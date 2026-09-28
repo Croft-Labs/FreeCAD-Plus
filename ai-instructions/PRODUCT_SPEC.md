@@ -17,7 +17,11 @@ validation status belong in [the roadmap](DEVELOPMENT_ROADMAP.md).
 
 The first change is Pad in the Part Design workbench. The broader direction is
 complete task-pane workflows for operations such as revolve and patterns; these
-remain future work. Application-wide rebranding, changing the geometry kernel,
+remain future work. The preferred direction is one command per geometry operation,
+with Add/Subtract chosen inside its shared create/edit task, following the workflow
+described by the user. The [candidate inventory](DEVELOPMENT_ROADMAP.md#unified-feature-workflows)
+defines the planned families; it does not establish implemented behavior.
+Application-wide rebranding, changing the geometry kernel,
 multi-object profile aggregation, modifying the installed FreeCAD, and release
 packaging are outside the current implementation scope.
 
@@ -32,6 +36,8 @@ packaging are outside the current implementation scope.
 | REQ-005 | Valid geometry can be previewed and accepted; empty or invalid profiles remain editable and cannot be accepted. |
 | REQ-006 | Cancel and Undo/Redo preserve feature/document integrity and restore temporary visibility changes. |
 | REQ-007 | Profile selection cooperates with direction and limit-reference selectors, rejects invalid body/document/dependency links, and preserves existing Pad parameters. |
+| REQ-008 | Planned unified feature families expose one geometry command with Add/Subtract in the same task pane used for creation and editing, retaining compatible selections and parameters when the operation changes. |
+| REQ-009 | Operation changes preserve document history, references, expressions, and Cancel/Undo behavior. Unsupported parameter combinations require explicit handling; existing documents retain their intended geometry and persisted identities. |
 
 ## Constraints and quality requirements
 

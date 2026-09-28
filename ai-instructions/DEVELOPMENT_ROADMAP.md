@@ -8,6 +8,8 @@
   This roadmap records status; it does not authorize new phases or external publication.
 - The [Part Design workflow audit](#part-design-workflow-audit) inventories the
   remaining selection and complete-editing work. Audit complete; implementation pending.
+- Preferred future command layout: [unified geometry workflows](#unified-feature-workflows)
+  with Add/Subtract inside the task pane; candidate mapping documented, implementation pending.
 
 ## [ X ] Phase 1: Repository and instruction foundation
 
@@ -75,6 +77,8 @@ Complete when: an operation and its create/edit acceptance criteria are approved
 
 - [   ] 3.1.1 Choose the next operation, such as revolve or a pattern, and define its input workflow.
   Status: future scope; no implementation authorized by this roadmap alone.
+  Plan paired operations as unified workflows under 3.6, rather than duplicating their
+  new task controls. The individual tasks below remain coverage checks for both modes.
 - [ X ] 3.1.2 Audit Part Design profile selection and shared create/edit task workflows.
   Evidence: source review on 2026-09-28 at `e0517bc4bd`, recorded below. No application
   or GUI tests were run for this audit; the installed FreeCAD was not used.
@@ -236,3 +240,92 @@ conditional wizard scope is explicitly resolved.
 - [   ] 3.5.5 Audit and complete Involute Gear and Sprocket task parameter coverage.
 - [   ] 3.5.6 Establish Shaft Design Wizard availability and edit/re-entry semantics;
   resolve any missing persisted-definition and cancel behavior before scheduling a fix.
+
+<a id="unified-feature-workflows"></a>
+
+### [   ] 3.6 Unify opposite operations into geometry workflows
+
+Outcome: implement the user's preferred one-command workflow with Add/Subtract in
+the task pane, as defined by [REQ-008/009](PRODUCT_SPEC.md#capabilities-and-requirements)
+and the [shared interaction](UI_UX_SPEC.md#planned-unified-feature-interaction).
+Depends on: 2.2, operation-specific selection coverage in 3.2/3.3/3.4, and a safe
+operation-switching design. These can be developed together by feature family;
+finishing all separate commands first is not required.
+Complete when: each selected family passes the [common acceptance](#feature-task-acceptance)
+plus operation-switching and legacy-document regressions below.
+
+#### Strong candidates: additive/subtractive pairs
+
+Source-backed planning inventory, 2026-09-28. Names below are proposed primary
+commands; existing API/document type names remain compatibility concerns.
+
+| Proposed command | Current features combined | Common parameters / inputs | Differences to preserve |
+| --- | --- | --- | --- |
+| Extrude | Pad + Pocket | Profile, start plane/offset, direction, side arrangement, lengths, limiting references, taper | Extent modes differ: Pad has UpToLast, Pocket has ThroughAll. Map modes by meaning, not enum index; validate direction and material result when switching. |
+| Revolve | Revolution + Groove | Profile, axis, angle, side arrangement, start and limiting references | Retain each mode's extent/geometry rules and the subtractive base-solid prerequisite. |
+| Loft | Additive Loft + Subtractive Loft | Base profile, ordered sections, ruled/closed options | Keep section compatibility and additive/subtractive result validation. |
+| Sweep (Pipe) | Additive Pipe + Subtractive Pipe | Profile, spine, orientation, auxiliary spine, section/scaling options | Preserve path/section semantics and validate the resulting union or cut. |
+| Helix | Additive Helix + Subtractive Helix | Profile, axis, pitch/height/turns modes, handedness, growth | Preserve helix mode dependencies and existing subtractive intersection/outside compatibility. |
+| Box | Additive Box + Subtractive Box | Length, width, height, placement/attachment | Same primitive geometry; operation changes how it combines with the Body. |
+| Cylinder | Additive Cylinder + Subtractive Cylinder | Radius, height, angle, placement/attachment | Same primitive geometry; validate union/cut result. |
+| Sphere | Additive Sphere + Subtractive Sphere | Radius, angular limits, placement/attachment | Same primitive geometry; validate union/cut result. |
+| Cone | Additive Cone + Subtractive Cone | Radii, height, angle, placement/attachment | Same primitive geometry; validate union/cut result. |
+| Ellipsoid | Additive Ellipsoid + Subtractive Ellipsoid | Radii, angular limits, placement/attachment | Same primitive geometry; validate union/cut result. |
+| Torus | Additive Torus + Subtractive Torus | Radii, angular limits, placement/attachment | Same primitive geometry; validate union/cut result. |
+| Prism | Additive Prism + Subtractive Prism | Polygon count, radius, height, placement/attachment | Same primitive geometry; validate union/cut result. |
+| Wedge | Additive Wedge + Subtractive Wedge | Wedge bounds/dimensions, placement/attachment | Same primitive geometry; validate union/cut result. |
+
+This combines **26 existing feature variants into 13 paired workflows**. The eight
+primitive workflows can also share one **Primitive** command with a shape selector,
+yielding six top-level families: Extrude, Revolve, Loft, Sweep, Helix, Primitive.
+Changing an existing primitive's shape type needs its own compatibility design;
+it is not implied by changing Add/Subtract for that same primitive.
+
+#### Additional consolidation options
+
+| Candidate | Possible shared workflow | Recommendation / boundary |
+| --- | --- | --- |
+| Linear Pattern, Polar Pattern, Mirrored; MultiTransform with Scale | Pattern/Transform with a type selector and shared original-feature list | A useful second-stage consolidation, but these are different transformations, not Add/Subtract opposites. Reuse MultiTransform's step editing; retain type-specific parameters. Circular/Path/Point model types need supported entry-path review under 3.4.2. |
+| Boolean union, subtraction, intersection | Boolean with operation and tool-body selectors | Already one feature/editor; align naming and interaction with the shared operation selector rather than create another command. |
+| Fillet and Chamfer | Optional Edge Treatment command with Round/Chamfer type | Shared edge selection is reusable, but curvature and parameter semantics differ. Lower priority than true additive/subtractive pairs; combining them is an option, not an agreed requirement. |
+
+Keep **Hole** specialized for hole standards, threads, and counterbores/countersinks.
+Keep Draft, Thickness, and Defeaturing distinct: they modify geometry in different
+ways and are not opposite operations. Binders, Clone, datums, gears, and sketches
+retain their own workflows while sharing appropriate selection and task conventions.
+
+#### Implementation evidence and constraints
+
+- Extrude already shares [`TaskExtrudeParameters`](../src/Mod/PartDesign/Gui/TaskExtrudeParameters.cpp).
+  Revolution/Groove share [`TaskRevolutionParameters`](../src/Mod/PartDesign/Gui/TaskRevolutionParameters.cpp);
+  Loft, Pipe, Helix, and primitive pairs also reuse their family task implementation.
+  UI consolidation can build on those existing paths.
+- [`FeatureAddSub`](../src/Mod/PartDesign/App/FeatureAddSub.cpp) already defines an
+  `Operation` property, but `defineAdditive` restricts it to Union and
+  `defineSubtractive` to Subtraction/Common. Existing operation controls do not make
+  all feature types freely interchangeable. Inspect each geometry execution path
+  and persistence behavior before implementing a shared selector.
+- [`Pad::TypeEnums`](../src/Mod/PartDesign/App/FeaturePad.cpp) and
+  [`Pocket::TypeEnums`](../src/Mod/PartDesign/App/FeaturePocket.cpp) demonstrate why
+  copying raw property indices between feature types is unsafe. Preserve common
+  parameters by meaning and identify incompatible settings explicitly.
+- Unifying command presentation is separate from changing a stored object class.
+  Decide how switching a committed feature between Add/Subtract preserves its
+  identity, dependent links, expressions, and recompute history. Do not silently
+  delete/recreate features or rename existing serialized types to match toolbar labels.
+
+- [ X ] 3.6.1 Inventory combined-workflow candidates and record the preferred interaction.
+  Evidence: the paired-feature/source mapping above; this is design documentation only.
+- [   ] 3.6.2 Define and validate the operation-switching compatibility approach;
+  inventory parameter mappings, existing Common behavior, and legacy entry points.
+- [   ] 3.6.3 Implement Extrude as the recommended first unified family, integrating
+  Pad validation and Pocket task 3.2.1 rather than creating duplicate new controls.
+- [   ] 3.6.4 Implement Revolve, covering both tasks 3.2.3 and 3.2.4.
+- [   ] 3.6.5 Implement Loft and Sweep, covering all four tasks in 3.3.
+- [   ] 3.6.6 Implement Helix, covering tasks 3.2.5 and 3.2.6.
+- [   ] 3.6.7 Implement paired primitive workflows and decide whether to expose them
+  through one Primitive command; validate all eight shapes in both operations.
+- [   ] 3.6.8 Verify Add-to-Subtract and Subtract-to-Add during creation and on reopened
+  features: common parameter retention, incompatible-mode guidance, no-base handling,
+  preview/recompute, dependent links and expressions, save/reopen, Cancel, and Undo/Redo.
+  Test existing additive, subtractive, and Common documents and legacy commands.

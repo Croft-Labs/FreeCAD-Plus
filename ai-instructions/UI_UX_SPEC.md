@@ -2,7 +2,8 @@
 
 ## Interface scope
 
-This document specifies the fork's Pad task-pane changes. The inherited desktop
+This document specifies the fork's Pad task-pane changes and the planned shared
+Add/Subtract interaction. The inherited desktop
 shell and unmodified workbenches retain upstream behavior; consult their source
 and the documentation linked in [the upstream overview](../README.md). This is
 not a claim that every inherited screen has been inventoried or revalidated.
@@ -14,6 +15,23 @@ and existing-feature editing open the task pane. Standard OK/Cancel and preview
 controls use the existing task-dialog and document transaction framework.
 Only one reference-selection mode is active at a time. User-facing text remains
 translatable; quantity fields retain FreeCAD's unit and expression behavior.
+
+### Planned unified feature interaction
+
+For the [candidate families](DEVELOPMENT_ROADMAP.md#unified-feature-workflows), use
+one geometry command and one create/edit task. Geometry selections remain the first
+section; an Operation control with **Add** and **Subtract** follows, before shared
+dimensions and mode-specific options. Reopening an existing feature loads its current
+operation and complete definition. Users can change operation without leaving the task.
+
+Retain compatible inputs, dimensions, and expressions across operation changes.
+If a mode has no equivalent, explain the conflict and require a valid choice instead
+of silently resetting it. Subtract requires a suitable base solid; keep the task usable
+and explain an unavailable operation. Preview and validation must reflect the selected
+operation, and Cancel restores the original feature definition. Existing supported
+intersection behavior must remain accessible where applicable; adding New Body or
+other operation modes is a separate scope decision. These planned interactions satisfy
+REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 
 ## Screen index
 
