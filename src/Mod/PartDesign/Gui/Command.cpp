@@ -1267,18 +1267,45 @@ void prepareProfileBased(Gui::Command* cmd, const std::string& which, double len
         finishProfileBased(cmd, sketch, Feat);
     };
 
-    // Pad starts in the same editor used for existing features. Its profile can
-    // be selected in the task panel without a separate sketch picker or an
-    // automatically chosen sketch.
-    if (which == "Pad" && cmd->getSelection().getSelectionEx().empty()) {
-        const std::string name = cmd->getUniqueObjectName("Pad", pcActiveBody);
-        cmd->openCommand(QT_TRANSLATE_NOOP("Command", "Make Pad"));
-        FCMD_OBJ_CMD(pcActiveBody, "newObject('PartDesign::Pad','" << name << "')");
+    // Both legacy commands and Extrude enter the shared editor without requiring
+    // a profile first. The task also validates subtractive base-solid prerequisites.
+    if (cmd->getSelection().getSelectionEx().empty()) {
+        const std::string name = cmd->getUniqueObjectName(which.c_str(), pcActiveBody);
+        cmd->openCommand(QT_TRANSLATE_NOOP("Command", "Make Extrude"));
+        FCMD_OBJ_CMD(pcActiveBody, "newObject('PartDesign::" << which << "','" << name << "')");
         worker(nullptr, pcActiveBody->getDocument()->getObject(name.c_str()));
         return;
     }
 
     prepareProfileBased(pcActiveBody, cmd, which, worker);
+}
+
+//===========================================================================
+// PartDesign_Extrude
+//===========================================================================
+DEF_STD_CMD_A(CmdPartDesignExtrude)
+
+CmdPartDesignExtrude::CmdPartDesignExtrude()
+    : Command("PartDesign_Extrude")
+{
+    sAppModule = "PartDesign";
+    sGroup = QT_TR_NOOP("PartDesign");
+    sMenuText = QT_TR_NOOP("Extrude");
+    sToolTipText = QT_TR_NOOP("Extrudes a profile with Add or Subtract selected in the task panel");
+    sWhatsThis = "PartDesign_Extrude";
+    sStatusTip = sToolTipText;
+    sPixmap = "PartDesign_Pad";
+}
+
+void CmdPartDesignExtrude::activated(int iMsg)
+{
+    Q_UNUSED(iMsg);
+    prepareProfileBased(this, "Pad", 10.0);
+}
+
+bool CmdPartDesignExtrude::isActive()
+{
+    return hasActiveDocument();
 }
 
 //===========================================================================
@@ -2881,6 +2908,7 @@ void CreatePartDesignCommands()
 
     rcCmdMgr.addCommand(new CmdPartDesignNewSketch());
 
+    rcCmdMgr.addCommand(new CmdPartDesignExtrude());
     rcCmdMgr.addCommand(new CmdPartDesignPad());
     rcCmdMgr.addCommand(new CmdPartDesignPocket());
     rcCmdMgr.addCommand(new CmdPartDesignHole());

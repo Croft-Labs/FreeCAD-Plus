@@ -219,7 +219,7 @@ class TestPadTaskPanel(unittest.TestCase):
         Gui.Selection.addSelection(self.sketch)
         start_mode = self.widget(QtGui.QComboBox, "startMode")
         start_mode.setCurrentIndex(2)  # Reference start
-        reference = self.widget(QtGui.QToolButton, "buttonStartReference")
+        reference = self.widget(QtGui.QPushButton, "buttonStartReference")
         if not reference.isChecked():
             reference.click()
         self.assertFalse(self.button("padSelectProfile").isChecked())

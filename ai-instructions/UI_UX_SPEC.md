@@ -2,7 +2,7 @@
 
 ## Interface scope
 
-This document specifies the fork's Pad task-pane changes and the planned shared
+This document specifies the fork's unified Extrude task-pane changes and the planned shared
 Add/Subtract interaction. The inherited desktop
 shell and unmodified workbenches retain upstream behavior; consult their source
 and the documentation linked in [the upstream overview](../README.md). This is
@@ -19,8 +19,8 @@ translatable; quantity fields retain FreeCAD's unit and expression behavior.
 ### Planned unified feature interaction
 
 For the [candidate families](DEVELOPMENT_ROADMAP.md#unified-feature-workflows), use
-one geometry command and one create/edit task. Geometry selections remain the first
-section; an Operation control with **Add** and **Subtract** follows, before shared
+one geometry command and one create/edit task. The first field is an Operation
+dropdown with **Add** and **Subtract**, followed by geometry selections, then shared
 dimensions and mode-specific options. Reopening an existing feature loads its current
 operation and complete definition. Users can change operation without leaving the task.
 
@@ -37,25 +37,28 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 
 | ID | Name | Purpose | Entry point | Specification |
 | --- | --- | --- | --- | --- |
-| UI-001 | Pad task pane | Select the profile and configure a new or existing Pad | `PartDesign_Pad`; Edit Pad / feature edit | [UI-001](#ui-001-pad-task-pane) |
+| UI-001 | Extrude task pane | Choose Add/Subtract and configure a new or existing extrusion | `PartDesign_Extrude`; legacy Pad/Pocket commands; Edit Extrude | [UI-001](#ui-001-pad-task-pane) |
 
 ## Screen specifications
 
-### UI-001: Pad task pane
+<a id="ui-001-pad-task-pane"></a>
 
-- Purpose: satisfy REQ-001 through REQ-007 in [the product specification](PRODUCT_SPEC.md#capabilities-and-requirements).
-- Entry: invoke Pad with an active body, with or without preselection; or edit an
-  existing Pad. The normal body prerequisite remains in force.
+### UI-001: Extrude task pane
+
+- Purpose: satisfy REQ-001 through REQ-009 in [the product specification](PRODUCT_SPEC.md#capabilities-and-requirements).
+- Entry: invoke Extrude with an active body, with or without preselection; or edit an
+  existing Pad/Pocket. Legacy commands remain callable. The normal body prerequisite remains in force.
 - Exit: OK accepts a valid result; Cancel abandons the transaction. Empty and
   invalid profiles retain the dialog so the user can correct them.
-- Layout: Profile is the first section inside Pad Parameters, followed by the
-  existing extrusion parameters and preview controls in the task pane.
+- Layout: Operation is the first field inside Extrude Parameters, then Profile,
+  shared extrusion parameters, and preview controls in the task pane.
 - Data: show the source label and selected edge/face names, or a whole-profile
   entry. Refresh from `Profile`; geometry and feature status drive preview/errors.
 
 | Control | Placement | Action | Availability and validation | Result/feedback |
 | --- | --- | --- | --- | --- |
-| Profile list | First section | Select one or more rows for removal | Populated from one source object and optional subelements | Shows accumulated geometry; ordinary viewport clicks do not discard previous rows. |
+| Operation dropdown | First field | Choose Add or Subtract without leaving the task | Add is the new Extrude default; reopening loads the saved operation. Existing Common features also expose Intersect to retain that operation. | Retains profile, dimensions, direction, expressions, and extent meanings. Subtract without a base solid stays editable but cannot be accepted. |
+| Profile list | Immediately after Operation | Select one or more rows for removal | Populated from one source object and optional subelements | Shows accumulated geometry; ordinary viewport clicks do not discard previous rows. |
 | Select / Done | Below profile list | Enter/exit geometry selection | A new empty Pad enters selection automatically | Model/tree selections update the profile; other selectors are deselected. |
 | Remove | Below profile list | Remove highlighted entries | Enabled only when list entries are selected | Remaining entries are retained; removing the last leaves an empty profile. |
 | Clear | Below profile list | Remove the source and all entries; begin selection | Enabled when a source is assigned | A different source can now be selected. |
@@ -63,7 +66,7 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 | Start / Offset / Pick Reference | Existing parameter area | Choose profile plane, offset, or referenced start | Offset/reference fields follow the selected start mode | Retain inherited start and reference-picking behavior. |
 | Direction, Reversed, custom X/Y/Z, Length along sketch normal | Existing direction controls | Set extrusion direction and length interpretation | Normal/reference/custom mode governs available fields | Changing the profile refreshes direction choices; explicit custom choices remain model-owned. |
 | One sided / Two sided / Symmetric | Existing side mode | Choose extent arrangement | Side 2 controls appear when applicable | Retain inherited one/two/symmetric behavior. |
-| Type, Length, end reference, Offset, Taper angle | Per-side parameter controls | Set dimension or limiting geometry and taper | Dimension, To last, To first, Up to face, Up to shape expose their applicable inputs | Existing geometric validation and preview remain authoritative. |
+| Type, Length, end reference, Offset, Taper angle | Per-side parameter controls | Set dimension or limiting geometry and taper | Dimension, To last, To first, Up to face, Up to shape, Through all expose their applicable inputs | To last and Through all remain distinct when switching operation. Through all requires a base shape. |
 | End-shape face list / Remove / all-faces control | Existing up-to-shape controls | Choose and refine limiting faces | Available in the applicable end mode | This list remains separate from Profile. |
 | Update view and preview controls | Existing task/preview sections | Control recomputation and preview presentation | Inherited task framework behavior | Preview is feedback, not a saved feature until acceptance. |
 | OK | Standard task controls | Validate and commit | Requires a profile and valid feature geometry | Hide accepted profile/base as appropriate; finish editing. |
@@ -88,6 +91,6 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 
 ## Open questions
 
-The next operation and multi-source profile behavior are [product questions](PRODUCT_SPEC.md#open-questions).
+The next unified family and multi-source profile behavior are [product questions](PRODUCT_SPEC.md#open-questions).
 Record any visual or interaction defects found by GUI validation against UI-001
 and the active roadmap milestone; do not silently change the intended workflow.

@@ -27,7 +27,7 @@
 #include <map>
 
 #include "TaskExtrudeParameters.h"
-#include "ViewProviderPad.h"
+#include "ViewProviderExtrude.h"
 
 class QComboBox;
 class QGroupBox;
@@ -54,7 +54,11 @@ class TaskPadParameters: public TaskExtrudeParameters
     Q_OBJECT
 
 public:
-    explicit TaskPadParameters(ViewProviderPad* PadView, QWidget* parent = nullptr, bool newObj = false);
+    explicit TaskPadParameters(
+        ViewProviderExtrude* PadView,
+        QWidget* parent = nullptr,
+        bool newObj = false
+    );
     ~TaskPadParameters() override;
 
     void apply() override;
@@ -65,6 +69,8 @@ protected:
     void changeEvent(QEvent* event) override;
 
 private:
+    void setupOperationSelection();
+    void translateOperationSelection();
     void setupProfileSelection();
     void updateProfileList();
     void updateProfile(App::DocumentObject* object, const std::vector<std::string>& subNames);
@@ -92,7 +98,7 @@ class TaskDlgPadParameters: public TaskDlgExtrudeParameters
     Q_OBJECT
 
 public:
-    explicit TaskDlgPadParameters(ViewProviderPad* PadView, bool newObj = false);
+    explicit TaskDlgPadParameters(ViewProviderExtrude* PadView, bool newObj = false);
 
 protected:
     TaskExtrudeParameters* getTaskParameters() override

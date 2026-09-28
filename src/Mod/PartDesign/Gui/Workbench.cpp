@@ -281,8 +281,7 @@ void Workbench::activated()
 
     const char* Sketch[] = {
         "PartDesign_NewSketch",
-        "PartDesign_Pad",
-        "PartDesign_Pocket",
+        "PartDesign_Extrude",
         "PartDesign_Hole",
         "PartDesign_Revolution",
         "PartDesign_Groove",
@@ -316,8 +315,7 @@ void Workbench::activated()
     ));
 
     const char* ShapeBinder[] = {
-        "PartDesign_Pad",
-        "PartDesign_Pocket",
+        "PartDesign_Extrude",
         "PartDesign_Revolution",
         "PartDesign_Groove",
         "PartDesign_AdditiveLoft",
@@ -334,8 +332,7 @@ void Workbench::activated()
     ));
 
     const char* SubShapeBinder[] = {
-        "PartDesign_Pad",
-        "PartDesign_Pocket",
+        "PartDesign_Extrude",
         "PartDesign_Revolution",
         "PartDesign_Groove",
         "PartDesign_AdditiveLoft",
@@ -411,8 +408,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     Gui::MenuItem* additives = new Gui::MenuItem;
     additives->setCommand("Additive Features");
 
-    *additives << "PartDesign_Pad"
-               << "PartDesign_Revolution"
+    *additives << "PartDesign_Revolution"
                << "PartDesign_AdditiveLoft"
                << "PartDesign_AdditivePipe"
                << "PartDesign_AdditiveHelix";
@@ -421,8 +417,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     Gui::MenuItem* subtractives = new Gui::MenuItem;
     subtractives->setCommand("Subtractive Features");
 
-    *subtractives << "PartDesign_Pocket"
-                  << "PartDesign_Hole"
+    *subtractives << "PartDesign_Hole"
                   << "PartDesign_Groove"
                   << "PartDesign_SubtractiveLoft"
                   << "PartDesign_SubtractivePipe"
@@ -448,6 +443,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
               << "PartDesign_Defeaturing";
 
     *part << "PartDesign_Body"
+          << "PartDesign_Extrude"
           << "Separator"
           << "PartDesign_ShapeBinder"
           << "PartDesign_SubShapeBinder"
@@ -505,14 +501,13 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     part = new Gui::ToolBarItem(root);
     part->setCommand("Part Design Modeling Features");
 
-    *part << "PartDesign_Pad"
+    *part << "PartDesign_Extrude"
           << "PartDesign_Revolution"
           << "PartDesign_AdditiveLoft"
           << "PartDesign_AdditivePipe"
           << "PartDesign_AdditiveHelix"
           << "PartDesign_CompPrimitiveAdditive"
           << "Separator"
-          << "PartDesign_Pocket"
           << "PartDesign_Hole"
           << "PartDesign_Groove"
           << "PartDesign_SubtractiveLoft"

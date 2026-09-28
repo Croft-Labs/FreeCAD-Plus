@@ -20,7 +20,8 @@ Do not claim to have read missing guidance or maintain an independent master cop
 
 - Work on this FreeCAD Plus checkout. Ignore the separately installed FreeCAD;
   do not modify it or use it as evidence for this fork's changes.
-- Start with Pad's task-pane workflow. Other Part Design operations are future
+- Current implementation scope is the unified Pad/Pocket Extrude task workflow.
+  Other Part Design operations are future
   scope; the roadmap does not authorize implementing them automatically.
 - Preserve FreeCAD document/property identities, geometry semantics, licensing,
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).

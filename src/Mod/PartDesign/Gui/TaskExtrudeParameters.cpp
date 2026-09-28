@@ -62,7 +62,6 @@ TaskExtrudeParameters::TaskExtrudeParameters(
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
     ui->setupUi(proxy);
-    setupOperation(ui->labelOperation, ui->comboOperation);
     handleLineFaceNameNo(ui->lineFaceName);
     handleLineFaceNameNo(ui->lineFaceName2);
     ui->lineStartReference->setPlaceholderText(tr("No start reference selected"));
@@ -141,13 +140,17 @@ void TaskExtrudeParameters::setupSideDialog(SideController& side)
     Base::Quantity length = side.Length->getQuantityValue();
     Base::Quantity offset = side.Offset->getQuantityValue();
     Base::Quantity taper = side.TaperAngle->getQuantityValue();
-    int typeIndex = side.Type->getValue();
-    // The Type/Type2 properties are stuck with the deprecated 'TwoLength' mode.
-    // Because enums do not store text just an index. So this create
-    // a inconsistence between the UI and the property.
-    if (typeIndex > static_cast<int>(Mode::ToShape)) {
-        typeIndex--;
-    }
+    // Pad and Pocket retain their legacy enum indices. Match by meaning so
+    // UpToLast and ThroughAll remain distinct in the common editor.
+    const QStringList modes {
+        QStringLiteral("Length"),
+        QStringLiteral("UpToLast"),
+        QStringLiteral("UpToFirst"),
+        QStringLiteral("UpToFace"),
+        QStringLiteral("UpToShape"),
+        QStringLiteral("ThroughAll")
+    };
+    const int typeIndex = modes.indexOf(QString::fromLatin1(side.Type->getValueAsString()));
 
     // --- Set up UI widgets with initial values ---
     side.lengthEdit->setValue(length);
@@ -847,7 +850,7 @@ void TaskExtrudeParameters::addAxisToCombo(
     }
 }
 
-void TaskExtrudeParameters::updateWholeUI(Type type, Side side)
+void TaskExtrudeParameters::updateWholeUI(Side side)
 {
     SidesMode sidesMode = static_cast<SidesMode>(ui->sidesMode->currentIndex());
     Mode mode1 = static_cast<Mode>(ui->changeMode->currentIndex());
@@ -864,16 +867,15 @@ void TaskExtrudeParameters::updateWholeUI(Type type, Side side)
 
     // --- Configure each side using the helper method ---
     // Side 1 is always conceptually visible, and we pass whether it should receive focus.
-    updateSideUI(m_side1, type, mode1, true, (side == Side::First));
+    updateSideUI(m_side1, mode1, true, (side == Side::First));
     // Side 2 is only visible if in TwoSides mode, and we pass whether it should receive focus.
-    updateSideUI(m_side2, type, mode2, isSide2GroupVisible, (side == Side::Second));
+    updateSideUI(m_side2, mode2, isSide2GroupVisible, (side == Side::Second));
 
     ui->checkBoxReversed->setEnabled(sidesMode != SidesMode::Symmetric || mode1 != Mode::Dimension);
 }
 
 void TaskExtrudeParameters::updateSideUI(
     const SideController& s,
-    Type featureType,
     Mode sideMode,
     bool isParentVisible,
     bool setFocus
@@ -895,10 +897,10 @@ void TaskExtrudeParameters::updateSideUI(
             QMetaObject::invokeMethod(s.lengthEdit, "setFocus", Qt::QueuedConnection);
         }
     }
-    else if (sideMode == Mode::ThroughAll && featureType == Type::Pocket) {
+    else if (sideMode == Mode::ThroughAll) {
         isTaperVisible = true;
     }
-    else if (sideMode == Mode::ToLast && featureType == Type::Pad) {
+    else if (sideMode == Mode::ToLast) {
         isOffsetVisible = true;
     }
     else if (sideMode == Mode::ToFirst) {
@@ -1395,15 +1397,10 @@ void TaskExtrudeParameters::applyParameters()
         facename2 = getFaceName(ui->lineFaceName2);
     }
 
-    // Handle deprecated 'TwoLength' mode.
-    int type1 = getMode();
-    if (static_cast<Mode>(type1) == Mode::ToShape) {
-        type1++;
-    }
-    int type2 = getMode2();
-    if (static_cast<Mode>(type2) == Mode::ToShape) {
-        type2++;
-    }
+    auto extrude = getObject<PartDesign::FeatureExtrude>();
+    const std::string type1 = extrude->Type.getValueAsString();
+    const std::string type2 = extrude->Type2.getValueAsString();
+    FCMD_OBJ_CMD(obj, "Operation = '" << extrude->Operation.getValueAsString() << "'");
 
     ui->lengthEdit->apply();
     ui->lengthEdit2->apply();
@@ -1418,8 +1415,8 @@ void TaskExtrudeParameters::applyParameters()
     FCMD_OBJ_CMD(obj, "ReferenceAxis = " << getReferenceAxis());
     FCMD_OBJ_CMD(obj, "AlongSketchNormal = " << (getAlongSketchNormal() ? 1 : 0));
     FCMD_OBJ_CMD(obj, "SideType = " << getSidesMode());
-    FCMD_OBJ_CMD(obj, "Type = " << type1);
-    FCMD_OBJ_CMD(obj, "Type2 = " << type2);
+    FCMD_OBJ_CMD(obj, "Type = '" << type1 << "'");
+    FCMD_OBJ_CMD(obj, "Type2 = '" << type2 << "'");
     FCMD_OBJ_CMD(obj, "UpToFace = " << facename.toUtf8().data());
     FCMD_OBJ_CMD(obj, "UpToFace2 = " << facename2.toUtf8().data());
     FCMD_OBJ_CMD(obj, "Reversed = " << (getReversed() ? 1 : 0));

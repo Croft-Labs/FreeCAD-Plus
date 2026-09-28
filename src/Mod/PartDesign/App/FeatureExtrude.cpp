@@ -77,10 +77,28 @@ FeatureExtrude::FeatureExtrude()
     );
 }
 
+void FeatureExtrude::setupExtrusionOperations()
+{
+    // Keep existing enum indices (including Pocket's Common) and restore old
+    // custom enum lists without replacing the feature or its dependent links.
+    const std::string operation = Operation.getValueAsString();
+    auto values = Operation.getEnumVector();
+    for (const char* value : {"Union", "Subtraction", "Common"}) {
+        if (std::find(values.begin(), values.end(), value) == values.end()) {
+            values.emplace_back(value);
+        }
+    }
+    if (values != Operation.getEnumVector()) {
+        Operation.setEnums(values);
+    }
+    Operation.setStatus(App::Property::Status::Hidden, false);
+    Operation.setValue(operation.c_str());
+}
+
 short FeatureExtrude::mustExecute() const
 {
-    if (Placement.isTouched() || SideType.isTouched() || Type.isTouched() || Type2.isTouched()
-        || Length.isTouched() || Length2.isTouched() || TaperAngle.isTouched()
+    if (Operation.isTouched() || Placement.isTouched() || SideType.isTouched() || Type.isTouched()
+        || Type2.isTouched() || Length.isTouched() || Length2.isTouched() || TaperAngle.isTouched()
         || TaperAngle2.isTouched() || UseCustomVector.isTouched() || Direction.isTouched()
         || ReferenceAxis.isTouched() || AlongSketchNormal.isTouched() || Offset.isTouched()
         || Offset2.isTouched() || StartType.isTouched() || StartOffset.isTouched()
@@ -93,7 +111,6 @@ short FeatureExtrude::mustExecute() const
 
 Base::Vector3d FeatureExtrude::computeDirection(const Base::Vector3d& sketchVector, bool inverse)
 {
-    (void)inverse;
     Base::Vector3d extrudeDirection;
 
     if (!UseCustomVector.getValue()) {
@@ -109,14 +126,9 @@ Base::Vector3d FeatureExtrude::computeDirection(const Base::Vector3d& sketchVect
             Base::Vector3d base;
             Base::Vector3d dir;
             getAxis(pcReferenceAxis, subReferenceAxis, base, dir, ForbiddenAxis::NotPerpendicularWithNormal);
-            switch (addSubType) {
-                case Type::Additive:
-                    extrudeDirection = dir;
-                    break;
-                case Type::Subtractive:
-                    extrudeDirection = -dir;
-                    break;
-            }
+            // Direction belongs to the extrusion, not its boolean operation.
+            // Retain Pocket's historical orientation when reopening old models.
+            extrudeDirection = inverse ? -dir : dir;
         }
     }
     else {
@@ -384,6 +396,22 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
     std::string method(Type.getValueAsString());
     std::string method2(Type2.getValueAsString());
 
+    TopoShape base = getBaseTopoShape(true);
+    if (getAddSubType() == FeatureAddSub::Type::Subtractive
+        && (base.isNull() || !base.hasSubShape(TopAbs_SOLID))) {
+        return new App::DocumentObjectExecReturn(QT_TRANSLATE_NOOP(
+            "Exception",
+            "Subtract or intersect requires a base solid. Choose Add or provide a base solid."
+        ));
+    }
+    if (base.isNull()
+        && (method == "ThroughAll" || (Sidemethod == "Two sides" && method2 == "ThroughAll"))) {
+        return new App::DocumentObjectExecReturn(QT_TRANSLATE_NOOP(
+            "Exception",
+            "Through all requires a base shape. Choose a different extrusion extent."
+        ));
+    }
+
     // Validate parameters
     double L = method == "ThroughAll" ? getThroughAllLength()
         : method == "Length"          ? Length.getValue()
@@ -469,9 +497,6 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
     catch (const Standard_Failure& e) {
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
-
-    // if the Base property has a valid shape, fuse the prism into it
-    TopoShape base = getBaseTopoShape(true);
 
     // get the normal vector of the sketch
     Base::Vector3d SketchVector = getProfileNormal();
@@ -1088,5 +1113,6 @@ void FeatureExtrude::onDocumentRestored()
         SideType.setValue("Symmetric");
     }
 
+    setupExtrusionOperations();
     ProfileBased::onDocumentRestored();
 }

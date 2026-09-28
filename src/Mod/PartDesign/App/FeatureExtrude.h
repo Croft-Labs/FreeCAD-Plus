@@ -83,6 +83,7 @@ public:
     static const char* SideTypesEnums[];
 
 protected:
+    void setupExtrusionOperations();
     void Restore(Base::XMLReader& reader) override;
     void onDocumentRestored() override;
     Base::Vector3d computeDirection(const Base::Vector3d& sketchVector, bool inverse);

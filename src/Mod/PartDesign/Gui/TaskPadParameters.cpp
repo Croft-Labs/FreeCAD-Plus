@@ -39,7 +39,7 @@
 #include <Gui/CommandT.h>
 #include <Mod/Part/App/Part2DObject.h>
 #include <Mod/PartDesign/App/Body.h>
-#include <Mod/PartDesign/App/FeaturePad.h>
+#include <Mod/PartDesign/App/FeatureExtrude.h>
 
 #include "ReferenceSelection.h"
 #include "ui_TaskPadPocketParameters.h"
@@ -51,12 +51,12 @@ using namespace Gui;
 
 namespace
 {
-// A Pad profile is one source object, optionally restricted to several curves
+// An extrusion profile is one source object, optionally restricted to several curves
 // or faces. Keep cross-body references and dependency cycles out of the editor.
-class PadProfileSelection: public Gui::SelectionFilterGate
+class ExtrudeProfileSelection: public Gui::SelectionFilterGate
 {
 public:
-    explicit PadProfileSelection(const PartDesign::Pad* pad)
+    explicit ExtrudeProfileSelection(const PartDesign::FeatureExtrude* pad)
         : Gui::SelectionFilterGate(nullPointer())
         , pad(pad)
     {}
@@ -81,20 +81,18 @@ public:
     }
 
 private:
-    const PartDesign::Pad* pad;
+    const PartDesign::FeatureExtrude* pad;
 };
 }  // namespace
 
 /* TRANSLATOR PartDesignGui::TaskPadParameters */
 
-TaskPadParameters::TaskPadParameters(ViewProviderPad* PadView, QWidget* parent, bool newObj)
-    : TaskExtrudeParameters(PadView, parent, "PartDesign_Pad", tr("Pad Parameters"))
+TaskPadParameters::TaskPadParameters(ViewProviderExtrude* PadView, QWidget* parent, bool newObj)
+    : TaskExtrudeParameters(PadView, parent, "PartDesign_Pad", tr("Extrude Parameters"))
 {
-    ui->offsetEdit->setToolTip(tr("Offset the pad from the face at which the pad will end on side 1"));
-    ui->offsetEdit2->setToolTip(
-        tr("Offset the pad from the face at which the pad will end on side 2")
-    );
-    ui->checkBoxReversed->setToolTip(tr("Reverses pad direction"));
+    ui->offsetEdit->setToolTip(tr("Offset from the face at which the extrusion will end on side 1"));
+    ui->offsetEdit2->setToolTip(tr("Offset from the face at which the extrusion will end on side 2"));
+    ui->checkBoxReversed->setToolTip(tr("Reverses extrusion direction"));
 
     // set the history path
     ui->lengthEdit->setEntryName(QByteArray("Length"));
@@ -112,6 +110,7 @@ TaskPadParameters::TaskPadParameters(ViewProviderPad* PadView, QWidget* parent, 
 
     setupProfileSelection();
     setupDialog();
+    setupOperationSelection();
 
     // if it is a newly created object use the last value of the history
     if (newObj) {
@@ -119,7 +118,7 @@ TaskPadParameters::TaskPadParameters(ViewProviderPad* PadView, QWidget* parent, 
     }
 
     updateProfileList();
-    if (!getObject<PartDesign::Pad>()->Profile.getValue()) {
+    if (!getObject<PartDesign::FeatureExtrude>()->Profile.getValue()) {
         setSelectionMode(SelectProfile);
     }
 }
@@ -130,6 +129,39 @@ TaskPadParameters::~TaskPadParameters()
     if (getObject()) {
         setSelectionMode(None);
     }
+}
+
+void TaskPadParameters::translateOperationSelection()
+{
+    const QSignalBlocker blocker(ui->comboOperation);
+    auto feature = getObject<PartDesign::FeatureExtrude>();
+    const QString operation = QString::fromLatin1(feature->Operation.getValueAsString());
+    // Preserve editing of existing Common features without changing their meaning.
+    const bool showCommon = operation == QStringLiteral("Common") || ui->comboOperation->count() > 2;
+    ui->comboOperation->clear();
+    ui->comboOperation->addItem(tr("Add"), QStringLiteral("Union"));
+    ui->comboOperation->addItem(tr("Subtract"), QStringLiteral("Subtraction"));
+    if (showCommon) {
+        ui->comboOperation->addItem(tr("Intersect"), QStringLiteral("Common"));
+    }
+    ui->comboOperation->setCurrentIndex(ui->comboOperation->findData(operation));
+    ui->comboOperation->setDisabled(feature->Operation.isReadOnly());
+}
+
+void TaskPadParameters::setupOperationSelection()
+{
+    translateOperationSelection();
+    QWidget::setTabOrder(ui->comboOperation, selectProfile);
+    connect(ui->comboOperation, qOverload<int>(&QComboBox::activated), this, [this](int index) {
+        auto feature = getObject<PartDesign::FeatureExtrude>();
+        feature->Operation.setValue(
+            ui->comboOperation->itemData(index).toString().toLatin1().constData()
+        );
+        recomputeFeature();
+        updateUI(Side::First);
+        setGizmoPositions();
+        updateProfileList();
+    });
 }
 
 void TaskPadParameters::setupProfileSelection()
@@ -160,7 +192,7 @@ void TaskPadParameters::setupProfileSelection()
     buttons->addWidget(removeProfile);
     buttons->addWidget(clearProfile);
     layout->addLayout(buttons);
-    ui->verticalLayout->insertWidget(0, profileGroup);
+    ui->verticalLayout->insertWidget(1, profileGroup);
 
     connect(selectProfile, &QPushButton::toggled, this, [this](bool checked) {
         setSelectionMode(checked ? SelectProfile : None);
@@ -191,6 +223,7 @@ void TaskPadParameters::changeEvent(QEvent* event)
 {
     TaskExtrudeParameters::changeEvent(event);
     if (event->type() == QEvent::LanguageChange && profileGroup) {
+        translateOperationSelection();
         translateProfileSelection();
         updateProfileList();
     }
@@ -199,7 +232,7 @@ void TaskPadParameters::changeEvent(QEvent* event)
 void TaskPadParameters::showProfileForSelection(App::DocumentObject* object)
 {
     // The base solid's visibility is already managed by onSelectReference().
-    if (!object || object == getObject<PartDesign::Pad>()->getBaseObject(true)) {
+    if (!object || object == getObject<PartDesign::FeatureExtrude>()->getBaseObject(true)) {
         return;
     }
     auto view = Gui::Application::Instance->getViewProvider(object);
@@ -237,9 +270,9 @@ void TaskPadParameters::setSelectionMode(SelectionMode mode, Side side)
     }
     TaskExtrudeParameters::setSelectionMode(mode, side);
     if (mode == SelectProfile) {
-        auto pad = getObject<PartDesign::Pad>();
+        auto pad = getObject<PartDesign::FeatureExtrude>();
         onSelectReference(AllowSelection::EDGE | AllowSelection::FACE);
-        Gui::Selection().addSelectionGate(new PadProfileSelection(pad));
+        Gui::Selection().addSelectionGate(new ExtrudeProfileSelection(pad));
         showProfileForSelection(pad->Profile.getValue());
     }
     if (selectProfile) {
@@ -251,7 +284,7 @@ void TaskPadParameters::setSelectionMode(SelectionMode mode, Side side)
 
 void TaskPadParameters::updateProfileList()
 {
-    auto pad = getObject<PartDesign::Pad>();
+    auto pad = getObject<PartDesign::FeatureExtrude>();
     auto object = pad->Profile.getValue();
     profileList->clear();
     if (object) {
@@ -276,7 +309,7 @@ void TaskPadParameters::updateProfileList()
                                 "model. Curves must form a closed profile."));
     }
     else if (pad->isError()) {
-        profileHint->setText(tr("Complete a closed profile or adjust the pad parameters.\n%1")
+        profileHint->setText(tr("Complete a closed profile or adjust the extrusion parameters.\n%1")
                                  .arg(QString::fromUtf8(pad->getStatusString())));
     }
     else {
@@ -287,7 +320,7 @@ void TaskPadParameters::updateProfileList()
 
 void TaskPadParameters::updateProfile(App::DocumentObject* object, const std::vector<std::string>& subNames)
 {
-    auto pad = getObject<PartDesign::Pad>();
+    auto pad = getObject<PartDesign::FeatureExtrude>();
     auto previous = pad->Profile.getValue();
     const bool followsNormal = !pad->ReferenceAxis.getValue()
         || (pad->ReferenceAxis.getValue() == previous
@@ -322,20 +355,19 @@ void TaskPadParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
     if (msg.Type != Gui::SelectionChanges::AddSelection) {
         return;
     }
-    auto pad = getObject<PartDesign::Pad>();
+    auto pad = getObject<PartDesign::FeatureExtrude>();
     if (std::strcmp(msg.pDocName, pad->getDocument()->getName()) != 0) {
         return;
     }
     auto object = pad->getDocument()->getObject(msg.pObjectName);
-    PadProfileSelection gate(pad);
+    ExtrudeProfileSelection gate(pad);
     if (!gate.allow(pad->getDocument(), object, msg.pSubName)) {
         return;
     }
     auto current = pad->Profile.getValue();
     if (current && current != object) {
-        profileHint->setText(
-            tr("A pad uses one profile object. Clear the list before selecting a different object.")
-        );
+        profileHint->setText(tr("An extrusion uses one profile object. Clear the list before "
+                                "selecting a different object."));
         return;
     }
     const std::string sub = msg.pSubName;
@@ -358,7 +390,7 @@ void TaskPadParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 
 void TaskPadParameters::removeSelectedProfileItems()
 {
-    auto pad = getObject<PartDesign::Pad>();
+    auto pad = getObject<PartDesign::FeatureExtrude>();
     auto subs = pad->Profile.getSubValues(false);
     for (int row = profileList->count() - 1; row >= 0; --row) {
         if (profileList->item(row)->isSelected() && row < static_cast<int>(subs.size())) {
@@ -370,12 +402,14 @@ void TaskPadParameters::removeSelectedProfileItems()
 
 void TaskPadParameters::translateModeList(QComboBox* box, int index)
 {
+    const QSignalBlocker blocker(box);
     box->clear();
     box->addItem(tr("Dimension"));
     box->addItem(tr("To last"));
     box->addItem(tr("To first"));
     box->addItem(tr("Up to face"));
     box->addItem(tr("Up to shape"));
+    box->addItem(tr("Through all"));
     box->setCurrentIndex(index);
 }
 
@@ -384,7 +418,7 @@ void TaskPadParameters::updateUI(Side side)
     // update direction combobox
     fillDirectionCombo();
     // set and enable checkboxes
-    updateWholeUI(Type::Pad, side);
+    updateWholeUI(side);
 }
 
 void TaskPadParameters::onModeChanged(int index, Side side)
@@ -406,6 +440,9 @@ void TaskPadParameters::onModeChanged(int index, Side side)
                     sideCtrl.lengthEdit->setValue(5.0);
                 }
             }
+            break;
+        case Mode::ThroughAll:
+            sideCtrl.Type->setValue("ThroughAll");
             break;
         case Mode::ToLast:
             sideCtrl.Type->setValue("UpToLast");
@@ -431,12 +468,12 @@ void TaskPadParameters::onModeChanged(int index, Side side)
 
 void TaskPadParameters::apply()
 {
-    auto pad = getObject<PartDesign::Pad>();
+    auto pad = getObject<PartDesign::FeatureExtrude>();
     auto profile = pad->Profile.getValue();
     if (!profile) {
-        profileHint->setText(tr("Select a profile before accepting the pad."));
+        profileHint->setText(tr("Select a profile before accepting the extrusion."));
         setSelectionMode(SelectProfile);
-        throw Base::ValueError("Select a profile before accepting the pad.");
+        throw Base::ValueError("Select a profile before accepting the extrusion.");
     }
     FCMD_OBJ_CMD(
         pad,
@@ -451,7 +488,7 @@ void TaskPadParameters::apply()
 // TaskDialog
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-TaskDlgPadParameters::TaskDlgPadParameters(ViewProviderPad* PadView, bool /*newObj*/)
+TaskDlgPadParameters::TaskDlgPadParameters(ViewProviderExtrude* PadView, bool /*newObj*/)
     : TaskDlgExtrudeParameters(PadView)
     , parameters(new TaskPadParameters(PadView))
 {

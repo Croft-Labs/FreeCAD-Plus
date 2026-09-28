@@ -2,14 +2,15 @@
 
 ## Current focus
 
-- Active milestone: 2.2, compiled validation of the Pad task workflow.
-- Target outcome: [REQ-001 through REQ-007](PRODUCT_SPEC.md#capabilities-and-requirements).
+- Active work: 3.6.3, unified Extrude source implementation, with compiled validation
+  still gated by 2.2. The user authorized this source work before that build gate clears.
+- Target outcome: [REQ-001 through REQ-009](PRODUCT_SPEC.md#capabilities-and-requirements).
 - Source implementation exists; build and GUI acceptance are still pending.
   This roadmap records status; it does not authorize new phases or external publication.
 - The [Part Design workflow audit](#part-design-workflow-audit) inventories the
   remaining selection and complete-editing work. Audit complete; implementation pending.
 - Preferred future command layout: [unified geometry workflows](#unified-feature-workflows)
-  with Add/Subtract inside the task pane; candidate mapping documented, implementation pending.
+  with Add/Subtract first in the task pane; Extrude source implemented, validation pending.
 
 ## [ X ] Phase 1: Repository and instruction foundation
 
@@ -58,10 +59,8 @@ Complete when: this fork builds and the focused suite plus manual UI acceptance 
   Status: blocked at configuration on 2026-09-28: MSVC 19.44 was detected, but
   `FREECAD_LIBPACK_DIR` had no usable LibPack. Follow [setup](DEVELOPMENT_GUIDE.md#prerequisites-and-setup).
 - [   ] 2.2.2 Correct and run the focused GUI regressions against the built fork.
-  Source-review finding during documentation adoption: the selector for
-  `buttonStartReference` in `TestPadTaskPanel.py` asks for `QToolButton`, while
-  `TaskPadPocketParameters.ui` defines `QPushButton`. Correct that test before execution.
-  GUI tests have not run; this documentation task does not change test code.
+  The `buttonStartReference` test selector now uses the actual `QPushButton` widget.
+  GUI execution is still pending; include the new Extrude regressions below.
 - [   ] 2.2.3 Verify viewport picking, rotated profiles, both directions, keyboard input,
   visibility restoration, Cancel, and Undo/Redo; check Pocket for shared-base regressions.
   Acceptance: [UI-001](UI_UX_SPEC.md#ui-001-pad-task-pane) and [test procedure](../tests/PadTaskPanel.md).
@@ -71,12 +70,13 @@ Complete when: this fork builds and the focused suite plus manual UI acceptance 
 Outcome: extend the complete task-pane workflow after Pad is validated and scope is authorized.
 Depends on: milestone 2.2.
 
-### [   ] 3.1 Define the next operation
+### [ X ] 3.1 Define the next operation
 
 Complete when: an operation and its create/edit acceptance criteria are approved.
 
-- [   ] 3.1.1 Choose the next operation, such as revolve or a pattern, and define its input workflow.
-  Status: future scope; no implementation authorized by this roadmap alone.
+- [ X ] 3.1.1 Choose the next operation and define its input workflow.
+  Evidence: user selected unified Pad/Pocket Extrude, with Add/Subtract as the first
+  dropdown, and requested implementation on 2026-09-28.
   Plan paired operations as unified workflows under 3.6, rather than duplicating their
   new task controls. The individual tasks below remain coverage checks for both modes.
 - [ X ] 3.1.2 Audit Part Design profile selection and shared create/edit task workflows.
@@ -91,6 +91,8 @@ Complete when: an operation and its create/edit acceptance criteria are approved
 Revolution, Groove, Additive Loft, Subtractive Loft, Additive Pipe, Subtractive Pipe,
 Additive Helix, and Subtractive Helix. Pad's source change is already recorded in
 milestone 2.1; its acceptance remains in [milestone 2.2](#pad-validation).
+This inventory describes the audited baseline. Pocket's subsequent source update
+is tracked in 3.6.3; it no longer uses that startup picker without preselection.
 
 In [`Command.cpp`](../src/Mod/PartDesign/Gui/Command.cpp), these ten commands call
 `prepareProfileBased`. Without preselection, it searches for sketches, automatically
@@ -164,8 +166,9 @@ owns the common controls and the remaining property-by-property coverage audit.
 These are backlog completion criteria. Detailed operation-specific screen behavior
 belongs in the UI specification when that operation is selected for implementation.
 
-1. Creating and reopening use the same task container and controls. Geometry inputs
-   appear first, show existing selections, and support selection after invocation.
+1. Creating and reopening use the same task container and controls. For unified
+   Add/Subtract families, Operation is first, immediately followed by geometry inputs
+   showing existing selections and supporting selection after invocation.
    Multiple sections within that task are acceptable; a separate prerequisite picker
    or property-editor detour must not be required to define the feature.
 2. Add, remove, clear, and replace inputs as supported by the feature; reorder ordered
@@ -193,6 +196,7 @@ Complete when: each operation passes the [common acceptance](#feature-task-accep
 including profile replacement while editing an existing feature.
 
 - [   ] 3.2.1 Pocket: replace the startup picker with the shared feature task and profile controls.
+  Source implemented through 3.6.3; compiled/GUI acceptance pending.
 - [   ] 3.2.2 Hole: add input selection with Hole-specific geometry rules.
 - [   ] 3.2.3 Revolution: add profile selection alongside axis and revolution controls.
 - [   ] 3.2.4 Groove: provide equivalent subtractive profile editing.
@@ -318,8 +322,29 @@ retain their own workflows while sharing appropriate selection and task conventi
   Evidence: the paired-feature/source mapping above; this is design documentation only.
 - [   ] 3.6.2 Define and validate the operation-switching compatibility approach;
   inventory parameter mappings, existing Common behavior, and legacy entry points.
+  Source approach: retain Pad/Pocket objects and their links; append enum choices
+  without changing legacy indices; match extent modes by name; restore old Operation
+  lists with the saved meaning intact. Geometry direction remains independent of
+  Add/Subtract. Existing Common features keep Intersect in their dropdown. Save/reopen
+  and legacy-document runtime validation remain pending. Cross-version recomputation
+  of switched features in unmodified upstream FreeCAD is not established.
 - [   ] 3.6.3 Implement Extrude as the recommended first unified family, integrating
   Pad validation and Pocket task 3.2.1 rather than creating duplicate new controls.
+  Source implemented on 2026-09-28: `PartDesign_Extrude` replaces the two standard
+  menu/toolbar entries; legacy commands remain available. Both feature types share
+  Extrude Parameters with Operation first, then Profile, and the existing dimensions.
+  Switching changes the same object's Operation; To last and Through all remain
+  separate choices. Subtract/Intersect require a base solid; incomplete tasks remain editable.
+  Added eight model regressions and seven GUI regressions, registered with CMake and
+  the respective test suites. Existing Pad tests remain registered, with the widget
+  selector correction in 2.2.2. These tests have not executed.
+  Source checks passed: clang-format 19.1.5 on changed C++ ranges, Python syntax
+  for the focused regressions and suite imports, Qt Designer XML parsing, local
+  documentation links/anchors, and Git whitespace checks.
+  Configure evidence: MSVC 19.44.35211 detected; CMake stopped for missing LibPack in
+  `D:\Temp\Office-PC\FreeCADPlus-extrude-check-20260928`. No installed FreeCAD was used.
+  Remaining gate: build and run [the focused procedure](../tests/PadTaskPanel.md), then
+  manual viewport acceptance. Source checks alone do not complete this milestone.
 - [   ] 3.6.4 Implement Revolve, covering both tasks 3.2.3 and 3.2.4.
 - [   ] 3.6.5 Implement Loft and Sweep, covering all four tasks in 3.3.
 - [   ] 3.6.6 Implement Helix, covering tasks 3.2.5 and 3.2.6.

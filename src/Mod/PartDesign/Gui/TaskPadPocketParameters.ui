@@ -15,6 +15,34 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QHBoxLayout" name="operationLayout">
+     <item>
+      <widget class="QLabel" name="labelOperation">
+       <property name="text">
+        <string>Operation</string>
+       </property>
+       <property name="buddy">
+        <cstring>comboOperation</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboOperation">
+       <item>
+        <property name="text">
+         <string>Add</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Subtract</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="labelStart">
@@ -753,34 +781,6 @@ the sketch plane's normal vector will be used</string>
       </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="operationLayout">
-     <item>
-      <widget class="QLabel" name="labelOperation">
-       <property name="text">
-        <string>Operation</string>
-       </property>
-       <property name="buddy">
-        <cstring>comboOperation</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboOperation">
-       <item>
-        <property name="text">
-         <string>Subtraction</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Common</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
    </item>
    <item>
     <widget class="QCheckBox" name="checkBoxUpdateView">

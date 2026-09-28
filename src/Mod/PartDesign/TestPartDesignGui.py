@@ -39,6 +39,7 @@ from PySide.QtGui import QApplication
 from PartDesignTests.TestMaterial import TestMaterial
 from PartDesignTests.TestActiveObject import TestActiveObject
 from PartDesignTests.TestPadTaskPanel import TestPadTaskPanel
+from PartDesignTests.TestExtrudeTaskPanel import TestExtrudeTaskPanel
 from PartDesignTests.TestSuppressed import TestSuppressedStrikethrough
 
 

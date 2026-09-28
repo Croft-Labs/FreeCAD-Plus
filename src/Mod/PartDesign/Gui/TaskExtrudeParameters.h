@@ -78,12 +78,6 @@ class TaskExtrudeParameters: public TaskSketchBasedParameters
     };
 
 public:
-    enum class Type
-    {
-        Pad,
-        Pocket
-    };
-
     enum class SidesMode
     {
         OneSide,
@@ -100,11 +94,11 @@ public:
     enum class Mode
     {
         Dimension,
-        ThroughAll,
-        ToLast = ThroughAll,
+        ToLast,
         ToFirst,
         ToFace,
         ToShape,
+        ThroughAll,
     };
 
     enum class StartMode
@@ -216,10 +210,9 @@ private:
     void onUnselectShapeFacesTrigger(Side side);
 
 protected:
-    void updateWholeUI(Type type, Side side);
+    void updateWholeUI(Side side);
     void updateSideUI(
         const SideController& s,
-        Type featureType,
         Mode sideMode,
         bool isParentVisible,
         bool setFocus

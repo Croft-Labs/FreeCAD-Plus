@@ -43,7 +43,8 @@ using namespace PartDesign;
 // enum entry is removed (see #23612). In the distant future, when all files are reasonably
 // migrated we can drop this.
 const char* Pad::TypeEnums[]
-    = {"Length", "UpToLast", "UpToFirst", "UpToFace", "?TwoLengths", "UpToShape", nullptr};
+    = {"Length", "UpToLast", "UpToFirst", "UpToFace", "?TwoLengths", "UpToShape", "ThroughAll", nullptr
+};
 
 PROPERTY_SOURCE(PartDesign::Pad, PartDesign::FeatureExtrude)
 
@@ -115,6 +116,7 @@ Pad::Pad()
     // https://forum.freecad.org/viewtopic.php?f=3&t=52075&p=448410#p447636
     Length.setConstraints(nullptr);
     Length2.setConstraints(nullptr);
+    setupExtrusionOperations();
 }
 
 
