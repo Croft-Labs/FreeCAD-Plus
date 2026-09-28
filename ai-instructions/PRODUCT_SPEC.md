@@ -1,0 +1,54 @@
+# FreeCAD Plus: Product Specification
+
+## Purpose and users
+
+Improve FreeCAD's feature workflows for CAD users who want to create and edit
+parametric features in one task pane, including choosing their input geometry.
+
+## Goals and success criteria
+
+Users can start Pad without preselection, select a valid profile in its task
+pane, preview the result, and accept or cancel. Editing an existing Pad exposes
+the same controls and preserves working document history. Acceptance is defined
+in [the UI specification](UI_UX_SPEC.md#ui-001-pad-task-pane); implementation and
+validation status belong in [the roadmap](DEVELOPMENT_ROADMAP.md).
+
+## Scope and non-goals
+
+The first change is Pad in the Part Design workbench. The broader direction is
+complete task-pane workflows for operations such as revolve and patterns; these
+remain future work. Application-wide rebranding, changing the geometry kernel,
+multi-object profile aggregation, modifying the installed FreeCAD, and release
+packaging are outside the current implementation scope.
+
+## Capabilities and requirements
+
+| ID | Intended requirement |
+| --- | --- |
+| REQ-001 | Pad creation and editing open the same parameter editor. |
+| REQ-002 | With an active body, starting Pad without preselection opens the editor; it does not force a separate sketch picker or automatically choose a sketch. |
+| REQ-003 | The first parameter section shows profile geometry and lets the user select, remove, or clear it within the task pane. |
+| REQ-004 | Preserve preselection, whole-sketch selection, and individual edge/face selection from a supported source object. Ordinary selection clicks must retain already collected references. |
+| REQ-005 | Valid geometry can be previewed and accepted; empty or invalid profiles remain editable and cannot be accepted. |
+| REQ-006 | Cancel and Undo/Redo preserve feature/document integrity and restore temporary visibility changes. |
+| REQ-007 | Profile selection cooperates with direction and limit-reference selectors, rejects invalid body/document/dependency links, and preserves existing Pad parameters. |
+
+## Constraints and quality requirements
+
+- Retain FreeCAD's current single-source `Profile` property and closed-profile
+  geometry requirements. Multiple subelements of that source are supported.
+- Retain document format, Python API names, object types, units, and persisted
+  properties unless a separately authorized migration defines otherwise.
+- Preserve upstream licensing and attribution. Follow the applicable
+  [contribution guidance](../CONTRIBUTING.md) and [AI policy](../AI_POLICY.md).
+- Initial development is on Windows. Cross-platform inheritance is not evidence
+  that fork changes have passed Linux/macOS validation.
+- Build and GUI validation must use this checkout's binaries, never the
+  separately installed FreeCAD. Follow [the guide](DEVELOPMENT_GUIDE.md).
+
+## Open questions
+
+- Which operation follows Pad, and what are its input-selection requirements?
+  See roadmap task 3.1.1.
+- Is multi-object profile aggregation desired later? It requires a separate
+  model/compatibility decision; it is not implied by curve selection within one source.

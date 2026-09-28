@@ -1,3 +1,11 @@
+# FreeCAD Plus
+
+Croft-Labs' fork of FreeCAD, starting with complete Part Design task-pane workflows.
+See the [project index](ai-instructions/PROGRAMMING_SUMMARY.md),
+[development guide](ai-instructions/DEVELOPMENT_GUIDE.md), and
+[implementation and validation status](ai-instructions/DEVELOPMENT_ROADMAP.md).
+The FreeCAD overview below describes the inherited upstream application.
+
 <a href="https://freecad.org"><img src="/src/Gui/Icons/freecad.svg" height="100px" width="100px"></a>
 
 ### Your own 3D Parametric Modeler
