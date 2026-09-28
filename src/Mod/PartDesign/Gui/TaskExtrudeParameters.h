@@ -121,7 +121,8 @@ public:
         SelectStartReference,
         SelectShape,
         SelectShapeFaces,
-        SelectReferenceAxis
+        SelectReferenceAxis,
+        SelectProfile
     };
 
     TaskExtrudeParameters(
@@ -143,7 +144,7 @@ public:
     );
     void applyParameters();
 
-    void setSelectionMode(SelectionMode mode, Side side = Side::First);
+    virtual void setSelectionMode(SelectionMode mode, Side side = Side::First);
 
 protected:
     // This struct holds all pointers for one side's UI and properties
@@ -284,9 +285,9 @@ private:
     Gui::RotationGizmo* taperAngleGizmo1 = nullptr;
     Gui::RotationGizmo* taperAngleGizmo2 = nullptr;
     void setupGizmos();
-    void setGizmoPositions();
 
 protected:
+    void setGizmoPositions();
     QWidget* proxy;
     QAction* unselectShapeFaceAction;
     QAction* unselectShapeFaceAction2;

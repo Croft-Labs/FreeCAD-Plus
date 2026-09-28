@@ -24,10 +24,16 @@
 
 #pragma once
 
+#include <map>
+
 #include "TaskExtrudeParameters.h"
 #include "ViewProviderPad.h"
 
 class QComboBox;
+class QGroupBox;
+class QLabel;
+class QListWidget;
+class QPushButton;
 
 namespace App
 {
@@ -52,11 +58,32 @@ public:
     ~TaskPadParameters() override;
 
     void apply() override;
+    void setSelectionMode(SelectionMode mode, Side side = Side::First) override;
+
+protected:
+    void onSelectionChanged(const Gui::SelectionChanges& msg) override;
+    void changeEvent(QEvent* event) override;
 
 private:
+    void setupProfileSelection();
+    void updateProfileList();
+    void updateProfile(App::DocumentObject* object, const std::vector<std::string>& subNames);
+    void removeSelectedProfileItems();
+    void showProfileForSelection(App::DocumentObject* object);
+    void restoreProfileVisibility();
+    void translateProfileSelection();
+
     void onModeChanged(int index, Side side) override;
     void translateModeList(QComboBox* box, int index) override;
     void updateUI(Side side) override;
+
+    QGroupBox* profileGroup = nullptr;
+    QListWidget* profileList = nullptr;
+    QLabel* profileHint = nullptr;
+    QPushButton* selectProfile = nullptr;
+    QPushButton* removeProfile = nullptr;
+    QPushButton* clearProfile = nullptr;
+    std::map<std::string, bool> profileVisibility;
 };
 
 /// simulation dialog for the TaskView

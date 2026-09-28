@@ -1521,7 +1521,7 @@ void TaskExtrudeParameters::setGizmoPositions()
     }
 
     auto extrude = getObject<PartDesign::FeatureExtrude>();
-    if (!extrude || extrude->isError()) {
+    if (!extrude || !extrude->Profile.getValue() || extrude->isError()) {
         gizmoContainer->visible = false;
         return;
     }

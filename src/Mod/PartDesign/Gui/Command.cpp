@@ -1267,6 +1267,17 @@ void prepareProfileBased(Gui::Command* cmd, const std::string& which, double len
         finishProfileBased(cmd, sketch, Feat);
     };
 
+    // Pad starts in the same editor used for existing features. Its profile can
+    // be selected in the task panel without a separate sketch picker or an
+    // automatically chosen sketch.
+    if (which == "Pad" && cmd->getSelection().getSelectionEx().empty()) {
+        const std::string name = cmd->getUniqueObjectName("Pad", pcActiveBody);
+        cmd->openCommand(QT_TRANSLATE_NOOP("Command", "Make Pad"));
+        FCMD_OBJ_CMD(pcActiveBody, "newObject('PartDesign::Pad','" << name << "')");
+        worker(nullptr, pcActiveBody->getDocument()->getObject(name.c_str()));
+        return;
+    }
+
     prepareProfileBased(pcActiveBody, cmd, which, worker);
 }
 
@@ -1281,7 +1292,9 @@ CmdPartDesignPad::CmdPartDesignPad()
     sAppModule = "PartDesign";
     sGroup = QT_TR_NOOP("PartDesign");
     sMenuText = QT_TR_NOOP("Pad");
-    sToolTipText = QT_TR_NOOP("Extrudes the selected sketch or profile and adds it to the body");
+    sToolTipText = QT_TR_NOOP(
+        "Extrudes a sketch or profile selected before or within the task panel and adds it to the body"
+    );
     sWhatsThis = "PartDesign_Pad";
     sStatusTip = sToolTipText;
     sPixmap = "PartDesign_Pad";
