@@ -23,7 +23,9 @@ same object when its pattern type changes; each type retains its own settings.
 The current scope unifies Pad and Pocket as Extrude and Linear/Polar Pattern as
 one Pattern command in the Part Design workbench. Pattern calls angular repetition
 **Circular** in its task pane; the separate upstream concentric-circle pattern is
-not part of this consolidation. Other operations, including Revolve, remain future work. The preferred direction is one command per geometry operation,
+not part of this consolidation. Revolution and Groove also expose signed angular
+start offsets and adjacent direction buttons; their command consolidation remains
+future work. Other operations remain future work. The preferred direction is one command per geometry operation,
 with Add/Subtract chosen inside its shared create/edit task, following the workflow
 described by the user. The [candidate inventory](DEVELOPMENT_ROADMAP.md#unified-feature-workflows)
 defines the planned families; it does not establish implemented behavior.
@@ -48,6 +50,7 @@ packaging are outside the current implementation scope.
 | REQ-011 | Pattern opens without preselection and uses the same complete pane when reopened. Switching type preserves its result identity, original-feature links, and independent per-type settings, including expressions and suppression. |
 | REQ-012 | Empty or invalid patterns cannot be accepted; selection rejects other bodies and dependent features. Cancel, Undo/Redo, save/reopen, and legacy Linear/Polar/MultiTransform behavior remain supported. |
 | REQ-013 | Extrude exposes a zero-default signed start offset in one-sided, two-sided, and symmetric modes, with an adjacent direction-flip button. Adjacent length-direction buttons replace the Reversed checkbox in the shared create/edit pane while preserving saved geometry semantics. |
+| REQ-014 | Revolution (Add) and Groove (Subtract) expose a zero-default start offset from -360 to +360 degrees inclusive in one-sided, two-sided, and symmetric modes. Adjacent buttons reverse the signed offset and the existing revolution direction; creation and editing use the same controls, preserving expressions and document history. |
 
 ## Constraints and quality requirements
 

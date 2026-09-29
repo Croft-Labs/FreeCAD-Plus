@@ -114,6 +114,13 @@ both consumers. The start-offset/reversal regressions live in the existing
 `TestExtrudeTaskPanel` suite; native geometry assertions and saved-file checks run
 inside the built GUI. Their procedure is in [start-offset tests](../tests/PadTaskPanel.md#start-offset-and-direction-buttons).
 
+For Revolution/Groove angular controls, regenerate Qt autogen and compile
+`TaskRevolutionParameters.cpp`, the consumer of `TaskRevolutionParameters.ui`,
+then link PartDesignGui. Run [the Revolve task tests](../tests/RevolveTaskPanel.md)
+against the matching GUI module. For curved-solid bounds after GUI rendering,
+use `Shape.optimalBoundingBox(False)` to avoid display-triangulation approximations;
+retain exact volume and bidirectional shape-difference assertions.
+
 ## Release and recovery
 
 No fork release or installer is part of the current task. Local commits do not

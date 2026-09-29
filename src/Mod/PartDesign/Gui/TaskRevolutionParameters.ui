@@ -81,6 +81,19 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="2">
+      <widget class="QToolButton" name="buttonReverseOffset">
+       <property name="toolTip">
+        <string>Reverse angular offset direction</string>
+       </property>
+       <property name="accessibleName">
+        <string>Reverse angular offset direction</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="labelStartOffset">
        <property name="text">
@@ -204,6 +217,19 @@
        </item>
       </widget>
      </item>
+     <item row="8" column="2">
+      <widget class="QToolButton" name="buttonReverse">
+       <property name="toolTip">
+        <string>Reverse revolution direction (both sides)</string>
+       </property>
+       <property name="accessibleName">
+        <string>Reverse revolution direction (both sides)</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="8" column="0">
       <widget class="QLabel" name="labelAngle">
        <property name="text">
@@ -300,6 +326,19 @@
      <item row="11" column="1">
       <widget class="QComboBox" name="changeMode2"/>
      </item>
+     <item row="12" column="2">
+      <widget class="QToolButton" name="buttonReverse2">
+       <property name="toolTip">
+        <string>Reverse revolution direction (both sides)</string>
+       </property>
+       <property name="accessibleName">
+        <string>Reverse revolution direction (both sides)</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="12" column="0">
       <widget class="QLabel" name="labelAngle2">
        <property name="text">
@@ -379,13 +418,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBoxReversed">
-     <property name="text">
-      <string>Reversed</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="operationLayout">
      <item>
       <widget class="QLabel" name="labelOperation">
@@ -449,16 +481,18 @@
   <tabstop>lineStartReference</tabstop>
   <tabstop>buttonStartReference</tabstop>
   <tabstop>startOffsetEdit</tabstop>
+  <tabstop>buttonReverseOffset</tabstop>
   <tabstop>sidesMode</tabstop>
   <tabstop>axis</tabstop>
   <tabstop>changeMode</tabstop>
   <tabstop>revolveAngle</tabstop>
+  <tabstop>buttonReverse</tabstop>
   <tabstop>lineFaceName</tabstop>
   <tabstop>changeMode2</tabstop>
   <tabstop>revolveAngle2</tabstop>
+  <tabstop>buttonReverse2</tabstop>
   <tabstop>lineFaceName2</tabstop>
   <tabstop>checkBoxProjectAxis</tabstop>
-  <tabstop>checkBoxReversed</tabstop>
   <tabstop>comboOperation</tabstop>
   <tabstop>checkBoxUpdateView</tabstop>
  </tabstops>

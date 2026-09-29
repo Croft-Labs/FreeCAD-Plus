@@ -2,8 +2,9 @@
 
 ## Interface scope
 
-This document specifies the fork's unified Extrude and Pattern task panes and the
-planned shared Add/Subtract interaction for other feature families. The inherited desktop
+This document specifies the fork's unified Extrude and Pattern task panes,
+angular offset controls for Revolution/Groove, and planned shared Add/Subtract
+interaction for other feature families. The inherited desktop
 shell and unmodified workbenches retain upstream behavior; consult their source
 and the documentation linked in [the upstream overview](../README.md). This is
 not a claim that every inherited screen has been inventoried or revalidated.
@@ -39,6 +40,7 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 | --- | --- | --- | --- | --- |
 | UI-001 | Extrude task pane | Choose Add/Subtract and configure a new or existing extrusion | `PartDesign_Extrude`; legacy Pad/Pocket commands; Edit Extrude | [UI-001](#ui-001-pad-task-pane) |
 | UI-002 | Pattern task pane | Choose Linear/Circular, features, and repetition parameters | `PartDesign_Pattern`; Edit Pattern | [UI-002](#ui-002-pattern-task-pane) |
+| UI-003 | Revolve/Groove angular controls | Offset the angular start and reverse direction within the existing create/edit pane | Revolution or Groove; edit existing feature | [UI-003](#ui-003-revolve-and-groove-angular-controls) |
 
 ## Screen specifications
 
@@ -113,6 +115,28 @@ reusing MultiTransform's geometry engine. Existing stored types and property uni
 are unchanged. Old upstream versions do not know the new result type; cross-version
 recomputation is not established. Keyboard/viewport acceptance remains a separate
 manual gate; see [the test procedure](../tests/PatternTaskPanel.md).
+
+### UI-003: Revolve and Groove angular controls
+
+Satisfies REQ-014. The existing **Revolution** command adds material; **Groove**
+subtracts it. Both use the shared Revolution parameters controller for creation
+and editing. This change covers angular controls, without consolidating the two
+commands or changing their profile-selection workflow.
+
+| Control | Behavior |
+| --- | --- |
+| Start offset | Always visible, in degrees, default 0. Accept -360 through +360 inclusive without wrapping those endpoints to 0. A nonzero value automatically selects Offset. One-sided and two-sided limits start at the rotated profile; Symmetric is centered on it. |
+| Offset reverse | Button beside Offset negates its signed value or expression. At zero it leaves the start unchanged. The offset is measured about the selected axis in the existing revolution direction. |
+| Angle reverse | Buttons beside Angle and second-side Angle replace the Reversed checkbox and stay synchronized with the existing shared direction. Symmetric angular sweeps disable them; reference extents retain the control beside Type when Angle is hidden. |
+| Start reference | Existing reference picking remains available. Its offset uses the same signed field. Choosing Profile plane resets the offset and its expression to zero. |
+| OK / Cancel | Accept valid geometry or restore the previous definition. Reopening loads the saved offset, signs, sides, angles, axis, and expressions. |
+
+Uses existing `StartType`, `StartOffset`, `Reversed`, `Angle`, and `Angle2` properties;
+no document schema change. The start-angle viewport gizmo is available at zero.
+Keyboard/high-DPI/manual viewport acceptance is tracked separately in milestone 3.9.
+Source: [`TaskRevolutionParameters.cpp`](../src/Mod/PartDesign/Gui/TaskRevolutionParameters.cpp),
+[`TaskRevolutionParameters.ui`](../src/Mod/PartDesign/Gui/TaskRevolutionParameters.ui).
+Validation: [Revolve task procedure](../tests/RevolveTaskPanel.md).
 
 ## Open questions
 

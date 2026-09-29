@@ -2,8 +2,8 @@
 
 ## Current focus
 
-- Active work: always-visible Extrude start offsets and adjacent direction buttons
-  in milestone 3.8. Target: [REQ-013](PRODUCT_SPEC.md#capabilities-and-requirements).
+- Active work: signed Revolve/Groove angular start offsets and adjacent direction
+  buttons in milestone 3.9. Target: [REQ-014](PRODUCT_SPEC.md#capabilities-and-requirements).
   Combined Pattern automated validation is recorded in milestone 3.7.
 - Extrude native build, 49 automated regressions, and task-pane visual inspection
   passed on 2026-09-28; see [validation evidence](#extrude-validation-evidence).
@@ -501,3 +501,43 @@ semantics; no stored property or object migration is introduced.
   changed for this follow-up; no binary rebuild was required.
 
 This work is local; publication and release packaging are not part of this task.
+
+### [   ] 3.9 Revolve/Groove angular start offsets
+
+Outcome: REQ-014 in the shared Revolution (Add) and Groove (Subtract) create/edit
+pane. This user-authorized angular-control change does not complete command/profile
+consolidation in 3.6.4 or the broader Revolve/Groove workflow audit.
+
+- [ X ] 3.9.1 Expose the existing signed StartOffset in all three side modes with
+  default 0 degrees, inclusive -360/+360 endpoints, and automatic Offset activation.
+  Add a sign-flip button preserving expressions and reference-start behavior.
+- [ X ] 3.9.2 Replace Reversed with synchronized buttons beside each angular
+  magnitude; keep reversal available for reference extents and disabled for
+  symmetric angular sweeps. Keep the start-offset gizmo available at zero.
+- [ X ] 3.9.3 Build and verify native geometry, controls, persistence, and task layout.
+  Windows x64 Release PartDesignGui rebuilt and linked in the existing isolated
+  MSVC/Qt LibPack environment. All **25 tests pass**: five new Revolve task tests,
+  three existing Revolve model tests, and 17 Extrude task regressions; no failures,
+  errors, or skips. The new suite includes **84 geometry scenarios** across Add and
+  Subtract, three side modes, normal/reversed axes, and 0/+45/-45/+180/-180/+360/-360
+  degree offsets. Independent cylindrical sectors verify analytical volume, exact
+  bounds, and both geometric differences. Offset endpoints stay numerically +/-360
+  through acceptance and reopening. Both buttons, zero default, range limits,
+  expressions, reset/rollback, Cancel, Undo/Redo, and save/reopen pass for both types.
+  Initial post-render bounds checks used display triangulation; corrected the test
+  oracle to exact `optimalBoundingBox(False)` without relaxing geometric tolerances.
+  Captured and inspected all three task modes for Revolution and Groove after Qt
+  layout animations settled. Physical interaction remains task 3.9.4.
+  C++ formatting, Python syntax, UI XML, whitespace, and documentation checks pass.
+  Evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928`,
+  `revolve-offset-gui-results.json`, `revolve-offset-visual-check.json`,
+  `revolve-offset-add-*.png`, `revolve-offset-subtract-*.png`, and
+  `revolve-offset-build-*.log`.
+  Launcher: `D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+  Incremental GUI module update; the main executable About/version stamp still
+  reflects its earlier build. The separately installed FreeCAD was not used.
+- [   ] 3.9.4 Complete physical viewport, keyboard, and high-DPI acceptance using
+  [the Revolve test procedure](../tests/RevolveTaskPanel.md).
+
+This work preserves existing stored feature types and properties; command
+consolidation, push/publication, and release packaging remain outside this task.

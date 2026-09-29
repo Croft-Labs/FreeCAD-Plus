@@ -29,12 +29,14 @@
 
 #include <App/Document.h>
 #include <App/DocumentObject.h>
+#include <App/Expression.h>
 #include <App/Origin.h>
 #include <Base/Console.h>
 #include <Base/Converter.h>
 #include <Base/Rotation.h>
 #include <Base/Tools.h>
 #include <Gui/Application.h>
+#include <Gui/BitmapFactory.h>
 #include <Gui/CommandT.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/ViewProvider.h>
@@ -81,6 +83,9 @@ TaskRevolutionParameters::TaskRevolutionParameters(
 {
     // we need a separate container widget to add all controls to
     ui->setupUi(proxy);
+    for (auto button : {ui->buttonReverseOffset, ui->buttonReverse, ui->buttonReverse2}) {
+        button->setIcon(Gui::BitmapFactory().iconFromTheme("button_sort"));
+    }
     setupOperation(ui->labelOperation, ui->comboOperation);
     QMetaObject::connectSlotsByName(this);
     this->groupLayout()->addWidget(proxy);
@@ -137,7 +142,8 @@ void TaskRevolutionParameters::setupDialog()
 
     auto revolved = getObject<PartDesign::Revolved>();
     ui->checkBoxMidplane->hide();
-    ui->checkBoxReversed->setChecked(propReversed->getValue());
+    ui->buttonReverse->setChecked(propReversed->getValue());
+    ui->buttonReverse2->setChecked(propReversed->getValue());
     ui->checkBoxProjectAxis->setChecked(revolved->ProjectAxis.getValue());
     gp_Pln profilePlane;
     ui->checkBoxProjectAxis->setEnabled(
@@ -146,7 +152,11 @@ void TaskRevolutionParameters::setupDialog()
     ui->lineStartReference->setPlaceholderText(tr("No start reference selected"));
     ui->startOffsetEdit->setToolTip(tr("Angular offset from the profile or selected start reference"));
     ui->startMode->setCurrentIndex(revolved->StartType.getValue());
-    ui->startOffsetEdit->setValue(revolved->StartOffset.getValue());
+    ui->startOffsetEdit->setValue(
+        revolved->StartType.getValue() == int(StartMode::ProfilePlane)
+            ? 0.0
+            : revolved->StartOffset.getValue()
+    );
     ui->startOffsetEdit->setMinimum(revolved->StartOffset.getMinimum());
     ui->startOffsetEdit->setMaximum(revolved->StartOffset.getMaximum());
     ui->startOffsetEdit->setSingleStep(revolved->StartOffset.getStepSize());
@@ -163,11 +173,10 @@ void TaskRevolutionParameters::setupDialog()
 void TaskRevolutionParameters::updateStartUI()
 {
     const auto mode = static_cast<StartMode>(ui->startMode->currentIndex());
-    const bool hasOffset = mode != StartMode::ProfilePlane;
     const bool hasReference = mode == StartMode::Reference;
 
-    ui->labelStartOffset->setVisible(hasOffset);
-    ui->startOffsetEdit->setVisible(hasOffset);
+    ui->labelStartOffset->show();
+    ui->startOffsetEdit->show();
     ui->labelStartReference->setVisible(hasReference);
     ui->lineStartReference->setVisible(hasReference);
     ui->buttonStartReference->setVisible(hasReference);
@@ -422,7 +431,12 @@ void TaskRevolutionParameters::updateWholeUI(Side side)
 
     const bool symmetricAngleLike = sidesMode == SidesMode::Symmetric
         && (mode1 == Mode::Angle || (isGroove && mode1 == Mode::ThroughAll));
-    ui->checkBoxReversed->setEnabled(!symmetricAngleLike);
+    ui->buttonReverse->setEnabled(!symmetricAngleLike);
+    ui->buttonReverse2->setEnabled(!symmetricAngleLike);
+    ui->buttonReverse2->setVisible(isSide2Visible);
+    // Reference extents retain direction control beside Type when Angle is hidden.
+    ui->gridLayout->addWidget(ui->buttonReverse, mode1 == Mode::Angle ? 8 : 7, 2);
+    ui->gridLayout->addWidget(ui->buttonReverse2, mode2 == Mode::Angle ? 12 : 11, 2);
 }
 
 void TaskRevolutionParameters::connectSignals()
@@ -436,8 +450,25 @@ void TaskRevolutionParameters::connectSignals()
             this, &TaskRevolutionParameters::onAxisChanged);
     connect(ui->checkBoxProjectAxis, &QCheckBox::toggled,
             this, &TaskRevolutionParameters::onProjectAxisChanged);
-    connect(ui->checkBoxReversed, &QCheckBox::toggled,
+    connect(ui->buttonReverse, &QToolButton::toggled,
             this, &TaskRevolutionParameters::onReversed);
+    connect(ui->buttonReverse2, &QToolButton::toggled,
+            this, &TaskRevolutionParameters::onReversed);
+    connect(ui->buttonReverseOffset, &QToolButton::clicked, this, [this] {
+        if (ui->startOffsetEdit->hasExpression()) {
+            auto revolved = getObject<PartDesign::Revolved>();
+            const auto expression = ui->startOffsetEdit->expressionText().toStdString();
+            revolved->setExpression(
+                App::ObjectIdentifier(revolved->StartOffset),
+                App::Expression::parse(revolved, "-(" + expression + ")")
+            );
+            recomputeFeature();
+            setGizmoPositions();
+        }
+        else {
+            ui->startOffsetEdit->setValue(-ui->startOffsetEdit->value().getValue());
+        }
+    });
     connect(ui->startMode, qOverload<int>(&QComboBox::currentIndexChanged),
             this, &TaskRevolutionParameters::onStartModeChanged);
     connect(ui->startOffsetEdit, qOverload<double>(&Gui::PrefQuantitySpinBox::valueChanged),
@@ -691,6 +722,10 @@ void TaskRevolutionParameters::onStartModeChanged(int type)
     auto revolved = getObject<PartDesign::Revolved>();
     const auto mode = static_cast<StartMode>(type);
     revolved->StartType.setValue(type);
+    if (mode == StartMode::ProfilePlane) {
+        revolved->setExpression(App::ObjectIdentifier(revolved->StartOffset), {});
+        ui->startOffsetEdit->setValue(0.0);
+    }
     if (mode == StartMode::Reference && !revolved->StartReference.getValue()) {
         ui->buttonStartReference->setChecked(true);
     }
@@ -705,7 +740,12 @@ void TaskRevolutionParameters::onStartModeChanged(int type)
 
 void TaskRevolutionParameters::onStartOffsetChanged(double angle)
 {
-    getObject<PartDesign::Revolved>()->StartOffset.setValue(angle);
+    auto revolved = getObject<PartDesign::Revolved>();
+    revolved->StartOffset.setValue(angle);
+    // Typing a start angle activates the offset without a separate mode selection.
+    if (ui->startMode->currentIndex() == int(StartMode::ProfilePlane) && angle != 0.0) {
+        ui->startMode->setCurrentIndex(int(StartMode::Offset));
+    }
     recomputeFeature();
     setGizmoPositions();
 }
@@ -765,9 +805,10 @@ void TaskRevolutionParameters::onAxisChanged(int num)
 
             if (reversed != propReversed->getValue()) {
                 propReversed->setValue(reversed);
-                ui->checkBoxReversed->blockSignals(true);
-                ui->checkBoxReversed->setChecked(reversed);
-                ui->checkBoxReversed->blockSignals(false);
+                const QSignalBlocker block1(ui->buttonReverse);
+                const QSignalBlocker block2(ui->buttonReverse2);
+                ui->buttonReverse->setChecked(reversed);
+                ui->buttonReverse2->setChecked(reversed);
             }
         }
 
@@ -852,6 +893,10 @@ void TaskRevolutionParameters::onProjectAxisChanged(bool on)
 
 void TaskRevolutionParameters::onReversed(bool on)
 {
+    const QSignalBlocker block1(ui->buttonReverse);
+    const QSignalBlocker block2(ui->buttonReverse2);
+    ui->buttonReverse->setChecked(on);
+    ui->buttonReverse2->setChecked(on);
     if (getObject()) {
         propReversed->setValue(on);
         recomputeFeature();
@@ -886,7 +931,7 @@ void TaskRevolutionParameters::getReferenceAxis(
 
 bool TaskRevolutionParameters::getReversed() const
 {
-    return ui->checkBoxReversed->isChecked();
+    return ui->buttonReverse->isChecked();
 }
 
 int TaskRevolutionParameters::getMode() const
@@ -987,8 +1032,8 @@ void TaskRevolutionParameters::setupGizmos(ViewProvider* vp)
     }
 
     const auto toggleReversed = [this] {
-        if (ui->checkBoxReversed->isEnabled()) {
-            ui->checkBoxReversed->setChecked(!ui->checkBoxReversed->isChecked());
+        if (ui->buttonReverse->isEnabled()) {
+            ui->buttonReverse->setChecked(!ui->buttonReverse->isChecked());
         }
     };
 
@@ -1072,7 +1117,7 @@ void TaskRevolutionParameters::setGizmoPositions()
         referenceDirection
             = Base::Rotation(
                   axisDir,
-                  Base::toRadians(effectiveStartOffset - revolved->StartOffset.getValue())
+                  Base::toRadians(effectiveStartOffset - ui->startOffsetEdit->value().getValue())
             )
                   .multVec(normalComp);
     }
@@ -1092,9 +1137,7 @@ void TaskRevolutionParameters::setGizmoPositions()
 
     startOffsetGizmo->Gizmo::setDraggerPlacement(axisPosition, referenceDirection);
     startOffsetGizmo->getDraggerContainer()->setArcNormalDirection(Base::convertTo<SbVec3f>(axisDir));
-    startOffsetGizmo->setVisibility(
-        std::strcmp(revolved->StartType.getValueAsString(), "Profile plane") != 0
-    );
+    startOffsetGizmo->setVisibility(true);
 
     if (!symmetric) {
         rotationGizmo->setMultFactor(defaultGizmoMultFactor);

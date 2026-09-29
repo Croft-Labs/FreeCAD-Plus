@@ -73,6 +73,7 @@ if(BUILD_GUI)
         PartDesignTests/TestMaterial.py
         PartDesignTests/TestPadTaskPanel.py
         PartDesignTests/TestExtrudeTaskPanel.py
+        PartDesignTests/TestRevolveTaskPanel.py
         PartDesignTests/TestPatternTaskPanel.py
         PartDesignTests/TestSuppressed.py
     )
