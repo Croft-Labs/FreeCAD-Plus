@@ -1,30 +1,27 @@
 # FreeCAD upstream issue watchlist
 
-Reviewed: 2026-09-29. Source: [FreeCAD/FreeCAD issues](https://github.com/FreeCAD/FreeCAD/issues).
+Reviewed against GitHub issue/PR metadata and this checkout on 2026-09-29.
+This is a small, prioritized working list, not an upstream issue export.
+Order reflects data loss, system impact, incorrect results, then workflow friction.
+Closed upstream does not prove local runtime validation. See the
+[roadmap](DEVELOPMENT_ROADMAP.md#upstream-issue-work) for evidence and pending checks.
 
-Small, curated reference for basic reliability and FreeCAD Plus workflow work; not a complete issue export or a ranked upstream backlog. Only issue numbers, short summaries, and links are retained. Status reflects the GitHub pages reviewed and may change. These reports have not been reproduced in FreeCAD Plus; check the linked issue and our source revision before planning a fix.
+| Order | Issue | Basic problem | FreeCAD Plus disposition |
+| --- | --- | --- | --- |
+| 1 | [#18044](https://github.com/FreeCAD/FreeCAD/issues/18044) | Corrupted newer project can hide crash recovery data. | Closed; [recovery checks](https://github.com/FreeCAD/FreeCAD/pull/24123) and [writer hardening](https://github.com/FreeCAD/FreeCAD/pull/27355) inherited. UI changes do not obsolete recovery. Source verified; fresh corruption-fixture validation pending. |
+| 2 | [#29376](https://github.com/FreeCAD/FreeCAD/issues/29376) | Intermittent OS-wide slowdown. | Open, high impact. Frame limiter already inherited; no deterministic local reproduction. Needs affected-session GPU evidence, not a speculative UI rewrite. |
+| 3 | [#32690](https://github.com/FreeCAD/FreeCAD/issues/32690) | CAM offset can flip an arc and generate wrong geometry. | Closed; [fix](https://github.com/FreeCAD/FreeCAD/pull/32703) inherited. Still relevant to CAM backend. All 43 offset-suite tests pass in existing build, including mixed-normal arc regression. |
+| 4 | [#32717](https://github.com/FreeCAD/FreeCAD/issues/32717) | Numeric arrow/wheel edits lost on focus change. | Closed; shared [quantity-input fix](https://github.com/FreeCAD/FreeCAD/pull/32707) inherited. New task panes still use these widgets; not obsolete. Fresh focused native widget run pending. |
+| 5 | [#32718](https://github.com/FreeCAD/FreeCAD/issues/32718) | Task field edits fail to update model. | Closed; same shared fix inherited. Applies to unified Extrude as well as legacy Pad. Keep regression coverage. |
+| 6 | [#32700](https://github.com/FreeCAD/FreeCAD/issues/32700) | Numeric input ignores document/display units. | Closed; same shared fix inherited. Still relevant to stock and modeling dimensions; source verified, fresh units check pending. |
+| 7 | [#32706](https://github.com/FreeCAD/FreeCAD/issues/32706) | Mirror plane ignores enclosing Body placement. | Open; reproduced with translation and rotation. Backend correction and three regressions added; native build/test deferred to next batch. Linear/Circular Pattern does not replace Part Mirror. |
+| 8 | [#28412](https://github.com/FreeCAD/FreeCAD/issues/28412) | Tree expansion accidentally selects other objects. | Closed 2026-09-22; [fix](https://github.com/FreeCAD/FreeCAD/pull/29687) inherited. Existing tree remains in use; fixed in source, not made obsolete by planned NX history. |
+| 9 | [#10584](https://github.com/FreeCAD/FreeCAD/issues/10584) | Legacy MillFace ignores approach start point. | Closed as won't-fix because Mill Facing replaces it. Current toolbar uses Mill Facing, so superseded for new tasks. Legacy saved MillFace operations still carry this risk; do not silently migrate paths. |
+| 10 | [#27751](https://github.com/FreeCAD/FreeCAD/issues/27751) | Surface/Waterline CAM refactoring umbrella. | Open. Modern PlanarSurface and modular generators already inherited and used by our STL workflow. Much of the requested path is present; broader upstream epic is not declared complete. |
 
-## Open issues to watch
-
-| Issue | Basic problem / relevance |
-| --- | --- |
-| [#29376](https://github.com/FreeCAD/FreeCAD/issues/29376) | Severe slowdown after 5–30 minutes of use; upstream high priority and confirmed. |
-| [#28412](https://github.com/FreeCAD/FreeCAD/issues/28412) | Expanding/collapsing tree containers can select unintended objects; upstream high priority and confirmed. |
-| [#32706](https://github.com/FreeCAD/FreeCAD/issues/32706) | Mirror using a face inside an Assembly can ignore the parent Body placement; awaiting confirmation. |
-| [#27751](https://github.com/FreeCAD/FreeCAD/issues/27751) | Surface/Waterline CAM refactoring tracker; relevant to toolpath reliability and future indexed machining. |
-
-## Closed issues worth retaining as regression references
-
-Closed upstream does not establish whether a fix is included or validated in this fork.
-
-| Issue | Basic problem to check when changing this area |
-| --- | --- |
-| [#18044](https://github.com/FreeCAD/FreeCAD/issues/18044) | Crash recovery can ignore recovery files when the project file is newer, even if corrupted. |
-| [#32717](https://github.com/FreeCAD/FreeCAD/issues/32717) | Numeric fields can lose arrow/scroll changes when focus moves. |
-| [#32718](https://github.com/FreeCAD/FreeCAD/issues/32718) | Task-dialog changes can fail to update the model, including Pad length. |
-| [#32700](https://github.com/FreeCAD/FreeCAD/issues/32700) | Numeric fields can ignore document units; relevant to CAM stock entry. |
-| [#32690](https://github.com/FreeCAD/FreeCAD/issues/32690) | CAM wire offsets can flip an arc and produce an incorrect offset shape. |
-| [#10584](https://github.com/FreeCAD/FreeCAD/issues/10584) | CAM MillFace can ignore a chosen start point and generate the wrong approach. |
+Inherited fix ancestry checked at `a501be8d1c`: recovery `864cde5aed` / `74e1d71c65`,
+quantity input `c15232437e`, arc offset `3708e7c27`, tree `8390598d5c`.
+Source inspection agrees with these commits. No inherited fix was reapplied.
 
 ## Links for later review
 
@@ -34,4 +31,5 @@ Closed upstream does not establish whether a fix is included or validated in thi
 - [Open CAM issues](https://github.com/FreeCAD/FreeCAD/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22Mod%3A%20CAM%22)
 - [Open topological-reference issues](https://github.com/FreeCAD/FreeCAD/issues?q=is%3Aissue%20is%3Aopen%20topological)
 
-Keep this file short when refreshing it. Follow issue links for reproduction steps, discussions, attachments, and fixes rather than copying them here. Accepted FreeCAD Plus work belongs in [the development roadmap](DEVELOPMENT_ROADMAP.md).
+Keep this file concise. Follow links for reproductions, attachments and discussion;
+record accepted tasks and validation in the roadmap.

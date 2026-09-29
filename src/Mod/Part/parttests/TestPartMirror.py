@@ -233,9 +233,70 @@ class TestPartMirroringRegression(unittest.TestCase):
         self.assertAlmostEqual(mirror_bbox.ZMax, link_bbox.ZMax, delta=1.0)
 
 
+class TestMirrorPlanePlacement(unittest.TestCase):
+    """Issue #32706: a feature face is expressed in its enclosing Body frame."""
+
+    def setUp(self):
+        self.doc = App.newDocument("MirrorPlanePlacement")
+
+    def tearDown(self):
+        App.closeDocument(self.doc.Name)
+
+    def checkBodyFace(self, rotation, through_body=False, container_placement=None):
+        assembly = self.doc.addObject("App::Part", "Assembly")
+        if container_placement is not None:
+            assembly.Placement = container_placement
+        body = self.doc.addObject("PartDesign::Body", "Body")
+        assembly.addObject(body)
+        box = body.newObject("PartDesign::AdditiveBox", "Box")
+        box.Length = box.Width = 10
+        box.Height = 15
+        self.doc.recompute()
+        top = max(
+            enumerate(box.Shape.Faces, 1), key=lambda item: item[1].CenterOfMass.z
+        )[0]
+        body.Placement = App.Placement(App.Vector(3, 4, 2), rotation)
+        mirror = self.doc.addObject("Part::Mirroring", "Mirror")
+        assembly.addObject(mirror)
+        mirror.Source = body
+        reference = body if through_body else box
+        mirror.MirrorPlane = (reference, [f"Face{top}"])
+
+        # Changing the source Body must update both the plane and mirrored solid.
+        for z in (2, 7):
+            body.Placement = App.Placement(App.Vector(3, 4, z), rotation)
+            self.doc.recompute()
+            expected = Part.makeBox(10, 10, 15, App.Vector(0, 0, 15))
+            expected.Placement = body.Placement
+            normal = rotation.multVec(App.Vector(0, 0, 1))
+            point = body.Placement.multVec(App.Vector(0, 0, 15))
+            self.assertAlmostEqual((mirror.Base - point).dot(normal), 0, places=7)
+            self.assertAlmostEqual(abs(mirror.Normal.dot(normal)), 1, places=7)
+            self.assertTrue(mirror.Shape.isValid())
+            self.assertAlmostEqual(mirror.Shape.Volume, expected.Volume, places=6)
+            self.assertAlmostEqual(
+                mirror.Shape.common(expected).Volume, expected.Volume, places=6
+            )
+
+    def testFeatureFaceInsideTranslatedBody(self):
+        self.checkBodyFace(App.Rotation())
+
+    def testFeatureFaceInsideRotatedBodyAndAssembly(self):
+        self.checkBodyFace(
+            App.Rotation(App.Vector(1, 1, 0), 37),
+            container_placement=App.Placement(
+                App.Vector(20, 30, 40), App.Rotation(App.Vector(0, 0, 1), 28)
+            ),
+        )
+
+    def testBodyFaceDoesNotApplyBodyPlacementTwice(self):
+        self.checkBodyFace(App.Rotation(App.Vector(1, 0, 0), 90), through_body=True)
+
+
 # for standalone execution
 if __name__ == "__main__":
     suite = unittest.TestSuite()
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPartMirroringRegression))
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestMirrorPlanePlacement))
     runner = unittest.TextTestRunner()
     runner.run(suite)

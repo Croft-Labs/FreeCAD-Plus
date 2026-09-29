@@ -2,6 +2,10 @@
 
 ## Current focus
 
+- Active implementation: [prioritized upstream issue work](#upstream-issue-work).
+  Audit inherited fixes and changed workflow applicability first. Mirror #32706
+  reproduces in the existing build; its source fix awaits the next batched native
+  build. No per-feature rebuild was performed.
 - Planning priority: [NX-style unified feature history](#nx-feature-history), then
   [consistent modeling workflows](#nx-modeling-workflows), then
   [downstream integration](#nx-downstream-workflows). These phases describe the
@@ -27,6 +31,54 @@
   remaining selection and complete-editing work. Audit complete; implementation pending.
 - Preferred future command layout: [unified geometry workflows](#unified-feature-workflows)
   with Add/Subtract first in the task pane; Extrude passes the automated checks below.
+
+<a id="upstream-issue-work"></a>
+## [   ] Upstream issue work: reliability before workflow polish
+
+Authorized 2026-09-29. Order and live links: [FREECAD_ISSUES.md](FREECAD_ISSUES.md).
+Complete each issue only with relevant source, runtime and acceptance evidence;
+closed upstream, inherited source, and obsolete UI entry points are distinct states.
+
+- [ X ] U.1 Triage all ten watchlist issues against this fork, prioritized by data
+  loss, system responsiveness, wrong geometry/toolpaths, numeric input and UI impact.
+  Recovery #18044, numeric #32700/#32717/#32718, arc #32690 and tree #28412 fixes
+  are inherited. #28412 is now closed upstream. No duplicate fixes were applied.
+- [ X ] U.2 Verify CAM arc-offset regression #32690 using the existing build:
+  all 43 `TestPathOpUtil` tests pass, including mixed circle-normal regression
+  `test49`. Installed `Path/Op/Util.py` SHA-256 matches source:
+  `8CEFCB9E818D91926EF29E9FDE36544735B72384B6AA99127B95E9477A2A8C98`.
+- [ X ] U.3 Reproduce #32706 and prepare the bounded Part Mirror correction.
+  Convert the reference plane from its enclosing Body/Part into the source's
+  parent frame; preserve the source transform, shared Assembly frame and existing
+  feature/property identities. Use the common GeoFeature base for datum planes.
+  Added three regressions for translated/rotated Body faces, shared Assembly
+  placement, Body-face references without double transformation and source moves.
+  Registered them in the standard Part suite and added `ValidateUpstreamIssues.FCMacro`.
+- [   ] U.4 At the next batched native build, build/install the changed Part module
+  and test scripts, then run all six Mirror tests and the CAM offset suite with
+  isolated preferences. Require all passes, save/reopen a referenced Mirror,
+  and check GUI face selection in translated/rotated Bodies. The existing binary
+  has not tested the C++ correction; do not mark #32706 fixed in the application yet.
+- [   ] U.5 Retain high-impact recovery and quantity-input regressions for the next
+  compatible consolidated validation. Source fixes are verified; this issue pass
+  did not run fresh recovery corruption fixtures or native QuantitySpinBox tests.
+- [   ] U.6 #29376: obtain a reproducible affected session/GPU trace before changing
+  rendering. Frame-rate limiting and background changes are already inherited;
+  upstream still reports intermittent OS-wide slowdown. Do not infer resolution
+  from a short successful session or one reporter's driver update.
+- [ X ] U.7 Classify workflow overlap: legacy #10584 is superseded for new tasks
+  by Mill Facing, but saved MillFace operations remain a regression risk (upstream
+  closed as won't-fix). #27751's modern PlanarSurface/modular generator workflow
+  is already inherited and used by our STL command; the wider upstream epic stays
+  open. Neither classification authorizes silent migration of saved operations.
+- [   ] U.8 Publish the coherent source/triage milestone to `origin/main`, verify
+  the remote hash, and retain the build/acceptance gates above. No release.
+
+Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.
+Existing binary run: 49 tests, 47 pass, two expected newly exposed Mirror failures,
+no errors/skips, process exit 0. Translated feature-face plane is 2 mm off; rotated
+case also fails. Three prior Mirror regressions and the new Body-face control pass.
+The aggregate result is FAIL, not a successful validation of the pending fix.
 
 ## [ X ] Phase 1: Repository and instruction foundation
 

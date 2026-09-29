@@ -27,6 +27,8 @@ Do not claim to have read missing guidance or maintain an independent master cop
   Both create separate results and preserve source Body Tips. Scope also includes
   direct STL CAM Parallel/Waterline machining, editable stock-to-part holding tabs,
   and separate manually indexed setups sharing model/stock/tab transforms.
+  The user also authorizes prioritized work on `ai-instructions/FREECAD_ISSUES.md`;
+  check inherited fixes and changed UI applicability before modifying code.
   Other operations
   remain future scope; the roadmap does not authorize them automatically.
 - Preserve FreeCAD document/property identities, geometry semantics, licensing,

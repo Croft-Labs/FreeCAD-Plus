@@ -40,7 +40,7 @@ from parttests.TestLinkArrayCircular import TestLinkArrayCircular
 from parttests.TestLinkArrayLinear import TestLinkArrayLinear
 from parttests.TestLinkArrayPath import TestLinkArrayPath
 from parttests.TestLinkArrayPoint import TestLinkArrayPoint
-from parttests.TestPartMirror import TestPartMirroringRegression
+from parttests.TestPartMirror import TestPartMirroringRegression, TestMirrorPlanePlacement
 from parttests.TestTrimBody import TestTrimBody
 from parttests.TestIsocline import TestIsocline
 from parttests.TestFaceMakerUnifiedPlanar import *

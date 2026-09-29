@@ -1,5 +1,14 @@
 # FreeCAD Plus: Build validation handoff
 
+Latest issue work (2026-09-29): the ten-entry watchlist is prioritized and checked
+against inherited fixes and our changed UI. Part Mirror #32706 reproduces; a
+source correction and three regressions are prepared. **The existing application
+does not contain this C++ fix.** Native build and post-fix validation await the
+next batch under the user's build policy. See [issue work](DEVELOPMENT_ROADMAP.md#upstream-issue-work)
+for the 49-test baseline (47 pass, two expected new Mirror failures) and exact
+evidence directory. No build/test process is running. Preserve this pending fix
+when planning the next consolidated build; do not close it from old binary tests.
+
 CAM implementation and automated validation are complete. Direct STL
 Parallel/Waterline, stock bridges and separate manually indexed setups are in the
 source-built application. No build or automated test is still running.
@@ -13,7 +22,8 @@ representative simulation and per-setup postprocessor review remain open.
 The NX-style roadmap planning request is committed and pushed as Phases 7-9
 (`4c9d7ed598`); no history architecture implementation has been started.
 The concise upstream issue watchlist is in `FREECAD_ISSUES.md`, committed and
-pushed as `bbcf78cffb`; it is a reference, not a list of reproduced fork defects.
+pushed initially as `bbcf78cffb`; the later issue pass now records applicability
+and the reproduced Mirror defect, separately from inherited fixes.
 
 Current CAM evidence under the external root below:
 

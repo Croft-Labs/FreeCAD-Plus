@@ -42,6 +42,7 @@
 #include <Mod/Part/App/PrimitiveFeature.h>
 #include <App/Link.h>
 #include <App/Datums.h>
+#include <App/GeoFeatureGroupExtension.h>
 
 #include "FeatureMirroring.h"
 #include "DatumFeature.h"
@@ -170,7 +171,7 @@ App::DocumentObjectExecReturn* Mirroring::execute()
         if (refObject->isDerivedFrom<Part::Plane>() || refObject->isDerivedFrom<App::Plane>()
             || (strstr(refObject->getNameInDocument(), "Plane")
                 && refObject->isDerivedFrom<Part::Datum>())) {
-            auto* plane = static_cast<Part::Feature*>(refObject);
+            auto* plane = static_cast<App::GeoFeature*>(refObject);
             Base::Vector3d base = plane->Placement.getValue().getPosition();
             axbase = gp_Pnt(base.x, base.y, base.z);
             Base::Rotation rot = plane->Placement.getValue().getRotation();
@@ -302,6 +303,24 @@ App::DocumentObjectExecReturn* Mirroring::execute()
                 std::string(this->getFullLabel()) + ": Mirror plane reference must be a face of a feature or a plane object or a circle"
             );
         }
+        // Shape extraction already includes the reference object's own Placement,
+        // but not the enclosing Body/Part placements. The source shape below is
+        // evaluated in its parent's coordinates, so bring the reference into that
+        // same frame. A shared Assembly placement must cancel, not be applied twice.
+        const auto parentPlacement = [](const App::DocumentObject* object) {
+            if (auto* parent = App::GeoFeatureGroupExtension::getGroupOfObject(object)) {
+                return parent->getExtensionByType<App::GeoFeatureGroupExtension>()
+                    ->globalGroupPlacement();
+            }
+            return Base::Placement();
+        };
+        const auto referenceToSource =
+            parentPlacement(link).inverse() * parentPlacement(refObject);
+        gp_Trsf referenceTransform;
+        TopoShape::convertTogpTrsf(referenceToSource.toMatrix(), referenceTransform);
+        axbase.Transform(referenceTransform);
+        axdir.Transform(referenceTransform);
+
         Base.setValue(axbase.X(), axbase.Y(), axbase.Z());
         Normal.setValue(axdir.X(), axdir.Y(), axdir.Z());
     }
