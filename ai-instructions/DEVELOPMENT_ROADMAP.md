@@ -93,8 +93,9 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   `24815217c91ecbc2029771f34be02a5aa4c640d6`; `origin/main` hash verified.
   At that checkpoint U.4/U.6 remained open; no native build was needed for those
   inherited fixes. The subsequent U.4 checkpoint now includes the Mirror correction.
-- [   ] U.11 Publish the passing Mirror persistence/GUI tests and build-validation
-  checkpoint, verify `origin/main`, and leave the unreproduced slowdown U.6 open.
+- [ X ] U.11 Passing Mirror persistence/GUI tests and build-validation checkpoint
+  published as `bb6d7607a78080bec36f8ade30c8925f09201874`; `origin/main` hash verified.
+  The unreproduced slowdown U.6 remains open.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.
 Existing binary run: 49 tests, 47 pass, two expected newly exposed Mirror failures,

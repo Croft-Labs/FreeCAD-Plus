@@ -9,6 +9,8 @@ See [issue work](DEVELOPMENT_ROADMAP.md#upstream-issue-work) for binary hashes a
 exact evidence directories, and [procedures](../tests/UpstreamIssues.md) to rerun.
 No build/test process remains running. The executable is the existing external
 `build/bin/FreeCAD.exe`; its Part module has changed, not its historical version string.
+Validation checkpoint `bb6d7607a78080bec36f8ade30c8925f09201874` is committed and
+pushed to `origin/main`; remote hash verified.
 
 The earlier five startup-recovery fixtures also passed; recovery, numeric input,
 Extrude and tree fixes were inherited and not duplicated. #29376 still needs a
