@@ -96,6 +96,18 @@ must also be compiled. Do not treat a compiler-only exit code as a completed bui
 
 ## Validation
 
+For a consolidated check of all implemented workflows and the related legacy
+geometry suites, launch [`tests/ValidateWorkflows.FCMacro`](../tests/ValidateWorkflows.FCMacro)
+with the explicitly resolved development executable. Set `FREECAD_PLUS_VALIDATION_DIR`
+to an external output directory and supply isolated `--user-cfg` and `--system-cfg`
+paths. The macro exits after writing per-suite logs, `results.json`, and
+`validation.done`; require PASS, no skipped tests, and a successful process exit.
+It records runtime module paths and hashes, application version, and display scale.
+Use a fresh process with `QT_SCALE_FACTOR=1.5` for an additional 1.5x Qt scaling
+check. This multiplies the operating-system scale; inspect the recorded device-pixel
+ratio rather than claiming an absolute 150% display setting. Automated results
+remain distinct from native mouse/keyboard acceptance.
+
 Source formatting, syntax, build success, passing GUI tests, visual acceptance,
 and published artifacts are separate evidence levels. For this native GUI change,
 run tests in the actual rebuilt fork and manually verify model selection and

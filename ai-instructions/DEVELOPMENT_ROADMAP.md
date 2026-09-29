@@ -2,13 +2,15 @@
 
 ## Current focus
 
-- Active work: associative Isocline Curve in [Phase 5](#isocline-curve), targeting
-  REQ-018 through REQ-020. Trim Body implementation and validation are recorded in
-  [Phase 4](#trim-body); physical viewport/keyboard acceptance remains pending.
-  Revolve/Groove angular-offset verification is recorded in milestone 3.9.
-- Extrude native build, 49 automated regressions, and task-pane visual inspection
-  passed on 2026-09-28; see [validation evidence](#extrude-validation-evidence).
-  Its manual viewport/keyboard acceptance remains pending in 2.2.3.
+- Current build and closeout evidence: [consolidated validation, 2026-09-29](#consolidated-validation).
+  The configured Windows application builds successfully; all 149 regression tests
+  pass at both tested display scales. No implemented feature is awaiting compilation
+  in this development build. Physical viewport/keyboard acceptance remains pending:
+  the user stopped native computer use with Escape before those checks completed.
+- Isocline Curve implementation is recorded in [Phase 5](#isocline-curve), Trim Body
+  in [Phase 4](#trim-body), and Revolve/Groove offsets in milestone 3.9.
+  Milestone 2.2 and the later manual acceptance milestones remain open; another
+  rebuild alone will not complete them.
   This roadmap records status; it does not authorize new phases or external publication.
 - The [Part Design workflow audit](#part-design-workflow-audit) inventories the
   remaining selection and complete-editing work. Audit complete; implementation pending.
@@ -72,6 +74,10 @@ Complete when: this fork builds and the focused suite plus manual UI acceptance 
   Physical viewport/tree picking, rotated previews, keyboard navigation, and the
   complete advanced-parameter click-through remain manual acceptance work.
   Acceptance: [UI-001](UI_UX_SPEC.md#ui-001-pad-task-pane) and [test procedure](../tests/PadTaskPanel.md).
+- [ X ] 2.2.4 Consolidate the configured application build and rerun all implemented
+  workflow and related legacy regressions against matching runtime modules.
+  Evidence: [2026-09-29 validation](#consolidated-validation), including two display
+  scales, current version identity, installed-script matching and binary hashes.
 
 <a id="extrude-validation-evidence"></a>
 
@@ -102,6 +108,41 @@ The fork build used source-pinned `LibPack-26.3.0-v3.5.3-x64-Release` and MSVC
 Focused build and test reproduction guidance is in the
 [development guide](DEVELOPMENT_GUIDE.md#commands). Settings and test documents
 were isolated from the normal user profile. No push, installer, or release was made.
+
+<a id="consolidated-validation"></a>
+
+#### Consolidated validation, 2026-09-29
+
+This evidence supersedes the older executable/version-stamp limitations recorded
+in the individual feature milestones below. Native application source is commit
+`8abce719de38a1b1ad255d0e7f4554a9d44e9c71`. This closeout adds a reusable validation
+macro and documentation; no feature implementation change was needed.
+
+| Check | Result |
+| --- | --- |
+| Configured Windows x64 Release build | Normal CMake ALL_BUILD completed with exit 0, including the main executable, core libraries, Part, Sketcher and Part Design App/Gui modules. Existing focused configuration; unrelated disabled workbenches and installer packaging are not included. |
+| Build execution | The first bounded pass reached its 40-minute hard deadline after compiling core dependencies. A resumed incremental pass reused completed outputs and finished successfully in 1,680 seconds. Dependency/deprecation and temporary-directory warnings remain; no compiler error required a source fix. |
+| Runtime identity | FreeCAD 26.3.0dev, revision 49009, hash `8abce719de`. Nine application/module binary hashes are recorded in the build manifest. |
+| Source/runtime matching | All 80 checked Python files in Part BasicShapes/BOPTools/parttests and PartDesignTests match the checkout byte for byte. |
+| Integrated regressions | **149/149 passed** in one initialized GUI: 84 model tests and 65 task tests. Zero failures, errors or skips; process exit 0. Baseline device-pixel ratio 1.5. Covers Extrude, Pad, Pocket, unified/legacy Patterns, MultiTransform, Revolve, Trim Body and Isocline. |
+| Additional display scaling | The same **149/149 passed** with `QT_SCALE_FACTOR=1.5`; process exit 0. This multiplies the Windows scale rather than setting an absolute DPI: the reported device-pixel ratio was 2.25. Automated control/geometry checks do not establish readable layout or physical picking at that scale. |
+| Native mouse/keyboard acceptance | Not completed. Window-control approval was granted, but capture returned `FrameArrived timed out` / `window capture timed out`. Accessibility inspection exposed an isolated fixture's close/save prompt. The user then stopped Computer Use with physical Escape; no further native input was issued. No manual acceptance gate is marked complete on that basis. |
+
+Evidence directory: `D:\Temp\Office-PC\freecad-plus-validation-20260928`:
+`closeout-build.log`, `closeout-build-results.json`, `closeout-build-resume.log`,
+`closeout-build-resume-results.json`, `closeout-build-manifest.json`, and
+`closeout-regressions/` / `closeout-highdpi/` (results, per-suite logs, process reports).
+Reproduction: [`ValidateWorkflows.FCMacro`](../tests/ValidateWorkflows.FCMacro) and
+[development-guide validation](DEVELOPMENT_GUIDE.md#validation).
+
+Launcher: `D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+This is the updated development application, not a published installer. The separately
+installed FreeCAD was not used. No push, publication, upstream round-trip validation,
+or Linux/macOS acceptance is established by this work.
+
+Remaining closeout gates: 2.2.3, the manual portions of 3.6.3/3.6.8, 3.7.4, 3.8.4,
+3.9.4, 4.2.3 and 5.2.3. These need the documented viewport, keyboard and visual
+acceptance checks; their builds and automated regressions are already complete.
 
 ## [   ] Phase 3: Further Part Design operations
 

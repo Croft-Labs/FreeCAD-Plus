@@ -1,0 +1,83 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Run the changed workflows and their legacy regressions in the built GUI.
+
+Set FREECAD_PLUS_VALIDATION_DIR to an external evidence directory. Run with
+isolated --user-cfg/--system-cfg arguments; the application exits when finished.
+This records automated evidence, not physical mouse/keyboard acceptance.
+"""
+
+import hashlib
+import importlib
+import json
+import os
+import traceback
+import unittest
+from pathlib import Path
+
+import FreeCAD as App
+import FreeCADGui as Gui
+from PySide import QtCore, QtGui
+
+
+output = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"])
+output.mkdir(parents=True, exist_ok=True)
+report = {
+    "version": App.Version(),
+    "application": App.ConfigGet("AppHomePath"),
+    "user_parameters": App.ConfigGet("UserParameter"),
+    "scale_factor": os.environ.get("QT_SCALE_FACTOR", "system"),
+    "suites": [],
+}
+main = Gui.getMainWindow()
+main.setAttribute(QtCore.Qt.WA_DontShowOnScreen, True)
+main.show()
+Gui.updateGui()
+report["device_pixel_ratio"] = main.devicePixelRatioF()
+
+suites = (
+    ("PartDesignTests", "TestExtrude"),
+    ("PartDesignTests", "TestPad"),
+    ("PartDesignTests", "TestPocket"),
+    ("PartDesignTests", "TestPattern"),
+    ("PartDesignTests", "TestLinearPattern"),
+    ("PartDesignTests", "TestPolarPattern"),
+    ("PartDesignTests", "TestMultiTransform"),
+    ("PartDesignTests", "TestRevolve"),
+    ("parttests", "TestTrimBody"),
+    ("parttests", "TestIsocline"),
+    ("PartDesignTests", "TestPadTaskPanel"),
+    ("PartDesignTests", "TestExtrudeTaskPanel"),
+    ("PartDesignTests", "TestRevolveTaskPanel"),
+    ("PartDesignTests", "TestPatternTaskPanel"),
+    ("parttests", "TestTrimBodyGui"),
+    ("parttests", "TestIsoclineGui"),
+)
+try:
+    for package, name in suites:
+        module = importlib.import_module(package + "." + name)
+        case = getattr(module, name)
+        with (output / (name + ".log")).open("w", encoding="utf-8", buffering=1) as stream:
+            result = unittest.TextTestRunner(stream=stream, verbosity=2).run(
+                unittest.defaultTestLoader.loadTestsFromTestCase(case)
+            )
+        report["suites"].append({
+            "name": name,
+            "module": module.__file__,
+            "sha256": hashlib.sha256(Path(module.__file__).read_bytes()).hexdigest(),
+            "run": result.testsRun,
+            "passed": result.wasSuccessful(),
+            "failures": [(str(test), detail) for test, detail in result.failures],
+            "errors": [(str(test), detail) for test, detail in result.errors],
+            "skipped": [(str(test), reason) for test, reason in result.skipped],
+        })
+        (output / "results.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+        Gui.updateGui()
+    report["passed"] = all(s["passed"] and not s["skipped"] for s in report["suites"])
+except BaseException:
+    report["harness_error"] = traceback.format_exc()
+    report["passed"] = False
+finally:
+    report["tests_run"] = sum(s["run"] for s in report["suites"])
+    (output / "results.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    (output / "validation.done").write_text("PASS" if report["passed"] else "FAIL")
+    QtCore.QTimer.singleShot(100, QtGui.QApplication.instance().quit)
