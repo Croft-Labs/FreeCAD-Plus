@@ -32,7 +32,10 @@ impact order for the current workflow:
   crash or lose coverage in legacy Surface. The modern planar open-face case
   passes. Fixed related modern boundary-failure fallbacks and strategy switching
   that could discard exclusions; eight focused tests pass. Original curved
-  GeomFillSurface fixture and legacy backend remain unverified/unchanged.
+  GeomFillSurface object remains unverified: the supplied attachment actually has
+  a mirrored Pad face, and this build has `BUILD_SURFACE=OFF`. Its saved BReps
+  generate a path with PlanarSurface; a generated curved B-spline exclusion passes
+  coverage checks. Ten focused checks pass. Legacy backend unchanged.
 - [#26300](https://github.com/FreeCAD/FreeCAD/issues/26300): freeform surfacing hangs
   or crashes. Next: bounded reproduction through our replacement operation before
   assuming the old Surface report applies.

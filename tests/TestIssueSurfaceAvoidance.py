@@ -94,13 +94,29 @@ class TestSurfaceAvoidanceOperation(PathTestWithAssets):
         op.StepOver = 50
         return op
 
+    def testExternalCurvedSurfaceAvoidedWithoutLosingCoverage(self):
+        # Exercise a non-planar open face without requiring the optional Surface module.
+        surface = Part.BSplineSurface()
+        poles = [[App.Vector(x, y, z) for y in (10, 20)]
+                 for x, z in ((10, 5), (15, 11), (20, 5))]
+        surface.buildFromPolesMultsKnots(
+            poles, [3, 3], [2, 2], [0, 1], [0, 1], False, False, 2, 1)
+        self.external.Shape = surface.toShape()
+        self.doc.recompute()
+        self.assertTrue(self.external.Shape.isValid())
+        self.assertGreater(self.external.Shape.BoundBox.ZLength, 1)
+        self.checkAvoidanceCoverage()
+
     def testExternalOpenSurfaceAvoidedWithoutLosingCoverage(self):
+        self.checkAvoidanceCoverage()
+
+    def checkAvoidanceCoverage(self):
         self.assertNotIn(self.external, self.job.Model.Group)
         op = self.operation()
         op.Proxy.execute(op)
         points = []
         position = App.Vector()
-        forbidden = self.external.Shape.extrude(App.Vector(0, 0, 1))
+        forbidden = Part.makePlane(10, 10, App.Vector(10, 10, 5)).extrude(App.Vector(0, 0, 1))
         forbidden.translate(App.Vector(0, 0, -0.5))
         for command in op.Path.Commands:
             current = App.Vector(*(command.Parameters.get(axis, getattr(position, axis.lower()))

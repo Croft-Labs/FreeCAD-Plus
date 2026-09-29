@@ -143,10 +143,15 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   The external planar open-face case retains full surrounding coverage and cutting
   segments do not cross the excluded face. Python files installed and hash-verified;
   no native build or document/property migration. UI behavior documented in UI-006.
-- [   ] U.14 #27950: exercise the original curved GeomFillSurface fixture with the
-  replacement workflow; record whether failure/coverage matches the legacy report.
-  Do not infer arbitrary freeform coverage from planar/cylindrical regressions.
-  Legacy Surface/Waterline remain unchanged and are not certified by U.13.
+- [   ] U.14 #27950: exact GeomFillSurface integration remains pending for a
+  batched build with Surface enabled (`BUILD_SURFACE=OFF` currently). Attachment
+  inspection found no GeomFillSurface object: Base selects Clone.Face3 and
+  Part__Mirroring.Face3 (mirrored Pad geometry). Saved BReps from that attachment
+  generate a nonempty path in PlanarSurface, without restoring legacy proxies.
+  This proves generation, not full attachment coverage or legacy backend repair.
+  A generated non-planar B-spline exclusion independently passes cutting-segment
+  exclusion and coverage-on-both-sides checks. Do not generalize to arbitrary
+  freeform faces or mark the upstream issue closed.
 - [   ] U.15 #26300: attempt the attached freeform hang/crash case in an isolated,
   bounded process through the replacement operation; distinguish legacy applicability
   and OCL/kernel behavior before modifying algorithms.
@@ -155,13 +160,23 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
 - [ X ] U.17 CAM avoidance fix published as
   `b2cfdf0f114ff2cba48004fe538991395b22f525`; `origin/main` hash verified. No release.
 
+- [ X ] U.18 Extend #27950 applicability evidence with saved attachment geometry
+  and a generated curved-face regression. `tests/TestIssueSurfaceAvoidance.py`
+  now has nine passing checks; opt-in `tests/TestIssue27950Fixture.py` adds one.
+  `curved-avoidance-20260929-final/results.json` under the external root below:
+  10 PASS, no failures/errors/skips, process 0. Installed surface_common.py and
+  PlanarSurface.py bytes match source and the U.13 recorded hashes. No app code
+  changed or rebuild performed. Initial exact-object probe stopped with missing
+  Surface module; that run is not acceptance evidence. Next actionable case U.15;
+  retain the exact-object gap in U.14 for the next relevant batched build.
+
 CAM avoidance evidence under the external validation root below:
 `avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
 checks (two valid geometry controls passed). After correction,
 `avoidance-tests-20260929-193013/results.json` reports 67 PASS, no errors/skips,
 process 0. Eight focused, 12 common-generator, seven pattern-generator, 18 unified
 operation and 22 STL/tab tests. `module-manifest.json` records installed Python
-hashes. The expanded default issue macro has 83 tests; it has not been run as a
+hashes. The expanded default issue macro now has 84 tests; it has not been run as a
 single batch. Preserve the separate 75-test native and 67-test CAM evidence.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.

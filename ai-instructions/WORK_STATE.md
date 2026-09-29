@@ -1,5 +1,13 @@
 # FreeCAD Plus: Build validation handoff
 
+Latest issue continuation (2026-09-29): U.18 adds curved avoidance and upstream
+#27950 saved-geometry probes. All 10 focused tests pass in the existing app; no
+application code/build changes. The attachment is a mirrored Pad, not a
+GeomFillSurface. Exact Surface-object validation awaits a relevant batched build
+with Surface enabled. Next actionable case is U.15 (#26300), then U.16 (#6864).
+Evidence: `curved-avoidance-20260929-final/results.json` under the external root.
+No test process remains running. Earlier evidence below is retained.
+
 Latest CAM issue milestone (2026-09-29): two Python modules updated in the existing
 app to stop generation when selected face-avoidance boundaries fail and to reject
 strategy switches that would ignore those exclusions. Eight focused checks and

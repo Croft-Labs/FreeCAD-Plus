@@ -57,7 +57,7 @@ both feature properties and solid volume for Add/Subtract on create and reopen.
 The tree test sends mouse press/move/release events to the expansion arrow and
 checks both the expansion toggle and unchanged model selection.
 
-Default macro coverage also includes Mirror, CAM offsets and avoidance: 83 tests total.
+Default macro coverage also includes Mirror, CAM offsets and avoidance: 84 tests total.
 The Mirror checks include save/reopen/recompute and real task-pane face selection
 for translated and rotated Bodies. The updated Part module passed the earlier
 75-test batch; the added avoidance work passed its separate 67-test CAM batch.
@@ -70,10 +70,10 @@ process exit of zero alone is not a passing test result.
 
 ## CAM avoidance (#27751 / linked #27950)
 
-`tests/TestIssueSurfaceAvoidance.py` adds eight checks for the replacement
+`tests/TestIssueSurfaceAvoidance.py` adds nine checks for the replacement
 Parallel/Waterline operation. Run it with `TestSurfaceCommonGenerator.py`,
 `TestSurfacePatternGenerator.py`, `TestPlanarSurfaceOp.py` and `TestMeshMachining.py`
-under `src/Mod/CAM/CAMTests/` using `FREECAD_PLUS_ISSUE_TESTS`: 67 tests total.
+under `src/Mod/CAM/CAMTests/` using `FREECAD_PLUS_ISSUE_TESTS`: 68 tests total (expanded batch not yet rerun).
 Synchronize and hash-check changed Python modules in the source-built app first;
 no native rebuild is necessary for this change.
 
@@ -85,3 +85,30 @@ generation and an unsupported Waterline strategy change remove the old path.
 Kernel failures are deliberately injected; the valid face/coverage cases use
 real geometry and generated toolpaths. This does not certify the original curved
 GeomFillSurface attachment, legacy Surface/Waterline, machine simulation or a post.
+
+### Curved exclusion and upstream attachment
+
+The ninth generated check uses a valid non-planar B-spline face outside the Job.
+It checks that cutting segments avoid the known footprint and retain coverage on
+both sides. Nine focused checks passed; no Surface module is needed for this case.
+
+For the [#27950 attachment](https://github.com/FreeCAD/FreeCAD/issues/27950), download
+`https://github.com/user-attachments/files/25724881/manche001testcam1.2.FCStd.zip`
+into isolated external evidence storage and extract only the FCStd entry. Set
+`FREECAD_PLUS_27950_FIXTURE` to that absolute path and run the opt-in
+`tests/TestIssue27950Fixture.py` through the same bounded macro procedure.
+Fixture FCStd SHA-256:
+`DAAE9773FF387E9C9BEEAB4505F83C5D307D944E5423F3B0D7E3FF503BB4BFE4`.
+Keep the downloaded model out of the repository; it is external reproduction data.
+
+The probe reads only Clone/Part__Mirroring saved BReps into a fresh document and
+creates a new PlanarSurface operation using the saved Face3 selections, 1 mm
+sampling and 99% stepover, with a test-library 5 mm endmill. It does not restore
+external Python proxies, execute the old operation, or save/modify the fixture.
+A nonempty cutting path is a generation check, not proof of full coverage or
+identical legacy tool parameters. Both suites passed together: ten tests, no skips.
+
+The attachment contains no GeomFillSurface object despite the issue title. The
+current build has `BUILD_SURFACE=OFF`; exact Surface-object integration remains
+pending for a relevant batched build. Neither result certifies the legacy backend,
+a postprocessor or physical machine motion.
