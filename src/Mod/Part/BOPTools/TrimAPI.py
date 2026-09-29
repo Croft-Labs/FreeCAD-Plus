@@ -7,24 +7,7 @@ import Part
 from . import SplitAPI
 
 
-class TrimError(ValueError):
-    pass
-
-
-def linked_shape(link):
-    if not link or not link[0]:
-        raise TrimError("Select a target and a cutting tool.")
-    obj, subs = link
-    if len(subs) > 1:
-        raise TrimError("Select one object or one face for each field.")
-    sub = subs[0] if subs else ""
-    shape = Part.getShape(obj, sub, needSubElement=True, transform=True)
-    # getShape includes the object's placement, but not its enclosing App::Part/Body.
-    if hasattr(obj, "getGlobalPlacement") and hasattr(obj, "Placement"):
-        parent = obj.getGlobalPlacement().multiply(obj.Placement.inverse())
-        shape = shape.copy()
-        shape.transformShape(parent.toMatrix())
-    return shape
+from BasicShapes.ShapeReferences import ReferenceError as TrimError, linked_shape, validate_link
 
 
 def tool_shape(link):
@@ -40,13 +23,6 @@ def tool_shape(link):
     if shape.isNull() or not shape.Faces or shape.Solids:
         raise TrimError("Select a face of the tool solid, a datum plane, or a sheet body.")
     return shape
-
-
-def validate_link(feature, obj):
-    if obj is None or obj.Document != feature.Document:
-        raise TrimError("Select an object in this document.")
-    if obj == feature or obj in feature.InListRecursive:
-        raise TrimError("A trim cannot reference itself or a dependent feature.")
 
 
 def frame(tool, target):

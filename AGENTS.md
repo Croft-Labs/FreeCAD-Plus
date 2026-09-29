@@ -23,8 +23,8 @@ Do not claim to have read missing guidance or maintain an independent master cop
 - Current implementation scope includes unified Pad/Pocket Extrude and the
   user-requested Linear/Circular Pattern task workflow, and signed angular start
   offsets/direction buttons for Revolution and Groove, and the user-requested
-  associative Trim Body workflow for solids and sheets in Part and Part Design.
-  Trim Body creates a separate result; it does not change a source Body Tip. Other operations
+  associative Trim Body workflow and draft-angle Isocline Curves in Part and Part Design.
+  Both create separate results and preserve source Body Tips. Other operations
   remain future scope; the roadmap does not authorize them automatically.
 - Preserve FreeCAD document/property identities, geometry semantics, licensing,
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).

@@ -7,109 +7,25 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import Part
 from PySide import QtCore, QtGui
-from pivy import coin
+from BasicShapes.FeatureTask import TaskFeatureViewProvider, DirectionArrow as KeepArrow
 from . import TrimAPI, TrimFeatures
 
 translate = App.Qt.translate
 ICON = str(Path(__file__).with_name("TrimBody.svg"))
 
 
-class ViewProviderTrimBody:
-    def __init__(self, view):
-        view.Proxy = self
+class ViewProviderTrimBody(TaskFeatureViewProvider):
+    icon = ICON
+    editLabel = translate("TrimBody", "Edit Trim Body")
 
-    def attach(self, view):
-        self.Object = view.Object
-        self.task = None
-
-    def getIcon(self):
-        return ICON
-
-    def doubleClicked(self, view):
-        if Gui.Control.activeDialog():
-            return False
-        return bool(view.Document.setEdit(view.Object.Name))
-
-    def setupContextMenu(self, view, menu):
-        action = menu.addAction(translate("TrimBody", "Edit Trim Body"))
-        action.triggered.connect(lambda: self.doubleClicked(view))
-
-    def setEdit(self, view, mode=0):
-        if mode != 0:
-            return False
-        doc = view.Object.Document
-        if not doc.HasPendingTransaction:
-            doc.openTransaction(translate("TrimBody", "Edit Trim Body"))
-        self.task = TrimBodyTask(view.Object)
-        Gui.Control.showDialog(self.task)
-        return True
-
-    def unsetEdit(self, view, mode=0):
-        if self.task:
-            if not self.task.finished:
-                self.task.reject(reset_edit=False)
-            self.task = None
-        Gui.Control.closeDialog()
-        return True
+    def makeTask(self, obj):
+        return TrimBodyTask(obj)
 
     def onDelete(self, view, subelements):
         for link in (view.Object.Target, view.Object.Tool):
             if link and link[0]:
                 link[0].ViewObject.show()
         return True
-
-    def dumps(self):
-        return None
-
-    def loads(self, state):
-        self.task = None
-
-
-class KeepArrow:
-    def __init__(self, view):
-        self.scene = view.getSceneGraph()
-        self.root = coin.SoAnnotation()
-        pick = coin.SoPickStyle()
-        pick.style = coin.SoPickStyle.UNPICKABLE
-        self.root.addChild(pick)
-        self.scene.addChild(self.root)
-
-    def update(self, origin, direction, length):
-        self.root.removeAllChildren()
-        pick = coin.SoPickStyle()
-        pick.style = coin.SoPickStyle.UNPICKABLE
-        self.root.addChild(pick)
-        material = coin.SoMaterial()
-        material.diffuseColor = (0.15, 0.75, 0.25)
-        self.root.addChild(material)
-        transform = coin.SoTransform()
-        transform.translation = tuple(origin)
-        transform.rotation = coin.SbRotation(coin.SbVec3f(0, 1, 0), coin.SbVec3f(*direction))
-        self.root.addChild(transform)
-        shaft = coin.SoSeparator()
-        move = coin.SoTranslation()
-        move.translation = (0, length * 0.35, 0)
-        shaft.addChild(move)
-        cylinder = coin.SoCylinder()
-        cylinder.radius = length * 0.035
-        cylinder.height = length * 0.7
-        shaft.addChild(cylinder)
-        self.root.addChild(shaft)
-        tip = coin.SoSeparator()
-        move = coin.SoTranslation()
-        move.translation = (0, length * 0.85, 0)
-        tip.addChild(move)
-        cone = coin.SoCone()
-        cone.bottomRadius = length * 0.11
-        cone.height = length * 0.3
-        tip.addChild(cone)
-        self.root.addChild(tip)
-
-    def clear(self):
-        self.root.removeAllChildren()
-
-    def close(self):
-        self.scene.removeChild(self.root)
 
 
 class TrimBodyTask:

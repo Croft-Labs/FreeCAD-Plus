@@ -7,7 +7,7 @@ import unittest
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
-from PySide import QtGui
+from PySide import QtCore, QtGui
 
 
 class TestTrimBodyGui(unittest.TestCase):
@@ -231,6 +231,11 @@ class TestTrimBodyGui(unittest.TestCase):
             self.assertEqual(len(actions), 1, workbench)
             Gui.Selection.addSelection(self.target)
             Gui.Selection.addSelection(self.tool)
+            # MainWindow refreshes command enablement on a 150 ms timer.
+            loop = QtCore.QEventLoop()
+            QtCore.QTimer.singleShot(350, loop.quit)
+            loop.exec()
+            self.assertTrue(actions[0].isEnabled(), workbench)
             actions[0].trigger()
             Gui.updateGui()
             self.assertTrue(Gui.Control.activeDialog())

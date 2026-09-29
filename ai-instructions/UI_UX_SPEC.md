@@ -3,7 +3,7 @@
 ## Interface scope
 
 This document specifies the fork's unified Extrude and Pattern task panes,
-angular offset controls for Revolution/Groove, the Trim Body pane, and planned shared Add/Subtract
+angular offset controls for Revolution/Groove, the Trim Body and Isocline Curve panes, and planned shared Add/Subtract
 interaction for other feature families. The inherited desktop
 shell and unmodified workbenches retain upstream behavior; consult their source
 and the documentation linked in [the upstream overview](../README.md). This is
@@ -42,6 +42,7 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 | UI-002 | Pattern task pane | Choose Linear/Circular, features, and repetition parameters | `PartDesign_Pattern`; Edit Pattern | [UI-002](#ui-002-pattern-task-pane) |
 | UI-003 | Revolve/Groove angular controls | Offset the angular start and reverse direction within the existing create/edit pane | Revolution or Groove; edit existing feature | [UI-003](#ui-003-revolve-and-groove-angular-controls) |
 | UI-004 | Trim Body task pane | Select a target, cutting tool, and side to keep | Part or Part Design: Trim Body; double-click existing result | [UI-004](#ui-004-trim-body-task-pane) |
+| UI-005 | Isocline Curve task pane | Trace draft-angle curves on selected faces | Part or Part Design: Isocline Curve; edit existing result | [UI-005](#ui-005-isocline-curve-task-pane) |
 
 ## Screen specifications
 
@@ -164,6 +165,31 @@ not multiple cutting tools or an automatic curved-sheet Trim and Extend operatio
 The saved feature requires the new BOPTools Python modules to recompute.
 Source: [`TrimGui.py`](../src/Mod/Part/BOPTools/TrimGui.py).
 Validation: [Trim Body procedure](../tests/TrimBody.md).
+
+### UI-005: Isocline Curve task pane
+
+Satisfies REQ-018 through REQ-020. Invoke **Isocline Curve** from the Part menu/Part
+Tools toolbar or Part Design menu/Modeling Features toolbar. An open document is
+required; an active Body is optional. Double-click a saved result or use **Edit
+Isocline Curve** to reopen the same complete definition.
+
+| Control | Order and behavior |
+| --- | --- |
+| Target faces | First section: accumulated face list with Add faces, Remove and Clear. Pick individual viewport faces or a whole source in the tree to include all its faces. Duplicate picks do not duplicate curves. Ordinary selection clearing retains collected references. |
+| Pull direction | X, Y or Z world axis (default Z), Reference, or Custom vector. Adjacent reverse button flips the pull direction; the green viewport arrow follows it. |
+| Direction reference | Visible in Reference mode. Pick a datum plane, a planar face, a straight edge or datum axis; planes supply their normal. Curved faces/edges, self/dependent objects, and other-document picks are rejected. |
+| Custom vector | X/Y/Z components, visible in Custom vector mode. Normalize internally; a zero or nonfinite vector is invalid. |
+| Draft angle | Degrees, default 0, range 0 through 90. Zero gives normals perpendicular to pull; positive values select normals increasingly facing pull. Reversing pull selects the opposite draft side. |
+| Preview and status | Red curves are highlighted through source faces while editing, including hidden portions; the accepted feature uses normal depth rendering. The green arrow indicates pull. Live preview can be paused. Missing input, no curve, whole-face coincidence, or solver errors stay editable and clear stale output. |
+| OK / Cancel | OK forces recompute and accepts valid wires; Cancel removes a pending feature or restores its previous definition and temporary visibility. Both remove selection observation and direction annotation. |
+
+Source objects remain unchanged and keep their Part Design Body Tip. Face boundary
+holes split a contour into separate segments; each connected set becomes a wire.
+At 90 degrees a sphere has only an isolated point and cannot produce a curve; a
+cylinder can retain a valid line. A whole face at the requested inclination has
+no unique isocline and is reported as such. This task does not split faces/bodies
+or create a stepped series of angles. Source: [`IsoclineGui.py`](../src/Mod/Part/BasicShapes/IsoclineGui.py).
+Validation: [Isocline procedure](../tests/IsoclineCurve.md).
 
 ## Open questions
 

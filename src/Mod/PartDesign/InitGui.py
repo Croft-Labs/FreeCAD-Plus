@@ -60,6 +60,8 @@ class PartDesignWorkbench(Workbench):
         import PartDesign
         from BOPTools.TrimGui import registerCommand
         registerCommand()
+        from BasicShapes.IsoclineGui import registerCommand as registerIsocline
+        registerIsocline()
 
         from PartDesign.InvoluteGearFeature import CommandInvoluteGear
 

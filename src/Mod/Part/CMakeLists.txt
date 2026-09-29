@@ -39,6 +39,8 @@ set(BasicShapes_Scripts
     BasicShapes/__init__.py
     BasicShapes/Shapes.py
     BasicShapes/Utils.py
+    BasicShapes/ShapeReferences.py
+    BasicShapes/Isocline.py
 )
 
 if(BUILD_GUI)
@@ -47,6 +49,9 @@ if(BUILD_GUI)
           BasicShapes/CommandShapes.py
           BasicShapes/ViewProviderShapes.py
           BasicShapes/TaskTube.ui
+          BasicShapes/FeatureTask.py
+          BasicShapes/IsoclineGui.py
+          BasicShapes/Isocline.svg
     )
 endif(BUILD_GUI)
 
@@ -92,6 +97,8 @@ set(Part_tests
     parttests/TestLinkArrayPath.py
     parttests/TestLinkArrayPoint.py
     parttests/TestPartMirror.py
+    parttests/TestIsocline.py
+    parttests/TestIsoclineGui.py
     parttests/TestTrimBody.py
     parttests/TestTrimBodyGui.py
     parttests/TestFaceMakerUnifiedPlanar.py

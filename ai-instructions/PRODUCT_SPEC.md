@@ -28,7 +28,9 @@ start offsets and adjacent direction buttons; their command consolidation remain
 future work. Trim Body adds associative solid/sheet trimming from Part and Part Design,
 using a plane, selected face, or connected sheet cutter and a reversible keep side.
 It creates a separate result object and preserves a source Part Design Body and its
-Tip. Other operations remain future work. The preferred direction is one command per geometry operation,
+Tip. Isocline Curve traces a specified draft angle on one or more oriented faces,
+relative to a world axis, referenced plane/axis/edge, or custom vector. Its linked
+wire result updates with the sources. Other operations remain future work. The preferred direction is one command per geometry operation,
 with Add/Subtract chosen inside its shared create/edit task, following the workflow
 described by the user. The [candidate inventory](DEVELOPMENT_ROADMAP.md#unified-feature-workflows)
 defines the planned families; it does not establish implemented behavior.
@@ -57,6 +59,9 @@ packaging are outside the current implementation scope.
 | REQ-015 | Trim Body opens without preselection in Part and Part Design. Target, tool, and keep-side controls share the same complete creation/editing task, with a visible direction arrow and live preview. |
 | REQ-016 | Trim a solid or sheet with a datum plane, planar/curved face, or connected sheet. Planar tools may extend across the target; finite curved tools must fully separate it. Reverse selects the other side. Reject nonintersecting/incomplete cuts and keep solid outputs valid and closed. |
 | REQ-017 | Persist target/tool links and recompute when their geometry or parent placement changes. Preserve source objects and Body Tip; Cancel, Undo/Redo, and reopening retain document integrity. Invalid edits clear stale output and cannot be accepted. |
+| REQ-018 | Isocline Curve selects one or more target faces, a pull direction, and a draft angle in the same complete create/edit task. Preselection is optional. Axes, plane normals, straight edges, datum axes and a custom vector support direction selection and reversal. |
+| REQ-019 | Use the draft convention n dot d = sin(angle), with unit oriented face normal n and unit pull d. Angle 0 degrees is the silhouette; 0..90 degrees is accepted. Trace source-surface curves within modeling tolerances and clip to face boundaries and holes. Report empty, isolated-point, and whole-face solutions instead of inventing curves. |
+| REQ-020 | Persist face and direction references; recompute on geometry and parent-placement changes. Preserve source bodies and provide live preview, invalid-state recovery, Cancel, Undo/Redo, and save/reopen. The first version creates one angle per associative feature. |
 
 ## Constraints and quality requirements
 

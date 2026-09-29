@@ -137,6 +137,26 @@ links before geometry execution and clear stale Shape on failure. Cancel must ab
 the transaction before GUI resetEdit, which otherwise commits the pending edit.
 New saved results need these Python modules for recomputation in another installation.
 
+For Isocline Curve, rebuild Part's `AppPartPy.cpp` and link Part, then rebuild/link
+both GUI workbench command entries. Install the `BasicShapes` scripts/icon listed
+in Part's CMake file, both InitGui files, and matching test scripts. The kernel
+binding `Part.makeIsocline(face, direction, angle=0, tolerance=1e-5)` wraps existing
+[OpenCASCADE Contap_Contour](https://dev.opencascade.org/doc/refman/html/class_contap___contour.html).
+No external numerical library is introduced. Contap's draft sign is converted to
+`normal dot pull = sin(angle)`; walking UV coordinates use the solver's S2 slots.
+Analytical curves and interpolated UV curves are clipped against the trimmed face.
+3D approximation tolerance defaults to 1e-5 model units; the native routine accepts
+1e-7 through 0.01. Freeform fits are checked at 401 samples for normalized dot-product
+residual <= 1e-5. This sampled check is not a proof of arbitrary-surface completeness.
+
+Run [Isocline tests](../tests/IsoclineCurve.md) with the rebuilt Part module. The
+shared ShapeReferences and FeatureTask helpers also serve Trim Body, so rerun both
+Trim suites when changing them. MainWindow updates toolbar enablement on a delayed
+150 ms timer; GUI action tests must allow that event loop to settle. For visual
+arrow checks capture the native window: viewport image export omits annotations.
+Saved Isocline objects need both these Python scripts and the new native Part API;
+unmodified upstream FreeCAD is not a supported recomputation environment.
+
 ## Release and recovery
 
 No fork release or installer is part of the current task. Local commits do not

@@ -25,6 +25,20 @@
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <BRepAlgoAPI_Common.hxx>
+#include <BRepBndLib.hxx>
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
+#include <BRepTopAdaptor_TopolTool.hxx>
+#include <Bnd_Box.hxx>
+#include <Contap_Contour.hxx>
+#include <Geom2dAPI_Interpolate.hxx>
+#include <Geom2dAdaptor.hxx>
+#include <Geom2d_BSplineCurve.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
+#include <IntSurf_PntOn2S.hxx>
+#include <TColgp_HArray1OfPnt2d.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
@@ -591,6 +605,13 @@ public:
             &Module::makeCircle,
             "makeCircle(radius,[pnt,dir,angle1,angle2]) -- Make a circle with a given radius\n"
             "By default pnt=Vector(0,0,0), dir=Vector(0,0,1), angle1=0 and angle2=360"
+        );
+        add_varargs_method(
+            "makeIsocline",
+            &Module::makeIsocline,
+            "makeIsocline(face, direction, angle=0, tolerance=1e-5) -- Return draft-angle curves.\n"
+            "Angle is in degrees: oriented face normal dot unit direction = sin(angle).\n"
+            "Zero is the silhouette. Curves are clipped to the face, including holes."
         );
         add_varargs_method(
             "makeSphere",
@@ -1531,6 +1552,213 @@ private:
             throw Py::Exception(PartExceptionOCCDomainError, "creation of wedge failed");
         }
     }
+    Py::Object makeIsocline(const Py::Tuple& args)
+    {
+        PyObject *shapeObj, *directionObj;
+        double angle = 0.0, tolerance = 1e-5;
+        if (!PyArg_ParseTuple(
+                args.ptr(),
+                "O!O!|dd",
+                &TopoShapeFacePy::Type,
+                &shapeObj,
+                &Base::VectorPy::Type,
+                &directionObj,
+                &angle,
+                &tolerance
+            )) {
+            throw Py::Exception();
+        }
+        const Base::Vector3d direction = static_cast<Base::VectorPy*>(directionObj)->value();
+        if (!std::isfinite(angle) || angle < 0.0 || angle > 90.0 || !std::isfinite(tolerance)
+            || tolerance < 1e-7 || tolerance > 0.01 || !std::isfinite(direction.x)
+            || !std::isfinite(direction.y) || !std::isfinite(direction.z)
+            || direction.Length() < 1e-12) {
+            throw Py::ValueError(
+                "Use a nonzero finite direction, angle 0..90 degrees, and tolerance 1e-7..0.01."
+            );
+        }
+        const char* stage = "Contour solver";
+        try {
+            const TopoDS_Face face = TopoDS::Face(
+                static_cast<TopoShapePy*>(shapeObj)->getTopoShapePtr()->getShape()
+            );
+            if (face.IsNull() || !BRepCheck_Analyzer(face).IsValid()) {
+                throw Py::ValueError("Select a valid bounded face.");
+            }
+            Handle(BRepAdaptor_Surface) surface = new BRepAdaptor_Surface(face);
+            Handle(BRepTopAdaptor_TopolTool) domain = new BRepTopAdaptor_TopolTool(surface);
+            gp_Vec pull(direction.x, direction.y, direction.z);
+            pull.Normalize();
+            if (face.Orientation() == TopAbs_REVERSED) {
+                pull.Reverse();
+            }
+            if (surface->GetType() == GeomAbs_Plane || surface->GetType() == GeomAbs_Cylinder
+                || surface->GetType() == GeomAbs_Cone) {
+                bool allMatch = true;
+                for (double fu : {0.13, 0.47, 0.81}) {
+                    for (double fv : {0.21, 0.63}) {
+                        gp_Vec du, dv;
+                        gp_Pnt point;
+                        surface->D1(
+                            surface->FirstUParameter()
+                                + fu * (surface->LastUParameter() - surface->FirstUParameter()),
+                            surface->FirstVParameter()
+                                + fv * (surface->LastVParameter() - surface->FirstVParameter()),
+                            point,
+                            du,
+                            dv
+                        );
+                        const gp_Vec normal = du.Crossed(dv).Normalized();
+                        allMatch = allMatch
+                            && std::abs(normal.Dot(pull) - std::sin(Base::toRadians(angle))) < 1e-10;
+                    }
+                }
+                if (allMatch) {
+                    throw Py::ValueError(
+                        "The entire face matches; there is no unique isocline curve."
+                    );
+                }
+            }
+            // Contap uses cos(pi/2 + angle); our positive draft faces the pull vector.
+            Contap_Contour contour(surface, domain, pull, -Base::toRadians(angle));
+            if (!contour.IsDone()) {
+                throw Py::RuntimeError("The surface contour solver did not converge.");
+            }
+            BRep_Builder builder;
+            TopoDS_Compound result;
+            builder.MakeCompound(result);
+            Bnd_Box box;
+            BRepBndLib::Add(face, box);
+            if (box.IsVoid() || box.IsOpen()) {
+                throw Py::ValueError("Select a bounded face.");
+            }
+            double x0, y0, z0, x1, y1, z1;
+            box.Get(x0, y0, z0, x1, y1, z1);
+            gp_Pnt center((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+            const double extent = gp_Pnt(x0, y0, z0).Distance(gp_Pnt(x1, y1, z1)) * 2 + 1;
+            Handle(Geom_Surface) geometry = BRep_Tool::Surface(face);
+            if (surface->GetType() == GeomAbs_Cylinder && angle == 90.0) {
+                const gp_Cylinder cylinder = surface->Cylinder();
+                if (std::abs(pull.Dot(gp_Vec(cylinder.Axis().Direction()))) < 1e-10) {
+                    const gp_Pnt start = cylinder.Location().Translated(pull * cylinder.Radius());
+                    const gp_Lin line(start, cylinder.Axis().Direction());
+                    const double middle = gp_Vec(start, center).Dot(gp_Vec(line.Direction()));
+                    const TopoDS_Edge edge
+                        = BRepBuilderAPI_MakeEdge(line, middle - extent, middle + extent);
+                    BRepAlgoAPI_Common clipped(edge, face);
+                    clipped.Build();
+                    if (!clipped.IsDone()) {
+                        throw Py::RuntimeError("Cannot clip the limiting cylinder isocline.");
+                    }
+                    return shape2pyshape(clipped.Shape());
+                }
+            }
+            for (int i = 1; i <= contour.NbLines(); ++i) {
+                stage = "Read contour";
+                const Contap_Line& line = contour.Line(i);
+                TopoDS_Edge edge;
+                if (line.TypeContour() == Contap_Circle) {
+                    if (line.Circle().Radius() <= tolerance) {
+                        continue;  // A pole is an isolated point, not a curve.
+                    }
+                    edge = BRepBuilderAPI_MakeEdge(line.Circle());
+                }
+                else if (line.TypeContour() == Contap_Lin) {
+                    gp_Lin axis = line.Line();
+                    const double middle = gp_Vec(axis.Location(), center).Dot(gp_Vec(axis.Direction()));
+                    edge = BRepBuilderAPI_MakeEdge(axis, middle - extent, middle + extent);
+                }
+                else {
+                    Handle(Geom2d_Curve) curve;
+                    if (line.TypeContour() == Contap_Restriction) {
+                        curve = new Geom2d_TrimmedCurve(
+                            Geom2dAdaptor::MakeCurve(*line.Arc()),
+                            line.Arc()->FirstParameter(),
+                            line.Arc()->LastParameter()
+                        );
+                    }
+                    else {
+                        if (line.NbPnts() < 2) {
+                            continue;
+                        }
+                        stage = "Interpolate UV contour";
+                        std::vector<gp_Pnt2d> samples;
+                        for (int j = 1; j <= line.NbPnts(); ++j) {
+                            double u, v;
+                            // Contap's implicit equation occupies S1; the actual surface is S2.
+                            line.Point(j).ParametersOnS2(u, v);
+                            gp_Pnt2d point(u, v);
+                            if (samples.empty() || point.Distance(samples.back()) > 1e-10) {
+                                samples.push_back(point);
+                            }
+                        }
+                        if (samples.size() < 2) {
+                            continue;
+                        }
+                        Handle(TColgp_HArray1OfPnt2d) points
+                            = new TColgp_HArray1OfPnt2d(1, static_cast<int>(samples.size()));
+                        for (int j = 1; j <= points->Length(); ++j) {
+                            points->SetValue(j, samples[j - 1]);
+                        }
+                        Geom2dAPI_Interpolate interpolate(points, false, 1e-10);
+                        interpolate.Perform();
+                        if (!interpolate.IsDone()) {
+                            throw Py::RuntimeError("Cannot fit the surface contour.");
+                        }
+                        curve = interpolate.Curve();
+                    }
+                    // Do not return a smooth-looking curve that misses the angular condition.
+                    for (int j = 0; j <= 400; ++j) {
+                        const double parameter = curve->FirstParameter()
+                            + (curve->LastParameter() - curve->FirstParameter()) * j / 400.0;
+                        const gp_Pnt2d uv = curve->Value(parameter);
+                        gp_Pnt point;
+                        gp_Vec du, dv;
+                        surface->D1(uv.X(), uv.Y(), point, du, dv);
+                        const gp_Vec normal = du.Crossed(dv);
+                        if (normal.Magnitude() > 1e-12) {
+                            const double dot = normal.Normalized().Dot(pull);
+                            if (std::abs(dot - std::sin(Base::toRadians(angle))) > 1e-5) {
+                                throw Py::RuntimeError(
+                                    "The freeform contour exceeds the angular residual tolerance."
+                                );
+                            }
+                        }
+                    }
+                    stage = "Build surface edge";
+                    edge = BRepBuilderAPI_MakeEdge(
+                        curve,
+                        geometry,
+                        curve->FirstParameter(),
+                        curve->LastParameter()
+                    );
+                    if (!BRepLib::BuildCurve3d(edge, tolerance)) {
+                        throw Py::RuntimeError("Cannot construct the 3D surface curve.");
+                    }
+                }
+                stage = "Clip curve to face";
+                BRepAlgoAPI_Common clipped(edge, face);
+                clipped.SetFuzzyValue(tolerance);
+                clipped.Build();
+                if (!clipped.IsDone()) {
+                    throw Py::RuntimeError("Cannot clip the contour to the selected face.");
+                }
+                for (TopExp_Explorer it(clipped.Shape(), TopAbs_EDGE); it.More(); it.Next()) {
+                    const TopoDS_Edge candidate = TopoDS::Edge(it.Current());
+                    GProp_GProps properties;
+                    BRepGProp::LinearProperties(candidate, properties);
+                    if (!BRep_Tool::Degenerated(candidate) && properties.Mass() > tolerance) {
+                        builder.Add(result, candidate);
+                    }
+                }
+            }
+            return shape2pyshape(result);
+        }
+        catch (const Standard_Failure& error) {
+            throw Py::RuntimeError(std::string(stage) + ": " + error.GetMessageString());
+        }
+    }
+
     Py::Object makeLine(const Py::Tuple& args)
     {
         PyObject *obj1, *obj2;

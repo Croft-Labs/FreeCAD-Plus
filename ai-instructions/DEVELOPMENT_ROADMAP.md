@@ -2,9 +2,9 @@
 
 ## Current focus
 
-- Active work: associative Trim Body for solids and sheets in [Phase 4](#trim-body),
-  targeting REQ-015 through REQ-017. Source, native build, and automated validation
-  are complete; physical viewport/keyboard acceptance remains pending.
+- Active work: associative Isocline Curve in [Phase 5](#isocline-curve), targeting
+  REQ-018 through REQ-020. Trim Body implementation and validation are recorded in
+  [Phase 4](#trim-body); physical viewport/keyboard acceptance remains pending.
   Revolve/Groove angular-offset verification is recorded in milestone 3.9.
 - Extrude native build, 49 automated regressions, and task-pane visual inspection
   passed on 2026-09-28; see [validation evidence](#extrude-validation-evidence).
@@ -612,3 +612,69 @@ boundaries only. Curved tools must fully span each trimmed region; automatic cur
 Trim and Extend is future scope. Result recomputation needs the new BOPTools Python
 modules. Upstream-only recomputation, Linux/macOS validation, and packaging are not
 established. The output is associative but does not insert a new Part Design Body Tip.
+
+
+<a id="isocline-curve"></a>
+
+## [   ] Phase 5: Associative Isocline Curve
+
+Outcome: trace a selected draft angle on one or more faces relative to an editable
+pull direction. User-authorized scope; REQ-018 through REQ-020 and
+[UI-005](UI_UX_SPEC.md#ui-005-isocline-curve-task-pane).
+Depends on: the existing OpenCASCADE Part kernel and native development build.
+
+### [ X ] 5.1 Implement contour geometry and complete editor
+
+- [ X ] 5.1.1 Add the Part.makeIsocline binding around Contap_Contour, analytical
+  curves and surface-parameter interpolation, clipping to trimmed faces and holes.
+  Use draft convention normal dot pull = sin(angle), so 0 degrees is silhouette.
+  Validate fit residual, suppress degenerate point output, report whole-face matches,
+  and handle the limiting 90-degree cylinder line.
+- [ X ] 5.1.2 Add the linked multi-face feature, axis/reference/custom direction,
+  reversal, angle, live preview, and same create/edit pane. Register one command
+  in Part's menu/Part Tools toolbar and Part Design's menu/Modeling Features toolbar.
+- [ X ] 5.1.3 Reuse extracted ShapeReferences and FeatureTask helpers with Trim Body.
+  Preserve stored Trim proxy names and input/transaction behavior. Both features
+  track enclosing placements, preserve source objects and keep a separate result.
+
+### [   ] 5.2 Validate the local build
+
+- [ X ] 5.2.1 Rebuild/link Part's contour binding plus PartGui/PartDesignGui command
+  entries and install the matching scripts and icon in the isolated Windows x64
+  Release build. Existing MSVC/Qt/OpenCASCADE LibPack; no added dependency.
+- [ X ] 5.2.2 Complete native model/task regressions and inspect task/viewport captures.
+  **88 tests passed**, with no failures/errors/skips: Isocline nine model and seven
+  GUI, Trim Body 14 model and 10 GUI, Pad 14, Extrude 17, Revolve five, Pattern 12.
+  Geometry checks include analytical lengths, normal-angle residuals and distance
+  to the trimmed source face, freeform closed loops, boundary contours, holes,
+  direction reversal, face orientation, multi-face wires and 90-degree degeneracy.
+  Persistence, parameter/placement recomputation, picking, invalid recovery,
+  paused preview, Cancel and Undo/Redo passed. Actual toolbar actions work in both
+  workbenches; the test now allows FreeCAD's delayed enablement timer to settle.
+  Visual inspection found a degree-symbol encoding issue and surface tessellation
+  obscuring freeform lines. Fixed the symbol and added a transient curve highlight;
+  the same 17 Isocline/Trim GUI tests passed after those presentation changes,
+  including annotation cleanup. Native window captures verify readable controls,
+  red curves and the reversing green arrow. Source geometry stays unchanged.
+  Python/C++ formatting, syntax, SVG XML, whitespace and documentation checks pass.
+  Saved editable sphere and freeform examples in the evidence directory below.
+- [   ] 5.2.3 Complete physical viewport selection, keyboard and high-DPI acceptance
+  using [the Isocline test procedure](../tests/IsoclineCurve.md). Automated Qt controls
+  and window captures do not establish this manual gate.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928`:
+`isocline-gui-gui-results.json`, `isocline-gui-Test*.log`,
+`isocline-visual-tests-gui-results.json`, `isocline-visual-check.json`,
+`isocline-*-task.png`, `isocline-*-window.png`, and `isocline-build-*.log` /
+`isocline-gui-build-*.log`. Examples: `Isocline-sphere-example.FCStd` and
+`Isocline-freeform-example.FCStd`. Launcher:
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+Incremental Part/GUI modules are updated; the main executable About stamp remains
+from its earlier build. The separately installed FreeCAD was not used.
+
+Compatibility/scope: one angle per feature; source faces and Body Tips are preserved.
+A result may have several connected wires. Empty, isolated-point and whole-face
+solutions do not invent an isocline. Arbitrary-surface completeness is not proven
+by sampled residual checks. Splitting bodies/faces, multiple stepped angles,
+Linux/macOS validation, packaging, push and publication remain outside this task.
+Recomputation requires the new Python modules and native Part API in FreeCAD Plus.

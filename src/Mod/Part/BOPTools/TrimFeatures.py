@@ -5,6 +5,7 @@
 import FreeCAD as App
 import Part
 from . import TrimAPI
+from BasicShapes.ShapeReferences import update_placement_support
 
 
 def makeTrimBody(document=None, name="TrimBody"):
@@ -57,18 +58,7 @@ class TrimBody:
             self.updatePlacementSupport(obj)
 
     def updatePlacementSupport(self, obj):
-        containers = []
-        for link in (obj.Target, obj.Tool):
-            if not link or not link[0]:
-                continue
-            parent = link[0].getParentGeoFeatureGroup()
-            while parent:
-                # A common parent of result and inputs already transforms the result.
-                if parent not in obj.InListRecursive and parent not in containers:
-                    containers.append(parent)
-                parent = parent.getParentGeoFeatureGroup()
-        if obj.PlacementSupport != containers:
-            obj.PlacementSupport = containers
+        update_placement_support(obj, (obj.Target, obj.Tool))
 
     def execute(self, obj):
         try:

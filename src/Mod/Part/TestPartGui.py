@@ -49,6 +49,7 @@ def findDockWidget(name):
 #---------------------------------------------------------------------------
 """
 from parttests.TestTrimBodyGui import TestTrimBodyGui
+from parttests.TestIsoclineGui import TestIsoclineGui
 from parttests.ColorPerFaceTest import ColorPerFaceTest
 from parttests.ColorTransparencyTest import ColorTransparencyTest
 from parttests.TaskFaceAppearancesTest import TaskFaceAppearancesGuiTest
