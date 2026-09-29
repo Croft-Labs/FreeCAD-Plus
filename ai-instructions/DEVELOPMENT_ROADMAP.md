@@ -71,8 +71,10 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   closed as won't-fix). #27751's modern PlanarSurface/modular generator workflow
   is already inherited and used by our STL command; the wider upstream epic stays
   open. Neither classification authorizes silent migration of saved operations.
-- [   ] U.8 Publish the coherent source/triage milestone to `origin/main`, verify
-  the remote hash, and retain the build/acceptance gates above. No release.
+- [ X ] U.8 Publish the coherent source/triage milestone to `origin/main`:
+  `85fd6ebc77a5a180d61ad116cf6507fb274e93d4`, remote hash verified.
+  Python/macro syntax and diff whitespace checks pass. Build/acceptance gates
+  above remain open; no release or new executable was produced.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.
 Existing binary run: 49 tests, 47 pass, two expected newly exposed Mirror failures,

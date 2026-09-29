@@ -8,6 +8,8 @@ next batch under the user's build policy. See [issue work](DEVELOPMENT_ROADMAP.m
 for the 49-test baseline (47 pass, two expected new Mirror failures) and exact
 evidence directory. No build/test process is running. Preserve this pending fix
 when planning the next consolidated build; do not close it from old binary tests.
+Source/triage milestone `85fd6ebc77a5a180d61ad116cf6507fb274e93d4` is committed
+and pushed to `origin/main`; remote hash verified. Syntax/whitespace checks pass.
 
 CAM implementation and automated validation are complete. Direct STL
 Parallel/Waterline, stock bridges and separate manually indexed setups are in the
