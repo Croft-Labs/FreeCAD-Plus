@@ -446,6 +446,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Separator" << subtractives << "PartDesign_CompPrimitiveSubtractive"
           << "Separator" << dressups << "Separator" << transformations << "Separator"
           << "PartDesign_Boolean"
+          << "Part_TrimBody"
           << "Separator"
           << "Materials_InspectAppearance"
           << "Materials_InspectMaterial"
@@ -509,7 +510,8 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
           << "PartDesign_SubtractiveHelix"
           << "PartDesign_CompPrimitiveSubtractive"
           << "Separator"
-          << "PartDesign_Boolean";
+          << "PartDesign_Boolean"
+          << "Part_TrimBody";
 
     part = new Gui::ToolBarItem(root);
 

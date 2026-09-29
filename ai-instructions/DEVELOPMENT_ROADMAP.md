@@ -2,9 +2,10 @@
 
 ## Current focus
 
-- Active work: signed Revolve/Groove angular start offsets and adjacent direction
-  buttons in milestone 3.9. Target: [REQ-014](PRODUCT_SPEC.md#capabilities-and-requirements).
-  Combined Pattern automated validation is recorded in milestone 3.7.
+- Active work: associative Trim Body for solids and sheets in [Phase 4](#trim-body),
+  targeting REQ-015 through REQ-017. Source, native build, and automated validation
+  are complete; physical viewport/keyboard acceptance remains pending.
+  Revolve/Groove angular-offset verification is recorded in milestone 3.9.
 - Extrude native build, 49 automated regressions, and task-pane visual inspection
   passed on 2026-09-28; see [validation evidence](#extrude-validation-evidence).
   Its manual viewport/keyboard acceptance remains pending in 2.2.3.
@@ -547,3 +548,67 @@ consolidation in 3.6.4 or the broader Revolve/Groove workflow audit.
 
 This work preserves existing stored feature types and properties; command
 consolidation, push/publication, and release packaging remain outside this task.
+
+
+<a id="trim-body"></a>
+
+## [   ] Phase 4: Associative Trim Body
+
+Outcome: select a target solid/sheet, cutter, and side to keep in one complete
+create/edit task, available from Part and Part Design. User-authorized scope;
+requirements REQ-015 through REQ-017 and [UI-004](UI_UX_SPEC.md#ui-004-trim-body-task-pane).
+Depends on: the existing Part geometry engine and native development build.
+
+### [ X ] 4.1 Implement geometry and shared task
+
+- [ X ] 4.1.1 Add a linked Trim Body feature reusing Part half-spaces, Boolean
+  common/cut, and BOPTools SplitAPI. Support datum planes, planar/curved faces,
+  connected sheets, solid/sheet targets, planar extension, and reversible keep side.
+  Reject incomplete or nonintersecting cuts and invalid solid closure.
+- [ X ] 4.1.2 Add Target then Tool selectors, side reversal and green viewport arrow,
+  live preview, refine/planar-extension controls, and error recovery in one new/edit
+  pane. Register the same command in both workbenches' menus and toolbars.
+- [ X ] 4.1.3 Persist input links, track parent-container placement changes, and
+  preserve transaction/visibility behavior. Keep source objects and Part Design
+  Body Tip unchanged; the result is a separate Part::FeaturePython object.
+
+### [   ] 4.2 Validate and prepare the local test build
+
+- [ X ] 4.2.1 Rebuild/link PartGui and PartDesignGui menu/toolbar entries, install
+  source-matching Python modules and icon into the existing Windows x64 Release
+  build. The separately installed FreeCAD was not used. No new dependencies.
+- [ X ] 4.2.2 Run native tests: **72 passed**, zero failures/errors/skips. Trim Body:
+  14 model and 10 GUI tests; existing Pad 14, Extrude 17, Revolve 5, Pattern 12.
+  Coverage includes analytical plane/cylinder/B-spline volumes and sheet areas,
+  connected curved tools, finite-cutter rejection, closed solids, selection and
+  both side buttons, datum planes, Body targets and nested placements, automatic
+  tool-parameter recomputation, save/reopen, Cancel, Undo/Redo, and arrow cleanup.
+  Fixed two issues found during development: finite planar half-spaces failed
+  outside a small tool's bounds, and resetting edit before abort committed Cancel.
+  Planar extension now uses an unbounded plane; Cancel aborts before resetEdit.
+  A toolbar-test assumption was corrected after confirming the isolated profile
+  intentionally hid Part Design toolbars; the test invokes the actual toolbar action.
+- [ X ] 4.2.4 Inspect native task and window captures for planar, curved, and sheet
+  targets in both keep directions. Controls fit and the green arrow reverses correctly.
+  FreeCAD image export omits transient annotations, so arrow visibility was verified
+  in native window captures. Saved an editable `TrimBodyExample.FCStd` in the evidence
+  directory. Python formatting/syntax, SVG XML, whitespace and documentation checks pass.
+- [   ] 4.2.3 Complete physical viewport selection, keyboard and high-DPI acceptance
+  using [the test procedure](../tests/TrimBody.md). Automated Qt tests and captured
+  layout inspection do not establish this manual gate.
+
+Evidence directory: `D:\Temp\Office-PC\freecad-plus-validation-20260928`.
+Native reports: `trim-gui-gui-results.json`, `trim-gui-TestTrimBody.log`,
+`trim-gui-TestTrimBodyGui.log`, and existing-suite logs with the `trim-gui-` prefix.
+Visual evidence: `trim-visual-check.json`, `trim-*-task.png`, and `trim-*-window.png`.
+Build logs: `trim-build-Part-Workbench.log`, `trim-build-PartGui-link.log`,
+`trim-build-PartDesign-Workbench.log`, `trim-build-PartDesignGui-link.log`.
+Launcher: `D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+Incremental modules are current; the main executable About/version stamp remains
+from its earlier build. This task does not publish a release or push local commits.
+
+Compatibility and geometry limits: one cutting tool, automatic extension for planar
+boundaries only. Curved tools must fully span each trimmed region; automatic curved
+Trim and Extend is future scope. Result recomputation needs the new BOPTools Python
+modules. Upstream-only recomputation, Linux/macOS validation, and packaging are not
+established. The output is associative but does not insert a new Part Design Body Tip.

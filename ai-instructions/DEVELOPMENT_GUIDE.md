@@ -121,6 +121,22 @@ against the matching GUI module. For curved-solid bounds after GUI rendering,
 use `Shape.optimalBoundingBox(False)` to avoid display-triangulation approximations;
 retain exact volume and bidirectional shape-difference assertions.
 
+For Trim Body, install the new `BOPTools/TrimAPI.py`, `TrimFeatures.py`, `TrimGui.py`,
+and `TrimBody.svg` through Part's CMake script list. Update both workbench InitGui
+scripts and rebuild/link the PartGui and PartDesignGui Workbench.cpp entries.
+The existing Part/BOPTools geometry kernel is reused; no new dependency is needed.
+Run [Trim Body model and GUI regressions](../tests/TrimBody.md), followed by the
+existing task suites to check selection, transaction, and scene-graph cleanup.
+The model suite is also registered with TestPartApp; GUI tests with TestPartGui.
+Keep source and runtime test files synchronized. A main executable's older About
+stamp does not identify the incrementally rebuilt GUI modules.
+
+Trim results are `Part::FeaturePython` objects linked to original inputs. The hidden
+PlacementSupport links trigger recomputation for moved parent containers. Validate
+links before geometry execution and clear stale Shape on failure. Cancel must abort
+the transaction before GUI resetEdit, which otherwise commits the pending edit.
+New saved results need these Python modules for recomputation in another installation.
+
 ## Release and recovery
 
 No fork release or installer is part of the current task. Local commits do not

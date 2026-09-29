@@ -3,7 +3,7 @@
 ## Interface scope
 
 This document specifies the fork's unified Extrude and Pattern task panes,
-angular offset controls for Revolution/Groove, and planned shared Add/Subtract
+angular offset controls for Revolution/Groove, the Trim Body pane, and planned shared Add/Subtract
 interaction for other feature families. The inherited desktop
 shell and unmodified workbenches retain upstream behavior; consult their source
 and the documentation linked in [the upstream overview](../README.md). This is
@@ -41,6 +41,7 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 | UI-001 | Extrude task pane | Choose Add/Subtract and configure a new or existing extrusion | `PartDesign_Extrude`; legacy Pad/Pocket commands; Edit Extrude | [UI-001](#ui-001-pad-task-pane) |
 | UI-002 | Pattern task pane | Choose Linear/Circular, features, and repetition parameters | `PartDesign_Pattern`; Edit Pattern | [UI-002](#ui-002-pattern-task-pane) |
 | UI-003 | Revolve/Groove angular controls | Offset the angular start and reverse direction within the existing create/edit pane | Revolution or Groove; edit existing feature | [UI-003](#ui-003-revolve-and-groove-angular-controls) |
+| UI-004 | Trim Body task pane | Select a target, cutting tool, and side to keep | Part or Part Design: Trim Body; double-click existing result | [UI-004](#ui-004-trim-body-task-pane) |
 
 ## Screen specifications
 
@@ -137,6 +138,32 @@ Keyboard/high-DPI/manual viewport acceptance is tracked separately in milestone 
 Source: [`TaskRevolutionParameters.cpp`](../src/Mod/PartDesign/Gui/TaskRevolutionParameters.cpp),
 [`TaskRevolutionParameters.ui`](../src/Mod/PartDesign/Gui/TaskRevolutionParameters.ui).
 Validation: [Revolve task procedure](../tests/RevolveTaskPanel.md).
+
+### UI-004: Trim Body task pane
+
+Satisfies REQ-015 through REQ-017. Invoke **Trim Body** from Part's Boolean menu or
+Boolean Tools toolbar, or Part Design's menu or Modeling Features toolbar. An open
+document is required; an active Body and preselection are optional. Double-clicking
+the result or choosing **Edit Trim Body** opens the same pane.
+
+| Control | Order and behavior |
+| --- | --- |
+| Target body | First section. Select/Clear one solid or sheet object in the current document. A viewport face pick selects its owning target object. |
+| Cutting tool | Second section. Select/Clear a datum plane, one face of another object, or a sheet. Selecting a whole solid as the tool is rejected; pick its face instead. After choosing a target, an empty tool field enters selection mode. |
+| Keep side | Text and adjacent reverse button flip the side to keep. The green viewport arrow points toward the kept side along the local tool normal. |
+| Extend planar tool | Enabled by default; extends a planar boundary across the target. Curved surfaces are not extended automatically and must span every region being trimmed. |
+| Refine result | Enabled by default; removes redundant result edges. |
+| Live preview and status | Preview hides the target and displays the kept result. Pausing preview defers computation until OK. Missing, self/dependent, wrong-document, or invalid cutting inputs stay editable with an explanation. |
+| OK / Cancel | OK recomputes and accepts only valid geometry, hides the source inputs, and shows the separate result. Cancel removes a pending new feature or restores an existing feature and input visibility. Both remove temporary selection observation and the arrow. |
+
+The source solid/sheet remains associative input. A Part Design Body keeps its Tip;
+the new result appears separately in the document tree. Reopen the result to change
+its target, cutter, or side. Original input visibility is restored while selecting.
+Solid cuts close newly exposed faces. This first implementation uses one cutter,
+not multiple cutting tools or an automatic curved-sheet Trim and Extend operation.
+The saved feature requires the new BOPTools Python modules to recompute.
+Source: [`TrimGui.py`](../src/Mod/Part/BOPTools/TrimGui.py).
+Validation: [Trim Body procedure](../tests/TrimBody.md).
 
 ## Open questions
 

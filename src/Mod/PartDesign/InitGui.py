@@ -58,6 +58,8 @@ class PartDesignWorkbench(Workbench):
 
         import PartDesignGui
         import PartDesign
+        from BOPTools.TrimGui import registerCommand
+        registerCommand()
 
         from PartDesign.InvoluteGearFeature import CommandInvoluteGear
 

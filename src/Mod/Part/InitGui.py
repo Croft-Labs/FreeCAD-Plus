@@ -42,6 +42,8 @@ class PartWorkbench(Gui.Workbench):
     def Initialize(self):
         # load the module
         import PartGui
+        from BOPTools.TrimGui import registerCommand
+        registerCommand()
 
         try:
             import BasicShapes.CommandShapes

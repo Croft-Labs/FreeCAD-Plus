@@ -94,7 +94,8 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     *bop << "Part_Boolean"
          << "Part_Cut"
          << "Part_Fuse"
-         << "Part_Common";
+         << "Part_Common"
+         << "Part_TrimBody";
 
     Gui::MenuItem* join = new Gui::MenuItem;
     join->setCommand("Join");
@@ -213,6 +214,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
             << "Part_Cut"
             << "Part_Fuse"
             << "Part_Common"
+            << "Part_TrimBody"
             << "Part_CompJoinFeatures"
             << "Part_CompSplitFeatures"
             << "Part_CheckGeometry"

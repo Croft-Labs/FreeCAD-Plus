@@ -61,6 +61,10 @@ set(BOPTools_Scripts
     BOPTools/SplitFeatures.py
     BOPTools/ToleranceFeatures.py
     BOPTools/Utils.py
+    BOPTools/TrimAPI.py
+    BOPTools/TrimFeatures.py
+    BOPTools/TrimGui.py
+    BOPTools/TrimBody.svg
 )
 
 set(CompoundTools_Scripts
@@ -88,6 +92,8 @@ set(Part_tests
     parttests/TestLinkArrayPath.py
     parttests/TestLinkArrayPoint.py
     parttests/TestPartMirror.py
+    parttests/TestTrimBody.py
+    parttests/TestTrimBodyGui.py
     parttests/TestFaceMakerUnifiedPlanar.py
     parttests/TestFaceMakerUnifiedNonPlanar.py
 )
