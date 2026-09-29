@@ -112,6 +112,30 @@ clearance conservative and clear stale paths before any validation that can fail
 
 ## Validation
 
+### Build and test batching
+
+User preference: do not create a new build after every change. When testing one
+feature would require a lengthy build, defer that build and its dependent tests
+until several related, authorized changes are ready to validate together.
+
+- Continue quick source review, formatting, syntax checks and tests that can run
+  against compatible existing binaries while developing the batch.
+- Record each changed feature and its pending build/runtime checks in the roadmap.
+  Do not mark those checks complete based on an older executable.
+- At the batch checkpoint, build once and run the relevant tests for all included
+  changes together. An explicit user request for a build or immediate validation
+  can bring that checkpoint forward.
+- Reuse the existing build directory and the smallest required incremental
+  targets. For compatible Python-only changes, synchronize the changed modules
+  and verify their identities without rebuilding native binaries.
+- Do not start a slow build merely to close an individual task or conversation
+  turn. If no further authorized changes are ready, leave an explicit validation
+  handoff for the next batch; do not expand implementation scope to fill it.
+
+This changes when build-dependent checks run, not the acceptance criteria below.
+
+### Runtime validation
+
 For a consolidated check of all implemented workflows and the related legacy
 geometry suites, launch [`tests/ValidateWorkflows.FCMacro`](../tests/ValidateWorkflows.FCMacro)
 with the explicitly resolved development executable. Set `FREECAD_PLUS_VALIDATION_DIR`

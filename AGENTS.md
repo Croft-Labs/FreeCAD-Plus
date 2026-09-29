@@ -33,6 +33,10 @@ Do not claim to have read missing guidance or maintain an independent master cop
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).
 - Record implementation, build, GUI validation, and publication separately in
   [the roadmap](ai-instructions/DEVELOPMENT_ROADMAP.md). A local commit is not a release.
+- Batch related authorized changes before a costly build and test pass; do not
+  rebuild after every change or just to close one feature task. Keep quick checks
+  running and record deferred validation. Follow the
+  [build batching policy](ai-instructions/DEVELOPMENT_GUIDE.md#build-and-test-batching).
 - The user authorizes periodic pushes to the configured `origin` GitHub fork.
   Push coherent, validated commits at completed milestones and clean stopping points;
   verify the remote branch afterward. Do not force-push. This does not authorize
