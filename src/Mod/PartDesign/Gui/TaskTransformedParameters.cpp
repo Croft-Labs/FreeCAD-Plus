@@ -42,6 +42,7 @@
 #include <Mod/PartDesign/App/Body.h>
 #include <Mod/PartDesign/App/FeatureAddSub.h>
 #include <Mod/PartDesign/App/FeatureTransformed.h>
+#include <Mod/PartDesign/App/FeaturePattern.h>
 
 #include "ui_TaskTransformedParameters.h"
 #include "TaskTransformedParameters.h"
@@ -123,6 +124,11 @@ void TaskTransformedParameters::setupUI()
     auto pcTransformed = getObject<PartDesign::Transformed>();
 
     using Mode = PartDesign::Transformed::Mode;
+    if (getObject<PartDesign::Pattern>()) {
+        ui->radioTransformToolShapes->setText(tr("Selected features"));
+        ui->radioTransformBody->setText(tr("Whole body"));
+        ui->verticalLayout_3->insertWidget(0, ui->radioTransformToolShapes);
+    }
 
     ui->buttonGroupMode->setId(ui->radioTransformBody, static_cast<int>(Mode::WholeShape));
     ui->buttonGroupMode->setId(ui->radioTransformToolShapes, static_cast<int>(Mode::Features));
@@ -153,6 +159,16 @@ void TaskTransformedParameters::setupUI()
 
     setupParameterUI(ui->featureUI);  // create parameter UI widgets
     this->groupLayout()->addWidget(proxy);
+}
+
+void TaskTransformedParameters::startFeatureSelection()
+{
+    ui->buttonAddFeature->setChecked(true);
+}
+
+void TaskTransformedParameters::insertWorkflowHeader(QWidget* widget)
+{
+    ui->verticalLayout->insertWidget(0, widget);
 }
 
 void TaskTransformedParameters::slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj)
@@ -207,8 +223,12 @@ void TaskTransformedParameters::addObject(App::DocumentObject* obj)
 
 void TaskTransformedParameters::removeObject(App::DocumentObject* obj)
 {
-    QString label = QString::fromUtf8(obj->Label.getValue());
-    removeItemFromListWidget(ui->listWidgetFeatures, label);
+    const QString name = QString::fromLatin1(obj->getNameInDocument());
+    for (int row = ui->listWidgetFeatures->count() - 1; row >= 0; --row) {
+        if (ui->listWidgetFeatures->item(row)->data(Qt::UserRole).toString() == name) {
+            delete ui->listWidgetFeatures->takeItem(row);
+        }
+    }
 }
 
 bool TaskTransformedParameters::originalSelected(const Gui::SelectionChanges& msg)
@@ -223,6 +243,13 @@ bool TaskTransformedParameters::originalSelected(const Gui::SelectionChanges& ms
 
         PartDesign::Transformed* pcTransformed = getObject();
         App::DocumentObject* selectedObject = pcTransformed->getDocument()->getObject(msg.pObjectName);
+        auto* body = pcTransformed->getFeatureBody();
+        const auto dependents = pcTransformed->getInListEx(true);
+        if (!selectedObject || !body || selectedObject == pcTransformed
+            || PartDesign::Body::findBodyOf(selectedObject) != body
+            || dependents.count(selectedObject)) {
+            return false;
+        }
         if (selectedObject->isDerivedFrom<PartDesign::FeatureAddSub>()) {
 
             // Do the same like in TaskDlgTransformedParameters::accept() but without doCommand
@@ -248,6 +275,7 @@ bool TaskTransformedParameters::originalSelected(const Gui::SelectionChanges& ms
             }
             setupTransaction();
             pcTransformed->Originals.setValues(originals);
+            Q_EMIT originalsChanged();
             recomputeFeature();
 
             return true;
@@ -297,16 +325,23 @@ void TaskTransformedParameters::onModeChanged(int mode_id)
     }
 
     auto pcTransformed = getObject<PartDesign::Transformed>();
+    setupTransaction();
     pcTransformed->TransformMode.setValue(mode_id);
 
     using Mode = PartDesign::Transformed::Mode;
     Mode const mode = static_cast<Mode>(mode_id);
 
     ui->groupFeatureList->setEnabled(mode == Mode::Features);
-    if (mode == Mode::WholeShape) {
-        ui->listWidgetFeatures->clear();
+    ui->listWidgetFeatures->clear();
+    if (mode == Mode::Features) {
+        for (auto* original : pcTransformed->getSortedOriginals()) {
+            if (original) {
+                addObject(original);
+            }
+        }
     }
-    setupTransaction();
+    exitSelectionMode();
+    Q_EMIT originalsChanged();
     recomputeFeature();
 }
 
@@ -370,10 +405,13 @@ void TaskTransformedParameters::onFeatureDeleted()
         Base::Console().error("PartDesign Pattern: No feature selected for removing.\n");
         return;  // no current row selected
     }
-    originals.erase(originals.begin() + currentRow);
+    const auto name = ui->listWidgetFeatures->item(currentRow)->data(Qt::UserRole).toString();
+    auto* original = pcTransformed->getDocument()->getObject(name.toLatin1().constData());
+    std::erase(originals, original);
     setupTransaction();
     pcTransformed->Originals.setValues(originals);
     ui->listWidgetFeatures->model()->removeRow(currentRow);
+    Q_EMIT originalsChanged();
     recomputeFeature();
 }
 
@@ -405,7 +443,7 @@ void TaskTransformedParameters::fillAxisCombo(Gui::ComboLinks& combolinks, Part:
     }
 
     // add part axes
-    App::DocumentObject* obj = getObject();
+    App::DocumentObject* obj = getTopTransformedObject();
     PartDesign::Body* body = PartDesign::Body::findBodyOf(obj);
 
     if (body) {
@@ -441,7 +479,7 @@ void TaskTransformedParameters::fillPlanesCombo(Gui::ComboLinks& combolinks, Par
     }
 
     // add part baseplanes
-    App::DocumentObject* obj = getObject();
+    App::DocumentObject* obj = getTopTransformedObject();
     PartDesign::Body* body = PartDesign::Body::findBodyOf(obj);
 
     if (body) {

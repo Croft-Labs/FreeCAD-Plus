@@ -43,6 +43,7 @@ set(PartDesign_TestScripts
     PartDesignTests/TestPad.py
     PartDesignTests/TestPocket.py
     PartDesignTests/TestExtrude.py
+    PartDesignTests/TestPattern.py
     PartDesignTests/TestHelix.py
     PartDesignTests/TestHole.py
     PartDesignTests/TestRevolve.py
@@ -72,6 +73,7 @@ if(BUILD_GUI)
         PartDesignTests/TestMaterial.py
         PartDesignTests/TestPadTaskPanel.py
         PartDesignTests/TestExtrudeTaskPanel.py
+        PartDesignTests/TestPatternTaskPanel.py
         PartDesignTests/TestSuppressed.py
     )
 endif(BUILD_GUI)

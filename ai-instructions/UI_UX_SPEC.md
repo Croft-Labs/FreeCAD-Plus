@@ -2,8 +2,8 @@
 
 ## Interface scope
 
-This document specifies the fork's unified Extrude task-pane changes and the planned shared
-Add/Subtract interaction. The inherited desktop
+This document specifies the fork's unified Extrude and Pattern task panes and the
+planned shared Add/Subtract interaction for other feature families. The inherited desktop
 shell and unmodified workbenches retain upstream behavior; consult their source
 and the documentation linked in [the upstream overview](../README.md). This is
 not a claim that every inherited screen has been inventoried or revalidated.
@@ -38,6 +38,7 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 | ID | Name | Purpose | Entry point | Specification |
 | --- | --- | --- | --- | --- |
 | UI-001 | Extrude task pane | Choose Add/Subtract and configure a new or existing extrusion | `PartDesign_Extrude`; legacy Pad/Pocket commands; Edit Extrude | [UI-001](#ui-001-pad-task-pane) |
+| UI-002 | Pattern task pane | Choose Linear/Circular, features, and repetition parameters | `PartDesign_Pattern`; Edit Pattern | [UI-002](#ui-002-pattern-task-pane) |
 
 ## Screen specifications
 
@@ -89,8 +90,30 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
   [`TaskPadPocketParameters.ui`](../src/Mod/PartDesign/Gui/TaskPadPocketParameters.ui).
   Test procedure: [Pad regressions](../tests/PadTaskPanel.md).
 
+### UI-002: Pattern task pane
+
+Satisfies REQ-010 through REQ-012. Invoke **Pattern** in Part Design with an active
+Body, with or without preselection, or double-click an existing combined Pattern.
+Both entry paths use the same task. Legacy Linear/Polar commands remain callable
+and edit their original types; they are not silently converted.
+
+| Control | Order and behavior |
+| --- | --- |
+| Pattern type | First field: Linear or Circular. Switching replaces only the displayed parameter controls and active transformation; the result object and both sets of saved settings remain. |
+| Features | Immediately follows the type selector. Add/Remove Feature and the list use model/tree selection. An empty new pattern enters Add Feature mode. Transform body remains an explicit alternative. Reject other-body and dependent-feature picks. |
+| Direction / Axis | Follows the feature list. Linear exposes direction; Circular exposes rotation axis. Choose a Body/sketch axis or pick a reference in the model. Reference picking and feature picking are mutually exclusive. |
+| Dimensions and occurrences | Linear: total length or spacing and count, with optional second direction. Circular: total angle or angular spacing and count. Retain reverse, expressions, custom spacing, and instance suppression. |
+| Preview | Existing recompute and preview controls. Empty/invalid inputs stay editable; no stale valid result may be accepted after removing all features. |
+| OK / Cancel | Standard task buttons commit a valid result or restore the pre-edit document. No nested OK is needed to finish defining the pattern. |
+
+Persistence uses a new `PartDesign::Pattern` result with owned Linear/Polar settings,
+reusing MultiTransform's geometry engine. Existing stored types and property units
+are unchanged. Old upstream versions do not know the new result type; cross-version
+recomputation is not established. Keyboard/viewport acceptance remains a separate
+manual gate; see [the test procedure](../tests/PatternTaskPanel.md).
+
 ## Open questions
 
-The next unified family and multi-source profile behavior are [product questions](PRODUCT_SPEC.md#open-questions).
+Further unified families and multi-source profile behavior are [product questions](PRODUCT_SPEC.md#open-questions).
 Record any visual or interaction defects found by GUI validation against UI-001
 and the active roadmap milestone; do not silently change the intended workflow.

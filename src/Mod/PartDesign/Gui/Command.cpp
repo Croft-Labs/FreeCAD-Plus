@@ -51,6 +51,7 @@
 #include <Mod/PartDesign/App/FeatureBoolean.h>
 #include <Mod/PartDesign/App/FeatureGroove.h>
 #include <Mod/PartDesign/App/FeatureMultiTransform.h>
+#include <Mod/PartDesign/App/FeaturePattern.h>
 #include <Mod/PartDesign/App/FeatureRevolution.h>
 #include <Mod/PartDesign/App/FeatureTransformed.h>
 #include <Mod/PartDesign/App/DatumLine.h>
@@ -2444,6 +2445,58 @@ bool CmdPartDesignMirrored::isActive()
 }
 
 //===========================================================================
+// PartDesign_Pattern
+//===========================================================================
+DEF_STD_CMD_A(CmdPartDesignPattern)
+
+CmdPartDesignPattern::CmdPartDesignPattern()
+    : Command("PartDesign_Pattern")
+{
+    sAppModule = "PartDesign";
+    sGroup = QT_TR_NOOP("PartDesign");
+    sMenuText = QT_TR_NOOP("Pattern");
+    sToolTipText = QT_TR_NOOP(
+        "Creates a linear or circular pattern; select the type and features in the task pane"
+    );
+    sWhatsThis = "PartDesign_Pattern";
+    sStatusTip = sToolTipText;
+    sPixmap = "PartDesign_LinearPattern";
+}
+
+void CmdPartDesignPattern::activated(int)
+{
+    auto* body = PartDesignGui::getBody(true);
+    if (!body) {
+        return;
+    }
+    auto worker = [this, body](App::DocumentObject* object, std::vector<App::DocumentObject*>) {
+        auto* pattern = static_cast<PartDesign::Pattern*>(object);
+        const auto& settings = pattern->PatternSettings.getValues();
+        FCMD_OBJ_CMD(
+            settings[0],
+            "Direction = (" << getObjectCmd(body->getOrigin()->getX()) << ", [''])"
+        );
+        FCMD_OBJ_CMD(
+            settings[0],
+            "Direction2 = (" << getObjectCmd(body->getOrigin()->getY()) << ", [''])"
+        );
+        FCMD_OBJ_CMD(settings[1], "Axis = (" << getObjectCmd(body->getOrigin()->getZ()) << ", [''])");
+        // Opening with no preselection starts feature picking, not an implicit whole-body pattern.
+        if (auto* previous = body->getPrevSolidFeature(pattern)) {
+            FCMD_OBJ_CMD(pattern, "BaseFeature = " << getObjectCmd(previous));
+        }
+        FCMD_OBJ_CMD(pattern, "TransformMode = 'Features'");
+        finishTransformed(this, pattern);
+    };
+    prepareTransformed(body, this, "Pattern", worker);
+}
+
+bool CmdPartDesignPattern::isActive()
+{
+    return hasActiveDocument();
+}
+
+//===========================================================================
 // PartDesign_LinearPattern
 //===========================================================================
 DEF_STD_CMD_A(CmdPartDesignLinearPattern)
@@ -2928,6 +2981,7 @@ void CreatePartDesignCommands()
     rcCmdMgr.addCommand(new CmdPartDesignDefeaturing());
 
     rcCmdMgr.addCommand(new CmdPartDesignMirrored());
+    rcCmdMgr.addCommand(new CmdPartDesignPattern());
     rcCmdMgr.addCommand(new CmdPartDesignLinearPattern());
     rcCmdMgr.addCommand(new CmdPartDesignPolarPattern());
     // rcCmdMgr.addCommand(new CmdPartDesignScaled());

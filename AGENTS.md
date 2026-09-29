@@ -20,9 +20,9 @@ Do not claim to have read missing guidance or maintain an independent master cop
 
 - Work on this FreeCAD Plus checkout. Ignore the separately installed FreeCAD;
   do not modify it or use it as evidence for this fork's changes.
-- Current implementation scope is the unified Pad/Pocket Extrude task workflow.
-  Other Part Design operations are future
-  scope; the roadmap does not authorize implementing them automatically.
+- Current implementation scope includes unified Pad/Pocket Extrude and the
+  user-requested Linear/Circular Pattern task workflow. Other Part Design
+  operations remain future scope; the roadmap does not authorize them automatically.
 - Preserve FreeCAD document/property identities, geometry semantics, licensing,
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).
 - Record implementation, build, GUI validation, and publication separately in

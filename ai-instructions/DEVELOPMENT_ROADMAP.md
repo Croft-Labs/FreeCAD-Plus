@@ -2,12 +2,11 @@
 
 ## Current focus
 
-- Active work: finish manual viewport acceptance in 2.2.3 for the unified Extrude
-  workflow. Native build, 49 automated regressions, and task-pane visual inspection
+- Active work: the user-requested combined Linear/Circular Pattern workflow in
+  milestone 3.7. Target: [REQ-010 through REQ-012](PRODUCT_SPEC.md#capabilities-and-requirements).
+- Extrude native build, 49 automated regressions, and task-pane visual inspection
   passed on 2026-09-28; see [validation evidence](#extrude-validation-evidence).
-- Target outcome: [REQ-001 through REQ-009](PRODUCT_SPEC.md#capabilities-and-requirements).
-- Source implementation and automated validation are complete; manual viewport
-  and keyboard acceptance remain pending.
+  Its manual viewport/keyboard acceptance remains pending in 2.2.3.
   This roadmap records status; it does not authorize new phases or external publication.
 - The [Part Design workflow audit](#part-design-workflow-audit) inventories the
   remaining selection and complete-editing work. Audit complete; implementation pending.
@@ -394,3 +393,60 @@ retain their own workflows while sharing appropriate selection and task conventi
   parameter/identity retention, base-solid validation, save/reopen, Cancel, and
   Undo/Redo. Finish the manual rotated/reference/custom-direction, taper, start/end
   reference, and downstream-pattern scenarios in the [test procedure](../tests/PadTaskPanel.md).
+
+
+<a id="combined-pattern-workflow"></a>
+
+### [   ] 3.7 Combined Linear/Circular Pattern workflow
+
+Outcome: [UI-002](UI_UX_SPEC.md#ui-002-pattern-task-pane) satisfies REQ-010/011/012.
+Authorized by the user's request to combine pattern buttons with type first,
+features second, and direction/axis and parameters after them. This advances the
+Linear/Polar portion of 3.4.2; Mirror, Path, Point, concentric CircularPattern, and
+other MultiTransform consolidation remain separate future work.
+
+- [ X ] 3.7.1 Implement one Pattern command in standard menus/toolbars/task watchers.
+  Creation without preselection and reopening the new Pattern share the same pane.
+  Linear/Circular is first, followed by selected features and mode-specific controls.
+  Keep legacy Linear/Polar commands and their persisted types unchanged.
+- [ X ] 3.7.2 Preserve result identity and separate mode settings using a new
+  `PartDesign::Pattern` feature backed by the existing MultiTransform engine.
+  The result owns Linear/Polar parameter helpers in the same Body. Switching selects
+  an existing helper; it does not replace the result, expressions, or original links.
+  Empty patterns stay editable and cannot be accepted. Feature picks reject other
+  bodies and dependents; list removal uses identity instead of labels/history order.
+- [ X ] 3.7.3 Build and run model/GUI regressions and inspect the actual task layout.
+  Windows x64 Release PartDesign App/Gui modules rebuilt with the existing MSVC/Qt
+  LibPack configuration outside Google Drive. All **91 tests pass**: 58 model tests
+  (Pattern 5, Linear 16, Polar 6, MultiTransform 3, Extrude 8, Pad 14, Pocket 6),
+  plus 33 GUI tests (Pattern 12, Pad 14, Extrude 7), with no failures/errors/skips.
+  Qt tests cover field ordering, no-preselection/face picking, mode switching, real
+  direction/spacing/count controls, retained expressions, feature removal with
+  duplicate labels/out-of-history order, invalid-body/dependent picks, empty-input
+  rejection/recovery, same-pane reopening, Cancel, Undo/Redo, and legacy commands.
+  Disabled live preview is honored and OK recomputes the final result.
+  Existing MultiTransform embedded editing also passes. Corrected a Cancel cleanup
+  path that could reapply parameters after rollback, and hid the embedded task
+  controller to avoid overlaying the initial pane header.
+  Task captures show Linear and Circular layouts in the requested order. The same
+  Pattern result computes 8024 mm3 with three linear instances and 8032 mm3 with four
+  circular instances in the regression fixture. Physical interaction remains 3.7.4.
+  Evidence directory: `D:\Temp\Office-PC\freecad-plus-validation-20260928`:
+  `pattern-model-results.json`, `pattern-gui-results.json`, `pattern-visual-check.json`,
+  `pattern-linear.png`, `pattern-circular.png`, and `pattern-build-*.log`.
+  The initial build found a task-header API mismatch, corrected to `setHeaderText`.
+  The GUI harness invokes FreeCAD's unsigned count slot; using Qt's signed setter
+  initially requested an excessive count, so that run was stopped and corrected.
+  Final build/link and runtime reports supersede those intermediate failures.
+  Source formatting, Python syntax, whitespace, and documentation checks pass.
+  Launcher: `D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+  This is an incremental development build; its About/version stamp still reflects
+  the earlier main-executable build, while the changed App/Gui modules are rebuilt.
+- [   ] 3.7.4 Complete physical viewport/keyboard/high-DPI acceptance using
+  [the Pattern procedure](../tests/PatternTaskPanel.md). Automated Qt interaction and
+  captured layout inspection do not establish this manual gate.
+
+Compatibility boundary: old Linear/Polar features keep their existing full editor;
+there is no automatic conversion to the new type. Unmodified upstream FreeCAD does
+not recognize `PartDesign::Pattern`; cross-version recomputation and release packaging
+are not established. This work is local and does not authorize a push or publication.

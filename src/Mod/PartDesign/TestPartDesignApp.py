@@ -35,6 +35,7 @@ from PartDesignTests.TestShapeBinder import TestSubShapeBinder
 from PartDesignTests.TestPad import TestPad
 from PartDesignTests.TestPocket import TestPocket
 from PartDesignTests.TestExtrude import TestExtrude
+from PartDesignTests.TestPattern import TestPattern
 from PartDesignTests.TestHelix import TestHelix
 from PartDesignTests.TestHole import TestHole
 from PartDesignTests.TestRevolve import TestRevolve

@@ -24,6 +24,8 @@
 
 
 #include <QAction>
+#include <QComboBox>
+#include <QFormLayout>
 
 
 #include <App/Document.h>
@@ -37,6 +39,7 @@
 #include <Mod/PartDesign/App/FeatureLinearPattern.h>
 #include <Mod/PartDesign/App/FeatureMirrored.h>
 #include <Mod/PartDesign/App/FeatureMultiTransform.h>
+#include <Mod/PartDesign/App/FeaturePattern.h>
 #include <Mod/PartDesign/App/FeaturePolarPattern.h>
 #include <Mod/PartDesign/App/FeatureScaled.h>
 
@@ -60,12 +63,41 @@ TaskMultiTransformParameters::TaskMultiTransformParameters(
     , ui(new Ui_TaskMultiTransformParameters)
 {
     setupUI();
+    if (auto* pattern = getObject<PartDesign::Pattern>(); pattern
+        && pattern->Originals.getValues().empty() && pattern->TransformMode.getValue() == 0) {
+        startFeatureSelection();
+    }
 }
 
 void TaskMultiTransformParameters::setupParameterUI(QWidget* widget)
 {
     ui->setupUi(widget);
     QMetaObject::connectSlotsByName(this);
+
+    if (auto* pattern = getObject<PartDesign::Pattern>()) {
+        setHeaderText(tr("Pattern Parameters"));
+        ui->label->hide();
+        ui->listTransformFeatures->hide();
+        ui->buttonOK->hide();
+        auto* header = new QWidget(widget);
+        header->setObjectName(QStringLiteral("patternTypeHeader"));
+        auto* layout = new QFormLayout(header);
+        layout->setContentsMargins(0, 0, 0, 0);
+        patternType = new QComboBox(header);
+        patternType->setObjectName(QStringLiteral("patternType"));
+        patternType->addItems({tr("Linear"), tr("Circular")});
+        patternType->setCurrentIndex(static_cast<int>(pattern->PatternType.getValue()));
+        layout->addRow(tr("Pattern type"), patternType);
+        insertWorkflowHeader(header);
+        connect(
+            patternType,
+            &QComboBox::currentIndexChanged,
+            this,
+            &TaskMultiTransformParameters::changePatternType
+        );
+        openPatternTask();
+        return;
+    }
 
     // Create a context menu for the listview of transformation features
     auto action = new QAction(tr("Edit"), ui->listTransformFeatures);
@@ -141,6 +173,37 @@ void TaskMultiTransformParameters::setupParameterUI(QWidget* widget)
     }
 }
 
+void TaskMultiTransformParameters::openPatternTask()
+{
+    auto* pattern = getObject<PartDesign::Pattern>();
+    subFeature = pattern ? pattern->getActivePattern() : nullptr;
+    if (subFeature) {
+        subTask = new TaskPatternParameters(this, ui->subFeatureWidget);
+        // The controls live in subFeatureWidget; the task object is only their controller.
+        subTask->hide();
+        subTask->setRecomputeOnChange(!blockUpdate);
+        subTask->setEnabledTransaction(isEnabledTransaction());
+    }
+}
+
+void TaskMultiTransformParameters::changePatternType(int index)
+{
+    auto* pattern = getObject<PartDesign::Pattern>();
+    if (!pattern || index < 0 || index > 1) {
+        return;
+    }
+    setupTransaction();
+    closeSubTask();
+    FCMD_OBJ_CMD(pattern, "PatternType = " << index);
+    openPatternTask();
+    recomputeFeature();
+    if (pattern->Originals.getValues().empty()
+        && pattern->TransformMode.getValue()
+            == static_cast<long>(PartDesign::Transformed::Mode::Features)) {
+        startFeatureSelection();
+    }
+}
+
 void TaskMultiTransformParameters::retranslateParameterUI(QWidget* widget)
 {
     ui->retranslateUi(widget);
@@ -154,14 +217,14 @@ void TaskMultiTransformParameters::slotDeletedObject(const Gui::ViewProviderDocu
     TaskTransformedParameters::slotDeletedObject(Obj);
 }
 
-void TaskMultiTransformParameters::closeSubTask()
+void TaskMultiTransformParameters::closeSubTask(bool apply)
 {
     if (subTask) {
         ui->buttonOK->hide();
         exitSelectionMode();
         // The subfeature can already be deleted (e.g. cancel) so we have to check before
         // calling apply
-        if (subFeature) {
+        if (subFeature && apply) {
             subTask->apply();
         }
 
@@ -517,6 +580,9 @@ void TaskMultiTransformParameters::onSubTaskButtonOK()
 void TaskMultiTransformParameters::onUpdateView(bool on)
 {
     blockUpdate = !on;
+    if (patternType && subTask) {
+        subTask->setRecomputeOnChange(on);
+    }
     if (on) {
         recomputeFeature();
     }
@@ -524,6 +590,13 @@ void TaskMultiTransformParameters::onUpdateView(bool on)
 
 void TaskMultiTransformParameters::apply()
 {
+    if (auto* pattern = getObject<PartDesign::Pattern>()) {
+        if (subTask) {
+            subTask->apply();
+        }
+        FCMD_OBJ_CMD(pattern, "PatternType = " << pattern->PatternType.getValue());
+        return;
+    }
     auto pcMultiTransform = getObject<PartDesign::MultiTransform>();
     std::vector<App::DocumentObject*> transformFeatures = pcMultiTransform->Transformations.getValues();
     std::stringstream str;
@@ -540,7 +613,9 @@ void TaskMultiTransformParameters::apply()
 TaskMultiTransformParameters::~TaskMultiTransformParameters()
 {
     try {
-        closeSubTask();
+        // Pattern applies on OK or a type switch. Destruction can follow Cancel,
+        // after the transaction has already restored the original parameters.
+        closeSubTask(!patternType);
     }
     catch (const Py::Exception&) {
         Base::PyException exc;  // extract the Python error text

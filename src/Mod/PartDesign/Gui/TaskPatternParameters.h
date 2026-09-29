@@ -49,6 +49,7 @@ public:
     ~TaskPatternParameters() override;
 
     void apply() override;
+    void refreshReferences();
 
 protected:
     void onSelectionChanged(const Gui::SelectionChanges& msg) override;

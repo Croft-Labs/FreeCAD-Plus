@@ -91,6 +91,12 @@ TaskPatternParameters::TaskPatternParameters(ViewProviderTransformed* Transforme
     , ui(new Ui_TaskPatternParameters)
 {
     setupUI();
+    connect(
+        this,
+        &TaskTransformedParameters::originalsChanged,
+        this,
+        &TaskPatternParameters::refreshReferences
+    );
     updatePatternSpacingLabels();
 }
 
@@ -102,6 +108,12 @@ TaskPatternParameters::TaskPatternParameters(
     , ui(new Ui::TaskPatternParameters)
 {
     setupParameterUI(parameterWidget);
+    connect(
+        parentTask,
+        &TaskTransformedParameters::originalsChanged,
+        this,
+        &TaskPatternParameters::refreshReferences
+    );
     updatePatternSpacingLabels();
 }
 
@@ -155,6 +167,18 @@ void TaskPatternParameters::setupParameterUI(QWidget* widget)
 
     // --- Task Specific Setup ---
     showOriginAxes(true);  // Show origin helper axes
+}
+
+void TaskPatternParameters::refreshReferences()
+{
+    if (auto* primary = getPrimaryParametersWidget()) {
+        fillDirectionCombo(primary->dirLinks, Part::LinearPatternDirection::First);
+    }
+    if (auto* secondary = getSecondaryParametersWidget()) {
+        fillDirectionCombo(secondary->dirLinks, Part::LinearPatternDirection::Second);
+    }
+    updatePatternParameterUI();
+    updatePatternSpacingLabels();
 }
 
 void TaskPatternParameters::retranslateParameterUI(QWidget* widget)
@@ -236,7 +260,7 @@ std::string TaskPatternParameters::buildDirectionReferencePythonString(
 
 void TaskPatternParameters::showOriginAxes(bool show)
 {
-    PartDesign::Body* body = PartDesign::Body::findBodyOf(getObject());
+    PartDesign::Body* body = PartDesign::Body::findBodyOf(getTopTransformedObject());
     if (body) {
         try {
             App::Origin* origin = body->getOrigin();
@@ -328,6 +352,9 @@ void TaskPatternParameters::onUpdateView(bool on)
     if (on) {
         PartGui::TaskPatternParameters::kickUpdateViewTimer();
     }
+    else {
+        cancelPendingUpdate();
+    }
 }
 
 void TaskPatternParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
@@ -349,7 +376,7 @@ void TaskPatternParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 
     std::vector<std::string> directions;
     App::DocumentObject* selObj = nullptr;
-    getReferencedSelection(patternObj, msg, selObj, directions);
+    getReferencedSelection(getTopTransformedObject(), msg, selObj, directions);
     if (!selObj) {
         const QString warning = [patternObj]() {
             if (patternObj->isDerivedFrom<PartDesign::PointPattern>()) {
@@ -416,7 +443,9 @@ void TaskPatternParameters::apply()
     // This triggers accept() before the update timer for the 3D view has a
     // chance to fire. If the timer is active, it means a recompute is
     // pending.
-    consumePendingUpdate();
+    if (!consumePendingUpdate() && blockUpdate) {
+        recomputePatternFeature();
+    }
 }
 
 Base::Vector3d TaskPatternParameters::getStartPoint() const
@@ -428,7 +457,7 @@ Base::Vector3d TaskPatternParameters::getStartPoint() const
         return startPoint;
     }
 
-    std::vector<App::DocumentObject*> originals = pattern->getOriginals();
+    std::vector<App::DocumentObject*> originals = getTopTransformedObject()->getOriginals();
     if (!originals.empty()) {
         BRep_Builder builder;
         TopoDS_Compound compoundShape;

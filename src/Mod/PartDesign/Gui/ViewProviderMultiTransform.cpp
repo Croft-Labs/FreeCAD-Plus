@@ -26,6 +26,7 @@
 #include "ViewProviderMultiTransform.h"
 #include "TaskMultiTransformParameters.h"
 #include <Mod/PartDesign/App/FeatureMultiTransform.h>
+#include <Mod/PartDesign/App/FeaturePattern.h>
 #include <App/Document.h>
 #include <Gui/Command.h>
 
@@ -41,12 +42,17 @@ TaskDlgFeatureParameters* ViewProviderMultiTransform::getEditDialog()
 const std::string& ViewProviderMultiTransform::featureName() const
 {
     static const std::string name = "MultiTransform";
-    return name;
+    static const std::string patternIcon = "LinearPattern";
+    return getObject()->isDerivedFrom<PartDesign::Pattern>() ? patternIcon : name;
 }
 
 void ViewProviderMultiTransform::setupContextMenu(QMenu* menu, QObject* receiver, const char* member)
 {
-    addDefaultAction(menu, QObject::tr("Edit Multi-Transform"));
+    addDefaultAction(
+        menu,
+        getObject()->isDerivedFrom<PartDesign::Pattern>() ? QObject::tr("Edit Pattern")
+                                                          : QObject::tr("Edit Multi-Transform")
+    );
     PartDesignGui::ViewProvider::setupContextMenu(menu, receiver, member);  // clazy:exclude=skipped-base-method
 }
 
@@ -57,7 +63,10 @@ std::vector<App::DocumentObject*> ViewProviderMultiTransform::claimChildren() co
         return {};  // TODO: Show error?
     }
 
-    std::vector<App::DocumentObject*> transformFeatures = pcMultiTransform->Transformations.getValues();
+    auto* pattern = freecad_cast<PartDesign::Pattern*>(pcMultiTransform);
+    std::vector<App::DocumentObject*> transformFeatures = pattern
+        ? pattern->PatternSettings.getValues()
+        : pcMultiTransform->Transformations.getValues();
     return transformFeatures;
 }
 
@@ -65,7 +74,10 @@ bool ViewProviderMultiTransform::onDelete(const std::vector<std::string>& svec)
 {
     // Delete the transformation features
     PartDesign::MultiTransform* pcMultiTransform = getObject<PartDesign::MultiTransform>();
-    std::vector<App::DocumentObject*> transformFeatures = pcMultiTransform->Transformations.getValues();
+    auto* pattern = freecad_cast<PartDesign::Pattern*>(pcMultiTransform);
+    std::vector<App::DocumentObject*> transformFeatures = pattern
+        ? pattern->PatternSettings.getValues()
+        : pcMultiTransform->Transformations.getValues();
 
     // if the multitransform object was deleted the transformed features must be deleted, too
     for (auto it : transformFeatures) {

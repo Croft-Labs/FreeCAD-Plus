@@ -82,6 +82,11 @@ public:
     /// Apply changes for python console
     virtual void apply() = 0;
 
+    void setRecomputeOnChange(bool enabled)
+    {
+        onUpdateView(enabled);
+    }
+
     /*!
      * \brief setEnabledTransaction
      * The transaction handling of this panel can be disabled if there is another
@@ -95,11 +100,18 @@ public:
 
     static void removeItemFromListWidget(QListWidget* widget, const QString& itemstr);
 
+Q_SIGNALS:
+    void originalsChanged();
+
 protected:
     /** Setup the standalone UI.
      * Call this in the derived destructor with ViewProvider.
      */
     void setupUI();
+
+    /// Insert the operation selector before the common feature list.
+    void insertWorkflowHeader(QWidget* widget);
+    void startFeatureSelection();
 
     /**
      * Returns the base transformation

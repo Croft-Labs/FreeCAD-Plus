@@ -38,9 +38,10 @@ successful execution are separate facts.
 | Whitespace | Root / PowerShell | `git -c core.whitespace=cr-at-eol diff --check` | Accommodates existing tracked CRLF files without normalizing unrelated lines. |
 | Configure/build | Root / PowerShell | Windows procedure below; [upstream build workflow](../.github/workflows/sub_buildWindows.yml) | Focused native targets built; [results](DEVELOPMENT_ROADMAP.md#extrude-validation-evidence). |
 | Run focused GUI tests | Built fork / Python console | [Pad test procedure](../tests/PadTaskPanel.md) | Requires the rebuilt application and matching copied test modules; [results](DEVELOPMENT_ROADMAP.md#extrude-validation-evidence). |
+| Run Pattern regressions | Built fork / Python console or FreeCADCmd | [Pattern test procedure](../tests/PatternTaskPanel.md) | Requires rebuilt PartDesign App/Gui and matching test modules; results belong to roadmap 3.7. |
 | Broader regression gates | Built fork / upstream CI procedures | [Python tests](../.github/workflows/actions/runPythonTests/action.yml), [C++ tests](../.github/workflows/actions/runCPPTests/runAllTests/action.yml) | Choose relevant cases; no remote workflow dispatch is authorized by these references. |
 
-Focused Windows configuration for the extrusion workflow. In a shell with CMake
+Focused Windows configuration for the Extrude and Pattern workflows. In a shell with CMake
 available, set `FREECAD_LIBPACK_DIR` to the source-pinned LibPack directory first.
 This omits unrelated workbenches and the C++ developer test framework; Python
 model and GUI regressions remain available:

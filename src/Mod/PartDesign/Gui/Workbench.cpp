@@ -348,13 +348,8 @@ void Workbench::activated()
         "PartDesign_Body"
     ));
 
-    const char* Transformed[] = {
-        "PartDesign_Mirrored",
-        "PartDesign_LinearPattern",
-        "PartDesign_PolarPattern",
-        "PartDesign_MultiTransform",
-        nullptr
-    };
+    const char* Transformed[]
+        = {"PartDesign_Mirrored", "PartDesign_Pattern", "PartDesign_MultiTransform", nullptr};
     Watcher.push_back(new Gui::TaskView::TaskWatcherCommands(
         "SELECT PartDesign::SketchBased",
         Transformed,
@@ -428,8 +423,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     transformations->setCommand("Transformation Features");
 
     *transformations << "PartDesign_Mirrored"
-                     << "PartDesign_LinearPattern"
-                     << "PartDesign_PolarPattern"
+                     << "PartDesign_Pattern"
                      << "PartDesign_MultiTransform";
 
     // dressups
@@ -530,8 +524,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     part->setCommand("Part Design Transformation Features");
 
     *part << "PartDesign_Mirrored"
-          << "PartDesign_LinearPattern"
-          << "PartDesign_PolarPattern"
+          << "PartDesign_Pattern"
           << "PartDesign_MultiTransform";
 
     return root;

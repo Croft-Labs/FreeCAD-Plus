@@ -30,6 +30,7 @@
 
 class Ui_TaskMultiTransformParameters;
 class QModelIndex;
+class QComboBox;
 
 namespace PartDesign
 {
@@ -93,9 +94,11 @@ private:
     void slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj) override;
 
     void updateUI();
-    void closeSubTask();
+    void closeSubTask(bool apply = true);
     void moveTransformFeature(int increment);
     void finishAdd(std::string& newFeatName);
+    void openPatternTask();
+    void changePatternType(int index);
 
 private:
     std::unique_ptr<Ui_TaskMultiTransformParameters> ui;
@@ -103,6 +106,7 @@ private:
     TaskTransformedParameters* subTask = nullptr;
     PartDesign::Transformed* subFeature = nullptr;
     bool editHint = false;
+    QComboBox* patternType = nullptr;
 };
 
 

@@ -14,12 +14,16 @@ the same controls and preserves working document history. Acceptance is defined
 in [the UI specification](UI_UX_SPEC.md#ui-001-pad-task-pane); implementation and
 validation status belong in [the roadmap](DEVELOPMENT_ROADMAP.md).
 
+Pattern users can choose Linear/Circular, select features after opening the command,
+and configure the pattern in the same pane used for editing. The result remains the
+same object when its pattern type changes; each type retains its own settings.
+
 ## Scope and non-goals
 
-The current change unifies Pad and Pocket as Extrude in the Part Design workbench.
-The broader direction is
-complete task-pane workflows for operations such as revolve and patterns; these
-remain future work. The preferred direction is one command per geometry operation,
+The current scope unifies Pad and Pocket as Extrude and Linear/Polar Pattern as
+one Pattern command in the Part Design workbench. Pattern calls angular repetition
+**Circular** in its task pane; the separate upstream concentric-circle pattern is
+not part of this consolidation. Other operations, including Revolve, remain future work. The preferred direction is one command per geometry operation,
 with Add/Subtract chosen inside its shared create/edit task, following the workflow
 described by the user. The [candidate inventory](DEVELOPMENT_ROADMAP.md#unified-feature-workflows)
 defines the planned families; it does not establish implemented behavior.
@@ -40,6 +44,9 @@ packaging are outside the current implementation scope.
 | REQ-007 | Profile selection cooperates with direction and limit-reference selectors, rejects invalid body/document/dependency links, and preserves existing Pad parameters. |
 | REQ-008 | Planned unified feature families expose one geometry command with Add/Subtract in the same task pane used for creation and editing, retaining compatible selections and parameters when the operation changes. |
 | REQ-009 | Operation changes preserve document history, references, expressions, and Cancel/Undo behavior. Unsupported parameter combinations require explicit handling; existing documents retain their intended geometry and persisted identities. |
+| REQ-010 | Pattern has one standard menu/toolbar command. Its task pane starts with Linear/Circular, then feature selection, then direction/axis, extent or spacing, count, and applicable options. |
+| REQ-011 | Pattern opens without preselection and uses the same complete pane when reopened. Switching type preserves its result identity, original-feature links, and independent per-type settings, including expressions and suppression. |
+| REQ-012 | Empty or invalid patterns cannot be accepted; selection rejects other bodies and dependent features. Cancel, Undo/Redo, save/reopen, and legacy Linear/Polar/MultiTransform behavior remain supported. |
 
 ## Constraints and quality requirements
 
@@ -56,6 +63,8 @@ packaging are outside the current implementation scope.
 
 ## Open questions
 
-- Which unified family follows Extrude? See roadmap milestone 3.6.
+- Linear/Circular Pattern is the next family selected by the user; see roadmap
+  milestone 3.7. Converting a saved legacy Linear/Polar object to the new Pattern
+  type is not implemented; existing objects retain their full legacy parameter editor.
 - Is multi-object profile aggregation desired later? It requires a separate
   model/compatibility decision; it is not implied by curve selection within one source.
