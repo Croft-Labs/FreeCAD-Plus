@@ -30,6 +30,10 @@ Do not claim to have read missing guidance or maintain an independent master cop
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).
 - Record implementation, build, GUI validation, and publication separately in
   [the roadmap](ai-instructions/DEVELOPMENT_ROADMAP.md). A local commit is not a release.
+- The user authorizes periodic pushes to the configured `origin` GitHub fork.
+  Push coherent, validated commits at completed milestones and clean stopping points;
+  verify the remote branch afterward. Do not force-push. This does not authorize
+  releases, deployments, or pushing to `upstream`.
 
 ## Project exceptions
 
