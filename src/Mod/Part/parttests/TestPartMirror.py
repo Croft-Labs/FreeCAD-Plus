@@ -29,6 +29,8 @@ add test to validate App:Link placement
 """
 
 import unittest
+import tempfile
+from pathlib import Path
 import FreeCAD as App
 import Part
 import Draft
@@ -277,6 +279,21 @@ class TestMirrorPlanePlacement(unittest.TestCase):
             self.assertAlmostEqual(
                 mirror.Shape.common(expected).Volume, expected.Volume, places=6
             )
+
+        with tempfile.TemporaryDirectory() as directory:
+            filename = str(Path(directory) / "MirrorPlane.FCStd")
+            self.doc.saveAs(filename)
+            App.closeDocument(self.doc.Name)
+            self.doc = App.openDocument(filename)
+            restored = self.doc.getObject("Mirror")
+            self.assertEqual(restored.MirrorPlane[0].Name, "Body" if through_body else "Box")
+            for _ in range(2):
+                restored.touch()
+                self.doc.recompute()
+                self.assertAlmostEqual((restored.Base - point).dot(normal), 0, places=7)
+                self.assertAlmostEqual(
+                    restored.Shape.common(expected).Volume, expected.Volume, places=6
+                )
 
     def testFeatureFaceInsideTranslatedBody(self):
         self.checkBodyFace(App.Rotation())

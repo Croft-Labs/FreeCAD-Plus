@@ -1,24 +1,24 @@
 # FreeCAD Plus: Build validation handoff
 
-Issue-validation continuation (2026-09-29): five real startup recovery fixtures,
-four quantity-event tests, all 19 Extrude task tests and one tree-selection test
-pass against the existing fork. No application code change or native rebuild was
-needed for those inherited fixes. See U.5/U.9 in the roadmap and
-[repeatable procedures](../tests/UpstreamIssues.md). Mirror remains unbuilt and
-#29376 still needs a reproducible affected session/GPU trace. No process is running.
-Regression milestone `24815217c91ecbc2029771f34be02a5aa4c640d6` is committed and
-pushed to `origin/main`; remote hash verified. No release was made.
+Issue batch completed (2026-09-29): the local application now contains the Mirror
+#32706 correction. A targeted compile of FeatureMirroring.cpp and Part relink
+both exited 0; no full rebuild was needed. All 75 issue tests pass, including
+Mirror save/reopen/recompute and translated/rotated face selection through the
+real task pane. Three changed test scripts were synchronized and hash-verified.
+See [issue work](DEVELOPMENT_ROADMAP.md#upstream-issue-work) for binary hashes and
+exact evidence directories, and [procedures](../tests/UpstreamIssues.md) to rerun.
+No build/test process remains running. The executable is the existing external
+`build/bin/FreeCAD.exe`; its Part module has changed, not its historical version string.
 
-Latest issue work (2026-09-29): the ten-entry watchlist is prioritized and checked
-against inherited fixes and our changed UI. Part Mirror #32706 reproduces; a
-source correction and three regressions are prepared. **The existing application
-does not contain this C++ fix.** Native build and post-fix validation await the
-next batch under the user's build policy. See [issue work](DEVELOPMENT_ROADMAP.md#upstream-issue-work)
-for the 49-test baseline (47 pass, two expected new Mirror failures) and exact
-evidence directory. No build/test process is running. Preserve this pending fix
-when planning the next consolidated build; do not close it from old binary tests.
-Source/triage milestone `85fd6ebc77a5a180d61ad116cf6507fb274e93d4` is committed
-and pushed to `origin/main`; remote hash verified. Syntax/whitespace checks pass.
+The earlier five startup-recovery fixtures also passed; recovery, numeric input,
+Extrude and tree fixes were inherited and not duplicated. #29376 still needs a
+reproducible affected session/GPU trace. Legacy MillFace is superseded for new
+workflow tasks, while saved legacy operations retain the documented risk.
+The broader upstream CAM refactor epic is not declared complete. No release.
+
+Earlier source checkpoints: Mirror/triage `85fd6ebc77`, then regression milestone
+`24815217c9`, both pushed to origin/main. Their earlier notes about an unbuilt
+Mirror correction are superseded by this completed build checkpoint.
 
 CAM implementation and automated validation are complete. Direct STL
 Parallel/Waterline, stock bridges and separate manually indexed setups are in the

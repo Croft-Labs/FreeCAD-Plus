@@ -4,8 +4,8 @@
 
 - Active implementation: [prioritized upstream issue work](#upstream-issue-work).
   Audit inherited fixes and changed workflow applicability first. Mirror #32706
-  reproduces in the existing build; its source fix awaits the next batched native
-  build. No per-feature rebuild was performed.
+  is now fixed in the local application: one targeted compile/relink completed
+  the accumulated batch, and all 75 issue regressions pass. No full rebuild.
   Recovery, quantity input, unified Extrude keyboard editing and tree-selection
   regressions now pass against the existing fork; see U.5 and U.9 below.
 - Planning priority: [NX-style unified feature history](#nx-feature-history), then
@@ -56,11 +56,13 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   Added three regressions for translated/rotated Body faces, shared Assembly
   placement, Body-face references without double transformation and source moves.
   Registered them in the standard Part suite and added `ValidateUpstreamIssues.FCMacro`.
-- [   ] U.4 At the next batched native build, build/install the changed Part module
-  and test scripts, then run all six Mirror tests and the CAM offset suite with
-  isolated preferences. Require all passes, save/reopen a referenced Mirror,
-  and check GUI face selection in translated/rotated Bodies. The existing binary
-  has not tested the C++ correction; do not mark #32706 fixed in the application yet.
+- [ X ] U.4 Build/install and validate the accumulated issue batch. Compiled only
+  `FeatureMirroring.cpp`, relinked Part and synchronized three changed test scripts.
+  Both build steps exit 0. All 75 regressions pass without errors/skips: six Mirror
+  geometry tests (now including save/reopen and repeated recompute), two real
+  Mirror task-pane reference-selection tests for translated/rotated Bodies, 43 CAM
+  offset tests, four quantity tests, 19 Extrude tests and one tree test. #32706 is
+  fixed locally; this does not close the upstream issue or certify physical picking.
 - [ X ] U.5 Validate inherited recovery and quantity-input fixes in the existing
   source-built fork. Five isolated recovery fixtures pass through the real startup
   dialog: damaged ZIP, malformed model XML and malformed GUI XML originals still
@@ -83,14 +85,16 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
 - [ X ] U.8 Publish the coherent source/triage milestone to `origin/main`:
   `85fd6ebc77a5a180d61ad116cf6507fb274e93d4`, remote hash verified.
   Python/macro syntax and diff whitespace checks pass. Build/acceptance gates
-  above remain open; no release or new executable was produced.
+  were still open at that checkpoint; no release or new executable was produced then.
 - [ X ] U.9 Validate inherited tree fix #28412 using native Qt mouse events.
   Expansion and collapse both toggle the container and preserve model selection
   during a held-button move. The planned NX history has not replaced this tree.
 - [ X ] U.10 Recovery, numeric and tree regression milestone committed/pushed as
   `24815217c91ecbc2029771f34be02a5aa4c640d6`; `origin/main` hash verified.
-  Keep U.4 and U.6 open. No new native build is needed for
-  these inherited fixes; the pending Mirror correction is still absent from the app.
+  At that checkpoint U.4/U.6 remained open; no native build was needed for those
+  inherited fixes. The subsequent U.4 checkpoint now includes the Mirror correction.
+- [   ] U.11 Publish the passing Mirror persistence/GUI tests and build-validation
+  checkpoint, verify `origin/main`, and leave the unreproduced slowdown U.6 open.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.
 Existing binary run: 49 tests, 47 pass, two expected newly exposed Mirror failures,
@@ -106,6 +110,15 @@ subcases), no errors/skips. All processes exited 0. Earlier harness-development
 runs are not acceptance evidence. These checks used existing native revision
 `8abce719de` with source-loaded tests, not the unbuilt Mirror correction. Native
 Qt event testing is distinct from physical viewport/keyboard acceptance.
+
+Completed build checkpoint: `issue-build-20260929-191841/build-result.json` in the
+same external root records compile/link exit 0, source hash, old/new Part module
+hashes and the three synchronized script hashes. Updated `build/Mod/Part/Part.pyd`
+SHA-256: `93D4E36312B52B6C0BF134F0A05351CFA3930EE5D0B35755C419E42AA78D5CA8`.
+`issue-batch-20260929-191959/results.json`: all 75 PASS, no errors/skips, process 0.
+The native version string remains `8abce719de`; the Part binary hash identifies
+this targeted update. Launch the existing `build/bin/FreeCAD.exe` under the
+external root to test it. No release, full rebuild or upstream publication.
 
 ## [ X ] Phase 1: Repository and instruction foundation
 
