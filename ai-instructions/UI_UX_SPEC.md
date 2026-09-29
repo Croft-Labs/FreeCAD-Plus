@@ -46,7 +46,7 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 
 ### UI-001: Extrude task pane
 
-- Purpose: satisfy REQ-001 through REQ-009 in [the product specification](PRODUCT_SPEC.md#capabilities-and-requirements).
+- Purpose: satisfy REQ-001 through REQ-009 and REQ-013 in [the product specification](PRODUCT_SPEC.md#capabilities-and-requirements).
 - Entry: invoke Extrude with an active body, with or without preselection; or edit an
   existing Pad/Pocket. Legacy commands remain callable. The normal body prerequisite remains in force.
 - Exit: OK accepts a valid result; Cancel abandons the transaction. Empty and
@@ -58,6 +58,8 @@ REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
 
 | Control | Placement | Action | Availability and validation | Result/feedback |
 | --- | --- | --- | --- | --- |
+| Start offset | Above direction/extent controls, always visible | Enter a signed distance or click the adjacent flip button | Defaults to zero for a new feature in every direction mode; entering a nonzero distance selects Offset automatically. A selected start reference remains supported. | Uses the existing start offset along the selected extrusion direction; flipping negates the value or expression. At zero the start remains on the plane. Selecting Profile plane resets the offset and its expression. |
+| Length direction buttons | Beside side 1 and side 2 Length | Flip the existing extrusion axis | The two buttons stay synchronized; symmetric Dimension disables length reversal. For non-dimensional extents the button sits beside Type. | Preserves lengths, expressions, and the existing opposite-side geometry; no separate Reversed checkbox. |
 | Operation dropdown | First field | Choose Add or Subtract without leaving the task | Add is the new Extrude default; reopening loads the saved operation. Existing Common features also expose Intersect to retain that operation. | Retains profile, dimensions, direction, expressions, and extent meanings. Subtract without a base solid stays editable but cannot be accepted. |
 | Profile list | Immediately after Operation | Select one or more rows for removal | Populated from one source object and optional subelements | Shows accumulated geometry; ordinary viewport clicks do not discard previous rows. |
 | Select / Done | Below profile list | Enter/exit geometry selection | A new empty Pad enters selection automatically | Model/tree selections update the profile; other selectors are deselected. |

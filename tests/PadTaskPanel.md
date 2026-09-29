@@ -60,3 +60,22 @@ both sides, taper, start/end references, and downstream patterns. The existing
 
 Record actual results in the roadmap milestone. Do not use the separately
 installed FreeCAD for these checks.
+
+## Start offset and direction buttons
+
+In both new and reopened Extrude tasks, check the visible zero-default Offset
+field in One side, Two sides, and Symmetric. Enter a positive distance without
+first changing Start; click its adjacent arrow button to negate the distance.
+Check preview position against the sketch plane, including a rotated sketch and
+a custom direction. The existing reference-start mode remains available.
+
+Check both length buttons in Two sides: either reverses the common axis and both
+buttons reflect that state, retaining both lengths. Symmetric Dimension disables
+length reversal. Through all and reference extents keep the direction button
+next to Type when Length is hidden. Start offset remains signed relative to the
+selected extrusion direction, preserving existing saved-feature behavior.
+
+Repeat with Subtract and an existing Pocket. Check expression-bound offset flips,
+zero offset, selecting Profile plane to reset, reopening, Cancel, and Undo/Redo.
+The automated `TestExtrudeTaskPanel` cases cover these controls and geometry;
+physical viewport, keyboard, and high-DPI interaction remain manual acceptance.

@@ -2,8 +2,9 @@
 
 ## Current focus
 
-- Active work: the user-requested combined Linear/Circular Pattern workflow in
-  milestone 3.7. Target: [REQ-010 through REQ-012](PRODUCT_SPEC.md#capabilities-and-requirements).
+- Active work: always-visible Extrude start offsets and adjacent direction buttons
+  in milestone 3.8. Target: [REQ-013](PRODUCT_SPEC.md#capabilities-and-requirements).
+  Combined Pattern automated validation is recorded in milestone 3.7.
 - Extrude native build, 49 automated regressions, and task-pane visual inspection
   passed on 2026-09-28; see [validation evidence](#extrude-validation-evidence).
   Its manual viewport/keyboard acceptance remains pending in 2.2.3.
@@ -450,3 +451,40 @@ Compatibility boundary: old Linear/Polar features keep their existing full edito
 there is no automatic conversion to the new type. Unmodified upstream FreeCAD does
 not recognize `PartDesign::Pattern`; cross-version recomputation and release packaging
 are not established. This work is local and does not authorize a push or publication.
+
+### [   ] 3.8 Extrude start offset and direction controls
+
+Outcome: REQ-013 is available in the shared new/edit Extrude pane for Pad and Pocket.
+Existing signed StartOffset, StartType, and Reversed properties retain their model
+semantics; no stored property or object migration is introduced.
+
+- [ X ] 3.8.1 Expose the zero-default start offset in all three direction modes,
+  automatically activate Offset when a distance is entered, and add a flip button
+  that negates the value or its expression. Retain reference starts and explicit
+  Profile plane reset.
+- [ X ] 3.8.2 Replace the Reversed checkbox with synchronized buttons beside each
+  length. Keep reversal beside Type for non-dimensional extents and disable it for
+  symmetric Dimension. Keep the start-offset viewport gizmo available at zero.
+- [ X ] 3.8.3 Rebuild the GUI module and run native geometry/task regressions; inspect
+  the actual task-pane layout. Windows x64 Release GUI module rebuilt and linked
+  using the existing MSVC/Qt LibPack environment outside Google Drive. All **42 GUI
+  tests pass**: Extrude 16 (nine new cases), Pad 14, Pattern 12; no failures/errors/skips.
+  Native tests assert positive/negative offset geometry in all three modes,
+  Add/Subtract and legacy Pocket behavior, both synchronized length buttons,
+  non-dimensional reversal, reference starts, expression flipping and rollback,
+  save/reopen, Cancel, and Undo/Redo. Captured one-sided, two-sided, and symmetric
+  task layouts were inspected; offset and length buttons align with their fields.
+  Formatting, Python syntax, UI XML, whitespace, and documentation checks pass.
+  Evidence directory: `D:\Temp\Office-PC\freecad-plus-validation-20260928`:
+  `extrude-offset-gui-results.json`, `extrude-offset-visual-check.json`,
+  `extrude-offset-one-side.png`, `extrude-offset-two-sides.png`,
+  `extrude-offset-symmetric.png`, and `extrude-offset-build-*.log`.
+  Final successful compile/link and tests supersede intermediate compile errors
+  from a protected expression-widget API and a removed checkbox reference.
+  Launcher: `D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+  Incremental GUI module update; the main executable About/version stamp still
+  reflects its earlier build. The separately installed FreeCAD was not used.
+- [   ] 3.8.4 Complete physical viewport/keyboard/high-DPI acceptance using the
+  [Extrude procedure](../tests/PadTaskPanel.md#start-offset-and-direction-buttons).
+
+This work is local; publication and release packaging are not part of this task.

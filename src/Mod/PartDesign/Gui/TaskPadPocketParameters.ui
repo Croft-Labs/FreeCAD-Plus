@@ -109,6 +109,19 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="2">
+      <widget class="QToolButton" name="buttonReverseOffset">
+       <property name="toolTip">
+        <string>Reverse offset direction</string>
+       </property>
+       <property name="accessibleName">
+        <string>Reverse offset direction</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="labelStartOffset">
        <property name="text">
@@ -186,6 +199,19 @@
          <string>Dimension</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QToolButton" name="buttonReverse">
+       <property name="toolTip">
+        <string>Reverse extrusion direction (both sides)</string>
+       </property>
+       <property name="accessibleName">
+        <string>Reverse extrusion direction (both sides)</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="7" column="0">
@@ -417,6 +443,19 @@
      <item row="13" column="1">
       <widget class="QComboBox" name="changeMode2"/>
      </item>
+     <item row="14" column="2">
+      <widget class="QToolButton" name="buttonReverse2">
+       <property name="toolTip">
+        <string>Reverse extrusion direction (both sides)</string>
+       </property>
+       <property name="accessibleName">
+        <string>Reverse extrusion direction (both sides)</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="14" column="0">
       <widget class="QLabel" name="labelLength2">
        <property name="text">
@@ -606,13 +645,6 @@
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="checkBoxReversed">
-     <property name="text">
-      <string>Reversed</string>
      </property>
     </widget>
    </item>

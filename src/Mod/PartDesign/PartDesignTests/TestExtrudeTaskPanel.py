@@ -3,6 +3,8 @@
 """Shared Extrude task behavior; requires the rebuilt FreeCAD Plus GUI."""
 
 import unittest
+import tempfile
+from pathlib import Path
 
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -182,3 +184,198 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.selectOperation("Union")
         self.assertTrue(feature.isValid(), feature.getStatusString())
         self.accept()
+
+    def quantity(self, name, value):
+        self.widget(QtGui.QWidget, name).setProperty("rawValue", value)
+        Gui.updateGui()
+
+    def testOffsetIsVisibleAndZeroInEveryDirectionMode(self):
+        feature = self.start(preselect=True)
+        for mode in range(3):
+            self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(mode)
+            self.assertEqual(feature.StartOffset.Value, 0)
+            self.assertTrue(self.widget(QtGui.QWidget, "startOffsetEdit").isVisible())
+            self.assertTrue(self.widget(QtGui.QToolButton, "buttonReverseOffset").isVisible())
+            self.assertEqual(self.widget(QtGui.QToolButton, "buttonReverse").isEnabled(), mode != 2)
+            self.assertEqual(self.widget(QtGui.QToolButton, "buttonReverse2").isVisible(), mode == 1)
+        panels = Gui.Control.activeTaskDialog().getDialogContent()
+        self.assertFalse(any(p.findChild(QtGui.QCheckBox, "checkBoxReversed") for p in panels))
+
+    def testSignedOffsetGeometryInAllDirectionModes(self):
+        self.doc.removeObject(self.base.Name)
+        feature = self.start(preselect=True)
+        self.quantity("lengthEdit", 6.0)
+        self.quantity("lengthEdit2", 2.0)
+        for mode, low, high in [(0, 0, 6), (1, -2, 6), (2, -3, 3)]:
+            with self.subTest(mode=mode):
+                self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(mode)
+                self.quantity("startOffsetEdit", 2.0)
+                self.assertEqual(feature.StartType, "Offset")
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+                self.assertAlmostEqual(feature.Shape.BoundBox.ZMin, 7 + low)
+                self.assertAlmostEqual(feature.Shape.BoundBox.ZMax, 7 + high)
+                self.widget(QtGui.QToolButton, "buttonReverseOffset").click()
+                self.assertAlmostEqual(feature.StartOffset.Value, -2)
+                self.assertAlmostEqual(feature.Shape.BoundBox.ZMin, 3 + low)
+                self.assertAlmostEqual(feature.Shape.BoundBox.ZMax, 3 + high)
+        self.accept()
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.assertEqual(self.widget(QtGui.QWidget, "startOffsetEdit").property("rawValue"), -2)
+        self.assertEqual(self.widget(QtGui.QComboBox, "sidesMode").currentIndex(), 2)
+
+    def testBothLengthButtonsReverseTheExistingTwoSidedAxis(self):
+        self.doc.removeObject(self.base.Name)
+        feature = self.start(preselect=True)
+        self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(1)
+        self.quantity("lengthEdit", 6.0)
+        self.quantity("lengthEdit2", 2.0)
+        self.quantity("startOffsetEdit", 1.0)
+        first = self.widget(QtGui.QToolButton, "buttonReverse")
+        second = self.widget(QtGui.QToolButton, "buttonReverse2")
+        first.click()
+        self.assertTrue(feature.Reversed)
+        self.assertTrue(second.isChecked())
+        self.assertAlmostEqual(feature.Shape.BoundBox.ZMin, -2)
+        self.assertAlmostEqual(feature.Shape.BoundBox.ZMax, 6)
+        second.click()
+        self.assertFalse(feature.Reversed)
+        self.assertFalse(first.isChecked())
+        self.assertAlmostEqual(feature.Shape.BoundBox.ZMin, 4)
+        self.assertAlmostEqual(feature.Shape.BoundBox.ZMax, 12)
+        self.assertEqual(feature.Length.Value, 6)
+        self.assertEqual(feature.Length2.Value, 2)
+
+    def testSubtractOffsetAndLegacyPocket(self):
+        for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
+            with self.subTest(command=command):
+                feature = self.start(command, preselect=True)
+                self.selectOperation("Subtraction")
+                # Legacy Pocket starts in the opposite direction.
+                if feature.Reversed:
+                    self.widget(QtGui.QToolButton, "buttonReverse").click()
+                # Pocket Direction includes its legacy convention; normalize via the model.
+                if feature.Direction.z < 0:
+                    self.widget(QtGui.QToolButton, "buttonReverse").click()
+                self.quantity("lengthEdit", 4.0)
+                self.quantity("startOffsetEdit", 2.0)
+                self.assertAlmostEqual(feature.Shape.Volume, 952)
+                self.widget(QtGui.QToolButton, "buttonReverseOffset").click()
+                self.assertAlmostEqual(feature.Shape.Volume, 936)
+                self.accept()
+                self.doc.undo()
+                self.doc.recompute()
+                Gui.Selection.clearSelection()
+
+    def testOffsetExpressionFlipAndReopen(self):
+        self.doc.removeObject(self.base.Name)
+        feature = self.start(preselect=True)
+        self.quantity("lengthEdit", 6.0)
+        self.quantity("startOffsetEdit", 2.0)
+        self.accept()
+        feature.setExpression("StartOffset", "Length / 3")
+        self.doc.recompute()
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.widget(QtGui.QToolButton, "buttonReverseOffset").click()
+        self.assertAlmostEqual(feature.StartOffset.Value, -2)
+        self.accept()
+        self.assertIn("Length", dict(feature.ExpressionEngine)["StartOffset"])
+        feature.Length = 9
+        self.doc.recompute()
+        self.assertAlmostEqual(feature.StartOffset.Value, -3)
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.assertAlmostEqual(self.widget(QtGui.QWidget, "startOffsetEdit").property("rawValue"), -3)
+
+    def testOffsetAndReverseCancelUndoRedo(self):
+        feature = self.start(preselect=True)
+        self.accept()
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.quantity("startOffsetEdit", 2.0)
+        self.widget(QtGui.QToolButton, "buttonReverse").click()
+        Gui.Control.activeTaskDialog().reject()
+        self.doc.recompute()
+        self.assertAlmostEqual(feature.StartOffset.Value, 0)
+        self.assertFalse(feature.Reversed)
+        self.assertEqual(feature.StartType, "Profile plane")
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.quantity("startOffsetEdit", -2.0)
+        self.accept()
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(feature.StartOffset.Value, 0)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(feature.StartOffset.Value, -2)
+        self.assertEqual(feature.StartType, "Offset")
+
+    def testReverseRemainsAvailableWithoutDimensionAndProfilePlaneResetsOffset(self):
+        feature = self.start(preselect=True)
+        self.selectOperation("Subtraction")
+        self.quantity("startOffsetEdit", 2.0)
+        self.widget(QtGui.QComboBox, "startMode").setCurrentIndex(0)
+        self.assertEqual(feature.StartType, "Profile plane")
+        self.assertAlmostEqual(feature.StartOffset.Value, 0)
+        self.widget(QtGui.QComboBox, "changeMode").setCurrentIndex(5)
+        reverse = self.widget(QtGui.QToolButton, "buttonReverse")
+        self.assertTrue(reverse.isVisible())
+        self.assertTrue(reverse.isEnabled())
+        self.assertFalse(self.widget(QtGui.QWidget, "lengthEdit").isVisible())
+        reverse.click()
+        self.assertTrue(feature.Reversed)
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+
+    def testOffsetSaveReopenAndExpressionCancel(self):
+        feature = self.start(preselect=True)
+        self.quantity("startOffsetEdit", -2.0)
+        self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(1)
+        self.quantity("lengthEdit", 6.0)
+        self.quantity("lengthEdit2", 2.0)
+        self.accept()
+        feature.setExpression("StartOffset", "-Length / 3")
+        self.doc.recompute()
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.widget(QtGui.QToolButton, "buttonReverseOffset").click()
+        self.assertAlmostEqual(feature.StartOffset.Value, 2)
+        Gui.Control.activeTaskDialog().reject()
+        self.doc.recompute()
+        self.assertAlmostEqual(feature.StartOffset.Value, -2)
+        with tempfile.TemporaryDirectory() as folder:
+            name = feature.Name
+            path = str(Path(folder) / "Offset.FCStd")
+            self.doc.saveAs(path)
+            App.closeDocument(self.doc.Name)
+            self.doc = App.openDocument(path)
+            feature = self.doc.getObject(name)
+            self.assertEqual(feature.SideType, "Two sides")
+            self.assertAlmostEqual(feature.StartOffset.Value, -2)
+            self.assertIn("Length", dict(feature.ExpressionEngine)["StartOffset"])
+            self.assertTrue(feature.ViewObject.doubleClicked())
+            Gui.updateGui()
+            self.assertAlmostEqual(self.widget(QtGui.QWidget, "startOffsetEdit").property("rawValue"), -2)
+            self.accept()
+
+    def testReferenceStartOffsetStillFlipsInSamePane(self):
+        feature = self.start(preselect=True)
+        self.quantity("lengthEdit", 6.0)
+        self.accept()
+        # Use the base top plane, with Subtract pointing back into the base solid.
+        top = max(range(len(self.base.Shape.Faces)), key=lambda i: self.base.Shape.Faces[i].CenterOfMass.z)
+        feature.Operation = "Subtraction"
+        feature.Reversed = True
+        feature.StartReference = (self.base, ["Face%d" % (top + 1)])
+        feature.StartType = "Reference"
+        self.doc.recompute()
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.quantity("startOffsetEdit", 2.0)
+        self.assertEqual(feature.StartType, "Reference")
+        self.assertAlmostEqual(feature.Shape.Volume, 904)
+        self.widget(QtGui.QToolButton, "buttonReverseOffset").click()
+        self.assertEqual(feature.StartType, "Reference")
+        self.assertAlmostEqual(feature.Shape.Volume, 936)
+        self.assertEqual(feature.StartReference[0], self.base)

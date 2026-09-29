@@ -47,6 +47,7 @@ packaging are outside the current implementation scope.
 | REQ-010 | Pattern has one standard menu/toolbar command. Its task pane starts with Linear/Circular, then feature selection, then direction/axis, extent or spacing, count, and applicable options. |
 | REQ-011 | Pattern opens without preselection and uses the same complete pane when reopened. Switching type preserves its result identity, original-feature links, and independent per-type settings, including expressions and suppression. |
 | REQ-012 | Empty or invalid patterns cannot be accepted; selection rejects other bodies and dependent features. Cancel, Undo/Redo, save/reopen, and legacy Linear/Polar/MultiTransform behavior remain supported. |
+| REQ-013 | Extrude exposes a zero-default signed start offset in one-sided, two-sided, and symmetric modes, with an adjacent direction-flip button. Adjacent length-direction buttons replace the Reversed checkbox in the shared create/edit pane while preserving saved geometry semantics. |
 
 ## Constraints and quality requirements
 

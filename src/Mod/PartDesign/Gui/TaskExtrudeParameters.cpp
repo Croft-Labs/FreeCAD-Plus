@@ -28,8 +28,10 @@
 
 
 #include <App/Document.h>
+#include <App/Expression.h>
 #include <Base/Tools.h>
 #include <Base/UnitsApi.h>
+#include <Gui/BitmapFactory.h>
 #include <Gui/Command.h>
 #include <Gui/Tools.h>
 #include <Gui/Inventor/Draggers/Gizmo.h>
@@ -67,9 +69,9 @@ TaskExtrudeParameters::TaskExtrudeParameters(
     ui->lineStartReference->setPlaceholderText(tr("No start reference selected"));
     ui->startOffsetEdit->setToolTip(tr("Offset from the profile or selected start reference"));
 
-    Gui::ButtonGroup* group = new Gui::ButtonGroup(this);
-    group->addButton(ui->checkBoxReversed);
-    group->setExclusive(true);
+    for (auto button : {ui->buttonReverseOffset, ui->buttonReverse, ui->buttonReverse2}) {
+        button->setIcon(Gui::BitmapFactory().iconFromTheme("button_sort"));
+    }
 
     this->groupLayout()->addWidget(proxy);
 }
@@ -106,10 +108,15 @@ void TaskExtrudeParameters::setupDialog()
     ui->YDirectionEdit->bind(App::ObjectIdentifier::parse(extrude, "Direction.y"));
     ui->ZDirectionEdit->bind(App::ObjectIdentifier::parse(extrude, "Direction.z"));
 
-    ui->checkBoxReversed->setChecked(extrude->Reversed.getValue());
+    ui->buttonReverse->setChecked(extrude->Reversed.getValue());
+    ui->buttonReverse2->setChecked(extrude->Reversed.getValue());
 
     ui->startMode->setCurrentIndex(extrude->StartType.getValue());
-    ui->startOffsetEdit->setValue(extrude->StartOffset.getQuantityValue());
+    ui->startOffsetEdit->setValue(
+        extrude->StartType.getValue() == int(StartMode::ProfilePlane)
+            ? 0.0
+            : extrude->StartOffset.getValue()
+    );
     ui->startOffsetEdit->bind(extrude->StartOffset);
 
     updateStartReferenceName();
@@ -210,11 +217,10 @@ void TaskExtrudeParameters::setupSideDialog(SideController& side)
 void TaskExtrudeParameters::updateStartUI()
 {
     const auto mode = static_cast<StartMode>(ui->startMode->currentIndex());
-    const bool hasOffset = mode != StartMode::ProfilePlane;
     const bool hasReference = mode == StartMode::Reference;
 
-    ui->labelStartOffset->setVisible(hasOffset);
-    ui->startOffsetEdit->setVisible(hasOffset);
+    ui->labelStartOffset->show();
+    ui->startOffsetEdit->show();
     ui->labelStartReference->setVisible(hasReference);
     ui->lineStartReference->setVisible(hasReference);
     ui->buttonStartReference->setVisible(hasReference);
@@ -375,8 +381,25 @@ void TaskExtrudeParameters::connectSlots()
             this, &TaskExtrudeParameters::onYDirectionEditChanged);
     connect(ui->ZDirectionEdit, qOverload<double>(&QDoubleSpinBox::valueChanged),
             this, &TaskExtrudeParameters::onZDirectionEditChanged);
-    connect(ui->checkBoxReversed, &QCheckBox::toggled,
+    connect(ui->buttonReverse, &QToolButton::toggled,
             this, &TaskExtrudeParameters::onReversedChanged);
+    connect(ui->buttonReverse2, &QToolButton::toggled,
+            this, &TaskExtrudeParameters::onReversedChanged);
+    connect(ui->buttonReverseOffset, &QToolButton::clicked, this, [this] {
+        if (ui->startOffsetEdit->hasExpression()) {
+            auto extrude = getObject<PartDesign::FeatureExtrude>();
+            const auto expression = ui->startOffsetEdit->expressionText().toStdString();
+            extrude->setExpression(
+                App::ObjectIdentifier(extrude->StartOffset),
+                App::Expression::parse(extrude, "-(" + expression + ")")
+            );
+            tryRecomputeFeature();
+            setGizmoPositions();
+        }
+        else {
+            ui->startOffsetEdit->setValue(-ui->startOffsetEdit->value().getValue());
+        }
+    });
     connect(ui->sidesMode, qOverload<int>(&QComboBox::currentIndexChanged),
             this, &TaskExtrudeParameters::onSidesModeChanged);
     connect(ui->checkBoxUpdateView, &QCheckBox::toggled,
@@ -708,7 +731,12 @@ void TaskExtrudeParameters::onLengthChanged(double len, Side side)
 
 void TaskExtrudeParameters::onStartOffsetChanged(double len)
 {
-    getObject<PartDesign::FeatureExtrude>()->StartOffset.setValue(len);
+    auto extrude = getObject<PartDesign::FeatureExtrude>();
+    extrude->StartOffset.setValue(len);
+    // Entering an offset is sufficient; no separate start-mode choice is required.
+    if (ui->startMode->currentIndex() == int(StartMode::ProfilePlane) && len != 0.0) {
+        ui->startMode->setCurrentIndex(int(StartMode::Offset));
+    }
     tryRecomputeFeature();
     setGizmoPositions();
 }
@@ -718,6 +746,11 @@ void TaskExtrudeParameters::onStartModeChanged(int type)
     auto extrude = getObject<PartDesign::FeatureExtrude>();
     const auto mode = static_cast<StartMode>(type);
     extrude->StartType.setValue(type);
+    if (mode == StartMode::ProfilePlane) {
+        // Profile plane explicitly resets the start, including any bound expression.
+        extrude->setExpression(App::ObjectIdentifier(extrude->StartOffset), {});
+        ui->startOffsetEdit->setValue(0.0);
+    }
     if (mode == StartMode::Reference && !extrude->StartReference.getValue()) {
         ui->buttonStartReference->setChecked(true);
     }
@@ -871,7 +904,13 @@ void TaskExtrudeParameters::updateWholeUI(Side side)
     // Side 2 is only visible if in TwoSides mode, and we pass whether it should receive focus.
     updateSideUI(m_side2, mode2, isSide2GroupVisible, (side == Side::Second));
 
-    ui->checkBoxReversed->setEnabled(sidesMode != SidesMode::Symmetric || mode1 != Mode::Dimension);
+    const bool canReverse = sidesMode != SidesMode::Symmetric || mode1 != Mode::Dimension;
+    ui->buttonReverse->setEnabled(canReverse);
+    ui->buttonReverse2->setEnabled(canReverse);
+    ui->buttonReverse2->setVisible(isSide2GroupVisible);
+    // Keep direction accessible for reference/through-all extents without a length field.
+    ui->gridLayout->addWidget(ui->buttonReverse, mode1 == Mode::Dimension ? 7 : 6, 2);
+    ui->gridLayout->addWidget(ui->buttonReverse2, mode2 == Mode::Dimension ? 14 : 13, 2);
 }
 
 void TaskExtrudeParameters::updateSideUI(
@@ -1123,6 +1162,10 @@ void TaskExtrudeParameters::setDirectionMode(int index)
 
 void TaskExtrudeParameters::onReversedChanged(bool on)
 {
+    const QSignalBlocker block1(ui->buttonReverse);
+    const QSignalBlocker block2(ui->buttonReverse2);
+    ui->buttonReverse->setChecked(on);
+    ui->buttonReverse2->setChecked(on);
     if (auto extrude = getObject<PartDesign::FeatureExtrude>()) {
         extrude->Reversed.setValue(on);
         // update the direction
@@ -1295,7 +1338,7 @@ double TaskExtrudeParameters::getZDirection() const
 
 bool TaskExtrudeParameters::getReversed() const
 {
-    return ui->checkBoxReversed->isChecked();
+    return ui->buttonReverse->isChecked();
 }
 
 int TaskExtrudeParameters::getMode() const
@@ -1484,8 +1527,8 @@ void TaskExtrudeParameters::setupGizmos()
     }
 
     const auto toggleReversed = [this] {
-        if (ui->checkBoxReversed->isEnabled()) {
-            ui->checkBoxReversed->setChecked(!ui->checkBoxReversed->isChecked());
+        if (ui->buttonReverse->isEnabled()) {
+            ui->buttonReverse->setChecked(!ui->buttonReverse->isChecked());
         }
     };
 
@@ -1534,8 +1577,6 @@ void TaskExtrudeParameters::setGizmoPositions()
     Base::Vector3d direction = extrude->Direction.getValue() * dir;
     Base::Vector3d center1 = center;
     Base::Vector3d center2 = center;
-    const bool hasStartOffset = std::strcmp(extrude->StartType.getValueAsString(), "Profile plane")
-        != 0;
     try {
         const Base::Vector3d startDirection = direction.Normalized();
         const double effectiveStartOffset = extrude->getStartOffset();
@@ -1543,14 +1584,14 @@ void TaskExtrudeParameters::setGizmoPositions()
         center1 += start;
         center2 += start;
         startOffsetGizmo->Gizmo::setDraggerPlacement(
-            center + startDirection * (effectiveStartOffset - extrude->StartOffset.getValue()),
+            center + startDirection * (effectiveStartOffset - ui->startOffsetEdit->value().getValue()),
             direction
         );
     }
     catch (const Base::Exception&) {
     }
 
-    startOffsetGizmo->setVisibility(hasStartOffset);
+    startOffsetGizmo->setVisibility(true);
 
     lengthGizmo1->Gizmo::setDraggerPlacement(center1, direction);
     lengthGizmo1->setVisibility(extrudeType == "Length");

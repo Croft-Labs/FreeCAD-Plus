@@ -107,6 +107,13 @@ reopen through `ViewObject.doubleClicked()` to include the user edit transaction
 calling `Gui.Document.setEdit()` directly is not equivalent for Cancel/Undo tests.
 Results and remaining manual checks are owned by [milestone 2.2](DEVELOPMENT_ROADMAP.md#pad-validation).
 
+Changes to `TaskPadPocketParameters.ui` require Qt autogen followed by recompiling
+both `TaskExtrudeParameters.cpp` and `TaskPadParameters.cpp`, which consume the
+generated header, then linking PartDesignGui. Replacing a widget requires updating
+both consumers. The start-offset/reversal regressions live in the existing
+`TestExtrudeTaskPanel` suite; native geometry assertions and saved-file checks run
+inside the built GUI. Their procedure is in [start-offset tests](../tests/PadTaskPanel.md#start-offset-and-direction-buttons).
+
 ## Release and recovery
 
 No fork release or installer is part of the current task. Local commits do not

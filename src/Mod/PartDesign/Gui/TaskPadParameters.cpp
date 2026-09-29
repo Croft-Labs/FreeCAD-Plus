@@ -92,7 +92,6 @@ TaskPadParameters::TaskPadParameters(ViewProviderExtrude* PadView, QWidget* pare
 {
     ui->offsetEdit->setToolTip(tr("Offset from the face at which the extrusion will end on side 1"));
     ui->offsetEdit2->setToolTip(tr("Offset from the face at which the extrusion will end on side 2"));
-    ui->checkBoxReversed->setToolTip(tr("Reverses extrusion direction"));
 
     // set the history path
     ui->lengthEdit->setEntryName(QByteArray("Length"));
