@@ -379,3 +379,71 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.assertEqual(feature.StartType, "Reference")
         self.assertAlmostEqual(feature.Shape.Volume, 936)
         self.assertEqual(feature.StartReference[0], self.base)
+
+    def testAddSubtractOffsetGeometryMatrix(self):
+        """Check actual solids against an independent box oracle, through real task controls."""
+        for command, normal in (("PartDesign_Extrude", 1), ("PartDesign_Pocket", -1)):
+            feature = self.start(command, preselect=True)
+            self.quantity("lengthEdit", 12.0)
+            self.quantity("lengthEdit2", 4.0)
+
+            def check_geometry(operation, mode, reverse, offset):
+                sign = normal * (-1 if reverse else 1)
+                origin = 5 + sign * offset
+                first, second = ((0, 12), (-4, 12), (-6, 6))[mode]
+                low, high = sorted((origin + sign * first, origin + sign * second))
+                tool = Part.makeBox(4, 4, high - low, App.Vector(2, 2, low))
+                base = Part.makeBox(10, 10, 10)
+                overlap = max(0, min(10, high) - max(0, low))
+                if operation == "Union":
+                    expected = base.fuse(tool)
+                    volume = 1000 + 16 * (high - low - overlap)
+                else:
+                    expected = base.cut(tool)
+                    volume = 1000 - 16 * overlap
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+                self.assertTrue(feature.Shape.isValid())
+                self.assertEqual(len(feature.Shape.Solids), 1)
+                self.assertAlmostEqual(feature.StartOffset.Value, offset)
+                self.assertAlmostEqual(feature.Shape.Volume, volume, places=6)
+                # Equal volume alone cannot detect a cut/addition on the wrong side.
+                self.assertAlmostEqual(feature.Shape.cut(expected).Volume, 0, places=6)
+                self.assertAlmostEqual(expected.cut(feature.Shape).Volume, 0, places=6)
+                for extent in ("XMin", "XMax", "YMin", "YMax", "ZMin", "ZMax"):
+                    self.assertAlmostEqual(
+                        getattr(feature.Shape.BoundBox, extent),
+                        getattr(expected.BoundBox, extent), places=6
+                    )
+
+            for reverse in (False, True):
+                self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(0)
+                button = self.widget(QtGui.QToolButton, "buttonReverse")
+                if button.isChecked() != reverse:
+                    button.click()
+                for mode in range(3):
+                    self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(mode)
+                    for operation in ("Union", "Subtraction"):
+                        self.selectOperation(operation)
+                        for offset in (0.0, 2.0, -2.0):
+                            with self.subTest(command=command, operation=operation,
+                                              mode=mode, reverse=reverse, offset=offset):
+                                if offset == -2:
+                                    self.widget(QtGui.QToolButton, "buttonReverseOffset").click()
+                                else:
+                                    self.quantity("startOffsetEdit", offset)
+                                check_geometry(operation, mode, reverse, offset)
+
+            self.accept()
+            self.assertTrue(feature.ViewObject.doubleClicked())
+            Gui.updateGui()
+            check_geometry("Subtraction", 2, True, -2)
+            self.widget(QtGui.QToolButton, "buttonReverseOffset").click()
+            check_geometry("Subtraction", 2, True, 2)
+            Gui.Control.activeTaskDialog().reject()
+            self.doc.recompute()
+            check_geometry("Subtraction", 2, True, -2)
+            name = feature.Name
+            self.doc.undo()
+            self.doc.recompute()
+            self.assertIsNone(self.doc.getObject(name))
+            Gui.Selection.clearSelection()

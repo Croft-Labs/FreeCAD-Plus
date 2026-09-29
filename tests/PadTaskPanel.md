@@ -79,3 +79,10 @@ Repeat with Subtract and an existing Pocket. Check expression-bound offset flips
 zero offset, selecting Profile plane to reset, reopening, Cancel, and Undo/Redo.
 The automated `TestExtrudeTaskPanel` cases cover these controls and geometry;
 physical viewport, keyboard, and high-DPI interaction remain manual acceptance.
+
+`testAddSubtractOffsetGeometryMatrix` exercises 72 combinations through actual task
+controls: both Extrude and legacy Pocket commands, Add and Subtract, all three
+direction modes, normal and reversed extrusion, and zero/positive/flipped-negative
+offsets. It compares valid solids, analytical volumes, bounds, and both geometric
+differences against independent box union/cut results. It also checks accepted
+feature reopening, another flip, Cancel, and removal through Undo.

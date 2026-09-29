@@ -486,5 +486,18 @@ semantics; no stored property or object migration is introduced.
   reflects its earlier build. The separately installed FreeCAD was not used.
 - [   ] 3.8.4 Complete physical viewport/keyboard/high-DPI acceptance using the
   [Extrude procedure](../tests/PadTaskPanel.md#start-offset-and-direction-buttons).
+- [ X ] 3.8.5 Verify Add/Subtract offsets across the full dimension-mode matrix.
+  User-requested follow-up passed in the same source-built GUI: **72 geometry
+  scenarios** (Extrude and legacy Pocket commands, Add/Subtract, one-sided/two-sided/
+  symmetric, normal/reversed extrusion, and 0/+2/-2 mm offsets). Negative offsets
+  use the real flip button. Each result is a valid single solid with the expected
+  analytical volume, bounding box, and zero excess/missing volume against an
+  independently constructed box union/cut. Accepted features reopen correctly;
+  flipping after reopening and Cancel restore the expected solids. All **17 Extrude
+  GUI tests pass**, including existing expression, reference, save/reopen, and
+  Undo/Redo cases, with no failures/errors/skips. No implementation fix was needed.
+  Evidence in the directory above: `extrude-offset-operations-gui-results.json`
+  and `extrude-offset-operations-TestExtrudeTaskPanel.log`. Only tests/documentation
+  changed for this follow-up; no binary rebuild was required.
 
 This work is local; publication and release packaging are not part of this task.
