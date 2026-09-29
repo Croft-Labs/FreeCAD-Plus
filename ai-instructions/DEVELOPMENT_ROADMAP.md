@@ -87,8 +87,9 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
 - [ X ] U.9 Validate inherited tree fix #28412 using native Qt mouse events.
   Expansion and collapse both toggle the container and preserve model selection
   during a held-button move. The planned NX history has not replaced this tree.
-- [   ] U.10 Commit/push this recovery, numeric and tree regression milestone and
-  verify `origin/main`; keep U.4 and U.6 open. No new native build is needed for
+- [ X ] U.10 Recovery, numeric and tree regression milestone committed/pushed as
+  `24815217c91ecbc2029771f34be02a5aa4c640d6`; `origin/main` hash verified.
+  Keep U.4 and U.6 open. No new native build is needed for
   these inherited fixes; the pending Mirror correction is still absent from the app.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.

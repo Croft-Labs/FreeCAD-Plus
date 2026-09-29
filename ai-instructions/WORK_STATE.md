@@ -6,6 +6,8 @@ pass against the existing fork. No application code change or native rebuild was
 needed for those inherited fixes. See U.5/U.9 in the roadmap and
 [repeatable procedures](../tests/UpstreamIssues.md). Mirror remains unbuilt and
 #29376 still needs a reproducible affected session/GPU trace. No process is running.
+Regression milestone `24815217c91ecbc2029771f34be02a5aa4c640d6` is committed and
+pushed to `origin/main`; remote hash verified. No release was made.
 
 Latest issue work (2026-09-29): the ten-entry watchlist is prioritized and checked
 against inherited fixes and our changed UI. Part Mirror #32706 reproduces; a
