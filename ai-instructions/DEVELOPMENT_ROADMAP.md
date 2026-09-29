@@ -536,6 +536,12 @@ consolidation in 3.6.4 or the broader Revolve/Groove workflow audit.
   Launcher: `D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
   Incremental GUI module update; the main executable About/version stamp still
   reflects its earlier build. The separately installed FreeCAD was not used.
+  Follow-up user-requested verification on local commit `84c34732ef`: all eight
+  focused tests passed (five Revolve task tests and three Revolve model tests),
+  with **84 individually recorded geometry scenarios: 42 Add and 42 Subtract**.
+  No failures/errors/skips and no implementation fix required. Source/build test
+  copies matched; the existing development GUI module was used. Detailed report:
+  `revolve-offset-verify-gui-results.json` in the evidence directory above.
 - [   ] 3.9.4 Complete physical viewport, keyboard, and high-DPI acceptance using
   [the Revolve test procedure](../tests/RevolveTaskPanel.md).
 
