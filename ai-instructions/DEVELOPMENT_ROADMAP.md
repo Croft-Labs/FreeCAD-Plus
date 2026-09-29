@@ -2,10 +2,20 @@
 
 ## Current focus
 
+- Planning priority: [NX-style unified feature history](#nx-feature-history), then
+  [consistent modeling workflows](#nx-modeling-workflows), then
+  [downstream integration](#nx-downstream-workflows). These phases describe the
+  user's preferred FreeCAD Plus workflow, drawing on NX and SolidWorks; they are
+  not a claim of exact product parity or authorization to start implementation.
+- [Phase 6: STL CAM and holding tabs](#cam-mesh-machining) has resumed at the user's new CAM request.
+  The earlier build was cancelled; the resumed build and draft source still need
+  validation. Two-sided/indexed machining is included through separate manually
+  indexed jobs. The NX-style history plan remains planning only.
+
 - Current build and closeout evidence: [consolidated validation, 2026-09-29](#consolidated-validation).
-  The configured Windows application builds successfully; all 149 regression tests
-  pass at both tested display scales. No implemented feature is awaiting compilation
-  in this development build. Physical viewport/keyboard acceptance remains pending:
+  Before the CAM changes, the configured Windows application built successfully
+  and all 149 regression tests passed at both tested display scales. This evidence
+  does not validate the later partial CAM build. Physical viewport/keyboard acceptance remains pending:
   the user stopped native computer use with Escape before those checks completed.
 - Isocline Curve implementation is recorded in [Phase 5](#isocline-curve), Trim Body
   in [Phase 4](#trim-body), and Revolve/Groove offsets in milestone 3.9.
@@ -719,3 +729,185 @@ solutions do not invent an isocline. Arbitrary-surface completeness is not prove
 by sampled residual checks. Splitting bodies/faces, multiple stepped angles,
 Linux/macOS validation, packaging, push and publication remain outside this task.
 Recomputation requires the new Python modules and native Part API in FreeCAD Plus.
+
+
+<a id="cam-mesh-machining"></a>
+## [   ] Phase 6: STL CAM and holding tabs
+
+User request: direct STL Parallel/Waterline machining similar to MeshCAM, with
+simple tabs that toolpaths automatically avoid, including two-sided/indexed
+machining. Source drafts now include separate manually indexed jobs, with shared
+model/stock/tab transforms and independent origins. Build and runtime acceptance
+remain pending; automatic rotary-axis output is outside this implementation.
+
+### [   ] 6.1 Direct mesh workflow
+
+- [   ] 6.1.1 Accept and clone STL job models associatively; compute stock and placement without facet-to-BRep conversion.
+- [   ] 6.1.2 Use every mesh/CAD model in Parallel and Waterline generation; expose the command without experimental preference flags.
+- [   ] 6.1.3 Validate actual STL import, placement, both strategies, mesh edits and save/reopen in the CAM-enabled build.
+
+### [   ] 6.2 Geometric holding tabs
+
+- [   ] 6.2.1 Add the shared create/edit pane, numeric dimensions and viewport placement; preserve transactions and document links.
+- [   ] 6.2.2 Protect tab stock across supported cutting/link moves using the cutter radius; reject unsupported strategies and unsafe heights without stale paths.
+- [   ] 6.2.3 Validate narrow crossings, rotated/overlapping bridges, operation recompute, Cancel/Undo/Redo and saved documents.
+- [   ] 6.2.4 Complete native visual/viewport acceptance and record a representative simulation review. No machine cutting validation is implied by software tests.
+
+### [   ] 6.3 Build and validation
+
+- [   ] 6.3.1 Enable CAM, Draft, MeshPart and required dependency modules in the external development build.
+- [   ] 6.3.2 Run focused CAM and relevant existing regressions; record runtime/source identities and remaining limitations.
+- [   ] 6.3.3 Commit and push the validated milestone to origin; verify the remote branch.
+
+### [   ] 6.4 Two-sided and indexed setups
+
+- [   ] 6.4.1 Define setup orientation, work origin, stock and part references for each side/index; distinguish manual indexing between jobs from controller-driven indexing.
+- [   ] 6.4.2 Preserve the same physical holding tabs across transformed setups; propagate tab edits and invalidate every affected path.
+- [   ] 6.4.3 Validate opposing faces and a non-orthogonal index, coordinate transforms, stock registration, tab clearance, safe linking moves and per-setup output.
+
+The first build was cancelled at the user's request. Work and the build resumed
+on the subsequent CAM request; no tests for this phase have passed yet.
+
+
+<a id="nx-feature-history"></a>
+## [   ] Phase 7: NX-style unified feature history ? first priority
+
+Outcome: one ordered feature history for a model part, with sketches, datums,
+linked/cloned geometry and modeling features available independently of a single
+Body. Users do not have to create or activate a Body before modeling. Solid/sheet
+bodies remain real geometric results with stable identities; they are not the
+mandatory organizing containers for every input and feature. An assembly has a
+history per component/model part, not one interleaved history for every component.
+
+This is the user's desired behavior, not a statement that current FreeCAD supports
+it through a tree preference. A flattened navigator is only the first visible step.
+Backend ownership, feature inputs/outputs and reference rules must support the same
+workflow. Reuse native FreeCAD capabilities where their semantics fit; do not hide
+an unchanged single-body restriction behind a different-looking tree.
+
+Implementation order: 7.1?7.3 establish the model and navigator; 7.4 delivers the
+first end-to-end Extrude/Revolve workflow; 7.5?7.7 make history editing and adoption
+safe. Existing Phase 2/3 implementation and tests are inputs, not work to recreate.
+
+### [   ] 7.1 Define the part-level history and body model
+
+- [   ] 7.1.1 Specify a single ordered History list and a separate Bodies/results list. Define feature, sketch, datum, curve, imported object, linked object, solid body and sheet body roles.
+- [   ] 7.1.2 Map current Part, Part Design Body/Tip, feature ownership, attachment and document-link restrictions to the proposed model. Identify which changes are presentation only and which require model/API changes.
+- [   ] 7.1.3 Prototype native Body adapters versus a part-level feature/result layer. Evaluate multi-body outputs, shared inputs, references, recompute, persistence and upstream compatibility before choosing the architecture.
+- [   ] 7.1.4 Define stable feature and body identities, explicit input/output links, and lineage when bodies merge, split, disappear or reappear after an edit. Keep display order distinct from dependency evaluation order.
+- [   ] 7.1.5 Document the chosen architecture, migration boundary and a small reference model; update product/UI specifications before production implementation.
+
+Complete when: a prototype demonstrates one independent sketch driving features
+on two bodies, one feature producing multiple bodies, and a later feature using
+results from both, without silently duplicating sketches or losing references.
+
+### [   ] 7.2 Build the unified history navigator
+
+- [   ] 7.2.1 Add a part-level History view containing sketches, datums, linked geometry and features in modeling order. Show shared inputs once, with discoverable consumers, instead of nesting them exclusively under one body.
+- [   ] 7.2.2 Add a Bodies/results view showing current solids and sheets, with source-feature links, names, visibility and selection. Body hiding must not suppress generating features.
+- [   ] 7.2.3 Synchronize navigator selection and viewport highlighting; provide Find in History, Find Result, Show Parents and Show Dependents.
+- [   ] 7.2.4 Provide search, type/status filters, user folders and meaningful names. Folders organize display without changing geometry ownership or recompute order.
+- [   ] 7.2.5 Retain access to the native document tree for legacy documents and diagnostics. A view change must not migrate or rewrite a file by itself.
+
+### [   ] 7.3 Make sketches and reference geometry independent
+
+- [   ] 7.3.1 Create sketches on principal planes, datum planes or selected faces without requiring a Body. Preserve attachment, placement, units and expressions.
+- [   ] 7.3.2 Allow one sketch or curve source to feed multiple features and bodies. Distinguish whole-sketch, region and curve-chain selection; define open/closed profile rules per operation.
+- [   ] 7.3.3 Put datums, construction geometry and imported geometry at part scope, with explicit dependencies rather than incidental active-body ownership.
+- [   ] 7.3.4 Add complete create/edit definitions for associative copies, clones and linked references: source, transform and update behavior. Keep independent copies a separate explicit choice.
+- [   ] 7.3.5 Validate cross-body reuse, source replacement, moved references, circular-dependency rejection, Cancel and save/reopen without automatic destructive reparenting.
+
+### [   ] 7.4 Automate body creation and target selection
+
+- [   ] 7.4.1 Extend the existing Extrude and Revolve task workflows to start in an empty part without a declared/active Body. Keep Operation as the first field, followed by profile, target/result controls and parameters.
+- [   ] 7.4.2 For Add with automatic targeting, create a new solid body when the generated solid has no valid volumetric overlap with an existing eligible solid. With exactly one eligible intersecting target, preview adding to that target.
+- [   ] 7.4.3 If multiple bodies intersect, show and highlight candidate targets; require an explicit target set or New Body choice. Never choose a target by incidental tree order or visibility.
+- [   ] 7.4.4 Provide an explicit New Body override even when geometry overlaps. For Subtract and Intersect, require valid target bodies and report a nonintersecting/empty result rather than creating an unintended body.
+- [   ] 7.4.5 Define tangency, face/edge contact, coincident geometry, tolerances, disconnected profile regions, sheet results and multi-solid outputs. Make automatic decisions inspectable in the preview.
+- [   ] 7.4.6 Persist target intent and body lineage. When editing an earlier feature changes overlap, report any target change; do not silently cut/join a different body or break downstream identity.
+- [   ] 7.4.7 Reuse this result/target policy for Loft, Sweep, Helix, primitives and Boolean operations after the Extrude/Revolve pilot passes. Retain legacy command/API entry points.
+
+First deliverable: open a new document, draw a sketch, Extrude without creating a
+Body, then create a disconnected Extrude and obtain a second body. Reuse the first
+sketch for another feature, modify one selected body with Subtract, and reopen each
+feature in the same complete task pane. Repeat the body-creation cases with Revolve.
+
+### [   ] 7.5 Add history editing, rollback and recovery
+
+- [   ] 7.5.1 Add Make Current / rollback and return-to-end controls; show the exact intermediate body results and disable later features for the rollback preview without deleting them.
+- [   ] 7.5.2 Insert new features at the current history position and update the dependency graph consistently. Restore the prior position and geometry on Cancel.
+- [   ] 7.5.3 Support safe reorder/move with dependency validation and a clear explanation of prohibited moves; never treat arbitrary tree drag order as a valid modeling history.
+- [   ] 7.5.4 Add suppress/unsuppress with explicit downstream status. Distinguish suppression, visibility, inactive setup and failed recompute.
+- [   ] 7.5.5 Preview deletion effects and offer valid dependent-feature handling. Provide broken-reference repair and Replace Input within the complete feature editor.
+- [   ] 7.5.6 Keep feature edits, target changes, body creation/removal and history-position changes atomic for Cancel and Undo/Redo; recover from recompute failures without displaying stale success.
+
+### [   ] 7.6 Preserve documents and external consumers
+
+- [   ] 7.6.1 Build a compatibility matrix covering existing upstream files, existing Plus files and new history-model files: open/display, edit, recompute and round-trip save are separate checks.
+- [   ] 7.6.2 Version any new persisted model and provide opt-in conversion with an untouched original. Opening a legacy file must not force migration.
+- [   ] 7.6.3 Preserve existing type/property names and Python entry points where possible. Document any new feature modules required for recomputation; do not promise upstream compatibility for backend changes without evidence.
+- [   ] 7.6.4 Define explicit neutral-geometry export as an exchange option, including loss of editable history. Never replace the editable original with a flattened export automatically.
+- [   ] 7.6.5 Audit Assembly, TechDraw, CAM, expressions, links and scripts that currently resolve a Body Tip. Provide stable result references and invalidation behavior for the new history model.
+
+### [   ] 7.7 Validate and release the history pilot
+
+- [   ] 7.7.1 Create regression fixtures for empty-part creation, disconnected solids, shared sketches, multiple intersecting targets, merge/split lineage, nested placements and legacy documents.
+- [   ] 7.7.2 Test geometry, dependency recompute, references/expressions, rollback, reorder, suppression, deletion, Cancel, Undo/Redo and save/reopen, including edits that change the number of output bodies.
+- [   ] 7.7.3 Run native mouse/keyboard acceptance for navigator and viewport selection, history insertion, create/edit parity and ambiguous-target recovery.
+- [   ] 7.7.4 Compare recompute time and navigator responsiveness on small and larger multi-body histories; define measurable acceptance thresholds before declaring performance complete.
+- [   ] 7.7.5 Supply a testable build and example document, record compatibility limitations, and retain a reversible opt-in until the pilot passes. Track source, build, tests, user acceptance and GitHub push separately.
+
+<a id="nx-modeling-workflows"></a>
+## [   ] Phase 8: Consistent NX/SolidWorks-inspired modeling workflows
+
+Depends on the applicable Phase 7 model/result contracts. Shared task-pane work
+that preserves current model semantics may proceed independently when separately
+authorized. Phase 3 remains the canonical operation inventory; do not duplicate its
+implementation or mark its unfinished validation complete through this plan.
+
+### [   ] 8.1 Standardize the complete feature task
+
+- [   ] 8.1.1 Define one shared task order: operation/type, input collectors, target bodies, geometry parameters, direction/extents, preview and acceptance. Hide only genuinely inapplicable controls.
+- [   ] 8.1.2 Apply command-first selection and identical create/edit coverage to the Phase 3 audit, including profile/section/path/axis replacement after reopening a feature.
+- [   ] 8.1.3 Standardize named selection collectors with add/remove/clear, viewport/tree picking, compatible-type filters, chain/region selection and visible invalid-reference feedback.
+- [   ] 8.1.4 Standardize signed offsets, adjacent direction buttons, one/two-sided and symmetric modes, units and expressions. Preserve parameters by meaning when switching operation or type.
+- [   ] 8.1.5 Add consistent live-preview and error states; make Cancel restore geometry, visibility and selection. Define Apply/repeat behavior separately from OK so repeated creation does not create accidental features.
+
+### [   ] 8.2 Finish unified command families
+
+- [   ] 8.2.1 Complete the existing Extrude and Linear/Circular Pattern acceptance gates, then adapt them to part-level results and reusable inputs without regressing legacy features.
+- [   ] 8.2.2 Combine Revolution/Groove as Revolve with Add/Subtract, retaining angular offsets and direction controls; add automatic/new-body handling from 7.4.
+- [   ] 8.2.3 Implement unified Loft, Sweep and Helix from milestone 3.6, retaining ordered sections, path/orientation controls and family-specific validity rules.
+- [   ] 8.2.4 Consolidate primitives into a shape selector plus operation/target controls. Define parameter and identity behavior before allowing an existing primitive to change shape type.
+- [   ] 8.2.5 Extend Pattern deliberately to Mirror and supported path/point patterns; distinguish repeating features, whole bodies and geometry copies, with clear result scope.
+- [   ] 8.2.6 Align Boolean, Trim and future Split workflows with common target/tool collectors and keep/discard previews. Keep Hole, Draft, Shell/Thickness and edge treatments specialized where their parameters differ.
+
+### [   ] 8.3 Improve sketch-to-feature interaction
+
+- [   ] 8.3.1 Create or edit a sketch from a feature's profile collector and return to the same pending feature task, with clear transaction and cancellation behavior.
+- [   ] 8.3.2 Preview selectable enclosed sketch regions and curve chains; explain gaps, self-intersections and ambiguous regions before attempting a solid operation.
+- [   ] 8.3.3 Define consistent sketch orientation, origin, normal and attachment controls, plus associative projected/intersection geometry across bodies.
+- [   ] 8.3.4 Test shared-sketch edits across multiple consumers and provide dependency feedback before changes invalidate downstream features.
+
+### [   ] 8.4 Make the modeling interface consistent
+
+- [   ] 8.4.1 Define a coherent Modeling command set across current Part/Part Design boundaries. Route by valid inputs/results rather than requiring users to change workbenches to find equivalent operations.
+- [   ] 8.4.2 Add searchable command names and familiar aliases, contextual right-click actions, predictable double-click editing and discoverable shortcuts; retain legacy names for scripts and compatibility.
+- [   ] 8.4.3 Define viewport manipulators for direction, extent, offset and placement that update the same task properties and expressions as numeric controls.
+- [   ] 8.4.4 Add consistent face/edge/body/reference selection filters, hide/show/isolate and preview colors. Verify keyboard focus, accessibility, high DPI and selection restoration.
+- [   ] 8.4.5 Run end-to-end modeling scenarios with the user and record friction points before replacing additional standard commands or making the new interface the default.
+
+<a id="nx-downstream-workflows"></a>
+## [   ] Phase 9: Extend the unified workflow to downstream work
+
+These are follow-on planning tasks, not authorization to implement every NX or
+SolidWorks capability. Prioritize after the feature-history pilot and review the
+specific interactions with the user before detailed implementation.
+
+- [   ] 9.1 Plan history-based Move/Offset/Delete/Replace Face for imported and native solids, with previews, repair limits and stable downstream result references. Treat direct edits as explicit features in history.
+- [   ] 9.2 Define surface-to-solid workflows for trimmed sheets, sewing and thickening, including body type changes and references to Trim Body/Isocline results.
+- [   ] 9.3 Integrate component placement, associative linked parts and in-context references with per-part histories; define external-reference updates and cycle prevention before adding assembly-edit shortcuts.
+- [   ] 9.4 Update drawings and dimensions to consume stable body/result identities, with explicit repair when a feature edit removes a referenced face or body.
+- [   ] 9.5 Connect CAM model and stock references to the unified results; invalidate paths after relevant history edits. Incorporate Phase 6's required two-sided/indexed setups and shared physical tab geometry when CAM work is resumed.
+- [   ] 9.6 Define named configurations/variants for dimensions and feature suppression, including persistence, downstream drawings/CAM and recompute cost, before exposing configuration controls.
+- [   ] 9.7 Build representative end-to-end examples: shared-sketch multi-body modeling, imported-part editing, assembly/drawing updates and two-sided machining. Record each product area?s independent acceptance and compatibility gates.
