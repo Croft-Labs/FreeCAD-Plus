@@ -24,7 +24,10 @@ Do not claim to have read missing guidance or maintain an independent master cop
   user-requested Linear/Circular Pattern task workflow, and signed angular start
   offsets/direction buttons for Revolution and Groove, and the user-requested
   associative Trim Body workflow and draft-angle Isocline Curves in Part and Part Design.
-  Both create separate results and preserve source Body Tips. Other operations
+  Both create separate results and preserve source Body Tips. Scope also includes
+  direct STL CAM Parallel/Waterline machining, editable stock-to-part holding tabs,
+  and separate manually indexed setups sharing model/stock/tab transforms.
+  Other operations
   remain future scope; the roadmap does not authorize them automatically.
 - Preserve FreeCAD document/property identities, geometry semantics, licensing,
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).

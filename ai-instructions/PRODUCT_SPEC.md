@@ -30,7 +30,9 @@ using a plane, selected face, or connected sheet cutter and a reversible keep si
 It creates a separate result object and preserves a source Part Design Body and its
 Tip. Isocline Curve traces a specified draft angle on one or more oriented faces,
 relative to a world axis, referenced plane/axis/edge, or custom vector. Its linked
-wire result updates with the sources. Other operations remain future work. The preferred direction is one command per geometry operation,
+wire result updates with the sources. The current CAM scope also includes direct
+STL Parallel/Waterline machining and geometric stock-to-part holding tabs.
+Other operations remain future work. The preferred direction is one command per geometry operation,
 with Add/Subtract chosen inside its shared create/edit task, following the workflow
 described by the user. The [candidate inventory](DEVELOPMENT_ROADMAP.md#unified-feature-workflows)
 defines the planned families; it does not establish implemented behavior.
@@ -62,6 +64,28 @@ packaging are outside the current implementation scope.
 | REQ-018 | Isocline Curve selects one or more target faces, a pull direction, and a draft angle in the same complete create/edit task. Preselection is optional. Axes, plane normals, straight edges, datum axes and a custom vector support direction selection and reversal. |
 | REQ-019 | Use the draft convention n dot d = sin(angle), with unit oriented face normal n and unit pull d. Angle 0 degrees is the silhouette; 0..90 degrees is accepted. Trace source-surface curves within modeling tolerances and clip to face boundaries and holes. Report empty, isolated-point, and whole-face solutions instead of inventing curves. |
 | REQ-020 | Persist face and direction references; recompute on geometry and parent-placement changes. Preserve source bodies and provide live preview, invalid-state recovery, Cancel, Undo/Redo, and save/reopen. The first version creates one angle per associative feature. |
+
+### CAM mesh machining and stock bridges
+
+| ID | Requirement |
+| --- | --- |
+| REQ-021 | A nonempty imported STL can be a CAM Job model without conversion to a CAD solid. Preserve triangles, placement, source association, and stock bounds. Parallel and Waterline machining use all selected job models. |
+| REQ-022 | Expose Parallel/Waterline through the standard CAM interface when OpenCAMLib is available. Retain tool, feeds, depths, stepover, sampling, and path preview controls. Support separate three-axis jobs for two-sided and manually indexed machining, with an explicit orientation and work origin per setup. |
+| REQ-023 | Create and edit visible stock-to-part bridges in the same task pane. Allow placement from the viewport and numeric position, length, width, height, and in-plane rotation. Reuse each Job's tabs across its Parallel/Waterline operations. |
+| REQ-024 | Preserve tab material with cutter-radius clearance on cutting and linking moves. Changes invalidate affected paths. Invalid tab dimensions, insufficient safe height, unsupported strategies/motions, and tilted setups must not leave a stale usable path. Cancel, Undo/Redo, and save/reopen preserve links and geometry. |
+
+Each indexed setup transforms the same source model, stock and physical tabs.
+Changes to a shared tab update its dependent setups. A 180-degree flip and a
+non-orthogonal index must be tested. Tilted tabs may use a conservative XY
+protection envelope that leaves additional stock. Each setup is posted separately;
+physical indexing and work-offset registration remain explicit operator steps.
+
+Tabs represent protected stock, not fixture/holder collision models. This first version
+leaves extra stock at bridge corners and retracts over the bridge. It does not implement
+automatic rotary-axis motion, automatic bridge strength assessment, roughing, or a
+complete machine/holder collision simulator. Existing profile holding-tag dressups
+remain available in jobs without the new geometric tabs. Saved mesh clones and tabs
+need FreeCAD Plus Python modules to recompute; upstream compatibility is not claimed.
 
 ## Constraints and quality requirements
 

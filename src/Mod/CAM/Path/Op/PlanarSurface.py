@@ -636,7 +636,7 @@ class ObjectSurface(PathOp.ObjectOp):
 
         enums = {
             "Strategy": [
-                (translate("CAM_PlanarSurface", "Surface Scan"), "SurfaceScan"),
+                (translate("CAM_PlanarSurface", "Parallel / surface scan"), "SurfaceScan"),
                 (translate("CAM_PlanarSurface", "Waterline"), "Waterline"),
                 (translate("CAM_PlanarSurface", "Z-Level Hybrid"), "ZLevelHybrid"),
             ],
@@ -1050,7 +1050,10 @@ class ObjectSurface(PathOp.ObjectOp):
         elif self.job and hasattr(obj, "BoundBox"):
             if obj.BoundBox == "BaseBoundBox":
                 models = getattr(self, "model", None) or self.job.Model.Group
-                zmin = min(self._rotatedShape(M.Shape).BoundBox.ZMin for M in models)
+                zmin = min(
+                    M.Mesh.BoundBox.ZMin if hasattr(M, "Mesh")
+                    else self._rotatedShape(M.Shape).BoundBox.ZMin for M in models
+                )
                 obj.OpFinalDepth = zmin
             elif obj.BoundBox == "Stock":
                 stock = getattr(self, "stock", None) or self.job.Stock
@@ -1604,6 +1607,17 @@ class ObjectSurface(PathOp.ObjectOp):
             )
             return None
 
+        if any(hasattr(b, "Mesh") for b in base_objs):
+            from Path.Main.Stock import shapeBoundBox
+
+            if any(hasattr(b, "Mesh") and b.Mesh.CountFacets == 0 for b in base_objs):
+                raise ValueError("The CAM model contains an empty mesh")
+            bb = shapeBoundBox(base_objs)
+            # Only a boundary envelope; machining uses original triangles below.
+            boundary = Part.makePlane(bb.XLength, bb.YLength,
+                                      FreeCAD.Vector(bb.XMin, bb.YMin, bb.ZMin))
+            return base_objs, boundary, [boundary], boundary
+
         valid_shapes = []
         for b in base_objs:
             shp = getattr(b, "Shape", None)
@@ -1653,6 +1667,7 @@ class ObjectSurface(PathOp.ObjectOp):
         Path.Log.track()
 
         startTime = time.time()
+        obj.Path = Path.Path()
 
         # Universal Setup
         if not (JOB := PathUtils.findParentJob(obj)):
@@ -1714,6 +1729,10 @@ class ObjectSurface(PathOp.ObjectOp):
         if geometry is None:
             return
         base_objs, model_shape, model_faces, optimized_shape = geometry
+        if any(hasattr(b, "Mesh") for b in base_objs):
+            if is_zlevel or getattr(obj, "Base", None):
+                raise ValueError("STL models support whole-model Parallel and Waterline machining")
+            optimize_stl = False
 
         # NOTE: Temporarily disable the model optimization on 3+2 axis operations
         if is_three_plus_two:

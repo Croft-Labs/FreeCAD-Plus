@@ -79,7 +79,12 @@ def isResourceClone(obj, propLink, resourceName):
 
 
 def createResourceClone(obj, orig, name, icon):
-    clone = Draft.clone(orig)
+    if hasattr(orig, "Mesh"):
+        from Path.Main import MeshModel
+
+        clone = MeshModel.create(obj.Document, orig)
+    else:
+        clone = Draft.clone(orig)
     clone.Label = "%s-%s" % (name, orig.Label)
     clone.addProperty("App::PropertyString", "PathResource")
     clone.PathResource = name
@@ -88,7 +93,8 @@ def createResourceClone(obj, orig, name, icon):
 
         Path.Base.Gui.IconViewProvider.Attach(clone.ViewObject, icon)
         clone.ViewObject.Visibility = False
-        clone.ViewObject.DisplayMode = "Flat Lines"
+        if "Flat Lines" in clone.ViewObject.listDisplayModes():
+            clone.ViewObject.DisplayMode = "Flat Lines"
         # clone.ViewObject.ShapeColor = (0.447, 0.475, 0.502)
         clone.ViewObject.Transparency = 0
         # clone.ViewObject.LineColor = (0.310, 0.333, 0.357)
@@ -676,7 +682,8 @@ class ObjectJob:
                 for base in obj.Model.Group:
                     if isResourceClone(obj, base, "Model") and base.ViewObject:
                         # base.ViewObject.Visibility = False
-                        base.ViewObject.DisplayMode = "Flat Lines"
+                        if "Flat Lines" in base.ViewObject.listDisplayModes():
+                            base.ViewObject.DisplayMode = "Flat Lines"
                         # base.ViewObject.ShapeColor = (0.447, 0.475, 0.502)
                         base.ViewObject.Transparency = 0
                         # base.ViewObject.LineColor = (0.310, 0.333, 0.357)

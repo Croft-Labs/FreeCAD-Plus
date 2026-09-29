@@ -1,10 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
-Stopped at the user's shutdown request on 2026-09-29. No new feature implementation
-is in progress. Resume the manual acceptance work; do not rebuild or repeat completed
-automated tests unless source/runtime changes or a newly found defect justify it.
+CAM implementation and automated validation are complete. Direct STL
+Parallel/Waterline, stock bridges and separate manually indexed setups are in the
+source-built application. No build or automated test is still running.
 
-## Completed
+Indexed setups use one associative transform for model, stock and shared tabs;
+each setup has its own work origin and separately generated/posted three-axis
+paths. No automatic rotary motion is generated. Native viewport acceptance,
+representative simulation and per-setup postprocessor review remain open.
+The NX-style roadmap planning request is committed and pushed as Phases 7-9
+(`4c9d7ed598`); no history architecture implementation has been started.
+The concise upstream issue watchlist is in `FREECAD_ISSUES.md`, committed and
+pushed as `bbcf78cffb`; it is a reference, not a list of reproduced fork defects.
+
+Current CAM evidence under the external root below:
+
+- `cam-completion-build-result.json`: full configured build exited 0;
+  `cam-final-scripts.log`: final script/test targets also exited 0.
+- `cam-tests-20260929-184049`: all 22 focused tests passed, no skips, process 0.
+- `cam-tests-20260929-183855`: related suites had 112 passes, no failures/errors,
+  one optional simplification test skipped for unavailable `fast_simplification`.
+  Strict aggregate FAIL records that skip; do not report all tests as passing.
+- `cam-validation-manifest.json`: 15 installed CAM Python files match source,
+  with five native binary hashes. Runtime retains the historical native version
+  stamp `8abce719de`; use file hashes and Git history to identify new CAM code.
+- The [Phase 6 roadmap](DEVELOPMENT_ROADMAP.md#cam-mesh-machining) separates
+  completed automated work from the remaining manual gates.
+
+The previous shutdown handoff below records completed Part/Part Design evidence.
+It predates the CAM changes. Do not mark CAM tests or native acceptance complete
+based on the earlier 149-test result.
+
+## Earlier Part/Part Design validation
 
 - Native feature source: `8abce719de38a1b1ad255d0e7f4554a9d44e9c71`.
 - Configured Windows x64 Release ALL_BUILD succeeded. First bounded pass timed out;
@@ -17,7 +44,7 @@ automated tests unless source/runtime changes or a newly found defect justify it
 - Roadmap milestone 2.2.4 is complete. Remaining manual gates are listed under
   [consolidated validation](DEVELOPMENT_ROADMAP.md#consolidated-validation).
 
-## Build and evidence
+## Earlier build and evidence
 
 External root: `D:\Temp\Office-PC\freecad-plus-validation-20260928`.
 Launch: `build\bin\FreeCAD.exe` beneath that root. It reports FreeCAD 26.3.0dev,
@@ -29,7 +56,15 @@ Evidence: `closeout-build-resume-results.json`, `closeout-build-manifest.json`,
 `closeout-regressions/results.json`, `closeout-highdpi/results.json`, and their logs.
 The two latter folders have isolated settings and successful process reports.
 
-## Next action
+## Next CAM acceptance work
+
+Follow `tests/CAMMeshMachining.md` for physical STL selection/placement, both
+strategies, tab picking/editing, and indexed-frame interaction. Review material
+removal and each setup's posted output. Keep the optional simplification skip
+visible until its dependency is available and that inherited test can run.
+No CNC machine motion or physical cutting has been performed.
+
+## Earlier Part/Part Design acceptance handoff
 
 1. Launch the development application for visible native testing with isolated
    preferences. Avoid `--hidden` for the interactive fixture: its startup/close

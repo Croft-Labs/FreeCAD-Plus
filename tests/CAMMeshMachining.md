@@ -1,0 +1,63 @@
+# CAM STL and holding-tab validation
+
+Use the source-built FreeCAD Plus application, never the separately installed
+FreeCAD. This procedure covers REQ-021 through REQ-024 and UI-006. Automated
+geometry and GUI tests are separate from native interaction and machining evidence.
+
+## Build and automated tests
+
+Enable `BUILD_CAM`, `BUILD_DRAFT`, `BUILD_MESH_PART`, `BUILD_TECHDRAW`,
+`BUILD_SPREADSHEET`, and `BUILD_IMPORT` in the existing development configuration.
+Build with the source-pinned LibPack; it provides OpenCAMLib. New Python modules
+and tests are listed in CAM's CMakeLists.txt. Keep outputs outside Google Drive.
+
+Set `FREECAD_PLUS_VALIDATION_DIR` to a fresh external output folder; point
+`FREECAD_USER_HOME` and `FREECAD_USER_DATA` at an isolated directory. Launch
+`tests/ValidateCAM.FCMacro` with the development `FreeCAD.exe`, isolated
+`--user-cfg` / `--system-cfg` files, and `--hidden`. The macro initializes the
+GUI, writes `results.json` and per-module logs, then exits. Require successful
+process exit, PASS, and no skipped tests for the focused workflow suite. Record
+optional inherited-test skips separately; the strict aggregate marker remains
+FAIL if any suite skips a test. `FREECAD_PLUS_CAM_TESTS` optionally
+selects comma-separated CAMTests module names; default `TestMeshMachining`.
+
+The suite covers actual STL file input, mesh clones and setup placement, stock
+bounds, Parallel/Waterline on mesh and CAD jobs, tab geometry changes,
+save/reopen, unsupported-strategy stale-path clearing, and the tab create/edit
+transactions. Analytical path splitting is checked with long crossings having
+no interior path point, rotated and overlapping bridges, vertical moves inside
+bridges, reversed traversals, unsupported arcs and insufficient safe height.
+An independent sampled swept-cylinder check compares generated motion against
+the tab's local solid bounds. Mixed translated mesh/CAD models and preservation
+of block-delete annotations are also checked. These checks do not prove
+machine/holder safety.
+
+Relevant inherited regressions: `TestPlanarSurfaceOp`, `TestSurfaceMeshGenerator`,
+`TestPathStock`, `TestPathDressupHoldingTags`, and the shared CAM job/operation
+tests. Record exact suites actually run in the roadmap.
+
+## Native acceptance
+
+1. Import an STL, select it, create a Job. Check stock size and placement. Move,
+   rotate and center the job model, then verify model/path/stock alignment.
+2. Select a suitable tool and feeds. Create **Parallel / Waterline**, choose
+   Parallel / surface scan with ZigZag, set depths and stepover, and inspect paths.
+   Repeat with Waterline and a coarse enough step-down to inspect each level.
+3. Use **Holding Tab**, position it across the model edge into stock, and set
+   length, width, height and angle. Test viewport picking and numeric entry.
+   Check that cutting passes and connecting moves rise above the bridge.
+4. Add a second bridge, including an overlapping/rotated example. Edit one
+   after paths exist; confirm the regenerated paths preserve both.
+5. Cancel creation and editing; check Undo/Redo, then save/reopen and recompute.
+   Attempt an unsupported operation and an unsafe-height tab; confirm there is
+   an actionable error and no retained old path.
+6. Create an Indexed Setup at 180 degrees and another at 45 degrees. Confirm model, stock and tabs stay registered; change the frame origin and a shared tab, then regenerate both strategies. Cancel frame edits and save/reopen.
+7. Inspect material removal with a representative simulation, including residual
+   stock connecting the model to surrounding stock. Record the simulator and its
+   limitations. Software acceptance does not authorize sending code to a machine.
+
+Each job uses three-axis machining; Indexed Setup creates additional manually indexed sides. Geometric tabs are shared only
+by supported Parallel/Waterline operations; they deliberately leave extra stock
+at corners and retract over bridges. They are not clamps, fixtures, or holders.
+An indexed job shares its source stock/model/tabs, with a 180-degree flip by default, configurable X/Y/Z axis and angle, and stock-top or custom work origin. Generate/post each job separately; no rotary motion is inferred. Tilted bridges use conservative XY envelopes and may leave additional stock.
+Mesh-clone/tab recomputation requires the FreeCAD Plus Python modules.

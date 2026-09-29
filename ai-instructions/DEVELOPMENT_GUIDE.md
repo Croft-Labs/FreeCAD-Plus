@@ -80,6 +80,22 @@ can relink its project with `BuildProjectReferences=false`. This assumes unchang
 headers/generated files and all required objects/resources exist; missing resources
 must also be compiled. Do not treat a compiler-only exit code as a completed build.
 
+### CAM-enabled configuration
+
+For STL Parallel/Waterline and geometric holding tabs, additionally enable
+`BUILD_CAM`, `BUILD_DRAFT`, `BUILD_MESH_PART`, `BUILD_TECHDRAW`,
+`BUILD_SPREADSHEET`, and `BUILD_IMPORT`. These override the earlier focused build's
+OFF settings; keep all existing LibPack/toolchain options. The Draft dependency
+chain requires TechDraw, Spreadsheet and Import. OpenCAMLib is provided by the
+pinned LibPack. Run [CAM validation](../tests/CAMMeshMachining.md) after rebuilding.
+
+The first mesh workflow uses an associative Mesh::FeaturePython model clone;
+stock bounds and surfacing consume the mesh directly. The bounding CAD plane is
+only a scan boundary, never a replacement machining surface. Holding tabs are
+linked Part::FeaturePython stock bridges. Each supported operation depends on the
+actual tab objects so dimension/placement edits invalidate its path. Keep cutter
+clearance conservative and clear stale paths before any validation that can fail.
+
 ## Development conventions
 
 - Reuse the shared task/selection/transaction classes indexed in
@@ -172,8 +188,9 @@ unmodified upstream FreeCAD is not a supported recomputation environment.
 ## Release and recovery
 
 No fork release or installer is part of the current task. Local commits do not
-imply a push, passing CI, or distribution. Pushes, remote builds, releases, and
-upstream submissions require task-specific authorization under the workspace rules.
+imply a push, passing CI, or distribution. The user authorizes periodic milestone
+pushes to the configured origin fork. Remote builds, releases, and upstream
+submissions still require task-specific authorization under the workspace rules.
 Use focused commits and non-destructive recovery; preserve unrelated changes.
 Any future package must retain upstream attribution and document compatibility.
 

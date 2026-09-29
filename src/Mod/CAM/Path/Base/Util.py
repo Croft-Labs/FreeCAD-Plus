@@ -113,6 +113,8 @@ def isValidBaseObject(obj):
     if hasattr(obj, "Sheets") or hasattr(obj, "TagText"):  # Arch.Panels and Arch.PanelCut
         Path.Log.debug("%s is not an Arch.Panel" % (obj.Label))
         return False
+    if hasattr(obj, "Mesh"):
+        return obj.Mesh.CountFacets > 0
     import Part
 
     return not Part.getShape(obj).isNull()

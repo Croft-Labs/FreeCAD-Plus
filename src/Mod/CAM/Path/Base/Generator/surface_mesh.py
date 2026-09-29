@@ -387,8 +387,7 @@ def _mesh_to_stl(mesh_obj):
 
     mesh_start = time.perf_counter()
     mesh_data = mesh_obj.Mesh
-    mesh_points = [tuple(p) for p in mesh_data.Points]
-    mesh_facets = [tuple(f.PointIndices) for f in mesh_data.Facets]
+    mesh_points, mesh_facets = mesh_data.Topology
 
     Path.Log.debug(
         f"surface_mesh.mesh_to_stl: input {len(mesh_points)} points, {len(mesh_facets)} facets"
@@ -767,13 +766,28 @@ def generate_stl(
         return None, None
 
     # Dispatch based on geometry type
-    is_mesh_op = hasattr(base_objs[0], "TypeId") and base_objs[0].TypeId.startswith("Mesh")
+    is_mesh_op = any(hasattr(base, "Mesh") for base in base_objs)
 
     if is_mesh_op:
         Path.Log.debug(
             "surface_mesh.generate_stl. Mesh object detected as Base. Using direct mesh conversion."
         )
-        stl = _mesh_to_stl(base_objs[0])
+        # Mesh + CAD jobs must include every model, in the job's coordinates.
+        import Mesh
+        from types import SimpleNamespace
+
+        mesh = Mesh.Mesh()
+        for base in base_objs:
+            if hasattr(base, "Mesh"):
+                # addMesh merges raw kernels and discards the input placement.
+                # Topology returns transformed points; bake those coordinates
+                # before merging models from translated or indexed setups.
+                mesh.addMesh(Mesh.Mesh(base.Mesh.Topology))
+            elif hasattr(base, "Shape") and not base.Shape.isNull():
+                mesh.addMesh(Mesh.Mesh(base.Shape.tessellate(linear_deflection)))
+            else:
+                raise ValueError("The CAM job contains an invalid model")
+        stl = _mesh_to_stl(SimpleNamespace(Mesh=mesh))
         if stl is None:
             Path.Log.error("Could not create a valid shape for primary STL generation.")
             return None, None

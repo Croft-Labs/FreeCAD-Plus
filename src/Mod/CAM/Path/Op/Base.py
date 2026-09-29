@@ -803,6 +803,9 @@ class ObjectOp:
             raise ValueError(
                 "No job associated with the operation. Please ensure the operation is part of a job."
             )
+        from Path.Main.HoldingTab import bind_operation
+
+        bind_operation(obj, job)
         obj.Active = True
 
         features = self.opFeatures(obj)
@@ -1252,6 +1255,33 @@ class ObjectOp:
         if job and "freezed" in job.getStatusString().casefold():
             return
 
+        from Path.Main.HoldingTab import bind_operation
+
+        if job:
+            bind_operation(obj, job)
+        if job and getattr(job, "IndexFrame", None):
+            obj.Path = Path.Path()
+            frame = job.IndexFrame
+            frame.Proxy.execute(frame)
+            for geometry in list(job.Model.Group) + [job.Stock]:
+                if getattr(geometry, "SetupFrame", None) != frame:
+                    raise ValueError("Indexed models and stock must use the same setup frame")
+                geometry.Proxy.execute(geometry)
+        if job and any(hasattr(model, "Mesh") for model in job.Model.Group):
+            obj.Path = Path.Path()
+            if self.__class__.__module__ != "Path.Op.PlanarSurface":
+                raise ValueError("STL models require the Parallel / Waterline operation")
+        if getattr(obj, "HoldingTabs", None):
+            # Stale paths must never survive a failed protected recomputation.
+            obj.Path = Path.Path()
+            if self.__class__.__module__ != "Path.Op.PlanarSurface" or obj.Strategy not in (
+                "SurfaceScan", "Waterline"
+            ):
+                raise ValueError("This Job has holding tabs: use Parallel or Waterline machining")
+            if obj.Workplane and (obj.Workplane.Placement.Rotation.multVec(
+                FreeCAD.Vector(0, 0, 1)) - FreeCAD.Vector(0, 0, 1)).Length > 1e-7:
+                raise ValueError("Holding tabs require a fixed XY machining plane")
+
         if not obj.Active:
             path = Path.Path("(inactive operation)")
             obj.Path = path
@@ -1402,6 +1432,11 @@ class ObjectOp:
             # Let's finish by rapid to clearance...just for safety
             self.commandlist.append(Path.Command("G0", {"Z": obj.ClearanceHeight.Value}))
 
+        if getattr(obj, "HoldingTabs", None):
+            from Path.Main.HoldingTab import protect
+
+            self.commandlist = protect(self.commandlist, obj.HoldingTabs, self.radius,
+                                       obj.SafeHeight.Value, self.vertFeed)
         path = Path.Path(self.commandlist)
 
         # Note: nothing here writes obj.Placement, and nothing should. A path

@@ -77,6 +77,8 @@ def shapeBoundBox(obj):
             bb.add(shapeBoundBox(o))
         return bb
 
+    if hasattr(obj, "Mesh"):
+        return obj.Mesh.BoundBox
     if hasattr(obj, "Shape"):
         return obj.Shape.BoundBox
     if obj and "App::Part" == obj.TypeId:

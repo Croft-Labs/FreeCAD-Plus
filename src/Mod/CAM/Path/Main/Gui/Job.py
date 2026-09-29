@@ -300,6 +300,9 @@ class ViewProvider:
             children.append(self.obj.Tools)
         if getattr(self.obj, "Workplanes", None):
             children.append(self.obj.Workplanes)
+        if getattr(self.obj, "IndexFrame", None):
+            children.append(self.obj.IndexFrame)
+        children.extend(getattr(self.obj, "HoldingTabs", []))
         return children
 
     def onDelete(self, vobj, arg2=None):
@@ -753,6 +756,8 @@ class StockFromExistingEdit(StockEdit):
             self.setStock(obj, stock)
 
     def candidates(self, obj):
+        if getattr(obj, "IndexFrame", None) and getattr(obj.Stock, "Objects", []):
+            return [obj.Stock.Objects[0]]
         solids = [o for o in obj.Document.Objects if PathUtil.isSolid(o)]
         if hasattr(obj, "Model"):
             job = obj
@@ -799,7 +804,12 @@ class StockFromExistingEdit(StockEdit):
             if stockBaseName == solid.Name:
                 index = i
 
-        if self.force and self.IsStock(obj) and obj.Model.Group:  # set placement while refresh
+        if (
+            self.force
+            and self.IsStock(obj)
+            and obj.Model.Group
+            and not getattr(obj, "IndexFrame", None)
+        ):  # Set placement while refreshing a non-indexed stock.
             for model in obj.Model.Group:
                 objects = getattr(model, "Objects", None)
                 if objects and objects[0] == obj.Stock.Objects[0]:
@@ -1481,12 +1491,16 @@ class TaskPanel:
             for sel in selection:
                 selObject = sel.Object
                 Path.Log.track(selObject.Label)
-                for name in sel.SubElementNames:
+                names = [None] if hasattr(selObject, "Mesh") else sel.SubElementNames
+                for name in names:
                     Path.Log.track(selObject.Label, name)
-                    feature = selObject.Shape.getElement(name)
-                    bb = feature.BoundBox
+                    bb = (
+                        PathStock.shapeBoundBox(selObject)
+                        if name is None
+                        else selObject.Shape.getElement(name).BoundBox
+                    )
                     offset = FreeCAD.Vector(axis.x * bb.XMax, axis.y * bb.YMax, axis.z * bb.ZMax)
-                    Path.Log.track(feature.BoundBox.ZMax, offset)
+                    Path.Log.track(bb.ZMax, offset)
                     p = selObject.Placement
                     p.move(offset)
                     selObject.Placement = p
@@ -1530,7 +1544,7 @@ class TaskPanel:
                     Draft.rotate(sel.Object, angle, bb.Center, axis)
             else:
                 for sel in selection:
-                    Draft.rotate(sel.Object, angle, sel.Object.Shape.BoundBox.Center, axis)
+                    Draft.rotate(sel.Object, angle, PathStock.shapeBoundBox(sel.Object).Center, axis)
 
     def populateMachineCombo(self):
         """Populate jobMachine combo from MachineFactory and select current Job.Machine."""
@@ -1655,6 +1669,10 @@ class TaskPanel:
         return (selObject, p)
 
     def updateStockEditor(self, index, force=False):
+        if getattr(self.obj, "IndexFrame", None):
+            index = -1
+            self.form.stock.setEnabled(False)
+            self.form.stock.setToolTip(translate("CAM_Job", "Stock is shared through the indexed setup frame."))
         def setupFromBaseEdit():
             Path.Log.track(index, force)
             if force or not self.stockFromBase:
@@ -1720,23 +1738,23 @@ class TaskPanel:
     def alignCenterInStock(self):
         bbs = self.obj.Stock.Shape.BoundBox
         for sel in FreeCADGui.Selection.getSelectionEx():
-            bbb = sel.Object.Shape.BoundBox
+            bbb = PathStock.shapeBoundBox(sel.Object)
             by = bbs.Center - bbb.Center
             Draft.move(sel.Object, by)
 
     def alignCenterInStockXY(self):
         bbs = self.obj.Stock.Shape.BoundBox
         for sel in FreeCADGui.Selection.getSelectionEx():
-            bbb = sel.Object.Shape.BoundBox
+            bbb = PathStock.shapeBoundBox(sel.Object)
             by = bbs.Center - bbb.Center
             by.z = 0
             Draft.move(sel.Object, by)
 
     def isValidDatumSelection(self, sel):
-        return sel.ShapeType in ("Vertex", "Edge", "Face")
+        return getattr(sel, "ShapeType", None) in ("Vertex", "Edge", "Face")
 
     def isValidAxisSelection(self, sel):
-        if sel.ShapeType in ("Vertex", "Edge", "Face"):
+        if getattr(sel, "ShapeType", None) in ("Vertex", "Edge", "Face"):
             if hasattr(sel, "Curve") and isinstance(sel.Curve, Part.Circle):
                 return False
             return not (hasattr(sel, "Surface") and sel.Surface.curvature(0, 0, "Max") != 0)
@@ -1789,6 +1807,18 @@ class TaskPanel:
             self.form.modelSetZ0.setEnabled(False)
             self.form.modelMoveGroup.setEnabled(False)
             # self.form.modelRotateGroup.setEnabled(False)
+
+        if getattr(self.obj, "IndexFrame", None):
+            # These objects must move together. Independent Draft transforms
+            # would be overwritten on recompute and detach the setup preview.
+            for name in ("setOrigin", "moveToOrigin", "modelSetXAxis", "modelSetYAxis",
+                         "modelSetZAxis", "modelSetX0", "modelSetY0", "modelSetZ0",
+                         "centerInStock", "centerInStockXY", "modelMoveGroup",
+                         "modelRotateGroup", "modelRotateCompound"):
+                widget = getattr(self.form, name, None)
+                if widget is not None:
+                    widget.setEnabled(False)
+                    widget.setToolTip(translate("CAM_Job", "Edit the indexed setup frame to change orientation or origin."))
 
     def jobModelEdit(self):
         dialog = PathJobDlg.JobCreate()

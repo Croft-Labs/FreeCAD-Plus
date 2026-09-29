@@ -95,6 +95,9 @@ SET(PathPythonMain_SRCS
     Path/Main/Job.py
     Path/Main/Workplane.py
     Path/Main/Stock.py
+    Path/Main/MeshModel.py
+    Path/Main/HoldingTab.py
+    Path/Main/IndexedSetup.py
 )
 
 SET(PathPythonMainGui_SRCS
@@ -104,6 +107,8 @@ SET(PathPythonMainGui_SRCS
     Path/Main/Gui/Fixture.py
     Path/Main/Gui/Inspect.py
     Path/Main/Gui/Job.py
+    Path/Main/Gui/HoldingTab.py
+    Path/Main/Gui/IndexedSetup.py
     Path/Main/Gui/JobCmd.py
     Path/Main/Gui/WorkplaneCmd.py
     Path/Main/Gui/JobDlg.py
@@ -691,6 +696,7 @@ SET(Tests_SRCS
     CAMTests/TestToolBitRecomputeState.py
     CAMTests/TestAdaptiveCommonGenerator.py
     CAMTests/TestPlanarSurfaceOp.py
+    CAMTests/TestMeshMachining.py
     CAMTests/TestSurfaceGenerator.py
     CAMTests/TestSurfaceCommonGenerator.py
     CAMTests/TestSurfacePostprocessGenerator.py

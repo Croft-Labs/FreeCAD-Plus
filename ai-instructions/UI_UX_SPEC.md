@@ -191,6 +191,46 @@ no unique isocline and is reported as such. This task does not split faces/bodie
 or create a stepped series of angles. Source: [`IsoclineGui.py`](../src/Mod/Part/BasicShapes/IsoclineGui.py).
 Validation: [Isocline procedure](../tests/IsoclineCurve.md).
 
+### UI-006: CAM mesh machining and tabs
+
+Entry: import STL, select it, create a CAM Job, set stock/tool and work origin,
+then choose **Parallel / Waterline**. Use the Strategy selector for Parallel / surface
+scan or Waterline; Parallel supports Line or ZigZag with the existing stepover and
+angle controls. Depths, feeds, sampling and tool controls retain the inherited CAM
+task pages. Selecting a CAD-only strategy for an STL reports an error.
+
+**Holding Tab** is in Project Setup and the CAM menu. Select a Job when more than
+one exists. The new tab starts at the model's +X edge, near surrounding stock.
+Double-click a tab to reopen the same complete editor.
+
+| Control | Behavior |
+| --- | --- |
+| Center X/Y and Bottom Z | Position in the Job's machining coordinates, in mm. |
+| Length / Width / Height | Positive dimensions in mm; changes preview the orange bridge. |
+| Angle | Rotation about Z, -360 to +360 degrees. |
+| Pick position on model | The next model pick sets center X/Y; bottom Z remains unchanged. |
+| OK | Commit and recompute linked toolpaths. |
+| Cancel | Abort creation or edits and restore the prior document state. |
+
+Tabs appear under the Job and remain visible for placement against the part and
+stock. They are shared by Parallel/Waterline operations. Other operations in a job
+with these tabs report unsupported protection and clear their output. Clearance and
+safe heights must be above every tab. Users must place bridges so they connect the
+part to stock; this version does not infer strength or connectivity from an STL.
+Controls support tab-key navigation, numeric keyboard editing, and translated labels.
+
+**Indexed Setup** creates another job from the selected source job. Its shared
+create/edit pane offers rotation axis X/Y/Z, an index angle (default 180 degrees),
+and a work origin at stock top center, stock top corner, or a custom point in
+rotated source coordinates. Edit the frame under the new Job to change these
+values. Independent model moves are disabled for indexed jobs: model, stock and
+tabs must stay registered. Create and post operations separately for each setup;
+the command does not emit rotary-axis moves. Double-clicking a copied tab edits
+its shared source in the original setup coordinates.
+
+Source: [`HoldingTab.py`](../src/Mod/CAM/Path/Main/Gui/HoldingTab.py).
+Validation: [CAM procedure](../tests/CAMMeshMachining.md).
+
 ## Open questions
 
 Further unified families and multi-source profile behavior are [product questions](PRODUCT_SPEC.md#open-questions).

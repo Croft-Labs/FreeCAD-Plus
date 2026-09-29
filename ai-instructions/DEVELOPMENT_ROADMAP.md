@@ -7,15 +7,16 @@
   [downstream integration](#nx-downstream-workflows). These phases describe the
   user's preferred FreeCAD Plus workflow, drawing on NX and SolidWorks; they are
   not a claim of exact product parity or authorization to start implementation.
-- [Phase 6: STL CAM and holding tabs](#cam-mesh-machining) has resumed at the user's new CAM request.
-  The earlier build was cancelled; the resumed build and draft source still need
-  validation. Two-sided/indexed machining is included through separate manually
-  indexed jobs. The NX-style history plan remains planning only.
+- [Phase 6: STL CAM and holding tabs](#cam-mesh-machining) is implemented and built.
+  All 22 focused automated tests pass; related regressions have 112 passes and one
+  optional dependency skip. Native acceptance and simulation remain pending.
+  Two-sided/indexed machining uses separate manually indexed jobs.
+  The NX-style history plan remains planning only.
 
 - Current build and closeout evidence: [consolidated validation, 2026-09-29](#consolidated-validation).
   Before the CAM changes, the configured Windows application built successfully
   and all 149 regression tests passed at both tested display scales. This evidence
-  does not validate the later partial CAM build. Physical viewport/keyboard acceptance remains pending:
+  is separate from the later CAM validation in Phase 6. Physical viewport/keyboard acceptance remains pending:
   the user stopped native computer use with Escape before those checks completed.
 - Isocline Curve implementation is recorded in [Phase 5](#isocline-curve), Trim Body
   in [Phase 4](#trim-body), and Revolve/Groove offsets in milestone 3.9.
@@ -736,37 +737,60 @@ Recomputation requires the new Python modules and native Part API in FreeCAD Plu
 
 User request: direct STL Parallel/Waterline machining similar to MeshCAM, with
 simple tabs that toolpaths automatically avoid, including two-sided/indexed
-machining. Source drafts now include separate manually indexed jobs, with shared
-model/stock/tab transforms and independent origins. Build and runtime acceptance
-remain pending; automatic rotary-axis output is outside this implementation.
+machining. Separate manually indexed jobs share model/stock/tab transforms and
+have independent origins. Implementation, build and automated workflow checks
+are complete. Native acceptance and simulation remain pending; automatic
+rotary-axis output is outside this implementation.
 
-### [   ] 6.1 Direct mesh workflow
+### [ X ] 6.1 Direct mesh workflow
 
-- [   ] 6.1.1 Accept and clone STL job models associatively; compute stock and placement without facet-to-BRep conversion.
-- [   ] 6.1.2 Use every mesh/CAD model in Parallel and Waterline generation; expose the command without experimental preference flags.
-- [   ] 6.1.3 Validate actual STL import, placement, both strategies, mesh edits and save/reopen in the CAM-enabled build.
+- [ X ] 6.1.1 Accept and clone STL job models associatively; compute stock and placement without facet-to-BRep conversion.
+- [ X ] 6.1.2 Use every mesh/CAD model in Parallel and Waterline generation; expose the command without experimental preference flags.
+- [ X ] 6.1.3 Validate actual STL import, placement, both strategies, mesh edits and save/reopen in the CAM-enabled build.
 
 ### [   ] 6.2 Geometric holding tabs
 
-- [   ] 6.2.1 Add the shared create/edit pane, numeric dimensions and viewport placement; preserve transactions and document links.
-- [   ] 6.2.2 Protect tab stock across supported cutting/link moves using the cutter radius; reject unsupported strategies and unsafe heights without stale paths.
-- [   ] 6.2.3 Validate narrow crossings, rotated/overlapping bridges, operation recompute, Cancel/Undo/Redo and saved documents.
+- [ X ] 6.2.1 Add the shared create/edit pane, numeric dimensions and viewport placement; preserve transactions and document links.
+- [ X ] 6.2.2 Protect tab stock across supported cutting/link moves using the cutter radius; reject unsupported strategies and unsafe heights without stale paths.
+- [ X ] 6.2.3 Validate narrow crossings, rotated/overlapping bridges, operation recompute, Cancel/Undo/Redo and saved documents.
 - [   ] 6.2.4 Complete native visual/viewport acceptance and record a representative simulation review. No machine cutting validation is implied by software tests.
 
 ### [   ] 6.3 Build and validation
 
-- [   ] 6.3.1 Enable CAM, Draft, MeshPart and required dependency modules in the external development build.
-- [   ] 6.3.2 Run focused CAM and relevant existing regressions; record runtime/source identities and remaining limitations.
+- [ X ] 6.3.1 Enable CAM, Draft, MeshPart and required dependency modules in the external development build.
+- [ X ] 6.3.2 Run focused CAM and relevant existing regressions; record runtime/source identities and remaining limitations.
 - [   ] 6.3.3 Commit and push the validated milestone to origin; verify the remote branch.
 
 ### [   ] 6.4 Two-sided and indexed setups
 
-- [   ] 6.4.1 Define setup orientation, work origin, stock and part references for each side/index; distinguish manual indexing between jobs from controller-driven indexing.
-- [   ] 6.4.2 Preserve the same physical holding tabs across transformed setups; propagate tab edits and invalidate every affected path.
+- [ X ] 6.4.1 Define setup orientation, work origin, stock and part references for each side/index; distinguish manual indexing between jobs from controller-driven indexing.
+- [ X ] 6.4.2 Preserve the same physical holding tabs across transformed setups; propagate tab edits and invalidate every affected path.
 - [   ] 6.4.3 Validate opposing faces and a non-orthogonal index, coordinate transforms, stock registration, tab clearance, safe linking moves and per-setup output.
 
-The first build was cancelled at the user's request. Work and the build resumed
-on the subsequent CAM request; no tests for this phase have passed yet.
+Evidence, 2026-09-29 (external root `D:\Temp\Office-PC\freecad-plus-validation-20260928`):
+
+- The first build was cancelled at the user's request. The resumed build linked
+  its modules but did not capture an exit code. The incremental completion build
+  passed with exit 0: `cam-completion-build-result.json`; final script targets
+  also exited 0 (`cam-final-scripts.log`).
+- `cam-tests-20260929-184049`: all 22 `TestMeshMachining` cases passed with no
+  skips and process exit 0. Includes STL curved-surface height checks, layered
+  Waterline, mixed translated mesh/CAD models, tab clearance and block-delete
+  annotations, persistence, 180/45-degree indexing, shared-tab propagation,
+  task transactions, indexed-stock refresh and command availability.
+- `cam-tests-20260929-183855`: the seven related suites ran 113 cases: 112 passed,
+  none failed/errored, one skipped. Suites: `TestPlanarSurfaceOp`,
+  `TestSurfaceMeshGenerator`, `TestPathStock`, `TestPathDressupHoldingTags`,
+  `TestPathOpUtil`, `TestPathUtil`, `TestPathSharedWorkplane`. The optional
+  simplification test skipped because `fast_simplification` is unavailable.
+  The strict aggregate marker is FAIL due to that skip, not a test failure.
+- `cam-validation-manifest.json`: all 15 installed changed CAM Python files
+  match source; five binary hashes recorded. The application still reports its
+  historical native stamp `8abce719de` (26.3.0dev, revision 49009); this stamp is
+  not the identity of the new Python implementation. Use the manifest and commit.
+- Native mouse/viewport acceptance, representative material-removal simulation,
+  and per-setup postprocessor review remain open (6.2.4 and 6.4.3). Automated
+  indexed geometry/path checks pass; they do not establish machine/fixture safety.
 
 
 <a id="nx-feature-history"></a>

@@ -125,7 +125,9 @@ class CAMWorkbench(Workbench):
         Path.GuiInit.Startup()
 
         # build commands list
-        projcmdlist = ["CAM_Job", "CAM_Workplane", "CAM_Sanity"]
+        from Path.Main.Gui import HoldingTab, IndexedSetup  # noqa: F401
+
+        projcmdlist = ["CAM_Job", "CAM_Workplane", "CAM_HoldingTab", "CAM_IndexedSetup", "CAM_Sanity"]
         postcmdlist = ["CAM_Post", "CAM_PostSelected"]
         toolcmdlist = ["CAM_Inspect", "CAM_SelectLoop", "CAM_OpActiveToggle"]
 
@@ -223,6 +225,14 @@ class CAMWorkbench(Workbench):
             extracmdlist.extend(["CAM_Area", "CAM_Area_Workplane"])
             engravecmdlist.append("CAM_Flute")
 
+        try:
+            from Path.Op.Gui import PlanarSurface  # noqa: F401
+
+            threedopcmdlist.append("CAM_PlanarSurface")
+            threedcmdgroup = ["CAM_PlanarSurface"]
+        except ImportError:
+            FreeCAD.Console.PrintWarning("Parallel and Waterline require OpenCAMLib.\n")
+
         if Path.Preferences.advancedOCLFeaturesEnabled():
             try:
                 r = subprocess.run(
@@ -257,7 +267,7 @@ class CAMWorkbench(Workbench):
                     from Path.Op.Gui import PlanarSurface  # noqa: F401
                     from Path.Op.Gui import RotarySurface  # noqa: F401
 
-                    threedopcmdlist.extend(["CAM_PlanarSurface", "CAM_RotarySurface"])
+                    threedopcmdlist.append("CAM_RotarySurface")
                 threedcmdgroup = ["CAM_3dTools"]
                 FreeCADGui.addCommand(
                     "CAM_3dTools",

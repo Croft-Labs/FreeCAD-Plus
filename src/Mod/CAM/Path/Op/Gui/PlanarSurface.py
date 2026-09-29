@@ -45,7 +45,7 @@ class TaskPanelOpPage(PathOpGui.TaskPanelPage):
 
     def initPage(self, obj):
         """initPage(obj) ... initialize the task panel page"""
-        self.setTitle("Planar Surface - " + obj.Label)
+        self.setTitle(translate("CAM_PlanarSurface", "Parallel / Waterline") + " - " + obj.Label)
         self.updateVisibility()
         self.form.accuracySlider.setPageStep(1)
 
@@ -565,8 +565,8 @@ Command = PathOpGui.SetupOperation(
     PathPlanarSurface.Create,
     TaskPanelOpPage,
     "CAM_PlanarSurface",
-    QT_TRANSLATE_NOOP("CAM_PlanarSurface", "Planar Surface"),
-    QT_TRANSLATE_NOOP("CAM_PlanarSurface", "Creates a Planar Surface operation from a model"),
+    QT_TRANSLATE_NOOP("CAM_PlanarSurface", "Parallel / Waterline"),
+    QT_TRANSLATE_NOOP("CAM_PlanarSurface", "Machines an STL or CAD model with Parallel or Waterline paths"),
     PathPlanarSurface.SetupProperties,
 )
 
