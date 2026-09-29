@@ -29,6 +29,7 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 | CAM face-avoidance failures | [`surface_common.py`](../src/Mod/CAM/Path/Base/Generator/surface_common.py), [`PlanarSurface.py`](../src/Mod/CAM/Path/Op/PlanarSurface.py) | Stop generation rather than omit exclusions; [regressions](../tests/TestIssueSurfaceAvoidance.py) |
 | Mirror reference placement | [`FeatureMirroring.cpp`](../src/Mod/Part/App/FeatureMirroring.cpp), [`TestPartMirror.py`](../src/Mod/Part/parttests/TestPartMirror.py) | Issue #32706 fixed locally; geometry, persistence and task selection pass in 75-test batch |
 | Resume the build-validation closeout | [Shutdown handoff](WORK_STATE.md) | Completed build/tests and remaining native acceptance gates |
+| Development policy and future architecture | [Adopted guidelines](DEVELOPMENT_GUIDELINES.md) | [Baseline mapping](DEVELOPMENT_ROADMAP.md#planning-baseline-adoption), [future contracts](PRODUCT_SPEC.md#future-architecture-direction) |
 | Agent instructions | [Root entry point](../AGENTS.md) | [Shared standard](../../ai-instructions/AGENTS_TEMPLATE.md) |
 
 ## Folder and module map

@@ -37,6 +37,37 @@
 - Preferred future command layout: [unified geometry workflows](#unified-feature-workflows)
   with Add/Subtract first in the task pane; Extrude passes the automated checks below.
 
+<a id="planning-baseline-adoption"></a>
+## Planning baseline adoption, 2026-09-29
+
+The owner requested adoption of two supplied documents. Execution guidance is in
+[DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md); the complete supplied
+[FREECAD_PLUS_DEVELOPMENT_ROADMAP.md](archive/FREECAD_PLUS_DEVELOPMENT_ROADMAP.md)
+is preserved as a dated reference. Its P0-P10 identifiers and inventory are planning
+inputs, not replacements for this file's stable task IDs or live status. Its estimates
+remain hypotheses. This instruction update does not authorize starting all phases.
+
+| Supplied phases | Existing owner / integration rule |
+| --- | --- |
+| P0 / G0 baseline | Phase 1, consolidated validation and Development Guide. Reuse recorded builds/tests; audit only missing or invalidated evidence. No claim that the entire expanded G0 is satisfied. |
+| P1-P3 / G1-G3 architecture | Phase 7. Decide contracts, prove the mixed-part/shared-occurrence pilot, then migrate. Include assembly-local effects, topology ambiguity, legacy documents and drawing/CAM/FEM consumers. |
+| P4-P5 / G4-G5 modeling and sketches | Phases 3 and 8. Preserve implemented Extrude/Pattern/offset work; migrate behind stable contracts. New selection conventions require reconciliation with input collectors. |
+| P6 / G6 assemblies | Phases 7 and 9. Shared versus local editing, reference sets, replacement, external links and load-state semantics remain planned. |
+| P7 / G7 geometry portfolio | Phases 3-5 and 8. Trim and Isocline already have implementation/test evidence; advanced surfaces/direct editing remain candidates. Do not recreate completed work. |
+| P8 / G8 mesh CAM | Phase 6. Preserve Parallel/Waterline, holding tabs and the user's two-sided/manually indexed requirement. Roughing, rest machining, simulation/post gates remain separate; three-axis wording does not drop indexed setups. |
+| P9 / G9 downstream | Phase 9; preserve all supplied inventory rows as future candidates, activating bounded tasks only within authorized scope. |
+| P10 / G10 maintenance | Upstream issue work and release gates in the Development Guide. Local fixes/builds are not releases. |
+
+The supplied section 6 inventory remains the full candidate inventory; each item
+activated later must cite its ID and receive a concrete task here. Do not maintain
+parallel status in the archived file. Benchmark B01-B10 in the guidelines names
+user-task fixtures (distinct from similarly numbered assembly inventory IDs).
+Baseline usability/performance thresholds and effort estimates require measurements.
+
+- [ X ] 1.3 Adopt the supplied agent guidance and map it to existing document owners.
+  Evidence: guidelines and complete planning reference retained; root/index/guide
+  links and future product direction updated. Documentation-only; no application
+  behavior, build evidence or prior completion markers changed.
 <a id="upstream-issue-work"></a>
 ## [   ] Upstream issue work: reliability before workflow polish
 
@@ -956,6 +987,10 @@ Complete when: a prototype demonstrates one independent sketch driving features
 on two bodies, one feature producing multiple bodies, and a later feature using
 results from both, without silently duplicating sketches or losing references.
 
+- [   ] 7.1.6 Before architecture implementation, record decisions for the supplied
+  definition/occurrence, body-result, selection, transaction and persistence contracts;
+  include alternatives, affected consumers and narrow proof criteria (G1-G3).
+
 ### [   ] 7.2 Build the unified history navigator
 
 - [   ] 7.2.1 Add a part-level History view containing sketches, datums, linked geometry and features in modeling order. Show shared inputs once, with discoverable consumers, instead of nesting them exclusively under one body.
@@ -974,6 +1009,9 @@ results from both, without silently duplicating sketches or losing references.
 
 ### [   ] 7.4 Automate body creation and target selection
 
+Default-choice decision pending: see task 7.4.8 and [baseline adoption](#planning-baseline-adoption).
+The following earlier automatic-target proposal is not a settled default.
+
 - [   ] 7.4.1 Extend the existing Extrude and Revolve task workflows to start in an empty part without a declared/active Body. Keep Operation as the first field, followed by profile, target/result controls and parameters.
 - [   ] 7.4.2 For Add with automatic targeting, create a new solid body when the generated solid has no valid volumetric overlap with an existing eligible solid. With exactly one eligible intersecting target, preview adding to that target.
 - [   ] 7.4.3 If multiple bodies intersect, show and highlight candidate targets; require an explicit target set or New Body choice. Never choose a target by incidental tree order or visibility.
@@ -986,6 +1024,9 @@ First deliverable: open a new document, draw a sketch, Extrude without creating 
 Body, then create a disconnected Extrude and obtain a second body. Reuse the first
 sketch for another feature, modify one selected body with Subtract, and reopen each
 feature in the same complete task pane. Repeat the body-creation cases with Revolve.
+
+- [   ] 7.4.8 Resolve the supplied New Body default against the earlier automatic
+  Add-target proposal; preserve explicit operations and stored target intent.
 
 ### [   ] 7.5 Add history editing, rollback and recovery
 
@@ -1003,6 +1044,10 @@ feature in the same complete task pane. Repeat the body-creation cases with Revo
 - [   ] 7.6.3 Preserve existing type/property names and Python entry points where possible. Document any new feature modules required for recomputation; do not promise upstream compatibility for backend changes without evidence.
 - [   ] 7.6.4 Define explicit neutral-geometry export as an exchange option, including loss of editable history. Never replace the editable original with a flattened export automatically.
 - [   ] 7.6.5 Audit Assembly, TechDraw, CAM, expressions, links and scripts that currently resolve a Body Tip. Provide stable result references and invalidation behavior for the new history model.
+
+- [   ] 7.6.6 Specify `.cadprt` schema/capabilities, legacy import/conversion,
+  Save As/Copy/Make Unique identity, external relocation and unsupported-content
+  handling before native-format implementation. Never convert owner files in place.
 
 ### [   ] 7.7 Validate and release the history pilot
 

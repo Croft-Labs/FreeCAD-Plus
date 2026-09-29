@@ -100,6 +100,36 @@ need FreeCAD Plus Python modules to recompute; upstream compatibility is not cla
 - Build and GUI validation must use this checkout's binaries, never the
   separately installed FreeCAD. Follow [the guide](DEVELOPMENT_GUIDE.md).
 
+## Future architecture direction
+
+The owner supplied an expanded planning baseline and development guidelines on
+2026-09-29. Adopt their product direction for future design, subject to the
+[roadmap gates](DEVELOPMENT_ROADMAP.md#planning-baseline-adoption); existing requirements
+and validation records above are not declarations that these changes exist.
+
+- Part-owned history, independent body results and reusable definitions containing
+  both geometry and child occurrences; explicit work/display context and targets.
+- Shared-definition edits, occurrence placement/overrides, Make Unique and
+  assembly-local operations have distinct, persisted scopes. Inspect App::Link and
+  existing facilities before introducing replacements.
+- Track reference identity and split/merge provenance; report ambiguous or stale
+  geometry instead of silently binding to a different face or using stale CAM output.
+- Keep reference sets, loading, suppression, visibility and BOM role separate.
+- Plan a versioned `.cadprt` engineering container, with legacy `.FCStd` import,
+  non-destructive conversion, recovery and explicit exchange losses. This does not
+  change the current format-retention constraint before a defined migration.
+- Preserve drawing, CAM, FEM and relevant Draft consumers through ownership changes.
+  Prove units, transforms, dependency invalidation, undo and persistence.
+
+Detailed candidate contracts and inventory remain available in the
+[supplied baseline](archive/FREECAD_PLUS_DEVELOPMENT_ROADMAP.md), sections 3 and 6.
+These two interactions need reconciliation before their implementation: the supplied
+**New Body by default** versus the earlier automatic Add target proposal in 7.4,
+and modifier-based general/Sketcher selection versus REQ-004's accumulating
+feature input collector. Keep capabilities and context-specific defaults distinct;
+do not silently discard the earlier requirements. Record the resulting decision
+and update the affected UI contracts before changing behavior.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

@@ -1,5 +1,9 @@
 # FreeCAD Plus: Development Guide
 
+Follow the [adopted execution guidelines](DEVELOPMENT_GUIDELINES.md) for reuse,
+architecture gates, risk-based validation and completion records. This guide remains
+the owner of executable commands and the build batching policy.
+
 ## Prerequisites and setup
 
 Work from the FreeCAD Plus checkout with recursive submodules initialized.

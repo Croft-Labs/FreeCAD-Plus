@@ -8,7 +8,10 @@
    when maintaining documentation.
 3. Read [the workspace instructions](../AGENTS.md) and follow their linked
    [operational rules](../CODEX_WORKSPACE_RULES.md), unless already loaded.
-4. Follow the summary to the task's requirements, source, tests, and roadmap.
+4. Read [the adopted development guidelines](ai-instructions/DEVELOPMENT_GUIDELINES.md),
+   including their repository adoption rules and task-relevant sections. Consult the supplied planning baseline
+   only for the relevant contracts and gates; it does not start new implementation.
+5. Follow the summary to the task's requirements, source, tests, and roadmap.
    Inspect applicable scoped instructions before edits. Continue authorized work
    through relevant verification and documentation updates.
 
@@ -43,6 +46,16 @@ Do not claim to have read missing guidance or maintain an independent master cop
   Push coherent, validated commits at completed milestones and clean stopping points;
   verify the remote branch afterward. Do not force-push. This does not authorize
   releases, deployments, or pushing to `upstream`.
+
+## Development approach
+
+Preserve this fork and reuse existing geometry, links, solvers and shared services.
+Decide ownership, identity, persistence and reference contracts early; prove them
+with a narrow end-to-end pilot before migrating commands. Prioritize dependency-ready
+work by user impact, feasibility and validation cost. A dialog or successful build
+alone does not establish recompute, undo, save/reopen or downstream correctness.
+Use the [canonical roadmap](ai-instructions/DEVELOPMENT_ROADMAP.md#planning-baseline-adoption)
+for phase mapping and status; do not create duplicate programming/status roadmaps.
 
 ## Project exceptions
 
