@@ -199,6 +199,14 @@ scan or Waterline; Parallel supports Line or ZigZag with the existing stepover a
 angle controls. Depths, feeds, sampling and tool controls retain the inherited CAM
 task pages. Selecting a CAD-only strategy for an STL reports an error.
 
+For CAD face selections, **Avoid last N faces** is supported by Parallel machining.
+Boundary-construction/subtraction failures stop generation and clear the previous
+path; the operation must not continue without its selected exclusion regions.
+Switching to Waterline or another strategy while this setting is nonzero reports
+an error instead of silently ignoring it. Return to Parallel or clear its avoided
+face selection before switching. This is separate from Holding Tabs, which remain
+supported by both Parallel and Waterline.
+
 **Holding Tab** is in Project Setup and the CAM menu. Select a Job when more than
 one exists. The new tab starts at the model's +X edge, near surrounding stock.
 Double-click a tab to reopen the same complete editor.

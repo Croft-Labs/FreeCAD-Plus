@@ -3,6 +3,9 @@
 ## Current focus
 
 - Active implementation: [prioritized upstream issue work](#upstream-issue-work).
+  Latest: modern CAM avoidance now stops on boundary failures or unsupported
+  strategy switches instead of ignoring exclusions. Python-only update installed;
+  all 67 focused/related CAM regressions pass. Remaining child cases: U.14-U.16.
   Audit inherited fixes and changed workflow applicability first. Mirror #32706
   is now fixed in the local application: one targeted compile/relink completed
   the accumulated batch, and all 75 issue regressions pass. No full rebuild.
@@ -96,6 +99,38 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
 - [ X ] U.11 Passing Mirror persistence/GUI tests and build-validation checkpoint
   published as `bb6d7607a78080bec36f8ade30c8925f09201874`; `origin/main` hash verified.
   The unreproduced slowdown U.6 remains open.
+- [ X ] U.12 Inspect the seven children linked from CAM umbrella #27751.
+  Four are closed; open #27950, #26300 and #6864 require comparison with the
+  replacement operation. Modern modular generators supersede the old code path,
+  but this does not prove every reported geometry case is fixed.
+- [ X ] U.13 Fix reproduced modern avoidance failure behavior related to #27950.
+  Boundary/subtraction failure now raises an error instead of restoring the full
+  cutting region or dropping selected exclusions. Valid fully excluded masks stay
+  empty. Waterline/other strategy changes with retained face avoidance now report
+  unsupported settings instead of ignoring them. Previous paths are cleared.
+  Eight focused tests and 59 related generator/operation/STL/tab tests pass.
+  The external planar open-face case retains full surrounding coverage and cutting
+  segments do not cross the excluded face. Python files installed and hash-verified;
+  no native build or document/property migration. UI behavior documented in UI-006.
+- [   ] U.14 #27950: exercise the original curved GeomFillSurface fixture with the
+  replacement workflow; record whether failure/coverage matches the legacy report.
+  Do not infer arbitrary freeform coverage from planar/cylindrical regressions.
+  Legacy Surface/Waterline remain unchanged and are not certified by U.13.
+- [   ] U.15 #26300: attempt the attached freeform hang/crash case in an isolated,
+  bounded process through the replacement operation; distinguish legacy applicability
+  and OCL/kernel behavior before modifying algorithms.
+- [   ] U.16 #6864: check final-strip coverage for nonintegral width/stepover ratios
+  in the current line generator; reproduce before porting a legacy algorithm fix.
+- [   ] U.17 Publish the validated CAM avoidance fix and verify `origin/main`.
+
+CAM avoidance evidence under the external validation root below:
+`avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
+checks (two valid geometry controls passed). After correction,
+`avoidance-tests-20260929-193013/results.json` reports 67 PASS, no errors/skips,
+process 0. Eight focused, 12 common-generator, seven pattern-generator, 18 unified
+operation and 22 STL/tab tests. `module-manifest.json` records installed Python
+hashes. The expanded default issue macro has 83 tests; it has not been run as a
+single batch. Preserve the separate 75-test native and 67-test CAM evidence.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.
 Existing binary run: 49 tests, 47 pass, two expected newly exposed Mirror failures,

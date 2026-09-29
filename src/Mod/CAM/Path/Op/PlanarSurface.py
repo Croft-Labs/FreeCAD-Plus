@@ -1679,6 +1679,12 @@ class ObjectSurface(PathOp.ObjectOp):
 
         # Extract basic operation data
         strategy = obj.Strategy
+        if strategy != "SurfaceScan" and obj.AvoidLastX_Faces > 0:
+            raise ValueError(translate(
+                "CAM_PlanarSurface",
+                "Face avoidance is only supported by Parallel machining. "
+                "Clear avoided faces before changing strategy.",
+            ))
         is_adaptive = getattr(obj, "AdaptiveSampling", False)
         boundary_adjustment = obj.BoundaryAdjustment.Value
 

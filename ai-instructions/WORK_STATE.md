@@ -1,5 +1,14 @@
 # FreeCAD Plus: Build validation handoff
 
+Latest CAM issue milestone (2026-09-29): two Python modules updated in the existing
+app to stop generation when selected face-avoidance boundaries fail and to reject
+strategy switches that would ignore those exclusions. Eight focused checks and
+59 related CAM regressions pass (67 total, no skips). No native rebuild. See
+U.12-U.17 in the roadmap for evidence and the remaining #27751 child cases:
+curved external avoidance, freeform hang/crash, and final-strip line coverage.
+Legacy Surface/Waterline and saved MillFace paths were not migrated. No test or
+build process remains running.
+
 Issue batch completed (2026-09-29): the local application now contains the Mirror
 #32706 correction. A targeted compile of FeatureMirroring.cpp and Part relink
 both exited 0; no full rebuild was needed. All 75 issue tests pass, including

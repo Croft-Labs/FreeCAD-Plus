@@ -412,13 +412,13 @@ def generate_pattern_mask(
 
     try:
         final_mask = main_boundary.cut(avoid_boundary)
-        if final_mask.isNull():
-            Path.Log.warning("Boolean cut for avoid_faces failed.")
-            return main_boundary
-        return final_mask
     except Exception as e:
-        Path.Log.error(f"Failed to cut avoid_faces from boundary mask: {e}")
-        return main_boundary
+        raise ValueError("Failed to subtract avoid faces from the machining boundary") from e
+    if final_mask.isNull() or not final_mask.isValid():
+        raise ValueError("Invalid machining boundary after subtracting avoid faces")
+    # A valid empty compound means the entire region is excluded. Preserve it;
+    # falling back to main_boundary would machine the explicitly avoided region.
+    return final_mask
 
 
 def build_optimized_boundary(faces, offset, tolerance=0.005, avoids=False):
@@ -719,8 +719,11 @@ def build_avoid_boundary(avoid_faces, avoid_overlap, tolerance):
             curves smoothly.
 
     Returns:
-        Part.Shape: The offset avoid-zone boundary, or None if
-        avoid_faces is empty or boundary generation fails.
+        Part.Shape: The offset avoid-zone boundary, or None if avoid_faces is empty.
+
+    Raises:
+        ValueError: Selected avoid faces cannot be represented safely. Never
+            silently drop them or let a caller generate unrestricted toolpaths.
     """
     if not avoid_faces:
         return None
@@ -732,13 +735,12 @@ def build_avoid_boundary(avoid_faces, avoid_overlap, tolerance):
         if secondary is not None:
             prepared_faces.append(secondary)
         else:
-            Path.Log.warning(
-                f"Failed to build a fallback boundary for {len(fallback_faces)} unresolved avoid face(s); they will be dropped."
+            raise ValueError(
+                f"Failed to build a boundary for {len(fallback_faces)} unresolved avoid face(s)"
             )
 
     if not prepared_faces:
-        Path.Log.debug("build_avoid_boundary: Nothing left to build a boundary from.")
-        return None
+        raise ValueError("No usable boundary could be built for the selected avoid faces")
 
     # Small buffer to avoid "path spikes" on vertical walls
     epsilon = max(0.01, tolerance + 0.001)
@@ -750,9 +752,8 @@ def build_avoid_boundary(avoid_faces, avoid_overlap, tolerance):
         avoids=True,
     )
 
-    if not avoid_boundary:
-        Path.Log.warning("Failed to generate boundary for avoid_faces.")
-        return None
+    if avoid_boundary is None or avoid_boundary.isNull() or not avoid_boundary.isValid():
+        raise ValueError("Failed to generate a valid boundary for the selected avoid faces")
 
     return avoid_boundary
 

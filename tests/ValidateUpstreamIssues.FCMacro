@@ -28,7 +28,8 @@ try:
     paths = [source / name for name in os.environ.get("FREECAD_PLUS_ISSUE_TESTS",
         "src/Mod/Part/parttests/TestPartMirror.py,src/Mod/CAM/CAMTests/TestPathOpUtil.py,"
         "tests/TestIssueQuantityInput.py,tests/TestIssueTreeSelection.py,"
-        "src/Mod/PartDesign/PartDesignTests/TestExtrudeTaskPanel.py,tests/TestIssueMirrorGui.py"
+        "src/Mod/PartDesign/PartDesignTests/TestExtrudeTaskPanel.py,tests/TestIssueMirrorGui.py,"
+        "tests/TestIssueSurfaceAvoidance.py"
     ).split(",")]
     for path in paths:
         spec = importlib.util.spec_from_file_location(path.stem, path)
