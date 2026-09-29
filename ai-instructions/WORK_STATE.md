@@ -8,6 +8,8 @@ U.12-U.17 in the roadmap for evidence and the remaining #27751 child cases:
 curved external avoidance, freeform hang/crash, and final-strip line coverage.
 Legacy Surface/Waterline and saved MillFace paths were not migrated. No test or
 build process remains running.
+CAM avoidance milestone `b2cfdf0f114ff2cba48004fe538991395b22f525` is committed
+and pushed to `origin/main`; remote hash verified. No release was made.
 
 Issue batch completed (2026-09-29): the local application now contains the Mirror
 #32706 correction. A targeted compile of FeatureMirroring.cpp and Part relink

@@ -121,7 +121,8 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   and OCL/kernel behavior before modifying algorithms.
 - [   ] U.16 #6864: check final-strip coverage for nonintegral width/stepover ratios
   in the current line generator; reproduce before porting a legacy algorithm fix.
-- [   ] U.17 Publish the validated CAM avoidance fix and verify `origin/main`.
+- [ X ] U.17 CAM avoidance fix published as
+  `b2cfdf0f114ff2cba48004fe538991395b22f525`; `origin/main` hash verified. No release.
 
 CAM avoidance evidence under the external validation root below:
 `avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
