@@ -1,0 +1,64 @@
+# Upstream issue validation
+
+Scope and status: [prioritized issues](../ai-instructions/FREECAD_ISSUES.md) and
+[roadmap evidence](../ai-instructions/DEVELOPMENT_ROADMAP.md#upstream-issue-work).
+Use the source-built fork identified in the development guide, never the separate
+installed FreeCAD. These are automated native Qt/model checks, not physical
+mouse/keyboard acceptance or evidence that an unbuilt C++ change works.
+
+## Recovery (#18044)
+
+Run `RunIssueRecovery.ps1` with an absolute fork executable and a **new** external
+evidence directory. The script launches preparation and verification processes,
+each with a 120-second deadline:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/RunIssueRecovery.ps1 `
+  -Executable "$build/bin/FreeCAD.exe" -OutputDirectory "$evidence/recovery"
+```
+
+Set `$build` and `$evidence` to the configured external build and a new external
+evidence location first. The process-only execution-policy setting does not
+change system policy. All user-data, preference and recovery paths are isolated.
+The helper asserts isolation before writing fixtures and never uses real files.
+
+Preparation saves a generated box and creates five original/recovery pairs:
+invalid ZIP, malformed Document.xml, malformed GuiDocument.xml, valid newer
+original and valid older original. The verification launch uses an isolated
+InitGui startup hook to inspect the real C++ recovery dialog. It checks the exact
+four offered documents, recovers them, verifies 231 mm³ solids, and compares
+original-file hashes to ensure none were overwritten. The valid newer original
+must be excluded. Both XML-corruption fixtures remain structurally valid ZIPs.
+
+Verification must use normal startup: `--hidden` skips recovery in FreeCAD.
+The test hook suppresses the main window and drives Qt controls programmatically.
+Evidence: `prepared.json`, `fixtures.json`, `recovery-results.json` and process logs.
+The runner fails on missing results, failed checks, process errors or timeout.
+
+## Quantity input, Extrude and tree (#32717/#32718/#32700/#28412)
+
+Run `ValidateUpstreamIssues.FCMacro` with isolated `--user-cfg`/`--system-cfg`,
+`FREECAD_USER_HOME`, `FREECAD_USER_DATA`, and `FREECAD_USER_TEMP`. Set
+`FREECAD_PLUS_SOURCE` to the checkout and `FREECAD_PLUS_VALIDATION_DIR` to an
+external evidence directory. This macro may use `--hidden` and exits when done.
+Use the existing bounded test-launch procedure; cap the process at 120 seconds.
+
+`FREECAD_PLUS_ISSUE_TESTS` accepts comma-separated source-relative test paths.
+For this no-build pass:
+
+```text
+tests/TestIssueQuantityInput.py,tests/TestIssueTreeSelection.py,src/Mod/PartDesign/PartDesignTests/TestExtrudeTaskPanel.py
+```
+
+The four quantity tests send native key/wheel/focus events, check focus-loss
+persistence and inch input in an inch-based document while the global schema is
+millimetres. Two added Extrude tests verify typed and stepped lengths change
+both feature properties and solid volume for Add/Subtract on create and reopen.
+The tree test sends mouse press/move/release events to the expansion arrow and
+checks both the expansion toggle and unchanged model selection.
+
+Default macro coverage also includes Mirror and CAM offsets. The existing binary
+is expected to fail the two newly exposed Mirror cases until the pending native
+fix is built. Do not hide those failures or report the default batch as passing.
+Results contain module paths/hashes, failures, skips and runtime version. A
+process exit of zero alone is not a passing test result.

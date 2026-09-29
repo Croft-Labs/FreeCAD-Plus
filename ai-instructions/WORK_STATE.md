@@ -1,5 +1,12 @@
 # FreeCAD Plus: Build validation handoff
 
+Issue-validation continuation (2026-09-29): five real startup recovery fixtures,
+four quantity-event tests, all 19 Extrude task tests and one tree-selection test
+pass against the existing fork. No application code change or native rebuild was
+needed for those inherited fixes. See U.5/U.9 in the roadmap and
+[repeatable procedures](../tests/UpstreamIssues.md). Mirror remains unbuilt and
+#29376 still needs a reproducible affected session/GPU trace. No process is running.
+
 Latest issue work (2026-09-29): the ten-entry watchlist is prioritized and checked
 against inherited fixes and our changed UI. Part Mirror #32706 reproduces; a
 source correction and three regressions are prepared. **The existing application

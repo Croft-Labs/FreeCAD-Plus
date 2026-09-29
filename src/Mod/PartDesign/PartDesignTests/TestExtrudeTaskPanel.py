@@ -9,7 +9,7 @@ from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
-from PySide import QtGui
+from PySide import QtCore, QtGui
 
 # Reopen via ViewObject.doubleClicked() to include the UI edit transaction.
 
@@ -92,6 +92,52 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.assertEqual(feature.Profile[0], self.sketch)
         self.assertAlmostEqual(feature.Shape.Volume, 920)
         self.accept()
+
+    def checkKeyboardLengthCommit(self, operation, initial):
+        """#32718/#32717: native editor events update both create and edit tasks."""
+        feature = self.start(preselect=True)
+        self.selectOperation(operation)
+
+        def check(value):
+            Gui.updateGui()
+            self.assertAlmostEqual(feature.Length.Value, value)
+            expected = 1000 + 16 * (value - 5) if operation == "Union" else 1000 - 16 * value
+            self.assertAlmostEqual(feature.Shape.Volume, expected, places=6)
+
+        for reopened in (False, True):
+            if reopened:
+                self.assertTrue(feature.ViewObject.doubleClicked())
+                Gui.updateGui()
+            spin = self.widget(QtGui.QWidget, "lengthEdit")
+            spin.setProperty("singleStep", 1.0)
+            editor = spin.findChild(QtGui.QLineEdit)
+            spin.setFocus()
+            editor.selectAll()
+            value = initial + int(reopened)
+            for char in f"{value} mm":
+                for kind in (QtCore.QEvent.KeyPress, QtCore.QEvent.KeyRelease):
+                    QtGui.QApplication.sendEvent(
+                        editor, QtGui.QKeyEvent(kind, 0, QtCore.Qt.NoModifier, char)
+                    )
+            self.widget(QtGui.QWidget, "startOffsetEdit").setFocus()
+            QtGui.QApplication.sendEvent(spin, QtGui.QFocusEvent(QtCore.QEvent.FocusOut))
+            check(value)
+            spin.setFocus()
+            for kind in (QtCore.QEvent.KeyPress, QtCore.QEvent.KeyRelease):
+                QtGui.QApplication.sendEvent(
+                    spin, QtGui.QKeyEvent(kind, QtCore.Qt.Key_Up, QtCore.Qt.NoModifier)
+                )
+            self.widget(QtGui.QWidget, "startOffsetEdit").setFocus()
+            QtGui.QApplication.sendEvent(spin, QtGui.QFocusEvent(QtCore.QEvent.FocusOut))
+            check(value + 1)
+            self.accept()
+            check(value + 1)
+
+    def testAddKeyboardEditsUpdateModelOnCreateAndReopen(self):
+        self.checkKeyboardLengthCommit("Union", 12)
+
+    def testSubtractKeyboardEditsUpdateModelOnCreateAndReopen(self):
+        self.checkKeyboardLengthCommit("Subtraction", 2)
 
     def testSwitchCreateThenReopenAndCancel(self):
         feature = self.start(preselect=True)

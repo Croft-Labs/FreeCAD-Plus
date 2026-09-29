@@ -25,6 +25,7 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 | Build or verify changes | [Development guide](DEVELOPMENT_GUIDE.md#commands) | [Pad test procedure](../tests/PadTaskPanel.md) |
 | Priorities, completion, and blockers | [Roadmap](DEVELOPMENT_ROADMAP.md) | [Current focus](DEVELOPMENT_ROADMAP.md#current-focus) |
 | Important upstream issues | [Prioritized issue watchlist](FREECAD_ISSUES.md) | [Issue work and pending validation](DEVELOPMENT_ROADMAP.md#upstream-issue-work) |
+| Recovery, numeric input and tree regressions | [Issue validation procedure](../tests/UpstreamIssues.md) | Isolated existing-build checks; no real user documents |
 | Mirror reference placement | [`FeatureMirroring.cpp`](../src/Mod/Part/App/FeatureMirroring.cpp), [`TestPartMirror.py`](../src/Mod/Part/parttests/TestPartMirror.py) | Issue #32706; source fix awaits batched native build |
 | Resume the build-validation closeout | [Shutdown handoff](WORK_STATE.md) | Completed build/tests and remaining native acceptance gates |
 | Agent instructions | [Root entry point](../AGENTS.md) | [Shared standard](../../ai-instructions/AGENTS_TEMPLATE.md) |

@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Prepare fixtures, then relaunch the same isolated app with recovery phase verify.
+
+Set FREECAD_PLUS_SOURCE and FREECAD_PLUS_VALIDATION_DIR. All FREECAD_USER_* paths
+must resolve below the validation directory. See IssueRecovery.py.
+"""
+import os
+from pathlib import Path
+import runpy
+
+runpy.run_path(str(Path(os.environ["FREECAD_PLUS_SOURCE"]) / "tests/IssueRecovery.py"))["prepare"]()

@@ -6,6 +6,8 @@
   Audit inherited fixes and changed workflow applicability first. Mirror #32706
   reproduces in the existing build; its source fix awaits the next batched native
   build. No per-feature rebuild was performed.
+  Recovery, quantity input, unified Extrude keyboard editing and tree-selection
+  regressions now pass against the existing fork; see U.5 and U.9 below.
 - Planning priority: [NX-style unified feature history](#nx-feature-history), then
   [consistent modeling workflows](#nx-modeling-workflows), then
   [downstream integration](#nx-downstream-workflows). These phases describe the
@@ -59,9 +61,16 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   isolated preferences. Require all passes, save/reopen a referenced Mirror,
   and check GUI face selection in translated/rotated Bodies. The existing binary
   has not tested the C++ correction; do not mark #32706 fixed in the application yet.
-- [   ] U.5 Retain high-impact recovery and quantity-input regressions for the next
-  compatible consolidated validation. Source fixes are verified; this issue pass
-  did not run fresh recovery corruption fixtures or native QuantitySpinBox tests.
+- [ X ] U.5 Validate inherited recovery and quantity-input fixes in the existing
+  source-built fork. Five isolated recovery fixtures pass through the real startup
+  dialog: damaged ZIP, malformed model XML and malformed GUI XML originals still
+  offer recovery; valid newer originals are excluded, valid older originals recover.
+  All four recovered solids have volume 231 mm3; original hashes remain unchanged.
+  Four native Qt quantity-event tests pass, including arrow/wheel focus-loss
+  persistence and implicit inches with global millimetres. All 19 Extrude task tests
+  pass, including two new Add/Subtract keyboard edit/step tests on create and reopen
+  that check feature dimensions and solid volume. No application fix was duplicated.
+  Procedure: [upstream issue validation](../tests/UpstreamIssues.md).
 - [   ] U.6 #29376: obtain a reproducible affected session/GPU trace before changing
   rendering. Frame-rate limiting and background changes are already inherited;
   upstream still reports intermittent OS-wide slowdown. Do not infer resolution
@@ -75,12 +84,27 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   `85fd6ebc77a5a180d61ad116cf6507fb274e93d4`, remote hash verified.
   Python/macro syntax and diff whitespace checks pass. Build/acceptance gates
   above remain open; no release or new executable was produced.
+- [ X ] U.9 Validate inherited tree fix #28412 using native Qt mouse events.
+  Expansion and collapse both toggle the container and preserve model selection
+  during a held-button move. The planned NX history has not replaced this tree.
+- [   ] U.10 Commit/push this recovery, numeric and tree regression milestone and
+  verify `origin/main`; keep U.4 and U.6 open. No new native build is needed for
+  these inherited fixes; the pending Mirror correction is still absent from the app.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.
 Existing binary run: 49 tests, 47 pass, two expected newly exposed Mirror failures,
 no errors/skips, process exit 0. Translated feature-face plane is 2 mm off; rotated
 case also fails. Three prior Mirror regressions and the new Body-face control pass.
 The aggregate result is FAIL, not a successful validation of the pending fix.
+
+Continuation evidence under the same external validation root (2026-09-29):
+`recovery-tests-20260929-final/recovery-results.json` reports PASS for five fixtures;
+`quantity-tests-20260929-191045/results.json` reports 23 tests PASS, no errors/skips;
+`tree-tests-20260929-191256/results.json` reports one test PASS (both expand/collapse
+subcases), no errors/skips. All processes exited 0. Earlier harness-development
+runs are not acceptance evidence. These checks used existing native revision
+`8abce719de` with source-loaded tests, not the unbuilt Mirror correction. Native
+Qt event testing is distinct from physical viewport/keyboard acceptance.
 
 ## [ X ] Phase 1: Repository and instruction foundation
 

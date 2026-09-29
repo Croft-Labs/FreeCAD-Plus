@@ -25,10 +25,11 @@ window.setAttribute(QtCore.Qt.WA_DontShowOnScreen, True)
 window.show()
 Gui.updateGui()
 try:
-    paths = (
-        source / "src/Mod/Part/parttests/TestPartMirror.py",
-        source / "src/Mod/CAM/CAMTests/TestPathOpUtil.py",
-    )
+    paths = [source / name for name in os.environ.get("FREECAD_PLUS_ISSUE_TESTS",
+        "src/Mod/Part/parttests/TestPartMirror.py,src/Mod/CAM/CAMTests/TestPathOpUtil.py,"
+        "tests/TestIssueQuantityInput.py,tests/TestIssueTreeSelection.py,"
+        "src/Mod/PartDesign/PartDesignTests/TestExtrudeTaskPanel.py"
+    ).split(",")]
     for path in paths:
         spec = importlib.util.spec_from_file_location(path.stem, path)
         module = importlib.util.module_from_spec(spec)
