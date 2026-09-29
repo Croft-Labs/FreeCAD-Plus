@@ -755,11 +755,13 @@ rotary-axis output is outside this implementation.
 - [ X ] 6.2.3 Validate narrow crossings, rotated/overlapping bridges, operation recompute, Cancel/Undo/Redo and saved documents.
 - [   ] 6.2.4 Complete native visual/viewport acceptance and record a representative simulation review. No machine cutting validation is implied by software tests.
 
-### [   ] 6.3 Build and validation
+### [ X ] 6.3 Build and validation
 
 - [ X ] 6.3.1 Enable CAM, Draft, MeshPart and required dependency modules in the external development build.
 - [ X ] 6.3.2 Run focused CAM and relevant existing regressions; record runtime/source identities and remaining limitations.
-- [   ] 6.3.3 Commit and push the validated milestone to origin; verify the remote branch.
+- [ X ] 6.3.3 Commit and push the validated milestone to origin; verify the remote branch.
+  Evidence: `648cff214ca78e1d8b3d72d87d6053e103390c60` pushed to `origin/main`;
+  `git ls-remote` returned the same hash. No release or installer was published.
 
 ### [   ] 6.4 Two-sided and indexed setups
 

@@ -3,6 +3,8 @@
 CAM implementation and automated validation are complete. Direct STL
 Parallel/Waterline, stock bridges and separate manually indexed setups are in the
 source-built application. No build or automated test is still running.
+Source milestone `648cff214ca78e1d8b3d72d87d6053e103390c60` is committed and
+pushed to `origin/main`; the remote branch hash was verified. No release was made.
 
 Indexed setups use one associative transform for model, stock and shared tabs;
 each setup has its own work origin and separately generated/posted three-axis
