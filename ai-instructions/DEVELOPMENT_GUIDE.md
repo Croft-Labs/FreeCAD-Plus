@@ -36,26 +36,48 @@ successful execution are separate facts.
 | C++ style | Root / PowerShell | `clang-format --dry-run --Werror src/Mod/PartDesign/Gui/TaskPadParameters.cpp src/Mod/PartDesign/Gui/TaskPadParameters.h src/Mod/PartDesign/Gui/TaskExtrudeParameters.h` | Formatting checked with clang-format 19.1.5; repository hooks specify their own version. |
 | Python syntax | Root / PowerShell | `python -c "import ast,pathlib; ast.parse(pathlib.Path('src/Mod/PartDesign/PartDesignTests/TestPadTaskPanel.py').read_text())"` | Syntax checked; does not import or execute FreeCAD. |
 | Whitespace | Root / PowerShell | `git -c core.whitespace=cr-at-eol diff --check` | Accommodates existing tracked CRLF files without normalizing unrelated lines. |
-| Configure/build | Root / PowerShell | Windows procedure below; [upstream build workflow](../.github/workflows/sub_buildWindows.yml) | Configuration reached the missing-LibPack gate; successful build unverified. |
-| Run focused GUI tests | Built fork / Python console | [Pad test procedure](../tests/PadTaskPanel.md) | Requires the rebuilt application and its copied test modules; not run yet. |
+| Configure/build | Root / PowerShell | Windows procedure below; [upstream build workflow](../.github/workflows/sub_buildWindows.yml) | Focused native targets built; [results](DEVELOPMENT_ROADMAP.md#extrude-validation-evidence). |
+| Run focused GUI tests | Built fork / Python console | [Pad test procedure](../tests/PadTaskPanel.md) | Requires the rebuilt application and matching copied test modules; [results](DEVELOPMENT_ROADMAP.md#extrude-validation-evidence). |
 | Broader regression gates | Built fork / upstream CI procedures | [Python tests](../.github/workflows/actions/runPythonTests/action.yml), [C++ tests](../.github/workflows/actions/runCPPTests/runAllTests/action.yml) | Choose relevant cases; no remote workflow dispatch is authorized by these references. |
 
-Windows procedure, not yet validated end-to-end. In a shell with CMake available,
-set `FREECAD_LIBPACK_DIR` to the compatible dependency directory first:
+Focused Windows configuration for the extrusion workflow. In a shell with CMake
+available, set `FREECAD_LIBPACK_DIR` to the source-pinned LibPack directory first.
+This omits unrelated workbenches and the C++ developer test framework; Python
+model and GUI regressions remain available:
 
 ```powershell
 if (-not $env:FREECAD_LIBPACK_DIR -or -not (Test-Path -LiteralPath $env:FREECAD_LIBPACK_DIR)) {
     throw 'Set FREECAD_LIBPACK_DIR to a compatible LibPack directory first.'
 }
 $freecadPlusBuild = Join-Path $env:LOCALAPPDATA 'FreeCADPlus\build'
-cmake -S . -B $freecadPlusBuild -G 'Visual Studio 17 2022' -A x64 -DBUILD_GUI=ON "-DFREECAD_LIBPACK_DIR=$env:FREECAD_LIBPACK_DIR"
+$freecadPlusOptions = @(
+    '-DBUILD_GUI=ON', '-DBUILD_PART=ON', '-DBUILD_SKETCHER=ON', '-DBUILD_PART_DESIGN=ON',
+    '-DFREECAD_RELEASE_PDB=OFF', '-DENABLE_DEVELOPER_TESTS=OFF',
+    '-DFREECAD_COPY_DEPEND_DIRS_TO_BUILD=ON', '-DFREECAD_COPY_LIBPACK_BIN_TO_BUILD=ON',
+    '-DFREECAD_COPY_PLUGINS_BIN_TO_BUILD=ON', '-DFREECAD_3DCONNEXION_SUPPORT=None'
+)
+$unusedWorkbenches = @(
+    'FEM', 'ADDONMGR', 'BIM', 'DRAFT', 'HELP', 'IMPORT', 'INSPECTION', 'MESH_PART',
+    'FLAT_MESH', 'OPENSCAD', 'CAM', 'ASSEMBLY', 'PLOT', 'POINTS', 'REVERSEENGINEERING',
+    'ROBOT', 'SHOW', 'SPREADSHEET', 'START', 'TECHDRAW', 'TUX', 'WEB', 'SURFACE'
+)
+$freecadPlusOptions += $unusedWorkbenches | ForEach-Object { "-DBUILD_$_=OFF" }
+cmake -S . -B $freecadPlusBuild -G 'Visual Studio 17 2022' -A x64 "-DFREECAD_LIBPACK_DIR=$env:FREECAD_LIBPACK_DIR" @freecadPlusOptions
 if ($LASTEXITCODE -ne 0) { throw 'FreeCAD Plus configuration failed.' }
-cmake --build $freecadPlusBuild --config Release --parallel
+cmake --build $freecadPlusBuild --config Release --parallel 3
+if ($LASTEXITCODE -ne 0) { throw 'FreeCAD Plus build failed.' }
 ```
 
 Identify the resulting executable from the actual build output; do not resolve
 an unrelated `FreeCAD` on PATH. Bound build operations by a finite hard deadline
 and an inactivity timeout, and inspect progress at least once per minute.
+Keep MSBuild file tracking enabled for normal incremental builds. The validation
+rebuild with `TrackFileAccess=false` recompiled dependencies. If only a
+C++ implementation file changes and all dependencies are already built, MSBuild's
+`ClCompile` target with `SelectedFiles` can compile that file, then `PrepareForBuild;_Link`
+can relink its project with `BuildProjectReferences=false`. This assumes unchanged
+headers/generated files and all required objects/resources exist; missing resources
+must also be compiled. Do not treat a compiler-only exit code as a completed build.
 
 ## Development conventions
 
@@ -78,9 +100,11 @@ and published artifacts are separate evidence levels. For this native GUI change
 run tests in the actual rebuilt fork and manually verify model selection and
 preview behavior. Check Pocket when shared extrusion code changes.
 
-The focused test code is [TestPadTaskPanel.py](../src/Mod/PartDesign/PartDesignTests/TestPadTaskPanel.py).
-Use [the test procedure](../tests/PadTaskPanel.md); current gaps and the known
-test-selector mismatch are tracked only in [milestone 2.2](DEVELOPMENT_ROADMAP.md#pad-validation).
+Run the five suites in [the test procedure](../tests/PadTaskPanel.md) against matching
+source-built modules. The GUI must have initialized document views. The fixtures
+reopen through `ViewObject.doubleClicked()` to include the user edit transaction;
+calling `Gui.Document.setEdit()` directly is not equivalent for Cancel/Undo tests.
+Results and remaining manual checks are owned by [milestone 2.2](DEVELOPMENT_ROADMAP.md#pad-validation).
 
 ## Release and recovery
 
@@ -93,7 +117,13 @@ Any future package must retain upstream attribution and document compatibility.
 ## Known development issues
 
 - Configuration needs a compatible LibPack even when MSVC/CMake are installed.
-  Use the source-owned dependency references above; current status is in milestone 2.2.
+  Use the source-owned dependency references above; tested setup is recorded in 2.2.
+- Set `FREECAD_USER_HOME`, `FREECAD_USER_DATA`, and `FREECAD_USER_TEMP` to existing
+  isolated directories and pass separate `--user-cfg` / `--system-cfg` files for
+  automated runs. Startup still creates a standard versioned cache directory;
+  this required authorized filesystem access in the validation sandbox.
+- MSBuild warns about incremental builds under the system temporary directory
+  (MSB8029). Prefer the stable local build directory shown above for ongoing work.
 - Google Drive is the source location; use the local-output convention above for builds.
 - Shared instruction files live outside this Git root. A fresh clone elsewhere
   needs accessible central guidance or an explicit missing-guidance report.

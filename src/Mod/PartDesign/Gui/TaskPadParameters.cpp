@@ -71,7 +71,7 @@ public:
         }
 
         if (!subName || !*subName) {
-            const auto& shape = static_cast<Part::Feature*>(object)->Shape.getValue();
+            const auto& shape = static_cast<Part::Feature*>(object)->Shape.getShape();
             return !shape.isNull() && !shape.hasSubShape(TopAbs_SOLID)
                 && shape.hasSubShape(TopAbs_EDGE);
         }

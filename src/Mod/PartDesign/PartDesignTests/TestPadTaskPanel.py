@@ -9,6 +9,8 @@ import FreeCADGui as Gui
 import Part
 from PySide import QtGui
 
+# Reopen via ViewObject.doubleClicked() to include the UI edit transaction.
+
 
 class TestPadTaskPanel(unittest.TestCase):
     def setUp(self):
@@ -35,9 +37,15 @@ class TestPadTaskPanel(unittest.TestCase):
         return sketch
 
     def widget(self, cls, name):
-        widget = Gui.getMainWindow().findChild(cls, name)
-        self.assertIsNotNone(widget, name)
-        return widget
+        # Closed task widgets can await deferred deletion during a test run.
+        # Only inspect the currently active editor.
+        dialog = Gui.Control.activeTaskDialog()
+        self.assertIsNotNone(dialog)
+        for panel in dialog.getDialogContent():
+            widget = panel.findChild(cls, name)
+            if widget is not None:
+                return widget
+        self.fail("Missing task widget: " + name)
 
     def button(self, name):
         return self.widget(QtGui.QPushButton, name)
@@ -79,7 +87,7 @@ class TestPadTaskPanel(unittest.TestCase):
         pad = self.startPad(preselect=True)
         self.assertEqual(self.profileList().count(), 1)
         self.accept()
-        Gui.activeDocument().setEdit(pad.Name)
+        self.assertTrue(pad.ViewObject.doubleClicked())
         Gui.updateGui()
         self.assertEqual(self.profileList().count(), 1)
         self.button("padClearProfile").click()
@@ -122,7 +130,7 @@ class TestPadTaskPanel(unittest.TestCase):
         pad = self.startPad(preselect=True)
         self.accept()
         self.other.ViewObject.Visibility = False
-        Gui.activeDocument().setEdit(pad.Name)
+        self.assertTrue(pad.ViewObject.doubleClicked())
         self.button("padClearProfile").click()
         Gui.Selection.addSelection(self.other)
         self.assertTrue(self.other.ViewObject.Visibility)
@@ -197,7 +205,7 @@ class TestPadTaskPanel(unittest.TestCase):
         dependent.Height = 2
         self.doc.recompute()
         self.assertEqual(dependent.BaseFeature, pad)
-        Gui.activeDocument().setEdit(pad.Name)
+        self.assertTrue(pad.ViewObject.doubleClicked())
         self.button("padClearProfile").click()
         Gui.Selection.addSelection(dependent, "Face1")
         self.assertIsNone(pad.Profile)

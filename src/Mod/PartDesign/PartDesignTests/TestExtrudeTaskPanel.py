@@ -9,6 +9,8 @@ import FreeCADGui as Gui
 import Part
 from PySide import QtGui
 
+# Reopen via ViewObject.doubleClicked() to include the UI edit transaction.
+
 
 class TestExtrudeTaskPanel(unittest.TestCase):
     def setUp(self):
@@ -34,9 +36,15 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         App.closeDocument(self.doc.Name)
 
     def widget(self, cls, name):
-        widget = Gui.getMainWindow().findChild(cls, name)
-        self.assertIsNotNone(widget, name)
-        return widget
+        # Closed task widgets can await deferred deletion during a test run.
+        # Only inspect the currently active editor.
+        dialog = Gui.Control.activeTaskDialog()
+        self.assertIsNotNone(dialog)
+        for panel in dialog.getDialogContent():
+            widget = panel.findChild(cls, name)
+            if widget is not None:
+                return widget
+        self.fail("Missing task widget: " + name)
 
     def operation(self):
         return self.widget(QtGui.QComboBox, "comboOperation")
@@ -71,7 +79,9 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.assertEqual([combo.itemText(i) for i in range(combo.count())], ["Add", "Subtract"])
         self.assertEqual(combo.currentData(), "Union")
         group = self.widget(QtGui.QGroupBox, "padProfileGroup")
-        layout = group.parentWidget().layout()
+        # Keep the parent wrapper alive while inspecting its layout.
+        container = group.parentWidget()
+        layout = container.layout()
         self.assertEqual(layout.itemAt(0).layout().itemAt(1).widget(), combo)
         self.assertEqual(layout.itemAt(1).widget(), group)
         self.assertIsNone(feature.Profile)
@@ -89,7 +99,7 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.assertAlmostEqual(feature.Shape.Volume, 920)
         self.assertEqual(feature.Direction, direction)
         self.accept()
-        Gui.activeDocument().setEdit(feature.Name)
+        self.assertTrue(feature.ViewObject.doubleClicked())
         Gui.updateGui()
         self.assertEqual(self.operation().currentData(), "Subtraction")
         self.selectOperation("Union")
@@ -109,7 +119,7 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.assertEqual(feature.TypeId, "PartDesign::Pocket")
         self.assertEqual(feature.Profile[0], self.sketch)
         self.accept()
-        Gui.activeDocument().setEdit(feature.Name)
+        self.assertTrue(feature.ViewObject.doubleClicked())
         Gui.updateGui()
         self.assertEqual(self.operation().currentData(), "Union")
         self.widget(QtGui.QPushButton, "padClearProfile").click()
@@ -140,7 +150,7 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         feature.Length = 7
         feature.Operation = "Common"
         self.doc.recompute()
-        Gui.activeDocument().setEdit(feature.Name)
+        self.assertTrue(feature.ViewObject.doubleClicked())
         Gui.updateGui()
         self.assertEqual(self.operation().currentData(), "Common")
         self.assertAlmostEqual(feature.Shape.Volume, 80)
@@ -150,7 +160,7 @@ class TestExtrudeTaskPanel(unittest.TestCase):
     def testAcceptedOperationEditCanUndoRedo(self):
         feature = self.start(preselect=True)
         self.accept()
-        Gui.activeDocument().setEdit(feature.Name)
+        self.assertTrue(feature.ViewObject.doubleClicked())
         Gui.updateGui()
         self.selectOperation("Subtraction")
         self.accept()

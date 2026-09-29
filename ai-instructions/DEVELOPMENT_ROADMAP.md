@@ -2,15 +2,17 @@
 
 ## Current focus
 
-- Active work: 3.6.3, unified Extrude source implementation, with compiled validation
-  still gated by 2.2. The user authorized this source work before that build gate clears.
+- Active work: finish manual viewport acceptance in 2.2.3 for the unified Extrude
+  workflow. Native build, 49 automated regressions, and task-pane visual inspection
+  passed on 2026-09-28; see [validation evidence](#extrude-validation-evidence).
 - Target outcome: [REQ-001 through REQ-009](PRODUCT_SPEC.md#capabilities-and-requirements).
-- Source implementation exists; build and GUI acceptance are still pending.
+- Source implementation and automated validation are complete; manual viewport
+  and keyboard acceptance remain pending.
   This roadmap records status; it does not authorize new phases or external publication.
 - The [Part Design workflow audit](#part-design-workflow-audit) inventories the
   remaining selection and complete-editing work. Audit complete; implementation pending.
 - Preferred future command layout: [unified geometry workflows](#unified-feature-workflows)
-  with Add/Subtract first in the task pane; Extrude source implemented, validation pending.
+  with Add/Subtract first in the task pane; Extrude passes the automated checks below.
 
 ## [ X ] Phase 1: Repository and instruction foundation
 
@@ -55,15 +57,50 @@ Complete when: source and regression cases exist and source-level checks pass.
 
 Complete when: this fork builds and the focused suite plus manual UI acceptance pass.
 
-- [   ] 2.2.1 Configure a compatible FreeCAD LibPack and build outside Google Drive.
-  Status: blocked at configuration on 2026-09-28: MSVC 19.44 was detected, but
-  `FREECAD_LIBPACK_DIR` had no usable LibPack. Follow [setup](DEVELOPMENT_GUIDE.md#prerequisites-and-setup).
-- [   ] 2.2.2 Correct and run the focused GUI regressions against the built fork.
-  The `buttonStartReference` test selector now uses the actual `QPushButton` widget.
-  GUI execution is still pending; include the new Extrude regressions below.
+- [ X ] 2.2.1 Configure a compatible FreeCAD LibPack and build outside Google Drive.
+  Windows x64 Release GUI, Part, Sketcher, and Part Design targets built successfully.
+  Fixed the profile selector to use `Shape.getShape()` for FreeCAD's `TopoShape`
+  methods; `getValue()` returns the raw OpenCASCADE shape and did not compile.
+- [ X ] 2.2.2 Correct and run the focused GUI regressions against the built fork.
+  All 21 task-pane tests passed. Tests now search the active dialog, retain the
+  layout's parent wrapper, and reopen via the user double-click entry point so
+  edit transactions are exercised. The earlier `QPushButton` selector fix is included.
 - [   ] 2.2.3 Verify viewport picking, rotated profiles, both directions, keyboard input,
   visibility restoration, Cancel, and Undo/Redo; check Pocket for shared-base regressions.
+  Automated selection, visibility, Cancel, Undo/Redo, and Pocket regressions pass.
+  Physical viewport/tree picking, rotated previews, keyboard navigation, and the
+  complete advanced-parameter click-through remain manual acceptance work.
   Acceptance: [UI-001](UI_UX_SPEC.md#ui-001-pad-task-pane) and [test procedure](../tests/PadTaskPanel.md).
+
+<a id="extrude-validation-evidence"></a>
+
+#### Validation evidence, 2026-09-28
+
+Tested this checkout at `f9d592dc1f` plus the selector and test-fixture corrections
+in this validation change. The source-built application reported FreeCAD 26.3.0;
+the separately installed FreeCAD was not launched or used.
+
+| Check | Result |
+| --- | --- |
+| Native model tests | `TestExtrude`: 8/8; existing `TestPad`: 14/14; existing `TestPocket`: 6/6. No failures, errors, or skips. |
+| Native GUI tests | `TestPadTaskPanel`: 14/14; `TestExtrudeTaskPanel`: 7/7. No failures, errors, or skips. |
+| Task-pane inspection | Captured and inspected Add and Subtract in the built GUI. Operation is first, Profile is second, and shared dimensions remain visible. |
+| Toolbar and material result | One `PartDesign_Extrude` action in the modeling toolbar. The same `Pad` object and `Profile` produced 1080 mm3 in Add and 920 mm3 in Subtract. |
+| Remaining limits | GUI tests use Qt controls and FreeCAD selection APIs; they do not establish physical mouse/keyboard acceptance. Unrelated workbenches, C++ developer tests, and cross-version recomputation in upstream FreeCAD were not tested. |
+
+Build and test artifacts are outside Google Drive at
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`:
+`configure-command.txt` / `configure.log`, `build-initial.log`, successful
+`repair-compile.log`, `repair-resource0.log`, `repair-resource1.log`, `repair-link.log`,
+`model-results.json`, `results.json`, per-suite logs, `visual-check.json`, and
+`extrude-add.png` / `extrude-subtract.png`. Executable: `build\bin\FreeCAD.exe`.
+
+The fork build used source-pinned `LibPack-26.3.0-v3.5.3-x64-Release` and MSVC
+19.44.35211. Archive SHA-256:
+`DCAA2D21F61B0607CF06B6E98F6E7525DC266C04C20E7B4D7B2C77BEC24366E7`.
+Focused build and test reproduction guidance is in the
+[development guide](DEVELOPMENT_GUIDE.md#commands). Settings and test documents
+were isolated from the normal user profile. No push, installer, or release was made.
 
 ## [   ] Phase 3: Further Part Design operations
 
@@ -196,7 +233,8 @@ Complete when: each operation passes the [common acceptance](#feature-task-accep
 including profile replacement while editing an existing feature.
 
 - [   ] 3.2.1 Pocket: replace the startup picker with the shared feature task and profile controls.
-  Source implemented through 3.6.3; compiled/GUI acceptance pending.
+  Source and automated validation completed through 3.6.3; manual viewport
+  acceptance remains in 2.2.3.
 - [   ] 3.2.2 Hole: add input selection with Hole-specific geometry rules.
 - [   ] 3.2.3 Revolution: add profile selection alongside axis and revolution controls.
 - [   ] 3.2.4 Groove: provide equivalent subtractive profile editing.
@@ -320,13 +358,14 @@ retain their own workflows while sharing appropriate selection and task conventi
 
 - [ X ] 3.6.1 Inventory combined-workflow candidates and record the preferred interaction.
   Evidence: the paired-feature/source mapping above; this is design documentation only.
-- [   ] 3.6.2 Define and validate the operation-switching compatibility approach;
+- [ X ] 3.6.2 Define and validate the operation-switching compatibility approach;
   inventory parameter mappings, existing Common behavior, and legacy entry points.
   Source approach: retain Pad/Pocket objects and their links; append enum choices
   without changing legacy indices; match extent modes by name; restore old Operation
   lists with the saved meaning intact. Geometry direction remains independent of
   Add/Subtract. Existing Common features keep Intersect in their dropdown. Save/reopen
-  and legacy-document runtime validation remain pending. Cross-version recomputation
+  and legacy-document model regressions passed, along with both legacy GUI entry
+  points; see [evidence](#extrude-validation-evidence). Cross-version recomputation
   of switched features in unmodified upstream FreeCAD is not established.
 - [   ] 3.6.3 Implement Extrude as the recommended first unified family, integrating
   Pad validation and Pocket task 3.2.1 rather than creating duplicate new controls.
@@ -335,16 +374,13 @@ retain their own workflows while sharing appropriate selection and task conventi
   Extrude Parameters with Operation first, then Profile, and the existing dimensions.
   Switching changes the same object's Operation; To last and Through all remain
   separate choices. Subtract/Intersect require a base solid; incomplete tasks remain editable.
-  Added eight model regressions and seven GUI regressions, registered with CMake and
-  the respective test suites. Existing Pad tests remain registered, with the widget
-  selector correction in 2.2.2. These tests have not executed.
-  Source checks passed: clang-format 19.1.5 on changed C++ ranges, Python syntax
-  for the focused regressions and suite imports, Qt Designer XML parsing, local
-  documentation links/anchors, and Git whitespace checks.
-  Configure evidence: MSVC 19.44.35211 detected; CMake stopped for missing LibPack in
-  `D:\Temp\Office-PC\FreeCADPlus-extrude-check-20260928`. No installed FreeCAD was used.
-  Remaining gate: build and run [the focused procedure](../tests/PadTaskPanel.md), then
-  manual viewport acceptance. Source checks alone do not complete this milestone.
+  Eight new model regressions, seven new GUI regressions, fourteen Pad GUI cases,
+  and twenty existing Pad/Pocket model cases all pass in the built fork. The native
+  build found and resolved the profile-selector API error recorded in 2.2.1.
+  Task-pane layout and the single toolbar command were inspected in the built GUI.
+  Source formatting, Python syntax, documentation links, and whitespace checks pass.
+  Remaining gate: manual viewport/keyboard acceptance in 2.2.3; passing automated
+  checks do not complete the common acceptance criteria for this milestone.
 - [   ] 3.6.4 Implement Revolve, covering both tasks 3.2.3 and 3.2.4.
 - [   ] 3.6.5 Implement Loft and Sweep, covering all four tasks in 3.3.
 - [   ] 3.6.6 Implement Helix, covering tasks 3.2.5 and 3.2.6.
@@ -354,3 +390,7 @@ retain their own workflows while sharing appropriate selection and task conventi
   features: common parameter retention, incompatible-mode guidance, no-base handling,
   preview/recompute, dependent links and expressions, save/reopen, Cancel, and Undo/Redo.
   Test existing additive, subtractive, and Common documents and legacy commands.
+  Automated coverage passed for both operations and legacy entry points, including
+  parameter/identity retention, base-solid validation, save/reopen, Cancel, and
+  Undo/Redo. Finish the manual rotated/reference/custom-direction, taper, start/end
+  reference, and downstream-pattern scenarios in the [test procedure](../tests/PadTaskPanel.md).
