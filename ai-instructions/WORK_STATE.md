@@ -11,7 +11,18 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8g/h atomic parameter rename and label-reference checks.
+Latest roadmap batch: 10.8i/j atomic parameter-expression edit prototype.
+edit_parameter_expression validates units, owns a transaction, checks affected
+native recompute state and rolls back failed geometry. Stale affected consumers and
+caller-owned transactions reject before mutation; a disconnected invalid box does
+not block a valid edit. Undo/Redo and native persistence pass.
+Grouped architecture validation: 56 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-edit-20260930-batch.
+Macro PASS; process ended. Engine 2df76790b4; no native rebuild, installed editor
+or release update. Object-level dependency scope is conservative through containers;
+production UI, property-level impact analysis and external/proxy effects remain open.
+
+Previous roadmap batch: 10.8g/h atomic parameter rename and label-reference checks.
 Test-only rename_parameter owns its transaction; native naming errors restore owned
 formulas/consumers. Unrelated pending edits reject before mutation. Label-based and
 internal-name references survive rename, Undo/Redo, label edit and save/reopen.

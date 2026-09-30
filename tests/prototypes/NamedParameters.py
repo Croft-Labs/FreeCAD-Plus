@@ -52,3 +52,37 @@ def rename_parameter(obj, old_name, new_name):
         doc.abortTransaction()
         doc.recompute()
         raise
+
+
+def edit_parameter_expression(obj, property_name, expression):
+    """Test-only atomic edit, restricted to current native length/angle consumers.
+
+    Readiness is object-level and includes recursive dependents and their inputs.
+    Unrelated document failures do not veto the edit. No implicit recompute/repair
+    is performed before opening the transaction.
+    """
+    doc = obj.Document
+    if doc.HasPendingTransaction:
+        raise ValueError("Finish the current transaction before editing a parameter")
+    setters = {"App::PropertyLength": set_length_expression,
+               "App::PropertyAngle": set_angle_expression}
+    setter = setters.get(obj.getTypeIdOfProperty(property_name))
+    if setter is None:
+        raise ValueError("Prototype supports length and angle parameters only")
+    affected = [obj] + list(obj.InListRecursive)
+    def require_current():
+        for consumer in affected:
+            for dependency in [consumer] + list(consumer.OutListRecursive):
+                if "Invalid" in dependency.State or "Touched" in dependency.State:
+                    raise ValueError("Parameter consumer is not current: " + dependency.Label)
+    require_current()
+    doc.openTransaction("Edit parameter expression")
+    try:
+        setter(obj, property_name, expression)
+        doc.recompute()
+        require_current()
+        doc.commitTransaction()
+    except Exception:
+        doc.abortTransaction()
+        doc.recompute()
+        raise

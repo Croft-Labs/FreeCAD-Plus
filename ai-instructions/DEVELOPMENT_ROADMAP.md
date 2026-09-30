@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8g/h prototype atomic parameter rename and verify label-based
+- Current batch: 10.8i/j prototype atomic parameter-expression edits with downstream
+  recompute validation, rollback and transaction/readiness boundaries. Grouped
+  architecture validation: 56 passes, zero failures/errors/skips. Test-only code;
+  no native rebuild, installed editor or release change.
+- Previous batch: 10.8g/h prototype atomic parameter rename and verify label-based
   consumer references with owned formulas. Grouped architecture validation: 54 passes,
   zero failures/errors/skips. No native rebuild, installed UI or release change.
 - Previous batch: 10.8e/f validate angular parameter expressions and native property
@@ -1984,6 +1988,27 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8h Verify label-based and internal-name references both follow parameter
   rename with an owned formula, Undo/Redo, container label changes, save/reopen and
   subsequent formula edits. External/ambiguous-label references remain unproven.
+
+- [ X ] 10.8i Prototype atomic named-parameter expression edits using the existing
+  length/angle unit guards, recompute-state validation and transaction rollback.
+  Prove a zero-width downstream failure restores the prior value/formula/geometry;
+  valid length edits support Undo/Redo and native persistence.
+- [ X ] 10.8j Guard parameter edits against stale affected consumers and unrelated
+  pending transactions before mutation. Verify a disconnected invalid feature does
+  not block a valid edit, while its existing invalid state remains visible.
+
+Atomic edit evidence: `parameter-edit-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **56 PASS, zero failures/errors/
+skips** (17 capability, 34 adapter, five lineage checks). Both tasks preceded one
+batch on existing fork engine 2df76790b4; macro PASS and process ended. Test-only
+`edit_parameter_expression` uses native recursive dependents and their inputs for
+object-level readiness before/after the edit. It aborts failed edits and rejects
+caller-owned transactions. NamedParameters SHA256:
+`E6B03595BBD5BBCFA1D43498799918BB1D4FB4AB093AF220C4469AA99845A148`.
+Dependency grouping can conservatively include sibling objects through container
+links; this is not property-level impact analysis. Only the native test fixtures
+are proven; proxy side effects, external consumers and general geometric validity
+remain separate gates. No native rebuild, installed editor or release update.
 
 Atomic rename evidence: `parameter-rename-safety-20260930-batch/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **54 PASS, zero failures/errors/

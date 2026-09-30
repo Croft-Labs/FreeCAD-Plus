@@ -527,3 +527,60 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         self.assertAlmostEqual(self.doc.ParameterizedBase.Shape.BoundBox.XLength, 40)
         self.assertAlmostEqual(self.doc.ParameterizedLid.Shape.BoundBox.XLength, 42)
         self.assertNotIn("Invalid", self.doc.ParameterizedBase.State)
+
+    def testAtomicParameterEditRollsBackInvalidGeometryAndSupportsUndo(self):
+        from prototypes.NamedParameters import edit_parameter_expression
+        parameters, first, second = self.parameterModel()
+        original = parameters.ExpressionEngine
+        with self.assertRaisesRegex(ValueError, "not current"):
+            edit_parameter_expression(parameters, "Width", "0 mm")
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.assertEqual(parameters.ExpressionEngine, original)
+        self.assertAlmostEqual(parameters.Width.Value, 25.4)
+        for obj, length in ((first, 25.4), (second, 27.4)):
+            self.assertNotIn("Invalid", obj.State)
+            self.assertAlmostEqual(obj.Shape.BoundBox.XLength, length)
+        edit_parameter_expression(parameters, "Width", "40 mm")
+        self.assertAlmostEqual(second.Shape.BoundBox.XLength, 42)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Length.Value, 25.4)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Length.Value, 40)
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "AtomicParameterEditProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.recompute()
+        self.assertAlmostEqual(self.doc.ParameterizedLid.Shape.BoundBox.XLength, 42)
+        self.assertIn("40 mm", str(self.doc.Parameters.ExpressionEngine))
+
+    def testAtomicParameterEditReadinessAndTransactionBoundaries(self):
+        from prototypes.NamedParameters import edit_parameter_expression
+        parameters, first, second = self.parameterModel()
+        original = parameters.ExpressionEngine
+        first.Width = 12
+        with self.assertRaisesRegex(ValueError, "not current"):
+            edit_parameter_expression(parameters, "Width", "35 mm")
+        self.assertEqual(parameters.ExpressionEngine, original)
+        self.assertIn("Touched", first.State)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.doc.recompute()
+        self.doc.openTransaction("Caller label edit")
+        first.Label = "Pending caller label"
+        with self.assertRaisesRegex(ValueError, "current transaction"):
+            edit_parameter_expression(parameters, "Width", "35 mm")
+        self.assertTrue(self.doc.HasPendingTransaction)
+        self.assertEqual(first.Label, "Pending caller label")
+        self.doc.abortTransaction()
+        self.doc.recompute()
+        unrelated = self.doc.addObject("Part::Box", "UnrelatedInvalidBox")
+        unrelated.Length = 0
+        self.doc.recompute()
+        self.assertIn("Invalid", unrelated.State)
+        edit_parameter_expression(parameters, "Width", "35 mm")
+        self.assertAlmostEqual(first.Shape.BoundBox.XLength, 35)
+        self.assertAlmostEqual(second.Shape.BoundBox.XLength, 37)
+        self.assertIn("Invalid", unrelated.State)
+        self.assertFalse(self.doc.HasPendingTransaction)

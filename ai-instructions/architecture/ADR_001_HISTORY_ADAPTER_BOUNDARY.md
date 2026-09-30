@@ -220,6 +220,23 @@ label edit and save/reopen, then react to a changed formula. No manual expressio
 rewriting is used. This does not establish cross-document or ambiguous-label behavior,
 or a production editor policy for geometry failures after recompute.
 
+### Atomic expression-edit prototype
+
+Roadmap 10.8i/j adds test-only `edit_parameter_expression`: reject caller-owned
+transactions, verify current affected objects, assign through the typed unit guard,
+recompute and commit only when the affected dependency graph remains current.
+On an exception or failed native recompute state, abort and recompute the restored
+model. Tests prove rollback after a zero-width box failure, successful length edits,
+Undo/Redo and persistence, stale-consumer rejection, caller-edit preservation and
+independence from a disconnected invalid box.
+
+The graph is object-level: recursive InList consumers plus their recursive OutList
+inputs. Container links can broaden this set to siblings, so it is conservative
+and cannot serve as a property-level where-used/impact report. Native Invalid/Touched
+state is not a universal geometric validity oracle. The prototype does not prove
+rollback of arbitrary proxy side effects or external-document consumers, and does
+not install an editor or change FreeCAD's normal expression assignment behavior.
+
 ## Remaining decision gates and consumers
 
 Roadmap 11.7a/b adds a test-only explicit planar reattachment operation in
