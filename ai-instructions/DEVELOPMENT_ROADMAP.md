@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8o/p guard stale parameter lists and verify two-editor
+- Current batch: 10.8q/r prototype atomic length/angle parameter creation and
+  its dialog workflow. Grouped validation: 67 passes, zero failures/errors/skips.
+  No native rebuild, installed command or release update.
+- Previous batch: 10.8o/p guard stale parameter lists and verify two-editor
   conflict/lifecycle isolation. Grouped validation: 65 passes, zero failures/errors/
   skips. Prototype only; no native rebuild, installed command or release update.
 - Previous batch: 10.8m/n protect the editor prototype from stale external edits
@@ -2028,6 +2031,26 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8p Verify two prototype dialogs preserve each other's committed values,
   reject stale drafts until Refresh and retain independent observer lifecycles.
   Closing one dialog leaves the other's parameter-deletion handling active.
+
+- [ X ] 10.8q Prototype typed parameter creation in an existing parameter object.
+  Reject invalid/colliding names and invalid expressions without a partial property;
+  verify native Undo/Redo, dependent formula updates and save/reopen for length/angle.
+- [ X ] 10.8r Add New name/type/expression and Create parameter to the prototype
+  dialog. Preserve failed input for correction; on success select the new parameter
+  and clear creation text. Verify incompatible units, collisions and both types.
+
+Parameter creation evidence: `parameter-create-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **67 PASS, zero failures/errors/
+skips** (ten native Qt, 18 capability, 34 adapter, five lineage checks). Both tasks
+preceded one grouped run on existing fork engine 2df76790b4; macro PASS and process
+ended. Test-only creation uses native dynamic Length/Angle properties and expressions,
+with ASCII identifier names and an owned transaction. Existing property identities
+are preserved. Prototype hashes: NamedParameters
+`7FFF822D2021F9DD5C65BBB1540B69E1B6582A628584D364BB46CB883D962622`;
+ParameterEditor `3E2A58639A1BFC0641BF35EB0C625C85EE6B61065DB4295971DD52D2D854D53D`.
+No native rebuild, installed command or release update. Parameter-object creation,
+delete/where-used/publication, broader types/scope and production integration remain
+open; physical UI/accessibility acceptance is separate from these widget tests.
 
 Parameter-list/multiple-editor evidence: `parameter-editor-schema-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **65 PASS, zero failures/

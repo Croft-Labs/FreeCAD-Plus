@@ -584,3 +584,34 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         self.assertAlmostEqual(second.Shape.BoundBox.XLength, 37)
         self.assertIn("Invalid", unrelated.State)
         self.assertFalse(self.doc.HasPendingTransaction)
+
+    def testCreateNamedParametersIsAtomicUndoableAndPersistent(self):
+        from prototypes.NamedParameters import create_parameter
+        parameters, first, second = self.parameterModel()
+        before = list(parameters.PropertiesList)
+        for name, kind, expression in (("Width", "Length", "2 mm"),
+                                      ("Bad name", "Length", "2 mm"),
+                                      ("BadUnit", "Length", "30 deg"),
+                                      ("MissingInput", "Angle", "Unknown.Tilt")):
+            with self.assertRaises(Exception):
+                create_parameter(parameters, name, kind, expression)
+            self.assertEqual(parameters.PropertiesList, before)
+            self.assertFalse(self.doc.HasPendingTransaction)
+            self.assertAlmostEqual(first.Length.Value, 25.4)
+        create_parameter(parameters, "Clearance", "Length", "Parameters.Width / 10")
+        self.assertAlmostEqual(parameters.Clearance.Value, 2.54)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertNotIn("Clearance", parameters.PropertiesList)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(parameters.Clearance.Value, 2.54)
+        create_parameter(parameters, "DraftAngle", "Angle", "5 deg")
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "CreatedParametersProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.Parameters.Width = "40 mm"
+        self.doc.recompute()
+        self.assertAlmostEqual(self.doc.Parameters.Clearance.Value, 4)
+        self.assertAlmostEqual(self.doc.Parameters.DraftAngle.Value, 5)

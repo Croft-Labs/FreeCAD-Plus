@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8o/p prototype parameter-list and two-editor handling.
+Latest roadmap batch: 10.8q/r typed parameter creation prototype and dialog.
+create_parameter adds native Length/Angle properties atomically, with explicit units
+and ASCII identifier names. Invalid names/units/references leave no partial property.
+Creation supports Undo/Redo/persistence; dialog correction and selection checks pass.
+Grouped validation: 67 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-create-20260930-batch.
+Macro PASS; process ended. Engine 2df76790b4; no native rebuild or release update.
+Still uninstalled: parameter-object creation, deletion/where-used/publication,
+broader types/scope, physical UI/accessibility and production integration remain open.
+
+Previous roadmap batch: 10.8o/p prototype parameter-list and two-editor handling.
 Loading a stale dropdown disables edit controls and requires Refresh. External
 rename/removal, empty lists and subsequent additions recover. Same-object dialogs
 reject conflicting drafts; closing one does not remove the other's observer.

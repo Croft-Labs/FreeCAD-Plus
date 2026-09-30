@@ -306,7 +306,8 @@ and the active roadmap milestone; do not silently change the intended workflow.
 parameter object, supplied by the test caller. It is not a production command or
 replacement for the planned part-level parameter editor. Fields appear in order:
 Parameter (existing length/angle property dropdown), Name, read-only Current value,
-Expression, error message, Apply expression/Rename buttons, then Refresh/Close.
+Expression, error message, Apply expression/Rename buttons, New name/type/expression,
+Create parameter, then Refresh/Close.
 
 Typing leaves the document unchanged. Apply evaluates units and affected recompute
 state in an owned transaction; a failed edit rolls back, keeps the attempted text
@@ -328,6 +329,13 @@ list disables Apply/Rename, while a later added length/angle parameter can be lo
 Two dialogs for the same object use the same conflict guard: either dialog must
 Refresh after the other commits. Closing one leaves the other's observer active.
 
-Nine native Qt tests exercise the prototype programmatically. Physical keyboard/
-accessibility, high-DPI layout, general external reference synchronization and
-production creation/deletion/where-used/publication remain pending.
+Create parameter operates on the existing parameter object. New type offers Length
+and Angle; New expression requires explicit compatible units. New name uses an ASCII
+identifier (letter/underscore followed by letters, digits or underscores); collisions
+reject. Creation owns one transaction and rolls back on failure. Errors retain the
+creation fields for correction; success selects the new property and clears New name/
+expression. Existing conflict checks apply to Create as well as Apply/Rename.
+
+Ten native Qt tests exercise the prototype programmatically. Physical keyboard/
+accessibility, high-DPI layout, general external reference synchronization, parameter-
+object creation and production deletion/where-used/publication remain pending.

@@ -2,7 +2,7 @@
 """Test-only existing-parameter editor. Not installed or registered as a command."""
 import FreeCAD as App
 from PySide import QtWidgets
-from prototypes.NamedParameters import edit_parameter_expression, rename_parameter
+from prototypes.NamedParameters import create_parameter, edit_parameter_expression, rename_parameter
 
 
 class ParameterEditor(QtWidgets.QDialog):
@@ -23,6 +23,11 @@ class ParameterEditor(QtWidgets.QDialog):
         self.apply = QtWidgets.QPushButton("Apply expression")
         self.rename = QtWidgets.QPushButton("Rename")
         self.refreshButton = QtWidgets.QPushButton("Refresh")
+        self.newName = QtWidgets.QLineEdit()
+        self.newType = QtWidgets.QComboBox()
+        self.newType.addItems(["Length", "Angle"])
+        self.newExpression = QtWidgets.QLineEdit()
+        self.create = QtWidgets.QPushButton("Create parameter")
         self.closeButton = QtWidgets.QPushButton("Close")
         layout.addRow("Parameter", self.parameter)
         layout.addRow("Name", self.name)
@@ -30,8 +35,13 @@ class ParameterEditor(QtWidgets.QDialog):
         layout.addRow("Expression", self.expression)
         layout.addRow(self.error)
         layout.addRow(self.apply, self.rename)
+        layout.addRow("New name", self.newName)
+        layout.addRow("New type", self.newType)
+        layout.addRow("New expression", self.newExpression)
+        layout.addRow(self.create)
         layout.addRow(self.refreshButton, self.closeButton)
         self.parameter.currentIndexChanged.connect(self.loadParameter)
+        self.create.clicked.connect(self.createParameter)
         self.apply.clicked.connect(self.applyExpression)
         self.rename.clicked.connect(self.renameParameter)
         self.closeButton.clicked.connect(self.reject)
@@ -122,3 +132,17 @@ class ParameterEditor(QtWidgets.QDialog):
             self._closed = True
             App.removeDocumentObserver(self)
         super().done(result)
+
+    def createParameter(self):
+        if self._closed:
+            return
+        name = self.newName.text()
+        try:
+            self.requireUnchanged()
+            create_parameter(self.obj, name, self.newType.currentText(), self.newExpression.text())
+        except Exception as error:
+            self.error.setText(str(error))
+            return
+        self.refresh(name)
+        self.newName.clear()
+        self.newExpression.clear()

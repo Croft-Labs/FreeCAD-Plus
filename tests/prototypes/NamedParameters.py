@@ -86,3 +86,35 @@ def edit_parameter_expression(obj, property_name, expression):
         doc.abortTransaction()
         doc.recompute()
         raise
+
+
+def create_parameter(obj, name, kind, expression):
+    """Create a typed parameter atomically; prototype names use ASCII identifiers."""
+    import re
+    doc = obj.Document
+    if doc.HasPendingTransaction:
+        raise ValueError("Finish the current transaction before creating a parameter")
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
+        raise ValueError("Use a parameter name starting with a letter or underscore, followed by letters, digits or underscores")
+    if name in obj.PropertiesList:
+        raise ValueError("A property with that name already exists")
+    types = {"Length": ("App::PropertyLength", set_length_expression),
+             "Angle": ("App::PropertyAngle", set_angle_expression)}
+    if kind not in types:
+        raise ValueError("Choose Length or Angle")
+    if any("Invalid" in dep.State or "Touched" in dep.State
+           for dep in [obj] + list(obj.OutListRecursive)):
+        raise ValueError("Parameter object is not current")
+    property_type, setter = types[kind]
+    doc.openTransaction("Create parameter")
+    try:
+        obj.addProperty(property_type, name, "Dimensions")
+        setter(obj, name, expression)
+        doc.recompute()
+        if "Invalid" in obj.State or "Touched" in obj.State:
+            raise ValueError("New parameter did not recompute successfully")
+        doc.commitTransaction()
+    except Exception:
+        doc.abortTransaction()
+        doc.recompute()
+        raise
