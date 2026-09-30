@@ -1,6 +1,14 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 16.2h/i complete. Shared PostList refuses dirty/invalid native
+Latest roadmap batch: 16.2j/k complete. Job.Model changes now rebind/clear nested
+base operations and dressup paths using allOperations. Native fixture removal and
+replacement/recovery checks pass, including restored export. cam-nested-20260929-batch
+records 90 passes, one existing skip, zero test failures/errors. Python-only install.
+Missing-model recompute reports Lead-in/Lead-out NoneType.Group diagnostics while
+keeping paths empty; recovery passes. That diagnostic and broader consumer gates
+remain open. No native build or GUI/machine acceptance in this batch.
+
+Previous roadmap batch: 16.2h/i complete. Shared PostList refuses dirty/invalid native
 operations and linked inputs before cached-path export. Dirty and failed-producer
 recovery checks pass; nested dressup export tests now recompute edited inputs first.
 cam-export-20260929-verified under the existing validation root records 88 passes,

@@ -262,3 +262,10 @@ The guard reads native dependency state without recomputing or changing the docu
 It does not certify clean-but-wrong geometry or references absent from the graph.
 Record the existing skipped postprocessor classification test separately from passing
 tests; the macro's strict overall flag is false whenever a test is skipped.
+
+For nested model-container checks (16.2j/k), synchronize Job.py and run
+TestCAMInvalidInputs, TestDressupPost and TestPostProcessor together. The native
+dressup fixture verifies clearing every collected path immediately and after model
+removal, then restored path/export generation; replacement also checks rebinding
+and dropping the old container link. Missing-model Lead-in/Lead-out diagnostics
+remain expected pending a separate fix; recovery must still pass.

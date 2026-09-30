@@ -693,13 +693,13 @@ class ObjectJob:
         if prop == "Model" and getattr(obj, "Operations", None):
             # Operations cannot link to their parent Job without creating a
             # dependency cycle. Rebind them explicitly when its model changes.
-            for operation in obj.Operations.Group:
+            for operation in self.allOperations():
                 bind = getattr(getattr(operation, "Proxy", None), "_bindModelDependencies", None)
                 if bind:
                     bind(operation, obj)
-                    if "freezed" not in obj.getStatusString().casefold():
-                        operation.Path = Path.Path()
-                        operation.touch()
+                if "freezed" not in obj.getStatusString().casefold():
+                    operation.Path = Path.Path()
+                    operation.touch()
         if prop == "PostProcessor" and obj.PostProcessor:
             processor = PostProcessorFactory.get_post_processor(obj, obj.PostProcessor)
             self.tooltip = processor.tooltip

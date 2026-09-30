@@ -5,7 +5,11 @@
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2h/16.2i reject postprocessing when a selected operation or
+- Current batch: 16.2j/16.2k extend model-container invalidation/rebinding to
+  nested CAM dressups and base operations. Grouped validation: 90 passes, one
+  existing skip, zero test failures/errors; Python-only synchronization. Missing
+  model diagnostics in Lead-in/Lead-out and general consumer gates remain open.
+- Previous batch: 16.2h/16.2i reject postprocessing when a selected operation or
   its linked inputs are dirty/invalid. Native cached-path failure/recovery checks
   and postprocessor/dressup regressions: 88 pass, one pre-existing skip, zero
   failures/errors. Python-only synchronization; no native build. General missing
@@ -2052,6 +2056,29 @@ Python-only install into the existing fork build, no native rebuild or GUI/machi
 acceptance. These guards do not detect silently wrong but clean geometry, missing
 references absent from the dependency graph, or external scripts bypassing PostList.
 Full 16.2 consumer/export compatibility remains open.
+
+- [ X ] 16.2j Clear nested base-operation and dressup caches when a job Model
+  container is removed; prove all paths remain empty through recompute and recover
+  after restoring the container, including successful postprocessing.
+- [ X ] 16.2k Rebind nested base-operation model dependencies when the container
+  is replaced, dropping the obsolete container and recovering paths/export after
+  transferring model geometry. Reuse Job.allOperations traversal.
+
+Nested CAM batch: Job.onChanged now visits existing allOperations, binding base
+operations and clearing/touching all returned path objects for unfrozen jobs.
+The existing native dressuptest.FCStd fixture includes four base operations and
+increasingly nested dressups. Two new tests verify removal and replacement/recovery.
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-nested-20260929-batch\results.json`
+records **90 PASS, one existing classification skip, zero test failures/errors**
+(11 invalid-input, five dressup and 75 postprocessor tests including the skip).
+Strict overall macro flag is false because of the skip. During missing-model
+recompute, Lead-in/Lead-out reports a NoneType.Group error; paths remain empty and
+restore/export succeeds. Improving that diagnostic remains pending, as do general
+compound/occurrence graphs, frozen-job policy and full consumer compatibility.
+Installed Job.py matches source SHA256
+`57B42492F1E5CFCC4935D09CC40BCA469E2120B51C6E973C94FFA745FFDBDB33`;
+Python-only synchronization, no native build or
+GUI/machine acceptance. This closes the two bounded nested-fixture checks only.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

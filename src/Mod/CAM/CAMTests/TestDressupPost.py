@@ -143,6 +143,48 @@ class TestDressupPost(PathTestUtils.PathTestBase):
         self.assertIn("M6 T3", gcode)
         self.assertIn("M6 T4", gcode)
 
+    def testModelRemovalClearsNestedPathsAndRecovers(self):
+        model = self.job.Model
+        operations = self.job.Proxy.allOperations()
+        self.assertGreater(len(operations), len(self.ops))
+        self.assertTrue(all(op.Path.Commands for op in operations))
+        try:
+            self.job.Model = None
+            for op in operations:
+                self.assertEqual(len(op.Path.Commands), 0, op.Label)
+                if hasattr(op, "ModelDependencies"):
+                    self.assertEqual(op.ModelDependencies, [])
+            self.doc.recompute()
+            self.assertTrue(all(not op.Path.Commands for op in operations))
+        finally:
+            self.job.Model = model
+            self.doc.recompute()
+        self.assertTrue(all(op.Path.Commands for op in operations))
+        self.assertTrue(self.post.export())
+
+    def testModelReplacementRebindsNestedOperations(self):
+        previous = self.job.Model
+        models = list(previous.Group)
+        replacement = self.doc.addObject("App::DocumentObjectGroup", "ReplacementModel")
+        try:
+            self.job.Model = replacement
+            for op in self.job.Proxy.allOperations():
+                self.assertEqual(len(op.Path.Commands), 0, op.Label)
+                if hasattr(op, "ModelDependencies"):
+                    self.assertEqual(op.ModelDependencies, [replacement])
+                    self.assertNotIn(previous, op.OutList)
+            previous.Group = []
+            replacement.Group = models
+            self.doc.recompute()
+            self.assertTrue(all(op.Path.Commands for op in self.job.Proxy.allOperations()))
+            self.assertTrue(self.post.export())
+        finally:
+            replacement.Group = []
+            previous.Group = models
+            self.job.Model = previous
+            self.doc.removeObject(replacement.Name)
+            self.doc.recompute()
+
     def test003(self):
         # test handling of CoolantMode in postprocessor and nested dressups
 
