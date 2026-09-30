@@ -7,6 +7,10 @@ user settings. The separately installed FreeCAD is outside this validation.
 
 ## Automated regressions
 
+The task-readiness regression makes a previously valid source fail recompute,
+verifies hidden preview and blocked acceptance, then repairs it and accepts the
+recovered curve. Shared dependency-state validation also serves Trim Body.
+
 Run inside the initialized source-built GUI:
 
 ```python

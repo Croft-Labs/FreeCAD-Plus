@@ -8,6 +8,7 @@ import FreeCADGui as Gui
 import Part
 from PySide import QtCore, QtGui
 from BasicShapes.FeatureTask import TaskFeatureViewProvider, DirectionArrow as KeepArrow
+from BasicShapes.ShapeReferences import require_current, ReferenceError
 from . import TrimAPI, TrimFeatures
 
 translate = App.Qt.translate
@@ -227,6 +228,11 @@ class TrimBodyTask:
             )
             return False
         self.doc.recompute()
+        try:
+            require_current(self.obj)
+        except ReferenceError as error:
+            self.status.setText(str(error))
+            return False
         if not self.obj.isValid() or self.obj.Shape.isNull():
             self.status.setText(self.obj.StatusMessage or self.obj.getStatusString())
             return False

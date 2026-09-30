@@ -70,6 +70,20 @@ class TestIsoclineGui(unittest.TestCase):
         self.assertEqual(highlight.scene.findChild(highlight.root), -1)
         self.assertTrue(self.source.Visibility)
 
+    def testFailedSourceBlocksPreviewAndAcceptUntilRepaired(self):
+        self.start()
+        self.assertFalse(self.obj.Shape.isNull())
+        self.source.Radius = 0
+        self.assertFalse(self.task.updatePreview(force=True))
+        self.assertIn("not current", self.task.status.text())
+        self.assertFalse(self.obj.Visibility)
+        self.assertFalse(self.task.accept())
+        self.assertTrue(Gui.Control.activeDialog())
+        self.source.Radius = 10
+        self.assertTrue(self.task.updatePreview(force=True))
+        self.assertAlmostEqual(self.obj.Shape.Length, 20 * math.pi)
+        self.accept()
+
     def testAngleReverseEditUndoAndCancel(self):
         self.start()
         self.task.angle.setValue(30)

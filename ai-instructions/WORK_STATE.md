@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7w/x complete as test-only current-result access checks.
+Latest roadmap batch: 4.1.4/5.1.4 production task-readiness guards complete.
+Trim Body/Isocline preview and acceptance reject invalid/touched dependency results
+after recompute, hide the result and remain editable; source repair recovers.
+Grouped model/GUI validation: 42 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\task-readiness-20260930-batch.
+Macro PASS; process ended. Three production Python modules plus two tests staged
+with matching source hashes in the isolated build. No native rebuild or release.
+This integrates readiness into these task panes only; exporters and other consumers
+remain separate gates, as do physical viewport/high-DPI acceptance checks.
+
+Previous roadmap batch: 11.7w/x complete as test-only current-result access checks.
 Native downstream solid remains cached after reference failure, but the new accessor
 rejects invalid/touched dependencies. Repair/restore recover access; recompute is
 explicit and returned shapes are independent copies.

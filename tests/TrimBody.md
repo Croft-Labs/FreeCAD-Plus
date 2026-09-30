@@ -6,6 +6,10 @@ actual results in [the roadmap](../ai-instructions/DEVELOPMENT_ROADMAP.md#trim-b
 
 ## Automated regressions
 
+The task-readiness regression makes a previously valid target fail recompute,
+verifies hidden preview and blocked acceptance, then repairs it and accepts the
+recovered result. Shared dependency-state validation also serves Isocline.
+
 Run model tests with the built FreeCADCmd, or both suites in an initialized GUI:
 
 ```python

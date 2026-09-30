@@ -9,6 +9,17 @@ class ReferenceError(ValueError):
     pass
 
 
+def require_current(obj):
+    """Reject stale dependency results after the caller has requested recompute."""
+    for dependency in [obj] + list(obj.OutListRecursive):
+        if "Invalid" in dependency.State or "Touched" in dependency.State:
+            raise ReferenceError(
+                "Input is not current: {}. Recompute or repair it before continuing.".format(
+                    dependency.Label
+                )
+            )
+
+
 def linked_shape(link):
     if not link or not link[0]:
         raise ReferenceError("Select an input object.")

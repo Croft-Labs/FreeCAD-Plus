@@ -79,6 +79,20 @@ class TestTrimBodyGui(unittest.TestCase):
         self.assertTrue(self.target.Visibility)
         self.assertTrue(self.tool.Visibility)
 
+    def testFailedSourceBlocksPreviewAndAcceptUntilRepaired(self):
+        self.start(preselect=True)
+        self.assertFalse(self.obj.Shape.isNull())
+        self.target.Length = 0
+        self.assertFalse(self.task.updatePreview(force=True))
+        self.assertIn("not current", self.task.status.text())
+        self.assertFalse(self.obj.Visibility)
+        self.assertFalse(self.task.accept())
+        self.assertTrue(Gui.Control.activeDialog())
+        self.target.Length = 10
+        self.assertTrue(self.task.updatePreview(force=True))
+        self.assertAlmostEqual(self.obj.Shape.Volume, 600)
+        self.accept()
+
     def testReverseEditCancelUndoRedo(self):
         self.start(preselect=True)
         self.accept()

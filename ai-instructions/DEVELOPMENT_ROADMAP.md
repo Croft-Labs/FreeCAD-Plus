@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7w/x prototype a current-result accessor that rejects invalid
+- Current batch: 4.1.4/5.1.4 integrate dependency readiness checks into production
+  Trim Body and Isocline task previews/acceptance. Grouped model/GUI validation:
+  42 passes, zero failures/errors/skips. Python modules staged in the isolated build;
+  no native rebuild or release update.
+- Previous batch: 11.7w/x prototype a current-result accessor that rejects invalid
   or unrecomputed dependencies and returns an independent shape copy. Grouped
   validation: 50 passes, zero failures/errors/skips; no native rebuild. This is
   not installed in application consumers/exporters; production integration pending.
@@ -1101,6 +1105,23 @@ Depends on: the existing Part geometry engine and native development build.
 
 ### [   ] 4.2 Validate and prepare the local test build
 
+- [ X ] 4.1.4 Reject stale dependency results in the Trim Body task pane after
+  recompute. Keep the dialog open, hide the result and report a repair/recompute
+  message instead of presenting it as ready. Verify acceptance recovery after repair.
+
+Shared task-readiness evidence (also 5.1.4): `task-readiness-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **42 PASS, zero failures/
+errors/skips** (Trim 14 model/11 GUI; Isocline nine model/eight GUI). Both tasks
+preceded grouped validation. Macro PASS; process ended. Three changed production
+Python modules and two GUI test modules were staged and source/destination hashes
+matched in the isolated fork build, engine source 2df76790b4. No native rebuild,
+manual viewport acceptance or release update. Shared `require_current` checks
+Invalid/Touched state across the result and dependencies after recompute; it does
+not clear cached geometry or change exporters. Source SHA256:
+ShapeReferences `44DD51DB6F76DB5B5F5A8F40B1715620380563B1E0A4F8822891F507CFBD514B`;
+TrimGui `276C6FAAA9901B3A4BA99844783703FEC883EEFD59F02E54BA2D6244307AE8D7`;
+IsoclineGui `649BD807CC20A00F026BB0BC9BDA93A26D4E62AB927468DC99A65F82B8F0F539`.
+
 - [ X ] 4.2.1 Rebuild/link PartGui and PartDesignGui menu/toolbar entries, install
   source-matching Python modules and icon into the existing Windows x64 Release
   build. The separately installed FreeCAD was not used. No new dependencies.
@@ -1163,6 +1184,9 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
 - [ X ] 5.1.3 Reuse extracted ShapeReferences and FeatureTask helpers with Trim Body.
   Preserve stored Trim proxy names and input/transaction behavior. Both features
   track enclosing placements, preserve source objects and keep a separate result.
+- [ X ] 5.1.4 Apply shared dependency-readiness validation to Isocline preview and
+  acceptance. Failed source geometry keeps the task editable and result hidden;
+  repair restores curve preview and acceptance. Evidence recorded with 4.1.4.
 
 ### [   ] 5.2 Validate the local build
 
@@ -1643,68 +1667,68 @@ the full objective is unverified; `Partial` points to existing bounded evidence.
 
 | ID | Desired objective | U | D | F | C | Effort | Supplied phase | Local tasks / full-objective status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| A01 | Unified part definition with geometry and child occurrences | 5 | 5 | Medium | 3 | L–XL | P1/P2 | 7.1; 12.1; Partial |
+| A01 | Unified part definition with geometry and child occurrences | 5 | 5 | Medium | 3 | Lâ€“XL | P1/P2 | 7.1; 12.1; Partial |
 | A02 | Part-owned history, independent body results, explicit targets | 5 | 5 | Medium | 3 | XL | P1/P2 | 7.1; 7.4; Partial |
-| A03 | Shared instances, occurrence overrides, Make Unique, promote bodies | 5 | 3 | High | 3 | M–L | P2/P3 contracts; P6 product | 12.2; Partial |
-| A04 | Work/display context and scoped selection services | 5 | 3 | High | 3 | M–L | P1/P3 | 10.5; 12.4; Pending |
+| A03 | Shared instances, occurrence overrides, Make Unique, promote bodies | 5 | 3 | High | 3 | Mâ€“L | P2/P3 contracts; P6 product | 12.2; Partial |
+| A04 | Work/display context and scoped selection services | 5 | 3 | High | 3 | Mâ€“L | P1/P3 | 10.5; 12.4; Pending |
 | A05 | Persistent references, topology provenance, repair | 5 | 5 | Medium | 3 | XL | P1/P3 | 7.1.4; 12.5; Partial |
-| A06 | Versioned persistence, legacy adapters, migration | 5 | 5 | Medium | 3 | L–XL | P1/P3 | 7.6; 16.1; Partial |
+| A06 | Versioned persistence, legacy adapters, migration | 5 | 5 | Medium | 3 | Lâ€“XL | P1/P3 | 7.6; 16.1; Partial |
 | A07 | Common feature lifecycle, undo, preview, cancellation | 5 | 4 | High | 2 | L | P2/P3 | 8.1; 10.2; Partial |
-| A08 | Assembly-scoped feature semantics | 4 | 5 | Medium | 3 | L–XL | P2 proof; P6 product | 7.1.3d; 12.6; Partial |
+| A08 | Assembly-scoped feature semantics | 4 | 5 | Medium | 3 | Lâ€“XL | P2 proof; P6 product | 7.1.3d; 12.6; Partial |
 | U01 | Separate navigators, docking, synchronized highlighting | 5 | 2 | High | 1 | M | P4 | 7.2; 10.6; Pending |
 | U02 | Tree filters, columns, folders, comments, dependency display | 4 | 2 | High | 1 | M | P4 | 7.2; 10.6; Pending |
-| U03 | Unified Extrude and Revolve command interfaces | 5 | 3 | High | 2 | M–L | P4; depends on A02/A07 | 8.2; 10.4; Partial |
-| U04 | Search aliases, shortcut palette, navigation presets | 4 | 2 | High | 0 | S–M | P4; safe prototypes earlier | 10.4; Pending |
+| U03 | Unified Extrude and Revolve command interfaces | 5 | 3 | High | 2 | Mâ€“L | P4; depends on A02/A07 | 8.2; 10.4; Partial |
+| U04 | Search aliases, shortcut palette, navigation presets | 4 | 2 | High | 0 | Sâ€“M | P4; safe prototypes earlier | 10.4; Pending |
 | U05 | Multiselection modifiers, filters, Select Other, selection rules | 5 | 3 | High | 2 | M | P4 | 10.5; Pending |
-| U06 | Shared extent controls, collectors, interactive handles | 5 | 3 | High | 2 | M–L | P4 | 8.1; 8.4.3; Partial |
+| U06 | Shared extent controls, collectors, interactive handles | 5 | 3 | High | 2 | Mâ€“L | P4 | 8.1; 8.4.3; Partial |
 | U07 | Move/Copy, point-to-point, triad and coordinate alignment | 5 | 3 | High | 2 | M | P4 | 10.7; Pending |
 | U08 | Rollback, valid insertion/reorder, suppression | 4 | 4 | Medium | 2 | L | P3 contract; P4 UI | 7.5; Pending |
-| U09 | Guided/direct workflows, progressive disclosure, consistent feature presets | 5 | 3 | High | 2 | M–L | P1 contracts; P4 | 10.2; 10.4; Pending |
-| U10 | Intelligent initial New Body/Unite suggestions with persisted explicit intent | 5 | 4 | Medium | 2 | M–L | P1/P3 contracts; P4 | 7.4; 10.3; Pending |
-| S01 | Automatic constraints, previews, inference controls | 5 | 3 | High | 2 | M–L | P5 | 11.1; Pending |
-| S02 | Cursor-adjacent suggested-constraint palette | 5 | 2 | High | 1 | S–M | P5; earlier prototype possible | 11.3; Pending |
+| U09 | Guided/direct workflows, progressive disclosure, consistent feature presets | 5 | 3 | High | 2 | Mâ€“L | P1 contracts; P4 | 10.2; 10.4; Pending |
+| U10 | Intelligent initial New Body/Unite suggestions with persisted explicit intent | 5 | 4 | Medium | 2 | Mâ€“L | P1/P3 contracts; P4 | 7.4; 10.3; Pending |
+| S01 | Automatic constraints, previews, inference controls | 5 | 3 | High | 2 | Mâ€“L | P5 | 11.1; Pending |
+| S02 | Cursor-adjacent suggested-constraint palette | 5 | 2 | High | 1 | Sâ€“M | P5; earlier prototype possible | 11.3; Pending |
 | S03 | Smart dimensions, driving/reference values, entry while drawing | 5 | 3 | High | 1 | M | P5 | 11.4; Pending |
 | S04 | Degrees of freedom, conflict repair, sketch diagnostics | 5 | 4 | Medium | 2 | L | P5 | 11.4; Pending |
 | S05 | External projection/intersection points and curves | 5 | 3 | High | 2 | M | P5; existing capability audit first | 11.5; Pending |
 | S06 | Regions, trim/extend, constrained copy, blocks and patterns | 4 | 4 | Medium | 2 | L | P5 in separate increments | 11.6; Pending |
 | S07 | Selection-aware constraint applicability, conflict/redundancy states and reasons | 5 | 4 | Medium | 2 | L | P1 audit/contracts; P5 | 11.2; Pending |
-| B01 | Entire/Model/Empty/custom reference sets | 5 | 3 | High | 2 | M–L | P3 contract; P6 UI | 12.3; Pending |
+| B01 | Entire/Model/Empty/custom reference sets | 5 | 3 | High | 2 | Mâ€“L | P3 contract; P6 UI | 12.3; Pending |
 | B02 | Joint/mate assistance, grounding, freedom/conflict display | 5 | 4 | Medium | 2 | L | P6 | 12.4; Pending |
-| B03 | Published interfaces, geometry links, external-reference manager | 5 | 5 | Medium | 3 | L–XL | P3 contracts; P6 product | 12.5; Pending |
+| B03 | Published interfaces, geometry links, external-reference manager | 5 | 5 | Medium | 3 | Lâ€“XL | P3 contracts; P6 product | 12.5; Pending |
 | B04 | Replacement, component patterns/mirrors, explosions and motion | 4 | 4 | High | 2 | L | P6 in separate increments | 12.2; 12.6; Pending |
 | B05 | Configurations, arrangements, flexible subassemblies | 4 | 5 | Medium | 3 | XL | P1 semantics; later P6 increments | 9.6; 12.7; Pending |
-| B06 | Lightweight/partial loading and simplified representations | 4 | 5 | Medium | 3 | L–XL | P1 contracts; measured P6 need | 12.8; Pending |
-| G01 | Solid/sheet trim and split | 5 | 3 | High | 1 | M–L | P7 | 13.1; Partial |
+| B06 | Lightweight/partial loading and simplified representations | 4 | 5 | Medium | 3 | Lâ€“XL | P1 contracts; measured P6 need | 12.8; Pending |
+| G01 | Solid/sheet trim and split | 5 | 3 | High | 1 | Mâ€“L | P7 | 13.1; Partial |
 | G02 | Thicken sheets, sew/stitch, offset and gap diagnostics | 5 | 4 | Medium | 1 | L | P7 | 13.1; Pending |
-| G03 | Sweep/loft and through-curves surfaces with guides | 5 | 5 | Medium | 2 | L–XL | P7 | 13.2; Pending |
+| G03 | Sweep/loft and through-curves surfaces with guides | 5 | 5 | Medium | 2 | Lâ€“XL | P7 | 13.2; Pending |
 | G04 | Curve-network/boundary surfaces and continuity controls | 4 | 5 | Unknown | 2 | XL | P7 after bounded spike | 13.3; Pending |
-| G05 | Extract/project/intersect curves; isocline extraction | 4 | 4 | Medium | 1 | M–L | P7; split by operation | 13.4; Partial |
-| G06 | Holes, patterns/mirrors, shell/draft/ribs and dress-up tools | 5 | 4 | High | 2 | L–XL | P7 in separate increments | 13.5; Partial |
+| G05 | Extract/project/intersect curves; isocline extraction | 4 | 4 | Medium | 1 | Mâ€“L | P7; split by operation | 13.4; Partial |
+| G06 | Holes, patterns/mirrors, shell/draft/ribs and dress-up tools | 5 | 4 | High | 2 | Lâ€“XL | P7 in separate increments | 13.5; Partial |
 | G07 | Direct face editing and healing | 4 | 5 | Medium | 2 | XL | Late P7 | 9.1; 13.6; Pending |
 | G08 | Imported-solid feature recognition | 3 | 5 | Unknown | 1 | XL | Late P7 after spike | 13.7; Pending |
 | C01 | Direct-STL input and first three-axis finishing workflow | 5 | 4 | Medium | 2 | L | P8 | 6; 14.1; Partial |
 | C02 | Stock-aware roughing, rest machining, boundaries | 5 | 5 | Medium | 2 | XL | P8 after C01 | 14.2; Pending |
-| C03 | Simulation, collision checks, posts and setup reuse | 5 | 5 | Medium | 2 | L–XL | P8; limited checks from first release | 14.3; 14.4; Partial |
-| I01 | Measurements, mass, sections, interference/clearance | 4 | 3 | High | 1 | M–L | P9; isolated tools may move earlier | 15.1; Pending |
-| I02 | Surface quality, continuity, and deviation inspection | 4 | 4 | Medium | 1 | M–L | P7 validation/P9 product | 15.2; Pending |
-| D01 | Drawing workflows, associative annotation and repair | 4 | 4 | Medium | 2 | L–XL | P9 | 9.4; 15.3; Pending |
-| D02 | BOM, balloons, exploded documentation | 4 | 3 | High | 2 | M–L | P9 after B01/B04 | 15.4; Pending |
+| C03 | Simulation, collision checks, posts and setup reuse | 5 | 5 | Medium | 2 | Lâ€“XL | P8; limited checks from first release | 14.3; 14.4; Partial |
+| I01 | Measurements, mass, sections, interference/clearance | 4 | 3 | High | 1 | Mâ€“L | P9; isolated tools may move earlier | 15.1; Pending |
+| I02 | Surface quality, continuity, and deviation inspection | 4 | 4 | Medium | 1 | Mâ€“L | P7 validation/P9 product | 15.2; Pending |
+| D01 | Drawing workflows, associative annotation and repair | 4 | 4 | Medium | 2 | Lâ€“XL | P9 | 9.4; 15.3; Pending |
+| D02 | BOM, balloons, exploded documentation | 4 | 3 | High | 2 | Mâ€“L | P9 after B01/B04 | 15.4; Pending |
 | X01 | Sheet metal, frames/weldments, hardware libraries | 3 | 4 | Medium | 2 | XL | P9 by module | 15.5; Pending |
 | X02 | Package/relocate projects, compatibility and export | 5 | 4 | High | 3 | L | P3 contracts/P9 UI | 7.6; 15.6; Pending |
 | X03 | Performance, scripting, packaging, upstream integration | 5 | 4 | High | 2 | Ongoing | P0 onward | 16.3; 16.5; 16.6; Partial |
 | X04 | Native .cadprt identity, capability/version checks, legacy import and associations | 5 | 4 | High | 3 | L | P1/P3; P10 packaging | 7.6; 16.1; 16.6; Pending |
-| X05 | Early drawing/CAM/FEM/Draft compatibility probes and adapters | 5 | 4 | Medium | 3 | M–L | P2/P3; ongoing | 7.1; 16.2; Partial |
-| X06 | Release licensing, matching source, notices, dependency and asset audit | 5 | 2 | High | 1 | S–M | P0 inventory; P10 releases | 16.7; Pending |
+| X05 | Early drawing/CAM/FEM/Draft compatibility probes and adapters | 5 | 4 | Medium | 3 | Mâ€“L | P2/P3; ongoing | 7.1; 16.2; Partial |
+| X06 | Release licensing, matching source, notices, dependency and asset audit | 5 | 2 | High | 1 | Sâ€“M | P0 inventory; P10 releases | 16.7; Pending |
 | X07 | Starter models, guided onboarding, compatibility and support documentation | 5 | 2 | High | 1 | M | P4/P11 | 17.2; 17.3; Pending |
 | Q01 | Task benchmarks, baseline comparison, effort and release evidence | 5 | 3 | High | 2 | M | P0 onward | 16.3; 16.4; 16.5; Pending |
-| M01 | Audience/competitor evidence and measured adoption assumptions | 4 | 2 | High | 0 | S–M | P0/P11 | 17.1; 17.5; Pending |
+| M01 | Audience/competitor evidence and measured adoption assumptions | 4 | 2 | High | 0 | Sâ€“M | P0/P11 | 17.1; 17.5; Pending |
 | M02 | Useful-model distribution, tutorials and focused channel experiments | 4 | 2 | High | 0 | M | P11; publication when authorized | 17.3; 17.4; 17.5; Pending |
-| M03 | Independent-fork branding, optional extension/MIME registration | 3 | 2 | High | 1 | S–M | Identity early; P10/P11 | 17.6; 17.7; Pending |
-| A09 | Named parameters, expressions, unit checking, scope and publication | 5 | 4 | Medium | 3 | M–L | P1/P3 contracts; P4/P5 editor | 10.8; Pending |
-| U11 | Unified workspace, contextual availability/help, keyboard and display accessibility | 5 | 3 | High | 2 | M–L | P3/P4; downstream integration later | 10.9; Pending |
-| S08 | Sketch support/orientation, attachment and deliberate reattachment | 5 | 4 | Medium | 2 | M–L | P1/P3 references; P5 UI | 11.7; Pending |
-| X08 | Document lifecycle, safe save, recovery snapshots, templates and recent-file repair | 5 | 4 | Medium | 3 | M–L | P1/P3 contracts; P10 hardening | 16.8; Pending |
-| X09 | Add-on/macro/API compatibility matrix, adapters and migration diagnostics | 4 | 4 | Medium | 2 | M–L | P0 audit; P3/P10 | 16.9; Pending |
+| M03 | Independent-fork branding, optional extension/MIME registration | 3 | 2 | High | 1 | Sâ€“M | Identity early; P10/P11 | 17.6; 17.7; Pending |
+| A09 | Named parameters, expressions, unit checking, scope and publication | 5 | 4 | Medium | 3 | Mâ€“L | P1/P3 contracts; P4/P5 editor | 10.8; Pending |
+| U11 | Unified workspace, contextual availability/help, keyboard and display accessibility | 5 | 3 | High | 2 | Mâ€“L | P3/P4; downstream integration later | 10.9; Pending |
+| S08 | Sketch support/orientation, attachment and deliberate reattachment | 5 | 4 | Medium | 2 | Mâ€“L | P1/P3 references; P5 UI | 11.7; Pending |
+| X08 | Document lifecycle, safe save, recovery snapshots, templates and recent-file repair | 5 | 4 | Medium | 3 | Mâ€“L | P1/P3 contracts; P10 hardening | 16.8; Pending |
+| X09 | Add-on/macro/API compatibility matrix, adapters and migration diagnostics | 4 | 4 | Medium | 2 | Mâ€“L | P0 audit; P3/P10 | 16.9; Pending |
 | X10 | Manufacturing export, units/orientation/quality controls and reusable presets | 5 | 3 | High | 2 | M | P3 contracts; P4/P9 UI | 15.7; Pending |
 
 ## [   ] Phase 10: Shared workflow, selection and guided modeling (P1/P3/P4)
@@ -2986,11 +3010,11 @@ and scope estimates are planning metadata, distinct from this roadmap's task num
 reconciliation rules above to every entry.
 
 <a id="f001"></a>
-### F001 — Unified part container
+### F001 â€” Unified part container
 
 **Owning tasks:** 7.1, 12.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A01 · **First delivery:** P1/P2 · **Likely scope:** Core
+**Packages:** A01 Â· **First delivery:** P1/P2 Â· **Likely scope:** Core
 
 **Goal:** Let a user start modeling a part and later add components without changing its fundamental object type.
 
@@ -2999,11 +3023,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a housing with its own geometry, insert a bearing and fastener, then insert the complete housing into another part. Edit the housing and reopen the project without duplicate transforms or ownership changes.
 
 <a id="f002"></a>
-### F002 — Part-level feature history
+### F002 â€” Part-level feature history
 
 **Owning tasks:** 7.1, 7.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A02 · **First delivery:** P1/P2 · **Likely scope:** Core
+**Packages:** A02 Â· **First delivery:** P1/P2 Â· **Likely scope:** Core
 
 **Goal:** Make the part's modeling sequence the primary history so features can act across several bodies.
 
@@ -3012,11 +3036,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create two solids, cut both with one part-owned feature, and edit an earlier sketch. The navigator, dependency graph, results, undo, and saved document agree about ownership and execution order.
 
 <a id="f003"></a>
-### F003 — Independent body results
+### F003 â€” Independent body results
 
 **Owning tasks:** 7.1, 7.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A02 · **First delivery:** P2/P3 · **Likely scope:** Core
+**Packages:** A02 Â· **First delivery:** P2/P3 Â· **Likely scope:** Core
 
 **Goal:** Create a solid or sheet without first preparing an active PartDesign Body.
 
@@ -3025,11 +3049,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create two disjoint profiles in a new part and produce independently selectable/editable results. Save/reopen preserves their identities and a later Boolean operation can target either result.
 
 <a id="f004"></a>
-### F004 — Explicit Boolean mode
+### F004 â€” Explicit Boolean mode
 
 **Owning tasks:** 7.4, 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U03, U10, A02 · **First delivery:** P2/P4 · **Likely scope:** Feature/Core
+**Packages:** U03, U10, A02 Â· **First delivery:** P2/P4 Â· **Likely scope:** Feature/Core
 
 **Goal:** Use the same modeling command to create independent material or alter selected existing material.
 
@@ -3038,11 +3062,11 @@ reconciliation rules above to every entry.
 **Complete when:** Exercise every supported mode, change one feature's mode, and test missing targets and invalid contact. Accepted operation and target identities survive recompute and reopening without being inferred again.
 
 <a id="f005"></a>
-### F005 — Multiple targets
+### F005 â€” Multiple targets
 
 **Owning tasks:** 7.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A02, A07 · **First delivery:** P2/P3 · **Likely scope:** Core
+**Packages:** A02, A07 Â· **First delivery:** P2/P3 Â· **Likely scope:** Core
 
 **Goal:** Apply one coherent operation to several selected bodies without duplicating setup.
 
@@ -3051,11 +3075,11 @@ reconciliation rules above to every entry.
 **Complete when:** A cut through two solids updates both after a profile edit. An invalid target causes a clear, reversible failure rather than a partially committed document or silent target omission.
 
 <a id="f006"></a>
-### F006 — Persistent body identity
+### F006 â€” Persistent body identity
 
 **Owning tasks:** 7.1.4, 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A05 · **First delivery:** P1/P3 · **Likely scope:** Core
+**Packages:** A05 Â· **First delivery:** P1/P3 Â· **Likely scope:** Core
 
 **Goal:** Keep intended relationships understandable when a feature splits, merges, or replaces bodies.
 
@@ -3064,11 +3088,11 @@ reconciliation rules above to every entry.
 **Complete when:** A downstream feature, drawing reference, and assembly use remain correct through supported splits/merges, or report the exact ambiguity. Renaming a body or sorting the tree does not change identity.
 
 <a id="f007"></a>
-### F007 — Reusable sketches and datums
+### F007 â€” Reusable sketches and datums
 
 **Owning tasks:** 7.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A01, A02, S05 · **First delivery:** P2/P5 · **Likely scope:** Feature
+**Packages:** A01, A02, S05 Â· **First delivery:** P2/P5 Â· **Likely scope:** Feature
 
 **Goal:** Use one design input in several features without copying geometry merely to satisfy ownership restrictions.
 
@@ -3077,11 +3101,11 @@ reconciliation rules above to every entry.
 **Complete when:** One sketch drives two extrusions and a datum drives a revolve. Editing the shared input updates all intended consumers; deleting it previews affected features and supports cancellation.
 
 <a id="f008"></a>
-### F008 — Promote bodies to components
+### F008 â€” Promote bodies to components
 
 **Owning tasks:** 12.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A03 · **First delivery:** P3/P6 · **Likely scope:** Core
+**Packages:** A03 Â· **First delivery:** P3/P6 Â· **Likely scope:** Core
 
 **Goal:** Turn bodies modeled together into reusable component definitions with deliberate design relationships.
 
@@ -3090,11 +3114,11 @@ reconciliation rules above to every entry.
 **Complete when:** Promote an enclosure and lid, reuse the lid elsewhere, and edit the original. Associative and independent modes behave as declared; placement, internal references, undo, and relocation remain correct.
 
 <a id="f009"></a>
-### F009 — Separate navigator tabs
+### F009 â€” Separate navigator tabs
 
 **Owning tasks:** 7.2, 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U01 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U01 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Separate assembly structure from modeling history without forcing users to interpret a mixed tree.
 
@@ -3103,11 +3127,11 @@ reconciliation rules above to every entry.
 **Complete when:** A repeated component is selected through its exact occurrence in the assembly tab; switching to its feature tab reveals the correct definition and does not accidentally change the work part.
 
 <a id="f010"></a>
-### F010 — Optional simultaneous display
+### F010 â€” Optional simultaneous display
 
 **Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U01 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U01 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Let users see structure and feature history together when screen space and the task justify it.
 
@@ -3116,11 +3140,11 @@ reconciliation rules above to every entry.
 **Complete when:** Dock both navigators, edit a nested component, switch work parts, then restore the default layout. Both panels stay synchronized and keyboard focus remains predictable.
 
 <a id="f011"></a>
-### F011 — Work part versus displayed assembly
+### F011 â€” Work part versus displayed assembly
 
 **Owning tasks:** 10.6, 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A04, U01 · **First delivery:** P1/P4 · **Likely scope:** Core/UI
+**Packages:** A04, U01 Â· **First delivery:** P1/P4 Â· **Likely scope:** Core/UI
 
 **Goal:** Make it unmistakable where a new feature will be created while the surrounding assembly remains visible.
 
@@ -3129,11 +3153,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a feature while viewing three identical occurrences. The UI identifies the edited definition and occurrence context; all intended shared instances update, and no feature lands in the displayed parent accidentally.
 
 <a id="f012"></a>
-### F012 — Body-oriented filtering
+### F012 â€” Body-oriented filtering
 
 **Owning tasks:** 7.2, 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U02 · **First delivery:** P4 · **Likely scope:** Feature/UI
+**Packages:** U02 Â· **First delivery:** P4 Â· **Likely scope:** Feature/UI
 
 **Goal:** Find the operations responsible for a selected body without introducing body-owned histories again.
 
@@ -3142,11 +3166,11 @@ reconciliation rules above to every entry.
 **Complete when:** Selecting a body created by a Boolean displays the contributing features and relevant inputs. Clearing the filter restores the full tree without any model or visibility mutation.
 
 <a id="f013"></a>
-### F013 — Navigator columns
+### F013 â€” Navigator columns
 
 **Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U02 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U02 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Expose important model state in the tree so users need not open properties to diagnose routine problems.
 
@@ -3155,11 +3179,11 @@ reconciliation rules above to every entry.
 **Complete when:** A hidden but unsuppressed component, a suppressed feature, an unloaded occurrence, and a failed feature are visibly distinguishable. Sorting columns changes presentation only and editing a state is undoable where appropriate.
 
 <a id="f014"></a>
-### F014 — Feature organization
+### F014 â€” Feature organization
 
 **Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U02 · **First delivery:** P4 · **Likely scope:** UI/Feature
+**Packages:** U02 Â· **First delivery:** P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Keep large part histories navigable through names, folders, comments, and targeted search.
 
@@ -3168,11 +3192,11 @@ reconciliation rules above to every entry.
 **Complete when:** Organize and rename a long feature sequence, then search for a hole and its comment. Model order and references are unchanged; folders and comments persist after reopening.
 
 <a id="f015"></a>
-### F015 — Dependency inspection
+### F015 â€” Dependency inspection
 
 **Owning tasks:** 7.5, 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U02, A05 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
+**Packages:** U02, A05 Â· **First delivery:** P3/P4 Â· **Likely scope:** Feature/UI
 
 **Goal:** Show why a feature depends on another and what an edit or deletion could affect.
 
@@ -3181,11 +3205,11 @@ reconciliation rules above to every entry.
 **Complete when:** Selecting a shared sketch reveals both consuming extrusions; selecting one extrusion shows a downstream fillet and drawing reference. The view handles cycles rejected by the system and missing references explicitly.
 
 <a id="f016"></a>
-### F016 — History controls
+### F016 â€” History controls
 
 **Owning tasks:** 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U08 · **First delivery:** P3/P4 · **Likely scope:** Core/Feature
+**Packages:** U08 Â· **First delivery:** P3/P4 Â· **Likely scope:** Core/Feature
 
 **Goal:** Allow users to inspect earlier states and insert or reorder features without corrupting dependencies.
 
@@ -3194,11 +3218,11 @@ reconciliation rules above to every entry.
 **Complete when:** Insert a supported feature before a fillet, reject moving a consumer ahead of its input, and return to the tip. Undo and save/reopen retain the intended sequence and no transient rollback state is mistaken for final geometry.
 
 <a id="f017"></a>
-### F017 — Shared part definitions
+### F017 â€” Shared part definitions
 
 **Owning tasks:** 12.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A03 · **First delivery:** P2/P6 · **Likely scope:** Core/Feature
+**Packages:** A03 Â· **First delivery:** P2/P6 Â· **Likely scope:** Core/Feature
 
 **Goal:** Reuse a part in one or many assemblies while keeping one editable source definition.
 
@@ -3207,11 +3231,11 @@ reconciliation rules above to every entry.
 **Complete when:** Edit a bracket used twice in one assembly and once in another. All loaded occurrences reflect the change, their placements remain independent, and reopened external documents resolve the updated source predictably.
 
 <a id="f018"></a>
-### F018 — Occurrence-specific properties
+### F018 â€” Occurrence-specific properties
 
 **Owning tasks:** 12.1, 12.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A03, B01 · **First delivery:** P3/P6 · **Likely scope:** Feature
+**Packages:** A03, B01 Â· **First delivery:** P3/P6 Â· **Likely scope:** Feature
 
 **Goal:** Allow local presentation and placement differences without accidentally making a separate part.
 
@@ -3220,11 +3244,11 @@ reconciliation rules above to every entry.
 **Complete when:** Color or hide one of several bolts and move another. The source geometry and unselected instances remain unchanged; resetting an override restores inherited behavior and survives save/reopen.
 
 <a id="f019"></a>
-### F019 — Make Unique
+### F019 â€” Make Unique
 
 **Owning tasks:** 12.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A03 · **First delivery:** P2/P6 · **Likely scope:** Feature/Core
+**Packages:** A03 Â· **First delivery:** P2/P6 Â· **Likely scope:** Feature/Core
 
 **Goal:** Intentionally break shared geometry identity when one occurrence must become a different design.
 
@@ -3233,11 +3257,11 @@ reconciliation rules above to every entry.
 **Complete when:** Make one repeated bracket unique, change its hole spacing, and reopen the project. Original instances stay linked to the original; the unique copy has no accidental internal references back to its former source.
 
 <a id="f020"></a>
-### F020 — Reference sets
+### F020 â€” Reference sets
 
 **Owning tasks:** 12.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B01 · **First delivery:** P3/P6 · **Likely scope:** Feature/Core
+**Packages:** B01 Â· **First delivery:** P3/P6 Â· **Likely scope:** Feature/Core
 
 **Goal:** Choose a part's exposed representation without changing what the part fundamentally contains.
 
@@ -3246,11 +3270,11 @@ reconciliation rules above to every entry.
 **Complete when:** Switch a subassembly among full, simplified, datum-only, and empty sets. Placement, BOM role, shared definition, and saved structure remain intact; missing representation is not mistaken for missing source.
 
 <a id="f021"></a>
-### F021 — Separate loading controls
+### F021 â€” Separate loading controls
 
 **Owning tasks:** 12.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B06 · **First delivery:** P1/P6 · **Likely scope:** Core
+**Packages:** B06 Â· **First delivery:** P1/P6 Â· **Likely scope:** Core
 
 **Goal:** Reduce resource use without overloading visibility or reference-set choices.
 
@@ -3259,11 +3283,11 @@ reconciliation rules above to every entry.
 **Complete when:** Unload a component, keep its occurrence in the tree, and later reload it at the same placement. Exact measurements, CAM, and validation cannot silently use a stale proxy as authoritative geometry.
 
 <a id="f022"></a>
-### F022 — Component replacement
+### F022 â€” Component replacement
 
 **Owning tasks:** 12.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B04, A05 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+**Packages:** B04, A05 Â· **First delivery:** P3/P6 Â· **Likely scope:** Core/Feature
 
 **Goal:** Swap a component source while retaining placement and as much valid assembly intent as possible.
 
@@ -3272,11 +3296,11 @@ reconciliation rules above to every entry.
 **Complete when:** Replace a bearing with a different size. Valid datum-based mates remain; incompatible face references are listed for repair; other shared occurrences change only if selected.
 
 <a id="f023"></a>
-### F023 — Component patterns and mirrors
+### F023 â€” Component patterns and mirrors
 
 **Owning tasks:** 12.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B04 · **First delivery:** P6 · **Likely scope:** Feature
+**Packages:** B04 Â· **First delivery:** P6 Â· **Likely scope:** Feature
 
 **Goal:** Create repeated assembly occurrences with clear linkage, skipped positions, and handedness.
 
@@ -3285,11 +3309,11 @@ reconciliation rules above to every entry.
 **Complete when:** Change a bolt-pattern count without silently redirecting surviving mate/BOM references. A mirrored handed bracket has the declared shared/unique behavior and correct orientation, quantity, and mass.
 
 <a id="f024"></a>
-### F024 — Configurations and arrangements
+### F024 â€” Configurations and arrangements
 
 **Owning tasks:** 12.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B05 · **First delivery:** P1 semantics; later P6 · **Likely scope:** Core
+**Packages:** B05 Â· **First delivery:** P1 semantics; later P6 Â· **Likely scope:** Core
 
 **Goal:** Separate design variants from saved assembly positions and presentation states.
 
@@ -3298,11 +3322,11 @@ reconciliation rules above to every entry.
 **Complete when:** Use two size configurations in one assembly, save a folded/unfolded arrangement, and reopen. Editing one configuration or arrangement does not unintentionally change another; dependencies, BOM policy, and active variant are explicit.
 
 <a id="f025"></a>
-### F025 — Unified modeling workspace
+### F025 â€” Unified modeling workspace
 
 **Owning tasks:** 8.4, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U11, U03 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+**Packages:** U11, U03 Â· **First delivery:** P3/P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Let users perform ordinary modeling without knowing whether a command historically belongs to Part or PartDesign.
 
@@ -3311,11 +3335,11 @@ reconciliation rules above to every entry.
 **Complete when:** Complete a bracket and enclosure using the unified workspace without switching workbenches merely to obtain a Boolean operation. Retained legacy commands and downstream workbenches continue to resolve the correct edit context.
 
 <a id="f026"></a>
-### F026 — Extrude
+### F026 â€” Extrude
 
 **Owning tasks:** 3.6, 3.8, 7.4, 10.2, 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U03, U09, U10 · **First delivery:** P2/P4 · **Likely scope:** UI/Core
+**Packages:** U03, U09, U10 Â· **First delivery:** P2/P4 Â· **Likely scope:** UI/Core
 
 **Goal:** Create and edit extruded material through one guided command with an efficient direct path.
 
@@ -3324,11 +3348,11 @@ reconciliation rules above to every entry.
 **Complete when:** Model a base, add an intersecting boss, create a separate rib blank, and cut a pocket using the same feature semantics. Editing extents preserves accepted operation/targets; invalid inputs cannot partially modify the part.
 
 <a id="f027"></a>
-### F027 — Revolve
+### F027 â€” Revolve
 
 **Owning tasks:** 3.9, 8.2, 10.2, 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U03, U09, U10 · **First delivery:** P4 · **Likely scope:** UI/Core
+**Packages:** U03, U09, U10 Â· **First delivery:** P4 Â· **Likely scope:** UI/Core
 
 **Goal:** Create rotational features through the same clear intent and target workflow as Extrude.
 
@@ -3337,11 +3361,11 @@ reconciliation rules above to every entry.
 **Complete when:** Build a turned part and its annular groove, reverse the rotation, and edit the axis/angle. Guided and direct entry produce equivalent editable results; failed full or partial revolutions preserve the last committed model.
 
 <a id="f028"></a>
-### F028 — Consistent Sweep and Loft
+### F028 â€” Consistent Sweep and Loft
 
 **Owning tasks:** 3.3, 13.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G03, U06 · **First delivery:** P7 · **Likely scope:** Feature
+**Packages:** G03, U06 Â· **First delivery:** P7 Â· **Likely scope:** Feature
 
 **Goal:** Use familiar profile, guide, output-type, and Boolean conventions when creating nonprismatic shapes.
 
@@ -3350,11 +3374,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a constant-section routed feature and a changing-section transition. Reorder or reverse sections, edit a guide, and verify deterministic results, target behavior, and clear unsupported-input diagnostics.
 
 <a id="f029"></a>
-### F029 — Common extent controls
+### F029 â€” Common extent controls
 
 **Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U06 · **First delivery:** P4/P7 · **Likely scope:** Feature
+**Packages:** U06 Â· **First delivery:** P4/P7 Â· **Likely scope:** Feature
 
 **Goal:** Make termination choices consistent and understandable across commands that support them.
 
@@ -3363,11 +3387,11 @@ reconciliation rules above to every entry.
 **Complete when:** An extrusion terminated at a selected face updates when that face moves; symmetric and two-sided values produce the documented lengths. A removed limiting face produces a repairable error rather than becoming a fixed distance silently.
 
 <a id="f030"></a>
-### F030 — Selection collectors
+### F030 â€” Selection collectors
 
 **Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+**Packages:** U06, A04 Â· **First delivery:** P3/P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Make every requested geometric role visible so users know what to select next.
 
@@ -3376,11 +3400,11 @@ reconciliation rules above to every entry.
 **Complete when:** A user can identify and replace the wrong guide or target without restarting a command. Ambiguous picks go through disambiguation, and selected geometry cannot silently fill a different role.
 
 <a id="f031"></a>
-### F031 — Preselection and postselection
+### F031 â€” Preselection and postselection
 
 **Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
+**Packages:** U06, A07 Â· **First delivery:** P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Support experienced users who select first and beginners who launch a command first.
 
@@ -3389,11 +3413,11 @@ reconciliation rules above to every entry.
 **Complete when:** Run Extrude with a profile preselected and with no initial selection; the resulting feature parameters agree. Mixed profile/target selection is handled deterministically and Cancel restores the prior selection where appropriate.
 
 <a id="f032"></a>
-### F032 — Consistent Apply/OK/Cancel
+### F032 â€” Consistent Apply/OK/Cancel
 
 **Owning tasks:** 8.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A07, U09 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
+**Packages:** A07, U09 Â· **First delivery:** P3/P4 Â· **Likely scope:** Feature/UI
 
 **Goal:** Make repeated operations and reversibility predictable across all modeling dialogs.
 
@@ -3402,11 +3426,11 @@ reconciliation rules above to every entry.
 **Complete when:** Apply two holes, begin a third, then Cancel. Exactly the first two remain as sensible undo steps; failed preview or cancellation leaves no orphan geometry, references, or hidden temporary objects.
 
 <a id="f033"></a>
-### F033 — Command search and shortcut palette
+### F033 â€” Command search and shortcut palette
 
 **Owning tasks:** 8.4, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U04, U11 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U04, U11 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Help users find equivalent operations using terminology they already know.
 
@@ -3415,11 +3439,11 @@ reconciliation rules above to every entry.
 **Complete when:** Searching Pocket opens subtractive Extrude; an unavailable assembly operation explains the required context. Keyboard users can invoke search, choose a result, and reach the relevant input without a mouse.
 
 <a id="f034"></a>
-### F034 — Modifier-based multiselection
+### F034 â€” Modifier-based multiselection
 
 **Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U05 · **First delivery:** P4/P5 · **Likely scope:** UI
+**Packages:** U05 Â· **First delivery:** P4/P5 Â· **Likely scope:** UI
 
 **Goal:** Prevent accidental accumulation of sketch selections while keeping deliberate multiselection fast.
 
@@ -3428,11 +3452,11 @@ reconciliation rules above to every entry.
 **Complete when:** Select one sketch line, click another, then use modifiers to form a two-line set. Selection counts, eligible constraints, and deselection are predictable in the viewport and tree without breaking geometry creation.
 
 <a id="f035"></a>
-### F035 — Selection filters
+### F035 â€” Selection filters
 
 **Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI/Feature
+**Packages:** U05 Â· **First delivery:** P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Reduce accidental picks by letting users restrict selectable entity types.
 
@@ -3441,11 +3465,11 @@ reconciliation rules above to every entry.
 **Complete when:** In a dense assembly, face-only selection cannot accidentally select a whole component. Leaving a command restores the documented previous filter state and the user can recover from an empty result easily.
 
 <a id="f036"></a>
-### F036 — Selection scope
+### F036 â€” Selection scope
 
 **Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A04, U05 · **First delivery:** P1/P4 · **Likely scope:** Core/UI
+**Packages:** A04, U05 Â· **First delivery:** P1/P4 Â· **Likely scope:** Core/UI
 
 **Goal:** Control whether selection addresses local geometry or surrounding assembly context.
 
@@ -3454,11 +3478,11 @@ reconciliation rules above to every entry.
 **Complete when:** During in-context editing, a user can reference a neighboring face while a local Boolean command refuses to alter that neighbor silently. Nested and repeated occurrences resolve the intended path.
 
 <a id="f037"></a>
-### F037 — Select Other
+### F037 â€” Select Other
 
 **Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U05 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Resolve overlapping or obscured picks without temporarily dismantling the display.
 
@@ -3467,11 +3491,11 @@ reconciliation rules above to every entry.
 **Complete when:** Select the rear of two coincident faces and one of overlapping repeated components. Hover/cycle previews accurately identify candidates, and the final selection matches the preview.
 
 <a id="f038"></a>
-### F038 — Selection intent rules
+### F038 â€” Selection intent rules
 
 **Owning tasks:** 10.5, 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U05, A05 · **First delivery:** P3/P4 · **Likely scope:** Feature/Core
+**Packages:** U05, A05 Â· **First delivery:** P3/P4 Â· **Likely scope:** Feature/Core
 
 **Goal:** Let users specify a meaningful geometric set instead of manually picking every member.
 
@@ -3480,11 +3504,11 @@ reconciliation rules above to every entry.
 **Complete when:** A fillet uses an accepted tangent chain and a later edge split resolves according to the stored policy. Unexpected added branches or ambiguous loops produce a visible choice or repair rather than an unnoticed broad edit.
 
 <a id="f039"></a>
-### F039 — Window versus crossing selection
+### F039 â€” Window versus crossing selection
 
 **Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U05 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Make rectangle selection communicate whether partial overlap counts.
 
@@ -3493,11 +3517,11 @@ reconciliation rules above to every entry.
 **Complete when:** A rectangle around part of a sketch selects only fully enclosed entities in one mode and crossing entities in the other. The same behavior holds at different zoom levels and does not accidentally include hidden assembly geometry.
 
 <a id="f040"></a>
-### F040 — Temporary isolate/hide
+### F040 â€” Temporary isolate/hide
 
 **Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U05 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Inspect a subset quickly and return to the previous display without manual reconstruction.
 
@@ -3506,11 +3530,11 @@ reconciliation rules above to every entry.
 **Complete when:** Isolate a component, hide one of its bodies, inspect it, and restore. The prior assembly visibility returns; no suppressed or reference-only states change and retained operation targets remain intact.
 
 <a id="f041"></a>
-### F041 — Predictable navigation
+### F041 â€” Predictable navigation
 
 **Owning tasks:** 8.4, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U04, U11 · **First delivery:** P4 · **Likely scope:** UI
+**Packages:** U04, U11 Â· **First delivery:** P4 Â· **Likely scope:** UI
 
 **Goal:** Make camera movement and sketch entry familiar and controllable.
 
@@ -3519,11 +3543,11 @@ reconciliation rules above to every entry.
 **Complete when:** Orbit about a selected feature in a large assembly, enter a rotated sketch, and return to the previous view. Mouse presets and high-DPI settings remain usable without changing model coordinates.
 
 <a id="f042"></a>
-### F042 — Improved automatic relations
+### F042 â€” Improved automatic relations
 
 **Owning tasks:** 11.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S01 · **First delivery:** P5 · **Likely scope:** Feature
+**Packages:** S01 Â· **First delivery:** P5 Â· **Likely scope:** Feature
 
 **Goal:** Infer common sketch intent as geometry is drawn without creating surprising constraints.
 
@@ -3532,11 +3556,11 @@ reconciliation rules above to every entry.
 **Complete when:** Draw representative lines, circles, and arcs with intended inferences and near-miss counterexamples. Only accepted relations persist, the override prevents unwanted inference, and dense geometry does not create arbitrary constraints.
 
 <a id="f043"></a>
-### F043 — Constraint preview
+### F043 â€” Constraint preview
 
 **Owning tasks:** 11.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S01 · **First delivery:** P5 · **Likely scope:** UI/Feature
+**Packages:** S01 Â· **First delivery:** P5 Â· **Likely scope:** UI/Feature
 
 **Goal:** Show the relationship about to be added before the user commits geometry.
 
@@ -3545,11 +3569,11 @@ reconciliation rules above to every entry.
 **Complete when:** Approach a tangent and then a coincident condition, suppress one inference, and complete drawing. The persisted relation matches the final preview and no abandoned candidate survives.
 
 <a id="f044"></a>
-### F044 — Cursor-adjacent constraint palette
+### F044 â€” Cursor-adjacent constraint palette
 
 **Owning tasks:** 11.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S02, S07 · **First delivery:** P5 · **Likely scope:** UI/Feature
+**Packages:** S02, S07 Â· **First delivery:** P5 Â· **Likely scope:** UI/Feature
 
 **Goal:** Offer relevant constraints close to the user's selection without forcing a toolbar search.
 
@@ -3558,11 +3582,11 @@ reconciliation rules above to every entry.
 **Complete when:** Select one line and two lines, move into the palette, apply a relation, and move away. It remains reachable, shows the correct actions/states, and never applies a constraint merely because the pointer crossed it.
 
 <a id="f045"></a>
-### F045 — Smart Dimension
+### F045 â€” Smart Dimension
 
 **Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S03 · **First delivery:** P5 · **Likely scope:** UI/Feature
+**Packages:** S03 Â· **First delivery:** P5 Â· **Likely scope:** UI/Feature
 
 **Goal:** Infer the useful dimensional relationship from geometry while allowing explicit control.
 
@@ -3571,11 +3595,11 @@ reconciliation rules above to every entry.
 **Complete when:** Dimension a line, circle, pair of lines, and point spacing. Users can deliberately select radial versus diameter or projected versus aligned length, and edits preserve their chosen dimension type.
 
 <a id="f046"></a>
-### F046 — Dimension during drawing
+### F046 â€” Dimension during drawing
 
 **Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S03 · **First delivery:** P5 · **Likely scope:** Feature
+**Packages:** S03 Â· **First delivery:** P5 Â· **Likely scope:** Feature
 
 **Goal:** Let users establish exact geometry while drawing instead of repeatedly drawing approximately and editing afterward.
 
@@ -3584,11 +3608,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a rectangle and slot from typed dimensions, correct a field before commit, and cancel another attempt. The resulting dimensions are editable driving constraints and no half-created geometry remains.
 
 <a id="f047"></a>
-### F047 — Visual degrees of freedom
+### F047 â€” Visual degrees of freedom
 
 **Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S04 · **First delivery:** P5 · **Likely scope:** Feature/UI
+**Packages:** S04 Â· **First delivery:** P5 Â· **Likely scope:** Feature/UI
 
 **Goal:** Show what can still move and distinguish incompletely constrained geometry from a failed solve.
 
@@ -3597,11 +3621,11 @@ reconciliation rules above to every entry.
 **Complete when:** A partly constrained sketch reveals the intended remaining movement; adding a supported relation updates the indication. A conflicting sketch is clearly different from a merely underconstrained one.
 
 <a id="f048"></a>
-### F048 — Constraint repair
+### F048 â€” Constraint repair
 
 **Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S04, S07 · **First delivery:** P5 · **Likely scope:** Feature/Core
+**Packages:** S04, S07 Â· **First delivery:** P5 Â· **Likely scope:** Feature/Core
 
 **Goal:** Explain overconstraint and help users make a deliberate repair while preserving design intent.
 
@@ -3610,11 +3634,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a redundant dimension and a genuine conflict. The UI distinguishes them, offers an understandable reversible repair, and leaves the original sketch unchanged if the user cancels.
 
 <a id="f049"></a>
-### F049 — Sketch repair
+### F049 â€” Sketch repair
 
 **Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S06 · **First delivery:** P5 · **Likely scope:** Feature
+**Packages:** S06 Â· **First delivery:** P5 Â· **Likely scope:** Feature
 
 **Goal:** Find small defects that prevent profiles from becoming valid regions or downstream features.
 
@@ -3623,11 +3647,11 @@ reconciliation rules above to every entry.
 **Complete when:** Repair an almost-closed profile and a duplicated edge deliberately. The intended region becomes usable, preserved dimensions still express the same design, and ignoring a tiny segment does not falsely certify a valid profile.
 
 <a id="f050"></a>
-### F050 — Power trim/extend
+### F050 â€” Power trim/extend
 
 **Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S06 · **First delivery:** P5 · **Likely scope:** Feature
+**Packages:** S06 Â· **First delivery:** P5 Â· **Likely scope:** Feature
 
 **Goal:** Remove or extend sketch segments with fewer selections while keeping the result understandable.
 
@@ -3636,11 +3660,11 @@ reconciliation rules above to every entry.
 **Complete when:** Trim several crossing lines, extend an arc to a boundary, and undo. Geometry matches the preview; surviving constraints remain valid and removed constraints are explained rather than left dangling.
 
 <a id="f051"></a>
-### F051 — Region selection
+### F051 â€” Region selection
 
 **Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S06, A05 · **First delivery:** P3/P5 · **Likely scope:** Feature/Core
+**Packages:** S06, A05 Â· **First delivery:** P3/P5 Â· **Likely scope:** Feature/Core
 
 **Goal:** Use closed areas inside a complex sketch without copying or deleting the rest of the sketch.
 
@@ -3649,11 +3673,11 @@ reconciliation rules above to every entry.
 **Complete when:** Extrude one compartment of a multi-region sketch and later move an internal boundary. The intended region updates or requests repair; the command does not silently extrude every newly formed region.
 
 <a id="f052"></a>
-### F052 — Associative external geometry
+### F052 â€” Associative external geometry
 
 **Owning tasks:** 11.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S05, B03 · **First delivery:** P5 · **Likely scope:** Feature/Core
+**Packages:** S05, B03 Â· **First delivery:** P5 Â· **Likely scope:** Feature/Core
 
 **Goal:** Bring useful neighboring geometry into a sketch through projection or true intersection with clear provenance.
 
@@ -3662,11 +3686,11 @@ reconciliation rules above to every entry.
 **Complete when:** Intersect an angled edge and curved surface with a sketch plane, then move the source. Points/curves update correctly or report ambiguity; independent copies and associative references remain visibly distinct.
 
 <a id="f053"></a>
-### F053 — Sketch reuse tools
+### F053 â€” Sketch reuse tools
 
 **Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S06, A05 · **First delivery:** P5 increments · **Likely scope:** Feature/Core
+**Packages:** S06, A05 Â· **First delivery:** P5 increments Â· **Likely scope:** Feature/Core
 
 **Goal:** Reuse proven sketch content while controlling which relationships remain shared.
 
@@ -3675,11 +3699,11 @@ reconciliation rules above to every entry.
 **Complete when:** Copy a constrained slot, rotate/place it, and change its dimensions. Internal relations survive; external links follow the declared policy; block or pattern edits affect the intended members and remain undoable.
 
 <a id="f054"></a>
-### F054 — Interactive feature handles
+### F054 â€” Interactive feature handles
 
 **Owning tasks:** 8.4.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U06 · **First delivery:** P4/P7 · **Likely scope:** UI/Feature
+**Packages:** U06 Â· **First delivery:** P4/P7 Â· **Likely scope:** UI/Feature
 
 **Goal:** Adjust common feature values visually while retaining exact parametric control.
 
@@ -3688,11 +3712,11 @@ reconciliation rules above to every entry.
 **Complete when:** Drag an extrusion handle, type an exact value, cancel a second edit, and reopen the part. The stored parameter is exact and editable, while canceled or intermediate previews leave no document changes.
 
 <a id="f055"></a>
-### F055 — Hole wizard
+### F055 â€” Hole wizard
 
 **Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature
+**Packages:** G06 Â· **First delivery:** P7 Â· **Likely scope:** Feature
 
 **Goal:** Create standard, documented holes through one guided placement and specification workflow.
 
@@ -3701,11 +3725,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create repeated counterbores and tapped holes, edit their standard/size, and produce supported drawing callouts. Location links, depth, thread representation, targets, and validation remain consistent after parameter changes.
 
 <a id="f056"></a>
-### F056 — Unified patterns
+### F056 â€” Unified patterns
 
 **Owning tasks:** 3.7, 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature/Core
+**Packages:** G06 Â· **First delivery:** P7 Â· **Likely scope:** Feature/Core
 
 **Goal:** Repeat features or bodies with one recognizable interface and explicit pattern semantics.
 
@@ -3714,11 +3738,11 @@ reconciliation rules above to every entry.
 **Complete when:** Pattern a hole across uneven geometry, skip two members, and change count/spacing. Valid members retain predictable references; unsupported members are identified and do not silently change the chosen evaluation mode.
 
 <a id="f057"></a>
-### F057 — Feature/body mirror
+### F057 â€” Feature/body mirror
 
 **Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature
+**Packages:** G06 Â· **First delivery:** P7 Â· **Likely scope:** Feature
 
 **Goal:** Make symmetry operations explicit about what is mirrored and whether results remain linked.
 
@@ -3727,11 +3751,11 @@ reconciliation rules above to every entry.
 **Complete when:** Mirror an asymmetric bracket body and a hole feature, edit the seed, and verify the chosen linkage. Reflected geometry, labels, target scope, and saved feature history remain correct.
 
 <a id="f058"></a>
-### F058 — Improved fillets/chamfers
+### F058 â€” Improved fillets/chamfers
 
 **Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature/Core
+**Packages:** G06 Â· **First delivery:** P7 Â· **Likely scope:** Feature/Core
 
 **Goal:** Make edge treatment easier to define and diagnose when complex geometry fails.
 
@@ -3740,11 +3764,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a chain fillet and a supported variable-radius case, then force a corner failure. The UI identifies a useful failing region, preserves prior geometry, and allows correction without rebuilding the entire selection.
 
 <a id="f059"></a>
-### F059 — Shell, draft, ribs, and webs
+### F059 â€” Shell, draft, ribs, and webs
 
 **Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G06 · **First delivery:** P7 increments · **Likely scope:** Feature/Core
+**Packages:** G06 Â· **First delivery:** P7 increments Â· **Likely scope:** Feature/Core
 
 **Goal:** Provide consistent guided workflows for common manufacturing-oriented features.
 
@@ -3753,11 +3777,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create and edit a thin enclosure, a drafted wall, and a reinforcing rib. Direction/thickness previews match final results; invalid thin regions or missing intersections produce localized, reversible failures.
 
 <a id="f060"></a>
-### F060 — Split and trim bodies
+### F060 â€” Split and trim bodies
 
 **Owning tasks:** 4, 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G01 · **First delivery:** P7 · **Likely scope:** Feature
+**Packages:** G01 Â· **First delivery:** P7 Â· **Likely scope:** Feature
 
 **Goal:** Divide solids or sheets with an explicit preview of which regions remain.
 
@@ -3766,11 +3790,11 @@ reconciliation rules above to every entry.
 **Complete when:** Split a housing with a plane, retain both halves, and trim one with a surface. Edit the tool and verify output identities, target scope, undo, and downstream-reference outcomes.
 
 <a id="f061"></a>
-### F061 — Direct editing
+### F061 â€” Direct editing
 
 **Owning tasks:** 13.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G07 · **First delivery:** Late P7 · **Likely scope:** Feature/Core
+**Packages:** G07 Â· **First delivery:** Late P7 Â· **Likely scope:** Feature/Core
 
 **Goal:** Make bounded changes to imported and native geometry without pretending to recover its original feature history.
 
@@ -3779,11 +3803,11 @@ reconciliation rules above to every entry.
 **Complete when:** Offset an imported planar face, remove a suitable hole with healing, and undo. Native downstream references either remain valid or request repair, and unsupported healing leaves the original model intact.
 
 <a id="f062"></a>
-### F062 — Feature recognition
+### F062 â€” Feature recognition
 
 **Owning tasks:** 13.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G08 · **First delivery:** Late P7 after spike · **Likely scope:** Core
+**Packages:** G08 Â· **First delivery:** Late P7 after spike Â· **Likely scope:** Core
 
 **Goal:** Recover useful editable structure from suitable imported solids while acknowledging incomplete information.
 
@@ -3792,11 +3816,11 @@ reconciliation rules above to every entry.
 **Complete when:** Recognize a documented test set, edit an accepted hole diameter, and compare the unchanged surrounding geometry. False positives can be rejected and unrecognized portions remain usable rather than disappearing.
 
 <a id="f063"></a>
-### F063 — Through-curves surfaces
+### F063 â€” Through-curves surfaces
 
 **Owning tasks:** 13.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G03 · **First delivery:** P7 · **Likely scope:** Feature/Core
+**Packages:** G03 Â· **First delivery:** P7 Â· **Likely scope:** Feature/Core
 
 **Goal:** Construct a controlled surface through ordered sections, using guides to shape correspondence.
 
@@ -3805,11 +3829,11 @@ reconciliation rules above to every entry.
 **Complete when:** Build a transition through three sections with guides, reverse one section, and adjust correspondence. The preview identifies twist; committed geometry meets documented interpolation/tolerance requirements and updates after source edits.
 
 <a id="f064"></a>
-### F064 — Curve-network surfaces
+### F064 â€” Curve-network surfaces
 
 **Owning tasks:** 13.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G04 · **First delivery:** P7 after spike · **Likely scope:** Core
+**Packages:** G04 Â· **First delivery:** P7 after spike Â· **Likely scope:** Core
 
 **Goal:** Build surfaces from two intersecting curve families when through-sections alone cannot express the intended shape.
 
@@ -3818,11 +3842,11 @@ reconciliation rules above to every entry.
 **Complete when:** Construct and edit a regular network fixture, reject incompatible crossings with localized diagnostics, and verify claimed interpolation and surface validity independently of visual smoothness.
 
 <a id="f065"></a>
-### F065 — Boundary continuity
+### F065 â€” Boundary continuity
 
 **Owning tasks:** 13.3, 15.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G04, I02 · **First delivery:** P7 · **Likely scope:** Feature/Core
+**Packages:** G04, I02 Â· **First delivery:** P7 Â· **Likely scope:** Feature/Core
 
 **Goal:** Control how a new surface joins neighboring geometry and verify the requested level.
 
@@ -3831,11 +3855,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create representative G0/G1/G2 supported joins, alter neighboring geometry, and inspect them using numerical continuity checks and visual tools. A failed condition is reported rather than silently downgraded.
 
 <a id="f066"></a>
-### F066 — Trim/untrim/extend surfaces
+### F066 â€” Trim/untrim/extend surfaces
 
 **Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G01, G02 · **First delivery:** P7 · **Likely scope:** Feature/Core
+**Packages:** G01, G02 Â· **First delivery:** P7 Â· **Likely scope:** Feature/Core
 
 **Goal:** Edit sheet boundaries while preserving the distinction between underlying surfaces and trimming loops.
 
@@ -3844,11 +3868,11 @@ reconciliation rules above to every entry.
 **Complete when:** Trim a sheet into two regions, restore a supported original domain, and extend an edge. Tool associations and region selections survive edits or become explicitly unresolved, without creating invalid shells.
 
 <a id="f067"></a>
-### F067 — Thicken sheet bodies
+### F067 â€” Thicken sheet bodies
 
 **Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G02 · **First delivery:** P7 · **Likely scope:** Feature/Core
+**Packages:** G02 Â· **First delivery:** P7 Â· **Likely scope:** Feature/Core
 
 **Goal:** Convert valid sheet geometry into material with a clear side, thickness, and Boolean result.
 
@@ -3857,11 +3881,11 @@ reconciliation rules above to every entry.
 **Complete when:** Thicken a planar and a curved fixture in each supported direction, then test a radius smaller than the requested thickness. Valid results have the expected volume and failed offsets preserve the source.
 
 <a id="f068"></a>
-### F068 — Sew/stitch surfaces
+### F068 â€” Sew/stitch surfaces
 
 **Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G02 · **First delivery:** P7 · **Likely scope:** Feature
+**Packages:** G02 Â· **First delivery:** P7 Â· **Likely scope:** Feature
 
 **Goal:** Join compatible sheets and reveal where gaps prevent a valid shell or solid.
 
@@ -3870,11 +3894,11 @@ reconciliation rules above to every entry.
 **Complete when:** Stitch a known enclosure and an intentionally gapped version. The first becomes a verified solid; the second identifies the unresolved gap and cannot be labeled watertight merely because it renders closed.
 
 <a id="f069"></a>
-### F069 — Extract/project/intersect curves
+### F069 â€” Extract/project/intersect curves
 
 **Owning tasks:** 13.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G05 · **First delivery:** P7 · **Likely scope:** Feature
+**Packages:** G05 Â· **First delivery:** P7 Â· **Likely scope:** Feature
 
 **Goal:** Generate reusable design curves from existing geometry with clear source and method.
 
@@ -3883,11 +3907,11 @@ reconciliation rules above to every entry.
 **Complete when:** Project a curve onto a curved face and intersect two surfaces. Moving a source updates intended results; multiple branches remain identifiable and changed topology cannot silently switch the selected branch.
 
 <a id="f070"></a>
-### F070 — Isocline curves
+### F070 â€” Isocline curves
 
 **Owning tasks:** 5, 13.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** G05, I02 · **First delivery:** P7 after spike · **Likely scope:** Feature/Core
+**Packages:** G05, I02 Â· **First delivery:** P7 after spike Â· **Likely scope:** Feature/Core
 
 **Goal:** Create constant-draft-angle curves on a surface relative to a chosen pull direction.
 
@@ -3898,11 +3922,11 @@ reconciliation rules above to every entry.
 **Complete when:** On analytic fixtures, sampled curve points satisfy the stated angle within tolerance. Reversing direction or normals follows the documented convention and does not create unexplained mirrored results.
 
 <a id="f071"></a>
-### F071 — Surface quality inspection
+### F071 â€” Surface quality inspection
 
 **Owning tasks:** 15.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** I02 · **First delivery:** P7/P9 · **Likely scope:** Feature
+**Packages:** I02 Â· **First delivery:** P7/P9 Â· **Likely scope:** Feature
 
 **Goal:** Help users diagnose shape quality and verify surfacing claims beyond shaded appearance.
 
@@ -3911,11 +3935,11 @@ reconciliation rules above to every entry.
 **Complete when:** Compare intentionally smooth and discontinuous joins and a known deviation fixture. The tools reveal the expected differences; colors/combs use documented scales and cannot substitute for the acceptance tolerance of a surface feature.
 
 <a id="f072"></a>
-### F072 — Unified Move/Copy dialog
+### F072 â€” Unified Move/Copy dialog
 
 **Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U07 · **First delivery:** P4 · **Likely scope:** UI/Feature
+**Packages:** U07 Â· **First delivery:** P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Position or duplicate parts through one consistent interface with precise geometric references.
 
@@ -3924,11 +3948,11 @@ reconciliation rules above to every entry.
 **Complete when:** Move a repeated component point-to-point, rotate it, and copy it. The correct occurrence changes, shared source geometry stays intact, and Cancel/Undo restore placement without residual constraints.
 
 <a id="f073"></a>
-### F073 — Relocatable manipulator
+### F073 â€” Relocatable manipulator
 
 **Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U07 · **First delivery:** P4 · **Likely scope:** UI/Feature
+**Packages:** U07 Â· **First delivery:** P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Place the movement triad where it makes a positioning task intuitive without changing the part itself.
 
@@ -3937,11 +3961,11 @@ reconciliation rules above to every entry.
 **Complete when:** Move the triad to a hole center and rotate around it. Relocating the triad alone leaves geometry unchanged; the resulting transform and preview agree and switching modes does not reset the pivot unexpectedly.
 
 <a id="f074"></a>
-### F074 — Precise placement
+### F074 â€” Precise placement
 
 **Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U07, A04 · **First delivery:** P4 · **Likely scope:** Feature/UI
+**Packages:** U07, A04 Â· **First delivery:** P4 Â· **Likely scope:** Feature/UI
 
 **Goal:** Expose exact coordinate meaning during movement, especially in nested assemblies.
 
@@ -3950,11 +3974,11 @@ reconciliation rules above to every entry.
 **Complete when:** Translate a rotated nested component by a local-axis distance and then a global-axis distance. Reported coordinates and final placement agree with the chosen frames; repeated operations do not apply parent transforms twice.
 
 <a id="f075"></a>
-### F075 — Placement versus constraint
+### F075 â€” Placement versus constraint
 
 **Owning tasks:** 10.7, 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U07, B02 · **First delivery:** P4/P6 · **Likely scope:** UI/Feature
+**Packages:** U07, B02 Â· **First delivery:** P4/P6 Â· **Likely scope:** UI/Feature
 
 **Goal:** Separate positioning something once from creating a relationship that stays true after later edits.
 
@@ -3963,11 +3987,11 @@ reconciliation rules above to every entry.
 **Complete when:** Align two holes once, then move the supporting part: the unconstrained item stays at its placement. Repeat with a persistent relationship and it follows correctly; users can see and undo the relationship.
 
 <a id="f076"></a>
-### F076 — Contextual mates/joints
+### F076 â€” Contextual mates/joints
 
 **Owning tasks:** 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B02 · **First delivery:** P6 · **Likely scope:** Feature
+**Packages:** B02 Â· **First delivery:** P6 Â· **Likely scope:** Feature
 
 **Goal:** Suggest useful assembly relationships from selected geometry without hiding their mechanical meaning.
 
@@ -3976,11 +4000,11 @@ reconciliation rules above to every entry.
 **Complete when:** Select cylindrical and planar references to position a shaft, inspect the resulting motion, and adjust limits. Conflicting mates are explained and canceled without leaving an overconstrained partial assembly.
 
 <a id="f077"></a>
-### F077 — Assembly freedom display
+### F077 â€” Assembly freedom display
 
 **Owning tasks:** 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B02 · **First delivery:** P6 · **Likely scope:** Feature/UI
+**Packages:** B02 Â· **First delivery:** P6 Â· **Likely scope:** Feature/UI
 
 **Goal:** Show which components are grounded, movable, fully constrained, or conflicting.
 
@@ -3989,11 +4013,11 @@ reconciliation rules above to every entry.
 **Complete when:** Inspect an assembly with one grounded base, one slider, one free part, and one conflict. The indicated freedoms match permitted manipulation and update after adding/removing a mate.
 
 <a id="f078"></a>
-### F078 — In-context part editing
+### F078 â€” In-context part editing
 
 **Owning tasks:** 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A04, B03 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+**Packages:** A04, B03 Â· **First delivery:** P3/P6 Â· **Likely scope:** Core/Feature
 
 **Goal:** Edit a component using its surroundings while preserving shared-definition and reference scope.
 
@@ -4002,11 +4026,11 @@ reconciliation rules above to every entry.
 **Complete when:** Size a cover from neighboring geometry within a rotated subassembly. The cover edits its intended definition, contextual references transform correctly, and moving or replacing the neighbor updates or produces a repairable reference error.
 
 <a id="f079"></a>
-### F079 — Assembly-scoped cuts
+### F079 â€” Assembly-scoped cuts
 
 **Owning tasks:** 12.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A08 · **First delivery:** P2 proof; P6 product · **Likely scope:** Core
+**Packages:** A08 Â· **First delivery:** P2 proof; P6 product Â· **Likely scope:** Core
 
 **Goal:** Apply a manufacturing or installation modification to chosen occurrences without modifying every shared source instance.
 
@@ -4015,11 +4039,11 @@ reconciliation rules above to every entry.
 **Complete when:** Cut one of two occurrences of the same plate, reopen the assembly, and inspect the source part. Only the selected occurrence result is cut; BOM identity policy, drawing output, and subsequent source updates follow documented rules.
 
 <a id="f080"></a>
-### F080 — Exploded views and motion
+### F080 â€” Exploded views and motion
 
 **Owning tasks:** 12.6, 12.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B04, B05 · **First delivery:** P6 increments · **Likely scope:** Feature/Core
+**Packages:** B04, B05 Â· **First delivery:** P6 increments Â· **Likely scope:** Feature/Core
 
 **Goal:** Explain assembly structure and simple mechanisms without overwriting their modeled placement.
 
@@ -4028,11 +4052,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create an exploded view, return to assembled state, and reopen both views. Animate a supported hinged mechanism within limits; source geometry and normal assembly placement remain unchanged.
 
 <a id="f081"></a>
-### F081 — Published interfaces
+### F081 â€” Published interfaces
 
 **Owning tasks:** 12.5, 10.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B03, A05, A09 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+**Packages:** B03, A05, A09 Â· **First delivery:** P3/P6 Â· **Likely scope:** Core/Feature
 
 **Goal:** Give other parts stable, intentional references instead of exposing arbitrary internal topology.
 
@@ -4041,11 +4065,11 @@ reconciliation rules above to every entry.
 **Complete when:** Publish mounting axes and spacing, consume them in a bracket, and replace internal source features while preserving the interfaces. Consumers update correctly; deleting an interface identifies affected downstream parts.
 
 <a id="f082"></a>
-### F082 — Associative geometry linking
+### F082 â€” Associative geometry linking
 
 **Owning tasks:** 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B03 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+**Packages:** B03 Â· **First delivery:** P3/P6 Â· **Likely scope:** Core/Feature
 
 **Goal:** Reuse geometry between parts with visible provenance and deliberate update control.
 
@@ -4054,11 +4078,11 @@ reconciliation rules above to every entry.
 **Complete when:** Link a surface into another part, move/edit the source, then freeze and later resume updates if supported. Each state behaves as shown, cycles are rejected, and source relocation is repairable.
 
 <a id="f083"></a>
-### F083 — External-reference manager
+### F083 â€” External-reference manager
 
 **Owning tasks:** 12.5, 15.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B03, X02 · **First delivery:** P3/P6 · **Likely scope:** Feature/UI
+**Packages:** B03, X02 Â· **First delivery:** P3/P6 Â· **Likely scope:** Feature/UI
 
 **Goal:** Give users one place to understand and repair dependencies outside the current document.
 
@@ -4067,11 +4091,11 @@ reconciliation rules above to every entry.
 **Complete when:** Move a project folder, repair a missing source once, and identify all affected consumers. Updating or freezing a dependency has a previewable scope and the manager agrees with saved references.
 
 <a id="f084"></a>
-### F084 — Cycle prevention
+### F084 â€” Cycle prevention
 
 **Owning tasks:** 7.5, 12.5, 10.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B03, A05, A09 · **First delivery:** P1/P3 · **Likely scope:** Core
+**Packages:** B03, A05, A09 Â· **First delivery:** P1/P3 Â· **Likely scope:** Core
 
 **Goal:** Reject dependency relationships that cannot be evaluated deterministically.
 
@@ -4080,11 +4104,11 @@ reconciliation rules above to every entry.
 **Complete when:** Attempt A-to-B-to-A links and an indirect expression cycle across three parts. The attempted final relationship is rejected with the dependency chain and no partially saved or partially computed link remains.
 
 <a id="f085"></a>
-### F085 — Reference repair
+### F085 â€” Reference repair
 
 **Owning tasks:** 7.5, 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A05, B03 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+**Packages:** A05, B03 Â· **First delivery:** P3/P6 Â· **Likely scope:** Core/Feature
 
 **Goal:** Recover from changed or missing geometry without rebuilding downstream work blindly.
 
@@ -4093,11 +4117,11 @@ reconciliation rules above to every entry.
 **Complete when:** Delete a referenced face, select a valid replacement, and preview an extrusion and drawing annotation that depend on it. Commit restores the intended relationships; Cancel preserves the diagnostic state.
 
 <a id="f086"></a>
-### F086 — Stable selection intent
+### F086 â€” Stable selection intent
 
 **Owning tasks:** 7.1.4, 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A05, U05 · **First delivery:** P1/P3 · **Likely scope:** Core
+**Packages:** A05, U05 Â· **First delivery:** P1/P3 Â· **Likely scope:** Core
 
 **Goal:** Preserve the meaning of selected geometry across supported topology changes without pretending every edit is resolvable.
 
@@ -4106,11 +4130,11 @@ reconciliation rules above to every entry.
 **Complete when:** Change upstream topology in a controlled corpus of splits, merges, and symmetry ambiguities. Supported references resolve correctly; ambiguous cases remain unresolved rather than attaching to plausible but wrong geometry.
 
 <a id="f087"></a>
-### F087 — Useful failure reporting
+### F087 â€” Useful failure reporting
 
 **Owning tasks:** 7.5, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A07, U11 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
+**Packages:** A07, U11 Â· **First delivery:** P3/P4 Â· **Likely scope:** Feature/UI
 
 **Goal:** Explain what failed, what caused it, and what the user can do next.
 
@@ -4119,11 +4143,11 @@ reconciliation rules above to every entry.
 **Complete when:** Break an upstream profile and inspect a downstream cascade. The user is directed to the first cause, not dozens of equivalent errors, and export/CAM cannot quietly treat stale geometry as current.
 
 <a id="f088"></a>
-### F088 — Controlled recompute
+### F088 â€” Controlled recompute
 
 **Owning tasks:** 7.5.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A07, X03 · **First delivery:** P3/P10 · **Likely scope:** Core/Feature
+**Packages:** A07, X03 Â· **First delivery:** P3/P10 Â· **Likely scope:** Core/Feature
 
 **Goal:** Let users balance responsiveness and model currency during expensive or grouped edits.
 
@@ -4132,11 +4156,11 @@ reconciliation rules above to every entry.
 **Complete when:** Change several parameters with deferred updates, recompute once, and compare with automatic mode. Results agree; targeted recompute includes required dependencies and stale drawings/toolpaths remain visibly marked.
 
 <a id="f089"></a>
-### F089 — Direct STL machining
+### F089 â€” Direct STL machining
 
 **Owning tasks:** 6, 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C01 · **First delivery:** P8 · **Likely scope:** Feature/Core
+**Packages:** C01 Â· **First delivery:** P8 Â· **Likely scope:** Feature/Core
 
 **Goal:** Generate supported toolpaths directly from mesh geometry without tessellation-to-B-rep conversion.
 
@@ -4145,11 +4169,11 @@ reconciliation rules above to every entry.
 **Complete when:** Load an STL, declare its units, set placement, generate the supported finishing path, and independently compare expected tool contact within stated tolerance. No thousands-of-faces conversion is required.
 
 <a id="f090"></a>
-### F090 — Guided CAM setup
+### F090 â€” Guided CAM setup
 
 **Owning tasks:** 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C01, C03, U09 · **First delivery:** P8 · **Likely scope:** UI/Feature
+**Packages:** C01, C03, U09 Â· **First delivery:** P8 Â· **Likely scope:** UI/Feature
 
 **Goal:** Guide users from a model to a complete machining setup with visible assumptions.
 
@@ -4158,11 +4182,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a setup from an STL and from supported solid geometry. Reopening preserves origins, units, stock, and tools; a wrong-scale mesh is obvious before toolpath generation or postprocessing.
 
 <a id="f091"></a>
-### F091 — Mesh preparation
+### F091 â€” Mesh preparation
 
 **Owning tasks:** 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C01 · **First delivery:** P8 · **Likely scope:** Feature
+**Packages:** C01 Â· **First delivery:** P8 Â· **Likely scope:** Feature
 
 **Goal:** Identify mesh conditions that matter to the chosen machining algorithm and offer controlled fixes.
 
@@ -4171,11 +4195,11 @@ reconciliation rules above to every entry.
 **Complete when:** Use inverted, open, disconnected, and dense fixtures. Report which conditions block each supported operation, and verify approved repairs respect dimensions/tolerance while preserving the original mesh.
 
 <a id="f092"></a>
-### F092 — Roughing and finishing workflow
+### F092 â€” Roughing and finishing workflow
 
 **Owning tasks:** 14.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C01, C02 · **First delivery:** P8 staged · **Likely scope:** Feature/Core
+**Packages:** C01, C02 Â· **First delivery:** P8 staged Â· **Likely scope:** Feature/Core
 
 **Goal:** Make a useful strategy sequence understandable without implying that a finishing path removes bulk stock safely.
 
@@ -4184,11 +4208,11 @@ reconciliation rules above to every entry.
 **Complete when:** Machine-planning fixtures show roughing leaves the intended allowance and finishing reaches supported surfaces within tolerance. A finishing-only release is labeled clearly; unsupported stock engagement or access is reported.
 
 <a id="f093"></a>
-### F093 — Boundary selection on meshes
+### F093 â€” Boundary selection on meshes
 
 **Owning tasks:** 14.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C01, C02 · **First delivery:** P8 · **Likely scope:** Feature
+**Packages:** C01, C02 Â· **First delivery:** P8 Â· **Likely scope:** Feature
 
 **Goal:** Control where a mesh-based strategy may cut and where it must avoid.
 
@@ -4197,11 +4221,11 @@ reconciliation rules above to every entry.
 **Complete when:** Restrict machining to one pocket-like region and protect a raised area. Generated paths respect the documented cutter/boundary rule and a moved mesh cannot leave boundaries silently in the wrong frame.
 
 <a id="f094"></a>
-### F094 — Rest machining
+### F094 â€” Rest machining
 
 **Owning tasks:** 14.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C02 · **First delivery:** P8 after roughing · **Likely scope:** Core
+**Packages:** C02 Â· **First delivery:** P8 after roughing Â· **Likely scope:** Core
 
 **Goal:** Remove material left by earlier operations using their actual stock assumptions.
 
@@ -4210,11 +4234,11 @@ reconciliation rules above to every entry.
 **Complete when:** Rough a fixture with a large tool, compute remaining stock, and plan a smaller-tool rest operation. It targets the expected remaining areas and is invalidated when the prior tool or stock changes.
 
 <a id="f095"></a>
-### F095 — Stock and collision simulation
+### F095 â€” Stock and collision simulation
 
 **Owning tasks:** 14.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C03 · **First delivery:** P8 increments · **Likely scope:** Feature/Core
+**Packages:** C03 Â· **First delivery:** P8 increments Â· **Likely scope:** Feature/Core
 
 **Goal:** Show what a supported toolpath removes and identify the checks actually performed.
 
@@ -4223,11 +4247,11 @@ reconciliation rules above to every entry.
 **Complete when:** Run known-clear and deliberately colliding fixtures, compare material removal with an independent reference where available, and verify units/transforms. Simulation results disclose their scope and cannot be presented as proof that real machine motion is safe.
 
 <a id="f096"></a>
-### F096 — Setup reuse
+### F096 â€” Setup reuse
 
 **Owning tasks:** 14.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C03 · **First delivery:** P8 · **Likely scope:** UI/Feature
+**Packages:** C03 Â· **First delivery:** P8 Â· **Likely scope:** UI/Feature
 
 **Goal:** Reuse trustworthy machine/tool/setup choices without inheriting stale model references.
 
@@ -4236,11 +4260,11 @@ reconciliation rules above to every entry.
 **Complete when:** Apply a template to a new model of different size, resolve collectors, and inspect all consequential values. Updating the template does not silently alter previously approved jobs or toolpaths.
 
 <a id="f097"></a>
-### F097 — Change tracking
+### F097 â€” Change tracking
 
 **Owning tasks:** 14.4, 16.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** C03, X05 · **First delivery:** P3/P8 · **Likely scope:** Core/Feature
+**Packages:** C03, X05 Â· **First delivery:** P3/P8 Â· **Likely scope:** Core/Feature
 
 **Goal:** Prevent outdated machining results from appearing current after their inputs change.
 
@@ -4249,11 +4273,11 @@ reconciliation rules above to every entry.
 **Complete when:** Change a cutter diameter, stock offset, and model placement separately. Exactly the affected paths/simulations/output states invalidate, and regeneration restores a traceable current state.
 
 <a id="f098"></a>
-### F098 — Unified measurement
+### F098 â€” Unified measurement
 
 **Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** I01 · **First delivery:** P9; isolated tools earlier · **Likely scope:** UI/Feature
+**Packages:** I01 Â· **First delivery:** P9; isolated tools earlier Â· **Likely scope:** UI/Feature
 
 **Goal:** Inspect common geometric quantities through one tool with explicit meaning and units.
 
@@ -4262,11 +4286,11 @@ reconciliation rules above to every entry.
 **Complete when:** Measure known analytic fixtures and repeated assembly instances. Values and units are correct; missing density or ambiguous thickness is explained instead of replaced with a misleading default result.
 
 <a id="f099"></a>
-### F099 — Persistent measurements
+### F099 â€” Persistent measurements
 
 **Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** I01, A05 · **First delivery:** P9 · **Likely scope:** Feature
+**Packages:** I01, A05 Â· **First delivery:** P9 Â· **Likely scope:** Feature
 
 **Goal:** Save useful engineering checks so they can be revisited after edits.
 
@@ -4275,11 +4299,11 @@ reconciliation rules above to every entry.
 **Complete when:** Save a clearance measurement, move a component, and reopen the document. An associative measurement updates or flags repair, while a snapshot remains labeled with its original state and does not imply current clearance.
 
 <a id="f100"></a>
-### F100 — Interactive sections
+### F100 â€” Interactive sections
 
 **Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** I01 · **First delivery:** P9 · **Likely scope:** UI/Feature
+**Packages:** I01 Â· **First delivery:** P9 Â· **Likely scope:** UI/Feature
 
 **Goal:** Inspect interiors and communicate selected cut views without changing modeled geometry.
 
@@ -4288,11 +4312,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create two section planes through a nested assembly, save the view, and move a plane numerically. Reopening reproduces it; model geometry remains intact and section measurements describe the actual selected plane.
 
 <a id="f101"></a>
-### F101 — Interference/clearance checks
+### F101 â€” Interference/clearance checks
 
 **Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** I01, B06 · **First delivery:** P9 · **Likely scope:** Feature
+**Packages:** I01, B06 Â· **First delivery:** P9 Â· **Likely scope:** Feature
 
 **Goal:** Find and navigate assembly conflicts rather than requiring visual inspection of every pair.
 
@@ -4301,11 +4325,11 @@ reconciliation rules above to every entry.
 **Complete when:** Check an assembly containing an overlap, a touch, a small clearance, and an unloaded component. Results classify each correctly, navigate to the relevant pair, and never label an incomplete check as fully clear.
 
 <a id="f102"></a>
-### F102 — Drawing creation wizard
+### F102 â€” Drawing creation wizard
 
 **Owning tasks:** 15.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** D01, X05 · **First delivery:** P9; compatibility P2/P3 · **Likely scope:** UI/Feature
+**Packages:** D01, X05 Â· **First delivery:** P9; compatibility P2/P3 Â· **Likely scope:** UI/Feature
 
 **Goal:** Create common drawings through a guided view/template setup that remains associative.
 
@@ -4314,11 +4338,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create a drawing with base/projected/section/detail views, edit the source, and reopen. Supported views update correctly; chosen scale, projection convention, and source arrangement remain explicit and broken references are surfaced.
 
 <a id="f103"></a>
-### F103 — Associative annotation
+### F103 â€” Associative annotation
 
 **Owning tasks:** 15.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** D01, A05 · **First delivery:** P9 · **Likely scope:** Feature/Core
+**Packages:** D01, A05 Â· **First delivery:** P9 Â· **Likely scope:** Feature/Core
 
 **Goal:** Keep dimensions and manufacturing notes attached to the intended geometry through supported edits.
 
@@ -4327,11 +4351,11 @@ reconciliation rules above to every entry.
 **Complete when:** Change a hole size and location, then split an annotated edge. Valid callouts update from source metadata, ambiguous annotations are marked for repair, and the drawing never silently displays a plausible dimension attached to the wrong edge.
 
 <a id="f104"></a>
-### F104 — Assembly documentation
+### F104 â€” Assembly documentation
 
 **Owning tasks:** 15.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** D02, B01, B04 · **First delivery:** P9 · **Likely scope:** Feature
+**Packages:** D02, B01, B04 Â· **First delivery:** P9 Â· **Likely scope:** Feature
 
 **Goal:** Produce BOMs, balloons, and exploded documentation from defined product-structure rules.
 
@@ -4340,11 +4364,11 @@ reconciliation rules above to every entry.
 **Complete when:** Document an assembly containing repeats, a unique copy, an empty reference set, and reference-only hardware. Quantities and balloons match the stated rules and remain stable or explicitly renumbered after supported edits.
 
 <a id="f105"></a>
-### F105 — Additional modeling modules
+### F105 â€” Additional modeling modules
 
 **Owning tasks:** 15.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X01 · **First delivery:** P9 by module · **Likely scope:** Feature/Core
+**Packages:** X01 Â· **First delivery:** P9 by module Â· **Likely scope:** Feature/Core
 
 **Goal:** Integrate useful sheet-metal, frame/weldment, and standard-hardware workflows without making them prerequisites for core modeling.
 
@@ -4353,11 +4377,11 @@ reconciliation rules above to every entry.
 **Complete when:** A bounded sheet-metal part unfolds/refolds as documented, a frame produces a consistent cut list, and repeated hardware preserves instance/BOM semantics. These are separate deliverables; passing one does not mark the whole package complete.
 
 <a id="f106"></a>
-### F106 — Responsive previews
+### F106 â€” Responsive previews
 
 **Owning tasks:** 8.1.6, 16.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X03, A07 · **First delivery:** P3/P10 · **Likely scope:** Feature/Core
+**Packages:** X03, A07 Â· **First delivery:** P3/P10 Â· **Likely scope:** Feature/Core
 
 **Goal:** Keep expensive commands responsive and make the difference between preview and final geometry clear.
 
@@ -4366,11 +4390,11 @@ reconciliation rules above to every entry.
 **Complete when:** Rapidly change a complex feature, cancel, and close the document during a preview. No stale result commits, the UI remains recoverable, and final geometry meets the full tolerance contract rather than the preview approximation.
 
 <a id="f107"></a>
-### F107 — Large-assembly handling
+### F107 â€” Large-assembly handling
 
 **Owning tasks:** 12.8, 16.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** B06, X03 · **First delivery:** P6/P10 after measurement · **Likely scope:** Core
+**Packages:** B06, X03 Â· **First delivery:** P6/P10 after measurement Â· **Likely scope:** Core
 
 **Goal:** Scale shared-instance assemblies while preserving correctness and complete model state.
 
@@ -4379,11 +4403,11 @@ reconciliation rules above to every entry.
 **Complete when:** Measure fixed assemblies at increasing instance counts on named hardware. Improvements are attributable to recorded bottlenecks; repeated geometry renders in correct transforms, and full-resolution checks still include required hidden/unloaded participants.
 
 <a id="f108"></a>
-### F108 — Project packaging
+### F108 â€” Project packaging
 
 **Owning tasks:** 15.6, 16.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X02, X04 · **First delivery:** P3/P9 · **Likely scope:** Feature/Core
+**Packages:** X02, X04 Â· **First delivery:** P3/P9 Â· **Likely scope:** Feature/Core
 
 **Goal:** Move or share a project with its dependencies while preserving intentional identity relationships.
 
@@ -4392,11 +4416,11 @@ reconciliation rules above to every entry.
 **Complete when:** Package a nested assembly, move it to a different directory, and open it without the original path. Supported references resolve, omitted sources are listed, and a copy cannot accidentally overwrite or redirect the original project.
 
 <a id="f109"></a>
-### F109 — Compatibility strategy
+### F109 â€” Compatibility strategy
 
 **Owning tasks:** 7.6, 16.1, 16.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A06, X04, X09 · **First delivery:** P1/P3/P10 · **Likely scope:** Core
+**Packages:** A06, X04, X09 Â· **First delivery:** P1/P3/P10 Â· **Likely scope:** Core
 
 **Goal:** Make native, legacy, and exchange behavior predictable as the fork diverges.
 
@@ -4405,11 +4429,11 @@ reconciliation rules above to every entry.
 **Complete when:** Import supported legacy fixtures, convert a copy, and reopen with full editability for supported features. Unsupported objects/add-ons are named explicitly; native data is never silently dropped to produce an apparently successful legacy export.
 
 <a id="f110"></a>
-### F110 — Consistent automation
+### F110 â€” Consistent automation
 
 **Owning tasks:** 16.5, 16.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X03, A07 · **First delivery:** P3/P10 · **Likely scope:** Feature
+**Packages:** X03, A07 Â· **First delivery:** P3/P10 Â· **Likely scope:** Feature
 
 **Goal:** Expose the same modeling behavior through scripts and reproducible operation recording.
 
@@ -4418,11 +4442,11 @@ reconciliation rules above to every entry.
 **Complete when:** Record or script a bracket workflow, replay it headlessly where supported, and compare parameter relationships/results. UI and automation reject the same invalid targets and do not depend on whichever document or body happened to be active.
 
 <a id="f111"></a>
-### F111 — Upstream-friendly implementation
+### F111 â€” Upstream-friendly implementation
 
 **Owning tasks:** 16.3, 16.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X03 · **First delivery:** P0/P10 · **Likely scope:** Feature/Core
+**Packages:** X03 Â· **First delivery:** P0/P10 Â· **Likely scope:** Feature/Core
 
 **Goal:** Keep long-term maintenance feasible while preserving deliberate product differences.
 
@@ -4431,11 +4455,11 @@ reconciliation rules above to every entry.
 **Complete when:** Integrate a representative upstream update using documented build/tests and the divergence map. Conflicts have identifiable owners/reasons, and supported legacy/new workflows still pass their release gates.
 
 <a id="f112"></a>
-### F112 — Guided workflows and progressive disclosure
+### F112 â€” Guided workflows and progressive disclosure
 
 **Owning tasks:** 10.2, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U09, U11 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+**Packages:** U09, U11 Â· **First delivery:** P3/P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Make common commands teach their own sequence while giving experienced users a direct, efficient route.
 
@@ -4444,11 +4468,11 @@ reconciliation rules above to every entry.
 **Complete when:** A first-time user completes Extrude from prompts; an experienced user performs the same operation through preselection and typed values. Both create equivalent editable features and can correct an earlier input without restarting.
 
 <a id="f113"></a>
-### F113 — Intelligent initial operation suggestions
+### F113 â€” Intelligent initial operation suggestions
 
 **Owning tasks:** 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U10, A02 · **First delivery:** P1/P4 · **Likely scope:** Feature/Core
+**Packages:** U10, A02 Â· **First delivery:** P1/P4 Â· **Likely scope:** Feature/Core
 
 **Goal:** Reduce routine Boolean decisions without taking control away from the user or changing saved intent.
 
@@ -4457,11 +4481,11 @@ reconciliation rules above to every entry.
 **Complete when:** Test zero, one, multiple, tangent-invalid, and cross-component candidates. Editing a committed Unite until it no longer intersects produces defined failure/repair behavior, not a silent conversion into New Body.
 
 <a id="f114"></a>
-### F114 — Selection-aware constraint eligibility
+### F114 â€” Selection-aware constraint eligibility
 
 **Owning tasks:** 11.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S07, S02, S04 · **First delivery:** P1 audit; P5 · **Likely scope:** Feature/Core
+**Packages:** S07, S02, S04 Â· **First delivery:** P1 audit; P5 Â· **Likely scope:** Feature/Core
 
 **Goal:** Show only relevant sketch actions and clearly distinguish a mathematical conflict from the wrong selection shape.
 
@@ -4470,11 +4494,11 @@ reconciliation rules above to every entry.
 **Complete when:** Selecting one line never suggests a two-line relation as immediately executable. A constrained horizontal line's Vertical candidate is evaluated correctly for its actual sketch state; stale checks cannot mutate the sketch or disable valid actions based on guessed conflicts.
 
 <a id="f115"></a>
-### F115 — Native .cadprt engineering documents
+### F115 â€” Native .cadprt engineering documents
 
 **Owning tasks:** 7.6, 16.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X04, A06 · **First delivery:** P1/P3/P10 · **Likely scope:** Core
+**Packages:** X04, A06 Â· **First delivery:** P1/P3/P10 Â· **Likely scope:** Core
 
 **Goal:** Provide a recognizable native format for the entire application and reliable behavior as schemas evolve.
 
@@ -4483,11 +4507,11 @@ reconciliation rules above to every entry.
 **Complete when:** Round-trip a mixed engineering document and an externally linked assembly. Required unknown capabilities, corrupt content, and legacy-only objects produce clear controlled outcomes; native files are not accepted or overwritten solely because their filename has the expected suffix.
 
 <a id="f116"></a>
-### F116 — Early cross-workbench compatibility
+### F116 â€” Early cross-workbench compatibility
 
 **Owning tasks:** 16.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X05 · **First delivery:** P2/P3 then each core change · **Likely scope:** Core/Feature
+**Packages:** X05 Â· **First delivery:** P2/P3 then each core change Â· **Likely scope:** Core/Feature
 
 **Goal:** Discover downstream consequences of ownership changes before many commands depend on the new model.
 
@@ -4496,11 +4520,11 @@ reconciliation rules above to every entry.
 **Complete when:** Changing a shared definition and making an assembly-local cut affect the correct drawing views, CAM model, FEM assignments, and Draft references. Unsupported paths are explicit and stale meshes/toolpaths/results cannot appear current.
 
 <a id="f117"></a>
-### F117 — Task benchmarks and release evidence
+### F117 â€” Task benchmarks and release evidence
 
 **Owning tasks:** 16.4, 16.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** Q01 · **First delivery:** P0 onward · **Likely scope:** Process/Validation
+**Packages:** Q01 Â· **First delivery:** P0 onward Â· **Likely scope:** Process/Validation
 
 **Goal:** Judge progress by usable engineering outcomes and reliable edits rather than command counts.
 
@@ -4509,11 +4533,11 @@ reconciliation rules above to every entry.
 **Complete when:** A release report links each advertised workflow to completed task evidence and states unverified cases. Performance, click-count, time-saving, and adoption claims are not fabricated from demonstrations or code generation.
 
 <a id="f118"></a>
-### F118 — Model-led onboarding and outreach
+### F118 â€” Model-led onboarding and outreach
 
 **Owning tasks:** 17.2, 17.3, 17.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X07, M02 · **First delivery:** P4/P11 · **Likely scope:** Product/Documentation
+**Packages:** X07, M02 Â· **First delivery:** P4/P11 Â· **Likely scope:** Product/Documentation
 
 **Goal:** Give people a concrete useful result that makes trying FC Plus worthwhile.
 
@@ -4522,11 +4546,11 @@ reconciliation rules above to every entry.
 **Complete when:** A representative user can install/open the supported build, customize the sample, save, and export without a general CAD course. Track this success and subsequent independent use separately from model downloads or social impressions.
 
 <a id="f119"></a>
-### F119 — Independent branding and format discoverability
+### F119 â€” Independent branding and format discoverability
 
 **Owning tasks:** 17.6, 17.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** M03, X04 · **First delivery:** Identity early; P10/P11 · **Likely scope:** Product/Documentation
+**Packages:** M03, X04 Â· **First delivery:** Identity early; P10/P11 Â· **Likely scope:** Product/Documentation
 
 **Goal:** Make the relationship to FreeCAD and the meaning of .cadprt clear without implying endorsement or exclusivity.
 
@@ -4535,11 +4559,11 @@ reconciliation rules above to every entry.
 **Complete when:** Release copy accurately describes the independent fork and supported imports/exports. Installers and sample files identify the format consistently, and any proposed registration identifier is not presented as assigned before it actually is.
 
 <a id="f120"></a>
-### F120 — Free releases, licensing, and maintenance sustainability
+### F120 â€” Free releases, licensing, and maintenance sustainability
 
 **Owning tasks:** 16.7, 17.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X06, X03 · **First delivery:** P0/P10 · **Likely scope:** Release/Process
+**Packages:** X06, X03 Â· **First delivery:** P0/P10 Â· **Likely scope:** Release/Process
 
 **Goal:** Keep the application free for the foreseeable future and make each distributed build maintainable and properly accompanied.
 
@@ -4548,11 +4572,11 @@ reconciliation rules above to every entry.
 **Complete when:** Each released binary has traceable source/build/license materials and a documented maintenance/support route. A future revenue discussion cannot silently introduce paywalls, unsupported proprietary claims, or mandatory cloud dependencies.
 
 <a id="f121"></a>
-### F121 — Audience and adoption research
+### F121 â€” Audience and adoption research
 
 **Owning tasks:** 17.1, 17.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** M01, M02 · **First delivery:** P0/P11 · **Likely scope:** Research/Product
+**Packages:** M01, M02 Â· **First delivery:** P0/P11 Â· **Likely scope:** Research/Product
 
 **Goal:** Use real tasks and repeated use to refine which users the fork serves first.
 
@@ -4561,11 +4585,11 @@ reconciliation rules above to every entry.
 **Complete when:** Product and release choices can point to observations or clearly labeled hypotheses. No probability of adoption or market-share claim is inferred merely from an enthusiastic model audience, a recognizable extension, or the owner's workflow expertise.
 
 <a id="f122"></a>
-### F122 — Named parameters, expressions, and units
+### F122 â€” Named parameters, expressions, and units
 
 **Owning tasks:** 10.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** A09 · **First delivery:** P1/P3; editor P4/P5 · **Likely scope:** Core/Feature
+**Packages:** A09 Â· **First delivery:** P1/P3; editor P4/P5 Â· **Likely scope:** Core/Feature
 
 **Goal:** Make design intent visible and reusable so people can customize a model without hunting through its entire feature history.
 
@@ -4574,11 +4598,11 @@ reconciliation rules above to every entry.
 **Complete when:** Drive enclosure width, lid clearance, and hole spacing from named values, rename a parameter, and change display units. All intended consumers update; incompatible units and cycles are rejected; a shared definition does not accidentally acquire occurrence-local geometry parameters.
 
 <a id="f123"></a>
-### F123 — Contextual workspace, help, and accessibility
+### F123 â€” Contextual workspace, help, and accessibility
 
 **Owning tasks:** 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** U11 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+**Packages:** U11 Â· **First delivery:** P3/P4 Â· **Likely scope:** UI/Feature
 
 **Goal:** Keep navigation, command availability, help, and accessibility coherent across modeling and supported engineering tasks.
 
@@ -4587,11 +4611,11 @@ reconciliation rules above to every entry.
 **Complete when:** Complete representative modeling and downstream setup tasks with keyboard navigation and enlarged display settings. Missing selections and wrong work context are recoverable from the interface; changing a preference does not change saved geometry.
 
 <a id="f124"></a>
-### F124 — Sketch placement and support management
+### F124 â€” Sketch placement and support management
 
 **Owning tasks:** 11.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** S08, A05 · **First delivery:** P1/P3 contracts; P5 · **Likely scope:** Feature/Core
+**Packages:** S08, A05 Â· **First delivery:** P1/P3 contracts; P5 Â· **Likely scope:** Feature/Core
 
 **Goal:** Make where a sketch lives, how it is oriented, and how it follows its support understandable and repairable.
 
@@ -4600,11 +4624,11 @@ reconciliation rules above to every entry.
 **Complete when:** Create an offset sketch on a rotated component, change its support, and repair a lost face reference. Orientation, external projections, dimensions, and occurrence transforms follow the selected policy; reattachment is undoable.
 
 <a id="f125"></a>
-### F125 — Recovery and document lifecycle
+### F125 â€” Recovery and document lifecycle
 
 **Owning tasks:** 16.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X08, X04 · **First delivery:** P1/P3/P10 · **Likely scope:** Core/Feature
+**Packages:** X08, X04 Â· **First delivery:** P1/P3/P10 Â· **Likely scope:** Core/Feature
 
 **Goal:** Protect editing work and make file identity, saving, and recovery predictable as documents become more complex.
 
@@ -4613,11 +4637,11 @@ reconciliation rules above to every entry.
 **Complete when:** Interrupt a controlled save/recovery fixture and recover a clearly labeled editable copy without overwriting a good original. Missing external sources remain explicit, and restoring a snapshot does not silently change definition identity or relink unrelated projects.
 
 <a id="f126"></a>
-### F126 — Add-on, macro, and API compatibility
+### F126 â€” Add-on, macro, and API compatibility
 
 **Owning tasks:** 16.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X09, X03 · **First delivery:** P0 audit; P3/P10 · **Likely scope:** Feature/Core
+**Packages:** X09, X03 Â· **First delivery:** P0 audit; P3/P10 Â· **Likely scope:** Feature/Core
 
 **Goal:** Keep useful extensions usable where feasible and make incompatibility visible as the fork changes.
 
@@ -4626,11 +4650,11 @@ reconciliation rules above to every entry.
 **Complete when:** Open fixtures requiring a supported and an unavailable extension, replay a representative macro, and review migration diagnostics. Supported integrations work through stable contracts; unsupported ones identify a concrete dependency without corrupting the model.
 
 <a id="f127"></a>
-### F127 — Manufacturing export and reusable output presets
+### F127 â€” Manufacturing export and reusable output presets
 
 **Owning tasks:** 15.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
 
-**Packages:** X10, X02 · **First delivery:** P3 contracts; P4/P9 UI · **Likely scope:** Feature
+**Packages:** X10, X02 Â· **First delivery:** P3 contracts; P4/P9 UI Â· **Likely scope:** Feature
 
 **Goal:** Make reliable handoff to printing, machining, and other tools part of the everyday workflow.
 

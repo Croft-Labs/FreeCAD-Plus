@@ -9,7 +9,7 @@ import Part
 from PySide import QtCore, QtGui
 from . import Isocline
 from .FeatureTask import TaskFeatureViewProvider, DirectionArrow, CurveOverlay
-from .ShapeReferences import validate_link, linked_shape
+from .ShapeReferences import validate_link, linked_shape, require_current, ReferenceError
 
 translate = App.Qt.translate
 ICON = str(Path(__file__).with_name("Isocline.svg"))
@@ -263,6 +263,11 @@ class IsoclineTask:
             self.status.setText(translate("Isocline", "Preview paused. OK will recompute."))
             return False
         self.doc.recompute()
+        try:
+            require_current(self.obj)
+        except ReferenceError as error:
+            self.status.setText(str(error))
+            return False
         if not self.obj.isValid() or self.obj.Shape.isNull():
             self.status.setText(self.obj.StatusMessage or self.obj.getStatusString())
             return False
