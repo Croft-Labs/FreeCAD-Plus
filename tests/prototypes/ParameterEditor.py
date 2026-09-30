@@ -53,6 +53,18 @@ class ParameterEditor(QtWidgets.QDialog):
         self.loadParameter()
 
     def loadParameter(self, *args):
+        if self._closed:
+            return
+        available = [name for name in self.obj.PropertiesList
+                     if self.obj.getTypeIdOfProperty(name) in
+                     ("App::PropertyLength", "App::PropertyAngle")]
+        displayed = [self.parameter.itemText(i) for i in range(self.parameter.count())]
+        if displayed != available:
+            for widget in (self.name, self.expression, self.apply, self.rename):
+                widget.setEnabled(False)
+            self.value.clear()
+            self.error.setText("Parameter list changed outside this editor. Refresh to continue.")
+            return
         name = self.parameter.currentText()
         enabled = bool(name)
         for widget in (self.name, self.expression, self.apply, self.rename):

@@ -322,6 +322,12 @@ current selection. Parameter-object or document deletion closes the dialog and
 removes its observer; closed dialogs ignore further edit actions. The snapshot is
 object-level and does not track every external dependency revision.
 
-Six native Qt tests exercise the prototype programmatically. Physical keyboard/
-accessibility, high-DPI layout, external property-list interactions, multi-dialog
-behavior and production creation/deletion/where-used/publication remain pending.
+When loading a selection after external parameter-list changes, editing is disabled
+and a Refresh message replaces the stale value. Refresh rebuilds the list; an empty
+list disables Apply/Rename, while a later added length/angle parameter can be loaded.
+Two dialogs for the same object use the same conflict guard: either dialog must
+Refresh after the other commits. Closing one leaves the other's observer active.
+
+Nine native Qt tests exercise the prototype programmatically. Physical keyboard/
+accessibility, high-DPI layout, general external reference synchronization and
+production creation/deletion/where-used/publication remain pending.

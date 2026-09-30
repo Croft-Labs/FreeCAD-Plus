@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8m/n parameter editor refresh/conflict and lifecycle.
+Latest roadmap batch: 10.8o/p prototype parameter-list and two-editor handling.
+Loading a stale dropdown disables edit controls and requires Refresh. External
+rename/removal, empty lists and subsequent additions recover. Same-object dialogs
+reject conflicting drafts; closing one does not remove the other's observer.
+Grouped validation: 65 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-editor-schema-20260930-batch.
+Macro PASS; process ended. Engine 2df76790b4; no native rebuild or release update.
+The editor remains an uninstalled prototype. Physical UI/accessibility, broader
+reference synchronization and full production parameter functionality remain open.
+
+Previous roadmap batch: 10.8m/n parameter editor refresh/conflict and lifecycle.
 External value/Undo changes reject stale Apply/Rename until explicit Refresh.
 Deleting the parameter object or document closes the dialog and detaches observation;
 subsequent edit calls do nothing. The dialog remains an uninstalled prototype.

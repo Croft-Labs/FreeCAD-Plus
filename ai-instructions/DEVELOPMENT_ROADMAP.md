@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8m/n protect the editor prototype from stale external edits
+- Current batch: 10.8o/p guard stale parameter lists and verify two-editor
+  conflict/lifecycle isolation. Grouped validation: 65 passes, zero failures/errors/
+  skips. Prototype only; no native rebuild, installed command or release update.
+- Previous batch: 10.8m/n protect the editor prototype from stale external edits
   and close it on parameter/document deletion. Grouped validation: 62 passes, zero
   failures/errors/skips. No native rebuild, production installation or release.
 - Previous batch: 10.8k/l add an uninstalled existing-parameter dialog prototype
@@ -2018,6 +2021,24 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8n Close the prototype when its parameter object or document is deleted,
   detach its document observer on completion and ignore subsequent edit actions.
   Verify both deletion paths using native document notifications.
+
+- [ X ] 10.8o Guard loading a stale parameter dropdown after external rename/removal.
+  Disable editing and require Refresh; verify list recovery, empty-state disabling
+  and externally added parameters becoming editable after Refresh.
+- [ X ] 10.8p Verify two prototype dialogs preserve each other's committed values,
+  reject stale drafts until Refresh and retain independent observer lifecycles.
+  Closing one dialog leaves the other's parameter-deletion handling active.
+
+Parameter-list/multiple-editor evidence: `parameter-editor-schema-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **65 PASS, zero failures/
+errors/skips** (nine native Qt, 17 capability, 34 adapter, five lineage checks).
+Both tasks preceded one grouped run on existing fork engine 2df76790b4; macro PASS
+and process ended. ParameterEditor SHA256:
+`0FE487EC3352BDD8342DECC49FCAB7EFD7ABA48B25327E98A0105EC081F2D804`.
+These tests cover same-object dialogs and explicit Refresh, not a general live
+synchronization or external-document reference protocol. Physical UI/accessibility,
+production command integration and full parameter functionality remain pending.
+No native rebuild or release update.
 
 Editor lifecycle evidence: `parameter-editor-lifecycle-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **62 PASS, zero failures/
