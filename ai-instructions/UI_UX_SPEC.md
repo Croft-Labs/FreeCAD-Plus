@@ -306,7 +306,8 @@ and the active roadmap milestone; do not silently change the intended workflow.
 parameter object, supplied by the test caller. It is not a production command or
 replacement for the planned part-level parameter editor. Fields appear in order:
 Parameter (existing length/angle property dropdown), Name, read-only Current value,
-Expression, error message, Apply expression/Rename buttons, New name/type/expression,
+Display unit, read-only Description, Expression, error message, Apply expression/Rename
+buttons, New name/type/expression/description,
 Create parameter, then Refresh/Close.
 
 Typing leaves the document unchanged. Apply evaluates units and affected recompute
@@ -336,6 +337,12 @@ reject. Creation owns one transaction and rolls back on failure. Errors retain t
 creation fields for correction; success selects the new property and clears New name/
 expression. Existing conflict checks apply to Create as well as Apply/Rename.
 
-Ten native Qt tests exercise the prototype programmatically. Physical keyboard/
-accessibility, high-DPI layout, general external reference synchronization, parameter-
-object creation and production deletion/where-used/publication remain pending.
+New description is stored as native property documentation and shown read-only when
+selected. Success clears it with the other creation text. Existing-description
+editing is not implemented. Display unit offers mm/cm/m/in/ft for lengths and deg/rad
+for angles; conversion changes the Current value display only. Expressions still
+require explicit units. Unit choice is dialog state, not a saved preference.
+
+Eleven native Qt tests exercise the prototype programmatically. Physical keyboard/
+accessibility, high-DPI/localized layout, general external reference synchronization,
+parameter-object creation and production deletion/where-used/publication remain pending.

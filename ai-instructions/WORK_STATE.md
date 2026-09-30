@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8q/r typed parameter creation prototype and dialog.
+Latest roadmap batch: 10.8s/t parameter descriptions and display-only units.
+Creation stores native property documentation; read-only description survives
+Undo/Redo, rename and save/reopen. Dialog length/angle display conversion leaves
+stored values, expressions and geometry unchanged; no unit preference is persisted.
+Grouped validation: 69 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-units-description-20260930-batch.
+Macro PASS; process ended. Engine 2df76790b4; no native rebuild or release update.
+Uninstalled prototype. Existing-description editing, localized display, physical
+accessibility, full T13 and production integration remain pending.
+
+Previous roadmap batch: 10.8q/r typed parameter creation prototype and dialog.
 create_parameter adds native Length/Angle properties atomically, with explicit units
 and ASCII identifier names. Invalid names/units/references leave no partial property.
 Creation supports Undo/Redo/persistence; dialog correction and selection checks pass.

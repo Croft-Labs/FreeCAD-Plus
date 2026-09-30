@@ -615,3 +615,23 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         self.doc.recompute()
         self.assertAlmostEqual(self.doc.Parameters.Clearance.Value, 4)
         self.assertAlmostEqual(self.doc.Parameters.DraftAngle.Value, 5)
+
+    def testParameterDescriptionSurvivesUndoRenameAndPersistence(self):
+        from prototypes.NamedParameters import create_parameter, rename_parameter
+        parameters, first, second = self.parameterModel()
+        description = "Clearance between enclosure and lid"
+        create_parameter(parameters, "Clearance", "Length", "2 mm", description)
+        self.assertEqual(parameters.getDocumentationOfProperty("Clearance"), description)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertNotIn("Clearance", parameters.PropertiesList)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertEqual(parameters.getDocumentationOfProperty("Clearance"), description)
+        rename_parameter(parameters, "Clearance", "LidGap")
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ParameterDescriptionProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.assertEqual(self.doc.Parameters.getDocumentationOfProperty("LidGap"), description)
+        self.assertAlmostEqual(self.doc.Parameters.LidGap.Value, 2)

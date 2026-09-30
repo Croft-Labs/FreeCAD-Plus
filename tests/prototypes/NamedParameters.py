@@ -88,7 +88,7 @@ def edit_parameter_expression(obj, property_name, expression):
         raise
 
 
-def create_parameter(obj, name, kind, expression):
+def create_parameter(obj, name, kind, expression, description=""):
     """Create a typed parameter atomically; prototype names use ASCII identifiers."""
     import re
     doc = obj.Document
@@ -108,7 +108,7 @@ def create_parameter(obj, name, kind, expression):
     property_type, setter = types[kind]
     doc.openTransaction("Create parameter")
     try:
-        obj.addProperty(property_type, name, "Dimensions")
+        obj.addProperty(property_type, name, "Dimensions", description)
         setter(obj, name, expression)
         doc.recompute()
         if "Invalid" in obj.State or "Touched" in obj.State:

@@ -17,6 +17,9 @@ class ParameterEditor(QtWidgets.QDialog):
         self.name = QtWidgets.QLineEdit()
         self.value = QtWidgets.QLineEdit()
         self.value.setReadOnly(True)
+        self.displayUnit = QtWidgets.QComboBox()
+        self.description = QtWidgets.QLineEdit()
+        self.description.setReadOnly(True)
         self.expression = QtWidgets.QLineEdit()
         self.error = QtWidgets.QLabel()
         self.error.setWordWrap(True)
@@ -26,20 +29,25 @@ class ParameterEditor(QtWidgets.QDialog):
         self.newName = QtWidgets.QLineEdit()
         self.newType = QtWidgets.QComboBox()
         self.newType.addItems(["Length", "Angle"])
+        self.newDescription = QtWidgets.QLineEdit()
         self.newExpression = QtWidgets.QLineEdit()
         self.create = QtWidgets.QPushButton("Create parameter")
         self.closeButton = QtWidgets.QPushButton("Close")
         layout.addRow("Parameter", self.parameter)
         layout.addRow("Name", self.name)
         layout.addRow("Current value", self.value)
+        layout.addRow("Display unit", self.displayUnit)
+        layout.addRow("Description", self.description)
         layout.addRow("Expression", self.expression)
         layout.addRow(self.error)
         layout.addRow(self.apply, self.rename)
         layout.addRow("New name", self.newName)
         layout.addRow("New type", self.newType)
         layout.addRow("New expression", self.newExpression)
+        layout.addRow("New description", self.newDescription)
         layout.addRow(self.create)
         layout.addRow(self.refreshButton, self.closeButton)
+        self.displayUnit.currentIndexChanged.connect(self.updateDisplayedValue)
         self.parameter.currentIndexChanged.connect(self.loadParameter)
         self.create.clicked.connect(self.createParameter)
         self.apply.clicked.connect(self.applyExpression)
@@ -73,6 +81,8 @@ class ParameterEditor(QtWidgets.QDialog):
             for widget in (self.name, self.expression, self.apply, self.rename):
                 widget.setEnabled(False)
             self.value.clear()
+            self.displayUnit.setEnabled(False)
+            self.description.clear()
             self.error.setText("Parameter list changed outside this editor. Refresh to continue.")
             return
         name = self.parameter.currentText()
@@ -80,7 +90,20 @@ class ParameterEditor(QtWidgets.QDialog):
         for widget in (self.name, self.expression, self.apply, self.rename):
             widget.setEnabled(enabled)
         self.name.setText(name)
-        self.value.setText(str(getattr(self.obj, name)) if enabled else "")
+        previous_unit = self.displayUnit.currentText()
+        self.displayUnit.blockSignals(True)
+        self.displayUnit.clear()
+        if enabled:
+            units = (["mm", "cm", "m", "in", "ft"]
+                     if self.obj.getTypeIdOfProperty(name) == "App::PropertyLength"
+                     else ["deg", "rad"])
+            self.displayUnit.addItems(units)
+            if previous_unit in units:
+                self.displayUnit.setCurrentText(previous_unit)
+        self.displayUnit.blockSignals(False)
+        self.displayUnit.setEnabled(enabled)
+        self.description.setText(self.obj.getDocumentationOfProperty(name) if enabled else "")
+        self.updateDisplayedValue()
         expressions = dict(self.obj.ExpressionEngine)
         self.expression.setText(expressions.get(name, expressions.get("." + name, "")))
         self.error.clear()
@@ -139,10 +162,26 @@ class ParameterEditor(QtWidgets.QDialog):
         name = self.newName.text()
         try:
             self.requireUnchanged()
-            create_parameter(self.obj, name, self.newType.currentText(), self.newExpression.text())
+            create_parameter(self.obj, name, self.newType.currentText(), self.newExpression.text(),
+                             self.newDescription.text())
         except Exception as error:
             self.error.setText(str(error))
             return
         self.refresh(name)
         self.newName.clear()
         self.newExpression.clear()
+        self.newDescription.clear()
+
+    def updateDisplayedValue(self, *args):
+        if self._closed:
+            return
+        name = self.parameter.currentText()
+        unit = self.displayUnit.currentText()
+        if not name or not unit:
+            self.value.clear()
+            return
+        if name not in self.obj.PropertiesList:
+            self.value.clear()
+            self.error.setText("Parameter list changed outside this editor. Refresh to continue.")
+            return
+        self.value.setText(str(getattr(self.obj, name).getValueAs(unit)) + " " + unit)

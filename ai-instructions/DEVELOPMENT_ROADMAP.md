@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8q/r prototype atomic length/angle parameter creation and
+- Current batch: 10.8s/t add descriptions on parameter creation and display-only
+  unit selection in the prototype editor. Grouped validation: 69 passes, zero
+  failures/errors/skips. No native rebuild, installed command or release update.
+- Previous batch: 10.8q/r prototype atomic length/angle parameter creation and
   its dialog workflow. Grouped validation: 67 passes, zero failures/errors/skips.
   No native rebuild, installed command or release update.
 - Previous batch: 10.8o/p guard stale parameter lists and verify two-editor
@@ -2038,6 +2041,25 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8r Add New name/type/expression and Create parameter to the prototype
   dialog. Preserve failed input for correction; on success select the new parameter
   and clear creation text. Verify incompatible units, collisions and both types.
+
+- [ X ] 10.8s Preserve descriptions as native dynamic-property documentation when
+  creating parameters, display them read-only and prove Undo/Redo, rename and
+  save/reopen retain them. Editing existing descriptions remains pending.
+- [ X ] 10.8t Add display-only length (mm/cm/m/in/ft) and angle (deg/rad) selection
+  to the prototype editor. Verify switching inch/radian display does not mutate
+  stored physical values, expressions, geometry or transaction state.
+
+Description/display-unit evidence: `parameter-units-description-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **69 PASS, zero failures/
+errors/skips** (11 native Qt, 19 capability, 34 adapter, five lineage checks).
+Both tasks preceded one grouped run on existing fork engine 2df76790b4; macro PASS
+and process ended. Native quantity conversion supplies display values without
+rewriting expressions. Prototype hashes: NamedParameters
+`C2CA3A7CDCFB2CA0E5D5527D452538F2A75C940C378ABA093105C10D41B15ADF`;
+ParameterEditor `E247E812F008718BFF902BDAF044C048C4C2131DFE7AE592145174BB013C884D`.
+Unit selection is local dialog state, not saved document or application preferences.
+No native rebuild or release. Description editing, localized quantity formatting,
+physical accessibility, full T13 and production integration remain pending.
 
 Parameter creation evidence: `parameter-create-20260930-batch/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **67 PASS, zero failures/errors/
