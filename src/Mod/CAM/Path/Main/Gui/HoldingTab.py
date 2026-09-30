@@ -4,7 +4,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtWidgets
-from BasicShapes.FeatureTask import TaskFeatureViewProvider
+from BasicShapes.FeatureTask import TaskFeatureViewProvider, creation_transaction
 from Path.Main import HoldingTab
 
 tr = App.Qt.translate
@@ -137,7 +137,7 @@ class Command:
         return App.ActiveDocument is not None and not Gui.Control.activeDialog()
 
     def Activated(self):
-        from Path.Op.Util import findParentJob
+        from PathScripts.PathUtils import findParentJob
 
         selected = Gui.Selection.getSelection()
         job = None
@@ -155,13 +155,10 @@ class Command:
             while getattr(job, "SourceJob", None):
                 job = job.SourceJob
             App.Console.PrintMessage(tr("CAM", "Creating a shared tab in the original setup coordinates.") + "\n")
-        job.Document.openTransaction(tr("CAM", "Create holding tab"))
-        try:
+        with creation_transaction(job.Document, tr("CAM", "Create holding tab")):
             tab = HoldingTab.create(job)
-            Gui.activeDocument().setEdit(tab.Name)
-        except Exception:
-            job.Document.abortTransaction()
-            raise
+            if not Gui.activeDocument().setEdit(tab.Name):
+                raise RuntimeError("Could not open the CAM task panel")
 
 
 Gui.addCommand("CAM_HoldingTab", Command())

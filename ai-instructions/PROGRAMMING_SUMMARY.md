@@ -59,7 +59,8 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 Feature creation startup rollback: `creation_transaction` in
 [`FeatureTask.py`](../src/Mod/Part/BasicShapes/FeatureTask.py), used by Trim Body and
-Isocline commands (roadmap 4.1.7/5.1.7); successful tasks retain their transaction.
+Isocline and CAM Holding Tab/Indexed Setup commands (roadmap 4.1.7/5.1.7,
+16.2bs/bt); successful tasks retain their transaction.
 `guard_task_construction` and `TaskFeatureViewProvider.setEdit` clean up construction/
 display failures and owned edit transactions (4.1.8/5.1.8).
 Scoped creation ownership prevents existing editors from adopting unrelated pending

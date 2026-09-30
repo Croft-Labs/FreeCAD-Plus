@@ -1,5 +1,12 @@
 # FreeCAD Plus: Build validation handoff
 
+Release 0.0.4 is in progress. Full native Release build passed; packaged checks
+found Holding Tab/Indexed Setup command import and transaction-ownership failures.
+Both fixes now pass 55 grouped CAM/Trim/Isocline checks (16.2bs/bt), process exit 0.
+Evidence: D:\Temp\Office-PC\freecad-plus-release-0.0.4\cam-ui-verified.
+Final source revision refresh, packaged regression, installer checks and publication
+remain pending. No 0.0.4 release has been published yet.
+
 Release 0.0.1 Windows x64 installer is built, accepted and published:
 https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.1
 Verified public pre-release state, one installer asset and matching GitHub SHA256.

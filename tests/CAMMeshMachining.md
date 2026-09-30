@@ -291,3 +291,9 @@ must preserve canned-cycle parameters and cancellation/retract sequences; Grbl
 must expand cycles to ordinary moves while retaining retract heights. A disposable
 FCStd fixture must preserve cycle settings and regenerate identical commands after
 reopen. No controller connection or physical machine is involved.
+
+
+Holding Tab and Indexed Setup command regressions invoke Command.Activated with
+a selected job. Creation must open the owned task transaction; cancellation must
+remove created objects, and an unrelated pending transaction must remain intact
+when creation is rejected. Holding Tab accept/edit/Undo/Redo are also exercised.

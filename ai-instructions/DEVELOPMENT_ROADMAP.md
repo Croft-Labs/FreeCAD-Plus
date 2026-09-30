@@ -3472,6 +3472,19 @@ native rebuild or release. This closes only the bounded G83 postprocessor fixtur
 other posts/cycle combinations, controller execution and physical machining remain
 unverified. Broader CAM acceptance gates remain open.
 
+- [ X ] 16.2bs Repair Holding Tab command creation: use the canonical parent-job
+  lookup and the shared owned creation transaction so the task pane can open.
+- [ X ] 16.2bt Repair Indexed Setup command creation with the same lifecycle;
+  verify cancellation removes created objects and unrelated transactions survive.
+
+Release regression evidence: `D:\Temp\Office-PC\freecad-plus-release-0.0.4\cam-ui-verified`
+records **55 PASS, zero failures/errors/skips**, process exit zero (24 mesh CAM,
+17 Trim Body GUI, 14 Isocline GUI). Tests invoke the actual CAM commands rather
+than bypassing startup. Initial release validation exposed the transaction guard
+regression; command-level coverage then exposed both invalid parent-job imports.
+Both fixes were staged together into the rebuilt application for the grouped run.
+This is automated task-pane acceptance, not physical machining validation.
+
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
   auto constraints, projection/intersection, transforms, Links, multi-solids,

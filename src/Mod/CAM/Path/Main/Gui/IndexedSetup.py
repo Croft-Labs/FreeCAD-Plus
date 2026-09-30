@@ -4,7 +4,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtWidgets
-from BasicShapes.FeatureTask import TaskFeatureViewProvider
+from BasicShapes.FeatureTask import TaskFeatureViewProvider, creation_transaction
 from Path.Main import IndexedSetup
 
 tr = App.Qt.translate
@@ -129,7 +129,7 @@ class Command:
         return App.ActiveDocument is not None and not Gui.Control.activeDialog()
 
     def Activated(self):
-        from Path.Op.Util import findParentJob
+        from PathScripts.PathUtils import findParentJob
 
         job = None
         for selected in Gui.Selection.getSelection():
@@ -143,13 +143,10 @@ class Command:
         if not job:
             App.Console.PrintError(tr("CAM", "Select the source CAM Job for the indexed setup.") + "\n")
             return
-        job.Document.openTransaction(tr("CAM", "Create indexed setup"))
-        try:
+        with creation_transaction(job.Document, tr("CAM", "Create indexed setup")):
             result = IndexedSetup.create(job)
-            Gui.activeDocument().setEdit(result.IndexFrame.Name)
-        except Exception:
-            job.Document.abortTransaction()
-            raise
+            if not Gui.activeDocument().setEdit(result.IndexFrame.Name):
+                raise RuntimeError("Could not open the CAM task panel")
 
 
 Gui.addCommand("CAM_IndexedSetup", Command())

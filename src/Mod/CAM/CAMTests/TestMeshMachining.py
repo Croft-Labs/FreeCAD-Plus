@@ -357,10 +357,11 @@ class TestHoldingTabGui(PathTestWithAssets):
             self.assertIn(name, commands)
 
     def test_create_cancel_edit_pick_and_undo(self):
-        self.doc.openTransaction("Create holding tab")
-        tab = HoldingTab.create(self.job)
+        self.Gui.Selection.clearSelection()
+        self.Gui.Selection.addSelection(self.job)
+        self.TabGui.Command().Activated()
+        tab = self.job.HoldingTabs[-1]
         name = tab.Name
-        self.Gui.activeDocument().setEdit(name)
         task = tab.ViewObject.Proxy.task
         task.fields["Width"].setValue(7)
         task.pick.setChecked(True)
@@ -380,13 +381,41 @@ class TestHoldingTabGui(PathTestWithAssets):
         self.assertIsNotNone(self.doc.getObject(name))
 
     def test_cancel_creation_removes_job_link(self):
-        self.doc.openTransaction("Create holding tab")
-        tab = HoldingTab.create(self.job)
+        self.Gui.Selection.clearSelection()
+        self.Gui.Selection.addSelection(self.job)
+        self.TabGui.Command().Activated()
+        tab = self.job.HoldingTabs[-1]
         name = tab.Name
-        self.Gui.activeDocument().setEdit(name)
         tab.ViewObject.Proxy.task.reject()
         self.assertIsNone(self.doc.getObject(name))
         self.assertFalse(getattr(self.job, "HoldingTabs", []))
+
+    def test_indexed_setup_command_cancel_removes_created_objects(self):
+        from Path.Main.Gui import IndexedSetup as SetupGui
+        before = {obj.Name for obj in self.doc.Objects}
+        self.Gui.Selection.clearSelection()
+        self.Gui.Selection.addSelection(self.job)
+        SetupGui.Command().Activated()
+        indexed = next(obj for obj in self.doc.Objects
+                       if getattr(obj, "SourceJob", None) == self.job)
+        self.assertIsNotNone(indexed.IndexFrame.ViewObject.Proxy.task)
+        indexed.IndexFrame.ViewObject.Proxy.task.reject()
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
+
+    def test_creation_commands_preserve_unrelated_transaction(self):
+        from Path.Main.Gui import IndexedSetup as SetupGui
+        self.doc.openTransaction("Unrelated edit")
+        self.job.Label = "Pending job label"
+        before = {obj.Name for obj in self.doc.Objects}
+        self.Gui.Selection.clearSelection()
+        self.Gui.Selection.addSelection(self.job)
+        for command in (self.TabGui.Command(), SetupGui.Command()):
+            with self.assertRaisesRegex(RuntimeError, "current transaction"):
+                command.Activated()
+            self.assertTrue(self.doc.HasPendingTransaction)
+            self.assertEqual(self.job.Label, "Pending job label")
+            self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
+        self.doc.abortTransaction()
 
     def test_indexed_setup_editor_cancel_and_accept(self):
         indexed = IndexedSetup.create(self.job)
