@@ -272,6 +272,15 @@ attachment rolls back both changes and leaves no pending transaction; a later
 attempt succeeds. Grouped evidence totals 46 passes. This remains a test-only
 operation, not integration with an existing GUI task transaction.
 
+Roadmap 11.7u/v verifies reference failure/repair. Missing faces clear adapter Shape
+and invalidate it; explicit source-face repair supports Undo/Redo and restore.
+Deleted sources clear placement dependencies and produce an explicit missing-source
+error. Replacing the source alone does not repair the sketch's old mapped face:
+explicit preserve-local face reselection is required. Restore and later source
+movement pass, with result identity retained. Grouped evidence totals 48 passes.
+This does not establish downstream cached-shape clearing or export safety during
+failure; those remain consumer gates distinct from successful recovery.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document

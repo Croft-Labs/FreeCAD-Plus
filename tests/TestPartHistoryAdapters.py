@@ -758,6 +758,66 @@ class TestPartHistoryAdapters(unittest.TestCase):
             self.profile, self.doc.RemotePlane, "Face1", "preserve-world")
         self.assertEqual(self.profile.AttachmentSupport[0][0], reference)
 
+    def testMissingReferenceFaceClearsOutputAndRepairsWithUndo(self):
+        from SketchReattachment import preview_planar, reattach_planar
+        reference = self.crossPartBinderFixture()
+        reattach_planar(self.profile, reference, "Face1", "preserve-world")
+        identity = self.doc.LeftResult.BodyIdentity
+        reference.Source = (self.doc.RemotePlane, ["Face99"])
+        self.doc.recompute()
+        self.assertIn("Invalid", reference.State)
+        self.assertTrue(reference.Shape.isNull())
+        with self.assertRaisesRegex(ValueError, "valid and recomputed"):
+            preview_planar(self.profile, reference, "Face1", "preserve-local")
+        self.doc.openTransaction("Repair missing reference face")
+        reference.Source = (self.doc.RemotePlane, ["Face1"])
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.assertNotIn("Invalid", reference.State)
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertIn("Invalid", reference.State)
+        self.assertTrue(reference.Shape.isNull())
+        self.doc.redo()
+        self.doc.recompute()
+        self.saveReopen("ReferenceFaceRepairProof")
+        self.assertEqual(self.doc.LeftResult.BodyIdentity, identity)
+        self.assertNotIn("Invalid", self.doc.LocalSupport.State)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+        self.assertAlmostEqual(self.doc.LeftResult.Shape.Volume, math.pi * 4 * 3, places=6)
+
+    def testDeletedReferenceSourceClearsDependenciesAndAcceptsReplacement(self):
+        from SketchReattachment import reattach_planar
+        reference = self.crossPartBinderFixture()
+        reattach_planar(self.profile, reference, "Face1", "preserve-world")
+        identity = self.doc.LeftResult.BodyIdentity
+        self.doc.removeObject(self.doc.RemotePlane.Name)
+        self.doc.recompute()
+        self.assertIn("Invalid", reference.State)
+        self.assertTrue(reference.Shape.isNull())
+        self.assertEqual(reference.PlacementSupport, [])
+        replacement = self.doc.addObject("Part::Plane", "ReplacementPlane")
+        self.doc.ReferencePart.addObject(replacement)
+        reference.Source = (replacement, ["Face1"])
+        self.doc.recompute()
+        self.assertNotIn("Invalid", reference.State)
+        # A different source has different topology identity: explicitly reselect
+        # the replacement face rather than treating the old mapped face as valid.
+        reattach_planar(self.profile, reference, "Face1", "preserve-local")
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertIn(self.doc.ReferencePart, reference.PlacementSupport)
+        self.saveReopen("ReferenceSourceReplacementProof")
+        self.assertEqual(self.doc.LocalSupport.Source[0], self.doc.ReplacementPlane)
+        self.assertEqual(self.doc.LeftResult.BodyIdentity, identity)
+        before = self.profile.getGlobalPlacement().Base
+        self.doc.ReferencePart.Placement.Base.z += 5
+        self.doc.recompute()
+        self.assertAlmostEqual((self.profile.getGlobalPlacement().Base - before
+                                - App.Vector(0, 0, 5)).Length, 0, places=6)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

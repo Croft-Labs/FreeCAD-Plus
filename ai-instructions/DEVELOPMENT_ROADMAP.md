@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7s/t combine reference creation and reattachment in one undo
+- Current batch: 11.7u/v validate missing-face repair and deleted-source replacement
+  for planar references. Grouped validation: 48 passes, zero failures/errors/skips;
+  no native rebuild. Deleted-source recovery requires explicit sketch face reselection;
+  production repair UI and broad consumer invalidation remain pending.
+- Previous batch: 11.7s/t combine reference creation and reattachment in one undo
   transaction and verify late-failure rollback without orphan objects. Grouped
   validation: 46 passes, zero failures/errors/skips; no native rebuild. Test-only
   operation; production editor and deployment remain pending.
@@ -1935,6 +1939,24 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7t Inject failure after attachment but before commit; verify rollback
   removes the reference, restores support/world placement and closes the transaction,
   then permits a subsequent successful operation.
+- [ X ] 11.7u Verify missing-face failure clears adapter output and prevents preview;
+  explicit face repair recovers through Undo/Redo and restore with result identity.
+- [ X ] 11.7v Report deleted source explicitly and remove obsolete placement
+  dependencies. Verify source replacement plus deliberate sketch face reselection,
+  restore and subsequent source-part movement.
+
+Reference repair evidence: `reference-repair-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **48 PASS, zero failures/
+errors/skips** (11 capability, 32 adapter, five lineage checks). Macro PASS; process
+ended. Both tasks preceded grouped testing using engine source 2df76790b4. Initial
+batch had 47 passes/one failure: replacing a deleted source repaired the adapter
+but left the sketch's old mapped face invalid. Explicit preserve-local reselection
+repairs that reference; no automatic topology equivalence is claimed. Recovery
+preserves result identity and native documents with the prototype module available.
+Prototype SHA256: `1C54D5F05CEB52B78FBFAAB4E9ACBA9CA2CD437433C78D782776B999A1E6ED16`.
+Test-only changes; no installed module, native rebuild or release update. These
+checks establish adapter output clearing and deliberate repair, not absence of
+cached downstream geometry during failure or general export-consumer safety.
 
 Atomic operation evidence: `reattachment-atomic-20260930-batch/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **46 PASS, zero failures/

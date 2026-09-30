@@ -20,8 +20,10 @@ class PlanarSupport:
 
     def execute(self, obj):
         obj.Shape = Part.Shape()
-        validate_link(obj, obj.Source[0])
         update_placement_support(obj, [obj.Source])
+        if not obj.Source or not obj.Source[0]:
+            raise ValueError("Planar reference source is missing; select a replacement")
+        validate_link(obj, obj.Source[0])
         shape = linked_shape(obj.Source)
         if len(shape.Faces) != 1 or not isinstance(shape.Faces[0].Surface, Part.Plane):
             raise ValueError("Reference requires one planar face")
