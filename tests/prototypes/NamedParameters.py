@@ -19,3 +19,13 @@ def set_length_expression(obj, property_name, expression):
     if getattr(value, "Unit", None) != App.Units.Quantity("1 mm").Unit:
         raise ValueError("Expression must evaluate to a length")
     obj.setExpression(property_name, expression)
+
+
+def set_angle_expression(obj, property_name, expression):
+    """Require an explicitly angular result; do not infer units for bare numbers."""
+    if obj.getTypeIdOfProperty(property_name) != "App::PropertyAngle":
+        raise ValueError("Prototype supports angle properties only")
+    value = obj.evalExpression(expression)
+    if getattr(value, "Unit", None) != App.Units.Quantity("1 deg").Unit:
+        raise ValueError("Expression must evaluate to an angle")
+    obj.setExpression(property_name, expression)

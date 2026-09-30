@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 4.1.10/5.1.10 preserve the primary startup error and continue task
+- Current batch: 10.8e/f validate angular parameter expressions and native property
+  rename propagation, including Undo/Redo and save/reopen. Grouped architecture
+  validation: 52 passes, zero failures/errors/skips. Test-only prototype; no native
+  rebuild, installed UI change or release update.
+- Previous batch: 4.1.10/5.1.10 preserve the primary startup error and continue task
   cleanup after secondary cleanup errors; repeated annotation removal is harmless.
   Grouped model/GUI validation: 54 passes, zero failures/errors/skips; Python staging
   only, no native rebuild or release update.
@@ -1962,6 +1966,25 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8d Prove a unit-correct zero length can invalidate downstream geometry,
   transaction abort restores expressions and geometry, and subsequent valid edits
   retain working Undo/Redo. This is recovery evidence, not automatic UI rollback.
+
+- [ X ] 10.8e Extend the test-only assignment boundary to explicit angular expressions.
+  Prove degree/radian changes drive cylinder sector geometry, reject length/unitless/
+  missing references without replacing the expression, and retain Undo/Redo/persistence.
+- [ X ] 10.8f Prove native dynamic-property rename updates two expression consumers,
+  survives Undo/Redo and save/reopen, and continues driving geometry after later edits.
+  This establishes native behavior, not a parameter rename UI or collision policy.
+
+Angle/rename evidence: `parameter-angle-rename-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **52 PASS, zero failures/errors/
+skips** (13 capability, 34 adapter, five lineage checks). Macro PASS; process ended.
+Both tasks preceded grouped validation on existing fork engine 2df76790b4. The initial
+`parameter-angle-rename-20260930-batch` also passed 52 checks; the verified run adds
+rename Undo/Redo and persistence assertions. Prototype NamedParameters SHA256:
+`463AB31A24BB31EE36F88C257F771674FF49E8FF63E928C69101636F9B506826`.
+Native `renameProperty` rewrites the two expression references; no manual string
+replacement is required for these internal-name references. Label-based/external
+references, name collisions, where-used, publication and the production editor remain
+open. No native rebuild, installed application change or release update.
 
 Parameter dependency/recovery batch: `parameter-dependencies-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928` records **26 PASS, zero

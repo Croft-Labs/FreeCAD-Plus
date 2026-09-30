@@ -172,7 +172,7 @@ and transaction abort preserve the valid model. This is a narrowly bounded futur
 editor boundary, not a production interception of FreeCAD expressions.
 
 Roadmap 10.8a/b owns the 24-test grouped evidence. General quantity types, bare-number
-unit defaults, parameter/property renaming, configuration/external scope, publication
+unit defaults, production parameter/property rename UI, configuration/external scope, publication
 and a parameter editor remain unimplemented. The production architecture decision
 must account for native unit coercion rather than treating stored property types as
 sufficient dimensional validation.
@@ -192,6 +192,21 @@ Aborting the transaction and recomputing restores the valid expressions and shap
 subsequent valid edits, Undo and Redo work. The test performs the abort explicitly.
 A production editor must distinguish unit validation from geometry validation and
 define failed-edit behavior; this probe adds no automatic rollback to the UI.
+
+### Angular parameters and native property rename
+
+Roadmap 10.8e/f adds an explicit angle assignment boundary to the test-only helper.
+A named angle drives a cylinder sector with degree/radian conversion, Undo/Redo and
+save/reopen; length, bare-number and missing-reference inputs leave the expression
+unchanged. Length and angle are the supported prototype types; no implicit unit
+policy or production feature-field interception is introduced.
+
+Native `renameProperty` propagates a dynamic Width-to-PanelWidth rename into two
+consumers using internal object names. Undo/Redo restores the corresponding property
+and expressions; save/reopen and subsequent edits retain valid geometry. Reuse this
+native mechanism when designing the parameter editor rather than replacing expression
+text manually. Collision handling, label-based/external references and a complete
+property-level where-used view still require separate validation and UI decisions.
 
 ## Remaining decision gates and consumers
 

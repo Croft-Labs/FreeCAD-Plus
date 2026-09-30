@@ -393,3 +393,75 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         self.doc.recompute()
         self.assertAlmostEqual(first.Shape.BoundBox.XLength, 35)
         self.assertNotIn("Invalid", first.State)
+
+    def testNamedAngleExpressionUnitsAndRecovery(self):
+        from prototypes.NamedParameters import set_angle_expression
+        parameters, first, second = self.parameterModel()
+        wedge = self.doc.addObject("Part::Cylinder", "AngularConsumer")
+        self.part.addObject(wedge)
+        set_angle_expression(wedge, "Angle", "Parameters.Tilt * 2")
+        self.doc.recompute()
+        self.assertAlmostEqual(wedge.Angle.Value, 60)
+        self.assertAlmostEqual(wedge.Shape.Volume, math.pi * wedge.Radius.Value ** 2 * wedge.Height.Value / 6)
+        original = wedge.ExpressionEngine
+        for expression in ("Parameters.Width", "42", "MissingParameter.Angle"):
+            with self.assertRaises(Exception):
+                set_angle_expression(wedge, "Angle", expression)
+            self.assertEqual(wedge.ExpressionEngine, original)
+            self.assertAlmostEqual(wedge.Angle.Value, 60)
+        with self.assertRaisesRegex(ValueError, "angle properties"):
+            set_angle_expression(first, "Length", "Parameters.Tilt")
+        self.doc.openTransaction("Change named angle")
+        parameters.Tilt = "1 rad"
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.assertAlmostEqual(wedge.Angle.Value, 360 / math.pi)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(wedge.Angle.Value, 60)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(wedge.Angle.Value, 360 / math.pi)
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "AngularParameterProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.Parameters.Tilt = "45 deg"
+        self.doc.recompute()
+        self.assertAlmostEqual(self.doc.AngularConsumer.Angle.Value, 90)
+        self.assertNotIn("Invalid", self.doc.AngularConsumer.State)
+
+    def testNativeParameterRenamePropagatesToConsumers(self):
+        parameters, first, second = self.parameterModel()
+        self.doc.openTransaction("Rename shared width")
+        parameters.renameProperty("Width", "PanelWidth")
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.assertIn("PanelWidth", parameters.PropertiesList)
+        for obj in (first, second):
+            self.assertNotIn("Invalid", obj.State)
+            self.assertIn("Parameters.PanelWidth", str(obj.ExpressionEngine))
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertIn("Width", parameters.PropertiesList)
+        for obj in (first, second):
+            self.assertNotIn("Invalid", obj.State)
+            self.assertIn("Parameters.Width", str(obj.ExpressionEngine))
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertIn("PanelWidth", parameters.PropertiesList)
+        parameters.PanelWidth = "31 mm"
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Length.Value, 31)
+        self.assertAlmostEqual(second.Length.Value, 33)
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "RenamedParameterProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.Parameters.PanelWidth = "36 mm"
+        self.doc.recompute()
+        self.assertAlmostEqual(self.doc.ParameterizedBase.Shape.BoundBox.XLength, 36)
+        self.assertAlmostEqual(self.doc.ParameterizedLid.Shape.BoundBox.XLength, 38)
+        for obj in (self.doc.ParameterizedBase, self.doc.ParameterizedLid):
+            self.assertNotIn("Invalid", obj.State)
+            self.assertIn("Parameters.PanelWidth", str(obj.ExpressionEngine))
