@@ -118,3 +118,28 @@ def create_parameter(obj, name, kind, expression, description=""):
         doc.abortTransaction()
         doc.recompute()
         raise
+
+
+def create_parameter_set(part):
+    """Create an explicit native parameter container in one Part definition.
+
+    This prototype does not resolve occurrences or infer scope from active state.
+    Container creation is its own undoable operation, separate from editing it.
+    """
+    if part.TypeId != "App::Part":
+        raise ValueError("Choose an explicit Part definition, not a Body or occurrence")
+    doc = part.Document
+    if doc.HasPendingTransaction:
+        raise ValueError("Finish the current transaction before creating a parameter set")
+    doc.openTransaction("Create parameter set")
+    try:
+        parameters = doc.addObject("App::FeaturePython", "Parameters")
+        parameters.Label = "Parameters"
+        part.addObject(parameters)
+        doc.recompute()
+        doc.commitTransaction()
+        return parameters
+    except Exception:
+        doc.abortTransaction()
+        doc.recompute()
+        raise

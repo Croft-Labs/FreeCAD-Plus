@@ -11,7 +11,18 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8w/x enclosure editor acceptance checks.
+Latest roadmap batch: 10.8y/z explicit Part parameter-set creation/editor entry.
+create_parameter_set owns an undoable native container-creation transaction;
+edit_parameter_set targets an explicit Part-owned container independently of active
+document state. Ownership, Body/occurrence rejection and save/reopen pass.
+Grouped validation: 75 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-part-scope-20260930-verified.
+Initial batch had one empty-transaction fixture mismatch; corrected with a real
+caller label edit. Macro PASS; process ended. Engine 2df76790b4; no native rebuild
+or release update. Prototype only; full scope/publication/where-used and production
+registration remain pending. Container creation is separate from editor lifetime.
+
+Previous roadmap batch: 10.8w/x enclosure editor acceptance checks.
 Actual prototype widgets drive width/clearance/spacing geometry, rename and inch
 display. Unit/cycle/zero-width errors preserve geometry and remain correctable;
 save/reopen allows editing through a fresh dialog. Application code unchanged.

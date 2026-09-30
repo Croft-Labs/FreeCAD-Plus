@@ -327,3 +327,37 @@ class TestParameterEditor(unittest.TestCase):
         self.assertAlmostEqual(result.Shape.BoundBox.XLength, 85)
         self.assertAlmostEqual(lid.Shape.BoundBox.XLength, 86)
         self.assertTrue(result.Shape.isValid())
+
+    def testExplicitPartEditorTargetsSuppliedDocumentRatherThanActiveDocument(self):
+        from prototypes.NamedParameters import create_parameter_set
+        from prototypes.ParameterEditor import edit_parameter_set
+        part = self.doc.addObject("App::Part", "WorkPart")
+        self.doc.recompute()
+        other_doc = App.newDocument("OtherActiveDocument")
+        other = None
+        try:
+            other_part = other_doc.addObject("App::Part", "OtherPart")
+            other_doc.recompute()
+            before = {obj.Name for obj in other_doc.Objects}
+            params = create_parameter_set(part)
+            self.assertEqual(params.Document, self.doc)
+            other = edit_parameter_set(params)
+            self.assertEqual(other.parameter.count(), 0)
+            other.newName.setText("Width")
+            other.newExpression.setText("42 mm")
+            other.create.click()
+            self.assertEqual(other.error.text(), "")
+            self.assertAlmostEqual(params.Width.Value, 42)
+            self.assertEqual({obj.Name for obj in other_doc.Objects}, before)
+            self.assertEqual(other_part.Group, [])
+            other.closeButton.click()
+            self.assertIsNotNone(self.doc.getObject(params.Name))
+            with self.assertRaisesRegex(ValueError, "explicit Part"):
+                edit_parameter_set(self.parameters)
+        finally:
+            if other is not None:
+                other.close()
+                other.deleteLater()
+            App.closeDocument(other_doc.Name)
+            App.setActiveDocument(self.doc.Name)
+            Gui.updateGui()

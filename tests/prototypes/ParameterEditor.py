@@ -185,3 +185,13 @@ class ParameterEditor(QtWidgets.QDialog):
             self.error.setText("Parameter list changed outside this editor. Refresh to continue.")
             return
         self.value.setText(str(getattr(self.obj, name).getValueAs(unit)) + " " + unit)
+
+
+def edit_parameter_set(parameters, parent=None):
+    """Open an explicitly supplied Part-owned native container; caller retains dialog."""
+    owner = parameters.getParentGeoFeatureGroup()
+    if parameters.TypeId != "App::FeaturePython" or owner is None or owner.TypeId != "App::Part":
+        raise ValueError("Choose a native parameter container in an explicit Part definition")
+    dialog = ParameterEditor(parameters, parent)
+    dialog.show()
+    return dialog

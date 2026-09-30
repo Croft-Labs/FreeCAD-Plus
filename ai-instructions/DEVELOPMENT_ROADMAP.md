@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8w/x validate the enclosure benchmark through prototype
+- Current batch: 10.8y/z add explicit Part-owned parameter-container creation
+  and an editor entry point independent of active document state. Grouped validation:
+  75 passes, zero failures/errors/skips after correcting a test setup. Prototype only;
+  no native rebuild or release update.
+- Previous batch: 10.8w/x validate the enclosure benchmark through prototype
   editor widgets, including rename/display units, error recovery and save/reopen.
   Grouped validation: 73 passes, zero failures/errors/skips. No native rebuild
   or release update; physical acceptance and production integration remain open.
@@ -2070,6 +2074,27 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8x Exercise incompatible-unit, cyclic and zero-width geometry errors in
   the enclosure dialog; verify restored geometry, retained attempted input and retry.
   Save/reopen and edit through a fresh dialog while preserving native relationships.
+
+- [ X ] 10.8y Prototype explicit Part-definition parameter-container creation as
+  its own native undoable transaction. Reject Body/occurrence targets and pending
+  caller edits; verify ownership, Undo/Redo and save/reopen without a custom schema.
+- [ X ] 10.8z Add a prototype editor entry point for an explicitly supplied native
+  Part-owned container. Verify it edits the intended document while another is
+  active, supports an initially empty set and leaves the other document unchanged.
+
+Part-scope evidence: `parameter-part-scope-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **75 PASS, zero failures/errors/
+skips** (14 native Qt, 22 capability, 34 adapter, five lineage checks). Both tasks
+preceded grouped validation on engine 2df76790b4; macro PASS and process ended.
+Initial `parameter-part-scope-20260930-batch` had 74 passes/one failure: an empty
+transaction was not reported as pending. The corrected fixture includes a caller
+label edit and verifies preservation and caller abort. Prototype hashes:
+NamedParameters `B59C8D4DDEB16FE0DB052F8E2833CB8B47AE37A888E951F1DB3B4E8915731EC6`;
+ParameterEditor `8E943A78D348D438CB71FE0225F164FDE4248AE25A904EDE77B4D1C92E04965A`.
+Container creation commits separately from opening/closing its editor; Close does
+not delete it. No automatic occurrence resolution or implicit expression scope is
+introduced. Production registration, scope/publication/where-used and physical UI
+remain pending. No native rebuild or release update.
 
 Enclosure editor evidence: `parameter-enclosure-editor-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **73 PASS, zero failures/

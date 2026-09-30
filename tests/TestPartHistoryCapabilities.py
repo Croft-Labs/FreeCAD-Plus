@@ -697,3 +697,43 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         self.assertAlmostEqual(result.Shape.BoundBox.XLength, 75)
         for link, x in zip(links, (120, 240)):
             self.assertAlmostEqual(link.LinkPlacement.Base.x, x)
+
+    def testExplicitPartParameterSetCreationRejectsInferredScope(self):
+        from prototypes.NamedParameters import create_parameter_set, create_parameter
+        body = self.doc.addObject("PartDesign::Body", "UnsupportedBody")
+        occurrence = self.doc.addObject("App::Link", "UnsupportedOccurrence")
+        occurrence.setLink(self.part)
+        self.doc.recompute()
+        before = {obj.Name for obj in self.doc.Objects}
+        for target in (body, occurrence):
+            with self.assertRaisesRegex(ValueError, "Part definition"):
+                create_parameter_set(target)
+            self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
+        original_label = self.part.Label
+        self.doc.openTransaction("Caller edit")
+        self.part.Label = "Pending caller label"
+        with self.assertRaisesRegex(ValueError, "current transaction"):
+            create_parameter_set(self.part)
+        self.assertTrue(self.doc.HasPendingTransaction)
+        self.assertEqual(self.part.Label, "Pending caller label")
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
+        self.doc.abortTransaction()
+        self.assertEqual(self.part.Label, original_label)
+        parameters = create_parameter_set(self.part)
+        name = parameters.Name
+        self.assertIn(parameters, self.part.Group)
+        self.assertNotIn(parameters, body.Group)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertIsNone(self.doc.getObject(name))
+        self.doc.redo()
+        self.doc.recompute()
+        parameters = self.doc.getObject(name)
+        self.assertIn(parameters, self.part.Group)
+        create_parameter(parameters, "Width", "Length", "60 mm")
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "PartParameterSetProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.assertIn(self.doc.getObject(name), self.doc.ModelPart.Group)
+        self.assertAlmostEqual(self.doc.getObject(name).Width.Value, 60)
