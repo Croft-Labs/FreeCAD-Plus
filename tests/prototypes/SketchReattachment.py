@@ -6,6 +6,35 @@ and Undo. The sketch stays in its existing container for both placement policies
 """
 import FreeCAD as App
 import Part
+from BasicShapes.ShapeReferences import linked_shape, update_placement_support, validate_link
+
+
+class PlanarSupport:
+    """Test-only associative world-to-local reference; module needed on restore."""
+
+    def __init__(self, obj, source):
+        obj.addProperty("App::PropertyLinkSub", "Source", "Prototype")
+        obj.addProperty("App::PropertyLinkList", "PlacementSupport", "Prototype")
+        obj.Source = source
+        obj.Proxy = self
+
+    def execute(self, obj):
+        obj.Shape = Part.Shape()
+        validate_link(obj, obj.Source[0])
+        update_placement_support(obj, [obj.Source])
+        shape = linked_shape(obj.Source)
+        if len(shape.Faces) != 1 or not isinstance(shape.Faces[0].Surface, Part.Plane):
+            raise ValueError("Reference requires one planar face")
+        parent = obj.getGlobalPlacement().multiply(obj.Placement.inverse())
+        shape.transformShape(parent.inverse().toMatrix())
+        obj.Placement = shape.Placement
+        obj.Shape = shape
+
+    def dumps(self):
+        return None
+
+    def loads(self, state):
+        pass
 
 
 def reattach_planar(sketch, support, face_name, policy="preserve-local"):

@@ -645,6 +645,69 @@ class TestPartHistoryAdapters(unittest.TestCase):
             self.assertEqual(link.LinkedObject, support)
             self.assertPlacementNear(link.Placement, placement)
 
+    def crossPartBinderFixture(self):
+        self.rotatedReattachmentFixture()
+        other = self.doc.addObject("App::Part", "ReferencePart")
+        other.Placement = App.Placement(App.Vector(-20, 10, 15),
+                                        App.Rotation(App.Vector(0, 0, 1), 40))
+        plane = self.doc.addObject("Part::Plane", "RemotePlane")
+        other.addObject(plane)
+        plane.Placement = App.Placement(App.Vector(3, 4, 5),
+                                        App.Rotation(App.Vector(0, 1, 0), 30))
+        from SketchReattachment import PlanarSupport
+        binder = self.doc.addObject("Part::FeaturePython", "LocalSupport")
+        self.part.addObject(binder)
+        PlanarSupport(binder, (plane, ["Face1"]))
+        self.doc.recompute()
+        self.assertNotIn("Invalid", binder.State)
+        self.assertAlmostEqual((linked_shape((binder, [])).CenterOfMass
+                                - linked_shape((plane, [])).CenterOfMass).Length, 0, places=6)
+        return binder
+
+    def testCrossPartBinderPreviewMatchesBothPolicies(self):
+        from SketchReattachment import preview_planar, reattach_planar
+        binder = self.crossPartBinderFixture()
+        original = self.profile.getGlobalPlacement()
+        for policy in ("preserve-local", "preserve-world"):
+            candidate, offset = preview_planar(self.profile, binder, "Face1", policy)
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+            reattach_planar(self.profile, binder, "Face1", policy)
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), candidate)
+            self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+            self.assertNotIn("Invalid", self.doc.LeftResult.State)
+            self.doc.undo()
+            self.doc.recompute()
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+
+    def testCrossPartBinderFollowsSourceMoveUndoAndRestore(self):
+        from SketchReattachment import reattach_planar
+        binder = self.crossPartBinderFixture()
+        reattach_planar(self.profile, binder, "Face1", "preserve-world")
+        original = self.profile.getGlobalPlacement()
+        identity = self.doc.LeftResult.BodyIdentity
+        self.doc.openTransaction("Move reference part")
+        self.doc.ReferencePart.Placement.Base.x += 8
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.assertAlmostEqual((self.profile.getGlobalPlacement().Base - original.Base
+                                - App.Vector(8, 0, 0)).Length, 0, places=6)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+        self.doc.redo()
+        self.doc.recompute()
+        self.saveReopen("CrossPartBinderProof")
+        self.assertEqual(self.doc.LocalSupport.Source[0], self.doc.RemotePlane)
+        self.assertEqual(self.doc.LocalSupport.Source[1], ["Face1"])
+        self.assertEqual(self.profile.AttachmentSupport[0][0], self.doc.LocalSupport)
+        self.assertEqual(self.doc.LeftResult.BodyIdentity, identity)
+        self.doc.ReferencePart.Placement.Base.x += 4
+        self.doc.recompute()
+        self.assertAlmostEqual((self.profile.getGlobalPlacement().Base - original.Base
+                                - App.Vector(12, 0, 0)).Length, 0, places=6)
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

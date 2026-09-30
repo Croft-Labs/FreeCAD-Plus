@@ -253,6 +253,17 @@ to either part or occurrence links/placements. This is a fail-closed prototype
 boundary, not implemented cross-part or occurrence-aware attachment. A deliberate
 reference adapter and occurrence-edit policy are prerequisites to expanding scope.
 
+Roadmap 11.7q/r adds PlanarSupport, an explicit local reference prototype reusing
+BasicShapes.ShapeReferences for source validation, placement dependencies and
+world/local conversion. Native SubShapeBinder probes exposed alignment and motion
+limitations in this fixture; parent qualification fixed only the initial alignment.
+The explicit adapter passes both preview policies, source-part motion, Undo/Redo,
+restore and further motion; grouped evidence totals 44 passes. Direct cross-container
+attachment still rejects. Unlike the native-only attachment fixtures, this adapter
+is a Python proxy whose module must be importable when restoring/recomputing. It is
+not installed and establishes no production persistence/schema or deployment policy.
+Missing/ambiguous source topology and failure-consumer handling remain open.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document

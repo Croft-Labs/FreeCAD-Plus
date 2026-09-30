@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7o/p complete as test-only support scope guards.
+Latest roadmap batch: 11.7q/r complete as test-only cross-part planar reference.
+Native binder probes failed alignment/motion criteria; explicit PlanarSupport uses
+existing ShapeReferences conversion/dependency helpers and passes alignment, both
+preview policies, source motion, Undo/Redo and restore. Grouped validation: 44 passes,
+zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reattachment-adapter-20260930-verified.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Saved fixtures require SketchReattachment.py for proxy recompute. Production adapter
+creation/deployment and missing-source consumer handling remain pending.
+
+Previous roadmap batch: 11.7o/p complete as test-only support scope guards.
 Cross-container placement probe found preview/native mismatch; different geometry
 containers now reject before mutation. App::Link supports also reject pending an
 explicit occurrence-edit policy. Grouped validation: 42 passes, zero failures/errors/skips in

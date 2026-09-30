@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7o/p enforce prototype support scope: cross-container and
+- Current batch: 11.7q/r prove an explicit planar reference adapter across placed
+  parts, including preview parity, source motion, Undo/Redo and restore. Grouped
+  validation: 44 passes, zero failures/errors/skips; no native rebuild. Test-only
+  Python proxy must remain importable; production reference integration pending.
+- Previous batch: 11.7o/p enforce prototype support scope: cross-container and
   App::Link occurrence supports reject before mutation. Grouped validation: 42
   passes, zero failures/errors/skips; no native rebuild. Cross-part placement
   mismatch recorded; reference adapters and occurrence-edit policy remain pending.
@@ -1917,6 +1921,28 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7p Reject App::Link occurrence supports until an explicit definition/
   occurrence edit policy exists. Verify preview/commit leave both occurrences,
   their definition links and the sketch unchanged.
+- [ X ] 11.7q Prototype an explicit local planar reference with source/ancestor
+  dependencies and world-to-local shape conversion. Verify alignment with a face
+  in another placed part and preview/commit parity under both placement policies.
+- [ X ] 11.7r Verify that reference follows source-part movement, Undo/Redo,
+  save/reopen and further movement while preserving downstream result identity.
+
+Adapter evidence: `reattachment-adapter-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **44 PASS, zero failures/
+errors/skips** (11 capability, 28 adapter, five lineage checks). Macro PASS; process
+ended. Both tasks preceded grouped testing using engine source 2df76790b4. Native
+SubShapeBinder probes are retained in evidence: `reattachment-binder-20260930-batch`
+had two initial-alignment failures; parent-qualified support in
+`reattachment-binder-20260930-verified` fixed alignment but failed the source-motion
+criterion (7.389913 mm difference from expected displacement). These are bounded
+fixture findings, not a general verdict on native binders. The passing PlanarSupport
+prototype reuses BasicShapes.ShapeReferences validation, placement dependencies and
+shape conversion. Direct cross-container attachment and occurrence selection still
+reject; the explicit adapter resides beside the sketch. Saved adapter fixtures need
+the prototype Python module to recompute; no installed module/schema/UI claim.
+Prototype SHA256: `25C644F7B4E6A793112157AD31BB1C0B3D940510DFA091B366F65B88F5EB1A36`.
+Missing/ambiguous source topology, failure consumers, atomic adapter creation and
+production deployment remain pending. No native rebuild or release update.
 
 Scope boundary evidence: `reattachment-scope-20260930-verified/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **42 PASS, zero failures/
