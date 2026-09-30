@@ -1190,6 +1190,12 @@ feature in the same complete task pane. Repeat the body-creation cases with Revo
 
 ### [   ] 7.6 Preserve documents and external consumers
 
+Owner decision (2026-09-29): `.cadprt` is the planned native format. Continue
+best-effort opening and conversion of legacy `.FCStd` files; the owner accepts
+that compatibility may become harder and less complete over time. Follow the
+[format policy](PRODUCT_SPEC.md#planned-native-format-and-legacy-import), including
+untouched originals and explicit conversion-loss reporting. This is not implemented.
+
 - [   ] 7.6.1 Build a compatibility matrix covering existing upstream files, existing Plus files and new history-model files: open/display, edit, recompute and round-trip save are separate checks.
 - [   ] 7.6.2 Version any new persisted model and provide opt-in conversion with an untouched original. Opening a legacy file must not force migration.
 - [   ] 7.6.3 Preserve existing type/property names and Python entry points where possible. Document any new feature modules required for recomputation; do not promise upstream compatibility for backend changes without evidence.
@@ -1199,6 +1205,16 @@ feature in the same complete task pane. Repeat the body-creation cases with Revo
 - [   ] 7.6.6 Specify `.cadprt` schema/capabilities, legacy import/conversion,
   Save As/Copy/Make Unique identity, external relocation and unsupported-content
   handling before native-format implementation. Never convert owner files in place.
+- [   ] 7.6.7 Implement versioned `.cadprt` reading/writing and make it the native
+  format for new documents after migration gates pass. Update Open/Save dialogs
+  and file associations while retaining legacy `.FCStd` opening.
+- [   ] 7.6.8 Implement explicit `.FCStd` to `.cadprt` conversion into a separate
+  file. Map editable history, geometry, references and workbench data where possible;
+  report unsupported content and distinguish partial or geometry-only recovery.
+- [   ] 7.6.9 Extend the compatibility fixtures across legacy versions and supported
+  workbenches; verify converted save/reopen/recompute and unchanged original files.
+  Publish tested conversion coverage and known losses as the formats diverge.
+  Best-effort compatibility must not be represented as guaranteed lossless import.
 
 ### [   ] 7.7 Validate and release the history pilot
 

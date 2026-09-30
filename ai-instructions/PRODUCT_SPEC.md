@@ -100,6 +100,27 @@ need FreeCAD Plus Python modules to recompute; upstream compatibility is not cla
 - Build and GUI validation must use this checkout's binaries, never the
   separately installed FreeCAD. Follow [the guide](DEVELOPMENT_GUIDE.md).
 
+## Planned native format and legacy import
+
+Owner decision (2026-09-29): FreeCAD Plus will use **`.cadprt`** as its new native
+file format. This is a planned reader/writer and schema change, not merely renaming
+`.FCStd` files, and is not implemented yet. The migration tasks are in roadmap 7.6.
+
+- Keep the ability to open legacy `.FCStd` documents and convert them to `.cadprt`
+  as fully as reasonably possible. Preserve editable features, geometry, references
+  and workbench data wherever a supported mapping exists.
+- Conversion writes a new `.cadprt` file and leaves the original `.FCStd` intact.
+  Opening a legacy document must not silently overwrite or convert its source.
+- Report unsupported content and conversion losses. Distinguish fully editable
+  conversion from partial conversion or geometry-only recovery; do not present
+  recovered geometry as intact feature history.
+- The owner accepts that conversion may become harder and less complete as the
+  formats and application architectures diverge. Maintain best-effort legacy
+  opening/conversion with tested compatibility, without freezing the new format
+  to guarantee perpetual lossless `.FCStd` compatibility.
+- This policy does not promise upstream FreeCAD can open `.cadprt`, or that every
+  future Plus document can be exported back to an editable `.FCStd` document.
+
 ## Future architecture direction
 
 The owner supplied an expanded planning baseline and development guidelines on
@@ -115,9 +136,9 @@ and validation records above are not declarations that these changes exist.
 - Track reference identity and split/merge provenance; report ambiguous or stale
   geometry instead of silently binding to a different face or using stale CAM output.
 - Keep reference sets, loading, suppression, visibility and BOM role separate.
-- Plan a versioned `.cadprt` engineering container, with legacy `.FCStd` import,
-  non-destructive conversion, recovery and explicit exchange losses. This does not
-  change the current format-retention constraint before a defined migration.
+- Implement the [planned native format and legacy import policy](#planned-native-format-and-legacy-import)
+  through a versioned engineering container, recovery and a defined migration.
+  The current format-retention constraint remains until that migration is implemented.
 - Preserve drawing, CAM, FEM and relevant Draft consumers through ownership changes.
   Prove units, transforms, dependency invalidation, undo and persistence.
 

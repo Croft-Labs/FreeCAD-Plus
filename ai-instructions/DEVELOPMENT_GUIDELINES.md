@@ -199,7 +199,13 @@ Before broad native-format adoption, specify and test:
 
 A different extension reduces accidental association with stock FreeCAD; it cannot prevent someone from deliberately opening or renaming a file.
 
-Preserve legacy `.FCStd` import according to tested compatibility. Never overwrite an original legacy file during conversion. Distinguish a lossless native save, a supported legacy export, and a geometry-only exchange.
+Preserve legacy `.FCStd` opening and conversion to `.cadprt` as fully as reasonably
+possible, according to the owner's [native-format policy](PRODUCT_SPEC.md#planned-native-format-and-legacy-import).
+The owner accepts that conversion may become harder and less complete over time;
+maintain best-effort support and document tested coverage rather than promising
+perpetual lossless compatibility or freezing the new architecture. Never overwrite
+an original legacy file during conversion. Distinguish a lossless native save,
+partial conversion, a supported legacy export, and geometry-only recovery/exchange.
 
 Provide a tested exchange path for the first audience. Do not describe STEP geometry exchange as preserving proprietary parametric history. Report meaningful conversion losses, such as unsupported features or relationships.
 
