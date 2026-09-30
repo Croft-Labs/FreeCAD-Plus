@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7q/r prove an explicit planar reference adapter across placed
+- Current batch: 11.7s/t combine reference creation and reattachment in one undo
+  transaction and verify late-failure rollback without orphan objects. Grouped
+  validation: 46 passes, zero failures/errors/skips; no native rebuild. Test-only
+  operation; production editor and deployment remain pending.
+- Previous batch: 11.7q/r prove an explicit planar reference adapter across placed
   parts, including preview parity, source motion, Undo/Redo and restore. Grouped
   validation: 44 passes, zero failures/errors/skips; no native rebuild. Test-only
   Python proxy must remain importable; production reference integration pending.
@@ -1926,6 +1930,24 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   in another placed part and preview/commit parity under both placement policies.
 - [ X ] 11.7r Verify that reference follows source-part movement, Undo/Redo,
   save/reopen and further movement while preserving downstream result identity.
+- [ X ] 11.7s Prototype atomic reference creation plus reattachment. Verify one
+  Undo removes the reference/restores attachment and Redo/save/reopen retain it.
+- [ X ] 11.7t Inject failure after attachment but before commit; verify rollback
+  removes the reference, restores support/world placement and closes the transaction,
+  then permits a subsequent successful operation.
+
+Atomic operation evidence: `reattachment-atomic-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **46 PASS, zero failures/
+errors/skips** (11 capability, 30 adapter, five lineage checks). Macro PASS; process
+ended. Both tasks preceded grouped testing using engine source 2df76790b4.
+`reattach_with_reference` validates source/policy first and owns the outer native
+transaction; internal attachment participates without committing the caller's work.
+Public operations still reject pre-existing caller transactions. Fault injection
+tests transaction recovery, not a claim that all native failure paths were exercised.
+Prototype SHA256: `F83559E7515736EF594DE65050D5713C0D5D65E14F435ADF348D853F415DFAAE`.
+Test-only; saved adapter fixtures require the Python module. No installed application
+change, native rebuild or release update. UI/task transaction integration and
+source-topology/consumer failure handling remain pending.
 
 Adapter evidence: `reattachment-adapter-20260930-verified/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **44 PASS, zero failures/

@@ -708,6 +708,56 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertNotIn("Invalid", self.profile.State)
         self.assertNotIn("Invalid", self.doc.LeftResult.State)
 
+    def testReferenceCreationAndReattachmentUndoAsOneOperation(self):
+        from SketchReattachment import reattach_with_reference
+        self.crossPartBinderFixture()
+        before = {o.Name for o in self.doc.Objects}
+        support = self.profile.AttachmentSupport
+        placement = self.profile.getGlobalPlacement()
+        reference = reattach_with_reference(self.profile, self.doc.RemotePlane, "Face1",
+                                            "preserve-world")
+        name = reference.Name
+        self.assertEqual({o.Name for o in self.doc.Objects}, before | {name})
+        self.assertEqual(self.profile.AttachmentSupport[0][0], reference)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), placement)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual({o.Name for o in self.doc.Objects}, before)
+        self.assertEqual(self.profile.AttachmentSupport, support)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), placement)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.AttachmentSupport[0][0], self.doc.getObject(name))
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+        self.saveReopen("AtomicPlanarReferenceProof")
+        self.assertEqual(self.profile.AttachmentSupport[0][0].Name, name)
+        self.assertEqual(self.doc.getObject(name).Source[0], self.doc.RemotePlane)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), placement)
+
+    def testReferenceCreationRollsBackAfterLateFailure(self):
+        from unittest.mock import patch
+        import SketchReattachment
+        self.crossPartBinderFixture()
+        before = {o.Name for o in self.doc.Objects}
+        support = self.profile.AttachmentSupport
+        placement = self.profile.getGlobalPlacement()
+        original = SketchReattachment._reattach_planar
+        def fail_after_attachment(*args, **kwargs):
+            original(*args, **kwargs)
+            raise RuntimeError("Injected failure after attachment")
+        with patch.object(SketchReattachment, "_reattach_planar", side_effect=fail_after_attachment):
+            with self.assertRaisesRegex(RuntimeError, "Injected failure"):
+                SketchReattachment.reattach_with_reference(self.profile, self.doc.RemotePlane,
+                                                          "Face1", "preserve-world")
+        self.assertEqual({o.Name for o in self.doc.Objects}, before)
+        self.assertEqual(self.profile.AttachmentSupport, support)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), placement)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+        reference = SketchReattachment.reattach_with_reference(
+            self.profile, self.doc.RemotePlane, "Face1", "preserve-world")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], reference)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

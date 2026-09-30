@@ -42,6 +42,27 @@ def reattach_planar(sketch, support, face_name, policy="preserve-local"):
     return _reattach_planar(sketch, support, face_name, policy)
 
 
+def reattach_with_reference(sketch, source, face_name, policy="preserve-local"):
+    """Create an explicit reference and reattach as one native undo transaction."""
+    _validate(sketch, source, face_name, policy, allow_cross=True)
+    doc = sketch.Document
+    parent = sketch.getParentGeoFeatureGroup()
+    doc.openTransaction("Create planar reference and reattach sketch")
+    try:
+        reference = doc.addObject("Part::FeaturePython", "PlanarReference")
+        if parent:
+            parent.addObject(reference)
+        PlanarSupport(reference, (source, [face_name]))
+        doc.recompute()
+        _reattach_planar(sketch, reference, "Face1", policy, own_transaction=False)
+        doc.commitTransaction()
+        return reference
+    except Exception:
+        doc.abortTransaction()
+        doc.recompute()
+        raise
+
+
 def preview_planar(sketch, support, face_name, policy="preserve-local"):
     """Evaluate attachment placement in a disposable document, not the live model.
 
@@ -68,13 +89,13 @@ def preview_planar(sketch, support, face_name, policy="preserve-local"):
         App.setActiveDocument(active.Name if active else "")
 
 
-def _validate(sketch, support, face_name, policy):
+def _validate(sketch, support, face_name, policy, allow_cross=False, allow_pending=False):
     if not sketch.isDerivedFrom("Sketcher::SketchObject"):
         raise ValueError("A sketch is required")
     if policy not in ("preserve-local", "preserve-world"):
         raise ValueError("Unknown reattachment placement policy")
     doc = sketch.Document
-    if doc.HasPendingTransaction:
+    if doc.HasPendingTransaction and not allow_pending:
         raise ValueError("Finish the current transaction before reattaching")
     if policy == "preserve-world" and ("Invalid" in sketch.State or "Touched" in sketch.State):
         raise ValueError("Preserve-world requires a valid recomputed sketch placement")
@@ -98,16 +119,17 @@ def _validate(sketch, support, face_name, policy):
         raise ValueError("Support face is unavailable") from exc
     if not isinstance(face, Part.Face) or not isinstance(face.Surface, Part.Plane):
         raise ValueError("Support must be a planar face")
-    if sketch.getParentGeoFeatureGroup() != support.getParentGeoFeatureGroup():
+    if not allow_cross and sketch.getParentGeoFeatureGroup() != support.getParentGeoFeatureGroup():
         raise ValueError("Cross-container support requires an explicit reference adapter")
 
 
-def _reattach_planar(sketch, support, face_name, policy):
-    _validate(sketch, support, face_name, policy)
+def _reattach_planar(sketch, support, face_name, policy, own_transaction=True):
+    _validate(sketch, support, face_name, policy, allow_pending=not own_transaction)
     doc = sketch.Document
     old_placement = sketch.Placement
     old_offset = sketch.AttachmentOffset
-    doc.openTransaction("Reattach sketch to planar face")
+    if own_transaction:
+        doc.openTransaction("Reattach sketch to planar face")
     try:
         sketch.AttachmentSupport = [(support, face_name)]
         sketch.MapMode = "FlatFace"
@@ -125,9 +147,11 @@ def _reattach_planar(sketch, support, face_name, policy):
             if "Invalid" in sketch.State:
                 raise ValueError("Sketch attachment failed")
         candidate = (sketch.getGlobalPlacement(), sketch.AttachmentOffset)
-        doc.commitTransaction()
+        if own_transaction:
+            doc.commitTransaction()
         return candidate
     except Exception:
-        doc.abortTransaction()
-        doc.recompute()
+        if own_transaction:
+            doc.abortTransaction()
+            doc.recompute()
         raise

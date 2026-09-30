@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7q/r complete as test-only cross-part planar reference.
+Latest roadmap batch: 11.7s/t complete as test-only atomic reference creation.
+One transaction creates the local reference and reattaches; Undo removes it and
+restores the original attachment, with Redo/restore passing. Injected late failure
+rolls back objects, placement and transaction state; subsequent success passes.
+Grouped validation: 46 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reattachment-atomic-20260930-batch.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Production UI/task transaction integration and source/consumer failure handling
+remain pending. Adapter fixtures require the test-only Python module on restore.
+
+Previous roadmap batch: 11.7q/r complete as test-only cross-part planar reference.
 Native binder probes failed alignment/motion criteria; explicit PlanarSupport uses
 existing ShapeReferences conversion/dependency helpers and passes alignment, both
 preview policies, source motion, Undo/Redo and restore. Grouped validation: 44 passes,

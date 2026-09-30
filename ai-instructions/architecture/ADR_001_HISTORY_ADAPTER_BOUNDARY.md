@@ -264,6 +264,14 @@ is a Python proxy whose module must be importable when restoring/recomputing. It
 not installed and establishes no production persistence/schema or deployment policy.
 Missing/ambiguous source topology and failure-consumer handling remain open.
 
+Roadmap 11.7s/t adds `reattach_with_reference`: source validation precedes one
+transaction creating the adapter and changing the attachment. Internal attachment
+participates without opening/committing a nested transaction. One Undo removes the
+reference and restores support; Redo and restore pass. A fault injected after
+attachment rolls back both changes and leaves no pending transaction; a later
+attempt succeeds. Grouped evidence totals 46 passes. This remains a test-only
+operation, not integration with an existing GUI task transaction.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document
