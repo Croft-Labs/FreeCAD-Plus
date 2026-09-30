@@ -348,6 +348,10 @@ class CommandIsocline:
         for selection in selections:
             if selection.DocumentName != doc.Name:
                 continue
+            try:
+                require_current(selection.Object)
+            except ReferenceError:
+                continue
             names = [n for n in selection.SubElementNames if n.startswith("Face")]
             if names or (
                 not selection.SubElementNames

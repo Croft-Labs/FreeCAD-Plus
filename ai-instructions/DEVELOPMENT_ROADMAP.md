@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 4.1.5/5.1.5 reject invalid/unrecomputed picks before replacing
+- Current batch: 4.1.6/5.1.6 skip stale preselected inputs while retaining usable
+  selections and an editable task. Grouped model/GUI validation: 46 passes, zero
+  failures/errors/skips; Python-only staging, no native rebuild or release update.
+- Previous batch: 4.1.5/5.1.5 reject invalid/unrecomputed picks before replacing
   Trim Body and Isocline inputs. Grouped model/GUI validation: 44 passes, zero
   failures/errors/skips; Python modules staged with matching hashes, no native
   rebuild or release update.
@@ -1115,6 +1118,20 @@ Depends on: the existing Part geometry engine and native development build.
 - [ X ] 4.1.5 Apply readiness checks before replacing Target or Tool. Reject stale
   picks without changing links or selection mode; verify repair/recompute allows
   replacement and successful acceptance.
+- [ X ] 4.1.6 Apply readiness checks to optional target/tool preselection. Skip
+  stale inputs and open the task for correction; verify a failed target is skipped,
+  its valid tool remains selected and the repaired target can be picked/accepted.
+
+Preselection evidence (also 5.1.6): `task-preselection-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **46 PASS, zero failures/
+errors/skips** (Trim 14 model/13 GUI; Isocline nine model/10 GUI). Both tasks preceded
+grouped testing; macro PASS and process ended. Two production Python modules and
+two test modules staged with matching source/destination hashes in the isolated
+fork build (engine source 2df76790b4). Source SHA256:
+TrimGui `E7C0372BA962C784BE0E44C497777B55A5A86C778B1CA32398108B201C468204`;
+IsoclineGui `C38C8D0F93FD31D39D02F2D60CBF5FB5011D20968A5834E42042E0D500902854`.
+No native rebuild, release update or physical viewport acceptance. Invalid
+preselection is omitted; this does not automatically repair or recompute inputs.
 
 Input-selection evidence (also 5.1.5): `task-selection-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **44 PASS, zero failures/
@@ -1210,6 +1227,8 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
 - [ X ] 5.1.5 Reject stale face/direction-reference picks before changing links,
   preserving the face list, direction reference and active selection mode. Verify
   repair/recompute permits reference selection and acceptance; evidence with 4.1.5.
+- [ X ] 5.1.6 Filter stale face preselection without discarding valid faces in the
+  same selection. Verify repaired faces can be added and accepted; evidence with 4.1.6.
 
 ### [   ] 5.2 Validate the local build
 

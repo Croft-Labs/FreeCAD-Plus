@@ -107,6 +107,28 @@ class TestIsoclineGui(unittest.TestCase):
         self.assertEqual(self.obj.Faces, faces)
         self.accept()
 
+    def testMixedPreselectionSkipsFailedFacesAndRetainsValidFaces(self):
+        valid = self.doc.addObject("Part::Sphere", "ValidSource")
+        valid.Radius = 10
+        valid.Placement.Base.x = 30
+        self.doc.recompute()
+        self.source.Radius = 0
+        self.doc.recompute()
+        self.assertIn("Invalid", self.source.State)
+        Gui.Selection.addSelection(self.source, "Face1")
+        Gui.Selection.addSelection(valid, "Face1")
+        self.start(False)
+        self.assertEqual([obj for obj, names in self.obj.Faces], [valid])
+        self.assertAlmostEqual(self.obj.Shape.Length, 20 * math.pi)
+        self.source.Radius = 10
+        self.doc.recompute()
+        self.task.select("Faces")
+        self.task.addSelection(self.doc.Name, self.source.Name, "Face1", None)
+        self.assertEqual({obj.Name for obj, names in self.obj.Faces},
+                         {valid.Name, self.source.Name})
+        self.assertAlmostEqual(self.obj.Shape.Length, 40 * math.pi)
+        self.accept()
+
     def testAngleReverseEditUndoAndCancel(self):
         self.start()
         self.task.angle.setValue(30)

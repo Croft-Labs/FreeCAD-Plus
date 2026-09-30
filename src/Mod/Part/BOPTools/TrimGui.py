@@ -318,6 +318,7 @@ class CommandTrimBody:
         if selections and selections[0].DocumentName == doc.Name:
             candidate = selections[0].Object
             try:
+                require_current(candidate)
                 shape = TrimAPI.linked_shape((candidate, []))
                 if shape.Faces:
                     obj.Target = (candidate, [])
@@ -329,6 +330,7 @@ class CommandTrimBody:
             link = (selection.Object, [sub] if sub else [])
             try:
                 if not obj.Target or obj.Target[0] != selection.Object:
+                    require_current(selection.Object)
                     TrimAPI.tool_shape(link)
                     obj.Tool = link
             except Exception:

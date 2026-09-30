@@ -117,6 +117,22 @@ class TestTrimBodyGui(unittest.TestCase):
         self.assertAlmostEqual(self.obj.Shape.Volume, 600)
         self.accept()
 
+    def testFailedPreselectedTargetIsSkippedAndCanBeRepaired(self):
+        self.target.Length = 0
+        self.doc.recompute()
+        self.assertIn("Invalid", self.target.State)
+        self.start(preselect=True)
+        self.assertFalse(self.obj.Target)
+        self.assertEqual(self.obj.Tool[0], self.tool)
+        self.assertTrue(Gui.Control.activeDialog())
+        self.target.Length = 10
+        self.doc.recompute()
+        self.task.select("Target")
+        self.task.addSelection(self.doc.Name, self.target.Name, "", None)
+        self.assertEqual(self.obj.Target[0], self.target)
+        self.assertAlmostEqual(self.obj.Shape.Volume, 600)
+        self.accept()
+
     def testReverseEditCancelUndoRedo(self):
         self.start(preselect=True)
         self.accept()

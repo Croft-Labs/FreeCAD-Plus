@@ -12,6 +12,8 @@ recovered result. Shared dependency-state validation also serves Isocline.
 
 Replacement checks reject a failed candidate for Target and Tool without changing
 stored links or selection mode, then verify successful selection after repair.
+Preselection checks skip a failed target, retain its valid tool and accept the
+target after repair and explicit selection in the task.
 
 Run model tests with the built FreeCADCmd, or both suites in an initialized GUI:
 

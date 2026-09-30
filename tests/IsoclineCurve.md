@@ -13,6 +13,8 @@ recovered curve. Shared dependency-state validation also serves Trim Body.
 
 Replacement checks reject a failed candidate for Faces and Direction Reference
 without changing links or selection mode, then verify selection after repair.
+Mixed preselection checks omit failed face objects, retain valid ones and allow
+repaired faces to be added before acceptance.
 
 Run inside the initialized source-built GUI:
 
