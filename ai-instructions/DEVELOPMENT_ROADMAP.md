@@ -2,9 +2,10 @@
 
 ## Current focus
 
-- Release 0.0.4: explicitly authorized Windows x64 installer-only GitHub pre-release.
-  Version metadata prepared; build, packaged validation, installation/uninstallation
-  checks and publication are pending. Retain the existing focused workbench configuration.
+- Release 0.0.4: Windows x64 installer built, validated and published as a GitHub
+  pre-release; [release checkpoint](#pre-release-004). All 312 packaged tests and
+  installation/launch/hash/uninstall checks pass. Other roadmap acceptance gates
+  remain open.
 
 
 Specification update: see [the re-updated objective reconciliation](#re-updated-objective-specifications-and-delivery-slices) and [all 127 item-level specifications](#item-level-product-specifications-f001-f127). Added tasks 10.8-10.9, 11.7, 15.7, 16.8-16.9 and benchmarks T13-T16 are pending; existing completion evidence is preserved.
@@ -15,7 +16,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2bq/br verify Plunge Milling LinuxCNC/Grbl output and FCStd
+- Current batch: 16.2bs/bt repair Holding Tab and Indexed Setup command startup
+  and protect unrelated transactions. Grouped validation: 55 passes; included in
+  the published 0.0.4 installer.
+- Previous batch: 16.2bq/br verify Plunge Milling LinuxCNC/Grbl output and FCStd
   save/reopen regeneration. Grouped validation: 87 passes, zero failures/errors/
   skips. Test-only batch using the existing build; no native rebuild or release.
 - Previous batch: 16.2bo/bp validate Plunge Milling cycle settings and exercise
@@ -3612,6 +3616,44 @@ Gate G11: release candidate, starter source/exports, tutorial and compatibility
 notes agree; representative users complete T11. Outreach is reviewable before
 publication, and repeated campaigns need evidence. Optional branding, registration
 or revenue cannot delay a usable free modeling release.
+
+## Pre-release 0.0.4
+
+- [ X ] Build the existing focused Windows x64 Release configuration after the
+  accumulated roadmap batches; full native build exit 0. Refresh/relink Version.cpp
+  after the final Python CAM fixes so the embedded identity matches release source.
+- [ X ] Correct Holding Tab/Indexed Setup command startup (16.2bs/bt). Grouped
+  command/transaction regressions: 55 passes. Final packaged run: **312 PASS** across
+  22 model/task/CAM suites, zero failures/errors/skips, application process exit 0.
+- [ X ] Package and install the actual Windows installer in an isolated directory.
+  All **15,532 installed files** match the payload. Installed launcher, separate
+  settings, module/workbench availability and FCStd save/reopen checks pass.
+- [ X ] Verify version registration and Start-menu shortcut, uninstall successfully,
+  remove application/shortcut/registration, and preserve an unrelated test file.
+- [ X ] Publish GitHub pre-release 0.0.4 with exactly one Windows `.exe` asset;
+  verify public state, source tag and uploaded SHA256 digest.
+
+Published 2026-09-30 07:17:39 UTC:
+[FreeCAD Plus 0.0.4](https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.4),
+release ID 399799828. Source, embedded runtime and tag commit:
+`802e19d64863ecdfc02817a2160b621579c2d8f2`; engine version remains 26.3.0.
+Artifact: `FreeCAD-Plus-0.0.4-Windows-x64-Setup.exe`, **360,831,616 bytes**, unsigned.
+SHA256: `e5ea99f9b3e556c65f6dadcc5ade42eb4e2531b79f55ae5757ec9eec891e7464`.
+GitHub confirms `draft=false`, `prerelease=true`, one matching installer asset.
+
+Evidence root: `D:\Temp\Office-PC\freecad-plus-release-0.0.4`:
+`build.log`, `final-version-compile.log`, `final-version-link.log`,
+`package-verified.log`, `cam-ui-verified/results.json`, `payload-final/results.json`,
+`install-results.json`, `installed-validation/results.json`, `uninstall-results.json`,
+`github-published.json` and `github-tag.json`. Initial packaged tests exposed two
+CAM creation errors; command-level regression then exposed invalid job-lookup imports.
+These failures were fixed and the full final run passed. Earlier packaging attempts
+were intentionally stopped to include revision and source corrections; they are
+not accepted artifacts. The initial interrupted test run does not supersede final
+validation. [Release notes](releases/0.0.4.md) document included workbenches and limits.
+No clean-VM, full manual GUI, controller or physical-machine acceptance is claimed.
+Planned `.cadprt`, production NX-like history and parameter-editor prototypes remain
+outside this installer; their roadmap tasks remain open.
 
 ## Pre-release 0.0.1
 
