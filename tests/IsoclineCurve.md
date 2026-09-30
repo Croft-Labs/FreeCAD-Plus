@@ -11,6 +11,9 @@ The task-readiness regression makes a previously valid source fail recompute,
 verifies hidden preview and blocked acceptance, then repairs it and accepts the
 recovered curve. Shared dependency-state validation also serves Trim Body.
 
+Replacement checks reject a failed candidate for Faces and Direction Reference
+without changing links or selection mode, then verify selection after repair.
+
 Run inside the initialized source-built GUI:
 
 ```python

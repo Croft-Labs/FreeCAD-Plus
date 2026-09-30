@@ -202,6 +202,7 @@ class IsoclineTask:
                 raise ValueError("Select an object in this document.")
             obj = self.doc.getObject(name)
             validate_link(self.obj, obj)
+            require_current(obj)
             if self.mode == "Reference":
                 link = (obj, [sub] if sub else [])
                 Isocline.reference_direction(link)

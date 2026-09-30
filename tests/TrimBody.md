@@ -10,6 +10,9 @@ The task-readiness regression makes a previously valid target fail recompute,
 verifies hidden preview and blocked acceptance, then repairs it and accepts the
 recovered result. Shared dependency-state validation also serves Isocline.
 
+Replacement checks reject a failed candidate for Target and Tool without changing
+stored links or selection mode, then verify successful selection after repair.
+
 Run model tests with the built FreeCADCmd, or both suites in an initialized GUI:
 
 ```python

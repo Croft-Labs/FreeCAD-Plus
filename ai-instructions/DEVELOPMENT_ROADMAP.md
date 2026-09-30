@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 4.1.4/5.1.4 integrate dependency readiness checks into production
+- Current batch: 4.1.5/5.1.5 reject invalid/unrecomputed picks before replacing
+  Trim Body and Isocline inputs. Grouped model/GUI validation: 44 passes, zero
+  failures/errors/skips; Python modules staged with matching hashes, no native
+  rebuild or release update.
+- Previous batch: 4.1.4/5.1.4 integrate dependency readiness checks into production
   Trim Body and Isocline task previews/acceptance. Grouped model/GUI validation:
   42 passes, zero failures/errors/skips. Python modules staged in the isolated build;
   no native rebuild or release update.
@@ -1108,6 +1112,21 @@ Depends on: the existing Part geometry engine and native development build.
 - [ X ] 4.1.4 Reject stale dependency results in the Trim Body task pane after
   recompute. Keep the dialog open, hide the result and report a repair/recompute
   message instead of presenting it as ready. Verify acceptance recovery after repair.
+- [ X ] 4.1.5 Apply readiness checks before replacing Target or Tool. Reject stale
+  picks without changing links or selection mode; verify repair/recompute allows
+  replacement and successful acceptance.
+
+Input-selection evidence (also 5.1.5): `task-selection-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **44 PASS, zero failures/
+errors/skips** (Trim 14 model/12 GUI; Isocline nine model/nine GUI). Both tasks
+preceded grouped validation. Macro PASS; process ended. Two changed production
+Python modules and their GUI suites were staged with matching source/destination
+hashes in the isolated fork build (engine source 2df76790b4). Native selection
+callbacks reject failed-box candidates for all four fields and retain existing
+inputs; repaired candidates can then be selected. No native rebuild, release
+update or physical viewport acceptance. Source SHA256:
+TrimGui `957F6F782B6DE5268686C5BB113FA9CEDE7370DE1DB62C2FAF4A8783BD8BCB08`;
+IsoclineGui `5F8A087476311AB0D5E7F2D78D4F3F2854D83B1867C10948057931548FBF2E2E`.
 
 Shared task-readiness evidence (also 5.1.4): `task-readiness-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **42 PASS, zero failures/
@@ -1188,6 +1207,9 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
 - [ X ] 5.1.4 Apply shared dependency-readiness validation to Isocline preview and
   acceptance. Failed source geometry keeps the task editable and result hidden;
   repair restores curve preview and acceptance. Evidence recorded with 4.1.4.
+- [ X ] 5.1.5 Reject stale face/direction-reference picks before changing links,
+  preserving the face list, direction reference and active selection mode. Verify
+  repair/recompute permits reference selection and acceptance; evidence with 4.1.5.
 
 ### [   ] 5.2 Validate the local build
 

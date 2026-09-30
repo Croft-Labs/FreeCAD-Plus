@@ -182,6 +182,7 @@ class TrimBodyTask:
                 raise TrimAPI.TrimError("Select an object in this document.")
             obj = self.doc.getObject(name)
             TrimAPI.validate_link(self.obj, obj)
+            require_current(obj)
             key = self.mode
             other = self.obj.Tool if key == "Target" else self.obj.Target
             if other and other[0] == obj:

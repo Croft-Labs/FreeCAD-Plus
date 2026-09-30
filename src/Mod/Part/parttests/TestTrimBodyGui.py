@@ -93,6 +93,30 @@ class TestTrimBodyGui(unittest.TestCase):
         self.assertAlmostEqual(self.obj.Shape.Volume, 600)
         self.accept()
 
+    def testFailedReplacementPreservesTargetAndTool(self):
+        self.start(preselect=True)
+        candidate = self.doc.addObject("Part::Box", "FailedCandidate")
+        candidate.Length = candidate.Width = candidate.Height = 10
+        self.doc.recompute()
+        candidate.Length = 0
+        self.doc.recompute()
+        self.assertIn("Invalid", candidate.State)
+        target, tool = self.obj.Target, self.obj.Tool
+        for mode, sub in (("Target", ""), ("Tool", "Face1")):
+            self.task.select(mode)
+            self.task.addSelection(self.doc.Name, candidate.Name, sub, None)
+            self.assertIn("not current", self.task.status.text())
+            self.assertEqual(self.obj.Target, target)
+            self.assertEqual(self.obj.Tool, tool)
+            self.assertEqual(self.task.mode, mode)
+        candidate.Length = 10
+        self.doc.recompute()
+        self.task.select("Target")
+        self.task.addSelection(self.doc.Name, candidate.Name, "", None)
+        self.assertEqual(self.obj.Target[0], candidate)
+        self.assertAlmostEqual(self.obj.Shape.Volume, 600)
+        self.accept()
+
     def testReverseEditCancelUndoRedo(self):
         self.start(preselect=True)
         self.accept()

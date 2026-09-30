@@ -84,6 +84,29 @@ class TestIsoclineGui(unittest.TestCase):
         self.assertAlmostEqual(self.obj.Shape.Length, 20 * math.pi)
         self.accept()
 
+    def testFailedReplacementPreservesFacesAndDirectionReference(self):
+        self.start()
+        candidate = self.doc.addObject("Part::Box", "FailedCandidate")
+        self.doc.recompute()
+        candidate.Length = 0
+        self.doc.recompute()
+        self.assertIn("Invalid", candidate.State)
+        faces, reference = self.obj.Faces, self.obj.DirectionReference
+        for mode in ("Faces", "Reference"):
+            self.task.select(mode)
+            self.task.addSelection(self.doc.Name, candidate.Name, "Face1", None)
+            self.assertIn("not current", self.task.status.text())
+            self.assertEqual(self.obj.Faces, faces)
+            self.assertEqual(self.obj.DirectionReference, reference)
+            self.assertEqual(self.task.mode, mode)
+        candidate.Length = 10
+        self.doc.recompute()
+        self.task.select("Reference")
+        self.task.addSelection(self.doc.Name, candidate.Name, "Face1", None)
+        self.assertEqual(self.obj.DirectionReference[0], candidate)
+        self.assertEqual(self.obj.Faces, faces)
+        self.accept()
+
     def testAngleReverseEditUndoAndCancel(self):
         self.start()
         self.task.angle.setValue(30)

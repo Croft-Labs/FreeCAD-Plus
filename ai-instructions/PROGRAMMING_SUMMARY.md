@@ -52,7 +52,8 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 Trim Body and Isocline task readiness uses `require_current` in
 [`ShapeReferences.py`](../src/Mod/Part/BasicShapes/ShapeReferences.py) after recompute;
-invalid/touched dependencies block preview acceptance (roadmap 4.1.4/5.1.4).
+invalid/touched dependencies block preview acceptance and input replacement
+(roadmap 4.1.4-5/5.1.4-5).
 
 Sketch reattachment foundation: [`SketchReattachment.py`](../tests/prototypes/SketchReattachment.py)
 and [`TestPartHistoryAdapters.py`](../tests/TestPartHistoryAdapters.py); roadmap 11.7a-x

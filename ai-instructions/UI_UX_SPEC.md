@@ -189,6 +189,9 @@ the result or choosing **Edit Trim Body** opens the same pane.
 | Live preview and status | Preview hides the target and displays the kept result. Pausing preview defers computation until OK. Missing, self/dependent, wrong-document, or invalid cutting inputs stay editable with an explanation. Invalid or unrecomputed dependencies after recompute hide the result and block OK until repaired. |
 | OK / Cancel | OK recomputes and accepts only valid geometry, hides the source inputs, and shows the separate result. Cancel removes a pending new feature or restores an existing feature and input visibility. Both remove temporary selection observation and the arrow. |
 
+Invalid or unrecomputed target/tool picks leave the existing inputs and active
+selection mode unchanged, with a repair/recompute message. Retry after repair.
+
 The source solid/sheet remains associative input. A Part Design Body keeps its Tip;
 the new result appears separately in the document tree. Reopen the result to change
 its target, cutter, or side. Original input visibility is restored while selecting.
@@ -214,6 +217,9 @@ Isocline Curve** to reopen the same complete definition.
 | Draft angle | Degrees, default 0, range 0 through 90. Zero gives normals perpendicular to pull; positive values select normals increasingly facing pull. Reversing pull selects the opposite draft side. |
 | Preview and status | Red curves are highlighted through source faces while editing, including hidden portions; the accepted feature uses normal depth rendering. The green arrow indicates pull. Live preview can be paused. Missing input, no curve, whole-face coincidence, or solver errors stay editable and clear stale output. Invalid or unrecomputed dependencies after recompute hide the result and block OK until repaired. |
 | OK / Cancel | OK forces recompute and accepts valid wires; Cancel removes a pending feature or restores its previous definition and temporary visibility. Both remove selection observation and direction annotation. |
+
+Invalid or unrecomputed face/direction-reference picks leave the existing inputs
+and selection mode unchanged, with a repair/recompute message. Retry after repair.
 
 Source objects remain unchanged and keep their Part Design Body Tip. Face boundary
 holes split a contour into separate segments; each connected set becomes a wire.

@@ -11,7 +11,15 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 4.1.4/5.1.4 production task-readiness guards complete.
+Latest roadmap batch: 4.1.5/5.1.5 production input-selection guards complete.
+Trim Target/Tool and Isocline Faces/Reference reject stale picks before changing
+inputs, retaining selection mode. Repair/recompute allows selection and acceptance.
+Grouped model/GUI validation: 44 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\task-selection-20260930-batch.
+Macro PASS; process ended. Two Python modules and two test suites staged with
+matching hashes. No native rebuild, release or physical viewport acceptance.
+
+Previous roadmap batch: 4.1.4/5.1.4 production task-readiness guards complete.
 Trim Body/Isocline preview and acceptance reject invalid/touched dependency results
 after recompute, hide the result and remain editable; source repair recovers.
 Grouped model/GUI validation: 42 passes, zero failures/errors/skips in
