@@ -67,6 +67,7 @@
 #include "SketchWorkflow.h"
 #include "TaskFeaturePick.h"
 #include "TaskPadParameters.h"
+#include "TaskTransformedParameters.h"
 #include "Utils.h"
 #include "WorkflowManager.h"
 #include "ViewProvider.h"
@@ -2469,11 +2470,14 @@ CmdPartDesignPattern::CmdPartDesignPattern()
 
 void CmdPartDesignPattern::activated(int)
 {
+    const auto originalSelection = getSelection().getSelectionEx(
+        "*", App::DocumentObject::getClassTypeId(), Gui::ResolveMode::NoResolve
+    );
     auto* body = PartDesignGui::getBody(true);
     if (!body) {
         return;
     }
-    auto worker = [this, body](App::DocumentObject* object, std::vector<App::DocumentObject*>) {
+    auto worker = [this, body, originalSelection](App::DocumentObject* object, std::vector<App::DocumentObject*>) {
         auto* pattern = static_cast<PartDesign::Pattern*>(object);
         const auto& settings = pattern->PatternSettings.getValues();
         FCMD_OBJ_CMD(
@@ -2491,6 +2495,9 @@ void CmdPartDesignPattern::activated(int)
         }
         FCMD_OBJ_CMD(pattern, "TransformMode = 'Features'");
         finishTransformed(this, pattern);
+        if (auto task = qobject_cast<PartDesignGui::TaskDlgTransformedParameters*>(Gui::Control().activeDialog())) {
+            task->setSelectionOnCancel(originalSelection);
+        }
     };
     prepareTransformed(body, this, "Pattern", worker);
 }

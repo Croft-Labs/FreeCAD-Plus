@@ -2,15 +2,15 @@
 
 ## Current focus
 
-- Current product batch: phase 8 Pattern Originals feedback, Clear/recovery and
-  direction-role isolation (8.1.3f-h), advancing F030/F032. All three tasks preceded
-  one native PartDesignGui build and one grouped run: 144 distinct tests pass
-  (149 executions, five repeated model cases), zero failures/errors/skips.
-  Empty/selected/Whole body layouts and radio states are verified. Broader F030
-  inspection/disambiguation/occurrence and physical interaction gates remain open;
-  F032 Apply/repeat remains open. Prior F031/F070 bounded acceptance is preserved.
-  No installer or release. Next item-level focus: Pattern Originals row inspection
-  and selection recovery against F030/F031, grouped before validation.
+- Current product batch: phase 8 Pattern Originals row/all-entry inspection and
+  creation/edit Cancel selection recovery (8.1.3i, 8.1.5c), advancing F030-F032.
+  Both tasks preceded one native PartDesignGui build; 149 distinct final checks
+  pass across preserved grouped results and a corrected test rerun. Empty,
+  inspection and Whole body layouts are verified. Broader command-family,
+  disambiguation/occurrence and physical interaction gates remain open, as does
+  F032 Apply/repeat. Prior F031/F070 bounded acceptance is preserved.
+  No installer or release. Next item-level focus: Pattern preselection parity
+  and invalid/mixed-selection explanations against F031, grouped before validation.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1854,6 +1854,9 @@ implementation or mark its unfinished validation complete through this plan.
 - [ X ] 8.1.3h Coordinate combined Pattern originals and embedded direction/axis
   selection so a pick cannot fill both roles, including Clear/Add/Remove transitions.
   F030 role isolation. Both transition directions pass; evidence below.
+- [ X ] 8.1.3i Add combined Pattern Originals row/all-entry inspection by object
+  identity, with reference isolation and temporary visibility cleanup on role/type
+  changes and OK/Cancel. F030. Native inspection and lifecycle checks pass; evidence below.
 - [   ] 8.1.4 Standardize signed offsets, adjacent direction buttons, one/two-sided and symmetric modes, units and expressions. Preserve parameters by meaning when switching operation or type.
   Cover distance, symmetric, two-sided, through-all, to-face and offset-from-face
   extents where the command supports them; keep extent semantics distinct from the
@@ -1869,6 +1872,9 @@ implementation or mark its unfinished validation complete through this plan.
 - [ X ] 8.1.5b Restore original object/subelement selection after Extrude/Pad/Pocket
   creation or edit Cancel, alongside existing profile and Body Tip rollback.
   Create/edit Cancel passes for all three command entries; evidence below.
+- [ X ] 8.1.5c Restore original combined Pattern selection on creation/edit Cancel,
+  preserving original object/subelement paths alongside Originals/settings/Body Tip
+  rollback. F031/F032. Both creation/edit cases pass; grouped evidence below.
 
 - [   ] 8.1.6 Make previews responsive with cancellable computation, progress
   feedback and reduced-cost previews before final computation. Clearly distinguish
@@ -1977,6 +1983,33 @@ Physical input/high-DPI, broader inspection/disambiguation/occurrence and Apply/
 repeat gates remain open. All 127 item IDs remain intact. No document property
 schema changes, installer or release. Next slice: Pattern row inspection and
 selection recovery against F030/F031.
+
+**Pattern inspection/recovery batch (8.1.3i, 8.1.5c), 2026-09-30:** Both tasks
+preceded one successful PartDesignGui Release build. **149 distinct final tests
+pass, zero remaining failures/errors/skips**: 27 Pattern task/model, 16 Linear,
+6 Polar, 3 MultiTransform, 14 Pad task, 28 Extrude task, 5 Revolve task, 24 Trim
+task and 26 Isocline task. Five new GUI cases cover duplicate-label row identity,
+all-entry inspection without model mutation, direction/type transitions, visibility
+on OK/Cancel and original subelement selection plus model rollback on create/edit
+Cancel. Pattern-only snapshot capture leaves legacy transformation behavior intact.
+Evidence: `D:\Temp\Office-PC\freecad-plus-pattern-inspection-20260930`, including
+`build.log`, `grouped`, `final`, `acceptance-summary.json` and
+`validated-identities.json`. The initial run retained one test-fixture failure:
+it compared editing visibility with idle visibility. It later reached the inactivity
+limit in the existing Revolve matrix; that timeout's cause is unconfirmed. After
+moving the fixture baseline before entering edit, a fresh process passed all 82
+Pattern/Revolve/Trim/Isocline checks (macro PASS, exit 0). The other 67 passing
+checks are reused from the initial run on identical native binaries. No native
+correction or second build. Source, staged test and native identities are verified.
+PartDesignGui SHA256:
+`70fc6c433231bbabe8c1041eee565f10c91201da119ef4f02a9de3611af7bafc`.
+The older executable version stamp is not rebuilt-module identity. Three readable
+empty/inspection/Whole body task captures are under `visual`; this does not close
+physical viewport/input/high-DPI acceptance. All 127 item IDs remain intact; no
+property schema changes, installer or release. Broader F030 command-family,
+disambiguation/occurrence, F031 Pattern preselection parity and F032 Apply/repeat
+remain open. Next slice: Pattern preselection parity and invalid/mixed-selection
+explanations, grouped before the next build.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4377,7 +4410,7 @@ reconciliation rules above to every entry.
 <a id="f030"></a>
 ### F030 — Selection collectors
 
-**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Extrude/Pad/Pocket profile inspection and feedback are validated under 8.1.3d/e. Combined Pattern Originals feedback, Clear/replacement recovery and direction-role isolation are validated under 8.1.3f-h (144 distinct passing tests). Pattern inspection, other command families, general occurrence/selection filters and disambiguation acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Extrude/Pad/Pocket profile inspection and feedback are validated under 8.1.3d/e. Combined Pattern Originals feedback, Clear/replacement recovery and direction-role isolation are validated under 8.1.3f-h (144 distinct passing tests). Pattern row/all-entry inspection by object identity and visibility lifecycle are validated under 8.1.3i (149 distinct final checks). Other command families, general occurrence/selection filters and disambiguation acceptance remain open.
 
 **Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
 
@@ -4390,7 +4423,7 @@ reconciliation rules above to every entry.
 <a id="f031"></a>
 ### F031 — Preselection and postselection
 
-**Owning tasks:** 8.1, 10.4. **Status:** Specified Extrude parity, deterministic mixed selections and creation/edit Cancel acceptance are complete for the active-Body workflow under 8.1.2b/8.1.5b (138 final passing checks). Extrude/Pad/Pocket use the same profile gate before and after startup; multiple profiles require explicit choice, invalid picks receive inline feedback. Trim Body/Isocline checks remain validated under 8.1.2a, 8.1.5a and 5.1.11. Broader command-family, occurrence and multi-target semantics remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Specified Extrude parity, deterministic mixed selections and creation/edit Cancel acceptance are complete for the active-Body workflow under 8.1.2b/8.1.5b (138 final passing checks). Extrude/Pad/Pocket use the same profile gate before and after startup; multiple profiles require explicit choice, invalid picks receive inline feedback. Trim Body/Isocline checks remain validated under 8.1.2a, 8.1.5a and 5.1.11. Combined Pattern creation/edit Cancel now restores original subelement selection and model state under 8.1.5c (149 distinct final checks). Pattern preselection parity and broader command-family, occurrence and multi-target semantics remain open.
 
 **Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 
@@ -4403,7 +4436,7 @@ reconciliation rules above to every entry.
 <a id="f032"></a>
 ### F032 — Consistent Apply/OK/Cancel
 
-**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Extrude/Pad/Pocket create/edit Cancel selection plus profile/Body Tip rollback is validated under 8.1.5b. Pattern Originals Clear/replacement Cancel and Undo/Redo is validated under 8.1.3g. Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
+**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Extrude/Pad/Pocket create/edit Cancel selection plus profile/Body Tip rollback is validated under 8.1.5b. Pattern Originals Clear/replacement Cancel and Undo/Redo is validated under 8.1.3g; original selection plus model rollback on creation/edit Cancel is validated under 8.1.5c. Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
 
 **Packages:** A07, U09 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
 

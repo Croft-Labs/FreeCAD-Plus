@@ -178,6 +178,105 @@ class TestPatternTaskPanel(unittest.TestCase):
         self.assertEqual(linear.Direction, direction)
         self.assertIn("Originals: 0", self.widget(QtGui.QLabel, "patternOriginalsStatus").text())
 
+    def selectionPaths(self):
+        return [(s.DocumentName, s.ObjectName, tuple(s.SubElementNames))
+                for s in Gui.Selection.getSelectionEx("*", 0)]
+
+    def testOriginalRowsHighlightByIdentityAndAllWithoutMutation(self):
+        self.base.Label = self.bump.Label = "Same label"
+        pattern = self.start()
+        self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+        Gui.Selection.addSelection(self.base)
+        originals = list(pattern.Originals)
+        linear, circular = pattern.PatternSettings
+        definition = (originals, linear.Direction, circular.Axis, pattern.Shape.Volume)
+        entries = self.widget(QtGui.QListWidget, "listWidgetFeatures")
+        self.assertEqual(entries.count(), 2)
+        self.base.ViewObject.Visibility = False
+        self.bump.ViewObject.Visibility = False
+        for obj in (self.base, self.bump):
+            row = next(i for i in range(entries.count()) if entries.item(i).data(QtCore.Qt.UserRole) == obj.Name)
+            entries.setCurrentRow(row)
+            self.assertEqual(Gui.Selection.getSelection(), [obj])
+            self.assertTrue(obj.ViewObject.Visibility)
+            self.assertEqual((list(pattern.Originals), linear.Direction, circular.Axis,
+                              pattern.Shape.Volume), definition)
+        entries.clearSelection()
+        self.widget(QtGui.QPushButton, "patternHighlightOriginals").click()
+        self.assertEqual(set(Gui.Selection.getSelection()), set(originals))
+        self.assertEqual(pattern.Originals, originals)
+        self.assertFalse(self.widget(QtGui.QPushButton, "buttonAddFeature").isChecked())
+        self.assertFalse(self.widget(QtGui.QPushButton, "buttonRemoveFeature").isChecked())
+
+    def testOriginalInspectionEndsDirectionPickingAndRestoresOnTypeSwitch(self):
+        pattern = self.start()
+        linear, circular = pattern.PatternSettings
+        direction = linear.Direction
+        self.requestDirectionPick()
+        self.widget(QtGui.QListWidget, "listWidgetFeatures").setCurrentRow(0)
+        self.assertEqual(Gui.Selection.getSelection(), [self.bump])
+        self.assertEqual(linear.Direction, direction)
+        self.assertEqual(pattern.Originals, [self.bump])
+        # Type changes must finish inspection before rebuilding the embedded editor.
+        self.switch(1)
+        axis = circular.Axis
+        self.widget(QtGui.QPushButton, "patternHighlightOriginals").click()
+        self.assertEqual(circular.Axis, axis)
+        self.assertEqual(pattern.Originals, [self.bump])
+        self.accept()
+        self.assertFalse(self.bump.ViewObject.Visibility)
+        self.assertTrue(pattern.ViewObject.Visibility)
+
+    def testOriginalInspectionVisibilityRestoresOnCancelAndAccept(self):
+        pattern = self.start()
+        self.accept()
+        self.assertFalse(self.bump.ViewObject.Visibility)
+        for accept in (False, True):
+            original = (self.bump.ViewObject.Visibility, pattern.ViewObject.Visibility)
+            self.assertTrue(pattern.ViewObject.doubleClicked())
+            self.widget(QtGui.QPushButton, "patternHighlightOriginals").click()
+            self.assertTrue(self.bump.ViewObject.Visibility)
+            self.assertFalse(pattern.ViewObject.Visibility)
+            if accept:
+                self.accept()
+            else:
+                Gui.Control.activeTaskDialog().reject()
+                Gui.updateGui()
+            self.assertEqual((self.bump.ViewObject.Visibility, pattern.ViewObject.Visibility), original)
+            self.assertEqual(pattern.Originals, [self.bump])
+            self.assertAlmostEqual(pattern.Shape.Volume, 8024)
+
+    def testCancelCreationRestoresOriginalSubelementSelectionAfterInspection(self):
+        Gui.Selection.addSelection(self.bump, "Face1")
+        selection = self.selectionPaths()
+        objects = {obj.Name for obj in self.doc.Objects}
+        pattern = self.start(False)
+        self.widget(QtGui.QPushButton, "patternHighlightOriginals").click()
+        self.widget(QtGui.QPushButton, "patternClearOriginals").click()
+        self.assertFalse(self.widget(QtGui.QPushButton, "patternHighlightOriginals").isEnabled())
+        Gui.Control.activeTaskDialog().reject()
+        Gui.updateGui()
+        self.assertEqual(self.selectionPaths(), selection)
+        self.assertEqual(self.body.Tip, self.bump)
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, objects)
+
+    def testCancelEditRestoresSelectionAndOriginalsAfterInspection(self):
+        pattern = self.start()
+        self.accept()
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(pattern, "Face1")
+        selection = self.selectionPaths()
+        self.assertTrue(pattern.ViewObject.doubleClicked())
+        self.widget(QtGui.QPushButton, "patternHighlightOriginals").click()
+        self.widget(QtGui.QPushButton, "patternClearOriginals").click()
+        self.setOccurrences(4)
+        Gui.Control.activeTaskDialog().reject()
+        Gui.updateGui()
+        self.assertEqual(self.selectionPaths(), selection)
+        self.assertEqual(pattern.Originals, [self.bump])
+        self.assertEqual(self.body.Tip, pattern)
+        self.assertAlmostEqual(pattern.Shape.Volume, 8024)
+
     def testFirstFieldThenFeaturePickingWithoutPreselection(self):
         pattern = self.start(False)
         combo = self.widget(QtGui.QComboBox, "patternType")

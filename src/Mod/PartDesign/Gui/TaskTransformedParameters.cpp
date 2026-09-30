@@ -36,6 +36,8 @@
 #include <App/Transactions.h>
 #include <App/Origin.h>
 #include <Base/Console.h>
+#include <Base/Tools.h>
+#include <Gui/Application.h>
 #include <Gui/Document.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/ViewProvider.h>
@@ -85,6 +87,7 @@ TaskTransformedParameters::TaskTransformedParameters(TaskMultiTransformParameter
 
 TaskTransformedParameters::~TaskTransformedParameters()
 {
+    restoreOriginalsVisibility();
     // make sure to remove selection gate in all cases
     Gui::Selection().rmvSelectionGate();
 
@@ -141,6 +144,15 @@ void TaskTransformedParameters::setupUI()
         ui->verticalLayout_2->addWidget(clearOriginalsButton);
         connect(clearOriginalsButton, &QPushButton::clicked, this, &TaskTransformedParameters::clearOriginals);
         connect(this, &TaskTransformedParameters::originalsChanged, this, &TaskTransformedParameters::updateOriginalsFeedback);
+        highlightOriginalsButton = new QPushButton(ui->groupFeatureList);
+        highlightOriginalsButton->setObjectName(QStringLiteral("patternHighlightOriginals"));
+        ui->verticalLayout_2->addWidget(highlightOriginalsButton);
+        connect(highlightOriginalsButton, &QPushButton::clicked, this, &TaskTransformedParameters::highlightOriginals);
+        connect(ui->listWidgetFeatures, &QListWidget::itemSelectionChanged, this, [this] {
+            if (!ui->listWidgetFeatures->selectedItems().isEmpty()) {
+                highlightOriginals();
+            }
+        });
     }
 
     ui->buttonGroupMode->setId(ui->radioTransformBody, static_cast<int>(Mode::WholeShape));
@@ -202,6 +214,58 @@ void TaskTransformedParameters::updateOriginalsFeedback()
     clearOriginalsButton->setText(tr("Clear"));
     clearOriginalsButton->setToolTip(tr("Clear selected features and start picking replacements"));
     clearOriginalsButton->setEnabled(!whole && count > 0);
+    highlightOriginalsButton->setText(tr("Highlight"));
+    highlightOriginalsButton->setToolTip(tr("Inspect the selected original, or all originals if no row is selected"));
+    highlightOriginalsButton->setEnabled(!whole && count > 0);
+}
+
+void TaskTransformedParameters::highlightOriginals()
+{
+    auto pattern = getObject<PartDesign::Pattern>();
+    if (!pattern || pattern->TransformMode.getValue()
+        != static_cast<long>(PartDesign::Transformed::Mode::Features)) {
+        return;
+    }
+    Base::StateLocker inspecting(inspectingOriginals, true);
+    prepareOriginalsSelection();
+    exitSelectionMode();
+    const auto showForInspection = [this](App::DocumentObject* object, bool visible) {
+        if (auto view = Gui::Application::Instance->getViewProvider(object)) {
+            inspectionVisibility.emplace(object->getNameInDocument(), view->isVisible());
+            view->setVisible(visible);
+        }
+    };
+    showForInspection(pattern, false);
+    Gui::Selection().clearSelection();
+    const bool all = ui->listWidgetFeatures->selectedItems().isEmpty();
+    for (int row = 0; row < ui->listWidgetFeatures->count(); ++row) {
+        auto item = ui->listWidgetFeatures->item(row);
+        if (!all && !item->isSelected()) {
+            continue;
+        }
+        const auto name = item->data(Qt::UserRole).toString().toLatin1();
+        if (auto object = pattern->getDocument()->getObject(name.constData())) {
+            showForInspection(object, true);
+            Gui::Selection().addSelection(pattern->getDocument()->getName(), name.constData());
+        }
+    }
+}
+
+void TaskTransformedParameters::restoreOriginalsVisibility()
+{
+    if (inspectionVisibility.empty()) {
+        return;
+    }
+    if (auto pattern = getTopTransformedObject()) {
+        for (const auto& [name, visible] : inspectionVisibility) {
+            if (auto object = pattern->getDocument()->getObject(name.c_str())) {
+                if (auto view = Gui::Application::Instance->getViewProvider(object)) {
+                    view->setVisible(visible);
+                }
+            }
+        }
+    }
+    inspectionVisibility.clear();
 }
 
 void TaskTransformedParameters::clearOriginals()
@@ -215,6 +279,7 @@ void TaskTransformedParameters::clearOriginals()
     exitSelectionMode();
     setupTransaction();
     pattern->Originals.setValues({});
+    const QSignalBlocker blocker(ui->listWidgetFeatures);
     ui->listWidgetFeatures->clear();
     Q_EMIT originalsChanged();
     recomputeFeature();
@@ -234,6 +299,7 @@ void TaskTransformedParameters::insertWorkflowHeader(QWidget* widget)
 void TaskTransformedParameters::slotDeletedObject(const Gui::ViewProviderDocumentObject& Obj)
 {
     if (TransformedView == &Obj) {
+        restoreOriginalsVisibility();
         TransformedView = nullptr;
     }
 }
@@ -261,6 +327,7 @@ void TaskTransformedParameters::clearButtons()
         parentTask->clearButtons();
     }
     else {
+        restoreOriginalsVisibility();
         ui->buttonAddFeature->setChecked(false);
         ui->buttonRemoveFeature->setChecked(false);
     }
@@ -284,6 +351,7 @@ void TaskTransformedParameters::addObject(App::DocumentObject* obj)
 
 void TaskTransformedParameters::removeObject(App::DocumentObject* obj)
 {
+    const QSignalBlocker blocker(ui->listWidgetFeatures);
     const QString name = QString::fromLatin1(obj->getNameInDocument());
     for (int row = ui->listWidgetFeatures->count() - 1; row >= 0; --row) {
         if (ui->listWidgetFeatures->item(row)->data(Qt::UserRole).toString() == name) {
@@ -294,6 +362,9 @@ void TaskTransformedParameters::removeObject(App::DocumentObject* obj)
 
 bool TaskTransformedParameters::originalSelected(const Gui::SelectionChanges& msg)
 {
+    if (inspectingOriginals) {
+        return false;
+    }
     if (msg.Type == Gui::SelectionChanges::AddSelection
         && ((selectionMode == SelectionMode::AddFeature)
             || (selectionMode == SelectionMode::RemoveFeature))) {
@@ -393,6 +464,7 @@ void TaskTransformedParameters::onModeChanged(int mode_id)
     Mode const mode = static_cast<Mode>(mode_id);
 
     ui->groupFeatureList->setEnabled(mode == Mode::Features);
+    const QSignalBlocker blocker(ui->listWidgetFeatures);
     ui->listWidgetFeatures->clear();
     if (mode == Mode::Features) {
         for (auto* original : pcTransformed->getSortedOriginals()) {
@@ -409,6 +481,7 @@ void TaskTransformedParameters::onModeChanged(int mode_id)
 void TaskTransformedParameters::onButtonAddFeature(bool checked)
 {
     if (checked) {
+        restoreOriginalsVisibility();
         prepareOriginalsSelection();
         const QSignalBlocker blocker(ui->buttonAddFeature);
         ui->buttonAddFeature->setChecked(true);
@@ -450,6 +523,7 @@ void TaskTransformedParameters::checkVisibility()
 void TaskTransformedParameters::onButtonRemoveFeature(bool checked)
 {
     if (checked) {
+        restoreOriginalsVisibility();
         prepareOriginalsSelection();
         const QSignalBlocker blocker(ui->buttonRemoveFeature);
         ui->buttonRemoveFeature->setChecked(true);
@@ -479,6 +553,7 @@ void TaskTransformedParameters::onFeatureDeleted()
     std::erase(originals, original);
     setupTransaction();
     pcTransformed->Originals.setValues(originals);
+    const QSignalBlocker blocker(ui->listWidgetFeatures);
     ui->listWidgetFeatures->model()->removeRow(currentRow);
     Q_EMIT originalsChanged();
     recomputeFeature();
@@ -709,9 +784,28 @@ bool TaskDlgTransformedParameters::accept()
 
 bool TaskDlgTransformedParameters::reject()
 {
+    const auto originalSelection = selectionOnCancel;
+    const bool restore = restoreSelectionOnCancel;
     // ensure that we are not in selection mode
     parameter->exitSelectionMode();
-    return TaskDlgFeatureParameters::reject();
+    const bool rejected = TaskDlgFeatureParameters::reject();
+    if (rejected && restore) {
+        Gui::Selection().clearSelection();
+        for (const auto& item : originalSelection) {
+            if (!item.getObject()) {
+                continue;
+            }
+            if (item.getSubNames().empty()) {
+                Gui::Selection().addSelection(item.getDocName(), item.getFeatName());
+            }
+            else {
+                for (const auto& sub : item.getSubNames()) {
+                    Gui::Selection().addSelection(item.getDocName(), item.getFeatName(), sub.c_str());
+                }
+            }
+        }
+    }
+    return rejected;
 }
 
 #include "moc_TaskTransformedParameters.cpp"

@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <map>
+#include <Gui/Selection/SelectionObject.h>
+
 #include <Gui/ComboLinks.h>
 #include <Gui/DocumentObserver.h>
 #include <Gui/Selection/Selection.h>
@@ -205,6 +208,8 @@ private:
     void checkVisibility();
     void updateOriginalsFeedback();
     void clearOriginals();
+    void highlightOriginals();
+    void restoreOriginalsVisibility();
 
     /// Return the base object of the base transformed object (see getTopTransformedObject())
     // Either through the ViewProvider or the currently active subFeature of the parentTask
@@ -239,6 +244,9 @@ private:
     std::unique_ptr<Ui_TaskTransformedParameters> ui;
     QLabel* originalsStatus = nullptr;
     QPushButton* clearOriginalsButton = nullptr;
+    QPushButton* highlightOriginalsButton = nullptr;
+    std::map<std::string, bool> inspectionVisibility;
+    bool inspectingOriginals = false;
 };
 
 /// simulation dialog for the TaskView
@@ -253,10 +261,18 @@ public:
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
+    void setSelectionOnCancel(const std::vector<Gui::SelectionObject>& selection)
+    {
+        selectionOnCancel = selection;
+        restoreSelectionOnCancel = true;
+    }
 
 protected:
     TaskTransformedParameters* parameter = nullptr;
     TaskTransformedMessages* message = nullptr;
+private:
+    std::vector<Gui::SelectionObject> selectionOnCancel;
+    bool restoreSelectionOnCancel = false;
 };
 
 }  // namespace PartDesignGui

@@ -49,6 +49,10 @@ pattern settings, blocks empty acceptance and supports replacement, Cancel and
 Undo/Redo. Direction picking and Originals Add/Remove/Clear are checked in both
 transition directions: one selection changes only the intended role. These controls
 are scoped to the combined Pattern; legacy model/task regressions remain included.
+Additional F030/F031 checks inspect duplicate-label originals by identity, highlight
+all entries without model mutation, switch inspection/type/reference roles, restore
+visibility on OK/Cancel, and restore original subelement selections plus model state
+after creation/edit Cancel. General assembly occurrence behavior remains separate.
 
 ## Manual acceptance
 
@@ -64,11 +68,17 @@ are scoped to the combined Pattern; legacy model/task regressions remain include
 4. Add several features, remove them through the list and model selection, and re-add
    them. Try a feature in another Body and a downstream dependent feature; neither
    may become an original. Removing all originals must keep OK from accepting.
+   Give two originals the same label and select each list row: the correct object
+   must highlight without changing the pattern. Clear the row selection and click
+   Highlight to inspect all originals. Verify inspection ends direction picking.
 5. Toggle Whole body, then Selected features. Confirm the retained feature list returns.
    Change between reference selection and feature selection; verify only the intended
    selector responds and temporary geometry visibility is restored.
 6. Accept, double-click the Pattern, and confirm the same complete pane opens with
    its saved type. Edit dimensions and type, Cancel, then verify the original result.
+   Start with a face selected; inspect and clear Originals, then Cancel. Verify the
+   initial face selection returns for both creation and editing, with source/result
+   visibility restored according to the normal editor lifecycle.
    Repeat with OK, Undo, and Redo. Save/reopen and repeat both modes.
 7. Verify the toolbar/menu has one Pattern entry. Open existing Linear/Polar and
    MultiTransform documents and confirm their stored feature types and parameters

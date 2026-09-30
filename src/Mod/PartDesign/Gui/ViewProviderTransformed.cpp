@@ -36,10 +36,12 @@
 #include <Base/Console.h>
 #include <Base/Tools.h>
 #include <Gui/Application.h>
+#include <Gui/Control.h>
 #include <Gui/View3DInventor.h>
 #include <Gui/View3DInventorViewer.h>
 #include <Mod/Part/App/Tools.h>
 #include <Mod/PartDesign/App/FeatureMultiTransform.h>
+#include <Mod/PartDesign/App/FeaturePattern.h>
 
 #include "ViewProviderTransformed.h"
 #include "TaskTransformedParameters.h"
@@ -93,9 +95,21 @@ Gui::ViewProvider* ViewProviderTransformed::startEditing(int ModNum)
 
 bool ViewProviderTransformed::setEdit(int ModNum)
 {
+    const bool pattern = getObject<PartDesign::Pattern>() != nullptr;
+    auto existing = qobject_cast<TaskDlgTransformedParameters*>(Gui::Control().activeDialog());
+    const bool continuing = existing && existing->getViewObject() == this;
+    const auto selection = Gui::Selection().getSelectionEx(
+        "*", App::DocumentObject::getClassTypeId(), Gui::ResolveMode::NoResolve
+    );
     recomputeFeature(false);
 
-    return ViewProvider::setEdit(ModNum);
+    const bool started = ViewProvider::setEdit(ModNum);
+    if (started && pattern && ModNum == ViewProvider::Default && !continuing) {
+        if (auto task = qobject_cast<TaskDlgTransformedParameters*>(Gui::Control().activeDialog())) {
+            task->setSelectionOnCancel(selection);
+        }
+    }
+    return started;
 }
 
 void ViewProviderTransformed::attachPreview()

@@ -1,6 +1,28 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.3f-h, advancing F030/F032. Combined Pattern
+Latest product batch: phase 8, tasks 8.1.3i/8.1.5c, advancing F030-F032. Combined
+Pattern now inspects Originals rows by object identity, highlights all entries when
+no row is selected, isolates reference picking and restores temporary visibility.
+Creation/edit Cancel restores the original object/subelement selection and model.
+Both tasks preceded one successful native PartDesignGui Release build. Final
+acceptance: 149 distinct passing tests, zero remaining failures/errors/skips.
+Evidence: D:\Temp\Office-PC\freecad-plus-pattern-inspection-20260930, including
+build.log, grouped, final, visual, acceptance-summary.json and validated-identities.json.
+Initial evidence retains a test-fixture visibility baseline failure and a later
+inactivity timeout in Revolve (cause unconfirmed). The corrected fixture captures
+visibility before entering edit. A fresh process passed 82 Pattern/Revolve/Trim/
+Isocline checks, macro PASS, exit 0; 67 unchanged passing grouped checks are reused
+on the same native binaries. No second native build. All five changed source
+identities, staged test and native hashes match. PartDesignGui SHA256:
+70fc6c433231bbabe8c1041eee565f10c91201da119ef4f02a9de3611af7bafc.
+Three task-pane captures are readable; physical viewport/input/high-DPI remains
+open. The older executable stamp is not rebuilt-module identity. All 127 item
+specifications remain intact. No installer/release. Broader F030 command-family/
+disambiguation/occurrence and F032 Apply/repeat remain open. Next item-level focus:
+Pattern preselection parity and invalid/mixed-selection explanations under F031,
+grouped before the next build.
+
+Previous product batch: phase 8, tasks 8.1.3f-h, advancing F030/F032. Combined Pattern
 now shows Originals count/type/picking state, offers Clear with replacement recovery,
 and coordinates originals with the embedded direction picker so one pick cannot
 fill both roles. Whole body retains the selected-feature list and disables Clear.
@@ -17,7 +39,7 @@ capture caught an unfinished radio animation; allowing Qt to settle corrected
 the evidence without a product change or rebuild. Old executable version stamp
 is not rebuilt-module identity; no installer/release. Broad F030/F031 inspection/
 occurrence/disambiguation and physical gates, plus F032 Apply/repeat remain open.
-Next item-level focus: Pattern Originals row inspection and selection recovery.
+Its Pattern inspection/selection recovery follow-up is completed above.
 
 Previous product batch: phase 8, tasks 8.1.3d/e, advancing F030. Extrude/Pad/Pocket
 profile row inspection and Highlight activate Profile without changing references;
