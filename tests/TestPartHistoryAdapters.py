@@ -355,6 +355,54 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertAlmostEqual((delta - self.part.Placement.Rotation.multVec(
             App.Vector(0, 0, 6))).Length, 0, places=6)
 
+    def testReattachmentRepairsMissingFaceWithExplicitLocalPolicy(self):
+        from SketchReattachment import reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        identity = self.doc.LeftResult.BodyIdentity
+        offset = self.profile.AttachmentOffset
+        self.profile.AttachmentSupport = [(old, "Face99")]
+        self.doc.recompute()
+        self.assertIn("Invalid", self.profile.State)
+        with self.assertRaisesRegex(ValueError, "valid recomputed"):
+            reattach_planar(self.profile, new, "Face1", "preserve-world")
+        self.assertEqual(self.profile.AttachmentSupport[0][1], ("Face99",))
+        reattach_planar(self.profile, new, "Face1", "preserve-local")
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+        self.assertAlmostEqual(self.doc.LeftResult.Shape.Volume, math.pi * 4 * 3, places=6)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertIn("Invalid", self.profile.State)
+        self.assertEqual(self.profile.AttachmentSupport[0][1], ("Face99",))
+        self.doc.redo()
+        self.doc.recompute()
+        self.saveReopen("RepairedSupportProof")
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+        self.assertEqual(self.profile.AttachmentSupport[0][0], self.doc.RotatedPlane)
+        self.assertEqual(self.doc.LeftResult.BodyIdentity, identity)
+        self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+
+    def testReattachmentDoesNotCommitOrAbortCallerTransaction(self):
+        from SketchReattachment import reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        label = self.profile.Label
+        self.doc.openTransaction("Caller-owned edit")
+        self.profile.Label = "Uncommitted caller edit"
+        with self.assertRaisesRegex(ValueError, "current transaction"):
+            reattach_planar(self.profile, new, "Face1")
+        self.assertTrue(self.doc.HasPendingTransaction)
+        self.assertEqual(self.profile.Label, "Uncommitted caller edit")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+        self.doc.abortTransaction()
+        self.doc.recompute()
+        self.assertEqual(self.profile.Label, label)
+        reattach_planar(self.profile, new, "Face1")
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

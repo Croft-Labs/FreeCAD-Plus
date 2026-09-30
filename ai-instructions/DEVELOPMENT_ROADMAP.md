@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7c/d extend the test-only reattachment operation to explicit
+- Current batch: 11.7e/f prototype deliberate missing-face repair and protect
+  caller-owned transactions. Grouped validation: 32 passes, zero failures/errors/
+  skips; no native rebuild. Production repair UI and broad topology repair remain open.
+- Previous batch: 11.7c/d extend the test-only reattachment operation to explicit
   preserve-local/preserve-world policies, validated with rotated supports and a
   rotated parent part. Grouped validation: 30 passes, zero failures/errors/skips.
   No native rebuild; production editor and lost-support repair remain pending.
@@ -1862,6 +1865,24 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7d Prototype preserve-world reattachment by solving a compensating
   native attachment offset. Verify world translation/orientation, result position
   and identity, Undo/Redo, save/reopen and subsequent support movement.
+- [ X ] 11.7e Prototype deliberate repair of a missing planar face reference using
+  an explicit preserve-local replacement. Reject preserve-world for invalid sketch
+  state; verify repair, Undo back to failure, Redo and save/reopen with result identity.
+- [ X ] 11.7f Reject prototype reattachment while a caller-owned transaction is
+  pending, before mutation. Verify the caller's edit remains uncommitted and can be
+  aborted, followed by successful independent reattachment and Undo.
+
+Recovery/transaction evidence: `reattachment-recovery-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **32 PASS, zero
+failures/errors/skips** (11 capability, 16 adapter, five lineage checks). Macro PASS;
+process ended. Both tasks preceded grouped testing using engine source 2df76790b4.
+Prototype SHA256: `6A006AFD9AD8C585BCB06FA0CBEFD178199296DB1B3F5985861A7995DA7B5C81`.
+Test-only changes; no native rebuild, installed editor or release update. The
+fixture uses an unavailable Face99 reference on an existing support, not deleted
+object resurrection or ambiguous topology matching. Preserve-world requires valid,
+recomputed placement; missing-face recovery is explicitly preserve-local. Nested
+transactions are rejected, not integrated with a production task transaction.
+Consumer stale-shape/export policy, general support repair and GUI remain pending.
 
 Placement-policy evidence: `reattachment-policies-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **30 PASS, zero

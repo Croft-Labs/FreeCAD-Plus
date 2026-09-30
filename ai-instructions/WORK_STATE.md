@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7c/d complete as test-only placement-policy prototypes.
+Latest roadmap batch: 11.7e/f complete as test-only recovery/transaction prototypes.
+Explicit preserve-local repair of a missing face survives Undo/Redo and restore;
+preserve-world rejects invalid placement. Caller-owned transactions reject before
+mutation and retain their pending edits/abort behavior.
+Grouped validation: 32 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reattachment-recovery-20260930-batch.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Production repair UI, ambiguous/deleted support recovery, transaction integration
+and consumer stale-result policy remain pending; see roadmap 11.7 and ADR 001.
+
+Previous roadmap batch: 11.7c/d complete as test-only placement-policy prototypes.
 Preserve-local retains the full attachment offset across rotated supports;
 preserve-world solves a compensating offset with unchanged sketch parent. Rotated
 parent, Undo/Redo, restore and subsequent associative support motion pass.

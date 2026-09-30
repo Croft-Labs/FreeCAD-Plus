@@ -208,9 +208,16 @@ Thirty grouped checks pass, including a translated/rotated support in a rotated
 part, local-offset preservation, world position/orientation, Undo/Redo, restore and
 later associative support movement. Result position and identity remain intact.
 
-This does not establish reparenting, selected-occurrence placement, support deletion/
-repair, production transaction ownership or a task-pane UI/preview. The prototype
-caller must have no open transaction. Native attachment properties and document
+Roadmap 11.7e/f adds deliberate missing-face repair: an invalid Face99 attachment
+can be explicitly replaced with a valid planar face under preserve-local. Undo
+restores the invalid reference; Redo and restore recover the result with its identity.
+Preserve-world rejects invalid or touched sketch state rather than treating cached
+placement as current. Calls inside an existing transaction reject before mutation;
+the caller's edit and abort remain intact. Grouped evidence totals 32 passing checks.
+
+This does not establish reparenting, selected-occurrence placement, deleted support
+resurrection, ambiguous topology repair, production transaction integration or a
+task-pane UI/preview. Native attachment properties and document
 identities remain unchanged; the helper is not needed to recompute saved fixtures.
 
 Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
