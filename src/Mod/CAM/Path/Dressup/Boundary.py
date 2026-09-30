@@ -266,7 +266,7 @@ class PathBoundary:
         path = PathUtils.getPathWithPlacement(self.baseOp)
         if len(path.Commands) == 0:
             Path.Log.warning("No Path Commands for %s" % self.baseOp.Label)
-            return []
+            return Path.Path()
 
         tc = PathDressup.toolController(self.baseOp)
 

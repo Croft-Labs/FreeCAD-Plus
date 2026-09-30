@@ -156,6 +156,7 @@ class TestDressupPost(PathTestUtils.PathTestBase):
                     self.assertEqual(op.ModelDependencies, [])
             self.doc.recompute()
             self.assertTrue(all(not op.Path.Commands for op in operations))
+            self.assertTrue(all("Invalid" not in op.State for op in operations))
         finally:
             self.job.Model = model
             self.doc.recompute()
@@ -183,6 +184,42 @@ class TestDressupPost(PathTestUtils.PathTestBase):
             previous.Group = models
             self.job.Model = previous
             self.doc.removeObject(replacement.Name)
+            self.doc.recompute()
+
+    def testLeadGenerationFailureClearsCachedPath(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import LeadInOut
+
+        dressup = next(op for op in self.job.Proxy.allOperations()
+                       if isinstance(op.Proxy, LeadInOut.ObjectDressup))
+        self.assertTrue(dressup.Path.Commands)
+        with patch.object(LeadInOut.leadinout.LeadInOut, "generate",
+                          side_effect=RuntimeError("Deliberate lead failure")):
+            with self.assertRaisesRegex(RuntimeError, "Deliberate lead failure"):
+                dressup.Proxy.execute(dressup)
+        self.assertEqual(len(dressup.Path.Commands), 0)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+
+    def testDisabledLeadsCopyBaseWithoutGeneration(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import LeadInOut
+        from PathScripts import PathUtils
+
+        dressup = next(op for op in self.job.Proxy.allOperations()
+                       if isinstance(op.Proxy, LeadInOut.ObjectDressup))
+        original = dressup.LeadIn, dressup.LeadOut
+        try:
+            dressup.LeadIn = False
+            dressup.LeadOut = False
+            with patch.object(LeadInOut.leadinout.LeadInOut, "generate",
+                              side_effect=AssertionError("Disabled leads invoked generator")):
+                dressup.Proxy.execute(dressup)
+            self.assertEqual(dressup.Path.toGCode(),
+                             PathUtils.getPathWithPlacement(dressup.Base).toGCode())
+        finally:
+            dressup.LeadIn, dressup.LeadOut = original
             self.doc.recompute()
 
     def test003(self):

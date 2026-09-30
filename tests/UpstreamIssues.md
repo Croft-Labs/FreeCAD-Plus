@@ -268,4 +268,11 @@ TestCAMInvalidInputs, TestDressupPost and TestPostProcessor together. The native
 dressup fixture verifies clearing every collected path immediately and after model
 removal, then restored path/export generation; replacement also checks rebinding
 and dropping the old container link. Missing-model Lead-in/Lead-out diagnostics
-remain expected pending a separate fix; recovery must still pass.
+were resolved in 16.2l; the fixture now also requires no Invalid operation state.
+Recovery must still pass.
+
+For 16.2l/m/n also synchronize Dressup/Gui/LeadInOut.py and Dressup/Boundary.py.
+Run TestCAMInvalidInputs, TestDressupPost, TestPathLeadInOutGenerator and
+TestLinkingGenerator together. Tests cover empty nested input, generation exception
+clearing/recovery, and disabled-lead exact placed-path passthrough without generation.
+Two existing linking-generator skips are separate from passing checks.

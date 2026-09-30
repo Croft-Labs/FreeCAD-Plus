@@ -498,8 +498,9 @@ class ObjectDressup:
         return self.clearanceHeight is not None and self.safeHeight is not None
 
     def execute(self, obj):
-        if not obj.Base or not obj.Base.isDerivedFrom("Path::Feature") or not obj.Base.Path:
-            obj.Path = Path.Path()
+        # A failed generation must not leave a previous dressed path available.
+        obj.Path = Path.Path()
+        if not obj.Base or not obj.Base.isDerivedFrom("Path::Feature") or not obj.Base.Path.Commands:
             return
 
         if not PathDressup.baseOp(obj.Base).Active:
@@ -508,6 +509,7 @@ class ObjectDressup:
 
         if not obj.LeadIn and not obj.LeadOut:
             obj.Path = PathUtils.getPathWithPlacement(obj.Base)
+            return
 
         if obj.RadiusIn <= 0:
             obj.RadiusIn = 1

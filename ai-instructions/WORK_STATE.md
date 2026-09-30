@@ -1,6 +1,14 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 16.2j/k complete. Job.Model changes now rebind/clear nested
+Latest roadmap batch: 16.2l/m/n complete. Empty Lead-in/Lead-out and Boundary inputs
+now stop cleanly; lead generation clears stale paths before possible exceptions;
+disabled leads return the placed base path directly. cam-leads-20260929-verified
+records 40 passes, two existing linking skips, zero failures/errors. Missing-model
+nested fixture now stays empty without invalid dressup objects and recovers.
+Python-only synchronization, no native rebuild or GUI/machine acceptance. Broader
+consumer/dressup failure gates remain open; continue related grouped validation.
+
+Previous roadmap batch: 16.2j/k complete. Job.Model changes now rebind/clear nested
 base operations and dressup paths using allOperations. Native fixture removal and
 replacement/recovery checks pass, including restored export. cam-nested-20260929-batch
 records 90 passes, one existing skip, zero test failures/errors. Python-only install.

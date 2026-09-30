@@ -5,7 +5,10 @@
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2j/16.2k extend model-container invalidation/rebinding to
+- Current batch: 16.2l/m/n handle empty dressup inputs, failed lead generation and
+  disabled-lead passthrough. Grouped validation: 40 passes, two existing generator
+  skips, zero failures/errors. Python-only synchronization, no native build.
+- Previous batch: 16.2j/16.2k extend model-container invalidation/rebinding to
   nested CAM dressups and base operations. Grouped validation: 90 passes, one
   existing skip, zero test failures/errors; Python-only synchronization. Missing
   model diagnostics in Lead-in/Lead-out and general consumer gates remain open.
@@ -2079,6 +2082,28 @@ Installed Job.py matches source SHA256
 `57B42492F1E5CFCC4935D09CC40BCA469E2120B51C6E973C94FFA745FFDBDB33`;
 Python-only synchronization, no native build or
 GUI/machine acceptance. This closes the two bounded nested-fixture checks only.
+
+- [ X ] 16.2l Stop Lead-in/Lead-out processing when the base Path has no commands;
+  return a native empty Path from Boundary for empty input. Verify the nested
+  missing-model fixture stays empty without invalid dressup objects and recovers.
+- [ X ] 16.2m Clear a Lead-in/Lead-out result before generation, preventing a
+  generator exception from retaining old machining commands; verify recovery.
+- [ X ] 16.2n Return the placed base path immediately when both lead options are
+  disabled; verify exact G-code passthrough without invoking the lead generator.
+
+Dressup input batch: `cam-leads-20260929-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **40 PASS, two existing
+linking-generator skips, zero failures/errors** (11 invalid-input, seven dressup,
+nine lead-generator and 15 linking tests including the skips). Strict overall
+macro flag is false because of skips. The first run exposed Boundary returning a
+list for an empty path; correcting it allowed the strengthened native no-invalid-
+objects assertion to pass. Prior missing-model Lead-in/Lead-out diagnostics are
+resolved in this fixture; ordinary missing-model/empty-boundary log messages remain.
+Source and installed hashes: LeadInOut.py
+`9F70114D88B5EBAC91119BD2805326A5755C105528BE8811BC738F8FF03AFC63`;
+Boundary.py `88DE0133429769A10821AAFE7EE408696502FE4E059176345CD5F2F4AAA674DA`.
+Python-only synchronization into the existing fork build; no native build or
+GUI/machine acceptance. General dressup failure/consumer compatibility remains open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
