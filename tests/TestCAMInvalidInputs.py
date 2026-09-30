@@ -652,3 +652,69 @@ class TestCAMInvalidInputs(PathTestWithAssets):
             self.assertAlmostEqual(xs[-1], length)
             for start, end in zip([0] + xs, xs):
                 self.assertLessEqual(end - start, 1 + 1e-9)
+
+    def makeEntryDressup(self, kind):
+        from Path.Dressup.Gui import Dragknife, RampEntry
+        dressup = self.doc.addObject("Path::FeaturePython", kind)
+        if kind == "Dragknife":
+            Dragknife.ObjectDressup(dressup)
+            dressup.Base = self.op
+            dressup.offset = 1
+            dressup.pivotheight = 1
+            dressup.filterAngle = 30
+        else:
+            self.op.ToolController.HorizFeed = 100
+            self.op.ToolController.VertFeed = 50
+            self.op.ToolController.RampFeed = 50
+            RampEntry.ObjectDressup(dressup, self.op)
+            dressup.Proxy.setup(dressup)
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(dressup.Path.Commands)
+        return dressup
+
+    def testDragknifeMissingAndEmptyBaseClearAndRecover(self):
+        dressup = self.makeEntryDressup("Dragknife")
+        empty = self.doc.addObject("Path::Feature", "EmptyDragknifeBase")
+        for base in (None, empty):
+            dressup.Base = base
+            self.doc.recompute()
+            self.assertFalse(dressup.Path.Commands)
+            dressup.Base = self.op
+            self.doc.recompute()
+            self.assertTrue(dressup.Path.Commands)
+
+    def testDragknifeGenerationFailureClearsAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import Dragknife
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeEntryDressup("Dragknife")
+        with patch.object(Dragknife.PathUtils, "getPathWithPlacement",
+                          side_effect=RuntimeError("Deliberate dragknife failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testRampGenerationFailureClearsAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import RampEntry
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeEntryDressup("RampEntry")
+        with patch.object(RampEntry.RampEntry, "generate",
+                          side_effect=RuntimeError("Deliberate ramp failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)

@@ -363,6 +363,8 @@ class ObjectDressup:
         return (results, replace)
 
     def execute(self, obj):
+        # Discard the old machining result before validation or generation can fail.
+        obj.Path = Path.Path()
         newpath = []
         global currLocation
 

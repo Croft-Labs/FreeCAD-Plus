@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2ad/ae/af reject non-finite probe coordinates and invalid
+- Current batch: 16.2ag/ah clear Dragknife and Ramp Entry output before
+  validation/generation. Grouped validation: 52 passes, zero failures/errors/skips;
+  Python-only synchronization, no native rebuild.
+- Previous batch: 16.2ad/ae/af reject non-finite probe coordinates and invalid
   interpolation settings, and correct source-line subdivision counts. Grouped
   validation: 51 passes, zero failures/errors/skips; no native rebuild.
 - Previous batch: 16.2aa/ab/ac clear Z Correction caches, reject unusable probe
@@ -2312,6 +2315,28 @@ All three changes preceded grouped validation; Python-only synchronization into
 engine 2df76790b4, no native rebuild or release update. Spacing bounds apply to
 source lines before height correction; no adaptive corrected-surface chord-error
 claim is made. GUI/machine acceptance and broader consumer gates remain open.
+
+- [ X ] 16.2ag Clear Dragknife output before input checks/generation. Verify
+  missing/empty base cleanup, generation-failure native error/export rejection
+  and regeneration after correction.
+- [ X ] 16.2ah Clear Ramp Entry output before validation/generation. Verify
+  generator-failure native error/export rejection and recovery with valid feed
+  settings; run the inherited ramp-generator suite alongside nested postprocessing.
+
+Dragknife/Ramp batch: `cam-dragknife-ramp-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **52 PASS, zero
+failures/errors/skips**: 38 invalid-input/workflow checks (three new), seven nested
+postprocessing and seven ramp-generator checks. Macro PASS; process ended.
+Initial `cam-dragknife-ramp-20260930-batch` had 51 passes/one fixture failure:
+Ramp Entry correctly rejected zero fixture feeds. Explicit positive horizontal,
+vertical and ramp feeds resolved setup; no production validation was weakened.
+Source/development-build SHA256: Dragknife.py
+`C9AC7F3CF16FC374F9B07AB2EECE63F89E1B4A0971335DCFC01ED4E4B8945E13`;
+RampEntry.py `BD9A86983A17461E4F302947DCA48D7B6CA9B1BAFC71AB60084C8D1FC5FAF3B5`.
+Both implementations preceded grouped runtime validation. Python-only updates to
+engine 2df76790b4; no native rebuild, release update or GUI/machine acceptance.
+General dragknife geometry and skipped-consumer eager invalidation are not closed
+by these bounded failure/recovery checks; broader consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

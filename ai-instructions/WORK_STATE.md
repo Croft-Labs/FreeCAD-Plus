@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2ad/ae/af complete. Z Correction rejects non-finite probe
+Latest roadmap batch: 16.2ag/ah complete. Dragknife and Ramp Entry clear output
+before input validation/generation. Missing/empty Dragknife input and native
+failure/export rejection/recovery pass. Final grouped validation: 52 passes,
+zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-dragknife-ramp-20260930-verified.
+Initial zero-feed fixture correction and source/module hashes recorded in roadmap.
+Python-only synchronization; no native rebuild, GUI/machine acceptance or release
+update. Test process ended. Broader consumer gates remain open.
+
+Previous roadmap batch: 16.2ad/ae/af complete. Z Correction rejects non-finite probe
 coordinates and non-positive/non-finite interpolation settings, and uses the correct
 source-line subdivision point count. Grouped validation: 51 passes, zero failures/
 errors/skips in

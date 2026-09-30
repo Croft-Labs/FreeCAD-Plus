@@ -103,6 +103,17 @@ increase corrected 3D segment length; these tests do not claim adaptive chord er
 External file edits still require recompute; automatic filesystem monitoring and
 arbitrary probe-grid quality are not established by these tests.
 
+## Dragknife and Ramp Entry failure checks
+
+`tests/TestCAMInvalidInputs.py` covers Dragknife missing/empty base cleanup and
+injected generation failures for both Dragknife and Ramp Entry. Recompute must
+leave no old commands; generation failures must block postprocessing through native
+error state, and corrected inputs must regenerate/export. Run with nested dressup
+postprocessing and `CAMTests.TestPathRampEntryGenerator`. These bounded fixtures
+exercise failure handling and recovery, not general dragknife corner geometry or
+physical cutter clearance. Native recompute may still skip a downstream consumer
+when its producer fails; the shared export guard remains necessary.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,

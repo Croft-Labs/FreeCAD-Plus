@@ -201,6 +201,8 @@ class ObjectDressup:
             obj.setExpression("DressupStartDepth", f"{baseOp.Name}.StartDepth")
 
     def execute(self, obj):
+        # Discard the old machining result before validation or generation can fail.
+        obj.Path = Path.Path()
         if not obj.Base:
             obj.Path = Path.Path()
             return
