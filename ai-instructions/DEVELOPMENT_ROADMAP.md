@@ -2,12 +2,13 @@
 
 ## Current focus
 
-- Current batch: 7.1.3f attached-profile and 16.2a TechDraw dimension probes
-  complete. All 24 grouped history/intent/consumer checks pass in the existing fork;
-  no installed source or native build changed. These are bounded compatibility
-  proofs, not a production history UI or general topology-reference guarantee.
-  Next: split/merge lineage, missing/ambiguous drawing references, CAM path/FEM
-  consumers and production target discovery before the parent gates can close.
+- Current batch: 7.1.3g/7.1.3h planar split and explicit merge lineage proofs
+  complete. All 29 grouped checks pass; expected prototype failure now invalidates
+  dependent live geometry instead of leaving a stale merge. No installed module or
+  native build changed. General lineage and production error integration stay open.
+- Prior attachment/drawing batch: 7.1.3f and 16.2a passed 24 grouped checks.
+  Next: missing/ambiguous drawing references, CAM path/FEM consumers, mixed-part
+  identity and production target discovery before architecture selection.
 - Previous batch: 10.1 and 10.3a/10.3b reconciled contracts and proved transient
   proposals versus committed operation intent with 22 grouped passing checks.
 - Version 2 objectives remain in the [coverage register](#version-2-objective-coverage);
@@ -1193,6 +1194,13 @@ safe. Existing Phase 2/3 implementation and tests are inputs, not work to recrea
   with attachment offset, feeds explicit history results. Support moves propagate;
   Undo/Redo and save/reopen retain attachment links, geometry and result identity.
   This is one FlatFace attachment case, not arbitrary topology repair.
+- [ X ] 7.1.3g Prototype a real planar split with explicit negative/positive-X
+  roles and distinct child identities/provenance. Validate moving the split,
+  disappearance/reappearance and Undo; reject multiple solids per role explicitly.
+- [ X ] 7.1.3h Prototype a merge preserving an explicitly chosen primary BodyId,
+  or allocating a new identity when no primary continues. Persist parent identities;
+  validate reorder/rename, geometry edits, save/reopen, unavailable inputs, duplicate
+  identities and replaced source lineage without implicit retargeting.
 - [ X ] 7.1.4 Define stable feature and body identities, explicit input/output links, and merge/split/disappear/reappear lineage. [Identity contract](architecture/PART_HISTORY_CONTRACT.md#identity-and-dependencies-714) separates modeling/display order from the dependency graph; storage and runtime implementation remain pending.
 - [   ] 7.1.5 Document the chosen architecture, migration boundary and a small reference model; update product/UI specifications before production implementation.
 
@@ -1207,6 +1215,20 @@ results from both, without silently duplicating sketches or losing references.
   Retain native Body adapters and an explicit-result layer as candidates; reuse
   native geometry, App::Link, links and transactions. Record unresolved production
   selection/default, schema and consumer gates. This is not the final architecture.
+
+Split/merge batch evidence: **29 PASS**, zero failures/errors/skips, in
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\lineage-20260929-topology\results.json`.
+Five new lineage checks join the previous 24 checks. The initial invalid-source test
+found that a raised native recompute error skipped dependent evaluation, retaining
+stale merge geometry. The new test-only lineage proxies report expected input/kernel
+failures as ResultStatus/ErrorMessage with cleared outputs, allowing participating
+result consumers to invalidate themselves. A U-shaped single solid that splits into
+two solids on one side now fails explicitly; no arbitrary solid-index mapping occurs.
+`prototype-manifest.json` records hashes; SplitMergeProof.FCStd requires test modules.
+No installed source or native build changed. This is explicit planar-role lineage,
+not arbitrary topology correspondence, persisted revision history, Make Unique or a
+production error protocol. Parent architecture/consumer gates remain open; native
+error icons and nonparticipating consumers still require deliberate integration.
 
 Attachment/drawing batch evidence: **24 PASS**, zero failures/errors/skips, in
 `D:\Temp\Office-PC\freecad-plus-validation-20260928\attachment-drawing-20260929-final\results.json`.

@@ -102,12 +102,41 @@ numeric values provide evidence beyond a successful recompute status.
   compatibility or distribute them as `.cadprt`. Follow the approved native-format
   and best-effort legacy-conversion policy when designing the actual schema.
 
+## Bounded split/merge lineage and failure propagation
+
+[`ResultLineage.py`](../../tests/prototypes/ResultLineage.py) adds real planar
+half-space splits using native geometry already used by TrimAPI. Negative and
+positive X are explicit semantic roles, not solid enumeration. Child result UUIDs
+are allocated once and retain parent identity through parameter edits, disappearance
+and reappearance. A merge either continues a deliberately chosen primary identity
+or receives a new UUID; parent identities are retained separately from source order.
+
+Five [lineage tests](../../tests/TestResultLineage.py) cover geometry/identity,
+Undo/abort, source order/rename, save/reopen, missing output recovery, duplicate
+identities, replaced lineage and a U-shaped source yielding two solids on one side.
+The latter is rejected as ambiguous instead of allocating arbitrary child roles.
+All 29 grouped checks pass; roadmap 7.1.3g/h owns the evidence location and hashes.
+
+A material integration finding: raising an expected producer error caused native
+recompute to skip downstream adapters, retaining old merge geometry. In these new
+proxies only, expected ValueError/OCCError instead records Failed/ErrorMessage and
+empty live outputs while completing native execution, so downstream adapters can
+clear their geometry. Unexpected exceptions still use native error handling. This
+is not a general solution for native GUI error icons, all consumers, export, or CAM;
+production must expose failure explicitly and test those integration boundaries.
+
+No production API/schema is selected. This proof is limited to one same-part solid,
+a fixed X-normal split and at most one solid per side. It does not implement generic
+shape correspondence, revision-history storage, cross-document remapping, arbitrary
+role reassignment, Make Unique or topology reference repair. Existing BodyResult and
+native transactions/property links are reused; no application module was installed.
+
 ## Remaining decision gates and consumers
 
 Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
 
-- Compare true merge/split lineage, ambiguous role changes and downstream reference
-  repair, including invalid feature input and cycles.
+- Extend the explicit planar split/primary-merge proof to general lineage, ambiguous
+  role changes and downstream reference repair, including invalid input and cycles.
 - Exercise changing/removed attachment topology, sheets, mixed definition/occurrence
   content and independent copies beyond the single planar attachment/local-cut proofs.
 - Check missing/ambiguous TechDraw references after topology changes, CAM path invalidation, FEM

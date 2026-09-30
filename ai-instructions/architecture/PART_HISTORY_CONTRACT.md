@@ -130,7 +130,8 @@ Subsequent batches implemented native Body and explicit-result adapters under
 found/corrected, native persistence evidence and remaining decision gates.
 
 Remaining before an architecture choice: extend the bounded adapter comparison;
-prove semantic split/merge identity, mixed definition/occurrence content,
+extend the bounded explicit planar split/primary-merge proof to general lineage,
+mixed definition/occurrence content,
 general attachment/topology changes and remaining drawing/CAM/FEM/Draft consumers.
 One assembly-local cut, transformed input placements and empty Draft/CAM job-model
 refresh are now proven. A later batch also proves one planar attached profile and

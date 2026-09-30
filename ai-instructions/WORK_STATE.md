@@ -1,6 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 7.1.3f and 16.2a complete; 24 grouped checks pass in
+Latest roadmap batch: 7.1.3g/h complete; 29 grouped checks pass in
+lineage-20260929-topology under the existing external validation root. New test-only
+ResultLineage.py implements planar side roles and explicit-primary/new-ID merges.
+Expected producer errors initially left stale downstream geometry; status/empty-output
+propagation fixes the bounded prototype chain. No installed module or native build.
+No test process remains. General lineage, native error/UI integration and broader
+consumer safety remain open. Next: mixed definitions, reference repair, CAM paths/FEM
+and production architecture decisions. Roadmap and ADR 001 retain evidence/limits.
+
+Earlier roadmap batch: 7.1.3f and 16.2a complete; 24 grouped checks pass in
 attachment-drawing-20260929-final under the existing external validation root.
 Independent FlatFace attachment on a rotated plane propagates support movement;
 TechDraw projected radius follows source edits, Undo/Redo and save/reopen.
