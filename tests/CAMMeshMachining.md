@@ -86,6 +86,18 @@ guard is unchanged and independently covered by invalid-input tests.
 This validates the inherited mapping operation, not a new
 simultaneous-multiaxis workflow or physical machine/post compatibility.
 
+## Z Correction probe validity checks
+
+`tests/TestCAMInvalidInputs.py` creates an isolated four-point probe grid with a
+constant 0.5 mm correction and verifies the corrected cutting height. It covers
+missing files, insufficient/collinear probe data, a valid grid too small for the
+path, interpolation exceptions, error-state export rejection, and repaired-input
+recovery. Explicitly clearing the probe filename retains the existing uncorrected
+placed-base behavior and clears the old surface. A specified but unusable probe
+file must never silently reuse an older surface or export an uncorrected fallback.
+External file edits still require recompute; automatic filesystem monitoring and
+arbitrary probe-grid quality are not established by these tests.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,

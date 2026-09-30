@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2x/y/z complete. Axis Map clears failed conversion output
+Latest roadmap batch: 16.2aa/ab/ac complete. Z Correction clears stale results,
+rejects unusable specified probe files and blocks uncorrected fallback outside the
+probe area. Empty filename deliberately retains placed-base passthrough. Grouped
+validation: 48 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-zcorrect-20260930-batch.
+Native constant-offset grid, failure/export rejection and recovery pass. Hash and
+external-file recompute limitation recorded in roadmap. Python-only synchronization;
+no native rebuild, GUI/machine acceptance or release update. Test process ended.
+
+Previous roadmap batch: 16.2x/y/z complete. Axis Map clears failed conversion output
 and requires positive finite radius. Rotary-post snapshot tests now recompute and
 validate inputs before restoring their prepared output; production export guard
 unchanged. Final grouped validation: 44 passes, zero failures/errors/skips in

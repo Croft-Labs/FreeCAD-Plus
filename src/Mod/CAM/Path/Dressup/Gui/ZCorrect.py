@@ -105,15 +105,14 @@ class ObjectDressup:
         return points[0].Z
 
     def _getinterpSurface(self, obj):
+        # A missing/replaced probe file must not reuse a previous surface.
+        obj.interpSurface = Part.Shape()
         filename = obj.probefile
         if not filename:
             return
 
         if not os.path.isfile(filename):
-            Path.Log.warning(
-                translate("CAM_DressupZCorrect", "Probe file not found: %s") % filename
-            )
-            return
+            raise ValueError(translate("CAM_DressupZCorrect", "Probe file not found: %s") % filename)
 
         with open(filename, "r") as file:
             lines = file.readlines()
@@ -141,12 +140,10 @@ class ObjectDressup:
             )
 
         if len(pointlist) < 3:
-            obj.interpSurface = Part.Shape()
-            Path.Log.warning(
+            raise ValueError(
                 translate("CAM_DressupZCorrect", "Not enough points (%s) got from file: %s")
                 % (len(pointlist), filename)
             )
-            return
 
         cols = list(zip(*pointlist))
         xlist = list(sorted(set(cols[0])))
@@ -174,16 +171,17 @@ class ObjectDressup:
         try:
             intSurf.interpolate(array)
             obj.interpSurface = intSurf.toShape()
-        except Exception:
+        except Exception as exc:
             obj.interpSurface = Part.Shape()
-            Path.Log.warning(
+            raise ValueError(
                 translate("CAM_DressupZCorrect", "Failed to create surface from probe data: %s")
                 % filename
-            )
+            ) from exc
 
         return
 
     def execute(self, obj):
+        obj.Path = Path.Path()
         if not obj.Base or not obj.Base.isDerivedFrom("Path::Feature") or not obj.Base.Path:
             obj.Path = Path.Path()
             return
@@ -232,18 +230,16 @@ class ObjectDressup:
 
                 for point in pointlist:
                     if not bb.isInside(FreeCAD.Vector(point.x, point.y, 0)):
-                        obj.Path = path
                         pointStr = f"({round(point.x, 3)}, {round(point.y, 3)})"
                         bbMin = f"XMin={round(bb.XMin, 3)}, YMin={round(bb.YMin, 3)}"
                         bbMax = f"XMax={round(bb.XMax, 3)}, YMax={round(bb.YMax, 3)}"
-                        Path.Log.warning(
+                        raise ValueError(
                             translate(
                                 "CAM_DressupZCorrect",
                                 "Path point %s is outside of the probe area %s, %s",
                             )
                             % (pointStr, bbMin, bbMax)
                         )
-                        return
 
                     offset = self._bilinearInterpolate(surface, point.x, point.y)
                     commandparams = {"X": point.x, "Y": point.y, "Z": point.z + offset}

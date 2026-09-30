@@ -516,3 +516,83 @@ class TestCAMInvalidInputs(PathTestWithAssets):
                         checked += 1
                 self.assertGreater(checked, 0)
                 self.assertEqual(self.op.Path.toGCode(), original)
+
+    def makeZCorrect(self):
+        import os
+        from pathlib import Path as FilePath
+        from Path.Dressup.Gui import ZCorrect
+        probe = FilePath(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "zcorrect-probe.txt"
+        probe.write_text("-10 -10 0.5\n40 -10 0.5\n-10 40 0.5\n40 40 0.5\n")
+        dressup = self.doc.addObject("Path::FeaturePython", "ZCorrect")
+        ZCorrect.ObjectDressup(dressup)
+        dressup.Base = self.op
+        dressup.probefile = str(probe)
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(dressup.Path.Commands)
+        self.assertFalse(dressup.interpSurface.isNull())
+        self.assertTrue(any(c.Name == "G1" and abs(c.Parameters.get("Z", -99) - 4.5) < 1e-6
+                            for c in dressup.Path.Commands))
+        return dressup, probe
+
+    def testZCorrectMissingProbeClearsSurfaceAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup, probe = self.makeZCorrect()
+        original = dressup.Path.toGCode()
+        dressup.probefile = str(probe) + ".missing"
+        self.doc.recompute()
+        self.assertTrue(dressup.interpSurface.isNull())
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.probefile = str(probe)
+        self.doc.recompute()
+        self.assertEqual(_wrap_op(dressup).Path.toGCode(), original)
+
+    def testZCorrectInvalidProbeAndOutsideAreaBlockOutput(self):
+        from Path.Post.PostList import _wrap_op
+        dressup, probe = self.makeZCorrect()
+        original_data = probe.read_text()
+        # Insufficient input, unusable collinear grid, and a valid but too-small grid.
+        for data in ("0 0 0\n", "0 0 0\n1 0 0\n2 0 0\n",
+                     "0 0 0\n1 0 0\n0 1 0\n1 1 0\n"):
+            probe.write_text(data)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertIn("Invalid", dressup.State)
+            self.assertFalse(dressup.Path.Commands)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            probe.write_text(original_data)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testZCorrectInterpolationFailureClearsAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Post.PostList import _wrap_op
+        dressup, probe = self.makeZCorrect()
+        with patch.object(dressup.Proxy, "_bilinearInterpolate",
+                          side_effect=RuntimeError("Deliberate interpolation failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testZCorrectClearingProbeUsesUncorrectedPlacedBase(self):
+        from PathScripts import PathUtils
+        dressup, probe = self.makeZCorrect()
+        self.op.Placement = App.Placement(App.Vector(1, 2, 3), App.Rotation())
+        dressup.probefile = ""
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(dressup.interpSurface.isNull())
+        self.assertEqual(dressup.Path.toGCode(),
+                         PathUtils.getPathWithPlacement(self.op).toGCode())

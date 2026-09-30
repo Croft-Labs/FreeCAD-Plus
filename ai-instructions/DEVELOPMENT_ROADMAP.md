@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2x/y/z clear failed Axis Map results, validate positive
+- Current batch: 16.2aa/ab/ac clear Z Correction caches, reject unusable probe
+  files and block out-of-area fallback. Grouped validation: 48 passes, zero
+  failures/errors/skips; Python-only synchronization, no native rebuild.
+- Previous batch: 16.2x/y/z clear failed Axis Map results, validate positive
   finite radius and update rotary-post snapshot fixtures for the export guard.
   Grouped validation: 44 passes, zero failures/errors/skips; no native rebuild.
 - Previous batch: 16.2u/v/w fix Mirror placed passthrough, failure-safe output
@@ -2260,6 +2263,31 @@ rotary fixture SHA256: `1E721C0B4752F3207BA2EC54C83E776E0D32EC8CB71D1E90309E5111
 Both production changes preceded grouped validation; only Python was synchronized
 into the existing engine (2df76790b4). No native build, new release, GUI/machine
 acceptance or new simultaneous-multiaxis capability. General consumer gates remain open.
+
+- [ X ] 16.2aa Clear Z Correction output before execution and the previous
+  interpolation surface before reading probe data. Verify missing-file and
+  interpolation-failure cleanup, corrected-data recovery, and explicit empty-
+  filename placed-base passthrough without an old surface.
+- [ X ] 16.2ab Raise native errors for specified missing files, insufficient
+  probe points and interpolation construction failures instead of silently
+  returning the base path. Verify export rejection and valid-grid recovery.
+- [ X ] 16.2ac Reject path points outside the probe area rather than replacing
+  corrected output with the uncorrected base. Verify an undersized valid grid
+  blocks output/export and a sufficient grid restores the expected correction.
+
+Z Correction batch: `cam-zcorrect-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **48 PASS, zero
+failures/errors/skips**: 32 invalid-input/workflow checks (four new), seven nested
+postprocessing checks and nine rotary-post regressions. Native four-point grid
+fixture produces the expected +0.5 mm cutting correction; missing, insufficient,
+collinear, out-of-area and injected interpolation-error cases reject/recover.
+Macro PASS; test process ended. Source/development-build ZCorrect.py SHA256:
+`A0E10B279DA11FA09BD05FA04061A4D8307D83ED2B633F5699E0A376AC37D3C0`.
+All three changes preceded grouped validation. Python-only synchronization into
+engine 2df76790b4; no native rebuild, GUI/machine acceptance or release update.
+An explicitly empty filename retains uncorrected placed-base behavior. External
+probe-file changes require explicit recompute; automatic file monitoring and
+arbitrary probe-grid quality remain outside this bounded validation.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
