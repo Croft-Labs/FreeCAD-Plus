@@ -76,8 +76,9 @@ was installed. The earlier eight-check batch remains historical evidence.
   output role. Never retarget by label, tree position or raw solid index. Result
   nodes depend on producers; producers do not depend on their result registries.
 - **Selection/defaults:** retain current input collectors in existing commands.
-  New Body versus automatic Add (7.4.8) and modifier-selection policy remain open;
-  neither prototype silently chooses a production default.
+  Version 2 resolves 7.4.8 as creation-time suggestions with explicit saved intent;
+  ordinary modifier selection coexists with active accumulating collectors. See
+  [ADR 002](ADR_002_CREATION_INTENT.md); production migration remains pending.
 - **Transactions:** use native document transactions for definitions, results and
   identities together. The checked prototype abort is not native GUI acceptance.
 - **Persistence:** use disposable `.FCStd` fixtures only for this comparison.

@@ -1,6 +1,16 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch (2026-09-29): 7.1.3c/7.1.3d/7.1.3e complete. Test-only
+Latest roadmap batch: 10.1 and 10.3a/b complete. Product/UI/guideline contracts
+now match version 2; ADR 002 defines transient suggestions versus saved intent.
+Test-only OperationIntent.py supports bounded single-part solid proposals and
+committed operations with explicit native links. All 22 grouped checks pass in
+operation-intent-20260929-final under the existing external validation root.
+No application module installed, native build or GUI acceptance. No test process
+remains. Next: Phase 7 lineage/consumers, production target discovery/access scope,
+scale-aware contact behavior and real task preview lifecycle. Keep 10.3 open.
+See roadmap/ADR 002 for evidence and limits; batch related work before builds.
+
+Earlier roadmap batch (2026-09-29): 7.1.3c/7.1.3d/7.1.3e complete. Test-only
 history adapters now handle tilted profiles and cross-part placement dependencies;
 a native assembly-local cut preserves the shared definition and other occurrence.
 Production Draft clones clear stale Shape when all sources become empty or the

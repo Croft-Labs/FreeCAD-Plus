@@ -20,7 +20,7 @@ to execute the entire backlog. Explicit user instructions and the root
   dated planning reference, not a second live status ledger. Its startup assignment,
   suggested filenames and unaudited assumptions do not restart this project.
 - [Product specification](PRODUCT_SPEC.md#future-architecture-direction) owns
-  intended product contracts and unresolved defaults; the
+  intended product contracts and planned creation defaults; the
   [UI specification](UI_UX_SPEC.md) owns interaction details.
 - [Development guide](DEVELOPMENT_GUIDE.md) owns verified commands and build policy.
   Reuse completed evidence when applicable; batch costly builds as requested.
@@ -29,9 +29,10 @@ to execute the entire backlog. Explicit user instructions and the root
 - `.cadprt` is future native-format direction, not the current file format or a
   completed migration. Establish schema, compatibility and recovery gates before
   changing save behavior. Keep original legacy files intact.
-- The supplied New Body default and modifier-selection proposals require explicit
-  reconciliation with existing automatic-target and task-collector requirements
-  before implementation. Do not silently reinterpret existing documents or inputs.
+- The owner-adopted version 2 [creation/interaction contracts](PRODUCT_SPEC.md#planned-creation-and-interaction-contracts)
+  supersede unconditional New Body defaults. Creation suggestions are visible and
+  overridable; saved operations/targets never change through recompute inference.
+  Preserve operation-first layout, alias presets and active input collectors.
 - Market research and access dates below are the supplied document's assertions,
   not independently reverified during this adoption. Refresh for decisions that
   require current evidence; do not infer commercial success from feature counts.
@@ -45,7 +46,9 @@ to execute the entire backlog. Explicit user instructions and the root
 5. Follow explicit user decisions. These guidelines refine execution; they do not authorize replacing the agreed product scope with the agent's preferences.
 6. Continue work in the existing fork. Audit its actual branch, upstream base, patches, dependencies, and build before estimating or changing it.
 
-The supplied `.cadprt` proposal is the future native-format direction. References to `.FCStd` in the earlier roadmap remain relevant to legacy import and compatibility; they do not require retaining that extension for new native documents.
+The adopted `.cadprt` policy is the future native engineering-format direction. References to `.FCStd` in the earlier roadmap remain relevant to legacy import and compatibility; they do not require retaining that extension for new native documents.
+
+The current desktop-core plan is free of charge without activation, subscriptions or paid feature gates. Optional future revenue and naming evaluation are not implementation mandates. See the product specification for this contract.
 
 ## 2. Product objective and first audience
 
@@ -162,7 +165,7 @@ When an upstream edit makes a reference ambiguous, report it and offer repair. A
 Keep capabilities, default choices, and storage implementation distinct.
 
 - Support part-owned history and a part definition containing both geometry and child occurrences.
-- Preserve the requested New Body behavior and explicit Unite/Add, Subtract, and other supported modes. Test common single-solid tasks before proposing changes to that default.
+- Apply the product specification's creation-time New Body/Unite suggestion policy and explicit supported operations. Do not resurrect the superseded unconditional default or infer new intent when editing/recomputing.
 - Persist the intended operation and target references; do not resolve targets from whichever body happens to be active when reopening or recomputing.
 - A conceptual tool body need not become an unnecessary permanent document object. Choose its representation through the ownership/history ADR.
 - Treat full/reference/empty representations separately from suppression, loading, and BOM participation.

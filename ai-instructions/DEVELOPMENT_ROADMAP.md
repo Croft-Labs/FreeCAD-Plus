@@ -2,11 +2,14 @@
 
 ## Current focus
 
-- Planning update: version 2 objectives are now mapped in the
-  [coverage register](#version-2-objective-coverage) and tasks 10-17. Preserve the
-  implementation evidence below; new portfolio items are pending, not completed.
-  Reconcile owning specifications in 10.1 before dependent workflow changes.
-- Active batch: Phase 7 placement/occurrence/consumer comparison, 2026-09-29.
+- Current batch: 10.1 contract reconciliation and 10.3a/10.3b bounded creation
+  proposal/saved-intent proofs complete. All 22 grouped native checks pass; no
+  application module or native build changed. The prototype is not a new GUI.
+  Next: Phase 7 lineage/consumer gates and production target discovery, access scope
+  and real Extrude/Revolve preview lifecycle before 10.3 can close.
+- Version 2 objectives remain in the [coverage register](#version-2-objective-coverage);
+  the expanded portfolio is pending except for specifically evidenced subtasks.
+- Previous batch: Phase 7 placement/occurrence/consumer comparison, 2026-09-29.
   Completed 7.1.3c/7.1.3d/7.1.3e: transformed inputs, an assembly-local cut,
   and a production fix for stale Draft clone/CAM job-model geometry.
   All 88 grouped history, Draft and CAM checks pass in the existing application;
@@ -1476,7 +1479,7 @@ the full objective is unverified; `Partial` points to existing bounded evidence.
 Depends on applicable Phase 7 decisions; presentation prototypes can proceed only
 when they preserve existing semantics. These tasks extend Phase 8, not replace it.
 
-- [   ] 10.1 Reconcile PRODUCT_SPEC, UI_UX_SPEC, guidelines and ADRs with version 2:
+- [ X ] 10.1 Reconcile PRODUCT_SPEC, UI_UX_SPEC, guidelines and ADRs with version 2:
   intelligent suggestions, guided/direct entry, aliases, selection rules, free-core
   commitment and engineering-document scope. Keep current implementation distinct
   from future requirements; retain the operation-first field and indexed CAM scope.
@@ -1496,6 +1499,24 @@ when they preserve existing semantics. These tasks extend Phase 8, not replace i
   and geometry. Persist accepted targets/mode; edited features initialize from saved
   intent and fail/repair rather than infer a new operation. Keep Tools is explicit;
   temporary tool geometry need not become a permanent body.
+- [ X ] 10.3a Prototype creation suggestions for single solids in one part:
+  no/one/multiple candidates, explicit contact review, invalid/empty geometry,
+  duplicate candidates and exclusion of cross-part/occurrence targets.
+- [ X ] 10.3b Prototype committed New Body/Unite/Subtract/Intersect with concrete
+  links. Validate explicit New Body override, changed-intersection failure without
+  retargeting, Undo/Redo, aborted target removal and native save/reopen.
+
+Batch evidence: [ADR 002](architecture/ADR_002_CREATION_INTENT.md) records the
+accepted boundary, alternatives and limits. **22 PASS**, zero failures/errors/skips,
+from seven new operation-intent checks plus 15 existing history/clone checks in
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\operation-intent-20260929-final\results.json`.
+An initial fixture translation was corrected to test overlap instead of face contact;
+no failed application fix is hidden by this correction. `prototype-manifest.json`
+records source hashes. No installed source update or native build was needed.
+Implementation is test-only: no production selection service, tolerance hysteresis,
+multi-target execution, semantic lineage or GUI acceptance is claimed. Task 10.3,
+Phase 7 architecture gates and the full guided workflow remain open.
+
 - [   ] 10.4 Retain searchable Pad/Pocket/Revolution/Groove shortcuts as presets
   into shared Extrude/Revolve validation and editing; Pocket/Groove select Subtract
   and request a valid target. Preserve legacy adapters until conversion is supported.

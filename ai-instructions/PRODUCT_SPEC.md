@@ -145,14 +145,43 @@ and validation records above are not declarations that these changes exist.
 - Preserve drawing, CAM, FEM and relevant Draft consumers through ownership changes.
   Prove units, transforms, dependency invalidation, undo and persistence.
 
-Detailed candidate contracts and inventory remain available in the
-[supplied baseline](archive/FREECAD_PLUS_DEVELOPMENT_ROADMAP.md), sections 3 and 6.
-These two interactions need reconciliation before their implementation: the supplied
-**New Body by default** versus the earlier automatic Add target proposal in 7.4,
-and modifier-based general/Sketcher selection versus REQ-004's accumulating
-feature input collector. Keep capabilities and context-specific defaults distinct;
-do not silently discard the earlier requirements. Record the resulting decision
-and update the affected UI contracts before changing behavior.
+### Planned creation and interaction contracts
+
+The [active version 2 inventory](DEVELOPMENT_ROADMAP.md#version-2-objective-coverage)
+supersedes the archived baseline. These are requirements, not installed behavior.
+
+- At creation, suggest New Body when no eligible body intersects; suggest Unite
+  only for one eligible target with a valid union. Multiple eligible targets require
+  deliberate selection. Invalid contact/Boolean results require corrective guidance.
+  Target eligibility respects work-part ownership, occurrence/edit context, reference
+  access and geometry. Intersection with another component alone never authorizes
+  modifying that component. Explicit New Body, Unite, Subtract and Intersect choices
+  take precedence wherever supported. Keep Tools is an explicit option.
+- Distinguish inference from commitment. Update uncommitted suggestions coherently
+  without oscillation near tolerance boundaries. Once chosen, preserve the user's
+  mode/targets. Store accepted operation and target identities. Editing/recompute
+  uses saved intent and reports invalid/missing references; it never reruns a
+  heuristic to silently switch target or operation.
+- Guided/direct entry and Pad/Pocket/Revolution/Groove aliases share one model,
+  validation and transaction path. Pocket/Groove preset Subtract. Guidance changes
+  neither geometry semantics nor saved types. Keep legacy editing adapters pending
+  explicit supported conversion, and preserve the operation-first task layout.
+- General/Sketcher plain picking replaces, Ctrl toggles/adds and Shift extends by
+  documented context. Window picking can collect a group. An active feature input
+  collector retains REQ-004's deliberate accumulation; leaving it restores ordinary
+  selection. Inference suppression uses a separate nonconflicting shortcut.
+- One Sketcher eligibility service distinguishes structural applicability from
+  solver proof and Valid/Already Applied/Redundant/Conflicting/Unsupported/Unverified.
+  No guessed conflicts, duplicate constraints, silent constraint deletion or live
+  mutation by trials; stale results are discarded and commit revalidates.
+- The desktop core remains free of charge for the foreseeable future, without
+  subscription, activation or paid feature gates. Optional hosted services are not
+  prerequisites for local modeling. A distinct public name remains an evaluation,
+  not an approved rename; stable format identity stays independent of branding.
+- `.cadprt` is an engineering container for supported CAD, assemblies, drawings,
+  CAM, FEM and other workbench data, not one solid per file. Required capabilities,
+  identity, units, transforms and external dependencies must survive round trips;
+  unknown required content must be preserved safely or refused, never dropped.
 
 ## Open questions
 

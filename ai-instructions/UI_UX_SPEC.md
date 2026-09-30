@@ -31,8 +31,40 @@ of silently resetting it. Subtract requires a suitable base solid; keep the task
 and explain an unavailable operation. Preview and validation must reflect the selected
 operation, and Cancel restores the original feature definition. Existing supported
 intersection behavior must remain accessible where applicable; adding New Body or
-other operation modes is a separate scope decision. These planned interactions satisfy
+other operation modes belongs to the planned part-level workflow below. These planned interactions satisfy
 REQ-008/009; implementation and acceptance are tracked in roadmap milestone 3.6.
+
+### Planned guided part-level workflow (not installed)
+
+Operation remains the first field. Guidance advances through unresolved profile/
+region, magnitude/direction, operation/target review and confirmation without moving
+that field. Expert preselection and direct numeric entry skip satisfied steps.
+Changing an earlier input keeps unrelated valid values; advanced controls collapse
+without hiding operation, targets, extent, units or consequential warnings.
+
+Display an inferred suggestion with its reason and highlighted target(s), distinct
+from explicit user choice. No eligible intersection suggests New Body; one valid
+eligible union suggests Unite; several candidates require deliberate selection.
+Invalid contact/union, inaccessible references and missing subtraction targets show
+corrective feedback and cannot silently commit. New Body remains selectable even
+with overlap. Keep Tools is explicit where supported. Suggestions can refresh only
+until explicit choice; near-contact behavior must avoid mode oscillation. Editing
+loads saved mode/targets and never silently changes them after an extent edit.
+
+Pad and additive Revolution route into shared Extrude/Revolve additive entry;
+Pocket/Groove route into Subtract. Guided/direct paths share preview, validation,
+Apply/OK/Cancel, handles and transactions. Guidance preferences are separate from
+model properties; existing create/edit compatibility remains until migration passes.
+
+Ordinary/Sketcher selection uses plain replace, Ctrl toggle/add and documented Shift
+extension, plus window selection. Active feature collectors explicitly show their
+accumulation mode; their existing multi-pick behavior remains. Auto-inference
+suppression has a nonconflicting shortcut. Shared eligibility controls hide
+structurally inapplicable constraints, disable proven conflicts with reasons and
+highlighted causes, and distinguish existing, redundant, unsupported and unverified
+states. The near-cursor palette uses the same service as menus/toolbars/shortcuts,
+with stable ordering, keyboard access, an off preference and a reachable pointer
+corridor/dismissal delay. Trials cannot remove constraints; commit revalidates.
 
 ## Screen index
 
