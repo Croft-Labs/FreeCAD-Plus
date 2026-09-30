@@ -236,11 +236,15 @@ Use the isolated existing-build macro procedure above with
 `tests/TestCAMInvalidInputs.py`. The test generates a real SurfaceScan toolpath,
 removes the job model or tool controller, explicitly executes the operation and
 requires an empty Path. Restoring the input must generate cutting commands again.
-This checks execution-time invalidation, not automatic dependency scheduling.
+The original two cases check execution-time invalidation. Three added cases use
+normal document recompute for width edits, empty-source removal/restoration and
+save/reopen of an operation lacking ModelDependencies. They establish automatic
+scheduling for this bounded native whole-model SurfaceScan fixture.
 
 The fix is shared Python `Path/Op/Base.py`; synchronize that source file to the
 matching validation build before running. Group it with TestPlanarSurfaceOp,
 TestMeshMachining, TestIssueSurfaceAvoidance and TestPathOpDeburr. No native compile
 is required. Preserve the frozen-job early return; do not represent this check as
-aggregate-job/export safety or proof that all upstream failures schedule execution.
+export safety or proof that all upstream failures schedule execution. Current
+Job.Operations is an App::DocumentObjectGroup, not an aggregate Path cache.
 Results and matching installed-module hash belong to the roadmap's batch record.

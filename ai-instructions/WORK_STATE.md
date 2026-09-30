@@ -1,6 +1,16 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 16.2b/c complete. Production CAM Path/Op/Base.py clears
+Latest roadmap batch: 16.2d/e complete. Production CAM Base.py binds hidden native
+ModelDependencies links on execution and restore; normal document recompute now
+propagates source edits and empty-source recovery in the SurfaceScan fixture.
+72 grouped checks pass in cam-dependencies-20260929-final. Installed/source SHA256:
+8F38E250CD73C0B1BF8754BF64CA4879BF509D35C40620520212F780A8ECCC4C.
+No native build or test process remains. Current Operations container is a plain
+group, not an aggregate Path cache. Export guards, skipped failed producers, replaced
+Model containers and broader reference/consumer graphs remain open. Next: targeted
+remaining downstream gates; batch related changes before any expensive build.
+
+Earlier roadmap batch: 16.2b/c complete. Production CAM Path/Op/Base.py clears
 old Path before validation can return for missing model or tool controller, after
 the existing frozen-job guard. Both defects retained 43 commands before correction;
 69 grouped checks pass in cam-invalid-inputs-20260929-verified. Installed Python

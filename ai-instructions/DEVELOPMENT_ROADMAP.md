@@ -5,11 +5,14 @@
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2b/16.2c fix CAM paths surviving execution with missing job
-  models or tool controllers. All 69 grouped CAM checks pass; production Python
-  Path/Op/Base.py synchronized to the existing fork, no native rebuild.
-  Automatic scheduling, aggregate/export invalidation and broader failed-source
-  consumers remain open; these checks explicitly execute the operation.
+- Current batch: 16.2d/16.2e add explicit CAM job-model dependencies and restore
+  them for older saved operations. All 72 grouped CAM checks pass; production Python
+  synchronized to the existing fork without a native build. Normal document recompute
+  now handles model edits and empty-source recovery in the SurfaceScan fixture.
+  Export guards, failed producers, replaced job Model containers and full consumer
+  compatibility remain open.
+- Prior batch: 16.2b/16.2c fixed stale paths on explicitly requested execution with
+  missing models/tools, with 69 grouped checks. The new batch addresses scheduling.
 - Prior mixed/unique batch: 12.1a/12.2a passed 32 grouped architecture checks.
 - Previous batch: 7.1.3g/h planar split/primary-merge lineage passed 29 checks.
 - Prior attachment/drawing batch: 7.1.3f and 16.2a passed 24 grouped checks.
@@ -1969,6 +1972,30 @@ This establishes clearing on execution and recovery, not automatic execution aft
 all history edits, aggregate-job/export invalidation or native failed-producer safety.
 Task 16.2 and the broader CAM dependency gates remain open. See the
 [regression procedure](../tests/UpstreamIssues.md#cam-invalid-input-paths-roadmap-162b162c).
+
+- [ X ] 16.2d Add hidden native ModelDependencies links to the job model group
+  and its geometry for whole-model operations without explicit Base picks. Prove
+  document recompute regenerates after model-width edits and clears/rebuilds paths
+  when the source becomes empty/returns, without manually touching/executing the op.
+- [ X ] 16.2e Restore those links for an older saved operation lacking the property;
+  save/reopen and a later empty source must still invalidate the path automatically.
+
+CAM dependency batch: the empty-source case reproduced **43 stale commands** even
+with 16.2b/c, because the operation was not scheduled. Shared ObjectOp now binds
+ModelDependencies on execution and document restore, preserving existing feature
+identities/properties and using additive native LinkList metadata. **72 PASS**, no
+failures/errors/skips, in
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-dependencies-20260929-final\results.json`.
+Coverage: five invalid-input/dependency cases, 18 PlanarSurface, 22 mesh/tab,
+18 avoidance and nine Deburr checks. Source/installed Base.py SHA256:
+`8F38E250CD73C0B1BF8754BF64CA4879BF509D35C40620520212F780A8ECCC4C`.
+`module-manifest.json` records matching hashes. Python-only install, no native build.
+The initial probe assumed an aggregate Operations.Path; current Job.setupOperations
+creates App::DocumentObjectGroup, so that assertion was corrected to inspect real
+operation paths. No aggregate-cache or postprocessor safety claim follows from it.
+Remaining: failed upstream producers that skip execution, replacing the job's Model
+container, arbitrary selection/occurrence graphs, export guards and frozen-job policy.
+The restore fixture is native FCStd; no cadprt or upstream compatibility is asserted.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

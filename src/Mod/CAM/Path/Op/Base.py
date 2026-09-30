@@ -650,6 +650,7 @@ class ObjectOp:
 
         self.setEditorModes(obj, features)
         self.opOnDocumentRestored(obj)
+        self._bindModelDependencies(obj, PathUtils.findParentJob(obj))
 
     def dumps(self):
         """__getstat__(self) ... called when receiver is saved.
@@ -1229,6 +1230,18 @@ class ObjectOp:
             return False
 
     @waiting_effects
+    def _bindModelDependencies(self, obj, job):
+        if job and getattr(job, "Model", None):
+            # Whole-model operations also need geometry dependencies when no
+            # explicit Base is picked and stock dimensions stay unchanged.
+            if not hasattr(obj, "ModelDependencies"):
+                obj.addProperty("App::PropertyLinkList", "ModelDependencies", "Base",
+                                "Job model dependencies for recomputation")
+                obj.setEditorMode("ModelDependencies", 2)
+            dependencies = [job.Model] + list(job.Model.Group)
+            if obj.ModelDependencies != dependencies:
+                obj.ModelDependencies = dependencies
+
     def execute(self, obj):
         """execute(obj) ... base implementation - do not overwrite!
         Verifies that the operation is assigned to a job and that the job also has a valid Base.
@@ -1259,6 +1272,8 @@ class ObjectOp:
         # early. A missing model/tool must not leave old machining commands live.
         if hasattr(obj, "Path"):
             obj.Path = Path.Path()
+
+        self._bindModelDependencies(obj, job)
 
         from Path.Main.HoldingTab import bind_operation
 
