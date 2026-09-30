@@ -1254,6 +1254,12 @@ class ObjectTagDressup:
 
     @waiting_effects
     def processTags(self, obj):
+        # Direct task callers need the same stale-output protection as execute.
+        obj.Path = Path.Path()
+        self.solids = []
+        if not obj.Base:
+            raise ValueError("Select a base path before processing holding tags")
+        PathDressup.requireCurrent(obj.Base)
         tagID = 0
         if logger.getLevel() == Path.Log.Level.DEBUG:
             for tag in self.tags:
@@ -1296,8 +1302,15 @@ class ObjectTagDressup:
 
     def setXyEnabled(self, triples):
         logger.track()
-        if not self.pathData:
-            self.setup(self.obj)
+        self.obj.Path = Path.Path()
+        self.tags = []
+        self.solids = []
+        self.pathData = None
+        if not self.obj.Base:
+            raise ValueError("Select a base path before editing holding tags")
+        PathDressup.requireCurrent(self.obj.Base)
+        if self.setup(self.obj) is None:
+            raise ValueError("Select a valid profile path before editing holding tags")
         positions = []
         disabled = []
         for i, (x, y, enabled) in enumerate(triples):

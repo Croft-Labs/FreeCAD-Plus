@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2au/av guard Boundary2 and holding-tag regeneration against
+- Current batch: 16.2aw/ax guard holding-tag direct processing and position edits.
+  Grouped validation: 62 passes, zero failures/errors/skips; failed direct generation
+  clears output, stale inputs preserve stored positions. Python staging only;
+  no native rebuild or release update.
+- Previous batch: 16.2au/av guard Boundary2 and holding-tag regeneration against
   invalid/unrecomputed dependencies. Grouped validation: 60 passes, zero failures/
   errors/skips. Native skipped-recompute caches remain export-blocked; explicit
   generation clears/rejects them. No native rebuild or release update.
@@ -3221,6 +3225,22 @@ Tags.py `A63513E05806E8C9DC90A40271900233B1EB042E6588DEDAF18FF6C9EDA511C9`;
 Boundary2.py `AC903F5E164F68D766ACB096F573E892A5CD3D72F7ECB08A518CCFFAE722FD7C`.
 Python-only staging into engine 2df76790b4; no native rebuild, release, physical GUI
 or machine acceptance. Direct task callbacks outside execute remain separate audit scope.
+
+- [ X ] 16.2aw Protect direct holding-tag processTags calls: clear old output/solid
+  previews and require current base inputs before generation. Verify a createPath
+  exception leaves empty output and a later direct call regenerates successfully.
+- [ X ] 16.2ax Refresh path data for setXyEnabled and reject stale/missing/unsupported
+  base inputs before replacing saved positions. Verify failed upstream dependencies
+  preserve Positions/Disabled, clear output/caches and allow correction after repair.
+
+Direct-tag edit evidence: `cam-tag-direct-edit-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **62 PASS, zero failures/errors/
+skips** (57 CAM invalid-input/workflow, five tag geometry checks). Both changes
+preceded one grouped run; macro PASS and process ended. Source/staged Tags.py SHA256:
+`A29DEF69355820C5D8D1482226D774031C5C8AA223E94A4EC3BF4EEC5C6FF383`.
+The regression invokes the native proxy methods directly; it is not physical task-panel
+acceptance. Native skipped-recompute cache behavior recorded in 16.2au/av is unchanged.
+Python-only staging into engine 2df76790b4; no native rebuild, release or machine test.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

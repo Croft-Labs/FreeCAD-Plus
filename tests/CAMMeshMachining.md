@@ -209,3 +209,10 @@ Explicit dressup execution must then raise for the invalid dependency and clear
 output. Repairing the producer must restore generation/export. These checks cover
 `execute` input readiness; they do not establish automatic cache clearing during
 skipped native execution or validate every direct task-panel callback.
+
+
+Direct holding-tag method checks additionally inject createPath failure through
+processTags, verify empty output/solid preview data and successful retry, and call
+setXyEnabled with a failed upstream dependency. Saved Positions/Disabled must remain
+unchanged on that rejection; after repair the new position generates a usable path.
+These are native proxy-method checks, not physical task-panel input acceptance.

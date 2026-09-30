@@ -1078,3 +1078,38 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.doc.recompute()
         self.assertNotIn("Invalid", dressup.State)
         self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testHoldingTagsDirectProcessingFailureClearsOutputAndRecovers(self):
+        from unittest.mock import patch
+        base, dressup = self.makeHoldingTags()
+        with patch.object(dressup.Proxy, "createPath", side_effect=RuntimeError("Direct tag failure")):
+            with self.assertRaisesRegex(RuntimeError, "Direct tag failure"):
+                dressup.Proxy.processTags(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        self.assertEqual(dressup.Proxy.solids, [])
+        self.assertTrue(base.Path.Commands)
+        dressup.Proxy.processTags(dressup)
+        self.assertTrue(dressup.Path.Commands)
+        self.assertTrue(dressup.Proxy.tags)
+
+    def testHoldingTagPositionEditRejectsStaleInputBeforeChangingPositions(self):
+        base, dressup = self.makeHoldingTags()
+        producer = self.attachFailingDressupInput(base)
+        positions = list(dressup.Positions)
+        disabled = list(dressup.Disabled)
+        producer.Fail = True
+        self.doc.recompute()
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.setXyEnabled([(12, 0, True)])
+        self.assertEqual(dressup.Positions, positions)
+        self.assertEqual(dressup.Disabled, disabled)
+        self.assertFalse(dressup.Path.Commands)
+        self.assertEqual(dressup.Proxy.tags, [])
+        self.assertEqual(dressup.Proxy.solids, [])
+        self.assertIsNone(dressup.Proxy.pathData)
+        producer.Fail = False
+        self.doc.recompute()
+        dressup.Proxy.setXyEnabled([(12, 0, True)])
+        self.assertAlmostEqual(dressup.Positions[0].x, 12)
+        self.assertTrue(dressup.Path.Commands)
+        self.assertTrue(dressup.Proxy.tags)
