@@ -2,6 +2,9 @@
 
 ## Current focus
 
+- Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
+  expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
+  before treating a broad objective as complete; implementation evidence is unchanged.
 - Current batch: 16.2b/16.2c fix CAM paths surviving execution with missing job
   models or tool controllers. All 69 grouped CAM checks pass; production Python
   Path/Op/Base.py synchronized to the existing fork, no native rebuild.
@@ -1318,6 +1321,9 @@ See 7.4.8 and [baseline adoption](#planning-baseline-adoption). Implementation i
 - [   ] 7.4.1 Extend the existing Extrude and Revolve task workflows to start in an empty part without a declared/active Body. Keep Operation as the first field, followed by profile, target/result controls and parameters.
 - [   ] 7.4.2 For Add with automatic targeting, create a new solid body when the generated solid has no valid volumetric overlap with an existing eligible solid. With exactly one eligible intersecting target, preview adding to that target.
 - [   ] 7.4.3 If multiple bodies intersect, show and highlight candidate targets; require an explicit target set or New Body choice. Never choose a target by incidental tree order or visibility.
+  Specify supported multi-target cuts, trims and other operations as one feature with an
+  explicit target set, per-target results and deterministic lineage. This is broader
+  than selecting a single target; the single-target prototypes do not complete it.
 - [   ] 7.4.4 Provide an explicit New Body override even when geometry overlaps. For Subtract and Intersect, require valid target bodies and report a nonintersecting/empty result rather than creating an unintended body.
 - [   ] 7.4.5 Define tangency, face/edge contact, coincident geometry, tolerances, disconnected profile regions, sheet results and multi-solid outputs. Make automatic decisions inspectable in the preview.
 - [   ] 7.4.6 Persist target intent and body lineage. Commit concrete operation and target identities. Recompute must not rerun creation inference. When an edit removes the required intersection, report failure/repair instead of switching operation, target or body identity.
@@ -1343,6 +1349,12 @@ feature in the same complete task pane. Repeat the body-creation cases with Revo
 - [   ] 7.5.4 Add suppress/unsuppress with explicit downstream status. Distinguish suppression, visibility, inactive setup and failed recompute.
 - [   ] 7.5.5 Preview deletion effects and offer valid dependent-feature handling. Provide broken-reference repair and Replace Input within the complete feature editor.
 - [   ] 7.5.6 Keep feature edits, target changes, body creation/removal and history-position changes atomic for Cancel and Undo/Redo; recover from recompute failures without displaying stale success.
+
+- [   ] 7.5.7 Add controlled recompute: automatic/manual update modes, deferred
+  updates and targeted recomputation. Show stale/blocked dependents and the first
+  failing input; provide a deliberate update action. Deferred results must not be
+  treated as current by export, CAM or downstream analysis. Test switching modes,
+  queued edits, failure recovery, cancellation and save/reopen status.
 
 ### [   ] 7.6 Preserve documents and external consumers
 
@@ -1391,10 +1403,24 @@ implementation or mark its unfinished validation complete through this plan.
 ### [   ] 8.1 Standardize the complete feature task
 
 - [   ] 8.1.1 Define one shared task order: operation/type, input collectors, target bodies, geometry parameters, direction/extents, preview and acceptance. Hide only genuinely inapplicable controls.
+  Name collectors by purpose: Profile, Axis, Target Bodies, Guides and Limits. Each
+  collector highlights its assigned geometry. Preselection and selection after invoking
+  the command must produce equivalent definitions, with the same editable inputs on
+  reopen.
 - [   ] 8.1.2 Apply command-first selection and identical create/edit coverage to the Phase 3 audit, including profile/section/path/axis replacement after reopening a feature.
 - [   ] 8.1.3 Standardize named selection collectors with add/remove/clear, viewport/tree picking, compatible-type filters, chain/region selection and visible invalid-reference feedback.
 - [   ] 8.1.4 Standardize signed offsets, adjacent direction buttons, one/two-sided and symmetric modes, units and expressions. Preserve parameters by meaning when switching operation or type.
+  Cover distance, symmetric, two-sided, through-all, to-face and offset-from-face
+  extents where the command supports them; keep extent semantics distinct from the
+  existing sketch-plane start offset. Specify shared solid/surface and Boolean/target
+  conventions for Sweep and Loft.
 - [   ] 8.1.5 Add consistent live-preview and error states; make Cancel restore geometry, visibility and selection. Define Apply/repeat behavior separately from OK so repeated creation does not create accidental features.
+
+- [   ] 8.1.6 Make previews responsive with cancellable computation, progress
+  feedback and reduced-cost previews before final computation. Clearly distinguish
+  provisional geometry from committed results; cancellation restores the previous
+  model, and a late preview result cannot overwrite newer inputs. Integrate with
+  16.5's thread-safety/result-commit rules before background document work.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -1417,6 +1443,8 @@ implementation or mark its unfinished validation complete through this plan.
 - [   ] 8.4.1 Define a coherent Modeling command set across current Part/Part Design boundaries. Route by valid inputs/results rather than requiring users to change workbenches to find equivalent operations.
 - [   ] 8.4.2 Add searchable command names and familiar aliases, contextual right-click actions, predictable double-click editing and discoverable shortcuts; retain legacy names for scripts and compatibility.
 - [   ] 8.4.3 Define viewport manipulators for direction, extent, offset and placement that update the same task properties and expressions as numeric controls.
+  Handles include lengths, angles, offsets and radii, with exact numeric entry using the
+  same properties. Dragging must not bypass expressions, validation or cancellation.
 - [   ] 8.4.4 Add consistent face/edge/body/reference selection filters, hide/show/isolate and preview colors. Verify keyboard focus, accessibility, high DPI and selection restoration.
 - [   ] 8.4.5 Run end-to-end modeling scenarios with the user and record friction points before replacing additional standard commands or making the new interface the default.
 
@@ -1435,6 +1463,43 @@ specific interactions with the user before detailed implementation.
 - [   ] 9.6 Define named configurations/variants for dimensions and feature suppression, including persistence, downstream drawings/CAM and recompute cost, before exposing configuration controls.
 - [   ] 9.7 Build representative end-to-end examples: shared-sketch multi-body modeling, imported-part editing, assembly/drawing updates and two-sided machining. Record each product area?s independent acceptance and compatibility gates.
 
+
+<a id="detailed-inventory-reconciliation"></a>
+## Detailed candidate inventory reconciliation
+
+The owner supplied a further 13-section candidate inventory in `Pasted text.txt`
+and requested missing specifications here. Its concrete behaviors now refine the
+owning tasks below; this is a planning update, not completed implementation or a
+new agent startup instruction. UI/Feature/Core labels describe likely scope, not
+verified effort. Existing completion evidence and stable task IDs are unchanged.
+
+Resolve older wording against established decisions: use creation-time suggestions
+with saved explicit intent, preserve the first Operation field and active collectors,
+retain the approved draft-angle convention, use `.cadprt` with best-effort legacy
+import, and keep required two-sided/indexed CAM and holding tabs. The candidate
+inventory does not supersede these with a fixed New Body default, guaranteed upstream
+compatibility, different angle semantics or three-axis-only machining. Its embedded
+citation placeholders are not verified sources or imported implementation evidence.
+
+| Supplied objective area | Owning roadmap tasks |
+| --- | --- |
+| 1. Part structure and ownership | 7.1, 7.3, 7.4 (including multi-target execution), 12.1, 12.2 |
+| 2. Assembly and feature navigators | 7.2, 7.5, 10.6 |
+| 3. Instances, references and reuse | 12.1-12.3, 12.6-12.8 |
+| 4. Consistent command interface | 8.1, 8.2, 8.4.1, 10.2-10.4, 13.2 |
+| 5. Selection and viewport | 8.4.4, 10.4, 10.5 |
+| 6. Sketch creation and constraints | 11.1-11.6 |
+| 7. Solid modeling and feature editing | 8.4.3, 13.1, 13.5-13.7 |
+| 8. Curves and surfaces | 13.1-13.4, 15.2 |
+| 9. Movement and assembly positioning | 10.7, 12.4-12.6 |
+| 10. Interpart relationships/reliability | 7.1.4, 7.5.5-7.5.7, 12.5 |
+| 11. Mesh and CAM | Phase 6, 14.1-14.4, 16.2 |
+| 12. Inspection, drawings and downstream | 15.1-15.5 |
+| 13. Performance, files and maintainability | 8.1.6, 12.8, 15.6, 16.1, 16.5, 16.6 |
+
+Completion of a broad heading requires its detailed behaviors and relevant gates;
+a narrow prototype or an existing approximate command is not evidence for the whole
+objective. Reuse existing backend capabilities and retain explicit unsupported cases.
 
 <a id="version-2-objective-coverage"></a>
 ## Version 2 objective coverage and delivery boundaries
@@ -1568,20 +1633,39 @@ Phase 7 architecture gates and the full guided workflow remain open.
   and request a valid target. Preserve legacy adapters until conversion is supported.
   Add expanded/searchable command catalog, shortcut palette and navigation presets
   without flooding contextual palettes. Track retirement of temporary UI adapters.
+  Search must recognize FreeCAD, NX and SolidWorks terminology and route aliases to the
+  same command. Navigation presets include mouse behavior, chosen rotation center, zoom-
+  to-selection and orthographic sketch orientation.
 - [   ] 10.5 Define shared scoped selection: plain click replaces, Ctrl adds/toggles,
   Shift has documented range/extension semantics; separate sketch picks accumulate
   with modifiers, window picking can collect a group. Integrate existing task
   collectors without losing deliberate collection state. Add Select Other, entity
   filters, tangent/connected-chain rules, window/crossing and restored hide/isolate.
   Keep auto-inference suppression shortcuts nonconflicting; verify keyboard/DPI use.
+  Specify filters for points, edges, faces, bodies, components, sketches and features;
+  scope choices are active part, selected component and whole assembly. Select Other
+  cycles overlapping/obscured candidates with a preview. Intent rules include tangent
+  chains, connected edges, complete loops, same-radius faces and feature-owned faces.
+  Window selection requires full enclosure; crossing selection includes intersected
+  entities. Allow documented configurable modifier policies while retaining the adopted
+  defaults and explicit collector mode; do not silently reinterpret clicks.
 - [   ] 10.6 Extend 7.2 with separate Assembly and Feature Navigator tabs, optional
   simultaneous docking, explicit work/display part, status columns, contributing-body
   filters, comments, folders and dependency highlights. Display grouping never
   changes ownership, transforms or valid history order.
+  Columns explicitly include visibility, suppression, errors, source file, reference set
+  and modification status. Feature Navigator shows the active work part while Assembly
+  Navigator retains component hierarchy. Body filtering supports all part features or
+  only contributors to selected bodies. Named groups/folders, comments, type filters and
+  input/downstream highlights must remain organizational rather than ownership changes.
 - [   ] 10.7 Add shared Move/Copy with point-to-point, translation/rotation,
   coordinate-system/axis alignment, movable triad, snapping and local/global context.
   Distinguish one-time placement from a persistent assembly relationship; validate
   occurrence scope, exact numeric results, preview, Cancel, Undo and restore.
+  Allow relocating the manipulator to a vertex, geometric center, datum or inferred
+  point. Include typed offsets, arbitrary-axis rotation and snapping in global/local
+  coordinates. Present move here once and maintain this relationship as distinct
+  actions, with a preview of the affected occurrence.
 
 Gate G4: simple part/assembly creation, edits, precise moves and recovery survive
 save/reopen. Guided/direct entry and aliases produce equivalent semantics. Test
@@ -1614,6 +1698,11 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   driving/reference dimensions from construction/reference geometry conversion.
   Show remaining degrees of freedom and conflict/redundancy diagnostics with
   deliberate, undoable repair that preserves intended design relationships.
+  Smart Dimension infers length, angle, radius, diameter or spacing from selected
+  geometry. Numeric entry while drawing covers lines, rectangles, circles and slots.
+  Degrees-of-freedom display highlights unconstrained entities and remaining movement
+  directions. Constraint repair previews proposed removals/replacements and their
+  effects before an explicit undoable commit.
 - [   ] 11.5 Extend associative external projection and true plane intersections:
   curve/plane points versus face/plane curves, with source highlighting and explicit
   projection/intersection choice. Cover tangent, coplanar, disjoint and multiple
@@ -1621,6 +1710,10 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [   ] 11.6 Complete regions, gap/duplicate/self-intersection diagnostics and
   trim/extend improvements; add constraint-preserving copy/paste, blocks, reusable
   profiles and sketch patterns as separate increments.
+  Sketch repair additionally detects tiny segments and overlapping geometry. Power
+  trim/extend supports dragging across unwanted segments while retaining valid
+  constraints where possible and reporting losses. Region picking selects closed areas
+  inside a larger sketch without requiring the whole sketch as the profile.
 
 Gate G5: solver trials cannot mutate live sketches; redundant/conflicting candidates
 remain distinct and invalid suggestions cannot commit. Validate T12, inference/no
@@ -1644,6 +1737,11 @@ partial evidence, not completion of these production workflows.
   Part/Component with explicit associative/independent choices. Remap internal
   references and identity for independent copies while preserving provenance;
   occurrence placement stays local. Validate replacement and multi-assembly reuse.
+  Occurrence-local overrides explicitly include placement, visibility, color and
+  representation; editing one override must not rewrite the shared definition or another
+  occurrence. Component replacement preserves placement and recoverable mate/joint
+  bindings, with unresolved relationships exposed for repair. Promoting selected bodies
+  must present associative versus independent behavior explicitly.
 - [ X ] 12.2a Implement a test-only Make Unique adapter for a definition containing
   one independent sketch and its native extrusion. Native recursive copy remaps
   inputs; assign fresh semantic IDs and provenance, relink only the chosen occurrence
@@ -1665,23 +1763,42 @@ Parents 12.1/12.2 and architecture release gates remain open.
 - [   ] 12.3 Add Entire Part/Model/Empty/custom named reference sets. Keep visibility,
   suppression, reference-only BOM role, configuration/arrangement and load state
   independent. Define deliberate full-geometry access outside exposed reference sets.
+  Named reference subsets select bodies/datums. Empty changes the exposed representation
+  only; it must not delete, suppress or exclude the component from BOMs implicitly.
+  Fully loaded/lightweight/unloaded state is separately controlled.
 - [   ] 12.4 Add contextual mates/joints, grounding, freedom/conflict display and
   joint limits using the existing solver. Preserve work/display context and clearly
   distinguish shared-definition edits from occurrence edits.
+  Suggest mates/joints from selected faces, axes or points. Visually distinguish
+  grounded, underconstrained, fully constrained and conflicting components. In-context
+  editing keeps surrounding geometry visible, with selection/edit scope made explicit.
 - [   ] 12.5 Add occurrence-aware in-context references and published datum/geometry/
   parameter interfaces, with source highlighting. Provide external-reference manager:
   source/version state, update/freeze/break, missing-path repair, unpublished-input
   diagnostics and dependency-cycle rejection. Extend 9.3 rather than inventing
   per-workbench traversal rules.
+  Associative geometry linking copies selected geometry between parts with visible
+  source tracking and update controls. Reference repair previews the downstream effects
+  of replacing a missing face/edge. Preserve geometric selection intent as well as
+  identity across topology changes; cycles must be rejected before acceptance. Failure
+  reporting identifies the first failed feature, invalid input and blocked dependents.
 - [   ] 12.6 Productize assembly-owned cuts with explicit selected-occurrence scope;
   source propagation is a separate deliberate action. Add component patterns/mirrors
   with skipped instances and shared/unique behavior, exploded views and simple motion.
+  Save exploded arrangements and support simple mechanism animations with joint limits.
+  Mirroring distinguishes linked/shared instances from independent mirrored definitions;
+  skipped instances are stored explicitly.
 - [   ] 12.7 Define configurations, arrangements and flexible subassemblies after
   parameter scope, identity, solver context and persistence proof. Flexible behavior
   is not merely separate placement of a shared rigid result. Extend 9.6.
+  Dimension/suppression configurations and assembly-position arrangements are separately
+  saved concepts; switching one must not implicitly overwrite the other.
 - [   ] 12.8 Profile then implement lightweight/partial loading and simplified
   representations. Missing/unloaded components remain represented; commands requiring
   full geometry resolve it explicitly or report unavailable validation.
+  Evaluate shared instance graphics and visibility-based processing in addition to
+  selective loading and simplified representations. Optimization must not omit
+  hidden/unloaded components from checks requiring their geometry.
 
 Gate G6: nested multi-file assembly with shared/unique edits, replacement, reference
 sets, in-context references, relocation repair and local cuts survives persistence.
@@ -1696,21 +1813,46 @@ inputs, tolerance, multi-result/target/tool retention and downstream-edit contra
 - [   ] 13.1 Complete solid/sheet trim and split coverage beyond the existing Trim
   feature; implement sew/stitch, offsets, gap diagnostics and sheet thickening.
   Spike high-curvature/self-intersection cases; validate actual solid/shell counts.
+  Body split/trim accepts supported planes, surfaces or other bodies and previews
+  retained regions. Add surface untrim and extend, plus interactive keep-region
+  selection and associative trimming tools. Thicken supports one-sided, opposite-sided
+  and symmetric thickness with Boolean options. Sewing exposes gaps and tolerance and
+  creates a solid only when a valid closed volume results; open results remain sheets.
 - [   ] 13.2 Extend sweep/loft with ordered sections, guides, orientation/twist and
   Boolean targets; implement through-curves surfaces with guides. Reuse 3.6/8.2.
+  Through-curves surfaces need section-to-section correspondence controls and twist
+  preview, not only guide selection. Shared Sweep/Loft tasks distinguish solid versus
+  surface output and show targets/results before commit.
 - [   ] 13.3 Spike curve-network/boundary surfaces and supported positional/tangent/
   curvature continuity. Measure continuity rather than judging rendered smoothness;
   explicitly limit unsupported inputs instead of assuming a kernel replacement.
+  Curve-network surfaces use intersecting curve families; expose positional, tangent and
+  curvature boundary conditions only where supported, and validate the claimed
+  continuity numerically.
 - [   ] 13.4 Complete associative extract/project/intersect curve coverage; retain
   Isocline's explicit draft-angle/direction convention and distinguish isoclines
   from isoparametric curves and display-only analysis. Reuse Phase 5 evidence.
+  Associative extraction sources include faces and edges; projection/intersection may
+  involve intersecting bodies. Preserve source/update links and the established Isocline
+  draft-angle convention rather than silently interpreting it as a different normal-
+  angle measure.
 - [   ] 13.5 Extend Hole wizard, feature/body patterns/mirrors, shell/draft/rib/web
   and fillet/chamfer tools in bounded increments, preserving specialized parameters.
+  Hole wizard covers standard holes, counterbores, countersinks, threads and reusable
+  position sketches. Unified patterns include linear, circular, curve-driven and table-
+  driven placement with skipped instances. Feature/body mirrors distinguish mirrored
+  geometry, linked copies and independent results. Fillets/chamfers include tangency
+  propagation, variable radii, corner options and localized failure feedback.
+  Shell/draft/ribs/webs need consistent tasks and specific geometric failure
+  explanations.
 - [   ] 13.6 Implement 9.1's history-based face move/offset/replace/delete-and-heal
   on a declared class of native/imported solids; explicit repair limits and preview.
 - [   ] 13.7 Spike imported-solid feature recognition only after direct-edit and
   reference foundations pass; record feasibility, bounded supported classes and
   geometry-only/unsupported fallback without claiming recovered original history.
+  Target recognition of editable holes, pockets and fillets on suitable imported solids.
+  Define recognized parameters and confidence/unsupported cases explicitly; do not claim
+  the original feature history has been recovered.
 
 Gate G7 per feature: analytic and difficult supported cases, explicit unsupported
 cases, geometric validity, scale-appropriate tolerances and downstream recompute.
@@ -1726,12 +1868,24 @@ for this planning adoption.
   units/dimension/scaling, normals, orientation, bounds, disconnected-piece and
   strategy-specific validity checks. Add setup wizard for model, WCS, stock, tools,
   boundaries, allowances, tolerance and post. Reuse existing inputs and tab geometry.
+  Direct machining must not require converting STL triangles into thousands of CAD
+  faces. Mesh preparation explicitly detects holes, inverted normals, disconnected
+  regions and unsuitable geometry. Guided setup visibly includes units, orientation and
+  work origin alongside stock/tools/boundaries.
 - [   ] 14.2 Add stock-aware roughing then rest machining as separate deliverables;
   finishing drop-cutter paths do not prove either. Preserve holding-tab exclusions
   in all supported cutting/link moves and across indexed setups.
+  Provide coherent roughing/finishing strategy presets with visible allowances,
+  tolerances and stepovers; rest machining targets remaining stock from preceding
+  operations rather than simply repeating a finishing path.
 - [   ] 14.3 Complete containment/avoidance, reusable setups, stale-path detection,
   progress/cancellation and large-mesh profiling. Validate transformed source edits,
   units, stock and fixtures; distinguish model refresh from generated-path validity.
+  Mesh boundaries include sketch-based containment, selected mesh regions and avoid
+  areas. Reusable setup templates cover machines, tools, stock, posts and recurring
+  operation sequences. Track geometry, stock and tooling changes separately and mark all
+  affected paths stale; the existing missing-input execution fix proves only its
+  recorded cases.
 - [   ] 14.4 Add supported simulation/remaining-stock, gouge and tool/holder/fixture
   clearance checks with visible unavailable checks. Verify a narrow machine/post
   scope and expand strategies/tools/posts only with representative fixtures.
@@ -1747,12 +1901,25 @@ Each module depends only on the contracts it consumes and can be delivered separ
 
 - [   ] 15.1 Unify transient/persistent measurement, units, materials/mass properties,
   interactive/saved sections, interference and minimum-clearance inspection.
+  Measurement covers distance, angle, radius, thickness, minimum separation and mass
+  properties. Saved measurements retain references and an explicit update policy.
+  Sections support multiple planes, saved section views and measurements on sections.
+  Interference/clearance results list component pairs, highlight conflicts and let users
+  navigate each result.
 - [   ] 15.2 Add curvature combs, zebra/reflection lines, continuity and deviation
   inspection with quantitative checks where claimed; support surface validation.
+  Deviation inspection includes deviation maps; keep analysis/display distinct from
+  constructing new curves or surfaces.
 - [   ] 15.3 Extend 9.4 with drawing setup, projected/section/detail views,
   associative annotations/dimensions and explicit broken-reference repair after edits.
+  Provide a drawing creation wizard for standard/projected/section/detail views using
+  consistent templates. Associative annotation includes hole callouts and center marks
+  as well as dimensions, with explicit lost-reference repair.
 - [   ] 15.4 Add BOMs, balloons and exploded documentation; validate repeated
   instances, unique copies, suppression, reference-only roles and nested quantities.
+  Expose reference-component exclusion explicitly and keep it independent of
+  visibility/reference-set contents; exploded documentation must correspond to saved
+  arrangements.
 - [   ] 15.5 Evaluate/reuse compatible sheet-metal, frames/weldments, hardware and
   profile libraries, delivering independently with configuration/persistence tests.
 - [   ] 15.6 Package projects and collect dependencies, repair relocated references,
@@ -1820,10 +1987,17 @@ Task 16.2 and the broader CAM dependency gates remain open. See the
   graphics and cancellation costs before optimizing. Define document locking,
   thread safety and result-commit rules before background execution. Keep core
   commands deterministic/scriptable through the same validation as UI.
+  Expose reproducible operation recording as well as scriptable commands. Reduced-cost
+  previews must be identified as previews and replaced by validated final geometry;
+  progress and cancellation remain responsive without committing partial results.
 - [   ] 16.6 Maintain release/platform and upstream integration gates; test install,
   launch, open/edit/save/export, migration, older/new files and recovery on supported
   platforms. Verify `.cadprt` filters/icons/installer associations. One Windows
   build is not multi-platform evidence; no public release is implied by a push.
+  Keep UI adaptations, new features and object-model changes separable so upstream
+  integration does not require one inseparable rewrite. Clearly identify which persisted
+  features require the fork; preserve the adopted best-effort legacy conversion policy
+  rather than promising unlimited upstream compatibility.
 - [   ] 16.7 Audit actual source/dependency/asset licenses, notices, change records
   and branding permissions before distribution. Plan matching tagged source/archive,
   required build/install and applicable linking materials with binaries; verify
