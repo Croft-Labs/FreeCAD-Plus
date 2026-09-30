@@ -1197,6 +1197,11 @@ class ObjectTagDressup:
         # pr.print_stats()
 
     def doExecute(self, obj):
+        # Never retain a previous path or tag preview after an input failure.
+        obj.Path = Path.Path()
+        self.tags = []
+        self.solids = []
+        self.pathData = None
         if not obj.Base:
             return
         if not obj.Base.isDerivedFrom("Path::Feature"):
@@ -1228,9 +1233,12 @@ class ObjectTagDressup:
 
         try:
             self.processTags(obj)
-        except Exception as e:
-            logger.error("processing tags failed clearing all tags… '{}'", e.args[0])
-            obj.Path = PathUtils.getPathWithPlacement(obj.Base)
+        except Exception:
+            # Falling back to the base path would remove the requested holding tags.
+            obj.Path = Path.Path()
+            self.tags = []
+            self.solids = []
+            raise
 
         # update disabled in case there are some additional ones
         disabled = copy.copy(self.obj.Disabled)

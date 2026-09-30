@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8y/z explicit Part parameter-set creation/editor entry.
+Latest roadmap batch: 16.2aq/ar production holding-tag failure behavior.
+Missing base clears cached path/tag/solid/pathData. Processing exceptions clear
+output and propagate instead of substituting the untagged base path; native invalid
+state blocks export and recovery regenerates tags. Separate from stock-bridge tabs.
+Grouped validation: 56 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-holding-tag-failures-20260930-batch.
+Macro PASS; process ended. Matching Tags.py staged into isolated engine 2df76790b4;
+no native rebuild, release, machine or physical GUI acceptance.
+
+Previous roadmap batch: 10.8y/z explicit Part parameter-set creation/editor entry.
 create_parameter_set owns an undoable native container-creation transaction;
 edit_parameter_set targets an explicit Part-owned container independently of active
 document state. Ownership, Body/occurrence rejection and save/reopen pass.

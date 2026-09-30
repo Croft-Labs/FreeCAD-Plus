@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8y/z add explicit Part-owned parameter-container creation
+- Current batch: 16.2aq/ar fix production CAM holding-tag failure behavior:
+  clear cached output on missing input and reject generation failure instead of
+  falling back to an untagged cutting path. Grouped validation: 56 passes, zero
+  failures/errors/skips; Python staging only, no native rebuild or release.
+- Previous batch: 10.8y/z add explicit Part-owned parameter-container creation
   and an editor entry point independent of active document state. Grouped validation:
   75 passes, zero failures/errors/skips after correcting a test setup. Prototype only;
   no native rebuild or release update.
@@ -3150,6 +3154,25 @@ Both changes preceded grouped validation. Python-only synchronization into engin
 Exact parsed XY duplicates are checked; no averaging or near-point merge tolerance
 is implied. Probe-file changes still require recompute; arbitrary surface quality
 and broader consumer gates remain open.
+
+- [ X ] 16.2aq Clear the holding-tag dressup's cached Path, tags, solids and path
+  data before input validation. Verify removing its base clears output/preview data
+  and restoring the base regenerates the tagged path.
+- [ X ] 16.2ar Remove untagged-base fallback on holding-tag processing exceptions.
+  Clear output, propagate the failure to native invalid state, reject export and
+  verify successful recompute after the fault is removed.
+
+Holding-tag failure evidence: `cam-holding-tag-failures-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **56 PASS, zero failures/
+errors/skips** (51 CAM invalid-input/workflow, five native tag geometry checks).
+Both source changes preceded one grouped run; macro PASS and process ended.
+Source/development-build Tags.py SHA256:
+`989B0E1B8D79889A4FF532ED7DF55F28D391A6239E09FAF7218DE7FD0DEB47B3`.
+The isolated fork engine remains 2df76790b4; matching Python module staged without
+native rebuild. Failure injection verifies that a nonempty base remains available
+but is not substituted for failed tag processing. This fixes the inherited profile
+holding-tag dressup, not the separate stock-bridge geometry feature. No machine,
+physical GUI, release or broader safety certification is implied.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

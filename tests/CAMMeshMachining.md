@@ -176,3 +176,15 @@ by supported Parallel/Waterline operations; they deliberately leave extra stock
 at corners and retract over bridges. They are not clamps, fixtures, or holders.
 An indexed job shares its source stock/model/tabs, with a 180-degree flip by default, configurable X/Y/Z axis and angle, and stock-top or custom work origin. Generate/post each job separately; no rotary motion is inferred. Tilted bridges use conservative XY envelopes and may leave additional stock.
 Mesh-clone/tab recomputation requires the FreeCAD Plus Python modules.
+
+
+## Related profile holding-tag failure regressions
+
+`TestCAMInvalidInputs` also exercises the inherited profile holding-tag dressup,
+which is distinct from the stock-bridge tabs used by mesh machining. Removing its
+base clears the old path and tag preview data; restoring the base regenerates them.
+A deliberately injected processing failure leaves an empty path and native Invalid
+state; postprocessing rejects it instead of exporting the untagged base path.
+Removing the fault restores generation. Pair this suite with
+`CAMTests.TestPathDressupHoldingTags` for the native tag geometry regression group.
+These automated checks do not replace simulation or physical-machine acceptance.

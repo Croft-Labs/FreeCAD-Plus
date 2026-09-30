@@ -921,3 +921,53 @@ class TestCAMInvalidInputs(PathTestWithAssets):
             dressup.touch()
             self.doc.recompute()
             self.assertEqual(_wrap_op(dressup).Path.toGCode(), expected)
+
+    def makeHoldingTags(self):
+        import Path
+        from Path.Dressup import Tags
+        base = self.doc.addObject("Path::Feature", "TagProfile")
+        base.addProperty("App::PropertyLink", "ToolController")
+        base.ToolController = self.job.Tools.Group[0]
+        base.Path = Path.Path("G0 Z5\nG0 X0 Y0\nG1 Z0 F100\nG1 X20 Y0 F200\nG1 X20 Y20\nG1 X0 Y20\nG1 X0 Y0\nG0 Z5")
+        self.job.Operations.addObject(base)
+        dressup = self.doc.addObject("Path::FeaturePython", "DressupTags")
+        Tags.ObjectTagDressup(dressup, base)
+        dressup.Width, dressup.Height, dressup.Angle = 6, 1, 45
+        dressup.Positions = [App.Vector(10, 0, 0)]
+        self.job.Proxy.addOperation(dressup, base, True)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        self.assertTrue(dressup.Proxy.tags)
+        return base, dressup
+
+    def testHoldingTagsMissingBaseClearsCachedPathAndPreview(self):
+        base, dressup = self.makeHoldingTags()
+        dressup.Base = None
+        self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertEqual(dressup.Proxy.tags, [])
+        self.assertEqual(dressup.Proxy.solids, [])
+        self.assertIsNone(dressup.Proxy.pathData)
+        dressup.Base = base
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        self.assertTrue(dressup.Proxy.tags)
+
+    def testHoldingTagsGenerationFailureDoesNotExportUntaggedBase(self):
+        from unittest.mock import patch
+        from Path.Post.PostList import _wrap_op
+        base, dressup = self.makeHoldingTags()
+        with patch.object(dressup.Proxy, "processTags", side_effect=RuntimeError("Deliberate tag failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertIn("Invalid", dressup.State)
+        self.assertFalse(dressup.Path.Commands)
+        self.assertTrue(base.Path.Commands)
+        self.assertEqual(dressup.Proxy.solids, [])
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(dressup.Path.Commands)
+        self.assertTrue(dressup.Proxy.tags)
