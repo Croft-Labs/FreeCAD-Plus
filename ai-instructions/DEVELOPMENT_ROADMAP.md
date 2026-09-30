@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 4.1.8/5.1.8 clean up task resources and edit transactions when
+- Current batch: 4.1.9/5.1.9 protect unrelated caller transactions when reopening
+  Trim Body or Isocline. Grouped model/GUI validation: 52 passes, zero failures/
+  errors/skips; Python-only staging, no native rebuild or release update.
+- Previous batch: 4.1.8/5.1.8 clean up task resources and edit transactions when
   construction/dialog display fails. Grouped model/GUI validation: 50 passes,
   zero failures/errors/skips; Python staging only, no native rebuild or release.
 - Previous batch: 4.1.7/5.1.7 roll back feature creation when factory/editor startup
@@ -1133,6 +1136,21 @@ Depends on: the existing Part geometry engine and native development build.
 - [ X ] 4.1.8 Clean up partially constructed Trim tasks and failed dialog display:
   remove registered selection observation/annotations, restore visibility and abort
   owned edit transactions. Verify scene count, no pending edit and successful retry.
+- [ X ] 4.1.9 Refuse reopening Trim Body inside an unrelated pending transaction.
+  Only the scoped feature-creation context can hand its transaction to the editor.
+  Verify pending edits survive rejected edit/create attempts and caller abort/retry.
+
+Transaction ownership evidence (also 5.1.9): `task-ownership-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **52 PASS, zero failures/
+errors/skips** (Trim 14 model/16 GUI; Isocline nine model/13 GUI). Both tasks preceded
+grouped tests; macro PASS and process ended. FeatureTask plus two GUI suites staged
+with matching hashes in the isolated fork build (engine source 2df76790b4). A scoped
+ContextVar marks command-owned creation transactions and resets on success/failure;
+unrelated transactions reject before task construction. Pending label edits remain
+uncommitted, can be aborted by their owner and permit a normal later edit. Existing
+creation, failure cleanup, Cancel and Undo/Redo suites also pass. FeatureTask SHA256:
+`C4F52FA1CD30BB41F9033DDAEC2AC48124D3DE687DFD75F2A4EDFC2783568763`.
+No native rebuild, release or physical viewport acceptance.
 
 Task cleanup evidence (also 5.1.8): `task-cleanup-20260930-verified/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **50 PASS, zero failures/
@@ -1276,6 +1294,8 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
 - [ X ] 5.1.8 Apply shared construction/display failure cleanup to Isocline tasks,
   including curve highlight and direction arrow removal, visibility restoration and
   transaction rollback; verify retry. Evidence recorded with 4.1.8.
+- [ X ] 5.1.9 Apply explicit transaction ownership to Isocline reopening and verify
+  unrelated pending edit/create rejection without mutation; evidence with 4.1.9.
 
 ### [   ] 5.2 Validate the local build
 

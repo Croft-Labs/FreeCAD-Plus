@@ -5,7 +5,11 @@
 import FreeCADGui as Gui
 from contextlib import contextmanager
 from functools import wraps
+from contextvars import ContextVar
 from pivy import coin
+
+
+_creation_document = ContextVar("feature_task_creation_document", default=None)
 
 
 @contextmanager
@@ -14,12 +18,15 @@ def creation_transaction(doc, label):
     if doc.HasPendingTransaction:
         raise RuntimeError("Finish the current transaction before starting a feature task.")
     doc.openTransaction(label)
+    token = _creation_document.set(doc)
     try:
         yield
     except Exception:
         doc.abortTransaction()
         doc.recompute()
         raise
+    finally:
+        _creation_document.reset(token)
 
 
 def guard_task_construction(init):
@@ -70,6 +77,8 @@ class TaskFeatureViewProvider:
             return False
         doc = view.Object.Document
         owns_transaction = not doc.HasPendingTransaction
+        if not owns_transaction and _creation_document.get() != doc:
+            raise RuntimeError("Finish the current transaction before editing this feature.")
         if owns_transaction:
             doc.openTransaction(self.editLabel)
         try:

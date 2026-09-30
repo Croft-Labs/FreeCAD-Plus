@@ -194,7 +194,8 @@ selection mode unchanged, with a repair/recompute message. Retry after repair.
 Optional preselection skips stale targets/tools while retaining valid inputs;
 the task remains available to select replacements.
 If feature creation or editor startup fails, creation is rolled back so the command
-can be retried. A pre-existing transaction must finish before starting this command.
+can be retried. A pre-existing transaction must finish before starting this command
+or reopening an existing feature; rejection preserves the caller's pending edits.
 
 The source solid/sheet remains associative input. A Part Design Body keeps its Tip;
 the new result appears separately in the document tree. Reopen the result to change
@@ -227,7 +228,8 @@ and selection mode unchanged, with a repair/recompute message. Retry after repai
 Optional preselection skips stale face objects and retains valid faces from the
 same selection. Repaired faces can be added in the task.
 If feature creation or editor startup fails, creation is rolled back so the command
-can be retried. A pre-existing transaction must finish before starting this command.
+can be retried. A pre-existing transaction must finish before starting this command
+or reopening an existing feature; rejection preserves the caller's pending edits.
 
 Source objects remain unchanged and keep their Part Design Body Tip. Face boundary
 holes split a contour into separate segments; each connected set becomes a wire.

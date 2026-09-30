@@ -60,6 +60,29 @@ class TestTrimBodyGui(unittest.TestCase):
         Gui.updateGui()
         self.task = self.obj.ViewObject.Proxy.task
 
+    def testUnrelatedTransactionIsPreservedByEditAndCreate(self):
+        import BOPTools.TrimGui as module
+        self.start(preselect=True)
+        self.accept()
+        before = {obj.Name for obj in self.doc.Objects}
+        original = self.obj.Label
+        self.doc.openTransaction("Unrelated user edit")
+        self.obj.Label = "Pending caller label"
+        with self.assertRaisesRegex(RuntimeError, "current transaction"):
+            self.obj.ViewObject.Proxy.setEdit(self.obj.ViewObject)
+        with self.assertRaisesRegex(RuntimeError, "current transaction"):
+            module.CommandTrimBody().Activated()
+        self.assertTrue(self.doc.HasPendingTransaction)
+        self.assertEqual(self.obj.Label, "Pending caller label")
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
+        self.assertIsNone(self.obj.ViewObject.Proxy.task)
+        self.assertFalse(Gui.Control.activeDialog())
+        self.doc.abortTransaction()
+        self.doc.recompute()
+        self.assertEqual(self.obj.Label, original)
+        self.reopen()
+        self.accept()
+
     def testTaskConstructionAndDisplayFailureCleanUpForRetry(self):
         from unittest.mock import patch, Mock
         import BOPTools.TrimGui as module

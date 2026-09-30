@@ -10,6 +10,8 @@ Startup failure injection covers a factory exception after object creation and
 editor refusal: neither leaves an object or pending transaction; retry succeeds.
 Task construction/display failure checks restore viewport annotation count and
 result visibility, leave no dialog/transaction, and permit reopening and acceptance.
+Ownership checks reject edit/create during an unrelated transaction, preserve its
+pending label edit, and verify caller abort followed by normal reopening.
 
 The task-readiness regression makes a previously valid target fail recompute,
 verifies hidden preview and blocked acceptance, then repairs it and accepts the

@@ -55,6 +55,8 @@ Feature creation startup rollback: `creation_transaction` in
 Isocline commands (roadmap 4.1.7/5.1.7); successful tasks retain their transaction.
 `guard_task_construction` and `TaskFeatureViewProvider.setEdit` clean up construction/
 display failures and owned edit transactions (4.1.8/5.1.8).
+Scoped creation ownership prevents existing editors from adopting unrelated pending
+transactions (4.1.9/5.1.9).
 
 Trim Body and Isocline task readiness uses `require_current` in
 [`ShapeReferences.py`](../src/Mod/Part/BasicShapes/ShapeReferences.py) after recompute;
