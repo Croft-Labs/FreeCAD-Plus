@@ -113,6 +113,8 @@ class ObjectDressup:
                 obj.MirrorAxis = "X"
 
     def execute(self, obj):
+        # Never expose cached or partially assembled machining output on failure.
+        obj.Path = Path.Path()
         if not obj.Base:
             obj.Path = Path.Path()
             Path.Log.warning(translate("MirrorDressup", "No base operation"))
@@ -134,7 +136,7 @@ class ObjectDressup:
             return
 
         if obj.MirrorAxis == "None":
-            obj.Path = obj.Base.Path
+            obj.Path = PathUtils.getPathWithPlacement(obj.Base).copy()
             return
 
         bb = None
@@ -172,7 +174,7 @@ class ObjectDressup:
                 offsetX += 2 * bb.Center.x
                 offsetY += 2 * bb.Center.y
 
-        commands = PathUtils.getPathWithPlacement(obj.Base).Commands
+        commands = PathUtils.getPathWithPlacement(obj.Base).copy().Commands
         for cmd in commands:
             if cmd.Name not in Constants.GCODE_MOVE_ALL:
                 # command without move, change nothing
@@ -210,10 +212,11 @@ class ObjectDressup:
                         cmd.Name = "G3"
 
         if obj.KeepBasePath:
-            obj.Path = PathUtils.getPathWithPlacement(obj.Base)
-            obj.Path.addCommands(commands)
+            result = PathUtils.getPathWithPlacement(obj.Base).copy()
+            result.addCommands(commands)
         else:
-            obj.Path = Path.Path(commands)
+            result = Path.Path(commands)
+        obj.Path = result
 
 
 class ViewProviderDressup:

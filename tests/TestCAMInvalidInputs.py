@@ -370,3 +370,83 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         dressup.touch()
         self.doc.recompute()
         self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def makeMirror(self):
+        from Path.Dressup.Gui import Mirror
+        dressup = self.doc.addObject("Path::FeaturePython", "Mirror")
+        Mirror.ObjectDressup(dressup, self.op)
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        return dressup
+
+    def testMirrorDisabledPreservesPlacedBaseAndDoesNotModifySource(self):
+        from PathScripts import PathUtils
+        dressup = self.makeMirror()
+        self.op.Placement = App.Placement(App.Vector(11, 7, 3),
+                                          App.Rotation(App.Vector(0, 0, 1), 30))
+        dressup.MirrorAxis = "None"
+        self.doc.recompute()
+        source = self.op.Path.toGCode()
+        expected = PathUtils.getPathWithPlacement(self.op).toGCode()
+        self.assertNotEqual(source, expected, "Fixture must exercise placement")
+        self.assertEqual(dressup.Path.toGCode(), expected)
+        self.assertEqual(self.op.Path.toGCode(), source)
+
+    def testMirrorCombinedOutputPreservesBaseAndSource(self):
+        from PathScripts import PathUtils
+        dressup = self.makeMirror()
+        for translation in (App.Vector(), App.Vector(11, 7, 3)):
+            self.op.Placement = App.Placement(translation, App.Rotation())
+            dressup.KeepBasePath = False
+            self.doc.recompute()
+            mirrored = dressup.Path.Commands
+            original = self.op.Path.toGCode()
+            expected = PathUtils.getPathWithPlacement(self.op).copy()
+            expected.addCommands(mirrored)
+            dressup.KeepBasePath = True
+            self.doc.recompute()
+            self.assertEqual(dressup.Path.toGCode(), expected.toGCode())
+            self.assertEqual(self.op.Path.toGCode(), original)
+            self.assertNotIn("Touched", self.op.State)
+
+    def testMirrorGenerationFailureClearsAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import Mirror
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeMirror()
+        for keep in (False, True):
+            dressup.KeepBasePath = keep
+            self.doc.recompute()
+            self.assertTrue(dressup.Path.Commands)
+            with patch.object(Mirror.PathUtils, "getPathWithPlacement",
+                              side_effect=RuntimeError("Deliberate mirror failure")):
+                dressup.touch()
+                self.doc.recompute()
+            self.assertFalse(dressup.Path.Commands)
+            self.assertIn("Invalid", dressup.State)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testMirrorAssemblyFailureDoesNotPublishPartialBase(self):
+        from unittest.mock import patch, Mock
+        from Path.Dressup.Gui import Mirror
+        from PathScripts import PathUtils
+        dressup = self.makeMirror()
+        dressup.KeepBasePath = True
+        self.doc.recompute()
+        placed = PathUtils.getPathWithPlacement(self.op)
+        incomplete = Mock()
+        incomplete.copy.return_value = incomplete
+        incomplete.addCommands.side_effect = RuntimeError("Deliberate assembly failure")
+        with patch.object(Mirror.PathUtils, "getPathWithPlacement",
+                          side_effect=[placed, incomplete]):
+            with self.assertRaisesRegex(RuntimeError, "Deliberate assembly failure"):
+                dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)

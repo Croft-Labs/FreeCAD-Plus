@@ -61,6 +61,16 @@ rejects the cache, then explicitly executes the dressup to check empty-path clea
 It does not prove eager invalidation of every skipped consumer. These checks do
 not establish machine safety.
 
+## Mirror placement and failure checks
+
+`tests/TestCAMInvalidInputs.py` also covers Mirror's disabled-axis passthrough with
+translation/rotation, combined base/mirrored output for identity and translated
+placements, unchanged source G-code/native state, generation failure/export rejection,
+and corrected-input recovery. An injected assembly failure verifies that the base
+portion is not published before the complete result is ready. Run alongside nested
+postprocessing, Array and Dogbone regressions. These checks are separate from
+viewport interaction and machining acceptance.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,

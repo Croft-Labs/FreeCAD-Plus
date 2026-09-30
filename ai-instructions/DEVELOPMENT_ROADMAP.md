@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2s/t clear Array paths before validation/generation and
+- Current batch: 16.2u/v/w fix Mirror placed passthrough, failure-safe output
+  assembly and source-path isolation. Grouped validation: 53 passes, zero
+  failures/errors/skips; Python-only synchronization, no native rebuild.
+- Previous batch: 16.2s/t clear Array paths before validation/generation and
   Dogbone machining/corner caches before generation. Grouped validation: 49
   passes, zero failures/errors/skips. Skipped native consumers remain a limitation;
   their export guard is verified. Python-only synchronization, no native build.
@@ -2206,6 +2209,28 @@ Both implementations preceded grouped runtime validation; no native rebuild.
 The reused engine reports 2df76790b4 with separately synchronized Python updates.
 No native GUI/machine acceptance or release update. Dogbone cache failure injection
 uses seeded markers; inherited tests separately verify normal corner geometry.
+
+- [ X ] 16.2u Preserve base placement when MirrorAxis is None; validate translated/
+  rotated passthrough and unchanged source G-code.
+- [ X ] 16.2v Clear Mirror output before generation and assemble KeepBasePath output
+  locally before publishing. Validate generation and assembly failures, empty output,
+  native error/export rejection where recompute invokes execution, and recovery.
+- [ X ] 16.2w Copy placed paths before Mirror transforms or appends commands. The
+  identity-placement helper can return the live source Path. Validate combined
+  output with identity and translated bases without changing source G-code/state.
+
+Mirror batch: `cam-mirror-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **53 PASS, zero
+failures/errors/skips**: 25 invalid-input/workflow checks (four new), seven nested
+postprocessing, four Array and 17 Dogbone checks. Macro PASS; test process ended.
+The initial `cam-mirror-20260930-batch` had 52 passes and one error: KeepBasePath
+mutated the identity-placement base and export correctly rejected its touched
+state. Copying the path fixed the production defect; the expanded identity/translated
+fixture and recovery/export check pass. Source/development-build Mirror.py SHA256:
+`DE48096DDD7D5C54F5FBACA65CDD52DB0F6BFCD28D02C36363D67AAFBF8FBE83`.
+Grouped Python synchronization/testing, no native rebuild; reused engine 2df76790b4.
+No GUI/machine acceptance or release update. General skipped-consumer invalidation
+and broader downstream compatibility remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

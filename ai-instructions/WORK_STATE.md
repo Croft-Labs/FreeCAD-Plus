@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2s/t complete. Array clears paths before input validation/
+Latest roadmap batch: 16.2u/v/w complete. Mirror preserves placement when disabled,
+clears stale output before generation, publishes only completed combined results,
+and copies live base paths before transformation/append. The identity-placement
+source mutation found in the initial run is fixed. Final grouped validation:
+53 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-mirror-20260930-verified.
+Source/development-module hash recorded in roadmap. Python-only synchronization;
+no native rebuild, GUI/machine acceptance or release update. Test process ended.
+Continue broader consumer compatibility gates with grouped validation.
+
+Previous roadmap batch: 16.2s/t complete. Array clears paths before input validation/
 generation; Dogbone clears paths and corner caches before generation. Grouped
 validation: 49 passes, zero failures/errors/skips in
 D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-array-dogbone-20260930-verified.
