@@ -2,6 +2,10 @@
 
 ## Current focus
 
+- Planning update: version 2 objectives are now mapped in the
+  [coverage register](#version-2-objective-coverage) and tasks 10-17. Preserve the
+  implementation evidence below; new portfolio items are pending, not completed.
+  Reconcile owning specifications in 10.1 before dependent workflow changes.
 - Active batch: Phase 7 placement/occurrence/consumer comparison, 2026-09-29.
   Completed 7.1.3c/7.1.3d/7.1.3e: transformed inputs, an assembly-local cut,
   and a production fix for stale Draft clone/CAM job-model geometry.
@@ -57,14 +61,35 @@
   with Add/Subtract first in the task pane; Extrude passes the automated checks below.
 
 <a id="planning-baseline-adoption"></a>
-## Planning baseline adoption, 2026-09-29
+## Planning baseline adoption and version 2 reconciliation
 
 The owner requested adoption of two supplied documents. Execution guidance is in
 [DEVELOPMENT_GUIDELINES.md](DEVELOPMENT_GUIDELINES.md); the complete supplied
 [FREECAD_PLUS_DEVELOPMENT_ROADMAP.md](archive/FREECAD_PLUS_DEVELOPMENT_ROADMAP.md)
-is preserved as a dated reference. Its P0-P10 identifiers and inventory are planning
-inputs, not replacements for this file's stable task IDs or live status. Its estimates
-remain hypotheses. This instruction update does not authorize starting all phases.
+is preserved as a historical reference. The owner subsequently supplied
+`UPDATED_FREECAD_PLUS_DEVELOPMENT_ROADMAP.md`, version 2.0 (document updated date:
+2026-09-30), and requested all additional objectives in this active roadmap.
+The expanded inventory and concrete tasks below now own that backlog; the original
+archive no longer defines its full scope. Supplied P0-P11/feature IDs are mappings,
+not replacements for stable local task IDs. Estimates remain planning hypotheses.
+
+This adoption imports desired objectives, not the attachment's embedded agent
+startup assignment: retain PROGRAMMING_SUMMARY.md, this roadmap, WORK_STATE.md and
+existing architecture records. Do not restart the fork, repeat established builds,
+or create a second status ledger. Preserve existing evidence and batch two or three
+related implementation tasks before costly build validation. Optional items remain
+optional; no release, outreach, registration, rename or billing action is authorized
+by listing it. The desktop application is planned to remain free of charge for the
+foreseeable future, without subscriptions, activation or paid core feature gates.
+
+Version 2's visible, overridable New Body/Unite suggestion policy supersedes the
+unconditional New Body proposal and the unresolved-default wording in earlier
+planning documents, including DEVELOPMENT_GUIDELINES.md. Task 7.4.8 records the
+planning decision; its implementation remains open. Synchronize the owning product,
+UI and guideline contracts in 10.1 before migrating commands. Preserve the owner's
+operation-first task layout: guided prompts can advance through unresolved inputs
+without relocating that first field. Retain Pocket/Groove as shared-command presets.
+FreeCAD Plus remains the working name; evaluating a rename is optional.
 
 | Supplied phases | Existing owner / integration rule |
 | --- | --- |
@@ -75,13 +100,14 @@ remain hypotheses. This instruction update does not authorize starting all phase
 | P7 / G7 geometry portfolio | Phases 3-5 and 8. Trim and Isocline already have implementation/test evidence; advanced surfaces/direct editing remain candidates. Do not recreate completed work. |
 | P8 / G8 mesh CAM | Phase 6. Preserve Parallel/Waterline, holding tabs and the user's two-sided/manually indexed requirement. Roughing, rest machining, simulation/post gates remain separate; three-axis wording does not drop indexed setups. |
 | P9 / G9 downstream | Phase 9; preserve all supplied inventory rows as future candidates, activating bounded tasks only within authorized scope. |
-| P10 / G10 maintenance | Upstream issue work and release gates in the Development Guide. Local fixes/builds are not releases. |
+| P10 / G10 maintenance | Upstream issue work, Phase 16 and release gates in the Development Guide. Local fixes/builds are not releases. |
+| P11 / G11 onboarding | Phase 17: starter models, tutorials, independent-fork positioning and measured user adoption; external publication requires separate authorization. |
 
-The supplied section 6 inventory remains the full candidate inventory; each item
-activated later must cite its ID and receive a concrete task here. Do not maintain
-parallel status in the archived file. Benchmark B01-B10 in the guidelines names
-user-task fixtures (distinct from similarly numbered assembly inventory IDs).
-Baseline usability/performance thresholds and effort estimates require measurements.
+The [version 2 coverage register](#version-2-objective-coverage) gives every supplied
+inventory ID a concrete task and status. Do not maintain parallel status in archived
+files. Guideline B01-B10 benchmark IDs are user-task fixtures, distinct from the
+assembly inventory IDs; the supplied T01-T12 benchmark register is retained below.
+Usability/performance thresholds and effort estimates require measurements.
 
 - [ X ] 1.3 Adopt the supplied agent guidance and map it to existing document owners.
   Evidence: guidelines and complete planning reference retained; root/index/guide
@@ -1236,15 +1262,16 @@ choosing the architecture. 7.1.5/7.1.6 are not closed by this foundation batch.
 
 ### [   ] 7.4 Automate body creation and target selection
 
-Default-choice decision pending: see task 7.4.8 and [baseline adoption](#planning-baseline-adoption).
-The following earlier automatic-target proposal is not a settled default.
+Planned default reconciled by version 2: suggest New Body or a valid single-target
+Unite at creation; require explicit resolution of ambiguity and preserve user intent.
+See 7.4.8 and [baseline adoption](#planning-baseline-adoption). Implementation is pending.
 
 - [   ] 7.4.1 Extend the existing Extrude and Revolve task workflows to start in an empty part without a declared/active Body. Keep Operation as the first field, followed by profile, target/result controls and parameters.
 - [   ] 7.4.2 For Add with automatic targeting, create a new solid body when the generated solid has no valid volumetric overlap with an existing eligible solid. With exactly one eligible intersecting target, preview adding to that target.
 - [   ] 7.4.3 If multiple bodies intersect, show and highlight candidate targets; require an explicit target set or New Body choice. Never choose a target by incidental tree order or visibility.
 - [   ] 7.4.4 Provide an explicit New Body override even when geometry overlaps. For Subtract and Intersect, require valid target bodies and report a nonintersecting/empty result rather than creating an unintended body.
 - [   ] 7.4.5 Define tangency, face/edge contact, coincident geometry, tolerances, disconnected profile regions, sheet results and multi-solid outputs. Make automatic decisions inspectable in the preview.
-- [   ] 7.4.6 Persist target intent and body lineage. When editing an earlier feature changes overlap, report any target change; do not silently cut/join a different body or break downstream identity.
+- [   ] 7.4.6 Persist target intent and body lineage. Commit concrete operation and target identities. Recompute must not rerun creation inference. When an edit removes the required intersection, report failure/repair instead of switching operation, target or body identity.
 - [   ] 7.4.7 Reuse this result/target policy for Loft, Sweep, Helix, primitives and Boolean operations after the Extrude/Revolve pilot passes. Retain legacy command/API entry points.
 
 First deliverable: open a new document, draw a sketch, Extrude without creating a
@@ -1252,8 +1279,12 @@ Body, then create a disconnected Extrude and obtain a second body. Reuse the fir
 sketch for another feature, modify one selected body with Subtract, and reopen each
 feature in the same complete task pane. Repeat the body-creation cases with Revolve.
 
-- [   ] 7.4.8 Resolve the supplied New Body default against the earlier automatic
-  Add-target proposal; preserve explicit operations and stored target intent.
+- [ X ] 7.4.8 Reconcile the planned default from the owner-supplied version 2:
+  suggest New Body for no eligible intersection, Unite for exactly one eligible
+  target with a valid union, and require deliberate selection for multiple targets.
+  Explicit user operation/targets prevail. Other-component intersections do not
+  authorize source modification. Pocket/Groove start in Subtract. This closes only
+  the planning decision; 7.4.1-7.4.7 and 10.3 implement and validate it.
 
 ### [   ] 7.5 Add history editing, rollback and recovery
 
@@ -1354,3 +1385,414 @@ specific interactions with the user before detailed implementation.
 - [   ] 9.5 Connect CAM model and stock references to the unified results; invalidate paths after relevant history edits. Incorporate Phase 6's required two-sided/indexed setups and shared physical tab geometry when CAM work is resumed.
 - [   ] 9.6 Define named configurations/variants for dimensions and feature suppression, including persistence, downstream drawings/CAM and recompute cost, before exposing configuration controls.
 - [   ] 9.7 Build representative end-to-end examples: shared-sketch multi-body modeling, imported-part editing, assembly/drawing updates and two-sided machining. Record each product area?s independent acceptance and compatibility gates.
+
+
+<a id="version-2-objective-coverage"></a>
+## Version 2 objective coverage and delivery boundaries
+
+Source: owner-supplied `UPDATED_FREECAD_PLUS_DEVELOPMENT_ROADMAP.md`, version 2.0,
+sections 3-7 and 12-15. Adopted as planning scope; all newly added implementation
+work below is **not started** unless an existing task explicitly records evidence.
+A matching older heading does not close a broader requirement. Existing Phase 3-7
+implementations remain partial evidence for the expanded portfolio.
+
+Apply dependency gates before utility/effort ranking. Establish C3 ownership,
+identity and persistence contracts before broad dependents, and C2 shared services
+before multiplying consumers. Prefer reusable existing code; no kernel or solver
+replacement is presumed. Decompose XL items and timebox uncertain feasibility
+spikes; engineering-hour estimates are hypotheses, not runtime or delivery promises.
+Re-estimate after three delivered milestones using measured work and build time.
+The first useful release is a coherent everyday-modeling/sketch slice, not completion
+of all surfaces, assemblies, CAM strategies, business options or specialized modules.
+
+Inventory ratings below preserve the supplied planning assessment: U/D are 1-5,
+F is feasibility, C is architectural criticality 0-3, effort is an unvalidated band.
+S=8-24, M=24-80, L=80-240 engineering hours; XL exceeds 240 with no defined upper
+bound. Ranges overlap and must not be summed into a delivery date. `Pending` means
+the full objective is unverified; `Partial` points to existing bounded evidence.
+
+| ID | Desired objective | U | D | F | C | Effort | Supplied phase | Local tasks / full-objective status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| A01 | Unified part definition with geometry and child occurrences | 5 | 5 | Medium | 3 | L–XL | P1/P2 | 7.1; 12.1; Partial |
+| A02 | Part-owned history, independent body results, explicit targets | 5 | 5 | Medium | 3 | XL | P1/P2 | 7.1; 7.4; Partial |
+| A03 | Shared instances, occurrence overrides, Make Unique, promote bodies | 5 | 3 | High | 3 | M–L | P2/P3 contracts; P6 product | 12.2; Partial |
+| A04 | Work/display context and scoped selection services | 5 | 3 | High | 3 | M–L | P1/P3 | 10.5; 12.4; Pending |
+| A05 | Persistent references, topology provenance, repair | 5 | 5 | Medium | 3 | XL | P1/P3 | 7.1.4; 12.5; Partial |
+| A06 | Versioned persistence, legacy adapters, migration | 5 | 5 | Medium | 3 | L–XL | P1/P3 | 7.6; 16.1; Partial |
+| A07 | Common feature lifecycle, undo, preview, cancellation | 5 | 4 | High | 2 | L | P2/P3 | 8.1; 10.2; Partial |
+| A08 | Assembly-scoped feature semantics | 4 | 5 | Medium | 3 | L–XL | P2 proof; P6 product | 7.1.3d; 12.6; Partial |
+| U01 | Separate navigators, docking, synchronized highlighting | 5 | 2 | High | 1 | M | P4 | 7.2; 10.6; Pending |
+| U02 | Tree filters, columns, folders, comments, dependency display | 4 | 2 | High | 1 | M | P4 | 7.2; 10.6; Pending |
+| U03 | Unified Extrude and Revolve command interfaces | 5 | 3 | High | 2 | M–L | P4; depends on A02/A07 | 8.2; 10.4; Partial |
+| U04 | Search aliases, shortcut palette, navigation presets | 4 | 2 | High | 0 | S–M | P4; safe prototypes earlier | 10.4; Pending |
+| U05 | Multiselection modifiers, filters, Select Other, selection rules | 5 | 3 | High | 2 | M | P4 | 10.5; Pending |
+| U06 | Shared extent controls, collectors, interactive handles | 5 | 3 | High | 2 | M–L | P4 | 8.1; 8.4.3; Partial |
+| U07 | Move/Copy, point-to-point, triad and coordinate alignment | 5 | 3 | High | 2 | M | P4 | 10.7; Pending |
+| U08 | Rollback, valid insertion/reorder, suppression | 4 | 4 | Medium | 2 | L | P3 contract; P4 UI | 7.5; Pending |
+| U09 | Guided/direct workflows, progressive disclosure, consistent feature presets | 5 | 3 | High | 2 | M–L | P1 contracts; P4 | 10.2; 10.4; Pending |
+| U10 | Intelligent initial New Body/Unite suggestions with persisted explicit intent | 5 | 4 | Medium | 2 | M–L | P1/P3 contracts; P4 | 7.4; 10.3; Pending |
+| S01 | Automatic constraints, previews, inference controls | 5 | 3 | High | 2 | M–L | P5 | 11.1; Pending |
+| S02 | Cursor-adjacent suggested-constraint palette | 5 | 2 | High | 1 | S–M | P5; earlier prototype possible | 11.3; Pending |
+| S03 | Smart dimensions, driving/reference values, entry while drawing | 5 | 3 | High | 1 | M | P5 | 11.4; Pending |
+| S04 | Degrees of freedom, conflict repair, sketch diagnostics | 5 | 4 | Medium | 2 | L | P5 | 11.4; Pending |
+| S05 | External projection/intersection points and curves | 5 | 3 | High | 2 | M | P5; existing capability audit first | 11.5; Pending |
+| S06 | Regions, trim/extend, constrained copy, blocks and patterns | 4 | 4 | Medium | 2 | L | P5 in separate increments | 11.6; Pending |
+| S07 | Selection-aware constraint applicability, conflict/redundancy states and reasons | 5 | 4 | Medium | 2 | L | P1 audit/contracts; P5 | 11.2; Pending |
+| B01 | Entire/Model/Empty/custom reference sets | 5 | 3 | High | 2 | M–L | P3 contract; P6 UI | 12.3; Pending |
+| B02 | Joint/mate assistance, grounding, freedom/conflict display | 5 | 4 | Medium | 2 | L | P6 | 12.4; Pending |
+| B03 | Published interfaces, geometry links, external-reference manager | 5 | 5 | Medium | 3 | L–XL | P3 contracts; P6 product | 12.5; Pending |
+| B04 | Replacement, component patterns/mirrors, explosions and motion | 4 | 4 | High | 2 | L | P6 in separate increments | 12.2; 12.6; Pending |
+| B05 | Configurations, arrangements, flexible subassemblies | 4 | 5 | Medium | 3 | XL | P1 semantics; later P6 increments | 9.6; 12.7; Pending |
+| B06 | Lightweight/partial loading and simplified representations | 4 | 5 | Medium | 3 | L–XL | P1 contracts; measured P6 need | 12.8; Pending |
+| G01 | Solid/sheet trim and split | 5 | 3 | High | 1 | M–L | P7 | 13.1; Partial |
+| G02 | Thicken sheets, sew/stitch, offset and gap diagnostics | 5 | 4 | Medium | 1 | L | P7 | 13.1; Pending |
+| G03 | Sweep/loft and through-curves surfaces with guides | 5 | 5 | Medium | 2 | L–XL | P7 | 13.2; Pending |
+| G04 | Curve-network/boundary surfaces and continuity controls | 4 | 5 | Unknown | 2 | XL | P7 after bounded spike | 13.3; Pending |
+| G05 | Extract/project/intersect curves; isocline extraction | 4 | 4 | Medium | 1 | M–L | P7; split by operation | 13.4; Partial |
+| G06 | Holes, patterns/mirrors, shell/draft/ribs and dress-up tools | 5 | 4 | High | 2 | L–XL | P7 in separate increments | 13.5; Partial |
+| G07 | Direct face editing and healing | 4 | 5 | Medium | 2 | XL | Late P7 | 9.1; 13.6; Pending |
+| G08 | Imported-solid feature recognition | 3 | 5 | Unknown | 1 | XL | Late P7 after spike | 13.7; Pending |
+| C01 | Direct-STL input and first three-axis finishing workflow | 5 | 4 | Medium | 2 | L | P8 | 6; 14.1; Partial |
+| C02 | Stock-aware roughing, rest machining, boundaries | 5 | 5 | Medium | 2 | XL | P8 after C01 | 14.2; Pending |
+| C03 | Simulation, collision checks, posts and setup reuse | 5 | 5 | Medium | 2 | L–XL | P8; limited checks from first release | 14.3; 14.4; Partial |
+| I01 | Measurements, mass, sections, interference/clearance | 4 | 3 | High | 1 | M–L | P9; isolated tools may move earlier | 15.1; Pending |
+| I02 | Surface quality, continuity, and deviation inspection | 4 | 4 | Medium | 1 | M–L | P7 validation/P9 product | 15.2; Pending |
+| D01 | Drawing workflows, associative annotation and repair | 4 | 4 | Medium | 2 | L–XL | P9 | 9.4; 15.3; Pending |
+| D02 | BOM, balloons, exploded documentation | 4 | 3 | High | 2 | M–L | P9 after B01/B04 | 15.4; Pending |
+| X01 | Sheet metal, frames/weldments, hardware libraries | 3 | 4 | Medium | 2 | XL | P9 by module | 15.5; Pending |
+| X02 | Package/relocate projects, compatibility and export | 5 | 4 | High | 3 | L | P3 contracts/P9 UI | 7.6; 15.6; Pending |
+| X03 | Performance, scripting, packaging, upstream integration | 5 | 4 | High | 2 | Ongoing | P0 onward | 16.3; 16.5; 16.6; Partial |
+| X04 | Native .cadprt identity, capability/version checks, legacy import and associations | 5 | 4 | High | 3 | L | P1/P3; P10 packaging | 7.6; 16.1; 16.6; Pending |
+| X05 | Early drawing/CAM/FEM/Draft compatibility probes and adapters | 5 | 4 | Medium | 3 | M–L | P2/P3; ongoing | 7.1; 16.2; Partial |
+| X06 | Release licensing, matching source, notices, dependency and asset audit | 5 | 2 | High | 1 | S–M | P0 inventory; P10 releases | 16.7; Pending |
+| X07 | Starter models, guided onboarding, compatibility and support documentation | 5 | 2 | High | 1 | M | P4/P11 | 17.2; 17.3; Pending |
+| Q01 | Task benchmarks, baseline comparison, effort and release evidence | 5 | 3 | High | 2 | M | P0 onward | 16.3; 16.4; 16.5; Pending |
+| M01 | Audience/competitor evidence and measured adoption assumptions | 4 | 2 | High | 0 | S–M | P0/P11 | 17.1; 17.5; Pending |
+| M02 | Useful-model distribution, tutorials and focused channel experiments | 4 | 2 | High | 0 | M | P11; publication when authorized | 17.3; 17.4; 17.5; Pending |
+| M03 | Independent-fork branding, optional extension/MIME registration | 3 | 2 | High | 1 | S–M | Identity early; P10/P11 | 17.6; 17.7; Pending |
+
+## [   ] Phase 10: Shared workflow, selection and guided modeling (P1/P3/P4)
+
+Depends on applicable Phase 7 decisions; presentation prototypes can proceed only
+when they preserve existing semantics. These tasks extend Phase 8, not replace it.
+
+- [   ] 10.1 Reconcile PRODUCT_SPEC, UI_UX_SPEC, guidelines and ADRs with version 2:
+  intelligent suggestions, guided/direct entry, aliases, selection rules, free-core
+  commitment and engineering-document scope. Keep current implementation distinct
+  from future requirements; retain the operation-first field and indexed CAM scope.
+- [   ] 10.2 Implement guided/direct entry through one command model, validation
+  and transaction path. Guide curves/regions, magnitude/direction, operation/target
+  review and visible confirmation; skip satisfied inputs for preselection/experts.
+  Revisit earlier inputs without discarding unrelated valid choices. Collapse
+  advanced controls while keeping operation, targets, extent, units and consequential
+  warnings visible. Guidance preferences are UI state, not new feature types.
+  Pilot Extrude and Revolve before extracting shared behavior; retain Apply/OK/Cancel,
+  previews, handles and numeric/expression controls from 8.1.
+- [   ] 10.3 Implement 7.4's shared suggestion service: explain inferred versus
+  explicitly chosen operations, highlight eligible targets, update proposals before
+  explicit choice without oscillating near contact tolerances, and never override
+  manual choices. Invalid unions need corrective guidance; mere overlap is not
+  validity. Eligibility includes work part, occurrence, reference access/editability
+  and geometry. Persist accepted targets/mode; edited features initialize from saved
+  intent and fail/repair rather than infer a new operation. Keep Tools is explicit;
+  temporary tool geometry need not become a permanent body.
+- [   ] 10.4 Retain searchable Pad/Pocket/Revolution/Groove shortcuts as presets
+  into shared Extrude/Revolve validation and editing; Pocket/Groove select Subtract
+  and request a valid target. Preserve legacy adapters until conversion is supported.
+  Add expanded/searchable command catalog, shortcut palette and navigation presets
+  without flooding contextual palettes. Track retirement of temporary UI adapters.
+- [   ] 10.5 Define shared scoped selection: plain click replaces, Ctrl adds/toggles,
+  Shift has documented range/extension semantics; separate sketch picks accumulate
+  with modifiers, window picking can collect a group. Integrate existing task
+  collectors without losing deliberate collection state. Add Select Other, entity
+  filters, tangent/connected-chain rules, window/crossing and restored hide/isolate.
+  Keep auto-inference suppression shortcuts nonconflicting; verify keyboard/DPI use.
+- [   ] 10.6 Extend 7.2 with separate Assembly and Feature Navigator tabs, optional
+  simultaneous docking, explicit work/display part, status columns, contributing-body
+  filters, comments, folders and dependency highlights. Display grouping never
+  changes ownership, transforms or valid history order.
+- [   ] 10.7 Add shared Move/Copy with point-to-point, translation/rotation,
+  coordinate-system/axis alignment, movable triad, snapping and local/global context.
+  Distinguish one-time placement from a persistent assembly relationship; validate
+  occurrence scope, exact numeric results, preview, Cancel, Undo and restore.
+
+Gate G4: simple part/assembly creation, edits, precise moves and recovery survive
+save/reopen. Guided/direct entry and aliases produce equivalent semantics. Test
+zero/one/multiple targets, invalid contacts, cross-component overlap, missing cut
+target, manual override and changed intersections. Compare measured tasks to baseline.
+
+## [   ] Phase 11: Selection-aware Sketcher and reference workflows (P5)
+
+Depends on stable selection/reference contracts; audit existing solver capabilities
+before replacement. These tasks extend 8.3, with one reusable eligibility service.
+
+- [   ] 11.1 Audit and improve automatic coincidence, horizontal/vertical, parallel,
+  perpendicular, tangent and equal inference. Preview constraints, expose thresholds
+  and per-sketch preferences, and support temporary suppression without conflicting
+  with selection modifiers. Test cases where no constraint should be inferred.
+- [   ] 11.2 Implement fast structural applicability separately from solver
+  feasibility. One service serves palettes, toolbar/menu actions, shortcuts and
+  execution. No selection shows drawing/global actions; one line offers supported
+  single-line actions; two suitable lines add Parallel/Perpendicular. Other operand
+  types/counts/roles use their supported relations. Hide structurally inapplicable
+  actions; disable proven conflicts with reasons and highlighted constraints.
+  Distinguish Valid, Already Applied, Redundant, Conflicting, Unsupported and
+  Unverified. Use nonmutating/rolled-back trials, revision/selection caches and stale
+  result rejection; revalidate on commit and never silently remove constraints.
+- [   ] 11.3 Add a reachable near-cursor suggested-constraint palette using 11.2:
+  stable pointer corridor/dismissal delay, useful ordering, keyboard access and
+  disable preference. Test dense sketches, zoom/DPI and movement toward/away from
+  it. Measure eligibility latency; a palette alone does not complete 11.2.
+- [   ] 11.4 Unify smart dimensions and numeric entry while drawing; distinguish
+  driving/reference dimensions from construction/reference geometry conversion.
+  Show remaining degrees of freedom and conflict/redundancy diagnostics with
+  deliberate, undoable repair that preserves intended design relationships.
+- [   ] 11.5 Extend associative external projection and true plane intersections:
+  curve/plane points versus face/plane curves, with source highlighting and explicit
+  projection/intersection choice. Cover tangent, coplanar, disjoint and multiple
+  results; changes update or report broken references across approved scopes.
+- [   ] 11.6 Complete regions, gap/duplicate/self-intersection diagnostics and
+  trim/extend improvements; add constraint-preserving copy/paste, blocks, reusable
+  profiles and sketch patterns as separate increments.
+
+Gate G5: solver trials cannot mutate live sketches; redundant/conflicting candidates
+remain distinct and invalid suggestions cannot commit. Validate T12, inference/no
+inference, external edits, stale asynchronous results and palette interaction.
+
+## [   ] Phase 12: Assembly definitions, occurrences and interpart design (P2/P3/P6)
+
+Depends on Phase 7 identity/persistence proof. A native Link or local-cut probe is
+partial evidence, not completion of these production workflows.
+
+- [   ] 12.1 Prove and productize mixed definitions containing geometry, datums and
+  child occurrences, without converting a part to a different assembly type. Define
+  logical definition versus document identity. Reuse one definition twice in one
+  assembly and once in another; shared edits update loaded dependents, with explicit
+  reload/update policy for closed external documents. Prevent double transforms.
+- [   ] 12.2 Productize occurrence overrides, Make Unique and Promote Bodies to
+  Part/Component with explicit associative/independent choices. Remap internal
+  references and identity for independent copies while preserving provenance;
+  occurrence placement stays local. Validate replacement and multi-assembly reuse.
+- [   ] 12.3 Add Entire Part/Model/Empty/custom named reference sets. Keep visibility,
+  suppression, reference-only BOM role, configuration/arrangement and load state
+  independent. Define deliberate full-geometry access outside exposed reference sets.
+- [   ] 12.4 Add contextual mates/joints, grounding, freedom/conflict display and
+  joint limits using the existing solver. Preserve work/display context and clearly
+  distinguish shared-definition edits from occurrence edits.
+- [   ] 12.5 Add occurrence-aware in-context references and published datum/geometry/
+  parameter interfaces, with source highlighting. Provide external-reference manager:
+  source/version state, update/freeze/break, missing-path repair, unpublished-input
+  diagnostics and dependency-cycle rejection. Extend 9.3 rather than inventing
+  per-workbench traversal rules.
+- [   ] 12.6 Productize assembly-owned cuts with explicit selected-occurrence scope;
+  source propagation is a separate deliberate action. Add component patterns/mirrors
+  with skipped instances and shared/unique behavior, exploded views and simple motion.
+- [   ] 12.7 Define configurations, arrangements and flexible subassemblies after
+  parameter scope, identity, solver context and persistence proof. Flexible behavior
+  is not merely separate placement of a shared rigid result. Extend 9.6.
+- [   ] 12.8 Profile then implement lightweight/partial loading and simplified
+  representations. Missing/unloaded components remain represented; commands requiring
+  full geometry resolve it explicitly or report unavailable validation.
+
+Gate G6: nested multi-file assembly with shared/unique edits, replacement, reference
+sets, in-context references, relocation repair and local cuts survives persistence.
+Do not silently omit missing components from checks or BOMs.
+
+## [   ] Phase 13: Solid, curve and surface portfolio (P7)
+
+Depends on stable feature/result contracts. Preserve existing Trim/Isocline and
+Phase 3 command work; extend only missing behavior. Each feature needs supported
+inputs, tolerance, multi-result/target/tool retention and downstream-edit contracts.
+
+- [   ] 13.1 Complete solid/sheet trim and split coverage beyond the existing Trim
+  feature; implement sew/stitch, offsets, gap diagnostics and sheet thickening.
+  Spike high-curvature/self-intersection cases; validate actual solid/shell counts.
+- [   ] 13.2 Extend sweep/loft with ordered sections, guides, orientation/twist and
+  Boolean targets; implement through-curves surfaces with guides. Reuse 3.6/8.2.
+- [   ] 13.3 Spike curve-network/boundary surfaces and supported positional/tangent/
+  curvature continuity. Measure continuity rather than judging rendered smoothness;
+  explicitly limit unsupported inputs instead of assuming a kernel replacement.
+- [   ] 13.4 Complete associative extract/project/intersect curve coverage; retain
+  Isocline's explicit draft-angle/direction convention and distinguish isoclines
+  from isoparametric curves and display-only analysis. Reuse Phase 5 evidence.
+- [   ] 13.5 Extend Hole wizard, feature/body patterns/mirrors, shell/draft/rib/web
+  and fillet/chamfer tools in bounded increments, preserving specialized parameters.
+- [   ] 13.6 Implement 9.1's history-based face move/offset/replace/delete-and-heal
+  on a declared class of native/imported solids; explicit repair limits and preview.
+- [   ] 13.7 Spike imported-solid feature recognition only after direct-edit and
+  reference foundations pass; record feasibility, bounded supported classes and
+  geometry-only/unsupported fallback without claiming recovered original history.
+
+Gate G7 per feature: analytic and difficult supported cases, explicit unsupported
+cases, geometric validity, scale-appropriate tolerances and downstream recompute.
+
+## [   ] Phase 14: CAM completion and verification expansion (P8)
+
+Extends Phase 6 and 9.5; retain existing Parallel/Waterline, physical holding tabs
+and required two-sided/manually indexed machining. Simultaneous rotary/multi-axis
+is later scope, not a reason to defer required indexed setups. No rebuild solely
+for this planning adoption.
+
+- [   ] 14.1 Audit mesh-capable algorithms versus BRep-only operations; finish STL
+  units/dimension/scaling, normals, orientation, bounds, disconnected-piece and
+  strategy-specific validity checks. Add setup wizard for model, WCS, stock, tools,
+  boundaries, allowances, tolerance and post. Reuse existing inputs and tab geometry.
+- [   ] 14.2 Add stock-aware roughing then rest machining as separate deliverables;
+  finishing drop-cutter paths do not prove either. Preserve holding-tab exclusions
+  in all supported cutting/link moves and across indexed setups.
+- [   ] 14.3 Complete containment/avoidance, reusable setups, stale-path detection,
+  progress/cancellation and large-mesh profiling. Validate transformed source edits,
+  units, stock and fixtures; distinguish model refresh from generated-path validity.
+- [   ] 14.4 Add supported simulation/remaining-stock, gouge and tool/holder/fixture
+  clearance checks with visible unavailable checks. Verify a narrow machine/post
+  scope and expand strategies/tools/posts only with representative fixtures.
+  Simulation is not proof of machine safety or authorization for actual motion.
+
+Gate G8: reproducible paths within stated tolerance, supported collision/simulation
+checks and independent checks where available; verified post output and explicit
+unsupported capabilities. Existing implementation evidence does not close new scope.
+
+## [   ] Phase 15: Inspection, drawing and specialized modules (P9)
+
+Each module depends only on the contracts it consumes and can be delivered separately.
+
+- [   ] 15.1 Unify transient/persistent measurement, units, materials/mass properties,
+  interactive/saved sections, interference and minimum-clearance inspection.
+- [   ] 15.2 Add curvature combs, zebra/reflection lines, continuity and deviation
+  inspection with quantitative checks where claimed; support surface validation.
+- [   ] 15.3 Extend 9.4 with drawing setup, projected/section/detail views,
+  associative annotations/dimensions and explicit broken-reference repair after edits.
+- [   ] 15.4 Add BOMs, balloons and exploded documentation; validate repeated
+  instances, unique copies, suppression, reference-only roles and nested quantities.
+- [   ] 15.5 Evaluate/reuse compatible sheet-metal, frames/weldments, hardware and
+  profile libraries, delivering independently with configuration/persistence tests.
+- [   ] 15.6 Package projects and collect dependencies, repair relocated references,
+  and export with stated history/metadata losses. Preserve originals and distinguish
+  native document packaging from flattened geometry exchange.
+
+Gate G9: independently releasable modules update correctly after source/topology
+changes, or explicitly report repair/stale state; drawing and BOM references cannot
+silently bind to a different entity.
+
+## [   ] Phase 16: Native documents, benchmark evidence and release hardening (P0-P3/P10)
+
+- [   ] 16.1 Extend 7.6 with stable internal `.cadprt` format identity independent
+  of branding; schema/producer/minimum-reader/required-capability declarations,
+  units/transforms, embedded/external content and definition/file distinction.
+  Preserve supported CAD, assemblies, TechDraw, CAM, FEM and other content; preserve
+  unknown content safely or refuse unsupported required saves without silent loss.
+  Test wrong-type/corrupt files, safe atomic save, backups/recovery, migration,
+  Save As/Copy/Make Unique and relocation. Retain best-effort legacy import with
+  untouched originals, conversion reports and distinct native/legacy/exchange paths.
+- [   ] 16.2 Complete early TechDraw dimension, CAM path, FEM support/load/material/
+  mesh/result and Draft consumer adapters exposed by Phase 7. Test units, transforms,
+  occurrence identity, source deletion/suppression/topology changes, Undo/Redo and
+  reopen; valid attachment or explicit repair/stale state is required. Do not wait
+  for new CAM/FEM products to run these existing-consumer probes.
+- [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
+  compatible component/add-on, bounded extension or demonstrated limitation. Cover
+  auto constraints, projection/intersection, transforms, Links, multi-solids,
+  disambiguation, reorder/suppression and mesh CAM; inspect code and actual behavior.
+  Preserve completed baseline evidence and identify only missing/invalidated checks.
+- [   ] 16.4 Implement the T01-T12 benchmark corpus below, choosing a coherent
+  first-release subset plus required downstream probes. Record named builds,
+  hardware, fixture parameters/design intent, operator experience, completion and
+  recovery/errors/help needs, task time and recompute/open/save/memory. Separate
+  learning from practiced work; use repeated trials/medians where useful. Measure
+  baseline before improvement/regression thresholds and claims. Use a separate
+  source-built upstream baseline, never the ignored installed FreeCAD. Compare
+  Fusion/SolidWorks/Onshape only where available; NX informs workflow, not parity.
+- [   ] 16.5 Measure full/incremental build, regeneration, loading, tessellation,
+  graphics and cancellation costs before optimizing. Define document locking,
+  thread safety and result-commit rules before background execution. Keep core
+  commands deterministic/scriptable through the same validation as UI.
+- [   ] 16.6 Maintain release/platform and upstream integration gates; test install,
+  launch, open/edit/save/export, migration, older/new files and recovery on supported
+  platforms. Verify `.cadprt` filters/icons/installer associations. One Windows
+  build is not multi-platform evidence; no public release is implied by a push.
+- [   ] 16.7 Audit actual source/dependency/asset licenses, notices, change records
+  and branding permissions before distribution. Plan matching tagged source/archive,
+  required build/install and applicable linking materials with binaries; verify
+  artifact/source correspondence. Keep proprietary competitor code/assets out.
+  This is an unperformed release audit, not a legal conclusion or publication order.
+
+G0-G3 remain prerequisite evidence gates: known reproducible fork baseline; recorded
+high-impact decisions; minimal mixed-definition/shared-occurrence/unique-copy/local-
+cut/split-merge/external-link proof with interactive demonstration; then hardened
+services and native/legacy/consumer round trips. Current narrow prototypes do not
+close these gates. First architectural release requires G0-G3; first broadly useful
+release adds G4 plus a selected G5 increment. G10 additionally requires the promised
+workflows, package/source/licensing evidence and accurate compatibility limitations.
+
+Benchmark acceptance targets for 16.4 (all full scenarios pending):
+
+| ID | Task | Required evidence |
+| --- | --- | --- |
+| T01 | Build and revise a mounting bracket | Guided sketch, Extrude add/cut, dress-up, and editable dimensions |
+| T02 | Model an enclosure and separate lid | Multiple bodies, shared dimensions, clear ownership, no accidental merge |
+| T03 | Reuse one part three times and in another assembly | Shared source edits and independent placements |
+| T04 | Make one occurrence independent | Remapped identity/references; other occurrences remain linked |
+| T05 | Move/align parts point-to-point | Correct coordinate context, orientation, preview, cancel, undo |
+| T06 | Change an upstream sketch/feature | Correct update or explicit repair; no silent wrong-target attachment |
+| T07 | Create a dimensioned drawing | Correct source view/dimension updates after edits |
+| T08 | Create/update an existing supported CAM operation | Correct setup/stock/reference scope and invalidated stale toolpaths |
+| T09 | Attach FEM material, support, and load | Correct attachment or explicit repair/remeshing/recalculation need |
+| T10 | Save/reopen/copy/relocate linked projects | Stable identities, dependencies, missing-file recovery |
+| T11 | Download a useful model, change two named dimensions, export for printing | Successful customization without general CAD training; repeat after reopen |
+| T12 | Apply constraints to one line, two lines, and a constrained sketch | Correct contextual options and distinct already-applied/redundant/conflict explanations |
+
+## [   ] Phase 17: Free product onboarding, audience and optional outreach (P11)
+
+Preparation may accompany engineering; public delivery depends on applicable G10
+and actual authorization. No advertising, contact, publication, registration or
+payment is authorized by this backlog. Distinct naming and revenue are optional.
+
+- [   ] 17.1 Validate audience hypotheses separately: serious hobbyists, small
+  engineering/manufacturing teams, recent/lapsed FreeCAD users, experienced users
+  and beginners. Refresh primary competitor evidence before targeting decisions;
+  distinguish survey population, team size, licenses, downloads and market share.
+  Prioritize FreeCAD baseline, Fusion/SolidWorks task comparisons, Onshape workflow,
+  with Inventor/Alibre/Solid Edge/Shapr3D/OpenSCAD and NX/Creo/CATIA where relevant.
+  Study local/private ownership and commercial-use terms without assuming adoption.
+- [   ] 17.2 Create a useful starter model with named parameters/descriptions/units,
+  supported ready-to-print STL/3MF, editable `.cadprt` and STEP where appropriate.
+  Include required build/version, image, installation/opening path, beginner guide,
+  expert shortcuts and T11 customization route. Printing downloads must not require
+  installing the CAD app. Candidate models: brackets, organizers, enclosures,
+  drawer/mounting interfaces, RC receiver mounts, battery trays and workshop fixtures.
+- [   ] 17.3 Prepare model-led distribution using existing owner model audiences:
+  Thingiverse/Printables-compatible uploads, allowed archive or source links if
+  `.cadprt` uploads are unsupported, never disguised FCStd files. Prepare one
+  60-90-second demonstration, complete tutorial and landing page joining model,
+  application download, tutorial and compatibility/support information. Advertise
+  useful outcomes and only measured savings; preserve familiar command names.
+- [   ] 17.4 Prepare bounded channel experiments: relevant Facebook maker/RC/CNC/
+  printing groups, short videos/YouTube, FreeCAD communities/forums, independent
+  small creators, searchable tutorials/comparison pages, makerspaces/robotics clubs,
+  and later maker publications such as Hackaday. Respect community rules; test
+  channel value rather than assuming rankings. Obtain authorization before outreach.
+- [   ] 17.5 Measure discovery, trial, installation, first successful customization,
+  voluntary return/second independent project, migration and support burden
+  separately. Use consented feedback/referral data, no undisclosed telemetry.
+  Refine beginner/expert friction using authorized observation; views/downloads or
+  enthusiasm do not prove adoption. Revisit effort/support capacity with evidence.
+- [   ] 17.6 Prepare independent-fork positioning: upstream credits, workflow/object
+  differences, native/import/export limits, add-on/macro compatibility, support
+  destination and maintenance status. Optional: evaluate a distinct public name
+  before broad incompatible release, preserving built-on-FreeCAD acknowledgment and
+  stable format identity. No approved rename or upstream endorsement is implied.
+- [   ] 17.7 Optional after format specification: public `.cadprt` description,
+  samples/icons, FileInfo submission and proposed IANA media type. Recheck naming,
+  availability/process/fees before action; no assigned MIME type or exclusive
+  extension ownership is claimed. Required OS association remains 16.6.
+- [   ] 17.8 Deferred unless explicitly revisited by the owner: paid packaged
+  distribution, support/training, hosted storage/collaboration/backups/computation,
+  sponsored development or independent extensions. Reconsider only against real
+  adoption/maintenance evidence and applicable code/licensing boundaries. No billing,
+  subscription, activation or paid core gates; optional hosted services must not
+  become prerequisites for ordinary local modeling.
+
+Gate G11: release candidate, starter source/exports, tutorial and compatibility
+notes agree; representative users complete T11. Outreach is reviewable before
+publication, and repeated campaigns need evidence. Optional branding, registration
+or revenue cannot delay a usable free modeling release.
