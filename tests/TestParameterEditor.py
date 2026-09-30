@@ -28,7 +28,8 @@ class TestParameterEditor(unittest.TestCase):
         self.editor.close()
         self.editor.deleteLater()
         Gui.updateGui()
-        App.closeDocument(self.doc.Name)
+        if self.doc is not None:
+            App.closeDocument(self.doc.Name)
 
     def testApplyAndCloseHaveExplicitCommitBoundaries(self):
         self.assertTrue(self.editor.value.isReadOnly())
@@ -77,3 +78,50 @@ class TestParameterEditor(unittest.TestCase):
         self.editor.expression.setText("32 mm")
         self.editor.apply.click()
         self.assertAlmostEqual(self.box.Shape.BoundBox.XLength, 32)
+
+    def testExternalEditRequiresExplicitRefreshBeforeApplyOrRename(self):
+        self.editor.expression.setText("40 mm")
+        self.parameters.Width = "28 mm"
+        self.doc.recompute()
+        self.editor.apply.click()
+        self.assertIn("Refresh", self.editor.error.text())
+        self.assertEqual(self.editor.expression.text(), "40 mm")
+        self.assertAlmostEqual(self.parameters.Width.Value, 28)
+        self.editor.name.setText("PanelWidth")
+        self.editor.rename.click()
+        self.assertIn("Refresh", self.editor.error.text())
+        self.assertIn("Width", self.parameters.PropertiesList)
+        self.editor.refreshButton.click()
+        self.assertEqual(self.editor.error.text(), "")
+        self.assertEqual(self.editor.name.text(), "Width")
+        self.assertEqual(self.editor.expression.text(), "")
+        self.editor.expression.setText("41 mm")
+        self.editor.apply.click()
+        self.assertAlmostEqual(self.box.Length.Value, 41)
+        self.doc.undo()
+        self.doc.recompute()
+        self.editor.apply.click()
+        self.assertIn("Refresh", self.editor.error.text())
+        self.editor.refreshButton.click()
+        self.assertIn("28", self.editor.value.text())
+
+    def testParameterDeletionClosesEditorAndDisablesFurtherActions(self):
+        self.doc.removeObject(self.parameters.Name)
+        Gui.updateGui()
+        self.assertFalse(self.editor.isVisible())
+        self.assertTrue(self.editor._closed)
+        self.editor.applyExpression()
+        self.editor.renameParameter()
+        self.editor.refresh()
+        self.assertFalse(self.doc.HasPendingTransaction)
+
+    def testDocumentClosureClosesEditor(self):
+        name = self.doc.Name
+        App.closeDocument(name)
+        self.doc = None
+        Gui.updateGui()
+        self.assertFalse(self.editor.isVisible())
+        self.assertTrue(self.editor._closed)
+        self.editor.applyExpression()
+        self.editor.renameParameter()
+        self.editor.refresh()

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Test-only existing-parameter editor. Not installed or registered as a command."""
+import FreeCAD as App
 from PySide import QtWidgets
 from prototypes.NamedParameters import edit_parameter_expression, rename_parameter
 
@@ -8,6 +9,8 @@ class ParameterEditor(QtWidgets.QDialog):
     def __init__(self, obj, parent=None):
         super().__init__(parent)
         self.obj = obj
+        self.doc = obj.Document
+        self._closed = False
         self.setWindowTitle("Parameter editor prototype")
         layout = QtWidgets.QFormLayout(self)
         self.parameter = QtWidgets.QComboBox()
@@ -19,6 +22,7 @@ class ParameterEditor(QtWidgets.QDialog):
         self.error.setWordWrap(True)
         self.apply = QtWidgets.QPushButton("Apply expression")
         self.rename = QtWidgets.QPushButton("Rename")
+        self.refreshButton = QtWidgets.QPushButton("Refresh")
         self.closeButton = QtWidgets.QPushButton("Close")
         layout.addRow("Parameter", self.parameter)
         layout.addRow("Name", self.name)
@@ -26,14 +30,18 @@ class ParameterEditor(QtWidgets.QDialog):
         layout.addRow("Expression", self.expression)
         layout.addRow(self.error)
         layout.addRow(self.apply, self.rename)
-        layout.addRow(self.closeButton)
+        layout.addRow(self.refreshButton, self.closeButton)
         self.parameter.currentIndexChanged.connect(self.loadParameter)
         self.apply.clicked.connect(self.applyExpression)
         self.rename.clicked.connect(self.renameParameter)
         self.closeButton.clicked.connect(self.reject)
+        self.refreshButton.clicked.connect(lambda: self.refresh(self.parameter.currentText()))
         self.refresh()
+        App.addDocumentObserver(self)
 
     def refresh(self, selected=None):
+        if self._closed:
+            return
         self.parameter.blockSignals(True)
         self.parameter.clear()
         for name in self.obj.PropertiesList:
@@ -54,9 +62,13 @@ class ParameterEditor(QtWidgets.QDialog):
         expressions = dict(self.obj.ExpressionEngine)
         self.expression.setText(expressions.get(name, expressions.get("." + name, "")))
         self.error.clear()
+        self._snapshot = self.snapshot()
 
     def applyExpression(self):
+        if self._closed:
+            return
         try:
+            self.requireUnchanged()
             edit_parameter_expression(self.obj, self.parameter.currentText(), self.expression.text())
         except Exception as error:
             self.error.setText(str(error))
@@ -64,10 +76,37 @@ class ParameterEditor(QtWidgets.QDialog):
         self.loadParameter()
 
     def renameParameter(self):
+        if self._closed:
+            return
         name = self.name.text()
         try:
+            self.requireUnchanged()
             rename_parameter(self.obj, self.parameter.currentText(), name)
         except Exception as error:
             self.error.setText(str(error))
             return
         self.refresh(name)
+
+    def snapshot(self):
+        return tuple((name, str(getattr(self.obj, name)))
+                     for name in self.obj.PropertiesList
+                     if self.obj.getTypeIdOfProperty(name) in
+                     ("App::PropertyLength", "App::PropertyAngle")), tuple(self.obj.ExpressionEngine)
+
+    def requireUnchanged(self):
+        if self.snapshot() != self._snapshot:
+            raise ValueError("Parameters changed outside this editor. Refresh before applying changes.")
+
+    def slotDeletedObject(self, obj):
+        if obj == self.obj:
+            self.reject()
+
+    def slotDeletedDocument(self, doc):
+        if doc == self.doc:
+            self.reject()
+
+    def done(self, result):
+        if not self._closed:
+            self._closed = True
+            App.removeDocumentObserver(self)
+        super().done(result)

@@ -306,7 +306,7 @@ and the active roadmap milestone; do not silently change the intended workflow.
 parameter object, supplied by the test caller. It is not a production command or
 replacement for the planned part-level parameter editor. Fields appear in order:
 Parameter (existing length/angle property dropdown), Name, read-only Current value,
-Expression, error message, Apply expression/Rename buttons, then Close.
+Expression, error message, Apply expression/Rename buttons, then Refresh/Close.
 
 Typing leaves the document unchanged. Apply evaluates units and affected recompute
 state in an owned transaction; a failed edit rolls back, keeps the attempted text
@@ -316,6 +316,12 @@ and success refreshes the dropdown to the new name. Selecting another parameter
 reloads its data and discards unapplied text. Close discards unapplied text; it does
 not undo earlier successful Apply/Rename transactions. Native Undo remains available.
 
-Three native Qt tests exercise these interactions programmatically. Physical
-keyboard/accessibility, high-DPI layout, external edits/document closure and the
-full production creation/deletion/where-used/publication workflow remain pending.
+External typed-value/expression changes (including Undo) block stale Apply/Rename
+with a Refresh instruction. Refresh explicitly discards draft text and reloads the
+current selection. Parameter-object or document deletion closes the dialog and
+removes its observer; closed dialogs ignore further edit actions. The snapshot is
+object-level and does not track every external dependency revision.
+
+Six native Qt tests exercise the prototype programmatically. Physical keyboard/
+accessibility, high-DPI layout, external property-list interactions, multi-dialog
+behavior and production creation/deletion/where-used/publication remain pending.
