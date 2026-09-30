@@ -1113,3 +1113,44 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.assertAlmostEqual(dressup.Positions[0].x, 12)
         self.assertTrue(dressup.Path.Commands)
         self.assertTrue(dressup.Proxy.tags)
+
+    def testHoldingTagsRejectInvalidToolAndClearSetupCaches(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from Path.Dressup import Tags
+        from Path.Post.PostList import _wrap_op
+        base, dressup = self.makeHoldingTags()
+        for controller in (None, SimpleNamespace(Tool=None),
+                           SimpleNamespace(Tool=SimpleNamespace(Diameter=0)),
+                           SimpleNamespace(Tool=SimpleNamespace(Diameter=float("inf")))):
+            with patch.object(Tags.PathDressup, "toolController", return_value=controller):
+                dressup.touch()
+                self.doc.recompute()
+            self.assertIn("Invalid", dressup.State)
+            self.assertFalse(dressup.Path.Commands)
+            self.assertIsNone(dressup.Proxy.pathData)
+            self.assertIsNone(dressup.Proxy.toolRadius)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertTrue(_wrap_op(dressup).Path.Commands)
+            self.assertGreater(dressup.Proxy.toolRadius, 0)
+
+    def testHoldingTagPointQueriesRejectStaleInputAndRecover(self):
+        base, dressup = self.makeHoldingTags()
+        producer = self.attachFailingDressupInput(base)
+        point = App.Vector(10, 0, 0)
+        self.assertTrue(dressup.Proxy.pointIsOnPath(dressup, point))
+        self.assertIsNotNone(dressup.Proxy.pointAtBottom(dressup, point))
+        producer.Fail = True
+        self.doc.recompute()
+        for query in (dressup.Proxy.pointIsOnPath, dressup.Proxy.pointAtBottom):
+            with self.assertRaisesRegex(ValueError, "input is not current"):
+                query(dressup, point)
+            self.assertIsNone(dressup.Proxy.pathData)
+            self.assertIsNone(dressup.Proxy.toolRadius)
+        producer.Fail = False
+        self.doc.recompute()
+        self.assertTrue(dressup.Proxy.pointIsOnPath(dressup, point))
+        self.assertIsNotNone(dressup.Proxy.pointAtBottom(dressup, point))

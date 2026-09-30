@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2aw/ax guard holding-tag direct processing and position edits.
+- Current batch: 16.2ay/az validate holding-tag setup/tool data and refresh point
+  queries instead of trusting old path caches. Grouped validation: 64 passes, zero
+  failures/errors/skips. Python staging only; no native rebuild or release.
+- Previous batch: 16.2aw/ax guard holding-tag direct processing and position edits.
   Grouped validation: 62 passes, zero failures/errors/skips; failed direct generation
   clears output, stale inputs preserve stored positions. Python staging only;
   no native rebuild or release update.
@@ -3241,6 +3244,24 @@ preceded one grouped run; macro PASS and process ended. Source/staged Tags.py SH
 The regression invokes the native proxy methods directly; it is not physical task-panel
 acceptance. Native skipped-recompute cache behavior recorded in 16.2au/av is unchanged.
 Python-only staging into engine 2df76790b4; no native rebuild, release or machine test.
+
+- [ X ] 16.2ay Clear holding-tag path/tool caches before setup, check base readiness
+  and require a tool with positive finite diameter. Verify missing controller/tool,
+  zero/infinite diameter leave empty output/caches, block export and recover.
+- [ X ] 16.2az Refresh setup for holding-tag point queries and give a clear error
+  for unsupported profile paths. Verify both point-query methods reject failed
+  dependencies despite previous caches and recover after producer repair.
+
+Tag setup/query evidence: `cam-tag-setup-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **64 PASS, zero failures/errors/
+skips** (59 CAM invalid-input/workflow, five tag geometry checks). Both changes
+preceded one grouped run; macro PASS and process ended. Source/staged Tags.py SHA256:
+`6D66A11C7979003AB6C75BD934830091B215855E2796C32325434B84D48B44C3`.
+Tests use native document/path fixtures with injected controller data and real
+producer failures. Queries rebuild path analysis; high-frequency interaction
+performance and physical UI acceptance remain unmeasured. Skipped native recompute
+behavior from 16.2au/av remains unchanged. Python staging into engine 2df76790b4;
+no native rebuild, release or machine acceptance.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

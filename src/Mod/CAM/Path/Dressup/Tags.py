@@ -1277,6 +1277,11 @@ class ObjectTagDressup:
     def setup(self, obj, generate=False):
         logger.debug("setup")
         self.obj = obj
+        self.pathData = None
+        self.toolRadius = None
+        if not obj.Base or not obj.Base.isDerivedFrom("Path::Feature"):
+            raise ValueError("Select a base path before setting up holding tags")
+        PathDressup.requireCurrent(obj.Base)
         try:
             pathData = PathData(obj)
         except ValueError:
@@ -1289,7 +1294,14 @@ class ObjectTagDressup:
             )
             return None
 
-        self.toolRadius = float(PathDressup.toolController(obj.Base).Tool.Diameter) / 2
+        controller = PathDressup.toolController(obj.Base)
+        tool = getattr(controller, "Tool", None)
+        if tool is None:
+            raise ValueError("Holding tags require a tool controller with a tool")
+        diameter = float(tool.Diameter)
+        if not math.isfinite(diameter) or diameter <= 0:
+            raise ValueError("Holding tags require a positive finite tool diameter")
+        self.toolRadius = diameter / 2
         self.pathData = pathData
         if generate:
             obj.Height = self.pathData.defaultTagHeight()
@@ -1326,14 +1338,16 @@ class ObjectTagDressup:
         self.processTags(self.obj)
 
     def pointIsOnPath(self, obj, point):
-        if not self.pathData:
-            self.setup(obj)
-        return self.pathData.pointIsOnPath(point)
+        pathData = self.setup(obj)
+        if pathData is None:
+            raise ValueError("Select a valid profile path before querying holding tags")
+        return pathData.pointIsOnPath(point)
 
     def pointAtBottom(self, obj, point):
-        if not self.pathData:
-            self.setup(obj)
-        return self.pathData.pointAtBottom(point)
+        pathData = self.setup(obj)
+        if pathData is None:
+            raise ValueError("Select a valid profile path before querying holding tags")
+        return pathData.pointAtBottom(point)
 
 
 def Create(baseObject, name="DressupTag"):

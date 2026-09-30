@@ -216,3 +216,10 @@ processTags, verify empty output/solid preview data and successful retry, and ca
 setXyEnabled with a failed upstream dependency. Saved Positions/Disabled must remain
 unchanged on that rejection; after repair the new position generates a usable path.
 These are native proxy-method checks, not physical task-panel input acceptance.
+
+
+Holding-tag setup tests inject missing controller/tool and zero/infinite diameter,
+requiring empty output plus cleared path/tool caches, export rejection and recovery.
+Point-query tests use a failed native upstream producer to ensure pointIsOnPath and
+pointAtBottom reject cached input and work after repair. Queries now rebuild path
+analysis; interactive performance has not been benchmarked by these checks.

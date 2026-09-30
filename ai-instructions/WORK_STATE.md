@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2aw/ax production direct holding-tag edit safeguards.
+Latest roadmap batch: 16.2ay/az production holding-tag setup/query checks.
+Setup clears path/tool caches, validates base readiness and positive finite tool
+diameter; direct point queries rebuild current setup rather than reuse stale data.
+Invalid tool/producer checks, export blocking and recovery pass.
+Grouped validation: 64 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-tag-setup-20260930-batch.
+Macro PASS; process ended. Matching Tags.py staged into engine 2df76790b4;
+no native rebuild or release. Query interaction performance/physical acceptance
+remain unmeasured; native skipped-recompute caching remains as documented.
+
+Previous roadmap batch: 16.2aw/ax production direct holding-tag edit safeguards.
 processTags clears old output and checks base readiness; setXyEnabled refreshes
 path data and checks inputs before replacing Positions/Disabled. Direct failure/
 repair tests pass; no physical task-panel acceptance is claimed.
