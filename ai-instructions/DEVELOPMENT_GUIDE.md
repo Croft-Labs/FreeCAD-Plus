@@ -215,7 +215,7 @@ unmodified upstream FreeCAD is not a supported recomputation environment.
 
 ## Release and recovery
 
-The user authorized a Windows installer and GitHub pre-release 0.0.1 on 2026-09-29.
+The user authorized a Windows installer and GitHub pre-release 0.0.4 on 2026-09-30.
 Use the [fork packaging procedure](../package/WindowsInstaller/FREECAD_PLUS_RELEASE.md).
 Local commits do not imply a push, passing CI, or distribution. The user authorizes periodic milestone
 pushes to the configured origin fork. Remote builds, releases, and upstream

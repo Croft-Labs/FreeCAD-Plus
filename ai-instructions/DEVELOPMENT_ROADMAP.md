@@ -2,6 +2,11 @@
 
 ## Current focus
 
+- Release 0.0.4: explicitly authorized Windows x64 installer-only GitHub pre-release.
+  Version metadata prepared; build, packaged validation, installation/uninstallation
+  checks and publication are pending. Retain the existing focused workbench configuration.
+
+
 Specification update: see [the re-updated objective reconciliation](#re-updated-objective-specifications-and-delivery-slices) and [all 127 item-level specifications](#item-level-product-specifications-f001-f127). Added tasks 10.8-10.9, 11.7, 15.7, 16.8-16.9 and benchmarks T13-T16 are pending; existing completion evidence is preserved.
 
 - Release 0.0.1: user-authorized Windows x64 installer built, accepted and published; publication
