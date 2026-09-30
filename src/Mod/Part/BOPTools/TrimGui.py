@@ -3,6 +3,7 @@
 """One create/edit task for the associative Trim Body feature."""
 
 from pathlib import Path
+from BasicShapes.FeatureTask import creation_transaction
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -312,31 +313,32 @@ class CommandTrimBody:
             return
         selections = Gui.Selection.getSelectionEx()
         doc = App.ActiveDocument
-        doc.openTransaction(translate("TrimBody", "Create Trim Body"))
-        obj = TrimFeatures.makeTrimBody(doc)
-        # Preselection is optional. The same task remains available for incomplete input.
-        if selections and selections[0].DocumentName == doc.Name:
-            candidate = selections[0].Object
-            try:
-                require_current(candidate)
-                shape = TrimAPI.linked_shape((candidate, []))
-                if shape.Faces:
-                    obj.Target = (candidate, [])
-            except Exception:
-                pass
-        if len(selections) > 1 and selections[1].DocumentName == doc.Name:
-            selection = selections[1]
-            sub = selection.SubElementNames[0] if selection.SubElementNames else ""
-            link = (selection.Object, [sub] if sub else [])
-            try:
-                if not obj.Target or obj.Target[0] != selection.Object:
-                    require_current(selection.Object)
-                    TrimAPI.tool_shape(link)
-                    obj.Tool = link
-            except Exception:
-                pass
-        Gui.Selection.clearSelection()
-        Gui.getDocument(doc.Name).setEdit(obj.Name)
+        with creation_transaction(doc, translate("TrimBody", "Create Trim Body")):
+            obj = TrimFeatures.makeTrimBody(doc)
+            # Preselection is optional. The same task remains available for incomplete input.
+            if selections and selections[0].DocumentName == doc.Name:
+                candidate = selections[0].Object
+                try:
+                    require_current(candidate)
+                    shape = TrimAPI.linked_shape((candidate, []))
+                    if shape.Faces:
+                        obj.Target = (candidate, [])
+                except Exception:
+                    pass
+            if len(selections) > 1 and selections[1].DocumentName == doc.Name:
+                selection = selections[1]
+                sub = selection.SubElementNames[0] if selection.SubElementNames else ""
+                link = (selection.Object, [sub] if sub else [])
+                try:
+                    if not obj.Target or obj.Target[0] != selection.Object:
+                        require_current(selection.Object)
+                        TrimAPI.tool_shape(link)
+                        obj.Tool = link
+                except Exception:
+                    pass
+            Gui.Selection.clearSelection()
+            if not Gui.getDocument(doc.Name).setEdit(obj.Name):
+                raise RuntimeError("Could not open the feature task editor.")
 
 
 def registerCommand():

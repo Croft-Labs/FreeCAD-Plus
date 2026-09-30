@@ -50,6 +50,10 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Feature creation startup rollback: `creation_transaction` in
+[`FeatureTask.py`](../src/Mod/Part/BasicShapes/FeatureTask.py), used by Trim Body and
+Isocline commands (roadmap 4.1.7/5.1.7); successful tasks retain their transaction.
+
 Trim Body and Isocline task readiness uses `require_current` in
 [`ShapeReferences.py`](../src/Mod/Part/BasicShapes/ShapeReferences.py) after recompute;
 invalid/touched dependencies block preview acceptance and input replacement

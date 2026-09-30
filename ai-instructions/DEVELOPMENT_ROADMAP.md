@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 4.1.6/5.1.6 skip stale preselected inputs while retaining usable
+- Current batch: 4.1.7/5.1.7 roll back feature creation when factory/editor startup
+  fails. Grouped model/GUI validation: 48 passes, zero failures/errors/skips;
+  shared Python transaction guard staged, no native rebuild or release update.
+- Previous batch: 4.1.6/5.1.6 skip stale preselected inputs while retaining usable
   selections and an editable task. Grouped model/GUI validation: 46 passes, zero
   failures/errors/skips; Python-only staging, no native rebuild or release update.
 - Previous batch: 4.1.5/5.1.5 reject invalid/unrecomputed picks before replacing
@@ -1121,6 +1124,24 @@ Depends on: the existing Part geometry engine and native development build.
 - [ X ] 4.1.6 Apply readiness checks to optional target/tool preselection. Skip
   stale inputs and open the task for correction; verify a failed target is skipped,
   its valid tool remains selected and the repaired target can be picked/accepted.
+- [ X ] 4.1.7 Guard command creation with a shared transaction context. Factory
+  exceptions and editor refusal roll back created objects; verify no pending
+  transaction/dialog remains and a normal retry can be accepted.
+
+Startup evidence (also 5.1.7): `task-startup-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **48 PASS, zero failures/
+errors/skips** (Trim 14 model/14 GUI; Isocline nine model/11 GUI). Both tasks preceded
+grouped tests; macro PASS and process ended. Three production modules and two
+tests staged with matching hashes in the isolated fork build, engine 2df76790b4.
+Final newline-only formatting was compared to tested files before restaging.
+`creation_transaction` leaves successful creation open for task acceptance/Cancel,
+aborts on startup exceptions, and refuses an existing caller transaction. Tests
+inject factory failure after object creation and a false editor-start return;
+partial task-widget construction/observer cleanup remains a separate failure case.
+Final SHA256: FeatureTask `5EEE50A76A4B96918A40C866FCBE17FD6A2D974086E20DAA255CEA0A79053BD0`;
+TrimGui `A3EBA1CF76F8E141988BED2453753B5B79F20DAB1563A9ADAAD79642EEF7103D`;
+IsoclineGui `7FBAAE80022851FF7BBAEF2BB2371026330C362034ED62D7F059C837BD7C824E`.
+No native rebuild, release update or physical viewport acceptance.
 
 Preselection evidence (also 5.1.6): `task-preselection-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **46 PASS, zero failures/
@@ -1229,6 +1250,8 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
   repair/recompute permits reference selection and acceptance; evidence with 4.1.5.
 - [ X ] 5.1.6 Filter stale face preselection without discarding valid faces in the
   same selection. Verify repaired faces can be added and accepted; evidence with 4.1.6.
+- [ X ] 5.1.7 Use shared creation transaction handling for factory/editor startup
+  failures and verify complete object rollback plus successful retry; evidence with 4.1.7.
 
 ### [   ] 5.2 Validate the local build
 

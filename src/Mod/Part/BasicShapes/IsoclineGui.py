@@ -3,6 +3,7 @@
 """Complete face/direction/angle selection for new and existing Isocline Curves."""
 
 from pathlib import Path
+from .FeatureTask import creation_transaction
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -342,26 +343,27 @@ class CommandIsocline:
             return
         selections = Gui.Selection.getSelectionEx()
         doc = App.ActiveDocument
-        doc.openTransaction(translate("Isocline", "Create Isocline Curve"))
-        obj = Isocline.makeIsocline(doc)
-        links = []
-        for selection in selections:
-            if selection.DocumentName != doc.Name:
-                continue
-            try:
-                require_current(selection.Object)
-            except ReferenceError:
-                continue
-            names = [n for n in selection.SubElementNames if n.startswith("Face")]
-            if names or (
-                not selection.SubElementNames
-                and hasattr(selection.Object, "Shape")
-                and selection.Object.Shape.Faces
-            ):
-                links.append((selection.Object, names))
-        obj.Faces = links
-        Gui.Selection.clearSelection()
-        Gui.getDocument(doc.Name).setEdit(obj.Name)
+        with creation_transaction(doc, translate("Isocline", "Create Isocline Curve")):
+            obj = Isocline.makeIsocline(doc)
+            links = []
+            for selection in selections:
+                if selection.DocumentName != doc.Name:
+                    continue
+                try:
+                    require_current(selection.Object)
+                except ReferenceError:
+                    continue
+                names = [n for n in selection.SubElementNames if n.startswith("Face")]
+                if names or (
+                    not selection.SubElementNames
+                    and hasattr(selection.Object, "Shape")
+                    and selection.Object.Shape.Faces
+                ):
+                    links.append((selection.Object, names))
+            obj.Faces = links
+            Gui.Selection.clearSelection()
+            if not Gui.getDocument(doc.Name).setEdit(obj.Name):
+                raise RuntimeError("Could not open the feature task editor.")
 
 
 def registerCommand():

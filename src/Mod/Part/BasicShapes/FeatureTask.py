@@ -3,7 +3,22 @@
 """Shared edit lifecycle and direction annotation for Part feature tasks."""
 
 import FreeCADGui as Gui
+from contextlib import contextmanager
 from pivy import coin
+
+
+@contextmanager
+def creation_transaction(doc, label):
+    """Leave successful creation open for the task; roll back failed startup."""
+    if doc.HasPendingTransaction:
+        raise RuntimeError("Finish the current transaction before starting a feature task.")
+    doc.openTransaction(label)
+    try:
+        yield
+    except Exception:
+        doc.abortTransaction()
+        doc.recompute()
+        raise
 
 
 class TaskFeatureViewProvider:

@@ -60,6 +60,28 @@ class TestTrimBodyGui(unittest.TestCase):
         Gui.updateGui()
         self.task = self.obj.ViewObject.Proxy.task
 
+    def testFailedStartupRollsBackAndAllowsRetry(self):
+        from unittest.mock import patch, Mock
+        import BOPTools.TrimGui as module
+        before = {obj.Name for obj in self.doc.Objects}
+        factory = module.TrimFeatures.makeTrimBody
+        def fail_after_creation(doc):
+            factory(doc)
+            raise RuntimeError("Injected factory failure")
+        with patch.object(module.TrimFeatures, "makeTrimBody", side_effect=fail_after_creation):
+            with self.assertRaisesRegex(RuntimeError, "Injected factory"):
+                module.CommandTrimBody().Activated()
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        with patch.object(module.Gui, "getDocument", return_value=Mock(setEdit=Mock(return_value=False))):
+            with self.assertRaisesRegex(RuntimeError, "Could not open"):
+                module.CommandTrimBody().Activated()
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.assertFalse(Gui.Control.activeDialog())
+        self.start(preselect=True)
+        self.accept()
+
     def testCreateWithoutPreselectionAndArrowCleanup(self):
         self.start()
         self.assertEqual(self.task.mode, "Target")

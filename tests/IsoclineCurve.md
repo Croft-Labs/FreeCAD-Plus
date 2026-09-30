@@ -7,6 +7,9 @@ user settings. The separately installed FreeCAD is outside this validation.
 
 ## Automated regressions
 
+Startup failure injection covers a factory exception after object creation and
+editor refusal: neither leaves an object or pending transaction; retry succeeds.
+
 The task-readiness regression makes a previously valid source fail recompute,
 verifies hidden preview and blocked acceptance, then repairs it and accepts the
 recovered curve. Shared dependency-state validation also serves Trim Body.
