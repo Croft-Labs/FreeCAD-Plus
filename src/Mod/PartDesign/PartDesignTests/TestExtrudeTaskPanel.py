@@ -376,6 +376,105 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         Gui.Selection.addSelection(self.sketch)
         self.assertEqual(feature.Profile[0], self.sketch)
 
+    def makeLimit(self, z):
+        limit = self.doc.addObject("Part::Feature", "Limit")
+        limit.Shape = Part.makePlane(20, 20)
+        limit.Placement.Base.z = z
+        self.doc.recompute()
+        return limit
+
+    def editFaceText(self, name, limit):
+        field = self.widget(QtGui.QLineEdit, name)
+        text = limit.Label + ":Face1"
+        field.setText(text)
+        field.textEdited.emit(text)
+        Gui.updateGui()
+
+    def testExtentLabelsDescribeMeasuredLengthsForBothFeatureTypes(self):
+        self.doc.removeObject(self.base.Name)
+        for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
+            with self.subTest(command=command):
+                feature = self.start(command, preselect=True)
+                self.selectOperation("Union")
+                self.quantity("lengthEdit", 6.0)
+                self.quantity("lengthEdit2", 2.0)
+                self.quantity("startOffsetEdit", 1.0)
+                for mode, label, low, high in ((0, "Length", 6, 12),
+                                              (1, "Side 1 length", 4, 12),
+                                              (2, "Total length", 3, 9)):
+                    self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(mode)
+                    self.assertEqual(self.widget(QtGui.QLabel, "labelLength").text(), label)
+                    self.assertEqual(self.widget(QtGui.QLabel, "labelLength2").text(), "Side 2 length")
+                    self.assertTrue(feature.isValid(), feature.getStatusString())
+                    # Pocket retains its opposite default axis around the sketch at z=5.
+                    if command == "PartDesign_Pocket":
+                        low, high = 10 - high, 10 - low
+                    self.assertAlmostEqual(feature.Shape.BoundBox.ZMin, low)
+                    self.assertAlmostEqual(feature.Shape.BoundBox.ZMax, high)
+                    if mode == 2:
+                        self.assertIn("half on each side", self.widget(QtGui.QWidget, "lengthEdit").toolTip())
+                self.accept()
+                self.assertTrue(feature.ViewObject.doubleClicked())
+                Gui.updateGui()
+                self.assertEqual(self.widget(QtGui.QLabel, "labelLength").text(), "Total length")
+                Gui.Control.activeTaskDialog().reject()
+                self.doc.undo()
+                self.doc.recompute()
+                Gui.Selection.clearSelection()
+
+    def testTypedSecondFaceChangesOnlyItsOwnSideAndCancelRestoresIt(self):
+        for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
+            with self.subTest(command=command):
+                upper, lower, replacement = self.makeLimit(14), self.makeLimit(1), self.makeLimit(2)
+                feature = self.start(command, preselect=True)
+                self.selectOperation("Union")
+                self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(1)
+                self.widget(QtGui.QComboBox, "changeMode").setCurrentIndex(3)
+                self.editFaceText("lineFaceName", upper)
+                self.widget(QtGui.QComboBox, "changeMode2").setCurrentIndex(3)
+                self.editFaceText("lineFaceName2", lower)
+                self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+                self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+                self.accept()
+                self.assertTrue(feature.ViewObject.doubleClicked())
+                Gui.updateGui()
+                self.editFaceText("lineFaceName2", replacement)
+                self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+                self.assertEqual(feature.UpToFace2, (replacement, ["Face1"]))
+                Gui.Control.activeTaskDialog().reject()
+                self.doc.recompute()
+                self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+                self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+                self.doc.undo()
+                self.doc.recompute()
+                Gui.Selection.clearSelection()
+
+    def testRemovedLimitingFaceCanBeRepairedInExistingEditor(self):
+        feature = self.start(preselect=True)
+        self.accept()
+        limit = self.makeLimit(14)
+        feature.Type = "UpToFace"
+        feature.UpToFace = (limit, ["Face1"])
+        self.doc.recompute()
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.doc.removeObject(limit.Name)
+        self.doc.recompute()
+        self.assertFalse(feature.isValid())
+        replacement = self.makeLimit(16)
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.assertEqual(self.widget(QtGui.QComboBox, "changeMode").currentIndex(), 3)
+        self.editFaceText("lineFaceName", replacement)
+        self.assertEqual(feature.Type, "UpToFace")
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.accept()
+        self.assertEqual(feature.UpToFace, (replacement, ["Face1"]))
+        self.assertAlmostEqual(feature.Shape.Volume, 1096)
+        replacement.Placement.Base.z = 17
+        self.doc.recompute()
+        self.assertAlmostEqual(feature.Shape.Volume, 1112)
+
     def testExtentChoiceIsPreservedByNameOnBothFeatureTypes(self):
         for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
             with self.subTest(command=command):

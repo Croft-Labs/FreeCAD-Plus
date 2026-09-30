@@ -203,7 +203,7 @@ void TaskSketchBasedParameters::exitSelectionMode()
     onSelectReference(AllowSelection::NONE);
 }
 
-QVariant TaskSketchBasedParameters::setUpToFace(const QString& text)
+QVariant TaskSketchBasedParameters::setUpToFace(const QString& text, App::PropertyLinkSub* reference)
 {
     if (text.isEmpty()) {
         return {};
@@ -252,7 +252,8 @@ QVariant TaskSketchBasedParameters::setUpToFace(const QString& text)
 
     std::vector<std::string> upToFaces(1, ss.str());
     auto sketchBased = getObject<PartDesign::ProfileBased>();
-    sketchBased->UpToFace.setValue(obj, upToFaces);
+    auto& target = reference ? *reference : sketchBased->UpToFace;
+    target.setValue(obj, upToFaces);
     recomputeFeature();
 
     return QByteArray(ss.str().c_str());

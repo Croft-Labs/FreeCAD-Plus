@@ -36,6 +36,95 @@ class TestExtrude(unittest.TestCase):
         self.doc.recompute()
         return feature
 
+    def makeLimit(self, z):
+        limit = self.doc.addObject("Part::Feature", "Limit")
+        limit.Shape = Part.makePlane(20, 20)
+        limit.Placement.Base.z = z
+        return limit
+
+    def testFaceLimitAndOffsetRemainAssociativeForBothOperations(self):
+        for type_id in ("PartDesign::Pad", "PartDesign::Pocket"):
+            for operation in ("Union", "Subtraction"):
+                with self.subTest(type_id=type_id, operation=operation):
+                    feature = self.makeExtrude(type_id)
+                    feature.Operation = operation
+                    limit = self.makeLimit(14 if operation == "Union" else 8)
+                    feature.Type = "UpToFace"
+                    feature.UpToFace = (limit, ["Face1"])
+                    for move, offset in ((0, 0), (1, 0), (1, 0.5), (1, -0.5)):
+                        limit.Placement.Base.z = (14 if operation == "Union" else 8) + move
+                        feature.Offset = offset
+                        self.doc.recompute()
+                        self.assertTrue(feature.isValid(), feature.getStatusString())
+                        end = limit.Placement.Base.z + offset
+                        expected = 1000 + 16 * (end - 10) if operation == "Union" else 1000 - 16 * (end - 5)
+                        self.assertAlmostEqual(feature.Shape.Volume, expected)
+                        self.assertEqual(feature.Type, "UpToFace")
+                        self.assertEqual(feature.UpToFace, (limit, ["Face1"]))
+                        self.assertEqual(dict(feature.ExpressionEngine)["Length"], "7 mm")
+
+    def testRemovedFaceLimitErrorsUndoRepairAndPersistence(self):
+        for type_id in ("PartDesign::Pad", "PartDesign::Pocket"):
+            with self.subTest(type_id=type_id):
+                feature = self.makeExtrude(type_id)
+                feature.Operation = "Union"
+                limit = self.makeLimit(14)
+                feature.Type = "UpToFace"
+                feature.UpToFace = (limit, ["Face1"])
+                self.doc.recompute()
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+                self.doc.openTransaction("Remove limiting face")
+                self.doc.removeObject(limit.Name)
+                self.doc.recompute()
+                self.doc.commitTransaction()
+                self.assertFalse(feature.isValid())
+                self.assertEqual(feature.Type, "UpToFace")
+                self.assertIn("face", feature.getStatusString().lower())
+                self.doc.undo()
+                self.doc.recompute()
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+                self.assertAlmostEqual(feature.Shape.Volume, 1064)
+                self.doc.redo()
+                self.doc.recompute()
+                self.assertFalse(feature.isValid())
+                replacement = self.makeLimit(16)
+                feature.UpToFace = (replacement, ["Face1"])
+                self.doc.recompute()
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+                self.assertAlmostEqual(feature.Shape.Volume, 1096)
+                with tempfile.TemporaryDirectory() as folder:
+                    path = os.path.join(folder, "FaceLimit.FCStd")
+                    self.doc.saveCopy(path)
+                    restored = App.openDocument(path)
+                    try:
+                        recovered = restored.getObject(feature.Name)
+                        self.assertEqual(recovered.Type, "UpToFace")
+                        self.assertEqual(recovered.UpToFace[1], ["Face1"])
+                        recovered.UpToFace[0].Placement.Base.z = 17
+                        restored.recompute()
+                        self.assertTrue(recovered.isValid(), recovered.getStatusString())
+                        self.assertAlmostEqual(recovered.Shape.Volume, 1112)
+                    finally:
+                        App.closeDocument(restored.Name)
+
+    def testMissingFaceSubelementCanBeRepairedWithoutChangingExtent(self):
+        feature = self.makeExtrude()
+        limit = self.makeLimit(14)
+        feature.Type = "UpToFace"
+        feature.UpToFace = (limit, ["Face1"])
+        self.doc.recompute()
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        limit.Shape = Part.makeLine(App.Vector(), App.Vector(20, 0, 0))
+        self.doc.recompute()
+        self.assertFalse(feature.isValid())
+        self.assertEqual(feature.Type, "UpToFace")
+        limit.Shape = Part.makePlane(20, 20)
+        limit.Placement.Base.z = 14
+        feature.UpToFace = (limit, ["Face1"])
+        self.doc.recompute()
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.assertAlmostEqual(feature.Shape.Volume, 1064)
+
     def testSwitchOperationPreservesIdentityDirectionAndExpressions(self):
         for type_id in ("PartDesign::Pad", "PartDesign::Pocket"):
             for reference in (False, True):

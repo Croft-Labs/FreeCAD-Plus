@@ -72,7 +72,8 @@ protected:
      */
     void onSelectReference(AllowSelectionFlags);
     void exitSelectionMode();
-    QVariant setUpToFace(const QString& text);
+    // Legacy callers use the first side; multi-side editors pass their destination.
+    QVariant setUpToFace(const QString& text, App::PropertyLinkSub* reference = nullptr);
     /// Try to find the name of a feature with the given label.
     /// For faster access a suggested name can be tested, first.
     QVariant objectNameByLabel(const QString& label, const QVariant& suggest) const;

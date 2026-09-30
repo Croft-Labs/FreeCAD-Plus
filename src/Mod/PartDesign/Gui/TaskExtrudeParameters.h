@@ -265,7 +265,7 @@ private:
 
     std::vector<std::string> getShapeFaces(App::PropertyLinkSubList& prop);
 
-    void changeFaceName(QLineEdit* lineEdit, const QString& text);
+    void changeFaceName(QLineEdit* lineEdit, const QString& text, App::PropertyLinkSub& reference);
 
     void createSideControllers();
     void updateStartUI();

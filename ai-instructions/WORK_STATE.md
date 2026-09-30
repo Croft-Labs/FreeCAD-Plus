@@ -1,6 +1,30 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.3m/8.1.5d, advancing F030-F032.
+Latest product batch: phase 8, tasks 8.1.4a/b, advancing F029. Extrude now
+labels total symmetric and independent per-side lengths. Typed second-side face
+limits update their own reference instead of the first-side preview link.
+Both changes and six regression cases preceded one native PartDesignGui Release
+build; no corrective rebuild. Final acceptance: 201 distinct passing tests,
+zero failures/errors/skips, macro PASS and exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-extrude-extents-20260930, including baseline,
+baseline-model-final, build.log, grouped, extrude-final, visual,
+acceptance-summary.json and validated-identities.json. Old binaries reproduced generic labels and wrong-side
+reference assignment. The persistence fixture now uses saveCopy to avoid opening
+and then closing the active source document; initial failure evidence is retained.
+The grouped GUI fixture assumed Pad's axis for Pocket; corrected opposite-direction
+bounds pass in the final 31-test GUI run, alongside 170 passing grouped checks
+on unchanged native binaries. All six source identities, staged tests and native
+hashes match. PartDesignGui SHA256: 57acdd8b8fd4c545cfdf98fc18b15503aa6b542e7fac7604783d2b0214d2e3a5.
+Three task captures are readable. F029's specified Extrude acceptance is verified:
+face movement and signed end offsets remain associative; symmetric/two-sided spans
+match labels; removed limits retain errors until repaired. Includes edit Cancel,
+Undo/Redo, missing subelements and save/reopen followed by another face move.
+All 127 specifications remain intact. Broader command-family and physical input/
+high-DPI gates remain open; no installer/release or native-format change.
+The older executable stamp is not rebuilt-module identity. Next bounded focus:
+audit cleared/invalid typed face-limit preview recovery, then batch related changes.
+
+Previous product batch: phase 8, tasks 8.1.3m/8.1.5d, advancing F030-F032.
 Combined Pattern retains saved direction/axis links when unfinished reference
 picking ends through Originals controls, scope/type changes or OK. Abandoned
 pickers stop consuming later selections. Body/sketch/datum rejection explains
@@ -20,8 +44,7 @@ b2e935fb8bc4272854139c581a97aa8b53fdb142c467e94141d14d03c1fe2c65.
 Three task captures are readable. All 127 item specifications remain intact.
 The older executable stamp is not rebuilt-module identity. No installer/release.
 Broader command/occurrence/disambiguation, physical input/high-DPI and F032
-Apply/repeat gates remain open. Next focus: audit remaining F029 Extrude extent
-acceptance, then choose the next dependency-ready batch before building.
+Apply/repeat gates remain open. Its F029 follow-up is completed above.
 
 Previous product batch: phase 8, tasks 8.1.3k/l, advancing F030/F032. Combined Pattern
 Direction/Direction 2/Circular Axis now show reference counts and picking state,

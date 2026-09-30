@@ -2,16 +2,16 @@
 
 ## Current focus
 
-- Current product batch: phase 8 Pattern picker recovery and precise rejection
-  (8.1.3m/8.1.5d), advancing F030-F032. Both tasks preceded the initial native
-  build; one corrective incremental rebuild retained the result-specific
-  dependency reason. Final acceptance: 167 distinct passing tests. Saved
-  direction/axis links survive unfinished picking on role/type/scope changes
-  and OK; abandoned pickers cannot consume later selections. Three task captures
-  are verified. Broader command-family, occurrence, physical input/high-DPI and
-  F032 Apply/repeat gates remain open. No installer or release. Next item-level
-  focus: audit the remaining F029 Extrude extent acceptance before choosing the
-  next dependency-ready batch.
+- Current product batch: phase 8 Extrude extent labels and associative face limits
+  (8.1.4a/b), advancing F029 beyond the recent collector work. Both tasks and
+  six new regression cases preceded one native build. Final acceptance: 201
+  distinct passing tests and three readable task captures. Symmetric lengths
+  are labelled as totals; two-sided lengths are explicit. Typed second-side
+  limits update their own reference. Moving/offset faces, missing-face errors,
+  repair, Cancel, Undo/Redo and save/reopen associativity are verified.
+  Broader command-family and physical input/high-DPI gates remain open.
+  No installer or release. Next bounded focus: audit cleared/invalid typed
+  face-limit preview recovery, then group the next dependency-ready changes.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1883,6 +1883,13 @@ implementation or mark its unfinished validation complete through this plan.
   extents where the command supports them; keep extent semantics distinct from the
   existing sketch-plane start offset. Specify shared solid/surface and Boolean/target
   conventions for Sweep and Loft.
+- [ X ] 8.1.4a Clarify Extrude/Pad/Pocket total symmetric and independent per-side
+  length labels, with measured geometry checks and edit/reopen coverage. F029.
+  Native labels, measured extents and reopen checks pass; grouped evidence below.
+- [ X ] 8.1.4b Route typed second-side face limits to their own saved reference;
+  verify moving/offset limiting faces, missing-face repair, Cancel, Undo/Redo and
+  save/reopen associativity. F029. Native reference isolation and lifecycle checks
+  pass in the grouped 8.1.4a/b batch below.
 - [   ] 8.1.5 Add consistent live-preview and error states; make Cancel restore geometry, visibility and selection. Define Apply/repeat behavior separately from OK so repeated creation does not create accidental features.
 
 - [ X ] 8.1.5a Restore original selection on Trim Body/Isocline creation Cancel,
@@ -2122,6 +2129,41 @@ Whole body scope cancellation. The older executable stamp is not rebuilt-module
 identity. All 127 item IDs remain intact. No property/schema or persistence-format
 change, installer or release. Broader command-family/occurrence/disambiguation,
 physical input/high-DPI and F032 Apply/repeat acceptance remain open.
+
+**Extrude extent batch (8.1.4a/b), 2026-09-30:** Both changes and six new
+regression cases preceded one successful PartDesignGui Release build. Symmetric
+mode now labels Length as Total length, and two-sided mode shows independent
+Side 1 length / Side 2 length. Tooltips explain half-length and end-face offset
+semantics. Typed side 2 face references now target UpToFace2 instead of changing
+UpToFace during preview; the shared parser keeps its first-side legacy default.
+**201 distinct tests pass, zero failures/errors/skips**: 11 Extrude model, 14 Pad
+model, 6 Pocket model, 31 Extrude task, 45 Pattern task/model, 16 Linear, 6 Polar,
+3 MultiTransform, 14 Pad task, 5 Revolve task, 24 Trim task and 26 Isocline task.
+New acceptance covers measured one/two/symmetric spans with a shifted start plane,
+labels on edit/reopen, typed second-side isolation and edit Cancel, moving limiting
+faces with signed end offsets for both operations and stored feature types, removed
+limits with Undo/Redo, repair, save/reopen followed by another face move, lost face
+subelements and repair in the existing editor. Missing limits retain Up to face
+mode and report an error. Existing model behavior was reused without schema or
+geometry-kernel changes; the new production fix is the typed-reference destination.
+Evidence: `D:\Temp\Office-PC\freecad-plus-extrude-extents-20260930`, including
+`baseline`, `baseline-model-final`, `build.log`, `grouped`, `extrude-final`, `visual`,
+`acceptance-summary.json` and `validated-identities.json`. Old binaries reproduced
+the generic labels and wrong-side reference mutation. Initial persistence fixture
+error retained: reopening a just-saved active document returned that same document;
+saveCopy provides an independent file. All three corrected model cases passed
+before the build. The grouped run found a test assumption that Pocket shared Pad's
+default axis; corrected bounds use Pocket's inherited opposite direction. The final
+31-test Extrude GUI run and 170 broader grouped checks pass on identical native
+binaries. No corrective native rebuild was needed. Final macro PASS,
+exit 0; all six source files, two staged tests and native hashes match.
+PartDesignGui SHA256:
+`57acdd8b8fd4c545cfdf98fc18b15503aa6b542e7fac7604783d2b0214d2e3a5`.
+Three readable task captures cover Symmetric, Two sided and independent face limits.
+The older executable stamp is not rebuilt-module identity. All 127 item IDs remain
+intact. No installer/release. F029's specified Extrude face-move, documented-length
+and missing-limit repair examples are validated for this active-Body workflow;
+broader command consistency and physical input/high-DPI acceptance remain open.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4509,7 +4551,7 @@ reconciliation rules above to every entry.
 <a id="f029"></a>
 ### F029 — Common extent controls
 
-**Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 8.1, 10.4. **Status:** Extrude/Pad/Pocket total symmetric and independent per-side labels, measured spans, typed second-side limit isolation and edit Cancel are validated under 8.1.4a/b (201 distinct passing checks). The specified Extrude examples for associative face movement, signed end offsets, missing-limit errors, repair, Undo/Redo and save/reopen are complete for the active-Body workflow. Broader command-family consistency and physical input/high-DPI acceptance remain open.
 
 **Packages:** U06 · **First delivery:** P4/P7 · **Likely scope:** Feature
 

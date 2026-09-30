@@ -898,6 +898,27 @@ void TaskExtrudeParameters::updateWholeUI(Side side)
     ui->typeLabel2->setVisible(isSide2GroupVisible);
     ui->changeMode2->setVisible(isSide2GroupVisible);
 
+    // Symmetric Length is the total span; two-sided lengths are independent.
+    // Keep these meanings visible without changing the persisted properties.
+    const bool symmetric = sidesMode == SidesMode::Symmetric;
+    ui->labelLength->setText(symmetric ? tr("Total length")
+                                    : isSide2GroupVisible ? tr("Side 1 length") : tr("Length"));
+    ui->labelLength2->setText(tr("Side 2 length"));
+    const QString lengthHint = symmetric
+        ? tr("Total distance across both sides; half on each side of the start plane.")
+        : tr("Distance from the start plane along this side's extrusion direction.");
+    ui->labelLength->setToolTip(lengthHint);
+    ui->lengthEdit->setToolTip(lengthHint);
+    const QString secondHint =
+        tr("Independent distance from the start plane in the opposite direction.");
+    ui->labelLength2->setToolTip(secondHint);
+    ui->lengthEdit2->setToolTip(secondHint);
+    const QString offsetHint =
+        tr("Moves the limiting face along this side's extrusion direction; "
+           "positive values extend farther.");
+    ui->offsetEdit->setToolTip(offsetHint);
+    ui->offsetEdit2->setToolTip(offsetHint);
+
     // --- Configure each side using the helper method ---
     // Side 1 is always conceptually visible, and we pass whether it should receive focus.
     updateSideUI(m_side1, mode1, true, (side == Side::First));
@@ -1243,10 +1264,12 @@ void TaskExtrudeParameters::onSelectShapeToggle(bool checked, Side side)
 void TaskExtrudeParameters::onFaceName(const QString& text, Side side)
 {
     auto& sideCtrl = getSideController(side);
-    changeFaceName(sideCtrl.lineFaceName, text);
+    changeFaceName(sideCtrl.lineFaceName, text, *sideCtrl.UpToFace);
 }
 
-void TaskExtrudeParameters::changeFaceName(QLineEdit* lineEdit, const QString& text)
+void TaskExtrudeParameters::changeFaceName(
+    QLineEdit* lineEdit, const QString& text, App::PropertyLinkSub& reference
+)
 {
     if (text.isEmpty()) {
         // if user cleared the text field then also clear the properties
@@ -1262,7 +1285,7 @@ void TaskExtrudeParameters::changeFaceName(QLineEdit* lineEdit, const QString& t
             parts[0] = name.toString();
             QString uptoface = parts.join(QStringLiteral(":"));
             lineEdit->setProperty("FeatureName", name);
-            lineEdit->setProperty("FaceName", setUpToFace(uptoface));
+            lineEdit->setProperty("FaceName", setUpToFace(uptoface, &reference));
         }
         else {
             lineEdit->setProperty("FeatureName", QVariant());
@@ -1412,6 +1435,7 @@ void TaskExtrudeParameters::changeEvent(QEvent* e)
         translateFaceName(ui->lineFaceName);
         translateFaceName(ui->lineFaceName2);
         updateStartReferenceName();
+        updateWholeUI(Side::First);
     }
 }
 

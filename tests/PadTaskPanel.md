@@ -50,6 +50,16 @@ invalid profiles, selection-mode switching, reference restrictions, Cancel, and
 Undo/Redo. Also check viewport picking and preview positioning manually with a
 rotated sketch and with both pad directions.
 
+F029 regressions compare measured total symmetric and independent two-sided spans
+with the visible labels for stored Pad and Pocket features, including a shifted
+start plane and edit/reopen. Typed side 2 limiting faces must update UpToFace2
+without changing UpToFace, including preview and edit Cancel. Model checks cover
+moving faces and signed end offsets for both operations and feature types, deleted
+limits with Undo/Redo, repair and save/reopen followed by another face move. A lost
+face subelement and an editor repair retain Up to face mode instead of reverting
+to a fixed length. Physical picking and broader command-family acceptance remain
+separate roadmap gates.
+
 F031 regressions compare profile/axis links, operation, direction/extent parameters
 and accepted volumes between
 preselection and command-first picking for Extrude, Pad and Pocket in Add/Subtract.
