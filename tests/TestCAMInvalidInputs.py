@@ -971,3 +971,55 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.assertNotIn("Invalid", dressup.State)
         self.assertTrue(dressup.Path.Commands)
         self.assertTrue(dressup.Proxy.tags)
+
+    def makeBoundary2(self):
+        from Path.Dressup.Gui import Boundary2
+        boundary = self.doc.addObject("Part::Feature", "SolidBoundary")
+        boundary.Shape = Part.makeBox(60, 60, 60, App.Vector(-20, -20, -20))
+        dressup = self.doc.addObject("Path::FeaturePython", "DressupBoundary2")
+        Boundary2.ObjectDressup(dressup, self.op)
+        dressup.Boundary = boundary
+        dressup.Side = "Inside"
+        dressup.RetractThreshold = 1000
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertTrue(any(command.Name == "G1" for command in dressup.Path.Commands))
+        return dressup
+
+    def testBoundary2GenerationFailureClearsOldPathAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import Boundary2
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeBoundary2()
+        with patch.object(Boundary2.FeedRate, "setFeedRate", side_effect=RuntimeError("Deliberate boundary feed failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertIn("Invalid", dressup.State)
+        self.assertFalse(dressup.Path.Commands)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testBoundary2RejectsEmptyOrNonSolidOffsetsAndRecovers(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from Path.Dressup.Gui import Boundary2
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeBoundary2()
+        for shape in (Part.Shape(), Part.makePlane(10, 10)):
+            with patch.object(Boundary2.Path.Geom, "uncompound", return_value=[
+                    SimpleNamespace(makeOffsetShape=lambda *args, **kwargs: shape)]):
+                dressup.Offset = 1
+                dressup.touch()
+                self.doc.recompute()
+            self.assertIn("Invalid", dressup.State)
+            self.assertFalse(dressup.Path.Commands)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            dressup.Offset = 0
+            self.doc.recompute()
+            self.assertNotIn("Invalid", dressup.State)
+            self.assertTrue(_wrap_op(dressup).Path.Commands)

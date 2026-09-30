@@ -188,3 +188,13 @@ state; postprocessing rejects it instead of exporting the untagged base path.
 Removing the fault restores generation. Pair this suite with
 `CAMTests.TestPathDressupHoldingTags` for the native tag geometry regression group.
 These automated checks do not replace simulation or physical-machine acceptance.
+
+
+## Related Boundary2 failure regressions
+
+`TestCAMInvalidInputs` exercises Boundary2 with a solid boundary around a generated
+surface path. An injected late feed-assignment error must clear the previous path,
+mark the feature Invalid and block postprocessing. Injected null and planar offset
+results must also reject before clipping. Removing each fault must regenerate a
+usable path. This supplements the older Boundary dressup checks; native GUI/machine
+acceptance remains separate from these automated failure/recovery tests.

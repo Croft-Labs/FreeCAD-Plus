@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2aq/ar fix production CAM holding-tag failure behavior:
+- Current batch: 16.2as/at clear stale Boundary2 paths on generation failure
+  and reject empty/invalid/non-solid boundary offset results. Grouped validation:
+  58 passes, zero failures/errors/skips. Python staging only; no native rebuild
+  or release update.
+- Previous batch: 16.2aq/ar fix production CAM holding-tag failure behavior:
   clear cached output on missing input and reject generation failure instead of
   falling back to an untagged cutting path. Grouped validation: 56 passes, zero
   failures/errors/skips; Python staging only, no native rebuild or release.
@@ -3173,6 +3177,24 @@ native rebuild. Failure injection verifies that a nonempty base remains availabl
 but is not substituted for failed tag processing. This fixes the inherited profile
 holding-tag dressup, not the separate stock-bridge geometry feature. No machine,
 physical GUI, release or broader safety certification is implied.
+
+- [ X ] 16.2as Clear Boundary2 output before validation/generation so exceptions
+  cannot retain old cutting commands. Verify late feed-assignment failure produces
+  empty native Invalid output, export rejection and subsequent recovery.
+- [ X ] 16.2at Validate Boundary2 offset geometry before clipping: require nonempty,
+  valid solids. Verify null and planar offset results reject with empty output,
+  block export and recover when restored to a usable boundary.
+
+Boundary2 evidence: `cam-boundary2-failures-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **58 PASS, zero failures/errors/
+skips** (53 CAM invalid-input/workflow, five holding-tag geometry checks). Both
+changes preceded one grouped run; macro PASS and process ended. Source/staged
+Boundary2.py SHA256:
+`C71874CC94DF236CA1325338E57E77E5A8734791A9827DD5175F170FF5F672CA`.
+Python-only staging into the isolated fork engine 2df76790b4; no native rebuild.
+Tests inject a late generation error and native null/plane offset results, then
+verify regeneration. This covers Boundary2, distinct from the earlier Boundary
+implementation; no machine/physical GUI acceptance or release update is implied.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

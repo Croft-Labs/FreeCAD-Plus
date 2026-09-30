@@ -105,6 +105,8 @@ class ObjectDressup:
         pass
 
     def execute(self, obj):
+        # Publish only a completed boundary path; failures must not retain old cuts.
+        obj.Path = Path.Path()
         if not obj.Base or not obj.Base.isDerivedFrom("Path::Feature") or not obj.Base.Path:
             obj.Path = Path.Path()
             return
@@ -134,6 +136,12 @@ class ObjectDressup:
             boundaryShapes = [sh.makeOffsetShape(offset, tolerance=0.1, join=2) for sh in shapes]
         else:
             boundaryShapes = [obj.Boundary.Shape]
+
+        if not boundaryShapes or any(
+            shape.isNull() or not shape.isValid() or not shape.Solids
+            for shape in boundaryShapes
+        ):
+            raise ValueError("Boundary offset must produce valid solid geometry")
 
         baseOp = PathDressup.baseOp(obj)
         job = PathUtils.findParentJob(obj)
