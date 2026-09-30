@@ -1313,3 +1313,52 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         producer.Fail = False
         self.doc.recompute()
         self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def makeDogbone(self):
+        from Path.Dressup import DogboneII
+        dressup = DogboneII.Create(self.op)
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        return dressup
+
+    def testDogboneRejectsDirtyAndFailedBaseAndRecovers(self):
+        dressup = self.makeDogbone()
+        self.checkDressupRejectsStaleBase(dressup)
+        self.op.Producer.touch()
+        dressup.Proxy.bones = [object()]
+        dressup.Proxy.boneTips = [App.Vector(1, 2, 3)]
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        self.assertEqual(dressup.Proxy.bones, [])
+        self.assertIsNone(dressup.Proxy.boneTips)
+        self.assertFalse(dressup.Proxy.maneuver.toPath().Commands)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+
+    def testDogboneRejectsInvalidToolAndRecovers(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from Path.Dressup import DogboneII
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeDogbone()
+        for controller in (None, SimpleNamespace(Tool=None),
+                           SimpleNamespace(Tool=SimpleNamespace(Diameter=0)),
+                           SimpleNamespace(Tool=SimpleNamespace(Diameter=-1)),
+                           SimpleNamespace(Tool=SimpleNamespace(Diameter=float("inf")))):
+            dressup.Proxy.bones = [object()]
+            dressup.Proxy.boneTips = [App.Vector(1, 2, 3)]
+            with patch.object(DogboneII.PathDressup, "toolController", return_value=controller):
+                dressup.touch()
+                self.doc.recompute()
+            self.assertIn("Invalid", dressup.State)
+            self.assertFalse(dressup.Path.Commands)
+            self.assertEqual(dressup.Proxy.bones, [])
+            self.assertIsNone(dressup.Proxy.boneTips)
+            self.assertFalse(dressup.Proxy.maneuver.toPath().Commands)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertTrue(_wrap_op(dressup).Path.Commands)

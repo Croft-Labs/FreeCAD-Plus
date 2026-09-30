@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2bi/bj guard Plunge Milling base inputs and original Boundary
+- Current batch: 16.2bk/bl guard Dogbone stale inputs and invalid cutter data.
+  Grouped CAM checks: 79 passes; Dogbone geometry suites: 24 passes. Final runs
+  have zero failures/errors/skips. Python staging; no native rebuild or release.
+- Previous batch: 16.2bi/bj guard Plunge Milling base inputs and original Boundary
   base/stock inputs. Grouped validation: 77 passes, zero failures/errors/skips.
   Python staging only; no native rebuild or release.
 - Previous batch: 16.2bg/bh guard Dragknife and Ramp Entry against stale base
@@ -3373,6 +3376,27 @@ verify export rejection, explicit generation rejection/cleanup and recovery.
 Native skipped-recompute output may remain cached and export-blocked; automatic
 cache clearing is not established. Python staging into engine 2df76790b4; no native
 rebuild, release or physical GUI/machine acceptance. Full 16.2 remains open.
+
+- [ X ] 16.2bk Reject dirty/failed base dependencies before Dogbone generation.
+  Verify empty path/corner caches on explicit rejection and repair/recompute recovery.
+- [ X ] 16.2bl Require a Dogbone tool controller/tool and positive finite diameter
+  before generating even a path without corners. Verify missing controller/tool,
+  zero/negative/infinite diameter rejection, cache cleanup, export blocking and recovery.
+
+Dogbone evidence under `D:\Temp\Office-PC\freecad-plus-validation-20260928`:
+`cam-dogbone-readiness-20260930-batch/results.json`: **79 PASS** (74 CAM invalid-input/
+workflow and five holding-tag checks); `cam-dogbone-geometry-20260930-verified/results.json`:
+**24 PASS** (17 dressup and seven generator geometry checks). Final runs have zero
+failures/errors/skips, macro PASS and ended processes. Both production changes
+preceded testing. Source/staged DogboneII.py SHA256:
+`9B937286874F3841944806C58ACAFD7340538C65E50ED30CCFB66BD46E67F0DF`.
+Initial geometry run had 23 passes/one error because a chained-dressup mock lacked
+native State/OutListRecursive fields. Clean mock fields were added; geometry behavior
+and production changes were unchanged before the successful rerun. Native dependency
+failures use real documents; the SurfaceScan fixture does not insert corners, so the
+existing geometry suites provide complementary coverage. Skipped native execution
+may retain export-blocked caches. Python staging into engine 2df76790b4; no native
+rebuild, release or physical GUI/machine acceptance. Broad 16.2 remains open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2bi/bj Plunge Milling/Boundary input readiness.
+Latest roadmap batch: 16.2bk/bl Dogbone readiness and cutter validation.
+79 CAM failure/recovery checks and 24 Dogbone geometry checks pass; zero final
+failures/errors/skips. Evidence under D:\Temp\Office-PC\freecad-plus-validation-20260928:
+cam-dogbone-readiness-20260930-batch and cam-dogbone-geometry-20260930-verified.
+Macros PASS; processes ended. Source/staged DogboneII.py hashes match. Initial
+geometry mock correction is recorded in the roadmap. Engine 2df76790b4; no native
+rebuild or release. Physical GUI/machine acceptance remains pending; native skipped
+recompute caching remains export-blocked.
+
+Previous roadmap batch: 16.2bi/bj Plunge Milling/Boundary input readiness.
 Grouped validation: 77 passes, zero failures/errors/skips in
 D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-plunge-boundary-readiness-20260930-batch.
 Macro PASS; process ended. Source/staged PlungeMilling.py and Boundary.py hashes match.

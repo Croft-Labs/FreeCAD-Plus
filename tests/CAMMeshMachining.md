@@ -259,3 +259,10 @@ base rejection and recovery checks. Boundary additionally attaches a failing
 producer to its stock, retains cached stock geometry, and verifies that explicit
 generation rejects it and clears output; repairing the producer restores paths.
 Export rejection remains separate from native skipped-recompute cache behavior.
+
+
+Dogbone readiness checks reject dirty/failed base paths and clear machining/corner
+caches. Invalid-tool checks cover missing controller/tool and zero, negative or
+infinite diameter, export rejection and repair. Existing Dogbone corner geometry
+unit tests supplement the native SurfaceScan failure fixtures, which do not
+exercise actual corner insertion. Test doubles expose clean dependency state.

@@ -292,7 +292,14 @@ class Proxy(object):
             obj.ViewObject.signalChangeIcon()
 
     def toolRadius(self, obj):
-        return PathDressup.toolController(obj.Base).Tool.Diameter.Value / 2
+        controller = PathDressup.toolController(obj.Base)
+        tool = getattr(controller, "Tool", None)
+        if tool is None:
+            raise ValueError("Dogbone requires a tool controller with a tool")
+        diameter = float(tool.Diameter)
+        if not math.isfinite(diameter) or diameter <= 0:
+            raise ValueError("Dogbone requires a positive finite tool diameter")
+        return diameter / 2
 
     def createBone(self, obj, move0, move1):
         if move0.isRapid() and move1.isRapid():
@@ -430,6 +437,8 @@ class Proxy(object):
         dressingUpDogbone = hasattr(obj.Base, "BoneBlacklist")
 
         if obj.Base and obj.Base.Path and obj.Base.Path.Commands:
+            PathDressup.requireCurrent(obj.Base)
+            self.toolRadius(obj)
             source = PathLanguage.Maneuver.FromPath(PathUtils.getPathWithPlacement(obj.Base)).instr
 
             # get indexes of outer closed profile in each multi work area

@@ -52,11 +52,15 @@ class MockOp(object):
         self.Label = "OP"
         self.Path = Path.Path(path)
         self.ToolController = MockTC(dia)
+        self.State = []
+        self.OutListRecursive = []
 
 
 class MockFeaturePython(object):
     def __init__(self, name):
         self.prop = {}
+        self.State = []
+        self.OutListRecursive = []
         self.addProperty("App::PropertyString", "Name", val=name)
         self.addProperty("App::PropertyString", "Label", val=name)
         self.addProperty("App::PropertyLink", "Proxy")
