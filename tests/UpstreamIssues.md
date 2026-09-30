@@ -57,7 +57,7 @@ both feature properties and solid volume for Add/Subtract on create and reopen.
 The tree test sends mouse press/move/release events to the expansion arrow and
 checks both the expansion toggle and unchanged model selection.
 
-Default macro coverage also includes Mirror, CAM offsets and avoidance: 89 tests total.
+Default macro coverage also includes Mirror, CAM offsets and avoidance: 93 tests total.
 The Mirror checks include save/reopen/recompute and real task-pane face selection
 for translated and rotated Bodies. The updated Part module passed the earlier
 75-test batch; the added avoidance work passed its separate 67-test CAM batch.
@@ -169,3 +169,25 @@ application code passed the 59 related CAM checks in `boundary-regions-20260929-
 that earlier aggregate was FAIL due to the subsequently corrected integration-test
 mock. Do not describe it as a single successful 73-test run. No native rebuild was
 needed. This safety correction does not resolve the separate #26300 projection timeout.
+
+## Line-pattern end strips (#6864)
+
+`tests/TestIssueLineCoverage.py` exercises the actual compiled generator with
+nonintegral and exact stepovers, disconnected regions, a 30-degree rotation,
+reversed output and a hole. It asserts edge coverage, maximum step distance and
+exclusion rather than an arbitrary line count. The existing pattern bridge test
+also checks edge coverage instead of requiring the old missing-edge result.
+
+Run it with the five CAM suites listed above using the bounded issue macro.
+The resulting 77-test batch passed without failures/errors/skips in
+`line-coverage-20260929-final/results.json`. Red fixtures failed against the old
+module. This C++ change was validated after a targeted compile/relink of
+surface_generator only; see roadmap U.21 for the installed binary hash. The new
+cases are registered in the default issue macro, which now has 93 tests; that
+entire default suite has not been run together.
+
+Coverage concerns transverse end strips within the current polygon clipping
+contract. It does not certify arbitrary contour finishing or the original legacy
+Surface operation. New passes are still clipped against holes/avoidance masks;
+the related avoidance and geometric holding-tab tests also pass. Simulation,
+postprocessor and machine acceptance remain separate.

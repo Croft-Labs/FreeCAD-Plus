@@ -35,6 +35,7 @@
 #include <Poly_Triangle.hxx>
 #include <gp_Trsf.hxx>
 
+#include <algorithm>
 #include <vector>
 #include <array>
 #include <chrono>
@@ -505,8 +506,42 @@ std::vector<std::vector<std::array<double, 3>>> generate_linear_pattern_cpp(
     double diag = std::hypot(xmax - xmin, ymax - ymin);
     int num_passes = static_cast<int>(std::ceil(diag / stepover)) + 1;
 
+    std::vector<double> offsets;
     for (int i = -num_passes / 2; i <= num_passes / 2; ++i) {
-        double y_off = i * stepover;
+        offsets.push_back(i * stepover);
+    }
+
+    // #6864: a centred stepover grid need not reach the edges of the machining
+    // mask. Add finishing passes at each contour's transverse limits, including
+    // disconnected regions. Clip against the complete mask to preserve holes.
+    for (const auto& polygon : polygons) {
+        if (polygon.size() < 3) {
+            continue;
+        }
+        double low = std::numeric_limits<double>::max();
+        double high = std::numeric_limits<double>::lowest();
+        for (const auto& point : polygon) {
+            const double transverse = -(point[0] - cx) * sin_a + (point[1] - cy) * cos_a;
+            low = std::min(low, transverse);
+            high = std::max(high, transverse);
+        }
+        // Ray-cast clipping treats the upper edge as outside. Stay just inside,
+        // well below machining tolerances and the requested stepover.
+        const double inset = std::min({1e-6, stepover * 1e-5, (high - low) * 1e-5});
+        if (inset <= 0.0) {
+            continue;
+        }
+        offsets.erase(std::remove_if(offsets.begin(), offsets.end(), [=](double value) {
+            return std::abs(value - low) <= inset * 2 || std::abs(value - high) <= inset * 2;
+        }), offsets.end());
+        offsets.push_back(low + inset);
+        offsets.push_back(high - inset);
+    }
+    std::sort(offsets.begin(), offsets.end());
+    offsets.erase(std::unique(offsets.begin(), offsets.end()), offsets.end());
+
+    for (size_t i = 0; i < offsets.size(); ++i) {
+        const double y_off = offsets[i];
         double start_x = cx + (-diag) * cos_a - y_off * sin_a;
         double start_y = cy + (-diag) * sin_a + y_off * cos_a;
         double end_x = cx + diag * cos_a - y_off * sin_a;

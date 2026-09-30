@@ -250,7 +250,7 @@ class TestSurfacePattern(PathTestUtils.PathTestBase):
 
         EXPECTED OUTPUT:
         - Returns a list of clipped line endpoints.
-        - Should produce 3 parallel lines across the 20mm boundary with a 5mm stepover.
+        - Reaches both boundary edges without exceeding the 5mm stepover.
         - This verifies the Python-to-C++ data bridge is working correctly.
         """
         from Path.Base.Generator.surface_pattern import fast_generate_pattern, BBox
@@ -270,7 +270,10 @@ class TestSurfacePattern(PathTestUtils.PathTestBase):
             boundary_face=self.square_face,
         )
 
-        self.assertEqual(len(lines), 4, "Expected 4 scan lines for a 20mm area with 5mm stepover")
+        levels = sorted(line[0][1] for line in lines)
+        self.assertAlmostEqual(levels[0], 0.0, delta=0.001)
+        self.assertAlmostEqual(levels[-1], 20.0, delta=0.001)
+        self.assertTrue(all(b - a <= 5.001 for a, b in zip(levels, levels[1:])))
         # Check that the line is clipped correctly to the 0-20 X boundary, allowing for a small tolerance
         self.assertAlmostEqual(lines[0][0][0], 0.0, delta=0.01)
         self.assertAlmostEqual(lines[0][1][0], 20.0, delta=0.01)

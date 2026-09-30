@@ -1,6 +1,14 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest implementation (2026-09-29): U.20 fixes partial boundary loss in the modern
+Latest implementation (2026-09-29): U.16/U.21 fix #6864 in the replacement
+Line/ZigZag generator. One targeted source compile/module relink completed; all
+77 CAM checks pass in one batch, including final-strip geometry, avoidance and
+STL/tab workflows. No full application build. Module/test hashes and evidence
+are in U.21. The existing test application now contains this correction.
+Next unresolved high-impact case remains U.15 (#26300); exact GeomFillSurface U.14
+needs a relevant build with Surface enabled. No process remains running.
+
+Earlier implementation (2026-09-29): U.20 fixes partial boundary loss in the modern
 CAM pipeline. Failed isolated/group projections and boundary unions now stop
 instead of dropping selected cutting/avoidance regions; stale paths are cleared.
 Fourteen focused and 59 related checks pass across separate runs. Python-only

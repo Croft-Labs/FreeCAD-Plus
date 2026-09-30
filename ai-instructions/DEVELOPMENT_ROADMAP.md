@@ -3,6 +3,8 @@
 ## Current focus
 
 - Active implementation: [prioritized upstream issue work](#upstream-issue-work).
+  Latest geometry fix: #6864 final-strip coverage now passes in the compiled
+  replacement generator; U.21 records the 77-test CAM batch.
   Latest safety fix: partial boundary projection/union can no longer drop selected
   regions; U.20 records 14 focused and 59 related passes without a build.
   Latest diagnosis: #26300 also stalls in the replacement workflow; see U.19.
@@ -161,8 +163,13 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   do not substitute a bounding box or omit unprojectable faces. Keep legacy
   applicability distinct. A tolerance-controlled projection alternative needs
   geometry/coverage evidence before adopting it; kernel replacement is not implied.
-- [   ] U.16 #6864: check final-strip coverage for nonintegral width/stepover ratios
-  in the current line generator; reproduce before porting a legacy algorithm fix.
+- [ X ] U.16 #6864: reproduced missing transverse edge passes in the current
+  C++ Line generator, so the replacement UI/backend did not obsolete the defect.
+  Add clipped finishing passes at each contour's transverse limits while retaining
+  the regular stepover grid. Validate nonintegral/exact step ratios, separate
+  regions, rotated masks, reverse order, and excluded holes. U.21 records the
+  installed module and passing CAM batch. This is a modern-generator correction;
+  saved legacy Surface operations and machine/post acceptance remain separate.
 - [ X ] U.17 CAM avoidance fix published as
   `b2cfdf0f114ff2cba48004fe538991395b22f525`; `origin/main` hash verified. No release.
 
@@ -220,13 +227,33 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   Python-only update installed; no native rebuild, schema change, legacy migration,
   or release. #26300 remains unresolved; U.14 and U.16 remain open.
 
+- [ X ] U.21 Build and validate the bounded #6864 generator correction. Compiled
+  only surface_generator.cpp using SelectedFiles, then relinked the existing CAM
+  module; both commands exit 0. No full application/dependency rebuild. Added four
+  regressions in TestIssueLineCoverage.py and replaced the older fixed-line-count
+  expectation with endpoint/maximum-step checks. The regular grid alone missed
+  1-5 mm at edges in the red fixtures. Additional passes sit at most 1e-6 mm inside
+  contour extrema to accommodate the existing ray-cast boundary convention and
+  still clip against the complete mask. No property/schema/default changes.
+  `line-coverage-20260929-red/results.json` reproduces the defect;
+  `line-coverage-20260929-final/results.json` reports 77 PASS, zero failures/errors/
+  skips: 4 coverage, 14 avoidance, 12 common, 7 pattern, 18 operation and 22 mesh/tab.
+  `line-build-20260929/build-result.json` records compile/link results and hashes.
+  Installed `build/Mod/CAM/surface_generator.pyd` SHA-256:
+  `B2BE185547170EB303508300A8B5639B9C301ABDFACDCD1BD0B364D101B65B94`.
+  Updated TestSurfacePatternGenerator.py synchronized and hash-verified. Existing
+  application version stamp remains unchanged. Default issue macro now includes
+  the four coverage cases (93 tests); the full default has not run as one batch.
+  This does not certify arbitrary contour finishing, legacy Surface, simulation,
+  postprocessor output or physical machining. #26300 and exact U.14 remain open.
+
 CAM avoidance evidence under the external validation root below:
 `avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
 checks (two valid geometry controls passed). After correction,
 `avoidance-tests-20260929-193013/results.json` reports 67 PASS, no errors/skips,
 process 0. Eight focused, 12 common-generator, seven pattern-generator, 18 unified
 operation and 22 STL/tab tests. `module-manifest.json` records installed Python
-hashes. The expanded default issue macro now has 89 tests; it has not been run as a
+hashes. The expanded default issue macro now has 93 tests; it has not been run as a
 single batch. Preserve the separate 75-test native and 67-test CAM evidence.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.

@@ -45,8 +45,11 @@ impact order for the current workflow:
   projection, before OCL cutting. Two-face projection experiments did not resolve
   the case and were discarded. Opt-in bounded reproduction retained; fix pending.
 - [#6864](https://github.com/FreeCAD/FreeCAD/issues/6864): line-pattern stepover can
-  leave the final strip uncut. Next: check exact boundary coverage in the current
-  generator, which differs from the reported legacy implementation.
+  leave the final strip uncut. Reproduced in the replacement C++ generator;
+  fixed locally with additional clipped passes at each contour's transverse
+  limits. Nonintegral stepovers, disconnected/rotated regions, reverse order and
+  hole exclusion pass; all 77 focused/related CAM tests pass after a targeted
+  module compile/relink. Legacy Surface backend unchanged; no machine/post claim.
 
 ## Links for later review
 
