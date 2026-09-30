@@ -3,6 +3,7 @@
 """Shared edit lifecycle and direction annotation for Part feature tasks."""
 
 import FreeCADGui as Gui
+import FreeCAD as App
 from contextlib import contextmanager
 from functools import wraps
 from contextvars import ContextVar
@@ -29,6 +30,26 @@ def creation_transaction(doc, label):
         _creation_document.reset(token)
 
 
+def _cleanup_failed_task(task):
+    task.finished = True
+    actions = [lambda: Gui.Selection.removeObserver(task)]
+    for name in ("arrow", "curveHighlight"):
+        annotation = getattr(task, name, None)
+        if annotation is not None:
+            actions.append(annotation.close)
+    if hasattr(task, "visibility"):
+        actions.append(task.restoreVisibility)
+    if hasattr(task, "result_visible"):
+        actions.append(lambda: setattr(task.obj.ViewObject, "Visibility", task.result_visible))
+    if hasattr(task, "form"):
+        actions.append(task.form.deleteLater)
+    for action in actions:
+        try:
+            action()
+        except Exception as error:
+            App.Console.PrintWarning("Feature task cleanup: {}\n".format(error))
+
+
 def guard_task_construction(init):
     """Dispose resources acquired before a task constructor finishes."""
     @wraps(init)
@@ -36,18 +57,7 @@ def guard_task_construction(init):
         try:
             init(task, *args, **kwargs)
         except Exception:
-            task.finished = True
-            Gui.Selection.removeObserver(task)
-            for name in ("arrow", "curveHighlight"):
-                annotation = getattr(task, name, None)
-                if annotation is not None:
-                    annotation.close()
-            if hasattr(task, "visibility"):
-                task.restoreVisibility()
-            if hasattr(task, "result_visible"):
-                task.obj.ViewObject.Visibility = task.result_visible
-            if hasattr(task, "form"):
-                task.form.deleteLater()
+            _cleanup_failed_task(task)
             raise
     return guarded
 
@@ -86,9 +96,9 @@ class TaskFeatureViewProvider:
             Gui.Control.showDialog(self.task)
         except Exception:
             if self.task:
-                self.task.reject(reset_edit=False)
+                _cleanup_failed_task(self.task)
                 self.task = None
-            elif owns_transaction:
+            if owns_transaction:
                 doc.abortTransaction()
                 doc.recompute()
             Gui.Control.closeDialog()
@@ -123,7 +133,8 @@ class SceneAnnotation:
         self.root.removeAllChildren()
 
     def close(self):
-        self.scene.removeChild(self.root)
+        if self.scene.findChild(self.root) >= 0:
+            self.scene.removeChild(self.root)
 
 
 class DirectionArrow(SceneAnnotation):

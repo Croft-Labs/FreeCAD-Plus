@@ -57,6 +57,8 @@ Isocline commands (roadmap 4.1.7/5.1.7); successful tasks retain their transacti
 display failures and owned edit transactions (4.1.8/5.1.8).
 Scoped creation ownership prevents existing editors from adopting unrelated pending
 transactions (4.1.9/5.1.9).
+Shared failed-task cleanup continues after secondary resource cleanup errors and
+preserves the primary startup exception; annotation removal is idempotent (4.1.10/5.1.10).
 
 Trim Body and Isocline task readiness uses `require_current` in
 [`ShapeReferences.py`](../src/Mod/Part/BasicShapes/ShapeReferences.py) after recompute;

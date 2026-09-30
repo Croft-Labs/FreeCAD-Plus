@@ -58,6 +58,13 @@ Trim Body tests protect the extracted shared reference and edit/arrow helpers.
 Also run the existing Pad, Extrude, Revolve and Pattern task suites together once
 after integration to check that task and selection state do not leak.
 
+Secondary cleanup regression: inject a primary constructor or dialog-display error
+plus an arrow-close error after repeated removal. Assert the primary error survives,
+remaining resources are released, scene count/visibility are restored, no transaction
+or dialog remains, and normal reopening/acceptance succeeds. Isocline also checks
+that its curve highlight is released after the arrow cleanup error. This does not
+simulate every native resource or transaction failure.
+
 ## Manual acceptance
 
 1. Open a sphere or curved sheet and invoke **Isocline Curve** without preselection

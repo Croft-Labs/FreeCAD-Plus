@@ -68,6 +68,38 @@ class TestIsoclineGui(unittest.TestCase):
         self.reopen()
         self.accept()
 
+    def testSecondaryCleanupFailurePreservesPrimaryErrorAndContinues(self):
+        from unittest.mock import patch, Mock
+        from BasicShapes import FeatureTask
+        import BasicShapes.IsoclineGui as module
+        self.start()
+        self.accept()
+        provider = self.obj.ViewObject.Proxy
+        scene = Gui.activeDocument().activeView().getSceneGraph()
+        children = scene.getNumChildren()
+        visible = self.obj.Visibility
+        close = FeatureTask.DirectionArrow.close
+        def close_then_fail(annotation):
+            close(annotation)
+            close(annotation)  # Repeated removal must be harmless.
+            raise RuntimeError("Secondary cleanup failure")
+        failures = (
+            patch.object(module.IsoclineTask, "updatePreview", side_effect=RuntimeError("Primary task failure")),
+            patch.object(module.Gui, "Control", Mock(wraps=Gui.Control,
+                         showDialog=Mock(side_effect=RuntimeError("Primary task failure")))),
+        )
+        for failure in failures:
+            with failure, patch.object(FeatureTask.DirectionArrow, "close", close_then_fail):
+                with self.assertRaisesRegex(RuntimeError, "Primary task failure"):
+                    provider.setEdit(self.obj.ViewObject)
+            self.assertEqual(scene.getNumChildren(), children)
+            self.assertEqual(self.obj.Visibility, visible)
+            self.assertFalse(self.doc.HasPendingTransaction)
+            self.assertFalse(Gui.Control.activeDialog())
+            self.assertIsNone(provider.task)
+        self.reopen()
+        self.accept()
+
     def testTaskConstructionAndDisplayFailureCleanUpForRetry(self):
         from unittest.mock import patch, Mock
         import BasicShapes.IsoclineGui as module

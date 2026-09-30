@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 4.1.9/5.1.9 production transaction ownership guards complete.
+Latest roadmap batch: 4.1.10/5.1.10 secondary task cleanup errors handled.
+Independent cleanup continues and preserves the primary constructor/display error;
+repeated annotation removal is harmless. Both feature retry checks pass.
+Grouped model/GUI validation: 54 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\task-cleanup-errors-20260930-batch.
+Macro PASS; process ended. Shared FeatureTask and both GUI test modules staged with
+matching hashes. No native rebuild, release update or physical viewport acceptance.
+Native cleanup/transaction failure coverage remains bounded to the tested faults.
+
+Previous roadmap batch: 4.1.9/5.1.9 production transaction ownership guards complete.
 Existing-feature editing rejects unrelated pending transactions; scoped command
 creation still hands its own transaction to the task. Caller edit/abort/retry passes.
 Grouped model/GUI validation: 52 passes, zero failures/errors/skips in

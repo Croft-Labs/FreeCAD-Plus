@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 4.1.9/5.1.9 protect unrelated caller transactions when reopening
+- Current batch: 4.1.10/5.1.10 preserve the primary startup error and continue task
+  cleanup after secondary cleanup errors; repeated annotation removal is harmless.
+  Grouped model/GUI validation: 54 passes, zero failures/errors/skips; Python staging
+  only, no native rebuild or release update.
+- Previous batch: 4.1.9/5.1.9 protect unrelated caller transactions when reopening
   Trim Body or Isocline. Grouped model/GUI validation: 52 passes, zero failures/
   errors/skips; Python-only staging, no native rebuild or release update.
 - Previous batch: 4.1.8/5.1.8 clean up task resources and edit transactions when
@@ -1140,6 +1144,23 @@ Depends on: the existing Part geometry engine and native development build.
   Only the scoped feature-creation context can hand its transaction to the editor.
   Verify pending edits survive rejected edit/create attempts and caller abort/retry.
 
+- [ X ] 4.1.10 Continue independent Trim task cleanup actions after a secondary
+  cleanup exception, retain the original startup failure and allow repeated annotation
+  removal. Verify constructor/display failure, restored resources and successful retry.
+
+Secondary cleanup evidence (also 5.1.10): `task-cleanup-errors-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **54 PASS, zero failures/
+errors/skips** (Trim 14 model/17 GUI; Isocline nine model/14 GUI). Both tasks preceded
+one grouped validation. Macro PASS; process ended. Shared FeatureTask and both GUI
+suites staged with matching hashes in the isolated fork build (engine 2df76790b4).
+Injected arrow cleanup errors after repeated removal preserve the primary constructor/
+dialog error; later cleanup restores scene counts and result visibility, leaves no
+pending transaction/dialog and permits reopen/accept. Isocline additionally releases
+its curve highlight. This does not exhaust native cleanup/transaction failures or
+replace physical viewport/high-DPI acceptance. FeatureTask SHA256:
+`8BD25B1B56D28500DAAA09F4434DF89CB07412D310A75727161131C0B875634C`.
+No native rebuild or release update.
+
 Transaction ownership evidence (also 5.1.9): `task-ownership-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **52 PASS, zero failures/
 errors/skips** (Trim 14 model/16 GUI; Isocline nine model/13 GUI). Both tasks preceded
@@ -1296,6 +1317,9 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
   transaction rollback; verify retry. Evidence recorded with 4.1.8.
 - [ X ] 5.1.9 Apply explicit transaction ownership to Isocline reopening and verify
   unrelated pending edit/create rejection without mutation; evidence with 4.1.9.
+- [ X ] 5.1.10 Continue Isocline task cleanup after a secondary arrow cleanup error,
+  including curve highlight removal, while preserving the primary startup error;
+  repeated removal and reopen/accept verified with 4.1.10.
 
 ### [   ] 5.2 Validate the local build
 
