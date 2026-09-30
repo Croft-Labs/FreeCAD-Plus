@@ -1023,3 +1023,58 @@ class TestCAMInvalidInputs(PathTestWithAssets):
             self.doc.recompute()
             self.assertNotIn("Invalid", dressup.State)
             self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def attachFailingDressupInput(self, input_object):
+        producer = self.doc.addObject("Part::FeaturePython", "DressupInputProducer")
+        producer.addProperty("App::PropertyBool", "Fail")
+        producer.Proxy = FailingModel()
+        input_object.addProperty("App::PropertyLink", "Producer")
+        input_object.Producer = producer
+        self.doc.recompute()
+        return producer
+
+    def testBoundary2RejectsCachedBoundaryAfterDependencyFailure(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeBoundary2()
+        producer = self.attachFailingDressupInput(dressup.Boundary)
+        self.assertTrue(dressup.Path.Commands)
+        producer.Fail = True
+        self.doc.recompute()
+        self.assertIn("Invalid", producer.State)
+        self.assertFalse(dressup.Boundary.Shape.isNull())
+        # Native recompute may skip downstream execution, retaining cached output.
+        self.assertTrue(dressup.Path.Commands)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        producer.Fail = False
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testHoldingTagsRejectCachedBaseAfterDependencyFailure(self):
+        from Path.Post.PostList import _wrap_op
+        base, dressup = self.makeHoldingTags()
+        producer = self.attachFailingDressupInput(base)
+        self.assertTrue(dressup.Path.Commands)
+        producer.Fail = True
+        self.doc.recompute()
+        self.assertIn("Invalid", producer.State)
+        self.assertTrue(base.Path.Commands)
+        # Native recompute may skip downstream execution, retaining cached output.
+        self.assertTrue(dressup.Path.Commands)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        producer.Fail = False
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(_wrap_op(dressup).Path.Commands)

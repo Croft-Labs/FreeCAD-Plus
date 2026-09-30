@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2as/at clear stale Boundary2 paths on generation failure
+- Current batch: 16.2au/av guard Boundary2 and holding-tag regeneration against
+  invalid/unrecomputed dependencies. Grouped validation: 60 passes, zero failures/
+  errors/skips. Native skipped-recompute caches remain export-blocked; explicit
+  generation clears/rejects them. No native rebuild or release update.
+- Previous batch: 16.2as/at clear stale Boundary2 paths on generation failure
   and reject empty/invalid/non-solid boundary offset results. Grouped validation:
   58 passes, zero failures/errors/skips. Python staging only; no native rebuild
   or release update.
@@ -3195,6 +3199,28 @@ Python-only staging into the isolated fork engine 2df76790b4; no native rebuild.
 Tests inject a late generation error and native null/plane offset results, then
 verify regeneration. This covers Boundary2, distinct from the earlier Boundary
 implementation; no machine/physical GUI acceptance or release update is implied.
+
+- [ X ] 16.2au Add shared dressup input readiness checks to Boundary2's base and
+  boundary before clipping cached results. Verify explicit regeneration rejects a
+  failed recursive boundary dependency, clears output and recovers after repair.
+- [ X ] 16.2av Apply the same check to holding-tag base inputs before path analysis.
+  Verify cached base-path rejection, empty regenerated output, export blocking
+  before/after explicit execution and recovery after repairing the producer.
+
+Dressup readiness evidence: `cam-dressup-readiness-20260930-verified/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **60 PASS, zero failures/
+errors/skips** (55 CAM invalid-input/workflow, five tag geometry checks). Both changes
+preceded grouped validation; macro PASS and process ended. Initial `-batch` had 58
+passes/two failures because native recompute skipped the downstream dressups after
+producer failure and retained cached output. Corrected tests explicitly preserve
+that observation: existing export guards reject the cache, explicit proxy execution
+raises and clears output, and producer repair permits regeneration. Automatic cache
+clearing when native execution is skipped is not implemented by this guard.
+Source/staged hashes: Utils.py `8CA3B7C1D8B01EB164B812DBBC30C9D8B6DCF7D9CD903E43BF9CC31B1FC5CB11`;
+Tags.py `A63513E05806E8C9DC90A40271900233B1EB042E6588DEDAF18FF6C9EDA511C9`;
+Boundary2.py `AC903F5E164F68D766ACB096F573E892A5CD3D72F7ECB08A518CCFFAE722FD7C`.
+Python-only staging into engine 2df76790b4; no native rebuild, release, physical GUI
+or machine acceptance. Direct task callbacks outside execute remain separate audit scope.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

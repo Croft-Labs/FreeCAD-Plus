@@ -198,3 +198,14 @@ mark the feature Invalid and block postprocessing. Injected null and planar offs
 results must also reject before clipping. Removing each fault must regenerate a
 usable path. This supplements the older Boundary dressup checks; native GUI/machine
 acceptance remains separate from these automated failure/recovery tests.
+
+
+## Dressup dependency-readiness regressions
+
+Boundary2 and holding-tag tests attach a real failing producer to their inputs and
+retain cached input geometry/path. Native recompute can skip downstream execution,
+leaving its old output; the existing postprocessing guard must reject that cache.
+Explicit dressup execution must then raise for the invalid dependency and clear
+output. Repairing the producer must restore generation/export. These checks cover
+`execute` input readiness; they do not establish automatic cache clearing during
+skipped native execution or validate every direct task-panel callback.

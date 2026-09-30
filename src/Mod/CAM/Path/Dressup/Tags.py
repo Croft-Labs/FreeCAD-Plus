@@ -1206,6 +1206,7 @@ class ObjectTagDressup:
             return
         if not obj.Base.isDerivedFrom("Path::Feature"):
             return
+        PathDressup.requireCurrent(obj.Base)
         if not obj.Base.Path:
             return
         if not obj.Base.Path.Commands:

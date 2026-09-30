@@ -102,3 +102,10 @@ def baseOp(path):
 def toolController(path, default=None):
     """toolController(path) ... return the tool controller from the base op."""
     return getattr(baseOp(path), "ToolController", default)
+
+
+def requireCurrent(obj):
+    """Reject cached results from an invalid or unrecomputed input dependency."""
+    for dependency in [obj] + list(obj.OutListRecursive):
+        if "Invalid" in dependency.State or "Touched" in dependency.State:
+            raise ValueError("Dressup input is not current: " + dependency.Label)

@@ -119,6 +119,8 @@ class ObjectDressup:
             Path.Log.warning(translate("CAM_DressupPathBoundary2", "Boundary model missing"))
             obj.Path = Path.Path()
             return
+        PathDressup.requireCurrent(obj.Base)
+        PathDressup.requireCurrent(obj.Boundary)
         if not getattr(obj.Boundary, "Shape", None) or obj.Boundary.Shape.isNull():
             Path.Log.warning(translate("CAM_DressupPathBoundary2", "Boundary has no shape"))
             obj.Path = Path.Path()

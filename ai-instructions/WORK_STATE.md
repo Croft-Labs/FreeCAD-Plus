@@ -11,7 +11,18 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2as/at production Boundary2 failure handling.
+Latest roadmap batch: 16.2au/av production dressup input readiness.
+Utils.requireCurrent guards Boundary2 base/boundary and holding-tag base execution.
+Explicit generation rejects stale dependencies and clears output; repair recovers.
+Grouped validation: 60 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-dressup-readiness-20260930-verified.
+Initial batch had two expectation failures: native recompute can skip downstream
+execution after upstream failure, retaining cache. Tests now verify export rejects
+that cache before explicit execution clears it. Automatic skipped-execution cache
+clearing and direct task callbacks remain separate gaps. Macro PASS; process ended.
+Three matching modules staged into engine 2df76790b4; no native rebuild or release.
+
+Previous roadmap batch: 16.2as/at production Boundary2 failure handling.
 Output clears before generation; null/invalid/non-solid offsets reject before
 clipping. Tests verify late-generation failure and null/plane offsets produce empty
 Invalid output, block export and recover after correction.
