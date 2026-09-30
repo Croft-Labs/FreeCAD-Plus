@@ -1,10 +1,13 @@
 # FreeCAD Plus: Build validation handoff
 
-Release 0.0.1 Windows x64 installer is built and accepted. Evidence/artifact root:
+Release 0.0.1 Windows x64 installer is built, accepted and published:
+https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.1
+Verified public pre-release state, one installer asset and matching GitHub SHA256.
+Release/tag commit 1a962bb23d; application source 2df76790b4. Evidence/artifact root:
 D:\Temp\Office-PC\freecad-plus-release-0.0.1. Full build plus revision refresh
 reports application source 2df76790b4; 120 staged tests pass and staged/installed
 launcher, installed hashes, shortcut and uninstall checks pass. Unrelated test file
-survives uninstall. Publication remains the last step; see roadmap release checkpoint.
+survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
