@@ -1,5 +1,17 @@
 # FreeCAD Plus: Build validation handoff
 
+Current roadmap batch (2026-09-29): 7.1.3a/7.1.3b adapter prototypes and 7.1.6a
+decision boundary complete. Eight native capability/adapter tests pass together
+in `part-adapters-20260929-final`. Implementation is test-only under
+tests/prototypes; no application code, installation or native build changed.
+Probes cover Body binders sharing a sketch and explicit result roles/identities,
+placement, dependencies, unavailable/reappearing results, transactions and restore.
+See architecture/ADR_001_HISTORY_ADAPTER_BOUNDARY.md for limits. Next: transformed
+attachments/occurrences, assembly-local edits and downstream consumers before
+final architecture choice. Prototype FCStd files require the test module for
+result-layer recompute; they are not cadprt files or released functionality.
+No test process remains running; continue batching related tasks before builds.
+
 Current roadmap batch (2026-09-29): logical contracts/mapping for 7.1.1, 7.1.2
 and 7.1.4 are complete in architecture/PART_HISTORY_CONTRACT.md. Four grouped
 native probes pass in `part-history-20260929-final`, covering independent/shared

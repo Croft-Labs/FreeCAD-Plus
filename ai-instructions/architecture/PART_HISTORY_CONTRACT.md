@@ -124,7 +124,12 @@ To rerun, use the isolated existing-build procedure in
 ValidateUpstreamIssues macro accepts this explicit suite. Use a new external
 evidence directory because the persistence probe writes its own example there.
 
-Remaining before an architecture choice: implement/compare actual result adapters;
+The next batch implemented both native Body and explicit-result adapters under
+`tests/prototypes`, with eight grouped passing checks. See
+[ADR 001](ADR_001_HISTORY_ADAPTER_BOUNDARY.md) for the comparison, placement defect
+found/corrected, native persistence evidence and remaining decision gates.
+
+Remaining before an architecture choice: extend the bounded adapter comparison;
 prove semantic split/merge identity, mixed definition/occurrence content, an
 assembly-local edit, transformed attachments and drawing/CAM/FEM/Draft consumers.
 Resolve selection/default policies separately. Record the architecture decision

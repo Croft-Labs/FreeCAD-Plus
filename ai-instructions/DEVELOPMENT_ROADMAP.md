@@ -2,10 +2,11 @@
 
 ## Current focus
 
-- Active batch: Phase 7 foundation, authorized 2026-09-29. Tasks 7.1.1, 7.1.2
-  and 7.1.4 now have a documented logical contract and native-model mapping.
-  Four grouped native capability probes pass in the existing application; no build.
-  Next: finish the adapter comparison in 7.1.3 and architecture decisions in
+- Active batch: Phase 7 adapter comparison, authorized 2026-09-29. Completed
+  7.1.3a/7.1.3b test-only adapters and 7.1.6a experiment boundary decision.
+  All eight grouped capability/adapter probes pass in the existing application;
+  no build or production source change. Tasks 7.1.1/7.1.2/7.1.4 remain defined.
+  Next: placement/occurrence and consumer probes for 7.1.3 and decisions in
   7.1.5/7.1.6 before production navigator/model changes. Batch two or three related
   implementation tasks before any costly build, as requested by the owner.
 - Previous implementation: [prioritized upstream issue work](#upstream-issue-work).
@@ -1138,6 +1139,13 @@ safe. Existing Phase 2/3 implementation and tests are inputs, not work to recrea
 - [ X ] 7.1.1 Specify a single ordered History list and a separate Bodies/results list. Roles and ownership are defined in [the logical contract](architecture/PART_HISTORY_CONTRACT.md#ownership-and-roles-711); no production schema is implied.
 - [ X ] 7.1.2 Map current Part, Part Design Body/Tip, feature ownership, attachment and document-link restrictions to the proposed model. [Source mapping](architecture/PART_HISTORY_CONTRACT.md#current-native-model-and-required-changes-712) separates presentation from model/API changes and records existing multi-solid support.
 - [   ] 7.1.3 Prototype native Body adapters versus a part-level feature/result layer. Evaluate multi-body outputs, shared inputs, references, recompute, persistence and upstream compatibility before choosing the architecture.
+- [ X ] 7.1.3a Prototype native Body/SubShapeBinder/Pad adapters sharing one
+  independent part-owned sketch. Validate source edits, separate Tips and native
+  save/reopen without duplicating sketch constraints or reparenting the source.
+- [ X ] 7.1.3b Prototype a part-level feature with two explicitly named output
+  roles and separate identified result nodes. Validate a later result consumer,
+  edits/rename/source order, unavailable/reappearing output, Undo/Redo, abort and
+  native save/reopen. Fixed roles are a bounded identity proof, not general lineage.
 - [ X ] 7.1.4 Define stable feature and body identities, explicit input/output links, and merge/split/disappear/reappear lineage. [Identity contract](architecture/PART_HISTORY_CONTRACT.md#identity-and-dependencies-714) separates modeling/display order from the dependency graph; storage and runtime implementation remain pending.
 - [   ] 7.1.5 Document the chosen architecture, migration boundary and a small reference model; update product/UI specifications before production implementation.
 
@@ -1148,6 +1156,23 @@ results from both, without silently duplicating sketches or losing references.
 - [   ] 7.1.6 Before architecture implementation, record decisions for the supplied
   definition/occurrence, body-result, selection, transaction and persistence contracts;
   include alternatives, affected consumers and narrow proof criteria (G1-G3).
+- [ X ] 7.1.6a Record the [adapter experiment boundary and decision gates](architecture/ADR_001_HISTORY_ADAPTER_BOUNDARY.md).
+  Retain native Body adapters and an explicit-result layer as candidates; reuse
+  native geometry, App::Link, links and transactions. Record unresolved production
+  selection/default, schema and consumer gates. This is not the final architecture.
+
+Adapter batch evidence (2026-09-29): `tests/TestPartHistoryAdapters.py` plus the
+four native capability probes report **8 PASS**, no failures/errors/skips, in
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\part-adapters-20260929-final\results.json`.
+`prototype-manifest.json` records the test/adapter hashes. All implementation is
+under `tests/prototypes`; no application module was installed or rebuilt.
+The first result adapter lost a shape's translation under native recompute and
+merged distinct outputs; Shape/Placement synchronization corrected it, with
+position assertions retained. Expected unavailable-result errors clear the
+consumer instead of returning partial/stale geometry. Native BodyAdapterProof.FCStd
+and test-module-dependent ExplicitResultProof.FCStd are disposable evidence only.
+Final choice, general topology/lineage, transformed attachments, assembly-local
+edits, downstream consumers and cold-start deployment remain open under the parents.
 
 Foundation batch evidence (2026-09-29): `tests/TestPartHistoryCapabilities.py`
 passes four native probes in the existing fork, with no failures/errors/skips.
