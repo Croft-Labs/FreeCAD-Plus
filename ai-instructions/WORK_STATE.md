@@ -1,12 +1,16 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest issue continuation (2026-09-29): U.18 adds curved avoidance and upstream
-#27950 saved-geometry probes. All 10 focused tests pass in the existing app; no
-application code/build changes. The attachment is a mirrored Pad, not a
-GeomFillSurface. Exact Surface-object validation awaits a relevant batched build
-with Surface enabled. Next actionable case is U.15 (#26300), then U.16 (#6864).
-Evidence: `curved-avoidance-20260929-final/results.json` under the external root.
-No test process remains running. Earlier evidence below is retained.
+Latest issue continuation (2026-09-29): U.19 reproduces #26300 in PlanarSurface.
+The original saved freeform geometry with nine selected faces exceeds 120 seconds;
+20/40-second stacks locate Path.Area boundary projection, before cutting generation.
+Per-face/paired-face projection experiments were unsuccessful and fully removed.
+Source-built app is restored to committed code (line endings normalized; module
+hash is recorded in U.19). No native rebuild or application fix is claimed.
+The opt-in TestIssue26300Fixture.py and bounded RunIssue26300.ps1 preserve the case.
+Next: resolve U.15 with validated projection/coverage semantics; U.16 final-strip
+coverage remains independent pending work. Exact GeomFillSurface testing U.14
+still awaits a relevant batched build with Surface enabled. Prior ten-test curved
+avoidance evidence remains valid. No test/build process remains running.
 
 Latest CAM issue milestone (2026-09-29): two Python modules updated in the existing
 app to stop generation when selected face-avoidance boundaries fail and to reject

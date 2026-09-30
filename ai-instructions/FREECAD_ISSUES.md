@@ -37,8 +37,10 @@ impact order for the current workflow:
   generate a path with PlanarSurface; a generated curved B-spline exclusion passes
   coverage checks. Ten focused checks pass. Legacy backend unchanged.
 - [#26300](https://github.com/FreeCAD/FreeCAD/issues/26300): freeform surfacing hangs
-  or crashes. Next: bounded reproduction through our replacement operation before
-  assuming the old Surface report applies.
+  or crashes. Still applicable: saved geometry/face selections also exceed a
+  120-second limit in PlanarSurface. Stack traces identify Path.Area boundary
+  projection, before OCL cutting. Two-face projection experiments did not resolve
+  the case and were discarded. Opt-in bounded reproduction retained; fix pending.
 - [#6864](https://github.com/FreeCAD/FreeCAD/issues/6864): line-pattern stepover can
   leave the final strip uncut. Next: check exact boundary coverage in the current
   generator, which differs from the reported legacy implementation.

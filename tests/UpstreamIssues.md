@@ -112,3 +112,44 @@ The attachment contains no GeomFillSurface object despite the issue title. The
 current build has `BUILD_SURFACE=OFF`; exact Surface-object integration remains
 pending for a relevant batched build. Neither result certifies the legacy backend,
 a postprocessor or physical machine motion.
+
+## Freeform slowdown (#26300): known failing, opt-in reproduction
+
+This is a diagnostic regression, **not a passing acceptance test**. The current
+replacement operation exceeds the 120-second limit while projecting the selected
+faces. Do not add it to the default in-process suite until fixed.
+
+Download the public issue attachment
+`https://github.com/user-attachments/files/24261352/Freeform.3D.Surface.CAM.zip`
+to external evidence storage. Extract only `Pilzmesser David CAM.FCStd`, leaving
+it unchanged. Expected FCStd SHA-256:
+`A6F127FDD5B52F93485DBDDBA289224BDAB7E75054B5D3CF7370EB666AD8E699`.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tests/RunIssue26300.ps1 `
+  -Executable "$build/bin/FreeCAD.exe" -Fixture "$fixture" `
+  -OutputDirectory "$evidence/freeform" -TimeoutSeconds 120
+```
+
+Set the three variables to the actual fork build, extracted fixture and external
+evidence parent; the output directory must be new. The runner isolates preferences,
+records process results, stops only its spawned process at the deadline (or after
+60 seconds without CPU progress), and rejects missing/failed test results.
+Its timeout path was verified at 30 seconds. A timeout confirms the diagnostic
+failure and is never reported as a successful geometry test.
+
+The test reads Clone.Shape.brp and its saved placement without restoring external
+Python proxies or running the saved legacy operation. It maps the nine Face
+selections, 5 mm endmill, Line pattern, 1 mm sampling, 5% stepover and saved depths
+onto a fresh PlanarSurface operation. Modern selected-face masking replaces the
+legacy BoundaryEnforcement=False setting; the replay does not establish identical
+legacy behavior. Success requires nonempty finite cutting commands and varying Z,
+with elapsed time/fixture hash in freeform-details.json. Additional coverage and
+simulation checks remain necessary before certifying a future algorithm change.
+
+A faulthandler stack is written every 20 seconds during execution. Both available
+baseline samples point to Path.Area.getShape in surface_common._boundary_via_area,
+called from generate_pattern_mask. The 120-second run was stopped without a crash;
+this is evidence of excessive runtime, not proof of an infinite loop. Experimental
+individual/pair projections were not retained because they failed or stalled on
+trimmed B-spline faces. The existing application code has been restored.

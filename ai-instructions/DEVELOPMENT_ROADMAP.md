@@ -3,7 +3,8 @@
 ## Current focus
 
 - Active implementation: [prioritized upstream issue work](#upstream-issue-work).
-  Latest: modern CAM avoidance now stops on boundary failures or unsupported
+  Latest diagnosis: #26300 also stalls in the replacement workflow; see U.19.
+  No projection experiment was retained. Latest implemented fix: modern CAM avoidance now stops on boundary failures or unsupported
   strategy switches instead of ignoring exclusions. Python-only update installed;
   all 67 focused/related CAM regressions pass. Remaining child cases: U.14-U.16.
   Audit inherited fixes and changed workflow applicability first. Mirror #32706
@@ -152,9 +153,12 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   A generated non-planar B-spline exclusion independently passes cutting-segment
   exclusion and coverage-on-both-sides checks. Do not generalize to arbitrary
   freeform faces or mark the upstream issue closed.
-- [   ] U.15 #26300: attempt the attached freeform hang/crash case in an isolated,
-  bounded process through the replacement operation; distinguish legacy applicability
-  and OCL/kernel behavior before modifying algorithms.
+- [   ] U.15 #26300: correct the reproduced freeform boundary-projection slowdown.
+  The replacement operation is affected; see U.19. A solution must preserve all
+  selected regions, holes, cutter offsets, curved-face coverage and cancellation;
+  do not substitute a bounding box or omit unprojectable faces. Keep legacy
+  applicability distinct. A tolerance-controlled projection alternative needs
+  geometry/coverage evidence before adopting it; kernel replacement is not implied.
 - [   ] U.16 #6864: check final-strip coverage for nonintegral width/stepover ratios
   in the current line generator; reproduce before porting a legacy algorithm fix.
 - [ X ] U.17 CAM avoidance fix published as
@@ -169,6 +173,29 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   changed or rebuild performed. Initial exact-object probe stopped with missing
   Surface module; that run is not acceptance evidence. Next actionable case U.15;
   retain the exact-object gap in U.14 for the next relevant batched build.
+
+- [ X ] U.19 Reproduce and locate #26300 in the replacement workflow. Original
+  attachment Clone BRep, saved placement, nine selected faces, 5 mm endmill,
+  1 mm sampling, 5% stepover and saved depths exceed the isolated 120-second limit.
+  Modern face masking replaces the removed legacy BoundaryEnforcement property;
+  this is not an exact legacy-UI replay. A separate 55-second trace records
+  Path.Area.getShape in surface_common._boundary_via_area at both 20 and 40 seconds,
+  called while generating the selected-face mask. No OCL crash was observed.
+  Individual projection plus planar union passed four simple geometry controls but
+  failed on narrow trimmed faces; adding selected neighbours also stalled. Both
+  candidates were removed, and source/installed module restored to committed code.
+  This completes diagnosis only, not U.15 or the upstream issue.
+  Evidence under the external root: `freeform-20260929-modern` (120-second timeout),
+  `freeform-20260929-trace` (stacks and 55-second timeout), and
+  `issue26300/diagnosis.json`. `tests/RunIssue26300.ps1` and the opt-in fixture test
+  retain the reproduction without adding a hanging test to the default suite.
+  Runner deadline behavior checked with a 30-second limit in
+  `freeform-20260929-runner`; TIMEOUT is the expected diagnostic result, not PASS
+  for toolpath generation. No native build, machine/post validation or release.
+  Restored surface_common.py matches HEAD after CRLF normalization; source and
+  installed SHA-256 now both
+  `972F399E92F0509E4023556B4C057823429BBF9292652C51F4F13CE8B8CA097B`.
+  The difference from U.13's raw hash is line endings only; no application change.
 
 CAM avoidance evidence under the external validation root below:
 `avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
