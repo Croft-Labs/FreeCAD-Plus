@@ -36,6 +36,16 @@ Relevant inherited regressions: `TestPlanarSurfaceOp`, `TestSurfaceMeshGenerator
 `TestPathStock`, `TestPathDressupHoldingTags`, and the shared CAM job/operation
 tests. Record exact suites actually run in the roadmap.
 
+## Boundary dressup failure checks
+
+`tests/TestCAMInvalidInputs.py` runs against the source-built application alongside
+`CAMTests.TestDressupPost` and `CAMTests.TestMeshMachining`. Its Boundary fixtures
+check that offset/clipping exceptions clear cached commands, missing/non-geometric/
+null boundaries block postprocessing, and repair restores generation/export.
+Injected empty offset results cover both inclusion and exclusion before clipping;
+these are failure-handling checks, not a proof of arbitrary offset geometry quality.
+Missing base input produces an empty native Path and recovers when reattached.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,

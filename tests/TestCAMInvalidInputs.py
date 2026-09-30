@@ -250,3 +250,46 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         dressup.Base = self.op
         self.doc.recompute()
         self.assertTrue(dressup.Path.Commands)
+
+    def testMissingOrNonGeometricBoundaryBlocksExportAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeBoundary()
+        stock = dressup.Stock
+        nongeometric = self.doc.addObject("App::FeaturePython", "NonGeometricBoundary")
+        for replacement in (None, nongeometric):
+            dressup.Stock = replacement
+            self.doc.recompute()
+            self.assertFalse(dressup.Path.Commands)
+            self.assertIn("Invalid", dressup.State)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            dressup.Stock = stock
+            self.doc.recompute()
+            self.assertNotIn("Invalid", dressup.State)
+            self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testCollapsedOffsetBlocksClippingAndRecovers(self):
+        from unittest.mock import patch, Mock
+        from Path.Dressup import Boundary
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeBoundary()
+        collapsed = Mock()
+        collapsed.makeOffsetShape.return_value = Part.Shape()
+        for pieces in ([], [collapsed]):
+            for inside in (True, False):
+                dressup.Inside = inside
+                dressup.Offset = 1
+                dressup.touch()
+                with patch.object(Boundary.Path.Geom, "uncompound", return_value=pieces):
+                    with patch.object(Boundary.PathBoundary, "execute") as clip:
+                        self.doc.recompute()
+                        clip.assert_not_called()
+                self.assertFalse(dressup.Path.Commands)
+                self.assertIn("Invalid", dressup.State)
+                with self.assertRaises(CAMValueError):
+                    _wrap_op(dressup)
+                dressup.Offset = 0
+                dressup.Inside = True
+                self.doc.recompute()
+                self.assertNotIn("Invalid", dressup.State)
+                self.assertTrue(_wrap_op(dressup).Path.Commands)

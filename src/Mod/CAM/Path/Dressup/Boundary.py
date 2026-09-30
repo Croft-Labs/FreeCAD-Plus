@@ -187,13 +187,9 @@ class DressupPathBoundary(object):
         # Never leave the previous machining result available after that failure.
         obj.Path = Path.Path()
         if not hasattr(obj, "Stock") or obj.Stock is None:
-            Path.Log.error("BoundaryStock (Stock) missing; cannot execute dressup.")
-            obj.Path = Path.Path()
-            return
+            raise ValueError("Boundary stock is missing; select a boundary before generating.")
         if not hasattr(obj.Stock, "Shape") or obj.Stock.Shape is None:
-            Path.Log.error("Boundary stock has no Shape; cannot execute dressup.")
-            obj.Path = Path.Path()
-            return
+            raise ValueError("Boundary stock has no Shape; select a geometric boundary.")
         if obj.Stock.Shape.isNull():
             raise ValueError("Boundary stock shape is empty; restore the boundary before generating.")
         if obj.Offset and obj.Stock and not obj.Stock.Shape.isNull():
@@ -202,6 +198,8 @@ class DressupPathBoundary(object):
                 offset = -offset
             stock = Path.Geom.uncompound(obj.Stock.Shape)
             shape = [sh.makeOffsetShape(offset, tolerance=0.1, join=2) for sh in stock]
+            if not shape or any(sh.isNull() or not sh.isValid() for sh in shape):
+                raise ValueError("Boundary offset is empty or invalid; adjust the offset before generating.")
         else:
             shape = obj.Stock.Shape
 

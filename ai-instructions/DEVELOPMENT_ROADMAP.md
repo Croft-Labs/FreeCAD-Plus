@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2o/p prevent cached Boundary paths after clipping/offset
+- Current batch: 16.2q/r block export for missing/non-geometric Boundary stock
+  and reject empty/invalid offset results before clipping. Grouped validation:
+  46 passes, zero failures/errors/skips; Python-only update, no native build.
+- Previous batch: 16.2o/p prevent cached Boundary paths after clipping/offset
   failures and reject empty boundary geometry in both inclusion/exclusion modes.
   Grouped validation: 44 passes, no failures/errors/skips; Python-only update
   to the existing development build. Native GUI/machine acceptance remains open.
@@ -2157,6 +2160,24 @@ Both implementation tasks were completed before this grouped validation; no nati
 rebuild was needed. The existing engine reports revision 2df76790b4, with this
 Python update synchronized separately. No GUI/machine acceptance or new release;
 the published 0.0.1 installer is unchanged. General consumer gates remain open.
+
+- [ X ] 16.2q Mark missing/non-geometric Boundary stock as a native operation
+  error instead of logging and returning success. Confirm empty output, export
+  rejection, and recovery after restoring the original boundary.
+- [ X ] 16.2r Validate boundary offset results before clipping: reject empty
+  collections and null/invalid shapes. Inject empty collections/null offset shapes
+  for both inclusion/exclusion, assert clipping is not invoked, and verify native
+  error/export rejection and recovery with a corrected offset.
+
+Boundary input batch: `cam-boundary-inputs-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **46 PASS, zero
+failures/errors/skips**: 17 invalid-input checks, seven nested-dressup checks and
+22 STL/tab checks. Macro PASS; test process ended. Source and development-build
+Boundary.py SHA256: `E7D4A2BB0D55DA4F1A8BE4CB7F6ADFA783783CAFBA9EB613DADF94BAE6D7CACE`.
+Both changes preceded the grouped runtime check; Python-only synchronization, no
+native rebuild. Existing engine revision is 2df76790b4. Offset failure injection
+validates rejection/recovery, not general offset geometry correctness. No native
+GUI/machine acceptance or release update; broader consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

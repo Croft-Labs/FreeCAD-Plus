@@ -11,7 +11,15 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2o/p complete. Boundary clears cached output before
+Latest roadmap batch: 16.2q/r complete. Missing/non-geometric Boundary stock
+now causes native error/export rejection; offset outputs are checked before clipping.
+Grouped run: 46 passes, zero failures/errors/skips, in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-boundary-inputs-20260930-batch.
+Python synchronized to the existing development build, hash recorded in roadmap.
+Test process ended. No native rebuild, GUI/machine acceptance or release update.
+Continue broader consumer compatibility tasks in coherent groups.
+
+Previous roadmap batch: 16.2o/p complete. Boundary clears cached output before
 clipping/offset work, rejects empty boundary geometry in both modes, and returns
 an empty native Path for missing base input. Four new failure/recovery checks and
 related suites pass: 44 tests, zero failures/errors/skips in
