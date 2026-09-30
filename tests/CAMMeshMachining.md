@@ -273,3 +273,13 @@ and at completion, and a safe-height retract between generated plunge positions.
 Drilling cycles carry the controller's vertical feed and cancel with G80 before
 subsequent travel. A zero vertical feed must reject output/export and recover when
 repaired. These are command-level checks, not postprocessor or machine acceptance.
+
+
+Plunge cycle variants cover G82 dwell, G83 peck and G73 chip breaking with explicit
+feed, expected P/Q and R values, cancellation, safe-height retract and final
+clearance. Negative dwell, combined peck+dwell, and chip breaking without
+peck depth must clear output, block export and recover after repair. Controller
+postprocessing and physical machining remain separate acceptance gates.
+
+Native negative peck-depth assignment is checked as normalization to zero before
+execution; it is not claimed as a generator rejection.

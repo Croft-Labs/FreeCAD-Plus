@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2bm/bn establish Plunge Milling entry/exit clearance and
+- Current batch: 16.2bo/bp validate Plunge Milling cycle settings and exercise
+  dwell/peck/chip-breaking output. Grouped validation: 84 passes, zero failures/
+  errors/skips. Python staging only; no native rebuild or release.
+- Previous batch: 16.2bm/bn establish Plunge Milling entry/exit clearance and
   between-position retracts, validate feed and set/cancel drilling cycles explicitly.
   Grouped validation: 82 passes, zero failures/errors/skips. No native rebuild/release.
 - Previous batch: 16.2bk/bl guard Dogbone stale inputs and invalid cutter data.
@@ -3420,6 +3423,26 @@ review and verified in the final run. Ordinary plunge and G81 command sequences 
 covered; individual peck/dwell variants, controller postprocessing and physical machine
 acceptance remain pending. Python staging into engine 2df76790b4; no native rebuild
 or release. These bounded fixes do not complete the broader CAM acceptance gates.
+
+- [ X ] 16.2bo Validate Plunge Milling cycle parameters before generation: finite,
+  non-negative depth/dwell; finite peck retract; mutually exclusive peck/dwell;
+  chip breaking requires peck depth. Implemented; rejection/recovery checks pass.
+- [ X ] 16.2bp Verify G82/G83/G73 command parameters, feed, cancellation and retracts,
+  plus invalid settings/export rejection and repair. Grouped checks pass.
+
+Plunge cycle evidence: `cam-plunge-cycles-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **84 PASS, zero failures/errors/
+skips** (79 CAM invalid-input/workflow, five holding-tag checks). Both tasks preceded
+grouped testing; macro PASS and process ended. Source/staged PlungeMilling.py SHA256:
+`DEF8CC6E1648BA321F80C9B083562A297CFFC8AA581A401338427D9908D39B42`.
+G82/G83/G73 verify P/Q/R, feed, cancellation, safe-height retract and final clearance.
+Negative dwell, peck+dwell and chip breaking without peck reject and recover. Initial
+`-batch` had 83 passes/one failed subtest because native negative PeckDepth assignment
+normalizes to zero; the final test verifies that normalization and valid output.
+Non-finite checks are defensive source validation, not a claim of exhaustive native
+property-domain testing. This closes the bounded command-level cycle variants left
+open by 16.2bm/bn; controller postprocessing and physical machine acceptance remain
+open. Python staging into engine 2df76790b4; no native rebuild or release.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

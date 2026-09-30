@@ -171,6 +171,17 @@ class ObjectDressup:
 
         baseOp = PathDressup.baseOp(obj)
         peck_retract = obj.PeckRetract.Value if obj.PeckDepth else baseOp.SafeHeight.Value
+        if obj.UseDrillingCycle:
+            for name, value in (("Peck depth", obj.PeckDepth.Value), ("Dwell time", obj.DwellTime)):
+                if not math.isfinite(value) or value < 0:
+                    raise ValueError(f"{name} must be finite and non-negative")
+            if obj.PeckDepth.Value > 0:
+                if not math.isfinite(peck_retract):
+                    raise ValueError("Peck retract height must be finite")
+                if obj.DwellTime > 0:
+                    raise ValueError("Peck depth and dwell time cannot be used together")
+            elif obj.ChipBreak:
+                raise ValueError("Chip breaking requires a positive peck depth")
         toolController = baseOp.ToolController
         step = obj.StepOver.Value
         step_min = step / 2

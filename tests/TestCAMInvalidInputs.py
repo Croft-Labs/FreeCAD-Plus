@@ -1404,3 +1404,57 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.op.ToolController.VertFeed = 50
         self.doc.recompute()
         self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testPlungeCycleVariantsPreserveParametersAndRetract(self):
+        dressup = self.makePlunge()
+        self.op.StartDepth = 6
+        dressup.UseDrillingCycle = True
+        dressup.setExpression("PeckRetract", None)
+        dressup.PeckRetract = 5.5
+        for name, peck, dwell, chip in (("G82", 0, 0.25, False),
+                                       ("G83", 1, 0, False), ("G73", 1, 0, True)):
+            with self.subTest(cycle=name):
+                dressup.PeckDepth = peck
+                dressup.DwellTime = dwell
+                dressup.ChipBreak = chip
+                self.doc.recompute()
+                self.assertNotIn("Invalid", dressup.State)
+                commands = dressup.Path.Commands
+                cycles = [i for i, cmd in enumerate(commands) if cmd.Name == name]
+                self.assertTrue(cycles)
+                for i in cycles:
+                    parameters = commands[i].Parameters
+                    self.assertEqual(parameters["F"], self.op.ToolController.VertFeed.Value)
+                    self.assertEqual(parameters["R"], 5.5 if peck else self.op.SafeHeight.Value)
+                    self.assertEqual(parameters["Q"] if peck else parameters["P"], peck or dwell)
+                    self.assertEqual(commands[i + 1].Name, "G80")
+                    self.assertEqual(commands[i + 2].Name, "G0")
+                    self.assertEqual(commands[i + 2].Parameters["Z"], self.op.SafeHeight.Value)
+                self.assertEqual(commands[-1].Parameters["Z"], self.op.ClearanceHeight.Value)
+
+    def testPlungeInvalidCycleSettingsClearOutputAndRecover(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makePlunge()
+        self.op.StartDepth = 6
+        dressup.UseDrillingCycle = True
+        for peck, dwell, chip in ((0, -1, False), (-1, 0, False),
+                                  (1, 0.25, False), (0, 0, True)):
+            with self.subTest(peck=peck, dwell=dwell, chip=chip):
+                dressup.PeckDepth = peck
+                dressup.DwellTime = dwell
+                dressup.ChipBreak = chip
+                self.doc.recompute()
+                if peck < 0:
+                    # Native PropertyLength normalizes this before execute.
+                    self.assertEqual(dressup.PeckDepth.Value, 0)
+                    self.assertTrue(_wrap_op(dressup).Path.Commands)
+                    continue
+                self.assertIn("Invalid", dressup.State)
+                self.assertFalse(dressup.Path.Commands)
+                with self.assertRaises(CAMValueError):
+                    _wrap_op(dressup)
+                dressup.PeckDepth = 0
+                dressup.DwellTime = 0
+                dressup.ChipBreak = False
+                self.doc.recompute()
+                self.assertTrue(_wrap_op(dressup).Path.Commands)
