@@ -118,6 +118,7 @@ protected:
     /// Insert the operation selector before the common feature list.
     void insertWorkflowHeader(QWidget* widget);
     void startFeatureSelection();
+    void highlightReference(App::DocumentObject* object, const std::vector<std::string>& subs);
     virtual void prepareOriginalsSelection() {}
 
     /**
@@ -250,7 +251,7 @@ private:
     QLabel* originalsHint = nullptr;
     QPushButton* clearOriginalsButton = nullptr;
     QPushButton* highlightOriginalsButton = nullptr;
-    std::map<std::string, bool> inspectionVisibility;
+    std::map<std::pair<std::string, std::string>, bool> inspectionVisibility;
     bool inspectingOriginals = false;
 };
 

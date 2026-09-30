@@ -58,6 +58,11 @@ picks, including reversed input order and duplicate face picks. Mixed and invali
 preselection retains valid originals and explains rejected Body/sketch/foreign inputs.
 Later scope/dependency/duplicate/removal rejections keep picking active; correction
 or Clear dismisses feedback. Cross-document checks cover both selection orders.
+Reference collector checks cover Direction/Direction 2/Axis counts and active state,
+empty-reference correction, exact subelement inspection without assignment, isolation
+from other picking roles, visibility on type changes/OK/Cancel and initial-selection
+restoration. Highlight is disabled for an empty reference.
+
 
 
 ## Manual acceptance
@@ -80,6 +85,9 @@ or Clear dismisses feedback. Cross-document checks cover both selection orders.
 5. Toggle Whole body, then Selected features. Confirm the retained feature list returns.
    Change between reference selection and feature selection; verify only the intended
    selector responds and temporary geometry visibility is restored.
+   Check the reference count and picking state for Direction, Direction 2 and Circular
+   Axis. Highlight each stored reference, including an edge, while another picker is
+   active. Confirm the exact reference highlights without changing any saved input.
 6. Accept, double-click the Pattern, and confirm the same complete pane opens with
    its saved type. Edit dimensions and type, Cancel, then verify the original result.
    Start with a face selected; inspect and clear Originals, then Cancel. Verify the

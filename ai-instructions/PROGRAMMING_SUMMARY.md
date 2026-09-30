@@ -74,6 +74,10 @@ combined Pattern command/view-provider entry captures selection for
 `setOriginalsPreselection`, `originalSelectionError` and `changeOriginal` share
 preselection/later-pick validation and assignment; Pattern-only inline rejection
 feedback leaves the collector recoverable (8.1.2c/8.1.3j).
+`TaskPatternParameters::setupReferenceCollectors` adds combined-only Direction/Axis
+feedback and inspection. `TaskTransformedParameters::highlightReference` shares
+visibility cleanup keyed by document/object identity (8.1.3k/l).
+
 
 
 Isocline tolerance: `curve_tolerance` in

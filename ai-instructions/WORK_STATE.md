@@ -1,6 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.2c/8.1.3j, advancing F030/F031. Combined
+Latest product batch: phase 8, tasks 8.1.3k/l, advancing F030/F032. Combined Pattern
+Direction/Direction 2/Circular Axis now show reference counts and picking state,
+with accepted-type tooltips and Highlight reference. Inspection preserves links and
+selection paths, isolates other pickers and restores source/Origin visibility.
+Both tasks preceded the initial native build; two corrective incremental rebuilds
+added source-path visibility lookup and restored reference combos for subsequent OK.
+Final acceptance: 161 distinct passing tests, zero remaining failures/errors/skips.
+Evidence: D:\Temp\Office-PC\freecad-plus-pattern-references-20260930, including
+three build logs, grouped, pattern-final, verified, pattern-accepted, visual,
+acceptance-summary.json and validated-identities.json. Initial fixture failures
+are retained: PySide parent-wrapper lifetime and canonical GUI versus resolved
+reference paths. Final 39 Pattern task/model tests pass, macro PASS, exit 0, plus
+122 passing verified checks on identical final native binaries. Six new GUI cases
+include reference recovery, role isolation, saved links after OK, source/Origin
+visibility and Cancel selection recovery. Five source identities, staged test and
+native hashes match. PartDesignGui SHA256:
+abb35d8b7cdbc7e0822f2280c7aa7c2af4f38448adbeb649655cea732e677d0b.
+Four reference captures are readable. Physical viewport/input/high-DPI and broader
+occurrence acceptance remain open. The older executable stamp is not rebuilt-module
+identity. All 127 item specifications remain intact. No installer/release. F032
+Apply/repeat remains open. Next item-level focus: remaining reference replacement/
+recovery and precise rejected-pick explanations under F030/F031, batched before build.
+
+Previous product batch: phase 8, tasks 8.1.2c/8.1.3j, advancing F030/F031. Combined
 Pattern preselection and later Originals picks share document/Body/type/dependency
 validation and assignment. Mixed inputs retain valid originals and explain rejects;
 invalid-only input keeps a useful task. Rejected later picks leave the collector
@@ -20,8 +43,7 @@ Three mixed/rejected/recovered captures are readable. Physical viewport/input/
 high-DPI acceptance remains open. The older executable stamp is not rebuilt-module
 identity. All 127 item specifications remain intact. No installer/release. Broader
 command-family/disambiguation/occurrence and F032 Apply/repeat remain open.
-Next item-level focus: Pattern direction/axis collector inspection and recovery
-under F030, grouped before the next build.
+Its reference feedback/inspection follow-up is completed above.
 
 Previous product batch: phase 8, tasks 8.1.3i/8.1.5c, advancing F030-F032. Combined
 Pattern now inspects Originals rows by object identity, highlights all entries when

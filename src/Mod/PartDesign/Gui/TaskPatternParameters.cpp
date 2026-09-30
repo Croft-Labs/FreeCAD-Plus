@@ -47,6 +47,9 @@
 #include <Gui/Application.h>
 #include <Gui/MainWindow.h>
 #include <Gui/BitmapFactory.h>
+#include <QLabel>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Command.h>
 #include <Gui/View3DInventor.h>
@@ -167,7 +170,95 @@ void TaskPatternParameters::setupParameterUI(QWidget* widget)
     }
 
     // --- Task Specific Setup ---
+    setupReferenceCollectors();
     showOriginAxes(true);  // Show origin helper axes
+}
+
+const App::PropertyLinkSub* TaskPatternParameters::referenceProperty(bool secondary) const
+{
+    if (auto linear = getObject<PartDesign::LinearPattern>()) {
+        return secondary ? &linear->Direction2 : &linear->Direction;
+    }
+    if (auto polar = getObject<PartDesign::PolarPattern>()) {
+        return secondary ? nullptr : &polar->Axis;
+    }
+    return nullptr;
+}
+
+void TaskPatternParameters::setupReferenceCollectors()
+{
+    auto top = getTopTransformedObject();
+    if (!top || !top->isDerivedFrom<PartDesign::Pattern>()) {
+        return;
+    }
+    const auto addCollector = [this](PartGui::PatternParametersWidget* widget, bool secondary) {
+        if (!widget) {
+            return;
+        }
+        auto layout = widget->findChild<QVBoxLayout*>(QStringLiteral("mainLayout"));
+        if (!layout) {
+            return;
+        }
+        auto status = new QLabel(widget);
+        status->setTextFormat(Qt::PlainText);
+        status->setWordWrap(true);
+        status->setObjectName(secondary ? QStringLiteral("patternReferenceStatus2")
+                                        : QStringLiteral("patternReferenceStatus"));
+        auto highlight = new QPushButton(widget);
+        highlight->setObjectName(secondary ? QStringLiteral("patternHighlightReference2")
+                                           : QStringLiteral("patternHighlightReference"));
+        layout->insertWidget(1, status);
+        layout->insertWidget(2, highlight);
+        if (secondary) {
+            referenceStatus2 = status;
+            referenceHighlight2 = highlight;
+        }
+        else {
+            referenceStatus = status;
+            referenceHighlight = highlight;
+        }
+        connect(highlight, &QPushButton::clicked, this, [this, secondary] {
+            if (auto property = referenceProperty(secondary); property && property->getValue()) {
+                auto object = property->getValue();
+                const auto subs = property->getSubValues();
+                highlightReference(object, subs);
+                // Inspection cancels pending picking. Restore both combos from
+                // their saved links so OK cannot apply a "Select reference" item.
+                if (auto primary = getPrimaryParametersWidget()) {
+                    primary->updateReferenceUI();
+                }
+                if (auto secondaryWidget = getSecondaryParametersWidget()) {
+                    secondaryWidget->updateReferenceUI();
+                }
+                updateReferenceCollectors();
+            }
+        });
+    };
+    addCollector(getPrimaryParametersWidget(), false);
+    addCollector(getSecondaryParametersWidget(), true);
+    updateReferenceCollectors();
+}
+
+void TaskPatternParameters::updateReferenceCollectors()
+{
+    const auto update = [this](bool secondary, QLabel* status, QPushButton* highlight) {
+        if (!status) {
+            return;
+        }
+        const auto property = referenceProperty(secondary);
+        const bool assigned = property && property->getValue();
+        const bool picking = selectionMode == SelectionMode::Reference
+            && getActiveDirectionWidget() == (secondary ? getSecondaryParametersWidget()
+                                                       : getPrimaryParametersWidget());
+        status->setText(tr("References: %1\n%2").arg(assigned ? 1 : 0).arg(
+            picking ? tr("Picking reference") : tr("Reference picking inactive")));
+        status->setToolTip(tr("Accepts compatible edges, faces and datum axes."));
+        highlight->setText(tr("Highlight reference"));
+        highlight->setToolTip(tr("Inspect the stored reference without changing it"));
+        highlight->setEnabled(assigned);
+    };
+    update(false, referenceStatus, referenceHighlight);
+    update(true, referenceStatus2, referenceHighlight2);
 }
 
 void TaskPatternParameters::refreshReferences()
@@ -179,12 +270,14 @@ void TaskPatternParameters::refreshReferences()
         fillDirectionCombo(secondary->dirLinks, Part::LinearPatternDirection::Second);
     }
     updatePatternParameterUI();
+    updateReferenceCollectors();
     updatePatternSpacingLabels();
 }
 
 void TaskPatternParameters::retranslateParameterUI(QWidget* widget)
 {
     ui->retranslateUi(widget);
+    updateReferenceCollectors();
 }
 
 App::DocumentObject* TaskPatternParameters::getPatternObject() const
@@ -332,6 +425,7 @@ void TaskPatternParameters::exitReferenceSelectionMode()
     hideBase();
     Gui::getMainWindow()->showMessage(QString());
     clearActiveDirectionWidget();
+    updateReferenceCollectors();
 }
 
 void TaskPatternParameters::cancelReferenceSelection()
@@ -349,10 +443,12 @@ void TaskPatternParameters::onReferenceSelectionRequested()
     // The embedded widget wants to enter reference selection mode
     enterReferenceSelectionMode();
     selectionMode = SelectionMode::Reference;
+    updateReferenceCollectors();
 }
 
 void TaskPatternParameters::onPatternParametersChanged()
 {
+    updateReferenceCollectors();
     // A parameter in the embedded widget changed, trigger a recompute
     if (blockUpdate) {
         return;  // Avoid loops if change originated from Task update

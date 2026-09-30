@@ -86,6 +86,14 @@ private:
 
     // Task-specific logic remains
     void showOriginAxes(bool show);
+    void setupReferenceCollectors();
+    void updateReferenceCollectors();
+    const App::PropertyLinkSub* referenceProperty(bool secondary) const;
+    QLabel* referenceStatus = nullptr;
+    QLabel* referenceStatus2 = nullptr;
+    QPushButton* referenceHighlight = nullptr;
+    QPushButton* referenceHighlight2 = nullptr;
+
     void enterReferenceSelectionMode();
     void exitReferenceSelectionMode();  // Ensure this clears gates etc.
 

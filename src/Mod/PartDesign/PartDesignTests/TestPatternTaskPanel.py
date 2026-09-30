@@ -425,6 +425,156 @@ class TestPatternTaskPanel(unittest.TestCase):
         self.assertEqual(pattern.Originals, [])
         self.assertTrue(hint.isHidden())
 
+    def referenceCombo(self, secondary=False):
+        status = self.widget(QtGui.QLabel, "patternReferenceStatus2" if secondary else "patternReferenceStatus")
+        parent = status.parentWidget()
+        combo = parent.findChild(QtGui.QComboBox, "comboDirection")
+        # Keep intermediate PySide wrappers alive while using their child controls.
+        self._referenceWidgets = getattr(self, "_referenceWidgets", []) + [status, parent, combo]
+        return combo
+
+    def pickReference(self, secondary=False):
+        combo = self.referenceCombo(secondary)
+        index = next(i for i in range(combo.count()) if combo.itemText(i).startswith("Select reference"))
+        combo.setCurrentIndex(index)
+        combo.activated[int].emit(index)
+        Gui.updateGui()
+
+    def enableSecondDirection(self):
+        status = self.widget(QtGui.QLabel, "patternReferenceStatus2")
+        parent = status.parentWidget()
+        root = parent.parentWidget()
+        check = root.findChild(QtGui.QCheckBox, "enableCheckbox")
+        self.assertIsNotNone(check)
+        self._referenceWidgets = getattr(self, "_referenceWidgets", []) + [status, parent, root, check]
+        if not check.isChecked():
+            check.click()
+
+    def horizontalBaseEdge(self):
+        return next("Edge" + str(i + 1) for i, edge in enumerate(self.base.Shape.Edges)
+                    if len(edge.Vertexes) == 2
+                    and abs((edge.Vertexes[1].Point - edge.Vertexes[0].Point).x) > 1)
+
+    def testReferenceFeedbackTracksPrimarySecondaryAndAxisRoles(self):
+        pattern = self.start()
+        status = self.widget(QtGui.QLabel, "patternReferenceStatus")
+        status2 = self.widget(QtGui.QLabel, "patternReferenceStatus2")
+        self.assertIn("References: 1", status.text())
+        self.assertIn("References: 1", status2.text())
+        self.pickReference()
+        self.assertIn("Picking reference", status.text())
+        self.assertIn("picking inactive", status2.text())
+        self.enableSecondDirection()
+        self.pickReference(True)
+        self.assertIn("Picking reference", status2.text())
+        self.assertIn("picking inactive", status.text())
+        self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+        self.assertIn("picking inactive", status2.text())
+        self.switch(1)
+        self.assertIn("References: 1", self.widget(QtGui.QLabel, "patternReferenceStatus").text())
+        self.pickReference()
+        self.assertIn("Picking reference", self.widget(QtGui.QLabel, "patternReferenceStatus").text())
+        self.assertEqual(pattern.Originals, [self.bump])
+
+    def testReferenceHighlightKeepsSubelementIdentityAndOriginals(self):
+        pattern = self.start()
+        linear, circular = pattern.PatternSettings
+        self.pickReference()
+        edge = self.horizontalBaseEdge()
+        Gui.Selection.addSelection(self.base, edge)
+        selected_path = self.selectionPaths()
+        self.doc.recompute()
+        self.assertTrue(pattern.isValid(), pattern.getStatusString())
+        definition = (linear.Direction, linear.Direction2, circular.Axis,
+                      list(pattern.Originals), pattern.Shape.Volume)
+        self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+        self.base.ViewObject.Visibility = False
+        self.widget(QtGui.QPushButton, "patternHighlightReference").click()
+        reference, subs = linear.Direction
+        self.assertEqual(self.selectionPaths(), selected_path)
+        resolved = [(item.DocumentName, item.ObjectName, tuple(item.SubElementNames))
+                    for item in Gui.Selection.getSelectionEx("*")]
+        self.assertEqual(resolved, [(reference.Document.Name, reference.Name, tuple(subs))])
+        self.assertTrue(self.base.ViewObject.Visibility)
+        self.assertFalse(pattern.ViewObject.Visibility)
+        self.assertFalse(self.widget(QtGui.QPushButton, "buttonAddFeature").isChecked())
+        self.assertEqual((linear.Direction, linear.Direction2, circular.Axis,
+                          list(pattern.Originals), pattern.Shape.Volume), definition)
+        self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+        self.assertFalse(self.base.ViewObject.Visibility)
+
+    def testReferenceInspectionEndsOtherReferencePickerWithoutMutation(self):
+        pattern = self.start()
+        linear = pattern.PatternSettings[0]
+        definition = (linear.Direction, linear.Direction2, list(pattern.Originals))
+        self.enableSecondDirection()
+        self.pickReference(True)
+        self.widget(QtGui.QPushButton, "patternHighlightReference").click()
+        self.assertEqual(Gui.Selection.getSelection(), [linear.Direction[0]])
+        self.assertIn("picking inactive", self.widget(QtGui.QLabel, "patternReferenceStatus2").text())
+        self.widget(QtGui.QPushButton, "patternHighlightReference2").click()
+        self.assertEqual(Gui.Selection.getSelection(), [linear.Direction2[0]])
+        self.assertEqual((linear.Direction, linear.Direction2, list(pattern.Originals)), definition)
+        self.accept()
+        self.assertEqual((linear.Direction, linear.Direction2, list(pattern.Originals)), definition)
+
+    def testReferenceInspectionRestoresVisibilityOnTypeSwitchAndExit(self):
+        pattern = self.start()
+        self.pickReference()
+        Gui.Selection.addSelection(self.base, self.horizontalBaseEdge())
+        self.accept()
+        self.base.ViewObject.Visibility = False
+        axes_visibility = [(obj, obj.ViewObject.Visibility) for obj in self.body.Origin.OriginFeatures]
+        for accept in (False, True):
+            self.assertTrue(pattern.ViewObject.doubleClicked())
+            self.widget(QtGui.QPushButton, "patternHighlightReference").click()
+            self.assertTrue(self.base.ViewObject.Visibility)
+            self.switch(1)
+            self.assertFalse(self.base.ViewObject.Visibility)
+            axis = pattern.PatternSettings[1].Axis
+            self.widget(QtGui.QPushButton, "patternHighlightReference").click()
+            self.assertEqual(Gui.Selection.getSelection(), [axis[0]])
+            self.switch(0)
+            self.widget(QtGui.QPushButton, "patternHighlightReference").click()
+            if accept:
+                self.accept()
+            else:
+                Gui.Control.activeTaskDialog().reject()
+                Gui.updateGui()
+            self.assertFalse(self.base.ViewObject.Visibility)
+            self.assertTrue(pattern.ViewObject.Visibility)
+            self.assertEqual(pattern.Originals, [self.bump])
+            self.assertEqual([(obj, obj.ViewObject.Visibility) for obj, _ in axes_visibility], axes_visibility)
+
+    def testEmptyReferenceFeedbackRecoversWithoutAssigningOtherRoles(self):
+        pattern = self.start()
+        linear = pattern.PatternSettings[0]
+        second = linear.Direction2
+        linear.Direction = None
+        self.setOccurrences(4)
+        status = self.widget(QtGui.QLabel, "patternReferenceStatus")
+        highlight = self.widget(QtGui.QPushButton, "patternHighlightReference")
+        self.assertIn("References: 0", status.text())
+        self.assertFalse(highlight.isEnabled())
+        self.pickReference()
+        Gui.Selection.addSelection(self.base, self.horizontalBaseEdge())
+        self.assertIn("References: 1", status.text())
+        self.assertTrue(highlight.isEnabled())
+        self.assertIn("picking inactive", status.text())
+        self.assertEqual(linear.Direction2, second)
+        self.assertEqual(pattern.Originals, [self.bump])
+
+    def testReferenceInspectionCancelRestoresInitialSelection(self):
+        Gui.Selection.addSelection(self.bump, "Face1")
+        initial = self.selectionPaths()
+        pattern = self.start(False)
+        self.widget(QtGui.QPushButton, "patternHighlightReference").click()
+        Gui.Control.activeTaskDialog().reject()
+        Gui.updateGui()
+        self.assertEqual(self.selectionPaths(), initial)
+        self.assertEqual(self.body.Tip, self.bump)
+        self.assertIsNone(self.doc.getObject("Pattern"))
+
     def testFirstFieldThenFeaturePickingWithoutPreselection(self):
         pattern = self.start(False)
         combo = self.widget(QtGui.QComboBox, "patternType")

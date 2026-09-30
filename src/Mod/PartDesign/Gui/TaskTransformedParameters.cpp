@@ -239,7 +239,9 @@ void TaskTransformedParameters::highlightOriginals()
     exitSelectionMode();
     const auto showForInspection = [this](App::DocumentObject* object, bool visible) {
         if (auto view = Gui::Application::Instance->getViewProvider(object)) {
-            inspectionVisibility.emplace(object->getNameInDocument(), view->isVisible());
+            inspectionVisibility.emplace(
+                std::make_pair(object->getDocument()->getName(), object->getNameInDocument()),
+                view->isVisible());
             view->setVisible(visible);
         }
     };
@@ -259,14 +261,54 @@ void TaskTransformedParameters::highlightOriginals()
     }
 }
 
-void TaskTransformedParameters::restoreOriginalsVisibility()
+void TaskTransformedParameters::highlightReference(
+    App::DocumentObject* object, const std::vector<std::string>& subs
+)
 {
-    if (inspectionVisibility.empty()) {
+    if (insideMultiTransform) {
+        parentTask->highlightReference(object, subs);
         return;
     }
-    if (auto pattern = getTopTransformedObject()) {
-        for (const auto& [name, visible] : inspectionVisibility) {
-            if (auto object = pattern->getDocument()->getObject(name.c_str())) {
+    auto pattern = getObject<PartDesign::Pattern>();
+    if (!pattern || !object) {
+        return;
+    }
+    Base::StateLocker inspecting(inspectingOriginals, true);
+    prepareOriginalsSelection();
+    exitSelectionMode();
+    std::vector<App::DocumentObject*> targets {pattern, object};
+    for (const auto& sub : subs) {
+        // A saved Body/occurrence path can name a hidden source feature. Reveal
+        // that geometry while keeping the original path for selection identity.
+        if (auto source = object->getSubObject(sub.c_str())) {
+            targets.push_back(source);
+        }
+    }
+    for (auto target : targets) {
+        if (auto view = Gui::Application::Instance->getViewProvider(target)) {
+            inspectionVisibility.emplace(
+                std::make_pair(target->getDocument()->getName(), target->getNameInDocument()),
+                view->isVisible());
+            view->setVisible(target != pattern);
+        }
+    }
+    Gui::Selection().clearSelection();
+    if (subs.empty()) {
+        Gui::Selection().addSelection(object->getDocument()->getName(), object->getNameInDocument());
+    }
+    else {
+        for (const auto& sub : subs) {
+            Gui::Selection().addSelection(
+                object->getDocument()->getName(), object->getNameInDocument(), sub.c_str());
+        }
+    }
+}
+
+void TaskTransformedParameters::restoreOriginalsVisibility()
+{
+    for (const auto& [identity, visible] : inspectionVisibility) {
+        if (auto doc = App::GetApplication().getDocument(identity.first.c_str())) {
+            if (auto object = doc->getObject(identity.second.c_str())) {
                 if (auto view = Gui::Application::Instance->getViewProvider(object)) {
                     view->setVisible(visible);
                 }
