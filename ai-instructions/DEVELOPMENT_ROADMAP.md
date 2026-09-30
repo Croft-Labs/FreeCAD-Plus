@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7a/b prototype explicit planar sketch reattachment with local
+- Current batch: 11.7c/d extend the test-only reattachment operation to explicit
+  preserve-local/preserve-world policies, validated with rotated supports and a
+  rotated parent part. Grouped validation: 30 passes, zero failures/errors/skips.
+  No native rebuild; production editor and lost-support repair remain pending.
+- Previous batch: 11.7a/b prototype explicit planar sketch reattachment with local
   offset preservation and reject missing/curved supports before mutation. Grouped
   validation: 28 passes, zero failures/errors/skips; no native rebuild. Production
   reattachment editor, preserve-world policy and lost-support repair remain pending.
@@ -1853,6 +1857,23 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   Undo/Redo and native save/reopen with two parallel supports.
 - [ X ] 11.7b Reject missing and curved support faces before changing the sketch;
   verify existing support, placement, offset and downstream geometry remain intact.
+- [ X ] 11.7c Verify preserve-local reattachment to a differently rotated planar
+  support inside a rotated part, retaining the full offset and valid result volume.
+- [ X ] 11.7d Prototype preserve-world reattachment by solving a compensating
+  native attachment offset. Verify world translation/orientation, result position
+  and identity, Undo/Redo, save/reopen and subsequent support movement.
+
+Placement-policy evidence: `reattachment-policies-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **30 PASS, zero
+failures/errors/skips** (11 capability, 14 adapter, five lineage checks). Macro PASS;
+process ended. Both tasks preceded this grouped run with engine source 2df76790b4;
+no native build, installed module change or release update. Prototype SHA256:
+`A48BA5C8C09FC164CE7A2F2D47C7DD8E1AFBA2F22F546996FCD27F1B558C5C7D`.
+The sketch stays in its existing container. Preserve-world compensates the offset
+at reattachment time; later support motion remains associative. This covers a
+rotated parent definition, not a selected assembly occurrence, reparenting or
+cross-document placement. Preview/UI, lost-support repair, production transaction
+integration and broader consumer failure handling remain pending under 11.7.
 
 Bounded reattachment evidence: `sketch-reattachment-20260930-verified/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **28 PASS, zero
@@ -1862,7 +1883,7 @@ engine source 2df76790b4. Initial batch had 27 passes/one error: the native miss
 face lookup raises IndexError, now converted into the prototype's validation error.
 `tests/prototypes/SketchReattachment.py` SHA256:
 `F52536AD4C705C29AD6569603E52D4416709000E20AD0D75FDC0EA0E44E0F770`.
-Test-only operation, not installed; no native rebuild or release update. This does
+Test-only operation, not installed; no native rebuild or release update. That batch did
 not implement preserve-world placement, automatic topology repair, rotated
 reattachment, external scope, preview or production transaction integration. The
 caller must have no open transaction; broader consumer invalidation remains a gate.

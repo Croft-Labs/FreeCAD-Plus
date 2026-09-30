@@ -288,6 +288,73 @@ class TestPartHistoryAdapters(unittest.TestCase):
             self.assertAlmostEqual((linked_shape((results[0], [])).CenterOfMass - before).Length,
                                    0, places=6)
 
+    def rotatedReattachmentFixture(self):
+        self.part.Placement = App.Placement(App.Vector(30, 40, 50),
+                                           App.Rotation(App.Vector(1, 0, 0), 25))
+        planes = [self.doc.addObject("Part::Plane", name)
+                  for name in ("OriginalPlane", "RotatedPlane")]
+        for plane in planes:
+            self.part.addObject(plane)
+            plane.Length, plane.Width = 20, 20
+        planes[1].Placement = App.Placement(App.Vector(4, 5, 10),
+                                          App.Rotation(App.Vector(0, 1, 0), 60))
+        self.profile.AttachmentSupport = [(planes[0], "Face1")]
+        self.profile.MapMode = "FlatFace"
+        self.profile.AttachmentOffset = App.Placement(App.Vector(1, 2, 3),
+                                                     App.Rotation(App.Vector(0, 0, 1), 15))
+        adapters.part_results(self.part, self.profile)
+        self.doc.recompute()
+        return planes
+
+    def assertPlacementNear(self, actual, expected):
+        # Three basis directions plus origin check translation and full rotation.
+        for point in (App.Vector(), App.Vector(1, 0, 0), App.Vector(0, 1, 0),
+                      App.Vector(0, 0, 1)):
+            self.assertAlmostEqual((actual.multVec(point) - expected.multVec(point)).Length,
+                                   0, places=6)
+
+    def testRotatedReattachmentPreservesLocalOffset(self):
+        from SketchReattachment import reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        offset = self.profile.AttachmentOffset
+        initial = self.profile.Placement
+        reattach_planar(self.profile, new, "Face1", "preserve-local")
+        self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+        self.assertGreater((self.profile.Placement.Base - initial.Base).Length, 1)
+        self.assertPlacementNear(self.profile.Placement, new.Placement.multiply(initial))
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+        self.assertAlmostEqual(self.doc.LeftResult.Shape.Volume, math.pi * 4 * 3, places=6)
+
+    def testRotatedReattachmentPreservesWorldPlacementAndRestore(self):
+        from SketchReattachment import reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        world = self.profile.getGlobalPlacement()
+        center = linked_shape((self.doc.LeftResult, [])).CenterOfMass
+        identity = self.doc.LeftResult.BodyIdentity
+        offset = self.profile.AttachmentOffset
+        reattach_planar(self.profile, new, "Face1", "preserve-world")
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), world)
+        self.assertAlmostEqual((linked_shape((self.doc.LeftResult, [])).CenterOfMass
+                                - center).Length, 0, places=6)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+        self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+        self.doc.redo()
+        self.doc.recompute()
+        self.saveReopen("PreservedWorldReattachmentProof")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], self.doc.RotatedPlane)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), world)
+        self.assertEqual(self.doc.LeftResult.BodyIdentity, identity)
+        self.assertAlmostEqual((linked_shape((self.doc.LeftResult, [])).CenterOfMass
+                                - center).Length, 0, places=6)
+        # The new support still drives the sketch after the compensating offset.
+        self.doc.RotatedPlane.Placement.Base.z += 6
+        self.doc.recompute()
+        delta = self.profile.getGlobalPlacement().Base - world.Base
+        self.assertAlmostEqual((delta - self.part.Placement.Rotation.multVec(
+            App.Vector(0, 0, 6))).Length, 0, places=6)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

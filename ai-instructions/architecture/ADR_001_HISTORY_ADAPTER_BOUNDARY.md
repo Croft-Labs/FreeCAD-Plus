@@ -200,10 +200,18 @@ Roadmap 11.7a/b adds a test-only explicit planar reattachment operation in
 native FlatFace attachment and transactions, keeping the local attachment offset.
 Two parallel planes establish downstream placement, result identity, Undo/Redo and
 restore. Missing/curved faces reject before mutation; grouped evidence is 28 passes.
-This does not establish preserve-world behavior, rotated reattachment, support
-deletion/repair, production transaction ownership or a task-pane UI. Its caller
-must have no open transaction. The existing rotated-plane motion proof is separate
-from deliberate reattachment to a differently oriented plane.
+Roadmap 11.7c/d extends the operation with explicit placement policies. For native
+attachment P = A * O, preserve-world solves O_new = O_old * P_new^-1 * P_old after
+the new support has established its attachment frame. The sketch parent stays
+unchanged, so preserving parent-local placement also preserves world placement.
+Thirty grouped checks pass, including a translated/rotated support in a rotated
+part, local-offset preservation, world position/orientation, Undo/Redo, restore and
+later associative support movement. Result position and identity remain intact.
+
+This does not establish reparenting, selected-occurrence placement, support deletion/
+repair, production transaction ownership or a task-pane UI/preview. The prototype
+caller must have no open transaction. Native attachment properties and document
+identities remain unchanged; the helper is not needed to recompute saved fixtures.
 
 Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
 

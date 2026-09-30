@@ -2,15 +2,17 @@
 """Test-only planar reattachment operation for roadmap 11.7.
 
 Not installed. Call with no transaction already open. Reuses native attachment
-and Undo; preserves the local attachment offset, not the old world placement.
+and Undo. The sketch stays in its existing container for both placement policies.
 """
 import Part
 
 
-def reattach_planar(sketch, support, face_name):
+def reattach_planar(sketch, support, face_name, policy="preserve-local"):
     """Explicitly replace a sketch's support with a same-document planar face."""
     if not sketch.isDerivedFrom("Sketcher::SketchObject"):
         raise ValueError("A sketch is required")
+    if policy not in ("preserve-local", "preserve-world"):
+        raise ValueError("Unknown reattachment placement policy")
     if support.Document != sketch.Document or support == sketch:
         raise ValueError("Support must be another object in the same document")
     try:
@@ -20,6 +22,8 @@ def reattach_planar(sketch, support, face_name):
     if not isinstance(face, Part.Face) or not isinstance(face.Surface, Part.Plane):
         raise ValueError("Support must be a planar face")
     doc = sketch.Document
+    old_placement = sketch.Placement
+    old_offset = sketch.AttachmentOffset
     doc.openTransaction("Reattach sketch to planar face")
     try:
         sketch.AttachmentSupport = [(support, face_name)]
@@ -27,6 +31,16 @@ def reattach_planar(sketch, support, face_name):
         doc.recompute()
         if "Invalid" in sketch.State:
             raise ValueError("Sketch attachment failed")
+        if policy == "preserve-world":
+            # With unchanged parent, preserving parent-local placement also
+            # preserves world placement. Native attachment computes P = A * O.
+            # Recover A from the new placement and retained old offset, then
+            # solve O_new = A^-1 * P_old without guessing face axes.
+            sketch.AttachmentOffset = old_offset.multiply(
+                sketch.Placement.inverse()).multiply(old_placement)
+            doc.recompute()
+            if "Invalid" in sketch.State:
+                raise ValueError("Sketch attachment failed")
         doc.commitTransaction()
     except Exception:
         doc.abortTransaction()
