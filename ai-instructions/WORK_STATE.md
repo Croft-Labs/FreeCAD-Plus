@@ -1,5 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
+Current roadmap batch (2026-09-29): logical contracts/mapping for 7.1.1, 7.1.2
+and 7.1.4 are complete in architecture/PART_HISTORY_CONTRACT.md. Four grouped
+native probes pass in `part-history-20260929-final`, covering independent/shared
+sketches, multiple results, links, transactions and FCStd persistence. No production
+application code changed and no build was needed. The saved native example is
+disposable evidence, not the future cadprt format or a new history implementation.
+Next: actual adapter comparison 7.1.3 and architecture decisions 7.1.5/7.1.6.
+The owner requests groups of two or three tasks before costly build/test work.
+No test process remains running. Earlier CAM evidence below remains valid.
+
 Latest implementation (2026-09-29): U.23 corrects the reproduced modern #26300
 freeform cutting-boundary stall. B-spline/Bezier selections now use tolerance-based
 tessellation and NonZero polygon union; failure cannot drop selected faces.

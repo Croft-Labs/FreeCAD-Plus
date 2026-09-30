@@ -130,6 +130,9 @@ and validation records above are not declarations that these changes exist.
 
 - Part-owned history, independent body results and reusable definitions containing
   both geometry and child occurrences; explicit work/display context and targets.
+  The [part-history logical contract](architecture/PART_HISTORY_CONTRACT.md)
+  defines the roles, current native mapping, dependency bindings and result lineage.
+  These are design requirements; production storage and navigator remain pending.
 - Shared-definition edits, occurrence placement/overrides, Make Unique and
   assembly-local operations have distinct, persisted scopes. Inspect App::Link and
   existing facilities before introducing replacements.

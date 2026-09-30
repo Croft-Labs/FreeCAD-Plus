@@ -2,7 +2,13 @@
 
 ## Current focus
 
-- Active implementation: [prioritized upstream issue work](#upstream-issue-work).
+- Active batch: Phase 7 foundation, authorized 2026-09-29. Tasks 7.1.1, 7.1.2
+  and 7.1.4 now have a documented logical contract and native-model mapping.
+  Four grouped native capability probes pass in the existing application; no build.
+  Next: finish the adapter comparison in 7.1.3 and architecture decisions in
+  7.1.5/7.1.6 before production navigator/model changes. Batch two or three related
+  implementation tasks before any costly build, as requested by the owner.
+- Previous implementation: [prioritized upstream issue work](#upstream-issue-work).
   Latest freeform fix: U.23 bypasses the reproduced #26300 exact-projection stall
   using tolerance-controlled mesh silhouettes. The fixture generates in 14 seconds;
   all 91 CAM checks pass without a rebuild. U.15 cancellation acceptance remains.
@@ -24,13 +30,14 @@
 - Planning priority: [NX-style unified feature history](#nx-feature-history), then
   [consistent modeling workflows](#nx-modeling-workflows), then
   [downstream integration](#nx-downstream-workflows). These phases describe the
-  user's preferred FreeCAD Plus workflow, drawing on NX and SolidWorks; they are
-  not a claim of exact product parity or authorization to start implementation.
+  user's preferred FreeCAD Plus workflow, drawing on NX and SolidWorks. The owner
+  has now requested roadmap execution; proceed in dependency order and preserve
+  the architecture/compatibility gates. Planned items do not imply product parity.
 - [Phase 6: STL CAM and holding tabs](#cam-mesh-machining) is implemented and built.
   All 22 focused automated tests pass; related regressions have 112 passes and one
   optional dependency skip. Native acceptance and simulation remain pending.
   Two-sided/indexed machining uses separate manually indexed jobs.
-  The NX-style history plan remains planning only.
+  The NX-style history foundation is underway; production history remains pending.
 
 - Current build and closeout evidence: [consolidated validation, 2026-09-29](#consolidated-validation).
   Before the CAM changes, the configured Windows application built successfully
@@ -1128,10 +1135,10 @@ safe. Existing Phase 2/3 implementation and tests are inputs, not work to recrea
 
 ### [   ] 7.1 Define the part-level history and body model
 
-- [   ] 7.1.1 Specify a single ordered History list and a separate Bodies/results list. Define feature, sketch, datum, curve, imported object, linked object, solid body and sheet body roles.
-- [   ] 7.1.2 Map current Part, Part Design Body/Tip, feature ownership, attachment and document-link restrictions to the proposed model. Identify which changes are presentation only and which require model/API changes.
+- [ X ] 7.1.1 Specify a single ordered History list and a separate Bodies/results list. Roles and ownership are defined in [the logical contract](architecture/PART_HISTORY_CONTRACT.md#ownership-and-roles-711); no production schema is implied.
+- [ X ] 7.1.2 Map current Part, Part Design Body/Tip, feature ownership, attachment and document-link restrictions to the proposed model. [Source mapping](architecture/PART_HISTORY_CONTRACT.md#current-native-model-and-required-changes-712) separates presentation from model/API changes and records existing multi-solid support.
 - [   ] 7.1.3 Prototype native Body adapters versus a part-level feature/result layer. Evaluate multi-body outputs, shared inputs, references, recompute, persistence and upstream compatibility before choosing the architecture.
-- [   ] 7.1.4 Define stable feature and body identities, explicit input/output links, and lineage when bodies merge, split, disappear or reappear after an edit. Keep display order distinct from dependency evaluation order.
+- [ X ] 7.1.4 Define stable feature and body identities, explicit input/output links, and merge/split/disappear/reappear lineage. [Identity contract](architecture/PART_HISTORY_CONTRACT.md#identity-and-dependencies-714) separates modeling/display order from the dependency graph; storage and runtime implementation remain pending.
 - [   ] 7.1.5 Document the chosen architecture, migration boundary and a small reference model; update product/UI specifications before production implementation.
 
 Complete when: a prototype demonstrates one independent sketch driving features
@@ -1141,6 +1148,22 @@ results from both, without silently duplicating sketches or losing references.
 - [   ] 7.1.6 Before architecture implementation, record decisions for the supplied
   definition/occurrence, body-result, selection, transaction and persistence contracts;
   include alternatives, affected consumers and narrow proof criteria (G1-G3).
+
+Foundation batch evidence (2026-09-29): `tests/TestPartHistoryCapabilities.py`
+passes four native probes in the existing fork, with no failures/errors/skips.
+Evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\part-history-20260929-final\results.json`.
+One independent sketch drives two Part extrusions without a Body; another
+extrusion produces two solids; a later compound consumes all four results.
+Shared radius edits propagate; Undo/Redo, abort and native `.FCStd` save/reopen
+retain links and geometry. Two App::Link occurrences keep independent placements.
+Native group ownership rejects direct sharing/reparenting from App::Part into a
+Body; Body ownership is exclusive. The initial probe assumed an allowed move and
+was corrected to test the observed restriction. No application source changed.
+`PartHistoryNativeProof.FCStd` in that evidence directory is a disposable native
+capability example, not `.cadprt` or a finished history-layer prototype.
+7.1.3 remains open: compare actual Body/result adapters, semantic lineage,
+mixed definition/occurrence content and drawing/CAM/FEM/Draft consumers before
+choosing the architecture. 7.1.5/7.1.6 are not closed by this foundation batch.
 
 ### [   ] 7.2 Build the unified history navigator
 

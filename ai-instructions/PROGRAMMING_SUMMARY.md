@@ -12,6 +12,7 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 | --- | --- | --- |
 | Product intent and boundaries | [Product specification](PRODUCT_SPEC.md) | [UI scope](UI_UX_SPEC.md#interface-scope) |
 | Planned `.cadprt` format and legacy `.FCStd` conversion | [Native-format policy](PRODUCT_SPEC.md#planned-native-format-and-legacy-import) | Roadmap 7.6; best-effort conversion with reported losses and untouched originals; not implemented yet |
+| Part-level history architecture | [Logical history/result contract](architecture/PART_HISTORY_CONTRACT.md) | Tasks 7.1.1/7.1.2/7.1.4 defined; [native capability probes](../tests/TestPartHistoryCapabilities.py); adapter choice and production model pending |
 | Pad creation without preselection | [`Command.cpp`](../src/Mod/PartDesign/Gui/Command.cpp), `CmdPartDesignPad::activated` and `prepareProfileBased` | [Pad UI](UI_UX_SPEC.md#ui-001-pad-task-pane) |
 | Unified Extrude command and Add/Subtract | [`Command.cpp`](../src/Mod/PartDesign/Gui/Command.cpp), `CmdPartDesignExtrude`; [`TaskPadParameters.cpp`](../src/Mod/PartDesign/Gui/TaskPadParameters.cpp), shared by Pad/Pocket | [Extrude UI](UI_UX_SPEC.md#ui-001-pad-task-pane) |
 | Combined Linear/Circular Pattern | [`FeaturePattern.cpp`](../src/Mod/PartDesign/App/FeaturePattern.cpp), [`TaskMultiTransformParameters.cpp`](../src/Mod/PartDesign/Gui/TaskMultiTransformParameters.cpp), `CmdPartDesignPattern` | [Pattern UI](UI_UX_SPEC.md#ui-002-pattern-task-pane), [tests](../tests/PatternTaskPanel.md) |
