@@ -1,5 +1,19 @@
 # FreeCAD Plus: Build validation handoff
 
+Release 0.0.2 is built, validated and publicly published after 0.0.4:
+https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.2
+Packaging/tag: 71358d8fbf40122e6c998008e7ab3ca741dbc773; unchanged application:
+802e19d64863ecdfc02817a2160b621579c2d8f2. All 14,584 runtime file hashes match the
+0.0.4 tested payload, so its 312-pass evidence is reused rather than rerun.
+New installer checks pass: all 14,586 installed hashes, launch/save/reopen,
+shortcut/registration, uninstall and unrelated-file preservation. One Windows
+installer asset, 356,439,411 bytes, unsigned; GitHub digest matches SHA256
+69d9b406904bb49c22f1efddc1769bae10147edbe38ae0bc1c8993796bb0ddfe.
+Evidence: D:\Temp\Office-PC\freecad-plus-release-0.0.2. Release ID 399816257;
+public pre-release and source tag verified. Disposable installation removed.
+Existing releases unchanged. Physical-machine, clean-VM and broader roadmap
+acceptance remain open; no new application features were added in this packaging task.
+
 Release 0.0.4 is built, validated and publicly published:
 https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.4
 Source/runtime/tag: 802e19d64863ecdfc02817a2160b621579c2d8f2.

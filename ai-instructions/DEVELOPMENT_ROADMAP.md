@@ -2,10 +2,10 @@
 
 ## Current focus
 
-- Release 0.0.2: explicitly requested after 0.0.4. Build a new installer with
-  0.0.2 metadata from the unchanged, validated application source 802e19d648;
-  reuse its 312-test evidence after runtime hash comparison. Installer acceptance
-  and publication pending. Preserve existing releases.
+- Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
+  the unchanged validated application and publicly published. Runtime hash
+  comparison and installer acceptance pass; [release checkpoint](#pre-release-002).
+  Existing 0.0.1 and 0.0.4 releases remain unchanged.
 
 - Release 0.0.4: Windows x64 installer built, validated and published as a GitHub
   pre-release; [release checkpoint](#pre-release-004). All 312 packaged tests and
@@ -3621,6 +3621,43 @@ Gate G11: release candidate, starter source/exports, tutorial and compatibility
 notes agree; representative users complete T11. Outreach is reviewable before
 publication, and repeated campaigns need evidence. Optional branding, registration
 or revenue cannot delay a usable free modeling release.
+
+## Pre-release 0.0.2
+
+- [ X ] Build the requested Windows installer with 0.0.2 version metadata, its own
+  installation directory, shortcut and uninstall registration. Reuse the existing
+  native Release build rather than recompile unchanged application sources.
+- [ X ] Freshly stage and compare all **14,584 runtime files** with the 0.0.4
+  payload. All SHA256 hashes match; reuse the **312 passing** model/task/CAM tests
+  recorded for that identical application. These regression tests were not rerun.
+- [ X ] Install the actual 0.0.2 `.exe`; all **14,586 installed files** match its
+  payload. Launcher, isolated upstream settings, workbenches and FCStd save/reopen
+  checks pass. FreeCAD Plus versions share their fork-specific settings.
+- [ X ] Verify shortcut/version registration, then uninstall successfully while
+  retaining an unrelated user file. Disposable test installation removed.
+- [ X ] Publish GitHub pre-release 0.0.2 with exactly one Windows installer asset;
+  verify source tag, public pre-release state, size and SHA256.
+
+Published 2026-09-30 07:43:25 UTC:
+[FreeCAD Plus 0.0.2](https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.2),
+release ID **399816257**. Application/runtime source:
+`802e19d64863ecdfc02817a2160b621579c2d8f2`; packaging/tag source:
+`71358d8fbf40122e6c998008e7ab3ca741dbc773`. Engine remains 26.3.0.
+Artifact: `FreeCAD-Plus-0.0.2-Windows-x64-Setup.exe`, **356,439,411 bytes**, unsigned.
+SHA256: `69d9b406904bb49c22f1efddc1769bae10147edbe38ae0bc1c8993796bb0ddfe`.
+GitHub confirms `draft=false`, `prerelease=true`, one matching asset. This requested
+version was published after 0.0.4 and contains the same application feature set;
+existing releases were not changed.
+
+Evidence root: `D:\Temp\Office-PC\freecad-plus-release-0.0.2`:
+`runtime-equivalence.json`, `package.log`, `install-results.json`,
+`installed-validation/results.json`, `uninstall-results.json`,
+`github-published.json` and `github-tag.json`. Reused native build/test evidence is
+under `D:\Temp\Office-PC\freecad-plus-release-0.0.4` (`build.log`, revision logs,
+`payload-final/results.json`). [Release notes](releases/0.0.2.md) record the focused
+workbench set and limitations. Clean-VM, full manual GUI, controller/machine and
+broader roadmap acceptance remain open. No `.cadprt` or production NX-history
+implementation is claimed.
 
 ## Pre-release 0.0.4
 
