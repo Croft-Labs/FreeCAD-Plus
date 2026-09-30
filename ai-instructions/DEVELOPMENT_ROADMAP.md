@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2bo/bp validate Plunge Milling cycle settings and exercise
+- Current batch: 16.2bq/br verify Plunge Milling LinuxCNC/Grbl output and FCStd
+  save/reopen regeneration. Grouped validation: 87 passes, zero failures/errors/
+  skips. Test-only batch using the existing build; no native rebuild or release.
+- Previous batch: 16.2bo/bp validate Plunge Milling cycle settings and exercise
   dwell/peck/chip-breaking output. Grouped validation: 84 passes, zero failures/
   errors/skips. Python staging only; no native rebuild or release.
 - Previous batch: 16.2bm/bn establish Plunge Milling entry/exit clearance and
@@ -3443,6 +3446,26 @@ Non-finite checks are defensive source validation, not a claim of exhaustive nat
 property-domain testing. This closes the bounded command-level cycle variants left
 open by 16.2bm/bn; controller postprocessing and physical machine acceptance remain
 open. Python staging into engine 2df76790b4; no native rebuild or release.
+
+- [ X ] 16.2bq Validate Plunge Milling peck output through real LinuxCNC and Grbl
+  postprocessors: canned-cycle preservation versus expansion, retracts and feed.
+  Native peck output passed both real processors in a mock job/configuration wrapper.
+- [ X ] 16.2br Verify Plunge Milling cycle settings and regeneration after FCStd
+  save/reopen. Settings persist and forced recompute reproduces identical commands.
+
+Plunge post/reopen evidence: `cam-plunge-post-reopen-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **87 PASS, zero failures/
+errors/skips** (82 CAM workflow/input/export/persistence, five holding-tag checks).
+Both verification tasks were prepared before one grouped run; macro PASS and process
+ended. LinuxCNC retains G83 peck parameters (Q and R), G80 cancellation
+and safe-height climbs; Grbl expands cycles and retains peck/safe/clearance heights.
+The saved `plunge-cycle.FCStd` fixture reopens with cycle settings and regenerates
+identical path commands. Test SHA256:
+`37B7C24A8B1B655C51D3A7EC1113B7275483BB5C951C09EB43E18B4437D5DB86`.
+Existing engine 2df76790b4 with previously staged Python fixes; no production changes,
+native rebuild or release. This closes only the bounded G83 postprocessor fixture;
+other posts/cycle combinations, controller execution and physical machining remain
+unverified. Broader CAM acceptance gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

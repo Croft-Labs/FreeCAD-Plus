@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2bo/bp Plunge Milling cycle settings and variants.
+Latest roadmap batch: 16.2bq/br Plunge Milling postprocessing and persistence probes.
+Grouped validation: 87 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-plunge-post-reopen-20260930-batch.
+Macro PASS; process ended. G83 output passes real LinuxCNC and Grbl processors with
+a mock job/configuration wrapper. FCStd reopen and forced regeneration preserve
+settings and commands. Existing engine 2df76790b4 plus staged Python fixes; no native
+rebuild, production changes or release. Other post/cycle combinations and physical
+controller/machine acceptance remain pending.
+
+Previous roadmap batch: 16.2bo/bp Plunge Milling cycle settings and variants.
 Grouped validation: 84 passes, zero failures/errors/skips in
 D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-plunge-cycles-20260930-verified.
 Macro PASS; process ended. Source/staged PlungeMilling.py hashes match. Initial

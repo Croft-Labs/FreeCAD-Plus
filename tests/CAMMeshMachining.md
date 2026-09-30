@@ -283,3 +283,11 @@ postprocessing and physical machining remain separate acceptance gates.
 
 Native negative peck-depth assignment is checked as normalization to zero before
 execution; it is not claimed as a generator rejection.
+
+
+Plunge Milling post/persistence probes use its native peck-cycle output with the
+real LinuxCNC and Grbl processors in a mock job/configuration wrapper. LinuxCNC
+must preserve canned-cycle parameters and cancellation/retract sequences; Grbl
+must expand cycles to ordinary moves while retaining retract heights. A disposable
+FCStd fixture must preserve cycle settings and regenerate identical commands after
+reopen. No controller connection or physical machine is involved.

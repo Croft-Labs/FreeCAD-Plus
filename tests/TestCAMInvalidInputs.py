@@ -1458,3 +1458,79 @@ class TestCAMInvalidInputs(PathTestWithAssets):
                 dressup.ChipBreak = False
                 self.doc.recompute()
                 self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def makePeckPlunge(self):
+        dressup = self.makePlunge()
+        self.op.StartDepth = 6
+        dressup.UseDrillingCycle = True
+        dressup.PeckDepth = 1
+        dressup.setExpression("PeckRetract", None)
+        dressup.PeckRetract = 5.5
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        return dressup
+
+    def exportPlunge(self, dressup, postname, expand):
+        from CAMTests import PostTestMocks
+        from Path.Post.Processor import PostProcessorFactory
+        from Machine.models.machine import Machine, Toolhead, ToolheadType
+        job = PostTestMocks.MockJob()
+        job.Tools.Group = [self.op.ToolController]
+        job.Operations.Group = [dressup]
+        post = PostProcessorFactory.get_post_processor(job, postname)
+        post._machine = Machine.create_3axis_config()
+        post._machine.processing.translate_drill_cycles = expand
+        post.apply_configuration_bundle()
+        post._machine.toolheads = [Toolhead(name="Test", toolhead_type=ToolheadType.ROTARY,
+                                            min_rpm=0, max_rpm=24000, max_power_kw=1.0)]
+        sections = post.export2()
+        self.assertTrue(sections)
+        return sections[0][1]
+
+    def testPlungeLinuxCNCExportPreservesPeckCycleAndCancellation(self):
+        import re
+        dressup = self.makePeckPlunge()
+        lines = self.exportPlunge(dressup, "linuxcnc", False).splitlines()
+        cycles = [i for i, line in enumerate(lines) if re.search(r"\bG83\b", line)]
+        self.assertGreater(len(cycles), 1)
+        for start, end in zip(cycles, cycles[1:]):
+            self.assertRegex(lines[start], r"R5\.5(?:0*\b)")
+            self.assertRegex(lines[start], r"Q1(?:\.0*)?\b")
+            between = lines[start + 1:end]
+            self.assertTrue(any(re.search(r"\bG80\b", line) for line in between))
+            self.assertTrue(any(re.search(r"\bG0\b", line) and
+                                re.search(r"Z" + str(int(self.op.SafeHeight.Value)) + r"(?:\.0*)?\b", line)
+                                for line in between))
+        self.assertTrue(any(re.search(r"F[1-9]", line) for line in lines))
+
+    def testPlungeGrblExportExpandsCyclesAndPreservesRetracts(self):
+        import re
+        dressup = self.makePeckPlunge()
+        code = self.exportPlunge(dressup, "grbl", True)
+        words = [word for line in code.splitlines() for word in line.split()]
+        for cycle in ("G81", "G82", "G83", "G73", "G80"):
+            self.assertNotIn(cycle, words)
+        heights = [float(value) for value in re.findall(r"Z(-?\d+(?:\.\d+)?)", code)]
+        self.assertIn(5.5, heights)
+        self.assertIn(self.op.SafeHeight.Value, heights)
+        self.assertIn(self.op.ClearanceHeight.Value, heights)
+        self.assertRegex(code, r"\bG1\b")
+
+    def testPlungeCycleSettingsAndRegenerationSurviveReopen(self):
+        import os
+        from pathlib import Path as FilePath
+        dressup = self.makePeckPlunge()
+        name = dressup.Name
+        expected = dressup.Path.toGCode()
+        filename = FilePath(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "plunge-cycle.FCStd"
+        self.doc.saveAs(str(filename))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(filename))
+        dressup = self.doc.getObject(name)
+        self.assertTrue(dressup.UseDrillingCycle)
+        self.assertEqual(dressup.PeckDepth.Value, 1)
+        self.assertEqual(dressup.PeckRetract.Value, 5.5)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertEqual(dressup.Path.toGCode(), expected)
