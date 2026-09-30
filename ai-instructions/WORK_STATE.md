@@ -1,6 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.3k/l, advancing F030/F032. Combined Pattern
+Latest product batch: phase 8, tasks 8.1.3m/8.1.5d, advancing F030-F032.
+Combined Pattern retains saved direction/axis links when unfinished reference
+picking ends through Originals controls, scope/type changes or OK. Abandoned
+pickers stop consuming later selections. Body/sketch/datum rejection explains
+accepted types; the Pattern result and supported dependants keep dependency reasons.
+Both tasks preceded the initial native build. The first grouped run passed all
+six new tests and 122 broader checks, but found one existing result-specific
+diagnostic regression. One corrective rebuild followed. Final acceptance:
+167 distinct passing tests, zero failures/errors/skips, macro PASS and exit 0.
+Evidence: D:\Temp\Office-PC\freecad-plus-pattern-picker-recovery-20260930,
+including baseline, build-initial.log, build.log, grouped, verified, visual,
+acceptance-summary.json and validated-identities.json. Baseline old binaries
+reproduce saved-link loss, stale picking and misleading rejection; failures after
+failed loop cleanup are not independent defects. Final 45 Pattern task/model
+and 122 broader tests pass on identical final native binaries. Source, staged test
+and binary hashes match. PartDesignGui SHA256:
+b2e935fb8bc4272854139c581a97aa8b53fdb142c467e94141d14d03c1fe2c65.
+Three task captures are readable. All 127 item specifications remain intact.
+The older executable stamp is not rebuilt-module identity. No installer/release.
+Broader command/occurrence/disambiguation, physical input/high-DPI and F032
+Apply/repeat gates remain open. Next focus: audit remaining F029 Extrude extent
+acceptance, then choose the next dependency-ready batch before building.
+
+Previous product batch: phase 8, tasks 8.1.3k/l, advancing F030/F032. Combined Pattern
 Direction/Direction 2/Circular Axis now show reference counts and picking state,
 with accepted-type tooltips and Highlight reference. Inspection preserves links and
 selection paths, isolates other pickers and restores source/Origin visibility.
@@ -20,8 +43,8 @@ abb35d8b7cdbc7e0822f2280c7aa7c2af4f38448adbeb649655cea732e677d0b.
 Four reference captures are readable. Physical viewport/input/high-DPI and broader
 occurrence acceptance remain open. The older executable stamp is not rebuilt-module
 identity. All 127 item specifications remain intact. No installer/release. F032
-Apply/repeat remains open. Next item-level focus: remaining reference replacement/
-recovery and precise rejected-pick explanations under F030/F031, batched before build.
+Apply/repeat remains open. Its reference recovery/rejected-pick follow-up is
+completed above.
 
 Previous product batch: phase 8, tasks 8.1.2c/8.1.3j, advancing F030/F031. Combined
 Pattern preselection and later Originals picks share document/Body/type/dependency

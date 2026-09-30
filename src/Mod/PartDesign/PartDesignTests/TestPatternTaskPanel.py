@@ -575,6 +575,123 @@ class TestPatternTaskPanel(unittest.TestCase):
         self.assertEqual(self.body.Tip, self.bump)
         self.assertIsNone(self.doc.getObject("Pattern"))
 
+    def referenceDefinition(self, pattern):
+        linear, circular = pattern.PatternSettings
+        return (linear.Direction, linear.Direction2, circular.Axis, list(pattern.Originals))
+
+    def prepareSecondReference(self):
+        self.enableSecondDirection()
+        combo = self.referenceCombo(True)
+        group = combo.parentWidget()
+        extent = group.findChild(QtGui.QAbstractSpinBox, "spinExtent")
+        self._referenceWidgets.extend([group, extent])
+        extent.setProperty("rawValue", 10.0)
+
+    def undoCreatedPattern(self):
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertIsNone(self.doc.getObject("Pattern"))
+        self.assertEqual(self.body.Tip, self.bump)
+
+    def testPendingReferenceOriginalsTransitionsPreserveLinksOnOK(self):
+        for action in ("buttonAddFeature", "buttonRemoveFeature", "patternClearOriginals"):
+            with self.subTest(action=action):
+                pattern = self.start()
+                if action == "patternClearOriginals":
+                    self.switch(1)
+                secondary = action == "buttonRemoveFeature"
+                if secondary:
+                    self.prepareSecondReference()
+                definition = self.referenceDefinition(pattern)
+                self.pickReference(secondary)
+                self.widget(QtGui.QPushButton, action).click()
+                status = self.widget(QtGui.QLabel, "patternReferenceStatus2" if secondary else "patternReferenceStatus")
+                self.assertIn("picking inactive", status.text())
+                self.assertFalse(self.referenceCombo(secondary).currentText().startswith("Select reference"))
+                if action == "patternClearOriginals":
+                    Gui.Selection.addSelection(self.bump)
+                else:
+                    self.widget(QtGui.QPushButton, action).click()
+                self.accept()
+                self.assertEqual(self.referenceDefinition(pattern), definition)
+                self.undoCreatedPattern()
+
+    def testPendingReferenceOKKeepsPrimarySecondaryAndAxis(self):
+        for role in ("primary", "secondary", "axis"):
+            with self.subTest(role=role):
+                pattern = self.start()
+                if role == "axis":
+                    self.switch(1)
+                elif role == "secondary":
+                    self.prepareSecondReference()
+                definition = self.referenceDefinition(pattern)
+                self.pickReference(role == "secondary")
+                self.accept()
+                self.assertEqual(self.referenceDefinition(pattern), definition)
+                self.assertTrue(pattern.isValid(), pattern.getStatusString())
+                self.undoCreatedPattern()
+
+    def testPendingReferenceTypeSwitchRetainsBothDefinitions(self):
+        pattern = self.start()
+        definition = self.referenceDefinition(pattern)
+        self.pickReference()
+        self.switch(1)
+        self.assertEqual(self.referenceDefinition(pattern), definition)
+        self.pickReference()
+        self.switch(0)
+        self.assertEqual(self.referenceDefinition(pattern), definition)
+        self.accept()
+        self.assertEqual(self.referenceDefinition(pattern), definition)
+
+    def testScopeChangeEndsReferencePickingAndDoesNotConsumeLaterPick(self):
+        pattern = self.start()
+        definition = self.referenceDefinition(pattern)
+        self.pickReference()
+        self.widget(QtGui.QRadioButton, "radioTransformBody").click()
+        self.assertIn("picking inactive", self.widget(QtGui.QLabel, "patternReferenceStatus").text())
+        Gui.Selection.addSelection(self.base, self.horizontalBaseEdge())
+        self.assertEqual(self.referenceDefinition(pattern), definition)
+        self.widget(QtGui.QRadioButton, "radioTransformToolShapes").click()
+        self.accept()
+        self.assertEqual(self.referenceDefinition(pattern), definition)
+
+    def testOriginalsTypeRejectionsArePreciseBeforeAndAfterStartup(self):
+        sketch = self.body.newObject("Sketcher::SketchObject", "UnusedSketch")
+        self.doc.recompute()
+        Gui.Selection.addSelection(self.body)
+        pattern = self.start(False)
+        hint = self.widget(QtGui.QLabel, "patternOriginalsHint")
+        self.assertIn("not a body, sketch or datum", hint.text())
+        for obj in (self.body, sketch, self.body.Origin.OriginFeatures[0]):
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(obj)
+            self.assertIn("not a body, sketch or datum", hint.text())
+            self.assertNotIn("depending on", hint.text())
+            self.assertEqual(pattern.Originals, [])
+            self.assertTrue(self.widget(QtGui.QPushButton, "buttonAddFeature").isChecked())
+        Gui.Selection.addSelection(self.bump)
+        self.assertEqual(pattern.Originals, [self.bump])
+        self.assertTrue(hint.isHidden())
+        self.accept()
+
+    def testPendingReferenceRoleChangeAndEditCancelRestoresState(self):
+        pattern = self.start()
+        self.accept()
+        definition = self.referenceDefinition(pattern)
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(pattern, "Face1")
+        initial = self.selectionPaths()
+        self.assertTrue(pattern.ViewObject.doubleClicked())
+        self.pickReference()
+        self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+        self.setOccurrences(4)
+        Gui.Control.activeTaskDialog().reject()
+        Gui.updateGui()
+        self.assertEqual(self.referenceDefinition(pattern), definition)
+        self.assertEqual(self.selectionPaths(), initial)
+        self.assertEqual(self.body.Tip, pattern)
+        self.assertAlmostEqual(pattern.Shape.Volume, 8024)
+
     def testFirstFieldThenFeaturePickingWithoutPreselection(self):
         pattern = self.start(False)
         combo = self.widget(QtGui.QComboBox, "patternType")

@@ -62,6 +62,11 @@ Reference collector checks cover Direction/Direction 2/Axis counts and active st
 empty-reference correction, exact subelement inspection without assignment, isolation
 from other picking roles, visibility on type changes/OK/Cancel and initial-selection
 restoration. Highlight is disabled for an empty reference.
+Pending-reference checks cover leaving through Add/Remove/Clear, scope/type switches
+and OK for primary/secondary/axis roles. Saved links survive each transition, later
+picks cannot fill an abandoned role, and edit Cancel restores selection and model.
+Body/sketch/datum Originals rejection uses type feedback before dependency feedback.
+
 
 
 

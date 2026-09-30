@@ -77,6 +77,11 @@ feedback leaves the collector recoverable (8.1.2c/8.1.3j).
 `TaskPatternParameters::setupReferenceCollectors` adds combined-only Direction/Axis
 feedback and inspection. `TaskTransformedParameters::highlightReference` shares
 visibility cleanup keyed by document/object identity (8.1.3k/l).
+Combined Pattern `cancelReferenceSelection` restores reference combos for all role
+exits; `apply` ends unfinished picking before recording links and scope changes call
+`prepareOriginalsSelection` (8.1.5d). Originals type rejection precedes dependency
+feedback (8.1.3m).
+
 
 
 

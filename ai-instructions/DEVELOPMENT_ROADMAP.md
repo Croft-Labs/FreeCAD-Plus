@@ -2,16 +2,16 @@
 
 ## Current focus
 
-- Current product batch: phase 8 Pattern reference feedback and inspection
-  (8.1.3k/l), advancing F030/F032. Both tasks preceded the initial native build;
-  two corrective incremental rebuilds followed. Final acceptance: 161 distinct
-  passing tests, including Direction/Direction 2/Axis state, exact reference
-  inspection, role isolation, saved links after OK and source/Origin visibility.
-  Four reference layouts are verified. Broader command-family, occurrence and
-  physical interaction gates remain open, as does F032 Apply/repeat.
-  No installer or release. Next item-level focus: remaining reference replacement/
-  recovery and precise rejected-pick explanations against F030/F031, grouped
-  before validation.
+- Current product batch: phase 8 Pattern picker recovery and precise rejection
+  (8.1.3m/8.1.5d), advancing F030-F032. Both tasks preceded the initial native
+  build; one corrective incremental rebuild retained the result-specific
+  dependency reason. Final acceptance: 167 distinct passing tests. Saved
+  direction/axis links survive unfinished picking on role/type/scope changes
+  and OK; abandoned pickers cannot consume later selections. Three task captures
+  are verified. Broader command-family, occurrence, physical input/high-DPI and
+  F032 Apply/repeat gates remain open. No installer or release. Next item-level
+  focus: audit the remaining F029 Extrude extent acceptance before choosing the
+  next dependency-ready batch.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1874,6 +1874,10 @@ implementation or mark its unfinished validation complete through this plan.
   other collectors. Preserve subelement identity and restore temporary visibility
   on role/type changes and OK/Cancel. F030/F032. Identity, role/visibility lifecycle
   and saved-reference acceptance checks pass; evidence below.
+- [ X ] 8.1.3m Explain rejected Body/sketch/datum Originals picks by accepted type
+  before dependency checks. Keep genuine result/downstream rejections distinct and
+  preserve correction behavior. F030/F031. Native rejection/correction checks pass;
+  the Pattern result retains its dependency-specific reason. Grouped evidence below.
 - [   ] 8.1.4 Standardize signed offsets, adjacent direction buttons, one/two-sided and symmetric modes, units and expressions. Preserve parameters by meaning when switching operation or type.
   Cover distance, symmetric, two-sided, through-all, to-face and offset-from-face
   extents where the command supports them; keep extent semantics distinct from the
@@ -1893,6 +1897,11 @@ implementation or mark its unfinished validation complete through this plan.
   preserving original object/subelement paths alongside Originals/settings/Body Tip
   rollback. F031/F032. Both creation/edit cases pass; grouped evidence below.
 
+- [ X ] 8.1.5d Preserve stored Pattern direction/axis references when unfinished
+  picking ends through Originals controls, scope/type changes or OK. End stale
+  reference observers and retain edit Cancel selection/model recovery. F031/F032.
+  Primary/secondary/axis, scope/type/role, OK/Undo and edit Cancel checks pass;
+  grouped evidence with 8.1.3m below.
 - [   ] 8.1.6 Make previews responsive with cancellable computation, progress
   feedback and reduced-cost previews before final computation. Clearly distinguish
   provisional geometry from committed results; cancellation restores the previous
@@ -2083,8 +2092,36 @@ Four readable captures under `visual` cover picking, a hidden-source edge refere
 Direction 2 and Circular Axis. The older executable stamp is not rebuilt-module
 identity. All 127 item IDs remain intact. No property schema change, installer or
 release. Physical input/high-DPI, broader command/occurrence/disambiguation and
-F032 Apply/repeat gates remain open. Next slice: remaining reference replacement/
-recovery and precise rejected-pick explanations under F030/F031.
+F032 Apply/repeat gates remain open. Its reference recovery/rejected-pick follow-up
+is completed in the next batch below.
+
+**Pattern picker recovery batch (8.1.3m, 8.1.5d), 2026-09-30:** Both tasks
+preceded the initial PartDesignGui Release build. Old binaries reproduced saved
+reference loss after abandoned picking, stale reference picking after scope changes
+and misleading Body rejection. Combined Pattern now restores saved reference combos
+whenever pending reference picking ends, including apply/type/scope transitions.
+Body/sketch/datum Originals receive type guidance; the Pattern result and supported
+downstream features retain dependency guidance. New behavior stays scoped to the
+combined Pattern workflow; legacy transform regression checks pass.
+The first grouped run passed all six new tests and 122 broader checks, but caught
+one existing result-specific diagnostic regression. One corrective incremental
+rebuild followed; both builds passed. **167 distinct final tests pass, zero
+failures/errors/skips**: 45 Pattern task/model, 16 Linear, 6 Polar, 3 MultiTransform,
+14 Pad task, 28 Extrude task, 5 Revolve task, 24 Trim task and 26 Isocline task.
+Coverage includes Add/Remove/Clear exits, primary/secondary/axis OK, type switches,
+scope changes without later-pick consumption, type rejection/correction, Undo and
+edit Cancel selection/model recovery. No new test fixture correction was required.
+Evidence: `D:\Temp\Office-PC\freecad-plus-pattern-picker-recovery-20260930`, including
+`baseline`, `build-initial.log`, `build.log`, `grouped`, `verified`, `visual`,
+`acceptance-summary.json` and `validated-identities.json`. Baseline loop failures
+after failed cleanup are not separate defect evidence. Final macro PASS, exit 0;
+source, staged test and native identities match. PartDesignGui SHA256:
+`b2e935fb8bc4272854139c581a97aa8b53fdb142c467e94141d14d03c1fe2c65`.
+Three readable captures cover Body rejection, Originals-role cancellation and
+Whole body scope cancellation. The older executable stamp is not rebuilt-module
+identity. All 127 item IDs remain intact. No property/schema or persistence-format
+change, installer or release. Broader command-family/occurrence/disambiguation,
+physical input/high-DPI and F032 Apply/repeat acceptance remain open.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4485,7 +4522,7 @@ reconciliation rules above to every entry.
 <a id="f030"></a>
 ### F030 — Selection collectors
 
-**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Extrude/Pad/Pocket profile inspection and feedback are validated under 8.1.3d/e. Combined Pattern Originals feedback, Clear/replacement recovery and direction-role isolation are validated under 8.1.3f-h (144 distinct passing tests). Pattern row/all-entry inspection by object identity and visibility lifecycle are validated under 8.1.3i (149 distinct final checks). Pattern inline rejection/correction feedback is validated under 8.1.3j (155 distinct final checks). Direction/Direction 2/Axis reference feedback, inspection and visibility lifecycle are validated under 8.1.3k/l (161 distinct final checks). Other command families, general occurrence/selection filters and disambiguation acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Extrude/Pad/Pocket profile inspection and feedback are validated under 8.1.3d/e. Combined Pattern Originals feedback, Clear/replacement recovery and direction-role isolation are validated under 8.1.3f-h (144 distinct passing tests). Pattern row/all-entry inspection by object identity and visibility lifecycle are validated under 8.1.3i (149 distinct final checks). Pattern inline rejection/correction feedback is validated under 8.1.3j (155 distinct final checks). Direction/Direction 2/Axis reference feedback, inspection and visibility lifecycle are validated under 8.1.3k/l (161 distinct final checks). Precise Body/sketch/datum type rejection is validated under 8.1.3m (167 distinct final checks). Other command families, general occurrence/selection filters and disambiguation acceptance remain open.
 
 **Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
 
@@ -4498,7 +4535,7 @@ reconciliation rules above to every entry.
 <a id="f031"></a>
 ### F031 — Preselection and postselection
 
-**Owning tasks:** 8.1, 10.4. **Status:** Specified Extrude parity, deterministic mixed selections and creation/edit Cancel acceptance are complete for the active-Body workflow under 8.1.2b/8.1.5b (138 final passing checks). Extrude/Pad/Pocket use the same profile gate before and after startup; multiple profiles require explicit choice, invalid picks receive inline feedback. Trim Body/Isocline checks remain validated under 8.1.2a, 8.1.5a and 5.1.11. Combined Pattern creation/edit Cancel now restores original subelement selection and model state under 8.1.5c (149 distinct final checks). Pattern active-Body preselection/later-pick parity, mixed/invalid-input recovery and inline reasons are validated under 8.1.2c/8.1.3j (155 distinct final checks), with both Linear/Circular geometry comparisons. Broader command-family, occurrence and multi-target semantics remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Specified Extrude parity, deterministic mixed selections and creation/edit Cancel acceptance are complete for the active-Body workflow under 8.1.2b/8.1.5b (138 final passing checks). Extrude/Pad/Pocket use the same profile gate before and after startup; multiple profiles require explicit choice, invalid picks receive inline feedback. Trim Body/Isocline checks remain validated under 8.1.2a, 8.1.5a and 5.1.11. Combined Pattern creation/edit Cancel now restores original subelement selection and model state under 8.1.5c (149 distinct final checks). Pattern active-Body preselection/later-pick parity, mixed/invalid-input recovery and inline reasons are validated under 8.1.2c/8.1.3j (155 distinct final checks), with both Linear/Circular geometry comparisons. Precise type rejection and abandoned reference-role/scope recovery are validated under 8.1.3m/8.1.5d (167 distinct final checks). Broader command-family, occurrence and multi-target semantics remain open.
 
 **Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 
@@ -4511,7 +4548,7 @@ reconciliation rules above to every entry.
 <a id="f032"></a>
 ### F032 — Consistent Apply/OK/Cancel
 
-**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Extrude/Pad/Pocket create/edit Cancel selection plus profile/Body Tip rollback is validated under 8.1.5b. Pattern Originals Clear/replacement Cancel and Undo/Redo is validated under 8.1.3g; original selection plus model rollback on creation/edit Cancel is validated under 8.1.5c. Reference inspection preserves links on OK and restores source/Origin visibility on OK/Cancel under 8.1.3l. Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
+**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Extrude/Pad/Pocket create/edit Cancel selection plus profile/Body Tip rollback is validated under 8.1.5b. Pattern Originals Clear/replacement Cancel and Undo/Redo is validated under 8.1.3g; original selection plus model rollback on creation/edit Cancel is validated under 8.1.5c. Reference inspection preserves links on OK and restores source/Origin visibility on OK/Cancel under 8.1.3l. Unfinished reference picking preserves primary/secondary/axis links through OK, role/type/scope changes, Undo and edit Cancel under 8.1.5d (167 distinct final checks). Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
 
 **Packages:** A07, U09 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
 

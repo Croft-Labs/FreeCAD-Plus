@@ -420,11 +420,11 @@ QString TaskTransformedParameters::originalSelectionError(App::DocumentObject* o
     if (object->getDocument() != transformed->getDocument()) {
         return tr("Select a feature in this document.");
     }
+    if (object != transformed && !object->isDerivedFrom<PartDesign::FeatureAddSub>()) {
+        return tr("Select an additive or subtractive feature, not a body, sketch or datum.");
+    }
     if (object == transformed || transformed->getInListEx(true).count(object)) {
         return tr("The result and features depending on it cannot be originals.");
-    }
-    if (!object->isDerivedFrom<PartDesign::FeatureAddSub>()) {
-        return tr("Select an additive or subtractive feature, not a body, sketch or datum.");
     }
     auto body = transformed->getFeatureBody();
     if (!body || PartDesign::Body::findBodyOf(object) != body) {
@@ -571,6 +571,7 @@ void TaskTransformedParameters::onModeChanged(int mode_id)
     }
 
     auto pcTransformed = getObject<PartDesign::Transformed>();
+    prepareOriginalsSelection();
     setupTransaction();
     pcTransformed->TransformMode.setValue(mode_id);
 

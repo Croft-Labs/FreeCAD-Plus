@@ -222,14 +222,6 @@ void TaskPatternParameters::setupReferenceCollectors()
                 auto object = property->getValue();
                 const auto subs = property->getSubValues();
                 highlightReference(object, subs);
-                // Inspection cancels pending picking. Restore both combos from
-                // their saved links so OK cannot apply a "Select reference" item.
-                if (auto primary = getPrimaryParametersWidget()) {
-                    primary->updateReferenceUI();
-                }
-                if (auto secondaryWidget = getSecondaryParametersWidget()) {
-                    secondaryWidget->updateReferenceUI();
-                }
                 updateReferenceCollectors();
             }
         });
@@ -432,6 +424,17 @@ void TaskPatternParameters::cancelReferenceSelection()
 {
     if (selectionMode == SelectionMode::Reference) {
         exitReferenceSelectionMode();
+        auto top = getTopTransformedObject();
+        if (top && top->isDerivedFrom<PartDesign::Pattern>()) {
+            // Leaving a picker without a new selection keeps its saved reference.
+            // Otherwise a later OK/type switch can apply "Select reference" as null.
+            if (auto primary = getPrimaryParametersWidget()) {
+                primary->updateReferenceUI();
+            }
+            if (auto secondary = getSecondaryParametersWidget()) {
+                secondary->updateReferenceUI();
+            }
+        }
     }
 }
 
@@ -547,6 +550,10 @@ void TaskPatternParameters::apply()
         return;
     }
 
+    if (auto top = getTopTransformedObject(); top
+        && top->isDerivedFrom<PartDesign::Pattern>()) {
+        cancelReferenceSelection();
+    }
     applyPatternParameters(pattern);
 
     // The user may have changed a value and immediately hit 'OK' or Enter.
