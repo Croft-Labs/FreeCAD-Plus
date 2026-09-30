@@ -1,6 +1,22 @@
 # FreeCAD Plus: Build validation handoff
 
-Current roadmap batch (2026-09-29): 7.1.3a/7.1.3b adapter prototypes and 7.1.6a
+Latest roadmap batch (2026-09-29): 7.1.3c/7.1.3d/7.1.3e complete. Test-only
+history adapters now handle tilted profiles and cross-part placement dependencies;
+a native assembly-local cut preserves the shared definition and other occurrence.
+Production Draft clones clear stale Shape when all sources become empty or the
+source list is cleared. Native CAM job-model clones clear/restore geometry too;
+generated-path invalidation is not established. All 88 grouped history, Draft
+modification, PlanarSurface and STL/tab tests pass without failures/errors/skips
+in `part-consumers-20260929-final/results.json` under the existing external build
+root. Fifteen focused checks also passed after reproducing three defects.
+Python clone module installed in the existing fork; no native build. Matching
+source/installed SHA256: 6291E8A30ED3C4321833182412A6D8AC86C642CFF035A605F9FFD29327DF19A9.
+The evidence manifest records adapter/module/test hashes. No test process remains.
+Next: semantic lineage, actual attachments and remaining TechDraw/CAM-path/FEM
+consumer gates. FEM is disabled in this build; batch future native build work.
+History production architecture and cadprt schema remain undecided/unimplemented.
+
+Earlier roadmap batch (2026-09-29): 7.1.3a/7.1.3b adapter prototypes and 7.1.6a
 decision boundary complete. Eight native capability/adapter tests pass together
 in `part-adapters-20260929-final`. Implementation is test-only under
 tests/prototypes; no application code, installation or native build changed.

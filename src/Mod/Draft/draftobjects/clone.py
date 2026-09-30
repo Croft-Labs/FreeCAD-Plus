@@ -144,6 +144,10 @@ class Clone(DraftObject):
                     sh.transformShape(m, False, True)
                     sh.Placement = op
             obj.Shape = sh
+        else:
+            # An empty source (or cleared source list) must not leave the last
+            # successful geometry available to drawing/CAM consumers.
+            obj.Shape = Part.Shape()
 
         obj.Placement = pl
         if hasattr(obj, "positionBySupport"):

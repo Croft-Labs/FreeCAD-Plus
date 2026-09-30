@@ -44,9 +44,34 @@ future adapters; shape volume alone is insufficient validation.
 
 ## Contracts retained for the next batch
 
+Follow-up placement/consumer batch (7.1.3c/7.1.3d/7.1.3e, 2026-09-29):
+
+- The explicit-result prototype now resolves source geometry into its owning
+  part frame and extrudes along the transformed sketch normal. PlacementSupport
+  records cross-part dependencies. Independent solid comparisons, source-part
+  moves/Undo and restore pass; these are placement checks, not attachment support.
+- A native Part cut of one App::Link occurrence inside a translated assembly
+  updates with source radius changes while the shared definition and second
+  occurrence retain their full geometry. The local cut survives save/reopen.
+- Draft clones previously retained cached geometry when every input became empty.
+  The production clone now clears Shape in that case, including an empty Objects
+  list. Native-source and unavailable-result checks pass; source restoration keeps
+  clone placement. Native CAM job-model clones also clear/restore correctly.
+  Mixed empty/nonempty input behavior is unchanged. Generated CAM path invalidation
+  is a separate gate and is not established by the job-model check.
+
+The final grouped batch passes **88 checks** (15 focused history/clone checks,
+33 existing Draft modifications and 40 CAM operation/STL/tab checks), no failures,
+errors or skips. Evidence: `part-consumers-20260929-final/results.json` and
+`prototype-manifest.json` under the roadmap's external validation root. Initial
+probes failed tilted extrusion, cross-part placement and stale clone checks;
+all three are corrected. Only the Python Draft clone production module was
+synchronized to the existing build. No native build or production history adapter
+was installed. The earlier eight-check batch remains historical evidence.
+
 - **Definition/occurrence:** separate shared definition edits from occurrence/local
-  edits. App::Link is the reuse candidate; mixed geometry/children and one
-  assembly-local edit still require proof before final choice.
+  edits. App::Link is the reuse candidate; one assembly-local cut is now proven,
+  while mixed geometry/children and general occurrence editing remain open.
 - **Body results:** input dependencies point to the producing stage and explicit
   output role. Never retarget by label, tree position or raw solid index. Result
   nodes depend on producers; producers do not depend on their result registries.
@@ -67,11 +92,12 @@ Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
 
 - Compare true merge/split lineage, ambiguous role changes and downstream reference
   repair, including invalid feature input and cycles.
-- Exercise transformed part/sketch attachments, sheets, mixed definition/occurrence
-  content, independent copies and an assembly-local operation without changing the
-  shared definition or its other occurrences.
-- Check TechDraw geometry/dimension references, CAM target and path invalidation,
-  FEM supports/loads and Draft references through edit, undo and restore.
+- Exercise actual part/sketch attachments, sheets, mixed definition/occurrence
+  content and independent copies beyond the bounded placement/local-cut proof.
+- Check TechDraw geometry/dimension references, CAM path invalidation, FEM
+  supports/loads and broader Draft references through edit, undo and restore.
+  Native CAM job-model refresh and empty Draft clone invalidation are established;
+  FEM is disabled in the current build and awaits a suitable grouped build.
 - Define `.cadprt` schema/version/identity and migration boundaries, including
   unsupported Python proxies and conversion losses; do not rename native fixtures.
 - Integrate the complete task editor and navigator only after the model choice,
@@ -79,5 +105,5 @@ Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
 
 These are distinct engineering gates. Successful native save/reopen with this
 module already importable proves neither cold-start deployment nor consumer safety.
-The next batch should address placement/occurrence and consumer probes, then revise
-this decision with evidence rather than treating the prototypes as production code.
+The next batch should address lineage and remaining consumer/attachment probes,
+then revise this decision without treating the prototypes as production code.

@@ -2,11 +2,12 @@
 
 ## Current focus
 
-- Active batch: Phase 7 adapter comparison, authorized 2026-09-29. Completed
-  7.1.3a/7.1.3b test-only adapters and 7.1.6a experiment boundary decision.
-  All eight grouped capability/adapter probes pass in the existing application;
-  no build or production source change. Tasks 7.1.1/7.1.2/7.1.4 remain defined.
-  Next: placement/occurrence and consumer probes for 7.1.3 and decisions in
+- Active batch: Phase 7 placement/occurrence/consumer comparison, 2026-09-29.
+  Completed 7.1.3c/7.1.3d/7.1.3e: transformed inputs, an assembly-local cut,
+  and a production fix for stale Draft clone/CAM job-model geometry.
+  All 88 grouped history, Draft and CAM checks pass in the existing application;
+  Python-only update, no native build. History adapters remain test-only.
+  Next: lineage, transformed attachments and remaining consumers for 7.1.3 and decisions in
   7.1.5/7.1.6 before production navigator/model changes. Batch two or three related
   implementation tasks before any costly build, as requested by the owner.
 - Previous implementation: [prioritized upstream issue work](#upstream-issue-work).
@@ -1146,6 +1147,16 @@ safe. Existing Phase 2/3 implementation and tests are inputs, not work to recrea
   roles and separate identified result nodes. Validate a later result consumer,
   edits/rename/source order, unavailable/reappearing output, Undo/Redo, abort and
   native save/reopen. Fixed roles are a bounded identity proof, not general lineage.
+- [ X ] 7.1.3c Resolve tilted sketch normals and cross-part placement dependencies
+  in the explicit-result prototype. Validate transformed geometry against an
+  independent solid, source-part moves/Undo, and native persistence.
+- [ X ] 7.1.3d Prove a native cut of one App::Link occurrence in an assembly
+  updates after shared source edits without changing the definition or second
+  occurrence; preserve the cut through save/reopen.
+- [ X ] 7.1.3e Probe Draft clone and CAM job-model invalidation. Fix production
+  Draft clones retaining old geometry when all source shapes become empty or
+  the source list is cleared; verify restored source geometry and clone placement.
+  This does not establish CAM toolpath invalidation or general consumer safety.
 - [ X ] 7.1.4 Define stable feature and body identities, explicit input/output links, and merge/split/disappear/reappear lineage. [Identity contract](architecture/PART_HISTORY_CONTRACT.md#identity-and-dependencies-714) separates modeling/display order from the dependency graph; storage and runtime implementation remain pending.
 - [   ] 7.1.5 Document the chosen architecture, migration boundary and a small reference model; update product/UI specifications before production implementation.
 
@@ -1161,7 +1172,23 @@ results from both, without silently duplicating sketches or losing references.
   native geometry, App::Link, links and transactions. Record unresolved production
   selection/default, schema and consumer gates. This is not the final architecture.
 
-Adapter batch evidence (2026-09-29): `tests/TestPartHistoryAdapters.py` plus the
+Placement/consumer batch evidence (2026-09-29): **88 PASS**, zero failures/errors/
+skips, in `D:\Temp\Office-PC\freecad-plus-validation-20260928\part-consumers-20260929-final\results.json`.
+Grouped coverage: four native capabilities, eight adapters, three clone
+invalidation checks, 33 existing Draft modifications, 18 PlanarSurface operations
+and 22 STL/tab machining checks. Initial probes reproduced wrong tilted extrusion
+direction, ignored source-part placement and stale clone geometry; focused rerun
+passed all 15 checks before the broader batch. The history layer stays test-only.
+The production change is limited to `Draft/draftobjects/clone.py`, synchronized
+to the existing fork build without native compilation. Source/installed SHA256:
+`6291E8A30ED3C4321833182412A6D8AC86C642CFF035A605F9FFD29327DF19A9`.
+`prototype-manifest.json` in that evidence directory records module/test hashes.
+No new GUI workflow or mouse/keyboard acceptance is claimed. CAM job-model refresh
+is distinct from invalidating generated paths. TechDraw dimension references,
+FEM supports/loads (FEM disabled in this build), actual sketch attachments,
+general lineage and cold-start prototype deployment remain open.
+
+Earlier adapter batch evidence (2026-09-29): `tests/TestPartHistoryAdapters.py` plus the
 four native capability probes report **8 PASS**, no failures/errors/skips, in
 `D:\Temp\Office-PC\freecad-plus-validation-20260928\part-adapters-20260929-final\results.json`.
 `prototype-manifest.json` records the test/adapter hashes. All implementation is
@@ -1171,8 +1198,9 @@ merged distinct outputs; Shape/Placement synchronization corrected it, with
 position assertions retained. Expected unavailable-result errors clear the
 consumer instead of returning partial/stale geometry. Native BodyAdapterProof.FCStd
 and test-module-dependent ExplicitResultProof.FCStd are disposable evidence only.
-Final choice, general topology/lineage, transformed attachments, assembly-local
-edits, downstream consumers and cold-start deployment remain open under the parents.
+Final choice, general topology/lineage, transformed attachments, remaining downstream
+consumers and cold-start deployment remain open under the parents; the later batch
+above establishes one bounded assembly-local edit and Draft/CAM model refresh.
 
 Foundation batch evidence (2026-09-29): `tests/TestPartHistoryCapabilities.py`
 passes four native probes in the existing fork, with no failures/errors/skips.

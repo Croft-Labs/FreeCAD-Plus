@@ -8,7 +8,7 @@ in the part's local frame. Native transactions/persistence own all stored state.
 import uuid
 import FreeCAD as App
 import Part
-from BasicShapes.ShapeReferences import validate_link
+from BasicShapes.ShapeReferences import linked_shape, update_placement_support, validate_link
 
 
 class PersistentProxy:
@@ -28,6 +28,7 @@ class TwoResults(PersistentProxy):
         obj.addProperty("Part::PropertyPartShape", "RightOutput", "Prototype")
         obj.addProperty("App::PropertyString", "FeatureIdentity", "Prototype")
         obj.addProperty("App::PropertyString", "ResultStatus", "Prototype")
+        obj.addProperty("App::PropertyLinkList", "PlacementSupport", "Prototype")
         obj.Profile = profile
         obj.Length = 3
         obj.RightEnabled = True
@@ -40,9 +41,16 @@ class TwoResults(PersistentProxy):
         obj.Shape = Part.Shape()
         obj.ResultStatus = "Failed"
         validate_link(obj, obj.Profile)
-        if obj.Length.Value <= 0 or len(obj.Profile.Shape.Wires) != 1:
+        update_placement_support(obj, [(obj.Profile, [])])
+        parent = obj.getGlobalPlacement().multiply(obj.Placement.inverse())
+        profile = linked_shape((obj.Profile, []))
+        profile.transformShape(parent.inverse().toMatrix())
+        if obj.Length.Value <= 0 or len(profile.Wires) != 1:
             raise ValueError("Prototype requires positive length and one closed profile")
-        left = Part.Face(obj.Profile.Shape.Wires[0]).extrude(App.Vector(0, 0, obj.Length.Value))
+        global_direction = obj.Profile.getGlobalPlacement().Rotation.multVec(
+            App.Vector(0, 0, obj.Length.Value))
+        direction = parent.Rotation.inverted().multVec(global_direction)
+        left = Part.Face(profile.Wires[0]).extrude(direction)
         right = left.copy()
         right.translate(App.Vector(10, 0, 0))
         obj.LeftOutput = left
@@ -101,7 +109,9 @@ class ResultUnion(PersistentProxy):
                 raise ValueError("Required body result is unavailable")
         if len(obj.Sources) < 2:
             raise ValueError("Prototype union requires at least two explicit results")
-        obj.Shape = obj.Sources[0].Shape.fuse([source.Shape for source in obj.Sources[1:]])
+        shape = obj.Sources[0].Shape.fuse([source.Shape for source in obj.Sources[1:]])
+        obj.Placement = shape.Placement
+        obj.Shape = shape
         obj.ResultStatus = "Ready"
 
 

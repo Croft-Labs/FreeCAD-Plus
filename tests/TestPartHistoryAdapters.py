@@ -8,6 +8,7 @@ import unittest
 import FreeCAD as App
 import Part
 import Sketcher
+from BasicShapes.ShapeReferences import linked_shape
 
 # The prototype module must remain importable while its disposable documents are
 # restored. It is deliberately absent from installed application/workbench paths.
@@ -124,3 +125,78 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertEqual([o.BodyIdentity for o in results], ids)
         self.assertEqual(consumer.ResultStatus, "Ready")
         self.assertAlmostEqual(consumer.Shape.Volume, 2 * original, places=6)
+
+    def testRotatedProfileAndPartPreserveOutputFrame(self):
+        self.profile.Placement = App.Placement(App.Vector(4, 5, 6), App.Rotation(App.Vector(0, 1, 0), 45))
+        self.part.Placement = App.Placement(App.Vector(50, 20, 10), App.Rotation(App.Vector(0, 0, 1), 30))
+        feature, results, consumer = adapters.part_results(self.part, self.profile)
+        self.doc.recompute()
+        for result, offset in zip(results, (0, 10)):
+            expected = Part.makeCylinder(2, 3)
+            local = App.Placement(App.Vector(offset, 0, 0), App.Rotation()).multiply(self.profile.Placement)
+            expected.Placement = self.part.Placement.multiply(local)
+            actual = linked_shape((result, []))
+            self.assertAlmostEqual(actual.Volume, expected.Volume, places=6)
+            self.assertAlmostEqual(actual.common(expected).Volume, expected.Volume, places=6)
+        self.saveReopen("TransformedResultProof")
+        self.assertAlmostEqual(self.doc.ResultUnion.Shape.Volume, math.pi * 4 * 6, places=6)
+
+    def testCrossPartSourceMoveInvalidatesResult(self):
+        destination = self.doc.addObject("App::Part", "Destination")
+        destination.Placement = App.Placement(App.Vector(0, 20, 0), App.Rotation())
+        feature, results, consumer = adapters.part_results(destination, self.profile)
+        self.part.Placement.Base = App.Vector(30, 0, 0)
+        self.doc.recompute()
+        self.assertAlmostEqual(linked_shape((results[0], [])).BoundBox.XMin, 28, places=6)
+        self.doc.openTransaction("Move source part")
+        self.part.Placement.Base = App.Vector(40, 0, 0)
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.assertAlmostEqual(linked_shape((results[0], [])).BoundBox.XMin, 38, places=6)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(linked_shape((results[0], [])).BoundBox.XMin, 28, places=6)
+
+    def testAssemblyLocalCutDoesNotEditSharedResult(self):
+        feature, results, consumer = adapters.part_results(self.part, self.profile)
+        assembly = self.doc.addObject("App::Part", "Assembly")
+        assembly.Placement.Base = App.Vector(100, 0, 0)
+        occurrences = []
+        for x in (30, 60):
+            link = self.doc.addObject("App::Link", "Occurrence")
+            assembly.addObject(link)
+            link.setLink(results[0])
+            link.LinkPlacement.Base = App.Vector(x, 0, 0)
+            occurrences.append(link)
+        tool = self.doc.addObject("Part::Box", "LocalTool")
+        assembly.addObject(tool)
+        tool.Length, tool.Width, tool.Height = 10, 20, 20
+        tool.Placement.Base = App.Vector(30, -10, -5)
+        cut = self.doc.addObject("Part::Cut", "LocalCut")
+        assembly.addObject(cut)
+        cut.Base, cut.Tool = occurrences[0], tool
+        self.doc.recompute()
+        for radius in (2, 3):
+            self.profile.setDatum(0, App.Units.Quantity(f"{radius} mm"))
+            self.doc.recompute()
+            full = math.pi * radius * radius * 3
+            self.assertAlmostEqual(results[0].Shape.Volume, full, places=6)
+            self.assertAlmostEqual(linked_shape((occurrences[1], [])).Volume, full, places=6)
+            self.assertAlmostEqual(cut.Shape.Volume, full / 2, places=6)
+            self.assertAlmostEqual(linked_shape((cut, [])).BoundBox.XMax, 130, places=6)
+        self.saveReopen("AssemblyLocalProof")
+        self.assertAlmostEqual(self.doc.LocalCut.Shape.Volume, math.pi * 9 * 3 / 2, places=6)
+
+    def testDraftCloneClearsUnavailableResult(self):
+        from draftmake.make_clone import make_clone
+        feature, results, consumer = adapters.part_results(self.part, self.profile)
+        self.doc.recompute()
+        clone = make_clone(results[1], forcedraft=True)
+        self.doc.recompute()
+        self.assertAlmostEqual(clone.Shape.Volume, results[1].Shape.Volume, places=6)
+        self.profile.setDatum(0, App.Units.Quantity("3 mm"))
+        self.doc.recompute()
+        self.assertAlmostEqual(clone.Shape.Volume, math.pi * 9 * 3, places=6)
+        feature.RightEnabled = False
+        self.doc.recompute()
+        self.assertTrue(clone.Shape.isNull(), "Draft consumer retained unavailable result geometry")

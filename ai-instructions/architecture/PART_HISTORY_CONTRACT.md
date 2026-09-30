@@ -124,14 +124,17 @@ To rerun, use the isolated existing-build procedure in
 ValidateUpstreamIssues macro accepts this explicit suite. Use a new external
 evidence directory because the persistence probe writes its own example there.
 
-The next batch implemented both native Body and explicit-result adapters under
-`tests/prototypes`, with eight grouped passing checks. See
+Subsequent batches implemented native Body and explicit-result adapters under
+`tests/prototypes`, then extended placement, local-cut and consumer checks. See
 [ADR 001](ADR_001_HISTORY_ADAPTER_BOUNDARY.md) for the comparison, placement defect
 found/corrected, native persistence evidence and remaining decision gates.
 
 Remaining before an architecture choice: extend the bounded adapter comparison;
-prove semantic split/merge identity, mixed definition/occurrence content, an
-assembly-local edit, transformed attachments and drawing/CAM/FEM/Draft consumers.
+prove semantic split/merge identity, mixed definition/occurrence content,
+actual transformed attachments and remaining drawing/CAM/FEM/Draft consumers.
+One assembly-local cut, transformed input placements and empty Draft/CAM job-model
+refresh are now proven; they do not establish general occurrence editing or path
+invalidation. The clone refresh fix is production Python; adapters remain test-only.
 Resolve selection/default policies separately. Record the architecture decision
 and `.cadprt` migration boundary before production implementation (7.1.5/7.1.6).
 The native probe's `.FCStd` output is test evidence, not the new file format.
