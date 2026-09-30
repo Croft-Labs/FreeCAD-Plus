@@ -1,6 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 7.1.3g/h complete; 29 grouped checks pass in
+Latest roadmap batch: 12.1a/12.2a complete. Mixed native definitions and a bounded
+Make Unique helper pass in a 32-check grouped run, mixed-unique-20260929-final under
+the existing external validation root. Native recursive copy remaps sketch links;
+new metadata identities/provenance, selected-link reassignment and placement are
+transactional. Undo/Redo, shared versus independent edits, restore and no-mutation
+rejection pass. No installed module/native build and no test process remains.
+Next: missing/ambiguous drawing references, CAM path/FEM consumers, complex/external
+identity and production architecture. Keep the full 12.1/12.2 gates open.
+
+Earlier roadmap batch: 7.1.3g/h complete; 29 grouped checks pass in
 lineage-20260929-topology under the existing external validation root. New test-only
 ResultLineage.py implements planar side roles and explicit-primary/new-ID merges.
 Expected producer errors initially left stale downstream geometry; status/empty-output

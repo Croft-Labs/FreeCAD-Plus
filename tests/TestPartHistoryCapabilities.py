@@ -142,3 +142,112 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         else:
             self.assertNotIn(sketch, first.Group)
             self.assertIn(sketch, second.Group)
+
+    def testMixedDefinitionGeometryAndChildOccurrences(self):
+        own = self.doc.addObject("Part::Box", "OwnSolid")
+        self.part.addObject(own)
+        own.Length, own.Width, own.Height = 2, 2, 2
+        child = self.doc.addObject("App::Part", "ChildDefinition")
+        child_box = self.doc.addObject("Part::Box", "ChildSolid")
+        child.addObject(child_box)
+        child_box.Length, child_box.Width, child_box.Height = 1, 1, 1
+        nested = self.doc.addObject("App::Link", "ChildOccurrence")
+        self.part.addObject(nested)
+        nested.setLink(child)
+        nested.LinkPlacement.Base = App.Vector(5, 0, 0)
+        assemblies = [self.doc.addObject("App::Part", "Assembly") for _ in range(2)]
+        occurrences = []
+        for assembly, x in ((assemblies[0], 20), (assemblies[0], 40), (assemblies[1], 60)):
+            link = self.doc.addObject("App::Link", "MixedOccurrence")
+            assembly.addObject(link)
+            link.setLink(self.part)
+            link.LinkPlacement.Base = App.Vector(x, 0, 0)
+            occurrences.append(link)
+        self.doc.recompute()
+        for length in (2, 3):
+            own.Length = length
+            self.doc.recompute()
+            for link, x in zip(occurrences, (20, 40, 60)):
+                shape = linked_shape((link, []))
+                self.assertAlmostEqual(shape.Volume, length * 4 + 1)
+                self.assertAlmostEqual(shape.BoundBox.XMin, x)
+                self.assertAlmostEqual(shape.BoundBox.XMax, x + 6)
+            self.assertEqual(nested.LinkedObject, child)
+            self.assertIn(own, self.part.Group)
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "MixedDefinitionProof.FCStd"
+        names = [o.Name for o in occurrences]
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.recompute()
+        for name in names:
+            self.assertAlmostEqual(linked_shape((self.doc.getObject(name), [])).Volume, 13)
+
+    def testUniqueDefinitionRemapsInputsAndPreservesOtherOccurrences(self):
+        import sys
+        import uuid
+        sys.path.insert(0, str(Path(__file__).parent / "prototypes"))
+        from UniqueDefinition import make_unique
+        sketch = self.sketch("UniqueSketch", [0])
+        extrusion = self.extrude("UniqueExtrusion", sketch, 3)
+        for obj in (self.part, sketch, extrusion):
+            obj.addProperty("App::PropertyString", "SemanticIdentity", "Prototype")
+            obj.SemanticIdentity = str(uuid.uuid4())
+        links = []
+        for x in (20, 40):
+            link = self.doc.addObject("App::Link", "SharedOccurrence")
+            link.setLink(self.part)
+            link.LinkPlacement.Base = App.Vector(x, 0, 0)
+            links.append(link)
+        self.doc.recompute()
+        copied = make_unique(links[0])
+        copied_name = copied.Name
+        copied_sketch = next(o for o in copied.Group if o.isDerivedFrom("Sketcher::SketchObject"))
+        copied_extrude = next(o for o in copied.Group if o.isDerivedFrom("Part::Extrusion"))
+        self.assertEqual(copied_extrude.Base, copied_sketch)
+        self.assertNotEqual(copied_sketch, sketch)
+        old_ids = {o.SemanticIdentity for o in (self.part, sketch, extrusion)}
+        new_ids = {o.SemanticIdentity for o in [copied] + list(copied.Group)}
+        self.assertFalse(old_ids & new_ids)
+        self.assertEqual({o.SourceIdentity for o in [copied] + list(copied.Group)}, old_ids)
+        self.assertEqual(links[1].LinkedObject, self.part)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(links[0].LinkedObject, self.part)
+        self.assertIsNone(self.doc.getObject(copied_name))
+        self.doc.redo()
+        self.doc.recompute()
+        copied = links[0].LinkedObject
+        self.assertEqual({o.SemanticIdentity for o in [copied] + list(copied.Group)}, new_ids)
+        sketch.setDatum(0, App.Units.Quantity("3 mm"))
+        self.doc.recompute()
+        self.assertAlmostEqual(linked_shape((links[0], [])).Volume, math.pi * 4 * 3, places=6)
+        self.assertAlmostEqual(linked_shape((links[1], [])).Volume, math.pi * 9 * 3, places=6)
+        self.assertAlmostEqual(links[0].LinkPlacement.Base.x, 20)
+        saved_identity = copied.SemanticIdentity
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "UniqueDefinitionProof.FCStd"
+        names = [o.Name for o in links]
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.recompute()
+        first, second = [self.doc.getObject(n) for n in names]
+        self.assertNotEqual(first.LinkedObject, second.LinkedObject)
+        self.assertEqual(first.LinkedObject.SemanticIdentity, saved_identity)
+        self.assertAlmostEqual(linked_shape((first, [])).Volume, math.pi * 4 * 3, places=6)
+        self.assertAlmostEqual(linked_shape((second, [])).Volume, math.pi * 9 * 3, places=6)
+
+    def testUniqueRejectsUnsupportedDefinitionWithoutMutation(self):
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent / "prototypes"))
+        from UniqueDefinition import make_unique
+        box = self.doc.addObject("Part::Box", "UnsupportedMember")
+        self.part.addObject(box)
+        occurrence = self.doc.addObject("App::Link", "UnchangedOccurrence")
+        occurrence.setLink(self.part)
+        self.doc.recompute()
+        before = {o.Name for o in self.doc.Objects}
+        with self.assertRaisesRegex(ValueError, "one independent sketch"):
+            make_unique(occurrence)
+        self.assertEqual({o.Name for o in self.doc.Objects}, before)
+        self.assertEqual(occurrence.LinkedObject, self.part)

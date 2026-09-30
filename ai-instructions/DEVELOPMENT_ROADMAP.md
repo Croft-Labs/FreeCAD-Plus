@@ -2,10 +2,13 @@
 
 ## Current focus
 
-- Current batch: 7.1.3g/7.1.3h planar split and explicit merge lineage proofs
-  complete. All 29 grouped checks pass; expected prototype failure now invalidates
-  dependent live geometry instead of leaving a stale merge. No installed module or
-  native build changed. General lineage and production error integration stay open.
+- Current batch: 12.1a mixed definitions and 12.2a bounded Make Unique proof
+  complete. All 32 grouped checks pass in the existing fork; no installed source or
+  native build changed. Native copy remaps the internal sketch link; the test-only
+  wrapper assigns new semantic identities/provenance in one undoable transaction.
+  Next: multi-document/complex-definition identity, missing drawing references,
+  CAM paths/FEM consumers and production architecture decisions.
+- Previous batch: 7.1.3g/h planar split/primary-merge lineage passed 29 checks.
 - Prior attachment/drawing batch: 7.1.3f and 16.2a passed 24 grouped checks.
   Next: missing/ambiguous drawing references, CAM path/FEM consumers, mixed-part
   identity and production target discovery before architecture selection.
@@ -1633,10 +1636,32 @@ partial evidence, not completion of these production workflows.
   logical definition versus document identity. Reuse one definition twice in one
   assembly and once in another; shared edits update loaded dependents, with explicit
   reload/update policy for closed external documents. Prevent double transforms.
+- [ X ] 12.1a Prove a native definition containing a solid and a child occurrence
+  can be instanced twice in one assembly and once in another. Shared dimension edits
+  update all instances; child placement and resulting bounds/volume survive restore.
+  Same-document proof only; external reload policy and product workflow remain open.
 - [   ] 12.2 Productize occurrence overrides, Make Unique and Promote Bodies to
   Part/Component with explicit associative/independent choices. Remap internal
   references and identity for independent copies while preserving provenance;
   occurrence placement stays local. Validate replacement and multi-assembly reuse.
+- [ X ] 12.2a Implement a test-only Make Unique adapter for a definition containing
+  one independent sketch and its native extrusion. Native recursive copy remaps
+  inputs; assign fresh semantic IDs and provenance, relink only the chosen occurrence
+  and preserve its placement. Verify Undo/Redo, independent edits and save/reopen;
+  unsupported definition rejection must not create objects or change the link.
+
+Mixed/unique batch evidence: **32 PASS**, no failures/errors/skips, in
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\mixed-unique-20260929-final\results.json`.
+Seven native capability probes plus ten history adapters, three clone checks,
+seven intent and five lineage checks. `prototype-manifest.json` records source
+hashes. The native mixed-part proof and the bounded copy require no application
+change or native build; no GUI command is installed. MixedDefinitionProof.FCStd
+and UniqueDefinitionProof.FCStd contain native objects with ordinary metadata.
+The copy prototype excludes external dependencies, nested definitions, arbitrary
+feature proxies, general body lineage and production identity/schema migration.
+First run passed 31 checks; the final run adds no-mutation rejection coverage.
+Parents 12.1/12.2 and architecture release gates remain open.
+
 - [   ] 12.3 Add Entire Part/Model/Empty/custom named reference sets. Keep visibility,
   suppression, reference-only BOM role, configuration/arrangement and load state
   independent. Define deliberate full-geometry access outside exposed reference sets.

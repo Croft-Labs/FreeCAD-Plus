@@ -86,7 +86,8 @@ numeric values provide evidence beyond a successful recompute status.
 
 - **Definition/occurrence:** separate shared definition edits from occurrence/local
   edits. App::Link is the reuse candidate; one assembly-local cut is now proven,
-  while mixed geometry/children and general occurrence editing remain open.
+  and mixed geometry/children now has a same-document proof. General occurrence
+  editing and cross-file behavior remain open.
 - **Body results:** input dependencies point to the producing stage and explicit
   output role. Never retarget by label, tree position or raw solid index. Result
   nodes depend on producers; producers do not depend on their result registries.
@@ -131,6 +132,30 @@ shape correspondence, revision-history storage, cross-document remapping, arbitr
 role reassignment, Make Unique or topology reference repair. Existing BodyResult and
 native transactions/property links are reused; no application module was installed.
 
+## Mixed definition and bounded independent-copy proof
+
+Native App::Part already combines its own solid with a child App::Link. Two
+occurrences in one assembly and one in another preserve independent placements;
+shared length edits propagate without double transforms and survive native restore.
+This is a same-document native capability, not cross-file update policy.
+
+[`UniqueDefinition.py`](../../tests/prototypes/UniqueDefinition.py) wraps native
+recursive document copy and link reassignment in one transaction for exactly one
+independent sketch plus native extrusion. Native copy remaps the extrusion Base;
+the wrapper assigns fresh SemanticIdentity values and SourceIdentity provenance.
+Only the selected occurrence becomes independent; placement remains unchanged.
+Undo removes the new definition and restores sharing; Redo restores the same new
+identities. Subsequent source edits change the still-shared instance alone.
+Save/reopen preserves the distinction. An unsupported definition fails before
+mutation. Three added checks join the existing suite for 32 passing checks.
+
+This supports native-copy reuse, not a production Make Unique implementation.
+Complex or nested definitions, external dependencies, custom feature proxies,
+repeated unique-copy provenance and cross-document lineage require separate design.
+No installed module/schema or UI changed. The fixtures use native types with
+metadata, so recompute does not require this test helper after creation.
+Roadmap 12.1a/12.2a records evidence and remaining parent gates.
+
 ## Remaining decision gates and consumers
 
 Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
@@ -138,7 +163,7 @@ Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
 - Extend the explicit planar split/primary-merge proof to general lineage, ambiguous
   role changes and downstream reference repair, including invalid input and cycles.
 - Exercise changing/removed attachment topology, sheets, mixed definition/occurrence
-  content and independent copies beyond the single planar attachment/local-cut proofs.
+  content and independent copies beyond the bounded same-document native proofs.
 - Check missing/ambiguous TechDraw references after topology changes, CAM path invalidation, FEM
   supports/loads and broader Draft references through edit, undo and restore.
   Native CAM job-model refresh and empty Draft clone invalidation are established;
