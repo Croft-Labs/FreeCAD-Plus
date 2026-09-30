@@ -1362,3 +1362,45 @@ class TestCAMInvalidInputs(PathTestWithAssets):
             dressup.touch()
             self.doc.recompute()
             self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testPlungeEstablishesAndFinishesAtClearance(self):
+        dressup = self.makePlunge()
+        commands = dressup.Path.Commands
+        first_xy = next(i for i, cmd in enumerate(commands)
+                        if cmd.Name == "G0" and "X" in cmd.Parameters)
+        self.assertGreater(first_xy, 0)
+        self.assertEqual(commands[first_xy - 1].Name, "G0")
+        self.assertEqual(commands[first_xy - 1].Parameters["Z"], self.op.ClearanceHeight.Value)
+        self.assertEqual(commands[-1].Name, "G0")
+        self.assertEqual(commands[-1].Parameters["Z"], self.op.ClearanceHeight.Value)
+
+    def testPlungeDrillingCyclesSetFeedAndCancel(self):
+        dressup = self.makePlunge()
+        self.op.StartDepth = 6
+        dressup.UseDrillingCycle = True
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        commands = dressup.Path.Commands
+        cycles = [i for i, cmd in enumerate(commands) if cmd.Name in ("G81", "G82", "G83", "G73")]
+        self.assertTrue(cycles)
+        for i in cycles:
+            self.assertEqual(commands[i].Parameters["F"], self.op.ToolController.VertFeed.Value)
+            self.assertEqual(commands[i + 1].Name, "G80")
+            self.assertEqual(commands[i + 2].Name, "G0")
+            self.assertEqual(commands[i + 2].Parameters["Z"], self.op.SafeHeight.Value)
+        first_xy = next(i for i, cmd in enumerate(commands) if "X" in cmd.Parameters)
+        self.assertEqual(commands[first_xy - 1].Parameters["Z"], self.op.ClearanceHeight.Value)
+        self.assertEqual(commands[-1].Parameters["Z"], self.op.ClearanceHeight.Value)
+
+    def testPlungeRejectsZeroFeedAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makePlunge()
+        self.op.ToolController.VertFeed = 0
+        self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        self.op.ToolController.VertFeed = 50
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)

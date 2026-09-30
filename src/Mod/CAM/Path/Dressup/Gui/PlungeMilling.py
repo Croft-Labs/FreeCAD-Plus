@@ -175,6 +175,8 @@ class ObjectDressup:
         step = obj.StepOver.Value
         step_min = step / 2
         vert_feed = toolController.VertFeed.Value
+        if not math.isfinite(vert_feed) or vert_feed <= 0:
+            raise ValueError("Plunge Milling requires a positive finite vertical feed rate")
         machine = MachineState()
 
         commands = []
@@ -203,6 +205,8 @@ class ObjectDressup:
                     if last and Path.Geom.pointsCoincide(p, last, step_min):
                         # skip too close point
                         continue
+                    if last is None:
+                        commands.append(Path.Command("G0", {"Z": baseOp.ClearanceHeight.Value}))
                     commands.append(Path.Command("G0", {"X": p.x, "Y": p.y}))
                     if obj.UseDrillingCycle:
                         v1 = FreeCAD.Vector(p.x, p.y, baseOp.StartDepth.Value)
@@ -214,14 +218,21 @@ class ObjectDressup:
                             retractheight=peck_retract,
                             chipBreak=obj.ChipBreak,
                         )
+                        for drillCmd in drillCmds:
+                            parameters = dict(drillCmd.Parameters)
+                            parameters["F"] = vert_feed
+                            drillCmd.Parameters = parameters
                         commands.extend(drillCmds)
+                        commands.append(Path.Command("G80", {}))
                     else:
                         commands.append(Path.Command("G1", {"Z": p.z, "F": vert_feed}))
-                        commands.append(Path.Command("G0", {"Z": baseOp.SafeHeight.Value}))
+                    commands.append(Path.Command("G0", {"Z": baseOp.SafeHeight.Value}))
                     last = p
 
             machine.addCommand(cmd)
 
+        if last is not None:
+            commands.append(Path.Command("G0", {"Z": baseOp.ClearanceHeight.Value}))
         obj.Path = Path.Path(commands)
 
 

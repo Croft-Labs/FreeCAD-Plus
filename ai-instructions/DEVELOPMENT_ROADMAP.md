@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2bk/bl guard Dogbone stale inputs and invalid cutter data.
+- Current batch: 16.2bm/bn establish Plunge Milling entry/exit clearance and
+  between-position retracts, validate feed and set/cancel drilling cycles explicitly.
+  Grouped validation: 82 passes, zero failures/errors/skips. No native rebuild/release.
+- Previous batch: 16.2bk/bl guard Dogbone stale inputs and invalid cutter data.
   Grouped CAM checks: 79 passes; Dogbone geometry suites: 24 passes. Final runs
   have zero failures/errors/skips. Python staging; no native rebuild or release.
 - Previous batch: 16.2bi/bj guard Plunge Milling base inputs and original Boundary
@@ -3397,6 +3400,26 @@ failures use real documents; the SurfaceScan fixture does not insert corners, so
 existing geometry suites provide complementary coverage. Skipped native execution
 may retain export-blocked caches. Python staging into engine 2df76790b4; no native
 rebuild, release or physical GUI/machine acceptance. Broad 16.2 remains open.
+
+- [ X ] 16.2bm Establish Plunge Milling clearance before first XY positioning and
+  at completion; retract to safe height between both ordinary and cycle plunges.
+  Verified ordinary/cycle command sequences in grouped validation.
+- [ X ] 16.2bn Require positive finite vertical feed and put it on each generated
+  drilling cycle; cancel each cycle with G80 before subsequent travel.
+  Verified cycle feed/cancellation and zero-feed rejection/recovery.
+
+Plunge motion evidence: `cam-plunge-motion-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **82 PASS, zero failures/errors/
+skips** (77 CAM invalid-input/workflow, five holding-tag checks). Both source tasks
+preceded grouped validation; macro PASS and process ended. Source/staged PlungeMilling.py
+SHA256: `6FC91C1FA0FD9617B733AA21A88EE20BB87F36062BB7DC4282E05910E10C1AE4`.
+Initial `-batch` had 80 passes/two assertion failures because FreeCAD adds F to rapid
+commands; assertions now check the required Z rather than exact parameter dictionaries.
+Final source also raises to SafeHeight after cycle cancellation; this was added during
+review and verified in the final run. Ordinary plunge and G81 command sequences are
+covered; individual peck/dwell variants, controller postprocessing and physical machine
+acceptance remain pending. Python staging into engine 2df76790b4; no native rebuild
+or release. These bounded fixes do not complete the broader CAM acceptance gates.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

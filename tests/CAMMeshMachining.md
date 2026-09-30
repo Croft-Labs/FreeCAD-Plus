@@ -266,3 +266,10 @@ caches. Invalid-tool checks cover missing controller/tool and zero, negative or
 infinite diameter, export rejection and repair. Existing Dogbone corner geometry
 unit tests supplement the native SurfaceScan failure fixtures, which do not
 exercise actual corner insertion. Test doubles expose clean dependency state.
+
+
+Plunge Milling motion checks require explicit clearance before the first XY move
+and at completion, and a safe-height retract between generated plunge positions.
+Drilling cycles carry the controller's vertical feed and cancel with G80 before
+subsequent travel. A zero vertical feed must reject output/export and recover when
+repaired. These are command-level checks, not postprocessor or machine acceptance.
