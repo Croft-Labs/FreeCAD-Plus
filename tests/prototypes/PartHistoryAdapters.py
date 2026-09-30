@@ -11,6 +11,22 @@ import Part
 from BasicShapes.ShapeReferences import linked_shape, update_placement_support, validate_link
 
 
+def current_result_shape(result):
+    """Test-only consumer boundary; a retained Shape is not proof of readiness.
+
+    Does not recompute or clear cached shapes and is not installed in exporters.
+    """
+    for dependency in [result] + list(result.OutListRecursive):
+        if "Invalid" in dependency.State or "Touched" in dependency.State:
+            raise ValueError("Result is not current: " + dependency.Name)
+    if getattr(result, "ResultStatus", None) != "Ready":
+        raise ValueError("Result is unavailable")
+    shape = linked_shape((result, []))
+    if shape.isNull():
+        raise ValueError("Result has no geometry")
+    return shape.copy()
+
+
 class PersistentProxy:
     def dumps(self):
         return None

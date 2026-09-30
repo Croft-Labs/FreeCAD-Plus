@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7u/v complete as test-only planar reference repair checks.
+Latest roadmap batch: 11.7w/x complete as test-only current-result access checks.
+Native downstream solid remains cached after reference failure, but the new accessor
+rejects invalid/touched dependencies. Repair/restore recover access; recompute is
+explicit and returned shapes are independent copies.
+Grouped validation: 50 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reference-consumers-20260930-batch.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Application exporters/GUI/other consumers do not yet use this test-only accessor.
+
+Previous roadmap batch: 11.7u/v complete as test-only planar reference repair checks.
 Missing face clears adapter output and rejects preview; face repair Undo/Redo and
 restore pass. Deleted-source replacement needs explicit sketch face reselection;
 obsolete placement dependencies clear and later source motion follows correctly.

@@ -281,6 +281,15 @@ movement pass, with result identity retained. Grouped evidence totals 48 passes.
 This does not establish downstream cached-shape clearing or export safety during
 failure; those remain consumer gates distinct from successful recovery.
 
+Roadmap 11.7w/x adds test-only `current_result_shape` as an explicit consumer
+boundary. It checks result/dependency Invalid and Touched state, Ready status and
+nonempty geometry, then returns a copy without recomputing. The fixture confirms
+that native upstream failure leaves a cached downstream solid, while this accessor
+refuses it. Repair/restore recover access; pending source motion requires explicit
+recompute and modifying the returned copy cannot change the stored result. Grouped
+evidence totals 50 passes. No production consumer/exporter uses this helper yet;
+cached-shape clearing and general consumer integration remain separate gates.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document

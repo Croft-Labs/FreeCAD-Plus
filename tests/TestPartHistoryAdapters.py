@@ -818,6 +818,45 @@ class TestPartHistoryAdapters(unittest.TestCase):
                                 - App.Vector(0, 0, 5)).Length, 0, places=6)
         self.assertNotIn("Invalid", self.doc.LeftResult.State)
 
+    def testConsumerRejectsCachedResultAfterReferenceFailureAndRecovers(self):
+        from SketchReattachment import reattach_planar
+        reference = self.crossPartBinderFixture()
+        reattach_planar(self.profile, reference, "Face1", "preserve-world")
+        result = self.doc.LeftResult
+        volume = adapters.current_result_shape(result).Volume
+        reference.Source = (self.doc.RemotePlane, ["Face99"])
+        self.doc.recompute()
+        self.assertIn("Invalid", reference.State)
+        # Native dependency failure skips downstream execution, retaining its solid.
+        self.assertAlmostEqual(result.Shape.Volume, volume, places=6)
+        with self.assertRaisesRegex(ValueError, "not current"):
+            adapters.current_result_shape(result)
+        reference.Source = (self.doc.RemotePlane, ["Face1"])
+        self.doc.recompute()
+        self.assertAlmostEqual(adapters.current_result_shape(result).Volume, volume, places=6)
+        self.saveReopen("ConsumerReferenceRecoveryProof")
+        self.assertAlmostEqual(adapters.current_result_shape(self.doc.LeftResult).Volume,
+                               volume, places=6)
+
+    def testConsumerRejectsPendingRecomputeAndReturnsIndependentShape(self):
+        from SketchReattachment import reattach_planar
+        reference = self.crossPartBinderFixture()
+        reattach_planar(self.profile, reference, "Face1", "preserve-world")
+        result = self.doc.LeftResult
+        before = adapters.current_result_shape(result).CenterOfMass
+        self.doc.ReferencePart.Placement.Base.x += 6
+        with self.assertRaisesRegex(ValueError, "not current"):
+            adapters.current_result_shape(result)
+        self.assertIn("Touched", self.doc.ReferencePart.State)
+        self.doc.recompute()
+        current = adapters.current_result_shape(result)
+        self.assertAlmostEqual((current.CenterOfMass - before - App.Vector(6, 0, 0)).Length,
+                               0, places=6)
+        center = current.CenterOfMass
+        current.translate(App.Vector(100, 0, 0))
+        self.assertAlmostEqual((adapters.current_result_shape(result).CenterOfMass
+                                - center).Length, 0, places=6)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

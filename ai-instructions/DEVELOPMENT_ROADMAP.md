@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7u/v validate missing-face repair and deleted-source replacement
+- Current batch: 11.7w/x prototype a current-result accessor that rejects invalid
+  or unrecomputed dependencies and returns an independent shape copy. Grouped
+  validation: 50 passes, zero failures/errors/skips; no native rebuild. This is
+  not installed in application consumers/exporters; production integration pending.
+- Previous batch: 11.7u/v validate missing-face repair and deleted-source replacement
   for planar references. Grouped validation: 48 passes, zero failures/errors/skips;
   no native rebuild. Deleted-source recovery requires explicit sketch face reselection;
   production repair UI and broad consumer invalidation remain pending.
@@ -1944,6 +1948,25 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7v Report deleted source explicitly and remove obsolete placement
   dependencies. Verify source replacement plus deliberate sketch face reselection,
   restore and subsequent source-part movement.
+- [ X ] 11.7w Prototype an explicit consumer accessor that refuses cached results
+  after dependency failure. Prove the old solid remains cached but access rejects;
+  source repair and save/reopen restore successful access.
+- [ X ] 11.7x Reject pending recompute without silently recomputing; verify source
+  movement appears after explicit recompute and returned-shape mutation cannot
+  change the stored/current result.
+
+Consumer boundary evidence: `reference-consumers-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **50 PASS, zero failures/
+errors/skips** (11 capability, 34 adapter, five lineage checks). Macro PASS; process
+ended. Both tasks preceded grouped testing using engine source 2df76790b4.
+`current_result_shape` in `tests/prototypes/PartHistoryAdapters.py` checks native
+Invalid/Touched state across the result and dependencies, Ready status and nonempty
+geometry, returning a copy. Native failure can skip downstream execution and retain
+the old solid; the test establishes that this accessor rejects that solid. It does
+not clear caches or retrofit application exporters, GUI, CAM, FEM or TechDraw.
+Prototype SHA256: `21B509DEBE9B5D04DF0D155E07AD65CF5A9F475445B07AC1D31F2550F459A32C`.
+No installed module, native rebuild or release update. General consumer integration,
+dependency-cycle/large-graph behavior and production result contracts remain open.
 
 Reference repair evidence: `reference-repair-20260930-verified/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **48 PASS, zero failures/
