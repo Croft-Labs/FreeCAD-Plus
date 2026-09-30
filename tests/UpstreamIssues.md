@@ -114,11 +114,12 @@ current build has `BUILD_SURFACE=OFF`; exact Surface-object integration remains
 pending for a relevant batched build. Neither result certifies the legacy backend,
 a postprocessor or physical machine motion.
 
-## Freeform slowdown (#26300): known failing, opt-in reproduction
+## Freeform slowdown (#26300): opt-in regression
 
-This is a diagnostic regression, **not a passing acceptance test**. The current
-replacement operation exceeds the 120-second limit while projecting the selected
-faces. Do not add it to the default in-process suite until fixed.
+The baseline exceeded 120 seconds in selected-face projection. The U.23 correction
+passes this reproduction in the existing fork; keep it opt-in because it requires
+an externally downloaded fixture. The default suite contains self-contained
+analytic projection checks in TestIssueFreeformBoundary.py.
 
 Download the public issue attachment
 `https://github.com/user-attachments/files/24261352/Freeform.3D.Surface.CAM.zip`
@@ -144,16 +145,34 @@ Python proxies or running the saved legacy operation. It maps the nine Face
 selections, 5 mm endmill, Line pattern, 1 mm sampling, 5% stepover and saved depths
 onto a fresh PlanarSurface operation. Modern selected-face masking replaces the
 legacy BoundaryEnforcement=False setting; the replay does not establish identical
-legacy behavior. Success requires nonempty finite cutting commands and varying Z,
-with elapsed time/fixture hash in freeform-details.json. Additional coverage and
-simulation checks remain necessary before certifying a future algorithm change.
+legacy behavior. Success requires nonempty finite cutting commands, varying Z,
+valid nonempty face masks and every XY cutting endpoint inside a mask. Elapsed
+generation time, fixture hash, mask areas and endpoint count are recorded in
+freeform-details.json. This does not certify every swept segment or machine motion.
 
 A faulthandler stack is written every 20 seconds during execution. Both available
 baseline samples point to Path.Area.getShape in surface_common._boundary_via_area,
 called from generate_pattern_mask. The 120-second run was stopped without a crash;
 this is evidence of excessive runtime, not proof of an infinite loop. Experimental
 individual/pair projections were not retained because they failed or stalled on
-trimmed B-spline faces. The existing application code has been restored.
+trimmed B-spline faces. Those candidates were removed before the U.23 correction.
+
+The retained freeform cutting projector tessellates each input face using the
+operation's LinearDeflection, unions consistently oriented XY triangles with
+NonZero filling, removes holes for the existing cutting-outline contract, and
+offsets the footprint. Explicit avoidance keeps its existing separate pipeline.
+No exact-HLR retry or bounding-box fallback occurs after mesh failure.
+
+`freeform-boundary-20260929-final/results.json` reports 91 PASS with no failures,
+errors or skips: nine new geometry/failure checks, the original fixture, and 81
+related CAM checks. The fixture generated in 14.05 seconds and returned 4,475
+commands; 4,118 cutting endpoints passed containment checks. The full fixture
+test takes longer because it performs these geometric assertions afterward.
+Source/installed module hash is recorded in roadmap U.23 and module-manifest.json.
+No native build was needed. This remains a tessellated approximation, not exact
+CAD projection or a universal timeout guarantee. Native cancellation and legacy
+operation acceptance remain pending. Default macro now has 106 tests, excluding
+the external fixture; that entire default has not run as one batch.
 
 ### Partial boundary failures (#27950 / #27751)
 
@@ -183,8 +202,8 @@ The resulting 77-test batch passed without failures/errors/skips in
 `line-coverage-20260929-final/results.json`. Red fixtures failed against the old
 module. This C++ change was validated after a targeted compile/relink of
 surface_generator only; see roadmap U.21 for the installed binary hash. The new
-cases are registered in the default issue macro, which now has 93 tests; that
-entire default suite has not been run together.
+cases were registered in the default issue macro (93 tests at U.21); that
+entire default suite was not run together.
 
 Coverage concerns transverse end strips within the current polygon clipping
 contract. It does not certify arbitrary contour finishing or the original legacy
@@ -207,4 +226,5 @@ Avoidance requests reaching TechDraw's outer-only fallback now stop, including
 triangulated avoidance selections routed to it. The change does not implement a
 new projection engine or resolve #26300. Successful hole-preserving projection,
 direct STL operations and holding tabs retain passing regressions. The default
-issue macro now has 97 tests; that complete default has not run together.
+issue macro had 97 tests at U.22; U.23 expands it to 106. That complete default
+has not run together.

@@ -3,14 +3,17 @@
 ## Current focus
 
 - Active implementation: [prioritized upstream issue work](#upstream-issue-work).
+  Latest freeform fix: U.23 bypasses the reproduced #26300 exact-projection stall
+  using tolerance-controlled mesh silhouettes. The fixture generates in 14 seconds;
+  all 91 CAM checks pass without a rebuild. U.15 cancellation acceptance remains.
   Latest boundary correction: avoidance no longer uses a fallback that fills
   selected holes after projection fails; U.22 records 81 passing CAM checks.
   Latest geometry fix: #6864 final-strip coverage now passes in the compiled
   replacement generator; U.21 records the 77-test CAM batch.
   Latest safety fix: partial boundary projection/union can no longer drop selected
   regions; U.20 records 14 focused and 59 related passes without a build.
-  Latest diagnosis: #26300 also stalls in the replacement workflow; see U.19.
-  No projection experiment was retained. Latest implemented fix: modern CAM avoidance now stops on boundary failures or unsupported
+  U.19 retains the original #26300 timeout evidence, superseded for generation by
+  U.23. Modern CAM avoidance now stops on boundary failures or unsupported
   strategy switches instead of ignoring exclusions. Python-only update installed;
   all 67 focused/related CAM regressions pass. Remaining child cases: U.14-U.16.
   Audit inherited fixes and changed workflow applicability first. Mirror #32706
@@ -159,12 +162,13 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   A generated non-planar B-spline exclusion independently passes cutting-segment
   exclusion and coverage-on-both-sides checks. Do not generalize to arbitrary
   freeform faces or mark the upstream issue closed.
-- [   ] U.15 #26300: correct the reproduced freeform boundary-projection slowdown.
-  The replacement operation is affected; see U.19. A solution must preserve all
-  selected regions, holes, cutter offsets, curved-face coverage and cancellation;
-  do not substitute a bounding box or omit unprojectable faces. Keep legacy
-  applicability distinct. A tolerance-controlled projection alternative needs
-  geometry/coverage evidence before adopting it; kernel replacement is not implied.
+- [   ] U.15 #26300: freeform generation corrected and geometry-validated in U.23;
+  native task cancellation acceptance remains pending. The replacement operation
+  was affected (U.19), so UI changes did not obsolete this backend issue. U.23
+  preserves the existing outer cutting silhouette, separate avoidance holes,
+  selected regions and cutter offsets; no bounding-box substitution or dropped
+  failed faces. Legacy Surface applicability and machine/post acceptance remain
+  separate. Do not mark the whole upstream report closed from the modern replay.
 - [ X ] U.16 #6864: reproduced missing transverse edge passes in the current
   C++ Line generator, so the replacement UI/backend did not obsolete the defect.
   Add clipped finishing passes at each contour's transverse limits while retaining
@@ -272,13 +276,43 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   one batch. Exact U.14 GeomFillSurface and U.15 freeform timeout remain open.
   No legacy operation migration, postprocessor/machine acceptance or release.
 
+- [ X ] U.23 Correct the reproduced #26300 freeform projection stall in the modern
+  cutting-boundary pipeline. B-spline/Bezier selections use per-face tessellation
+  at the operation's LinearDeflection, consistently oriented XY triangle union,
+  and one offset per connected input group. Reuse Path.Area's NonZero polygon
+  union without exact HLR or quadratic triangle nesting. Fill cutting-outline
+  holes as Outline=True already did; explicit avoidance is subtracted separately.
+  Failed face meshing, empty/invalid projection and invalid tolerance raise rather
+  than dropping geometry or retrying the stalled exact projector. Non-freeform
+  and avoidance projection remain on their existing paths. No new dependency,
+  property, saved type or native build.
+  Nine new analytic/fault checks cover seams, overlaps/reversed faces, islands,
+  curved silhouette extrema, hole/avoidance behavior and failed/edge-on meshes.
+  The original fixture now also verifies valid nonempty masks and every XY cutting
+  endpoint inside the mask. `freeform-boundary-20260929-final/results.json` reports
+  91 PASS, no failures/errors/skips: 9 boundary, 1 fixture and the prior 81 CAM
+  checks. `freeform-details.json`: 14.05 seconds generation, 4,475 commands,
+  4,235 G1 commands, 4,118 checked cutting endpoints, mask area 1336.60025 mm2.
+  Baseline exceeded 120 seconds (U.19). The full fixture test also spends time on
+  geometric assertions; elapsed generation is not whole-suite runtime.
+  Earlier triangle-wire nesting timed out; a direct libarea experiment canceled
+  overlaps under EvenOdd filling. Both failed candidates were discarded; overlap
+  and sphere controls reject them. Retained implementation uses NonZero union.
+  Source/installed surface_common.py SHA-256 in `module-manifest.json`:
+  `873FA60DA4BDB414A1749219C8EBEC084F42DECBD55A33E537CD414009CB8D0C`.
+  Default issue suite now has 106 tests; external-fixture test stays opt-in.
+  Full default suite was not run together. This is a tessellated approximation,
+  not an exact CAD boundary or general guarantee against all slow geometry.
+  Native cancellation, legacy operation replay and machine/post acceptance are
+  not established. Exact GeomFillSurface integration U.14 remains pending.
+
 CAM avoidance evidence under the external validation root below:
 `avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
 checks (two valid geometry controls passed). After correction,
 `avoidance-tests-20260929-193013/results.json` reports 67 PASS, no errors/skips,
 process 0. Eight focused, 12 common-generator, seven pattern-generator, 18 unified
 operation and 22 STL/tab tests. `module-manifest.json` records installed Python
-hashes. The expanded default issue macro now has 97 tests; it has not been run as a
+hashes. The expanded default issue macro now has 106 tests; it has not been run as a
 single batch. Preserve the separate 75-test native and 67-test CAM evidence.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.

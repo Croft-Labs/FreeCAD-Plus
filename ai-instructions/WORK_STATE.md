@@ -1,5 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
+Latest implementation (2026-09-29): U.23 corrects the reproduced modern #26300
+freeform cutting-boundary stall. B-spline/Bezier selections now use tolerance-based
+tessellation and NonZero polygon union; failure cannot drop selected faces.
+All 91 CAM checks pass in `freeform-boundary-20260929-final`, including the
+original fixture: 14.05 seconds generation versus the baseline 120-second timeout,
+4,475 commands and 4,118 cutting endpoints inside the mask. Python-only update
+installed, no rebuild. Module hash and limits are recorded in U.23.
+U.15 native cancellation and U.14 exact GeomFillSurface acceptance remain pending;
+legacy Surface and machine/post acceptance are not claimed. No test process remains.
+
 Latest implementation (2026-09-29): U.22 rejects the modern CAM avoidance
 fallback that silently filled selected holes when projection failed. The error
 clears the stale operation path. Successful primary projection and outer-only

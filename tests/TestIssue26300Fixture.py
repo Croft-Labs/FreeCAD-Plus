@@ -13,11 +13,13 @@ from pathlib import Path
 import time
 import xml.etree.ElementTree as ET
 import zipfile
+from unittest.mock import patch
 import FreeCAD as App
 import Part
 from CAMTests.PathTestUtils import PathTestWithAssets
 from Path.Main import Job
 from Path.Op import PlanarSurface
+from Path.Base.Generator import surface_common
 
 
 class TestIssue26300Fixture(PathTestWithAssets):
@@ -57,10 +59,21 @@ class TestIssue26300Fixture(PathTestWithAssets):
                 op.setExpression(name, None)
                 setattr(op, name, value)
             started = time.monotonic()
+            masks = []
+            generate_mask = surface_common.generate_pattern_mask
+
+            def capture_mask(*args, **kwargs):
+                mask = generate_mask(*args, **kwargs)
+                self.assertTrue(mask.isValid())
+                self.assertGreater(mask.Area, 0, "Projection produced no filled machining region")
+                masks.append(mask)
+                return mask
+
             with (Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "freeform-stack.log").open("w") as trace:
                 faulthandler.dump_traceback_later(20, repeat=True, file=trace)
                 try:
-                    op.Proxy.execute(op)
+                    with patch.object(surface_common, "generate_pattern_mask", side_effect=capture_mask):
+                        op.Proxy.execute(op)
                 finally:
                     faulthandler.cancel_dump_traceback_later()
             elapsed = time.monotonic() - started
@@ -70,10 +83,24 @@ class TestIssue26300Fixture(PathTestWithAssets):
             self.assertTrue(all(math.isfinite(v) for c in commands for v in c.Parameters.values()))
             self.assertGreater(len({c.Parameters.get("Z") for c in cuts if "Z" in c.Parameters}), 2,
                                "Freeform path has no height variation")
+            self.assertTrue(masks)
+            position = App.Vector()
+            checked = 0
+            for command in commands:
+                position = App.Vector(*(command.Parameters.get(axis, getattr(position, axis.lower()))
+                                        for axis in "XYZ"))
+                if command.Name == "G1" and ("X" in command.Parameters or "Y" in command.Parameters):
+                    point = App.Vector(position.x, position.y, 0)
+                    self.assertTrue(any(mask.isInside(point, 0.01, True) for mask in masks),
+                                    f"Cutting endpoint outside selected-face mask: {point}")
+                    checked += 1
+            self.assertGreater(checked, 0)
             evidence = {"fixture_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
                         "faces": faces, "parameters": parameters, "seconds": elapsed,
                         "commands": len(commands), "cutting_commands": len(cuts),
-                        "shape_faces": len(shape.Faces), "shape_volume": shape.Volume}
+                        "shape_faces": len(shape.Faces), "shape_volume": shape.Volume,
+                        "mask_areas": [mask.Area for mask in masks],
+                        "cutting_endpoints_checked": checked}
             (Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "freeform-details.json").write_text(
                 json.dumps(evidence, indent=2))
         finally:

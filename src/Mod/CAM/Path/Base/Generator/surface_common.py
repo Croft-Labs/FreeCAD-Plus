@@ -26,6 +26,8 @@ These are pure functions with no FreeCAD document access — tool parameters
 and geometry are passed in by the operation wrapper.
 """
 
+import math
+
 import Path
 import Part
 import FreeCAD
@@ -218,9 +220,9 @@ def make_safe_cutter(
 
 def create_boundary_face(faces, offset=0.0, tolerance=0.005, avoids=False, compound=None):
     """
-    Creates a flat 2D boundary face from 3D faces using Path.Area's HLR
-    projection (Outline mode) as primary method, falling back to
-    TechDraw.findShapeOutline() for outer outlines if projection fails.
+    Creates a flat 2D boundary face from 3D faces. Freeform cutting silhouettes
+    use tessellation at the supplied tolerance; other faces use Path.Area's HLR
+    projection, falling back to TechDraw for outer outlines if projection fails.
     Avoidance requires hole-preserving projection and rejects that fallback.
 
     Path.Area with Outline=True uses OCC's HLRBRep_Algo to project the
@@ -232,7 +234,7 @@ def create_boundary_face(faces, offset=0.0, tolerance=0.005, avoids=False, compo
             used for mesh detection; pass the real list even when
             `compound` is given too, so mesh detection isn't skipped.
         offset (float): Offset to apply to the resulting boundary.
-        tolerance (float): Tolerance for wire joining.
+        tolerance (float): Linear deflection for freeform silhouette tessellation.
         avoids (bool): 'True' only from _preprocess_avoid_faces.
         compound (Part.Shape, optional): A pre-built shape to use directly
             instead of rebuilding one from `faces` — pass this when the
@@ -243,7 +245,7 @@ def create_boundary_face(faces, offset=0.0, tolerance=0.005, avoids=False, compo
         Part.Shape: The 2D boundary face, or None on failure.
 
     Raises:
-        ValueError: Avoidance would require a lossy outline fallback.
+        ValueError: Freeform projection fails or avoidance requires a lossy fallback.
     """
     if not faces and not compound:
         Path.Log.warning(
@@ -257,12 +259,80 @@ def create_boundary_face(faces, offset=0.0, tolerance=0.005, avoids=False, compo
     outline = bool(not avoids)
     is_triangulated = _is_triangulated_mesh(faces)
 
+    # Exact HLR of trimmed freeform faces can stall before toolpath generation.
+    # Use the operation's tessellation tolerance for their cutting silhouette.
+    # Avoidance keeps its separate hole-preserving projection contract.
+    if outline and any(
+        isinstance(face.Surface, (Part.BSplineSurface, Part.BezierSurface))
+        for face in compound.Faces
+    ):
+        return _boundary_via_mesh(compound, offset, tolerance)
+
     if not is_triangulated:
         result = _boundary_via_area(compound, offset, outline)
         if result is not None:
             return result
 
     return _boundary_via_techdraw(compound, offset, outline)
+
+
+def _boundary_via_mesh(compound, offset, tolerance):
+    """Project a freeform cutting silhouette without exact hidden-line removal.
+
+    Union consistently oriented XY triangles with CAM's existing polygon engine.
+    Fill interior holes, matching the cutting Outline=True contract, then offset
+    the complete footprint once. Avoidance is applied separately by the caller.
+    Tessellation uses the operation's linear deflection; generate_pattern_mask
+    also insets by that tolerance. Projection failure must not restore HLR or a
+    bounding rectangle, either of which would defeat this path's contract.
+    """
+    if not math.isfinite(tolerance) or tolerance <= 0:
+        raise ValueError("Freeform boundary tolerance must be finite and positive")
+    triangles_xy = []
+    for face in compound.Faces:
+        vertices, triangles = face.tessellate(tolerance)
+        if not triangles:
+            raise ValueError("Failed to mesh a selected freeform boundary face")
+        for triangle in triangles:
+            points = [vertices[i] for i in triangle]
+            if not all(math.isfinite(value) for p in points for value in (p.x, p.y, p.z)):
+                raise ValueError("Non-finite coordinates in freeform boundary mesh")
+            cross = (
+                (points[1].x - points[0].x) * (points[2].y - points[0].y)
+                - (points[1].y - points[0].y) * (points[2].x - points[0].x)
+            )
+            if cross == 0:
+                continue  # An edge-on triangle contributes no projected area.
+            if cross < 0:
+                points.reverse()
+            points = [FreeCAD.Vector(p.x, p.y, 0) for p in points]
+            triangles_xy.append(Part.makePolygon(points + [points[0]]))
+
+    if not triangles_xy:
+        raise ValueError("Freeform boundary mesh has no projected area")
+    projection = Path.Area()
+    projection.setPlane(Part.makeCircle(1))
+    # All triangles are already CCW. Reorient's nesting pass is quadratic and
+    # inappropriate for overlapping triangles; NonZero union keeps overlaps.
+    projection.setParams(
+        Outline=False, Coplanar=0, Fill=1, Reorient=False,
+        SubjectFill=1, Offset=0,  # Clipper2 FillRule::NonZero
+    )
+    projection.add(Part.makeCompound(triangles_xy))
+    footprint = projection.getShape()
+    if footprint.isNull() or not footprint.isValid() or not footprint.Faces:
+        raise ValueError("Invalid projected freeform boundary")
+
+    # Outer-only outlines may contain multiple islands. Filling their holes can
+    # overlap another island, so union again before applying cutter compensation.
+    engine = Path.Area()
+    engine.setPlane(Part.makeCircle(1))
+    engine.setParams(Outline=False, Coplanar=0, Fill=1, Offset=offset)
+    engine.add(Part.makeCompound([Part.Face(face.OuterWire) for face in footprint.Faces]))
+    boundary = engine.getShape()
+    if boundary.isNull() or not boundary.isValid():
+        raise ValueError("Failed to offset the projected freeform boundary")
+    return boundary
 
 
 def _boundary_via_area(compound, offset, outline):
@@ -288,7 +358,7 @@ def _boundary_via_area(compound, offset, outline):
             Outline=outline,
             Offset=offset,
             Coplanar=0,  # CoplanarNone — don't restrict to coplanar
-            Fill=2,  # FillFace
+            Fill=2,  # FillAuto (the input contains faces)
         )
         result = area.getShape()
 

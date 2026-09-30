@@ -41,12 +41,15 @@ impact order for the current workflow:
   projection failed. All 81 focused/related CAM checks pass in one batch (U.22),
   including primary hole preservation and stale-path removal. Avoidance requiring
   that fallback now reports an error; legacy backend unchanged. Exact
-  GeomFillSurface acceptance and #26300 remain open.
+  GeomFillSurface acceptance remains open; the #26300 generation correction is below.
 - [#26300](https://github.com/FreeCAD/FreeCAD/issues/26300): freeform surfacing hangs
-  or crashes. Still applicable: saved geometry/face selections also exceed a
-  120-second limit in PlanarSurface. Stack traces identify Path.Area boundary
-  projection, before OCL cutting. Two-face projection experiments did not resolve
-  the case and were discarded. Opt-in bounded reproduction retained; fix pending.
+  or crashes. Reproduced in PlanarSurface despite UI changes, then corrected locally
+  with tolerance-controlled mesh projection for freeform cutting boundaries (U.23).
+  The saved geometry/face selections now generate in 14 seconds instead of timing
+  out at 120 seconds. All 91 CAM checks pass, including geometric controls and
+  4,118 fixture cutting endpoints inside the mask. Native cancellation, legacy
+  operation replay and machine/post acceptance remain separate pending checks;
+  this does not close the upstream report.
 - [#6864](https://github.com/FreeCAD/FreeCAD/issues/6864): line-pattern stepover can
   leave the final strip uncut. Reproduced in the replacement C++ generator;
   fixed locally with additional clipped passes at each contour's transverse

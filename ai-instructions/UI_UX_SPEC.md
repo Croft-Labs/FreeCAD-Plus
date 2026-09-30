@@ -207,6 +207,12 @@ an error instead of silently ignoring it. Return to Parallel or clear its avoide
 face selection before switching. This is separate from Holding Tabs, which remain
 supported by both Parallel and Waterline.
 
+For selected freeform CAD cutting faces, **Linear Deflection** also controls the
+approximation of the projected machining boundary. Smaller values make a finer
+boundary at greater computation cost. The outer cutting outline and separately
+selected avoidance regions retain their existing meanings. Failed projection
+stops generation; it must not silently expand to the model's bounding rectangle.
+
 **Holding Tab** is in Project Setup and the CAM menu. Select a Job when more than
 one exists. The new tab starts at the model's +X edge, near surrounding stock.
 Double-click a tab to reopen the same complete editor.
