@@ -1,6 +1,14 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest issue continuation (2026-09-29): U.19 reproduces #26300 in PlanarSurface.
+Latest implementation (2026-09-29): U.20 fixes partial boundary loss in the modern
+CAM pipeline. Failed isolated/group projections and boundary unions now stop
+instead of dropping selected cutting/avoidance regions; stale paths are cleared.
+Fourteen focused and 59 related checks pass across separate runs. Python-only
+update is installed and hash-verified; no native rebuild or process remains active.
+Evidence and installed module hash are recorded in U.20. The confirmed freeform
+slowdown below remains open; no unsuccessful projection experiment was restored.
+
+Earlier diagnosis (2026-09-29): U.19 reproduces #26300 in PlanarSurface.
 The original saved freeform geometry with nine selected faces exceeds 120 seconds;
 20/40-second stacks locate Path.Area boundary projection, before cutting generation.
 Per-face/paired-face projection experiments were unsuccessful and fully removed.

@@ -57,7 +57,7 @@ both feature properties and solid volume for Add/Subtract on create and reopen.
 The tree test sends mouse press/move/release events to the expansion arrow and
 checks both the expansion toggle and unchanged model selection.
 
-Default macro coverage also includes Mirror, CAM offsets and avoidance: 84 tests total.
+Default macro coverage also includes Mirror, CAM offsets and avoidance: 89 tests total.
 The Mirror checks include save/reopen/recompute and real task-pane face selection
 for translated and rotated Bodies. The updated Part module passed the earlier
 75-test batch; the added avoidance work passed its separate 67-test CAM batch.
@@ -70,10 +70,11 @@ process exit of zero alone is not a passing test result.
 
 ## CAM avoidance (#27751 / linked #27950)
 
-`tests/TestIssueSurfaceAvoidance.py` adds nine checks for the replacement
+`tests/TestIssueSurfaceAvoidance.py` adds fourteen checks for the replacement
 Parallel/Waterline operation. Run it with `TestSurfaceCommonGenerator.py`,
 `TestSurfacePatternGenerator.py`, `TestPlanarSurfaceOp.py` and `TestMeshMachining.py`
-under `src/Mod/CAM/CAMTests/` using `FREECAD_PLUS_ISSUE_TESTS`: 68 tests total (expanded batch not yet rerun).
+under `src/Mod/CAM/CAMTests/` using `FREECAD_PLUS_ISSUE_TESTS`: 73 tests total; latest evidence combines 14 focused and 59 related passes
+from separate runs.
 Synchronize and hash-check changed Python modules in the source-built app first;
 no native rebuild is necessary for this change.
 
@@ -153,3 +154,18 @@ called from generate_pattern_mask. The 120-second run was stopped without a cras
 this is evidence of excessive runtime, not proof of an infinite loop. Experimental
 individual/pair projections were not retained because they failed or stalled on
 trimmed B-spline faces. The existing application code has been restored.
+
+### Partial boundary failures (#27950 / #27751)
+
+The expanded avoidance suite checks that a failed isolated region, failed connected
+face group, or failed region union cannot return partial boundaries. A valid two-region
+control requires both exclusions to remain covered. The integration test selects
+two real external faces, injects failure only for the second, and verifies that
+generation raises and removes the old path. Fault injection is repeatable because
+operation execution may trigger document recompute before its explicit pass.
+
+All 14 focused checks pass in `boundary-regions-20260929-focused`. The unchanged
+application code passed the 59 related CAM checks in `boundary-regions-20260929-green`;
+that earlier aggregate was FAIL due to the subsequently corrected integration-test
+mock. Do not describe it as a single successful 73-test run. No native rebuild was
+needed. This safety correction does not resolve the separate #26300 projection timeout.

@@ -35,7 +35,10 @@ impact order for the current workflow:
   GeomFillSurface object remains unverified: the supplied attachment actually has
   a mirrored Pad face, and this build has `BUILD_SURFACE=OFF`. Its saved BReps
   generate a path with PlanarSurface; a generated curved B-spline exclusion passes
-  coverage checks. Ten focused checks pass. Legacy backend unchanged.
+  coverage checks. Further fixed partial-region loss: failed individual/group
+  projection or union now stops generation instead of dropping selected regions.
+  Fourteen focused and 59 related CAM checks pass in separate runs. Legacy backend
+  unchanged; exact GeomFillSurface acceptance and #26300 remain open.
 - [#26300](https://github.com/FreeCAD/FreeCAD/issues/26300): freeform surfacing hangs
   or crashes. Still applicable: saved geometry/face selections also exceed a
   120-second limit in PlanarSurface. Stack traces identify Path.Area boundary

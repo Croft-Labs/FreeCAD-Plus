@@ -42,6 +42,38 @@ class TestSurfaceAvoidanceFailure(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "avoid"):
                     surface_common.build_avoid_boundary([self.face, self.avoid], 1, 0.01)
 
+    def testPartialAvoidanceProjectionStopsGeneration(self):
+        second = Part.makePlane(5, 5, App.Vector(40, 40, 0))
+        # Real grouping finds two isolated faces; only the second projection fails.
+        with patch.object(surface_common, "create_boundary_face", side_effect=[self.avoid, None]):
+            with self.assertRaisesRegex(ValueError, "boundary"):
+                surface_common.build_avoid_boundary([self.avoid, second], 1, 0.01)
+
+    def testConnectedAvoidanceProjectionStopsGeneration(self):
+        with patch.object(surface_common, "_separate_touching_faces",
+                          return_value=([[self.face, self.avoid]], [])):
+            with patch.object(surface_common, "create_boundary_face", return_value=None):
+                with self.assertRaisesRegex(ValueError, "boundary"):
+                    surface_common.build_optimized_boundary([self.face, self.avoid], 1, avoids=True)
+
+    def testAvoidanceMergeFailureDoesNotReturnFirstRegion(self):
+        first = Mock()
+        first.isNull.return_value = False
+        first.isValid.return_value = True
+        first.fuse.side_effect = Part.OCCError("Synthetic region union failure")
+        with patch.object(surface_common, "_separate_touching_faces",
+                          return_value=([], [self.face, self.avoid])):
+            with patch.object(surface_common, "create_boundary_face", side_effect=[first, self.avoid]):
+                with self.assertRaisesRegex(ValueError, "boundary"):
+                    surface_common.build_optimized_boundary([self.face, self.avoid], 1, avoids=True)
+
+    def testDisconnectedAvoidanceRegionsBothPreserved(self):
+        second = Part.makePlane(5, 5, App.Vector(40, 40, 0))
+        boundary = surface_common.build_avoid_boundary([self.avoid, second], 1, 0.01)
+        self.assertTrue(boundary.isValid())
+        self.assertAlmostEqual(boundary.common(self.avoid).Area, self.avoid.Area, places=5)
+        self.assertAlmostEqual(boundary.common(second).Area, second.Area, places=5)
+
     def testFullyAvoidedAreaDoesNotRestoreCuttingRegion(self):
         covering = Part.makePlane(40, 40, App.Vector(-5, -5, 0))
         result = surface_common.generate_pattern_mask(
@@ -132,6 +164,23 @@ class TestSurfaceAvoidanceOperation(PathTestWithAssets):
         for axis in ("x", "y"):
             self.assertLess(min(getattr(p, axis) for p in points), 8)
             self.assertGreater(max(getattr(p, axis) for p in points), 22)
+
+    def testPartialAvoidanceFailureClearsOldPath(self):
+        op = self.operation()
+        extra = self.doc.addObject("Part::Feature", "SecondAvoidFace")
+        extra.Shape = Part.makePlane(5, 5, App.Vector(22, 22, 5))
+        op.Base = list(op.Base) + [(extra, ["Face1"])]
+        op.AvoidLastX_Faces = 2
+        op.Path = Path.Path([Path.Command("G1", {"X": 24, "Y": 24, "Z": 5})])
+        project = surface_common.create_boundary_face
+        def fail_second(faces, *args, **kwargs):
+            if faces[0].BoundBox.XMin >= 22:
+                return None
+            return project(faces, *args, **kwargs)
+        with patch.object(surface_common, "create_boundary_face", side_effect=fail_second):
+            with self.assertRaisesRegex(ValueError, "boundary"):
+                op.Proxy.execute(op)
+        self.assertEqual(len(op.Path.Commands), 0, "Stale cutting path remained")
 
     def testAvoidanceFailureClearsOldPathForBothStrategies(self):
         op = self.operation()

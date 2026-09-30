@@ -437,7 +437,11 @@ def build_optimized_boundary(faces, offset, tolerance=0.005, avoids=False):
         avoids (bool): Default 'False'. 'True' only from _preprocess_avoid_faces.
 
     Returns:
-        Part.Shape: The combined boundary shape, or None on failure.
+        Part.Shape: The combined boundary shape, or None for empty input.
+
+    Raises:
+        ValueError: Any selected region fails projection or the complete union
+            cannot be built. Never return partial cutting or avoidance coverage.
     """
     if not faces:
         return None
@@ -454,14 +458,16 @@ def build_optimized_boundary(faces, offset, tolerance=0.005, avoids=False):
     # Process each connected group as a single batch
     for group in touching_groups:
         bnd = create_boundary_face(group, offset, tolerance, avoids)
-        if bnd and not bnd.isNull():
-            generated_boundaries.append(bnd)
+        if bnd is None or bnd.isNull() or not bnd.isValid():
+            raise ValueError("Failed to generate a valid boundary for a selected face group")
+        generated_boundaries.append(bnd)
 
     # Process isolated faces one by one
     for face in isolated_faces:
         bnd = create_boundary_face([face], offset, tolerance, avoids)
-        if bnd and not bnd.isNull():
-            generated_boundaries.append(bnd)
+        if bnd is None or bnd.isNull() or not bnd.isValid():
+            raise ValueError("Failed to generate a valid boundary for a selected face")
+        generated_boundaries.append(bnd)
 
     if not generated_boundaries:
         return None
@@ -473,13 +479,13 @@ def build_optimized_boundary(faces, offset, tolerance=0.005, avoids=False):
         final_boundary = generated_boundaries[0].fuse(generated_boundaries[1:])
         if hasattr(final_boundary, "removeSplitter"):
             final_boundary = final_boundary.removeSplitter()
+        if final_boundary.isNull() or not final_boundary.isValid():
+            raise ValueError("Invalid combined boundary for selected faces")
         return final_boundary
     except Exception as e:
-        Path.Log.warning(
-            f"build_optimized_boundary: Failed to fuse boundaries: {e}. "
-            "Returning first boundary only."
-        )
-        return generated_boundaries[0]
+        # Every selected region is significant, especially for keep-out faces.
+        # Returning one region would silently machine the missing exclusions.
+        raise ValueError("Failed to combine all selected boundary regions") from e
 
 
 def _separate_touching_faces(faces, tolerance=0.01):

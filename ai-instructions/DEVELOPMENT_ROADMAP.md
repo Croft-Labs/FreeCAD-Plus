@@ -3,6 +3,8 @@
 ## Current focus
 
 - Active implementation: [prioritized upstream issue work](#upstream-issue-work).
+  Latest safety fix: partial boundary projection/union can no longer drop selected
+  regions; U.20 records 14 focused and 59 related passes without a build.
   Latest diagnosis: #26300 also stalls in the replacement workflow; see U.19.
   No projection experiment was retained. Latest implemented fix: modern CAM avoidance now stops on boundary failures or unsupported
   strategy switches instead of ignoring exclusions. Python-only update installed;
@@ -197,13 +199,34 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   `972F399E92F0509E4023556B4C057823429BBF9292652C51F4F13CE8B8CA097B`.
   The difference from U.13's raw hash is line endings only; no application change.
 
+- [ X ] U.20 Stop partial-region fallback in build_optimized_boundary (#27950 /
+  #27751). Inspection during U.15 found that a failed isolated face or connected
+  group was silently omitted and failed union returned only the first boundary.
+  This still affects the modern workflow and can remove requested keep-out areas;
+  its wrong-toolpath impact takes priority over continuing projection experiments.
+  Raise on missing/null/invalid region boundaries and failed/null/invalid union.
+  Preserve all valid regions; the existing operation error path clears old paths.
+  Five new checks cover isolated/group projection failure, union failure, valid
+  disconnected exclusions and actual two-selection operation failure/stale-path
+  clearing. Source and installed Python module SHA-256:
+  `49647EC67FF15C603F341A71807640BB936E8C0FF0106632218AAD8B2EBB6003`.
+  Evidence under the external root: `boundary-regions-20260929-red/results.json`
+  reproduces three missing-error failures. `boundary-regions-20260929-green/results.json`
+  has 59 related passes but an aggregate FAIL due to one exhausted mock in the
+  new integration test. After making the fault repeatable across recomputes,
+  `boundary-regions-20260929-focused/results.json` has all 14 focused checks PASS,
+  no errors/skips. Application source unchanged between those two validation runs;
+  together they establish 73 passing focused/related checks, not one all-pass batch.
+  Python-only update installed; no native rebuild, schema change, legacy migration,
+  or release. #26300 remains unresolved; U.14 and U.16 remain open.
+
 CAM avoidance evidence under the external validation root below:
 `avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
 checks (two valid geometry controls passed). After correction,
 `avoidance-tests-20260929-193013/results.json` reports 67 PASS, no errors/skips,
 process 0. Eight focused, 12 common-generator, seven pattern-generator, 18 unified
 operation and 22 STL/tab tests. `module-manifest.json` records installed Python
-hashes. The expanded default issue macro now has 84 tests; it has not been run as a
+hashes. The expanded default issue macro now has 89 tests; it has not been run as a
 single batch. Preserve the separate 75-test native and 67-test CAM evidence.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.
