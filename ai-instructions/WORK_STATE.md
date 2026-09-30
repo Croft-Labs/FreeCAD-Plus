@@ -1,5 +1,13 @@
 # FreeCAD Plus: Build validation handoff
 
+Release 0.0.1 Windows x64 installer is built and accepted. Evidence/artifact root:
+D:\Temp\Office-PC\freecad-plus-release-0.0.1. Full build plus revision refresh
+reports application source 2df76790b4; 120 staged tests pass and staged/installed
+launcher, installed hashes, shortcut and uninstall checks pass. Unrelated test file
+survives uninstall. Publication remains the last step; see roadmap release checkpoint.
+Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
+FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
+
 Latest roadmap batch: 16.2l/m/n complete. Empty Lead-in/Lead-out and Boundary inputs
 now stop cleanly; lead generation clears stale paths before possible exceptions;
 disabled leads return the placed base path directly. cam-leads-20260929-verified

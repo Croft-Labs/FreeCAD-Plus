@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Installed-launcher smoke check; write evidence outside the install directory."""
+import json
+import os
+import traceback
+from pathlib import Path
+import FreeCAD as App
+import FreeCADGui as Gui
+from PySide import QtCore
+
+output = Path(os.environ["FREECAD_PLUS_RELEASE_SMOKE"])
+output.mkdir(parents=True, exist_ok=True)
+(output / "application.pid").write_text(str(os.getpid()))
+report = {"passed": False, "version": App.Version(),
+          "application": App.ConfigGet("AppHomePath"),
+          "user_data": App.getUserAppDataDir()}
+try:
+    import Part
+    import Sketcher
+    import Mesh
+    import Path as CAMPath
+    import TechDraw
+    try:
+        import ocl
+    except ImportError:
+        import opencamlib
+    report["workbenches"] = sorted(Gui.listWorkbenches())
+    for name in ("PartDesignWorkbench", "CAMWorkbench", "DraftWorkbench", "TechDrawWorkbench"):
+        assert name in report["workbenches"], name
+    assert "FreeCADPlus" in report["user_data"], report["user_data"]
+    doc = App.newDocument("ReleaseSmoke")
+    box = doc.addObject("Part::Box", "Box")
+    box.Length = 12
+    doc.recompute()
+    filename = output / "ReleaseSmoke.FCStd"
+    doc.saveAs(str(filename))
+    App.closeDocument(doc.Name)
+    doc = App.openDocument(str(filename))
+    assert abs(doc.Box.Shape.Volume - 1200) < 1e-6
+    Gui.activeDocument().activeView().viewAxonometric()
+    Gui.activeDocument().activeView().fitAll()
+    Gui.updateGui()
+    report["passed"] = True
+except Exception:
+    report["error"] = traceback.format_exc()
+finally:
+    for doc_name in list(App.listDocuments()):
+        App.closeDocument(doc_name)
+    (output / "results.json").write_text(json.dumps(report, indent=2))
+    QtCore.QTimer.singleShot(0, Gui.getMainWindow().close)

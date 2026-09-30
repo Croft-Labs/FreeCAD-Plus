@@ -2,6 +2,9 @@
 
 ## Current focus
 
+- Release 0.0.1: user-authorized Windows x64 installer built and accepted; publication
+  tracked in [the release checkpoint](#pre-release-001). This does not close the
+  remaining product, GUI, machine or broad compatibility gates.
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
@@ -2219,3 +2222,32 @@ Gate G11: release candidate, starter source/exports, tutorial and compatibility
 notes agree; representative users complete T11. Outreach is reviewable before
 publication, and repeated campaigns need evidence. Optional branding, registration
 or revenue cannot delay a usable free modeling release.
+
+## Pre-release 0.0.1
+
+- [ X ] Build current application source `2df76790b4` in Release configuration and
+  stage a self-contained Windows x64 runtime outside the source tree. Full build
+  completed successfully. Refresh/relink Base/Version.cpp because incremental
+  metadata still reported `8abce719de`; final launcher reports `2df76790b4`.
+- [ X ] Package a per-user NSIS installer with a distinct FreeCAD Plus registration,
+  Start-menu entry and launcher settings directories. Preserve native identities,
+  upstream installation, file associations, licensing and unrelated files.
+- [ X ] Validate 120 model/task/CAM cases against the staged runtime, zero failures,
+  errors or skips. After revision-only relink, staged and installed launcher smoke
+  checks pass: native imports, workbench inventory, isolated settings, save/reopen.
+- [ X ] Install the actual artifact silently, verify 11 key installed hashes and
+  registration, check shortcut target, uninstall and verify application/shortcut/
+  registration removal while retaining an unrelated user file. No clean-VM or
+  hardware cutting acceptance is claimed.
+- [   ] Publish GitHub pre-release `0.0.1` with only the Windows installer asset;
+  verify public pre-release state and uploaded artifact digest.
+
+Evidence root: `D:\Temp\Office-PC\freecad-plus-release-0.0.1`.
+Records: `build.log`, `version-compile.log`, `version-link.log`, `package-final.log`,
+`payload-validation/results.json`, `launcher-validation/results.json`,
+`install-results.json`, `installed-validation/results.json`, `uninstall-results.json`.
+Artifact: `FreeCAD-Plus-0.0.1-Windows-x64-Setup.exe`, 360,754,930 bytes, unsigned;
+SHA256 `c969fb92aea4cbd4da400d78dfb18d3674de16ebb68d9a4432f3f1bcc1b33dd8`.
+[Release notes](releases/0.0.1.md) list included/omitted workbenches, compatibility
+limits and the distinction between fork version 0.0.1 and engine version 26.3.0.
+[Packaging procedure](../package/WindowsInstaller/FREECAD_PLUS_RELEASE.md).
