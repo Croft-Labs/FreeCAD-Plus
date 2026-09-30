@@ -29,3 +29,26 @@ def set_angle_expression(obj, property_name, expression):
     if getattr(value, "Unit", None) != App.Units.Quantity("1 deg").Unit:
         raise ValueError("Expression must evaluate to an angle")
     obj.setExpression(property_name, expression)
+
+
+def rename_parameter(obj, old_name, new_name):
+    """Atomically rename a native length/angle parameter; own the transaction.
+
+    Native validation defines legal names and locked/dynamic-property rules.
+    Abort is essential: native rename may remove an owned expression before a
+    naming error is raised. Never adopt another editor's pending transaction.
+    """
+    doc = obj.Document
+    if doc.HasPendingTransaction:
+        raise ValueError("Finish the current transaction before renaming a parameter")
+    if obj.getTypeIdOfProperty(old_name) not in ("App::PropertyLength", "App::PropertyAngle"):
+        raise ValueError("Prototype supports length and angle parameters only")
+    doc.openTransaction("Rename parameter")
+    try:
+        obj.renameProperty(old_name, new_name)
+        doc.recompute()
+        doc.commitTransaction()
+    except Exception:
+        doc.abortTransaction()
+        doc.recompute()
+        raise

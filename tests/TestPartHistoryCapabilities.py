@@ -465,3 +465,65 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         for obj in (self.doc.ParameterizedBase, self.doc.ParameterizedLid):
             self.assertNotIn("Invalid", obj.State)
             self.assertIn("Parameters.PanelWidth", str(obj.ExpressionEngine))
+
+    def testParameterRenameFailuresPreserveOwnedExpressionAndCallerTransaction(self):
+        from prototypes.NamedParameters import rename_parameter, set_length_expression
+        parameters, first, second = self.parameterModel()
+        set_length_expression(parameters, "Width", "10 mm + 15.4 mm")
+        self.doc.recompute()
+        original = parameters.ExpressionEngine
+        consumers = [obj.ExpressionEngine for obj in (first, second)]
+        for name in ("Tilt", "Invalid name", ""):
+            with self.assertRaises(Exception):
+                rename_parameter(parameters, "Width", name)
+            self.assertEqual(parameters.ExpressionEngine, original)
+            self.assertEqual([obj.ExpressionEngine for obj in (first, second)], consumers)
+            self.assertFalse(self.doc.HasPendingTransaction)
+            self.assertAlmostEqual(first.Shape.BoundBox.XLength, 25.4)
+            self.assertNotIn("Invalid", first.State)
+        old_label = parameters.Label
+        self.doc.openTransaction("Unrelated caller edit")
+        parameters.Label = "Pending caller edit"
+        with self.assertRaisesRegex(ValueError, "current transaction"):
+            rename_parameter(parameters, "Width", "PanelWidth")
+        self.assertTrue(self.doc.HasPendingTransaction)
+        self.assertEqual(parameters.Label, "Pending caller edit")
+        self.assertEqual(parameters.ExpressionEngine, original)
+        self.doc.abortTransaction()
+        self.doc.recompute()
+        self.assertEqual(parameters.Label, old_label)
+        rename_parameter(parameters, "Width", "PanelWidth")
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.assertIn("PanelWidth", str(parameters.ExpressionEngine))
+        self.assertAlmostEqual(first.Length.Value, 25.4)
+
+    def testParameterRenameTracksLabelReferencesAndOwnedFormula(self):
+        from prototypes.NamedParameters import rename_parameter, set_length_expression
+        parameters, first, second = self.parameterModel()
+        parameters.Label = "Enclosure dimensions"
+        set_length_expression(parameters, "Width", "10 mm + 15.4 mm")
+        set_length_expression(first, "Length", "<<Enclosure dimensions>>.Width")
+        self.doc.recompute()
+        rename_parameter(parameters, "Width", "PanelWidth")
+        self.assertIn("PanelWidth", str(parameters.ExpressionEngine))
+        for obj in (first, second):
+            self.assertIn("PanelWidth", str(obj.ExpressionEngine))
+            self.assertNotIn("Invalid", obj.State)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertIn("Width", parameters.PropertiesList)
+        self.assertAlmostEqual(first.Length.Value, 25.4)
+        self.doc.redo()
+        self.doc.recompute()
+        parameters.Label = "Renamed dimensions"
+        self.doc.recompute()
+        self.assertNotIn("Invalid", first.State)
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "LabelParameterRenameProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        set_length_expression(self.doc.Parameters, "PanelWidth", "40 mm")
+        self.doc.recompute()
+        self.assertAlmostEqual(self.doc.ParameterizedBase.Shape.BoundBox.XLength, 40)
+        self.assertAlmostEqual(self.doc.ParameterizedLid.Shape.BoundBox.XLength, 42)
+        self.assertNotIn("Invalid", self.doc.ParameterizedBase.State)

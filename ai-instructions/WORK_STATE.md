@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8e/f named angular parameters and native property rename.
+Latest roadmap batch: 10.8g/h atomic parameter rename and label-reference checks.
+Test-only rename_parameter owns its transaction; native naming errors restore owned
+formulas/consumers. Unrelated pending edits reject before mutation. Label-based and
+internal-name references survive rename, Undo/Redo, label edit and save/reopen.
+Grouped architecture validation: 54 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-rename-safety-20260930-batch.
+Macro PASS; process ended. Existing fork engine 2df76790b4; no native rebuild,
+installed UI or release update. Production editor, external reference handling,
+where-used and failed recompute policy remain pending under 10.8.
+
+Previous roadmap batch: 10.8e/f named angular parameters and native property rename.
 Test-only angle assignment rejects incompatible or missing expressions before mutation;
 native rename updates two consumers through Undo/Redo and save/reopen.
 Grouped architecture validation: 52 passes, zero failures/errors/skips in

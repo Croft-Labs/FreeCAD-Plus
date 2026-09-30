@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8e/f validate angular parameter expressions and native property
+- Current batch: 10.8g/h prototype atomic parameter rename and verify label-based
+  consumer references with owned formulas. Grouped architecture validation: 54 passes,
+  zero failures/errors/skips. No native rebuild, installed UI or release change.
+- Previous batch: 10.8e/f validate angular parameter expressions and native property
   rename propagation, including Undo/Redo and save/reopen. Grouped architecture
   validation: 52 passes, zero failures/errors/skips. Test-only prototype; no native
   rebuild, installed UI change or release update.
@@ -1973,6 +1976,26 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8f Prove native dynamic-property rename updates two expression consumers,
   survives Undo/Redo and save/reopen, and continues driving geometry after later edits.
   This establishes native behavior, not a parameter rename UI or collision policy.
+
+- [ X ] 10.8g Add a test-only atomic length/angle parameter rename wrapper using
+  native validation and its own transaction. Verify collision/invalid/empty-name
+  failures restore an owned expression and consumers, pending caller edits remain
+  untouched, and a later valid rename succeeds.
+- [ X ] 10.8h Verify label-based and internal-name references both follow parameter
+  rename with an owned formula, Undo/Redo, container label changes, save/reopen and
+  subsequent formula edits. External/ambiguous-label references remain unproven.
+
+Atomic rename evidence: `parameter-rename-safety-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **54 PASS, zero failures/errors/
+skips** (15 capability, 34 adapter, five lineage checks). Both tasks preceded one
+grouped run on existing fork engine 2df76790b4. Macro PASS; process ended.
+`DocumentObject::renameDynamicProperty` removes an owned expression before native
+name validation; the prototype transaction restores it on failure. No expression
+text replacement or new document schema is introduced. NamedParameters SHA256:
+`46F0CF4BB903581B9D18F02EDEE6A3E693E3741B4403EFBC1AA92F69900C88E0`.
+The helper is test-only and not installed; no native rebuild or release update.
+Production editor, general where-used, external scope and failed recompute policy
+remain pending; this batch does not claim all rename failure modes are covered.
 
 Angle/rename evidence: `parameter-angle-rename-20260930-verified/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **52 PASS, zero failures/errors/

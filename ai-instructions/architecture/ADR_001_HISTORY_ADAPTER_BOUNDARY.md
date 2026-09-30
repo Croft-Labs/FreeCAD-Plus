@@ -205,8 +205,20 @@ Native `renameProperty` propagates a dynamic Width-to-PanelWidth rename into two
 consumers using internal object names. Undo/Redo restores the corresponding property
 and expressions; save/reopen and subsequent edits retain valid geometry. Reuse this
 native mechanism when designing the parameter editor rather than replacing expression
-text manually. Collision handling, label-based/external references and a complete
-property-level where-used view still require separate validation and UI decisions.
+text manually. Subsequent 10.8g/h evidence covers collisions and label-based
+references below. External references and a complete property-level where-used view
+still require separate validation and UI decisions.
+
+The test-only `rename_parameter` wrapper owns a transaction and rejects unrelated
+pending transactions. Native rename removes a property's owned expression before
+validating the requested name, so failure must abort the transaction to restore it.
+Collision, invalid and empty names preserve the owned formula and both consumers;
+a later valid rename succeeds. Native rules remain authoritative for names and
+locked/dynamic properties. Tests also prove a uniquely labeled parameter container
+and an internal-name reference both follow rename through Undo/Redo, a container
+label edit and save/reopen, then react to a changed formula. No manual expression
+rewriting is used. This does not establish cross-document or ambiguous-label behavior,
+or a production editor policy for geometry failures after recompute.
 
 ## Remaining decision gates and consumers
 
