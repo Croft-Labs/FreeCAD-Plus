@@ -212,6 +212,8 @@ class DressupArray:
         return True
 
     def execute(self, obj):
+        # Missing inputs and generator failures must not retain a previous array.
+        obj.Path = Path.Path()
 
         if not obj.Base or not obj.Base.isDerivedFrom("Path::Feature") or not obj.Base.Path:
             Path.Log.error(translate("PathArray", "Base is empty or an invalid object."))

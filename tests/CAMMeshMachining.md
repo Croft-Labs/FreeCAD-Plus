@@ -46,6 +46,21 @@ Injected empty offset results cover both inclusion and exclusion before clipping
 these are failure-handling checks, not a proof of arbitrary offset geometry quality.
 Missing base input produces an empty native Path and recovers when reattached.
 
+## Array and Dogbone failure checks
+
+Run `tests/TestCAMInvalidInputs.py` with `CAMTests.TestPathDressupArray`,
+`CAMTests.TestPathDressupDogboneII` and `CAMTests.TestDressupPost` after synchronizing
+both dressup modules to the development build. Array fixtures cover missing/empty
+base paths during execution and generator exceptions; Dogbone covers generation exceptions and
+clearing its corner/maneuver caches. Native error state must block export on failed
+generation, and corrected inputs must regenerate/export successfully. The Dogbone
+failure fixture seeds corner caches deliberately; inherited geometry tests cover
+normal corner generation separately. When a producer fails, native recompute can
+skip downstream execution: the Array fixture verifies the existing export guard
+rejects the cache, then explicitly executes the dressup to check empty-path cleanup.
+It does not prove eager invalidation of every skipped consumer. These checks do
+not establish machine safety.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,

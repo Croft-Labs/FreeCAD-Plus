@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2q/r complete. Missing/non-geometric Boundary stock
+Latest roadmap batch: 16.2s/t complete. Array clears paths before input validation/
+generation; Dogbone clears paths and corner caches before generation. Grouped
+validation: 49 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-array-dogbone-20260930-verified.
+Initial empty-source fixture exposed skipped downstream native execution; corrected
+coverage verifies export rejection before explicit empty-input cleanup. Eager cache
+invalidation of skipped consumers remains open. Python-only synchronization, no
+native rebuild or GUI/machine/release acceptance. Validation process ended.
+
+Previous roadmap batch: 16.2q/r complete. Missing/non-geometric Boundary stock
 now causes native error/export rejection; offset outputs are checked before clipping.
 Grouped run: 46 passes, zero failures/errors/skips, in
 D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-boundary-inputs-20260930-batch.

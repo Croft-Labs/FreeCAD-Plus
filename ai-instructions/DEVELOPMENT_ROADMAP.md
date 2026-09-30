@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2q/r block export for missing/non-geometric Boundary stock
+- Current batch: 16.2s/t clear Array paths before validation/generation and
+  Dogbone machining/corner caches before generation. Grouped validation: 49
+  passes, zero failures/errors/skips. Skipped native consumers remain a limitation;
+  their export guard is verified. Python-only synchronization, no native build.
+- Previous batch: 16.2q/r block export for missing/non-geometric Boundary stock
   and reject empty/invalid offset results before clipping. Grouped validation:
   46 passes, zero failures/errors/skips; Python-only update, no native build.
 - Previous batch: 16.2o/p prevent cached Boundary paths after clipping/offset
@@ -2178,6 +2182,30 @@ Both changes preceded the grouped runtime check; Python-only synchronization, no
 native rebuild. Existing engine revision is 2df76790b4. Offset failure injection
 validates rejection/recovery, not general offset geometry correctness. No native
 GUI/machine acceptance or release update; broader consumer gates remain open.
+
+- [ X ] 16.2s Clear Array output before input checks and generation. Verify
+  missing base, explicitly executed empty base, generation failure, export rejection
+  for native errors and recovery after correction.
+- [ X ] 16.2t Clear Dogbone output and maneuver/bone/tip caches before generation.
+  Verify injected generation failure leaves no cached output/markers, blocks export
+  and recovers; retain normal corner geometry regression coverage.
+
+Array/Dogbone batch: `cam-array-dogbone-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **49 PASS, zero
+failures/errors/skips**: 21 invalid-input checks (four new), four Array checks,
+17 Dogbone checks and seven nested-dressup checks. Macro PASS; test process ended.
+The initial `cam-array-dogbone-20260930-batch` had 48 passes and one failure:
+native recompute skips the Array when its producer fails. The corrected fixture
+verifies the existing export guard rejects the cached result, then explicitly
+executes Array to validate empty-input cleanup. This is not a fix for eager
+invalidation of every skipped consumer; that broader gate remains open.
+Source/development-build SHA256: Array.py
+`E50D7CB6E317918933D40CA4AF863F85C546D48B83447B8831BC7FEE3153A39F`;
+DogboneII.py `9D51B57CAE2083D9E74E31074AD9D161674E1E9F8AE3A7EF7AB4BE36735AB280`.
+Both implementations preceded grouped runtime validation; no native rebuild.
+The reused engine reports 2df76790b4 with separately synchronized Python updates.
+No native GUI/machine acceptance or release update. Dogbone cache failure injection
+uses seeded markers; inherited tests separately verify normal corner geometry.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

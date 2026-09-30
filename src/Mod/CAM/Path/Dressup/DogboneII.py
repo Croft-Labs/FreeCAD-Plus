@@ -417,6 +417,12 @@ class Proxy(object):
 
     def execute(self, obj):
         Path.Log.track(obj.Label)
+        # Clear both machining output and selectable corner caches before work
+        # that may fail. Only a completed generation publishes new results.
+        obj.Path = Path.Path()
+        self.maneuver = PathLanguage.Maneuver()
+        self.bones = []
+        self.boneTips = None
         maneuver = PathLanguage.Maneuver()
         bones = []
         lastMove = None

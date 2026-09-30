@@ -293,3 +293,80 @@ class TestCAMInvalidInputs(PathTestWithAssets):
                 self.doc.recompute()
                 self.assertNotIn("Invalid", dressup.State)
                 self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def makeArray(self):
+        from Path.Dressup import Array
+        dressup = Array.Create(self.op)
+        dressup.Copies = 1
+        dressup.Offset = App.Vector(25, 0, 0)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        return dressup
+
+    def testArrayMissingBaseClearsAndRecovers(self):
+        dressup = self.makeArray()
+        dressup.Base = None
+        self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        dressup.Base = self.op
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+
+    def testArrayEmptyBaseClearsAndRecovers(self):
+        dressup = self.makeArray()
+        self.source.Shape = Part.Shape()
+        self.doc.recompute()
+        self.assertFalse(self.op.Path.Commands)
+        # A failed producer can cause native recompute to skip the dressup.
+        # The export guard must reject that cache before explicit execution.
+        from Path.Post.PostList import _wrap_op
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        self.source.Shape = Part.makeBox(20, 20, 4)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+
+    def testArrayGenerationFailureClearsAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup import Array
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeArray()
+        with patch.object(Array.PathArray, "getPath",
+                          side_effect=RuntimeError("Deliberate array failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testDogboneFailureClearsPathAndCornerCachesAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup import DogboneII
+        from Path.Post.PostList import _wrap_op
+        dressup = DogboneII.Create(self.op)
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        # SurfaceScan is not a corner fixture; seed caches to expose stale state.
+        dressup.Proxy.bones = [object()]
+        dressup.Proxy.boneTips = [App.Vector(1, 2, 3)]
+        with patch.object(DogboneII.PathUtils, "getPathWithPlacement",
+                          side_effect=RuntimeError("Deliberate dogbone failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertEqual(dressup.Proxy.bones, [])
+        self.assertIsNone(dressup.Proxy.boneTips)
+        self.assertFalse(dressup.Proxy.maneuver.toPath().Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
