@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8s/t parameter descriptions and display-only units.
+Latest roadmap batch: 10.8u/v native enclosure parameter benchmark.
+Width/lid clearance/hole spacing drive native geometry; rename, unit/cycle rejection
+and persistence pass. Shared occurrence placements and separate-definition isolation
+survive parameter edits and Undo/Redo. This is bounded T13 evidence, not production UI.
+Grouped validation: 71 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-enclosure-20260930-verified.
+Initial batch had one fixture-readiness error; recompute after visibility setup fixed
+it. Macro PASS; process ended. Engine 2df76790b4; no native rebuild or release update.
+Production integration, full physical T13 and broader occurrence consumers remain open.
+
+Previous roadmap batch: 10.8s/t parameter descriptions and display-only units.
 Creation stores native property documentation; read-only description survives
 Undo/Redo, rename and save/reopen. Dialog length/angle display conversion leaves
 stored values, expressions and geometry unchanged; no unit preference is persisted.

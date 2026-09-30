@@ -635,3 +635,65 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         self.doc = App.openDocument(str(path))
         self.assertEqual(self.doc.Parameters.getDocumentationOfProperty("LidGap"), description)
         self.assertAlmostEqual(self.doc.Parameters.LidGap.Value, 2)
+
+    def testEnclosureParameterBenchmarkGeometryRenameAndRecovery(self):
+        from prototypes.ParameterEnclosure import make_enclosure
+        from prototypes.NamedParameters import edit_parameter_expression, rename_parameter
+        params, result, lid, holes = make_enclosure(self.doc, self.part)
+        edit_parameter_expression(params, "Width", "80 mm")
+        edit_parameter_expression(params, "LidClearance", "1 mm")
+        edit_parameter_expression(params, "HoleSpacing", "40 mm")
+        self.assertTrue(result.Shape.isValid())
+        self.assertAlmostEqual(result.Shape.Volume, 80 * 30 * 20 - 76 * 26 * 18 - 16 * math.pi, places=5)
+        self.assertAlmostEqual(lid.Shape.Volume, 82 * 32 * 2)
+        self.assertAlmostEqual(holes[1].Placement.Base.x - holes[0].Placement.Base.x, 40)
+        rename_parameter(params, "Width", "EnclosureWidth")
+        for bad in ("30 deg", lid.Name + ".Length"):
+            with self.assertRaises(Exception):
+                edit_parameter_expression(params, "EnclosureWidth", bad)
+            self.assertFalse(self.doc.HasPendingTransaction)
+            self.assertAlmostEqual(params.EnclosureWidth.Value, 80)
+            self.assertNotIn("Invalid", result.State)
+        names = [obj.Name for obj in (params, result, lid)]
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "EnclosureParameterBenchmark.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.recompute()
+        params, result, lid = [self.doc.getObject(name) for name in names]
+        edit_parameter_expression(params, "EnclosureWidth", "90 mm")
+        self.assertAlmostEqual(result.Shape.BoundBox.XLength, 90)
+        self.assertAlmostEqual(lid.Shape.BoundBox.XLength, 92)
+        self.assertTrue(result.Shape.isValid())
+
+    def testEnclosureParametersStayWithSharedDefinitionNotOccurrences(self):
+        from prototypes.ParameterEnclosure import make_enclosure
+        from prototypes.NamedParameters import edit_parameter_expression
+        params, result, lid, holes = make_enclosure(self.doc, self.part)
+        other_part = self.doc.addObject("App::Part", "IndependentEnclosure")
+        other_params, other_result, other_lid, _ = make_enclosure(self.doc, other_part)
+        links = []
+        for x in (120, 240):
+            link = self.doc.addObject("App::Link", "EnclosureOccurrence")
+            link.setLink(self.part)
+            link.LinkPlacement.Base = App.Vector(x, 0, 0)
+            links.append(link)
+        self.doc.recompute()
+        edit_parameter_expression(params, "Width", "75 mm")
+        self.assertAlmostEqual(result.Shape.BoundBox.XLength, 75)
+        self.assertAlmostEqual(lid.Shape.BoundBox.XLength, 76)
+        self.assertAlmostEqual(other_result.Shape.BoundBox.XLength, 60)
+        self.assertAlmostEqual(other_lid.Shape.BoundBox.XLength, 61)
+        for link, x in zip(links, (120, 240)):
+            self.assertEqual(link.LinkedObject, self.part)
+            self.assertAlmostEqual(link.LinkPlacement.Base.x, x)
+        self.assertIn(params, self.part.Group)
+        self.assertIn(other_params, other_part.Group)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(result.Shape.BoundBox.XLength, 60)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(result.Shape.BoundBox.XLength, 75)
+        for link, x in zip(links, (120, 240)):
+            self.assertAlmostEqual(link.LinkPlacement.Base.x, x)

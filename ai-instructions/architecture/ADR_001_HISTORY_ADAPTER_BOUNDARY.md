@@ -237,6 +237,20 @@ state is not a universal geometric validity oracle. The prototype does not prove
 rollback of arbitrary proxy side effects or external-document consumers, and does
 not install an editor or change FreeCAD's normal expression assignment behavior.
 
+### Enclosure parameter benchmark
+
+`tests/prototypes/ParameterEnclosure.py` builds a native box-cut shell, separate lid
+and two cylindrical mounting cuts using Width, LidClearance and HoleSpacing. Roadmap
+10.8u/v checks analytic shell/lid volume, hole placement, rename propagation, rejected
+incompatible/cyclic expressions and native save/reopen. Two App::Link occurrences
+retain their placements and shared definition while an independent enclosure keeps
+its own dimensions. Undo/Redo preserves these relationships.
+
+This bounds T13's geometric and definition-scope evidence. It does not decide the
+production history architecture, prove every occurrence consumer or replace physical
+editor acceptance. No custom geometry proxy or new file schema is required by the
+fixture. Its construction geometry is hidden and setup recomputed before edits.
+
 ## Remaining decision gates and consumers
 
 Roadmap 11.7a/b adds a test-only explicit planar reattachment operation in

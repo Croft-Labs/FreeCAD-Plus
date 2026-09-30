@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8s/t add descriptions on parameter creation and display-only
+- Current batch: 10.8u/v add a native enclosure/lid/hole parameter benchmark and
+  shared-definition occurrence checks. Grouped validation: 71 passes, zero failures/
+  errors/skips after fixture correction. Bounded T13 evidence; no native rebuild
+  or release update, production integration remains pending.
+- Previous batch: 10.8s/t add descriptions on parameter creation and display-only
   unit selection in the prototype editor. Grouped validation: 69 passes, zero
   failures/errors/skips. No native rebuild, installed command or release update.
 - Previous batch: 10.8q/r prototype atomic length/angle parameter creation and
@@ -2048,6 +2052,27 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8t Add display-only length (mm/cm/m/in/ft) and angle (deg/rad) selection
   to the prototype editor. Verify switching inch/radian display does not mutate
   stored physical values, expressions, geometry or transaction state.
+
+- [ X ] 10.8u Build a native enclosure/lid/two-hole parameter fixture for bounded
+  T13 validation. Verify Width/LidClearance/HoleSpacing updates via geometry volume,
+  extent and placement; rename, unit/cycle rejection and save/reopen retain intent.
+- [ X ] 10.8v Verify two linked occurrences retain independent placements while
+  sharing the enclosure definition's parameters; a separately parameterized enclosure
+  stays unchanged. Verify shared-definition edits through Undo/Redo.
+
+Enclosure benchmark evidence: `parameter-enclosure-20260930-verified/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **71 PASS, zero failures/
+errors/skips** (11 native Qt, 21 capability, 34 adapter, five lineage checks).
+Both tasks preceded grouped validation on engine 2df76790b4; macro PASS and process
+ended. Initial `parameter-enclosure-20260930-batch` had 70 passes/one error because
+fixture visibility changes left its Part Touched; recomputing after setup corrected
+that fixture without weakening the readiness guard. ParameterEnclosure SHA256:
+`DA61FE96C6F33E5B1BE95C345A5D0C99FFC47980D3B50124607E393748202D11`.
+The fixture uses native boxes, cylinders and cuts, not a production unified-history
+model. Link tests establish definition identity/placement and independent definition
+isolation, not every rendered/consumer occurrence result. Existing display-unit Qt
+checks accompany this geometry batch; full physical T13 and production integration
+remain pending. No native rebuild or release update.
 
 Description/display-unit evidence: `parameter-units-description-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **69 PASS, zero failures/
