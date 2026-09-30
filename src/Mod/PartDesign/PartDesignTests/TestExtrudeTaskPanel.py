@@ -75,6 +75,117 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         Gui.updateGui()
         self.assertFalse(Gui.Control.activeDialog())
 
+    def selectionPaths(self):
+        return [(s.DocumentName, s.ObjectName, tuple(s.SubElementNames))
+                for s in Gui.Selection.getSelectionEx("*", 0)]
+
+    def definition(self, feature):
+        return (feature.TypeId, feature.Profile, feature.ReferenceAxis,
+                feature.Operation, feature.Type, feature.SideType,
+                feature.Length.Value, feature.Length2.Value, feature.StartOffset.Value,
+                feature.Reversed, feature.AlongSketchNormal, tuple(feature.Direction),
+                feature.Shape.Volume,
+                tuple(tuple(solid.CenterOfMass) for solid in feature.Shape.Solids))
+
+    def testPreselectionMatchesCommandFirstForExtrudeAndAliases(self):
+        for command in ("PartDesign_Extrude", "PartDesign_Pad", "PartDesign_Pocket"):
+            for operation in ("Union", "Subtraction"):
+                definitions = []
+                for preselect in (True, False):
+                    with self.subTest(command=command, operation=operation, preselect=preselect):
+                        Gui.Selection.clearSelection()
+                        feature = self.start(command, preselect=preselect)
+                        if not preselect:
+                            Gui.Selection.addSelection(self.sketch)
+                        self.selectOperation(operation)
+                        self.quantity("lengthEdit", 8.0)
+                        self.accept()
+                        definitions.append(self.definition(feature))
+                        self.assertEqual(feature.Profile[0], self.sketch)
+                        self.assertEqual(self.body.Tip, feature)
+                        self.assertAlmostEqual(feature.Shape.Volume, 1048 if operation == "Union" else 920)
+                        self.doc.undo()
+                        self.doc.recompute()
+                self.assertEqual(definitions[0], definitions[1])
+
+    def testMixedSolidAndProfilePreselectionIsIndependentOfOrder(self):
+        for target in (self.base, self.body):
+            for profileFirst in (True, False):
+                Gui.Selection.clearSelection()
+                for obj in ((self.sketch, target) if profileFirst else (target, self.sketch)):
+                    Gui.Selection.addSelection(obj)
+                feature = self.start()
+                self.assertEqual(feature.Profile[0], self.sketch)
+                self.assertEqual(feature.getParentGeoFeatureGroup(), self.body)
+                self.assertIn("Ignored preselection", self.widget(QtGui.QLabel, "extrudePreselectionHint").text())
+                self.selectOperation("Subtraction")
+                self.accept()
+                self.assertAlmostEqual(feature.Shape.Volume, 920)
+                self.doc.undo()
+                self.doc.recompute()
+
+    def testAmbiguousProfilesOpenCollectorAndCanBeChosenExplicitly(self):
+        other = self.body.newObject("Sketcher::SketchObject", "OtherProfile")
+        other.addGeometry(Part.Circle(App.Vector(4, 4, 5), App.Vector(0, 0, 1), 1))
+        self.doc.recompute()
+        for reverse in (False, True):
+            Gui.Selection.clearSelection()
+            for obj in ((other, self.sketch) if reverse else (self.sketch, other)):
+                Gui.Selection.addSelection(obj)
+            feature = self.start()
+            self.assertIsNone(feature.Profile)
+            self.assertTrue(self.widget(QtGui.QPushButton, "padSelectProfile").isChecked())
+            self.assertIn("Several profile objects", self.widget(QtGui.QLabel, "extrudePreselectionHint").text())
+            Gui.Selection.addSelection(self.sketch)
+            self.assertEqual(feature.Profile[0], self.sketch)
+            self.accept()
+            self.doc.undo()
+            self.doc.recompute()
+
+    def testInvalidPreselectionLeavesRecoverableTaskWithoutChangingBody(self):
+        foreign = self.doc.addObject("PartDesign::Body", "OtherBody")
+        sketch = foreign.newObject("Sketcher::SketchObject", "ForeignProfile")
+        sketch.addGeometry(Part.Circle(App.Vector(), App.Vector(0, 0, 1), 1))
+        self.doc.recompute()
+        for obj, sub in ((self.base, ""), (self.sketch, "Vertex1"), (sketch, "")):
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(obj, sub)
+            feature = self.start()
+            self.assertIsNone(feature.Profile)
+            self.assertIn("Ignored preselection", self.widget(QtGui.QLabel, "extrudePreselectionHint").text())
+            self.assertEqual(feature.getParentGeoFeatureGroup(), self.body)
+            Gui.Selection.addSelection(self.sketch)
+            self.accept()
+            self.doc.undo()
+            self.doc.recompute()
+
+    def testCancelRestoresOriginalSelectionAndBodyTipOnCreateAndEdit(self):
+        for command in ("PartDesign_Extrude", "PartDesign_Pad", "PartDesign_Pocket"):
+            Gui.Selection.addSelection(self.base, "Face6")
+            original = self.selectionPaths()
+            tip = self.body.Tip
+            feature = self.start(command)
+            Gui.Control.activeTaskDialog().reject()
+            Gui.updateGui()
+            self.assertIsNone(self.doc.getObject("Pocket" if command == "PartDesign_Pocket" else "Pad"))
+            self.assertEqual(self.body.Tip, tip)
+            self.assertEqual(self.selectionPaths(), original)
+            Gui.Selection.clearSelection()
+            feature = self.start(command, preselect=True)
+            self.accept()
+            Gui.Selection.addSelection(feature, "Face1")
+            original = self.selectionPaths()
+            self.assertTrue(feature.ViewObject.doubleClicked())
+            self.widget(QtGui.QPushButton, "padClearProfile").click()
+            Gui.Control.activeTaskDialog().reject()
+            Gui.updateGui()
+            self.assertEqual(feature.Profile[0], self.sketch)
+            self.assertEqual(self.body.Tip, feature)
+            self.assertEqual(self.selectionPaths(), original)
+            Gui.Selection.clearSelection()
+            self.doc.undo()
+            self.doc.recompute()
+
     def testOperationIsFirstFieldAndProfileCanBeSelectedAfterStarting(self):
         feature = self.start()
         combo = self.operation()

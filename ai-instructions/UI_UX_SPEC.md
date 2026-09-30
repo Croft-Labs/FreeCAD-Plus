@@ -87,6 +87,14 @@ corridor/dismissal delay. Trials cannot remove constraints; commit revalidates.
   existing Pad/Pocket. Legacy commands remain callable. The normal body prerequisite remains in force.
 - Exit: OK accepts a valid result; Cancel abandons the transaction. Empty and
   invalid profiles retain the dialog so the user can correct them.
+- Preselection: Extrude and legacy Pad/Pocket use the editor's profile gate.
+  One valid profile source is assigned regardless of its order among whole solid
+  or Body picks. Those picks are not treated as explicit Boolean targets: the
+  active Body remains the scope. Invalid/out-of-body picks are explained inside
+  the Profile group; multiple valid profile objects leave the collector empty
+  for explicit choice. No blocking selection-error dialog replaces the editor.
+- Cancel restores the original object/subelement selection captured before
+  creation or reopening, alongside the previous profile, visibility and Body Tip.
 - Layout: Operation is the first field inside Extrude Parameters, then Profile,
   shared extrusion parameters, and preview controls in the task pane.
 - Data: show the source label and selected edge/face names, or a whole-profile

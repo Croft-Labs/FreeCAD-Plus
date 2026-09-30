@@ -28,16 +28,35 @@
 
 #include <App/Document.h>
 #include <Gui/Application.h>
+#include <Gui/Control.h>
+#include <Gui/Selection/Selection.h>
 #include <Mod/PartDesign/App/FeatureExtrude.h>
 #include <Mod/Part/Gui/ReferenceHighlighter.h>
 
 #include "TaskExtrudeParameters.h"
+#include "TaskPadParameters.h"
 #include "ViewProviderExtrude.h"
 
 
 using namespace PartDesignGui;
 
 PROPERTY_SOURCE(PartDesignGui::ViewProviderExtrude, PartDesignGui::ViewProviderSketchBased)
+
+bool ViewProviderExtrude::setEdit(int mode)
+{
+    auto existing = qobject_cast<TaskDlgPadParameters*>(Gui::Control().activeDialog());
+    const bool continuing = existing && existing->getViewObject() == this;
+    const auto selection = Gui::Selection().getSelectionEx(
+        "*", App::DocumentObject::getClassTypeId(), Gui::ResolveMode::NoResolve
+    );
+    const bool started = ViewProviderSketchBased::setEdit(mode);
+    if (started && mode == ViewProvider::Default && !continuing) {
+        if (auto task = qobject_cast<TaskDlgPadParameters*>(Gui::Control().activeDialog())) {
+            task->setSelectionOnCancel(selection);
+        }
+    }
+    return started;
+}
 
 void PartDesignGui::ViewProviderExtrude::highlightShapeFaces(const std::vector<std::string>& faces)
 {

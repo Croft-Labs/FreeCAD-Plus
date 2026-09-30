@@ -343,6 +343,57 @@ void TaskPadParameters::updateProfile(App::DocumentObject* object, const std::ve
     }
 }
 
+void TaskPadParameters::setPreselection(const std::vector<Gui::SelectionObject>& selection)
+{
+    auto pad = getObject<PartDesign::FeatureExtrude>();
+    ExtrudeProfileSelection gate(pad);
+    std::map<App::DocumentObject*, std::vector<std::string>> candidates;
+    QStringList messages;
+    for (auto item : selection) {
+        auto object = item.getObject();
+        if (!object) {
+            continue;
+        }
+        auto subs = item.getSubNames();
+        if (subs.empty()) {
+            subs.emplace_back();
+        }
+        for (const auto& sub : subs) {
+            if (!gate.allow(object->getDocument(), object, sub.c_str())) {
+                messages << tr("Ignored preselection: %1%2. Select a sketch, curves or faces in the active body.")
+                    .arg(QString::fromUtf8(object->Label.getValue()),
+                         sub.empty() ? QString() : QStringLiteral(" : ") + QString::fromStdString(sub));
+                continue;
+            }
+            auto& accepted = candidates[object];
+            if (std::find(accepted.begin(), accepted.end(), sub) == accepted.end()) {
+                accepted.push_back(sub);
+            }
+        }
+    }
+    if (candidates.size() == 1) {
+        auto& [object, subs] = *candidates.begin();
+        if (std::find(subs.begin(), subs.end(), "") != subs.end()) {
+            subs.clear();
+        }
+        updateProfile(object, subs);
+        setSelectionMode(None);
+    }
+    else if (candidates.size() > 1) {
+        messages << tr("Several profile objects were preselected. Select one explicitly in the profile collector.");
+    }
+    if (!messages.empty()) {
+        if (!preselectionHint) {
+            preselectionHint = new QLabel(profileGroup);
+            preselectionHint->setObjectName(QStringLiteral("extrudePreselectionHint"));
+            preselectionHint->setTextFormat(Qt::PlainText);
+            preselectionHint->setWordWrap(true);
+            profileGroup->layout()->addWidget(preselectionHint);
+        }
+        preselectionHint->setText(messages.join(QLatin1Char('\n')));
+    }
+}
+
 void TaskPadParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 {
     if (selectionMode != SelectProfile) {
@@ -489,10 +540,44 @@ void TaskPadParameters::apply()
 
 TaskDlgPadParameters::TaskDlgPadParameters(ViewProviderExtrude* PadView, bool /*newObj*/)
     : TaskDlgExtrudeParameters(PadView)
+    , selectionOnCancel(Gui::Selection().getSelectionEx(
+          "*", App::DocumentObject::getClassTypeId(), Gui::ResolveMode::NoResolve))
     , parameters(new TaskPadParameters(PadView))
 {
     Content.push_back(parameters);
     Content.push_back(preview);
+}
+
+void TaskDlgPadParameters::setPreselection(
+    const std::vector<Gui::SelectionObject>& selection,
+    const std::vector<Gui::SelectionObject>& originalSelection
+)
+{
+    selectionOnCancel = originalSelection;
+    parameters->setPreselection(selection);
+}
+
+bool TaskDlgPadParameters::reject()
+{
+    const auto originalSelection = selectionOnCancel;
+    const bool rejected = TaskDlgExtrudeParameters::reject();
+    if (rejected) {
+        Gui::Selection().clearSelection();
+        for (const auto& item : originalSelection) {
+            if (!item.getObject()) {
+                continue;
+            }
+            if (item.getSubNames().empty()) {
+                Gui::Selection().addSelection(item.getDocName(), item.getFeatName());
+            }
+            else {
+                for (const auto& sub : item.getSubNames()) {
+                    Gui::Selection().addSelection(item.getDocName(), item.getFeatName(), sub.c_str());
+                }
+            }
+        }
+    }
+    return rejected;
 }
 
 //==== calls from the TaskView ===============================================================

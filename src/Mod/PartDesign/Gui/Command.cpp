@@ -66,6 +66,7 @@
 #include "ReferenceSelection.h"
 #include "SketchWorkflow.h"
 #include "TaskFeaturePick.h"
+#include "TaskPadParameters.h"
 #include "Utils.h"
 #include "WorkflowManager.h"
 #include "ViewProvider.h"
@@ -1240,6 +1241,10 @@ void finishProfileBased(const Gui::Command* cmd, const Part::Feature* sketch, Ap
 
 void prepareProfileBased(Gui::Command* cmd, const std::string& which, double length)
 {
+    const auto originalSelection = cmd->getSelection().getSelectionEx(
+        "*", App::DocumentObject::getClassTypeId(), Gui::ResolveMode::NoResolve
+    );
+    const auto selection = cmd->getSelection().getSelectionEx("*");
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
@@ -1268,17 +1273,16 @@ void prepareProfileBased(Gui::Command* cmd, const std::string& which, double len
         finishProfileBased(cmd, sketch, Feat);
     };
 
-    // Both legacy commands and Extrude enter the shared editor without requiring
-    // a profile first. The task also validates subtractive base-solid prerequisites.
-    if (cmd->getSelection().getSelectionEx().empty()) {
-        const std::string name = cmd->getUniqueObjectName(which.c_str(), pcActiveBody);
-        cmd->openCommand(QT_TRANSLATE_NOOP("Command", "Make Extrude"));
-        FCMD_OBJ_CMD(pcActiveBody, "newObject('PartDesign::" << which << "','" << name << "')");
-        worker(nullptr, pcActiveBody->getDocument()->getObject(name.c_str()));
-        return;
+    // Use the same profile gate and assignment for preselection and later picks.
+    // The generic profile-family path takes the first selection and can mistake
+    // a selected solid/body for the profile. Keep that path for other commands.
+    const std::string name = cmd->getUniqueObjectName(which.c_str(), pcActiveBody);
+    cmd->openCommand(QT_TRANSLATE_NOOP("Command", "Make Extrude"));
+    FCMD_OBJ_CMD(pcActiveBody, "newObject('PartDesign::" << which << "','" << name << "')");
+    worker(nullptr, pcActiveBody->getDocument()->getObject(name.c_str()));
+    if (auto task = qobject_cast<PartDesignGui::TaskDlgPadParameters*>(Gui::Control().activeDialog())) {
+        task->setPreselection(selection, originalSelection);
     }
-
-    prepareProfileBased(pcActiveBody, cmd, which, worker);
 }
 
 //===========================================================================

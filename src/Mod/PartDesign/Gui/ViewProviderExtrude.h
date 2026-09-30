@@ -40,6 +40,7 @@ public:
     ~ViewProviderExtrude() override = default;
 
     void highlightShapeFaces(const std::vector<std::string>& faces);
+    bool setEdit(int mode) override;
 };
 
 

@@ -50,6 +50,15 @@ invalid profiles, selection-mode switching, reference restrictions, Cancel, and
 Undo/Redo. Also check viewport picking and preview positioning manually with a
 rotated sketch and with both pad directions.
 
+F031 regressions compare profile/axis links, operation, direction/extent parameters
+and accepted volumes between
+preselection and command-first picking for Extrude, Pad and Pocket in Add/Subtract.
+Mixed whole-solid/Body plus sketch selections are tested in both orders; the
+active Body stays the scope. Ambiguous profiles and invalid vertex/other-Body
+inputs leave a recoverable task with explicit feedback. Create/edit Cancel checks
+restore original subelement selection and Body Tip/profile state. These do not
+establish future multi-target Boolean or general occurrence-selection support.
+
 The Extrude suites additionally check the first-field Add/Subtract dropdown,
 both legacy object types, operation changes, extent names, expression/dependency
 retention, no-base recovery, save/reopen, legacy Operation lists, and Common behavior.

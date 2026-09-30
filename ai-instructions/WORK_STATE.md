@@ -1,6 +1,25 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 5, tasks 5.1.12/5.2.4. F070 functional acceptance
+Latest product batch: phase 8, tasks 8.1.2b/8.1.5b. F031's Extrude parity,
+mixed-selection and Cancel acceptance example is complete for the active-Body
+workflow. Extrude/Pad/Pocket reuse one profile gate; ambiguous picks stay in the
+collector and invalid picks receive inline feedback. Cancel restores original
+subelement selection and profile/Body Tip state for creation and editing.
+Both tasks were grouped before the native build; regression-found edit snapshot
+timing was fixed and rebuilt. Final 138 checks pass: 24 corrected Extrude tests
+plus 114 passing grouped checks on the same native modules, zero remaining
+failures/errors/skips, final macro PASS and process exit 0. Evidence root:
+D:\Temp\Office-PC\freecad-plus-extrude-selection-20260930.
+See acceptance-summary.json, validated-identities.json, build.log, verified,
+extrude-final and visually checked captures in visual. Initial failures retained;
+test-only compound/quantity fixture corrections require no further native build.
+PartDesignGui SHA256 02d7224188574514a67f5a981d9a25cd5100f53f72c7df0256b248c76093e76c.
+The executable's older version stamp is not the rebuilt module identity. No
+installer/release. Broad occurrence/other-family and physical interaction gates
+remain open. Next item-level focus: F030 Extrude collector inspection/count/type
+feedback, with related tasks grouped before validation.
+
+Previous product batch: phase 5, tasks 5.1.12/5.2.4. F070 functional acceptance
 is complete for the documented bounded single-angle workflow. The Isocline task
 now edits Curve tolerance with length units and the existing native range, blocks
 invalid drafts even with preview paused, and preserves expression-driven values.
@@ -12,8 +31,7 @@ D:\Temp\Office-PC\freecad-plus-isocline-tolerance-20260930\grouped.
 Four changed source/development-build Python hashes match; existing fork engine
 802e19d648, no native rebuild or release. Physical viewport/keyboard/high-DPI
 acceptance remains 5.2.3; arbitrary singular-surface completeness is not claimed.
-Next item-level focus: F031 Extrude preselection/postselection equivalence and
-mixed-input acceptance in phase 8, with related tasks batched before validation.
+Its next F031 Extrude slice was completed in the phase 8 batch above.
 
 Release 0.0.2 is built, validated and publicly published after 0.0.4:
 https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.2

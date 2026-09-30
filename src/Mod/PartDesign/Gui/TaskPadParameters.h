@@ -25,6 +25,7 @@
 #pragma once
 
 #include <map>
+#include <Gui/Selection/SelectionObject.h>
 
 #include "TaskExtrudeParameters.h"
 #include "ViewProviderExtrude.h"
@@ -63,6 +64,7 @@ public:
 
     void apply() override;
     void setSelectionMode(SelectionMode mode, Side side = Side::First) override;
+    void setPreselection(const std::vector<Gui::SelectionObject>& selection);
 
 protected:
     void onSelectionChanged(const Gui::SelectionChanges& msg) override;
@@ -86,6 +88,7 @@ private:
     QGroupBox* profileGroup = nullptr;
     QListWidget* profileList = nullptr;
     QLabel* profileHint = nullptr;
+    QLabel* preselectionHint = nullptr;
     QPushButton* selectProfile = nullptr;
     QPushButton* removeProfile = nullptr;
     QPushButton* clearProfile = nullptr;
@@ -99,6 +102,15 @@ class TaskDlgPadParameters: public TaskDlgExtrudeParameters
 
 public:
     explicit TaskDlgPadParameters(ViewProviderExtrude* PadView, bool newObj = false);
+    void setPreselection(
+        const std::vector<Gui::SelectionObject>& selection,
+        const std::vector<Gui::SelectionObject>& originalSelection
+    );
+    bool reject() override;
+    void setSelectionOnCancel(const std::vector<Gui::SelectionObject>& selection)
+    {
+        selectionOnCancel = selection;
+    }
 
 protected:
     TaskExtrudeParameters* getTaskParameters() override
@@ -107,6 +119,7 @@ protected:
     }
 
 private:
+    std::vector<Gui::SelectionObject> selectionOnCancel;
     TaskPadParameters* parameters;
 };
 

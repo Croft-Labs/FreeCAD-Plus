@@ -2,13 +2,15 @@
 
 ## Current focus
 
-- Current product batch: phase 5 tolerance editing and F070 functional acceptance
-  (5.1.12, 5.2.4). The related implementation and acceptance work was batched before
-  one grouped run: 130 tests pass, zero failures/errors/skips. F070's documented
-  functional scope is complete; physical viewport/keyboard/high-DPI acceptance
-  remains open under 5.2.3. Matching Python modules on the existing fork engine;
-  no native rebuild, installer or release. Next item-level focus: F031 Extrude
-  preselection/postselection equivalence and mixed-input acceptance in phase 8.
+- Current product batch: phase 8 Extrude preselection parity and Cancel recovery
+  (8.1.2b, 8.1.5b). Both tasks were implemented before native build/validation.
+  F031's Extrude acceptance example is complete within the active-Body workflow;
+  broader command-family/occurrence behavior remains open. Final acceptance:
+  138 checks pass across the grouped run and corrected Extrude rerun. Native
+  PartDesignGui build passes; source/test/binary identities recorded below.
+  No installer or release. Prior phase 5 F070 functional acceptance remains
+  complete for its documented scope; physical interaction remains 5.2.3.
+  Next item-level focus: F030 Extrude collector inspection and count/type feedback.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1819,6 +1821,11 @@ implementation or mark its unfinished validation complete through this plan.
   preselection and later picks. Show ignored inputs with reasons; retain valid
   inputs and reject ambiguous multiple Trim tool faces without choosing one.
   Verify mixed picks, document scope, correction and equivalent definitions. F031.
+- [ X ] 8.1.2b Route Extrude and legacy Pad/Pocket preselection through the
+  same profile gate and assignment as command-first picking. Ignore invalid picks
+  with visible reasons; require explicit choice for multiple profile objects.
+  Mixed whole solids/bodies do not replace the active Body or become profiles.
+  Parity, invalid-input recovery and selection-order regressions pass; evidence below.
 - [   ] 8.1.3 Standardize named selection collectors with add/remove/clear, viewport/tree picking, compatible-type filters, chain/region selection and visible invalid-reference feedback.
 - [ X ] 8.1.3a Add input inspection to existing Trim Body and Isocline collectors:
   Target/Tool Highlight, face-list row highlighting and direction-reference
@@ -1842,6 +1849,10 @@ implementation or mark its unfinished validation complete through this plan.
   edit Cancel and failed startup. Capture before command preselection is consumed;
   retain original occurrence/subelement paths instead of resolved definitions.
   Shared FeatureTask helpers; F031/F032 cancellation slice, not Apply/repeat.
+
+- [ X ] 8.1.5b Restore original object/subelement selection after Extrude/Pad/Pocket
+  creation or edit Cancel, alongside existing profile and Body Tip rollback.
+  Create/edit Cancel passes for all three command entries; evidence below.
 
 - [   ] 8.1.6 Make previews responsive with cancellable computation, progress
   feedback and reduced-cost previews before final computation. Clearly distinguish
@@ -1878,6 +1889,32 @@ Preselection parity is verified for these editors, not the full F031 Extrude
 acceptance. Counts/type hints and explicit rejection do not complete general
 selection filters or disambiguation. Next independent product slice: expose the
 existing Isocline tolerance in its create/edit task and validate its F070 semantics.
+
+**Extrude selection batch (8.1.2b, 8.1.5b), 2026-09-30:** Both native changes
+were grouped before the first PartDesignGui Release build. Initial regressions
+caught the base view provider clearing edit selection before dialog construction;
+`ViewProviderExtrude::setEdit` now captures it earlier. A follow-up native build
+passes. Test fixtures were corrected to compare compound solids' centers and use
+the quantity widget's `rawValue` helper; native code did not change afterward.
+Final acceptance: **138 passes, zero remaining failures/errors/skips**: Extrude
+task 24, Pad task 14, Extrude model 8, Pad model 14, Pocket model 6, Revolve task 5,
+Pattern task 17, Trim task 24, Isocline task 26. The final 24-test Extrude rerun
+passes (macro PASS, exit 0); the other 114 passing checks are retained from the
+grouped run against the same rebuilt native modules. Earlier failed runs remain
+in the evidence, not counted as acceptance. Evidence root:
+`D:\Temp\Office-PC\freecad-plus-extrude-selection-20260930`, with `build.log`,
+`verified`, `extrude-final`, `acceptance-summary.json`, `validated-identities.json`
+and readable, visually checked mixed/ambiguous Profile captures under `visual`.
+Six changed source hashes and the staged test identity are recorded; PartDesignGui
+SHA256 `02d7224188574514a67f5a981d9a25cd5100f53f72c7df0256b248c76093e76c`.
+The executable's existing `802e19d648` version stamp does not identify these rebuilt
+modules. No installer or release. All 127 item IDs remain unique and ordered.
+F031's specified Extrude parity/mixed-selection/Cancel example is complete for
+the active-Body workflow. Whole solid/Body picks are explained as ignored profile
+inputs; they do not introduce multi-target Boolean semantics. Broad occurrence,
+other-family and physical input/high-DPI acceptance remains open, as does F032's
+Apply/repeat workflow. Next bounded product slice: F030 Extrude collector inspection
+and count/type feedback.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4291,7 +4328,7 @@ reconciliation rules above to every entry.
 <a id="f031"></a>
 ### F031 — Preselection and postselection
 
-**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline shared preselection/picking checks, ignored-input explanations, parity, cancellation recovery and whole-object collection are validated under 8.1.2a, 8.1.5a and 5.1.11. The specified Extrude equivalence and broad mixed-selection acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Specified Extrude parity, deterministic mixed selections and creation/edit Cancel acceptance are complete for the active-Body workflow under 8.1.2b/8.1.5b (138 final passing checks). Extrude/Pad/Pocket use the same profile gate before and after startup; multiple profiles require explicit choice, invalid picks receive inline feedback. Trim Body/Isocline checks remain validated under 8.1.2a, 8.1.5a and 5.1.11. Broader command-family, occurrence and multi-target semantics remain open.
 
 **Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 
@@ -4304,7 +4341,7 @@ reconciliation rules above to every entry.
 <a id="f032"></a>
 ### F032 — Consistent Apply/OK/Cancel
 
-**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
+**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Extrude/Pad/Pocket create/edit Cancel selection plus profile/Body Tip rollback is validated under 8.1.5b. Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
 
 **Packages:** A07, U09 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
 

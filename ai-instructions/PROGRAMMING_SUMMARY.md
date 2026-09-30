@@ -57,6 +57,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Extrude preselection: `TaskPadParameters::setPreselection` reuses the profile
+gate/assignment for `Command.cpp`'s Pad/Pocket entry. `TaskDlgPadParameters` owns
+Cancel selection snapshots; `ViewProviderExtrude::setEdit` captures editing
+selection before the base editor clears it. Roadmap 8.1.2b/8.1.5b.
+
 Isocline tolerance: `curve_tolerance` in
 [`Isocline.py`](../src/Mod/Part/BasicShapes/Isocline.py) validates native distance
 limits and length units; `IsoclineTask.applyTolerance` in
