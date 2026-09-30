@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2u/v/w fix Mirror placed passthrough, failure-safe output
+- Current batch: 16.2x/y/z clear failed Axis Map results, validate positive
+  finite radius and update rotary-post snapshot fixtures for the export guard.
+  Grouped validation: 44 passes, zero failures/errors/skips; no native rebuild.
+- Previous batch: 16.2u/v/w fix Mirror placed passthrough, failure-safe output
   assembly and source-path isolation. Grouped validation: 53 passes, zero
   failures/errors/skips; Python-only synchronization, no native rebuild.
 - Previous batch: 16.2s/t clear Array paths before validation/generation and
@@ -2231,6 +2234,32 @@ fixture and recovery/export check pass. Source/development-build Mirror.py SHA25
 Grouped Python synchronization/testing, no native rebuild; reused engine 2df76790b4.
 No GUI/machine acceptance or release update. General skipped-consumer invalidation
 and broader downstream compatibility remain open.
+
+- [ X ] 16.2x Clear Axis Map output before conversion so arc splitting or mapping
+  failure cannot retain an old path. Verify native error/export rejection and recovery.
+- [ X ] 16.2y Require finite positive Axis Map radius, with Reverse controlling
+  direction. Verify zero/negative rejection and recovery; check all six X/Y-to-A/B/C
+  mappings in both directions on linear motion, preserving source G-code.
+- [ X ] 16.2z Adapt rotary-post snapshot fixtures to the dirty-input export guard:
+  recompute dependencies, assert clean/valid inputs and valid operation, then restore
+  and acknowledge only the deliberately injected compound/split test path. Preserve
+  production export checks and validate LinuxCNC/Grbl rotary regression expectations.
+
+Axis Map batch: `cam-axis-map-20260930-final/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **44 PASS, zero
+failures/errors/skips**: 28 invalid-input/workflow checks (three new), seven nested
+postprocessing checks and nine rotary-post regressions. Macro PASS; process ended.
+The initial `cam-axis-map-20260930-batch` had 35 passes/nine errors because rotary
+fixtures injected paths without clearing their deliberate dirty-output state.
+The intermediate `cam-axis-map-20260930-verified` retained 35 passes/nine failures:
+new dependency assertions exposed a dirty stock sketch. Explicit fixture recompute
+before restoring snapshots resolved that prerequisite without weakening export.
+Source/development-build AxisMap.py SHA256:
+`A9E44123B1F057B5E7CEB21D510C22EE69E6A39627003A64DE663D022D83D9EE`;
+rotary fixture SHA256: `1E721C0B4752F3207BA2EC54C83E776E0D32EC8CB71D1E90309E5111BCDD3290`.
+Both production changes preceded grouped validation; only Python was synchronized
+into the existing engine (2df76790b4). No native build, new release, GUI/machine
+acceptance or new simultaneous-multiaxis capability. General consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

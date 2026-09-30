@@ -243,6 +243,17 @@ class TestPathRotaryPostRegression(PathTestBase):
         return post
 
     def _export_gcode(self, post_name):
+        # This post-only fixture deliberately replaces the generated Path with
+        # compound/split snapshots. Recompute inputs, then restore that deliberate
+        # test output: recompute alone would overwrite the split form.
+        prepared_path = self.op.Path.copy()
+        self.doc.recompute()
+        self.assertNotIn("Invalid", self.op.State)
+        for dependency in self.op.OutListRecursive:
+            self.assertNotIn("Invalid", dependency.State, dependency.Label)
+            self.assertNotIn("Touched", dependency.State, dependency.Label)
+        self.op.Path = prepared_path
+        self.op.purgeTouched()
         post = self._make_post(post_name)
         sections = post.export2()
         self.assertIsNotNone(sections, f"{post_name} export2 returned None")

@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2u/v/w complete. Mirror preserves placement when disabled,
+Latest roadmap batch: 16.2x/y/z complete. Axis Map clears failed conversion output
+and requires positive finite radius. Rotary-post snapshot tests now recompute and
+validate inputs before restoring their prepared output; production export guard
+unchanged. Final grouped validation: 44 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-axis-map-20260930-final.
+Earlier fixture failures and final hashes are recorded in the roadmap. Python-only
+synchronization; no native rebuild, GUI/machine acceptance or release update.
+Test process ended. Continue broader consumer gates with grouped validation.
+
+Previous roadmap batch: 16.2u/v/w complete. Mirror preserves placement when disabled,
 clears stale output before generation, publishes only completed combined results,
 and copies live base paths before transformation/append. The identity-placement
 source mutation found in the initial run is fixed. Final grouped validation:

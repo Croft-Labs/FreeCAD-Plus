@@ -450,3 +450,69 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         dressup.touch()
         self.doc.recompute()
         self.assertTrue(dressup.Path.Commands)
+
+    def makeAxisMap(self):
+        from Path.Dressup.Gui import AxisMap
+        dressup = self.doc.addObject("Path::FeaturePython", "AxisMap")
+        AxisMap.ObjectDressup(dressup)
+        dressup.Base = self.op
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        return dressup
+
+    def testAxisMapInvalidRadiusBlocksExportAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeAxisMap()
+        for radius in (0, -10):
+            dressup.Radius = radius
+            self.doc.recompute()
+            self.assertFalse(dressup.Path.Commands)
+            self.assertIn("Invalid", dressup.State)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            dressup.Radius = 45
+            self.doc.recompute()
+            self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testAxisMapGenerationFailureClearsAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import AxisMap
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeAxisMap()
+        with patch.object(AxisMap.PostUtils, "splitArcs",
+                          side_effect=RuntimeError("Deliberate arc conversion failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testAxisMapMappingAndReversePreserveSource(self):
+        import math
+        from PathScripts import PathUtils
+        dressup = self.makeAxisMap()
+        self.doc.recompute()
+        original = self.op.Path.toGCode()
+        source = PathUtils.getPathWithPlacement(self.op).Commands
+        for mapping in ("X->A", "Y->A", "X->B", "Y->B", "X->C", "Y->C"):
+            for reverse in (False, True):
+                dressup.AxisMap = mapping
+                dressup.Reverse = reverse
+                self.doc.recompute()
+                result = dressup.Path.Commands
+                self.assertEqual(len(result), len(source))
+                checked = 0
+                for before, after in zip(source, result):
+                    if mapping[0] in before.Parameters:
+                        expected = math.degrees(before.Parameters[mapping[0]] / 45)
+                        self.assertAlmostEqual(after.Parameters[mapping[3]],
+                                               -expected if reverse else expected)
+                        self.assertNotIn(mapping[0], after.Parameters)
+                        checked += 1
+                self.assertGreater(checked, 0)
+                self.assertEqual(self.op.Path.toGCode(), original)

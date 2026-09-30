@@ -144,6 +144,8 @@ class ObjectDressup:
             obj.Centre = FreeCAD.Vector(0, 0, 0 - obj.Radius.Value)
 
     def execute(self, obj):
+        # Failed conversion must never leave the previous rotary path available.
+        obj.Path = Path.Path()
 
         inAxis = obj.AxisMap[0]
         outAxis = obj.AxisMap[3]
@@ -156,6 +158,10 @@ class ObjectDressup:
         ):
             obj.Path = Path.Path()
             return
+
+        radius = obj.Radius.Value
+        if not math.isfinite(radius) or radius <= 0:
+            raise ValueError("Axis Map radius must be finite and greater than zero; use Reverse to change direction.")
 
         job = PathUtils.findParentJob(obj)
         deflection = job.GeometryTolerance.Value
@@ -171,12 +177,12 @@ class ObjectDressup:
             if remapvar is not None:
                 if obj.Reverse:
                     remapvar = -remapvar
-                newparams[outAxis] = math.degrees(remapvar / obj.Radius.Value)
+                newparams[outAxis] = math.degrees(remapvar / radius)
                 locdiff = dict(set(newparams.items()) - set(lastPar.items()))
                 if len(locdiff) == 1 and outAxis in locdiff:
                     # calculate rotational feed rate
                     feed = cmd.Parameters.get("F", lastPar["F"])
-                    newparams.update({"F": math.degrees(feed / obj.Radius.Value)})
+                    newparams.update({"F": math.degrees(feed / radius)})
                 newcommand = Path.Command(cmd.Name, newparams)
                 newcommand.Annotations = cmd.Annotations
                 newcommandlist.append(newcommand)

@@ -71,6 +71,21 @@ portion is not published before the complete result is ready. Run alongside nest
 postprocessing, Array and Dogbone regressions. These checks are separate from
 viewport interaction and machining acceptance.
 
+## Axis Map failure and conversion checks
+
+Run `tests/TestCAMInvalidInputs.py` with the nested-dressup and rotary-post
+regressions. Axis Map tests cover zero/negative-radius error and export rejection,
+arc-conversion failure clearing, and regeneration after correction. Analytical
+checks cover all six X/Y-to-A/B/C mappings in both directions on a linear path,
+with unchanged source G-code. Radius must be finite and positive; Reverse controls
+rotation direction. The rotary-post fixture deliberately injects compound/split
+path snapshots; before export it recomputes inputs, checks operation validity and
+clean/valid recursive inputs, then restores and acknowledges only the fixture
+output edit. The production export
+guard is unchanged and independently covered by invalid-input tests.
+This validates the inherited mapping operation, not a new
+simultaneous-multiaxis workflow or physical machine/post compatibility.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,
