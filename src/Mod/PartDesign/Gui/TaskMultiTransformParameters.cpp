@@ -186,6 +186,15 @@ void TaskMultiTransformParameters::openPatternTask()
     }
 }
 
+void TaskMultiTransformParameters::prepareOriginalsSelection()
+{
+    if (getObject<PartDesign::Pattern>()) {
+        if (auto task = qobject_cast<TaskPatternParameters*>(subTask)) {
+            task->cancelReferenceSelection();
+        }
+    }
+}
+
 void TaskMultiTransformParameters::changePatternType(int index)
 {
     auto* pattern = getObject<PartDesign::Pattern>();

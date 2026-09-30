@@ -50,6 +50,7 @@ public:
 
     void apply() override;
     void refreshReferences();
+    void cancelReferenceSelection();
 
 protected:
     void onSelectionChanged(const Gui::SelectionChanges& msg) override;

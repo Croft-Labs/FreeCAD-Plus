@@ -43,6 +43,13 @@ save/reopen, and Undo/Redo. GUI checks use the active task's Qt controls and ope
 transactions through `ViewObject.doubleClicked()`. They do not substitute for physical
 mouse/keyboard interaction or broad cross-platform validation.
 
+F030 collector checks cover Originals counts and accepted types, duplicate/removal
+updates, Whole body retention, reopen and explicit Clear. Clear preserves both
+pattern settings, blocks empty acceptance and supports replacement, Cancel and
+Undo/Redo. Direction picking and Originals Add/Remove/Clear are checked in both
+transition directions: one selection changes only the intended role. These controls
+are scoped to the combined Pattern; legacy model/task regressions remain included.
+
 ## Manual acceptance
 
 1. Create a base plate and an attached additive or subtractive feature. Clear selection

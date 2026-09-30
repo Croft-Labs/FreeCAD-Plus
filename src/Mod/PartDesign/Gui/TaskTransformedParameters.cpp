@@ -25,6 +25,9 @@
 
 #include <QAction>
 #include <QListWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QSignalBlocker>
 
 
 #include <App/Application.h>
@@ -128,6 +131,16 @@ void TaskTransformedParameters::setupUI()
         ui->radioTransformToolShapes->setText(tr("Selected features"));
         ui->radioTransformBody->setText(tr("Whole body"));
         ui->verticalLayout_3->insertWidget(0, ui->radioTransformToolShapes);
+        originalsStatus = new QLabel(proxy);
+        originalsStatus->setObjectName(QStringLiteral("patternOriginalsStatus"));
+        originalsStatus->setTextFormat(Qt::PlainText);
+        originalsStatus->setWordWrap(true);
+        ui->verticalLayout->insertWidget(1, originalsStatus);
+        clearOriginalsButton = new QPushButton(ui->groupFeatureList);
+        clearOriginalsButton->setObjectName(QStringLiteral("patternClearOriginals"));
+        ui->verticalLayout_2->addWidget(clearOriginalsButton);
+        connect(clearOriginalsButton, &QPushButton::clicked, this, &TaskTransformedParameters::clearOriginals);
+        connect(this, &TaskTransformedParameters::originalsChanged, this, &TaskTransformedParameters::updateOriginalsFeedback);
     }
 
     ui->buttonGroupMode->setId(ui->radioTransformBody, static_cast<int>(Mode::WholeShape));
@@ -159,6 +172,53 @@ void TaskTransformedParameters::setupUI()
 
     setupParameterUI(ui->featureUI);  // create parameter UI widgets
     this->groupLayout()->addWidget(proxy);
+    updateOriginalsFeedback();
+}
+
+void TaskTransformedParameters::updateOriginalsFeedback()
+{
+    if (!originalsStatus) {
+        return;
+    }
+    auto pattern = getObject<PartDesign::Pattern>();
+    if (!pattern) {
+        return;
+    }
+    const bool whole = pattern->TransformMode.getValue()
+        == static_cast<long>(PartDesign::Transformed::Mode::WholeShape);
+    const int count = static_cast<int>(pattern->Originals.getValues().size());
+    QString state = tr("Originals picking inactive");
+    if (whole) {
+        state = tr("Whole body; selected features are retained for switching back.");
+    }
+    else if (selectionMode == SelectionMode::AddFeature) {
+        state = tr("Picking: add original feature");
+    }
+    else if (selectionMode == SelectionMode::RemoveFeature) {
+        state = tr("Picking: remove original feature");
+    }
+    originalsStatus->setText(tr("Originals: %1\nAccepts: additive/subtractive features from this body.\n%2")
+        .arg(count).arg(state));
+    clearOriginalsButton->setText(tr("Clear"));
+    clearOriginalsButton->setToolTip(tr("Clear selected features and start picking replacements"));
+    clearOriginalsButton->setEnabled(!whole && count > 0);
+}
+
+void TaskTransformedParameters::clearOriginals()
+{
+    auto pattern = getObject<PartDesign::Pattern>();
+    if (!pattern || pattern->TransformMode.getValue()
+        != static_cast<long>(PartDesign::Transformed::Mode::Features)) {
+        return;
+    }
+    prepareOriginalsSelection();
+    exitSelectionMode();
+    setupTransaction();
+    pattern->Originals.setValues({});
+    ui->listWidgetFeatures->clear();
+    Q_EMIT originalsChanged();
+    recomputeFeature();
+    startFeatureSelection();
 }
 
 void TaskTransformedParameters::startFeatureSelection()
@@ -184,6 +244,7 @@ void TaskTransformedParameters::changeEvent(QEvent* event)
     if (event->type() == QEvent::LanguageChange && proxy) {
         ui->retranslateUi(proxy);
         retranslateParameterUI(ui->featureUI);
+        updateOriginalsFeedback();
     }
 }
 
@@ -348,6 +409,9 @@ void TaskTransformedParameters::onModeChanged(int mode_id)
 void TaskTransformedParameters::onButtonAddFeature(bool checked)
 {
     if (checked) {
+        prepareOriginalsSelection();
+        const QSignalBlocker blocker(ui->buttonAddFeature);
+        ui->buttonAddFeature->setChecked(true);
         hideObject();
         showBase();
         selectionMode = SelectionMode::AddFeature;
@@ -358,6 +422,7 @@ void TaskTransformedParameters::onButtonAddFeature(bool checked)
     }
 
     ui->buttonRemoveFeature->setDisabled(checked);
+    updateOriginalsFeedback();
 }
 
 // Make sure only some feature before the given one is visible
@@ -385,6 +450,9 @@ void TaskTransformedParameters::checkVisibility()
 void TaskTransformedParameters::onButtonRemoveFeature(bool checked)
 {
     if (checked) {
+        prepareOriginalsSelection();
+        const QSignalBlocker blocker(ui->buttonRemoveFeature);
+        ui->buttonRemoveFeature->setChecked(true);
         checkVisibility();
         selectionMode = SelectionMode::RemoveFeature;
         Gui::Selection().clearSelection();
@@ -394,6 +462,7 @@ void TaskTransformedParameters::onButtonRemoveFeature(bool checked)
     }
 
     ui->buttonAddFeature->setDisabled(checked);
+    updateOriginalsFeedback();
 }
 
 void TaskTransformedParameters::onFeatureDeleted()
@@ -601,6 +670,7 @@ void TaskTransformedParameters::exitSelectionMode()
         clearButtons();
         selectionMode = SelectionMode::None;
         Gui::Selection().rmvSelectionGate();
+        updateOriginalsFeedback();
     }
     catch (Base::Exception& exc) {
         exc.reportException();

@@ -152,7 +152,7 @@ and edit their original types; they are not silently converted.
 | Control | Order and behavior |
 | --- | --- |
 | Pattern type | First field: Linear or Circular. Switching replaces only the displayed parameter controls and active transformation; the result object and both sets of saved settings remain. |
-| Features | Immediately follows the type selector. Add/Remove Feature and the list use model/tree selection. An empty new pattern enters Add Feature mode. Transform body remains an explicit alternative. Reject other-body and dependent-feature picks. |
+| Features | Immediately follows the type selector. Originals feedback shows entry count, accepted additive/subtractive feature types and add/remove/inactive picking state. Add/Remove Feature and the list use model/tree selection. Clear empties the list and activates replacement picking while retaining both pattern settings. Empty inputs cannot be accepted. Whole body disables Clear and reports the retained selected-feature count. Reject other-body and dependent-feature picks. |
 | Direction / Axis | Follows the feature list. Linear exposes direction; Circular exposes rotation axis. Choose a Body/sketch axis or pick a reference in the model. Reference picking and feature picking are mutually exclusive. |
 | Dimensions and occurrences | Linear: total length or spacing and count, with optional second direction. Circular: total angle or angular spacing and count. Retain reverse, expressions, custom spacing, and instance suppression. |
 | Preview | Existing recompute and preview controls. Empty/invalid inputs stay editable; no stale valid result may be accepted after removing all features. |

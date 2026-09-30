@@ -42,6 +42,7 @@
 #include <App/Document.h>
 #include <App/DocumentObject.h>
 #include <App/Origin.h>
+#include <Mod/PartDesign/App/FeaturePattern.h>
 #include <Base/Console.h>
 #include <Gui/Application.h>
 #include <Gui/MainWindow.h>
@@ -289,6 +290,12 @@ void TaskPatternParameters::enterReferenceSelectionMode()
         return;
     }
 
+    if (getTopTransformedObject()->isDerivedFrom<PartDesign::Pattern>()) {
+        // The combined task has a separate originals controller. End its role
+        // before accepting a pick for a direction or axis.
+        exitSelectionMode();
+    }
+
     hideObject();  // Hide the pattern feature itself
     showBase();    // Show the base features/body
     Gui::Selection().clearSelection();
@@ -325,6 +332,13 @@ void TaskPatternParameters::exitReferenceSelectionMode()
     hideBase();
     Gui::getMainWindow()->showMessage(QString());
     clearActiveDirectionWidget();
+}
+
+void TaskPatternParameters::cancelReferenceSelection()
+{
+    if (selectionMode == SelectionMode::Reference) {
+        exitReferenceSelectionMode();
+    }
 }
 
 

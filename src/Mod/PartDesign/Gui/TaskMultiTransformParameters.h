@@ -87,6 +87,7 @@ private Q_SLOTS:
     void onUpdateView(bool /*unused*/) override;
 
 private:
+    void prepareOriginalsSelection() override;
     void setupParameterUI(QWidget* widget) override;
     void retranslateParameterUI(QWidget* widget) override;
 

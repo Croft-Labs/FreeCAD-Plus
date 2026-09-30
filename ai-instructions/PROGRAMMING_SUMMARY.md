@@ -64,6 +64,11 @@ selection before the base editor clears it. Roadmap 8.1.2b/8.1.5b.
 `highlightProfileItems` activates Profile for inspection under a guarded selection
 callback; `updateProfileFeedback` owns entry counts/type/picking text (8.1.3d/e).
 
+Combined Pattern Originals: `TaskTransformedParameters::updateOriginalsFeedback`
+and `clearOriginals` add scoped count/type/state and Clear controls. The combined
+controller's `prepareOriginalsSelection` and embedded Pattern reference cancellation
+coordinate input roles without changing stored types/settings; roadmap 8.1.3f-h.
+
 Isocline tolerance: `curve_tolerance` in
 [`Isocline.py`](../src/Mod/Part/BasicShapes/Isocline.py) validates native distance
 limits and length units; `IsoclineTask.applyTolerance` in

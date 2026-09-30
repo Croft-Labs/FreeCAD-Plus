@@ -37,6 +37,8 @@
 #include "ViewProviderTransformed.h"
 
 class QListWidget;
+class QLabel;
+class QPushButton;
 
 class Ui_TaskTransformedParameters;
 
@@ -112,6 +114,7 @@ protected:
     /// Insert the operation selector before the common feature list.
     void insertWorkflowHeader(QWidget* widget);
     void startFeatureSelection();
+    virtual void prepareOriginalsSelection() {}
 
     /**
      * Returns the base transformation
@@ -200,6 +203,8 @@ private:
     void removeObject(App::DocumentObject*);
     void clearButtons();
     void checkVisibility();
+    void updateOriginalsFeedback();
+    void clearOriginals();
 
     /// Return the base object of the base transformed object (see getTopTransformedObject())
     // Either through the ViewProvider or the currently active subFeature of the parentTask
@@ -232,6 +237,8 @@ private:
     /// Widget holding the transform task UI
     QWidget* proxy = nullptr;
     std::unique_ptr<Ui_TaskTransformedParameters> ui;
+    QLabel* originalsStatus = nullptr;
+    QPushButton* clearOriginalsButton = nullptr;
 };
 
 /// simulation dialog for the TaskView

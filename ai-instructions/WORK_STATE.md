@@ -1,6 +1,25 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.3d/e, advancing F030. Extrude/Pad/Pocket
+Latest product batch: phase 8, tasks 8.1.3f-h, advancing F030/F032. Combined Pattern
+now shows Originals count/type/picking state, offers Clear with replacement recovery,
+and coordinates originals with the embedded direction picker so one pick cannot
+fill both roles. Whole body retains the selected-feature list and disables Clear.
+Three tasks preceded one native PartDesignGui Release build and one grouped run:
+144 distinct passing tests, 149 executions (five repeated Pattern model cases),
+zero failures/errors/skips, macro PASS, process exit 0. Five new GUI cases cover
+feedback/reopen, Clear recovery/settings, Cancel/Undo/Redo and role transitions.
+Evidence: D:\Temp\Office-PC\freecad-plus-pattern-collectors-20260930, including
+build.log, grouped/results.json, acceptance-summary.json and validated-identities.json.
+Seven changed source identities and staged test hash match; PartDesignGui SHA256:
+0843f5f52fd8bce6e68b952dc8f89cb2a3136ca47fa8f6baf702150467a83639.
+Readable layouts and radio/model states are recorded in visual-final. The first
+capture caught an unfinished radio animation; allowing Qt to settle corrected
+the evidence without a product change or rebuild. Old executable version stamp
+is not rebuilt-module identity; no installer/release. Broad F030/F031 inspection/
+occurrence/disambiguation and physical gates, plus F032 Apply/repeat remain open.
+Next item-level focus: Pattern Originals row inspection and selection recovery.
+
+Previous product batch: phase 8, tasks 8.1.3d/e, advancing F030. Extrude/Pad/Pocket
 profile row inspection and Highlight activate Profile without changing references;
 count/type/picking feedback stays current on mutation and reopen. Inspection
 visibility restores on Cancel and OK. Both tasks preceded one successful native
@@ -14,8 +33,7 @@ staged tests hash-match; PartDesignGui SHA256:
 Three collector captures under visual are readable without clipping. Executable
 version stamp remains older than rebuilt modules; no installer or release.
 Broad F030 other-family/disambiguation/occurrence and physical interaction gates
-remain open. Next item-level focus: audit the authorized Pattern originals
-collector against F030 and batch its remaining interaction gaps.
+remain open. Its Pattern collector follow-up is completed above.
 
 Previous product batch: phase 8, tasks 8.1.2b/8.1.5b. F031's Extrude parity,
 mixed-selection and Cancel acceptance example is complete for the active-Body
