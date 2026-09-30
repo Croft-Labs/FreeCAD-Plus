@@ -212,6 +212,8 @@ class ObjectDressup:
         if not obj.Base.Path:
             obj.Path = Path.Path()
             return
+        PathDressup.requireCurrent(obj.Base)
+
         if not PathDressup.baseOp(obj.Base).Active:
             path = Path.Path("(inactive operation)")
             obj.Path = path

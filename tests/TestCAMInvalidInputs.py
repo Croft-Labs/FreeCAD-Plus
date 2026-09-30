@@ -1285,3 +1285,9 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.doc.recompute()
         self.assertTrue(dressup.Path.Commands)
         self.assertFalse(dressup.interpSurface.isNull())
+
+    def testDragknifeRejectsDirtyAndFailedBaseAndRecovers(self):
+        self.checkDressupRejectsStaleBase(self.makeEntryDressup("Dragknife"))
+
+    def testRampEntryRejectsDirtyAndFailedBaseAndRecovers(self):
+        self.checkDressupRejectsStaleBase(self.makeEntryDressup("RampEntry"))

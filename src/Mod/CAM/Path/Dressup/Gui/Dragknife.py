@@ -374,6 +374,8 @@ class ObjectDressup:
         if not obj.Base.isDerivedFrom("Path::Feature"):
             return
 
+        PathDressup.requireCurrent(obj.Base)
+
         if obj.Base.Path.Commands:
 
             firstmove = Path.Command("G0", {"X": 0, "Y": 0, "Z": 0})

@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2be/bf guard Axis Map and Z Correction against stale base
+- Current batch: 16.2bg/bh guard Dragknife and Ramp Entry against stale base
+  dependencies. Grouped validation: 74 passes, zero failures/errors/skips.
+  Python staging only; no native rebuild or release.
+- Previous batch: 16.2be/bf guard Axis Map and Z Correction against stale base
   inputs and clear Z Correction surface caches before validation. Grouped tests:
   72 passes, zero failures/errors/skips. Python staging; no native rebuild/release.
 - Previous batch: 16.2bc/bd reject stale Array/Mirror base paths and Mirror
@@ -3333,6 +3336,23 @@ and recovery pass. Native skipped recompute can retain an export-blocked downstr
 cache; these fixes clear it during explicit execution. Python staging into engine
 2df76790b4; no native rebuild, release or physical GUI/machine acceptance. Broader
 CAM consumer/export gates in 16.2 remain open.
+
+- [ X ] 16.2bg Guard Dragknife generation against dirty/failed base dependencies
+  using the shared readiness check. Dirty/failed rejection and recovery verified.
+- [ X ] 16.2bh Guard Ramp Entry generation against dirty/failed base dependencies
+  before consuming cached commands. Dirty/failed rejection and recovery verified.
+
+Dragknife/Ramp Entry readiness evidence: `cam-entry-readiness-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **74 PASS, zero failures/
+errors/skips** (69 CAM invalid-input/workflow, five holding-tag geometry checks).
+Both changes preceded one grouped run; macro PASS and process ended. Source/staged
+SHA256: Dragknife.py `8532EA5CD8655FF59EA94C48CB0B891ACDE21E8A596EB585B3060DE10B52476C`;
+RampEntry.py `C779906BCBFDC69D4DE351948D9A0532C11DCA7A9D632BA8EDF05961EFA37EDA`.
+Tests verify export rejection for dirty/failed inputs, explicit execution clearing
+output and raising, and regeneration after repair. Native skipped-recompute caching
+remains export-blocked; automatic cache clearing is not established. Python staging
+into engine 2df76790b4; no native rebuild, release or physical GUI/machine acceptance.
+Broad CAM consumer/export completion remains open under 16.2.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

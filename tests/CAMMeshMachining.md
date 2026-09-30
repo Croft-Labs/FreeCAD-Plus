@@ -246,3 +246,9 @@ repair/recompute. Z Correction additionally must clear its interpolation surface
 when the base is missing or stale, then rebuild that surface on successful retry.
 These checks do not establish machine acceptance or change native skipped-recompute
 behavior; cached downstream output remains subject to the existing export guard.
+
+
+Dragknife and Ramp Entry also run the shared dirty/failed-base regression: export
+must reject stale dependencies, explicit generation must clear output and raise,
+and repaired/recomputed inputs must regenerate usable paths. The existing missing
+input and injected generation-error checks remain part of the grouped suite.
