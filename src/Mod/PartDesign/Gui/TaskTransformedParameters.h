@@ -102,6 +102,7 @@ public:
 
     /// Exit the selection mode of the associated task panel
     void exitSelectionMode();
+    void setOriginalsPreselection(const std::vector<Gui::SelectionObject>& selection);
 
     static void removeItemFromListWidget(QListWidget* widget, const QString& itemstr);
 
@@ -210,6 +211,9 @@ private:
     void clearOriginals();
     void highlightOriginals();
     void restoreOriginalsVisibility();
+    QString originalSelectionError(App::DocumentObject* object) const;
+    bool changeOriginal(App::DocumentObject* object, bool add);
+    void setOriginalsHint(const QString& text);
 
     /// Return the base object of the base transformed object (see getTopTransformedObject())
     // Either through the ViewProvider or the currently active subFeature of the parentTask
@@ -243,6 +247,7 @@ private:
     QWidget* proxy = nullptr;
     std::unique_ptr<Ui_TaskTransformedParameters> ui;
     QLabel* originalsStatus = nullptr;
+    QLabel* originalsHint = nullptr;
     QPushButton* clearOriginalsButton = nullptr;
     QPushButton* highlightOriginalsButton = nullptr;
     std::map<std::string, bool> inspectionVisibility;
@@ -261,6 +266,10 @@ public:
     bool accept() override;
     /// is called by the framework if the dialog is rejected (Cancel)
     bool reject() override;
+    void setOriginalsPreselection(const std::vector<Gui::SelectionObject>& selection)
+    {
+        parameter->setOriginalsPreselection(selection);
+    }
     void setSelectionOnCancel(const std::vector<Gui::SelectionObject>& selection)
     {
         selectionOnCancel = selection;

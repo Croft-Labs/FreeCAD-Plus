@@ -53,6 +53,12 @@ Additional F030/F031 checks inspect duplicate-label originals by identity, highl
 all entries without model mutation, switch inspection/type/reference roles, restore
 visibility on OK/Cancel, and restore original subelement selections plus model state
 after creation/edit Cancel. General assembly occurrence behavior remains separate.
+F031 parity checks compare Linear/Circular definitions for preselection and later
+picks, including reversed input order and duplicate face picks. Mixed and invalid-only
+preselection retains valid originals and explains rejected Body/sketch/foreign inputs.
+Later scope/dependency/duplicate/removal rejections keep picking active; correction
+or Clear dismisses feedback. Cross-document checks cover both selection orders.
+
 
 ## Manual acceptance
 

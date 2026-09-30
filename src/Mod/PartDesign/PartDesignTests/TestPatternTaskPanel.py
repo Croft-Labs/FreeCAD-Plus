@@ -277,6 +277,154 @@ class TestPatternTaskPanel(unittest.TestCase):
         self.assertEqual(self.body.Tip, pattern)
         self.assertAlmostEqual(pattern.Shape.Volume, 8024)
 
+    def testPreselectionAndLaterPicksAgreeForBothPatternTypes(self):
+        other = self.body.newObject("PartDesign::AdditiveBox", "OtherBump")
+        other.Length = other.Width = other.Height = 2
+        other.Placement.Base = App.Vector(-5, 0, 5)
+        self.doc.recompute()
+        for mode in (0, 1):
+            definitions = []
+            shapes = []
+            for preselect in (True, False):
+                Gui.Selection.clearSelection()
+                if preselect:
+                    # Multiple subelements denote one original; input order is not history order.
+                    Gui.Selection.addSelection(other, "Face1")
+                    Gui.Selection.addSelection(self.bump, "Face1")
+                    Gui.Selection.addSelection(self.bump, "Face2")
+                pattern = self.start(False)
+                if not preselect:
+                    Gui.Selection.addSelection(self.bump, "Face1")
+                    self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+                    Gui.Selection.addSelection(other, "Face1")
+                self.switch(mode)
+                self.accept()
+                self.assertTrue(pattern.isValid(), pattern.getStatusString())
+                linear, circular = pattern.PatternSettings
+                definitions.append((sorted(obj.Name for obj in pattern.Originals), pattern.PatternType,
+                                    linear.Direction, linear.Length.Value, linear.Occurrences,
+                                    circular.Axis, circular.Occurrences, pattern.Shape.Volume))
+                shapes.append(pattern.Shape.copy())
+                self.assertTrue(pattern.ViewObject.doubleClicked())
+                self.assertEqual(self.widget(QtGui.QListWidget, "listWidgetFeatures").count(), 2)
+                Gui.Control.activeTaskDialog().reject()
+                self.doc.undo()
+                self.doc.recompute()
+                self.assertIsNone(self.doc.getObject("Pattern"))
+                self.assertEqual(self.body.Tip, other)
+            self.assertEqual(definitions[0][:-1], definitions[1][:-1])
+            self.assertAlmostEqual(definitions[0][-1], definitions[1][-1])
+            # Originals membership is unordered input; native evaluation uses Body history.
+            self.assertAlmostEqual(shapes[0].cut(shapes[1]).Volume, 0, places=6)
+            self.assertAlmostEqual(shapes[1].cut(shapes[0]).Volume, 0, places=6)
+
+    def testMixedPreselectionKeepsValidOriginalAndExplainsRejections(self):
+        sketch = self.body.newObject("Sketcher::SketchObject", "UnusedSketch")
+        other_body = self.doc.addObject("PartDesign::Body", "OtherBody")
+        other = other_body.newObject("PartDesign::AdditiveBox", "OtherFeature")
+        self.doc.recompute()
+        Gui.activeDocument().activeView().setActiveObject("pdbody", self.body)
+        for obj in (other, sketch, self.bump):
+            Gui.Selection.addSelection(obj)
+        selection = self.selectionPaths()
+        pattern = self.start(False)
+        self.assertEqual(pattern.Originals, [self.bump])
+        self.assertIn(pattern, self.body.Group)
+        hint = self.widget(QtGui.QLabel, "patternOriginalsHint")
+        self.assertIn("OtherFeature", hint.text())
+        self.assertIn("active body", hint.text())
+        self.assertIn("UnusedSketch", hint.text())
+        self.assertIn("additive or subtractive", hint.text())
+        self.assertFalse(hint.isHidden())
+        self.assertFalse(self.widget(QtGui.QPushButton, "buttonAddFeature").isChecked())
+        Gui.Control.activeTaskDialog().reject()
+        Gui.updateGui()
+        self.assertEqual(self.selectionPaths(), selection)
+        self.assertIsNone(self.doc.getObject("Pattern"))
+
+    def testInvalidOnlyPreselectionLeavesUsefulTaskAndRecovers(self):
+        Gui.Selection.addSelection(self.body)
+        pattern = self.start(False)
+        self.assertEqual(pattern.Originals, [])
+        hint = self.widget(QtGui.QLabel, "patternOriginalsHint")
+        self.assertFalse(hint.isHidden())
+        self.assertTrue(self.widget(QtGui.QPushButton, "buttonAddFeature").isChecked())
+        Gui.Control.activeTaskDialog().accept()
+        self.assertTrue(Gui.Control.activeDialog())
+        # A failed OK ends picking; restart it explicitly if needed.
+        if not self.widget(QtGui.QPushButton, "buttonAddFeature").isChecked():
+            self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+        Gui.Selection.addSelection(self.bump, "Face1")
+        self.assertEqual(pattern.Originals, [self.bump])
+        self.assertTrue(hint.isHidden())
+        self.accept()
+        self.assertAlmostEqual(pattern.Shape.Volume, 8024)
+
+    def testCrossDocumentPreselectionAndLaterPickUseSameRejection(self):
+        foreign = App.newDocument("ForeignPatternInputs")
+        try:
+            body = foreign.addObject("PartDesign::Body", "Body")
+            feature = body.newObject("PartDesign::AdditiveBox", "ForeignFeature")
+            foreign.recompute()
+            App.setActiveDocument(self.doc.Name)
+            Gui.activeDocument().activeView().setActiveObject("pdbody", self.body)
+            Gui.Selection.addSelection(feature)
+            pattern = self.start(False)
+            hint = self.widget(QtGui.QLabel, "patternOriginalsHint")
+            self.assertIn("this document", hint.text())
+            self.assertEqual(pattern.Originals, [])
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(feature)
+            self.assertIn("this document", hint.text())
+            self.assertEqual(pattern.Originals, [])
+            Gui.Selection.addSelection(self.bump)
+            self.assertEqual(pattern.Originals, [self.bump])
+            self.assertTrue(hint.isHidden())
+            self.accept()
+        finally:
+            App.closeDocument(foreign.Name)
+
+    def testRejectedLaterPicksExplainScopeDependencyAndRecover(self):
+        pattern = self.start()
+        self.accept()
+        downstream = self.body.newObject("PartDesign::AdditiveBox", "Downstream")
+        downstream.Length = downstream.Width = downstream.Height = 2
+        downstream.Placement.Base = App.Vector(0, 0, 5)
+        other_body = self.doc.addObject("PartDesign::Body", "OtherBody")
+        other = other_body.newObject("PartDesign::AdditiveBox", "OtherFeature")
+        self.doc.recompute()
+        Gui.activeDocument().activeView().setActiveObject("pdbody", self.body)
+        self.assertTrue(pattern.ViewObject.doubleClicked())
+        self.widget(QtGui.QPushButton, "buttonAddFeature").click()
+        hint = self.widget(QtGui.QLabel, "patternOriginalsHint")
+        for obj, reason in ((other, "active body"), (pattern, "depending on"),
+                            (downstream, "depending on"), (self.bump, "already an original")):
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(obj)
+            self.assertIn(reason, hint.text())
+            self.assertEqual(pattern.Originals, [self.bump])
+            self.assertTrue(self.widget(QtGui.QPushButton, "buttonAddFeature").isChecked())
+        self.widget(QtGui.QPushButton, "patternClearOriginals").click()
+        self.assertTrue(hint.isHidden())
+        Gui.Selection.addSelection(self.bump)
+        self.assertEqual(pattern.Originals, [self.bump])
+        self.assertTrue(hint.isHidden())
+        Gui.Control.activeTaskDialog().reject()
+        self.doc.recompute()
+        self.assertEqual(self.body.Tip, downstream)
+
+    def testRemoveUnlistedFeatureExplainsAndKeepsPickerActive(self):
+        pattern = self.start()
+        self.widget(QtGui.QPushButton, "buttonRemoveFeature").click()
+        Gui.Selection.addSelection(self.base)
+        hint = self.widget(QtGui.QLabel, "patternOriginalsHint")
+        self.assertIn("not in Originals", hint.text())
+        self.assertTrue(self.widget(QtGui.QPushButton, "buttonRemoveFeature").isChecked())
+        self.assertEqual(pattern.Originals, [self.bump])
+        Gui.Selection.addSelection(self.bump)
+        self.assertEqual(pattern.Originals, [])
+        self.assertTrue(hint.isHidden())
+
     def testFirstFieldThenFeaturePickingWithoutPreselection(self):
         pattern = self.start(False)
         combo = self.widget(QtGui.QComboBox, "patternType")

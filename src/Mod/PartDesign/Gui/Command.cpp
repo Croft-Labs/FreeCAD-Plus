@@ -2473,11 +2473,12 @@ void CmdPartDesignPattern::activated(int)
     const auto originalSelection = getSelection().getSelectionEx(
         "*", App::DocumentObject::getClassTypeId(), Gui::ResolveMode::NoResolve
     );
+    const auto selection = getSelection().getSelectionEx("*");
     auto* body = PartDesignGui::getBody(true);
     if (!body) {
         return;
     }
-    auto worker = [this, body, originalSelection](App::DocumentObject* object, std::vector<App::DocumentObject*>) {
+    auto worker = [this, body, selection, originalSelection](App::DocumentObject* object, std::vector<App::DocumentObject*>) {
         auto* pattern = static_cast<PartDesign::Pattern*>(object);
         const auto& settings = pattern->PatternSettings.getValues();
         FCMD_OBJ_CMD(
@@ -2497,9 +2498,19 @@ void CmdPartDesignPattern::activated(int)
         finishTransformed(this, pattern);
         if (auto task = qobject_cast<PartDesignGui::TaskDlgTransformedParameters*>(Gui::Control().activeDialog())) {
             task->setSelectionOnCancel(originalSelection);
+            task->setOriginalsPreselection(selection);
         }
     };
-    prepareTransformed(body, this, "Pattern", worker);
+    // Combined Pattern uses the task collector for both initial and later picks.
+    // Keep the legacy transformation startup path unchanged.
+    const auto name = getUniqueObjectName("Pattern", body);
+    openCommand(QT_TRANSLATE_NOOP("Command", "Make Pattern"));
+    FCMD_OBJ_CMD(body, "newObject('PartDesign::Pattern','" << name << "')");
+    Gui::Command::updateActive();
+    auto pattern = body->getDocument()->getObject(name.c_str());
+    worker(pattern, {});
+    FCMD_OBJ_CMD(body, "Tip = " << getObjectCmd(pattern));
+    Gui::Command::updateActive();
 }
 
 bool CmdPartDesignPattern::isActive()

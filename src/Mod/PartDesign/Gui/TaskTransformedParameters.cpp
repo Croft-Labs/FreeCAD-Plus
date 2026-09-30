@@ -28,6 +28,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QSignalBlocker>
+#include <QStringList>
+#include <set>
 
 
 #include <App/Application.h>
@@ -139,6 +141,12 @@ void TaskTransformedParameters::setupUI()
         originalsStatus->setTextFormat(Qt::PlainText);
         originalsStatus->setWordWrap(true);
         ui->verticalLayout->insertWidget(1, originalsStatus);
+        originalsHint = new QLabel(proxy);
+        originalsHint->setObjectName(QStringLiteral("patternOriginalsHint"));
+        originalsHint->setTextFormat(Qt::PlainText);
+        originalsHint->setWordWrap(true);
+        originalsHint->hide();
+        ui->verticalLayout->insertWidget(2, originalsHint);
         clearOriginalsButton = new QPushButton(ui->groupFeatureList);
         clearOriginalsButton->setObjectName(QStringLiteral("patternClearOriginals"));
         ui->verticalLayout_2->addWidget(clearOriginalsButton);
@@ -279,6 +287,7 @@ void TaskTransformedParameters::clearOriginals()
     exitSelectionMode();
     setupTransaction();
     pattern->Originals.setValues({});
+    setOriginalsHint({});
     const QSignalBlocker blocker(ui->listWidgetFeatures);
     ui->listWidgetFeatures->clear();
     Q_EMIT originalsChanged();
@@ -360,61 +369,124 @@ void TaskTransformedParameters::removeObject(App::DocumentObject* obj)
     }
 }
 
-bool TaskTransformedParameters::originalSelected(const Gui::SelectionChanges& msg)
+QString TaskTransformedParameters::originalSelectionError(App::DocumentObject* object) const
 {
-    if (inspectingOriginals) {
+    auto transformed = getObject();
+    if (!object || !transformed) {
+        return tr("The selected feature is no longer available.");
+    }
+    if (object->getDocument() != transformed->getDocument()) {
+        return tr("Select a feature in this document.");
+    }
+    if (object == transformed || transformed->getInListEx(true).count(object)) {
+        return tr("The result and features depending on it cannot be originals.");
+    }
+    if (!object->isDerivedFrom<PartDesign::FeatureAddSub>()) {
+        return tr("Select an additive or subtractive feature, not a body, sketch or datum.");
+    }
+    auto body = transformed->getFeatureBody();
+    if (!body || PartDesign::Body::findBodyOf(object) != body) {
+        return tr("Select a feature in the active body.");
+    }
+    return {};
+}
+
+void TaskTransformedParameters::setOriginalsHint(const QString& text)
+{
+    if (originalsHint) {
+        originalsHint->setText(text);
+        originalsHint->setVisible(!text.isEmpty());
+    }
+}
+
+bool TaskTransformedParameters::changeOriginal(App::DocumentObject* object, bool add)
+{
+    const auto error = originalSelectionError(object);
+    if (!error.isEmpty()) {
+        setOriginalsHint(error);
         return false;
     }
-    if (msg.Type == Gui::SelectionChanges::AddSelection
-        && ((selectionMode == SelectionMode::AddFeature)
-            || (selectionMode == SelectionMode::RemoveFeature))) {
-
-        if (strcmp(msg.pDocName, getObject()->getDocument()->getName()) != 0) {
+    auto transformed = getObject();
+    auto originals = transformed->getSortedOriginals();
+    const auto found = std::ranges::find(originals, object);
+    if (add) {
+        if (found != originals.end()) {
+            setOriginalsHint(tr("This feature is already an original."));
             return false;
         }
-
-        PartDesign::Transformed* pcTransformed = getObject();
-        App::DocumentObject* selectedObject = pcTransformed->getDocument()->getObject(msg.pObjectName);
-        auto* body = pcTransformed->getFeatureBody();
-        const auto dependents = pcTransformed->getInListEx(true);
-        if (!selectedObject || !body || selectedObject == pcTransformed
-            || PartDesign::Body::findBodyOf(selectedObject) != body
-            || dependents.count(selectedObject)) {
+        originals.push_back(object);
+    }
+    else {
+        if (found == originals.end()) {
+            setOriginalsHint(tr("This feature is not in Originals. Select a listed feature to remove."));
             return false;
         }
-        if (selectedObject->isDerivedFrom<PartDesign::FeatureAddSub>()) {
+        originals.erase(found);
+    }
+    setupTransaction();
+    transformed->Originals.setValues(originals);
+    if (add) {
+        addObject(object);
+    }
+    else {
+        removeObject(object);
+    }
+    setOriginalsHint({});
+    Q_EMIT originalsChanged();
+    return true;
+}
 
-            // Do the same like in TaskDlgTransformedParameters::accept() but without doCommand
-            std::vector<App::DocumentObject*> originals = pcTransformed->getSortedOriginals();
-            const auto or_iter = std::ranges::find(originals, selectedObject);
-            if (selectionMode == SelectionMode::AddFeature) {
-                if (or_iter == originals.end()) {
-                    originals.push_back(selectedObject);
-                    addObject(selectedObject);
-                }
-                else {
-                    return false;  // duplicate selection
-                }
-            }
-            else {
-                if (or_iter != originals.end()) {
-                    originals.erase(or_iter);
-                    removeObject(selectedObject);
-                }
-                else {
-                    return false;
-                }
-            }
-            setupTransaction();
-            pcTransformed->Originals.setValues(originals);
-            Q_EMIT originalsChanged();
-            recomputeFeature();
-
-            return true;
+void TaskTransformedParameters::setOriginalsPreselection(
+    const std::vector<Gui::SelectionObject>& selection
+)
+{
+    if (!getObject<PartDesign::Pattern>()) {
+        return;
+    }
+    QStringList ignored;
+    std::set<App::DocumentObject*> seen;
+    bool changed = false;
+    for (auto item : selection) {
+        auto object = item.getObject();
+        if (!object || !seen.insert(object).second) {
+            continue;
+        }
+        const auto error = originalSelectionError(object);
+        if (!error.isEmpty()) {
+            ignored << tr("Ignored %1: %2").arg(QString::fromUtf8(object->Label.getValue()), error);
+        }
+        else {
+            changed = changeOriginal(object, true) || changed;
         }
     }
+    if (changed) {
+        recomputeFeature();
+        exitSelectionMode();
+    }
+    setOriginalsHint(ignored.join(QLatin1Char('\n')));
+}
 
-    return false;
+bool TaskTransformedParameters::originalSelected(const Gui::SelectionChanges& msg)
+{
+    if (inspectingOriginals || msg.Type != Gui::SelectionChanges::AddSelection
+        || (selectionMode != SelectionMode::AddFeature
+            && selectionMode != SelectionMode::RemoveFeature)) {
+        return false;
+    }
+    auto transformed = getObject();
+    if (!transformed) {
+        return false;
+    }
+    if (strcmp(msg.pDocName, transformed->getDocument()->getName()) != 0) {
+        setOriginalsHint(tr("Select a feature in this document."));
+        return false;
+    }
+    auto object = transformed->getDocument()->getObject(msg.pObjectName);
+    if (!changeOriginal(object, selectionMode == SelectionMode::AddFeature)) {
+        return false;
+    }
+    recomputeFeature();
+    return true;
 }
 
 void TaskTransformedParameters::setupTransaction()

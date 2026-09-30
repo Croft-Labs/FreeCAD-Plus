@@ -1,6 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.3i/8.1.5c, advancing F030-F032. Combined
+Latest product batch: phase 8, tasks 8.1.2c/8.1.3j, advancing F030/F031. Combined
+Pattern preselection and later Originals picks share document/Body/type/dependency
+validation and assignment. Mixed inputs retain valid originals and explain rejects;
+invalid-only input keeps a useful task. Rejected later picks leave the collector
+active; correction or Clear dismisses feedback. Legacy startup behavior is retained.
+Both tasks preceded one successful PartDesignGui Release build. Final acceptance:
+155 distinct passing tests, zero remaining failures/errors/skips. Evidence:
+D:\Temp\Office-PC\freecad-plus-pattern-selection-20260930, including build.log,
+grouped, pattern-final, visual, acceptance-summary.json and validated-identities.json.
+The initial fixture compared raw Originals input order. Native evaluation already
+uses Body-history order; the corrected test compares membership/settings and both
+geometric differences for Linear/Circular. All 33 Pattern task/model tests pass,
+macro PASS, exit 0, plus 122 unchanged passing grouped checks on the same binaries.
+No second native build. Four changed source identities, staged tests and binaries
+are verified. PartDesignGui SHA256:
+b1123a2ba699ab3f709d37a64419c2ca74b257b491946c037e7b453543b614c4.
+Three mixed/rejected/recovered captures are readable. Physical viewport/input/
+high-DPI acceptance remains open. The older executable stamp is not rebuilt-module
+identity. All 127 item specifications remain intact. No installer/release. Broader
+command-family/disambiguation/occurrence and F032 Apply/repeat remain open.
+Next item-level focus: Pattern direction/axis collector inspection and recovery
+under F030, grouped before the next build.
+
+Previous product batch: phase 8, tasks 8.1.3i/8.1.5c, advancing F030-F032. Combined
 Pattern now inspects Originals rows by object identity, highlights all entries when
 no row is selected, isolates reference picking and restores temporary visibility.
 Creation/edit Cancel restores the original object/subelement selection and model.
@@ -18,9 +41,7 @@ identities, staged test and native hashes match. PartDesignGui SHA256:
 Three task-pane captures are readable; physical viewport/input/high-DPI remains
 open. The older executable stamp is not rebuilt-module identity. All 127 item
 specifications remain intact. No installer/release. Broader F030 command-family/
-disambiguation/occurrence and F032 Apply/repeat remain open. Next item-level focus:
-Pattern preselection parity and invalid/mixed-selection explanations under F031,
-grouped before the next build.
+disambiguation/occurrence and F032 Apply/repeat remain open. Its Pattern preselection/feedback follow-up is completed above.
 
 Previous product batch: phase 8, tasks 8.1.3f-h, advancing F030/F032. Combined Pattern
 now shows Originals count/type/picking state, offers Clear with replacement recovery,
