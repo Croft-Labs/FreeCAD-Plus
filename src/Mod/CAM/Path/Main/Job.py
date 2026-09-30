@@ -690,6 +690,16 @@ class ObjectJob:
                         # base.ViewObject.ShapeMaterial.Shininess = 0.85
 
     def onChanged(self, obj, prop):
+        if prop == "Model" and getattr(obj, "Operations", None):
+            # Operations cannot link to their parent Job without creating a
+            # dependency cycle. Rebind them explicitly when its model changes.
+            for operation in obj.Operations.Group:
+                bind = getattr(getattr(operation, "Proxy", None), "_bindModelDependencies", None)
+                if bind:
+                    bind(operation, obj)
+                    if "freezed" not in obj.getStatusString().casefold():
+                        operation.Path = Path.Path()
+                        operation.touch()
         if prop == "PostProcessor" and obj.PostProcessor:
             processor = PostProcessorFactory.get_post_processor(obj, obj.PostProcessor)
             self.tooltip = processor.tooltip

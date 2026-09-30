@@ -968,7 +968,7 @@ class ObjectOp:
             if not ignoreErrors:
                 Path.Log.error(translate("CAM_Operation", "No parent job found for operation"))
             return False
-        if not self.job.Model.Group:
+        if not self.job.Model or not self.job.Model.Group:
             if not ignoreErrors:
                 Path.Log.error(
                     translate("CAM_Operation", "Parent job %s doesn't have a base object")
@@ -1229,7 +1229,6 @@ class ObjectOp:
                     delattr(self, attr)
             return False
 
-    @waiting_effects
     def _bindModelDependencies(self, obj, job):
         if job and getattr(job, "Model", None):
             # Whole-model operations also need geometry dependencies when no
@@ -1241,7 +1240,10 @@ class ObjectOp:
             dependencies = [job.Model] + list(job.Model.Group)
             if obj.ModelDependencies != dependencies:
                 obj.ModelDependencies = dependencies
+        elif hasattr(obj, "ModelDependencies") and obj.ModelDependencies:
+            obj.ModelDependencies = []
 
+    @waiting_effects
     def execute(self, obj):
         """execute(obj) ... base implementation - do not overwrite!
         Verifies that the operation is assigned to a job and that the job also has a valid Base.
@@ -1274,6 +1276,10 @@ class ObjectOp:
             obj.Path = Path.Path()
 
         self._bindModelDependencies(obj, job)
+
+        if job and not job.Model:
+            Path.Log.error(translate("CAM_Operation", "Parent job has no model container"))
+            return
 
         from Path.Main.HoldingTab import bind_operation
 

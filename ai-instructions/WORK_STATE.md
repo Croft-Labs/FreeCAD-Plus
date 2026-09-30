@@ -1,6 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 16.2d/e complete. Production CAM Base.py binds hidden native
+Latest roadmap batch: 16.2f/g complete. Job.Model replacement/removal rebinds
+operation dependencies and clears unfrozen paths; normal recompute recovers them.
+Restored the full execute wait-cursor decorator displaced by the previous change.
+75 distinct checks pass across cam-container-20260929-batch (67 broader passing)
+and cam-container-20260929-corrected (eight targeted passing after fixture repair).
+Both evidence folders are under D:\Temp\Office-PC\freecad-plus-validation-20260928.
+Only Python modules synchronized; no native rebuild or GUI/machine acceptance.
+Next: failed-producer, nested-operation and export gates; retain grouped validation.
+
+Previous roadmap batch: 16.2d/e complete. Production CAM Base.py binds hidden native
 ModelDependencies links on execution and restore; normal document recompute now
 propagates source edits and empty-source recovery in the SurfaceScan fixture.
 72 grouped checks pass in cam-dependencies-20260929-final. Installed/source SHA256:

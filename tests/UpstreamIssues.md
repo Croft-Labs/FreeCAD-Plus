@@ -241,7 +241,11 @@ normal document recompute for width edits, empty-source removal/restoration and
 save/reopen of an operation lacking ModelDependencies. They establish automatic
 scheduling for this bounded native whole-model SurfaceScan fixture.
 
-The fix is shared Python `Path/Op/Base.py`; synchronize that source file to the
+Three further checks cover replacing/removing Job.Model with normal recompute and
+recovery, plus the wait cursor during generation and cleanup after an exception.
+The replacement fixture transfers model membership out of the old group first.
+
+The fixes use shared Python `Path/Op/Base.py` and `Path/Main/Job.py`; synchronize both to the
 matching validation build before running. Group it with TestPlanarSurfaceOp,
 TestMeshMachining, TestIssueSurfaceAvoidance and TestPathOpDeburr. No native compile
 is required. Preserve the frozen-job early return; do not represent this check as

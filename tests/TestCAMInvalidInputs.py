@@ -89,3 +89,47 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.source.Shape = Part.Shape()
         self.doc.recompute()
         self.assertEqual(len(self.op.Path.Commands), 0)
+
+    def testReplacingModelContainerRebindsAndRecovers(self):
+        previous = self.job.Model
+        replacement = self.doc.addObject("App::DocumentObjectGroup", "ReplacementModel")
+        self.job.Model = replacement
+        self.assertEqual(len(self.op.Path.Commands), 0)
+        self.doc.recompute()
+        self.assertEqual(self.op.ModelDependencies, [replacement])
+        self.assertNotIn(previous, self.op.OutList)
+        models = list(previous.Group)
+        previous.Group = []
+        replacement.Group = models
+        self.doc.recompute()
+        self.assertTrue(any(c.Name == "G1" for c in self.op.Path.Commands))
+
+    def testRemovingModelContainerClearsAndRecovers(self):
+        previous = self.job.Model
+        self.job.Model = None
+        self.assertEqual(len(self.op.Path.Commands), 0)
+        self.doc.recompute()
+        self.assertEqual(self.op.ModelDependencies, [])
+        self.assertEqual(len(self.op.Path.Commands), 0)
+        self.job.Model = previous
+        self.doc.recompute()
+        self.assertIn(previous, self.op.ModelDependencies)
+        self.assertTrue(any(c.Name == "G1" for c in self.op.Path.Commands))
+
+    def testWaitCursorCoversGenerationAndIsRestoredOnFailure(self):
+        from PySide import QtCore, QtGui
+        from unittest.mock import patch
+
+        previous = QtGui.QApplication.overrideCursor()
+        previous_shape = previous.shape() if previous else None
+
+        def fail_generation(obj):
+            self.assertEqual(QtGui.QApplication.overrideCursor().shape(), QtCore.Qt.WaitCursor)
+            raise RuntimeError("generation failed")
+
+        with patch.object(self.op.Proxy, "opExecute", side_effect=fail_generation):
+            with self.assertRaisesRegex(RuntimeError, "generation failed"):
+                self.op.Proxy.execute(self.op)
+        current = QtGui.QApplication.overrideCursor()
+        self.assertEqual(current.shape() if current else None, previous_shape)
+        self.assertEqual(len(self.op.Path.Commands), 0)

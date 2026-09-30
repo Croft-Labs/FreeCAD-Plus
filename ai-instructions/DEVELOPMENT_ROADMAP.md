@@ -5,11 +5,15 @@
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2d/16.2e add explicit CAM job-model dependencies and restore
+- Current batch: 16.2f/16.2g handle replacing/removing CAM model containers and
+  restore the wait cursor around full operation execution. Eight targeted checks
+  and 67 broader CAM regressions pass across two runs; no native build required.
+  Export guards, failed upstream producers and general consumer compatibility remain open.
+- Previous batch: 16.2d/16.2e add explicit CAM job-model dependencies and restore
   them for older saved operations. All 72 grouped CAM checks pass; production Python
   synchronized to the existing fork without a native build. Normal document recompute
   now handles model edits and empty-source recovery in the SurfaceScan fixture.
-  Export guards, failed producers, replaced job Model containers and full consumer
+  Export guards, failed producers and full consumer
   compatibility remain open.
 - Prior batch: 16.2b/16.2c fixed stale paths on explicitly requested execution with
   missing models/tools, with 69 grouped checks. The new batch addresses scheduling.
@@ -1996,6 +2000,27 @@ operation paths. No aggregate-cache or postprocessor safety claim follows from i
 Remaining: failed upstream producers that skip execution, replacing the job's Model
 container, arbitrary selection/occurrence graphs, export guards and frozen-job policy.
 The restore fixture is native FCStd; no cadprt or upstream compatibility is asserted.
+
+- [ X ] 16.2f Rebind whole-model operation dependencies when Job.Model is replaced
+  or removed; clear old paths immediately for unfrozen jobs and recover through
+  normal document recompute when geometry returns. Drop obsolete model links.
+- [ X ] 16.2g Restore the wait-cursor decorator to full ObjectOp.execute, correcting
+  its accidental placement on the dependency helper in 16.2d/e. Verify generation
+  runs with the wait cursor and an exception restores the previous cursor and clears Path.
+
+Container/cursor batch: production Python Base.py and Job.py synchronized into the
+existing fork build. `cam-container-20260929-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records 67 passing broader
+checks plus seven passing targeted cases and one fixture error (native objects
+cannot belong to two groups). After correcting the fixture to transfer membership,
+`cam-container-20260929-corrected/results.json` records all eight targeted cases
+passing: **75 distinct checks pass across the two runs**, no remaining failures/skips.
+Source/installed SHA256: Base.py
+`53D660473414228095FC9B4F69132CF11DBB90356251A168AFDFB695AEFB57D6`, Job.py
+`16D5377AF2A031543D64B7708E9DABDA04E2CF8239CF6D8216C879CCA09CD2A5`.
+No native build, mouse/keyboard acceptance or machine/export safety claim.
+Frozen-job preservation remains the existing policy; general failed-producer,
+nested-operation and export gates remain pending under 16.2.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
