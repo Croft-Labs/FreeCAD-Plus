@@ -298,3 +298,24 @@ Validation: [CAM procedure](../tests/CAMMeshMachining.md).
 Further unified families and multi-source profile behavior are [product questions](PRODUCT_SPEC.md#open-questions).
 Record any visual or interaction defects found by GUI validation against UI-001
 and the active roadmap milestone; do not silently change the intended workflow.
+
+
+## Test-only parameter editor prototype (roadmap 10.8k/l)
+
+`tests/prototypes/ParameterEditor.py` is an uninstalled dialog for one existing
+parameter object, supplied by the test caller. It is not a production command or
+replacement for the planned part-level parameter editor. Fields appear in order:
+Parameter (existing length/angle property dropdown), Name, read-only Current value,
+Expression, error message, Apply expression/Rename buttons, then Close.
+
+Typing leaves the document unchanged. Apply evaluates units and affected recompute
+state in an owned transaction; a failed edit rolls back, keeps the attempted text
+and displays the error for correction. Success refreshes the value/expression.
+Rename uses native rename through the atomic wrapper; a collision stays editable,
+and success refreshes the dropdown to the new name. Selecting another parameter
+reloads its data and discards unapplied text. Close discards unapplied text; it does
+not undo earlier successful Apply/Rename transactions. Native Undo remains available.
+
+Three native Qt tests exercise these interactions programmatically. Physical
+keyboard/accessibility, high-DPI layout, external edits/document closure and the
+full production creation/deletion/where-used/publication workflow remain pending.

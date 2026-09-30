@@ -11,7 +11,18 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8i/j atomic parameter-expression edit prototype.
+Latest roadmap batch: 10.8k/l uninstalled parameter editor dialog prototype.
+Existing length/angle selection, expression Apply, Rename and Close reuse atomic
+helpers. Native widget tests cover commit boundaries, error correction, angle edits
+and rename collision recovery; no application command has been registered.
+Grouped Qt/model validation: 59 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-editor-20260930-batch.
+Macro PASS; process ended. Engine 2df76790b4; no native rebuild or release update.
+Physical UI/accessibility, external-document lifecycle, creation/deletion, where-used
+and production integration remain pending. TestParameterEditor joins the three
+architecture suites for future changes to this dialog/helpers.
+
+Previous roadmap batch: 10.8i/j atomic parameter-expression edit prototype.
 edit_parameter_expression validates units, owns a transaction, checks affected
 native recompute state and rolls back failed geometry. Stale affected consumers and
 caller-owned transactions reject before mutation; a disconnected invalid box does

@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8i/j prototype atomic parameter-expression edits with downstream
+- Current batch: 10.8k/l add an uninstalled existing-parameter dialog prototype
+  and verify apply/close, error correction and rename interactions. Grouped native
+  Qt/model validation: 59 passes, zero failures/errors/skips. No native rebuild
+  or release update; production editor integration remains open.
+- Previous batch: 10.8i/j prototype atomic parameter-expression edits with downstream
   recompute validation, rollback and transaction/readiness boundaries. Grouped
   architecture validation: 56 passes, zero failures/errors/skips. Test-only code;
   no native rebuild, installed editor or release change.
@@ -1996,6 +2000,26 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8j Guard parameter edits against stale affected consumers and unrelated
   pending transactions before mutation. Verify a disconnected invalid feature does
   not block a valid edit, while its existing invalid state remains visible.
+
+- [ X ] 10.8k Prototype a Qt dialog for an existing parameter object, with typed
+  parameter selection, current value, expression entry and explicit Apply/Close.
+  Reuse atomic edits; prove typing does not mutate geometry and Close keeps applied
+  changes while discarding unapplied text. Native Undo restores the applied edit.
+- [ X ] 10.8l Add rename and recoverable error feedback to that prototype. Verify
+  wrong-unit and failed-geometry corrections, angle edits, collision recovery and
+  successful rename refreshing selection while retaining consumer links.
+
+Editor prototype evidence: `parameter-editor-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **59 PASS, zero failures/errors/
+skips** (three native Qt interaction, 17 capability, 34 adapter, five lineage checks).
+Both tasks preceded one grouped run on existing fork engine 2df76790b4; macro PASS
+and process ended. `tests/prototypes/ParameterEditor.py` is not installed or registered
+as a command. SHA256:
+`F9DFAC34611ED7E01C3042808AD077040CB0CADB16FB4D31AB07D1A323B64665`.
+Tests operate real widgets programmatically; physical keyboard, viewport/high-DPI,
+accessibility and production integration are not validated. Creation/deletion,
+where-used, publication, external document lifecycle and live external updates remain
+pending. No native rebuild, installed application change or release update.
 
 Atomic edit evidence: `parameter-edit-20260930-batch/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **56 PASS, zero failures/errors/
