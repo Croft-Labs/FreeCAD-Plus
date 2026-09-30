@@ -170,6 +170,18 @@ class IsoclineTask:
         self.angle.setValue(obj.Angle.Value)
         self.angle.valueChanged.connect(lambda value: self.change("Angle", value))
         angle_row.addRow(translate("Isocline", "Draft angle"), self.angle)
+        self.tolerance = QtGui.QLineEdit()
+        self.tolerance.setObjectName("isoclineTolerance")
+        self.tolerance.setText("{} mm".format(obj.Tolerance.Value))
+        self.toleranceHelp = translate(
+            "Isocline", "3D curve distance tolerance: 0.0000001 mm to 0.01 mm. "
+            "Enter a length with units; bare numbers use mm. This is not an angular tolerance."
+        )
+        self.tolerance.setToolTip(self.toleranceHelp)
+        self.toleranceDirty = False
+        self.tolerance.textChanged.connect(self.toleranceEdited)
+        self.tolerance.editingFinished.connect(self.updatePreview)
+        angle_row.addRow(translate("Isocline", "Curve tolerance"), self.tolerance)
         layout.addLayout(angle_row)
         self.preview = QtGui.QCheckBox(translate("Isocline", "Live preview"))
         self.preview.setObjectName("isoclinePreview")
@@ -334,12 +346,39 @@ class IsoclineTask:
         setattr(self.obj, name, value)
         self.updatePreview()
 
+    def toleranceEdited(self, *args):
+        self.toleranceDirty = True
+
+    def applyTolerance(self):
+        expression = dict(self.obj.ExpressionEngine).get("Tolerance")
+        self.tolerance.setReadOnly(bool(expression))
+        self.tolerance.setToolTip(self.toleranceHelp)
+        if expression:
+            blocker = QtCore.QSignalBlocker(self.tolerance)
+            self.tolerance.setText("{} mm".format(self.obj.Tolerance.Value))
+            del blocker
+            self.toleranceDirty = False
+            self.tolerance.setToolTip(translate(
+                "Isocline", "Controlled by expression: {}. Edit the expression in the property editor."
+            ).format(expression))
+        elif self.toleranceDirty:
+            try:
+                value = Isocline.curve_tolerance(self.tolerance.text())
+            except Exception as error:
+                self.status.setText(translate("Isocline", "Curve tolerance: {}").format(error))
+                return False
+            self.obj.Tolerance = value
+            self.toleranceDirty = False
+        return True
+
     def updatePreview(self, *args, force=False):
         if self.finished:
             return False
         self.arrow.clear()
         self.curveHighlight.clear()
         self.obj.ViewObject.hide()
+        if not self.applyTolerance():
+            return False
         if not force and not self.preview.isChecked():
             self.status.setText(translate("Isocline", "Preview paused. OK will recompute."))
             return False

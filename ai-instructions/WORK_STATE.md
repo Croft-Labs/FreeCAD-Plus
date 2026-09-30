@@ -1,17 +1,19 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phases 5/8, roadmap 5.1.11, 8.1.2a and 8.1.3c, mapped
-to F030/F031/F070. Trim Body and Isocline show collector counts/type hints/active
-role, explain ignored preselection and share validation with later picks. Whole
-Isocline objects now persist as explicit empty-name references instead of being
-dropped by the native LinkSubList; removal, Undo/Redo and save/reopen/source edits
-are covered. Nine added regressions in 70 grouped passes, zero failures/errors/skips,
-macro PASS, process exit 0. Evidence:
-D:\Temp\Office-PC\freecad-plus-collector-feedback-20260930\verified.
+Latest product batch: phase 5, tasks 5.1.12/5.2.4. F070 functional acceptance
+is complete for the documented bounded single-angle workflow. The Isocline task
+now edits Curve tolerance with length units and the existing native range, blocks
+invalid drafts even with preview paused, and preserves expression-driven values.
+Five new regressions cover tolerance limits/recovery, unit/editor/persistence
+lifecycle, and oriented-normal plus pull reversal. All 130 grouped Isocline/Trim
+and Pad/Extrude/Revolve/Pattern checks pass; zero failures/errors/skips, macro PASS,
+process exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-isocline-tolerance-20260930\grouped.
 Four changed source/development-build Python hashes match; existing fork engine
-802e19d648, no native rebuild or release. Item-level broad acceptance remains open.
-Next dependency-ready slice: expose the existing Isocline tolerance in its task
-and validate F070 semantics, batching related changes before runtime checks.
+802e19d648, no native rebuild or release. Physical viewport/keyboard/high-DPI
+acceptance remains 5.2.3; arbitrary singular-surface completeness is not claimed.
+Next item-level focus: F031 Extrude preselection/postselection equivalence and
+mixed-input acceptance in phase 8, with related tasks batched before validation.
 
 Release 0.0.2 is built, validated and publicly published after 0.0.4:
 https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.2

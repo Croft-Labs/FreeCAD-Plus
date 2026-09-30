@@ -38,7 +38,7 @@ suite = unittest.TestSuite(
 unittest.TextTestRunner(verbosity=2).run(suite)
 ```
 
-The nine Isocline model tests also run under FreeCADCmd. They compare curve length
+The Isocline model tests also run under FreeCADCmd. They compare curve length
 and independently sampled normal-dot-direction residuals with analytical answers.
 At each sampled point, distance to the trimmed face is checked as well as the
 angle condition. Cases cover spheres with five draft angles and three pull vectors,
@@ -48,11 +48,35 @@ hole. Empty/nonunique solutions, invalid angles/vectors, source parameter change
 multiple faces, datum/edge direction references, nested placements, dependency
 restrictions, save/reopen and Undo/Redo are exercised.
 
-Seven GUI tests use actual selections and Qt controls for no-preselection creation,
+GUI tests use actual selections and Qt controls for no-preselection creation,
 face accumulation/removal, direction references and custom vectors, angle and reverse,
 invalid-state recovery, paused preview, Cancel, Undo/Redo, save/reopen, and both
 workbenches' toolbar actions. Command enablement uses a delayed timer, so action
 checks allow the event loop to settle without forcing actions enabled.
+
+Tolerance tests exercise the existing native distance interval (1e-7 through
+0.01 mm), incompatible units, invalid draft text, and recovery from invalid saved
+values. The task accepts explicit length units or bare millimetres; editing an
+expression-driven tolerance cannot detach its formula. Cancel, Undo/Redo and
+save/reopen retain the accepted physical value. An oriented-face feature regression
+checks normal reversal together with pull reversal and Undo/Redo, independently
+sampling the generated geometry rather than relying on its visual appearance.
+
+### F070 functional acceptance mapping
+
+| Contract | Automated evidence |
+| --- | --- |
+| Normal dot pull = sin(draft angle); zero is silhouette | `testSphereDraftAnglesAndReversedFace`, `testCylinderAndNinetyDegreeLimit`; 81 samples per edge check normal-dot-pull residual within 1e-5 and distance to source face within 5e-5 mm. |
+| Pull/normal reversal and recompute | `testOrientedFaceAndPullReversalThroughFeatureRecompute`, `testAssociativeParametersAndInvalidRecovery`, GUI angle/reverse tests. |
+| Domain is the selected trimmed faces, including holes | `testSplineAndTrimmedHole`, `testFreeformClosedContour`; face-distance checks, analytical length and disconnected edge counts. Whole-object domain collection has row-removal/Undo/persistence coverage. |
+| Multiple, empty, isolated-point and whole-face results | Multi-face persistence, cylinder 90-degree line, sphere isolated pole, plane/cylinder nonunique and no-solution tests; the editor reports invalid/empty results and blocks OK. |
+| Curve tolerance is a distance, separate from angular residual | `testToleranceLimitsUnitsAndModelRecovery` checks native endpoints, rejects nonfinite/out-of-range native values, clears invalid feature output, and recovers. |
+| Complete tolerance create/edit lifecycle | GUI tolerance unit, invalid-draft/paused-preview, Cancel/Undo/save/reopen and expression-protection tests. |
+| Supported scope and limits | Bounded source faces, one draft angle per feature, kernel errors reported by stage; tests cover spheres, cylinders and quadratic B-splines. Sampled checks do not prove arbitrary singular-surface completeness. |
+
+This mapping establishes functional acceptance for the documented implementation;
+physical keyboard/viewport/high-DPI acceptance remains the separate roadmap 5.2.3
+gate. The 3D distance tolerance does not relax the native angular-residual guard.
 
 Trim Body tests protect the extracted shared reference and edit/arrow helpers.
 Also run the existing Pad, Extrude, Revolve and Pattern task suites together once
@@ -76,14 +100,18 @@ simulate every native resource or transaction failure.
    normal. Exercise a datum axis and a straight edge, then a custom vector.
 4. Use an organic/freeform sheet and a surface with a hole. Inspect the red contour
    and ensure it does not bridge excluded surface regions. Inspect the green pull arrow.
-5. Accept and double-click the result. Change faces/direction/angle in the same pane.
+5. Accept and double-click the result. Change faces/direction/angle/tolerance in the same pane.
    Cancel must restore the original curve; Undo/Redo and save/reopen must retain it.
 6. Change source dimensions and direction-reference placement, recompute, and confirm
    the curve moves. Source bodies remain intact and their Tips do not change.
 7. Exercise an empty selection, zero custom vector, no-solution angle, matching
    planar face, and the isolated sphere pole at 90 degrees. Errors must remain
    editable and cannot accept stale geometry. A cylinder can have a valid 90-degree line.
-8. Check keyboard focus, tooltips, target/reference picking and normal/high-DPI layout.
+8. Enter a valid Curve tolerance with explicit units, then an incompatible unit
+   or out-of-range value. Invalid text must remain correctable, hide preview and
+   block OK even with Live preview paused. Check that an expression-driven
+   tolerance is read-only and its formula survives accepting another parameter.
+9. Check keyboard focus, tooltips, target/reference picking and normal/high-DPI layout.
    Capture the native window for arrow evidence; viewport image export omits annotations.
 
 The convention is **n dot d = sin(angle)** for unit oriented normal n and unit pull d.

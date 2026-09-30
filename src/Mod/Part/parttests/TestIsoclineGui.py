@@ -49,6 +49,84 @@ class TestIsoclineGui(unittest.TestCase):
         return [(s.DocumentName, s.ObjectName, tuple(s.SubElementNames))
                 for s in Gui.Selection.getSelectionEx("*", 0)]
 
+    def testToleranceUnitsCancelUndoAndSaveReopen(self):
+        self.start()
+        self.assertAlmostEqual(App.Units.Quantity(self.task.tolerance.text()).Value, 1e-5)
+        self.task.tolerance.setText("0.000001 m")
+        self.task.tolerance.editingFinished.emit()
+        self.assertAlmostEqual(self.obj.Tolerance.Value, 0.001)
+        self.assertTrue(self.obj.isValid())
+        self.accept()
+        self.reopen()
+        self.task.tolerance.setText("0.0002 mm")
+        self.task.tolerance.editingFinished.emit()
+        Gui.Control.activeTaskDialog().reject()
+        self.assertAlmostEqual(self.obj.Tolerance.Value, 0.001)
+        self.reopen()
+        self.task.tolerance.setText("0.0002")
+        self.accept()
+        self.assertAlmostEqual(self.obj.Tolerance.Value, 0.0002)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(self.obj.Tolerance.Value, 0.001)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(self.obj.Tolerance.Value, 0.0002)
+        with tempfile.TemporaryDirectory() as directory:
+            path = str(Path(directory) / "Tolerance.FCStd")
+            self.doc.saveAs(path)
+            App.closeDocument(self.doc.Name)
+            self.doc = App.openDocument(path)
+            self.obj = self.doc.getObject("IsoclineCurve")
+            self.obj.touch()
+            self.doc.recompute()
+            self.reopen()
+            self.assertAlmostEqual(App.Units.Quantity(self.task.tolerance.text()).Value, 0.0002)
+            self.assertTrue(self.obj.isValid())
+            self.accept()
+
+    def testInvalidToleranceDraftBlocksPausedAndLiveAcceptanceAndRecovers(self):
+        self.start()
+        original = self.obj.Tolerance.Value
+        for live in (False, True):
+            self.task.preview.setChecked(live)
+            for value in ("", "not a length", "2 deg", "0", "1e-8 mm", "0.1 mm"):
+                with self.subTest(live=live, value=value):
+                    self.task.tolerance.setText(value)
+                    self.task.tolerance.editingFinished.emit()
+                    self.assertEqual(self.task.tolerance.text(), value)
+                    self.assertEqual(self.obj.Tolerance.Value, original)
+                    self.assertFalse(self.obj.Visibility)
+                    self.assertFalse(self.task.accept())
+                    self.assertTrue(Gui.Control.activeDialog())
+                    self.assertIn("Curve tolerance", self.task.status.text())
+            self.task.tolerance.setText("0.00001 mm")
+            self.assertTrue(self.task.updatePreview(force=True))
+        self.task.tolerance.setText("0.01 mm")
+        self.accept()
+        self.assertAlmostEqual(self.obj.Tolerance.Value, 0.01)
+
+    def testExpressionDrivenToleranceRemainsAuthoritative(self):
+        self.start()
+        self.accept()
+        self.obj.setExpression("Tolerance", "Source.Radius / 100000")
+        self.doc.recompute()
+        self.reopen()
+        self.assertTrue(self.task.tolerance.isReadOnly())
+        self.assertIn("Source.Radius", self.task.tolerance.toolTip())
+        expression = dict(self.obj.ExpressionEngine)["Tolerance"]
+        self.task.tolerance.setText("0.002 mm")  # Even a programmatic edit cannot detach it.
+        self.task.angle.setValue(30)
+        self.accept()
+        self.assertEqual(dict(self.obj.ExpressionEngine)["Tolerance"], expression)
+        self.source.Radius = 20
+        self.doc.recompute()
+        self.assertAlmostEqual(self.obj.Tolerance.Value, 0.0002)
+        self.assertAlmostEqual(self.obj.Shape.optimalBoundingBox(False).Center.z, 10)
+        self.reopen()
+        self.assertAlmostEqual(App.Units.Quantity(self.task.tolerance.text()).Value, 0.0002)
+        self.accept()
+
     def testCollectorEntryCountsAndActiveRoleFollowEdits(self):
         self.start(False)
         self.assertIn("Selected entries: 0", self.task.facesHint.text())

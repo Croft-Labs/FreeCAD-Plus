@@ -105,6 +105,53 @@ class TestIsocline(unittest.TestCase):
         with self.assertRaises(ValueError):
             Part.makeIsocline(face, App.Vector(), 0)
 
+    def testToleranceLimitsUnitsAndModelRecovery(self):
+        obj, source = self.feature()
+        obj.Angle = 30
+        for tolerance in (1e-7, 1e-5, 0.01):
+            obj.Tolerance = tolerance
+            self.doc.recompute()
+            self.assertTrue(obj.isValid(), obj.StatusMessage)
+            self.checkCurve(source.Shape.Faces[0], App.Vector(0, 0, 1), 30, obj.Shape)
+        for tolerance in (0, 1e-8, 0.02):
+            obj.Tolerance = tolerance
+            self.doc.recompute()
+            self.assertFalse(obj.isValid())
+            self.assertTrue(obj.Shape.isNull())
+            self.assertIn("Curve tolerance", obj.StatusMessage)
+        for tolerance in (float("nan"), float("inf"), -1, 0, 1e-8, 0.02):
+            with self.assertRaises(ValueError):
+                Part.makeIsocline(source.Shape.Faces[0], App.Vector(0, 0, 1), 30, tolerance)
+        obj.Tolerance = Isocline.curve_tolerance("0.000001 m")
+        self.doc.recompute()
+        self.assertTrue(obj.isValid(), obj.StatusMessage)
+        self.assertAlmostEqual(obj.Tolerance.Value, 0.001)
+        self.checkCurve(source.Shape.Faces[0], App.Vector(0, 0, 1), 30, obj.Shape)
+
+    def testOrientedFaceAndPullReversalThroughFeatureRecompute(self):
+        source = self.doc.addObject("Part::Feature", "OrientedSphere")
+        face = Part.makeSphere(10).Faces[0]
+        face.reverse()
+        source.Shape = face
+        obj = Isocline.makeIsocline(self.doc)
+        obj.Faces = [(source, ["Face1"])]
+        obj.Angle = 30
+        self.doc.recompute()
+        self.checkCurve(source.Shape.Faces[0], App.Vector(0, 0, 1), 30, obj.Shape)
+        self.assertAlmostEqual(obj.Shape.optimalBoundingBox(False).Center.z, -5)
+        self.doc.openTransaction("Reverse pull")
+        obj.Reversed = True
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.checkCurve(source.Shape.Faces[0], App.Vector(0, 0, -1), 30, obj.Shape)
+        self.assertAlmostEqual(obj.Shape.optimalBoundingBox(False).Center.z, 5)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(obj.Shape.optimalBoundingBox(False).Center.z, -5)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(obj.Shape.optimalBoundingBox(False).Center.z, 5)
+
     def testAssociativeParametersAndInvalidRecovery(self):
         obj, source = self.feature()
         obj.Angle = 30

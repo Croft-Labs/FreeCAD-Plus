@@ -2,11 +2,13 @@
 
 ## Current focus
 
-- Current product batch: F030/F031 collector feedback and preselection parity,
-  plus F070 whole-object collection recovery (8.1.3c, 8.1.2a, 5.1.11). Three
-  related changes completed before final grouped validation: 70 tests pass with
-  zero failures/errors/skips. Existing fork binary plus matching Python modules;
-  no native rebuild or release. Broader item-level acceptance remains open.
+- Current product batch: phase 5 tolerance editing and F070 functional acceptance
+  (5.1.12, 5.2.4). The related implementation and acceptance work was batched before
+  one grouped run: 130 tests pass, zero failures/errors/skips. F070's documented
+  functional scope is complete; physical viewport/keyboard/high-DPI acceptance
+  remains open under 5.2.3. Matching Python modules on the existing fork engine;
+  no native rebuild, installer or release. Next item-level focus: F031 Extrude
+  preselection/postselection equivalence and mixed-input acceptance in phase 8.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1431,6 +1433,12 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
   and retention when other rows are removed. Verify geometry, Undo/Redo and
   save/reopen followed by source edits; evidence with 8.1.2a/8.1.3c. F031/F070.
 
+- [ X ] 5.1.12 Expose the existing Isocline curve tolerance in the create/edit task.
+  Accept length units or bare mm within native 1e-7..0.01 mm limits; reject invalid
+  drafts without overwriting the saved value, hide preview and block OK even when
+  paused. Preserve expression authority and Cancel/Undo/save/reopen semantics.
+  Reuse the same unit/range boundary in model execution; no native/schema change.
+
 ### [   ] 5.2 Validate the local build
 
 - [ X ] 5.2.1 Rebuild/link Part's contour binding plus PartGui/PartDesignGui command
@@ -1455,6 +1463,22 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
 - [   ] 5.2.3 Complete physical viewport selection, keyboard and high-DPI acceptance
   using [the Isocline test procedure](../tests/IsoclineCurve.md). Automated Qt controls
   and window captures do not establish this manual gate.
+
+- [ X ] 5.2.4 Complete F070 functional acceptance for the documented bounded,
+  single-angle Isocline workflow. Add tolerance endpoint/recovery and native
+  nonfinite checks, expression/units/editor lifecycle, and feature-level reversed
+  normal plus reversed pull/Undo coverage. Map the item to analytic residual,
+  trimmed-domain/hole, multiple/empty/nonunique/isolated-point, persistence and
+  task tests in [the acceptance matrix](../tests/IsoclineCurve.md#f070-functional-acceptance-mapping).
+  Five added tests; **130 grouped passes, zero failures/errors/skips**, macro PASS,
+  process exit 0: Isocline model 11 and GUI 26; Trim model 14 and GUI 24; Pad 14,
+  Extrude 19, Revolve 5 and Pattern 17 task tests. Four source/staged Python hashes
+  match. Existing engine `802e19d648`; no native rebuild or release. Evidence:
+  `D:\Temp\Office-PC\freecad-plus-isocline-tolerance-20260930\grouped`, with
+  `staging-identities.json` in its parent. Valid and incompatible-unit error
+  panels were captured and visually checked in sibling `visual`; controls and
+  messages are readable. Physical acceptance remains 5.2.3; sampled tests do not
+  establish completeness for arbitrary singular surfaces.
 
 Evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928`:
 `isocline-gui-gui-results.json`, `isocline-gui-Test*.log`,
@@ -4774,7 +4798,7 @@ reconciliation rules above to every entry.
 <a id="f070"></a>
 ### F070 — Isocline curves
 
-**Owning tasks:** 5, 13.4. **Status:** Existing analytic model checks pass; whole-source face collection and its undo/persistence lifecycle are validated under 5.1.11. Complete task-level tolerance controls and broader domain/normal-orientation acceptance remain pending.
+**Owning tasks:** 5, 13.4. **Status:** Functional acceptance complete for the documented bounded, single-angle workflow under 5.1.12/5.2.4 (130-test grouped checkpoint). See the [acceptance mapping](../tests/IsoclineCurve.md#f070-functional-acceptance-mapping). Physical viewport/keyboard/high-DPI acceptance remains 5.2.3; arbitrary singular-surface completeness is not claimed.
 
 **Packages:** G05, I02 · **First delivery:** P7 after spike · **Likely scope:** Feature/Core
 

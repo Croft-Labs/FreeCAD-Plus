@@ -57,6 +57,13 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Isocline tolerance: `curve_tolerance` in
+[`Isocline.py`](../src/Mod/Part/BasicShapes/Isocline.py) validates native distance
+limits and length units; `IsoclineTask.applyTolerance` in
+[`IsoclineGui.py`](../src/Mod/Part/BasicShapes/IsoclineGui.py) handles drafts and
+protects expression-driven values. F070 acceptance mapping:
+[Isocline tests](../tests/IsoclineCurve.md#f070-functional-acceptance-mapping).
+
 Collector inspection and Cancel selection recovery: `highlight_references` and
 `task_selection_snapshot` in [`FeatureTask.py`](../src/Mod/Part/BasicShapes/FeatureTask.py),
 used by Trim Body and Isocline. Snapshots retain object/occurrence subelement paths;

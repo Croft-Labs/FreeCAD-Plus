@@ -8,6 +8,17 @@ import Part
 from .ShapeReferences import linked_shape, validate_link, update_placement_support, ReferenceError
 
 
+def curve_tolerance(value):
+    """Return millimetres, using the existing Part.makeIsocline distance limits."""
+    quantity = App.Units.Quantity(value)
+    if quantity.Unit not in (App.Units.Unit(), App.Units.Quantity("1 mm").Unit):
+        raise ReferenceError("Curve tolerance must be a length (bare numbers are millimetres).")
+    tolerance = quantity.Value
+    if not math.isfinite(tolerance) or not 1e-7 <= tolerance <= 0.01:
+        raise ReferenceError("Curve tolerance must be between 0.0000001 mm and 0.01 mm.")
+    return tolerance
+
+
 def reference_direction(link):
     if not link or not link[0]:
         raise ReferenceError("Select a direction plane, planar face, straight edge, or datum axis.")
@@ -118,10 +129,11 @@ class IsoclineCurve:
             angle = obj.Angle.Value
             if not math.isfinite(angle) or not 0 <= angle <= 90:
                 raise ReferenceError("Draft angle must be between 0 and 90 degrees.")
+            tolerance = curve_tolerance(obj.Tolerance.Value)
             direction = resolved_direction(obj)
             edges = []
             for face in selected_faces(obj):
-                edges.extend(Part.makeIsocline(face, direction, angle, obj.Tolerance.Value).Edges)
+                edges.extend(Part.makeIsocline(face, direction, angle, tolerance).Edges)
             if not edges:
                 raise ReferenceError(
                     "No isocline curve at this angle. The solution may be empty or an isolated point."
