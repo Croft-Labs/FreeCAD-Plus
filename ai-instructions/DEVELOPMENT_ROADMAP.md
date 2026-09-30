@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 4.1.7/5.1.7 roll back feature creation when factory/editor startup
+- Current batch: 4.1.8/5.1.8 clean up task resources and edit transactions when
+  construction/dialog display fails. Grouped model/GUI validation: 50 passes,
+  zero failures/errors/skips; Python staging only, no native rebuild or release.
+- Previous batch: 4.1.7/5.1.7 roll back feature creation when factory/editor startup
   fails. Grouped model/GUI validation: 48 passes, zero failures/errors/skips;
   shared Python transaction guard staged, no native rebuild or release update.
 - Previous batch: 4.1.6/5.1.6 skip stale preselected inputs while retaining usable
@@ -1127,6 +1130,24 @@ Depends on: the existing Part geometry engine and native development build.
 - [ X ] 4.1.7 Guard command creation with a shared transaction context. Factory
   exceptions and editor refusal roll back created objects; verify no pending
   transaction/dialog remains and a normal retry can be accepted.
+- [ X ] 4.1.8 Clean up partially constructed Trim tasks and failed dialog display:
+  remove registered selection observation/annotations, restore visibility and abort
+  owned edit transactions. Verify scene count, no pending edit and successful retry.
+
+Task cleanup evidence (also 5.1.8): `task-cleanup-20260930-verified/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **50 PASS, zero failures/
+errors/skips** (Trim 14 model/15 GUI; Isocline nine model/12 GUI). Both tasks preceded
+grouped validation. Macro PASS; process ended. Three production Python modules and
+two tests staged with matching source hashes (engine 2df76790b4). Initial batch
+had 48 passes/two test errors because native Control methods cannot be patched;
+wrapping Control supplied the intended dialog-display failure without changing
+production behavior. Tests inject failure during initial preview and dialog display,
+check original scene child count/result visibility and absence of dialog/pending
+transaction, then reopen/accept successfully. They do not exhaust every Qt allocation
+or cleanup failure. No native rebuild, release or physical viewport acceptance.
+SHA256: FeatureTask `74B27674A51132F90E0E6403027C58C1BD0F08665C16263BC2D0E9F29D0084E2`;
+TrimGui `31ED4AFCE425830CED40800A472D627A21B5182FB2DA53EC165ADCCCFCF884CB`;
+IsoclineGui `3C9A6BEBCC92E7739BE8571439EC3EAF8FF078079EC58898E3C1C4283D6CAC49`.
 
 Startup evidence (also 5.1.7): `task-startup-20260930-batch/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **48 PASS, zero failures/
@@ -1252,6 +1273,9 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
   same selection. Verify repaired faces can be added and accepted; evidence with 4.1.6.
 - [ X ] 5.1.7 Use shared creation transaction handling for factory/editor startup
   failures and verify complete object rollback plus successful retry; evidence with 4.1.7.
+- [ X ] 5.1.8 Apply shared construction/display failure cleanup to Isocline tasks,
+  including curve highlight and direction arrow removal, visibility restoration and
+  transaction rollback; verify retry. Evidence recorded with 4.1.8.
 
 ### [   ] 5.2 Validate the local build
 

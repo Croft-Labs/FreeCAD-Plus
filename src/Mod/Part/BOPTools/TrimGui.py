@@ -3,7 +3,7 @@
 """One create/edit task for the associative Trim Body feature."""
 
 from pathlib import Path
-from BasicShapes.FeatureTask import creation_transaction
+from BasicShapes.FeatureTask import creation_transaction, guard_task_construction
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -31,6 +31,7 @@ class ViewProviderTrimBody(TaskFeatureViewProvider):
 
 
 class TrimBodyTask:
+    @guard_task_construction
     def __init__(self, obj):
         self.obj = obj
         self.name = obj.Name

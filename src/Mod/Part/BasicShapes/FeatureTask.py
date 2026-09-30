@@ -4,6 +4,7 @@
 
 import FreeCADGui as Gui
 from contextlib import contextmanager
+from functools import wraps
 from pivy import coin
 
 
@@ -19,6 +20,29 @@ def creation_transaction(doc, label):
         doc.abortTransaction()
         doc.recompute()
         raise
+
+
+def guard_task_construction(init):
+    """Dispose resources acquired before a task constructor finishes."""
+    @wraps(init)
+    def guarded(task, *args, **kwargs):
+        try:
+            init(task, *args, **kwargs)
+        except Exception:
+            task.finished = True
+            Gui.Selection.removeObserver(task)
+            for name in ("arrow", "curveHighlight"):
+                annotation = getattr(task, name, None)
+                if annotation is not None:
+                    annotation.close()
+            if hasattr(task, "visibility"):
+                task.restoreVisibility()
+            if hasattr(task, "result_visible"):
+                task.obj.ViewObject.Visibility = task.result_visible
+            if hasattr(task, "form"):
+                task.form.deleteLater()
+            raise
+    return guarded
 
 
 class TaskFeatureViewProvider:
@@ -45,10 +69,21 @@ class TaskFeatureViewProvider:
         if mode != 0:
             return False
         doc = view.Object.Document
-        if not doc.HasPendingTransaction:
+        owns_transaction = not doc.HasPendingTransaction
+        if owns_transaction:
             doc.openTransaction(self.editLabel)
-        self.task = self.makeTask(view.Object)
-        Gui.Control.showDialog(self.task)
+        try:
+            self.task = self.makeTask(view.Object)
+            Gui.Control.showDialog(self.task)
+        except Exception:
+            if self.task:
+                self.task.reject(reset_edit=False)
+                self.task = None
+            elif owns_transaction:
+                doc.abortTransaction()
+                doc.recompute()
+            Gui.Control.closeDialog()
+            raise
         return True
 
     def unsetEdit(self, view, mode=0):

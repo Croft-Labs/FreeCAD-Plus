@@ -3,7 +3,7 @@
 """Complete face/direction/angle selection for new and existing Isocline Curves."""
 
 from pathlib import Path
-from .FeatureTask import creation_transaction
+from .FeatureTask import creation_transaction, guard_task_construction
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -25,6 +25,7 @@ class ViewProviderIsocline(TaskFeatureViewProvider):
 
 
 class IsoclineTask:
+    @guard_task_construction
     def __init__(self, obj):
         self.obj = obj
         self.doc = obj.Document

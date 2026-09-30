@@ -8,6 +8,8 @@ actual results in [the roadmap](../ai-instructions/DEVELOPMENT_ROADMAP.md#trim-b
 
 Startup failure injection covers a factory exception after object creation and
 editor refusal: neither leaves an object or pending transaction; retry succeeds.
+Task construction/display failure checks restore viewport annotation count and
+result visibility, leave no dialog/transaction, and permit reopening and acceptance.
 
 The task-readiness regression makes a previously valid target fail recompute,
 verifies hidden preview and blocked acceptance, then repairs it and accepts the

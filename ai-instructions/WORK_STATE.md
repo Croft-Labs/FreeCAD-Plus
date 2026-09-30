@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 4.1.7/5.1.7 production command startup rollback complete.
+Latest roadmap batch: 4.1.8/5.1.8 production task cleanup complete for tested faults.
+Initial-preview construction failure and dialog-display failure clean resources,
+restore visibility and roll back owned edit transactions; reopen/accept succeeds.
+Grouped model/GUI validation: 50 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\task-cleanup-20260930-verified.
+Macro PASS; process ended. Three Python modules and two tests staged with matching
+hashes. No native rebuild or release. Arbitrary allocation/cleanup faults and
+physical viewport/high-DPI acceptance remain separate gates.
+
+Previous roadmap batch: 4.1.7/5.1.7 production command startup rollback complete.
 Shared creation transaction guard aborts factory failure/editor refusal; successful
 startup leaves the transaction to the task. Retry passes for both commands.
 Grouped model/GUI validation: 48 passes, zero failures/errors/skips in

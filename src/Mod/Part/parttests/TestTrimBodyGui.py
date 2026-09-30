@@ -60,6 +60,32 @@ class TestTrimBodyGui(unittest.TestCase):
         Gui.updateGui()
         self.task = self.obj.ViewObject.Proxy.task
 
+    def testTaskConstructionAndDisplayFailureCleanUpForRetry(self):
+        from unittest.mock import patch, Mock
+        import BOPTools.TrimGui as module
+        self.start(preselect=True)
+        self.accept()
+        provider = self.obj.ViewObject.Proxy
+        scene = Gui.activeDocument().activeView().getSceneGraph()
+        children = scene.getNumChildren()
+        visible = self.obj.Visibility
+        failures = (
+            patch.object(module.TrimBodyTask, "updatePreview", side_effect=RuntimeError("Injected task failure")),
+            patch.object(module.Gui, "Control", Mock(wraps=Gui.Control,
+                         showDialog=Mock(side_effect=RuntimeError("Injected task failure")))),
+        )
+        for failure in failures:
+            with failure:
+                with self.assertRaisesRegex(RuntimeError, "Injected task failure"):
+                    provider.setEdit(self.obj.ViewObject)
+            self.assertIsNone(provider.task)
+            self.assertFalse(self.doc.HasPendingTransaction)
+            self.assertFalse(Gui.Control.activeDialog())
+            self.assertEqual(scene.getNumChildren(), children)
+            self.assertEqual(self.obj.Visibility, visible)
+        self.reopen()
+        self.accept()
+
     def testFailedStartupRollsBackAndAllowsRetry(self):
         from unittest.mock import patch, Mock
         import BOPTools.TrimGui as module

@@ -9,6 +9,8 @@ user settings. The separately installed FreeCAD is outside this validation.
 
 Startup failure injection covers a factory exception after object creation and
 editor refusal: neither leaves an object or pending transaction; retry succeeds.
+Task construction/display failure checks restore viewport annotation count and
+result visibility, leave no dialog/transaction, and permit reopening and acceptance.
 
 The task-readiness regression makes a previously valid source fail recompute,
 verifies hidden preview and blocked acceptance, then repairs it and accepts the
