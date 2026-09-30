@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8a/b complete as bounded foundation proofs. Native named
+Latest roadmap batch: 10.8c/d complete as bounded foundation proofs. Explicit native
+parameter references remain independent across parts with matching labels; native
+object-level reverse dependencies survive save/reopen. A unit-correct zero length
+invalidates geometry; abort restores the valid model and later edits Undo/Redo.
+Grouped architecture validation: 26 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-dependencies-20260930-batch.
+Macro PASS; process ended. Test-only changes; no native rebuild or release update.
+Property-level where-used, production scope resolution and parameter editor remain
+pending. These checks do not implement automatic invalid-edit rollback in the UI.
+
+Previous roadmap batch: 10.8a/b complete as bounded foundation proofs. Native named
 length parameters drive two features with inch/mm conversion, label edits,
 Undo/Redo and save/reopen; occurrence placement remains independent. Native angle-
 to-length coercion exposed by the initial test requires a production boundary.

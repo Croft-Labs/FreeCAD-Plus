@@ -327,3 +327,69 @@ class TestPartHistoryCapabilities(unittest.TestCase):
         self.doc.recompute()
         self.assertAlmostEqual(first.Length.Value, 40)
         self.assertAlmostEqual(second.Length.Value, 42)
+
+    def testParameterDependenciesDistinguishMatchingLabelsAcrossParts(self):
+        parameters, first, second = self.parameterModel()
+        other_part = self.doc.addObject("App::Part", "OtherPart")
+        other_parameters = self.doc.addObject("App::FeaturePython", "OtherParameters")
+        other_parameters.addProperty("App::PropertyLength", "Width", "Dimensions")
+        other_parameters.Width = "12 mm"
+        other_part.addObject(other_parameters)
+        parameters.Label = other_parameters.Label = "Dimensions"
+        other_box = self.doc.addObject("Part::Box", "OtherBox")
+        other_part.addObject(other_box)
+        from prototypes.NamedParameters import set_length_expression
+        set_length_expression(other_box, "Length", "OtherParameters.Width")
+        self.doc.recompute()
+        # Native object-level dependency lookup is a candidate index for where-used,
+        # not proof of property-level references or implicit part-local name lookup.
+        self.assertIn(first, parameters.InList)
+        self.assertIn(second, parameters.InList)
+        self.assertNotIn(other_box, parameters.InList)
+        self.assertIn(other_box, other_parameters.InList)
+        parameters.Width = "40 mm"
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Length.Value, 40)
+        self.assertAlmostEqual(second.Length.Value, 42)
+        self.assertAlmostEqual(other_box.Length.Value, 12)
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ParameterScopeProof.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.doc.recompute()
+        self.doc.OtherParameters.Width = "18 mm"
+        self.doc.recompute()
+        self.assertAlmostEqual(self.doc.OtherBox.Shape.BoundBox.XLength, 18)
+        self.assertAlmostEqual(self.doc.ParameterizedBase.Shape.BoundBox.XLength, 40)
+        self.assertIn(self.doc.OtherBox, self.doc.OtherParameters.InList)
+        self.assertNotIn(self.doc.OtherBox, self.doc.Parameters.InList)
+
+    def testInvalidParameterGeometryRecoversAfterAbortAndUndo(self):
+        parameters, first, second = self.parameterModel()
+        original_expression = first.ExpressionEngine
+        self.doc.openTransaction("Invalid shared dimension")
+        parameters.Width = "0 mm"
+        self.doc.recompute()
+        # A dimension can be unit-correct but geometrically invalid. Consumers must
+        # inspect recompute state rather than assuming a retained Shape is current.
+        self.assertIn("Invalid", first.State)
+        self.doc.abortTransaction()
+        self.doc.recompute()
+        self.assertAlmostEqual(parameters.Width.Value, 25.4)
+        self.assertEqual(first.ExpressionEngine, original_expression)
+        for obj, length in ((first, 25.4), (second, 27.4)):
+            self.assertNotIn("Invalid", obj.State)
+            self.assertAlmostEqual(obj.Shape.BoundBox.XLength, length)
+        self.doc.openTransaction("Valid shared dimension")
+        parameters.Width = "35 mm"
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.assertAlmostEqual(first.Shape.BoundBox.XLength, 35)
+        self.assertAlmostEqual(second.Shape.BoundBox.XLength, 37)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Shape.BoundBox.XLength, 25.4)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Shape.BoundBox.XLength, 35)
+        self.assertNotIn("Invalid", first.State)

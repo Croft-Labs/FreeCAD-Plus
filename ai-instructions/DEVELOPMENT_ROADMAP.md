@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8a/b prove shared named length parameters, native expression
+- Current batch: 10.8c/d prove explicit parameter references remain independent
+  across parts with matching labels and invalid geometry recovers after transaction
+  abort. Grouped architecture validation: 26 passes, zero failures/errors/skips.
+  Test-only changes; no native rebuild or parameter editor delivery.
+- Previous batch: 10.8a/b prove shared named length parameters, native expression
   persistence/transactions and a test-only dimensional assignment guard. Grouped
   architecture validation: 24 passes, zero failures/errors/skips; no installed
   feature/editor or native rebuild. Native unit coercion remains a production gate.
@@ -1749,6 +1753,23 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8b Prototype a dimensional assignment boundary for length expressions;
   reject angular results before mutation and reuse native expression cycle rejection.
   Verify transaction abort restores the valid expressions/geometry and later edits.
+- [ X ] 10.8c Prove explicit internal-name parameter references remain independent
+  across two parts with matching container labels and Width property names, through
+  edits and save/reopen. Verify native object-level reverse dependency membership.
+- [ X ] 10.8d Prove a unit-correct zero length can invalidate downstream geometry,
+  transaction abort restores expressions and geometry, and subsequent valid edits
+  retain working Undo/Redo. This is recovery evidence, not automatic UI rollback.
+
+Parameter dependency/recovery batch: `parameter-dependencies-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928` records **26 PASS, zero
+failures/errors/skips**: eleven capability checks (two new), ten adapter and five
+lineage checks. Macro PASS; process ended. Both tasks preceded this grouped run
+using the existing fork build (engine source 2df76790b4). No native rebuild,
+installed application change or release update. Native `InList` is object-level
+and includes non-expression dependencies; it is not a property-level where-used
+implementation. Explicit document object names are not implicit part/configuration
+scope resolution. Production scope, where-used, editor validation and failed-result
+consumer handling remain open under 10.8 and the architecture gates.
 
 Named-parameter foundation: `named-parameters-20260930-verified/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928` records **24 PASS, zero

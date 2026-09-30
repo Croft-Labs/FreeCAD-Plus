@@ -177,6 +177,22 @@ and a parameter editor remain unimplemented. The production architecture decisio
 must account for native unit coercion rather than treating stored property types as
 sufficient dimensional validation.
 
+### Explicit parameter references and invalid geometry recovery
+
+Roadmap 10.8c/d extends the grouped evidence to 26 passing checks. Two parts can
+contain parameter objects with identical labels and Width property names without
+cross-talk when expressions use unique internal object names. Native `InList`
+membership distinguishes the two consumers from the unrelated part before and
+after save/reopen. This is object-level dependency evidence: container links also
+appear there, so a future property-level where-used view must inspect actual
+expression references. No implicit local scope or publication policy is established.
+
+A zero-valued shared length passes dimensional typing but invalidates a native box.
+Aborting the transaction and recomputing restores the valid expressions and shapes;
+subsequent valid edits, Undo and Redo work. The test performs the abort explicitly.
+A production editor must distinguish unit validation from geometry validation and
+define failed-edit behavior; this probe adds no automatic rollback to the UI.
+
 ## Remaining decision gates and consumers
 
 Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
