@@ -238,3 +238,11 @@ cached inputs, clear output, and recover after recompute/repair; postprocessing
 must reject the stale dependency. Mirror additionally checks its disabled-axis
 passthrough and failed reference-offset geometry. Native skipped execution can
 still retain old output until explicit execution; export rejection is separate.
+
+
+Axis Map and Z Correction use the same dirty/failed-producer checks as Array and
+Mirror: explicit generation must reject cached base paths and recover after
+repair/recompute. Z Correction additionally must clear its interpolation surface
+when the base is missing or stale, then rebuild that surface on successful retry.
+These checks do not establish machine acceptance or change native skipped-recompute
+behavior; cached downstream output remains subject to the existing export guard.

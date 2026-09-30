@@ -11,7 +11,15 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2bc/bd production Array/Mirror input readiness.
+Latest roadmap batch: 16.2be/bf Axis Map/Z Correction readiness and cache cleanup.
+Grouped validation: 72 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-axis-zcorrect-readiness-20260930-batch.
+Macro PASS; process ended. Source/staged AxisMap.py and ZCorrect.py hashes match.
+Engine 2df76790b4; no native rebuild or release. Native skipped-recompute caches
+remain export-blocked; explicit generation clears/rejects stale inputs. Physical
+GUI/machine acceptance remains pending.
+
+Previous roadmap batch: 16.2bc/bd production Array/Mirror input readiness.
 Shared requireCurrent guards base paths and Mirror center/reference geometry.
 Grouped validation: 69 passes, zero failures/errors/skips in
 D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-array-mirror-readiness-20260930-verified.

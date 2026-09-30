@@ -159,6 +159,8 @@ class ObjectDressup:
             obj.Path = Path.Path()
             return
 
+        PathDressup.requireCurrent(obj.Base)
+
         radius = obj.Radius.Value
         if not math.isfinite(radius) or radius <= 0:
             raise ValueError("Axis Map radius must be finite and greater than zero; use Reverse to change direction.")

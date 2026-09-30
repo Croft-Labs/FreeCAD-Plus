@@ -198,9 +198,12 @@ class ObjectDressup:
 
     def execute(self, obj):
         obj.Path = Path.Path()
+        obj.interpSurface = Part.Shape()
         if not obj.Base or not obj.Base.isDerivedFrom("Path::Feature") or not obj.Base.Path:
             obj.Path = Path.Path()
             return
+
+        PathDressup.requireCurrent(obj.Base)
 
         path = PathUtils.getPathWithPlacement(obj.Base)
         if not path.Commands:

@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2bc/bd reject stale Array/Mirror base paths and Mirror
+- Current batch: 16.2be/bf guard Axis Map and Z Correction against stale base
+  inputs and clear Z Correction surface caches before validation. Grouped tests:
+  72 passes, zero failures/errors/skips. Python staging; no native rebuild/release.
+- Previous batch: 16.2bc/bd reject stale Array/Mirror base paths and Mirror
   reference geometry during explicit generation. Grouped validation: 69 passes,
   zero failures/errors/skips. Python staging only; no native rebuild or release.
 - Previous batch: 16.2ba/bb repair Boundary2 linking command access and omit all
@@ -3310,6 +3313,26 @@ the on-disk correction after module import; use the final verified report for ev
 Native skipped execution may retain an export-blocked cache; explicit execute clears
 it and rejects stale inputs. Python staging into engine 2df76790b4; no native rebuild,
 release or physical GUI/machine acceptance. Broad task 16.2 remains open.
+
+- [ X ] 16.2be Reject dirty/failed base dependencies before Axis Map conversion.
+  Verified explicit regeneration clears
+  output on rejection and restores rotary paths after repair/recompute.
+- [ X ] 16.2bf Reject stale Z Correction base dependencies and clear interpolation
+  surfaces before validation, including missing-base exits. Verified output/surface
+  cleanup and successful recovery.
+
+Axis Map/Z Correction readiness evidence: `cam-axis-zcorrect-readiness-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **72 PASS, zero failures/
+errors/skips** (67 CAM invalid-input/workflow, five holding-tag geometry checks).
+Both production changes preceded one grouped run; macro PASS and process ended.
+Source/staged SHA256: AxisMap.py
+`06F8ACD543B7C85FA09DB8BD3573A173BBE06FEDF4469776804B06B6F3BA524E`;
+ZCorrect.py `1E9F75D9E63CA7CC8BF0197FE7D7F18EBE515B6694D06426D7FC39C984E3CE9F`.
+Dirty/failed base producer rejection, export blocking, missing-base surface cleanup
+and recovery pass. Native skipped recompute can retain an export-blocked downstream
+cache; these fixes clear it during explicit execution. Python staging into engine
+2df76790b4; no native rebuild, release or physical GUI/machine acceptance. Broader
+CAM consumer/export gates in 16.2 remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

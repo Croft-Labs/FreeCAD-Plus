@@ -1258,3 +1258,30 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         reference.Fail = False
         self.doc.recompute()
         self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testAxisMapRejectsDirtyAndFailedBaseAndRecovers(self):
+        self.checkDressupRejectsStaleBase(self.makeAxisMap())
+
+    def testZCorrectRejectsDirtyAndFailedBaseAndRecovers(self):
+        dressup, probe = self.makeZCorrect()
+        self.checkDressupRejectsStaleBase(dressup)
+        self.assertFalse(dressup.interpSurface.isNull())
+        self.op.Producer.touch()
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        self.assertTrue(dressup.interpSurface.isNull())
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        self.assertFalse(dressup.interpSurface.isNull())
+
+    def testZCorrectMissingBaseClearsSurfaceAndRecovers(self):
+        dressup, probe = self.makeZCorrect()
+        dressup.Base = None
+        self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertTrue(dressup.interpSurface.isNull())
+        dressup.Base = self.op
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        self.assertFalse(dressup.interpSurface.isNull())
