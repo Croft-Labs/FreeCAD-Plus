@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2ay/az validate holding-tag setup/tool data and refresh point
+- Current batch: 16.2ba/bb repair Boundary2 linking command access and omit all
+  motion when clipping removes every cut. Grouped validation: 66 passes, zero
+  failures/errors/skips. Python staging only; no native rebuild or release.
+- Previous batch: 16.2ay/az validate holding-tag setup/tool data and refresh point
   queries instead of trusting old path caches. Grouped validation: 64 passes, zero
   failures/errors/skips. Python staging only; no native rebuild or release.
 - Previous batch: 16.2aw/ax guard holding-tag direct processing and position edits.
@@ -3262,6 +3265,26 @@ producer failures. Queries rebuild path analysis; high-frequency interaction
 performance and physical UI acceptance remain unmeasured. Skipped native recompute
 behavior from 16.2au/av remains unchanged. Python staging into engine 2df76790b4;
 no native rebuild, release or machine acceptance.
+
+- [ X ] 16.2ba Read Boundary2 linking Z from native command Parameters, retaining
+  feed moves below safe height. Verify real separated-cut linking, positive plunge
+  feed and final clearance retraction.
+- [ X ] 16.2bb Return an empty path when boundary clipping removes every wire;
+  do not emit a standalone clearance move. Verify empty result and regeneration
+  after restoring the boundary.
+
+Boundary linking/empty-result evidence: `cam-boundary-links-20260930-final/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **66 PASS, zero failures/
+errors/skips** (61 CAM invalid-input/workflow, five holding-tag geometry checks).
+Both source changes preceded grouped testing; macro PASS and process ended.
+Source/staged Boundary2.py SHA256:
+`E18E7904E0288D1DF3D16CEEAD5F590287EDCEABBF6F0E4D34241D9FE36B549D`.
+Initial `-batch` run had 65 passes/one failure because the fixture retained high
+links; `-verified` had 65 passes/one failure due to its default zero cutting feed.
+Final fixture clips below safe height and sets explicit controller feeds; it wraps
+and executes the real linking generator. Production fixes were unchanged between
+runs. Python staging into engine 2df76790b4, no native rebuild or release. Physical
+GUI/machine acceptance and broad CAM completion remain pending.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

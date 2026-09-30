@@ -11,7 +11,15 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2ay/az production holding-tag setup/query checks.
+Latest roadmap batch: 16.2ba/bb production Boundary2 linking and empty results.
+Linking uses native command Parameters for Z; empty clipping emits no moves.
+Grouped validation: 66 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-boundary-links-20260930-final.
+Macro PASS; process ended. Boundary2.py source/staging hashes match; engine
+2df76790b4, no native rebuild or release. Earlier fixture failures and corrections
+are recorded in the roadmap. Physical GUI/machine acceptance remains pending.
+
+Previous roadmap batch: 16.2ay/az production holding-tag setup/query checks.
 Setup clears path/tool caches, validates base readiness and positive finite tool
 diameter; direct point queries rebuild current setup rather than reuse stale data.
 Invalid tool/producer checks, export blocking and recovery pass.

@@ -223,3 +223,10 @@ requiring empty output plus cleared path/tool caches, export rejection and recov
 Point-query tests use a failed native upstream producer to ensure pointIsOnPath and
 pointAtBottom reject cached input and work after repair. Queries now rebuild path
 analysis; interactive performance has not been benchmarked by these checks.
+
+
+Boundary2 linking checks lower the clipping volume below safe height to remove
+original high links, force the real linking generator between separated cuts,
+and verify feed moves below safe height plus final clearance retraction. Moving
+the boundary entirely away must produce no commands; restoring it must regenerate
+cutting moves. These are native path tests, not machine or physical UI acceptance.

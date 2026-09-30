@@ -1154,3 +1154,46 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.doc.recompute()
         self.assertTrue(dressup.Proxy.pointIsOnPath(dressup, point))
         self.assertIsNotNone(dressup.Proxy.pointAtBottom(dressup, point))
+
+    def testBoundary2LinksSeparatedCutsWithFeedBelowSafeHeight(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import Boundary2
+        dressup = self.makeBoundary2()
+        self.op.ToolController.HorizFeed = 200
+        self.op.ToolController.VertFeed = 100
+        # Clip away the original high links so the generator must plunge again.
+        safe = self.op.SafeHeight.Value
+        top = self.source.Shape.BoundBox.ZMax
+        self.assertGreater(safe, top)
+        dressup.Boundary.Shape = Part.makeBox(
+            60, 60, 20 + (safe + top) / 2, App.Vector(-20, -20, -20))
+        with patch.object(Boundary2.linking, "get_linking_moves",
+                          wraps=Boundary2.linking.get_linking_moves) as link:
+            dressup.RetractThreshold = 0
+            self.doc.recompute()
+        self.assertTrue(link.called)
+        self.assertNotIn("Invalid", dressup.State)
+        commands = dressup.Path.Commands
+        self.assertTrue(commands)
+        linked = [cmd for cmd in commands if cmd.Annotations == Boundary2.linking.Constants.ANNOT_LINKING]
+        self.assertTrue(linked)
+        safe = self.op.SafeHeight.Value
+        self.assertTrue(any(cmd.Parameters["Z"] < safe for cmd in linked))
+        for cmd in linked:
+            if cmd.Parameters["Z"] < safe - 1e-7:
+                self.assertEqual(cmd.Name, "G1")
+                self.assertGreater(cmd.Parameters["F"], 0)
+        self.assertEqual(commands[-1].Name, "G0")
+        self.assertAlmostEqual(commands[-1].Parameters["Z"], self.op.ClearanceHeight.Value)
+
+    def testBoundary2EmptyIntersectionHasNoMovesAndRecovers(self):
+        dressup = self.makeBoundary2()
+        original = dressup.Boundary.Shape.copy()
+        dressup.Boundary.Shape = Part.makeBox(2, 2, 2, App.Vector(100, 100, 100))
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertFalse(dressup.Path.Commands)
+        dressup.Boundary.Shape = original
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(any(cmd.Name == "G1" for cmd in dressup.Path.Commands))

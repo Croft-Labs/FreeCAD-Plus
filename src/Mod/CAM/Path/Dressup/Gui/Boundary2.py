@@ -163,6 +163,7 @@ class ObjectDressup:
 
         if not boundaryWires:
             Path.Log.warning(translate("CAM_DressupPathBoundary2", "No path with such boundary"))
+            return
 
         linkingArgs = {
             "start_position": None,
@@ -196,7 +197,7 @@ class ObjectDressup:
                     linkingArgs["target_position"] = FreeCAD.Vector(p.x, p.y, p.z)
                     linkingMoves = linking.get_linking_moves(**linkingArgs)
                     for cmd in linkingMoves:
-                        if Path.Geom.isStrictlyLess(cmd.z, safeHeight):
+                        if Path.Geom.isStrictlyLess(cmd.Parameters["Z"], safeHeight):
                             cmd.Name = "G1"
                     commands.extend(linkingMoves)
 
