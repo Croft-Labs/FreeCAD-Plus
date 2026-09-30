@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2ba/bb production Boundary2 linking and empty results.
+Latest roadmap batch: 16.2bc/bd production Array/Mirror input readiness.
+Shared requireCurrent guards base paths and Mirror center/reference geometry.
+Grouped validation: 69 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-array-mirror-readiness-20260930-verified.
+Macro PASS; process ended. Array.py/Mirror.py staging hashes match source; engine
+2df76790b4, no native rebuild or release. Explicit generation rejects and clears
+stale output; skipped-native-recompute caching remains export-blocked. Physical
+GUI/machine acceptance remains pending. Initial fixture correction is in roadmap.
+
+Previous roadmap batch: 16.2ba/bb production Boundary2 linking and empty results.
 Linking uses native command Parameters for Z; empty clipping emits no moves.
 Grouped validation: 66 passes, zero failures/errors/skips in
 D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-boundary-links-20260930-final.

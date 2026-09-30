@@ -230,3 +230,11 @@ original high links, force the real linking generator between separated cuts,
 and verify feed moves below safe height plus final clearance retraction. Moving
 the boundary entirely away must produce no commands; restoring it must regenerate
 cutting moves. These are native path tests, not machine or physical UI acceptance.
+
+
+Array and Mirror readiness regressions attach a producer to the base path and
+exercise both unrecomputed and failed states. Explicit generation must reject
+cached inputs, clear output, and recover after recompute/repair; postprocessing
+must reject the stale dependency. Mirror additionally checks its disabled-axis
+passthrough and failed reference-offset geometry. Native skipped execution can
+still retain old output until explicit execution; export rejection is separate.

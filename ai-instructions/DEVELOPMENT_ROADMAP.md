@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2ba/bb repair Boundary2 linking command access and omit all
+- Current batch: 16.2bc/bd reject stale Array/Mirror base paths and Mirror
+  reference geometry during explicit generation. Grouped validation: 69 passes,
+  zero failures/errors/skips. Python staging only; no native rebuild or release.
+- Previous batch: 16.2ba/bb repair Boundary2 linking command access and omit all
   motion when clipping removes every cut. Grouped validation: 66 passes, zero
   failures/errors/skips. Python staging only; no native rebuild or release.
 - Previous batch: 16.2ay/az validate holding-tag setup/tool data and refresh point
@@ -3285,6 +3288,28 @@ Final fixture clips below safe height and sets explicit controller feeds; it wra
 and executes the real linking generator. Production fixes were unchanged between
 runs. Python staging into engine 2df76790b4, no native rebuild or release. Physical
 GUI/machine acceptance and broad CAM completion remain pending.
+
+- [ X ] 16.2bc Reuse the shared input-readiness guard in Array before generation;
+  verify dirty and failed upstream producers cannot regenerate cached cuts, with
+  empty output after explicit rejection and successful repair/recompute.
+- [ X ] 16.2bd Guard Mirror base inputs before passthrough/transformation and check
+  selected center/reference models before reading cached geometry. Verify stale
+  base rejection, disabled-axis passthrough rejection, failed reference-offset
+  geometry rejection, export blocking and recovery.
+
+Array/Mirror readiness evidence: `cam-array-mirror-readiness-20260930-verified/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **69 PASS, zero failures/
+errors/skips** (64 CAM invalid-input/workflow, five holding-tag geometry checks).
+Both changes preceded grouped testing; macro PASS and process ended. Source/staged
+SHA256: Array.py `5C4C11FDAE1C211EA9F59CC6EE8675ADFB392BEC8CB5B634986A89FDC9B4FFC7`;
+Mirror.py `05FFAA6E206617B378B07F6AA0A3333A00730D737BFB88391DE978ED9BD8C920`.
+The initial `-batch` run had 68 passes/one error: an older empty-base fixture expected
+silent return despite its failed producer. The test now expects explicit stale-input
+rejection; production changes were unchanged. That initial run's test hash reflects
+the on-disk correction after module import; use the final verified report for evidence.
+Native skipped execution may retain an export-blocked cache; explicit execute clears
+it and rejects stale inputs. Python staging into engine 2df76790b4; no native rebuild,
+release or physical GUI/machine acceptance. Broad task 16.2 remains open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

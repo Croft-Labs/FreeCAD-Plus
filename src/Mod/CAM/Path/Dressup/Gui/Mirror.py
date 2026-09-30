@@ -128,6 +128,8 @@ class ObjectDressup:
             )
             return
 
+        PathDressup.requireCurrent(obj.Base)
+
         if not obj.Base.Path.Commands:
             obj.Path = Path.Path()
             Path.Log.warning(
@@ -152,9 +154,11 @@ class ObjectDressup:
             else:  # otherwise get first model from Model group of the Job
                 job = PathUtils.findParentJob(obj)
                 model = job.Model.Group[0]
+            PathDressup.requireCurrent(model)
             bb = model.Shape.BoundBox
         elif obj.ReferenceOffset:  # calculate offset for reference shape
             model, subNames = obj.ReferenceOffset
+            PathDressup.requireCurrent(model)
             if hasattr(model, "Shape"):
                 if subNames:
                     sub = model.Shape.getElement(subNames[0])

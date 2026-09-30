@@ -322,7 +322,8 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         from Path.Post.PostList import _wrap_op
         with self.assertRaises(CAMValueError):
             _wrap_op(dressup)
-        dressup.Proxy.execute(dressup)
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
         self.assertFalse(dressup.Path.Commands)
         self.source.Shape = Part.makeBox(20, 20, 4)
         self.doc.recompute()
@@ -1197,3 +1198,63 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.doc.recompute()
         self.assertNotIn("Invalid", dressup.State)
         self.assertTrue(any(cmd.Name == "G1" for cmd in dressup.Path.Commands))
+
+    def checkDressupRejectsStaleBase(self, dressup):
+        from Path.Post.PostList import _wrap_op
+        producer = self.attachFailingDressupInput(dressup.Base)
+        for fail in (False, True):
+            with self.subTest(failed=fail):
+                if fail:
+                    producer.Fail = True
+                    self.doc.recompute()
+                    self.assertIn("Invalid", producer.State)
+                else:
+                    producer.touch()
+                    self.assertIn("Touched", producer.State)
+                self.assertTrue(dressup.Base.Path.Commands)
+                with self.assertRaises(CAMValueError):
+                    _wrap_op(dressup)
+                with self.assertRaisesRegex(ValueError, "input is not current"):
+                    dressup.Proxy.execute(dressup)
+                self.assertFalse(dressup.Path.Commands)
+                producer.Fail = False
+                self.doc.recompute()
+                self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testArrayRejectsDirtyAndFailedBaseAndRecovers(self):
+        self.checkDressupRejectsStaleBase(self.makeArray())
+
+    def testMirrorRejectsDirtyAndFailedBaseIncludingPassthrough(self):
+        dressup = self.makeMirror()
+        self.checkDressupRejectsStaleBase(dressup)
+        dressup.MirrorAxis = "None"
+        self.doc.recompute()
+        producer = self.op.Producer
+        producer.touch()
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+
+    def testMirrorRejectsCachedReferenceGeometryAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeMirror()
+        reference = self.doc.addObject("Part::FeaturePython", "MirrorReference")
+        reference.addProperty("App::PropertyBool", "Fail")
+        reference.Proxy = FailingModel()
+        dressup.CenterModel = False
+        dressup.ReferenceOffset = (reference, [])
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        reference.Fail = True
+        self.doc.recompute()
+        self.assertFalse(reference.Shape.isNull())
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        reference.Fail = False
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)

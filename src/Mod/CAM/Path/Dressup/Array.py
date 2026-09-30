@@ -219,6 +219,8 @@ class DressupArray:
             Path.Log.error(translate("PathArray", "Base is empty or an invalid object."))
             return None
 
+        PathDressup.requireCurrent(obj.Base)
+
         # Do not generate paths and clear current Path data if operation not active
         if not PathDressup.baseOp(obj.Base).Active:
             if obj.Path:
