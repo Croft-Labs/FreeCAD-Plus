@@ -592,6 +592,59 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertNotIn("Invalid", self.profile.State)
         self.assertNotIn("Invalid", self.doc.LeftResult.State)
 
+    def testCrossPartSupportRejectedWithoutChangingEitherPart(self):
+        from SketchReattachment import preview_planar, reattach_planar
+        old, unused = self.rotatedReattachmentFixture()
+        other = self.doc.addObject("App::Part", "SupportPart")
+        other.Placement = App.Placement(App.Vector(-20, 10, 15),
+                                        App.Rotation(App.Vector(0, 0, 1), 40))
+        support = self.doc.addObject("Part::Plane", "CrossPartPlane")
+        other.addObject(support)
+        support.Placement = App.Placement(App.Vector(3, 4, 5),
+                                          App.Rotation(App.Vector(0, 1, 0), 30))
+        self.doc.recompute()
+        original = self.profile.getGlobalPlacement()
+        original_support = support.getGlobalPlacement()
+        center = linked_shape((self.doc.LeftResult, [])).CenterOfMass
+        documents = set(App.listDocuments())
+        for policy in ("preserve-local", "preserve-world"):
+            for operation in (preview_planar, reattach_planar):
+                with self.assertRaisesRegex(ValueError, "reference adapter"):
+                    operation(self.profile, support, "Face1", policy)
+                self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+                self.assertPlacementNear(support.getGlobalPlacement(), original_support)
+                self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+                self.assertFalse(self.doc.HasPendingTransaction)
+        self.assertEqual(set(App.listDocuments()), documents)
+        self.assertAlmostEqual((linked_shape((self.doc.LeftResult, [])).CenterOfMass
+                                - center).Length, 0, places=6)
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertNotIn("Invalid", support.State)
+
+    def testOccurrenceSupportRejectedWithoutChangingDefinitionOrLinks(self):
+        from SketchReattachment import preview_planar, reattach_planar
+        old, support = self.rotatedReattachmentFixture()
+        links = []
+        for x in (20, 40):
+            link = self.doc.addObject("App::Link", "SupportOccurrence")
+            link.setLink(support)
+            link.Placement.Base.x = x
+            links.append(link)
+        self.doc.recompute()
+        original = self.profile.getGlobalPlacement()
+        placements = [link.Placement for link in links]
+        documents = set(App.listDocuments())
+        for operation in (preview_planar, reattach_planar):
+            with self.assertRaisesRegex(ValueError, "definition/occurrence policy"):
+                operation(self.profile, links[0], "Face1")
+        self.assertEqual(set(App.listDocuments()), documents)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+        for link, placement in zip(links, placements):
+            self.assertEqual(link.LinkedObject, support)
+            self.assertPlacementNear(link.Placement, placement)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

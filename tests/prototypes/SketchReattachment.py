@@ -56,6 +56,8 @@ def _validate(sketch, support, face_name, policy):
         raise ValueError("Preserve-world cannot replace an expression-driven attachment offset")
     if support.Document != sketch.Document or support == sketch:
         raise ValueError("Support must be another object in the same document")
+    if support.isDerivedFrom("App::Link"):
+        raise ValueError("Occurrence support requires an explicit definition/occurrence policy")
     if sketch in support.OutListRecursive:
         raise ValueError("Support depends on this sketch; reattachment would create a cycle")
     if any("Invalid" in obj.State or "Touched" in obj.State
@@ -67,6 +69,8 @@ def _validate(sketch, support, face_name, policy):
         raise ValueError("Support face is unavailable") from exc
     if not isinstance(face, Part.Face) or not isinstance(face.Surface, Part.Plane):
         raise ValueError("Support must be a planar face")
+    if sketch.getParentGeoFeatureGroup() != support.getParentGeoFeatureGroup():
+        raise ValueError("Cross-container support requires an explicit reference adapter")
 
 
 def _reattach_planar(sketch, support, face_name, policy):

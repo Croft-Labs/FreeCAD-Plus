@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7m/n validate reversed attachment preview/commit/restore and
+- Current batch: 11.7o/p enforce prototype support scope: cross-container and
+  App::Link occurrence supports reject before mutation. Grouped validation: 42
+  passes, zero failures/errors/skips; no native rebuild. Cross-part placement
+  mismatch recorded; reference adapters and occurrence-edit policy remain pending.
+- Previous batch: 11.7m/n validate reversed attachment preview/commit/restore and
   protect expression-driven offsets from preserve-world replacement. Grouped
   validation: 40 passes, zero failures/errors/skips; no native rebuild. Test-only
   work; production UI and broader expression/reference policies remain pending.
@@ -1907,6 +1911,24 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7n Reject preserve-world preview/commit when AttachmentOffset is driven
   by an expression. Verify no mutation and preserve-local retention of a named
   length expression through restore and subsequent parameter edits.
+- [ X ] 11.7o Probe differently placed part containers and guard the unsupported
+  cross-container case. Verify both policies reject preview/commit before changing
+  either part, opening a transaction or creating a temporary preview document.
+- [ X ] 11.7p Reject App::Link occurrence supports until an explicit definition/
+  occurrence edit policy exists. Verify preview/commit leave both occurrences,
+  their definition links and the sketch unchanged.
+
+Scope boundary evidence: `reattachment-scope-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **42 PASS, zero failures/
+errors/skips** (11 capability, 26 adapter, five lineage checks). Macro PASS; process
+ended. Both tasks preceded grouped testing using engine source 2df76790b4. Initial
+batch had 41 passes/one failure: native direct attachment across differently placed
+parts disagreed with the world-space preview (70.652620 mm origin difference).
+The prototype now rejects different parent geometry containers rather than claiming
+cross-part placement support. Native reference adapter/transform policy remains
+unimplemented; no production functionality is removed by this test-only guard.
+Prototype SHA256: `21D65714C897F62015DC199077455E2DE04C4536A2D75DEEC8CBF228166818D1`.
+No installed application change, native rebuild or release update.
 
 Expression/reversal evidence: `reattachment-expressions-20260930-verified/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **40 PASS, zero

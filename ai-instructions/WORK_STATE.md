@@ -11,7 +11,15 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7m/n complete as test-only reversal/expression checks.
+Latest roadmap batch: 11.7o/p complete as test-only support scope guards.
+Cross-container placement probe found preview/native mismatch; different geometry
+containers now reject before mutation. App::Link supports also reject pending an
+explicit occurrence-edit policy. Grouped validation: 42 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reattachment-scope-20260930-verified.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Cross-part reference adapters, occurrence policy and production UI remain pending.
+
+Previous roadmap batch: 11.7m/n complete as test-only reversal/expression checks.
 MapReversed preview/commit/restore passes. Preserve-world rejects expression-driven
 offsets before mutation; preserve-local retains the named length expression through
 restore and parameter edits. Grouped validation: 40 passes, zero failures/errors/skips in

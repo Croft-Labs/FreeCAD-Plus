@@ -245,6 +245,14 @@ policies preview/commit with MapReversed enabled; restore preserves orientation.
 Grouped evidence totals 40 passes. Expressions depending on the changed support
 and external sketch projections still need separate evaluation.
 
+Roadmap 11.7o/p probes scope boundaries. Direct native attachment to a plane in a
+differently placed part disagreed with the world-space preview. The prototype now
+requires matching parent geometry containers and rejects App::Link support objects
+before mutation. Forty-two grouped checks pass, covering rejection without changes
+to either part or occurrence links/placements. This is a fail-closed prototype
+boundary, not implemented cross-part or occurrence-aware attachment. A deliberate
+reference adapter and occurrence-edit policy are prerequisites to expanding scope.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document
