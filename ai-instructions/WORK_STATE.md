@@ -1,5 +1,20 @@
 # FreeCAD Plus: Build validation handoff
 
+Latest product batch: phases 4/5/8 collector inspection and selection recovery,
+roadmap 8.1.3a/b and 8.1.5a, mapped explicitly to F030/F031/F032. Trim Body now
+highlights its Target/Tool; Isocline highlights selected face rows and its direction
+reference and can clear/replace that reference. Cancel/failed startup restores
+original object/subelement/occurrence selections. Seven new regressions included
+in 85 grouped passes, zero failures/errors/skips, macro PASS and process exit 0.
+Evidence: D:\Temp\Office-PC\freecad-plus-collectors-20260930\grouped-staged.
+Five source/development-build Python hashes match (staging-identities.json in the
+parent). Existing fork engine 802e19d648 plus staged modules; no native rebuild,
+installer or release. F030-F032 broad acceptance and physical GUI checks remain
+open. All F001-F127 IDs are present once; only bounded affected statuses advanced.
+Next dependency-ready slice: collector type/count feedback and explicit invalid
+preselection feedback in these production editors, batched before validation.
+
+
 Release 0.0.2 is built, validated and publicly published after 0.0.4:
 https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.2
 Packaging/tag: 71358d8fbf40122e6c998008e7ab3ca741dbc773; unchanged application:

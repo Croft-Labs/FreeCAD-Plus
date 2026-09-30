@@ -45,6 +45,96 @@ class TestIsoclineGui(unittest.TestCase):
         Gui.updateGui()
         self.task = self.obj.ViewObject.Proxy.task
 
+    def selectionPaths(self):
+        return [(s.DocumentName, s.ObjectName, tuple(s.SubElementNames))
+                for s in Gui.Selection.getSelectionEx("*", 0)]
+
+    def testCancelRestoresOccurrenceSelectionForCreationAndEdit(self):
+        occurrence = self.doc.addObject("App::Link", "Occurrence")
+        occurrence.setLink(self.source)
+        self.doc.recompute()
+        Gui.Selection.addSelection(occurrence, "Face1")
+        original = self.selectionPaths()
+        self.start(False)
+        Gui.Control.activeTaskDialog().reject()
+        self.assertIsNone(self.doc.getObject("IsoclineCurve"))
+        self.assertEqual(self.selectionPaths(), original)
+        Gui.Selection.clearSelection()
+        self.start()
+        self.accept()
+        Gui.Selection.addSelection(occurrence, "Face1")
+        original = self.selectionPaths()
+        self.reopen()
+        self.task.clearFaces()
+        Gui.Control.activeTaskDialog().reject()
+        self.assertEqual(self.selectionPaths(), original)
+        self.assertFalse(self.doc.HasPendingTransaction)
+
+    def testFailedStartupRestoresPreselection(self):
+        from unittest.mock import patch, Mock
+        import BasicShapes.IsoclineGui as module
+        Gui.Selection.addSelection(self.source, "Face1")
+        original = self.selectionPaths()
+        with patch.object(module.Gui, "getDocument", return_value=Mock(setEdit=Mock(return_value=False))):
+            with self.assertRaisesRegex(RuntimeError, "Could not open"):
+                module.CommandIsocline().Activated()
+        self.assertEqual(self.selectionPaths(), original)
+        self.assertIsNone(self.doc.getObject("IsoclineCurve"))
+        self.assertFalse(self.doc.HasPendingTransaction)
+
+    def testInspectFacesAndReferenceDoesNotFillAnotherRole(self):
+        self.start()
+        self.task.direction.setCurrentIndex(3)
+        self.assertEqual(self.task.mode, "Reference")
+        self.task.faces.item(0).setSelected(True)
+        self.assertEqual(self.selectionPaths(), [(self.doc.Name, self.source.Name, ("Face1",))])
+        self.assertFalse(self.obj.DirectionReference)
+        self.assertEqual(self.task.mode, "Reference")
+        axis = self.doc.addObject("Part::Feature", "Axis")
+        axis.Shape = Part.makeLine(App.Vector(0, 0, 0), App.Vector(0, 0, 10))
+        axis.Visibility = False
+        self.doc.recompute()
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(axis, "Edge1")
+        self.task.select("Faces")
+        original = self.obj.Faces
+        self.task.highlightRef.click()
+        self.assertEqual(self.selectionPaths(), [(self.doc.Name, axis.Name, ("Edge1",))])
+        self.assertEqual(self.obj.Faces, original)
+        self.assertEqual(self.task.mode, "Faces")
+        self.assertTrue(axis.Visibility)
+        self.assertTrue(self.task.accept())
+        self.assertFalse(axis.Visibility)
+
+    def testClearDirectionReferenceRejectsAcceptAndCanBeReplaced(self):
+        axis = self.doc.addObject("Part::Feature", "Axis")
+        axis.Shape = Part.makeLine(App.Vector(0, 0, 0), App.Vector(0, 0, 10))
+        self.doc.recompute()
+        self.start()
+        self.task.direction.setCurrentIndex(3)
+        Gui.Selection.addSelection(axis, "Edge1")
+        self.accept()
+        self.reopen()
+        self.task.preview.setChecked(False)
+        self.task.clearRef.click()
+        self.assertFalse(self.obj.DirectionReference)
+        self.assertEqual(self.obj.DirectionMode, "Reference")
+        self.assertEqual(self.task.mode, "Reference")
+        self.assertFalse(self.obj.Visibility)
+        self.assertFalse(self.task.highlightRef.isEnabled())
+        self.assertFalse(self.task.clearRef.isEnabled())
+        self.assertFalse(self.task.accept())
+        self.assertTrue(Gui.Control.activeDialog())
+        Gui.Control.activeTaskDialog().reject()
+        self.assertEqual(self.obj.DirectionReference[0], axis)
+        self.assertTrue(self.obj.isValid())
+        self.reopen()
+        self.task.clearRef.click()
+        Gui.Selection.addSelection(axis, "Edge1")
+        self.assertTrue(self.task.clearRef.isEnabled())
+        self.accept()
+        self.assertTrue(self.obj.isValid())
+
     def testUnrelatedTransactionIsPreservedByEditAndCreate(self):
         import BasicShapes.IsoclineGui as module
         self.start()

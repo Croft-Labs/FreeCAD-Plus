@@ -11,6 +11,45 @@ from pivy import coin
 
 
 _creation_document = ContextVar("feature_task_creation_document", default=None)
+_creation_selection = ContextVar("feature_task_creation_selection", default=None)
+
+
+class SelectionSnapshot:
+    """Keep original object/occurrence paths, without resolving them to definitions."""
+
+    def __init__(self):
+        self.entries = [
+            (selection.DocumentName, selection.ObjectName, sub)
+            for selection in Gui.Selection.getSelectionEx("*", 0)
+            for sub in (selection.SubElementNames or [""])
+        ]
+
+    def restore(self):
+        Gui.Selection.clearSelection()
+        documents = App.listDocuments()
+        for document, name, sub in self.entries:
+            doc = documents.get(document)
+            if doc and doc.getObject(name):
+                Gui.Selection.addSelection(document, name, sub)
+
+
+def task_selection_snapshot():
+    """Creation captures before command preselection is consumed; edits capture now."""
+    selection = _creation_selection.get()
+    return selection if selection is not None else SelectionSnapshot()
+
+
+def highlight_references(task, entries):
+    """Inspect assigned inputs without sending those picks back to a collector."""
+    task._inspecting_selection = True
+    try:
+        Gui.Selection.clearSelection()
+        for obj, sub in entries:
+            task.remember(obj)
+            obj.ViewObject.show()
+            Gui.Selection.addSelection(obj, sub)
+    finally:
+        task._inspecting_selection = False
 
 
 @contextmanager
@@ -18,15 +57,19 @@ def creation_transaction(doc, label):
     """Leave successful creation open for the task; roll back failed startup."""
     if doc.HasPendingTransaction:
         raise RuntimeError("Finish the current transaction before starting a feature task.")
+    selection = SelectionSnapshot()
     doc.openTransaction(label)
     token = _creation_document.set(doc)
+    selection_token = _creation_selection.set(selection)
     try:
         yield
     except Exception:
         doc.abortTransaction()
         doc.recompute()
+        selection.restore()
         raise
     finally:
+        _creation_selection.reset(selection_token)
         _creation_document.reset(token)
 
 
@@ -43,6 +86,8 @@ def _cleanup_failed_task(task):
         actions.append(lambda: setattr(task.obj.ViewObject, "Visibility", task.result_visible))
     if hasattr(task, "form"):
         actions.append(task.form.deleteLater)
+    if hasattr(task, "selection"):
+        actions.append(task.selection.restore)
     for action in actions:
         try:
             action()

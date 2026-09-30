@@ -3,7 +3,9 @@
 """Complete face/direction/angle selection for new and existing Isocline Curves."""
 
 from pathlib import Path
-from .FeatureTask import creation_transaction, guard_task_construction
+from .FeatureTask import (
+    creation_transaction, guard_task_construction, task_selection_snapshot, highlight_references,
+)
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -27,6 +29,7 @@ class ViewProviderIsocline(TaskFeatureViewProvider):
 class IsoclineTask:
     @guard_task_construction
     def __init__(self, obj):
+        self.selection = task_selection_snapshot()
         self.obj = obj
         self.doc = obj.Document
         self.gui_doc = Gui.getDocument(self.doc.Name)
@@ -49,6 +52,7 @@ class IsoclineTask:
         self.faces.setObjectName("isoclineFaces")
         self.faces.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.faces.setMaximumHeight(120)
+        self.faces.itemSelectionChanged.connect(self.highlightFaces)
         rows.addWidget(self.faces)
         buttons = QtGui.QHBoxLayout()
         self.add = QtGui.QPushButton(translate("Isocline", "Add faces"))
@@ -99,6 +103,16 @@ class IsoclineTask:
         self.pickRef.setCheckable(True)
         self.pickRef.clicked.connect(lambda on: self.select("Reference" if on else None))
         ref_layout.addWidget(self.pickRef)
+        reference_actions = QtGui.QHBoxLayout()
+        self.highlightRef = QtGui.QPushButton(translate("Isocline", "Highlight"))
+        self.highlightRef.setObjectName("isoclineHighlightReference")
+        self.highlightRef.clicked.connect(self.highlightReference)
+        self.clearRef = QtGui.QPushButton(translate("Isocline", "Clear"))
+        self.clearRef.setObjectName("isoclineClearReference")
+        self.clearRef.clicked.connect(self.clearReference)
+        reference_actions.addWidget(self.highlightRef)
+        reference_actions.addWidget(self.clearRef)
+        ref_layout.addLayout(reference_actions)
         layout.addWidget(self.reference)
         self.custom = QtGui.QWidget()
         custom_layout = QtGui.QFormLayout(self.custom)
@@ -161,11 +175,15 @@ class IsoclineTask:
         return [(obj, sub) for obj, subs in self.obj.Faces for sub in (subs or [""])]
 
     def refresh(self):
+        blocker = QtCore.QSignalBlocker(self.faces)
         self.faces.clear()
         for obj, sub in self.entries():
             self.remember(obj)
             self.faces.addItem(obj.Label + (" : " + sub if sub else " (all faces)"))
+        del blocker
         link = self.obj.DirectionReference
+        self.highlightRef.setEnabled(bool(link and link[0]))
+        self.clearRef.setEnabled(bool(link and link[0]))
         self.refName.setText(
             link[0].Label + (" : " + link[1][0] if link[1] else "") if link else ""
         )
@@ -196,8 +214,30 @@ class IsoclineTask:
         else:
             self.updatePreview()
 
+    def highlightFaces(self):
+        if self.finished:
+            return
+        entries = self.entries()
+        highlight_references(self, [entries[self.faces.row(item)]
+                                    for item in self.faces.selectedItems()])
+
+    def highlightReference(self):
+        link = self.obj.DirectionReference
+        if not self.finished and link and link[0]:
+            highlight_references(self, [(link[0], sub) for sub in (link[1] or [""])])
+
+    def clearReference(self):
+        if self.finished:
+            return
+        self.restoreVisibility()
+        self.obj.DirectionReference = None
+        self.obj.Shape = Part.Shape()
+        self.refresh()
+        self.updatePreview()
+        self.select("Reference")
+
     def addSelection(self, document, name, sub, position):
-        if self.finished or not self.mode:
+        if self.finished or not self.mode or getattr(self, "_inspecting_selection", False):
             return
         try:
             if document != self.doc.Name:
@@ -314,6 +354,7 @@ class IsoclineTask:
         if obj:
             obj.ViewObject.Visibility = self.result_visible
         self.doc.recompute()
+        self.selection.restore()
         return True
 
     def isAllowedAlterSelection(self):

@@ -181,8 +181,8 @@ the result or choosing **Edit Trim Body** opens the same pane.
 
 | Control | Order and behavior |
 | --- | --- |
-| Target body | First section. Select/Clear one solid or sheet object in the current document. A viewport face pick selects its owning target object. |
-| Cutting tool | Second section. Select/Clear a datum plane, one face of another object, or a sheet. Selecting a whole solid as the tool is rejected; pick its face instead. After choosing a target, an empty tool field enters selection mode. |
+| Target body | First section. Select/Clear one solid or sheet object in the current document. A viewport face pick selects its owning target object. Highlight shows the assigned object without replacing an active collector's input. |
+| Cutting tool | Second section. Select/Clear a datum plane, one face of another object, or a sheet. Highlight shows the assigned object/face; it is disabled when empty. Selecting a whole solid as the tool is rejected; pick its face instead. After choosing a target, an empty tool field enters selection mode. |
 | Keep side | Text and adjacent reverse button flip the side to keep. The green viewport arrow points toward the kept side along the local tool normal. |
 | Extend planar tool | Enabled by default; extends a planar boundary across the target. Curved surfaces are not extended automatically and must span every region being trimmed. |
 | Refine result | Enabled by default; removes redundant result edges. |
@@ -193,8 +193,12 @@ Invalid or unrecomputed target/tool picks leave the existing inputs and active
 selection mode unchanged, with a repair/recompute message. Retry after repair.
 Optional preselection skips stale targets/tools while retaining valid inputs;
 the task remains available to select replacements.
-If feature creation or editor startup fails, creation is rolled back so the command
-can be retried. A pre-existing transaction must finish before starting this command
+Cancel restores the selection captured before creation or editing, including
+subelement and occurrence paths. Highlight temporarily shows hidden inputs;
+normal acceptance/cancellation visibility rules still apply. Failed startup also
+restores the original selection. If feature creation or editor startup fails,
+creation is rolled back so the command can be retried.
+A pre-existing transaction must finish before starting this command
 or reopening an existing feature; rejection preserves the caller's pending edits.
 
 The source solid/sheet remains associative input. A Part Design Body keeps its Tip;
@@ -215,9 +219,9 @@ Isocline Curve** to reopen the same complete definition.
 
 | Control | Order and behavior |
 | --- | --- |
-| Target faces | First section: accumulated face list with Add faces, Remove and Clear. Pick individual viewport faces or a whole source in the tree to include all its faces. Duplicate picks do not duplicate curves. Ordinary selection clearing retains collected references. |
+| Target faces | First section: accumulated face list with Add faces, Remove and Clear. Selecting list rows highlights their geometry without adding/replacing collector inputs, including when picking a direction reference. Pick individual viewport faces or a whole source in the tree to include all its faces. Duplicate picks do not duplicate curves. Ordinary selection clearing retains collected references. |
 | Pull direction | X, Y or Z world axis (default Z), Reference, or Custom vector. Adjacent reverse button flips the pull direction; the green viewport arrow follows it. |
-| Direction reference | Visible in Reference mode. Pick a datum plane, a planar face, a straight edge or datum axis; planes supply their normal. Curved faces/edges, self/dependent objects, and other-document picks are rejected. |
+| Direction reference | Visible in Reference mode. Pick a datum plane, a planar face, a straight edge or datum axis; planes supply their normal. Highlight inspects the assigned reference without adding it to Target faces. Clear removes the reference, clears the curve preview and enters reference picking while retaining Reference mode. OK stays blocked until a valid replacement or another direction mode is chosen. Highlight/Clear are disabled when empty. Curved faces/edges, self/dependent objects, and other-document picks are rejected. |
 | Custom vector | X/Y/Z components, visible in Custom vector mode. Normalize internally; a zero or nonfinite vector is invalid. |
 | Draft angle | Degrees, default 0, range 0 through 90. Zero gives normals perpendicular to pull; positive values select normals increasingly facing pull. Reversing pull selects the opposite draft side. |
 | Preview and status | Red curves are highlighted through source faces while editing, including hidden portions; the accepted feature uses normal depth rendering. The green arrow indicates pull. Live preview can be paused. Missing input, no curve, whole-face coincidence, or solver errors stay editable and clear stale output. Invalid or unrecomputed dependencies after recompute hide the result and block OK until repaired. |
@@ -227,6 +231,8 @@ Invalid or unrecomputed face/direction-reference picks leave the existing inputs
 and selection mode unchanged, with a repair/recompute message. Retry after repair.
 Optional preselection skips stale face objects and retains valid faces from the
 same selection. Repaired faces can be added in the task.
+Cancel and failed startup restore the original object/subelement/occurrence
+selection. Highlighted inputs return to their previous visibility on task exit.
 If feature creation or editor startup fails, creation is rolled back so the command
 can be retried. A pre-existing transaction must finish before starting this command
 or reopening an existing feature; rejection preserves the caller's pending edits.

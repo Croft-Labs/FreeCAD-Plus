@@ -2,6 +2,14 @@
 
 ## Current focus
 
+- Current product batch: phases 4/5/8 input inspection and selection recovery,
+  mapped to F030/F031/F032 (8.1.3a/b and 8.1.5a). Three related implementation
+  tasks completed before one grouped runtime checkpoint: 85 tests pass, with zero
+  failures/errors/skips. Existing fork binary plus matching staged Python modules.
+  F060/F070 benefit through their existing Trim Body/Isocline editors; their
+  broader geometry acceptance remains separate. Continue dependency-ready
+  item-level product work outside CAM 16.2 in subsequent batches.
+
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
   comparison and installer acceptance pass; [release checkpoint](#pre-release-002).
@@ -21,7 +29,7 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2bs/bt repair Holding Tab and Indexed Setup command startup
+- Previous batch: 16.2bs/bt repair Holding Tab and Indexed Setup command startup
   and protect unrelated transactions. Grouped validation: 55 passes; included in
   the published 0.0.4 installer.
 - Previous batch: 16.2bq/br verify Plunge Milling LinuxCNC/Grbl output and FCStd
@@ -1781,6 +1789,13 @@ implementation or mark its unfinished validation complete through this plan.
   reopen.
 - [   ] 8.1.2 Apply command-first selection and identical create/edit coverage to the Phase 3 audit, including profile/section/path/axis replacement after reopening a feature.
 - [   ] 8.1.3 Standardize named selection collectors with add/remove/clear, viewport/tree picking, compatible-type filters, chain/region selection and visible invalid-reference feedback.
+- [ X ] 8.1.3a Add input inspection to existing Trim Body and Isocline collectors:
+  Target/Tool Highlight, face-list row highlighting and direction-reference
+  Highlight. Inspection retains the active role without consuming its own picks;
+  temporary visibility follows task exit rules. F030 production slice.
+- [ X ] 8.1.3b Add Isocline direction-reference Clear, retain Reference mode, clear
+  stale preview even while paused, and permit correction or Cancel recovery.
+  Empty collectors disable Highlight/Clear. F030 production slice.
 - [   ] 8.1.4 Standardize signed offsets, adjacent direction buttons, one/two-sided and symmetric modes, units and expressions. Preserve parameters by meaning when switching operation or type.
   Cover distance, symmetric, two-sided, through-all, to-face and offset-from-face
   extents where the command supports them; keep extent semantics distinct from the
@@ -1788,11 +1803,31 @@ implementation or mark its unfinished validation complete through this plan.
   conventions for Sweep and Loft.
 - [   ] 8.1.5 Add consistent live-preview and error states; make Cancel restore geometry, visibility and selection. Define Apply/repeat behavior separately from OK so repeated creation does not create accidental features.
 
+- [ X ] 8.1.5a Restore original selection on Trim Body/Isocline creation Cancel,
+  edit Cancel and failed startup. Capture before command preselection is consumed;
+  retain original occurrence/subelement paths instead of resolved definitions.
+  Shared FeatureTask helpers; F031/F032 cancellation slice, not Apply/repeat.
+
 - [   ] 8.1.6 Make previews responsive with cancellable computation, progress
   feedback and reduced-cost previews before final computation. Clearly distinguish
   provisional geometry from committed results; cancellation restores the previous
   model, and a late preview result cannot overwrite newer inputs. Integrate with
   16.5's thread-safety/result-commit rules before background document work.
+
+**Collector batch evidence (8.1.3a/b, 8.1.5a), 2026-09-30:** Seven added GUI
+regressions pass in one grouped checkpoint: Trim task 20, Isocline task 18,
+Trim geometry 14, Isocline geometry 9, shared CAM/mesh lifecycle 24; **85 passes,
+zero failures/errors/skips**, macro PASS and process exit 0. Five source/staged
+Python file hashes match. Runtime engine `802e19d648` with staged Python changes;
+no native rebuild or release. Evidence:
+`D:\Temp\Office-PC\freecad-plus-collectors-20260930\grouped-staged`, with staging hashes
+in its parent. Initial harness attempts stopped before tests (macro encoding and
+already-loaded overlay modules); direct development-build staging resolved them.
+Syntax/whitespace checks pass; all 127 specification IDs remain unique and ordered.
+No property/schema, geometry or persistence format changes. Broad 8.1/F030-F032
+acceptance (other commands, disambiguation, Apply/repeat and physical interaction)
+remains open. Next dependency-ready slice: collector type/count feedback and
+explicit invalid-preselection feedback in these production editors.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4193,7 +4228,7 @@ reconciliation rules above to every entry.
 <a id="f030"></a>
 ### F030 — Selection collectors
 
-**Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 8.1, 10.4. **Status:** Production Trim Body/Isocline inspection and direction-reference clearing are validated under 8.1.3a/b (85-test grouped batch). Cross-command collectors, counts/type hints and disambiguation acceptance remain open.
 
 **Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
 
@@ -4206,7 +4241,7 @@ reconciliation rules above to every entry.
 <a id="f031"></a>
 ### F031 — Preselection and postselection
 
-**Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline cancellation selection recovery is validated under 8.1.5a (85-test grouped batch). The required Extrude preselection/postselection equivalence and mixed-selection acceptance remain open.
 
 **Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 
@@ -4219,7 +4254,7 @@ reconciliation rules above to every entry.
 <a id="f032"></a>
 ### F032 — Consistent Apply/OK/Cancel
 
-**Owning tasks:** 8.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
 
 **Packages:** A07, U09 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
 

@@ -60,6 +60,61 @@ class TestTrimBodyGui(unittest.TestCase):
         Gui.updateGui()
         self.task = self.obj.ViewObject.Proxy.task
 
+    def selectionPaths(self):
+        return [(s.DocumentName, s.ObjectName, tuple(s.SubElementNames))
+                for s in Gui.Selection.getSelectionEx("*", 0)]
+
+    def testCancelRestoresOriginalSelectionForCreationAndEdit(self):
+        Gui.Selection.addSelection(self.target, "Face1")
+        Gui.Selection.addSelection(self.tool)
+        original = self.selectionPaths()
+        self.start()
+        Gui.Control.activeTaskDialog().reject()
+        self.assertIsNone(self.doc.getObject("TrimBody"))
+        self.assertEqual(self.selectionPaths(), original)
+        self.start()
+        self.accept()
+        Gui.Selection.addSelection(self.obj)
+        original = self.selectionPaths()
+        self.reopen()
+        self.task.select("Tool")
+        Gui.Control.activeTaskDialog().reject()
+        self.assertEqual(self.selectionPaths(), original)
+        self.assertFalse(self.doc.HasPendingTransaction)
+
+    def testFailedStartupRestoresPreselection(self):
+        from unittest.mock import patch, Mock
+        import BOPTools.TrimGui as module
+        Gui.Selection.addSelection(self.target, "Face2")
+        Gui.Selection.addSelection(self.tool)
+        original = self.selectionPaths()
+        with patch.object(module.Gui, "getDocument", return_value=Mock(setEdit=Mock(return_value=False))):
+            with self.assertRaisesRegex(RuntimeError, "Could not open"):
+                module.CommandTrimBody().Activated()
+        self.assertEqual(self.selectionPaths(), original)
+        self.assertIsNone(self.doc.getObject("TrimBody"))
+        self.assertFalse(self.doc.HasPendingTransaction)
+
+    def testHighlightDoesNotReplaceActiveCollectorAndCancelRestoresVisibility(self):
+        self.start(preselect=True)
+        self.accept()
+        before = (self.target.Visibility, self.tool.Visibility, self.obj.Visibility)
+        self.reopen()
+        self.task.select("Tool")
+        original = (self.obj.Target, self.obj.Tool)
+        self.widget(QtGui.QPushButton, "trimHighlightTarget").click()
+        self.assertEqual(self.selectionPaths(), [(self.doc.Name, self.target.Name, ())])
+        self.assertEqual((self.obj.Target, self.obj.Tool), original)
+        self.assertEqual(self.task.mode, "Tool")
+        self.assertTrue(self.target.Visibility)
+        self.widget(QtGui.QPushButton, "trimHighlightTool").click()
+        self.assertEqual(self.selectionPaths(), [(self.doc.Name, self.tool.Name, ())])
+        self.assertEqual((self.obj.Target, self.obj.Tool), original)
+        self.task.clear("Tool")
+        self.assertFalse(self.widget(QtGui.QPushButton, "trimHighlightTool").isEnabled())
+        Gui.Control.activeTaskDialog().reject()
+        self.assertEqual((self.target.Visibility, self.tool.Visibility, self.obj.Visibility), before)
+
     def testUnrelatedTransactionIsPreservedByEditAndCreate(self):
         import BOPTools.TrimGui as module
         self.start(preselect=True)

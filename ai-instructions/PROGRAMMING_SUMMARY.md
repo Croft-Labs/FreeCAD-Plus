@@ -57,6 +57,12 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Collector inspection and Cancel selection recovery: `highlight_references` and
+`task_selection_snapshot` in [`FeatureTask.py`](../src/Mod/Part/BasicShapes/FeatureTask.py),
+used by Trim Body and Isocline. Snapshots retain object/occurrence subelement paths;
+inspection does not feed its own picks into active collectors. Isocline also offers
+explicit direction-reference Clear; roadmap 8.1.3a/b and 8.1.5a.
+
 Feature creation startup rollback: `creation_transaction` in
 [`FeatureTask.py`](../src/Mod/Part/BasicShapes/FeatureTask.py), used by Trim Body and
 Isocline and CAM Holding Tab/Indexed Setup commands (roadmap 4.1.7/5.1.7,

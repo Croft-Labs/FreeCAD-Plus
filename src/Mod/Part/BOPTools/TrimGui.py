@@ -3,7 +3,9 @@
 """One create/edit task for the associative Trim Body feature."""
 
 from pathlib import Path
-from BasicShapes.FeatureTask import creation_transaction, guard_task_construction
+from BasicShapes.FeatureTask import (
+    creation_transaction, guard_task_construction, task_selection_snapshot, highlight_references,
+)
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -33,6 +35,7 @@ class ViewProviderTrimBody(TaskFeatureViewProvider):
 class TrimBodyTask:
     @guard_task_construction
     def __init__(self, obj):
+        self.selection = task_selection_snapshot()
         self.obj = obj
         self.name = obj.Name
         self.result_visible = obj.ViewObject.Visibility
@@ -49,6 +52,7 @@ class TrimBodyTask:
         layout = QtGui.QVBoxLayout(self.form)
         self.fields = {}
         self.buttons = {}
+        self.inspectButtons = {}
         for key, title in (("Target", "Target body"), ("Tool", "Cutting tool")):
             group = QtGui.QGroupBox(translate("TrimBody", title))
             group.setObjectName("trim" + key + "Group")
@@ -66,11 +70,16 @@ class TrimBodyTask:
             clear = QtGui.QPushButton(translate("TrimBody", "Clear"))
             clear.setObjectName("trimClear" + key)
             clear.clicked.connect(lambda checked=False, key=key: self.clear(key))
+            inspect = QtGui.QPushButton(translate("TrimBody", "Highlight"))
+            inspect.setObjectName("trimHighlight" + key)
+            inspect.clicked.connect(lambda checked=False, key=key: self.highlight(key))
             controls.addWidget(button)
+            controls.addWidget(inspect)
             controls.addWidget(clear)
             rows.addLayout(controls)
             layout.addWidget(group)
             self.fields[key], self.buttons[key] = field, button
+            self.inspectButtons[key] = inspect
         side = QtGui.QHBoxLayout()
         self.side = QtGui.QLabel()
         self.side.setObjectName("trimKeepSide")
@@ -134,6 +143,7 @@ class TrimBodyTask:
     def refreshFields(self):
         for key in self.fields:
             link = getattr(self.obj, key)
+            self.inspectButtons[key].setEnabled(bool(link and link[0]))
             if link and link[0]:
                 self.remember(link[0])
                 text = link[0].Label
@@ -176,8 +186,13 @@ class TrimBodyTask:
         else:
             self.updatePreview()
 
+    def highlight(self, key):
+        link = getattr(self.obj, key)
+        if not self.finished and link and link[0]:
+            highlight_references(self, [(link[0], sub) for sub in (link[1] or [""])])
+
     def addSelection(self, document, name, sub, position):
-        if self.finished or not self.mode:
+        if self.finished or not self.mode or getattr(self, "_inspecting_selection", False):
             return
         try:
             if document != self.doc.Name:
@@ -283,6 +298,7 @@ class TrimBodyTask:
         if result:
             result.ViewObject.Visibility = self.result_visible
         self.doc.recompute()
+        self.selection.restore()
         return True
 
     def isAllowedAlterSelection(self):
