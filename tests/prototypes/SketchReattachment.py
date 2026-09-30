@@ -4,24 +4,42 @@
 Not installed. Rejects calls with a transaction already open. Reuses native attachment
 and Undo. The sketch stays in its existing container for both placement policies.
 """
+import FreeCAD as App
 import Part
 
 
 def reattach_planar(sketch, support, face_name, policy="preserve-local"):
     """Explicitly replace a sketch's support with a same-document planar face."""
-    return _reattach_planar(sketch, support, face_name, policy, preview=False)
+    return _reattach_planar(sketch, support, face_name, policy)
 
 
 def preview_planar(sketch, support, face_name, policy="preserve-local"):
-    """Return candidate placements, rolling back the temporary native transaction.
+    """Evaluate attachment placement in a disposable document, not the live model.
 
-    Synchronous test prototype only: recompute/observers see temporary changes.
-    This is not an isolated solver trial or a production graphical preview.
+    Only planar placement is evaluated, not sketch constraints or downstream solids.
+    Application observers can see the temporary document's lifecycle.
     """
-    return _reattach_planar(sketch, support, face_name, policy, preview=True)
+    _validate(sketch, support, face_name, policy)
+    active = App.ActiveDocument
+    trial = App.newDocument("ReattachmentPreview", hidden=True, temp=True)
+    try:
+        trial_support = trial.addObject("Part::Feature", "Support")
+        shape = support.Shape.copy()
+        parent = support.getGlobalPlacement().multiply(support.Placement.inverse())
+        shape.transformShape(parent.toMatrix())
+        trial_support.Shape = shape
+        trial_sketch = trial.addObject("Sketcher::SketchObject", "Sketch")
+        trial_sketch.Placement = sketch.getGlobalPlacement()
+        trial_sketch.AttachmentOffset = sketch.AttachmentOffset
+        trial_sketch.MapReversed = sketch.MapReversed
+        trial.recompute()
+        return _reattach_planar(trial_sketch, trial_support, face_name, policy)
+    finally:
+        App.closeDocument(trial.Name)
+        App.setActiveDocument(active.Name if active else "")
 
 
-def _reattach_planar(sketch, support, face_name, policy, preview):
+def _validate(sketch, support, face_name, policy):
     if not sketch.isDerivedFrom("Sketcher::SketchObject"):
         raise ValueError("A sketch is required")
     if policy not in ("preserve-local", "preserve-world"):
@@ -44,6 +62,11 @@ def _reattach_planar(sketch, support, face_name, policy, preview):
         raise ValueError("Support face is unavailable") from exc
     if not isinstance(face, Part.Face) or not isinstance(face.Surface, Part.Plane):
         raise ValueError("Support must be a planar face")
+
+
+def _reattach_planar(sketch, support, face_name, policy):
+    _validate(sketch, support, face_name, policy)
+    doc = sketch.Document
     old_placement = sketch.Placement
     old_offset = sketch.AttachmentOffset
     doc.openTransaction("Reattach sketch to planar face")
@@ -64,11 +87,7 @@ def _reattach_planar(sketch, support, face_name, policy, preview):
             if "Invalid" in sketch.State:
                 raise ValueError("Sketch attachment failed")
         candidate = (sketch.getGlobalPlacement(), sketch.AttachmentOffset)
-        if preview:
-            doc.abortTransaction()
-            doc.recompute()
-        else:
-            doc.commitTransaction()
+        doc.commitTransaction()
         return candidate
     except Exception:
         doc.abortTransaction()

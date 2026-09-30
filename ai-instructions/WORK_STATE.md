@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7i/j complete as test-only rollback preview probes.
+Latest roadmap batch: 11.7k/l complete as test-only isolated placement preview.
+Disposable-document attachment evaluation replaces live rollback. Both policies
+retain candidate/commit parity, leave original object/recompute notifications empty,
+clean up the temporary document and preserve an already-populated redo stack.
+Grouped validation: 38 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reattachment-isolation-20260930-batch.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Application observers can see temporary-document lifecycle; full sketch/consumer
+evaluation and production graphical preview remain pending. See roadmap 11.7.
+
+Previous roadmap batch: 11.7i/j complete as test-only rollback preview probes.
 Both policies return placements matching committed operations and restore support,
 offset and downstream position. Repeated/rejected previews preserve an existing
 committed edit's Undo/Redo. Grouped validation: 36 passes, zero failures/errors/skips in

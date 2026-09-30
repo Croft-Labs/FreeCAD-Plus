@@ -227,7 +227,15 @@ transaction and recomputes. Both policies match later commits; repeated previews
 and missing-face rejection preserve the prior committed edit's Undo/Redo. Grouped
 evidence totals 36 passing checks. This is not isolated evaluation: observers see
 temporary state, and preservation of an already-populated redo stack is unproven.
-Production preview must resolve these boundaries before integration.
+That implementation is superseded by 11.7k/l: preview copies the support shape into
+world coordinates and evaluates attachment on a temporary sketch in a disposable
+hidden document. It retains offset and MapReversed, returning world placement and
+the proposed offset without opening a transaction on the original document.
+Thirty-eight grouped checks pass, including candidate/commit parity, absence of
+original object-change/recompute notifications, document cleanup/active-doc restore
+and an already-populated redo stack. Application observers still see temporary
+document lifecycle. This is placement evaluation, not constraint solving or full
+downstream geometry validation; production preview must retain that distinction.
 
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a

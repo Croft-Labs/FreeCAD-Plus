@@ -499,6 +499,47 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertEqual(self.profile.Label, "User label")
         self.assertEqual(self.profile.AttachmentSupport[0][0], old)
 
+    def testPreviewDoesNotChangeOrRecomputeOriginalDocument(self):
+        from SketchReattachment import preview_planar
+        old, new = self.rotatedReattachmentFixture()
+        events = []
+        original_doc = self.doc
+        class Observer:
+            def slotChangedObject(self, obj, prop):
+                if obj.Document == original_doc:
+                    events.append((obj.Name, prop))
+            def slotRecomputedDocument(self, doc):
+                if doc == original_doc:
+                    events.append((doc.Name, "recomputed"))
+        observer = Observer()
+        documents = set(App.listDocuments())
+        App.addDocumentObserver(observer)
+        try:
+            for policy in ("preserve-local", "preserve-world"):
+                preview_planar(self.profile, new, "Face1", policy)
+            self.assertEqual(events, [])
+            self.assertEqual(set(App.listDocuments()), documents)
+            self.assertEqual(App.ActiveDocument, self.doc)
+        finally:
+            App.removeDocumentObserver(observer)
+
+    def testPreviewPreservesAlreadyPopulatedRedoStack(self):
+        from SketchReattachment import preview_planar
+        old, new = self.rotatedReattachmentFixture()
+        label = self.profile.Label
+        self.doc.openTransaction("Edit to redo after preview")
+        self.profile.Label = "Redo must survive"
+        self.doc.commitTransaction()
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.Label, label)
+        for policy in ("preserve-local", "preserve-world"):
+            preview_planar(self.profile, new, "Face1", policy)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.Label, "Redo must survive")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time
