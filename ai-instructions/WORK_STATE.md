@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7e/f complete as test-only recovery/transaction prototypes.
+Latest roadmap batch: 11.7g/h complete as test-only support validation.
+Derived native extrusion support rejects before introducing a cycle; touched and
+failed supports reject before mutation. Repaired support accepts reattachment and
+Undo restores the original support/placement.
+Grouped validation: 34 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reattachment-support-20260930-batch.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Production UI and broader topology/consumer failure handling remain pending.
+
+Previous roadmap batch: 11.7e/f complete as test-only recovery/transaction prototypes.
 Explicit preserve-local repair of a missing face survives Undo/Redo and restore;
 preserve-world rejects invalid placement. Caller-owned transactions reject before
 mutation and retain their pending edits/abort behavior.

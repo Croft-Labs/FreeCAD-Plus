@@ -20,6 +20,11 @@ def reattach_planar(sketch, support, face_name, policy="preserve-local"):
         raise ValueError("Preserve-world requires a valid recomputed sketch placement")
     if support.Document != sketch.Document or support == sketch:
         raise ValueError("Support must be another object in the same document")
+    if sketch in support.OutListRecursive:
+        raise ValueError("Support depends on this sketch; reattachment would create a cycle")
+    if any("Invalid" in obj.State or "Touched" in obj.State
+           for obj in [support] + list(support.OutListRecursive)):
+        raise ValueError("Support and its dependencies must be valid and recomputed")
     try:
         face = support.Shape.getElement(face_name)
     except (AttributeError, IndexError, RuntimeError, Part.OCCError) as exc:

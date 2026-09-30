@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7e/f prototype deliberate missing-face repair and protect
+- Current batch: 11.7g/h reject cyclic and stale/invalid reattachment supports
+  before mutation. Grouped validation: 34 passes, zero failures/errors/skips;
+  test-only changes, no native rebuild. Production reattachment UI remains pending.
+- Previous batch: 11.7e/f prototype deliberate missing-face repair and protect
   caller-owned transactions. Grouped validation: 32 passes, zero failures/errors/
   skips; no native rebuild. Production repair UI and broad topology repair remain open.
 - Previous batch: 11.7c/d extend the test-only reattachment operation to explicit
@@ -1871,6 +1874,23 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7f Reject prototype reattachment while a caller-owned transaction is
   pending, before mutation. Verify the caller's edit remains uncommitted and can be
   aborted, followed by successful independent reattachment and Undo.
+- [ X ] 11.7g Reject support geometry that depends on the sketch before introducing
+  an attachment cycle. Verify with a native extrusion derived from the sketch,
+  preserving support, placement, validity and transaction state after rejection.
+- [ X ] 11.7h Reject supports with invalid or pending recompute state, including
+  dependencies. Verify touched-plane and failed-box rejection, then repair the box,
+  recompute, reattach successfully and Undo back to the original support.
+
+Support validation evidence: `reattachment-support-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **34 PASS, zero
+failures/errors/skips** (11 capability, 18 adapter, five lineage checks). Macro PASS;
+process ended. Both tasks preceded grouped testing using engine source 2df76790b4.
+Prototype SHA256: `4E22D978257BCF6A7758D7E6E0557F2FC1BE6A285BB4B3952E9DAEA4B9F02524`.
+Native dependency traversal supplies cycle and state inspection; validation occurs
+before opening the reattachment transaction. Tests cover a direct derived support,
+a touched support and a failed native box; broader dependency graph and consumer
+failure cases remain open. No installed application change, native rebuild or
+release update. This is test-only prerequisite validation, not production UI delivery.
 
 Recovery/transaction evidence: `reattachment-recovery-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **32 PASS, zero

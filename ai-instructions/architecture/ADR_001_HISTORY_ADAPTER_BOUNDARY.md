@@ -215,6 +215,12 @@ Preserve-world rejects invalid or touched sketch state rather than treating cach
 placement as current. Calls inside an existing transaction reject before mutation;
 the caller's edit and abort remain intact. Grouped evidence totals 32 passing checks.
 
+Roadmap 11.7g/h validates support prerequisites before opening a transaction.
+Native OutListRecursive rejects a support derived from the sketch and checks
+support/dependency Invalid or Touched state. Native extrusion cycle rejection,
+touched-plane rejection and failed-box rejection/recovery bring the grouped suite
+to 34 passes. A cached face alone is not evidence that its support is usable.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document

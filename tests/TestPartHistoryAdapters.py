@@ -403,6 +403,58 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.doc.recompute()
         self.assertEqual(self.profile.AttachmentSupport[0][0], old)
 
+    def testReattachmentRejectsDerivedSupportCycleBeforeMutation(self):
+        from SketchReattachment import reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        derived = self.doc.addObject("Part::Extrusion", "DerivedSupport")
+        self.part.addObject(derived)
+        derived.Base = self.profile
+        derived.Dir = App.Vector(0, 0, 5)
+        derived.Solid = True
+        self.doc.recompute()
+        self.assertNotIn("Invalid", derived.State)
+        face_name = next("Face%d" % (i + 1) for i, face in enumerate(derived.Shape.Faces)
+                         if isinstance(face.Surface, Part.Plane))
+        before = self.profile.getGlobalPlacement()
+        with self.assertRaisesRegex(ValueError, "cycle"):
+            reattach_planar(self.profile, derived, face_name)
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), before)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.doc.recompute()
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertNotIn("Invalid", derived.State)
+
+    def testReattachmentRejectsStaleAndInvalidSupportThenRecovers(self):
+        from SketchReattachment import reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        box = self.doc.addObject("Part::Box", "FailingSupport")
+        self.part.addObject(box)
+        self.doc.recompute()
+        before = self.profile.getGlobalPlacement()
+        new.touch()
+        with self.assertRaisesRegex(ValueError, "valid and recomputed"):
+            reattach_planar(self.profile, new, "Face1")
+        self.doc.recompute()
+        box.Length = 0
+        self.doc.recompute()
+        self.assertIn("Invalid", box.State)
+        with self.assertRaisesRegex(ValueError, "valid and recomputed"):
+            reattach_planar(self.profile, box, "Face1")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), before)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        box.Length = 10
+        self.doc.recompute()
+        reattach_planar(self.profile, box, "Face1")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], box)
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), before)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time
