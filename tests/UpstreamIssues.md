@@ -252,3 +252,13 @@ is required. Preserve the frozen-job early return; do not represent this check a
 export safety or proof that all upstream failures schedule execution. Current
 Job.Operations is an App::DocumentObjectGroup, not an aggregate Path cache.
 Results and matching installed-module hash belong to the roadmap's batch record.
+
+For the export-state checks (16.2h/i), also synchronize `Path/Post/PostList.py` and
+group TestCAMInvalidInputs with TestPostProcessor and TestDressupPost. Three tests
+require refusal for a dirty operation, dirty upstream source with a clean operation,
+and native failed producer with a retained cached path; repaired inputs must allow
+post-list construction. Dressup output tests recompute after editing properties.
+The guard reads native dependency state without recomputing or changing the document.
+It does not certify clean-but-wrong geometry or references absent from the graph.
+Record the existing skipped postprocessor classification test separately from passing
+tests; the macro's strict overall flag is false whenever a test is skipped.

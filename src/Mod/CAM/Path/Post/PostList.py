@@ -23,7 +23,9 @@ from dataclasses import dataclass, field
 from typing import Any, List, Optional, Tuple
 
 import Path
+import FreeCAD
 import Path.Base.Util as PathUtil
+from Path.Post.CAMErrors import CAMValueError
 
 debug = False
 if debug:
@@ -190,6 +192,17 @@ def _wrap_op(op: Any) -> Postable:
     Data keys populated:
         "tool_controller" (Postable) - Present when the operation has a ToolController.
     """
+    # Recompute may skip downstream consumers when a producer fails, leaving
+    # their previous Path intact. Never copy that cache into export output.
+    if isinstance(op, FreeCAD.DocumentObject):
+        for dependency in [op] + list(op.OutListRecursive):
+            state = dependency.State
+            if "Invalid" in state or "Touched" in state:
+                raise CAMValueError(
+                    f"Cannot post process: {dependency.Label} has errors or needs recompute. "
+                    "Recompute and resolve errors before exporting.",
+                    operation=op,
+                )
     data = {}  # WHATIF: = op.postable_annotations()
     raw_tc = PathUtil.toolControllerForOp(op)
     if raw_tc is not None:

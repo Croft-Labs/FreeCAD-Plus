@@ -85,6 +85,9 @@ class TestDressupPost(PathTestUtils.PathTestBase):
         # reinitialize the postprocessor data structures between tests
         #
         self.post.reinitialize()
+        # Restored fixtures and edited operation properties must be recomputed
+        # before exporting; cached paths are no longer accepted while dirty.
+        self.doc.recompute()
 
     def tearDown(self):
         """tearDown()...
@@ -118,6 +121,8 @@ class TestDressupPost(PathTestUtils.PathTestBase):
         for op in self.ops:
             PathDressup.baseOp(op).Active = True
 
+        self.doc.recompute()
+
         # check that all operations are in the output
 
         gcode = self.post.export()[0][1].splitlines()
@@ -146,6 +151,7 @@ class TestDressupPost(PathTestUtils.PathTestBase):
         for op in self.ops:
             base = PathDressup.baseOp(op)
             base.CoolantMode = "Mist"
+            self.doc.recompute()
 
             gcode = self.post.export()[0][1].splitlines()
 

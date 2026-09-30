@@ -5,9 +5,23 @@ import Part
 from CAMTests.PathTestUtils import PathTestWithAssets
 from Path.Main import Job
 from Path.Op import PlanarSurface
+from Path.Post.PostList import buildPostList
+from Path.Post.CAMErrors import CAMValueError
+
+
+class FailingModel:
+    def execute(self, obj):
+        if obj.Fail:
+            raise RuntimeError("Deliberate model failure")
+        obj.Shape = Part.makeBox(20, 20, 4)
 
 
 class TestCAMInvalidInputs(PathTestWithAssets):
+    def postList(self):
+        from types import SimpleNamespace
+        return buildPostList(SimpleNamespace(
+            _job=self.job, _operations=[self.op], _machine=None, values={}))
+
     def setUp(self):
         super().setUp()
         self.doc = App.newDocument("CAMInvalidInputs")
@@ -133,3 +147,42 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         current = QtGui.QApplication.overrideCursor()
         self.assertEqual(current.shape() if current else None, previous_shape)
         self.assertEqual(len(self.op.Path.Commands), 0)
+
+    def testPostRejectsDirtyOperationAndRecovers(self):
+        self.doc.recompute()
+        self.assertTrue(self.postList())
+        self.op.StepOver = 40
+        self.assertTrue(self.op.Path.Commands)
+        with self.assertRaisesRegex(CAMValueError, "needs recompute"):
+            self.postList()
+        self.doc.recompute()
+        self.assertTrue(self.postList())
+
+    def testPostRejectsDirtySourceEvenWithCleanOperation(self):
+        self.doc.recompute()
+        self.source.Shape = Part.makeBox(30, 20, 4)
+        self.op.purgeTouched()
+        with self.assertRaisesRegex(CAMValueError, "needs recompute"):
+            self.postList()
+        self.doc.recompute()
+        self.assertTrue(self.postList())
+
+    def testPostRejectsFailedProducerWithCachedPathAndRecovers(self):
+        producer = self.doc.addObject("PartDesign::FeaturePython", "FailingProducer")
+        producer.addProperty("App::PropertyBool", "Fail")
+        producer.Proxy = FailingModel()
+        # Add a real upstream dependency without changing the baseline job model.
+        self.source.addProperty("App::PropertyLink", "Producer")
+        self.source.Producer = producer
+        self.doc.recompute()
+        self.assertTrue(self.postList())
+        producer.Fail = True
+        self.doc.recompute()
+        self.assertIn("Invalid", producer.State)
+        self.assertTrue(self.op.Path.Commands, "Fixture must retain a cached path")
+        self.op.purgeTouched()
+        with self.assertRaisesRegex(CAMValueError, "FailingProducer"):
+            self.postList()
+        producer.Fail = False
+        self.doc.recompute()
+        self.assertTrue(self.postList())

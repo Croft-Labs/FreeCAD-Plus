@@ -1,6 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 16.2f/g complete. Job.Model replacement/removal rebinds
+Latest roadmap batch: 16.2h/i complete. Shared PostList refuses dirty/invalid native
+operations and linked inputs before cached-path export. Dirty and failed-producer
+recovery checks pass; nested dressup export tests now recompute edited inputs first.
+cam-export-20260929-verified under the existing validation root records 88 passes,
+one pre-existing skip, zero failures/errors (overall macro flag false for any skip).
+PostList.py source/installed SHA256:
+0C70E6249CF1AEF5BD346CE89B2CB507F750E7F97BD2A07EE702A258B7B2E078.
+No native build; GUI/machine acceptance and broader semantic/export gates remain open.
+
+Previous roadmap batch: 16.2f/g complete. Job.Model replacement/removal rebinds
 operation dependencies and clears unfrozen paths; normal recompute recovers them.
 Restored the full execute wait-cursor decorator displaced by the previous change.
 75 distinct checks pass across cam-container-20260929-batch (67 broader passing)

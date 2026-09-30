@@ -5,7 +5,12 @@
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2f/16.2g handle replacing/removing CAM model containers and
+- Current batch: 16.2h/16.2i reject postprocessing when a selected operation or
+  its linked inputs are dirty/invalid. Native cached-path failure/recovery checks
+  and postprocessor/dressup regressions: 88 pass, one pre-existing skip, zero
+  failures/errors. Python-only synchronization; no native build. General missing
+  links, semantic validity, frozen-job policy and machine acceptance remain open.
+- Previous batch: 16.2f/16.2g handle replacing/removing CAM model containers and
   restore the wait cursor around full operation execution. Eight targeted checks
   and 67 broader CAM regressions pass across two runs; no native build required.
   Export guards, failed upstream producers and general consumer compatibility remain open.
@@ -2021,6 +2026,32 @@ Source/installed SHA256: Base.py
 No native build, mouse/keyboard acceptance or machine/export safety claim.
 Frozen-job preservation remains the existing policy; general failed-producer,
 nested-operation and export gates remain pending under 16.2.
+
+- [ X ] 16.2h Refuse post-list creation for dirty native operations or linked
+  dependencies, reporting the offending object and requiring recompute. Verify
+  dirty operation and dirty source with a clean operation cache, then recovery.
+- [ X ] 16.2i Refuse post-list creation after a native producer failure even when
+  downstream CAM retains machining commands. Verify failure and repaired-producer
+  recovery; retain nested dressup Active/tool/coolant export regressions.
+
+Export-state batch: shared `Path/Post/PostList.py` checks native `State` on each
+active operation and its `OutListRecursive` before copying cached paths into a
+Postable. All three output ordering strategies use this wrapper; shared legacy
+and machine-based exporters consume these lists. No implicit recompute or document
+mutation is performed by the guard. Frozen state does not bypass dirty/invalid
+export checks; the existing generation freeze behavior remains unchanged.
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-export-20260929-verified\results.json`
+records **88 PASS, one existing skipped classification test, zero failures/errors**
+(11 invalid-input checks, 75 postprocessor checks including the skip, three dressup
+checks). The macro's overall `passed` is false because it requires zero skips.
+The first grouped run identified dressup tests exporting edited inputs without
+recompute; corrected tests recompute before export and preserve their output assertions.
+PostList.py source/installed SHA256:
+`0C70E6249CF1AEF5BD346CE89B2CB507F750E7F97BD2A07EE702A258B7B2E078`.
+Python-only install into the existing fork build, no native rebuild or GUI/machine
+acceptance. These guards do not detect silently wrong but clean geometry, missing
+references absent from the dependency graph, or external scripts bypassing PostList.
+Full 16.2 consumer/export compatibility remains open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
