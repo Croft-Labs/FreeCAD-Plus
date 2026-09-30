@@ -2,6 +2,11 @@
 
 ## Current focus
 
+- Release 0.0.2: explicitly requested after 0.0.4. Build a new installer with
+  0.0.2 metadata from the unchanged, validated application source 802e19d648;
+  reuse its 312-test evidence after runtime hash comparison. Installer acceptance
+  and publication pending. Preserve existing releases.
+
 - Release 0.0.4: Windows x64 installer built, validated and published as a GitHub
   pre-release; [release checkpoint](#pre-release-004). All 312 packaged tests and
   installation/launch/hash/uninstall checks pass. Other roadmap acceptance gates

@@ -12,15 +12,15 @@ SetCompressor /SOLID lzma
 !ifndef OUTPUT
   !error "Pass /DOUTPUT=<installer.exe>"
 !endif
-!define VERSION "0.0.4"
+!define VERSION "0.0.2"
 !define UNINSTALL_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\CroftLabs.FreeCADPlus.${VERSION}"
 Name "FreeCAD Plus ${VERSION} Pre-Release"
 OutFile "${OUTPUT}"
 InstallDir "$LOCALAPPDATA\Programs\FreeCAD Plus ${VERSION}"
-VIProductVersion "0.0.4.0"
+VIProductVersion "0.0.2.0"
 VIAddVersionKey "ProductName" "FreeCAD Plus"
-VIAddVersionKey "FileDescription" "FreeCAD Plus 0.0.4 Windows x64 installer"
-VIAddVersionKey "FileVersion" "0.0.4.0"
+VIAddVersionKey "FileDescription" "FreeCAD Plus 0.0.2 Windows x64 installer"
+VIAddVersionKey "FileVersion" "0.0.2.0"
 VIAddVersionKey "LegalCopyright" "FreeCAD contributors; FreeCAD Plus changes by Croft-Labs"
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_WELCOME

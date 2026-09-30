@@ -28,7 +28,7 @@ through FreeCADPlus.exe, and check uninstallation. Record limitations, source/bu
 identity, installer size and SHA256 in the roadmap/release notes. Publish only the
 requested installer asset; a local build or draft release is not publication evidence.
 
-Version 0.0.4 is the fork's distribution version. The upstream-derived engine version
+Version 0.0.2 is the fork's distribution version. The upstream-derived engine version
 can still be shown in About. The package is unsigned and uses the focused
 workbench configuration recorded in the release notes. The planned `.cadprt` format
 and production part-history restructuring are not included.

@@ -59,7 +59,7 @@ if (args.libpack / "sbom").is_dir():
     shutil.copytree(args.libpack / "sbom", args.payload / "dependency-licenses" / "sbom")
 revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source, text=True).strip()
 (args.payload / "release-info.json").write_text(json.dumps({
-    "product": "FreeCAD Plus", "release": "0.0.4", "source_commit": revision,
+    "product": "FreeCAD Plus", "release": "0.0.2", "source_commit": revision,
     "source": "https://github.com/Croft-Labs/FreeCAD-Plus",
     "configuration": "Windows x64 Release; see GitHub release notes for workbenches",
 }, indent=2), encoding="utf-8")
