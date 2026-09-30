@@ -2,6 +2,8 @@
 
 ## Current focus
 
+Specification update: see [the re-updated objective reconciliation](#re-updated-objective-specifications-and-delivery-slices) and [all 127 item-level specifications](#item-level-product-specifications-f001-f127). Added tasks 10.8-10.9, 11.7, 15.7, 16.8-16.9 and benchmarks T13-T16 are pending; existing completion evidence is preserved.
+
 - Release 0.0.1: user-authorized Windows x64 installer built, accepted and published; publication
   tracked in [the release checkpoint](#pre-release-001). This does not close the
   remaining product, GUI, machine or broad compatibility gates.
@@ -1606,6 +1608,12 @@ the full objective is unverified; `Partial` points to existing bounded evidence.
 | M01 | Audience/competitor evidence and measured adoption assumptions | 4 | 2 | High | 0 | S–M | P0/P11 | 17.1; 17.5; Pending |
 | M02 | Useful-model distribution, tutorials and focused channel experiments | 4 | 2 | High | 0 | M | P11; publication when authorized | 17.3; 17.4; 17.5; Pending |
 | M03 | Independent-fork branding, optional extension/MIME registration | 3 | 2 | High | 1 | S–M | Identity early; P10/P11 | 17.6; 17.7; Pending |
+| A09 | Named parameters, expressions, unit checking, scope and publication | 5 | 4 | Medium | 3 | M–L | P1/P3 contracts; P4/P5 editor | 10.8; Pending |
+| U11 | Unified workspace, contextual availability/help, keyboard and display accessibility | 5 | 3 | High | 2 | M–L | P3/P4; downstream integration later | 10.9; Pending |
+| S08 | Sketch support/orientation, attachment and deliberate reattachment | 5 | 4 | Medium | 2 | M–L | P1/P3 references; P5 UI | 11.7; Pending |
+| X08 | Document lifecycle, safe save, recovery snapshots, templates and recent-file repair | 5 | 4 | Medium | 3 | M–L | P1/P3 contracts; P10 hardening | 16.8; Pending |
+| X09 | Add-on/macro/API compatibility matrix, adapters and migration diagnostics | 4 | 4 | Medium | 2 | M–L | P0 audit; P3/P10 | 16.9; Pending |
+| X10 | Manufacturing export, units/orientation/quality controls and reusable presets | 5 | 3 | High | 2 | M | P3 contracts; P4/P9 UI | 15.7; Pending |
 
 ## [   ] Phase 10: Shared workflow, selection and guided modeling (P1/P3/P4)
 
@@ -1689,6 +1697,15 @@ Phase 7 architecture gates and the full guided workflow remain open.
   coordinates. Present move here once and maintain this relationship as distinct
   actions, with a preview of the affected occurrence.
 
+- [   ] 10.8 Add named parameters, expressions, dimensional unit checking and explicit
+  document/part/configuration scope (A09; [F122](#f122)). Provide rename and where-used,
+  cycle rejection, publication rules and compatible-expression entry in feature fields.
+  Validate shared dimensions, unit changes and rename propagation with T13.
+- [   ] 10.9 Complete the unified contextual workspace, availability explanations,
+  local help, keyboard navigation and display accessibility (U11; [F025](#f025),
+  [F123](#f123)). Preserve the active engineering document across modeling, CAM,
+  drawings and analysis; validate keyboard-only tasks and enlarged-display recovery.
+
 Gate G4: simple part/assembly creation, edits, precise moves and recovery survive
 save/reopen. Guided/direct entry and aliases produce equivalent semantics. Test
 zero/one/multiple targets, invalid contacts, cross-component overlap, missing cut
@@ -1736,6 +1753,11 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   trim/extend supports dragging across unwanted segments while retaining valid
   constraints where possible and reporting losses. Region picking selects closed areas
   inside a larger sketch without requiring the whole sketch as the profile.
+
+- [   ] 11.7 Make sketch placement, orientation, offset and support/reattachment
+  explicit (S08; [F124](#f124)). Preview preserve-local versus preserve-world policies,
+  prefer stable references where appropriate, and repair lost supports deliberately.
+  Validate rotated occurrences, external projections, constraints and Undo with T14.
 
 Gate G5: solver trials cannot mutate live sketches; redundant/conflicting candidates
 remain distinct and invalid suggestions cannot commit. Validate T12, inference/no
@@ -1948,6 +1970,11 @@ Each module depends only on the contracts it consumes and can be delivered separ
   and export with stated history/metadata losses. Preserve originals and distinguish
   native document packaging from flattened geometry exchange.
 
+- [   ] 15.7 Add reusable manufacturing export presets (X10; [F127](#f127)).
+  Make selected geometry/occurrences/configuration, units, orientation and mesh
+  quality explicit; audit supported formats and report history/metadata losses.
+  Validate dimensions, transforms and tessellation by reimport using T16.
+
 Gate G9: independently releasable modules update correctly after source/topology
 changes, or explicitly report repair/stale state; drawing and BOM references cannot
 silently bind to a different entity.
@@ -2142,6 +2169,15 @@ GUI/machine acceptance. General dressup failure/consumer compatibility remains o
   artifact/source correspondence. Keep proprietary competitor code/assets out.
   This is an unperformed release audit, not a legal conclusion or publication order.
 
+- [   ] 16.8 Complete document lifecycle and recovery (X08; [F125](#f125)):
+  dirty/read-only state, templates, recent-file repair, safe saves and rotating snapshots.
+  Recover into an editable copy while protecting originals; distinguish file identity
+  and external-dependency state without claiming atomic multi-file saves. Validate T15.
+- [   ] 16.9 Establish an add-on/macro/API compatibility matrix (X09; [F126](#f126)).
+  Audit representative extensions, define supported capability/version boundaries,
+  adapters and deprecations, and test changed ownership through public APIs. Missing
+  required extensions must preserve unsupported content safely or refuse unsafe saves.
+
 G0-G3 remain prerequisite evidence gates: known reproducible fork baseline; recorded
 high-impact decisions; minimal mixed-definition/shared-occurrence/unique-copy/local-
 cut/split-merge/external-link proof with interactive demonstration; then hardened
@@ -2166,6 +2202,10 @@ Benchmark acceptance targets for 16.4 (all full scenarios pending):
 | T10 | Save/reopen/copy/relocate linked projects | Stable identities, dependencies, missing-file recovery |
 | T11 | Download a useful model, change two named dimensions, export for printing | Successful customization without general CAD training; repeat after reopen |
 | T12 | Apply constraints to one line, two lines, and a constrained sketch | Correct contextual options and distinct already-applied/redundant/conflict explanations |
+| T13 | Drive several features from named expressions, then rename/change display units | Correct dimensional meaning, dependency updates, and rejected cycles/incompatible units |
+| T14 | Create and reattach an offset sketch in a rotated component | Explicit local/world placement policy, preserved valid constraints, deliberate reference repair |
+| T15 | Recover from an interrupted save using a snapshot | Recoverable editable copy, protected original, explicit external-dependency state and identity |
+| T16 | Export a part and selected assembly occurrences using supported presets | Correct dimensions, units, transforms, configuration, mesh quality, and disclosed data losses |
 
 ## [   ] Phase 17: Free product onboarding, audience and optional outreach (P11)
 
@@ -2258,3 +2298,1736 @@ Release ID 399674768, target/tag commit `1a962bb23da3795adc2b4c10c59b8218aea2fe9
 Verified `draft=false`, `prerelease=true`, exactly one asset, 360,754,930 bytes, and
 GitHub asset digest matching the tested installer SHA256 above. Application source
 remains `2df76790b4`; the tag additionally contains packaging/tests/release documentation.
+
+## Re-updated objective specifications and delivery slices
+
+Source: owner-supplied `RE-UPDATED_FREECAD_PLUS_DEVELOPMENT_ROADMAP.md`, reconciled
+2026-09-29. The [item-level catalogue](#item-level-product-specifications-f001-f127)
+retains all 127 goals, workflow descriptions and completion examples. F001-F111
+expand the original inventory, F112-F121 capture later product decisions, and
+F122-F127 add supporting requirements. The package coverage table and owning tasks
+above remain the execution/status index; this catalogue adds acceptance detail.
+
+This is a specification reconciliation, not feature implementation, a build, or
+validation. Existing completed task records and the 0.0.1 release remain unchanged.
+No catalogue item is newly declared complete. Read each item with its owning tasks:
+existing bounded implementation/prototype evidence applies only to its tested scope;
+unproven portions remain pending. Embedded agent rules, startup tasks, repository
+reorganization and publication instructions from the supplied file are not adopted.
+Market assertions and source citations are planning inputs, not newly verified facts.
+
+Established decisions take precedence over ambiguous source wording: the Operation
+field stays first; active command collectors accumulate picks, while ordinary click,
+Ctrl and Shift retain the established selection semantics. Automatic body/mode
+suggestions occur only at creation, with accepted intent persisted for recomputation.
+Isocline uses the approved draft-angle convention (Phase 5), not a substituted raw
+normal-vector angle. Required two-sided/indexed CAM and holding tabs remain in scope;
+initial three-axis finishing is only a delivery increment. `.cadprt` remains planned;
+0.0.1 still uses `.FCStd`. Benchmark comparisons use a separately scoped upstream
+source build, never the installed upstream application. The roadmap does not itself
+authorize implementation of every future capability or external publication.
+
+### Dependency contracts added by the expanded specifications
+
+- Definition/occurrence/document identities precede shared assembly reuse, Make
+  Unique, replacement and configuration-aware copies (7.1, 12.1-12.2, 16.1).
+- Feature provenance and stable references precede region selection, rollback,
+  repair and reliable downstream consumers (7.1.4, 7.5, 11.6, 16.2).
+- Parameter scope, dimensional units and cycle rules precede broad expression fields,
+  configurations and published dimensions (10.8, 12.5, 12.7).
+- Edit context, selection eligibility and sketch coordinate/reattachment policies
+  precede shared collectors, contextual constraints and precise moves (10.4-10.7,
+  11.2, 11.7). Prove local/world placement in a rotated occurrence.
+- Transactions and preview invalidation precede shared command lifecycles, scripting
+  and background results; stale work must not commit (8.1, 16.5, 16.9).
+- Native save/copy/recovery and external-reference contracts precede format migration,
+  project packaging and extension compatibility (7.6, 15.6, 16.1, 16.8-16.9).
+- Downstream adapters must retain correct engineering references before production
+  claims for TechDraw, CAM, FEM or Draft. Export boundaries explicitly distinguish
+  native documents from geometry exchange (15.7, 16.2).
+
+Use narrow probes before broad UI: one unit-aware parameter drives two features,
+rename propagates and a cycle is rejected; sketch reattachment proves its coordinate
+policy; recovery-as-copy preserves identity rules and the original. General feature
+recognition, full configurations, simultaneous multiaxis CAM, cloud services and a
+kernel replacement are not prerequisites for these contracts.
+
+### Incremental product release slices
+
+These are candidate capability slices, not dates, release authorizations or claims
+about the published 0.0.1 installer. Dependencies govern ordering; independent
+modules can ship separately after their applicable evidence gates.
+
+| Slice | Minimum useful capability | Evidence before claiming the slice | Explicit later scope |
+| --- | --- | --- | --- |
+| R0: internal architecture proof | Mixed part definition, shared occurrences, part-level Extrude/cut, persisted identity; narrow parameter/document contracts | G0-G2 and early engineering-consumer probes | Polished UI and broad migration |
+| R1: useful free modeling preview/beta | Navigators, guided/direct Extrude and Revolve, aliases, modifier selection, contextual constraints, precise moves, native-save/basic export | G3-G5 selected scope, G10-G11; T01, T02, T05, T10-T12 and architecture/legacy/consumer evidence. Constraint subset covers one/two lines, conflicts, redundancy and commit validation | Advanced surfaces, full configurations, recognition and complete CAM |
+| R2: dependable assembly reuse | Instances, Make Unique, replacement, reference sets, mates and interpart links | G6; T03, T04, T06 plus reference repair and persistence | Broader configuration/loading increments |
+| R3: modeling depth | Selected trim, thicken, holes, dress-ups, sweep and loft increments | G7 fixtures for each delivered operation | Arbitrary curve networks and general recognition |
+| R4: mesh CAM | Finishing first, then separately validated rough/rest machining; preserve the required indexed/two-sided and tab roadmap | G8 for each operation with stated post, simulation and collision scope | Simultaneous multiaxis and any universal machining-safety claim |
+| Independent downstream slices | Drawing, inspection, BOM, sheet metal and frames as bounded modules | G9 and relevant consumer/persistence evidence | Undelivered module capabilities |
+
+A narrow prototype does not promote an entire slice to complete. Build and validate
+coherent groups of changes as already requested, recording source, automated tests,
+GUI acceptance and publication separately.
+
+## Item-level product specifications (F001-F127)
+
+Each entry preserves the supplied goal, workflow and completion example; the owning
+roadmap tasks establish status and implementation boundaries. Source P-phase labels
+and scope estimates are planning metadata, distinct from this roadmap's task numbers.
+?Complete when? states required evidence, not evidence already obtained. Apply the
+reconciliation rules above to every entry.
+
+<a id="f001"></a>
+### F001 — Unified part container
+
+**Owning tasks:** 7.1, 12.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A01 · **First delivery:** P1/P2 · **Likely scope:** Core
+
+**Goal:** Let a user start modeling a part and later add components without changing its fundamental object type.
+
+**Workflow and behavior:** A definition contains its own sketches, datums, features, solid/sheet results, and child occurrences. Add Component adds an occurrence to that definition; it does not convert its geometry into a different assembly-only class. Distinguish structural children from feature inputs and keep child transforms explicit.
+
+**Complete when:** Create a housing with its own geometry, insert a bearing and fastener, then insert the complete housing into another part. Edit the housing and reopen the project without duplicate transforms or ownership changes.
+
+<a id="f002"></a>
+### F002 — Part-level feature history
+
+**Owning tasks:** 7.1, 7.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A02 · **First delivery:** P1/P2 · **Likely scope:** Core
+
+**Goal:** Make the part's modeling sequence the primary history so features can act across several bodies.
+
+**Workflow and behavior:** Create features in the work part and collect input geometry and target bodies explicitly. A sketch can drive multiple features; the active or last-visible body is not an implicit destination. The visible history represents an executable dependency order, while organizational folders remain presentation only.
+
+**Complete when:** Create two solids, cut both with one part-owned feature, and edit an earlier sketch. The navigator, dependency graph, results, undo, and saved document agree about ownership and execution order.
+
+<a id="f003"></a>
+### F003 — Independent body results
+
+**Owning tasks:** 7.1, 7.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A02 · **First delivery:** P2/P3 · **Likely scope:** Core
+
+**Goal:** Create a solid or sheet without first preparing an active PartDesign Body.
+
+**Workflow and behavior:** A geometry-creation command accepts valid profiles and datums in the part and produces one or more identified body results. Expose whether the selected input makes a solid, sheet, or several disconnected results. A Unite feature may use temporary tool geometry without leaving an extra permanent tool body unless Keep Tools is selected.
+
+**Complete when:** Create two disjoint profiles in a new part and produce independently selectable/editable results. Save/reopen preserves their identities and a later Boolean operation can target either result.
+
+<a id="f004"></a>
+### F004 — Explicit Boolean mode
+
+**Owning tasks:** 7.4, 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U03, U10, A02 · **First delivery:** P2/P4 · **Likely scope:** Feature/Core
+
+**Goal:** Use the same modeling command to create independent material or alter selected existing material.
+
+**Workflow and behavior:** Present New Body, Unite, Subtract, and Intersect where supported, with targets highlighted separately from profiles/tools. Apply tasks 7.4 and 10.3's contextual initial suggestion and sticky manual choices. Mode conversion edits the feature when supported; unsupported legacy conversions require a clear migration path. Validate topology as well as spatial intersection.
+
+**Complete when:** Exercise every supported mode, change one feature's mode, and test missing targets and invalid contact. Accepted operation and target identities survive recompute and reopening without being inferred again.
+
+<a id="f005"></a>
+### F005 — Multiple targets
+
+**Owning tasks:** 7.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A02, A07 · **First delivery:** P2/P3 · **Likely scope:** Core
+
+**Goal:** Apply one coherent operation to several selected bodies without duplicating setup.
+
+**Workflow and behavior:** Collect an ordered target set, preview each affected result, and define per-command semantics: a cut can modify each target separately, while a unite may produce combined results. Specify whether tools are retained and which results replace which inputs. Commit all supported targets atomically; any explicit partial-success mode must show exactly what will be skipped.
+
+**Complete when:** A cut through two solids updates both after a profile edit. An invalid target causes a clear, reversible failure rather than a partially committed document or silent target omission.
+
+<a id="f006"></a>
+### F006 — Persistent body identity
+
+**Owning tasks:** 7.1.4, 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A05 · **First delivery:** P1/P3 · **Likely scope:** Core
+
+**Goal:** Keep intended relationships understandable when a feature splits, merges, or replaces bodies.
+
+**Workflow and behavior:** Separate stable document identifiers from labels, output position, and transient kernel topology. Record provenance and explicit identity rules for surviving, split, merged, and deleted results. If more than one new result could satisfy an old reference, retain the unresolved reference and offer repair instead of guessing.
+
+**Complete when:** A downstream feature, drawing reference, and assembly use remain correct through supported splits/merges, or report the exact ambiguity. Renaming a body or sorting the tree does not change identity.
+
+<a id="f007"></a>
+### F007 — Reusable sketches and datums
+
+**Owning tasks:** 7.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A01, A02, S05 · **First delivery:** P2/P5 · **Likely scope:** Feature
+
+**Goal:** Use one design input in several features without copying geometry merely to satisfy ownership restrictions.
+
+**Workflow and behavior:** Keep sketches, planes, axes, points, and coordinate systems identifiable at part level. Consuming a sketch may change a visibility preference but does not transfer ownership or prevent reuse. Show its consumers and distinguish using original geometry, selecting a closed region, projecting geometry, and making an independent copy.
+
+**Complete when:** One sketch drives two extrusions and a datum drives a revolve. Editing the shared input updates all intended consumers; deleting it previews affected features and supports cancellation.
+
+<a id="f008"></a>
+### F008 — Promote bodies to components
+
+**Owning tasks:** 12.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A03 · **First delivery:** P3/P6 · **Likely scope:** Core
+
+**Goal:** Turn bodies modeled together into reusable component definitions with deliberate design relationships.
+
+**Workflow and behavior:** Select bodies, choose new part names and grouping, and choose associative derived parts or independent copies. Preview which sketches/datums or source references remain in the original definition. Place resulting occurrences so the assembly geometry does not jump. Prevent cycles and avoid duplicating ownership of the same editable result.
+
+**Complete when:** Promote an enclosure and lid, reuse the lid elsewhere, and edit the original. Associative and independent modes behave as declared; placement, internal references, undo, and relocation remain correct.
+
+<a id="f009"></a>
+### F009 — Separate navigator tabs
+
+**Owning tasks:** 7.2, 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U01 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Separate assembly structure from modeling history without forcing users to interpret a mixed tree.
+
+**Workflow and behavior:** The Assembly Navigator shows occurrences and hierarchy; the Feature Navigator shows the work part's inputs/history/results. Switching tabs preserves relevant expansion, selection, scroll, and filter state. Selecting a tree item highlights the corresponding occurrence or feature in the viewport, with definition versus occurrence context explicit.
+
+**Complete when:** A repeated component is selected through its exact occurrence in the assembly tab; switching to its feature tab reveals the correct definition and does not accidentally change the work part.
+
+<a id="f010"></a>
+### F010 — Optional simultaneous display
+
+**Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U01 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Let users see structure and feature history together when screen space and the task justify it.
+
+**Workflow and behavior:** Support docking/splitting the two navigator views independently while keeping one selection/context service. Remember layouts per user, provide a reset, and accommodate small screens and high DPI. Closing or moving a panel must not alter model state or leave duplicate active edit contexts.
+
+**Complete when:** Dock both navigators, edit a nested component, switch work parts, then restore the default layout. Both panels stay synchronized and keyboard focus remains predictable.
+
+<a id="f011"></a>
+### F011 — Work part versus displayed assembly
+
+**Owning tasks:** 10.6, 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A04, U01 · **First delivery:** P1/P4 · **Likely scope:** Core/UI
+
+**Goal:** Make it unmistakable where a new feature will be created while the surrounding assembly remains visible.
+
+**Workflow and behavior:** Provide explicit Set Work Part/Edit Component and Return to Parent actions, a breadcrumb or equivalent context indicator, and restrained highlighting of editable versus contextual geometry. Selecting a component is not automatically permission to edit its definition. Resolve nested occurrence paths and reject edits to unloaded or read-only sources with guidance.
+
+**Complete when:** Create a feature while viewing three identical occurrences. The UI identifies the edited definition and occurrence context; all intended shared instances update, and no feature lands in the displayed parent accidentally.
+
+<a id="f012"></a>
+### F012 — Body-oriented filtering
+
+**Owning tasks:** 7.2, 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U02 · **First delivery:** P4 · **Likely scope:** Feature/UI
+
+**Goal:** Find the operations responsible for a selected body without introducing body-owned histories again.
+
+**Workflow and behavior:** Filter the part history by contributors to one or several body results, optionally including upstream inputs and downstream consumers. Clearly indicate that the tree is filtered, preserve access to the full history, and handle operations contributing to multiple results. Filtering must not suppress features or alter execution.
+
+**Complete when:** Selecting a body created by a Boolean displays the contributing features and relevant inputs. Clearing the filter restores the full tree without any model or visibility mutation.
+
+<a id="f013"></a>
+### F013 — Navigator columns
+
+**Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U02 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Expose important model state in the tree so users need not open properties to diagnose routine problems.
+
+**Workflow and behavior:** Offer configurable visibility, suppression, error/stale state, source file, reference set, and modified/read-only columns. Use distinct icons and text/tooltips for different states. Source and status values are derived from the model; toggles call validated commands and cannot bypass loading, ownership, or recompute rules.
+
+**Complete when:** A hidden but unsuppressed component, a suppressed feature, an unloaded occurrence, and a failed feature are visibly distinguishable. Sorting columns changes presentation only and editing a state is undoable where appropriate.
+
+<a id="f014"></a>
+### F014 — Feature organization
+
+**Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U02 · **First delivery:** P4 · **Likely scope:** UI/Feature
+
+**Goal:** Keep large part histories navigable through names, folders, comments, and targeted search.
+
+**Workflow and behavior:** Support renaming, lightweight folders/groups, descriptions or comments, feature-type filters, and search by labels and useful metadata. Clearly distinguish a presentation folder from an operation group with execution semantics. Preserve stable identifiers through renaming and avoid turning a drag into a reorder without an explicit valid operation.
+
+**Complete when:** Organize and rename a long feature sequence, then search for a hole and its comment. Model order and references are unchanged; folders and comments persist after reopening.
+
+<a id="f015"></a>
+### F015 — Dependency inspection
+
+**Owning tasks:** 7.5, 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U02, A05 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
+
+**Goal:** Show why a feature depends on another and what an edit or deletion could affect.
+
+**Workflow and behavior:** From a feature, reveal direct inputs, target bodies, upstream dependencies, downstream consumers, and external sources using highlights and a compact dependency view. Allow navigation between nodes and differentiate direct from transitive dependencies. Use the actual execution graph rather than reconstructing dependency assumptions from tree order.
+
+**Complete when:** Selecting a shared sketch reveals both consuming extrusions; selecting one extrusion shows a downstream fillet and drawing reference. The view handles cycles rejected by the system and missing references explicitly.
+
+<a id="f016"></a>
+### F016 — History controls
+
+**Owning tasks:** 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U08 · **First delivery:** P3/P4 · **Likely scope:** Core/Feature
+
+**Goal:** Allow users to inspect earlier states and insert or reorder features without corrupting dependencies.
+
+**Workflow and behavior:** Provide a rollback marker or equivalent edit position, an explicit return-to-tip action, and insertion/reorder only when the dependency graph permits it. Show what becomes temporarily inactive and why a proposed move is invalid. Distinguish rollback display from committed suppression and ensure downstream stale results are labeled.
+
+**Complete when:** Insert a supported feature before a fillet, reject moving a consumer ahead of its input, and return to the tip. Undo and save/reopen retain the intended sequence and no transient rollback state is mistaken for final geometry.
+
+<a id="f017"></a>
+### F017 — Shared part definitions
+
+**Owning tasks:** 12.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A03 · **First delivery:** P2/P6 · **Likely scope:** Core/Feature
+
+**Goal:** Reuse a part in one or many assemblies while keeping one editable source definition.
+
+**Workflow and behavior:** Occurrences reference a stable definition and carry their own placement. Editing through an occurrence clearly edits the shared source; notify users of the scope through the command context. Update loaded dependents and show stale/external update status for sources that must be reloaded. Do not promise automatic edits to closed files.
+
+**Complete when:** Edit a bracket used twice in one assembly and once in another. All loaded occurrences reflect the change, their placements remain independent, and reopened external documents resolve the updated source predictably.
+
+<a id="f018"></a>
+### F018 — Occurrence-specific properties
+
+**Owning tasks:** 12.1, 12.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A03, B01 · **First delivery:** P3/P6 · **Likely scope:** Feature
+
+**Goal:** Allow local presentation and placement differences without accidentally making a separate part.
+
+**Workflow and behavior:** Store placement, visibility, allowed color/material-display overrides, and reference-set selection on the occurrence, with inheritance/reset-to-source behavior. Distinguish visual material overrides from engineering material or configuration changes that affect mass/FEM. Nested overrides resolve through the selected occurrence path.
+
+**Complete when:** Color or hide one of several bolts and move another. The source geometry and unselected instances remain unchanged; resetting an override restores inherited behavior and survives save/reopen.
+
+<a id="f019"></a>
+### F019 — Make Unique
+
+**Owning tasks:** 12.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A03 · **First delivery:** P2/P6 · **Likely scope:** Feature/Core
+
+**Goal:** Intentionally break shared geometry identity when one occurrence must become a different design.
+
+**Workflow and behavior:** Preview the new definition, destination document, copied internal dependencies, and external links to retain or detach. Remap internal references, assign new identities, and replace only the selected occurrence while preserving placement and recoverable relationships. For subassemblies, explicitly choose shallow versus supported deep duplication.
+
+**Complete when:** Make one repeated bracket unique, change its hole spacing, and reopen the project. Original instances stay linked to the original; the unique copy has no accidental internal references back to its former source.
+
+<a id="f020"></a>
+### F020 — Reference sets
+
+**Owning tasks:** 12.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B01 · **First delivery:** P3/P6 · **Likely scope:** Feature/Core
+
+**Goal:** Choose a part's exposed representation without changing what the part fundamentally contains.
+
+**Workflow and behavior:** Provide Entire Part, Model, Empty, and named custom sets of geometry/datums. Document what Model includes and how new members are handled. An occurrence selects a set; source editing manages set membership. Empty retains the occurrence, identity, placement, and product-structure role. Commands explain when requested geometry is outside the selected set.
+
+**Complete when:** Switch a subassembly among full, simplified, datum-only, and empty sets. Placement, BOM role, shared definition, and saved structure remain intact; missing representation is not mistaken for missing source.
+
+<a id="f021"></a>
+### F021 — Separate loading controls
+
+**Owning tasks:** 12.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B06 · **First delivery:** P1/P6 · **Likely scope:** Core
+
+**Goal:** Reduce resource use without overloading visibility or reference-set choices.
+
+**Workflow and behavior:** Represent fully loaded, lightweight, and unloaded states independently. Retain identifiers, bounds/proxy information, source location, and assembly structure where supported. Commands requiring exact geometry resolve it deliberately or report a blocker. Define cache freshness and what can be inspected versus edited in each state.
+
+**Complete when:** Unload a component, keep its occurrence in the tree, and later reload it at the same placement. Exact measurements, CAM, and validation cannot silently use a stale proxy as authoritative geometry.
+
+<a id="f022"></a>
+### F022 — Component replacement
+
+**Owning tasks:** 12.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B04, A05 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+
+**Goal:** Swap a component source while retaining placement and as much valid assembly intent as possible.
+
+**Workflow and behavior:** Select one occurrence or an explicitly chosen set, preview the replacement, and map published interfaces or stable reference equivalents. Preserve placement by default; offer deliberate alignment alternatives. Classify relationships as preserved, remapped, or unresolved rather than matching arbitrary face numbers. Allow cancellation before committing.
+
+**Complete when:** Replace a bearing with a different size. Valid datum-based mates remain; incompatible face references are listed for repair; other shared occurrences change only if selected.
+
+<a id="f023"></a>
+### F023 — Component patterns and mirrors
+
+**Owning tasks:** 12.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B04 · **First delivery:** P6 · **Likely scope:** Feature
+
+**Goal:** Create repeated assembly occurrences with clear linkage, skipped positions, and handedness.
+
+**Workflow and behavior:** Support bounded linear/circular patterns first, then other useful distributions. Store a seed definition, transforms, parameters, and stable instance keys. Mirrors must explain whether they reflect placement, create a mirrored definition, or create independent geometry; changing handedness is not ordinary rigid placement. Skipped instances remain identifiable for later edits.
+
+**Complete when:** Change a bolt-pattern count without silently redirecting surviving mate/BOM references. A mirrored handed bracket has the declared shared/unique behavior and correct orientation, quantity, and mass.
+
+<a id="f024"></a>
+### F024 — Configurations and arrangements
+
+**Owning tasks:** 12.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B05 · **First delivery:** P1 semantics; later P6 · **Likely scope:** Core
+
+**Goal:** Separate design variants from saved assembly positions and presentation states.
+
+**Workflow and behavior:** Configurations own declared parameter/suppression overrides and their identity; arrangements own component positions/joint settings or supported presentation state. Define whether occurrences can select different configurations of one source and how cache keys and derived results are distinguished. Keep flexible subassembly evaluation scoped to occurrence context instead of overwriting the rigid source.
+
+**Complete when:** Use two size configurations in one assembly, save a folded/unfolded arrangement, and reopen. Editing one configuration or arrangement does not unintentionally change another; dependencies, BOM policy, and active variant are explicit.
+
+<a id="f025"></a>
+### F025 — Unified modeling workspace
+
+**Owning tasks:** 8.4, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U11, U03 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+
+**Goal:** Let users perform ordinary modeling without knowing whether a command historically belongs to Part or PartDesign.
+
+**Workflow and behavior:** Offer a coherent modeling workspace backed by shared feature contracts, with task-oriented access to sketching, solids, surfaces, and assembly actions. Preserve advanced workbench access and expose incompatible legacy objects honestly. Command availability follows selection/edit context, while search explains unavailable commands instead of silently hiding every discovery path.
+
+**Complete when:** Complete a bracket and enclosure using the unified workspace without switching workbenches merely to obtain a Boolean operation. Retained legacy commands and downstream workbenches continue to resolve the correct edit context.
+
+<a id="f026"></a>
+### F026 — Extrude
+
+**Owning tasks:** 3.6, 3.8, 7.4, 10.2, 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U03, U09, U10 · **First delivery:** P2/P4 · **Likely scope:** UI/Core
+
+**Goal:** Create and edit extruded material through one guided command with an efficient direct path.
+
+**Workflow and behavior:** Select curves/regions, establish a normal or supported custom direction, enter extents, and review the contextual New Body/Unite suggestion or explicit Subtract/Intersect choice. Highlight targets and solid/sheet output. Keep Pad and Pocket as presets, with Pocket explicitly subtractive. Support returning to earlier inputs without erasing valid choices.
+
+**Complete when:** Model a base, add an intersecting boss, create a separate rib blank, and cut a pocket using the same feature semantics. Editing extents preserves accepted operation/targets; invalid inputs cannot partially modify the part.
+
+<a id="f027"></a>
+### F027 — Revolve
+
+**Owning tasks:** 3.9, 8.2, 10.2, 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U03, U09, U10 · **First delivery:** P4 · **Likely scope:** UI/Core
+
+**Goal:** Create rotational features through the same clear intent and target workflow as Extrude.
+
+**Workflow and behavior:** Select profiles and an axis from a datum, line, or supported cylindrical reference; show the axis and rotation sense. Offer partial/full revolution and applicable symmetric/two-sided angle controls. Keep Revolution/additive Revolve and Groove/Subtract presets. Explain profiles crossing the axis, self-intersections, and invalid solid/sheet choices.
+
+**Complete when:** Build a turned part and its annular groove, reverse the rotation, and edit the axis/angle. Guided and direct entry produce equivalent editable results; failed full or partial revolutions preserve the last committed model.
+
+<a id="f028"></a>
+### F028 — Consistent Sweep and Loft
+
+**Owning tasks:** 3.3, 13.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G03, U06 · **First delivery:** P7 · **Likely scope:** Feature
+
+**Goal:** Use familiar profile, guide, output-type, and Boolean conventions when creating nonprismatic shapes.
+
+**Workflow and behavior:** Sweep collects section, path, and supported orientation/scaling controls; Loft collects ordered sections and optional guides. Expose solid versus sheet and targets consistently with Extrude/Revolve, but show only geometrically meaningful extents. Preview section orientation and likely twist before committing. Keep algorithm-specific advanced controls available without inventing equivalence between sweep and loft.
+
+**Complete when:** Create a constant-section routed feature and a changing-section transition. Reorder or reverse sections, edit a guide, and verify deterministic results, target behavior, and clear unsupported-input diagnostics.
+
+<a id="f029"></a>
+### F029 — Common extent controls
+
+**Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U06 · **First delivery:** P4/P7 · **Likely scope:** Feature
+
+**Goal:** Make termination choices consistent and understandable across commands that support them.
+
+**Workflow and behavior:** Offer Distance, Symmetric, Two-sided, Through All, To Face, and Offset from Face where applicable. Label total versus per-side distance, positive direction, start offset, and reference face. Store associative face/limit references and explicitly define their behavior after edits. Do not expose a mode on a command that cannot implement its semantics.
+
+**Complete when:** An extrusion terminated at a selected face updates when that face moves; symmetric and two-sided values produce the documented lengths. A removed limiting face produces a repairable error rather than becoming a fixed distance silently.
+
+<a id="f030"></a>
+### F030 — Selection collectors
+
+**Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+
+**Goal:** Make every requested geometric role visible so users know what to select next.
+
+**Workflow and behavior:** Provide labeled Profile, Axis, Target Bodies, Guides, and Limits collectors with counts, type hints, and active-role highlighting. Users can activate, clear, replace, or inspect individual entries; selecting a row highlights its geometry and occurrence path. Validate type, scope, ordering, and duplication before accepting picks.
+
+**Complete when:** A user can identify and replace the wrong guide or target without restarting a command. Ambiguous picks go through disambiguation, and selected geometry cannot silently fill a different role.
+
+<a id="f031"></a>
+### F031 — Preselection and postselection
+
+**Owning tasks:** 8.1, 10.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
+
+**Goal:** Support experienced users who select first and beginners who launch a command first.
+
+**Workflow and behavior:** Map preselected items to valid roles only when unambiguous; preserve unresolved items for a visible choice or explain why they were ignored. Postselection uses the same collectors and checks. Switching selection order must not change geometry semantics, and invalid preselection should leave a useful command rather than fail opaquely.
+
+**Complete when:** Run Extrude with a profile preselected and with no initial selection; the resulting feature parameters agree. Mixed profile/target selection is handled deterministically and Cancel restores the prior selection where appropriate.
+
+<a id="f032"></a>
+### F032 — Consistent Apply/OK/Cancel
+
+**Owning tasks:** 8.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A07, U09 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
+
+**Goal:** Make repeated operations and reversibility predictable across all modeling dialogs.
+
+**Workflow and behavior:** OK validates, commits one operation, and exits; Apply commits and keeps the command ready with documented retained/reset inputs; Cancel discards only the current uncommitted operation. Escape handling, preview rollback, and selection restoration follow a shared lifecycle. If several Apply operations were committed, subsequent Cancel must not erase them unexpectedly.
+
+**Complete when:** Apply two holes, begin a third, then Cancel. Exactly the first two remain as sensible undo steps; failed preview or cancellation leaves no orphan geometry, references, or hidden temporary objects.
+
+<a id="f033"></a>
+### F033 — Command search and shortcut palette
+
+**Owning tasks:** 8.4, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U04, U11 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Help users find equivalent operations using terminology they already know.
+
+**Workflow and behavior:** Index canonical commands and aliases such as Pad/Extrude, Pocket/Cut, Groove/Revolved Cut, and supported NX/SolidWorks terms. Show concise intent, shortcut, current availability, and a reason or path when unavailable. Keep customization and favorites per user, with a reset and conflict checks. Search aliases invoke the same validated commands.
+
+**Complete when:** Searching Pocket opens subtractive Extrude; an unavailable assembly operation explains the required context. Keyboard users can invoke search, choose a result, and reach the relevant input without a mouse.
+
+<a id="f034"></a>
+### F034 — Modifier-based multiselection
+
+**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U05 · **First delivery:** P4/P5 · **Likely scope:** UI
+
+**Goal:** Prevent accidental accumulation of sketch selections while keeping deliberate multiselection fast.
+
+**Workflow and behavior:** Plain click replaces the current set; Ctrl toggles/adds and Shift provides the documented extension/range behavior. Allow consistent configurable presets where platform conventions require them. Window selection may select multiple entities in one gesture. Coordinate these rules with drawing tools, dragging, and the separate auto-inference override key.
+
+**Complete when:** Select one sketch line, click another, then use modifiers to form a two-line set. Selection counts, eligible constraints, and deselection are predictable in the viewport and tree without breaking geometry creation.
+
+<a id="f035"></a>
+### F035 — Selection filters
+
+**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI/Feature
+
+**Goal:** Reduce accidental picks by letting users restrict selectable entity types.
+
+**Workflow and behavior:** Expose points/vertices, edges, faces, bodies, components, sketches, and features, with a clear active-filter indicator and quick reset. Command-specific filters refine the global policy without becoming a persistent trap. Respect keyboard navigation and show why a visible object cannot be selected under the active filter.
+
+**Complete when:** In a dense assembly, face-only selection cannot accidentally select a whole component. Leaving a command restores the documented previous filter state and the user can recover from an empty result easily.
+
+<a id="f036"></a>
+### F036 — Selection scope
+
+**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A04, U05 · **First delivery:** P1/P4 · **Likely scope:** Core/UI
+
+**Goal:** Control whether selection addresses local geometry or surrounding assembly context.
+
+**Workflow and behavior:** Provide active-part, selected-component, and whole-assembly scopes with occurrence-path-aware results. Scope is separate from visibility and loading. Commands declare whether they accept contextual references, editable targets, or both; a selectable external face is not automatically a writable target. Make scope changes deliberate and visible.
+
+**Complete when:** During in-context editing, a user can reference a neighboring face while a local Boolean command refuses to alter that neighbor silently. Nested and repeated occurrences resolve the intended path.
+
+<a id="f037"></a>
+### F037 — Select Other
+
+**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Resolve overlapping or obscured picks without temporarily dismantling the display.
+
+**Workflow and behavior:** Open a small candidate list or cycling interaction with transient highlights and useful labels/type/context. Order candidates predictably using pick location and scope; allow deeper/hidden candidates only under documented rules. Escape dismisses without replacing the existing selection. Keep filtering and occurrence identity intact.
+
+**Complete when:** Select the rear of two coincident faces and one of overlapping repeated components. Hover/cycle previews accurately identify candidates, and the final selection matches the preview.
+
+<a id="f038"></a>
+### F038 — Selection intent rules
+
+**Owning tasks:** 10.5, 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U05, A05 · **First delivery:** P3/P4 · **Likely scope:** Feature/Core
+
+**Goal:** Let users specify a meaningful geometric set instead of manually picking every member.
+
+**Workflow and behavior:** Offer tangent chain, connected edges, complete loop, same-radius faces, and feature-owned faces where supported. Preview included entities and expose tolerance/boundary choices. Distinguish storing an associative rule that reevaluates after edits from freezing an explicit selection set; avoid silently expanding operation scope when topology changes.
+
+**Complete when:** A fillet uses an accepted tangent chain and a later edge split resolves according to the stored policy. Unexpected added branches or ambiguous loops produce a visible choice or repair rather than an unnoticed broad edit.
+
+<a id="f039"></a>
+### F039 — Window versus crossing selection
+
+**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Make rectangle selection communicate whether partial overlap counts.
+
+**Workflow and behavior:** Provide distinct enclosed-only and crossing modes through a documented drag-direction or explicit setting, with visible styling during the gesture. Define whether hidden/back-facing geometry is eligible and apply type/scope filters consistently. Preserve a deliberate modifier policy for replacing, adding, and removing window results.
+
+**Complete when:** A rectangle around part of a sketch selects only fully enclosed entities in one mode and crossing entities in the other. The same behavior holds at different zoom levels and does not accidentally include hidden assembly geometry.
+
+<a id="f040"></a>
+### F040 — Temporary isolate/hide
+
+**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Inspect a subset quickly and return to the previous display without manual reconstruction.
+
+**Workflow and behavior:** Isolate selected objects, hide selected objects, and restore the prior visibility snapshot using explicit temporary-display actions. Handle nested isolates and newly created objects predictably. Visibility must not imply suppression, exclusion from a Boolean target set, or removal from BOM/validation.
+
+**Complete when:** Isolate a component, hide one of its bodies, inspect it, and restore. The prior assembly visibility returns; no suppressed or reference-only states change and retained operation targets remain intact.
+
+<a id="f041"></a>
+### F041 — Predictable navigation
+
+**Owning tasks:** 8.4, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U04, U11 · **First delivery:** P4 · **Likely scope:** UI
+
+**Goal:** Make camera movement and sketch entry familiar and controllable.
+
+**Workflow and behavior:** Offer configurable mouse/navigation presets, a visible or inferable rotation center, zoom-to-selection, fit-all, standard views, and orthographic sketch orientation. Preserve the previous 3D view when entering/exiting sketch edit and avoid wild camera jumps on small or off-origin geometry. Resolve shortcut conflicts with selection and command gestures.
+
+**Complete when:** Orbit about a selected feature in a large assembly, enter a rotated sketch, and return to the previous view. Mouse presets and high-DPI settings remain usable without changing model coordinates.
+
+<a id="f042"></a>
+### F042 — Improved automatic relations
+
+**Owning tasks:** 11.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S01 · **First delivery:** P5 · **Likely scope:** Feature
+
+**Goal:** Infer common sketch intent as geometry is drawn without creating surprising constraints.
+
+**Workflow and behavior:** Support configurable coincidence, tangent, horizontal/vertical, parallel, perpendicular, and equal inference where the solver supports them. Use screen-space proximity for interaction while respecting geometric tolerances and model units. Prioritize candidates, show what will be added, and distinguish transient snapping from persistent constraints.
+
+**Complete when:** Draw representative lines, circles, and arcs with intended inferences and near-miss counterexamples. Only accepted relations persist, the override prevents unwanted inference, and dense geometry does not create arbitrary constraints.
+
+<a id="f043"></a>
+### F043 — Constraint preview
+
+**Owning tasks:** 11.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S01 · **First delivery:** P5 · **Likely scope:** UI/Feature
+
+**Goal:** Show the relationship about to be added before the user commits geometry.
+
+**Workflow and behavior:** Display a legible relation glyph and highlight its operands as the pointer approaches a valid inference. Provide a temporary suppression key independent of Ctrl/Shift multiselection, plus optional inference controls. Preview state never mutates the committed sketch and disappears when the candidate or tool changes.
+
+**Complete when:** Approach a tangent and then a coincident condition, suppress one inference, and complete drawing. The persisted relation matches the final preview and no abandoned candidate survives.
+
+<a id="f044"></a>
+### F044 — Cursor-adjacent constraint palette
+
+**Owning tasks:** 11.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S02, S07 · **First delivery:** P5 · **Likely scope:** UI/Feature
+
+**Goal:** Offer relevant constraints close to the user's selection without forcing a toolbar search.
+
+**Workflow and behavior:** After selection, show a compact palette driven by the shared eligibility service. Use a reachable pointer corridor or dismissal delay, place it away from selected geometry and screen edges, and dismiss when the pointer genuinely leaves. Provide keyboard access, stable ordering, high-DPI sizing, and a user preference to disable it.
+
+**Complete when:** Select one line and two lines, move into the palette, apply a relation, and move away. It remains reachable, shows the correct actions/states, and never applies a constraint merely because the pointer crossed it.
+
+<a id="f045"></a>
+### F045 — Smart Dimension
+
+**Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S03 · **First delivery:** P5 · **Likely scope:** UI/Feature
+
+**Goal:** Infer the useful dimensional relationship from geometry while allowing explicit control.
+
+**Workflow and behavior:** For suitable selections offer length, angle, radius, diameter, horizontal/vertical spacing, and other supported measurements. Preview alternatives based on placement or an explicit switch; show units and driving versus reference state. Route overconstrained candidates through shared validation rather than silently converting or deleting existing dimensions.
+
+**Complete when:** Dimension a line, circle, pair of lines, and point spacing. Users can deliberately select radial versus diameter or projected versus aligned length, and edits preserve their chosen dimension type.
+
+<a id="f046"></a>
+### F046 — Dimension during drawing
+
+**Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S03 · **First delivery:** P5 · **Likely scope:** Feature
+
+**Goal:** Let users establish exact geometry while drawing instead of repeatedly drawing approximately and editing afterward.
+
+**Workflow and behavior:** Expose temporary numeric fields for supported line lengths/angles, rectangle dimensions, circle diameters, and slot dimensions. Define field cycling, locked versus inferred values, expression/unit entry, and Escape behavior. Commit a coherent set of geometry and constraints as one undoable action; keep advanced options accessible.
+
+**Complete when:** Create a rectangle and slot from typed dimensions, correct a field before commit, and cancel another attempt. The resulting dimensions are editable driving constraints and no half-created geometry remains.
+
+<a id="f047"></a>
+### F047 — Visual degrees of freedom
+
+**Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S04 · **First delivery:** P5 · **Likely scope:** Feature/UI
+
+**Goal:** Show what can still move and distinguish incompletely constrained geometry from a failed solve.
+
+**Workflow and behavior:** Use visual states and optional movement-direction indicators for translation, rotation, size, or other supported freedoms, supplemented by text rather than color alone. Distinguish grounded/fixed geometry, reference geometry, solver conflict, and remaining freedom. Do not present a simple count as a complete diagnosis when freedoms are coupled.
+
+**Complete when:** A partly constrained sketch reveals the intended remaining movement; adding a supported relation updates the indication. A conflicting sketch is clearly different from a merely underconstrained one.
+
+<a id="f048"></a>
+### F048 — Constraint repair
+
+**Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S04, S07 · **First delivery:** P5 · **Likely scope:** Feature/Core
+
+**Goal:** Explain overconstraint and help users make a deliberate repair while preserving design intent.
+
+**Workflow and behavior:** Separate existing, redundant, conflicting, and unsupported constraints. Highlight implicated geometry and candidate relations, preview the effect of removing/replacing a relation, and show resulting freedom where feasible. Candidates may be conservative solver-derived sets rather than a claimed unique cause. Never delete constraints automatically to make a new action succeed.
+
+**Complete when:** Create a redundant dimension and a genuine conflict. The UI distinguishes them, offers an understandable reversible repair, and leaves the original sketch unchanged if the user cancels.
+
+<a id="f049"></a>
+### F049 — Sketch repair
+
+**Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S06 · **First delivery:** P5 · **Likely scope:** Feature
+
+**Goal:** Find small defects that prevent profiles from becoming valid regions or downstream features.
+
+**Workflow and behavior:** Detect gaps, duplicate entities, tiny segments, overlaps, self-intersections, and unsupported loops using explicit model-scale tolerances. Present a navigable results list with zoom/highlight and proposed fixes. Separate diagnostic tolerance from automatic merging tolerance, and preview changes to constraints before deleting or merging geometry.
+
+**Complete when:** Repair an almost-closed profile and a duplicated edge deliberately. The intended region becomes usable, preserved dimensions still express the same design, and ignoring a tiny segment does not falsely certify a valid profile.
+
+<a id="f050"></a>
+### F050 — Power trim/extend
+
+**Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S06 · **First delivery:** P5 · **Likely scope:** Feature
+
+**Goal:** Remove or extend sketch segments with fewer selections while keeping the result understandable.
+
+**Workflow and behavior:** Support dragging across segments to trim and deliberate extension to a selected or inferred boundary. Preview the portion removed/added, distinguish construction geometry, and retain valid dimensions/relations or report which will be removed. Bundle one drag gesture into a sensible undo step and avoid silently changing unrelated loops.
+
+**Complete when:** Trim several crossing lines, extend an arc to a boundary, and undo. Geometry matches the preview; surviving constraints remain valid and removed constraints are explained rather than left dangling.
+
+<a id="f051"></a>
+### F051 — Region selection
+
+**Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S06, A05 · **First delivery:** P3/P5 · **Likely scope:** Feature/Core
+
+**Goal:** Use closed areas inside a complex sketch without copying or deleting the rest of the sketch.
+
+**Workflow and behavior:** Highlight bounded regions and nested holes, support multiple compatible regions, and explain ambiguous/open/self-intersecting boundaries. Define how selected regions are identified across sketch edits and how changes that split/merge regions are repaired. Keep full-sketch versus region inputs explicit in feature parameters.
+
+**Complete when:** Extrude one compartment of a multi-region sketch and later move an internal boundary. The intended region updates or requests repair; the command does not silently extrude every newly formed region.
+
+<a id="f052"></a>
+### F052 — Associative external geometry
+
+**Owning tasks:** 11.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S05, B03 · **First delivery:** P5 · **Likely scope:** Feature/Core
+
+**Goal:** Bring useful neighboring geometry into a sketch through projection or true intersection with clear provenance.
+
+**Workflow and behavior:** Offer projected edges, curve/plane intersection points, and face/plane intersection curves as distinct operations. Show source part/occurrence, transform, and association status. Define tangent, coplanar, coincident, disjoint, and multiple-result cases; a surface intersection is not necessarily a straight line. External inputs obey publication/scope and cycle rules.
+
+**Complete when:** Intersect an angled edge and curved surface with a sketch plane, then move the source. Points/curves update correctly or report ambiguity; independent copies and associative references remain visibly distinct.
+
+<a id="f053"></a>
+### F053 — Sketch reuse tools
+
+**Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S06, A05 · **First delivery:** P5 increments · **Likely scope:** Feature/Core
+
+**Goal:** Reuse proven sketch content while controlling which relationships remain shared.
+
+**Workflow and behavior:** Provide constraint-preserving copy/paste with transform, reusable profiles, blocks, and sketch patterns in separate increments. Remap internal geometry/constraint identifiers; require a choice for external references. Define block-local coordinates, editable block instances, explode behavior, and pattern members before claiming full block support.
+
+**Complete when:** Copy a constrained slot, rotate/place it, and change its dimensions. Internal relations survive; external links follow the declared policy; block or pattern edits affect the intended members and remain undoable.
+
+<a id="f054"></a>
+### F054 — Interactive feature handles
+
+**Owning tasks:** 8.4.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U06 · **First delivery:** P4/P7 · **Likely scope:** UI/Feature
+
+**Goal:** Adjust common feature values visually while retaining exact parametric control.
+
+**Workflow and behavior:** Expose handles for supported length, angle, radius, and offset values, with clear direction, snapping, numeric entry, and current units. Dragging changes a transient preview; typed values and expressions use the same parameter validation. Indicate limits and invalid ranges without committing unusable geometry.
+
+**Complete when:** Drag an extrusion handle, type an exact value, cancel a second edit, and reopen the part. The stored parameter is exact and editable, while canceled or intermediate previews leave no document changes.
+
+<a id="f055"></a>
+### F055 — Hole wizard
+
+**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature
+
+**Goal:** Create standard, documented holes through one guided placement and specification workflow.
+
+**Workflow and behavior:** Separate hole locations from hole definition: select/reuse position sketches or points, then choose simple, counterbore, countersink, or thread specification and extent. Use versioned standard tables with explicit units/source and user overrides. Distinguish cosmetic thread metadata from actual helical geometry and communicate cost/compatibility.
+
+**Complete when:** Create repeated counterbores and tapped holes, edit their standard/size, and produce supported drawing callouts. Location links, depth, thread representation, targets, and validation remain consistent after parameter changes.
+
+<a id="f056"></a>
+### F056 — Unified patterns
+
+**Owning tasks:** 3.7, 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature/Core
+
+**Goal:** Repeat features or bodies with one recognizable interface and explicit pattern semantics.
+
+**Workflow and behavior:** Offer linear, circular, curve-driven, and table-driven patterns in staged increments, with count/spacing, orientation, seeds, and skipped members. Distinguish copying resulting geometry from reevaluating a feature at each location when they yield different results. Preserve stable member keys for downstream references and report invalid members.
+
+**Complete when:** Pattern a hole across uneven geometry, skip two members, and change count/spacing. Valid members retain predictable references; unsupported members are identified and do not silently change the chosen evaluation mode.
+
+<a id="f057"></a>
+### F057 — Feature/body mirror
+
+**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature
+
+**Goal:** Make symmetry operations explicit about what is mirrored and whether results remain linked.
+
+**Workflow and behavior:** Select features or body results and a mirror plane, then choose supported mirrored geometry, associative copies, or independent results. Preview Boolean target behavior and handedness. Feature mirroring must map inputs/targets under its declared semantics rather than merely duplicating viewport graphics.
+
+**Complete when:** Mirror an asymmetric bracket body and a hole feature, edit the seed, and verify the chosen linkage. Reflected geometry, labels, target scope, and saved feature history remain correct.
+
+<a id="f058"></a>
+### F058 — Improved fillets/chamfers
+
+**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature/Core
+
+**Goal:** Make edge treatment easier to define and diagnose when complex geometry fails.
+
+**Workflow and behavior:** Use edge collectors with tangent propagation, radius/offset previews, and supported variable-radius and corner controls. Separate attempted capabilities from validated kernel support. Localize failing edges or corners and let users revise a subset without losing valid selections. Keep tolerance and reference-repair behavior explicit.
+
+**Complete when:** Create a chain fillet and a supported variable-radius case, then force a corner failure. The UI identifies a useful failing region, preserves prior geometry, and allows correction without rebuilding the entire selection.
+
+<a id="f059"></a>
+### F059 — Shell, draft, ribs, and webs
+
+**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G06 · **First delivery:** P7 increments · **Likely scope:** Feature/Core
+
+**Goal:** Provide consistent guided workflows for common manufacturing-oriented features.
+
+**Workflow and behavior:** Shell collects removed faces and thickness/side; Draft collects neutral reference, pull direction, target faces, and angle; Rib/Web collects profiles, thickness, direction, and extent/targets. Explain when thickness, draft, or intersections make the result invalid. Keep each operation a separate bounded implementation with common lifecycle and reference behavior.
+
+**Complete when:** Create and edit a thin enclosure, a drafted wall, and a reinforcing rib. Direction/thickness previews match final results; invalid thin regions or missing intersections produce localized, reversible failures.
+
+<a id="f060"></a>
+### F060 — Split and trim bodies
+
+**Owning tasks:** 4, 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G01 · **First delivery:** P7 · **Likely scope:** Feature
+
+**Goal:** Divide solids or sheets with an explicit preview of which regions remain.
+
+**Workflow and behavior:** Choose planes, surfaces, or bodies as tools, select target bodies, and preview resulting regions with keep/remove choices. Specify retained-tool behavior and distinguish a nondestructive split into multiple results from trimming away regions. Persist region choices/provenance and treat later ambiguous splits as repair cases.
+
+**Complete when:** Split a housing with a plane, retain both halves, and trim one with a surface. Edit the tool and verify output identities, target scope, undo, and downstream-reference outcomes.
+
+<a id="f061"></a>
+### F061 — Direct editing
+
+**Owning tasks:** 13.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G07 · **First delivery:** Late P7 · **Likely scope:** Feature/Core
+
+**Goal:** Make bounded changes to imported and native geometry without pretending to recover its original feature history.
+
+**Workflow and behavior:** Offer move, offset, replace, and delete-and-heal face operations as new editable steps. Show affected adjacent topology and whether tangent propagation or healing is supported. Do not alter an upstream feature's parameters silently. Limit initial support to reproducibly valid shape classes and expose failures explicitly.
+
+**Complete when:** Offset an imported planar face, remove a suitable hole with healing, and undo. Native downstream references either remain valid or request repair, and unsupported healing leaves the original model intact.
+
+<a id="f062"></a>
+### F062 — Feature recognition
+
+**Owning tasks:** 13.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G08 · **First delivery:** Late P7 after spike · **Likely scope:** Core
+
+**Goal:** Recover useful editable structure from suitable imported solids while acknowledging incomplete information.
+
+**Workflow and behavior:** Detect bounded candidates such as analytic holes, pockets, or fillets; preview recognized parameters and residual geometry before conversion. Label uncertain or unsupported candidates and retain the original solid as a recoverable source. Recognition is a new inferred model, not proof of the original designer's intent.
+
+**Complete when:** Recognize a documented test set, edit an accepted hole diameter, and compare the unchanged surrounding geometry. False positives can be rejected and unrecognized portions remain usable rather than disappearing.
+
+<a id="f063"></a>
+### F063 — Through-curves surfaces
+
+**Owning tasks:** 13.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G03 · **First delivery:** P7 · **Likely scope:** Feature/Core
+
+**Goal:** Construct a controlled surface through ordered sections, using guides to shape correspondence.
+
+**Workflow and behavior:** Collect sections in order, optional guide curves, start/end conditions, and curve directions; show correspondence markers and twist previews. Validate guide/section compatibility and supported intersections within explicit tolerances. Expose meaningful continuity controls only when the construction supports them and retain all input associations.
+
+**Complete when:** Build a transition through three sections with guides, reverse one section, and adjust correspondence. The preview identifies twist; committed geometry meets documented interpolation/tolerance requirements and updates after source edits.
+
+<a id="f064"></a>
+### F064 — Curve-network surfaces
+
+**Owning tasks:** 13.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G04 · **First delivery:** P7 after spike · **Likely scope:** Core
+
+**Goal:** Build surfaces from two intersecting curve families when through-sections alone cannot express the intended shape.
+
+**Workflow and behavior:** Collect and order the two curve directions, detect missing/inconsistent intersections, and show network cells/corners. Specify supported open/closed networks, trimming, interpolation, and approximation tolerance. Start with a bounded regular network instead of promising arbitrary networks or commercial-kernel equivalence.
+
+**Complete when:** Construct and edit a regular network fixture, reject incompatible crossings with localized diagnostics, and verify claimed interpolation and surface validity independently of visual smoothness.
+
+<a id="f065"></a>
+### F065 — Boundary continuity
+
+**Owning tasks:** 13.3, 15.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G04, I02 · **First delivery:** P7 · **Likely scope:** Feature/Core
+
+**Goal:** Control how a new surface joins neighboring geometry and verify the requested level.
+
+**Workflow and behavior:** At each supported boundary, choose positional, tangent, or curvature continuity with the required adjacent reference and orientation. Explain unsupported boundary combinations, approximation limits, and conflicting conditions. Treat continuity as a measured geometric property, not an icon or display shading choice.
+
+**Complete when:** Create representative G0/G1/G2 supported joins, alter neighboring geometry, and inspect them using numerical continuity checks and visual tools. A failed condition is reported rather than silently downgraded.
+
+<a id="f066"></a>
+### F066 — Trim/untrim/extend surfaces
+
+**Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G01, G02 · **First delivery:** P7 · **Likely scope:** Feature/Core
+
+**Goal:** Edit sheet boundaries while preserving the distinction between underlying surfaces and trimming loops.
+
+**Workflow and behavior:** Trim with selected curves/surfaces and pick kept regions; untrim exposes recoverable underlying surface domains; extend grows supported boundaries using a stated geometric method. Preview new boundaries and self-intersections. Do not claim untrim can recover original design intent or missing geometry from every imported sheet.
+
+**Complete when:** Trim a sheet into two regions, restore a supported original domain, and extend an edge. Tool associations and region selections survive edits or become explicitly unresolved, without creating invalid shells.
+
+<a id="f067"></a>
+### F067 — Thicken sheet bodies
+
+**Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G02 · **First delivery:** P7 · **Likely scope:** Feature/Core
+
+**Goal:** Convert valid sheet geometry into material with a clear side, thickness, and Boolean result.
+
+**Workflow and behavior:** Offer one-sided, opposite-sided, and symmetric thickness with unambiguous total/per-side dimensions. Show normals and side reversal; collect optional union/subtraction targets through common rules. Detect tight curvature, offset self-intersections, and unsuitable open boundaries; distinguish a thickened solid from separate offset sheets.
+
+**Complete when:** Thicken a planar and a curved fixture in each supported direction, then test a radius smaller than the requested thickness. Valid results have the expected volume and failed offsets preserve the source.
+
+<a id="f068"></a>
+### F068 — Sew/stitch surfaces
+
+**Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G02 · **First delivery:** P7 · **Likely scope:** Feature
+
+**Goal:** Join compatible sheets and reveal where gaps prevent a valid shell or solid.
+
+**Workflow and behavior:** Collect sheets, display free edges/gaps, and use explicit tolerances with a preview of proposed joins. Indicate whether the result is an open shell, closed shell, or valid solid. Avoid silently escalating tolerances to force a join; show any healing/approximation effects and retain source choices.
+
+**Complete when:** Stitch a known enclosure and an intentionally gapped version. The first becomes a verified solid; the second identifies the unresolved gap and cannot be labeled watertight merely because it renders closed.
+
+<a id="f069"></a>
+### F069 — Extract/project/intersect curves
+
+**Owning tasks:** 13.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G05 · **First delivery:** P7 · **Likely scope:** Feature
+
+**Goal:** Generate reusable design curves from existing geometry with clear source and method.
+
+**Workflow and behavior:** Support extracting edges/face boundaries, projecting curves along a chosen direction or supported normal rule, and intersecting bodies/surfaces. Collect source and target roles separately, define multiple/disjoint/tangent results, and preserve association or deliberate snapshot copying. Display approximation tolerance for nonanalytic results.
+
+**Complete when:** Project a curve onto a curved face and intersect two surfaces. Moving a source updates intended results; multiple branches remain identifiable and changed topology cannot silently switch the selected branch.
+
+<a id="f070"></a>
+### F070 — Isocline curves
+
+**Owning tasks:** 5, 13.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** G05, I02 · **First delivery:** P7 after spike · **Likely scope:** Feature/Core
+
+**Goal:** Create constant-draft-angle curves on a surface relative to a chosen pull direction.
+
+**Local convention:** Preserve Phase 5: normal dot pull = sin(draft angle), with 0 degrees at the silhouette. The supplied normal-angle wording is interpreted through this established convention, not as a change to stored feature semantics.
+
+**Workflow and behavior:** Collect faces, direction, angle, domain, and tolerance; state the normal-orientation and signed/unsigned angle convention. Distinguish isoclines from isoparametric curves and purely visual draft-analysis coloring. Handle zero/multiple curves, singularities, boundary termination, and unsupported surface types explicitly.
+
+**Complete when:** On analytic fixtures, sampled curve points satisfy the stated angle within tolerance. Reversing direction or normals follows the documented convention and does not create unexplained mirrored results.
+
+<a id="f071"></a>
+### F071 — Surface quality inspection
+
+**Owning tasks:** 15.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** I02 · **First delivery:** P7/P9 · **Likely scope:** Feature
+
+**Goal:** Help users diagnose shape quality and verify surfacing claims beyond shaded appearance.
+
+**Workflow and behavior:** Provide zebra/reflection lines, curvature combs, continuity checks, and deviation maps with visible scale, sampling, units, and reference geometry. Distinguish approximate display sampling from numerical certification and show unsupported/singular regions. Save useful analysis settings without making them geometry features unless requested.
+
+**Complete when:** Compare intentionally smooth and discontinuous joins and a known deviation fixture. The tools reveal the expected differences; colors/combs use documented scales and cannot substitute for the acceptance tolerance of a surface feature.
+
+<a id="f072"></a>
+### F072 — Unified Move/Copy dialog
+
+**Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U07 · **First delivery:** P4 · **Likely scope:** UI/Feature
+
+**Goal:** Position or duplicate parts through one consistent interface with precise geometric references.
+
+**Workflow and behavior:** Offer translation, rotation, point-to-point, axis alignment, and coordinate-system alignment, with Move versus Copy explicit. Identify whether the subject is a component occurrence, body transform feature, or supported geometry copy. Show source and destination references, transform order, and a live ghost preview; copy mode declares shared versus unique definition behavior.
+
+**Complete when:** Move a repeated component point-to-point, rotate it, and copy it. The correct occurrence changes, shared source geometry stays intact, and Cancel/Undo restore placement without residual constraints.
+
+<a id="f073"></a>
+### F073 — Relocatable manipulator
+
+**Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U07 · **First delivery:** P4 · **Likely scope:** UI/Feature
+
+**Goal:** Place the movement triad where it makes a positioning task intuitive without changing the part itself.
+
+**Workflow and behavior:** Relocate the manipulator to a vertex, edge midpoint, circle center, datum, coordinate system, or supported inferred point. Orient its axes from explicit references and distinguish editing the manipulator from moving the object. Define whether the chosen pivot is temporary, remembered for the command, or deliberately saved.
+
+**Complete when:** Move the triad to a hole center and rotate around it. Relocating the triad alone leaves geometry unchanged; the resulting transform and preview agree and switching modes does not reset the pivot unexpectedly.
+
+<a id="f074"></a>
+### F074 — Precise placement
+
+**Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U07, A04 · **First delivery:** P4 · **Likely scope:** Feature/UI
+
+**Goal:** Expose exact coordinate meaning during movement, especially in nested assemblies.
+
+**Workflow and behavior:** Allow global/work-part/component-local coordinates, typed offsets, snapping, and arbitrary-axis rotation. Label whether values are absolute positions or incremental transforms, show reference frames, and preserve units. Compose nested transforms through the shared occurrence service rather than treating displayed coordinates as local values.
+
+**Complete when:** Translate a rotated nested component by a local-axis distance and then a global-axis distance. Reported coordinates and final placement agree with the chosen frames; repeated operations do not apply parent transforms twice.
+
+<a id="f075"></a>
+### F075 — Placement versus constraint
+
+**Owning tasks:** 10.7, 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U07, B02 · **First delivery:** P4/P6 · **Likely scope:** UI/Feature
+
+**Goal:** Separate positioning something once from creating a relationship that stays true after later edits.
+
+**Workflow and behavior:** Move Here commits a placement; Maintain Relationship opens a supported mate/joint workflow with explicit references and degrees of freedom. Do not create hidden constraints from snapping alone. When a component is already constrained, explain whether movement is a solver-driven drag, an arrangement change, or blocked by existing relationships.
+
+**Complete when:** Align two holes once, then move the supporting part: the unconstrained item stays at its placement. Repeat with a persistent relationship and it follows correctly; users can see and undo the relationship.
+
+<a id="f076"></a>
+### F076 — Contextual mates/joints
+
+**Owning tasks:** 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B02 · **First delivery:** P6 · **Likely scope:** Feature
+
+**Goal:** Suggest useful assembly relationships from selected geometry without hiding their mechanical meaning.
+
+**Workflow and behavior:** Use selected planes, cylinders, axes, and points to offer supported planar, concentric, fixed, revolute, slider, or other available joint forms. Preview remaining freedom, alignment flip, offsets, and limits. Resolve multiple valid interpretations explicitly and use the existing assembly solver where it satisfies the contract.
+
+**Complete when:** Select cylindrical and planar references to position a shaft, inspect the resulting motion, and adjust limits. Conflicting mates are explained and canceled without leaving an overconstrained partial assembly.
+
+<a id="f077"></a>
+### F077 — Assembly freedom display
+
+**Owning tasks:** 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B02 · **First delivery:** P6 · **Likely scope:** Feature/UI
+
+**Goal:** Show which components are grounded, movable, fully constrained, or conflicting.
+
+**Workflow and behavior:** Provide consistent status indicators and optional movement/rotation cues from solver state. Grounding is a declared relationship rather than a color convention. Differentiate an unloaded/unresolved component from an underconstrained loaded component and provide navigation to controlling joints or conflicts.
+
+**Complete when:** Inspect an assembly with one grounded base, one slider, one free part, and one conflict. The indicated freedoms match permitted manipulation and update after adding/removing a mate.
+
+<a id="f078"></a>
+### F078 — In-context part editing
+
+**Owning tasks:** 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A04, B03 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+
+**Goal:** Edit a component using its surroundings while preserving shared-definition and reference scope.
+
+**Workflow and behavior:** Enter the intended occurrence context, visually distinguish the work part, and collect external geometry only through supported associative/snapshot policies. Store occurrence transforms and sources explicitly; warn through scope information when editing a shared definition affects other occurrences. Prevent relationships that create dependency cycles.
+
+**Complete when:** Size a cover from neighboring geometry within a rotated subassembly. The cover edits its intended definition, contextual references transform correctly, and moving or replacing the neighbor updates or produces a repairable reference error.
+
+<a id="f079"></a>
+### F079 — Assembly-scoped cuts
+
+**Owning tasks:** 12.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A08 · **First delivery:** P2 proof; P6 product · **Likely scope:** Core
+
+**Goal:** Apply a manufacturing or installation modification to chosen occurrences without modifying every shared source instance.
+
+**Workflow and behavior:** Create the operation in the assembly definition, collect affected occurrence paths and tool geometry, and show derived assembly-local results. Keep original source definitions and unselected occurrences unchanged. An explicit propagate-to-source action, if implemented, previews its broader consequences and rejects inconsistent transforms/scopes.
+
+**Complete when:** Cut one of two occurrences of the same plate, reopen the assembly, and inspect the source part. Only the selected occurrence result is cut; BOM identity policy, drawing output, and subsequent source updates follow documented rules.
+
+<a id="f080"></a>
+### F080 — Exploded views and motion
+
+**Owning tasks:** 12.6, 12.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B04, B05 · **First delivery:** P6 increments · **Likely scope:** Feature/Core
+
+**Goal:** Explain assembly structure and simple mechanisms without overwriting their modeled placement.
+
+**Workflow and behavior:** Save exploded transforms and assembly arrangements separately from source placements. Provide explode steps, spacing, trails or sequence where useful, plus bounded joint-driven motion with limits. Distinguish visual animation from dynamic/physical simulation. Drawing/BOM consumers choose the intended saved arrangement explicitly.
+
+**Complete when:** Create an exploded view, return to assembled state, and reopen both views. Animate a supported hinged mechanism within limits; source geometry and normal assembly placement remain unchanged.
+
+<a id="f081"></a>
+### F081 — Published interfaces
+
+**Owning tasks:** 12.5, 10.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B03, A05, A09 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+
+**Goal:** Give other parts stable, intentional references instead of exposing arbitrary internal topology.
+
+**Workflow and behavior:** Publish named datums, geometry, and parameters with identity, units/type, description, and source ownership. Consumers select those interfaces through controlled scope. Define rename, replacement, deprecation, and deletion behavior; changing internal construction should not break a maintained published interface unnecessarily.
+
+**Complete when:** Publish mounting axes and spacing, consume them in a bracket, and replace internal source features while preserving the interfaces. Consumers update correctly; deleting an interface identifies affected downstream parts.
+
+<a id="f082"></a>
+### F082 — Associative geometry linking
+
+**Owning tasks:** 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B03 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+
+**Goal:** Reuse geometry between parts with visible provenance and deliberate update control.
+
+**Workflow and behavior:** Create a link/derived feature from selected published or permitted geometry, preserve the source occurrence transform, and show live, frozen, or independent-copy status. Freezing retains provenance and a defined snapshot; breaking a link deliberately changes future update behavior. Avoid copying hidden source-document internals accidentally.
+
+**Complete when:** Link a surface into another part, move/edit the source, then freeze and later resume updates if supported. Each state behaves as shown, cycles are rejected, and source relocation is repairable.
+
+<a id="f083"></a>
+### F083 — External-reference manager
+
+**Owning tasks:** 12.5, 15.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B03, X02 · **First delivery:** P3/P6 · **Likely scope:** Feature/UI
+
+**Goal:** Give users one place to understand and repair dependencies outside the current document.
+
+**Workflow and behavior:** List source definitions/files, dependent features, resolved paths, versions/staleness, loading state, and update/freeze/break actions. Provide missing-path repair and dependency collection without changing geometry silently. Distinguish a missing file, inaccessible source, unsupported format, and intentionally unloaded object.
+
+**Complete when:** Move a project folder, repair a missing source once, and identify all affected consumers. Updating or freezing a dependency has a previewable scope and the manager agrees with saved references.
+
+<a id="f084"></a>
+### F084 — Cycle prevention
+
+**Owning tasks:** 7.5, 12.5, 10.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B03, A05, A09 · **First delivery:** P1/P3 · **Likely scope:** Core
+
+**Goal:** Reject dependency relationships that cannot be evaluated deterministically.
+
+**Workflow and behavior:** Check proposed feature inputs, external geometry links, parameter expressions, and configuration dependencies before commit. Include cross-document/occurrence context and report an understandable chain forming the cycle. Handle partially loaded graphs conservatively; do not call an unchecked graph valid.
+
+**Complete when:** Attempt A-to-B-to-A links and an indirect expression cycle across three parts. The attempted final relationship is rejected with the dependency chain and no partially saved or partially computed link remains.
+
+<a id="f085"></a>
+### F085 — Reference repair
+
+**Owning tasks:** 7.5, 12.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A05, B03 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
+
+**Goal:** Recover from changed or missing geometry without rebuilding downstream work blindly.
+
+**Workflow and behavior:** Show the broken reference, its original role/provenance, candidate replacements, and affected consumers. Let the user replace one reference or a clearly bounded group, preview the consequences, and undo the repair. Respect expected type, ownership, orientation, units, and occurrence path; do not choose by nearest face alone.
+
+**Complete when:** Delete a referenced face, select a valid replacement, and preview an extrusion and drawing annotation that depend on it. Commit restores the intended relationships; Cancel preserves the diagnostic state.
+
+<a id="f086"></a>
+### F086 — Stable selection intent
+
+**Owning tasks:** 7.1.4, 7.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A05, U05 · **First delivery:** P1/P3 · **Likely scope:** Core
+
+**Goal:** Preserve the meaning of selected geometry across supported topology changes without pretending every edit is resolvable.
+
+**Workflow and behavior:** Combine stable feature/result provenance with explicitly stored selection rules and geometric signatures where appropriate. Define when an edge split maps to several entities, when a merged face remains equivalent, and when ambiguity requires repair. Keep explicit frozen selections distinct from associative intent rules.
+
+**Complete when:** Change upstream topology in a controlled corpus of splits, merges, and symmetry ambiguities. Supported references resolve correctly; ambiguous cases remain unresolved rather than attaching to plausible but wrong geometry.
+
+<a id="f087"></a>
+### F087 — Useful failure reporting
+
+**Owning tasks:** 7.5, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A07, U11 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
+
+**Goal:** Explain what failed, what caused it, and what the user can do next.
+
+**Workflow and behavior:** Identify the first failing feature, invalid/missing input, and blocked dependents, with navigation/highlighting and concise corrective actions. Distinguish unsupported input, geometric failure, solver conflict, cancellation, and internal error. Preserve the last valid result only with a visible stale marker and offer optional technical diagnostics separately.
+
+**Complete when:** Break an upstream profile and inspect a downstream cascade. The user is directed to the first cause, not dozens of equivalent errors, and export/CAM cannot quietly treat stale geometry as current.
+
+<a id="f088"></a>
+### F088 — Controlled recompute
+
+**Owning tasks:** 7.5.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A07, X03 · **First delivery:** P3/P10 · **Likely scope:** Core/Feature
+
+**Goal:** Let users balance responsiveness and model currency during expensive or grouped edits.
+
+**Workflow and behavior:** Support documented automatic/manual modes, deferred updates within a transaction, and targeted recompute of the necessary dependency closure. Track dirty/stale state at relevant feature/document boundaries. Commands requiring current geometry must update or explicitly refuse/ask for the needed action; manual mode cannot imply unchanged results are current.
+
+**Complete when:** Change several parameters with deferred updates, recompute once, and compare with automatic mode. Results agree; targeted recompute includes required dependencies and stale drawings/toolpaths remain visibly marked.
+
+<a id="f089"></a>
+### F089 — Direct STL machining
+
+**Owning tasks:** 6, 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C01 · **First delivery:** P8 · **Likely scope:** Feature/Core
+
+**Goal:** Generate supported toolpaths directly from mesh geometry without tessellation-to-B-rep conversion.
+
+**Workflow and behavior:** Accept a mesh as the CAM model through shared units/transforms and a validated mesh-capable algorithm. Audit existing facilities before adding new algorithms. Begin with a bounded three-axis finishing workflow, documenting supported tool shapes, mesh assumptions, and tolerance. Keep roughing/rest machining as distinct required increments.
+
+**Complete when:** Load an STL, declare its units, set placement, generate the supported finishing path, and independently compare expected tool contact within stated tolerance. No thousands-of-faces conversion is required.
+
+<a id="f090"></a>
+### F090 — Guided CAM setup
+
+**Owning tasks:** 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C01, C03, U09 · **First delivery:** P8 · **Likely scope:** UI/Feature
+
+**Goal:** Guide users from a model to a complete machining setup with visible assumptions.
+
+**Workflow and behavior:** Collect model, units, orientation, work coordinate system/origin, stock, machine, tools, boundaries, allowances, and postprocessor in a logical sequence. Show geometry/setup previews and explain missing inputs. Templates can prefill choices but consequential values remain visible, editable, and validated against the selected strategy.
+
+**Complete when:** Create a setup from an STL and from supported solid geometry. Reopening preserves origins, units, stock, and tools; a wrong-scale mesh is obvious before toolpath generation or postprocessing.
+
+<a id="f091"></a>
+### F091 — Mesh preparation
+
+**Owning tasks:** 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C01 · **First delivery:** P8 · **Likely scope:** Feature
+
+**Goal:** Identify mesh conditions that matter to the chosen machining algorithm and offer controlled fixes.
+
+**Workflow and behavior:** Inspect normals/orientation, holes, nonmanifold regions, disconnected pieces, degenerate triangles, bounds, and excessive density. Distinguish a diagnostic from a required repair: some algorithms tolerate open meshes while others require a solid stock model. Preview repair/decimation effects and never smooth away intentional detail without an explicit tolerance.
+
+**Complete when:** Use inverted, open, disconnected, and dense fixtures. Report which conditions block each supported operation, and verify approved repairs respect dimensions/tolerance while preserving the original mesh.
+
+<a id="f092"></a>
+### F092 — Roughing and finishing workflow
+
+**Owning tasks:** 14.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C01, C02 · **First delivery:** P8 staged · **Likely scope:** Feature/Core
+
+**Goal:** Make a useful strategy sequence understandable without implying that a finishing path removes bulk stock safely.
+
+**Workflow and behavior:** Ship finishing first where supported, then add stock-aware roughing with stepdown/stepover, allowance, entry/exit, clearance, and strategy-specific controls. Expose strategy presets as editable values with documented applicability. Carry stock/setup identity between operations and show the resulting order and remaining material assumptions.
+
+**Complete when:** Machine-planning fixtures show roughing leaves the intended allowance and finishing reaches supported surfaces within tolerance. A finishing-only release is labeled clearly; unsupported stock engagement or access is reported.
+
+<a id="f093"></a>
+### F093 — Boundary selection on meshes
+
+**Owning tasks:** 14.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C01, C02 · **First delivery:** P8 · **Likely scope:** Feature
+
+**Goal:** Control where a mesh-based strategy may cut and where it must avoid.
+
+**Workflow and behavior:** Offer sketch-based projected containment, supported picked mesh regions, and avoid areas with visible boundary loops. Specify projection direction, open/closed-loop rules, and whether containment applies to tool center, contact point, or tool envelope. Preserve references under mesh placement/unit changes and warn when a region cannot be reidentified.
+
+**Complete when:** Restrict machining to one pocket-like region and protect a raised area. Generated paths respect the documented cutter/boundary rule and a moved mesh cannot leave boundaries silently in the wrong frame.
+
+<a id="f094"></a>
+### F094 — Rest machining
+
+**Owning tasks:** 14.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C02 · **First delivery:** P8 after roughing · **Likely scope:** Core
+
+**Goal:** Remove material left by earlier operations using their actual stock assumptions.
+
+**Workflow and behavior:** Reference a preceding stock state or supported remaining-material representation, tool geometry, operation order, and tolerance. Recalculate when any upstream stock/toolpath changes. Distinguish true remaining-stock computation from merely rerunning finishing with a smaller tool; show approximation limits.
+
+**Complete when:** Rough a fixture with a large tool, compute remaining stock, and plan a smaller-tool rest operation. It targets the expected remaining areas and is invalidated when the prior tool or stock changes.
+
+<a id="f095"></a>
+### F095 — Stock and collision simulation
+
+**Owning tasks:** 14.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C03 · **First delivery:** P8 increments · **Likely scope:** Feature/Core
+
+**Goal:** Show what a supported toolpath removes and identify the checks actually performed.
+
+**Workflow and behavior:** Visualize remaining stock, gouges, tool/holder clearance, and fixture interactions to the implemented fidelity. State whether checks use toolpaths, postprocessed motion, or a machine model; list missing coverage instead of implying complete collision safety. Keep tools, holders, fixtures, stock, and machine envelopes separately defined.
+
+**Complete when:** Run known-clear and deliberately colliding fixtures, compare material removal with an independent reference where available, and verify units/transforms. Simulation results disclose their scope and cannot be presented as proof that real machine motion is safe.
+
+<a id="f096"></a>
+### F096 — Setup reuse
+
+**Owning tasks:** 14.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C03 · **First delivery:** P8 · **Likely scope:** UI/Feature
+
+**Goal:** Reuse trustworthy machine/tool/setup choices without inheriting stale model references.
+
+**Workflow and behavior:** Provide templates for machines, tools, stock rules, posts, and recurring operation sequences with names, versions, units, and compatibility metadata. Instantiate templates into an editable job, remap geometry collectors, and show unresolved inputs. Keep template changes distinct from modifying existing jobs unless explicitly applied.
+
+**Complete when:** Apply a template to a new model of different size, resolve collectors, and inspect all consequential values. Updating the template does not silently alter previously approved jobs or toolpaths.
+
+<a id="f097"></a>
+### F097 — Change tracking
+
+**Owning tasks:** 14.4, 16.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** C03, X05 · **First delivery:** P3/P8 · **Likely scope:** Core/Feature
+
+**Goal:** Prevent outdated machining results from appearing current after their inputs change.
+
+**Workflow and behavior:** Track dependencies on model geometry/placement, stock, tools/holders, fixtures, operation parameters, units, and relevant post settings. Mark affected stages stale and distinguish toolpath regeneration from reposting. If output is exported despite a permitted warning workflow, identify its source revision/state explicitly rather than silently using stale data.
+
+**Complete when:** Change a cutter diameter, stock offset, and model placement separately. Exactly the affected paths/simulations/output states invalidate, and regeneration restores a traceable current state.
+
+<a id="f098"></a>
+### F098 — Unified measurement
+
+**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** I01 · **First delivery:** P9; isolated tools earlier · **Likely scope:** UI/Feature
+
+**Goal:** Inspect common geometric quantities through one tool with explicit meaning and units.
+
+**Workflow and behavior:** Infer and allow choosing distance, angle, radius, thickness, minimum separation, area, volume, center of mass, and mass where supported. Show which entities and frames define a result, whether a value is minimum/projected/local, and what material/density is assumed. Label mesh/approximate measurements and unsupported shell mass cases.
+
+**Complete when:** Measure known analytic fixtures and repeated assembly instances. Values and units are correct; missing density or ambiguous thickness is explained instead of replaced with a misleading default result.
+
+<a id="f099"></a>
+### F099 — Persistent measurements
+
+**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** I01, A05 · **First delivery:** P9 · **Likely scope:** Feature
+
+**Goal:** Save useful engineering checks so they can be revisited after edits.
+
+**Workflow and behavior:** Store references, measurement type, units, and either associative update behavior or an explicitly dated snapshot. Display valid, stale, and unresolved states; allow names, notes, and navigation to operands. Persisting a measurement does not automatically create a driving constraint or a dependency cycle.
+
+**Complete when:** Save a clearance measurement, move a component, and reopen the document. An associative measurement updates or flags repair, while a snapshot remains labeled with its original state and does not imply current clearance.
+
+<a id="f100"></a>
+### F100 — Interactive sections
+
+**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** I01 · **First delivery:** P9 · **Likely scope:** UI/Feature
+
+**Goal:** Inspect interiors and communicate selected cut views without changing modeled geometry.
+
+**Workflow and behavior:** Provide one or more movable section planes with exact offsets/orientations, caps where supported, and saved view definitions. Let users inspect section curves and supported dimensions while distinguishing visual clipping from extracted/intersected geometry. Preserve source occurrence context and keep exports explicit about whether they use the clipped view or full model.
+
+**Complete when:** Create two section planes through a nested assembly, save the view, and move a plane numerically. Reopening reproduces it; model geometry remains intact and section measurements describe the actual selected plane.
+
+<a id="f101"></a>
+### F101 — Interference/clearance checks
+
+**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** I01, B06 · **First delivery:** P9 · **Likely scope:** Feature
+
+**Goal:** Find and navigate assembly conflicts rather than requiring visual inspection of every pair.
+
+**Workflow and behavior:** Choose component sets, exclude intended cases explicitly, and compute interference or minimum clearance with documented tolerance and touching-contact policy. Return pair lists, highlights, magnitudes where meaningful, and unresolved/unloaded participants. Use broad-phase acceleration without skipping required exact checks unnoticed.
+
+**Complete when:** Check an assembly containing an overlap, a touch, a small clearance, and an unloaded component. Results classify each correctly, navigate to the relevant pair, and never label an incomplete check as fully clear.
+
+<a id="f102"></a>
+### F102 — Drawing creation wizard
+
+**Owning tasks:** 15.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** D01, X05 · **First delivery:** P9; compatibility P2/P3 · **Likely scope:** UI/Feature
+
+**Goal:** Create common drawings through a guided view/template setup that remains associative.
+
+**Workflow and behavior:** Select source definition/occurrence or arrangement, sheet template, units, scale, projection convention, and base orientation. Add projected, section, and detail views with preview and consistent placement. Keep drawing-only data within the engineering-document contract and preserve explicit external links if stored separately.
+
+**Complete when:** Create a drawing with base/projected/section/detail views, edit the source, and reopen. Supported views update correctly; chosen scale, projection convention, and source arrangement remain explicit and broken references are surfaced.
+
+<a id="f103"></a>
+### F103 — Associative annotation
+
+**Owning tasks:** 15.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** D01, A05 · **First delivery:** P9 · **Likely scope:** Feature/Core
+
+**Goal:** Keep dimensions and manufacturing notes attached to the intended geometry through supported edits.
+
+**Workflow and behavior:** Support associative dimensions, center marks/lines, hole callouts, and relevant annotations with clear reference versus driving semantics. Reuse source hole/thread metadata where present; expose tolerances and formatting without duplicating model parameters. Detect lost or ambiguous topology and provide repair with a preview.
+
+**Complete when:** Change a hole size and location, then split an annotated edge. Valid callouts update from source metadata, ambiguous annotations are marked for repair, and the drawing never silently displays a plausible dimension attached to the wrong edge.
+
+<a id="f104"></a>
+### F104 — Assembly documentation
+
+**Owning tasks:** 15.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** D02, B01, B04 · **First delivery:** P9 · **Likely scope:** Feature
+
+**Goal:** Produce BOMs, balloons, and exploded documentation from defined product-structure rules.
+
+**Workflow and behavior:** Define quantities for repeated occurrences, unique parts, configurations, subassemblies, and reference-only/suppressed items. Keep reference-set visibility independent of BOM inclusion. Associate balloons with stable item identities, allow explicit item numbering policies, and use selected exploded arrangements for views.
+
+**Complete when:** Document an assembly containing repeats, a unique copy, an empty reference set, and reference-only hardware. Quantities and balloons match the stated rules and remain stable or explicitly renumbered after supported edits.
+
+<a id="f105"></a>
+### F105 — Additional modeling modules
+
+**Owning tasks:** 15.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X01 · **First delivery:** P9 by module · **Likely scope:** Feature/Core
+
+**Goal:** Integrate useful sheet-metal, frame/weldment, and standard-hardware workflows without making them prerequisites for core modeling.
+
+**Workflow and behavior:** Audit compatible modules first. Sheet metal should track thickness, bend rules, reliefs, and unfold/refold intent; frames should place profiles along paths and expose trim/joint/cut-list behavior; hardware should insert reusable parameterized definitions with source/standard metadata. Each is a separately scoped module using shared identity, units, references, and UI contracts.
+
+**Complete when:** A bounded sheet-metal part unfolds/refolds as documented, a frame produces a consistent cut list, and repeated hardware preserves instance/BOM semantics. These are separate deliverables; passing one does not mark the whole package complete.
+
+<a id="f106"></a>
+### F106 — Responsive previews
+
+**Owning tasks:** 8.1.6, 16.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X03, A07 · **First delivery:** P3/P10 · **Likely scope:** Feature/Core
+
+**Goal:** Keep expensive commands responsive and make the difference between preview and final geometry clear.
+
+**Workflow and behavior:** Use cancellable computation, progress feedback, and reduced-cost previews where useful. Give each request an input revision/token; discard late results after parameter changes, cancellation, or document closure. Use safe worker boundaries and commit geometry only on the appropriate thread/transaction path. Clearly indicate approximation and revalidate the final result.
+
+**Complete when:** Rapidly change a complex feature, cancel, and close the document during a preview. No stale result commits, the UI remains recoverable, and final geometry meets the full tolerance contract rather than the preview approximation.
+
+<a id="f107"></a>
+### F107 — Large-assembly handling
+
+**Owning tasks:** 12.8, 16.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** B06, X03 · **First delivery:** P6/P10 after measurement · **Likely scope:** Core
+
+**Goal:** Scale shared-instance assemblies while preserving correctness and complete model state.
+
+**Workflow and behavior:** Reuse geometry/tessellation across instances where supported, use selective loading and simplified representations, and profile culling/rendering separately from recompute. Visibility-based display optimizations must not suppress required dependency evaluation or omit hidden parts from engineering checks. Record cache keys by source/configuration/revision.
+
+**Complete when:** Measure fixed assemblies at increasing instance counts on named hardware. Improvements are attributable to recorded bottlenecks; repeated geometry renders in correct transforms, and full-resolution checks still include required hidden/unloaded participants.
+
+<a id="f108"></a>
+### F108 — Project packaging
+
+**Owning tasks:** 15.6, 16.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X02, X04 · **First delivery:** P3/P9 · **Likely scope:** Feature/Core
+
+**Goal:** Move or share a project with its dependencies while preserving intentional identity relationships.
+
+**Workflow and behavior:** Collect required files and supported embedded assets, preview missing/external references, and create a package manifest with portable paths. Specify Save Copy as a file/package operation versus Make Unique as new definition identity; document whether a copied project remains linked to external originals. Offer deliberate relinking and independent duplication.
+
+**Complete when:** Package a nested assembly, move it to a different directory, and open it without the original path. Supported references resolve, omitted sources are listed, and a copy cannot accidentally overwrite or redirect the original project.
+
+<a id="f109"></a>
+### F109 — Compatibility strategy
+
+**Owning tasks:** 7.6, 16.1, 16.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A06, X04, X09 · **First delivery:** P1/P3/P10 · **Likely scope:** Core
+
+**Goal:** Make native, legacy, and exchange behavior predictable as the fork diverges.
+
+**Workflow and behavior:** Maintain a tested matrix for opening, displaying, editing, converting, and exporting representative FreeCAD/fork objects. Use `.cadprt` for new native documents and preserve original `.FCStd` files during conversion. Detect required capabilities from content, report losses, and refuse unsafe saves; an extension alone is not a compatibility check.
+
+**Complete when:** Import supported legacy fixtures, convert a copy, and reopen with full editability for supported features. Unsupported objects/add-ons are named explicitly; native data is never silently dropped to produce an apparently successful legacy export.
+
+<a id="f110"></a>
+### F110 — Consistent automation
+
+**Owning tasks:** 16.5, 16.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X03, A07 · **First delivery:** P3/P10 · **Likely scope:** Feature
+
+**Goal:** Expose the same modeling behavior through scripts and reproducible operation recording.
+
+**Workflow and behavior:** Provide stable command/model APIs with explicit inputs, operation/target identities, units, context, and transaction behavior. Record committed semantic actions rather than raw mouse coordinates; include deterministic replay fixtures and meaningful errors. Preview-only state and private filesystem/account data should not enter a shareable recording by accident.
+
+**Complete when:** Record or script a bracket workflow, replay it headlessly where supported, and compare parameter relationships/results. UI and automation reject the same invalid targets and do not depend on whichever document or body happened to be active.
+
+<a id="f111"></a>
+### F111 — Upstream-friendly implementation
+
+**Owning tasks:** 16.3, 16.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X03 · **First delivery:** P0/P10 · **Likely scope:** Feature/Core
+
+**Goal:** Keep long-term maintenance feasible while preserving deliberate product differences.
+
+**Workflow and behavior:** Record upstream base and fork-specific decisions; separate UI adapters, feature additions, and model/persistence changes into reviewable patches where practical. Reuse supported extension points, upstream useful general fixes, and retire adapters when shared contracts replace them. Do not preserve an incompatible architecture merely to minimize a diff.
+
+**Complete when:** Integrate a representative upstream update using documented build/tests and the divergence map. Conflicts have identifiable owners/reasons, and supported legacy/new workflows still pass their release gates.
+
+<a id="f112"></a>
+### F112 — Guided workflows and progressive disclosure
+
+**Owning tasks:** 10.2, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U09, U11 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+
+**Goal:** Make common commands teach their own sequence while giving experienced users a direct, efficient route.
+
+**Workflow and behavior:** Use one command state model for guided prompts, preselection, direct field editing, preview, and commit. Show the next unresolved input; keep consequential operation/target choices visible and reveal advanced options on demand. Help is specific to the active step and explains valid selections, not a mandatory tour. Preserve already valid choices when moving back.
+
+**Complete when:** A first-time user completes Extrude from prompts; an experienced user performs the same operation through preselection and typed values. Both create equivalent editable features and can correct an earlier input without restarting.
+
+<a id="f113"></a>
+### F113 — Intelligent initial operation suggestions
+
+**Owning tasks:** 10.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U10, A02 · **First delivery:** P1/P4 · **Likely scope:** Feature/Core
+
+**Goal:** Reduce routine Boolean decisions without taking control away from the user or changing saved intent.
+
+**Workflow and behavior:** Within the editable work part, suggest New Body for no eligible intersection and Unite for exactly one valid eligible target. Require explicit resolution for multiple candidates; explain invalid contact and exclude unrelated component geometry from automatic mutation. Pocket/Groove start in Subtract. Manual choice takes precedence, and accepted mode/targets become stored feature parameters.
+
+**Complete when:** Test zero, one, multiple, tangent-invalid, and cross-component candidates. Editing a committed Unite until it no longer intersects produces defined failure/repair behavior, not a silent conversion into New Body.
+
+<a id="f114"></a>
+### F114 — Selection-aware constraint eligibility
+
+**Owning tasks:** 11.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S07, S02, S04 · **First delivery:** P1 audit; P5 · **Likely scope:** Feature/Core
+
+**Goal:** Show only relevant sketch actions and clearly distinguish a mathematical conflict from the wrong selection shape.
+
+**Workflow and behavior:** Use selection type/count/roles for fast applicability: one line exposes supported single-line relations and construction/reference actions; two suitable lines add Parallel/Perpendicular. For applicable actions, use solver evidence to mark Valid, Already Applied, Redundant, Conflicting, Unsupported, or Unverified. Proven conflicts are disabled with reasons. Reuse this service in palettes, menus, toolbars, shortcuts, and commit validation.
+
+**Complete when:** Selecting one line never suggests a two-line relation as immediately executable. A constrained horizontal line's Vertical candidate is evaluated correctly for its actual sketch state; stale checks cannot mutate the sketch or disable valid actions based on guessed conflicts.
+
+<a id="f115"></a>
+### F115 — Native .cadprt engineering documents
+
+**Owning tasks:** 7.6, 16.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X04, A06 · **First delivery:** P1/P3/P10 · **Likely scope:** Core
+
+**Goal:** Provide a recognizable native format for the entire application and reliable behavior as schemas evolve.
+
+**Workflow and behavior:** Use a stable internal format identity, schema/capability declarations, producer metadata, and explicit part/document relationships. Preserve supported CAD, assembly, drawing, CAM, FEM, and Draft data; reject or safely retain unsupported required content. Reuse suitable existing container infrastructure rather than inventing a new binary format unnecessarily. Legacy conversion is explicit and preserves originals.
+
+**Complete when:** Round-trip a mixed engineering document and an externally linked assembly. Required unknown capabilities, corrupt content, and legacy-only objects produce clear controlled outcomes; native files are not accepted or overwritten solely because their filename has the expected suffix.
+
+<a id="f116"></a>
+### F116 — Early cross-workbench compatibility
+
+**Owning tasks:** 16.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X05 · **First delivery:** P2/P3 then each core change · **Likely scope:** Core/Feature
+
+**Goal:** Discover downstream consequences of ownership changes before many commands depend on the new model.
+
+**Workflow and behavior:** Include small existing drawing, CAM, FEM, and Draft consumers in the architecture proof. Verify references, transforms, units, materials/supports/loads, invalidation, and save/reopen through shared adapters. Distinguish geometry compatibility from a complete redesigned downstream UI; broaden each module only after this foundation works.
+
+**Complete when:** Changing a shared definition and making an assembly-local cut affect the correct drawing views, CAM model, FEM assignments, and Draft references. Unsupported paths are explicit and stale meshes/toolpaths/results cannot appear current.
+
+<a id="f117"></a>
+### F117 — Task benchmarks and release evidence
+
+**Owning tasks:** 16.4, 16.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** Q01 · **First delivery:** P0 onward · **Likely scope:** Process/Validation
+
+**Goal:** Judge progress by usable engineering outcomes and reliable edits rather than command counts.
+
+**Workflow and behavior:** Maintain task 16.4's fixed benchmark tasks, recorded builds/hardware, learning-versus-practiced comparisons, completion/error/recovery measurements, and relevant geometry/persistence checks. Measure new workflow benefits against stock FreeCAD and selected available comparators. Establish acceptance thresholds before evaluating a release and revise engineering estimates using actual work.
+
+**Complete when:** A release report links each advertised workflow to completed task evidence and states unverified cases. Performance, click-count, time-saving, and adoption claims are not fabricated from demonstrations or code generation.
+
+<a id="f118"></a>
+### F118 — Model-led onboarding and outreach
+
+**Owning tasks:** 17.2, 17.3, 17.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X07, M02 · **First delivery:** P4/P11 · **Likely scope:** Product/Documentation
+
+**Goal:** Give people a concrete useful result that makes trying FC Plus worthwhile.
+
+**Workflow and behavior:** Publish-ready examples include named parameters, units/descriptions, editable native sources, suitable fabrication exports, version information, and a short path to changing two dimensions. Prepare concise videos plus complete tutorials and channel-specific materials for Thingiverse/Printables, relevant Facebook groups, creators, forums, makerspaces, and search. Posting still follows actual authorization.
+
+**Complete when:** A representative user can install/open the supported build, customize the sample, save, and export without a general CAD course. Track this success and subsequent independent use separately from model downloads or social impressions.
+
+<a id="f119"></a>
+### F119 — Independent branding and format discoverability
+
+**Owning tasks:** 17.6, 17.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** M03, X04 · **First delivery:** Identity early; P10/P11 · **Likely scope:** Product/Documentation
+
+**Goal:** Make the relationship to FreeCAD and the meaning of .cadprt clear without implying endorsement or exclusivity.
+
+**Workflow and behavior:** Retain FreeCAD-Plus as the working name until a rename is chosen. Publish differences, compatibility, support destination, upstream credits, and stable format documentation. Evaluate a distinct public brand before major incompatible distribution. Optional FileInfo listing, IANA media-type registration, and installer association follow the process and limitations in tasks 17.6-17.7; they are not exclusive ownership claims.
+
+**Complete when:** Release copy accurately describes the independent fork and supported imports/exports. Installers and sample files identify the format consistently, and any proposed registration identifier is not presented as assigned before it actually is.
+
+<a id="f120"></a>
+### F120 — Free releases, licensing, and maintenance sustainability
+
+**Owning tasks:** 16.7, 17.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X06, X03 · **First delivery:** P0/P10 · **Likely scope:** Release/Process
+
+**Goal:** Keep the application free for the foreseeable future and make each distributed build maintainable and properly accompanied.
+
+**Workflow and behavior:** Preserve the free local-core commitment, audit actual code/dependency/asset terms, and prepare matching source/build materials and required notices as described in tasks 16.7 and 17.8. Record supported platforms and capability limits. Treat support, donations/sponsorship, hosted services, or paid distribution as optional later business decisions rather than reasons to build billing now.
+
+**Complete when:** Each released binary has traceable source/build/license materials and a documented maintenance/support route. A future revenue discussion cannot silently introduce paywalls, unsupported proprietary claims, or mandatory cloud dependencies.
+
+<a id="f121"></a>
+### F121 — Audience and adoption research
+
+**Owning tasks:** 17.1, 17.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** M01, M02 · **First delivery:** P0/P11 · **Likely scope:** Research/Product
+
+**Goal:** Use real tasks and repeated use to refine which users the fork serves first.
+
+**Workflow and behavior:** Keep hobbyist, professional, small-team, and small-company populations distinct. Use task 17.1's dated, verified competitor evidence to choose comparisons, then learn from frustrated/lapsed FreeCAD users, experienced CAD users, and small teams separately. Track migration barriers, compatibility needs, support load, first success, and a second real project.
+
+**Complete when:** Product and release choices can point to observations or clearly labeled hypotheses. No probability of adoption or market-share claim is inferred merely from an enthusiastic model audience, a recognizable extension, or the owner's workflow expertise.
+
+<a id="f122"></a>
+### F122 — Named parameters, expressions, and units
+
+**Owning tasks:** 10.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** A09 · **First delivery:** P1/P3; editor P4/P5 · **Likely scope:** Core/Feature
+
+**Goal:** Make design intent visible and reusable so people can customize a model without hunting through its entire feature history.
+
+**Workflow and behavior:** Provide a part-level parameter editor with names, descriptions, types/units, values/expressions, and where-used links. Reuse existing expression facilities where adequate; define document/part/configuration scope, dimensional checking, cycles, renaming, and controlled publication to other parts. Common feature fields accept compatible expressions. Separate UI display units from stored physical meaning.
+
+**Complete when:** Drive enclosure width, lid clearance, and hole spacing from named values, rename a parameter, and change display units. All intended consumers update; incompatible units and cycles are rejected; a shared definition does not accidentally acquire occurrence-local geometry parameters.
+
+<a id="f123"></a>
+### F123 — Contextual workspace, help, and accessibility
+
+**Owning tasks:** 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** U11 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
+
+**Goal:** Keep navigation, command availability, help, and accessibility coherent across modeling and supported engineering tasks.
+
+**Workflow and behavior:** Use shared context/selection services for command availability and explain disabled operations. Offer local contextual help, searchable terminology, keyboard focus/order, configurable shortcuts, high-DPI sizing, text alternatives to color, and preference reset. Keep separate UI preferences from document semantics. Transition to drawing/CAM/FEM tasks without losing the identity of the active engineering document.
+
+**Complete when:** Complete representative modeling and downstream setup tasks with keyboard navigation and enlarged display settings. Missing selections and wrong work context are recoverable from the interface; changing a preference does not change saved geometry.
+
+<a id="f124"></a>
+### F124 — Sketch placement and support management
+
+**Owning tasks:** 11.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** S08, A05 · **First delivery:** P1/P3 contracts; P5 · **Likely scope:** Feature/Core
+
+**Goal:** Make where a sketch lives, how it is oriented, and how it follows its support understandable and repairable.
+
+**Workflow and behavior:** Create a sketch on principal/datum planes or supported planar faces with explicit origin, axes, offsets, and attachment mode. Prefer stable datums where the workflow calls for them without banning face attachment. Provide support inspection and reattachment with a preview; distinguish preserving local coordinates from preserving world-space placement and warn about changed downstream geometry.
+
+**Complete when:** Create an offset sketch on a rotated component, change its support, and repair a lost face reference. Orientation, external projections, dimensions, and occurrence transforms follow the selected policy; reattachment is undoable.
+
+<a id="f125"></a>
+### F125 — Recovery and document lifecycle
+
+**Owning tasks:** 16.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X08, X04 · **First delivery:** P1/P3/P10 · **Likely scope:** Core/Feature
+
+**Goal:** Protect editing work and make file identity, saving, and recovery predictable as documents become more complex.
+
+**Workflow and behavior:** Provide dirty/read-only indicators, recent files with missing-path repair, intentional document templates, atomic save where supported, rotating recovery snapshots, and a recover-as-copy workflow. Define treatment of external dependencies and interrupted multi-file saves; do not claim cross-file atomicity unless implemented. Keep normal save, backup/recovery, Save Copy, and Make Unique distinct.
+
+**Complete when:** Interrupt a controlled save/recovery fixture and recover a clearly labeled editable copy without overwriting a good original. Missing external sources remain explicit, and restoring a snapshot does not silently change definition identity or relink unrelated projects.
+
+<a id="f126"></a>
+### F126 — Add-on, macro, and API compatibility
+
+**Owning tasks:** 16.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X09, X03 · **First delivery:** P0 audit; P3/P10 · **Likely scope:** Feature/Core
+
+**Goal:** Keep useful extensions usable where feasible and make incompatibility visible as the fork changes.
+
+**Workflow and behavior:** Inventory important workbenches/macros/APIs, publish supported versions/capabilities, and test representative integrations against the changed ownership and document model. Prefer adapters and staged deprecation where practical. Detect unavailable required add-ons in files and preserve/refuse their data safely. Do not promise all upstream extensions work or silently run an incompatible migration.
+
+**Complete when:** Open fixtures requiring a supported and an unavailable extension, replay a representative macro, and review migration diagnostics. Supported integrations work through stable contracts; unsupported ones identify a concrete dependency without corrupting the model.
+
+<a id="f127"></a>
+### F127 — Manufacturing export and reusable output presets
+
+**Owning tasks:** 15.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+
+**Packages:** X10, X02 · **First delivery:** P3 contracts; P4/P9 UI · **Likely scope:** Feature
+
+**Goal:** Make reliable handoff to printing, machining, and other tools part of the everyday workflow.
+
+**Workflow and behavior:** Provide explicit geometry/occurrence/configuration selection, units, placement/orientation, quality/tessellation, and output paths for supported STEP, STL, 3MF, DXF, and other audited formats. Offer reusable presets with visible consequential values. Validate watertightness or supported output properties where relevant and report lost history/metadata; never label a geometry export a parametric native file.
+
+**Complete when:** Export a dimensioned part and selected assembly occurrences using supported formats, reopen/check dimensions and transforms, and compare coarse/fine mesh settings. Stale geometry and unsupported entities are disclosed and presets cannot silently export the wrong configuration.
