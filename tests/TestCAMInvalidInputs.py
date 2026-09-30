@@ -880,3 +880,44 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.assertIs(operations[-1], terminal)
         self.assertEqual(len({id(op) for op in operations}), len(operations))
         self.assertEqual(ObjectJob.allOperations(SimpleNamespace(obj=SimpleNamespace())), [])
+
+    def testZCorrectPreservesProbePrecision(self):
+        dressup, probe = self.makeZCorrect()
+        height = 0.123456
+        probe.write_text("-10.001 -10.002 0.123456\n40.003 -10.002 0.123456\n"
+                         "-10.001 40.004 0.123456\n40.003 40.004 0.123456\n")
+        dressup.touch()
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        bb = dressup.interpSurface.BoundBox
+        self.assertAlmostEqual(bb.XMin, -10.001, places=5)
+        self.assertAlmostEqual(bb.XMax, 40.003, places=5)
+        self.assertAlmostEqual(bb.YMin, -10.002, places=5)
+        self.assertAlmostEqual(bb.YMax, 40.004, places=5)
+        self.assertAlmostEqual(bb.ZMin, height, places=5)
+        self.assertTrue(any(c.Name == "G1" and abs(c.Parameters.get("Z", -99) - (4 + height)) < 1e-6
+                            for c in dressup.Path.Commands))
+
+    def testZCorrectDuplicateProbeSamplesAreOrderIndependent(self):
+        from Path.Post.PostList import _wrap_op
+        dressup, probe = self.makeZCorrect()
+        original = probe.read_text()
+        expected = dressup.Path.toGCode()
+        for data in (original + "-10 -10 0.5\n", "-10 -10 0.5\n" + original):
+            probe.write_text(data)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertEqual(_wrap_op(dressup).Path.toGCode(), expected)
+        for data in (original + "-10 -10 0.501\n", "-10 -10 0.501\n" + original):
+            probe.write_text(data)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertFalse(dressup.Path.Commands)
+            self.assertTrue(dressup.interpSurface.isNull())
+            self.assertIn("Invalid", dressup.State)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            probe.write_text(original)
+            dressup.touch()
+            self.doc.recompute()
+            self.assertEqual(_wrap_op(dressup).Path.toGCode(), expected)

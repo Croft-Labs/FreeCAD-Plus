@@ -100,6 +100,11 @@ and zero/negative interpolation settings, then verify recovery/export. Source-li
 lengths 0.5, 1, 1.01, 2 and 2.5 mm with a 1 mm segment setting check subdivision
 counts, final endpoints and maximum spacing before Z correction. Surface slope can
 increase corrected 3D segment length; these tests do not claim adaptive chord error.
+Probe-precision fixtures preserve sub-0.01 mm XY coordinates and a 0.123456 mm
+constant height through the native interpolated surface and corrected path. Identical
+XY/Z repeats are deduplicated; differing heights at exactly the same parsed XY
+are rejected in either file order, with export rejection and recovery. No implicit
+rounding, averaging or near-point merge tolerance is introduced.
 External file edits still require recompute; automatic filesystem monitoring and
 arbitrary probe-grid quality are not established by these tests.
 

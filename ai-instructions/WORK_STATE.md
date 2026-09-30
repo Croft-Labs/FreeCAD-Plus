@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2am/an complete. Shared property inheritance rejects
+Latest roadmap batch: 16.2ao/ap complete. Z Correction preserves parsed probe
+precision and rejects conflicting heights at identical XY positions; identical
+samples are deduplicated. Native precision, order-independent rejection/export
+blocking and recovery pass. Grouped validation: 65 passes, zero failures/errors/
+skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-probe-precision-20260930-batch.
+Source/module hash and precision limits recorded in roadmap. Python-only update;
+no native rebuild, GUI/machine acceptance or release. Test process ended.
+
+Previous roadmap batch: 16.2am/an complete. Shared property inheritance rejects
 cycles without recursion; job operation traversal is iterative, ordered and unique.
 Native shared-base invalidation/recovery and deep/cyclic fixtures pass. Grouped
 validation: 151 passes, zero failures/errors/skips in

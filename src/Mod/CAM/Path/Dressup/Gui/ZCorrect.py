@@ -119,6 +119,7 @@ class ObjectDressup:
             lines = file.readlines()
 
         pointlist = []
+        heights = {}
         skipped = []
         for i, line in enumerate(lines):
             w = line.replace(",", ".").split()
@@ -126,9 +127,9 @@ class ObjectDressup:
                 skipped.append(i + 1)
                 continue
             try:
-                xval = round(float(w[0]), 2)
-                yval = round(float(w[1]), 2)
-                zval = round(float(w[2]), 2)
+                xval = float(w[0])
+                yval = float(w[1])
+                zval = float(w[2])
             except ValueError:
                 skipped.append(i + 1)
                 continue
@@ -137,6 +138,15 @@ class ObjectDressup:
                     translate("CAM_DressupZCorrect", "Non-finite probe coordinate in file %s, line %s")
                     % (filename, i + 1)
                 )
+            key = (xval, yval)
+            if key in heights:
+                if heights[key] != zval:
+                    raise ValueError(
+                        translate("CAM_DressupZCorrect", "Conflicting probe heights in file %s, line %s")
+                        % (filename, i + 1)
+                    )
+                continue  # Identical repeated samples do not add grid points.
+            heights[key] = zval
             pointlist.append((xval, yval, zval))
 
         if skipped:

@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2am/an make shared property inheritance and job operation
+- Current batch: 16.2ao/ap preserve probe-file precision and reject conflicting
+  duplicate heights. Grouped validation: 65 passes, zero failures/errors/skips;
+  Python-only synchronization, no native rebuild.
+- Previous batch: 16.2am/an make shared property inheritance and job operation
   traversal iterative, handling cycles/deep chains and duplicate bases. Grouped
   validation: 151 passes, zero failures/errors/skips; no native rebuild.
 - Previous batch: 16.2ak/al recognize dressups by current proxy identity with
@@ -2409,6 +2412,25 @@ Both changes preceded grouped validation. Python-only synchronization into engin
 Cycle tolerance in job invalidation/cleanup does not validate cyclic models for
 machining/export; property lookup explicitly raises when a cycle prevents resolution.
 Broader consumer gates remain open.
+
+- [ X ] 16.2ao Preserve parsed probe XYZ precision instead of rounding to two
+  decimal places. Validate sub-0.01 mm bounds and a 0.123456 mm height through the
+  native interpolation surface and corrected cutting path.
+- [ X ] 16.2ap Deduplicate identical XY/Z samples and reject conflicting heights
+  at the same parsed XY rather than choosing the first line. Verify both file
+  orders, empty output/surface on conflict, export rejection and recovery.
+
+Probe precision batch: `cam-probe-precision-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **65 PASS, zero
+failures/errors/skips**: 49 invalid-input/workflow checks (two new), seven nested
+postprocessing and nine rotary-post regressions. Macro PASS; process ended.
+Source/development-build ZCorrect.py SHA256:
+`96D5E1DE0D0AF53F367C682AF326F83C4F267DDF1D0DAA69DFFBF1FD882D7B97`.
+Both changes preceded grouped validation. Python-only synchronization into engine
+2df76790b4; no native rebuild, schema migration, release or GUI/machine acceptance.
+Exact parsed XY duplicates are checked; no averaging or near-point merge tolerance
+is implied. Probe-file changes still require recompute; arbitrary surface quality
+and broader consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
