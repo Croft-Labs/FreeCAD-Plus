@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8c/d prove explicit parameter references remain independent
+- Current batch: 11.7a/b prototype explicit planar sketch reattachment with local
+  offset preservation and reject missing/curved supports before mutation. Grouped
+  validation: 28 passes, zero failures/errors/skips; no native rebuild. Production
+  reattachment editor, preserve-world policy and lost-support repair remain pending.
+- Previous batch: 10.8c/d prove explicit parameter references remain independent
   across parts with matching labels and invalid geometry recovers after transaction
   abort. Grouped architecture validation: 26 passes, zero failures/errors/skips.
   Test-only changes; no native rebuild or parameter editor delivery.
@@ -1844,6 +1848,24 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   explicit (S08; [F124](#f124)). Preview preserve-local versus preserve-world policies,
   prefer stable references where appropriate, and repair lost supports deliberately.
   Validate rotated occurrences, external projections, constraints and Undo with T14.
+- [ X ] 11.7a Prototype explicit same-document planar-face reattachment preserving
+  the local attachment offset. Validate downstream result placement/identity,
+  Undo/Redo and native save/reopen with two parallel supports.
+- [ X ] 11.7b Reject missing and curved support faces before changing the sketch;
+  verify existing support, placement, offset and downstream geometry remain intact.
+
+Bounded reattachment evidence: `sketch-reattachment-20260930-verified/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **28 PASS, zero
+failures/errors/skips** (11 capability, 12 adapter, five lineage checks). Macro PASS;
+process ended. Both tasks preceded grouped testing with the existing fork build,
+engine source 2df76790b4. Initial batch had 27 passes/one error: the native missing
+face lookup raises IndexError, now converted into the prototype's validation error.
+`tests/prototypes/SketchReattachment.py` SHA256:
+`F52536AD4C705C29AD6569603E52D4416709000E20AD0D75FDC0EA0E44E0F770`.
+Test-only operation, not installed; no native rebuild or release update. This does
+not implement preserve-world placement, automatic topology repair, rotated
+reattachment, external scope, preview or production transaction integration. The
+caller must have no open transaction; broader consumer invalidation remains a gate.
 
 Gate G5: solver trials cannot mutate live sketches; redundant/conflicting candidates
 remain distinct and invalid suggestions cannot commit. Validate T12, inference/no

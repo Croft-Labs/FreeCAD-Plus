@@ -195,6 +195,16 @@ define failed-edit behavior; this probe adds no automatic rollback to the UI.
 
 ## Remaining decision gates and consumers
 
+Roadmap 11.7a/b adds a test-only explicit planar reattachment operation in
+[`SketchReattachment.py`](../../tests/prototypes/SketchReattachment.py). It uses
+native FlatFace attachment and transactions, keeping the local attachment offset.
+Two parallel planes establish downstream placement, result identity, Undo/Redo and
+restore. Missing/curved faces reject before mutation; grouped evidence is 28 passes.
+This does not establish preserve-world behavior, rotated reattachment, support
+deletion/repair, production transaction ownership or a task-pane UI. Its caller
+must have no open transaction. The existing rotated-plane motion proof is separate
+from deliberate reattachment to a differently oriented plane.
+
 Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
 
 - Extend the explicit planar split/primary-merge proof to general lineage, ambiguous

@@ -233,6 +233,61 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertAlmostEqual((linked_shape((self.doc.LeftResult, [])).CenterOfMass
                                 - original - App.Vector(0, 0, 10)).Length, 0, places=6)
 
+    def testDeliberatePlanarReattachmentPreservesOffsetAndHistory(self):
+        from SketchReattachment import reattach_planar
+        old_plane = self.doc.addObject("Part::Plane", "OldSupport")
+        new_plane = self.doc.addObject("Part::Plane", "NewSupport")
+        for plane in (old_plane, new_plane):
+            self.part.addObject(plane)
+            plane.Length, plane.Width = 20, 20
+        new_plane.Placement.Base.z = 10
+        self.profile.AttachmentSupport = [(old_plane, "Face1")]
+        self.profile.MapMode = "FlatFace"
+        self.profile.AttachmentOffset.Base.z = 2
+        feature, results, consumer = adapters.part_results(self.part, self.profile)
+        self.doc.recompute()
+        initial = linked_shape((results[0], [])).CenterOfMass
+        identity = results[0].BodyIdentity
+        reattach_planar(self.profile, new_plane, "Face1")
+        self.assertAlmostEqual(self.profile.AttachmentOffset.Base.z, 2)
+        self.assertAlmostEqual((linked_shape((results[0], [])).CenterOfMass
+                                - initial - App.Vector(0, 0, 10)).Length, 0, places=6)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old_plane)
+        self.assertAlmostEqual((linked_shape((results[0], [])).CenterOfMass - initial).Length,
+                               0, places=6)
+        self.doc.redo()
+        self.doc.recompute()
+        self.saveReopen("ReattachedSketchProof")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], self.doc.NewSupport)
+        self.assertAlmostEqual(self.profile.AttachmentOffset.Base.z, 2)
+        self.assertEqual(self.doc.LeftResult.BodyIdentity, identity)
+        self.assertAlmostEqual((linked_shape((self.doc.LeftResult, [])).CenterOfMass
+                                - initial - App.Vector(0, 0, 10)).Length, 0, places=6)
+
+    def testReattachmentRejectsMissingAndCurvedFacesWithoutMutation(self):
+        from SketchReattachment import reattach_planar
+        plane = self.doc.addObject("Part::Plane", "ValidSupport")
+        sphere = self.doc.addObject("Part::Sphere", "CurvedSupport")
+        self.profile.AttachmentSupport = [(plane, "Face1")]
+        self.profile.MapMode = "FlatFace"
+        self.profile.AttachmentOffset.Base.z = 2
+        feature, results, consumer = adapters.part_results(self.part, self.profile)
+        self.doc.recompute()
+        before = linked_shape((results[0], [])).CenterOfMass
+        placement = self.profile.Placement
+        for support, face in ((plane, "Face99"), (sphere, "Face1")):
+            with self.assertRaisesRegex(ValueError, "unavailable|planar"):
+                reattach_planar(self.profile, support, face)
+            self.doc.recompute()
+            self.assertEqual(self.profile.AttachmentSupport[0][0], plane)
+            self.assertEqual(self.profile.Placement, placement)
+            self.assertAlmostEqual(self.profile.AttachmentOffset.Base.z, 2)
+            self.assertNotIn("Invalid", self.profile.State)
+            self.assertAlmostEqual((linked_shape((results[0], [])).CenterOfMass - before).Length,
+                                   0, places=6)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time
