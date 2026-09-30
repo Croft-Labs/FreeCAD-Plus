@@ -35,6 +35,7 @@
 
 
 #include <App/Document.h>
+#include <Base/Tools.h>
 #include <Gui/Application.h>
 #include <Gui/CommandT.h>
 #include <Mod/Part/App/Part2DObject.h>
@@ -168,9 +169,15 @@ void TaskPadParameters::setupProfileSelection()
     profileGroup = new QGroupBox(proxy);
     profileGroup->setObjectName(QStringLiteral("padProfileGroup"));
     auto layout = new QVBoxLayout(profileGroup);
+    profileStatus = new QLabel(profileGroup);
+    profileStatus->setObjectName(QStringLiteral("padProfileStatus"));
+    profileStatus->setTextFormat(Qt::PlainText);
+    profileStatus->setWordWrap(true);
+    layout->addWidget(profileStatus);
     profileHint = new QLabel(profileGroup);
     profileHint->setObjectName(QStringLiteral("padProfileHint"));
     profileHint->setWordWrap(true);
+    profileHint->setTextFormat(Qt::PlainText);
     layout->addWidget(profileHint);
 
     profileList = new QListWidget(profileGroup);
@@ -191,6 +198,9 @@ void TaskPadParameters::setupProfileSelection()
     buttons->addWidget(removeProfile);
     buttons->addWidget(clearProfile);
     layout->addLayout(buttons);
+    highlightProfile = new QPushButton(profileGroup);
+    highlightProfile->setObjectName(QStringLiteral("padHighlightProfile"));
+    layout->addWidget(highlightProfile);
     ui->verticalLayout->insertWidget(1, profileGroup);
 
     connect(selectProfile, &QPushButton::toggled, this, [this](bool checked) {
@@ -203,7 +213,11 @@ void TaskPadParameters::setupProfileSelection()
     });
     connect(profileList, &QListWidget::itemSelectionChanged, this, [this] {
         removeProfile->setEnabled(!profileList->selectedItems().isEmpty());
+        if (!profileList->selectedItems().isEmpty()) {
+            highlightProfileItems();
+        }
     });
+    connect(highlightProfile, &QPushButton::clicked, this, &TaskPadParameters::highlightProfileItems);
     translateProfileSelection();
 }
 
@@ -216,6 +230,39 @@ void TaskPadParameters::translateProfileSelection()
     );
     removeProfile->setText(tr("Remove"));
     clearProfile->setText(tr("Clear"));
+    highlightProfile->setText(tr("Highlight"));
+    highlightProfile->setToolTip(tr("Activate Profile and highlight selected entries, or all entries if none are selected"));
+    updateProfileFeedback();
+}
+
+void TaskPadParameters::updateProfileFeedback()
+{
+    profileStatus->setText(tr("Entries: %1\nAccepts: sketch, curves or faces from one object in the active body.\n%2")
+        .arg(profileList->count())
+        .arg(selectionMode == SelectProfile ? tr("Picking: Profile") : tr("Profile picking inactive")));
+}
+
+void TaskPadParameters::highlightProfileItems()
+{
+    auto pad = getObject<PartDesign::FeatureExtrude>();
+    auto object = pad->Profile.getValue();
+    if (!object || profileList->count() == 0) {
+        return;
+    }
+    // Inspection explicitly activates this role, but must not feed its own
+    // selections back into the profile or any previous direction/limit collector.
+    Base::StateLocker inspecting(inspectingProfile, true);
+    setSelectionMode(SelectProfile);
+    showProfileForSelection(object);
+    Gui::Selection().clearSelection();
+    const auto subs = pad->Profile.getSubValues(false);
+    const bool all = profileList->selectedItems().isEmpty();
+    for (int row = 0; row < profileList->count(); ++row) {
+        if (all || profileList->item(row)->isSelected()) {
+            const char* sub = row < static_cast<int>(subs.size()) ? subs[row].c_str() : "";
+            Gui::Selection().addSelection(object->getDocument()->getName(), object->getNameInDocument(), sub);
+        }
+    }
 }
 
 void TaskPadParameters::changeEvent(QEvent* event)
@@ -283,6 +330,7 @@ void TaskPadParameters::setSelectionMode(SelectionMode mode, Side side)
 
 void TaskPadParameters::updateProfileList()
 {
+    const QSignalBlocker blocker(profileList);
     auto pad = getObject<PartDesign::FeatureExtrude>();
     auto object = pad->Profile.getValue();
     profileList->clear();
@@ -302,6 +350,7 @@ void TaskPadParameters::updateProfileList()
         }
     }
     clearProfile->setEnabled(object != nullptr);
+    highlightProfile->setEnabled(object != nullptr && profileList->count() > 0);
     removeProfile->setEnabled(false);
     if (!object) {
         profileHint->setText(tr("Select a sketch in the tree, or click curves or faces in the "
@@ -315,6 +364,7 @@ void TaskPadParameters::updateProfileList()
         profileHint->setText(tr("Select adds curves or faces from this object. Clear the list to "
                                 "choose a different profile."));
     }
+    updateProfileFeedback();
 }
 
 void TaskPadParameters::updateProfile(App::DocumentObject* object, const std::vector<std::string>& subNames)
@@ -396,6 +446,9 @@ void TaskPadParameters::setPreselection(const std::vector<Gui::SelectionObject>&
 
 void TaskPadParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 {
+    if (inspectingProfile) {
+        return;
+    }
     if (selectionMode != SelectProfile) {
         TaskExtrudeParameters::onSelectionChanged(msg);
         return;

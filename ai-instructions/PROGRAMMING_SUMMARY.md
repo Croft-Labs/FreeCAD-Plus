@@ -61,6 +61,8 @@ Extrude preselection: `TaskPadParameters::setPreselection` reuses the profile
 gate/assignment for `Command.cpp`'s Pad/Pocket entry. `TaskDlgPadParameters` owns
 Cancel selection snapshots; `ViewProviderExtrude::setEdit` captures editing
 selection before the base editor clears it. Roadmap 8.1.2b/8.1.5b.
+`highlightProfileItems` activates Profile for inspection under a guarded selection
+callback; `updateProfileFeedback` owns entry counts/type/picking text (8.1.3d/e).
 
 Isocline tolerance: `curve_tolerance` in
 [`Isocline.py`](../src/Mod/Part/BasicShapes/Isocline.py) validates native distance

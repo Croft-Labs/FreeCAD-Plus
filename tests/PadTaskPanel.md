@@ -59,6 +59,12 @@ inputs leave a recoverable task with explicit feedback. Create/edit Cancel check
 restore original subelement selection and Body Tip/profile state. These do not
 establish future multi-target Boolean or general occurrence-selection support.
 
+F030 collector regressions cover counts after accumulation, duplicate picks,
+removal, clear and reopen; whole-profile counting; row and all-entry highlighting;
+explicit Profile activation from the start-reference role without reference
+assignment; and inspection visibility/selection cleanup on Cancel and OK for
+Extrude and Pocket. Physical viewport/high-DPI acceptance remains separate.
+
 The Extrude suites additionally check the first-field Add/Subtract dropdown,
 both legacy object types, operation changes, extent names, expression/dependency
 retention, no-base recovery, save/reopen, legacy Operation lists, and Common behavior.

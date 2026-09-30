@@ -75,6 +75,8 @@ private:
     void translateOperationSelection();
     void setupProfileSelection();
     void updateProfileList();
+    void updateProfileFeedback();
+    void highlightProfileItems();
     void updateProfile(App::DocumentObject* object, const std::vector<std::string>& subNames);
     void removeSelectedProfileItems();
     void showProfileForSelection(App::DocumentObject* object);
@@ -88,10 +90,13 @@ private:
     QGroupBox* profileGroup = nullptr;
     QListWidget* profileList = nullptr;
     QLabel* profileHint = nullptr;
+    QLabel* profileStatus = nullptr;
     QLabel* preselectionHint = nullptr;
     QPushButton* selectProfile = nullptr;
     QPushButton* removeProfile = nullptr;
     QPushButton* clearProfile = nullptr;
+    QPushButton* highlightProfile = nullptr;
+    bool inspectingProfile = false;
     std::map<std::string, bool> profileVisibility;
 };
 

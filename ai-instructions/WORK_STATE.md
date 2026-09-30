@@ -1,6 +1,23 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.2b/8.1.5b. F031's Extrude parity,
+Latest product batch: phase 8, tasks 8.1.3d/e, advancing F030. Extrude/Pad/Pocket
+profile row inspection and Highlight activate Profile without changing references;
+count/type/picking feedback stays current on mutation and reopen. Inspection
+visibility restores on Cancel and OK. Both tasks preceded one successful native
+PartDesignGui Release build and one grouped run: 142 passes, zero failures/errors/
+skips, macro PASS, process exit 0. Four added Extrude tests pass; existing Pad,
+Extrude/Pocket model, Revolve/Pattern, Trim and Isocline suites also pass.
+Evidence: D:\Temp\Office-PC\freecad-plus-extrude-collectors-20260930, including
+build.log, grouped/results.json and validated-identities.json. Changed source and
+staged tests hash-match; PartDesignGui SHA256:
+1c1bef4b22a721fdc1335da5233062e21262dd0750ad3e56bbec39621adef3ce.
+Three collector captures under visual are readable without clipping. Executable
+version stamp remains older than rebuilt modules; no installer or release.
+Broad F030 other-family/disambiguation/occurrence and physical interaction gates
+remain open. Next item-level focus: audit the authorized Pattern originals
+collector against F030 and batch its remaining interaction gaps.
+
+Previous product batch: phase 8, tasks 8.1.2b/8.1.5b. F031's Extrude parity,
 mixed-selection and Cancel acceptance example is complete for the active-Body
 workflow. Extrude/Pad/Pocket reuse one profile gate; ambiguous picks stay in the
 collector and invalid picks receive inline feedback. Cancel restores original
@@ -16,8 +33,7 @@ test-only compound/quantity fixture corrections require no further native build.
 PartDesignGui SHA256 02d7224188574514a67f5a981d9a25cd5100f53f72c7df0256b248c76093e76c.
 The executable's older version stamp is not the rebuilt module identity. No
 installer/release. Broad occurrence/other-family and physical interaction gates
-remain open. Next item-level focus: F030 Extrude collector inspection/count/type
-feedback, with related tasks grouped before validation.
+remain open. Its F030 Extrude collector follow-up is completed above.
 
 Previous product batch: phase 5, tasks 5.1.12/5.2.4. F070 functional acceptance
 is complete for the documented bounded single-angle workflow. The Isocline task

@@ -2,15 +2,15 @@
 
 ## Current focus
 
-- Current product batch: phase 8 Extrude preselection parity and Cancel recovery
-  (8.1.2b, 8.1.5b). Both tasks were implemented before native build/validation.
-  F031's Extrude acceptance example is complete within the active-Body workflow;
-  broader command-family/occurrence behavior remains open. Final acceptance:
-  138 checks pass across the grouped run and corrected Extrude rerun. Native
-  PartDesignGui build passes; source/test/binary identities recorded below.
-  No installer or release. Prior phase 5 F070 functional acceptance remains
-  complete for its documented scope; physical interaction remains 5.2.3.
-  Next item-level focus: F030 Extrude collector inspection and count/type feedback.
+- Current product batch: phase 8 Extrude collector inspection and feedback
+  (8.1.3d/e), advancing F030. Both tasks preceded one native PartDesignGui build
+  and one grouped run: 142 checks pass, zero failures/errors/skips. Row/all-entry
+  highlighting, entry counts, accepted types and picking-state text are validated;
+  visual captures are readable. Broader F030 command-family/disambiguation and
+  physical interaction acceptance remains open. F031's prior active-Body Extrude
+  acceptance and phase 5 F070's bounded functional acceptance remain complete.
+  No installer or release. Next item-level focus: audit the authorized Pattern
+  originals collector against F030 and group its remaining interaction gaps.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1838,6 +1838,13 @@ implementation or mark its unfinished validation complete through this plan.
   role as text in Trim Body and Isocline. Preserve required input-group ordering;
   refresh feedback after picks, duplicates, clear, removal and reopen. Counts are
   collected entries, not expanded face totals. F030.
+- [ X ] 8.1.3d Add Extrude/Pad/Pocket profile row inspection and Highlight for
+  selected/all entries. Explicitly activate Profile without assigning inspection
+  picks to any collector; restore temporary visibility on exit. F030.
+  Row/all-entry, role isolation and Cancel/OK visibility checks pass; evidence below.
+- [ X ] 8.1.3e Show Extrude profile entry counts, accepted types and picking state.
+  Refresh on pick/remove/clear/reopen and role switches; a whole profile counts
+  as one entry. F030. Mutation, duplicate, clear and reopen checks pass; evidence below.
 - [   ] 8.1.4 Standardize signed offsets, adjacent direction buttons, one/two-sided and symmetric modes, units and expressions. Preserve parameters by meaning when switching operation or type.
   Cover distance, symmetric, two-sided, through-all, to-face and offset-from-face
   extents where the command supports them; keep extent semantics distinct from the
@@ -1915,6 +1922,26 @@ inputs; they do not introduce multi-target Boolean semantics. Broad occurrence,
 other-family and physical input/high-DPI acceptance remains open, as does F032's
 Apply/repeat workflow. Next bounded product slice: F030 Extrude collector inspection
 and count/type feedback.
+
+**Extrude collector batch (8.1.3d/e), 2026-09-30:** Both tasks were implemented
+before one successful PartDesignGui Release build and one grouped native run.
+**142 passes, zero failures/errors/skips**, macro PASS and process exit 0:
+Extrude task 28 (four new regressions), Pad task 14, Extrude model 8, Pad model 14,
+Pocket model 6, Revolve task 5, Pattern task 17, Trim task 24 and Isocline task 26.
+Profile row/all-entry inspection explicitly activates Profile, guards its own
+selection callbacks, preserves reference/geometry definitions and restores temporary
+visibility on Cancel/OK. Feedback counts collected entries, not expanded edges;
+duplicate picks, removal, clear, role switching and reopen are covered.
+Evidence: `D:\Temp\Office-PC\freecad-plus-extrude-collectors-20260930`, with
+`build.log`, `grouped/results.json`, `source-identities.json` and
+`validated-identities.json`. Source/staged test hashes match. PartDesignGui SHA256:
+`1c1bef4b22a721fdc1335da5233062e21262dd0750ad3e56bbec39621adef3ce`.
+The unchanged executable version stamp is not the rebuilt module identity.
+Empty/whole/individual-curve collector captures under `visual` were inspected;
+text and buttons are readable without clipping. Physical input/high-DPI, general
+occurrences and other command-family/disambiguation gates remain open. All 127
+item IDs remain unique and ordered. No document property/schema changes, installer
+or release. Next bounded focus: audit Pattern originals collection against F030.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4315,7 +4342,7 @@ reconciliation rules above to every entry.
 <a id="f030"></a>
 ### F030 — Selection collectors
 
-**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Other command families, selection filters and general disambiguation acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Extrude/Pad/Pocket profile row/all-entry inspection and count/type/picking feedback are validated under 8.1.3d/e (142-test grouped checkpoint), including role isolation and Cancel/OK visibility cleanup. Other command families, general occurrence/selection filters and disambiguation acceptance remain open.
 
 **Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
 

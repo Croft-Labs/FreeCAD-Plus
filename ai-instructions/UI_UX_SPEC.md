@@ -95,6 +95,12 @@ corridor/dismissal delay. Trials cannot remove constraints; commit revalidates.
   for explicit choice. No blocking selection-error dialog replaces the editor.
 - Cancel restores the original object/subelement selection captured before
   creation or reopening, alongside the previous profile, visibility and Body Tip.
+- Profile feedback shows the collected entry count, accepted types and whether
+  Profile picking is active. A whole profile counts as one entry, not its edges.
+  Selecting rows highlights their geometry; Highlight inspects selected rows or
+  all entries when none are selected. Inspection explicitly activates Profile,
+  leaves model references unchanged and restores temporary visibility on exit.
+  Empty collectors disable Highlight. The Highlight button has its own row.
 - Layout: Operation is the first field inside Extrude Parameters, then Profile,
   shared extrusion parameters, and preview controls in the task pane.
 - Data: show the source label and selected edge/face names, or a whole-profile
