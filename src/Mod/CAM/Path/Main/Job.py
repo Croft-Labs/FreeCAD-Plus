@@ -924,23 +924,29 @@ class ObjectJob:
             Notification.updateTC.emit(self.obj, tc)
 
     def allOperations(self):
+        """Return each nested operation once, in outer-before-base order.
+
+        Shared bases and malformed cycles must not duplicate updates or overflow
+        the call stack during model invalidation and job cleanup.
+        """
         ops = []
-
-        def collectBaseOps(op):
-            if hasattr(op, "TypeId"):
-                if op.TypeId == "Path::FeaturePython":
-                    ops.append(op)
-                    if hasattr(op, "Base"):
-                        collectBaseOps(op.Base)
-                if op.TypeId == "Path::FeatureCompoundPython":
-                    ops.append(op)
-                    for sub in op.Group:
-                        collectBaseOps(sub)
-
-        if getattr(self.obj, "Operations", None) and getattr(self.obj.Operations, "Group", None):
-            for op in self.obj.Operations.Group:
-                collectBaseOps(op)
-
+        seen = set()
+        container = getattr(self.obj, "Operations", None)
+        pending = list(reversed(getattr(container, "Group", [])))
+        while pending:
+            op = pending.pop()
+            kind = getattr(op, "TypeId", None)
+            if kind not in ("Path::FeaturePython", "Path::FeatureCompoundPython"):
+                continue
+            key = (op.Document.Name, op.Name) if isinstance(op, FreeCAD.DocumentObject) else id(op)
+            if key in seen:
+                continue
+            seen.add(key)
+            ops.append(op)
+            if kind == "Path::FeatureCompoundPython":
+                pending.extend(reversed(op.Group))
+            elif hasattr(op, "Base"):
+                pending.append(op.Base)
         return ops
 
     def setCenterOfRotation(self, center):

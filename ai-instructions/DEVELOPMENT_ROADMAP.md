@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2ak/al recognize dressups by current proxy identity with
+- Current batch: 16.2am/an make shared property inheritance and job operation
+  traversal iterative, handling cycles/deep chains and duplicate bases. Grouped
+  validation: 151 passes, zero failures/errors/skips; no native rebuild.
+- Previous batch: 16.2ak/al recognize dressups by current proxy identity with
   guarded legacy fallback and traverse base chains iteratively with cycle errors.
   Grouped validation: 84 passes, zero failures/errors/skips; no native rebuild.
 - Previous batch: 16.2ai/aj clear failed Plunge Milling output and reject
@@ -2384,6 +2387,28 @@ certified. Cycle/deep-chain tests use duck-typed fixtures; native custom-name,
 nesting, missing-link and save/reopen paths are tested separately. No schema change,
 native rebuild, GUI/machine acceptance or release update. Python synchronized into
 engine 2df76790b4; broader consumer gates remain open.
+
+- [ X ] 16.2am Replace recursive operation-property lookup with iterative traversal
+  and cycle rejection. Preserve explicit overrides (including False/None), missing-
+  property defaults and tool/coolant/active behavior; validate a 1500-link chain.
+- [ X ] 16.2an Make job allOperations traversal iterative and unique by native
+  document/object identity. Preserve outer-before-base/group order; handle shared
+  bases/cycles without duplicate invalidation. Validate native shared Array bases
+  through model removal/recovery and deep/cyclic duck-typed compound graphs.
+
+Shared traversal batch: `cam-traversal-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **151 PASS, zero
+failures/errors/skips**: 47 invalid-input/workflow checks (three new), seven nested
+postprocessing, four Array, 17 Dogbone, five holding-tag, seven ramp-generator,
+21 Path utility and 43 operation-utility checks. Macro PASS; process ended.
+Source/development-build SHA256: Base/Util.py
+`2EB08E210346860558224801B6654C64A65A2129E39AE9911AABEFE5C05F0F2E`;
+Main/Job.py `9FF91E759C2EC4FE1D031118523C19E1C9BC7AA4B5445D6064834E89B8B548B1`.
+Both changes preceded grouped validation. Python-only synchronization into engine
+2df76790b4; no native rebuild, schema migration, release or GUI/machine acceptance.
+Cycle tolerance in job invalidation/cleanup does not validate cyclic models for
+machining/export; property lookup explicitly raises when a cycle prevents resolution.
+Broader consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

@@ -135,6 +135,17 @@ suites because they share this helper. Recognition covers current Path.Dressup
 proxies and the retained legacy naming/shape contract; arbitrary third-party proxy
 namespaces are not automatically certified. No document schema migration is added.
 
+## Shared operation traversal
+
+`tests/TestCAMInvalidInputs.py` verifies property lookup through 1500 Base links,
+explicit false/None overrides, missing-property defaults and cycle rejection.
+Job traversal visits each operation once in outer-before-base order, including
+shared bases and compound groups. Native shared Array bases are checked through
+model removal/recovery; deep and cyclic graphs use duck-typed fixtures. Run with
+nested dressups, Array, Dogbone, holding tags, ramps and both utility suites. A
+job traversal tolerating a cycle for invalidation/cleanup does not make that model
+valid for generation or export.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,

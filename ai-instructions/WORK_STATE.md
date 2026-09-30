@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2ak/al complete. Shared dressup lookup recognizes current
+Latest roadmap batch: 16.2am/an complete. Shared property inheritance rejects
+cycles without recursion; job operation traversal is iterative, ordered and unique.
+Native shared-base invalidation/recovery and deep/cyclic fixtures pass. Grouped
+validation: 151 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-traversal-20260930-batch.
+Source/module hashes and cycle policy recorded in roadmap. Python-only
+synchronization; no native rebuild, schema migration, GUI/machine acceptance or
+release update. Test process ended; broader consumer gates remain open.
+
+Previous roadmap batch: 16.2ak/al complete. Shared dressup lookup recognizes current
 proxies independently of internal names, keeps guarded legacy fallback, stops at
 ordinary operations and handles deep/cyclic/disconnected chains. Native custom-name
 nested and restored fixtures pass. Grouped validation: 84 passes, zero failures/

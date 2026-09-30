@@ -129,11 +129,20 @@ def isSolid(obj):
 
 
 def opProperty(op, prop, default=None):
-    """opProperty(op, prop) ... return the value of property prop of the underlying operation (or None if prop does not exist)"""
-    if hasattr(op, prop):
-        return getattr(op, prop)
-    if hasattr(op, "Base"):
-        return opProperty(op.Base, prop, default)
+    """Read the first property in a Base chain, preserving explicit overrides.
+
+    A disconnected chain returns the default. Cycles without the requested
+    property are errors, not an invitation to recurse indefinitely.
+    """
+    seen = set()
+    while op is not None:
+        if hasattr(op, prop):
+            return getattr(op, prop)
+        key = (op.Document.Name, op.Name) if isinstance(op, FreeCAD.DocumentObject) else id(op)
+        if key in seen:
+            raise ValueError("Cyclic CAM operation property chain")
+        seen.add(key)
+        op = getattr(op, "Base", None)
     return default
 
 

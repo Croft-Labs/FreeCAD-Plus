@@ -828,3 +828,55 @@ class TestCAMInvalidInputs(PathTestWithAssets):
             Utils.baseOp(first)
         with self.assertRaisesRegex(ValueError, "Cyclic"):
             Utils.toolController(first)
+
+    def testOperationPropertyOverridesDefaultsAndDeepChain(self):
+        from types import SimpleNamespace
+        from Path.Base import Util
+        terminal = SimpleNamespace(ToolController="tool", CoolantMode="Flood", Active=True)
+        chain = terminal
+        for index in range(1500):
+            chain = SimpleNamespace(Base=chain)
+        self.assertEqual(Util.toolControllerForOp(chain), "tool")
+        self.assertEqual(Util.coolantModeForOp(chain), "Flood")
+        override = SimpleNamespace(Base=chain, Active=False, ToolController=None)
+        self.assertFalse(Util.activeForOp(override))
+        self.assertIsNone(Util.toolControllerForOp(override))
+        self.assertEqual(Util.coolantModeForOp(SimpleNamespace(Base=None)), "None")
+        self.assertTrue(Util.activeForOp(SimpleNamespace(Base=[])))
+        first = SimpleNamespace()
+        second = SimpleNamespace(Base=first)
+        first.Base = second
+        with self.assertRaisesRegex(ValueError, "Cyclic"):
+            Util.toolControllerForOp(first)
+
+    def testJobTraversalSharedNativeBasesKeepOrder(self):
+        from Path.Dressup import Array
+        first = Array.Create(self.op, "RepeatedFirst")
+        second = Array.Create(self.op, "RepeatedSecond")
+        self.job.Operations.Group = [first, second]
+        self.doc.recompute()
+        self.assertEqual(self.job.Proxy.allOperations(), [first, self.op, second])
+        previous = self.job.Model
+        self.job.Model = None
+        self.assertTrue(all(not op.Path.Commands for op in (first, self.op, second)))
+        self.job.Model = previous
+        self.doc.recompute()
+        self.assertTrue(all(op.Path.Commands for op in (first, self.op, second)))
+
+    def testJobTraversalDeepSharedAndCyclicGraph(self):
+        from types import SimpleNamespace
+        from Path.Main.Job import ObjectJob
+        terminal = SimpleNamespace(TypeId="Path::FeaturePython", Base=[])
+        chain = terminal
+        for index in range(1500):
+            chain = SimpleNamespace(TypeId="Path::FeaturePython", Base=chain)
+        group = SimpleNamespace(TypeId="Path::FeatureCompoundPython", Group=[])
+        group.Group = [chain, terminal, group]
+        job = SimpleNamespace(obj=SimpleNamespace(Operations=SimpleNamespace(Group=[group, chain])))
+        operations = ObjectJob.allOperations(job)
+        self.assertEqual(len(operations), 1502)
+        self.assertIs(operations[0], group)
+        self.assertIs(operations[1], chain)
+        self.assertIs(operations[-1], terminal)
+        self.assertEqual(len({id(op) for op in operations}), len(operations))
+        self.assertEqual(ObjectJob.allOperations(SimpleNamespace(obj=SimpleNamespace())), [])
