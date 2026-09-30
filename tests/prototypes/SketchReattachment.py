@@ -49,6 +49,11 @@ def _validate(sketch, support, face_name, policy):
         raise ValueError("Finish the current transaction before reattaching")
     if policy == "preserve-world" and ("Invalid" in sketch.State or "Touched" in sketch.State):
         raise ValueError("Preserve-world requires a valid recomputed sketch placement")
+    if policy == "preserve-world" and any(
+            path.lstrip(".") == "AttachmentOffset"
+            or path.lstrip(".").startswith("AttachmentOffset.")
+            for path, expression in sketch.ExpressionEngine):
+        raise ValueError("Preserve-world cannot replace an expression-driven attachment offset")
     if support.Document != sketch.Document or support == sketch:
         raise ValueError("Support must be another object in the same document")
     if sketch in support.OutListRecursive:

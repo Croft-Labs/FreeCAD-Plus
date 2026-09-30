@@ -237,6 +237,14 @@ and an already-populated redo stack. Application observers still see temporary
 document lifecycle. This is placement evaluation, not constraint solving or full
 downstream geometry validation; production preview must retain that distinction.
 
+Roadmap 11.7m/n adds reversed-direction parity and an expression policy boundary.
+Preserve-world rejects expression-driven AttachmentOffset before replacing values;
+native expression paths may start with a dot. Preserve-local retains the tested
+independent named-length expression through restore and parameter edits. Both
+policies preview/commit with MapReversed enabled; restore preserves orientation.
+Grouped evidence totals 40 passes. Expressions depending on the changed support
+and external sketch projections still need separate evaluation.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document

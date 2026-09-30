@@ -540,6 +540,58 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertEqual(self.profile.Label, "Redo must survive")
         self.assertEqual(self.profile.AttachmentSupport[0][0], old)
 
+    def testReversedAttachmentPreviewMatchesCommitAndRestore(self):
+        from SketchReattachment import preview_planar, reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        self.profile.MapReversed = True
+        self.doc.recompute()
+        original = self.profile.getGlobalPlacement()
+        for policy in ("preserve-local", "preserve-world"):
+            candidate, offset = preview_planar(self.profile, new, "Face1", policy)
+            self.assertTrue(self.profile.MapReversed)
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+            reattach_planar(self.profile, new, "Face1", policy)
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), candidate)
+            self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+            self.assertTrue(self.profile.MapReversed)
+            self.doc.undo()
+            self.doc.recompute()
+        reattach_planar(self.profile, new, "Face1", "preserve-world")
+        self.saveReopen("ReversedAttachmentProof")
+        self.assertTrue(self.profile.MapReversed)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+
+    def testExpressionOffsetIsPreservedOrExplicitlyRejected(self):
+        from SketchReattachment import preview_planar, reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        parameters = self.doc.addObject("App::FeaturePython", "AttachmentParameters")
+        parameters.addProperty("App::PropertyLength", "Distance")
+        parameters.Distance = 3
+        self.profile.setExpression("AttachmentOffset.Base.z", "AttachmentParameters.Distance")
+        self.doc.recompute()
+        expression = self.profile.ExpressionEngine
+        original = self.profile.getGlobalPlacement()
+        for operation in (preview_planar, reattach_planar):
+            with self.assertRaisesRegex(ValueError, "expression-driven", msg=repr(expression)):
+                operation(self.profile, new, "Face1", "preserve-world")
+            self.assertEqual(self.profile.ExpressionEngine, expression)
+            self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+            self.assertFalse(self.doc.HasPendingTransaction)
+        candidate, offset = preview_planar(self.profile, new, "Face1", "preserve-local")
+        reattach_planar(self.profile, new, "Face1", "preserve-local")
+        self.assertEqual(self.profile.ExpressionEngine, expression)
+        self.assertPlacementNear(self.profile.getGlobalPlacement(), candidate)
+        self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+        self.saveReopen("ExpressionAttachmentProof")
+        self.assertEqual(self.profile.ExpressionEngine, expression)
+        self.doc.AttachmentParameters.Distance = 7
+        self.doc.recompute()
+        self.assertAlmostEqual(self.profile.AttachmentOffset.Base.z, 7)
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertNotIn("Invalid", self.doc.LeftResult.State)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

@@ -11,7 +11,15 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 11.7k/l complete as test-only isolated placement preview.
+Latest roadmap batch: 11.7m/n complete as test-only reversal/expression checks.
+MapReversed preview/commit/restore passes. Preserve-world rejects expression-driven
+offsets before mutation; preserve-local retains the named length expression through
+restore and parameter edits. Grouped validation: 40 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\reattachment-expressions-20260930-verified.
+Macro PASS; process ended. No installed module, native rebuild or release update.
+Production UI, support-dependent expressions and external projections remain open.
+
+Previous roadmap batch: 11.7k/l complete as test-only isolated placement preview.
 Disposable-document attachment evaluation replaces live rollback. Both policies
 retain candidate/commit parity, leave original object/recompute notifications empty,
 clean up the temporary document and preserve an already-populated redo stack.

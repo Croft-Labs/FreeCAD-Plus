@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7k/l replace live rollback preview with disposable-document
+- Current batch: 11.7m/n validate reversed attachment preview/commit/restore and
+  protect expression-driven offsets from preserve-world replacement. Grouped
+  validation: 40 passes, zero failures/errors/skips; no native rebuild. Test-only
+  work; production UI and broader expression/reference policies remain pending.
+- Previous batch: 11.7k/l replace live rollback preview with disposable-document
   placement evaluation and verify live-document isolation and existing redo history.
   Grouped validation: 38 passes, zero failures/errors/skips; no native rebuild.
   Production graphical preview and full sketch/consumer evaluation remain pending.
@@ -1898,6 +1902,22 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   no original-object change/recompute notifications, cleanup and active-doc restore.
 - [ X ] 11.7l Verify both placement previews preserve an already-populated redo
   stack: undo a committed label edit, preview, then redo that same edit successfully.
+- [ X ] 11.7m Validate MapReversed attachment with both placement-policy previews
+  and commits, Undo and native restore, including downstream result validity.
+- [ X ] 11.7n Reject preserve-world preview/commit when AttachmentOffset is driven
+  by an expression. Verify no mutation and preserve-local retention of a named
+  length expression through restore and subsequent parameter edits.
+
+Expression/reversal evidence: `reattachment-expressions-20260930-verified/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **40 PASS, zero
+failures/errors/skips** (11 capability, 24 adapter, five lineage checks). Macro PASS;
+process ended. Both tasks preceded grouped testing using engine source 2df76790b4.
+Initial batch: 39 passes/one failure; a focused diagnostic exposed native expression
+path `.AttachmentOffset.Base.z`, requiring leading-dot handling in the guard.
+Prototype SHA256: `76981E9913335F1863490FF9BFDD89AD475721E220E1DEDC724620875F4323EB`.
+No installed module, native rebuild or release update. The preserved expression
+fixture references an independent named length; support-dependent expressions,
+external projections and production expression editing remain separate gates.
 
 Isolated placement evidence: `reattachment-isolation-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **38 PASS, zero

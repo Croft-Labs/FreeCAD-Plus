@@ -51,10 +51,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 ## Folder and module map
 
 Sketch reattachment foundation: [`SketchReattachment.py`](../tests/prototypes/SketchReattachment.py)
-and [`TestPartHistoryAdapters.py`](../tests/TestPartHistoryAdapters.py); roadmap 11.7a-l
+and [`TestPartHistoryAdapters.py`](../tests/TestPartHistoryAdapters.py); roadmap 11.7a-n
 covers test-only planar reattachment, local/world policies, missing-face repair,
 transaction ownership, support validity/cycle checks and disposable-document placement
-preview. Production editor and graphical preview pending.
+preview, reversed direction and expression-offset protection. Production editor and
+graphical preview pending.
 
 All code paths are relative to the project root.
 
