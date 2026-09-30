@@ -1255,6 +1255,11 @@ class ObjectOp:
         if job and "freezed" in job.getStatusString().casefold():
             return
 
+        # Invalidate the previous result before any input validation can return
+        # early. A missing model/tool must not leave old machining commands live.
+        if hasattr(obj, "Path"):
+            obj.Path = Path.Path()
+
         from Path.Main.HoldingTab import bind_operation
 
         if job:

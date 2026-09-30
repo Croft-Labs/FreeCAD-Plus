@@ -2,12 +2,12 @@
 
 ## Current focus
 
-- Current batch: 12.1a mixed definitions and 12.2a bounded Make Unique proof
-  complete. All 32 grouped checks pass in the existing fork; no installed source or
-  native build changed. Native copy remaps the internal sketch link; the test-only
-  wrapper assigns new semantic identities/provenance in one undoable transaction.
-  Next: multi-document/complex-definition identity, missing drawing references,
-  CAM paths/FEM consumers and production architecture decisions.
+- Current batch: 16.2b/16.2c fix CAM paths surviving execution with missing job
+  models or tool controllers. All 69 grouped CAM checks pass; production Python
+  Path/Op/Base.py synchronized to the existing fork, no native rebuild.
+  Automatic scheduling, aggregate/export invalidation and broader failed-source
+  consumers remain open; these checks explicitly execute the operation.
+- Prior mixed/unique batch: 12.1a/12.2a passed 32 grouped architecture checks.
 - Previous batch: 7.1.3g/h planar split/primary-merge lineage passed 29 checks.
 - Prior attachment/drawing batch: 7.1.3f and 16.2a passed 24 grouped checks.
   Next: missing/ambiguous drawing references, CAM path/FEM consumers, mixed-part
@@ -1783,6 +1783,26 @@ silently bind to a different entity.
   save/reopen preserve links and the correct numerical dimension. The fixture has
   one analytic projected circle; no general edge naming, removed-reference repair
   or topology-change safety is established. Batch evidence is in 7.1 above.
+- [ X ] 16.2b Clear an operation's previous path before a missing job model can
+  return from execution. Validate removal after successful SurfaceScan generation
+  and regenerated cutting commands after restoring the model.
+- [ X ] 16.2c Apply the same early invalidation to missing tool-controller failures;
+  restored controller regenerates the path. Preserve the existing frozen-job branch.
+
+CAM invalid-input batch: both regressions reproduced **43 stale machining commands**
+before the fix. Shared production `src/Mod/CAM/Path/Op/Base.py` now clears Path after
+its frozen-job guard and before input validation. **69 PASS**, no failures/errors/
+skips, in `D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-invalid-inputs-20260929-verified\results.json`:
+two new cases, 18 PlanarSurface, 22 mesh/tab, 18 avoidance and nine Deburr checks.
+Source/installed SHA256: `FE5A146430588CD2B3E5660B2CD9B16B67E6A57EEB12AFD3F5DA079B9BB3227D`;
+`module-manifest.json` records matching source/module/test hashes. Python-only install,
+no native build or GUI/machine acceptance. The earlier `red` and `final` directories
+ran the pre-fix module; `verified` is the completed corrected batch.
+This establishes clearing on execution and recovery, not automatic execution after
+all history edits, aggregate-job/export invalidation or native failed-producer safety.
+Task 16.2 and the broader CAM dependency gates remain open. See the
+[regression procedure](../tests/UpstreamIssues.md#cam-invalid-input-paths-roadmap-162b162c).
+
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
   auto constraints, projection/intersection, transforms, Links, multi-solids,

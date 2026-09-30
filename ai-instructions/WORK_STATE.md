@@ -1,6 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 12.1a/12.2a complete. Mixed native definitions and a bounded
+Latest roadmap batch: 16.2b/c complete. Production CAM Path/Op/Base.py clears
+old Path before validation can return for missing model or tool controller, after
+the existing frozen-job guard. Both defects retained 43 commands before correction;
+69 grouped checks pass in cam-invalid-inputs-20260929-verified. Installed Python
+module matches source SHA256 FE5A146430588CD2B3E5660B2CD9B16B67E6A57EEB12AFD3F5DA079B9BB3227D.
+No native build or test process remains. Automatic dependency scheduling, aggregate
+job/export invalidation and general failed-source behavior remain open. Continue
+related downstream consumer work; do not equate these execution tests with those gates.
+
+Earlier roadmap batch: 12.1a/12.2a complete. Mixed native definitions and a bounded
 Make Unique helper pass in a 32-check grouped run, mixed-unique-20260929-final under
 the existing external validation root. Native recursive copy remaps sketch links;
 new metadata identities/provenance, selected-link reassignment and placement are

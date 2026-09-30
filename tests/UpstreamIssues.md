@@ -228,3 +228,19 @@ new projection engine or resolve #26300. Successful hole-preserving projection,
 direct STL operations and holding tabs retain passing regressions. The default
 issue macro had 97 tests at U.22; U.23 expands it to 106. That complete default
 has not run together.
+
+
+## CAM invalid input paths (roadmap 16.2b/16.2c)
+
+Use the isolated existing-build macro procedure above with
+`tests/TestCAMInvalidInputs.py`. The test generates a real SurfaceScan toolpath,
+removes the job model or tool controller, explicitly executes the operation and
+requires an empty Path. Restoring the input must generate cutting commands again.
+This checks execution-time invalidation, not automatic dependency scheduling.
+
+The fix is shared Python `Path/Op/Base.py`; synchronize that source file to the
+matching validation build before running. Group it with TestPlanarSurfaceOp,
+TestMeshMachining, TestIssueSurfaceAvoidance and TestPathOpDeburr. No native compile
+is required. Preserve the frozen-job early return; do not represent this check as
+aggregate-job/export safety or proof that all upstream failures schedule execution.
+Results and matching installed-module hash belong to the roadmap's batch record.
