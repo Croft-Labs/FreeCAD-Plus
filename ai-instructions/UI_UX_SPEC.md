@@ -343,6 +343,8 @@ editing is not implemented. Display unit offers mm/cm/m/in/ft for lengths and de
 for angles; conversion changes the Current value display only. Expressions still
 require explicit units. Unit choice is dialog state, not a saved preference.
 
-Eleven native Qt tests exercise the prototype programmatically. Physical keyboard/
+Thirteen native Qt tests exercise the prototype programmatically, including enclosure
+geometry edits, exact inch display, unit/cycle/geometry failure recovery and editing
+a saved/reopened model. Physical keyboard/
 accessibility, high-DPI/localized layout, general external reference synchronization,
 parameter-object creation and production deletion/where-used/publication remain pending.

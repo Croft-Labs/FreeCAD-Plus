@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 10.8u/v native enclosure parameter benchmark.
+Latest roadmap batch: 10.8w/x enclosure editor acceptance checks.
+Actual prototype widgets drive width/clearance/spacing geometry, rename and inch
+display. Unit/cycle/zero-width errors preserve geometry and remain correctable;
+save/reopen allows editing through a fresh dialog. Application code unchanged.
+Grouped validation: 73 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\parameter-enclosure-editor-20260930-batch.
+Macro PASS; process ended. Engine 2df76790b4; no native rebuild or release update.
+Automated T13 prototype slice is connected end to end; physical input/accessibility,
+production integration and broader parameter requirements remain pending.
+
+Previous roadmap batch: 10.8u/v native enclosure parameter benchmark.
 Width/lid clearance/hole spacing drive native geometry; rename, unit/cycle rejection
 and persistence pass. Shared occurrence placements and separate-definition isolation
 survive parameter edits and Undo/Redo. This is bounded T13 evidence, not production UI.

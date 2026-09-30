@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 10.8u/v add a native enclosure/lid/hole parameter benchmark and
+- Current batch: 10.8w/x validate the enclosure benchmark through prototype
+  editor widgets, including rename/display units, error recovery and save/reopen.
+  Grouped validation: 73 passes, zero failures/errors/skips. No native rebuild
+  or release update; physical acceptance and production integration remain open.
+- Previous batch: 10.8u/v add a native enclosure/lid/hole parameter benchmark and
   shared-definition occurrence checks. Grouped validation: 71 passes, zero failures/
   errors/skips after fixture correction. Bounded T13 evidence; no native rebuild
   or release update, production integration remains pending.
@@ -2059,6 +2063,23 @@ Phase 7 architecture gates and the full guided workflow remain open.
 - [ X ] 10.8v Verify two linked occurrences retain independent placements while
   sharing the enclosure definition's parameters; a separately parameterized enclosure
   stays unchanged. Verify shared-definition edits through Undo/Redo.
+
+- [ X ] 10.8w Exercise enclosure width/clearance/hole spacing through actual prototype
+  widgets, checking geometry after Apply, rename selection/propagation, exact inch
+  display conversion without mutation and Close discarding unapplied text.
+- [ X ] 10.8x Exercise incompatible-unit, cyclic and zero-width geometry errors in
+  the enclosure dialog; verify restored geometry, retained attempted input and retry.
+  Save/reopen and edit through a fresh dialog while preserving native relationships.
+
+Enclosure editor evidence: `parameter-enclosure-editor-20260930-batch/results.json`
+under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **73 PASS, zero failures/
+errors/skips** (13 native Qt, 21 capability, 34 adapter, five lineage checks).
+Both validation tasks preceded one grouped run on engine 2df76790b4; macro PASS and
+process ended. TestParameterEditor SHA256:
+`37439E05D2F4080DABED5DA4FDBCC5B3266E3B9CC38BCA9E5669D0D08E75BAC7`.
+The automated T13 slice now connects the dialog to the native enclosure geometry;
+physical input/accessibility and production installation still remain pending.
+No application code or installer changed, no native rebuild or release update.
 
 Enclosure benchmark evidence: `parameter-enclosure-20260930-verified/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **71 PASS, zero failures/

@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Native Qt checks for the uninstalled parameter editor prototype."""
 import unittest
+import math
+import os
+from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
 from prototypes.ParameterEditor import ParameterEditor
@@ -250,3 +253,77 @@ class TestParameterEditor(unittest.TestCase):
         self.assertEqual(self.editor.description.text(), "Lid clearance")
         self.assertTrue(self.editor.description.isReadOnly())
         self.assertEqual(self.editor.newDescription.text(), "")
+
+    def enclosureEditor(self):
+        from prototypes.ParameterEnclosure import make_enclosure
+        self.editor.close()
+        self.editor.deleteLater()
+        Gui.updateGui()
+        part = self.doc.addObject("App::Part", "EnclosureDefinition")
+        self.parameters, result, lid, holes = make_enclosure(self.doc, part)
+        self.editor = ParameterEditor(self.parameters)
+        self.editor.show()
+        Gui.updateGui()
+        return result, lid, holes
+
+    def testEnclosureEditorBenchmarkEditsRenameAndDisplayUnits(self):
+        result, lid, holes = self.enclosureEditor()
+        for name, expression in (("Width", "76.2 mm"), ("LidClearance", "1 mm"),
+                                 ("HoleSpacing", "40 mm")):
+            self.editor.parameter.setCurrentIndex(self.editor.parameter.findText(name))
+            self.editor.expression.setText(expression)
+            self.editor.apply.click()
+            self.assertEqual(self.editor.error.text(), "")
+        self.assertAlmostEqual(result.Shape.Volume, 76.2 * 30 * 20 - 72.2 * 26 * 18 - 16 * math.pi, places=5)
+        self.assertAlmostEqual(lid.Shape.BoundBox.XLength, 78.2)
+        self.assertAlmostEqual(holes[1].Placement.Base.x - holes[0].Placement.Base.x, 40)
+        self.editor.parameter.setCurrentIndex(self.editor.parameter.findText("Width"))
+        self.editor.name.setText("EnclosureWidth")
+        self.editor.rename.click()
+        self.assertEqual(self.editor.error.text(), "")
+        self.assertEqual(self.editor.parameter.currentText(), "EnclosureWidth")
+        before = self.parameters.ExpressionEngine
+        self.editor.displayUnit.setCurrentText("in")
+        self.assertAlmostEqual(float(self.editor.value.text().split()[0]), 3)
+        self.assertEqual(self.parameters.ExpressionEngine, before)
+        self.assertAlmostEqual(result.Shape.BoundBox.XLength, 76.2)
+        self.editor.expression.setText("90 mm")
+        self.editor.closeButton.click()
+        self.assertAlmostEqual(result.Shape.BoundBox.XLength, 76.2)
+
+    def testEnclosureEditorRejectsFailuresThenReopensSavedModel(self):
+        result, lid, holes = self.enclosureEditor()
+        self.editor.parameter.setCurrentIndex(self.editor.parameter.findText("Width"))
+        volume = result.Shape.Volume
+        for expression in ("30 deg", lid.Name + ".Length", "0 mm"):
+            self.editor.expression.setText(expression)
+            self.editor.apply.click()
+            self.assertTrue(self.editor.error.text())
+            self.assertTrue(self.editor.isVisible())
+            self.assertEqual(self.editor.expression.text(), expression)
+            self.assertAlmostEqual(result.Shape.Volume, volume)
+            self.assertNotIn("Invalid", result.State)
+            self.assertFalse(self.doc.HasPendingTransaction)
+        self.editor.expression.setText("80 mm")
+        self.editor.apply.click()
+        self.assertEqual(self.editor.error.text(), "")
+        names = [obj.Name for obj in (self.parameters, result, lid)]
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "EnclosureEditorBenchmark.FCStd"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.assertTrue(self.editor._closed)
+        self.editor.deleteLater()
+        Gui.updateGui()
+        self.doc = App.openDocument(str(path))
+        self.doc.recompute()
+        self.parameters, result, lid = [self.doc.getObject(name) for name in names]
+        self.editor = ParameterEditor(self.parameters)
+        self.editor.show()
+        self.editor.parameter.setCurrentIndex(self.editor.parameter.findText("Width"))
+        self.assertIn("80 mm", self.editor.expression.text())
+        self.editor.expression.setText("85 mm")
+        self.editor.apply.click()
+        self.assertEqual(self.editor.error.text(), "")
+        self.assertAlmostEqual(result.Shape.BoundBox.XLength, 85)
+        self.assertAlmostEqual(lid.Shape.BoundBox.XLength, 86)
+        self.assertTrue(result.Shape.isValid())
