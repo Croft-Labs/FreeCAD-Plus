@@ -252,3 +252,10 @@ Dragknife and Ramp Entry also run the shared dirty/failed-base regression: expor
 must reject stale dependencies, explicit generation must clear output and raise,
 and repaired/recomputed inputs must regenerate usable paths. The existing missing
 input and injected generation-error checks remain part of the grouped suite.
+
+
+Plunge Milling and the original Boundary dressup exercise the same dirty/failed
+base rejection and recovery checks. Boundary additionally attaches a failing
+producer to its stock, retains cached stock geometry, and verifies that explicit
+generation rejects it and clears output; repairing the producer restores paths.
+Export rejection remains separate from native skipped-recompute cache behavior.

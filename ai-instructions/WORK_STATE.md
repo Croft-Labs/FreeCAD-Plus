@@ -11,7 +11,15 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2bg/bh Dragknife/Ramp Entry input readiness.
+Latest roadmap batch: 16.2bi/bj Plunge Milling/Boundary input readiness.
+Grouped validation: 77 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-plunge-boundary-readiness-20260930-batch.
+Macro PASS; process ended. Source/staged PlungeMilling.py and Boundary.py hashes match.
+Engine 2df76790b4; no native rebuild or release. Explicit generation rejects stale
+base/stock inputs and clears output; repaired inputs recover. Native skipped
+execution may retain export-blocked caches. Physical GUI/machine acceptance pending.
+
+Previous roadmap batch: 16.2bg/bh Dragknife/Ramp Entry input readiness.
 Grouped validation: 74 passes, zero failures/errors/skips in
 D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-entry-readiness-20260930-batch.
 Macro PASS; process ended. Source/staged Dragknife.py and RampEntry.py hashes match.

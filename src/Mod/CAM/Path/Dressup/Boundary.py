@@ -188,6 +188,9 @@ class DressupPathBoundary(object):
         obj.Path = Path.Path()
         if not hasattr(obj, "Stock") or obj.Stock is None:
             raise ValueError("Boundary stock is missing; select a boundary before generating.")
+        PathDressup.requireCurrent(obj.Stock)
+        if obj.Base:
+            PathDressup.requireCurrent(obj.Base)
         if not hasattr(obj.Stock, "Shape") or obj.Stock.Shape is None:
             raise ValueError("Boundary stock has no Shape; select a geometric boundary.")
         if obj.Stock.Shape.isNull():

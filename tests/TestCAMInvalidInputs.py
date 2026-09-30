@@ -1291,3 +1291,25 @@ class TestCAMInvalidInputs(PathTestWithAssets):
 
     def testRampEntryRejectsDirtyAndFailedBaseAndRecovers(self):
         self.checkDressupRejectsStaleBase(self.makeEntryDressup("RampEntry"))
+
+    def testPlungeRejectsDirtyAndFailedBaseAndRecovers(self):
+        self.checkDressupRejectsStaleBase(self.makePlunge())
+
+    def testBoundaryRejectsDirtyAndFailedBaseAndRecovers(self):
+        self.checkDressupRejectsStaleBase(self.makeBoundary())
+
+    def testBoundaryRejectsCachedStockAfterProducerFailure(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeBoundary()
+        producer = self.attachFailingDressupInput(dressup.Stock)
+        producer.Fail = True
+        self.doc.recompute()
+        self.assertFalse(dressup.Stock.Shape.isNull())
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        with self.assertRaisesRegex(ValueError, "input is not current"):
+            dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        producer.Fail = False
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)

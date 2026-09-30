@@ -150,6 +150,8 @@ class ObjectDressup:
             )
             return
 
+        PathDressup.requireCurrent(obj.Base)
+
         if not obj.Base.Path.Commands:
             obj.Path = Path.Path()
             Path.Log.warning(
