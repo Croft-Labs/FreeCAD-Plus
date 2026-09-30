@@ -131,10 +131,11 @@ found/corrected, native persistence evidence and remaining decision gates.
 
 Remaining before an architecture choice: extend the bounded adapter comparison;
 prove semantic split/merge identity, mixed definition/occurrence content,
-actual transformed attachments and remaining drawing/CAM/FEM/Draft consumers.
+general attachment/topology changes and remaining drawing/CAM/FEM/Draft consumers.
 One assembly-local cut, transformed input placements and empty Draft/CAM job-model
-refresh are now proven; they do not establish general occurrence editing or path
-invalidation. The clone refresh fix is production Python; adapters remain test-only.
+refresh are now proven. A later batch also proves one planar attached profile and
+one TechDraw projected radius through edits, Undo/Redo and restore; these do not
+establish general reference repair, occurrence editing or path invalidation. The clone refresh fix is production Python; adapters remain test-only.
 Resolve selection/default policies separately. Record the architecture decision
 and `.cadprt` migration boundary before production implementation (7.1.5/7.1.6).
 The native probe's `.FCStd` output is test evidence, not the new file format.

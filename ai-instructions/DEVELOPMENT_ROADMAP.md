@@ -2,11 +2,14 @@
 
 ## Current focus
 
-- Current batch: 10.1 contract reconciliation and 10.3a/10.3b bounded creation
-  proposal/saved-intent proofs complete. All 22 grouped native checks pass; no
-  application module or native build changed. The prototype is not a new GUI.
-  Next: Phase 7 lineage/consumer gates and production target discovery, access scope
-  and real Extrude/Revolve preview lifecycle before 10.3 can close.
+- Current batch: 7.1.3f attached-profile and 16.2a TechDraw dimension probes
+  complete. All 24 grouped history/intent/consumer checks pass in the existing fork;
+  no installed source or native build changed. These are bounded compatibility
+  proofs, not a production history UI or general topology-reference guarantee.
+  Next: split/merge lineage, missing/ambiguous drawing references, CAM path/FEM
+  consumers and production target discovery before the parent gates can close.
+- Previous batch: 10.1 and 10.3a/10.3b reconciled contracts and proved transient
+  proposals versus committed operation intent with 22 grouped passing checks.
 - Version 2 objectives remain in the [coverage register](#version-2-objective-coverage);
   the expanded portfolio is pending except for specifically evidenced subtasks.
 - Previous batch: Phase 7 placement/occurrence/consumer comparison, 2026-09-29.
@@ -1186,6 +1189,10 @@ safe. Existing Phase 2/3 implementation and tests are inputs, not work to recrea
   Draft clones retaining old geometry when all source shapes become empty or
   the source list is cleared; verify restored source geometry and clone placement.
   This does not establish CAM toolpath invalidation or general consumer safety.
+- [ X ] 7.1.3f Prove an independent sketch attached to a rotated planar support,
+  with attachment offset, feeds explicit history results. Support moves propagate;
+  Undo/Redo and save/reopen retain attachment links, geometry and result identity.
+  This is one FlatFace attachment case, not arbitrary topology repair.
 - [ X ] 7.1.4 Define stable feature and body identities, explicit input/output links, and merge/split/disappear/reappear lineage. [Identity contract](architecture/PART_HISTORY_CONTRACT.md#identity-and-dependencies-714) separates modeling/display order from the dependency graph; storage and runtime implementation remain pending.
 - [   ] 7.1.5 Document the chosen architecture, migration boundary and a small reference model; update product/UI specifications before production implementation.
 
@@ -1200,6 +1207,20 @@ results from both, without silently duplicating sketches or losing references.
   Retain native Body adapters and an explicit-result layer as candidates; reuse
   native geometry, App::Link, links and transactions. Record unresolved production
   selection/default, schema and consumer gates. This is not the final architecture.
+
+Attachment/drawing batch evidence: **24 PASS**, zero failures/errors/skips, in
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\attachment-drawing-20260929-final\results.json`.
+Includes ten adapter probes, four native capabilities, three clone invalidation and
+seven operation-intent checks. New probes cover a moved rotated support plane with
+2 mm attachment offset, and an analytic TechDraw projected radius changing 2 to 3 mm
+through source edit, Undo/Redo and restore. Initial drawing fixture used Edge1;
+TechDraw's projected circle uses zero-based Edge0 (confirmed in native source and
+existing upstream tests). Correcting the fixture required no application fix.
+`prototype-manifest.json` records source hashes. Saved AttachedProfileProof.FCStd
+and DrawingResultProof.FCStd require the test proxy module to recompute; no native
+build, installed source change or GUI mouse/keyboard acceptance is claimed.
+Missing/ambiguous drawing references, CAM paths, FEM, general attachment/topology
+and lineage gates remain open. See 16.2a and ADR 001 for the bounded consumer proof.
 
 Placement/consumer batch evidence (2026-09-29): **88 PASS**, zero failures/errors/
 skips, in `D:\Temp\Office-PC\freecad-plus-validation-20260928\part-consumers-20260929-final\results.json`.
@@ -1710,6 +1731,11 @@ silently bind to a different entity.
   occurrence identity, source deletion/suppression/topology changes, Undo/Redo and
   reopen; valid attachment or explicit repair/stale state is required. Do not wait
   for new CAM/FEM products to run these existing-consumer probes.
+- [ X ] 16.2a Validate a native TechDraw view and projected radius dimension
+  referencing an explicit history result: source radius edits, Undo/Redo and
+  save/reopen preserve links and the correct numerical dimension. The fixture has
+  one analytic projected circle; no general edge naming, removed-reference repair
+  or topology-change safety is established. Batch evidence is in 7.1 above.
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover
   auto constraints, projection/intersection, transforms, Links, multi-solids,

@@ -200,3 +200,93 @@ class TestPartHistoryAdapters(unittest.TestCase):
         feature.RightEnabled = False
         self.doc.recompute()
         self.assertTrue(clone.Shape.isNull(), "Draft consumer retained unavailable result geometry")
+
+    def testAttachedProfileFollowsPlaneAndUndo(self):
+        plane = self.doc.addObject("Part::Plane", "SupportPlane")
+        self.part.addObject(plane)
+        plane.Length, plane.Width = 20, 20
+        plane.Placement = App.Placement(App.Vector(0, 0, 5), App.Rotation(App.Vector(0, 1, 0), 30))
+        self.profile.AttachmentSupport = [(plane, "Face1")]
+        self.profile.MapMode = "FlatFace"
+        self.profile.AttachmentOffset.Base = App.Vector(0, 0, 2)
+        feature, results, consumer = adapters.part_results(self.part, self.profile)
+        self.doc.recompute()
+        original = linked_shape((results[0], [])).CenterOfMass
+        original_id = results[0].BodyIdentity
+        self.assertNotIn("Invalid", self.profile.State)
+        self.assertAlmostEqual(results[0].Shape.Volume, math.pi * 4 * 3, places=6)
+        self.doc.openTransaction("Move attachment support")
+        plane.Placement.Base.z += 10
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        delta = linked_shape((results[0], [])).CenterOfMass - original
+        self.assertAlmostEqual((delta - App.Vector(0, 0, 10)).Length, 0, places=6)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual((linked_shape((results[0], [])).CenterOfMass - original).Length, 0, places=6)
+        self.doc.redo()
+        self.doc.recompute()
+        self.saveReopen("AttachedProfileProof")
+        self.assertEqual(self.doc.LeftResult.BodyIdentity, original_id)
+        self.assertEqual(self.profile.AttachmentSupport[0][0], self.doc.SupportPlane)
+        self.assertEqual(self.profile.MapMode, "FlatFace")
+        self.assertAlmostEqual((linked_shape((self.doc.LeftResult, [])).CenterOfMass
+                                - original - App.Vector(0, 0, 10)).Length, 0, places=6)
+
+    def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
+        from PySide import QtCore
+        import time
+
+        def wait_for(predicate):
+            deadline = time.monotonic() + 8
+            while time.monotonic() < deadline:
+                QtCore.QCoreApplication.processEvents()
+                if predicate():
+                    return
+                loop = QtCore.QEventLoop()
+                QtCore.QTimer.singleShot(25, loop.quit)
+                loop.exec_()
+            self.fail("TechDraw did not produce the expected geometry/dimension in 8 seconds")
+
+        feature, results, consumer = adapters.part_results(self.part, self.profile)
+        self.doc.recompute()
+        page = self.doc.addObject("TechDraw::DrawPage", "Page")
+        template = self.doc.addObject("TechDraw::DrawSVGTemplate", "Template")
+        template.Template = App.getResourceDir() + "Mod/TechDraw/Templates/ISO/A3_Landscape_blank.svg"
+        page.Template = template
+        view = self.doc.addObject("TechDraw::DrawViewPart", "ResultView")
+        view.Source = [results[0]]
+        view.Direction = App.Vector(0, 0, 1)
+        page.addView(view)
+        self.doc.recompute()
+        wait_for(lambda: len(view.getVisibleEdges()) == 1)
+        edge = view.getVisibleEdges()[0]
+        self.assertIsInstance(edge.Curve, Part.Circle)
+        self.assertAlmostEqual(edge.Curve.Radius, 2, places=6)
+        dim = self.doc.addObject("TechDraw::DrawViewDimension", "RadiusDimension")
+        dim.Type = "Radius"
+        dim.MeasureType = "Projected"
+        # This fixture has exactly one analytic circular projected edge; this is
+        # not a general topology reference or edge-index identity assumption.
+        dim.References2D = [(view, "Edge0")]
+        page.addView(dim)
+        self.doc.recompute()
+        wait_for(lambda: abs(dim.getRawValue() - 2) < 1e-6)
+        self.doc.openTransaction("Edit source radius")
+        self.profile.setDatum(0, App.Units.Quantity("3 mm"))
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        wait_for(lambda: abs(dim.getRawValue() - 3) < 1e-6)
+        self.assertAlmostEqual(view.getVisibleEdges()[0].Curve.Radius, 3, places=6)
+        self.doc.undo()
+        self.doc.recompute()
+        wait_for(lambda: abs(dim.getRawValue() - 2) < 1e-6)
+        self.doc.redo()
+        self.doc.recompute()
+        wait_for(lambda: abs(dim.getRawValue() - 3) < 1e-6)
+        self.saveReopen("DrawingResultProof")
+        dim = self.doc.RadiusDimension
+        wait_for(lambda: abs(dim.getRawValue() - 3) < 1e-6)
+        self.assertEqual(self.doc.ResultView.Source, [self.doc.LeftResult])
+        self.assertEqual(dim.References2D[0][0], self.doc.ResultView)
+        self.assertNotIn("Invalid", dim.State)

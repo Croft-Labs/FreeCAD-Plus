@@ -69,6 +69,21 @@ all three are corrected. Only the Python Draft clone production module was
 synchronized to the existing build. No native build or production history adapter
 was installed. The earlier eight-check batch remains historical evidence.
 
+Follow-up attachment/drawing batch (7.1.3f/16.2a): an independent sketch with
+FlatFace support on a rotated Part plane and a 2 mm attachment offset propagates
+support translations through results, Undo/Redo and restore without changing its
+result UUID. A TechDraw view of one result supplies a projected radius dimension;
+sketch radius 2 to 3 mm, Undo/Redo and save/reopen preserve both numeric values and
+native links. The view is asserted to have one analytic circular visible edge.
+TechDraw uses Edge0 for this projected edge; the initial Edge1 fixture failed and
+was corrected using native source/upstream tests, not by changing application code.
+
+All 24 grouped checks pass in `attachment-drawing-20260929-final/results.json`;
+manifest and disposable FCStd examples accompany it. No native build or installed
+source update. This closes two bounded proofs, not full attachment support or
+TechDraw topology/reference repair. Shape/placement/identity checks and drawing
+numeric values provide evidence beyond a successful recompute status.
+
 - **Definition/occurrence:** separate shared definition edits from occurrence/local
   edits. App::Link is the reuse candidate; one assembly-local cut is now proven,
   while mixed geometry/children and general occurrence editing remain open.
@@ -93,9 +108,9 @@ Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
 
 - Compare true merge/split lineage, ambiguous role changes and downstream reference
   repair, including invalid feature input and cycles.
-- Exercise actual part/sketch attachments, sheets, mixed definition/occurrence
-  content and independent copies beyond the bounded placement/local-cut proof.
-- Check TechDraw geometry/dimension references, CAM path invalidation, FEM
+- Exercise changing/removed attachment topology, sheets, mixed definition/occurrence
+  content and independent copies beyond the single planar attachment/local-cut proofs.
+- Check missing/ambiguous TechDraw references after topology changes, CAM path invalidation, FEM
   supports/loads and broader Draft references through edit, undo and restore.
   Native CAM job-model refresh and empty Draft clone invalidation are established;
   FEM is disabled in the current build and awaits a suitable grouped build.

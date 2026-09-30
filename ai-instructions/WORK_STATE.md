@@ -1,6 +1,16 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest roadmap batch: 10.1 and 10.3a/b complete. Product/UI/guideline contracts
+Latest roadmap batch: 7.1.3f and 16.2a complete; 24 grouped checks pass in
+attachment-drawing-20260929-final under the existing external validation root.
+Independent FlatFace attachment on a rotated plane propagates support movement;
+TechDraw projected radius follows source edits, Undo/Redo and save/reopen.
+Only tests and documentation changed; no installed source or native rebuild.
+The initial drawing fixture needed TechDraw Edge0, not Edge1. No test process
+remains. Next: semantic split/merge lineage, missing/ambiguous drawing references,
+CAM generated-path and FEM consumers. Keep parent architecture/consumer gates open.
+Evidence, fixture limits and module hashes are linked from the roadmap and ADR 001.
+
+Earlier roadmap batch: 10.1 and 10.3a/b complete. Product/UI/guideline contracts
 now match version 2; ADR 002 defines transient suggestions versus saved intent.
 Test-only OperationIntent.py supports bounded single-part solid proposals and
 committed operations with explicit native links. All 22 grouped checks pass in
