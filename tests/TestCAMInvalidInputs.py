@@ -718,3 +718,46 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         dressup.touch()
         self.doc.recompute()
         self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def makePlunge(self):
+        from Path.Dressup.Gui import PlungeMilling
+        self.op.ToolController.VertFeed = 50
+        dressup = self.doc.addObject("Path::FeaturePython", "DressupPlungeMilling")
+        PlungeMilling.ObjectDressup(dressup, self.op)
+        self.job.Proxy.addOperation(dressup, self.op, True)
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(any(c.Name == "G1" for c in dressup.Path.Commands))
+        return dressup
+
+    def testPlungeGenerationFailureClearsAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup.Gui import PlungeMilling
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makePlunge()
+        with patch.object(PlungeMilling.Path.Geom, "edgeForCmd",
+                          side_effect=RuntimeError("Deliberate plunge failure")):
+            dressup.touch()
+            self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertIn("Invalid", dressup.State)
+        with self.assertRaises(CAMValueError):
+            _wrap_op(dressup)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testPlungeInvalidStepoverBlocksExportAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makePlunge()
+        dressup.setExpression("StepOver", None)
+        for value in (0, -1):
+            dressup.StepOver = value
+            self.doc.recompute()
+            self.assertFalse(dressup.Path.Commands)
+            self.assertIn("Invalid", dressup.State)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+            dressup.StepOver = 1
+            self.doc.recompute()
+            self.assertTrue(_wrap_op(dressup).Path.Commands)

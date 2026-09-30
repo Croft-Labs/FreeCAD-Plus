@@ -11,7 +11,17 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2ag/ah complete. Dragknife and Ramp Entry clear output
+Latest roadmap batch: 16.2ai/aj complete. Plunge Milling clears cached output
+before generation and marks invalid stepover as a native error. Final grouped run:
+54 passes, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-plunge-20260930-verified.
+Initial fixture name correction and module hash recorded in roadmap. Next bounded
+candidate: 16.2ak, audit shared dressup base lookup's internal-name dependence with
+legacy/nested/ordinary-operation tests before changing recognition. Python-only
+synchronization; no native rebuild, GUI/machine acceptance or release update.
+Test process ended; broader consumer gates remain open.
+
+Previous roadmap batch: 16.2ag/ah complete. Dragknife and Ramp Entry clear output
 before input validation/generation. Missing/empty Dragknife input and native
 failure/export rejection/recovery pass. Final grouped validation: 52 passes,
 zero failures/errors/skips in

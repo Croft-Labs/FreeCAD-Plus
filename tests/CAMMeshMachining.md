@@ -114,6 +114,15 @@ exercise failure handling and recovery, not general dragknife corner geometry or
 physical cutter clearance. Native recompute may still skip a downstream consumer
 when its producer fails; the shared export guard remains necessary.
 
+## Plunge Milling failure checks
+
+`tests/TestCAMInvalidInputs.py` validates Plunge Milling with a positive-feed native
+CAM fixture. Injected edge-conversion failure must clear old output and block export;
+zero/negative stepover must produce a native error rather than a valid empty result.
+Restoring generation or a 1 mm stepover must recover exported commands. These checks
+cover bounded failure handling; they do not certify drilling cycles, holder clearance
+or physical plunge-milling suitability.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,

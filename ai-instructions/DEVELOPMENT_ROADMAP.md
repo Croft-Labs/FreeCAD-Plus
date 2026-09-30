@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2ag/ah clear Dragknife and Ramp Entry output before
+- Current batch: 16.2ai/aj clear failed Plunge Milling output and reject
+  invalid stepover with native error state. Grouped validation: 54 passes, zero
+  failures/errors/skips; Python-only synchronization, no native rebuild.
+- Previous batch: 16.2ag/ah clear Dragknife and Ramp Entry output before
   validation/generation. Grouped validation: 52 passes, zero failures/errors/skips;
   Python-only synchronization, no native rebuild.
 - Previous batch: 16.2ad/ae/af reject non-finite probe coordinates and invalid
@@ -2337,6 +2340,30 @@ Both implementations preceded grouped runtime validation. Python-only updates to
 engine 2df76790b4; no native rebuild, release update or GUI/machine acceptance.
 General dragknife geometry and skipped-consumer eager invalidation are not closed
 by these bounded failure/recovery checks; broader consumer gates remain open.
+
+- [ X ] 16.2ai Clear Plunge Milling output before generation. Verify injected
+  edge-conversion failure removes cached commands, blocks export and recovers.
+- [ X ] 16.2aj Reject non-finite/negative/approximately-zero stepover with native
+  error state instead of warning and returning success. Verify zero/negative
+  rejection/export blocking and recovery after restoring 1 mm stepover.
+- [   ] 16.2ak Audit the shared dressup base-operation lookup, which currently
+  depends on "Dressup" in the internal object name. Define structural recognition
+  and cycle/missing-link behavior before changing it; test real nested/legacy
+  dressups and ordinary operations so profile Base links are never misclassified.
+
+Plunge Milling batch: `cam-plunge-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **54 PASS, zero
+failures/errors/skips**: 40 invalid-input/workflow checks (two new), seven nested
+postprocessing and seven ramp-generator checks. Macro PASS; process ended.
+Initial `cam-plunge-20260930-batch` had 52 passes/two fixture failures: the inherited
+base lookup requires "Dressup" in the internal name. Matching the application
+creation convention fixed the fixture; structural lookup remains task 16.2ak.
+Source/development-build PlungeMilling.py SHA256:
+`109B684C9247EC18DFC62E1234CB81C307E428AA5EA5B9F194FE6954B2A19AD2`.
+Both implementations preceded grouped validation. Python-only synchronization into
+engine 2df76790b4; no native rebuild, release update or GUI/machine acceptance.
+Drilling-cycle semantics and general physical milling suitability are not certified
+by these bounded checks; broader consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

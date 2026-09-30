@@ -20,6 +20,7 @@
 
 import Constants
 import FreeCAD
+import math
 import FreeCADGui
 import Part
 import Path
@@ -132,6 +133,8 @@ class ObjectDressup:
         obj.setEditorMode("DwellTime", dwellMode)
 
     def execute(self, obj):
+        # Failed regeneration must not retain the previous machining result.
+        obj.Path = Path.Path()
         if not obj.Base:
             obj.Path = Path.Path()
             Path.Log.warning(translate("CAM_DressupPlungeMilling", "No base operation"))
@@ -155,10 +158,14 @@ class ObjectDressup:
             )
             return
 
-        if obj.StepOver.Value < 0 or Path.Geom.isRoughly(obj.StepOver.Value, 0):
-            obj.Path = Path.Path()
-            Path.Log.warning(translate("CAM_DressupPlungeMilling", "Negative or zero stepover"))
-            return
+        if (
+            not math.isfinite(obj.StepOver.Value)
+            or obj.StepOver.Value < 0
+            or Path.Geom.isRoughly(obj.StepOver.Value, 0)
+        ):
+            raise ValueError(
+                translate("CAM_DressupPlungeMilling", "Stepover must be finite and greater than zero")
+            )
 
         baseOp = PathDressup.baseOp(obj)
         peck_retract = obj.PeckRetract.Value if obj.PeckDepth else baseOp.SafeHeight.Value
