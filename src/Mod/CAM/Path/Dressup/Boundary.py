@@ -183,6 +183,9 @@ class DressupPathBoundary(object):
         return True
 
     def execute(self, obj):
+        # Offsetting and clipping can fail before a replacement path is ready.
+        # Never leave the previous machining result available after that failure.
+        obj.Path = Path.Path()
         if not hasattr(obj, "Stock") or obj.Stock is None:
             Path.Log.error("BoundaryStock (Stock) missing; cannot execute dressup.")
             obj.Path = Path.Path()
@@ -191,6 +194,8 @@ class DressupPathBoundary(object):
             Path.Log.error("Boundary stock has no Shape; cannot execute dressup.")
             obj.Path = Path.Path()
             return
+        if obj.Stock.Shape.isNull():
+            raise ValueError("Boundary stock shape is empty; restore the boundary before generating.")
         if obj.Offset and obj.Stock and not obj.Stock.Shape.isNull():
             offset = obj.Offset
             if obj.Inside:
@@ -261,7 +266,7 @@ class PathBoundary:
             or not self.baseOp.isDerivedFrom("Path::Feature")
             or not self.baseOp.Path
         ):
-            return None
+            return Path.Path()
 
         path = PathUtils.getPathWithPlacement(self.baseOp)
         if len(path.Commands) == 0:

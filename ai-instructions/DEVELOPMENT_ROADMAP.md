@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2l/m/n handle empty dressup inputs, failed lead generation and
+- Current batch: 16.2o/p prevent cached Boundary paths after clipping/offset
+  failures and reject empty boundary geometry in both inclusion/exclusion modes.
+  Grouped validation: 44 passes, no failures/errors/skips; Python-only update
+  to the existing development build. Native GUI/machine acceptance remains open.
+- Previous batch: 16.2l/m/n handle empty dressup inputs, failed lead generation and
   disabled-lead passthrough. Grouped validation: 40 passes, two existing generator
   skips, zero failures/errors. Python-only synchronization, no native build.
 - Previous batch: 16.2j/16.2k extend model-container invalidation/rebinding to
@@ -2134,6 +2138,25 @@ Source and installed hashes: LeadInOut.py
 Boundary.py `88DE0133429769A10821AAFE7EE408696502FE4E059176345CD5F2F4AAA674DA`.
 Python-only synchronization into the existing fork build; no native build or
 GUI/machine acceptance. General dressup failure/consumer compatibility remains open.
+
+- [ X ] 16.2o Clear Boundary dressup output before offset/clipping work so an
+  exception cannot leave cached machining commands. Verify both failure stages
+  and regeneration after correction using the native CAM fixture.
+- [ X ] 16.2p Reject null boundary shapes for both inclusion and exclusion masks;
+  keep an empty path and native error state that prevents postprocessing. Return
+  a native empty Path for a missing base instead of assigning None. Verify repair
+  restores generation/export and missing-base recovery remains clean.
+
+Boundary failure batch: `cam-boundary-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **44 PASS, zero
+failures/errors/skips**: 15 invalid-input checks (four new), seven nested-dressup
+checks and 22 STL/tab checks. The macro completed with PASS and the test process
+ended. Source and development-build Boundary.py SHA256 both:
+`1EC5F400DBD2CC116A281FEF24A16F117B1041C3097B546A342216098B2135D0`.
+Both implementation tasks were completed before this grouped validation; no native
+rebuild was needed. The existing engine reports revision 2df76790b4, with this
+Python update synchronized separately. No GUI/machine acceptance or new release;
+the published 0.0.1 installer is unchanged. General consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

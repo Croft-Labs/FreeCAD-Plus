@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2l/m/n complete. Empty Lead-in/Lead-out and Boundary inputs
+Latest roadmap batch: 16.2o/p complete. Boundary clears cached output before
+clipping/offset work, rejects empty boundary geometry in both modes, and returns
+an empty native Path for missing base input. Four new failure/recovery checks and
+related suites pass: 44 tests, zero failures/errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-boundary-20260930-batch.
+Python synchronized to the existing development build; source/installed hash is
+recorded in the roadmap. No native rebuild, GUI/machine acceptance or release.
+Validation process ended. Continue broader consumer gates in coherent groups.
+
+Previous roadmap batch: 16.2l/m/n complete. Empty Lead-in/Lead-out and Boundary inputs
 now stop cleanly; lead generation clears stale paths before possible exceptions;
 disabled leads return the placed base path directly. cam-leads-20260929-verified
 records 40 passes, two existing linking skips, zero failures/errors. Missing-model

@@ -186,3 +186,67 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         producer.Fail = False
         self.doc.recompute()
         self.assertTrue(self.postList())
+
+    def makeBoundary(self):
+        from Path.Dressup import Boundary
+        dressup = Boundary.Create(self.op)
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+        return dressup
+
+    def testBoundaryClippingFailureClearsCachedPathAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup import Boundary
+        dressup = self.makeBoundary()
+        with patch.object(Boundary.PathBoundary, "execute",
+                          side_effect=RuntimeError("Deliberate clipping failure")):
+            with self.assertRaisesRegex(RuntimeError, "Deliberate clipping failure"):
+                dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+
+    def testBoundaryOffsetFailureClearsCachedPathAndRecovers(self):
+        from unittest.mock import patch
+        from Path.Dressup import Boundary
+        dressup = self.makeBoundary()
+        dressup.Offset = 1
+        with patch.object(Boundary.Path.Geom, "uncompound",
+                          side_effect=RuntimeError("Deliberate offset failure")):
+            with self.assertRaisesRegex(RuntimeError, "Deliberate offset failure"):
+                dressup.Proxy.execute(dressup)
+        self.assertFalse(dressup.Path.Commands)
+        dressup.touch()
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
+
+    def testEmptyBoundaryRejectsBothModesAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup = self.makeBoundary()
+        stock = dressup.Stock
+        empty = self.doc.addObject("Part::Feature", "EmptyBoundary")
+        dressup.Stock = empty
+        for inside in (True, False):
+            dressup.Inside = inside
+            self.doc.recompute()
+            self.assertFalse(dressup.Path.Commands)
+            self.assertIn("Invalid", dressup.State)
+            with self.assertRaises(CAMValueError):
+                _wrap_op(dressup)
+        dressup.Stock = stock
+        dressup.Inside = True
+        self.doc.recompute()
+        self.assertNotIn("Invalid", dressup.State)
+        self.assertTrue(dressup.Path.Commands)
+        self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testMissingBoundaryBaseClearsAndRecovers(self):
+        dressup = self.makeBoundary()
+        dressup.Base = None
+        self.doc.recompute()
+        self.assertFalse(dressup.Path.Commands)
+        self.assertNotIn("Invalid", dressup.State)
+        dressup.Base = self.op
+        self.doc.recompute()
+        self.assertTrue(dressup.Path.Commands)
