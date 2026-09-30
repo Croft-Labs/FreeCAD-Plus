@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 11.7g/h reject cyclic and stale/invalid reattachment supports
+- Current batch: 11.7i/j prototype rollback-based reattachment placement previews
+  and verify candidate/commit parity and preservation of existing undo history.
+  Grouped validation: 36 passes, zero failures/errors/skips; no native rebuild.
+  Production graphical preview and isolation from observers remain pending.
+- Previous batch: 11.7g/h reject cyclic and stale/invalid reattachment supports
   before mutation. Grouped validation: 34 passes, zero failures/errors/skips;
   test-only changes, no native rebuild. Production reattachment UI remains pending.
 - Previous batch: 11.7e/f prototype deliberate missing-face repair and protect
@@ -1880,6 +1884,22 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7h Reject supports with invalid or pending recompute state, including
   dependencies. Verify touched-plane and failed-box rejection, then repair the box,
   recompute, reattach successfully and Undo back to the original support.
+- [ X ] 11.7i Prototype synchronous candidate placement preview by recomputing in
+  a temporary transaction and aborting. Verify both placement policies match later
+  commits while restoring support, offset, world placement and downstream position.
+- [ X ] 11.7j Verify repeated previews and rejected missing-face preview preserve
+  an existing committed user edit and its Undo/Redo without a pending transaction.
+
+Preview evidence: `reattachment-preview-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928`: **36 PASS, zero failures/
+errors/skips** (11 capability, 20 adapter, five lineage checks). Macro PASS; process
+ended. Both tasks preceded grouped testing using engine source 2df76790b4.
+Prototype SHA256: `FFB7C0A062757FE463A91837F40916108DE4EEB166E0063437C8BED4A8F97763`.
+No installed module, native rebuild or release update. This synchronous test-only
+preview temporarily mutates the document and recomputes: observers see trial state.
+It does not satisfy isolated trial execution or implement graphical preview,
+asynchronous cancellation, production task transactions or preservation of an
+already-populated redo stack. Those remain production gates under 11.7.
 
 Support validation evidence: `reattachment-support-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **34 PASS, zero

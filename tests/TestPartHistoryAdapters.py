@@ -455,6 +455,50 @@ class TestPartHistoryAdapters(unittest.TestCase):
         self.assertEqual(self.profile.AttachmentSupport[0][0], old)
         self.assertPlacementNear(self.profile.getGlobalPlacement(), before)
 
+    def testReattachmentPreviewMatchesBothCommittedPolicies(self):
+        from SketchReattachment import preview_planar, reattach_planar
+        old, new = self.rotatedReattachmentFixture()
+        original = self.profile.getGlobalPlacement()
+        offset = self.profile.AttachmentOffset
+        center = linked_shape((self.doc.LeftResult, [])).CenterOfMass
+        for policy in ("preserve-local", "preserve-world"):
+            candidate, candidate_offset = preview_planar(self.profile, new, "Face1", policy)
+            self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), original)
+            self.assertPlacementNear(self.profile.AttachmentOffset, offset)
+            self.assertAlmostEqual((linked_shape((self.doc.LeftResult, [])).CenterOfMass
+                                    - center).Length, 0, places=6)
+            self.assertFalse(self.doc.HasPendingTransaction)
+            reattach_planar(self.profile, new, "Face1", policy)
+            self.assertPlacementNear(self.profile.getGlobalPlacement(), candidate)
+            self.assertPlacementNear(self.profile.AttachmentOffset, candidate_offset)
+            self.doc.undo()
+            self.doc.recompute()
+            self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+
+    def testReattachmentPreviewLeavesExistingUndoHistoryIntact(self):
+        from SketchReattachment import preview_planar
+        old, new = self.rotatedReattachmentFixture()
+        original_label = self.profile.Label
+        self.doc.openTransaction("Existing user edit")
+        self.profile.Label = "User label"
+        self.doc.commitTransaction()
+        self.doc.recompute()
+        for policy in ("preserve-local", "preserve-world", "preserve-local"):
+            preview_planar(self.profile, new, "Face1", policy)
+        with self.assertRaisesRegex(ValueError, "unavailable"):
+            preview_planar(self.profile, new, "Face99")
+        self.assertEqual(self.profile.Label, "User label")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.Label, original_label)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertEqual(self.profile.Label, "User label")
+        self.assertEqual(self.profile.AttachmentSupport[0][0], old)
+
     def testDrawingRadiusFollowsResultEditsUndoAndRestore(self):
         from PySide import QtCore
         import time

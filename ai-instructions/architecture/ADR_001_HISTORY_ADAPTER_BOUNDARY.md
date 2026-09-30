@@ -221,6 +221,14 @@ support/dependency Invalid or Touched state. Native extrusion cycle rejection,
 touched-plane rejection and failed-box rejection/recovery bring the grouped suite
 to 34 passes. A cached face alone is not evidence that its support is usable.
 
+Roadmap 11.7i/j adds a synchronous rollback preview sharing the same operation.
+It returns candidate global placement and attachment offset, aborts the temporary
+transaction and recomputes. Both policies match later commits; repeated previews
+and missing-face rejection preserve the prior committed edit's Undo/Redo. Grouped
+evidence totals 36 passing checks. This is not isolated evaluation: observers see
+temporary state, and preservation of an already-populated redo stack is unproven.
+Production preview must resolve these boundaries before integration.
+
 This does not establish reparenting, selected-occurrence placement, deleted support
 resurrection, ambiguous topology repair, production transaction integration or a
 task-pane UI/preview. Native attachment properties and document
