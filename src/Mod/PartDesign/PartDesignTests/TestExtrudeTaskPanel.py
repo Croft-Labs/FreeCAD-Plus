@@ -383,12 +383,150 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.doc.recompute()
         return limit
 
-    def editFaceText(self, name, limit):
+    def typeFaceText(self, name, text):
         field = self.widget(QtGui.QLineEdit, name)
-        text = limit.Label + ":Face1"
         field.setText(text)
         field.textEdited.emit(text)
         Gui.updateGui()
+
+    def editFaceText(self, name, limit):
+        self.typeFaceText(name, limit.Label + ":Face1")
+
+    def startTwoFaceLimits(self, command="PartDesign_Extrude"):
+        upper, lower = self.makeLimit(14), self.makeLimit(1)
+        feature = self.start(command, preselect=True)
+        self.selectOperation("Union")
+        self.widget(QtGui.QComboBox, "sidesMode").setCurrentIndex(1)
+        self.widget(QtGui.QComboBox, "changeMode").setCurrentIndex(3)
+        self.editFaceText("lineFaceName", upper)
+        self.widget(QtGui.QComboBox, "changeMode2").setCurrentIndex(3)
+        self.editFaceText("lineFaceName2", lower)
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        return feature, upper, lower
+
+    def makeDatumLimit(self, z):
+        plane = self.body.newObject("PartDesign::Plane", "DatumLimit")
+        plane.Placement.Base.z = z
+        self.doc.recompute()
+        return plane
+
+    def testClearedAndMalformedFaceTextInvalidatesOnlyEditedSide(self):
+        for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
+            feature, upper, lower = self.startTwoFaceLimits(command)
+            for field, prop, limit, other, otherLimit in (
+                ("lineFaceName", "UpToFace", upper, "UpToFace2", lower),
+                ("lineFaceName2", "UpToFace2", lower, "UpToFace", upper),
+            ):
+                for text in ("", "MissingLimit:Face1", limit.Label + ":Fac", limit.Label + ":Face1:extra"):
+                    with self.subTest(command=command, field=field, text=text):
+                        self.typeFaceText(field, text)
+                        self.assertIsNone(getattr(feature, prop))
+                        self.assertEqual(getattr(feature, other), (otherLimit, ["Face1"]))
+                        self.assertFalse(feature.isValid())
+                        self.assertEqual(feature.Type, "UpToFace")
+                        self.assertEqual(feature.Type2, "UpToFace")
+                        self.assertTrue(Gui.Control.activeDialog())
+                        self.editFaceText(field, limit)
+                        self.assertTrue(feature.isValid(), feature.getStatusString())
+            Gui.Control.activeTaskDialog().reject()
+            Gui.Selection.clearSelection()
+
+    def testMissingFaceNumberRetainsErrorAndCanBeCorrected(self):
+        feature, upper, lower = self.startTwoFaceLimits()
+        for field, prop, limit in (("lineFaceName", "UpToFace", upper),
+                                   ("lineFaceName2", "UpToFace2", lower)):
+            with self.subTest(field=field):
+                self.typeFaceText(field, limit.Label + ":Face99999")
+                self.assertEqual(getattr(feature, prop), (limit, ["Face99999"]))
+                self.assertFalse(feature.isValid())
+                self.editFaceText(field, limit)
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+
+    def testInvalidFaceOKStaysOpenAndEditCancelRestoresLinks(self):
+        feature, upper, lower = self.startTwoFaceLimits()
+        self.accept()
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.typeFaceText("lineFaceName2", "")
+        Gui.Control.activeTaskDialog().accept()
+        Gui.updateGui()
+        self.assertTrue(Gui.Control.activeDialog())
+        self.assertFalse(feature.isValid())
+        Gui.Control.activeTaskDialog().reject()
+        self.doc.recompute()
+        self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+        self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.assertEqual(self.body.Tip, feature)
+        self.assertAlmostEqual(feature.Shape.Volume, 1064)
+
+    def testDisabledPreviewChecksClearedLimitOnOKThenRepairs(self):
+        feature, upper, lower = self.startTwoFaceLimits()
+        self.widget(QtGui.QCheckBox, "checkBoxUpdateView").setChecked(False)
+        self.typeFaceText("lineFaceName", "")
+        self.assertIsNone(feature.UpToFace)
+        self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+        Gui.Control.activeTaskDialog().accept()
+        Gui.updateGui()
+        self.assertTrue(Gui.Control.activeDialog())
+        self.assertFalse(feature.isValid())
+        self.editFaceText("lineFaceName", upper)
+        self.accept()
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+
+    def testTypedDatumAndOriginPlanesUpdatePreviewBeforeOK(self):
+        datum = self.makeDatumLimit(16)
+        origin = next(obj for obj in self.body.Origin.OriginFeatures if obj.Name.startswith("XY_Plane"))
+        for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
+            feature, upper, lower = self.startTwoFaceLimits(command)
+            self.typeFaceText("lineFaceName", datum.Label)
+            self.assertEqual(feature.UpToFace, (datum, [""]))
+            self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+            self.assertTrue(feature.isValid(), feature.getStatusString())
+            self.assertAlmostEqual(feature.Shape.Volume, 1096)
+            self.typeFaceText("lineFaceName2", origin.Label)
+            self.assertEqual(feature.UpToFace2, (origin, [""]))
+            self.assertEqual(feature.UpToFace, (datum, [""]))
+            self.assertTrue(feature.isValid(), feature.getStatusString())
+            self.accept()
+            self.assertEqual(feature.UpToFace, (datum, [""]))
+            self.assertEqual(feature.UpToFace2, (origin, [""]))
+            self.doc.undo()
+            self.doc.recompute()
+            Gui.Selection.clearSelection()
+
+    def testTypedPlaneRepairUndoRedoAndSaveReopen(self):
+        datum = self.makeDatumLimit(16)
+        feature, upper, lower = self.startTwoFaceLimits()
+        self.accept()
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.typeFaceText("lineFaceName", "MissingLimit")
+        self.assertFalse(feature.isValid())
+        self.typeFaceText("lineFaceName", datum.Label)
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.accept()
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertEqual(feature.UpToFace, (datum, [""]))
+        with tempfile.TemporaryDirectory() as folder:
+            path = str(Path(folder) / "TypedPlane.FCStd")
+            self.doc.saveCopy(path)
+            restored = App.openDocument(path)
+            try:
+                recovered = restored.getObject(feature.Name)
+                self.assertEqual(recovered.UpToFace[0].Name, datum.Name)
+                self.assertEqual(recovered.UpToFace2[0].Name, lower.Name)
+                recovered.UpToFace[0].Placement.Base.z = 17
+                restored.recompute()
+                self.assertTrue(recovered.isValid(), recovered.getStatusString())
+                self.assertAlmostEqual(recovered.Shape.Volume, 1112)
+            finally:
+                App.closeDocument(restored.Name)
 
     def testExtentLabelsDescribeMeasuredLengthsForBothFeatureTypes(self):
         self.doc.removeObject(self.base.Name)

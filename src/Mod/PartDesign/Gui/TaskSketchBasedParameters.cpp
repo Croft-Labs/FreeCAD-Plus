@@ -39,6 +39,7 @@
 #include <Gui/Selection/Selection.h>
 #include <Gui/ViewProvider.h>
 #include <Mod/Part/App/DatumFeature.h>
+#include <Mod/PartDesign/App/DatumPlane.h>
 #include <Mod/PartDesign/App/FeatureSketchBased.h>
 #include <Mod/Sketcher/App/SketchObject.h>
 
@@ -214,6 +215,11 @@ QVariant TaskSketchBasedParameters::setUpToFace(const QString& text, App::Proper
         parts.push_back(QString());
     }
 
+    // Explicit destinations use the complete text, not a valid prefix of it.
+    if (reference && parts.size() != 2) {
+        return {};
+    }
+
     // Check whether this is the name of an App::Plane or Part::Datum feature
     App::Document* doc = getAppDocument();
     if (!doc) {
@@ -223,6 +229,17 @@ QVariant TaskSketchBasedParameters::setUpToFace(const QString& text, App::Proper
     App::DocumentObject* obj = doc->getObject(parts[0].toLatin1());
     if (!obj) {
         return {};
+    }
+
+    if (reference && (obj->isDerivedFrom<App::Plane>()
+                      || obj->isDerivedFrom<PartDesign::Plane>())) {
+        if (!parts[1].isEmpty()) {
+            return {};
+        }
+        // Typed plane limits must update the preview just like picked planes.
+        reference->setValue(obj, std::vector<std::string>(1, ""));
+        recomputeFeature();
+        return QByteArray("");  // Valid empty subelement; distinct from invalid text.
     }
 
     if (obj->isDerivedFrom<App::Plane>()) {

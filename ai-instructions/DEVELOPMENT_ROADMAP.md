@@ -2,16 +2,16 @@
 
 ## Current focus
 
-- Current product batch: phase 8 Extrude extent labels and associative face limits
-  (8.1.4a/b), advancing F029 beyond the recent collector work. Both tasks and
-  six new regression cases preceded one native build. Final acceptance: 201
-  distinct passing tests and three readable task captures. Symmetric lengths
-  are labelled as totals; two-sided lengths are explicit. Typed second-side
-  limits update their own reference. Moving/offset faces, missing-face errors,
-  repair, Cancel, Undo/Redo and save/reopen associativity are verified.
-  Broader command-family and physical input/high-DPI gates remain open.
-  No installer or release. Next bounded focus: audit cleared/invalid typed
-  face-limit preview recovery, then group the next dependency-ready changes.
+- Current product batch: phase 8 Extrude typed-limit recovery (8.1.4c/d),
+  advancing F029/F032. Both fixes and six GUI cases preceded one native build.
+  Final acceptance: 207 distinct passing tests and three readable task captures.
+  Empty/malformed face text invalidates only the edited side, invalid OK stays
+  in the editor with preview on/off, and typed datum/origin planes update their
+  reference before OK. Correction, Cancel, Undo/Redo and save/reopen pass.
+  Broader command/occurrence/dependency-selection, physical input/high-DPI and
+  F032 Apply/repeat acceptance remain open. No installer or release. Next bounded
+  focus: audit typed-reference selection restrictions against the existing pick
+  filters before grouping further changes.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1890,6 +1890,14 @@ implementation or mark its unfinished validation complete through this plan.
   verify moving/offset limiting faces, missing-face repair, Cancel, Undo/Redo and
   save/reopen associativity. F029. Native reference isolation and lifecycle checks
   pass in the grouped 8.1.4a/b batch below.
+- [ X ] 8.1.4c Clear only the edited Extrude face-limit link for empty/malformed
+  text, preserving a repairable error and rejecting invalid OK with preview on/off.
+  Verify both sides, aliases and edit Cancel. F029/F032. Native recovery/OK and
+  Cancel checks pass; grouped evidence below.
+- [ X ] 8.1.4d Apply typed datum/origin plane limits to the correct side during
+  preview; verify face-to-plane repair, Undo/Redo and save/reopen associativity.
+  F029. Native plane assignment, repair and persistence checks pass; grouped
+  evidence with 8.1.4c below.
 - [   ] 8.1.5 Add consistent live-preview and error states; make Cancel restore geometry, visibility and selection. Define Apply/repeat behavior separately from OK so repeated creation does not create accidental features.
 
 - [ X ] 8.1.5a Restore original selection on Trim Body/Isocline creation Cancel,
@@ -2164,6 +2172,36 @@ The older executable stamp is not rebuilt-module identity. All 127 item IDs rema
 intact. No installer/release. F029's specified Extrude face-move, documented-length
 and missing-limit repair examples are validated for this active-Body workflow;
 broader command consistency and physical input/high-DPI acceptance remain open.
+
+**Extrude typed-limit recovery batch (8.1.4c/d), 2026-09-30:** Both fixes and
+six new GUI cases preceded one successful PartDesignGui Release build. Empty or
+malformed text clears only the edited side's saved link and recomputes its error,
+so OK cannot accept the previous result as valid. Numeric missing-face references
+retain their repairable error. Explicit-target face parsing rejects trailing text;
+typed datum/origin planes assign their saved link and recompute before OK. The
+shared parser's legacy caller behavior remains unchanged.
+**207 distinct tests pass, zero failures/errors/skips**: 11 Extrude model, 14 Pad
+model, 6 Pocket model, 37 Extrude task, 45 Pattern task/model, 16 Linear, 6 Polar,
+3 MultiTransform, 14 Pad task, 5 Revolve task, 24 Trim task and 26 Isocline task.
+Six new cases cover both sides and stored Pad/Pocket aliases, empty/unknown/
+incomplete/trailing input, missing numeric faces, valid correction, invalid OK
+with automatic preview on/off, edit Cancel links/Body Tip/geometry, typed datum
+and origin planes before OK, Undo/Redo and save/reopen followed by a plane move.
+Evidence: `D:\Temp\Office-PC\freecad-plus-extrude-limit-recovery-20260930`, including
+`baseline`, `build.log`, `grouped`, `extrude-final`, `visual`, `acceptance-summary.json` and
+`validated-identities.json`. Old binaries reproduced stale links, invalid OK
+closing the task and typed-plane assignment delayed until OK. Existing numeric
+missing-face errors already passed. The first grouped run exposed a fixture error:
+a cleared PropertyLinkSub returns None, not a tuple containing None. Corrected
+37-test Extrude GUI checks pass alongside 170 broader grouped checks on unchanged
+binaries. No corrective native rebuild. Final macro PASS, exit 0; source identities, the
+staged test and native hashes match. PartDesignGui SHA256:
+`7db59a73df9cc8f05193145f1a30265b52ae992506473cc636ed389c900a8b11`.
+Three readable captures cover a cleared first side, malformed second side and
+valid typed planes. All 127 item IDs remain intact. The older executable stamp
+is not rebuilt-module identity. No schema/geometry-kernel/native-format change,
+installer or release. Broader command/occurrence/dependency-selection, physical
+input/high-DPI and F032 Apply/repeat acceptance remain open.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4551,7 +4589,7 @@ reconciliation rules above to every entry.
 <a id="f029"></a>
 ### F029 — Common extent controls
 
-**Owning tasks:** 8.1, 10.4. **Status:** Extrude/Pad/Pocket total symmetric and independent per-side labels, measured spans, typed second-side limit isolation and edit Cancel are validated under 8.1.4a/b (201 distinct passing checks). The specified Extrude examples for associative face movement, signed end offsets, missing-limit errors, repair, Undo/Redo and save/reopen are complete for the active-Body workflow. Broader command-family consistency and physical input/high-DPI acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Extrude/Pad/Pocket total symmetric and independent per-side labels, measured spans, typed second-side limit isolation and edit Cancel are validated under 8.1.4a/b (201 distinct passing checks). The specified Extrude examples for associative face movement, signed end offsets, missing-limit errors, repair, Undo/Redo and save/reopen are complete for the active-Body workflow. Empty/malformed typed limits, invalid OK with preview on/off, typed datum/origin plane preview and repair persistence are validated under 8.1.4c/d (207 distinct passing checks). Broader command-family, occurrence/dependency-selection and physical input/high-DPI acceptance remain open.
 
 **Packages:** U06 · **First delivery:** P4/P7 · **Likely scope:** Feature
 
@@ -4590,7 +4628,7 @@ reconciliation rules above to every entry.
 <a id="f032"></a>
 ### F032 — Consistent Apply/OK/Cancel
 
-**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Extrude/Pad/Pocket create/edit Cancel selection plus profile/Body Tip rollback is validated under 8.1.5b. Pattern Originals Clear/replacement Cancel and Undo/Redo is validated under 8.1.3g; original selection plus model rollback on creation/edit Cancel is validated under 8.1.5c. Reference inspection preserves links on OK and restores source/Origin visibility on OK/Cancel under 8.1.3l. Unfinished reference picking preserves primary/secondary/axis links through OK, role/type/scope changes, Undo and edit Cancel under 8.1.5d (167 distinct final checks). Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
+**Owning tasks:** 8.1. **Status:** Trim Body/Isocline Cancel and failed-startup selection recovery is validated under 8.1.5a (85-test grouped batch). Extrude/Pad/Pocket create/edit Cancel selection plus profile/Body Tip rollback is validated under 8.1.5b. Pattern Originals Clear/replacement Cancel and Undo/Redo is validated under 8.1.3g; original selection plus model rollback on creation/edit Cancel is validated under 8.1.5c. Reference inspection preserves links on OK and restores source/Origin visibility on OK/Cancel under 8.1.3l. Unfinished reference picking preserves primary/secondary/axis links through OK, role/type/scope changes, Undo and edit Cancel under 8.1.5d (167 distinct final checks). Extrude invalid face-limit OK stays open with automatic preview on/off, and edit Cancel restores saved links, Body Tip and geometry under 8.1.4c (207 distinct passing checks). Apply/repeat and the two-holes-then-Cancel acceptance example remain open.
 
 **Packages:** A07, U09 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
 

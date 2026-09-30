@@ -60,6 +60,14 @@ face subelement and an editor repair retain Up to face mode instead of reverting
 to a fixed length. Physical picking and broader command-family acceptance remain
 separate roadmap gates.
 
+F029/F032 typed-limit recovery checks clear and mistype both side references for
+Extrude and Pocket, verify unaffected-side identity and repair, reject invalid OK
+with automatic recompute enabled or disabled, and restore saved links/model on edit
+Cancel. Datum/origin plane labels update their own reference before OK. Face-to-plane
+repair remains associative through Undo/Redo and save/reopen followed by a plane move.
+Numeric missing-face errors stay recoverable; this does not establish general
+occurrence, cross-Body or dependency-selection acceptance.
+
 F031 regressions compare profile/axis links, operation, direction/extent parameters
 and accepted volumes between
 preselection and command-first picking for Extrude, Pad and Pocket in Add/Subtract.

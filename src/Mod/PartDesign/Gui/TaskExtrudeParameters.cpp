@@ -1271,27 +1271,27 @@ void TaskExtrudeParameters::changeFaceName(
     QLineEdit* lineEdit, const QString& text, App::PropertyLinkSub& reference
 )
 {
-    if (text.isEmpty()) {
-        // if user cleared the text field then also clear the properties
-        lineEdit->setProperty("FeatureName", QVariant());
-        lineEdit->setProperty("FaceName", QVariant());
-    }
-    else {
-        // expect that the label of an object is used
+    QVariant featureName;
+    QVariant faceName;
+    if (!text.isEmpty()) {
+        // Resolve the displayed label while retaining a valid identity suggestion.
         QStringList parts = text.split(QChar::fromLatin1(':'));
-        QString label = parts[0];
-        QVariant name = objectNameByLabel(label, lineEdit->property("FeatureName"));
-        if (name.isValid()) {
-            parts[0] = name.toString();
-            QString uptoface = parts.join(QStringLiteral(":"));
-            lineEdit->setProperty("FeatureName", name);
-            lineEdit->setProperty("FaceName", setUpToFace(uptoface, &reference));
-        }
-        else {
-            lineEdit->setProperty("FeatureName", QVariant());
-            lineEdit->setProperty("FaceName", QVariant());
+        featureName = objectNameByLabel(parts[0], lineEdit->property("FeatureName"));
+        if (featureName.isValid()) {
+            parts[0] = featureName.toString();
+            faceName = setUpToFace(parts.join(QStringLiteral(":")), &reference);
         }
     }
+
+    if (!faceName.isValid()) {
+        // An unfinished or invalid edit must not keep the old valid limit alive.
+        // Only this side changes; normal recompute/OK rules govern preview errors.
+        featureName = QVariant();
+        reference.setValue(nullptr);
+        recomputeFeature();
+    }
+    lineEdit->setProperty("FeatureName", featureName);
+    lineEdit->setProperty("FaceName", faceName);
 }
 
 void TaskExtrudeParameters::translateFaceName(QLineEdit* lineEdit)

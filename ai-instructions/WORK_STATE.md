@@ -1,6 +1,33 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.4a/b, advancing F029. Extrude now
+Latest product batch: phase 8, tasks 8.1.4c/d, advancing F029/F032. Empty or
+malformed Extrude face-limit text clears only the edited side's saved link,
+invalidating the preview instead of retaining the previous valid result. Invalid
+OK keeps the editor open with automatic preview on/off. Typed datum/origin planes
+update their saved links and geometry before OK. Correction and Cancel recover.
+Both fixes and six GUI cases preceded one native PartDesignGui Release build.
+Final acceptance: 207 distinct passing tests, zero failures/errors/skips, macro
+PASS and exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-extrude-limit-recovery-20260930, including baseline,
+build.log, grouped, extrude-final, visual, acceptance-summary.json and
+validated-identities.json.
+Old binaries reproduced stale links, invalid OK closing the editor and delayed
+plane assignment. Numeric missing-face errors already worked. The fixture now
+checks a cleared PropertyLinkSub as None; its initial errors are preserved. Final
+37-test Extrude GUI and 170 broader grouped checks pass on unchanged binaries.
+No corrective native rebuild. All three source identities, staged test
+and native hashes match. PartDesignGui SHA256:
+7db59a73df9cc8f05193145f1a30265b52ae992506473cc636ed389c900a8b11.
+Three task captures are readable. Tests include both sides/aliases, malformed
+and missing inputs, correction, edit Cancel links/Body Tip/geometry, typed planes,
+Undo/Redo and save/reopen followed by another plane move. All 127 item specs remain
+intact. Broader command/occurrence/dependency-selection, physical input/high-DPI
+and F032 Apply/repeat gates remain open. No installer/release or format change.
+The older executable stamp is not rebuilt-module identity. Next bounded focus:
+audit typed-reference restrictions against existing selection filters, then batch
+related changes before another build.
+
+Previous product batch: phase 8, tasks 8.1.4a/b, advancing F029. Extrude now
 labels total symmetric and independent per-side lengths. Typed second-side face
 limits update their own reference instead of the first-side preview link.
 Both changes and six regression cases preceded one native PartDesignGui Release
@@ -21,8 +48,8 @@ match labels; removed limits retain errors until repaired. Includes edit Cancel,
 Undo/Redo, missing subelements and save/reopen followed by another face move.
 All 127 specifications remain intact. Broader command-family and physical input/
 high-DPI gates remain open; no installer/release or native-format change.
-The older executable stamp is not rebuilt-module identity. Next bounded focus:
-audit cleared/invalid typed face-limit preview recovery, then batch related changes.
+The older executable stamp is not rebuilt-module identity. Its typed-limit recovery
+follow-up is completed above.
 
 Previous product batch: phase 8, tasks 8.1.3m/8.1.5d, advancing F030-F032.
 Combined Pattern retains saved direction/axis links when unfinished reference
