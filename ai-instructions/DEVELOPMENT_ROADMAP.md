@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2aa/ab/ac clear Z Correction caches, reject unusable probe
+- Current batch: 16.2ad/ae/af reject non-finite probe coordinates and invalid
+  interpolation settings, and correct source-line subdivision counts. Grouped
+  validation: 51 passes, zero failures/errors/skips; no native rebuild.
+- Previous batch: 16.2aa/ab/ac clear Z Correction caches, reject unusable probe
   files and block out-of-area fallback. Grouped validation: 48 passes, zero
   failures/errors/skips; Python-only synchronization, no native rebuild.
 - Previous batch: 16.2x/y/z clear failed Axis Map results, validate positive
@@ -2288,6 +2291,27 @@ engine 2df76790b4; no native rebuild, GUI/machine acceptance or release update.
 An explicitly empty filename retains uncorrected placed-base behavior. External
 probe-file changes require explicit recompute; automatic file monitoring and
 arbitrary probe-grid quality remain outside this bounded validation.
+
+- [ X ] 16.2ad Reject NaN/infinite probe coordinates before building a surface;
+  identify file/line, leave no old output, and verify rejection/export blocking
+  plus recovery for each X/Y/Z coordinate.
+- [ X ] 16.2ae Require finite positive ArcInterpolate and SegInterpolate values
+  when applying a correction. Verify zero/negative values yield native errors,
+  empty output/export rejection, and recovery after restoring valid settings.
+- [ X ] 16.2af Use ceiling division for source-line segment counts and include
+  both endpoints in the discretization point count. Verify lengths 0.5, 1, 1.01,
+  2 and 2.5 mm at a 1 mm setting preserve endpoints and bound source-line spacing.
+
+Numeric Z Correction batch: `cam-zcorrect-numeric-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **51 PASS, zero
+failures/errors/skips**: 35 invalid-input/workflow checks (three new), seven nested
+postprocessing and nine rotary-post regressions. Macro PASS; process ended.
+Source/development-build ZCorrect.py SHA256:
+`636A64C32DBB9762352EF22D0B01D55B57551202A6E03F31B7863C519F46B716`.
+All three changes preceded grouped validation; Python-only synchronization into
+engine 2df76790b4, no native rebuild or release update. Spacing bounds apply to
+source lines before height correction; no adaptive corrected-surface chord-error
+claim is made. GUI/machine acceptance and broader consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

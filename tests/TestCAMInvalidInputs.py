@@ -596,3 +596,59 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.assertTrue(dressup.interpSurface.isNull())
         self.assertEqual(dressup.Path.toGCode(),
                          PathUtils.getPathWithPlacement(self.op).toGCode())
+
+    def testZCorrectNonFiniteProbeCoordinatesRejectAndRecover(self):
+        from Path.Post.PostList import _wrap_op
+        dressup, probe = self.makeZCorrect()
+        original_data = probe.read_text()
+        for axis in range(3):
+            for invalid in ("nan", "inf", "-inf"):
+                row = ["-10", "-10", "0.5"]
+                row[axis] = invalid
+                probe.write_text(" ".join(row) + "\n" + original_data)
+                dressup.touch()
+                self.doc.recompute()
+                self.assertFalse(dressup.Path.Commands)
+                self.assertTrue(dressup.interpSurface.isNull())
+                self.assertIn("Invalid", dressup.State)
+                with self.assertRaises(CAMValueError):
+                    _wrap_op(dressup)
+                probe.write_text(original_data)
+                dressup.touch()
+                self.doc.recompute()
+                self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testZCorrectNonPositiveInterpolationRejectsAndRecovers(self):
+        from Path.Post.PostList import _wrap_op
+        dressup, probe = self.makeZCorrect()
+        for name in ("ArcInterpolate", "SegInterpolate"):
+            original = getattr(dressup, name).Value
+            for invalid in (0, -1):
+                setattr(dressup, name, invalid)
+                self.doc.recompute()
+                self.assertFalse(dressup.Path.Commands)
+                self.assertIn("Invalid", dressup.State)
+                with self.assertRaises(CAMValueError):
+                    _wrap_op(dressup)
+                setattr(dressup, name, original)
+                self.doc.recompute()
+                self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testZCorrectLinearSubdivisionHonorsMaximumLength(self):
+        import Path
+        import math
+        dressup, probe = self.makeZCorrect()
+        base = self.doc.addObject("Path::Feature", "StraightPath")
+        dressup.Base = base
+        dressup.SegInterpolate = 1
+        for length in (0.5, 1, 1.01, 2, 2.5):
+            base.Path = Path.Path([Path.Command("G0", {"X": 0, "Y": 0, "Z": 4}),
+                                   Path.Command("G1", {"X": length, "Y": 0, "Z": 4})])
+            self.doc.recompute()
+            self.assertNotIn("Invalid", dressup.State)
+            xs = [c.Parameters["X"] for c in dressup.Path.Commands
+                  if c.Name == "G1" and c.Parameters.get("X", 0) > 0]
+            self.assertEqual(len(xs), math.ceil(length))
+            self.assertAlmostEqual(xs[-1], length)
+            for start, end in zip([0] + xs, xs):
+                self.assertLessEqual(end - start, 1 + 1e-9)

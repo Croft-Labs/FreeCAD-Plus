@@ -11,7 +11,16 @@ survives uninstall. Publication complete; see roadmap release checkpoint.
 Packaging uses separate per-user FreeCADPlus settings and does not alter upstream
 FreeCAD. The distribution version differs from the retained 26.3.0 engine version.
 
-Latest roadmap batch: 16.2aa/ab/ac complete. Z Correction clears stale results,
+Latest roadmap batch: 16.2ad/ae/af complete. Z Correction rejects non-finite probe
+coordinates and non-positive/non-finite interpolation settings, and uses the correct
+source-line subdivision point count. Grouped validation: 51 passes, zero failures/
+errors/skips in
+D:\Temp\Office-PC\freecad-plus-validation-20260928\cam-zcorrect-numeric-20260930-batch.
+Source/development-module hash and spacing limitation recorded in roadmap.
+Python-only synchronization; no native rebuild, GUI/machine acceptance or release
+update. Test process ended. Continue related consumer gates with grouped validation.
+
+Previous roadmap batch: 16.2aa/ab/ac complete. Z Correction clears stale results,
 rejects unusable specified probe files and blocks uncorrected fallback outside the
 probe area. Empty filename deliberately retains placed-base passthrough. Grouped
 validation: 48 passes, zero failures/errors/skips in

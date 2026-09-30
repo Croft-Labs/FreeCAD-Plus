@@ -95,6 +95,11 @@ path, interpolation exceptions, error-state export rejection, and repaired-input
 recovery. Explicitly clearing the probe filename retains the existing uncorrected
 placed-base behavior and clears the old surface. A specified but unusable probe
 file must never silently reuse an older surface or export an uncorrected fallback.
+Additional numeric cases reject NaN/+infinity/-infinity in each probe coordinate
+and zero/negative interpolation settings, then verify recovery/export. Source-line
+lengths 0.5, 1, 1.01, 2 and 2.5 mm with a 1 mm segment setting check subdivision
+counts, final endpoints and maximum spacing before Z correction. Surface slope can
+increase corrected 3D segment length; these tests do not claim adaptive chord error.
 External file edits still require recompute; automatic filesystem monitoring and
 arbitrary probe-grid quality are not established by these tests.
 

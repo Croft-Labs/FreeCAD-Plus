@@ -29,6 +29,7 @@ from PySide import QtGui
 from PySide.QtCore import QT_TRANSLATE_NOOP
 
 import os
+import math
 
 # lazily loaded modules
 from lazy_loader.lazy_loader import LazyLoader
@@ -131,6 +132,11 @@ class ObjectDressup:
             except ValueError:
                 skipped.append(i + 1)
                 continue
+            if not all(math.isfinite(value) for value in (xval, yval, zval)):
+                raise ValueError(
+                    translate("CAM_DressupZCorrect", "Non-finite probe coordinate in file %s, line %s")
+                    % (filename, i + 1)
+                )
             pointlist.append((xval, yval, zval))
 
         if skipped:
@@ -197,6 +203,14 @@ class ObjectDressup:
             obj.Path = path
             return
 
+        for name in ("ArcInterpolate", "SegInterpolate"):
+            value = getattr(obj, name).Value
+            if not math.isfinite(value) or value <= 0:
+                raise ValueError(
+                    translate("CAM_DressupZCorrect", "%s must be finite and greater than zero")
+                    % name
+                )
+
         face = obj.interpSurface.toNurbs().Faces[0]
         surface = face.Surface
         bb = face.BoundBox
@@ -222,9 +236,10 @@ class ObjectDressup:
                 if cmd.Name in Path.Geom.CmdMoveArc:
                     pointlist = edge.discretize(Deflection=obj.ArcInterpolate.Value)
                 else:
-                    disc_number = int(edge.Length / obj.SegInterpolate.Value)
-                    if disc_number > 1:
-                        pointlist = edge.discretize(Number=disc_number)
+                    segment_count = math.ceil(edge.Length / obj.SegInterpolate.Value)
+                    if segment_count > 1:
+                        # Number counts points, including both endpoints.
+                        pointlist = edge.discretize(Number=segment_count + 1)
                     else:
                         pointlist = [v.Point for v in edge.Vertexes]
 
