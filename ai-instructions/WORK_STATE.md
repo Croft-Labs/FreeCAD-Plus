@@ -1,5 +1,14 @@
 # FreeCAD Plus: Build validation handoff
 
+Latest implementation (2026-09-29): U.22 rejects the modern CAM avoidance
+fallback that silently filled selected holes when projection failed. The error
+clears the stale operation path. Successful primary projection and outer-only
+cutting fallback remain covered. All 81 CAM checks pass in one batch at
+`avoidance-fallback-20260929-final`; Python-only update synchronized, no build.
+Final module hash is in U.22. Avoidance inputs requiring this lossy fallback now
+stop explicitly; a replacement projection algorithm remains future work.
+#26300 and exact GeomFillSurface acceptance remain open. No test process remains.
+
 Latest implementation (2026-09-29): U.16/U.21 fix #6864 in the replacement
 Line/ZigZag generator. One targeted source compile/module relink completed; all
 77 CAM checks pass in one batch, including final-strip geometry, avoidance and

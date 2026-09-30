@@ -3,6 +3,8 @@
 ## Current focus
 
 - Active implementation: [prioritized upstream issue work](#upstream-issue-work).
+  Latest boundary correction: avoidance no longer uses a fallback that fills
+  selected holes after projection fails; U.22 records 81 passing CAM checks.
   Latest geometry fix: #6864 final-strip coverage now passes in the compiled
   replacement generator; U.21 records the 77-test CAM batch.
   Latest safety fix: partial boundary projection/union can no longer drop selected
@@ -247,13 +249,36 @@ closed upstream, inherited source, and obsolete UI entry points are distinct sta
   This does not certify arbitrary contour finishing, legacy Surface, simulation,
   postprocessor output or physical machining. #26300 and exact U.14 remain open.
 
+- [ X ] U.22 Reject lossy avoidance-outline fallback (#27950 / #27751 review).
+  The replacement workflow still called TechDraw.findShapeOutline after failed
+  hole-preserving projection. That API returns only an outer wire, silently
+  filling holes in the exclusion and removing intended machining coverage.
+  Unified UI changes do not obsolete this backend path. Now raise an actionable
+  error before that fallback and clear the old operation path. Successful primary
+  avoidance projection and outer-only cutting-outline fallback remain available.
+  This deliberately rejects all avoidance requests that reach the lossy fallback,
+  including triangulated avoidance inputs routed there; no general replacement
+  projection algorithm is claimed. Direct STL machining/tab regressions still pass.
+  Four added checks cover a holed selection, successful primary hole preservation,
+  outer-outline fallback, and stale-path removal in a real operation. Two fail
+  before the correction in `avoidance-fallback-20260929-red/results.json`.
+  `avoidance-fallback-20260929-final/results.json`: 81 PASS, no failures/errors/skips
+  (18 avoidance, 4 line coverage, 12 common, 7 pattern, 18 operation, 22 mesh/tab).
+  Python-only update installed in the existing fork; no native build. Final
+  docstrings synchronized after testing; executable statements unchanged.
+  Source/installed surface_common.py SHA-256 in `module-manifest.json`:
+  `0E23CD3491979F4346D21FC6FE3FDBDFA504D3AEFE057296F3147AF932F4D556`.
+  Default issue macro now contains 97 tests; the entire default was not run as
+  one batch. Exact U.14 GeomFillSurface and U.15 freeform timeout remain open.
+  No legacy operation migration, postprocessor/machine acceptance or release.
+
 CAM avoidance evidence under the external validation root below:
 `avoidance-tests-20260929-192717/results.json` reproduced four failing fault-handling
 checks (two valid geometry controls passed). After correction,
 `avoidance-tests-20260929-193013/results.json` reports 67 PASS, no errors/skips,
 process 0. Eight focused, 12 common-generator, seven pattern-generator, 18 unified
 operation and 22 STL/tab tests. `module-manifest.json` records installed Python
-hashes. The expanded default issue macro now has 93 tests; it has not been run as a
+hashes. The expanded default issue macro now has 97 tests; it has not been run as a
 single batch. Preserve the separate 75-test native and 67-test CAM evidence.
 
 Reproduction evidence: `D:\Temp\Office-PC\freecad-plus-validation-20260928\issue-tests-20260929-185401`.

@@ -74,6 +74,28 @@ class TestSurfaceAvoidanceFailure(unittest.TestCase):
         self.assertAlmostEqual(boundary.common(self.avoid).Area, self.avoid.Area, places=5)
         self.assertAlmostEqual(boundary.common(second).Area, second.Area, places=5)
 
+    def testAvoidanceFallbackDoesNotFillSelectedHoles(self):
+        ring = self.face.cut(self.avoid).Faces[0]
+        self.assertEqual(len(ring.Wires), 2)
+        # Force only the primary projection to fail; the old real TechDraw
+        # fallback returns a valid face but silently fills the ring's hole.
+        with patch.object(surface_common, "_boundary_via_area", return_value=None):
+            with self.assertRaisesRegex(ValueError, "avoidance.*holes"):
+                surface_common.create_boundary_face([ring], 0, avoids=True)
+
+    def testAvoidancePrimaryProjectionPreservesSelectedHoles(self):
+        ring = self.face.cut(self.avoid).Faces[0]
+        boundary = surface_common.create_boundary_face([ring], 0, avoids=True)
+        self.assertTrue(boundary.isValid())
+        self.assertAlmostEqual(boundary.Area, ring.Area, places=5)
+        self.assertAlmostEqual(boundary.common(self.avoid).Area, 0, places=5)
+
+    def testOuterOutlineFallbackStillWorks(self):
+        with patch.object(surface_common, "_boundary_via_area", return_value=None):
+            boundary = surface_common.create_boundary_face([self.face], 0)
+        self.assertTrue(boundary.isValid())
+        self.assertAlmostEqual(boundary.Area, self.face.Area, places=5)
+
     def testFullyAvoidedAreaDoesNotRestoreCuttingRegion(self):
         covering = Part.makePlane(40, 40, App.Vector(-5, -5, 0))
         result = surface_common.generate_pattern_mask(
@@ -179,6 +201,22 @@ class TestSurfaceAvoidanceOperation(PathTestWithAssets):
             return project(faces, *args, **kwargs)
         with patch.object(surface_common, "create_boundary_face", side_effect=fail_second):
             with self.assertRaisesRegex(ValueError, "boundary"):
+                op.Proxy.execute(op)
+        self.assertEqual(len(op.Path.Commands), 0, "Stale cutting path remained")
+
+    def testLossyAvoidanceFallbackClearsOldPath(self):
+        self.external.Shape = self.external.Shape.cut(
+            Part.makePlane(4, 4, App.Vector(13, 13, 5)))
+        self.doc.recompute()
+        op = self.operation()
+        op.Path = Path.Path([Path.Command("G1", {"X": 15, "Y": 15, "Z": 5})])
+        project = surface_common._boundary_via_area
+
+        def fail_avoidance(shape, offset, outline):
+            return project(shape, offset, outline) if outline else None
+
+        with patch.object(surface_common, "_boundary_via_area", side_effect=fail_avoidance):
+            with self.assertRaisesRegex(ValueError, "avoidance.*holes"):
                 op.Proxy.execute(op)
         self.assertEqual(len(op.Path.Commands), 0, "Stale cutting path remained")
 

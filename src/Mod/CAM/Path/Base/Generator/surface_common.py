@@ -220,7 +220,8 @@ def create_boundary_face(faces, offset=0.0, tolerance=0.005, avoids=False, compo
     """
     Creates a flat 2D boundary face from 3D faces using Path.Area's HLR
     projection (Outline mode) as primary method, falling back to
-    TechDraw.findShapeOutline() if projection fails.
+    TechDraw.findShapeOutline() for outer outlines if projection fails.
+    Avoidance requires hole-preserving projection and rejects that fallback.
 
     Path.Area with Outline=True uses OCC's HLRBRep_Algo to project the
     3D shape silhouette onto the XY plane — more robust than TechDraw
@@ -240,6 +241,9 @@ def create_boundary_face(faces, offset=0.0, tolerance=0.005, avoids=False, compo
 
     Returns:
         Part.Shape: The 2D boundary face, or None on failure.
+
+    Raises:
+        ValueError: Avoidance would require a lossy outline fallback.
     """
     if not faces and not compound:
         Path.Log.warning(
@@ -308,10 +312,9 @@ def _boundary_via_techdraw(compound, offset, outline):
     Secondary (fallback) boundary engine: TechDraw.findShapeOutline(),
     followed by a second Path.Area pass purely to apply `offset`.
 
-    Note: findShapeOutline() only ever returns the outer envelope — unlike
-    _boundary_via_area(), it cannot preserve inner wires (holes) when
-    `outline` is False. If a caller needed holes preserved and lands
-    here, that guarantee is lost, and a warning is logged.
+    findShapeOutline() returns only an outer wire. It cannot satisfy the
+    hole-preserving contract requested by avoidance boundaries (outline=False).
+    Reject that fallback rather than silently changing the selected region.
 
     Args:
         compound (Part.Shape): Shape to project — already built by the
@@ -321,11 +324,14 @@ def _boundary_via_techdraw(compound, offset, outline):
 
     Returns:
         Part.Shape: The resulting boundary, or None on failure.
+
+    Raises:
+        ValueError: The caller requires holes to be preserved (outline=False).
     """
     if not outline:
-        Path.Log.warning(
-            "Falling back to TechDraw outline extraction, which cannot preserve "
-            "inner wires (holes). Any holes in this selection will be lost."
+        raise ValueError(
+            "Failed to project avoidance faces while preserving holes. "
+            "The outline fallback cannot preserve the selected regions."
         )
     try:
         import TechDraw

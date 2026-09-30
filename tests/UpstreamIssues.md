@@ -191,3 +191,20 @@ contract. It does not certify arbitrary contour finishing or the original legacy
 Surface operation. New passes are still clipped against holes/avoidance masks;
 the related avoidance and geometric holding-tab tests also pass. Simulation,
 postprocessor and machine acceptance remain separate.
+
+## Lossy avoidance fallback (#27950 / #27751 review)
+
+The avoidance suite now has 18 checks. Four additions force primary projection
+failure for a holed face, check primary hole preservation, keep the outer-outline
+fallback working, and verify a real failed operation removes its stale path.
+The old fallback silently filled holes; two red checks failed before correction.
+All 81 CAM checks pass in `avoidance-fallback-20260929-final/results.json`, with
+zero failures/errors/skips. Only Python was synchronized; no rebuild was needed.
+Final docstring edits followed testing without changing executable statements.
+See roadmap U.22 for the installed/source hash and `module-manifest.json`.
+
+Avoidance requests reaching TechDraw's outer-only fallback now stop, including
+triangulated avoidance selections routed to it. The change does not implement a
+new projection engine or resolve #26300. Successful hole-preserving projection,
+direct STL operations and holding tabs retain passing regressions. The default
+issue macro now has 97 tests; that complete default has not run together.

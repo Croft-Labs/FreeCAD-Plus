@@ -37,8 +37,11 @@ impact order for the current workflow:
   generate a path with PlanarSurface; a generated curved B-spline exclusion passes
   coverage checks. Further fixed partial-region loss: failed individual/group
   projection or union now stops generation instead of dropping selected regions.
-  Fourteen focused and 59 related CAM checks pass in separate runs. Legacy backend
-  unchanged; exact GeomFillSurface acceptance and #26300 remain open.
+  Also rejected the lossy outline fallback that filled holes after avoidance
+  projection failed. All 81 focused/related CAM checks pass in one batch (U.22),
+  including primary hole preservation and stale-path removal. Avoidance requiring
+  that fallback now reports an error; legacy backend unchanged. Exact
+  GeomFillSurface acceptance and #26300 remain open.
 - [#26300](https://github.com/FreeCAD/FreeCAD/issues/26300): freeform surfacing hangs
   or crashes. Still applicable: saved geometry/face selections also exceed a
   120-second limit in PlanarSurface. Stack traces identify Path.Area boundary
