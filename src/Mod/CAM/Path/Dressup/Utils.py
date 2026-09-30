@@ -63,10 +63,39 @@ def isOp(obj):
     return "Path.Op" in proxy or "Path.Dressup" in proxy
 
 
+def _isDressup(path):
+    """Recognize current proxies, retaining the legacy naming convention."""
+    module = getattr(getattr(path, "Proxy", None), "__module__", "")
+    if module.startswith("Path.Op."):
+        # Operations have geometric Base links; they are not dressup chains.
+        return False
+    if module.startswith("Path.Dressup."):
+        return True
+    if "Dressup" not in getattr(path, "Name", "") or not hasattr(path, "Base"):
+        return False
+    if isinstance(path, FreeCAD.DocumentObject):
+        # A legacy/native dressup has one object link, not a profile LinkSubList.
+        return (path.isDerivedFrom("Path::Feature")
+                and path.getTypeIdOfProperty("Base") == "App::PropertyLink")
+    return True  # Preserve legacy duck-typed callers.
+
+
 def baseOp(path):
-    """baseOp(path) ... return the base operation underlying the given path"""
-    if hasattr(path, "Name") and "Dressup" in path.Name:
-        return baseOp(path.Base)
+    """Return the underlying operation, or None for a disconnected dressup.
+
+    Reject cycles rather than recursing forever. Do not follow geometry references
+    on ordinary operations, even when their names contain the word Dressup.
+    """
+    seen = set()
+    while path is not None and _isDressup(path):
+        if isinstance(path, FreeCAD.DocumentObject):
+            key = (path.Document.Name, path.Name)
+        else:
+            key = id(path)
+        if key in seen:
+            raise ValueError("Cyclic CAM dressup base chain")
+        seen.add(key)
+        path = getattr(path, "Base", None)
     return path
 
 

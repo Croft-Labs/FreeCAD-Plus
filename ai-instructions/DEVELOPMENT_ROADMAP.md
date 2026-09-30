@@ -10,7 +10,10 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2ai/aj clear failed Plunge Milling output and reject
+- Current batch: 16.2ak/al recognize dressups by current proxy identity with
+  guarded legacy fallback and traverse base chains iteratively with cycle errors.
+  Grouped validation: 84 passes, zero failures/errors/skips; no native rebuild.
+- Previous batch: 16.2ai/aj clear failed Plunge Milling output and reject
   invalid stepover with native error state. Grouped validation: 54 passes, zero
   failures/errors/skips; Python-only synchronization, no native rebuild.
 - Previous batch: 16.2ag/ah clear Dragknife and Ramp Entry output before
@@ -2346,10 +2349,14 @@ by these bounded failure/recovery checks; broader consumer gates remain open.
 - [ X ] 16.2aj Reject non-finite/negative/approximately-zero stepover with native
   error state instead of warning and returning success. Verify zero/negative
   rejection/export blocking and recovery after restoring 1 mm stepover.
-- [   ] 16.2ak Audit the shared dressup base-operation lookup, which currently
-  depends on "Dressup" in the internal object name. Define structural recognition
-  and cycle/missing-link behavior before changing it; test real nested/legacy
-  dressups and ordinary operations so profile Base links are never misclassified.
+- [ X ] 16.2ak Audit and replace internal-name-only base lookup with recognition
+  of current Path.Dressup proxies. Stop at Path.Op proxies; retain legacy naming
+  fallback with native Path::Feature/single-Base-link checks. Validate custom-name
+  nested Array/Mirror, restored custom-name Array, legacy links and ordinary
+  operation/profile LinkSubList boundaries.
+- [ X ] 16.2al Traverse dressup base chains iteratively, detect cycles with stable
+  native document/object identity, and return None/default tool for disconnected
+  chains. Validate a 1500-node duck-typed chain, a cycle and real missing-link repair.
 
 Plunge Milling batch: `cam-plunge-20260930-verified/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928` records **54 PASS, zero
@@ -2364,6 +2371,19 @@ Both implementations preceded grouped validation. Python-only synchronization in
 engine 2df76790b4; no native rebuild, release update or GUI/machine acceptance.
 Drilling-cycle semantics and general physical milling suitability are not certified
 by these bounded checks; broader consumer gates remain open.
+
+Shared lookup batch: `cam-dressup-lookup-20260930-batch/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **84 PASS, zero
+failures/errors/skips**: 44 invalid-input/workflow checks (four new), seven nested
+postprocessing, four Array, 17 Dogbone, five holding-tag and seven ramp-generator
+checks. Macro PASS; process ended. Source/development-build Dressup/Utils.py SHA256:
+`1DA658C5E228D8B423C752459646DCD7AD49B539730AC770DACC4BC747B7B6D2`.
+Both changes preceded grouped testing. Current proxy namespaces and the legacy
+single-link/name contract are covered; arbitrary third-party proxies are not
+certified. Cycle/deep-chain tests use duck-typed fixtures; native custom-name,
+nesting, missing-link and save/reopen paths are tested separately. No schema change,
+native rebuild, GUI/machine acceptance or release update. Python synchronized into
+engine 2df76790b4; broader consumer gates remain open.
 
 - [   ] 16.3 Maintain capability audit and patch/upstream map: usable, inconsistent,
   compatible component/add-on, bounded extension or demonstrated limitation. Cover

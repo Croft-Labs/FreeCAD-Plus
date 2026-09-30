@@ -761,3 +761,70 @@ class TestCAMInvalidInputs(PathTestWithAssets):
             dressup.StepOver = 1
             self.doc.recompute()
             self.assertTrue(_wrap_op(dressup).Path.Commands)
+
+    def testCustomNamedNestedDressupsResolveOperationAndTool(self):
+        from Path.Dressup import Array, Utils
+        from Path.Dressup.Gui import Mirror
+        inner = Array.Create(self.op, "RepeatedPath")
+        outer = self.doc.addObject("Path::FeaturePython", "ReflectedPath")
+        Mirror.ObjectDressup(outer, inner)
+        self.job.Proxy.addOperation(outer, inner, True)
+        self.doc.recompute()
+        self.assertTrue(outer.Path.Commands)
+        self.assertEqual(Utils.baseOp(outer), self.op)
+        self.assertEqual(Utils.toolController(outer), self.op.ToolController)
+        inner.Base = None
+        self.assertIsNone(Utils.baseOp(outer))
+        sentinel = object()
+        self.assertIs(Utils.toolController(outer, sentinel), sentinel)
+        inner.Base = self.op
+        self.doc.recompute()
+        self.assertEqual(Utils.baseOp(outer), self.op)
+        self.assertTrue(outer.Path.Commands)
+
+    def testLegacyDressupAndOrdinaryGeometryLinksStayDistinct(self):
+        from Path.Dressup import Utils
+        legacy = self.doc.addObject("Path::FeaturePython", "DressupLegacy")
+        legacy.addProperty("App::PropertyLink", "Base")
+        legacy.Base = self.op
+        self.assertEqual(Utils.baseOp(legacy), self.op)
+        ordinary = self.doc.addObject("Path::FeaturePython", "DressupNamedOperation")
+        ordinary.addProperty("App::PropertyLinkSubList", "Base")
+        ordinary.Base = [(self.source, ["Face1"])]
+        self.assertEqual(Utils.baseOp(ordinary), ordinary)
+        ordinary.Proxy = self.op.Proxy
+        self.assertEqual(Utils.baseOp(ordinary), ordinary)
+
+    def testCustomNamedDressupsRestoreLookup(self):
+        import os
+        from pathlib import Path
+        from Path.Dressup import Array, Utils
+        inner = Array.Create(self.op, "RepeatedPath")
+        self.doc.recompute()
+        names = inner.Name, self.op.Name
+        filename = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "DressupLookup.FCStd"
+        self.doc.saveAs(str(filename))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(filename))
+        restored, operation = [self.doc.getObject(name) for name in names]
+        self.doc.recompute()
+        self.assertEqual(Utils.baseOp(restored), operation)
+        self.assertEqual(Utils.toolController(restored), operation.ToolController)
+        self.assertTrue(restored.Path.Commands)
+
+    def testDressupLookupRejectsCyclesAndHandlesDeepChains(self):
+        from types import SimpleNamespace
+        from Path.Dressup import Utils
+        proxy = type("TestDressup", (), {"__module__": "Path.Dressup.TestFixture"})()
+        terminal = SimpleNamespace(Name="Operation")
+        chain = terminal
+        for index in range(1500):
+            chain = SimpleNamespace(Name=str(index), Proxy=proxy, Base=chain)
+        self.assertIs(Utils.baseOp(chain), terminal)
+        first = SimpleNamespace(Name="First", Proxy=proxy)
+        second = SimpleNamespace(Name="Second", Proxy=proxy, Base=first)
+        first.Base = second
+        with self.assertRaisesRegex(ValueError, "Cyclic"):
+            Utils.baseOp(first)
+        with self.assertRaisesRegex(ValueError, "Cyclic"):
+            Utils.toolController(first)

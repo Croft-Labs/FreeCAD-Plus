@@ -123,6 +123,18 @@ Restoring generation or a 1 mm stepover must recover exported commands. These ch
 cover bounded failure handling; they do not certify drilling cycles, holder clearance
 or physical plunge-milling suitability.
 
+## Shared dressup lookup compatibility
+
+`tests/TestCAMInvalidInputs.py` checks custom-named nested Array/Mirror objects,
+missing-link/default-tool behavior, a restored custom-named Array, and legacy
+single-link dressups. Ordinary operations and geometry LinkSubList inputs must not
+be traversed just because an internal name contains Dressup. Iterative traversal
+is exercised with a 1500-element chain and a cycle; cycles raise a clear error.
+Run with nested postprocessing, Array, Dogbone, holding-tag and ramp-generator
+suites because they share this helper. Recognition covers current Path.Dressup
+proxies and the retained legacy naming/shape contract; arbitrary third-party proxy
+namespaces are not automatically certified. No document schema migration is added.
+
 ## Native acceptance
 
 1. Import an STL, select it, create a Job. Check stock size and placement. Move,
