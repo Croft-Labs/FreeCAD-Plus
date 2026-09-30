@@ -1,19 +1,17 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phases 4/5/8 collector inspection and selection recovery,
-roadmap 8.1.3a/b and 8.1.5a, mapped explicitly to F030/F031/F032. Trim Body now
-highlights its Target/Tool; Isocline highlights selected face rows and its direction
-reference and can clear/replace that reference. Cancel/failed startup restores
-original object/subelement/occurrence selections. Seven new regressions included
-in 85 grouped passes, zero failures/errors/skips, macro PASS and process exit 0.
-Evidence: D:\Temp\Office-PC\freecad-plus-collectors-20260930\grouped-staged.
-Five source/development-build Python hashes match (staging-identities.json in the
-parent). Existing fork engine 802e19d648 plus staged modules; no native rebuild,
-installer or release. F030-F032 broad acceptance and physical GUI checks remain
-open. All F001-F127 IDs are present once; only bounded affected statuses advanced.
-Next dependency-ready slice: collector type/count feedback and explicit invalid
-preselection feedback in these production editors, batched before validation.
-
+Latest product batch: phases 5/8, roadmap 5.1.11, 8.1.2a and 8.1.3c, mapped
+to F030/F031/F070. Trim Body and Isocline show collector counts/type hints/active
+role, explain ignored preselection and share validation with later picks. Whole
+Isocline objects now persist as explicit empty-name references instead of being
+dropped by the native LinkSubList; removal, Undo/Redo and save/reopen/source edits
+are covered. Nine added regressions in 70 grouped passes, zero failures/errors/skips,
+macro PASS, process exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-collector-feedback-20260930\verified.
+Four changed source/development-build Python hashes match; existing fork engine
+802e19d648, no native rebuild or release. Item-level broad acceptance remains open.
+Next dependency-ready slice: expose the existing Isocline tolerance in its task
+and validate F070 semantics, batching related changes before runtime checks.
 
 Release 0.0.2 is built, validated and publicly published after 0.0.4:
 https://github.com/Croft-Labs/FreeCAD-Plus/releases/tag/0.0.2

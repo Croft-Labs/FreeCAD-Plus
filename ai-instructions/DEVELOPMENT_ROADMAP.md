@@ -2,13 +2,11 @@
 
 ## Current focus
 
-- Current product batch: phases 4/5/8 input inspection and selection recovery,
-  mapped to F030/F031/F032 (8.1.3a/b and 8.1.5a). Three related implementation
-  tasks completed before one grouped runtime checkpoint: 85 tests pass, with zero
-  failures/errors/skips. Existing fork binary plus matching staged Python modules.
-  F060/F070 benefit through their existing Trim Body/Isocline editors; their
-  broader geometry acceptance remains separate. Continue dependency-ready
-  item-level product work outside CAM 16.2 in subsequent batches.
+- Current product batch: F030/F031 collector feedback and preselection parity,
+  plus F070 whole-object collection recovery (8.1.3c, 8.1.2a, 5.1.11). Three
+  related changes completed before final grouped validation: 70 tests pass with
+  zero failures/errors/skips. Existing fork binary plus matching Python modules;
+  no native rebuild or release. Broader item-level acceptance remains open.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1428,6 +1426,11 @@ Depends on: the existing OpenCASCADE Part kernel and native development build.
   including curve highlight removal, while preserving the primary startup error;
   repeated removal and reopen/accept verified with 4.1.10.
 
+- [ X ] 5.1.11 Preserve whole-object face collection using an explicit empty
+  subelement name in the native LinkSubList. Fix preselection, interactive picking
+  and retention when other rows are removed. Verify geometry, Undo/Redo and
+  save/reopen followed by source edits; evidence with 8.1.2a/8.1.3c. F031/F070.
+
 ### [   ] 5.2 Validate the local build
 
 - [ X ] 5.2.1 Rebuild/link Part's contour binding plus PartGui/PartDesignGui command
@@ -1788,6 +1791,10 @@ implementation or mark its unfinished validation complete through this plan.
   the command must produce equivalent definitions, with the same editable inputs on
   reopen.
 - [   ] 8.1.2 Apply command-first selection and identical create/edit coverage to the Phase 3 audit, including profile/section/path/axis replacement after reopening a feature.
+- [ X ] 8.1.2a Reuse each Trim Body/Isocline collector's input validation for
+  preselection and later picks. Show ignored inputs with reasons; retain valid
+  inputs and reject ambiguous multiple Trim tool faces without choosing one.
+  Verify mixed picks, document scope, correction and equivalent definitions. F031.
 - [   ] 8.1.3 Standardize named selection collectors with add/remove/clear, viewport/tree picking, compatible-type filters, chain/region selection and visible invalid-reference feedback.
 - [ X ] 8.1.3a Add input inspection to existing Trim Body and Isocline collectors:
   Target/Tool Highlight, face-list row highlighting and direction-reference
@@ -1796,6 +1803,10 @@ implementation or mark its unfinished validation complete through this plan.
 - [ X ] 8.1.3b Add Isocline direction-reference Clear, retain Reference mode, clear
   stale preview even while paused, and permit correction or Cancel recovery.
   Empty collectors disable Highlight/Clear. F030 production slice.
+- [ X ] 8.1.3c Show collector entry counts, accepted types and the active picking
+  role as text in Trim Body and Isocline. Preserve required input-group ordering;
+  refresh feedback after picks, duplicates, clear, removal and reopen. Counts are
+  collected entries, not expanded face totals. F030.
 - [   ] 8.1.4 Standardize signed offsets, adjacent direction buttons, one/two-sided and symmetric modes, units and expressions. Preserve parameters by meaning when switching operation or type.
   Cover distance, symmetric, two-sided, through-all, to-face and offset-from-face
   extents where the command supports them; keep extent semantics distinct from the
@@ -1828,6 +1839,21 @@ No property/schema, geometry or persistence format changes. Broad 8.1/F030-F032
 acceptance (other commands, disambiguation, Apply/repeat and physical interaction)
 remains open. Next dependency-ready slice: collector type/count feedback and
 explicit invalid-preselection feedback in these production editors.
+
+**Collector feedback batch (8.1.2a, 8.1.3c, 5.1.11), 2026-09-30:** Nine added
+regressions plus existing GUI/model checks: Trim task 24, Isocline task 23,
+Trim geometry 14, Isocline geometry 9; **70 passes, zero failures/errors/skips**,
+macro PASS, process exit 0. Four changed Python files hash-match the development
+build. Existing engine `802e19d648`; no native rebuild or release. Evidence:
+`D:\Temp\Office-PC\freecad-plus-collector-feedback-20260930\verified` and parent
+`staging-identities.json`. Both Qt task panels were captured and visually checked
+under the sibling `visual` directory; labels, warnings and controls are readable
+without clipping in those captures. Physical input/high-DPI acceptance remains
+separate. Initial checks caught input-group ordering regressions (corrected) and the native whole-object LinkSubList omission (fixed under 5.1.11).
+Preselection parity is verified for these editors, not the full F031 Extrude
+acceptance. Counts/type hints and explicit rejection do not complete general
+selection filters or disambiguation. Next independent product slice: expose the
+existing Isocline tolerance in its create/edit task and validate its F070 semantics.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4228,7 +4254,7 @@ reconciliation rules above to every entry.
 <a id="f030"></a>
 ### F030 — Selection collectors
 
-**Owning tasks:** 8.1, 10.4. **Status:** Production Trim Body/Isocline inspection and direction-reference clearing are validated under 8.1.3a/b (85-test grouped batch). Cross-command collectors, counts/type hints and disambiguation acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Other command families, selection filters and general disambiguation acceptance remain open.
 
 **Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
 
@@ -4241,7 +4267,7 @@ reconciliation rules above to every entry.
 <a id="f031"></a>
 ### F031 — Preselection and postselection
 
-**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline cancellation selection recovery is validated under 8.1.5a (85-test grouped batch). The required Extrude preselection/postselection equivalence and mixed-selection acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline shared preselection/picking checks, ignored-input explanations, parity, cancellation recovery and whole-object collection are validated under 8.1.2a, 8.1.5a and 5.1.11. The specified Extrude equivalence and broad mixed-selection acceptance remain open.
 
 **Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 
@@ -4748,7 +4774,7 @@ reconciliation rules above to every entry.
 <a id="f070"></a>
 ### F070 — Isocline curves
 
-**Owning tasks:** 5, 13.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 5, 13.4. **Status:** Existing analytic model checks pass; whole-source face collection and its undo/persistence lifecycle are validated under 5.1.11. Complete task-level tolerance controls and broader domain/normal-orientation acceptance remain pending.
 
 **Packages:** G05, I02 · **First delivery:** P7 after spike · **Likely scope:** Feature/Core
 

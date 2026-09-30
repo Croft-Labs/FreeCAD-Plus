@@ -18,6 +18,23 @@ translate = App.Qt.translate
 ICON = str(Path(__file__).with_name("TrimBody.svg"))
 
 
+def selection_link(feature, candidate, sub, role):
+    """Use identical reference checks for preselection and interactive picking."""
+    TrimAPI.validate_link(feature, candidate)
+    require_current(candidate)
+    other = feature.Tool if role == "Target" else feature.Target
+    if other and other[0] == candidate:
+        raise TrimAPI.TrimError("Use a separate object as the cutting tool.")
+    link = (candidate, [sub] if role == "Tool" and sub else [])
+    if role == "Tool":
+        TrimAPI.tool_shape(link)
+    else:
+        shape = TrimAPI.linked_shape(link)
+        if shape.isNull() or not shape.Faces:
+            raise TrimAPI.TrimError("Select a solid or sheet target.")
+    return link
+
+
 class ViewProviderTrimBody(TaskFeatureViewProvider):
     icon = ICON
     editLabel = translate("TrimBody", "Edit Trim Body")
@@ -50,13 +67,26 @@ class TrimBodyTask:
         self.form.setWindowTitle(translate("TrimBody", "Trim Body"))
         self.form.setWindowIcon(QtGui.QIcon(ICON))
         layout = QtGui.QVBoxLayout(self.form)
+        self.preselectionFeedback = QtGui.QLabel()
+        self.preselectionFeedback.setObjectName("trimPreselectionFeedback")
+        self.preselectionFeedback.setTextFormat(QtCore.Qt.PlainText)
+        self.preselectionFeedback.setWordWrap(True)
+        self.preselectionFeedback.hide()
+        self.activeCollector = QtGui.QLabel(translate("TrimBody", "Picking: none"))
+        self.activeCollector.setObjectName("trimActiveCollector")
         self.fields = {}
         self.buttons = {}
         self.inspectButtons = {}
+        self.collectorHints = {}
         for key, title in (("Target", "Target body"), ("Tool", "Cutting tool")):
             group = QtGui.QGroupBox(translate("TrimBody", title))
             group.setObjectName("trim" + key + "Group")
             rows = QtGui.QVBoxLayout(group)
+            hint = QtGui.QLabel()
+            hint.setObjectName("trim" + key + "Hint")
+            hint.setWordWrap(True)
+            rows.addWidget(hint)
+            self.collectorHints[key] = hint
             field = QtGui.QLineEdit()
             field.setObjectName("trim" + key)
             field.setReadOnly(True)
@@ -80,6 +110,8 @@ class TrimBodyTask:
             layout.addWidget(group)
             self.fields[key], self.buttons[key] = field, button
             self.inspectButtons[key] = inspect
+        layout.addWidget(self.activeCollector)
+        layout.addWidget(self.preselectionFeedback)
         side = QtGui.QHBoxLayout()
         self.side = QtGui.QLabel()
         self.side.setObjectName("trimKeepSide")
@@ -143,6 +175,11 @@ class TrimBodyTask:
     def refreshFields(self):
         for key in self.fields:
             link = getattr(self.obj, key)
+            self.collectorHints[key].setText(
+                translate("TrimBody", "Selected: {}/1. Solid or sheet body.").format(int(bool(link)))
+                if key == "Target" else
+                translate("TrimBody", "Selected: {}/1. Plane, face or sheet body.").format(int(bool(link)))
+            )
             self.inspectButtons[key].setEnabled(bool(link and link[0]))
             if link and link[0]:
                 self.remember(link[0])
@@ -160,6 +197,10 @@ class TrimBodyTask:
 
     def select(self, key):
         self.mode = key
+        self.activeCollector.setText(translate("TrimBody", {
+            "Target": "Picking: Target body", "Tool": "Picking: Cutting tool",
+            None: "Picking: none",
+        }[key]))
         for field, button in self.buttons.items():
             blocker = QtCore.QSignalBlocker(button)
             button.setChecked(field == key)
@@ -198,19 +239,8 @@ class TrimBodyTask:
             if document != self.doc.Name:
                 raise TrimAPI.TrimError("Select an object in this document.")
             obj = self.doc.getObject(name)
-            TrimAPI.validate_link(self.obj, obj)
-            require_current(obj)
             key = self.mode
-            other = self.obj.Tool if key == "Target" else self.obj.Target
-            if other and other[0] == obj:
-                raise TrimAPI.TrimError("Use a separate object as the cutting tool.")
-            link = (obj, [sub] if key == "Tool" and sub else [])
-            if key == "Tool":
-                TrimAPI.tool_shape(link)
-            else:
-                shape = TrimAPI.linked_shape(link)
-                if shape.isNull() or not shape.Faces:
-                    raise TrimAPI.TrimError("Select a solid or sheet target.")
+            link = selection_link(self.obj, obj, sub, key)
             self.restoreVisibility()
             setattr(self.obj, key, link)
             self.refreshFields()
@@ -328,34 +358,31 @@ class CommandTrimBody:
     def Activated(self):
         if not self.IsActive():
             return
-        selections = Gui.Selection.getSelectionEx()
+        selections = Gui.Selection.getSelectionEx("*")
         doc = App.ActiveDocument
         with creation_transaction(doc, translate("TrimBody", "Create Trim Body")):
             obj = TrimFeatures.makeTrimBody(doc)
-            # Preselection is optional. The same task remains available for incomplete input.
-            if selections and selections[0].DocumentName == doc.Name:
-                candidate = selections[0].Object
+            messages = []
+            # Preserve the established order: first target, second tool. Never
+            # silently choose one of several tool faces or reassign ignored picks.
+            for index, selection in enumerate(selections):
                 try:
-                    require_current(candidate)
-                    shape = TrimAPI.linked_shape((candidate, []))
-                    if shape.Faces:
-                        obj.Target = (candidate, [])
-                except Exception:
-                    pass
-            if len(selections) > 1 and selections[1].DocumentName == doc.Name:
-                selection = selections[1]
-                sub = selection.SubElementNames[0] if selection.SubElementNames else ""
-                link = (selection.Object, [sub] if sub else [])
-                try:
-                    if not obj.Target or obj.Target[0] != selection.Object:
-                        require_current(selection.Object)
-                        TrimAPI.tool_shape(link)
-                        obj.Tool = link
-                except Exception:
-                    pass
+                    if index > 1:
+                        raise TrimAPI.TrimError("Only the first target and second cutting tool are used.")
+                    role = "Target" if index == 0 else "Tool"
+                    if role == "Tool" and len(selection.SubElementNames) > 1:
+                        raise TrimAPI.TrimError("Select one cutting-tool face; multiple faces were preselected.")
+                    sub = selection.SubElementNames[0] if selection.SubElementNames else ""
+                    setattr(obj, role, selection_link(obj, selection.Object, sub, role))
+                except Exception as error:
+                    messages.append(translate("TrimBody", "Ignored preselection: {0}: {1}").format(
+                        selection.Object.Label, error))
             Gui.Selection.clearSelection()
             if not Gui.getDocument(doc.Name).setEdit(obj.Name):
                 raise RuntimeError("Could not open the feature task editor.")
+            task = obj.ViewObject.Proxy.task
+            task.preselectionFeedback.setText("\n".join(messages))
+            task.preselectionFeedback.setVisible(bool(messages))
 
 
 def registerCommand():

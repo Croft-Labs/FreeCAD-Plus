@@ -62,6 +62,10 @@ Collector inspection and Cancel selection recovery: `highlight_references` and
 used by Trim Body and Isocline. Snapshots retain object/occurrence subelement paths;
 inspection does not feed its own picks into active collectors. Isocline also offers
 explicit direction-reference Clear; roadmap 8.1.3a/b and 8.1.5a.
+`selection_link` in each editor shares preselection and interactive input checks;
+collector counts/type hints/active-role text and ignored-input notices implement
+8.1.2a/8.1.3c. Isocline whole-object LinkSubList entries use an explicit empty
+subelement name so picking, removal and persistence retain the source (5.1.11).
 
 Feature creation startup rollback: `creation_transaction` in
 [`FeatureTask.py`](../src/Mod/Part/BasicShapes/FeatureTask.py), used by Trim Body and

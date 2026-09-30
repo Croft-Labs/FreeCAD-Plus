@@ -189,6 +189,14 @@ the result or choosing **Edit Trim Body** opens the same pane.
 | Live preview and status | Preview hides the target and displays the kept result. Pausing preview defers computation until OK. Missing, self/dependent, wrong-document, or invalid cutting inputs stay editable with an explanation. Invalid or unrecomputed dependencies after recompute hide the result and block OK until repaired. |
 | OK / Cancel | OK recomputes and accepts only valid geometry, hides the source inputs, and shows the separate result. Cancel removes a pending new feature or restores an existing feature and input visibility. Both remove temporary selection observation and the arrow. |
 
+Target and Cutting tool show 0/1 or 1/1 collected inputs and accepted type hints.
+A Picking label below these groups identifies the active role without relying on
+color. Preselection follows the established first-target, second-tool order;
+extra objects, rejected inputs and multiple faces for a single tool are explained
+in a persistent plain-text notice. No tool face is chosen from an ambiguous set.
+Valid inputs remain available for correction; the notice is not saved with the
+feature and is hidden on reopen. Preselection and later picks share validation.
+
 Invalid or unrecomputed target/tool picks leave the existing inputs and active
 selection mode unchanged, with a repair/recompute message. Retry after repair.
 Optional preselection skips stale targets/tools while retaining valid inputs;
@@ -226,6 +234,16 @@ Isocline Curve** to reopen the same complete definition.
 | Draft angle | Degrees, default 0, range 0 through 90. Zero gives normals perpendicular to pull; positive values select normals increasingly facing pull. Reversing pull selects the opposite draft side. |
 | Preview and status | Red curves are highlighted through source faces while editing, including hidden portions; the accepted feature uses normal depth rendering. The green arrow indicates pull. Live preview can be paused. Missing input, no curve, whole-face coincidence, or solver errors stay editable and clear stale output. Invalid or unrecomputed dependencies after recompute hide the result and block OK until repaired. |
 | OK / Cancel | OK forces recompute and accepts valid wires; Cancel removes a pending feature or restores its previous definition and temporary visibility. Both remove selection observation and direction annotation. |
+
+Target faces shows a count of collected entries, with whole-object entries
+explicitly labeled as all faces; the count is not the number of expanded faces.
+Direction reference shows 0/1 or 1/1 and its accepted types. A Picking label below
+the face group identifies the active collector, including after rejected picks.
+Preselection uses the same checks as later picks: valid faces remain collected,
+while rejected edges, vertices, stale or wrong-document inputs are named with
+reasons in a plain-text notice. The notice remains while correcting the task and
+is hidden on reopen. Whole-object picks are retained across other-row removal,
+Undo/Redo and save/reopen, and continue to follow source geometry edits.
 
 Invalid or unrecomputed face/direction-reference picks leave the existing inputs
 and selection mode unchanged, with a repair/recompute message. Retry after repair.

@@ -18,6 +18,23 @@ translate = App.Qt.translate
 ICON = str(Path(__file__).with_name("Isocline.svg"))
 
 
+def selection_link(feature, candidate, sub, role):
+    """Validate preselection and later picks through the same geometry boundary."""
+    validate_link(feature, candidate)
+    require_current(candidate)
+    link = (candidate, [sub] if sub else [])
+    if role == "Reference":
+        Isocline.reference_direction(link)
+    else:
+        shape = linked_shape(link)
+        if not shape.Faces or (sub and shape.ShapeType != "Face"):
+            raise ValueError("Select faces, not edges or vertices.")
+        # PropertyLinkSubList drops an object paired with an empty subelement
+        # list. An explicit empty name represents the whole-object reference.
+        link = (candidate, [sub])
+    return link
+
+
 class ViewProviderIsocline(TaskFeatureViewProvider):
     icon = ICON
     editLabel = translate("Isocline", "Edit Isocline Curve")
@@ -45,9 +62,20 @@ class IsoclineTask:
         self.form.setWindowTitle(translate("Isocline", "Isocline Curve"))
         self.form.setWindowIcon(QtGui.QIcon(ICON))
         layout = QtGui.QVBoxLayout(self.form)
+        self.preselectionFeedback = QtGui.QLabel()
+        self.preselectionFeedback.setObjectName("isoclinePreselectionFeedback")
+        self.preselectionFeedback.setTextFormat(QtCore.Qt.PlainText)
+        self.preselectionFeedback.setWordWrap(True)
+        self.preselectionFeedback.hide()
+        self.activeCollector = QtGui.QLabel(translate("Isocline", "Picking: none"))
+        self.activeCollector.setObjectName("isoclineActiveCollector")
         group = QtGui.QGroupBox(translate("Isocline", "Target faces"))
         group.setObjectName("isoclineFacesGroup")
         rows = QtGui.QVBoxLayout(group)
+        self.facesHint = QtGui.QLabel()
+        self.facesHint.setObjectName("isoclineFacesHint")
+        self.facesHint.setWordWrap(True)
+        rows.addWidget(self.facesHint)
         self.faces = QtGui.QListWidget()
         self.faces.setObjectName("isoclineFaces")
         self.faces.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
@@ -69,6 +97,8 @@ class IsoclineTask:
             buttons.addWidget(button)
         rows.addLayout(buttons)
         layout.addWidget(group)
+        layout.addWidget(self.activeCollector)
+        layout.addWidget(self.preselectionFeedback)
         layout.addWidget(QtGui.QLabel(translate("Isocline", "Pull direction")))
         direction_row = QtGui.QHBoxLayout()
         self.direction = QtGui.QComboBox()
@@ -91,6 +121,10 @@ class IsoclineTask:
         self.reference = QtGui.QWidget()
         ref_layout = QtGui.QVBoxLayout(self.reference)
         ref_layout.setContentsMargins(0, 0, 0, 0)
+        self.referenceHint = QtGui.QLabel()
+        self.referenceHint.setObjectName("isoclineReferenceHint")
+        self.referenceHint.setWordWrap(True)
+        ref_layout.addWidget(self.referenceHint)
         self.refName = QtGui.QLineEdit()
         self.refName.setObjectName("isoclineReference")
         self.refName.setReadOnly(True)
@@ -181,7 +215,13 @@ class IsoclineTask:
             self.remember(obj)
             self.faces.addItem(obj.Label + (" : " + sub if sub else " (all faces)"))
         del blocker
+        self.facesHint.setText(translate(
+            "Isocline", "Selected entries: {}. Pick faces or whole objects (all faces)."
+        ).format(self.faces.count()))
         link = self.obj.DirectionReference
+        self.referenceHint.setText(translate(
+            "Isocline", "Selected: {}/1. Plane, planar face, straight edge or axis."
+        ).format(int(bool(link))))
         self.highlightRef.setEnabled(bool(link and link[0]))
         self.clearRef.setEnabled(bool(link and link[0]))
         self.refName.setText(
@@ -192,6 +232,10 @@ class IsoclineTask:
 
     def select(self, mode):
         self.mode = mode
+        self.activeCollector.setText(translate("Isocline", {
+            "Faces": "Picking: Target faces", "Reference": "Picking: Direction reference",
+            None: "Picking: none",
+        }[mode]))
         for button, name in ((self.add, "Faces"), (self.pickRef, "Reference")):
             blocker = QtCore.QSignalBlocker(button)
             button.setChecked(mode == name)
@@ -243,23 +287,17 @@ class IsoclineTask:
             if document != self.doc.Name:
                 raise ValueError("Select an object in this document.")
             obj = self.doc.getObject(name)
-            validate_link(self.obj, obj)
-            require_current(obj)
+            link = selection_link(self.obj, obj, sub, self.mode)
             if self.mode == "Reference":
-                link = (obj, [sub] if sub else [])
-                Isocline.reference_direction(link)
                 self.obj.DirectionReference = link
                 self.select(None)
             else:
-                shape = linked_shape((obj, [sub] if sub else []))
-                if not shape.Faces or (sub and shape.ShapeType != "Face"):
-                    raise ValueError("Select faces, not edges or vertices.")
                 entries = self.entries()
                 if (obj, sub) not in entries and (obj, "") not in entries:
                     if not sub:
                         entries = [(o, n) for o, n in entries if o != obj]
                     entries.append((obj, sub))
-                    self.obj.Faces = [(o, [n] if n else []) for o, n in entries]
+                    self.obj.Faces = [(o, [n]) for o, n in entries]
             self.refresh()
             self.updatePreview()
             Gui.Selection.clearSelection()
@@ -269,7 +307,7 @@ class IsoclineTask:
     def removeFaces(self):
         rows = {self.faces.row(item) for item in self.faces.selectedItems()}
         self.obj.Faces = [
-            (o, [n] if n else []) for i, (o, n) in enumerate(self.entries()) if i not in rows
+            (o, [n]) for i, (o, n) in enumerate(self.entries()) if i not in rows
         ]
         self.refresh()
         self.updatePreview()
@@ -383,29 +421,29 @@ class CommandIsocline:
     def Activated(self):
         if not self.IsActive():
             return
-        selections = Gui.Selection.getSelectionEx()
+        selections = Gui.Selection.getSelectionEx("*")
         doc = App.ActiveDocument
         with creation_transaction(doc, translate("Isocline", "Create Isocline Curve")):
             obj = Isocline.makeIsocline(doc)
             links = []
+            messages = []
             for selection in selections:
-                if selection.DocumentName != doc.Name:
-                    continue
-                try:
-                    require_current(selection.Object)
-                except ReferenceError:
-                    continue
-                names = [n for n in selection.SubElementNames if n.startswith("Face")]
-                if names or (
-                    not selection.SubElementNames
-                    and hasattr(selection.Object, "Shape")
-                    and selection.Object.Shape.Faces
-                ):
-                    links.append((selection.Object, names))
+                for sub in (selection.SubElementNames or [""]):
+                    try:
+                        link = selection_link(obj, selection.Object, sub, "Faces")
+                        if link not in links:
+                            links.append(link)
+                    except Exception as error:
+                        label = selection.Object.Label + (" : " + sub if sub else "")
+                        messages.append(translate("Isocline", "Ignored preselection: {0}: {1}").format(
+                            label, error))
             obj.Faces = links
             Gui.Selection.clearSelection()
             if not Gui.getDocument(doc.Name).setEdit(obj.Name):
                 raise RuntimeError("Could not open the feature task editor.")
+            task = obj.ViewObject.Proxy.task
+            task.preselectionFeedback.setText("\n".join(messages))
+            task.preselectionFeedback.setVisible(bool(messages))
 
 
 def registerCommand():
