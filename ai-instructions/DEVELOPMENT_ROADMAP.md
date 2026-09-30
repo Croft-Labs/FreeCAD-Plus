@@ -10,7 +10,11 @@ Specification update: see [the re-updated objective reconciliation](#re-updated-
 - Specification refinement: the [detailed candidate inventory](#detailed-inventory-reconciliation)
   expands existing pending tasks and adds 7.5.7/8.1.6. Consult those concrete behaviors
   before treating a broad objective as complete; implementation evidence is unchanged.
-- Current batch: 16.2ao/ap preserve probe-file precision and reject conflicting
+- Current batch: 10.8a/b prove shared named length parameters, native expression
+  persistence/transactions and a test-only dimensional assignment guard. Grouped
+  architecture validation: 24 passes, zero failures/errors/skips; no installed
+  feature/editor or native rebuild. Native unit coercion remains a production gate.
+- Previous batch: 16.2ao/ap preserve probe-file precision and reject conflicting
   duplicate heights. Grouped validation: 65 passes, zero failures/errors/skips;
   Python-only synchronization, no native rebuild.
 - Previous batch: 16.2am/an make shared property inheritance and job operation
@@ -1739,6 +1743,29 @@ Phase 7 architecture gates and the full guided workflow remain open.
   document/part/configuration scope (A09; [F122](#f122)). Provide rename and where-used,
   cycle rejection, publication rules and compatible-expression entry in feature fields.
   Validate shared dimensions, unit changes and rename propagation with T13.
+- [ X ] 10.8a Prove a native named length property drives two part features,
+  converts inch/mm input, survives parameter-container label edits, Undo/Redo and
+  native save/reopen, and preserves an occurrence's independent placement.
+- [ X ] 10.8b Prototype a dimensional assignment boundary for length expressions;
+  reject angular results before mutation and reuse native expression cycle rejection.
+  Verify transaction abort restores the valid expressions/geometry and later edits.
+
+Named-parameter foundation: `named-parameters-20260930-verified/results.json` under
+`D:\Temp\Office-PC\freecad-plus-validation-20260928` records **24 PASS, zero
+failures/errors/skips**: nine native capability checks (two new), ten adapter and
+five lineage checks. Macro PASS; process ended. Initial `named-parameters-20260930-batch`
+had 23 passes/one failure because native assignment accepted an angle as a length
+without invalid state. The new test-only `tests/prototypes/NamedParameters.py`
+evaluates the expression's unit before assignment; native code rejects the cycle.
+Prototype SHA256: `0C2E9ED61A09F8795E63902940E5C0B1A8177F954E098D8B7B580B404583DC17`.
+The guard supports App::PropertyLength and explicitly length-valued expressions
+only. It is not installed and does not intercept application expressions. Fixtures
+retain native object/property identities and need no custom proxy to recompute.
+This proves container label changes, not property renaming or a parameter editor.
+Configuration/cross-document scope, publication, where-used, display-unit settings,
+full T13, and production unit/default policy remain pending under 10.8. Both tasks
+preceded grouped testing using engine 2df76790b4; no native build or release change.
+
 - [   ] 10.9 Complete the unified contextual workspace, availability explanations,
   local help, keyboard navigation and display accessibility (U11; [F025](#f025),
   [F123](#f123)). Preserve the active engineering document across modeling, CAM,

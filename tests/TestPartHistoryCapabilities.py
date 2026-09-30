@@ -251,3 +251,79 @@ class TestPartHistoryCapabilities(unittest.TestCase):
             make_unique(occurrence)
         self.assertEqual({o.Name for o in self.doc.Objects}, before)
         self.assertEqual(occurrence.LinkedObject, self.part)
+
+    def parameterModel(self):
+        parameters = self.doc.addObject("App::FeaturePython", "Parameters")
+        self.part.addObject(parameters)
+        parameters.addProperty("App::PropertyLength", "Width", "Dimensions")
+        parameters.addProperty("App::PropertyAngle", "Tilt", "Dimensions")
+        parameters.Width = "1 in"
+        parameters.Tilt = "30 deg"
+        first = self.doc.addObject("Part::Box", "ParameterizedBase")
+        second = self.doc.addObject("Part::Box", "ParameterizedLid")
+        self.part.addObject(first)
+        self.part.addObject(second)
+        from prototypes.NamedParameters import set_length_expression
+        set_length_expression(first, "Length", "Parameters.Width")
+        set_length_expression(second, "Length", "Parameters.Width + 2 mm")
+        self.doc.recompute()
+        return parameters, first, second
+
+    def testNamedUnitAwareParameterDrivesMultipleFeatures(self):
+        parameters, first, second = self.parameterModel()
+        self.assertAlmostEqual(first.Length.Value, 25.4)
+        self.assertAlmostEqual(second.Length.Value, 27.4)
+        self.assertAlmostEqual(first.Shape.BoundBox.XLength, 25.4)
+        occurrence = self.doc.addObject("App::Link", "ParameterOccurrence")
+        occurrence.setLink(self.part)
+        occurrence.Placement.Base = App.Vector(100, 0, 0)
+        self.doc.recompute()
+        self.doc.openTransaction("Change named width and parameter label")
+        parameters.Label = "Enclosure dimensions"
+        parameters.Width = "30 mm"
+        self.doc.recompute()
+        self.doc.commitTransaction()
+        self.assertAlmostEqual(first.Length.Value, 30)
+        self.assertAlmostEqual(second.Length.Value, 32)
+        self.assertEqual(occurrence.LinkedObject, self.part)
+        self.assertEqual(occurrence.Placement.Base, App.Vector(100, 0, 0))
+        self.doc.undo()
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Length.Value, 25.4)
+        self.doc.redo()
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Length.Value, 30)
+        filename = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "NamedParameterProof.FCStd"
+        self.doc.saveAs(str(filename))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(filename))
+        self.doc.recompute()
+        self.doc.Parameters.Width = "2 in"
+        self.doc.recompute()
+        self.assertAlmostEqual(self.doc.ParameterizedBase.Length.Value, 50.8)
+        self.assertAlmostEqual(self.doc.ParameterizedLid.Shape.BoundBox.XLength, 52.8)
+        self.assertEqual(self.doc.ParameterOccurrence.LinkedObject, self.doc.ModelPart)
+        self.assertEqual(self.doc.ParameterOccurrence.Placement.Base, App.Vector(100, 0, 0))
+
+    def testParameterExpressionFailuresAbortWithoutLosingValidModel(self):
+        parameters, first, second = self.parameterModel()
+        original = first.ExpressionEngine
+        for target, prop, expression in (
+            (first, "Length", "Parameters.Tilt"),
+            (parameters, "Width", "ParameterizedBase.Length"),
+        ):
+            self.doc.openTransaction("Invalid parameter expression")
+            from prototypes.NamedParameters import set_length_expression
+            with self.assertRaises(Exception) as caught:
+                set_length_expression(target, prop, expression)
+            self.assertRegex(str(caught.exception), "(?i)length|cyclic|cycle")
+            self.doc.abortTransaction()
+            self.doc.recompute()
+            self.assertEqual(first.ExpressionEngine, original)
+            self.assertTrue(all("Invalid" not in obj.State for obj in (parameters, first, second)))
+            self.assertAlmostEqual(first.Shape.BoundBox.XLength, 25.4)
+            self.assertAlmostEqual(second.Length.Value, 27.4)
+        parameters.Width = "40 mm"
+        self.doc.recompute()
+        self.assertAlmostEqual(first.Length.Value, 40)
+        self.assertAlmostEqual(second.Length.Value, 42)

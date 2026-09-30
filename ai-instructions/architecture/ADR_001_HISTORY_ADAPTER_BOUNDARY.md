@@ -156,6 +156,27 @@ No installed module/schema or UI changed. The fixtures use native types with
 metadata, so recompute does not require this test helper after creation.
 Roadmap 12.1a/12.2a records evidence and remaining parent gates.
 
+## Named parameter and dimensional assignment proof
+
+Native App::FeaturePython length properties can drive multiple native Part features
+through expressions, with inch/mm conversion, native transactions, label changes,
+and save/reopen. A linked part occurrence retains its placement while the shared
+parameter changes. These fixtures preserve existing property/document identities;
+no custom proxy is needed to recompute the saved parameter model.
+
+The initial negative test exposed native coercion: an angular expression assigned
+to a length was accepted without an invalid state. The test-only
+[`NamedParameters.py`](../../tests/prototypes/NamedParameters.py) evaluates expression
+units and requires a length result before native assignment. Native cycle rejection
+and transaction abort preserve the valid model. This is a narrowly bounded future
+editor boundary, not a production interception of FreeCAD expressions.
+
+Roadmap 10.8a/b owns the 24-test grouped evidence. General quantity types, bare-number
+unit defaults, parameter/property renaming, configuration/external scope, publication
+and a parameter editor remain unimplemented. The production architecture decision
+must account for native unit coercion rather than treating stored property types as
+sufficient dimensional validation.
+
 ## Remaining decision gates and consumers
 
 Before closing 7.1.3/7.1.5/7.1.6 or shipping the model:
