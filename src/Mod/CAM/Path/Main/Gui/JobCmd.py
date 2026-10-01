@@ -69,14 +69,14 @@ class CommandJobCreate:
         if dialog.exec_() == 1:
             models = dialog.getModels()
             if models:
-                self.Execute(models, dialog.getTemplate())
+                self.Execute(models, dialog.getTemplateSettings())
                 FreeCAD.ActiveDocument.recompute()
 
     @classmethod
     def Execute(cls, base, template):
         FreeCADGui.addModule("Path.Main.Gui.Job")
         if template:
-            template = "'%s'" % template
+            template = repr(template)
         else:
             template = "None"
         FreeCADGui.doCommand(
@@ -150,6 +150,8 @@ class CommandJobTemplateExport:
 
         # description: override (or remove) using the dialog's edited value
         if dialog:
+            attrs["TemplateInfo"]["Name"] = dialog.templateName()
+            attrs["TemplateInfo"]["Revision"] = dialog.templateRevision()
             desc = dialog.description()
             if desc:
                 attrs[PathJob.JobTemplate.Description] = desc
@@ -161,6 +163,7 @@ class CommandJobTemplateExport:
             attrs.pop(PathJob.JobTemplate.PostProcessor, None)
             attrs.pop(PathJob.JobTemplate.PostProcessorArgs, None)
             attrs.pop(PathJob.JobTemplate.PostProcessorOutputFile, None)
+            attrs.pop(PathJob.JobTemplate.PostProcessorPropertyOverrides, None)
 
         # tool controller settings
         toolControllers = dialog.includeToolControllers() if dialog else job.Tools.Group
@@ -198,8 +201,12 @@ class CommandJobTemplateExport:
             attrs[PathJob.JobTemplate.SetupSheet] = setupSheetAttrs
 
         encoded = job.Proxy.setupSheet.encodeTemplateAttributes(attrs)
+        # Validate portable settings before replacing an existing template file.
+        from Path.Main import Template
+
+        Template.validate(encoded)
         # write template
-        with open(str(path), "w") as fp:
+        with open(str(path), "w", encoding="utf-8") as fp:
             json.dump(encoded, fp, sort_keys=True, indent=2)
 
 

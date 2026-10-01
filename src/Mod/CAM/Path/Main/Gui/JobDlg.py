@@ -28,6 +28,7 @@ import FreeCADGui
 import Path
 import Path.Base.Util as PathUtil
 import Path.Main.Job as PathJob
+import Path.Main.Template as PathTemplate
 import Path.Main.Stock as PathStock
 import glob
 import json
@@ -72,6 +73,15 @@ class JobCreate:
         self.model = None
 
         self._setupUnitSchema()
+        self.templateReview = QtGui.QPlainTextEdit(self.dialog)
+        self.templateReview.setObjectName("templateReview")
+        self.templateReview.setReadOnly(True)
+        self.templateReview.setMinimumHeight(160)
+        self.dialog.templateGroup.layout().addWidget(self.templateReview)
+        self.dialog.jobTemplate.currentIndexChanged.connect(self.reviewTemplate)
+        self.dialog.buttonBox.accepted.disconnect()
+        self.dialog.buttonBox.accepted.connect(self.acceptReviewedTemplate)
+        self._reviewedTemplate = None
 
     def _schemaUsesMinutes(self, schema_id):
         """Return True if the given unit schema expresses velocity in /min."""
@@ -404,6 +414,34 @@ class JobCreate:
             )
         self.dialog.jobTemplate.setCurrentIndex(index)
         self.dialog.templateGroup.show()
+        self.reviewTemplate()
+
+    def reviewTemplate(self):
+        try:
+            filename = self.getTemplate()
+            attrs = PathTemplate.read(filename) if filename else None
+            self._reviewedTemplate = attrs
+            text = (PathTemplate.review(attrs) if attrs is not None else
+                    translate("CAM_Job", "No template: use current job defaults and review them before machining."))
+            self.templateReview.setPlainText(text)
+            self.dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok).setEnabled(True)
+            return True
+        except (OSError, ValueError, TypeError) as exc:
+            self._reviewedTemplate = None
+            self.templateReview.setPlainText(translate("CAM_Job", "Cannot use this template: ") + str(exc))
+            self.dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok).setEnabled(False)
+            return False
+
+    def acceptReviewedTemplate(self):
+        previous = self._reviewedTemplate
+        if not self.reviewTemplate():
+            return
+        if previous != self._reviewedTemplate:
+            self.templateReview.setPlainText(
+                translate("CAM_Job", "Template changed. Review the updated settings, then press OK again.\n\n")
+                + self.templateReview.toPlainText())
+            return
+        self.dialog.accept()
 
     def templateFilesIn(self, path):
         """templateFilesIn(path) ... answer all file in the given directory which fit the job template naming convention.
@@ -435,6 +473,10 @@ class JobCreate:
         """answer the file name of the template to be assigned"""
         return self.dialog.jobTemplate.itemData(self.dialog.jobTemplate.currentIndex())
 
+    def getTemplateSettings(self):
+        """Return the exact settings reviewed on acceptance, not a reread file."""
+        return self._reviewedTemplate
+
     def exec_(self):
         # ml: For some reason the callback has to be unregistered, otherwise there is a
         # segfault when python is shutdown. To keep it symmetric I also put the callback
@@ -459,6 +501,14 @@ class JobTemplateExport:
             self.dialog.dialogButtonBox.hide()
         else:
             self.dialog.exportButtonBox.hide()
+        self.nameEdit = QtGui.QLineEdit(getattr(job, "TemplateName", "") or job.Label)
+        self.nameEdit.setObjectName("templateName")
+        self.revisionEdit = QtGui.QLineEdit(getattr(job, "TemplateRevision", "") or "1")
+        self.revisionEdit.setObjectName("templateRevision")
+        metadata = QtGui.QFormLayout()
+        metadata.addRow(translate("CAM_Job", "Template name"), self.nameEdit)
+        metadata.addRow(translate("CAM_Job", "Revision"), self.revisionEdit)
+        self.dialog.layout().insertLayout(0, metadata)
         self.updateUI()
         self.dialog.toolsGroup.clicked.connect(self.checkUncheckTools)
 
@@ -555,6 +605,12 @@ class JobTemplateExport:
         )
         for i in range(self.dialog.toolsList.count()):
             self.dialog.toolsList.item(i).setCheckState(state)
+
+    def templateName(self):
+        return self.nameEdit.text().strip() or self.job.Label
+
+    def templateRevision(self):
+        return self.revisionEdit.text().strip() or "1"
 
     def description(self):
         """Return the (possibly edited) description to write to the template."""

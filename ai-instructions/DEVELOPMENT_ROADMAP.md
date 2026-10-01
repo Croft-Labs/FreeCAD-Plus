@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F067 sheet thickening, phase
+- Current product batch complete for owner testing: F096 setup reuse, phase 14
+  tasks 14.4a/b. Existing CAM templates now carry name/revision/units, preflight
+  known compatibility failures and show stored/default settings in New Job.
+  Accepted settings are captured exactly; native tools, stock and setup objects
+  remain editable and independent. Both tasks preceded one grouped staging pass;
+  16 distinct selected checks pass and six final captures were reviewed.
+  [Owner procedure](../tests/SetupTemplates.md). Full F096 remains open for operation
+  sequences, wider compatibility/remapping and physical acceptance. Stop and rotate.
+
+- Previous product batch complete for owner testing: F067 sheet thickening, phase
   13 tasks 13.1c/d. Existing 3D Offset now explains signed one-sided thickness,
   reverses numeric direction, distinguishes sheets from solids, preserves sources
   during kernel work and keeps failed acceptance recoverable. Both tasks preceded
@@ -4134,6 +4143,39 @@ No installer/release update or physical owner acceptance. [Owner procedure](../t
   scope and expand strategies/tools/posts only with representative fixtures.
   Simulation is not proof of machine safety or authorization for actual motion.
 
+- [ X ] 14.4a Preflight native CAM setup templates before creating job resources:
+  supported format/post/stock/tool data, portable setup expressions and explicit
+  name/revision/unit metadata. Keep exact post selection and reject known silent
+  fallbacks; preserve native job/model/stock/tool creation and rollback services.
+- [ X ] 14.4b Add a read-only template settings review to New Job, with changed-file
+  re-review and exact accepted settings. Export editable template names/revisions;
+  verify different-model stock sizing, isolated tools, Undo/Redo and save/reopen.
+
+14.4a/b evidence (2026-10-01):
+Both tasks preceded one grouped PathScripts build/staging pass, exit 0. Compatible
+Python changes use the existing native fork; no native C++ rebuild was needed.
+Evidence: `D:\Temp\Office-PC\freecad-plus-setup-templates-20261001`.
+`grouped/` passes eight new template checks plus eight existing setup-sheet checks.
+After clearer stock-margin/default labels and restoration of an existing UTF-8 log
+message, only affected Python files were restaged; `template-verified/` passes all
+eight template checks. **16 distinct selected passes**, zero failures/errors/skips,
+native process exits 0. Six final `visual-accepted/` captures reviewed: export
+metadata, settings/tools, unavailable post, changed-file review and reopened reuse.
+`job_metric_fixture.json` and `Reused-Setup.FCStd` are owner fixtures in that folder.
+A 12 mm model with X margins 2/3 mm produces 17 mm stock; applying the same template
+to a 30 mm model produces 35 mm stock with independent tools/setup and no operations.
+Native exact post selection, 600 mm/min feed, metadata, portable setup-sheet
+expression rebinding, known-incompatible-input refusal, GUI rollback, Undo/Redo,
+save/reopen and later source growth pass. Template edits do not alter created jobs.
+The fixture uses an available legacy post and no configured machine; no posted output
+or physical machine motion is validated. Full machine compatibility remains open.
+validated-identities.json and acceptance-summary.json identify exact source/staged
+modules and unchanged native runtime; historical About metadata is not source identity.
+No installer/release update. Full F096 remains open for operation sequences and
+collector remapping, complete machine/tool asset compatibility, broader reference
+repair, localization/high-DPI and owner acceptance. Stop here and rotate.
+[Owner procedure](../tests/SetupTemplates.md).
+
 Gate G8: reproducible paths within stated tolerance, supported collision/simulation
 checks and independent checks where available; verified post output and explicit
 unsupported capabilities. Existing implementation evidence does not close new scope.
@@ -6652,7 +6694,7 @@ regenerated Waterline contour repeatability and broader F089 acceptance remain o
 <a id="f096"></a>
 ### F096 — Setup reuse
 
-**Owning tasks:** 14.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 14.4, 14.4a/b. **Status:** Bounded native setup-template reuse is ready for owner testing. Name/revision/unit metadata, compatibility preflight, exact post selection and a visible accepted-settings review work with native job/stock/tool creation. Different-size model reuse, independent setup resources, Undo/Redo and persistence pass in 16 selected checks; six final captures reviewed. Full F096 remains open for recurring operation sequences, collector remapping, complete machine/tool compatibility and physical acceptance. [Owner procedure](../tests/SetupTemplates.md).
 
 **Packages:** C03 · **First delivery:** P8 · **Likely scope:** UI/Feature
 

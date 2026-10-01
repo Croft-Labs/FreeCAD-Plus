@@ -730,8 +730,16 @@ class ObjectJob:
         This will also create any TCs stored in the template."""
         tcs = []
         if template:
-            with open(str(template), "rb") as fp:
-                attrs = json.load(fp)
+            from Path.Main import Template
+
+            attrs = Template.validate(template) if isinstance(template, dict) else Template.read(template)
+            info = attrs.get("TemplateInfo", {})
+            for prop, value in (("TemplateName", info.get("Name", "")),
+                                ("TemplateRevision", info.get("Revision", ""))):
+                if prop not in obj.PropertiesList:
+                    obj.addProperty("App::PropertyString", prop, "Setup template")
+                setattr(obj, prop, value)
+                obj.setEditorMode(prop, 1)
 
             if attrs.get(JobTemplate.Version) and 1 == int(attrs[JobTemplate.Version]):
                 attrs = self.setupSheet.decodeTemplateAttributes(attrs)
@@ -742,15 +750,11 @@ class ObjectJob:
                     obj.GeometryTolerance = float(attrs.get(JobTemplate.GeometryTolerance))
                 if attrs.get(JobTemplate.PostProcessor):
                     templatePost = attrs.get(JobTemplate.PostProcessor)
-                    # Validate that the template's postprocessor exists in current enumeration
-                    if templatePost in obj.PostProcessor:
-                        obj.PostProcessor = templatePost
-                    else:
-                        Path.Log.warning(
-                            f"PostProcessor '{templatePost}' from template not found in available postprocessors. Using default."
-                        )
-                        Path.Log.debug(f"Available postprocessors: {obj.PostProcessor}")
-                        # Keep the default postprocessor that was already set
+                    # Check the enumeration choices, not substring membership in
+                    # the currently selected postprocessor's name.
+                    if templatePost not in obj.getEnumerationsOfProperty("PostProcessor"):
+                        raise ValueError("Template postprocessor is no longer available: " + templatePost)
+                    obj.PostProcessor = templatePost
                     if attrs.get(JobTemplate.PostProcessorArgs):
                         obj.PostProcessorArgs = attrs.get(JobTemplate.PostProcessorArgs)
                     else:
@@ -800,6 +804,13 @@ class ObjectJob:
         """templateAttrs(obj) ... answer a dictionary with all properties of the receiver that should be stored in a template file."""
         attrs = {}
         attrs[JobTemplate.Version] = 1
+        from Path.Main import Template
+
+        attrs["TemplateInfo"] = {
+            "Name": getattr(obj, "TemplateName", "") or obj.Label,
+            "Revision": getattr(obj, "TemplateRevision", "") or "1",
+            "Units": Template.UNITS,
+        }
         if obj.PostProcessor:
             attrs[JobTemplate.PostProcessor] = obj.PostProcessor
             attrs[JobTemplate.PostProcessorArgs] = obj.PostProcessorArgs
@@ -1024,6 +1035,12 @@ def Instances():
 def Create(name, base, templateFile=None):
     """Create(name, base, templateFile=None) ... creates a new job and all it's resources.
     If a template file is specified the new job is initialized with the values from the template."""
+    # Reject incompatible templates before adding any document resources.
+    if templateFile:
+        from Path.Main import Template
+
+        templateFile = (Template.validate(templateFile) if isinstance(templateFile, dict)
+                        else Template.read(templateFile))
     if isinstance(base[0], str):
         models = []
         for baseName in base:

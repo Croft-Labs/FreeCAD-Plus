@@ -1,6 +1,39 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F067 sheet thickening, phase 13 tasks 13.1c/d. Existing native 3D
+Latest batch: F096 CAM setup reuse, phase 14 tasks 14.4a/b. Existing Export Template
+and New Job now add named revision metadata, compatibility preflight and a visible
+settings review. Exact accepted settings feed the existing native creation services;
+known incompatible inputs fail before resource creation, and native GUI transaction
+rollback handles later instantiation failure. Post selection uses enum choices,
+not substring matching against the selected value. Model-bound stock adapts to the
+new model; tool and setup objects remain independent and editable.
+
+14.4a/b evidence (2026-10-01):
+Both tasks preceded one grouped PathScripts build/staging pass, exit 0. Compatible
+Python changes use the existing native fork; no native C++ rebuild was needed.
+Evidence: `D:\Temp\Office-PC\freecad-plus-setup-templates-20261001`.
+`grouped/` passes eight new template checks plus eight existing setup-sheet checks.
+After clearer stock-margin/default labels and restoration of an existing UTF-8 log
+message, only affected Python files were restaged; `template-verified/` passes all
+eight template checks. **16 distinct selected passes**, zero failures/errors/skips,
+native process exits 0. Six final `visual-accepted/` captures reviewed: export
+metadata, settings/tools, unavailable post, changed-file review and reopened reuse.
+`job_metric_fixture.json` and `Reused-Setup.FCStd` are owner fixtures in that folder.
+A 12 mm model with X margins 2/3 mm produces 17 mm stock; applying the same template
+to a 30 mm model produces 35 mm stock with independent tools/setup and no operations.
+Native exact post selection, 600 mm/min feed, metadata, portable setup-sheet
+expression rebinding, known-incompatible-input refusal, GUI rollback, Undo/Redo,
+save/reopen and later source growth pass. Template edits do not alter created jobs.
+The fixture uses an available legacy post and no configured machine; no posted output
+or physical machine motion is validated. Full machine compatibility remains open.
+validated-identities.json and acceptance-summary.json identify exact source/staged
+modules and unchanged native runtime; historical About metadata is not source identity.
+No installer/release update. Full F096 remains open for operation sequences and
+collector remapping, complete machine/tool asset compatibility, broader reference
+repair, localization/high-DPI and owner acceptance. Stop here and rotate.
+[Owner procedure](../tests/SetupTemplates.md).
+
+Previous batch: F067 sheet thickening, phase 13 tasks 13.1c/d. Existing native 3D
 Offset now exposes signed one-sided thickness, formula-preserving numeric reversal,
 solid/sheet status and recoverable failed acceptance. Kernel inputs are deep copies
 with native element maps. Cancel aborts before resetEdit's implicit commit; direct

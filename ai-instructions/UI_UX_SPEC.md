@@ -1010,3 +1010,25 @@ The same task's 2D controls keep their labels and hide the 3D side/result contro
 No new Boolean targets or symmetric thickness mode are implied. Graphical normals,
 compound inputs, broader kernel failures, localization/high-DPI and physical owner
 acceptance remain open. [Owner procedure](../tests/SheetThickening.md).
+
+## UI-033: CAM setup-template review (F096; roadmap 14.4a/b)
+
+Existing CAM Export Template and New Job use native version-1 templates and native
+job, model, stock, tool-controller and setup-sheet services. No operation/path copy.
+
+| Control/state | Behavior |
+| --- | --- |
+| Export: Template name / Revision | Editable metadata; fallback to job label / revision 1. Template-only edits do not alter the source job. Native stored-value units are recorded separately from document display units. |
+| Existing export inclusion choices | Preserve native post/tool/stock/setup selections. Excluding posts also excludes post-property overrides. Validate portable settings before writing the chosen file. |
+| New Job: template selector | Existing search paths and descriptions. Read-only scrollable review shows identity, stored units, post/arguments/output, stock rules, tools/feeds and setup values. Omitted settings use current defaults. |
+| Incompatible template | Inline explanation and disabled OK for unsupported format/post/tools/units, incomplete stock dimensions or detected model-specific expressions. Re-select after correcting the file. |
+| File changed during review | Reload the review and require another OK. Job creation uses the exact accepted settings snapshot; later file edits cannot change it. |
+| OK / Cancel | Existing model selection and unit-schema flow. Native transaction creates the editable job, clones, stock and tools; existing GUI creation rollback handles instantiation errors. Cancel creates no job. |
+| Created job provenance | Read-only TemplateName and TemplateRevision properties under Setup template; no continuing link to the file. Native settings remain editable. |
+
+Fixed stock size/placement may need adjustment for a different model. Current-format
+embedded tool data and portable setup-sheet expressions are supported; unavailable
+tool assets or other native instantiation failures roll back in the GUI path.
+Legacy metadata is marked unknown. Recurring operation sequences, complete machine
+compatibility, broader reference remapping, localization/high-DPI and physical
+acceptance remain open. [Owner procedure](../tests/SetupTemplates.md).
