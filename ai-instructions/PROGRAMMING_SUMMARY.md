@@ -62,6 +62,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Sketch repair review (F049): existing [`TaskSketcherValidation.cpp`](../src/Mod/Sketcher/Gui/TaskSketcherValidation.cpp)
+lists missing-coincidence endpoints/gaps with row highlighting and checked-only,
+undoable repair. Solver failures restore the sketch; edits/search-policy changes
+invalidate candidates. [Owner procedure](../tests/SketchRepairReview.md); roadmap 11.6a/b.
+
 Interference/clearance inspection (F101): [`InterferenceCheck.py`](../src/Mod/Part/InterferenceCheck.py)
 and [`InterferenceCheckGui.py`](../src/Mod/Part/InterferenceCheckGui.py) inspect explicit
 solid pairs using native world shapes, overlap volume and minimum distance. Part menu;

@@ -28,6 +28,7 @@
 #include <QMessageBox>
 #include <algorithm>
 #include <array>
+#include <cmath>
 
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoCoordinate3.h>
@@ -91,6 +92,13 @@ SketcherValidation::SketcherValidation(Sketcher::SketchObject* Obj, QWidget* par
     const double top = 10.0;
     const int decimals = 10;
     ui->comboBoxTolerance->setValidator(new QDoubleValidator(bottom, top, decimals, this));
+    changedSketch = Obj->getDocument()->signalChangedObject.connect(
+        [this](const App::DocumentObject& object, const App::Property&) {
+            if (!sketch.expired() && &object == sketch.get()) {
+                invalidateCoincidences();
+            }
+        }
+    );
 }
 
 SketcherValidation::~SketcherValidation()
@@ -105,6 +113,14 @@ void SketcherValidation::setupConnections()
             this, &SketcherValidation::onFindButtonClicked);
     connect(ui->fixButton, &QPushButton::clicked,
             this, &SketcherValidation::onFixButtonClicked);
+    connect(ui->comboBoxTolerance, &QComboBox::currentTextChanged,
+            this, &SketcherValidation::invalidateCoincidences);
+    connect(ui->checkBoxIgnoreConstruction, &QCheckBox::toggled,
+            this, &SketcherValidation::invalidateCoincidences);
+    connect(ui->coincidenceCandidates, &QTreeWidget::itemChanged,
+            this, &SketcherValidation::updateCoincidenceSelection);
+    connect(ui->coincidenceCandidates, &QTreeWidget::itemSelectionChanged,
+            this, &SketcherValidation::highlightCoincidence);
     connect(ui->highlightButton, &QPushButton::clicked,
             this, &SketcherValidation::onHighlightButtonClicked);
     connect(ui->findConstraint, &QPushButton::clicked,
@@ -142,53 +158,49 @@ void SketcherValidation::onFindButtonClicked()
         return;
     }
 
-    double prec = Precision::Confusion();
+    invalidateCoincidences();
     bool ok {};
-    double conv {};
-
-    conv = QLocale::system().toDouble(ui->comboBoxTolerance->currentText(), &ok);
-
-    if (ok) {
-        prec = conv;
-    }
-    else {
-        QVariant v = ui->comboBoxTolerance->itemData(ui->comboBoxTolerance->currentIndex());
-        if (v.isValid()) {
-            prec = v.toDouble();
-        }
+    const double prec = QLocale::system().toDouble(ui->comboBoxTolerance->currentText(), &ok);
+    if (!ok || !std::isfinite(prec) || prec <= 0.0 || prec > 10.0) {
+        ui->coincidenceStatus->setText(tr("Enter a search tolerance greater than 0 and at most 10 mm."));
+        return;
     }
 
     sketch->detectMissingPointOnPointConstraints(prec, !ui->checkBoxIgnoreConstruction->isChecked());
 
-    std::vector<Sketcher::ConstraintIds>& vertexConstraints
-        = sketch->getMissingPointOnPointConstraints();
+    coincidenceCandidates = sketch->getMissingPointOnPointConstraints();
 
     std::vector<Base::Vector3d> points;
-    points.reserve(vertexConstraints.size());
+    points.reserve(coincidenceCandidates.size());
 
-    for (auto vc : vertexConstraints) {
+    auto endpoint = [this](int geometry, Sketcher::PointPos position) {
+        const QString point = position == Sketcher::PointPos::start ? tr("start")
+            : position == Sketcher::PointPos::end ? tr("end") : tr("center");
+        return tr("Geometry %1: %2").arg(geometry + 1).arg(point);
+    };
+    for (const auto& vc : coincidenceCandidates) {
         points.push_back(vc.v);
+        const double gap = (sketch->getPoint(vc.First, vc.FirstPos)
+                            - sketch->getPoint(vc.Second, vc.SecondPos)).Length();
+        auto item = new QTreeWidgetItem(ui->coincidenceCandidates);
+        item->setText(0, endpoint(vc.First, vc.FirstPos));
+        item->setText(1, endpoint(vc.Second, vc.SecondPos));
+        item->setText(2, QLocale().toString(gap, 'g', 10));
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+        item->setCheckState(0, Qt::Unchecked);
+    }
+    for (int column = 0; column < 3; ++column) {
+        ui->coincidenceCandidates->resizeColumnToContents(column);
     }
 
     hidePoints();
-    if (vertexConstraints.empty()) {
-        Gui::TranslatedNotification(
-            *sketch,
-            tr("No missing coincidences"),
-            tr("No missing coincidences found")
-        );
-
-        ui->fixButton->setEnabled(false);
+    if (coincidenceCandidates.empty()) {
+        ui->coincidenceStatus->setText(tr("No missing coincidences at this tolerance. Other profile defects may remain."));
     }
     else {
         showPoints(points);
-        Gui::TranslatedUserWarning(
-            *sketch,
-            tr("Missing coincidences"),
-            tr("%1 missing coincidences found").arg(vertexConstraints.size())
-        );
-
-        ui->fixButton->setEnabled(true);
+        ui->coincidenceStatus->setText(tr("%1 candidates found. Check only the coincidences to add.")
+                                         .arg(coincidenceCandidates.size()));
     }
 }
 
@@ -198,19 +210,78 @@ void SketcherValidation::onFixButtonClicked()
         return;
     }
 
-    // undo command open
     App::Document* doc = sketch->getDocument();
-    doc->openTransaction("Add coincident constraint");
+    if (doc->hasPendingTransaction()) {
+        ui->coincidenceStatus->setText(tr("Finish the current edit transaction before adding coincidences."));
+        return;
+    }
+    std::vector<Sketcher::ConstraintIds> selected;
+    for (int i = 0; i < ui->coincidenceCandidates->topLevelItemCount(); ++i) {
+        if (ui->coincidenceCandidates->topLevelItem(i)->checkState(0) == Qt::Checked) {
+            selected.push_back(coincidenceCandidates.at(i));
+        }
+    }
+    if (selected.empty()) {
+        return;
+    }
+    doc->openTransaction("Add checked coincident constraints");
+    try {
+        Gui::Command::doCommand(Gui::Command::Doc, "import Sketcher");
+        for (const auto& vc : selected) {
+            Gui::cmdAppObjectArgs(sketch.get(), "addConstraint(Sketcher.Constraint('Coincident', %d, %d, %d, %d))",
+                                 vc.First, int(vc.FirstPos), vc.Second, int(vc.SecondPos));
+        }
+        if (sketch->solve() != Sketcher::SketchSolveStatus::Success) {
+            throw Base::RuntimeError("The checked coincidences could not be solved.");
+        }
+        Gui::WaitCursor wc;
+        doc->recompute();
+        if (!sketch->isValid()) {
+            throw Base::RuntimeError("The repaired sketch is invalid.");
+        }
+        doc->commitTransaction();
+        invalidateCoincidences();
+        ui->coincidenceStatus->setText(tr("Added %1 coincidences. Undo restores the previous sketch. Find again to review remaining candidates.")
+                                         .arg(selected.size()));
+    }
+    catch (const Base::Exception&) {
+        doc->abortTransaction();
+        doc->recompute();
+        invalidateCoincidences();
+        ui->coincidenceStatus->setText(tr("Repair could not be solved; the sketch was restored. Find again and choose different candidates."));
+    }
+}
 
-    Gui::cmdAppObjectArgs(sketch.get(), "makeMissingPointOnPointCoincident()");
-
+void SketcherValidation::invalidateCoincidences()
+{
+    ui->coincidenceCandidates->clear();
+    coincidenceCandidates.clear();
     ui->fixButton->setEnabled(false);
     hidePoints();
+    ui->coincidenceStatus->setText(tr("Find again to review current candidates."));
+}
 
-    // finish the transaction and update
-    Gui::WaitCursor wc;
-    doc->commitTransaction();
-    doc->recompute();
+void SketcherValidation::updateCoincidenceSelection()
+{
+    bool checked = false;
+    for (int i = 0; i < ui->coincidenceCandidates->topLevelItemCount(); ++i) {
+        checked |= ui->coincidenceCandidates->topLevelItem(i)->checkState(0) == Qt::Checked;
+    }
+    ui->fixButton->setEnabled(checked);
+}
+
+void SketcherValidation::highlightCoincidence()
+{
+    if (sketch.expired()) {
+        return;
+    }
+    const int row = ui->coincidenceCandidates->indexOfTopLevelItem(ui->coincidenceCandidates->currentItem());
+    if (row < 0 || size_t(row) >= coincidenceCandidates.size()) {
+        return;
+    }
+    const auto& vc = coincidenceCandidates[row];
+    hidePoints();
+    showPoints({sketch->getPoint(vc.First, vc.FirstPos), sketch->getPoint(vc.Second, vc.SecondPos)});
 }
 
 void SketcherValidation::onHighlightButtonClicked()

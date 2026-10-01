@@ -30,6 +30,7 @@
 #include <App/DocumentObserver.h>
 #include <Base/Vector3D.h>
 #include <Gui/TaskView/TaskDialog.h>
+#include <Mod/Sketcher/App/Analyse.h>
 
 
 class SoGroup;
@@ -57,6 +58,9 @@ private:
     void setupConnections();
     void onFindButtonClicked();
     void onFixButtonClicked();
+    void invalidateCoincidences();
+    void updateCoincidenceSelection();
+    void highlightCoincidence();
     void onHighlightButtonClicked();
     void onFindConstraintClicked();
     void onFixConstraintClicked();
@@ -76,6 +80,8 @@ private:
     std::unique_ptr<Ui_TaskSketcherValidation> ui;
     App::WeakPtrT<Sketcher::SketchObject> sketch;
     SoGroup* coincidenceRoot;
+    std::vector<Sketcher::ConstraintIds> coincidenceCandidates;
+    fastsignals::scoped_connection changedSketch;
 };
 
 class TaskSketcherValidation: public Gui::TaskView::TaskDialog

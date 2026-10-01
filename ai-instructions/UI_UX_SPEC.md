@@ -629,3 +629,18 @@ disables navigation until recheck. No live geometry preview or document edits oc
 Close detaches the document observer; closing the document closes the dialog.
 Pending edits and active tasks must finish before checking. Errors stay inline.
 Scope/limitations and owner procedure: [Interference check](../tests/InterferenceCheck.md).
+
+## UI-016: Missing-coincidence review (F049; roadmap 11.6a/b)
+
+Existing Sketcher Validate Sketch, Missing Coincidences section: explicit Search
+tolerance (mm), Ignore construction geometry, Find, candidate list and Add Checked
+Coincidences. Columns identify both geometry endpoints and measured gap. Selecting
+a row displays endpoint markers; checkboxes default off. Only checked candidates
+are committed, as one Undo step. Existing constraints remain. Solver conflict aborts
+the repair and reports restoration inline. Close clears markers and preserves only
+completed repairs. No geometric before/after preview is claimed.
+
+Sketch or search-policy changes clear the list and disable repair until Find.
+Invalid/zero/out-of-range tolerance reports a correction; no fallback search runs.
+No candidates reports that other profile defects may remain. Other inherited
+validation sections are unchanged. [Owner procedure](../tests/SketchRepairReview.md).

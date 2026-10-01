@@ -323,6 +323,20 @@ No persistent inspection objects or model properties are introduced. Broader nes
 external assemblies, pair-specific exclusions, acceleration and physical acceptance
 remain open. [Owner procedure](../tests/InterferenceCheck.md); roadmap 15.1c/d, UI-015.
 
+## Current sketch-repair review pilot (F049)
+
+The existing Validate Sketch task lists native missing-coincidence candidates with
+endpoint identities and measured mm gaps. Row selection highlights endpoints; checkboxes
+select repairs explicitly. Search/review do not mutate the document. Add Checked
+Coincidences owns one Undo transaction, preserves existing constraints and restores the
+original sketch if the solver cannot accept the repair. Sketch edits, tolerance and
+construction-policy changes require a fresh search. Invalid tolerance cannot silently
+fall back to another value. No candidates is not a valid-profile certification.
+
+Roadmap 11.6a/b covers this bounded improvement. Duplicate/self-intersection diagnosis,
+geometric change preview and broader repair/physical acceptance remain open.
+[Owner procedure](../tests/SketchRepairReview.md); UI-016.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

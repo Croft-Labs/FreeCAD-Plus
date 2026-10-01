@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F101 interference/clearance,
+- Current product batch complete for owner testing: F049 missing-coincidence review,
+  phase 11 tasks 11.6a/b. Existing Validate Sketch lists endpoints/gaps, highlights
+  candidate rows and adds only checked coincidences in one undoable repair. Edits
+  invalidate candidates; solver failures restore the sketch. Both tasks preceded
+  the grouped build; one compile correction was required. All 22 selected checks
+  pass and five captures reviewed. [Try the gap-repair example](../tests/SketchRepairReview.md).
+  Whole F049 remains open for broader diagnostics/preview and physical acceptance.
+  Native detector/Block limitations are recorded below. Rotate pending owner feedback.
+
+- Previous product batch complete for owner testing: F101 interference/clearance,
   phase 15 tasks 15.1c/d. Part > Interference and clearance checks explicit native
   solid pairs, with overlap volume, contact tolerance, minimum clearance, unresolved
   inputs and counted exclusions. Result navigation selects each pair; edits invalidate
@@ -3065,6 +3074,41 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   constraints where possible and reporting losses. Region picking selects closed areas
   inside a larger sketch without requiring the whole sketch as the profile.
 
+- [x] 11.6a Extend existing Validate Sketch missing-coincidence search with
+  endpoint identities, measured gaps, candidate-row highlighting and explicit mm
+  search tolerance (F049). Search and review must not change geometry/constraints;
+  no candidates must not imply that all profile defects are resolved.
+- [x] 11.6b Add checked-candidate coincidence repair in one native transaction,
+  preserving existing constraints and rolling back solver failures. Invalidate
+  candidates after sketch/tolerance/construction-policy changes. Verify deliberate
+  gap closure, subset repair, Undo/Redo, save/reopen and downstream solid creation.
+  Duplicate, overlap/self-intersection diagnostics and geometric repair preview remain open.
+
+11.6a/b evidence (2026-09-30): both tasks preceded the grouped SketcherGui/SketcherScripts
+Release build. Initial attempt failed on the observer connection type; scoped_connection
+correction built successfully (exit 0). **22 selected PASS**, no failures/errors/skips:
+5 repair in repair-verified/, 5 inherited coincidence validator, 5 sketch-support
+and 7 command-search checks in grouped/, all process exits 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-sketch-repair-20260930`, acceptance-summary.json,
+validated-identities.json, build.log and build-initial-failed.log. SketcherGui SHA256:
+`ed450a6370921ed0012d7d2dab6873b1d3078cb0053a12bfb1a9066163cbdedc`.
+
+Search/review/Close are read-only; candidate markers clear on Close. Checked-only
+repair, construction policy, invalid tolerance, edit invalidation, pending-transaction
+guard, conflict rollback, Undo/Redo and save/reopen pass. A repaired 20 x 10 mm profile
+produces a 1000 mm³ extrusion and updates to 1250 mm³ after a Width edit on reopen.
+visual/ has five reviewed captures, Sketch-Repair.FCStd and Sketch-Repaired-Solid.FCStd.
+[Owner procedure](../tests/SketchRepairReview.md). No release/installer update.
+
+Earlier grouped/ retains a task-widget lookup error; repair-final/ and repair-accepted/
+retain fixture assumptions corrected using native probes. Final application source
+was unchanged after the successful build. Native coincidence insertion can move
+Block-constrained geometry while retaining Block constraints; the detector can omit
+already dimension-referenced endpoints. These native semantics are not redesigned here.
+The accepted conflict fixture uses dimensioned lines with unreferenced candidate ends
+that cannot meet. Whole F049/11.6 remain open for duplicate/self-intersection diagnosis,
+broader repair, geometric preview and physical/high-DPI acceptance. Stop for feedback.
+
 - [   ] 11.7 Make sketch placement, orientation, offset and support/reattachment
   explicit (S08; [F124](#f124)). Preview preserve-local versus preserve-world policies,
   prefer stable references where appropriate, and repair lost supports deliberately.
@@ -5285,7 +5329,7 @@ reconciliation rules above to every entry.
 <a id="f049"></a>
 ### F049 — Sketch repair
 
-**Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 11.6. **Status:** Missing-coincidence review and checked-only repair completed under 11.6a/b, ready for owner testing. Endpoint/gap list, highlighting, conflict rollback, invalidation, Undo/Redo, persistence and downstream extrusion pass; 22 selected checks and five reviewed captures. Native detector/Block limitations, duplicate/self-intersection diagnosis, broader repair/preview and physical acceptance remain open. [Owner procedure](../tests/SketchRepairReview.md).
 
 **Packages:** S06 · **First delivery:** P5 · **Likely scope:** Feature
 

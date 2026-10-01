@@ -1,6 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F101 interference/clearance inspection, phase 15 tasks 15.1c/d.
+Latest batch: F049 missing-coincidence review, phase 11 tasks 11.6a/b.
+Existing Validate Sketch now lists both endpoints and measured mm gaps. Row selection
+highlights candidates; checkboxes default off. Add Checked Coincidences owns one
+transaction, retains existing constraints and aborts failed solves. Sketch/tolerance/
+construction-policy edits invalidate the list. Invalid tolerance never falls back.
+
+Both tasks preceded a grouped SketcherGui/SketcherScripts Release build. First attempt
+failed on the observer connection type; scoped_connection correction passed, exit 0.
+22 selected checks pass, no failures/errors/skips: 5 repair in repair-verified/;
+5 native coincidence validator, 5 sketch-support and 7 command-search in grouped/.
+All process exits 0. Evidence: D:\Temp\Office-PC\freecad-plus-sketch-repair-20260930.
+acceptance-summary.json and validated-identities.json record exact accepted suites,
+sources and binaries. SketcherGui SHA256:
+ed450a6370921ed0012d7d2dab6873b1d3078cb0053a12bfb1a9066163cbdedc.
+
+visual/ has five reviewed captures plus Sketch-Repair.FCStd and Sketch-Repaired-Solid.FCStd.
+Read-only review/Close, markers, subset repair, conflict rollback, stale results,
+pending transactions, Undo/Redo and save/reopen pass. The repaired profile extrudes
+to 1000 mm³ and updates to 1250 mm³ after Width changes on reopen. Owner procedure:
+tests/SketchRepairReview.md. Earlier grouped/ has a wrong widget lookup; repair-final/
+and repair-accepted/ retain fixture assumptions resolved by native probes. Application
+source was unchanged after the successful build; no further build was needed.
+
+Native coincidence insertion can move Block-constrained geometry, and the detector
+can omit dimension-referenced endpoints. The final conflict fixture uses dimensioned
+lines with unreferenced ends that cannot meet. These native limitations, duplicate/
+self-intersection diagnosis, broader geometric preview and physical/high-DPI acceptance
+keep whole F049/11.6 open. No installer/release update. Stop for owner feedback and rotate.
+
+Previous batch: F101 interference/clearance inspection, phase 15 tasks 15.1c/d.
 Part > Interference and clearance checks 2-12 explicitly listed whole native solids
 or direct shape/Body occurrences using the shared world-shape resolver. Native common
 solid volume and minimum distance classify overlap, contact within tolerance,
