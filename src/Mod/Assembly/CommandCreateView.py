@@ -136,7 +136,11 @@ class ExplodedView:
         for obj in viewObj.InList:
             if obj.isDerivedFrom("Assembly::AssemblyObject"):
                 return obj
-        return None
+            if obj.TypeId == "Assembly::ViewGroup":
+                for parent in obj.InList:
+                    if parent.isDerivedFrom("Assembly::AssemblyObject"):
+                        return parent
+        raise ValueError("The exploded view has no owning assembly.")
 
     def _createSafeLine(self, start, end):
         """Creates a LineSegment shape only if points are not coincident."""
@@ -181,57 +185,60 @@ class ExplodedView:
         """
         final_placements = {}
         line_positions = []
-        factor = 1
-
         assembly = self.getAssembly(viewObj)
-        # Get a snapshot of the assembly's current, un-exploded state
-        calculated_placements = UtilsAssembly.saveAssemblyPartsPlacements(assembly)
-
         com, size = UtilsAssembly.getComAndSize(assembly)
 
         for move in viewObj.Group:
             if not UtilsAssembly.isRefValid(move.References, 1):
-                continue
+                raise ValueError("Exploded move '%s' has a missing reference." % move.Label)
 
-            if move.MoveType == "Radial":
-                distance = move.MovementTransform.Base.Length
-                factor = 4 * distance / size
+            if move.MoveType == "Radial" and size <= Precision.confusion():
+                raise ValueError("The assembly is too small for a radial exploded move.")
 
-            subs = move.References[1]
-            for sub in subs:
-                ref = [move.References[0], [sub]]
-                obj = UtilsAssembly.getObject(ref)
-                if not obj or not hasattr(obj, "Placement"):
-                    continue
+            for sub in move.References[1]:
+                obj = UtilsAssembly.getObject([move.References[0], [sub]])
+                if obj is None or not hasattr(obj, "Placement") or not hasattr(obj, "Shape"):
+                    raise ValueError("Exploded move '%s' has an unavailable part." % move.Label)
 
-                # Use the placement from our calculation dictionary, which tracks
-                # changes from previous steps.
-                current_placement = calculated_placements.get(obj.Name, obj.Placement)
-
-                # The part's shape is already placed, so its BBox.Center is the
-                # correct global starting position for the explosion line.
-                start_pos = obj.Shape.BoundBox.Center
-
+                current = final_placements.get(obj, obj.Placement)
+                # Derive each trail from the geometry at this step, including all
+                # preceding moves. A rotated bounding box must be recalculated.
+                start = self._shapeAtPlacement(obj, final_placements).BoundBox.Center
                 if move.MoveType == "Radial":
-                    obj_com, obj_size = UtilsAssembly.getComAndSize(obj)
-                    init_vec = obj_com - com
-                    new_base = current_placement.Base + init_vec * factor
-                    new_placement = App.Placement(new_base, current_placement.Rotation)
+                    factor = 4 * move.MovementTransform.Base.Length / size
+                    world_delta = (start - com) * factor
+                    parent = self._parentPlacement(obj, final_placements)
+                    local_delta = parent.Rotation.inverted().multVec(world_delta)
+                    final_placements[obj] = App.Placement(
+                        current.Base + local_delta, current.Rotation
+                    )
                 else:
-                    new_placement = move.MovementTransform * current_placement
-
-                # Store the newly calculated placement for this part
-                calculated_placements[obj.Name] = new_placement
-                final_placements[obj] = new_placement
-
-                # To find the end_pos, calculate the transformation that takes the part
-                # from its current_placement to its new_placement...
-                delta_transform = new_placement * current_placement.inverse()
-                # ...and apply that same transformation to the start_pos.
-                end_pos = delta_transform.multVec(start_pos)
-                line_positions.append([start_pos, end_pos])
+                    final_placements[obj] = move.MovementTransform * current
+                end = self._shapeAtPlacement(obj, final_placements).BoundBox.Center
+                line_positions.append([start, end])
 
         return final_placements, line_positions
+
+    @staticmethod
+    def _parentPlacement(obj, placements):
+        """Structural parent frame, without following links into definitions."""
+        frame = App.Placement()
+        parent = obj.getParentGeoFeatureGroup()
+        while parent is not None:
+            frame = placements.get(parent, parent.Placement) * frame
+            parent = parent.getParentGeoFeatureGroup()
+        return frame
+
+    @staticmethod
+    def _shapeAtPlacement(obj, placements):
+        # Shape already contains the occurrence's placement, including LinkTransform
+        # and the linked definition's own transform. Apply a delta to that shape;
+        # assigning the occurrence placement would discard the definition transform.
+        shape = obj.Shape.copy()
+        current = placements.get(obj, obj.Placement)
+        delta = current * obj.Placement.inverse()
+        shape.Placement = ExplodedView._parentPlacement(obj, placements) * delta * shape.Placement
+        return shape
 
     def getExplodedShape(self, viewObj):
         """
@@ -250,15 +257,7 @@ class ExplodedView:
         ]
 
         for part in visible_parts:
-            # Get the shape. It's crucial to use .copy()
-            shape_copy = part.Shape.copy()
-
-            # If the part was moved, use its calculated final placement.
-            # Otherwise, use its current placement from the document.
-            final_plc = final_placements.get(part, part.Placement)
-
-            shape_copy.Placement = final_plc
-            exploded_shapes.append(shape_copy)
+            exploded_shapes.append(self._shapeAtPlacement(part, final_placements))
 
         # Add shapes for the explosion lines
         for start_pos, end_pos in line_positions:
@@ -614,9 +613,11 @@ class ExplodedViewStep:
                 startPos = UtilsAssembly.getCenterOfBoundingBox([obj], [ref])
 
             if move.MoveType == "Radial":
-                objCom, objSize = UtilsAssembly.getComAndSize(obj)
+                objCom = ExplodedView._shapeAtPlacement(obj, {}).BoundBox.Center
                 init_vec = objCom - com
-                obj.Placement.Base = obj.Placement.Base + init_vec * factor
+                parent = ExplodedView._parentPlacement(obj, {})
+                delta = parent.Rotation.inverted().multVec(init_vec * factor)
+                obj.Placement.Base = obj.Placement.Base + delta
             else:
                 obj.Placement = move.MovementTransform * obj.Placement
 

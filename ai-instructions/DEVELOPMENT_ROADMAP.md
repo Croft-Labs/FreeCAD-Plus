@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F096 setup reuse, phase 14
+- Current product batch complete for owner testing: F080 saved exploded-view output,
+  phase 12 tasks 12.7a/b. Existing native steps now produce drawing geometry that
+  preserves occurrence/definition and structural-parent transforms. Successive
+  trails follow preceding moves; radial preview and output use the same frame.
+  Both tasks preceded one grouped script-staging pass. 28 distinct selected checks
+  pass across accepted suites; five final captures were reviewed.
+  [Owner procedure](../tests/ExplodedViewOutput.md). Full F080 stays open for joint
+  motion, broader arrangements/consumers and physical acceptance. Stop and rotate.
+
+- Previous product batch complete for owner testing: F096 setup reuse, phase 14
   tasks 14.4a/b. Existing CAM templates now carry name/revision/units, preflight
   known compatibility failures and show stored/default settings in New Job.
   Accepted settings are captured exactly; native tools, stock and setup objects
@@ -3916,6 +3925,40 @@ macro recording and physical acceptance. Stop at this checkpoint and rotate.
   is not merely separate placement of a shared rigid result. Extend 9.6.
   Dimension/suppression configurations and assembly-position arrangements are separately
   saved concepts; switching one must not implicitly overwrite the other.
+- [ X ] 12.7a Preserve native occurrence/definition and enclosing structural-parent
+  transforms in copied exploded-view output. Resolve the owning native ViewGroup;
+  TechDraw explicitly consumes the saved view without moving modeled sources.
+- [ X ] 12.7b Derive successive trails from each step's current geometry and align
+  radial preview/output frames. Report unavailable move references instead of
+  silently omitting steps. Prove the bounded solid-occurrence workflow through
+  native task Accept/Cancel, Undo/Redo, save/reopen and a real TechDraw projection.
+
+12.7a/b evidence (2026-10-01):
+Both tasks preceded one AssemblyTests Release script-staging pass, exit 0; no C++
+changes or native recompilation. Evidence:
+`D:\Temp\Office-PC\freecad-plus-exploded-output-20261001`.
+Initial grouped checks exposed a radial live-preview frame mismatch, corrected by
+using copied world geometry and converting its delta into the structural parent
+frame. Two inherited movement-row mocks lacked Label; the fixture now supplies it.
+Only corrected Python files were restaged. The drawing test was completed with a
+native page, the existing ISO template and asynchronous projection settling.
+`corrected/` passes all 19 inherited movement-editor checks; `accepted/` passes all
+nine output checks. **28 distinct selected passes**, zero failures/errors/skips in
+accepted suites, native exits 0. Earlier failed aggregates remain recorded.
+Five reviewed `visual-accepted/` captures show assembled geometry, two saved steps,
+restored placements, explicit TechDraw output and reopened editing. The initial
+capture attempt reopened on the drawing tab; the corrected harness activates the
+model tab before entering assembly edit mode. `Exploded-Arrangement.FCStd` supplies
+the owner fixture. Source geometry/placements/visibility, LinkTransform variants,
+translated/rotated parents, repeated/radial trails, explicit missing-reference
+failure, native dialog restoration, Undo/Redo and persistence pass.
+validated-identities.json and acceptance-summary.json identify source/runtime and
+accepted checks; historical About metadata is not the exact source identity.
+No installer/release update. Whole F080/12.7 remains open for mixed parent/child
+subassembly moves, broader link/visibility coverage, configurations, flexible and
+joint-driven motion/limits, BOM arrangement choice and physical owner acceptance.
+[Owner procedure](../tests/ExplodedViewOutput.md). Stop at this checkpoint and rotate.
+
 - [   ] 12.8 Profile then implement lightweight/partial loading and simplified
   representations. Missing/unloaded components remain represented; commands requiring
   full geometry resolve it explicitly or report unavailable validation.
@@ -6483,7 +6526,7 @@ reconciliation rules above to every entry.
 <a id="f080"></a>
 ### F080 — Exploded views and motion
 
-**Owning tasks:** 12.6, 12.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 12.6, 12.7; bounded output tasks 12.7a/b. **Status:** Saved solid-occurrence exploded output is ready for owner testing (28 selected checks and five reviewed captures). Full F080 remains open for broader arrangements, joint-driven motion/limits, consumer coverage and physical acceptance.
 
 **Packages:** B04, B05 · **First delivery:** P6 increments · **Likely scope:** Feature/Core
 
@@ -6492,6 +6535,12 @@ reconciliation rules above to every entry.
 **Workflow and behavior:** Save exploded transforms and assembly arrangements separately from source placements. Provide explode steps, spacing, trails or sequence where useful, plus bounded joint-driven motion with limits. Distinguish visual animation from dynamic/physical simulation. Drawing/BOM consumers choose the intended saved arrangement explicitly.
 
 **Complete when:** Create an exploded view, return to assembled state, and reopen both views. Animate a supported hinged mechanism within limits; source geometry and normal assembly placement remain unchanged.
+
+**Validated checkpoint (2026-10-01):** Existing Assembly steps and explicit
+TechDraw Source preserve modeled placements and copied occurrence transforms.
+Successive translation/rotation/radial trails, native Accept/Cancel, Undo/Redo and
+save/reopen are covered by 12.7a/b. [Owner procedure](../tests/ExplodedViewOutput.md).
+The bounded checkpoint does not complete the hinged-motion acceptance above.
 
 <a id="f081"></a>
 ### F081 — Published interfaces

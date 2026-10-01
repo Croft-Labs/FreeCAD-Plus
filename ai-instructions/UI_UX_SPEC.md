@@ -1032,3 +1032,22 @@ tool assets or other native instantiation failures roll back in the GUI path.
 Legacy metadata is marked unknown. Recurring operation sequences, complete machine
 compatibility, broader reference remapping, localization/high-DPI and physical
 acceptance remain open. [Owner procedure](../tests/SetupTemplates.md).
+
+## UI-034: Saved exploded-view output (F080; roadmap 12.7a/b)
+
+The existing Assembly Exploded View task, step rows, distance/angle entries,
+dragger and radial control retain their identities. Reopening a saved view edits
+its native steps; Accept restores the assembly's modeled placements and saves
+steps separately, while Cancel restores the previous transaction state.
+
+For the validated solid-occurrence workflow, TechDraw uses the saved exploded
+view as its explicit Source. Its geometry preserves each occurrence's existing
+source-placement policy and enclosing structural transforms. Trails follow the
+geometry through successive steps, including rotation and radial movement.
+Missing move references raise an output error rather than silently omitting a
+step. Native visibility filtering still controls which parts enter the drawing.
+
+No new animation or configuration controls are introduced. Nested parent/child
+step combinations, scaled/array/external links, broader visibility, joint limits,
+BOM arrangement selection and physical owner acceptance remain open.
+[Owner procedure](../tests/ExplodedViewOutput.md).
