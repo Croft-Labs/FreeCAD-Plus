@@ -194,9 +194,28 @@ def _shape_kind(shape, sketch=False):
     raise ValueError("Select a body, sheet, sketch or curve.")
 
 
+def geometry_dependencies(obj):
+    """Follow geometry inputs without treating component ownership as an input.
+
+    A reference's SourceOccurrence establishes placement/context. Traversing its
+    whole definition would incorrectly depend on every unrelated history branch.
+    SourceObject supplies the actual geometry dependency instead.
+    """
+    found, pending = set(), list(obj.OutList)
+    while pending:
+        dep = pending.pop()
+        if dep == obj or dep in found:
+            continue
+        if getattr(dep, "ComponentRole", "") in ("Definition", "Occurrence", "Document"):
+            continue
+        found.add(dep)
+        pending.extend(dep.OutList)
+    return list(found)
+
+
 def current_shape(obj):
     """Never certify stale native caches as evaluated component results."""
-    for dep in [obj] + list(obj.OutListRecursive):
+    for dep in [obj] + geometry_dependencies(obj):
         if "Invalid" in dep.State or "Touched" in dep.State:
             raise ValueError("Geometry requires update or repair: " + dep.Label)
         if getattr(dep, "UserSuppressed", False) or getattr(dep, "ResultStatus", "Ready") != "Ready":
@@ -231,7 +250,7 @@ class ResultProxy(PersistentProxy):
             return
         if getattr(source, "UserSuppressed", False) or any(
                 getattr(dep, "ResultStatus", "Ready") != "Ready" or getattr(dep, "UserSuppressed", False)
-                for dep in [source] + list(source.OutListRecursive)):
+                for dep in [source] + geometry_dependencies(source)):
             return
         shape = getattr(source, obj.OutputProperty, None)
         if shape is None or shape.isNull():
@@ -407,6 +426,34 @@ def activate(component, strict=True):
     return issues
 
 
+def _check_reference_rebind(reference):
+    consumers = [obj for obj in reference.InList if obj != owner(reference)]
+    for obj in [reference] + consumers:
+        if obj.ExpressionEngine:
+            raise ValueError("Expression-driven consumers need an explicit reference-remapping review.")
+        for name in obj.PropertiesList:
+            if "LinkSub" not in obj.getTypeIdOfProperty(name):
+                continue
+            value = getattr(obj, name)
+            values = (value or []) if "List" in obj.getTypeIdOfProperty(name) else [value]
+            if any(binding[0] == reference and any(binding[1]) for binding in values if binding and binding[0]):
+                raise ValueError("Face or edge consumers need an explicit reference-remapping review before changing this source.")
+
+
+def _check_reference_dependents(reference):
+    for obj in reference.InListRecursive:
+        if not hasattr(obj, "Shape") or getattr(obj, "UserSuppressed", False):
+            continue
+        dependencies = geometry_dependencies(obj)
+        if reference not in dependencies:
+            continue
+        blocked = any(getattr(dep, "UserSuppressed", False)
+                      or (getattr(dep, "ComponentRole", "") == "Reference" and dep.ResultStatus != "Ready")
+                      for dep in dependencies)
+        if not blocked and ("Invalid" in obj.State or getattr(obj, "ResultStatus", "Ready") != "Ready"):
+            raise ValueError("A dependent operation could not use the replacement geometry: " + obj.Label)
+
+
 def repair_reference(parent, reference, occurrence, source):
     """Retarget whole evaluated geometry while preserving the reference identity."""
     if owner(reference) != parent or getattr(reference, "ComponentRole", "") != "Reference":
@@ -418,18 +465,8 @@ def repair_reference(parent, reference, occurrence, source):
         raise ValueError("The selected source would introduce a dependency cycle.")
     changed_source = (reference.SourceObject != source or reference.SourceOccurrence != occurrence
                       or reference.SourceObjectId != source.ObjectId)
-    consumers = [obj for obj in reference.InList if obj != parent]
     if changed_source:
-        for obj in [reference] + consumers:
-            if obj.ExpressionEngine:
-                raise ValueError("Expression-driven consumers need an explicit reference-remapping review.")
-            for name in obj.PropertiesList:
-                if "LinkSub" not in obj.getTypeIdOfProperty(name):
-                    continue
-                value = getattr(obj, name)
-                values = value if "List" in obj.getTypeIdOfProperty(name) else [value]
-                if any(link == reference and any(sub for sub in subs) for link, subs in values if link):
-                    raise ValueError("Face or edge consumers need an explicit reference-remapping review before changing this source.")
+        _check_reference_rebind(reference)
     try:
         with transaction(parent.Document, "Repair Reference Object"):
             reference.SourceOccurrence = occurrence
@@ -438,14 +475,7 @@ def repair_reference(parent, reference, occurrence, source):
             reference.Placement = shape.Placement
             reference.Shape = shape
             activate(parent, strict=False)
-            for obj in reference.InListRecursive:
-                if not hasattr(obj, "Shape") or getattr(obj, "UserSuppressed", False):
-                    continue
-                blocked = any(getattr(dep, "UserSuppressed", False)
-                              or (getattr(dep, "ComponentRole", "") == "Reference" and dep.ResultStatus != "Ready")
-                              for dep in obj.OutListRecursive)
-                if not blocked and ("Invalid" in obj.State or getattr(obj, "ResultStatus", "Ready") != "Ready"):
-                    raise ValueError("A dependent operation could not use the replacement geometry: " + obj.Label)
+            _check_reference_dependents(reference)
     except Exception:
         activate(parent, strict=False)
         raise
@@ -573,15 +603,48 @@ def delete_parameters(component, result):
     return result
 
 
+def _copy_override_plan(occurrence):
+    """Find path segments owned by the definition being separated, before relinking."""
+    plan = []
+    for doc in App.listDocuments().values():
+        for component in definitions(doc):
+            values = json.loads(component.RepresentationOverrides)
+            affected = {}
+            for key in values:
+                ids = key.split("/")
+                if occurrence.ObjectId not in ids[:-1]:
+                    continue
+                chain = _path(component, ids)
+                if occurrence not in chain[:-1]:
+                    continue
+                if doc != occurrence.Document:
+                    raise ValueError("Another open file has nested display overrides for this instance. "
+                                     "Reset those overrides before copying the part: " + doc.Label)
+                affected[key] = chain.index(occurrence) + 1
+            if affected:
+                plan.append((component, values, affected))
+    return plan
+
+
 def make_independent(occurrence, label=None):
     """Copy one definition's owned objects; child definitions stay shared."""
     parent = owner(occurrence)
     if not is_component(parent) or occurrence not in children(parent):
         raise ValueError("Select a direct component instance.")
     source = occurrence.LinkedObject
+    if not is_component(source):
+        raise ValueError("Locate the missing component file before copying this instance.")
     members = list(source.Group)
     if any(o.ExpressionEngine for o in [source] + members):
         raise ValueError("Expression-driven definition copies require reviewed expression remapping.")
+    override_plan = _copy_override_plan(occurrence)
+    references = [obj for obj in history(parent)
+                  if getattr(obj, "ComponentRole", "") == "Reference" and obj.SourceOccurrence == occurrence]
+    for reference in references:
+        if (reference.SourceObject is None or reference.SourceObject not in members
+                or reference.SourceObjectId != reference.SourceObject.ObjectId):
+            raise ValueError("Repair this instance's reference objects before copying the part: " + reference.Label)
+        _check_reference_rebind(reference)
     with transaction(parent.Document, "Copy to New Part"):
         originals = [source] + members + [source.Origin] + list(source.Origin.OriginFeatures)
         copied = parent.Document.copyObject(originals, False)
@@ -606,19 +669,39 @@ def make_independent(occurrence, label=None):
             if hasattr(new, "PreviousVisibility"):
                 new.PreviousVisibility = json.dumps({id_map.get(key, key): value
                     for key, value in json.loads(old.PreviousVisibility).items()})
+        for component, values, affected in override_plan:
+            remapped = {}
+            for key, value in values.items():
+                ids = key.split("/")
+                if key in affected:
+                    index = affected[key]
+                    ids[index] = id_map[ids[index]]
+                remapped["/".join(ids)] = value
+            component.RepresentationOverrides = json.dumps(remapped, sort_keys=True)
         placement = App.Placement(occurrence.LinkPlacement)
         occurrence.setLink(definition)
         occurrence.DefinitionId = definition.ObjectId
         if hasattr(occurrence, "InstanceNumber"):
             occurrence.InstanceNumber = 1
         occurrence.LinkPlacement = placement
+        for reference in references:
+            reference.SourceObject = mapping[reference.SourceObject.Name]
+            reference.SourceObjectId = reference.SourceObject.ObjectId
+        # Refresh copied associative objects before their new parent consumers.
+        activate(definition, strict=False)
+        if references:
+            activate(parent, strict=False)
+            for reference in references:
+                if not suppression_sources(reference) and reference.ResultStatus != "Ready":
+                    raise ValueError("The copied reference could not be refreshed: " + reference.Label)
+                _check_reference_dependents(reference)
         validate(parent.Document)
     return definition
 
 
 def suppression_sources(obj):
     """Authored flags, including upstream flags, independent of cached shapes."""
-    return [dep for dep in [obj] + list(obj.OutListRecursive)
+    return [dep for dep in [obj] + geometry_dependencies(obj)
             if getattr(dep, "UserSuppressed", False)]
 
 
@@ -709,7 +792,7 @@ def history_state(obj):
     if getattr(obj, "UserSuppressed", False):
         return "Suppressed"
     if any(getattr(dep, "UserSuppressed", False)
-           or getattr(dep, "ResultStatus", "Ready") != "Ready" for dep in obj.OutListRecursive):
+           or getattr(dep, "ResultStatus", "Ready") != "Ready" for dep in geometry_dependencies(obj)):
         return "Inactive — dependency"
     if "Invalid" in obj.State:
         return "Needs repair"

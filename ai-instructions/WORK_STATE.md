@@ -1,5 +1,32 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.8c, instance copy/reference continuity.
+Copy to New Part keeps parent references on the selected occurrence, remaps their
+source identities and nested display overrides, retains placement and shared child
+definitions, and checks ambiguous face/edge/expression consumers before mutation.
+Model History follows the active occurrence after Copy/Undo/Redo and refreshes its
+references. Readiness/suppression checks follow geometry dependencies instead of
+all unrelated history reached through component ownership links.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-instances-20261001`.
+One grouped script/resource staging build passed. `smoke-ready/` passes three
+focused workflows, zero failures/errors/skips, process exit 0 and empty stderr;
+the final Component Structure capture was reviewed. Checks include parent native
+Mirror/result updates, copy Undo/Redo, child sharing, nested display overrides,
+.cadprt reopen, external-to-embedded copy and ambiguous face-reference refusal.
+Initial checks exposed unset native LinkSub handling and ownership traversal that
+blocked a valid parent result; both were corrected in Python without another build.
+Fixture transaction/API corrections are recorded in the evidence directories.
+
+Feedback fixtures in `smoke-ready/`: `Component-Independent-References.cadprt`,
+`Component-Independent-Assembly.cadprt`, `Component-Embedded-Copy.cadprt`.
+No schema change, broad validation or installer/release update. Continue component
+migration: native suppression scheduling, multi-output lineage, solver/BOM/mass,
+deep copies and general expression/topology/external-file remapping remain open.
+Other open files' nested overrides are refused before copy because they require
+multi-document transaction handling. Unloaded ancestor files remain a broader gate.
+
+Previous feedback batch:
 Current feedback batch: roadmap 7.8.5e, Model History branch restoration.
 Suppression now derives dependent inactivity separately from explicit flags, restores
 eligible earlier results and releases shared inputs only after their last active

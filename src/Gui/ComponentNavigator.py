@@ -155,7 +155,17 @@ class Navigator(QtWidgets.QDockWidget):
             self.structure.clear()
             self.history.clear()
             root = resolve(self.root_key) if self.root_key else None
-            active = resolve(self.active_key) if self.active_key else None
+            active = None
+            if root:
+                active, self.active_path = self.edit_context(root, self.active_path)
+                active_key = object_key(active)
+                if self.active_key != active_key:
+                    self.active_key = active_key
+                    Gui.getDocument(active.Document.Name).activeView().setActiveObject("part", active)
+                    if not active.Document.HasPendingTransaction:
+                        model().activate(active, strict=False)
+                    if self.mdi and self.mdi.activeSubWindow():
+                        self.store_edit_context(self.mdi.activeSubWindow())
             if root is None or active is None:
                 self.context.setText(tr("Create or open a component document."))
                 self.conversion.hide()
@@ -463,6 +473,18 @@ class Navigator(QtWidgets.QDockWidget):
         window.setProperty("ComponentActiveKey", self.active_key)
         window.setProperty("ComponentActivePath", self.active_path)
 
+    @staticmethod
+    def edit_context(root, ids):
+        # Copy, Undo and deleted occurrences can invalidate part of a path.
+        # Keep the nearest surviving component instead of editing a stale definition.
+        ids = list(ids)
+        while ids:
+            try:
+                return model()._path(root, ids)[-1].LinkedObject, ids
+            except ValueError:
+                ids.pop()
+        return root, []
+
     def activate_item(self, item):
         value = item.data(0, QtCore.Qt.UserRole)
         if not value:
@@ -544,11 +566,7 @@ class Navigator(QtWidgets.QDockWidget):
             self.active_key = tuple(active)
             self.active_path = list(window.property("ComponentActivePath") or [])
             root = resolve(self.root_key)
-            try:
-                chain = model()._path(root, self.active_path)
-                component = chain[-1].LinkedObject if chain else root
-            except ValueError:
-                component, self.active_path = root, []
+            component, self.active_path = self.edit_context(root, self.active_path)
             self.active_key = object_key(component)
             Gui.getDocument(component.Document.Name).activeView().setActiveObject("part", component)
             self.store_edit_context(window)
@@ -705,7 +723,11 @@ class Navigator(QtWidgets.QDockWidget):
                               placement=App.Placement(occurrence.LinkPlacement))
 
     def copy_part(self, key):
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before copying a component."))
         occurrence = resolve(key)
+        if not model().is_component(occurrence.LinkedObject):
+            raise ValueError(tr("Locate the missing component file before copying this instance."))
         name, ok = QtWidgets.QInputDialog.getText(self, tr("Copy to New Part"), tr("Part name"),
                                                  text=occurrence.LinkedObject.Label + " copy")
         if ok and name.strip():
@@ -811,7 +833,7 @@ class Navigator(QtWidgets.QDockWidget):
                         obj.Visibility = True
                 except ValueError:
                     pass
-        if prop in ("Label", "Group", "ModelHistory", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError"):
+        if prop in ("Label", "Group", "ModelHistory", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):

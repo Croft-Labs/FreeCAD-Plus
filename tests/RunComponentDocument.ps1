@@ -7,6 +7,7 @@ param(
     [switch]$SelectionSmoke,
     [switch]$ReferenceSmoke,
     [switch]$HistorySmoke,
+    [switch]$InstanceSmoke,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -25,6 +26,7 @@ if ($PanelSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPanelIter
 if ($SelectionSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentSelectionIteration.py' }
 if ($ReferenceSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentReferenceRecovery.py' }
 if ($HistorySmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentHistoryIteration.py' }
+if ($InstanceSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentInstanceIteration.py' }
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'

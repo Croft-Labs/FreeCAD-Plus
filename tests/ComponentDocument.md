@@ -134,6 +134,28 @@ empties its input. The published body stays unavailable and recovers on unsuppre
 native scheduling integration remains open. The feedback fixtures and checks do not
 qualify the complete suppression model, external-document matrix or file schema.
 
+## Copy to New Part feedback iteration
+
+Expand repeated instances, then use Instances > Copy to New Part on the instance to
+separate. Its placement remains intact; geometry edits to the copy leave the other
+instances unchanged. Parent Add Reference Object items using the selected instance
+follow its new geometry without changing their own identities or history positions.
+References using other instances stay on the shared original. Child definitions
+remain shared, including sources for reference objects within the copied definition.
+
+Nested Part View overrides follow the copied child instances. Model History resolves
+the active occurrence after Copy/Undo/Redo. If a deeper editing path no longer exists,
+it falls back to the nearest surviving component; isolated views of the original
+definition continue editing that original. Activating a changed component refreshes
+its reference snapshots. Unrelated suppressed child history is not a geometry input
+to a parent operation that references a different body in that child.
+
+Use `-InstanceSmoke` for the three current workflows and `-ScriptsOnly` to stage this
+Python batch. Review the generated independent-reference, assembly and embedded-copy
+.cadprt fixtures in the fork build. Face/edge and expression rebinding remains guarded;
+other open files with affected nested overrides must reset those overrides before
+copying. Complete external-ancestor and topology remapping remains future work.
+
 ## Automated checks
 
 Run from the repository root in PowerShell, with a new evidence directory each time:

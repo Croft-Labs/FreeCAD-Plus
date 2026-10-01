@@ -2435,6 +2435,11 @@ Remaining integration is dependency ordered, with this milestone retaining prior
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
   externalization with additional loaded external consumers. Current preflight
   refuses unsupported relationships instead of silently rebinding them.
+- [ X ] 7.8.8c Instance separation feedback: remap selected-occurrence parent
+  references and nested display overrides, retain child sharing and placement,
+  reconcile active editing context through Copy/Undo/Redo and follow geometry
+  dependencies without importing unrelated component history. Three focused checks
+  pass; ambiguous face/edge/expression and other-file override remapping stay guarded.
 - [ X ] 7.8.10a Published result updates through native Draft clone, CAM job model
   and TechDraw projection after save/reopen; suppressed inputs clear clone/CAM geometry.
 - [   ] 7.8.10b FEM (disabled in this build), general drawing references, CAM path
@@ -2544,6 +2549,29 @@ claimed. No installer/release update. Implementation
 `1ffb7a9df29d6190c68f78307452c9c5d6c523ba` was pushed to `origin/main` and verified
 with `git ls-remote`. `acceptance-identities.json` records the matching source/runtime
 modules, fixture and six unchanged native artifacts.
+
+2026-10-01 instance separation feedback batch (7.8.8c): reference/source-identity
+remapping, nested display override remapping and active-context changes preceded one
+grouped script/resource staging build, exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-instances-20261001`.
+`smoke-ready/` passes **three focused workflows**, no failures/errors/skips, process
+exit 0 and empty stderr: parent references/native Mirror update only from the copied
+instance, one Copy Undo/Redo restores links and placement, child definitions remain
+shared, nested display overrides and active Model History survive .cadprt reopen,
+and external-to-embedded copies leave the original source file unchanged. A native
+face-consumer refusal is checked before mutation. A final structure capture was
+reviewed. Initial attempts exposed optional LinkSub values and false dependency
+inactivity through occurrence/definition ownership links; geometry eligibility now
+traverses actual inputs. Fixture API/transaction corrections and final reference
+refresh changes were staged in Python without another build. Tests remain confined
+to those three workflows; no broad schema/consumer validation or installer update.
+
+Feedback files in `smoke-ready/`: `Component-Independent-References.cadprt`,
+`Component-Independent-Assembly.cadprt`, `Component-Embedded-Copy.cadprt`.
+General topology/expression copying and loaded/unloaded external-ancestor override
+remapping remain under 7.8.8b. A loaded other-file override is refused before mutation;
+no cross-file Undo is implied. The prior native suppression scheduling limitation
+(7.8.5e) remains open. Publication is recorded after commit.
 
 2026-10-01 Model History feedback batch (7.8.5e): branch eligibility, result/input
 visibility, selected-item transactions and dependency explanation changes preceded
