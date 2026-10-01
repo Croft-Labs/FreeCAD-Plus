@@ -26,6 +26,9 @@
 
 #include <Gui/TaskView/TaskSolverMessages.h>
 
+class QLabel;
+class QPushButton;
+
 namespace SketcherGui
 {
 
@@ -40,6 +43,11 @@ public:
     ~TaskSketcherMessages() override;
 
 private:
+    void showSolverState(const QString& state, const QString& msg,
+                         const QString& link, const QString& linkText);
+    QLabel* freedomExplanation;
+    QPushButton* selectFreedom;
+
     void createSettingsButtonActions() override;
     void onLabelStatusLinkClicked(const QString&) override;
 

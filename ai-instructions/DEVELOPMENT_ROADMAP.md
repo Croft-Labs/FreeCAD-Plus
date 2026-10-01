@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F095 CAM Simulator input review,
+- Current product batch complete for owner testing: F047 sketch freedom guidance,
+  phase 11 tasks 11.4c/d. The existing sketch solver task explains remaining freedom,
+  fixed/reference semantics and failed states, with a visible native selection
+  button gated by successful underconstrained solves. Both tasks preceded a grouped
+  build; a compile correction was followed by one successful incremental build.
+  Fifteen distinct selected checks pass and five captures were reviewed.
+  [Owner procedure](../tests/SketchFreedom.md). Full F047 remains open for movement
+  directions, richer per-entity diagnosis and physical acceptance. Stop and rotate.
+
+- Previous product batch complete for owner testing: F095 CAM Simulator input review,
   phase 14 tasks 14.3a/b. The existing OpenGL task shows selected operation order,
   stock dimensions, cutters, quality and explicit coverage limits. Complete input
   preparation precedes native reset; edits invalidate review and conflicting tool
@@ -3444,6 +3453,38 @@ movement-direction diagnosis, macro recording, localization and physical accepta
 Stop here for owner workflow testing and rotate to another item family.
 [Owner procedure](../tests/ConstraintRepair.md).
 
+- [x] 11.4c Add F047 text guidance to the existing sketch solver task: distinguish
+  remaining freedom, fully constrained, empty and invalid solver states; explain
+  coupled freedoms, fixed/Block constraints, construction and reference dimensions.
+- [x] 11.4d Expose native unconstrained-geometry selection beside that guidance,
+  enabled only for a successful underconstrained solve. Preserve geometry, constraints,
+  edit context and native selection behavior; verify live repair, Undo/Redo and reopen.
+
+11.4c/d evidence (2026-10-01): both tasks preceded the grouped SketcherGui/
+SketcherScripts build. Initial compilation exposed constructor-parameter shadowing
+in a lambda; the corrected incremental build exits 0. Initial failure log retained.
+Evidence: `D:\Temp\Office-PC\freecad-plus-sketch-freedom-20261001`.
+Seven TestSketchFreedom checks pass in freedom-verified/; eight unchanged
+TestConstraintRepair checks pass in grouped/. **15 distinct selected checks pass**,
+zero failures/errors/skips in accepted suites; native process exits 0. The initial
+new-test failures used IsDriving instead of the native Driving property and reopened
+an edit session between Undo/Redo. Corrected tests exercise Undo/Redo within edit;
+no further implementation changes or build were needed after the passing build.
+Native selection highlights solver-dependent elements while excluding fixed geometry,
+preserving geometry/constraint values, placements and Undo count. Empty, successful
+underconstrained, fully constrained, conflicting and redundant states are distinct;
+repair reenables selection. Construction/reference geometry, live constraint
+transitions, Body placement 10,000 mm off-origin and save/reopen pass. No new solver,
+constraint types or document properties were introduced.
+Five captures in visual/ were reviewed: underconstrained, selected native geometry,
+conflict, fully constrained and reopened state. Sketch-Freedom.FCStd and
+Sketch-Located.FCStd are owner fixtures. validated-identities.json and
+acceptance-summary.json record source/runtime identity and accepted checks; the
+historical About stamp does not identify this rebuilt module. No installer/release
+update. Full F047 remains open for movement-direction indicators, richer per-entity
+diagnosis, physical keyboard/high-DPI and owner acceptance.
+[Owner procedure](../tests/SketchFreedom.md). Rotate after this workflow checkpoint.
+
 - [   ] 11.5 Extend associative external projection and true plane intersections:
   curve/plane points versus face/plane curves, with source highlighting and explicit
   projection/intersection choice. Cover tangent, coplanar, disjoint and multiple
@@ -6194,7 +6235,7 @@ reconciliation rules above to every entry.
 <a id="f047"></a>
 ### F047 — Visual degrees of freedom
 
-**Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 11.4, bounded tasks 11.4c/d. **Status:** Native sketch-edit solver-state guidance and unconstrained-geometry selection are ready for owner testing; 15 selected checks and five reviewed captures cover live constraint/repair transitions, source preservation, Undo/Redo and reopen. Full F047 remains open for movement-direction indicators, richer per-entity diagnosis and physical acceptance. [Owner procedure](../tests/SketchFreedom.md).
 
 **Packages:** S04 · **First delivery:** P5 · **Likely scope:** Feature/UI
 

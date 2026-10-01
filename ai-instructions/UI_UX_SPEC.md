@@ -1091,3 +1091,21 @@ This review does not check holder, fixture or machine-envelope clearance, certif
 stock removal accuracy or establish safe machine motion. Full collision/removal,
 broader command/model scope and physical acceptance remain open.
 [Owner procedure](../tests/SimulationReview.md).
+
+## UI-037: Sketch freedom guidance (F047; roadmap 11.4c/d)
+
+The existing Sketch Edit solver task retains its native status, diagnostic links,
+geometry colors and update/settings controls. A word-wrapped text explanation and
+**Select unconstrained geometry** button supplement those controls.
+
+| State/control | Behavior |
+| --- | --- |
+| Underconstrained | Explain that geometry may move or change size, freedoms can be coupled, and construction geometry can retain freedom. Enable selection. |
+| Fully constrained | Explain dimensions/relations/fixed or Block geometry and that reference dimensions do not remove freedom. Disable selection. |
+| Conflict, redundancy, malformed or failed solve | Ask for resolution of the native solver issue before interpreting movement. Disable selection; keep native diagnostic links. |
+| Empty sketch | Ask for geometry; disable selection. |
+| Select unconstrained geometry | Replace selection using the existing solver-driven native command. No geometry, constraint or placement edits; recheck solver validity at activation. |
+
+The button supports normal Qt keyboard focus and a tooltip explains its selection
+replacement behavior. Native solve updates refresh both controls. Count and selected
+entities do not assert independent movement directions. [Owner procedure](../tests/SketchFreedom.md).

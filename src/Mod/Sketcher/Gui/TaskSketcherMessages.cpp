@@ -25,6 +25,8 @@
 #include <QAction>
 #include <QMenu>
 #include <QCheckBox>
+#include <QLabel>
+#include <QPushButton>
 
 #include <Gui/Application.h>
 #include <Gui/BitmapFactory.h>
@@ -47,10 +49,62 @@ TaskSketcherMessages::TaskSketcherMessages(ViewProviderSketch* sketchView)
 {
     createSettingsButtonActions();
 
+    freedomExplanation = new QLabel(this);
+    freedomExplanation->setObjectName(QStringLiteral("sketchFreedomExplanation"));
+    freedomExplanation->setTextFormat(Qt::PlainText);
+    freedomExplanation->setWordWrap(true);
+    freedomExplanation->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    this->groupLayout()->addWidget(freedomExplanation);
+    selectFreedom = new QPushButton(tr("Select unconstrained geometry"), this);
+    selectFreedom->setObjectName(QStringLiteral("selectSketchFreedom"));
+    selectFreedom->setEnabled(false);
+    selectFreedom->setToolTip(tr("Replaces the selection with geometry and points where the "
+                                "native solver detects remaining freedom. Does not edit constraints."));
+    this->groupLayout()->addWidget(selectFreedom);
+    connect(selectFreedom, &QPushButton::clicked, this, [this] {
+        // Do not use geometry flags from a conflicting or failed solve.
+        const auto* sketch = this->sketchView->getSketchObject();
+        if (selectFreedom->isEnabled() && sketch->getLastDoF() > 0
+            && sketch->getLastSolverStatus() == GCS::SolveStatus::Success
+            && !sketch->getLastHasConflicts() && !sketch->getLastHasRedundancies()
+            && !sketch->getLastHasPartialRedundancies()
+            && !sketch->getLastHasMalformedConstraints()) {
+            onLabelStatusLinkClicked(QStringLiteral("#dofs"));
+        }
+    });
+
     //NOLINTBEGIN
     connectionSetUp = sketchView->signalSetUp.connect(std::bind(
-        &SketcherGui::TaskSketcherMessages::slotSetUp, this, sp::_1, sp::_2, sp::_3, sp::_4));
+        &SketcherGui::TaskSketcherMessages::showSolverState, this, sp::_1, sp::_2, sp::_3, sp::_4));
     //NOLINTEND
+}
+
+void TaskSketcherMessages::showSolverState(const QString& state, const QString& msg,
+                                          const QString& link, const QString& linkText)
+{
+    slotSetUp(state, msg, link, linkText);
+    const bool underConstrained = state == QStringLiteral("under_constrained");
+    selectFreedom->setEnabled(underConstrained);
+    if (underConstrained) {
+        freedomExplanation->setText(tr(
+            "Geometry can still move or change size. Freedoms may be coupled; the count "
+            "does not identify independent movement directions. Select the affected "
+            "geometry to inspect it. Construction geometry can also have freedom."));
+    }
+    else if (state == QStringLiteral("fully_constrained")) {
+        freedomExplanation->setText(tr(
+            "No remaining solver freedom. Dimensions, relations or fixed/Block constraints "
+            "can hold geometry in place. Reference dimensions measure geometry; they do "
+            "not remove freedom."));
+    }
+    else if (state == QStringLiteral("empty")) {
+        freedomExplanation->setText(tr("Add geometry to inspect its remaining freedom."));
+    }
+    else {
+        freedomExplanation->setText(tr(
+            "Resolve the solver issue shown above before inspecting remaining movement. "
+            "A conflict or failed solve is different from unconstrained geometry."));
+    }
 }
 
 TaskSketcherMessages::~TaskSketcherMessages()
