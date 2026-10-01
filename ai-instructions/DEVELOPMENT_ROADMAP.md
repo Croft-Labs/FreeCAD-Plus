@@ -2382,8 +2382,15 @@ Remaining integration is dependency ordered, with this milestone retaining prior
 - [ X ] 7.8.5c Feedback iteration: route component-context Extrude/Pad/Pocket to a
   Body-independent native extrusion/Boolean task; explicit New Body/Add/Subtract,
   local profile/target, length/direction, preview/Cancel and editing without result
-  identity replacement. Stored operation/target remain fixed during this edit pilot.
+  identity replacement. This initial edit pilot kept the saved operation/target;
+  7.8.5d extends editing to those choices.
   One solid result is required; no general split/merge or multi-target claim.
+- [ X ] 7.8.5d Feedback batch: route both native New Sketch commands to a
+  component-owned plane/face task without a Body prerequisite. Permit Extrude mode
+  and target edits while preserving result and operation semantic identities;
+  retain explicit refusal for direct operation consumers and expression remapping.
+  Grouped Release build and three focused feedback checks pass; general topology
+  and command migration remain under 7.8.5b.
 - [ X ] 7.8.6a Result identity, exclusive-history pruning, shared producers, reference
   freezing, independent extraction and native Undo are covered by regression fixtures.
 - [   ] 7.8.6b Prove real multi-body edge-treatment contribution detachment and
@@ -2399,7 +2406,14 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   Rename, retained navigator selection/expansion/scroll and single-Undo embedded
   component creation. Suppression invalidates dependent result caches even when a
   native Boolean fails before the result proxy can execute.
-- [ X ] 7.8.8a Embedded and external Make Independent with child sharing; assembly
+- [ X ] 7.8.7e Owner panel revision: remove path/file and creation buttons, make
+  Edit first and double-click active, highlight the part, protect its visible branch,
+  group repeated definitions with xN and expandable numbered instances, revise
+  Instances/Part View/Save to External File menus, and add visibility and suppression
+  controls before Model History item names. Three focused checks pass and four
+  rendered captures were reviewed. Complete native navigator parity remains
+  tracked in 7.8.7b.
+- [ X ] 7.8.8a Embedded and external independent-copy service (now Copy to New Part) with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
   externalization with additional loaded external consumers. Current preflight
@@ -2451,15 +2465,41 @@ captures were reviewed. A final status-text adjustment clears stale preview word
 it is source-reviewed/staged without repeating the workflow suite.
 
 This is an iteration for owner feedback, not file-format qualification. Existing
-legacy native editors are retained; standard Part Design sketch creation still has
-its Body workflow. Full sketch routing, operation/target changes while editing,
-expressions, multi-result lineage, assembly solver and broader consumer/recovery
+legacy native editors were retained at that milestone. Sketch routing and
+operation/target editing continue in 7.8.5d; expressions, multi-result lineage, assembly solver and broader consumer/recovery
 acceptance remain open. Do not rerun the broad suites solely to close this feedback
 batch. [Procedure and current limits](../tests/ComponentDocument.md#current-feedback-iteration).
 Source publication: implementation `7630012c25efae2e2c79b0102808b8331695a582`
 pushed to `origin/main` and verified with `git ls-remote`. No installer or release.
 The review fixture is `smoke-accepted/Component-Feedback.cadprt` under the iteration
 evidence folder; use the local fork executable from the existing validation build.
+
+2026-10-01 panel/sketch feedback batch (7.8.5d/7.8.7e): implementation preceded
+one grouped Release build. The initial `build/` process ended during a session
+interruption without a completion result; no processes survived. `build-resumed/`
+completed with exit 0. Evidence root:
+`D:\Temp\Office-PC\freecad-plus-component-panels-20261001`.
+Native Part Design and Sketcher command routing, GUI resources and Part scripts are
+included. Native Sketcher also needs the existing Show Python package; this was
+staged afterward and added to the build helper for subsequent batches.
+
+`smoke-accepted/` passes **three focused workflow checks**, no failures/errors/skips,
+process exit 0 and an empty stderr log. Checked native New Sketch entry/cancel/editor,
+Body-independent plane and associative local-face attachment, Extrude mode/target
+editing with stable semantic operation/result identities, Undo and .cadprt reopen,
+grouped instance names/counts and menus, active visibility protection, object
+suppression/dependent result invalidation and restoration. Six loaded component
+module hashes are checked against source by the suite. Four captures were reviewed:
+component structure with x5/numbered instances, suppression/visibility columns,
+Instances submenu and sketch plane task. `Component-Panel-Feedback.cadprt` and
+`Component-Edit-Feedback.cadprt` in that folder are owner review fixtures.
+
+Earlier smoke attempts exposed submenu wrapper lifetime/inspection and view-provider
+close callbacks; Python corrections required no further native build. Capture review
+then corrected ancestor expansion and unavailable-result visibility indicators.
+This is bounded feedback evidence, not complete native-tree parity, schema lock-in,
+assembly solver, arbitrary topology/expression or cross-workbench qualification.
+No installer/release update. Source publication is pending for this batch.
 
 ### [   ] 7.7 Validate and release the history pilot
 

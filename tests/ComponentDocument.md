@@ -12,17 +12,20 @@ owns requirements.
    Tools > Component Structure reopens the navigator.
 2. Add Component creates an embedded definition or inserts an existing definition.
    Save both documents before inserting an external `.cadprt`. Repeated instances
-   share geometry and keep separate placements. Right-click an instance for Make
-   Independent, Externalize Component, representation settings or repair.
+   share geometry and keep separate placements. Right-click a component for Add Component, Instances > Add Instance / Copy to
+   New Part, Save to External File, Part View settings or repair. Expand Instances
+   reveals numbered occurrences of a grouped part; the group shows its count.
 3. Double-click a component to edit its definition, or choose Open Component in
-   Tab. Check the edited component and owning file shown above the tabs. Editing
+   Tab (child rows only). Check the highlighted active part and editing label; the
+   panel has no filename/path. The active component cannot be hidden. Editing
    a shared definition updates every instance; the isolated tab creates no copy.
 4. Add Reference Object lists evaluated objects from direct children. It accepts
    bodies, sheets, sketches and curves. Referenced sketches contain evaluated
    geometry only. Edit the source, then activate the parent: its reference and
    downstream operations should update without changing source history.
-5. Model History lists objects and operations. Its context menu offers suppression
-   and Convert to Dumb Object. Delete Parameters retains the result identity and
+5. Model History lists objects and operations. Use the checkbox to suppress/activate an
+   item and the next icon to show/hide it. A partial check means an input is inactive.
+   Its context menu offers Convert to Dumb Object. Delete Parameters retains the result identity and
    valid downstream links; Extract Dumb Body creates an independent copy. Check
    Undo/Redo and separate suppression on an independent operation.
 6. Check Bodies Only, Full Component, Hidden and Reset to Inherited through a
@@ -46,18 +49,25 @@ Preview and Cancel leave no feature in the document. This iteration supports one
 solid output; disjoint/multiple-solid results are refused.
 
 Double-click an operation or its result in Model History to edit it. Component
-Extrude opens the same task for profile/length/direction edits while retaining its
-saved mode/target. Expression-driven extrusion edits remain in the property editor.
+Extrude opens the same task for profile/length/direction, mode and target changes,
+while retaining the published result identity. Expression-driven extrusion edits remain in the property editor.
 Other supported objects use their native task editor. Context menus also offer
 Rename. History distinguishes explicit Suppressed, Inactive dependency and repair
 states; refresh preserves the selected row and expanded component branches. Creating
 an embedded component and its first occurrence is now one Undo step.
 
-This is a feedback build. Standard Part Design sketch creation still has its native
-Body workflow; full sketch/command integration remains pending. Broader topology,
-consumer and file-format qualification waits for owner feedback. For the small
-current smoke check, add `-IterationSmoke` to `RunComponentDocument.ps1` instead of
-running the full suites below.
+New Sketch in Part Design or Sketcher now offers an independent component sketch
+on XY/XZ/YZ or a selected planar face with offset, then opens the native editor.
+The new sketch belongs to the active component and needs no Body container.
+
+This is a feedback build. Broader topology, native command parity, consumer and
+file-format qualification wait for owner feedback. For the three current checks,
+add `-PanelSmoke` to `RunComponentDocument.ps1` instead of running the full suites
+below. They cover native sketch commands/attachment, Extrude mode and target edits
+with Undo/save/reopen, and grouped instances/menu/visibility/history controls.
+`-IterationSmoke` selects the preceding extrusion iteration instead. Neither is
+full schema qualification. Current panel captures and two .cadprt feedback fixtures
+are produced under the selected evidence directory.
 
 ## Automated checks
 

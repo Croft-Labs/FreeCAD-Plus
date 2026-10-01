@@ -1,5 +1,28 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: 7.8.5d/7.8.7e. Standalone sketch routing and Extrude
+mode/target editing are implemented, together with the owner's latest panel
+revision: grouped/numbered instances, active highlight/visibility protection,
+Edit/Instances/Part View menus, no filename/path or creation buttons, and history
+checkbox/visibility controls. The native tree and panel share document objects;
+complete native command/picking parity remains a gate, not a completed claim.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-component-panels-20261001`.
+The initial `build/` process was interrupted without completion or surviving
+processes. The same grouped batch completed in `build-resumed/`, exit 0.
+`smoke-accepted/` passes three focused workflow checks, process exit 0, empty stderr;
+four rendered captures reviewed. Corrections stayed in Python. The existing Show
+Python package needed by native Sketcher was staged and added to the build helper.
+No broad suite was run; retain the owner's feedback-first validation boundary.
+Use `Component-Panel-Feedback.cadprt` and `Component-Edit-Feedback.cadprt` from that
+folder in the local fork build. The owner/test procedure describes `-PanelSmoke`.
+
+Source publication pending. No installer/release update. Continue the component
+migration after feedback: native command/picking parity, expression and multi-result
+lineage, solver, BOM/mass consumers and broader format/recovery qualification remain
+open. Do not infer completion of the whole architecture from this feedback batch.
+
+Previous feedback batch:
 Current feedback batch: roadmap 7.8.5c/7.8.7d. Component-context Extrude/Pad/Pocket
 now use a Body-independent native extrusion/Boolean task with explicit New Body,
 Add or Subtract, profile/target, length/direction and view-only preview. Model History

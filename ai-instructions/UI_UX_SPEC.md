@@ -1430,19 +1430,32 @@ Convert to Dumb Object offers Delete Parameters and Extract Dumb Body. Component
 edit tabs identify the shared definition and owning file; they do not make copies.
 Assembly Constraints is the first grouping row only when populated. The root row
 is the root component with the native Part icon; no file wrapper appears above it.
-Entry points are File > New/Open and Tools > Component Structure. Context menus
-provide editing, a separate component tab, Make Independent, Externalize Component,
-Locate Component File and representation/reset actions. The Model History menu
-provides suppression and the Convert to Dumb Object dropdown. The context label
-identifies the edited definition and owning file; missing components offer explicit
-repair, and legacy conversions expose their report. Full implementation and native
-interaction/solver acceptance remain tracked in 7.8.
+Entry points are File > New/Open and Tools > Component Structure. The panel shows
+only the edited component name, without a file path or creation buttons. Right-click
+provides Edit first, Add Component and Add Reference Object. Double-click edits the
+shared definition. The root omits Open Component in Tab. Instances contains Add
+Instance and Copy to New Part; Part View contains the three display types and Reset
+to Inherited. Save to External File replaces the earlier Externalize wording.
+Missing components offer Locate Component File and legacy conversions expose their
+report. The native tree and these projections share document objects; complete
+native command/edit/picking parity remains an explicit roadmap gate.
 
-Component feedback iteration (7.8.5c/7.8.7d): Extrude/Pad/Pocket in a component
+Component Structure's first column shows part names, with a visibility control,
+instance count and Part View columns. Same-definition instances under a parent
+start grouped (x5); Expand Instances reveals support_angle#001 through #005, and
+Collapse Instances regroups them. The active part is highlighted and cannot be
+hidden, including by hiding its parent branch. Model History places the active /
+suppressed checkbox to the left of the visibility icon and item name. Partial
+checks identify dependent inactivity; visibility does not suppress an item.
+
+Component feedback tasks (7.8.5c/d and 7.8.7d/e): Extrude/Pad/Pocket in a component
 context opens an operation-first task with New Body/Add/Subtract, local profile,
 explicit target, length, reverse direction and Preview. OK commits one operation;
 Cancel leaves no provisional document objects. Editing a published result opens its
-producer; this iteration keeps the saved Boolean mode/target during edits. Model
-History double-click uses this task or the object's native editor, provides Rename,
-and distinguishes authored suppression from dependent inactivity. Navigator refresh
-retains row selection, expansion and scroll position. Broader acceptance is pending.
+producer. Mode and target can change while preserving the published result identity;
+unsupported direct operation consumers or expressions require explicit review.
+New Sketch from Part Design or Sketcher chooses XY/XZ/YZ or a selected local planar
+face plus offset, then opens native Sketcher without requiring a Body. Model History
+also uses native object editors and offers Rename and Convert to Dumb Object.
+Refresh retains row selection, expansion and scroll position. Broader acceptance
+and owner feedback remain pending.

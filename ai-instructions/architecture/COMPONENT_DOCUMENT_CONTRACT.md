@@ -7,7 +7,8 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 ## Ownership, instances and files
 
 - UI names: **Component Structure**, **Model History**, **Add Component**,
-  **Add Reference Object**, **Convert to Dumb Object**, **Make Independent**.
+  **Add Reference Object**, **Convert to Dumb Object**, **Instances > Add Instance**,
+  **Instances > Copy to New Part**, **Save to External File**.
   Documentation may say sub-component; UI calls every instance a component.
 - A component definition owns ordered history, evaluated result objects, child
   component instances and optional assembly constraints. Geometry and children
@@ -18,7 +19,7 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   definitions in other `.cadprt` files. New definitions are embedded by default.
   Definition identity is distinct from occurrence identity and labels/file paths.
 - Repeated instances share a definition, with independent placements and display
-  overrides. Make Independent copies the selected definition and its own model;
+  overrides. Copy to New Part copies the selected definition and its own model;
   child definitions remain shared unless a deep hierarchy copy is explicitly chosen.
 - Opening a component in a tab creates a view/edit context of the same definition.
   Embedded edits save with the owning file; external edits save with their file.
@@ -28,6 +29,25 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   owns the semantic contracts; tree flattening alone cannot implement them.
 
 ## Component Structure and representation
+
+- The Components panel identifies the active component, without a filename/path or
+  Add Component / Add Reference Object buttons. Creation actions live in context
+  menus. Component tabs may still identify their owning file.
+- The first tree column is the part name. Repeated occurrences of the same definition
+  under one parent collapse into one row by default, with an instance count such as
+  **x5**. **Expand Instances** reveals rows such as **support_angle#005**; **Collapse
+  Instances** restores the grouped view. The number is a persistent display number,
+  separate from the occurrence UUID; labels and numbers are not reference identities.
+- Highlight the active component and provide a show/hide control. The active component
+  and its ancestor branch cannot be hidden. Group actions apply to the represented
+  occurrences; Copy to New Part requires an individual occurrence.
+- **Edit** is the first context action; double-click also activates the definition
+  for editing. **Add Component** adds to that definition. Omit **Open Component in
+  Tab** on the root row, which is already its own view. Use an **Instances** submenu
+  for **Add Instance** and **Copy to New Part**, and **Save to External File** for
+  externalization. **Part View** contains Full Component, Bodies Only, Hidden and
+  Reset to Inherited. The view root is displayed in full; these settings apply to
+  occurrences added to a parent.
 
 - Each child instance defaults to **Bodies Only**. It exposes finished solid/sheet
   results plus child instances evaluated under their own representation settings.
@@ -45,6 +65,10 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 
 ## Model History and evaluated objects
 
+- An **item** means an object or an operation. Show a suppression checkbox, then
+  a visibility icon, then the item name. Checked means active, unchecked means
+  explicitly suppressed, and partially checked means inactive because of an input.
+  Visibility is separate from suppression and does not change dependencies.
 - Display objects and operations in creation/history order. Reusable inputs and
   result identities are separate from producing operations. Solid/sheet results
   expose geometry; editable parameters remain on their operations.

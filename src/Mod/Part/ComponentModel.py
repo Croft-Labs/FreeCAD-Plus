@@ -141,6 +141,11 @@ def add_component(parent, definition=None, label=None, placement=None):
         parent.addObject(link)
         link.Label = label or definition.Label
         _identity(link, "Occurrence")
+        peers = [obj for obj in children(parent) if obj != link and obj.LinkedObject == definition]
+        for index, peer in enumerate(peers, 1):
+            if not hasattr(peer, "InstanceNumber"):
+                _property(peer, "Integer", "InstanceNumber", index, True)
+        _property(link, "Integer", "InstanceNumber", max([obj.InstanceNumber for obj in peers] or [0]) + 1, True)
         _property(link, "String", "DefinitionId", definition.ObjectId, True)
         _property(link, "Enumeration", "Representation", list(TYPES))
         link.Representation = "Bodies Only"
@@ -194,7 +199,7 @@ def current_shape(obj):
     for dep in [obj] + list(obj.OutListRecursive):
         if "Invalid" in dep.State or "Touched" in dep.State:
             raise ValueError("Geometry requires update or repair: " + dep.Label)
-        if getattr(dep, "ResultStatus", "Ready") != "Ready":
+        if getattr(dep, "UserSuppressed", False) or getattr(dep, "ResultStatus", "Ready") != "Ready":
             raise ValueError("Geometry is unavailable: " + dep.Label)
     if obj.Shape.isNull():
         raise ValueError("The selected object has no evaluated geometry.")
@@ -211,6 +216,11 @@ class PersistentProxy:
 
 class ResultProxy(PersistentProxy):
     def execute(self, obj):
+        if getattr(obj, "UserSuppressed", False):
+            if not obj.Frozen:
+                obj.Shape = Part.Shape()
+            obj.ResultStatus = "Suppressed"
+            return
         if obj.Frozen:
             obj.ResultStatus = "Ready" if not obj.Shape.isNull() else "Unavailable"
             return
@@ -314,6 +324,10 @@ class ReferenceProxy(PersistentProxy):
     def execute(self, obj):
         # Shape is an explicit last-evaluated snapshot until activation refreshes it.
         # Pending is separate from visibility and prevents current_shape consumers.
+        if getattr(obj, "UserSuppressed", False):
+            obj.Shape = Part.Shape()
+            obj.ResultStatus = "Suppressed"
+            return
         if obj.SourceOccurrence is None or obj.SourceObject is None:
             obj.ResultStatus = "Missing source"
             return
@@ -346,6 +360,11 @@ def activate(component):
     doc.recompute()
     for obj in history(component):
         if getattr(obj, "ComponentRole", "") != "Reference":
+            continue
+        if getattr(obj, "UserSuppressed", False):
+            obj.Shape = Part.Shape()
+            obj.ResultStatus = "Suppressed"
+            obj.purgeTouched()
             continue
         try:
             if obj.SourceObject is None or obj.SourceObject.ObjectId != obj.SourceObjectId:
@@ -397,7 +416,7 @@ def set_representation(root, ids, value=None):
         root.RepresentationOverrides = json.dumps(overrides, sort_keys=True)
 
 
-def representation(root, ids):
+def representation(root, ids, root_overrides=None):
     chain = _path(root, ids)
     for depth, link in enumerate(chain):
         value = str(link.Representation)
@@ -405,7 +424,8 @@ def representation(root, ids):
         for start in range(depth, -1, -1):
             context = root if start == 0 else chain[start - 1].LinkedObject
             key = "/".join(ids[start:depth + 1])
-            value = json.loads(context.RepresentationOverrides).get(key, value)
+            overrides = root_overrides if start == 0 and root_overrides is not None else json.loads(context.RepresentationOverrides)
+            value = overrides.get(key, value)
         if value == "Hidden":
             return value
     return value if chain else "Full Component"
@@ -472,7 +492,7 @@ def delete_parameters(component, result):
     return result
 
 
-def make_independent(occurrence):
+def make_independent(occurrence, label=None):
     """Copy one definition's owned objects; child definitions stay shared."""
     parent = owner(occurrence)
     if not is_component(parent) or occurrence not in children(parent):
@@ -481,11 +501,12 @@ def make_independent(occurrence):
     members = list(source.Group)
     if any(o.ExpressionEngine for o in [source] + members):
         raise ValueError("Expression-driven definition copies require reviewed expression remapping.")
-    with transaction(parent.Document, "Make Independent"):
+    with transaction(parent.Document, "Copy to New Part"):
         originals = [source] + members + [source.Origin] + list(source.Origin.OriginFeatures)
         copied = parent.Document.copyObject(originals, False)
         mapping = {old.Name: new for old, new in zip(originals, copied)}
         definition = mapping[source.Name]
+        definition.Label = label or source.Label + " copy"
         for obj in copied:
             if hasattr(obj, "ObjectId"):
                 obj.ObjectId = str(uuid.uuid4())
@@ -507,6 +528,8 @@ def make_independent(occurrence):
         placement = App.Placement(occurrence.LinkPlacement)
         occurrence.setLink(definition)
         occurrence.DefinitionId = definition.ObjectId
+        if hasattr(occurrence, "InstanceNumber"):
+            occurrence.InstanceNumber = 1
         occurrence.LinkPlacement = placement
         validate(parent.Document)
     return definition
@@ -514,11 +537,19 @@ def make_independent(occurrence):
 
 def set_suppressed(operation, suppressed):
     component = owner(operation)
-    if not is_component(component) or getattr(operation, "ComponentRole", "") != "Operation":
-        raise ValueError("Select an operation in Model History.")
-    with transaction(operation.Document, "Suppress operation" if suppressed else "Unsuppress operation"):
+    if not is_component(component) or operation not in history(component):
+        raise ValueError("Select an item in Model History.")
+    with transaction(operation.Document, "Suppress item" if suppressed else "Unsuppress item"):
         if not hasattr(operation, "UserSuppressed"):
             _property(operation, "Bool", "UserSuppressed", False)
+        if App.GuiUp and bool(suppressed) != bool(operation.UserSuppressed):
+            if suppressed:
+                if not hasattr(operation, "SuppressionVisibility"):
+                    _property(operation, "Bool", "SuppressionVisibility", bool(operation.Visibility), True)
+                operation.SuppressionVisibility = bool(operation.Visibility)
+                operation.Visibility = False
+            else:
+                operation.Visibility = getattr(operation, "SuppressionVisibility", False)
         operation.UserSuppressed = bool(suppressed)
         if hasattr(operation, "ConsumedResults"):
             previous = json.loads(operation.PreviousVisibility)
@@ -532,6 +563,9 @@ def set_suppressed(operation, suppressed):
                     obj.Shape = Part.Shape()
                     obj.ResultStatus = "Unavailable"
                 obj.touch()
+
+    if not suppressed and getattr(operation, "ComponentRole", "") == "Reference":
+        activate(component)
 
 
 def history_state(obj):
@@ -555,7 +589,7 @@ def finished_results(component):
                 if not getattr(operation, "UserSuppressed", False)
                 for source in getattr(operation, "ConsumedResults", [])}
     results = [component.Document.getObject(name) for name in component.ResultObjects if name not in consumed]
-    return [obj for obj in results if obj is not None
+    return [obj for obj in results if obj is not None and not getattr(obj, "UserSuppressed", False)
             and getattr(obj, "ResultStatus", "Ready") == "Ready" and not obj.Shape.isNull()]
 
 

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Body-independent component Extrude using native extrusion and Boolean features."""
+import json
 import FreeCAD as App
 import ComponentModel as Model
 
@@ -107,16 +108,73 @@ def parameters(operation):
     return tool, mode, operation.Base if mode != "New Body" else None
 
 
-def edit(operation, profile, length, reversed_direction=False):
+def edit(operation, profile, length, reversed_direction=False, mode=None, target=None):
     component = Model.owner(operation)
     Model.activate(component)
-    tool, mode, target = parameters(operation)
+    tool, old_mode, old_target = parameters(operation)
+    if mode is None:
+        mode, target = old_mode, old_target
     inputs(component, profile, length, mode, target, operation)
-    if tool.ExpressionEngine:
+    if tool.ExpressionEngine or operation.ExpressionEngine:
         raise ValueError("This extrusion uses expressions. Edit them in the property editor to preserve the formulas.")
-    with Model.transaction(component.Document, "Edit Extrude"):
-        configure(tool, profile, length, reversed_direction)
-        evaluate(component.Document, operation, mode, target)
+    doc = component.Document
+    results = [obj for obj in operation.InList if getattr(obj, "Producer", None) == operation]
+    if mode != old_mode:
+        allowed = set(results + [component])
+        if any(obj not in allowed for obj in operation.InList):
+            raise ValueError("Other objects reference this operation directly. Use its published result before changing the operation type.")
+        if tool != operation and any(obj not in (component, operation) for obj in tool.InList):
+            raise ValueError("The extrusion tool has another consumer; its operation type cannot be changed safely.")
+    previous = json.loads(getattr(operation, "PreviousVisibility", "{}"))
+    consumed = list(getattr(operation, "ConsumedResults", []))
+    target_visibility = previous.get(target.ObjectId, bool(target.Visibility)) if target else None
+    with Model.transaction(doc, "Edit Extrude"):
+        if mode != old_mode:
+            ordered = list(component.ModelHistory)
+            old_name, old_id, label = operation.Name, operation.ObjectId, operation.Label
+            old_tool_name = tool.Name if tool != operation else None
+            suppressed = getattr(operation, "UserSuppressed", False)
+            replacement_tool = doc.addObject("Part::Extrusion", "Extrude")
+            configure(replacement_tool, profile, length, reversed_direction)
+            replacement = replacement_tool
+            if mode != "New Body":
+                component.addObject(replacement_tool)
+                Model._identity(replacement_tool, "Internal")
+                replacement = doc.addObject("Part::Fuse" if mode == "Add" else "Part::Cut", "Extrude")
+                replacement.Base, replacement.Tool = target, replacement_tool
+                Model._property(replacement, "Link", "ExtrusionTool", replacement_tool, True)
+            Model.register_object(component, replacement, "Operation")
+            replacement.ObjectId, replacement.Label = old_id, label
+            Model._property(replacement, "String", "OperationKind", "Extrude", True)
+            Model._property(replacement, "String", "ExtrudeMode", mode, True)
+            Model._property(replacement, "Bool", "UserSuppressed", suppressed)
+            evaluate(doc, replacement, mode, target)
+            for result in results:
+                result.Producer = replacement
+                result.touch()
+            doc.removeObject(old_name)
+            if old_tool_name:
+                doc.removeObject(old_tool_name)
+            component.ModelHistory = [replacement.Name if name == old_name else name for name in ordered]
+            operation, tool = replacement, replacement_tool
+        else:
+            configure(tool, profile, length, reversed_direction)
+            if mode != "New Body":
+                operation.Base = target
+        if mode != "New Body":
+            if not hasattr(operation, "ConsumedResults"):
+                Model._property(operation, "LinkList", "ConsumedResults", [], True)
+                Model._property(operation, "String", "PreviousVisibility", "{}", True)
+            operation.ConsumedResults = [target]
+            operation.PreviousVisibility = json.dumps({target.ObjectId: target_visibility})
+        evaluate(doc, operation, mode, target)
         if App.GuiUp:
             profile.Visibility = False
+            operation.Visibility = tool.Visibility = False
+            if target:
+                target.Visibility = target_visibility if getattr(operation, "UserSuppressed", False) else False
+            for source in consumed:
+                if source != target and not any(source in getattr(other, "ConsumedResults", [])
+                       and not getattr(other, "UserSuppressed", False) for other in Model.history(component)):
+                    source.Visibility = previous.get(source.ObjectId, True)
     return operation

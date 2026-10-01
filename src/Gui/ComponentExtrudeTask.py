@@ -49,7 +49,7 @@ class ExtrudeTask:
         self.target = QtWidgets.QComboBox()
         self.target.addItem(tr("Select a target body…"), None)
         for obj in Model.finished_results(component):
-            if obj.Shape.Solids:
+            if obj.Shape.Solids and (operation is None or operation not in obj.OutListRecursive):
                 self.target.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
         layout.addRow(tr("Target body"), self.target)
         self.length = Gui.UiLoader().createWidget("Gui::QuantitySpinBox")
@@ -74,13 +74,10 @@ class ExtrudeTask:
             self.length.setProperty("rawValue", tool.LengthFwd.Value)
             self.reverse.setChecked(tool.Reversed)
             self.mode.setCurrentIndex(Extrude.MODES.index(mode))
-            self.mode.setEnabled(False)
-            self.mode.setToolTip(tr("Editing retains the saved operation and target."))
             if target:
                 if self.target.findData(target.Name) < 0:
                     self.target.addItem(target.Label, target.Name)
                 self.target.setCurrentIndex(self.target.findData(target.Name))
-            self.target.setEnabled(False)
         else:
             self.use_selection()
         self.capture.clicked.connect(self.use_selection)
@@ -98,7 +95,7 @@ class ExtrudeTask:
 
     def changed(self, *args):
         self.clear_preview()
-        self.target.setEnabled(self.operation is None and self.mode.currentData() != "New Body")
+        self.target.setEnabled(self.mode.currentData() != "New Body")
         if not self.profile.currentData():
             self.status.setText(tr("Choose a profile. No Body container is required."))
         elif self.mode.currentData() != "New Body" and not self.target.currentData():
@@ -147,7 +144,7 @@ class ExtrudeTask:
         try:
             profile, length, mode, target, reverse = self.values()
             if self.operation:
-                Extrude.edit(self.operation, profile, length, reverse)
+                self.operation = Extrude.edit(self.operation, profile, length, reverse, mode, target)
             else:
                 self.operation, self.result = Extrude.create(self.component, profile, length, mode, target, reverse)
         except Exception as error:

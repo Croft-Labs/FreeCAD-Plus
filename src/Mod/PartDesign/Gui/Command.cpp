@@ -624,6 +624,15 @@ CmdPartDesignNewSketch::CmdPartDesignNewSketch()
 void CmdPartDesignNewSketch::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    for (auto* object : getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentSketchTask import launch; launch()");
+            return;
+        }
+    }
+
     PartDesignGui::SketchWorkflow creator(getActiveGuiDocument());
     creator.createSketch();
 }

@@ -3,6 +3,7 @@ param(
     [Parameter(Mandatory=$true)][string]$OutputDirectory,
     [string]$ColdFixtureDirectory,
     [switch]$IterationSmoke,
+    [switch]$PanelSmoke,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -17,6 +18,7 @@ $env:FREECAD_USER_DATA = $OutputDirectory
 $env:FREECAD_USER_TEMP = $OutputDirectory
 $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentDocument.py'
 if ($IterationSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentIteration.py' }
+if ($PanelSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPanelIteration.py' }
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'

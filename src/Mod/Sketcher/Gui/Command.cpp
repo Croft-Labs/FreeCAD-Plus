@@ -166,6 +166,15 @@ CmdSketcherNewSketch::CmdSketcherNewSketch()
 void CmdSketcherNewSketch::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    for (auto* object : getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentSketchTask import launch; launch()");
+            return;
+        }
+    }
+
     Attacher::eMapMode mapmode = Attacher::mmDeactivated;
     std::string groupName;
     bool bAttach = false;
