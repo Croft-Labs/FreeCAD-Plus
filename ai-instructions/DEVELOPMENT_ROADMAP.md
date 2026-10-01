@@ -30,7 +30,17 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F080 saved exploded-view output,
+- Current product batch complete for owner testing: F069 intersection curves,
+  phase 13 tasks 13.4a/b. Part > Review intersection curves captures explicit whole
+  root shapes/Bodies, previews native Section on isolated copies and creates an
+  associative result in one transaction. Empty results and changed inputs prevent
+  creation; sources retain visibility, geometry and Body Tips. Both tasks preceded
+  one grouped build. 18 distinct selected checks pass across accepted suites;
+  six native captures were reviewed. [Owner procedure](../tests/SectionReview.md).
+  Full F069 remains open for extraction/projection, wider references and physical
+  acceptance. Stop at this usable checkpoint and rotate.
+
+- Previous product batch complete for owner testing: F080 saved exploded-view output,
   phase 12 tasks 12.7a/b. Existing native steps now produce drawing geometry that
   preserves occurrence/definition and structural-parent transforms. Successive
   trails follow preceding moves; radial preview and output use the same frame.
@@ -4073,6 +4083,43 @@ localization and physical owner acceptance. Stop here for owner testing and rota
   involve intersecting bodies. Preserve source/update links and the established Isocline
   draft-angle convention rather than silently interpreting it as a different normal-
   angle measure.
+- [ X ] 13.4a Add a bounded, nonmutating review of native Part::Section curves from
+  two whole root Part shapes/whole root Bodies. Use copied BReps and the existing
+  kernel feature in a hidden temporary document; report edge count, total length,
+  empty/point-only output and the native approximation choice.
+- [ X ] 13.4b Add explicit capture, temporary wire preview and one transactional
+  associative creation under Part > Review intersection curves. Recheck identity,
+  current geometry and context; invalidate stale previews, refuse empty creation,
+  roll back mismatches and preserve source visibility and Body Tips. Verify native
+  Undo/Redo, persistence and downstream update; keep the older Section command.
+
+13.4a/b evidence (2026-10-01):
+Both tasks preceded one PartGui/PartScripts Release build, exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-section-review-20261001`.
+Initial grouped checks exposed native Boolean view-provider operand auto-hide;
+creation now restores the reviewed visibility in the same transaction. Only the
+corrected SectionReview.py was restaged; no second native build. Test fixtures were
+corrected to use Part.sortEdges for multiple loops and to compare authored property
+values/BReps independently of native transient property-status bits (Content is an
+XML fragment). Earlier failed grouped/corrected reports are retained.
+`accepted/` passes all nine Section checks; `grouped/` passes nine unchanged sampled
+surface-deviation checks. **18 distinct selected passes**, zero failures/errors/
+skips in accepted suites; native exits 0. A 10 x 8 mm box/plane intersection has
+four edges totaling 36 mm; after save/reopen and changing length to 20 mm it becomes
+56 mm, and a 2 mm downstream extrusion changes from 72 to 112 mm^2. Coplanar
+boundaries, disjoint/point-only results, transformed multiple loops, whole Body
+Tip preservation, Cancel, stale/context refusal and rollback pass.
+Six reviewed `visual/` captures cover review/preview geometry, changed input, empty
+output, native creation and reopened source editing. Intersection-Sources.FCStd,
+Intersection-Result.FCStd and Intersection-Edited.FCStd provide owner fixtures.
+PartGui SHA256: `84969A10FE8FA3B3AFB62E5618F09C34BD698D4029917D8503276C67DFA6D0B3`.
+validated-identities.json and acceptance-summary.json record exact source/runtime
+and accepted evidence; historical About metadata is not the exact source identity.
+No installer/release update. Whole F069/13.4 remains open for associative face/edge
+extraction, projection, nested/external references, topology repair, richer curve
+selection, broader kernel coverage and physical/high-DPI acceptance.
+[Owner procedure](../tests/SectionReview.md). Stop here and rotate for feedback.
+
 - [   ] 13.5 Extend Hole wizard, feature/body patterns/mirrors, shell/draft/rib/web
   and fillet/chamfer tools in bounded increments, preserving specialized parameters.
   Hole wizard covers standard holes, counterbores, countersinks, threads and reusable
@@ -6381,7 +6428,7 @@ reconciliation rules above to every entry.
 <a id="f069"></a>
 ### F069 — Extract/project/intersect curves
 
-**Owning tasks:** 13.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.4; bounded intersection tasks 13.4a/b. **Status:** Native Section review and associative creation are ready for owner testing. 18 selected checks and six reviewed captures cover preview/source preservation, empty results, multiple loops, Undo/Redo, persistence and downstream edits. Full F069 remains open for extraction, projection, broader references/topology repair and physical acceptance. [Owner procedure](../tests/SectionReview.md).
 
 **Packages:** G05 · **First delivery:** P7 · **Likely scope:** Feature
 

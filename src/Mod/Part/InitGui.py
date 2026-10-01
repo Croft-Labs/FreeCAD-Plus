@@ -54,6 +54,8 @@ class PartWorkbench(Gui.Workbench):
         registerInspection()
         from SurfaceDeviationGui import registerCommand as registerDeviation
         registerDeviation()
+        from SectionReviewGui import registerCommand as registerSectionReview
+        registerSectionReview()
 
         try:
             import BasicShapes.CommandShapes

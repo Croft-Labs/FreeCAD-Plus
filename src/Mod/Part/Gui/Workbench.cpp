@@ -143,7 +143,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Part_RuledSurface"
           << "Part_Loft"
           << "Part_Sweep"
-          << "Part_Section"
+          << "Part_Section" << "Part_SectionReview"
           << "Part_CrossSections"
           << "Part_Offset"
           << "Part_Offset2D"

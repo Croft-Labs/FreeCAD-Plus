@@ -1051,3 +1051,23 @@ No new animation or configuration controls are introduced. Nested parent/child
 step combinations, scaled/array/external links, broader visibility, joint limits,
 BOM arrangement selection and physical owner acceptance remain open.
 [Owner procedure](../tests/ExplodedViewOutput.md).
+
+## UI-035: Reviewed intersection curves (F069; roadmap 13.4a/b)
+
+Part > Review intersection curves opens a modeless review of two whole root Part
+shapes/whole root Bodies, with up to 200 faces each. The original Section command
+and native Part::Section/Base/Tool/Approximation identities remain unchanged.
+
+| Control/state | Behavior |
+| --- | --- |
+| Capture first / second shape | Capture one whole tree selection from the active document, showing label and internal name. Two valid preselected objects initialize the roles. Nested members, Links and subelements are refused. |
+| Approximate output curves | Native Section option, initially off. Changing it clears the previous preview. |
+| Preview curves | Run native Section on copied BReps in a hidden temporary document. Show a temporary non-pickable wire, edge count and total millimeter length; no source transaction or geometry changes. |
+| Empty or point-only result | Explain zero curves and isolated vertex count; disable creation. Coincident surfaces may yield boundary edges and require review. |
+| Changed/unavailable input | Remove the old overlay and disable creation. Changed inputs require explicit recapture; edit/transaction/document context must be valid. |
+| Create intersection | Recheck the inputs/result, then create one native associative Section transaction. Preserve source visibility and Body Tips; failed creation rolls back. Close after success. |
+| Cancel / close document | Remove the temporary overlay and observer; leave no created feature. |
+
+This review does not project curves, cut material or create clipping planes.
+Individual-face extraction, nested/external scope, broad topology repair and
+physical/high-DPI acceptance remain open. [Owner procedure](../tests/SectionReview.md).
