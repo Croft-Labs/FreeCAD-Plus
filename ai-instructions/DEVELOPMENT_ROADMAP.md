@@ -2556,7 +2556,10 @@ No schema version change: native optional ReferenceError/status properties retai
 repair details; format, graph and external-definition identity checks stay in force.
 This is whole-object recovery, not arbitrary face/edge/expression correspondence,
 full missing-external-file recovery, general native consumers or schema qualification.
-No installer/release update. Source publication pending.
+No installer/release update. Implementation `6b12567f01d20743eca90535b55ab9e8b7bad064`
+was pushed to `origin/main` and verified with `git ls-remote`. The evidence root
+contains `acceptance-identities.json`: seven matching source/runtime modules, six
+unchanged native artifacts and both fixture hashes.
 
 ### [   ] 7.7 Validate and release the history pilot
 

@@ -13,7 +13,9 @@ checks, process exit 0, empty stderr; two captures reviewed. The initial checks
 passed; capture review corrected the missing-source eye icon and a fixture scope
 warning. Only Python was restaged, with no extra build. Feedback fixtures in that
 folder: `Component-Broken-Reference.cadprt`, `Component-Repaired-Reference.cadprt`.
-Source publication pending. No schema lock-in, broad validation or installer update.
+Implementation 6b12567f01 was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching modules, six unchanged native
+artifacts and fixture hashes. No schema lock-in, broad validation or installer update.
 
 Continue component migration rather than unrelated feature rotation. Whole-object
 recovery does not establish arbitrary topology/expression remapping, all missing-file
