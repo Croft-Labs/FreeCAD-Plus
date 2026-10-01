@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F077 assembly freedom guidance,
+- Current product batch complete for owner testing: F063 ordered open-section Loft,
+  phase 13 tasks 13.2a/b. Native open wires/single edges are selectable, section order
+  and output modes are explicit, and invalid creation rolls back for correction.
+  Both tasks preceded the grouped build; all 17 selected checks pass. Capture review
+  found a misleading solid-output error detail, corrected in one incremental rebuild.
+  Eight affected checks pass again and five final captures are reviewed. [Owner procedure](../tests/LoftSections.md). Full F063 stays open; rotate
+  after this usable checkpoint pending owner testing.
+
+- Previous product batch complete for owner testing: F077 assembly freedom guidance,
   phase 12 tasks 12.4a/b. Native solver messages explain the assembly-wide count;
   grounded/unconnected selection distinguishes connectivity from slider/hinge freedom.
   Contextual panel attachment/lifecycle is repaired. Both tasks preceded a grouped
@@ -4204,6 +4212,34 @@ localization and physical owner acceptance. Stop here for owner testing and rota
   Through-curves surfaces need section-to-section correspondence controls and twist
   preview, not only guide selection. Shared Sweep/Loft tasks distinguish solid versus
   surface output and show targets/results before commit.
+- [x] 13.2a Expose native open-wire/single-edge sections in the existing Loft task,
+  with ordered-section and surface/solid/ruled/closed-loop scope review (F063).
+- [x] 13.2b Validate current section identities and committed result before one
+  undo transaction, retain failed creation for correction, and verify association,
+  Cancel, Undo/Redo and save/reopen. Both tasks passed grouped build/runtime checks.
+
+13.2a/b grouped evidence (2026-10-01): both tasks preceded one successful 70-second
+PartGui build (exit 0). Eight TestLoftSections checks and nine unchanged
+TestSheetThickening checks pass together (17 total, no failures/skips). Native
+open-wire/single-edge collection, section reordering with duplicate labels, smooth
+surface and ruled output, closed-profile solid, rollback/retry, insufficient/stale
+inputs, owner transaction preservation, document close, Undo/Redo and associative
+source edits after save/reopen are covered. Evidence:
+D:\Temp\Office-PC\freecad-plus-loft-sections-20261001 (grouped/ and build-initial.log).
+Capture review exposed a misleading "Valid" detail when open profiles failed to
+produce the requested solid. One corrective 60-second PartGui rebuild (exit 0;
+build.log) reports invalid geometry or a solid-output mismatch accurately. All eight affected Loft checks pass again (loft-final/); the nine unchanged
+companion results are retained, giving 17 accepted distinct checks. The first
+corrective verification expected the solid-count message; its assertion was
+corrected to the actual native invalid-shape result without a further source change.
+All five final captures reviewed (visual-final/): ordered solid/surface modes,
+recoverable failure, created surface and reopened source edit. Three owner fixtures
+and source/runtime hashes are retained with evidence.json. Source-built validation
+is not installer or owner acceptance. [Owner procedure](../tests/LoftSections.md).
+Full F063/13.2 remains open for guides, section correspondence/reversal, geometric
+and twist preview, continuity/tolerance certification and Boolean targets. Stop
+at this bounded checkpoint and rotate pending owner workflow feedback.
+
 - [   ] 13.3 Spike curve-network/boundary surfaces and supported positional/tangent/
   curvature continuity. Measure continuity rather than judging rendered smoothness;
   explicitly limit unsupported inputs instead of assuming a kernel replacement.
@@ -6549,7 +6585,7 @@ reconciliation rules above to every entry.
 <a id="f063"></a>
 ### F063 — Through-curves surfaces
 
-**Owning tasks:** 13.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.2, 13.2a/b. **Status:** Bounded ordered open-section Loft ready for owner testing: native open wires/single edges, explicit surface/solid/ruled/closed-loop review, valid atomic creation and recoverable failure. Association, Undo/Redo and save/reopen pass in 17 grouped checks; one corrective rebuild clarifies failed solid output. Full F063 remains open for guides, correspondence/reversal, geometric/twist preview, continuity/tolerance certification and Boolean targets. [Owner procedure](../tests/LoftSections.md).
 
 **Packages:** G03 · **First delivery:** P7 · **Likely scope:** Feature/Core
 

@@ -25,6 +25,7 @@
 
 #include <Mod/Part/App/ShapeAnalysis_FreeBoundsFix.h>
 #include <Precision.hxx>
+#include <QLabel>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QTreeWidget>
@@ -45,6 +46,7 @@
 #include <Gui/ViewProvider.h>
 
 #include <Mod/Part/App/PartFeature.h>
+#include <Mod/Part/App/PartFeatures.h>
 
 #include <BRep_Tool.hxx>
 #include <TopExp_Explorer.hxx>
@@ -60,6 +62,7 @@ class LoftWidget::Private
 public:
     Ui_TaskLoft ui;
     std::string document;
+    QLabel* review {nullptr};
     Private() = default;
     ~Private() = default;
 };
@@ -75,7 +78,21 @@ LoftWidget::LoftWidget(QWidget* parent)
 
     d->ui.setupUi(this);
     d->ui.selector->setAvailableLabel(tr("Available profiles"));
-    d->ui.selector->setSelectedLabel(tr("Selected profiles"));
+    d->ui.selector->setSelectedLabel(tr("Sections in loft order"));
+    d->ui.selector->selectedTreeWidget()->setToolTip(tr("Top to bottom is section order. Use Move up/down to change it."));
+    d->ui.checkClosed->setToolTip(tr("Connect the last section back to the first; this does not cap an open section."));
+    d->review = new QLabel(this);
+    d->review->setObjectName(QStringLiteral("loftSectionReview"));
+    d->review->setWordWrap(true);
+    d->review->setTextFormat(Qt::PlainText);
+    d->ui.gridLayout->addWidget(d->review, 2, 0, 1, 4);
+    auto* model = d->ui.selector->selectedTreeWidget()->model();
+    connect(model, &QAbstractItemModel::rowsInserted, this, &LoftWidget::updateReview);
+    connect(model, &QAbstractItemModel::rowsRemoved, this, &LoftWidget::updateReview);
+    connect(model, &QAbstractItemModel::rowsMoved, this, &LoftWidget::updateReview);
+    connect(d->ui.checkSolid, &QCheckBox::toggled, this, &LoftWidget::updateReview);
+    connect(d->ui.checkRuledSurface, &QCheckBox::toggled, this, &LoftWidget::updateReview);
+    connect(d->ui.checkClosed, &QCheckBox::toggled, this, &LoftWidget::updateReview);
 
     // clang-format off
     connect(d->ui.selector->availableTreeWidget(), &QTreeWidget::currentItemChanged,
@@ -85,6 +102,7 @@ LoftWidget::LoftWidget(QWidget* parent)
     // clang-format on
 
     findShapes();
+    updateReview();
 }
 
 LoftWidget::~LoftWidget()
@@ -116,36 +134,20 @@ void LoftWidget::findShapes()
             continue;
         }
 
-        bool viable = false;
-        TopExp_Explorer xp(shape, TopAbs_WIRE);
-        int wireCount = 0;
-        bool allClosed = true;
-        for (; xp.More() && wireCount <= 1; xp.Next(), wireCount++) {
-            if (!BRep_Tool::IsClosed(TopoDS::Wire(xp.Current()))) {
-                allClosed = false;
-                break;
-            }
-        }
-        if (wireCount == 1 && allClosed) {
-            viable = true;
-        }
-        else if (!wireCount) {
-            int vertexCount = 0;
-            TopExp_Explorer xp(shape, TopAbs_VERTEX);
-            for (; xp.More() && vertexCount <= 1; xp.Next(), vertexCount++)
-                ;
-            if (vertexCount == 1) {
-                viable = true;
-            }
-        }
+        const auto wires = topoShape.countSubShapes(TopAbs_WIRE);
+        const auto edges = topoShape.countSubShapes(TopAbs_EDGE);
+        const auto vertices = topoShape.countSubShapes(TopAbs_VERTEX);
+        const bool viable = wires == 1 || (wires == 0 && edges == 1)
+            || (edges == 0 && vertices == 1);
 
         if (viable) {
             QString label = QString::fromUtf8(obj->Label.getValue());
             QString name = QString::fromLatin1(obj->getNameInDocument());
             QTreeWidgetItem* child = new QTreeWidgetItem();
             child->setText(0, label);
-            child->setToolTip(0, label);
+            child->setToolTip(0, label + QStringLiteral(" [") + name + QStringLiteral("]"));
             child->setData(0, Qt::UserRole, name);
+            child->setData(0, Qt::UserRole + 1, static_cast<qulonglong>(obj->getID()));
             Gui::ViewProvider* vp = activeGui->getViewProvider(obj);
             if (vp) {
                 child->setIcon(0, vp->getIcon());
@@ -153,6 +155,21 @@ void LoftWidget::findShapes()
             d->ui.selector->availableTreeWidget()->addTopLevelItem(child);
         }
     }  // end for objs
+}
+
+void LoftWidget::updateReview()
+{
+    const int count = d->ui.selector->selectedTreeWidget()->topLevelItemCount();
+    d->review->setText(tr("%1 sections, top to bottom. %2 %3 %4 "
+                         "Creates a separate associative Loft. Guides, explicit correspondence "
+                         "and twist preview are not available in this task.")
+        .arg(count)
+        .arg(d->ui.checkSolid->isChecked() ? tr("Solid output requires closed profiles.")
+                                         : tr("Surface output accepts open or closed profiles."))
+        .arg(d->ui.checkRuledSurface->isChecked() ? tr("Ruled joins connect adjacent sections.")
+                                                : tr("Smooth interpolation through sections."))
+        .arg(d->ui.checkClosed->isChecked() ? tr("Last section connects back to first.")
+                                          : tr("First and last sections remain separate.")));
 }
 
 bool LoftWidget::accept()
@@ -183,19 +200,28 @@ bool LoftWidget::accept()
 
     int count = d->ui.selector->selectedTreeWidget()->topLevelItemCount();
     if (count < 2) {
-        QMessageBox::critical(
-            this,
-            tr("Too Few Elements"),
-            tr("At least 2 vertices, edges, wires, or faces are required.")
-        );
+        d->review->setText(tr("Choose at least two sections in loft order."));
+        return false;
+    }
+    auto* appDoc = App::GetApplication().getDocument(d->document.c_str());
+    if (!appDoc || App::GetApplication().getActiveDocument() != appDoc
+        || appDoc->hasPendingTransaction() || appDoc->getBookedTransactionID() > 0) {
+        d->review->setText(tr("Activate the section document and finish other edit transactions first."));
         return false;
     }
     for (int i = 0; i < count; i++) {
         QTreeWidgetItem* child = d->ui.selector->selectedTreeWidget()->topLevelItem(i);
         QString name = child->data(0, Qt::UserRole).toString();
+        auto* section = appDoc->getObject(name.toUtf8().constData());
+        if (!section || section->getID() != child->data(0, Qt::UserRole + 1).toULongLong()
+            || !section->isValid() || section->isTouched()) {
+            d->review->setText(tr("A section is missing, replaced or not current. Recompute or reopen the task to select current sections."));
+            return false;
+        }
         str << "App.getDocument('" << d->document.c_str() << "')." << name << ", ";
     }
 
+    int transaction = 0;
     try {
         QString cmd;
         cmd = QStringLiteral(
@@ -211,23 +237,31 @@ bool LoftWidget::accept()
         if (!doc) {
             throw Base::RuntimeError("Document doesn't exist anymore");
         }
-        doc->openCommand(QT_TRANSLATE_NOOP("Command", "Loft"));
+        transaction = Gui::Command::openActiveDocumentCommand(tr("Loft").toStdString());
         Gui::Command::runCommand(Gui::Command::App, cmd.toUtf8());
         doc->getDocument()->recompute();
-        App::DocumentObject* obj = doc->getDocument()->getActiveObject();
-        if (obj && !obj->isValid()) {
-            std::string msg = obj->getStatusString();
-            doc->abortCommand();
-            throw Base::RuntimeError(msg);
+        auto* loft = dynamic_cast<Part::Loft*>(doc->getDocument()->getActiveObject());
+        if (!loft) {
+            throw Base::RuntimeError("Loft creation failed");
         }
-        doc->commitCommand();
+        if (!loft->isValid()) {
+            throw Base::RuntimeError(loft->getStatusString());
+        }
+        if (loft->Shape.getShape().isNull() || !loft->Shape.getShape().isValid()) {
+            throw Base::RuntimeError("Loft did not produce a valid shape");
+        }
+        if (d->ui.checkSolid->isChecked()
+            && loft->Shape.getShape().countSubShapes(TopAbs_SOLID) != 1) {
+            throw Base::RuntimeError(
+                "The sections did not produce one solid. Use closed profiles or turn off Create solid.");
+        }
+        Gui::Command::commitCommand(transaction);
     }
     catch (const Base::Exception& e) {
-        QMessageBox::warning(
-            this,
-            tr("Input error"),
-            QCoreApplication::translate("Exception", e.what())
-        );
+        Gui::Command::abortCommand(transaction);
+        d->review->setText(tr("Loft was not created. Original sections were preserved. "
+                             "Check section order and output mode, then try again.\n%1")
+                          .arg(QCoreApplication::translate("Exception", e.what())));
         return false;
     }
 
@@ -260,8 +294,9 @@ void LoftWidget::changeEvent(QEvent* e)
     QWidget::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         d->ui.retranslateUi(this);
-        d->ui.selector->setAvailableLabel(tr("Vertex/Edge/Wire/Face"));
-        d->ui.selector->setSelectedLabel(tr("Loft"));
+        d->ui.selector->setAvailableLabel(tr("Available profiles"));
+        d->ui.selector->setSelectedLabel(tr("Sections in loft order"));
+        updateReview();
     }
 }
 
@@ -270,6 +305,7 @@ void LoftWidget::changeEvent(QEvent* e)
 
 TaskLoft::TaskLoft()
 {
+    setAutoCloseOnDeletedDocument(true);
     widget = new LoftWidget();
     addTaskBox(Gui::BitmapFactory().pixmap("Part_Loft"), widget);
 }

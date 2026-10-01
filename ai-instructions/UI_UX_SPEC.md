@@ -1162,3 +1162,23 @@ placements and joints. Grounded selection states
 a relationship, not solve success. Movement arrows, per-component rank, detailed
 incomplete-joint/unresolved external/nested loading states and physical acceptance remain open.
 [Owner procedure](../tests/AssemblyFreedom.md).
+
+## UI-040: Ordered Loft section collection (F063; roadmap 13.2a/b)
+
+The existing Part_Loft command and ActionSelector retain their identities. Native
+Part::Loft owns Sections, Solid, Ruled and Closed persistence and geometry.
+
+| Control/state | Behavior |
+| --- | --- |
+| Available profiles | Include a single wire (open or closed), single edge or vertex; keep native single-wire face support. Tooltips distinguish duplicate labels by internal name. |
+| Sections in loft order | Top-to-bottom is the committed Sections sequence. Existing add/remove and Move up/down controls update the section count. |
+| Create solid | Require a valid result containing one solid. Uncheck for a surface through open or closed sections. |
+| Ruled surface | Explain joins between adjacent sections versus smooth interpolation. |
+| Closed | Connect last section back to first; explicitly distinguish this from capping an open profile. |
+| Review text | Show section count, order, output/connection modes and separate associative result. No geometric preview is claimed. |
+| OK | Recheck section identity/readiness and edit context. Recompute and validate before committing one undo transaction. |
+| Failed OK | Roll back creation, retain the task and show an inline correction message. |
+| Cancel / document close | Create nothing; native task closes with its document. |
+
+Guide curves, explicit correspondence, section reversal, twist preview, continuity
+certification and Boolean targets remain open. [Owner procedure](../tests/LoftSections.md).

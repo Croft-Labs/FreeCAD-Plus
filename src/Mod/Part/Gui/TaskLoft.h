@@ -50,6 +50,7 @@ private Q_SLOTS:
 private:
     void changeEvent(QEvent* e) override;
     void findShapes();
+    void updateReview();
 
 private:
     class Private;
