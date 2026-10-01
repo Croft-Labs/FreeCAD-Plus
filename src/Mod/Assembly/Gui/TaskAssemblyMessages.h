@@ -27,6 +27,9 @@
 #include <Gui/TaskView/TaskSolverMessages.h>
 
 
+class QLabel;
+class QPushButton;
+
 namespace AssemblyGui
 {
 
@@ -42,6 +45,12 @@ public:
 
 private:
     void onLabelStatusLinkClicked(const QString&) override;
+
+    void showSolverState(const QString&, const QString&, const QString&, const QString&);
+    void selectComponents(bool grounded);
+    QLabel* freedomExplanation;
+    QPushButton* selectGrounded;
+    QPushButton* selectUnconnected;
 
     void updateToolTip(const QString& link) override;
 

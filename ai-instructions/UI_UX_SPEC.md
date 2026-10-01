@@ -1139,3 +1139,26 @@ Native owner-view-change confirmation and selection errors remain in place.
 Review is a reference list, not a graphical preview. Broader topology repair,
 hole/thread annotations, full type coverage and physical acceptance remain open.
 [Owner procedure](../tests/DimensionRepair.md).
+
+## UI-039: Assembly freedom guidance (F077; roadmap 12.4a/b)
+
+The existing assembly-edit Solver messages panel retains solver-state labels,
+conflict/malformed navigation and native solver ownership. A word-wrapped plain
+text explanation and two keyboard-focusable buttons supplement that status.
+
+| State/control | Behavior |
+| --- | --- |
+| Underconstrained | Explain assembly-wide count and that connected sliders/hinges can still move. Enable unconnected selection. |
+| Fully constrained | Explain the successful zero-freedom solve and distinguish grounding from ordinary joints. Disable unconnected selection. |
+| Failed/conflicting/malformed solve | Explain that freedom is not established. Disable unconnected selection; retain native diagnostic links. |
+| Empty | Ask for components and grounding; disable both buttons. |
+| Select grounded components | Replace selection using the native grounding set filtered to assembly components, including native read-only/rigid-group rules. |
+| Select unconnected components / DoF link | Replace selection with components without a joint path to ground. Recheck successful current solve; this does not identify every movable component. |
+| Stale or invalid assembly/component | Preserve selection and ask for recompute/reference resolution. |
+
+The contextual panel is visible without a task dialog, persists across dialog
+open/close and follows its owning document. Both buttons preserve geometry,
+placements and joints. Grounded selection states
+a relationship, not solve success. Movement arrows, per-component rank, detailed
+incomplete-joint/unresolved external/nested loading states and physical acceptance remain open.
+[Owner procedure](../tests/AssemblyFreedom.md).

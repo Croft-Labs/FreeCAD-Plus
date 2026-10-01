@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F103 associative dimension
+- Current product batch complete for owner testing: F077 assembly freedom guidance,
+  phase 12 tasks 12.4a/b. Native solver messages explain the assembly-wide count;
+  grounded/unconnected selection distinguishes connectivity from slider/hinge freedom.
+  Contextual panel attachment/lifecycle is repaired. Both tasks preceded a grouped
+  build; runtime evidence justified one corrective build. Twenty-eight distinct
+  selected checks pass. Five native GUI captures were reviewed. [Owner procedure](../tests/AssemblyFreedom.md).
+  Full F077 remains open; rotate pending workflow feedback.
+
+- Previous product batch complete for owner testing: F103 associative dimension
   repair, phase 15 tasks 15.3c/d. Native reference review distinguishes projected
   and true geometry, clears obsolete 3D references and validates before committing.
   Failed repairs restore the original dimension and remain open for correction.
@@ -3983,6 +3991,31 @@ stop at this usable checkpoint and rotate to another item family.
   Suggest mates/joints from selected faces, axes or points. Visually distinguish
   grounded, underconstrained, fully constrained and conflicting components. In-context
   editing keeps surrounding geometry visible, with selection/edit scope made explicit.
+- [x] 12.4a Explain native assembly solver freedom and its distinction from grounding
+  and connectivity; preserve existing conflict/malformed navigation (F077).
+- [x] 12.4b Add read-only grounded/unconnected component navigation, refuse stale or
+  failed freedom selection, and validate joint changes, Undo/Redo and persistence.
+  Native solver guidance and selection pass. The task system now attaches contextual
+  panels when no task dialog is open, transfers them across dialog open/close and
+  hides another document's context. Native empty/incomplete-joint filtering is not
+  certified as missing-reference diagnosis; full F077 remains open.
+
+12.4a/b grouped evidence (2026-10-01): both tasks preceded a successful 70-second
+AssemblyGui build. Runtime exposed the existing contextual-panel attachment defect;
+one corrective 70-second build includes its shared TaskView fix. Eight assembly
+checks pass in freedom-final/, including read-only grounding/connectivity selection,
+slider versus unconnected distinction, redundant-joint disable/recovery, stale
+refusal, task-dialog/document switching and joint Undo/Redo/save-reopen. Thirteen
+inherited AssemblyTests.TestCore checks pass in grouped/; seven TestDimensionRepair
+checks pass in freedom-verified/ against the corrected shared task view (28 distinct
+selected checks total). Earlier harness failures and the interrupted run are retained:
+Qt enum conversion and deferred widget deletion were corrected; the unsupported
+empty-joint diagnosis fixture was replaced with native redundant-joint evidence.
+Five native GUI captures were reviewed. Evidence: D:\Temp\Office-PC\freecad-plus-assembly-freedom-20261001.
+[Owner procedure](../tests/AssemblyFreedom.md). Stop at this bounded checkpoint and
+rotate pending owner feedback; per-component movement directions, incomplete-joint
+and external/nested loading diagnosis and physical acceptance remain open.
+
 - [   ] 12.5 Add occurrence-aware in-context references and published datum/geometry/
   parameter interfaces, with source highlighting. Provide external-reference manager:
   source/version state, update/freeze/break, missing-path repair, unpublished-input
@@ -6700,7 +6733,7 @@ reconciliation rules above to every entry.
 <a id="f077"></a>
 ### F077 — Assembly freedom display
 
-**Owning tasks:** 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 12.4, 12.4a/b. **Status:** Bounded assembly freedom guidance and native grounded/unconnected selection ready for owner testing. Slider/connectivity distinction, redundant-state recovery, stale refusal, task lifecycle and Undo/Redo/save-reopen pass in 28 selected checks across accepted runs. Initial grouped build plus one corrective build. Full F077 stays open for per-component direction/rank, incomplete-joint and external/nested loading diagnosis and physical acceptance. [Owner procedure](../tests/AssemblyFreedom.md).
 
 **Packages:** B02 · **First delivery:** P6 · **Likely scope:** Feature/UI
 

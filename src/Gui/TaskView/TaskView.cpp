@@ -444,6 +444,11 @@ QSize TaskView::minimumSizeHint() const
 
 void TaskView::slotActiveDocument(const App::Document& doc)
 {
+    for (auto* panel : TaskWatcherPanel->contextualPanels) {
+        panel->setVisible(panel->property("contextDocument").toString()
+                          == QString::fromUtf8(doc.getName()));
+    }
+
     auto foundTaskInfo = std::ranges::find(taskInfos, &doc, &TaskInfo::Document);
     if (foundTaskInfo != taskInfos.end()) {
         setShownTaskInfo((foundTaskInfo - taskInfos.begin()));
@@ -648,6 +653,19 @@ bool TaskView::showDialog(TaskDialog* dlg, App::Document* doc)
             this, [doc, this](QAbstractButton *button) { clicked(button, doc); });
     // clang-format on
 
+    // Contextual information also exists while only task watchers are shown.
+    // Move this document's panels into its dialog without changing their ownership.
+    const auto contextual = TaskWatcherPanel->contextualPanels;
+    for (auto* panel : contextual) {
+        if (panel->property("contextDocument").toString() == QString::fromUtf8(doc->getName())) {
+            TaskWatcherPanel->contextualPanelsLayout->removeWidget(panel);
+            TaskWatcherPanel->contextualPanels.removeOne(panel);
+            outInfo.taskPanel->contextualPanelsLayout->addWidget(panel);
+            outInfo.taskPanel->contextualPanels.append(panel);
+            panel->show();
+        }
+    }
+
     // This will hide whatever was shown in the taskview
     taskInfos.push_back(outInfo);
     addWidget(outInfo.taskPanel);
@@ -701,6 +719,14 @@ void TaskView::removeDialog(std::vector<TaskInfo>::iterator infoIt)
     addTaskWatcher();
 
     if (remove) {
+        const auto contextual = remove->taskPanel->contextualPanels;
+        for (auto* panel : contextual) {
+            remove->taskPanel->contextualPanelsLayout->removeWidget(panel);
+            remove->taskPanel->contextualPanels.removeOne(panel);
+            TaskWatcherPanel->contextualPanelsLayout->addWidget(panel);
+            TaskWatcherPanel->contextualPanels.append(panel);
+            panel->setVisible(App::GetApplication().getActiveDocument() == remove->Document);
+        }
         remove->ActiveDialog->closed();
         remove->ActiveDialog->emitDestructionSignal();
         delete remove->ActiveCtrl;
@@ -1018,15 +1044,18 @@ void TaskView::restoreActionStyle()
 
 void TaskView::addContextualPanel(QWidget* panel, App::Document* doc)
 {
-    auto foundTaskInfo = std::ranges::find(taskInfos, doc, &TaskInfo::Document);
-    if (!panel || foundTaskInfo == taskInfos.end()
-        || foundTaskInfo->taskPanel->contextualPanels.contains(panel)) {
+    if (!panel || !doc) {
         return;
     }
-
-    foundTaskInfo->taskPanel->contextualPanelsLayout->addWidget(panel);
-    foundTaskInfo->taskPanel->contextualPanels.append(panel);
-    panel->show();
+    auto foundTaskInfo = std::ranges::find(taskInfos, doc, &TaskInfo::Document);
+    auto* owner = foundTaskInfo == taskInfos.end() ? TaskWatcherPanel : foundTaskInfo->taskPanel;
+    if (owner->contextualPanels.contains(panel)) {
+        return;
+    }
+    panel->setProperty("contextDocument", QString::fromUtf8(doc->getName()));
+    owner->contextualPanelsLayout->addWidget(panel);
+    owner->contextualPanels.append(panel);
+    panel->setVisible(App::GetApplication().getActiveDocument() == doc);
     triggerMinimumSizeHint();
     Q_EMIT taskUpdate();
 }
@@ -1034,14 +1063,15 @@ void TaskView::addContextualPanel(QWidget* panel, App::Document* doc)
 void TaskView::removeContextualPanel(QWidget* panel, App::Document* doc)
 {
     auto foundTaskInfo = std::ranges::find(taskInfos, doc, &TaskInfo::Document);
-    if (!panel || foundTaskInfo == taskInfos.end()
-        || !foundTaskInfo->taskPanel->contextualPanels.contains(panel)) {
+    auto* owner = foundTaskInfo == taskInfos.end() ? TaskWatcherPanel : foundTaskInfo->taskPanel;
+    if (panel && TaskWatcherPanel->contextualPanels.contains(panel)) {
+        owner = TaskWatcherPanel;
+    }
+    if (!panel || !owner->contextualPanels.contains(panel)) {
         return;
     }
-
-
-    foundTaskInfo->taskPanel->contextualPanelsLayout->removeWidget(panel);
-    foundTaskInfo->taskPanel->contextualPanels.removeOne(panel);
+    owner->contextualPanelsLayout->removeWidget(panel);
+    owner->contextualPanels.removeOne(panel);
     panel->deleteLater();
     triggerMinimumSizeHint();
     Q_EMIT taskUpdate();
