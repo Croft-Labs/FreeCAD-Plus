@@ -45,3 +45,4 @@ from .TaskMoveView import TaskMoveView
 from .TaskHoleShaftFit import TaskHoleShaftFit
 from .TaskAddOffsetVertex import TaskAddOffsetVertex
 from .TaskFillTemplateFields import TaskFillTemplateFields
+from .DrawingSetup import CommandDrawingSetup

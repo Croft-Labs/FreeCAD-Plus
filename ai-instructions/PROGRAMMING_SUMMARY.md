@@ -62,6 +62,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Drawing setup (F102): [`DrawingSetup.py`](../src/Mod/TechDraw/TechDrawTools/DrawingSetup.py)
+provides TechDraw > Page > Create drawing sheet, using native templates and projection
+groups with explicit orientation, scale and convention. [Owner procedure](../tests/DrawingSetup.md),
+roadmap 15.3a/b. Broader views and annotations remain separate.
+
 Make Unique (F019): [`UniqueDefinition.py`](../src/Gui/UniqueDefinition.py) provides
 Tools > Make occurrence unique for reviewed native sketch/extrusion Part definitions.
 Native copy/remap and one-occurrence relinking; [owner procedure](../tests/UniqueOccurrence.md),

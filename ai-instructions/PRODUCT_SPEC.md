@@ -394,6 +394,20 @@ or experimental semantic IDs are introduced. Roadmap 12.2d/e covers this bounded
 pilot; arbitrary Body histories/subassemblies and broader provenance/remapping remain
 open. [Owner procedure](../tests/UniqueOccurrence.md); UI-020.
 
+## Current drawing setup pilot (F102)
+
+TechDraw > Page > Create drawing sheet guides one document-root solid/Body into a
+native same-document drawing. Built-in A4/A3 ISO landscape border-only templates, explicit
+drawing/model scale, base orientation and first/third-angle convention create a base
+view and optional top/right projections using the existing projection group. Native
+source links, persistence and update preferences remain authoritative.
+
+Creation is one transaction; Cancel creates nothing. Unsupported/stale sources,
+pending edits, missing templates and oversized view envelopes receive explicit
+feedback. No new proxy/schema is introduced. Roadmap 15.3a/b covers this bounded
+pilot; occurrence/external sources, custom templates, graphical preview, section/detail
+setup and reference repair remain open. [Owner procedure](../tests/DrawingSetup.md); UI-021.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

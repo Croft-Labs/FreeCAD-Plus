@@ -702,3 +702,16 @@ invalidate review; Review again revalidates current inputs after recompute. Pend
 edits/active tasks, changed identity and empty labels prevent commit with inline
 feedback. Occurrence/document deletion closes the dialog. Broader relationship or
 subassembly remapping remains out of scope. [Owner procedure](../tests/UniqueOccurrence.md).
+
+## UI-021: Drawing setup (F102; roadmap 15.3a/b)
+
+TechDraw > Page > Create drawing sheet reviews one selected root solid/Body. The
+modeless dialog identifies the source and offers A4/A3 landscape template, explicit
+drawing/model scale, named base orientation, first/third-angle projection and optional
+top/right views. Sheet coordinates are millimetres; no global unit preference changes.
+
+Create sheet adds the page/template/views in one Undo transaction and opens the native
+sheet. Cancel creates nothing. Source/document edits invalidate review; recompute and
+Review again restore eligibility. Size/template/context errors stay inline for correction.
+Source/document deletion closes the dialog. Geometry preview, section/detail views and
+annotations remain separate. [Owner procedure](../tests/DrawingSetup.md).

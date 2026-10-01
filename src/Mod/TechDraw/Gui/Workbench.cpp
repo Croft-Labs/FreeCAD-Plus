@@ -199,6 +199,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     // pages
     Gui::MenuItem* pages = new Gui::MenuItem;
     pages->setCommand("Page");
+    *pages << "TechDraw_DrawingSetup";
     *pages << "TechDraw_PageDefault";
     *pages << "TechDraw_PageTemplate";
     *pages << "TechDraw_FillTemplateFields";

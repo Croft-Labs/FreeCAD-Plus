@@ -1,6 +1,38 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F019 Make Unique, phase 12 tasks 12.2d/e.
+Latest batch: F102 drawing setup, phase 15 tasks 15.3a/b.
+TechDraw > Page > Create drawing sheet creates native same-document pages for one
+root solid/Body, with A4/A3 border-only templates, drawing/model scale, base orientation,
+first/third-angle projection and optional top/right views. Native links and update
+preferences remain authoritative; no proxy/schema or geometry ownership changes.
+Creation is one Undo transaction; stale/context/fit checks and failure rollback are
+explicit. Cancel creates nothing. Broader drawing/annotation workflows remain open.
+
+Both tasks preceded one TechDrawGui/TechDraw_Data Release build, exit 0. All 16 final
+selected checks pass together in accepted-grouped/, without failures/errors/skips:
+7 TestDrawingSetup, one native projection-group test, one native view test and
+7 TestCommandSearch. Process exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-drawing-setup-20261001.
+acceptance-summary.json / validated-identities.json record accepted suites and identities;
+installed DrawingSetup.py matches source. TechDrawGui SHA256:
+f53a78f0b512c8242e534042c1fec5e35b943eaade935ffb05e80c88e48c67e5.
+
+visual-accepted/ contains five reviewed captures and Drawing-Source.FCStd,
+Drawing-Sheets.FCStd / Drawing-Edited.FCStd. First/third-angle placement, scale,
+Body Tip/source placement preservation, live source edits, Undo/Redo, save/reopen,
+Cancel, stale/context/fit guards and rollback after forced partial creation pass.
+tests/DrawingSetup.md is the owner procedure. Initial grouped/ passed, but visual/
+exposed bundled sample material/approval text and a fixed projection symbol. The
+Python module was corrected to select border-only templates and restaged; no second
+native build. accepted-grouped/ reran the entire selected group successfully.
+Workbench.cpp line endings restored after build; no semantic native change.
+
+Whole F102 remains open for occurrence/arrangement/external sources, custom templates,
+graphical preview, section/detail setup, broken-reference repair and physical/high-DPI
+acceptance. F103 annotations remain separate. No installer/release update.
+Stop here for owner testing and rotate to another item family.
+
+Previous batch: F019 Make Unique, phase 12 tasks 12.2d/e.
 Tools > Make occurrence unique reviews and copies one same-document native Part
 containing an independent sketch and its solid Part extrusion, then relinks only
 the selected occurrence. New native object identities and internal input remapping

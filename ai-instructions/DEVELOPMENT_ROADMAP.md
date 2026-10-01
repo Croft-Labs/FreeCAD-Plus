@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F019 Make Unique,
+- Current product batch complete for owner testing: F102 drawing creation,
+  phase 15 tasks 15.3a/b.
+  TechDraw > Page > Create drawing sheet provides A4/A3 border-only templates,
+  explicit scale/base orientation/first- or third-angle convention and linked
+  top/right views for a root solid/Body. Both tasks preceded one grouped build;
+  all 16 final selected checks pass and five corrected captures reviewed.
+  [Try the bracket drawing](../tests/DrawingSetup.md). Broader F102 views, sources,
+  preview and repair remain open; stop at the owner-test checkpoint and rotate.
+
+- Previous product batch complete for owner testing: F019 Make Unique,
   phase 12 tasks 12.2d/e. Tools > Make occurrence unique copies a same-document
   sketch/extrusion Part and relinks one occurrence in one Undo step. Other instances
   retain the original; native input remapping, placement, independent edits and
@@ -3783,6 +3792,38 @@ high-DPI acceptance. No installer/release update. Stop for owner feedback and ro
   Provide a drawing creation wizard for standard/projected/section/detail views using
   consistent templates. Associative annotation includes hole callouts and center marks
   as well as dimensions, with explicit lost-reference repair.
+- [x] 15.3a Add bounded native drawing setup for one root solid/Body (F102):
+  built-in A4/A3 templates, explicit scale/base orientation/projection convention,
+  and optional top/right views through the existing TechDraw projection group.
+- [x] 15.3b Make sheet creation atomic and reviewable, with source readiness,
+  stale/context/fit checks, Cancel and rollback. Validate native associativity,
+  projection placement, Undo/Redo and save/reopen; stop for owner testing.
+  Both tasks complete for owner testing; grouped build/runtime and visual checks pass.
+  Occurrence/external sources, geometric preview, section/detail and annotation
+  workflows remain open under F102/F103 and parent 15.3.
+
+15.3a/b grouped evidence (2026-10-01): both tasks preceded one TechDrawGui/
+TechDraw_Data Release build, exit 0. All 16 selected checks pass together in
+accepted-grouped/, without failures/errors/skips: 7 TestDrawingSetup, one native
+projection-group test, one native view test and 7 command-search checks. Process exit 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-drawing-setup-20261001`.
+TechDrawGui SHA256: `f53a78f0b512c8242e534042c1fec5e35b943eaade935ffb05e80c88e48c67e5`.
+First/third-angle placement, scale, solid/Body source isolation, native links and
+independent source edits after save/reopen pass. Cancel, stale/context/fit guards,
+Undo/Redo and rollback after an injected post-page-creation failure pass.
+The initial grouped/ also passed, but visual/ exposed sample material/approval text
+and a fixed projection symbol in bundled minimal title blocks. DrawingSetup.py now
+chooses the existing border-only templates, was restaged without another native
+build, and the full selected group passed again. No custom schema or global preference
+changes. Section/detail setup, occurrence/external sources, custom templates, graphical
+preview, annotation/reference repair and physical acceptance remain open. No installer
+or release update. [Owner procedure](../tests/DrawingSetup.md).
+Five corrected captures reviewed in visual-accepted/, with Drawing-Source.FCStd,
+Drawing-Sheets.FCStd and Drawing-Edited.FCStd. acceptance-summary.json and
+validated-identities.json record the accepted source/runtime/native identities.
+DrawingSetup.py matches the installed module. Stop here for owner workflow testing;
+parent 15.3 and whole F102 remain open.
+
 - [   ] 15.4 Add BOMs, balloons and exploded documentation; validate repeated
   instances, unique copies, suppression, reference-only roles and nested quantities.
   Expose reference-component exclusion explicitly and keep it independent of
@@ -6174,7 +6215,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f102"></a>
 ### F102 — Drawing creation wizard
 
-**Owning tasks:** 15.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.3, 15.3a/b. **Status:** Bounded native drawing setup ready for owner testing: A4/A3 border-only templates, explicit scale/orientation/convention and optional linked top/right views for a root solid/Body. First/third-angle placement, source edits, Undo/Redo, rollback and save/reopen pass. One grouped build, 16 final selected checks and five reviewed captures. Whole F102 remains open for broader sources/templates, graphical preview, section/detail setup, reference repair and physical acceptance. See [owner procedure](../tests/DrawingSetup.md).
 
 **Packages:** D01, X05 · **First delivery:** P9; compatibility P2/P3 · **Likely scope:** UI/Feature
 
