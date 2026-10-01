@@ -22,8 +22,7 @@ Mixed-file grouped-transaction prompts and close-during-Undo remain broader acce
 The 2026-10-01 evidence is
 `D:\Temp\Office-PC\freecad-plus-undo-routing-20261001/smoke`.
 Open `testExternalOperationUndoRedoAndAvailability/Assembly.cadprt` with sibling
-`Support.cadprt` to review the restored Extrude history; saved fixtures contain model
-history, not a promise to persist the interactive Undo stack across reopen.
+`Support.cadprt` to review the restored Extrude history.
 
 Owning-file Save feedback (roadmap 7.8.3d): activate an external component in the
 assembly and use File > Save. Its own file receives the changes while the assembly

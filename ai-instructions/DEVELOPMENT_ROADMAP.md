@@ -2501,6 +2501,9 @@ reviewed. Feedback fixture:
 `Support.cadprt`. No schema, geometry-model, installer or release change. This does
 not qualify mixed-file grouped-transaction prompts, close-during-Undo or every native
 task editor. Native transaction grouping and checks remain in use.
+Publication: implementation `79972d9bd5` pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine native
+artifacts, three changed native sources and final evidence. No release published.
 
 2026-10-01 owning-file save feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-save-routing-20261001`.

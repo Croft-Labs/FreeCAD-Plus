@@ -18,6 +18,9 @@ One final Model History capture reviewed. Feedback fixture:
 No schema, geometry-model, installer or release changes. Native grouped-transaction
 checks remain in use; mixed-file prompts, close-during-Undo and broad task-editor
 acceptance remain open. Keep broad testing deferred for owner feedback.
+Implementation `79972d9bd5` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine native
+artifacts, three changed native sources and the final build/check/fixture/capture evidence.
 
 Previous feedback batch follows.
 
