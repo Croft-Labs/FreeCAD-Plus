@@ -33,6 +33,13 @@ def linked_shape(link):
         parent = obj.getGlobalPlacement().multiply(obj.Placement.inverse())
         shape = shape.copy()
         shape.transformShape(parent.toMatrix())
+    elif hasattr(obj, "getParentGeoFeatureGroup"):
+        # Native App::Link is a DocumentObject, not a GeoFeature: it has no
+        # getGlobalPlacement(), but its containing Part still places its shape.
+        parent = obj.getParentGeoFeatureGroup()
+        if parent is not None:
+            shape = shape.copy()
+            shape.transformShape(parent.getGlobalPlacement().toMatrix())
     return shape
 
 

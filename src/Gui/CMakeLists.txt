@@ -1526,6 +1526,7 @@ set(FreeCADGui_Scripts
     FeatureOrganizer.py
     UniqueDefinition.py
     OccurrenceAppearance.py
+    OccurrenceMove.py
     TemporaryDisplay.py
     RemoteDebugger.ui
     RemoteDebugger.py

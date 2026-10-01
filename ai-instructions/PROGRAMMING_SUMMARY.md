@@ -62,6 +62,15 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Precise occurrence movement (F074; bounded F072/F075): [`OccurrenceMove.py`](../src/Gui/OccurrenceMove.py)
+provides Tools > Move occurrence once with explicit world/link frames, translation,
+pivot rotation and view-only preview. Reuses native placements, world-shape resolver,
+identity resolution and the whole-occurrence selector; [owner procedure](../tests/OccurrenceMove.md),
+roadmap 10.7a/b. Copy/snapping/triads/maintained relationships remain open.
+The shared `BasicShapes/ShapeReferences.py::linked_shape` now includes enclosing
+Part transforms for native Links, which lack `getGlobalPlacement`; tested against
+native assembly-path geometry with the affected export/inspection/feature consumers.
+
 Document updates (F087/F088): [`DocumentUpdates.py`](../src/Gui/DocumentUpdates.py)
 exposes native deferral/explicit recompute and pending/failed/affected input status.
 Reuses dependency-inspector identities and native document updates; [owner procedure](../tests/DocumentUpdates.md),

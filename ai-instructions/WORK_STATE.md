@@ -1,6 +1,42 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F087/F088 document updates, phase 7 tasks 7.5.7a/b.
+Latest batch: F074 precise occurrence movement, phase 10 tasks 10.7a/b.
+Tools > Move occurrence once offers explicit world/occurrence-frame translation,
+arbitrary-axis rotation and typed pivot for one unconstrained unscaled Link to a
+same-document Part solid/Body within structural Part containers. View-only non-pickable
+wireframe preview and numeric world origin preserve the model until one Undoable
+confirmation. Source/other occurrences, visibility and LinkTransform remain intact.
+This is bounded progress for F072/F075; no copy, mate or solver detachment.
+
+Both tasks preceded one FreeCADGui/FreeCADGui_Resources Release build, exit 0.
+Initial grouped/ passed 7 TestOccurrenceAppearance and 7 TestCommandSearch but had
+3 movement geometry failures. frame-probe-2/ identified a shared resolver bug:
+App::Link lacks getGlobalPlacement(), so linked_shape omitted enclosing Part transforms.
+BasicShapes/ShapeReferences.py now applies the parent's native global placement for
+that case. Only this Python module was restaged; no corrective native build.
+Movement tests now compare against independent native assembly-path geometry.
+
+All 54 checks pass in resolver-verified/, without failures/errors/skips: 7 movement,
+9 manufacturing export, 7 interference, 6 Make Unique, 14 Trim Body and 11 Isocline.
+68 distinct selected passes including the initial unaffected appearance/command
+suites; accepted process exits 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-occurrence-move-20261001.
+acceptance-summary.json / validated-identities.json record accepted suites and hashes;
+installed OccurrenceMove.py and ShapeReferences.py match source. FreeCADGui SHA256:
+1959269e7ea02b2760f4cb914d4693dcec41f0e425441939e5324e28823f7608.
+
+visual-accepted/ has six reviewed captures and Nested-Occurrences.FCStd /
+Moved-Occurrences.FCStd. World/local nested transforms, arbitrary-axis pivots, both
+LinkTransform settings, preview/commit agreement, Cancel/lifecycle cleanup, rollback,
+Undo/Redo and reopened shared-source edits pass. Initial visual/ omitted the extra
+scene node; FramebufferObject captures the preview using isolated settings. No global
+preferences changed. tests/OccurrenceMove.md is the owner guide.
+
+Whole F072/F074/F075 remain open for Copy, point picking/snapping, movable triads,
+work-part frames, external/subassembly scopes, maintained relationships and physical/
+high-DPI acceptance. No installer/release update. Stop for owner testing and rotate.
+
+Previous batch: F087/F088 document updates, phase 7 tasks 7.5.7a/b.
 Tools > Document updates exposes native deferred recompute, explicit one-time document
 update and failed/pending/affected loaded dependency status. Object/input navigation
 preserves visibility. Cached shapes do not imply current inputs. Native recompute

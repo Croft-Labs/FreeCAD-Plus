@@ -421,6 +421,20 @@ input is evidence, not unique-cause classification. Native edit previews can sti
 update individual objects; unloaded references and asynchronous background completion
 are not certified. Roadmap 7.5.7a/b; [owner procedure](../tests/DocumentUpdates.md), UI-022.
 
+## Current precise occurrence movement pilot (F074)
+
+Tools > Move occurrence once provides incremental translation and arbitrary-axis
+rotation about a typed pivot in world or current occurrence axes. The world result
+is converted back through enclosing native Part transforms; only the selected
+LinkPlacement changes. Source identity/geometry, other occurrences and native
+LinkTransform semantics remain intact. A non-pickable view-only wireframe previews
+the result, with no document objects or preview transactions.
+
+Confirmation is one Undo transaction; Cancel removes the preview. Stale frames,
+unsupported/driven/consumed links and pending edits receive explicit feedback.
+This advances the one-time positioning boundary of F072/F075 without creating mates
+or copies. Roadmap 10.7a/b; [owner procedure](../tests/OccurrenceMove.md), UI-023.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

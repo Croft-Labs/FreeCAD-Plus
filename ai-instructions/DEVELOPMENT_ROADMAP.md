@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F087/F088 document updates,
+- Current product batch complete for owner testing: F074 precise occurrence movement,
+  phase 10 tasks 10.7a/b (bounded F072/F075). Tools > Move occurrence once provides
+  world/occurrence translation, typed pivot/axis rotation and a view-only preview.
+  Both tasks preceded one native build; a shared Python world-shape correction
+  followed the nested-frame checks. 54 affected-consumer checks pass after the fix,
+  plus 14 appearance/command checks from the initial group; six captures reviewed.
+  [Try the nested occurrences](../tests/OccurrenceMove.md). Copy/snapping/triads and
+  maintained relationships remain open. Stop here for owner testing and rotate.
+
+- Previous product batch complete for owner testing: F087/F088 document updates,
   phase 7 tasks 7.5.7a/b.
   Tools > Document updates exposes native deferral, explicit recompute, failed/pending
   objects and affected loaded inputs. Both tasks preceded one grouped build;
@@ -2834,6 +2843,39 @@ F015/10.6 stays open; stop this pilot pending feedback and rotate. No release up
   point. Include typed offsets, arbitrary-axis rotation and snapping in global/local
   coordinates. Present move here once and maintain this relationship as distinct
   actions, with a preview of the affected occurrence.
+
+- [x] 10.7a Add explicit world/occurrence-frame translation and arbitrary-axis
+  pivot rotation for one unconstrained, unscaled same-document solid/Body Link
+  within structural Part containers (F074; bounded F072/F075). Preserve shared source
+  and other occurrences; one-time movement creates no hidden relationship.
+- [x] 10.7b Provide a non-pickable view-only preview, numeric world-origin result,
+  stale/frame guards, Cancel and transactional confirmation. Validate rotated nested
+  containers, both source-transform policies, preview/commit agreement, rollback,
+  Undo/Redo and save/reopen. Both tasks complete for owner testing.
+  Copy, point picking/snapping, triads and maintained relationships remain open.
+
+10.7a/b grouped evidence (2026-10-01): both tasks preceded one FreeCADGui/
+FreeCADGui_Resources Release build, exit 0. Initial grouped/ passed 7 appearance
+and 7 command-search checks but exposed 3 movement geometry failures. A bounded
+native assembly-path probe found that App::Link lacks getGlobalPlacement(), so
+the shared BasicShapes.ShapeReferences.linked_shape omitted enclosing Part transforms.
+The resolver now applies the native parent global placement for that case. Only
+the Python resolver was restaged; no second native build. Tests use the independent
+native assembly path as the movement oracle, not the corrected resolver itself.
+All 54 checks in resolver-verified/ pass without failures/errors/skips: 7 movement,
+9 manufacturing export, 7 interference, 6 Make Unique, 14 Trim Body and 11 Isocline.
+Together with the initial unchanged appearance/command suites, 68 distinct selected
+checks pass across accepted runs; process exits 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-occurrence-move-20261001`.
+FreeCADGui SHA256: `1959269e7ea02b2760f4cb914d4693dcec41f0e425441939e5324e28823f7608`.
+Six captures reviewed in visual-accepted/, with Nested-Occurrences.FCStd and
+Moved-Occurrences.FCStd. Frame/pivot/LinkTransform semantics, source/other-link
+isolation, preview/commit geometry, cleanup, rollback, Undo/Redo and reopen pass.
+The initial visual/ backend omitted the extra scene node; FramebufferObject captures
+the ghost correctly using isolated preferences. acceptance-summary.json and
+validated-identities.json record exact suites, source/runtime/native identities.
+Whole F072/F074/F075 and parent 10.7 remain open for broader scope and physical
+acceptance. No installer/release update. [Owner procedure](../tests/OccurrenceMove.md).
 
 - [   ] 10.8 Add named parameters, expressions, dimensional unit checking and explicit
   document/part/configuration scope (A09; [F122](#f122)). Provide rename and where-used,
@@ -5858,7 +5900,7 @@ reconciliation rules above to every entry.
 <a id="f072"></a>
 ### F072 — Unified Move/Copy dialog
 
-**Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.7, 10.7a/b. **Status:** One-occurrence Move branch is ready for owner testing: explicit world/occurrence translation, pivot rotation, view-only preview and transactional confirmation. Copy, point-to-point picking/alignment and wider transform subjects remain open. See F074 evidence and [owner procedure](../tests/OccurrenceMove.md).
 
 **Packages:** U07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 
@@ -5884,7 +5926,7 @@ reconciliation rules above to every entry.
 <a id="f074"></a>
 ### F074 — Precise placement
 
-**Owning tasks:** 10.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.7, 10.7a/b. **Status:** Bounded precise placement ready for owner testing. Native nested Link movement, explicit world/occurrence frames, arbitrary-axis/pivot rotation and preview/commit agreement pass. A shared world-shape resolver correction includes enclosing Part transforms for native Links. One native build, 54 post-correction affected-consumer checks plus 14 initial appearance/command passes; six captures reviewed. Work-part frames, snapping, broader occurrence scope and physical acceptance remain open. [Owner procedure](../tests/OccurrenceMove.md).
 
 **Packages:** U07, A04 · **First delivery:** P4 · **Likely scope:** Feature/UI
 
@@ -5897,7 +5939,7 @@ reconciliation rules above to every entry.
 <a id="f075"></a>
 ### F075 — Placement versus constraint
 
-**Owning tasks:** 10.7, 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.7, 12.4, 10.7a/b. **Status:** The one-time Move branch explicitly creates no mate and refuses driven/read-only/consumed links. Placement Undo/Redo and shared-source isolation pass under the F074 batch. Maintained relationships, solver-driven movement and the full paired acceptance example remain open. [Owner procedure](../tests/OccurrenceMove.md).
 
 **Packages:** U07, B02 · **First delivery:** P4/P6 · **Likely scope:** UI/Feature
 

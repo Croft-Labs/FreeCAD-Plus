@@ -727,3 +727,17 @@ mode. Pending owner transactions, wrong document and active tasks receive inline
 Close retains the session setting; document closure removes observers/timers. The panel
 states native preview exceptions, session persistence and background/external scope limits.
 There is no custom geometry state or automatic repair. [Owner procedure](../tests/DocumentUpdates.md).
+
+## UI-023: Move occurrence once (F074; roadmap 10.7a/b)
+
+Tools > Move occurrence once reviews one explicitly selected whole Link. Translate/
+Rotate and World/Occurrence selectors label frame meaning. Translation uses incremental
+mm offsets; rotation uses a dimensionless axis, degrees and pivot coordinates in mm.
+Irrelevant fields are disabled. Preview adds a non-pickable teal wireframe and reports
+world-origin coordinates. Original geometry stays visible. Value changes remove the
+old ghost; model/frame changes also invalidate review.
+
+Move once commits one placement transaction and closes; Cancel removes the preview
+without model changes. Failures remain inline for correction. Document/occurrence
+closure removes the ghost and observer. No hidden mates, copies or solver detachment.
+[Owner procedure](../tests/OccurrenceMove.md).

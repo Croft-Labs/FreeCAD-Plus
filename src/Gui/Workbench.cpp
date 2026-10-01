@@ -816,6 +816,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
           << "Std_DocumentUpdates"
           << "Std_FeatureOrganizer"
           << "Std_MakeOccurrenceUnique"
+          << "Std_MoveOccurrenceOnce"
           << "Std_ExportDependencyGraph"
           << "Separator"
           << "Std_ProjectUtil"
