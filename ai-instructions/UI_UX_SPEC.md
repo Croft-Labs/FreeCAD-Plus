@@ -1205,3 +1205,26 @@ it changed since the displayed review. Template and model eligibility both gate
 OK. Cancel creates nothing and does not apply the unit choice. Mesh/solid topology
 repair, automatic unit conversion, final WCS preview and a complete step-by-step
 strategy wizard remain open. [Owner procedure](../tests/JobModelReview.md).
+
+## UI-042: Native state columns (F013; roadmap 10.6d/e)
+
+Tools > Find and describe features keeps its existing document scope, metadata
+editor, 2000-object limit and explicit selection action. Additional read-only
+columns show native visibility flags, supported Boolean suppression, native error/
+recompute state, immediate loaded source identity/file and metadata access.
+The Columns menu changes presentation for this dialog; choices survive Refresh.
+State filtering combines with the existing type and text filters. Sorting and
+inspection do not change geometry, visibility, suppression or history order.
+
+A selected row exposes the full native status/state and source path below the list.
+Unresolved links remain explicit; inspection never requests loading. Visible/hidden
+flags do not describe effective ancestor visibility. No native error is a native
+status report, not geometry certification. Metadata access refers to Label/Label2,
+not an operating-system file permission test. Read-only metadata disables Apply.
+
+Relevant object/property, view visibility, recompute, Undo/Redo, save and immediate
+loaded external-source changes invalidate the snapshot and clear rows until
+Refresh. Closing detaches both application and GUI observers; closing the owner
+document closes the dialog. Nested/external link chains, unloaded-state diagnosis,
+reference sets, integrated navigator tabs, global column preferences and display/
+suppression toggles remain open. [Owner procedure](../tests/FeatureStateColumns.md).

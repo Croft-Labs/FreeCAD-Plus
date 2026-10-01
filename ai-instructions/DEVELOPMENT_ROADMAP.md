@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F090 CAM model setup review, phase 14 tasks 14.1c/d.
+- Current product batch complete for owner testing: F013 native state columns, phase 10 tasks 10.6d/e.
+  The existing feature organizer distinguishes visibility, suppression, native
+  error/recompute, source and metadata access. Read-only filtering/column choices
+  and change invalidation pass in 14 grouped checks after one staging pass and a
+  narrow Python observer correction. Seven final captures are reviewed.
+  [Owner procedure](../tests/FeatureStateColumns.md). Full F013 remains open; stop
+  at this bounded inspection workflow and rotate pending owner feedback.
+
+- Previous product batch complete for owner testing: F090 CAM model setup review, phase 14 tasks 14.1c/d.
   Exact source identity and repeated counts, separate mesh candidates and source
   size/unit review are implemented. Both tasks preceded one script-staging pass;
   all 16 distinct selected checks pass and six final captures are reviewed.
@@ -3046,6 +3054,37 @@ F015/10.6 stays open; stop this pilot pending feedback and rotate. No release up
   uncapped/external search and physical/high-DPI acceptance. No installer/release
   update. Stop for owner feedback and rotate.
 
+- [x] 10.6d Expose native visibility, suppression, error/recompute, source and
+  metadata-access columns in the existing feature organizer (F013). Keep the
+  display flags distinct from effective visibility and suppression; report
+  unresolved links without loading them or claiming full loading diagnosis.
+- [x] 10.6e Add presentation-only column choices and state filters, full status/
+  source detail, and invalidate snapshots after relevant object, display,
+  recompute, save and loaded-source changes. Verify source/geometry preservation,
+  metadata compatibility and lifecycle. Both tasks passed grouped verification.
+
+10.6d/e evidence (2026-10-01): both tasks preceded one 10-second successful
+FreeCADGui_Resources staging pass (exit 0); Python-only, no native recompilation.
+Evidence: D:\Temp\Office-PC\freecad-plus-feature-state-20261001.
+All 14 assertions passed initially, but log review exposed callbacks receiving
+unattached view providers and GUI property containers. Added narrow lifecycle/type
+guards and restaged only FeatureOrganizer.py. verified/ passes all eight new state
+checks and six existing metadata checks, zero failures/errors/skips, process exit 0.
+Final stderr contains only the deliberately broken Cut and empty suppressed-Body
+fixture diagnostics; no observer tracebacks. Native suppression, hidden flags,
+error/recompute recovery, missing Link distinction, read-only metadata, columns/
+filters/sorting without mutation, loaded external source identity/files, change
+invalidation, Undo/Redo, save/reopen and observer/document lifecycle pass.
+Seven final captures reviewed in visual-final/: native state/source columns,
+suppression, unresolved links, read-only metadata, native errors, display-state
+invalidation and reopened sources. Feature-States.FCStd is the owner fixture;
+evidence.json records accepted suites and source/runtime hashes. Source-built
+verification is not installer or owner acceptance.
+Full F013/10.6 remains open for integrated navigator
+columns, reference sets, nested/unloaded reference diagnosis, global preferences,
+modified/file-permission state, validated state toggles and physical owner acceptance.
+[Owner procedure](../tests/FeatureStateColumns.md). Stop here and rotate for feedback.
+
 - [   ] 10.7 Add shared Move/Copy with point-to-point, translation/rotation,
   coordinate-system/axis alignment, movable triad, snapping and local/global context.
   Distinguish one-time placement from a persistent assembly relationship; validate
@@ -5972,7 +6011,7 @@ reconciliation rules above to every entry.
 <a id="f013"></a>
 ### F013 — Navigator columns
 
-**Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.6, 10.6d/e. **Status:** Bounded native state columns implemented in the feature organizer: visibility flags, suppression, errors/recompute, immediate source file and metadata access, with read-only filters/column choices and explicit refresh after changes. Fourteen grouped checks pass, including metadata compatibility and loaded external-source persistence. Full F013 remains open for integrated navigators, reference sets, nested/unloaded diagnosis, modified/file-permission state and physical acceptance. [Owner procedure](../tests/FeatureStateColumns.md).
 
 **Packages:** U02 · **First delivery:** P4 · **Likely scope:** UI
 
