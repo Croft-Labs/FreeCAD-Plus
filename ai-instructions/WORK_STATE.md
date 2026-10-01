@@ -1,5 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.3c, moved/missing component recovery.
+Component Structure groups missing instances by saved definition identity, keeps
+numbered expansion available and disables geometry-dependent actions. Add Instance
+refuses an unresolved source instead of creating a new definition. Locate Component
+File restores matching unresolved instances in the same file together, preserving
+placements and references in one Undo. Missing source geometry stays repairable;
+healthy references and modeling can continue. Failed locate restores parent context.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-file-recovery-20261001`.
+Initial grouped script staging and three focused recovery workflows passed. Log review
+found an MDI close callback race and native PropertyXLink None-to-None clearing that
+retained an unresolved filename. Python cleanup attempts were discarded because they
+did not preserve property/Undo semantics. The native setter now distinguishes an
+empty link from an unresolved saved target; the property itself remains intact.
+`build-native/` completes the additional grouped native build, exit 0.
+`smoke-native/` passes the same three workflows, zero failures/errors/skips and
+process exit 0. The saved XML no longer contains the obsolete source filename after
+partial recovery and Undo/Redo. Two final captures were reviewed. Stderr contains
+the expected missing-file/broken-link diagnostics from deliberate fixture failures,
+with no Python traceback; all three missing-file reports precede repair.
+Feedback file: `smoke-native/testGroupedLocateUndoAndReopen/Recovery-Parent.cadprt`.
+The sibling partial-recovery fixture preserves a missing body for further repair.
+
+Keep checks limited to the three feedback workflows: grouped locate/Undo/Redo/reopen,
+partial geometry recovery/independent modeling/saved-link inspection, and wrong-file
+identity refusal with parent-context preservation. Deliberately missing files produce
+native missing-file and broken-link diagnostics before recovery; retain those logs.
+No schema version, installer or release change. General multi-owning-file recovery,
+automatic dependency searches, crash/backup/schema matrix, native suppression,
+multi-output lineage and solver/BOM/mass integration remain open.
+
+Previous feedback batch:
 Current feedback batch: roadmap 7.8.6c, reviewed geometry conversion.
 Convert to Dumb Object now shows the existing dropdown with a read-only review of
 removed versus retained shared history. Delete Parameters follows geometry inputs,

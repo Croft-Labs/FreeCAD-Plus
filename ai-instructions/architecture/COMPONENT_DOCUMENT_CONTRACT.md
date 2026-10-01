@@ -104,6 +104,15 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 - No separate snapshot option in this command: independent copies use Convert
   to Dumb Object. Adding a reference does not change its source's display type.
 
+## Missing component files
+
+Locate Component File resolves the saved definition identity and restores matching
+unresolved instances in the same owning document together, preserving occurrence
+identity and placement. Missing evaluated objects remain separate reference-repair
+items; they do not prevent recovery of healthy geometry from that component.
+Component Structure retains missing instance groups and numbered rows, and prevents
+geometry-dependent actions from implicitly creating replacement definitions.
+
 ## Convert to Dumb Object
 
 The dropdown has **Delete Parameters** and **Extract Dumb Body**. The conversion

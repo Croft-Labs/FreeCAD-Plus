@@ -2374,6 +2374,11 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   Save As/Copy preserve identities and rejected Save As restores location/label.
 - [   ] 7.8.3b Broader crash recovery/backup restoration, moved dependency packages,
   malformed graph/schema matrix and larger document acceptance.
+- [ X ] 7.8.3c File recovery feedback: grouped missing instances and guarded actions,
+  identity-based restoration of matching unresolved instances in one owning file,
+  partial reference recovery and native clearing of obsolete saved link targets.
+  Grouped native build and three focused recovery/Undo/reopen checks pass; broad
+  dependency-package and multi-owning-file recovery remain in 7.8.3b.
 - [ X ] 7.8.4a Reference recovery feedback: refresh independent references before
   reporting failures, keep structurally valid .cadprt files open with broken reference
   geometry, and repair/retarget a direct-child reference without replacing its identity,
@@ -2554,6 +2559,28 @@ claimed. No installer/release update. Implementation
 `1ffb7a9df29d6190c68f78307452c9c5d6c523ba` was pushed to `origin/main` and verified
 with `git ls-remote`. `acceptance-identities.json` records the matching source/runtime
 modules, fixture and six unchanged native artifacts.
+
+2026-10-01 file recovery feedback batch (7.8.3c): grouped missing-instance display,
+guarded actions, bulk identity-based locate and partial reference recovery preceded
+one script/resource staging build. Evidence:
+`D:\Temp\Office-PC\freecad-plus-file-recovery-20261001`.
+Initial three focused checks passed. Log inspection exposed a GUI document-close
+callback race and obsolete native XLink file metadata after a missing source was
+cleared. Python field recreation failed Undo and was discarded; the final native
+PropertyXLink setter fix preserves property identity while clearing unresolved saved
+targets, including during transaction replay. The additional grouped native build
+in `build-native/` passes, exit 0. `smoke-native/` passes **three focused workflows**,
+zero failures/errors/skips, process exit 0: grouped missing instances and guarded
+actions; locate/Undo/Redo/reopen with retained placement and reference identities;
+partial geometry recovery with independent native Mirror work and saved-link XML
+inspection; wrong-file identity refusal and restored parent editing context. Two
+captures were reviewed. Expected native missing-file/broken-link diagnostics remain
+for intentionally absent fixture sources; no Python traceback remains, and the three
+missing-file reports occur before repair. No broad suite, schema change, installer
+or release update is part of this batch. The recovered feedback file is
+`smoke-native/testGroupedLocateUndoAndReopen/Recovery-Parent.cadprt`;
+`testMissingGeometryDoesNotBlockFileRecovery/Recovery-Parent.cadprt` retains one
+missing reference for review. Publication is recorded after commit.
 
 2026-10-01 conversion feedback batch (7.8.6c): parameter-removal planning,
 component-boundary pruning, detached-reference metadata and conversion review UI

@@ -933,6 +933,7 @@ def validate(doc, allow_unresolved=False):
 
 
 def repair_component(parent, occurrence, filename):
+    """Locate a saved definition and restore its unresolved instances in this file."""
     if occurrence not in children(parent):
         raise ValueError("Select a direct component instance to repair.")
     import CadDocument
@@ -941,20 +942,32 @@ def repair_component(parent, occurrence, filename):
     if len(matches) != 1:
         raise ValueError("That file does not contain the saved component definition identity.")
     definition = matches[0]
-    if _reachable(definition, parent):
+    doc = parent.Document
+    targets = [link for component in definitions(doc) for link in children(component)
+               if link == occurrence or (link.LinkedObject is None
+                   and getattr(link, "DefinitionId", "") == occurrence.DefinitionId)]
+    if any(_reachable(definition, owner(link)) for link in targets):
         raise ValueError("Repair would introduce a component cycle.")
-    with transaction(parent.Document, "Repair Component"):
-        placement = App.Placement(occurrence.LinkPlacement)
-        occurrence.setLink(definition)
-        occurrence.LinkPlacement = placement
-        for obj in history(parent):
-            if getattr(obj, "ComponentRole", "") != "Reference" or obj.SourceOccurrence != occurrence:
-                continue
-            candidates = [o for o in definition.Group if getattr(o, "ObjectId", "") == obj.SourceObjectId]
-            if len(candidates) != 1:
-                raise ValueError("A saved reference object is missing or ambiguous in the selected component.")
-            obj.SourceObject = candidates[0]
-        activate(parent)
+    sources = {}
+    for obj in definition.Group:
+        ident = getattr(obj, "ObjectId", "")
+        if ident:
+            sources.setdefault(ident, []).append(obj)
+    affected = list(dict.fromkeys(owner(link) for link in targets))
+    with transaction(doc, "Locate Component File"):
+        for link in targets:
+            placement = App.Placement(link.LinkPlacement)
+            link.setLink(definition)
+            link.LinkPlacement = placement
+        for component in affected:
+            for obj in history(component):
+                if getattr(obj, "ComponentRole", "") != "Reference" or obj.SourceOccurrence not in targets:
+                    continue
+                candidates = sources.get(obj.SourceObjectId, [])
+                # Keep missing/ambiguous geometry repairable without undoing the
+                # recovered component or binding a different object by its label.
+                obj.SourceObject = candidates[0] if len(candidates) == 1 else None
+            activate(component, strict=False)
     return definition
 
 

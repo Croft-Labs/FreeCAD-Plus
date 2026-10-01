@@ -177,6 +177,28 @@ after activation and final geometry after Redo/reopen. General native scheduling
 multi-body contribution detachment and arbitrary topology/expression consumers remain
 open. These focused checks are not full file-format validation.
 
+## Locate Component File feedback iteration
+
+Missing instances remain grouped by their saved definition identity and can be
+expanded to numbered rows. Geometry-dependent actions and visibility changes are
+unavailable until the file is located. Right-click Locate Component File and choose
+the moved .cadprt. Matching unresolved instances in the same owning file recover
+together, preserving placement and reference identities in one Undo transaction.
+
+A missing body in that file does not block recovery of the component. Healthy
+references update; unavailable ones keep their source identity and appear as Missing
+source in Model History for Repair Reference Object. Save/reopen preserves that
+partial recovery. Choosing a file with another definition identity leaves the parent
+unchanged and returns to its editing context. Unresolved native links explicitly
+cleared during recovery no longer save the obsolete filename, including after Redo.
+
+Use `-RecoverySmoke` for three focused workflows: grouped locate/Undo/Redo/reopen,
+partial geometry recovery with independent modeling and saved-link inspection, and
+wrong-file refusal with parent-context preservation. Intentionally missing files
+produce native missing-file/broken-link diagnostics before repair. General package
+relocation, recovery across multiple owning files, automatic searching and complete
+crash/backup/schema qualification remain future work.
+
 ## Automated checks
 
 Run from the repository root in PowerShell, with a new evidence directory each time:

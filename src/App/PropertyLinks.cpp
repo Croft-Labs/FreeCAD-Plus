@@ -3929,7 +3929,10 @@ void PropertyXLink::setValue(App::DocumentObject* lValue,
                              std::vector<std::string>&& subs,
                              std::vector<ShadowSub>&& shadows)
 {
-    if (_pcLink == lValue && _SubList == subs) {
+    // An unresolved link has no live pointer but still owns a saved target.
+    // Assigning nullptr must clear that target, including during transaction replay.
+    if (_pcLink == lValue && _SubList == subs
+        && (lValue || (objectName.empty() && filePath.empty() && !docInfo))) {
         return;
     }
 

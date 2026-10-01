@@ -57,6 +57,8 @@ def apply_representation(root):
             # suppression, native engineering geometry, or BOM/mass participation.
             child.ViewObject.LinkView.setType(-2, False)
             child.ViewObject.LinkView.setLink(child.LinkedObject if paths else None, paths)
+        else:
+            child.ViewObject.LinkView.setLink(None, [])
 
 
 class ConversionDialog(QtWidgets.QDialog):
@@ -337,13 +339,19 @@ class Navigator(QtWidgets.QDockWidget):
 
     @staticmethod
     def path_visible(root, ids):
-        return bool(root.Visibility) and model().representation(root, ids) != "Hidden" and all(
-            link.Visibility for link in model()._path(root, ids))
+        try:
+            return bool(root.Visibility) and model().representation(root, ids) != "Hidden" and all(
+                link.Visibility for link in model()._path(root, ids))
+        except ValueError:
+            return False
 
     def decorate_component(self, item, definition, paths):
         root = resolve(self.root_key)
         visible = not paths or any(self.path_visible(root, ids) for ids in paths)
         self.visibility_icon(item, visible)
+        if definition is None:
+            item.setToolTip(1, tr("Locate the component file before changing its display."))
+            item.setToolTip(3, tr("Right-click and choose Locate Component File. Matching unresolved instances in this file are repaired together."))
         if self.protected(item):
             item.setToolTip(1, tr("The active component and its parent branch cannot be hidden."))
         if definition and object_key(definition) == self.active_key:
@@ -366,7 +374,7 @@ class Navigator(QtWidgets.QDockWidget):
         groups = {}
         for link in model().children(component):
             definition = link.LinkedObject
-            group_key = object_key(definition) if definition else object_key(link)
+            group_key = object_key(definition) if definition else ("missing", getattr(link, "DefinitionId", "") or link.ObjectId)
             groups.setdefault(group_key, []).append(link)
         for definition_key, links in groups.items():
             definition = links[0].LinkedObject
@@ -385,7 +393,8 @@ class Navigator(QtWidgets.QDockWidget):
                     for index, (link, value) in enumerate(zip(links, values), 1):
                         number = getattr(link, "InstanceNumber", index)
                         name = "_".join(title.split()) + "#" + str(number).zfill(3)
-                        instance = QtWidgets.QTreeWidgetItem(item, [name, "", "", model().representation(root, value[1])])
+                        mode = model().representation(root, value[1]) if definition else tr("Missing component")
+                        instance = QtWidgets.QTreeWidgetItem(item, [name, "", "", mode])
                         instance.setData(0, QtCore.Qt.UserRole, value)
                         instance.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
                         self.decorate_component(instance, definition, [value[1]])
@@ -418,6 +427,9 @@ class Navigator(QtWidgets.QDockWidget):
 
     def toggle_component(self, item):
         if not item.data(0, QtCore.Qt.UserRole):
+            return
+        if any(getattr(resolve(key), "ComponentRole", "") == "Occurrence"
+               and resolve(key).LinkedObject is None for key, ids in self.members(item)):
             return
         root = resolve(self.root_key)
         members = self.members(item)
@@ -633,7 +645,16 @@ class Navigator(QtWidgets.QDockWidget):
             root = resolve(self.root_key)
             component, self.active_path = self.edit_context(root, self.active_path)
             self.active_key = object_key(component)
-            Gui.getDocument(component.Document.Name).activeView().setActiveObject("part", component)
+            try:
+                gui_doc = Gui.getDocument(component.Document.Name)
+            except NameError:
+                # MDI activation can arrive after the GUI document is removed
+                # but before the corresponding App document finishes closing.
+                return
+            view = gui_doc.activeView()
+            if view is None:
+                return
+            view.setActiveObject("part", component)
             self.store_edit_context(window)
             self.run(lambda: model().activate(component, strict=False))
             self.selection_timer.start(0)
@@ -691,12 +712,16 @@ class Navigator(QtWidgets.QDockWidget):
 
     def repair_component(self, key):
         occurrence = resolve(key)
+        root_key, active_key, active_path = self.root_key, self.active_key, list(self.active_path)
         filename, unused = QtWidgets.QFileDialog.getOpenFileName(
             self, tr("Locate Component File"), "", "Component document (*.cadprt)")
         if filename:
             parent = model().owner(occurrence)
-            model().repair_component(parent, occurrence, filename)
-            App.setActiveDocument(parent.Document.Name)
+            try:
+                model().repair_component(parent, occurrence, filename)
+            finally:
+                App.setActiveDocument(parent.Document.Name)
+                self.root_key, self.active_key, self.active_path = root_key, active_key, active_path
 
     def choose_reference_source(self, active, reference=None):
         choices = []
@@ -784,6 +809,8 @@ class Navigator(QtWidgets.QDockWidget):
 
     def add_instance(self, key):
         occurrence = resolve(key)
+        if not model().is_component(occurrence.LinkedObject):
+            raise ValueError(tr("Locate the missing component file before adding an instance."))
         model().add_component(model().owner(occurrence), occurrence.LinkedObject,
                               placement=App.Placement(occurrence.LinkPlacement))
 
@@ -818,17 +845,17 @@ class Navigator(QtWidgets.QDockWidget):
             if not value:
                 return menu
             obj = resolve(value[0])
-            menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(item)))
-            menu.addAction(tr("Add Component"), lambda: self.run(lambda: self.add_component(value[0])))
-            menu.addAction(tr("Add Reference Object"), lambda: self.run(lambda: self.add_reference(value[0])))
             definition = obj.LinkedObject if getattr(obj, "ComponentRole", "") == "Occurrence" else obj
+            menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(item))).setEnabled(definition is not None)
+            menu.addAction(tr("Add Component"), lambda: self.run(lambda: self.add_component(value[0]))).setEnabled(definition is not None)
+            menu.addAction(tr("Add Reference Object"), lambda: self.run(lambda: self.add_reference(value[0]))).setEnabled(definition is not None)
             if definition:
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(object_key(definition))))
             if value[1]:
-                menu.addAction(tr("Open Component in Tab"), lambda: self.run(lambda: self.open_component_tab(value[0])))
+                menu.addAction(tr("Open Component in Tab"), lambda: self.run(lambda: self.open_component_tab(value[0]))).setEnabled(definition is not None)
                 instances = menu.addMenu(tr("Instances"))
                 menu.component_submenus.append(instances)
-                instances.addAction(tr("Add Instance"), lambda: self.run(lambda: self.add_instance(value[0])))
+                instances.addAction(tr("Add Instance"), lambda: self.run(lambda: self.add_instance(value[0]))).setEnabled(definition is not None)
                 copy = instances.addAction(tr("Copy to New Part"), lambda: self.run(lambda: self.copy_part(value[0])))
                 copy.setEnabled(definition is not None and len(self.members(item)) == 1)
                 copy.setToolTip(tr("Expand instances to choose the instance that becomes a new part."))
@@ -836,7 +863,7 @@ class Navigator(QtWidgets.QDockWidget):
                     expanded = item.data(0, QtCore.Qt.UserRole + 2) in self.expanded_instances
                     menu.addAction(tr("Collapse Instances") if expanded else tr("Expand Instances"),
                                    lambda: self.run(lambda: self.toggle_instances(item)))
-                menu.addAction(tr("Save to External File"), lambda: self.run(lambda: self.externalize_component(value[0])))
+                menu.addAction(tr("Save to External File"), lambda: self.run(lambda: self.externalize_component(value[0]))).setEnabled(definition is not None)
                 menu.addAction(tr("Locate Component File"), lambda: self.run(lambda: self.repair_component(value[0])))
             view = menu.addMenu(tr("Part View"))
             menu.component_submenus.append(view)
@@ -844,7 +871,7 @@ class Navigator(QtWidgets.QDockWidget):
                 setting = None if label == "Reset to Inherited" else label
                 action = view.addAction(tr(label), lambda checked=False, setting=setting:
                     self.run(lambda: self.set_part_view(item, setting)))
-                action.setEnabled(bool(value[1]) and not (setting == "Hidden" and self.protected(item)))
+                action.setEnabled(definition is not None and bool(value[1]) and not (setting == "Hidden" and self.protected(item)))
                 if not value[1]:
                     action.setToolTip(tr("The root is displayed in full. Part View applies to components added to a parent."))
         else:

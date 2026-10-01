@@ -9,6 +9,7 @@ param(
     [switch]$HistorySmoke,
     [switch]$InstanceSmoke,
     [switch]$ConversionSmoke,
+    [switch]$RecoverySmoke,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -29,6 +30,7 @@ if ($ReferenceSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentRefer
 if ($HistorySmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentHistoryIteration.py' }
 if ($InstanceSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentInstanceIteration.py' }
 if ($ConversionSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentConversionIteration.py' }
+if ($RecoverySmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentFileRecovery.py' }
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'
