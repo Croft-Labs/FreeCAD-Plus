@@ -21,6 +21,9 @@ Feedback fixtures: `smoke-final/Component-History-Suppressed.cadprt` and
 including native recompute integration, multi-output lineage, assembly solver and
 BOM/mass consumers. Preserve the owner's limited feedback-first validation boundary.
 No schema lock-in, broad suite, installer or release update.
+Implementation `19285590d8` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching modules, six unchanged native
+artifacts, both fixtures and the known native stderr diagnostics.
 
 Previous feedback batch:
 Current feedback batch: roadmap 7.8.4a, component reference recovery. Missing
