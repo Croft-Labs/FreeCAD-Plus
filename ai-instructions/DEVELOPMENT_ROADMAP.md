@@ -2580,7 +2580,10 @@ missing-file reports occur before repair. No broad suite, schema change, install
 or release update is part of this batch. The recovered feedback file is
 `smoke-native/testGroupedLocateUndoAndReopen/Recovery-Parent.cadprt`;
 `testMissingGeometryDoesNotBlockFileRecovery/Recovery-Parent.cadprt` retains one
-missing reference for review. Publication is recorded after commit.
+missing reference for review. Implementation `c539d4ea4b03d4200970bfa8ddbb29f6c3e30851`
+was pushed to `origin/main` and verified with `git ls-remote`.
+`acceptance-identities.json` records seven matching Python modules, nine native
+artifacts, the native source hash, both builds and the recovery evidence.
 
 2026-10-01 conversion feedback batch (7.8.6c): parameter-removal planning,
 component-boundary pruning, detached-reference metadata and conversion review UI
