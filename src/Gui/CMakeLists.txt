@@ -1527,6 +1527,7 @@ set(FreeCADGui_Scripts
     UniqueDefinition.py
     OccurrenceAppearance.py
     OccurrenceMove.py
+    OccurrenceReplace.py
     TemporaryDisplay.py
     RemoteDebugger.ui
     RemoteDebugger.py

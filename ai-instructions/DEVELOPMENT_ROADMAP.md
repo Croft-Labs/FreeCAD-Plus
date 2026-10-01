@@ -30,7 +30,18 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F068 sewing tolerance and Shape
+- Current product batch complete for owner testing: F022 single-occurrence source
+  replacement, phase 12 tasks 12.6a/b. Tools > Replace occurrence source reuses a
+  same-document root solid/Body while preserving one free Link's identity, placement,
+  visibility and uniform appearance policy. Preview reuses the existing overlay;
+  consumers/relationships are refused. Both tasks preceded one native build;
+  22 distinct selected checks pass across accepted suites and five captures were
+  reviewed. [Owner procedure](../tests/OccurrenceReplace.md). Full F022 remains open
+  for mate/interface remapping and broader replacement scope. Stop here and rotate.
+  Item-level bookkeeping also corrected: the prior Make Unique pilot belongs under
+  F019, not F008. Body promotion F008 remains unimplemented by that pilot.
+
+- Previous product batch complete for owner testing: F068 sewing tolerance and Shape
   Builder diagnostics, phase 13 tasks 13.1a/b. Native sewing now honors its supplied
   tolerance. Existing shell/solid modes expose computed classification/free-boundary
   reports and refuse open-shell solid creation while preserving sources. Both tasks
@@ -3760,6 +3771,38 @@ stop at this usable checkpoint and rotate to another item family.
   Save exploded arrangements and support simple mechanism animations with joint limits.
   Mirroring distinguishes linked/shared instances from independent mirrored definitions;
   skipped instances are stored explicitly.
+- [ X ] 12.6a Add a bounded single-occurrence replacement using native Link.setLink.
+  Reuse a same-document root solid/whole Body, preserving native occurrence identity,
+  label, placement, source-placement setting, visibility and uniform appearance
+  policy. Other occurrences and source definitions stay unchanged. Refuse consumers,
+  relationships, scaled/array/copy-on-change links and unsupported source scope.
+- [ X ] 12.6b Expose explicit source review, view-only preview, stale-input recovery
+  and one Undoable confirmation in the standard Tools menu. Reuse native identity,
+  occurrence selection, placement and appearance services; verify independent native
+  geometry, failure rollback, Cancel, Undo/Redo and save/reopen.
+
+12.6a/b evidence (2026-10-01):
+Both tasks preceded one FreeCADGui/FreeCADGui_Resources Release build, exit 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-occurrence-replace-20261001`.
+Initial `grouped/` passed seven movement and seven appearance checks, plus four of
+eight replacement checks. Qt findData did not match stored Python identity tuples;
+replaced it with explicit key comparison. A test quantity increment also needed its
+native length value. Only OccurrenceReplace.py was restaged; no second native build.
+`replacement-verified/` passes all eight. **22 distinct selected passes** across
+accepted suites, zero failures/errors/skips in accepted suites, native exits 0.
+Initial failed aggregate remains recorded. Five reviewed `visual/` captures and
+Occurrence-Replacement-Source.FCStd / Occurrence-Replacement-Result.FCStd provide
+the owner fixture. Native assembly-path geometry agrees with preview for both
+source-placement settings; whole Body sources, preserved appearance/placement,
+other-occurrence isolation, Cancel/stale cleanup, unsupported consumers, rollback,
+Undo/Redo and save/reopen pass. Later replacement edits update only its instances.
+FreeCADGui SHA256: `8F48A425D59BFE4A5182B2F3CEDB920932AAFDB1104A5658B9CE2F63A529AE8A`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted checks; historical About metadata is not this source identity.
+No installer/release update. Whole F022/12.6 remains open for mate/interface remapping,
+multiple targets, realignment, external/mixed sources, arrays, broader appearance,
+macro recording and physical acceptance. Stop at this checkpoint and rotate.
+
 - [   ] 12.7 Define configurations, arrangements and flexible subassemblies after
   parameter scope, identity, solver context and persistence proof. Flexible behavior
   is not merely separate placement of a shared rigid result. Extend 9.6.
@@ -5292,7 +5335,7 @@ reconciliation rules above to every entry.
 <a id="f008"></a>
 ### F008 — Promote bodies to components
 
-**Owning tasks:** 12.2, 12.2d/e. **Status:** Bounded native Make Unique pilot ready for owner testing. A same-document sketch/extrusion Part is copied with independent native identities and remapped inputs, then only the selected occurrence is relinked. Placement/visibility, independent edits, Undo/Redo, save/reopen and rollback pass; one grouped build, 19 selected passing checks and three reviewed captures. Whole F019 remains open for broader definitions/subassemblies, external destinations, provenance, relationship remapping and physical acceptance. See [owner procedure](../tests/UniqueOccurrence.md).
+**Owning tasks:** 12.2. **Status:** Promotion workflow acceptance remains pending. The Make Unique pilot is tracked under F019; copying an existing occurrence definition does not establish body promotion.
 
 **Packages:** A03 · **First delivery:** P3/P6 · **Likely scope:** Core
 
@@ -5435,7 +5478,7 @@ reconciliation rules above to every entry.
 <a id="f019"></a>
 ### F019 — Make Unique
 
-**Owning tasks:** 12.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 12.2, 12.2d/e. **Status:** Bounded native Make Unique pilot ready for owner testing. A same-document sketch/extrusion Part is copied with independent native identities and remapped inputs, then only the selected occurrence is relinked. Placement/visibility, independent edits, Undo/Redo, save/reopen and rollback pass; one grouped build, 19 selected passing checks and three reviewed captures. Whole F019 remains open for broader definitions/subassemblies, external destinations, provenance, relationship remapping and physical acceptance. See [owner procedure](../tests/UniqueOccurrence.md).
 
 **Packages:** A03 · **First delivery:** P2/P6 · **Likely scope:** Feature/Core
 
@@ -5474,7 +5517,7 @@ reconciliation rules above to every entry.
 <a id="f022"></a>
 ### F022 — Component replacement
 
-**Owning tasks:** 12.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 12.6, 12.6a/b. **Status:** Bounded single-occurrence replacement ready for owner testing. An unconstrained native Link can reuse a same-document root solid/Body with explicit preview while retaining identity, placement, visibility and uniform appearance policy. Other instances stay unchanged; consumers/relationships are refused. Twenty-two selected checks pass across accepted suites with five reviewed captures. Whole F022 remains open for mate/interface remapping, multiple replacements, realignment and broader scope/physical acceptance. See [owner procedure](../tests/OccurrenceReplace.md).
 
 **Packages:** B04, A05 · **First delivery:** P3/P6 · **Likely scope:** Core/Feature
 

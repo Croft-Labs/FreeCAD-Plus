@@ -1,6 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F068 sewing, phase 13 tasks 13.1a/b. sewShape(tolerance) now passes
+Latest batch: F022 occurrence replacement, phase 12 tasks 12.6a/b. Standard Tools
+command reuses one same-document root solid/Body for a free native Link, preserving
+identity, placement/source-placement setting, visibility and uniform appearance
+policy. Existing identity/selection, movement and appearance services are reused;
+preview is view-only. Consumers/relationships and unsupported scopes are refused.
+
+Both tasks preceded one FreeCADGui/FreeCADGui_Resources Release build, exit 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-occurrence-replace-20261001`.
+Initial `grouped/` passed seven movement and seven appearance checks, plus four of
+eight replacement checks. Qt findData did not match stored Python identity tuples;
+replaced it with explicit key comparison. A test quantity increment also needed its
+native length value. Only OccurrenceReplace.py was restaged; no second native build.
+`replacement-verified/` passes all eight. **22 distinct selected passes** across
+accepted suites, zero failures/errors/skips in accepted suites, native exits 0.
+Initial failed aggregate remains recorded. Five reviewed `visual/` captures and
+Occurrence-Replacement-Source.FCStd / Occurrence-Replacement-Result.FCStd provide
+the owner fixture. Native assembly-path geometry agrees with preview for both
+source-placement settings; whole Body sources, preserved appearance/placement,
+other-occurrence isolation, Cancel/stale cleanup, unsupported consumers, rollback,
+Undo/Redo and save/reopen pass. Later replacement edits update only its instances.
+FreeCADGui SHA256: `8F48A425D59BFE4A5182B2F3CEDB920932AAFDB1104A5658B9CE2F63A529AE8A`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted checks; historical About metadata is not this source identity.
+No installer/release update. Whole F022/12.6 remains open for mate/interface remapping,
+multiple targets, realignment, external/mixed sources, arrays, broader appearance,
+macro recording and physical acceptance. Stop at this checkpoint and rotate.
+
+Item-level correction: previous Make Unique status had been attached to F008;
+it now belongs to F019. F008 promotion acceptance remains open. The owning 12.2d/e
+evidence is unchanged. tests/OccurrenceReplace.md is the new owner procedure.
+
+Previous batch: F068 sewing, phase 13 tasks 13.1a/b. sewShape(tolerance) now passes
 the requested tolerance and rejects non-finite/non-positive values. Existing Shape
 Builder shell/solid modes add tolerance and Check shape diagnostics, independent
 snapshot creation, and open-shell/invalid-solid refusal. Source geometry/visibility

@@ -885,3 +885,30 @@ No automatic escalation, graphical boundaries or ghost preview is claimed. Recor
 UI calls require the live Shape Builder and selection; standalone macro replay,
 localization and physical keyboard/high-DPI acceptance remain open.
 [Owner procedure](../tests/ShapeSewing.md).
+
+
+## UI-028: Replace occurrence source (F022; roadmap 12.6a/b)
+
+Tools > Replace occurrence source / Std_ReplaceOccurrenceSource takes one whole
+unscaled direct native Link in the active document. Structural Part container paths
+reuse the existing whole-occurrence selector; links through links, arrays and native
+assembly relationships are outside this workflow. Both old and replacement sources
+must be current root single solids or whole root Bodies in the same document.
+
+| Control | Action and feedback |
+| --- | --- |
+| Occurrence/current-source summary | Labels and internal names identify the edited instance and its current definition. |
+| Source placement: Included/Ignored | Reports the existing native setting; replacement retains it and its consequence for source coordinates. |
+| Replacement source | Same-document root shape candidates by label/internal name; invalid/stale/non-solid choices disable Preview/Replace with a reason. |
+| Review again | Refresh candidates and native identities/state after recompute or changed inputs; retain the selected source by explicit identity comparison. |
+| Preview | Existing non-pickable teal overlay in the occurrence's world frame; frame both model and overlay without adding document objects. |
+| Replace | Revalidate and relink only this occurrence, preserving ID/name, label, placement, visibility and uniform appearance override. Inherited appearance follows the replacement. One native transaction; rollback on failure. |
+| Cancel | Close and remove the preview, without model edits. |
+
+No copying, alignment inference or face-number/mate remapping occurs. Consumers,
+driven/read-only links, copy-on-change and per-element appearance are refused.
+Document edits clear the preview and require review; deletion/close removes it.
+An empty source list explains how to provide a replacement. Check/preview/commit
+errors stay inline. UI state is separate from the saved native link. Keyboard/high-DPI
+acceptance, macro recording and broader replacement scope remain pending.
+[Owner procedure](../tests/OccurrenceReplace.md).

@@ -583,6 +583,10 @@ from freecad.gui.OccurrenceMove import registerCommand as _registerOccurrenceMov
 _registerOccurrenceMove()
 del _registerOccurrenceMove
 
+from freecad.gui.OccurrenceReplace import registerCommand as _registerOccurrenceReplace
+_registerOccurrenceReplace()
+del _registerOccurrenceReplace
+
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 
