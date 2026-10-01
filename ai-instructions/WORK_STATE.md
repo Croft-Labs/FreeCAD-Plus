@@ -16,7 +16,9 @@ passes three focused checks, exit 0 and empty stderr; two captures reviewed. Nat
 addSelection may canonicalize a bare object to an occurrence; the mapper's ambiguous
 bare-input guard is checked separately, and the dialog reviews the received path.
 Use `Component-Selection-Feedback.cadprt` from that folder in the local fork build.
-Source publication pending. No installer/release update or broad qualification.
+Implementation 1ffb7a9df2 was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records module/fixture identities and confirms all six
+native artifacts are unchanged. No installer/release update or broad qualification.
 
 Continue component migration integration rather than unrelated feature rotation.
 Full mouse/native-editor parity, external-view matrix, expression/multi-result lineage,

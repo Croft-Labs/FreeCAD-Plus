@@ -2528,7 +2528,10 @@ canonicalize a bare source object to an occurrence before the mapper sees it. Th
 ambiguity boundary is therefore checked before native normalization; the GUI always
 reviews the native occurrence that it receives. No mouse-ray picking, full native
 editor parity, external-view matrix, broader consumer or schema qualification is
-claimed. No installer/release update. Source publication pending.
+claimed. No installer/release update. Implementation
+`1ffb7a9df29d6190c68f78307452c9c5d6c523ba` was pushed to `origin/main` and verified
+with `git ls-remote`. `acceptance-identities.json` records the matching source/runtime
+modules, fixture and six unchanged native artifacts.
 
 ### [   ] 7.7 Validate and release the history pilot
 
