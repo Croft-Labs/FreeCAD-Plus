@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F072 shared-definition Copy,
+- Current product batch complete for owner testing: F103 associative dimension
+  repair, phase 15 tasks 15.3c/d. Native reference review distinguishes projected
+  and true geometry, clears obsolete 3D references and validates before committing.
+  Failed repairs restore the original dimension and remain open for correction.
+  One grouped build and 14 distinct selected checks pass. Five native task captures were reviewed.
+  [Owner procedure](../tests/DimensionRepair.md). Full F103 remains open; rotate
+  after this bounded checkpoint pending owner workflow feedback.
+
+- Previous product batch complete for owner testing: F072 shared-definition Copy,
   phase 10 tasks 10.7c/d. Tools > Move or copy occurrence now offers explicit Move
   and Copy actions using the same preview and coordinate frames. Copy creates one
   new native Link in the same structural container and preserves the original.
@@ -4568,6 +4576,29 @@ validated-identities.json record the accepted source/runtime/native identities.
 DrawingSetup.py matches the installed module. Stop here for owner workflow testing;
 parent 15.3 and whole F102 remain open.
 
+- [x] 15.3c Repair native drawing dimensions with explicit projected 2D versus true
+  3D reference review; clear previous 3D references when returning to projection (F103).
+- [x] 15.3d Commit only evaluable repairs, restore original references on failure,
+  keep the task open for correction, and preserve Cancel/Undo/Redo/save-reopen.
+  Fourteen distinct selected checks pass after one grouped build. Full F103 stays open.
+
+15.3c/d grouped evidence (2026-10-01): both source tasks preceded one successful
+TechDrawGui build (351 seconds, exit 0; includes TechDraw core). Seven native
+repair checks cover projected/true handoff, read-only review/Cancel, incompatible
+reference rollback/retry, no-choice and owner-transaction guards, formatting,
+Undo/Redo and source edits after save/reopen. Seven unchanged DrawingSetup checks
+also pass. The first persistence test edited during restored-view projection;
+the final harness waits for that native asynchronous work before editing, as the
+existing drawing tests do. No source rebuild was needed for that harness fix.
+
+Accepted logs: D:\Temp\Office-PC\freecad-plus-dimension-repair-20261001,
+repair-verified/ (7 repair checks) and grouped/ (7 drawing setup checks; initial
+repair timing failure retained). Five native task captures were reviewed. See
+[owner procedure](../tests/DimensionRepair.md). This checkpoint adds reference-list
+review, not graphical annotation preview. Hole/thread metadata, automatic
+ambiguous-reference repair, broader dimension types and physical owner acceptance
+remain open under F103/15.3. Stop and rotate pending workflow feedback.
+
 - [   ] 15.4 Add BOMs, balloons and exploded documentation; validate repeated
   instances, unique copies, suppression, reference-only roles and nested quantities.
   Expose reference-component exclusion explicitly and keep it independent of
@@ -7019,7 +7050,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f103"></a>
 ### F103 — Associative annotation
 
-**Owning tasks:** 15.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.3, 15.3c/d. **Status:** Bounded native dimension reference repair ready for owner testing; 14 distinct selected checks pass after one grouped build. Explicit projected/true reference review clears old 3D links when switching to projection and validates before committing. Full F103 remains open for graphical preview, hole/thread metadata, ambiguous topology repair and physical acceptance. See [owner procedure](../tests/DimensionRepair.md).
 
 **Packages:** D01, A05 · **First delivery:** P9 · **Likely scope:** Feature/Core
 

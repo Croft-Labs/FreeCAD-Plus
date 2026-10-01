@@ -22,12 +22,17 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cmath>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
+#include <QLabel>
 #include <QMessageBox>
 #include <QTableWidgetItem>
 
+#include <Base/Exception.h>
+#include <App/Application.h>
 #include <App/Document.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/Command.h>
@@ -50,6 +55,15 @@ TaskDimRepair::TaskDimRepair(TechDraw::DrawViewDimension* inDvd)
       m_dim(inDvd)
 {
     ui->setupUi(this);
+    ui->twReferences3d->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_status = new QLabel(this);
+    m_status->setObjectName(QStringLiteral("dimensionRepairStatus"));
+    m_status->setWordWrap(true);
+    m_status->setTextFormat(Qt::PlainText);
+    m_status->setText(tr("Select replacement geometry and use the selection to review it. "
+                         "OK validates before committing. Drawing dimensions measure geometry; "
+                         "this repair does not drive the source model."));
+    ui->verticalLayout->addWidget(m_status);
 
     connect(ui->pbSelection, &QPushButton::clicked, this, &TaskDimRepair::slotUseSelection);
 
@@ -107,6 +121,9 @@ void TaskDimRepair::restoreDimState()
 //use the current selection to replace the references in dim
 void TaskDimRepair::slotUseSelection()
 {
+    m_toApply2d.clear();
+    m_toApply3d.clear();
+    m_status->setText(tr("No reviewed replacement. Select compatible geometry and use the selection again."));
     const std::vector<App::DocumentObject*> dimObjects =
         Gui::Selection().getObjectsOfType(TechDraw::DrawViewDimension::getClassTypeId());
     if (dimObjects.empty()) {
@@ -160,6 +177,11 @@ void TaskDimRepair::slotUseSelection()
         m_toApply3d = references3d;
     }
     updateUi();
+    m_status->setText(m_toApply3d.empty()
+        ? tr("Reviewed replacement: projected 2D geometry. Previous 3D references will be cleared. "
+             "OK recomputes before committing; source geometry is unchanged.")
+        : tr("Reviewed replacement: true 3D model geometry. The drawing remains linked to the selected "
+             "source references. OK recomputes before committing; this does not drive the model."));
 }
 
 void TaskDimRepair::updateUi()
@@ -167,10 +189,8 @@ void TaskDimRepair::updateUi()
     // if the dimension is very broken, it may not have a valid 2d view reference.  This can happen if the
     // restore process breaks and the reference target object does not get properly loaded.
 
-    DrawViewPart* viewPart = m_dim->getViewPart();
-    if (!viewPart && !m_toApply2d.empty()) {
-        viewPart = Base::freecad_cast<DrawViewPart*>(m_toApply2d.front().getObject());
-    }
+    DrawViewPart* viewPart = m_toApply2d.empty() ? m_dim->getViewPart()
+        : Base::freecad_cast<DrawViewPart*>(m_toApply2d.front().getObject());
 
     std::string objName = viewPart ?  viewPart->getNameInDocument() : "";
     std::string objLabel = viewPart ?  viewPart->Label.getValue() : "";
@@ -235,30 +255,73 @@ void TaskDimRepair::replaceReferences()
 
     m_dim->setReferences2d(m_toApply2d);
 
-    if (!m_toApply3d.empty()) {
-        m_dim->setReferences3d(m_toApply3d);
+    // An empty 3D set is an explicit switch back to projected references.
+    m_dim->setReferences3d(m_toApply3d);
+    if (m_toApply3d.empty()) {
+        m_dim->clear3DMeasurements();
+        m_dim->MeasureType.setValue("Projected");
+    }
+    else {
+        m_dim->MeasureType.setValue("True");
+        m_dim->setAll3DMeasurement();
     }
 }
 
 bool TaskDimRepair::accept()
 {
-    Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
-
+    if (m_toApply2d.empty()) {
+        m_status->setText(tr("Choose replacement geometry with Use Selection before accepting."));
+        return false;
+    }
+    auto* doc = m_dim->getDocument();
+    if (App::GetApplication().getActiveDocument() != doc || doc->hasPendingTransaction()
+        || doc->getBookedTransactionID() > 0) {
+        m_status->setText(tr("Activate the dimension document and finish the other edit transaction first."));
+        return false;
+    }
     int tid = Gui::Command::openActiveDocumentCommand(tr("Repair dimension").toStdString().c_str());
-    replaceReferences();
-    Gui::Command::commitCommand(tid);
-
-    m_dim->recomputeFeature();
+    try {
+        replaceReferences();
+        for (const auto& ref : m_dim->getEffectiveReferences()) {
+            auto* object = ref.getObject();
+            if (!object || !object->isValid() || object->isTouched()
+                || (!ref.getSubName().empty() && !ref.hasGeometry())) {
+                throw std::runtime_error("A replacement reference is missing or not current.");
+            }
+        }
+        if (!m_dim->validateReferenceForm()
+            || !m_dim->getViewPart() || !m_dim->getViewPart()->hasGeometry()
+            || (m_toApply3d.empty() && !m_dim->checkReferences2D())
+            || !m_dim->recomputeFeature() || !std::isfinite(m_dim->getDimValue())) {
+            throw std::runtime_error("The dimension cannot evaluate these references.");
+        }
+        Gui::Command::commitCommand(tid);
+    }
+    catch (const Base::Exception& error) {
+        Gui::Command::abortCommand(tid);
+        m_dim->recomputeFeature();
+        m_status->setText(tr("Repair was not applied. Original references were restored. "
+                             "Choose compatible geometry and try again.\n%1")
+                             .arg(QString::fromUtf8(error.what())));
+        return false;
+    }
+    catch (const std::exception& error) {
+        Gui::Command::abortCommand(tid);
+        m_dim->recomputeFeature();
+        m_status->setText(tr("Repair was not applied. Original references were restored. "
+                             "Choose compatible geometry and try again.\n%1")
+                             .arg(QString::fromUtf8(error.what())));
+        return false;
+    }
     Gui::Selection().clearSelection();
     return true;
 }
 
 bool TaskDimRepair::reject()
 {
-    restoreDimState();
-    Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
+    // Collection is read-only; failed acceptance already aborts its own transaction.
     Gui::Selection().clearSelection();
-    return false;
+    return true;
 }
 
 void TaskDimRepair::changeEvent(QEvent* e)
@@ -299,8 +362,7 @@ void TaskDlgDimReference::clicked(int i)
 
 bool TaskDlgDimReference::accept()
 {
-    widget->accept();
-    return true;
+    return widget->accept();
 }
 
 bool TaskDlgDimReference::reject()

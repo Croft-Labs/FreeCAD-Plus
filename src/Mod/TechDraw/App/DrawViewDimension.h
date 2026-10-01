@@ -170,6 +170,7 @@ public:
     void setAll3DMeasurement();
     void clear3DMeasurements();
     virtual bool checkReferences2D() const;
+    bool validateReferenceForm() const;
     bool hasBroken3dReferences() const;
 
 
@@ -267,7 +268,6 @@ protected:
     bool okToProceed();
     void updateSavedGeometry();
 
-    bool validateReferenceForm() const;
     bool autocorrectReferences();
 
 private:

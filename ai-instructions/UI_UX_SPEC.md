@@ -1119,3 +1119,23 @@ geometry colors and update/settings controls. A word-wrapped text explanation an
 The button supports normal Qt keyboard focus and a tooltip explains its selection
 replacement behavior. Native solve updates refresh both controls. Count and selected
 entities do not assert independent movement directions. [Owner procedure](../tests/SketchFreedom.md).
+
+## UI-038: Associative dimension repair (F103; roadmap 15.3c/d)
+
+The existing TechDraw_DimensionRepair command, dimension identity, reference
+properties and native geometry validators remain authoritative.
+
+| Control/state | Behavior |
+| --- | --- |
+| Name, label and reference collections | Read-only review of the existing dimension, then the proposed owner view and geometry after Replace References With Selection. |
+| Replace References With Selection | Collect native drawing/model references without changing the dimension. Explain projected 2D or true 3D mode and that drawing measurements do not drive the model. |
+| OK without reviewed geometry | Stay open and ask for Replace References With Selection. |
+| OK with replacement | Validate compatible reference form/current geometry and recompute in one transaction. Projected replacement clears old 3D references and measurements. |
+| Failed repair | Abort that transaction, restore original references and remain open with an inline explanation for correction. |
+| Another edit transaction | Preserve the owner's edit and ask for its completion before repair. |
+| Cancel | Discard the proposed reference collection without changing the dimension or undo history. |
+
+Native owner-view-change confirmation and selection errors remain in place.
+Review is a reference list, not a graphical preview. Broader topology repair,
+hole/thread annotations, full type coverage and physical acceptance remain open.
+[Owner procedure](../tests/DimensionRepair.md).

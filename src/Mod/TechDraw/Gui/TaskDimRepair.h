@@ -34,6 +34,7 @@
 
 
 class Ui_TaskDimRepair;
+class QLabel;
 
 namespace App
 {
@@ -73,6 +74,7 @@ protected:
 private:
     std::unique_ptr<Ui_TaskDimRepair> ui;
     TechDraw::DrawViewDimension* m_dim;
+    QLabel* m_status;
 
     long int m_saveMeasureType;
     long int m_saveDimType;
