@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Bounded checkpoint ready for owner testing: F050 native sketch Trim gestures,
+- Bounded checkpoint ready for owner testing: F059 native shell Thickness,
+  phase 13 tasks 13.5g/h. Removed-face review, signed-side controls, expression
+  preservation and recoverable failed acceptance pass. Both tasks preceded a
+  grouped build; one corrective build fixed a demonstrated preview-status label.
+  Sixteen distinct checks pass and six final captures are reviewed; Undo/Redo,
+  save/reopen and downstream source edits pass. Full F059 stays open, including
+  oversized inward offsets. [Owner procedure](../tests/ShellThickness.md).
+  Stop at this usable checkpoint and rotate pending owner feedback.
+
+- Previous bounded checkpoint ready for owner testing: F050 native sketch Trim gestures,
   phase 11 tasks 11.6e/f. One drag is one Undo step; unfinished gestures roll back,
   and the task reports native removed/replaced-constraint identities. Both tasks
   preceded the grouped build; a corrective build fixed demonstrated notice clipping
@@ -4589,6 +4598,34 @@ This bounded increment preserves the existing edge/face collector and native
 parameters. Tangent-chain controls, live radius previews, corner controls and precise
 kernel failure localization remain open. [Owner procedure](../tests/EdgeTreatmentRecovery.md).
 
+- [x] 13.5g Make native Thickness source/removed faces, signed direction and
+  current/failed/pending result explicit; retain native face collection and expressions (F059).
+- [x] 13.5h Keep failed shell acceptance editable, roll back through Cancel and
+  isolate kernel inputs with native element maps. Validate enclosure creation/edit,
+  side reversal, face changes, Undo/Redo, persistence and downstream updates together.
+
+2026-10-01 evidence: both tasks preceded one 60-second PartGui build; one corrective
+60-second build fixed a displayed pending state after live preview recomputation and
+retained the cached-geometry warning after failed acceptance. Both exit 0. Seven final
+TestShellThickness checks pass, plus nine unchanged TestSheetThickening checks from
+the grouped run: sixteen distinct accepted checks, no skips. Coverage includes native
+face reselection/clearing, signed sides, expressions, deferred preview, zero-thickness
+and collapsed-wall failure/retry, new/existing Cancel, source BRep preservation,
+Undo/Redo, save/reopen and a downstream Refine update. Six final native captures
+were reviewed; three owner fixtures are saved in `visual-final`.
+Evidence: `D:\Temp\Office-PC\freecad-plus-shell-thickness-20261001`:
+`grouped`, `shell-verified`, `final-shell`, `visual-final`, both build logs and
+`evidence.json`. The first grouped run retains one failed test assumption: -25 mm
+inward on a 30 x 20 x 15 mm box was accepted by the native kernel. The verified
+collapse/recovery case is -10 mm. Arbitrary oversized-offset wall correctness is
+unresolved, not certified by shape validity. Initial captures are superseded by
+`visual-final`. Exact source/native hashes identify evidence; About metadata is
+historical. No owner acceptance, installer or release publication is claimed.
+
+Full F059 remains open for Draft, Rib/Web, localized thin-region diagnostics,
+oversized offsets, broader geometry and physical owner acceptance.
+[Owner procedure](../tests/ShellThickness.md). Stop here and rotate.
+
 - [   ] 13.6 Implement 9.1's history-based face move/offset/replace/delete-and-heal
   on a declared class of native/imported solids; explicit repair limits and preview.
 - [   ] 13.7 Spike imported-solid feature recognition only after direct-edit and
@@ -6861,7 +6898,7 @@ reconciliation rules above to every entry.
 <a id="f059"></a>
 ### F059 — Shell, draft, ribs, and webs
 
-**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.5, 13.5g/h. **Status:** Bounded native shell Thickness face/side review and recoverable acceptance ready for owner testing: sixteen distinct checks pass, six final captures reviewed, Undo/Redo, save/reopen and downstream source editing verified. Full F059 remains open for Draft, Rib/Web, oversized-offset correctness and broader acceptance. [Owner procedure](../tests/ShellThickness.md).
 
 **Packages:** G06 · **First delivery:** P7 increments · **Likely scope:** Feature/Core
 

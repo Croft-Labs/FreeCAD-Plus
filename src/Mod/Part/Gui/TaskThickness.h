@@ -55,6 +55,8 @@ public:
 
 private:
     void setupConnections();
+    void updatePreview();
+    void updateResultStatus();
     void onSpinOffsetValueChanged(double);
     void onModeTypeActivated(int);
     void onJoinTypeActivated(int);

@@ -23,7 +23,6 @@
  ***************************************************************************/
 
 #include <limits>
-#include <QMessageBox>
 
 #include <App/Application.h>
 #include <App/Document.h>
@@ -93,11 +92,11 @@ ThicknessWidget::ThicknessWidget(Part::Thickness* thickness, QWidget* parent)
     d->ui.setupUi(this);
     setupConnections();
 
-    d->ui.labelOffset->setText(tr("Thickness"));
     d->ui.fillOffset->hide();
-    d->ui.reverseSide->hide();
-    d->ui.sideHelp->hide();
-    d->ui.resultStatus->hide();
+    d->ui.labelOffset->setText(tr("Signed thickness"));
+    d->ui.facesButton->setText(tr("Removed faces"));
+    d->ui.labelFaces->setWordWrap(true);
+    d->ui.labelFaces->setTextFormat(Qt::PlainText);
 
     QSignalBlocker blockOffset(d->ui.spinOffset);
     d->ui.spinOffset->setRange(-std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
@@ -124,6 +123,7 @@ ThicknessWidget::ThicknessWidget(Part::Thickness* thickness, QWidget* parent)
     // of concept. And so, it is kept disabled until the other operations of the
     // Part workbench are covered.
     // setupGizmos();
+    updateResultStatus();
 }
 
 ThicknessWidget::~ThicknessWidget()
@@ -149,6 +149,11 @@ void ThicknessWidget::setupConnections()
             this, &ThicknessWidget::onFacesButtonToggled);
     connect(d->ui.updateView, &QCheckBox::toggled,
             this, &ThicknessWidget::onUpdateViewToggled);
+    connect(d->ui.reverseSide, &QPushButton::clicked, this, [this]() {
+        if (!d->ui.spinOffset->hasExpression()) {
+            d->ui.spinOffset->setValue(-d->ui.spinOffset->value().getValue());
+        }
+    });
     // clang-format on
 }
 
@@ -160,41 +165,31 @@ Part::Thickness* ThicknessWidget::getObject() const
 void ThicknessWidget::onSpinOffsetValueChanged(double val)
 {
     d->thickness->Value.setValue(val);
-    if (d->ui.updateView->isChecked()) {
-        d->thickness->getDocument()->recomputeFeature(d->thickness);
-    }
+    updatePreview();
 }
 
 void ThicknessWidget::onModeTypeActivated(int val)
 {
     d->thickness->Mode.setValue(val);
-    if (d->ui.updateView->isChecked()) {
-        d->thickness->getDocument()->recomputeFeature(d->thickness);
-    }
+    updatePreview();
 }
 
 void ThicknessWidget::onJoinTypeActivated(int val)
 {
     d->thickness->Join.setValue((long)val);
-    if (d->ui.updateView->isChecked()) {
-        d->thickness->getDocument()->recomputeFeature(d->thickness);
-    }
+    updatePreview();
 }
 
 void ThicknessWidget::onIntersectionToggled(bool on)
 {
     d->thickness->Intersection.setValue(on);
-    if (d->ui.updateView->isChecked()) {
-        d->thickness->getDocument()->recomputeFeature(d->thickness);
-    }
+    updatePreview();
 }
 
 void ThicknessWidget::onSelfIntersectionToggled(bool on)
 {
     d->thickness->SelfIntersection.setValue(on);
-    if (d->ui.updateView->isChecked()) {
-        d->thickness->getDocument()->recomputeFeature(d->thickness);
-    }
+    updatePreview();
 }
 
 void ThicknessWidget::onFacesButtonToggled(bool on)
@@ -214,6 +209,12 @@ void ThicknessWidget::onFacesButtonToggled(bool on)
         Gui::Application::Instance->hideViewProvider(d->thickness);
         Gui::Selection().clearSelection();
         Gui::Selection().addSelectionGate(new Private::FaceSelection(d->thickness->Faces.getValue()));
+        // Seed the native collector so reopening it preserves the current choice.
+        for (const auto& face : d->thickness->Faces.getSubValues()) {
+            Gui::Selection().addSelection(d->thickness->getDocument()->getName(),
+                                          d->thickness->Faces.getValue()->getNameInDocument(),
+                                          face.c_str());
+        }
 
         if (gizmoContainer) {
             gizmoContainer->visible = false;
@@ -227,25 +228,22 @@ void ThicknessWidget::onFacesButtonToggled(bool on)
         d->ui.facesButton->setText(d->text);
         d->ui.labelFaces->clear();
 
+        std::vector<std::string> faces;
+        for (const auto& item : Gui::Selection().getSelectionEx()) {
+            if (item.getObject() == d->thickness->Faces.getValue()) {
+                faces = item.getSubNames();
+                break;
+            }
+        }
+        d->thickness->Faces.setValue(d->thickness->Faces.getValue(), faces);
         d->selection = Gui::Command::getPythonTuple(
             d->thickness->Faces.getValue()->getNameInDocument(),
             d->thickness->Faces.getSubValues()
         );
-        std::vector<Gui::SelectionObject> sel = Gui::Selection().getSelectionEx();
-        for (auto& it : sel) {
-            if (it.getObject() == d->thickness->Faces.getValue()) {
-                d->thickness->Faces.setValue(it.getObject(), it.getSubNames());
-                d->selection = it.getAsPropertyLinkSubString();
-                break;
-            }
-        }
-
         Gui::Selection().rmvSelectionGate();
         Gui::Application::Instance->showViewProvider(d->thickness);
         Gui::Application::Instance->hideViewProvider(d->thickness->Faces.getValue());
-        if (d->ui.updateView->isChecked()) {
-            d->thickness->getDocument()->recomputeFeature(d->thickness);
-        }
+        updatePreview();
 
         if (gizmoContainer) {
             gizmoContainer->visible = true;
@@ -254,10 +252,51 @@ void ThicknessWidget::onFacesButtonToggled(bool on)
     }
 }
 
-void ThicknessWidget::onUpdateViewToggled(bool on)
+void ThicknessWidget::onUpdateViewToggled(bool)
 {
-    if (on) {
+    updatePreview();
+}
+
+void ThicknessWidget::updatePreview()
+{
+    if (d->ui.updateView->isChecked()) {
         d->thickness->getDocument()->recomputeFeature(d->thickness);
+    }
+    updateResultStatus();
+}
+
+void ThicknessWidget::updateResultStatus()
+{
+    d->ui.reverseSide->setEnabled(!d->ui.spinOffset->hasExpression());
+    d->ui.reverseSide->setToolTip(tr("Reverse the thickness sign. For a formula, edit its expression."));
+    d->ui.sideHelp->setText(tr("Positive thickness grows outward; negative grows inward for an "
+                             "outward-oriented solid. Selected faces become openings. "
+                             "The result stays linked to its source."));
+    auto* source = d->thickness->Faces.getValue();
+    QStringList faces;
+    for (const auto& face : d->thickness->Faces.getSubValues()) {
+        faces.append(QString::fromStdString(face));
+    }
+    if (!d->ui.facesButton->isChecked()) {
+        d->ui.labelFaces->setText(tr("Source: %1\nRemoved faces: %2")
+            .arg(source ? QString::fromStdString(source->getFullName()) : tr("missing"))
+            .arg(faces.isEmpty() ? tr("none (closed thick solid)") : faces.join(QStringLiteral(", "))));
+    }
+    if (!d->thickness->isValid()) {
+        d->ui.resultStatus->setText(tr("Thickness failed. Displayed geometry may be the last valid result. "
+                                      "Adjust thickness, faces or join type, or cancel.\n%1")
+            .arg(QString::fromUtf8(d->thickness->getStatusString())));
+    }
+    else if (!d->ui.updateView->isChecked() && d->thickness->isTouched()) {
+        d->ui.resultStatus->setText(tr("Preview pending. Enable Update view or press OK to recompute."));
+    }
+    else {
+        const auto& shape = d->thickness->Shape.getShape();
+        d->ui.resultStatus->setText(!shape.isNull() && shape.isValid()
+            ? tr("Valid result: %1 solid(s), %2 face(s).")
+                .arg(qulonglong(shape.countSubShapes(TopAbs_SOLID)))
+                .arg(qulonglong(shape.countSubShapes(TopAbs_FACE)))
+            : tr("No valid result. Adjust settings or cancel."));
     }
 }
 
@@ -271,7 +310,8 @@ bool ThicknessWidget::accept()
         if (!d->selection.empty()) {
             Gui::cmdAppObjectArgs(d->thickness, "Faces = %s", d->selection.c_str());
         }
-        Gui::cmdAppObjectArgs(d->thickness, "Value = %f", d->ui.spinOffset->value().getValue());
+        Gui::cmdAppObjectArgs(d->thickness, "Value = %.17g", d->ui.spinOffset->value().getValue());
+        d->ui.spinOffset->apply();
         Gui::cmdAppObjectArgs(d->thickness, "Mode = %d", d->ui.modeType->currentIndex());
         Gui::cmdAppObjectArgs(d->thickness, "Join = %d", d->ui.joinType->currentIndex());
         Gui::cmdAppObjectArgs(
@@ -285,21 +325,25 @@ bool ThicknessWidget::accept()
             d->ui.selfIntersection->isChecked() ? "True" : "False"
         );
 
-        Gui::Command::doCommand(Gui::Command::Doc, "App.ActiveDocument.recompute()");
+        Gui::cmdAppDocument(d->thickness, "recompute()");
+        updateResultStatus();
+        const auto& shape = d->thickness->Shape.getShape();
         if (!d->thickness->isValid()) {
             throw Base::CADKernelError(d->thickness->getStatusString());
         }
-        Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
-        d->thickness->getDocument()->commitTransaction();  // Opened in
-                                                           // ViewProviderDocumentObject::startDefaultEditMode()
+        if (shape.isNull() || !shape.isValid() || shape.countSubShapes(TopAbs_SOLID) != 1) {
+            throw Base::CADKernelError("Thickness did not produce one valid solid.");
+        }
+        auto* doc = d->thickness->getDocument();
+        Gui::cmdGuiDocument(d->thickness, "resetEdit()");
+        doc->commitTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
     }
     catch (const Base::Exception& e) {
-        d->thickness->getDocument()->abortTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
-        QMessageBox::warning(
-            this,
-            tr("Input error"),
-            QCoreApplication::translate("Exception", e.what())
-        );
+        // Keep the native edit transaction alive for correction. Aborting can delete
+        // a newly created feature while this panel still holds its pointer.
+        d->ui.resultStatus->setText(tr("Cannot accept thickness. Displayed geometry may be the last valid result. "
+                                         "Adjust settings or cancel.\n%1")
+            .arg(QCoreApplication::translate("Exception", e.what())));
         return false;
     }
 
@@ -312,20 +356,11 @@ bool ThicknessWidget::reject()
         return false;
     }
 
-    // save this and check if the object is still there after the
-    // transaction is aborted
-    std::string objname = d->thickness->getNameInDocument();
-    App::DocumentObject* source = d->thickness->Faces.getValue();
-
-    // roll back the done things
-    d->thickness->getDocument()->abortTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
-    Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
+    auto* doc = d->thickness->getDocument();
+    // Aborting may delete the feature and task panel; retain only its document.
+    doc->abortTransaction();
+    Gui::Command::doCommand(Gui::Command::Gui, "Gui.getDocument('%s').resetEdit()", doc->getName());
     Gui::Command::updateActive();
-
-    // Thickness object was deleted
-    if (source && !source->getDocument()->getObject(objname.c_str())) {
-        Gui::Application::Instance->getViewProvider(source)->show();
-    }
 
     return true;
 }
@@ -335,7 +370,9 @@ void ThicknessWidget::changeEvent(QEvent* e)
     QWidget::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         d->ui.retranslateUi(this);
-        d->ui.labelOffset->setText(tr("Thickness"));
+        d->ui.labelOffset->setText(tr("Signed thickness"));
+        d->ui.facesButton->setText(tr("Removed faces"));
+        updateResultStatus();
     }
 }
 

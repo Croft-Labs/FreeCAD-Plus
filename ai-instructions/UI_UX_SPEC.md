@@ -1352,3 +1352,20 @@ No heuristic comparison or silent constraint reconstruction is introduced. Nativ
 trim semantics own retained/remapped constraints and construction geometry.
 New geometric previews and extension guidance remain open.
 [Owner procedure](../tests/TrimGesture.md).
+
+## UI-049: Shell Thickness (F059; roadmap 13.5g/h)
+
+The existing Part Thickness task shows its source identity and removed face names.
+The native collector starts with the saved faces selected; Done applies the current
+selection, including an explicitly empty set for a closed thick solid. Face names
+remain native references, without inferred replacement after ambiguous topology edits.
+
+Signed thickness follows the native convention: positive outward and negative inward
+for an outward-oriented solid. Reverse side changes the sign unless an expression
+controls the value. Update view controls recomputation; the task distinguishes current,
+pending and failed output, and identifies potentially cached geometry after failure.
+
+OK recomputes and requires one valid solid before finishing the native transaction.
+A failed attempt retains the feature and settings for correction. Cancel owns rollback
+for both new and existing features. No new localized failure preview is claimed.
+[Owner procedure](../tests/ShellThickness.md).

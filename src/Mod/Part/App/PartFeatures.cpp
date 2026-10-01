@@ -22,6 +22,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cmath>
 #include <memory>
 #include <BRepAdaptor_CompCurve.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -435,6 +436,9 @@ App::DocumentObjectExecReturn* Thickness::execute()
     if (base.countSubShapes(TopAbs_SOLID) != 1) {
         return new App::DocumentObjectExecReturn("Source shape is not single solid.");
     }
+    // The offset builder can mutate topology flags; retain native element maps
+    // while isolating the source and its other consumers.
+    base = base.makeElementCopy();
     for (auto& sub : Faces.getSubValues(true)) {
         shapes.push_back(base.getSubTopoShape(sub.c_str()));
         if (shapes.back().getShape().ShapeType() != TopAbs_FACE) {
@@ -442,6 +446,9 @@ App::DocumentObjectExecReturn* Thickness::execute()
         }
     }
     double thickness = Value.getValue();
+    if (!std::isfinite(thickness) || std::abs(thickness) < Precision::Confusion()) {
+        return new App::DocumentObjectExecReturn("Thickness must be finite and non-zero.");
+    }
     double tol = Precision::Confusion();
     bool inter = Intersection.getValue();
     bool self = SelfIntersection.getValue();
