@@ -2397,6 +2397,12 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   retain explicit refusal for direct operation consumers and expression remapping.
   Grouped Release build and three focused feedback checks pass; general topology
   and command migration remain under 7.8.5b.
+- [ X ] 7.8.5e Model History feedback: restore eligible results across suppressed
+  branches, preserve separately suppressed items and independent visibility, release
+  shared inputs only when their last active consumer stops, and support selected-item
+  suppression/unsuppression in one Undo with blocking-input tooltips. Three focused
+  workflows pass, including .cadprt reopen; native null-input recompute messages
+  remain. Native scheduling integration and broader suppression acceptance stay open.
 - [ X ] 7.8.6a Result identity, exclusive-history pruning, shared producers, reference
   freezing, independent extraction and native Undo are covered by regression fixtures.
 - [   ] 7.8.6b Prove real multi-body edge-treatment contribution detachment and
@@ -2538,6 +2544,25 @@ claimed. No installer/release update. Implementation
 `1ffb7a9df29d6190c68f78307452c9c5d6c523ba` was pushed to `origin/main` and verified
 with `git ls-remote`. `acceptance-identities.json` records the matching source/runtime
 modules, fixture and six unchanged native artifacts.
+
+2026-10-01 Model History feedback batch (7.8.5e): branch eligibility, result/input
+visibility, selected-item transactions and dependency explanation changes preceded
+one grouped script/resource staging build, exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-history-20261001`.
+`smoke-final/` passes **three focused workflows**, zero test failures/errors/skips,
+process exit 0: chained native Cut suppression and shared-input restoration, explicit
+suppression retention and independent branches, panel bulk action/Undo/Redo/.cadprt
+reopen, and hidden objects/manually shown intermediate inputs. A readable panel
+capture was reviewed. Fixtures: `Component-History-Suppressed.cadprt` and
+`Component-History-Restored.cadprt` in that folder. Initial failures identified fixture
+creation outside native command transactions; this was corrected. Subsequent Python
+refinements preserved unrelated visibility and scoped reference refresh, then were
+restaged without another build. Eight native `SecondCut: Base shape is null` stderr
+messages remain while its source is suppressed. The result caches remain empty,
+history reports dependency inactivity and restored inputs regenerate the result.
+This bounded feedback pass does not establish native execution skipping, full
+cross-document suppression or general consumer/topology acceptance. No schema change,
+installer/release update or broad suite run. Publication is recorded after commit.
 
 2026-10-01 reference recovery feedback batch (7.8.4a): component reference services,
 nonblocking activation in the file reader/sketch/Extrude workflows, and history repair

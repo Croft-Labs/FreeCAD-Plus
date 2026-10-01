@@ -1,5 +1,28 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.5e, Model History branch restoration.
+Suppression now derives dependent inactivity separately from explicit flags, restores
+eligible earlier results and releases shared inputs only after their last active
+consumer stops. Manual visibility remains independent. Selected history items can
+be suppressed/unsuppressed in one Undo; dependency tooltips name suppressed inputs.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-history-20261001`.
+One grouped script/resource build passed; unchanged native C++ was not rebuilt.
+`smoke-final/` passes three focused workflows with no test failures/errors/skips,
+process exit 0. A readable Model History capture was reviewed. Early fixture creation
+needed native command transactions to capture visibility; later Python refinements
+were restaged without further builds. Eight native `SecondCut: Base shape is null`
+messages remain when suppression empties its input. Published results stay empty,
+Model History shows dependency inactivity, and unsuppression recovers the geometry.
+Native recompute scheduling is still open; this is not full suppression qualification.
+
+Feedback fixtures: `smoke-final/Component-History-Suppressed.cadprt` and
+`smoke-final/Component-History-Restored.cadprt`. Continue the component migration,
+including native recompute integration, multi-output lineage, assembly solver and
+BOM/mass consumers. Preserve the owner's limited feedback-first validation boundary.
+No schema lock-in, broad suite, installer or release update.
+
+Previous feedback batch:
 Current feedback batch: roadmap 7.8.4a, component reference recovery. Missing
 reference geometry no longer closes a structurally valid .cadprt or blocks independent
 reference refresh/local sketch and Extrude work. Model History Edit and Repair /

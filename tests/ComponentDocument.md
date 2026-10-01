@@ -115,6 +115,25 @@ and subelement refusal, and Model History repair/refresh/suppression controls. S
 this Python-only batch with `-ScriptsOnly`. The generated broken and repaired .cadprt
 files are feedback fixtures, not full format or cross-workbench qualification.
 
+## Model History suppression feedback iteration
+
+Suppress an operation in a chain: dependent items become partially checked/inactive,
+while independent branches continue. Hover over the state or checkbox to see which
+suppressed inputs block it. Earlier usable bodies reappear; a shared input remains
+consumed while another active operation needs it. Unsuppressing restores eligible
+results without clearing separately authored suppression or unrelated visibility.
+
+Select several history rows and right-click Suppress Selected Items or Unsuppress
+Selected Items. One Undo restores the whole selection's previous flags and geometry.
+Right-clicking an unselected row scopes the command to that row. Suppression is saved
+in .cadprt; the same dependent state should appear when reopening the feedback file.
+
+Use `-HistorySmoke` for three bounded workflows; use `-ScriptsOnly` for this Python
+batch. Native Boolean recompute can still log `Base shape is null` when suppression
+empties its input. The published body stays unavailable and recovers on unsuppression;
+native scheduling integration remains open. The feedback fixtures and checks do not
+qualify the complete suppression model, external-document matrix or file schema.
+
 ## Automated checks
 
 Run from the repository root in PowerShell, with a new evidence directory each time:

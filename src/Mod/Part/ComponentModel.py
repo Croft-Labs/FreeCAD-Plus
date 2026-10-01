@@ -616,37 +616,92 @@ def make_independent(occurrence, label=None):
     return definition
 
 
-def set_suppressed(operation, suppressed):
-    component = owner(operation)
-    if not is_component(component) or operation not in history(component):
-        raise ValueError("Select an item in Model History.")
-    with transaction(operation.Document, "Suppress item" if suppressed else "Unsuppress item"):
-        if not hasattr(operation, "UserSuppressed"):
-            _property(operation, "Bool", "UserSuppressed", False)
-        if App.GuiUp and bool(suppressed) != bool(operation.UserSuppressed):
-            if suppressed:
-                if not hasattr(operation, "SuppressionVisibility"):
-                    _property(operation, "Bool", "SuppressionVisibility", bool(operation.Visibility), True)
-                operation.SuppressionVisibility = bool(operation.Visibility)
-                operation.Visibility = False
-            else:
-                operation.Visibility = getattr(operation, "SuppressionVisibility", False)
-        operation.UserSuppressed = bool(suppressed)
-        if hasattr(operation, "ConsumedResults"):
-            previous = json.loads(operation.PreviousVisibility)
-            for source in operation.ConsumedResults:
-                source.Visibility = previous.get(source.ObjectId, False) if suppressed else False
-        for obj in [operation] + list(operation.InListRecursive):
+def suppression_sources(obj):
+    """Authored flags, including upstream flags, independent of cached shapes."""
+    return [dep for dep in [obj] + list(obj.OutListRecursive)
+            if getattr(dep, "UserSuppressed", False)]
+
+
+def _consumed_results(items, blocked):
+    return {source for operation in items if not blocked[operation]
+            for source in getattr(operation, "ConsumedResults", [])}
+
+
+def set_items_suppressed(items, suppressed):
+    """Change explicit flags together; dependent inactivity is always derived."""
+    items = list(dict.fromkeys(items))
+    if not items:
+        return
+    component = owner(items[0])
+    if (not is_component(component)
+            or any(owner(obj) != component or obj not in history(component) for obj in items)):
+        raise ValueError("Select items from the active component's Model History.")
+    items = [obj for obj in items if bool(getattr(obj, "UserSuppressed", False)) != bool(suppressed)]
+    if not items:
+        return
+    doc = component.Document
+    # Reference/result consumers in other local definitions also need invalidation.
+    members = [obj for definition in definitions(doc) for obj in history(definition)]
+    before = {obj: bool(suppression_sources(obj)) for obj in members}
+    consumed_before = _consumed_results(members, before)
+    with transaction(doc, "Suppress items" if suppressed else "Unsuppress items"):
+        for obj in items:
+            if not hasattr(obj, "UserSuppressed"):
+                _property(obj, "Bool", "UserSuppressed", False)
+            obj.UserSuppressed = bool(suppressed)
+        after = {obj: bool(suppression_sources(obj)) for obj in members}
+        consumed_after = _consumed_results(members, after)
+        for obj in members:
+            if before[obj] == after[obj]:
+                continue
+            if App.GuiUp:
+                if after[obj]:
+                    if not hasattr(obj, "SuppressionVisibility"):
+                        _property(obj, "Bool", "SuppressionVisibility", bool(obj.Visibility), True)
+                    obj.SuppressionVisibility = bool(obj.Visibility)
+                    obj.Visibility = False
+                else:
+                    obj.Visibility = getattr(obj, "SuppressionVisibility", False)
             if hasattr(obj, "Shape"):
-                # A failing native Boolean may stop recompute before its result
-                # proxy executes. Invalidate these caches before that can happen.
-                if suppressed and getattr(obj, "ComponentRole", "") == "Result" and not obj.Frozen:
+                # Native failure may prevent downstream proxies from executing.
+                if after[obj] and getattr(obj, "ComponentRole", "") == "Result" and not obj.Frozen:
                     obj.Shape = Part.Shape()
                     obj.ResultStatus = "Unavailable"
                 obj.touch()
+        if App.GuiUp:
+            all_consumed = {source for operation in members
+                            for source in getattr(operation, "ConsumedResults", [])}
+            restored = {obj for obj in members if before[obj] and not after[obj]}
+            for source in (consumed_before | (restored & all_consumed)) - consumed_after:
+                # Multiple consumers may have recorded different visibility as
+                # they were created. Restore only when the last active one ends.
+                was_visible = any(json.loads(operation.PreviousVisibility).get(source.ObjectId, False)
+                                  for operation in members
+                                  if source in getattr(operation, "ConsumedResults", []))
+                if not after.get(source, False):
+                    source.Visibility = was_visible
+            for source in (consumed_after - consumed_before) | (restored & consumed_after):
+                source.Visibility = False
+        # Refresh associative snapshots within the same Undo transaction, after
+        # eligibility changes. This also restores consumers across definitions.
+        if not suppressed:
+            for definition in definitions(doc):
+                if any(getattr(obj, "ComponentRole", "") == "Reference"
+                       and before[obj] and not after[obj] for obj in history(definition)):
+                    activate(definition, strict=False)
 
-    if not suppressed and getattr(operation, "ComponentRole", "") == "Reference":
-        activate(component, strict=False)
+
+def set_suppressed(operation, suppressed):
+    set_items_suppressed([operation], suppressed)
+
+
+def history_detail(obj):
+    sources = suppression_sources(obj)
+    if sources:
+        if sources[0] == obj:
+            return "Suppressed explicitly. Unsuppress this item to enable it when its inputs are available."
+        return "Inactive because these inputs are suppressed: " + ", ".join(dep.Label for dep in sources)
+    return getattr(obj, "ReferenceError", "")
 
 
 def history_state(obj):
@@ -666,12 +721,11 @@ def history_state(obj):
 
 
 def finished_results(component):
-    consumed = {source.Name for operation in history(component)
-                if not getattr(operation, "UserSuppressed", False)
-                for source in getattr(operation, "ConsumedResults", [])}
-    results = [component.Document.getObject(name) for name in component.ResultObjects if name not in consumed]
-    return [obj for obj in results if obj is not None and not getattr(obj, "UserSuppressed", False)
-            and getattr(obj, "ResultStatus", "Ready") == "Ready" and not obj.Shape.isNull()]
+    items = history(component)
+    consumed = _consumed_results(items, {obj: bool(suppression_sources(obj)) for obj in items})
+    results = [component.Document.getObject(name) for name in component.ResultObjects]
+    return [obj for obj in results if obj is not None and obj not in consumed
+            and history_state(obj) == "Ready" and not obj.Shape.isNull()]
 
 
 def externalize(definition, filename):

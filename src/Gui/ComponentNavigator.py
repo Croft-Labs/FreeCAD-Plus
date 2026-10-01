@@ -194,7 +194,7 @@ class Navigator(QtWidgets.QDockWidget):
                 inactive = status == tr("Inactive \u2014 dependency")
                 state = QtCore.Qt.Unchecked if getattr(obj, "UserSuppressed", False) else (QtCore.Qt.PartiallyChecked if inactive else QtCore.Qt.Checked)
                 item.setCheckState(0, state)
-                item.setToolTip(0, tr("Unchecked: suppressed. Partially checked: an input is inactive."))
+                item.setToolTip(0, model().history_detail(obj) or tr("Unchecked: suppressed. Partially checked: an input is inactive."))
                 unavailable = (inactive or bool(getattr(obj, "UserSuppressed", False))
                                or getattr(obj, "ResultStatus", "Ready") in ("Missing source", "Needs repair", "Unavailable"))
                 self.visibility_icon(item, bool(obj.Visibility) and not unavailable, 1)
@@ -203,9 +203,9 @@ class Navigator(QtWidgets.QDockWidget):
                 if obj.ViewObject:
                     item.setIcon(2, obj.ViewObject.Icon)
                 item.setToolTip(2, tr("Operation") if obj.ComponentRole == "Operation" else tr("Object"))
+                item.setToolTip(3, model().history_detail(obj))
                 if obj.ComponentRole == "Reference":
                     item.setToolTip(2, tr("Reference object. Edit to review or replace its direct-child source."))
-                    item.setToolTip(3, getattr(obj, "ReferenceError", ""))
             self.restore_tree(self.structure, structure_state)
             iterator = QtWidgets.QTreeWidgetItemIterator(self.structure)
             while iterator.value():
@@ -771,6 +771,12 @@ class Navigator(QtWidgets.QDockWidget):
                     menu.addAction(tr(action), lambda: self.run(lambda: self.edit_reference(key)))
                 if hasattr(obj, "Shape") and obj.ComponentRole != "Operation":
                     menu.addAction(tr("Convert to Dumb Object"), lambda: self.run(lambda: self.convert(key)))
+                selected = self.history.selectedItems() if item.isSelected() else [item]
+                keys = [row.data(0, QtCore.Qt.UserRole) for row in selected]
+                for suppressed, title in ((True, "Suppress Selected Items"), (False, "Unsuppress Selected Items")):
+                    action = menu.addAction(tr(title), lambda checked=False, keys=keys, suppressed=suppressed:
+                        self.run(lambda: model().set_items_suppressed([resolve(key) for key in keys], suppressed)))
+                    action.setEnabled(any(bool(getattr(resolve(key), "UserSuppressed", False)) != suppressed for key in keys))
                 menu.addSeparator()
             if self.active_key:
                 menu.addAction(tr("Refresh References"), lambda: self.run(self.refresh_references))
