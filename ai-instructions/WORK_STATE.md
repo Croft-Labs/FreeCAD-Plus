@@ -17,7 +17,8 @@ Evidence root: `D:\Temp\Office-PC\freecad-plus-components-20261001`.
 navigator/isolated-view captures. `cold-05`: five passing fresh-process installed
 module and native File command checks including the format/name-collision guard.
 Builds 01-05 passed; final native runtime hashes and source/module identities are
-in acceptance-identities.json. Publication evidence is recorded in roadmap 7.8. No installer or release update.
+in acceptance-identities.json. Implementation d1a7a73be1 was pushed to origin/main
+and verified remotely; roadmap 7.8 records the full publication identity. No installer or release update.
 
 Continue 7.8's outstanding integration tasks: native multi-result task migration,
 lineage, assembly solver, BOM/mass consumers, deep copies/expression remapping,

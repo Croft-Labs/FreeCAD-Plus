@@ -2346,7 +2346,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   report tested editable mappings and unsupported/geometry-only content.
 - [   ] 7.8.10 Complete grouped native/runtime, cold reopen, undo/redo, graph/failure,
   downstream and GUI acceptance against the contract's end-to-end example.
-- [   ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
+- [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 
 Complete when: the approved end-to-end component workflow works in the fork, with
@@ -2416,8 +2416,14 @@ while that initial projection is still computing are not established by this fix
 [Owner and test procedure](../tests/ComponentDocument.md).
 
 Implementation/build/runtime evidence does not close the remaining child tasks.
-No installer, public release or physical owner acceptance is claimed. Publication
-identity is recorded after the coherent source milestone is committed and pushed.
+No installer, public release or physical owner acceptance is claimed.
+Implementation commit `d1a7a73be12ddd430e32689f9ff73bd3444d1606` was pushed to
+`origin/main` (Croft-Labs/FreeCAD-Plus), then verified by `git ls-remote` at the same
+full commit. This is source publication, not a release. Final native/runtime and
+source identities are in `acceptance-identities.json` under the evidence root.
+FreeCADApp SHA256: `8c6ac7d577afe97a526fbe9453e151573ea962b0d0d4ad62b0f0ac5e35c78d36`;
+FreeCADGui SHA256: `280b29f39aeca19846c3ccf911d90fca9679c7a7d3a88ec31a781901f5eb39d9`.
+The executable About/version metadata predates this rebuild and is not its source identity.
 
 ### [   ] 7.7 Validate and release the history pilot
 
