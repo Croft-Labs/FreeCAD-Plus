@@ -752,9 +752,9 @@ Close retains the session setting; document closure removes observers/timers. Th
 states native preview exceptions, session persistence and background/external scope limits.
 There is no custom geometry state or automatic repair. [Owner procedure](../tests/DocumentUpdates.md).
 
-## UI-023: Move occurrence once (F074; roadmap 10.7a/b)
+## UI-023: Move or copy occurrence (F072/F074; roadmap 10.7a-d)
 
-Tools > Move occurrence once reviews one explicitly selected whole Link. Translate/
+Tools > Move or copy occurrence reviews one explicitly selected whole Link. Translate/
 Rotate and World/Occurrence selectors label frame meaning. Translation uses incremental
 mm offsets; rotation uses a dimensionless axis, degrees and pivot coordinates in mm.
 Irrelevant fields are disabled. Preview adds a non-pickable teal wireframe and reports
@@ -763,7 +763,17 @@ old ghost; model/frame changes also invalidate review.
 
 Move once commits one placement transaction and closes; Cancel removes the preview
 without model changes. Failures remain inline for correction. Document/occurrence
-closure removes the ghost and observer. No hidden mates, copies or solver detachment.
+closure removes the ghost and observer. No hidden mates or solver detachment.
+
+Action defaults to **Move existing occurrence**. **Copy occurrence (shared
+definition)** enables Copy label and changes confirmation to **Create linked copy**.
+The copy is a new native Link in the same structural container, with the same
+source, appearance, visibility and LinkTransform policy. Only its placement changes;
+source edits affect both links. The original occurrence stays in place. Zero offset
+is allowed as an explicit coincident copy. Empty labels are refused inline.
+Changing action or label clears the preview. Copy commits one Undo step and closes;
+Cancel creates nothing. Copy does not create an independent definition or array.
+The existing Std_MoveOccurrenceOnce command identity is preserved.
 [Owner procedure](../tests/OccurrenceMove.md).
 
 

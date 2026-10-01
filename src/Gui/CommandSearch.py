@@ -41,7 +41,7 @@ ALIASES = {
         "Copy reusable sketch", "copy sketch;reuse profile", "SketcherWorkbench",
         "Select one whole, free root sketch with internal constraints only."),
     "Std_MoveOccurrenceOnce": (
-        "Move occurrence once", "move component;translate;rotate component", "",
+        "Move or copy occurrence", "move component;copy component;duplicate occurrence;translate;rotate component", "",
         "Select one whole unconstrained Link occurrence in the tree."),
     "Std_DocumentUpdates": (
         "Document updates", "defer;recompute;failed;pending", "",
@@ -97,9 +97,10 @@ HELP = {
         "are preserved. Cancel creates nothing; Undo removes the accepted copy. Partial copying is not included."),
     "Std_MoveOccurrenceOnce": (
         "Select a whole unconstrained same-document Link to a solid or Body, then choose world or occurrence axes. "
-        "Choose Translate with offsets, or Rotate with an axis, angle and pivot. Review and preview before Move. This changes that "
-        "occurrence's placement once; it creates no maintained assembly relationship. Cancel leaves placement "
-        "unchanged; Undo reverses Move. Constrained assembly motion, copies and snapping are not included."),
+        "Choose Translate with offsets, or Rotate with an axis, angle and pivot. Move changes the selected "
+        "placement; Copy creates one new occurrence in the same container sharing its definition, appearance "
+        "and visibility. Source edits affect both copies. Review and preview before confirming. Cancel creates "
+        "nothing; Undo reverses one action. Independent definitions, constrained motion and snapping are not included."),
     "Std_DocumentUpdates": (
         "Review pending and failed objects and their loaded dependencies. Select a listed object to locate it. "
         "Deferring updates leaves results potentially stale; Update document explicitly recomputes the document. "

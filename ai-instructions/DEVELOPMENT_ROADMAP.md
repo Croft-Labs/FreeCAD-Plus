@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F047 sketch freedom guidance,
+- Current product batch complete for owner testing: F072 shared-definition Copy,
+  phase 10 tasks 10.7c/d. Tools > Move or copy occurrence now offers explicit Move
+  and Copy actions using the same preview and coordinate frames. Copy creates one
+  new native Link in the same structural container and preserves the original.
+  Both tasks preceded one grouped script-staging pass; 25 selected checks pass and
+  five captures were reviewed. [Owner procedure](../tests/OccurrenceMove.md).
+  Point picking/alignment, independent definitions and broader F072 acceptance stay
+  open. Stop at this workflow checkpoint and rotate for owner feedback.
+
+- Previous product batch complete for owner testing: F047 sketch freedom guidance,
   phase 11 tasks 11.4c/d. The existing sketch solver task explains remaining freedom,
   fixed/reference semantics and failed states, with a visible native selection
   button gated by successful underconstrained solves. Both tasks preceded a grouped
@@ -177,7 +186,7 @@ is subsequently changed.
   Both tasks preceded one native build; a shared Python world-shape correction
   followed the nested-frame checks. 54 affected-consumer checks pass after the fix,
   plus 14 appearance/command checks from the initial group; six captures reviewed.
-  [Try the nested occurrences](../tests/OccurrenceMove.md). Copy/snapping/triads and
+  [Try the nested occurrences](../tests/OccurrenceMove.md). Copy follows in 10.7c/d; snapping/triads and
   maintained relationships remain open. Stop here for owner testing and rotate.
 
 - Previous product batch complete for owner testing: F087/F088 document updates,
@@ -3023,7 +3032,40 @@ F015/10.6 stays open; stop this pilot pending feedback and rotate. No release up
   stale/frame guards, Cancel and transactional confirmation. Validate rotated nested
   containers, both source-transform policies, preview/commit agreement, rollback,
   Undo/Redo and save/reopen. Both tasks complete for owner testing.
-  Copy, point picking/snapping, triads and maintained relationships remain open.
+  Shared-definition Copy follows in 10.7c/d; point picking/snapping, triads and
+  maintained relationships remain open.
+
+- [x] 10.7c Add one transactional shared-definition occurrence copy at the existing
+  reviewed transform, preserving native Link identity semantics, parent, source,
+  original placement and appearance/visibility. Verify Undo/Redo, rollback and reopen.
+- [x] 10.7d Add explicit Move/Copy action and copy label to the existing F072 dialog.
+  Reuse preview/frame controls and command identity; disclose shared geometry and
+  preserve Cancel/stale handling. Keep independent definitions and arrays separate.
+
+10.7c/d evidence (2026-10-01): both tasks preceded one FreeCADGui_Resources
+Release staging pass, exit 0; no native C++ compilation. Evidence:
+`D:\Temp\Office-PC\freecad-plus-occurrence-copy-20261001`.
+All 25 grouped checks pass: seven new copy, seven movement and eleven command-search
+checks. After a copy-label encoding correction and updated offline help, only the
+two Python files were restaged. All seven copy checks pass again in copy-verified/,
+including the copy search alias/help; unchanged passing suites stand. **25 distinct
+selected passes**, zero failures/errors/skips; native process exits 0.
+Native shallow Link copy creates only one new object/identity and retains its shared
+source, nested structural parent, visibility, material override and LinkTransform.
+World translation and arbitrary-axis rotation agree with an independent native
+assembly-path geometry check. Preview/Cancel preserve object count and original
+placement; commit is one Undo step. Undo/Redo, save/reopen, source edits updating
+all copies, empty-label/stale-frame/booked-transaction refusal and injected-failure
+rollback of both object and parent membership pass. Coincident copies are deliberate.
+Five visual/ captures were reviewed: settings, ghost, missing-label recovery,
+reopened shared-source growth and changed-frame refusal. Copy-Sources.FCStd,
+Linked-Copies.FCStd and Edited-Copies.FCStd are owner fixtures. Source/runtime hashes
+and accepted suites are recorded in validated-identities.json and
+acceptance-summary.json; the historical About stamp is not this source identity.
+No installer/release update. Full F072 remains open for independent definitions,
+point picking/alignment, wider transform subjects and physical/high-DPI acceptance.
+[Owner procedure](../tests/OccurrenceMove.md#shared-definition-copy-f072-107cd).
+Stop at this usable copy branch and rotate pending owner workflow feedback.
 
 10.7a/b grouped evidence (2026-10-01): both tasks preceded one FreeCADGui/
 FreeCADGui_Resources Release build, exit 0. Initial grouped/ passed 7 appearance
@@ -6562,7 +6604,7 @@ reconciliation rules above to every entry.
 <a id="f072"></a>
 ### F072 — Unified Move/Copy dialog
 
-**Owning tasks:** 10.7, 10.7a/b. **Status:** One-occurrence Move branch is ready for owner testing: explicit world/occurrence translation, pivot rotation, view-only preview and transactional confirmation. Copy, point-to-point picking/alignment and wider transform subjects remain open. See F074 evidence and [owner procedure](../tests/OccurrenceMove.md).
+**Owning tasks:** 10.7, bounded tasks 10.7a-d. **Status:** Move and shared-definition Copy branches are ready for owner testing. The explicit action reuses world/occurrence transforms and ghost preview; copying preserves original/source placements and native appearance. The copy batch passes 25 selected checks with five reviewed captures, including Undo/Redo, rollback and save/reopen. Full F072 remains open for independent definitions, point-to-point/alignment and wider transform scope/physical acceptance. [Owner procedure](../tests/OccurrenceMove.md).
 
 **Packages:** U07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Explicit one-time movement of an unconstrained native occurrence."""
+"""Explicit one-time movement or shared-definition copying of a native occurrence."""
 import math
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -29,7 +29,7 @@ def review(link):
         raise ValueError(tr("Select a whole unscaled native Link, not an array or source definition."))
     source = link.LinkedObject
     if source is None or source.Document != link.Document or not source.isDerivedFrom("Part::Feature"):
-        raise ValueError(tr("This move supports a direct same-document link to a Part solid or Body."))
+        raise ValueError(tr("This workflow supports a direct same-document link to a Part solid or Body."))
     if (link.ExpressionEngine or any(obj.TypeId != "App::Part" for obj in link.InList)
             or "ReadOnly" in link.getPropertyStatus("LinkPlacement")
             or "ReadOnly" in link.getPropertyStatus("Placement")):
@@ -93,6 +93,38 @@ def move(link, expected, mode, frame, vector, angle=0., pivot=(0., 0., 0.)):
         raise
 
 
+def copy_occurrence(link, expected, label, mode, frame, vector, angle=0., pivot=(0., 0., 0.)):
+    """Create one native Link at the reviewed destination, retaining its definition."""
+    doc = link.Document
+    if (App.ActiveDocument != doc or Gui.Control.activeDialog()
+            or doc.HasPendingTransaction or App.getActiveTransaction()):
+        raise ValueError(tr("Activate this document and finish the current task or edit transaction."))
+    if not label.strip() or "\x00" in label:
+        raise ValueError(tr("Enter a nonempty label for the copied occurrence."))
+    placement, shape, world = candidate(link, expected, mode, frame, vector, angle, pivot)
+    parent = link.getParentGeoFeatureGroup()
+    doc.openTransaction("Copy occurrence once")
+    try:
+        # Shallow native copy retains Link target and view overrides, not a new definition.
+        copied = doc.copyObject(link, False)
+        if copied.TypeId != "App::Link" or copied.LinkedObject != link.LinkedObject:
+            raise ValueError(tr("The copy did not retain the shared definition."))
+        if parent:
+            parent.addObject(copied)
+        copied.Label = label.strip()
+        copied.LinkPlacement = placement
+        doc.recompute()
+        review(copied)
+        if review(link) != expected:
+            raise ValueError(tr("The original occurrence changed during copying."))
+        doc.commitTransaction()
+        return copied
+    except Exception:
+        doc.abortTransaction()
+        doc.recompute()
+        raise
+
+
 class Ghost:
     """A non-pickable, view-owned overlay; never a document object or transaction."""
     def __init__(self, shape):
@@ -130,13 +162,19 @@ class MoveDialog(QtWidgets.QDialog):
         self.key, self.doc = identity(link), link.Document
         self.closed = self.saving = False
         self.expected = self.ghost = None
-        self.setWindowTitle(tr("Move occurrence once"))
+        self.setWindowTitle(tr("Move or copy occurrence"))
         self.resize(660, 480)
         layout = QtWidgets.QVBoxLayout(self)
         self.summary = QtWidgets.QLabel(link.Label + " [" + link.Name + "]")
         self.summary.setTextFormat(QtCore.Qt.PlainText)
         layout.addWidget(self.summary)
         form = QtWidgets.QFormLayout()
+        self.action = QtWidgets.QComboBox()
+        self.action.addItem(tr("Move existing occurrence"), "Move")
+        self.action.addItem(tr("Copy occurrence (shared definition)"), "Copy")
+        form.addRow(tr("Action"), self.action)
+        self.copyLabel = QtWidgets.QLineEdit(link.Label + tr(" copy"))
+        form.addRow(tr("Copy label"), self.copyLabel)
         self.mode = QtWidgets.QComboBox()
         self.mode.addItems(["Translate", "Rotate"])
         self.frame = QtWidgets.QComboBox()
@@ -171,8 +209,10 @@ class MoveDialog(QtWidgets.QDialog):
             "Offsets are incremental. Rotation uses the typed axis and pivot in the chosen frame. "
             "Occurrence axes use this link's current orientation within its parent containers. "
             "The teal wireframe previews the result; original geometry stays visible. Move once "
-            "changes only this placement in one Undo step. It creates no mate or persistent "
-            "relationship. Cancel removes the preview without changing the model."))
+            "changes only this placement. Copy creates one new occurrence in the same container, "
+            "sharing the source definition and retaining appearance/visibility. Source edits affect "
+            "both occurrences; Copy does not make geometry independent. Each action is one Undo "
+            "step and creates no mate. Cancel removes the preview without changing the model."))
         note.setWordWrap(True)
         layout.addWidget(note)
         self.message = QtWidgets.QLabel()
@@ -192,6 +232,8 @@ class MoveDialog(QtWidgets.QDialog):
         self.previewButton.clicked.connect(self.preview)
         self.moveButton.clicked.connect(self.commit)
         cancel.clicked.connect(self.reject)
+        self.action.currentIndexChanged.connect(self.fieldsChanged)
+        self.copyLabel.textChanged.connect(self.clearGhost)
         self.mode.currentIndexChanged.connect(self.fieldsChanged)
         self.frame.currentIndexChanged.connect(self.clearGhost)
         for field in self.offset + self.axis + self.pivot + [self.angle]:
@@ -208,6 +250,9 @@ class MoveDialog(QtWidgets.QDialog):
 
     def fieldsChanged(self):
         self.clearGhost()
+        copying = self.action.currentData() == "Copy"
+        self.copyLabel.setEnabled(copying)
+        self.moveButton.setText(tr("Create linked copy") if copying else tr("Move once"))
         rotation = self.mode.currentText() == "Rotate"
         for field in self.offset:
             field.setEnabled(not rotation)
@@ -225,7 +270,7 @@ class MoveDialog(QtWidgets.QDialog):
         self.expected = None
         try:
             self.expected = review(resolve(self.key))
-            self.message.setText(tr("Ready. Preview or move using the explicit frame and values."))
+            self.message.setText(tr("Ready. Preview, then move or create a shared-definition copy using the explicit values."))
         except Exception as error:
             self.message.setText(str(error))
         self.previewButton.setEnabled(self.expected is not None)
@@ -247,7 +292,10 @@ class MoveDialog(QtWidgets.QDialog):
     def commit(self):
         self.saving = True
         try:
-            move(resolve(self.key), self.expected, *self.values())
+            if self.action.currentData() == "Copy":
+                copy_occurrence(resolve(self.key), self.expected, self.copyLabel.text(), *self.values())
+            else:
+                move(resolve(self.key), self.expected, *self.values())
             self.accept()
         except Exception as error:
             self.message.setText(str(error))
@@ -291,8 +339,8 @@ _dialogs = []
 
 class CommandMove:
     def GetResources(self):
-        return {"MenuText": tr("Move occurrence once..."),
-                "ToolTip": tr("Translate or rotate one unconstrained occurrence in world or occurrence axes")}
+        return {"MenuText": tr("Move or copy occurrence..."),
+                "ToolTip": tr("Move or create a shared-definition copy of one unconstrained occurrence in world or occurrence axes")}
 
     def IsActive(self):
         return App.ActiveDocument is not None and not Gui.Control.activeDialog()
