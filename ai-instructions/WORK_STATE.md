@@ -1,6 +1,31 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.4c/d, advancing F029/F032. Empty or
+Latest product batch: phase 8, tasks 8.1.4e/f, advancing F029-F031. Extrude
+end-limit typing/picking now reject self and downstream links before assignment.
+Typed datum/origin planes follow the existing Body/type selection policy. Rejected
+picks retain saved links and displayed names while keeping the picker active;
+typed rejection, correction, invalid OK and edit Cancel remain recoverable.
+Both fixes and six GUI cases preceded one native PartDesignGui Release build.
+Final acceptance: 213 distinct passing tests, zero failures/errors/skips, macro
+PASS and exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-extrude-reference-gates-20260930, including baseline,
+baseline-scope, build.log, grouped, visual, acceptance-summary.json and
+validated-identities.json. Old binaries reproduced typed foreign-plane scope
+bypass; the final baseline assigns a unique foreign-origin label. Deliberate
+cycles were not assigned to old binaries; the source audit found the missing guard.
+No corrective native rebuild. All three source identities, staged test and native
+hashes match. PartDesignGui SHA256:
+065d9f5af5615cfcef42909b801840e0457132b924fb3420afca98376fa36969.
+Three task captures are readable. New checks cover both sides/aliases, direct/
+indirect synthetic dependants, rejected picks, correction, foreign/owned planes,
+invalid OK and edit Cancel links/Body Tip/geometry/dependency preservation.
+All 127 item specifications remain intact. Start-reference and broader command/
+occurrence/global-filter, physical input/high-DPI and F032 Apply/repeat acceptance
+remain open. No installer/release or format change. The older executable stamp
+is not rebuilt-module identity. Next bounded focus: audit start-reference
+restrictions/recovery separately, then group related changes before building.
+
+Previous product batch: phase 8, tasks 8.1.4c/d, advancing F029/F032. Empty or
 malformed Extrude face-limit text clears only the edited side's saved link,
 invalidating the preview instead of retaining the previous valid result. Invalid
 OK keeps the editor open with automatic preview on/off. Typed datum/origin planes
@@ -23,9 +48,8 @@ and missing inputs, correction, edit Cancel links/Body Tip/geometry, typed plane
 Undo/Redo and save/reopen followed by another plane move. All 127 item specs remain
 intact. Broader command/occurrence/dependency-selection, physical input/high-DPI
 and F032 Apply/repeat gates remain open. No installer/release or format change.
-The older executable stamp is not rebuilt-module identity. Next bounded focus:
-audit typed-reference restrictions against existing selection filters, then batch
-related changes before another build.
+The older executable stamp is not rebuilt-module identity. Its end-limit selection
+restriction follow-up is completed above.
 
 Previous product batch: phase 8, tasks 8.1.4a/b, advancing F029. Extrude now
 labels total symmetric and independent per-side lengths. Typed second-side face

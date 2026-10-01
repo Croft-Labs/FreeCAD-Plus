@@ -410,6 +410,126 @@ class TestExtrudeTaskPanel(unittest.TestCase):
         self.doc.recompute()
         return plane
 
+    def makeDependentLimit(self, feature):
+        dependent = self.makeLimit(16)
+        dependent.addProperty("App::PropertyLink", "Source")
+        dependent.Source = feature
+        self.doc.recompute()
+        return dependent
+
+    def testTypedSelfLimitsAreRejectedBeforeAssigningCycles(self):
+        for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
+            feature, upper, lower = self.startTwoFaceLimits(command)
+            for field, prop, valid in (("lineFaceName", "UpToFace", upper),
+                                       ("lineFaceName2", "UpToFace2", lower)):
+                with self.subTest(command=command, field=field):
+                    self.typeFaceText(field, feature.Label + ":Face1")
+                    self.assertIsNone(getattr(feature, prop))
+                    self.assertFalse(feature.isValid())
+                    self.assertNotIn(feature, feature.OutList)
+                    self.editFaceText(field, valid)
+                    self.assertTrue(feature.isValid(), feature.getStatusString())
+            Gui.Control.activeTaskDialog().reject()
+            Gui.Selection.clearSelection()
+
+    def testTypedDownstreamLimitsRejectDirectAndIndirectCycles(self):
+        feature, upper, lower = self.startTwoFaceLimits()
+        direct = self.makeDependentLimit(feature)
+        indirect = self.makeDependentLimit(direct)
+        for dependent in (direct, indirect):
+            for field, prop, valid in (("lineFaceName", "UpToFace", upper),
+                                       ("lineFaceName2", "UpToFace2", lower)):
+                with self.subTest(dependent=dependent.Name, field=field):
+                    self.editFaceText(field, dependent)
+                    self.assertIsNone(getattr(feature, prop))
+                    self.assertNotIn(dependent, feature.OutList)
+                    self.assertFalse(feature.isValid())
+                    self.editFaceText(field, valid)
+                    self.assertTrue(feature.isValid(), feature.getStatusString())
+
+    def testPickedDependentKeepsSavedLimitsAndPickerForCorrection(self):
+        feature, upper, lower = self.startTwoFaceLimits()
+        dependent = self.makeDependentLimit(feature)
+        for buttonName, prop, valid in (("buttonFace", "UpToFace", upper),
+                                        ("buttonFace2", "UpToFace2", lower)):
+            button = self.widget(QtGui.QToolButton, buttonName)
+            button.setChecked(True)
+            for rejected in (feature, dependent):
+                Gui.Selection.clearSelection()
+                Gui.Selection.addSelection(rejected, "Face1")
+                self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+                self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+                self.assertTrue(button.isChecked())
+                field = "lineFaceName2" if prop == "UpToFace2" else "lineFaceName"
+                self.assertEqual(self.widget(QtGui.QLineEdit, field).text(), valid.Label + ":Face1")
+                self.assertTrue(feature.isValid(), feature.getStatusString())
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(valid, "Face1")
+            self.assertEqual(getattr(feature, prop), (valid, ["Face1"]))
+            self.assertFalse(button.isChecked())
+
+    def testTypedForeignPlanesFollowPickScopeAndRecover(self):
+        foreignBody = self.doc.addObject("PartDesign::Body", "OtherBody")
+        foreignDatum = foreignBody.newObject("PartDesign::Plane", "OtherPlane")
+        foreignDatum.Placement.Base.z = 16
+        foreignOrigin = next(obj for obj in foreignBody.Origin.OriginFeatures if obj.Name.startswith("XY_Plane"))
+        foreignOrigin.Label = "Other Body XY plane"
+        self.doc.recompute()
+        feature, upper, lower = self.startTwoFaceLimits()
+        for plane in (foreignDatum, foreignOrigin):
+            for field, prop, valid in (("lineFaceName", "UpToFace", upper),
+                                       ("lineFaceName2", "UpToFace2", lower)):
+                with self.subTest(plane=plane.Name, field=field):
+                    self.typeFaceText(field, plane.Label)
+                    self.assertIsNone(getattr(feature, prop))
+                    self.assertFalse(feature.isValid())
+                    self.editFaceText(field, valid)
+                    self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.accept()
+        self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+        self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+
+    def testPlanePickScopeRetainsValidReferenceAndAllowsOwnDatum(self):
+        own = self.makeDatumLimit(16)
+        foreignBody = self.doc.addObject("PartDesign::Body", "OtherBody")
+        foreign = foreignBody.newObject("PartDesign::Plane", "OtherPlane")
+        foreign.Placement.Base.z = 18
+        self.doc.recompute()
+        feature, upper, lower = self.startTwoFaceLimits()
+        button = self.widget(QtGui.QToolButton, "buttonFace")
+        button.setChecked(True)
+        Gui.Selection.addSelection(foreign)
+        self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+        self.assertTrue(button.isChecked())
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(own)
+        self.assertEqual(feature.UpToFace, (own, [""]))
+        self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+        self.assertFalse(button.isChecked())
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.assertAlmostEqual(feature.Shape.Volume, 1096)
+
+    def testRejectedTypedDependencyOKAndCancelRestoreAcceptedDefinition(self):
+        feature, upper, lower = self.startTwoFaceLimits()
+        self.accept()
+        dependent = self.makeDependentLimit(feature)
+        self.assertTrue(feature.ViewObject.doubleClicked())
+        Gui.updateGui()
+        self.editFaceText("lineFaceName2", dependent)
+        Gui.Control.activeTaskDialog().accept()
+        Gui.updateGui()
+        self.assertTrue(Gui.Control.activeDialog())
+        self.assertIsNone(feature.UpToFace2)
+        self.assertNotIn(dependent, feature.OutList)
+        Gui.Control.activeTaskDialog().reject()
+        self.doc.recompute()
+        self.assertEqual(feature.UpToFace, (upper, ["Face1"]))
+        self.assertEqual(feature.UpToFace2, (lower, ["Face1"]))
+        self.assertEqual(dependent.Source, feature)
+        self.assertTrue(feature.isValid(), feature.getStatusString())
+        self.assertEqual(self.body.Tip, feature)
+        self.assertAlmostEqual(feature.Shape.Volume, 1064)
+
     def testClearedAndMalformedFaceTextInvalidatesOnlyEditedSide(self):
         for command in ("PartDesign_Extrude", "PartDesign_Pocket"):
             feature, upper, lower = self.startTwoFaceLimits(command)

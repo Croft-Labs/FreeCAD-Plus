@@ -615,6 +615,17 @@ void PartDesignGui::TaskExtrudeParameters::selectedFace(
     SideController& side
 )
 {
+    auto selected = getAppDocument()->getObject(msg.pObjectName);
+    NoDependentsSelection dependencyGate(getObject());
+    ReferenceSelection referenceGate(getObject(), AllowSelection::FACE);
+    if (!selected || !dependencyGate.allow(getAppDocument(), selected, msg.pSubName)
+        || (PartDesign::Feature::isDatum(selected)
+            && !referenceGate.allow(getAppDocument(), selected, msg.pSubName))) {
+        // Keep the previous reference and picker active for a valid replacement.
+        updateReferenceName(side.lineFaceName, *side.UpToFace, tr("Face selection active"));
+        return;
+    }
+
     QString refText = onAddSelection(msg, *side.UpToFace);
 
     if (refText.length() > 0) {

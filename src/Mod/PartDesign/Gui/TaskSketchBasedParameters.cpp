@@ -231,9 +231,20 @@ QVariant TaskSketchBasedParameters::setUpToFace(const QString& text, App::Proper
         return {};
     }
 
+    if (reference) {
+        NoDependentsSelection dependencyGate(getObject());
+        if (!dependencyGate.allow(doc, obj, "")) {
+            return {};
+        }
+    }
+
     if (reference && (obj->isDerivedFrom<App::Plane>()
                       || obj->isDerivedFrom<PartDesign::Plane>())) {
         if (!parts[1].isEmpty()) {
+            return {};
+        }
+        ReferenceSelection planeGate(getObject(), AllowSelection::FACE);
+        if (!planeGate.allow(doc, obj, "")) {
             return {};
         }
         // Typed plane limits must update the preview just like picked planes.

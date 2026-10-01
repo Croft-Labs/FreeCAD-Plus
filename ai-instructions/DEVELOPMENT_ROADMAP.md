@@ -2,16 +2,16 @@
 
 ## Current focus
 
-- Current product batch: phase 8 Extrude typed-limit recovery (8.1.4c/d),
-  advancing F029/F032. Both fixes and six GUI cases preceded one native build.
-  Final acceptance: 207 distinct passing tests and three readable task captures.
-  Empty/malformed face text invalidates only the edited side, invalid OK stays
-  in the editor with preview on/off, and typed datum/origin planes update their
-  reference before OK. Correction, Cancel, Undo/Redo and save/reopen pass.
-  Broader command/occurrence/dependency-selection, physical input/high-DPI and
-  F032 Apply/repeat acceptance remain open. No installer or release. Next bounded
-  focus: audit typed-reference selection restrictions against the existing pick
-  filters before grouping further changes.
+- Current product batch: phase 8 Extrude end-limit reference restrictions
+  (8.1.4e/f), advancing F029-F031. Both fixes and six GUI cases preceded one
+  native build. Final acceptance: 213 distinct passing tests and three readable
+  task captures. Self/downstream links are rejected before assignment; typed
+  datum/origin planes follow existing Body selection rules. Rejected picks retain
+  saved references and displayed names while staying ready for correction.
+  Typed rejection, invalid OK and edit Cancel recovery pass. Broader command,
+  occurrence/global-filter, physical input/high-DPI and F032 Apply/repeat gates
+  remain open. No installer/release. Next bounded focus: audit start-reference
+  restrictions and recovery separately from the validated end-limit workflow.
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1898,6 +1898,13 @@ implementation or mark its unfinished validation complete through this plan.
   preview; verify face-to-plane repair, Undo/Redo and save/reopen associativity.
   F029. Native plane assignment, repair and persistence checks pass; grouped
   evidence with 8.1.4c below.
+- [ X ] 8.1.4e Reject self/downstream Extrude end-limit references before assignment
+  in typed and picked paths; keep picked rejection recoverable and typed invalid OK
+  open, with Cancel restoring the definition. F029/F031. Native self/dependency,
+  correction and transaction checks pass; grouped evidence below.
+- [ X ] 8.1.4f Apply existing Body ownership/type rules to typed datum/origin end
+  planes and preserve valid references on rejected picks. F029/F030. Native
+  ownership and owned-plane correction checks pass; grouped evidence below.
 - [   ] 8.1.5 Add consistent live-preview and error states; make Cancel restore geometry, visibility and selection. Define Apply/repeat behavior separately from OK so repeated creation does not create accidental features.
 
 - [ X ] 8.1.5a Restore original selection on Trim Body/Isocline creation Cancel,
@@ -2202,6 +2209,36 @@ valid typed planes. All 127 item IDs remain intact. The older executable stamp
 is not rebuilt-module identity. No schema/geometry-kernel/native-format change,
 installer or release. Broader command/occurrence/dependency-selection, physical
 input/high-DPI and F032 Apply/repeat acceptance remain open.
+
+**Extrude end-limit restrictions batch (8.1.4e/f), 2026-09-30:** Both fixes
+and six GUI regression cases preceded one successful PartDesignGui Release build.
+Typed end limits reuse NoDependentsSelection before assigning a link. Picked end
+faces also reject self/downstream references before assignment, retaining the saved
+reference, displayed name and active picker for correction. Typed datum/origin
+planes and picked datums use the existing ReferenceSelection Body/type policy.
+The shared parser's legacy callers and ordinary external-face policy are preserved.
+**213 distinct tests pass, zero failures/errors/skips**: 11 Extrude model, 14 Pad
+model, 6 Pocket model, 43 Extrude task, 45 Pattern task/model, 16 Linear, 6 Polar,
+3 MultiTransform, 14 Pad task, 5 Revolve task, 24 Trim task and 26 Isocline task.
+New cases cover typed self links on both sides/aliases, direct and indirect
+synthetic dependants, rejected self/dependent viewport picks, valid replacement,
+foreign-Body datum/origin planes, owned-plane picking, invalid OK and edit Cancel
+restoring accepted links, Body Tip, geometry and dependency direction.
+Evidence: `D:\Temp\Office-PC\freecad-plus-extrude-reference-gates-20260930`, including
+`baseline`, `baseline-scope`, `build.log`, `grouped`, `visual`,
+`acceptance-summary.json` and `validated-identities.json`. Old binaries reproduced
+foreign-plane scope bypass. The second baseline uses a unique foreign-origin label
+so ownership is tested independently of label ambiguity. Deliberate cycles were
+not assigned to old binaries; source audit identified the missing dependency guard.
+No corrective native rebuild. Final macro PASS, exit 0; three source identities,
+the staged test and native hashes match. PartDesignGui SHA256:
+`065d9f5af5615cfcef42909b801840e0457132b924fb3420afca98376fa36969`.
+Three readable captures cover typed self rejection, typed foreign-plane rejection
+and a rejected dependent pick retaining its saved limit. All 127 item IDs remain
+intact. The older executable stamp is not rebuilt-module identity. No schema,
+geometry-kernel or native-format change, installer or release. Start-reference,
+broader command/occurrence/global-filter, physical input/high-DPI and F032
+Apply/repeat acceptance remain separate open gates.
 
 ### [   ] 8.2 Finish unified command families
 
@@ -4589,7 +4626,7 @@ reconciliation rules above to every entry.
 <a id="f029"></a>
 ### F029 — Common extent controls
 
-**Owning tasks:** 8.1, 10.4. **Status:** Extrude/Pad/Pocket total symmetric and independent per-side labels, measured spans, typed second-side limit isolation and edit Cancel are validated under 8.1.4a/b (201 distinct passing checks). The specified Extrude examples for associative face movement, signed end offsets, missing-limit errors, repair, Undo/Redo and save/reopen are complete for the active-Body workflow. Empty/malformed typed limits, invalid OK with preview on/off, typed datum/origin plane preview and repair persistence are validated under 8.1.4c/d (207 distinct passing checks). Broader command-family, occurrence/dependency-selection and physical input/high-DPI acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Extrude/Pad/Pocket total symmetric and independent per-side labels, measured spans, typed second-side limit isolation and edit Cancel are validated under 8.1.4a/b (201 distinct passing checks). The specified Extrude examples for associative face movement, signed end offsets, missing-limit errors, repair, Undo/Redo and save/reopen are complete for the active-Body workflow. Empty/malformed typed limits, invalid OK with preview on/off, typed datum/origin plane preview and repair persistence are validated under 8.1.4c/d (207 distinct passing checks). End-limit typing/picking reject self/downstream references before assignment; typed datum/origin planes follow Body selection policy under 8.1.4e/f (213 distinct passing checks). Broader command-family, occurrence/dependency-selection and physical input/high-DPI acceptance remain open.
 
 **Packages:** U06 · **First delivery:** P4/P7 · **Likely scope:** Feature
 
@@ -4602,7 +4639,7 @@ reconciliation rules above to every entry.
 <a id="f030"></a>
 ### F030 — Selection collectors
 
-**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Extrude/Pad/Pocket profile inspection and feedback are validated under 8.1.3d/e. Combined Pattern Originals feedback, Clear/replacement recovery and direction-role isolation are validated under 8.1.3f-h (144 distinct passing tests). Pattern row/all-entry inspection by object identity and visibility lifecycle are validated under 8.1.3i (149 distinct final checks). Pattern inline rejection/correction feedback is validated under 8.1.3j (155 distinct final checks). Direction/Direction 2/Axis reference feedback, inspection and visibility lifecycle are validated under 8.1.3k/l (161 distinct final checks). Precise Body/sketch/datum type rejection is validated under 8.1.3m (167 distinct final checks). Other command families, general occurrence/selection filters and disambiguation acceptance remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Trim Body/Isocline inspection, direction-reference clearing, entry counts, type hints and active-role text are validated under 8.1.3a-c. Extrude/Pad/Pocket profile inspection and feedback are validated under 8.1.3d/e. Combined Pattern Originals feedback, Clear/replacement recovery and direction-role isolation are validated under 8.1.3f-h (144 distinct passing tests). Pattern row/all-entry inspection by object identity and visibility lifecycle are validated under 8.1.3i (149 distinct final checks). Pattern inline rejection/correction feedback is validated under 8.1.3j (155 distinct final checks). Direction/Direction 2/Axis reference feedback, inspection and visibility lifecycle are validated under 8.1.3k/l (161 distinct final checks). Precise Body/sketch/datum type rejection is validated under 8.1.3m (167 distinct final checks). Extrude rejected end-limit picks retain saved links/displayed names and an active picker; typed plane scope and correction are validated under 8.1.4e/f (213 distinct passing checks). Other command families, general occurrence/selection filters and disambiguation acceptance remain open.
 
 **Packages:** U06, A04 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
 
@@ -4615,7 +4652,7 @@ reconciliation rules above to every entry.
 <a id="f031"></a>
 ### F031 — Preselection and postselection
 
-**Owning tasks:** 8.1, 10.4. **Status:** Specified Extrude parity, deterministic mixed selections and creation/edit Cancel acceptance are complete for the active-Body workflow under 8.1.2b/8.1.5b (138 final passing checks). Extrude/Pad/Pocket use the same profile gate before and after startup; multiple profiles require explicit choice, invalid picks receive inline feedback. Trim Body/Isocline checks remain validated under 8.1.2a, 8.1.5a and 5.1.11. Combined Pattern creation/edit Cancel now restores original subelement selection and model state under 8.1.5c (149 distinct final checks). Pattern active-Body preselection/later-pick parity, mixed/invalid-input recovery and inline reasons are validated under 8.1.2c/8.1.3j (155 distinct final checks), with both Linear/Circular geometry comparisons. Precise type rejection and abandoned reference-role/scope recovery are validated under 8.1.3m/8.1.5d (167 distinct final checks). Broader command-family, occurrence and multi-target semantics remain open.
+**Owning tasks:** 8.1, 10.4. **Status:** Specified Extrude parity, deterministic mixed selections and creation/edit Cancel acceptance are complete for the active-Body workflow under 8.1.2b/8.1.5b (138 final passing checks). Extrude/Pad/Pocket use the same profile gate before and after startup; multiple profiles require explicit choice, invalid picks receive inline feedback. Trim Body/Isocline checks remain validated under 8.1.2a, 8.1.5a and 5.1.11. Combined Pattern creation/edit Cancel now restores original subelement selection and model state under 8.1.5c (149 distinct final checks). Pattern active-Body preselection/later-pick parity, mixed/invalid-input recovery and inline reasons are validated under 8.1.2c/8.1.3j (155 distinct final checks), with both Linear/Circular geometry comparisons. Precise type rejection and abandoned reference-role/scope recovery are validated under 8.1.3m/8.1.5d (167 distinct final checks). Extrude typed/picked end-limit dependency rejection, plane ownership, valid correction and edit Cancel are validated under 8.1.4e/f (213 distinct passing checks). Broader command-family, occurrence and multi-target semantics remain open.
 
 **Packages:** U06, A07 · **First delivery:** P4 · **Likely scope:** UI/Feature
 

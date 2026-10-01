@@ -68,6 +68,14 @@ repair remains associative through Undo/Redo and save/reopen followed by a plane
 Numeric missing-face errors stay recoverable; this does not establish general
 occurrence, cross-Body or dependency-selection acceptance.
 
+End-limit restriction checks reject self and direct/indirect downstream references
+before assignment, for both typed side fields and viewport selection. Rejected picks
+retain the saved links, displayed name and active picker until correction. Typed
+foreign-Body datum/origin planes follow the existing selection ownership rules;
+owned planes remain usable. Invalid OK and edit Cancel preserve the accepted model
+and dependency graph. Baseline runs only exercise foreign-plane scope on old native
+code; deliberate dependency cycles are tested only with the rebuilt guards present.
+
 F031 regressions compare profile/axis links, operation, direction/extent parameters
 and accepted volumes between
 preselection and command-first picking for Extrude, Pad and Pocket in Add/Subtract.
