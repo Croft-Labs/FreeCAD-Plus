@@ -20,6 +20,9 @@ No schema version, native source, installer or release changes. Keep broader tes
 deferred for owner feedback; other-file consumers and atomic multi-file crash recovery
 remain open. Saving the parent persists its new external links; Undo leaves the newly
 created external file on disk.
+Implementation `3a325840f6` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine unchanged
+native artifacts, the build and the final checks/captures/fixtures.
 
 Previous feedback batch follows.
 

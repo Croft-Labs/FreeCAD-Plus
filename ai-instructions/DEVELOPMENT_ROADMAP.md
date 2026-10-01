@@ -2477,6 +2477,10 @@ Two final navigator captures were reviewed. Feedback fixture:
 `Bracket.cadprt`. No schema version, native source, installer or release change.
 Live isolated-tab migration, general other-file consumers and atomic crash recovery
 across the new external file and parent save are not established by this check.
+Publication: implementation `3a325840f6` pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine unchanged
+native artifacts and final build/check/capture/fixture identities. This is a source
+milestone, not an installer or release publication.
 
 Validation evidence: `D:\Temp\Office-PC\freecad-plus-components-20261001`.
 Grouped Release native App/Gui and PartScripts build passes are recorded under
