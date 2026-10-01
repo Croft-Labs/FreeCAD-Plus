@@ -2497,6 +2497,9 @@ checked at runtime. Feedback fixture:
 with sibling `Support-Renamed.cadprt`. No schema, geometry-model, installer or release
 change. Broader Save All/close/recovery/task-time-save behavior and native Undo/Redo
 ownership routing remain separate acceptance work.
+Publication: implementation `67a2f3d460` pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine native
+artifacts, four changed native sources and final evidence. No release published.
 
 2026-10-01 task-transition feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-task-context-20261001`.

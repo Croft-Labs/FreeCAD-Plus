@@ -18,6 +18,9 @@ Feedback fixture:
 No schema version, geometry model, installer or release changes. Broader Save All,
 close/recovery dialogs, task-time saves and native Undo/Redo ownership routing remain
 separate acceptance work; keep broad testing deferred for owner feedback.
+Implementation `67a2f3d460` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine native
+artifacts, four changed native sources and final build/check/fixture/capture evidence.
 
 Previous feedback batch follows.
 
