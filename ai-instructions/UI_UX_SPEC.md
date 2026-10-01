@@ -1334,3 +1334,21 @@ Accepted features retain native Base/Edges/EdgeLinks and downstream semantics.
 No new live preview, tangent-chain collector, corner option or exact failure-region
 classifier is claimed. Broader topology and physical/high-DPI acceptance remain open.
 [Owner procedure](../tests/EdgeTreatmentRecovery.md).
+
+## UI-048: Sketch Trim gestures (F050; roadmap 11.6e/f)
+
+The existing Sketcher Trim tool retains its boundary markers and Include axes
+control. Pressing and dragging applies native trims in one gesture transaction;
+release commits it as one Undo step. An empty gesture creates no transaction.
+A consumed pick is cleared so release cannot apply the same pick again. Escape,
+right-click or leaving edit cancels unfinished work; completed gestures remain.
+A trim exception aborts the current gesture and reports failure.
+
+The existing tool notice shows progress and the release/Cancel rule, then completed
+trim count and constraint identifiers supplied by native removal notifications. The notice says
+removed or replaced because a native operation can retain a name on a new identity;
+it wraps within the task pane.
+No heuristic comparison or silent constraint reconstruction is introduced. Native
+trim semantics own retained/remapped constraints and construction geometry.
+New geometric previews and extension guidance remain open.
+[Owner procedure](../tests/TrimGesture.md).

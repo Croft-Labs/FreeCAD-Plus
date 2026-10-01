@@ -106,11 +106,15 @@ public:
     {}
     ~DrawSketchHandlerTrimming() override
     {
+        cancelGesture();
         Gui::Selection().rmvSelectionGate();
     }
 
     bool pressButton(Base::Vector2d onSketchPos) override
     {
+        gestureFailed = false;
+        removedConstraints.clear();
+        trimmedCount = 0;
         mousePressed = true;
         return DrawSketchControllableHandler::pressButton(onSketchPos);
     }
@@ -118,7 +122,22 @@ public:
     bool releaseButton(Base::Vector2d onSketchPos) override
     {
         mousePressed = false;
+        if (gestureOpen) {
+            removalConnection.disconnect();
+            commitCommand();
+            gestureOpen = false;
+            currentTransactionID = 0;
+            showNotice(tr("Trimmed %1 segment(s) in one Undo step. Native constraints removed or replaced: %2")
+                .arg(trimmedCount).arg(removedConstraints.isEmpty()
+                    ? tr("none") : removedConstraints.join(QStringLiteral(", "))));
+        }
         return DrawSketchControllableHandler::releaseButton(onSketchPos);
+    }
+
+    void cancelCurrentAction() override
+    {
+        cancelGesture();
+        DrawSketchControllableHandler::cancelCurrentAction();
     }
 
     void updateDataAndDrawToPosition(Base::Vector2d onSketchPos) override
@@ -176,6 +195,10 @@ public:
 
     bool canGoToNextMode() override
     {
+        // A press may already have trimmed its pick before the state transition.
+        if (gestureOpen) {
+            return true;
+        }
         if (geoIdToTrim < 0) {
             return false;
         }
@@ -186,7 +209,7 @@ public:
 
     void executeCommands() override
     {
-        if (geoIdToTrim < 0) {
+        if (geoIdToTrim < 0 || gestureFailed) {
             return;
         }
 
@@ -196,17 +219,36 @@ public:
         Gui::Selection().rmvPreselect();
 
         try {
-            openCommand(QT_TRANSLATE_NOOP("Command", "Trim edge"));
+            if (!gestureOpen) {
+                openCommand(QT_TRANSLATE_NOOP("Command", "Trim gesture"));
+                gestureOpen = true;
+                removalConnection = sketchgui->getSketchObject()->Constraints.signalConstraintsRemoved.connect(
+                    [this](const std::set<App::ObjectIdentifier>& paths) {
+                        if (collectRemovals) {
+                            for (const auto& path : paths) {
+                                const auto text = QString::fromStdString(path.toString());
+                                if (!removedConstraints.contains(text)) {
+                                    removedConstraints.append(text);
+                                }
+                            }
+                        }
+                    });
+            }
+            collectRemovals = true;
             Gui::cmdAppObjectArgs(
                 sketchgui->getObject(),
-                "trim(%d,App.Vector(%f,%f,0),%s)",
+                "trim(%d,App.Vector(%.17g,%.17g,0),%s)",
                 geoIdToTrim,
                 trimPos.x,
                 trimPos.y,
                 includeAxes ? "True" : "False"
             );
-            commitCommand();
+            collectRemovals = false;
+            ++trimmedCount;
+            geoIdToTrim = Sketcher::GeoEnum::GeoUndef;
             tryAutoRecompute(sketchgui->getObject<Sketcher::SketchObject>());
+            showNotice(tr("Trimming gesture: %1 segment(s). Release to keep; Escape cancels this gesture.")
+                .arg(trimmedCount));
         }
         catch (const Base::Exception&) {
             Gui::NotifyError(
@@ -214,11 +256,40 @@ public:
                 QT_TRANSLATE_NOOP("Notifications", "Error"),
                 QT_TRANSLATE_NOOP("Notifications", "Failed to trim edge")
             );
-            abortCommand();
+            cancelGesture();
+            gestureFailed = true;
+            showNotice(tr("Trim failed. This gesture was rolled back; earlier completed gestures are kept."));
         }
     }
 
 private:
+    void showNotice(const QString& text)
+    {
+        if (auto* widget = dynamic_cast<SketcherToolDefaultWidget*>(toolwidget)) {
+            if (auto* notice = widget->findChild<QLabel*>(QStringLiteral("notice"))) {
+                notice->setTextFormat(Qt::PlainText);
+                notice->setWordWrap(true);
+                notice->setMinimumWidth(0);
+                notice->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+            }
+            widget->setNoticeText(text);
+            widget->setNoticeVisible(true);
+        }
+    }
+
+    void cancelGesture()
+    {
+        collectRemovals = false;
+        removalConnection.disconnect();
+        mousePressed = false;
+        geoIdToTrim = Sketcher::GeoEnum::GeoUndef;
+        if (gestureOpen) {
+            gestureOpen = false;
+            abortCommand();
+            currentTransactionID = 0;
+        }
+    }
+
     std::string getToolName() const override
     {
         return "DSH_Trimming";
@@ -254,6 +325,12 @@ private:
 private:
     std::vector<Base::Vector2d> EditMarkers;
     bool mousePressed = false;
+    bool gestureOpen = false;
+    bool gestureFailed = false;
+    bool collectRemovals = false;
+    int trimmedCount = 0;
+    QStringList removedConstraints;
+    fastsignals::connection removalConnection;
     Base::Vector2d trimPos;
     int geoIdToTrim = Sketcher::GeoEnum::GeoUndef;
     bool includeAxes = false;
@@ -268,6 +345,7 @@ public:
             {{.state = SelectMode::SeekFirst,
               .hints
               = {{tr("%1 pick edge to trim", "Sketcher Trimming: hint"), {MouseLeft}},
+                 {tr("Hold and drag to trim; one drag is one Undo step"), {}},
                  {tr("%1 toggle include axes as trim boundaries"), {KeyU}}}}}
         );
     }

@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current bounded checkpoint ready for owner testing: F058 fillet/chamfer
+- Bounded checkpoint ready for owner testing: F050 native sketch Trim gestures,
+  phase 11 tasks 11.6e/f. One drag is one Undo step; unfinished gestures roll back,
+  and the task reports native removed/replaced-constraint identities. Both tasks
+  preceded the grouped build; a corrective build fixed demonstrated notice clipping
+  and clarified replacement semantics. Twelve distinct selected checks pass, five
+  final captures are reviewed, and save/reopen passes. Full F050 remains open.
+  [Owner procedure](../tests/TrimGesture.md). Rotate pending owner feedback.
+
+- Previous bounded checkpoint ready for owner testing: F058 fillet/chamfer
   recovery, phase 13 tasks 13.5e/f. Invalid acceptance keeps checked edges for
   correction and rolls back geometry; copied kernel inputs preserve sources.
   Both tasks preceded one grouped build; 16 distinct selected checks pass and
@@ -3759,6 +3767,35 @@ Whole F053/11.6 remain open for partial paste/remapping, external-reference choi
 Body/Part/occurrence scope, blocks, libraries, sketch patterns and physical acceptance.
 [Owner procedure](../tests/SketchReuse.md). Stop here for owner feedback and rotate.
 
+- [x] 11.6e Group native hold-and-drag Trim changes into one Undo step, commit
+  on release and roll back an unfinished/failed gesture on cancellation. Keep
+  earlier completed gestures and native trim/constraint semantics (F050).
+- [x] 11.6f Show completed trim count and native removed/replaced-constraint identifiers;
+  prevent release from reusing a consumed pick. Verify real viewport drags,
+  single click, Undo/Redo, empty gestures and Escape/edit-exit cancellation together.
+
+2026-10-01 bounded validation: both tasks preceded one 90-second SketcherGui build.
+A second 90-second build corrected notice clipping observed in captures and clarified
+that native removal notifications can include replacement identities retaining a name.
+Both builds exit 0. Five TestTrimGesture checks pass on the final source-built GUI;
+seven unchanged TestSketchFreedom checks passed in the initial grouped run: twelve
+distinct accepted checks, no skips. Final viewport-event coverage includes three-edge
+one-step Undo/Redo, single click without a duplicate release trim, empty drag,
+Escape preserving an earlier completed gesture and sketch-edit exit rollback.
+Five final captures were reviewed; the eight-geometry/seven-constraint result saves
+and reopens with matching geometry and a successful solve, and Undo restores the
+original named constraint. Kernel-exception rollback is implemented but not
+fault-injected. Evidence: `D:\Temp\Office-PC\freecad-plus-trim-gesture-20261001`
+(`grouped`, `notice-verified`, `visual-final`, build logs and `evidence.json`).
+An earlier capture run failed because its helper used an unavailable constraint-name
+API; that failure and superseded captures are retained separately. The About commit
+stamp is historical; source/runtime hashes identify this validation.
+
+This increment reuses existing boundary markers, Include axes and native geometry
+operations. New removal previews, extension-to-boundary guidance, general curve
+coverage and physical/high-DPI acceptance remain open. No owner acceptance or release
+is claimed. [Owner procedure](../tests/TrimGesture.md). Stop here and rotate.
+
 - [   ] 11.7 Make sketch placement, orientation, offset and support/reattachment
   explicit (S08; [F124](#f124)). Preview preserve-local versus preserve-world policies,
   prefer stable references where appropriate, and repair lost supports deliberately.
@@ -6707,7 +6744,7 @@ reconciliation rules above to every entry.
 <a id="f050"></a>
 ### F050 — Power trim/extend
 
-**Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 11.6. **Status:** Bounded native Trim gesture grouping and removed/replaced-constraint feedback ready for owner testing under 11.6e/f: twelve distinct checks pass, five final captures reviewed, Undo/Redo and save/reopen verified. Full power trim/extend acceptance remains open for removal previews, extension behavior, broader curves and owner workflow feedback. [Owner procedure](../tests/TrimGesture.md).
 
 **Packages:** S06 · **First delivery:** P5 · **Likely scope:** Feature
 
