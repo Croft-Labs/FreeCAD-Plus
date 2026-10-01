@@ -26,6 +26,9 @@ No schema change, broad suite, installer or release update. Continue component
 migration. Real multi-body edge-treatment contribution detachment, general topology/
 expression preservation, native suppression scheduling and solver/BOM/mass remain
 open; this review and the shared-sketch check do not complete those gates.
+Implementation `bc5ddabe9d` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching modules, six unchanged native
+artifacts, fixture hashes, reviewed capture and native diagnostics.
 
 Previous feedback batch:
 Current feedback batch: roadmap 7.8.8c, instance copy/reference continuity.

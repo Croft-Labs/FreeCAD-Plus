@@ -2574,8 +2574,10 @@ Fixtures in `smoke-accepted/`: `Component-Converted-Body.cadprt`,
 `Component-Shared-History.cadprt`, `Component-Dumb-Sketch.cadprt`.
 This does not prove real multi-body edge-treatment detachment, arbitrary downstream
 face/expression lineage, native reference/suppression scheduling or full format
-qualification. No schema version change, installer or release update. Publication
-is recorded after commit.
+qualification. No schema version change, installer or release update. Implementation
+`bc5ddabe9d105ab80209b2cc40ce403b03c64b79` was pushed to `origin/main` and verified
+with `git ls-remote`. `acceptance-identities.json` records seven matching modules,
+six unchanged native artifacts, the fixtures, reviewed capture and native diagnostics.
 
 2026-10-01 instance separation feedback batch (7.8.8c): reference/source-identity
 remapping, nested display override remapping and active-context changes preceded one
