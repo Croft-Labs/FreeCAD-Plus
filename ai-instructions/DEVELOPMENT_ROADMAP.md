@@ -2379,6 +2379,12 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   partial reference recovery and native clearing of obsolete saved link targets.
   Grouped native build and three focused recovery/Undo/reopen checks pass; broad
   dependency-package and multi-owning-file recovery remain in 7.8.3b.
+- [ X ] 7.8.3d Owning-file save feedback: native Save, Save As and Save a Copy
+  follow the active component definition's owner, retaining the displayed view/path.
+  Embedded definitions save their entire containing document; external definitions
+  save their own file. Backup Save As routing uses the same owner, and file-dialog
+  captions identify it. Grouped native build and three focused ownership/context
+  workflows pass. Save All/close/recovery remain in 7.8.3b.
 - [ X ] 7.8.4a Reference recovery feedback: refresh independent references before
   reporting failures, keep structurally valid .cadprt files open with broken reference
   geometry, and repair/retarget a direct-child reference without replacing its identity,
@@ -2475,6 +2481,22 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   and TechDraw projection after save/reopen; suppressed inputs clear clone/CAM geometry.
 - [   ] 7.8.10b FEM (disabled in this build), general drawing references, CAM path
   invalidation, broader topology changes, performance and interactive owner acceptance.
+
+2026-10-01 owning-file save feedback evidence:
+`D:\Temp\Office-PC\freecad-plus-save-routing-20261001`.
+`build/` records one successful grouped native build, including the GUI view/command
+and dialog changes and dependent modules. `smoke-ready/` passes three workflows,
+zero failures/errors/skips, process exit 0 and empty stderr. Native standard commands
+cover external Save with a separately dirty parent and cold reopen; external Save As,
+Save Copy and Cancel with stable view/path and identity; and first-save of the entire
+owning document from an isolated embedded-component tab. The initial tab-title fixture
+assumed backslashes; accepting Qt's forward-slash path required no source change or
+additional build. One final panel capture reviewed; file-dialog captions and filters
+checked at runtime. Feedback fixture:
+`smoke-ready/testExternalSaveCopyCancelAndSaveAsPreserveContext/Assembly.cadprt`
+with sibling `Support-Renamed.cadprt`. No schema, geometry-model, installer or release
+change. Broader Save All/close/recovery/task-time-save behavior and native Undo/Redo
+ownership routing remain separate acceptance work.
 
 2026-10-01 task-transition feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-task-context-20261001`.

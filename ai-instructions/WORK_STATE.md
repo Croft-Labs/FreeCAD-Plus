@@ -1,5 +1,26 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.3d, owning-file Save routing.
+Native Save, Save As and Save a Copy resolve the active component's owning document
+from the native occurrence binding, retaining the assembly/isolated view. Embedded
+components save their entire containing file. Backup Save As routing follows the
+same owner; component save-dialog titles identify the owning file.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-save-routing-20261001`.
+One grouped native build passed (`build/`). `smoke-ready/` passes three workflows,
+zero failures/errors/skips, process exit 0 and empty stderr. Checks cover external Save
+leaving an independently dirty parent untouched (with reopen), external Save As/Copy/
+Cancel and view context, and isolated embedded first-save ownership. Only the test's
+Windows path-separator assumption needed correction; no additional build. One final
+panel capture reviewed; file-dialog captions and filters checked at runtime.
+Feedback fixture:
+`smoke-ready/testExternalSaveCopyCancelAndSaveAsPreserveContext/Assembly.cadprt`.
+No schema version, geometry model, installer or release changes. Broader Save All,
+close/recovery dialogs, task-time saves and native Undo/Redo ownership routing remain
+separate acceptance work; keep broad testing deferred for owner feedback.
+
+Previous feedback batch follows.
+
 Current feedback batch: roadmap 7.8.7h, component modeling task transitions.
 Extrude and New Sketch capture the originating component view/path before entering
 the owning document. Extrude OK/Cancel, sketch-plane Cancel and native sketch/history

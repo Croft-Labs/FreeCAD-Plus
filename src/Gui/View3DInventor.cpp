@@ -51,6 +51,7 @@
 #include <App/Application.h>
 #include <App/Document.h>
 #include <App/GeoFeature.h>
+#include <App/PropertyStandard.h>
 #include <Base/Builder3D.h>
 #include <Base/Console.h>
 #include <Base/Interpreter.h>
@@ -430,15 +431,15 @@ bool View3DInventor::onMsg(const char* pMsg)
         return true;
     }
     else if (strcmp("Save", pMsg) == 0) {
-        getGuiDocument()->save();
+        getSaveDocument()->save();
         return true;
     }
     else if (strcmp("SaveAs", pMsg) == 0) {
-        getGuiDocument()->saveAs();
+        getSaveDocument()->saveAs();
         return true;
     }
     else if (strcmp("SaveCopy", pMsg) == 0) {
-        getGuiDocument()->saveCopy();
+        getSaveDocument()->saveCopy();
         return true;
     }
     else if (strcmp("ZoomIn", pMsg) == 0) {
@@ -461,6 +462,23 @@ bool View3DInventor::onMsg(const char* pMsg)
     }
 
     return false;
+}
+
+Gui::Document* View3DInventor::getSaveDocument() const
+{
+    // The native active-object binding retains the occurrence path even when
+    // its definition belongs to another file. Saving must follow that owner.
+    if (auto* component = getActiveObject<App::DocumentObject*>("part")) {
+        const auto* role = dynamic_cast<const App::PropertyString*>(
+            component->getPropertyByName("ComponentRole")
+        );
+        if (role && role->getStrValue() == "Definition") {
+            if (auto* owner = Application::Instance->getDocument(component->getDocument())) {
+                return owner;
+            }
+        }
+    }
+    return getGuiDocument();
 }
 
 bool View3DInventor::onHasMsg(const char* pMsg) const

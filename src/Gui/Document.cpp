@@ -1739,6 +1739,16 @@ const char* nativeDocumentFilter(const App::Document* document)
     }
     return "*.FCStd";
 }
+
+QString nativeSaveTitle(const App::Document* document, bool copy)
+{
+    if (strcmp(nativeDocumentFilter(document), "*.cadprt") == 0) {
+        const QString owner = QString::fromUtf8(document->Label.getValue());
+        return copy ? QObject::tr("Save a copy of owning file: %1").arg(owner)
+                    : QObject::tr("Save owning file: %1").arg(owner);
+    }
+    return QObject::tr("Save %1 Document").arg(qApp->applicationName());
+}
 }  // namespace
 
 /// Save the document under a new file name
@@ -1760,7 +1770,7 @@ bool Document::saveAs()
     }
     QString fn = FileDialog::getSaveFileName(
         getMainWindow(),
-        QObject::tr("Save %1 Document").arg(exe),
+        nativeSaveTitle(getDocument(), false),
         name,
         FileDialog::FilterList {{QObject::tr("%1 document").arg(exe),
                                {nativeDocumentFilter(getDocument())}}}
@@ -1892,7 +1902,7 @@ bool Document::saveCopy()
     }
     QString fn = FileDialog::getSaveFileName(
         getMainWindow(),
-        QObject::tr("Save %1 Document").arg(exe),
+        nativeSaveTitle(getDocument(), true),
         name,
         FileDialog::FilterList {{QObject::tr("%1 document").arg(exe),
                                {nativeDocumentFilter(getDocument())}}}

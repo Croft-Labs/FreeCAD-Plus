@@ -13,6 +13,7 @@ param(
     [switch]$ExternalizationSmoke,
     [switch]$EditContextSmoke,
     [switch]$TaskContextSmoke,
+    [switch]$SaveRoutingSmoke,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -37,6 +38,7 @@ if ($RecoverySmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentFileRe
 if ($ExternalizationSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentExternalization.py' }
 if ($EditContextSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentEditContext.py' }
 if ($TaskContextSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTaskContext.py' }
+if ($SaveRoutingSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentSaveRouting.py' }
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'

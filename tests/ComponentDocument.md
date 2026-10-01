@@ -7,6 +7,23 @@ owns requirements.
 
 ## Owner workflow
 
+Owning-file Save feedback (roadmap 7.8.3d): activate an external component in the
+assembly and use File > Save. Its own file receives the changes while the assembly
+view stays open. Save As changes that owning document's location; Save a Copy writes
+a separate snapshot while retaining the current location and shared identities.
+Activate and save the parent afterward to persist a changed external path. An embedded component,
+including one in an isolated tab, saves with its entire containing `.cadprt` document.
+The save-dialog title names the owning file. Cancel keeps the current file and view.
+
+`RunComponentDocument.ps1 -SaveRoutingSmoke` runs three focused workflows from
+`TestComponentSaveRouting.py`. They cover external Save with an independently dirty
+parent, Save As/Copy/Cancel ownership and context, and first-save from an isolated
+embedded component. Save All and close/recovery prompts remain broader acceptance.
+The 2026-10-01 evidence is
+`D:\Temp\Office-PC\freecad-plus-save-routing-20261001/smoke-ready`.
+The `testExternalSaveCopyCancelAndSaveAsPreserveContext/Assembly.cadprt` fixture
+references sibling `Support-Renamed.cadprt`.
+
 Modeling task transitions (roadmap 7.8.7h): edit an external component instance in an
 assembly, select its sketch, then start Extrude/Pad. The task uses the definition's
 owning document for geometry; OK or Cancel returns to the original assembly view and

@@ -837,7 +837,9 @@ void StdCmdSave::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
 
-    if (App::Document* doc = App::GetApplication().getActiveDocument()) {
+    auto* view = dynamic_cast<Gui::View3DInventor*>(getMainWindow()->activeWindow());
+    auto* saving = view ? view->getSaveDocument() : getActiveGuiDocument();
+    if (App::Document* doc = saving ? saving->getDocument() : nullptr) {
         Base::FileInfo filename(doc->FileName.getValue());
         if (filename.hasExtension("fcbak")) {
             Gui::Command::doCommand(Gui::Command::Gui, "Gui.runCommand('Std_SaveAs')");

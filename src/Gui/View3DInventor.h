@@ -98,6 +98,8 @@ public:
     /// Message handler
     bool onMsg(const char* pMsg) override;
     bool onHasMsg(const char* pMsg) const override;
+    /// Owning file of the active component, or this view's ordinary document.
+    Gui::Document* getSaveDocument() const;
     void deleteSelf() override;
     /// get called when the document is updated
     void onRename(Gui::Document* pDoc) override;
