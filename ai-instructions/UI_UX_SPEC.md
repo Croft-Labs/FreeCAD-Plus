@@ -1071,3 +1071,23 @@ and native Part::Section/Base/Tool/Approximation identities remain unchanged.
 This review does not project curves, cut material or create clipping planes.
 Individual-face extraction, nested/external scope, broad topology repair and
 physical/high-DPI acceptance remain open. [Owner procedure](../tests/SectionReview.md).
+
+## UI-036: CAM Simulator input review (F095; roadmap 14.3a/b)
+
+Existing CAM Simulator (CAM_SimulatorGL) retains its job, operation, visibility and
+quality controls. The Legacy CAM Simulator is unchanged.
+
+| Control/state | Behavior |
+| --- | --- |
+| Review text | Read-only stock dimensions in mm, quality level, selected operations in saved job order, command counts and cutter number/diameter. Quality is a display setting, not a certified tolerance. |
+| Job, operation checks, visibility policy, quality | Rebuild the review using the current choices. No selected operations disables Play. |
+| Review inputs | Revalidate current stock/model, paths and cutter profiles. Show the first preparation error inline, disabling Play. |
+| Play | Prepare the complete selected input set before resetting the native session. Submit each cutter selection before its operation's placed commands. Changed/unreviewed inputs show updated review and require another Play. |
+| Model/tool/path edit | Clear the review and disable Play; ask for recompute as needed and renewed review. A previously opened simulator view is a snapshot of its submitted inputs. |
+| Close | Remove the task's observer; native simulator view lifecycle remains native. |
+
+Visible scope text identifies pre-postprocessor job paths and cutter profiles.
+This review does not check holder, fixture or machine-envelope clearance, certify
+stock removal accuracy or establish safe machine motion. Full collision/removal,
+broader command/model scope and physical acceptance remain open.
+[Owner procedure](../tests/SimulationReview.md).

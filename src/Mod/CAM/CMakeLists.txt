@@ -93,6 +93,7 @@ SET(PathPythonDressupGui_SRCS
 SET(PathPythonMain_SRCS
     Path/Main/__init__.py
     Path/Main/Job.py
+    Path/Main/SimulationReview.py
     Path/Main/Template.py
     Path/Main/Workplane.py
     Path/Main/Stock.py

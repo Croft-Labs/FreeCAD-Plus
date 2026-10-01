@@ -31,6 +31,7 @@ import Path.Base.Util as PathUtil
 import Path.Dressup.Utils as PathDressup
 from PathScripts import PathUtils
 import CAMSimulator
+from Path.Main import SimulationReview
 
 from FreeCAD import Vector, Placement, Rotation
 
@@ -42,7 +43,7 @@ Part = LazyLoader("Part", globals(), "Part")
 
 if FreeCAD.GuiUp:
     import FreeCADGui
-    from PySide import QtGui, QtCore
+    from PySide import QtGui, QtCore, QtWidgets
     from PySide.QtGui import QDialogButtonBox
 
 _filePath = os.path.dirname(os.path.abspath(__file__))
@@ -67,6 +68,9 @@ class CAMSimTaskUi:
         # this will create a Qt widget from our ui file
         self.form = FreeCADGui.PySideUic.loadUi(":/panels/TaskCAMSimulator.ui")
         self.parent = parent
+
+    def autoClosedOnDeletedDocument(self):
+        self.parent.cancel()
 
     def getStandardButtons(self, *_args):
         """Task panel needs only Close button"""
@@ -107,6 +111,9 @@ class CAMSimulation:
         self.busy = False
         self.operations = []
         self.baseShape = None
+        self.review = None
+        self.observing = False
+        self.document = None
 
     def Connect(self, but, sig):
         """Connect task panel buttons"""
@@ -210,8 +217,23 @@ class CAMSimulation:
     def Activate(self):
         """Invoke the simulator task panel"""
         self.initdone = False
+        self.document = FreeCAD.ActiveDocument
         self.taskForm = CAMSimTaskUi(self)
         form = self.taskForm.form
+        self.reviewText = QtWidgets.QPlainTextEdit()
+        self.reviewText.setReadOnly(True)
+        self.reviewText.setMinimumHeight(170)
+        self.reviewButton = QtWidgets.QPushButton(SimulationReview.tr("Review inputs"))
+        self.scopeText = QtWidgets.QLabel(SimulationReview.tr(
+            "Uses selected job toolpaths and cutter profiles, before postprocessing. "
+            "Holder, fixture and machine-envelope clearance are not checked by this review. "
+            "The simulator view reflects inputs sent at Play; restart after edits. "
+            "This display is not proof of safe machine motion."))
+        self.scopeText.setWordWrap(True)
+        form.layout().addWidget(self.reviewText)
+        form.layout().addWidget(self.reviewButton)
+        form.layout().addWidget(self.scopeText)
+        self.reviewButton.clicked.connect(self.refreshReview)
         self.Connect(form.toolButtonPlay, self.SimPlay)
         form.sliderAccuracy.valueChanged.connect(self.onAccuracyBarChange)
         self.onAccuracyBarChange()
@@ -225,13 +247,16 @@ class CAMSimulation:
         form.comboJobs.currentIndexChanged.connect(self.onJobChange)
         self.onJobChange()
         form.listOperations.itemChanged.connect(self.onOperationItemChange)
-        FreeCADGui.Control.showDialog(self.taskForm)
+        dialog = FreeCADGui.Control.showDialog(self.taskForm)
+        dialog.setAutoCloseOnDeletedDocument(True)
         self.disableAnim = False
         self.firstDrill = True
         self.millSim = CAMSimulator.PathSim()
         self.initdone = True
         self.job = self.jobs[self.taskForm.form.comboJobs.currentIndex()]
-        # self.SetupSimulation()
+        FreeCAD.addDocumentObserver(self)
+        self.observing = True
+        self.refreshReview()
 
     def _populateJobSelection(self, form):
         """Make Job selection combobox"""
@@ -285,12 +310,13 @@ class CAMSimulation:
         form = self.taskForm.form
         j = self.jobs[form.comboJobs.currentIndex()]
         self.job = j
+        form.listOperations.blockSignals(True)
         form.listOperations.clear()
         self.operations = []
         allhidden = all(
-            not op.Visibility for op in j.Operations.OutList if PathUtil.opProperty(op, "Active")
+            not op.Visibility for op in j.Operations.Group if PathUtil.opProperty(op, "Active")
         )
-        for op in j.Operations.OutList:
+        for op in j.Operations.Group:
             if PathUtil.opProperty(op, "Active"):
                 listItem = QtGui.QListWidgetItem(op.ViewObject.Icon, op.Label)
                 listItem.setFlags(listItem.flags() | QtCore.Qt.ItemIsUserCheckable)
@@ -300,10 +326,9 @@ class CAMSimulation:
                     listItem.setCheckState(QtCore.Qt.CheckState.Checked)
                 self.operations.append(op)
                 form.listOperations.addItem(listItem)
-        if len(j.Model.OutList) > 0:
-            self.baseShape = Part.makeCompound([o.Shape for o in j.Model.OutList])
-        else:
-            self.baseShape = None
+        form.listOperations.blockSignals(False)
+        if self.initdone:
+            self.refreshReview()
 
     def onAccuracyBarChange(self):
         """Update simulation quality"""
@@ -315,6 +340,8 @@ class CAMSimulation:
         elif self.quality < 9:
             qualText = QtCore.QT_TRANSLATE_NOOP("CAM_Simulator", "Medium")
         form.labelAccuracy.setText(qualText)
+        if self.initdone:
+            self.refreshReview()
 
     def followsVisibilityChange(self):
         """Update job list in accordance with operations visibility"""
@@ -325,33 +352,72 @@ class CAMSimulation:
         self.onJobChange()
 
     def onOperationItemChange(self, _item):
-        """Check if at least one operation is selected to enable the Play button"""
-        playvalid = False
+        self.refreshReview()
+
+    def selectedOperations(self):
         form = self.taskForm.form
-        for i in range(form.listOperations.count()):
-            if form.listOperations.item(i).checkState() == QtCore.Qt.CheckState.Checked:
-                playvalid = True
-                break
-        form.toolButtonPlay.setEnabled(playvalid)
+        return [self.operations[i] for i in range(form.listOperations.count())
+                if form.listOperations.item(i).checkState() == QtCore.Qt.CheckState.Checked]
+
+    def refreshReview(self):
+        self.review = None
+        self.taskForm.form.toolButtonPlay.setEnabled(False)
+        try:
+            self.review = SimulationReview.prepare(
+                self.job, self.selectedOperations(), self.quality, self.GetToolProfile)
+            self.reviewText.setPlainText(SimulationReview.describe(self.review))
+            self.taskForm.form.toolButtonPlay.setEnabled(True)
+        except Exception as error:
+            self.reviewText.setPlainText(str(error))
 
     def SimPlay(self):
-        """Activate the simulation"""
-        self.SetupSimulation()
-        self.millSim.ResetSimulation(FreeCADGui.getDocument(self.job.Document))
-        for op in self.activeOps:
-            tool = PathDressup.toolController(op).Tool
-            toolNumber = PathDressup.toolController(op).ToolNumber
-            toolProfile = self.GetToolProfile(tool, 0.5)
-            self.millSim.AddTool(toolProfile, toolNumber, tool.Diameter, 1)
-            opCommands = PathUtils.getPathWithPlacement(op).Commands
-            for cmd in opCommands:
-                self.millSim.AddCommand(cmd)
-        self.millSim.BeginSimulation(self.stock, self.quality)
-        if self.baseShape is not None:
-            self.millSim.SetBaseShape(self.baseShape, 1)
+        """Validate every cutter/path before resetting or feeding the native session."""
+        previous = self.review
+        self.refreshReview()
+        prepared = self.review
+        if prepared is None:
+            return
+        if previous is None or previous["fingerprint"] != prepared["fingerprint"]:
+            self.reviewText.appendPlainText(SimulationReview.tr("Inputs changed. Review the updated values, then press Play."))
+            return
+        try:
+            self.millSim.ResetSimulation(FreeCADGui.getDocument(self.job.Document))
+            tools = {tool["number"]: tool for tool in prepared["tools"]}
+            for entry in prepared["operations"]:
+                # Native AddTool also inserts a T command, so retain operation order.
+                tool = tools[entry["tool"]]
+                self.millSim.AddTool(tool["profile"], tool["number"], tool["diameter"], 1)
+                for command in entry["commands"]:
+                    self.millSim.AddCommand(command)
+            self.millSim.BeginSimulation(prepared["stock"], prepared["quality"])
+            if prepared["model"] is not None:
+                self.millSim.SetBaseShape(prepared["model"], 1)
+        except Exception as error:
+            self.reviewText.appendPlainText(SimulationReview.tr("Simulation could not start: ") + str(error))
+
+    def slotChangedObject(self, obj, prop):
+        if obj.Document == self.document:
+            self.invalidateReview()
+
+    def slotDeletedObject(self, obj):
+        if obj.Document == self.document:
+            self.invalidateReview()
+
+    def slotDeletedDocument(self, doc):
+        if self.document == doc:
+            self.cancel()
+
+    def invalidateReview(self):
+        self.review = None
+        self.taskForm.form.toolButtonPlay.setEnabled(False)
+        self.reviewText.setPlainText(SimulationReview.tr("Inputs changed. Recompute the job if needed, then Review inputs before restarting simulation."))
 
     def cancel(self):
-        """Cancel the simulation"""
+        """Remove only this task's input observer; native simulator owns its view."""
+        if self.observing:
+            FreeCAD.removeDocumentObserver(self)
+            self.observing = False
+
 
 
 class CommandCAMSimulate:

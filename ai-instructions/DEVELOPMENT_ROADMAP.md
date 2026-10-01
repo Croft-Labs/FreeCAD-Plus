@@ -30,7 +30,17 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F069 intersection curves,
+- Current product batch complete for owner testing: F095 CAM Simulator input review,
+  phase 14 tasks 14.3a/b. The existing OpenGL task shows selected operation order,
+  stock dimensions, cutters, quality and explicit coverage limits. Complete input
+  preparation precedes native reset; edits invalidate review and conflicting tool
+  numbers/missing cutters are refused. Both tasks preceded one grouped script
+  staging pass. 17 distinct selected checks pass across accepted suites, including
+  native simulator startup; five captures were reviewed.
+  [Owner procedure](../tests/SimulationReview.md). Full F095 stays open for removal
+  accuracy, collision classification and physical acceptance. Stop and rotate.
+
+- Previous product batch complete for owner testing: F069 intersection curves,
   phase 13 tasks 13.4a/b. Part > Review intersection curves captures explicit whole
   root shapes/Bodies, previews native Section on isolated copies and creates an
   associative result in one transaction. Empty results and changed inputs prevent
@@ -4228,6 +4238,48 @@ No installer/release update or physical owner acceptance. [Owner procedure](../t
   operation sequences. Track geometry, stock and tooling changes separately and mark all
   affected paths stale; the existing missing-input execution fix proves only its
   recorded cases.
+- [ X ] 14.3a Prepare the complete selected operation/stock/model/cutter set before
+  resetting the existing OpenGL simulator. Validate current geometry, nonempty
+  finite paths, native tool profiles and unique cutter identities per tool number;
+  preserve saved job order and each operation's native tool-selection sequence.
+- [ X ] 14.3b Add visible input/coverage review to CAM Simulator. Show stock in mm,
+  selected operations/command counts, cutter numbers/diameters and quality meaning;
+  disable Play for failed/empty input, invalidate after edits and require renewed
+  review. Clean up observers on Close/document closure. Preserve native model and
+  path data and keep Legacy CAM Simulator behavior separate.
+
+14.3a/b evidence (2026-10-01):
+Both tasks preceded one PathScripts Release staging pass, exit 0; no C++ source
+changes/native compilation. Evidence:
+`D:\Temp\Office-PC\freecad-plus-simulation-review-20261001`.
+`native-close-verified/` passes all nine simulation-review checks; `grouped/` passes eight
+unchanged setup-template checks. **17 distinct selected passes**, zero failures/
+errors/skips in accepted suites; native exits 0. The initial native startup check
+used a Python wrapper-name assertion; corrected it to query the actual native
+CAMSimulator::ViewCAMSimulator. A repeated document-close failure exposed a task
+left registered after its document closed; native auto-close now removes it and
+its observer. The regression opens a new simulator task after document closure.
+Earlier failed grouped/accepted/final-verified reports remain. Only affected Python
+files were restaged for owning-document identity, native task closure and saved
+operation order changed while the task is open; there was no second native build.
+Native startup, source/path preservation, explicit operation selection/order,
+stale-stock refusal, complete preparation before reset,
+missing later tool, conflicting cutter numbers, profile failure, fresh-review
+requirement, per-operation tool submission, save/reopen and observer cleanup pass.
+Native AddTool inserts a T command; submission deliberately retains that ordering.
+Five reviewed `visual-final/` captures show full review, no selected operations, missing
+second cutter, stale inputs and the native simulator view. Simulation-Review.FCStd
+and Simulation-Reviewed-Stock.FCStd are owner fixtures. Earlier capture-harness
+view API errors remain recorded; the final harness uses supported native view commands. Native startup/rendering is
+separate from quantitative material-removal or collision validation; test spies
+establish the no-reset/no-feed behavior on preparation failure.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted evidence; the historical About stamp is not the source identity.
+No installer/release update. Full F095 remains open for independent stock-removal
+accuracy, gouge/collision classification, holder/fixture/machine envelope coverage,
+postprocessor/controller behavior, wider model/tool scope and physical acceptance.
+[Owner procedure](../tests/SimulationReview.md). Stop here and rotate for feedback.
+
 - [   ] 14.4 Add supported simulation/remaining-stock, gouge and tool/holder/fixture
   clearance checks with visible unavailable checks. Verify a narrow machine/post
   scope and expand strategies/tools/posts only with representative fixtures.
@@ -6777,7 +6829,7 @@ regenerated Waterline contour repeatability and broader F089 acceptance remain o
 <a id="f095"></a>
 ### F095 — Stock and collision simulation
 
-**Owning tasks:** 14.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 14.3, bounded tasks 14.3a/b. **Status:** Existing CAM Simulator input/coverage review is ready for owner testing. Complete preparation before reset, native tool/operation order, stale-review recovery, source preservation and save/reopen pass in 17 selected checks; five captures reviewed. Native startup is verified separately from removal accuracy/collision acceptance. Full F095 remains open. [Owner procedure](../tests/SimulationReview.md).
 
 **Packages:** C03 · **First delivery:** P8 increments · **Likely scope:** Feature/Core
 
