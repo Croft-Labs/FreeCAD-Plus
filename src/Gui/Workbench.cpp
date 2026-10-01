@@ -760,7 +760,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
           << "Separator" << "Std_TemporaryIsolate" << "Std_TemporaryHide"
           << "Std_RestoreDisplay" << "Std_RestoreAllDisplay"
           << "Separator" << "Std_ToggleObjects" << "Std_ShowObjects" << "Std_HideObjects"
-          << "Separator" << "Std_ToggleSelectability";
+          << "Separator" << "Std_ToggleSelectability" << "Std_EntitySelectionFilter";
 
     // View
     auto view = new MenuItem(menuBar);

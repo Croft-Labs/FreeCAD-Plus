@@ -36,7 +36,9 @@ deletion/recreation with the same name while the menu is open.
 
 No model/property/visibility changes or Undo entries are created. Save/reopen
 preserves native occurrence links and placements; menu state is transient.
-Configurable global type filters (F035), new assembly scopes (F036), depth ranking,
+Bounded session entity filters (F035) are now available; see
+[Selection filters](EntitySelectionFilter.md). Separate object categories,
+new assembly scopes (F036), depth ranking,
 live menu rebuilding after topology changes, and physical/high-DPI/mouse-preset
 acceptance remain open. Full F037 is not claimed complete.
 

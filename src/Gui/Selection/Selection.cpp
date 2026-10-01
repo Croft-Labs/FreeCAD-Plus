@@ -545,6 +545,40 @@ std::vector<SelectionObject> SelectionSingleton::getObjectList(
     return temp;
 }
 
+namespace {
+// UI-session policy, independent of the command-owned ActiveGate. The panel
+// resets this preference on close and application startup.
+int entityFilterMode()
+{
+    return App::GetApplication()
+        .GetParameterGroupByPath("User parameter:BaseApp/Preferences/SelectionFilter")
+        ->GetInt("EntityMode", 0);
+}
+
+bool passesEntityFilter(App::DocumentObject* object, const char* subname)
+{
+    const int mode = entityFilterMode();
+    if (mode < 1 || mode > 4) {
+        return true;
+    }
+    if (!object) {
+        return false;
+    }
+    App::ElementNamePair element;
+    if (!App::GeoFeature::resolveElement(object, subname ? subname : "", element)) {
+        return false;
+    }
+    const auto& name = element.oldName;
+    switch (mode) {
+        case 1: return boost::starts_with(name, "Vertex");
+        case 2: return boost::starts_with(name, "Edge");
+        case 3: return boost::starts_with(name, "Face");
+        case 4: return name.empty();
+        default: return true;
+    }
+}
+}  // namespace
+
 bool SelectionSingleton::needPickedList() const
 {
     return _needPickedList;
@@ -552,6 +586,10 @@ bool SelectionSingleton::needPickedList() const
 
 SelectionSingleton::SelectionAllowance SelectionSingleton::isSelectionAllowed(const _SelObj& sel)
 {
+    if (!passesEntityFilter(sel.pObject, sel.SubName.c_str())) {
+        return {.allowed = false,
+                .reason = QT_TRANSLATE_NOOP("SelectionFilter", "Excluded by the entity filter; reset it in Selection filters")};
+    }
     if (!ActiveGate) {
         return {.allowed = true, .reason = ""};
     }
@@ -872,6 +910,9 @@ bool SelectionSingleton::testSelection(
         return false;
     }
 
+    if (!passesEntityFilter(pObject, pSubName)) {
+        return false;
+    }
     if (!ActiveGate) {
         return true;
     }
@@ -910,7 +951,7 @@ bool SelectionSingleton::hasSelectionGate(App::Document* /*pDoc*/) const
 
     // auto foundContext = docSelectionContext.find(pDoc);
     // return foundContext != docSelectionContext.end() && foundContext->second.gate;
-    return ActiveGate != nullptr;
+    return ActiveGate != nullptr || (entityFilterMode() >= 1 && entityFilterMode() <= 4);
 }
 
 int SelectionSingleton::setPreselect(
@@ -938,6 +979,17 @@ int SelectionSingleton::setPreselect(
     }
 
     rmvPreselect();
+
+    if (signal != SelectionChanges::MsgSource::Internal) {
+        auto doc = getDocument(pDocName);
+        if (!passesEntityFilter(doc ? doc->getObject(pObjectName) : nullptr, pSubName)) {
+            if (getMainWindow()) {
+                getMainWindow()->showMessage(QCoreApplication::translate(
+                    "SelectionFilter", "Excluded by the entity filter; reset it in Selection filters"));
+            }
+            return 0;
+        }
+    }
 
     if (ActiveGate && signal != SelectionChanges::MsgSource::Internal) {
         App::Document* pDoc = getDocument(pDocName);

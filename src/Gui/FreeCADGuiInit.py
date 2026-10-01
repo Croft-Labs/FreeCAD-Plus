@@ -591,6 +591,10 @@ from freecad.gui.OccurrenceReplace import registerCommand as _registerOccurrence
 _registerOccurrenceReplace()
 del _registerOccurrenceReplace
 
+from freecad.gui.EntitySelectionFilter import registerCommand as _registerEntitySelectionFilter
+_registerEntitySelectionFilter()
+del _registerEntitySelectionFilter
+
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 

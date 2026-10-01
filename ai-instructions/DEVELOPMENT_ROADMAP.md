@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current bounded checkpoint: F055 Hole specification review, phase 13 tasks
+- Current bounded checkpoint ready for owner testing: F035 entity selection
+  filters, phase 10 tasks 10.5e/f. Native vertex/edge/face/whole-object policy
+  intersects command gates and has visible reset/Close/Escape recovery. Both tasks
+  preceded one grouped build, followed by one startup-registration correction;
+  17 distinct selected checks pass and five captures are reviewed. Full F035 stays
+  open for separate object categories, broader picking
+  and physical acceptance. [Owner procedure](../tests/EntitySelectionFilter.md).
+  Stop at this functional checkpoint and rotate pending owner feedback.
+
+- Previous bounded checkpoint: F055 Hole specification review, phase 13 tasks
   13.5c/d. Profile/Body identity, location readiness and distinct thread result
   explanations are implemented. One grouped build passed; 17 bounded selected
   checks pass. **13.5d remains open:** deferred modeled-thread acceptance waits,
@@ -3011,10 +3020,44 @@ FreeCADGui SHA256: `19FE903A46ABEFC2A34F0AECBA86F2BAA6C331A2663685C0DD797032A1EF
 validated-identities.json and acceptance-summary.json identify exact source/runtime
 and accepted evidence; the historical About stamp is not this source identity.
 No installer/release update. Full F037 remains open for broader topology/live-menu
-changes and physical/high-DPI/navigation-preset acceptance. Global filter controls
-(F035), new selection scopes (F036) and depth ranking are separate work.
+changes and physical/high-DPI/navigation-preset acceptance. Bounded F035 filters are now
+available under 10.5e/f; new selection scopes (F036) and depth ranking remain
+separate work.
 Stop at this functional checkpoint for owner testing and rotate to another family.
 [Owner procedure](../tests/ClarifySelection.md).
+
+- [x] 10.5e Implement a bounded F035 entity filter alongside command-owned gates:
+  vertices, edges, faces and whole objects, preserving resolved occurrence paths.
+  Apply it to native add/preselection and Select Other eligibility.
+- [x] 10.5f Provide discoverable modeless controls, a persistent active indicator,
+  one-click reset, Close/Escape/startup recovery and unchanged existing selections.
+  Both changes are complete for bounded owner workflow testing.
+
+10.5e/f grouped evidence (2026-10-01): both implementation tasks preceded one
+FreeCADGui/FreeCADGui_Resources Release build, exit 0 (120 seconds). Evidence:
+`D:\Temp\Office-PC\freecad-plus-entity-filter-20261001`. Initial `grouped/` passes
+all seven native Select Other regressions and eight of nine filter checks. The
+hover fixture incorrectly used native internal-highlight mode (tp=1), which bypasses
+gates; corrected viewport mode (tp=0) passes all nine in `filter-verified/`.
+Final source review moved command registration before standard-workbench
+initialization; one 60-second corrective build passed. The added menu check initially
+assumed NoneWorkbench had a Visibility menu, but it intentionally has minimal menus.
+The corrected modeling-workbench fixture passes with all ten filter checks in
+`final-verified/`; no further source change/build was needed. Together with the
+seven unchanged Select Other regressions, **17 distinct selected checks pass**,
+zero accepted failures/errors/skips; accepted GUI processes exit 0.
+Five `visual/` captures were reviewed: face controls and exact occurrence face,
+whole occurrence, reset controls and restored unrestricted workspace. The owner
+fixture is `visual/Repeated-Components.FCStd`. `evidence.json` records matching
+source/runtime Python identity, exact native binary hash and accepted results.
+FreeCADGui SHA256: `331ff38104740d19a266338b3f3fe51b3886216233b3e10f1202e359132f9593`.
+No installer/release publication. Stop here and rotate pending owner testing.
+
+The command's gate refines this session filter; leaving a command does not remove
+or replace it. The owner can reset or close the modeless filter window at any time.
+Separate bodies/components/sketches/features, richer filter combinations, dedicated
+sketch-edit and tree/window-selection semantics and physical/high-DPI acceptance
+remain open. [Owner procedure](../tests/EntitySelectionFilter.md).
 
 - [   ] 10.6 Extend 7.2 with separate Assembly and Feature Navigator tabs, optional
   simultaneous docking, explicit work/display part, status columns, contributing-body
@@ -6429,7 +6472,7 @@ reconciliation rules above to every entry.
 <a id="f035"></a>
 ### F035 — Selection filters
 
-**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.5. **Status:** Bounded entity-filter workflow ready for owner testing under 10.5e/f. Vertex/edge/face/whole-object policy intersects command gates and preserves repeated occurrence paths; visible reset/Close/Escape/startup recovery passes. One grouped build plus a startup-registration correction, 17 distinct selected passing checks and five reviewed captures. Full F035 stays open for separate body/component/sketch/feature categories, dedicated sketch/tree/window picking and physical/high-DPI acceptance. [Owner procedure](../tests/EntitySelectionFilter.md).
 
 **Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI/Feature
 

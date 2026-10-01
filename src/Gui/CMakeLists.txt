@@ -1530,6 +1530,7 @@ set(FreeCADGui_Scripts
     OccurrenceMove.py
     OccurrenceReplace.py
     TemporaryDisplay.py
+    EntitySelectionFilter.py
     RemoteDebugger.ui
     RemoteDebugger.py
 )

@@ -1291,3 +1291,25 @@ profile changes and native preview updates refresh the review after the event lo
 Native acceptance/Cancel/Undo and the existing Update View control retain ownership.
 Broader placement collection, table version/provenance and drawing-callout acceptance
 remain open. [Owner procedure](../tests/HoleSpecification.md).
+
+## UI-046: Entity selection filters (F035; roadmap 10.5e/f)
+
+View > Visibility > Selection filters opens a modeless window. The selectable
+entities combo chooses All entities, Vertices only, Edges only, Faces only or
+Whole objects only. Whole objects groups components, bodies, sketches and features;
+no separate subtype selectors are claimed. The policy restricts subsequent native
+selection/preselection and Select Other candidates without clearing existing picks.
+Resolved native element names classify linked/nested occurrence paths. Command-owned
+gates independently refine this policy; no gate is replaced, removed or restored by
+the panel. A command ending leaves the selected session policy in effect.
+
+An active status-bar button names the filter and resets it in one click. Reset to
+all, Close and Escape restore All entities; application startup also resets the
+policy. The window remains available during native task commands. Rejected picks
+show native filter guidance; an empty Select Other result uses its existing filter
+explanation. No model properties, geometry, visibility, transactions or persistent
+reference identities change. Existing selections may include other entity types.
+
+Dedicated sketch-edit, tree/window policies, separate object categories, multiple
+filter combinations and physical/high-DPI acceptance remain open.
+[Owner procedure](../tests/EntitySelectionFilter.md).
