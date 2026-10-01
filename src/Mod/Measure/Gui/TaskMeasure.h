@@ -94,6 +94,8 @@ private:
 
     QFormLayout* formLayout {nullptr};
     QLineEdit* valueResult {nullptr};
+    QLabel* operandSummary {nullptr};
+    QLabel* measurementMeaning {nullptr};
     QComboBox* modeSwitch {nullptr};
     QComboBox* unitSwitch {nullptr};
     QAction* autoSaveAction {nullptr};
@@ -116,6 +118,7 @@ private:
     void ensureGroup(Measure::MeasureBase* measurement);
     void syncDisplayUnit();
     void refreshResult();
+    void updateMeasurementContext(const App::MeasureSelection& selection, const std::string& type);
     void updateAnnotation();
     void createTypeInfo(const std::string& type);
 

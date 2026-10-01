@@ -157,6 +157,11 @@ public:
     App::PropertyVector Position1;
     App::PropertyVector Position2;
 
+    // Capture provenance is informational, never a live dependency.
+    App::PropertyString UpdatePolicy;
+    App::PropertyString CaptureTime;
+    App::PropertyStringList CaptureSources;
+
     App::DocumentObjectExecReturn* execute() override;
     void recalculateDistance();
 

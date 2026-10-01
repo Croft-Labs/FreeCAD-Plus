@@ -557,3 +557,29 @@ view notice and node navigation to continue. Cycles in the displayed portion pro
 a warning. The view is inspection rather than a deletion plan. Broader navigator,
 reference repair and physical/high-DPI acceptance remain open.
 [Owner procedure](../tests/DependencyInspector.md).
+
+## UI-013: Measurement meaning and snapshots (F098/F099; roadmap 15.1a/b)
+
+The existing Tools > Measure task retains its Mode, Result, units, delta controls
+and Save/Close behavior. Selected entities now lists operand labels and native
+document/object/subelement paths. A plain-text meaning field explains the selected
+measurement policy and frame. These are details of the current selection, not
+editable input replacements.
+
+Distance distinguishes circle/arc centres, infinite datum axes/planes and otherwise
+minimum separation. Delta components are unsigned world-axis differences. Distance
+Free is explicitly a point snapshot: picked world coordinates, not minimum clearance
+and not associative after Save. It displays UTC capture time when available.
+Geometric Center explains that density and physical mass are not included;
+radius/diameter are not thickness. Existing native units control the displayed value.
+
+Saved Distance Free objects expose read-only Snapshot properties: UpdatePolicy,
+CaptureTime and CaptureSources. Paths describe the original pick and create no live
+dependencies. Manual Position1/Position2 edits clear capture provenance; Undo/Redo
+restore the recorded transaction state. Save/reopen preserves metadata. Old or
+uncaptured objects keep unknown provenance rather than receiving a new capture date.
+Clearing selection clears operand text and disables Save under the existing task
+contract. Close removes an unsaved preview; saved objects remain.
+
+Broader mass/thickness/mesh semantics, associative error/repair and physical/high-DPI
+acceptance remain pending. [Owner procedure](../tests/MeasurementContext.md).

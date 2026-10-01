@@ -276,6 +276,24 @@ unloaded-reference diagnoses, target-role classification, integrated navigator
 tabs/highlights and physical/high-DPI acceptance remain open.
 [Owner procedure](../tests/DependencyInspector.md); UI-012 defines interaction.
 
+## Current measurement-context batch (F098/F099)
+
+The existing Measure task exposes native operand identities and the meaning of
+each result. Distance can report circle/arc centres or infinite datum separation;
+Distance Free uses picked world points and is explicitly a fixed snapshot. World
+frame and unsigned deltas, geometric-centre density exclusion and radius-versus-
+thickness distinctions are visible alongside existing units and Save controls.
+
+Native Measure::MeasureDistanceDetached adds read-only UpdatePolicy, CaptureTime
+and CaptureSources properties. Capture time is UTC and selection paths are metadata,
+not live links. Direct coordinate edits clear provenance, while restore and Undo/
+Redo preserve recorded state. Old files default to unknown capture information.
+Native types, geometric algorithms and existing associative references are retained.
+
+Roadmap 15.1a/b covers this bounded improvement. Broader material/mass, thickness,
+mesh accuracy, stale/invalid associative measurement repair and physical/high-DPI
+acceptance remain open. [Owner procedure](../tests/MeasurementContext.md); UI-013.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

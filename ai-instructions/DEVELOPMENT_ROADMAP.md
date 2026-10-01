@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F015 dependency inspection,
+- Current product batch complete for owner testing: F098/F099 measurement meaning
+  and point snapshots, phase 15 tasks 15.1a/b. The existing Measure task now shows
+  operand identities, distance/frame meaning and snapshot policy. Distance Free
+  persists UTC capture information without live links. One grouped build; 13 selected
+  checks pass and two task-panel captures reviewed. [Try the example](../tests/MeasurementContext.md).
+  Broader measurement/repair and physical acceptance remain open. Rotate the next
+  item family and defer refinements to owner workflow feedback.
+
+- Previous product batch complete for owner testing: F015 dependency inspection,
   phases 7 and 10 tasks 7.5.5a / 10.6a. Tools > Inspect dependencies shows native
   inputs/consumers, direct/transitive property relationships, status and loaded
   external sources, with explicit model selection and node navigation. One grouped
@@ -3474,6 +3482,35 @@ Each module depends only on the contracts it consumes and can be delivered separ
   Sections support multiple planes, saved section views and measurements on sections.
   Interference/clearance results list component pairs, highlight conflicts and let users
   navigate each result.
+- [x] 15.1a Extend the existing Measure task with explicit operand identities and
+  measurement meaning/frame: circle-centre versus minimum distance, fixed picked
+  points, unsigned deltas and geometric-centre versus density-based mass (F098).
+- [x] 15.1b Persist explicit fixed-world-point policy, UTC capture time and original
+  selection paths for Distance Free snapshots (F099). Preserve native type identity,
+  avoid live source links, clear capture provenance after manual coordinate edits,
+  and leave old/uncaptured timestamps unknown. Verify save/reopen and Undo/Redo.
+
+15.1a/b grouped evidence (2026-09-30): both tasks preceded one MeasureGui Release
+build including Measure and changed GUI dependencies, exit 0. **13 selected checks
+pass**, no failures/errors/skips in accepted suites: 6 measurement in measurement-final/,
+7 unchanged command-search in grouped/. Process exits 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-measurement-20260930`, `acceptance-summary.json` and
+`validated-identities.json`. MeasureGui SHA256:
+`20ee15fd1b6db168b8320cbec941682dd5c66466ba7ee408810918b37b85c8e1`.
+Analytic circle-centre distance (20 mm versus 10 mm edge gap), display units,
+occurrence world points/unsigned deltas, geometric-centre density disclosure,
+associative source movement, fixed-point metadata, manual-coordinate Undo/Redo,
+save/reopen, unknown legacy capture fields and Close pass. `visual/` contains two
+reviewed task-panel captures, snapshot-metadata.json and native-only
+`Measurement-Context.FCStd`; [owner procedure](../tests/MeasurementContext.md).
+The earlier grouped aggregate retains a legacy-fixture XML error: transient property
+entries were incorrectly included in persisted Count. Corrected fixture passes;
+application code unchanged, no corrective build. Snapshot metadata adds no live
+links; timestamps/paths clear on manual point edits and are not invented on restore.
+Native identifiers/algorithms remain. Full F098/F099/15.1 stays open for broader
+mass/material, thickness, mesh accuracy, stale/invalid associative repair and physical/
+high-DPI acceptance. No installer/release update. Stop for owner feedback and rotate.
+
 - [   ] 15.2 Add curvature combs, zebra/reflection lines, continuity and deviation
   inspection with quantitative checks where claimed; support surface validation.
   Deviation inspection includes deviation maps; keep analysis/display distinct from
@@ -5822,7 +5859,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f098"></a>
 ### F098 — Unified measurement
 
-**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.1. **Status:** Existing native Measure task gains operand identities and explicit measurement/frame meaning under 15.1a/b, ready for owner testing. Circle-centre versus edge-gap, unit conversion, occurrence world coordinates/unsigned deltas and geometric-centre density disclosure pass. The grouped batch has 13 selected passes and two reviewed captures. Broader material/mass, thickness, mesh-accuracy and physical/high-DPI acceptance remain open. [Owner procedure](../tests/MeasurementContext.md).
 
 **Packages:** I01 · **First delivery:** P9; isolated tools earlier · **Likely scope:** UI/Feature
 
@@ -5835,7 +5872,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f099"></a>
 ### F099 — Persistent measurements
 
-**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.1. **Status:** Distance Free point snapshots now persist explicit fixed-world policy, UTC capture time and informational selection paths under 15.1b. Native save/reopen, source-move independence, direct-coordinate provenance clearing, Undo/Redo and legacy unknown provenance pass. Existing associative distance follows source edits in the companion fixture. Ready for owner testing; broader valid/stale/unresolved associative status, notes/operand navigation and repair remain open. [Owner procedure](../tests/MeasurementContext.md).
 
 **Packages:** I01, A05 · **First delivery:** P9 · **Likely scope:** Feature
 

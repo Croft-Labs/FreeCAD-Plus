@@ -1,6 +1,31 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F015 dependency inspection, phases 7 and 10 tasks 7.5.5a / 10.6a.
+Latest batch: F098/F099 measurement meaning and point snapshots, phase 15 tasks 15.1a/b.
+The existing Measure task shows operand identities, distance/frame meaning and
+geometric-centre density exclusion. Distance Free remains native fixed world points;
+new read-only UpdatePolicy/CaptureTime/CaptureSources fields retain explicit policy
+and UTC capture provenance without live links. Manual point edits clear provenance;
+restore and Undo/Redo preserve recorded state. Old files retain unknown capture data.
+
+One grouped MeasureGui Release build (including Measure), exit 0. All 13 selected
+checks pass without failures/errors/skips: 6 measurement in measurement-final/ and
+7 unchanged command-search in grouped/, process exits 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-measurement-20260930.
+acceptance-summary.json and validated-identities.json record suites/source/native
+identities. MeasureGui SHA256:
+20ee15fd1b6db168b8320cbec941682dd5c66466ba7ee408810918b37b85c8e1.
+grouped/ retains an earlier legacy-fixture XML Count error; the corrected fixture
+counts only persisted Property elements. No application correction or second build.
+
+visual/ has two reviewed task-panel captures, snapshot-metadata.json and native-only
+Measurement-Context.FCStd with both saved measurement types. tests/MeasurementContext.md
+is the owner procedure. Circle-centre/gap meaning, units, occurrence world points,
+unsigned deltas, source movement, fixed snapshots, coordinate-edit Undo/Redo,
+save/reopen, legacy unknown capture and Close pass. Whole F098/F099 remain open for
+broader mass/material, thickness, mesh accuracy, associative stale/invalid repair
+and physical/high-DPI acceptance. No release update. Stop for feedback and rotate.
+
+Previous batch: F015 dependency inspection, phases 7 and 10 tasks 7.5.5a / 10.6a.
 Tools > Inspect dependencies presents native property edges, direct/transitive
 inputs/consumers, expression reasons, native status and loaded external sources.
 Explicit model selection preserves visibility; node inspection changes only the

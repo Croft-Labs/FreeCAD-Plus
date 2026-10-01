@@ -184,6 +184,7 @@ TaskMeasure::TaskMeasure()
 
     // Create mode dropdown and add all registered measuretypes
     modeSwitch = new QComboBox();
+    modeSwitch->setObjectName(QStringLiteral("measureMode"));
     modeSwitch->addItem(tr("Auto"));
 
     for (App::MeasureType* mType : App::MeasureManager::getMeasureTypes()) {
@@ -197,12 +198,14 @@ TaskMeasure::TaskMeasure()
     connect(modeSwitch, qOverload<int>(&QComboBox::currentIndexChanged), this, &TaskMeasure::onModeChanged);
 
     unitSwitch = new QComboBox();
+    unitSwitch->setObjectName(QStringLiteral("measureUnit"));
     unitSwitch->addItem(QLatin1String("-"));
     connect(unitSwitch, qOverload<int>(&QComboBox::currentIndexChanged), this, &TaskMeasure::onUnitChanged);
 
 
     // Result widget
     valueResult = new QLineEdit();
+    valueResult->setObjectName(QStringLiteral("measureResult"));
     valueResult->setReadOnly(true);
 
     // Main layout
@@ -220,6 +223,17 @@ TaskMeasure::TaskMeasure()
     settingsLayout->addWidget(mSettings);
     formLayout->addRow(QLatin1String(), settingsLayout);
     formLayout->addRow(tr("Mode"), modeSwitch);
+    operandSummary = new QLabel();
+    operandSummary->setObjectName(QStringLiteral("measureOperands"));
+    operandSummary->setTextFormat(Qt::PlainText);
+    operandSummary->setWordWrap(true);
+    operandSummary->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    formLayout->addRow(tr("Selected entities"), operandSummary);
+    measurementMeaning = new QLabel();
+    measurementMeaning->setObjectName(QStringLiteral("measureMeaning"));
+    measurementMeaning->setTextFormat(Qt::PlainText);
+    measurementMeaning->setWordWrap(true);
+    formLayout->addRow(measurementMeaning);
 
     auto* resultLayout = new QHBoxLayout();
     resultLayout->setSpacing(8);
@@ -260,7 +274,8 @@ void TaskMeasure::modifyStandardButtons(QDialogButtonBox* box)
 
     QPushButton* btn = box->button(QDialogButtonBox::Apply);
     btn->setText(QCoreApplication::translate("QPlatformTheme", "Save"));
-    btn->setToolTip(tr("Saves the measurement in the active document"));
+    btn->setToolTip(tr("Saves the measurement in the active document. Distance Free saves fixed "
+                       "world points, not an associative clearance check."));
     connect(btn, &QPushButton::released, this, qOverload<>(&TaskMeasure::apply));
 
     // Disable button by default
@@ -388,6 +403,7 @@ void TaskMeasure::tryUpdate()
         }
         removeObject();
         enableAnnotateButton(false);
+        updateMeasurementContext(selection, modeIdentifier);
         return;
     }
 
@@ -413,9 +429,58 @@ void TaskMeasure::tryUpdate()
 
         syncDisplayUnit();
         refreshResult();
+        updateMeasurementContext(selection, measureType->identifier);
         updateAnnotation();
     }
     _mMeasureObject->purgeTouched();
+}
+
+void TaskMeasure::updateMeasurementContext(
+    const App::MeasureSelection& selection,
+    const std::string& type
+)
+{
+    QStringList operands;
+    for (const auto& item : selection) {
+        if (auto* obj = item.object.getObject()) {
+            operands.append(QString::fromUtf8(obj->Label.getValue()) + QStringLiteral(" [")
+                            + QString::fromStdString(obj->getFullName()) + QStringLiteral(".")
+                            + QString::fromStdString(item.object.getSubName()) + QStringLiteral("]"));
+        }
+    }
+    operandSummary->setText(operands.isEmpty() ? tr("Select geometry to measure.")
+                                             : operands.join(QStringLiteral("\n")));
+
+    QString meaning;
+    if (type == "DISTANCE") {
+        meaning = tr("Associative distance: circle/arc centres; infinite datum axes/planes; "
+                     "otherwise minimum separation of the selected geometry. "
+                     "World frame; delta components are unsigned.");
+    }
+    else if (type == "DISTANCEFREE") {
+        meaning = tr("Point snapshot: distance between picked world coordinates, not minimum "
+                     "clearance. Saved points do not follow source edits. Delta components are unsigned.");
+        if (auto* snapshot = dynamic_cast<Measure::MeasureDistanceDetached*>(_mMeasureObject)) {
+            const auto time = QString::fromUtf8(snapshot->CaptureTime.getValue());
+            meaning += QStringLiteral("\n")
+                + (time.isEmpty() ? tr("Capture time unavailable.") : tr("Captured (UTC): %1").arg(time));
+        }
+    }
+    else if (type == "CENTEROFMASS") {
+        meaning = tr("Geometric centre in world coordinates; this does not apply material density "
+                     "or report physical mass.");
+    }
+    else if (type == "POSITION") {
+        meaning = tr("Position in world coordinates.");
+    }
+    else if (type == "RADIUS" || type == "DIAMETER") {
+        meaning = tr("Radius or diameter of the selected circular geometry; not wall thickness.");
+    }
+    else {
+        meaning = tr("Result for the selected entities in the displayed units. "
+                     "Geometric measurements keep native references when saved.");
+    }
+    measurementMeaning->setText(meaning);
 }
 
 void TaskMeasure::updateUnitDropdown(const App::MeasureType* measureType)

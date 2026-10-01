@@ -62,6 +62,12 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Measurement context (F098/F099): existing [`TaskMeasure.cpp`](../src/Mod/Measure/Gui/TaskMeasure.cpp)
+shows operand identities and measurement/frame meaning. Native
+[`MeasureDistanceDetached`](../src/Mod/Measure/App/MeasureDistance.cpp) stores fixed-point
+policy and capture provenance without live source links. [Owner procedure](../tests/MeasurementContext.md);
+roadmap 15.1a/b. Broader measurement acceptance remains open.
+
 Dependency inspection (F015): [`DependencyInspector.py`](../src/Gui/DependencyInspector.py)
 owns the bounded native property-edge snapshot and Tools > Inspect dependencies
 dialog. Direct/transitive inputs and consumers, property reasons, status, external

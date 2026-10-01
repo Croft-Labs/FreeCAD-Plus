@@ -23,6 +23,7 @@
 
 
 #include <App/PropertyContainer.h>
+#include <QDateTime>
 #include <App/Application.h>
 #include <App/Document.h>
 #include <App/MeasureManager.h>
@@ -529,6 +530,21 @@ PROPERTY_SOURCE(Measure::MeasureDistanceDetached, Measure::MeasureBase)
 MeasureDistanceDetached::MeasureDistanceDetached()
 {
     ADD_PROPERTY_TYPE(
+        UpdatePolicy, ("Fixed world points; does not follow source edits"), "Snapshot",
+        App::PropertyType(App::Prop_ReadOnly | App::Prop_NoRecompute),
+        "Distance Free stores world coordinates, not associative geometry references"
+    );
+    ADD_PROPERTY_TYPE(
+        CaptureTime, (""), "Snapshot",
+        App::PropertyType(App::Prop_ReadOnly | App::Prop_NoRecompute),
+        "UTC capture time; empty means unavailable or coordinates subsequently edited"
+    );
+    ADD_PROPERTY_TYPE(
+        CaptureSources, (std::vector<std::string> {}), "Snapshot",
+        App::PropertyType(App::Prop_ReadOnly | App::Prop_NoRecompute),
+        "Original selection paths for information only; these are not live links"
+    );
+    ADD_PROPERTY_TYPE(
         Distance,
         (0.0),
         "Measurement",
@@ -581,6 +597,14 @@ void MeasureDistanceDetached::parseSelection(const App::MeasureSelection& select
 
     Position1.setValue(sel1.pickedPoint);
     Position2.setValue(sel2.pickedPoint);
+    std::vector<std::string> sources;
+    for (const auto& item : selection) {
+        if (auto* obj = item.object.getObject()) {
+            sources.push_back(obj->getFullName() + "." + item.object.getSubName());
+        }
+    }
+    CaptureSources.setValues(sources);
+    CaptureTime.setValue(QDateTime::currentDateTimeUtc().toString(Qt::ISODate).toStdString());
 }
 
 
@@ -606,6 +630,11 @@ void MeasureDistanceDetached::onChanged(const App::Property* prop)
     }
 
     if (prop == &Position1 || prop == &Position2) {
+        // A direct coordinate edit is no longer the original picked-point capture.
+        if (!getDocument() || !getDocument()->isPerformingTransaction()) {
+            CaptureTime.setValue("");
+            CaptureSources.setValues(std::vector<std::string> {});
+        }
         recalculateDistance();
     }
 
