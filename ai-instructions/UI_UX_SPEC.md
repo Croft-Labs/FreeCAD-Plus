@@ -856,3 +856,32 @@ numbering is claimed. Arrays, suppression/configurations, external/unloaded scop
 custom-column identity and exploded documentation remain open. Native editor/
 recompute refresh remains the workflow; no new automatic change tracker is added.
 [Owner procedure](../tests/AssemblyBomScope.md).
+
+
+## UI-027: Shape Builder sewing and solids (F068; roadmap 13.1a/b)
+
+Part > Shape Builder / Part_Builder keeps the existing shell and solid modes.
+Edge/wire/face modes retain their existing behavior. Shell/solid inputs are bounded
+to same-document root Part features or root Body results, 500 faces maximum;
+Links/nested members, stale inputs and pending edit transactions are refused.
+
+| Control | Action and feedback |
+| --- | --- |
+| Shell from faces | Select faces. All faces expands selected source objects; repeated input faces are deduplicated. |
+| Sewing tolerance (mm) | Shell mode only; 0.0000001-1 mm, default 0.000001. Passes the explicit value to native sewing. |
+| Check shape | Computes without document changes: classification, shell/face counts, free-edge names, requested/result maximum tolerance. |
+| Solid from shell | Select one whole closed shell. Only one valid positive-volume solid can be created; failures stay inline. |
+| Refine shape | Existing native refinement, followed by result validity checking. |
+| Create | Rechecks current inputs and makes one independent Part feature in one native transaction. Source geometry/visibility stays unchanged. |
+| Close | Ends this multi-create utility; accepted results remain. Undo removes each accepted result. |
+
+Selection/tolerance/refine changes invalidate the displayed check. Status uses plain
+wrapped text; errors preserve selection. The owner document is checked before
+review/creation. Results store read-only source-name provenance and sewing tolerance;
+these are snapshots, not associative features. Free-edge names belong to proposed
+result topology, not stable source repair targets. Source tolerances may already
+exceed requested sewing tolerance; the report discloses maximum result tolerance.
+No automatic escalation, graphical boundaries or ghost preview is claimed. Recorded
+UI calls require the live Shape Builder and selection; standalone macro replay,
+localization and physical keyboard/high-DPI acceptance remain open.
+[Owner procedure](../tests/ShapeSewing.md).

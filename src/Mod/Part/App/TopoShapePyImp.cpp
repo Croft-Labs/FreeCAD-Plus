@@ -22,6 +22,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cmath>
 #include <limits>
 #include <sstream>
 #include <boost/regex.hpp>
@@ -892,9 +893,13 @@ PyObject* TopoShapePy::sewShape(PyObject* args)
     if (!PyArg_ParseTuple(args, "|d", &tolerance)) {
         return nullptr;
     }
+    if (!std::isfinite(tolerance) || tolerance <= 0.0) {
+        PyErr_SetString(PyExc_ValueError, "Sewing tolerance must be finite and positive");
+        return nullptr;
+    }
 
     try {
-        getTopoShapePtr()->sewShape();
+        getTopoShapePtr()->sewShape(tolerance);
         Py_Return;
     }
     catch (Standard_Failure& e) {

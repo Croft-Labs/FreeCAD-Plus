@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F123 local command help and
+- Current product batch complete for owner testing: F068 sewing tolerance and Shape
+  Builder diagnostics, phase 13 tasks 13.1a/b. Native sewing now honors its supplied
+  tolerance. Existing shell/solid modes expose computed classification/free-boundary
+  reports and refuse open-shell solid creation while preserving sources. Both tasks
+  preceded one native build; 22 distinct selected checks pass across accepted suites
+  and six settled captures were reviewed. [Owner procedure](../tests/ShapeSewing.md).
+  Full F068 remains open for associative sewing, graphical preview/repair tools and
+  broader acceptance. Stop at this usable checkpoint and rotate for feedback.
+
+- Previous product batch complete for owner testing: F123 local command help and
   keyboard/display recovery, phase 10 tasks 10.9a/b. Existing command search now
   includes thirteen offline guides, live native availability, scrollable details,
   F1/Ctrl+L navigation and a window-only layout reset. Both tasks preceded one
@@ -3781,6 +3790,38 @@ inputs, tolerance, multi-result/target/tool retention and downstream-edit contra
   selection and associative trimming tools. Thicken supports one-sided, opposite-sided
   and symmetric thickness with Boolean options. Sewing exposes gaps and tolerance and
   creates a solid only when a valid closed volume results; open results remain sheets.
+- [ X ] 13.1a Honor explicit native Python sewing tolerance and expose it in the
+  existing Shape Builder. Reject non-finite/non-positive API values; bound the task
+  to 0.0000001-1 mm without automatic escalation. Sew copied source faces and disclose
+  maximum result geometry tolerance, which may exceed the requested joining value.
+- [ X ] 13.1b Add nonmutating shell/solid checks, open/closed/disconnected and free-
+  boundary reports, snapshot provenance and atomic native creation. Refuse open or
+  invalid shells for solid creation without losing inputs. Validate complete/gapped/
+  open enclosures, a curved seam, source/placement preservation, native controls,
+  invalid/stale/nested inputs, Undo/Redo and save/reopen.
+
+13.1a/b evidence (2026-10-01):
+Both tasks preceded one PartGui/PartScripts Release build, exit 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-shape-sewing-20261001`.
+Initial `grouped/` passed all 14 Trim Body checks and 6/8 sewing checks. Two test
+expectations were corrected for native Part origin objects and the face-only
+selection gate; no implementation rebuild. `sewing-verified/` passes all eight.
+**22 distinct selected passes** across accepted suites, zero failures/errors/skips
+in accepted suites, native process exits 0. Initial failed aggregate is retained.
+Six reviewed `visual-settled/` captures and Sewing-Sources.FCStd / Sewing-Results.FCStd;
+initial `visual/` captures caught native layout/radio animations before settling.
+The 0.01 mm gapped enclosure stays disconnected at 1e-6 mm sewing tolerance;
+explicit 0.05 mm joins it and reports 0.0105 mm maximum geometry tolerance. The
+exact enclosure produces a valid 1000 mm^3 solid; the open shell is refused.
+Part SHA256: `5DF2B65D6A4F06972AA7596371B7D777779D0AB11F86D29FA68A2C842725C128`.
+PartGui SHA256: `7ACC4FBFDE731DA33A76528FC0373D16E563F2D7C01164AD8F5C6CEA0409CBE6`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted checks; historical About metadata is not this source identity.
+No installer/release update. Root same-document inputs, 500 faces maximum.
+Whole F068/13.1 stays open for associative links, graphical boundaries/preview,
+gap-width measurement, broader nonmanifold/healing diagnostics, standalone macro
+replay, localization and physical acceptance. Stop here for owner testing and rotate.
+
 - [   ] 13.2 Extend sweep/loft with ordered sections, guides, orientation/twist and
   Boolean targets; implement through-curves surfaces with guides. Reuse 3.6/8.2.
   Through-curves surfaces need section-to-section correspondence controls and twist
@@ -6031,7 +6072,7 @@ reconciliation rules above to every entry.
 <a id="f068"></a>
 ### F068 — Sew/stitch surfaces
 
-**Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.1, 13.1a/b. **Status:** Bounded native Shape Builder sewing/solid workflow ready for owner testing. Explicit tolerance reaches the kernel; checks distinguish open/closed shells and disconnected sheets, list free boundaries and disclose actual geometry tolerance. Independent snapshots preserve sources; open-shell solid creation is refused. Twenty-two selected checks pass across accepted suites, with six settled captures reviewed. Whole F068 remains open for associative sources, graphical boundaries/preview, gap measurement, broader diagnostics and physical acceptance. See [owner procedure](../tests/ShapeSewing.md).
 
 **Packages:** G02 · **First delivery:** P7 · **Likely scope:** Feature
 

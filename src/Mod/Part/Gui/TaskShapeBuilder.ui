@@ -128,6 +128,34 @@
       </layout>
     </widget>
    </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="sewingToleranceLabel">
+     <property name="text"><string>Sewing tolerance (mm)</string></property>
+     <property name="buddy"><cstring>sewingTolerance</cstring></property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QDoubleSpinBox" name="sewingTolerance">
+     <property name="decimals"><number>7</number></property>
+     <property name="minimum"><double>0.0000001</double></property>
+     <property name="maximum"><double>1.0000000</double></property>
+     <property name="value"><double>0.0000010</double></property>
+     <property name="singleStep"><double>0.0000010</double></property>
+     <property name="toolTip"><string>Explicit joining tolerance; never increased automatically. Source tolerances can already be larger.</string></property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="QPushButton" name="checkShapeButton">
+     <property name="text"><string>Check shape</string></property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QLabel" name="sewingStatus">
+     <property name="text"><string>Check before creating. Results are independent snapshots.</string></property>
+     <property name="wordWrap"><bool>true</bool></property>
+     <property name="textFormat"><enum>Qt::PlainText</enum></property>
+    </widget>
+   </item>
    <item row="1" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
@@ -162,6 +190,8 @@
   <tabstop>checkPlanar</tabstop>
   <tabstop>checkRefine</tabstop>
   <tabstop>checkFaces</tabstop>
+  <tabstop>sewingTolerance</tabstop>
+  <tabstop>checkShapeButton</tabstop>
   <tabstop>createButton</tabstop>
  </tabstops>
  <resources/>

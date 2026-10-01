@@ -19,6 +19,7 @@ set(Part_Scripts
     ManufacturingExport.py
     NamedParameters.py
     PartEnums.py
+    ShapeSewing.py
     TestPartApp.py
 )
 

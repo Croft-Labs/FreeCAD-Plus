@@ -117,6 +117,16 @@ ShapeBuilderWidget::ShapeBuilderWidget(QWidget* parent)
 {
     Q_UNUSED(parent);
     d->ui.setupUi(this);
+    setProperty("ownerDocument", QString::fromUtf8(App::GetApplication().getActiveDocument()->getName()));
+    connect(d->ui.checkShapeButton, &QPushButton::clicked, this, []() {
+        Gui::Command::runCommand(Gui::Command::App,
+            "import ShapeSewing\nShapeSewing.builder_action(False)");
+    });
+    auto invalidateReview = [this]() { d->ui.sewingStatus->setText(tr("Inputs changed. Check the shape again.")); };
+    connect(d->ui.sewingTolerance, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+            [invalidateReview](double) { invalidateReview(); });
+    connect(d->ui.checkRefine, &QCheckBox::toggled, this,
+            [invalidateReview](bool) { invalidateReview(); });
     d->ui.label->setText(QString());
     d->bg.addButton(d->ui.radioButtonEdgeFromVertex, 0);
     d->bg.addButton(d->ui.radioButtonWireFromEdge, 1);
@@ -144,6 +154,9 @@ ShapeBuilderWidget::~ShapeBuilderWidget()
 
 void ShapeBuilderWidget::onSelectionChanged(const Gui::SelectionChanges& msg)
 {
+    if (d->bg.checkedId() >= 4) {
+        d->ui.sewingStatus->setText(tr("Selection changed. Check the shape again."));
+    }
     if (d->ui.checkFaces->isChecked()) {
         if (msg.Type == Gui::SelectionChanges::AddSelection) {
             std::string subName(msg.pSubName);
@@ -196,9 +209,11 @@ void ShapeBuilderWidget::onCreateButtonClicked()
         }
         else if (mode == 4) {
             createShellFromFace();
+            return;
         }
         else if (mode == 5) {
             createSolidFromShell();
+            return;
         }
         doc->getDocument()->recompute();
         Gui::Selection().clearSelection();
@@ -426,130 +441,23 @@ void ShapeBuilderWidget::createFaceFromEdge()
 
 void ShapeBuilderWidget::createShellFromFace()
 {
-    Gui::SelectionFilter faceFilter("SELECT Part::Feature SUBELEMENT Face COUNT 2..");
-    bool matchFace = faceFilter.match();
-    if (!matchFace) {
-        QMessageBox::critical(this, tr("Wrong Selection"), tr("Select at least 2 faces"));
-        return;
-    }
-
-    std::vector<Gui::SelectionObject> sel = faceFilter.Result[0];
-
-    QString list;
-    QTextStream str(&list);
-    if (d->ui.checkFaces->isChecked()) {
-        std::set<const App::DocumentObject*> obj;
-        for (const auto& it : sel) {
-            obj.insert(it.getObject());
-        }
-        str << "[]";
-        for (auto it : obj) {
-            str << "+ App.ActiveDocument." << it->getNameInDocument() << ".Shape.Faces";
-        }
-    }
-    else {
-        str << "[";
-        for (const auto& it : sel) {
-            for (const auto& jt : it.getSubNames()) {
-                str << "App.ActiveDocument." << it.getFeatName() << ".Shape." << jt.c_str() << ", ";
-            }
-        }
-        str << "]";
-    }
-
-    QString cmd;
-    if (d->ui.checkRefine->isEnabled() && d->ui.checkRefine->isChecked()) {
-        cmd = QStringLiteral(
-                  "_=Part.Shell(%1)\n"
-                  "if _.isNull(): raise RuntimeError('Failed to create shell')\n"
-                  "App.ActiveDocument.addObject('Part::Feature','Shell').Shape=_.removeSplitter()\n"
-                  "del _\n"
-        )
-                  .arg(list);
-    }
-    else {
-        cmd = QStringLiteral(
-                  "_=Part.Shell(%1)\n"
-                  "if _.isNull(): raise RuntimeError('Failed to create shell')\n"
-                  "App.ActiveDocument.addObject('Part::Feature','Shell').Shape=_\n"
-                  "del _\n"
-        )
-                  .arg(list);
-    }
-
-    try {
-        Gui::Application::Instance->activeDocument()->openCommand(
-            QT_TRANSLATE_NOOP("Command", "Shell")
-        );
-        Gui::Command::runCommand(Gui::Command::App, cmd.toLatin1());
-        Gui::Application::Instance->activeDocument()->commitCommand();
-    }
-    catch (const Base::Exception&) {
-        Gui::Application::Instance->activeDocument()->abortCommand();
-        throw;
-    }
+    Gui::Command::runCommand(Gui::Command::App,
+        "import ShapeSewing\nShapeSewing.builder_action(True)");
 }
 
 void ShapeBuilderWidget::createSolidFromShell()
 {
-    Gui::SelectionFilter partFilter("SELECT Part::Feature COUNT 1");
-    bool matchPart = partFilter.match();
-    if (!matchPart) {
-        QMessageBox::critical(this, tr("Wrong Selection"), tr("Select only 1 shape object"));
-        return;
-    }
-
-    QString line;
-    QTextStream str(&line);
-
-    std::vector<Gui::SelectionObject> sel = partFilter.Result[0];
-    std::vector<Gui::SelectionObject>::iterator it;
-    for (it = sel.begin(); it != sel.end(); ++it) {
-        str << "App.ActiveDocument." << it->getFeatName() << ".Shape";
-        break;
-    }
-
-    QString cmd;
-    if (d->ui.checkRefine->isEnabled() && d->ui.checkRefine->isChecked()) {
-        cmd = QStringLiteral(
-                  "shell=%1\n"
-                  "if shell.ShapeType != 'Shell': raise RuntimeError('Part object is not a "
-                  "shell')\n"
-                  "_=Part.Solid(shell)\n"
-                  "if _.isNull(): raise RuntimeError('Failed to create solid')\n"
-                  "App.ActiveDocument.addObject('Part::Feature','Solid').Shape=_.removeSplitter()\n"
-                  "del _\n"
-        )
-                  .arg(line);
-    }
-    else {
-        cmd = QStringLiteral(
-                  "shell=%1\n"
-                  "if shell.ShapeType != 'Shell': raise RuntimeError('Part object is not a "
-                  "shell')\n"
-                  "_=Part.Solid(shell)\n"
-                  "if _.isNull(): raise RuntimeError('Failed to create solid')\n"
-                  "App.ActiveDocument.addObject('Part::Feature','Solid').Shape=_\n"
-                  "del _\n"
-        )
-                  .arg(line);
-    }
-
-    try {
-        Gui::Application::Instance->activeDocument()->openCommand(
-            QT_TRANSLATE_NOOP("Command", "Solid")
-        );
-        Gui::Command::runCommand(Gui::Command::App, cmd.toLatin1());
-        Gui::Application::Instance->activeDocument()->commitCommand();
-    }
-    catch (const Base::Exception&) {
-        Gui::Application::Instance->activeDocument()->abortCommand();
-        throw;
-    }
+    Gui::Command::runCommand(Gui::Command::App,
+        "import ShapeSewing\nShapeSewing.builder_action(True)");
 }
 
 void ShapeBuilderWidget::switchMode(int mode)
 {
+    d->ui.sewingTolerance->setVisible(mode == 4);
+    d->ui.sewingToleranceLabel->setVisible(mode == 4);
+    d->ui.checkShapeButton->setVisible(mode >= 4);
+    d->ui.sewingStatus->setVisible(mode >= 4);
+    d->ui.sewingStatus->setText(tr("Check before creating. Results are independent snapshots."));
     Gui::Selection().clearSelection();
     if (mode == 0) {
         d->gate->setMode(ShapeSelection::VERTEX);
