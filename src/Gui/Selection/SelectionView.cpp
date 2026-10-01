@@ -31,7 +31,9 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <set>
+#include <tuple>
 
+#include <App/Application.h>
 #include <App/ComplexGeoData.h>
 #include <App/Document.h>
 #include <App/ElementNamingUtils.h>
@@ -719,6 +721,8 @@ void SelectionView::onEnablePickList()
 SelectionMenu::SelectionMenu(QWidget* parent)
     : QMenu(parent)
 {
+    setObjectName(QStringLiteral("ClarifySelectionMenu"));
+    setToolTipsVisible(true);
     connect(this, &QMenu::hovered, this, &SelectionMenu::onHover);
 }
 
@@ -742,11 +746,18 @@ PickData SelectionMenu::doPick(const std::vector<PickData>& sels, const QPoint& 
     Gui::Selection().setClarifySelectionActive(true);
 
     currentSelections = sels;
+    for (auto& sel : currentSelections) {
+        sel.objectId = sel.obj ? sel.obj->getID() : 0;
+    }
 
     std::map<std::string, SubMenuInfo> menus;
     processSelections(currentSelections, menus);
     buildMenuStructure(menus, currentSelections);
 
+    if (actions().isEmpty()) {
+        auto* empty = addAction(tr("No candidates pass the current selection filter"));
+        empty->setEnabled(false);
+    }
     QAction* picked = this->exec(pos);
     return onPicked(picked, currentSelections);
 }
@@ -758,42 +769,45 @@ void SelectionMenu::processSelections(
 {
     std::map<App::DocumentObject*, QIcon> icons;
     std::set<std::string> createdElementTypes;
-    std::set<std::string> processedItems;
+    std::set<std::tuple<std::string, std::string, std::string>> processedItems;
 
-    for (int i = 0; i < (int)selections.size(); ++i) {
-        const auto& sel = selections[i];
-
-        App::DocumentObject* sobj = sel.obj;
-        bool usedFallback = false;
-        if (!sel.subName.empty()) {
-            App::DocumentObject* resolved = sel.obj->getSubObject(sel.subName.c_str());
-            if (resolved) {
-                sobj = resolved;
-            }
-            else {
-                usedFallback = true;
-            }
-        }
-        std::string elementType = extractElementType(sel);
-        // When sub-path resolution failed, all picks share the same container object.
-        // Collapse them to a single menu entry so the container does not appear as duplicates.
-        std::string objKey = usedFallback ? std::string(sel.objName) : createObjectKey(sel);
-        std::string itemId = elementType + "|" + std::string(sobj->Label.getValue()) + "|"
-            + (usedFallback ? sel.objName : sel.subName);
-
-        if (processedItems.find(itemId) != processedItems.end()) {
+    for (int i = 0; i < static_cast<int>(selections.size()); ++i) {
+        // Whole-object candidates append to this vector; retain a value, not a
+        // reference that can be invalidated by reallocation.
+        const auto sel = selections[i];
+        if (!sel.obj) {
             continue;
         }
-        processedItems.insert(itemId);
+        App::DocumentObject* sobj = sel.obj;
+        if (!sel.subName.empty()) {
+            sobj = sel.obj->getSubObject(sel.subName.c_str());
+            if (!sobj) {
+                continue; // An unresolved path must not become its outer container.
+            }
+        }
+        if (!processedItems.emplace(sel.docName, sel.objName, sel.subName).second) {
+            continue;
+        }
 
         QIcon icon = getOrCreateIcon(sobj, icons);
-
-        auto& elementInfo = menus[elementType].items[sobj->Label.getValue()][objKey];
-        elementInfo.icon = icon;
-        elementInfo.indices.push_back(i);
-
-        addGeoFeatureTypes(sobj, menus, createdElementTypes);
+        // A command may permit whole objects but reject individual faces. Generate
+        // both candidate roles before applying its native selection gate.
         addWholeObjectSelection(sel, sobj, selections, menus, icon);
+        if (!Gui::Selection().testSelection(sel.obj->getDocument(), sel.obj, sel.subName.c_str())) {
+            continue;
+        }
+        std::string elementType = extractElementType(sel);
+        // Generated whole-object entries already belong to the Object category.
+        if (sel.element.empty() && (sel.subName.empty() || sel.subName.back() == '.')) {
+            elementType = "Object";
+        }
+        auto& elementInfo = menus[elementType].items[sobj->Label.getValue()][createObjectKey(sel)];
+        elementInfo.icon = icon;
+        if (std::find(elementInfo.indices.begin(), elementInfo.indices.end(), i)
+            == elementInfo.indices.end()) {
+            elementInfo.indices.push_back(i);
+        }
+        addGeoFeatureTypes(sobj, menus, createdElementTypes);
     }
 }
 
@@ -862,13 +876,16 @@ PickData SelectionMenu::onPicked(QAction* picked, const std::vector<PickData>& s
         return PickData {};
     }
 
-    int index = picked->data().toInt();
-    if (index >= 0 && index < (int)sels.size()) {
+    bool ok = false;
+    int index = picked->data().toInt(&ok);
+    if (ok && index >= 0 && index < static_cast<int>(sels.size())) {
         const auto& sel = sels[index];
-        if (sel.obj) {
-            Gui::Selection().addSelection(sel.docName.c_str(), sel.objName.c_str(), sel.subName.c_str());
+        if (auto* obj = currentObject(sel)) {
+            if (Gui::Selection().testSelection(obj->getDocument(), obj, sel.subName.c_str())
+                && Gui::Selection().addSelection(sel.docName.c_str(), sel.objName.c_str(), sel.subName.c_str())) {
+                return sel;
+            }
         }
-        return sel;
     }
     return PickData {};
 }
@@ -890,7 +907,8 @@ void SelectionMenu::onHover(QAction* action)
     }
 
     const auto& sel = currentSelections[index];
-    if (!sel.obj) {
+    auto* obj = currentObject(sel);
+    if (!obj || !Gui::Selection().testSelection(obj->getDocument(), obj, sel.subName.c_str())) {
         return;
     }
 
@@ -904,6 +922,14 @@ void SelectionMenu::onHover(QAction* action)
         0,
         SelectionChanges::MsgSource::TreeView
     );
+}
+
+App::DocumentObject* SelectionMenu::currentObject(const PickData& sel) const
+{
+    auto* doc = App::GetApplication().getDocument(sel.docName.c_str());
+    auto* obj = doc ? doc->getObject(sel.objName.c_str()) : nullptr;
+    return obj && obj->getID() == sel.objectId
+        && (sel.subName.empty() || obj->getSubObject(sel.subName.c_str())) ? obj : nullptr;
 }
 
 bool SelectionMenu::eventFilter(QObject* obj, QEvent* event)
@@ -953,7 +979,7 @@ std::string SelectionMenu::extractElementType(const PickData& sel)
 
 std::string SelectionMenu::createObjectKey(const PickData& sel)
 {
-    std::string objKey = std::string(sel.objName);
+    std::string objKey = sel.docName + "#" + sel.objName + ".";
     if (!sel.subName.empty()) {
         std::string subNameNoElement = sel.subName;
         const char* elementName = Data::findElementName(sel.subName.c_str());
@@ -964,7 +990,7 @@ std::string SelectionMenu::createObjectKey(const PickData& sel)
                 subNameNoElement = subNameNoElement.substr(0, elementPos);
             }
         }
-        objKey += "." + subNameNoElement;
+        objKey += subNameNoElement;
     }
     return objKey;
 }
@@ -1059,40 +1085,18 @@ void SelectionMenu::addWholeObjectSelection(
     }
 
     if (shouldAdd) {
-        std::string wholeObjKey;
         std::string wholeObjSubName;
-
         if (sobj != sel.obj) {
-            // sub-objects
-            std::string subNameStr = sel.subName;
-            std::size_t lastDot = subNameStr.find_last_of('.');
-            if (lastDot != std::string::npos && lastDot > 0) {
-                std::size_t prevDot = subNameStr.find_last_of('.', lastDot - 1);
-                std::string subObjName;
-                if (prevDot != std::string::npos) {
-                    subObjName = subNameStr.substr(prevDot + 1, lastDot - prevDot - 1);
-                }
-                else {
-                    subObjName = subNameStr.substr(0, lastDot);
-                }
-
-                if (!subObjName.empty()) {
-                    wholeObjKey = std::string(sel.objName) + "." + subObjName + ".";
-                    // use the full sub-object path up to and including the
-                    // last dot, not just the final segment. this preserves
-                    // the correct chain ie. "Cone001.Cone." instead of
-                    // just "Cone.") for objects inside assembly links.
-                    // see github issue: https://github.com/freecad/freecad/issues/29024
-                    wholeObjSubName = subNameStr.substr(0, lastDot + 1);
-                }
+            auto lastDot = sel.subName.find_last_of('.');
+            if (lastDot == std::string::npos) {
+                return;
             }
+            wholeObjSubName = sel.subName.substr(0, lastDot + 1);
         }
-        else {
-            // top-level objects (sobj == sel.obj)
-            wholeObjKey = std::string(sel.objName) + ".";
-            wholeObjSubName = "";  // empty subName for top-level whole object
+        const std::string wholeObjKey = sel.docName + "#" + sel.objName + "." + wholeObjSubName;
+        if (!Gui::Selection().testSelection(sel.obj->getDocument(), sel.obj, wholeObjSubName.c_str())) {
+            return;
         }
-
         if (!wholeObjKey.empty()) {
             auto& objItems = menus["Object"].items[sobj->Label.getValue()];
             if (objItems.find(wholeObjKey) == objItems.end()) {
@@ -1157,7 +1161,9 @@ void SelectionMenu::createFlatMenu(
             }
         }
 
+        text += QStringLiteral(" [%1]").arg(QString::fromStdString(createObjectKey(sel)));
         QAction* action = parentMenu->addAction(elementInfo.icon, text);
+        action->setToolTip(QString::fromStdString(sel.docName + "#" + sel.objName + "." + sel.subName));
         action->setData(idx);
         connect(action, &QAction::hovered, this, [this, action]() { onHover(action); });
     }
@@ -1172,7 +1178,10 @@ void SelectionMenu::createGroupedMenu(
 )
 {
     if (!elementInfo.menu) {
-        elementInfo.menu = parentMenu->addMenu(elementInfo.icon, QString::fromUtf8(label.c_str()));
+        const auto& first = selections[elementInfo.indices.front()];
+        QString title = QStringLiteral("%1 [%2]")
+            .arg(QString::fromUtf8(label.c_str()), QString::fromStdString(createObjectKey(first)));
+        elementInfo.menu = parentMenu->addMenu(elementInfo.icon, title);
     }
 
     for (int idx : elementInfo.indices) {
@@ -1201,6 +1210,7 @@ void SelectionMenu::createGroupedMenu(
         }
 
         QAction* action = elementInfo.menu->addAction(text);
+        action->setToolTip(QString::fromStdString(sel.docName + "#" + sel.objName + "." + sel.subName));
         action->setData(idx);
         connect(action, &QAction::hovered, this, [this, action]() { onHover(action); });
     }

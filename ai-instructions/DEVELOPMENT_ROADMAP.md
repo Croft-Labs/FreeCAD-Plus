@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F071 sampled face deviation,
+- Current product batch complete for owner testing: F037 Select Other, phase 10
+  tasks 10.5c/d. The existing Clarify Selection command now preserves equal-label
+  objects and full repeated-occurrence paths, labels their context, and respects
+  native command selection gates through hover and acceptance. Both tasks preceded
+  one native build; all 16 selected checks pass and five captures were reviewed.
+  [Owner procedure](../tests/ClarifySelection.md). Full F037 remains open for broader
+  live-topology and physical/high-DPI acceptance. Stop here and rotate.
+
+- Previous product batch complete for owner testing: F071 sampled face deviation,
   phase 15 tasks 15.2a/b. Part > Sampled face deviation compares two explicit faces
   using native unsigned point-to-face distances and a temporary color map. Sampling,
   mm scale, trimmed-out/failed counts and non-certification limits are visible;
@@ -2839,6 +2847,36 @@ restore before saving (save while isolated persists current native visibility).
 Linked members address the whole occurrence; Body features address the whole
 Body result. Deep member overrides, broader save-time policy and physical/high-DPI
 acceptance remain open. Stop here for owner feedback and rotate the next batch.
+
+- [x] 10.5c Complete a bounded F037 Select Other increment in the existing
+  Clarify Selection command: deduplicate by document/root/full occurrence path,
+  preserve repeated equal-label candidates and expose their internal context.
+- [x] 10.5d Apply native command selection gates to element and whole-object
+  candidates, recheck hover/accept identity and eligibility, explain an empty
+  filtered result, and validate additive acceptance and Escape preservation.
+
+Both implementation tasks preceded one FreeCADGui/FreeCADGui_Resources Release
+build, exit 0. Evidence: `D:\Temp\Office-PC\freecad-plus-clarify-selection-20261001`.
+Initial `grouped/` stopped before any tests because the PySide compatibility wrapper
+has no QtTest export. The test now imports the bundled PySide6 QtTest (PySide2 fallback);
+no implementation change or second build was needed. `grouped-native/` passes all
+seven native Clarify Selection checks and nine temporary-display regressions:
+**16 selected passes**, zero failures/errors/skips, native exit 0. Five `visual/`
+captures were reviewed: equal-label face choices, rear-face highlight, face-only
+filter, all-filtered explanation and distinct repeated occurrence paths.
+Overlapping-Equal-Labels.FCStd and Overlapping-Occurrences.FCStd are owner fixtures.
+The native picker exposes Front/Rear Face5/Face6 separately and Assembly.First. /
+Assembly.Second. as separate whole occurrences. Exact hover/accept, additive
+selection, Escape preservation, face/object/reject gates, changed-gate refusal,
+deleted/recreated-name protection and native Link save/reopen pass.
+FreeCADGui SHA256: `19FE903A46ABEFC2A34F0AECBA86F2BAA6C331A2663685C0DD797032A1EF80C8`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted evidence; the historical About stamp is not this source identity.
+No installer/release update. Full F037 remains open for broader topology/live-menu
+changes and physical/high-DPI/navigation-preset acceptance. Global filter controls
+(F035), new selection scopes (F036) and depth ranking are separate work.
+Stop at this functional checkpoint for owner testing and rotate to another family.
+[Owner procedure](../tests/ClarifySelection.md).
 
 - [   ] 10.6 Extend 7.2 with separate Assembly and Feature Navigator tabs, optional
   simultaneous docking, explicit work/display part, status columns, contributing-body
@@ -5751,7 +5789,7 @@ reconciliation rules above to every entry.
 <a id="f037"></a>
 ### F037 — Select Other
 
-**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.5, 10.5c/d. **Status:** Bounded Select Other increment is ready for owner testing in native Clarify Selection: equal-label candidates retain document/root/full occurrence identity and visible context; native gates filter element/whole-object roles and are rechecked for hover/accept. One grouped build, 16 selected checks and five reviewed captures pass. Full F037 remains open for broader live-topology and physical/high-DPI/navigation-preset acceptance. [Owner procedure](../tests/ClarifySelection.md).
 
 **Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
 

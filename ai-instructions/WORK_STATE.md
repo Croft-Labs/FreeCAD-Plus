@@ -1,6 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F071 sampled face deviation, phase 15 tasks 15.2a/b. The Part command
+Latest batch: F037 Select Other, phase 10 tasks 10.5c/d. Existing native Clarify
+Selection now deduplicates by document/root/full subpath and displays occurrence
+context. Full whole-object paths survive repeated instances; command gates filter
+candidate roles and are rechecked at hover/accept. Empty filtered lists explain the
+cause; deleted/recreated roots cannot redirect selection. No new picker/service.
+
+Both implementation tasks preceded one FreeCADGui/FreeCADGui_Resources Release
+build, exit 0. Evidence: `D:\Temp\Office-PC\freecad-plus-clarify-selection-20261001`.
+Initial `grouped/` stopped before any tests because the PySide compatibility wrapper
+has no QtTest export. The test now imports the bundled PySide6 QtTest (PySide2 fallback);
+no implementation change or second build was needed. `grouped-native/` passes all
+seven native Clarify Selection checks and nine temporary-display regressions:
+**16 selected passes**, zero failures/errors/skips, native exit 0. Five `visual/`
+captures were reviewed: equal-label face choices, rear-face highlight, face-only
+filter, all-filtered explanation and distinct repeated occurrence paths.
+Overlapping-Equal-Labels.FCStd and Overlapping-Occurrences.FCStd are owner fixtures.
+The native picker exposes Front/Rear Face5/Face6 separately and Assembly.First. /
+Assembly.Second. as separate whole occurrences. Exact hover/accept, additive
+selection, Escape preservation, face/object/reject gates, changed-gate refusal,
+deleted/recreated-name protection and native Link save/reopen pass.
+FreeCADGui SHA256: `19FE903A46ABEFC2A34F0AECBA86F2BAA6C331A2663685C0DD797032A1EF80C8`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted evidence; the historical About stamp is not this source identity.
+No installer/release update. Full F037 remains open for broader topology/live-menu
+changes and physical/high-DPI/navigation-preset acceptance. Global filter controls
+(F035), new selection scopes (F036) and depth ranking are separate work.
+Stop at this functional checkpoint for owner testing and rotate to another family.
+tests/ClarifySelection.md is the owner procedure.
+
+Previous batch: F071 sampled face deviation, phase 15 tasks 15.2a/b. The Part command
 uses explicit sampled/reference face roles, native unsigned point-to-face distances,
 UV cell-center sampling and a non-pickable on-top color map. Millimeter scale,
 sample statistics and excluded/failed counts are visible. Settings persist only by

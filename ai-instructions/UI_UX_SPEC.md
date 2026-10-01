@@ -939,3 +939,27 @@ recapture. Document activation changes clear it, and closing its owner closes th
 dialog. Native files contain only the original model. Zebra, combs, continuity,
 adaptive/bidirectional/global deviation and physical/high-DPI acceptance remain open.
 [Owner procedure](../tests/SurfaceDeviation.md).
+
+## UI-030: Clarify Selection / Select Other (F037; roadmap 10.5c/d)
+
+The existing Std_ClarifySelection command remains available from the native 3D-view
+context menu and G, G shortcut. It uses the current cursor or stored context-menu
+position and the existing ray-pick radius, geometry roles and selection service.
+
+| Interaction | Behavior |
+| --- | --- |
+| Open over overlapping geometry | Show native type categories, then label/internal-path ordering. Candidates use document/root/full subpath identity, so repeated labels cannot collapse distinct occurrences. |
+| Candidate labels | Include `[document#root.occurrence.path.]`; grouped submenu titles also include context. Tooltips show the complete selected path. |
+| Hover / keyboard highlight | Native transient preselection of the candidate's exact path. Current root identity and command gate are rechecked. |
+| Accept | Recheck identity and gate, then add the exact target through native selection. Existing selections remain for command collectors. |
+| Escape / dismiss | Clear transient preselection; leave existing selection and model unchanged. |
+| Active native command filter | Omit disallowed element/whole-object roles. Whole objects can still be derived from face hits for object-only gates. The menu never changes the gate. |
+| All candidates filtered | Disabled explanation: No candidates pass the current selection filter. Leave the owning command to restore its selection policy. |
+
+Only geometry participating in native ray picking is offered; intentionally hidden
+objects are not revealed. Ordering is not a nearest-depth ranking. Invalid paths
+are omitted instead of falling back to an outer container. Root deletion/recreation
+with the same name cannot redirect hover or acceptance. No model, visibility, Undo
+or persistence changes occur. Global type controls, new scopes, live topology/menu
+rebuilding, localization and physical/high-DPI/navigation-preset acceptance remain
+open. [Owner procedure](../tests/ClarifySelection.md).

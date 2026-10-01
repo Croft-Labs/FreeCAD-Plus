@@ -135,6 +135,7 @@ struct PickData
     std::string docName;
     std::string objName;
     std::string subName;
+    long objectId {0};
 };
 
 // Add SelectionMenu class outside the DockWnd namespace
@@ -163,6 +164,7 @@ protected:
     PickData onPicked(QAction*, const std::vector<PickData>& sels);
 
 private:
+    App::DocumentObject* currentObject(const PickData& sel) const;
     void processSelections(std::vector<PickData>& selections, std::map<std::string, SubMenuInfo>& menus);
     void buildMenuStructure(
         std::map<std::string, SubMenuInfo>& menus,
