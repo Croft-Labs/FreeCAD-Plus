@@ -36,6 +36,29 @@ owns requirements.
    new `.cadprt` and verify the original is unchanged. Retained native Body or
    unsupported payloads must not be mistaken for fully migrated component history.
 
+## Current feedback iteration
+
+The native Extrude/Pad/Pocket commands in a component document now open a component
+Extrude task. Choose a local sketch or evaluated curve profile without creating a
+Body container. Choose New Body, Add or Subtract; Add/Subtract require an explicit
+local target. Length, direction and preview are available before committing.
+Preview and Cancel leave no feature in the document. This iteration supports one
+solid output; disjoint/multiple-solid results are refused.
+
+Double-click an operation or its result in Model History to edit it. Component
+Extrude opens the same task for profile/length/direction edits while retaining its
+saved mode/target. Expression-driven extrusion edits remain in the property editor.
+Other supported objects use their native task editor. Context menus also offer
+Rename. History distinguishes explicit Suppressed, Inactive dependency and repair
+states; refresh preserves the selected row and expanded component branches. Creating
+an embedded component and its first occurrence is now one Undo step.
+
+This is a feedback build. Standard Part Design sketch creation still has its native
+Body workflow; full sketch/command integration remains pending. Broader topology,
+consumer and file-format qualification waits for owner feedback. For the small
+current smoke check, add `-IterationSmoke` to `RunComponentDocument.ps1` instead of
+running the full suites below.
+
 ## Automated checks
 
 Run from the repository root in PowerShell, with a new evidence directory each time:

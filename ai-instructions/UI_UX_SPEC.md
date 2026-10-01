@@ -1437,3 +1437,12 @@ provides suppression and the Convert to Dumb Object dropdown. The context label
 identifies the edited definition and owning file; missing components offer explicit
 repair, and legacy conversions expose their report. Full implementation and native
 interaction/solver acceptance remain tracked in 7.8.
+
+Component feedback iteration (7.8.5c/7.8.7d): Extrude/Pad/Pocket in a component
+context opens an operation-first task with New Body/Add/Subtract, local profile,
+explicit target, length, reverse direction and Preview. OK commits one operation;
+Cancel leaves no provisional document objects. Editing a published result opens its
+producer; this iteration keeps the saved Boolean mode/target during edits. Model
+History double-click uses this task or the object's native editor, provides Rename,
+and distinguishes authored suppression from dependent inactivity. Navigator refresh
+retains row selection, expansion and scroll position. Broader acceptance is pending.

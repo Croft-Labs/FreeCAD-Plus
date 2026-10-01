@@ -122,6 +122,13 @@ User preference: do not create a new build after every change. When testing one
 feature would require a lengthy build, defer that build and its dependent tests
 until several related, authorized changes are ready to validate together.
 
+For the current component/Model History feedback rounds (owner direction,
+2026-10-01), implement several related changes, then use one grouped incremental
+build and a small workflow smoke check. Do not repeatedly run the full component
+or cross-workbench qualification suites before owner feedback. Keep broader schema,
+compatibility, recovery and interaction acceptance explicitly pending; address any
+concrete defect found by the smoke check before handing over the iteration.
+
 - Continue quick source review, formatting, syntax checks and tests that can run
   against compatible existing binaries while developing the batch.
 - Record each changed feature and its pending build/runtime checks in the roadmap.

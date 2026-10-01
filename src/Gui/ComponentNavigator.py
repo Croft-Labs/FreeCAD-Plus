@@ -98,6 +98,8 @@ class Navigator(QtWidgets.QDockWidget):
         self.structure.itemSelectionChanged.connect(self.select_structure)
         self.history.itemSelectionChanged.connect(self.select_history)
         self.structure.itemDoubleClicked.connect(lambda item, column: self.run(lambda: self.activate_item(item)))
+        self.history.itemDoubleClicked.connect(lambda item, column: self.run(
+            lambda: self.edit_history(item.data(0, QtCore.Qt.UserRole))))
         for tree in (self.structure, self.history):
             tree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
             tree.customContextMenuRequested.connect(lambda point, tree=tree: self.menu(tree, point))
@@ -130,6 +132,8 @@ class Navigator(QtWidgets.QDockWidget):
         if self.refreshing:
             return
         self.refreshing = True
+        structure_state = self.tree_state(self.structure)
+        history_state = self.tree_state(self.history)
         try:
             self.structure.clear()
             self.history.clear()
@@ -153,17 +157,48 @@ class Navigator(QtWidgets.QDockWidget):
             root_item.setData(0, QtCore.Qt.UserRole, (object_key(root), []))
             root_item.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
             self.populate(root_item, root, root, [], set())
-            self.structure.expandToDepth(1)
+            if not structure_state[0]:
+                self.structure.expandToDepth(1)
             for obj in model().history(active):
-                status = getattr(obj, "ResultStatus", "")
-                if "Invalid" in obj.State:
-                    status = tr("Needs repair")
+                status = tr(model().history_state(obj))
                 item = QtWidgets.QTreeWidgetItem(self.history, [obj.Label, status])
                 item.setData(0, QtCore.Qt.UserRole, object_key(obj))
                 if obj.ViewObject:
                     item.setIcon(0, obj.ViewObject.Icon)
+                item.setToolTip(0, tr("Operation") if obj.ComponentRole == "Operation" else tr("Object"))
+            self.restore_tree(self.structure, structure_state)
+            self.restore_tree(self.history, history_state)
         finally:
             self.refreshing = False
+
+    @staticmethod
+    def row_key(item):
+        def freeze(value):
+            return tuple(freeze(v) for v in value) if isinstance(value, (list, tuple)) else value
+        return freeze(item.data(0, QtCore.Qt.UserRole))
+
+    def tree_state(self, tree):
+        rows = {}
+        iterator = QtWidgets.QTreeWidgetItemIterator(tree)
+        while iterator.value():
+            item = iterator.value()
+            key = self.row_key(item)
+            if key is not None:
+                rows[key] = item.isExpanded(), item.isSelected()
+            iterator += 1
+        return rows, tree.verticalScrollBar().value()
+
+    def restore_tree(self, tree, state):
+        rows, scroll = state
+        iterator = QtWidgets.QTreeWidgetItemIterator(tree)
+        while iterator.value():
+            item = iterator.value()
+            saved = rows.get(self.row_key(item))
+            if saved:
+                item.setExpanded(saved[0])
+                item.setSelected(saved[1])
+            iterator += 1
+        tree.verticalScrollBar().setValue(scroll)
 
     def populate(self, row, component, root, path, seen):
         key = object_key(component)
@@ -260,7 +295,9 @@ class Navigator(QtWidgets.QDockWidget):
 
     def add_component(self):
         active = resolve(self.active_key)
-        choices = [d for d in model().definitions(active.Document) if d != active]
+        root_key, active_key = self.root_key, self.active_key
+        choices = [d for d in model().definitions(active.Document)
+                   if d != active and not model()._reachable(d, active)]
         labels = [tr("New embedded component…"), tr("Component from file…")] + [f"{d.Label} ({d.Name})" for d in choices]
         selected, ok = QtWidgets.QInputDialog.getItem(self, tr("Add Component"), tr("Component"), labels, 0, False)
         if not ok:
@@ -270,7 +307,8 @@ class Navigator(QtWidgets.QDockWidget):
             label, ok = QtWidgets.QInputDialog.getText(self, tr("Add Component"), tr("Name"))
             if not ok or not label.strip():
                 return
-            definition = model().create_definition(active.Document, label.strip())
+            model().add_component(active, label=label.strip())
+            return
         elif index == 1:
             path, unused = QtWidgets.QFileDialog.getOpenFileName(self, tr("Add Component"), "", "Component document (*.cadprt)")
             if not path:
@@ -281,6 +319,7 @@ class Navigator(QtWidgets.QDockWidget):
             definition = choices[index - 2]
         model().add_component(active, definition)
         App.setActiveDocument(active.Document.Name)
+        self.root_key, self.active_key = root_key, active_key
 
     def show_conversion_report(self):
         component = resolve(self.active_key)
@@ -326,6 +365,37 @@ class Navigator(QtWidgets.QDockWidget):
             link, obj = choices[labels.index(selected)]
             model().add_reference(active, link, obj)
 
+    def edit_history(self, key):
+        obj = resolve(key)
+        if obj is None:
+            return
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before editing history."))
+        if getattr(obj, "ComponentRole", "") == "Result" and not obj.Frozen:
+            obj = obj.Producer
+        if obj is None:
+            return
+        component = model().owner(obj)
+        model().activate(component)
+        self.active_key = object_key(component)
+        App.setActiveDocument(component.Document.Name)
+        Gui.activeDocument().activeView().setActiveObject("part", component)
+        if getattr(obj, "OperationKind", "") == "Extrude":
+            from freecad.gui.ComponentExtrudeTask import launch
+            launch(operation=obj)
+        else:
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(obj)
+            if not Gui.getDocument(obj.Document.Name).setEdit(obj.Name):
+                raise ValueError(tr("This object has no task editor. Its properties are available in the property editor."))
+
+    def rename_item(self, key):
+        obj = resolve(key)
+        name, ok = QtWidgets.QInputDialog.getText(self, tr("Rename"), tr("Name"), text=obj.Label)
+        if ok and name.strip() and name.strip() != obj.Label:
+            with model().transaction(obj.Document, "Rename"):
+                obj.Label = name.strip()
+
     def menu(self, tree, point):
         item = tree.itemAt(point)
         if item is None:
@@ -335,6 +405,7 @@ class Navigator(QtWidgets.QDockWidget):
             value = item.data(0, QtCore.Qt.UserRole)
             if not value:
                 return
+            menu.addAction(tr("Rename…"), lambda: self.run(lambda: self.rename_item(value[0])))
             menu.addAction(tr("Edit Component"), lambda: self.run(lambda: self.activate_item(item)))
             menu.addAction(tr("Open Component in Tab"), lambda: self.run(lambda: self.open_component_tab(value[0])))
             if value[1]:
@@ -347,8 +418,11 @@ class Navigator(QtWidgets.QDockWidget):
                         self.run(lambda: model().set_representation(resolve(self.root_key), value[1], setting)))
         else:
             key = item.data(0, QtCore.Qt.UserRole)
-            menu.addAction(tr("Convert to Dumb Object…"), lambda: self.run(lambda: self.convert(key)))
             obj = resolve(key)
+            menu.addAction(tr("Edit…"), lambda: self.run(lambda: self.edit_history(key)))
+            menu.addAction(tr("Rename…"), lambda: self.run(lambda: self.rename_item(key)))
+            if hasattr(obj, "Shape") and obj.ComponentRole != "Operation":
+                menu.addAction(tr("Convert to Dumb Object…"), lambda: self.run(lambda: self.convert(key)))
             if getattr(obj, "ComponentRole", "") == "Operation":
                 suppressed = getattr(obj, "UserSuppressed", False)
                 menu.addAction(tr("Unsuppress") if suppressed else tr("Suppress"),
@@ -363,7 +437,7 @@ class Navigator(QtWidgets.QDockWidget):
             fn(resolve(self.active_key), resolve(key))
 
     def slotChangedObject(self, obj, prop):
-        if prop in ("Label", "Group", "ModelHistory", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility"):
+        if prop in ("Label", "Group", "ModelHistory", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):

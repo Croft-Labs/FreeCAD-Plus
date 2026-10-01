@@ -124,16 +124,18 @@ def _reachable(start, target, visited=None):
                for child in children(start))
 
 
-def add_component(parent, definition, label=None, placement=None):
-    if not is_component(parent) or not is_component(definition):
+def add_component(parent, definition=None, label=None, placement=None):
+    if not is_component(parent) or (definition is not None and not is_component(definition)):
         raise ValueError("Both parent and source must be component definitions.")
-    if _reachable(definition, parent):
+    if definition is not None and _reachable(definition, parent):
         raise ValueError("A component cannot contain itself, directly or indirectly.")
-    if definition.Document != parent.Document and not definition.Document.FileName.lower().endswith(".cadprt"):
+    if definition is not None and definition.Document != parent.Document and not definition.Document.FileName.lower().endswith(".cadprt"):
         raise ValueError("Save an external component as .cadprt before adding it.")
-    if definition.Document != parent.Document and not parent.Document.FileName.lower().endswith(".cadprt"):
+    if definition is not None and definition.Document != parent.Document and not parent.Document.FileName.lower().endswith(".cadprt"):
         raise ValueError("Save the parent as .cadprt before adding an external component.")
     with transaction(parent.Document, "Add Component"):
+        if definition is None:
+            definition = _definition(parent.Document, label or "Component")
         link = parent.Document.addObject("App::Link", "ComponentInstance")
         link.setLink(definition)
         parent.addObject(link)
@@ -524,7 +526,28 @@ def set_suppressed(operation, suppressed):
                 source.Visibility = previous.get(source.ObjectId, False) if suppressed else False
         for obj in [operation] + list(operation.InListRecursive):
             if hasattr(obj, "Shape"):
+                # A failing native Boolean may stop recompute before its result
+                # proxy executes. Invalidate these caches before that can happen.
+                if suppressed and getattr(obj, "ComponentRole", "") == "Result" and not obj.Frozen:
+                    obj.Shape = Part.Shape()
+                    obj.ResultStatus = "Unavailable"
                 obj.touch()
+
+
+def history_state(obj):
+    """Keep authored suppression distinct from unavailable inputs and failures."""
+    if getattr(obj, "UserSuppressed", False):
+        return "Suppressed"
+    if any(getattr(dep, "UserSuppressed", False)
+           or getattr(dep, "ResultStatus", "Ready") != "Ready" for dep in obj.OutListRecursive):
+        return "Inactive — dependency"
+    if "Invalid" in obj.State:
+        return "Needs repair"
+    if hasattr(obj, "ResultStatus"):
+        return obj.ResultStatus
+    if "Touched" in obj.State:
+        return "Needs update"
+    return "Ready"
 
 
 def finished_results(component):

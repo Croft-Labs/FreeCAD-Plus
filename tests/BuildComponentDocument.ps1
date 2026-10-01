@@ -7,7 +7,7 @@ $ErrorActionPreference = 'Stop'
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new build evidence directory.' }
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 $argsList = @('--build', ('"' + $BuildDirectory + '"'), '--config', 'Release',
-              '--target', 'FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartScripts', '--parallel', '3')
+              '--target', 'FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartDesignGui', 'PartScripts', '--parallel', '3')
 $process = Start-Process -FilePath $CMake -ArgumentList $argsList -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput "$OutputDirectory\build.log" `
     -RedirectStandardError "$OutputDirectory\build-errors.log"

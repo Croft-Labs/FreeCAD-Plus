@@ -14,6 +14,7 @@ endif(BUILD_GUI)
 set(Part_Scripts
     Init.py
     ComponentModel.py
+    ComponentExtrude.py
     CadDocument.py
     InterferenceCheck.py
     JoinFeatures.py

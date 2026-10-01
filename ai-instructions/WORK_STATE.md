@@ -1,5 +1,22 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.5c/7.8.7d. Component-context Extrude/Pad/Pocket
+now use a Body-independent native extrusion/Boolean task with explicit New Body,
+Add or Subtract, profile/target, length/direction and view-only preview. Model History
+opens its producer for editing, distinguishes suppression/dependent inactivity and
+retains selection/expansion on refresh. Embedded Add Component is a single Undo.
+
+One grouped native Release build passed. Three small workflow checks pass under
+`D:\Temp\Office-PC\freecad-plus-component-iteration-20261001\smoke-accepted`;
+two GUI captures reviewed. Corrections stayed in Python; no second native build.
+Final ready/preview wording was source-reviewed/staged after those checks. The owner
+explicitly wants feedback and iteration before extensive file-format validation.
+Do not run a full component/cross-workbench qualification pass merely to close this
+batch. Open `Component-Feedback.cadprt` from that folder in the fork build to review.
+Full Part Design sketch routing, mode/target edit changes, expressions, multi-solid
+lineage and the broader gates below remain pending. No installer or release update.
+
+Previous foundation batch:
 Latest owner priority: component document migration, roadmap 7.8 (2026-10-01).
 [Approved contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md),
 [architecture decision](architecture/ADR_003_COMPONENT_DOCUMENT.md), and

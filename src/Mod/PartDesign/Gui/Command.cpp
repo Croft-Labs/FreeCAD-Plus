@@ -1242,6 +1242,18 @@ void finishProfileBased(const Gui::Command* cmd, const Part::Feature* sketch, Ap
 
 void prepareProfileBased(Gui::Command* cmd, const std::string& which, double length)
 {
+    // Component documents publish independent results instead of requiring a Body.
+    // Existing native Body workflows remain available in legacy documents.
+    for (auto* object : cmd->getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            cmd->doCommand(Gui::Command::Gui,
+                           "from freecad.gui.ComponentExtrudeTask import launch; launch(%s)",
+                           which == "Pocket" ? "'Subtract'" : "None");
+            return;
+        }
+    }
+
     const auto originalSelection = cmd->getSelection().getSelectionEx(
         "*", App::DocumentObject::getClassTypeId(), Gui::ResolveMode::NoResolve
     );

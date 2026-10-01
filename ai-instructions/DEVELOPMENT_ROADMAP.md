@@ -2379,6 +2379,11 @@ Remaining integration is dependency ordered, with this milestone retaining prior
 - [   ] 7.8.5b Integrate unified Extrude/Pad/Pocket and remaining native task editors
   with explicit component result roles; validate general split/merge and per-output
   topology lineage before enabling arbitrary multi-solid operations.
+- [ X ] 7.8.5c Feedback iteration: route component-context Extrude/Pad/Pocket to a
+  Body-independent native extrusion/Boolean task; explicit New Body/Add/Subtract,
+  local profile/target, length/direction, preview/Cancel and editing without result
+  identity replacement. Stored operation/target remain fixed during this edit pilot.
+  One solid result is required; no general split/merge or multi-target claim.
 - [ X ] 7.8.6a Result identity, exclusive-history pruning, shared producers, reference
   freezing, independent extraction and native Undo are covered by regression fixtures.
 - [   ] 7.8.6b Prove real multi-body edge-treatment contribution detachment and
@@ -2389,6 +2394,11 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   group; complete repeated-path picking, native edit/create parity and owner GUI acceptance.
 - [   ] 7.8.7c Connect separate BOM/mass participation flags to engineering consumers;
   validate multi-tab display overrides without changing engineering geometry.
+- [ X ] 7.8.7d Feedback iteration: Model History double-click opens the component
+  Extrude or native object editor; explicit suppression/dependency/repair states,
+  Rename, retained navigator selection/expansion/scroll and single-Undo embedded
+  component creation. Suppression invalidates dependent result caches even when a
+  native Boolean fails before the result proxy can execute.
 - [ X ] 7.8.8a Embedded and external Make Independent with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
@@ -2424,6 +2434,28 @@ source identities are in `acceptance-identities.json` under the evidence root.
 FreeCADApp SHA256: `8c6ac7d577afe97a526fbe9453e151573ea962b0d0d4ad62b0f0ac5e35c78d36`;
 FreeCADGui SHA256: `280b29f39aeca19846c3ccf911d90fca9679c7a7d3a88ec31a781901f5eb39d9`.
 The executable About/version metadata predates this rebuild and is not its source identity.
+
+2026-10-01 feedback iteration (7.8.5c/7.8.7d): the owner requested several changes
+before building, and limited checks until feedback stabilizes the file structure.
+The extrusion service/task, native command routing and navigator/history changes
+preceded **one grouped incremental Release build**, exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-component-iteration-20261001`.
+`smoke-accepted` passes **three focused workflow checks**, no failures/errors/skips,
+native process exit 0. Initial smoke failures identified quantity-widget use and
+suppressed Boolean result-cache invalidation; Python corrections and a harness
+widget-lifetime correction required no additional native build. The limited check
+covers native Extrude/Pad/Pocket entry, no Body prerequisite for extrusion,
+preview/Cancel, Add/Subtract, edit/Undo, suppression, failed-operation rollback,
+save/reopen, atomic component creation and retained navigator selection. Two UI
+captures were reviewed. A final status-text adjustment clears stale preview wording;
+it is source-reviewed/staged without repeating the workflow suite.
+
+This is an iteration for owner feedback, not file-format qualification. Existing
+legacy native editors are retained; standard Part Design sketch creation still has
+its Body workflow. Full sketch routing, operation/target changes while editing,
+expressions, multi-result lineage, assembly solver and broader consumer/recovery
+acceptance remain open. Do not rerun the broad suites solely to close this feedback
+batch. [Procedure and current limits](../tests/ComponentDocument.md#current-feedback-iteration).
 
 ### [   ] 7.7 Validate and release the history pilot
 

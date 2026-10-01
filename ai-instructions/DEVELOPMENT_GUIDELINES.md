@@ -26,9 +26,10 @@ to execute the entire backlog. Explicit user instructions and the root
   Reuse completed evidence when applicable; batch costly builds as requested.
   Benchmarking stock FreeCAD does not authorize using or modifying the separately
   installed FreeCAD, or treating it as evidence for this fork.
-- `.cadprt` is future native-format direction, not the current file format or a
-  completed migration. Establish schema, compatibility and recovery gates before
-  changing save behavior. Keep original legacy files intact.
+- `.cadprt` component persistence is under implementation in roadmap 7.8; the
+  complete migration is not yet accepted. Follow the approved component contract
+  and ADR 003, preserve legacy originals, and keep outstanding compatibility and
+  recovery gates separate from the implemented native archive envelope.
 - The owner-adopted version 2 [creation/interaction contracts](PRODUCT_SPEC.md#planned-creation-and-interaction-contracts)
   supersede unconditional New Body defaults. Creation suggestions are visible and
   overridable; saved operations/targets never change through recompute inference.
