@@ -30,7 +30,17 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F074 precise occurrence movement,
+- Current product batch complete for owner testing: F091 mesh preparation, phase 14
+  tasks 14.1a/b. CAM > Review CAM mesh reports imported dimensions, boundaries,
+  components, orientation, degenerate/duplicate triangles and density. One explicit
+  action makes an independent reversed-normal copy of a supported inward mesh.
+  Both tasks preceded one PathScripts/Tests build/staging pass; Python corrections
+  were staged afterward without another native build. 32 distinct selected checks
+  pass across accepted runs; five captures reviewed. [Owner procedure](../tests/MeshPreparation.md).
+  Broader repair, self-intersection checks and full F091 acceptance remain open.
+  Stop at this usable checkpoint for owner testing and rotate to another family.
+
+- Previous product batch complete for owner testing: F074 precise occurrence movement,
   phase 10 tasks 10.7a/b (bounded F072/F075). Tools > Move occurrence once provides
   world/occurrence translation, typed pivot/axis rotation and a view-only preview.
   Both tasks preceded one native build; a shared Python world-shape correction
@@ -3749,6 +3759,39 @@ for this planning adoption.
   faces. Mesh preparation explicitly detects holes, inverted normals, disconnected
   regions and unsuitable geometry. Guided setup visibly includes units, orientation and
   work origin alongside stock/tools/boundaries.
+- [x] 14.1a Add a bounded imported-mesh review (F091): native topology, dimensions
+  and bounds in mm, boundary/nonmanifold edges, connected pieces, inconsistent
+  normals, zero-area/duplicate triangles, density and signed orientation for a
+  single closed component. Distinguish Parallel/open-surface guidance from Waterline
+  contour review. No implicit scale correction, decimation or machining approval.
+- [x] 14.1b Offer an explicit independent reversed-normal copy for a reviewed single
+  closed inward component, preserving coordinates, placement, source and existing
+  job links. Atomic confirmation, owner transaction guards, stale review, Cancel,
+  Undo/Redo and save/reopen are validated. Both tasks are ready for owner testing.
+
+14.1a/b grouped evidence (2026-10-01): both tasks preceded one Release PathScripts/
+Tests build/staging pass, exit 0; these Python changes require no C++ rebuild.
+Initial grouped/ passed all 24 CAMTests.TestMeshMachining checks, including direct-STL
+Parallel/Waterline, holding tabs and indexed setups. The new suite initially had
+two malformed native vector fixtures and an empty booked-transaction guard failure.
+Corrected the fixtures, added an incomplete-topology diagnostic and protected native
+booked transactions as well as pending edits. Native Mesh.Volume is absolute, so
+orientation uses signed triangle volume; no assumption that positive absolute volume
+means outward normals. Only the two Python modules were restaged; no second build.
+All 8 TestMeshPreparation checks pass in preparation-verified/, including a real
+100,352-triangle fixture, topology defects, placed independent copy, existing model
+link isolation, rollback, Undo/Redo, reopen and installed command/lifecycle behavior.
+Together with the unchanged CAM suite, 32 distinct selected checks pass across
+accepted runs, no failures/errors/skips in the accepted suites and process exits 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-mesh-preparation-20261001`.
+Five captures reviewed in visual/ with Mesh-Preparation.FCStd; source/runtime hashes
+and unchanged native CAM/Mesh identities are in validated-identities.json, accepted
+suites in acceptance-summary.json. The historical About stamp is not this batch's
+source identity. Whole F091 and parent 14.1 remain open: root imported meshes only,
+200,000-triangle review limit, no self-intersection check, defect highlighting,
+per-piece orientation, hole/weld/decimation repairs, unit conversion or setup wizard.
+No installer/release update or physical owner acceptance. [Owner procedure](../tests/MeshPreparation.md).
+
 - [   ] 14.2 Add stock-aware roughing then rest machining as separate deliverables;
   finishing drop-cutter paths do not prove either. Preserve holding-tab exclusions
   in all supported cutting/link moves and across indexed setups.
@@ -6150,7 +6193,7 @@ regenerated Waterline contour repeatability and broader F089 acceptance remain o
 <a id="f091"></a>
 ### F091 — Mesh preparation
 
-**Owning tasks:** 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 14.1, 14.1a/b. **Status:** Bounded imported-mesh preparation is ready for owner testing: dimensions/topology/orientation/density review and an independent reversed-normal copy preserving the source and existing job links. One build/staging pass, 32 distinct selected checks across accepted runs and five reviewed captures. Full F091 remains open for broader repair, self-intersection and physical acceptance. [Owner procedure](../tests/MeshPreparation.md).
 
 **Packages:** C01 · **First delivery:** P8 · **Likely scope:** Feature
 

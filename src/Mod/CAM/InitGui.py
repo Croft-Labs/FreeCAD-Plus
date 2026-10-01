@@ -125,9 +125,9 @@ class CAMWorkbench(Workbench):
         Path.GuiInit.Startup()
 
         # build commands list
-        from Path.Main.Gui import HoldingTab, IndexedSetup  # noqa: F401
+        from Path.Main.Gui import HoldingTab, IndexedSetup, MeshPreparation  # noqa: F401
 
-        projcmdlist = ["CAM_Job", "CAM_Workplane", "CAM_HoldingTab", "CAM_IndexedSetup", "CAM_Sanity"]
+        projcmdlist = ["CAM_Job", "CAM_MeshPreparation", "CAM_Workplane", "CAM_HoldingTab", "CAM_IndexedSetup", "CAM_Sanity"]
         postcmdlist = ["CAM_Post", "CAM_PostSelected"]
         toolcmdlist = ["CAM_Inspect", "CAM_SelectLoop", "CAM_OpActiveToggle"]
 

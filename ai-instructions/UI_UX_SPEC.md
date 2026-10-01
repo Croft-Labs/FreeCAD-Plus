@@ -741,3 +741,32 @@ Move once commits one placement transaction and closes; Cancel removes the previ
 without model changes. Failures remain inline for correction. Document/occurrence
 closure removes the ghost and observer. No hidden mates, copies or solver detachment.
 [Owner procedure](../tests/OccurrenceMove.md).
+
+
+## UI-024: CAM mesh preparation (F091; roadmap 14.1a/b)
+
+CAM > Review CAM mesh (`CAM_MeshPreparation`) opens a modeless review of one whole
+root imported Mesh::Feature. The native source identity is fixed for the dialog.
+The table reports mm dimensions/bounds, triangles/points, boundary/nonmanifold
+edges, connected components, inconsistent normals, zero-area/duplicate triangles,
+closed topology/orientation and density. At 100,000 triangles density is flagged;
+above 200,000 this bounded review refuses without modifying the mesh.
+
+STL units are not inferred. Open surfaces receive different Parallel/Waterline
+advice; no new operation gate or path approval is implied. Self-intersections,
+accessibility and stock/tool clearance are explicitly unchecked. Orientation is
+undetermined for open, inconsistent, multiple-component or degenerate input.
+
+Create reversed-normal copy is available only for a single consistently inward,
+closed component without duplicate/zero-area triangles. Its explanation previews
+reversal of every triangle with unchanged coordinates and dimensions. Confirmation
+creates one independent native mesh in one Undo transaction; source visibility,
+geometry and existing job model links are unchanged. The result may visually overlap
+its source; success names the result and tells the user to choose it explicitly for
+a new job. Failure rolls back. An active task, pending or booked owner transaction,
+inactive source document or stale input refuses confirmation.
+
+Review again refreshes the report; document edits clear stale findings and disable
+copying. Source deletion/document closure closes the dialog and removes its observer.
+Close without copying changes no model state. No hole filling, welding, smoothing,
+decimation, scaling or per-piece repair is included. [Owner procedure](../tests/MeshPreparation.md).

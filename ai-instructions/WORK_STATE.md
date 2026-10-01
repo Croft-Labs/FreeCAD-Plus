@@ -1,6 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F074 precise occurrence movement, phase 10 tasks 10.7a/b.
+Latest batch: F091 mesh preparation, phase 14 tasks 14.1a/b.
+CAM > Review CAM mesh inspects one root imported mesh: mm dimensions/bounds,
+boundary/nonmanifold edges, components, inconsistent normals, degenerate/duplicate
+triangles, density and signed orientation. An explicit independent reversed-normal
+copy preserves placement, coordinates, source visibility and existing CAM model
+links. Native transactions provide atomic creation and Undo/Redo; active tasks,
+booked/pending owner edits, inactive document and stale input reject.
+
+Both tasks preceded one Release PathScripts/Tests build/staging pass, exit 0.
+No C++ change/rebuild was needed. Initial grouped/ passed all 24 existing
+CAMTests.TestMeshMachining checks but the new suite had two malformed native vector
+fixtures and an empty booked-transaction guard failure. Fixtures corrected; added
+incomplete-topology feedback and protected booked transactions. Only the two Python
+modules were restaged; no second build. All 8 TestMeshPreparation checks pass in
+preparation-verified/, including a real 100,352-triangle input, defects, placed copy,
+model-link isolation, rollback, Undo/Redo, save/reopen and GUI lifecycle.
+32 distinct selected passes across accepted runs, without failures/errors/skips in
+accepted suites; process exits 0. The initial aggregate remains recorded as failed.
+
+Evidence: D:\Temp\Office-PC\freecad-plus-mesh-preparation-20261001.
+Five reviewed visual/ captures and Mesh-Preparation.FCStd cover inward/open/outward
+reports, copy success and invalidated review. acceptance-summary.json and
+validated-identities.json record accepted suites and matching source/runtime hashes,
+plus the unchanged native CAM/Mesh artifacts. The historical About stamp is not
+this batch's source identity. tests/MeshPreparation.md is the owner procedure.
+
+Whole F091 and parent 14.1 remain open for self-intersection checks, defect-region
+highlighting, per-piece repair, hole filling/welding/decimation, units conversion,
+setup wizard and physical owner acceptance. Current scope is a root Mesh::Feature
+up to 200,000 triangles. No installer/release updated. Stop here and rotate.
+
+Previous batch: F074 precise occurrence movement, phase 10 tasks 10.7a/b.
 Tools > Move occurrence once offers explicit world/occurrence-frame translation,
 arbitrary-axis rotation and typed pivot for one unconstrained unscaled Link to a
 same-document Part solid/Body within structural Part containers. View-only non-pickable

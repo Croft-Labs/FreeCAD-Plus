@@ -96,6 +96,7 @@ SET(PathPythonMain_SRCS
     Path/Main/Workplane.py
     Path/Main/Stock.py
     Path/Main/MeshModel.py
+    Path/Main/MeshPreparation.py
     Path/Main/HoldingTab.py
     Path/Main/IndexedSetup.py
 )
@@ -109,6 +110,7 @@ SET(PathPythonMainGui_SRCS
     Path/Main/Gui/Job.py
     Path/Main/Gui/HoldingTab.py
     Path/Main/Gui/IndexedSetup.py
+    Path/Main/Gui/MeshPreparation.py
     Path/Main/Gui/JobCmd.py
     Path/Main/Gui/WorkplaneCmd.py
     Path/Main/Gui/JobDlg.py
