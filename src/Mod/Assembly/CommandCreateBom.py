@@ -78,10 +78,14 @@ class CommandCreateBom:
         }
 
     def IsActive(self):
-        return True
+        return App.ActiveDocument is not None and not Gui.Control.activeDialog()
 
     def Activated(self):
-        self.panel = TaskAssemblyCreateBom()
+        try:
+            self.panel = TaskAssemblyCreateBom()
+        except ValueError as error:
+            App.Console.PrintError(str(error) + "\n")
+            return
         dialog = Gui.Control.showDialog(self.panel)
         if dialog is not None:
             dialog.setAutoCloseOnDeletedDocument(True)
@@ -92,6 +96,12 @@ class CommandCreateBom:
 class TaskAssemblyCreateBom(QtCore.QObject):
     def __init__(self, bomObj=None):
         super().__init__()
+
+        self.doc = bomObj.Document if bomObj else App.ActiveDocument
+        if (self.doc is None or App.ActiveDocument != self.doc or Gui.Control.activeDialog()
+                or self.doc.HasPendingTransaction or App.getActiveTransaction()):
+            raise ValueError(translate("Assembly", "Activate the BOM document and finish the current task or edit transaction first."))
+        self.guiDoc = Gui.getDocument(self.doc.Name)
 
         self.form = Gui.PySideUic.loadUi(":/panels/TaskAssemblyCreateBom.ui")
 
@@ -115,7 +125,7 @@ class TaskAssemblyCreateBom(QtCore.QObject):
         pref = Preferences.preferences()
 
         if bomObj:
-            Gui.ActiveDocument.openCommand("Edit Bill Of Materials")
+            self.guiDoc.openCommand("Edit Bill Of Materials")
 
             for name in bomObj.columnsNames:
                 if name in ColumnNames:
@@ -126,7 +136,7 @@ class TaskAssemblyCreateBom(QtCore.QObject):
 
             self.bomObj = bomObj
         else:
-            Gui.ActiveDocument.openCommand("Create Bill Of Materials")
+            self.guiDoc.openCommand("Create Bill Of Materials")
 
             # Add the columns
             for name in TranslatedColumnNames:
@@ -149,10 +159,14 @@ class TaskAssemblyCreateBom(QtCore.QObject):
         self.form.CheckBox_detailSubAssemblies.stateChanged.connect(self.onDetailSubAssemblies)
 
         self.updateColumnList()
+        self.setupExclusions()
 
     def accept(self):
+        if App.ActiveDocument != self.doc:
+            self.exclusionStatus.setText(translate("Assembly", "Activate the BOM document before accepting."))
+            return False
         self.deactivate()
-        Gui.ActiveDocument.commitCommand()
+        self.guiDoc.commitCommand()
 
         self.bomObj.recompute()
 
@@ -162,8 +176,104 @@ class TaskAssemblyCreateBom(QtCore.QObject):
 
     def reject(self):
         self.deactivate()
-        Gui.ActiveDocument.abortCommand()
+        self.guiDoc.abortCommand()
         return True
+
+    def setupExclusions(self):
+        group = QtWidgets.QGroupBox(translate("Assembly", "Excluded from this BOM"))
+        layout = QtWidgets.QVBoxLayout(group)
+        note = QtWidgets.QLabel(translate("Assembly", "Hidden components remain included. Exclude a selected occurrence to omit only that occurrence. "
+                                        "Excluding a definition child affects every use of that child. Quantities are per parent; multiply by parent quantities for totals. "
+                                        "Array, suppression and configuration counts require separate review."))
+        note.setWordWrap(True)
+        layout.addWidget(note)
+        self.exclusionList = QtWidgets.QListWidget()
+        self.exclusionList.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.exclusionList.setMaximumHeight(110)
+        layout.addWidget(self.exclusionList)
+        buttons = QtWidgets.QHBoxLayout()
+        self.excludeButton = QtWidgets.QPushButton(translate("Assembly", "Exclude tree selection"))
+        self.includeButton = QtWidgets.QPushButton(translate("Assembly", "Include again"))
+        self.excludeButton.clicked.connect(self.excludeSelection)
+        self.includeButton.clicked.connect(self.includeSelected)
+        buttons.addWidget(self.excludeButton)
+        buttons.addWidget(self.includeButton)
+        layout.addLayout(buttons)
+        self.exclusionStatus = QtWidgets.QLabel()
+        self.exclusionStatus.setTextFormat(QtCore.Qt.PlainText)
+        self.exclusionStatus.setWordWrap(True)
+        layout.addWidget(self.exclusionStatus)
+        self.form.gridLayout.addWidget(group, 4, 0, 1, 2)
+        self.refreshExclusions()
+
+    def refreshExclusions(self):
+        self.exclusionList.clear()
+        for obj in self.bomObj.excludedObjects:
+            item = QtWidgets.QListWidgetItem(obj.Label + " [" + obj.Name + "]")
+            item.setData(QtCore.Qt.UserRole, (obj.Document.Name, obj.Name, obj.ID))
+            self.exclusionList.addItem(item)
+        self.exclusionStatus.setText(translate("Assembly", "Excluded objects: {0}. Item numbers regenerate after structure or inclusion changes.").format(self.exclusionList.count()))
+
+    def exclusionScope(self):
+        assembly = None
+        for parent in self.bomObj.InList:
+            if parent.isDerivedFrom("Assembly::AssemblyObject"):
+                assembly = parent
+                break
+            if parent.TypeId == "Assembly::BomGroup":
+                assembly = next((obj for obj in parent.InList if obj.isDerivedFrom("Assembly::AssemblyObject")), None)
+                if assembly:
+                    break
+        pending = list(assembly.Group if assembly else self.doc.RootObjectsIgnoreLinks)
+        found = set()
+        while pending:
+            obj = pending.pop()
+            if obj in found:
+                continue
+            if len(found) >= 2000:
+                raise ValueError(translate("Assembly", "This exclusion picker supports at most 2,000 objects."))
+            found.add(obj)
+            linked = obj.getLinkedObject()
+            # The native BOM tests exclusions before resolving a link. Offer its
+            # actual child occurrences, not an unused source-definition entry.
+            if linked and (linked.isDerivedFrom("App::Part")
+                           or linked.isDerivedFrom("Assembly::AssemblyObject")):
+                pending.extend(linked.Group)
+        return found
+
+    def excludeSelection(self):
+        try:
+            if App.ActiveDocument != self.doc:
+                raise ValueError(translate("Assembly", "Activate the BOM document first."))
+            selected = Gui.Selection.getSelectionEx()
+            scope = self.exclusionScope()
+            objects = []
+            for entry in selected:
+                obj = entry.Object
+                if (entry.SubElementNames or obj.Document != self.doc or obj not in scope
+                        or obj == self.bomObj or obj in self.bomObj.InListRecursive
+                        or not any(obj.isDerivedFrom(kind) for kind in
+                                   ("App::Part", "Part::Feature", "App::Link", "Assembly::AssemblyObject", "Assembly::AssemblyLink"))):
+                    raise ValueError(translate("Assembly", "Select whole component objects in this BOM's document and assembly scope; not faces, the BOM or its parent."))
+                objects.append(obj)
+            if not objects:
+                raise ValueError(translate("Assembly", "Select components in the tree to exclude."))
+            excluded = list(self.bomObj.excludedObjects)
+            self.bomObj.excludedObjects = excluded + [obj for obj in objects if obj not in excluded]
+            self.doc.recompute()
+            self.refreshExclusions()
+        except Exception as error:
+            self.exclusionStatus.setText(str(error))
+
+    def includeSelected(self):
+        if App.ActiveDocument != self.doc:
+            self.exclusionStatus.setText(translate("Assembly", "Activate the BOM document first."))
+            return
+        keys = {tuple(item.data(QtCore.Qt.UserRole)) for item in self.exclusionList.selectedItems()}
+        self.bomObj.excludedObjects = [obj for obj in self.bomObj.excludedObjects
+                                       if (obj.Document.Name, obj.Name, obj.ID) not in keys]
+        self.doc.recompute()
+        self.refreshExclusions()
 
     def deactivate(self):
         pref = Preferences.preferences()

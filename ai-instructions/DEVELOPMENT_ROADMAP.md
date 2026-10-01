@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F053 sketch reuse, phase 11
+- Current product batch complete for owner testing: F104 native assembly BOM scope
+  and inclusion, phase 15 tasks 15.4a/b. Quantities group only siblings; assembly-group
+  scope is resolved explicitly, and per-BOM exclusions preserve visibility and source
+  objects. Both tasks preceded one successful native build after enabling Assembly
+  in the local validation configuration. 21 distinct selected checks pass across
+  accepted runs; five captures reviewed. [Owner procedure](../tests/AssemblyBomScope.md).
+  Arrays/configurations, custom-column identity, balloons and exploded documentation
+  remain open. Stop here for owner workflow testing and rotate.
+
+- Previous product batch complete for owner testing: F053 sketch reuse, phase 11
   tasks 11.6c/d. Sketch > Copy reusable sketch preserves whole-sketch internal
   constraints and construction geometry in an independent native copy, with typed
   placement and a view-only preview. Both tasks preceded one grouped build; the
@@ -4002,6 +4011,47 @@ parent 15.3 and whole F102 remain open.
   Expose reference-component exclusion explicitly and keep it independent of
   visibility/reference-set contents; exploded documentation must correspond to saved
   arrangements.
+- [x] 15.4a Keep native BOM quantity aggregation within each sibling set (F104),
+  with per-parent child quantities for repeated modules. Add assembly-group scope
+  fallback and checked link casts for mirror classification. Repeated, unique,
+  hidden and uniformly mirrored native-link fixtures pass; ready for owner testing.
+- [x] 15.4b Add native per-BOM excludedObjects and editor exclude/include controls,
+  independently of visibility. Tree selection uses native assembly/document scope;
+  linked definitions are not substituted for selected occurrences. Existing task
+  transactions preserve Cancel/Undo/Redo; native save/reopen and CSV export pass.
+  This is a BOM-local policy, not a new global reference-only component role.
+
+15.4a/b evidence (2026-10-01): both tasks preceded grouped validation. The first
+build invocation found no AssemblyGui target because this development configuration
+had BUILD_ASSEMBLY=OFF. Enabled BUILD_ASSEMBLY=ON in the existing D: validation
+build only; the supplied OndselSolver source was already present and unchanged.
+One actual AssemblyGui/AssemblyTests Release build then completed, exit 0, including
+its native solver dependency. No separately installed FreeCAD was changed.
+Initial grouped/ passed all 13 AssemblyTests.TestCore checks and six of seven new
+BOM checks. The remaining test assumed a fixed InList parent order; corrected it
+to check membership. The Python picker was aligned to native document-wide tree
+roots and actual assembly occurrences, then restaged without another native build.
+All 8 TestAssemblyBomScope checks pass in bom-verified/, no failures/errors/skips.
+Together with the unchanged core suite, 21 distinct selected checks pass across
+accepted runs, process exits 0; the initial aggregate remains recorded as failed.
+Evidence: `D:\Temp\Office-PC\freecad-plus-bom-scope-20261001`.
+AssemblyApp SHA256: `03682741c90cc84388080773890606b774174e4178605e432f149441f2004010`.
+AssemblyGui SHA256: `dd7fe8cbce8d06a129708417342304187ee21a73cbe98c821e7955cb85287656`.
+Five captures reviewed in visual/ with Assembly-BOM-Source.FCStd and
+Assembly-BOM-Excluded.FCStd. The fixture preserves module quantity 2 / child bolt
+quantity 1 / direct bolt quantity 3; excluding two direct occurrences changes only
+the direct row to 1. Hidden items remain included until explicitly excluded;
+second-BOM isolation, child-definition exclusions, Cancel, Undo/Redo, reopen, native
+CSV and creation cancellation pass. acceptance-summary.json / validated-identities.json
+record exact suites and source/runtime/native identities. Historical About metadata
+is not this source identity. Assembly is now enabled in the local validation build;
+earlier disabled-workbench records remain historical evidence.
+Whole F104/15.4 stay open for arrays/suppression/configurations, external/unloaded
+inputs, individual paths through reused subassemblies, custom-column identity,
+persistent balloons, exploded documentation and physical/high-DPI acceptance.
+Item numbers regenerate after structure/inclusion changes. No installer/release
+update. [Owner procedure](../tests/AssemblyBomScope.md). Stop for feedback and rotate.
+
 - [   ] 15.5 Evaluate/reuse compatible sheet-metal, frames/weldments, hardware and
   profile libraries, delivering independently with configuration/persistence tests.
 - [   ] 15.6 Package projects and collect dependencies, repair relocated references,
@@ -6414,7 +6464,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f104"></a>
 ### F104 — Assembly documentation
 
-**Owning tasks:** 15.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.4, 15.4a/b. **Status:** Bounded native BOM inclusion is ready for owner testing: sibling-only quantities, assembly scope, explicit per-BOM exclusions independent of visibility, native persistence/Undo/CSV. 21 distinct selected checks pass across accepted runs and five captures reviewed after one successful native build. Arrays/configurations, custom-column identity, balloons/exploded documentation and full F104 acceptance remain open. [Owner procedure](../tests/AssemblyBomScope.md).
 
 **Packages:** D02, B01, B04 · **First delivery:** P9 · **Likely scope:** Feature
 

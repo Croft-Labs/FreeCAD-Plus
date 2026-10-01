@@ -1,6 +1,43 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F053 sketch reuse, phase 11 tasks 11.6c/d.
+Latest batch: F104 assembly BOM scope/inclusion, phase 15 tasks 15.4a/b.
+Existing native BOM quantities now group siblings only, keeping a later direct
+component out of an earlier nested child row. Native scope also follows BOM-group
+ownership; mirror classification uses checked link casts. The existing editor adds
+per-BOM exclusions with explicit tree selection and include-again controls. Hidden
+components remain counted unless excluded. Source objects and visibility stay intact.
+
+The first target invocation failed because BUILD_ASSEMBLY was OFF in this local
+validation build. Enabled BUILD_ASSEMBLY=ON in D:\Temp\Office-PC\freecad-plus-validation-20260928\build.
+Existing OndselSolver sources were used unchanged. One actual AssemblyGui/
+AssemblyTests Release build then succeeded, exit 0. No separately installed FreeCAD
+was changed. The local validation payload now has Assembly enabled; older disabled-
+workbench records describe their historical configuration, not the current one.
+
+Initial grouped/ passed 13 AssemblyTests.TestCore and 6 of 7 new BOM tests; the
+remaining assertion assumed fixed InList order. Corrected that test and aligned
+the Python picker with actual assembly occurrences/native document tree roots.
+Only CommandCreateBom.py was restaged; no second native build. All 8 new BOM tests
+pass in bom-verified/. 21 distinct selected passes across accepted runs, no failures/
+errors/skips in accepted suites; process exits 0. Initial aggregate remains failed.
+
+Evidence: D:\Temp\Office-PC\freecad-plus-bom-scope-20261001.
+AssemblyApp SHA256: 03682741c90cc84388080773890606b774174e4178605e432f149441f2004010.
+AssemblyGui SHA256: dd7fe8cbce8d06a129708417342304187ee21a73cbe98c821e7955cb85287656.
+Five reviewed visual/ captures; Assembly-BOM-Source.FCStd and Assembly-BOM-Excluded.FCStd.
+Module quantity 2 / nested bolt 1 / direct bolt 3 stays distinct; excluding two direct
+occurrences changes that row to 1. Scope, mirrored/unique items, hidden inclusion,
+per-BOM independence, nested-child policy, Cancel, creation cleanup, Undo/Redo,
+reopen and native CSV pass. acceptance-summary.json and validated-identities.json
+record exact source/runtime/native identities and accepted suites. Historical About
+metadata is not this source identity. tests/AssemblyBomScope.md is the owner guide.
+
+Whole F104/15.4 stay open for arrays/suppression/configurations, external/unloaded
+inputs, individual paths through reused definitions, custom-column identity,
+persistent balloons, exploded documentation and physical acceptance. Item numbers
+regenerate. No installer/release update. Stop at this checkpoint and rotate.
+
+Previous batch: F053 sketch reuse, phase 11 tasks 11.6c/d.
 Sketch > Copy reusable sketch preserves the complete native geometry/constraint
 set, named dimensions and construction roles in an independent editable sketch.
 Typed source-axis offsets and rotation about the source normal set the copy's

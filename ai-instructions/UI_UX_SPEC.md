@@ -801,3 +801,34 @@ expressions and other linked inputs are refused with an inline explanation; the
 command never silently drops them. Partial paste/remapping, reference policy choices,
 blocks, libraries, patterns and physical/high-DPI acceptance remain open.
 [Owner procedure](../tests/SketchReuse.md).
+
+
+## UI-026: Native BOM scope and exclusions (F104; roadmap 15.4a/b)
+
+The existing Assembly > Bill of Materials command and native BOM double-click
+editor now expose Excluded from this BOM. A list shows omitted object labels and
+internal names. Exclude tree selection adds whole same-document objects from the
+BOM's assembly scope, or native document-wide tree roots when no assembly owns it.
+Faces, unrelated assembly objects, the BOM and its ancestors are refused. Picker
+traversal is limited to 2,000 objects. Select list rows and Include again to restore
+inclusion. The native excludedObjects link-list property saves the policy per BOM.
+
+Hidden components stay included. Selecting an occurrence excludes that occurrence;
+a child occurrence stored in a reused definition is excluded in every use of that
+child. This is not a path-specific override or global reference-only role. The
+picker does not replace occurrences with their source definitions. Native quantities
+are per parent; a repeated parent quantity multiplies its displayed child quantities
+for overall totals. A later sibling cannot merge into an earlier nested child row.
+Uniformly mirrored native links remain separate quantity groups. Native scope lookup
+also follows the containing BOM group to its owning assembly.
+
+Edits reuse the existing native BOM task transaction. Cancel restores prior policy
+and counts; Accept commits, recomputes and opens the sheet. An inactive document or
+pre-existing task/booked/pending edit transaction refuses editing/confirmation, and
+commit/abort uses the owning GUI document. Exclusions do not alter visibility,
+placements or source geometry. The existing spreadsheet export carries scoped rows.
+Item numbers regenerate after structure/inclusion changes; no persistent balloon
+numbering is claimed. Arrays, suppression/configurations, external/unloaded scopes,
+custom-column identity and exploded documentation remain open. Native editor/
+recompute refresh remains the workflow; no new automatic change tracker is added.
+[Owner procedure](../tests/AssemblyBomScope.md).

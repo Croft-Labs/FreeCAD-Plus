@@ -22,6 +22,8 @@
  ***************************************************************************/
 
 #include <cmath>
+#include <algorithm>
+#include <map>
 #include <vector>
 
 #include <App/Application.h>
@@ -47,6 +49,7 @@
 #include "AssemblyLink.h"
 #include "BomObject.h"
 #include "BomObjectPy.h"
+#include "Groups.h"
 
 
 using namespace Assembly;
@@ -88,6 +91,13 @@ BomObject::BomObject()
         "Bom",
         (App::PropertyType)(App::Prop_None),
         "Only Part containers will be added. Solids like PartDesign Bodies will be ignored."
+    );
+    ADD_PROPERTY_TYPE(
+        excludedObjects,
+        (nullptr),
+        "Bom",
+        App::Prop_None,
+        "Objects excluded from this BOM, independently of visibility. Excluding a definition child affects every use of that child."
     );
 }
 BomObject::~BomObject() = default;
@@ -179,7 +189,8 @@ void BomObject::addObjectChildrenToBom(
     int quantityColIndex = getColumnIndex("Quantity");
     bool hasQuantityCol = hasQuantityColumn();
 
-    size_t siblingsInitialRow = row;
+    // Quantity is per parent. Descendant rows must never absorb a later sibling.
+    std::map<std::pair<App::DocumentObject*, bool>, size_t> siblingRows;
 
     if (index != "") {
         index = index + ".";
@@ -189,6 +200,10 @@ void BomObject::addObjectChildrenToBom(
 
     for (auto* child : objs) {
         if (!child) {
+            continue;
+        }
+        const auto& excluded = excludedObjects.getValues();
+        if (std::find(excluded.begin(), excluded.end(), child) != excluded.end()) {
             continue;
         }
 
@@ -212,26 +227,12 @@ void BomObject::addObjectChildrenToBom(
             continue;
         }
 
-        if (hasQuantityCol && row != siblingsInitialRow) {
-            // Check if the object is not already in (case of links). And if so just increment.
-            // Note: an object can be used in several parts. In which case we do no want to blindly
-            // increment.
-            // We also check if the Mirror state matches. Mirrored parts should not group with
-            // non-mirrored parts.
-            bool found = false;
-            for (size_t i = siblingsInitialRow; i <= row; ++i) {
-                size_t idInList = i - 1;  // -1 for the header
-                if (idInList < obj_list.size() && child == obj_list[idInList]
-                    && idInList < obj_mirrored_list.size()
-                    && isMirrored == obj_mirrored_list[idInList]) {
-
-                    int qty = std::stoi(getText(i, quantityColIndex)) + 1;
-                    setCell(App::CellAddress(i, quantityColIndex), std::to_string(qty).c_str());
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
+        const auto key = std::make_pair(child, isMirrored);
+        if (hasQuantityCol) {
+            const auto existing = siblingRows.find(key);
+            if (existing != siblingRows.end()) {
+                int qty = std::stoi(getText(existing->second, quantityColIndex)) + 1;
+                setCell(App::CellAddress(existing->second, quantityColIndex), std::to_string(qty).c_str());
                 continue;
             }
         }
@@ -239,6 +240,7 @@ void BomObject::addObjectChildrenToBom(
         std::string sub_index = index + std::to_string(sub_i);
         ++sub_i;
 
+        siblingRows.emplace(key, row);
         addObjectToBom(child, row, sub_index, isMirrored);
         ++row;
 
@@ -256,14 +258,14 @@ bool BomObject::isObjMirrored(App::DocumentObject* obj)
     // We multiply scales to handle nested mirroring (e.g., Mirrored LinkElement inside Mirrored
     // LinkGroup = Normal).
     double accumulatedScale = 1.0;
-    if (auto element = static_cast<App::LinkElement*>(obj)) {
+    if (auto element = freecad_cast<App::LinkElement*>(obj)) {
         accumulatedScale *= element->Scale.getValue();
 
         if (auto group = element->getLinkGroup()) {
             accumulatedScale *= group->Scale.getValue();
         }
     }
-    else if (auto link = static_cast<App::Link*>(obj)) {
+    else if (auto link = freecad_cast<App::Link*>(obj)) {
         accumulatedScale *= link->Scale.getValue();
     }
     return accumulatedScale < 0.0;
@@ -358,6 +360,13 @@ AssemblyObject* BomObject::getAssembly() const
     for (auto& obj : getInList()) {
         if (obj->isDerivedFrom<AssemblyObject>()) {
             return static_cast<AssemblyObject*>(obj);
+        }
+        if (auto* group = freecad_cast<BomGroup*>(obj)) {
+            for (auto* parent : group->getInList()) {
+                if (auto* assembly = freecad_cast<AssemblyObject*>(parent)) {
+                    return assembly;
+                }
+            }
         }
     }
     return nullptr;

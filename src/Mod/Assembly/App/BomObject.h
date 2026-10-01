@@ -90,6 +90,7 @@ public:
     App::PropertyBool detailSubAssemblies;
     App::PropertyBool detailParts;
     App::PropertyBool onlyParts;
+    App::PropertyLinkList excludedObjects;
 
     std::vector<BomDataElement> dataElements;
     std::vector<App::DocumentObject*> obj_list;
