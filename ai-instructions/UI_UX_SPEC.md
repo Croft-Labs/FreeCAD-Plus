@@ -1228,3 +1228,23 @@ Refresh. Closing detaches both application and GUI observers; closing the owner
 document closes the dialog. Nested/external link chains, unloaded-state diagnosis,
 reference sets, integrated navigator tabs, global column preferences and display/
 suppression toggles remain open. [Owner procedure](../tests/FeatureStateColumns.md).
+
+## UI-043: Explicit Sweep inputs (F028; roadmap 13.2c/d)
+
+The native Part_Sweep command retains its profile list and Part::Sweep properties.
+Sections in sweep order identifies the top-to-bottom sequence; candidate tooltips
+include internal names. Sweep Path enters edge selection; Done captures one whole
+edge/wire or connected edges of one object in the owning document. The path label
+shows the captured document/object and selected edges. Later profile/global
+selection does not replace this choice. Starting path capture clears the old choice;
+invalid completion leaves no captured path and shows inline guidance.
+
+Review text explains section count, solid/surface output and native Frenet/corrected
+frame choice. No geometric orientation/twist preview or Boolean target is claimed.
+OK rechecks document/edit context, object identities, current inputs, connected path
+and distinct profile/path roles. Recompute and valid-shape/one-solid checks precede
+transaction commit. Path validation and native Sweep construction deep-copy source
+geometry with element mappings intact. Failed creation rolls back and stays open
+for correction. Cancel works during path capture and removes the selection gate; document closure
+closes the task. Native Sections/Spine/Solid/Frenet persistence is unchanged.
+[Owner procedure](../tests/SweepInputs.md).

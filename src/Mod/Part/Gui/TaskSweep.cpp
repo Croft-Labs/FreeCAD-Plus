@@ -28,6 +28,8 @@
 #include <Precision.hxx>
 #include <QApplication>
 #include <QMessageBox>
+#include <QLabel>
+#include <QStringList>
 #include <QTextStream>
 #include <QTimer>
 #include <QTreeWidget>
@@ -53,6 +55,7 @@
 #include <Gui/ViewProvider.h>
 #include <Gui/WaitCursor.h>
 #include <Mod/Part/App/PartFeature.h>
+#include <Mod/Part/App/PartFeatures.h>
 
 #include "TaskSweep.h"
 #include "ui_TaskSweep.h"
@@ -66,6 +69,9 @@ public:
     Ui_TaskSweep ui;
     QString buttonText;
     std::string document;
+    std::vector<Gui::SelectionObject> pathSelection;
+    unsigned long long pathId {0};
+    QLabel* review {nullptr};
     Private() = default;
     ~Private() = default;
 
@@ -135,7 +141,20 @@ SweepWidget::SweepWidget(QWidget* parent)
 
     d->ui.setupUi(this);
     d->ui.selector->setAvailableLabel(tr("Available profiles"));
-    d->ui.selector->setSelectedLabel(tr("Selected profiles"));
+    d->ui.selector->setSelectedLabel(tr("Sections in sweep order"));
+    d->ui.labelPath->setTextFormat(Qt::PlainText);
+    d->ui.labelPath->setWordWrap(true);
+    d->review = new QLabel(this);
+    d->review->setObjectName(QStringLiteral("sweepInputReview"));
+    d->review->setWordWrap(true);
+    d->review->setTextFormat(Qt::PlainText);
+    d->ui.gridLayout->addWidget(d->review, 4, 0, 1, 3);
+    auto* model = d->ui.selector->selectedTreeWidget()->model();
+    connect(model, &QAbstractItemModel::rowsInserted, this, &SweepWidget::updateReview);
+    connect(model, &QAbstractItemModel::rowsRemoved, this, &SweepWidget::updateReview);
+    connect(model, &QAbstractItemModel::rowsMoved, this, &SweepWidget::updateReview);
+    connect(d->ui.checkSolid, &QCheckBox::toggled, this, &SweepWidget::updateReview);
+    connect(d->ui.checkFrenet, &QCheckBox::toggled, this, &SweepWidget::updateReview);
     d->ui.labelPath->clear();
 
     // clang-format off
@@ -148,6 +167,7 @@ SweepWidget::SweepWidget(QWidget* parent)
     // clang-format on
 
     findShapes();
+    updateReview();
 }
 
 SweepWidget::~SweepWidget()
@@ -224,8 +244,9 @@ void SweepWidget::findShapes()
 
             QTreeWidgetItem* child = new QTreeWidgetItem();
             child->setText(0, label);
-            child->setToolTip(0, label);
+            child->setToolTip(0, label + QStringLiteral(" [") + name + QStringLiteral("]"));
             child->setData(0, Qt::UserRole, name);
+            child->setData(0, Qt::UserRole + 1, static_cast<qulonglong>(obj->getID()));
             Gui::ViewProvider* vp = activeGui->getViewProvider(obj);
             if (vp) {
                 child->setIcon(0, vp->getIcon());
@@ -238,14 +259,24 @@ void SweepWidget::findShapes()
 bool SweepWidget::isPathValid(const Gui::SelectionObject& sel) const
 {
     const App::DocumentObject* path = sel.getObject();
+    if (!path) {
+        return false;
+    }
     const std::vector<std::string>& sub = sel.getSubNames();
 
     TopoDS_Shape pathShape;
-    const Part::TopoShape& shape = Part::Feature::getTopoShape(
+    Part::TopoShape shape = Part::Feature::getTopoShape(
         path,
         Part::ShapeOption::ResolveLink | Part::ShapeOption::Transform
     );
     if (shape.isNull()) {
+        return false;
+    }
+    try {
+        // Wire validation must not change flags on the selected source topology.
+        shape = shape.makeElementCopy();
+    }
+    catch (...) {
         return false;
     }
     if (!sub.empty()) {
@@ -303,57 +334,57 @@ bool SweepWidget::isPathValid(const Gui::SelectionObject& sel) const
     return (!pathShape.IsNull());
 }
 
+void SweepWidget::updateReview()
+{
+    d->review->setText(tr("%1 sections, top to bottom. %2 %3 "
+                         "Creates a separate associative Sweep. No twist preview or Boolean target is provided.")
+        .arg(d->ui.selector->selectedTreeWidget()->topLevelItemCount())
+        .arg(d->ui.checkSolid->isChecked() ? tr("Solid output requires closed profiles.")
+                                         : tr("Surface output is requested."))
+        .arg(d->ui.checkFrenet->isChecked() ? tr("Native Frenet frame enabled.")
+                                          : tr("Native corrected frame enabled.")));
+    if (!d->ui.buttonPath->isChecked()) {
+        if (d->pathSelection.empty()) {
+            d->ui.labelPath->setText(tr("No path captured. Choose Sweep Path, select connected edges, then Done."));
+        }
+        else {
+            const auto& path = d->pathSelection.front();
+            QStringList edges;
+            for (const auto& sub : path.getSubNames()) {
+                edges << QString::fromStdString(sub);
+            }
+            d->ui.labelPath->setText(tr("Captured path: %1 [%2] - %3. Profile selection does not change it.")
+                .arg(QString::fromUtf8(path.getDocName()), QString::fromUtf8(path.getFeatName()),
+                     edges.isEmpty() ? tr("whole edge/wire") : edges.join(QStringLiteral(", "))));
+        }
+    }
+}
+
 bool SweepWidget::accept()
 {
     if (d->ui.buttonPath->isChecked()) {
+        d->review->setText(tr("Finish path selection with Done before creating the sweep."));
         return false;
     }
-    const App::DocumentObject* docobj = nullptr;
-    std::string selection;
-    const std::vector<Gui::SelectionObject> selobjs = Gui::Selection().getSelectionEx();
-    std::vector<Part::TopoShape> subShapes;
-    Part::TopoShape topoShape = Part::TopoShape();
-    std::string spineObject, spineLabel;
-
-    bool ok = true;
-    if (selobjs.size() == 1) {
-        selection = selobjs[0].getAsPropertyLinkSubString();
-        const std::vector<std::string>& subnames = selobjs[0].getSubNames();
-        docobj = selobjs[0].getObject();
-        spineObject = selobjs[0].getFeatName();
-        spineLabel = docobj->Label.getValue();
-        topoShape = Part::Feature::getTopoShape(
-            docobj,
-            Part::ShapeOption::ResolveLink | Part::ShapeOption::Transform
-        );
-        if (!topoShape.isNull()) {
-            for (std::vector<std::string>::const_iterator it = subnames.begin(); it != subnames.end();
-                 ++it) {
-                subShapes.push_back(
-                    Part::Feature::getTopoShape(
-                        docobj,
-                        Part::ShapeOption::NeedSubElement | Part::ShapeOption::ResolveLink
-                            | Part::ShapeOption::Transform,
-                        subnames[0].c_str()
-                    )
-                );
-            }
-            for (const auto& it : subShapes) {
-                TopoDS_Shape dsShape = it.getShape();
-                if (dsShape.IsNull()
-                    || dsShape.ShapeType() != TopAbs_EDGE) {  // only edge selection allowed
-                    ok = false;
-                }
-            }
-        }
-        else {  // could be not a part::feature or app:link to non-part::feature or app::part
-                // without a visible part::feature
-            ok = false;
-        }
+    auto* appDoc = App::GetApplication().getDocument(d->document.c_str());
+    if (!appDoc || App::GetApplication().getActiveDocument() != appDoc
+        || appDoc->hasPendingTransaction() || appDoc->getBookedTransactionID() > 0) {
+        d->review->setText(tr("Activate the section document and finish other edit transactions first."));
+        return false;
     }
-    else {  // not just one object selected
-        ok = false;
+    if (d->pathSelection.empty()) {
+        d->review->setText(tr("Capture a path with Sweep Path and Done before creating the sweep."));
+        return false;
     }
+    const auto& path = d->pathSelection.front();
+    const auto* docobj = path.getObject();
+    if (!docobj || docobj->getDocument() != appDoc || docobj->getID() != d->pathId
+        || !docobj->isValid() || docobj->isTouched() || !isPathValid(path)) {
+        d->review->setText(tr("The captured path is missing, replaced, stale or invalid. Recompute and capture it again."));
+        return false;
+    }
+    const auto selection = path.getAsPropertyLinkSubString();
+    const std::string spineObject = path.getFeatName();
 
     QString list, solid, frenet;
     if (d->ui.checkSolid->isChecked()) {
@@ -374,31 +405,26 @@ bool SweepWidget::accept()
 
     int count = d->ui.selector->selectedTreeWidget()->topLevelItemCount();
     if (count < 1) {
-        QMessageBox::critical(this, tr("Too Few Elements"), tr("At least one edge or wire is required."));
-        return false;
-    }
-    if (!ok) {
-        QMessageBox::critical(
-            this,
-            tr("Invalid Selection"),
-            tr("Select at least 1 edge from a single object.")
-        );
+        d->review->setText(tr("Choose at least one section in sweep order."));
         return false;
     }
     for (int i = 0; i < count; i++) {
         QTreeWidgetItem* child = d->ui.selector->selectedTreeWidget()->topLevelItem(i);
         QString name = child->data(0, Qt::UserRole).toString();
+        auto* section = appDoc->getObject(name.toUtf8().constData());
+        if (!section || section->getID() != child->data(0, Qt::UserRole + 1).toULongLong()
+            || !section->isValid() || section->isTouched()) {
+            d->review->setText(tr("A section is missing, replaced or not current. Recompute or reopen the task."));
+            return false;
+        }
         if (name == QLatin1String(spineObject.c_str())) {
-            QMessageBox::critical(
-                this,
-                tr("Wrong Selection"),
-                tr("'%1' cannot be used as profile and path.").arg(QString::fromUtf8(spineLabel.c_str()))
-            );
+            d->review->setText(tr("A section cannot also be the sweep path."));
             return false;
         }
         str << "App.getDocument('" << d->document.c_str() << "')." << name << ", ";
     }
 
+    int transaction = 0;
     try {
         Gui::WaitCursor wc;
         QString cmd;
@@ -415,23 +441,30 @@ bool SweepWidget::accept()
         if (!doc) {
             throw Base::RuntimeError("Document doesn't exist anymore");
         }
-        doc->openCommand(QT_TRANSLATE_NOOP("Command", "Sweep"));
+        transaction = Gui::Command::openActiveDocumentCommand(tr("Sweep").toStdString());
         Gui::Command::runCommand(Gui::Command::App, cmd.toUtf8());
         doc->getDocument()->recompute();
-        App::DocumentObject* obj = doc->getDocument()->getActiveObject();
-        if (obj && !obj->isValid()) {
-            std::string msg = obj->getStatusString();
-            doc->abortCommand();
-            throw Base::RuntimeError(msg);
+        auto* sweep = dynamic_cast<Part::Sweep*>(doc->getDocument()->getActiveObject());
+        if (!sweep) {
+            throw Base::RuntimeError("Sweep creation failed");
         }
-        doc->commitCommand();
+        if (!sweep->isValid()) {
+            throw Base::RuntimeError(sweep->getStatusString());
+        }
+        if (sweep->Shape.getShape().isNull() || !sweep->Shape.getShape().isValid()) {
+            throw Base::RuntimeError("Sweep did not produce a valid shape");
+        }
+        if (d->ui.checkSolid->isChecked()
+            && sweep->Shape.getShape().countSubShapes(TopAbs_SOLID) != 1) {
+            throw Base::RuntimeError("The sections and path did not produce one solid");
+        }
+        Gui::Command::commitCommand(transaction);
     }
     catch (const Base::Exception& e) {
-        QMessageBox::warning(
-            this,
-            tr("Input error"),
-            QCoreApplication::translate("Exception", e.what())
-        );
+        Gui::Command::abortCommand(transaction);
+        d->review->setText(tr("Sweep was not created. Original inputs were preserved. "
+                             "Check the sections, path and output mode, then try again.\n%1")
+                          .arg(QCoreApplication::translate("Exception", e.what())));
         return false;
     }
 
@@ -440,9 +473,7 @@ bool SweepWidget::accept()
 
 bool SweepWidget::reject()
 {
-    if (d->ui.buttonPath->isChecked()) {
-        return false;
-    }
+    Gui::Selection().rmvSelectionGate();
     return true;
 }
 
@@ -465,6 +496,8 @@ void SweepWidget::onCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem
 void SweepWidget::onButtonPathToggled(bool on)
 {
     if (on) {
+        d->pathSelection.clear();
+        d->pathId = 0;
         QList<QWidget*> c = this->findChildren<QWidget*>();
         for (auto it : c) {
             it->setEnabled(false);
@@ -489,25 +522,17 @@ void SweepWidget::onButtonPathToggled(bool on)
         d->ui.labelPath->clear();
         Gui::Selection().rmvSelectionGate();
 
-        Gui::SelectionFilter edgeFilter("SELECT Part::Feature SUBELEMENT Edge COUNT 1..");
-        Gui::SelectionFilter partFilter("SELECT Part::Feature COUNT 1");
-        bool matchEdge = edgeFilter.match();
-        bool matchPart = partFilter.match();
-        if (matchEdge) {
-            // check if path is valid
-            const std::vector<Gui::SelectionObject>& result = edgeFilter.Result[0];
-            if (!isPathValid(result.front())) {
-                QMessageBox::critical(this, tr("Sweep Path"), tr("The selected sweep path is invalid."));
-                Gui::Selection().clearSelection();
-            }
+        const auto selected = Gui::Selection().getSelectionEx();
+        if (selected.size() == 1 && selected.front().getDocName() == d->document
+            && isPathValid(selected.front())) {
+            d->pathSelection = selected;
+            d->pathId = selected.front().getObject()->getID();
+            updateReview();
         }
-        else if (matchPart) {
-            // check if path is valid
-            const std::vector<Gui::SelectionObject>& result = partFilter.Result[0];
-            if (!isPathValid(result.front())) {
-                QMessageBox::critical(this, tr("Sweep Path"), tr("The selected sweep path is invalid."));
-                Gui::Selection().clearSelection();
-            }
+        else {
+            d->pathSelection.clear();
+            updateReview();
+            d->review->setText(tr("No path captured: select connected edges from one object in this document."));
         }
     }
 }
@@ -517,8 +542,9 @@ void SweepWidget::changeEvent(QEvent* e)
     QWidget::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         d->ui.retranslateUi(this);
-        d->ui.selector->setAvailableLabel(tr("Vertex/Wire"));
-        d->ui.selector->setSelectedLabel(tr("Sweep"));
+        d->ui.selector->setAvailableLabel(tr("Available profiles"));
+        d->ui.selector->setSelectedLabel(tr("Sections in sweep order"));
+        updateReview();
     }
 }
 
@@ -528,6 +554,7 @@ void SweepWidget::changeEvent(QEvent* e)
 TaskSweep::TaskSweep()
     : label(nullptr)
 {
+    setAutoCloseOnDeletedDocument(true);
     widget = new SweepWidget();
     addTaskBox(Gui::BitmapFactory().pixmap("Part_Sweep"), widget);
 }

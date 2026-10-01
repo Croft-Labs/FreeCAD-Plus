@@ -56,6 +56,7 @@ private:
 private:
     void changeEvent(QEvent* e) override;
     void findShapes();
+    void updateReview();
     bool isPathValid(const Gui::SelectionObject& sel) const;
 
 private:

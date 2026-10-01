@@ -340,6 +340,11 @@ App::DocumentObjectExecReturn* Sweep::execute()
     Standard_Boolean isFrenet = Frenet.getValue() ? Standard_True : Standard_False;
     auto transMode = static_cast<TransitionMode>(Transition.getValue());
     try {
+        // Pipe-shell construction can change OCCT flags on its inputs, even on failure.
+        // Keep source topology unchanged and propagate native element maps to the copies.
+        for (auto& shape : shapes) {
+            shape = shape.makeElementCopy();
+        }
         TopoShape result(0, getDocument()->getStringHasher());
         result.makeElementPipeShell(shapes, isSolid, isFrenet, transMode, Part::OpCodes::Sweep);
         if (Linearize.getValue()) {

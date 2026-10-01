@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F013 native state columns, phase 10 tasks 10.6d/e.
+- Current product batch complete for owner testing: F028 captured Sweep inputs,
+  phase 13 tasks 13.2c/d. The native collector retains its path through later
+  profile/global selection, reviews ordered sections/output and recovers failed
+  creation without changing source topology. Both tasks preceded the grouped build;
+  a demonstrated kernel input mutation was fixed in one corrective rebuild.
+  All 16 distinct selected checks pass; six captures are reviewed and four owner
+  fixtures saved. [Owner procedure](../tests/SweepInputs.md).
+  Full F028 remains open; rotate after this usable checkpoint pending owner feedback.
+
+- Previous product batch complete for owner testing: F013 native state columns, phase 10 tasks 10.6d/e.
   The existing feature organizer distinguishes visibility, suppression, native
   error/recompute, source and metadata access. Read-only filtering/column choices
   and change invalidation pass in 14 grouped checks after one staging pass and a
@@ -4286,6 +4295,34 @@ Full F063/13.2 remains open for guides, section correspondence/reversal, geometr
 and twist preview, continuity/tolerance certification and Boolean targets. Stop
 at this bounded checkpoint and rotate pending owner workflow feedback.
 
+- [ X ] 13.2c Make the native Sweep path collector retain its explicit object/edge
+  choice independently of later global/profile selection, with identity checks,
+  connected-edge validation and visible path/order/output review (F028).
+- [ X ] 13.2d Validate native Sweep geometry and requested solid output before one
+  undo commit. Keep failed creation editable, preserve owner transactions, support
+  Cancel during path capture and close with the document. Verify association,
+  downstream use, Undo/Redo and save/reopen.
+
+13.2c/d grouped evidence (2026-10-01): both tasks preceded one 70-second PartGui
+build (exit 0). Eight unchanged TestLoftSections checks pass in grouped/; Sweep
+checks exposed source topology flag mutation during native wire/pipe construction.
+Validation and native Sweep execution now deep-copy inputs with native element
+maps before kernel construction. One corrective 60-second PartGui build (exit 0)
+and all eight affected TestSweepInputs checks pass (sweep-verified/); 16 accepted
+distinct checks, no skips. The document-switch assertion was corrected to native
+task closure instead of assuming the task survives a new document.
+Retained single/multiple-edge paths, disconnected/stale/replaced input refusal,
+source BRep preservation, solid failure/surface retry, owner transaction and Cancel
+behavior, Undo/Redo, save/reopen and associative edits through a downstream Link
+are covered. All six final captures reviewed (visual/): missing/captured path,
+solid creation, reopened path edit, recoverable refusal and surface retry. Four
+owner fixtures and source/runtime hashes are retained with evidence.json.
+Evidence: D:\Temp\Office-PC\freecad-plus-sweep-inputs-20261001.
+Source-built validation is separate from installer and owner acceptance. Full
+F028/13.2 remains open for guides, broader orientation/scaling, section reversal,
+geometric/twist preview, Boolean targets and unified command-family semantics.
+Stop at this bounded checkpoint and rotate pending owner workflow feedback.
+
 - [   ] 13.3 Spike curve-network/boundary surfaces and supported positional/tangent/
   curvature continuity. Measure continuity rather than judging rendered smoothness;
   explicitly limit unsupported inputs instead of assuming a kernel replacement.
@@ -6206,7 +6243,7 @@ reconciliation rules above to every entry.
 <a id="f028"></a>
 ### F028 — Consistent Sweep and Loft
 
-**Owning tasks:** 3.3, 13.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 3.3, 13.2, 13.2c/d. **Status:** Bounded native Sweep inputs ready for owner testing. Explicit retained path, ordered section/output review, source-preserving failure/retry and associative save/reopen/downstream edits pass in 16 distinct selected checks after the grouped build and one corrective rebuild. [Owner procedure](../tests/SweepInputs.md). The bounded Loft workflow is recorded under F063/13.2a/b. Broader guides/orientation/scaling, section reversal, twist preview, Boolean targets and unified command-family acceptance remain open.
 
 **Packages:** G03, U06 · **First delivery:** P7 · **Likely scope:** Feature
 
