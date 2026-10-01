@@ -555,6 +555,10 @@ from freecad.gui.CommandSearch import registerCommand as _registerCommandSearch
 _registerCommandSearch()
 del _registerCommandSearch
 
+from freecad.gui.TemporaryDisplay import registerCommands as _registerTemporaryDisplay
+_registerTemporaryDisplay()
+del _registerTemporaryDisplay
+
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 

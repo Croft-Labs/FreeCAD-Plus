@@ -214,6 +214,20 @@ explanations and physical/high-DPI acceptance remain pending. See
 [UI-008](UI_UX_SPEC.md#ui-008-command-search-f033-roadmap-842-104) and the
 [owner procedure](../tests/CommandSearch.md).
 
+## Current temporary-display pilot (F040)
+
+View > Visibility provides temporary isolate/hide and previous/original display
+restore. Session-local, per-document snapshots change native visibility only;
+Body Tips, modeling inputs, placements and link targets remain unchanged. Whole
+Body results and whole linked occurrences define this pilot's target scope.
+New objects retain current visibility on restore, deleted objects are ignored,
+and native object IDs prevent reusing a deleted object's snapshot for a replacement.
+Model Undo/Redo remains separate. Restore before saving: the transient stack is
+not serialized and save during isolation stores current visibility. The bounded
+workflow is ready for owner testing under roadmap 10.5a/b; linked-member overrides,
+broader save-time policy and physical/high-DPI acceptance remain pending. See
+[the owner procedure](../tests/TemporaryDisplay.md) and UI-009.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

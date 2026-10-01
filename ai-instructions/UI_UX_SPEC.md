@@ -439,3 +439,33 @@ buttons. Reinvocation focuses/selects the query. Existing Customize > Keyboard
 owns per-user shortcut editing, reset and conflict handling. Favorites, exhaustive
 aliases, per-command diagnostics, navigation presets and physical/high-DPI/localized
 acceptance remain pending. [Owner procedure](../tests/CommandSearch.md).
+
+
+## UI-009: Temporary display (F040; roadmap 10.5)
+
+View > Visibility adds Temporarily isolate selection, Temporarily hide selection,
+Restore previous display and Restore original display. The shared command search
+indexes these native command registrations. No new default shortcut is assigned.
+Isolate/hide snapshots the active document's current native visibility; each changed
+display pushes one level. A no-op pushes nothing. The status bar confirms depth;
+Restore commands remain available while the active document has saved levels.
+
+Isolate retains selected objects and their containing Parts, hides other branches,
+and preserves selected containers' internal hidden states. A Body-feature selection
+addresses the whole Body result. A linked subelement addresses its whole local
+occurrence, never its shared source member. Hide affects those same whole targets.
+Input links, placements, ownership, suppression and Body Tips are not edited.
+
+Restore previous pops one level; Restore original returns to the oldest snapshot
+and clears the stack. Ordinary visibility changes since that snapshot are reset
+too. Deleted objects are ignored; objects created after the snapshot retain their
+visibility, including a replacement with a reused name and different native ID.
+Document close discards its stack. Other documents retain independent stacks.
+
+Empty/foreign selection, active tasks, pending edit transactions and ambiguous or
+cyclic container ownership reject without applying a display. Errors appear in
+the status bar and Report view. Restore is separate from model Undo/Redo. Native
+visibility may mark the document modified; restore before save to retain the old
+display. The session stack is not serialized. Save-time temporary-display policy,
+linked member overrides and physical/high-DPI acceptance remain pending.
+[Owner procedure](../tests/TemporaryDisplay.md).

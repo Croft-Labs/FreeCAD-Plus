@@ -30,7 +30,14 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: command search (F033,
+- Current product batch complete for owner testing: F040 temporary isolate/hide,
+  phase 10 tasks 10.5a/b. View > Visibility now has temporary isolate/hide and
+  previous/original display restore. One grouped build and all 20 selected checks
+  pass; five viewport captures reviewed. [Try the example](../tests/TemporaryDisplay.md).
+  Whole F040 remains open for linked-member/save-time policy and physical acceptance.
+  Defer further refinement to owner feedback and rotate to another item family.
+
+- Previous product batch complete for owner testing: command search (F033,
   phase 8 tasks 8.4.2a/b and phase 10.4 progress). Tools > Command search / Ctrl+K
   finds familiar aliases and opens existing commands with context guidance.
   One grouped build; 59 distinct passing checks and three reviewed captures.
@@ -2580,6 +2587,33 @@ Phase 7 architecture gates and the full guided workflow remain open.
   Window selection requires full enclosure; crossing selection includes intersected
   entities. Allow documented configurable modifier policies while retaining the adopted
   defaults and explicit collector mode; do not silently reinterpret clicks.
+- [x] 10.5a Deliver the bounded F040 temporary isolate/hide workflow for native
+  objects, Part containers, Body results and whole linked occurrences. Native
+  visibility changes preserve feature ownership, Body Tips, link targets and
+  placements. Complete for owner workflow testing.
+- [x] 10.5b Add per-document nested restore/original-display actions, lifecycle
+  cleanup and defined created/deleted-object behavior. Restored visibility, geometry,
+  independent model Undo/Redo and save/reopen pass. Complete for owner workflow
+  testing; whole F040 remains open for the broader acceptance below.
+
+10.5a/b grouped evidence (2026-09-30): both implementation tasks preceded one
+FreeCADGui/FreeCADGui_Resources Release build, exit 0. All 20 selected tests pass,
+with no failures/errors/skips: 9 temporary-display checks, 7 command-search checks
+and 4 named-parameter command checks. GUI process exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-temporary-display-20260930`, `grouped/`.
+Native Part visibility behavior was first confirmed in the bounded `probe/`.
+`visual/` contains five reviewed viewport captures showing original/isolate/hide/
+whole-occurrence/restore states, plus `Temporary-Display.FCStd` for owner testing.
+`acceptance-summary.json` and `validated-identities.json` record passing results
+and matching source/runtime scripts. FreeCADGui SHA256:
+`097c5e0cf486bcbc75bc7a98731c83d80440a9146c2633c28d126744f7e2ac11`.
+No corrective build or script restaging was needed. No installer/release update.
+[Try the workflow](../tests/TemporaryDisplay.md). Snapshots are session-local;
+restore before saving (save while isolated persists current native visibility).
+Linked members address the whole occurrence; Body features address the whole
+Body result. Deep member overrides, broader save-time policy and physical/high-DPI
+acceptance remain open. Stop here for owner feedback and rotate the next batch.
+
 - [   ] 10.6 Extend 7.2 with separate Assembly and Feature Navigator tabs, optional
   simultaneous docking, explicit work/display part, status columns, contributing-body
   filters, comments, folders and dependency highlights. Display grouping never
@@ -4915,7 +4949,7 @@ reconciliation rules above to every entry.
 <a id="f040"></a>
 ### F040 — Temporary isolate/hide
 
-**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.5. **Status:** Bounded temporary isolate/hide/restore pilot ready for owner testing under 10.5a/b. Native Parts, whole Body results and whole linked occurrences support per-document nested restore. Created/deleted/reused objects, model Undo/Redo and restored save/reopen are validated; all 20 selected checks pass and five viewport captures are reviewed. Session snapshots do not persist; restore before saving. Linked-member overrides, save-time policy and physical/high-DPI acceptance remain open. [Owner procedure](../tests/TemporaryDisplay.md).
 
 **Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
 

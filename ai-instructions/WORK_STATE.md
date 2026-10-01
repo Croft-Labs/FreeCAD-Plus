@@ -1,6 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F033 command search, phase 8 tasks 8.4.2a/b; phase 10.4 progress.
+Latest batch: F040 temporary isolate/hide, phase 10 tasks 10.5a/b.
+View > Visibility has Temporarily isolate/hide selection and Restore previous/
+original display. Native visibility only; per-document nested snapshots. Whole
+Body results and whole linked occurrences preserve model/definition identities.
+New objects retain current visibility, deleted/replaced identities are ignored,
+and document close clears its stack. Model Undo/Redo is independent.
+
+One grouped FreeCADGui/FreeCADGui_Resources Release build passed after both tasks.
+All 20 selected tests pass with zero failures/errors/skips (9 temporary display,
+7 command search, 4 parameter commands); process exit 0. Evidence root:
+D:\Temp\Office-PC\freecad-plus-temporary-display-20260930.
+Use grouped/, acceptance-summary.json and validated-identities.json. Source/runtime
+scripts match; FreeCADGui SHA256:
+097c5e0cf486bcbc75bc7a98731c83d80440a9146c2633c28d126744f7e2ac11.
+No corrective build or script restaging. probe/ records native container behavior;
+visual/ has five reviewed viewport captures and Temporary-Display.FCStd.
+
+Ready for owner workflow testing: tests/TemporaryDisplay.md. Stop refining this
+pilot without feedback or a demonstrated blocker. Whole F040 remains open for
+linked-member overrides, save-time policy and physical/high-DPI acceptance.
+Session stacks are not saved; saving while isolated stores current visibility,
+so restore before saving. No installer/release update. Rotate the next item family.
+
+Previous batch: F033 command search, phase 8 tasks 8.4.2a/b; phase 10.4 progress.
 Standard Tools > Command search / Ctrl+K indexes loaded commands plus familiar
 modeling aliases, displays current shortcuts and selected context, explicitly
 switches workbenches and invokes existing commands. Pocket keyboard entry reaches
