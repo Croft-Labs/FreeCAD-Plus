@@ -21,6 +21,9 @@ Feedback fixture: `feedback/testBOMPolicyReopenAndPerReportExclusions/Assembly.c
 Mass consumers, automatic cross-file report invalidation, general missing-file/array/
 custom-column behavior and per-report exclusions of children stored outside the
 BOM's owning file remain open. No schema-version change, installer or release.
+Implementation `bc12172def` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records three matching Python modules, five runtime
+artifacts, the native BOM source and final build/check/fixture/capture evidence.
 
 Previous feedback batch follows.
 
