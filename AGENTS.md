@@ -23,6 +23,10 @@ Do not claim to have read missing guidance or maintain an independent master cop
 
 - Work on this FreeCAD Plus checkout. Ignore the separately installed FreeCAD;
   do not modify it or use it as evidence for this fork's changes.
+- Current owner priority is the component/document migration in roadmap 7.8:
+  Component Structure, Model History, shared embedded/external definitions and
+  versioned `.cadprt` persistence. Follow the approved component contract; continue
+  its integration and acceptance work before unrelated feature rotation.
 - Current implementation scope includes unified Pad/Pocket Extrude and the
   user-requested Linear/Circular Pattern task workflow, and signed angular start
   offsets/direction buttons for Revolution and Groove, and the user-requested

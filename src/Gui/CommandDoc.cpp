@@ -803,7 +803,7 @@ void StdCmdNew::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     QString cmd;
-    cmd = QStringLiteral("App.newDocument()");
+    cmd = QStringLiteral("Gui.runCommand(\"Std_NewComponentDocument\")");
     runCommand(Command::Doc, cmd.toUtf8());
     doCommand(Command::Gui, "Gui.activeDocument().activeView().viewDefaultOrientation()");
 

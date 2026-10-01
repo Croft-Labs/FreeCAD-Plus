@@ -800,6 +800,8 @@ MenuItem* StdWorkbench::setupMenuBar() const
     }
 #endif
     *tool << "Std_CommandSearch"
+          << "Std_NewComponentDocument"
+          << "Std_ComponentStructure"
           << "Separator"
           << "Std_Measure"
           << "Std_MassProperties"

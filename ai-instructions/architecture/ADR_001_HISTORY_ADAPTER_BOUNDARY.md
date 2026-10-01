@@ -1,7 +1,9 @@
 # ADR 001: history adapter experiment boundary
 
 Date: 2026-09-29. Status: accepted boundary for experiments; final production
-architecture is **not selected**. Supports 7.1.3a/7.1.3b and the bounded 7.1.6a
+architecture was **not selected** by this experiment. The later
+[component decision](ADR_003_COMPONENT_DOCUMENT.md) selects the initial production
+mapping without closing the remaining lineage and consumer gates. Supports 7.1.3a/7.1.3b and the bounded 7.1.6a
 decision record. The [logical contract](PART_HISTORY_CONTRACT.md) remains the
 model requirement. None of these prototypes is installed or exposed as a command.
 

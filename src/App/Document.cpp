@@ -1873,17 +1873,21 @@ static std::string checkFileName(const char* file)
         constexpr std::size_t backupAndDocExtLen = sizeof(".fcbak.fcstd") - 1;
         if (boost::iends_with(fn, ".fcbak.fcstd")) {
             fn.erase(fn.size() - backupAndDocExtLen);
-            fn += ".FCStd";
+            if (!boost::iends_with(fn, ".cadprt")) {
+                fn += ".FCStd";
+            }
             return fn;
         }
         if (boost::iends_with(fn, ".fcbak")) {
             fn.erase(fn.size() - backupExtLen);
-            fn += ".FCStd";
+            if (!boost::iends_with(fn, ".cadprt")) {
+                fn += ".FCStd";
+            }
             return fn;
         }
 
         const char* ext = strrchr(fn.c_str(), '.');
-        if ((ext == nullptr) || !boost::iequals(ext + 1, "fcstd")) {
+        if ((ext == nullptr) || (!boost::iequals(ext + 1, "fcstd") && !boost::iequals(ext + 1, "cadprt"))) {
             if (ext && ext[1] == 0) {
                 fn += "FCStd";
             }
@@ -1899,13 +1903,33 @@ bool Document::saveAs(const char* _file)
 {
     const std::string file = checkFileName(_file);
     const Base::FileInfo fi(file.c_str());
-    if (this->FileName.getStrValue() != file) {
+    const std::string previousFile = this->FileName.getStrValue();
+    const std::string previousLabel = this->Label.getStrValue();
+    const bool renamed = previousFile != file;
+    if (renamed) {
         this->FileName.setValue(file);
         this->Label.setValue(fi.fileNamePure());
         this->Uid.touch();  // this forces a rename of the transient directory
     }
 
-    return save();
+    auto restoreLocation = [&]() {
+        if (renamed) {
+            this->FileName.setValue(previousFile);
+            this->Label.setValue(previousLabel);
+            this->Uid.touch();
+        }
+    };
+    try {
+        if (save()) {
+            return true;
+        }
+    }
+    catch (...) {
+        restoreLocation();
+        throw;
+    }
+    restoreLocation();
+    return false;
 }
 
 bool Document::saveCopy(const char* file) const
@@ -1967,6 +1991,36 @@ bool Document::save()
 
 bool Document::saveToFile(const char* filename) const
 {
+    // Component documents reuse native payloads but require a versioned manifest.
+    // Validate before opening output, including when the caller disables backups.
+    std::string componentManifest;
+    bool componentDocument = boost::iends_with(filename, ".cadprt");
+    for (auto object : getObjects()) {
+        auto role = dynamic_cast<const App::PropertyString*>(
+            object->getPropertyByName("ComponentRole")
+        );
+        if (role && role->getStrValue() == "Document") {
+            componentDocument = true;
+            break;
+        }
+    }
+    if (componentDocument) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module module(PyImport_ImportModule("CadDocument"), true);
+            if (module.isNull()) {
+                throw Py::Exception();
+            }
+            Py::Tuple args(2);
+            args.setItem(0, Py::Object(const_cast<Document*>(this)->getPyObject(), true));
+            args.setItem(1, Py::String(filename, "utf-8"));
+            componentManifest = Py::String(Py::Callable(module.getAttr("manifest")).apply(args))
+                                    .as_std_string("utf-8");
+        }
+        catch (Py::Exception&) {
+            throw Base::PyException();
+        }
+    }
     signalStartSave(*this, filename);
 
     auto hGrp = GetApplication().GetParameterGroupByPath(
@@ -2057,6 +2111,10 @@ bool Document::saveToFile(const char* filename) const
 
         // write additional files
         writer.writeFiles();
+        if (!componentManifest.empty()) {
+            writer.putNextEntry("ComponentManifest.json");
+            writer.Stream() << componentManifest;
+        }
         if (writer.hasErrors()) {
             // retrieve Writer error strings
             std::stringstream message;
@@ -2144,6 +2202,34 @@ void Document::restore(const char* filename,
                        bool delaySignal,
                        const std::vector<std::string>& objNames)
 {
+    // Preflight before clearing an existing document or restoring Python proxies.
+    const char* componentPath = filename ? filename : FileName.getValue();
+    bool componentFormat = boost::iends_with(componentPath, ".cadprt");
+    if (!componentFormat) {
+        try {
+            // Recovery files and renamed archives retain their format identity.
+            zipios::ZipFile archive(componentPath);
+            componentFormat = archive.getEntry("ComponentManifest.json").get() != nullptr;
+        }
+        catch (const std::exception&) {
+            // Let the existing native reader diagnose invalid legacy archives.
+        }
+    }
+    if (componentFormat) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module module(PyImport_ImportModule("CadDocument"), true);
+            if (module.isNull()) {
+                throw Py::Exception();
+            }
+            Py::Tuple args(1);
+            args.setItem(0, Py::String(componentPath, "utf-8"));
+            Py::Callable(module.getAttr("preflight")).apply(args);
+        }
+        catch (Py::Exception&) {
+            throw Base::PyException();
+        }
+    }
     clearUndos();
     d->activeObject = nullptr;
 

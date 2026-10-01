@@ -1418,3 +1418,22 @@ Source visibility is preserved. Existing feature edits use the native properties
 No true untrim, kept-region trim selection, maximum-deviation certification or
 complete self-intersection diagnosis is claimed.
 [Owner procedure](../tests/ExtendFaceReview.md).
+
+## Component Structure and Model History (roadmap 7.8)
+
+Owner-approved behavior is in the [component document contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
+Use Component Structure and Model History as the navigator tab labels. Add Component
+adds a child instance to the active component; Add Reference Object selects evaluated
+geometry from a direct child only. Full Component / Bodies Only / Hidden and Reset
+to Inherited control occurrence-path representation. No Reference Only role is added.
+Convert to Dumb Object offers Delete Parameters and Extract Dumb Body. Component
+edit tabs identify the shared definition and owning file; they do not make copies.
+Assembly Constraints is the first grouping row only when populated. The root row
+is the root component with the native Part icon; no file wrapper appears above it.
+Entry points are File > New/Open and Tools > Component Structure. Context menus
+provide editing, a separate component tab, Make Independent, Externalize Component,
+Locate Component File and representation/reset actions. The Model History menu
+provides suppression and the Convert to Dumb Object dropdown. The context label
+identifies the edited definition and owning file; missing components offer explicit
+repair, and legacy conversions expose their report. Full implementation and native
+interaction/solver acceptance remain tracked in 7.8.

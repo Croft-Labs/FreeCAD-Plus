@@ -1726,6 +1726,21 @@ bool Document::save()
     }
 }
 
+namespace {
+const char* nativeDocumentFilter(const App::Document* document)
+{
+    for (const auto* object : document->getObjects()) {
+        const auto* role = dynamic_cast<const App::PropertyString*>(
+            object->getPropertyByName("ComponentRole")
+        );
+        if (role && role->getStrValue() == "Document") {
+            return "*.cadprt";
+        }
+    }
+    return "*.FCStd";
+}
+}  // namespace
+
 /// Save the document under a new file name
 bool Document::saveAs()
 {
@@ -1738,7 +1753,8 @@ bool Document::saveAs()
     }
     if (name.endsWith(QStringLiteral(".FCBak"), Qt::CaseInsensitive)) {
         name.chop(QStringLiteral(".FCBak").size());
-        if (!name.endsWith(QStringLiteral(".FCStd"), Qt::CaseInsensitive)) {
+        if (!name.endsWith(QStringLiteral(".FCStd"), Qt::CaseInsensitive)
+            && !name.endsWith(QStringLiteral(".cadprt"), Qt::CaseInsensitive)) {
             name += QStringLiteral(".FCStd");
         }
     }
@@ -1746,7 +1762,8 @@ bool Document::saveAs()
         getMainWindow(),
         QObject::tr("Save %1 Document").arg(exe),
         name,
-        FileDialog::FilterList {{QObject::tr("%1 document").arg(exe), {"*.FCStd"}}}
+        FileDialog::FilterList {{QObject::tr("%1 document").arg(exe),
+                               {nativeDocumentFilter(getDocument())}}}
     );
 
     if (!fn.isEmpty()) {
@@ -1868,7 +1885,8 @@ bool Document::saveCopy()
     QString name = QString::fromUtf8(getDocument()->FileName.getValue());
     if (name.endsWith(QStringLiteral(".FCBak"), Qt::CaseInsensitive)) {
         name.chop(QStringLiteral(".FCBak").size());
-        if (!name.endsWith(QStringLiteral(".FCStd"), Qt::CaseInsensitive)) {
+        if (!name.endsWith(QStringLiteral(".FCStd"), Qt::CaseInsensitive)
+            && !name.endsWith(QStringLiteral(".cadprt"), Qt::CaseInsensitive)) {
             name += QStringLiteral(".FCStd");
         }
     }
@@ -1876,7 +1894,8 @@ bool Document::saveCopy()
         getMainWindow(),
         QObject::tr("Save %1 Document").arg(exe),
         name,
-        FileDialog::FilterList {{QObject::tr("%1 document").arg(exe), {"*.FCStd"}}}
+        FileDialog::FilterList {{QObject::tr("%1 document").arg(exe),
+                               {nativeDocumentFilter(getDocument())}}}
     );
     if (!fn.isEmpty()) {
         const char* DocName = App::GetApplication().getDocumentName(getDocument());

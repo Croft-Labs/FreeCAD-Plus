@@ -1,9 +1,13 @@
 # Part-level history and result contract
 
+Terminology/ownership refinement: [owner-approved component document contract](COMPONENT_DOCUMENT_CONTRACT.md), 2026-10-01. Part definitions are component definitions; History is Model History.
+
 Status: logical contract for roadmap 7.1.1, 7.1.2 and 7.1.4, 2026-09-29.
-This defines the requested model, not an implemented document schema or a chosen
-production adapter. Native capability probes inform 7.1.3; its architecture choice,
-consumer validation and migration remain open. No existing document is migrated.
+This defines the logical requirements and records the earlier native probes.
+The 2026-10-01 [component architecture decision](ADR_003_COMPONENT_DOCUMENT.md)
+selects the initial production mapping and `.cadprt` envelope. General lineage,
+consumer safety and complete command migration remain acceptance gates in 7.8;
+the historical probe evidence below is not proof of those broader behaviors.
 
 ## Ownership and roles (7.1.1)
 

@@ -790,7 +790,11 @@ void Application::open(const char* FileName, const char* Module)
                 }
 
                 if (!handled) {
-                    Command::doCommand(Command::App, "FreeCAD.openDocument('%s')", unicodepath.c_str());
+                    Command::doCommand(Command::App,
+                                       "import CadDocument; CadDocument.open_legacy('%s')",
+                                       unicodepath.c_str());
+                    Command::doCommand(Command::Gui,
+                                       "from freecad.gui.ComponentNavigator import show; show(App.ActiveDocument)");
                     Gui::Application::checkForRecomputes();
                 }
             }

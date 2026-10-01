@@ -118,17 +118,27 @@ need FreeCAD Plus Python modules to recompute; upstream compatibility is not cla
 - Build and GUI validation must use this checkout's binaries, never the
   separately installed FreeCAD. Follow [the guide](DEVELOPMENT_GUIDE.md).
 
+## Component document architecture
+
+The owner-approved 2026-10-01 [component document contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md)
+owns Component Structure/Model History, embedded and external shared definitions,
+representation inheritance, direct-child evaluated references, dumb-object actions,
+suppression and isolated edit tabs. Roadmap 7.8 is the active implementation priority.
+It supersedes conflicting earlier part/navigator terminology and conversion timing.
+
 ## Planned native format and legacy import
 
 Owner decision (2026-09-29): FreeCAD Plus will use **`.cadprt`** as its new native
-file format. This is a planned reader/writer and schema change, not merely renaming
-`.FCStd` files, and is not implemented yet. The migration tasks are in roadmap 7.6.
+file format. It requires a versioned reader/writer and component schema, not merely
+renaming `.FCStd` files. Roadmap 7.8 owns the current implementation and acceptance;
+7.6 retains the broader format/migration requirements.
 
 - Keep the ability to open legacy `.FCStd` documents and convert them to `.cadprt`
   as fully as reasonably possible. Preserve editable features, geometry, references
   and workbench data wherever a supported mapping exists.
 - Conversion writes a new `.cadprt` file and leaves the original `.FCStd` intact.
-  Opening a legacy document must not silently overwrite or convert its source.
+  Opening converts supported content in memory, reports conversion limits, and must
+  never overwrite the source. Difficult legacy mapping does not block the new model.
 - Report unsupported content and conversion losses. Distinguish fully editable
   conversion from partial conversion or geometry-only recovery; do not present
   recovered geometry as intact feature history.
@@ -150,7 +160,8 @@ and validation records above are not declarations that these changes exist.
   both geometry and child occurrences; explicit work/display context and targets.
   The [part-history logical contract](architecture/PART_HISTORY_CONTRACT.md)
   defines the roles, current native mapping, dependency bindings and result lineage.
-  These are design requirements; production storage and navigator remain pending.
+  The component contract refines these requirements. Production mappings and their
+  remaining integration gates are recorded in roadmap 7.8.
 - Shared-definition edits, occurrence placement/overrides, Make Unique and
   assembly-local operations have distinct, persisted scopes. Inspect App::Link and
   existing facilities before introducing replacements.
@@ -159,7 +170,8 @@ and validation records above are not declarations that these changes exist.
 - Keep reference sets, loading, suppression, visibility and BOM role separate.
 - Implement the [planned native format and legacy import policy](#planned-native-format-and-legacy-import)
   through a versioned engineering container, recovery and a defined migration.
-  The current format-retention constraint remains until that migration is implemented.
+  Native serialization is retained inside the versioned component envelope; new
+  component semantics must declare their required reader capabilities.
 - Preserve drawing, CAM, FEM and relevant Draft consumers through ownership changes.
   Prove units, transforms, dependency invalidation, undo and persistence.
 

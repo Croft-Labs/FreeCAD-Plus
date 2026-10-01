@@ -595,6 +595,11 @@ from freecad.gui.EntitySelectionFilter import registerCommand as _registerEntity
 _registerEntitySelectionFilter()
 del _registerEntitySelectionFilter
 
+# Component services register lazily; Part geometry loads only when invoked.
+from freecad.gui.ComponentNavigator import registerCommands as _registerComponentNavigator
+_registerComponentNavigator()
+del _registerComponentNavigator
+
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 

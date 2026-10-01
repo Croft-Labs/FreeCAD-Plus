@@ -30,6 +30,13 @@ is subsequently changed.
 
 ## Current focus
 
+- Owner priority (2026-10-01): complete the component/document architecture under
+  **7.8**, using the [approved contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
+  This explicitly supersedes rotation for this work: complete dependency-ready
+  component, Model History and `.cadprt` tasks together; retain earlier validation
+  evidence and do not resume unrelated polish. Implementation, native build,
+  behavioral/GUI validation and publication remain separate gates.
+
 - Bounded checkpoint ready for owner testing: F066 reviewed face extension,
   phase 13 tasks 13.1e/f. The existing Surface Extend Face command now reviews
   U/V percentages, fitting settings and approximation semantics before preview
@@ -2293,7 +2300,7 @@ that compatibility may become harder and less complete over time. Follow the
 untouched originals and explicit conversion-loss reporting. This is not implemented.
 
 - [   ] 7.6.1 Build a compatibility matrix covering existing upstream files, existing Plus files and new history-model files: open/display, edit, recompute and round-trip save are separate checks.
-- [   ] 7.6.2 Version any new persisted model and provide opt-in conversion with an untouched original. Opening a legacy file must not force migration.
+- [   ] 7.6.2 Version the component model and convert supported legacy content in memory on opening; preserve the original and save separately as `.cadprt` (owner decision 2026-10-01).
 - [   ] 7.6.3 Preserve existing type/property names and Python entry points where possible. Document any new feature modules required for recomputation; do not promise upstream compatibility for backend changes without evidence.
 - [   ] 7.6.4 Define explicit neutral-geometry export as an exchange option, including loss of editable history. Never replace the editable original with a flattened export automatically.
 - [   ] 7.6.5 Audit Assembly, TechDraw, CAM, expressions, links and scripts that currently resolve a Body Tip. Provide stable result references and invalidation behavior for the new history model.
@@ -2304,13 +2311,113 @@ untouched originals and explicit conversion-loss reporting. This is not implemen
 - [   ] 7.6.7 Implement versioned `.cadprt` reading/writing and make it the native
   format for new documents after migration gates pass. Update Open/Save dialogs
   and file associations while retaining legacy `.FCStd` opening.
-- [   ] 7.6.8 Implement explicit `.FCStd` to `.cadprt` conversion into a separate
+- [   ] 7.6.8 Implement on-open in-memory `.FCStd` conversion, saved into a separate `.cadprt`
   file. Map editable history, geometry, references and workbench data where possible;
   report unsupported content and distinguish partial or geometry-only recovery.
 - [   ] 7.6.9 Extend the compatibility fixtures across legacy versions and supported
   workbenches; verify converted save/reopen/recompute and unchanged original files.
   Publish tested conversion coverage and known losses as the formats diverge.
   Best-effort compatibility must not be represented as guaranteed lossless import.
+
+### [   ] 7.8 Component Structure, Model History and native component documents
+
+Owner-approved 2026-10-01; [canonical contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
+Execution order: contracts -> model/identities -> persistence -> history/reference
+operations -> navigators/edit contexts -> migration/downstream acceptance. Existing
+7.1-7.7 and phase 12 tasks retain their evidence; this milestone integrates them.
+
+- [ X ] 7.8.1 Resolve owner choices and record component/file, representation,
+  direct-child reference, dumb-object, suppression and conversion contracts.
+- [ X ] 7.8.2 Implement component definitions and instances, stable identities,
+  embedded/external ownership, independent placement and safe graph validation.
+- [   ] 7.8.3 Implement versioned `.cadprt` persistence/capability preflight,
+  atomic save/recovery, Save As/Copy identity and external dependency resolution.
+- [ X ] 7.8.4 Implement direct-child evaluated references for bodies, sheets,
+  sketches and curves, pending refresh on parent activation and parent-local edits.
+- [   ] 7.8.5 Integrate ordered Model History, independent inputs/result identities,
+  production modeling operations and dependency-aware suppression/restoration.
+- [   ] 7.8.6 Implement Convert to Dumb Object: identity-preserving Delete Parameters
+  with shared-producer pruning, plus independent Extract Dumb Body.
+- [   ] 7.8.7 Implement Component Structure and Model History tabs, Add Component,
+  display types/path overrides, constraints grouping and isolated component tabs.
+- [   ] 7.8.8 Implement Make Independent and embedded/external conversion, retaining
+  shared child definitions unless deep-copy was explicitly requested.
+- [ X ] 7.8.9 Convert legacy FCStd in memory on opening; preserve original files,
+  report tested editable mappings and unsupported/geometry-only content.
+- [   ] 7.8.10 Complete grouped native/runtime, cold reopen, undo/redo, graph/failure,
+  downstream and GUI acceptance against the contract's end-to-end example.
+- [   ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
+  remote branch verification. Packaging/public release require separate authority.
+
+Complete when: the approved end-to-end component workflow works in the fork, with
+recorded save/reopen, recompute, undo, downstream and UI evidence. A schema, Python
+API or dialog alone does not complete this milestone.
+
+2026-10-01 implementation: [architecture decision](architecture/ADR_003_COMPONENT_DOCUMENT.md),
+[`ComponentModel.py`](../src/Mod/Part/ComponentModel.py),
+[`CadDocument.py`](../src/Mod/Part/CadDocument.py) and
+[`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py). Native File New/Open/
+Save As/Copy integrate the component schema. A `.cadprt` is a native archive plus
+validated version/capability/identity manifest; merely renaming FCStd is refused.
+Root-component Part icon, ordered history, shared embedded/external instances,
+path representations, evaluated direct-child references, suppression, transactional
+result conversion and isolated views are implemented for the bounded native result
+mapping. Make Independent supports embedded/external definitions while sharing
+children; externalization moves an embedded assembly closure and retains all shared
+identities. Missing files require identity-preserving repair. Legacy root geometry
+is adopted and unmapped native payloads retained/reported; original files are protected.
+
+Remaining integration is dependency ordered, with this milestone retaining priority:
+
+- [ X ] 7.8.3a Native envelope, required-capability preflight including renamed backup
+  archives, atomic-writer reuse, external dependency identity and missing-file repair;
+  Save As/Copy preserve identities and rejected Save As restores location/label.
+- [   ] 7.8.3b Broader crash recovery/backup restoration, moved dependency packages,
+  malformed graph/schema matrix and larger document acceptance.
+- [ X ] 7.8.5a Body-independent shared sketch/extrusion and native transaction adoption;
+  native Boolean result replacement restores prior visible results on suppression.
+- [   ] 7.8.5b Integrate unified Extrude/Pad/Pocket and remaining native task editors
+  with explicit component result roles; validate general split/merge and per-output
+  topology lineage before enabling arbitrary multi-solid operations.
+- [ X ] 7.8.6a Result identity, exclusive-history pruning, shared producers, reference
+  freezing, independent extraction and native Undo are covered by regression fixtures.
+- [   ] 7.8.6b Prove real multi-body edge-treatment contribution detachment and
+  expression/subelement reference preservation or explicit ambiguity refusal.
+- [ X ] 7.8.7a Root component with native Part icon, both navigator tabs, representation
+  inheritance/reset and a rendered isolated view; native New/Open/Save dialog checks.
+- [   ] 7.8.7b Integrate assembly joint creation/solver with the first constraints
+  group; complete repeated-path picking, native edit/create parity and owner GUI acceptance.
+- [   ] 7.8.7c Connect separate BOM/mass participation flags to engineering consumers;
+  validate multi-tab display overrides without changing engineering geometry.
+- [ X ] 7.8.8a Embedded and external Make Independent with child sharing; assembly
+  externalization, reference remapping, shared child identity and save/reopen.
+- [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
+  externalization with additional loaded external consumers. Current preflight
+  refuses unsupported relationships instead of silently rebinding them.
+- [ X ] 7.8.10a Published result updates through native Draft clone, CAM job model
+  and TechDraw projection after save/reopen; suppressed inputs clear clone/CAM geometry.
+- [   ] 7.8.10b FEM (disabled in this build), general drawing references, CAM path
+  invalidation, broader topology changes, performance and interactive owner acceptance.
+
+Validation evidence: `D:\Temp\Office-PC\freecad-plus-components-20261001`.
+Grouped Release native App/Gui and PartScripts build passes are recorded under
+`build-01` through `build-05`; the later builds correct demonstrated reader/save
+integration defects. `model-21` passes **27** selected model, consumer and GUI checks;
+`cold-03` passes **5** installed-module/native File command checks, with no failures,
+errors or skips and native process exits 0. Cold module hashes match the checkout.
+`cold-05` repeats all five checks successfully after the final native format guard,
+including a legacy object named ComponentDocument and exact installed module hashes.
+`cold-04` caught an unstaged navigator resource; staging corrected it, and the build
+helper now explicitly includes FreeCADGui_Resources. Earlier failed runs remain
+diagnostic evidence, not acceptance. The three model-21 captures
+were reviewed: root Part icon/no file row, separate Model History and rendered
+isolated geometry. TechDraw is checked after asynchronous restore finishes; edits
+while that initial projection is still computing are not established by this fixture.
+[Owner and test procedure](../tests/ComponentDocument.md).
+
+Implementation/build/runtime evidence does not close the remaining child tasks.
+No installer, public release or physical owner acceptance is claimed. Publication
+identity is recorded after the coherent source milestone is committed and pushed.
 
 ### [   ] 7.7 Validate and release the history pilot
 

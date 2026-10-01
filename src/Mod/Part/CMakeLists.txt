@@ -13,6 +13,8 @@ endif(BUILD_GUI)
 
 set(Part_Scripts
     Init.py
+    ComponentModel.py
+    CadDocument.py
     InterferenceCheck.py
     JoinFeatures.py
     MakeBottle.py

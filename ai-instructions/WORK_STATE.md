@@ -1,6 +1,32 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F096 CAM setup reuse, phase 14 tasks 14.4a/b. Existing Export Template
+Latest owner priority: component document migration, roadmap 7.8 (2026-10-01).
+[Approved contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md),
+[architecture decision](architecture/ADR_003_COMPONENT_DOCUMENT.md), and
+[owner/test procedure](../tests/ComponentDocument.md) route the work.
+
+The native `.cadprt` envelope, embedded/external definitions, evaluated results and
+references, Component Structure/Model History, standard File command integration,
+independent copies and assembly externalization are implemented. The top row is the
+root component with the native Part icon. Native serialization, object identities,
+geometry, transactions and links are retained. FCStd converts supported root content
+on GUI opening, preserving the source and reporting unmapped native payloads.
+
+Evidence root: `D:\Temp\Office-PC\freecad-plus-components-20261001`.
+`model-21`: 27 passing checks including Draft/CAM/TechDraw consumers and reviewed
+navigator/isolated-view captures. `cold-05`: five passing fresh-process installed
+module and native File command checks including the format/name-collision guard.
+Builds 01-05 passed; final native runtime hashes and source/module identities are
+in acceptance-identities.json. Publication evidence is recorded in roadmap 7.8. No installer or release update.
+
+Continue 7.8's outstanding integration tasks: native multi-result task migration,
+lineage, assembly solver, BOM/mass consumers, deep copies/expression remapping,
+broader recovery, selection and consumer acceptance. FEM remains disabled in this
+local build. This explicit owner priority supersedes the older rotation advice below.
+Do not describe the entire component migration as complete on the basis of the
+persistence and result-layer pilot. Source/build/runtime/publication stay separate.
+
+Previous batch: F096 CAM setup reuse, phase 14 tasks 14.4a/b. Existing Export Template
 and New Job now add named revision metadata, compatibility preflight and a visible
 settings review. Exact accepted settings feed the existing native creation services;
 known incompatible inputs fail before resource creation, and native GUI transaction

@@ -42,4 +42,6 @@ FreeCAD.addTranslatableExportType(
     translate("FileFormat", "STEP with colors"), ["step", "stp"], "Import"
 )
 
+FreeCAD.addImportType("Component document (*.cadprt)", "CadDocument")
+
 FreeCAD.__unit_test__ += ["TestPartApp"]
