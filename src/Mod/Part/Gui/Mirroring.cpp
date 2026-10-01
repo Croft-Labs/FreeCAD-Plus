@@ -23,6 +23,7 @@
  ***************************************************************************/
 
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -46,6 +47,7 @@
 #include <App/Application.h>
 #include <App/Document.h>
 #include <App/DocumentObject.h>
+#include <App/GeoFeatureGroupExtension.h>
 #include <App/Link.h>
 #include <App/Part.h>
 #include <Gui/Application.h>
@@ -291,6 +293,7 @@ void Mirroring::findShapes()
             child->setText(0, label);
             child->setToolTip(0, label);
             child->setData(0, Qt::UserRole, name);
+            child->setData(0, Qt::UserRole + 1, qlonglong(obj->getID()));
             Gui::ViewProvider* vp = activeGui->getViewProvider(obj);
             if (vp) {
                 child->setIcon(0, vp->getIcon());
@@ -309,8 +312,9 @@ bool Mirroring::reject()
 
 bool Mirroring::accept()
 {
+    ui->resultStatus->clear();
     if (ui->shapes->selectedItems().isEmpty()) {
-        QMessageBox::critical(this, windowTitle(), tr("Select a shape for mirroring."));
+        ui->resultStatus->setText(tr("Select a shape for mirroring."));
         return false;
     }
 
@@ -322,13 +326,35 @@ bool Mirroring::accept()
         return false;
     }
 
-    Gui::WaitCursor wc;
-    unsigned int count = activeDoc->countObjectsOfType<Part::Mirroring>();
-    activeDoc->openTransaction("Mirroring");
+    if (activeDoc->hasPendingTransaction()) {
+        ui->resultStatus->setText(tr("Finish the current edit transaction before creating a mirror."));
+        return false;
+    }
+    const bool independent = ui->resultMode->currentIndex() == 1;
 
     QString shape, label, selectionString;
     QRegularExpression rx(QString::fromLatin1(R"( \(Mirror #\d+\)$)"));
     QList<QTreeWidgetItem*> items = ui->shapes->selectedItems();
+    for (auto item : items) {
+        auto* source = activeDoc->getObject(item->data(0, Qt::UserRole).toString().toUtf8());
+        if (!source || source->getID() != item->data(0, Qt::UserRole + 1).toLongLong()) {
+            ui->resultStatus->setText(tr("A source was deleted or replaced. Cancel and select the intended inputs again."));
+            return false;
+        }
+        if (independent && (!source->isDerivedFrom<Part::Feature>()
+                            || App::GeoFeatureGroupExtension::getGroupOfObject(source))) {
+            ui->resultStatus->setText(tr("Snapshot mode requires document-root shapes or whole Bodies. Links, containers and nested features remain outside this mode."));
+            return false;
+        }
+        auto dependencies = source->getOutListRecursive();
+        dependencies.push_back(source);
+        if (std::any_of(dependencies.begin(), dependencies.end(), [](const auto* object) {
+                return object->isTouched() || !object->isValid();
+            })) {
+            ui->resultStatus->setText(tr("A source or dependency needs recompute or repair. Update it before creating the mirror."));
+            return false;
+        }
+    }
     float normx = 0, normy = 0, normz = 0;
     int index = ui->comboBox->currentIndex();
     std::string selection("");  // set MirrorPlane property to empty string unless
@@ -348,53 +374,90 @@ bool Mirroring::accept()
         if (selobjs.size() == 1) {
             selection = selobjs[0].getAsPropertyLinkSubString();
         }
+        if (selection.empty()) {
+            ui->resultStatus->setText(tr("Select one valid mirror plane reference or choose a standard plane."));
+            return false;
+        }
     }
     double basex = ui->baseX->value().getValue();
     double basey = ui->baseY->value().getValue();
     double basez = ui->baseZ->value().getValue();
-    for (auto item : items) {
-        shape = item->data(0, Qt::UserRole).toString();
-        label = item->text(0);
-        selectionString = QString::fromStdString(selection);
+    Gui::WaitCursor wc;
+    unsigned int count = activeDoc->countObjectsOfType<Part::Mirroring>();
+    activeDoc->openTransaction("Mirroring");
+    try {
+        for (auto item : items) {
+            shape = item->data(0, Qt::UserRole).toString();
+            label = item->text(0);
+            selectionString = QString::fromStdString(selection);
 
-        // if we already have the suffix " (Mirror #<number>)" remove it
-        int pos = label.indexOf(rx);
-        if (pos > -1) {
-            label = label.left(pos);
+            // if we already have the suffix " (Mirror #<number>)" remove it
+            int pos = label.indexOf(rx);
+            if (pos > -1) {
+                label = label.left(pos);
+            }
+            label.append(QStringLiteral(" (Mirror #%1)").arg(++count));
+            std::string escapedLabel = Base::Tools::escapeEncodeString(label.toUtf8().toStdString());
+            label = QString::fromUtf8(escapedLabel.c_str());
+
+            QString code = QStringLiteral(
+                               "__doc__=FreeCAD.getDocument(\"%1\")\n"
+                               "__doc__.addObject(\"Part::Mirroring\")\n"
+                               "__doc__.ActiveObject.Source=__doc__.getObject(\"%2\")\n"
+                               "__doc__.ActiveObject.Label=u\"%3\"\n"
+                               "__doc__.ActiveObject.Normal=(%4,%5,%6)\n"
+                               "__doc__.ActiveObject.Base=(%7,%8,%9)\n"
+                               "__doc__.ActiveObject.MirrorPlane=(%10)\n"
+                               "del __doc__"
+            )
+                               .arg(this->document, shape, label)
+                               .arg(normx)
+                               .arg(normy)
+                               .arg(normz)
+                               .arg(basex)
+                               .arg(basey)
+                               .arg(basez)
+                               .arg(selectionString);
+            Gui::Command::runCommand(Gui::Command::App, code.toUtf8());
+            QByteArray from = shape.toUtf8();
+            auto dst = activeDoc->getActiveObject();
+            auto src = activeDoc->getObject(from);
+            activeDoc->recompute();
+            auto* mirror = dynamic_cast<Part::Mirroring*>(dst);
+            if (!mirror || !mirror->isValid() || mirror->Shape.getShape().isNull()
+                || !mirror->Shape.getShape().isValid()) {
+                throw Base::RuntimeError("The mirror did not produce a valid shape.");
+            }
+            if (independent) {
+                const QString snapshot = QStringLiteral(
+                    "__doc__=FreeCAD.getDocument(\"%1\")\n"
+                    "__mirror__=__doc__.getObject(\"%2\")\n"
+                    "__snapshot__=__doc__.addObject(\"Part::Feature\",\"MirrorSnapshot\")\n"
+                    "__snapshot__.Shape=__mirror__.Shape.copy()\n"
+                    "__snapshot__.Label=__mirror__.Label+\" [independent snapshot]\"\n"
+                    "__doc__.removeObject(__mirror__.Name)\n"
+                    "del __doc__,__mirror__,__snapshot__"
+                ).arg(this->document, QString::fromLatin1(mirror->getNameInDocument()));
+                Gui::Command::runCommand(Gui::Command::App, snapshot.toUtf8());
+                dst = activeDoc->getActiveObject();
+                if (!dst || !dst->isDerivedFrom<Part::Feature>()) {
+                    throw Base::RuntimeError("The independent snapshot could not be created.");
+                }
+            }
+            Gui::copyVisualT(dst, "ShapeAppearance", src);
+            Gui::copyVisualT(dst, "LineColor", src);
+            Gui::copyVisualT(dst, "PointColor", src);
         }
-        label.append(QStringLiteral(" (Mirror #%1)").arg(++count));
-        std::string escapedLabel = Base::Tools::escapeEncodeString(label.toUtf8().toStdString());
-        label = QString::fromUtf8(escapedLabel.c_str());
 
-        QString code = QStringLiteral(
-                           "__doc__=FreeCAD.getDocument(\"%1\")\n"
-                           "__doc__.addObject(\"Part::Mirroring\")\n"
-                           "__doc__.ActiveObject.Source=__doc__.getObject(\"%2\")\n"
-                           "__doc__.ActiveObject.Label=u\"%3\"\n"
-                           "__doc__.ActiveObject.Normal=(%4,%5,%6)\n"
-                           "__doc__.ActiveObject.Base=(%7,%8,%9)\n"
-                           "__doc__.ActiveObject.MirrorPlane=(%10)\n"
-                           "del __doc__"
-        )
-                           .arg(this->document, shape, label)
-                           .arg(normx)
-                           .arg(normy)
-                           .arg(normz)
-                           .arg(basex)
-                           .arg(basey)
-                           .arg(basez)
-                           .arg(selectionString);
-        Gui::Command::runCommand(Gui::Command::App, code.toUtf8());
-        QByteArray from = shape.toUtf8();
-        auto dst = activeDoc->getActiveObject();
-        auto src = activeDoc->getObject(from);
-        Gui::copyVisualT(dst, "ShapeAppearance", src);
-        Gui::copyVisualT(dst, "LineColor", src);
-        Gui::copyVisualT(dst, "PointColor", src);
+        activeDoc->recompute();
+        activeDoc->commitTransaction();
     }
-
-    activeDoc->commitTransaction();
-    activeDoc->recompute();
+    catch (const Base::Exception&) {
+        activeDoc->abortTransaction();
+        activeDoc->recompute();
+        ui->resultStatus->setText(tr("Mirror creation failed; no results were kept. Check the sources and plane, then try again."));
+        return false;
+    }
     Gui::Selection().rmvSelectionGate();
     filterSelection = false;
     return true;

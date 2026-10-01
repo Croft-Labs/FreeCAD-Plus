@@ -644,3 +644,17 @@ Sketch or search-policy changes clear the list and disable repair until Find.
 Invalid/zero/out-of-range tolerance reports a correction; no fallback search runs.
 No candidates reports that other profile defects may remain. Other inherited
 validation sections are unchanged. [Owner procedure](../tests/SketchRepairReview.md).
+
+## UI-017: Mirror result behavior (F057; roadmap 13.5a/b)
+
+Existing Part Mirror retains its shape list, standard/reference plane and base-point
+controls. Result behavior explicitly chooses Associative mirror (default) or
+Independent shape snapshot. The policy text distinguishes updates/links, separate
+geometry and lack of copied feature history. OK creates all selected results in
+one transaction; Cancel creates nothing. No live geometry preview is introduced.
+
+Missing references, dirty/deleted/replaced sources, pending edits and unsupported
+snapshot scope produce inline feedback while preserving the task for correction.
+Invalid result creation aborts the transaction. Successful independent results have
+snapshot labels; the native associative editor remains unchanged. No source hiding
+or Body Tip mutation. [Owner procedure](../tests/MirrorResultMode.md).

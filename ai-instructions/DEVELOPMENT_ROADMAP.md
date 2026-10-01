@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F049 missing-coincidence review,
+- Current product batch complete for owner testing: F057 mirror result behavior,
+  phase 13 tasks 13.5a/b. Part > Mirror offers an associative mirror or independent
+  reflected-shape snapshot, with atomic creation and recoverable inline errors.
+  Both tasks preceded the grouped build; one compile correction was required.
+  All 21 selected checks pass together and five captures reviewed.
+  [Try the asymmetric bracket example](../tests/MirrorResultMode.md). Whole F057
+  remains open for feature reevaluation, nested snapshots and graphical preview.
+  Stop here for owner feedback and rotate to another dependency-ready item family.
+
+- Previous product batch complete for owner testing: F049 missing-coincidence review,
   phase 11 tasks 11.6a/b. Existing Validate Sketch lists endpoints/gaps, highlights
   candidate rows and adds only checked coincidences in one undoable repair. Edits
   invalidate candidates; solver failures restore the sketch. Both tasks preceded
@@ -3511,6 +3520,31 @@ inputs, tolerance, multi-result/target/tool retention and downstream-edit contra
   propagation, variable radii, corner options and localized failure feedback.
   Shell/draft/ribs/webs need consistent tasks and specific geometric failure
   explanations.
+- [ X ] 13.5a Expose associative mirror versus independent reflected-shape snapshot
+  in the existing Part Mirror task (F057). Reuse native mirroring and preserve source
+  geometry/Body Tip. Bound snapshot mode to document-root shapes and whole Bodies;
+  snapshots have no source/plane dependencies and do not copy feature history.
+- [ X ] 13.5b Make mirror creation transactional and recoverable: reject stale or
+  replaced sources, pending edits and missing plane references; abort invalid results
+  with inline feedback. Verify asymmetric geometry, source/plane edits, Cancel,
+  Undo/Redo and save/reopen for both result choices.
+  Both tasks completed before the grouped PartGui/PartScripts Release build.
+  First compile failed on TopoDS_Shape versus TopoShape accessor; getShape() correction
+  passed, exit 0. All 21 checks pass together in combined-recheck/: 6 new result-mode,
+  6 native mirror, 2 existing mirror GUI and 7 command-search; no failures/errors/skips,
+  process exit 0. Geometry/handedness, source/plane updates, source Tip preservation,
+  snapshot independence, Cancel, rollback/recovery, Undo/Redo and save/reopen pass.
+  Five captures reviewed; owner fixtures/procedure: [Mirror result mode](../tests/MirrorResultMode.md).
+  Evidence: `D:\Temp\Office-PC\freecad-plus-mirror-modes-20260930`;
+  acceptance-summary.json / validated-identities.json record suites and source/native
+  hashes. PartGui SHA256: `a6c60e615d42e30f0760ca2de7d89fde709fca505981e3c65007c67de3006d13`.
+  Earlier grouped/ retains an incorrect Compound centre-of-mass fixture lookup and
+  an access violation when entering command-search. The fixture was corrected;
+  separate suites and the full combined recheck pass. The access violation did not
+  recur; its cause is unestablished. No application changes after the successful build.
+  Whole F057/13.5 remain open for feature reevaluation, nested snapshot coordinates,
+  graphical preview and physical/high-DPI acceptance. No installer/release update.
+  Stop for owner feedback and rotate.
 - [   ] 13.6 Implement 9.1's history-based face move/offset/replace/delete-and-heal
   on a declared class of native/imported solids; explicit repair limits and preview.
 - [   ] 13.7 Spike imported-solid feature recognition only after direct-edit and
@@ -5433,7 +5467,7 @@ reconciliation rules above to every entry.
 <a id="f057"></a>
 ### F057 — Feature/body mirror
 
-**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.5, 13.5a/b. **Status:** Bounded Part Mirror result-mode pilot is ready for owner testing: native associative mirror or independent reflected-shape snapshot for root shapes/whole Bodies, atomic creation and inline recovery. All 21 selected checks pass together; five captures reviewed. Source/plane edits, asymmetric geometry, Undo/Redo and save/reopen verified. Whole F057 remains open for feature reevaluation, broader occurrence/nested scope, target/handedness preview and physical acceptance. See 13.5a/b and [owner procedure](../tests/MirrorResultMode.md).
 
 **Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature
 

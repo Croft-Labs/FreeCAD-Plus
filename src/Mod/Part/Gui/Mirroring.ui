@@ -167,6 +167,22 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0"><widget class="QLabel" name="resultModeLabel">
+    <property name="text"><string>Result behavior</string></property>
+   </widget></item>
+   <item row="4" column="1"><widget class="QComboBox" name="resultMode">
+    <item><property name="text"><string>Associative mirror</string></property></item>
+    <item><property name="text"><string>Independent shape snapshot</string></property></item>
+   </widget></item>
+   <item row="5" column="0" colspan="2"><widget class="QLabel" name="resultPolicy">
+    <property name="text"><string>Associative mirrors update with the source and referenced plane. Snapshots keep only the reflected shape at creation and have no source or plane links. Both create separate geometry without fusing, changing the source Body Tip or hiding sources. Snapshot mode supports document-root shapes and whole Bodies; it does not copy feature history. OK creates the result; Cancel creates nothing.</string></property>
+    <property name="wordWrap"><bool>true</bool></property>
+   </widget></item>
+   <item row="6" column="0" colspan="2"><widget class="QLabel" name="resultStatus">
+    <property name="text"><string/></property>
+    <property name="textFormat"><enum>Qt::PlainText</enum></property>
+    <property name="wordWrap"><bool>true</bool></property>
+   </widget></item>
   </layout>
  </widget>
  <customwidgets>

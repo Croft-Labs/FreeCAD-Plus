@@ -337,6 +337,20 @@ Roadmap 11.6a/b covers this bounded improvement. Duplicate/self-intersection dia
 geometric change preview and broader repair/physical acceptance remain open.
 [Owner procedure](../tests/SketchRepairReview.md); UI-016.
 
+## Current mirror result-mode pilot (F057)
+
+Existing Part Mirror explicitly offers associative mirroring or independent reflected
+shape snapshots. Associative results remain native Part::Mirroring with source/plane
+dependencies; snapshots are native Part::Feature shapes without those links or copied
+feature history. Snapshot scope is document-root shapes and whole Bodies. Both modes
+create separate geometry and preserve source geometry/Body Tips and visibility.
+
+Creation owns one transaction, rejects stale/replaced sources and pending edits,
+and aborts invalid results with recoverable inline feedback. No new schema is added.
+Roadmap 13.5a/b covers the bounded workflow. Feature reevaluation, nested snapshots,
+graphical target/handedness preview and physical acceptance remain open.
+[Owner procedure](../tests/MirrorResultMode.md); UI-017.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

@@ -1,6 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F049 missing-coincidence review, phase 11 tasks 11.6a/b.
+Latest batch: F057 mirror result modes, phase 13 tasks 13.5a/b.
+Part > Mirror offers native associative results or independent reflected-shape
+snapshots for document-root shapes and whole Bodies. Both preserve source geometry,
+visibility and Body Tip. Snapshots contain no Source/MirrorPlane links or copied
+feature history. Creation is atomic; stale/replaced inputs, pending edits and missing
+references receive inline feedback, and invalid results roll back for correction.
+
+Both tasks preceded a grouped PartGui/PartScripts Release build. First compile
+failed on TopoDS_Shape validity methods; getShape() correction passed, exit 0.
+21 selected checks pass together in combined-recheck/, no failures/errors/skips:
+6 result-mode, 6 native mirror, 2 existing mirror GUI and 7 command-search.
+Process exit 0. Evidence: D:\Temp\Office-PC\freecad-plus-mirror-modes-20260930.
+acceptance-summary.json and validated-identities.json record suites/source/native
+identities. PartGui SHA256:
+a6c60e615d42e30f0760ca2de7d89fde709fca505981e3c65007c67de3006d13.
+
+visual/ has five reviewed captures and Mirror-Modes.FCStd / Mirror-Modes-Compared.FCStd.
+Asymmetric reflected geometry, source/plane updates, snapshot independence, Cancel,
+error rollback/recovery, Undo/Redo and save/reopen pass. After a source edit, source
+and associative volumes are 276 mm3 while the snapshot remains 228 mm3. Owner guide:
+tests/MirrorResultMode.md. Earlier grouped/ retains a Compound centre-of-mass fixture
+lookup error and access violation entering command-search. Corrected fixture, separate
+suites and full combined recheck pass; the access violation did not recur and its
+cause is unestablished. No application changes after the successful build.
+
+Whole F057/13.5 remain open for feature reevaluation, nested snapshots, graphical
+preview and physical/high-DPI acceptance. No installer/release update. Stop for
+owner feedback and rotate to another item family.
+
+Previous batch: F049 missing-coincidence review, phase 11 tasks 11.6a/b.
 Existing Validate Sketch now lists both endpoints and measured mm gaps. Row selection
 highlights candidates; checkboxes default off. Add Checked Coincidences owns one
 transaction, retains existing constraints and aborts failed solves. Sketch/tolerance/

@@ -62,6 +62,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Mirror result mode (F057): existing [`Mirroring.cpp`](../src/Mod/Part/Gui/Mirroring.cpp)
+offers native associative results or independent shape snapshots for root shapes/Bodies.
+Transactional creation validates sources/results and reports recoverable errors inline.
+[Owner procedure](../tests/MirrorResultMode.md); roadmap 13.5a/b.
+
 Sketch repair review (F049): existing [`TaskSketcherValidation.cpp`](../src/Mod/Sketcher/Gui/TaskSketcherValidation.cpp)
 lists missing-coincidence endpoints/gaps with row highlighting and checked-only,
 undoable repair. Solver failures restore the sketch; edits/search-policy changes
