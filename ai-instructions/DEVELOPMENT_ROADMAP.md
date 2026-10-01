@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F018 occurrence appearance,
+- Current product batch complete for owner testing: F101 interference/clearance,
+  phase 15 tasks 15.1c/d. Part > Interference and clearance checks explicit native
+  solid pairs, with overlap volume, contact tolerance, minimum clearance, unresolved
+  inputs and counted exclusions. Result navigation selects each pair; edits invalidate
+  the report. One grouped build; all 23 selected checks pass on the first run and
+  four captures reviewed. [Try the overlap/contact/gap example](../tests/InterferenceCheck.md).
+  Whole F101 remains open for broader assemblies, acceleration and physical acceptance.
+  Stop here for owner feedback and rotate to another dependency-ready item family.
+
+- Previous product batch complete for owner testing: F018 occurrence appearance,
   phase 12 tasks 12.2b/c. View > Occurrence appearance stages visibility and uniform
   colour/transparency for a whole shape/Body link, with native source inheritance.
   Source, other occurrences and placement remain unchanged. One grouped build;
@@ -3526,6 +3535,31 @@ Each module depends only on the contracts it consumes and can be delivered separ
   selection paths for Distance Free snapshots (F099). Preserve native type identity,
   avoid live source links, clear capture provenance after manual coordinate edits,
   and leave old/uncaptured timestamps unknown. Verify save/reopen and Undo/Redo.
+- [x] 15.1c Add read-only, explicit solid-pair inspection for F101. Reuse native
+  world geometry, common solid volume and minimum distance; classify overlap,
+  contact within a stated tolerance, insufficient clearance, clear and unresolved.
+  Keep unsupported/unavailable inputs in the report and preserve document geometry.
+- [x] 15.1d Expose the bounded pair check in Part with explicit input replacement,
+  deliberate exclusions, result navigation and invalidation after model edits.
+  Verify analytic overlap/contact/gap, placed links, unavailable inputs and lifecycle.
+  Cap this pilot at 12 selected inputs and defer broad assembly traversal/acceleration
+  to feedback.
+
+15.1c/d grouped evidence (2026-09-30): both tasks preceded one PartGui/PartScripts
+Release build, exit 0. **23 PASS on the first run**, no failures/errors/skips:
+7 interference, 9 manufacturing-export and 7 command-search checks; process exit 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-interference-20260930`, grouped/,
+acceptance-summary.json and validated-identities.json. Installed Python scripts match
+source; no corrective build or script restaging. PartGui SHA256:
+`61bbc89f4924f7c447af2177661090878d43d2b1f5e1468cf776c0eee51b31c4`.
+Analytic 200 mm³ overlap, zero-volume contact, 0.25 mm gap, tolerance/clearance
+boundaries, rotated Part/direct-Link world geometry, native save/reopen, hidden inputs,
+dirty/unavailable/mixed input disclosure, explicit exclusions, pair selection, identity
+replacement, edit invalidation and document-close lifecycle pass. visual/ contains
+four reviewed captures and Interference-Check.FCStd. [Owner procedure](../tests/InterferenceCheck.md).
+Whole F101/15.1 remain open: broader nested/external assemblies, per-pair exceptions,
+large-set acceleration/cancellation, persistent reports and physical/high-DPI
+acceptance are deferred. No release update. Rotate pending owner workflow feedback.
 
 15.1a/b grouped evidence (2026-09-30): both tasks preceded one MeasureGui Release
 build including Measure and changed GUI dependencies, exit 0. **13 selected checks
@@ -5935,7 +5969,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f101"></a>
 ### F101 — Interference/clearance checks
 
-**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.1. **Status:** Bounded explicit solid-pair inspection completed under 15.1c/d, ready for owner testing. Overlap volume, contact tolerance, minimum-clearance classification, unresolved inputs, explicit exclusions, pair navigation and edit invalidation pass. One grouped build; 23 passing checks and four reviewed captures. Whole F101 remains open for broader nested/external assemblies, per-pair exceptions, large-set acceleration and physical/high-DPI acceptance. [Owner procedure](../tests/InterferenceCheck.md).
 
 **Packages:** I01, B06 · **First delivery:** P9 · **Likely scope:** Feature
 

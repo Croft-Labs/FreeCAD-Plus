@@ -13,6 +13,7 @@ endif(BUILD_GUI)
 
 set(Part_Scripts
     Init.py
+    InterferenceCheck.py
     JoinFeatures.py
     MakeBottle.py
     ManufacturingExport.py
@@ -24,6 +25,7 @@ set(Part_Scripts
 if(BUILD_GUI)
     list (APPEND Part_Scripts
           InitGui.py
+          InterferenceCheckGui.py
           ManufacturingExportGui.py
           NamedParameterGui.py
           TestPartGui.py

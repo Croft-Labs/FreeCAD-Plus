@@ -50,6 +50,8 @@ class PartWorkbench(Gui.Workbench):
         registerParameters()
         from ManufacturingExportGui import registerCommand as registerExport
         registerExport()
+        from InterferenceCheckGui import registerCommand as registerInspection
+        registerInspection()
 
         try:
             import BasicShapes.CommandShapes

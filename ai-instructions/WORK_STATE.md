@@ -1,6 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F018 occurrence appearance, phase 12 tasks 12.2b/c.
+Latest batch: F101 interference/clearance inspection, phase 15 tasks 15.1c/d.
+Part > Interference and clearance checks 2-12 explicitly listed whole native solids
+or direct shape/Body occurrences using the shared world-shape resolver. Native common
+solid volume and minimum distance classify overlap, contact within tolerance,
+insufficient clearance and clear. Unsupported/unavailable inputs remain unresolved;
+the summary discloses incompleteness and counted exclusions. Result navigation selects
+the pair without visibility/model edits; document changes invalidate the report.
+
+One grouped PartGui/PartScripts Release build, exit 0. All 23 checks pass on the first
+run, no failures/errors/skips: 7 interference, 9 manufacturing-export and 7 command-search.
+Process exit 0. Evidence: D:\Temp\Office-PC\freecad-plus-interference-20260930.
+grouped/, acceptance-summary.json and validated-identities.json record results and
+identities. Installed Python modules match source; no corrective build or restaging.
+PartGui SHA256: 61bbc89f4924f7c447af2177661090878d43d2b1f5e1468cf776c0eee51b31c4.
+
+visual/ has four reviewed captures and Interference-Check.FCStd. Analytic overlap/
+contact/gap, tolerance boundary, rotated Part/direct-Link coordinates, save/reopen,
+read-only behavior, dirty/missing/mixed inputs, identity guards, exclusions, selection,
+edit invalidation and lifecycle pass. tests/InterferenceCheck.md is the owner procedure.
+Whole F101/15.1 remain open for broader assemblies, per-pair exceptions, large-set
+acceleration/cancellation, persistent reports and physical/high-DPI acceptance.
+No installer/release update. Stop for owner feedback and rotate to another item family.
+
+Previous batch: F018 occurrence appearance, phase 12 tasks 12.2b/c.
 View > Occurrence appearance stages native whole-link visibility and uniform
 colour/transparency. Use source appearance restores inheritance; Apply owns one
 Undo transaction. Source/other links, placement, geometry and engineering material

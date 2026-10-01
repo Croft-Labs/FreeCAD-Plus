@@ -612,3 +612,20 @@ documents and mixed Part definitions remain outside this pilot. Visibility is di
 state, not suppression or BOM policy; colour is not a material/mass/FEM assignment.
 Physical/high-DPI and broader occurrence acceptance remain open.
 [Owner procedure](../tests/OccurrenceAppearance.md).
+
+## UI-015: Interference and clearance (F101; roadmap 15.1c/d)
+
+Part > Interference and clearance opens with explicit whole-object selection. The
+input list shows native identities and included checkboxes. Replace inputs with
+current selection deliberately changes scope; ordinary selection navigation does not.
+Required clearance and contact tolerance use explicit world mm. Check included pairs
+produces first/second input, text status, distance, common solid volume and details.
+Unreadable/unsupported inputs remain Unresolved, and the summary says Incomplete.
+Exclusion counts and selected-set scope remain visible; no full-assembly claim is made.
+
+Select result pair changes native selection only; hidden inputs are not revealed
+automatically. Changing controls, exclusions or document objects clears results and
+disables navigation until recheck. No live geometry preview or document edits occur.
+Close detaches the document observer; closing the document closes the dialog.
+Pending edits and active tasks must finish before checking. Errors stay inline.
+Scope/limitations and owner procedure: [Interference check](../tests/InterferenceCheck.md).

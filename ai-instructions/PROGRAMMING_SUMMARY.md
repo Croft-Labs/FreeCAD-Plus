@@ -62,6 +62,12 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Interference/clearance inspection (F101): [`InterferenceCheck.py`](../src/Mod/Part/InterferenceCheck.py)
+and [`InterferenceCheckGui.py`](../src/Mod/Part/InterferenceCheckGui.py) inspect explicit
+solid pairs using native world shapes, overlap volume and minimum distance. Part menu;
+deliberate exclusions, unresolved rows, pair selection and edit invalidation.
+[Owner procedure](../tests/InterferenceCheck.md); roadmap 15.1c/d.
+
 Occurrence appearance (F018): [`OccurrenceAppearance.py`](../src/Gui/OccurrenceAppearance.py)
 exposes native whole-link visibility/colour/transparency and source inheritance in
 View > Occurrence appearance. Staged edits use one transaction and reject stale state;

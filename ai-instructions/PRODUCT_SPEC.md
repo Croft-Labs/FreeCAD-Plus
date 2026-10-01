@@ -308,6 +308,21 @@ occurrence paths, external documents, mixed Part definitions and broader represe
 physical acceptance remain open. [Owner procedure](../tests/OccurrenceAppearance.md);
 UI-014 defines the interaction. The Make Unique prototype remains test-only.
 
+## Current interference/clearance pilot (F101)
+
+Part > Interference and clearance checks an explicit set of 2-12 whole native solids
+or direct same-document shape/Body occurrences. Common solid volume identifies overlap;
+minimum distance classifies contact within the stated tolerance, below-clearance or
+clear pairs. Unsupported/unavailable inputs produce unresolved pairs and an incomplete
+summary, never implicit omission. Distances/volume use world mm/mm³. Deliberate input
+exclusions are counted; this is not automatic whole-assembly acceptance.
+
+The read-only dialog selects result pairs without visibility changes. Geometry edits
+invalidate results; recheck requires current geometry and never recomputes the model.
+No persistent inspection objects or model properties are introduced. Broader nested/
+external assemblies, pair-specific exclusions, acceleration and physical acceptance
+remain open. [Owner procedure](../tests/InterferenceCheck.md); roadmap 15.1c/d, UI-015.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap
