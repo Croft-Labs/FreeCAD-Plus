@@ -199,6 +199,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.active_key = None
         self.active_path = []
         self.expanded_instances = set()
+        self.restored_documents = set()
         self.refreshing = False
         self.selecting = False
         self.component_views = []
@@ -301,6 +302,10 @@ class Navigator(QtWidgets.QDockWidget):
                     self.bind_edit_context()
                     if not active.Document.HasPendingTransaction:
                         model().activate(active, strict=False)
+                if (active.Document.Name in self.restored_documents
+                        and not active.Document.HasPendingTransaction and not Gui.Control.activeDialog()):
+                    self.restored_documents.discard(active.Document.Name)
+                    model().activate(active, strict=False)
             if root is None or active is None:
                 self.context.setText(tr("Create or open a component document."))
                 self.conversion.hide()
@@ -1036,12 +1041,21 @@ class Navigator(QtWidgets.QDockWidget):
 
     def slotDeletedDocument(self, doc):
         name = getattr(doc, "Document", doc).Name
+        self.restored_documents.discard(name)
         self.expanded_instances = {group for group in self.expanded_instances
                                    if group[0][0] != name and group[2][0] != name}
         self.timer.start(100)
 
     def slotFinishSaveDocument(self, doc, filename):
         self.timer.start(100)
+
+    def slotUndoDocument(self, doc):
+        self.restored_documents.add(doc.Name)
+        # Native Undo restores properties before GUI providers finish restoring.
+        self.timer.start(0)
+
+    def slotRedoDocument(self, doc):
+        self.slotUndoDocument(doc)
 
 
 def show(doc=None):

@@ -2414,6 +2414,12 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   suppression/unsuppression in one Undo with blocking-input tooltips. Three focused
   workflows pass, including .cadprt reopen; native null-input recompute messages
   remain. Native scheduling integration and broader suppression acceptance stay open.
+- [ X ] 7.8.5f Owning-file Undo/Redo feedback: native execution, availability and
+  history menus follow the active component owner; external multi-step history stays
+  in that owner throughout the range. Model History refreshes after native Undo/Redo
+  restoration, deferring during active edits. Grouped native build and three focused
+  workflows pass. Broader grouped-file prompts and
+  close-during-Undo acceptance remain open.
 - [ X ] 7.8.6a Result identity, exclusive-history pruning, shared producers, reference
   freezing, independent extraction and native Undo are covered by regression fixtures.
 - [   ] 7.8.6b Prove real multi-body edge-treatment contribution detachment and
@@ -2481,6 +2487,20 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   and TechDraw projection after save/reopen; suppressed inputs clear clone/CAM geometry.
 - [   ] 7.8.10b FEM (disabled in this build), general drawing references, CAM path
   invalidation, broader topology changes, performance and interactive owner acceptance.
+
+2026-10-01 owning-file Undo/Redo feedback evidence:
+`D:\Temp\Office-PC\freecad-plus-undo-routing-20261001`.
+`build/` records one successful grouped native/script build. `smoke/` passes three
+workflows on the first runtime pass, zero failures/errors/skips, process exit 0 and
+empty stderr. Coverage: external Extrude parameter and suppression Undo/Redo with
+stable result identity, geometry/state restoration and independent parent history;
+owner-based enabled states and toolbar lists, two-step Undo/Redo ranges; embedded
+isolated ownership and ordinary-document fallback. One final Model History capture
+reviewed. Feedback fixture:
+`smoke/testExternalOperationUndoRedoAndAvailability/Assembly.cadprt` with sibling
+`Support.cadprt`. No schema, geometry-model, installer or release change. This does
+not qualify mixed-file grouped-transaction prompts, close-during-Undo or every native
+task editor. Native transaction grouping and checks remain in use.
 
 2026-10-01 owning-file save feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-save-routing-20261001`.

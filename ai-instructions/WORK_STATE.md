@@ -1,5 +1,26 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.5f, owning-file Undo/Redo.
+Native Undo/Redo execution, enabled states and toolbar history lists follow the
+active component's owner, preserving the displayed occurrence context. A multi-step
+external history selection stays in that owning file for the whole range. Model
+History defers refresh until native restoration finishes and active editing ends.
+Embedded components share their containing file's history; ordinary documents retain
+their existing ownership behavior.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-undo-routing-20261001`.
+One grouped native/script build passed (`build/`); `smoke/` passes three workflows
+on the first runtime pass, zero failures/errors/skips, process exit 0 and empty stderr.
+Checks cover external operation/suppression restoration, enabled states/menu ranges,
+independent parent history, embedded isolation and ordinary-document fallback.
+One final Model History capture reviewed. Feedback fixture:
+`smoke/testExternalOperationUndoRedoAndAvailability/Assembly.cadprt`.
+No schema, geometry-model, installer or release changes. Native grouped-transaction
+checks remain in use; mixed-file prompts, close-during-Undo and broad task-editor
+acceptance remain open. Keep broad testing deferred for owner feedback.
+
+Previous feedback batch follows.
+
 Current feedback batch: roadmap 7.8.3d, owning-file Save routing.
 Native Save, Save As and Save a Copy resolve the active component's owning document
 from the native occurrence binding, retaining the assembly/isolated view. Embedded

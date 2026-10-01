@@ -423,11 +423,11 @@ bool View3DInventor::onMsg(const char* pMsg)
         return true;
     }
     else if (strcmp("Undo", pMsg) == 0) {
-        getGuiDocument()->undo(1);
+        getSaveDocument()->undo(1);
         return true;
     }
     else if (strcmp("Redo", pMsg) == 0) {
-        getGuiDocument()->redo(1);
+        getSaveDocument()->redo(1);
         return true;
     }
     else if (strcmp("Save", pMsg) == 0) {
@@ -496,11 +496,11 @@ bool View3DInventor::onHasMsg(const char* pMsg) const
         return true;
     }
     else if (strcmp("Undo", pMsg) == 0) {
-        App::Document* doc = getAppDocument();
+        App::Document* doc = getSaveDocument()->getDocument();
         return doc && doc->getAvailableUndos() > 0;
     }
     else if (strcmp("Redo", pMsg) == 0) {
-        App::Document* doc = getAppDocument();
+        App::Document* doc = getSaveDocument()->getDocument();
         return doc && doc->getAvailableRedos() > 0;
     }
     else if (strcmp("Print", pMsg) == 0) {

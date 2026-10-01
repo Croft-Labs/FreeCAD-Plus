@@ -29,6 +29,8 @@
 #include "Application.h"
 #include "MainWindow.h"
 #include "MDIView.h"
+#include "Document.h"
+#include "View3DInventor.h"
 
 
 using namespace Gui::Dialog;
@@ -72,6 +74,13 @@ void UndoDialog::onSelected()
 {
     auto a = static_cast<QAction*>(sender());
     QList<QAction*> acts = this->actions();
+    auto* view = dynamic_cast<View3DInventor*>(getMainWindow()->activeWindow());
+    if (view && view->getSaveDocument() != view->getGuiDocument()) {
+        // Keep the whole requested range in this owner even if its active
+        // component disappears during the first undo.
+        view->getSaveDocument()->undo(acts.indexOf(a) + 1);
+        return;
+    }
     for (QList<QAction*>::Iterator it = acts.begin(); it != acts.end(); ++it) {
         Gui::Application::Instance->sendMsgToActiveView("Undo");
         if (*it == a) {
@@ -119,6 +128,11 @@ void RedoDialog::onSelected()
 {
     auto a = static_cast<QAction*>(sender());
     QList<QAction*> acts = this->actions();
+    auto* view = dynamic_cast<View3DInventor*>(getMainWindow()->activeWindow());
+    if (view && view->getSaveDocument() != view->getGuiDocument()) {
+        view->getSaveDocument()->redo(acts.indexOf(a) + 1);
+        return;
+    }
     for (QList<QAction*>::Iterator it = acts.begin(); it != acts.end(); ++it) {
         Gui::Application::Instance->sendMsgToActiveView("Redo");
         if (*it == a) {

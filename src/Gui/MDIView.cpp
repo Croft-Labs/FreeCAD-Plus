@@ -46,6 +46,7 @@
 #include "FileDialog.h"
 #include "MainWindow.h"
 #include "ViewProviderDocumentObject.h"
+#include "View3DInventor.h"
 
 
 using namespace Gui;
@@ -352,7 +353,8 @@ void MDIView::restorePrinterSettings(QPrinter* printer)
 QStringList MDIView::undoActions() const
 {
     QStringList actions;
-    Gui::Document* doc = getGuiDocument();
+    const auto* view = dynamic_cast<const View3DInventor*>(this);
+    Gui::Document* doc = view ? view->getSaveDocument() : getGuiDocument();
     if (doc) {
         std::vector<std::string> vecUndos = doc->getUndoVector();
         for (const auto& vecUndo : vecUndos) {
@@ -366,7 +368,8 @@ QStringList MDIView::undoActions() const
 QStringList MDIView::redoActions() const
 {
     QStringList actions;
-    Gui::Document* doc = getGuiDocument();
+    const auto* view = dynamic_cast<const View3DInventor*>(this);
+    Gui::Document* doc = view ? view->getSaveDocument() : getGuiDocument();
     if (doc) {
         std::vector<std::string> vecRedos = doc->getRedoVector();
         for (const auto& vecRedo : vecRedos) {

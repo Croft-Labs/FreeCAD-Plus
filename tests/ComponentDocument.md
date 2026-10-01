@@ -7,6 +7,24 @@ owns requirements.
 
 ## Owner workflow
 
+Owning-file Undo/Redo feedback (roadmap 7.8.5f): while an external component is active
+in an assembly, Undo and Redo use that component's owning document. Their enabled
+states and toolbar history lists follow the same owner. A multi-step toolbar choice
+keeps the requested range in that file. Activate the parent to undo parent edits.
+An embedded component shares its containing file's history, including in an isolated
+tab. Model History refreshes after the native transaction finishes; sketch/task editor
+refreshes stay deferred until editing ends.
+
+`RunComponentDocument.ps1 -UndoRoutingSmoke` runs three focused workflows from
+`TestComponentUndoRouting.py`: external operation/suppression restoration and command
+availability, multi-step toolbar history, and embedded/ordinary document ownership.
+Mixed-file grouped-transaction prompts and close-during-Undo remain broader acceptance.
+The 2026-10-01 evidence is
+`D:\Temp\Office-PC\freecad-plus-undo-routing-20261001/smoke`.
+Open `testExternalOperationUndoRedoAndAvailability/Assembly.cadprt` with sibling
+`Support.cadprt` to review the restored Extrude history; saved fixtures contain model
+history, not a promise to persist the interactive Undo stack across reopen.
+
 Owning-file Save feedback (roadmap 7.8.3d): activate an external component in the
 assembly and use File > Save. Its own file receives the changes while the assembly
 view stays open. Save As changes that owning document's location; Save a Copy writes
