@@ -2413,7 +2413,7 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   controls before Model History item names. Three focused checks pass and four
   rendered captures were reviewed. Complete native navigator parity remains
   tracked in 7.8.7b.
-- [ X ] 7.8.8a Embedded and external independent-copy service (now Copy to New Part) with child sharing; assembly
+- [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
   externalization with additional loaded external consumers. Current preflight
@@ -2466,8 +2466,8 @@ it is source-reviewed/staged without repeating the workflow suite.
 
 This is an iteration for owner feedback, not file-format qualification. Existing
 legacy native editors were retained at that milestone. Sketch routing and
-operation/target editing continue in 7.8.5d; expressions, multi-result lineage, assembly solver and broader consumer/recovery
-acceptance remain open. Do not rerun the broad suites solely to close this feedback
+operation/target editing continue in 7.8.5d; expressions, multi-result lineage,
+assembly solver and broader consumer/recovery acceptance remain open. Do not rerun the broad suites solely to close this feedback
 batch. [Procedure and current limits](../tests/ComponentDocument.md#current-feedback-iteration).
 Source publication: implementation `7630012c25efae2e2c79b0102808b8331695a582`
 pushed to `origin/main` and verified with `git ls-remote`. No installer or release.
@@ -2499,7 +2499,9 @@ close callbacks; Python corrections required no further native build. Capture re
 then corrected ancestor expansion and unavailable-result visibility indicators.
 This is bounded feedback evidence, not complete native-tree parity, schema lock-in,
 assembly solver, arbitrary topology/expression or cross-workbench qualification.
-No installer/release update. Source publication is pending for this batch.
+No installer/release update. Implementation `5ecd62c94193cd040804147d9c9470062974fe2a`
+was pushed to `origin/main` and verified with `git ls-remote`. Runtime/source/fixture
+hashes are recorded in `acceptance-identities.json` under this evidence root.
 
 ### [   ] 7.7 Validate and release the history pilot
 

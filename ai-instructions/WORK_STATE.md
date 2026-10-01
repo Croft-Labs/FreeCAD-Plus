@@ -17,8 +17,9 @@ No broad suite was run; retain the owner's feedback-first validation boundary.
 Use `Component-Panel-Feedback.cadprt` and `Component-Edit-Feedback.cadprt` from that
 folder in the local fork build. The owner/test procedure describes `-PanelSmoke`.
 
-Source publication pending. No installer/release update. Continue the component
-migration after feedback: native command/picking parity, expression and multi-result
+Implementation 5ecd62c941 was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records source/runtime/fixture hashes. No installer or
+release update. Continue the component migration after feedback: native command/picking parity, expression and multi-result
 lineage, solver, BOM/mass consumers and broader format/recovery qualification remain
 open. Do not infer completion of the whole architecture from this feedback batch.
 
