@@ -29,6 +29,7 @@
 #include <App/Application.h>
 #include <App/Document.h>
 #include <App/DocumentObjectGroup.h>
+#include <App/GeoFeatureGroupExtension.h>
 #include <App/FeaturePythonPyImp.h>
 #include <App/Link.h>
 #include <App/PropertyPythonObject.h>
@@ -53,6 +54,33 @@
 
 
 using namespace Assembly;
+
+namespace
+{
+bool hasComponentRole(const App::DocumentObject* obj, const char* role)
+{
+    auto* property = freecad_cast<App::PropertyString*>(obj->getPropertyByName("ComponentRole"));
+    return property && std::string(property->getValue()) == role;
+}
+
+std::vector<App::DocumentObject*> bomChildren(App::DocumentObject* obj)
+{
+    if (!hasComponentRole(obj, "Definition")) {
+        return obj->getOutList();
+    }
+    // A component's history/results are geometry of that part, not BOM children.
+    std::vector<App::DocumentObject*> children;
+    auto* group = freecad_cast<App::PropertyLinkList*>(obj->getPropertyByName("Group"));
+    if (group) {
+        for (auto* child : group->getValues()) {
+            if (child && hasComponentRole(child, "Occurrence")) {
+                children.push_back(child);
+            }
+        }
+    }
+    return children;
+}
+}  // namespace
 
 // ================================ Assembly Object ============================
 
@@ -171,9 +199,13 @@ void BomObject::generateBOM()
     }
     ++row;
 
+    auto* component = App::GeoFeatureGroupExtension::getGroupOfObject(this);
     auto* assembly = getAssembly();
-    if (assembly) {
-        addObjectChildrenToBom(assembly->getOutList(), row, "");
+    if (component && hasComponentRole(component, "Definition")) {
+        addObjectChildrenToBom(bomChildren(component), row, "");
+    }
+    else if (assembly) {
+        addObjectChildrenToBom(bomChildren(assembly), row, "");
     }
     else {
         addObjectChildrenToBom(getDocument()->getRootObjectsIgnoreLinks(), row, "");
@@ -206,6 +238,14 @@ void BomObject::addObjectChildrenToBom(
         if (std::find(excluded.begin(), excluded.end(), child) != excluded.end()) {
             continue;
         }
+        if (hasComponentRole(child, "Occurrence")) {
+            auto* included = freecad_cast<App::PropertyBool*>(
+                child->getPropertyByName("IncludeInBOM")
+            );
+            if (included && !included->getValue()) {
+                continue;
+            }
+        }
 
         bool isMirrored = isObjMirrored(child);
 
@@ -216,8 +256,14 @@ void BomObject::addObjectChildrenToBom(
             }
         }
         else if (child->isDerivedFrom<App::Link>()) {
+            const bool componentOccurrence = hasComponentRole(child, "Occurrence");
             child = static_cast<App::Link*>(child)->getLinkedObject();
             if (!child) {
+                if (componentOccurrence) {
+                    throw Base::ValueError(
+                        "Repair included missing components before generating the BOM."
+                    );
+                }
                 continue;
             }
         }
@@ -247,7 +293,7 @@ void BomObject::addObjectChildrenToBom(
         if ((child->isDerivedFrom<AssemblyObject>() && detailSubAssemblies.getValue())
             || (!child->isDerivedFrom<AssemblyObject>() && child->isDerivedFrom<App::Part>()
                 && detailParts.getValue())) {
-            addObjectChildrenToBom(child->getOutList(), row, sub_index);
+            addObjectChildrenToBom(bomChildren(child), row, sub_index);
         }
     }
 }

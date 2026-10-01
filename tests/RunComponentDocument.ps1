@@ -16,6 +16,7 @@ param(
     [switch]$SaveRoutingSmoke,
     [switch]$UndoRoutingSmoke,
     [switch]$DisplayContextSmoke,
+    [switch]$BomSmoke,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -43,6 +44,7 @@ if ($TaskContextSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTas
 if ($SaveRoutingSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentSaveRouting.py' }
 if ($UndoRoutingSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentUndoRouting.py' }
 if ($DisplayContextSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentDisplayContext.py' }
+if ($BomSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentBom.py' }
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'

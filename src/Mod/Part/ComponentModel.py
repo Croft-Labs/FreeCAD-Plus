@@ -527,6 +527,19 @@ def set_representation(root, ids, value=None):
     set_representations(root, [(ids, value)])
 
 
+def set_bom_inclusion(occurrences, included):
+    """Change actual occurrence ownership, independently of display/path overrides."""
+    occurrences = list(dict.fromkeys(occurrences))
+    if not occurrences or any(getattr(obj, "ComponentRole", "") != "Occurrence" for obj in occurrences):
+        raise ValueError("Select component instances to change BOM participation.")
+    doc = occurrences[0].Document
+    if any(obj.Document != doc for obj in occurrences):
+        raise ValueError("Change BOM participation in one owning file at a time.")
+    with transaction(doc, "Component BOM participation"):
+        for obj in occurrences:
+            obj.IncludeInBOM = bool(included)
+
+
 def representation(root, ids, root_overrides=None):
     chain = _path(root, ids)
     for depth, link in enumerate(chain):

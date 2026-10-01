@@ -922,7 +922,10 @@ class Navigator(QtWidgets.QDockWidget):
         component = model().owner(obj)
         model().activate(component, strict=False)
         self.active_key = object_key(component)
-        if getattr(obj, "OperationKind", "") == "Extrude":
+        if obj.TypeId == "Assembly::BomObject":
+            from CommandCreateBom import CommandCreateBom
+            CommandCreateBom().Activated(obj)
+        elif getattr(obj, "OperationKind", "") == "Extrude":
             from freecad.gui.ComponentExtrudeTask import launch
             launch(operation=obj)
         else:
@@ -965,6 +968,11 @@ class Navigator(QtWidgets.QDockWidget):
         from freecad.gui.ComponentExtrudeTask import launch
         launch()
 
+    def create_bom(self):
+        import AssemblyGui  # Register native BOM objects and providers.
+        from CommandCreateBom import CommandCreateBom
+        CommandCreateBom().Activated()
+
     def build_menu(self, tree, item):
         menu = QtWidgets.QMenu(self)
         # Retain the Python submenu wrappers throughout popup execution.
@@ -996,6 +1004,15 @@ class Navigator(QtWidgets.QDockWidget):
                 externalize.setEnabled(definition is not None and definition.Document == obj.Document)
                 externalize.setToolTip(tr("Move this embedded definition and its embedded children to a new file; all instances stay shared."))
                 menu.addAction(tr("Locate Component File"), lambda: self.run(lambda: self.repair_component(value[0])))
+                occurrences = [resolve(key) for key, unused in self.members(item)]
+                participation = menu.addMenu(tr("Bill of Materials"))
+                menu.component_submenus.append(participation)
+                for included, title in ((True, "Include"), (False, "Exclude")):
+                    action = participation.addAction(tr(title), lambda checked=False, included=included:
+                        self.run(lambda: model().set_bom_inclusion(occurrences, included)))
+                    action.setCheckable(True)
+                    action.setChecked(all(bool(link.IncludeInBOM) == included for link in occurrences))
+                    action.setToolTip(tr("Changes this occurrence in its owning component, including all uses of that component. Display and mass settings are separate. Refresh existing BOMs in their editor."))
             view = menu.addMenu(tr("Part View"))
             menu.component_submenus.append(view)
             paths = [ids for unused, ids in self.members(item) if ids]
@@ -1036,6 +1053,7 @@ class Navigator(QtWidgets.QDockWidget):
                 menu.addAction(tr("New Sketch"), lambda: self.run(self.new_sketch))
                 menu.addAction(tr("Extrude"), lambda: self.run(self.new_extrude))
                 menu.addAction(tr("Add Reference Object"), lambda: self.run(self.add_reference))
+                menu.addAction(tr("Bill of Materials"), lambda: self.run(self.create_bom))
         return menu
 
     def menu(self, tree, point):
@@ -1065,7 +1083,7 @@ class Navigator(QtWidgets.QDockWidget):
                         obj.Visibility = True
                 except ValueError:
                     pass
-        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject"):
+        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject", "IncludeInBOM"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):

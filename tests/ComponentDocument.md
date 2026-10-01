@@ -7,6 +7,26 @@ owns requirements.
 
 ## Owner workflow
 
+Component BOM feedback (roadmap 7.8.7j): activate a component and choose **Bill of
+Materials** from Model History's context menu (or the existing Assembly command).
+The report belongs to that component, appears in its history, and counts child
+instances with quantities per parent. **Include nested components** controls deeper
+rows. Bodies, sketches and operations are not separate BOM parts.
+
+In Component Structure, use **Bill of Materials > Include / Exclude** on an instance
+or a grouped row. This is an owning-component policy, independent of Part View and
+mass inclusion. Reopen an existing BOM's editor to refresh counts. Its exclusion list
+can omit additional whole instances stored in that report's owning file without
+changing other BOMs. Double-click the report in Model History to edit; OK/Cancel
+returns to the original component occurrence.
+
+`RunComponentDocument.ps1 -BomSmoke` runs three workflows from `TestComponentBom.py`.
+Final evidence is `D:\Temp\Office-PC\freecad-plus-component-bom-20261001/feedback`;
+open `testBOMPolicyReopenAndPerReportExclusions/Assembly.cadprt` with sibling
+`Support.cadprt` for saved-policy feedback. Native Assembly builds use
+`BuildComponentDocument.ps1 -ScriptsOnly -AssemblyConsumer`. Mass consumers,
+automatic cross-file invalidation and broader BOM recovery remain open.
+
 Display-context feedback (roadmap 7.8.7i): open an assembly and a component's isolated
 tab. Change a child's Part View in the isolated tab; inactive parent windows should
 update inherited occurrences while retaining their explicit path overrides. Hidden

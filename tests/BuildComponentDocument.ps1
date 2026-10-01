@@ -2,13 +2,15 @@ param(
     [Parameter(Mandatory=$true)][string]$CMake,
     [Parameter(Mandatory=$true)][string]$BuildDirectory,
     [Parameter(Mandatory=$true)][string]$OutputDirectory,
-    [switch]$ScriptsOnly
+    [switch]$ScriptsOnly,
+    [switch]$AssemblyConsumer
 )
 $ErrorActionPreference = 'Stop'
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new build evidence directory.' }
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 $targets = @('FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartDesignGui', 'SketcherGui', 'PartScripts')
 if ($ScriptsOnly) { $targets = @('FreeCADGui_Resources', 'PartScripts') }
+if ($AssemblyConsumer) { $targets += @('AssemblyGui', 'AssemblyTests') }
 $showTarget = Test-Path -LiteralPath (Join-Path $BuildDirectory 'src/Mod/Show/Show.vcxproj')
 if ($showTarget) { $targets += 'Show' }
 $argsList = @('--build', ('"' + $BuildDirectory + '"'), '--config', 'Release', '--target') + $targets + @('--parallel', '3')

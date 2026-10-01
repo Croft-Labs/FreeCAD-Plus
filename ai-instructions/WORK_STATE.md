@@ -1,5 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.7j, native component BOM integration.
+Native BOMs count component occurrences, excluding owned history/geometry, honor
+IncludeInBOM independently of Part View/mass flags and use their owning component
+as scope. Component Structure exposes grouped Include/Exclude with one Undo. Model
+History creates/edits native reports with owning-file task context and return to the
+original occurrence. Whole-instance selections work in the report's exclusion picker;
+opening the editor explicitly refreshes counts. Component wording hides legacy-only
+scope controls and uses Include nested components.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-component-bom-20261001`.
+Grouped native Assembly/script build passed (`build/`). Initial checks exposed use
+of ordinary-group lookup instead of GeoFeatureGroup ownership; the narrow correction
+passed `build-scope-fix/`. The same three workflows pass in `feedback/`, zero failures,
+errors or skips, process exit 0 and empty stderr. Python selection/refresh/wording
+refinements were staged directly. Final BOM editor capture reviewed. Checks include
+legacy Part-container counting, grouped Undo/Redo, independent policies, external
+task OK/Cancel/history editing and .cadprt reopen. No broad regression run.
+Feedback fixture: `feedback/testBOMPolicyReopenAndPerReportExclusions/Assembly.cadprt`.
+Mass consumers, automatic cross-file report invalidation, general missing-file/array/
+custom-column behavior and per-report exclusions of children stored outside the
+BOM's owning file remain open. No schema-version change, installer or release.
+
+Previous feedback batch follows.
+
 Current feedback batch: roadmap 7.8.7i, component display contexts.
 Loaded definitions' native LinkViews and isolated snapshots now refresh even when
 their assembly window is inactive. Inherited child settings and outer path overrides

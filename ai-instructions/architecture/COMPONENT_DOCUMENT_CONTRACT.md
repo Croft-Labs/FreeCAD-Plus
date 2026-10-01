@@ -64,6 +64,10 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   **Reset to Inherited** removes that override. A Hidden ancestor wins.
 - Do not introduce a Reference Only component role. BOM/mass inclusion remains
   separate. The owner may revisit reference-only display behavior later.
+  BOM participation belongs to the occurrence in its owning component; changing
+  a shared definition's child applies to all uses of that definition. Excluding an
+  occurrence omits that branch from BOM counting without changing display or mass
+  settings. Component BOM rows represent components, not their modeling history.
 - An **Assembly Constraints** grouping item appears first under its component
   only when constraints exist. It contains constraints, not real child components.
 

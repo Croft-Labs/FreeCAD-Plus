@@ -2433,7 +2433,8 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   inheritance/reset and a rendered isolated view; native New/Open/Save dialog checks.
 - [   ] 7.8.7b Integrate assembly joint creation/solver with the first constraints
   group; complete repeated-path picking, native edit/create parity and owner GUI acceptance.
-- [   ] 7.8.7c Connect separate BOM/mass participation flags to engineering consumers;
+- [   ] 7.8.7c Connect mass participation flags to engineering consumers;
+  the initial native BOM integration is recorded in 7.8.7j. Also
   complete multi-tab/task display acceptance without changing engineering geometry.
   The bounded background/isolated-view pilot is recorded in 7.8.7i.
 - [ X ] 7.8.7d Feedback iteration: Model History double-click opens the component
@@ -2477,6 +2478,17 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   the first run; the same three checks passed on repeat. One Qt window-activation
   diagnostic remains. Broad task-time display, construction-provider coverage and
   large-assembly performance stay open under 7.8.7b/c and 7.8.10b.
+- [ X ] 7.8.7j Component BOM feedback: reuse the native BOM spreadsheet with the
+  active component's owning-file scope. Count occurrences, omit modeling history
+  and geometric results, honor IncludeInBOM independently of display/mass flags,
+  and expose grouped single-Undo Include/Exclude actions. Model History creates/edits
+  the report with return-to-occurrence context; its exclusion picker understands
+  whole component paths and its editor explicitly refreshes counts. Component-mode
+  wording uses nested components. Grouped Assembly/script build plus one native
+  container-ownership correction passed; three focused workflows pass, including
+  legacy part-container behavior and .cadprt reopen. Mass consumers, automatic
+  cross-file report invalidation, general missing-file/array/custom-column behavior
+  and per-report exclusions of children stored in other files remain open.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and

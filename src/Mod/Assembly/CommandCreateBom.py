@@ -80,10 +80,24 @@ class CommandCreateBom:
     def IsActive(self):
         return App.ActiveDocument is not None and not Gui.Control.activeDialog()
 
-    def Activated(self):
+    def Activated(self, bomObj=None):
+        context = None
         try:
-            self.panel = TaskAssemblyCreateBom()
+            view = Gui.activeDocument().activeView()
+            component = view.getActiveObject("part") if hasattr(view, "getActiveObject") else None
+            if bomObj:
+                component = next((obj for obj in bomObj.InList
+                                  if getattr(obj, "ComponentRole", "") == "Definition"), None)
+            if getattr(component, "ComponentRole", "") == "Definition":
+                from freecad.gui.ComponentNavigator import TaskContext
+                context = TaskContext(component)
+                context.enter()
+            else:
+                component = None
+            self.panel = TaskAssemblyCreateBom(bomObj, component=component, context=context)
         except ValueError as error:
+            if context:
+                context.restore()
             App.Console.PrintError(str(error) + "\n")
             return
         dialog = Gui.Control.showDialog(self.panel)
@@ -94,9 +108,14 @@ class CommandCreateBom:
 
 ######### Create Exploded View Task ###########
 class TaskAssemblyCreateBom(QtCore.QObject):
-    def __init__(self, bomObj=None):
+    def __init__(self, bomObj=None, component=None, context=None):
         super().__init__()
 
+        self.context = context
+        self.component = component
+        if bomObj:
+            self.component = next((obj for obj in bomObj.InList
+                                   if getattr(obj, "ComponentRole", "") == "Definition"), None)
         self.doc = bomObj.Document if bomObj else App.ActiveDocument
         if (self.doc is None or App.ActiveDocument != self.doc or Gui.Control.activeDialog()
                 or self.doc.HasPendingTransaction or App.getActiveTransaction()):
@@ -150,6 +169,10 @@ class TaskAssemblyCreateBom(QtCore.QObject):
         self.form.CheckBox_onlyParts.setChecked(self.bomObj.onlyParts)
         self.form.CheckBox_detailParts.setChecked(self.bomObj.detailParts)
         self.form.CheckBox_detailSubAssemblies.setChecked(self.bomObj.detailSubAssemblies)
+        if self.component:
+            self.form.CheckBox_detailSubAssemblies.hide()
+            self.form.CheckBox_onlyParts.hide()
+            self.form.CheckBox_detailParts.setText(translate("Assembly", "Include nested components"))
 
         self.form.columnList.model().rowsMoved.connect(self.onItemsReordered)
         self.form.columnList.itemChanged.connect(self.itemUpdated)
@@ -160,6 +183,9 @@ class TaskAssemblyCreateBom(QtCore.QObject):
 
         self.updateColumnList()
         self.setupExclusions()
+        # Inclusion flags in another owning file do not create native dependency
+        # links back to this report. Opening its editor explicitly refreshes it.
+        self.bomObj.recompute()
 
     def accept(self):
         if App.ActiveDocument != self.doc:
@@ -171,12 +197,16 @@ class TaskAssemblyCreateBom(QtCore.QObject):
         self.bomObj.recompute()
 
         self.bomObj.ViewObject.showSheetMdi()
+        if self.context:
+            self.context.restore()
 
         return True
 
     def reject(self):
         self.deactivate()
         self.guiDoc.abortCommand()
+        if self.context:
+            self.context.restore()
         return True
 
     def setupExclusions(self):
@@ -186,6 +216,8 @@ class TaskAssemblyCreateBom(QtCore.QObject):
                                         "Excluding a definition child affects every use of that child. Quantities are per parent; multiply by parent quantities for totals. "
                                         "Array, suppression and configuration counts require separate review."))
         note.setWordWrap(True)
+        if self.component:
+            note.setText(translate("Assembly", "Component Structure's BOM inclusion settings apply first. This list excludes additional instances from this report only. Hidden components remain included. Quantities are per parent. Select whole instances stored in this BOM's owning file; a child setting affects every use of its component."))
         layout.addWidget(note)
         self.exclusionList = QtWidgets.QListWidget()
         self.exclusionList.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -224,7 +256,11 @@ class TaskAssemblyCreateBom(QtCore.QObject):
                 assembly = next((obj for obj in parent.InList if obj.isDerivedFrom("Assembly::AssemblyObject")), None)
                 if assembly:
                     break
-        pending = list(assembly.Group if assembly else self.doc.RootObjectsIgnoreLinks)
+        if self.component:
+            import ComponentModel
+            pending = list(ComponentModel.children(self.component))
+        else:
+            pending = list(assembly.Group if assembly else self.doc.RootObjectsIgnoreLinks)
         found = set()
         while pending:
             obj = pending.pop()
@@ -238,19 +274,36 @@ class TaskAssemblyCreateBom(QtCore.QObject):
             # actual child occurrences, not an unused source-definition entry.
             if linked and (linked.isDerivedFrom("App::Part")
                            or linked.isDerivedFrom("Assembly::AssemblyObject")):
-                pending.extend(linked.Group)
+                if getattr(linked, "ComponentRole", "") == "Definition":
+                    import ComponentModel
+                    pending.extend(ComponentModel.children(linked))
+                else:
+                    pending.extend(linked.Group)
         return found
 
     def excludeSelection(self):
         try:
             if App.ActiveDocument != self.doc:
                 raise ValueError(translate("Assembly", "Activate the BOM document first."))
-            selected = Gui.Selection.getSelectionEx()
+            selected = Gui.Selection.getSelectionEx("*", 0) if self.component else Gui.Selection.getSelectionEx()
             scope = self.exclusionScope()
             objects = []
+            candidates = []
             for entry in selected:
-                obj = entry.Object
-                if (entry.SubElementNames or obj.Document != self.doc or obj not in scope
+                if self.component:
+                    import ComponentModel
+                    from freecad.gui import ComponentSelection
+                    for subname in entry.SubElementNames or [""]:
+                        picks = ComponentSelection.resolve(self.component, entry.Object, subname)
+                        if len(picks) != 1 or not picks[0].ids or picks[0].item or picks[0].element:
+                            raise ValueError(translate("Assembly", "Select an unambiguous whole component instance in this BOM's scope."))
+                        candidates.append(ComponentModel._path(self.component, picks[0].ids)[-1])
+                else:
+                    if entry.SubElementNames:
+                        raise ValueError(translate("Assembly", "Select whole component objects, not faces."))
+                    candidates.append(entry.Object)
+            for obj in candidates:
+                if (obj.Document != self.doc or obj not in scope
                         or obj == self.bomObj or obj in self.bomObj.InListRecursive
                         or not any(obj.isDerivedFrom(kind) for kind in
                                    ("App::Part", "Part::Feature", "App::Link", "Assembly::AssemblyObject", "Assembly::AssemblyLink"))):
@@ -424,6 +477,11 @@ class TaskAssemblyCreateBom(QtCore.QObject):
         return False
 
     def createBomObject(self):
+        if self.component:
+            import ComponentModel
+            self.bomObj = self.doc.addObject("Assembly::BomObject", "BillOfMaterials")
+            ComponentModel.register_object(self.component, self.bomObj, "Object")
+            return
         assembly = UtilsAssembly.activeAssembly()
         Gui.addModule("UtilsAssembly")
         if assembly is not None:
