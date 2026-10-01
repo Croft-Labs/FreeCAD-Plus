@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F028 captured Sweep inputs,
+- Current product batch complete for owner testing: F108 saved project packaging,
+  phase 15 tasks 15.6a/b. Tools > Package saved project reviews recursive relative
+  native links and creates a byte-preserving portable ZIP. A nested assembly opens
+  and updates after its original folder becomes unavailable. Both tasks preceded
+  one native build; all 15 distinct selected checks pass and six captures are
+  reviewed. [Owner procedure](../tests/ProjectPackage.md). Full F108 stays open for
+  broader assets, relinking and independent duplication; rotate pending owner tests.
+
+- Previous product batch complete for owner testing: F028 captured Sweep inputs,
   phase 13 tasks 13.2c/d. The native collector retains its path through later
   profile/global selection, reviews ordered sections/output and recovers failed
   creation without changing source topology. Both tasks preceded the grouped build;
@@ -4833,6 +4841,39 @@ update. [Owner procedure](../tests/AssemblyBomScope.md). Stop for feedback and r
   and export with stated history/metadata losses. Preserve originals and distinguish
   native document packaging from flattened geometry exchange.
 
+- [ X ] 15.6a Review saved native project dependencies before packaging (F108):
+  collect recursive serialized relative XLinks, preserve duplicate basenames and
+  expose source/package paths. Refuse missing, unsaved/dirty, absolute-link,
+  external file-asset and Python-feature dependencies in this bounded pilot.
+- [ X ] 15.6b Create a new portable ZIP with byte-identical FCStd sources, native
+  relative directory layout and hashed manifest. Revalidate before atomic publication;
+  preserve originals and reject overwrite. Verify relocated nested assembly open,
+  source edits/save/reopen and recoverable failures.
+
+15.6a/b grouped evidence (2026-10-01): both tasks preceded one successful
+110-second FreeCADGui build (exit 0), including menu/startup registration. The new
+Python module was synchronized into the source-built runtime with matching hashes.
+Seven TestDependencyInspector checks pass in grouped/; all eight TestProjectPackage
+checks pass in package-final/ (15 accepted distinct checks, no skips). Initial
+package fixtures were corrected to save external-link owner documents first and
+use native GUI save to clear the unsaved flag. No implementation correction or
+additional native rebuild was required.
+Native nested and repeated links with duplicate source basenames retain their
+relative paths and byte-identical documents. The extracted assembly opens with
+its original folder moved aside, copied-source edits update both consumers, and
+save/reopen retains the edit. Unsaved owner transactions, changed saved sources,
+missing dependencies, external file assets, absolute links, overwrite and failed
+atomic publication are checked; failures preserve originals and leave no package.
+Six captures reviewed: source review, unsaved-change refusal, refreshed review,
+created package, relocated assembly and relocated dependency review. Evidence:
+D:\Temp\Office-PC\freecad-plus-project-package-20261001; visual/ contains
+Portable-Project.zip, the relocated native project and original-unavailable fixtures.
+Source/runtime hashes and publication evidence are in evidence.json.
+The package preserves identities; this is not Make Unique or format conversion.
+Absolute-link repair, independent duplication, add-on/Python code, external assets,
+unsupported destination filesystems, installer and physical owner acceptance remain
+open. Stop at this bounded checkpoint and rotate pending owner workflow feedback.
+
 - [   ] 15.7 Add reusable manufacturing export presets (X10; [F127](#f127)).
   Make selected geometry/occurrences/configuration, units, orientation and mesh
   quality explicit; audit supported formats and report history/metadata losses.
@@ -7297,7 +7338,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f108"></a>
 ### F108 — Project packaging
 
-**Owning tasks:** 15.6, 16.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.6, 15.6a/b, 16.1. **Status:** Bounded saved-native packaging ready for owner testing. Recursive relative XLink review, byte-preserving portable ZIP/manifest, no-overwrite publication and source-change guards are implemented. A relocated nested/repeated-link assembly opens, updates and saves/reopens without its original folder. One grouped native build, 15 distinct passing checks and six reviewed captures; [owner procedure](../tests/ProjectPackage.md). Absolute-link repair, external asset/code collection, independent duplication, format migration and physical owner acceptance remain open.
 
 **Packages:** X02, X04 · **First delivery:** P3/P9 · **Likely scope:** Feature/Core
 

@@ -1248,3 +1248,27 @@ geometry with element mappings intact. Failed creation rolls back and stays open
 for correction. Cancel works during path capture and removes the selection gate; document closure
 closes the task. Native Sections/Spine/Solid/Frenet persistence is unchanged.
 [Owner procedure](../tests/SweepInputs.md).
+
+## UI-044: Saved project packaging (F108; roadmap 15.6a/b)
+
+Tools > Package saved project reviews the active document's saved FCStd and
+recursive serialized relative XLinks, including unopened source documents. The
+read-only table shows original paths, portable package paths and byte counts.
+Review never loads, saves, recomputes or redirects a document. Missing/inaccessible
+files, unsupported archives, dirty/pending/invalid loaded documents, absolute
+links, external PropertyFile/PropertyPath assets and Python feature code block
+creation with explicit guidance. Embedded archive assets remain in the native files.
+
+Refresh review replaces the snapshot. Choose ZIP selects a new destination;
+Create package rechecks the exact saved sources, copies native bytes and relative
+directory layout, writes a hashed portable manifest, verifies copied bytes and
+publishes only the completed ZIP. Existing destinations are refused. Failure leaves
+originals unchanged, removes the temporary package and keeps the dialog usable.
+Success explains extraction and the root file to open. Close cancels without
+model mutation; closing the root document closes the dialog.
+
+The package is a file copy with native identities preserved, not Make Unique.
+Close originals before opening the extracted project. Absolute-link repair,
+external file asset/code collection, independent duplication and general format
+migration remain open. Unsupported atomic-publication filesystems fail explicitly.
+[Owner procedure](../tests/ProjectPackage.md).

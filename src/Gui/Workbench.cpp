@@ -820,6 +820,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
           << "Std_ReplaceOccurrenceSource"
           << "Std_ExportDependencyGraph"
           << "Separator"
+          << "Std_PackageProject"
           << "Std_ProjectUtil"
           << "Std_DlgParameter"
           << "Std_DlgCustomize";
