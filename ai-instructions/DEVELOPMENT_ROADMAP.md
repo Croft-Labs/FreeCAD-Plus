@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current bounded checkpoint ready for owner testing: F035 entity selection
+- Current bounded checkpoint ready for owner testing: F058 fillet/chamfer
+  recovery, phase 13 tasks 13.5e/f. Invalid acceptance keeps checked edges for
+  correction and rolls back geometry; copied kernel inputs preserve sources.
+  Both tasks preceded one grouped build; 16 distinct selected checks pass and
+  six captures are reviewed. Full F058 remains open for tangent-chain controls,
+  live previews, corners, exact failure localization and physical acceptance.
+  [Owner procedure](../tests/EdgeTreatmentRecovery.md). Rotate pending owner feedback.
+
+- Previous bounded checkpoint ready for owner testing: F035 entity selection
   filters, phase 10 tasks 10.5e/f. Native vertex/edge/face/whole-object policy
   intersects command gates and has visible reset/Close/Escape recovery. Both tasks
   preceded one grouped build, followed by one startup-registration correction;
@@ -4512,6 +4520,38 @@ also remains open for broader guided placement, versioned standard-table provena
 drawing callouts, installer and physical owner acceptance. Stop here and rotate
 pending owner feedback or a concrete dependency; do not keep polishing this section.
 
+- [x] 13.5e Preserve native fillet/chamfer source topology with element-mapped
+  copies before kernel construction. Keep native Base/Edges/EdgeLinks identities
+  and associative downstream recompute (F058).
+- [x] 13.5f Keep the existing edge task open after failure: validate sizes/current
+  source, recompute before commit, roll back failed create/edit and retain checked
+  edges for correction. Name the attempted edge set without inventing a uniquely
+  failing edge. Verify bounded variable fillet/two-distance chamfer cases, Undo/Redo,
+  Cancel and save/reopen together.
+
+13.5e/f grouped evidence (2026-10-01): both implementation tasks preceded one
+70-second PartGui Release build (including Part), exit 0. Eight native Loft task
+regressions pass in grouped/. Initial edge-treatment fixtures assigned plain
+floats to the Base::Quantity property and left native sizes unchanged; correcting
+them to QuantitySpinBox.rawValue makes all eight checks pass in numeric-fixture/.
+**16 distinct selected checks pass**, zero accepted failures/errors/skips; both GUI
+processes exit 0. No implementation correction or second build was needed.
+Evidence: `D:\Temp\Office-PC\freecad-plus-edge-treatment-20261001`.
+Checks establish two-edge fillet/chamfer failure and retry, BRep source preservation,
+no failed-create Undo entry, Undo/Redo, no-edge/zero-size refusal, changed-source
+refusal, variable fillet save/reopen/downstream source editing, two-distance chamfer,
+failed existing-fillet edit/Cancel, and numeric precision independent of display.
+Six visual/ captures were reviewed: retained failed sets, recovered geometry,
+variable-radius controls/result and two-distance chamfer. Owner fixtures:
+Recovered-Fillet.FCStd, Variable-Fillet.FCStd and Two-Distance-Chamfer.FCStd.
+`evidence.json` records exact source/native hashes and accepted results; historical
+About metadata is not the source identity. No installer/release publication.
+Stop at this working checkpoint and rotate pending owner workflow feedback.
+
+This bounded increment preserves the existing edge/face collector and native
+parameters. Tangent-chain controls, live radius previews, corner controls and precise
+kernel failure localization remain open. [Owner procedure](../tests/EdgeTreatmentRecovery.md).
+
 - [   ] 13.6 Implement 9.1's history-based face move/offset/replace/delete-and-heal
   on a declared class of native/imported solids; explicit repair limits and preview.
 - [   ] 13.7 Spike imported-solid feature recognition only after direct-edit and
@@ -6771,7 +6811,7 @@ reconciliation rules above to every entry.
 <a id="f058"></a>
 ### F058 — Improved fillets/chamfers
 
-**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.5. **Status:** Bounded native fillet/chamfer recovery ready for owner testing under 13.5e/f. Failed acceptance retains checked edges/sizes and prior geometry; native kernel inputs are isolated with element maps intact. One grouped build, 16 distinct selected passing checks and six reviewed captures establish retry, Undo/Redo, variable fillet, two-distance chamfer, failed edit/Cancel and downstream save/reopen. Full tangent-chain, preview, corner, precise kernel-localization and physical acceptance remain open. [Owner procedure](../tests/EdgeTreatmentRecovery.md).
 
 **Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature/Core
 

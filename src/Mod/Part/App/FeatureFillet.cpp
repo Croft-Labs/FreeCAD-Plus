@@ -60,6 +60,8 @@ App::DocumentObjectExecReturn* Fillet::execute()
 #endif
         TopoShape baseTopoShape
             = Feature::getTopoShape(link, ShapeOption::ResolveLink | ShapeOption::Transform);
+        // Kernel builders may alter topology flags; preserve the source and its element map.
+        baseTopoShape = baseTopoShape.makeElementCopy();
         auto baseShape = baseTopoShape.getShape();
         BRepFilletAPI_MakeFillet mkFillet(baseShape);
         TopTools_IndexedMapOfShape mapOfShape;

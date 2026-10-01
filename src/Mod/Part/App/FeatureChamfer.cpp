@@ -52,6 +52,8 @@ App::DocumentObjectExecReturn* Chamfer::execute()
     try {
         TopoShape baseTopoShape
             = Feature::getTopoShape(link, ShapeOption::ResolveLink | ShapeOption::Transform);
+        // Kernel builders may alter topology flags; preserve the source and its element map.
+        baseTopoShape = baseTopoShape.makeElementCopy();
         const auto& baseShape = baseTopoShape.getShape();
         BRepFilletAPI_MakeChamfer mkChamfer(baseShape);
         TopTools_IndexedDataMapOfShapeListOfShape mapEdgeFace;

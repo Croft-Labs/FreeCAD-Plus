@@ -24,6 +24,9 @@
 
 #include <algorithm>
 #include <climits>
+#include <cmath>
+#include <QLabel>
+#include <Base/Exception.h>
 #include <sstream>
 #include <QHeaderView>
 #include <QItemDelegate>
@@ -218,6 +221,8 @@ public:
     Part::FilletBase* fillet;
     QTimer* highlighttimer;
     FilletType filletType;
+    TopoDS_Shape sourceShape;
+    QLabel* resultReview;
     std::vector<int> edge_ids;
     TopTools_IndexedMapOfShape all_edges;
     TopTools_IndexedMapOfShape all_faces;
@@ -254,6 +259,12 @@ DlgFilletEdges::DlgFilletEdges(
 {
     ui->setupUi(this);
     setupConnections();
+    d->resultReview = new QLabel(this);
+    d->resultReview->setObjectName(QStringLiteral("edgeTreatmentReview"));
+    d->resultReview->setWordWrap(true);
+    d->resultReview->setText(tr("Choose edges and sizes. OK checks the result before saving. "
+                                "If construction fails, the checked edges stay available for correction."));
+    ui->gridLayout_3->addWidget(d->resultReview, ui->gridLayout_3->rowCount(), 0);
 
     ui->filletStartRadius->setMaximum(std::numeric_limits<int>::max());
     ui->filletStartRadius->setMinimum(0);
@@ -839,6 +850,7 @@ void DlgFilletEdges::onShapeObjectActivated(int itemPos)
     if (part && part->isDerivedFrom<Part::Feature>()) {
         d->object = part;
         TopoDS_Shape myShape = static_cast<Part::Feature*>(part)->Shape.getValue();
+        d->sourceShape = myShape;
 
         d->all_edges.Clear();
         TopExp::MapShapes(myShape, TopAbs_EDGE, d->all_edges);
@@ -1033,96 +1045,94 @@ const char* DlgFilletEdges::getFilletType() const
 
 bool DlgFilletEdges::accept()
 {
+    auto fail = [this](const QString& reason) {
+        d->resultReview->setText(reason);
+        return false;
+    };
     if (!d->object) {
-        QMessageBox::warning(
-            this,
-            tr("No shape selected"),
-            tr("No valid shape is selected.\n"
-               "Select a valid shape in the drop-down box first.")
-        );
-        return false;
+        return fail(tr("Select a current source shape first."));
     }
-    App::Document* activeDoc = App::GetApplication().getActiveDocument();
-    QAbstractItemModel* model = ui->treeView->model();
-    bool end_radius = !ui->treeView->isColumnHidden(2);
-    bool todo = false;
-
-    QString shape, type, name;
-    std::string fillet = getFilletType();
-    int index = ui->shapeObject->currentIndex();
-    shape = ui->shapeObject->itemData(index).toString();
-    type = QStringLiteral("Part::%1").arg(QString::fromLatin1(fillet.c_str()));
-
-    if (d->fillet) {
-        name = QString::fromLatin1(d->fillet->getNameInDocument());
+    auto* activeDoc = App::GetApplication().getActiveDocument();
+    if (!activeDoc || activeDoc != d->object->getDocument()) {
+        return fail(tr("Activate the source document before accepting this task."));
     }
-    else {
-        name = QString::fromLatin1(activeDoc->getUniqueObjectName(fillet.c_str()).c_str());
+    if (!d->fillet && (activeDoc->hasPendingTransaction()
+                      || activeDoc->getBookedTransactionID() > 0)) {
+        return fail(tr("Finish other edit transactions before creating an edge treatment."));
     }
-
-    activeDoc->openTransaction(fillet.c_str());
-    QString code;
-    if (!d->fillet) {
-        code = QStringLiteral(
-                   "FreeCAD.ActiveDocument.addObject(\"%1\",\"%2\")\n"
-                   "FreeCAD.ActiveDocument.%2.Base = FreeCAD.ActiveDocument.%3\n"
-        )
-                   .arg(type, name, shape);
+    auto* source = dynamic_cast<Part::Feature*>(d->object);
+    if (!source || !source->isValid() || source->isTouched()
+        || source->Shape.getValue().IsNull()
+        || !source->Shape.getValue().IsEqual(d->sourceShape)) {
+        return fail(tr("The source shape changed or needs recompute. Recompute and reopen "
+                       "the task to review the current edge identities."));
     }
-    code += QStringLiteral("__fillets__ = []\n");
+    auto* model = ui->treeView->model();
+    const bool endRadius = !ui->treeView->isColumnHidden(2);
+    QStringList edgeNames;
+    QString code = QStringLiteral("__fillets__ = []\n");
     for (int i = 0; i < model->rowCount(); ++i) {
-        QVariant value = model->index(i, 0).data(Qt::CheckStateRole);
-        Qt::CheckState checkState = static_cast<Qt::CheckState>(value.toInt());
-
-        // is item checked
-        if (checkState & Qt::Checked) {
-            // the index value of the edge
-            int id = model->index(i, 0).data(Qt::UserRole).toInt();
-            Base::Quantity r1 = model->index(i, 1).data(Qt::EditRole).value<Base::Quantity>();
-            Base::Quantity r2 = r1;
-            if (end_radius) {
-                r2 = model->index(i, 2).data(Qt::EditRole).value<Base::Quantity>();
-            }
-            code += QStringLiteral("__fillets__.append((%1,%2,%3))\n")
-                        .arg(id)
-                        .arg(r1.getValue(), 0, 'f', Base::UnitsApi::getDecimals())
-                        .arg(r2.getValue(), 0, 'f', Base::UnitsApi::getDecimals());
-            todo = true;
+        if (model->index(i, 0).data(Qt::CheckStateRole).toInt() != Qt::Checked) {
+            continue;
         }
+        const int id = model->index(i, 0).data(Qt::UserRole).toInt();
+        const double r1 = model->index(i, 1).data(Qt::EditRole).value<Base::Quantity>().getValue();
+        const double r2 = endRadius
+            ? model->index(i, 2).data(Qt::EditRole).value<Base::Quantity>().getValue() : r1;
+        if (!std::isfinite(r1) || !std::isfinite(r2) || r1 <= 0 || r2 <= 0) {
+            return fail(tr("Edge%1 needs positive finite sizes. Its selection has been kept.").arg(id));
+        }
+        edgeNames << QStringLiteral("Edge%1").arg(id);
+        // Preserve entered precision independently of the display's decimal setting.
+        code += QStringLiteral("__fillets__.append((%1,%2,%3))\n")
+                    .arg(id).arg(r1, 0, 'g', 17).arg(r2, 0, 'g', 17);
     }
-
-    if (!todo) {
-        QMessageBox::warning(
-            this,
-            tr("No edge selected"),
-            tr("No edge entity is checked to fillet.\n"
-               "Check one or more edge entities first.")
-        );
-        return false;
+    if (edgeNames.isEmpty()) {
+        return fail(tr("Check at least one edge. No model changes were made."));
     }
-
+    const std::string operation = getFilletType();
+    const QString name = QString::fromLatin1(d->fillet
+        ? d->fillet->getNameInDocument()
+        : activeDoc->getUniqueObjectName(operation.c_str()).c_str());
+    const QString shape = QString::fromLatin1(source->getNameInDocument());
+    if (!d->fillet) {
+        code += QStringLiteral("App.ActiveDocument.addObject('Part::%1','%2')\n"
+                               "App.ActiveDocument.%2.Base = App.ActiveDocument.%3\n")
+                    .arg(QString::fromLatin1(operation.c_str()), name, shape);
+    }
+    code += QStringLiteral("App.ActiveDocument.%1.Edges = __fillets__\n"
+                           "del __fillets__\n").arg(name);
     Gui::WaitCursor wc;
-    code += QStringLiteral(
-                "FreeCAD.ActiveDocument.%1.Edges = __fillets__\n"
-                "del __fillets__\n"
-                "FreeCADGui.ActiveDocument.%2.Visibility = False\n"
-    )
-                .arg(name, shape);
-    Gui::Command::runCommand(Gui::Command::App, code.toLatin1());
-    activeDoc->commitTransaction();
-    activeDoc->recompute();
-    if (d->fillet) {
-        Gui::ViewProvider* vp;
-        vp = Gui::Application::Instance->getViewProvider(d->fillet);
-        if (vp) {
-            vp->show();
-        }
+    // Existing edit tasks own their pending transaction; creation opens its own.
+    if (!activeDoc->hasPendingTransaction()) {
+        activeDoc->openTransaction(operation.c_str());
     }
-
-    QByteArray to = name.toLatin1();
-    QByteArray from = shape.toLatin1();
-    Gui::Command::copyVisual(to, "LineColor", from);
-    Gui::Command::copyVisual(to, "PointColor", from);
+    try {
+        Gui::Command::runCommand(Gui::Command::App, code.toUtf8());
+        activeDoc->recompute();
+        auto* result = dynamic_cast<Part::FilletBase*>(activeDoc->getObject(name.toLatin1()));
+        if (!result || !result->isValid()) {
+            throw Base::RuntimeError(result ? result->getStatusString() : "Edge treatment was not created");
+        }
+        if (result->Shape.getShape().isNull() || !result->Shape.getShape().isValid()) {
+            throw Base::RuntimeError("Edge treatment did not produce a valid shape");
+        }
+        Gui::Command::runCommand(Gui::Command::Gui,
+            QStringLiteral("Gui.ActiveDocument.%1.Visibility = False\n"
+                           "Gui.ActiveDocument.%2.Visibility = True\n").arg(shape, name).toUtf8());
+        Gui::Command::copyVisual(name.toLatin1(), "LineColor", shape.toLatin1());
+        Gui::Command::copyVisual(name.toLatin1(), "PointColor", shape.toLatin1());
+        activeDoc->commitTransaction();
+    }
+    catch (const Base::Exception& error) {
+        activeDoc->abortTransaction();
+        activeDoc->recompute();
+        return fail(tr("%1 failed for the checked set: %2. Original geometry was preserved. "
+                       "Reduce the sizes or uncheck edges and retry; the kernel may not identify "
+                       "one failing edge.\n%3")
+                    .arg(QString::fromLatin1(operation.c_str()), edgeNames.join(QStringLiteral(", ")),
+                         QCoreApplication::translate("Exception", error.what())));
+    }
     return true;
 }
 void DlgFilletEdges::setSelectionGate()

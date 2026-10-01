@@ -1313,3 +1313,24 @@ reference identities change. Existing selections may include other entity types.
 Dedicated sketch-edit, tree/window policies, separate object categories, multiple
 filter combinations and physical/high-DPI acceptance remain open.
 [Owner procedure](../tests/EntitySelectionFilter.md).
+
+## UI-047: Fillet/chamfer failure recovery (F058; roadmap 13.5e/f)
+
+The existing Part Fillet and Chamfer tasks retain their source dropdown, checked
+edge/face collector, constant/variable radius and equal/two-distance controls.
+An inline status explains that OK checks the result before committing. Empty
+selection and nonpositive/nonfinite sizes are refused before a transaction. A
+changed/touched/invalid source requires recompute and a fresh edge review; the
+active document must own the selected source.
+
+Native recompute and shape validity precede commit and source hiding. Failure
+rolls back model changes and leaves the task and checked edges/sizes available.
+The message names the attempted edge set, suggests reducing sizes/removing edges,
+and includes the native error; it does not claim the kernel identified one failing
+edge. Existing-feature edits retain prior parameters and geometry after failure.
+Inputs are copied with native element mappings before kernel construction.
+Accepted features retain native Base/Edges/EdgeLinks and downstream semantics.
+
+No new live preview, tangent-chain collector, corner option or exact failure-region
+classifier is claimed. Broader topology and physical/high-DPI acceptance remain open.
+[Owner procedure](../tests/EdgeTreatmentRecovery.md).
