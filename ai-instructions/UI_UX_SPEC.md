@@ -1400,3 +1400,21 @@ Correction, acceptance and Cancel reuse native transactions. Direct property-edi
 and scripted solver normalization remain unchanged. No contextual suggestions or
 new motion-envelope/conflict preview is claimed.
 [Owner procedure](../tests/JointReview.md).
+
+## UI-052: Reviewed face extension (F066; roadmap 13.1e/f)
+
+The existing Surface Extend Face command opens a modeless review for one face on
+a root Part shape or Body. It shows exact source identity, four independent U/V
+side percentages, fitting tolerance in mm and sample counts. The explanation
+distinguishes parameter spans from physical distances and explicitly discloses
+rectangular B-spline approximation and loss of trimming loops/holes.
+
+Preview uses a copied source and native feature in a hidden temporary document,
+then a non-pickable boundary overlay. Changed inputs remove the preview and disable
+Create; changed source geometry requires reselection. Failure retains settings
+for correction. Create rechecks the current source and native result before one
+transaction commits a separate associative feature. Cancel leaves no feature.
+Source visibility is preserved. Existing feature edits use the native properties.
+No true untrim, kept-region trim selection, maximum-deviation certification or
+complete self-intersection diagnosis is claimed.
+[Owner procedure](../tests/ExtendFaceReview.md).

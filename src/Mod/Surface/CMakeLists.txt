@@ -18,7 +18,7 @@ set(Surface_TestScripts
 )
 
 if(BUILD_GUI)
-    list (APPEND Surface_Scripts InitGui.py)
+    list (APPEND Surface_Scripts InitGui.py ExtendFaceReview.py ExtendFaceGui.py)
 endif(BUILD_GUI)
 
 add_custom_target(SurfaceScripts ALL

@@ -296,31 +296,13 @@ CmdSurfaceExtendFace::CmdSurfaceExtendFace()
 
 void CmdSurfaceExtendFace::activated(int)
 {
-    Gui::SelectionFilter faceFilter("SELECT Part::Feature SUBELEMENT Face COUNT 1");
-    if (faceFilter.match()) {
-        const std::vector<std::string>& sub = faceFilter.Result[0][0].getSubNames();
-        if (sub.size() == 1) {
-            openCommand(QT_TRANSLATE_NOOP("Command", "Extend surface"));
-            std::string FeatName = getUniqueObjectName("Surface");
-            std::string supportString = faceFilter.Result[0][0].getAsPropertyLinkSubString();
-            doCommand(Doc, "App.ActiveDocument.addObject(\"Surface::Extend\",\"%s\")", FeatName.c_str());
-            doCommand(Doc, "App.ActiveDocument.%s.Face = %s", FeatName.c_str(), supportString.c_str());
-            updateActive();
-            commitCommand();
-        }
-    }
-    else {
-        QMessageBox::warning(
-            Gui::getMainWindow(),
-            qApp->translate("Surface_ExtendFace", "Wrong selection"),
-            qApp->translate("Surface_ExtendFace", "Select a single face")
-        );
-    }
+    doCommand(Gui, "import ExtendFaceGui\nExtendFaceGui.show()");
 }
 
 bool CmdSurfaceExtendFace::isActive()
 {
-    return Gui::Selection().countObjectsOfType<Part::Feature>() == 1;
+    return !Gui::Control().activeDialog()
+        && Gui::Selection().countObjectsOfType<Part::Feature>() == 1;
 }
 
 DEF_STD_CMD_A(CmdSurfaceSections)

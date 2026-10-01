@@ -30,6 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
+- Bounded checkpoint ready for owner testing: F066 reviewed face extension,
+  phase 13 tasks 13.1e/f. The existing Surface Extend Face command now reviews
+  U/V percentages, fitting settings and approximation semantics before preview
+  and associative creation. Both tasks preceded one grouped native build;
+  nineteen distinct checks pass and six final GUI captures are reviewed.
+  Full trim/untrim, broad imported/periodic surfaces and physical acceptance remain
+  open. [Owner procedure](../tests/ExtendFaceReview.md). Stop here and rotate
+  pending owner workflow feedback.
+
 - Bounded checkpoint ready for owner testing: F076 joint motion and limit review,
   phase 12 tasks 12.4c/d. Native joint tasks explain five common joint meanings,
   expose exact reference identities and retain reversed-limit edits for correction
@@ -4448,6 +4457,40 @@ Boolean target collection, compound-sheet filling, broader high-curvature diagno
 localization and physical owner acceptance. Stop here for owner testing and rotate.
 [Owner procedure](../tests/SheetThickening.md).
 
+- [x] 13.1e Add an explicit review to native Surface Extend Face: source identity,
+  independent U/V percentages, fitting tolerance/samples and rectangular-domain
+  approximation semantics; preview copied inputs without document mutations (F066).
+- [x] 13.1f Reject empty/nonfinite domains and invalid native fits; recompute
+  sample/tolerance edits, preserve source geometry and create a separate associative
+  feature in one transaction. Validate correction, Cancel, Undo/Redo, source edits,
+  downstream use and persistence together. Both tasks passed grouped build/runtime
+  validation. Full F066 remains open.
+
+13.1e/f grouped evidence (2026-10-01): enabled the existing Surface workbench in
+the local validation configuration (`BUILD_SURFACE=ON`), then completed one
+190-second SurfaceGui/SurfaceScripts build, exit 0. The first grouped run passes
+nine TestExtendFaceReview, nine TestSectionReview and one inherited
+SurfaceTests.TestBlendCurve check (19 distinct selected checks, no skips).
+Visual review found internal tessellation lines in the reused face overlay; a
+Python-only correction renders an edge compound. All nine affected task checks
+pass again in extension-final/, without another native build.
+Six visual-final/ captures were reviewed; the earlier visual/ run is retained.
+Three FCStd owner fixtures cover source, accepted plane and accepted cylinder.
+Evidence: D:\Temp\Office-PC\freecad-plus-extend-face-20261001.
+
+Validated scope: placed planar dimensions/area, quarter-cylinder area/validity,
+explicit loss of trim holes in the rectangular fit, source BRep/placement/visibility
+preservation, no preview objects/transactions, invalid-domain/tolerance recovery,
+changed-input refusal, fault-injected commit rollback/retry, Undo/Redo and
+associative source growth through a downstream extrusion and save/reopen.
+Native feature/property identities remain unchanged. Source and runtime hashes
+are recorded in evidence.json; historical About metadata is not this batch identity.
+No installer/release update or owner acceptance is claimed.
+Full F066 remains open for true supported untrim domains, associative trim-region
+selection, U/V direction handles, measured deviation/self-intersection guarantees,
+broad nested/imported/periodic surfaces, localization and physical acceptance.
+[Owner procedure](../tests/ExtendFaceReview.md). Rotate pending owner feedback.
+
 - [   ] 13.2 Extend sweep/loft with ordered sections, guides, orientation/twist and
   Boolean targets; implement through-curves surfaces with guides. Reuse 3.6/8.2.
   Through-curves surfaces need section-to-section correspondence controls and twist
@@ -7062,7 +7105,7 @@ reconciliation rules above to every entry.
 <a id="f066"></a>
 ### F066 — Trim/untrim/extend surfaces
 
-**Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.1, 13.1e/f. **Status:** Bounded native face-extension review ready for owner testing: explicit parameter/fitting semantics, boundary-only preview, recoverable refusal and separate associative creation. One grouped native build; 19 distinct selected checks pass and six final captures reviewed. Full trim/untrim, measured deviation, broader surfaces and physical acceptance remain open. [Owner procedure](../tests/ExtendFaceReview.md).
 
 **Packages:** G01, G02 · **First delivery:** P7 · **Likely scope:** Feature/Core
 

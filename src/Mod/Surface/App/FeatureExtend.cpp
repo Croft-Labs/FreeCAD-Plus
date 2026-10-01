@@ -23,9 +23,11 @@
  ***************************************************************************/
 
 #include <limits>
+#include <cmath>
 
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepCheck_Analyzer.hxx>
 #include <BRepLProp_SLProps.hxx>
 #include <GeomAPI_PointsToBSplineSurface.hxx>
 #include <Geom_BSplineSurface.hxx>
@@ -75,6 +77,9 @@ Extend::Extend()
 
 short Extend::mustExecute() const
 {
+    if (Tolerance.isTouched() || SampleU.isTouched() || SampleV.isTouched()) {
+        return 1;
+    }
     if (Face.isTouched()) {
         return 1;
     }
@@ -95,6 +100,9 @@ short Extend::mustExecute() const
 
 App::DocumentObjectExecReturn* Extend::execute()
 {
+    if (!std::isfinite(Tolerance.getValue()) || Tolerance.getValue() <= 0.0) {
+        return new App::DocumentObjectExecReturn("Fitting tolerance must be finite and positive.");
+    }
     App::DocumentObject* part = Face.getValue();
     if (!part || !part->isDerivedFrom<Part::Feature>()) {
         return new App::DocumentObjectExecReturn("No shape linked.");
@@ -126,6 +134,11 @@ App::DocumentObjectExecReturn* Extend::execute()
     double ev2 = v2 + vr * ExtendVPos.getValue();
     double eur = eu2 - eu1;
     double evr = ev2 - ev1;
+    if (!std::isfinite(eu1) || !std::isfinite(eu2) || !std::isfinite(ev1)
+        || !std::isfinite(ev2) || eur <= Precision::PConfusion()
+        || evr <= Precision::PConfusion()) {
+        return new App::DocumentObjectExecReturn("Extended U and V domains must be finite and nonempty.");
+    }
 
     long numU = SampleU.getValue();
     long numV = SampleV.getValue();
@@ -148,9 +161,15 @@ App::DocumentObjectExecReturn* Extend::execute()
 
     GeomAPI_PointsToBSplineSurface approx;
     approx.Init(approxPoints, ParType, DegMin, DegMax, Continuity, Tol3d);
+    if (!approx.IsDone()) {
+        return new App::DocumentObjectExecReturn("Could not fit the extended surface.");
+    }
 
     Handle(Geom_BSplineSurface) surface(approx.Surface());
     BRepBuilderAPI_MakeFace mkFace(surface, Precision::Confusion());
+    if (!mkFace.IsDone() || !BRepCheck_Analyzer(mkFace.Face()).IsValid()) {
+        return new App::DocumentObjectExecReturn("The extended surface is not a valid face.");
+    }
 
     Shape.setValue(mkFace.Face());
 
