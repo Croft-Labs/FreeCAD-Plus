@@ -715,3 +715,15 @@ sheet. Cancel creates nothing. Source/document edits invalidate review; recomput
 Review again restore eligibility. Size/template/context errors stay inline for correction.
 Source/document deletion closes the dialog. Geometry preview, section/detail views and
 annotations remain separate. [Owner procedure](../tests/DrawingSetup.md).
+
+## UI-022: Document updates (F087/F088; roadmap 7.5.7a/b)
+
+Tools > Document updates opens a modeless panel bound to the current document. A native
+deferral checkbox, failed/pending counts and object/status/affected-input/native-detail
+columns distinguish visible cached results from model currency. Object/input selection
+preserves visibility. Refresh status rereads flags; Recompute now updates once, retaining
+mode. Pending owner transactions, wrong document and active tasks receive inline guidance.
+
+Close retains the session setting; document closure removes observers/timers. The panel
+states native preview exceptions, session persistence and background/external scope limits.
+There is no custom geometry state or automatic repair. [Owner procedure](../tests/DocumentUpdates.md).

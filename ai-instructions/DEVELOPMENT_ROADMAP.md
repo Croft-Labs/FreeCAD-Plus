@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F102 drawing creation,
+- Current product batch complete for owner testing: F087/F088 document updates,
+  phase 7 tasks 7.5.7a/b.
+  Tools > Document updates exposes native deferral, explicit recompute, failed/pending
+  objects and affected loaded inputs. Both tasks preceded one grouped build;
+  21 selected checks pass across accepted runs and five captures reviewed.
+  [Try the deferred-edit/repair example](../tests/DocumentUpdates.md). Targeted updates,
+  background cancellation and broader failure classification remain open; rotate
+  after the owner-test checkpoint.
+
+- Previous product batch complete for owner testing: F102 drawing creation,
   phase 15 tasks 15.3a/b.
   TechDraw > Page > Create drawing sheet provides A4/A3 border-only templates,
   explicit scale/base orientation/first- or third-angle convention and linked
@@ -1960,6 +1969,36 @@ feature in the same complete task pane. Repeat the body-creation cases with Revo
   failing input; provide a deliberate update action. Deferred results must not be
   treated as current by export, CAM or downstream analysis. Test switching modes,
   queued edits, failure recovery, cancellation and save/reopen status.
+
+- [x] 7.5.7a Expose native deferred recompute plus explicit whole-document update
+  (F088), preserving session mode, owner transactions and Undo/Redo. No replacement
+  update engine or persistence schema; targeted/asynchronous cancellation remains open.
+- [x] 7.5.7b Show native failed/pending objects and affected loaded dependents
+  (F087/F088), with object/input navigation and native details. Validate stale export
+  refusal, failure repair, mode changes, lifecycle and save/reopen. Bound inspection
+  and stop at a usable owner-test checkpoint. Both tasks complete for owner testing;
+  grouped build/runtime checks pass and five captures reviewed.
+
+7.5.7a/b grouped evidence (2026-10-01): both tasks preceded one FreeCADGui/
+FreeCADGui_Resources Release build, exit 0. 21 distinct selected checks pass without
+failures/errors/skips: 7 TestDocumentUpdates in updates-accepted/, 7 dependency-inspector
+and 7 command-search in grouped/; accepted process exits 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-document-updates-20261001`.
+FreeCADGui SHA256: `d2aab61ea0e6db907281baa3323e86b0c1379e051fceb7a84ca53f7dd0eba2c7`.
+Deferred dimension edits retain cached geometry until explicit update; native mode
+is preserved, normal-mode results agree, and the existing manufacturing STL handoff
+rejects pending/invalid linked results. Native Cut failure/input navigation/repair,
+loaded external dependency status, cycle rejection, Undo/Redo, transaction guards,
+session mode and save/reopen pass. Initial grouped/ and updates-verified/ retain
+external-link fixture errors requiring first the source and then the owner document
+to be saved. Only the fixture changed; no application restaging or corrective build.
+Targeted recompute, asynchronous progress/cancellation, unloaded references, broader
+first-cause classification and physical acceptance remain open. No installer/release
+update; whole F087/F088 and parent 7.5.7 remain open. [Owner procedure](../tests/DocumentUpdates.md).
+visual/ contains five reviewed captures, Update-Bracket.FCStd and
+Update-Bracket-Repaired.FCStd. acceptance-summary.json / validated-identities.json
+record accepted suite and source/runtime/native identities; installed DocumentUpdates.py
+matches source. Stop here for owner workflow feedback and rotate item families.
 
 ### [   ] 7.6 Preserve documents and external consumers
 
@@ -6014,7 +6053,7 @@ reconciliation rules above to every entry.
 <a id="f087"></a>
 ### F087 — Useful failure reporting
 
-**Owning tasks:** 7.5, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 7.5, 10.9, 7.5.7b. **Status:** Bounded native failure/pending inspector ready for owner testing. Lists affected loaded dependents and reachable failed/pending inputs with native details and explicit navigation. Cut failure, linked-result stale export refusal and repair pass; 21 selected checks and five reviewed captures across the F087/F088 batch. Whole F087 remains open for broader failure classification, unique first-cause diagnosis, repair actions and physical acceptance. See [owner procedure](../tests/DocumentUpdates.md).
 
 **Packages:** A07, U11 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
 
@@ -6027,7 +6066,7 @@ reconciliation rules above to every entry.
 <a id="f088"></a>
 ### F088 — Controlled recompute
 
-**Owning tasks:** 7.5.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 7.5.7, 7.5.7a/b. **Status:** Native session deferral and explicit whole-document recompute are ready for owner testing. Cached/pending/failed/affected states, loaded external inputs, cycle refusal, mode preservation, transactions, Undo/Redo and save/reopen pass. One grouped build; 21 selected passing checks and five reviewed captures. Whole F088 remains open for targeted dependency updates, asynchronous progress/cancellation, broader downstream currency and physical acceptance. See [owner procedure](../tests/DocumentUpdates.md).
 
 **Packages:** A07, X03 · **First delivery:** P3/P10 · **Likely scope:** Core/Feature
 

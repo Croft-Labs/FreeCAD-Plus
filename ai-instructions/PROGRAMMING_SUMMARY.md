@@ -62,6 +62,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Document updates (F087/F088): [`DocumentUpdates.py`](../src/Gui/DocumentUpdates.py)
+exposes native deferral/explicit recompute and pending/failed/affected input status.
+Reuses dependency-inspector identities and native document updates; [owner procedure](../tests/DocumentUpdates.md),
+roadmap 7.5.7a/b. Targeted updates and background completion remain open.
+
 Drawing setup (F102): [`DrawingSetup.py`](../src/Mod/TechDraw/TechDrawTools/DrawingSetup.py)
 provides TechDraw > Page > Create drawing sheet, using native templates and projection
 groups with explicit orientation, scale and convention. [Owner procedure](../tests/DrawingSetup.md),

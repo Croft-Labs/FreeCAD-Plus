@@ -1,6 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F102 drawing setup, phase 15 tasks 15.3a/b.
+Latest batch: F087/F088 document updates, phase 7 tasks 7.5.7a/b.
+Tools > Document updates exposes native deferred recompute, explicit one-time document
+update and failed/pending/affected loaded dependency status. Object/input navigation
+preserves visibility. Cached shapes do not imply current inputs. Native recompute
+checks cycles, bypasses deferral only for the explicit action, preserves the session
+mode and opens no extra model transaction. No custom persistence or update engine.
+
+Both tasks preceded one FreeCADGui/FreeCADGui_Resources Release build, exit 0.
+21 distinct selected checks pass without failures/errors/skips: 7 TestDocumentUpdates
+in updates-accepted/, 7 TestDependencyInspector and 7 TestCommandSearch in grouped/;
+accepted process exits 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-document-updates-20261001.
+acceptance-summary.json / validated-identities.json record accepted suites and identities;
+installed DocumentUpdates.py matches source. FreeCADGui SHA256:
+d2aab61ea0e6db907281baa3323e86b0c1379e051fceb7a84ca53f7dd0eba2c7.
+
+visual/ contains five reviewed captures and Update-Bracket.FCStd /
+Update-Bracket-Repaired.FCStd. Deferred grouped dimension changes, native Cut failure
+and affected Link, input navigation, repair, existing manufacturing STL stale refusal,
+cycle rejection, owner transaction guards, Undo/Redo and session-mode reopen pass.
+Loaded external dependencies are inspected without claiming to update the external
+document. tests/DocumentUpdates.md is the owner procedure. Initial grouped/ and
+updates-verified/ retain fixture errors requiring the source and owner to be saved
+before a native external link. Only that fixture changed; no app restaging or second
+build. Accepted checks span directories, not a claim that earlier aggregates passed.
+
+Whole F087/F088 remain open for unique first-cause classification, targeted dependency
+updates, asynchronous progress/cancellation, unloaded references, broader downstream
+currency and physical/high-DPI acceptance. No installer/release update. Stop for
+owner workflow testing and rotate to another item family.
+
+Previous batch: F102 drawing setup, phase 15 tasks 15.3a/b.
 TechDraw > Page > Create drawing sheet creates native same-document pages for one
 root solid/Body, with A4/A3 border-only templates, drawing/model scale, base orientation,
 first/third-angle projection and optional top/right views. Native links and update

@@ -408,6 +408,19 @@ feedback. No new proxy/schema is introduced. Roadmap 15.3a/b covers this bounded
 pilot; occurrence/external sources, custom templates, graphical preview, section/detail
 setup and reference repair remain open. [Owner procedure](../tests/DrawingSetup.md); UI-021.
 
+## Current document update pilot (F087/F088)
+
+Tools > Document updates exposes native failed/pending objects and affected loaded
+inputs, with deliberate navigation and native error text. Native Skip Recomputes
+controls deferral; explicit Recompute now updates the document once with cycle checking
+and leaves its session mode unchanged. No error flags are cleared and no update engine
+or persisted schema is introduced. Existing model edits retain their Undo/Redo history.
+
+Inspection is bounded to 2000 objects including loaded inputs. A reachable affected
+input is evidence, not unique-cause classification. Native edit previews can still
+update individual objects; unloaded references and asynchronous background completion
+are not certified. Roadmap 7.5.7a/b; [owner procedure](../tests/DocumentUpdates.md), UI-022.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap
