@@ -2,16 +2,19 @@
 
 ## Current focus
 
-- Current product batch: phase 8 Extrude end-limit reference restrictions
-  (8.1.4e/f), advancing F029-F031. Both fixes and six GUI cases preceded one
-  native build. Final acceptance: 213 distinct passing tests and three readable
-  task captures. Self/downstream links are rejected before assignment; typed
-  datum/origin planes follow existing Body selection rules. Rejected picks retain
-  saved references and displayed names while staying ready for correction.
-  Typed rejection, invalid OK and edit Cancel recovery pass. Broader command,
-  occurrence/global-filter, physical input/high-DPI and F032 Apply/repeat gates
-  remain open. No installer/release. Next bounded focus: audit start-reference
-  restrictions and recovery separately from the validated end-limit workflow.
+- Current product batch: phase 6 indexed STL CAM output (6.4.3), advancing
+  bounded F089/F097 acceptance outside F029-F032 and phase 16. Fixed generation
+  rewriting indexed model/stock producers and leaving them permanently dirty,
+  which blocked export. Indexed stock is now an operation dependency; generation
+  consumes current geometry and rejects stale inputs without rewriting producers.
+  Final evidence: 116 distinct passing checks, 17 configured LinuxCNC/Grbl output
+  fixtures, shared-tab/origin-edit recovery and exact saved-path persistence.
+  Python-only batch using compatible binaries; no native rebuild or release.
+  45-degree Waterline regenerated-contour repeatability, native viewport and
+  simulation gates remain open. F029-F032 stay at their validated checkpoint;
+  start-reference auditing is deferred. Rotate the next implementation batch to
+  another dependency-ready item family; avoid extending one local audit indefinitely.
+
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
   the unchanged validated application and publicly published. Runtime hash
@@ -1537,6 +1540,47 @@ rotary-axis output is outside this implementation.
 - [ X ] 6.4.1 Define setup orientation, work origin, stock and part references for each side/index; distinguish manual indexing between jobs from controller-driven indexing.
 - [ X ] 6.4.2 Preserve the same physical holding tabs across transformed setups; propagate tab edits and invalidate every affected path.
 - [   ] 6.4.3 Validate opposing faces and a non-orthogonal index, coordinate transforms, stock registration, tab clearance, safe linking moves and per-setup output.
+  Per-setup export and edit/persistence checks completed in the 2026-09-30 batch
+  below. Native indexed viewport acceptance and regenerated-contour repeatability
+  remain open; this parent is not marked complete by the output tests.
+
+Evidence, 2026-09-30 (`D:\Temp\Office-PC\freecad-plus-indexed-output-20260930`):
+
+- Completed the indexed producer/dependency fix: generation no longer invokes
+  model/stock proxies after native recompute. Indexed stock joins the explicit
+  operation dependencies; stale or invalid indexed inputs reject direct generation
+  and leave no old path. The unchanged post guard still rejects stale export.
+- Completed real-job output validation for 180/45-degree STL setups and both
+  Parallel/Waterline strategies through LinuxCNC/Grbl. Explicit three-axis metric
+  configuration, six-decimal axis output and G17/G90 preamble; 17 retained `.nc`
+  fixtures. Every posted XYZ endpoint and rapid/feed mode agrees with its native
+  operation within 0.000001 mm, with final clearance and sampled tab protection.
+  No rotary motion, controller connection or machine certification is implied.
+- Completed shared-tab and independent-origin edit checks: dirty jobs reject
+  posting, native recompute refreshes both Waterline outputs after a shared-tab
+  edit, and changing one custom origin preserves the other setup's path.
+  Saved commands persist exactly; reopened, regenerated jobs post and retain tab
+  clearance. This does not prove identical regenerated contours.
+- Final acceptance uses `fixed` for the 24 mesh-workflow, 7 nested-post and 82
+  invalid-input regressions, plus `verified` for the 3 final output tests: 116
+  distinct passes, zero failures/errors/skips in those selected results, process
+  exits 0. `acceptance-summary.json` and `validated-identities.json` record exact
+  suites, matching source/runtime modules and binary identities. The mixed `fixed`
+  aggregate includes earlier output-fixture failures and is not itself claimed PASS.
+- Initial runs reproduced dirty indexed producers despite repeated recompute.
+  Fixture corrections handle the existing helper's direct execute, configure the
+  machine bundle preamble and avoid assuming a fixed Waterline contour start.
+  A slow OCC-distance probe was interrupted; its overlapping exploratory launch
+  is excluded from acceptance. The final `verified` run was isolated and passed.
+- Open finding: the 45-degree Waterline regeneration comparison found horizontal
+  cutting lengths 653.304546 versus 653.329250 mm and up to 0.172558 mm sampled
+  bidirectional contour distance. The 180-degree contour matches at floating
+  precision. Retain `persistence-comparison.json`, probe and output artifacts;
+  investigate repeatability separately. Do not close F089 or 6.4.3 on this evidence.
+- Both source changes and the three workflow cases preceded grouped validation.
+  No native build was needed; installed Python modules match source. Viewport,
+  material-removal simulation and broader post/machine acceptance remain pending.
+
 
 Evidence, 2026-09-29 (external root `D:\Temp\Office-PC\freecad-plus-validation-20260928`):
 
@@ -1560,7 +1604,8 @@ Evidence, 2026-09-29 (external root `D:\Temp\Office-PC\freecad-plus-validation-2
   historical native stamp `8abce719de` (26.3.0dev, revision 49009); this stamp is
   not the identity of the new Python implementation. Use the manifest and commit.
 - Native mouse/viewport acceptance, representative material-removal simulation,
-  and per-setup postprocessor review remain open (6.2.4 and 6.4.3). Automated
+  and per-setup postprocessor review remained open at this checkpoint (6.2.4 and
+  6.4.3); the later configured-output evidence above advances the latter. Automated
   indexed geometry/path checks pass; they do not establish machine/fixture safety.
 
 
@@ -5418,6 +5463,9 @@ reconciliation rules above to every entry.
 
 **Complete when:** Load an STL, declare its units, set placement, generate the supported finishing path, and independently compare expected tool contact within stated tolerance. No thousands-of-faces conversion is required.
 
+Bounded increment: phase 6.4.3 now covers configured per-setup STL post output;
+regenerated Waterline contour repeatability and broader F089 acceptance remain open.
+
 <a id="f090"></a>
 ### F090 — Guided CAM setup
 
@@ -5521,6 +5569,9 @@ reconciliation rules above to every entry.
 **Workflow and behavior:** Track dependencies on model geometry/placement, stock, tools/holders, fixtures, operation parameters, units, and relevant post settings. Mark affected stages stale and distinguish toolpath regeneration from reposting. If output is exported despite a permitted warning workflow, identify its source revision/state explicitly rather than silently using stale data.
 
 **Complete when:** Change a cutter diameter, stock offset, and model placement separately. Exactly the affected paths/simulations/output states invalidate, and regeneration restores a traceable current state.
+
+Bounded increment: phase 6.4.3 verifies shared-tab/origin invalidation through
+real indexed-job export and recovery. Broader input/output-state tracking remains open.
 
 <a id="f098"></a>
 ### F098 — Unified measurement

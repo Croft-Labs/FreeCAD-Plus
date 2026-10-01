@@ -89,6 +89,25 @@ class Geometry:
             obj.Placement = shape.Placement
 
 
+def require_current_geometry(job):
+    """Consume indexed inputs without rewriting already recomputed producers."""
+    frame = job.IndexFrame
+    geometry = list(job.Model.Group) + [job.Stock] + list(getattr(job, "HoldingTabs", []))
+    for item in geometry:
+        if not item or getattr(item, "SetupFrame", None) != frame:
+            raise ValueError("Indexed models, stock and tabs must use the same setup frame")
+    seen = set()
+    for item in [frame] + geometry:
+        for dependency in [item] + list(item.OutListRecursive):
+            if dependency.Name in seen:
+                continue
+            seen.add(dependency.Name)
+            if "Invalid" in dependency.State or "Touched" in dependency.State:
+                raise ValueError("Indexed setup input needs recompute or repair: " + dependency.Label)
+    if not frame.SourceStock or frame.SourceStock.Shape.isNull():
+        raise ValueError("Indexed setup needs valid source stock")
+
+
 def copy_geometry(source, frame, name):
     kind = "Mesh::FeaturePython" if hasattr(source, "Mesh") else "Part::FeaturePython"
     obj = source.Document.addObject(kind, name)

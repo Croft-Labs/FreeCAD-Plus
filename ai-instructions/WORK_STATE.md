@@ -1,6 +1,31 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest product batch: phase 8, tasks 8.1.4e/f, advancing F029-F031. Extrude
+Latest batch: phase 6 indexed STL CAM output, task 6.4.3 (bounded F089/F097).
+User requested diversification from repeated F029-F032 batches; start-reference
+follow-up is deferred. Fixed indexed operation generation rewriting recomputed
+model/stock producers and permanently blocking export. Consume current producers,
+reject stale inputs and schedule indexed stock as an operation dependency.
+
+Final acceptance: 116 distinct passing tests, no failures/errors/skips in the
+selected results, process exits 0. Evidence root:
+D:\Temp\Office-PC\freecad-plus-indexed-output-20260930.
+Use acceptance-summary.json, validated-identities.json, the three existing suites
+from fixed/ (24 + 7 + 82), and the final new suite from verified/ (3). The mixed
+fixed aggregate contains earlier fixture failures; do not call it a full PASS.
+17 retained output fixtures cover 180/45-degree jobs, both supported strategies,
+LinuxCNC/Grbl, shared-tab edits, custom-origin isolation and exact saved commands.
+Regenerated output matches current native paths and retains sampled tab clearance.
+
+Open: 45-degree Waterline regenerated contours differ by up to 0.172558 mm in the
+bounded comparison (persistence-comparison.json); viewport/indexed interaction and
+material-removal simulation also remain unvalidated. 6.4.3 and whole F089/F097 stay
+open. A slow OCC oracle was interrupted; its overlapping exploratory launch is
+excluded from acceptance. Final verified/ was isolated. Source/runtime hashes
+match; Python-only batch, no native rebuild, installer or release.
+Rotate the next implementation batch to another dependency-ready item family;
+retain contour repeatability as an explicit bounded follow-up, not an endless audit.
+
+Previous product batch: phase 8, tasks 8.1.4e/f, advancing F029-F031. Extrude
 end-limit typing/picking now reject self and downstream links before assignment.
 Typed datum/origin planes follow the existing Body/type selection policy. Rejected
 picks retain saved links and displayed names while keeping the picker active;

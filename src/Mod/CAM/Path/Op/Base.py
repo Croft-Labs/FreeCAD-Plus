@@ -1238,6 +1238,11 @@ class ObjectOp:
                                 "Job model dependencies for recomputation")
                 obj.setEditorMode("ModelDependencies", 2)
             dependencies = [job.Model] + list(job.Model.Group)
+            if getattr(job, "IndexFrame", None) and job.Stock:
+                # Indexed stock shares the frame but is a separate producer.
+                # Schedule it before the operation rather than rewriting it
+                # from inside toolpath generation.
+                dependencies.append(job.Stock)
             if obj.ModelDependencies != dependencies:
                 obj.ModelDependencies = dependencies
         elif hasattr(obj, "ModelDependencies") and obj.ModelDependencies:
@@ -1287,12 +1292,9 @@ class ObjectOp:
             bind_operation(obj, job)
         if job and getattr(job, "IndexFrame", None):
             obj.Path = Path.Path()
-            frame = job.IndexFrame
-            frame.Proxy.execute(frame)
-            for geometry in list(job.Model.Group) + [job.Stock]:
-                if getattr(geometry, "SetupFrame", None) != frame:
-                    raise ValueError("Indexed models and stock must use the same setup frame")
-                geometry.Proxy.execute(geometry)
+            from Path.Main.IndexedSetup import require_current_geometry
+
+            require_current_geometry(job)
         if job and any(hasattr(model, "Mesh") for model in job.Model.Group):
             obj.Path = Path.Path()
             if self.__class__.__module__ != "Path.Op.PlanarSurface":

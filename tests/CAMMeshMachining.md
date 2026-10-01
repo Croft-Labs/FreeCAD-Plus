@@ -297,3 +297,36 @@ Holding Tab and Indexed Setup command regressions invoke Command.Activated with
 a selected job. Creation must open the owned task transaction; cancellation must
 remove created objects, and an unrelated pending transaction must remain intact
 when creation is rejected. Holding Tab accept/edit/Undo/Redo are also exercised.
+
+
+## Indexed per-setup post output
+
+Run `tests/TestIndexedSetupExport.py` through the same source-built GUI harness,
+with the checkout's `tests` directory on `sys.path`. Pair it with
+`CAMTests.TestMeshMachining`, `CAMTests.TestDressupPost` and
+`TestCAMInvalidInputs` when changing indexed operation dependencies.
+
+The fixture imports an STL, creates real 180-degree and 45-degree indexed Jobs,
+and posts Parallel/Waterline separately through LinuxCNC and Grbl. It supplies a
+three-axis metric machine configuration, six-decimal axes and an explicit
+`G17 G90` preamble. These are configured-output checks, not factory-default or
+controller certification. The independent linear-motion decoder compares every
+XYZ endpoint and rapid/feed mode to the generated operation within 0.000001 mm,
+checks final clearance and rejects rotary words. Sampled cutter/tab clearance is
+also checked on the exported motion; no material-removal simulator is used.
+
+Shared-tab edits must reject export until recompute and then change both indexed
+Waterline outputs. An independent custom-origin edit must preserve the other
+setup's path. Reopening must preserve saved commands exactly and allow posting
+regenerated operations with the same output/native-path and tab-clearance checks.
+Contour repeatability is not closed by this test: the bounded 45-degree Waterline
+probe found up to 0.172558 mm bidirectional endpoint/midpoint distance after
+regeneration, whereas the 180-degree contour differed only at floating precision.
+This remains recorded under roadmap 6.4.3; no unchanged-contour claim is made. With
+`FREECAD_PLUS_VALIDATION_DIR` set, the `.nc` fixtures are retained under
+`indexed-output` for review. No output is sent to a machine.
+
+Indexed generation consumes recomputed producers; it must not directly execute
+model/stock proxies and leave them dirty. Indexed stock is an explicit operation
+dependency. Direct generation with stale indexed inputs rejects and clears the
+old path; the existing post guard remains in force.
