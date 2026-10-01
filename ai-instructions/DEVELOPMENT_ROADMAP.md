@@ -2571,7 +2571,10 @@ Feedback files in `smoke-ready/`: `Component-Independent-References.cadprt`,
 General topology/expression copying and loaded/unloaded external-ancestor override
 remapping remain under 7.8.8b. A loaded other-file override is refused before mutation;
 no cross-file Undo is implied. The prior native suppression scheduling limitation
-(7.8.5e) remains open. Publication is recorded after commit.
+(7.8.5e) remains open. Implementation
+`b2d1dd642519da7bb953b03e5b30a0d4e7b6293c` was pushed to `origin/main` and verified
+with `git ls-remote`. `acceptance-identities.json` records seven matching modules,
+six unchanged native artifacts, feedback fixture hashes and the reviewed capture.
 
 2026-10-01 Model History feedback batch (7.8.5e): branch eligibility, result/input
 visibility, selected-item transactions and dependency explanation changes preceded

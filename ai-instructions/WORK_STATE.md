@@ -25,6 +25,9 @@ migration: native suppression scheduling, multi-output lineage, solver/BOM/mass,
 deep copies and general expression/topology/external-file remapping remain open.
 Other open files' nested overrides are refused before copy because they require
 multi-document transaction handling. Unloaded ancestor files remain a broader gate.
+Implementation `b2d1dd6425` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching modules, six unchanged native
+artifacts, fixture hashes and the reviewed capture.
 
 Previous feedback batch:
 Current feedback batch: roadmap 7.8.5e, Model History branch restoration.
