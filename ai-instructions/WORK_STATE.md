@@ -18,6 +18,9 @@ Feedback fixture:
 Keep broad tests deferred for owner feedback. Native task entry/exit across files,
 save routing and general multi-tab display remain open; no schema, native source,
 installer or release change.
+Implementation `eb206eccf2` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine unchanged
+native artifacts, build/check results and final fixture/capture identities.
 
 Previous feedback batch follows.
 

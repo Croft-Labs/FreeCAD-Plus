@@ -2483,6 +2483,9 @@ unresolved-link fixture and no Python traceback. Two navigator captures were rev
 Feedback fixture: `smoke-final/testIsolatedTabsRestoreNestedContextAndOwningFileTitle/Assembly.cadprt`
 with its sibling `Renamed-Support.cadprt`. No schema, native source, installer or release
 change. Broader native task, save-routing and interactive owner acceptance stay open.
+Publication: implementation `eb206eccf2` pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine unchanged
+native artifacts and the final build/check/fixture/capture evidence. No release published.
 
 2026-10-01 externalization feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-externalization-20261001`.
