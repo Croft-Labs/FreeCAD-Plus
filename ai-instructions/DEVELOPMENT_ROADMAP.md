@@ -30,7 +30,17 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F104 native assembly BOM scope
+- Current product batch complete for owner testing: F123 local command help and
+  keyboard/display recovery, phase 10 tasks 10.9a/b. Existing command search now
+  includes thirteen offline guides, live native availability, scrollable details,
+  F1/Ctrl+L navigation and a window-only layout reset. Both tasks preceded one
+  resource build/staging pass; no C++ recompilation was needed. Eighteen selected
+  checks pass across accepted suites; six final captures reviewed, including actual
+  rendered 20-point text. [Owner procedure](../tests/CommandSearch.md#f123-local-help-and-accessibility-batch-phase-10-tasks-109ab).
+  Full F123 remains open for unified workspaces, broader keyboard workflows and
+  physical accessibility/high-DPI acceptance. Stop here for feedback and rotate.
+
+- Previous product batch complete for owner testing: F104 native assembly BOM scope
   and inclusion, phase 15 tasks 15.4a/b. Quantities group only siblings; assembly-group
   scope is resolved explicitly, and per-BOM exclusions preserve visibility and source
   objects. Both tasks preceded one successful native build after enabling Assembly
@@ -3207,6 +3217,39 @@ preceded grouped testing using engine 2df76790b4; no native build or release cha
   local help, keyboard navigation and display accessibility (U11; [F025](#f025),
   [F123](#f123)). Preserve the active engineering document across modeling, CAM,
   drawings and analysis; validate keyboard-only tasks and enlarged-display recovery.
+- [ X ] 10.9a Add offline contextual guidance to the existing command-search pilot.
+  Thirteen curated entries describe inputs, workflow, Cancel/Undo or export effects,
+  and known limits; uncurated entries explicitly retain native descriptions.
+  Reading never runs commands or loads a workbench. Native availability stays
+  authoritative and rechecks before Run; active-document state refreshes while open.
+- [ X ] 10.9b Make command-search guidance keyboard-readable and recoverable with
+  enlarged text. Scrollable split panes, accessible names, local F1/Ctrl+L, tab order,
+  button mnemonics and window-only Reset layout preserve document state and global
+  fonts/shortcuts. Validate reading, wrong workbench, empty/no-document recovery,
+  unchanged geometry/selection/Undo history, and existing native Pocket lifecycle.
+
+10.9a/b evidence (2026-10-01): both tasks preceded one successful
+FreeCADGui_Resources build/staging pass in the existing local build. Python-only
+changes required no C++ recompilation. Evidence:
+`D:\Temp\Office-PC\freecad-plus-command-help-20261001`.
+Initial `grouped/` passed seven DocumentUpdates and ten of eleven CommandSearch
+checks; the F1 keyboard check failed. Palette-local shortcut handling was corrected
+and only CommandSearch.py restaged. `help-verified/` passes all eleven. Visual review
+then found application styling overrode the inherited font stress setting; the
+final test explicitly checks actual rendered 20-point text. `enlarged-verified/`
+passes all eleven, including native Pocket geometry, Undo/Redo and save/reopen.
+**18 distinct selected passes**, zero failures/errors/skips in accepted suites;
+all native process exits 0. Initial failed aggregate remains recorded.
+Six reviewed `visual-accepted/` captures and Command-Help-Example.FCStd; `visual/`
+retains the ineffective inherited-font stress captures. Source/runtime module hashes
+match; `validated-identities.json` and `acceptance-summary.json` identify the payload.
+FreeCADGui SHA256: `72AD07F792C746280276D8388CB0845EB57BA293BBD17140E093CE98CF591655`.
+Historical About metadata is not the changed Python source identity.
+No installer/release update. Whole 10.9/F123 remains open for shared workspace
+transitions, broader command eligibility explanations, keyboard modeling/downstream
+coverage, localization, physical screen-reader and multi-monitor/high-DPI acceptance.
+The owner guide is [CommandSearch.md](../tests/CommandSearch.md). Stop at this
+bounded owner-test checkpoint and rotate to another family.
 
 Gate G4: simple part/assembly creation, edits, precise moves and recovery survive
 save/reopen. Guided/direct entry and aliases produce equivalent semantics. Test
@@ -6711,7 +6754,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f123"></a>
 ### F123 — Contextual workspace, help, and accessibility
 
-**Owning tasks:** 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.9, 10.9a/b. **Status:** Bounded offline command-help and keyboard/display recovery pilot ready for owner testing. Thirteen guides extend existing command search with native live availability, scrollable plain-text detail, local F1/Ctrl+L and window-only layout reset. Eighteen selected checks pass across accepted suites, with six reviewed captures including actual rendered 20-point text. Whole F123 remains open for broader workspace/keyboard workflows, command explanations, localization and physical accessibility/high-DPI acceptance. See [owner procedure](../tests/CommandSearch.md).
 
 **Packages:** U11 · **First delivery:** P3/P4 · **Likely scope:** UI/Feature
 

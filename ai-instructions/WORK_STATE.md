@@ -1,6 +1,34 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F104 assembly BOM scope/inclusion, phase 15 tasks 15.4a/b.
+Latest batch: F123 offline command help and keyboard/display recovery, phase 10
+10.9a/b. Existing command search now has thirteen local workflow guides, native
+live availability, a scrollable plain-text pane, F1/Ctrl+L navigation, accessible
+names and window-only Reset layout. Reading/reset leaves the model, selection,
+Undo history and global fonts/shortcuts intact. Whole F123/10.9 remains open.
+
+Both tasks preceded one successful FreeCADGui_Resources build/staging pass;
+no C++ recompilation was needed. Initial grouped/ passed seven TestDocumentUpdates
+and ten of eleven TestCommandSearch checks; F1 failed. Corrected palette-local
+key handling and restaged only CommandSearch.py. help-verified/ passes all eleven.
+Visual review exposed application styling overriding inherited test fonts; final
+stress checks verify actual rendered 20-point text. enlarged-verified/ passes all
+eleven; 18 distinct selected passes across accepted suites, no failures/errors/
+skips, native process exits 0. Initial failed aggregate remains preserved.
+
+Evidence: D:\Temp\Office-PC\freecad-plus-command-help-20261001.
+Six reviewed visual-accepted/ captures and Command-Help-Example.FCStd; initial
+visual/ font-stress captures retained. FreeCADGui SHA256:
+72AD07F792C746280276D8388CB0845EB57BA293BBD17140E093CE98CF591655.
+validated-identities.json records source/runtime hashes and native payload identity;
+acceptance-summary.json links accepted suites. Historical About stamp is not this
+Python source identity. tests/CommandSearch.md is the updated owner procedure.
+
+Full shared workspace transitions, command-specific explanations, broader keyboard
+modeling/downstream workflows, localization and physical screen-reader/high-DPI
+acceptance remain open. No installer/release update. Stop here for owner testing
+and rotate to another item family.
+
+Previous batch: F104 assembly BOM scope/inclusion, phase 15 tasks 15.4a/b.
 Existing native BOM quantities now group siblings only, keeping a later direct
 component out of an earlier nested child row. Native scope also follows BOM-group
 ownership; mirror classification uses checked link casts. The existing editor adds

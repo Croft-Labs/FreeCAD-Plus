@@ -412,7 +412,7 @@ adopted or migrated. The native properties and expressions require no custom
 serialization proxy. This pilot does not select the future unified history model.
 
 
-## UI-008: Command search (F033; roadmap 8.4.2, 10.4)
+## UI-008: Command search and local help (F033/F123; roadmap 8.4.2, 10.4, 10.9a/b)
 
 Tools > Command search... (`Std_CommandSearch`, default Ctrl+K) opens one reusable
 modeless palette. Search matches registered names, menu labels, current shortcuts
@@ -439,6 +439,30 @@ buttons. Reinvocation focuses/selects the query. Existing Customize > Keyboard
 owns per-user shortcut editing, reset and conflict handling. Favorites, exhaustive
 aliases, per-command diagnostics, navigation presets and physical/high-DPI/localized
 acceptance remain pending. [Owner procedure](../tests/CommandSearch.md).
+
+F123 extension: the same palette bundles plain-text guides for thirteen named
+commands, including sketch reuse, one-time occurrence movement, document updates,
+manufacturing STL export and CAM mesh preparation. Guides explain inputs, actions,
+reversal/file effects and limitations. No network lookup, workbench activation or
+model edit occurs when reading. Commands without a curated guide explicitly say so
+and retain their native description. "Available to open" is not a geometry check;
+native IsActive and each command's existing editor remain authoritative.
+
+| Control | Action and feedback |
+| --- | --- |
+| Local help (F1) | Toggle extended guide for the selected row; focus the readable lower pane when opening. Works while Run is unavailable. |
+| Guidance pane | Plain text, selectable and scrollable; arrows/Page Up/Down read without launching. Tab leaves the pane; Enter here does not run. |
+| Ctrl+L | Focus and select the query from any palette control. These bindings are local to this window. |
+| Vertical divider | Allocate space between results and guidance; neither pane can collapse completely. |
+| Reset layout | Restore window size/position and divider, hide extended help and focus search; preserve query, application fonts, shortcuts and model. |
+| Run/Switch/Refresh/Help/Reset/Close | Two button rows with mnemonics and explicit focus order after query/results/guidance. |
+
+Availability and active-document text refresh every 750 ms while visible; unchanged
+text preserves reading position. Refresh reloads the command/shortcut catalog.
+Empty results disable Run/Switch and show the empty state. Guidance remains readable
+without a document or required workbench. There is no new saved document property
+or persistent help preference. Actual rendered enlarged-text layout is exercised in
+automation; physical screen-reader/high-DPI and localization acceptance remain open.
 
 
 ## UI-009: Temporary display (F040; roadmap 10.5)

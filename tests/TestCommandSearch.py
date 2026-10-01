@@ -12,9 +12,9 @@ from PySide import QtCore, QtGui, QtWidgets
 from freecad.gui import CommandSearch as Search
 
 
-def key_click(widget, key):
+def key_click(widget, key, modifiers=QtCore.Qt.NoModifier):
     for kind in (QtCore.QEvent.KeyPress, QtCore.QEvent.KeyRelease):
-        QtWidgets.QApplication.sendEvent(widget, QtGui.QKeyEvent(kind, key, QtCore.Qt.NoModifier))
+        QtWidgets.QApplication.sendEvent(widget, QtGui.QKeyEvent(kind, key, modifiers))
 
 
 class TestCommandSearch(unittest.TestCase):
@@ -102,7 +102,7 @@ class TestCommandSearch(unittest.TestCase):
         dialog.query.setText("no_such_operation_98765")
         self.assertEqual(dialog.results.topLevelItemCount(), 0)
         self.assertFalse(dialog.runButton.isEnabled())
-        self.assertIn("No matching", dialog.detail.text())
+        self.assertIn("No matching", dialog.detail.toPlainText())
         key_click(dialog.query, QtCore.Qt.Key_Return)
         self.assertTrue(dialog.isVisible())
         key_click(dialog.query, QtCore.Qt.Key_Escape)
@@ -128,7 +128,7 @@ class TestCommandSearch(unittest.TestCase):
             dialog.runSelected()
             run.assert_not_called()
         self.assertFalse(dialog.runButton.isEnabled())
-        self.assertIn("Open a document", dialog.detail.text())
+        self.assertIn("Open a document", dialog.detail.toPlainText())
         self.assertTrue(dialog.isVisible())
 
     def testAssemblyContext(self):
@@ -139,9 +139,9 @@ class TestCommandSearch(unittest.TestCase):
             self.assertEqual(Gui.activeWorkbench().name(), "AssemblyWorkbench")
         else:
             self.assertFalse(dialog.switchButton.isEnabled())
-            self.assertIn("workbench is not installed", dialog.detail.text())
+            self.assertIn("workbench is not installed", dialog.detail.toPlainText())
         self.assertFalse(dialog.runButton.isEnabled())
-        self.assertIn("Create or activate an Assembly", dialog.detail.text())
+        self.assertIn("Create or activate an Assembly", dialog.detail.toPlainText())
         self.assertEqual(self.doc.Objects, [])
 
     def testPocketKeyboardGeometryUndoAndReopen(self):
@@ -162,7 +162,7 @@ class TestCommandSearch(unittest.TestCase):
         self.assertEqual(combo.currentData(), "Subtraction")
         blocked = self.launch("pad")
         self.assertFalse(blocked.runButton.isEnabled())
-        self.assertIn("Finish or cancel", blocked.detail.text())
+        self.assertIn("Finish or cancel", blocked.detail.toPlainText())
         blocked.close()
         active.accept()
         self.doc.recompute()
@@ -183,3 +183,110 @@ class TestCommandSearch(unittest.TestCase):
             self.assertAlmostEqual(reopened.Pocket.Shape.Volume, 920)
             self.assertEqual(reopened.Pocket.Operation, "Subtraction")
             self.assertEqual(reopened.Body.Tip, reopened.Pocket)
+
+    def testOfflineHelpAndUncuratedFallbackLeaveDocumentAlone(self):
+        box = self.doc.addObject("Part::Box", "Box")
+        self.doc.recompute()
+        Gui.Selection.addSelection(box)
+        before = (box.Shape.Volume, tuple(box.Placement.toMatrix().A),
+                  self.doc.UndoCount, list(self.doc.Objects))
+        dialog = self.launch("pocket")
+        with patch.object(Gui, "activateWorkbench") as switch, patch.object(Gui, "runCommand") as run:
+            dialog.helpButton.setChecked(True)
+            for name in Search.HELP:
+                dialog.query.setText(name)
+                self.assertEqual(dialog.selected()[0], name)
+                self.assertIn(Search.help_text(dialog.selected()), dialog.detail.toPlainText())
+            dialog.query.setText("Std_New")
+            self.assertIn("No extended local guide", dialog.detail.toPlainText())
+            self.assertNotIn("Partial copying", dialog.detail.toPlainText())
+            switch.assert_not_called()
+            run.assert_not_called()
+        self.assertEqual(Gui.Selection.getSelection(), [box])
+        self.assertEqual(before, (box.Shape.Volume, tuple(box.Placement.toMatrix().A),
+                                 self.doc.UndoCount, list(self.doc.Objects)))
+        self.assertFalse(self.doc.HasPendingTransaction)
+
+    def testHelpKeyboardReadingAndReturnToSearch(self):
+        dialog = self.launch("Sketcher_CopyReusable")
+        dialog.helpButton.setChecked(False)
+        dialog.query.setFocus()
+        key_click(dialog.query, QtCore.Qt.Key_F1)
+        Gui.updateGui()
+        self.assertTrue(dialog.helpButton.isChecked())
+        self.assertTrue(dialog.detail.hasFocus())
+        with patch.object(Gui, "runCommand") as run:
+            key_click(dialog.detail, QtCore.Qt.Key_Return)
+            key_click(dialog.detail, QtCore.Qt.Key_PageDown)
+            run.assert_not_called()
+        key_click(dialog.detail, QtCore.Qt.Key_L, QtCore.Qt.ControlModifier)
+        Gui.updateGui()
+        self.assertTrue(dialog.query.hasFocus())
+        self.assertEqual(dialog.query.selectedText(), "Sketcher_CopyReusable")
+        key_click(dialog.query, QtCore.Qt.Key_F1)
+        self.assertFalse(dialog.helpButton.isChecked())
+        key_click(dialog.query, QtCore.Qt.Key_Tab)
+        self.assertTrue(dialog.results.hasFocus())
+        key_click(dialog.results, QtCore.Qt.Key_Tab)
+        self.assertTrue(dialog.detail.hasFocus())
+        key_click(dialog.detail, QtCore.Qt.Key_Escape)
+        self.assertFalse(dialog.isVisible())
+        self.assertFalse(dialog.contextTimer.isActive())
+
+    def testLiveContextAndHelpAreSeparateFromEligibility(self):
+        dialog = self.launch("Pocket")
+        dialog.helpButton.setChecked(True)
+        guide = Search.help_text(dialog.selected())
+        self.assertTrue(dialog.contextTimer.isActive())
+        other = App.newDocument("OtherSearchDocument")
+        dialog.contextTimer.timeout.emit()
+        self.assertIn(other.Label, dialog.detail.toPlainText())
+        App.closeDocument(other.Name)
+        App.closeDocument(self.doc.Name)
+        dialog.contextTimer.timeout.emit()
+        self.assertFalse(dialog.runButton.isEnabled())
+        self.assertIn("Open a document", dialog.detail.toPlainText())
+        self.assertIn(guide, dialog.detail.toPlainText())
+        self.assertIn("Active document: None", dialog.detail.toPlainText())
+
+    def testEnlargedTextScrollAndLayoutRecovery(self):
+        dialog = self.launch("CAM_MeshPreparation")
+        original = QtGui.QFont(dialog.font())
+        original_style = dialog.styleSheet()
+        font = QtGui.QFont(original)
+        font.setPointSize(20)
+        try:
+            dialog.setFont(font)
+            # FreeCAD's application stylesheet can override inherited widget fonts.
+            # Exercise actual rendered enlargement, not just QDialog.font().
+            dialog.setStyleSheet("QWidget { font-size: 20pt; }")
+            dialog.resize(740, 640)
+            dialog.helpButton.setChecked(True)
+            dialog.splitter.setSizes([300, 80])
+            Gui.updateGui()
+            self.assertEqual(dialog.detail.font().pointSize(), 20)
+            self.assertEqual(dialog.runButton.font().pointSize(), 20)
+            bar = dialog.detail.verticalScrollBar()
+            self.assertGreater(bar.maximum(), 0)
+            bar.setValue(bar.maximum())
+            dialog.describe()
+            self.assertEqual(bar.value(), bar.maximum())
+            for control in (dialog.query, dialog.results, dialog.detail, dialog.runButton,
+                            dialog.switchButton, dialog.refreshButton, dialog.helpButton,
+                            dialog.resetButton, dialog.closeButton):
+                rect = QtCore.QRect(control.mapTo(dialog, QtCore.QPoint()), control.size())
+                self.assertTrue(dialog.rect().contains(rect), control.objectName() or control.__class__.__name__)
+            before = (App.ActiveDocument, list(self.doc.Objects), dialog.query.text(),
+                      Gui.Command.get("Std_CommandSearch").getShortcut())
+            dialog.resetButton.click()
+            Gui.updateGui()
+            self.assertFalse(dialog.helpButton.isChecked())
+            self.assertEqual(dialog.font().pointSize(), 20)
+            self.assertEqual(dialog.detail.font().pointSize(), 20)
+            self.assertTrue(all(size > 0 for size in dialog.splitter.sizes()))
+            self.assertEqual(before, (App.ActiveDocument, list(self.doc.Objects), dialog.query.text(),
+                                     Gui.Command.get("Std_CommandSearch").getShortcut()))
+        finally:
+            dialog.setStyleSheet(original_style)
+            dialog.setFont(original)
+            dialog.resetLayout()
