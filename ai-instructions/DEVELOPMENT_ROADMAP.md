@@ -2490,6 +2490,9 @@ Feedback fixture: `smoke-ready/testExtrudePreselectionPreviewCancelAndAccept/Ass
 with sibling `Support.cadprt`. No schema version, native source, installer or release
 change. Full modeling-editor coverage and active-definition save routing are not
 established by this bounded check.
+Publication: implementation `613cd31707` pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine unchanged
+native artifacts and final build/check/fixture/capture identities. No release published.
 
 2026-10-01 cross-file edit-context feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-edit-context-20261001`.

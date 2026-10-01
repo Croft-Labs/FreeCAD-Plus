@@ -17,6 +17,9 @@ captures reviewed. Feedback fixture:
 No schema version, native source, installer or release change. Keep broader testing
 deferred for owner feedback. Active-definition save routing, general native editors,
 close-during-task and multi-tab display acceptance remain open.
+Implementation `613cd31707` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records seven matching Python modules, nine unchanged
+native artifacts, build/check results and reviewed fixture/capture identities.
 
 Previous feedback batch follows.
 
