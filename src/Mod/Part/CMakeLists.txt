@@ -15,6 +15,7 @@ set(Part_Scripts
     Init.py
     JoinFeatures.py
     MakeBottle.py
+    NamedParameters.py
     PartEnums.py
     TestPartApp.py
 )
@@ -22,6 +23,7 @@ set(Part_Scripts
 if(BUILD_GUI)
     list (APPEND Part_Scripts
           InitGui.py
+          NamedParameterGui.py
           TestPartGui.py
           TestPartPreview.py
     )

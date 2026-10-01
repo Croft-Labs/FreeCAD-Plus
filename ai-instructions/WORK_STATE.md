@@ -1,6 +1,32 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: phase 6 indexed STL CAM output, task 6.4.3 (bounded F089/F097).
+Latest batch: phase 10 named-parameter pilot, 10.8aa/ab (F122).
+Installed native Part-menu command, explicit Part/set ownership, marked native
+parameter containers, same-document expression reference copying, and the promoted
+length/angle editor/core. Prototype imports forward to application modules.
+One grouped PartGui/PartScripts Release build passed after both features were ready.
+Final selected checks: 90 distinct passes (4 command, 14 editor, 22 capability,
+24 Trim Body GUI, 26 Isocline GUI); no failures/errors/skips in accepted results.
+Evidence: D:\Temp\Office-PC\freecad-plus-parameter-command-20260930.
+Use built/ for the four unchanged suites and command-final/ for the final command
+suite. built/ includes an earlier external Windows clipboard-lock failure, so its
+aggregate is not claimed PASS. The final copy test checks the requested clipboard
+payload through a test double and drives a real feature expression with it.
+Physical copy/paste remains owner acceptance. Initial Python appendMenu failed for
+the native workbench; the command is now registered in native Workbench.cpp.
+
+visual-final/ contains two reviewed dialog captures and the native
+Named-parameters-enclosure.FCStd example. acceptance-summary.json and
+validated-identities.json record matching source/runtime modules and native hashes.
+PartGui SHA256: 41bde8dbd15017f005b1937afd9e5d80fb2c90d0f83274922254324d7bb8440a.
+
+Stop at this usable pilot for owner workflow testing. tests/NamedParameters.md
+contains the entry point, example and step-by-step test. Do not continue polishing
+F122 without owner feedback or a demonstrated blocker/dependency. Where-used,
+publication/configuration scope and physical/high-DPI acceptance remain pending.
+No release/installer update. Previous CAM and Extrude follow-ups remain recorded.
+
+Previous batch: phase 6 indexed STL CAM output, task 6.4.3 (bounded F089/F097).
 User requested diversification from repeated F029-F032 batches; start-reference
 follow-up is deferred. Fixed indexed operation generation rewriting recomputed
 model/stock producers and permanently blocking export. Consume current producers,

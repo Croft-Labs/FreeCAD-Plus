@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Native enclosure fixture for the bounded T13 parameter benchmark."""
-from prototypes.NamedParameters import create_parameter
+from prototypes.NamedParameters import create_parameter, create_parameter_set
 
 
 def make_enclosure(doc, part):
@@ -8,7 +8,7 @@ def make_enclosure(doc, part):
         obj = doc.addObject(kind, name)
         part.addObject(obj)
         return obj
-    params = add("App::FeaturePython", "EnclosureParameters")
+    params = create_parameter_set(part)
     doc.recompute()
     for name, expression in (("Width", "60 mm"), ("LidClearance", "0.5 mm"),
                              ("HoleSpacing", "30 mm")):

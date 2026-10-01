@@ -153,6 +153,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Part_SectionCut"
           << "Separator"
           << "Part_EditAttachment"
+          << "Part_NamedParameters"
           << "Separator"
           << "Part_CheckGeometry"
           << "Part_Defeaturing"

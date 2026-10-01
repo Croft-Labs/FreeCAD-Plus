@@ -46,6 +46,8 @@ class PartWorkbench(Gui.Workbench):
         registerCommand()
         from BasicShapes.IsoclineGui import registerCommand as registerIsocline
         registerIsocline()
+        from NamedParameterGui import registerCommand as registerParameters
+        registerParameters()
 
         try:
             import BasicShapes.CommandShapes

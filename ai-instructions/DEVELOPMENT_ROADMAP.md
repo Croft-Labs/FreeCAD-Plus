@@ -30,18 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch: phase 6 indexed STL CAM output (6.4.3), advancing
-  bounded F089/F097 acceptance outside F029-F032 and phase 16. Fixed generation
-  rewriting indexed model/stock producers and leaving them permanently dirty,
-  which blocked export. Indexed stock is now an operation dependency; generation
-  consumes current geometry and rejects stale inputs without rewriting producers.
-  Final evidence: 116 distinct passing checks, 17 configured LinuxCNC/Grbl output
-  fixtures, shared-tab/origin-edit recovery and exact saved-path persistence.
-  Python-only batch using compatible binaries; no native rebuild or release.
-  45-degree Waterline regenerated-contour repeatability, native viewport and
-  simulation gates remain open. F029-F032 stay at their validated checkpoint;
-  start-reference auditing is deferred. Rotate the next implementation batch to
-  another dependency-ready item family; avoid extending one local audit indefinitely.
+- Current product batch complete for owner testing: phase 10 named parameters
+  (10.8aa/ab, F122). Part > Named parameters now opens the promoted length/angle
+  editor for an explicit Part or marked parameter set, with reusable expression
+  references. One grouped PartGui/PartScripts build passed; final selected evidence
+  has 90 distinct passing checks and two reviewed dialog captures. No release update.
+  [Try the enclosure and command](../tests/NamedParameters.md). Stop refining this
+  workflow pending owner feedback or a demonstrated blocker/dependency. Whole F122
+  remains open for scope/publication/where-used and physical acceptance. Rotate the
+  next authorized batch to another dependency-ready family; CAM/Extrude follow-ups
+  remain recorded separately.
 
 
 - Release 0.0.2: requested after 0.0.4, built as a new Windows installer from
@@ -2661,6 +2659,44 @@ Phase 7 architecture gates and the full guided workflow remain open.
   Part-owned container. Verify it edits the intended document while another is
   active, supports an initially empty set and leaves the other document unchanged.
 
+- [ X ] 10.8aa Promote the proven length/angle editor and native parameter
+  operations to application modules, register Part > Named parameters, and reuse
+  the explicitly selected Part's marked set. Preserve ownership, transactions,
+  legacy fixtures and native persistence; expose no implicit occurrence resolution.
+- [ X ] 10.8ab Add same-document expression references and Copy reference, then
+  deliver an enclosure example and short owner-testing procedure. Verify actual
+  command entry, reference/rename propagation, edit recovery and save/reopen as one
+  usable batch. This is the stopping point pending owner workflow feedback.
+
+Installed pilot evidence, 2026-09-30:
+`D:\Temp\Office-PC\freecad-plus-parameter-command-20260930`.
+
+- Both command-entry and reference-copy tasks preceded one grouped PartGui and
+  PartScripts Release build (exit 0). CMake installs the new application modules;
+  old prototype imports forward to them. An initial Python appendMenu attempt
+  failed on the native workbench; the blocked disposable test process was stopped.
+  The command is now registered in the native Part menu.
+- Final selected acceptance: 90 distinct passes, no failures/errors/skips, process
+  exits 0. `built/` supplies 14 editor, 22 capability, 24 Trim GUI and 26 Isocline
+  GUI checks; `command-final/` supplies 4 command checks. The mixed built aggregate
+  includes an earlier Windows OpenClipboard failure and is not itself claimed PASS.
+  The final copy test verifies the requested clipboard payload and uses it in a
+  real feature expression; physical copy/paste remains owner acceptance.
+- Command checks cover menu availability, creation/reuse, Undo/Redo, explicit set
+  choice, Body/occurrence rejection, pending edits, copied references, rename and
+  enclosure edits/save/reopen. Existing unit/cycle/geometry rollback checks now
+  exercise the application implementation.
+- `visual-final/` contains two reviewed readable normal/error captures and
+  `Named-parameters-enclosure.FCStd`. The first capture harness lacked GUI document
+  initialization; the corrected startup passed. `validated-identities.json` records
+  matching source/runtime modules, tests and binary hashes. PartGui SHA256:
+  `41bde8dbd15017f005b1937afd9e5d80fb2c90d0f83274922254324d7bb8440a`.
+- **Ready for owner testing; not owner accepted.** Follow
+  [the short workflow procedure](../tests/NamedParameters.md). Stop at this usable
+  pilot. Where-used, publication/configuration/document scope, existing-description
+  editing, broader types and physical/high-DPI/localized acceptance remain open.
+  No installer/release update or unified history architecture decision is implied.
+
 Part-scope evidence: `parameter-part-scope-20260930-verified/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **75 PASS, zero failures/errors/
 skips** (14 native Qt, 22 capability, 34 adapter, five lineage checks). Both tasks
@@ -2672,8 +2708,9 @@ NamedParameters `B59C8D4DDEB16FE0DB052F8E2833CB8B47AE37A888E951F1DB3B4E8915731EC
 ParameterEditor `8E943A78D348D438CB71FE0225F164FDE4248AE25A904EDE77B4D1C92E04965A`.
 Container creation commits separately from opening/closing its editor; Close does
 not delete it. No automatic occurrence resolution or implicit expression scope is
-introduced. Production registration, scope/publication/where-used and physical UI
-remain pending. No native rebuild or release update.
+introduced. At that prototype checkpoint production registration, scope/publication/where-used
+and physical UI remained pending. The installed pilot above adds registration;
+broader scope and physical acceptance remain open. No native rebuild or release update.
 
 Enclosure editor evidence: `parameter-enclosure-editor-20260930-batch/results.json`
 under `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **73 PASS, zero failures/
@@ -5916,7 +5953,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f122"></a>
 ### F122 — Named parameters, expressions, and units
 
-**Owning tasks:** 10.8. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.8. **Status:** Part-level length/angle pilot ready for owner testing (10.8aa/ab); full F122 acceptance, broader scope, publication and where-used remain pending.
 
 **Packages:** A09 · **First delivery:** P1/P3; editor P4/P5 · **Likely scope:** Core/Feature
 

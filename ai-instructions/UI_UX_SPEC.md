@@ -75,6 +75,7 @@ corridor/dismissal delay. Trials cannot remove constraints; commit revalidates.
 | UI-003 | Revolve/Groove angular controls | Offset the angular start and reverse direction within the existing create/edit pane | Revolution or Groove; edit existing feature | [UI-003](#ui-003-revolve-and-groove-angular-controls) |
 | UI-004 | Trim Body task pane | Select a target, cutting tool, and side to keep | Part or Part Design: Trim Body; double-click existing result | [UI-004](#ui-004-trim-body-task-pane) |
 | UI-005 | Isocline Curve task pane | Trace draft-angle curves on selected faces | Part or Part Design: Isocline Curve; edit existing result | [UI-005](#ui-005-isocline-curve-task-pane) |
+| UI-007 | Named parameters | Create/edit Part-owned lengths and angles; copy reusable expressions | Part > Named parameters... | [UI-007](#ui-007-named-parameters-roadmap-108) |
 
 ## Screen specifications
 
@@ -346,15 +347,24 @@ Record any visual or interaction defects found by GUI validation against UI-001
 and the active roadmap milestone; do not silently change the intended workflow.
 
 
-## Test-only parameter editor prototype (roadmap 10.8k/l)
+## UI-007: Named parameters (roadmap 10.8)
 
-`tests/prototypes/ParameterEditor.py` is an uninstalled dialog for one existing
-parameter object, supplied by the test caller. It is not a production command or
-replacement for the planned part-level parameter editor. Fields appear in order:
-Parameter (existing length/angle property dropdown), Name, read-only Current value,
-Display unit, read-only Description, Expression, error message, Apply expression/Rename
-buttons, New name/type/expression/description,
-Create parameter, then Refresh/Close.
+Part workbench > **Part > Named parameters...** (`Part_NamedParameters`) opens
+`NamedParameterGui.py` for the selected native App::Part definition or its marked
+parameter set. The command is enabled for one supported selection with no pending
+transaction. A Part with no set creates one in its own undoable transaction; a
+Part with one set reuses it. Multiple sets require explicit set selection. Bodies,
+occurrences and arbitrary FeaturePython objects are not inferred as parameter sets.
+Reinvoking the command raises the existing dialog for that set.
+
+Fields appear in order: Parameter (length/angle property dropdown), Name,
+read-only Current value, Display unit, read-only Description, Expression,
+read-only Reference in this document and Copy reference, error message,
+Apply expression/Rename, New name/type/expression/description, Create parameter,
+then Refresh/Close. Copy reference uses the container's internal object name and
+parameter property name, for example `Parameters.Width`, suitable for a compatible
+feature expression in the same document. Rename refreshes it; an empty or stale
+selection cannot copy an outdated reference. Cross-document publication is future scope.
 
 Typing leaves the document unchanged. Apply evaluates units and affected recompute
 state in an owned transaction; a failed edit rolls back, keeps the attempted text
@@ -389,17 +399,14 @@ editing is not implemented. Display unit offers mm/cm/m/in/ft for lengths and de
 for angles; conversion changes the Current value display only. Expressions still
 require explicit units. Unit choice is dialog state, not a saved preference.
 
-Fourteen native Qt tests exercise the prototype programmatically, including enclosure
-geometry edits, exact inch display, unit/cycle/geometry failure recovery and editing
-a saved/reopened model. Physical keyboard/
-accessibility, high-DPI/localized layout, general external reference synchronization,
-production parameter-object creation UI and deletion/where-used/publication remain pending.
+Model/Qt acceptance and the example for owner testing are recorded in roadmap
+10.8. Physical keyboard/accessibility, high-DPI/localized layout, general external
+reference synchronization, existing-description editing, deletion/where-used and
+publication remain pending.
 
-
-The test-only `create_parameter_set(part)` entry point creates an empty native
-container in an explicitly supplied App::Part definition as a separate undoable
-operation. Body and occurrence targets are rejected. `edit_parameter_set(parameters)`
-opens the dialog for an explicit Part-owned native container, regardless of active
-document. The caller retains the dialog. Close leaves the committed container intact;
-Undo of creation is separate. No production command, automatic occurrence-to-definition
-resolution or implicit part-local expression lookup is registered by these helpers.
+The underlying create/edit functions accept explicit objects, independent of active
+document. Close leaves the committed container intact; Undo of creation is separate.
+Production command recognition requires a directly Part-owned App::FeaturePython
+with integer ParameterSetVersion 1. Existing unmarked objects are not silently
+adopted or migrated. The native properties and expressions require no custom
+serialization proxy. This pilot does not select the future unified history model.

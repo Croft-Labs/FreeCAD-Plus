@@ -40,6 +40,24 @@ Application-wide rebranding, changing the geometry kernel,
 multi-object profile aggregation, modifying the installed FreeCAD, and release
 packaging are outside the current implementation scope.
 
+## Named parameter pilot (F122)
+
+The Part workbench exposes named length/angle parameters for an explicitly selected
+native App::Part definition. Reuse native expressions, dimensional unit checks,
+transactions, rename propagation and FCStd persistence. Parameter containers use
+native App::FeaturePython properties and a read-only integer ParameterSetVersion
+marker (version 1); no custom proxy, geometry ownership or format migration is added.
+Existing unmarked objects are not automatically adopted. The command reuses one
+marked set per selected Part, or requires explicit selection when several exist.
+
+Users can create parameters with descriptions, edit expressions, rename, switch
+display units and copy an internal-name expression reference for compatible fields
+in the same document. Definition parameters are not silently localized to an
+occurrence. Document/configuration scopes, where-used navigation, publication,
+existing-description editing and automatic cross-document references remain future
+increments. The usable pilot and owner acceptance are tracked separately in
+[roadmap 10.8](DEVELOPMENT_ROADMAP.md#f122) and [UI-007](UI_UX_SPEC.md#ui-007-named-parameters-roadmap-108).
+
 ## Capabilities and requirements
 
 | ID | Intended requirement |
