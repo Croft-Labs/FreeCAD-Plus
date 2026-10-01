@@ -1,6 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F100 section planes, phase 15 tasks 15.1e/f.
+Latest batch: F014 feature organization, phase 10 tasks 10.6b/c.
+Tools > Find and describe features searches the active document's loaded objects by
+label, internal name, type and native Label2 description. Type filtering and sorting
+are presentation-only; explicit model selection preserves visibility. Staged native
+Label/Label2 edits apply in one transaction with stale/identity/read-only/context
+checks. Link metadata stays local to that object; no copied source or new schema.
+
+Both tasks preceded one FreeCADGui/FreeCADGui_Resources Release build, exit 0.
+20 selected checks pass without failures/errors/skips: 6 feature-organizer in
+organizer-verified/, 7 dependency-inspector and 7 command-search in grouped/;
+process exits 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-feature-organization-20260930.
+acceptance-summary.json / validated-identities.json record suites and source/native
+identities; installed Python script matches source. FreeCADGui SHA256:
+c1c081a7212b15ed4355872cedb8241ab873e46b18be67d1e7581d015e7bfa3d.
+
+visual/ contains four reviewed captures and Feature-Notes.FCStd / Feature-Notes-Edited.FCStd.
+Metadata search, explicit selection, native identity/order/link/placement preservation,
+Undo/Redo, no-op Apply, Close, stale/replaced/read-only/pending guards and persistence
+pass. Stock.Width edit after reopening still drives the hole radius, Boolean result
+and linked occurrence. tests/FeatureOrganizer.md is the owner guide. Earlier grouped/
+retains an empty-transaction fixture assumption, corrected with an actual owner edit;
+no application changes after build, no script restaging or corrective build.
+
+Search caps at the first 2000 loaded document objects with explicit partial disclosure.
+Whole F014 remains open for folders, bulk organization, navigator integration,
+uncapped/external search and physical/high-DPI acceptance. No installer/release update.
+Stop for owner feedback and rotate to another item family.
+
+Previous batch: F100 section planes, phase 15 tasks 15.1e/f.
 Clipping View now reports explicit world/mm offsets and synchronized custom/camera
 normals, pauses zero-direction clipping with recovery guidance, and saves/loads
 four native planes in a versioned .fcsection file. Loading validates the whole

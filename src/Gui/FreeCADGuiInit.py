@@ -563,6 +563,10 @@ from freecad.gui.DependencyInspector import registerCommand as _registerDependen
 _registerDependencyInspector()
 del _registerDependencyInspector
 
+from freecad.gui.FeatureOrganizer import registerCommand as _registerFeatureOrganizer
+_registerFeatureOrganizer()
+del _registerFeatureOrganizer
+
 from freecad.gui.OccurrenceAppearance import registerCommand as _registerOccurrenceAppearance
 _registerOccurrenceAppearance()
 del _registerOccurrenceAppearance

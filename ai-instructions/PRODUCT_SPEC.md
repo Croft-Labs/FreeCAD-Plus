@@ -365,6 +365,20 @@ No caps or section-specific measurements are claimed. Roadmap 15.1e/f covers thi
 bounded pilot; broader F100 remains open. [Owner procedure and preset contract](../tests/SectionPlanes.md);
 UI-018.
 
+## Current feature organization pilot (F014)
+
+A document-scoped metadata list searches native labels, internal names, types and
+Label2 descriptions. Type filtering and sorting affect presentation only; deliberate
+model selection preserves visibility. A partial-search notice identifies the bounded
+2000-object scope. Closed/unloaded external definitions are not opened implicitly.
+
+One-object label/description edits are staged until Apply, stored in one native Undo
+transaction, and guarded against stale identity/metadata, pending edits and read-only
+properties. Link metadata stays local to that object. No new persistent schema,
+ownership changes or history reordering. Roadmap 10.6b/c covers this bounded pilot;
+folders, bulk organization and integrated navigators remain open.
+[Owner procedure](../tests/FeatureOrganizer.md); UI-019.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

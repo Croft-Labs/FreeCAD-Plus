@@ -62,6 +62,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Feature organization (F014): [`FeatureOrganizer.py`](../src/Gui/FeatureOrganizer.py)
+provides Tools > Find and describe features, native metadata search and undoable
+Label/Label2 editing. Reuses dependency-inspector identity resolution.
+[Owner procedure](../tests/FeatureOrganizer.md); roadmap 10.6b/c.
+
 Section planes (F100): existing [`Clipping.cpp`](../src/Gui/Clipping.cpp) owns numeric
 plane feedback and atomic `.fcsection` preset save/load. Native visual clipping;
 [owner procedure and contract](../tests/SectionPlanes.md), roadmap 15.1e/f.

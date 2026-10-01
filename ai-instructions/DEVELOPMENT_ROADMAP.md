@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F100 section planes,
+- Current product batch complete for owner testing: F014 feature organization,
+  phase 10 tasks 10.6b/c. Tools > Find and describe features searches native labels,
+  names, types and descriptions and applies staged Label/Label2 edits in one Undo
+  step. Native identity, shared links, geometry and order stay intact. Both tasks
+  preceded one grouped build; 20 selected checks pass and four captures reviewed.
+  [Try the hole/description example](../tests/FeatureOrganizer.md). Whole F014 stays
+  open for folders, bulk organization, integrated navigators and physical acceptance.
+  Stop here for owner feedback and rotate to another dependency-ready item family.
+
+- Previous product batch complete for owner testing: F100 section planes,
   phase 15 tasks 15.1e/f. Clipping View has synchronized numeric direction, explicit
   mm/world offsets and save/load of portable plane presets. Invalid input preserves
   the current view; a scrollable dock keeps fields reachable. Both tasks preceded
@@ -2733,6 +2742,33 @@ establish deletion safety or diagnose unloaded references. Integrated navigator
 tabs/highlights, target roles and physical/high-DPI acceptance remain open. Whole
 F015/10.6 stays open; stop this pilot pending feedback and rotate. No release update.
 
+- [ X ] 10.6b Add native metadata search by label, internal name, type and description
+  for F014, with explicit document scope/type filtering, presentation-only sorting,
+  partial-search disclosure and deliberate model selection without visibility edits.
+- [ X ] 10.6c Stage native Label/Label2 edits for one selected object, preserving
+  identity, links, history order and placement. Apply owns one Undo transaction;
+  reject stale/replaced/read-only inputs and pending edits. Validate Close, Undo/Redo,
+  save/reopen, shared-source isolation and downstream recompute.
+  Both tasks preceded one grouped FreeCADGui/FreeCADGui_Resources Release build,
+  exit 0. All 20 selected checks pass, no failures/errors/skips: 6 feature-organizer
+  in organizer-verified/, 7 dependency-inspector and 7 command-search in grouped/;
+  process exits 0. Search/type filtering, presentation-only sorting, explicit model
+  selection, source/occurrence metadata isolation, stale/replaced/read-only guards,
+  pending-edit preservation, no-op Apply, Close, Undo/Redo and save/reopen pass.
+  Native hole expressions/Boolean references and shared instance geometry still
+  update after editing Stock.Width on reopen. Native Label/Label2 persistence only.
+  Evidence: `D:\Temp\Office-PC\freecad-plus-feature-organization-20260930`;
+  acceptance-summary.json / validated-identities.json record exact suites and matching
+  installed script. FreeCADGui SHA256:
+  `c1c081a7212b15ed4355872cedb8241ab873e46b18be67d1e7581d015e7bfa3d`.
+  Four captures reviewed in visual/ with Feature-Notes.FCStd and Feature-Notes-Edited.FCStd.
+  [Owner procedure](../tests/FeatureOrganizer.md). Earlier grouped/ retains an empty
+  transaction fixture assumption; corrected fixture performs an owner edit before
+  checking the guard. No application correction, script restaging or second build.
+  Whole F014 remains open for folders, bulk organization, navigator integration,
+  uncapped/external search and physical/high-DPI acceptance. No installer/release
+  update. Stop for owner feedback and rotate.
+
 - [   ] 10.7 Add shared Move/Copy with point-to-point, translation/rotation,
   coordinate-system/axis alignment, movable triad, snapping and local/global context.
   Distinguish one-time placement from a persistent assembly relationship; validate
@@ -4944,7 +4980,7 @@ reconciliation rules above to every entry.
 <a id="f014"></a>
 ### F014 — Feature organization
 
-**Owning tasks:** 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.6, 10.6b/c. **Status:** Bounded native metadata search/editor ready for owner testing. Label/name/type/description search, filtering/sorting without history edits, one-object Label/Label2 transactions, stale/identity guards, source/occurrence isolation, Undo/Redo and reopen/downstream geometry verified. One grouped build, 20 selected passing checks and four captures reviewed. Whole F014 remains open for folders, bulk organization, integrated navigators, uncapped/external search and physical acceptance. See [owner procedure](../tests/FeatureOrganizer.md).
 
 **Packages:** U02 · **First delivery:** P4 · **Likely scope:** UI/Feature
 

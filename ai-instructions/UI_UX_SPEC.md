@@ -673,3 +673,18 @@ the whole versioned preset before applying and disables camera following. Errors
 stay inline; presets never alter camera/model or own a document transaction.
 The panel explains whole-model export/measurement behavior, lack of caps, separate
 preset storage and Close removing clipping. [Owner procedure](../tests/SectionPlanes.md).
+
+## UI-019: Find and describe features (F014; roadmap 10.6b/c)
+
+Tools > Find and describe features opens the active document's loaded metadata list.
+Search matches all typed words across label/name/type/description, case-insensitively;
+the type filter uses native types. Rows show label, stable internal name, type and
+multiline description, with explicit scope/match count and partial-search disclosure.
+Sorting only changes the list; Select in model preserves visibility and requires the
+same active document with no task dialog.
+
+Selecting a row fills staged Label and Description fields. Apply saves one native
+transaction; unchanged values create none. Close, Refresh, row or filter changes discard
+unapplied text, as explained in the panel. Model edits invalidate the snapshot and
+require Refresh; failed Apply remains open with inline guidance. Document closure
+closes the dialog and removes its observer. [Owner procedure](../tests/FeatureOrganizer.md).

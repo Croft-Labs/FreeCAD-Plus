@@ -1522,6 +1522,7 @@ endif(WIN32)
 set(FreeCADGui_Scripts
     CommandSearch.py
     DependencyInspector.py
+    FeatureOrganizer.py
     OccurrenceAppearance.py
     TemporaryDisplay.py
     RemoteDebugger.ui

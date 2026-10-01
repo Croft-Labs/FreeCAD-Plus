@@ -813,6 +813,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
           << "Std_SceneInspector"
           << "Std_DependencyGraph"
           << "Std_InspectDependencies"
+          << "Std_FeatureOrganizer"
           << "Std_ExportDependencyGraph"
           << "Separator"
           << "Std_ProjectUtil"
