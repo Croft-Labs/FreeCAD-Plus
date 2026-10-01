@@ -222,7 +222,7 @@ protected:
 class GuiExport RubberbandSelection: public BaseMouseSelection
 {
 public:
-    RubberbandSelection();
+    explicit RubberbandSelection(bool directional = false);
     ~RubberbandSelection() override;
 
     void setColor(float r, float g, float b, float a = 1.0);
@@ -240,6 +240,7 @@ protected:
 
 protected:
     QColor rubberbandColor;
+    bool directionalSelection;
 
     void updateOverlayPosition();
     void setOverlayVisible(bool visible);

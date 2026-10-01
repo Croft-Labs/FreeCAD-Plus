@@ -49,6 +49,7 @@ namespace
 using SelectionMode = enum
 {
     CENTER,
+    ENCLOSED,
     INTERSECT
 };
 
@@ -112,6 +113,12 @@ static bool findObjectsOfTypeInBox(
             if (mode == CENTER && !polygon.Contains(loop.CalcBoundBox().GetCenter())) {
                 continue;
             }
+            const auto bounds = loop.CalcBoundBox();
+            if (mode == ENCLOSED
+                && (!polygon.Contains(Base::Vector2d(bounds.MinX, bounds.MinY))
+                    || !polygon.Contains(Base::Vector2d(bounds.MaxX, bounds.MaxY)))) {
+                continue;
+            }
             ret.push_back(element);
             foundElement = true;
         }
@@ -127,7 +134,7 @@ static bool findObjectsOfTypeInBox(
  * box or fence polygon.
  *
  * @param[in] vp View provider to query.
- * @param[in] mode Center or intersect selection mode.
+ * @param[in] mode Center (fence), enclosed or intersect selection mode.
  * @param[in] selectElement When true, collect subelements instead of whole objects.
  * @param[in] proj Projection function for 3D points.
  * @param[in] polygon Selection polygon in projected coordinates.
@@ -144,7 +151,9 @@ std::vector<std::string> getBoxSelection(
     const Base::Polygon2d& polygon,
     const Base::Matrix4D& mat,
     bool transform = true,
-    int depth = 0
+    int depth = 0,
+    App::DocumentObject* selectionRoot = nullptr,
+    const std::string& selectionPrefix = {}
 )
 {
     std::vector<std::string> ret;
@@ -153,7 +162,10 @@ std::vector<std::string> getBoxSelection(
         return ret;
     }
 
-    App::Document* doc = App::GetApplication().getActiveDocument();
+    if (!selectionRoot) {
+        selectionRoot = obj;
+    }
+    App::Document* doc = selectionRoot->getDocument();
     const auto selectionGate = SelectionSingleton::instance().getSelectionGate(doc);
 
     // DO NOT check this view object Visibility, let the caller do this. Because
@@ -161,12 +173,13 @@ std::vector<std::string> getBoxSelection(
     auto bbox3 = vp->getBoundingBox(nullptr, &mat, transform);
     Base::BoundBox2d bbox;
     const bool isBBox3Valid = bbox3.IsValid();
-    if (isBBox3Valid && selectionGate == nullptr) {
+    if (isBBox3Valid) {
         bbox = bbox3.ProjectBox(&proj);
 
         // check if both two boundary points are inside polygon, only
         // valid since we know the given polygon is a box.
-        if (polygon.Contains(Base::Vector2d(bbox.MinX, bbox.MinY))
+        if (!selectElement && !Selection().hasSelectionGate(doc)
+            && polygon.Contains(Base::Vector2d(bbox.MinX, bbox.MinY))
             && polygon.Contains(Base::Vector2d(bbox.MaxX, bbox.MaxY))) {
             ret.emplace_back("");
             return ret;
@@ -180,7 +193,12 @@ std::vector<std::string> getBoxSelection(
     const auto& subs = obj->getSubObjects(App::DocumentObject::GS_SELECT);
     if (subs.empty()) {
         if (!selectElement) {
-            if (mode == INTERSECT || (isBBox3Valid && polygon.Contains(bbox.GetCenter()))) {
+            const bool enclosed = isBBox3Valid
+                && polygon.Contains(Base::Vector2d(bbox.MinX, bbox.MinY))
+                && polygon.Contains(Base::Vector2d(bbox.MaxX, bbox.MaxY));
+            if ((mode == INTERSECT && isBBox3Valid)
+                || (mode == ENCLOSED && enclosed)
+                || (mode == CENTER && isBBox3Valid && polygon.Contains(bbox.GetCenter()))) {
                 ret.emplace_back("");
             }
             return ret;
@@ -202,18 +220,29 @@ std::vector<std::string> getBoxSelection(
         auto data = static_cast<Data::ComplexGeoDataPy*>(pyobj)->getComplexGeoDataPtr();
         const auto& allAllowedDocumentTypes = data->getElementTypes();
 
+        auto collectAllowed = [&](const std::string& type) {
+            std::vector<std::string> candidates;
+            findObjectsOfTypeInBox(type, proj, data, polygon, candidates, mode);
+            for (const auto& candidate : candidates) {
+                const auto path = selectionPrefix + candidate;
+                if (Selection().testSelection(doc, selectionRoot, path.c_str())) {
+                    ret.push_back(candidate);
+                }
+            }
+            return !ret.empty();
+        };
         if (selectionGate) {
             auto filteredTypes = selectionGate->getGatedTypes(allAllowedDocumentTypes);
             if (!filteredTypes.empty()) {
                 for (const auto& type : filteredTypes) {
-                    findObjectsOfTypeInBox(type, proj, data, polygon, ret, mode);
+                    collectAllowed(type);
                 }
                 return ret;
             }
         }
 
         for (auto type : allAllowedDocumentTypes) {
-            if (findObjectsOfTypeInBox(type, proj, data, polygon, ret, mode)) {
+            if (collectAllowed(type)) {
                 break;
             }
         }
@@ -247,7 +276,8 @@ std::vector<std::string> getBoxSelection(
         }
 
         const auto& sels
-            = getBoxSelection(svp, mode, selectElement, proj, polygon, smat, false, depth + 1);
+            = getBoxSelection(svp, mode, selectElement, proj, polygon, smat, false, depth + 1,
+                              selectionRoot, selectionPrefix + sub);
         if (sels.size() == 1 && sels[0].empty()) {
             ++count;
         }
@@ -256,7 +286,7 @@ std::vector<std::string> getBoxSelection(
         }
     }
 
-    if (count == subs.size()) {
+    if (count == subs.size() && !selectElement && !Selection().hasSelectionGate(doc)) {
         ret.resize(1);
         ret[0].clear();
     }
@@ -293,11 +323,8 @@ void Gui::applyBoxSelection(
         polygon.Add(Base::Vector2d(pt2[0], pt2[1]));
         polygon.Add(Base::Vector2d(pt2[0], pt1[1]));
 
-        // when selecting from right to left then select by intersection
-        // otherwise if the center is inside the rectangle
-        if (pt1[0] > pt2[0]) {
-            selectionMode = INTERSECT;
-        }
+        // Right-to-left crosses projected bounds; left-to-right requires full enclosure.
+        selectionMode = pt1[0] > pt2[0] ? INTERSECT : ENCLOSED;
     }
     else {
         for (const auto& point : glPolygon) {

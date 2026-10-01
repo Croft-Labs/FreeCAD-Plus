@@ -131,6 +131,11 @@ void RubberbandOverlay::setBorderColor(const QColor& color)
     setMaterialColor(borderMaterial, color);
 }
 
+void RubberbandOverlay::setDashed(bool dashed)
+{
+    borderStyle->linePattern.setValue(dashed ? 0xAAAA : 0xFFFF);
+}
+
 void RubberbandOverlay::setVisible(bool visible)
 {
     visibilitySwitch->whichChild = visible ? SO_SWITCH_ALL : SO_SWITCH_NONE;

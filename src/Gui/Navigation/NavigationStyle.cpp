@@ -1903,7 +1903,7 @@ void NavigationStyle::startSelection(NavigationStyle::SelectionMode mode)
             mouseSelection = new RectangleSelection();
             break;
         case Rubberband:
-            mouseSelection = new RubberbandSelection();
+            mouseSelection = new RubberbandSelection(true);
             break;
         case BoxZoom:
             mouseSelection = new BoxZoomSelection();

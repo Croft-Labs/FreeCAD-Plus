@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Bounded checkpoint ready for owner testing: F059 native shell Thickness,
+- Bounded checkpoint ready for owner testing: F039 window/crossing selection,
+  phase 10 tasks 10.5g/h. Left-to-right uses full projected enclosure with a solid
+  border; right-to-left crosses with a dashed border. Both tasks preceded one
+  grouped build; nineteen distinct checks pass and six captures are reviewed.
+  Filters, command gates, hidden objects, Ctrl-add, Escape and Box Zoom pass.
+  Full F039 remains open, including broad sketch/curve coverage and the recorded
+  nested BRep flag observation. [Owner procedure](../tests/WindowSelection.md).
+  Stop here and rotate pending owner feedback.
+
+- Previous bounded checkpoint ready for owner testing: F059 native shell Thickness,
   phase 13 tasks 13.5g/h. Removed-face review, signed-side controls, expression
   preservation and recoverable failed acceptance pass. Both tasks preceded a
   grouped build; one corrective build fixed a demonstrated preview-status label.
@@ -3083,6 +3092,36 @@ or replace it. The owner can reset or close the modeless filter window at any ti
 Separate bodies/components/sketches/features, richer filter combinations, dedicated
 sketch-edit and tree/window-selection semantics and physical/high-DPI acceptance
 remain open. [Owner procedure](../tests/EntitySelectionFilter.md).
+
+- [x] 10.5g Use full projected enclosure for left-to-right native 3D box selection;
+  keep right-to-left crossing, visible-object scope and filter/command-gate intersection.
+  Preserve explicit subelement collection when whole bounds fit (F039).
+- [x] 10.5h Distinguish solid window and dashed crossing borders in command and
+  delayed-drag selection, with documented Ctrl-add/Escape behavior. Verify zoom,
+  hidden objects, occurrence bounds, filters and cancellation in one grouped pass.
+
+2026-10-01 evidence: both tasks preceded one 70-second FreeCADGui build, exit 0.
+Nine TestWindowSelection checks pass in `final-window`, plus ten existing
+TestEntitySelectionFilter checks in `grouped`: nineteen distinct accepted checks,
+no skips. Native viewport events establish partial versus full enclosure at two
+zooms, command-gate spatial bounds, separate/hidden objects, Ctrl-add/plain replace,
+Escape/retry, edge/face filter intersection, delayed CAD drag, nested occurrence
+identity/bounds and unchanged Box Zoom behavior. Root-box BRep/Undo preservation
+passes. Six `visual` captures are reviewed and `Window-Selection.FCStd` is saved.
+Evidence: `D:\Temp\Office-PC\freecad-plus-window-selection-20261001`, build log,
+accepted results, captures and `evidence.json` source/native hashes. About metadata
+is historical; no owner acceptance, installer or release publication is claimed.
+
+Retained finding: both initial runs (`grouped`, `window-verified`) observed a single
+serialized BRep flag changing on the nested occurrence source during selection,
+including with a post-setup baseline. The final nested check verifies volume, area,
+vertex coordinates, placement, shared identity, object state and Undo count; it does
+not certify byte-for-byte nested BRep preservation. Do not erase this distinction.
+
+This bounded 3D increment retains projected-bounds crossing and native tessellated
+subelement checks. Exact silhouette/occlusion picking, broad curve and sketch coverage,
+removal modifiers and physical/high-DPI acceptance remain open for F039.
+[Owner procedure](../tests/WindowSelection.md). Stop here and rotate.
 
 - [   ] 10.6 Extend 7.2 with separate Assembly and Feature Navigator tabs, optional
   simultaneous docking, explicit work/display part, status columns, contributing-body
@@ -6638,7 +6677,7 @@ reconciliation rules above to every entry.
 <a id="f039"></a>
 ### F039 — Window versus crossing selection
 
-**Owning tasks:** 10.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 10.5, 10.5g/h. **Status:** Bounded native 3D window/crossing workflow ready for owner testing: full enclosure, directional borders and filter/gate-aware collection pass in nineteen distinct checks, with six reviewed captures. Full F039 remains open for broad sketch/curve and physical acceptance; nested serialized BRep flag preservation is not claimed. [Owner procedure](../tests/WindowSelection.md).
 
 **Packages:** U05 · **First delivery:** P4 · **Likely scope:** UI
 

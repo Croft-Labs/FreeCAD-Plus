@@ -1369,3 +1369,18 @@ OK recomputes and requires one valid solid before finishing the native transacti
 A failed attempt retains the feature and settings for correction. Cancel owns rollback
 for both new and existing features. No new localized failure preview is claimed.
 [Owner procedure](../tests/ShellThickness.md).
+
+## UI-050: Window and crossing selection (F039; roadmap 10.5g/h)
+
+Native 3D box selection uses left-to-right full enclosure with a solid border and
+right-to-left crossing with a dashed border. The style updates if the drag crosses
+its starting point. Command tooltips explain the directions, Ctrl-add and Escape.
+Both explicit box commands and supported delayed drag selection share the policy.
+Generic rectangles and Box Zoom retain their existing styles and camera behavior.
+
+Whole-object picking uses projected bounds; element picking uses native projected
+tessellation. Visible objects may include occluded/back-facing geometry. Hidden
+objects are excluded through the existing visibility traversal. Whole bounds do
+not replace element requests, and entity filters intersect command gates before
+choosing an eligible element category. Plain selection replaces; Ctrl adds.
+[Owner procedure](../tests/WindowSelection.md).

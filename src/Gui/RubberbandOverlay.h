@@ -61,6 +61,9 @@ public:
     /** Set the retained rubber-band border color. */
     void setBorderColor(const QColor& color);
 
+    /** Distinguish crossing (dashed) from enclosed (solid) selection. */
+    void setDashed(bool dashed);
+
     /** Show or hide the retained rubber-band rectangle. */
     void setVisible(bool visible);
 

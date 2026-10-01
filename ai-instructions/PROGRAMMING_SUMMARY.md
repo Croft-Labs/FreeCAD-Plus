@@ -10,6 +10,7 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 | Task or question | Start here | Related reference |
 | --- | --- | --- |
+| Window/crossing selection (F039) | [`BoxSelection.cpp`](../src/Gui/Selection/BoxSelection.cpp), [`MouseSelection.cpp`](../src/Gui/MouseSelection.cpp) | Full projected enclosure, directional borders and filter-aware native collection. [Owner procedure](../tests/WindowSelection.md); roadmap 10.5g/h. |
 | Entity selection filters (F035) | [`EntitySelectionFilter.py`](../src/Gui/EntitySelectionFilter.py), native [`Selection.cpp`](../src/Gui/Selection/Selection.cpp) | View > Visibility > Selection filters: session vertex/edge/face/whole-object policy, command-gate intersection and visible reset. [Owner procedure](../tests/EntitySelectionFilter.md); roadmap 10.5e/f owns validation. |
 | Product intent and boundaries | [Product specification](PRODUCT_SPEC.md) | [UI scope](UI_UX_SPEC.md#interface-scope) |
 | Planned `.cadprt` format and legacy `.FCStd` conversion | [Native-format policy](PRODUCT_SPEC.md#planned-native-format-and-legacy-import) | Roadmap 7.6; best-effort conversion with reported losses and untouched originals; not implemented yet |

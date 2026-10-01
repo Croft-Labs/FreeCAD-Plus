@@ -2826,7 +2826,8 @@ StdBoxSelection::StdBoxSelection()
 {
     sGroup = "Standard-View";
     sMenuText = QT_TR_NOOP("&Box Selection");
-    sToolTipText = QT_TR_NOOP("Activates the box selection tool");
+    sToolTipText = QT_TR_NOOP("Box selection: drag left to right for full enclosure (solid border), "
+                            "right to left for crossing (dashed border). Ctrl adds; Escape cancels.");
     sWhatsThis = "Std_BoxSelection";
     sStatusTip = sToolTipText;
     sPixmap = "edit-select-box";
@@ -2893,7 +2894,8 @@ StdBoxElementSelection::StdBoxElementSelection()
 {
     sGroup = "Standard-View";
     sMenuText = QT_TR_NOOP("Bo&x Element Selection");
-    sToolTipText = QT_TR_NOOP("Activates box element selection");
+    sToolTipText = QT_TR_NOOP("Box element selection: drag left to right for full enclosure (solid border), "
+                            "right to left for crossing (dashed border). Ctrl adds; Escape cancels.");
     sWhatsThis = "Std_BoxElementSelection";
     sStatusTip = sToolTipText;
     sPixmap = "edit-element-select-box";

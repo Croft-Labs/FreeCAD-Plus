@@ -559,7 +559,8 @@ int FreehandSelection::locationEvent(const SoLocation2Event* const e, const QPoi
 
 // -----------------------------------------------------------------------------------
 
-RubberbandSelection::RubberbandSelection()
+RubberbandSelection::RubberbandSelection(bool directional)
+    : directionalSelection(directional)
 {
     const SbColor color = SelectionColors::defaultSelectionColor();
     rubberbandColor = QColor::fromRgbF(color[0], color[1], color[2], 0.5F);
@@ -579,6 +580,7 @@ void RubberbandSelection::initialize()
 {
     auto& overlay = _pcView3D->rubberbandOverlay();
     overlay.setBorderColor(rubberbandColor);
+    overlay.setDashed(!directionalSelection);
     overlay.setVisible(false);
     _pcView3D->redraw();
 }
@@ -599,6 +601,9 @@ void RubberbandSelection::updateOverlayPosition()
         return;
     }
 
+    if (directionalSelection) {
+        _pcView3D->rubberbandOverlay().setDashed(m_iXnew < m_iXold);
+    }
     const qreal dpr = _pcView3D->devicePixelRatio();
     const qreal scale = dpr > 0.0 ? dpr : 1.0;
     _pcView3D->rubberbandOverlay().setRectangle(
@@ -701,7 +706,8 @@ void BoxZoomSelection::terminate(bool abort)
 // -----------------------------------------------------------------------------------
 
 BoxSelectSelection::BoxSelectSelection(bool additiveSelection, bool selectElement)
-    : additiveSelection(additiveSelection)
+    : RubberbandSelection(true)
+    , additiveSelection(additiveSelection)
     , selectElement(selectElement)
 {}
 
