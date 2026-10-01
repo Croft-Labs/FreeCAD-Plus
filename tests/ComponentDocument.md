@@ -94,6 +94,27 @@ Undo plus isolated-tab context. For this Python-only batch, `-ScriptsOnly` on th
 build helper stages GUI resources, Part scripts and Show without recompiling native
 C++. Broad component suites and full GUI/consumer acceptance remain deferred.
 
+## Reference recovery feedback iteration
+
+A .cadprt with a missing reference object remains open for repair, provided its
+component graph and format identities are valid. Model History shows the missing
+source and a repair detail tooltip. Edit/double-click the reference, or use Repair
+Reference Object, to choose replacement whole geometry from a direct child. The
+reference identity, history position, valid whole-object consumers and authored
+suppression remain intact. Change Reference Source uses the same review for an
+existing source. Use Refresh References after source changes to update snapshots.
+
+Independent references and new local sketch/Extrude branches continue when another
+reference is broken. Failed references have no usable evaluated shape. Different
+geometry kinds and unreviewed face/edge or expression consumers are refused before
+retargeting; complete topology repair is still a future gate.
+
+Use `-ReferenceSmoke` with the runner for the current three checks: broken-reference
+save/open plus independent work, identity-preserving native Cut repair with Undo/Redo
+and subelement refusal, and Model History repair/refresh/suppression controls. Stage
+this Python-only batch with `-ScriptsOnly`. The generated broken and repaired .cadprt
+files are feedback fixtures, not full format or cross-workbench qualification.
+
 ## Automated checks
 
 Run from the repository root in PowerShell, with a new evidence directory each time:

@@ -89,6 +89,11 @@ class Navigator(QtWidgets.QDockWidget):
         widget = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout(widget)
         layout.addWidget(self.context)
+        self.reference_notice = QtWidgets.QLabel()
+        self.reference_notice.setWordWrap(True)
+        self.reference_notice.setTextFormat(QtCore.Qt.PlainText)
+        self.reference_notice.hide()
+        layout.addWidget(self.reference_notice)
         self.conversion = QtWidgets.QPushButton(tr("Review legacy conversion"))
         self.conversion.clicked.connect(lambda: self.run(self.show_conversion_report))
         self.conversion.hide()
@@ -154,9 +159,18 @@ class Navigator(QtWidgets.QDockWidget):
             if root is None or active is None:
                 self.context.setText(tr("Create or open a component document."))
                 self.conversion.hide()
+                self.reference_notice.hide()
                 return
             self.conversion.setVisible(bool(model().metadata(active.Document).LegacySource))
             self.context.setText(tr("Editing: {0}").format(active.Label))
+            references = [obj for obj in model().history(active) if obj.ComponentRole == "Reference"]
+            repair = [obj for obj in references if obj.ResultStatus in ("Missing source", "Needs repair")]
+            pending = [obj for obj in references if obj.ResultStatus == "Pending"]
+            self.reference_notice.setVisible(bool(repair or pending))
+            if repair:
+                self.reference_notice.setText(tr("{0} reference object(s) need repair. Edit them in Model History.").format(len(repair)))
+            elif pending:
+                self.reference_notice.setText(tr("{0} reference object(s) need updating. Use Refresh References.").format(len(pending)))
             apply_representation(root)
             for entry in list(self.component_views):
                 component = resolve(entry["key"])
@@ -181,13 +195,17 @@ class Navigator(QtWidgets.QDockWidget):
                 state = QtCore.Qt.Unchecked if getattr(obj, "UserSuppressed", False) else (QtCore.Qt.PartiallyChecked if inactive else QtCore.Qt.Checked)
                 item.setCheckState(0, state)
                 item.setToolTip(0, tr("Unchecked: suppressed. Partially checked: an input is inactive."))
-                unavailable = inactive or bool(getattr(obj, "UserSuppressed", False))
+                unavailable = (inactive or bool(getattr(obj, "UserSuppressed", False))
+                               or getattr(obj, "ResultStatus", "Ready") in ("Missing source", "Needs repair", "Unavailable"))
                 self.visibility_icon(item, bool(obj.Visibility) and not unavailable, 1)
                 if unavailable:
-                    item.setToolTip(1, tr("Geometry is unavailable while this item or an input is suppressed."))
+                    item.setToolTip(1, getattr(obj, "ReferenceError", "") or tr("Geometry is unavailable. Restore or repair the item and its inputs."))
                 if obj.ViewObject:
                     item.setIcon(2, obj.ViewObject.Icon)
                 item.setToolTip(2, tr("Operation") if obj.ComponentRole == "Operation" else tr("Object"))
+                if obj.ComponentRole == "Reference":
+                    item.setToolTip(2, tr("Reference object. Edit to review or replace its direct-child source."))
+                    item.setToolTip(3, getattr(obj, "ReferenceError", ""))
             self.restore_tree(self.structure, structure_state)
             iterator = QtWidgets.QTreeWidgetItemIterator(self.structure)
             while iterator.value():
@@ -342,7 +360,8 @@ class Navigator(QtWidgets.QDockWidget):
         obj = resolve(item.data(0, QtCore.Qt.UserRole))
         if obj is None:
             return
-        if getattr(obj, "UserSuppressed", False) or model().history_state(obj) == "Inactive \u2014 dependency":
+        if (getattr(obj, "UserSuppressed", False) or model().history_state(obj) == "Inactive \u2014 dependency"
+                or getattr(obj, "ResultStatus", "Ready") in ("Missing source", "Needs repair", "Unavailable")):
             return
         with model().transaction(obj.Document, "Toggle item visibility"):
             obj.Visibility = not obj.Visibility
@@ -468,7 +487,7 @@ class Navigator(QtWidgets.QDockWidget):
             link.Visibility = True
             if model().representation(root, ids) == "Hidden":
                 model().set_representation(root, ids, "Bodies Only")
-        model().activate(obj)
+        model().activate(obj, strict=False)
         App.setActiveDocument(obj.Document.Name)
         self.root_key, self.active_key, self.active_path = root_key, object_key(obj), list(value[1])
         Gui.activeDocument().activeView().setActiveObject("part", obj)
@@ -490,7 +509,7 @@ class Navigator(QtWidgets.QDockWidget):
                 self.mdi.setActiveSubWindow(entry["window"])
                 self.view_activated(entry["window"])
                 return entry["view"]
-        model().activate(obj)
+        model().activate(obj, strict=False)
         App.setActiveDocument(obj.Document.Name)
         view = Gui.getDocument(obj.Document.Name).createView("Gui::View3DInventor")
         snapshot = Gui.LinkView()
@@ -533,7 +552,7 @@ class Navigator(QtWidgets.QDockWidget):
             self.active_key = object_key(component)
             Gui.getDocument(component.Document.Name).activeView().setActiveObject("part", component)
             self.store_edit_context(window)
-            self.run(lambda: model().activate(component))
+            self.run(lambda: model().activate(component, strict=False))
             self.selection_timer.start(0)
 
     def add_component(self, parent_key=None):
@@ -596,32 +615,55 @@ class Navigator(QtWidgets.QDockWidget):
             model().repair_component(parent, occurrence, filename)
             App.setActiveDocument(parent.Document.Name)
 
-    def add_reference(self, parent_key=None):
-        active = resolve(parent_key or self.active_key)
-        if getattr(active, "ComponentRole", "") == "Occurrence":
-            active = active.LinkedObject
+    def choose_reference_source(self, active, reference=None):
         choices = []
         for occurrence in model().children(active):
             if occurrence.LinkedObject:
                 for obj in occurrence.LinkedObject.Group:
                     if (hasattr(obj, "Shape") and not obj.Shape.isNull()
-                            and getattr(obj, "ComponentRole", "") in ("Object", "Result", "Reference")):
+                            and getattr(obj, "ComponentRole", "") in ("Object", "Result", "Reference")
+                            and model().history_state(obj) == "Ready"):
                         choices.append((occurrence, obj))
         if not choices:
             raise ValueError(tr("Add a direct child with evaluated geometry first."))
         labels = [f"{link.Label} / {obj.Label} ({link.Name}/{obj.Name})" for link, obj in choices]
         root = resolve(self.root_key)
         preferred = Selection.reference_choice(root, active, Gui.Selection.getSelectionEx("*", 0))
+        if reference is not None and preferred not in choices:
+            preferred = (reference.SourceOccurrence, reference.SourceObject)
         index = choices.index(preferred) if preferred in choices else -1
         prompt = tr("Direct child object (whole evaluated geometry)")
         if index < 0:
             labels.insert(0, tr("Choose a direct child object"))
             choices.insert(0, None)
             index = 0
-        selected, ok = QtWidgets.QInputDialog.getItem(self, tr("Add Reference Object"), prompt, labels, index, False)
+        title = tr("Repair Reference Object") if reference is not None else tr("Add Reference Object")
+        if reference is not None:
+            prompt = reference.Label + " (" + reference.GeometryKind + ")\n" + prompt
+            if getattr(reference, "ReferenceError", ""):
+                prompt += "\n" + reference.ReferenceError
+        selected, ok = QtWidgets.QInputDialog.getItem(self, title, prompt, labels, index, False)
         if ok and choices[labels.index(selected)] is not None:
-            link, obj = choices[labels.index(selected)]
-            model().add_reference(active, link, obj)
+            return choices[labels.index(selected)]
+        return None
+
+    def add_reference(self, parent_key=None):
+        active = resolve(parent_key or self.active_key)
+        if getattr(active, "ComponentRole", "") == "Occurrence":
+            active = active.LinkedObject
+        choice = self.choose_reference_source(active)
+        if choice:
+            return model().add_reference(active, *choice)
+
+    def edit_reference(self, key):
+        reference = resolve(key)
+        parent = model().owner(reference)
+        choice = self.choose_reference_source(parent, reference)
+        if choice:
+            return model().repair_reference(parent, reference, *choice)
+
+    def refresh_references(self):
+        model().activate(resolve(self.active_key), strict=False)
 
     def edit_history(self, key):
         obj = resolve(key)
@@ -629,12 +671,15 @@ class Navigator(QtWidgets.QDockWidget):
             return
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing history."))
+        if getattr(obj, "ComponentRole", "") == "Reference":
+            self.edit_reference(key)
+            return
         if getattr(obj, "ComponentRole", "") == "Result" and not obj.Frozen:
             obj = obj.Producer
         if obj is None:
             return
         component = model().owner(obj)
-        model().activate(component)
+        model().activate(component, strict=False)
         self.active_key = object_key(component)
         App.setActiveDocument(component.Document.Name)
         Gui.activeDocument().activeView().setActiveObject("part", component)
@@ -721,10 +766,14 @@ class Navigator(QtWidgets.QDockWidget):
                 obj = resolve(key)
                 menu.addAction(tr("Edit"), lambda: self.run(lambda: self.edit_history(key)))
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(key)))
+                if obj.ComponentRole == "Reference":
+                    action = "Repair Reference Object" if obj.ResultStatus in ("Missing source", "Needs repair") else "Change Reference Source"
+                    menu.addAction(tr(action), lambda: self.run(lambda: self.edit_reference(key)))
                 if hasattr(obj, "Shape") and obj.ComponentRole != "Operation":
                     menu.addAction(tr("Convert to Dumb Object"), lambda: self.run(lambda: self.convert(key)))
                 menu.addSeparator()
             if self.active_key:
+                menu.addAction(tr("Refresh References"), lambda: self.run(self.refresh_references))
                 menu.addAction(tr("New Sketch"), lambda: self.run(self.new_sketch))
                 menu.addAction(tr("Extrude"), lambda: self.run(self.new_extrude))
                 menu.addAction(tr("Add Reference Object"), lambda: self.run(self.add_reference))
@@ -756,7 +805,7 @@ class Navigator(QtWidgets.QDockWidget):
                         obj.Visibility = True
                 except ValueError:
                     pass
-        if prop in ("Label", "Group", "ModelHistory", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed"):
+        if prop in ("Label", "Group", "ModelHistory", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):

@@ -71,7 +71,7 @@ def preview(component, profile, length, mode="New Body", target=None, reversed_d
 
 
 def create(component, profile, length, mode="New Body", target=None, reversed_direction=False):
-    Model.activate(component)
+    Model.activate(component, strict=False)
     inputs(component, profile, length, mode, target)
     doc = component.Document
     with Model.transaction(doc, "Extrude"):
@@ -110,7 +110,7 @@ def parameters(operation):
 
 def edit(operation, profile, length, reversed_direction=False, mode=None, target=None):
     component = Model.owner(operation)
-    Model.activate(component)
+    Model.activate(component, strict=False)
     tool, old_mode, old_target = parameters(operation)
     if mode is None:
         mode, target = old_mode, old_target

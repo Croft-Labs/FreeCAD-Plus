@@ -320,18 +320,32 @@ def _reference_source(parent, occurrence, source):
     return shape, kind
 
 
+def _reference_status(obj, status, message=""):
+    if not hasattr(obj, "ReferenceError"):
+        _property(obj, "String", "ReferenceError", "", True)
+    obj.ResultStatus = status
+    obj.ReferenceError = message
+
+
+def _invalidate_reference(obj, status, message):
+    obj.Shape = Part.Shape()
+    _reference_status(obj, status, message)
+    # Native failures can skip result proxies. Clear their caches immediately.
+    for consumer in obj.InListRecursive:
+        if getattr(consumer, "ComponentRole", "") == "Result" and not consumer.Frozen:
+            consumer.Shape = Part.Shape()
+            consumer.ResultStatus = "Unavailable"
+
+
 class ReferenceProxy(PersistentProxy):
     def execute(self, obj):
-        # Shape is an explicit last-evaluated snapshot until activation refreshes it.
-        # Pending is separate from visibility and prevents current_shape consumers.
+        # Pending snapshots are never accepted by current_shape consumers.
         if getattr(obj, "UserSuppressed", False):
-            obj.Shape = Part.Shape()
-            obj.ResultStatus = "Suppressed"
-            return
-        if obj.SourceOccurrence is None or obj.SourceObject is None:
-            obj.ResultStatus = "Missing source"
-            return
-        obj.ResultStatus = "Pending"
+            _invalidate_reference(obj, "Suppressed", "")
+        elif obj.SourceOccurrence is None or obj.SourceObject is None:
+            _invalidate_reference(obj, "Missing source", "Choose a replacement object from a direct child component.")
+        else:
+            _reference_status(obj, "Pending")
 
 
 def add_reference(parent, occurrence, source):
@@ -345,48 +359,97 @@ def add_reference(parent, occurrence, source):
         _property(obj, "String", "SourceObjectId", source.ObjectId, True)
         _property(obj, "String", "GeometryKind", kind, True)
         _property(obj, "String", "ResultStatus", "Pending", True)
+        _property(obj, "String", "ReferenceError", "", True)
         obj.Proxy = ReferenceProxy()
         if App.GuiUp:
             obj.ViewObject.Proxy = 0
         obj.Placement = shape.Placement
         obj.Shape = shape
-    activate(parent)
+    activate(parent, strict=False)
     return obj
 
 
-def activate(component):
-    """Refresh this definition's references, then its dependent native operations."""
+def activate(component, strict=True):
+    """Refresh all independent references before reporting any broken branches."""
     doc = component.Document
     doc.recompute()
+    issues = []
     for obj in history(component):
         if getattr(obj, "ComponentRole", "") != "Reference":
             continue
         if getattr(obj, "UserSuppressed", False):
-            obj.Shape = Part.Shape()
-            obj.ResultStatus = "Suppressed"
+            _invalidate_reference(obj, "Suppressed", "")
             obj.purgeTouched()
             continue
         try:
-            if obj.SourceObject is None or obj.SourceObject.ObjectId != obj.SourceObjectId:
+            if obj.SourceOccurrence is None or obj.SourceObject is None:
+                raise ValueError("The source is missing. Choose an object from a direct child component.")
+            if obj.SourceObject.ObjectId != obj.SourceObjectId:
                 raise ValueError("The source identity changed; repair the reference.")
             shape, kind = _reference_source(component, obj.SourceOccurrence, obj.SourceObject)
+            if kind != obj.GeometryKind:
+                raise ValueError("The source geometry kind changed. Review the reference and its dependent operations.")
             obj.Placement = shape.Placement
             obj.Shape = shape
-            obj.GeometryKind = kind
-            obj.ResultStatus = "Ready"
+            _reference_status(obj, "Ready")
             obj.purgeTouched()
-            # Native recompute can skip consumers once the explicitly refreshed
-            # snapshot is purged. Mark them for execution after publishing it.
             for consumer in obj.InListRecursive:
                 if consumer != component and hasattr(consumer, "Shape"):
                     consumer.touch()
-        except Exception:
-            obj.Shape = Part.Shape()
-            obj.ResultStatus = "Needs repair"
+        except Exception as error:
+            status = "Missing source" if obj.SourceOccurrence is None or obj.SourceObject is None else "Needs repair"
+            _invalidate_reference(obj, status, str(error))
             obj.purgeTouched()
-            doc.recompute()
-            raise
+            issues.append((obj, str(error)))
     doc.recompute()
+    if strict and issues:
+        raise ValueError("\n".join(obj.Label + ": " + message for obj, message in issues))
+    return issues
+
+
+def repair_reference(parent, reference, occurrence, source):
+    """Retarget whole evaluated geometry while preserving the reference identity."""
+    if owner(reference) != parent or getattr(reference, "ComponentRole", "") != "Reference":
+        raise ValueError("Select a reference object in the active component.")
+    shape, kind = _reference_source(parent, occurrence, source)
+    if kind != reference.GeometryKind:
+        raise ValueError("Choose the same geometry kind as the reference: " + reference.GeometryKind + ".")
+    if source == reference or reference in source.OutListRecursive:
+        raise ValueError("The selected source would introduce a dependency cycle.")
+    changed_source = (reference.SourceObject != source or reference.SourceOccurrence != occurrence
+                      or reference.SourceObjectId != source.ObjectId)
+    consumers = [obj for obj in reference.InList if obj != parent]
+    if changed_source:
+        for obj in [reference] + consumers:
+            if obj.ExpressionEngine:
+                raise ValueError("Expression-driven consumers need an explicit reference-remapping review.")
+            for name in obj.PropertiesList:
+                if "LinkSub" not in obj.getTypeIdOfProperty(name):
+                    continue
+                value = getattr(obj, name)
+                values = value if "List" in obj.getTypeIdOfProperty(name) else [value]
+                if any(link == reference and any(sub for sub in subs) for link, subs in values if link):
+                    raise ValueError("Face or edge consumers need an explicit reference-remapping review before changing this source.")
+    try:
+        with transaction(parent.Document, "Repair Reference Object"):
+            reference.SourceOccurrence = occurrence
+            reference.SourceObject = source
+            reference.SourceObjectId = source.ObjectId
+            reference.Placement = shape.Placement
+            reference.Shape = shape
+            activate(parent, strict=False)
+            for obj in reference.InListRecursive:
+                if not hasattr(obj, "Shape") or getattr(obj, "UserSuppressed", False):
+                    continue
+                blocked = any(getattr(dep, "UserSuppressed", False)
+                              or (getattr(dep, "ComponentRole", "") == "Reference" and dep.ResultStatus != "Ready")
+                              for dep in obj.OutListRecursive)
+                if not blocked and ("Invalid" in obj.State or getattr(obj, "ResultStatus", "Ready") != "Ready"):
+                    raise ValueError("A dependent operation could not use the replacement geometry: " + obj.Label)
+    except Exception:
+        activate(parent, strict=False)
+        raise
+    return reference
 
 
 def _path(root, ids):
@@ -583,7 +646,7 @@ def set_suppressed(operation, suppressed):
                 obj.touch()
 
     if not suppressed and getattr(operation, "ComponentRole", "") == "Reference":
-        activate(component)
+        activate(component, strict=False)
 
 
 def history_state(obj):

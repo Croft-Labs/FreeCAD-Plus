@@ -1,5 +1,26 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.4a, component reference recovery. Missing
+reference geometry no longer closes a structurally valid .cadprt or blocks independent
+reference refresh/local sketch and Extrude work. Model History Edit and Repair /
+Change Reference Source preserve reference identity, history position, valid whole-
+object consumers and authored suppression. Refresh References, repair notice and
+error tooltip expose the state. Kind/face/edge/expression remapping guards remain.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-reference-recovery-20261001`.
+One grouped script/resource build passed. `smoke-accepted/` passes three focused
+checks, process exit 0, empty stderr; two captures reviewed. The initial checks
+passed; capture review corrected the missing-source eye icon and a fixture scope
+warning. Only Python was restaged, with no extra build. Feedback fixtures in that
+folder: `Component-Broken-Reference.cadprt`, `Component-Repaired-Reference.cadprt`.
+Source publication pending. No schema lock-in, broad validation or installer update.
+
+Continue component migration rather than unrelated feature rotation. Whole-object
+recovery does not establish arbitrary topology/expression remapping, all missing-file
+recovery, native editor parity, solver/BOM/mass or engineering-consumer acceptance.
+Preserve the owner's request for batched implementation and limited feedback checks.
+
+Previous feedback batch:
 Current feedback batch: roadmap 7.8.7f. Native occurrence-path selection is now
 synchronized with Component Structure / active Model History; precise nested picks
 reveal the instance without changing the edited definition. Add Reference Object

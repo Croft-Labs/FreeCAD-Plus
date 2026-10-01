@@ -1474,3 +1474,12 @@ Grouped Part View changes and show/reset fallback use one Undo transaction. Open
 an already-open isolated component focuses its existing tab; switching views restores
 the stored active component and occurrence path. These are bounded native-integration
 steps; complete picking/editor/consumer parity remains in roadmap 7.8.7b.
+
+Reference recovery feedback (7.8.4a): Model History Edit/double-click on a reference
+opens its direct-child source review. The context action says Repair Reference Object
+for a broken source and Change Reference Source otherwise. The picker states that
+it references whole evaluated geometry. Repair preserves identity and history order;
+unsupported geometry-kind, face/edge or expression remapping is refused before commit.
+A repair notice and state tooltip identify unavailable references. Their visibility
+icon indicates unavailable geometry. Refresh References updates pending snapshots
+without closing the component or blocking independent work on other inputs.

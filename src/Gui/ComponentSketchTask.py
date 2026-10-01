@@ -16,7 +16,7 @@ class SketchTask:
     def __init__(self, component):
         import ComponentModel as Model
         import ComponentSketch as Sketch
-        Model.activate(component)
+        Model.activate(component, strict=False)
         self.component, self.support, self.result = component, None, None
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle(tr("New Sketch"))

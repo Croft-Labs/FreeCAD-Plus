@@ -141,15 +141,8 @@ def open(filename, _opening=None):
                     Model._property(occurrence, "String", "DefinitionId", instance["definition"], True)
                 elif occurrence.DefinitionId != instance["definition"]:
                     raise ValueError("An occurrence definition differs from its saved manifest.")
-        if missing:
-            for obj in doc.Objects:
-                if getattr(obj, "ComponentRole", "") == "Reference" and obj.SourceObject is None:
-                    import Part
-                    obj.Shape = Part.Shape()
-                    obj.ResultStatus = "Missing source"
-            doc.recompute()
-        else:
-            Model.activate(meta.RootComponent)
+        # Broken reference geometry remains editable; format/identity failures above still refuse restore.
+        Model.activate(meta.RootComponent, strict=False)
         if App.GuiUp and _opening is None:
             from freecad.gui.ComponentNavigator import show
             show(doc)

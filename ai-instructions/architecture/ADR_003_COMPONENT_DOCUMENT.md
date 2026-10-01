@@ -48,11 +48,14 @@ output. Native restore preflights required capabilities even for renamed archive
 and backup extensions, before clearing objects or restoring proxies. The component
 reader verifies native metadata/history against the manifest after restore and
 opens external dependencies fully before resolving links. Missing files open in a
-repairable state; saving an unresolved graph is refused. Locate Component File
+repairable state; saving unresolved component links is refused. Missing reference
+geometry remains editable and saveable with its source identity and repair status;
+invalid format/component identities still refuse opening. Activation refreshes every
+independent reference before reporting broken branches. Locate Component File
 requires the original definition and referenced-object identities.
 
 Save As/Copy preserve semantic identities. Failed Save As restores the original
-location and label. Make Independent regenerates copied definition/object/occurrence
+location and label. Copy to New Part regenerates copied definition/object/occurrence
 identities and retains child definitions. Externalization moves the embedded
 definition closure to a new file, preserving identities and shared children while
 remapping loaded owner occurrences/references. Expression-driven copies and

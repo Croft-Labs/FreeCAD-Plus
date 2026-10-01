@@ -2374,6 +2374,12 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   Save As/Copy preserve identities and rejected Save As restores location/label.
 - [   ] 7.8.3b Broader crash recovery/backup restoration, moved dependency packages,
   malformed graph/schema matrix and larger document acceptance.
+- [ X ] 7.8.4a Reference recovery feedback: refresh independent references before
+  reporting failures, keep structurally valid .cadprt files open with broken reference
+  geometry, and repair/retarget a direct-child reference without replacing its identity,
+  history position or authored suppression. Model History exposes review/repair and
+  explicit refresh; incompatible kind/subelement/expression rebinding is refused.
+  Three focused checks pass; general topology and consumer recovery remain open.
 - [ X ] 7.8.5a Body-independent shared sketch/extrusion and native transaction adoption;
   native Boolean result replacement restores prior visible results on suppression.
 - [   ] 7.8.5b Integrate unified Extrude/Pad/Pocket and remaining native task editors
@@ -2532,6 +2538,25 @@ claimed. No installer/release update. Implementation
 `1ffb7a9df29d6190c68f78307452c9c5d6c523ba` was pushed to `origin/main` and verified
 with `git ls-remote`. `acceptance-identities.json` records the matching source/runtime
 modules, fixture and six unchanged native artifacts.
+
+2026-10-01 reference recovery feedback batch (7.8.4a): component reference services,
+nonblocking activation in the file reader/sketch/Extrude workflows, and history repair
+controls preceded one grouped script/resource staging build, exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-reference-recovery-20261001`.
+`smoke-accepted/` passes **three focused checks**, no failures/errors/skips, process
+exit 0 and empty stderr. Broken-reference .cadprt save/reopen, independent reference
+refresh and local sketch/Extrude work, native Cut downstream identity/geometry,
+repair Undo/Redo, native LinkSub preflight refusal, GUI repair/refresh and retained
+suppression are covered. Two captures were reviewed. Initial smoke checks passed;
+capture review corrected a missing-source visibility icon and the fixture's native
+link scope. The Python correction was staged without another build. Fixtures:
+`Component-Broken-Reference.cadprt` and `Component-Repaired-Reference.cadprt`.
+
+No schema version change: native optional ReferenceError/status properties retain
+repair details; format, graph and external-definition identity checks stay in force.
+This is whole-object recovery, not arbitrary face/edge/expression correspondence,
+full missing-external-file recovery, general native consumers or schema qualification.
+No installer/release update. Source publication pending.
 
 ### [   ] 7.7 Validate and release the history pilot
 

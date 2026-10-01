@@ -25,7 +25,7 @@ def check_support(component, support):
 def create(component, plane="XY plane", offset=0.0, support=None):
     if not Model.is_component(component) or plane not in PLANES:
         raise ValueError("Choose a component and a sketch plane.")
-    Model.activate(component)
+    Model.activate(component, strict=False)
     if plane == "Selected planar face":
         support = check_support(component, support)
     with Model.transaction(component.Document, "New Sketch"):

@@ -93,6 +93,14 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   cached shapes must never be advertised as current engineering results.
 - Parent operations depend on the reference result; they are not baked into or
   overwritten by source refresh. Cycles are refused before committing changes.
+- Repair or explicitly change a reference's direct-child source without replacing
+  the reference object, its history position, authored suppression or valid whole-
+  object consumers. Keep the same geometry kind. Refuse unreviewed face/edge or
+  expression remapping before mutation; a failed dependent rebuild rolls back.
+- Missing reference geometry must not close an otherwise structurally valid document
+  or prevent independent references/operations from updating. Report each broken
+  reference in Model History and retain its saved source identity for repair. This
+  does not relax format, component-graph or external-definition identity checks.
 - No separate snapshot option in this command: independent copies use Convert
   to Dumb Object. Adding a reference does not change its source's display type.
 

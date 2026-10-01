@@ -29,7 +29,7 @@ class ExtrudeTask:
         self.component, self.operation = component, operation
         self.ghost = None
         self.result = None
-        Model.activate(component)
+        Model.activate(component, strict=False)
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle(tr("Extrude"))
         layout = QtWidgets.QFormLayout(self.form)
