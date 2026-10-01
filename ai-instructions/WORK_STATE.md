@@ -1,5 +1,33 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.6c, reviewed geometry conversion.
+Convert to Dumb Object now shows the existing dropdown with a read-only review of
+removed versus retained shared history. Delete Parameters follows geometry inputs,
+never component ownership, preserves the result identity/downstream links, and
+clears obsolete reference metadata when freezing a reference. Model History explains
+independent geometry. Extract Dumb Body defaults for already independent objects;
+curves/dumb sketches use extraction, with body/sheet-only parameter deletion.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-conversion-20261001`.
+One grouped script/resource build passed. `smoke-accepted/` passes three focused
+workflows, zero failures/errors/skips, process exit 0. The conversion review capture
+was reviewed. Checks cover exclusive upstream pruning without losing a child,
+downstream native Mirror identity/geometry, Undo/Redo/reopen, shared sketch retention,
+review Cancel/extraction and independent dumb-sketch geometry. The initial three
+checks passed; the same workflows were repeated only to assert current downstream
+geometry after Undo/reference refresh. No additional build was needed.
+Two native `DownstreamMirror: Cannot mirror empty shape` messages remain during
+reference restoration; current geometry after activation and final geometry pass.
+Native reference/recompute scheduling remains a separate open integration issue.
+
+Feedback files in `smoke-accepted/`: `Component-Converted-Body.cadprt`,
+`Component-Shared-History.cadprt`, `Component-Dumb-Sketch.cadprt`.
+No schema change, broad suite, installer or release update. Continue component
+migration. Real multi-body edge-treatment contribution detachment, general topology/
+expression preservation, native suppression scheduling and solver/BOM/mass remain
+open; this review and the shared-sketch check do not complete those gates.
+
+Previous feedback batch:
 Current feedback batch: roadmap 7.8.8c, instance copy/reference continuity.
 Copy to New Part keeps parent references on the selected occurrence, remaps their
 source identities and nested display overrides, retains placement and shared child

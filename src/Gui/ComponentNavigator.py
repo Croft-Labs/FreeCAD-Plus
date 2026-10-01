@@ -59,6 +59,71 @@ def apply_representation(root):
             child.ViewObject.LinkView.setLink(child.LinkedObject if paths else None, paths)
 
 
+class ConversionDialog(QtWidgets.QDialog):
+    def __init__(self, component, source, parent=None):
+        super().__init__(parent)
+        self.component_key, self.source_key = object_key(component), object_key(source)
+        self.result_object = None
+        self.setWindowTitle(tr("Convert to Dumb Object"))
+        self.resize(560, 410)
+        layout = QtWidgets.QVBoxLayout(self)
+        name = QtWidgets.QLabel(source.Label)
+        name.setTextFormat(QtCore.Qt.PlainText)
+        layout.addWidget(name)
+        self.choice = QtWidgets.QComboBox()
+        self.choice.addItems([tr("Delete Parameters"), tr("Extract Dumb Body")])
+        layout.addWidget(self.choice)
+        self.summary = QtWidgets.QLabel()
+        self.summary.setTextFormat(QtCore.Qt.PlainText)
+        self.summary.setWordWrap(True)
+        layout.addWidget(self.summary)
+        self.items = QtWidgets.QTreeWidget()
+        self.items.setHeaderLabels([tr("Action"), tr("History item")])
+        self.items.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        layout.addWidget(self.items)
+        self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+        layout.addWidget(self.buttons)
+        self.choice.currentIndexChanged.connect(self.review)
+        if not isinstance(getattr(source, "Proxy", None), (model().ResultProxy, model().ReferenceProxy)) or getattr(source, "Frozen", False):
+            self.choice.setCurrentIndex(1)
+        self.review()
+
+    def review(self):
+        self.items.clear()
+        self.buttons.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(False)
+        try:
+            component, source = resolve(self.component_key), resolve(self.source_key)
+            if self.choice.currentIndex() == 0:
+                plan = model().parameter_removal_plan(component, source)
+                self.summary.setText(tr("Keep this body's or sheet's identity and downstream references. Remove only its exclusive history; shared inputs remain editable."))
+                QtWidgets.QTreeWidgetItem(self.items, [tr("Keep geometry"), source.Label])
+                for action, objects in ((tr("Remove"), plan["remove"]), (tr("Keep shared"), plan["retain"])):
+                    for obj in objects:
+                        QtWidgets.QTreeWidgetItem(self.items, [action, obj.Label])
+                if plan["reference"]:
+                    self.summary.setText(tr("Keep this object's identity and downstream references. Disconnect its source; the child component and its history remain intact."))
+            else:
+                model().current_shape(source)
+                self.summary.setText(tr("Create independent, unlinked geometry. Keep the original object and all of its history."))
+                QtWidgets.QTreeWidgetItem(self.items, [tr("Keep original"), source.Label])
+                QtWidgets.QTreeWidgetItem(self.items, [tr("Create copy"), source.Label + tr(" copy")])
+            self.buttons.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(True)
+        except Exception as error:
+            self.summary.setText(str(error))
+
+    def accept(self):
+        try:
+            component, source = resolve(self.component_key), resolve(self.source_key)
+            fn = model().delete_parameters if self.choice.currentIndex() == 0 else model().extract_dumb
+            self.result_object = fn(component, source)
+        except Exception as error:
+            self.summary.setText(str(error))
+            return
+        super().accept()
+
+
 class Navigator(QtWidgets.QDockWidget):
     def __init__(self):
         super().__init__(tr("Components"), Gui.getMainWindow())
@@ -812,11 +877,12 @@ class Navigator(QtWidgets.QDockWidget):
         menu.exec(tree.viewport().mapToGlobal(point))
 
     def convert(self, key):
-        choice, ok = QtWidgets.QInputDialog.getItem(self, tr("Convert to Dumb Object"), tr("Operation"),
-                                                  [tr("Delete Parameters"), tr("Extract Dumb Body")], 0, False)
-        if ok:
-            fn = model().delete_parameters if choice == tr("Delete Parameters") else model().extract_dumb
-            fn(resolve(self.active_key), resolve(key))
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before converting an object."))
+        dialog = ConversionDialog(resolve(self.active_key), resolve(key), self)
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            self.refresh()
+            self.select_native([(self.active_path, dialog.result_object)])
 
     def slotChangedObject(self, obj, prop):
         try:

@@ -558,15 +558,19 @@ def extract_dumb(component, source):
     return obj
 
 
-def delete_parameters(component, result):
+def parameter_removal_plan(component, result):
+    """Read-only review of exclusive history; component ownership is never pruned."""
     proxy = getattr(result, "Proxy", None)
     if owner(result) != component or not isinstance(proxy, (ResultProxy, ReferenceProxy)):
         raise ValueError("Select a published body or sheet result in the active component.")
     shape = current_shape(result)
-    _shape_kind(shape)
+    if _shape_kind(shape) not in ("Body", "Sheet"):
+        raise ValueError("Delete Parameters applies to bodies and sheets. Use Extract Dumb Body for other geometry.")
+    if getattr(result, "Frozen", False):
+        raise ValueError("This object already has independent geometry.")
     is_reference = isinstance(proxy, ReferenceProxy)
     producer = None if is_reference else result.Producer
-    candidates = set([producer] + list(producer.OutListRecursive)) if producer else set()
+    candidates = set([producer] + geometry_dependencies(producer)) if producer else set()
     candidates = {o for o in candidates if owner(o) == component}
     # Only delete an upstream object when all its engineering consumers are also
     # deleted. Component grouping is ownership, not a consumer. Shared producers
@@ -581,10 +585,22 @@ def delete_parameters(component, result):
         removable -= blocked
     if any(o.ExpressionEngine for o in [result] + list(removable)):
         raise ValueError("Expression references need an explicit conversion review before deleting parameters.")
+    ordered = [obj for obj in component.Document.Objects if obj in candidates]
+    return {"shape": shape, "remove": [obj for obj in ordered if obj in removable],
+            "retain": [obj for obj in ordered if obj not in removable], "reference": is_reference}
+
+
+def delete_parameters(component, result):
+    plan = parameter_removal_plan(component, result)
+    shape, is_reference = plan["shape"], plan["reference"]
+    removable = plan["remove"]
     with transaction(component.Document, "Delete Parameters"):
         if is_reference:
             result.SourceObject = None
             result.SourceOccurrence = None
+            result.SourceObjectId = ""
+            if hasattr(result, "ReferenceError"):
+                result.ReferenceError = ""
             _property(result, "Link", "Producer", None, True)
             _property(result, "String", "OutputProperty", "Shape", True)
             _property(result, "Bool", "Frozen", True, True)
@@ -598,8 +614,8 @@ def delete_parameters(component, result):
         removed_names = {o.Name for o in removable}
         component.ModelHistory = [n for n in component.ModelHistory if n not in removed_names]
         component.ResultObjects = [n for n in component.ResultObjects if n not in removed_names]
-        for name in removed_names:
-            component.Document.removeObject(name)
+        for obj in reversed(removable):
+            component.Document.removeObject(obj.Name)
     return result
 
 
@@ -784,6 +800,8 @@ def history_detail(obj):
         if sources[0] == obj:
             return "Suppressed explicitly. Unsuppress this item to enable it when its inputs are available."
         return "Inactive because these inputs are suppressed: " + ", ".join(dep.Label for dep in sources)
+    if getattr(obj, "Frozen", False):
+        return "Independent geometry. Generating parameters have been removed; downstream references retain this object."
     return getattr(obj, "ReferenceError", "")
 
 

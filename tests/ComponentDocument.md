@@ -156,6 +156,27 @@ Python batch. Review the generated independent-reference, assembly and embedded-
 other open files with affected nested overrides must reset those overrides before
 copying. Complete external-ancestor and topology remapping remains future work.
 
+## Convert to Dumb Object feedback iteration
+
+Right-click a body/sheet in Model History and choose Convert to Dumb Object. The
+Delete Parameters review lists the selected geometry, exclusive history to remove,
+and shared upstream items to retain. Cancel leaves the document untouched. Accept
+keeps the selected object's identity and downstream links; child components survive
+even when the deleted operation obtained its inputs through Add Reference Object.
+An independent geometry tooltip identifies the converted result in Model History.
+
+Choose Extract Dumb Body to keep the original and create an independent, unlinked
+copy. Already independent objects default to extraction. Referenced curves and dumb
+sketches can be extracted; Delete Parameters remains restricted to bodies/sheets.
+Converting a body/sheet reference disconnects its source metadata; Undo restores it.
+
+Use `-ConversionSmoke` for the three current feedback workflows and `-ScriptsOnly`
+for this Python batch. Native Mirror may emit an empty-shape diagnostic during Undo
+before reference activation; the focused workflow asserts current downstream geometry
+after activation and final geometry after Redo/reopen. General native scheduling,
+multi-body contribution detachment and arbitrary topology/expression consumers remain
+open. These focused checks are not full file-format validation.
+
 ## Automated checks
 
 Run from the repository root in PowerShell, with a new evidence directory each time:

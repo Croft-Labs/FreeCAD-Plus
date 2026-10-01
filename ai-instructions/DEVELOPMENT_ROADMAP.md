@@ -2407,6 +2407,11 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   freezing, independent extraction and native Undo are covered by regression fixtures.
 - [   ] 7.8.6b Prove real multi-body edge-treatment contribution detachment and
   expression/subelement reference preservation or explicit ambiguity refusal.
+- [ X ] 7.8.6c Conversion feedback: review removed/retained history before Delete
+  Parameters, prune geometry inputs without removing child instances, preserve
+  shared sketches and downstream identity, clear detached reference metadata and
+  explain independent geometry in Model History. Three focused workflows pass;
+  native reference restoration diagnostics and 7.8.6b's general lineage gates remain.
 - [ X ] 7.8.7a Root component with native Part icon, both navigator tabs, representation
   inheritance/reset and a rendered isolated view; native New/Open/Save dialog checks.
 - [   ] 7.8.7b Integrate assembly joint creation/solver with the first constraints
@@ -2549,6 +2554,28 @@ claimed. No installer/release update. Implementation
 `1ffb7a9df29d6190c68f78307452c9c5d6c523ba` was pushed to `origin/main` and verified
 with `git ls-remote`. `acceptance-identities.json` records the matching source/runtime
 modules, fixture and six unchanged native artifacts.
+
+2026-10-01 conversion feedback batch (7.8.6c): parameter-removal planning,
+component-boundary pruning, detached-reference metadata and conversion review UI
+changes preceded one grouped script/resource staging build, exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-conversion-20261001`.
+`smoke-accepted/` passes **three focused workflows**, zero failures/errors/skips,
+process exit 0: native Mirror-chain conversion retains its child component and
+result/downstream identity through Undo/Redo/reopen; shared sketch inputs remain
+editable after exclusive Extrude removal; review Cancel and independent extraction
+preserve original history; detached body references and dumb-sketch copies retain
+their intended geometry semantics. The review capture was inspected. Initial checks
+passed; the same checks were repeated with an explicit current-geometry assertion
+after Undo/reference activation because stderr contained two native
+`DownstreamMirror: Cannot mirror empty shape` messages. Those diagnostics remain;
+post-activation and final geometry pass. No second build or broader suite was run.
+
+Fixtures in `smoke-accepted/`: `Component-Converted-Body.cadprt`,
+`Component-Shared-History.cadprt`, `Component-Dumb-Sketch.cadprt`.
+This does not prove real multi-body edge-treatment detachment, arbitrary downstream
+face/expression lineage, native reference/suppression scheduling or full format
+qualification. No schema version change, installer or release update. Publication
+is recorded after commit.
 
 2026-10-01 instance separation feedback batch (7.8.8c): reference/source-identity
 remapping, nested display override remapping and active-context changes preceded one

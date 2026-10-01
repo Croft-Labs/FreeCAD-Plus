@@ -106,7 +106,9 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 
 ## Convert to Dumb Object
 
-The dropdown has **Delete Parameters** and **Extract Dumb Body**.
+The dropdown has **Delete Parameters** and **Extract Dumb Body**. The conversion
+review identifies exclusive history to remove and shared upstream items to retain;
+Cancel leaves the document unchanged.
 
 - Delete Parameters freezes the selected current body/sheet, preserves its object
   identity and valid downstream references, and removes only history exclusively
