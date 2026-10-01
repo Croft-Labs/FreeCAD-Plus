@@ -583,3 +583,32 @@ contract. Close removes an unsaved preview; saved objects remain.
 
 Broader mass/thickness/mesh semantics, associative error/repair and physical/high-DPI
 acceptance remain pending. [Owner procedure](../tests/MeasurementContext.md).
+
+## UI-014: Occurrence appearance (F018; roadmap 12.2b/c)
+
+View > Occurrence appearance requires one whole native Link selected in the tree.
+The modeless editor identifies the occurrence and shared source, and provides Visible,
+Override source appearance, Colour (all faces), Transparency (0-100%), Use source
+appearance, Reload current values, Apply and Close. Colour uses the native Qt chooser.
+Colour/transparency controls are disabled while inheriting source appearance.
+
+Controls stage values without a live model preview. Apply validates the original
+link/source identity and appearance state and owns one native Undo transaction.
+Only link visibility and native display override properties change. Source geometry,
+other occurrences, placement and engineering material are preserved. Use source
+appearance stages disabling OverrideMaterial; it does not change visibility or copy
+source values. Reload discards the staged form and reads current values. Close
+discards unapplied choices while keeping completed Apply transactions.
+
+Changed link targets or appearance require Reload before Apply. Deleted source
+disables Apply until repair/reload; deleting the occurrence or closing its document
+closes and detaches the editor. Active tasks and pending edits block Apply. Errors
+appear inline and leave the form recoverable.
+
+Supported links directly target a Part shape or Body in the same document. Structural
+Part container selection paths are accepted; traversal through another Link is rejected. Arrays,
+per-element overrides, selected subelements/nested occurrence paths, external
+documents and mixed Part definitions remain outside this pilot. Visibility is display
+state, not suppression or BOM policy; colour is not a material/mass/FEM assignment.
+Physical/high-DPI and broader occurrence acceptance remain open.
+[Owner procedure](../tests/OccurrenceAppearance.md).

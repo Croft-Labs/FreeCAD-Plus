@@ -1,6 +1,34 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F098/F099 measurement meaning and point snapshots, phase 15 tasks 15.1a/b.
+Latest batch: F018 occurrence appearance, phase 12 tasks 12.2b/c.
+View > Occurrence appearance stages native whole-link visibility and uniform
+colour/transparency. Use source appearance restores inheritance; Apply owns one
+Undo transaction. Source/other links, placement, geometry and engineering material
+remain unchanged. Structural Part container selection is supported; paths through
+another Link are rejected. Arrays/per-element overrides and external/mixed definitions
+remain outside this bounded pilot.
+
+One grouped FreeCADGui/FreeCADGui_Resources Release build, exit 0. All 23 selected
+checks pass, no failures/errors/skips: 7 occurrence in occurrence-accepted/, 9
+temporary-display and 7 command-search in grouped/, all process exits 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-occurrence-appearance-20260930.
+acceptance-summary.json and validated-identities.json record exact accepted suites
+and identities. Installed script matches source; FreeCADGui SHA256:
+9f9ffbc6c1773c42d948c018ec71fc1533d850e988757a33741d6856254307fc.
+
+Earlier grouped/ retains a whole-link container-path selector failure and placement/
+empty-transaction fixture assumptions; occurrence-final/ retains a duplicate View
+menu lookup failure. Python-only selector correction was staged without another
+native build; corrected fixture/menu assertions pass. Earlier aggregates are not PASS.
+
+visual/ contains five reviewed captures and Occurrence-Appearance.FCStd. Apply,
+Undo/Redo, save/reopen, placement/source isolation, Body Tip, reset, stale state,
+scope rejection and lifecycle pass. tests/OccurrenceAppearance.md is the owner guide.
+Whole F018 and parent 12.2 stay open for broader occurrence/representation behavior
+and physical/high-DPI acceptance. No installer/release update. Stop for feedback
+and rotate to another item family.
+
+Previous batch: F098/F099 measurement meaning and point snapshots, phase 15 tasks 15.1a/b.
 The existing Measure task shows operand identities, distance/frame meaning and
 geometric-centre density exclusion. Distance Free remains native fixed world points;
 new read-only UpdatePolicy/CaptureTime/CaptureSources fields retain explicit policy

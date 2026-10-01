@@ -294,6 +294,20 @@ Roadmap 15.1a/b covers this bounded improvement. Broader material/mass, thicknes
 mesh accuracy, stale/invalid associative measurement repair and physical/high-DPI
 acceptance remain open. [Owner procedure](../tests/MeasurementContext.md); UI-013.
 
+## Current occurrence-appearance pilot (F018)
+
+View > Occurrence appearance exposes visibility and uniform colour/transparency
+overrides for one direct same-document link to a Part shape or Body. Explicit
+occurrence/source identities and staged controls precede a single native transaction.
+Use source appearance restores native inheritance without changing visibility.
+Placement, shared geometry, other links and engineering material remain separate.
+No new object schema or copy semantics are introduced.
+
+Roadmap 12.2b/c covers this bounded workflow. Arrays, per-element overrides, nested
+occurrence paths, external documents, mixed Part definitions and broader representation/
+physical acceptance remain open. [Owner procedure](../tests/OccurrenceAppearance.md);
+UI-014 defines the interaction. The Make Unique prototype remains test-only.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

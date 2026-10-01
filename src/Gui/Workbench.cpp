@@ -775,6 +775,7 @@ MenuItem* StdWorkbench::setupMenuBar() const
           << "Std_TextureMapping"
           << "Separator" << visu << "Std_ToggleNavigation"
           << "Std_RandomColor"
+          << "Std_OccurrenceAppearance"
           << "Std_ToggleTransparency"
           << "Separator"
           << "Std_Workbench"

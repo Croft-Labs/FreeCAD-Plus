@@ -62,6 +62,12 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Occurrence appearance (F018): [`OccurrenceAppearance.py`](../src/Gui/OccurrenceAppearance.py)
+exposes native whole-link visibility/colour/transparency and source inheritance in
+View > Occurrence appearance. Staged edits use one transaction and reject stale state;
+geometry/placement are preserved. [Owner procedure](../tests/OccurrenceAppearance.md);
+roadmap 12.2b/c. Make Unique remains a separate test-only prototype.
+
 Measurement context (F098/F099): existing [`TaskMeasure.cpp`](../src/Mod/Measure/Gui/TaskMeasure.cpp)
 shows operand identities and measurement/frame meaning. Native
 [`MeasureDistanceDetached`](../src/Mod/Measure/App/MeasureDistance.cpp) stores fixed-point

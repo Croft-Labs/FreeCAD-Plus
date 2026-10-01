@@ -563,6 +563,10 @@ from freecad.gui.DependencyInspector import registerCommand as _registerDependen
 _registerDependencyInspector()
 del _registerDependencyInspector
 
+from freecad.gui.OccurrenceAppearance import registerCommand as _registerOccurrenceAppearance
+_registerOccurrenceAppearance()
+del _registerOccurrenceAppearance
+
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 

@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F098/F099 measurement meaning
+- Current product batch complete for owner testing: F018 occurrence appearance,
+  phase 12 tasks 12.2b/c. View > Occurrence appearance stages visibility and uniform
+  colour/transparency for a whole shape/Body link, with native source inheritance.
+  Source, other occurrences and placement remain unchanged. One grouped build;
+  23 selected checks pass and five captures reviewed. [Try the repeated-part example](../tests/OccurrenceAppearance.md).
+  Whole F018 remains open for broader occurrence paths, representations and physical
+  acceptance. Stop here for owner feedback and rotate to another item family.
+
+- Previous product batch complete for owner testing: F098/F099 measurement meaning
   and point snapshots, phase 15 tasks 15.1a/b. The existing Measure task now shows
   operand identities, distance/frame meaning and snapshot policy. Distance Free
   persists UTC capture information without live links. One grouped build; 13 selected
@@ -3324,6 +3332,35 @@ partial evidence, not completion of these production workflows.
   and preserve its placement. Verify Undo/Redo, independent edits and save/reopen;
   unsupported definition rejection must not create objects or change the link.
 
+- [x] 12.2b Expose native whole-occurrence visibility and uniform appearance
+  overrides for direct same-document shape/Body links (F018). Use native view
+  properties, one Undo transaction and explicit source inheritance; preserve
+  definition, other occurrences and placement. Arrays/per-element overrides remain out.
+- [x] 12.2c Add an occurrence appearance editor with explicit identity, staged
+  colour/transparency/visibility, Use source appearance, stale-state recovery and
+  close/deletion handling. Verify native save/reopen and a repeated-part fixture;
+  stop at owner-test-ready appearance before wider occurrence work.
+
+Occurrence appearance evidence (12.2b/c): one grouped FreeCADGui/FreeCADGui_Resources
+Release build, exit 0. **23 selected PASS**, no failures/errors/skips: 7 occurrence
+checks in occurrence-accepted/, 9 unchanged temporary-display and 7 command-search
+checks in grouped/, all process exits 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-occurrence-appearance-20260930`, acceptance-summary.json
+and validated-identities.json. Source/runtime script hashes match. FreeCADGui SHA256:
+`9f9ffbc6c1773c42d948c018ec71fc1533d850e988757a33741d6856254307fc`.
+grouped/ retains an initial whole-link container-path selector failure and fixture
+assumptions; occurrence-final/ retains a duplicate View menu lookup failure.
+The Python selector now accepts structural Part paths and rejects traversal through
+another Link; it was staged without a second native build. Corrected fixture/menu
+checks pass. Do not report either earlier aggregate as passing.
+
+visual/ has five reviewed captures and the native Occurrence-Appearance.FCStd example.
+Apply/Undo/Redo/save/reopen, source/other-link isolation, placement, Body Tip, reset,
+stale state and lifecycle pass. [Owner procedure](../tests/OccurrenceAppearance.md).
+Whole F018 and parent 12.2 remain open: arrays/per-element overrides, nested occurrence
+paths, external/mixed definitions, broader representations and physical/high-DPI
+acceptance are deferred. No installer/release update. Rotate pending owner feedback.
+
 Mixed/unique batch evidence: **32 PASS**, no failures/errors/skips, in
 `D:\Temp\Office-PC\freecad-plus-validation-20260928\mixed-unique-20260929-final\results.json`.
 Seven native capability probes plus ten history adapters, three clone checks,
@@ -4811,7 +4848,7 @@ reconciliation rules above to every entry.
 <a id="f018"></a>
 ### F018 — Occurrence-specific properties
 
-**Owning tasks:** 12.1, 12.3. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 12.1, 12.2, 12.3. **Status:** Native whole-link visibility and uniform colour/transparency editor completed under 12.2b/c, ready for owner testing. Source inheritance/reset, source/other-link isolation, placement preservation, Undo/Redo and save/reopen pass; 23 selected checks and five reviewed captures. Whole F018 remains open for broader nested occurrence paths, representations/reference sets and physical/high-DPI acceptance. [Owner procedure](../tests/OccurrenceAppearance.md).
 
 **Packages:** A03, B01 · **First delivery:** P3/P6 · **Likely scope:** Feature
 
