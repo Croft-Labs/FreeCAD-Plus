@@ -2440,6 +2440,13 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   direct-child reference objects, make grouped Part View a single Undo, reuse open
   component tabs and restore per-view edit context. Grouped script/resource staging
   and three focused checks pass; full native interaction parity remains in 7.8.7b.
+- [ X ] 7.8.7g Cross-file editing feedback: Edit retains the assembly view and exact
+  occurrence path for external definitions; tab switches and Copy/Undo/Redo restore
+  that binding. Missing active links fall back to the nearest available component.
+  Isolated-tab labels follow rename/Save As; document-close guards avoid stale GUI
+  access and clear instance expansion state before native names are reused.
+  One grouped staging pass and three focused workflows pass. Native task entry/exit
+  across owning files and broad multi-tab display acceptance remain in 7.8.7b/c.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
@@ -2461,6 +2468,21 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   and TechDraw projection after save/reopen; suppressed inputs clear clone/CAM geometry.
 - [   ] 7.8.10b FEM (disabled in this build), general drawing references, CAM path
   invalidation, broader topology changes, performance and interactive owner acceptance.
+
+2026-10-01 cross-file edit-context feedback evidence:
+`D:\Temp\Office-PC\freecad-plus-edit-context-20261001`.
+`build/` records successful grouped script/resource staging; native binaries reused.
+Three focused checks cover exact external-instance activation/native history selection;
+Copy/Undo/Redo and unresolved-active fallback; nested assembly/isolated-tab restoration
+and rename/Save As title ownership. The first run was stopped after a close-time modal
+error; direct Python corrections guard the closing external GUI document and clear
+per-document instance expansion state. No additional build or broad suite was run.
+`smoke-final/` passes all three checks, zero failures/errors/skips, process exit 0.
+Stderr has three expected `Support001: Link broken!` diagnostics from the deliberate
+unresolved-link fixture and no Python traceback. Two navigator captures were reviewed.
+Feedback fixture: `smoke-final/testIsolatedTabsRestoreNestedContextAndOwningFileTitle/Assembly.cadprt`
+with its sibling `Renamed-Support.cadprt`. No schema, native source, installer or release
+change. Broader native task, save-routing and interactive owner acceptance stay open.
 
 2026-10-01 externalization feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-externalization-20261001`.

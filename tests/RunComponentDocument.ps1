@@ -11,6 +11,7 @@ param(
     [switch]$ConversionSmoke,
     [switch]$RecoverySmoke,
     [switch]$ExternalizationSmoke,
+    [switch]$EditContextSmoke,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -33,6 +34,7 @@ if ($InstanceSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentInstan
 if ($ConversionSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentConversionIteration.py' }
 if ($RecoverySmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentFileRecovery.py' }
 if ($ExternalizationSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentExternalization.py' }
+if ($EditContextSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentEditContext.py' }
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'

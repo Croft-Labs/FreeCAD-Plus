@@ -1,5 +1,26 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.7g, cross-file component editing.
+Edit retains the assembly view and binds the selected occurrence, including external
+definitions. Model History/native selection, tab switching and Copy/Undo/Redo retain
+the correct definition/path. A missing active link falls back to the nearest available
+component. Isolated titles update after rename/Save As. Closing GUI documents are
+guarded, and instance expansion state is cleared before native document-name reuse.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-edit-context-20261001`.
+One grouped script/resource staging pass succeeded (`build/`), native binaries reused.
+The first check was stopped at a close-time modal error. Focused fixes were staged
+directly; no extra build. `smoke-final/` passes three checks, zero failures/errors/skips,
+process exit 0. Only three expected broken-link messages from the deliberate missing
+link appear in stderr; no Python traceback. Two final panel captures reviewed.
+Feedback fixture:
+`smoke-final/testIsolatedTabsRestoreNestedContextAndOwningFileTitle/Assembly.cadprt`.
+Keep broad tests deferred for owner feedback. Native task entry/exit across files,
+save routing and general multi-tab display remain open; no schema, native source,
+installer or release change.
+
+Previous feedback batch follows.
+
 Current feedback batch: roadmap 7.8.8d, Save to External File.
 The moved embedded hierarchy retains component names and evaluates reference
 geometry before saving. Parent references and downstream history refresh after

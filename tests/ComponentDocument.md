@@ -7,6 +7,21 @@ owns requirements.
 
 ## Owner workflow
 
+Cross-file editing feedback (roadmap 7.8.7g): expand instances of an external
+component and double-click a numbered occurrence. The assembly view should remain
+active while Model History shows that definition. Selecting a history item retains
+the chosen occurrence path. Open Component in Tab provides an isolated view; switching
+between it and the assembly restores each view's active nested component. Rename or
+Save As updates the isolated tab's component name/owning-file title. If an active link
+becomes unresolved, the navigator falls back to the nearest available component.
+
+`RunComponentDocument.ps1 -EditContextSmoke` runs three focused workflows in
+`TestComponentEditContext.py`. The 2026-10-01 evidence is
+`D:\Temp\Office-PC\freecad-plus-edit-context-20261001/smoke-final`.
+The `testIsolatedTabsRestoreNestedContextAndOwningFileTitle/Assembly.cadprt` fixture
+references sibling `Renamed-Support.cadprt`. Native modeling-task entry/exit and full
+save-routing acceptance across owning files remain separate work.
+
 Save to External File feedback (roadmap 7.8.8d): save the parent `.cadprt`, finish
 the current edit and close isolated tabs for the component and its embedded children.
 Right-click an embedded component and choose Save to External File with a new

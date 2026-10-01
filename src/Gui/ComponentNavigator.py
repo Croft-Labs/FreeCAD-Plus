@@ -225,14 +225,17 @@ class Navigator(QtWidgets.QDockWidget):
             active = None
             if root:
                 active, self.active_path = self.edit_context(root, self.active_path)
+                try:
+                    Gui.getDocument(active.Document.Name)
+                except NameError:
+                    # An external App object may briefly outlive its GUI document.
+                    return
                 active_key = object_key(active)
                 if self.active_key != active_key:
                     self.active_key = active_key
-                    Gui.getDocument(active.Document.Name).activeView().setActiveObject("part", active)
+                    self.bind_edit_context()
                     if not active.Document.HasPendingTransaction:
                         model().activate(active, strict=False)
-                    if self.mdi and self.mdi.activeSubWindow():
-                        self.store_edit_context(self.mdi.activeSubWindow())
             if root is None or active is None:
                 self.context.setText(tr("Create or open a component document."))
                 self.conversion.hide()
@@ -254,6 +257,10 @@ class Navigator(QtWidgets.QDockWidget):
                 if component:
                     paths = visible_paths(component, component, [])
                     entry["snapshot"].setLink(component if paths else None, paths)
+                    if entry.get("window"):
+                        entry["window"].setWindowTitle(self.component_title(component))
+                else:
+                    entry["snapshot"].setLink(None, [])
             # The root is the component itself, not the document/file wrapper.
             root_item = QtWidgets.QTreeWidgetItem(self.structure, [root.Label, "", "", ""])
             root_item.setData(0, QtCore.Qt.UserRole, (object_key(root), []))
@@ -550,6 +557,27 @@ class Navigator(QtWidgets.QDockWidget):
         window.setProperty("ComponentActiveKey", self.active_key)
         window.setProperty("ComponentActivePath", self.active_path)
 
+    def bind_edit_context(self, window=None):
+        """Bind the exact occurrence in the displayed document, including external definitions."""
+        root = resolve(self.root_key)
+        try:
+            Gui.getDocument(resolve(self.active_key).Document.Name)
+            view = Gui.getDocument(root.Document.Name).activeView()
+        except NameError:
+            # Closing MDI views can outlive their GUI document.
+            return False
+        if view is None:
+            return False
+        view.setActiveObject("part", root, Selection.native_path(root, self.active_path))
+        window = window or (self.mdi.activeSubWindow() if self.mdi else None)
+        if window and tuple(window.property("ComponentKey") or ()) == self.root_key:
+            self.store_edit_context(window)
+        return True
+
+    @staticmethod
+    def component_title(component):
+        return component.Label + " \u2014 " + (component.Document.FileName or tr("Unsaved"))
+
     @staticmethod
     def edit_context(root, ids):
         # Copy, Undo and deleted occurrences can invalidate part of a path.
@@ -557,9 +585,12 @@ class Navigator(QtWidgets.QDockWidget):
         ids = list(ids)
         while ids:
             try:
-                return model()._path(root, ids)[-1].LinkedObject, ids
+                component = model()._path(root, ids)[-1].LinkedObject
+                if model().is_component(component):
+                    return component, ids
             except ValueError:
-                ids.pop()
+                pass
+            ids.pop()
         return root, []
 
     def activate_item(self, item):
@@ -587,12 +618,9 @@ class Navigator(QtWidgets.QDockWidget):
             if model().representation(root, ids) == "Hidden":
                 model().set_representation(root, ids, "Bodies Only")
         model().activate(obj, strict=False)
-        App.setActiveDocument(obj.Document.Name)
+        App.setActiveDocument(root.Document.Name)
         self.root_key, self.active_key, self.active_path = root_key, object_key(obj), list(value[1])
-        Gui.activeDocument().activeView().setActiveObject("part", obj)
-        if self.mdi and self.mdi.activeSubWindow():
-            self.mdi.activeSubWindow().setProperty("ComponentActiveKey", self.active_key)
-            self.mdi.activeSubWindow().setProperty("ComponentActivePath", self.active_path)
+        self.bind_edit_context()
         self.tabs.setCurrentWidget(self.history)
 
     def open_component_tab(self, key):
@@ -625,7 +653,7 @@ class Navigator(QtWidgets.QDockWidget):
             window.setProperty("ComponentKey", object_key(obj))
             window.setProperty("ComponentActiveKey", object_key(obj))
             window.setProperty("ComponentActivePath", [])
-            window.setWindowTitle(obj.Label + " — " + (obj.Document.FileName or tr("Unsaved")))
+            window.setWindowTitle(self.component_title(obj))
             window.destroyed.connect(lambda: self.component_views.remove(entry) if entry in self.component_views else None)
         self.root_key = self.active_key = object_key(obj)
         self.active_path = []
@@ -645,17 +673,8 @@ class Navigator(QtWidgets.QDockWidget):
             root = resolve(self.root_key)
             component, self.active_path = self.edit_context(root, self.active_path)
             self.active_key = object_key(component)
-            try:
-                gui_doc = Gui.getDocument(component.Document.Name)
-            except NameError:
-                # MDI activation can arrive after the GUI document is removed
-                # but before the corresponding App document finishes closing.
+            if not self.bind_edit_context(window):
                 return
-            view = gui_doc.activeView()
-            if view is None:
-                return
-            view.setActiveObject("part", component)
-            self.store_edit_context(window)
             self.run(lambda: model().activate(component, strict=False))
             self.selection_timer.start(0)
 
@@ -727,10 +746,7 @@ class Navigator(QtWidgets.QDockWidget):
                 self.root_key, self.active_path = root_key, active_path
                 active, self.active_path = self.edit_context(resolve(root_key), active_path)
                 self.active_key = object_key(active)
-                if window:
-                    self.store_edit_context(window)
-                Gui.getDocument(parent.Document.Name).activeView().setActiveObject(
-                    "part", resolve(root_key), Selection.native_path(resolve(root_key), self.active_path))
+                self.bind_edit_context(window)
                 self.refresh()
 
     def repair_component(self, key):
@@ -958,6 +974,12 @@ class Navigator(QtWidgets.QDockWidget):
         self.timer.start(100)
 
     def slotDeletedDocument(self, doc):
+        name = getattr(doc, "Document", doc).Name
+        self.expanded_instances = {group for group in self.expanded_instances
+                                   if group[0][0] != name and group[2][0] != name}
+        self.timer.start(100)
+
+    def slotFinishSaveDocument(self, doc, filename):
         self.timer.start(100)
 
 
