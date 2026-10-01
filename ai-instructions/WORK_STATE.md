@@ -1,6 +1,42 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F048 sketch constraint repair, phase 11 tasks 11.4a/b. The Sketch
+Latest batch: F067 sheet thickening, phase 13 tasks 13.1c/d. Existing native 3D
+Offset now exposes signed one-sided thickness, formula-preserving numeric reversal,
+solid/sheet status and recoverable failed acceptance. Kernel inputs are deep copies
+with native element maps. Cancel aborts before resetEdit's implicit commit; direct
+setEdit also gets an edit transaction. The shared solid-shell Thickness form keeps
+its face-selection controls and the 2D geometry implementation is unchanged.
+
+13.1c/d evidence (2026-10-01):
+Both tasks preceded the first grouped PartGui/PartScripts Release build. Four build
+attempts were needed for demonstrated defects: the initial compile exposed the
+shared solid-shell Thickness form and a shape API type; later native tests exposed
+kernel mutation of shared source data, feature-recompute status and resetEdit's
+implicit commit before Cancel. Final build exit 0; earlier logs/results retained.
+Evidence: `D:\Temp\Office-PC\freecad-plus-sheet-thickening-20261001`.
+`grouped-corrected/` passes eight existing sewing checks; after the final Cancel
+ordering fix, `thicken-verified/` passes all nine sheet-thickening checks.
+**17 distinct selected passes**, zero failures/errors/skips in accepted suites;
+native process exits 0. Initial failed aggregates are not acceptance evidence.
+Six `visual/` captures reviewed: offset sheet, planar positive/opposite thickness,
+curved inward thickness, excessive-thickness refusal and reopened results.
+Sheet-Thickening-Sources.FCStd / Sheet-Thickening-Results.FCStd are owner fixtures.
+Planar 10 x 8 x 2 mm results measure 160 mm^3 on either side; radius-5/height-10
+cylindrical sheet offsets +1/-1 mm produce 110*pi/90*pi mm^3. Inward -6 mm is
+refused. Deep native shape copies preserve source BRep data and element maps.
+Failed OK remains editable, Cancel restores/removes the native feature correctly,
+and Undo/Redo, formula preservation, deferred preview, 2D and solid-shell Thickness
+controls pass. Reopened source growth updates the thickened solid and downstream cut.
+Part SHA256: `53C9A44F356F8CD8912ED297813A5DA17BEC9636919F14FDB955B73192AD9C72`.
+PartGui SHA256: `008DAA38E031E59809DA177CD2A7A66D8063ABD9DD760665158ED434266F8255`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime;
+the historical About stamp is not this source identity. No installer/release update.
+Full F067/13.1 stays open for symmetric/two-sided thickness, graphical normals,
+Boolean target collection, compound-sheet filling, broader high-curvature diagnostics,
+localization and physical owner acceptance. Stop here for owner testing and rotate.
+[Owner procedure](../tests/SheetThickening.md).
+
+Previous batch: F048 sketch constraint repair, phase 11 tasks 11.4a/b. The Sketch
 command diagnoses a hidden temporary native copy, previews explicit deactivation
 choices and applies a successful proposal transactionally. Native solver, copying,
 constraint signatures, identity and wireframe services are reused. Source sketches

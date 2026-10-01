@@ -59,6 +59,10 @@ OffsetWidget::OffsetWidget(Part::Offset* offset, QWidget* parent)
     Gui::Command::runCommand(Gui::Command::App, "import Part");
 
     d->offset = offset;
+    // Direct setEdit/Std_Edit also needs a transaction for preview rollback.
+    if (!offset->getDocument()->hasPendingTransaction()) {
+        offset->getDocument()->openTransaction("Edit offset");
+    }
     d->ui.setupUi(this);
     setupConnections();
 
@@ -106,6 +110,14 @@ OffsetWidget::OffsetWidget(Part::Offset* offset, QWidget* parent)
     d->ui.spinOffset->blockSignals(block);
 
     d->ui.spinOffset->bind(d->offset->Value);
+    d->ui.reverseSide->setVisible(!is_2d);
+    d->ui.sideHelp->setVisible(!is_2d);
+    d->ui.resultStatus->setVisible(!is_2d);
+    if (!is_2d) {
+        d->ui.fillOffset->setText(tr("Fill between source and offset"));
+        d->ui.labelOffset->setText(tr("Signed distance"));
+    }
+    updateResultStatus();
 }
 
 OffsetWidget::~OffsetWidget()
@@ -130,6 +142,7 @@ void OffsetWidget::setupConnections()
             this, &OffsetWidget::onFillOffsetToggled);
     connect(d->ui.updateView, &QCheckBox::toggled,
             this, &OffsetWidget::onUpdateViewToggled);
+    connect(d->ui.reverseSide, &QPushButton::clicked, this, &OffsetWidget::onReverseSide);
     // clang-format on
 }
 
@@ -141,55 +154,100 @@ Part::Offset* OffsetWidget::getObject() const
 void OffsetWidget::onSpinOffsetValueChanged(double val)
 {
     d->offset->Value.setValue(val);
-    if (d->ui.updateView->isChecked()) {
-        d->offset->getDocument()->recomputeFeature(d->offset);
-    }
+    updatePreview();
 }
 
 void OffsetWidget::onModeTypeActivated(int val)
 {
     d->offset->Mode.setValue(val);
-    if (d->ui.updateView->isChecked()) {
-        d->offset->getDocument()->recomputeFeature(d->offset);
-    }
+    updatePreview();
 }
 
 void OffsetWidget::onJoinTypeActivated(int val)
 {
     d->offset->Join.setValue((long)val);
-    if (d->ui.updateView->isChecked()) {
-        d->offset->getDocument()->recomputeFeature(d->offset);
-    }
+    updatePreview();
 }
 
 void OffsetWidget::onIntersectionToggled(bool on)
 {
     d->offset->Intersection.setValue(on);
-    if (d->ui.updateView->isChecked()) {
-        d->offset->getDocument()->recomputeFeature(d->offset);
-    }
+    updatePreview();
 }
 
 void OffsetWidget::onSelfIntersectionToggled(bool on)
 {
     d->offset->SelfIntersection.setValue(on);
-    if (d->ui.updateView->isChecked()) {
-        d->offset->getDocument()->recomputeFeature(d->offset);
-    }
+    updatePreview();
 }
 
 void OffsetWidget::onFillOffsetToggled(bool on)
 {
     d->offset->Fill.setValue(on);
+    updatePreview();
+}
+
+void OffsetWidget::onUpdateViewToggled(bool)
+{
+    updatePreview();
+}
+
+void OffsetWidget::onReverseSide()
+{
+    // Never replace a saved formula with its evaluated number.
+    if (d->ui.spinOffset->hasExpression()) {
+        d->ui.resultStatus->setText(tr("Edit the distance expression to reverse its side."));
+        return;
+    }
+    d->ui.spinOffset->setValue(-d->ui.spinOffset->value().getValue());
+}
+
+void OffsetWidget::updatePreview()
+{
     if (d->ui.updateView->isChecked()) {
         d->offset->getDocument()->recomputeFeature(d->offset);
     }
+    updateResultStatus();
 }
 
-void OffsetWidget::onUpdateViewToggled(bool on)
+void OffsetWidget::updateResultStatus()
 {
-    if (on) {
-        d->offset->getDocument()->recomputeFeature(d->offset);
+    if (d->offset->isDerivedFrom<Part::Offset2D>()) {
+        return;
+    }
+    d->ui.sideHelp->setText(
+        tr("Positive follows the sheet normals; negative uses the opposite side. "
+           "For a filled sheet, the absolute distance is the one-sided thickness. "
+           "The result is separate and remains linked to its source.")
+    );
+    d->ui.reverseSide->setEnabled(!d->ui.spinOffset->hasExpression());
+    d->ui.reverseSide->setToolTip(tr("Reverse the distance sign. For a formula, edit its expression."));
+    if (!d->offset->isValid()) {
+        d->ui.resultStatus->setText(
+            tr("Offset failed. Displayed geometry may be from the last successful result. "
+               "Adjust the distance/side or cancel.\n%1")
+                .arg(QString::fromUtf8(d->offset->getStatusString()))
+        );
+        return;
+    }
+    if (!d->ui.updateView->isChecked() && d->offset->isTouched()) {
+        d->ui.resultStatus->setText(tr("Preview pending. Enable Update view or press OK to recompute."));
+        return;
+    }
+    const auto& shape = d->offset->Shape.getShape();
+    if (shape.isNull()) {
+        d->ui.resultStatus->setText(tr("No result. Adjust the offset settings."));
+        return;
+    }
+    const auto solids = shape.countSubShapes(TopAbs_SOLID);
+    const auto faces = shape.countSubShapes(TopAbs_FACE);
+    if (solids > 0 && shape.isValid()) {
+        d->ui.resultStatus->setText(tr("Valid result: %1 solid(s), %2 face(s).")
+                                      .arg(qulonglong(solids)).arg(qulonglong(faces)));
+    }
+    else {
+        d->ui.resultStatus->setText(tr("Offset sheet result: %1 face(s), no validated solid.")
+                                      .arg(qulonglong(faces)));
     }
 }
 
@@ -213,21 +271,27 @@ bool OffsetWidget::accept()
         );
         Gui::cmdAppObjectArgs(d->offset, "Fill = %s", d->ui.fillOffset->isChecked() ? "True" : "False");
 
-        Gui::Command::doCommand(Gui::Command::Doc, "App.ActiveDocument.recompute()");
+        Gui::cmdAppDocument(d->offset, "recompute()");
+        updateResultStatus();
         if (!d->offset->isValid()) {
             throw Base::CADKernelError(d->offset->getStatusString());
         }
 
-        Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
-        d->offset->getDocument()->commitTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
+        auto* doc = d->offset->getDocument();
+        Gui::cmdGuiDocument(d->offset, "resetEdit()");
+        doc->commitTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
     }
     catch (const Base::Exception& e) {
-        d->offset->getDocument()->abortTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
-        QMessageBox::warning(
-            this,
-            tr("Input error"),
-            QCoreApplication::translate("Exception", e.what())
-        );
+        // Retain the edit transaction: aborting here can delete a newly created
+        // offset while the task panel still holds its pointer. Cancel owns rollback.
+        if (d->offset->isDerivedFrom<Part::Offset2D>()) {
+            QMessageBox::warning(this, tr("Input error"),
+                                 QCoreApplication::translate("Exception", e.what()));
+        }
+        else {
+            d->ui.resultStatus->setText(tr("Cannot accept offset. Adjust settings or cancel.\n%1")
+                .arg(QCoreApplication::translate("Exception", e.what())));
+        }
         return false;
     }
 
@@ -236,17 +300,12 @@ bool OffsetWidget::accept()
 
 bool OffsetWidget::reject()
 {
-    // get the support and Sketch
-    App::DocumentObject* source = d->offset->Source.getValue();
-    if (source) {
-        Gui::Application::Instance->getViewProvider(source)->show();
-    }
-
-    // roll back the done things
-    d->offset->getDocument()->abortTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
-    Gui::Command::doCommand(Gui::Command::Gui, "Gui.ActiveDocument.resetEdit()");
+    auto* doc = d->offset->getDocument();
+    // resetEdit commits a pending transaction, so rollback must happen first.
+    // Aborting can delete both the feature and this task: keep only its document.
+    doc->abortTransaction();  // ViewProviderDocumentObject::startDefaultEditMode()
+    Gui::Command::doCommand(Gui::Command::Gui, "Gui.getDocument('%s').resetEdit()", doc->getName());
     Gui::Command::updateActive();
-
     return true;
 }
 
@@ -255,6 +314,11 @@ void OffsetWidget::changeEvent(QEvent* e)
     QWidget::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         d->ui.retranslateUi(this);
+        if (!d->offset->isDerivedFrom<Part::Offset2D>()) {
+            d->ui.fillOffset->setText(tr("Fill between source and offset"));
+            d->ui.labelOffset->setText(tr("Signed distance"));
+        }
+        updateResultStatus();
     }
 }
 

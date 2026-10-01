@@ -989,3 +989,24 @@ groups are conservative candidate sets, not unique causes. Freedom counts do not
 describe all coupled motions. Downstream geometry is recomputed only on Apply;
 consumer-wide previews, constraint replacement and broader/physical acceptance
 remain open. [Owner procedure](../tests/ConstraintRepair.md).
+
+## UI-032: Native sheet thickening (F067; roadmap 13.1c/d)
+
+Existing Part > 3D Offset / Part_Offset retains the native Source, Value, Fill,
+Mode and Join identities. Select one whole sheet object; the bounded thickening
+workflow uses Skin mode and Fill. A separate native result remains associative.
+
+| Control | Behavior |
+| --- | --- |
+| Signed distance | Native length entry. Positive follows sheet normals; negative uses the opposite side. Absolute distance is the complete one-sided thickness when filled. |
+| Reverse side | Negate a numeric value; preserve saved expressions by requiring formula editing instead. |
+| Fill between source and offset | Join the source/offset boundaries. Filled face/shell inputs must yield a valid closed solid. Unfilled offsets remain sheets. |
+| Result message | Solid/face counts, sheet classification, deferred-preview state or explicit failure. Cached last-success geometry after failure is not presented as a current result. |
+| Update view | Recompute previews while checked. When unchecked, parameter edits stay pending until enabled or OK. |
+| OK | Recompute the owning document and commit the native transaction only on success. Failure stays inline with the task and transaction open for correction. |
+| Cancel | Abort the transaction before resetting native edit mode; restore an existing committed feature or remove a new uncommitted offset. |
+
+The same task's 2D controls keep their labels and hide the 3D side/result controls.
+No new Boolean targets or symmetric thickness mode are implied. Graphical normals,
+compound inputs, broader kernel failures, localization/high-DPI and physical owner
+acceptance remain open. [Owner procedure](../tests/SheetThickening.md).

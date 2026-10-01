@@ -22,6 +22,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cmath>
+
 #include <Precision.hxx>
 
 
@@ -88,6 +90,9 @@ App::DocumentObjectExecReturn* Offset::execute()
         return new App::DocumentObjectExecReturn("No source shape linked.");
     }
     double offset = Value.getValue();
+    if (!std::isfinite(offset) || std::abs(offset) < Precision::Confusion()) {
+        return new App::DocumentObjectExecReturn("Offset must be finite and non-zero.");
+    }
     double tol = Precision::Confusion();
     bool inter = Intersection.getValue();
     bool self = SelfIntersection.getValue();
@@ -97,8 +102,11 @@ App::DocumentObjectExecReturn* Offset::execute()
     if (shape.isNull()) {
         return new App::DocumentObjectExecReturn("Invalid source link");
     }
+    // Offset/sewing may update topology flags and surface data in-place.
+    // Deep-copy geometry while propagating the native element map.
+    shape = shape.makeElementCopy();
     auto join = static_cast<JoinType>(Join.getValue());
-    this->Shape.setValue(TopoShape(0).makeElementOffset(
+    auto result = TopoShape(0).makeElementOffset(
         shape,
         offset,
         tol,
@@ -107,7 +115,20 @@ App::DocumentObjectExecReturn* Offset::execute()
         mode,
         join,
         fill ? FillType::fill : FillType::noFill
-    ));
+    );
+    // Filled single sheets must produce material, not an apparently successful
+    // open shell. Keep the previous committed shape on failure; native Invalid
+    // status identifies that cache until the offset is repaired or cancelled.
+    if (fill && (shape.shapeType() == TopAbs_FACE || shape.shapeType() == TopAbs_SHELL)) {
+        if (result.isNull() || result.shapeType() != TopAbs_SOLID || !result.isClosed()
+            || !result.isValid()) {
+            return new App::DocumentObjectExecReturn(
+                "Sheet thickening did not produce a valid closed solid. "
+                "Reduce the thickness or reverse its side and check the sheet boundaries."
+            );
+        }
+    }
+    this->Shape.setValue(result);
     return App::DocumentObject::StdReturn;
 }
 

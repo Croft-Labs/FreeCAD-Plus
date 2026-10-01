@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F048 constraint repair, phase
+- Current product batch complete for owner testing: F067 sheet thickening, phase
+  13 tasks 13.1c/d. Existing 3D Offset now explains signed one-sided thickness,
+  reverses numeric direction, distinguishes sheets from solids, preserves sources
+  during kernel work and keeps failed acceptance recoverable. Both tasks preceded
+  the grouped build; demonstrated failures were fixed before the final pass.
+  Seventeen distinct selected checks pass and six native captures were reviewed.
+  [Owner procedure](../tests/SheetThickening.md). Symmetric thickness, Boolean targets
+  and full F067 remain open. Stop here and rotate for owner feedback.
+
+- Previous product batch complete for owner testing: F048 constraint repair, phase
   11 tasks 11.4a/b. Sketch > Review constraint repair diagnoses an isolated native
   copy and previews checked constraint deactivation, then applies a successful
   choice in one Undo step while retaining constraint numbers/names/values.
@@ -3955,6 +3964,45 @@ Whole F068/13.1 stays open for associative links, graphical boundaries/preview,
 gap-width measurement, broader nonmanifold/healing diagnostics, standalone macro
 replay, localization and physical acceptance. Stop here for owner testing and rotate.
 
+- [ X ] 13.1c Make the native 3D Offset sheet-thickening workflow explicit:
+  signed one-sided thickness, Reverse side without replacing expressions, separate
+  associative result, and clear solid versus offset-sheet/preview-pending status.
+- [ X ] 13.1d Validate filled face/shell results as closed valid solids; refuse zero
+  or non-finite 3D distances; deep-copy kernel inputs with native element maps.
+  Failed acceptance retains an editable transaction;
+  correction or Cancel preserves the source and last committed feature. Validate
+  planar/curved directions, tight inward radius, Undo/Redo, source changes,
+  downstream consumption, save/reopen and existing 2D controls as one batch.
+
+13.1c/d evidence (2026-10-01):
+Both tasks preceded the first grouped PartGui/PartScripts Release build. Four build
+attempts were needed for demonstrated defects: the initial compile exposed the
+shared solid-shell Thickness form and a shape API type; later native tests exposed
+kernel mutation of shared source data, feature-recompute status and resetEdit's
+implicit commit before Cancel. Final build exit 0; earlier logs/results retained.
+Evidence: `D:\Temp\Office-PC\freecad-plus-sheet-thickening-20261001`.
+`grouped-corrected/` passes eight existing sewing checks; after the final Cancel
+ordering fix, `thicken-verified/` passes all nine sheet-thickening checks.
+**17 distinct selected passes**, zero failures/errors/skips in accepted suites;
+native process exits 0. Initial failed aggregates are not acceptance evidence.
+Six `visual/` captures reviewed: offset sheet, planar positive/opposite thickness,
+curved inward thickness, excessive-thickness refusal and reopened results.
+Sheet-Thickening-Sources.FCStd / Sheet-Thickening-Results.FCStd are owner fixtures.
+Planar 10 x 8 x 2 mm results measure 160 mm^3 on either side; radius-5/height-10
+cylindrical sheet offsets +1/-1 mm produce 110*pi/90*pi mm^3. Inward -6 mm is
+refused. Deep native shape copies preserve source BRep data and element maps.
+Failed OK remains editable, Cancel restores/removes the native feature correctly,
+and Undo/Redo, formula preservation, deferred preview, 2D and solid-shell Thickness
+controls pass. Reopened source growth updates the thickened solid and downstream cut.
+Part SHA256: `53C9A44F356F8CD8912ED297813A5DA17BEC9636919F14FDB955B73192AD9C72`.
+PartGui SHA256: `008DAA38E031E59809DA177CD2A7A66D8063ABD9DD760665158ED434266F8255`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime;
+the historical About stamp is not this source identity. No installer/release update.
+Full F067/13.1 stays open for symmetric/two-sided thickness, graphical normals,
+Boolean target collection, compound-sheet filling, broader high-curvature diagnostics,
+localization and physical owner acceptance. Stop here for owner testing and rotate.
+[Owner procedure](../tests/SheetThickening.md).
+
 - [   ] 13.2 Extend sweep/loft with ordered sections, guides, orientation/twist and
   Boolean targets; implement through-curves surfaces with guides. Reuse 3.6/8.2.
   Through-curves surfaces need section-to-section correspondence controls and twist
@@ -6222,7 +6270,7 @@ reconciliation rules above to every entry.
 <a id="f067"></a>
 ### F067 — Thicken sheet bodies
 
-**Owning tasks:** 13.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.1, 13.1c/d. **Status:** Bounded one-sided sheet thickening is ready for owner testing through the existing native 3D Offset task. Signed distance/reversal, solid versus sheet feedback, source-preserving native copies and recoverable failed acceptance are verified. Seventeen distinct selected checks pass, with six captures reviewed. Full F067 remains open for symmetric thickness, graphical normals, Boolean targets, compound sheets, broader diagnostics and physical acceptance. See [owner procedure](../tests/SheetThickening.md).
 
 **Packages:** G02 · **First delivery:** P7 · **Likely scope:** Feature/Core
 

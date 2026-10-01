@@ -95,6 +95,9 @@ ThicknessWidget::ThicknessWidget(Part::Thickness* thickness, QWidget* parent)
 
     d->ui.labelOffset->setText(tr("Thickness"));
     d->ui.fillOffset->hide();
+    d->ui.reverseSide->hide();
+    d->ui.sideHelp->hide();
+    d->ui.resultStatus->hide();
 
     QSignalBlocker blockOffset(d->ui.spinOffset);
     d->ui.spinOffset->setRange(-std::numeric_limits<int>::max(), std::numeric_limits<int>::max());
