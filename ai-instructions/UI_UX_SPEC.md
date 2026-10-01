@@ -1182,3 +1182,26 @@ Part::Loft owns Sections, Solid, Ruled and Closed persistence and geometry.
 
 Guide curves, explicit correspondence, section reversal, twist preview, continuity
 certification and Boolean targets remain open. [Owner procedure](../tests/LoftSections.md).
+
+## UI-041: CAM model setup review (F090; roadmap 14.1c/d)
+
+Native New Job and existing-job Model Selection keep their command and document
+identities. Candidate selection uses document/object identity rather than display
+labels. Duplicate-label candidates show internal names in tooltips. Repeated
+sources retain their counts when reopening Model Selection. Meshes have a separate
+group alongside Solids, 2D and Jobs; selected jobs expand to their model resources.
+
+The read-only Model review lists source labels/internal names, type, count,
+axis-aligned dimensions and minimum coordinates in mm including source placement,
+before job setup. It does not claim enclosing-parent/world or final WCS bounds.
+Document unit selection changes display rather than scaling geometry; STL source
+units must be checked against the displayed dimensions. Native Job setup remains
+the place to review orientation/work origin, stock, tools, strategy and post.
+
+Count/selection and unit-display changes refresh review. Empty selection, empty
+geometry, stale/invalid dependencies, replaced/deleted sources or changed document
+context prevent acceptance. OK rechecks geometry and requires renewed review if
+it changed since the displayed review. Template and model eligibility both gate
+OK. Cancel creates nothing and does not apply the unit choice. Mesh/solid topology
+repair, automatic unit conversion, final WCS preview and a complete step-by-step
+strategy wizard remain open. [Owner procedure](../tests/JobModelReview.md).

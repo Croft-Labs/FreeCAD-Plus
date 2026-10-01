@@ -33,6 +33,8 @@ import Path.Main.Stock as PathStock
 import glob
 import json
 import os
+import math
+import hashlib
 
 translate = FreeCAD.Qt.translate
 
@@ -61,6 +63,7 @@ class JobCreate:
     def __init__(self, parent=None, sel=None):
         self.dialog = FreeCADGui.PySideUic.loadUi(":/panels/DlgJobCreate.ui")
         self.itemsSolid = QtGui.QStandardItem(translate("CAM_Job", "Solids"))
+        self.itemsMesh = QtGui.QStandardItem(translate("CAM_Job", "Meshes"))
         self.items2D = QtGui.QStandardItem(translate("CAM_Job", "2D"))
         self.itemsJob = QtGui.QStandardItem(translate("CAM_Job", "Jobs"))
         self.dialog.templateGroup.hide()
@@ -82,6 +85,17 @@ class JobCreate:
         self.dialog.buttonBox.accepted.disconnect()
         self.dialog.buttonBox.accepted.connect(self.acceptReviewedTemplate)
         self._reviewedTemplate = None
+        self.document = FreeCAD.ActiveDocument
+        self._modelIdentities = {}
+        self._reviewedModels = None
+        self._modelReady = False
+        self._templateReady = True
+        self.modelReview = QtGui.QPlainTextEdit(self.dialog)
+        self.modelReview.setObjectName("modelReview")
+        self.modelReview.setReadOnly(True)
+        self.modelReview.setMinimumHeight(150)
+        self.dialog.modelGroup.layout().addWidget(self.modelReview)
+        self.dialog.unitSchemaCombo.currentIndexChanged.connect(self.reviewModels)
 
     def _schemaUsesMinutes(self, schema_id):
         """Return True if the given unit schema expresses velocity in /min."""
@@ -206,20 +220,20 @@ class JobCreate:
         if job:
             preSelected = Counter(
                 [
-                    PathUtil.getPublicObject(job.Proxy.baseObject(job, obj)).Label
+                    self.modelIdentity(PathUtil.getPublicObject(job.Proxy.baseObject(job, obj)))
                     for obj in job.Model.Group
                 ]
             )
             jobResources = job.Model.Group + [job.Stock]
         else:
-            preSelected = Counter([obj.Label for obj in FreeCADGui.Selection.getSelection()])
+            preSelected = Counter([self.modelIdentity(obj) for obj in FreeCADGui.Selection.getSelection()])
             jobResources = []
 
         self.candidates = sorted(PathJob.ObjectJob.baseCandidates(), key=lambda o: o.Label)
 
         # If there is only one possibility we might as well make sure it's selected
         if not preSelected and 1 == len(self.candidates):
-            preSelected = Counter([self.candidates[0].Label])
+            preSelected = Counter([self.modelIdentity(self.candidates[0])])
 
         expandSolids = False
         expand2Ds = False
@@ -236,6 +250,9 @@ class JobCreate:
                 item0 = QtGui.QStandardItem()
                 item1 = QtGui.QStandardItem()
 
+                key = self.modelIdentity(base)
+                self._modelIdentities[base.Name] = key
+                item0.setToolTip("%s [%s]" % (base.Label, base.Name))
                 item0.setData(base.Label, QtCore.Qt.EditRole)
                 item0.setData(base, self.DataObject)
                 item0.setCheckable(True)
@@ -244,16 +261,18 @@ class JobCreate:
                 item1.setEnabled(True)
                 item1.setEditable(True)
 
-                if base.Label in preSelected:
+                if key in preSelected:
                     itemSelected = True
                     item0.setCheckState(QtCore.Qt.CheckState.Checked)
-                    item1.setData(preSelected[base.Label], QtCore.Qt.EditRole)
+                    item1.setData(preSelected[key], QtCore.Qt.EditRole)
                 else:
                     itemSelected = False
                     item0.setCheckState(QtCore.Qt.CheckState.Unchecked)
                     item1.setData(0, QtCore.Qt.EditRole)
 
-                if PathUtil.isSolid(base):
+                if hasattr(base, "Mesh"):
+                    self.itemsMesh.appendRow([item0, item1])
+                elif PathUtil.isSolid(base):
                     self.itemsSolid.appendRow([item0, item1])
                     if itemSelected:
                         expandSolids = True
@@ -267,6 +286,9 @@ class JobCreate:
                 item0 = QtGui.QStandardItem()
                 item1 = QtGui.QStandardItem()
 
+                key = self.modelIdentity(j)
+                self._modelIdentities[j.Name] = key
+                item0.setToolTip("%s [%s]" % (j.Label, j.Name))
                 item0.setData(j.Label, QtCore.Qt.EditRole)
                 item0.setData(j, self.DataObject)
                 item0.setCheckable(True)
@@ -275,10 +297,10 @@ class JobCreate:
                 item1.setEnabled(True)
                 item1.setEditable(True)
 
-                if j.Label in preSelected:
+                if key in preSelected:
                     expandJobs = True
                     item0.setCheckState(QtCore.Qt.CheckState.Checked)
-                    item1.setData(preSelected[j.Label], QtCore.Qt.EditRole)
+                    item1.setData(preSelected[key], QtCore.Qt.EditRole)
                 else:
                     item0.setCheckState(QtCore.Qt.CheckState.Unchecked)
                     item1.setData(0, QtCore.Qt.EditRole)
@@ -295,6 +317,8 @@ class JobCreate:
             self.model.appendRow(self.itemsSolid)
             if expandSolids or not (expand2Ds or expandJobs):
                 expandSolids = True
+        if self.itemsMesh.hasChildren():
+            self.model.appendRow(self.itemsMesh)
         if self.items2D.hasChildren():
             self.model.appendRow(self.items2D)
         if self.itemsJob.hasChildren():
@@ -307,6 +331,8 @@ class JobCreate:
         self.dialog.modelTree.resizeColumnToContents(1)
         self.dialog.modelTree.collapseAll()
 
+        if self.itemsMesh.hasChildren():
+            self.dialog.modelTree.setExpanded(self.itemsMesh.index(), True)
         if expandSolids:
             self.dialog.modelTree.setExpanded(self.itemsSolid.index(), True)
         if expand2Ds:
@@ -318,6 +344,65 @@ class JobCreate:
         self.dialog.modelTree.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems)
 
         self.dialog.modelGroup.show()
+        self.reviewModels()
+
+    @staticmethod
+    def modelIdentity(obj):
+        return (obj.Document.Name, obj.Name, obj.ID)
+
+    def _updateAcceptState(self):
+        self.dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok).setEnabled(
+            self._templateReady and (self.model is None or self._modelReady))
+
+    def reviewModels(self):
+        """Read native source bounds; do not rescale or alter the setup."""
+        if self.model is None:
+            return True
+        try:
+            from Path.Dressup.Utils import requireCurrent
+            if self.document != FreeCAD.ActiveDocument:
+                raise ValueError(translate("CAM_Job", "Activate the original model document and reopen New Job."))
+            lines = [translate("CAM_Job", "Source bounds in mm, including source placement (before job setup).")]
+            signatures = []
+            for group in (self.itemsSolid, self.itemsMesh, self.items2D, self.itemsJob):
+                for i in range(group.rowCount()):
+                    count = group.child(i, 1).data(QtCore.Qt.EditRole)
+                    if not count:
+                        continue
+                    obj = group.child(i).data(self.DataObject)
+                    if self.modelIdentity(obj) != self._modelIdentities.get(obj.Name):
+                        raise ValueError(translate("CAM_Job", "A model was replaced. Reopen New Job."))
+                    models = obj.Model.Group if group is self.itemsJob else [obj]
+                    if not models:
+                        raise ValueError(translate("CAM_Job", "The selected job has no models."))
+                    for source in models:
+                        requireCurrent(source)
+                        mesh = hasattr(source, "Mesh")
+                        geometry = source.Mesh if mesh else source.Shape
+                        if (mesh and not geometry.CountFacets) or (not mesh and geometry.isNull()):
+                            raise ValueError(translate("CAM_Job", "A selected model has empty geometry: ") + source.Label)
+                        box = geometry.BoundBox
+                        values = (box.XLength, box.YLength, box.ZLength, box.XMin, box.YMin, box.ZMin)
+                        if not box.isValid() or not all(math.isfinite(v) for v in values):
+                            raise ValueError(translate("CAM_Job", "A selected model has invalid bounds: ") + source.Label)
+                        kind = translate("CAM_Job", "mesh") if mesh else translate("CAM_Job", "BRep")
+                        lines.append("%s [%s], %s x %d: %.6g x %.6g x %.6g mm; min (%.6g, %.6g, %.6g) mm" %
+                                     ((source.Label, source.Name, kind, count) + values))
+                        geometry_key = repr(geometry.Topology) if mesh else geometry.exportBrepToString()
+                        signatures.append((self.modelIdentity(source), count, geometry_key))
+            if not signatures:
+                raise ValueError(translate("CAM_Job", "Select at least one model with a positive count."))
+            lines += [translate("CAM_Job", "Document units change display, not model size. STL has no declared units; verify the dimensions before continuing."),
+                      translate("CAM_Job", "Next: review model orientation/work origin, stock, tools, strategy and postprocessor in the Job task. These bounds are not a machining approval.")]
+            self._reviewedModels = hashlib.sha256(repr(signatures).encode("utf-8")).hexdigest()
+            self.modelReview.setPlainText("\n".join(lines))
+            self._modelReady = True
+        except (ValueError, RuntimeError, ReferenceError, AttributeError, TypeError) as exc:
+            self._reviewedModels = None
+            self._modelReady = False
+            self.modelReview.setPlainText(translate("CAM_Job", "Cannot use selected models: ") + str(exc))
+        self._updateAcceptState()
+        return self._modelReady
 
     def updateData(self, topLeft, bottomRight):
         if topLeft.column() == bottomRight.column() == 0:
@@ -336,6 +421,8 @@ class JobCreate:
                 item0.setCheckState(QtCore.Qt.CheckState.Unchecked)
             else:
                 item0.setCheckState(QtCore.Qt.CheckState.Checked)
+
+        self.reviewModels()
 
     def item1ValueChanged(self, v):
         item0 = self.model.itemFromIndex(self.index.sibling(self.index.row(), 0))
@@ -424,15 +511,25 @@ class JobCreate:
             text = (PathTemplate.review(attrs) if attrs is not None else
                     translate("CAM_Job", "No template: use current job defaults and review them before machining."))
             self.templateReview.setPlainText(text)
-            self.dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok).setEnabled(True)
+            self._templateReady = True
+            self._updateAcceptState()
             return True
         except (OSError, ValueError, TypeError) as exc:
             self._reviewedTemplate = None
             self.templateReview.setPlainText(translate("CAM_Job", "Cannot use this template: ") + str(exc))
-            self.dialog.buttonBox.button(QtGui.QDialogButtonBox.Ok).setEnabled(False)
+            self._templateReady = False
+            self._updateAcceptState()
             return False
 
     def acceptReviewedTemplate(self):
+        previous_models = self._reviewedModels
+        if not self.reviewModels():
+            return
+        if previous_models != self._reviewedModels:
+            self.modelReview.setPlainText(
+                translate("CAM_Job", "Models changed. Review the updated dimensions, then press OK again.\n\n")
+                + self.modelReview.toPlainText())
+            return
         previous = self._reviewedTemplate
         if not self.reviewTemplate():
             return
@@ -455,6 +552,10 @@ class JobCreate:
         for i in range(self.itemsSolid.rowCount()):
             for j in range(self.itemsSolid.child(i, 1).data(QtCore.Qt.EditRole)):
                 models.append(self.itemsSolid.child(i).data(self.DataObject))
+
+        for i in range(self.itemsMesh.rowCount()):
+            for j in range(self.itemsMesh.child(i, 1).data(QtCore.Qt.EditRole)):
+                models.append(self.itemsMesh.child(i).data(self.DataObject))
 
         for i in range(self.items2D.rowCount()):
             for j in range(self.items2D.child(i, 1).data(QtCore.Qt.EditRole)):

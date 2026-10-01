@@ -30,7 +30,14 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F063 ordered open-section Loft,
+- Current product batch complete for owner testing: F090 CAM model setup review, phase 14 tasks 14.1c/d.
+  Exact source identity and repeated counts, separate mesh candidates and source
+  size/unit review are implemented. Both tasks preceded one script-staging pass;
+  all 16 distinct selected checks pass and six final captures are reviewed.
+  [Owner procedure](../tests/JobModelReview.md). Stop at this bounded workflow and
+  rotate pending owner feedback; the complete guided CAM wizard remains open.
+
+- Previous product batch complete for owner testing: F063 ordered open-section Loft,
   phase 13 tasks 13.2a/b. Native open wires/single edges are selectable, section order
   and output modes are explicit, and invalid creation rolls back for correction.
   Both tasks preceded the grouped build; all 17 selected checks pass. Capture review
@@ -4384,6 +4391,36 @@ source identity. Whole F091 and parent 14.1 remain open: root imported meshes on
 per-piece orientation, hole/weld/decimation repairs, unit conversion or setup wizard.
 No installer/release update or physical owner acceptance. [Owner procedure](../tests/MeshPreparation.md).
 
+- [x] 14.1c Preserve exact model identity and repeated-source counts in New Job
+  and existing-job model selection; distinguish mesh candidates from 2D shapes (F090).
+- [x] 14.1d Review source dimensions/placement in mm before job creation, distinguish
+  display units from model scaling, and recheck changed/stale inputs on acceptance.
+  Preserve native job resources and prove Cancel, Undo/Redo and save/reopen for mesh
+  and solid sources. Both tasks preceded the grouped PathScripts staging pass.
+
+14.1c/d evidence (2026-10-01): both tasks preceded one 30-second PathScripts
+Release staging pass (exit 0); Python-only changes, no native recompilation.
+Evidence: D:\Temp\Office-PC\freecad-plus-job-model-review-20261001.
+The grouped run passes all eight unchanged TestSetupTemplates checks and seven
+of eight TestJobModelReview checks. Its duplicate-label fixture was automatically
+renamed by native preferences; enabling duplicate labels in isolated test
+preferences corrects the fixture. No implementation change or second staging.
+model-verified/ passes all eight new checks, for 16 distinct accepted checks, no
+failures/errors/skips in accepted suites, native process exits 0. Exact identity,
+existing-job repeated counts, placed-mesh bounds, unchanged geometry/unit display,
+empty/stale/deleted/context refusal, changed-source renewed review, modal Cancel,
+native mesh/solid resources, Undo/Redo and save/reopen pass. Six final captures
+reviewed in visual-final/: duplicate-label identity, mesh size, changed model,
+empty selection, reopened Model Selection and native stock/model. The first visual
+run captured an unsettled camera; the final harness waits for native view fitting.
+Setup-Sources.FCStd and Reviewed-Mesh-Job.FCStd supply owner fixtures. Source/runtime
+hashes and accepted suite locations are recorded in evidence.json. Source-built
+verification is separate from installer and physical owner acceptance.
+Full F090/14.1 remains open for the full guided sequence, final WCS/parent-world
+preview, declared mesh-unit conversion, machine/strategy compatibility and owner
+acceptance. Review uses native source geometry, not new WCS or origin semantics.
+[Owner procedure](../tests/JobModelReview.md). Stop here and rotate for feedback.
+
 - [   ] 14.2 Add stock-aware roughing then rest machining as separate deliverables;
   finishing drop-cutter paths do not prove either. Preserve holding-tab exclusions
   in all supported cutting/link moves and across indexed setups.
@@ -6947,7 +6984,7 @@ regenerated Waterline contour repeatability and broader F089 acceptance remain o
 <a id="f090"></a>
 ### F090 — Guided CAM setup
 
-**Owning tasks:** 14.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 14.1, 14.1c/d. **Status:** Bounded native model setup review implemented: exact model identity and repeated-source counts, separate mesh candidates, source dimensions/placement in mm, display-unit distinction and changed-input acceptance review. Native mesh/solid job handoff, Undo/Redo and save/reopen pass in 16 selected checks after one grouped staging pass. Full F090 remains open for complete guided setup, final WCS preview, mesh-unit conversion and owner acceptance. [Owner procedure](../tests/JobModelReview.md).
 
 **Packages:** C01, C03, U09 · **First delivery:** P8 · **Likely scope:** UI/Feature
 
