@@ -1,6 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F022 occurrence replacement, phase 12 tasks 12.6a/b. Standard Tools
+Latest batch: F071 sampled face deviation, phase 15 tasks 15.2a/b. The Part command
+uses explicit sampled/reference face roles, native unsigned point-to-face distances,
+UV cell-center sampling and a non-pickable on-top color map. Millimeter scale,
+sample statistics and excluded/failed counts are visible. Settings persist only by
+explicit request; references/results are temporary. No geometry or appearance edits.
+
+Both tasks preceded one PartGui/PartScripts Release build, exit 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-surface-deviation-20261001`.
+`grouped/` passes nine new deviation checks and seven existing interference checks:
+**16 selected passes**, zero failures/errors/skips, native exit 0. Six `visual/`
+captures were reviewed: known offset, tilted report/map, changed-face refusal,
+reopened report and trimmed-hole report. Known-Offset.FCStd and Tilted-Surfaces.FCStd
+are the owner fixtures. Planar and cylindrical fixtures report 2 mm; the tilted
+11 x 11 grid reports 0.155463702-3.264737732 mm. The trimmed fixture excludes 25
+of 121 UV centers and reports 96 usable samples. Native whole Body results,
+world placement, one-way finite-face differences, incomplete native sampling,
+source/Undo isolation, saved settings, transaction/stale/context guards, map cleanup,
+command activation and save/reopen pass.
+Part SHA256: `93D8BCB643EEB020AB1466333DEA84F14BA934C0EF00C2043566111E5AFC8C66`.
+PartGui SHA256: `5025C3E75A2D150FEC54B939C6C5DD49510517FF2BCD8AB6C8255F4049BC995A`.
+validated-identities.json and acceptance-summary.json identify source/runtime and
+accepted evidence; the historical About stamp is not this source identity.
+Original tracked newline conventions were restored after build without changing
+compiled semantics; InitGui.py was restaged before native command capture.
+No installer/release update. Whole F071/15.2 remains open for zebra/reflection lines,
+curvature combs, continuity, broader subjects, adaptive/bidirectional or certified
+global deviation, reference/report persistence and physical/high-DPI acceptance.
+Stop at this functional checkpoint for owner feedback and rotate to another family.
+tests/SurfaceDeviation.md is the owner procedure.
+
+Previous batch: F022 occurrence replacement, phase 12 tasks 12.6a/b. Standard Tools
 command reuses one same-document root solid/Body for a free native Link, preserving
 identity, placement/source-placement setting, visibility and uniform appearance
 policy. Existing identity/selection, movement and appearance services are reused;

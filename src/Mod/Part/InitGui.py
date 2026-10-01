@@ -52,6 +52,8 @@ class PartWorkbench(Gui.Workbench):
         registerExport()
         from InterferenceCheckGui import registerCommand as registerInspection
         registerInspection()
+        from SurfaceDeviationGui import registerCommand as registerDeviation
+        registerDeviation()
 
         try:
             import BasicShapes.CommandShapes

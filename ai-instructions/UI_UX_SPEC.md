@@ -912,3 +912,30 @@ An empty source list explains how to provide a replacement. Check/preview/commit
 errors stay inline. UI state is separate from the saved native link. Keyboard/high-DPI
 acceptance, macro recording and broader replacement scope remain pending.
 [Owner procedure](../tests/OccurrenceReplace.md).
+
+## UI-029: Sampled face deviation (F071; roadmap 15.2a/b)
+
+Part > Sampled face deviation / Part_SurfaceDeviation compares two explicit faces
+on current root Part shapes or root Body results in the active document. Links,
+nested members, cross-document inputs and pending edit transactions are refused.
+
+| Control | Action and feedback |
+| --- | --- |
+| Capture sampled face / Capture reference face | Capture exactly one selected face for that role; show label, internal name and face number. Failed capture clears that role. Whole single-face objects also work. |
+| Samples per UV direction | 3-25 cell-center samples in each direction, default 11. Does not sample boundaries or guarantee uniform physical spacing. |
+| Full color scale (mm) | Explicit 0.000001-1000000 mm, default 1. Blue zero, yellow half scale, red full scale or greater; numerical values are never clipped. |
+| Check and show map | Native unsigned nearest distances to the finite reference face, including boundaries. Non-pickable colored point overlay; usable/outside/singular-failed counts and sample min/max/mean. |
+| Clear map | Remove the overlay and current report; retain captured roles and settings. |
+| Save sampling settings | Explicitly persist grid and scale in user preferences; never save references, results or geometry. |
+| Close | Remove the map and observer. No geometry/appearance changes or Undo entries. |
+
+Markers render on top of geometry. One-way UV sampling is not area weighted and can
+miss narrow defects/boundary extrema. The dialog states that sample maximum and map
+colors are not certification. No alignment or normal-direction projection occurs.
+Singular/failed points produce an incomplete report; all-unusable input gives an
+inline error. Input geometry/placement snapshots refuse silent face rebinding.
+Settings and document edits clear the map; changed geometry requires deliberate
+recapture. Document activation changes clear it, and closing its owner closes the
+dialog. Native files contain only the original model. Zebra, combs, continuity,
+adaptive/bidirectional/global deviation and physical/high-DPI acceptance remain open.
+[Owner procedure](../tests/SurfaceDeviation.md).

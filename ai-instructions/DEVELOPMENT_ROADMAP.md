@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F022 single-occurrence source
+- Current product batch complete for owner testing: F071 sampled face deviation,
+  phase 15 tasks 15.2a/b. Part > Sampled face deviation compares two explicit faces
+  using native unsigned point-to-face distances and a temporary color map. Sampling,
+  mm scale, trimmed-out/failed counts and non-certification limits are visible;
+  saved settings do not create geometry. Both tasks preceded one grouped build;
+  all 16 selected checks pass and six captures were reviewed.
+  [Owner procedure](../tests/SurfaceDeviation.md). Full F071 remains open for zebra,
+  combs, continuity and broader deviation/physical acceptance. Stop here and rotate.
+
+- Previous product batch complete for owner testing: F022 single-occurrence source
   replacement, phase 12 tasks 12.6a/b. Tools > Replace occurrence source reuses a
   same-document root solid/Body while preserving one free Link's identity, placement,
   visibility and uniform appearance policy. Preview reuses the existing overlay;
@@ -4096,6 +4105,36 @@ high-DPI acceptance. No installer/release update. Stop for owner feedback and ro
   inspection with quantitative checks where claimed; support surface validation.
   Deviation inspection includes deviation maps; keep analysis/display distinct from
   constructing new curves or surfaces.
+- [x] 15.2a Add a bounded F071 one-way face-deviation calculation using native
+  point-to-face distances, explicit sampled/reference roles, UV cell-center sampling,
+  known-distance fixtures and reported trimmed-out/singular/failed samples.
+- [x] 15.2b Add a nonmutating review dialog and temporary color map, visible mm
+  scale and sampling, explicit settings persistence and stale-input/close cleanup.
+
+Both tasks preceded one PartGui/PartScripts Release build, exit 0.
+Evidence: `D:\Temp\Office-PC\freecad-plus-surface-deviation-20261001`.
+`grouped/` passes nine new deviation checks and seven existing interference checks:
+**16 selected passes**, zero failures/errors/skips, native exit 0. Six `visual/`
+captures were reviewed: known offset, tilted report/map, changed-face refusal,
+reopened report and trimmed-hole report. Known-Offset.FCStd and Tilted-Surfaces.FCStd
+are the owner fixtures. Planar and cylindrical fixtures report 2 mm; the tilted
+11 x 11 grid reports 0.155463702-3.264737732 mm. The trimmed fixture excludes 25
+of 121 UV centers and reports 96 usable samples. Native whole Body results,
+world placement, one-way finite-face differences, incomplete native sampling,
+source/Undo isolation, saved settings, transaction/stale/context guards, map cleanup,
+command activation and save/reopen pass.
+Part SHA256: `93D8BCB643EEB020AB1466333DEA84F14BA934C0EF00C2043566111E5AFC8C66`.
+PartGui SHA256: `5025C3E75A2D150FEC54B939C6C5DD49510517FF2BCD8AB6C8255F4049BC995A`.
+validated-identities.json and acceptance-summary.json identify source/runtime and
+accepted evidence; the historical About stamp is not this source identity.
+Original tracked newline conventions were restored after build without changing
+compiled semantics; InitGui.py was restaged before native command capture.
+No installer/release update. Whole F071/15.2 remains open for zebra/reflection lines,
+curvature combs, continuity, broader subjects, adaptive/bidirectional or certified
+global deviation, reference/report persistence and physical/high-DPI acceptance.
+Stop at this functional checkpoint for owner feedback and rotate to another family.
+[Owner procedure](../tests/SurfaceDeviation.md).
+
 - [   ] 15.3 Extend 9.4 with drawing setup, projected/section/detail views,
   associative annotations/dimensions and explicit broken-reference repair after edits.
   Provide a drawing creation wizard for standard/projected/section/detail views using
@@ -6156,7 +6195,7 @@ reconciliation rules above to every entry.
 <a id="f071"></a>
 ### F071 — Surface quality inspection
 
-**Owning tasks:** 15.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.2, 15.2a/b. **Status:** Bounded sampled face deviation is ready for owner testing: explicit sampled/reference roles, unsigned native distances in world mm, temporary color map, sample statistics, trimmed-out/failed counts and saved grid/scale. One grouped build, 16 selected checks and six reviewed captures pass. Full F071 remains open for zebra/reflection, curvature combs, join continuity, broader/adaptive/global deviation and physical acceptance. [Owner procedure](../tests/SurfaceDeviation.md).
 
 **Packages:** I02 · **First delivery:** P7/P9 · **Likely scope:** Feature
 

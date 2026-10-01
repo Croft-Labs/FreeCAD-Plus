@@ -20,6 +20,7 @@ set(Part_Scripts
     NamedParameters.py
     PartEnums.py
     ShapeSewing.py
+    SurfaceDeviation.py
     TestPartApp.py
 )
 
@@ -27,6 +28,7 @@ if(BUILD_GUI)
     list (APPEND Part_Scripts
           InitGui.py
           InterferenceCheckGui.py
+          SurfaceDeviationGui.py
           ManufacturingExportGui.py
           NamedParameterGui.py
           TestPartGui.py
