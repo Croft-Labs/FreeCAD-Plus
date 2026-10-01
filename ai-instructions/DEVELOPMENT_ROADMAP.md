@@ -2447,6 +2447,13 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   access and clear instance expansion state before native names are reused.
   One grouped staging pass and three focused workflows pass. Native task entry/exit
   across owning files and broad multi-tab display acceptance remain in 7.8.7b/c.
+- [ X ] 7.8.7h Task-transition feedback: capture originating component view/path
+  before entering the owning file; restore it after Extrude OK/Cancel, sketch-plane
+  Cancel or closing the native sketch/history editor. Resolve a single unambiguous
+  instance selection into a local profile/planar face, and edit Extrude results from
+  isolated Model History without replacing result identity. One grouped staging
+  pass and three focused workflows pass. Broader native editors, close-during-task,
+  save routing and multi-tab display acceptance remain open.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
@@ -2468,6 +2475,21 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   and TechDraw projection after save/reopen; suppressed inputs clear clone/CAM geometry.
 - [   ] 7.8.10b FEM (disabled in this build), general drawing references, CAM path
   invalidation, broader topology changes, performance and interactive owner acceptance.
+
+2026-10-01 task-transition feedback evidence:
+`D:\Temp\Office-PC\freecad-plus-task-context-20261001`.
+`build/` records one successful grouped script/resource staging pass; native binaries
+were reused. `smoke-ready/` passes three workflows with zero failures/errors/skips,
+process exit 0 and empty stderr. Coverage: selected external-instance profile,
+Extrude preview/Cancel/native Pad/accept and return; selected planar face, sketch-plane
+Cancel/native Sketcher editor/reset and history edit return; isolated-tab Extrude
+creation/history editing with stable result identity. The initial test assertion read
+a deleted QLabel after successful task acceptance; correcting the fixture required
+no source restaging or rebuild. Two final Model History captures were reviewed.
+Feedback fixture: `smoke-ready/testExtrudePreselectionPreviewCancelAndAccept/Assembly.cadprt`
+with sibling `Support.cadprt`. No schema version, native source, installer or release
+change. Full modeling-editor coverage and active-definition save routing are not
+established by this bounded check.
 
 2026-10-01 cross-file edit-context feedback evidence:
 `D:\Temp\Office-PC\freecad-plus-edit-context-20261001`.

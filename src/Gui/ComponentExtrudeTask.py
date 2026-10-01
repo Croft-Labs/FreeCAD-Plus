@@ -23,10 +23,11 @@ def active_component():
 
 
 class ExtrudeTask:
-    def __init__(self, component, operation=None, preset=None):
+    def __init__(self, component, operation=None, preset=None, context=None):
         import ComponentModel as Model
         import ComponentExtrude as Extrude
         self.component, self.operation = component, operation
+        self.context = context
         self.ghost = None
         self.result = None
         Model.activate(component, strict=False)
@@ -79,7 +80,7 @@ class ExtrudeTask:
                     self.target.addItem(target.Label, target.Name)
                 self.target.setCurrentIndex(self.target.findData(target.Name))
         else:
-            self.use_selection()
+            self.use_selection(context.selection if context else None)
         self.capture.clicked.connect(self.use_selection)
         self.preview_button.clicked.connect(self.preview)
         self.mode.currentIndexChanged.connect(self.changed)
@@ -108,13 +109,13 @@ class ExtrudeTask:
             self.ghost.remove()
             self.ghost = None
 
-    def use_selection(self):
-        for obj in Gui.Selection.getSelection():
-            if obj.Document == self.component.Document:
-                index = self.profile.findData(obj.Name)
-                if index > 0:
-                    self.profile.setCurrentIndex(index)
-                    return
+    def use_selection(self, picks=None):
+        from freecad.gui.ComponentNavigator import task_geometry
+        for obj, element in picks if isinstance(picks, list) else task_geometry(self.component):
+            index = self.profile.findData(obj.Name)
+            if index > 0:
+                self.profile.setCurrentIndex(index)
+                return
 
     def values(self):
         doc = self.component.Document
@@ -162,6 +163,8 @@ class ExtrudeTask:
         self.clear_preview()
         Gui.Control.closeDialog()
         _task = None
+        if self.context:
+            self.context.restore()
 
 
 def launch(preset=None, operation=None):
@@ -169,8 +172,15 @@ def launch(preset=None, operation=None):
     if Gui.Control.activeDialog():
         raise ValueError(tr("Finish the current task before starting Extrude."))
     import ComponentModel as Model
+    from freecad.gui.ComponentNavigator import TaskContext
     component = Model.owner(operation) if operation else active_component()
-    App.setActiveDocument(component.Document.Name)
-    _task = ExtrudeTask(component, operation, preset)
-    Gui.Control.showDialog(_task)
+    context = TaskContext(component)
+    try:
+        context.enter()
+        _task = ExtrudeTask(component, operation, preset, context)
+        Gui.Control.showDialog(_task)
+    except Exception:
+        _task = None
+        context.restore()
+        raise
     return _task

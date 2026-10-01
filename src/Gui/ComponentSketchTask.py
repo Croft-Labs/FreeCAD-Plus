@@ -13,11 +13,12 @@ def tr(text):
 
 
 class SketchTask:
-    def __init__(self, component):
+    def __init__(self, component, context=None):
         import ComponentModel as Model
         import ComponentSketch as Sketch
         Model.activate(component, strict=False)
         self.component, self.support, self.result = component, None, None
+        self.context = context
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle(tr("New Sketch"))
         layout = QtWidgets.QFormLayout(self.form)
@@ -43,20 +44,22 @@ class SketchTask:
         self.capture.clicked.connect(self.capture_face)
         self.plane.currentIndexChanged.connect(self.update_plane)
         self.update_plane()
-        selected = Gui.Selection.getSelectionEx()
-        if len(selected) == 1 and len(selected[0].SubElementNames) == 1:
-            self.capture_face()
+        from freecad.gui.ComponentNavigator import task_geometry
+        selected = context.selection if context else task_geometry(component)
+        if len(selected) == 1 and selected[0][1]:
+            self.capture_face(selected)
 
     def update_plane(self, *args):
         self.source.setVisible(self.plane.currentData() == "Selected planar face")
 
-    def capture_face(self):
+    def capture_face(self, picks=None):
         import ComponentSketch as Sketch
+        from freecad.gui.ComponentNavigator import task_geometry
         try:
-            selected = Gui.Selection.getSelectionEx()
-            if len(selected) != 1 or len(selected[0].SubElementNames) != 1:
+            selected = picks if isinstance(picks, list) else task_geometry(self.component)
+            if len(selected) != 1 or not selected[0][1]:
                 raise ValueError(tr("Select one planar face in the active component."))
-            candidate = (selected[0].Object, selected[0].SubElementNames[0])
+            candidate = selected[0]
             self.support = Sketch.check_support(self.component, candidate)
             self.plane.setCurrentIndex(self.plane.findData("Selected planar face"))
             self.source.setText(self.support[0].Label + " / " + self.support[1])
@@ -76,20 +79,25 @@ class SketchTask:
         except Exception as error:
             self.status.setText(str(error))
             return False
-        self.finish()
+        self.finish(restore=False)
         App.setActiveDocument(self.component.Document.Name)
         Gui.Selection.clearSelection()
-        Gui.getDocument(self.component.Document.Name).setEdit(self.result.Name)
+        if self.context:
+            self.context.edit(self.result)
+        else:
+            Gui.getDocument(self.component.Document.Name).setEdit(self.result.Name)
         return True
 
     def reject(self):
         self.finish()
         return True
 
-    def finish(self):
+    def finish(self, restore=True):
         global _task
         Gui.Control.closeDialog()
         _task = None
+        if restore and self.context:
+            self.context.restore()
 
 
 def launch(component=None):
@@ -97,7 +105,14 @@ def launch(component=None):
     if Gui.Control.activeDialog():
         raise ValueError(tr("Finish the current task before creating a sketch."))
     component = component or active_component()
-    App.setActiveDocument(component.Document.Name)
-    _task = SketchTask(component)
-    Gui.Control.showDialog(_task)
+    from freecad.gui.ComponentNavigator import TaskContext
+    context = TaskContext(component)
+    try:
+        context.enter()
+        _task = SketchTask(component, context)
+        Gui.Control.showDialog(_task)
+    except Exception:
+        _task = None
+        context.restore()
+        raise
     return _task

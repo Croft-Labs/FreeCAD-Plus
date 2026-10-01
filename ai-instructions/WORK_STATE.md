@@ -1,5 +1,25 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.7h, component modeling task transitions.
+Extrude and New Sketch capture the originating component view/path before entering
+the owning document. Extrude OK/Cancel, sketch-plane Cancel and native sketch/history
+editor reset restore that context. Instance-picked profiles and planar faces resolve
+to definition-local inputs. Isolated-tab Extrude history editing retains the tab and
+result identity; preview overlays are removed on completion/cancellation.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-task-context-20261001`.
+One grouped script/resource staging pass succeeded (`build/`); native binaries reused.
+`smoke-ready/` passes three focused workflows, zero failures/errors/skips, process
+exit 0 and empty stderr. Initial assertions read deleted task labels after success;
+only the test fixture needed correction. No additional build. Two final Model History
+captures reviewed. Feedback fixture:
+`smoke-ready/testExtrudePreselectionPreviewCancelAndAccept/Assembly.cadprt`.
+No schema version, native source, installer or release change. Keep broader testing
+deferred for owner feedback. Active-definition save routing, general native editors,
+close-during-task and multi-tab display acceptance remain open.
+
+Previous feedback batch follows.
+
 Current feedback batch: roadmap 7.8.7g, cross-file component editing.
 Edit retains the assembly view and binds the selected occurrence, including external
 definitions. Model History/native selection, tab switching and Copy/Undo/Redo retain

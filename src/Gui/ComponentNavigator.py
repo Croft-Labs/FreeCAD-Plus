@@ -26,6 +26,71 @@ def resolve(key):
     return doc.getObject(key[1]) if doc else None
 
 
+def task_geometry(component):
+    """One unambiguous evaluated item selected through a component occurrence."""
+    root = resolve(_dock.root_key) if _dock and _dock.root_key else component
+    picks = Selection.selected(root or component, Gui.Selection.getSelectionEx("*", 0))
+    if len(picks) == 1 and picks[0].component == component and picks[0].item is not None:
+        return [(picks[0].item, picks[0].element)]
+    return []
+
+
+class TaskContext:
+    """Return from a definition-owned task to the originating component view."""
+    def __init__(self, component):
+        self.component = component
+        self.selection = task_geometry(component)
+        self.dock = _dock
+        self.window = self.dock.mdi.activeSubWindow() if self.dock and self.dock.mdi else None
+        self.root_key = self.dock.root_key if self.dock else None
+        self.path = list(self.dock.active_path) if self.dock else []
+        self.edit_key = None
+        self.finished = False
+
+    def enter(self):
+        App.setActiveDocument(self.component.Document.Name)
+        Gui.activeDocument().activeView().setActiveObject("part", self.component)
+        if self.dock:
+            # Task inputs/preview use definition-local geometry. Keep the origin
+            # window's saved context intact until the task returns there.
+            self.dock.root_key = self.dock.active_key = object_key(self.component)
+            self.dock.active_path = []
+            self.dock.refresh()
+
+    def edit(self, obj):
+        self.edit_key = object_key(obj)
+        Gui.addDocumentObserver(self)
+        try:
+            if not Gui.getDocument(obj.Document.Name).setEdit(obj.Name):
+                raise ValueError(tr("This object has no task editor. Its properties are available in the property editor."))
+        except Exception:
+            self.restore()
+            raise
+
+    def slotResetEdit(self, view_provider):
+        if object_key(view_provider.Object) == self.edit_key:
+            QtCore.QTimer.singleShot(0, self.restore)
+
+    def restore(self):
+        if self.finished:
+            return
+        self.finished = True
+        if self.edit_key:
+            Gui.removeDocumentObserver(self)
+        if not self.dock or not self.root_key or not resolve(self.root_key):
+            return
+        if self.window not in self.dock.mdi.subWindowList():
+            return
+        self.dock.mdi.setActiveSubWindow(self.window)
+        root = resolve(self.root_key)
+        App.setActiveDocument(root.Document.Name)
+        active, path = self.dock.edit_context(root, self.path)
+        self.dock.root_key, self.dock.active_key, self.dock.active_path = self.root_key, object_key(active), path
+        self.dock.bind_edit_context(self.window)
+        model().activate(active, strict=False)
+        self.dock.refresh()
+
+
 def visible_paths(root, component, ids, prefix=""):
     """Resolve representation to native sub-object paths, never change sources."""
     mode = model().representation(root, ids)
@@ -828,16 +893,15 @@ class Navigator(QtWidgets.QDockWidget):
         component = model().owner(obj)
         model().activate(component, strict=False)
         self.active_key = object_key(component)
-        App.setActiveDocument(component.Document.Name)
-        Gui.activeDocument().activeView().setActiveObject("part", component)
         if getattr(obj, "OperationKind", "") == "Extrude":
             from freecad.gui.ComponentExtrudeTask import launch
             launch(operation=obj)
         else:
+            context = TaskContext(component)
+            context.enter()
             Gui.Selection.clearSelection()
             Gui.Selection.addSelection(obj)
-            if not Gui.getDocument(obj.Document.Name).setEdit(obj.Name):
-                raise ValueError(tr("This object has no task editor. Its properties are available in the property editor."))
+            context.edit(obj)
 
     def rename_item(self, key):
         obj = resolve(key)
@@ -870,9 +934,6 @@ class Navigator(QtWidgets.QDockWidget):
 
     def new_extrude(self):
         from freecad.gui.ComponentExtrudeTask import launch
-        active = resolve(self.active_key)
-        App.setActiveDocument(active.Document.Name)
-        Gui.activeDocument().activeView().setActiveObject("part", active)
         launch()
 
     def build_menu(self, tree, item):

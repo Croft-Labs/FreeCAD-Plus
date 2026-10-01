@@ -7,6 +7,21 @@ owns requirements.
 
 ## Owner workflow
 
+Modeling task transitions (roadmap 7.8.7h): edit an external component instance in an
+assembly, select its sketch, then start Extrude/Pad. The task uses the definition's
+owning document for geometry; OK or Cancel returns to the original assembly view and
+instance. Select a planar face in that same component before New Sketch to prefill
+its support. Cancel returns immediately; OK enters the native Sketcher editor and
+closing that editor restores the original view. Model History editing also returns
+there, including Extrude edits within an isolated component tab.
+
+`RunComponentDocument.ps1 -TaskContextSmoke` runs three focused workflows from
+`TestComponentTaskContext.py`. Evidence is
+`D:\Temp\Office-PC\freecad-plus-task-context-20261001/smoke-ready`.
+Open `testExtrudePreselectionPreviewCancelAndAccept/Assembly.cadprt` with sibling
+`Support.cadprt` for feedback. Save ownership/routing and general native editor
+coverage remain separate acceptance work.
+
 Cross-file editing feedback (roadmap 7.8.7g): expand instances of an external
 component and double-click a numbered occurrence. The assembly view should remain
 active while Model History shows that definition. Selecting a history item retains
