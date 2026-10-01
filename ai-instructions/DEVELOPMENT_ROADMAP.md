@@ -2456,6 +2456,10 @@ its Body workflow. Full sketch routing, operation/target changes while editing,
 expressions, multi-result lineage, assembly solver and broader consumer/recovery
 acceptance remain open. Do not rerun the broad suites solely to close this feedback
 batch. [Procedure and current limits](../tests/ComponentDocument.md#current-feedback-iteration).
+Source publication: implementation `7630012c25efae2e2c79b0102808b8331695a582`
+pushed to `origin/main` and verified with `git ls-remote`. No installer or release.
+The review fixture is `smoke-accepted/Component-Feedback.cadprt` under the iteration
+evidence folder; use the local fork executable from the existing validation build.
 
 ### [   ] 7.7 Validate and release the history pilot
 

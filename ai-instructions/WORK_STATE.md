@@ -15,6 +15,7 @@ Do not run a full component/cross-workbench qualification pass merely to close t
 batch. Open `Component-Feedback.cadprt` from that folder in the fork build to review.
 Full Part Design sketch routing, mode/target edit changes, expressions, multi-solid
 lineage and the broader gates below remain pending. No installer or release update.
+Implementation 7630012c25 was pushed to origin/main and verified remotely.
 
 Previous foundation batch:
 Latest owner priority: component document migration, roadmap 7.8 (2026-10-01).
