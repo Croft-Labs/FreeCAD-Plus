@@ -44,6 +44,8 @@ class SketcherWorkbench(Workbench):
         # load the module
         import SketcherGui
         import Sketcher
+        from SketchSupportGui import registerCommand as registerSupport
+        registerSupport()
 
         try:
             import Profiles

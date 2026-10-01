@@ -264,6 +264,7 @@ inline void SketcherAddWorkbenchSketchActions(Gui::MenuItem& sketch)
     sketch << "Sketcher_NewSketch"
            << "Sketcher_EditSketch"
            << "Sketcher_MapSketch"
+           << "Sketcher_InspectSupport"
            << "Sketcher_ReorientSketch"
            << "Sketcher_ValidateSketch"
            << "Sketcher_MergeSketches"

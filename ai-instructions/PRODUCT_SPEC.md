@@ -244,6 +244,22 @@ configuration/orientation/unit controls, mesh inputs, deep linked-member paths,
 collision/printability checks and physical/high-DPI acceptance remain pending.
 [Owner procedure](../tests/ManufacturingExport.md); UI-010 describes the dialog.
 
+## Current sketch-support pilot (F124)
+
+Sketcher > Sketch > Inspect and change sketch support promotes the proven direct
+planar attachment core into the installed application. An explicit sketch and
+replacement face in the same native container use preserve-local or preserve-world
+policy. Numeric preview uses a disposable document; source attachment and geometry
+stay unchanged until Apply. Apply requires current preview inputs and owns one native
+undoable transaction. Preserve-local can repair a missing face; preserve-world needs
+a valid old placement and refuses expression-driven offsets. The dialog explains
+that numeric preview does not simulate constraints or downstream solids.
+
+This bounded workflow is ready for owner testing under 11.7y/z. The experimental
+cross-part adapter remains test-only. Graphical ghosts, broader datum/occurrence and
+external-projection behavior and physical/high-DPI acceptance remain pending.
+[Owner procedure](../tests/SketchSupport.md); UI-011 describes the editor.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

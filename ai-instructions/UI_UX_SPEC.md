@@ -499,3 +499,34 @@ assembly identity. It explicitly describes current recomputed input geometry and
 no fusion/collision check. More formats, configuration/orientation/unit controls,
 mesh inputs and physical/high-DPI acceptance remain pending.
 [Owner procedure](../tests/ManufacturingExport.md).
+
+
+## UI-011: Sketch support (F124; roadmap 11.7)
+
+Sketcher workbench > Sketch > Inspect and change sketch support requires one
+selected sketch outside edit mode. The modeless editor shows current support and
+world placement, a read-only replacement object, editable face name, Use selected
+planar face, local/world placement policy, numeric Preview, Apply and Close.
+The selected face resolves native nested Part paths; occurrence paths reject.
+
+Preserve local retains the native attachment offset and follows the new support.
+Preserve world solves an offset to retain the sketch's current world transform.
+Preview evaluates planar attachment in a disposable hidden document and reports
+candidate world origin/axis/angle and attachment offset in mm/degrees. It does not
+simulate constraints/downstream solids or add geometry to the source document.
+
+Apply requires a matching fresh preview and revalidates the native support contract.
+Changed sketch/support geometry, placement, attachment state, policy or expression
+invalidates the preview; the user must preview again. A successful Apply owns one
+undo transaction, refreshes current-support text and leaves dependent-result checking
+to the user. Close discards unapplied choices; previous successful Apply remains.
+
+Errors appear inline without closing the editor. Invalid/missing candidate faces,
+dependency cycles, stale supports, pending edits and direct cross-container/occurrence
+references reject. Preserve local supports broken-face repair; Preserve world needs
+a valid old placement and cannot replace an expression-driven offset. Deleting the
+replacement clears it; deleting the sketch or closing its document closes/detaches
+the editor. Activate the target document before preview or Apply.
+
+Graphical ghost preview, general datum/occurrence support and physical/high-DPI
+acceptance remain pending. [Owner procedure](../tests/SketchSupport.md).

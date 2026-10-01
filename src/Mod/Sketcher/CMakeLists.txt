@@ -10,6 +10,7 @@ endif(BUILD_GUI)
 set(Sketcher_Scripts
     Init.py
     SketcherExample.py
+    SketchSupport.py
     TestSketcherApp.py
     Profiles.py
 )
@@ -29,6 +30,7 @@ set(Sketcher_TestScripts
 if(BUILD_GUI)
     list (APPEND Sketcher_Scripts
           InitGui.py
+          SketchSupportGui.py
           TestSketcherGui.py
     )
     list (APPEND Sketcher_TestScripts

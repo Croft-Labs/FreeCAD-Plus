@@ -1,6 +1,28 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F127 manufacturing STL handoff, phase 15 tasks 15.7a/b.
+Latest batch: F124 sketch support, phase 11 tasks 11.7y/z.
+Sketcher > Sketch > Inspect and change sketch support promotes the proven direct
+planar core and exposes current support, explicit replacement, preserve-local/world
+numeric preview and undoable Apply/repair. Preview uses a disposable document and
+requires unchanged inputs at Apply. The cross-part reference adapter stays test-only.
+
+One grouped SketcherGui/SketcherScripts Release build passed after both tasks.
+All 39 selected checks pass (5 installed editor, 34 history adapters), no failures/
+errors/skips, process exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-sketch-support-20260930.
+Use grouped/, acceptance-summary.json and validated-identities.json. Installed
+scripts match source. No corrective build or script restaging. visual/ contains
+three reviewed dialog captures and the native-only Sketch-Support.FCStd example.
+Rotated/constrained sketch and downstream extrusion, world preservation, local
+missing-face repair, stale preview, cycles, Undo/Redo and save/reopen pass.
+
+Ready for owner testing: tests/SketchSupport.md. Numeric preview evaluates placement
+only; check dependent features after Apply. Whole F124 remains open for graphical
+preview, broader support/occurrence and external-projection behavior and physical/
+high-DPI acceptance. No installer/release update. Stop refining this pilot pending
+owner feedback or a demonstrated blocker; rotate to another item family.
+
+Previous batch: F127 manufacturing STL handoff, phase 15 tasks 15.7a/b.
 Part > Manufacturing export lists explicit solid/whole-occurrence identities and
 world dimensions. Fixed mm/world coordinates, editable Coarse/Normal/Fine quality,
 custom per-user presets/reset, explicit selection replacement and overwrite prompt.

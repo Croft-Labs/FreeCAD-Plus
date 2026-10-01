@@ -13,6 +13,7 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 | Product intent and boundaries | [Product specification](PRODUCT_SPEC.md) | [UI scope](UI_UX_SPEC.md#interface-scope) |
 | Planned `.cadprt` format and legacy `.FCStd` conversion | [Native-format policy](PRODUCT_SPEC.md#planned-native-format-and-legacy-import) | Roadmap 7.6; best-effort conversion with reported losses and untouched originals; not implemented yet |
 | Part-level history architecture | [Logical history/result contract](architecture/PART_HISTORY_CONTRACT.md), [adapter decision boundary](architecture/ADR_001_HISTORY_ADAPTER_BOUNDARY.md) | Foundation and bounded placement/local-cut/consumer probes validated; Draft clone empty-source fix included; final choice/production history model pending |
+| Sketch support editor (F124) | [`SketchSupport.py`](../src/Mod/Sketcher/SketchSupport.py), [`SketchSupportGui.py`](../src/Mod/Sketcher/SketchSupportGui.py) | Sketcher > Sketch > Inspect and change sketch support: native planar reattachment, local/world numeric preview and undoable repair. [Owner procedure](../tests/SketchSupport.md); roadmap 11.7y/z. |
 | Manufacturing export (F127) | [`ManufacturingExport.py`](../src/Mod/Part/ManufacturingExport.py), [`ManufacturingExportGui.py`](../src/Mod/Part/ManufacturingExportGui.py) | Part > Manufacturing export: explicit solid/occurrence inputs, STL mm/world coordinates, reusable quality and stale-input guards. [Owner procedure](../tests/ManufacturingExport.md); roadmap 15.7a/b. |
 | Temporary isolate/hide (F040) | [`TemporaryDisplay.py`](../src/Gui/TemporaryDisplay.py), standard View > Visibility menu | Native visibility with per-document nested restore; whole Body/link targets preserve model identities. [Owner procedure](../tests/TemporaryDisplay.md); roadmap 10.5a/b. |
 | Command search (F033) | [`CommandSearch.py`](../src/Gui/CommandSearch.py), native standard Tools menu | Familiar aliases into existing commands, keyboard palette, explicit workbench switching and live availability. [Owner procedure](../tests/CommandSearch.md); roadmap 8.4.2a/b, 10.4. |
@@ -122,17 +123,17 @@ Trim Body and Isocline task readiness uses `require_current` in
 invalid/touched dependencies block preview acceptance and input replacement
 and are omitted from optional preselection (roadmap 4.1.4-6/5.1.4-6).
 
-Sketch reattachment foundation: [`SketchReattachment.py`](../tests/prototypes/SketchReattachment.py)
-and [`TestPartHistoryAdapters.py`](../tests/TestPartHistoryAdapters.py); roadmap 11.7a-x
-covers test-only planar reattachment, local/world policies, missing-face repair,
-transaction ownership, support validity/cycle checks and disposable-document placement
-preview, reversed direction, expression-offset protection and explicit support scope.
-Direct cross-container/occurrence supports reject; test-only PlanarSupport provides
-an explicit cross-part reference with atomic creation/reattachment and deliberate
-missing-face/source repair checks. `current_result_shape` in
-[`PartHistoryAdapters.py`](../tests/prototypes/PartHistoryAdapters.py) prototypes
-consumer rejection of invalid/unrecomputed cached results. Production editor and
-graphical preview pending.
+Sketch reattachment: installed [`SketchSupport.py`](../src/Mod/Sketcher/SketchSupport.py)
+owns direct same-container planar operations and disposable-document placement
+preview. [`SketchSupportGui.py`](../src/Mod/Sketcher/SketchSupportGui.py) provides
+inspection, local/world choices, numeric preview, stale rejection and Apply/repair
+(11.7y/z). [Owner procedure](../tests/SketchSupport.md). Existing foundation tests
+in [`TestPartHistoryAdapters.py`](../tests/TestPartHistoryAdapters.py) call that core
+through compatibility imports in [`SketchReattachment.py`](../tests/prototypes/SketchReattachment.py).
+Its cross-part PlanarSupport proxy and atomic reference creation remain test-only,
+with their existing import identities preserved. `current_result_shape` in
+[`PartHistoryAdapters.py`](../tests/prototypes/PartHistoryAdapters.py) remains an
+experimental consumer guard. Graphical preview and broader support scope remain open.
 
 All code paths are relative to the project root.
 

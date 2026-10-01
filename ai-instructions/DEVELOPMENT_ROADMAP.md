@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F127 manufacturing export,
+- Current product batch complete for owner testing: F124 sketch support,
+  phase 11 tasks 11.7y/z. Sketcher > Sketch > Inspect and change sketch support
+  exposes current attachment, explicit planar replacement, local/world numeric
+  previews and undoable Apply/repair. One grouped build and all 39 selected checks
+  pass; three dialog captures reviewed. [Try the example](../tests/SketchSupport.md).
+  Whole F124 remains open for graphical preview, broader support/occurrence and
+  physical acceptance. Stop refining this pilot and rotate pending owner feedback.
+
+- Previous product batch complete for owner testing: F127 manufacturing export,
   phase 15 tasks 15.7a/b. Part > Manufacturing export now hands selected solids and
   whole occurrences to STL with explicit mm/world placement and reusable quality.
   One grouped build, all 20 selected checks and two reviewed captures pass.
@@ -3057,6 +3065,29 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
 - [ X ] 11.7x Reject pending recompute without silently recomputing; verify source
   movement appears after explicit recompute and returned-shape mutation cannot
   change the stored/current result.
+
+- [x] 11.7y Promote the proven same-container planar reattachment and disposable
+  placement-preview operations into the installed Sketcher module. Keep experimental
+  cross-part reference creation test-only and preserve native attachment identities.
+- [x] 11.7z Add the sketch support editor: current-support inspection, explicit
+  replacement face, local/world policy, numeric placement preview, stale-preview
+  rejection and undoable Apply/repair. Stop for owner testing after grouped native
+  geometry/persistence and command checks; viewport ghost preview remains pending.
+
+11.7y/z grouped evidence (2026-09-30): both tasks preceded one SketcherGui/
+SketcherScripts Release build, exit 0. All **39 selected checks pass**, zero
+failures/errors/skips, process 0 (5 installed editor, 34 existing history adapter).
+Evidence: `D:\Temp\Office-PC\freecad-plus-sketch-support-20260930`, `grouped/`,
+`acceptance-summary.json` and `validated-identities.json`. Installed scripts match
+source. The direct core is installed; the cross-part reference adapter retains its
+test-only module identity. World preservation, rotated container, constrained sketch,
+downstream extrusion, missing-face local repair, Undo/Redo, save/reopen, stale preview,
+cycles, linked-support rejection and editor lifecycle pass. Three reviewed captures
+and native-only `visual/Sketch-Support.FCStd` support [owner testing](../tests/SketchSupport.md).
+Preview reports placement numerically without changing source geometry; it does not
+simulate constraints/downstream solids. Physical/high-DPI interaction, graphical
+ghosts, broader datums/occurrences and external-projection acceptance remain open.
+No installer/release update. Whole 11.7/F124 remains open; rotate the next family.
 
 Consumer boundary evidence: `reference-consumers-20260930-batch/results.json` under
 `D:\Temp\Office-PC\freecad-plus-validation-20260928`: **50 PASS, zero failures/
@@ -6086,7 +6117,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f124"></a>
 ### F124 — Sketch placement and support management
 
-**Owning tasks:** 11.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 11.7. **Status:** Same-container planar support editor is ready for owner testing under 11.7y/z. Installed core and native menu expose current support, explicit replacement, preserve-local/world numeric preview and undoable Apply/repair. All 39 selected checks pass, including rotated placement, constrained sketch/downstream extrusion, missing-face repair, Undo/Redo and save/reopen; three captures reviewed. Cross-part reference adapter stays test-only. Graphical preview, broader datum/occurrence and external-projection behavior and physical/high-DPI acceptance remain open. [Owner procedure](../tests/SketchSupport.md).
 
 **Packages:** S08, A05 · **First delivery:** P1/P3 contracts; P5 · **Likely scope:** Feature/Core
 
