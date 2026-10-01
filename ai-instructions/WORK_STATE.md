@@ -1,5 +1,28 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.8d, Save to External File.
+The moved embedded hierarchy retains component names and evaluates reference
+geometry before saving. Parent references and downstream history refresh after
+relinking. Pending edits are rejected before creating a file; already external
+components disable this menu action. Active occurrence and parent-view context are
+restored with the native occurrence path. Close isolated tabs for the moved component
+and embedded children first; live tab migration is not yet supported.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-externalization-20261001`.
+One grouped script/resource staging pass succeeded (`build/`); native binaries reused.
+Focused feedback exposed the native activation path and copied-label suffix, corrected
+by direct Python staging without another build. `smoke-final/` passes three workflows,
+zero failures/errors/skips, process exit 0, empty stderr. Two final captures reviewed.
+Checks cover shared hierarchy/reference geometry, Undo/Redo/reopen, preflight and
+menu/edit context. Feedback fixture:
+`smoke-final/testSharedHierarchyReferencesUndoAndReopen/Parent.cadprt`.
+No schema version, native source, installer or release changes. Keep broader testing
+deferred for owner feedback; other-file consumers and atomic multi-file crash recovery
+remain open. Saving the parent persists its new external links; Undo leaves the newly
+created external file on disk.
+
+Previous feedback batch follows.
+
 Current feedback batch: roadmap 7.8.3c, moved/missing component recovery.
 Component Structure groups missing instances by saved definition identity, keeps
 numbered expansion available and disables geometry-dependent actions. Add Instance

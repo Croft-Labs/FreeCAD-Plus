@@ -7,6 +7,23 @@ owns requirements.
 
 ## Owner workflow
 
+Save to External File feedback (roadmap 7.8.8d): save the parent `.cadprt`, finish
+the current edit and close isolated tabs for the component and its embedded children.
+Right-click an embedded component and choose Save to External File with a new
+`.cadprt` filename. Its embedded children move with it; shared instances, component
+names and parent references remain linked. Parent Model History should immediately
+show current reference/results geometry. The active component and parent view remain
+selected. Already external components have this action disabled. Save the parent to
+persist the new external links. Undo restores embedded definitions; the newly created
+external file remains on disk.
+
+Bounded automated feedback: `RunComponentDocument.ps1 -ExternalizationSmoke` runs
+only `TestComponentExternalization.py` (three workflows). The 2026-10-01 evidence
+is `D:\Temp\Office-PC\freecad-plus-externalization-20261001/smoke-final`.
+Open `testSharedHierarchyReferencesUndoAndReopen/Parent.cadprt` there to review
+the shared Bracket/Pin example. Broader compatibility, crash recovery and migration
+of open isolated tabs remain pending; this check is not full schema acceptance.
+
 1. File > New creates a component document. Component Structure starts with the
    root component and the native yellow Part icon. There is no file wrapper row.
    Tools > Component Structure reopens the navigator.

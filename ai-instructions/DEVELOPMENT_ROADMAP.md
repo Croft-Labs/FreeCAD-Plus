@@ -2450,10 +2450,33 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   reconcile active editing context through Copy/Undo/Redo and follow geometry
   dependencies without importing unrelated component history. Three focused checks
   pass; ambiguous face/edge/expression and other-file override remapping stay guarded.
+- [ X ] 7.8.8d Save to External File feedback: preserve component labels, evaluate
+  the moved hierarchy before saving, refresh parent reference history immediately,
+  and retain active occurrence context. Reject pending edits before file creation;
+  disable the command for already external definitions. Close affected isolated tabs
+  before moving definitions. One grouped script/resource staging pass and three
+  focused workflows pass; wider multi-file/crash acceptance remains pending.
+
 - [ X ] 7.8.10a Published result updates through native Draft clone, CAM job model
   and TechDraw projection after save/reopen; suppressed inputs clear clone/CAM geometry.
 - [   ] 7.8.10b FEM (disabled in this build), general drawing references, CAM path
   invalidation, broader topology changes, performance and interactive owner acceptance.
+
+2026-10-01 externalization feedback evidence:
+`D:\Temp\Office-PC\freecad-plus-externalization-20261001`.
+`build/` records successful grouped script/resource staging; native binaries were
+reused. The first smoke found a native active-object binding that needed the explicit
+occurrence path. Capture review also exposed a copied root label suffix. Those Python
+corrections were staged directly, without another build. `smoke-final/` passes the
+same three workflows with zero failures/errors/skips, process exit 0 and empty stderr.
+Coverage: shared assembly/child identities, parent references and Mirror result,
+Undo/Redo and save/reopen; pending edit/existing-file/cancel/isolated-tab preflight;
+and active component, owning parent view and already-external menu eligibility.
+Two final navigator captures were reviewed. Feedback fixture:
+`smoke-final/testSharedHierarchyReferencesUndoAndReopen/Parent.cadprt` with sibling
+`Bracket.cadprt`. No schema version, native source, installer or release change.
+Live isolated-tab migration, general other-file consumers and atomic crash recovery
+across the new external file and parent save are not established by this check.
 
 Validation evidence: `D:\Temp\Office-PC\freecad-plus-components-20261001`.
 Grouped Release native App/Gui and PartScripts build passes are recorded under

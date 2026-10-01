@@ -832,6 +832,9 @@ def finished_results(component):
 def externalize(definition, filename):
     """Move an embedded definition closure, retaining shared identities and links."""
     doc = definition.Document
+    # Refuse before creating a document or writing a destination file.
+    if doc.HasPendingTransaction:
+        raise ValueError("Finish the current edit before saving a component to an external file.")
     if metadata(doc).RootComponent == definition:
         raise ValueError("Use Save As for a root component.")
     if not doc.FileName.lower().endswith(".cadprt"):
@@ -840,6 +843,7 @@ def externalize(definition, filename):
     if destination.suffix.lower() != ".cadprt" or destination.exists():
         raise ValueError("Choose a new .cadprt file; externalization never overwrites another definition.")
     closure = []
+    refresh_order = []
     def collect(component):
         if component in closure:
             return
@@ -849,6 +853,7 @@ def externalize(definition, filename):
                 raise ValueError("Repair missing components before externalizing.")
             if child.LinkedObject.Document == doc:
                 collect(child.LinkedObject)
+        refresh_order.append(component)
     collect(definition)
     originals = []
     for component in closure:
@@ -865,6 +870,7 @@ def externalize(definition, filename):
                    and getattr(o, "ComponentRole", "") == "Occurrence" and o.LinkedObject in closure]
     references = [o for o in doc.Objects if o not in own
                   and getattr(o, "ComponentRole", "") == "Reference" and o.SourceObject in own]
+    affected = list(dict.fromkeys(owner(reference) for reference in references))
     allowed = own | set(occurrences) | set(references)
     if any(consumer not in allowed for obj in originals for consumer in obj.InList):
         raise ValueError("Other consumers must be remapped explicitly before externalizing this definition.")
@@ -880,9 +886,18 @@ def externalize(definition, filename):
             copied_component.ResultObjects = [mapping[name].Name for name in component.ResultObjects]
         metadata(external).RootComponent = new_root
         external.removeObject(empty.Name)
+        # copyObject may disambiguate the root label against the temporary root.
+        # Keep the user's component names after that temporary object is gone.
+        for component in closure:
+            mapping[component.Name].Label = component.Label
         if App.GuiUp:
             new_root.Visibility = True
         external.recompute()
+        # Native copying touches reference features. Evaluate children first so
+        # the saved file contains current geometry throughout the moved closure.
+        for component in refresh_order:
+            activate(mapping[component.Name], strict=False)
+        validate(external)
         external.saveAs(str(destination))
         with transaction(doc, "Externalize Component"):
             for occurrence in occurrences:
@@ -895,6 +910,8 @@ def externalize(definition, filename):
             for name in names:
                 if doc.getObject(name):
                     doc.removeObject(name)
+            for component in affected:
+                activate(component, strict=False)
             validate(doc)
         return new_root
     except Exception:

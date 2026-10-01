@@ -703,12 +703,35 @@ class Navigator(QtWidgets.QDockWidget):
 
     def externalize_component(self, key):
         occurrence = resolve(key)
+        definition = occurrence.LinkedObject
+        if definition is None or definition.Document != occurrence.Document:
+            raise ValueError(tr("Select an embedded component to save to an external file."))
+        if Gui.Control.activeDialog() or occurrence.Document.HasPendingTransaction:
+            raise ValueError(tr("Finish the current edit before saving a component to an external file."))
+        if any(resolve(entry["key"]) and resolve(entry["key"]).Document == definition.Document
+               and model()._reachable(definition, resolve(entry["key"]))
+               for entry in self.component_views):
+            raise ValueError(tr("Close isolated tabs for this component and its embedded children before saving to an external file."))
+        root_key, active_path = self.root_key, list(self.active_path)
+        window = self.mdi.activeSubWindow() if self.mdi else None
         filename, unused = QtWidgets.QFileDialog.getSaveFileName(
             self, tr("Save to External File"), "", "Component document (*.cadprt)")
         if filename:
             parent = model().owner(occurrence)
-            model().externalize(occurrence.LinkedObject, filename)
-            App.setActiveDocument(parent.Document.Name)
+            try:
+                model().externalize(definition, filename)
+            finally:
+                App.setActiveDocument(parent.Document.Name)
+                if window:
+                    self.mdi.setActiveSubWindow(window)
+                self.root_key, self.active_path = root_key, active_path
+                active, self.active_path = self.edit_context(resolve(root_key), active_path)
+                self.active_key = object_key(active)
+                if window:
+                    self.store_edit_context(window)
+                Gui.getDocument(parent.Document.Name).activeView().setActiveObject(
+                    "part", resolve(root_key), Selection.native_path(resolve(root_key), self.active_path))
+                self.refresh()
 
     def repair_component(self, key):
         occurrence = resolve(key)
@@ -863,7 +886,9 @@ class Navigator(QtWidgets.QDockWidget):
                     expanded = item.data(0, QtCore.Qt.UserRole + 2) in self.expanded_instances
                     menu.addAction(tr("Collapse Instances") if expanded else tr("Expand Instances"),
                                    lambda: self.run(lambda: self.toggle_instances(item)))
-                menu.addAction(tr("Save to External File"), lambda: self.run(lambda: self.externalize_component(value[0]))).setEnabled(definition is not None)
+                externalize = menu.addAction(tr("Save to External File"), lambda: self.run(lambda: self.externalize_component(value[0])))
+                externalize.setEnabled(definition is not None and definition.Document == obj.Document)
+                externalize.setToolTip(tr("Move this embedded definition and its embedded children to a new file; all instances stay shared."))
                 menu.addAction(tr("Locate Component File"), lambda: self.run(lambda: self.repair_component(value[0])))
             view = menu.addMenu(tr("Part View"))
             menu.component_submenus.append(view)
