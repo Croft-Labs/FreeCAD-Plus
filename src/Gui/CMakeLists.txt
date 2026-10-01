@@ -1520,6 +1520,7 @@ else(WIN32)
 endif(WIN32)
 
 set(FreeCADGui_Scripts
+    CommandSearch.py
     RemoteDebugger.ui
     RemoteDebugger.py
 )

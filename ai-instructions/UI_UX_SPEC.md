@@ -410,3 +410,32 @@ Production command recognition requires a directly Part-owned App::FeaturePython
 with integer ParameterSetVersion 1. Existing unmarked objects are not silently
 adopted or migrated. The native properties and expressions require no custom
 serialization proxy. This pilot does not select the future unified history model.
+
+
+## UI-008: Command search (F033; roadmap 8.4.2, 10.4)
+
+Tools > Command search... (`Std_CommandSearch`, default Ctrl+K) opens one reusable
+modeless palette. Search matches registered names, menu labels, current shortcuts
+and the bounded familiar-alias catalog. Results show command intent and shortcut;
+the selected result shows guidance and current availability. Exact command names
+precede incidental matches. No match disables Run and displays an empty state.
+
+Pad/Boss-Extrude invokes PartDesign_Pad; Pocket/Cut-Extrude invokes
+PartDesign_Pocket; Revolution/Revolved Boss invokes PartDesign_Revolution;
+Groove/Revolved Cut invokes PartDesign_Groove. Existing feature identities and
+editor presets remain authoritative. Linear/Circular Pattern, named parameters
+and Insert Component have explicit catalog entries too. Other loaded commands
+retain their native titles and tooltips.
+
+Switch workbench is explicit, retains the query/result and creates no geometry.
+Run rechecks command availability and releases palette focus before invoking the
+existing command. Active task dialogs block launch/switch with a recovery message.
+An unavailable Insert Component points to creating or activating an Assembly;
+generic commands receive their existing tooltip/context guidance. Refresh reloads
+commands/shortcuts and availability. Close/Escape makes no document changes.
+
+Up/Down moves results from the query, Enter runs the selection, and Tab reaches
+buttons. Reinvocation focuses/selects the query. Existing Customize > Keyboard
+owns per-user shortcut editing, reset and conflict handling. Favorites, exhaustive
+aliases, per-command diagnostics, navigation presets and physical/high-DPI/localized
+acceptance remain pending. [Owner procedure](../tests/CommandSearch.md).

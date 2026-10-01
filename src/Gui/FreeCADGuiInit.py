@@ -550,6 +550,11 @@ Gui.addWorkbench(_fc_patch_workbench_icon_object(NoneWorkbench()))
 # init modules
 InitApplications()
 
+# Register the shared command palette before building the standard menus.
+from freecad.gui.CommandSearch import registerCommand as _registerCommandSearch
+_registerCommandSearch()
+del _registerCommandSearch
+
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 

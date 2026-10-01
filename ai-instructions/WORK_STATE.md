@@ -1,6 +1,31 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: phase 10 named-parameter pilot, 10.8aa/ab (F122).
+Latest batch: F033 command search, phase 8 tasks 8.4.2a/b; phase 10.4 progress.
+Standard Tools > Command search / Ctrl+K indexes loaded commands plus familiar
+modeling aliases, displays current shortcuts and selected context, explicitly
+switches workbenches and invokes existing commands. Pocket keyboard entry reaches
+Subtraction and passes native geometry, Undo/Redo and save/reopen.
+
+One grouped FreeCADGui/FreeCADGui_Resources Release build, exit 0. Final accepted
+checks: 59 distinct passes (7 palette, 43 Extrude task, 5 Revolve task, 4 parameter
+command), no failures/errors/skips. Evidence:
+D:\Temp\Office-PC\freecad-plus-command-search-20260930.
+Use search-final/ plus the three passing unchanged suites in verified/. verified/
+contains initial palette failures; do not claim its aggregate PASS. grouped/ ran
+zero tests due unavailable optional QtTest; key events now use QApplication.
+Final Python-only palette corrections were staged without a second native build.
+validated-identities.json records matching source/runtime and native hashes;
+FreeCADGui SHA256 9bcb059b9c0428816035ca768715b0282776cb4d8ac3e30599fc2c7dd14c3f53.
+visual/ contains three reviewed captures and Search-Pocket.FCStd for owner testing.
+
+BUILD_ASSEMBLY=OFF in this development build; missing-workbench/context feedback
+passes, while active-assembly recovery remains unverified. Favorites, broader
+aliases/diagnoses, navigation presets and physical/high-DPI/localized acceptance
+remain open. Whole F033 and parent tasks are not complete. tests/CommandSearch.md
+is the owner procedure. Stop this pilot for feedback and rotate the next batch.
+No installer/release update; publication recorded separately in commit/remote history.
+
+Previous batch: phase 10 named-parameter pilot, 10.8aa/ab (F122).
 Installed native Part-menu command, explicit Part/set ownership, marked native
 parameter containers, same-document expression reference copying, and the promoted
 length/angle editor/core. Prototype imports forward to application modules.

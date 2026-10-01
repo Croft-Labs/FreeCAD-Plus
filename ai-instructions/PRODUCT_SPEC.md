@@ -201,6 +201,19 @@ supersedes the archived baseline. These are requirements, not installed behavior
   identity, units, transforms and external dependencies must survive round trips;
   unknown required content must be preserved safely or refused, never dropped.
 
+## Current command-search pilot (F033)
+
+Tools > Command search / Ctrl+K searches loaded native commands plus a bounded
+alias catalog and current shortcuts. Familiar modeling names invoke the existing
+Pad/Pocket/Revolution/Groove/Pattern commands; Pocket retains its subtractive
+Extrude preset. Workbench switching is explicit, availability is checked before
+execution, and native commands retain selection, transactions and document types.
+Missing workbenches and active tasks receive recovery guidance. The pilot is ready
+for owner workflow testing under roadmap 8.4.2a/b; favorites, broader context
+explanations and physical/high-DPI acceptance remain pending. See
+[UI-008](UI_UX_SPEC.md#ui-008-command-search-f033-roadmap-842-104) and the
+[owner procedure](../tests/CommandSearch.md).
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

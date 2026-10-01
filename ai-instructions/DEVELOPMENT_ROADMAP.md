@@ -30,7 +30,14 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: phase 10 named parameters
+- Current product batch complete for owner testing: command search (F033,
+  phase 8 tasks 8.4.2a/b and phase 10.4 progress). Tools > Command search / Ctrl+K
+  finds familiar aliases and opens existing commands with context guidance.
+  One grouped build; 59 distinct passing checks and three reviewed captures.
+  [Try the palette](../tests/CommandSearch.md). Whole F033 remains open; defer
+  further refinement to owner feedback and rotate to another item family.
+
+- Previous product batch complete for owner testing: phase 10 named parameters
   (10.8aa/ab, F122). Part > Named parameters now opens the promoted length/angle
   editor for an explicit Part or marked parameter set, with reusable expression
   references. One grouped PartGui/PartScripts build passed; final selected evidence
@@ -2331,6 +2338,35 @@ Apply/repeat acceptance remain separate open gates.
 
 - [   ] 8.4.1 Define a coherent Modeling command set across current Part/Part Design boundaries. Route by valid inputs/results rather than requiring users to change workbenches to find equivalent operations.
 - [   ] 8.4.2 Add searchable command names and familiar aliases, contextual right-click actions, predictable double-click editing and discoverable shortcuts; retain legacy names for scripts and compatibility.
+- [x] 8.4.2a Deliver a bounded F033 command-search catalog: preserve command
+  identities, route familiar extrusion/revolution/pattern aliases into existing
+  editors, and display current user shortcuts. Complete for owner testing.
+- [x] 8.4.2b Add the standard Tools-menu/keyboard launcher, explicit workbench
+  switching, selected-command availability and missing-workbench/context recovery.
+  Pocket search reaches Subtract with native geometry, Undo/Redo and persistence.
+  Complete for owner testing; active-Assembly and physical input acceptance remain open.
+
+8.4.2a/b grouped evidence (2026-09-30): one FreeCADGui/FreeCADGui_Resources
+Release build, exit 0, after both implementation tasks. Final selected acceptance
+has 59 distinct passes: 7 palette tests, 43 Extrude task tests, 5 Revolve task
+checks and 4 named-parameter command checks; no failures/errors/skips in accepted
+results. Root: `D:\Temp\Office-PC\freecad-plus-command-search-20260930`.
+Use `search-final/` for the corrected palette suite and the three passing suites
+in `verified/`; the latter aggregate retains initial palette failures and is not
+claimed PASS. `grouped/` stopped before tests because optional QtTest was absent;
+key events now use QApplication. Final Python-only corrections were staged
+without another native build. Source/runtime hashes match in
+`validated-identities.json`; FreeCADGui SHA256:
+`9bcb059b9c0428816035ca768715b0282776cb4d8ac3e30599fc2c7dd14c3f53`.
+`visual/` holds three reviewed readable captures and `Search-Pocket.FCStd`.
+`acceptance-summary.json` selects the passing evidence. Assembly is excluded by
+this build's BUILD_ASSEMBLY=OFF: the palette reports the missing workbench and
+required context without launching anything. Active-assembly recovery is unverified.
+[Test the workflow](../tests/CommandSearch.md), then refine from owner feedback.
+Whole F033, 8.4.2 and 10.4 remain open for broader interaction, favorites/context,
+navigation and physical/high-DPI/localized acceptance. No installer/release update.
+Rotate the next batch to another dependency-ready family.
+
 - [   ] 8.4.3 Define viewport manipulators for direction, extent, offset and placement that update the same task properties and expressions as numeric controls.
   Handles include lengths, angles, offsets and radii, with exact numeric entry using the
   same properties. Dragging must not bypass expressions, validation or cancellation.
@@ -4788,7 +4824,7 @@ reconciliation rules above to every entry.
 <a id="f033"></a>
 ### F033 — Command search and shortcut palette
 
-**Owning tasks:** 8.4, 10.9. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 8.4, 10.4, 10.9. **Status:** Bounded command-search pilot ready for owner testing under 8.4.2a/b: standard menu/Ctrl+K, familiar aliases, shortcut display, explicit workbench switching and live run guards. Pocket opens subtractive Extrude with geometry, Undo/Redo and reopen acceptance; 59 distinct selected checks pass. Missing Assembly workbench/context guidance is validated; active Assembly, favorites, broader diagnoses and physical/high-DPI acceptance remain open. See [owner procedure](../tests/CommandSearch.md).
 
 **Packages:** U04, U11 · **First delivery:** P4 · **Likely scope:** UI
 
