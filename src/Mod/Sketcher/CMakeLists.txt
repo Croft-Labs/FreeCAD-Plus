@@ -12,6 +12,7 @@ set(Sketcher_Scripts
     SketcherExample.py
     SketchSupport.py
     SketchReuse.py
+    ConstraintRepair.py
     TestSketcherApp.py
     Profiles.py
 )
@@ -33,6 +34,7 @@ if(BUILD_GUI)
           InitGui.py
           SketchSupportGui.py
           SketchReuseGui.py
+          ConstraintRepairGui.py
           TestSketcherGui.py
     )
     list (APPEND Sketcher_TestScripts

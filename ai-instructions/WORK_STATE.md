@@ -1,6 +1,39 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F037 Select Other, phase 10 tasks 10.5c/d. Existing native Clarify
+Latest batch: F048 sketch constraint repair, phase 11 tasks 11.4a/b. The Sketch
+command diagnoses a hidden temporary native copy, previews explicit deactivation
+choices and applies a successful proposal transactionally. Native solver, copying,
+constraint signatures, identity and wireframe services are reused. Source sketches
+may be invalid; authored geometry/constraints are diagnosed instead of cached Shape.
+
+Both implementation tasks preceded one SketcherGui/SketcherScripts Release build,
+exit 0. Evidence: `D:\Temp\Office-PC\freecad-plus-constraint-repair-20261001`.
+`grouped/` passes eight repair checks and seven existing sketch-reuse checks. A final
+UI correction frames the temporary overlay automatically because native Fit All
+excludes it; only ConstraintRepairGui.py was restaged, without a second native build.
+`repair-verified/` passes all eight repair checks, including a 10,000 mm off-origin
+preview. **15 distinct selected passes**, zero failures/errors/skips in accepted
+suites, native exits 0. Six final `visual-accepted/` captures were reviewed: redundant
+and conflicting diagnoses, failed choice, successful proposal, preview wireframe
+and reopened inactive constraint. Earlier `visual/` used harness framing and is
+retained separately. Constraint-Repair-Source.FCStd / Constraint-Repair-Result.FCStd
+are owner fixtures; the unselected redundant profile intentionally remains unrepaired.
+Native diagnostics distinguish equal-radius redundancy from unequal-radius conflict.
+Preview preserves source content, constraints, object count, Undo and active document.
+Choice/Cancel, retained dimension identity/values, transaction/stale guards, rollback,
+Undo/Redo and save/reopen pass. A repaired radius-5 profile extrudes 4 mm to 100*pi
+mm^3; changing the surviving radius to 6 after reopen updates it to 144*pi mm^3.
+Sketcher SHA256: `0525D3CA7E6DB90B2830C504F9BC99DB1A092D6D72268E5A18D70C15F2EED0D6`.
+SketcherGui SHA256: `1B375C675DBABA3373565643D0D493CA9E8EA58CE9A4E3FC09A09DF17D11E5D4`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted evidence; the historical About stamp is not this source identity.
+No installer/release update. Full F048/11.4 remains open for Body/attached/external
+and expression-driven sketches, constraint replacement, consumer-wide previews,
+movement-direction diagnosis, macro recording, localization and physical acceptance.
+Stop here for owner workflow testing and rotate to another item family.
+tests/ConstraintRepair.md is the owner procedure.
+
+Previous batch: F037 Select Other, phase 10 tasks 10.5c/d. Existing native Clarify
 Selection now deduplicates by document/root/full subpath and displays occurrence
 context. Full whole-object paths survive repeated instances; command gates filter
 candidate roles and are rechecked at hover/accept. Empty filtered lists explain the

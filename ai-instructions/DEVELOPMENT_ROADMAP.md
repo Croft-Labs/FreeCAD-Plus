@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F037 Select Other, phase 10
+- Current product batch complete for owner testing: F048 constraint repair, phase
+  11 tasks 11.4a/b. Sketch > Review constraint repair diagnoses an isolated native
+  copy and previews checked constraint deactivation, then applies a successful
+  choice in one Undo step while retaining constraint numbers/names/values.
+  Both tasks preceded one grouped build; 15 distinct selected checks pass and six
+  final captures were reviewed. [Owner procedure](../tests/ConstraintRepair.md).
+  Free root sketches only; full F048 remains open for broader repair/physical
+  acceptance. Stop here and rotate.
+
+- Previous product batch complete for owner testing: F037 Select Other, phase 10
   tasks 10.5c/d. The existing Clarify Selection command now preserves equal-label
   objects and full repeated-occurrence paths, labels their context, and respects
   native command selection gates through hover and acceptance. Both tasks preceded
@@ -3354,6 +3363,40 @@ before replacement. These tasks extend 8.3, with one reusable eligibility servic
   Degrees-of-freedom display highlights unconstrained entities and remaining movement
   directions. Constraint repair previews proposed removals/replacements and their
   effects before an explicit undoable commit.
+- [x] 11.4a Add bounded F048 constraint-repair review for free root sketches:
+  native isolated-copy diagnosis, explicit constraint choices and deactivation
+  preview with remaining freedom, preserving source data and constraint identities.
+- [x] 11.4b Add the review/geometry-selection/preview workflow and one transactional
+  Apply, with failed-preview refusal, stale/context guards, rollback, Cancel and
+  downstream/Undo/save-reopen acceptance.
+
+Both implementation tasks preceded one SketcherGui/SketcherScripts Release build,
+exit 0. Evidence: `D:\Temp\Office-PC\freecad-plus-constraint-repair-20261001`.
+`grouped/` passes eight repair checks and seven existing sketch-reuse checks. A final
+UI correction frames the temporary overlay automatically because native Fit All
+excludes it; only ConstraintRepairGui.py was restaged, without a second native build.
+`repair-verified/` passes all eight repair checks, including a 10,000 mm off-origin
+preview. **15 distinct selected passes**, zero failures/errors/skips in accepted
+suites, native exits 0. Six final `visual-accepted/` captures were reviewed: redundant
+and conflicting diagnoses, failed choice, successful proposal, preview wireframe
+and reopened inactive constraint. Earlier `visual/` used harness framing and is
+retained separately. Constraint-Repair-Source.FCStd / Constraint-Repair-Result.FCStd
+are owner fixtures; the unselected redundant profile intentionally remains unrepaired.
+Native diagnostics distinguish equal-radius redundancy from unequal-radius conflict.
+Preview preserves source content, constraints, object count, Undo and active document.
+Choice/Cancel, retained dimension identity/values, transaction/stale guards, rollback,
+Undo/Redo and save/reopen pass. A repaired radius-5 profile extrudes 4 mm to 100*pi
+mm^3; changing the surviving radius to 6 after reopen updates it to 144*pi mm^3.
+Sketcher SHA256: `0525D3CA7E6DB90B2830C504F9BC99DB1A092D6D72268E5A18D70C15F2EED0D6`.
+SketcherGui SHA256: `1B375C675DBABA3373565643D0D493CA9E8EA58CE9A4E3FC09A09DF17D11E5D4`.
+validated-identities.json and acceptance-summary.json identify exact source/runtime
+and accepted evidence; the historical About stamp is not this source identity.
+No installer/release update. Full F048/11.4 remains open for Body/attached/external
+and expression-driven sketches, constraint replacement, consumer-wide previews,
+movement-direction diagnosis, macro recording, localization and physical acceptance.
+Stop here for owner workflow testing and rotate to another item family.
+[Owner procedure](../tests/ConstraintRepair.md).
+
 - [   ] 11.5 Extend associative external projection and true plane intersections:
   curve/plane points versus face/plane curves, with source highlighting and explicit
   projection/intersection choice. Cover tangent, coplanar, disjoint and multiple
@@ -5932,7 +5975,7 @@ reconciliation rules above to every entry.
 <a id="f048"></a>
 ### F048 — Constraint repair
 
-**Owning tasks:** 11.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 11.4, 11.4a/b. **Status:** Bounded constraint repair is ready for owner testing: native isolated-copy diagnosis, explicit deactivation choices, solve/freedom/wireframe preview and one transactional Apply. Constraint numbers/names/values survive; no automatic deletion. One grouped build, 15 distinct selected checks and six final captures pass. Full F048 remains open for attached/Body/external and expression-driven sketches, replacement, broader previews and physical acceptance. [Owner procedure](../tests/ConstraintRepair.md).
 
 **Packages:** S04, S07 · **First delivery:** P5 · **Likely scope:** Feature/Core
 

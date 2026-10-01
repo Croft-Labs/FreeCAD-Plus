@@ -48,6 +48,8 @@ class SketcherWorkbench(Workbench):
         registerSupport()
         from SketchReuseGui import registerCommand as registerReuse
         registerReuse()
+        from ConstraintRepairGui import registerCommand as registerRepair
+        registerRepair()
 
         try:
             import Profiles

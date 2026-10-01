@@ -963,3 +963,29 @@ with the same name cannot redirect hover or acceptance. No model, visibility, Un
 or persistence changes occur. Global type controls, new scopes, live topology/menu
 rebuilding, localization and physical/high-DPI/navigation-preset acceptance remain
 open. [Owner procedure](../tests/ClarifySelection.md).
+
+## UI-031: Sketch constraint repair (F048; roadmap 11.4a/b)
+
+Sketch > Review constraint repair / Sketcher_ReviewConstraintRepair accepts one
+whole free root sketch outside edit mode. Invalid/conflicting native results are
+allowed; a hidden temporary native copy is solved for diagnosis and preview.
+
+| Control | Action and feedback |
+| --- | --- |
+| Solver summary | Native conflict/redundancy/malformed/failure groups, or successful fully/underconstrained state and freedom count. Failed counts are not presented as movement diagnosis. |
+| Constraint table | Number/name, type, dimensional value/units, active/reference/diagnostic state and involved internal edges. No repair checkbox is selected automatically. Inactive constraints cannot be chosen. |
+| Select row geometry | Select internal geometry through the native selection service; axes/origin-only relations have no internal edge. Source data stays unchanged. |
+| Preview deactivation | Solve the checked choice on a temporary copy. Success shows resulting degrees of freedom and an automatically framed view-only wireframe; unresolved diagnostics disable Apply. |
+| Apply deactivation | Recheck snapshot and native solve; deactivate selected constraints and recompute in one transaction, with rollback on failure. Preserve constraint numbers, names and values. |
+| Review again | Remove preview and reload current native diagnostics; clear previous repair choices. |
+| Cancel | Close and remove the overlay; leave source model unchanged. Explicit row selection is not undone. |
+
+Document changes invalidate the proposal. Deletion/close cleans up the dialog.
+Scratch documents close after every probe; source objects, Undo history and active
+document remain intact. Scope is limited to 200 geometries/400 constraints on free
+root sketches without external geometry, attachment, expressions or other linked
+inputs. Body/Part members and active tasks/edit transactions are refused. Solver
+groups are conservative candidate sets, not unique causes. Freedom counts do not
+describe all coupled motions. Downstream geometry is recomputed only on Apply;
+consumer-wide previews, constraint replacement and broader/physical acceptance
+remain open. [Owner procedure](../tests/ConstraintRepair.md).
