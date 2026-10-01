@@ -1521,6 +1521,7 @@ endif(WIN32)
 
 set(FreeCADGui_Scripts
     CommandSearch.py
+    ComponentSelection.py
     ComponentNavigator.py
     ComponentExtrudeTask.py
     ComponentSketchTask.py

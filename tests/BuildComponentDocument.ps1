@@ -1,13 +1,17 @@
 param(
     [Parameter(Mandatory=$true)][string]$CMake,
     [Parameter(Mandatory=$true)][string]$BuildDirectory,
-    [Parameter(Mandatory=$true)][string]$OutputDirectory
+    [Parameter(Mandatory=$true)][string]$OutputDirectory,
+    [switch]$ScriptsOnly
 )
 $ErrorActionPreference = 'Stop'
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new build evidence directory.' }
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
-$argsList = @('--build', ('"' + $BuildDirectory + '"'), '--config', 'Release',
-              '--target', 'FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartDesignGui', 'SketcherGui', 'PartScripts', 'Show', '--parallel', '3')
+$targets = @('FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartDesignGui', 'SketcherGui', 'PartScripts')
+if ($ScriptsOnly) { $targets = @('FreeCADGui_Resources', 'PartScripts') }
+$showTarget = Test-Path -LiteralPath (Join-Path $BuildDirectory 'src/Mod/Show/Show.vcxproj')
+if ($showTarget) { $targets += 'Show' }
+$argsList = @('--build', ('"' + $BuildDirectory + '"'), '--config', 'Release', '--target') + $targets + @('--parallel', '3')
 $process = Start-Process -FilePath $CMake -ArgumentList $argsList -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput "$OutputDirectory\build.log" `
     -RedirectStandardError "$OutputDirectory\build-errors.log"
@@ -26,4 +30,18 @@ while (-not $process.WaitForExit(1000)) {
 @{exit_code=$process.ExitCode; build=$BuildDirectory} | ConvertTo-Json |
     Set-Content "$OutputDirectory\build-result.json"
 if ($process.ExitCode -ne 0) { throw "Build failed: $($process.ExitCode)." }
+if (-not $showTarget) {
+    # This validation configuration disables BUILD_SHOW. Native Sketcher still
+    # imports its Python visibility helpers; stage those without a native rebuild.
+    $showSource = Join-Path (Split-Path -Parent $PSScriptRoot) 'src/Mod/Show'
+    $showDestination = Join-Path $BuildDirectory 'Mod/Show'
+    foreach ($folder in @('', 'SceneDetails')) {
+        $sourceFolder = if ($folder) { Join-Path $showSource $folder } else { $showSource }
+        $destinationFolder = if ($folder) { Join-Path $showDestination $folder } else { $showDestination }
+        New-Item -ItemType Directory -Path $destinationFolder -Force | Out-Null
+        Get-ChildItem -LiteralPath $sourceFolder -Filter '*.py' -File | ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination $destinationFolder
+        }
+    }
+}
 Write-Output "Build passed. Evidence: $OutputDirectory"

@@ -69,6 +69,31 @@ with Undo/save/reopen, and grouped instances/menu/visibility/history controls.
 full schema qualification. Current panel captures and two .cadprt feedback fixtures
 are produced under the selected evidence directory.
 
+## Selection and view-context feedback iteration
+
+Selecting a component row or history item now uses its native occurrence path.
+Select a face in a repeated nested component: Component Structure should reveal
+that instance without changing which definition is being edited. History selection
+appears when the picked object belongs to the active component. Clear selection
+in the native view to clear the corresponding panel highlights.
+
+Select a direct child's body (or one of its faces), then Add Reference Object:
+the dialog reviews the whole evaluated object in that occurrence. Bare shared
+geometry, grandchildren and unrelated selections must not choose a source silently.
+Change a grouped row's Part View and use Undo once: every represented instance must
+return to its prior state. Open a child in its own tab twice: the second request
+focuses the existing tab. Switching back restores the original active component.
+
+Native selection can normalize a bare scripted object into an occurrence before
+the panel receives it. The reference dialog reviews that incoming occurrence; the
+mapper itself refuses to pick a path when given genuinely ambiguous bare input.
+
+Use `-SelectionSmoke` for the three current bounded checks: nested native selection /
+history round-trip, direct-child reference choice and .cadprt reopen, and grouped
+Undo plus isolated-tab context. For this Python-only batch, `-ScriptsOnly` on the
+build helper stages GUI resources, Part scripts and Show without recompiling native
+C++. Broad component suites and full GUI/consumer acceptance remain deferred.
+
 ## Automated checks
 
 Run from the repository root in PowerShell, with a new evidence directory each time:

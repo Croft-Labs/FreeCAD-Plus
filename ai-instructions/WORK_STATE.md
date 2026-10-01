@@ -1,5 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.7f. Native occurrence-path selection is now
+synchronized with Component Structure / active Model History; precise nested picks
+reveal the instance without changing the edited definition. Add Reference Object
+preselects a direct-child object only when the incoming native path is unambiguous,
+with explicit whole-object review. Grouped Part View and show/reset changes use one
+Undo. Reopening an isolated component focuses its existing tab; switching tabs
+restores the component and occurrence being edited.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-component-selection-20261001`.
+`build-corrected/` stages the Python batch successfully; native C++ was unchanged.
+Initial staging reached a missing Show target (BUILD_SHOW disabled); the helper now
+handles that configuration with existing Python support staging. `smoke-accepted/`
+passes three focused checks, exit 0 and empty stderr; two captures reviewed. Native
+addSelection may canonicalize a bare object to an occurrence; the mapper's ambiguous
+bare-input guard is checked separately, and the dialog reviews the received path.
+Use `Component-Selection-Feedback.cadprt` from that folder in the local fork build.
+Source publication pending. No installer/release update or broad qualification.
+
+Continue component migration integration rather than unrelated feature rotation.
+Full mouse/native-editor parity, external-view matrix, expression/multi-result lineage,
+solver, BOM/mass and broader recovery/consumer gates remain open. Keep the owner's
+feedback-first validation boundary; do not run the full suites simply to close this batch.
+
+Previous feedback batch:
 Current feedback batch: 7.8.5d/7.8.7e. Standalone sketch routing and Extrude
 mode/target editing are implemented, together with the owner's latest panel
 revision: grouped/numbered instances, active highlight/visibility protection,

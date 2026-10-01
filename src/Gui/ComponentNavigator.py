@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Component Structure and Model History views over the shared component model."""
-import json
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
+from freecad.gui import ComponentSelection as Selection
 
 _dock = None
 
@@ -68,6 +68,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.active_path = []
         self.expanded_instances = set()
         self.refreshing = False
+        self.selecting = False
         self.component_views = []
         self.tabs = QtWidgets.QTabWidget()
         self.structure = QtWidgets.QTreeWidget()
@@ -75,6 +76,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.history = QtWidgets.QTreeWidget()
         self.history.setHeaderLabels([tr("Active"), tr("View"), tr("Item"), tr("State")])
         for tree in (self.structure, self.history):
+            tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
             for column in range(3):
                 tree.header().setSectionResizeMode(column, QtWidgets.QHeaderView.ResizeToContents)
             tree.header().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
@@ -107,13 +109,18 @@ class Navigator(QtWidgets.QDockWidget):
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.refresh)
+        self.selection_timer = QtCore.QTimer(self)
+        self.selection_timer.setSingleShot(True)
+        self.selection_timer.timeout.connect(self.sync_selection)
         self.mdi = Gui.getMainWindow().findChild(QtWidgets.QMdiArea)
         if self.mdi:
             self.mdi.subWindowActivated.connect(self.view_activated)
         App.addDocumentObserver(self)
         Gui.addDocumentObserver(self)
+        Gui.Selection.addObserver(self, 0)
         self.destroyed.connect(lambda: App.removeDocumentObserver(self))
         self.destroyed.connect(lambda: Gui.removeDocumentObserver(self))
+        self.destroyed.connect(lambda: Gui.Selection.removeObserver(self))
 
     def run(self, callback):
         try:
@@ -130,6 +137,7 @@ class Navigator(QtWidgets.QDockWidget):
         Gui.getDocument(doc.Name).activeView().setActiveObject("part", root)
         if self.mdi and self.mdi.activeSubWindow():
             self.mdi.activeSubWindow().setProperty("ComponentKey", self.root_key)
+            self.store_edit_context(self.mdi.activeSubWindow())
         self.refresh()
 
     def refresh(self):
@@ -302,35 +310,33 @@ class Navigator(QtWidgets.QDockWidget):
             self.expanded_instances.add(group_id)
         item.setExpanded(group_id in self.expanded_instances)
 
-    def set_part_view(self, item, setting):
-        if setting == "Hidden" and self.protected(item):
-            raise ValueError(tr("The active component cannot be hidden."))
+    def change_part_view(self, updates, show=False):
         root = resolve(self.root_key)
-        overrides = json.loads(root.RepresentationOverrides)
-        for key, ids in self.members(item):
-            if setting is None:
-                overrides.pop("/".join(ids), None)
-            else:
-                overrides["/".join(ids)] = setting
+        overrides = model().representation_overrides(root, updates)
         if model().representation(root, self.active_path, root_overrides=overrides) == "Hidden":
-            raise ValueError(tr("Reset would hide the active component. Edit another component first."))
-        for key, ids in self.members(item):
-            if ids:
-                model().set_representation(root, ids, setting)
+            raise ValueError(tr("The active component cannot be hidden. Edit another component first."))
+        model().set_representations(root, updates, show=show)
+
+    def set_part_view(self, item, setting):
+        updates = [(ids, setting) for key, ids in self.members(item) if ids]
+        if not updates:
+            raise ValueError(tr("The root component is displayed in full."))
+        self.change_part_view(updates)
 
     def toggle_component(self, item):
         if not item.data(0, QtCore.Qt.UserRole):
             return
         root = resolve(self.root_key)
-        visible = any(self.path_visible(root, ids) for key, ids in self.members(item))
-        self.set_part_view(item, "Hidden" if visible else None)
-        # Reset can still inherit a Hidden setting; show explicitly in that case.
-        if not visible:
-            for key, ids in self.members(item):
-                for link in model()._path(root, ids):
-                    link.Visibility = True
-                if ids and model().representation(root, ids) == "Hidden":
-                    model().set_representation(root, ids, "Bodies Only")
+        members = self.members(item)
+        visible = any(self.path_visible(root, ids) for key, ids in members)
+        if visible:
+            self.set_part_view(item, "Hidden")
+            return
+        updates = [(ids, None) for key, ids in members if ids]
+        overrides = model().representation_overrides(root, updates)
+        updates = [(ids, "Bodies Only" if model().representation(root, ids, root_overrides=overrides) == "Hidden"
+                    else None) for ids, unused in updates]
+        self.change_part_view(updates, show=True)
 
     def toggle_item_view(self, item):
         obj = resolve(item.data(0, QtCore.Qt.UserRole))
@@ -348,28 +354,95 @@ class Navigator(QtWidgets.QDockWidget):
         checked = item.checkState(0) != QtCore.Qt.Unchecked
         self.run(lambda: model().set_suppressed(resolve(key), not checked))
 
+    def select_native(self, values):
+        if self.refreshing or self.selecting:
+            return
+        root = resolve(self.root_key) if self.root_key else None
+        if root is None:
+            return
+        self.selecting = True
+        try:
+            Gui.Selection.clearSelection()
+            for ids, item in values:
+                Gui.Selection.addSelection(root.Document.Name, root.Name,
+                                           Selection.native_path(root, ids, item))
+        finally:
+            self.selecting = False
+
     def select_structure(self):
-        if self.refreshing:
-            return
-        items = self.structure.selectedItems()
-        if not items:
-            return
-        value = items[0].data(0, QtCore.Qt.UserRole)
-        if value:
-            obj = resolve(value[0])
-            if obj:
-                Gui.Selection.clearSelection()
-                Gui.Selection.addSelection(obj)
+        values = []
+        for row in self.structure.selectedItems():
+            for value in self.members(row):
+                if value:
+                    values.append((value[1], None))
+        self.select_native(values)
 
     def select_history(self):
-        if self.refreshing:
+        self.select_native([(self.active_path, resolve(row.data(0, QtCore.Qt.UserRole)))
+                            for row in self.history.selectedItems()])
+
+    def selection_changed(self, *args):
+        if not self.selecting and not self.refreshing:
+            self.selection_timer.start(0)
+
+    addSelection = selection_changed
+    removeSelection = selection_changed
+    clearSelection = selection_changed
+    setSelection = selection_changed
+
+    def sync_selection(self):
+        root = resolve(self.root_key) if self.root_key else None
+        if root is None or self.selecting or self.refreshing:
             return
-        items = self.history.selectedItems()
-        if items:
-            obj = resolve(items[0].data(0, QtCore.Qt.UserRole))
-            if obj:
-                Gui.Selection.clearSelection()
-                Gui.Selection.addSelection(obj)
+        picks = Selection.selected(root, Gui.Selection.getSelectionEx("*", 0))
+        self.selecting = True
+        try:
+            # Reveal a precise pick through grouped instances. An ambiguous bare
+            # definition selection must never choose an arbitrary occurrence.
+            changed = False
+            if len(picks) == 1:
+                prefix, component = [], root
+                for link in model()._path(root, picks[0].ids):
+                    peers = [child for child in model().children(component)
+                             if child.LinkedObject == link.LinkedObject]
+                    group = (self.root_key, tuple(prefix), object_key(link.LinkedObject))
+                    if len(peers) > 1 and group not in self.expanded_instances:
+                        self.expanded_instances.add(group)
+                        changed = True
+                    prefix.append(link.ObjectId)
+                    component = link.LinkedObject
+            if changed:
+                self.refresh()
+            self.structure.clearSelection()
+            self.history.clearSelection()
+            for pick in picks:
+                matches = []
+                iterator = QtWidgets.QTreeWidgetItemIterator(self.structure)
+                while iterator.value():
+                    row = iterator.value()
+                    if any(value and tuple(value[1]) == pick.ids for value in self.members(row)):
+                        matches.append(row)
+                    iterator += 1
+                if matches:
+                    row = min(matches, key=lambda candidate: len(self.members(candidate)))
+                    row.setSelected(True)
+                    parent = row.parent()
+                    while parent:
+                        parent.setExpanded(True)
+                        parent = parent.parent()
+                    self.structure.scrollToItem(row)
+                if pick.item is not None and object_key(pick.component) == self.active_key:
+                    for index in range(self.history.topLevelItemCount()):
+                        row = self.history.topLevelItem(index)
+                        if row.data(0, QtCore.Qt.UserRole) == object_key(pick.item):
+                            row.setSelected(True)
+                            self.history.scrollToItem(row)
+        finally:
+            self.selecting = False
+
+    def store_edit_context(self, window):
+        window.setProperty("ComponentActiveKey", self.active_key)
+        window.setProperty("ComponentActivePath", self.active_path)
 
     def activate_item(self, item):
         value = item.data(0, QtCore.Qt.UserRole)
@@ -410,6 +483,13 @@ class Navigator(QtWidgets.QDockWidget):
             obj = obj.LinkedObject
         if not model().is_component(obj):
             raise ValueError(tr("Select a resolved component."))
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before opening another component view."))
+        for entry in self.component_views:
+            if entry["key"] == object_key(obj) and entry.get("window"):
+                self.mdi.setActiveSubWindow(entry["window"])
+                self.view_activated(entry["window"])
+                return entry["view"]
         model().activate(obj)
         App.setActiveDocument(obj.Document.Name)
         view = Gui.getDocument(obj.Document.Name).createView("Gui::View3DInventor")
@@ -423,7 +503,10 @@ class Navigator(QtWidgets.QDockWidget):
         self.component_views.append(entry)
         if self.mdi and self.mdi.activeSubWindow():
             window = self.mdi.activeSubWindow()
+            entry["window"] = window
             window.setProperty("ComponentKey", object_key(obj))
+            window.setProperty("ComponentActiveKey", object_key(obj))
+            window.setProperty("ComponentActivePath", [])
             window.setWindowTitle(obj.Label + " — " + (obj.Document.FileName or tr("Unsaved")))
             window.destroyed.connect(lambda: self.component_views.remove(entry) if entry in self.component_views else None)
         self.root_key = self.active_key = object_key(obj)
@@ -441,8 +524,17 @@ class Navigator(QtWidgets.QDockWidget):
             active = window.property("ComponentActiveKey") or key
             self.active_key = tuple(active)
             self.active_path = list(window.property("ComponentActivePath") or [])
-            if resolve(self.active_key):
-                self.run(lambda: model().activate(resolve(self.active_key)))
+            root = resolve(self.root_key)
+            try:
+                chain = model()._path(root, self.active_path)
+                component = chain[-1].LinkedObject if chain else root
+            except ValueError:
+                component, self.active_path = root, []
+            self.active_key = object_key(component)
+            Gui.getDocument(component.Document.Name).activeView().setActiveObject("part", component)
+            self.store_edit_context(window)
+            self.run(lambda: model().activate(component))
+            self.selection_timer.start(0)
 
     def add_component(self, parent_key=None):
         active = resolve(parent_key or self.active_key)
@@ -473,6 +565,8 @@ class Navigator(QtWidgets.QDockWidget):
         model().add_component(active, definition)
         App.setActiveDocument(active.Document.Name)
         self.root_key, self.active_key, self.active_path = root_key, active_key, active_path
+        if self.mdi and self.mdi.activeSubWindow():
+            self.store_edit_context(self.mdi.activeSubWindow())
 
     def show_conversion_report(self):
         component = resolve(self.active_key)
@@ -510,13 +604,22 @@ class Navigator(QtWidgets.QDockWidget):
         for occurrence in model().children(active):
             if occurrence.LinkedObject:
                 for obj in occurrence.LinkedObject.Group:
-                    if hasattr(obj, "Shape") and getattr(obj, "ComponentRole", "") not in ("Operation", "Occurrence"):
+                    if (hasattr(obj, "Shape") and not obj.Shape.isNull()
+                            and getattr(obj, "ComponentRole", "") in ("Object", "Result", "Reference")):
                         choices.append((occurrence, obj))
         if not choices:
             raise ValueError(tr("Add a direct child with evaluated geometry first."))
         labels = [f"{link.Label} / {obj.Label} ({link.Name}/{obj.Name})" for link, obj in choices]
-        selected, ok = QtWidgets.QInputDialog.getItem(self, tr("Add Reference Object"), tr("Direct child object"), labels, 0, False)
-        if ok:
+        root = resolve(self.root_key)
+        preferred = Selection.reference_choice(root, active, Gui.Selection.getSelectionEx("*", 0))
+        index = choices.index(preferred) if preferred in choices else -1
+        prompt = tr("Direct child object (whole evaluated geometry)")
+        if index < 0:
+            labels.insert(0, tr("Choose a direct child object"))
+            choices.insert(0, None)
+            index = 0
+        selected, ok = QtWidgets.QInputDialog.getItem(self, tr("Add Reference Object"), prompt, labels, index, False)
+        if ok and choices[labels.index(selected)] is not None:
             link, obj = choices[labels.index(selected)]
             model().add_reference(active, link, obj)
 

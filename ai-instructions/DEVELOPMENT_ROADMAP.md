@@ -2413,6 +2413,11 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   controls before Model History item names. Three focused checks pass and four
   rendered captures were reviewed. Complete native navigator parity remains
   tracked in 7.8.7b.
+- [ X ] 7.8.7f Native selection/context feedback batch: retain full occurrence paths
+  between native selection and the two panel trees; preselect only unambiguous
+  direct-child reference objects, make grouped Part View a single Undo, reuse open
+  component tabs and restore per-view edit context. Grouped script/resource staging
+  and three focused checks pass; full native interaction parity remains in 7.8.7b.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
@@ -2502,6 +2507,28 @@ assembly solver, arbitrary topology/expression or cross-workbench qualification.
 No installer/release update. Implementation `5ecd62c94193cd040804147d9c9470062974fe2a`
 was pushed to `origin/main` and verified with `git ls-remote`. Runtime/source/fixture
 hashes are recorded in `acceptance-identities.json` under this evidence root.
+
+2026-10-01 selection/context feedback batch (7.8.7f): native-path selection mapping,
+reference preselection, grouped display transactions and tab context changes preceded
+a grouped script/resource staging build. Evidence:
+`D:\Temp\Office-PC\freecad-plus-component-selection-20261001`.
+The initial build staged changed GUI/Part modules but failed at the inherited helper's
+Show target, absent because BUILD_SHOW is disabled. The corrected helper uses that
+target only when configured; otherwise it stages the existing Python support files.
+`build-corrected/` exits 0. Native C++ artifacts were not rebuilt.
+
+`smoke-accepted/` passes **three focused checks**, zero failures/errors/skips, native
+process exit 0 and empty stderr: exact repeated/nested native selection round-trip,
+active-context history selection, grouped selection and single-Undo display changes,
+unambiguous direct-child reference preselection with whole-object review and .cadprt
+reopen, and isolated-tab reuse/restoration. Two panel captures were reviewed. The
+fixture is `smoke-accepted/Component-Selection-Feedback.cadprt`. Loaded module hashes
+match source. Earlier attempts exposed a test assumption: native addSelection can
+canonicalize a bare source object to an occurrence before the mapper sees it. The
+ambiguity boundary is therefore checked before native normalization; the GUI always
+reviews the native occurrence that it receives. No mouse-ray picking, full native
+editor parity, external-view matrix, broader consumer or schema qualification is
+claimed. No installer/release update. Source publication pending.
 
 ### [   ] 7.7 Validate and release the history pilot
 

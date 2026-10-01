@@ -1459,3 +1459,18 @@ face plus offset, then opens native Sketcher without requiring a Body. Model His
 also uses native object editors and offers Rename and Convert to Dumb Object.
 Refresh retains row selection, expansion and scroll position. Broader acceptance
 and owner feedback remain pending.
+
+Component selection/context iteration (7.8.7f): selecting a Component Structure
+row sends the full native occurrence path to the shared selection/property system;
+a grouped row selects its represented instances. A native tree or 3D pick selects
+matching rows without changing the active definition. A precise nested pick reveals
+the required grouped instances; an ambiguous bare shared definition never chooses
+an arbitrary path. Model History selection uses the active occurrence context.
+
+Add Reference Object uses an unambiguous selected direct-child object as its initial
+choice. Selecting a face/edge identifies that whole evaluated object, as the dialog
+states. Ambiguous, unrelated or grandchild selections require an explicit choice.
+Grouped Part View changes and show/reset fallback use one Undo transaction. Opening
+an already-open isolated component focuses its existing tab; switching views restores
+the stored active component and occurrence path. These are bounded native-integration
+steps; complete picking/editor/consumer parity remains in roadmap 7.8.7b.

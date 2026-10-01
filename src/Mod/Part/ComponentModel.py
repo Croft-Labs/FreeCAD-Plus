@@ -402,18 +402,36 @@ def _path(root, ids):
     return chain
 
 
-def set_representation(root, ids, value=None):
-    chain = _path(root, ids)
-    if not chain or (value is not None and value not in TYPES):
-        raise ValueError("Select a component path and a valid representation.")
-    with transaction(root.Document, "Component representation"):
-        overrides = json.loads(root.RepresentationOverrides)
+def representation_overrides(root, updates):
+    overrides = json.loads(root.RepresentationOverrides)
+    for ids, value in updates:
+        if not _path(root, ids) or (value is not None and value not in TYPES):
+            raise ValueError("Select a component path and a valid representation.")
         key = "/".join(ids)
         if value is None:
             overrides.pop(key, None)
         else:
             overrides[key] = value
+    return overrides
+
+
+def set_representations(root, updates, show=False):
+    """Apply a reviewed group of occurrence-path changes in one undo transaction."""
+    updates = list(updates)
+    overrides = representation_overrides(root, updates)
+    with transaction(root.Document, "Component representation"):
         root.RepresentationOverrides = json.dumps(overrides, sort_keys=True)
+        if show and App.GuiUp:
+            for ids, unused in updates:
+                for link in _path(root, ids):
+                    # Never change an external definition's stored view properties.
+                    # Its inherited Hidden ancestors still govern representation.
+                    if link.Document == root.Document:
+                        link.Visibility = True
+
+
+def set_representation(root, ids, value=None):
+    set_representations(root, [(ids, value)])
 
 
 def representation(root, ids, root_overrides=None):
