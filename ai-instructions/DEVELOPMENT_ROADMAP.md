@@ -30,7 +30,14 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F040 temporary isolate/hide,
+- Current product batch complete for owner testing: F127 manufacturing export,
+  phase 15 tasks 15.7a/b. Part > Manufacturing export now hands selected solids and
+  whole occurrences to STL with explicit mm/world placement and reusable quality.
+  One grouped build, all 20 selected checks and two reviewed captures pass.
+  [Try the handoff example](../tests/ManufacturingExport.md). Broader formats and
+  configuration/physical acceptance remain open; rotate the next item family.
+
+- Previous product batch complete for owner testing: F040 temporary isolate/hide,
   phase 10 tasks 10.5a/b. View > Visibility now has temporary isolate/hide and
   previous/original display restore. One grouped build and all 20 selected checks
   pass; five viewport captures reviewed. [Try the example](../tests/TemporaryDisplay.md).
@@ -3418,6 +3425,36 @@ Each module depends only on the contracts it consumes and can be delivered separ
   quality explicit; audit supported formats and report history/metadata losses.
   Validate dimensions, transforms and tessellation by reimport using T16.
 
+- [x] 15.7a Add the bounded F127 solid-to-STL exporter using existing world-shape
+  and mesh services. Explicit input identities, millimeter/world frame, visible
+  quality and current-geometry checks precede file creation/replacement. Dimension,
+  volume, nested placement and occurrence round trips pass; ready for owner testing.
+- [x] 15.7b Add the installed manufacturing-export dialog, reusable per-user
+  quality presets/reset, explicit selection replacement and overwrite recovery.
+  Menu/dialog, preset, deleted-input and correction checks pass; ready for owner
+  testing. Whole F127 remains open for the broader format/configuration portfolio.
+
+15.7a/b grouped evidence (2026-09-30): both implementation tasks preceded one
+PartGui/PartScripts Release build, exit 0. All 20 selected checks pass with no
+failures/errors/skips: 9 manufacturing-export, 4 named-parameter command and 7
+command-search checks; GUI process exit 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-manufacturing-export-20260930`, `export-accepted/` for the final export suite and `grouped/` for the two unchanged suites.
+Reimported STL dimensions, volume and transformed occurrence bounds match the
+analytic fixtures. Fine sphere approximation improves volume error and produces
+10,598 triangles versus 302 Coarse. `visual/` has two reviewed readable dialog
+captures, `Manufacturing-Handoff.FCStd`, `Handoff.stl`, `Sphere-Coarse.stl` and
+`Sphere-Fine.stl`. Source/runtime scripts match in `validated-identities.json`;
+PartGui SHA256: `57a246ae57ef5b199b8e83cac490aec7d570ac2236d82a830ae350a3458d68f0`.
+`acceptance-summary.json` records accepted evidence. Final Python-only mixed-compound rejection was staged without another native build.
+`export-final/` retains the initial missed rejection; `probe/` confirms the inherited
+shape resolver extracts solids from mixed input. The final guard checks source and
+resolved shapes; `export-accepted/` passes. No installer/release update. [Test the handoff](../tests/ManufacturingExport.md).
+STL uses mm/world coordinates and loses history, colors, units metadata and
+assembly identity. Closed-mesh checks do not certify collisions/self-intersection
+or printability. STEP/3MF/DXF, configurations/orientation/unit overrides, mesh
+inputs, deep occurrence members and physical/high-DPI acceptance remain open.
+Stop at this pilot for owner feedback; rotate the next dependency-ready item family.
+
 Gate G9: independently releasable modules update correctly after source/topology
 changes, or explicitly report repair/stale state; drawing and BOM references cannot
 silently bind to a different entity.
@@ -6088,7 +6125,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f127"></a>
 ### F127 — Manufacturing export and reusable output presets
 
-**Owning tasks:** 15.7. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.7. **Status:** Bounded solid/occurrence STL handoff and reusable quality presets are ready for owner testing under 15.7a/b. Explicit mm/world placement, stable selected identities, stale/unsupported-input guards and overwrite recovery pass; reimport verifies dimensions, volume and occurrence transforms, and Fine improves the curved fixture over Coarse. All 20 selected checks pass; two dialog captures reviewed. STEP/3MF/DXF, configuration/orientation/unit overrides, mesh inputs, deep occurrence members and physical/high-DPI acceptance remain open. [Owner procedure](../tests/ManufacturingExport.md).
 
 **Packages:** X10, X02 · **First delivery:** P3 contracts; P4/P9 UI · **Likely scope:** Feature
 

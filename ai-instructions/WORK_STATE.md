@@ -1,6 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F040 temporary isolate/hide, phase 10 tasks 10.5a/b.
+Latest batch: F127 manufacturing STL handoff, phase 15 tasks 15.7a/b.
+Part > Manufacturing export lists explicit solid/whole-occurrence identities and
+world dimensions. Fixed mm/world coordinates, editable Coarse/Normal/Fine quality,
+custom per-user presets/reset, explicit selection replacement and overwrite prompt.
+Reuse BasicShapes.ShapeReferences and MeshPart; stale/unsupported inputs reject
+before output replacement. Inputs never silently retarget after deletion/reuse.
+
+One grouped PartGui/PartScripts Release build, exit 0, after both tasks. All 20
+selected checks pass (9 export, 4 parameter-command, 7 command-search), zero failures/
+errors/skips and process exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-manufacturing-export-20260930.
+Use export-accepted/ for export and grouped/ for the two unchanged suites.
+acceptance-summary.json and validated-identities.json record the results. Source/runtime
+scripts match; PartGui SHA256:
+57a246ae57ef5b199b8e83cac490aec7d570ac2236d82a830ae350a3458d68f0.
+Reimport checks dimensions/volume/nested and occurrence transforms. Sphere Fine
+improves volume error: 10,598 facets versus 302 Coarse. visual/ has two reviewed
+captures, Manufacturing-Handoff.FCStd and three STL example outputs. Final Python-only
+mixed-compound guard was staged without another native build.
+export-final/ retains the earlier missed rejection; probe/ shows the inherited
+resolver reducing mixed compounds. Final guard checks original and resolved shapes;
+export-accepted/ passes. No installer/release update.
+
+Ready for owner testing: tests/ManufacturingExport.md. Whole F127 stays open for
+STEP/3MF/DXF, configuration/orientation/unit overrides, mesh/deep occurrence inputs,
+broader mesh checks and physical/high-DPI acceptance. Closed mesh is not a collision
+or printability guarantee. Stop refining this pilot pending owner feedback or a
+proven blocker; rotate to another dependency-ready item family.
+
+Previous batch: F040 temporary isolate/hide, phase 10 tasks 10.5a/b.
 View > Visibility has Temporarily isolate/hide selection and Restore previous/
 original display. Native visibility only; per-document nested snapshots. Whole
 Body results and whole linked occurrences preserve model/definition identities.

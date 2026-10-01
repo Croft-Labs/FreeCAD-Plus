@@ -228,6 +228,22 @@ workflow is ready for owner testing under roadmap 10.5a/b; linked-member overrid
 broader save-time policy and physical/high-DPI acceptance remain pending. See
 [the owner procedure](../tests/TemporaryDisplay.md) and UI-009.
 
+## Current manufacturing-export pilot (F127)
+
+Part > Manufacturing export provides a bounded STL handoff for explicit whole
+solids/Body results and whole solid occurrences. Existing shape services supply
+world placement; the mesh service uses visible absolute linear and angular quality.
+Output coordinates are millimeters; STL lacks units metadata, parametric history,
+colors and assembly identity. Current-geometry, solid-only and closed-mesh checks
+precede output replacement. Inputs remain bound to the selected native identities,
+with explicit replacement and existing-file confirmation. Per-user presets store
+quality only. No geometry feature or history conversion is created.
+
+The pilot is ready for owner workflow testing under roadmap 15.7a/b. Other formats,
+configuration/orientation/unit controls, mesh inputs, deep linked-member paths,
+collision/printability checks and physical/high-DPI acceptance remain pending.
+[Owner procedure](../tests/ManufacturingExport.md); UI-010 describes the dialog.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

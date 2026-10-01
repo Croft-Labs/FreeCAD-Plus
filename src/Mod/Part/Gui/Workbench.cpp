@@ -154,6 +154,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Separator"
           << "Part_EditAttachment"
           << "Part_NamedParameters"
+          << "Part_ManufacturingExport"
           << "Separator"
           << "Part_CheckGeometry"
           << "Part_Defeaturing"

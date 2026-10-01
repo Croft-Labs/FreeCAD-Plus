@@ -469,3 +469,33 @@ visibility may mark the document modified; restore before save to retain the old
 display. The session stack is not serialized. Save-time temporary-display policy,
 linked member overrides and physical/high-DPI acceptance remain pending.
 [Owner procedure](../tests/TemporaryDisplay.md).
+
+
+## UI-010: Manufacturing STL export (F127; roadmap 15.7)
+
+Part > Manufacturing export opens a modeless review dialog for selected whole
+solid objects/Body results or whole solid link occurrences. Inputs list document,
+label, internal identity and world bounding dimensions. Use current selection
+explicitly replaces the list; unrelated selection changes do not retarget export.
+Faces/edges, Part containers, mesh objects and members inside linked components
+are rejected. Whole native objects selected through their Part tree path work.
+
+Output is fixed and visible: STL, millimeters, world placement. Quality preset
+offers Coarse/Normal/Fine and custom per-user names; linear deflection (0.001-10 mm)
+and angular deflection (1-90 degrees) remain visible/editable. Save custom preset
+stores only these values, updates an existing custom name, and reserves built-in
+names. Reset removes custom presets. No input/configuration/path is saved with one.
+
+Choose file fills the editable output path. Export requires a .stl suffix and
+existing folder, rechecks input identities/current state and solid geometry, then
+uses the existing mesh service and rejects nonclosed output. Existing-file replacement
+requires an explicit Yes, default No; errors retain fields for correction. Success
+reports triangle count, output dimensions and full file path. Close leaves exports
+intact and creates no modeling transaction or feature. Stale/deleted inputs must
+be repaired/reselected; export never falls back to an object with a reused name.
+
+The loss notice states that STL lacks feature history, units metadata, colors and
+assembly identity. It explicitly describes current recomputed input geometry and
+no fusion/collision check. More formats, configuration/orientation/unit controls,
+mesh inputs and physical/high-DPI acceptance remain pending.
+[Owner procedure](../tests/ManufacturingExport.md).

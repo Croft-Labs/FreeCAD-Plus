@@ -48,6 +48,8 @@ class PartWorkbench(Gui.Workbench):
         registerIsocline()
         from NamedParameterGui import registerCommand as registerParameters
         registerParameters()
+        from ManufacturingExportGui import registerCommand as registerExport
+        registerExport()
 
         try:
             import BasicShapes.CommandShapes
