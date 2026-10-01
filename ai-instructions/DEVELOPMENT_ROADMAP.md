@@ -30,7 +30,17 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F091 mesh preparation, phase 14
+- Current product batch complete for owner testing: F053 sketch reuse, phase 11
+  tasks 11.6c/d. Sketch > Copy reusable sketch preserves whole-sketch internal
+  constraints and construction geometry in an independent native copy, with typed
+  placement and a view-only preview. Both tasks preceded one grouped build; the
+  preview framing correction was Python-only. 35 distinct selected checks pass;
+  one inherited solver case remains deliberately skipped. Five final captures
+  reviewed. [Owner procedure](../tests/SketchReuse.md). Partial paste, external-reference
+  policies, blocks/libraries/patterns and full F053 acceptance remain open. Stop at
+  this owner-test checkpoint and rotate to another dependency-ready family.
+
+- Previous product batch complete for owner testing: F091 mesh preparation, phase 14
   tasks 14.1a/b. CAM > Review CAM mesh reports imported dimensions, boundaries,
   components, orientation, degenerate/duplicate triangles and density. One explicit
   action makes an independent reversed-normal copy of a supported inward mesh.
@@ -3272,6 +3282,45 @@ The accepted conflict fixture uses dimensioned lines with unreferenced candidate
 that cannot meet. Whole F049/11.6 remain open for duplicate/self-intersection diagnosis,
 broader repair, geometric preview and physical/high-DPI acceptance. Stop for feedback.
 
+- [x] 11.6c Add independent whole-sketch reuse for free root sketches (F053), using
+  the native document copier to preserve geometry order, internal constraints,
+  named dimensions and construction roles. Typed source-axis offsets and rotation
+  change the new sketch's Placement; source and consumers remain unchanged.
+- [x] 11.6d Add an installed review/preview/confirmation workflow, reusing native
+  selection identities and the existing non-pickable scene overlay. Frame the
+  proposed result, remove it on numeric/model changes or close, refuse unsupported
+  linked inputs explicitly and commit one Undoable copy with rollback. Both tasks
+  are ready for owner testing; broader F053 scope stays open.
+
+11.6c/d evidence (2026-10-01): both tasks preceded one SketcherGui/SketcherScripts
+Release build, exit 0. Initial grouped/ has 35 passes and one inherited intentional
+skip, no failures/errors: 7 TestSketchReuse, 23 of 24 SketcherTests.TestSketcherSolver,
+and 5 TestSketchSupportCommand. The skipped native secant driving-distance test is
+decorated with the existing PR 9044 discussion note; it was not changed or counted
+as a pass. The strict no-skips harness marks that aggregate false; GUI process exit 0.
+Visual inspection then showed native Fit All omitting the offset view-only overlay.
+SketchReuseGui now frames the complete scene on Preview. Only this Python module
+was restaged, no second native build. All 7 affected checks pass again without
+failures/errors/skips in reuse-verified/; the 28 unchanged regression passes stand.
+Evidence: `D:\Temp\Office-PC\freecad-plus-sketch-reuse-20261001`.
+SketcherGui SHA256: `9b75530fb26a5c39b179aee9443e15f18122c298e040e9cbad8f85b66391bf2b`.
+The fully constrained slot retains 5 geometry elements including construction,
+11 constraints and named dimensions. A rotated/translated independent copy changes
+radius from 3 to 4 mm while preserving the source; its reopened 5 mm extrusion
+updates from 741.371669 to 1051.327412 mm³. Preview/commit geometry, native placement,
+Cancel/invalidation/close, owner booked-transaction protection, rollback and
+Undo/Redo pass. Five final captures reviewed in visual-accepted/; visual/ retains
+the off-screen preview and visual-frame-probe/ demonstrates the framing diagnosis.
+Reusable-Slot.FCStd, Copied-Slot.FCStd and Edited-Copy-Solid.FCStd are owner fixtures.
+acceptance-summary.json and validated-identities.json record suite results, the
+deliberate inherited skip and exact source/runtime/native identities. Historical
+About metadata is not this batch's source identity. No installer/release update.
+Root free sketches with at most 500 geometry elements only; support, external
+geometry, expressions and other links are refused without silently stripping data.
+Whole F053/11.6 remain open for partial paste/remapping, external-reference choices,
+Body/Part/occurrence scope, blocks, libraries, sketch patterns and physical acceptance.
+[Owner procedure](../tests/SketchReuse.md). Stop here for owner feedback and rotate.
+
 - [   ] 11.7 Make sketch placement, orientation, offset and support/reattachment
   explicit (S08; [F124](#f124)). Preview preserve-local versus preserve-world policies,
   prefer stable references where appropriate, and repair lost supports deliberately.
@@ -5694,7 +5743,7 @@ reconciliation rules above to every entry.
 <a id="f053"></a>
 ### F053 — Sketch reuse tools
 
-**Owning tasks:** 11.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 11.6, 11.6c/d. **Status:** Independent whole-sketch reuse is ready for owner testing: internal constraints/construction geometry, named dimensions, typed source-frame placement, view-only preview and one Undoable native copy. One grouped build; 35 distinct selected passes, one inherited solver skip; five final captures reviewed. Full F053 remains open for partial paste, external-reference policy choices, blocks/libraries/patterns and physical acceptance. [Owner procedure](../tests/SketchReuse.md).
 
 **Packages:** S06, A05 · **First delivery:** P5 increments · **Likely scope:** Feature/Core
 

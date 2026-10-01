@@ -1,6 +1,40 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F091 mesh preparation, phase 14 tasks 14.1a/b.
+Latest batch: F053 sketch reuse, phase 11 tasks 11.6c/d.
+Sketch > Copy reusable sketch preserves the complete native geometry/constraint
+set, named dimensions and construction roles in an independent editable sketch.
+Typed source-axis offsets and rotation about the source normal set the copy's
+Placement. A view-only non-pickable preview frames both source and proposed copy;
+confirmation makes one Undoable native copy. Source/consumers remain unchanged.
+
+Both tasks preceded one SketcherGui/SketcherScripts Release build, exit 0.
+Initial grouped/ has 35 passes, one inherited intentional skip, no failures/errors:
+7 TestSketchReuse, 23 of 24 SketcherTests.TestSketcherSolver, 5 TestSketchSupportCommand.
+The existing secant driving-distance test is skipped with its PR 9044 discussion
+note. The strict no-skips harness records aggregate false; process exit 0. Do not
+claim 36 passes or hide the skip. Visual inspection found native Fit All excluded
+the view-only copy overlay; Preview now frames the complete scene. Only
+SketchReuseGui.py was restaged; no second build. All 7 affected checks pass in
+reuse-verified/, no failures/errors/skips; the 28 unchanged regression passes stand.
+
+Evidence: D:\Temp\Office-PC\freecad-plus-sketch-reuse-20261001.
+SketcherGui SHA256: 9b75530fb26a5c39b179aee9443e15f18122c298e040e9cbad8f85b66391bf2b.
+Five final captures in visual-accepted/ with Reusable-Slot.FCStd, Copied-Slot.FCStd
+and Edited-Copy-Solid.FCStd. visual/ retains the off-screen preview;
+visual-frame-probe/ demonstrates the camera diagnosis. The slot has 5 geometry
+items (including construction), 11 constraints and 0 DoF. Copy radius changes from
+3 to 4 mm independently; its reopened 5 mm extrusion updates from 741.371669 to
+1051.327412 mm3. Preview/commit, placement, rollback, Undo/Redo and lifecycle pass.
+acceptance-summary.json / validated-identities.json record exact results, inherited
+skip and source/runtime/native identities. Historical About metadata is not this
+batch's source identity. tests/SketchReuse.md is the owner guide.
+
+Whole F053/11.6 stay open: only free root sketches up to 500 geometry items; no
+support/external geometry/expressions/other links. Partial paste/remapping,
+reference choices, nested scopes, blocks/libraries/patterns and physical acceptance
+remain pending. No installer/release update. Stop at this checkpoint and rotate.
+
+Previous batch: F091 mesh preparation, phase 14 tasks 14.1a/b.
 CAM > Review CAM mesh inspects one root imported mesh: mm dimensions/bounds,
 boundary/nonmanifold edges, components, inconsistent normals, degenerate/duplicate
 triangles, density and signed orientation. An explicit independent reversed-normal

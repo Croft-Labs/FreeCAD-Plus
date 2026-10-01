@@ -46,6 +46,8 @@ class SketcherWorkbench(Workbench):
         import Sketcher
         from SketchSupportGui import registerCommand as registerSupport
         registerSupport()
+        from SketchReuseGui import registerCommand as registerReuse
+        registerReuse()
 
         try:
             import Profiles

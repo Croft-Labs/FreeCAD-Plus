@@ -770,3 +770,34 @@ Review again refreshes the report; document edits clear stale findings and disab
 copying. Source deletion/document closure closes the dialog and removes its observer.
 Close without copying changes no model state. No hole filling, welding, smoothing,
 decimation, scaling or per-piece repair is included. [Owner procedure](../tests/MeshPreparation.md).
+
+
+## UI-025: Copy reusable sketch (F053; roadmap 11.6c/d)
+
+Sketcher > Sketch > Copy reusable sketch (`Sketcher_CopyReusable`) opens a modeless
+review of one whole free root sketch. Geometry/constraint/degree-of-freedom counts
+identify the copy scope. Fields specify a new label, X/Y/Z offsets in the source
+sketch axes and a signed angle about its normal. Rotate about the source origin,
+then translate in source axes. The native whole-sketch copy keeps local geometry,
+internal constraint indices, named dimensions and construction roles; changing its
+Placement preserves horizontal/vertical semantics in the new sketch's own plane.
+
+Preview reuses the non-pickable view-only overlay and shows the resulting world
+origin in mm. It frames the complete scene including the proposed copy; native Fit
+All would omit this overlay. Numeric edits clear the preview. Model edits invalidate
+the reviewed snapshot, clear the overlay and disable Preview/Create until Review
+again. Source deletion/document close removes the observer and overlay. Cancel
+creates no object or Undo entry. Camera framing is a view change, not a model edit.
+
+Create independent copy uses the native document copier in one transaction, shows
+the new sketch and closes on success. The source and downstream consumers are not
+copied or relinked. Failure aborts creation and leaves the dialog available. Empty
+names/non-finite numeric inputs, stale geometry, inactive document, active tasks
+and booked/pending owner transactions refuse confirmation.
+
+The first increment accepts up to 500 geometry elements, with visible geometry and
+valid current constraints. Body/Part/occurrence scopes, support, external geometry,
+expressions and other linked inputs are refused with an inline explanation; the
+command never silently drops them. Partial paste/remapping, reference policy choices,
+blocks, libraries, patterns and physical/high-DPI acceptance remain open.
+[Owner procedure](../tests/SketchReuse.md).
