@@ -20,6 +20,9 @@ No schema or native C++ change, installer or release. Engineering shape, source
 visibility and participation flags are preserved in the focused fixture. General
 construction providers, task-time display and large-assembly performance remain open;
 keep broad validation deferred for owner feedback.
+Implementation `57ece03afe` was pushed to origin/main and verified remotely.
+`acceptance-identities.json` records three matching Python modules, reused native
+artifacts and the final build/check/fixture/capture evidence.
 
 Previous feedback batch follows.
 
