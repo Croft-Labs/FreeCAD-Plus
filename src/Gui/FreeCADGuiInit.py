@@ -559,6 +559,10 @@ from freecad.gui.TemporaryDisplay import registerCommands as _registerTemporaryD
 _registerTemporaryDisplay()
 del _registerTemporaryDisplay
 
+from freecad.gui.DependencyInspector import registerCommand as _registerDependencyInspector
+_registerDependencyInspector()
+del _registerDependencyInspector
+
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 

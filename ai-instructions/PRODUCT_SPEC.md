@@ -260,6 +260,22 @@ cross-part adapter remains test-only. Graphical ghosts, broader datum/occurrence
 external-projection behavior and physical/high-DPI acceptance remain pending.
 [Owner procedure](../tests/SketchSupport.md); UI-011 describes the editor.
 
+## Current dependency-inspection pilot (F015)
+
+Tools > Inspect dependencies provides a bounded view of actual native property
+edges for an explicit object. Inputs/upstream and consumers/downstream distinguish
+direct and transitive relationships, show linking properties and native error state,
+and identify loaded external documents. Expressions and container links remain
+visible without inventing geometric roles. Explicit row navigation and model
+selection preserve geometry, ownership and visibility. Model changes invalidate the
+snapshot; Refresh reads current state without recompute. Cycles and traversal limits
+are reported. Unresolved references use native status, not inferred null-link errors.
+
+The bounded pilot implements roadmap 7.5.5a / 10.6a. Broader deletion/repair controls,
+unloaded-reference diagnoses, target-role classification, integrated navigator
+tabs/highlights and physical/high-DPI acceptance remain open.
+[Owner procedure](../tests/DependencyInspector.md); UI-012 defines interaction.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

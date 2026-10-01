@@ -530,3 +530,30 @@ the editor. Activate the target document before preview or Apply.
 
 Graphical ghost preview, general datum/occurrence support and physical/high-DPI
 acceptance remain pending. [Owner procedure](../tests/SketchSupport.md).
+
+## UI-012: Dependency inspection (F015; roadmap 7.5.5a / 10.6a)
+
+Tools > Inspect dependencies requires one selected object and no active task.
+The modeless dialog shows root label/internal identity, type, native state/status,
+Inspect selected object, Refresh and Include transitive dependencies. Inputs/upstream
+and Consumers/downstream tabs list feature, relationship/depth, linking property,
+state and document. Native expressions, container membership and loaded external
+links are shown alongside geometry dependencies; no target role is guessed.
+
+A row shows native status, a traversal path and source file (or Unsaved document).
+Inspect this row changes the root explicitly. Select in model activates its document
+and replaces native selection while preserving visibility; hidden objects remain
+hidden. Selecting a table row alone changes neither document selection nor geometry.
+Selection-changing actions reject while a native task is active.
+
+Empty tables state that no links exist in that direction. Graph edits/recompute clear
+rows and require Refresh. A deleted/replaced identity cannot be selected through an
+old row. Deleting the root or closing its document closes and detaches the editor.
+Native invalid-reference status is visible, but null optional links are not invented
+as missing-reference errors. Inspection never opens unloaded files or recomputes.
+
+Traversal uses at most 500 edges and 8 levels per direction, with an explicit partial
+view notice and node navigation to continue. Cycles in the displayed portion produce
+a warning. The view is inspection rather than a deletion plan. Broader navigator,
+reference repair and physical/high-DPI acceptance remain open.
+[Owner procedure](../tests/DependencyInspector.md).

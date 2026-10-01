@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F124 sketch support,
+- Current product batch complete for owner testing: F015 dependency inspection,
+  phases 7 and 10 tasks 7.5.5a / 10.6a. Tools > Inspect dependencies shows native
+  inputs/consumers, direct/transitive property relationships, status and loaded
+  external sources, with explicit model selection and node navigation. One grouped
+  build; 23 distinct selected checks pass and three captures reviewed.
+  [Try the shared-sketch example](../tests/DependencyInspector.md). Whole F015 remains
+  open for broader navigator/target roles and physical acceptance. Rotate the next
+  item family; defer further inspection refinements to owner feedback.
+
+- Previous product batch complete for owner testing: F124 sketch support,
   phase 11 tasks 11.7y/z. Sketcher > Sketch > Inspect and change sketch support
   exposes current attachment, explicit planar replacement, local/world numeric
   previews and undoable Apply/repair. One grouped build and all 39 selected checks
@@ -1860,6 +1869,13 @@ feature in the same complete task pane. Repeat the body-creation cases with Revo
 - [   ] 7.5.5 Preview deletion effects and offer valid dependent-feature handling. Provide broken-reference repair and Replace Input within the complete feature editor.
 - [   ] 7.5.6 Keep feature edits, target changes, body creation/removal and history-position changes atomic for Cancel and Undo/Redo; recover from recompute failures without displaying stale success.
 
+- [x] 7.5.5a Add a read-only F015 dependency snapshot using native property edges,
+  showing direct/transitive inputs and consumers, expression/link reasons, native
+  error state and loaded external sources. Bound traversal and report cycles/limits;
+  this is inspection, not a deletion or repair implementation.
+  Installed with 10.6a; grouped evidence is recorded there. Native container edges
+  remain visible without inferring target roles. Whole 7.5.5 remains open.
+
 - [   ] 7.5.7 Add controlled recompute: automatic/manual update modes, deferred
   updates and targeted recomputation. Show stale/blocked dependents and the first
   failing input; provide a deliberate update action. Deferred results must not be
@@ -2638,6 +2654,33 @@ acceptance remain open. Stop here for owner feedback and rotate the next batch.
   Navigator retains component hierarchy. Body filtering supports all part features or
   only contributors to selected bodies. Named groups/folders, comments, type filters and
   input/downstream highlights must remain organizational rather than ownership changes.
+- [x] 10.6a Expose 7.5.5a's snapshot through Tools > Inspect dependencies with
+  explicit model selection and node navigation, refresh after graph changes and
+  safe close/deletion handling. Validate a shared sketch, downstream feature and
+  drawing; stop at owner-test-ready inspection before further navigator work.
+
+7.5.5a / 10.6a grouped evidence (2026-09-30): both tasks preceded one FreeCADGui/
+FreeCADGui_Resources Release build, exit 0. **23 distinct checks pass**, zero failures/
+errors/skips in accepted suites: 7 dependency inspector, 7 command search, 9 temporary
+display. Use `inspector-final/` and the two unchanged passing suites in `grouped/`
+under `D:\Temp\Office-PC\freecad-plus-dependencies-20260930`. Process exits 0.
+`acceptance-summary.json` and `validated-identities.json` record exact suites and
+matching installed script; FreeCADGui SHA256:
+`a54d51a83333161ba4c2574648159b56117a31489160709279b6bdd11d581582`.
+Shared sketch/two extrusions/real fillet/TechDraw source, expression property reasons,
+saved-document external links, cyclic graph, traversal limits, native missing-face
+status/repair, Undo/save/reopen, selection/visibility preservation and deletion/close
+pass. `visual-accepted/` has three reviewed captures and native-only
+`Dependency-Inspection.FCStd`; [owner procedure](../tests/DependencyInspector.md).
+Earlier `grouped/` and `inspector-accepted/` retain fixture failures (cylinder seam,
+unsaved external-link documents and tree expansion state). Initial captures expected
+four edges, but native save exposes both Fillet Base and EdgeLinks; final capture
+retains both and checks the four related objects. Application code was unchanged;
+no corrective build or script restaging. Source graph/status inspection does not
+establish deletion safety or diagnose unloaded references. Integrated navigator
+tabs/highlights, target roles and physical/high-DPI acceptance remain open. Whole
+F015/10.6 stays open; stop this pilot pending feedback and rotate. No release update.
+
 - [   ] 10.7 Add shared Move/Copy with point-to-point, translation/rotation,
   coordinate-system/axis alignment, movable triad, snapping and local/global context.
   Distinguish one-time placement from a persistent assembly relationship; validate
@@ -4692,7 +4735,7 @@ reconciliation rules above to every entry.
 <a id="f015"></a>
 ### F015 — Dependency inspection
 
-**Owning tasks:** 7.5, 10.6. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 7.5, 10.6. **Status:** Bounded native dependency inspector ready for owner testing under 7.5.5a / 10.6a. Direct/transitive inputs and consumers, linking properties/expressions, native status and loaded external sources support explicit model selection and node navigation. Shared sketch/two extrusions/real fillet/drawing, cycles, limits, missing-face status/repair, Undo/save/reopen and lifecycle checks pass; 23 selected checks and three reviewed captures. Broader target-role classification, unloaded-reference diagnosis, integrated navigator tabs/highlights and physical/high-DPI acceptance remain open. [Owner procedure](../tests/DependencyInspector.md).
 
 **Packages:** U02, A05 · **First delivery:** P3/P4 · **Likely scope:** Feature/UI
 

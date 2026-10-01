@@ -62,6 +62,12 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Dependency inspection (F015): [`DependencyInspector.py`](../src/Gui/DependencyInspector.py)
+owns the bounded native property-edge snapshot and Tools > Inspect dependencies
+dialog. Direct/transitive inputs and consumers, property reasons, status, external
+sources and explicit selection/navigation reuse native graph/selection APIs.
+[Owner procedure](../tests/DependencyInspector.md); roadmap 7.5.5a / 10.6a.
+
 Extrude preselection: `TaskPadParameters::setPreselection` reuses the profile
 gate/assignment for `Command.cpp`'s Pad/Pocket entry. `TaskDlgPadParameters` owns
 Cancel selection snapshots; `ViewProviderExtrude::setEdit` captures editing

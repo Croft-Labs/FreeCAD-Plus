@@ -1,6 +1,33 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F124 sketch support, phase 11 tasks 11.7y/z.
+Latest batch: F015 dependency inspection, phases 7 and 10 tasks 7.5.5a / 10.6a.
+Tools > Inspect dependencies presents native property edges, direct/transitive
+inputs/consumers, expression reasons, native status and loaded external sources.
+Explicit model selection preserves visibility; node inspection changes only the
+root. Edits invalidate the snapshot; Refresh reads current state without recompute.
+Cycles and 500-edge/8-level traversal limits are reported.
+
+One grouped FreeCADGui/FreeCADGui_Resources Release build, exit 0. All 23 selected
+checks pass with no failures/errors/skips: 7 dependency inspector in inspector-final/,
+7 command search and 9 temporary display in grouped/. Process exits 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-dependencies-20260930.
+acceptance-summary.json and validated-identities.json record suite/module identities.
+Installed script matches source; FreeCADGui SHA256:
+a54d51a83333161ba4c2574648159b56117a31489160709279b6bdd11d581582.
+No corrective build or script restaging. Earlier grouped/ and inspector-accepted/
+retain fixture failures: seam fillet, unsaved external-link documents and tree
+expansion state. Initial capture counts missed native Fillet EdgeLinks alongside
+Base; final capture retains both. Do not claim those earlier aggregates PASS.
+
+visual-accepted/ contains three reviewed captures and Dependency-Inspection.FCStd.
+Ready for owner testing: tests/DependencyInspector.md. Shared sketch, two extrusions,
+fillet/drawing, expressions/external links, cycles/limits, native broken support,
+Undo/save/reopen and lifecycle pass. Whole F015 remains open for target roles,
+unloaded-reference diagnosis, integrated navigator tabs/highlights and physical/
+high-DPI acceptance. No installer/release update. Stop refining this pilot pending
+owner feedback or a demonstrated blocker; rotate the next family.
+
+Previous batch: F124 sketch support, phase 11 tasks 11.7y/z.
 Sketcher > Sketch > Inspect and change sketch support promotes the proven direct
 planar core and exposes current support, explicit replacement, preserve-local/world
 numeric preview and undoable Apply/repair. Preview uses a disposable document and
