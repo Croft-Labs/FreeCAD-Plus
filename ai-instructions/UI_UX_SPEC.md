@@ -1384,3 +1384,19 @@ objects are excluded through the existing visibility traversal. Whole bounds do
 not replace element requests, and entity filters intersect command gates before
 choosing an eligible element category. Plain selection replaces; Ctrl adds.
 [Owner procedure](../tests/WindowSelection.md).
+
+## UI-051: Joint motion and limit review (F076; roadmap 12.4c/d)
+
+The native Assembly joint task explains relative motion for Fixed, Revolute,
+Cylindrical, Slider and Ball joints and directs users to the assembly solver for
+combined restrictions. Reference-row tooltips expose document/component/subelement
+identity without changing native connectors, placement or selection semantics.
+
+Enabled supported limits must be finite and ordered minimum <= maximum. An inline
+message identifies length or angle bounds and keeps the task open on failed OK.
+Validation reads task inputs and evaluates expressions before the solver can swap
+reversed bounds. Disabled/unsupported limits do not block; equal bounds are valid.
+Correction, acceptance and Cancel reuse native transactions. Direct property-editor
+and scripted solver normalization remain unchanged. No contextual suggestions or
+new motion-envelope/conflict preview is claimed.
+[Owner procedure](../tests/JointReview.md).

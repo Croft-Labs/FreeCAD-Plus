@@ -1765,6 +1765,17 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
             layout.setSpacing(0)
         layout.addWidget(self.jForm)
 
+        self.motionReview = QtWidgets.QLabel(self.form)
+        self.motionReview.setObjectName("jointMotionReview")
+        self.limitReview = QtWidgets.QLabel(self.form)
+        self.limitReview.setObjectName("jointLimitReview")
+        for label in (self.motionReview, self.limitReview):
+            label.setTextFormat(QtCore.Qt.PlainText)
+            label.setWordWrap(True)
+            label.setMinimumWidth(0)
+            label.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Preferred)
+            layout.addWidget(label)
+
         self.isolate_modes = ["Transparent", "Wireframe", "Hidden", "Disabled"]
         self.jForm.isolateType.addItems(
             [translate("Assembly", mode) for mode in self.isolate_modes]
@@ -1874,6 +1885,23 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
             App.Console.PrintWarning(
                 translate("Assembly", "Select 2 elements from 2 separate parts")
             )
+            return False
+
+        # A preview solve may have normalized model values since the last input
+        # signal. Accept the displayed literal bounds, preserving expressions.
+        expressions = dict(self.joint.ExpressionEngine)
+        for prefix, widgetPrefix, supported in (
+            ("Length", "Len", JointUsingLimitLength),
+            ("Angle", "Rot", JointUsingLimitAngle),
+        ):
+            if self.jType not in supported:
+                continue
+            for side in ("Min", "Max"):
+                prop = prefix + side
+                if getattr(self.joint, "Enable" + prop) and prop not in expressions:
+                    widget = getattr(self.jForm, "limit" + widgetPrefix + side + "Spinbox")
+                    setattr(self.joint, prop, widget.property("rawValue"))
+        if self.updateLimitReview():
             return False
 
         self.deactivate()
@@ -2020,18 +2048,59 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
     def onLimitLenMinChanged(self, quantity):
         if self.jForm.limitCheckbox1.isChecked():
             self.joint.LengthMin = self.jForm.limitLenMinSpinbox.property("rawValue")
+        self.updateLimitReview()
 
     def onLimitLenMaxChanged(self, quantity):
         if self.jForm.limitCheckbox2.isChecked():
             self.joint.LengthMax = self.jForm.limitLenMaxSpinbox.property("rawValue")
+        self.updateLimitReview()
 
     def onLimitRotMinChanged(self, quantity):
         if self.jForm.limitCheckbox3.isChecked():
             self.joint.AngleMin = self.jForm.limitRotMinSpinbox.property("rawValue")
+        self.updateLimitReview()
 
     def onLimitRotMaxChanged(self, quantity):
         if self.jForm.limitCheckbox4.isChecked():
             self.joint.AngleMax = self.jForm.limitRotMaxSpinbox.property("rawValue")
+        self.updateLimitReview()
+
+    def updateLimitReview(self):
+        """Validate only enabled limits supported by the current joint type."""
+        pairs = []
+        if self.jType in JointUsingLimitLength:
+            pairs.append(("Length", "Len", translate("Assembly", "Length minimum must not exceed maximum.")))
+        if self.jType in JointUsingLimitAngle:
+            pairs.append(("Angle", "Rot", translate("Assembly", "Angle minimum must not exceed maximum.")))
+        error = ""
+        expressions = dict(self.joint.ExpressionEngine)
+        for prefix, widgetPrefix, reversedMessage in pairs:
+            enabled = [getattr(self.joint, "Enable" + prefix + side) for side in ("Min", "Max")]
+            # The native solver swaps reversed bounds. Inspect the task inputs
+            # before solving so that OK cannot silently change the user's intent.
+            values = []
+            try:
+                for side, on in zip(("Min", "Max"), enabled):
+                    widget = getattr(self.jForm, "limit" + widgetPrefix + side + "Spinbox")
+                    expression = expressions.get(prefix + side)
+                    value = (self.joint.evalExpression(expression) if on and expression
+                             else widget.property("rawValue"))
+                    values.append(value.Value if hasattr(value, "Value") else float(value))
+            except (ValueError, TypeError, RuntimeError):
+                error = translate("Assembly", "Enabled limit expressions must evaluate to valid numbers.")
+                break
+            if any(on and not math.isfinite(value) for on, value in zip(enabled, values)):
+                error = translate("Assembly", "Enabled limits must be finite numbers.")
+                break
+            if all(enabled) and values[0] > values[1]:
+                error = reversedMessage
+                break
+        self.limitReview.setText(
+            error + " " + translate("Assembly", "Correct the limits or Cancel to restore the previous joint.")
+            if error else ""
+        )
+        self.limitReview.setVisible(bool(error))
+        return error
 
     def onReverseClicked(self):
         self.joint.Proxy.flipOnePart(self.joint)
@@ -2055,6 +2124,19 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
 
     def adaptUi(self):
         jType = self.jType
+
+        meanings = {
+            "Fixed": translate("Assembly", "Fixed: locks relative position and orientation."),
+            "Revolute": translate("Assembly", "Revolute: allows rotation about the joint Z axis; translation is locked."),
+            "Cylindrical": translate("Assembly", "Cylindrical: allows translation along and rotation about the joint Z axis."),
+            "Slider": translate("Assembly", "Slider: allows translation along the joint Z axis; rotation is locked."),
+            "Ball": translate("Assembly", "Ball: allows rotation about the joint origin; translation is locked."),
+        }
+        meaning = meanings.get(jType, "")
+        self.motionReview.setText(meaning + " " + translate(
+            "Assembly", "Other joints and grounding can further restrict motion. Check the assembly solver messages."
+        ) if meaning else "")
+        self.motionReview.setVisible(bool(meaning) and self.activeType == "Assembly")
 
         needAngle = jType in JointUsingAngle
         self.jForm.angleLabel.setVisible(needAngle)
@@ -2141,6 +2223,7 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
                 self.onLimitRotMaxChanged(0)
 
         self.updateOffsetWidgets()
+        self.updateLimitReview()
 
     def updateOffsetWidgets(self):
         # Makes sure the values in both the simplified and advanced tabs are sync.
@@ -2257,6 +2340,10 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
                 sname = sname + "." + element_name
             simplified_names.append(sname)
         self.jForm.featureList.addItems(simplified_names)
+        for index, ref in enumerate(self.refs):
+            self.jForm.featureList.item(index).setToolTip(
+                ref[0].Document.Name + "#" + ref[0].Name + "." + ref[1][0]
+            )
 
     def updateLimits(self):
         needLengthLimits = self.jType in JointUsingLimitLength

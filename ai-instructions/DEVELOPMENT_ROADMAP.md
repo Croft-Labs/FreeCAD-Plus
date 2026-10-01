@@ -30,6 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
+- Bounded checkpoint ready for owner testing: F076 joint motion and limit review,
+  phase 12 tasks 12.4c/d. Native joint tasks explain five common joint meanings,
+  expose exact reference identities and retain reversed-limit edits for correction
+  or Cancel. Both tasks preceded grouped validation; this Python-only batch required
+  no native rebuild. Twenty-nine distinct checks pass across accepted runs and six
+  GUI captures are reviewed. Full contextual suggestions, motion-envelope previews,
+  broader assemblies and physical acceptance remain open. [Owner procedure](../tests/JointReview.md).
+  Stop here and rotate pending owner feedback.
+
 - Bounded checkpoint ready for owner testing: F039 window/crossing selection,
   phase 10 tasks 10.5g/h. Left-to-right uses full projected enclosure with a solid
   border; right-to-left crosses with a dashed border. Both tasks preceded one
@@ -4231,6 +4240,31 @@ Five native GUI captures were reviewed. Evidence: D:\Temp\Office-PC\freecad-plus
 rotate pending owner feedback; per-component movement directions, incomplete-joint
 and external/nested loading diagnosis and physical acceptance remain open.
 
+- [x] 12.4c Explain relative motion for native Fixed/Revolute/Cylindrical/Slider/Ball
+  joints, distinguish combined solver restrictions and expose exact reference paths (F076).
+- [x] 12.4d Keep reversed/nonfinite enabled limits in the task for correction or
+  Cancel; preserve expressions, displayed accepted bounds and native transactions.
+  Verify disabled/unsupported limits, both Cylindrical pairs, equal bounds,
+  new/edit Cancel, Undo/Redo and save/reopen. Full F076 remains open.
+
+12.4c/d grouped evidence (2026-10-01): both tasks preceded staging the Python module
+in the source-built fork and grouped validation; no C++ or resource rebuild was
+required. Eight TestJointReview checks pass in joint-verified/; eight
+TestAssemblyFreedom and thirteen inherited AssemblyTests.TestCore checks pass in
+grouped/ (29 distinct accepted checks). Initial failures exposed native solver
+normalization of reversed bounds. The task now checks displayed inputs and evaluates
+expressions before solving, and synchronizes accepted literal bounds after any preview
+normalization. Direct property-editor/scripted solver behavior is unchanged.
+Earlier failed runs remain recorded; the Cancel assertion was corrected to compare
+UndoCount before opening the native transaction. Six GUI captures were reviewed in
+visual/ before the final acceptance-only synchronization correction; eight final
+checks cover that correction. Two FCStd fixtures are included. Evidence:
+D:\Temp\Office-PC\freecad-plus-joint-review-20261001.
+[Owner procedure](../tests/JointReview.md). No installer/release or owner acceptance
+is claimed. Automatic suggestions, ambiguity alternatives, full motion/conflict
+previews, broad nested/external references and physical acceptance remain open.
+Rotate to another family pending owner workflow feedback.
+
 - [   ] 12.5 Add occurrence-aware in-context references and published datum/geometry/
   parameter interfaces, with source highlighting. Provide external-reference manager:
   source/version state, update/freeze/break, missing-path repair, unpublished-input
@@ -7160,7 +7194,7 @@ reconciliation rules above to every entry.
 <a id="f076"></a>
 ### F076 — Contextual mates/joints
 
-**Owning tasks:** 12.4. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 12.4, 12.4c/d. **Status:** Bounded native joint meaning/reference review and enabled-limit recovery ready for owner testing. Twenty-nine distinct checks pass across accepted runs; six GUI captures reviewed. Python-only staging, no native rebuild. Full F076 remains open for contextual suggestions, ambiguous alternatives, motion/conflict previews, broader assemblies and physical acceptance. [Owner procedure](../tests/JointReview.md).
 
 **Packages:** B02 · **First delivery:** P6 · **Likely scope:** Feature
 
