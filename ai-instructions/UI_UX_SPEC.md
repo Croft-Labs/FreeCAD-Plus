@@ -1272,3 +1272,22 @@ Close originals before opening the extracted project. Absolute-link repair,
 external file asset/code collection, independent duplication and general format
 migration remain open. Unsupported atomic-publication filesystems fail explicitly.
 [Owner procedure](../tests/ProjectPackage.md).
+
+## UI-045: Hole specification review (F055; roadmap 13.5c/d)
+
+The existing Part Design Hole task identifies the location profile and owning Body
+by document, internal name and label. It reports the native processed-location
+count only for a current valid feature, explicitly separate from the number of
+cuts that intersect the target. Failed features show the native error; deferred or
+touched previews show pending state. A restored feature without a location cache
+reports that the count is unavailable until recompute. Review does not recompute.
+
+The thread summary follows saved native properties and current standard/size
+controls: clearance diameter, tap-drill preparation, cosmetic visual/specification
+without exported helical geometry, or actual modeled thread with recompute cost.
+No standard means a plain hole diameter. Native tables and feature properties
+remain unchanged; drawing callouts are not certified by this review. Model edits,
+profile changes and native preview updates refresh the review after the event loop.
+Native acceptance/Cancel/Undo and the existing Update View control retain ownership.
+Broader placement collection, table version/provenance and drawing-callout acceptance
+remain open. [Owner procedure](../tests/HoleSpecification.md).

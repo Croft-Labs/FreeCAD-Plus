@@ -30,6 +30,9 @@
 
 class Ui_TaskHoleParameters;
 
+class QLabel;
+class QTimer;
+
 namespace App
 {
 class Property;
@@ -154,6 +157,7 @@ private:
     void onSelectionChanged(const Gui::SelectionChanges& msg) override;
     void updateHoleCutLimits(PartDesign::Hole* hole);
     void updateHoleTypeCombo();
+    void updateSpecificationReview();
     void updateStartUI();
     void updateStartReferenceName();
     void selectedStartReference(const Gui::SelectionChanges& msg);
@@ -165,6 +169,9 @@ private:
 
     std::unique_ptr<Observer> observer;
     QWidget* proxy;
+    QLabel* locationReview {nullptr};
+    QLabel* threadReview {nullptr};
+    QTimer* reviewTimer {nullptr};
     std::unique_ptr<Ui_TaskHoleParameters> ui;
 
     std::unique_ptr<Gui::GizmoContainer> gizmoContainer;

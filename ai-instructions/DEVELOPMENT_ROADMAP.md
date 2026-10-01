@@ -30,7 +30,15 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F108 saved project packaging,
+- Current bounded checkpoint: F055 Hole specification review, phase 13 tasks
+  13.5c/d. Profile/Body identity, location readiness and distinct thread result
+  explanations are implemented. One grouped build passed; 17 bounded selected
+  checks pass. **13.5d remains open:** deferred modeled-thread acceptance waits,
+  and counterbore Redo after recompute changes volume. Preserve these findings and
+  rotate instead of extending this workflow before owner feedback.
+  [Owner procedure and limits](../tests/HoleSpecification.md).
+
+- Previous product batch complete for owner testing: F108 saved project packaging,
   phase 15 tasks 15.6a/b. Tools > Package saved project reviews recursive relative
   native links and creates a byte-preserving portable ZIP. A nested assembly opens
   and updates after its original folder becomes unavailable. Both tasks preceded
@@ -4415,6 +4423,52 @@ selection, broader kernel coverage and physical/high-DPI acceptance.
   Whole F057/13.5 remain open for feature reevaluation, nested snapshot coordinates,
   graphical preview and physical/high-DPI acceptance. No installer/release update.
   Stop for owner feedback and rotate.
+- [ X ] 13.5c Add native Hole location/specification review (F055): identify the
+  profile and owning Body, show the native processed-location count only when
+  current, and distinguish it from actual target cuts. Keep failed/pending preview
+  state visible without changing source geometry or feature identities.
+- [ ] 13.5d Explain clearance, tap-drill, cosmetic and modeled thread results in
+  the existing Hole task, retaining native tables and controls. Verify repeated
+  counterbores, deferred modeled-thread recompute, Cancel, Undo/Redo, save/reopen
+  and downstream source edits. Review implementation is complete; the two acceptance
+  blockers below keep this task open.
+
+13.5c/d checkpoint (2026-10-01): both implementation tasks preceded one successful
+120-second PartDesignGui build (exit 0). Ten existing PartDesignTests.TestHole
+checks pass in grouped/. Seven bounded TestHoleSpecification checks pass in
+review-accepted/: profile/Body identities, construction exclusion, current-count
+review, clearance/tap-drill/cosmetic semantics, pending modeled-thread disclosure
+and Cancel, native invalid-depth feedback, source preservation, counterbore create/
+Undo, profile edits and cosmetic save/reopen with a downstream Body Link. This is
+17 accepted bounded checks, not completion of the originally attempted acceptance
+scope. Initial widget-parent and zero-diameter assumptions were corrected in the
+fixtures; native diameter clamps to a supported minimum, so zero depth exercises
+actual failure. No additional source change or native build was needed.
+
+Open acceptance evidence, retained separately:
+- Deferred modeled-thread task acceptance did not return in hole-verified/ and
+  hole-dialog-check/; the isolated validation process was stopped. A bounded probe
+  with the actual new review timer disabled also reached its deadline
+  (task-refresh-disabled/, one timer found). This rules out its refresh callback
+  for that reproduction, but does not establish the underlying cause. Standalone
+  native recompute without the task succeeds (modeled-native-probe/), producing a
+  valid 96-face, 5535.535590280199 mm3 result. That does not certify task acceptance.
+- Counterbore create and Undo return expected geometry, but Redo after recompute
+  changed volume from expected 5597.876140340506 to 5607.527112972334 mm3
+  (hole-final/). Preserve the mismatch for a focused follow-up; do not mark Redo passed.
+
+All six captures in visual/ were reviewed. Plain-Holes.FCStd,
+Counterbore-Holes.FCStd and Cosmetic-Holes.FCStd support owner review;
+Native-Modeled-Probe.FCStd is explicitly a task-free geometry probe, not accepted
+modeled-thread task output. The counterbore capture shows the inherited head-size
+control displaying its previous value after an API parameter edit; physical numeric
+control acceptance is not established by these captures. Source/runtime hashes and
+publication evidence are recorded in evidence.json.
+Evidence: D:\Temp\Office-PC\freecad-plus-hole-specification-20261001. Full F055
+also remains open for broader guided placement, versioned standard-table provenance,
+drawing callouts, installer and physical owner acceptance. Stop here and rotate
+pending owner feedback or a concrete dependency; do not keep polishing this section.
+
 - [   ] 13.6 Implement 9.1's history-based face move/offset/replace/delete-and-heal
   on a declared class of native/imported solids; explicit repair limits and preview.
 - [   ] 13.7 Spike imported-solid feature recognition only after direct-edit and
@@ -6635,7 +6689,7 @@ reconciliation rules above to every entry.
 <a id="f055"></a>
 ### F055 — Hole wizard
 
-**Owning tasks:** 13.5. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 13.5, 13.5c/d. **Status:** Native profile/Body and thread-result review implemented; 13.5c is ready for owner testing. One grouped build and 17 bounded passing checks cover working modes, Cancel, counterbore creation/Undo and cosmetic persistence/downstream edits. Task 13.5d stays open for deferred modeled-thread acceptance waiting and a counterbore Redo volume mismatch. Standalone modeled geometry succeeds but does not close task acceptance. Broader guided placement, table provenance, drawing callouts and owner acceptance remain open. [Owner procedure](../tests/HoleSpecification.md).
 
 **Packages:** G06 · **First delivery:** P7 · **Likely scope:** Feature
 

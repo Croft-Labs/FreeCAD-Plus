@@ -30,6 +30,9 @@
 #include <cstring>
 
 #include <Base/Console.h>
+#include <QLabel>
+#include <QTimer>
+
 #include <Base/Converter.h>
 #include <Base/Tools.h>
 #include <App/Document.h>
@@ -41,6 +44,7 @@
 #include <Gui/Selection/Selection.h>
 #include <Gui/ViewProvider.h>
 #include <Mod/PartDesign/App/FeatureHole.h>
+#include <Mod/PartDesign/App/Body.h>
 #include <Mod/Part/App/GizmoHelper.h>
 #include <Mod/Part/App/Tools.h>
 
@@ -69,6 +73,19 @@ TaskHoleParameters::TaskHoleParameters(ViewProviderHole* HoleView, QWidget* pare
     // we need a separate container widget to add all controls to
     proxy = new QWidget(this);
     ui->setupUi(proxy);
+    locationReview = new QLabel(proxy);
+    locationReview->setObjectName(QStringLiteral("holeLocationReview"));
+    locationReview->setTextFormat(Qt::PlainText);
+    locationReview->setWordWrap(true);
+    ui->profileAndPlacementLayout->insertWidget(0, locationReview);
+    threadReview = new QLabel(proxy);
+    threadReview->setObjectName(QStringLiteral("holeThreadReview"));
+    threadReview->setTextFormat(Qt::PlainText);
+    threadReview->setWordWrap(true);
+    ui->verticalLayout_2->insertWidget(1, threadReview);
+    reviewTimer = new QTimer(this);
+    reviewTimer->setSingleShot(true);
+    connect(reviewTimer, &QTimer::timeout, this, &TaskHoleParameters::updateSpecificationReview);
     setupOperation(ui->labelOperation, ui->comboOperation);
     QMetaObject::connectSlotsByName(this);
 
@@ -293,9 +310,62 @@ TaskHoleParameters::TaskHoleParameters(ViewProviderHole* HoleView, QWidget* pare
 
     ui->CustomThreadClearance->setMinimum(pcHole->CustomThreadClearance.getMinimum());
     ui->CustomThreadClearance->setMaximum(pcHole->CustomThreadClearance.getMaximum());
+    updateSpecificationReview();
 }
 
 TaskHoleParameters::~TaskHoleParameters() = default;
+
+void TaskHoleParameters::updateSpecificationReview()
+{
+    auto* hole = getObject<PartDesign::Hole>();
+    if (!hole || !locationReview || !threadReview) {
+        return;
+    }
+    const auto identity = [](const App::DocumentObject* object) {
+        return object ? QStringLiteral("%1.%2 [%3]")
+                            .arg(QString::fromUtf8(object->getDocument()->getName()),
+                                 QString::fromUtf8(object->getNameInDocument()),
+                                 QString::fromUtf8(object->Label.getValue()))
+                      : tr("Missing");
+    };
+    QString state;
+    if (!hole->isValid()) {
+        state = tr("Hole needs correction: %1").arg(QString::fromUtf8(hole->getStatusString()));
+    }
+    else if (hole->isTouched() || isUpdateBlocked()) {
+        state = tr("Preview is pending. Update the view or accept to recompute; cached locations are not current.");
+    }
+    else if (hole->getHoleLocations().empty()) {
+        state = tr("Location count is unavailable until the next recompute.");
+    }
+    else {
+        state = tr("%1 profile locations processed. This is not a count of separate cuts in the target.")
+                    .arg(hole->getHoleLocations().size());
+    }
+    locationReview->setText(tr("Location profile: %1\nOwning Body: %2\n%3")
+                               .arg(identity(hole->Profile.getValue()),
+                                    identity(PartDesign::Body::findBodyOf(hole)), state));
+    QString representation;
+    if (hole->ThreadType.getValue() == 0) {
+        representation = tr("No thread standard selected: diameter defines a plain hole.");
+    }
+    else if (!hole->Threaded.getValue()) {
+        representation = tr("Clearance hole: standard size and fit set the diameter. No helical thread geometry.");
+    }
+    else if (hole->ModelThread.getValue()) {
+        representation = tr("Modeled thread: actual helical geometry. Recompute can be expensive for multiple locations.");
+    }
+    else if (hole->CosmeticThread.getValue()) {
+        representation = tr("Cosmetic thread: visual thread representation and saved specification; no helical geometry for solid export.");
+    }
+    else {
+        representation = tr("Tap-drill hole: prepared diameter only; no cosmetic or helical thread representation.");
+    }
+    threadReview->setText(tr("Thread result: %1\nStandard and size: %2 / %3. Native tables are used; drawing callouts require separate verification.")
+                             .arg(representation, ui->ThreadType->currentText(),
+                                  ui->ThreadSize->currentText()));
+}
+
 
 void TaskHoleParameters::modelThreadChanged()
 {
@@ -365,6 +435,7 @@ void TaskHoleParameters::updateViewChanged(bool isChecked)
 {
     setUpdateBlocked(!isChecked);
     recomputeFeature();
+    reviewTimer->start(0);
 }
 
 void TaskHoleParameters::threadDepthTypeChanged(int index)
@@ -883,6 +954,7 @@ void TaskHoleParameters::changeEvent(QEvent* e)
     TaskBox::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         ui->retranslateUi(proxy);
+        updateSpecificationReview();
     }
 }
 
@@ -891,6 +963,9 @@ void TaskHoleParameters::changedObject(const App::Document&, const App::Property
     auto hole = getObject<PartDesign::Hole>();
     if (!hole) {
         return;  // happens when aborting the command
+    }
+    if (reviewTimer) {
+        reviewTimer->start(0);
     }
     bool ro = Prop.isReadOnly();
 
@@ -1524,6 +1599,9 @@ void TaskHoleParameters::Observer::slotChangedObject(
     const App::Property& Prop
 )
 {
+    if (owner->reviewTimer) {
+        owner->reviewTimer->start(0);
+    }
     if (&Obj == hole) {
         Base::Console().log("Parameter {} was updated with a new value\n", Prop.getName());
         if (Obj.getDocument()) {
