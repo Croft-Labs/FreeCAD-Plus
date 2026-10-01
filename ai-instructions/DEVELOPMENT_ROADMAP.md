@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F014 feature organization,
+- Current product batch complete for owner testing: F019 Make Unique,
+  phase 12 tasks 12.2d/e. Tools > Make occurrence unique copies a same-document
+  sketch/extrusion Part and relinks one occurrence in one Undo step. Other instances
+  retain the original; native input remapping, placement, independent edits and
+  persistence pass. Both tasks preceded one grouped build; 19 selected checks pass
+  and three captures reviewed. [Try the spacers](../tests/UniqueOccurrence.md).
+  Whole F019 stays open for broader definitions, relationship remapping, external
+  destinations and physical acceptance. Stop here for feedback and rotate item families.
+
+- Previous product batch complete for owner testing: F014 feature organization,
   phase 10 tasks 10.6b/c. Tools > Find and describe features searches native labels,
   names, types and descriptions and applies staged Label/Label2 edits in one Undo
   step. Native identity, shared links, geometry and order stay intact. Both tasks
@@ -3480,6 +3489,39 @@ feature proxies, general body lineage and production identity/schema migration.
 First run passed 31 checks; the final run adds no-mutation rejection coverage.
 Parents 12.1/12.2 and architecture release gates remain open.
 
+- [x] 12.2d Productize a bounded native Make Unique copy for a same-document
+  Part containing one independent sketch and its Part extrusion (F019). Native
+  recursive copy remaps internal inputs and assigns new native object identities;
+  relink only the selected occurrence while preserving placement and visibility.
+- [x] 12.2e Add explicit copy review, destination/name, stale-input recovery and
+  transactional confirmation. Reject unsupported external/attached/expressed inputs,
+  arrays/scales and occurrence consumers; verify independent edits, Cancel, rollback,
+  Undo/Redo and save/reopen before expanding definition scope.
+  Both tasks complete for owner testing. Arbitrary Body histories, subassemblies,
+  provenance, external destinations and relationship remapping remain open.
+
+12.2d/e grouped evidence (2026-10-01): both tasks preceded one FreeCADGui/
+FreeCADGui_Resources Release build, exit 0. A Python-only selection correction
+then resolved structural Part paths and was restaged without another native build.
+19 distinct selected checks pass: 6 TestUniqueOccurrence in unique-verified/;
+6 TestFeatureOrganizer and 7 TestCommandSearch in selected-grouped/, all accepted
+suites without failures/errors/skips and process exits 0. Evidence:
+`D:\Temp\Office-PC\freecad-plus-unique-occurrence-20261001`.
+acceptance-summary.json / validated-identities.json record source/runtime/native
+identities; installed UniqueDefinition.py matches source. FreeCADGui SHA256:
+`149486d68741474b996be733a55188737ea324b1214031a410fa291ea3885768`.
+Native copy remaps the sketch input, creates new identities and preserves occurrence
+world placement and visibility. Independent source/copy edits, Undo/Redo, save/reopen,
+Cancel, stale/context guards and rollback after a forced post-copy failure pass.
+Three captures reviewed; visual/ holds Shared-Spacers.FCStd / Independent-Spacers.FCStd
+and the [owner procedure](../tests/UniqueOccurrence.md) describes the bounded workflow.
+Earlier grouped/ is incomplete after an invalid-selection modal; only its isolated
+validation process was stopped. selected-grouped/ retains the initial fixture failure
+from hiding the source without recomputing; the corrected fixture passed in
+unique-verified/. Do not interpret either earlier aggregate as a full passing run.
+No installer/release update or physical acceptance. Parents 12.2 and F019 remain open;
+stop at this usable checkpoint and rotate to another item family.
+
 - [   ] 12.3 Add Entire Part/Model/Empty/custom named reference sets. Keep visibility,
   suppression, reference-only BOM role, configuration/arrangement and load state
   independent. Define deliberate full-geometry access outside exposed reference sets.
@@ -4902,7 +4944,7 @@ reconciliation rules above to every entry.
 <a id="f008"></a>
 ### F008 — Promote bodies to components
 
-**Owning tasks:** 12.2. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 12.2, 12.2d/e. **Status:** Bounded native Make Unique pilot ready for owner testing. A same-document sketch/extrusion Part is copied with independent native identities and remapped inputs, then only the selected occurrence is relinked. Placement/visibility, independent edits, Undo/Redo, save/reopen and rollback pass; one grouped build, 19 selected passing checks and three reviewed captures. Whole F019 remains open for broader definitions/subassemblies, external destinations, provenance, relationship remapping and physical acceptance. See [owner procedure](../tests/UniqueOccurrence.md).
 
 **Packages:** A03 · **First delivery:** P3/P6 · **Likely scope:** Core
 

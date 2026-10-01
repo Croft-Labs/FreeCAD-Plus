@@ -62,6 +62,11 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Make Unique (F019): [`UniqueDefinition.py`](../src/Gui/UniqueDefinition.py) provides
+Tools > Make occurrence unique for reviewed native sketch/extrusion Part definitions.
+Native copy/remap and one-occurrence relinking; [owner procedure](../tests/UniqueOccurrence.md),
+roadmap 12.2d/e. The older `tests/prototypes/UniqueDefinition.py` remains test-only.
+
 Feature organization (F014): [`FeatureOrganizer.py`](../src/Gui/FeatureOrganizer.py)
 provides Tools > Find and describe features, native metadata search and undoable
 Label/Label2 editing. Reuses dependency-inspector identity resolution.
@@ -91,7 +96,7 @@ Occurrence appearance (F018): [`OccurrenceAppearance.py`](../src/Gui/OccurrenceA
 exposes native whole-link visibility/colour/transparency and source inheritance in
 View > Occurrence appearance. Staged edits use one transaction and reject stale state;
 geometry/placement are preserved. [Owner procedure](../tests/OccurrenceAppearance.md);
-roadmap 12.2b/c. Make Unique remains a separate test-only prototype.
+roadmap 12.2b/c. Make Unique has a separate bounded native command; see the entry above.
 
 Measurement context (F098/F099): existing [`TaskMeasure.cpp`](../src/Mod/Measure/Gui/TaskMeasure.cpp)
 shows operand identities and measurement/frame meaning. Native

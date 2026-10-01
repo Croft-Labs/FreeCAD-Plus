@@ -1523,6 +1523,7 @@ set(FreeCADGui_Scripts
     CommandSearch.py
     DependencyInspector.py
     FeatureOrganizer.py
+    UniqueDefinition.py
     OccurrenceAppearance.py
     TemporaryDisplay.py
     RemoteDebugger.ui

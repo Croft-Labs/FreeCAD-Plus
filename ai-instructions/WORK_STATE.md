@@ -1,6 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F014 feature organization, phase 10 tasks 10.6b/c.
+Latest batch: F019 Make Unique, phase 12 tasks 12.2d/e.
+Tools > Make occurrence unique reviews and copies one same-document native Part
+containing an independent sketch and its solid Part extrusion, then relinks only
+the selected occurrence. New native object identities and internal input remapping
+preserve independent histories; placement and visibility stay unchanged. One Undo
+step, no custom schema. Unsupported definitions/dependencies/consumers are rejected.
+
+Both tasks preceded one FreeCADGui/FreeCADGui_Resources Release build, exit 0.
+A Python selection correction for structural Part paths was restaged afterward;
+no second native build. 19 distinct selected checks pass without failures/errors/skips:
+6 TestUniqueOccurrence in unique-verified/, 6 TestFeatureOrganizer and 7 TestCommandSearch
+in selected-grouped/, process exits 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-unique-occurrence-20261001.
+acceptance-summary.json / validated-identities.json record accepted suites and identities;
+installed UniqueDefinition.py matches source. FreeCADGui SHA256:
+149486d68741474b996be733a55188737ea324b1214031a410fa291ea3885768.
+
+visual/ has three reviewed captures and Shared-Spacers.FCStd / Independent-Spacers.FCStd.
+Source and enclosing assembly placements are nontrivial. Copy/source independent edits,
+native identities/input isolation, Undo/Redo, save/reopen, Cancel, stale/context guards
+and rollback after forced post-copy failure pass. Edited unique spacer is 48*pi mm3;
+original remains 63*pi mm3. tests/UniqueOccurrence.md is the owner guide.
+Earlier grouped/ is incomplete after an invalid-selection modal; only the isolated
+validation process was stopped. selected-grouped/ retains a readiness fixture failure
+from hiding the source without recomputing, corrected before unique-verified/ passed.
+The accepted results span directories; earlier aggregates did not pass in full.
+
+Whole F019 stays open for broader definitions/Body histories/subassemblies, external
+destinations, provenance, relationship remapping and physical/high-DPI acceptance.
+No installer/release update. Stop for owner testing and rotate item families.
+
+Previous batch: F014 feature organization, phase 10 tasks 10.6b/c.
 Tools > Find and describe features searches the active document's loaded objects by
 label, internal name, type and native Label2 description. Type filtering and sorting
 are presentation-only; explicit model selection preserves visibility. Staged native

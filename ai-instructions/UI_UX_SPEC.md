@@ -688,3 +688,17 @@ transaction; unchanged values create none. Close, Refresh, row or filter changes
 unapplied text, as explained in the panel. Model edits invalidate the snapshot and
 require Refresh; failed Apply remains open with inline guidance. Document closure
 closes the dialog and removes its observer. [Owner procedure](../tests/FeatureOrganizer.md).
+
+## UI-020: Make occurrence unique (F019; roadmap 12.2d/e)
+
+Tools > Make occurrence unique reviews one explicitly selected whole Link. The
+modeless dialog lists occurrence/source identities, same-document destination and
+copied sketch/extrusion inputs, plus an editable new definition label. The policy
+explains internal remapping, independent source behavior, preserved placement and
+one-step Undo. Make Unique commits and closes; Cancel creates nothing.
+
+Unsupported definitions show inline reasons with creation disabled. Model edits
+invalidate review; Review again revalidates current inputs after recompute. Pending
+edits/active tasks, changed identity and empty labels prevent commit with inline
+feedback. Occurrence/document deletion closes the dialog. Broader relationship or
+subassembly remapping remains out of scope. [Owner procedure](../tests/UniqueOccurrence.md).

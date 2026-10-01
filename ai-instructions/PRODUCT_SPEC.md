@@ -379,6 +379,21 @@ ownership changes or history reordering. Roadmap 10.6b/c covers this bounded pil
 folders, bulk organization and integrated navigators remain open.
 [Owner procedure](../tests/FeatureOrganizer.md); UI-019.
 
+## Current Make Unique pilot (F019)
+
+One direct unscaled occurrence of a same-document Part containing an independent
+sketch and its native extrusion can receive a private native copy. The review shows
+source, destination, copied inputs and new label. Native recursive copy assigns new
+object identities and remaps internal inputs; only the chosen occurrence is relinked.
+Its placement/visibility and other instances remain unchanged. Confirmation owns one
+Undo transaction; Cancel and failed copying retain the original model.
+
+External/attached inputs, expressions, arrays, prototype identity fields and occurrence
+consumers requiring relationship remapping are explicitly unsupported. No new schema
+or experimental semantic IDs are introduced. Roadmap 12.2d/e covers this bounded
+pilot; arbitrary Body histories/subassemblies and broader provenance/remapping remain
+open. [Owner procedure](../tests/UniqueOccurrence.md); UI-020.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

@@ -567,6 +567,10 @@ from freecad.gui.FeatureOrganizer import registerCommand as _registerFeatureOrga
 _registerFeatureOrganizer()
 del _registerFeatureOrganizer
 
+from freecad.gui.UniqueDefinition import registerCommand as _registerUniqueDefinition
+_registerUniqueDefinition()
+del _registerUniqueDefinition
+
 from freecad.gui.OccurrenceAppearance import registerCommand as _registerOccurrenceAppearance
 _registerOccurrenceAppearance()
 del _registerOccurrenceAppearance
