@@ -2434,7 +2434,8 @@ Remaining integration is dependency ordered, with this milestone retaining prior
 - [   ] 7.8.7b Integrate assembly joint creation/solver with the first constraints
   group; complete repeated-path picking, native edit/create parity and owner GUI acceptance.
 - [   ] 7.8.7c Connect separate BOM/mass participation flags to engineering consumers;
-  validate multi-tab display overrides without changing engineering geometry.
+  complete multi-tab/task display acceptance without changing engineering geometry.
+  The bounded background/isolated-view pilot is recorded in 7.8.7i.
 - [ X ] 7.8.7d Feedback iteration: Model History double-click opens the component
   Extrude or native object editor; explicit suppression/dependency/repair states,
   Rename, retained navigator selection/expansion/scroll and single-Undo embedded
@@ -2466,6 +2467,16 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   isolated Model History without replacing result identity. One grouped staging
   pass and three focused workflows pass. Broader native editors, close-during-task,
   save routing and multi-tab display acceptance remain open.
+- [ X ] 7.8.7i Display-context feedback: refresh native representations for loaded
+  definitions and isolated views, including inactive assembly windows; preserve
+  path overrides and source geometry/visibility. Full Component and Model History
+  share unavailable-item visibility rules. Part View indicates its effective choice
+  and inherited/overridden settings; expanded rows highlight the active occurrence.
+  One grouped script/resource build and three focused workflows pass, including
+  Undo/Redo and .cadprt reopen. A close-transition GUI-provider guard was added after
+  the first run; the same three checks passed on repeat. One Qt window-activation
+  diagnostic remains. Broad task-time display, construction-provider coverage and
+  large-assembly performance stay open under 7.8.7b/c and 7.8.10b.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and

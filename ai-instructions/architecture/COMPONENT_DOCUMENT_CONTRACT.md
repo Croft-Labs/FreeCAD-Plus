@@ -41,6 +41,8 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 - Highlight the active component and provide a show/hide control. The active component
   and its ancestor branch cannot be hidden. Group actions apply to the represented
   occurrences; Copy to New Part requires an individual occurrence.
+  Expanded instance rows identify the exact active occurrence; the grouped row
+  remains highlighted when it contains that occurrence.
 - **Edit** is the first context action; double-click also activates the definition
   for editing. **Add Component** adds to that definition. Omit **Open Component in
   Tab** on the root row, which is already its own view. Use an **Instances** submenu
@@ -48,6 +50,8 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   externalization. **Part View** contains Full Component, Bodies Only, Hidden and
   Reset to Inherited. The view root is displayed in full; these settings apply to
   occurrences added to a parent.
+  Indicate the effective Part View choice (no single choice for a mixed group)
+  and whether an occurrence inherits its setting or has an override in this context.
 
 - Each child instance defaults to **Bodies Only**. It exposes finished solid/sheet
   results plus child instances evaluated under their own representation settings.

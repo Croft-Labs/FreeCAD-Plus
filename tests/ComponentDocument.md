@@ -7,6 +7,23 @@ owns requirements.
 
 ## Owner workflow
 
+Display-context feedback (roadmap 7.8.7i): open an assembly and a component's isolated
+tab. Change a child's Part View in the isolated tab; inactive parent windows should
+update inherited occurrences while retaining their explicit path overrides. Hidden
+does not change geometry, source-object visibility or BOM/mass participation flags.
+Expand repeated instances to see which occurrence is active. The Part View menu
+checks the effective choice and enables Reset to Inherited only for local overrides.
+Unavailable reference snapshots cannot be shown through the Model History eye.
+
+`RunComponentDocument.ps1 -DisplayContextSmoke` runs three focused workflows from
+`TestComponentDisplayContext.py`: cross-window inheritance and Undo/Redo, menu/active
+occurrence behavior, and unavailable history plus `.cadprt` reopen. Evidence:
+`D:\Temp\Office-PC\freecad-plus-display-context-20261001/smoke-ready`.
+Open `testBackgroundAssemblyAndIsolatedInheritance/Assembly.cadprt` with its sibling
+`Support.cadprt` for feedback. The second Support instance overrides the hidden Pin.
+Broad task-time display, construction-provider coverage and large-assembly performance
+remain pending. One Qt window-activation diagnostic remains in the focused run.
+
 Owning-file Undo/Redo feedback (roadmap 7.8.5f): while an external component is active
 in an assembly, Undo and Redo use that component's owning document. Their enabled
 states and toolbar history lists follow the same owner. A multi-step toolbar choice

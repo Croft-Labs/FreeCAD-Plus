@@ -1,5 +1,28 @@
 # FreeCAD Plus: Build validation handoff
 
+Current feedback batch: roadmap 7.8.7i, component display contexts.
+Loaded definitions' native LinkViews and isolated snapshots now refresh even when
+their assembly window is inactive. Inherited child settings and outer path overrides
+remain separate. Full Component includes normally visible view providers and uses
+the same unavailable-item rules as Model History. Part View menus indicate effective
+choices and reset availability; expanded instances highlight only the active path.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-display-context-20261001`.
+One grouped script/resource build passed (`build/`). The first focused run passed
+two workflows but reached its bounded deadline on close/reopen after App objects
+outlived their GUI providers. A guard for that transition was staged directly; the same
+three workflows pass in `smoke-ready/`, zero failures/errors/skips and process exit 0.
+One `QMdiArea::setActiveSubWindow: window is not inside workspace` diagnostic remains.
+Two captures reviewed: isolated geometry and exact active occurrence in the tree.
+Feedback fixture:
+`smoke-ready/testBackgroundAssemblyAndIsolatedInheritance/Assembly.cadprt`.
+No schema or native C++ change, installer or release. Engineering shape, source
+visibility and participation flags are preserved in the focused fixture. General
+construction providers, task-time display and large-assembly performance remain open;
+keep broad validation deferred for owner feedback.
+
+Previous feedback batch follows.
+
 Current feedback batch: roadmap 7.8.5f, owning-file Undo/Redo.
 Native Undo/Redo execution, enabled states and toolbar history lists follow the
 active component's owner, preserving the displayed occurrence context. A multi-step

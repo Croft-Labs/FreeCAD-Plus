@@ -93,15 +93,19 @@ class TaskContext:
 
 def visible_paths(root, component, ids, prefix=""):
     """Resolve representation to native sub-object paths, never change sources."""
+    try:
+        Gui.getDocument(component.Document.Name)
+    except NameError:
+        return []  # External GUI providers are removed before their App objects.
     mode = model().representation(root, ids)
     if mode == "Hidden":
         return []
     paths = []
     results = {o.Name for o in model().finished_results(component)}
     for obj in component.Group:
-        if not hasattr(obj, "Shape") or not obj.Visibility or model().history_state(obj) in ("Suppressed", "Inactive \u2014 dependency"):
-            continue
         if getattr(obj, "ComponentRole", "") in ("Occurrence", "Internal"):
+            continue
+        if not obj.ViewObject or not obj.Visibility or not item_display_available(obj):
             continue
         if mode == "Bodies Only" and obj.Name not in results:
             continue
@@ -111,6 +115,13 @@ def visible_paths(root, component, ids, prefix=""):
             paths.extend(visible_paths(root, child.LinkedObject, ids + [child.ObjectId],
                                        prefix + child.Name + "."))
     return paths
+
+
+def item_display_available(obj):
+    """Use the same availability for history eyes and component representations."""
+    return model().history_state(obj) not in (
+        "Suppressed", "Inactive \u2014 dependency", "Missing source", "Needs repair",
+        "Unavailable", "Pending")
 
 
 def apply_representation(root):
@@ -306,6 +317,7 @@ class Navigator(QtWidgets.QDockWidget):
                         and not active.Document.HasPendingTransaction and not Gui.Control.activeDialog()):
                     self.restored_documents.discard(active.Document.Name)
                     model().activate(active, strict=False)
+            self.refresh_representations()
             if root is None or active is None:
                 self.context.setText(tr("Create or open a component document."))
                 self.conversion.hide()
@@ -321,16 +333,6 @@ class Navigator(QtWidgets.QDockWidget):
                 self.reference_notice.setText(tr("{0} reference object(s) need repair. Edit them in Model History.").format(len(repair)))
             elif pending:
                 self.reference_notice.setText(tr("{0} reference object(s) need updating. Use Refresh References.").format(len(pending)))
-            apply_representation(root)
-            for entry in list(self.component_views):
-                component = resolve(entry["key"])
-                if component:
-                    paths = visible_paths(component, component, [])
-                    entry["snapshot"].setLink(component if paths else None, paths)
-                    if entry.get("window"):
-                        entry["window"].setWindowTitle(self.component_title(component))
-                else:
-                    entry["snapshot"].setLink(None, [])
             # The root is the component itself, not the document/file wrapper.
             root_item = QtWidgets.QTreeWidgetItem(self.structure, [root.Label, "", "", ""])
             root_item.setData(0, QtCore.Qt.UserRole, (object_key(root), []))
@@ -349,8 +351,7 @@ class Navigator(QtWidgets.QDockWidget):
                 state = QtCore.Qt.Unchecked if getattr(obj, "UserSuppressed", False) else (QtCore.Qt.PartiallyChecked if inactive else QtCore.Qt.Checked)
                 item.setCheckState(0, state)
                 item.setToolTip(0, model().history_detail(obj) or tr("Unchecked: suppressed. Partially checked: an input is inactive."))
-                unavailable = (inactive or bool(getattr(obj, "UserSuppressed", False))
-                               or getattr(obj, "ResultStatus", "Ready") in ("Missing source", "Needs repair", "Unavailable"))
+                unavailable = not item_display_available(obj)
                 self.visibility_icon(item, bool(obj.Visibility) and not unavailable, 1)
                 if unavailable:
                     item.setToolTip(1, getattr(obj, "ReferenceError", "") or tr("Geometry is unavailable. Restore or repair the item and its inputs."))
@@ -370,6 +371,23 @@ class Navigator(QtWidgets.QDockWidget):
             self.restore_tree(self.history, history_state)
         finally:
             self.refreshing = False
+
+    def refresh_representations(self):
+        # Native LinkViews belong to definitions, not to the active window. Keep
+        # background assemblies current too, evaluating each in its own context.
+        for doc in list(App.listDocuments().values()):
+            try:
+                Gui.getDocument(doc.Name)
+            except NameError:
+                continue  # App objects can briefly outlive GUI documents on close.
+            for component in model().definitions(doc):
+                apply_representation(component)
+        for entry in list(self.component_views):
+            component = resolve(entry["key"])
+            paths = visible_paths(component, component, []) if component else []
+            entry["snapshot"].setLink(component if paths else None, paths)
+            if component and entry.get("window"):
+                entry["window"].setWindowTitle(self.component_title(component))
 
     @staticmethod
     def row_key(item):
@@ -431,12 +449,19 @@ class Navigator(QtWidgets.QDockWidget):
             item.setToolTip(3, tr("Right-click and choose Locate Component File. Matching unresolved instances in this file are repaired together."))
         if self.protected(item):
             item.setToolTip(1, tr("The active component and its parent branch cannot be hidden."))
-        if definition and object_key(definition) == self.active_key:
+        if definition and any(list(ids) == self.active_path for ids in paths or [[]]):
             font = item.font(0)
             font.setBold(True)
             item.setFont(0, font)
             item.setBackground(0, self.palette().brush(QtGui.QPalette.Highlight))
             item.setForeground(0, self.palette().brush(QtGui.QPalette.HighlightedText))
+        if definition and paths:
+            overrides = model().representation_overrides(root, [])
+            explicit = sum("/".join(ids) in overrides for ids in paths)
+            detail = (tr("Inherited from the component definition.") if not explicit else
+                      tr("Override in this view's root component. Reset to Inherited removes it.")
+                      if explicit == len(paths) else tr("Mixed inherited settings and occurrence overrides."))
+            item.setToolTip(3, detail)
 
     def populate(self, row, component, root, path, seen):
         key = object_key(component)
@@ -524,8 +549,7 @@ class Navigator(QtWidgets.QDockWidget):
         obj = resolve(item.data(0, QtCore.Qt.UserRole))
         if obj is None:
             return
-        if (getattr(obj, "UserSuppressed", False) or model().history_state(obj) == "Inactive \u2014 dependency"
-                or getattr(obj, "ResultStatus", "Ready") in ("Missing source", "Needs repair", "Unavailable")):
+        if not item_display_available(obj):
             return
         with model().transaction(obj.Document, "Toggle item visibility"):
             obj.Visibility = not obj.Visibility
@@ -974,11 +998,19 @@ class Navigator(QtWidgets.QDockWidget):
                 menu.addAction(tr("Locate Component File"), lambda: self.run(lambda: self.repair_component(value[0])))
             view = menu.addMenu(tr("Part View"))
             menu.component_submenus.append(view)
+            paths = [ids for unused, ids in self.members(item) if ids]
+            modes = {model().representation(resolve(self.root_key), ids) for ids in paths} if definition else set()
+            overrides = model().representation_overrides(resolve(self.root_key), [])
             for label in model().TYPES + ("Reset to Inherited",):
                 setting = None if label == "Reset to Inherited" else label
                 action = view.addAction(tr(label), lambda checked=False, setting=setting:
                     self.run(lambda: self.set_part_view(item, setting)))
                 action.setEnabled(definition is not None and bool(value[1]) and not (setting == "Hidden" and self.protected(item)))
+                if setting is not None:
+                    action.setCheckable(True)
+                    action.setChecked(modes == {setting})
+                else:
+                    action.setEnabled(definition is not None and any("/".join(ids) in overrides for ids in paths))
                 if not value[1]:
                     action.setToolTip(tr("The root is displayed in full. Part View applies to components added to a parent."))
         else:
@@ -1033,7 +1065,7 @@ class Navigator(QtWidgets.QDockWidget):
                         obj.Visibility = True
                 except ValueError:
                     pass
-        if prop in ("Label", "Group", "ModelHistory", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject"):
+        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):
