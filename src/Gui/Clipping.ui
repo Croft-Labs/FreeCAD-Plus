@@ -220,6 +220,25 @@
     </widget>
    </item>
    <item row="4" column="0">
+    <widget class="QLabel" name="sectionPolicy">
+     <property name="text"><string>Visual clipping only: geometry, measurements and model exports remain whole. No section caps are generated. Save/Load stores world-space planes in a separate preset; save the model separately. Close removes clipping.</string></property>
+     <property name="wordWrap"><bool>true</bool></property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <layout class="QHBoxLayout" name="sectionActions">
+     <item><widget class="QPushButton" name="saveSection"><property name="text"><string>Save section planes...</string></property></widget></item>
+     <item><widget class="QPushButton" name="loadSection"><property name="text"><string>Load section planes...</string></property></widget></item>
+    </layout>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="sectionStatus">
+     <property name="text"><string/></property>
+     <property name="wordWrap"><bool>true</bool></property>
+     <property name="textFormat"><enum>Qt::PlainText</enum></property>
+    </widget>
+   </item>
+   <item row="7" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

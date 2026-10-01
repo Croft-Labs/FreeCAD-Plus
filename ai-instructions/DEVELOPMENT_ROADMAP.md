@@ -30,7 +30,16 @@ is subsequently changed.
 
 ## Current focus
 
-- Current product batch complete for owner testing: F057 mirror result behavior,
+- Current product batch complete for owner testing: F100 section planes,
+  phase 15 tasks 15.1e/f. Clipping View has synchronized numeric direction, explicit
+  mm/world offsets and save/load of portable plane presets. Invalid input preserves
+  the current view; a scrollable dock keeps fields reachable. Both tasks preceded
+  the first grouped build; two layout corrections followed visual review. All 22
+  final checks pass and six captures reviewed. [Try the housings](../tests/SectionPlanes.md).
+  Whole F100 remains open for embedded views, caps, section measurements and physical
+  acceptance. Stop here for owner feedback and rotate to another item family.
+
+- Previous product batch complete for owner testing: F057 mirror result behavior,
   phase 13 tasks 13.5a/b. Part > Mirror offers an associative mirror or independent
   reflected-shape snapshot, with atomic creation and recoverable inline errors.
   Both tasks preceded the grouped build; one compile correction was required.
@@ -3660,6 +3669,33 @@ Native identifiers/algorithms remain. Full F098/F099/15.1 stays open for broader
 mass/material, thickness, mesh accuracy, stale/invalid associative repair and physical/
 high-DPI acceptance. No installer/release update. Stop for owner feedback and rotate.
 
+- [ X ] 15.1e Make existing Clipping View numeric controls describe the displayed
+  world-space section: millimetre offsets, synchronized camera-derived normals,
+  visible zero-direction pause/recovery and usable planar-fixture steps (F100).
+- [ X ] 15.1f Save/load the four native clipping planes in versioned .fcsection
+  presets. Capture camera-following orientation as fixed; validate the entire preset
+  before applying. Preserve source geometry, document edits and full-model exports.
+  Both tasks preceded the first grouped FreeCADGui/FreeCADGui_Resources Release
+  build. Three builds total, all exit 0: initial, field-height correction, final
+  scrollable-dock correction after visual review exposed parent clipping. All 22
+  checks pass together in accepted-grouped/, no failures/errors/skips: 6 section,
+  9 temporary-display and 7 command-search; process exit 0. Numeric/camera normals,
+  zero recovery, two planes/flip, malformed preset atomicity, failed writes, nested
+  Part/direct-Link fixture reopen, owner transaction/Undo preservation and whole
+  BREP export pass. Direction fields fit their enclosing controls on the final build.
+  Evidence: `D:\Temp\Office-PC\freecad-plus-sections-20260930`;
+  acceptance-summary.json / validated-identities.json record accepted suites and
+  source/native identities. FreeCADGui SHA256:
+  `a5636bf1387c47568b8dd65e2db8ba4467ca4b51b662310ac4de9bd3064e1a11`.
+  Six captures reviewed in visual-accepted/, with Section-Housings.FCStd and
+  Housing-Section.fcsection. [Owner procedure and preset contract](../tests/SectionPlanes.md).
+  Earlier grouped/ retains a wrong Qt widget-name lookup. Earlier visual/sizing
+  captures show the layout problem; they are not final acceptance. The default
+  image backend omitted clipping; FramebufferObject captures it correctly. Model
+  exports remain whole. Presets are separate files, not embedded document views.
+  Whole F100 remains open for caps, extracted curves/section measurements, embedded
+  views and physical/high-DPI acceptance. No release update. Stop for feedback and rotate.
+
 - [   ] 15.2 Add curvature combs, zebra/reflection lines, continuity and deviation
   inspection with quantitative checks where claimed; support surface validation.
   Deviation inspection includes deviation maps; keep analysis/display distinct from
@@ -6034,7 +6070,7 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 <a id="f100"></a>
 ### F100 — Interactive sections
 
-**Owning tasks:** 15.1. **Status:** Follow the owning task evidence; expanded acceptance remains pending unless explicitly validated there.
+**Owning tasks:** 15.1, 15.1e/f. **Status:** Bounded section-plane pilot ready for owner testing: explicit mm/world numeric controls, synchronized camera-derived normals, zero-direction recovery and atomic portable preset save/load. All 22 final grouped checks pass and six captures reviewed. Two-plane persistence through separate preset/model reopen and unchanged geometry/Undo/full exports verified. Whole F100 remains open for embedded saved views, caps, section-specific curves/measurements and physical acceptance. See [owner procedure](../tests/SectionPlanes.md).
 
 **Packages:** I01 · **First delivery:** P9 · **Likely scope:** UI/Feature
 

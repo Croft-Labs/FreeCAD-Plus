@@ -1,6 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
-Latest batch: F057 mirror result modes, phase 13 tasks 13.5a/b.
+Latest batch: F100 section planes, phase 15 tasks 15.1e/f.
+Clipping View now reports explicit world/mm offsets and synchronized custom/camera
+normals, pauses zero-direction clipping with recovery guidance, and saves/loads
+four native planes in a versioned .fcsection file. Loading validates the whole
+preset first and restores a fixed direction without changing camera/model state.
+The dock scrolls so short windows do not compress direction controls.
+
+Both tasks preceded the first grouped FreeCADGui/FreeCADGui_Resources Release build.
+Three builds, all exit 0: initial, minimum field-height correction, final scrollable
+container correction after visual review found parent clipping. Final accepted-grouped/
+has all 22 checks passing, no failures/errors/skips: 6 section, 9 temporary-display,
+7 command-search; process exit 0. Evidence:
+D:\Temp\Office-PC\freecad-plus-sections-20260930.
+acceptance-summary.json / validated-identities.json record accepted suites and
+source/native identities. FreeCADGui SHA256:
+a5636bf1387c47568b8dd65e2db8ba4467ca4b51b662310ac4de9bd3064e1a11.
+
+visual-accepted/ contains six reviewed captures, Section-Housings.FCStd and
+Housing-Section.fcsection. Two planes/flips, camera normals, zero recovery, invalid
+preset atomicity, write failure, nested Part/direct-Link example reopen, owner
+transaction/Undo preservation and whole BREP export pass. tests/SectionPlanes.md
+is the owner procedure and preset contract. Earlier grouped/ retains wrong widget
+lookup; earlier visual/sizing probes are not final acceptance. Default image backend
+omitted clipping; FramebufferObject captures the cuts correctly. No global user
+preferences were changed; captures used isolated validation configuration.
+
+Whole F100 remains open for embedded saved views, caps, section curves/measurements
+and physical/high-DPI acceptance. No installer/release update. Stop for owner
+feedback and rotate to another dependency-ready item family.
+
+Previous batch: F057 mirror result modes, phase 13 tasks 13.5a/b.
 Part > Mirror offers native associative results or independent reflected-shape
 snapshots for document-root shapes and whole Bodies. Both preserve source geometry,
 visibility and Body Tip. Snapshots contain no Source/MirrorPlane links or copied

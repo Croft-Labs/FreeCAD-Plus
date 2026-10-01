@@ -49,6 +49,9 @@ public:
     Clipping(Gui::View3DInventor* view, App::Document* showOn, QWidget* parent = nullptr);
     ~Clipping() override;
 
+    Q_INVOKABLE bool saveSection(const QString& path);
+    Q_INVOKABLE bool loadSection(const QString& path);
+
 protected:
     void setupConnections();
     void onActiveDocument(const App::Document& doc);

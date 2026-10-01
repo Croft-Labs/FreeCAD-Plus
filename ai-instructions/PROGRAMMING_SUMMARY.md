@@ -62,6 +62,10 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 ## Folder and module map
 
+Section planes (F100): existing [`Clipping.cpp`](../src/Gui/Clipping.cpp) owns numeric
+plane feedback and atomic `.fcsection` preset save/load. Native visual clipping;
+[owner procedure and contract](../tests/SectionPlanes.md), roadmap 15.1e/f.
+
 Mirror result mode (F057): existing [`Mirroring.cpp`](../src/Mod/Part/Gui/Mirroring.cpp)
 offers native associative results or independent shape snapshots for root shapes/Bodies.
 Transactional creation validates sources/results and reports recoverable errors inline.

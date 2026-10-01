@@ -351,6 +351,20 @@ Roadmap 13.5a/b covers the bounded workflow. Feature reevaluation, nested snapsh
 graphical target/handedness preview and physical acceptance remain open.
 [Owner procedure](../tests/MirrorResultMode.md); UI-017.
 
+## Current section-plane pilot (F100)
+
+Existing Clipping View uses explicit world-coordinate millimetre offsets and
+camera-derived/custom direction fields that describe the displayed plane. Zero
+direction pauses custom clipping until corrected. Portable `.fcsection` presets
+capture the four native planes, enabled states and retained sides; camera-following
+orientation is saved as a fixed plane. Loading validates all data before changing
+this view, preserving camera, geometry, document transactions and model exports.
+
+Presets are separate versioned files, not embedded document views or geometry.
+No caps or section-specific measurements are claimed. Roadmap 15.1e/f covers this
+bounded pilot; broader F100 remains open. [Owner procedure and preset contract](../tests/SectionPlanes.md);
+UI-018.
+
 ## Open questions
 
 - Linear/Circular Pattern is the next family selected by the user; see roadmap

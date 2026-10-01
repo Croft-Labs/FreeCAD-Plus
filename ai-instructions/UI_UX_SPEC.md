@@ -658,3 +658,18 @@ snapshot scope produce inline feedback while preserving the task for correction.
 Invalid result creation aborts the transaction. Successful independent results have
 snapshot labels; the native associative editor remains unchanged. No source hiding
 or Body Tip mutation. [Owner procedure](../tests/MirrorResultMode.md).
+
+## UI-018: Numeric and saved section planes (F100; roadmap 15.1e/f)
+
+View > Clipping View retains native X/Y/Z or custom-plane controls in a scrollable
+dock so short windows do not compress the direction inputs. Offsets show mm
+and world-frame tooltips; View and camera-follow synchronize the displayed normal.
+Zero direction pauses custom clipping with inline recovery guidance. Axis planes
+may combine; custom clipping disables axis planes, following existing behavior.
+
+Save section planes and Load section planes use standard file dialogs. Cancellation
+leaves the view unchanged. Save captures actual native plane state; Load validates
+the whole versioned preset before applying and disables camera following. Errors
+stay inline; presets never alter camera/model or own a document transaction.
+The panel explains whole-model export/measurement behavior, lack of caps, separate
+preset storage and Close removing clipping. [Owner procedure](../tests/SectionPlanes.md).
