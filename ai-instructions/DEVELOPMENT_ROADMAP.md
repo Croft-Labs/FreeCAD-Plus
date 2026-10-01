@@ -1,5 +1,33 @@
 # FreeCAD Plus: Development Roadmap
 
+## Owner directive: functional workflows first, then move on
+
+**Standing development priority, explicitly directed by the owner on 2026-09-30.**
+Do not get stuck in any phase, section, item family or workflow. Make it sufficiently
+functional for the owner to test, then move to another dependency-ready area.
+The owner's hands-on workflow testing determines which refinements are actually
+needed. Prolonged polishing before that feedback wastes effort when the workflow
+is subsequently changed.
+
+- Define a bounded, usable end-to-end outcome before starting a batch. Reach a
+  representative working workflow, fix demonstrated blockers to that workflow,
+  and run the relevant grouped checks. Do not require exhaustive edge-case closure
+  or completion of every subtask before moving on.
+- At that checkpoint, record what works, how the owner can test it, and the known
+  limitations. Distinguish **ready for owner testing** from **owner accepted** and
+  from full specification completion; leave unverified acceptance gates open.
+- Then rotate to another authorized, dependency-ready section or item family.
+  Do not keep generating successive microtasks, speculative audits, extra polish
+  or broader regression campaigns merely because more improvements can be imagined.
+- Resume refinement in response to owner testing, a demonstrated blocker, or a
+  concrete dependency needed for another authorized workflow. State that reason
+  before extending work in the same area. Hypothetical defects are not blockers.
+- If a section stalls, record the blocker and move to useful independent work.
+  Waiting for owner feedback on one workflow does not stop progress elsewhere.
+- Continue batching related tasks before costly builds. This directive governs
+  work selection across the roadmap, including F001-F127 and phase 16; it does not
+  waive necessary checks for known correctness or data-integrity problems.
+
 ## Current focus
 
 - Current product batch: phase 6 indexed STL CAM output (6.4.3), advancing
