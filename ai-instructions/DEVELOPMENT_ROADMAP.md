@@ -30,6 +30,12 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 queued ribbon refinement: compact primary/secondary/rare action
+  hierarchy implemented in source, with nine source-overlay Qt checks passing.
+  The owner withholds October 2 build incorporation until explicitly requested.
+  [WORK_STATE](WORK_STATE.md) records this separately from the delivered build;
+  [UI specification](UI_UX_SPEC.md#toolbar-ui-styles) owns the standing UX rule.
+
 - October 2 owner build checkpoint: all implemented application changes through
   `52495b0cb2` are incorporated in a separate dated Windows x64 Release runtime.
   ALL_BUILD succeeds; final staged-copy validation passes 103 executions (101

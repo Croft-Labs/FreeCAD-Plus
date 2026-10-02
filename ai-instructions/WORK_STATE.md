@@ -1,5 +1,38 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: compact ribbon source changes awaiting owner incorporation
+
+Owner explicitly directs that new changes be made in source and incorporated into
+the October 2 build only when requested. PlusRibbon now uses a single row of large
+primary buttons spanning three small-icon rows. Primary buttons are 76 x 76 logical
+pixels with 32-pixel icons and bounded captions; secondary buttons are 24 x 24
+with icon-only presentation. Commands align in three-row grids, retaining section
+labels and horizontal overflow. Clear primary captions include New file, Add part
+and Auto Dimension without renaming shared native menu actions.
+
+Extrude/Revolve, Pattern/Fillet and selected common workflow actions have priority.
+Specific dimensions share an Auto Dimension menu, including vertical, horizontal,
+angle, radius and diameter, with other native dimension choices retained. Additive
+and subtractive Loft/Pipe/Helix variants share secondary dropdowns; rare Help
+commands share a menu. Existing native compound menus and QAction state/shortcuts
+are preserved. The action hierarchy is recorded as a standing rule for every new
+or modified interface in UI_UX_SPEC and DEVELOPMENT_GUIDELINES.
+
+Nine source-overlay Qt checks pass, zero failures/errors/skips and process exit
+zero: `D:\Temp\Office-PC\freecad-plus-ribbon-compact-20261002\final-caption`.
+Covers grid positions/sizes, bounded height, native action identity/state, dimension
+and rare-choice menus, actual Home commands, mode/tab/task routing, workbench
+initialization, narrow-window scrolling and Classic visibility restoration.
+Final Home/Modeling/Sketch captures were reviewed.
+Visual review found an initial Qt caption override; the final button class restores
+its separate caption after default-action assignment and native action changes.
+Explicit New file/Add part label checks now pass, and inherited fonts are measured
+after parenting controls. The native preference-page
+payload test is deliberately excluded from this source-only run; it remains part
+of the next owner-authorized build validation. No native build or runtime staging.
+The October 2 launcher, ribbon runtime file and portable ZIP remain unchanged.
+Physical gestures, themes and broader DPI acceptance remain separate.
+
 ## October 2: new owner test build
 
 All implemented application changes through `52495b0cb2` are incorporated in a

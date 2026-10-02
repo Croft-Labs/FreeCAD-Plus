@@ -19,6 +19,22 @@ translatable; quantity fields retain FreeCAD's unit and expression behavior.
 
 ### Toolbar UI styles
 
+**Standing owner UX directive (October 2, 2026):** apply action hierarchy to all
+new or modified UI. Give the most commonly used actions visual priority, keep
+secondary actions compact and collect infrequent related choices in dropdowns.
+Keep choices discoverable through tooltips, accessible names and meaningful groups;
+preserve native command states and shortcuts. Do not give every operation equal
+visual weight or expand every rare variant into a separate labeled button.
+
+For Plus ribbon sections, primary commands such as Extrude and Revolve occupy
+one row of large buttons spanning the section's three-row grid. Secondary commands
+use small icons without visible name text, stacked in three rows with as many
+columns as required. Large-button captions have a bounded width (76 logical pixels
+including button padding); retain full names in tooltips/accessibility when
+elided. Align buttons to a consistent grid. Related variants share dropdowns:
+Auto Dimension is the default dimension action, with vertical, horizontal, angle,
+radius and diameter choices and less common dimension types in its menu.
+
 Edit > Preferences > General includes UI style: **Plus UI** and **Classic UI**.
 Plus UI is the default when no UI style is saved. Preserve an explicitly saved
 Classic UI choice and its existing workbench toolbar presentation. Apply/OK switches immediately and persists the
@@ -43,8 +59,9 @@ standard view orientation/fit and display controls. Unavailable workbench tabs
 are disabled. Other modes use Home, Tools and View; Tools preserves that mode's
 native workbench command groups.
 
-The ribbon presents native command icons and captions beneath them, labeled
-sections and native group-action dropdowns. It shares QAction enablement, checked
+The ribbon presents primary native command icons with bounded captions beneath
+them, secondary icons in three rows, labeled sections and grouped dropdowns.
+It shares QAction enablement, checked
 state, tooltips, shortcuts and operation lifecycle with menus/Classic toolbars.
 Horizontal scrolling keeps sections reachable in a narrow window; the mode and
 tabs remain at the top. Preserve Classic toolbar visibility across mode switches

@@ -163,6 +163,13 @@ When an upstream edit makes a reference ambiguous, report it and offer repair. A
 
 ## 7. Preserve the requested workflow while testing defaults
 
+Standing owner direction (2026-10-02): apply the action hierarchy in
+[the UI specification](UI_UX_SPEC.md#toolbar-ui-styles) to every new or modified
+interface. Prioritize common actions, use compact secondary controls and group
+rare related choices in dropdowns. Ribbon changes use one row of large primary
+buttons and three rows of small icons, with bounded captions and native command
+states. This is an ongoing UX rule, not permission to redesign unrelated screens.
+
 Keep capabilities, default choices, and storage implementation distinct.
 
 - Support part-owned history and a part definition containing both geometry and child occurrences.

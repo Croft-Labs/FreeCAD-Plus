@@ -11,7 +11,76 @@ DESIGN_WORKBENCHES = {
     "Surface": "SurfaceWorkbench", "Sketch": "SketcherWorkbench", "Mesh": "MeshWorkbench",
 }
 STANDARD = {"File", "Edit", "Clipboard", "Workbench", "Macro", "View", "Individual Views", "Structure", "Help"}
+SMALL_BUTTON_SIZE = 24
+GRID_SPACING = 2
+GRID_ROWS = 3
+PRIMARY_WIDTH = GRID_HEIGHT = GRID_ROWS * SMALL_BUTTON_SIZE + (GRID_ROWS - 1) * GRID_SPACING
+# Presentation priority only: every operation still uses its native QAction.
+PRIMARY_COMMANDS = {
+    "Std_NewComponentDocument", "Std_Open", "Std_Save", "Std_Part",
+    "PartDesign_NewSketch", "Sketcher_NewSketch", "Sketcher_EditSketch",
+    "PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Pattern", "PartDesign_Fillet",
+    "Sketcher_CreatePolyline", "Sketcher_CompLine", "Sketcher_CreateRectangle",
+    "Sketcher_CompCreateRectangles", "Sketcher_Dimension",
+    "Std_ViewFitAll", "Draft_Line", "Draft_Wire", "Path_Job", "CAM_Job",
+    "TechDraw_NewPageDefault", "Surface_ExtendFace", "Mesh_Import",
+}
+DIMENSION_CHOICES = (
+    "Sketcher_Dimension", "Sketcher_ConstrainDistanceY", "Sketcher_ConstrainDistanceX",
+    "Sketcher_ConstrainAngle", "Sketcher_ConstrainRadius", "Sketcher_ConstrainDiameter",
+    "Sketcher_ConstrainDistance", "Sketcher_ConstrainRadiam", "Sketcher_ConstrainLock",
+    "Sketcher_ConstrainSnellsLaw",
+)
+COMMAND_FAMILIES = (
+    ("Sketcher_Dimension",
+     DIMENSION_CHOICES + ("Sketcher_CompDimensionTools", "Sketcher_CompConstrainRadDia"), DIMENSION_CHOICES),
+    ("PartDesign_AdditiveLoft", ("PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft"),
+     ("PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft")),
+    ("PartDesign_AdditivePipe", ("PartDesign_AdditivePipe", "PartDesign_SubtractivePipe"),
+     ("PartDesign_AdditivePipe", "PartDesign_SubtractivePipe")),
+    ("PartDesign_AdditiveHelix", ("PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix"),
+     ("PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix")),
+)
 _ribbon = None
+
+
+def projected_commands(commands):
+    """Collapse related choices without changing native toolbar preferences."""
+    emitted = set()
+    for name in commands:
+        if name == "Separator":
+            continue
+        family = next((item for item in COMMAND_FAMILIES if name in item[1]), None)
+        root, choices = (family[0], family[2]) if family else (name, None)
+        if root not in emitted:
+            emitted.add(root)
+            yield root, choices
+
+
+def native_actions(name):
+    command = Gui.Command.get(name)
+    return command.getAction() if command else []
+
+
+class RibbonButton(QtWidgets.QToolButton):
+    """Keep a presentation caption separate from the shared native action text."""
+    def __init__(self, caption=None, parent=None):
+        super().__init__(parent)
+        self.caption = caption
+
+    def setDefaultAction(self, action):
+        super().setDefaultAction(action)
+        self.restore_caption()
+
+    def restore_caption(self):
+        if self.caption:
+            self.setText(self.caption)
+            self.setAccessibleName(self.caption.replace("\n", " "))
+
+    def actionEvent(self, event):
+        super().actionEvent(event)
+        if self.caption and event.type() in (QtCore.QEvent.ActionAdded, QtCore.QEvent.ActionChanged):
+            self.restore_caption()
 
 
 def tr(text):
@@ -75,7 +144,9 @@ class Ribbon(QtCore.QObject):
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.scroll.setMinimumHeight(160)
+        self.scroll.setMinimumWidth(0)
+        self.scroll.setFixedHeight(GRID_HEIGHT + self.widget.fontMetrics().height() + 6
+                                   + self.widget.style().pixelMetric(QtWidgets.QStyle.PM_ScrollBarExtent))
         layout.addWidget(self.scroll)
         self.widget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         self.toolbar.addWidget(self.widget)
@@ -230,52 +301,103 @@ class Ribbon(QtCore.QObject):
             self.render_timer.start(100)
             return
         self.hide_bars()
-        page = QtWidgets.QWidget()
+        page = QtWidgets.QWidget(self.scroll)
         layout = QtWidgets.QHBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         for title, commands in self.groups():
-            group = QtWidgets.QWidget()
+            group = QtWidgets.QWidget(page)
             group.setObjectName("PlusRibbonGroup")
             group_layout = QtWidgets.QVBoxLayout(group)
-            group_layout.setContentsMargins(7, 3, 7, 3)
+            group_layout.setContentsMargins(5, 2, 5, 2)
+            group_layout.setSpacing(2)
             grid = QtWidgets.QGridLayout()
-            grid.setSpacing(2)
-            count = 0
-            for command_name in commands:
-                if command_name == "Separator":
-                    continue
-                command = Gui.Command.get(command_name)
-                actions = command.getAction() if command else []
+            grid.setContentsMargins(0, 0, 0, 0)
+            grid.setSpacing(GRID_SPACING)
+            grid.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+            buttons = []
+            for command_name, choices in projected_commands(commands):
+                actions = native_actions(command_name)
                 if not actions:
                     continue
-                button = QtWidgets.QToolButton()
+                captions = {"Std_NewComponentDocument": tr("New file"),
+                            "Std_Part": tr("Add part"), "Sketcher_Dimension": tr("Auto\ndimension")}
+                button = RibbonButton(captions.get(command_name), group)
                 button.setObjectName("Ribbon_" + command_name)
                 button.setAutoRaise(True)
-                button.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
-                button.setIconSize(QtCore.QSize(28, 28))
                 button.setDefaultAction(actions[0])
+                primary = command_name in PRIMARY_COMMANDS
+                button.setProperty("ribbonPriority", "primary" if primary else "secondary")
+                button.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon if primary else QtCore.Qt.ToolButtonIconOnly)
+                button.setIconSize(QtCore.QSize(32, 32) if primary else QtCore.QSize(20, 20))
+                if primary:
+                    button.setFixedSize(PRIMARY_WIDTH, GRID_HEIGHT)
+                else:
+                    button.setFixedSize(SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE)
+                if choices:
+                    actions = []
+                    for name in choices:
+                        available = native_actions(name)
+                        if available:
+                            actions.append(available[0])
                 if len(actions) > 1:
                     menu = QtWidgets.QMenu(button)
                     for action in actions:
                         menu.addAction(action)
                     button.setMenu(menu)
                     button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
-                grid.addWidget(button, count % 2, count // 2)
-                count += 1
-            if not count:
+                buttons.append((button, primary))
+            if title == "Help" and buttons:
+                # Rare help operations share one icon; choices retain native states.
+                menu_button = QtWidgets.QToolButton(group)
+                menu_button.setObjectName("Ribbon_Group_Help")
+                menu_button.setAutoRaise(True)
+                menu_button.setText(tr("Help"))
+                menu_button.setToolTip(tr("Help"))
+                menu_button.setIcon(buttons[0][0].icon())
+                menu_button.setIconSize(QtCore.QSize(20, 20))
+                menu_button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+                menu_button.setFixedSize(SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE)
+                menu_button.setProperty("ribbonPriority", "secondary")
+                menu = QtWidgets.QMenu(menu_button)
+                for button, _ in buttons:
+                    menu.addAction(button.defaultAction())
+                    if button.menu():
+                        for action in button.menu().actions():
+                            if action not in menu.actions():
+                                menu.addAction(action)
+                    button.deleteLater()
+                menu_button.setMenu(menu)
+                menu_button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+                buttons = [(menu_button, False)]
+            if not buttons:
                 group.deleteLater()
                 continue
+            primaries = [button for button, primary in buttons if primary]
+            secondary = [button for button, primary in buttons if not primary]
+            for column, button in enumerate(primaries):
+                grid.addWidget(button, 0, column, GRID_ROWS, 1)
+            for index, button in enumerate(secondary):
+                grid.addWidget(button, index % GRID_ROWS, len(primaries) + index // GRID_ROWS)
+            for row in range(GRID_ROWS):
+                grid.setRowMinimumHeight(row, SMALL_BUTTON_SIZE)
             group_layout.addLayout(grid)
             caption = {"Part Design Modeling Features": "Modeling", "Part Design Transformation Features": "Transformation",
                        "Part Design Dress-Up Features": "Dress-Up", "Part Design Helper Features": "Helpers"}.get(title, title)
-            label = QtWidgets.QLabel(tr(caption) if caption != title else App.Qt.translate("Workbench", title))
+            label = QtWidgets.QLabel(tr(caption) if caption != title else App.Qt.translate("Workbench", title), group)
+            label.setToolTip(label.text())
+            caption_width = max(grid.sizeHint().width(),
+                                min(PRIMARY_WIDTH, label.fontMetrics().horizontalAdvance(label.text()) + 2))
+            label.setText(label.fontMetrics().elidedText(label.text(), QtCore.Qt.ElideRight, caption_width))
+            label.setFixedHeight(label.fontMetrics().height())
             label.setAlignment(QtCore.Qt.AlignCenter)
             group_layout.addWidget(label)
-            layout.addWidget(group)
-            separator = QtWidgets.QFrame()
+            group.setFixedHeight(GRID_HEIGHT + label.fontMetrics().height() + 6)
+            layout.addWidget(group, 0, QtCore.Qt.AlignTop)
+            separator = QtWidgets.QFrame(page)
             separator.setFrameShape(QtWidgets.QFrame.VLine)
-            layout.addWidget(separator)
+            separator.setFixedHeight(group.height())
+            layout.addWidget(separator, 0, QtCore.Qt.AlignTop)
         layout.addStretch()
         old = self.scroll.takeWidget()
         self.scroll.setWidget(page)

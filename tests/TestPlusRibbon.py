@@ -17,6 +17,16 @@ if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1":
     overlay = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(overlay)
     name = "freecad.gui.PlusRibbon"
+    previous = sys.modules.get(name)
+    old_ribbon = getattr(previous, "_ribbon", None)
+    if old_ribbon:
+        old_ribbon.enabled = False
+        old_ribbon.render_timer.stop()
+        old_ribbon.restore_bars()
+        old_ribbon.window.workbenchActivated.disconnect(old_ribbon.workbench_changed)
+        old_ribbon.window.removeToolBar(old_ribbon.toolbar)
+        old_ribbon.toolbar.deleteLater()
+        old_ribbon.deleteLater()
     spec = importlib.util.spec_from_file_location(name, source / "src/Gui/PlusRibbon.py")
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
@@ -85,6 +95,8 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertEqual([self.ribbon.tabs.tabData(i) for i in range(self.ribbon.tabs.count())], list(UI.DESIGN_TABS))
         self.assertTrue(self.ribbon.enabled)
         self.assertFalse(self.ribbon.toolbar.isHidden())
+        self.assertEqual(self.button("Std_NewComponentDocument").text(), "New file")
+        self.assertEqual(self.button("Std_Part").text(), "Add part")
         for name in ("Std_Open", "Std_Save", "Std_Undo", "Std_Part", "PartDesign_NewSketch",
                      "Sketcher_MapSketch", "Sketcher_EditSketch", "PartDesign_AddReferenceObject"):
             button = self.button(name)
@@ -167,18 +179,83 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertTrue(self.ribbon.scroll.widget().findChildren(QtWidgets.QToolButton))
 
     def testNarrowWindowAndNativeDropdownAction(self):
-        self.tab("Modeling")
+        self.tab("Home")
         window = Gui.getMainWindow()
-        window.resize(900, 800)
+        window.resize(650, 800)
         settle()
         scroll = self.ribbon.scroll.horizontalScrollBar()
         self.assertGreater(scroll.maximum(), 0)
         scroll.setValue(scroll.maximum())
+        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-narrow.png"))
+        self.tab("Modeling")
         button = self.button("PartDesign_CompPrimitiveAdditive")
         self.assertIsNotNone(button.menu())
         self.assertEqual(button.menu().actions(), Gui.Command.get("PartDesign_CompPrimitiveAdditive").getAction())
         self.assertIsNotNone(self.button("PartDesign_Fillet"))
-        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-narrow.png"))
+
+    def testCompactPrimaryAndSecondaryGrid(self):
+        self.tab("Modeling")
+        for name in ("PartDesign_Extrude", "PartDesign_Revolution"):
+            button = self.button(name)
+            self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonTextUnderIcon)
+            self.assertEqual(button.width(), UI.PRIMARY_WIDTH)
+            self.assertEqual(button.height(), UI.GRID_HEIGHT)
+        first = self.button("PartDesign_Extrude")
+        second = self.button("PartDesign_Revolution")
+        self.assertEqual(first.y(), second.y())
+        groups = self.ribbon.scroll.widget().findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+        for group in groups:
+            grid = group.layout().itemAt(0).layout()
+            for i in range(grid.count()):
+                button = grid.itemAt(i).widget()
+                row, column, rows, columns = grid.getItemPosition(i)
+                if button.property("ribbonPriority") == "primary":
+                    self.assertEqual((row, rows, columns), (0, 3, 1))
+                else:
+                    self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
+                    self.assertEqual((button.width(), button.height()), (24, 24))
+                    self.assertLess(row, 3)
+                    self.assertEqual((rows, columns), (1, 1))
+                self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
+                self.assertLessEqual(button.geometry().bottom(), group.height())
+        self.assertLess(self.ribbon.toolbar.height(), 170)
+        for name in ("PartDesign_SubtractiveLoft", "PartDesign_SubtractivePipe", "PartDesign_SubtractiveHelix"):
+            self.assertIsNone(self.button(name), "Rare variants belong in the family menu")
+        self.assertIn(Gui.Command.get("PartDesign_SubtractiveLoft").getAction()[0],
+                      self.button("PartDesign_AdditiveLoft").menu().actions())
+
+    def testAutoDimensionChoicesAndSharedNativeStates(self):
+        self.tab("Sketch")
+        button = self.button("Sketcher_Dimension")
+        self.assertIsNotNone(button)
+        self.assertEqual(button.defaultAction(), Gui.Command.get("Sketcher_Dimension").getAction()[0])
+        self.assertEqual(button.text().replace("\n", " "), "Auto dimension")
+        self.assertEqual(button.popupMode(), QtWidgets.QToolButton.MenuButtonPopup)
+        expected = [Gui.Command.get(name).getAction()[0] for name in UI.DIMENSION_CHOICES]
+        self.assertEqual(button.menu().actions(), expected)
+        for name in UI.DIMENSION_CHOICES[1:]:
+            self.assertIsNone(self.button(name), "Specific dimensions are menu choices")
+        action = button.defaultAction()
+        native_text = action.text()
+        Gui.Command.update()
+        self.assertEqual(button.text().replace("\n", " "), "Auto dimension")
+        self.assertEqual(action.text(), native_text, "Ribbon captions must not rename native menus")
+        self.assertEqual(button.isEnabled(), action.isEnabled())
+        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-sketch.png"))
+
+    def testRareHelpCommandsRemainAccessible(self):
+        self.tab("Home")
+        button = self.button("Group_Help")
+        if not button:
+            return  # A workbench may expose no Help toolbar commands.
+        self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
+        self.assertEqual(button.popupMode(), QtWidgets.QToolButton.InstantPopup)
+        commands = dict(self.ribbon.groups())["Help"]
+        for name in commands:
+            if name != "Separator" and Gui.Command.get(name):
+                actions = Gui.Command.get(name).getAction()
+                if actions:
+                    self.assertIn(actions[0], button.menu().actions())
 
     @unittest.skipIf(os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1", "Native General preference requires grouped build")
     def testNativeGeneralPreferenceApplyAndCancel(self):

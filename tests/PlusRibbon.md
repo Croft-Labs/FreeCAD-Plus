@@ -26,6 +26,13 @@ within that parent. Do not enable source overlays for these phases.
    Surface/Sketch/Mesh show their native toolbar groups; View exposes fit,
    orientation and display. Narrow the window and use horizontal scrolling to
    reach every section without moving the mode dropdown/tab strip.
+   Primary operations (including Extrude/Revolve) share one row of large buttons,
+   each spanning the three-row grid. Secondary buttons have icons only and fill
+   three rows; primary captions have a 76 logical pixel button-width limit.
+   Help uses one dropdown. Loft/Pipe/Helix variants share menus. In Sketch,
+   Auto Dimension is the primary dimension action; its dropdown offers vertical,
+   horizontal, angle, radius, diameter and less common native dimension types.
+   Verify full tooltips and native enabled/checked states remain available.
 4. Use Draft and CAM modes, and available Assembly/Drawing/other installed modes.
    Non-Design modes have Home, Tools and View; Tools preserves workbench sections.
    FEM is conditional on the registered workbench (the initial 9/28 configuration
@@ -41,3 +48,12 @@ dropdowns and Classic visibility restoration. Mocked addon discovery is evidence
 for conditional mode mapping only, not acceptance of an installed printing addon.
 Physical touch/keyboard, dark themes, screen-reader and multi-monitor DPI behavior
 remain owner acceptance gates.
+
+When the owner defers build incorporation, run the nine non-preference tests in
+`TestPlusRibbon.py` with `FREECAD_PLUS_PROFILE_SOURCE=1`, `-RibbonSmoke` and an
+explicit `-TestNames` list. Exclude `testNativeGeneralPreferenceApplyAndCancel`,
+which requires a runtime-loaded module. The overlay removes the existing ribbon
+object before loading source; test files/settings stay in a new evidence folder.
+This verifies source against the fork's native Qt/actions without copying any
+changed module into the owner build. Record source validation and deferred
+build/payload acceptance separately.

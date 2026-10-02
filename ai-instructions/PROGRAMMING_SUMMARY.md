@@ -6,7 +6,14 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-October 2: A separate dated owner build now incorporates all implemented changes;
+October 2 pending source batch: Plus Ribbon now uses large primary actions,
+three-row secondary icon grids and grouped dimension/variant choices. Nine
+source-overlay checks pass. The hierarchy is a standing UI rule. Incorporation
+into the October 2 build awaits the owner's explicit instruction; see
+[WORK_STATE](WORK_STATE.md).
+
+October 2 delivered checkpoint: the separate dated owner build incorporates
+application changes through `52495b0cb2`;
 all enabled native targets built successfully and the final staged copy passes
 103 check executions plus launcher/save/reopen. [WORK_STATE](WORK_STATE.md) records
 the runtime/portable ZIP paths and exact identity. New Sketch supports existing
