@@ -1523,6 +1523,7 @@ set(FreeCADGui_Scripts
     CommandSearch.py
     ComponentSelection.py
     ComponentNavigator.py
+    PlusRibbon.py
     ComponentExtrudeTask.py
     ComponentSketchTask.py
     ProjectPackage.py

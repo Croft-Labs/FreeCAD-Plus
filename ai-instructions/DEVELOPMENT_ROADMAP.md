@@ -2611,30 +2611,30 @@ Remaining integration is dependency ordered, with this milestone retaining prior
 - [   ] 7.8.7v Owner follow-up: restore the top-level component first in Assembly
   Structure (Part001 by default), with linked occurrences beneath its permanent
   selectable/editable root row. Custom names, empty assemblies, instance counts
-  and safe instance-only deletion retained. Source-overlay navigator/context and
-  root regression checks pass; see WORK_STATE. Running 9/28 payload unchanged;
-  grouped script/resource staging and owner acceptance remain pending.
+  and safe instance-only deletion retained. Incorporated in the October 2 grouped
+  9/28 payload update; native navigator/root checks pass. See WORK_STATE. Physical
+  owner acceptance remains pending.
 - [   ] 7.8.7w Owner follow-up: rename Assembly Structure to Part Tree and Model
   History to History. Add Reference Object is a modeling operation command/button
   beside Extrude in Part Design/Part, removed from creation context menus; repair
   retained. Default active-component origin visibility on entry, with manual eye
   hiding preserved through refresh. Source and 42 overlay navigator/context checks
-  pass. Batch native PartGui/PartDesignGui/resource/scripts update with 7.8.7v;
-  owner-running 9/28 payload unchanged. See WORK_STATE; native/owner acceptance pending.
+  pass. Native PartGui/PartDesignGui/resource/scripts update incorporated October 2;
+  native command/menu and origin checks pass. See WORK_STATE; physical owner acceptance pending.
 - [   ] 7.8.7x Owner follow-up: Part Tree Cut/Paste and drag/drop rearrange existing
   instance links with sibling ordering, safe reparenting, grouped/multiple selection,
   placement preservation, stable identities, protected root, Undo/Redo and persistence.
   Referenced/constrained, driven/scaled and path-overridden reparenting is refused
   rather than silently invalidating relationships; shared-definition ownership retained.
   Nine focused source-overlay checks and 42 broader component checks pass. Source
-  refresh disposal fix passes repeated moves/rebuilds. Running 9/28 payload unchanged;
-  batch staging with 7.8.7v/w and native/physical acceptance pending. See WORK_STATE.
+  refresh disposal fix passes repeated moves/rebuilds. Incorporated October 2 in
+  the 9/28 payload; nine native movement checks pass. Physical acceptance pending.
 - [   ] 7.8.7y Owner follow-up: Origin Planes child in History controls native
   XY/XZ/YZ planes together, hidden on component entry, independently toggleable
   and undoable. Origin/planes are permanent; protect native Delete and occurrence
-  selection routing as well as History actions. Source implemented; automated
-  evidence and queued native/owner acceptance are recorded in WORK_STATE. Batch
-  with 7.8.7v/w/x while the owner-running payload is closed.
+  selection routing as well as History actions. Incorporated October 2; compiled
+  Delete guard also passes with the Python adapter bypassed and mixed selections.
+  Native evidence and pending physical acceptance are recorded in WORK_STATE.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
@@ -4282,6 +4282,19 @@ preceded grouped testing using engine 2df76790b4; no native build or release cha
   button mnemonics and window-only Reset layout preserve document state and global
   fonts/shortcuts. Validate reading, wrong workbench, empty/no-document recovery,
   unchanged geometry/selection/Undo history, and existing native Pocket lifecycle.
+
+- [ X ] 10.9c Owner-authorized Plus UI / Classic UI preference in native General:
+  immediate Apply/OK and persisted selection; Plus mode dropdown and Design tabs
+  Home/Modeling/Surface/Sketch/Mesh/View, grouped native actions, optional FEM/
+  printing modes and reversible Classic toolbar visibility. Source and grouped
+  9/28 payload updated October 2. Six native ribbon checks and three cold-start
+  processes pass; exact build/payload evidence is recorded in WORK_STATE.
+- [   ] 10.9d Validate native General Apply/Cancel, startup/style persistence,
+  actual task buttons, availability/dropdowns, mode/task context, narrow-window
+  scrolling and Classic restoration across workbench switches. Native automated
+  checks pass October 2; source/payload hashes agree. Physical keyboard,
+  themes, DPI and installed printing-addon acceptance remain separate gates.
+  See [owner procedure](../tests/PlusRibbon.md).
 
 10.9a/b evidence (2026-10-01): both tasks preceded one successful
 FreeCADGui_Resources build/staging pass in the existing local build. Python-only

@@ -34,6 +34,7 @@
 
 #include <App/Document.h>
 #include <Base/Parameter.h>
+#include <Base/Interpreter.h>
 #include <Base/UnitsApi.h>
 
 #include <Gui/Document.h>
@@ -262,6 +263,8 @@ void DlgSettingsGeneral::saveSettings()
 
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("General");
     QVariant size = ui->toolbarIconSize->itemData(ui->toolbarIconSize->currentIndex());
+    hGrp->SetASCII("ToolbarUIStyle", ui->toolbarUIStyle->currentIndex() == 0 ? "Plus" : "Classic");
+    Base::Interpreter().runString("from freecad.gui import PlusRibbon\nPlusRibbon.apply_preferences()\n");
     int pixel = size.toInt();
     hGrp->SetInt("ToolbarIconSize", pixel);
     getMainWindow()->setIconSize(QSize(pixel, pixel));
@@ -313,6 +316,7 @@ void DlgSettingsGeneral::loadSettings()
     // search for the language files
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("General");
     auto langToStr = Translator::instance()->activeLanguage();
+    ui->toolbarUIStyle->setCurrentIndex(hGrp->GetASCII("ToolbarUIStyle", "Classic") == "Plus" ? 0 : 1);
     QByteArray language = hGrp->GetASCII("Language", langToStr.c_str()).c_str();
 
     localeIndex = ui->UseLocaleFormatting->currentIndex();

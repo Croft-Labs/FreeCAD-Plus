@@ -182,6 +182,20 @@ class TestComponentModelsPane(unittest.TestCase):
         Gui.runCommand("Std_Delete")
         self.assertTrue(all(self.doc.getObject(name) for name in names))
         self.assertEqual(self.root.Origin, origin)
+        if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") != "1":
+            # Bypass the Python navigator adapter to prove the compiled guard,
+            # including a mixed selection that should still delete ordinary work.
+            for obj in [origin] + Navigator.origin_planes(origin):
+                loose = self.doc.addObject("Part::Feature", "Disposable")
+                loose.Shape = Part.makeBox(1, 1, 1)
+                loose_name = loose.Name
+                Gui.Selection.clearSelection()
+                Gui.Selection.addSelection(obj)
+                Gui.Selection.addSelection(loose)
+                with patch.object(Navigator, "_dock", None):
+                    Gui.runCommand("Std_Delete")
+                self.assertIsNone(self.doc.getObject(loose_name))
+                self.assertTrue(all(self.doc.getObject(name) for name in names))
         Gui.Selection.clearSelection()
         self.panel.history.topLevelItem(0).child(0).setSelected(True)
         QtWidgets.QApplication.sendEvent(self.panel.history,

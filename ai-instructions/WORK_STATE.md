@@ -1,5 +1,58 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 1-2 grouped update: Plus UI / Classic UI and queued component feedback
+
+Owner-authorized ribbon UI is implemented and incorporated into the existing
+September 28 build, together with 7.8.7v/w/x/y root ordering, Part Tree/History,
+reference operation, Cut/Paste/drag/drop and Origin Planes/deletion protection.
+Edit > Preferences > General > UI style offers Plus UI and Classic UI. Classic
+remains the default until selected; Apply/OK switches immediately and persists.
+Plus adds the mode selector and Design Home/Modeling/Surface/Sketch/Mesh/View
+ribbon tabs, grouped native commands and horizontal scrolling. Non-Design modes
+reuse Home/Tools/View plus their workbench sections. Installed modes are discovered
+from registered workbenches, including conditional FEM and printing addons.
+Current payload modes: Design, Assembly, CAM, Draft, Material, Part, Spreadsheet,
+Drawing and Test Framework. BUILD_FEM is off and no printing addon is registered;
+no empty placeholders or new addon installation. Native QAction ownership,
+enablement, checked states, dropdowns and command lifecycle are retained. Native
+getAction now initializes actions lazily for commands not previously presented.
+Classic toolbar visibility is preserved across workbench switches and cold restart.
+
+Grouped incremental App/Gui/resources/PartGui/PartDesignGui/SketcherGui/PartScripts
+build succeeded in `D:\Temp\Office-PC\freecad-plus-ribbon-build-fixed-20261001`.
+The initial build in `freecad-plus-ribbon-build-20261001` exposed a const-pointer
+error in the previously queued Origin guard; corrected before resuming the same
+directory. Initial overlay smoke fixtures used activeDialog as an object and did
+not wait for native delayed action updates; corrected. A modal Add Component test
+process was stopped and replaced with controlled input-dialog answers. Failed
+evidence retained. Four initial overlay workflows passed before native validation.
+Final mode mapping was synchronized after the resource target; exact hashes agree.
+
+62 distinct native checks pass without source overlays:
+- Six ribbon command/mode/tab/Classic/task/narrow/dropdown/native General Apply/
+  Cancel checks in `freecad-plus-ribbon-final-20261002` (prior same six pass in
+  `freecad-plus-ribbon-native-20261002`; final repeats add settled preference captures).
+- Three successive cold processes in `freecad-plus-ribbon-cold-20261002`:
+  Bootstrap, Plus and Classic preserve style and previous hidden toolbar state.
+- 44 navigator/context checks in `freecad-plus-ribbon-components-20261002`, including
+  the compiled Origin/plane Delete guard with Python routing bypassed and mixed
+  selections, reference command, sketch display/Cancel, context, save/Undo and recovery.
+- Nine movement checks in `freecad-plus-ribbon-tree-move-20261002` cover native
+  clipboard/drop events, grouped/multiple moves, placement, Undo/Redo and persistence.
+
+Home/Modeling/narrow and native General captures reviewed. Runtime module evidence
+reports matching source hashes and paths within this build, including PlusRibbon.
+The desktop `FreeCAD.exe - Shortcut.lnk` still targets this build's bin executable;
+use the same shortcut. No owner preference file was changed: tests used isolated
+configurations. Physical keyboard/theme/DPI and owner workflow acceptance remain
+pending; no installer, tag or release publication.
+
+Payload SHA-256:
+- FreeCADGui.dll: `60854FFAA3BF37068DE40EB53F02664F9175D52193A978FDC9C8ED8A402C7F7B`
+- PartGui.pyd: `1D231AE3A425507EFEF4828B729FFCDF1FAC0E175E6E2DFA0C91F585759D2463`
+- PartDesignGui.pyd: `164262752BED3CAEC984366356375ADBA97E4C6602F8F181C457E612833DD898`
+- PlusRibbon.py: `A070A57C0B2D10CCC9F0DFD2F79964AD50D99A116FE2B55720749B95EBC147CE`
+
 ## October 1 follow-up: Origin Planes and permanent datum protection (7.8.7y)
 
 History now expands Origin to an Origin Planes child row controlling the existing

@@ -17,6 +17,40 @@ controls use the existing task-dialog and document transaction framework.
 Only one reference-selection mode is active at a time. User-facing text remains
 translatable; quantity fields retain FreeCAD's unit and expression behavior.
 
+### Toolbar UI styles
+
+Edit > Preferences > General includes UI style: **Plus UI** and **Classic UI**.
+Classic UI preserves the existing workbench toolbar presentation and is the default
+until the owner chooses Plus UI. Apply/OK switches immediately and persists the
+choice; Cancel leaves the unapplied selection unchanged. These are application UI
+preferences, separate from document data, themes and geometry operations.
+
+Plus UI replaces the visible toolbars with a top ribbon. A mode dropdown at the
+upper left lists available workflow workbenches, including Design, Draft, CAM,
+Assembly and Drawing where installed. FEM and installed 3D printing workbenches
+are included when registered; do not show invented/unavailable modes. Other
+installed workbenches retain their own labeled mode. Native workbench activation
+keeps the selector synchronized; changing modes during an active task is refused.
+
+Design has **Home, Modeling, Surface, Sketch, Mesh, View**, in that order.
+Home groups File, Edit, Clipboard, Structure, Sketch, common Tools and Help;
+include New/Open/Save/Save As/Import/Export, Undo/Redo/Delete/Recompute/Preferences,
+component/part/group/link structure controls, New Sketch, Attach Sketch, Edit Sketch
+and Validate Sketch. Modeling groups native Part Design Modeling, Transformation,
+Dress-Up and Helper commands, in that order. Surface, Sketch and Mesh reuse the
+toolbar group boundaries of their corresponding native workbenches. View groups
+standard view orientation/fit and display controls. Unavailable workbench tabs
+are disabled. Other modes use Home, Tools and View; Tools preserves that mode's
+native workbench command groups.
+
+The ribbon presents native command icons and captions beneath them, labeled
+sections and native group-action dropdowns. It shares QAction enablement, checked
+state, tooltips, shortcuts and operation lifecycle with menus/Classic toolbars.
+Horizontal scrolling keeps sections reachable in a narrow window; the mode and
+tabs remain at the top. Preserve Classic toolbar visibility across mode switches
+and restoration. Do not apply a global stylesheet or change document ownership,
+selection, geometry or command semantics to implement the ribbon.
+
 ### Planned unified feature interaction
 
 For the [candidate families](DEVELOPMENT_ROADMAP.md#unified-feature-workflows), use

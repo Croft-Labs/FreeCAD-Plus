@@ -27,6 +27,8 @@ param(
     [switch]$CoreSmoke,
     [switch]$AssemblyStructureSmoke,
     [switch]$TreeMoveSmoke,
+    [switch]$RibbonSmoke,
+    [ValidateSet('Bootstrap','Plus','Classic')][string]$RibbonStartupPhase,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -77,11 +79,17 @@ if ($AssemblyStructureSmoke) {
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentModelsPane.py,tests/TestComponentPanelIteration.py,tests/TestComponentSelectionIteration.py,tests/TestComponentEditContext.py,tests/TestComponentTaskContext.py,tests/TestComponentSaveRouting.py,tests/TestComponentUndoRouting.py,tests/TestComponentDisplayContext.py,tests/TestComponentBom.py,tests/TestComponentExternalization.py,tests/TestComponentFileRecovery.py,tests/TestComponentAddCommand.py'
 }
 if ($TreeMoveSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTreeMove.py' }
+if ($RibbonSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestPlusRibbon.py' }
+if ($RibbonStartupPhase) {
+    $env:FREECAD_PLUS_RIBBON_PHASE = $RibbonStartupPhase
+    $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestPlusRibbonStartup.py'
+}
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'
 }
-$launchArgs = @('--hidden', '--user-cfg', ('"' + $OutputDirectory + '\user.cfg"'),
+$userConfig = if ($RibbonStartupPhase) { Join-Path (Split-Path -Parent $OutputDirectory) 'ribbon-user.cfg' } else { Join-Path $OutputDirectory 'user.cfg' }
+$launchArgs = @('--hidden', '--user-cfg', ('"' + $userConfig + '"'),
     '--system-cfg', ('"' + $OutputDirectory + '\system.cfg"'),
     ('"' + $PSScriptRoot + '\ValidateUpstreamIssues.FCMacro"'))
 $process = Start-Process -FilePath $Executable -ArgumentList $launchArgs -WindowStyle Hidden -PassThru `

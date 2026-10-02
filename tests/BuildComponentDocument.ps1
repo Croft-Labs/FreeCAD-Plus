@@ -9,7 +9,7 @@ param(
 $ErrorActionPreference = 'Stop'
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new build evidence directory.' }
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
-$targets = @('FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartDesignGui', 'SketcherGui', 'PartScripts')
+$targets = @('FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartGui', 'PartDesignGui', 'SketcherGui', 'PartScripts')
 if ($ScriptsOnly) { $targets = @('FreeCADGui_Resources', 'PartScripts') }
 if ($AssemblyConsumer) { $targets += @('AssemblyGui', 'AssemblyTests') }
 $showTarget = Test-Path -LiteralPath (Join-Path $BuildDirectory 'src/Mod/Show/Show.vcxproj')

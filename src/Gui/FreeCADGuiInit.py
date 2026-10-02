@@ -603,6 +603,10 @@ del _registerComponentNavigator
 # set standard workbench (needed as fallback)
 Gui.activateWorkbench("NoneWorkbench")
 
+from freecad.gui.PlusRibbon import install as _installPlusRibbon
+_installPlusRibbon()
+del _installPlusRibbon
+
 # Register .py, .FCScript and .FCMacro
 FreeCAD.addImportType("Inventor V2.1 (*.iv *.IV)", "FreeCADGui")
 FreeCAD.addImportType(

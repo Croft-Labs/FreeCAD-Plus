@@ -283,6 +283,9 @@ PyObject* CommandPy::getAction(PyObject* args)
 
     Command* cmd = this->getCommandPtr();
     if (cmd) {
+        // A ribbon can present registered commands before a native menu or
+        // toolbar has requested their action. Reuse the same lazy factory.
+        cmd->initAction();
         Action* action = cmd->getAction();
         auto* group = qobject_cast<ActionGroup*>(action);
 

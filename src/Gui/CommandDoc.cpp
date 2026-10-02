@@ -1678,8 +1678,8 @@ void StdCmdDelete::activated(int iMsg)
                 auto background = dynamic_cast<App::PropertyBool*>(obj->getPropertyByName("BackgroundResult"));
                 auto frozen = dynamic_cast<App::PropertyBool*>(obj->getPropertyByName("Frozen"));
                 auto role = dynamic_cast<App::PropertyString*>(obj->getPropertyByName("ComponentRole"));
-                auto protectedOrigin = [](App::DocumentObject* candidate) {
-                    auto origin = dynamic_cast<App::Origin*>(candidate);
+                auto protectedOrigin = [](const App::DocumentObject* candidate) {
+                    auto origin = dynamic_cast<const App::Origin*>(candidate);
                     if (!origin) {
                         return false;
                     }

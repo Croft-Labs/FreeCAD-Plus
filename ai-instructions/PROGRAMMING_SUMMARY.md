@@ -6,15 +6,16 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-October 1: the initial component feedback batch is incorporated in the existing
-9/28 build; 102 native automated checks passed. Subsequent Part Tree/History and
-reference-button/origin and Cut/Paste/drag/drop feedback is queued while that application is running. [WORK_STATE](WORK_STATE.md) records
+October 2: Plus UI / Classic UI and the queued Part Tree/History/reference/origin
+feedback are incorporated in the existing 9/28 build. The grouped update passed
+62 native automated checks, including three cold startup processes. [WORK_STATE](WORK_STATE.md) records
 exact payload/build/test evidence; physical owner acceptance remains separate.
 
 ## Where to go
 
 | Task or question | Start here | Related reference |
 | --- | --- | --- |
+| Plus UI / Classic UI | [`PlusRibbon.py`](../src/Gui/PlusRibbon.py), [`DlgSettingsGeneral.cpp`](../src/Gui/PreferencePages/DlgSettingsGeneral.cpp), native command actions | Optional mode/ribbon presentation, native workbench sections and reversible Classic toolbar visibility; roadmap 10.9c/d; [owner procedure](../tests/PlusRibbon.md). |
 | Reviewed face extension (F066) | [`ExtendFaceReview.py`](../src/Mod/Surface/ExtendFaceReview.py), [`ExtendFaceGui.py`](../src/Mod/Surface/ExtendFaceGui.py), native `Surface::Extend` | Existing Surface Extend Face command: explicit U/V approximation, view-only preview and transactional associative creation. [Owner procedure](../tests/ExtendFaceReview.md); roadmap 13.1e/f owns validation. |
 | Joint motion/limit review (F076) | [`JointObject.py`](../src/Mod/Assembly/JointObject.py), native Assembly joint task | Relative-motion guidance, exact reference tooltips and enabled-limit refusal/recovery before solver normalization. [Owner procedure](../tests/JointReview.md); roadmap 12.4c/d. |
 | Window/crossing selection (F039) | [`BoxSelection.cpp`](../src/Gui/Selection/BoxSelection.cpp), [`MouseSelection.cpp`](../src/Gui/MouseSelection.cpp) | Full projected enclosure, directional borders and filter-aware native collection. [Owner procedure](../tests/WindowSelection.md); roadmap 10.5g/h. |

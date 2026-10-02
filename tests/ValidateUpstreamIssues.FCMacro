@@ -63,7 +63,7 @@ finally:
     for name in ("ComponentModel", "ComponentSketch", "ComponentExtrude", "ComponentProfile",
                  "ComponentExtent", "ComponentResultView", "freecad.gui.ComponentNavigator",
                  "freecad.gui.ComponentExtrudeTask", "freecad.gui.ComponentSketchTask",
-                 "freecad.gui.ComponentSelection", "freecad.gui.OccurrenceMove"):
+                 "freecad.gui.ComponentSelection", "freecad.gui.OccurrenceMove", "freecad.gui.PlusRibbon"):
         module = sys.modules.get(name)
         filename = getattr(module, "__file__", "")
         if filename:
