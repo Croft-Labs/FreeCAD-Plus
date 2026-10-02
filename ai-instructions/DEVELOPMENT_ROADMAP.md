@@ -30,6 +30,12 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 queued Tasks startup actions: New File/Open at startup, followed by
+  New Sketch/Coordinate System/Datum Plane/Add Component after New File. Native
+  actions, operation dialogs and other-mode/legacy task watchers are preserved.
+  Five native Qt source-overlay checks and four dock-layout checks pass. Source
+  only, awaiting owner-authorized build incorporation; see [WORK_STATE](WORK_STATE.md).
+
 - October 2 queued component workspace layout: startup shows Components above
   Attributes on the left with a 2:1 initial height split, correcting saved floating,
   hidden or tabbed placements. Four native Qt source-overlay checks pass; user

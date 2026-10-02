@@ -8,6 +8,7 @@ from freecad.gui import ComponentSelection as Selection
 
 _dock = None
 _startup_layout = None
+_start_actions = None
 
 
 def tr(text):
@@ -1533,6 +1534,7 @@ class StartupLayout(QtCore.QObject):
         self.applied = True
         self.window.removeEventFilter(self)
         panel = show()
+        install_start_actions()
         attributes = self.window.findChild(QtWidgets.QDockWidget, "Model")
         panel.setFloating(False)
         self.window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, panel)
@@ -1557,6 +1559,107 @@ def install_startup_layout():
     global _startup_layout
     if _startup_layout is None:
         _startup_layout = StartupLayout(Gui.getMainWindow())
+
+
+class StartActionButton(QtWidgets.QToolButton):
+    def __init__(self, caption, parent):
+        self.caption = tr(caption)
+        super().__init__(parent)
+        self.setAccessibleName(self.caption)
+
+    def actionEvent(self, event):
+        super().actionEvent(event)
+        self.setText(self.caption)
+
+
+class StartActions(QtCore.QObject):
+    """Idle Design actions alongside, without replacing, native task watchers."""
+    DESIGN = {"NoneWorkbench", "PartDesignWorkbench", "PartWorkbench",
+              "SketcherWorkbench", "SurfaceWorkbench", "MeshWorkbench"}
+    FILE = (("Std_New", "New File"), ("Std_Open", "Open"))
+    COMPONENT = (("PartDesign_NewSketch", "New Sketch"),
+                 ("Part_CoordinateSystem", "Coordinate System"),
+                 ("Part_DatumPlane", "Datum Plane"), ("Std_Part", "Add Component"))
+
+    def __init__(self, window):
+        super().__init__(window)
+        self.window = window
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.refresh)
+        self.timer.start(150)
+        self.refresh()
+
+    def refresh(self):
+        doc = App.ActiveDocument
+        component_doc = bool(doc and any(
+            getattr(obj, "ComponentRole", "") == "Document" for obj in doc.Objects))
+        design = Gui.activeWorkbench().name() in self.DESIGN
+        choices = self.FILE if doc is None else self.COMPONENT
+        eligible = doc is None or (design and component_doc)
+        if eligible and doc and any(not Gui.Command.get(name) for name, caption in self.COMPONENT):
+            # Load existing command implementations, without switching workbenches.
+            import PartGui
+            import PartDesignGui
+        for view in self.window.findChildren(QtWidgets.QStackedWidget):
+            if view.metaObject().className() != "Gui::TaskView::TaskView":
+                continue
+            idle = view.widget(0)
+            pane = idle.findChild(QtWidgets.QWidget, "ComponentStartActions",
+                                  QtCore.Qt.FindDirectChildrenOnly)
+            scroll = idle.findChild(QtWidgets.QScrollArea)
+            if not pane:
+                if not eligible:
+                    continue
+                pane = QtWidgets.QWidget(idle)
+                pane.setObjectName("ComponentStartActions")
+                layout = QtWidgets.QVBoxLayout(pane)
+                layout.setContentsMargins(12, 12, 12, 12)
+                for command, caption in self.FILE + self.COMPONENT:
+                    actions = Gui.Command.get(command)
+                    if not actions:
+                        continue
+                    for action in actions.getAction()[:1]:
+                        button = StartActionButton(caption, pane)
+                        button.setObjectName(command)
+                        button.setDefaultAction(action)
+                        button.setText(tr(caption))
+                        button.setAccessibleName(tr(caption))
+                        button.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+                        button.setIconSize(QtCore.QSize(24, 24))
+                        button.setSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                             QtWidgets.QSizePolicy.Fixed)
+                        if command == "Std_New":
+                            button.clicked.connect(lambda: Gui.activateWorkbench("PartDesignWorkbench"))
+                        layout.addWidget(button)
+                layout.addStretch()
+                idle.layout().insertWidget(0, pane, 1)
+            # PartDesign commands may load only after the first file is created.
+            names = {command for command, caption in choices}
+            missing = eligible and any(not pane.findChild(QtWidgets.QToolButton, name)
+                                       for name in names)
+            if missing:
+                idle.layout().removeWidget(pane)
+                pane.setObjectName("")
+                pane.hide()
+                pane.deleteLater()
+                continue
+            for button in pane.findChildren(QtWidgets.QToolButton):
+                button.setVisible(button.objectName() in names)
+            pane.setVisible(eligible)
+            if scroll:
+                scroll.setVisible(not eligible)
+            state = ("file" if doc is None else "component:" + doc.Name) if eligible else ""
+            if eligible and pane.property("StartActionState") != state and not Gui.Control.activeDialog():
+                dock = view.parentWidget()
+                if isinstance(dock, QtWidgets.QDockWidget):
+                    dock.show()
+            pane.setProperty("StartActionState", state)
+
+
+def install_start_actions():
+    global _start_actions
+    if _start_actions is None:
+        _start_actions = StartActions(Gui.getMainWindow())
 
 
 def delete_selected_instances():

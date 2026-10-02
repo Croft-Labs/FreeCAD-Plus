@@ -1,5 +1,33 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: idle Tasks actions queued in source
+
+Startup Tasks shows New File and Open with no active document, regardless of the
+saved workbench. Clicking New File runs native Std_New and enters Design; idle
+component Tasks then shows New Sketch, Coordinate System, Datum Plane and Add
+Component, in that order. Compact buttons share native QActions, icons and states.
+The idle panel lives in the native watcher page without replacing its watchers or
+the native task-dialog stack. Editing shows the existing native operation dialog;
+legacy documents and other modes retain their native watcher tools.
+
+Five source-overlay native Qt checks pass, zero failures/errors/skips and clean
+process exit, under
+`D:\Temp\Office-PC\freecad-plus-start-actions-20261002\final-state`.
+Covers exact initial/new-file captions, untitled001/Part001 creation, native action
+identity (including Open), New Sketch handoff/cancel, coordinate-system and datum
+creation/ownership/native OK, Add Component, no-workbench/saved-Draft startup and
+return after closing files, native legacy/Draft watcher visibility, and a single
+active Components panel. Open's native file-picker interaction is not automated.
+Initial test runs exposed unfinished datum test transactions, an unhandled test
+name prompt and mixed runtime/source navigator globals; those harness issues were
+corrected. Earlier evidence is retained. Startup/new-file captures were reviewed.
+The four existing dock-layout checks also pass under `layout-regression` beside
+that evidence. The older ribbon in these screenshots belongs to the untouched
+October 2 executable; the compact ribbon source remains queued separately.
+
+No runtime/ZIP files were staged or rebuilt. Packaged cold-start acceptance and
+owner visual acceptance remain for the next explicitly authorized build update.
+
 ## October 2: component startup layout queued in source
 
 Components initializes when commands register, without needing an open document.

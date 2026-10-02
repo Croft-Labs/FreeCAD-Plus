@@ -14,6 +14,11 @@ opens at startup above Attributes on the left with a 2:1 split; four isolated
 native Qt source-overlay checks pass for the layout and registration; see
 [WORK_STATE](WORK_STATE.md).
 
+Tasks startup actions are also queued in source: New File/Open with no document,
+then New Sketch/Coordinate System/Datum Plane/Add Component in a component's
+idle Design task pane. Five native Qt source-overlay checks cover the command
+handoffs and states; the prior four dock-layout checks also pass.
+
 October 2 delivered checkpoint: the separate dated owner build incorporates
 application changes through `52495b0cb2`;
 all enabled native targets built successfully and the final staged copy passes

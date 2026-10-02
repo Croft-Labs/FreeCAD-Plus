@@ -1521,6 +1521,14 @@ height for Components and one third for Attributes. Restore this initial layout
 after native saved-state restoration, including previously hidden, floating or
 tabbed panels. Users can resize the split afterward; document changes and panel
 Show commands do not reset it.
+With no document open, Tasks shows **New File** and **Open**, including when the
+saved mode is outside Design. New File uses the native New command and enters
+Design; its idle Tasks pane shows **New Sketch**, **Coordinate System**, **Datum
+Plane** and **Add Component**, in that order. These use the existing native sketch,
+datum and component workflows and share command enablement/icons. The buttons
+use compact text beside icons. Native operation dialogs take over during editing;
+the idle actions return after finishing or cancelling. Native task watchers remain
+available for legacy documents and other modes with a document open.
 Add Reference Object is a modeling operation button beside Extrude in Part Design
 and Part; omit its creation action from Part Tree and History context menus.
 Existing reference repair/change-source actions remain available. The operation
