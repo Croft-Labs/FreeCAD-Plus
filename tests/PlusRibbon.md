@@ -45,6 +45,16 @@ within that parent. Do not enable source overlays for these phases.
 5. During New Sketch, try changing modes: keep the current task and component
    context. Cancel, change mode and return to Design. Also activate a workbench
    through the native menu/command search and check ribbon synchronization.
+6. Home Structure includes native Datums (Coordinate System/Plane/Line/Point) and
+   Variable Set. Home Macro is a single dropdown for record, manager and direct
+   execution. Verify their native enabled states and no duplicate full toolbar.
+   Drawing > Tools presents Insert Default Page as a large primary button. Iconless
+   native actions have ribbon-only artwork; action-state refresh must not blank it.
+7. After native incorporation, Pattern offers unified linear/circular plus native
+   concentric Circular, Path and Point choices. Run `testRestoredNativePatternBindings`
+   for command/view-provider/task opening and cancellation, then exercise valid
+   references and acceptance, Undo/Redo and save/reopen in the staged application.
+   The existing ten Circular/Path/Point geometry checks do not prove GUI binding.
 
 Automated tests share native QAction instances, invoke actual operation buttons,
 exercise mode/tab routing, task blocking, native General Apply/Cancel, compound
@@ -53,10 +63,11 @@ for conditional mode mapping only, not acceptance of an installed printing addon
 Physical touch/keyboard, dark themes, screen-reader and multi-monitor DPI behavior
 remain owner acceptance gates.
 
-When the owner defers build incorporation, run the twelve non-preference tests in
+When the owner defers build incorporation, run the fourteen source-compatible tests in
 `TestPlusRibbon.py` with `FREECAD_PLUS_PROFILE_SOURCE=1`, `-RibbonSmoke` and an
 explicit `-TestNames` list. Exclude `testNativeGeneralPreferenceApplyAndCancel`,
-which requires a runtime-loaded module. The overlay removes the existing ribbon
+which requires a runtime-loaded module, and `testRestoredNativePatternBindings`,
+which requires rebuilt C++ bindings. The overlay removes the existing ribbon
 object before loading source; test files/settings stay in a new evidence folder.
 This verifies source against the fork's native Qt/actions without copying any
 changed module into the owner build. Record source validation and deferred

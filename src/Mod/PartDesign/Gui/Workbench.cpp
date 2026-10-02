@@ -424,6 +424,9 @@ Gui::MenuItem* Workbench::setupMenuBar() const
 
     *transformations << "PartDesign_Mirrored"
                      << "PartDesign_Pattern"
+                     << "PartDesign_CircularPattern"
+                     << "PartDesign_PathPattern"
+                     << "PartDesign_PointPattern"
                      << "PartDesign_MultiTransform";
 
     // dressups
@@ -531,6 +534,9 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
 
     *part << "PartDesign_Mirrored"
           << "PartDesign_Pattern"
+          << "PartDesign_CircularPattern"
+          << "PartDesign_PathPattern"
+          << "PartDesign_PointPattern"
           << "PartDesign_MultiTransform";
 
     return root;

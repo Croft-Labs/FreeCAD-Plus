@@ -23,8 +23,16 @@ PRIMARY_COMMANDS = {
     "Sketcher_CreatePolyline", "Sketcher_CompLine", "Sketcher_CreateRectangle",
     "Sketcher_CompCreateRectangles", "Sketcher_Dimension",
     "Std_ViewFitAll", "Draft_Line", "Draft_Wire", "Path_Job", "CAM_Job",
-    "TechDraw_NewPageDefault", "Surface_ExtendFace", "Mesh_Import",
+    "TechDraw_PageDefault", "Surface_ExtendFace", "Mesh_Import",
 }
+ICON_FALLBACKS = {
+    "Std_CommandSearch": "zoom-in.svg",
+    "Std_EntitySelectionFilter": "view-select.svg",
+    "Std_ToolBarMenu": "preferences-workbenches.svg",
+    "Std_DockViewMenu": "Std_ToggleBottomPanels.svg",
+    "Std_ViewStatusBar": "info.svg",
+}
+COLLAPSED_GROUPS = {"Help", "Macro"}
 DIMENSION_CHOICES = (
     "Sketcher_Dimension", "Sketcher_ConstrainDistanceY", "Sketcher_ConstrainDistanceX",
     "Sketcher_ConstrainAngle", "Sketcher_ConstrainRadius", "Sketcher_ConstrainDiameter",
@@ -32,6 +40,9 @@ DIMENSION_CHOICES = (
     "Sketcher_ConstrainSnellsLaw",
 )
 COMMAND_FAMILIES = (
+    ("PartDesign_Pattern",
+     ("PartDesign_Pattern", "PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern"),
+     ("PartDesign_Pattern", "PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern")),
     ("Sketcher_Dimension",
      DIMENSION_CHOICES + ("Sketcher_CompDimensionTools", "Sketcher_CompConstrainRadDia"), DIMENSION_CHOICES),
     ("PartDesign_AdditiveLoft", ("PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft"),
@@ -64,22 +75,26 @@ def native_actions(name):
 
 class RibbonButton(QtWidgets.QToolButton):
     """Keep a presentation caption separate from the shared native action text."""
-    def __init__(self, caption=None, parent=None):
+    def __init__(self, caption=None, parent=None, fallback="preferences-general.svg"):
         super().__init__(parent)
         self.caption = caption
+        self.fallback = fallback
 
     def setDefaultAction(self, action):
         super().setDefaultAction(action)
         self.restore_caption()
 
     def restore_caption(self):
+        action = self.defaultAction()
+        if action and action.icon().isNull():
+            self.setIcon(Gui.getIcon(self.fallback))
         if self.caption:
             self.setText(self.caption)
             self.setAccessibleName(self.caption.replace("\n", " "))
 
     def actionEvent(self, event):
         super().actionEvent(event)
-        if self.caption and event.type() in (QtCore.QEvent.ActionAdded, QtCore.QEvent.ActionChanged):
+        if event.type() in (QtCore.QEvent.ActionAdded, QtCore.QEvent.ActionChanged):
             self.restore_caption()
 
 
@@ -321,11 +336,12 @@ class Ribbon(QtCore.QObject):
             groups = [(name, bars.get(name, [])) for name in ("File", "Edit", "Clipboard", "Structure")]
             groups[0] = ("File", ["Std_New", "Std_Open", "Std_Save", "Std_SaveAs", "Std_Import", "Std_Export"])
             groups[1] = ("Edit", ["Std_Undo", "Std_Redo", "Std_Delete", "Std_Refresh", "Std_DlgPreferences"])
-            groups[3] = ("Structure", ["Std_ComponentStructure", "Std_Part", "Std_Group", "Std_LinkActions", "PartDesign_AddReferenceObject"])
+            groups[3] = ("Structure", ["Std_ComponentStructure", "Std_Part", "Part_Datums", "Std_Group", "Std_LinkActions", "Std_VarSet", "PartDesign_AddReferenceObject"])
             if self.mode_name == "Design":
                 groups.append(("Sketch", ["PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch", "Sketcher_ValidateSketch"]))
                 groups.append(("Tools", ["Std_CommandSearch", "Std_Measure", "Std_MassProperties"]))
             groups.append(("Help", bars.get("Help", [])))
+            groups.append(("Macro", bars.get("Macro", [])))
             return groups
         if tab == "View":
             groups = [(name, commands) for name, commands in bars.items()
@@ -370,7 +386,8 @@ class Ribbon(QtCore.QObject):
                     continue
                 captions = {"Std_New": tr("New File"),
                             "Std_Part": tr("Add part"), "Sketcher_Dimension": tr("Auto\ndimension")}
-                button = RibbonButton(captions.get(command_name), group)
+                button = RibbonButton(captions.get(command_name), group,
+                                      ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
                 button.setObjectName("Ribbon_" + command_name)
                 button.setAutoRaise(True)
                 button.setDefaultAction(actions[0])
@@ -391,17 +408,18 @@ class Ribbon(QtCore.QObject):
                 if len(actions) > 1:
                     menu = QtWidgets.QMenu(button)
                     for action in actions:
-                        menu.addAction(action)
+                        if not action.isSeparator():
+                            menu.addAction(action)
                     button.setMenu(menu)
                     button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
                 buttons.append((button, primary))
-            if title == "Help" and buttons:
+            if title in COLLAPSED_GROUPS and buttons:
                 # Rare help operations share one icon; choices retain native states.
                 menu_button = QtWidgets.QToolButton(group)
-                menu_button.setObjectName("Ribbon_Group_Help")
+                menu_button.setObjectName("Ribbon_Group_" + title)
                 menu_button.setAutoRaise(True)
-                menu_button.setText(tr("Help"))
-                menu_button.setToolTip(tr("Help"))
+                menu_button.setText(tr(title))
+                menu_button.setToolTip(tr(title))
                 menu_button.setIcon(buttons[0][0].icon())
                 menu_button.setIconSize(QtCore.QSize(20, 20))
                 menu_button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)

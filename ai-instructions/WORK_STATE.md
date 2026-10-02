@@ -1,5 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: toolbar audit corrections queued in source
+
+Audit follow-through restores Datums and Variable Set to Home Structure and Macro
+to one compact Home dropdown. Drawing's primary-page ID is corrected from absent
+TechDraw_NewPageDefault to native TechDraw_PageDefault. Ribbon-only fallback icons
+prevent icon-only buttons from rendering blank when native actions lack artwork;
+native QAction icons and state remain unchanged. Native compound-menu separators
+are omitted from selectable choice lists.
+
+Circular/Path/Point pattern geometry and task support already exist, but their
+commands, view-provider files, module registration and CMake entries had been
+removed. The upstream command blocks and six view-provider source/header files
+are restored exactly (normalized newline comparison against b9609745048b), with
+module/CMake registration and Classic menu/toolbar entries. Plus places these
+variants in the primary Pattern dropdown and retains unified linear/circular,
+Mirrored and MultiTransform. No geometry implementation is changed.
+
+Fourteen native Qt/source-overlay ribbon checks pass with no failures/errors/skips
+and clean runner diagnostics in
+`D:\Temp\Office-PC\freecad-plus-toolbar-audit-fixes-20261002\complete`.
+The ten existing native Circular/Path/Point geometry checks also pass in the sibling
+pattern-core directory. These prove existing kernel behavior, not restored GUI
+bindings. Source equality, Python syntax and document links/anchors are checked.
+The refreshed governing toolbar reference identifies pending native bindings.
+
+No native target, owner runtime or ZIP was rebuilt/changed. Next authorized build
+must compile/package the restored files and run testRestoredNativePatternBindings
+plus the complete packaged ribbon suite and Pattern geometry suites. Follow the
+owner procedure for native variant acceptance, Undo/Redo and save/reopen; preserve
+the existing native General preference and cold-start acceptance gates.
+
 ## October 2: toolbar governance and visual catalog
 
 The owner requested a governing Markdown reference by workbench. The

@@ -65,6 +65,9 @@ component/part/group/link structure controls, New Sketch, Attach Sketch, Edit Sk
 and Validate Sketch.
 The Home New File button uses the standard New Document (`document-new`) icon and
 native Std_New action, which routes to the component-document workflow.
+Home also retains Datums as a native dropdown, Variable Set as a secondary button,
+and Macro actions in one compact dropdown. Iconless native actions use ribbon-only
+fallback artwork and retain their original QAction state and menu identity.
 Modeling groups native Part Design Modeling, Transformation, Dress-Up and Helper
 commands, in that order. Surface, Sketch and Mesh reuse the
 toolbar group boundaries of their corresponding native workbenches. View groups

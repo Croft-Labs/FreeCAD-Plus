@@ -6,7 +6,7 @@ This is the governing command-placement reference for Classic versus Plus toolba
 
 Common actions use large buttons (**L**); secondary actions use small icons (**S**) in three rows; related/rare variants use dropdowns (**▼**). Icons below identify commands; these Markdown tables show membership and order, not exact ribbon pixel layout. Plus and Classic are mutually exclusive. Default UI is Plus; explicit saved Classic choices remain valid.
 
-Snapshot: 2026-10-02. Fork source `ed67530eda91`; recorded upstream FreeCAD/main `b9609745048b`. Upstream means that local source snapshot, not a claim that the remote has no later commits. Native action metadata/icons were read from the fork executable at application source `52495b0cb2bd`; Plus grouping/projection was read from current source. Pending source ribbon changes are not yet incorporated in the owner's 10/2 build. Runtime export is an inventory check, not functional acceptance of every command.
+Snapshot: 2026-10-02. Fork source `d32c3542384c`; recorded upstream FreeCAD/main `b9609745048b`. Upstream means that local source snapshot, not a claim that the remote has no later commits. Native action metadata/icons were read from the fork executable at application source `52495b0cb2bd`; Plus grouping/projection was read from current source. Pending source ribbon changes are not yet incorporated in the owner's 10/2 build. Runtime export is an inventory check, not functional acceptance of every command.
 
 For every toolbar change, review placement, native command identity, retained functionality, icon/caption, large/small/dropdown priority, enabled/checked states and accessibility. Record new implementations and build/acceptance status in the existing roadmap/WORK_STATE, rather than treating this catalog as a release record.
 
@@ -62,9 +62,10 @@ The shared list includes Part's upstream toolbar manipulator additions: Datums i
 - The Workbench selector is replaced visually by the mode dropdown (Design, Draft, CAM, etc.).
 - File adds Save As, Import and Export; New uses the document icon and caption **New File**, with the component-document workflow. Native command identity remains `Std_New`.
 - Edit adds Delete and Preferences. Clipboard remains its native section.
-- Home Structure uses Components, Add part, Group, Link Actions and Add Reference Object. Upstream Datums (`Part_Datums`) and Variable Set (`Std_VarSet`) are omitted from this ribbon section; native menu commands remain. Coordinate System/Datum Plane creation is also exposed through the idle component Tasks pane, not as Home ribbon buttons.
+- Home Structure uses Components, Add part, Group, Link Actions and Add Reference Object. The audit correction restores native Datums as one dropdown and Variable Set as a small button. Coordinate System/Datum Plane creation is also exposed through the idle component Tasks pane.
 - View and Individual Views move to the View tab; Display adds selection filters, toolbar menu, dock menu and status-bar toggle.
-- Help commands move into one Help dropdown. The Macro toolbar has no Plus ribbon section; its commands remain in the native Macro menu. This is presentation omission, not deletion of macro support.
+- Help and Macro each use one compact dropdown; record, macro manager and direct execution retain native states. The audit correction restores Macro ribbon access.
+- Iconless native actions get a ribbon-only icon from existing artwork. Their native QAction icons, states and menu identities remain unchanged. Native compound-menu separators are omitted from button-choice lists.
 - Home common Tools adds Command Search, Measure and Mass Properties in Design. Workbenches retain their native menu/shortcut commands even where the ribbon omits a toolbar button.
 
 ### Plus shared sections
@@ -74,10 +75,11 @@ The shared list includes Part's upstream toolbar manipulator additions: Datums i
 | File | ![New Document](toolbar-icons/Std_New.png) [New File](#button-std_new) **L**; ![Open…](toolbar-icons/Std_Open.png) [Open…](#button-std_open) **L**; ![Save](toolbar-icons/Std_Save.png) [Save](#button-std_save) **L**; ![Save As…](toolbar-icons/Std_SaveAs.png) [Save As…](#button-std_saveas) **S**; ![Import…](toolbar-icons/Std_Import.png) [Import…](#button-std_import) **S**; ![Export…](toolbar-icons/Std_Export.png) [Export…](#button-std_export) **S** |
 | Edit | ![Undo](toolbar-icons/Std_Undo.png) [Undo](#button-std_undo) **S**; ![Redo](toolbar-icons/Std_Redo.png) [Redo](#button-std_redo) **S**; ![Delete](toolbar-icons/Std_Delete.png) [Delete](#button-std_delete) **S**; ![Recompute](toolbar-icons/Std_Refresh.png) [Recompute](#button-std_refresh) **S**; ![Preferences](toolbar-icons/Std_DlgPreferences.png) [Preferences](#button-std_dlgpreferences) **S** |
 | Clipboard | ![Cut](toolbar-icons/Std_Cut.png) [Cut](#button-std_cut) **S**; ![Copy](toolbar-icons/Std_Copy.png) [Copy](#button-std_copy) **S**; ![Paste](toolbar-icons/Std_Paste.png) [Paste](#button-std_paste) **S** |
-| Structure | ![Components](toolbar-icons/Std_ComponentStructure.png) [Components](#button-std_componentstructure) **S**; ![Add Component](toolbar-icons/Std_Part.png) [Add part](#button-std_part) **L**; ![New Group](toolbar-icons/Std_Group.png) [New Group](#button-std_group) **S**; ![Make Link](toolbar-icons/Std_LinkActions.png) [Make Link](#button-std_linkactions) **S** **▼**; ![Add Reference Object](toolbar-icons/PartDesign_AddReferenceObject.png) [Add Reference Object](#button-partdesign_addreferenceobject) **S** |
+| Structure | ![Components](toolbar-icons/Std_ComponentStructure.png) [Components](#button-std_componentstructure) **S**; ![Add Component](toolbar-icons/Std_Part.png) [Add part](#button-std_part) **L**; ![Coordinate System](toolbar-icons/Part_Datums.png) [Coordinate System](#button-part_datums) **S** **▼**; ![New Group](toolbar-icons/Std_Group.png) [New Group](#button-std_group) **S**; ![Make Link](toolbar-icons/Std_LinkActions.png) [Make Link](#button-std_linkactions) **S** **▼**; ![Variable Set](toolbar-icons/Std_VarSet.png) [Variable Set](#button-std_varset) **S**; ![Add Reference Object](toolbar-icons/PartDesign_AddReferenceObject.png) [Add Reference Object](#button-partdesign_addreferenceobject) **S** |
 | Sketch | ![New Sketch](toolbar-icons/PartDesign_NewSketch.png) [New Sketch](#button-partdesign_newsketch) **L**; ![Attach Sketch](toolbar-icons/Sketcher_MapSketch.png) [Attach Sketch](#button-sketcher_mapsketch) **S**; ![Edit Sketch](toolbar-icons/Sketcher_EditSketch.png) [Edit Sketch](#button-sketcher_editsketch) **L**; ![Validate Sketch](toolbar-icons/Sketcher_ValidateSketch.png) [Validate Sketch](#button-sketcher_validatesketch) **S** |
-| Tools | — [Command search...](#button-std_commandsearch) **S**; ![Measure](toolbar-icons/Std_Measure.png) [Measure](#button-std_measure) **S**; ![Mass Properties](toolbar-icons/Std_MassProperties.png) [Mass Properties](#button-std_massproperties) **S** |
+| Tools | ![Command search...](../../../src/Gui/Icons/zoom-in.svg) [Command search...](#button-std_commandsearch) **S**; ![Measure](toolbar-icons/Std_Measure.png) [Measure](#button-std_measure) **S**; ![Mass Properties](toolbar-icons/Std_MassProperties.png) [Mass Properties](#button-std_massproperties) **S** |
 | Help | Help dropdown → ![What's This?](toolbar-icons/Std_WhatsThis.png) [What's This?](#button-std_whatsthis) |
+| Macro | Macro dropdown → ![Record Macro](toolbar-icons/Std_DlgMacroRecord.png) [Record Macro](#button-std_dlgmacrorecord); ![Macros](toolbar-icons/Std_DlgMacroExecute.png) [Macros](#button-std_dlgmacroexecute); ![Execute Macro](toolbar-icons/Std_DlgMacroExecuteDirect.png) [Execute Macro](#button-std_dlgmacroexecutedirect) |
 
 **View tab** (shared projection of each active workbench's native View / Individual Views groups):
 
@@ -85,7 +87,7 @@ The shared list includes Part's upstream toolbar manipulator additions: Datums i
 | --- | --- |
 | View | ![Fit All](toolbar-icons/Std_ViewFitAll.png) [Fit All](#button-std_viewfitall) **L**; ![Fit Selection](toolbar-icons/Std_ViewFitSelection.png) [Fit Selection](#button-std_viewfitselection) **S**; ![Isometric](toolbar-icons/Std_ViewGroup.png) [Isometric](#button-std_viewgroup) **S** **▼**; ![Align to Selection](toolbar-icons/Std_AlignToSelection.png) [Align to Selection](#button-std_aligntoselection) **S**; ![As Is](toolbar-icons/Std_DrawStyle.png) [As Is](#button-std_drawstyle) **S** **▼**; ![Vertex Selection](toolbar-icons/Part_SelectFilter.png) [Vertex Selection](#button-part_selectfilter) **S** **▼**; ![Measure](toolbar-icons/Std_Measure.png) [Measure](#button-std_measure) **S**; ![Mass Properties](toolbar-icons/Std_MassProperties.png) [Mass Properties](#button-std_massproperties) **S** |
 | Individual Views | ![Isometric](toolbar-icons/Std_ViewIsometric.png) [Isometric](#button-std_viewisometric) **S**; ![Front](toolbar-icons/Std_ViewFront.png) [Front](#button-std_viewfront) **S**; ![Top](toolbar-icons/Std_ViewTop.png) [Top](#button-std_viewtop) **S**; ![Right](toolbar-icons/Std_ViewRight.png) [Right](#button-std_viewright) **S**; ![Rear](toolbar-icons/Std_ViewRear.png) [Rear](#button-std_viewrear) **S**; ![Bottom](toolbar-icons/Std_ViewBottom.png) [Bottom](#button-std_viewbottom) **S**; ![Left](toolbar-icons/Std_ViewLeft.png) [Left](#button-std_viewleft) **S** |
-| Display | — [Selection filters…](#button-std_entityselectionfilter) **S**; — [Toolbars](#button-std_toolbarmenu) **S**; — [Panels](#button-std_dockviewmenu) **S**; — [Status Bar](#button-std_viewstatusbar) **S** |
+| Display | ![Selection filters…](../../../src/Gui/Icons/view-select.svg) [Selection filters…](#button-std_entityselectionfilter) **S**; ![Toolbars](../../../src/Gui/Icons/preferences-workbenches.svg) [Toolbars](#button-std_toolbarmenu) **S**; ![Panels](../../../src/Gui/Icons/Std_ToggleBottomPanels.svg) [Panels](#button-std_dockviewmenu) **S**; ![Status Bar](../../../src/Gui/Icons/info.svg) [Status Bar](#button-std_viewstatusbar) **S** |
 
 ## Workbench comparisons
 
@@ -108,7 +110,7 @@ Definition: [`src/Mod/PartDesign/Gui/Workbench.cpp`](../../../src/Mod/PartDesign
 #### Changes made / buttons consolidated or omitted
 
 - ![Pad](toolbar-icons/PartDesign_Pad.png) [Pad](#button-partdesign_pad) + ![Pocket](toolbar-icons/PartDesign_Pocket.png) [Pocket](#button-partdesign_pocket) → ![Extrude](toolbar-icons/PartDesign_Extrude.png) [Extrude](#button-partdesign_extrude). Add/Subtract is selected in the task pane; the component workflow also supports separate background solid results.
-- ![Linear Pattern](toolbar-icons/PartDesign_LinearPattern.png) [Linear Pattern](#button-partdesign_linearpattern), ![Polar Pattern](toolbar-icons/PartDesign_PolarPattern.png) [Polar Pattern](#button-partdesign_polarpattern), ![Circular Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_CircularPattern.svg) [Circular Pattern](#button-partdesign_circularpattern), ![Path Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_PathPattern.svg) [Path Pattern](#button-partdesign_pathpattern), ![Point Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_PointPattern.svg) [Point Pattern](#button-partdesign_pointpattern) are replaced as direct toolbar buttons by ![Pattern](toolbar-icons/PartDesign_Pattern.png) [Pattern](#button-partdesign_pattern). The unified task currently offers linear/circular patterns; Path/Point are not claimed as unified choices. Linear/Polar native commands remain registered. The inspected fork does not register the newer upstream Circular/Path/Point commands; these are not hidden unified options. Mirrored and MultiTransform remain separate buttons.
+- ![Linear Pattern](toolbar-icons/PartDesign_LinearPattern.png) [Linear Pattern](#button-partdesign_linearpattern), ![Polar Pattern](toolbar-icons/PartDesign_PolarPattern.png) [Polar Pattern](#button-partdesign_polarpattern), ![Circular Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_CircularPattern.svg) [Circular Pattern](#button-partdesign_circularpattern), ![Path Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_PathPattern.svg) [Path Pattern](#button-partdesign_pathpattern), ![Point Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_PointPattern.svg) [Point Pattern](#button-partdesign_pointpattern) share ![Pattern](toolbar-icons/PartDesign_Pattern.png) [Pattern](#button-partdesign_pattern) as the primary ribbon entry. The unified task offers linear/circular patterns; the dropdown adds native concentric Circular, Path and Point tasks. The audit correction restores their upstream commands and view providers in source, without changing geometry. Those three bindings remain pending native rebuild/GUI validation in the inspected executable. Classic exposes their individual native buttons; Mirrored and MultiTransform remain separate buttons.
 - Additive/Subtractive Loft, Pipe and Helix each share one dropdown. Both variants remain selectable.
 - Added to native toolbar definitions: ![Add Reference Object](toolbar-icons/PartDesign_AddReferenceObject.png) [Add Reference Object](#button-partdesign_addreferenceobject); ![Extrude](toolbar-icons/PartDesign_Extrude.png) [Extrude](#button-partdesign_extrude); ![Pattern](toolbar-icons/PartDesign_Pattern.png) [Pattern](#button-partdesign_pattern); ![Isocline Curve](toolbar-icons/Part_IsoclineCurve.png) [Isocline Curve](#button-part_isoclinecurve); ![Trim Body](toolbar-icons/Part_TrimBody.png) [Trim Body](#button-part_trimbody).
 
@@ -121,7 +123,7 @@ Definition: [`src/Mod/PartDesign/Gui/Workbench.cpp`](../../../src/Mod/PartDesign
 | Section / toolbar group | Buttons in display order |
 | --- | --- |
 | Part Design Modeling Features | ![Extrude](toolbar-icons/PartDesign_Extrude.png) [Extrude](#button-partdesign_extrude) **L**; ![Add Reference Object](toolbar-icons/PartDesign_AddReferenceObject.png) [Add Reference Object](#button-partdesign_addreferenceobject) **S**; ![Revolve](toolbar-icons/PartDesign_Revolution.png) [Revolve](#button-partdesign_revolution) **L**; ![Additive Loft](toolbar-icons/PartDesign_AdditiveLoft.png) [Additive Loft](#button-partdesign_additiveloft) **S** **▼** {![Additive Loft](toolbar-icons/PartDesign_AdditiveLoft.png) [Additive Loft](#button-partdesign_additiveloft); ![Subtractive Loft](toolbar-icons/PartDesign_SubtractiveLoft.png) [Subtractive Loft](#button-partdesign_subtractiveloft)}; ![Additive Pipe](toolbar-icons/PartDesign_AdditivePipe.png) [Additive Pipe](#button-partdesign_additivepipe) **S** **▼** {![Additive Pipe](toolbar-icons/PartDesign_AdditivePipe.png) [Additive Pipe](#button-partdesign_additivepipe); ![Subtractive Pipe](toolbar-icons/PartDesign_SubtractivePipe.png) [Subtractive Pipe](#button-partdesign_subtractivepipe)}; ![Additive Helix](toolbar-icons/PartDesign_AdditiveHelix.png) [Additive Helix](#button-partdesign_additivehelix) **S** **▼** {![Additive Helix](toolbar-icons/PartDesign_AdditiveHelix.png) [Additive Helix](#button-partdesign_additivehelix); ![Subtractive Helix](toolbar-icons/PartDesign_SubtractiveHelix.png) [Subtractive Helix](#button-partdesign_subtractivehelix)}; ![Additive Box](toolbar-icons/PartDesign_CompPrimitiveAdditive.png) [Additive Box](#button-partdesign_compprimitiveadditive) **S** **▼**; ![Hole](toolbar-icons/PartDesign_Hole.png) [Hole](#button-partdesign_hole) **S**; ![Groove](toolbar-icons/PartDesign_Groove.png) [Groove](#button-partdesign_groove) **S**; ![Subtractive Box](toolbar-icons/PartDesign_CompPrimitiveSubtractive.png) [Subtractive Box](#button-partdesign_compprimitivesubtractive) **S** **▼**; ![Boolean Operation](toolbar-icons/PartDesign_Boolean.png) [Boolean Operation](#button-partdesign_boolean) **S**; ![Isocline Curve](toolbar-icons/Part_IsoclineCurve.png) [Isocline Curve](#button-part_isoclinecurve) **S**; ![Trim Body](toolbar-icons/Part_TrimBody.png) [Trim Body](#button-part_trimbody) **S** |
-| Part Design Transformation Features | ![Mirror](toolbar-icons/PartDesign_Mirrored.png) [Mirror](#button-partdesign_mirrored) **S**; ![Pattern](toolbar-icons/PartDesign_Pattern.png) [Pattern](#button-partdesign_pattern) **L**; ![Multi-Transform](toolbar-icons/PartDesign_MultiTransform.png) [Multi-Transform](#button-partdesign_multitransform) **S** |
+| Part Design Transformation Features | ![Mirror](toolbar-icons/PartDesign_Mirrored.png) [Mirror](#button-partdesign_mirrored) **S**; ![Pattern](toolbar-icons/PartDesign_Pattern.png) [Pattern](#button-partdesign_pattern) **L** **▼** {![Pattern](toolbar-icons/PartDesign_Pattern.png) [Pattern](#button-partdesign_pattern); ![Circular Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_CircularPattern.svg) [Circular Pattern](#button-partdesign_circularpattern); ![Path Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_PathPattern.svg) [Path Pattern](#button-partdesign_pathpattern); ![Point Pattern](../../../src/Mod/PartDesign/Gui/Resources/icons/PartDesign_PointPattern.svg) [Point Pattern](#button-partdesign_pointpattern)}; ![Multi-Transform](toolbar-icons/PartDesign_MultiTransform.png) [Multi-Transform](#button-partdesign_multitransform) **S** |
 | Part Design Dress-Up Features | ![Fillet](toolbar-icons/PartDesign_Fillet.png) [Fillet](#button-partdesign_fillet) **L**; ![Chamfer](toolbar-icons/PartDesign_Chamfer.png) [Chamfer](#button-partdesign_chamfer) **S**; ![Draft](toolbar-icons/PartDesign_Draft.png) [Draft](#button-partdesign_draft) **S**; ![Thickness](toolbar-icons/PartDesign_Thickness.png) [Thickness](#button-partdesign_thickness) **S**; ![Defeaturing](toolbar-icons/PartDesign_Defeaturing.png) [Defeaturing](#button-partdesign_defeaturing) **S** |
 | Part Design Helper Features | ![New Body](toolbar-icons/PartDesign_Body.png) [New Body](#button-partdesign_body) **S**; ![New Sketch](toolbar-icons/PartDesign_CompSketches.png) [New Sketch](#button-partdesign_compsketches) **S** **▼**; ![Validate Sketch](toolbar-icons/Sketcher_ValidateSketch.png) [Validate Sketch](#button-sketcher_validatesketch) **S**; ![Check Geometry](toolbar-icons/Part_CheckGeometry.png) [Check Geometry](#button-part_checkgeometry) **S**; ![Sub-Shape Binder](toolbar-icons/PartDesign_SubShapeBinder.png) [Sub-Shape Binder](#button-partdesign_subshapebinder) **S**; ![Clone](toolbar-icons/PartDesign_Clone.png) [Clone](#button-partdesign_clone) **S** |
 
@@ -333,7 +335,7 @@ Definition: [`src/Mod/CAM/InitGui.py`](../../../src/Mod/CAM/InitGui.py). Shared 
 
 - Project Setup adds Mesh Preparation, Holding Tabs and Indexed Setup.
 - New Operations exposes Parallel / Waterline (`CAM_PlanarSurface`) with OpenCAMLib. Stock upstream makes advanced 3D operations conditional; grouping can change when the advanced setting is enabled.
-- Added to native toolbar definitions: — [Holding Tab](#button-cam_holdingtab); ![Indexed Setup](toolbar-icons/CAM_IndexedSetup.png) [Indexed Setup](#button-cam_indexedsetup); ![Review CAM mesh...](toolbar-icons/CAM_MeshPreparation.png) [Review CAM mesh...](#button-cam_meshpreparation); ![Parallel / Waterline](toolbar-icons/CAM_PlanarSurface.png) [Parallel / Waterline](#button-cam_planarsurface).
+- Added to native toolbar definitions: ![Holding Tab](../../../src/Gui/Icons/preferences-general.svg) [Holding Tab](#button-cam_holdingtab); ![Indexed Setup](toolbar-icons/CAM_IndexedSetup.png) [Indexed Setup](#button-cam_indexedsetup); ![Review CAM mesh...](toolbar-icons/CAM_MeshPreparation.png) [Review CAM mesh...](#button-cam_meshpreparation); ![Parallel / Waterline](toolbar-icons/CAM_PlanarSurface.png) [Parallel / Waterline](#button-cam_planarsurface).
 
 #### Plus UI tabs and sections
 
@@ -343,7 +345,7 @@ Definition: [`src/Mod/CAM/InitGui.py`](../../../src/Mod/CAM/InitGui.py). Shared 
 
 | Section / toolbar group | Buttons in display order |
 | --- | --- |
-| Project Setup | ![New Job](toolbar-icons/CAM_Job.png) [New Job](#button-cam_job) **L**; ![Review CAM mesh...](toolbar-icons/CAM_MeshPreparation.png) [Review CAM mesh...](#button-cam_meshpreparation) **S**; ![Work Plane](toolbar-icons/CAM_Workplane.png) [Work Plane](#button-cam_workplane) **S**; — [Holding Tab](#button-cam_holdingtab) **S**; ![Indexed Setup](toolbar-icons/CAM_IndexedSetup.png) [Indexed Setup](#button-cam_indexedsetup) **S**; ![Sanity Check](toolbar-icons/CAM_Sanity.png) [Sanity Check](#button-cam_sanity) **S**; ![Post Process](toolbar-icons/CAM_PostTools.png) [Post Process](#button-cam_posttools) **S** **▼** |
+| Project Setup | ![New Job](toolbar-icons/CAM_Job.png) [New Job](#button-cam_job) **L**; ![Review CAM mesh...](toolbar-icons/CAM_MeshPreparation.png) [Review CAM mesh...](#button-cam_meshpreparation) **S**; ![Work Plane](toolbar-icons/CAM_Workplane.png) [Work Plane](#button-cam_workplane) **S**; ![Holding Tab](../../../src/Gui/Icons/preferences-general.svg) [Holding Tab](#button-cam_holdingtab) **S**; ![Indexed Setup](toolbar-icons/CAM_IndexedSetup.png) [Indexed Setup](#button-cam_indexedsetup) **S**; ![Sanity Check](toolbar-icons/CAM_Sanity.png) [Sanity Check](#button-cam_sanity) **S**; ![Post Process](toolbar-icons/CAM_PostTools.png) [Post Process](#button-cam_posttools) **S** **▼** |
 | Tool Commands | ![CAM Simulator](toolbar-icons/CAM_SimTools.png) [CAM Simulator](#button-cam_simtools) **S** **▼**; ![Inspect Toolpath](toolbar-icons/CAM_Inspect.png) [Inspect Toolpath](#button-cam_inspect) **S**; ![Finish Selecting Loop](toolbar-icons/CAM_SelectLoop.png) [Finish Selecting Loop](#button-cam_selectloop) **S**; ![Toggle Operation](toolbar-icons/CAM_OpActiveToggle.png) [Toggle Operation](#button-cam_opactivetoggle) **S**; ![Add Toolbit…](toolbar-icons/CAM_ToolBitDock.png) [Add Toolbit…](#button-cam_toolbitdock) **S** |
 | New Operations | ![Profile](toolbar-icons/CAM_Profile.png) [Profile](#button-cam_profile) **S**; ![Pocket Shape](toolbar-icons/CAM_Pocket_Shape.png) [Pocket Shape](#button-cam_pocket_shape) **S**; ![Mill Facing](toolbar-icons/CAM_MillFacing.png) [Mill Facing](#button-cam_millfacing) **S**; ![Helix](toolbar-icons/CAM_Helix.png) [Helix](#button-cam_helix) **S**; ![Adaptive](toolbar-icons/CAM_Adaptive.png) [Adaptive](#button-cam_adaptive) **S**; ![Slot](toolbar-icons/CAM_Slot.png) [Slot](#button-cam_slot) **S**; ![Drilling](toolbar-icons/CAM_DrillingTools.png) [Drilling](#button-cam_drillingtools) **S** **▼**; ![Engrave](toolbar-icons/CAM_EngraveTools.png) [Engrave](#button-cam_engravetools) **S** **▼**; ![Parallel / Waterline](toolbar-icons/CAM_PlanarSurface.png) [Parallel / Waterline](#button-cam_planarsurface) **S** |
 | Path Modification | ![Copy Operation](toolbar-icons/CAM_OperationCopy.png) [Copy Operation](#button-cam_operationcopy) **S**; ![Array](toolbar-icons/CAM_Array.png) [Array](#button-cam_array) **S**; ![Simple Copy](toolbar-icons/CAM_SimpleCopy.png) [Simple Copy](#button-cam_simplecopy) **S**; ![Array](toolbar-icons/CAM_DressupTools.png) [Array](#button-cam_dressuptools) **S** **▼** |
@@ -382,7 +384,7 @@ Definition: [`src/Mod/TechDraw/Gui/Workbench.cpp`](../../../src/Mod/TechDraw/Gui
 
 | Section / toolbar group | Buttons in display order |
 | --- | --- |
-| TechDraw Pages | ![New Page](toolbar-icons/TechDraw_PageDefault.png) [New Page](#button-techdraw_pagedefault) **S**; ![New Page From Template](toolbar-icons/TechDraw_PageTemplate.png) [New Page From Template](#button-techdraw_pagetemplate) **S**; ![Update Template Fields](toolbar-icons/TechDraw_FillTemplateFields.png) [Update Template Fields](#button-techdraw_filltemplatefields) **S**; ![Redraw Page](toolbar-icons/TechDraw_RedrawPage.png) [Redraw Page](#button-techdraw_redrawpage) **S**; ![Print All Pages](toolbar-icons/TechDraw_PrintAll.png) [Print All Pages](#button-techdraw_printall) **S** |
+| TechDraw Pages | ![New Page](toolbar-icons/TechDraw_PageDefault.png) [New Page](#button-techdraw_pagedefault) **L**; ![New Page From Template](toolbar-icons/TechDraw_PageTemplate.png) [New Page From Template](#button-techdraw_pagetemplate) **S**; ![Update Template Fields](toolbar-icons/TechDraw_FillTemplateFields.png) [Update Template Fields](#button-techdraw_filltemplatefields) **S**; ![Redraw Page](toolbar-icons/TechDraw_RedrawPage.png) [Redraw Page](#button-techdraw_redrawpage) **S**; ![Print All Pages](toolbar-icons/TechDraw_PrintAll.png) [Print All Pages](#button-techdraw_printall) **S** |
 | TechDraw Views | ![New View](toolbar-icons/TechDraw_View.png) [New View](#button-techdraw_view) **S**; ![Broken View](toolbar-icons/TechDraw_BrokenView.png) [Broken View](#button-techdraw_brokenview) **S**; ![Active View](toolbar-icons/TechDraw_ActiveView.png) [Active View](#button-techdraw_activeview) **S**; ![Section View](toolbar-icons/TechDraw_SectionGroup.png) [Section View](#button-techdraw_sectiongroup) **S** **▼**; ![Detail View](toolbar-icons/TechDraw_DetailView.png) [Detail View](#button-techdraw_detailview) **S**; ![Draft View](toolbar-icons/TechDraw_DraftView.png) [Draft View](#button-techdraw_draftview) **S**; ![Spreadsheet View](toolbar-icons/TechDraw_SpreadsheetView.png) [Spreadsheet View](#button-techdraw_spreadsheetview) **S**; ![Clip Group](toolbar-icons/TechDraw_ClipGroup.png) [Clip Group](#button-techdraw_clipgroup) **S** |
 | TechDraw Stacking | ![Stack Top](toolbar-icons/TechDraw_StackGroup.png) [Stack Top](#button-techdraw_stackgroup) **S** **▼** |
 | TechDraw Dimensions | ![Dimension](toolbar-icons/TechDraw_CompDimensionTools.png) [Dimension](#button-techdraw_compdimensiontools) **S** **▼**; ![Balloon Annotation](toolbar-icons/TechDraw_Balloon.png) [Balloon Annotation](#button-techdraw_balloon) **S**; ![Axonometric Length Dimension](toolbar-icons/TechDraw_AxoLengthDimension.png) [Axonometric Length Dimension](#button-techdraw_axolengthdimension) **S**; ![Repair Dimension References](toolbar-icons/TechDraw_DimensionRepair.png) [Repair Dimension References](#button-techdraw_dimensionrepair) **S** |
@@ -503,7 +505,7 @@ Definition: [`src/Mod/MeshPart/Gui/Workbench.cpp`](../../../src/Mod/MeshPart/Gui
 
 | Section / toolbar group | Buttons in display order |
 | --- | --- |
-| MeshPart | — [Mesh From Shape](#button-meshpart_mesher) |
+| MeshPart | ![Mesh From Shape](../../../src/Gui/Icons/preferences-general.svg) [Mesh From Shape](#button-meshpart_mesher) |
 
 #### Changes made / buttons consolidated or omitted
 
@@ -515,7 +517,7 @@ Definition: [`src/Mod/MeshPart/Gui/Workbench.cpp`](../../../src/Mod/MeshPart/Gui
 
 | Section / toolbar group | Buttons in display order |
 | --- | --- |
-| MeshPart | — [Mesh From Shape](#button-meshpart_mesher) **S** |
+| MeshPart | ![Mesh From Shape](../../../src/Gui/Icons/preferences-general.svg) [Mesh From Shape](#button-meshpart_mesher) **S** |
 
 <a id="workbench-pointsworkbench"></a>
 ### Points (`PointsWorkbench`)
@@ -696,7 +698,7 @@ Definition: [`src/Mod/Test/InitGui.py`](../../../src/Mod/Test/InitGui.py). Share
 
 | Section / toolbar group | Buttons in display order |
 | --- | --- |
-| TestTools | — [Self-test...](#button-test_test); ![Test all](toolbar-icons/Test_TestAll.png) [Test all](#button-test_testall); ![Test Document](toolbar-icons/Test_TestDoc.png) [Test Document](#button-test_testdoc); ![Test base](toolbar-icons/Test_TestBase.png) [Test base](#button-test_testbase) |
+| TestTools | ![Self-test...](../../../src/Gui/Icons/preferences-general.svg) [Self-test...](#button-test_test); ![Test all](toolbar-icons/Test_TestAll.png) [Test all](#button-test_testall); ![Test Document](toolbar-icons/Test_TestDoc.png) [Test Document](#button-test_testdoc); ![Test base](toolbar-icons/Test_TestBase.png) [Test base](#button-test_testbase) |
 
 #### Changes made / buttons consolidated or omitted
 
@@ -710,7 +712,7 @@ Definition: [`src/Mod/Test/InitGui.py`](../../../src/Mod/Test/InitGui.py). Share
 
 | Section / toolbar group | Buttons in display order |
 | --- | --- |
-| TestTools | — [Self-test...](#button-test_test) **S**; ![Test all](toolbar-icons/Test_TestAll.png) [Test all](#button-test_testall) **S**; ![Test Document](toolbar-icons/Test_TestDoc.png) [Test Document](#button-test_testdoc) **S**; ![Test base](toolbar-icons/Test_TestBase.png) [Test base](#button-test_testbase) **S** |
+| TestTools | ![Self-test...](../../../src/Gui/Icons/preferences-general.svg) [Self-test...](#button-test_test) **S**; ![Test all](toolbar-icons/Test_TestAll.png) [Test all](#button-test_testall) **S**; ![Test Document](toolbar-icons/Test_TestDoc.png) [Test Document](#button-test_testdoc) **S**; ![Test base](toolbar-icons/Test_TestBase.png) [Test base](#button-test_testbase) **S** |
 
 **View:** shared sections above.
 
@@ -1567,7 +1569,7 @@ Source-defined dropdown choices: ![B-Spline](toolbar-icons/Draft_BSpline.png) [B
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Holding Tab | Creates a stock bridge preserved by Parallel and Waterline paths |
+| ![Holding Tab](../../../src/Gui/Icons/preferences-general.svg) | Holding Tab | Creates a stock bridge preserved by Parallel and Waterline paths |
 
 <a id="button-cam_indexedsetup"></a>
 ### Indexed Setup — `CAM_IndexedSetup`
@@ -2891,7 +2893,7 @@ Source-defined dropdown choices: ![Distance-Based Refinement](../../../src/Mod/F
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Mesh From Shape | Tessellate shape |
+| ![Mesh From Shape](../../../src/Gui/Icons/preferences-general.svg) | Mesh From Shape | Tessellate shape |
 
 <a id="button-mesh_addfacet"></a>
 ### Add Triangle — `Mesh_AddFacet`
@@ -4518,7 +4520,7 @@ Source-defined dropdown choices: ![Distance-Based Refinement](../../../src/Mod/F
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Command search... | Find commands by name, familiar alias or shortcut |
+| ![Command search...](../../../src/Gui/Icons/zoom-in.svg) | Command search... | Find commands by name, familiar alias or shortcut |
 
 <a id="button-std_componentstructure"></a>
 ### Components — `Std_ComponentStructure`
@@ -4581,7 +4583,7 @@ Source-defined dropdown choices: ![Distance-Based Refinement](../../../src/Mod/F
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Panels | Lists available dock panels |
+| ![Panels](../../../src/Gui/Icons/Std_ToggleBottomPanels.svg) | Panels | Lists available dock panels |
 
 <a id="button-std_drawstyle"></a>
 ### As Is — `Std_DrawStyle`
@@ -4601,7 +4603,7 @@ Source-defined dropdown choices: ![Distance-Based Refinement](../../../src/Mod/F
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Selection filters… | Restrict new picks to vertices, edges, faces or whole objects |
+| ![Selection filters…](../../../src/Gui/Icons/view-select.svg) | Selection filters… | Restrict new picks to vertices, edges, faces or whole objects |
 
 <a id="button-std_export"></a>
 ### Export… — `Std_Export`
@@ -4711,7 +4713,7 @@ Source-defined dropdown choices: ![Distance-Based Refinement](../../../src/Mod/F
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Toolbars | Toggles this window |
+| ![Toolbars](../../../src/Gui/Icons/preferences-workbenches.svg) | Toolbars | Toggles this window |
 
 <a id="button-std_undo"></a>
 ### Undo — `Std_Undo`
@@ -4801,7 +4803,7 @@ Source-defined dropdown choices: ![Distance-Based Refinement](../../../src/Mod/F
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Status Bar | Toggles the status bar |
+| ![Status Bar](../../../src/Gui/Icons/info.svg) | Status Bar | Toggles the status bar |
 
 <a id="button-std_viewtop"></a>
 ### Top — `Std_ViewTop`
@@ -5378,7 +5380,7 @@ Source-defined dropdown choices: ![Distance-Based Refinement](../../../src/Mod/F
 
 | Icon | Button / dropdown choice | Function |
 | --- | --- | --- |
-| — | Self-test... | Runs a self-test to check if the application works properly |
+| ![Self-test...](../../../src/Gui/Icons/preferences-general.svg) | Self-test... | Runs a self-test to check if the application works properly |
 
 <a id="button-test_testall"></a>
 ### Test all — `Test_TestAll`

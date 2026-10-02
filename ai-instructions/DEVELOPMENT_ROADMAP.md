@@ -30,6 +30,13 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 toolbar audit corrections queued: restore compact Datums/Variable Set/
+  Macro access, Drawing page priority and visible icons for iconless native actions.
+  Restore upstream Circular/Path/Point commands/view providers and group native
+  variants under Pattern. Fourteen ribbon overlay checks and ten existing native
+  geometry checks pass. Native restored-binding compilation/GUI acceptance is
+  pending the next authorized build; [WORK_STATE](WORK_STATE.md) owns evidence.
+
 - October 2 toolbar governance reference: [visual toolbar catalog](details/ui/TOOLBARS.md)
   now governs detailed Classic/Plus placement and documents command consolidation
   by workbench. Its 20 workbench sections and 638-command function catalog include

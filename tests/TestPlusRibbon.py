@@ -311,6 +311,73 @@ class TestPlusRibbon(unittest.TestCase):
                 if actions:
                     self.assertIn(actions[0], button.menu().actions())
 
+    def testAuditStructureAndMacroAccess(self):
+        self.tab("Home")
+        datums = self.button("Part_Datums")
+        self.assertIsNotNone(datums.menu())
+        self.assertEqual(datums.menu().actions(), Gui.Command.get("Part_Datums").getAction())
+        variables = self.button("Std_VarSet")
+        self.assertEqual(variables.defaultAction(), Gui.Command.get("Std_VarSet").getAction()[0])
+        variables.click()
+        self.assertTrue(any(obj.isDerivedFrom("App::VarSet") for obj in self.doc.Objects))
+        macro = self.button("Group_Macro")
+        self.assertEqual(macro.popupMode(), QtWidgets.QToolButton.InstantPopup)
+        for name in dict(self.ribbon.groups())["Macro"]:
+            if name != "Separator":
+                self.assertIn(Gui.Command.get(name).getAction()[0], macro.menu().actions())
+
+    def testAuditIconsAndDrawingPagePriority(self):
+        self.tab("Home")
+        button = self.button("Std_CommandSearch")
+        native = button.defaultAction()
+        native_icon = native.icon().cacheKey()
+        Gui.Command.update()
+        settle()
+        self.assertFalse(button.icon().isNull())
+        self.assertEqual(native.icon().cacheKey(), native_icon)
+        self.tab("View")
+        for name in UI.ICON_FALLBACKS:
+            button = self.button(name)
+            if button:
+                self.assertFalse(button.icon().isNull(), name)
+        Gui.activateWorkbench("TechDrawWorkbench")
+        settle()
+        self.ribbon.tabs.setCurrentIndex(1)
+        settle()
+        page = self.button("TechDraw_PageDefault")
+        self.assertEqual(page.property("ribbonPriority"), "primary")
+        self.assertEqual(page.width(), UI.PRIMARY_WIDTH)
+        self.assertEqual(page.defaultAction(), Gui.Command.get("TechDraw_PageDefault").getAction()[0])
+        for button in self.ribbon.scroll.widget().findChildren(QtWidgets.QToolButton):
+            self.assertFalse(button.icon().isNull(), button.objectName())
+            if button.menu():
+                self.assertFalse(any(action.isSeparator() for action in button.menu().actions()))
+
+    @unittest.skipIf(os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1", "Restored native pattern bindings require grouped build")
+    def testRestoredNativePatternBindings(self):
+        self.tab("Modeling")
+        pattern = self.button("PartDesign_Pattern")
+        expected = ("PartDesign_Pattern", "PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern")
+        self.assertEqual(pattern.menu().actions(), [Gui.Command.get(name).getAction()[0] for name in expected])
+        body = self.doc.addObject("PartDesign::Body", "AuditPatternBody")
+        base = body.newObject("PartDesign::AdditiveBox", "AuditPatternBase")
+        self.doc.recompute()
+        Gui.activeDocument().activeView().setActiveObject("pdbody", body)
+        for name in expected[1:]:
+            with self.subTest(command=name):
+                Gui.Selection.clearSelection()
+                Gui.Selection.addSelection(base)
+                Gui.runCommand(name)
+                Gui.updateGui()
+                self.assertTrue(Gui.Control.activeDialog())
+                created = [obj for obj in body.Group if obj.TypeId == "PartDesign::" + name.removeprefix("PartDesign_")]
+                self.assertEqual(len(created), 1)
+                self.assertTrue(created[0].ViewObject.TypeId.endswith(name.removeprefix("PartDesign_") ))
+                Gui.Control.activeTaskDialog().reject()
+                Gui.updateGui()
+                self.assertFalse(Gui.Control.activeDialog())
+                self.assertIsNotNone(self.doc.getObject(base.Name))
+
     @unittest.skipIf(os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1", "Native General preference requires grouped build")
     def testNativeGeneralPreferenceApplyAndCancel(self):
         self.assertTrue(Path(UI.__file__).resolve().is_relative_to(Path(App.ConfigGet("AppHomePath")).resolve()))

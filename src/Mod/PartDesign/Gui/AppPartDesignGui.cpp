@@ -49,6 +49,9 @@
 #include "ViewProviderHelix.h"
 #include "ViewProviderHole.h"
 #include "ViewProviderLinearPattern.h"
+#include "ViewProviderCircularPattern.h"
+#include "ViewProviderPathPattern.h"
+#include "ViewProviderPointPattern.h"
 #include "ViewProviderLoft.h"
 #include "ViewProviderMirrored.h"
 #include "ViewProviderMultiTransform.h"
@@ -146,6 +149,9 @@ PyMOD_INIT_FUNC(PartDesignGui)
     PartDesignGui::ViewProviderTransformed   ::init();
     PartDesignGui::ViewProviderMirrored      ::init();
     PartDesignGui::ViewProviderLinearPattern ::init();
+    PartDesignGui::ViewProviderCircularPattern::init();
+    PartDesignGui::ViewProviderPathPattern   ::init();
+    PartDesignGui::ViewProviderPointPattern  ::init();
     PartDesignGui::ViewProviderPolarPattern  ::init();
     PartDesignGui::ViewProviderScaled        ::init();
     PartDesignGui::ViewProviderMultiTransform::init();

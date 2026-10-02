@@ -18,6 +18,11 @@ Toolbar styles are now mutually exclusive in source, guarding late native toolba
 show events and saved-layout restoration. Twelve ribbon source-overlay checks
 pass, including preservation of Classic visibility. This fix joins the pending
 batch; packaged preference/startup acceptance awaits build incorporation.
+Audit corrections add compact Datums/Variable Set/Macro access, usable icons for
+iconless actions and correct Drawing page priority. Circular/Path/Point native
+Pattern bindings are restored in source and grouped under Pattern; native rebuild
+and GUI acceptance remain pending. Fourteen ribbon overlay checks and ten existing
+native Pattern geometry checks pass; see [WORK_STATE](WORK_STATE.md).
 
 Tasks startup actions are also queued in source: New File/Open with no document,
 then New Sketch/Coordinate System/Datum Plane/Add Component in a component's

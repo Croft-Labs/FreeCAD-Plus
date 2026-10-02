@@ -18,6 +18,8 @@ OUT = ROOT / "ai-instructions/details/ui/TOOLBARS.md"
 ASSETS = OUT.parent / "toolbar-icons"
 inventory_path = Path(sys.argv[1])
 data = json.loads(inventory_path.read_text(encoding="utf-8"))
+pending_native = {"PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern"} - {
+    name for name, actions in data["commands"].items() if actions}
 REF = sys.argv[2] if len(sys.argv) > 2 else "upstream/main"
 def git(*args):
     return subprocess.check_output(["git", *args], cwd=ROOT).decode("utf-8")
@@ -79,6 +81,12 @@ STANDARD = set(standard)
 baselines = {}
 for name, module in modules.items():
     baselines[name] = cpp_groups(stock(f"src/Mod/{module}/Gui/Workbench.cpp"), helpers=helpers)
+    if name == "PartDesignWorkbench" and pending_native:
+        local = cpp_groups((ROOT / f"src/Mod/{module}/Gui/Workbench.cpp").read_text(encoding="utf-8"),helpers=helpers)
+        data["workbenches"][name]["classic"].update(local)
+        data["workbenches"][name]["plus"]["Modeling"] = [(k,local[k]) for k in (
+            "Part Design Modeling Features","Part Design Transformation Features",
+            "Part Design Dress-Up Features","Part Design Helper Features")]
     if name not in data["workbenches"]:
         path = ROOT / f"src/Mod/{module}/Gui/Workbench.cpp"
         local = cpp_groups(path.read_text(encoding="utf-8"), helpers=helpers)
@@ -245,7 +253,7 @@ def constant(node):
 for node in ribbon_tree.body:
     if isinstance(node,ast.Assign) and isinstance(node.targets[0],ast.Name):
         key = node.targets[0].id
-        if key in ("PRIMARY_COMMANDS", "DIMENSION_CHOICES", "COMMAND_FAMILIES"):
+        if key in ("PRIMARY_COMMANDS", "DIMENSION_CHOICES", "COMMAND_FAMILIES", "ICON_FALLBACKS", "COLLAPSED_GROUPS"):
             constants[key] = constant(node.value)
 primary = constants["PRIMARY_COMMANDS"]
 families = constants["COMMAND_FAMILIES"]
@@ -265,7 +273,8 @@ def icon_for(name, act=None):
         used_icons.add(filename)
         shutil.copyfile(inventory_path.parent / "icons" / filename, ASSETS / filename)
         return f"![{cell(clean(act['text']))}](toolbar-icons/{filename})"
-    pixmap = Path(act.get("pixmap", "")).stem or name
+    fallback = constants["ICON_FALLBACKS"].get(name, "preferences-general.svg") if data["commands"].get(name) else ""
+    pixmap = Path(act.get("pixmap", "") or fallback).stem or name
     path = svg_index.get(pixmap) or svg_index.get(name)
     if path:
         import os
@@ -294,9 +303,9 @@ def group_table(groups, plus=False, source_only=False):
     lines = ["| Section / toolbar group | Buttons in display order |", "| --- | --- |"]
     for title, names in groups:
         buttons = []
-        if plus and title == "Help":
+        if plus and title in constants["COLLAPSED_GROUPS"]:
             catalog.update(c for c in names if c != "Separator")
-            buttons = ["Help dropdown → " + "; ".join(button(c) for c in names if c != "Separator")]
+            buttons = [title + " dropdown → " + "; ".join(button(c) for c in names if c != "Separator")]
         elif plus:
             for name, choices in projection(names):
                 if not source_only and not data["commands"].get(name): continue
@@ -351,12 +360,13 @@ lines += ["### Changes in Plus", "",
     "with the component-document workflow. Native command identity remains `Std_New`.",
     "- Edit adds Delete and Preferences. Clipboard remains its native section.",
     "- Home Structure uses Components, Add part, Group, Link Actions and Add Reference Object. "
-    "Upstream Datums (`Part_Datums`) and Variable Set (`Std_VarSet`) are omitted from this ribbon "
-    "section; native menu commands remain. Coordinate System/Datum Plane creation is also exposed through "
-    "the idle component Tasks pane, not as Home ribbon buttons.",
+    "The audit correction restores native Datums as one dropdown and Variable Set as a small button. "
+    "Coordinate System/Datum Plane creation is also exposed through the idle component Tasks pane.",
     "- View and Individual Views move to the View tab; Display adds selection filters, toolbar menu, dock menu and status-bar toggle.",
-    "- Help commands move into one Help dropdown. The Macro toolbar has no Plus ribbon section; "
-    "its commands remain in the native Macro menu. This is presentation omission, not deletion of macro support.",
+    "- Help and Macro each use one compact dropdown; record, macro manager and direct execution retain native states. "
+    "The audit correction restores Macro ribbon access.",
+    "- Iconless native actions get a ribbon-only icon from existing artwork. Their native QAction icons, "
+    "states and menu identities remain unchanged. Native compound-menu separators are omitted from button-choice lists.",
     "- Home common Tools adds Command Search, Measure and Mass Properties in Design. "
     "Workbenches retain their native menu/shortcut commands even where the ribbon omits a toolbar button.", "",
     "### Plus shared sections", ""]
@@ -395,11 +405,11 @@ for name in order:
             "Add/Subtract is selected in the task pane; the component workflow also supports separate background solid results.",
             f"- {button('PartDesign_LinearPattern')}, {button('PartDesign_PolarPattern')}, "
             f"{button('PartDesign_CircularPattern')}, {button('PartDesign_PathPattern')}, {button('PartDesign_PointPattern')} "
-            f"are replaced as direct toolbar buttons by {button('PartDesign_Pattern')}. "
-            "The unified task currently offers linear/circular patterns; Path/Point are not claimed as unified choices. "
-            "Linear/Polar native commands remain registered. The inspected fork does not register the "
-            "newer upstream Circular/Path/Point commands; these are not hidden unified options. "
-            "Mirrored and MultiTransform remain separate buttons.",
+            f"share {button('PartDesign_Pattern')} as the primary ribbon entry. "
+            "The unified task offers linear/circular patterns; the dropdown adds native concentric Circular, Path and Point tasks. "
+            "The audit correction restores their upstream commands and view providers in source, without changing geometry. "
+            "Those three bindings remain pending native rebuild/GUI validation in the inspected executable. "
+            "Classic exposes their individual native buttons; Mirrored and MultiTransform remain separate buttons.",
             "- Additive/Subtractive Loft, Pipe and Helix each share one dropdown. Both variants remain selectable."]
     if name == "SketcherWorkbench":
         lines += ["- Dimension buttons are consolidated under large Auto Dimension, with vertical, horizontal, "
