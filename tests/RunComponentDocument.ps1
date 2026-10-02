@@ -28,6 +28,11 @@ param(
     [switch]$AssemblyStructureSmoke,
     [switch]$TreeMoveSmoke,
     [switch]$PaneInteractions,
+    [switch]$SketchWorkflow,
+    [switch]$SketchRegression,
+    [switch]$SketchSolver,
+    [string]$SketchColdFixtureDirectory,
+    [string]$TestNames,
     [switch]$RibbonSmoke,
     [ValidateSet('Bootstrap','Plus','Classic')][string]$RibbonStartupPhase,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
@@ -43,6 +48,7 @@ $env:FREECAD_USER_HOME = $OutputDirectory
 $env:FREECAD_USER_DATA = $OutputDirectory
 $env:FREECAD_USER_TEMP = $OutputDirectory
 $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentDocument.py'
+$env:FREECAD_PLUS_TEST_NAMES = $TestNames
 if ($IterationSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentIteration.py' }
 if ($PanelSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPanelIteration.py' }
 if ($SelectionSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentSelectionIteration.py' }
@@ -83,6 +89,23 @@ if ($TreeMoveSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTreeMo
 if ($PaneInteractions) {
     $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPaneInteractions.py'
+}
+if ($SketchWorkflow) {
+    $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
+    $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentSketchWorkflow.py'
+}
+if ($SketchRegression) {
+    $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
+    $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPanelIteration.py,tests/TestComponentTaskContext.py,tests/TestSketchFreedom.py,tests/TestSketchSupportCommand.py,tests/TestSketchRepairReview.py,tests/TestConstraintRepair.py,tests/TestSketchReuse.py,tests/TestTrimGesture.py'
+}
+if ($SketchSolver) {
+    $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
+    $env:FREECAD_PLUS_ISSUE_TESTS = 'src/Mod/Sketcher/SketcherTests/TestSketcherSolver.py'
+}
+if ($SketchColdFixtureDirectory) {
+    $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
+    $env:FREECAD_PLUS_SKETCH_FIXTURES = (Resolve-Path -LiteralPath $SketchColdFixtureDirectory).Path
+    $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentSketchCold.py'
 }
 if ($RibbonSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestPlusRibbon.py' }
 if ($RibbonStartupPhase) {

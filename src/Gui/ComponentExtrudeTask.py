@@ -385,13 +385,17 @@ class ExtrudeTask:
             hit_object = hit_doc.getObject(hit.get("Object", "")) if hit_doc else None
             origin = self.component.Origin
             origin_hit = hit_object == origin or hit_object in origin.OriginFeatures
+            support_plane_hit = (hit_object is not None
+                and hit_object in [ref[0] for ref in source.AttachmentSupport]
+                and (hit_object.isDerivedFrom("PartDesign::Plane")
+                     or hit_object.isDerivedFrom("Part::Plane")))
             sketch_region_hit = (hit.get("Document") == source.Document.Name
                                  and hit.get("Object") == source.Name
                                  and hit.get("Component", "").startswith("InternalFace"))
-            if not origin_hit and not sketch_region_hit:
+            if not origin_hit and not support_plane_hit and not sketch_region_hit:
                 return  # Native edge picks are collected by the selection observer.
-            # The active origin is visible by default. Its axes/planes must not
-            # block projection into a sketch region; other geometry still does.
+            # Origin helpers and the sketch's own support plane must not block
+            # region projection. Other geometry still blocks occluded picks.
         try:
             import ComponentProfile as Profile
             start, end = self.view.projectPointToLine(position)

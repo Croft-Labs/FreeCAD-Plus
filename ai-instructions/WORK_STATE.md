@@ -1,5 +1,83 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: complete sketch workflow regression batch
+
+Owner requested rigorous sketch creation, attachment, active/reference curves,
+active/reference dimensions and geometric constraints, plus plane creation inside
+New Sketch. The task now offers User plane and Create new plane beside native
+origin-plane and planar-face choices. Creating a plane exposes origin/face/user
+base, signed offset and X/Y/Z rotations; OK creates a component-owned native datum
+plane and attached sketch in one creation transaction, then enters Sketcher.
+Cancel creates neither. Plane001 numbering is local to each component. New origin
+and user-plane sketches use native ObjectXY attachment; face sketches use FlatFace.
+Existing detached sketches are unchanged. See UI-011 and
+[the reproducible sketch procedure](../tests/SketchWorkflow.md).
+
+Also fixed origin-plane preselection and support-plane region picking: a visible
+plane supporting a sketch had blocked its Extrude interior-region clicks. The
+picker now permits that support helper; unrelated solid occlusion still rejects.
+The native viewport test records an actual Plane hit, selects Edge1 and accepts a
+5 mm extrusion at its 7 mm support offset. Existing occlusion checks still pass.
+Two profile fixtures now change AttachmentOffset rather than the evaluated
+Placement of their newly attached sketches.
+
+Final evidence: **173 distinct passing checks in 22 test modules**, one intentional
+inherited solver skip, zero assertion failures/errors. Six GUI processes exit zero;
+no source overlays or unexpected GUI lifecycle diagnostics. Repeated component
+panel/task suites are counted once. Beneath
+`D:\Temp\Office-PC\freecad-plus-sketch-rigorous-20261002`:
+- `final-workflow`: 27, including native Qt drawing of line/arc/rectangle and
+  construction circle; five saved curve families, six dimension kinds on active
+  and construction geometry, native driving/reference creation and conversion,
+  radius value-dialog Accept/Cancel, eight native geometric constraint commands,
+  tangent/symmetry, unit expressions, external projection and support recovery.
+- `final-cold`: three, including standard Open, saved reference/constraint flags,
+  native editor entry, moved-plane downstream recompute/Undo/Redo and plane reuse.
+- `final-feedback`: 44; `final-regression`: 44; `final-core`: 39. Covers owning-file
+  task return, geometry/history/ownership, support and constraint repair, native
+  Validate Sketch, freedom guidance, reuse, Trim mouse gestures and persistence.
+- `final-solver`: 24 attempted, 23 pass. The inherited driving circle-to-line
+  secant test is explicitly skipped because support remains under discussion.
+  The strict runner correctly marks this run incomplete rather than suppressing
+  the skip. All other assertions pass; the application process exits zero.
+
+A fully constrained rectangle with a construction diagonal/reference dimension
+updates its Extrude volume from 1000 to 1500 mm3, measured diagonal and Undo/Redo,
+then preserves semantic identities and attachment through `.cadprt` reopen.
+The cold process moves its saved plane and verifies the solid follows. Screenshots
+`new-plane-options.png` and `constrained-reference-sketch.png` reviewed: support
+controls, fully constrained status, green active curves, construction diagonal and
+blue reference dimension are visible.
+
+Native first-dimension autoscaling creates separate Add radius constraint and
+Scale geometries Undo entries. Both Undo/Redo steps and Cancel are verified; this
+existing native behavior is preserved. Earlier fixture/API mistakes and a hidden
+standard-Open dialog timeout are retained. Corrected hidden-dialog attributes and
+deferred-widget cleanup allow the three final cold checks to finish normally.
+
+Three TopoShape hasher-mismatch diagnostics are retained in final-feedback stderr.
+No tested identity, geometry or link assertion failed. Focused result deletion/Undo
+and nonmutating preview audits passed without reproducing those messages; their
+cause remains unproven. General topology-naming qualification remains open under
+7.8.5b. Deliberate conflict/redundancy and protected-delete fixture diagnostics are
+expected. `sketch-validation-summary.json` records all outcomes without hiding the
+skip or these kernel messages.
+
+Three Python modules synchronized into the existing September 28 build:
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+Native binaries are unchanged; no native rebuild needed. Runtime paths/hashes
+match source, and the desktop shortcut target is unchanged. Final SHA-256:
+- ComponentSketch.py: `1A3868CB704B2E3B357613D1CFDBFFECDBA9A731EBDB64FBA1C1823045EBC354`
+- ComponentSketchTask.py: `FAF2527F12880A7AD5509F9AC00F696D295A95933283D0D5FA928EACBAEC88EE`
+- ComponentExtrudeTask.py: `073189DCD774F4BC8F196BEE337F864A2329FCC1CB1B26D65A1BBA5F75B2B132`
+- FreeCADGui.dll unchanged: `CA6554BCE9C5168A2B2344472134BE5759B3E8CDB6A425C66693F4880E604949`
+
+Owner documents/preferences and installed upstream FreeCAD were untouched.
+Automated Qt/native command coverage is separate from physical gestures, other
+DPI/themes and exhaustive combinations of every Sketcher tool. No installer,
+tag or release publication. Creation and the requested automated validation are
+complete; remaining topology/physical acceptance gates are explicitly separate.
+
 ## October 2: rigorous Components pane regression validation
 
 Models, Part Tree and History pass **139 distinct automated checks in 25 test

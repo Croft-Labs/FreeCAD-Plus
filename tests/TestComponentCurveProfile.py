@@ -194,7 +194,7 @@ class TestComponentCurveProfile(unittest.TestCase):
             with self.assertRaises(ValueError):
                 Extrude.preview(self.component, self.sketch, 4, elements=["Edge2"], options=options)
         options = Extent.defaults()
-        self.sketch.Placement.Base = App.Vector(0, 0, 12)
+        self.sketch.AttachmentOffset = App.Placement(App.Vector(0, 0, 12), App.Rotation())
         self.doc.recompute()
         added = Extrude.preview(self.component, self.sketch, 4, "Add", box,
                                 elements=["Edge2"], options=options, volume_only=True)
@@ -379,7 +379,7 @@ class TestComponentCurveProfile(unittest.TestCase):
     def testPlacedSketchRegionAndNativeAcceptance(self):
         module = task_module()
         self.component.Placement = App.Placement(App.Vector(80, 20, 10), App.Rotation(App.Vector(0, 0, 1), 25))
-        self.sketch.Placement = App.Placement(App.Vector(10, 20, 30), App.Rotation(App.Vector(1, 0, 0), 90))
+        self.sketch.AttachmentOffset = App.Placement(App.Vector(10, 20, 30), App.Rotation(App.Vector(1, 0, 0), 90))
         self.doc.recompute()
         Gui.Selection.clearSelection()
         task = module.ExtrudeTask(self.component)

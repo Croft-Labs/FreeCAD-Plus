@@ -589,6 +589,38 @@ the editor. Activate the target document before preview or Apply.
 Graphical ghost preview, general datum/occurrence support and physical/high-DPI
 acceptance remain pending. [Owner procedure](../tests/SketchSupport.md).
 
+### Component New Sketch support choices
+
+In a component document, both native New Sketch commands open the component-owned
+New Sketch task without requiring a Body. Plane offers XY, XZ, YZ, Selected planar
+face, User plane and Create new plane. Origin planes are temporarily displayed;
+preselection and viewport picks choose the support. Use selected face or plane
+also captures a support explicitly. User plane lists local native datum planes
+and Part planes by label while retaining object identity.
+
+Create new plane reveals Base plane and Rotation X/Y/Z. The base can be an origin
+plane, local planar face or existing user plane. Offset is measured along the
+base normal; rotations apply X, then Y, then Z in the base frame. OK creates a
+native PartDesign plane and the attached sketch in one creation transaction,
+then opens native Sketcher after the New Sketch task closes. The sketch has zero
+additional offset on its newly created plane. Cancel creates neither object.
+Native Sketcher owns subsequent edit transactions separately.
+
+Planes remain component-owned History objects, named Plane001, Plane002, etc.
+per component; no Body is added. Origin and user-plane sketches use native
+ObjectXY attachment, while face sketches use FlatFace. Edit AttachmentOffset
+to change a supported sketch/plane's offset or rotation. New sketches follow
+their support through recompute and save/reopen. Existing detached sketches
+retain their prior placement and attachment state without migration.
+Nonplanar, missing, stale and foreign-component supports reject inline and leave
+the task open for correction; foreign geometry requires a local reference.
+
+Sketcher construction curves are reference geometry: they participate in solving
+but are excluded from the solid profile. Driving dimensions control geometry;
+reference dimensions measure solved geometry. Existing native drawing, dimension,
+constraint, expression and repair tools retain these semantics. Automated coverage
+and physical acceptance limits are recorded in [the sketch workflow procedure](../tests/SketchWorkflow.md).
+
 ## UI-012: Dependency inspection (F015; roadmap 7.5.5a / 10.6a)
 
 Tools > Inspect dependencies requires one selected object and no active task.

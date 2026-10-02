@@ -6,11 +6,12 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-October 2: Models, Part Tree and History pass 139 native automated checks across
-25 modules, with six discovered defects fixed in the existing 9/28 build. Plus UI
-is the default, including the compiled native preference fallback.
-[WORK_STATE](WORK_STATE.md) records exact build/payload/test evidence and
-[the pane procedure](../tests/ComponentPaneValidation.md) records reproducible
+October 2: New Sketch now supports existing user planes and creating a native
+plane with base/offset/rotations. The sketch validation batch passes 173 distinct
+checks with one intentional inherited solver skip; support-plane region picking
+is fixed in the existing 9/28 build. [WORK_STATE](WORK_STATE.md) records exact
+payload/test evidence and retained diagnostics. [Sketch workflow procedure](../tests/SketchWorkflow.md)
+and [pane procedure](../tests/ComponentPaneValidation.md) record reproducible
 coverage. Physical owner acceptance remains separate.
 
 ## Where to go
@@ -39,7 +40,7 @@ coverage. Physical owner acceptance remains separate.
 | Component file recovery | [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py), Component Structure, native `PropertyXLink` | Grouped missing instances, identity-based Locate Component File, partial reference recovery and clearing obsolete saved link targets; roadmap 7.8.3c. |
 | Component reference recovery | [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py), [`CadDocument.py`](../src/Mod/Part/CadDocument.py), History | Repairable missing geometry, independent refresh and identity-preserving direct-child source repair; roadmap 7.8.4a. |
 | Component selection and view context | [`ComponentSelection.py`](../src/Gui/ComponentSelection.py), [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py) | Native occurrence-path selection, direct-child reference preselection, grouped display Undo and isolated-tab context; roadmap 7.8.7f. |
-| Independent component sketches | [`ComponentSketch.py`](../src/Mod/Part/ComponentSketch.py), [`ComponentSketchTask.py`](../src/Gui/ComponentSketchTask.py) | Body-independent native New Sketch plane/face workflow; roadmap 7.8.5d. |
+| Independent component sketches | [`ComponentSketch.py`](../src/Mod/Part/ComponentSketch.py), [`ComponentSketchTask.py`](../src/Gui/ComponentSketchTask.py) | Body-independent New Sketch origin/face/user-plane workflow and native plane creation; roadmap 7.8.5d/7.8.7aa; [validation procedure](../tests/SketchWorkflow.md). |
 | Component Extrude feedback task | [`ComponentExtrude.py`](../src/Mod/Part/ComponentExtrude.py), [`ComponentExtent.py`](../src/Mod/Part/ComponentExtent.py), [`ComponentProfile.py`](../src/Mod/Part/ComponentProfile.py), [`ComponentExtrudeTask.py`](../src/Gui/ComponentExtrudeTask.py), native Part Design command routing | Independent New Body/Add/Subtract/history workflow, associative selected curves/regions, native extent/offset/taper/direction controls and colored volume previews; roadmap 7.8.5c/d, 7.8.7d/e/p/q. |
 | Product intent and boundaries | [Product specification](PRODUCT_SPEC.md) | [UI scope](UI_UX_SPEC.md#interface-scope) |
 | `.cadprt` persistence and legacy conversion | [`CadDocument.py`](../src/Mod/Part/CadDocument.py), native App/Gui document save/open | Versioned manifest with native payloads; automatic GUI conversion, untouched originals and reported limitations. Roadmap 7.8; [owner procedure](../tests/ComponentDocument.md). |

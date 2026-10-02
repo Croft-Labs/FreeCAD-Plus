@@ -2643,6 +2643,16 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   All seven final processes exit zero with no failures/errors/skips or unexpected
   GUI diagnostics. See WORK_STATE and tests/ComponentPaneValidation.md. Physical
   owner acceptance for preceding milestones remains separate and pending.
+- [ X ] 7.8.7aa Owner sketch workflow: New Sketch supports existing local user
+  planes and creates a native datum plane plus attached sketch atomically from an
+  origin/face/user base with offset and X/Y/Z rotations. Native origin attachment,
+  preselection, labels, cancellation and support-plane Extrude region picking
+  implemented and synchronized into the 9/28 payload. Rigorous native GUI/model
+  validation passes 173 distinct checks across 22 modules, with one intentional
+  inherited driving-secant solver skip and no assertion failures/errors. Recompute,
+  Undo/Redo, reference semantics and cold save/reopen covered. See WORK_STATE and
+  tests/SketchWorkflow.md. Physical acceptance and three retained topology-hasher
+  diagnostics remain separate from these passing assertions; 7.8.5b stays open.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
