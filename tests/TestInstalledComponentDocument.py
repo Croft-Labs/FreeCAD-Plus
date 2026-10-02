@@ -14,6 +14,10 @@ from freecad.gui import ComponentNavigator
 
 
 class TestInstalledComponentDocument(unittest.TestCase):
+    def setUp(self):
+        # Correlate native Qt diagnostics with the cold workflow that emitted them.
+        os.write(2, ("Cold GUI check: " + self._testMethodName + "\n").encode())
+
     def tearDown(self):
         for doc in list(App.listDocuments().values()):
             App.closeDocument(doc.Name)
@@ -42,6 +46,30 @@ class TestInstalledComponentDocument(unittest.TestCase):
         self.assertEqual(panel.structure.topLevelItemCount(), 1)
         self.assertEqual(panel.structure.topLevelItem(0).text(0), root.Label)
         self.assertEqual(Gui.activeDocument().activeView().getActiveObject("part"), root)
+
+    def testCameraCommandsAcrossClosingAndNewViews(self):
+        doc = Model.new_document("Camera lifecycle")
+        Gui.updateGui()
+        commands = [Gui.Command.get(name) for name in
+                    ("Std_OrthographicCamera", "Std_PerspectiveCamera")]
+        for command in commands:
+            command.getAction()
+            self.assertTrue(command.isActive())
+        App.closeDocument(doc.Name)
+        # Query before the closed Qt window has finished deferred destruction.
+        Gui.Command.update()
+        self.assertTrue(all(not command.isActive() for command in commands))
+        for name in ("Std_Save", "Std_Undo", "Std_Redo"):
+            command = Gui.Command.get(name)
+            command.getAction()
+            self.assertFalse(command.isActive(), name + " must not query a detached view")
+        doc = Model.new_document("Restored camera")
+        Gui.updateGui()
+        self.assertTrue(all(command.isActive() for command in commands))
+        Gui.runCommand("Std_PerspectiveCamera", 1)
+        self.assertIn("PerspectiveCamera", Gui.activeDocument().activeView().getCamera())
+        Gui.runCommand("Std_OrthographicCamera", 1)
+        self.assertIn("OrthographicCamera", Gui.activeDocument().activeView().getCamera())
 
     def testStandardOpenConvertsLegacyWithoutChangingOriginal(self):
         doc = App.newDocument("LegacyGui")
@@ -119,3 +147,29 @@ class TestInstalledComponentDocument(unittest.TestCase):
         self.assertNotEqual(reference.SourceObject.Document, doc)
         panel = ComponentNavigator.show(doc)
         self.assertEqual(panel.structure.topLevelItem(0).text(0), root.Label)
+        from PySide import QtCore
+        self.assertEqual([panel.tabs.tabText(i) for i in range(panel.tabs.count())],
+                         ["Models", "Part Tree", "History"])
+        counts = Model.instance_counts(root)
+        expected = set(Model.definitions(doc)) | set(counts)
+        actual = {}
+        for index in range(panel.models.topLevelItemCount()):
+            row = panel.models.topLevelItem(index)
+            self.assertEqual(row.childCount(), 0)
+            component = ComponentNavigator.resolve(row.data(0, QtCore.Qt.UserRole))
+            actual[component] = int(row.text(1))
+        self.assertEqual(actual, {component: counts.get(component, 0) for component in expected})
+        root_row = panel.structure.topLevelItem(0)
+        self.assertEqual(root_row.childCount(), len(Model.children(root)))
+        for index in range(root_row.childCount()):
+            self.assertTrue(all(ComponentNavigator.resolve(key).ComponentRole == "Occurrence"
+                                for key, ids in panel.members(root_row.child(index))))
+        self.assertEqual(panel.history.topLevelItem(0).text(2), "Origin")
+        self.assertEqual(panel.history.topLevelItem(0).child(0).text(2), "Origin Planes")
+        self.assertTrue(root.Origin.Visibility)
+        self.assertFalse(any(plane.Visibility for plane in ComponentNavigator.origin_planes(root.Origin)))
+        reference_row = next(panel.history.topLevelItem(index)
+                             for index in range(panel.history.topLevelItemCount())
+                             if panel.history.topLevelItem(index).data(0, QtCore.Qt.UserRole)
+                             == ComponentNavigator.object_key(reference))
+        self.assertEqual(reference_row.text(3), "Ready")

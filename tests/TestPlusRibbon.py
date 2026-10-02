@@ -65,6 +65,18 @@ class TestPlusRibbon(unittest.TestCase):
     def button(self, command):
         return self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, "Ribbon_" + command)
 
+    def testWorkbenchInitializationDefersRendering(self):
+        incomplete = type("InitializingWorkbench", (), {
+            "name": lambda self: (_ for _ in ()).throw(AttributeError("__Workbench__"))})()
+        with patch.object(Gui, "activeWorkbench", return_value=incomplete):
+            self.ribbon.workbench_changed("SketcherWorkbench")
+            self.assertTrue(self.ribbon.render_timer.isActive())
+        Gui.activateWorkbench("SketcherWorkbench")
+        settle()
+        self.assertFalse(self.ribbon.render_timer.isActive())
+        self.assertEqual(self.ribbon.current_tab(), "Sketch")
+        self.assertIsNotNone(self.ribbon.scroll.widget())
+
     def tab(self, name):
         self.ribbon.tabs.setCurrentIndex(UI.DESIGN_TABS.index(name))
         settle()

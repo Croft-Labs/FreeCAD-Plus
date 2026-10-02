@@ -75,7 +75,11 @@ finally:
                 "matches_source": expected.is_file() and digest == hashlib.sha256(expected.read_bytes()).hexdigest(),
                 "in_build": path.resolve().is_relative_to(Path(App.ConfigGet("AppHomePath")).resolve())}
     if os.environ.get("FREECAD_PLUS_VERIFY_PAYLOAD") == "1":
-        report["payload_verified"] = (len(report["runtime_modules"]) == 11 and not report["source_overlay"]
+        required = {"ComponentModel", "ComponentSketch", "ComponentExtrude", "ComponentProfile",
+                    "ComponentExtent", "ComponentResultView", "freecad.gui.ComponentNavigator",
+                    "freecad.gui.ComponentExtrudeTask", "freecad.gui.ComponentSketchTask",
+                    "freecad.gui.ComponentSelection", "freecad.gui.OccurrenceMove"}
+        report["payload_verified"] = (required.issubset(report["runtime_modules"]) and not report["source_overlay"]
             and all(entry["matches_source"] and entry["in_build"] for entry in report["runtime_modules"].values()))
         report["passed"] = (report["passed"] and report["payload_verified"]
             and report.get("native_attributes") == {"title": "Attributes", "tree_hidden": True})

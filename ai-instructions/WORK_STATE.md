@@ -1,5 +1,65 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: rigorous Components pane regression validation
+
+Models, Part Tree and History pass **139 distinct automated checks in 25 test
+modules**, across seven clean native GUI processes with source overlays disabled.
+Coverage includes model inventory/counts, root/occurrence ordering and deletion,
+rename and isolated editing, visibility, suppression, references, conversion,
+clipboard/drop rearrangement, Undo/Redo, shared/external definitions, `.cadprt`
+save/reopen, task transitions and close/reopen lifecycle. Ten focused interaction
+workflows use Qt mouse events, deferred context actions, 60 refresh/tab cycles,
+24 shared nested uses, unused definitions and narrow Plus/Classic captures.
+See [the reproducible procedure](../tests/ComponentPaneValidation.md).
+
+Six application defects found and corrected:
+- Active Origin axes/planes intercepted viewport Extrude region picking; helper
+  hits now permit sketch projection while actual occluding geometry still blocks.
+- Models root editing could change context while a task was open; it now refuses.
+- Closing the last document retained stale navigator context; keys/path reset.
+- Deferred refresh invalidated context-menu row objects; actions resolve stable
+  row identities and reject changed document contexts when triggered.
+- Sketcher activation could render Plus Ribbon before its Python workbench handle
+  existed; rendering is deferred until initialization completes.
+- Detached MDI views retained enabled document/camera commands during deferred
+  destruction, causing camera exceptions and an access violation; capabilities
+  now reject detached views and camera-less renderers.
+
+Incorporated in the existing September 28 build at
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+The desktop shortcut target is unchanged. Grouped App/Gui/resources/PartGui/
+PartDesignGui/SketcherGui/PartScripts build and subsequent GUI detached-view repair
+both succeeded. The native General-page Plus default fallback is now compiled.
+Build evidence is in `native-build` and `native-build-detached-view` beneath
+`D:\Temp\Office-PC\freecad-plus-pane-rigorous-20261002`.
+
+Final test directories beneath that evidence root:
+- `native-feedback`: 44; `native-integration`: 24; `native-core`: 39.
+- `native-movement`: nine; `native-input`: ten; `native-ribbon`: seven.
+- `native-cold-fixed`: six, including standard New/Open and detached-view commands.
+
+`pane-validation-summary.json` aggregates the seven runs: no failures, errors or
+skips; every process exited zero. Runtime modules load from this build and match
+source hashes. The runner now rejects unhandled camera exceptions, uninitialized
+workbench handles and deleted Qt row diagnostics rather than accepting assertions
+alone. Earlier failing runs are retained; deliberate missing-file, protected-delete
+and inactive-geometry fixture messages are expected. Screenshots were reviewed
+for readable Models/Part Tree/History layouts and protected Origin Planes hierarchy.
+
+Final SHA-256:
+- FreeCADGui.dll: `CA6554BCE9C5168A2B2344472134BE5759B3E8CDB6A425C66693F4880E604949`
+- PartGui.pyd: `49BD0C13A727C74D4AFE09F6835F521864A0DE1A53301B9BA75C1C465951F4E2`
+- PartDesignGui.pyd: `BE85C06A3FA2CAB968BA0CD49F4A6C7C2B8D046BEDED68AA2FFCB03DD346AD32`
+- SketcherGui.pyd: `C09C763F03894D7A415B88CBD8AAC9FEE84BD29891C7B8B5DD053BBDDD8DF399`
+- ComponentNavigator.py: `208DEEDB278BEA675142145B084E16DD35B7C1189E19E38F05A7C4F0A10EAE72`
+- ComponentExtrudeTask.py: `94A8051C87C8F7377872E9B6B66DBEC6B6A92B581D853A48F48CC598FD14DEF8`
+- PlusRibbon.py: `E98486A6C71AACC282B83D128CDA3872901BD70B8B321E67A852E36CCBD0E297`
+
+Owner documents/preferences and installed upstream FreeCAD were untouched. Qt
+input/native drop events establish automated coverage; physical desktop gestures,
+other DPI/themes and very large assemblies remain separate acceptance. Existing
+physical owner milestones remain open. No installer, tag or release publication.
+
 ## October 2 follow-up: Plus UI is the default
 
 Owner requests Plus UI by default. The startup service initializes an absent/empty

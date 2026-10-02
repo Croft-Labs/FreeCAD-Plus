@@ -483,6 +483,11 @@ Gui::Document* View3DInventor::getSaveDocument() const
 
 bool View3DInventor::onHasMsg(const char* pMsg) const
 {
+    // deleteSelf() detaches the renderer before Qt destroys the MDI window.
+    // Action updates during that interval must not query its former document.
+    if (!_pcDocument || !_viewer->getDocument()) {
+        return false;
+    }
     if (strcmp("CanPan", pMsg) == 0) {
         return true;
     }
@@ -549,10 +554,12 @@ bool View3DInventor::onHasMsg(const char* pMsg) const
         return true;
     }
     else if (strcmp("OrthographicCamera", pMsg) == 0) {
-        return true;
+        // Closing/restoring a view can temporarily leave its renderer without a
+        // camera. Camera command availability must not read that missing node.
+        return _viewer->getSoRenderManager()->getCamera() != nullptr;
     }
     else if (strcmp("PerspectiveCamera", pMsg) == 0) {
-        return true;
+        return _viewer->getSoRenderManager()->getCamera() != nullptr;
     }
     else if (strcmp("ZoomIn", pMsg) == 0) {
         return true;

@@ -2635,6 +2635,14 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   selection routing as well as History actions. Incorporated October 2; compiled
   Delete guard also passes with the Python adapter bypassed and mixed selections.
   Native evidence and pending physical acceptance are recorded in WORK_STATE.
+- [ X ] 7.8.7z Automated Components pane regression validation: 139 distinct
+  native checks across 25 modules exercise Models, Part Tree and History, including
+  Qt input, deferred menus, task locks, hierarchy counts, rearrangement, persistence
+  and cold document/view lifecycle. Six discovered application defects corrected;
+  grouped native build and detached-view GUI repair incorporated into 9/28 payload.
+  All seven final processes exit zero with no failures/errors/skips or unexpected
+  GUI diagnostics. See WORK_STATE and tests/ComponentPaneValidation.md. Physical
+  owner acceptance for preceding milestones remains separate and pending.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and

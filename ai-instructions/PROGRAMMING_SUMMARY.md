@@ -6,10 +6,12 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-October 2: Plus UI / Classic UI and the queued Part Tree/History/reference/origin
-feedback are incorporated in the existing 9/28 build. The grouped update passed
-62 native automated checks, including three cold startup processes. [WORK_STATE](WORK_STATE.md) records
-exact payload/build/test evidence; physical owner acceptance remains separate.
+October 2: Models, Part Tree and History pass 139 native automated checks across
+25 modules, with six discovered defects fixed in the existing 9/28 build. Plus UI
+is the default, including the compiled native preference fallback.
+[WORK_STATE](WORK_STATE.md) records exact build/payload/test evidence and
+[the pane procedure](../tests/ComponentPaneValidation.md) records reproducible
+coverage. Physical owner acceptance remains separate.
 
 ## Where to go
 

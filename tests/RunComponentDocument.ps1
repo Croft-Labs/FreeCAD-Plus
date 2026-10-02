@@ -27,6 +27,7 @@ param(
     [switch]$CoreSmoke,
     [switch]$AssemblyStructureSmoke,
     [switch]$TreeMoveSmoke,
+    [switch]$PaneInteractions,
     [switch]$RibbonSmoke,
     [ValidateSet('Bootstrap','Plus','Classic')][string]$RibbonStartupPhase,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
@@ -79,6 +80,10 @@ if ($AssemblyStructureSmoke) {
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentModelsPane.py,tests/TestComponentPanelIteration.py,tests/TestComponentSelectionIteration.py,tests/TestComponentEditContext.py,tests/TestComponentTaskContext.py,tests/TestComponentSaveRouting.py,tests/TestComponentUndoRouting.py,tests/TestComponentDisplayContext.py,tests/TestComponentBom.py,tests/TestComponentExternalization.py,tests/TestComponentFileRecovery.py,tests/TestComponentAddCommand.py'
 }
 if ($TreeMoveSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTreeMove.py' }
+if ($PaneInteractions) {
+    $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
+    $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPaneInteractions.py'
+}
 if ($RibbonSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestPlusRibbon.py' }
 if ($RibbonStartupPhase) {
     $env:FREECAD_PLUS_RIBBON_PHASE = $RibbonStartupPhase
@@ -112,5 +117,15 @@ while (-not $process.WaitForExit(1000)) {
     Set-Content "$OutputDirectory\process-result.json"
 if ($process.ExitCode -ne 0) { throw "FreeCAD exited $($process.ExitCode)." }
 $result = Get-Content "$OutputDirectory\results.json" -Raw | ConvertFrom-Json
-if (-not $result.passed) { throw 'Component validation failed; see results.json.' }
+$diagnostics = @(Select-String -LiteralPath "$OutputDirectory\stderr.log" -Pattern @(
+    'Unhandled Base::Exception caught in GUIApplication::notify',
+    'AttributeError: .*__Workbench__',
+    'libshiboken: Internal C\+\+ object .*already deleted') | ForEach-Object { $_.Line })
+$result | Add-Member -NotePropertyName unexpected_gui_diagnostics -NotePropertyValue $diagnostics -Force
+if ($diagnostics.Count) { $result.passed = $false }
+$result | ConvertTo-Json -Depth 30 | Set-Content "$OutputDirectory\results.json"
+if (-not $result.passed) {
+    Set-Content "$OutputDirectory\validation.done" 'FAIL'
+    throw 'Component validation failed; see results.json.'
+}
 Write-Output "PASS: $($result.tests_run) component checks; evidence in $OutputDirectory"

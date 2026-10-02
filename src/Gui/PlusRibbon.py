@@ -42,6 +42,9 @@ class Ribbon(QtCore.QObject):
         self.window = Gui.getMainWindow()
         self.enabled = False
         self.changing = False
+        self.render_timer = QtCore.QTimer(self)
+        self.render_timer.setSingleShot(True)
+        self.render_timer.timeout.connect(self.render)
         self.saved_bars = {}
         self.mode_name = "Design"
         self.toolbar = QtWidgets.QToolBar(tr("Plus Ribbon"), self.window)
@@ -218,6 +221,13 @@ class Ribbon(QtCore.QObject):
 
     def render(self):
         if not self.enabled:
+            return
+        try:
+            Gui.activeWorkbench().name()
+        except AttributeError:
+            # Native Sketcher activation can emit workbenchActivated before the
+            # Python workbench wrapper receives its __Workbench__ handle.
+            self.render_timer.start(100)
             return
         self.hide_bars()
         page = QtWidgets.QWidget()

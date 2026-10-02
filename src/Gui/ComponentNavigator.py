@@ -383,6 +383,9 @@ class Navigator(QtWidgets.QDockWidget):
                     model().activate(active, strict=False)
             self.refresh_representations()
             if root is None or active is None:
+                self.root_key = self.active_key = None
+                self.active_path = []
+                self.origin_context = None
                 self.context.setText(tr("Create or open a component document."))
                 self.conversion.hide()
                 self.reference_notice.hide()
@@ -709,6 +712,8 @@ class Navigator(QtWidgets.QDockWidget):
             self.selecting = False
 
     def edit_model(self, item):
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before editing another component."))
         key = item.data(0, QtCore.Qt.UserRole)
         if key == self.root_key:
             self.active_key, self.active_path = key, []
@@ -1301,14 +1306,32 @@ class Navigator(QtWidgets.QDockWidget):
         from CommandCreateBom import CommandCreateBom
         CommandCreateBom().Activated()
 
+    def menu_row(self, tree, key, context):
+        root = resolve(self.root_key) if self.root_key else None
+        if root is None or (self.root_key, root.ObjectId) != context:
+            raise ValueError(tr("The component view changed. Open the menu again."))
+        iterator = QtWidgets.QTreeWidgetItemIterator(tree)
+        while iterator.value():
+            row = iterator.value()
+            if self.row_key(row) == key:
+                return row
+            iterator += 1
+        raise ValueError(tr("The selected item changed. Open the menu again."))
+
     def build_menu(self, tree, item):
         menu = QtWidgets.QMenu(self)
         # Retain the Python submenu wrappers throughout popup execution.
         menu.component_submenus = []
+        root = resolve(self.root_key) if self.root_key else None
+        context = (self.root_key, root.ObjectId) if root else None
+        row_key = self.row_key(item) if item else None
+        # Timed refreshes replace QTreeWidgetItems even while a popup is open.
+        # Resolve the stable row identity when an action fires, never a dead item.
+        target = lambda: self.menu_row(tree, row_key, context)
         if tree == self.models:
             if item:
                 key = item.data(0, QtCore.Qt.UserRole)
-                menu.addAction(tr("Edit"), lambda: self.run(lambda: self.edit_model(item)))
+                menu.addAction(tr("Edit"), lambda: self.run(lambda: self.edit_model(target())))
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(key)))
                 menu.addAction(tr("Add Instance"), lambda: self.run(
                     lambda: model().add_component(resolve(self.active_key), resolve(key))))
@@ -1320,14 +1343,14 @@ class Navigator(QtWidgets.QDockWidget):
                 return menu
             obj = resolve(value[0])
             definition = obj.LinkedObject if getattr(obj, "ComponentRole", "") == "Occurrence" else obj
-            menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(item))).setEnabled(definition is not None)
+            menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(target()))).setEnabled(definition is not None)
             if value[1]:
-                menu.addAction(tr("Cut"), lambda: self.run(lambda: self.cut_instances(item)))
-            paste = menu.addAction(tr("Paste"), lambda: self.run(lambda: self.paste_instances(item)))
+                menu.addAction(tr("Cut"), lambda: self.run(lambda: self.cut_instances(target())))
+            paste = menu.addAction(tr("Paste"), lambda: self.run(lambda: self.paste_instances(target())))
             paste.setEnabled(definition is not None and QtWidgets.QApplication.clipboard().mimeData().hasFormat(PartTree.MIME))
             if value[1]:
                 menu.addAction(tr("Delete Instance") if len(self.members(item)) == 1 else tr("Delete Instances"),
-                               lambda: self.run(lambda: self.delete_instances(item)))
+                               lambda: self.run(lambda: self.delete_instances(target())))
             menu.addAction(tr("Add Component"), lambda: self.run(lambda: self.add_component(value[0]))).setEnabled(definition is not None)
             if definition:
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(object_key(definition))))
@@ -1342,7 +1365,7 @@ class Navigator(QtWidgets.QDockWidget):
                 if len(self.members(item)) > 1:
                     expanded = item.data(0, QtCore.Qt.UserRole + 2) in self.expanded_instances
                     menu.addAction(tr("Collapse Instances") if expanded else tr("Expand Instances"),
-                                   lambda: self.run(lambda: self.toggle_instances(item)))
+                                   lambda: self.run(lambda: self.toggle_instances(target())))
                 externalize = menu.addAction(tr("Save to External File"), lambda: self.run(lambda: self.externalize_component(value[0])))
                 externalize.setEnabled(definition is not None and definition.Document == obj.Document)
                 externalize.setToolTip(tr("Move this embedded definition and its embedded children to a new file; all instances stay shared."))
@@ -1364,7 +1387,7 @@ class Navigator(QtWidgets.QDockWidget):
             for label in model().TYPES + ("Reset to Inherited",):
                 setting = None if label == "Reset to Inherited" else label
                 action = view.addAction(tr(label), lambda checked=False, setting=setting:
-                    self.run(lambda: self.set_part_view(item, setting)))
+                    self.run(lambda: self.set_part_view(target(), setting)))
                 action.setEnabled(definition is not None and bool(value[1]) and not (setting == "Hidden" and self.protected(item)))
                 if setting is not None:
                     action.setCheckable(True)
@@ -1375,12 +1398,11 @@ class Navigator(QtWidgets.QDockWidget):
                     action.setToolTip(tr("The root is displayed in full. Part View applies to components added to a parent."))
         else:
             if item and is_origin(resolve(item.data(0, QtCore.Qt.UserRole))):
-                origin_item = item
                 origin = resolve(item.data(0, QtCore.Qt.UserRole))
                 visible = (any(plane.Visibility for plane in origin_planes(origin))
                            if planes_row(item) else origin.Visibility)
                 menu.addAction(tr("Hide") if visible else tr("Show"),
-                               lambda: self.run(lambda: self.toggle_item_view(origin_item)))
+                               lambda: self.run(lambda: self.toggle_item_view(target())))
                 menu.addSeparator()
                 item = None
             if item:

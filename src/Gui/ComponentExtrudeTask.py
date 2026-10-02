@@ -380,10 +380,18 @@ class ExtrudeTask:
         if not position:
             return
         hit = self.view.getObjectInfo(position)
-        if hit and not (hit.get("Document") == source.Document.Name
-                        and hit.get("Object") == source.Name
-                        and hit.get("Component", "").startswith("InternalFace")):
-            return  # Native edge picks are collected by the selection observer.
+        if hit:
+            hit_doc = App.listDocuments().get(hit.get("Document"))
+            hit_object = hit_doc.getObject(hit.get("Object", "")) if hit_doc else None
+            origin = self.component.Origin
+            origin_hit = hit_object == origin or hit_object in origin.OriginFeatures
+            sketch_region_hit = (hit.get("Document") == source.Document.Name
+                                 and hit.get("Object") == source.Name
+                                 and hit.get("Component", "").startswith("InternalFace"))
+            if not origin_hit and not sketch_region_hit:
+                return  # Native edge picks are collected by the selection observer.
+            # The active origin is visible by default. Its axes/planes must not
+            # block projection into a sketch region; other geometry still does.
         try:
             import ComponentProfile as Profile
             start, end = self.view.projectPointToLine(position)

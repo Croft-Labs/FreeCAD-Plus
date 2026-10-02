@@ -649,7 +649,9 @@ class TestComponentDocument(unittest.TestCase):
             self.assertEqual(isolated.getActiveObject("part"), self.child)
             self.assertEqual(panel.structure.topLevelItemCount(), 1)
             self.assertEqual(panel.structure.topLevelItem(0).childCount(), 0)
-            self.assertEqual(list(panel.component_views[0]["snapshot"].SubNames), [Model.display_object(result).Name + "."])
+            # Entering a component now displays its permanent origin by default.
+            self.assertEqual(set(panel.component_views[0]["snapshot"].SubNames),
+                             {Model.display_object(result).Name + ".", self.child.Origin.Name + "."})
             Gui.updateGui()
             from pivy import coin
             bounds = coin.SoGetBoundingBoxAction(coin.SbViewportRegion(640, 480))

@@ -1,5 +1,8 @@
 # Component documents: owner and regression procedure
 
+For the complete Models / Part Tree / History regression matrix and native mouse
+input tests, use [Components pane validation](ComponentPaneValidation.md).
+
 October 1 incorporation: the existing September 28 build was rebuilt while closed.
 Run `RunComponentDocument.ps1 -FeedbackSmoke` for 39 feedback checks with source
 overlays disabled and exact loaded-payload/native Attributes verification.

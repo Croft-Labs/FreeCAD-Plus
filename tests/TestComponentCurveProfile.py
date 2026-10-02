@@ -336,6 +336,46 @@ class TestComponentCurveProfile(unittest.TestCase):
         self.assertIsNone(task.mouse_callback)
         self.assertFalse(self.sketch.Visibility)
 
+    def testOriginHelpersAllowRegionPickingButSolidOcclusionBlocksIt(self):
+        from freecad.gui import ComponentNavigator as Navigator
+        Navigator.show(self.doc)
+        module = task_module()
+        task = module.ExtrudeTask(self.component)
+        try:
+            task.profile.setCurrentIndex(task.profile.findData(self.sketch.Name))
+            task.view.viewTop()
+            for point, show_planes in ((App.Vector(7, 0, 0), False),
+                                       (App.Vector(0, 7, 0), False),
+                                       (App.Vector(7, 0, 0), True)):
+                for plane in Navigator.origin_planes(self.component.Origin):
+                    plane.Visibility = show_planes
+                task.set_curves([], False)
+                task.view.fitAll()
+                Gui.updateGui()
+                position = task.view.getPointOnViewport(point)
+                task.pick_region({"State": "DOWN", "Button": "BUTTON1", "Position": position})
+                self.assertEqual(task.curve_names(), ["Edge1", "Edge2"],
+                                 str(task.view.getObjectInfo(position)) + " / " + task.status.text())
+            for plane in Navigator.origin_planes(self.component.Origin):
+                plane.Visibility = False
+            blocker = self.doc.addObject("Part::Feature", "OccludingSolid")
+            Model.register_object(self.component, blocker, "Object", True)
+            blocker.Shape = Part.makeBox(2, 2, 2, App.Vector(6, -1, 3))
+            blocker.Visibility = True
+            self.doc.recompute()
+            task.set_curves([], False)
+            task.view.fitAll()
+            Gui.updateGui()
+            position = task.view.getPointOnViewport(App.Vector(7, 0, 0))
+            hit = task.view.getObjectInfo(position)
+            self.assertEqual(hit["Object"], blocker.Name, str(hit))
+            task.pick_region({"State": "DOWN", "Button": "BUTTON1", "Position": position})
+            self.assertEqual(task.curve_names(), [], "Other geometry must still block hidden region picks")
+        finally:
+            task.stop_selection()
+            task.clear_preview()
+            task.restore_profile_visibility()
+
     def testPlacedSketchRegionAndNativeAcceptance(self):
         module = task_module()
         self.component.Placement = App.Placement(App.Vector(80, 20, 10), App.Rotation(App.Vector(0, 0, 1), 25))
