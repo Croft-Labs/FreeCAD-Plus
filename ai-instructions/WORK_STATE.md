@@ -1,5 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 1 follow-up: Part Tree Cut/Paste and drag/drop (7.8.7x)
+
+Source adds Part Tree context-menu Cut/Paste, Ctrl+X/Ctrl+V and viewport drag/drop
+with row-edge insertion indicators. Cut stages stable occurrence paths without
+deleting links; Paste/drop moves the existing links in one transaction. Drop onto
+a part reparents, above/below inserts siblings, empty space appends at the root.
+Root remains fixed; grouped/multiple selections move without duplicate models.
+Native occurrence-frame transforms preserve placement in the chosen context;
+existing destination instance numbers are reserved. Active moved descendants stay
+in edit context. Shared definition child changes apply to all uses, as before.
+Preflight refuses stale/cross-file selection, cycles, driven/scaled links, consumer
+relationships and path display overrides for reparenting. Ordering within the same
+parent remains permitted with references/overrides; general relationship remapping
+is not claimed. Source contract, UI, tests and summary synchronized.
+
+Seven initial focused checks passed twice after changing refresh to take Python
+ownership of rows before disposal. Earlier repeated native tree.clear() rebuilds
+crashed with PyGILState_Release errors; native-widget/event-filter and deferred
+refresh changes alone did not fix that. Failed evidence retained in the earlier
+freecad-tree-move-* directories. Final nine focused checks pass in
+`D:\Temp\Office-PC\freecad-tree-move-complete-20261001`, including sixteen repeated
+reparent operations, existing-number collisions, clipboard keys, native drag/drop
+events, above/below/empty-space routing, grouped moves, world placement, active descendants, reference/override/
+cycle/stale refusal, Undo/Redo and save/reopen. The broader 42 source-overlay checks
+pass in `D:\Temp\Office-PC\freecad-tree-move-regression-20261001`.
+
+The owner-running 9/28 executable remains PID 8140 at final inspection. No payload
+replacement, native build, installer or release occurred. Batch script/resource
+staging with 7.8.7v/w while closed; run TreeMoveSmoke and AssemblyStructureSmoke
+without source overlays against that payload. Physical drag gestures and acceptance
+remain pending; synthetic native events are automated GUI evidence only.
+
 ## October 1 follow-up: Part Tree/History, reference operation and origin (7.8.7w)
 
 Owner requests Models / Part Tree / History tab names, Add Reference Object as an

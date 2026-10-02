@@ -2621,6 +2621,14 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   hiding preserved through refresh. Source and 42 overlay navigator/context checks
   pass. Batch native PartGui/PartDesignGui/resource/scripts update with 7.8.7v;
   owner-running 9/28 payload unchanged. See WORK_STATE; native/owner acceptance pending.
+- [   ] 7.8.7x Owner follow-up: Part Tree Cut/Paste and drag/drop rearrange existing
+  instance links with sibling ordering, safe reparenting, grouped/multiple selection,
+  placement preservation, stable identities, protected root, Undo/Redo and persistence.
+  Referenced/constrained, driven/scaled and path-overridden reparenting is refused
+  rather than silently invalidating relationships; shared-definition ownership retained.
+  Nine focused source-overlay checks and 42 broader component checks pass. Source
+  refresh disposal fix passes repeated moves/rebuilds. Running 9/28 payload unchanged;
+  batch staging with 7.8.7v/w and native/physical acceptance pending. See WORK_STATE.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and

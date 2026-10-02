@@ -8,7 +8,7 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 October 1: the initial component feedback batch is incorporated in the existing
 9/28 build; 102 native automated checks passed. Subsequent Part Tree/History and
-reference-button/origin feedback is queued while that application is running. [WORK_STATE](WORK_STATE.md) records
+reference-button/origin and Cut/Paste/drag/drop feedback is queued while that application is running. [WORK_STATE](WORK_STATE.md) records
 exact payload/build/test evidence; physical owner acceptance remains separate.
 
 ## Where to go
@@ -20,6 +20,7 @@ exact payload/build/test evidence; physical owner acceptance remains separate.
 | Window/crossing selection (F039) | [`BoxSelection.cpp`](../src/Gui/Selection/BoxSelection.cpp), [`MouseSelection.cpp`](../src/Gui/MouseSelection.cpp) | Full projected enclosure, directional borders and filter-aware native collection. [Owner procedure](../tests/WindowSelection.md); roadmap 10.5g/h. |
 | Entity selection filters (F035) | [`EntitySelectionFilter.py`](../src/Gui/EntitySelectionFilter.py), native [`Selection.cpp`](../src/Gui/Selection/Selection.cpp) | View > Visibility > Selection filters: session vertex/edge/face/whole-object policy, command-gate intersection and visible reset. [Owner procedure](../tests/EntitySelectionFilter.md); roadmap 10.5e/f owns validation. |
 | Component document architecture | [Approved component contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md) | Active owner priority: roadmap 7.8; Models, Part Tree, History, Attributes and `.cadprt` |
+| Part Tree rearrangement | [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py), [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py) | Cut/Paste and drag/drop of existing instances, ordering/reparenting, placement and reference guards; roadmap 7.8.7x; [`TestComponentTreeMove.py`](../tests/TestComponentTreeMove.py). |
 | Component BOM participation | [`BomObject.cpp`](../src/Mod/Assembly/App/BomObject.cpp), [`CommandCreateBom.py`](../src/Mod/Assembly/CommandCreateBom.py), component model/navigator | Native BOM scope, occurrence inclusion, owning-file history editor and saved report policies; roadmap 7.8.7j. |
 | Component display contexts | [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py), [`TestComponentDisplayContext.py`](../tests/TestComponentDisplayContext.py) | Background/isolated-view refresh, occurrence highlighting, Part View indications and history availability; roadmap 7.8.7i. |
 | Component owning-file Undo/Redo | Native [`View3DInventor.cpp`](../src/Gui/View3DInventor.cpp), [`MDIView.cpp`](../src/Gui/MDIView.cpp), [`DlgUndoRedo.cpp`](../src/Gui/Dialogs/DlgUndoRedo.cpp), History | Consistent owning-file execution, enabled states/history menus and deferred navigator refresh; roadmap 7.8.5f owns build and feedback status. |

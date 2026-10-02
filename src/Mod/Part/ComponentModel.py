@@ -173,6 +173,89 @@ def remove_instances(occurrences):
             activate(component, strict=False)
 
 
+def _component_frame(root, ids):
+    """Native occurrence frame, including linked definition and Part placements."""
+    chain = _path(root, ids)
+    component = chain[-1].LinkedObject if chain else root
+    path = "".join(link.Name + "." for link in chain) + component.Origin.Name + "."
+    frame = root.getSubObject(path, 3)
+    if frame is None:
+        raise ValueError("The component placement context is unavailable.")
+    return frame
+
+
+def move_instances(root, paths, destination_ids=(), before=None):
+    """Reorder/reparent existing links atomically; never recreate model identities."""
+    paths = [tuple(path) for path in paths]
+    destination_ids = tuple(destination_ids)
+    if not paths or any(not path for path in paths):
+        raise ValueError("Select linked instances; the top-level part cannot be moved.")
+    if any(path[:len(other)] == other for path in paths for other in paths if path != other):
+        raise ValueError("Move a parent or its children, not both together.")
+    chain = _path(root, destination_ids)
+    destination = chain[-1].LinkedObject if chain else root
+    doc = root.Document
+    links = [_path(root, path)[-1] for path in paths]
+    if len(set(links)) != len(links):
+        raise ValueError("Select each owning instance only once.")
+    if destination.Document != doc or any(link.Document != doc for link in links):
+        raise ValueError("Rearrange instances in their owning file; external models must be edited in their own tab.")
+    if before is not None and (before not in children(destination) or before in links):
+        raise ValueError("Choose a sibling outside the moved selection.")
+    placements = {}
+    reparented = [link for link in links if owner(link) != destination]
+    if reparented:
+        destination_frame = _component_frame(root, destination_ids)
+        for link, path in zip(links, paths):
+            if link not in reparented:
+                continue
+            if _reachable(link.LinkedObject, destination):
+                raise ValueError("A part cannot be moved into itself or its descendants.")
+            if (link.ExpressionEngine or link.ElementCount or link.Scale != 1
+                    or tuple(link.ScaleVector) != (1, 1, 1)
+                    or "ReadOnly" in link.getPropertyStatus("LinkPlacement")):
+                raise ValueError("Driven, scaled or read-only instances need their relationship editor.")
+            if any(consumer != owner(link) for consumer in link.InList):
+                raise ValueError("This instance has references or assembly relationships. Reorder it within its parent or repair those relationships before moving it.")
+            # Explicit path overrides cannot silently become invalid or apply to
+            # another occurrence when a shared definition changes ownership.
+            if any(link.ObjectId in key.split("/") for component in definitions(doc)
+                   for key in json.loads(component.RepresentationOverrides)):
+                raise ValueError("Reset this instance's path display overrides before moving it to another parent.")
+            placements[link] = destination_frame.inverse().multiply(
+                _component_frame(root, path[:-1])).multiply(link.LinkPlacement)
+    groups = {owner(link): list(owner(link).Group) for link in links}
+    groups.setdefault(destination, list(destination.Group))
+    for component in groups:
+        groups[component] = [obj for obj in groups[component] if obj not in links]
+    index = groups[destination].index(before) if before else len(groups[destination])
+    groups[destination][index:index] = links
+    if not reparented and all(list(component.Group) == group for component, group in groups.items()):
+        return False
+    with transaction(doc, "Rearrange Part Tree"):
+        for link in reparented:
+            owner(link).removeObject(link)
+        for component, group in groups.items():
+            component.Group = group
+        for link, placement in placements.items():
+            link.LinkPlacement = placement
+        # Preserve existing persistent numbers unless the new parent has a clash.
+        used = {}
+        for link in children(destination):
+            if link in reparented:
+                continue
+            used.setdefault(link.LinkedObject, set()).add(link.InstanceNumber)
+        for link in reparented:
+            peers = used.setdefault(link.LinkedObject, set())
+            number = link.InstanceNumber
+            if number in peers:
+                number = max(peers) + 1
+                link.InstanceNumber = number
+            peers.add(number)
+        validate(doc, allow_unresolved=True)
+    return True
+
+
 def _reachable(start, target, visited=None):
     if start == target:
         return True

@@ -26,6 +26,7 @@ param(
     [switch]$IntegrationSmoke,
     [switch]$CoreSmoke,
     [switch]$AssemblyStructureSmoke,
+    [switch]$TreeMoveSmoke,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
@@ -75,6 +76,7 @@ if ($CoreSmoke) {
 if ($AssemblyStructureSmoke) {
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentModelsPane.py,tests/TestComponentPanelIteration.py,tests/TestComponentSelectionIteration.py,tests/TestComponentEditContext.py,tests/TestComponentTaskContext.py,tests/TestComponentSaveRouting.py,tests/TestComponentUndoRouting.py,tests/TestComponentDisplayContext.py,tests/TestComponentBom.py,tests/TestComponentExternalization.py,tests/TestComponentFileRecovery.py,tests/TestComponentAddCommand.py'
 }
+if ($TreeMoveSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTreeMove.py' }
 if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'

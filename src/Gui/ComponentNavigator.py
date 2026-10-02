@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Models, Part Tree and History."""
 import FreeCAD as App
+import json
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
 from freecad.gui import ComponentSelection as Selection
@@ -211,6 +212,10 @@ class ConversionDialog(QtWidgets.QDialog):
         super().accept()
 
 
+class PartTree:
+    MIME = "application/x-freecad-plus-part-tree-move"
+
+
 class Navigator(QtWidgets.QDockWidget):
     def __init__(self):
         super().__init__(tr("Components"), Gui.getMainWindow())
@@ -232,6 +237,11 @@ class Navigator(QtWidgets.QDockWidget):
         self.models.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.models.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         self.structure = QtWidgets.QTreeWidget()
+        self.structure.setAcceptDrops(True)
+        self.structure.viewport().setAcceptDrops(True)
+        self.drag_start = None
+        self.drop_position = QtWidgets.QAbstractItemView.OnItem
+        self.drop_indicator = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Rectangle, self.structure.viewport())
         self.structure.setHeaderLabels([tr("Part name"), tr("View"), tr("Instances"), tr("Part View")])
         self.history = QtWidgets.QTreeWidget()
         self.history.setHeaderLabels([tr("Active"), tr("View"), tr("Item"), tr("State")])
@@ -266,6 +276,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.models.itemDoubleClicked.connect(lambda item, column: self.run(
             lambda: self.edit_model(item)) if column == 0 else None)
         self.structure.installEventFilter(self)
+        self.structure.viewport().installEventFilter(self)
         self.models.installEventFilter(self)
         self.history.itemSelectionChanged.connect(self.select_history)
         self.structure.itemDoubleClicked.connect(lambda item, column: self.run(lambda: self.activate_item(item)) if column == 0 else None)
@@ -293,10 +304,11 @@ class Navigator(QtWidgets.QDockWidget):
         self.destroyed.connect(lambda: Gui.removeDocumentObserver(self))
         self.destroyed.connect(lambda: Gui.Selection.removeObserver(self))
 
-    def run(self, callback):
+    def run(self, callback, refresh=True):
         try:
             callback()
-            self.refresh()
+            if refresh:
+                self.refresh()
         except Exception as exc:
             QtWidgets.QMessageBox.warning(self, tr("Component operation"), str(exc))
 
@@ -319,9 +331,15 @@ class Navigator(QtWidgets.QDockWidget):
         models_state = self.tree_state(self.models)
         history_state = self.tree_state(self.history)
         try:
-            self.structure.clear()
-            self.models.clear()
-            self.history.clear()
+            # Take ownership before disposing Python-backed row data. Native
+            # clear() can crash during repeated rebuilds after moving rows.
+            for tree in (self.structure, self.models, self.history):
+                blocked = tree.blockSignals(True)
+                try:
+                    removed = [tree.takeTopLevelItem(0) for unused in range(tree.topLevelItemCount())]
+                    removed.clear()
+                finally:
+                    tree.blockSignals(blocked)
             root = resolve(self.root_key) if self.root_key else None
             active = None
             if root:
@@ -378,6 +396,7 @@ class Navigator(QtWidgets.QDockWidget):
             root_row = QtWidgets.QTreeWidgetItem(self.structure, [root.Label, "", "", ""])
             root_row.setData(0, QtCore.Qt.UserRole, (object_key(root), []))
             root_row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
+            root_row.setFlags((root_row.flags() | QtCore.Qt.ItemIsDropEnabled) & ~QtCore.Qt.ItemIsDragEnabled)
             self.decorate_component(root_row, root, [[]])
             root_row.setExpanded(True)
             self.populate(root_row, root, root, [], set())
@@ -664,13 +683,164 @@ class Navigator(QtWidgets.QDockWidget):
         self.tabs.setCurrentWidget(self.history)
 
     def eventFilter(self, watched, event):
+        if watched == self.structure.viewport():
+            kind = event.type()
+            if kind == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:
+                self.drag_start = event.position().toPoint() if hasattr(event, "position") else event.pos()
+            elif kind == QtCore.QEvent.MouseMove and event.buttons() & QtCore.Qt.LeftButton and self.drag_start is not None:
+                point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+                if (point - self.drag_start).manhattanLength() >= QtWidgets.QApplication.startDragDistance():
+                    self.drag_start = None
+                    self.run(self.start_tree_drag, refresh=False)
+                    return True
+            elif kind == QtCore.QEvent.MouseButtonRelease:
+                self.drag_start = None
+            elif kind in (QtCore.QEvent.DragEnter, QtCore.QEvent.DragMove):
+                if not event.mimeData().hasFormat(PartTree.MIME):
+                    event.ignore()
+                    return True
+                self.update_drop_indicator(event)
+                event.setDropAction(QtCore.Qt.MoveAction)
+                event.accept()
+                return True
+            elif kind == QtCore.QEvent.DragLeave:
+                self.drop_indicator.hide()
+                event.accept()
+                return True
+            elif kind == QtCore.QEvent.Drop:
+                self.drop_instances(event)
+                return True
         if watched in (self.structure, self.models) and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
+            if watched == self.structure and (event.matches(QtGui.QKeySequence.Cut) or event.matches(QtGui.QKeySequence.Paste)):
+                event.accept()
+                if event.type() == QtCore.QEvent.KeyPress:
+                    callback = self.cut_instances if event.matches(QtGui.QKeySequence.Cut) else lambda: self.paste_instances(deferred=True)
+                    self.run(callback, refresh=False)
+                return True
             if event.key() == QtCore.Qt.Key_Delete:
                 event.accept()
                 if event.type() == QtCore.QEvent.KeyPress and watched == self.structure:
                     self.run(self.delete_instances)
                 return True
         return super().eventFilter(watched, event)
+
+    def start_tree_drag(self):
+        drag = QtGui.QDrag(self.structure)
+        drag.setMimeData(self.move_mime())
+        drag.exec(QtCore.Qt.MoveAction)
+        self.drop_indicator.hide()
+
+    def update_drop_indicator(self, event):
+        point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+        item = self.structure.itemAt(point)
+        if item is None:
+            self.drop_position = QtWidgets.QAbstractItemView.OnViewport
+            self.drop_indicator.hide()
+            return
+        rect = self.structure.visualItemRect(item)
+        edge = min(5, max(2, rect.height() // 4))
+        if point.y() < rect.top() + edge:
+            self.drop_position = QtWidgets.QAbstractItemView.AboveItem
+            rect.setHeight(2)
+        elif point.y() > rect.bottom() - edge:
+            self.drop_position = QtWidgets.QAbstractItemView.BelowItem
+            rect.setTop(rect.bottom() - 1)
+        else:
+            self.drop_position = QtWidgets.QAbstractItemView.OnItem
+        self.drop_indicator.setGeometry(rect)
+        self.drop_indicator.show()
+
+    def drop_instances(self, event):
+        self.drop_indicator.hide()
+        if not event.mimeData().hasFormat(PartTree.MIME):
+            event.ignore()
+            return
+        point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+        item = self.structure.itemAt(point)
+        succeeded = []
+        self.run(lambda: succeeded.append(self.paste_instances(item, event.mimeData(), self.drop_position, deferred=True)), refresh=False)
+        if succeeded:
+            event.setDropAction(QtCore.Qt.MoveAction)
+            event.accept()
+        else:
+            event.ignore()
+
+    def move_mime(self, item=None):
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before rearranging parts."))
+        rows = self.structure.selectedItems() if item is None or item.isSelected() else [item]
+        values = [value for row in rows for value in self.members(row)]
+        if not values or any(not value or not value[1] for value in values):
+            raise ValueError(tr("Select linked instances; the top-level part cannot be moved."))
+        # Selecting a branch moves its children with it, without duplicating them.
+        paths = list(dict.fromkeys(tuple(value[1]) for value in values))
+        paths = [path for path in paths if not any(path[:len(parent)] == parent
+                                                 for parent in paths if len(parent) < len(path))]
+        root = resolve(self.root_key)
+        payload = {"root": root.ObjectId, "document": model().metadata(root.Document).ObjectId,
+                   "items": [{"path": path, "id": model()._path(root, path)[-1].ObjectId} for path in paths]}
+        mime = QtCore.QMimeData()
+        mime.setData(PartTree.MIME, json.dumps(payload).encode("utf-8"))
+        return mime
+
+    def cut_instances(self, item=None):
+        QtWidgets.QApplication.clipboard().setMimeData(self.move_mime(item))
+
+    def paste_instances(self, item=None, mime=None, position=None, deferred=False):
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before rearranging parts."))
+        mime = mime or QtWidgets.QApplication.clipboard().mimeData()
+        if not mime.hasFormat(PartTree.MIME):
+            raise ValueError(tr("Cut linked instances from this Part Tree first."))
+        payload = json.loads(bytes(mime.data(PartTree.MIME)).decode("utf-8"))
+        root = resolve(self.root_key)
+        if (payload.get("root") != root.ObjectId
+                or payload.get("document") != model().metadata(root.Document).ObjectId):
+            raise ValueError(tr("Move parts within the same Part Tree and owning file."))
+        paths = [tuple(value["path"]) for value in payload["items"]]
+        if any(model()._path(root, path)[-1].ObjectId != value["id"]
+               for path, value in zip(paths, payload["items"])):
+            raise ValueError(tr("The cut selection changed; select and cut it again."))
+        item = (self.structure.topLevelItem(0) if position == QtWidgets.QAbstractItemView.OnViewport
+                else item or self.structure.currentItem() or self.structure.topLevelItem(0))
+        values = self.members(item)
+        if len(values) != 1:
+            raise ValueError(tr("Expand Instances and choose a single destination instance."))
+        destination = tuple(values[0][1])
+        before = None
+        if position in (QtWidgets.QAbstractItemView.AboveItem, QtWidgets.QAbstractItemView.BelowItem):
+            if not destination:
+                raise ValueError(tr("The top-level part must remain first."))
+            target = model()._path(root, destination)[-1]
+            destination = destination[:-1]
+            if position == QtWidgets.QAbstractItemView.AboveItem:
+                before = target
+            else:
+                siblings = model().children(model().owner(target))
+                following = siblings[siblings.index(target) + 1:]
+                moving = {model()._path(root, path)[-1] for path in paths}
+                before = next((link for link in following if link not in moving), None)
+        elif position == QtWidgets.QAbstractItemView.OnViewport:
+            destination = ()
+        Gui.Selection.clearSelection()
+        changed = model().move_instances(root, paths, destination, before)
+        # Follow a moved active branch, including its edited descendants.
+        for path in paths:
+            if tuple(self.active_path[:len(path)]) == path:
+                self.active_path = list(destination + (path[-1],) + tuple(self.active_path[len(path):]))
+                break
+        if deferred:
+            QtCore.QTimer.singleShot(0, self.finish_tree_move)
+        else:
+            self.finish_tree_move()
+        if mime == QtWidgets.QApplication.clipboard().mimeData():
+            QtWidgets.QApplication.clipboard().clear()
+        return changed
+
+    def finish_tree_move(self):
+        self.refresh()
+        if resolve(self.root_key):
+            self.bind_edit_context()
 
     def delete_instances(self, item=None):
         if Gui.Control.activeDialog():
@@ -1115,6 +1285,10 @@ class Navigator(QtWidgets.QDockWidget):
             obj = resolve(value[0])
             definition = obj.LinkedObject if getattr(obj, "ComponentRole", "") == "Occurrence" else obj
             menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(item))).setEnabled(definition is not None)
+            if value[1]:
+                menu.addAction(tr("Cut"), lambda: self.run(lambda: self.cut_instances(item)))
+            paste = menu.addAction(tr("Paste"), lambda: self.run(lambda: self.paste_instances(item)))
+            paste.setEnabled(definition is not None and QtWidgets.QApplication.clipboard().mimeData().hasFormat(PartTree.MIME))
             if value[1]:
                 menu.addAction(tr("Delete Instance") if len(self.members(item)) == 1 else tr("Delete Instances"),
                                lambda: self.run(lambda: self.delete_instances(item)))

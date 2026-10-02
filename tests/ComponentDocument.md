@@ -17,6 +17,20 @@ Creation must be absent from Part Tree/History context menus; existing reference
 repair actions remain. Origin starts visible in History on component entry; hide
 it using the eye, refresh, then switch away/back to check the default is restored.
 
+Part Tree rearrangement (7.8.7x): run `RunComponentDocument.ps1 -TreeMoveSmoke`
+against the grouped payload. Source-overlay evidence is recorded separately in
+WORK_STATE. Select linked rows, use Ctrl+X/Ctrl+V and right-click Cut/Paste to move
+under another part; Cut alone must leave the document unchanged. Drag onto a part,
+above/below a sibling and into empty space; check the insertion indicator, order
+and preserved placement. Move a collapsed group and a parent with descendants.
+Part001 stays first and cannot move. Expand a grouped destination before choosing
+its instance. Check one-step Undo/Redo, save/reopen order, stable IDs, existing
+destination numbers and repeated moves without duplicate models or crashes.
+Shared-model child changes affect every use. Cycles, stale/cross-file clipboard,
+referenced/constrained or driven/scaled reparenting and path display overrides
+must be refused without document mutation; sibling ordering remains permitted
+with references/overrides. Repair relationships/reset overrides before reparenting.
+
 Models/assembly feedback (7.8.7u): check Models, Part Tree and History
 tab order. Models must be flat and show unused definitions plus assembly-use counts.
 Part Tree starts with the top-level part (Part001 by default), with its

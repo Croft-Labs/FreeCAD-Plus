@@ -1439,6 +1439,16 @@ hide persists through refresh; re-entering the component restores the default.
 Part Tree always starts with its top-level component (Part001 by default),
 with linked occurrence rows beneath it. The root row supplies selection/edit
 context, persists even without children, and is not a deletable assembly instance.
+Cut/Paste is available in Part Tree's context menu and through Ctrl+X/Ctrl+V.
+Cut keeps the instances in place until Paste succeeds; Paste moves them under the
+selected part. Drag onto a part to make it the parent, or use the row-edge indicator
+to insert above/below a sibling. Empty-space drops append at the root. Multiple
+selected rows and collapsed instance groups move together without making copies.
+Expand a grouped destination to choose one occurrence. Part001 cannot be moved.
+Moves preserve the selected occurrence's placement and are undoable. Child-list
+edits of a shared model affect all its uses. Cross-file moves and unsafe reparenting
+of referenced, constrained, driven/scaled or path-overridden instances are refused
+with repair guidance; sibling reordering remains available for references/overrides.
 Delete Instance/Instances, Delete key and standard occurrence Delete remove owning
 links only. Definitions and their geometry remain under Models, including after
 the last instance is removed. Missing instance references require repair; Undo

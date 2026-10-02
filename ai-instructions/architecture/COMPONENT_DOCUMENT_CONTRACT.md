@@ -70,6 +70,19 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   The generic Delete command also protects definitions and routes precise occurrence
   picks to link deletion. Removing the active occurrence returns editing to its
   nearest surviving parent. Models does not offer destructive definition deletion.
+- Part Tree Cut/Paste and drag/drop rearrange existing owning links within one
+  root and owning file. Cut stages a selection without deleting it; Paste appends
+  it under the chosen part. Drop on a part reparents; drop above/below an instance
+  orders siblings; drop on empty space appends at the root. The root cannot move.
+  Group rows move all represented instances; expand a grouped destination first.
+  Selected branches include their descendants once. Preserve identities, model
+  reuse, geometry and placement in the chosen occurrence context. Reserve existing
+  destination instance numbers, assigning a new number only to an incoming clash.
+  Shared definition child-list changes apply to every use of that definition.
+  One transaction supports Undo/Redo and persisted Group ordering. Refuse cycles,
+  stale clipboard paths, cross-file edits, driven/scaled links, consumer relationships
+  and path display overrides before reparenting; sibling ordering remains available
+  with references/overrides. Relationship repair/remapping is separate scope.
 - **Edit** is the first context action; double-click also activates the definition
   for editing. **Add Component** adds to that definition. Omit **Open Component in
   Tab** on the root row, which is already its own view. Use an **Instances** submenu
