@@ -30,6 +30,12 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 toolbar governance reference: [visual toolbar catalog](details/ui/TOOLBARS.md)
+  now governs detailed Classic/Plus placement and documents command consolidation
+  by workbench. Its 20 workbench sections and 638-command function catalog include
+  native icons and source-only boundaries. Links/catalog coverage checked; no new
+  functionality or build is claimed. [WORK_STATE](WORK_STATE.md) owns provenance.
+
 - October 2 queued toolbar exclusivity fix: Plus suppresses late native toolbar
   Show/layout events and Classic suppresses the ribbon. Saved layouts cannot
   reveal both styles; Classic visibility choices survive workbench switches.

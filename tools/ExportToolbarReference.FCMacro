@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Export native toolbar/action metadata into an isolated documentation folder.
+
+FREECAD_PLUS_SOURCE points to the checkout; FREECAD_PLUS_TOOLBAR_OUTPUT is a
+fresh evidence folder. Run only against this fork with isolated preferences.
+No source or application payload is changed by this macro.
+"""
+import importlib.util
+import json
+import os
+from pathlib import Path
+import traceback
+import FreeCAD as App
+import FreeCADGui as Gui
+from PySide import QtCore, QtWidgets
+
+root = Path(os.environ["FREECAD_PLUS_SOURCE"])
+out = Path(os.environ["FREECAD_PLUS_TOOLBAR_OUTPUT"])
+out.mkdir(parents=True, exist_ok=True)
+icons = out / "icons"
+icons.mkdir(exist_ok=True)
+spec = importlib.util.spec_from_file_location("ToolbarReferenceRibbon", root / "src/Gui/PlusRibbon.py")
+UI = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(UI)
+data = {"version": App.Version(), "workbenches": {}, "commands": {}, "modes": UI.available_modes()}
+window = Gui.getMainWindow()
+window.setAttribute(QtCore.Qt.WA_DontShowOnScreen, True)
+window.show()
+
+class Projection:
+    groups = UI.Ribbon.groups
+    def current_tab(self):
+        return self.tab
+
+try:
+    for name, wb in Gui.listWorkbenches().items():
+        if name in ("NoneWorkbench", "StartWorkbench"):
+            continue
+        entry = {"label": getattr(wb, "MenuText", name).replace("&", "")}
+        data["workbenches"][name] = entry
+        try:
+            Gui.activateWorkbench(name)
+            Gui.updateGui()
+            if Gui.activeWorkbench().name() != name:
+                raise RuntimeError("Workbench did not activate")
+            entry["classic"] = Gui.activeWorkbench().getToolbarItems()
+            projection = Projection()
+            projection.mode_name = "Design" if name in UI.DESIGN_WORKBENCHES.values() else entry["label"]
+            tabs = ("Home", "Modeling", "View") if name == "PartDesignWorkbench" else (
+                ({"SketcherWorkbench": "Sketch", "SurfaceWorkbench": "Surface", "MeshWorkbench": "Mesh"}[name],)
+                if name in ("SketcherWorkbench", "SurfaceWorkbench", "MeshWorkbench") else ("Home", "Tools", "View"))
+            entry["plus"] = {}
+            for tab in tabs:
+                projection.tab = tab
+                entry["plus"][tab] = projection.groups()
+        except Exception:
+            entry["error"] = traceback.format_exc()
+        (out / "inventory.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+    for name in Gui.listCommands():
+        command = Gui.Command.get(name)
+        actions = command.getAction() if command else []
+        entries = []
+        for index, action in enumerate(actions):
+            icon = ""
+            if not action.icon().isNull():
+                filename = name + ("_" + str(index) if index else "") + ".png"
+                if action.icon().pixmap(32, 32).save(str(icons / filename)):
+                    icon = filename
+            entries.append({"text": action.text(), "tooltip": action.toolTip(),
+                            "status": action.statusTip(), "icon": icon})
+        data["commands"][name] = entries
+    (out / "inventory.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+finally:
+    QtCore.QTimer.singleShot(0, window.close)

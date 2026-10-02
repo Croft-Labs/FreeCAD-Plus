@@ -1,5 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: toolbar governance and visual catalog
+
+The owner requested a governing Markdown reference by workbench. The
+[toolbar reference](details/ui/TOOLBARS.md) records shared desktop groups and 20
+workbench sections, Classic upstream groups, Plus changes/consolidations, Plus
+tab/section placement and a final function catalog (638 command IDs, with native
+compound choices expanded). It embeds 605 native-rendered PNG icons and links to
+source SVGs for source-only commands. UI_UX_SPEC owns shared interaction/sizing;
+the new reference owns detailed toolbar placement and points back to those rules.
+
+Metadata was exported from the existing fork executable in an isolated hidden
+session to `D:\Temp\Office-PC\freecad-plus-toolbar-reference-20261002`.
+Twelve workbenches were registered; eight additional workbench definitions were
+read from source and clearly marked unvalidated/not packaged. Classic definitions
+use recorded upstream revision `b9609745048b`, with native default branches for
+unchanged Python/Sketcher groups. Current source PlusRibbon supplies projection.
+The document distinguishes missing newer upstream Pattern commands from actual
+linear/circular unification, and keeps Part's separate mode/Tools routing clear.
+
+Source export/generation tools are under tools/. All document links, icon paths
+and command anchors resolve; every catalog row has a function description. Both
+tools parse successfully. This is documentation/inventory validation, not a new
+functional command test or build. The owner runtime/ZIP remains unchanged.
+
 ## October 2: mutually exclusive toolbar styles queued in source
 
 Owner screenshot shows native Classic bars alongside the Plus ribbon. Previous

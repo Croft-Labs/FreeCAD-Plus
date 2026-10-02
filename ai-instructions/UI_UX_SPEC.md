@@ -19,6 +19,12 @@ translatable; quantity fields retain FreeCAD's unit and expression behavior.
 
 ### Toolbar UI styles
 
+[Toolbar governance and visual reference](details/ui/TOOLBARS.md) owns the
+workbench-by-workbench Classic/Plus command placement, consolidation inventory,
+icons and button/function catalog. Keep it synchronized when toolbar membership,
+sections, dropdown choices or captions change. This section owns shared behavior
+and sizing requirements.
+
 **Standing owner UX directive (October 2, 2026):** apply action hierarchy to all
 new or modified UI. Give the most commonly used actions visual priority, keep
 secondary actions compact and collect infrequent related choices in dropdowns.
