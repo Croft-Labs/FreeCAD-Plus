@@ -19,7 +19,9 @@ diagnostics; launcher/native imports/save/reopen and final revision also pass.
 Acceptance corrected native Circular Pattern registration, Start view ownership/
 first-run setup/focus, and origin-helper ray picking through solids. The
 [toolbar reference](details/ui/TOOLBARS.md) now includes the rebuilt native bindings
-and 608 native icon renders. [WORK_STATE](WORK_STATE.md) owns exact provenance,
+and a reorganized 644-command catalog with 615 native icon renders. The revised
+common toolbar, medium icons and expanded Design layout are documented targets
+pending implementation. [WORK_STATE](WORK_STATE.md) owns exact provenance,
 portable build paths, integrity evidence and retained broader acceptance limits.
 
 This update supersedes the earlier October 2 build at `52495b0cb2`; that runtime

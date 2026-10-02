@@ -1,5 +1,21 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: toolbar document revision
+
+[TOOLBARS.md](details/ui/TOOLBARS.md) now separates Classic toolbar inventory,
+proposed Plus mode/tab/group placement, consolidations and the final function
+catalog. Classic rows contain one command each with 11px reference icons. The
+owner's common toolbar above the ribbon and medium/half-size treatment are
+recorded; the incomplete outline is filled with proposed native command groups,
+including Design Assembly while retaining Sketch. New Component remains a
+proposed entry with binding pending under the component contract.
+
+Validation: all 638 prior catalog command IDs remain in the 644-command catalog;
+615 referenced native PNGs, local links and button anchors resolve. Generator
+syntax, section ordering and whitespace checks pass. These are documentation
+checks. No application source, runtime payload or packaged acceptance is changed;
+the revised layout awaits implementation and native GUI acceptance.
+
 ## October 2: updated owner build completed
 
 The owner-authorized update incorporates all queued application changes through

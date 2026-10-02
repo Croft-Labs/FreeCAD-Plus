@@ -41,6 +41,34 @@ elided. Align buttons to a consistent grid. Related variants share dropdowns:
 Auto Dimension is the default dimension action, with vertical, horizontal, angle,
 radius and diameter choices and less common dimension types in its menu.
 
+#### Revised toolbar layout — pending implementation
+
+The owner's revised outline adds a small-icon horizontal toolbar **above** the
+ribbon, shared by all modes: File (New File/Open/Save/Save As), Edit
+(Undo/Redo/Recompute), and Clipboard (Cut/Copy/Paste). These actions remain visible
+across mode/tab switches. This is an intentional Plus toolbar, not permission to
+show Classic workbench toolbars alongside the ribbon.
+
+Add **medium / half-size** icons between full-size and small. Size and dropdown
+are independent: any size may have a dropdown. Full and medium captions have
+bounded widths; small icons have tooltips/accessibility but no visible caption.
+Small ribbon icons retain a three-row grid; common-toolbar icons use one row.
+Exact medium pixel sizes and grid allocation remain for implementation.
+
+Design Home contains the most frequently used actions from the other tabs.
+Its Main group has medium New Component, Add Component, New Sketch and Coordinate
+System; Coordinate System has coordinate-system/plane/axis/point choices.
+The [toolbar reference](details/ui/TOOLBARS.md#plus-ui-target-layout) owns the
+detailed placements and proposed fill-ins for the incomplete owner outline,
+including the added Assembly tab and retained Sketch tab. New Component's native
+binding and exact creation/occurrence behavior remain unresolved; use the approved
+component contract when implementing it. Proposed fill-ins are reviewable choices,
+not claims of delivered commands or approval of new geometry workflows.
+
+The following describes the delivered October 2 layout. The revised common
+toolbar, medium sizing and new grouping above are documented only and require
+application implementation and native acceptance before build incorporation.
+
 Edit > Preferences > General includes UI style: **Plus UI** and **Classic UI**.
 Plus UI is the default when no UI style is saved. Preserve an explicitly saved
 Classic UI choice and its existing workbench toolbar presentation. Apply/OK switches immediately and persists the

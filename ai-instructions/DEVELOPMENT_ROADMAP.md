@@ -46,9 +46,13 @@ is subsequently changed.
 
 - Toolbar governance reference: [visual toolbar catalog](details/ui/TOOLBARS.md)
   governs detailed Classic/Plus placement and command consolidation by workbench.
-  Refreshed from the updated executable: 20 workbench sections, 638 command IDs,
-  608 native icon renders and all three restored native Pattern bindings. Source-
-  only workbenches remain marked. Inventory is not acceptance of every command.
+  Reorganized into one-command Classic rows, proposed mode/tab/group tables and
+  a final function catalog: 20 workbench sections, 644 command IDs and 615 native
+  icon renders, reusing the updated build inventory and recorded upstream source.
+  The common bar above the ribbon, medium icon size and expanded Design layout
+  are documentation targets pending implementation and native acceptance. All
+  previous catalog commands are retained. Source-only workbenches remain marked;
+  inventory is not acceptance of every command.
 
 - Owner priority (2026-10-01): complete the component/document architecture under
   **7.8**, using the [approved contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
