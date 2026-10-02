@@ -4,6 +4,7 @@ import importlib.util
 import os
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
@@ -41,7 +42,7 @@ class TestComponentModelsPane(unittest.TestCase):
 
     def testLayoutAndSingleOccurrence(self):
         self.assertEqual([self.panel.tabs.tabText(i) for i in range(3)],
-                         ["Models", "Assembly Structure", "Model History"])
+                         ["Models", "Part Tree", "History"])
         self.assertEqual(self.panel.models.topLevelItemCount(), 2)
         self.assertFalse(self.panel.models.itemsExpandable())
         for i in range(2):
@@ -102,6 +103,45 @@ class TestComponentModelsPane(unittest.TestCase):
         self.assertEqual(self.panel.structure.topLevelItemCount(), 1)
         self.assertEqual(self.panel.structure.topLevelItem(0).text(0), "Main assembly")
         self.assertEqual(self.panel.structure.topLevelItem(0).childCount(), 0)
+
+    def testReferenceOperationCommandAndOriginDefaults(self):
+        Navigator.registerCommands()
+        self.assertIn("PartDesign_AddReferenceObject", Gui.listCommands())
+        self.assertTrue(Navigator.AddReferenceCommand().IsActive())
+        self.assertTrue(self.root.Origin.Visibility)
+        origin_row = self.panel.history.topLevelItem(0)
+        self.assertEqual(origin_row.text(2), "Origin")
+        self.panel.toggle_item_view(origin_row)
+        self.panel.refresh()
+        self.assertFalse(self.root.Origin.Visibility, "Refresh must preserve a deliberate eye toggle")
+        for tree, row in ((self.panel.structure, self.panel.structure.topLevelItem(0)),
+                          (self.panel.history, self.panel.history.topLevelItem(0))):
+            menu = self.panel.build_menu(tree, row)
+            self.assertNotIn("Add Reference Object", [action.text() for action in menu.actions()])
+        with patch.object(self.panel, "choose_reference_source", return_value=(self.first, self.shape)):
+            Gui.runCommand("PartDesign_AddReferenceObject")
+        references = [obj for obj in Model.history(self.root) if obj.ComponentRole == "Reference"]
+        self.assertEqual(len(references), 1)
+        self.assertEqual(references[0].SourceOccurrence, self.first)
+        self.assertEqual(references[0].SourceObject, self.shape)
+        self.assertEqual(self.panel.active_key, Navigator.object_key(self.root))
+        count = len(self.doc.Objects)
+        with patch.object(self.panel, "choose_reference_source", return_value=None):
+            Gui.runCommand("PartDesign_AddReferenceObject")
+        self.assertEqual(len(self.doc.Objects), count)
+        class BusyTask:
+            form = QtWidgets.QWidget()
+        Gui.Control.showDialog(BusyTask())
+        try:
+            self.assertFalse(Navigator.AddReferenceCommand().IsActive())
+        finally:
+            Gui.Control.closeDialog()
+        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0))
+        self.panel.refresh()
+        self.assertTrue(self.part.Origin.Visibility)
+        self.panel.activate_item(self.panel.structure.topLevelItem(0))
+        self.panel.refresh()
+        self.assertTrue(self.root.Origin.Visibility, "Entering a component restores its origin default")
 
     def testDeleteAllRetainModelUndoReopenAndReuse(self):
         second = Model.add_component(self.root, self.part)

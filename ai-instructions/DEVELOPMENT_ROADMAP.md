@@ -2614,6 +2614,13 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   and safe instance-only deletion retained. Source-overlay navigator/context and
   root regression checks pass; see WORK_STATE. Running 9/28 payload unchanged;
   grouped script/resource staging and owner acceptance remain pending.
+- [   ] 7.8.7w Owner follow-up: rename Assembly Structure to Part Tree and Model
+  History to History. Add Reference Object is a modeling operation command/button
+  beside Extrude in Part Design/Part, removed from creation context menus; repair
+  retained. Default active-component origin visibility on entry, with manual eye
+  hiding preserved through refresh. Source and 42 overlay navigator/context checks
+  pass. Batch native PartGui/PartDesignGui/resource/scripts update with 7.8.7v;
+  owner-running 9/28 payload unchanged. See WORK_STATE; native/owner acceptance pending.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and

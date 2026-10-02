@@ -134,6 +134,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
         *part << "Sketcher_NewSketch";
     }
     *part << "Part_Extrude"
+          << "PartDesign_AddReferenceObject"
           << "Part_Revolve"
           << "Part_Mirror"
           << "Part_Scale"
@@ -196,6 +197,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
         *tool << "Sketcher_NewSketch";
     }
     *tool << "Part_Extrude"
+          << "PartDesign_AddReferenceObject"
           << "Part_Revolve"
           << "Part_Mirror"
           << "Part_Scale"

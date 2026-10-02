@@ -438,6 +438,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
 
     *part << "PartDesign_Body"
           << "PartDesign_Extrude"
+          << "PartDesign_AddReferenceObject"
           << "Separator"
           << "PartDesign_ShapeBinder"
           << "PartDesign_SubShapeBinder"
@@ -498,6 +499,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     part->setCommand("Part Design Modeling Features");
 
     *part << "PartDesign_Extrude"
+          << "PartDesign_AddReferenceObject"
           << "PartDesign_Revolution"
           << "PartDesign_AdditiveLoft"
           << "PartDesign_AdditivePipe"

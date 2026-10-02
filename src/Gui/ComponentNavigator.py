@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Models, rooted Assembly Structure and Model History."""
+"""Models, Part Tree and History."""
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
@@ -219,6 +219,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.active_key = None
         self.active_path = []
         self.expanded_instances = set()
+        self.origin_context = None
         self.restored_documents = set()
         self.refreshing = False
         self.selecting = False
@@ -241,8 +242,8 @@ class Navigator(QtWidgets.QDockWidget):
             tree.header().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
         self.history.setRootIsDecorated(False)
         self.tabs.addTab(self.models, tr("Models"))
-        self.tabs.addTab(self.structure, tr("Assembly Structure"))
-        self.tabs.addTab(self.history, tr("Model History"))
+        self.tabs.addTab(self.structure, tr("Part Tree"))
+        self.tabs.addTab(self.history, tr("History"))
         self.context = QtWidgets.QLabel()
         self.context.setWordWrap(True)
         self.context.setTextFormat(QtCore.Qt.PlainText)
@@ -331,6 +332,10 @@ class Navigator(QtWidgets.QDockWidget):
                     # An external App object may briefly outlive its GUI document.
                     return
                 active_key = object_key(active)
+                origin_context = (root.Document.Name, root.ObjectId, tuple(self.active_path), active.ObjectId)
+                if self.origin_context != origin_context:
+                    self.origin_context = origin_context
+                    active.Origin.Visibility = True
                 if self.active_key != active_key:
                     self.active_key = active_key
                     self.bind_edit_context()
@@ -353,7 +358,7 @@ class Navigator(QtWidgets.QDockWidget):
             pending = [obj for obj in references if obj.ResultStatus == "Pending"]
             self.reference_notice.setVisible(bool(repair or pending))
             if repair:
-                self.reference_notice.setText(tr("{0} reference object(s) need repair. Edit them in Model History.").format(len(repair)))
+                self.reference_notice.setText(tr("{0} reference object(s) need repair. Edit them in History.").format(len(repair)))
             elif pending:
                 self.reference_notice.setText(tr("{0} reference object(s) need updating. Use Refresh References.").format(len(pending)))
             # Definitions are inventory, not extra instances in the assembly.
@@ -521,7 +526,7 @@ class Navigator(QtWidgets.QDockWidget):
             return
         seen = seen | {key}
         # Below the root context, only linked occurrences belong in this tree.
-        # Constraints remain definition-owned items in Model History.
+        # Constraints remain definition-owned items in History.
         groups = {}
         for link in model().children(component):
             definition = link.LinkedObject
@@ -1004,6 +1009,8 @@ class Navigator(QtWidgets.QDockWidget):
         return None
 
     def add_reference(self, parent_key=None):
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before adding a reference object."))
         active = resolve(parent_key or self.active_key)
         if getattr(active, "ComponentRole", "") == "Occurrence":
             active = active.LinkedObject
@@ -1112,7 +1119,6 @@ class Navigator(QtWidgets.QDockWidget):
                 menu.addAction(tr("Delete Instance") if len(self.members(item)) == 1 else tr("Delete Instances"),
                                lambda: self.run(lambda: self.delete_instances(item)))
             menu.addAction(tr("Add Component"), lambda: self.run(lambda: self.add_component(value[0]))).setEnabled(definition is not None)
-            menu.addAction(tr("Add Reference Object"), lambda: self.run(lambda: self.add_reference(value[0]))).setEnabled(definition is not None)
             if definition:
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(object_key(definition))))
             if value[1]:
@@ -1187,7 +1193,6 @@ class Navigator(QtWidgets.QDockWidget):
                 menu.addAction(tr("Refresh References"), lambda: self.run(self.refresh_references))
                 menu.addAction(tr("New Sketch"), lambda: self.run(self.new_sketch))
                 menu.addAction(tr("Extrude"), lambda: self.run(self.new_extrude))
-                menu.addAction(tr("Add Reference Object"), lambda: self.run(self.add_reference))
                 menu.addAction(tr("Bill of Materials"), lambda: self.run(self.create_bom))
         return menu
 
@@ -1296,7 +1301,7 @@ class Command:
 
     def GetResources(self):
         return {"MenuText": tr("New Component Document") if self.create else tr("Components"),
-                "ToolTip": tr("Create a component document") if self.create else tr("Show Models, Assembly Structure and Model History"),
+                "ToolTip": tr("Create a component document") if self.create else tr("Show Models, Part Tree and History"),
                 "Pixmap": "Geofeaturegroup.svg"}
 
     def IsActive(self):
@@ -1311,6 +1316,29 @@ class Command:
         show(doc)
 
 
+class AddReferenceCommand:
+    def GetResources(self):
+        return {"MenuText": tr("Add Reference Object"),
+                "ToolTip": tr("Reference evaluated geometry from a direct child of the active component"),
+                "Pixmap": "LinkImport.svg"}
+
+    def IsActive(self):
+        if Gui.Control.activeDialog():
+            return False
+        try:
+            from freecad.gui.ComponentExtrudeTask import active_component
+            return model().is_component(active_component())
+        except (ValueError, NameError):
+            return False
+
+    def Activated(self):
+        from freecad.gui.ComponentExtrudeTask import active_component
+        component = active_component()
+        panel = _dock or show(component.Document)
+        panel.run(lambda: panel.add_reference(object_key(component)))
+
+
 def registerCommands():
     Gui.addCommand("Std_NewComponentDocument", Command(True))
     Gui.addCommand("Std_ComponentStructure", Command())
+    Gui.addCommand("PartDesign_AddReferenceObject", AddReferenceCommand())

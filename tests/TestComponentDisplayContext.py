@@ -88,7 +88,8 @@ class TestComponentDisplayContext(unittest.TestCase):
         self.assertEqual(self.paths(self.first), {self.body.Name + "."})
         self.assertEqual(self.paths(self.second), full)
         snapshot = next(entry["snapshot"] for entry in self.panel.component_views if entry["view"] == view)
-        self.assertEqual(set(snapshot.SubNames), {self.body.Name + ".", self.curve.Name + "."})
+        self.assertEqual(set(snapshot.SubNames), {self.part.Origin.Name + ".",
+                                                self.body.Name + ".", self.curve.Name + "."})
         self.assertEqual((self.body.Visibility, self.pin_body.Visibility, self.child.Visibility), source_visibility)
         self.assertAlmostEqual(self.first.Shape.Volume, volume)
         self.assertTrue(self.first.IncludeInBOM and self.first.IncludeInMass)

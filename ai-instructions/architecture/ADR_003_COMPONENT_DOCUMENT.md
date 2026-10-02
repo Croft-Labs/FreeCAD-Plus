@@ -8,7 +8,7 @@ the roadmap owns implementation and acceptance status.
 
 Use native `App::Part` definitions and `App::Link` occurrences with distinct stable
 identities. A hidden document metadata object identifies the root. Definitions
-hold ordered object names for Model History and a separate result registry, avoiding
+hold ordered object names for History and a separate result registry, avoiding
 reverse dependency edges from operations to their owning component. Native object
 types, properties, geometry, transactions and serialization remain intact.
 
@@ -70,10 +70,10 @@ location. The original is protected from overwrite. Native `App.newDocument` and
 scratch documents. A renamed FCStd without a manifest is not valid `.cadprt`.
 
 Owner feedback 7.8.7u supersedes the original navigator projection: Models lists
-definitions and instance counts, Assembly Structure projects the permanent root
+definitions and instance counts, Part Tree projects the permanent root
 context followed by child occurrence links (owner follow-up 7.8.7v),
 and Attributes replaces the native Model pane while reusing its property editor.
-Model History displays owned objects and operations. Native LinkView
+History displays owned objects and operations. Native LinkView
 projections implement occurrence-path display and isolated views without changing
 the source geometry. This is separate from BOM/mass participation.
 

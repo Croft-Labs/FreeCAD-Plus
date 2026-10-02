@@ -615,8 +615,8 @@ class TestComponentDocument(unittest.TestCase):
         panel = navigator.show(self.doc)
         try:
             self.assertEqual(panel.tabs.tabText(0), "Models")
-            self.assertEqual(panel.tabs.tabText(1), "Assembly Structure")
-            self.assertEqual(panel.tabs.tabText(2), "Model History")
+            self.assertEqual(panel.tabs.tabText(1), "Part Tree")
+            self.assertEqual(panel.tabs.tabText(2), "History")
             self.assertEqual(panel.structure.topLevelItemCount(), 1)
             root = panel.structure.topLevelItem(0).child(0)
             self.assertEqual(root.text(0), self.child.Label)

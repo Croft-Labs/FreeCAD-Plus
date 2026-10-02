@@ -1,5 +1,38 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 1 follow-up: Part Tree/History, reference operation and origin (7.8.7w)
+
+Owner requests Models / Part Tree / History tab names, Add Reference Object as an
+operation button rather than a right-click creation action, and the active origin
+visible by default in History. Source registers PartDesign_AddReferenceObject
+through the existing GUI startup registration; native Part Design and Part menus/
+toolbars place it beside Extrude. It reuses direct-child evaluated-source picking
+and transactional creation, supports Cancel and is blocked during another task.
+Repair/change-source actions for existing references remain. Native object/property,
+dock, command and Python member identities retained (structure/history internally).
+
+Origin becomes visible on component/occurrence context entry, including root,
+isolated tabs and document reopen. Refresh preserves a deliberate eye hide until
+re-entry. Native Full Component projection includes the visible origin; Bodies Only
+continues to use its existing geometry-filter contract. Source UI/contract/ADR and
+owner tests synchronized. The owner-running 9/28 app is untouched (PID 8140).
+
+Source-overlay validation: eight focused Models/root/reference/origin checks pass
+in `D:\Temp\Office-PC\freecad-part-tree-history-focused-20261001`; 42 navigator/
+context workflows pass in `freecad-part-tree-history-final-20261001`. Tests exercise
+real registered command invocation, Cancel, task blocking, source ownership,
+origin default/manual hide/re-entry, tab names and absent context creation, plus
+linked selection/task/display/save/Undo/externalization/recovery/BOM behavior.
+Initial attempt to mock the extension Control.activeDialog raised an unsupported
+setattr error and that validation process crashed; replaced with a real task dialog.
+Repeated panel/combined workflows pass. Failed evidence retained. Pane captures
+reviewed; native toolbar compilation and physical acceptance remain pending.
+
+Batch with 7.8.7v when the app is closed: native PartGui/PartDesignGui plus GUI
+resources/scripts; verify the reference button in both workbenches, run
+AssemblyStructureSmoke without overlay and feedback checks against that payload.
+No installer/release or running-build update.
+
 ## October 1 follow-up: Assembly Structure root restored (7.8.7v)
 
 Owner requests the top-level part as the first Assembly Structure component.

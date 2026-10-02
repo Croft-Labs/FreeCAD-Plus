@@ -10,9 +10,16 @@ and this fork executable; results/logs retain failures as well as final passes.
 The same desktop shortcut still targets the updated build. Physical owner
 acceptance remains separate from automated native GUI and screenshot checks.
 
-Models/assembly feedback (7.8.7u): check Models, Assembly Structure and Model History
+Pane follow-up (7.8.7w): check the Add Reference Object button beside Extrude in
+Part Design and Part. It must use the active component, preserve the direct-child
+source contract, cancel without changes and refuse entry during another task.
+Creation must be absent from Part Tree/History context menus; existing reference
+repair actions remain. Origin starts visible in History on component entry; hide
+it using the eye, refresh, then switch away/back to check the default is restored.
+
+Models/assembly feedback (7.8.7u): check Models, Part Tree and History
 tab order. Models must be flat and show unused definitions plus assembly-use counts.
-Assembly Structure starts with the top-level part (Part001 by default), with its
+Part Tree starts with the top-level part (Part001 by default), with its
 linked instances beneath it. Selecting Edit on that row returns to top-level
 editing; Delete must preserve the root. The row remains after all child instances
 are removed and follows a custom root name. Add Component produces one child
@@ -26,7 +33,7 @@ all uses of that model. Run `RunComponentDocument.ps1 -AssemblyStructureSmoke` a
 grouped build; source overlays cannot verify native Delete/Attributes compilation.
 
 Background result feedback (7.8.7t): after the grouped update, create Extrude001.
-Its solid appears with no generated Body row in Model or Model History. Toggle
+Its solid appears with no generated Body row in Model or History. Toggle
 Extrude visibility, edit its dimensions, create a downstream Add/Subtract, suppress
 and restore that feature, and save/reopen. Face picks must retain reference lineage.
 Delete an unused Extrude: its internal result disappears with it; Undo restores both.
@@ -46,11 +53,11 @@ In the updated 9/28 build (roadmap 7.8.7k): standard/Assembly **New Part** route
 to **Add Component**, adding under the active root or child and retaining that
 parent's edit context. Adding a component from file returns to the original
 occurrence/window. October 1 native feedback/integration checks pass. Use the
-intended parent's Assembly Structure context menu **Add Component**. Do not replace
+intended parent's Part Tree context menu **Add Component**. Do not replace
 build files while the owner is testing.
 
 Component BOM feedback (roadmap 7.8.7j): activate a component and choose **Bill of
-Materials** from Model History's context menu (or the existing Assembly command).
+Materials** from History's context menu (or the existing Assembly command).
 The report belongs to that component, appears in its history, and counts child
 instances with quantities per parent. **Include nested components** controls deeper
 rows. Bodies, sketches and operations are not separate BOM parts.
@@ -59,7 +66,7 @@ In Component Structure, use **Bill of Materials > Include / Exclude** on an inst
 or a grouped row. This is an owning-component policy, independent of Part View and
 mass inclusion. Reopen an existing BOM's editor to refresh counts. Its exclusion list
 can omit additional whole instances stored in that report's owning file without
-changing other BOMs. Double-click the report in Model History to edit; OK/Cancel
+changing other BOMs. Double-click the report in History to edit; OK/Cancel
 returns to the original component occurrence.
 
 `RunComponentDocument.ps1 -BomSmoke` runs three workflows from `TestComponentBom.py`.
@@ -75,7 +82,7 @@ update inherited occurrences while retaining their explicit path overrides. Hidd
 does not change geometry, source-object visibility or BOM/mass participation flags.
 Expand repeated instances to see which occurrence is active. The Part View menu
 checks the effective choice and enables Reset to Inherited only for local overrides.
-Unavailable reference snapshots cannot be shown through the Model History eye.
+Unavailable reference snapshots cannot be shown through the History eye.
 
 `RunComponentDocument.ps1 -DisplayContextSmoke` runs three focused workflows from
 `TestComponentDisplayContext.py`: cross-window inheritance and Undo/Redo, menu/active
@@ -91,7 +98,7 @@ in an assembly, Undo and Redo use that component's owning document. Their enable
 states and toolbar history lists follow the same owner. A multi-step toolbar choice
 keeps the requested range in that file. Activate the parent to undo parent edits.
 An embedded component shares its containing file's history, including in an isolated
-tab. Model History refreshes after the native transaction finishes; sketch/task editor
+tab. History refreshes after the native transaction finishes; sketch/task editor
 refreshes stay deferred until editing ends.
 
 `RunComponentDocument.ps1 -UndoRoutingSmoke` runs three focused workflows from
@@ -125,7 +132,7 @@ assembly, select its sketch, then start Extrude/Pad. The task uses the definitio
 owning document for geometry; OK or Cancel returns to the original assembly view and
 instance. Select a planar face in that same component before New Sketch to prefill
 its support. Cancel returns immediately; OK enters the native Sketcher editor and
-closing that editor restores the original view. Model History editing also returns
+closing that editor restores the original view. History editing also returns
 there, including Extrude edits within an isolated component tab.
 
 `RunComponentDocument.ps1 -TaskContextSmoke` runs three focused workflows from
@@ -137,7 +144,7 @@ coverage remain separate acceptance work.
 
 Cross-file editing feedback (roadmap 7.8.7g): expand instances of an external
 component and double-click a numbered occurrence. The assembly view should remain
-active while Model History shows that definition. Selecting a history item retains
+active while History shows that definition. Selecting a history item retains
 the chosen occurrence path. Open Component in Tab provides an isolated view; switching
 between it and the assembly restores each view's active nested component. Rename or
 Save As updates the isolated tab's component name/owning-file title. If an active link
@@ -154,7 +161,7 @@ Save to External File feedback (roadmap 7.8.8d): save the parent `.cadprt`, fini
 the current edit and close isolated tabs for the component and its embedded children.
 Right-click an embedded component and choose Save to External File with a new
 `.cadprt` filename. Its embedded children move with it; shared instances, component
-names and parent references remain linked. Parent Model History should immediately
+names and parent references remain linked. Parent History should immediately
 show current reference/results geometry. The active component and parent view remain
 selected. Already external components have this action disabled. Save the parent to
 persist the new external links. Undo restores embedded definitions; the newly created
@@ -183,7 +190,7 @@ of open isolated tabs remain pending; this check is not full schema acceptance.
    bodies, sheets, sketches and curves. Referenced sketches contain evaluated
    geometry only. Edit the source, then activate the parent: its reference and
    downstream operations should update without changing source history.
-5. Model History lists objects and operations. Use the checkbox to suppress/activate an
+5. History lists objects and operations. Use the checkbox to suppress/activate an
    item and the next icon to show/hide it. A partial check means an input is inactive.
    Its context menu offers Convert to Dumb Object. Delete Parameters retains the result identity and
    valid downstream links; Extract Dumb Body creates an independent copy. Check
@@ -237,7 +244,7 @@ extrusion, Undo/Redo and save/reopen while retaining its body and operation UUID
 Ten source-overlay workflows pass including region selection; payload validation,
 copy/externalization, downstream face references and physical acceptance remain open.
 
-Double-click an operation or its result in Model History to edit it. Component
+Double-click an operation or its result in History to edit it. Component
 Extrude opens the same task for profile/length/direction, mode and target changes,
 while retaining the published result identity. Expression-driven extrusion edits remain in the property editor.
 Other supported objects use their native task editor. Context menus also offer
@@ -308,7 +315,7 @@ C++. Broad component suites and full GUI/consumer acceptance remain deferred.
 ## Reference recovery feedback iteration
 
 A .cadprt with a missing reference object remains open for repair, provided its
-component graph and format identities are valid. Model History shows the missing
+component graph and format identities are valid. History shows the missing
 source and a repair detail tooltip. Edit/double-click the reference, or use Repair
 Reference Object, to choose replacement whole geometry from a direct child. The
 reference identity, history position, valid whole-object consumers and authored
@@ -322,11 +329,11 @@ retargeting; complete topology repair is still a future gate.
 
 Use `-ReferenceSmoke` with the runner for the current three checks: broken-reference
 save/open plus independent work, identity-preserving native Cut repair with Undo/Redo
-and subelement refusal, and Model History repair/refresh/suppression controls. Stage
+and subelement refusal, and History repair/refresh/suppression controls. Stage
 this Python-only batch with `-ScriptsOnly`. The generated broken and repaired .cadprt
 files are feedback fixtures, not full format or cross-workbench qualification.
 
-## Model History suppression feedback iteration
+## History suppression feedback iteration
 
 Suppress an operation in a chain: dependent items become partially checked/inactive,
 while independent branches continue. Hover over the state or checkbox to see which
@@ -354,7 +361,7 @@ follow its new geometry without changing their own identities or history positio
 References using other instances stay on the shared original. Child definitions
 remain shared, including sources for reference objects within the copied definition.
 
-Nested Part View overrides follow the copied child instances. Model History resolves
+Nested Part View overrides follow the copied child instances. History resolves
 the active occurrence after Copy/Undo/Redo. If a deeper editing path no longer exists,
 it falls back to the nearest surviving component; isolated views of the original
 definition continue editing that original. Activating a changed component refreshes
@@ -369,12 +376,12 @@ copying. Complete external-ancestor and topology remapping remains future work.
 
 ## Convert to Dumb Object feedback iteration
 
-Right-click a body/sheet in Model History and choose Convert to Dumb Object. The
+Right-click a body/sheet in History and choose Convert to Dumb Object. The
 Delete Parameters review lists the selected geometry, exclusive history to remove,
 and shared upstream items to retain. Cancel leaves the document untouched. Accept
 keeps the selected object's identity and downstream links; child components survive
 even when the deleted operation obtained its inputs through Add Reference Object.
-An independent geometry tooltip identifies the converted result in Model History.
+An independent geometry tooltip identifies the converted result in History.
 
 Choose Extract Dumb Body to keep the original and create an independent, unlinked
 copy. Already independent objects default to extraction. Referenced curves and dumb
@@ -398,7 +405,7 @@ together, preserving placement and reference identities in one Undo transaction.
 
 A missing body in that file does not block recovery of the component. Healthy
 references update; unavailable ones keep their source identity and appear as Missing
-source in Model History for Repair Reference Object. Save/reopen preserves that
+source in History for Repair Reference Object. Save/reopen preserves that
 partial recovery. Choosing a file with another definition identity leaves the parent
 unchanged and returns to its editing context. Unresolved native links explicitly
 cleared during recovery no longer save the obsolete filename, including after Redo.

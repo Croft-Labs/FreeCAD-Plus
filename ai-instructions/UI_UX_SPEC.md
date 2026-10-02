@@ -1419,17 +1419,24 @@ No true untrim, kept-region trim selection, maximum-deviation certification or
 complete self-intersection diagnosis is claimed.
 [Owner procedure](../tests/ExtendFaceReview.md).
 
-## Models, Assembly Structure and Model History (roadmap 7.8)
+## Models, Part Tree and History (roadmap 7.8)
 
 Owner-approved behavior is in the [component document contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
-Use Models, Assembly Structure and Model History as the tab labels, in that order.
+Use Models, Part Tree and History as the tab labels, in that order.
 Models is flat/non-expandable and lists all owning-file definitions, including
 unused definitions and referenced external models, with expanded assembly-instance
 counts. The root is an editing model/context, with zero linked uses unless explicitly
 instanced elsewhere. Selecting a model shows native attributes; Edit accesses the
 same definition even with zero instances. Add Instance reuses it in the active model.
 Replace the native Model pane with Attributes, retaining its View and Data tabs.
-Assembly Structure always starts with its top-level component (Part001 by default),
+Add Reference Object is a modeling operation button beside Extrude in Part Design
+and Part; omit its creation action from Part Tree and History context menus.
+Existing reference repair/change-source actions remain available. The operation
+uses the active component, supports direct-child preselection and cancellation,
+and is unavailable during another task.
+On entry to a component, its Origin eye in History defaults to visible. A manual
+hide persists through refresh; re-entering the component restores the default.
+Part Tree always starts with its top-level component (Part001 by default),
 with linked occurrence rows beneath it. The root row supplies selection/edit
 context, persists even without children, and is not a deletable assembly instance.
 Delete Instance/Instances, Delete key and standard occurrence Delete remove owning
@@ -1442,22 +1449,23 @@ geometry from a direct child only. Full Component / Bodies Only / Hidden and Res
 to Inherited control occurrence-path representation. No Reference Only role is added.
 Convert to Dumb Object offers Delete Parameters and Extract Dumb Body. Component
 edit tabs identify the shared definition and owning file; they do not make copies.
-Definition-owned constraints remain in Model History, outside occurrence rows.
+Definition-owned constraints remain in History, outside occurrence rows.
 Entry points are File > New/Open and Tools > Components. The panel shows
 only the edited component name, without a file path or creation buttons. Right-click
-provides Edit first, Add Component and Add Reference Object. Double-click edits the
-shared definition. Root editing is available in Models. Instances contains Add
+provides Edit first and Add Component; Add Reference Object is an operation
+button. Double-click edits the shared definition. Root editing is available in
+Models and through the first Part Tree row. Instances contains Add
 Instance and Copy to New Part; Part View contains the three display types and Reset
 to Inherited. Save to External File replaces the earlier Externalize wording.
 Missing components offer Locate Component File and legacy conversions expose their
 report. Attributes and these projections share native document objects; complete
 native command/edit/picking parity remains an explicit roadmap gate.
 
-Assembly Structure's first column shows part names, with a visibility control,
+Part Tree's first column shows part names, with a visibility control,
 instance count and Part View columns. Same-definition instances under a parent
 start grouped (x5); Expand Instances reveals support_angle#001 through #005, and
 Collapse Instances regroups them. The active part is highlighted and cannot be
-hidden, including by hiding its parent branch. Model History places the active /
+hidden, including by hiding its parent branch. History places the active /
 suppressed checkbox to the left of the visibility icon and item name. Partial
 checks identify dependent inactivity; visibility does not suppress an item.
 
@@ -1510,13 +1518,13 @@ native XY/XZ/YZ origin planes and their labels in the owning-file view. Clicking
 one selects its orientation in the task; the plane dropdown and selected local
 planar face plus offset remain available. OK/Cancel restore the previous origin
 and datum visibility; OK opens native Sketcher after the creation task closes,
-without a close-task confirmation or requiring a Body. Model History
+without a close-task confirmation or requiring a Body. History
 also uses native object editors and offers Rename and Convert to Dumb Object.
-Model History displays every component's origin as Origin. Newly created default
+History displays every component's origin as Origin. Newly created default
 labels use a component-local sequence starting at Sketch001, Body001, Extrude001,
 etc.; other components may show the same labels. Custom labels are preserved.
 Generated Body results are background objects: omit their rows from native Model
-and Model History, and show the producing Extrude as the public solid. Its eye and
+and History, and show the producing Extrude as the public solid. Its eye and
 native visibility control display; geometry picks retain the internal result for
 engineering references. Delete Extrude removes its unused result; one Undo restores
 both. Internal results cannot be deleted separately. Convert to Dumb Object remains
@@ -1529,7 +1537,7 @@ row sends the full native occurrence path to the shared selection/property syste
 a grouped row selects its represented instances. A native tree or 3D pick selects
 matching rows without changing the active definition. A precise nested pick reveals
 the required grouped instances; an ambiguous bare shared definition never chooses
-an arbitrary path. Model History selection uses the active occurrence context.
+an arbitrary path. History selection uses the active occurrence context.
 
 Add Reference Object uses an unambiguous selected direct-child object as its initial
 choice. Selecting a face/edge identifies that whole evaluated object, as the dialog
@@ -1539,7 +1547,7 @@ an already-open isolated component focuses its existing tab; switching views res
 the stored active component and occurrence path. These are bounded native-integration
 steps; complete picking/editor/consumer parity remains in roadmap 7.8.7b.
 
-Reference recovery feedback (7.8.4a): Model History Edit/double-click on a reference
+Reference recovery feedback (7.8.4a): History Edit/double-click on a reference
 opens its direct-child source review. The context action says Repair Reference Object
 for a broken source and Change Reference Source otherwise. The picker states that
 it references whole evaluated geometry. Repair preserves identity and history order;

@@ -1,4 +1,4 @@
-# Component documents and Model History
+# Component documents and History
 
 Owner-approved contract, 2026-10-01. Implementation and validation status belong
 to roadmap 7.8. This supersedes conflicting part/navigator terminology and the
@@ -6,7 +6,7 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 
 ## Ownership, instances and files
 
-- UI names: **Models**, **Assembly Structure**, **Model History**, **Attributes**, **Add Component**,
+- UI names: **Models**, **Part Tree**, **History**, **Attributes**, **Add Component**,
   **Add Reference Object**, **Convert to Dumb Object**, **Instances > Add Instance**,
   **Instances > Copy to New Part**, **Save to External File**.
   Documentation may say sub-component; UI calls every instance a component.
@@ -20,7 +20,12 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   instance, so it normally has count zero. Selection supplies native Attributes;
   Edit opens the same model, including models with no placed instances. Add Instance
   inserts that model into the active component without creating another definition.
-- Assembly Structure starts with the top-level component (Part001 by default),
+- Add Reference Object is an operation command/button beside Extrude, not a
+  creation entry in the Part Tree or History context menus. It uses the active
+  component and preserves the existing direct-child evaluated-geometry contract.
+- Entering a component makes its Origin visible by default in History. The eye
+  remains editable; refresh preserves a deliberate hide until the next entry.
+- Part Tree starts with the top-level component (Part001 by default),
   with linked occurrences beneath it. This permanent root context is selectable
   and editable, not a linked instance; it cannot be deleted as an instance and
   does not increase instance counts. Renaming updates its displayed label. The
@@ -39,11 +44,12 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   and transactions remain reusable infrastructure. A new component/result layer
   owns the semantic contracts; tree flattening alone cannot implement them.
 
-## Assembly Structure and representation
+## Part Tree and representation
 
 - The Components panel identifies the active component, without a filename/path or
-  Add Component / Add Reference Object buttons. Creation actions live in context
-  menus. Component tabs may still identify their owning file.
+  inline creation buttons. Add Component lives in context menus; Add Reference
+  Object lives beside Extrude in the modeling toolbar/menu. Component tabs may
+  still identify their owning file.
 - The first tree column is the part name. Repeated occurrences of the same definition
   under one parent collapse into one row by default, with an instance count such as
   **x5**. **Expand Instances** reveals rows such as **support_angle#005**; **Collapse
@@ -89,10 +95,10 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   a shared definition's child applies to all uses of that definition. Excluding an
   occurrence omits that branch from BOM counting without changing display or mass
   settings. Component BOM rows represent components, not their modeling history.
-- Definition-owned constraints belong in Model History, not among occurrence rows
-  in Assembly Structure.
+- Definition-owned constraints belong in History, not among occurrence rows
+  in Part Tree.
 
-## Model History and evaluated objects
+## History and evaluated objects
 
 Automatically created root definitions are labeled Part001; subsequent new
 definitions default to the next available PartNNN within the owning document.
@@ -107,7 +113,7 @@ they do not create a new part number. Native object names/UUIDs retain their rol
   Persist selected subelements as a native LinkSub on a component-owned Internal
   profile, not copied independent curves or label references. Recompute validates
   the subset and invalid/missing inputs require repair. Keep the published result
-  identity through edits; the internal profile is not a Model History item.
+  identity through edits; the internal profile is not a History item.
 - Component Extrude extent restoration reuses the native Pad geometry engine
   directly under a definition, without an auxiliary PartDesign::Body. Preserve
   native extent/start/limit properties and dependencies. Selected profiles retain
@@ -116,7 +122,7 @@ they do not create a new part number. Native object names/UUIDs retain their rol
   Extrusions/Booleans remain readable and migrate only on reviewed editing, with
   stable operation/result UUIDs and transactional rollback/Undo. Preview overlays
   and temporary target transparency never persist as model geometry.
-- Every component always shows its native **Origin** as the first Model History
+- Every component always shows its native **Origin** as the first History
   item, including empty components and isolated views. It is permanent and cannot
   be suppressed; its visibility can be toggled. Reuse the existing origin identity.
 - The Components pane displays that item as **Origin**, without a document-wide
@@ -133,7 +139,7 @@ they do not create a new part number. Native object names/UUIDs retain their rol
   result identities are separate from producing operations. Solid/sheet results
   expose geometry; editable parameters remain on their operations.
 - Owner feedback 7.8.7t: generated solid Body results are protected background
-  objects, omitted from native Model and Model History. Their producing operation
+  objects, omitted from native Model and History. Their producing operation
   (for example Extrude001) is the public solid with visibility/edit/delete controls.
   Engineering picks retain the stable internal result identity. Existing results
   adopt this display without UUID changes. Deleting an operation removes its unused
@@ -167,7 +173,7 @@ they do not create a new part number. Native object names/UUIDs retain their rol
   expression remapping before mutation; a failed dependent rebuild rolls back.
 - Missing reference geometry must not close an otherwise structurally valid document
   or prevent independent references/operations from updating. Report each broken
-  reference in Model History and retain its saved source identity for repair. This
+  reference in History and retain its saved source identity for repair. This
   does not relax format, component-graph or external-definition identity checks.
 - No separate snapshot option in this command: independent copies use Convert
   to Dumb Object. Adding a reference does not change its source's display type.
