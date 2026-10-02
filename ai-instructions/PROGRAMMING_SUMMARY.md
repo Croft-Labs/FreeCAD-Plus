@@ -6,28 +6,33 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-October 2 updated owner build incorporates the complete queued application batch
-through `6be8eda4246a`: compact ribbon and New File icon/caption, exclusive Plus/
-Classic styles, restored audit commands/icons/native pattern variants, startup
-Components above Attributes at 2:1, idle Tasks actions, recent-only Start view,
-Notifications/navigation/unit controls, and Blender/Imperial Decimal defaults.
-Saved user choices are preserved. Start and Tux are enabled in the native cache.
+October 2 audit build incorporates the conversation's requested UI/workflow
+changes, including the common toolbar above the ribbon, medium icons, completed
+Home groups, Design Assembly tab and unplaced New Component action. Its application
+sources are `ca244c0335`; it reuses the validated native engine at `6be8eda4246a`
+and synchronizes two compatible GUI Python modules without a C++ rebuild.
 
-All enabled native Release targets pass. The staged runtime passes 138 executions
-(136 distinct checks), with no failures/errors/skips or unexpected GUI exception
-diagnostics; launcher/native imports/save/reopen and final revision also pass.
-Acceptance corrected native Circular Pattern registration, Start view ownership/
-first-run setup/focus, and origin-helper ray picking through solids. The
-[toolbar reference](details/ui/TOOLBARS.md) now includes the rebuilt native bindings
-and a reorganized 644-command catalog with 616 native icon renders. The conversation audit adds
-the common toolbar, medium icons and expanded Design layout in the audit build.
-The desktop owner shortcut is a mandatory delivery gate under root AGENTS.md. [WORK_STATE](WORK_STATE.md) owns exact provenance,
-portable build paths, integrity evidence and retained broader acceptance limits.
+Packaged acceptance passes 131 executions without failures/errors/skips or source
+overlays: ribbon and every installed mode, component tabs/tree/naming/background
+results, selected-profile Extrude, complete sketch workflow/cold reopen, startup
+panes/Tasks/recent files/status and three actual owner-launcher cold restarts.
+Plus/Blender/Imperial Decimal defaults preserve saved choices. Hidden-window
+specialist initialization was corrected to preserve Classic toolbar visibility.
+The desktop owner shortcut now points to this payload; root AGENTS.md makes its
+verified update mandatory for every delivered owner build.
 
-This update supersedes the earlier October 2 build at `52495b0cb2`; that runtime
-and ZIP remain intact. It is a local test build ready for owner testing; physical
-owner acceptance and publication remain separate. The earlier broader sketch
-qualification retains its intentional inherited solver skip and topology gates.
+The [toolbar reference](details/ui/TOOLBARS.md) separates Classic command rows,
+implemented Plus groups and the final 644-command function catalog with 616 native
+icon renders. The [conversation audit](DEVELOPMENT_ROADMAP.md#october-2-conversation-and-payload-audit)
+maps each request to incorporation/evidence. [WORK_STATE](WORK_STATE.md) owns exact
+source/native identities, launcher/ZIP paths, shortcut verification, file hashes
+and retained acceptance limits.
+
+Both earlier October 2 builds remain intact. Baseline native ALL_BUILD and 138
+executions (136 distinct checks) remain recorded separately; they are not a new
+native build/test claim. Start and Tux remain enabled; FEM remains disabled.
+This is an unsigned local test build ready for owner testing. Physical owner
+acceptance, upstream candidate integration and external publication are separate.
 
 ## Where to go
 

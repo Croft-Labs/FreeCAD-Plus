@@ -1,27 +1,57 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 2: conversation audit — package delivery in progress
+## October 2: conversation audit — owner build ready
 
-The owner opened the earlier source 52495b0cb2 payload; it lacks the compact grid.
-Use the new audit folder, retaining both earlier folders. Common toolbar, medium
-icons, Design Assembly, populated Home and Std_NewComponent are now implemented.
-The mandatory owner-shortcut update is recorded in AGENTS.md/DEVELOPMENT_GUIDE.
+The owner opened the earlier source `52495b0cb2` payload, which lacks the compact
+grid. Both earlier folders remain intact. Use the audit payload:
 
-Packaged checks pass: ribbon/all-mode 19; feedback 44; sketch workflow 27;
-component pane/tree/layout/Tasks/status/recent 35; cold sketch reopen 3. Fresh
-Plus/Blender/Imperial defaults and persisted Plus/Classic state pass three native
-processes after correcting hidden-window specialist initialization. Final owner
-launcher verification and archive/shortcut integrity are being completed.
-The native engine is reused from 6be8eda4246a; only compatible Python GUI modules
-change. The final metadata must record both native and application source identity.
+- Launcher: `D:\Temp\Office-PC\freecad-plus-build-20261002-audit\FreeCAD-Plus-2026-10-02\FreeCADPlus.exe`
+- ZIP: `D:\Temp\Office-PC\freecad-plus-build-20261002-audit\FreeCAD-Plus-2026-10-02-Audit-Windows-x64.zip`
+- Application sources: `ca244c0335d95bf4e2127d8d77aa107cd535a838`.
+- Native engine reused: `6be8eda4246a15590664ba17772a92ec63aaa448`; no C++ rebuild is claimed.
+- ZIP bytes: **662,182,921**; SHA256:
+  `4b5df882b1f419c432b3c92b6d44efa981a80d49b48a57a03ef8e3a56bcf78e8`.
+- Desktop `FreeCADPlus.exe - Shortcut.lnk` target and working directory are saved
+  and reopened/verified against this launcher. Mandatory delivery gate is in
+  AGENTS.md/DEVELOPMENT_GUIDE; the update tool preserves other shortcut settings.
+
+**Implemented:** common small File/Edit/Clipboard bar above the ribbon; 40/20/16px
+full/medium/small icon hierarchy; medium Home Main and curated domain groups;
+Design Assembly tab; Coordinate System dropdown; Std_NewComponent creates an
+embedded definition with zero occurrences and opens its editing tab. Native
+Isometric binding corrects the invalid draft alias. Specialist actions initialize
+only after the main window is visible, preserving Classic visibility at cold start.
+The [conversation audit](DEVELOPMENT_ROADMAP.md#october-2-conversation-and-payload-audit)
+records each requested UI/workflow change. Toolbar governance is regenerated from
+this payload: 644 command IDs, 616 native PNGs, 11px reference icons and valid local
+links/anchors. Python/PowerShell syntax and whitespace checks pass.
+
+**Packaged acceptance:** **131 passing executions**, no failures/errors/skips or
+source overlays in accepted reports: ribbon/all-installed-mode 19; component
+feedback 44; sketch workflow 27; component pane/tree/layout/Tasks/status/recent 35;
+cold sketch reopen 3; three owner-launcher startup processes. Fresh Plus/Blender/
+Imperial defaults and saved Plus/Classic visibility persist. New-model creation,
+Undo/Redo and save/reopen pass. The native launcher is the same FreeCADPlus.exe
+that the owner shortcut targets. Captures come from the actual packaged Qt UI.
+
+**Integrity:** all 14,702 non-cache payload files are hashed; only PlusRibbon.py
+and ComponentNavigator.py differ in runtime folders from the validated 6be8eda
+baseline. All other runtime hashes match that baseline. Source module hashes and
+loaded payload provenance are recorded; final ribbon/launcher checks use final
+GUI bytes. The 14,703-entry ZIP includes the manifest and passes CRC verification.
+Metadata separates application/native source identity and marks native rebuild as
+false. Earlier native Pattern geometry and ALL_BUILD evidence are retained,
+not described as rerun. Evidence: audit root's `acceptance`, `toolbar-reference`,
+`build-validation-summary.json`, `shortcut-verification.json`, `artifact-result.json`;
+payload BUILD-VALIDATION/BUILD-MANIFEST/release-info.
 
 Failed ribbon draft (invalid Std_ViewAxonometric), two cold-start attempts and a
-detached-launcher harness attempt remain in the audit evidence. They are excluded
-from accepted counts; corrected native command, visible-window initialization and
-detached-launcher-aware runner pass the relevant checks. No upstream patch import,
-installer, signing or publication occurs. The recorded upstream compatibility
-review answers the earlier check request; candidate integration is separate.
-
+detached-launcher harness attempt remain in evidence, excluded from accepted
+counts. Corrected command, visible-window initialization and detached-aware runner
+pass. No upstream patch import, installer, signing or publication occurs. The
+recorded upstream compatibility review answers the earlier check request;
+candidate integration is separate. FEM/printing-addon execution and physical
+owner acceptance remain conditional/separate as documented in the audit.
 
 ## October 2: toolbar document revision (historical; superseded by audit build)
 

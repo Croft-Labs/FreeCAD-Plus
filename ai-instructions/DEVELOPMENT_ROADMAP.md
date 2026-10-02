@@ -80,7 +80,9 @@ paths, source/native identities, counts, failed diagnostic attempts and final ha
 ## Current focus
 
 - October 2 conversation audit: revised Plus layout and shortcut delivery gate
-  are implemented; the request-by-request [audit](#october-2-conversation-and-payload-audit)
+  are incorporated in the audit payload, passing 131 packaged executions. The
+  desktop shortcut is retargeted and verified, and ZIP/file integrity passes. The
+  request-by-request [audit](#october-2-conversation-and-payload-audit)
   records incorporation and verification, with exact artifact status in WORK_STATE.
 
 - October 2 updated owner build: all queued application changes through
