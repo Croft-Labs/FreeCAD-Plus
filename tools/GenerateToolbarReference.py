@@ -20,6 +20,10 @@ inventory_path = Path(sys.argv[1])
 data = json.loads(inventory_path.read_text(encoding="utf-8"))
 pending_native = {"PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern"} - {
     name for name, actions in data["commands"].items() if actions}
+pattern_bindings_status = (
+    "Those three bindings remain pending native rebuild/GUI validation in the inspected executable. "
+    if pending_native else "The inspected executable registers all three restored native bindings. "
+)
 REF = sys.argv[2] if len(sys.argv) > 2 else "upstream/main"
 def git(*args):
     return subprocess.check_output(["git", *args], cwd=ROOT).decode("utf-8")
@@ -334,8 +338,8 @@ lines = ["# FreeCAD Plus toolbar governance and visual reference", "",
     f"Snapshot: 2026-10-02. Fork source `{fork[:12]}`; recorded upstream FreeCAD/main `{upstream[:12]}`. "
     "Upstream means that local source snapshot, not a claim that the remote has no later commits. "
     f"Native action metadata/icons were read from the fork executable at application source `{data['version'][7][:12]}`; "
-    "Plus grouping/projection was read from current source. Pending source ribbon changes are not yet incorporated "
-    "in the owner's 10/2 build. Runtime export is an inventory check, not functional acceptance of every command.", "",
+    "Plus grouping/projection was read from current source. Build and acceptance status are recorded in "
+    "[WORK_STATE](../../WORK_STATE.md). Runtime export is an inventory check, not functional acceptance of every command.", "",
     "For every toolbar change, review placement, native command identity, retained functionality, "
     "icon/caption, large/small/dropdown priority, enabled/checked states and accessibility. "
     "Record new implementations and build/acceptance status in the existing roadmap/WORK_STATE, "
@@ -407,8 +411,7 @@ for name in order:
             f"{button('PartDesign_CircularPattern')}, {button('PartDesign_PathPattern')}, {button('PartDesign_PointPattern')} "
             f"share {button('PartDesign_Pattern')} as the primary ribbon entry. "
             "The unified task offers linear/circular patterns; the dropdown adds native concentric Circular, Path and Point tasks. "
-            "The audit correction restores their upstream commands and view providers in source, without changing geometry. "
-            "Those three bindings remain pending native rebuild/GUI validation in the inspected executable. "
+            f"The audit correction restores their upstream commands and view providers in source, without changing geometry. {pattern_bindings_status}"
             "Classic exposes their individual native buttons; Mirrored and MultiTransform remain separate buttons.",
             "- Additive/Subtractive Loft, Pipe and Helix each share one dropdown. Both variants remain selectable."]
     if name == "SketcherWorkbench":

@@ -30,63 +30,25 @@ is subsequently changed.
 
 ## Current focus
 
-- October 2 toolbar audit corrections queued: restore compact Datums/Variable Set/
-  Macro access, Drawing page priority and visible icons for iconless native actions.
-  Restore upstream Circular/Path/Point commands/view providers and group native
-  variants under Pattern. Fourteen ribbon overlay checks and ten existing native
-  geometry checks pass. Native restored-binding compilation/GUI acceptance is
-  pending the next authorized build; [WORK_STATE](WORK_STATE.md) owns evidence.
+- October 2 updated owner build: all queued application changes through
+  `6be8eda4246a` are incorporated into the portable Windows x64 Release build.
+  ALL_BUILD passes with Start and Tux enabled; focused corrective compiles/relinks
+  resolve Circular Pattern registration and native Start startup/lifecycle issues.
+  Source correction also preserves solid occlusion behind visible origin helpers.
+  Staged acceptance passes 138 executions (136 distinct tests) across ribbon,
+  startup preferences, native recent cards, status controls, dock layout, Tasks,
+  component feedback/tabs/tree, sketch workflow/cold reopen and native Pattern
+  geometry. No selected-suite skips or unexpected GUI exception diagnostics.
+  Final version-only refresh and launcher/imports/save/reopen pass. All earlier
+  October 2 queued UI items are incorporated; the previous build remains intact.
+  [WORK_STATE](WORK_STATE.md) owns exact source/build/validation/artifact evidence.
+  Physical owner acceptance and publication remain separate from this local build.
 
-- October 2 toolbar governance reference: [visual toolbar catalog](details/ui/TOOLBARS.md)
-  now governs detailed Classic/Plus placement and documents command consolidation
-  by workbench. Its 20 workbench sections and 638-command function catalog include
-  native icons and source-only boundaries. Links/catalog coverage checked; no new
-  functionality or build is claimed. [WORK_STATE](WORK_STATE.md) owns provenance.
-
-- October 2 queued toolbar exclusivity fix: Plus suppresses late native toolbar
-  Show/layout events and Classic suppresses the ribbon. Saved layouts cannot
-  reveal both styles; Classic visibility choices survive workbench switches.
-  Twelve native Qt/source-overlay ribbon checks pass. Packaged preferences and
-  cold startup remain for the next owner-authorized build; see [WORK_STATE](WORK_STATE.md).
-
-- October 2 queued status controls/defaults: enable/package Tux for the native
-  navigation chooser and seed Blender/Imperial Decimal before module initialization.
-  Four source-overlay/native menu checks pass, including Notifications and actual
-  viewer/unit scope changes. C++ Blender fallback changes and packaged startup
-  still require the next owner-authorized build. [WORK_STATE](WORK_STATE.md) owns
-  evidence and the staged acceptance boundary.
-
-- October 2 queued recent-file startup: source hook presents the upstream native
-  Start page's Recent Files only, with no creation/examples/setup content and an
-  empty-list message. Existing Tasks checks pass (five). Native recent-card tests
-  remain unaccepted: the current executable was built with `BUILD_START=OFF`.
-  Next owner-authorized build must enable/package Start and run the three native
-  checks without skips. [WORK_STATE](WORK_STATE.md) records the module boundary.
-
-- October 2 queued Tasks startup actions: New File/Open at startup, followed by
-  New Sketch/Coordinate System/Datum Plane/Add Component after New File. Native
-  actions, operation dialogs and other-mode/legacy task watchers are preserved.
-  Five native Qt source-overlay checks and four dock-layout checks pass. Source
-  only, awaiting owner-authorized build incorporation; see [WORK_STATE](WORK_STATE.md).
-
-- October 2 queued component workspace layout: startup shows Components above
-  Attributes on the left with a 2:1 initial height split, correcting saved floating,
-  hidden or tabbed placements. Four native Qt source-overlay checks pass; user
-  resizing afterward is preserved. Source only; build incorporation awaits the
-  owner's instruction. [WORK_STATE](WORK_STATE.md) records evidence.
-
-- October 2 queued ribbon refinement: compact primary/secondary/rare action
-  hierarchy implemented in source, with nine source-overlay Qt checks passing.
-  The owner withholds October 2 build incorporation until explicitly requested.
-  [WORK_STATE](WORK_STATE.md) records this separately from the delivered build;
-  [UI specification](UI_UX_SPEC.md#toolbar-ui-styles) owns the standing UX rule.
-
-- October 2 owner build checkpoint: all implemented application changes through
-  `52495b0cb2` are incorporated in a separate dated Windows x64 Release runtime.
-  ALL_BUILD succeeds; final staged-copy validation passes 103 executions (101
-  distinct tests) plus launcher/save/reopen and correct native revision checks.
-  [WORK_STATE](WORK_STATE.md) owns paths, evidence and portable artifact integrity.
-  This is a local build; physical acceptance and publication remain separate.
+- Toolbar governance reference: [visual toolbar catalog](details/ui/TOOLBARS.md)
+  governs detailed Classic/Plus placement and command consolidation by workbench.
+  Refreshed from the updated executable: 20 workbench sections, 638 command IDs,
+  608 native icon renders and all three restored native Pattern bindings. Source-
+  only workbenches remain marked. Inventory is not acceptance of every command.
 
 - Owner priority (2026-10-01): complete the component/document architecture under
   **7.8**, using the [approved contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).

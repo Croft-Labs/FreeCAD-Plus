@@ -6,53 +6,26 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-October 2 pending source batch: Plus Ribbon now uses large primary actions,
-three-row secondary icon grids and grouped dimension/variant choices. Nine
-source-overlay checks pass. The hierarchy is a standing UI rule. Incorporation
-into the October 2 build awaits the owner's explicit instruction. Components also
-opens at startup above Attributes on the left with a 2:1 split; four isolated
-native Qt source-overlay checks pass for the layout and registration; see
-[WORK_STATE](WORK_STATE.md).
+October 2 updated owner build incorporates the complete queued application batch
+through `6be8eda4246a`: compact ribbon and New File icon/caption, exclusive Plus/
+Classic styles, restored audit commands/icons/native pattern variants, startup
+Components above Attributes at 2:1, idle Tasks actions, recent-only Start view,
+Notifications/navigation/unit controls, and Blender/Imperial Decimal defaults.
+Saved user choices are preserved. Start and Tux are enabled in the native cache.
 
-Toolbar styles are now mutually exclusive in source, guarding late native toolbar
-show events and saved-layout restoration. Twelve ribbon source-overlay checks
-pass, including preservation of Classic visibility. This fix joins the pending
-batch; packaged preference/startup acceptance awaits build incorporation.
-Audit corrections add compact Datums/Variable Set/Macro access, usable icons for
-iconless actions and correct Drawing page priority. Circular/Path/Point native
-Pattern bindings are restored in source and grouped under Pattern; native rebuild
-and GUI acceptance remain pending. Fourteen ribbon overlay checks and ten existing
-native Pattern geometry checks pass; see [WORK_STATE](WORK_STATE.md).
+All enabled native Release targets pass. The staged runtime passes 138 executions
+(136 distinct checks), with no failures/errors/skips or unexpected GUI exception
+diagnostics; launcher/native imports/save/reopen and final revision also pass.
+Acceptance corrected native Circular Pattern registration, Start view ownership/
+first-run setup/focus, and origin-helper ray picking through solids. The
+[toolbar reference](details/ui/TOOLBARS.md) now includes the rebuilt native bindings
+and 608 native icon renders. [WORK_STATE](WORK_STATE.md) owns exact provenance,
+portable build paths, integrity evidence and retained broader acceptance limits.
 
-Tasks startup actions are also queued in source: New File/Open with no document,
-then New Sketch/Coordinate System/Datum Plane/Add Component in a component's
-idle Design task pane. Five native Qt source-overlay checks cover the command
-handoffs and states; the prior four dock-layout checks also pass.
-
-Recent-only viewing-area startup is prepared in source, reusing the native Start
-page and hiding creation/examples/setup content. The current October 2 executable
-has `BUILD_START=OFF`, so native recent-card acceptance is pending the next
-authorized build with Start enabled. Five adjacent Tasks checks pass; see
-[WORK_STATE](WORK_STATE.md) and the build guide.
-
-Status controls/defaults are queued: restore the Tux navigation indicator, seed
-Blender and Imperial Decimal for unset preferences, preserve saved choices and
-document units. Four native/source-overlay menu checks pass for Notifications,
-navigation viewer changes and unit scopes. Native fallback rebuild and packaged
-Tux/early startup acceptance remain for the next authorized build.
-
-October 2 delivered checkpoint: the separate dated owner build incorporates
-application changes through `52495b0cb2`;
-all enabled native targets built successfully and the final staged copy passes
-103 check executions plus launcher/save/reopen. [WORK_STATE](WORK_STATE.md) records
-the runtime/portable ZIP paths and exact identity. New Sketch supports existing
-user planes and creating a native
-plane with base/offset/rotations. The sketch validation batch passes 173 distinct
-checks with one intentional inherited solver skip; support-plane region picking
-is fixed in the existing 9/28 build. [WORK_STATE](WORK_STATE.md) records exact
-payload/test evidence and retained diagnostics. [Sketch workflow procedure](../tests/SketchWorkflow.md)
-and [pane procedure](../tests/ComponentPaneValidation.md) record reproducible
-coverage. Physical owner acceptance remains separate.
+This update supersedes the earlier October 2 build at `52495b0cb2`; that runtime
+and ZIP remain intact. It is a local test build ready for owner testing; physical
+owner acceptance and publication remain separate. The earlier broader sketch
+qualification retains its intentional inherited solver skip and topology gates.
 
 ## Where to go
 

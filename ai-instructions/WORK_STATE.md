@@ -1,36 +1,64 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 2: owner-authorized build incorporation in progress
+## October 2: updated owner build completed
 
-The owner authorized incorporation of the queued batch. All enabled native Release
-targets pass, with Start and Tux enabled in the existing cache. The staged update
-is under `D:\Temp\Office-PC\freecad-plus-build-20261002-update`; the previous owner
-runtime and ZIP remain intact. Native version metadata required a focused
-Version.cpp compile/relink after the full build retained the previous object.
+The owner-authorized update incorporates all queued application changes through
+`6be8eda4246a15590664ba17772a92ec63aaa448`. The earlier October 2 runtime/ZIP at
+application source `52495b0cb2` remain intact. The updated local test build is:
 
-Packaged acceptance exposed and corrected Circular Pattern view-provider
-registration before its Polar parent, temporary native Start/PySide wrapper
-ownership, empty recent-view focus, and first-run setup construction in the
-recent-only startup view. Start's unit/navigation controls also block signals
-while populating to preserve saved/default settings. The runner now rejects
-unhandled std::exception diagnostics as well as Base::Exception diagnostics.
+- Launcher: `D:\Temp\Office-PC\freecad-plus-build-20261002-update\FreeCAD-Plus-2026-10-02\FreeCADPlus.exe`
+- Portable ZIP: `D:\Temp\Office-PC\freecad-plus-build-20261002-update\FreeCAD-Plus-2026-10-02-Windows-x64.zip`
+- ZIP bytes: **662,180,525**; SHA256:
+  `67e73d17a4dee6d03f60da2ce83e4da0254167c5dcae0b228f3821c4b727feeb`.
+- Evidence: the update root's `native-build`, corrective native compile/relink
+  directories, `final-acceptance`, `toolbar-reference`, `build-validation-summary.json`
+  and `artifact-result.json`; packaged `BUILD-VALIDATION.json`/`BUILD-MANIFEST.json`.
 
-The corrected packaged recent-files (3), status controls (4), dock layout (4) and
-Tasks actions (5) checks pass with no skipped checks or unexpected GUI exception
-diagnostics. Fresh startup confirms Plus/Blender/Imperial Decimal. Full ribbon,
-component and sketch acceptance is running; archive creation and delivery remain
-pending. This checkpoint does not claim a completed or published build.
+**Implementation:** compact primary/secondary/dropdown ribbon hierarchy; New File
+native icon/caption; exclusive Plus/Classic toolbars; audit Datums/Variable Set/
+Macro access, fallback icons and Drawing page priority; restored native Circular/
+Path/Point Pattern commands; startup Components above Attributes at 2:1; idle
+Tasks actions; recent-only native Start; status controls; Blender/Imperial Decimal
+fresh defaults with saved choices preserved. Acceptance also corrected Circular
+Pattern registration after its Polar parent, native Start/PySide wrapper lifetime
+and empty-view focus, hidden first-run setup construction, signal emission while
+populating native Start unit/navigation controls, and full-ray region picking
+through origin helpers. Foreground solids block picks; geometry behind the
+sketch does not. Runner phases reset Feedback-only state and reject both native
+C++ exception diagnostic types.
 
-The packaged component regression additionally exposed origin-helper pick
-priority masking an occluding solid. Extrude region picking now inspects the
-full native pick ray and ignores geometry only when it lies behind the sketch
-plane. The regression checks both front occlusion and successful picking with
-geometry behind the sketch. All 44 component feedback checks pass on the staged
-copy. The runner supports explicit TestFiles for grouped native suites; all ten
-existing Circular/Path/Point Pattern geometry checks pass without overlays.
-Sequential runner phases now reset the Feedback-only payload verification flag;
-otherwise an unrelated later suite could pass all its checks yet be rejected for
-not loading Feedback's complete module list. This is a harness-state correction.
+**Native build:** ALL_BUILD passes in the existing Windows x64 Release cache,
+with `BUILD_START=ON` and `BUILD_TUX=ON`; other configured modules are retained.
+Focused corrective compiles/relinks are recorded separately. A version-only
+refresh follows functional acceptance and stamps native 26.3.0 / 49231 Git,
+branch main, commit `6be8eda4246a15590664ba17772a92ec63aaa448`; final launcher
+verification confirms this identity. No separately installed upstream FreeCAD is
+used. FEM remains disabled in this configuration.
+
+**Packaged behavioral/GUI validation:** 138 executions / 136 distinct checks pass
+without source overlays, failures, errors, skips or unexpected GUI exception
+diagnostics. Selected phases: component feedback 44; component tab input/lifecycle
+10; Part Tree rearrangement 9; sketch workflow 27; cold sketch reopen 3; ribbon 16;
+three preference-persistence startup processes; recent cards/open/empty/focus 3;
+status controls 4; startup dock layout 4; idle Tasks actions 5; native Circular/
+Path/Point geometry 10. Module provenance is verified. The final version-stamped
+launcher passes native imports and save/reopen. Recent-files and ribbon captures
+are reviewed. All 14,702 non-cache staged files are hashed; runtime folders match
+build bytes, and ZIP entries pass CRC verification. The unchanged launcher is
+reused from the earlier owner payload; its source has not changed.
+
+The governing toolbar reference is refreshed from this executable: 638 command
+IDs, 608 native PNG icon renders, and all three restored Pattern bindings. This
+inventory does not claim functional acceptance of every inherited command.
+
+**Delivery/publication:** local portable test build ready for owner testing;
+no installer, GitHub release or publication is performed. Physical owner acceptance,
+broader topology coverage and the earlier intentional inherited solver skip remain
+separate gates. Failed diagnostic attempts remain in the evidence folders with
+corrective outcomes above; they are not counted as final accepted phases.
+
+The queued-source entries below are historical and superseded by this completed
+build checkpoint.
 
 ## October 2: toolbar audit corrections queued in source
 
