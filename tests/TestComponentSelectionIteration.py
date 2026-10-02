@@ -132,7 +132,7 @@ class TestComponentSelectionIteration(unittest.TestCase):
         self.assertAlmostEqual(reference.Shape.BoundBox.XMin, 40)
 
     def testGroupedUndoAndComponentTabContext(self):
-        group = self.panel.structure.topLevelItem(0)
+        group = self.panel.structure.topLevelItem(0).child(0)
         group.setSelected(True)
         selected = Gui.Selection.getSelectionEx("*", 0)
         self.assertEqual(set(selected[0].SubElementNames),

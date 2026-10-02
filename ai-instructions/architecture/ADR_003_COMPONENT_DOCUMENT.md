@@ -70,7 +70,8 @@ location. The original is protected from overwrite. Native `App.newDocument` and
 scratch documents. A renamed FCStd without a manifest is not valid `.cadprt`.
 
 Owner feedback 7.8.7u supersedes the original navigator projection: Models lists
-definitions and instance counts, Assembly Structure projects occurrence links only,
+definitions and instance counts, Assembly Structure projects the permanent root
+context followed by child occurrence links (owner follow-up 7.8.7v),
 and Attributes replaces the native Model pane while reusing its property editor.
 Model History displays owned objects and operations. Native LinkView
 projections implement occurrence-path display and isolated views without changing

@@ -1,5 +1,27 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 1 follow-up: Assembly Structure root restored (7.8.7v)
+
+Owner requests the top-level part as the first Assembly Structure component.
+Source now displays the view's root (Part001 by default, custom labels retained)
+as the permanent first row, with linked instances beneath it. It starts expanded;
+subsequent user expansion state is retained. Edit returns to the root path.
+Root Delete/instance menu actions cannot remove the definition; linked instance
+counts are unchanged. Empty assemblies retain the root row. Contract/UI/ADR and
+existing row-based regression fixtures updated for this hierarchy.
+
+The owner has reopened the 9/28 executable (PID 8140 at inspection). No running
+payload files were replaced and no native rebuild/staging occurred. Source-only
+isolated fork tests with FREECAD_PLUS_PROFILE_SOURCE=1 pass: 41 navigator/context
+checks in `D:\Temp\Office-PC\freecad-assembly-root-context-20261001` and seven
+focused Models/root tests in `freecad-assembly-root-expanded-20261001`. Root-first,
+custom rename, empty state, root editing/Delete, linked deletion/Undo/reopen,
+selection, display, tasks, file/save/Undo routing, BOM and Add Component exercised.
+Native Attributes/Delete compiled behavior remains the preceding build's evidence;
+these checks do not establish the new root projection in the owner-running payload.
+Next grouped script/resource staging while closed: run AssemblyStructureSmoke
+without overlay, including the root/context regression. Physical acceptance pending.
+
 ## October 1: pending feedback incorporated into the closed 9/28 build
 
 The owner closed FreeCAD and authorized incorporation/testing. The existing

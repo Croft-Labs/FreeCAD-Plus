@@ -12,13 +12,17 @@ acceptance remains separate from automated native GUI and screenshot checks.
 
 Models/assembly feedback (7.8.7u): check Models, Assembly Structure and Model History
 tab order. Models must be flat and show unused definitions plus assembly-use counts.
-Add Component produces one occurrence row, not an extra definition row. Attributes
+Assembly Structure starts with the top-level part (Part001 by default), with its
+linked instances beneath it. Selecting Edit on that row returns to top-level
+editing; Delete must preserve the root. The row remains after all child instances
+are removed and follows a custom root name. Add Component produces one child
+occurrence row. Attributes
 must retain native View/Data editing without a visible Model tree. Add a second
 instance, delete one and then the last: geometry/history must remain in Models with
 zero uses and be reusable through Add Instance. Check nested/repeated counts, Delete
 key and standard Edit > Delete, active-parent fallback, references becoming missing,
 Undo/Redo and save/reopen of unused models. Shared model child-link deletion affects
-all uses of that model. Run `RunComponentDocument.ps1 -ModelsPaneSmoke` after the
+all uses of that model. Run `RunComponentDocument.ps1 -AssemblyStructureSmoke` after the
 grouped build; source overlays cannot verify native Delete/Attributes compilation.
 
 Background result feedback (7.8.7t): after the grouped update, create Extrude001.

@@ -49,7 +49,8 @@ class TestComponentModelsPane(unittest.TestCase):
         self.assertEqual(self.model_row(self.part).text(1), "1")
         self.assertEqual(self.model_row(self.root).text(1), "0")
         self.assertEqual(self.panel.structure.topLevelItemCount(), 1)
-        row = self.panel.structure.topLevelItem(0)
+        self.assertEqual(self.panel.structure.topLevelItem(0).text(0), self.root.Label)
+        row = self.panel.structure.topLevelItem(0).child(0)
         for key, path in self.panel.members(row):
             self.assertEqual(Navigator.resolve(key).ComponentRole, "Occurrence")
             self.assertEqual(path, [self.first.ObjectId])
@@ -70,6 +71,38 @@ class TestComponentModelsPane(unittest.TestCase):
         Gui.updateGui()
         self.panel.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "assembly-structure.png"))
 
+    def testRootFirstEditingAndDeleteProtection(self):
+        doc = Model.new_document()
+        root = Model.metadata(doc).RootComponent
+        self.panel.set_document(doc)
+        self.assertEqual(self.panel.structure.topLevelItem(0).text(0), "Part001")
+        link = Model.add_component(root)
+        self.panel.refresh()
+        row = self.panel.structure.topLevelItem(0)
+        self.assertEqual(row.data(0, QtCore.Qt.UserRole), (Navigator.object_key(root), []))
+        self.assertEqual(row.child(0).text(0), "Part002")
+        self.assertTrue(row.isExpanded())
+        self.panel.activate_item(row.child(0))
+        self.panel.refresh()
+        self.panel.activate_item(self.panel.structure.topLevelItem(0))
+        self.assertEqual(self.panel.active_key, Navigator.object_key(root))
+        self.assertEqual(self.panel.active_path, [])
+        row = self.panel.structure.topLevelItem(0)
+        menu = self.panel.build_menu(self.panel.structure, row)
+        self.assertFalse(any(action.text().startswith("Delete Instance") for action in menu.actions()))
+        row.setSelected(True)
+        QtWidgets.QApplication.sendEvent(self.panel.structure,
+            QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Delete, QtCore.Qt.NoModifier))
+        self.assertEqual(Model.children(root), [link])
+        self.assertEqual(Model.instance_counts(root)[link.LinkedObject], 1)
+        self.assertNotIn(root, Model.instance_counts(root))
+        root.Label = "Main assembly"
+        Model.remove_instances([link])
+        self.panel.refresh()
+        self.assertEqual(self.panel.structure.topLevelItemCount(), 1)
+        self.assertEqual(self.panel.structure.topLevelItem(0).text(0), "Main assembly")
+        self.assertEqual(self.panel.structure.topLevelItem(0).childCount(), 0)
+
     def testDeleteAllRetainModelUndoReopenAndReuse(self):
         second = Model.add_component(self.root, self.part)
         identity, shape_identity = self.part.ObjectId, self.shape.ObjectId
@@ -84,7 +117,8 @@ class TestComponentModelsPane(unittest.TestCase):
         self.assertEqual(len(Model.children(self.root)), 2)
         Model.remove_instances(Model.children(self.root))
         self.panel.refresh()
-        self.assertEqual(self.panel.structure.topLevelItemCount(), 0)
+        self.assertEqual(self.panel.structure.topLevelItemCount(), 1)
+        self.assertEqual(self.panel.structure.topLevelItem(0).childCount(), 0)
         self.assertEqual(self.model_row(self.part).text(1), "0")
         self.assertEqual(self.part.ObjectId, identity)
         self.assertEqual(self.shape.ObjectId, shape_identity)
@@ -134,10 +168,10 @@ class TestComponentModelsPane(unittest.TestCase):
         self.assertEqual(len(Model.definitions(self.doc)), 3)
 
     def testKeyboardDeleteAndActiveFallback(self):
-        row = self.panel.structure.topLevelItem(0)
+        row = self.panel.structure.topLevelItem(0).child(0)
         self.panel.activate_item(row)
         self.panel.refresh()
-        row = self.panel.structure.topLevelItem(0)
+        row = self.panel.structure.topLevelItem(0).child(0)
         row.setSelected(True)
         event = QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Delete, QtCore.Qt.NoModifier)
         QtWidgets.QApplication.sendEvent(self.panel.structure, event)

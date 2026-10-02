@@ -57,7 +57,7 @@ class TestComponentAddCommand(unittest.TestCase):
         support = Model.children(self.root)[0]
         self.assertEqual(support.LinkedObject.Label, "Support")
         self.assert_context(self.root, [])
-        self.panel.activate_item(self.panel.structure.topLevelItem(0))
+        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0))
         self.panel.refresh()
         self.create("Std_Part", "Pin")
         self.assertEqual(len(Model.children(self.root)), 1)
@@ -77,7 +77,7 @@ class TestComponentAddCommand(unittest.TestCase):
         self.assertTrue(CommandInsertNewPart.CommandInsertNewPart().IsActive())
         self.create("Assembly_InsertNewPart", "Support")
         support = Model.children(self.root)[0]
-        self.panel.activate_item(self.panel.structure.topLevelItem(0))
+        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0))
         self.panel.refresh()
         self.create("Assembly_InsertNewPart", "Pin")
         self.assertEqual(len(Model.children(support.LinkedObject)), 1)
@@ -94,9 +94,9 @@ class TestComponentAddCommand(unittest.TestCase):
         second = Model.add_component(self.root, support)
         self.panel.mdi.setActiveSubWindow(self.window)
         self.panel.set_document(self.doc)
-        self.panel.toggle_instances(self.panel.structure.topLevelItem(0))
+        self.panel.toggle_instances(self.panel.structure.topLevelItem(0).child(0))
         self.panel.refresh()
-        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(1))
+        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0).child(1))
         self.panel.refresh()
         with patch.object(QtWidgets.QInputDialog, "getItem", side_effect=lambda *args: (args[3][1], True)), \
                 patch.object(QtWidgets.QFileDialog, "getOpenFileName", return_value=(str(self.output / "Pin.cadprt"), "")):

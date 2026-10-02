@@ -20,9 +20,11 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   instance, so it normally has count zero. Selection supplies native Attributes;
   Edit opens the same model, including models with no placed instances. Add Instance
   inserts that model into the active component without creating another definition.
-- Assembly Structure contains only linked occurrences; the root definition has no
-  row. The active model name above the tabs supplies root/edit context. The native
-  Model pane is replaced with Attributes, retaining the native View/Data editors.
+- Assembly Structure starts with the top-level component (Part001 by default),
+  with linked occurrences beneath it. This permanent root context is selectable
+  and editable, not a linked instance; it cannot be deleted as an instance and
+  does not increase instance counts. Renaming updates its displayed label. The
+  native Model pane is replaced with Attributes, retaining the native View/Data editors.
   Preserve native dock/command identifiers internally for layout compatibility.
 - Each `.cadprt` has one root component and embedded definitions, and may link
   definitions in other `.cadprt` files. New definitions are embedded by default.

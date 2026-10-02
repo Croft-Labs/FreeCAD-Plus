@@ -1429,7 +1429,9 @@ counts. The root is an editing model/context, with zero linked uses unless expli
 instanced elsewhere. Selecting a model shows native attributes; Edit accesses the
 same definition even with zero instances. Add Instance reuses it in the active model.
 Replace the native Model pane with Attributes, retaining its View and Data tabs.
-Assembly Structure contains only occurrence rows, with no root-definition row.
+Assembly Structure always starts with its top-level component (Part001 by default),
+with linked occurrence rows beneath it. The root row supplies selection/edit
+context, persists even without children, and is not a deletable assembly instance.
 Delete Instance/Instances, Delete key and standard occurrence Delete remove owning
 links only. Definitions and their geometry remain under Models, including after
 the last instance is removed. Missing instance references require repair; Undo

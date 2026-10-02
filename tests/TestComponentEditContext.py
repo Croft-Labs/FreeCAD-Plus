@@ -40,7 +40,7 @@ class TestComponentEditContext(unittest.TestCase):
         self.window = self.panel.mdi.activeSubWindow()
         Gui.Selection.clearSelection()
         self.panel.refresh()
-        group = self.panel.structure.topLevelItem(0)
+        group = self.panel.structure.topLevelItem(0).child(0)
         self.assertEqual(group.childCount(), 0, "A new document must start with grouped instances")
         self.panel.toggle_instances(group)
         self.panel.refresh()

@@ -38,10 +38,10 @@ class TestComponentSaveRouting(unittest.TestCase):
         self.parent_bytes = self.parent_path.read_bytes()
         self.panel = Navigator.show(self.doc)
         self.window = self.panel.mdi.activeSubWindow()
-        group = self.panel.structure.topLevelItem(0)
+        group = self.panel.structure.topLevelItem(0).child(0)
         self.panel.toggle_instances(group)
         self.panel.refresh()
-        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(1))
+        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0).child(1))
         self.panel.refresh()
         self.path = [self.second.ObjectId]
 

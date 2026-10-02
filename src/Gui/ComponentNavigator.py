@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Models, occurrence-only Assembly Structure and Model History."""
+"""Models, rooted Assembly Structure and Model History."""
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
@@ -370,7 +370,12 @@ class Navigator(QtWidgets.QDockWidget):
                     font = row.font(0)
                     font.setBold(True)
                     row.setFont(0, font)
-            self.populate(self.structure, root, root, [], set())
+            root_row = QtWidgets.QTreeWidgetItem(self.structure, [root.Label, "", "", ""])
+            root_row.setData(0, QtCore.Qt.UserRole, (object_key(root), []))
+            root_row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
+            self.decorate_component(root_row, root, [[]])
+            root_row.setExpanded(True)
+            self.populate(root_row, root, root, [], set())
             if not structure_state[0]:
                 self.structure.expandToDepth(1)
             # The native origin exists independently of editable feature history.
@@ -515,8 +520,8 @@ class Navigator(QtWidgets.QDockWidget):
         if key in seen:
             return
         seen = seen | {key}
-        # Assembly Structure contains occurrence rows only; constraints remain
-        # definition-owned items in Model History.
+        # Below the root context, only linked occurrences belong in this tree.
+        # Constraints remain definition-owned items in Model History.
         groups = {}
         for link in model().children(component):
             definition = link.LinkedObject
@@ -666,7 +671,7 @@ class Navigator(QtWidgets.QDockWidget):
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before deleting instances."))
         rows = self.structure.selectedItems() if item is None or item.isSelected() else [item]
-        objects = [resolve(key) for row in rows for key, ids in self.members(row)]
+        objects = [resolve(key) for row in rows for key, ids in self.members(row) if ids]
         model().remove_instances(objects)
         root = resolve(self.root_key)
         if root:
@@ -1103,8 +1108,9 @@ class Navigator(QtWidgets.QDockWidget):
             obj = resolve(value[0])
             definition = obj.LinkedObject if getattr(obj, "ComponentRole", "") == "Occurrence" else obj
             menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(item))).setEnabled(definition is not None)
-            menu.addAction(tr("Delete Instance") if len(self.members(item)) == 1 else tr("Delete Instances"),
-                           lambda: self.run(lambda: self.delete_instances(item)))
+            if value[1]:
+                menu.addAction(tr("Delete Instance") if len(self.members(item)) == 1 else tr("Delete Instances"),
+                               lambda: self.run(lambda: self.delete_instances(item)))
             menu.addAction(tr("Add Component"), lambda: self.run(lambda: self.add_component(value[0]))).setEnabled(definition is not None)
             menu.addAction(tr("Add Reference Object"), lambda: self.run(lambda: self.add_reference(value[0]))).setEnabled(definition is not None)
             if definition:

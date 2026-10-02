@@ -83,7 +83,7 @@ class TestComponentFileRecovery(unittest.TestCase):
 
     def testGroupedLocateUndoAndReopen(self):
         self.open_missing()
-        row = self.panel.structure.topLevelItem(0)
+        row = self.panel.structure.topLevelItem(0).child(0)
         self.assertEqual(row.text(0), "Support")
         self.assertEqual(row.text(2), "x2")
         self.assertEqual(row.text(3), "Missing component")
@@ -101,7 +101,7 @@ class TestComponentFileRecovery(unittest.TestCase):
         self.assertEqual(len(self.doc.Objects), count)
         self.panel.toggle_instances(row)
         self.panel.refresh()
-        row = self.panel.structure.topLevelItem(0)
+        row = self.panel.structure.topLevelItem(0).child(0)
         self.assertEqual(row.childCount(), 2)
         self.assertEqual(row.child(1).text(0), "Support#002")
         self.capture("missing-instances.png")

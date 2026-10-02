@@ -136,7 +136,7 @@ class TestComponentExternalization(unittest.TestCase):
 
     def testMenuAndEditingContext(self):
         self.panel.refresh()
-        row = self.panel.structure.topLevelItem(0)
+        row = self.panel.structure.topLevelItem(0).child(0)
         self.panel.activate_item(row)
         root_key, path = self.panel.root_key, list(self.panel.active_path)
         window = self.panel.mdi.activeSubWindow()
@@ -149,7 +149,7 @@ class TestComponentExternalization(unittest.TestCase):
         self.assertEqual(self.panel.active_path, path)
         self.assertEqual(Navigator.resolve(self.panel.active_key), moved)
         self.assertEqual(Gui.getDocument(self.doc.Name).activeView().getActiveObject("part"), moved)
-        row = self.panel.structure.topLevelItem(0)
+        row = self.panel.structure.topLevelItem(0).child(0)
         menu = self.panel.build_menu(self.panel.structure, row)
         action = next(a for a in menu.actions() if a.text() == "Save to External File")
         self.assertFalse(action.isEnabled())

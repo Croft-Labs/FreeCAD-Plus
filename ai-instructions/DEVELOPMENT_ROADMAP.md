@@ -2608,6 +2608,12 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   checks, plus external/selection/task parity. Closed isolated-view cache and
   copied definition-label regressions fixed and verified. Owner acceptance remains
   pending. The closed 9/28 payload is updated; see WORK_STATE. No publication.
+- [   ] 7.8.7v Owner follow-up: restore the top-level component first in Assembly
+  Structure (Part001 by default), with linked occurrences beneath its permanent
+  selectable/editable root row. Custom names, empty assemblies, instance counts
+  and safe instance-only deletion retained. Source-overlay navigator/context and
+  root regression checks pass; see WORK_STATE. Running 9/28 payload unchanged;
+  grouped script/resource staging and owner acceptance remain pending.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
