@@ -1,5 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: recent-only startup prepared; native acceptance pending
+
+StartupLayout queues a native Start-page presentation after the dock layout.
+`show_recent_files` reuses Start_Start/StartView, its RecentFilesModel, card
+delegate, metadata/thumbnails and native opening handler. It selects the Documents
+page and hides New File creation choices, examples, custom-folder cards and setup
+footer controls. New File/Open remain in Tasks. Recent files preserve native order;
+an empty list gets a message. Repeated calls are idempotent and do not take focus
+from a file opened by startup arguments/scripts. Recent-list model signals queue
+the empty state after the native refresh finishes changing visibility.
+
+The delivered October 2 runtime and configured development cache have
+`BUILD_START=OFF`. No StartGui module is available to validate native cards, so the
+initial attempt reported ModuleNotFoundError. The startup helper now reports that
+missing build dependency and preserves independent startup workflows. Updated
+DEVELOPMENT_GUIDE explicitly enables Start and removes it from disabled modules.
+During the next authorized build, reconfigure the existing cache with
+`-DBUILD_START=ON` and package the Start App/Gui modules/resources.
+
+Evidence: `D:\Temp\Office-PC\freecad-plus-recent-files-20261002`.
+`adjacent` passes all five existing Tasks source-overlay checks with no
+failures/errors/skips and clean process exit. `native-unavailable` records three
+explicit skips for the missing native module; the runner correctly rejects this
+as acceptance. Tests cover recent-only/empty startup even with conflicting old
+preferences, native card order and opening a `.cadprt` fixture, idempotence and
+preserving an already-open file's focus. Run `-RecentFilesSmoke` on the next
+staged build and require all three to pass without skips. No recent-page visual
+or native opening acceptance is claimed now. No runtime/ZIP was rebuilt or staged;
+the owner's explicit incorporation instruction remains outstanding.
+
 ## October 2: idle Tasks actions queued in source
 
 Startup Tasks shows New File and Open with no active document, regardless of the

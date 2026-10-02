@@ -19,6 +19,12 @@ then New Sketch/Coordinate System/Datum Plane/Add Component in a component's
 idle Design task pane. Five native Qt source-overlay checks cover the command
 handoffs and states; the prior four dock-layout checks also pass.
 
+Recent-only viewing-area startup is prepared in source, reusing the native Start
+page and hiding creation/examples/setup content. The current October 2 executable
+has `BUILD_START=OFF`, so native recent-card acceptance is pending the next
+authorized build with Start enabled. Five adjacent Tasks checks pass; see
+[WORK_STATE](WORK_STATE.md) and the build guide.
+
 October 2 delivered checkpoint: the separate dated owner build incorporates
 application changes through `52495b0cb2`;
 all enabled native targets built successfully and the final staged copy passes

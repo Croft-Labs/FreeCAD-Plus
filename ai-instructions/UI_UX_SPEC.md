@@ -1529,6 +1529,13 @@ datum and component workflows and share command enablement/icons. The buttons
 use compact text beside icons. Native operation dialogs take over during editing;
 the idle actions return after finishing or cancelling. Native task watchers remain
 available for legacy documents and other modes with a document open.
+At startup, the central viewing area shows the upstream native Start page's
+Recent Files cards. Hide its New File heading/creation row, example files,
+custom-folder cards and setup/startup footer, and show the Documents page rather
+than the first-start setup. New File/Open remain in Tasks. Preserve native recent
+ordering, thumbnails/file metadata and card-click opening. An empty list shows
+"No recent files." Do not take focus from a document opened by startup arguments.
+This page requires the native Start module (`BUILD_START=ON`).
 Add Reference Object is a modeling operation button beside Extrude in Part Design
 and Part; omit its creation action from Part Tree and History context menus.
 Existing reference repair/change-source actions remain available. The operation

@@ -1545,6 +1545,7 @@ class StartupLayout(QtCore.QObject):
             attributes.show()
             # Size only after Qt has laid out the newly separated docks.
             QtCore.QTimer.singleShot(0, self.size_panels)
+        QtCore.QTimer.singleShot(0, show_recent_files)
 
     def size_panels(self):
         attributes = self.window.findChild(QtWidgets.QDockWidget, "Model")
@@ -1559,6 +1560,66 @@ def install_startup_layout():
     global _startup_layout
     if _startup_layout is None:
         _startup_layout = StartupLayout(Gui.getMainWindow())
+
+
+def show_recent_files():
+    """Reuse the native Start MDI view, presenting only its recent-file cards."""
+    window = Gui.getMainWindow()
+    view = window.findChild(QtWidgets.QWidget, "StartView")
+    if view is None:
+        # Do not take focus away from a file opened by command-line/startup scripts.
+        if App.ActiveDocument:
+            return
+        try:
+            import StartGui
+        except ImportError:
+            App.Console.PrintWarning(tr("Recent files requires the Start module. Enable BUILD_START for the next build.") + "\n")
+            return
+        Gui.runCommand("Start_Start")
+        view = window.findChild(QtWidgets.QWidget, "StartView")
+    if view is None or view.property("PlusRecentFilesOnly"):
+        return
+    contents = view.findChild(QtWidgets.QStackedWidget)
+    recent = next((cards for cards in view.findChildren(QtWidgets.QListView)
+                   if cards.model() and cards.model().metaObject().className()
+                   == "Start::RecentFilesModel"), None)
+    if contents is None or recent is None:
+        return
+    # The upstream Documents page contains the recent heading/cards, creation
+    # row, examples and optional custom-folder cards in one content layout.
+    layout = recent.parentWidget().layout()
+    heading = layout.itemAt(layout.indexOf(recent) - 1).widget()
+    for index in range(layout.count()):
+        widget = layout.itemAt(index).widget()
+        if widget and widget not in (heading, recent):
+            widget.hide()
+    documents = contents.widget(1)
+    for widget in documents.findChildren(QtWidgets.QPushButton) + documents.findChildren(QtWidgets.QCheckBox):
+        widget.hide()
+    contents.setCurrentWidget(documents)
+    empty = QtWidgets.QLabel(tr("No recent files."), recent.parentWidget())
+    empty.setObjectName("RecentFilesEmpty")
+    layout.insertWidget(layout.indexOf(recent) + 1, empty)
+
+    def update_empty():
+        has_files = recent.model().rowCount() > 0
+        heading.show()
+        recent.setVisible(has_files)
+        empty.setVisible(not has_files)
+
+    # Run after the native refresh finishes setting heading/card visibility.
+    empty_timer = QtCore.QTimer(view)
+    empty_timer.setSingleShot(True)
+    empty_timer.timeout.connect(update_empty)
+
+    def queue_empty_update():
+        empty_timer.start(0)
+
+    recent.model().modelReset.connect(queue_empty_update)
+    recent.model().rowsInserted.connect(queue_empty_update)
+    recent.model().rowsRemoved.connect(queue_empty_update)
+    update_empty()
+    view.setProperty("PlusRecentFilesOnly", True)
 
 
 class StartActionButton(QtWidgets.QToolButton):

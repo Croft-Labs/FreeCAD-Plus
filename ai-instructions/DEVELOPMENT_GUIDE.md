@@ -57,6 +57,7 @@ if (-not $env:FREECAD_LIBPACK_DIR -or -not (Test-Path -LiteralPath $env:FREECAD_
 $freecadPlusBuild = Join-Path $env:LOCALAPPDATA 'FreeCADPlus\build'
 $freecadPlusOptions = @(
     '-DBUILD_GUI=ON', '-DBUILD_PART=ON', '-DBUILD_SKETCHER=ON', '-DBUILD_PART_DESIGN=ON',
+    '-DBUILD_START=ON',
     '-DFREECAD_RELEASE_PDB=OFF', '-DENABLE_DEVELOPER_TESTS=OFF',
     '-DFREECAD_COPY_DEPEND_DIRS_TO_BUILD=ON', '-DFREECAD_COPY_LIBPACK_BIN_TO_BUILD=ON',
     '-DFREECAD_COPY_PLUGINS_BIN_TO_BUILD=ON', '-DFREECAD_3DCONNEXION_SUPPORT=None'
@@ -64,7 +65,7 @@ $freecadPlusOptions = @(
 $unusedWorkbenches = @(
     'FEM', 'ADDONMGR', 'BIM', 'DRAFT', 'HELP', 'IMPORT', 'INSPECTION', 'MESH_PART',
     'FLAT_MESH', 'OPENSCAD', 'CAM', 'ASSEMBLY', 'PLOT', 'POINTS', 'REVERSEENGINEERING',
-    'ROBOT', 'SHOW', 'SPREADSHEET', 'START', 'TECHDRAW', 'TUX', 'WEB', 'SURFACE'
+    'ROBOT', 'SHOW', 'SPREADSHEET', 'TECHDRAW', 'TUX', 'WEB', 'SURFACE'
 )
 $freecadPlusOptions += $unusedWorkbenches | ForEach-Object { "-DBUILD_$_=OFF" }
 cmake -S . -B $freecadPlusBuild -G 'Visual Studio 17 2022' -A x64 "-DFREECAD_LIBPACK_DIR=$env:FREECAD_LIBPACK_DIR" @freecadPlusOptions
@@ -76,6 +77,11 @@ if ($LASTEXITCODE -ne 0) { throw 'FreeCAD Plus build failed.' }
 Identify the resulting executable from the actual build output; do not resolve
 an unrelated `FreeCAD` on PATH. Bound build operations by a finite hard deadline
 and an inactivity timeout, and inspect progress at least once per minute.
+The startup recent-file page requires `BUILD_START=ON`. Existing configurations
+made from the older focused command may cache it as OFF: explicitly reconfigure
+with `-DBUILD_START=ON` during the next authorized build, then include the Start
+App/Gui modules and resources in the packaged runtime. Run `-RecentFilesSmoke`
+against that staged copy; no skipped native Start checks count as acceptance.
 Keep MSBuild file tracking enabled for normal incremental builds. The validation
 rebuild with `TrackFileAccess=false` recompiled dependencies. If only a
 C++ implementation file changes and all dependencies are already built, MSBuild's

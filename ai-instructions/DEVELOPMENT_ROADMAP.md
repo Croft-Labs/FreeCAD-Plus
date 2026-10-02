@@ -30,6 +30,13 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 queued recent-file startup: source hook presents the upstream native
+  Start page's Recent Files only, with no creation/examples/setup content and an
+  empty-list message. Existing Tasks checks pass (five). Native recent-card tests
+  remain unaccepted: the current executable was built with `BUILD_START=OFF`.
+  Next owner-authorized build must enable/package Start and run the three native
+  checks without skips. [WORK_STATE](WORK_STATE.md) records the module boundary.
+
 - October 2 queued Tasks startup actions: New File/Open at startup, followed by
   New Sketch/Coordinate System/Datum Plane/Add Component after New File. Native
   actions, operation dialogs and other-mode/legacy task watchers are preserved.
