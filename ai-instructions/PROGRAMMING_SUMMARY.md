@@ -6,7 +6,11 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-October 2: New Sketch now supports existing user planes and creating a native
+October 2: A separate dated owner build now incorporates all implemented changes;
+all enabled native targets built successfully and the final staged copy passes
+103 check executions plus launcher/save/reopen. [WORK_STATE](WORK_STATE.md) records
+the runtime/portable ZIP paths and exact identity. New Sketch supports existing
+user planes and creating a native
 plane with base/offset/rotations. The sketch validation batch passes 173 distinct
 checks with one intentional inherited solver skip; support-plane region picking
 is fixed in the existing 9/28 build. [WORK_STATE](WORK_STATE.md) records exact

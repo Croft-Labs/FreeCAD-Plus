@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("build", type=Path)
 parser.add_argument("payload", type=Path)
 parser.add_argument("--libpack", type=Path, required=True)
+parser.add_argument("--build-label", help="Label a local test build without assigning a release version")
 args = parser.parse_args()
 source = Path(__file__).resolve().parents[2]
 if args.payload.exists() and any(args.payload.iterdir()):
@@ -58,10 +59,17 @@ for name in ("COPYING", "LICENSE_LGPL_21.txt", "OCCT_LGPL_EXCEPTION.txt", "manif
 if (args.libpack / "sbom").is_dir():
     shutil.copytree(args.libpack / "sbom", args.payload / "dependency-licenses" / "sbom")
 revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source, text=True).strip()
-(args.payload / "release-info.json").write_text(json.dumps({
-    "product": "FreeCAD Plus", "release": "0.0.2", "source_commit": revision,
+metadata = {
+    "product": "FreeCAD Plus", "source_commit": revision,
     "source": "https://github.com/Croft-Labs/FreeCAD-Plus",
-    "configuration": "Windows x64 Release; see GitHub release notes for workbenches",
-}, indent=2), encoding="utf-8")
+    "configuration": "Windows x64 Release",
+}
+if args.build_label:
+    metadata.update(build_label=args.build_label, distribution="local test build")
+    shutil.copy2(args.build / "CMakeCache.txt", args.payload / "build-configuration.txt")
+else:
+    metadata["release"] = "0.0.2"
+(args.payload / "release-info.json").write_text(
+    json.dumps(metadata, indent=2), encoding="utf-8")
 files = [p for p in args.payload.rglob("*") if p.is_file()]
 print(f"Staged {len(files)} files, {sum(p.stat().st_size for p in files):,} bytes")

@@ -1,5 +1,52 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: new owner test build
+
+All implemented application changes through `52495b0cb2` are incorporated in a
+separate Windows x64 Release runtime:
+`D:\Temp\Office-PC\freecad-plus-build-20261002\FreeCAD-Plus-2026-10-02`.
+Run `FreeCADPlus.exe`; no installation is required. The launcher uses the fork's
+FreeCADPlus user-data folder. Includes the component naming/inventory/occurrence
+changes, Part Tree/History/Attributes, protected background results, selected-region
+Extrude, Plus/Classic UI and the complete New Sketch plane workflow.
+
+The existing configured build was incrementally rebuilt with **ALL_BUILD**, covering
+every enabled native target, Python script and resource. Show visibility helpers
+are staged for this configuration. `native-build/build-result.json` records exit
+zero. Staging uses the established runtime-only packager with a local build label
+and CMake configuration; no release version or GitHub release was assigned.
+
+The generated version header identified the current source, but the cached native
+version object still reported `802e19d648`. A focused Version.cpp compile and
+FreeCADBase relink corrected that metadata. The final staged launcher now reports
+`49218 (Git)`, branch main and hash `52495b0cb2bdbfe1a8c47cb2e7336761b93f3a2c`.
+Compile/link evidence is under `version-refresh`; initial evidence is retained.
+
+Final staged-copy acceptance: **103 passing executions, 101 distinct tests**,
+zero failures/errors/skips, nine clean GUI process exits and no source overlays.
+Under `final-acceptance`: feedback 44 (current Python hashes/native Attributes),
+sketch 27, sketch-cold 3, pane interactions 10, Part Tree moves 9, ribbon 7, and
+three successive one-test startup phases (fresh Plus default, persisted Plus,
+persisted Classic/toolbars). The launcher separately passes native workbench
+imports, save/reopen and exact runtime/revision checks using isolated configuration
+files. Final feedback has no TopoShape hasher-mismatch diagnostics; prior warnings
+remain recorded, without assigning a cause or closing general topology gates.
+Plus History/Part Tree and Classic Models captures were inspected for requested
+tab labels, component inventory and the protected hidden Origin Planes child.
+
+`build-validation-summary.json`, payload `BUILD-VALIDATION.json` and
+`BUILD-MANIFEST.json` identify this checkpoint. Portable artifact integrity is
+recorded separately in `artifact-result.json`; the archive is
+`FreeCAD-Plus-2026-10-02-Windows-x64.zip` beside the runtime folder.
+All 14,688 non-cache staged files are manifested; every staged runtime file matches
+the rebuilt output. The ZIP contains 14,689 files including that manifest, passes
+CRC verification, and is 661,552,451 bytes. SHA-256:
+`3b118311f131feee9248806b3e5613a7fbd3c7883138a863620557f9006daf36`.
+Owner documents/preferences and installed upstream FreeCAD were not modified.
+FEM remains disabled in this established configuration. Physical owner acceptance,
+general topology qualification and the earlier intentional inherited solver skip
+remain separate; this acceptance subset has no skips. No installer or publication.
+
 ## October 2: complete sketch workflow regression batch
 
 Owner requested rigorous sketch creation, attachment, active/reference curves,

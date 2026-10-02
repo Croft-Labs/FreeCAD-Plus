@@ -30,6 +30,13 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 owner build checkpoint: all implemented application changes through
+  `52495b0cb2` are incorporated in a separate dated Windows x64 Release runtime.
+  ALL_BUILD succeeds; final staged-copy validation passes 103 executions (101
+  distinct tests) plus launcher/save/reopen and correct native revision checks.
+  [WORK_STATE](WORK_STATE.md) owns paths, evidence and portable artifact integrity.
+  This is a local build; physical acceptance and publication remain separate.
+
 - Owner priority (2026-10-01): complete the component/document architecture under
   **7.8**, using the [approved contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
   This explicitly supersedes rotation for this work: complete dependency-ready
