@@ -25,6 +25,12 @@ has `BUILD_START=OFF`, so native recent-card acceptance is pending the next
 authorized build with Start enabled. Five adjacent Tasks checks pass; see
 [WORK_STATE](WORK_STATE.md) and the build guide.
 
+Status controls/defaults are queued: restore the Tux navigation indicator, seed
+Blender and Imperial Decimal for unset preferences, preserve saved choices and
+document units. Four native/source-overlay menu checks pass for Notifications,
+navigation viewer changes and unit scopes. Native fallback rebuild and packaged
+Tux/early startup acceptance remain for the next authorized build.
+
 October 2 delivered checkpoint: the separate dated owner build incorporates
 application changes through `52495b0cb2`;
 all enabled native targets built successfully and the final staged copy passes

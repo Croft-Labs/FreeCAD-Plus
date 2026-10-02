@@ -30,6 +30,13 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 queued status controls/defaults: enable/package Tux for the native
+  navigation chooser and seed Blender/Imperial Decimal before module initialization.
+  Four source-overlay/native menu checks pass, including Notifications and actual
+  viewer/unit scope changes. C++ Blender fallback changes and packaged startup
+  still require the next owner-authorized build. [WORK_STATE](WORK_STATE.md) owns
+  evidence and the staged acceptance boundary.
+
 - October 2 queued recent-file startup: source hook presents the upstream native
   Start page's Recent Files only, with no creation/examples/setup content and an
   empty-list message. Existing Tasks checks pass (five). Native recent-card tests

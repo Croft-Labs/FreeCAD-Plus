@@ -1536,6 +1536,14 @@ than the first-start setup. New File/Open remain in Tasks. Preserve native recen
 ordering, thumbnails/file metadata and card-click opening. An empty list shows
 "No recent files." Do not take focus from a document opened by startup arguments.
 This page requires the native Start module (`BUILD_START=ON`).
+Keep the native status-bar Notifications (icon/unread count), Navigation Styles
+and Dimension/Unit System menus visible by default. Restore the upstream Tux
+navigation indicator (`BUILD_TUX=ON`), retaining its icon, style choices, tooltips
+and native viewer behavior. Seed Blender navigation and Imperial Decimal (in, lb)
+units before module initialization when no preference is saved. Preserve explicit
+saved choices and document unit overrides. Units changes keep their native scope:
+global without a document, the active document with one open. The native Blender
+fallback also applies to navigation preference resets.
 Add Reference Object is a modeling operation button beside Extrude in Part Design
 and Part; omit its creation action from Part Tree and History context menus.
 Existing reference repair/change-source actions remain available. The operation

@@ -1524,6 +1524,7 @@ set(FreeCADGui_Scripts
     ComponentSelection.py
     ComponentNavigator.py
     PlusRibbon.py
+    PlusDefaults.py
     ComponentExtrudeTask.py
     ComponentSketchTask.py
     ProjectPackage.py

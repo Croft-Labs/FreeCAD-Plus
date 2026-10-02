@@ -31,6 +31,7 @@ param(
     [switch]$PaneLayoutSmoke,
     [switch]$StartActionsSmoke,
     [switch]$RecentFilesSmoke,
+    [switch]$StatusControlsSmoke,
     [switch]$SketchWorkflow,
     [switch]$SketchRegression,
     [switch]$SketchSolver,
@@ -92,6 +93,7 @@ if ($TreeMoveSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTreeMo
 if ($PaneLayoutSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPaneLayout.py' }
 if ($StartActionsSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentStartActions.py' }
 if ($RecentFilesSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentRecentFiles.py' }
+if ($StatusControlsSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestPlusStatusControls.py' }
 if ($PaneInteractions) {
     $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPaneInteractions.py'

@@ -902,7 +902,7 @@ def getCurrentNavigationStyle():
         if view and hasattr(view, "getNavigationType"):
             return view.getNavigationType()
 
-    return pView.GetString("NavigationStyle")
+    return pView.GetString("NavigationStyle", "Gui::BlenderNavigationStyle")
 
 
 def onMenu(action):
@@ -940,7 +940,7 @@ def setCurrent():
                 pass
     else:
         s = True
-        pView.SetString("NavigationStyle", a2.data())
+        pView.SetString("NavigationStyle", a1.data())
 
     if s:
         a0.setVisible(False)

@@ -49,6 +49,11 @@ import FreeCADGui
 Gui = FreeCADGui
 App = FreeCAD
 
+# Seed defaults before workbench modules/status indicators create their controls.
+from freecad.gui.PlusDefaults import initialize as _initializePlusDefaults
+_initializePlusDefaults()
+del _initializePlusDefaults
+
 
 # --- BEGIN external workbench icon central patch ---
 def _fc_external_workbench_icon(fallback_path):
