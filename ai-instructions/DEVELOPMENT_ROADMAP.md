@@ -30,6 +30,12 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 queued component workspace layout: startup shows Components above
+  Attributes on the left with a 2:1 initial height split, correcting saved floating,
+  hidden or tabbed placements. Four native Qt source-overlay checks pass; user
+  resizing afterward is preserved. Source only; build incorporation awaits the
+  owner's instruction. [WORK_STATE](WORK_STATE.md) records evidence.
+
 - October 2 queued ribbon refinement: compact primary/secondary/rare action
   hierarchy implemented in source, with nine source-overlay Qt checks passing.
   The owner withholds October 2 build incorporation until explicitly requested.

@@ -9,7 +9,9 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 October 2 pending source batch: Plus Ribbon now uses large primary actions,
 three-row secondary icon grids and grouped dimension/variant choices. Nine
 source-overlay checks pass. The hierarchy is a standing UI rule. Incorporation
-into the October 2 build awaits the owner's explicit instruction; see
+into the October 2 build awaits the owner's explicit instruction. Components also
+opens at startup above Attributes on the left with a 2:1 split; four isolated
+native Qt source-overlay checks pass for the layout and registration; see
 [WORK_STATE](WORK_STATE.md).
 
 October 2 delivered checkpoint: the separate dated owner build incorporates

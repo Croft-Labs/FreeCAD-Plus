@@ -7,6 +7,7 @@ from PySide import QtCore, QtGui, QtWidgets
 from freecad.gui import ComponentSelection as Selection
 
 _dock = None
+_startup_layout = None
 
 
 def tr(text):
@@ -1511,6 +1512,53 @@ def show(doc=None):
     return _dock
 
 
+class StartupLayout(QtCore.QObject):
+    """Apply the component workspace once, after native saved-state restoration."""
+    def __init__(self, window):
+        super().__init__(window)
+        self.window = window
+        self.applied = False
+        window.installEventFilter(self)
+        if window.isVisible():
+            QtCore.QTimer.singleShot(0, self.apply)
+
+    def eventFilter(self, watched, event):
+        if watched is self.window and event.type() == QtCore.QEvent.Show:
+            QtCore.QTimer.singleShot(0, self.apply)
+        return False
+
+    def apply(self):
+        if self.applied:
+            return
+        self.applied = True
+        self.window.removeEventFilter(self)
+        panel = show()
+        attributes = self.window.findChild(QtWidgets.QDockWidget, "Model")
+        panel.setFloating(False)
+        self.window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, panel)
+        if attributes:
+            attributes.setFloating(False)
+            self.window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, attributes)
+            self.window.splitDockWidget(panel, attributes, QtCore.Qt.Vertical)
+            attributes.show()
+            # Size only after Qt has laid out the newly separated docks.
+            QtCore.QTimer.singleShot(0, self.size_panels)
+
+    def size_panels(self):
+        attributes = self.window.findChild(QtWidgets.QDockWidget, "Model")
+        if attributes and _dock:
+            height = _dock.height() + attributes.height()
+            self.window.resizeDocks([_dock, attributes],
+                                    [round(height * 2 / 3), round(height / 3)],
+                                    QtCore.Qt.Vertical)
+
+
+def install_startup_layout():
+    global _startup_layout
+    if _startup_layout is None:
+        _startup_layout = StartupLayout(Gui.getMainWindow())
+
+
 def delete_selected_instances():
     """Std_Delete adapter for precise occurrence picks, never bare model selections."""
     if _dock is None or Gui.Control.activeDialog() or not _dock.root_key:
@@ -1586,3 +1634,4 @@ def registerCommands():
     Gui.addCommand("Std_NewComponentDocument", Command(True))
     Gui.addCommand("Std_ComponentStructure", Command())
     Gui.addCommand("PartDesign_AddReferenceObject", AddReferenceCommand())
+    install_startup_layout()

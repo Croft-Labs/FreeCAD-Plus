@@ -1,5 +1,22 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: component startup layout queued in source
+
+Components initializes when commands register, without needing an open document.
+A one-time main-window Show callback runs after native saved-layout restoration,
+places Components above Attributes in the left dock column, makes both visible,
+and sizes their available height in a 2:1 split. Previously floating, hidden or
+tabbed layouts are corrected. Subsequent document/panel shows preserve user resizing.
+
+Four native Qt source-overlay checks pass with zero failures/errors/skips and a
+clean process exit in `D:\Temp\Office-PC\freecad-plus-pane-layout-20261002\final`:
+empty startup/new document, prior floating/tabbed placement, user resizing and
+idempotent command registration. The workspace capture confirms the arrangement.
+The source callback is exercised against the October 2 fork executable with isolated
+preferences. Full packaged cold-start acceptance remains for the next build.
+No runtime, launcher or portable ZIP was modified; incorporation into the October
+2 build remains deferred until the owner requests it.
+
 ## October 2: compact ribbon source changes awaiting owner incorporation
 
 Owner explicitly directs that new changes be made in source and incorporated into

@@ -28,6 +28,7 @@ param(
     [switch]$AssemblyStructureSmoke,
     [switch]$TreeMoveSmoke,
     [switch]$PaneInteractions,
+    [switch]$PaneLayoutSmoke,
     [switch]$SketchWorkflow,
     [switch]$SketchRegression,
     [switch]$SketchSolver,
@@ -86,6 +87,7 @@ if ($AssemblyStructureSmoke) {
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentModelsPane.py,tests/TestComponentPanelIteration.py,tests/TestComponentSelectionIteration.py,tests/TestComponentEditContext.py,tests/TestComponentTaskContext.py,tests/TestComponentSaveRouting.py,tests/TestComponentUndoRouting.py,tests/TestComponentDisplayContext.py,tests/TestComponentBom.py,tests/TestComponentExternalization.py,tests/TestComponentFileRecovery.py,tests/TestComponentAddCommand.py'
 }
 if ($TreeMoveSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentTreeMove.py' }
+if ($PaneLayoutSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPaneLayout.py' }
 if ($PaneInteractions) {
     $env:FREECAD_PLUS_PROFILE_SOURCE = '0'
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPaneInteractions.py'

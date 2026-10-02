@@ -1515,6 +1515,12 @@ counts. The root is an editing model/context, with zero linked uses unless expli
 instanced elsewhere. Selecting a model shows native attributes; Edit accesses the
 same definition even with zero instances. Add Instance reuses it in the active model.
 Replace the native Model pane with Attributes, retaining its View and Data tabs.
+On application startup, show Components even with no document open. Dock it at
+the top left above Attributes, using two thirds of the available dock-column
+height for Components and one third for Attributes. Restore this initial layout
+after native saved-state restoration, including previously hidden, floating or
+tabbed panels. Users can resize the split afterward; document changes and panel
+Show commands do not reset it.
 Add Reference Object is a modeling operation button beside Extrude in Part Design
 and Part; omit its creation action from Part Tree and History context menus.
 Existing reference repair/change-source actions remain available. The operation
