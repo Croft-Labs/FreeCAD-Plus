@@ -7,7 +7,7 @@ the October 2 build only when requested. PlusRibbon now uses a single row of lar
 primary buttons spanning three small-icon rows. Primary buttons are 76 x 76 logical
 pixels with 32-pixel icons and bounded captions; secondary buttons are 24 x 24
 with icon-only presentation. Commands align in three-row grids, retaining section
-labels and horizontal overflow. Clear primary captions include New file, Add part
+labels and horizontal overflow. Clear primary captions include New File, Add part
 and Auto Dimension without renaming shared native menu actions.
 
 Extrude/Revolve, Pattern/Fillet and selected common workflow actions have priority.
@@ -26,12 +26,21 @@ initialization, narrow-window scrolling and Classic visibility restoration.
 Final Home/Modeling/Sketch captures were reviewed.
 Visual review found an initial Qt caption override; the final button class restores
 its separate caption after default-action assignment and native action changes.
-Explicit New file/Add part label checks now pass, and inherited fonts are measured
+Explicit New File/Add part label checks now pass, and inherited fonts are measured
 after parenting controls. The native preference-page
 payload test is deliberately excluded from this source-only run; it remains part
 of the next owner-authorized build validation. No native build or runtime staging.
 The October 2 launcher, ribbon runtime file and portable ZIP remain unchanged.
 Physical gestures, themes and broader DPI acceptance remain separate.
+
+Follow-up owner request: the ribbon now uses native `Std_New` (the standard
+`document-new` icon) with the exact caption **New File**, replacing the component
+icon presentation. Native Std_New already dispatches Std_NewComponentDocument, so
+the component-document workflow and Ctrl+N are preserved. This remains a source
+change queued for owner-authorized October 2 build incorporation.
+The focused Home/native-action check passes in `new-file-icon` beside the ribbon
+evidence above; the capture confirms the document-with-plus icon and New File
+caption. No build files were changed.
 
 ## October 2: new owner test build
 

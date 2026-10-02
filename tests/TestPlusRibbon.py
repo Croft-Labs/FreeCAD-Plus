@@ -95,9 +95,9 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertEqual([self.ribbon.tabs.tabData(i) for i in range(self.ribbon.tabs.count())], list(UI.DESIGN_TABS))
         self.assertTrue(self.ribbon.enabled)
         self.assertFalse(self.ribbon.toolbar.isHidden())
-        self.assertEqual(self.button("Std_NewComponentDocument").text(), "New file")
+        self.assertEqual(self.button("Std_New").text(), "New File")
         self.assertEqual(self.button("Std_Part").text(), "Add part")
-        for name in ("Std_Open", "Std_Save", "Std_Undo", "Std_Part", "PartDesign_NewSketch",
+        for name in ("Std_New", "Std_Open", "Std_Save", "Std_Undo", "Std_Part", "PartDesign_NewSketch",
                      "Sketcher_MapSketch", "Sketcher_EditSketch", "PartDesign_AddReferenceObject"):
             button = self.button(name)
             self.assertIsNotNone(button, name)

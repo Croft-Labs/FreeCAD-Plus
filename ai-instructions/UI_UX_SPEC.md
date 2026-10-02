@@ -52,8 +52,11 @@ Design has **Home, Modeling, Surface, Sketch, Mesh, View**, in that order.
 Home groups File, Edit, Clipboard, Structure, Sketch, common Tools and Help;
 include New/Open/Save/Save As/Import/Export, Undo/Redo/Delete/Recompute/Preferences,
 component/part/group/link structure controls, New Sketch, Attach Sketch, Edit Sketch
-and Validate Sketch. Modeling groups native Part Design Modeling, Transformation,
-Dress-Up and Helper commands, in that order. Surface, Sketch and Mesh reuse the
+and Validate Sketch.
+The Home New File button uses the standard New Document (`document-new`) icon and
+native Std_New action, which routes to the component-document workflow.
+Modeling groups native Part Design Modeling, Transformation, Dress-Up and Helper
+commands, in that order. Surface, Sketch and Mesh reuse the
 toolbar group boundaries of their corresponding native workbenches. View groups
 standard view orientation/fit and display controls. Unavailable workbench tabs
 are disabled. Other modes use Home, Tools and View; Tools preserves that mode's

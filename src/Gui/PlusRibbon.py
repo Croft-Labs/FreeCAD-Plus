@@ -17,7 +17,7 @@ GRID_ROWS = 3
 PRIMARY_WIDTH = GRID_HEIGHT = GRID_ROWS * SMALL_BUTTON_SIZE + (GRID_ROWS - 1) * GRID_SPACING
 # Presentation priority only: every operation still uses its native QAction.
 PRIMARY_COMMANDS = {
-    "Std_NewComponentDocument", "Std_Open", "Std_Save", "Std_Part",
+    "Std_New", "Std_Open", "Std_Save", "Std_Part",
     "PartDesign_NewSketch", "Sketcher_NewSketch", "Sketcher_EditSketch",
     "PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Pattern", "PartDesign_Fillet",
     "Sketcher_CreatePolyline", "Sketcher_CompLine", "Sketcher_CreateRectangle",
@@ -271,7 +271,7 @@ class Ribbon(QtCore.QObject):
         tab = self.current_tab()
         if tab == "Home":
             groups = [(name, bars.get(name, [])) for name in ("File", "Edit", "Clipboard", "Structure")]
-            groups[0] = ("File", ["Std_NewComponentDocument", "Std_Open", "Std_Save", "Std_SaveAs", "Std_Import", "Std_Export"])
+            groups[0] = ("File", ["Std_New", "Std_Open", "Std_Save", "Std_SaveAs", "Std_Import", "Std_Export"])
             groups[1] = ("Edit", ["Std_Undo", "Std_Redo", "Std_Delete", "Std_Refresh", "Std_DlgPreferences"])
             groups[3] = ("Structure", ["Std_ComponentStructure", "Std_Part", "Std_Group", "Std_LinkActions", "PartDesign_AddReferenceObject"])
             if self.mode_name == "Design":
@@ -320,7 +320,7 @@ class Ribbon(QtCore.QObject):
                 actions = native_actions(command_name)
                 if not actions:
                     continue
-                captions = {"Std_NewComponentDocument": tr("New file"),
+                captions = {"Std_New": tr("New File"),
                             "Std_Part": tr("Add part"), "Sketcher_Dimension": tr("Auto\ndimension")}
                 button = RibbonButton(captions.get(command_name), group)
                 button.setObjectName("Ribbon_" + command_name)
