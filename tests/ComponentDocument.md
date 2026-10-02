@@ -16,6 +16,15 @@ source contract, cancel without changes and refuse entry during another task.
 Creation must be absent from Part Tree/History context menus; existing reference
 repair actions remain. Origin starts visible in History on component entry; hide
 it using the eye, refresh, then switch away/back to check the default is restored.
+Origin follow-up (7.8.7y): Origin Planes appears as a child of Origin and controls
+the three native XY/XZ/YZ planes together. It starts hidden on component entry;
+Show reveals planes and the parent, refresh preserves the choice, Undo/Redo restores
+it, and re-entry resets the default. Check both eyes, nested/external edit contexts
+and New Sketch temporary plane display/Cancel restoration. Origin and Origin Planes
+have no suppression/rename/delete action. Delete key and standard Delete must
+preserve the origin and its planes, including direct native plane selections and
+forced dependency deletion. AssemblyStructureSmoke exercises row/visibility and
+source Delete routing; compilation of the native guard remains a separate gate.
 
 Part Tree rearrangement (7.8.7x): run `RunComponentDocument.ps1 -TreeMoveSmoke`
 against the grouped payload. Source-overlay evidence is recorded separately in

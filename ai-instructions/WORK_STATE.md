@@ -1,5 +1,34 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 1 follow-up: Origin Planes and permanent datum protection (7.8.7y)
+
+History now expands Origin to an Origin Planes child row controlling the existing
+native XY/XZ/YZ planes together. Component entry keeps Origin visible and planes
+hidden; manual changes persist through refresh. Showing planes reveals the parent
+as needed. Visibility is transactional and undoable. The child is a view projection
+with a distinct row key, not a new document object or reference identity. Both
+rows remain always active and have no suppression, rename or deletion actions.
+The native Delete command filters component-owned origins and their datum children
+before dependency/force deletion. Its existing occurrence adapter also clears
+protected native and occurrence-path selections before generic deletion.
+
+44 source-overlay navigator/context checks pass in
+`D:\Temp\Office-PC\freecad-origin-planes-final-20261001`, including two new checks
+for child visibility, native plane grouping, Undo/Redo, manual-show refresh,
+permanent menus, direct origin/plane selection protection and standard/key Delete.
+Existing New Sketch plane display/picking/Cancel, external editing, display and
+save/Undo workflows pass. The initial run's only failure was an erroneous test
+fixture call to a missing root_row helper, removed before the final run; initial
+evidence retained. Python syntax and whitespace checks pass. Native CommandDoc.cpp
+guard compilation and forced-dependency acceptance remain pending.
+Ten focused pane checks also pass in `freecad-origin-planes-pane-20261001` after
+selecting History for the pane capture; Origin/Origin Planes nesting was reviewed.
+
+Owner-running 9/28 payload remains unchanged (PID 8140). Batch Gui/native plus
+scripts/resources with 7.8.7v/w/x when closed, then run AssemblyStructureSmoke
+without source overlays and check forced native deletion and visible child row.
+No build staging, installer or publication performed for this follow-up.
+
 ## October 1 follow-up: Part Tree Cut/Paste and drag/drop (7.8.7x)
 
 Source adds Part Tree context-menu Cut/Paste, Ctrl+X/Ctrl+V and viewport drag/drop

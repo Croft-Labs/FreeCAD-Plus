@@ -25,6 +25,10 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   component and preserves the existing direct-child evaluated-geometry contract.
 - Entering a component makes its Origin visible by default in History. The eye
   remains editable; refresh preserves a deliberate hide until the next entry.
+  Origin Planes is a child row controlling the native XY/XZ/YZ planes together.
+  It starts hidden on entry; manual visibility persists through refresh and is
+  undoable. Showing planes also shows their Origin parent. Both rows are permanent,
+  cannot be suppressed or deleted, and reuse native origin/datum identities.
 - Part Tree starts with the top-level component (Part001 by default),
   with linked occurrences beneath it. This permanent root context is selectable
   and editable, not a linked instance; it cannot be deleted as an instance and
@@ -137,7 +141,8 @@ they do not create a new part number. Native object names/UUIDs retain their rol
   and temporary target transparency never persist as model geometry.
 - Every component always shows its native **Origin** as the first History
   item, including empty components and isolated views. It is permanent and cannot
-  be suppressed; its visibility can be toggled. Reuse the existing origin identity.
+  be suppressed or deleted; its visibility can be toggled. Origin Planes is its
+  permanent child visibility item, hidden by default. Reuse native identities.
 - The Components pane displays that item as **Origin**, without a document-wide
   numeric suffix. Default object/operation labels are numbered within their owning
   component, starting at **001**: Sketch001, Body001, Extrude001, etc. A second

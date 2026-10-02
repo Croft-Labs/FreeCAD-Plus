@@ -143,6 +143,51 @@ class TestComponentModelsPane(unittest.TestCase):
         self.panel.refresh()
         self.assertTrue(self.root.Origin.Visibility, "Entering a component restores its origin default")
 
+    def testOriginPlanesChildVisibilityAndUndo(self):
+        origin = self.root.Origin
+        row = self.panel.history.topLevelItem(0)
+        planes = row.child(0)
+        self.assertEqual(row.childCount(), 1)
+        self.assertEqual(planes.text(2), "Origin Planes")
+        self.assertFalse(planes.flags() & QtCore.Qt.ItemIsUserCheckable)
+        native = Navigator.origin_planes(origin)
+        self.assertEqual(len(native), 3)
+        self.assertFalse(any(plane.Visibility for plane in native))
+        self.panel.toggle_item_view(planes)
+        self.panel.refresh()
+        self.assertTrue(all(plane.Visibility for plane in native))
+        self.assertTrue(origin.Visibility)
+        self.doc.undo()
+        self.assertFalse(any(plane.Visibility for plane in native))
+        self.doc.redo()
+        self.panel.refresh()
+        self.assertTrue(all(plane.Visibility for plane in native), "Refresh retains a manual show")
+        menu = self.panel.build_menu(self.panel.history, self.panel.history.topLevelItem(0).child(0))
+        self.assertIn("Hide", [action.text() for action in menu.actions()])
+        self.assertFalse(any(action.text() in ("Edit", "Rename", "Delete") for action in menu.actions()))
+        self.panel.tabs.setCurrentWidget(self.panel.history)
+        Gui.updateGui()
+        self.panel.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "history-origin-planes.png"))
+
+    def testOriginAndPlanesDeleteProtection(self):
+        origin = self.root.Origin
+        names = [origin.Name] + [plane.Name for plane in Navigator.origin_planes(origin)]
+        for obj in [origin] + Navigator.origin_planes(origin):
+            self.assertTrue(Navigator.protected_origin_item(obj))
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(obj)
+            Navigator.delete_selected_instances()
+            self.assertFalse(Gui.Selection.getSelection())
+        Gui.Selection.addSelection(self.root, origin.Name + ".")
+        Gui.runCommand("Std_Delete")
+        self.assertTrue(all(self.doc.getObject(name) for name in names))
+        self.assertEqual(self.root.Origin, origin)
+        Gui.Selection.clearSelection()
+        self.panel.history.topLevelItem(0).child(0).setSelected(True)
+        QtWidgets.QApplication.sendEvent(self.panel.history,
+            QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_Delete, QtCore.Qt.NoModifier))
+        self.assertTrue(all(self.doc.getObject(name) for name in names))
+
     def testDeleteAllRetainModelUndoReopenAndReuse(self):
         second = Model.add_component(self.root, self.part)
         identity, shape_identity = self.part.ObjectId, self.shape.ObjectId

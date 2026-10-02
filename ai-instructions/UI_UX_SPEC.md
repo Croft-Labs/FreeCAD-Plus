@@ -1436,6 +1436,12 @@ uses the active component, supports direct-child preselection and cancellation,
 and is unavailable during another task.
 On entry to a component, its Origin eye in History defaults to visible. A manual
 hide persists through refresh; re-entering the component restores the default.
+Origin contains an Origin Planes child item for XY, XZ and YZ planes together.
+The planes start hidden on component entry. Their eye/context Show/Hide control
+is independent of the Origin eye; showing planes also shows the parent Origin.
+Refresh preserves a manual show, and visibility changes support Undo/Redo.
+Neither Origin nor Origin Planes can be suppressed, renamed or deleted. Standard
+Delete also protects their native datum objects; no extra model object is created.
 Part Tree always starts with its top-level component (Part001 by default),
 with linked occurrence rows beneath it. The root row supplies selection/edit
 context, persists even without children, and is not a deletable assembly instance.

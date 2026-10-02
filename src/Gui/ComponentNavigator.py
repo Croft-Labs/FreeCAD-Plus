@@ -134,6 +134,22 @@ def is_origin(obj):
     return obj is not None and obj.isDerivedFrom("App::Origin")
 
 
+def origin_planes(origin):
+    return [obj for obj in origin.OriginFeatures if obj.isDerivedFrom("App::Plane")]
+
+
+def planes_row(item):
+    key = item.data(0, QtCore.Qt.UserRole)
+    return bool(key and len(key) == 3 and key[2] == "planes")
+
+
+def protected_origin_item(obj):
+    origins = ([obj] if is_origin(obj) else
+               [parent for parent in obj.InList if is_origin(parent)] if obj else [])
+    return any(any(model().is_component(parent) and parent.Origin == origin
+                   for parent in origin.InList) for origin in origins)
+
+
 def apply_representation(root):
     for child in model().children(root):
         if child.LinkedObject:
@@ -354,6 +370,8 @@ class Navigator(QtWidgets.QDockWidget):
                 if self.origin_context != origin_context:
                     self.origin_context = origin_context
                     active.Origin.Visibility = True
+                    for plane in origin_planes(active.Origin):
+                        plane.Visibility = False
                 if self.active_key != active_key:
                     self.active_key = active_key
                     self.bind_edit_context()
@@ -436,6 +454,16 @@ class Navigator(QtWidgets.QDockWidget):
                 item.setToolTip(3, model().history_detail(obj))
                 if getattr(obj, "ComponentRole", "") == "Reference":
                     item.setToolTip(2, tr("Reference object. Edit to review or replace its direct-child source."))
+                if origin:
+                    item.setExpanded(True)
+                    planes = QtWidgets.QTreeWidgetItem(item, ["", "", tr("Origin Planes"), tr("Always active")])
+                    planes.setData(0, QtCore.Qt.UserRole, object_key(obj) + ("planes",))
+                    planes.setCheckState(0, QtCore.Qt.Checked)
+                    planes.setFlags(planes.flags() & ~QtCore.Qt.ItemIsUserCheckable)
+                    planes.setIcon(2, Gui.getIcon("PartDesign_Plane.svg"))
+                    self.visibility_icon(planes, any(plane.Visibility for plane in origin_planes(obj)))
+                    planes.setToolTip(0, tr("Origin planes are permanent and cannot be suppressed or deleted."))
+                    planes.setToolTip(2, tr("XY, XZ and YZ origin planes. Permanent; cannot be deleted."))
             self.restore_tree(self.structure, structure_state)
             iterator = QtWidgets.QTreeWidgetItemIterator(self.structure)
             while iterator.value():
@@ -625,7 +653,15 @@ class Navigator(QtWidgets.QDockWidget):
         if not item_display_available(obj):
             return
         with model().transaction(obj.Document, "Toggle item visibility"):
-            obj.Visibility = not obj.Visibility
+            if planes_row(item):
+                planes = origin_planes(obj)
+                visible = not any(plane.Visibility for plane in planes)
+                for plane in planes:
+                    plane.Visibility = visible
+                if visible:
+                    obj.Visibility = True
+            else:
+                obj.Visibility = not obj.Visibility
 
     def history_checked(self, item, column):
         if self.refreshing or column != 0:
@@ -1341,7 +1377,9 @@ class Navigator(QtWidgets.QDockWidget):
             if item and is_origin(resolve(item.data(0, QtCore.Qt.UserRole))):
                 origin_item = item
                 origin = resolve(item.data(0, QtCore.Qt.UserRole))
-                menu.addAction(tr("Hide") if origin.Visibility else tr("Show"),
+                visible = (any(plane.Visibility for plane in origin_planes(origin))
+                           if planes_row(item) else origin.Visibility)
+                menu.addAction(tr("Hide") if visible else tr("Show"),
                                lambda: self.run(lambda: self.toggle_item_view(origin_item)))
                 menu.addSeparator()
                 item = None
@@ -1455,6 +1493,16 @@ def delete_selected_instances():
     """Std_Delete adapter for precise occurrence picks, never bare model selections."""
     if _dock is None or Gui.Control.activeDialog() or not _dock.root_key:
         return False
+    entries = Gui.Selection.getSelectionEx("*", 0)
+    # Remove permanent datum selections before native Delete, including precise
+    # occurrence paths that select their component root in the native tree.
+    root = resolve(_dock.root_key)
+    for entry in entries:
+        for subname in entry.SubElementNames or [""]:
+            picks = Selection.resolve(root, entry.Object, subname) if root else []
+            if (protected_origin_item(entry.Object)
+                    or any(protected_origin_item(pick.item) for pick in picks)):
+                Gui.Selection.removeSelection(entry.DocumentName, entry.ObjectName, subname)
     entries = Gui.Selection.getSelectionEx("*", 0)
     if not entries or any(model().is_component(entry.Object) and not entry.SubElementNames for entry in entries):
         return False

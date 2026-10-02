@@ -39,6 +39,7 @@
 #include <App/DocumentObject.h>
 #include <App/Expression.h>
 #include <App/GeoFeature.h>
+#include <App/Origin.h>
 #include <App/PropertyStandard.h>
 #include <Base/Exception.h>
 #include <Base/FileInfo.h>
@@ -1677,6 +1678,23 @@ void StdCmdDelete::activated(int iMsg)
                 auto background = dynamic_cast<App::PropertyBool*>(obj->getPropertyByName("BackgroundResult"));
                 auto frozen = dynamic_cast<App::PropertyBool*>(obj->getPropertyByName("Frozen"));
                 auto role = dynamic_cast<App::PropertyString*>(obj->getPropertyByName("ComponentRole"));
+                auto protectedOrigin = [](App::DocumentObject* candidate) {
+                    auto origin = dynamic_cast<App::Origin*>(candidate);
+                    if (!origin) {
+                        return false;
+                    }
+                    for (auto parent : origin->getInList()) {
+                        auto parentRole = dynamic_cast<App::PropertyString*>(parent->getPropertyByName("ComponentRole"));
+                        if (parentRole && parentRole->getStrValue() == "Definition") {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                if (protectedOrigin(obj) || std::any_of(obj->getInList().begin(), obj->getInList().end(), protectedOrigin)) {
+                    Base::Console().warning("Component origin and origin planes are permanent and cannot be deleted.\n");
+                    return true;
+                }
                 if (role && role->getStrValue() == "Definition") {
                     Base::Console().warning("Component models are reusable definitions. Delete an assembly instance instead.\n");
                     return true;

@@ -2629,6 +2629,12 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   Nine focused source-overlay checks and 42 broader component checks pass. Source
   refresh disposal fix passes repeated moves/rebuilds. Running 9/28 payload unchanged;
   batch staging with 7.8.7v/w and native/physical acceptance pending. See WORK_STATE.
+- [   ] 7.8.7y Owner follow-up: Origin Planes child in History controls native
+  XY/XZ/YZ planes together, hidden on component entry, independently toggleable
+  and undoable. Origin/planes are permanent; protect native Delete and occurrence
+  selection routing as well as History actions. Source implemented; automated
+  evidence and queued native/owner acceptance are recorded in WORK_STATE. Batch
+  with 7.8.7v/w/x while the owner-running payload is closed.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and
