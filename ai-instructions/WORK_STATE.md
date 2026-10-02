@@ -1,5 +1,27 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: mutually exclusive toolbar styles queued in source
+
+Owner screenshot shows native Classic bars alongside the Plus ribbon. Previous
+suppression ran only during rendering and skipped bars whose toggle actions were
+already hidden, allowing later native Show/layout events to reveal them again.
+PlusRibbon now guards toolbar Show events, hides native bars even when their
+toggle actions are unavailable, and restores the Plus ribbon after a saved layout
+hides it. Classic rejects attempts to show the ribbon. Same-choice Apply also
+enforces the selected style. Workbench transitions hide the ribbon while restoring
+outgoing native state, then suppress native bars before showing Plus again.
+Per-workbench Classic visibility is retained independently of forced suppression.
+
+Twelve native Qt/source-overlay ribbon checks pass with no failures/errors/skips
+in `D:\Temp\Office-PC\freecad-plus-ui-exclusive-20261002\complete`.
+New regressions cover late native Show events, newly created toolbars, restoring
+a Classic saved layout while Plus is selected, attempts to show Plus in Classic,
+and external Sketcher/Draft/Part Design activation. Existing checks cover command
+states, mode/tab routing, dropdowns, compact grids and Classic visibility recovery.
+Initial runs exposed restoration errors; corrected source passes the complete
+batch. Evidence is retained. Native General Apply/Cancel and cold-start packaged
+acceptance remain deferred to incorporation; no owner runtime or ZIP was changed.
+
 ## October 2: status controls and defaults queued in source
 
 The supplied screenshot shows Notifications (blue icon/unread count), the upstream

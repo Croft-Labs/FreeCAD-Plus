@@ -115,6 +115,8 @@ class Ribbon(QtCore.QObject):
         self.render_timer.setSingleShot(True)
         self.render_timer.timeout.connect(self.render)
         self.saved_bars = {}
+        self.saved_toggles = {}
+        self.workbench_name = Gui.activeWorkbench().name()
         self.mode_name = "Design"
         self.toolbar = QtWidgets.QToolBar(tr("Plus Ribbon"), self.window)
         self.toolbar.setObjectName("FreeCADPlusRibbon")
@@ -156,6 +158,27 @@ class Ribbon(QtCore.QObject):
         self.modes.currentIndexChanged.connect(self.mode_changed)
         self.tabs.currentChanged.connect(self.tab_changed)
         self.window.workbenchActivated.connect(self.workbench_changed)
+        QtWidgets.QApplication.instance().installEventFilter(self)
+
+    def eventFilter(self, watched, event):
+        if (watched == self.toolbar and event.type() == QtCore.QEvent.Hide
+                and self.enabled and not self.changing):
+            QtCore.QTimer.singleShot(0, self.ensure_plus_visible)
+        if (event.type() == QtCore.QEvent.Show and isinstance(watched, QtWidgets.QToolBar)
+                and self.window.isAncestorOf(watched)):
+            if watched == self.toolbar:
+                if not self.enabled:
+                    watched.hide()
+                else:
+                    self.hide_bars()
+            elif self.enabled and not (self.changing and self.toolbar.isHidden()):
+                self.hide_bar(watched)
+        return False
+
+    def ensure_plus_visible(self):
+        if self.enabled and not self.changing and self.window.isVisible():
+            self.hide_bars()
+            self.toolbar.show()
 
     def current_tab(self):
         return self.tabs.tabData(self.tabs.currentIndex())
@@ -168,9 +191,15 @@ class Ribbon(QtCore.QObject):
             params.SetString("ToolbarUIStyle", "Plus")
         plus = params.GetString("ToolbarUIStyle", "Plus") == "Plus"
         if plus == self.enabled:
+            if plus:
+                self.hide_bars()
+                self.toolbar.show()
+            else:
+                self.toolbar.hide()
             return
         self.enabled = plus
         if plus:
+            self.saved_bars.pop(Gui.activeWorkbench().name(), None)
             if Gui.activeWorkbench().name() in ("NoneWorkbench", "StartWorkbench"):
                 self.activate("PartDesignWorkbench")
             self.workbench_changed(Gui.activeWorkbench().name())
@@ -180,23 +209,34 @@ class Ribbon(QtCore.QObject):
             self.restore_bars()
 
     def hide_bars(self):
-        wb = Gui.activeWorkbench().name()
-        saved = self.saved_bars.setdefault(wb, {})
         for bar in self.window.findChildren(QtWidgets.QToolBar):
-            if bar == self.toolbar or not bar.toggleViewAction().isVisible():
-                continue
-            saved[bar.objectName()] = not bar.isHidden()
-            # Native ToolBarManager.saveState skips unavailable toggle actions,
-            # preserving Classic visibility preferences during workbench switches.
-            bar.toggleViewAction().setVisible(False)
-            bar.hide()
+            if bar != self.toolbar:
+                self.hide_bar(bar)
+
+    def hide_bar(self, bar):
+        saved = self.saved_bars.setdefault(self.workbench_name, {})
+        name = bar.objectName()
+        if bar.toggleViewAction().isVisible():
+            # Capture only unsuppressed native intent; repeated Show events must
+            # not overwrite the Classic layout with our forced hidden state.
+            saved.setdefault(name, not bar.isHidden())
+        elif name not in saved and not bar.isHidden():
+            saved[name] = True
+        self.saved_toggles.setdefault(name, bar.toggleViewAction().isVisible())
+        # Native ToolBarManager.saveState skips unavailable toggle actions,
+        # preserving Classic visibility preferences during workbench switches.
+        bar.toggleViewAction().setVisible(False)
+        bar.hide()
 
     def restore_bars(self):
         saved = self.saved_bars.get(Gui.activeWorkbench().name(), {})
         for bar in self.window.findChildren(QtWidgets.QToolBar):
+            if bar.objectName() in self.saved_toggles:
+                bar.toggleViewAction().setVisible(self.saved_toggles[bar.objectName()])
             if bar.objectName() in saved:
                 bar.toggleViewAction().setVisible(True)
                 bar.setVisible(saved[bar.objectName()])
+        self.saved_toggles.clear()
 
     def configure(self, mode, tab="Home"):
         self.changing = True
@@ -225,12 +265,19 @@ class Ribbon(QtCore.QObject):
             return True
         if Gui.Control.activeDialog():
             return False
-        self.restore_bars()
         self.changing = True
         try:
+            # Restore native state for its outgoing-workbench save with the
+            # ribbon hidden, so even the transition displays only one style.
+            self.toolbar.hide()
+            self.restore_bars()
             Gui.activateWorkbench(workbench)
         finally:
+            self.workbench_name = Gui.activeWorkbench().name()
+            if self.enabled:
+                self.hide_bars()
             self.changing = False
+            self.toolbar.setVisible(self.enabled)
         return Gui.activeWorkbench().name() == workbench
 
     def mode_changed(self, index):
@@ -255,6 +302,7 @@ class Ribbon(QtCore.QObject):
         self.render()
 
     def workbench_changed(self, name):
+        self.workbench_name = name
         if not self.enabled or self.changing:
             return
         if name in set(DESIGN_WORKBENCHES.values()):

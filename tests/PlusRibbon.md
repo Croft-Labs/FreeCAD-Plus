@@ -15,6 +15,10 @@ within that parent. Do not enable source overlays for these phases.
    Change the selection and Cancel: the last applied style remains. Restart and
    confirm the applied preference persists. Switch to Classic UI to restore the
    native toolbar presentation and previous show/hide choices.
+   Restore a saved Classic layout while Plus is selected, switch workbenches,
+   and create/show a native toolbar: Classic bars must remain hidden and the
+   Plus ribbon visible. With Classic selected, attempting to show the ribbon
+   must leave it hidden. Neither style may display both presentations.
 2. Design shows Home, Modeling, Surface, Sketch, Mesh and View. Home has File,
    Edit, Clipboard, Structure, Sketch, common Tools and Help sections. Use the
    actual New Sketch, Attach Sketch, Edit Sketch and Add Component buttons in a
@@ -49,7 +53,7 @@ for conditional mode mapping only, not acceptance of an installed printing addon
 Physical touch/keyboard, dark themes, screen-reader and multi-monitor DPI behavior
 remain owner acceptance gates.
 
-When the owner defers build incorporation, run the nine non-preference tests in
+When the owner defers build incorporation, run the twelve non-preference tests in
 `TestPlusRibbon.py` with `FREECAD_PLUS_PROFILE_SOURCE=1`, `-RibbonSmoke` and an
 explicit `-TestNames` list. Exclude `testNativeGeneralPreferenceApplyAndCancel`,
 which requires a runtime-loaded module. The overlay removes the existing ribbon

@@ -14,6 +14,11 @@ opens at startup above Attributes on the left with a 2:1 split; four isolated
 native Qt source-overlay checks pass for the layout and registration; see
 [WORK_STATE](WORK_STATE.md).
 
+Toolbar styles are now mutually exclusive in source, guarding late native toolbar
+show events and saved-layout restoration. Twelve ribbon source-overlay checks
+pass, including preservation of Classic visibility. This fix joins the pending
+batch; packaged preference/startup acceptance awaits build incorporation.
+
 Tasks startup actions are also queued in source: New File/Open with no document,
 then New Sketch/Coordinate System/Datum Plane/Add Component in a component's
 idle Design task pane. Five native Qt source-overlay checks cover the command

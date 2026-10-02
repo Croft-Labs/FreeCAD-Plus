@@ -151,6 +151,60 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertEqual({bar.objectName(): bar.isHidden() for bar in bars}, before)
         self.assertTrue(all(bar.toggleViewAction().isVisible() for bar in bars))
 
+    def testLateClassicShowsAndNewToolbarStayHiddenInPlus(self):
+        window = Gui.getMainWindow()
+        bars = [bar for bar in window.findChildren(QtWidgets.QToolBar)
+                if bar != self.ribbon.toolbar]
+        self.assertTrue(bars)
+        for bar in bars:
+            bar.show()
+            self.assertTrue(bar.isHidden(), bar.objectName())
+        late = QtWidgets.QToolBar("Late native toolbar", window)
+        late.setObjectName("PlusTestLateToolbar")
+        window.addToolBar(late)
+        late.show()
+        self.assertTrue(late.isHidden())
+        settle()
+        self.assertFalse(self.ribbon.toolbar.isHidden())
+        self.assertTrue(all(bar.isHidden() for bar in bars))
+        self.params.SetString("ToolbarUIStyle", "Classic")
+        UI.apply_preferences()
+        self.assertTrue(self.ribbon.toolbar.isHidden())
+        self.assertFalse(late.isHidden())
+        window.removeToolBar(late)
+        late.deleteLater()
+
+    def testSavedLayoutCannotDisplayBothStyles(self):
+        window = Gui.getMainWindow()
+        self.params.SetString("ToolbarUIStyle", "Classic")
+        UI.apply_preferences()
+        classic_state = window.saveState()
+        self.params.SetString("ToolbarUIStyle", "Plus")
+        UI.apply_preferences()
+        self.assertTrue(window.restoreState(classic_state))
+        settle()
+        self.assertFalse(self.ribbon.toolbar.isHidden())
+        self.assertTrue(all(bar.isHidden() for bar in window.findChildren(QtWidgets.QToolBar)
+                            if bar != self.ribbon.toolbar))
+        UI.apply_preferences()  # Applying the same choice must enforce it too.
+        self.assertFalse(self.ribbon.toolbar.isHidden())
+        self.params.SetString("ToolbarUIStyle", "Classic")
+        UI.apply_preferences()
+        self.ribbon.toolbar.show()
+        self.assertTrue(self.ribbon.toolbar.isHidden())
+
+    def testExternalWorkbenchRestoresCannotReshowClassicBars(self):
+        for workbench in ("SketcherWorkbench", "DraftWorkbench", "PartDesignWorkbench"):
+            Gui.activateWorkbench(workbench)
+            settle()
+            for bar in Gui.getMainWindow().findChildren(QtWidgets.QToolBar):
+                if bar != self.ribbon.toolbar:
+                    bar.show()
+            settle()
+            self.assertFalse(self.ribbon.toolbar.isHidden())
+            self.assertTrue(all(bar.isHidden() for bar in Gui.getMainWindow().findChildren(QtWidgets.QToolBar)
+                                if bar != self.ribbon.toolbar))
+
     def testAvailableModesTaskGuardAndExternalActivation(self):
         modes = dict(UI.available_modes())
         (Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-modes.json").write_text(

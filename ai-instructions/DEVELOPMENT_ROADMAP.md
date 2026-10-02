@@ -30,6 +30,12 @@ is subsequently changed.
 
 ## Current focus
 
+- October 2 queued toolbar exclusivity fix: Plus suppresses late native toolbar
+  Show/layout events and Classic suppresses the ribbon. Saved layouts cannot
+  reveal both styles; Classic visibility choices survive workbench switches.
+  Twelve native Qt/source-overlay ribbon checks pass. Packaged preferences and
+  cold startup remain for the next owner-authorized build; see [WORK_STATE](WORK_STATE.md).
+
 - October 2 queued status controls/defaults: enable/package Tux for the native
   navigation chooser and seed Blender/Imperial Decimal before module initialization.
   Four source-overlay/native menu checks pass, including Notifications and actual

@@ -40,6 +40,10 @@ Plus UI is the default when no UI style is saved. Preserve an explicitly saved
 Classic UI choice and its existing workbench toolbar presentation. Apply/OK switches immediately and persists the
 choice; Cancel leaves the unapplied selection unchanged. These are application UI
 preferences, separate from document data, themes and geometry operations.
+The styles are mutually exclusive: Plus hides all native Classic toolbars,
+including newly created bars and late workbench/layout show events; Classic hides
+the ribbon. Restoring a saved layout must not override the selected style.
+Switching back to Classic restores its toolbar visibility choices.
 
 Plus UI replaces the visible toolbars with a top ribbon. A mode dropdown at the
 upper left lists available workflow workbenches, including Design, Draft, CAM,
