@@ -82,7 +82,7 @@ class TestComponentSelectionIteration(unittest.TestCase):
         self.assertEqual(list(selected[0].SubElementNames), [Selection.native_path(self.root, ids)])
         self.panel.activate_item(row)
         self.panel.refresh()
-        item = self.panel.history.topLevelItem(0)
+        item = self.panel.history.topLevelItem(1)
         item.setSelected(True)
         selected = Gui.Selection.getSelectionEx("*", 0)
         self.assertEqual(list(selected[0].SubElementNames), [Selection.native_path(self.root, ids, self.pin)])
@@ -132,7 +132,7 @@ class TestComponentSelectionIteration(unittest.TestCase):
         self.assertAlmostEqual(reference.Shape.BoundBox.XMin, 40)
 
     def testGroupedUndoAndComponentTabContext(self):
-        group = self.panel.structure.topLevelItem(0).child(0)
+        group = self.panel.structure.topLevelItem(0)
         group.setSelected(True)
         selected = Gui.Selection.getSelectionEx("*", 0)
         self.assertEqual(set(selected[0].SubElementNames),

@@ -2489,6 +2489,125 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   legacy part-container behavior and .cadprt reopen. Mass consumers, automatic
   cross-file report invalidation, general missing-file/array/custom-column behavior
   and per-report exclusions of children stored in other files remain open.
+- [   ] 7.8.7k Owner feedback: standard/Assembly New Part bypassed the component
+  model and could replace the native active binding with a legacy container.
+  Source routes both commands through Add Component; insertion retains the parent
+  and restores view/occurrence context after file opening, cancellation or failure.
+  Source syntax/whitespace checks pass. Owner-requested grouped native/script
+  build passed on 2026-10-01; all three TestComponentAddCommand workflows pass,
+  zero failures/errors/skips, process exit 0 and empty stderr. Evidence:
+  `D:\Temp\Office-PC\freecad-plus-owner-build-20261001` (`build/`, `smoke/`,
+  `build-identity.json`). Ready for owner testing; broad/physical acceptance
+  remains open. No installer or publication.
+- [   ] 7.8.7l Owner feedback: every component's native Origin is always first in
+  Model History, with visibility, precise occurrence selection and no suppression.
+  Source uses the existing origin without altering feature history or identities;
+  Full Component includes a normally visible origin. Syntax/whitespace checked;
+  built/staged in the owner-requested 7.8.7k batch above. Three passing focused
+  workflows cover Origin-first rows, exact occurrence selection and suppression
+  exclusion. Physical visibility interaction and broader acceptance remain open.
+- [   ] 7.8.7m Owner feedback: New Sketch should show XY/XZ/YZ origin planes.
+  Source temporarily shows the active component's native planes and labels;
+  native plane selection updates the task orientation, retaining dropdown/face
+  choices. OK/Cancel restore origin/datum visibility and remove the observer.
+  Reuses native coordinate-system temporary visibility through a Python binding.
+  Python syntax, binding generation and whitespace checks pass.
+  Panel regressions cover both commands, three plane picks and cancellation;
+  external task-context assertions cover the owning-file planes. Owner-requested
+  grouped build passed; four panel and three task-context workflows pass, no
+  failures/errors/skips and both processes exit 0 with empty stderr. Plane captures
+  reviewed. Evidence: `D:\Temp\Office-PC\freecad-plus-sketch-feedback-20261001`
+  (`build/`, `panel-final/`, `task-context/`, `build-identity.json`). Updated
+  September 28 copy is ready for owner testing; physical acceptance remains open.
+- [   ] 7.8.7n Owner feedback: New Sketch OK triggered Sketcher's close-task
+  confirmation. TaskView postpones dialog removal during its native acceptance
+  callback; the Python task entered Sketcher before that removal. Source defers
+  editor entry to the next Qt event turn, checks the owning-file task is closed,
+  and restores context if edit entry fails. Panel and external-context checks now
+  use activeTaskDialog().accept() to exercise the actual OK-button path; the panel
+  check detects/dismisses unexpected prompts instead of hanging. Earlier direct
+  Python accept checks did not validate this path. Syntax/whitespace checks pass;
+  native OK acceptance passes in the grouped 7.8.7m build/checks above, including
+  one-sketch creation and external-context return. Physical owner acceptance
+  remains pending. No installer or publication.
+- [   ] 7.8.7o Owner feedback: component-local default names and unsuffixed Origin.
+  Source displays Origin in every component's history and allocates Sketch001,
+  Body001, Extrude001 and automatic registered-object labels within one definition.
+  Other definitions restart at 001; custom labels and local occupied names remain.
+  Native duplicate-label permission is limited to marked objects owned by a marked
+  component; legacy objects retain ordinary label policy. Native names/UUIDs and
+  history/reference identities are unchanged. Three LocalNameSmoke workflows
+  cover same-file definitions, custom/reserved labels, legacy policy and .cadprt
+  save/reopen identities. October 1 grouped App/Gui/dependent rebuild and native
+  feedback checks pass, including duplicate-label policy and externalized custom
+  names. Physical owner acceptance remains pending; see WORK_STATE.
+- [   ] 7.8.7p Owner feedback: component Extrude selected sketch curves/regions.
+  Source provides a curve list, native edge collection, Remove/Clear/Use all and
+  viewport region picking that collects outer and hole contours. Owner requires
+  one connected region with optional holes, from one sketch; other sketch curves
+  may remain unused. Open, self-crossing, touching/crossing and disconnected
+  selections are rejected. An internal native LinkSub profile preserves the subset
+  through geometry updates, editing and persistence without changing result IDs.
+  Four source-overlay CurveProfileSmoke workflows pass on the existing fork engine:
+  annulus/interior picking, unused open/disconnected geometry, invalid profiles,
+  associative radius changes, Undo/Redo, .cadprt reopen, native mapped edge picks,
+  selection controls, mixed-sketch rejection, visibility cleanup, placed-plane
+  region picking and native OK creation. October 1 rebuilt 9/28 payload passes all
+  ten profile/extent checks without source overlay, plus selection/task and
+  copy/externalization integration. Physical owner acceptance remains pending.
+  Evidence in WORK_STATE; no installer or publication.
+- [   ] 7.8.7q Owner feedback: restore component Extrude extent/preview controls.
+  Source reuses native Pad's engine without a Body container: one/two dimensions,
+  symmetric total length, Dimension/To first/To last/Up to surface/Up to shape/
+  Through all, independent second-side limits, signed start/end offsets and start
+  reference, taper, custom numeric direction, normal-length measurement, refinement
+  and automatic preview. Green added/red removed volume previews temporarily make
+  the target transparent and restore its appearance. Native Part2D subset profiles
+  preserve signed sketch normals using exact rigid transforms. Existing simple
+  operations migrate on reviewed edit with UUIDs/results/Undo retained. Ten
+  source-overlay workflows pass; preview captures reviewed, exit 0/empty stderr.
+  October 1 grouped build and native profile/preview checks pass; compiled GUI
+  captures reviewed. Component/reference/copy integration is checked separately
+  in WORK_STATE. Physical owner acceptance remains pending. No release.
+- [   ] 7.8.7r Owner feedback: default new-document basename untitled001.
+  Source allocates untitled001/002/etc. against open names, labels and saved
+  basenames, preserving explicit labels and root component labels. Isolated
+  source-overlay actual Std_New twice and custom-name checks pass; WORK_STATE
+  records evidence. October 1 rebuilt payload passes actual Std_New twice with
+  both names and visible titles numbered; physical Save As acceptance pending.
+- [   ] 7.8.7s Owner feedback: automatic Part001/002/003 definition labels.
+  Root defaults to Part001; embedded/nested additions allocate the next available
+  document PartNNN and pre-fill the editable name prompt. Custom labels remain;
+  repeated occurrences reuse their definition's label/instance display. Native
+  label permission extends only to marked component-owned occurrences, with
+  ownership/identity established before link naming. Source command/numbering/
+  reopen checks pass with isolated duplicate-label simulation; compiled permission
+  is not validated by that old-engine check. Added LocalNameSmoke regression;
+  October 1 grouped native App build and label/Add Component regressions pass
+  against the payload without changing global duplicate-label preferences.
+  Physical owner acceptance remains pending. See WORK_STATE; no publication.
+- [   ] 7.8.7t Owner feedback: protected background solid results.
+  Hide generated Body rows in Model/Model History; display and edit the producer,
+  retaining stable engineering result references. Existing results adopt display;
+  frozen dumb Bodies remain public. GUI deletion veto/native forced-delete guard
+  protect results; deleting an operation cleans unused results in one Undo.
+  Four source-overlay display/deletion/Undo/reopen/conversion/suppression/downstream
+  checks and ten Extrude regressions pass. October 1 rebuilt Gui passes native
+  forced-delete protection, five background-result checks and broader linked/
+  copy/conversion regressions. Physical owner acceptance remains pending; see WORK_STATE.
+- [   ] 7.8.7u Owner feedback: Models inventory, occurrence-only Assembly Structure
+  and native Attributes pane. Flat Models is first and retains unused definitions;
+  counts expand nested assembly uses. Assembly Structure omits the root definition
+  and contains linked occurrences only. Delete key/context actions remove links,
+  retain definitions/geometry and mark affected references missing; Undo/Redo and
+  save/reopen preserve identity. Native Delete routes occurrence paths and protects
+  definitions; native View/Data editors replace the public Model tree. Six source-
+  overlay checks and four background-result regressions pass; screenshots reviewed.
+  Prior navigator tests updated for the removed root row. October 1 grouped
+  Gui/resource rebuild passes native Attributes/hidden-tree and standard Delete
+  checks, plus external/selection/task parity. Closed isolated-view cache and
+  copied definition-label regressions fixed and verified. Owner acceptance remains
+  pending. The closed 9/28 payload is updated; see WORK_STATE. No publication.
 - [ X ] 7.8.8a Embedded/external Copy to New Part with child sharing; assembly
   externalization, reference remapping, shared child identity and save/reopen.
 - [   ] 7.8.8b Explicit complete-hierarchy copy, general expression remapping and

@@ -3,11 +3,13 @@
 import json
 import FreeCAD as App
 import ComponentModel as Model
+import ComponentProfile as Profile
+import ComponentExtent as Extent
 
 MODES = ("New Body", "Add", "Subtract")
 
 
-def inputs(component, profile, length, mode, target=None, operation=None):
+def inputs(component, profile, length, mode, target=None, operation=None, elements=None):
     if not Model.is_component(component) or Model.owner(profile) != component:
         raise ValueError("Choose a profile owned by the active component.")
     if mode not in MODES or length <= 0:
@@ -17,6 +19,8 @@ def inputs(component, profile, length, mode, target=None, operation=None):
     shape = Model.current_shape(profile)
     if shape.Solids or not shape.Edges:
         raise ValueError("Choose a closed planar profile, not a solid body.")
+    if elements is not None:
+        Profile.face(profile, elements)
     if mode != "New Body":
         if target is None or Model.owner(target) != component or target.Name not in component.ResultObjects:
             raise ValueError("Choose an explicit body in the active component.")
@@ -49,51 +53,88 @@ def evaluate(doc, operation, mode, target):
     return operation.Shape.copy()
 
 
-def preview(component, profile, length, mode="New Body", target=None, reversed_direction=False):
-    inputs(component, profile, length, mode, target)
+def preview(component, profile, length, mode="New Body", target=None, reversed_direction=False, elements=None,
+            options=None, volume_only=False):
+    inputs(component, profile, length, mode, target, elements=elements)
+    if options is not None:
+        Extent.validate(component, profile, length, mode, target, options)
     scratch = App.newDocument("ComponentExtrudePreview", hidden=True, temp=True)
     try:
-        copied = scratch.addObject("Part::Feature", "Profile")
-        copied.Shape = Model.current_shape(profile)
-        tool = scratch.addObject("Part::Extrusion", "Extrusion")
-        configure(tool, copied, length, reversed_direction)
-        operation = tool
+        copied = scratch.addObject("Part::Part2DObjectPython" if profile.isDerivedFrom("Sketcher::SketchObject") else "Part::Feature", "Profile")
+        shape = Profile.face(profile, elements) if elements is not None else Model.current_shape(profile)
+        Profile.assign_shape(copied, profile, shape)
         base = None
         if mode != "New Body":
             base = scratch.addObject("Part::Feature", "Target")
             base.Shape = Model.current_shape(target)
+        if options is not None:
+            import PartDesign
+            tool = scratch.addObject("PartDesign::Pad", "Extrusion")
+            copies = {profile: copied}
+            if target:
+                copies[target] = base
+            Extent.configure(tool, copied, length, mode, base, reversed_direction,
+                             Extent.copy_references(scratch, options, copies))
+            result = evaluate(scratch, tool, mode, base)
+            if volume_only and base:
+                return base.Shape.cut(result) if mode == "Subtract" else result.cut(base.Shape)
+            return result
+        tool = scratch.addObject("Part::Extrusion", "Extrusion")
+        configure(tool, copied, length, reversed_direction)
+        operation = tool
+        if mode != "New Body":
             operation = scratch.addObject("Part::Fuse" if mode == "Add" else "Part::Cut", "Extrude")
             operation.Base, operation.Tool = base, tool
-        return evaluate(scratch, operation, mode, base)
+        result = evaluate(scratch, operation, mode, base)
+        if volume_only and base:
+            return base.Shape.cut(result) if mode == "Subtract" else result.cut(base.Shape)
+        return result
     finally:
         App.closeDocument(scratch.Name)
         App.setActiveDocument(component.Document.Name)
 
 
-def create(component, profile, length, mode="New Body", target=None, reversed_direction=False):
+def create(component, profile, length, mode="New Body", target=None, reversed_direction=False, elements=None,
+           options=None):
     Model.activate(component, strict=False)
-    inputs(component, profile, length, mode, target)
+    inputs(component, profile, length, mode, target, elements=elements)
+    if options is not None:
+        Extent.validate(component, profile, length, mode, target, options)
     doc = component.Document
+    target_visibility = bool(target.Visibility) if target is not None else None
     with Model.transaction(doc, "Extrude"):
-        tool = doc.addObject("Part::Extrusion", "Extrude")
-        configure(tool, profile, length, reversed_direction)
+        if options is not None:
+            import PartDesign
+        tool = doc.addObject("PartDesign::Pad" if options is not None else "Part::Extrusion", "Extrude")
+        bound = Profile.bind(component, profile, elements)
+        if options is None:
+            configure(tool, bound, length, reversed_direction)
+        else:
+            Extent.configure(tool, bound, length, mode, target, reversed_direction, options)
         operation = tool
-        if mode != "New Body":
+        if mode != "New Body" and options is None:
             component.addObject(tool)
             Model._identity(tool, "Internal")
             tool.Label = "Extrude profile"
             operation = doc.addObject("Part::Fuse" if mode == "Add" else "Part::Cut", "Extrude")
             operation.Base, operation.Tool = target, tool
             Model._property(operation, "Link", "ExtrusionTool", tool, True)
-        operation.Label = "Extrude"
         Model.register_object(component, operation, "Operation")
+        operation.Label = Model.next_label(component, "Extrude", operation)
         Model._property(operation, "String", "OperationKind", "Extrude", True)
         Model._property(operation, "String", "ExtrudeMode", mode, True)
+        if options is not None and target:
+            Model._property(operation, "LinkList", "ConsumedResults", [target], True)
+            Model._property(operation, "String", "PreviousVisibility",
+                            json.dumps({target.ObjectId: target_visibility}), True)
         evaluate(doc, operation, mode, target)
         result = Model.publish_result(component, operation)
         if App.GuiUp:
             profile.Visibility = False
-            tool.Visibility = False
+            if tool != operation:
+                tool.Visibility = False
+            if target:
+                target.Visibility = False
     return operation, result
 
 
@@ -105,21 +146,31 @@ def parameters(operation):
         mode, tool = "New Body", operation
     else:
         raise ValueError("Select a component Extrude operation.")
-    return tool, mode, operation.Base if mode != "New Body" else None
+    target = operation.BaseFeature if tool.TypeId == "PartDesign::Pad" else operation.Base
+    return tool, mode, target if mode != "New Body" else None
 
 
-def edit(operation, profile, length, reversed_direction=False, mode=None, target=None):
+def edit(operation, profile, length, reversed_direction=False, mode=None, target=None, elements=None, options=None):
     component = Model.owner(operation)
     Model.activate(component, strict=False)
     tool, old_mode, old_target = parameters(operation)
     if mode is None:
         mode, target = old_mode, old_target
-    inputs(component, profile, length, mode, target, operation)
+    inputs(component, profile, length, mode, target, operation, elements)
+    if options is None and tool.TypeId == "PartDesign::Pad":
+        options = Extent.read(tool)
+    if options is not None:
+        Extent.validate(component, profile, length, mode, target, options, operation)
+    base_profile = tool.Profile[0] if tool.TypeId == "PartDesign::Pad" else tool.Base
+    old_profile = base_profile if hasattr(base_profile, "ProfileSource") else None
+    replace = mode != old_mode or (options is not None and tool.TypeId != "PartDesign::Pad")
+    if old_profile and any(obj not in (component, tool) for obj in old_profile.InList):
+        raise ValueError("The selected-curve profile has another consumer. Review it before editing.")
     if tool.ExpressionEngine or operation.ExpressionEngine:
         raise ValueError("This extrusion uses expressions. Edit them in the property editor to preserve the formulas.")
     doc = component.Document
     results = [obj for obj in operation.InList if getattr(obj, "Producer", None) == operation]
-    if mode != old_mode:
+    if replace:
         allowed = set(results + [component])
         if any(obj not in allowed for obj in operation.InList):
             raise ValueError("Other objects reference this operation directly. Use its published result before changing the operation type.")
@@ -129,15 +180,21 @@ def edit(operation, profile, length, reversed_direction=False, mode=None, target
     consumed = list(getattr(operation, "ConsumedResults", []))
     target_visibility = previous.get(target.ObjectId, bool(target.Visibility)) if target else None
     with Model.transaction(doc, "Edit Extrude"):
-        if mode != old_mode:
+        bound = Profile.bind(component, profile, elements, old_profile)
+        if replace:
             ordered = list(component.ModelHistory)
             old_name, old_id, label = operation.Name, operation.ObjectId, operation.Label
             old_tool_name = tool.Name if tool != operation else None
             suppressed = getattr(operation, "UserSuppressed", False)
-            replacement_tool = doc.addObject("Part::Extrusion", "Extrude")
-            configure(replacement_tool, profile, length, reversed_direction)
+            if options is not None:
+                import PartDesign
+            replacement_tool = doc.addObject("PartDesign::Pad" if options is not None else "Part::Extrusion", "Extrude")
+            if options is None:
+                configure(replacement_tool, bound, length, reversed_direction)
+            else:
+                Extent.configure(replacement_tool, bound, length, mode, target, reversed_direction, options)
             replacement = replacement_tool
-            if mode != "New Body":
+            if mode != "New Body" and options is None:
                 component.addObject(replacement_tool)
                 Model._identity(replacement_tool, "Internal")
                 replacement = doc.addObject("Part::Fuse" if mode == "Add" else "Part::Cut", "Extrude")
@@ -158,8 +215,11 @@ def edit(operation, profile, length, reversed_direction=False, mode=None, target
             component.ModelHistory = [replacement.Name if name == old_name else name for name in ordered]
             operation, tool = replacement, replacement_tool
         else:
-            configure(tool, profile, length, reversed_direction)
-            if mode != "New Body":
+            if options is None:
+                configure(tool, bound, length, reversed_direction)
+            else:
+                Extent.configure(tool, bound, length, mode, target, reversed_direction, options)
+            if mode != "New Body" and options is None:
                 operation.Base = target
         if mode != "New Body":
             if not hasattr(operation, "ConsumedResults"):
@@ -168,9 +228,16 @@ def edit(operation, profile, length, reversed_direction=False, mode=None, target
             operation.ConsumedResults = [target]
             operation.PreviousVisibility = json.dumps({target.ObjectId: target_visibility})
         evaluate(doc, operation, mode, target)
+        if old_profile and old_profile != bound:
+            doc.removeObject(old_profile.Name)
         if App.GuiUp:
             profile.Visibility = False
-            operation.Visibility = tool.Visibility = False
+            if tool != operation:
+                tool.Visibility = False
+            if results:
+                import ComponentResultView
+                for result in results:
+                    ComponentResultView.sync(result)
             if target:
                 target.Visibility = target_visibility if getattr(operation, "UserSuppressed", False) else False
             for source in consumed:

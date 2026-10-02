@@ -51,19 +51,30 @@ class CommandInsertNewPart:
     def GetResources(self):
         return {
             "Pixmap": "Geofeaturegroup",
-            "MenuText": QT_TRANSLATE_NOOP("Assembly_InsertNewPart", "New Part"),
+            "MenuText": QT_TRANSLATE_NOOP("Assembly_InsertNewPart", "Add Component"),
             "Accel": "P",
             "ToolTip": QT_TRANSLATE_NOOP(
                 "Assembly_InsertNewPart",
-                "Insert a new part into the active assembly. The new part's origin can be positioned in the assembly.",
+                "Adds a component to the active component or assembly.",
             ),
             "CmdType": "ForEdit",
         }
 
     def IsActive(self):
+        if self.componentDocument():
+            return not Gui.Control.activeDialog()
         return UtilsAssembly.isAssemblyCommandActive()
 
+    @staticmethod
+    def componentDocument():
+        return App.ActiveDocument is not None and any(
+            getattr(obj, "ComponentRole", "") == "Document" for obj in App.ActiveDocument.Objects)
+
     def Activated(self):
+        if self.componentDocument():
+            from freecad.gui.ComponentNavigator import add_component_from_command
+            add_component_from_command()
+            return
         # Check if document is saved before proceeding
         doc = App.ActiveDocument
         if not doc.FileName:

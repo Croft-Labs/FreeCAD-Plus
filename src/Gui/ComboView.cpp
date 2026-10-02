@@ -22,7 +22,6 @@
 
 #include <QEvent>
 #include <QGridLayout>
-#include <QSplitter>
 
 #include "ComboView.h"
 #include "PropertyView.h"
@@ -42,19 +41,14 @@ ComboView::ComboView(Gui::Document* pcDocument, QWidget* parent)
     pLayout->setSpacing(0);
     pLayout->setContentsMargins(0, 0, 0, 0);
 
-    // tabs to switch between Tree/Properties and TaskPanel
-    auto splitter = new QSplitter();
-    pLayout->addWidget(splitter, 0, 0);
-
-    // splitter between tree and property view
-    splitter->setOrientation(Qt::Vertical);
-
+    // Retain the native tree infrastructure for command integration, without a
+    // second public hierarchy competing with the component occurrence navigator.
     tree = new TreePanel("ComboView", this);
-    splitter->addWidget(tree);
+    tree->hide();
 
     // property view
     prop = new PropertyView(this);
-    splitter->addWidget(prop);
+    pLayout->addWidget(prop, 0, 0);
 }
 
 ComboView::~ComboView() = default;

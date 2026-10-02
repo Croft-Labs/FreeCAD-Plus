@@ -898,7 +898,7 @@ bool MainWindow::updateComboView(bool show)
 
             pcComboView = new ComboView(nullptr, getMainWindow());
             pcComboView->setObjectName(QStringLiteral("Model"));
-            pcComboView->setWindowTitle(QDockWidget::tr("Model"));
+            pcComboView->setWindowTitle(QDockWidget::tr("Attributes"));
             pcComboView->setMinimumWidth(150);
             widget = pcComboView;
             return widget;

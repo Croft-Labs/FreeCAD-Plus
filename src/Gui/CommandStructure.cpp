@@ -46,12 +46,8 @@ StdCmdPart::StdCmdPart()
     : Command("Std_Part")
 {
     sGroup = "Structure";
-    sMenuText = QT_TR_NOOP("New Part");
-    sToolTipText = QT_TR_NOOP(
-        "Creates a part, which is a general-purpose container to group objects so they "
-        "act as a unit in the 3D view. It is intended to arrange objects that have a part "
-        "TopoShape, like part primitives, Part Design bodies, and other parts."
-    );
+    sMenuText = QT_TR_NOOP("Add Component");
+    sToolTipText = QT_TR_NOOP("Adds a component to the active component.");
     sWhatsThis = "Std_Part";
     sStatusTip = sToolTipText;
     sPixmap = "Geofeaturegroup";
@@ -60,6 +56,16 @@ StdCmdPart::StdCmdPart()
 void StdCmdPart::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    for (auto* object : getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentNavigator import add_component_from_command; "
+                      "add_component_from_command()");
+            return;
+        }
+    }
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Add a part"));
 

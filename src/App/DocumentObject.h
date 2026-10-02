@@ -1044,10 +1044,7 @@ public:
      *
      * @return true if duplicate labels are allowed, false otherwise.
      */
-    virtual bool allowDuplicateLabel() const
-    {
-        return false;
-    }
+    virtual bool allowDuplicateLabel() const;
 
     /**
      * @brief Called when a new label for the document object is proposed.

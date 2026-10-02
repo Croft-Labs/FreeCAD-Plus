@@ -1419,28 +1419,39 @@ No true untrim, kept-region trim selection, maximum-deviation certification or
 complete self-intersection diagnosis is claimed.
 [Owner procedure](../tests/ExtendFaceReview.md).
 
-## Component Structure and Model History (roadmap 7.8)
+## Models, Assembly Structure and Model History (roadmap 7.8)
 
 Owner-approved behavior is in the [component document contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
-Use Component Structure and Model History as the navigator tab labels. Add Component
+Use Models, Assembly Structure and Model History as the tab labels, in that order.
+Models is flat/non-expandable and lists all owning-file definitions, including
+unused definitions and referenced external models, with expanded assembly-instance
+counts. The root is an editing model/context, with zero linked uses unless explicitly
+instanced elsewhere. Selecting a model shows native attributes; Edit accesses the
+same definition even with zero instances. Add Instance reuses it in the active model.
+Replace the native Model pane with Attributes, retaining its View and Data tabs.
+Assembly Structure contains only occurrence rows, with no root-definition row.
+Delete Instance/Instances, Delete key and standard occurrence Delete remove owning
+links only. Definitions and their geometry remain under Models, including after
+the last instance is removed. Missing instance references require repair; Undo
+restores identities. The shared-parent child ownership contract still applies.
+Add Component
 adds a child instance to the active component; Add Reference Object selects evaluated
 geometry from a direct child only. Full Component / Bodies Only / Hidden and Reset
 to Inherited control occurrence-path representation. No Reference Only role is added.
 Convert to Dumb Object offers Delete Parameters and Extract Dumb Body. Component
 edit tabs identify the shared definition and owning file; they do not make copies.
-Assembly Constraints is the first grouping row only when populated. The root row
-is the root component with the native Part icon; no file wrapper appears above it.
-Entry points are File > New/Open and Tools > Component Structure. The panel shows
+Definition-owned constraints remain in Model History, outside occurrence rows.
+Entry points are File > New/Open and Tools > Components. The panel shows
 only the edited component name, without a file path or creation buttons. Right-click
 provides Edit first, Add Component and Add Reference Object. Double-click edits the
-shared definition. The root omits Open Component in Tab. Instances contains Add
+shared definition. Root editing is available in Models. Instances contains Add
 Instance and Copy to New Part; Part View contains the three display types and Reset
 to Inherited. Save to External File replaces the earlier Externalize wording.
 Missing components offer Locate Component File and legacy conversions expose their
-report. The native tree and these projections share document objects; complete
+report. Attributes and these projections share native document objects; complete
 native command/edit/picking parity remains an explicit roadmap gate.
 
-Component Structure's first column shows part names, with a visibility control,
+Assembly Structure's first column shows part names, with a visibility control,
 instance count and Part View columns. Same-definition instances under a parent
 start grouped (x5); Expand Instances reveals support_angle#001 through #005, and
 Collapse Instances regroups them. The active part is highlighted and cannot be
@@ -1448,15 +1459,66 @@ hidden, including by hiding its parent branch. Model History places the active /
 suppressed checkbox to the left of the visibility icon and item name. Partial
 checks identify dependent inactivity; visibility does not suppress an item.
 
-Component feedback tasks (7.8.5c/d and 7.8.7d/e): Extrude/Pad/Pocket in a component
+Component feedback tasks (7.8.5c/d and 7.8.7d/e):
+
+New component documents use the default title/file basename untitled001; further
+open documents reserve names case-insensitively and use untitled002, etc. Save As
+therefore suggests untitled001.cadprt for the first new document. Explicitly named
+documents and existing saved files retain their names; the root component's label
+remains separate from the document filename.
+The automatically created root part is Part001. New embedded part/component
+definitions use the next available Part002, Part003, etc., across the document,
+including nested additions. Add Component pre-fills that name and allows custom
+names. Reusing a definition adds an occurrence with the definition's label and
+does not consume another part number. Preserve existing/custom names and native
+component identities; these names do not change the component's part/assembly role.
+
+Extrude/Pad/Pocket in a component
 context opens an operation-first task with New Body/Add/Subtract, local profile,
 explicit target, length, reverse direction and Preview. OK commits one operation;
+the component task also restores native extrusion extent controls: One dimension,
+Two dimensions or Symmetric (total length, half each side); per-side Dimension,
+To first, To last, Up to surface, Up to shape or Through all; second-side length,
+limiting reference, signed end Offset and taper. Start offers Profile plane,
+Offset or Reference with a signed start offset. Custom direction accepts a numeric
+vector and Length along sketch normal; Refine result remains available. To first/
+last/Through all need an explicit target body. Whole multi-face shape limits need
+zero end offset; use one limiting face for an end offset. Pick/Clear and typed
+native object/face names collect local start/limit references without changing the
+profile list. Second-side fields appear only for Two dimensions. Automatic preview
+can be switched off; Preview remains available. Added volume is filled green,
+removed volume filled red; target transparency is temporary and returns when the
+preview clears or the task ends. The restored native options use the existing
+geometry engine without creating a Part Design Body container.
+for a sketch profile, Selected curves lists each collected curve. Add selected
+curves supports viewport/native multi-selection from that sketch; Remove, Clear
+and Use all revise the list. The first explicit curve/region pick replaces the
+default whole-sketch selection; subsequent picks add curves without duplicates.
+Pick closed regions in the view collects the clicked region's outer contour and
+immediate hole contours, including Sketcher's filled internal-face hits. Preview
+and OK require one connected region with optional holes; open/self-intersecting,
+touching/crossing contours and disconnected regions receive inline rejection.
+The chosen sketch is temporarily visible for picking and prior visibility returns
+on Cancel; successful OK hides the consumed sketch. Edits restore the saved subset.
 Cancel leaves no provisional document objects. Editing a published result opens its
 producer. Mode and target can change while preserving the published result identity;
 unsupported direct operation consumers or expressions require explicit review.
-New Sketch from Part Design or Sketcher chooses XY/XZ/YZ or a selected local planar
-face plus offset, then opens native Sketcher without requiring a Body. Model History
+New Sketch from Part Design or Sketcher temporarily shows the active component's
+native XY/XZ/YZ origin planes and their labels in the owning-file view. Clicking
+one selects its orientation in the task; the plane dropdown and selected local
+planar face plus offset remain available. OK/Cancel restore the previous origin
+and datum visibility; OK opens native Sketcher after the creation task closes,
+without a close-task confirmation or requiring a Body. Model History
 also uses native object editors and offers Rename and Convert to Dumb Object.
+Model History displays every component's origin as Origin. Newly created default
+labels use a component-local sequence starting at Sketch001, Body001, Extrude001,
+etc.; other components may show the same labels. Custom labels are preserved.
+Generated Body results are background objects: omit their rows from native Model
+and Model History, and show the producing Extrude as the public solid. Its eye and
+native visibility control display; geometry picks retain the internal result for
+engineering references. Delete Extrude removes its unused result; one Undo restores
+both. Internal results cannot be deleted separately. Convert to Dumb Object remains
+available on Extrude; Delete Parameters exposes the retained independent Body.
 Refresh retains row selection, expansion and scroll position. Broader acceptance
 and owner feedback remain pending.
 

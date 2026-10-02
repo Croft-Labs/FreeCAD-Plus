@@ -91,6 +91,14 @@ class ViewProvider(ExtensionContainer):
         """
         ...
 
+    def setTemporaryOriginPlanes(self, visible: bool, /) -> None:
+        """
+        Show a coordinate system's native planes and labels for a task.
+        Passing False restores the visibility saved on the first True call.
+        Only coordinate-system and Origin view providers support this method.
+        """
+        ...
+
     def canDragObject(self, obj: Any = None, /) -> bool:
         """
         Check whether the child object can be removed by dragging.

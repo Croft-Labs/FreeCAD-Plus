@@ -40,6 +40,7 @@
 #include "PythonWrapper.h"
 #include "SoFCDB.h"
 #include "SoFullPathHelper.h"
+#include "ViewProviderCoordinateSystem.h"
 
 // generated out of ViewProvider.pyi
 #include "ViewProviderPy.h"
@@ -192,6 +193,33 @@ PyObject* ViewProviderPy::isVisible(PyObject* args)
     PY_TRY
     {
         return Py::new_reference_to(Py::Boolean(getViewProviderPtr()->isShow()));
+    }
+    PY_CATCH;
+}
+
+PyObject* ViewProviderPy::setTemporaryOriginPlanes(PyObject* args)
+{
+    int visible;
+    if (!PyArg_ParseTuple(args, "p", &visible)) {
+        return nullptr;
+    }
+
+    auto* origin = dynamic_cast<Gui::ViewProviderCoordinateSystem*>(getViewProviderPtr());
+    if (!origin) {
+        throw Py::TypeError("Expected a coordinate-system or Origin view provider");
+    }
+
+    PY_TRY
+    {
+        if (visible) {
+            origin->setTemporaryVisibility(Gui::DatumElement::Planes);
+            origin->setPlaneLabelVisibility(true);
+        }
+        else {
+            origin->resetTemporaryVisibility();
+            origin->setPlaneLabelVisibility(false);
+        }
+        Py_Return;
     }
     PY_CATCH;
 }

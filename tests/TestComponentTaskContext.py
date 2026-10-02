@@ -47,10 +47,10 @@ class TestComponentTaskContext(unittest.TestCase):
         self.panel = Navigator.show(self.doc)
         self.window = self.panel.mdi.activeSubWindow()
         self.path = [self.second.ObjectId]
-        group = self.panel.structure.topLevelItem(0).child(0)
+        group = self.panel.structure.topLevelItem(0)
         self.panel.toggle_instances(group)
         self.panel.refresh()
-        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0).child(1))
+        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(1))
         self.panel.refresh()
         Gui.Selection.clearSelection()
 
@@ -117,6 +117,9 @@ class TestComponentTaskContext(unittest.TestCase):
         self.panel.new_sketch()
         task = SketchTask._task
         self.assertEqual(task.support, (self.box, "Face6"))
+        self.assertTrue(self.part.Origin.ViewObject.isVisible())
+        self.assertTrue(all(obj.ViewObject.isVisible() for obj in self.part.Origin.OriginFeatures
+                            if obj.isDerivedFrom("App::Plane")))
         task.reject()
         self.assertEqual(len(self.external.Objects), count)
         self.assert_origin()
@@ -124,8 +127,8 @@ class TestComponentTaskContext(unittest.TestCase):
         Gui.runCommand("Sketcher_NewSketch")
         task = SketchTask._task
         self.assertEqual(task.support, (self.box, "Face6"))
-        if not task.accept():
-            self.fail(task.status.text())
+        Gui.Control.activeTaskDialog().accept()
+        Gui.updateGui()
         self.assertEqual(App.ActiveDocument, self.external)
         self.assertTrue(Gui.activeDocument().getInEdit())
         self.assertEqual(Model.owner(task.result), self.part)

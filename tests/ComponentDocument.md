@@ -1,11 +1,49 @@
 # Component documents: owner and regression procedure
 
+October 1 incorporation: the existing September 28 build was rebuilt while closed.
+Run `RunComponentDocument.ps1 -FeedbackSmoke` for 39 feedback checks with source
+overlays disabled and exact loaded-payload/native Attributes verification.
+`-IntegrationSmoke` covers 24 display/edit/externalization/recovery/save/Undo/BOM
+checks; `-CoreSmoke` covers 39 ownership, geometry, conversion, suppression,
+copy/persistence and downstream-consumer checks. Use a fresh evidence directory
+and this fork executable; results/logs retain failures as well as final passes.
+The same desktop shortcut still targets the updated build. Physical owner
+acceptance remains separate from automated native GUI and screenshot checks.
+
+Models/assembly feedback (7.8.7u): check Models, Assembly Structure and Model History
+tab order. Models must be flat and show unused definitions plus assembly-use counts.
+Add Component produces one occurrence row, not an extra definition row. Attributes
+must retain native View/Data editing without a visible Model tree. Add a second
+instance, delete one and then the last: geometry/history must remain in Models with
+zero uses and be reusable through Add Instance. Check nested/repeated counts, Delete
+key and standard Edit > Delete, active-parent fallback, references becoming missing,
+Undo/Redo and save/reopen of unused models. Shared model child-link deletion affects
+all uses of that model. Run `RunComponentDocument.ps1 -ModelsPaneSmoke` after the
+grouped build; source overlays cannot verify native Delete/Attributes compilation.
+
+Background result feedback (7.8.7t): after the grouped update, create Extrude001.
+Its solid appears with no generated Body row in Model or Model History. Toggle
+Extrude visibility, edit its dimensions, create a downstream Add/Subtract, suppress
+and restore that feature, and save/reopen. Face picks must retain reference lineage.
+Delete an unused Extrude: its internal result disappears with it; Undo restores both.
+Internal-result deletion must be refused, including forced dependency deletion.
+Convert to Dumb Object / Delete Parameters exposes an independent Body again.
+Run `RunComponentDocument.ps1 -BackgroundResultSmoke` against the grouped payload;
+source-overlay tests do not validate the new native Std_Delete guard.
+
 Use the rebuilt FreeCAD Plus checkout, never the separately installed upstream
 application. [Roadmap 7.8](../ai-instructions/DEVELOPMENT_ROADMAP.md)
 owns acceptance status; the [component contract](../ai-instructions/architecture/COMPONENT_DOCUMENT_CONTRACT.md)
 owns requirements.
 
 ## Owner workflow
+
+In the updated 9/28 build (roadmap 7.8.7k): standard/Assembly **New Part** routes
+to **Add Component**, adding under the active root or child and retaining that
+parent's edit context. Adding a component from file returns to the original
+occurrence/window. October 1 native feedback/integration checks pass. Use the
+intended parent's Assembly Structure context menu **Add Component**. Do not replace
+build files while the owner is testing.
 
 Component BOM feedback (roadmap 7.8.7j): activate a component and choose **Bill of
 Materials** from Model History's context menu (or the existing Assembly command).
@@ -166,6 +204,35 @@ local target. Length, direction and preview are available before committing.
 Preview and Cancel leave no feature in the document. This iteration supports one
 solid output; disjoint/multiple-solid results are refused.
 
+Pending curve-selection feedback (7.8.7p): after the next grouped update, create
+one sketch with nested closed contours, a separate closed contour and an unused
+open line. Pick the area between the nested contours: Selected curves must list
+both boundaries; Preview/OK must create the annulus only. Clear and pick its edges
+individually for the same result; Remove and Use all revise the list. Selecting
+the separate contour as well, an open contour, crossing/self-crossing contours or
+curves from another sketch must not commit. Edit the sketch dimensions, edit the
+saved subset, Undo/Redo and save/reopen; the same body identity and chosen region
+must remain. Repeat on a rotated/offset sketch and component. Cancel restores
+visibility; successful OK hides the source. Four isolated source-overlay checks
+pass; staging/installed-runtime and physical owner acceptance are pending.
+Run `RunComponentDocument.ps1 -CurveProfileSmoke` against the updated fork.
+For pre-build source checks only, set `FREECAD_PLUS_PROFILE_SOURCE=1`; this loads
+repository Python in that isolated process and does not update the owner build.
+
+Pending restored controls (7.8.7q): after the grouped update, compare a one-dimension,
+two-dimension and symmetric extrusion. Symmetric length is the total span; the
+second-side length/type/reference is independent. Check To first/last, Up to
+surface/shape and Through all with a target where required. Move a limiting surface
+and check recompute; test signed end offsets, signed start offset/reference, taper,
+custom direction, normal-length measurement and Refine. Offsets to a whole
+multi-face shape require choosing one limiting face instead. Verify an Add preview
+shows only green added volume and Subtract only red removed volume; automatic
+preview and manual Preview agree. Target transparency and sketch visibility must
+restore on Cancel; successful OK hides consumed inputs. Edit an older simple
+extrusion, Undo/Redo and save/reopen while retaining its body and operation UUIDs.
+Ten source-overlay workflows pass including region selection; payload validation,
+copy/externalization, downstream face references and physical acceptance remain open.
+
 Double-click an operation or its result in Model History to edit it. Component
 Extrude opens the same task for profile/length/direction, mode and target changes,
 while retaining the published result identity. Expression-driven extrusion edits remain in the property editor.
@@ -173,6 +240,28 @@ Other supported objects use their native task editor. Context menus also offer
 Rename. History distinguishes explicit Suppressed, Inactive dependency and repair
 states; refresh preserves the selected row and expanded component branches. Creating
 an embedded component and its first occurrence is now one Undo step.
+
+New Sketch should display the active component's XY/XZ/YZ origin planes in the
+3D view with their labels. Pick each plane and verify the task selects the matching
+orientation; test OK and Cancel with previously hidden/visible origin items.
+Prior visibility must return. For an external component, the planes belong to
+its owning-file task view. Automated selection/visibility checks pass in the
+updated development build (roadmap 7.8.7m); physical owner picking remains open.
+
+Click the actual New Sketch OK button and verify Sketcher opens directly, with
+no "A dialog is already open in the task panel" confirmation and exactly one
+new sketch. Repeat with a selected local face in an external component; closing
+Sketcher must restore the originating occurrence/view. Earlier direct Python
+acceptance calls missed TaskView's deferred closure (roadmap 7.8.7n). The native
+OK-button regression now passes; retain this step for owner acceptance.
+
+New Sketch in Part Design or Sketcher now offers an independent component sketch
+whose first default label is Sketch001. Create sketches and bodies in two
+components in one file: each starts with Sketch001 and Body001, and only later
+items in the same component advance to 002. Every Origin row says Origin.
+Check custom names, Undo/Redo and save/reopen without changing native identities.
+Run `RunComponentDocument.ps1 -LocalNameSmoke` after the matching native rebuild;
+roadmap 7.8.7o is source-only until that grouped update.
 
 New Sketch in Part Design or Sketcher now offers an independent component sketch
 on XY/XZ/YZ or a selected planar face with offset, then opens the native editor.

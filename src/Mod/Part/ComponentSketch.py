@@ -31,6 +31,7 @@ def create(component, plane="XY plane", offset=0.0, support=None):
     with Model.transaction(component.Document, "New Sketch"):
         sketch = component.Document.addObject("Sketcher::SketchObject", "Sketch")
         Model.register_object(component, sketch)
+        sketch.Label = Model.next_label(component, "Sketch", sketch)
         if plane == "Selected planar face":
             sketch.AttachmentSupport = [(support[0], support[1])]
             sketch.MapMode = "FlatFace"

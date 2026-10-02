@@ -3,7 +3,8 @@ param(
     [Parameter(Mandatory=$true)][string]$BuildDirectory,
     [Parameter(Mandatory=$true)][string]$OutputDirectory,
     [switch]$ScriptsOnly,
-    [switch]$AssemblyConsumer
+    [switch]$AssemblyConsumer,
+    [ValidateRange(5,120)][int]$TimeoutMinutes = 30
 )
 $ErrorActionPreference = 'Stop'
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new build evidence directory.' }
@@ -18,7 +19,7 @@ $process = Start-Process -FilePath $CMake -ArgumentList $argsList -WindowStyle H
     -RedirectStandardOutput "$OutputDirectory\build.log" `
     -RedirectStandardError "$OutputDirectory\build-errors.log"
 $processHandle = $process.Handle
-$deadline = (Get-Date).AddMinutes(30)
+$deadline = (Get-Date).AddMinutes($TimeoutMinutes)
 $lastProgress = Get-Date
 $lastLength = 0
 while (-not $process.WaitForExit(1000)) {

@@ -6,15 +6,24 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 
 ## Ownership, instances and files
 
-- UI names: **Component Structure**, **Model History**, **Add Component**,
+- UI names: **Models**, **Assembly Structure**, **Model History**, **Attributes**, **Add Component**,
   **Add Reference Object**, **Convert to Dumb Object**, **Instances > Add Instance**,
   **Instances > Copy to New Part**, **Save to External File**.
   Documentation may say sub-component; UI calls every instance a component.
 - A component definition owns ordered history, evaluated result objects, child
   component instances and optional assembly constraints. Geometry and children
   may coexist. Bodies are results, never prerequisites for sketches or operations.
-- Component Structure starts at the root component, using the existing native Part
-  icon. Do not display a file/document wrapper row above it.
+- Models is the first tab: a flat, non-expandable inventory of owning-file component
+  definitions, including unused models and referenced external models. Show each
+  model's number of linked occurrences in the owning file's assembly, expanding
+  repeated nested uses. The file root is a model/context, not an implicit linked
+  instance, so it normally has count zero. Selection supplies native Attributes;
+  Edit opens the same model, including models with no placed instances. Add Instance
+  inserts that model into the active component without creating another definition.
+- Assembly Structure contains only linked occurrences; the root definition has no
+  row. The active model name above the tabs supplies root/edit context. The native
+  Model pane is replaced with Attributes, retaining the native View/Data editors.
+  Preserve native dock/command identifiers internally for layout compatibility.
 - Each `.cadprt` has one root component and embedded definitions, and may link
   definitions in other `.cadprt` files. New definitions are embedded by default.
   Definition identity is distinct from occurrence identity and labels/file paths.
@@ -28,7 +37,7 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   and transactions remain reusable infrastructure. A new component/result layer
   owns the semantic contracts; tree flattening alone cannot implement them.
 
-## Component Structure and representation
+## Assembly Structure and representation
 
 - The Components panel identifies the active component, without a filename/path or
   Add Component / Add Reference Object buttons. Creation actions live in context
@@ -43,6 +52,16 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   occurrences; Copy to New Part requires an individual occurrence.
   Expanded instance rows identify the exact active occurrence; the grouped row
   remains highlighted when it contains that occurrence.
+- Delete Instance/Instances and Delete key remove only represented owning links,
+  never definitions, their geometry/history, or child definitions. Deleting a shared
+  model's child link changes that child in all uses of the shared parent model,
+  consistent with definition ownership. Deleting every placed use leaves Models
+  showing the reusable definition with zero instances. Undo/Redo and save/reopen
+  preserve unused definitions. References to removed instances keep their identity
+  and become missing-source items for repair; cached geometry is not current.
+  The generic Delete command also protects definitions and routes precise occurrence
+  picks to link deletion. Removing the active occurrence returns editing to its
+  nearest surviving parent. Models does not offer destructive definition deletion.
 - **Edit** is the first context action; double-click also activates the definition
   for editing. **Add Component** adds to that definition. Omit **Open Component in
   Tab** on the root row, which is already its own view. Use an **Instances** submenu
@@ -68,11 +87,42 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   a shared definition's child applies to all uses of that definition. Excluding an
   occurrence omits that branch from BOM counting without changing display or mass
   settings. Component BOM rows represent components, not their modeling history.
-- An **Assembly Constraints** grouping item appears first under its component
-  only when constraints exist. It contains constraints, not real child components.
+- Definition-owned constraints belong in Model History, not among occurrence rows
+  in Assembly Structure.
 
 ## Model History and evaluated objects
 
+Automatically created root definitions are labeled Part001; subsequent new
+definitions default to the next available PartNNN within the owning document.
+Nested definitions share that sequence. Explicit labels remain authoritative.
+Occurrences reuse their definition's label and existing instance-number display;
+they do not create a new part number. Native object names/UUIDs retain their roles.
+
+- Component Extrude may consume a subset of curves from one sketch. The selected
+  contours must be closed, non-self-intersecting, mutually non-touching and form
+  one connected region with optional holes. Unselected sketch geometry is unused.
+  Picking an interior region collects its outer boundary and immediate holes.
+  Persist selected subelements as a native LinkSub on a component-owned Internal
+  profile, not copied independent curves or label references. Recompute validates
+  the subset and invalid/missing inputs require repair. Keep the published result
+  identity through edits; the internal profile is not a Model History item.
+- Component Extrude extent restoration reuses the native Pad geometry engine
+  directly under a definition, without an auxiliary PartDesign::Body. Preserve
+  native extent/start/limit properties and dependencies. Selected profiles retain
+  the sketch coordinate frame and signed normal as native Part2DObjectPython
+  helpers; use exact rigid transforms that preserve analytic curves. Legacy simple
+  Extrusions/Booleans remain readable and migrate only on reviewed editing, with
+  stable operation/result UUIDs and transactional rollback/Undo. Preview overlays
+  and temporary target transparency never persist as model geometry.
+- Every component always shows its native **Origin** as the first Model History
+  item, including empty components and isolated views. It is permanent and cannot
+  be suppressed; its visibility can be toggled. Reuse the existing origin identity.
+- The Components pane displays that item as **Origin**, without a document-wide
+  numeric suffix. Default object/operation labels are numbered within their owning
+  component, starting at **001**: Sketch001, Body001, Extrude001, etc. A second
+  component starts its own sequence at 001 even in the same file. Preserve custom
+  labels; reserve labels already used in that component. Native object names and
+  UUIDs remain unique identities, and references never resolve by these labels.
 - An **item** means an object or an operation. Show a suppression checkbox, then
   a visibility icon, then the item name. Checked means active, unchecked means
   explicitly suppressed, and partially checked means inactive because of an input.
@@ -80,6 +130,14 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 - Display objects and operations in creation/history order. Reusable inputs and
   result identities are separate from producing operations. Solid/sheet results
   expose geometry; editable parameters remain on their operations.
+- Owner feedback 7.8.7t: generated solid Body results are protected background
+  objects, omitted from native Model and Model History. Their producing operation
+  (for example Extrude001) is the public solid with visibility/edit/delete controls.
+  Engineering picks retain the stable internal result identity. Existing results
+  adopt this display without UUID changes. Deleting an operation removes its unused
+  result in the same Undo transaction; referenced results stay unavailable for
+  explicit repair. GUI deletion of background results is blocked, including forced
+  deletion. Freezing exposes the retained result as an independent dumb Body again.
 - Suppressing an operation disables its dependent operations, not independent
   branches. Restore the preceding eligible body state; never silently reconnect
   dependent features to different geometry. Unsuppress preserves explicit user

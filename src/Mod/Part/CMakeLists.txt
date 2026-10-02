@@ -15,6 +15,9 @@ set(Part_Scripts
     Init.py
     ComponentModel.py
     ComponentExtrude.py
+    ComponentExtent.py
+    ComponentProfile.py
+    ComponentResultView.py
     ComponentSketch.py
     CadDocument.py
     InterferenceCheck.py

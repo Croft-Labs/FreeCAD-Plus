@@ -59,9 +59,8 @@ class ControlSingleton;
 namespace DockWnd
 {
 
-/** Combo View
- * is a combination of a tree and property view for
- * integrated user action.
+/** Native Attributes view.
+ * Retains the property editor and internal tree command infrastructure.
  */
 class GuiExport ComboView: public Gui::DockWindow
 {

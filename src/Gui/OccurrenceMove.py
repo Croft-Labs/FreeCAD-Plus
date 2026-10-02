@@ -127,7 +127,7 @@ def copy_occurrence(link, expected, label, mode, frame, vector, angle=0., pivot=
 
 class Ghost:
     """A non-pickable, view-owned overlay; never a document object or transaction."""
-    def __init__(self, shape):
+    def __init__(self, shape, color=None, filled=False, transparency=0.):
         from pivy import coin
         view = Gui.activeDocument().activeView()
         self.root = view.getSceneGraph()
@@ -136,11 +136,12 @@ class Ghost:
         pick.style = coin.SoPickStyle.UNPICKABLE
         pick.setOverride(True)
         style = coin.SoDrawStyle()
-        style.style = coin.SoDrawStyle.LINES
+        style.style = coin.SoDrawStyle.FILLED if filled else coin.SoDrawStyle.LINES
         style.lineWidth = 2
         style.setOverride(True)
         material = coin.SoMaterial()
-        material.diffuseColor = (0., 0.85, 0.8)
+        material.diffuseColor = color if color is not None else (0., 0.85, 0.8)
+        material.transparency = transparency
         material.setOverride(True)
         stream = coin.SoInput()
         stream.setBuffer(shape.writeInventor())

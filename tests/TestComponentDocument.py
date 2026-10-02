@@ -14,7 +14,8 @@ import FreeCAD as App
 import Part
 import Sketcher
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src/Mod/Part"))
+if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1":
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src/Mod/Part"))
 import ComponentModel as Model
 import CadDocument
 
@@ -613,15 +614,16 @@ class TestComponentDocument(unittest.TestCase):
         self.box()
         panel = navigator.show(self.doc)
         try:
-            self.assertEqual(panel.tabs.tabText(0), "Component Structure")
-            self.assertEqual(panel.tabs.tabText(1), "Model History")
+            self.assertEqual(panel.tabs.tabText(0), "Models")
+            self.assertEqual(panel.tabs.tabText(1), "Assembly Structure")
+            self.assertEqual(panel.tabs.tabText(2), "Model History")
             self.assertEqual(panel.structure.topLevelItemCount(), 1)
             root = panel.structure.topLevelItem(0)
-            self.assertEqual(root.text(0), self.root.Label)
+            self.assertEqual(root.text(0), self.child.Label)
             self.assertFalse(root.icon(0).isNull())
-            self.assertEqual(root.childCount(), 1)
+            self.assertEqual(root.childCount(), 0)
             result = next(o for o in self.child.Group if getattr(o, "ComponentRole", "") == "Result")
-            self.assertEqual(list(self.link.ViewObject.LinkView.SubNames), [result.Name + "."])
+            self.assertEqual(list(self.link.ViewObject.LinkView.SubNames), [Model.display_object(result).Name + "."])
             Model.set_representation(self.root, [self.link.ObjectId], "Hidden")
             panel.refresh()
             self.assertIsNone(self.link.ViewObject.LinkView.LinkedView)
@@ -629,15 +631,15 @@ class TestComponentDocument(unittest.TestCase):
             Model.set_representation(self.root, [self.link.ObjectId])
             panel.refresh()
             root = panel.structure.topLevelItem(0)
-            panel.activate_item(root.child(0))
+            panel.activate_item(root)
             panel.refresh()
             self.assertEqual(panel.active_key, navigator.object_key(self.child))
-            self.assertEqual(panel.history.topLevelItemCount(), 2)
-            panel.tabs.setCurrentIndex(0)
+            self.assertEqual(panel.history.topLevelItemCount(), 2)  # Origin plus public operation.
+            panel.tabs.setCurrentWidget(panel.structure)
             panel.resize(560, 700)
             Gui.updateGui()
             panel.grab().save(str(self.output / "component-structure.png"))
-            panel.tabs.setCurrentIndex(1)
+            panel.tabs.setCurrentWidget(panel.history)
             Gui.updateGui()
             panel.grab().save(str(self.output / "model-history.png"))
             count = len(self.doc.Objects)
@@ -645,8 +647,8 @@ class TestComponentDocument(unittest.TestCase):
             panel.refresh()
             self.assertEqual(len(self.doc.Objects), count)
             self.assertEqual(isolated.getActiveObject("part"), self.child)
-            self.assertEqual(panel.structure.topLevelItem(0).text(0), self.child.Label)
-            self.assertEqual(list(panel.component_views[0]["snapshot"].SubNames), [result.Name + "."])
+            self.assertEqual(panel.structure.topLevelItemCount(), 0)
+            self.assertEqual(list(panel.component_views[0]["snapshot"].SubNames), [Model.display_object(result).Name + "."])
             Gui.updateGui()
             from pivy import coin
             bounds = coin.SoGetBoundingBoxAction(coin.SbViewportRegion(640, 480))

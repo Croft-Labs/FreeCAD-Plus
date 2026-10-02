@@ -1053,6 +1053,22 @@ void DocumentObject::onBeforeChange(const Property* prop)
     signalBeforeChange(*this, *prop);
 }
 
+bool DocumentObject::allowDuplicateLabel() const
+{
+    const auto* role = dynamic_cast<const PropertyString*>(getPropertyByName("ComponentRole"));
+    if (!role || (role->getStrValue() != "Object" && role->getStrValue() != "Operation"
+                  && role->getStrValue() != "Result" && role->getStrValue() != "Reference"
+                  && role->getStrValue() != "Occurrence")) {
+        return false;
+    }
+    const auto* component = GeoFeatureGroupExtension::getGroupOfObject(this);
+    const auto* parentRole = component
+        ? dynamic_cast<const PropertyString*>(component->getPropertyByName("ComponentRole"))
+        : nullptr;
+    // Component-local labels are presentation; native names and UUIDs remain identities.
+    return parentRole && parentRole->getStrValue() == "Definition";
+}
+
 std::vector<std::pair<Property*, std::unique_ptr<Property>>>
 DocumentObject::onProposedLabelChange(std::string& newLabel)
 {

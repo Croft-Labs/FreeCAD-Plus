@@ -6,6 +6,7 @@ History ordering is metadata: it must not introduce reverse dependency edges.
 """
 from contextlib import contextmanager
 import json
+import re
 from pathlib import Path
 import uuid
 
@@ -58,7 +59,19 @@ def definitions(doc):
     return [o for o in doc.Objects if is_component(o)]
 
 
-def _definition(doc, label):
+def next_part_label(doc):
+    """Reserve visible part names throughout this component document."""
+    labels = {obj.Label.casefold() for obj in doc.Objects}
+    labels.update(obj.LinkedObject.Label.casefold() for obj in doc.Objects
+                  if getattr(obj, "ComponentRole", "") == "Occurrence" and obj.LinkedObject)
+    number = 1
+    while f"Part{number:03d}".casefold() in labels:
+        number += 1
+    return f"Part{number:03d}"
+
+
+def _definition(doc, label=None):
+    label = label or next_part_label(doc)
     obj = doc.addObject("App::Part", "Component")
     obj.Label = label
     _identity(obj, "Definition")
@@ -70,9 +83,19 @@ def _definition(doc, label):
     return obj
 
 
-def new_document(label="Component"):
-    doc = App.newDocument()
-    doc.Label = label
+def new_document(label=None):
+    if label is None:
+        occupied = {value.casefold() for existing in App.listDocuments().values()
+                    for value in (existing.Name, existing.Label, Path(existing.FileName).stem)}
+        number = 1
+        while "untitled" + f"{number:03d}" in occupied:
+            number += 1
+        doc = App.newDocument("untitled" + f"{number:03d}")
+        doc.Label = "untitled" + f"{number:03d}"
+        label = next_part_label(doc)
+    else:
+        doc = App.newDocument()
+        doc.Label = label
     doc.UndoMode = 1
     initialize(doc, label)
     doc.recompute()
@@ -95,7 +118,7 @@ def initialize(doc, label):
     return meta
 
 
-def create_definition(doc, label):
+def create_definition(doc, label=None):
     metadata(doc)
     with transaction(doc, "Create component definition"):
         obj = _definition(doc, label)
@@ -110,6 +133,44 @@ def children(component):
 
 def owner(obj):
     return obj.getParentGeoFeatureGroup()
+
+
+def instance_counts(root):
+    """Count placed occurrences, expanding repeated parents without counting definitions."""
+    counts = {}
+    def visit(component, ancestors):
+        key = (component.Document.Name, component.ObjectId)
+        if key in ancestors:
+            return
+        for link in children(component):
+            definition = link.LinkedObject
+            if definition is not None:
+                counts[definition] = counts.get(definition, 0) + 1
+                visit(definition, ancestors | {key})
+    visit(root, set())
+    return counts
+
+
+def remove_instances(occurrences):
+    """Remove only owning links; retain models, geometry and reference identities."""
+    occurrences = list(dict.fromkeys(occurrences))
+    if not occurrences:
+        return
+    doc = occurrences[0].Document
+    if any(obj.Document != doc or getattr(obj, "ComponentRole", "") != "Occurrence"
+           or not is_component(owner(obj)) for obj in occurrences):
+        raise ValueError("Select linked instances from one owning file.")
+    ids = {obj.ObjectId for obj in occurrences}
+    with transaction(doc, "Delete assembly instances"):
+        for component in definitions(doc):
+            overrides = json.loads(component.RepresentationOverrides)
+            component.RepresentationOverrides = json.dumps(
+                {path: value for path, value in overrides.items() if not ids.intersection(path.split("/"))})
+        for obj in occurrences:
+            doc.removeObject(obj.Name)
+        # References keep their own identity, but no longer have a placed source.
+        for component in definitions(doc):
+            activate(component, strict=False)
 
 
 def _reachable(start, target, visited=None):
@@ -135,12 +196,12 @@ def add_component(parent, definition=None, label=None, placement=None):
         raise ValueError("Save the parent as .cadprt before adding an external component.")
     with transaction(parent.Document, "Add Component"):
         if definition is None:
-            definition = _definition(parent.Document, label or "Component")
+            definition = _definition(parent.Document, label)
         link = parent.Document.addObject("App::Link", "ComponentInstance")
-        link.setLink(definition)
         parent.addObject(link)
-        link.Label = label or definition.Label
         _identity(link, "Occurrence")
+        link.setLink(definition)
+        link.Label = label or definition.Label
         peers = [obj for obj in children(parent) if obj != link and obj.LinkedObject == definition]
         for index, peer in enumerate(peers, 1):
             if not hasattr(peer, "InstanceNumber"):
@@ -158,16 +219,28 @@ def add_component(parent, definition=None, label=None, placement=None):
     return link
 
 
+def next_label(component, base, exclude=None):
+    """Allocate a default label within one definition, independent of its file."""
+    labels = {obj.Label for obj in component.Group if obj != exclude}
+    number = 1
+    while f"{base}{number:03d}" in labels:
+        number += 1
+    return f"{base}{number:03d}"
+
+
 def register_object(component, obj, role="Object", result=False):
     if not is_component(component) or component.Document != obj.Document:
         raise ValueError("An object and its component must belong to the same file.")
     if owner(obj) not in (None, component):
         raise ValueError("An object cannot belong to two components.")
+    automatic = not hasattr(obj, "ObjectId") and obj.Label == obj.Name
     if not hasattr(obj, "ObjectId"):
         _identity(obj, role)
     elif obj.ComponentRole != role:
         raise ValueError("The object's existing role cannot be changed implicitly.")
     component.addObject(obj)
+    if automatic:
+        obj.Label = next_label(component, re.sub(r"\d+$", "", obj.Name), obj)
     if obj.Name not in component.ModelHistory:
         component.ModelHistory = list(component.ModelHistory) + [obj.Name]
     if result and obj.Name not in component.ResultObjects:
@@ -235,6 +308,14 @@ class PersistentProxy:
 
 class ResultProxy(PersistentProxy):
     def execute(self, obj):
+        try:
+            self.update_result(obj)
+        finally:
+            if App.GuiUp:
+                import ComponentResultView
+                ComponentResultView.sync(obj)
+
+    def update_result(self, obj):
         if getattr(obj, "UserSuppressed", False):
             if not obj.Frozen:
                 obj.Shape = Part.Shape()
@@ -261,19 +342,52 @@ class ResultProxy(PersistentProxy):
         obj.ResultStatus = "Ready"
 
 
+def background_result(obj):
+    return (getattr(obj, "ComponentRole", "") == "Result"
+            and getattr(obj, "BackgroundResult", False) and not getattr(obj, "Frozen", False))
+
+
+def display_object(obj):
+    return obj.Producer if background_result(obj) and obj.Producer is not None else obj
+
+
+def result_for_operation(obj):
+    if getattr(obj, "ComponentRole", "") != "Operation":
+        return obj
+    results = [candidate for candidate in obj.InList
+               if getattr(candidate, "ComponentRole", "") == "Result"
+               and getattr(candidate, "Producer", None) == obj and background_result(candidate)]
+    return results[0] if len(results) == 1 else obj
+
+
+def prepare_result_display(component):
+    """Adopt existing published bodies without replacing their reference identities."""
+    if not App.GuiUp:
+        return
+    import ComponentResultView
+    for obj in history(component):
+        if (getattr(obj, "ComponentRole", "") == "Result" and hasattr(obj, "Producer")
+                and obj.Producer is not None and not obj.Frozen and obj.GeometryKind == "Body"
+                and obj.OutputProperty == "Shape"):
+            if not hasattr(obj, "BackgroundResult"):
+                _property(obj, "Bool", "BackgroundResult", True, True)
+            ComponentResultView.install(obj)
+
+
 def publish_result(component, operation, label="Body", output_property="Shape"):
     if owner(operation) != component:
         raise ValueError("The operation must belong to the active component.")
     shape = getattr(operation, output_property)
     kind = _shape_kind(shape)
     result = component.Document.addObject("Part::FeaturePython", "Result")
-    result.Label = label
     register_object(component, result, "Result", True)
+    result.Label = next_label(component, "Body", result) if label == "Body" else label
     _property(result, "Link", "Producer", operation, True)
     _property(result, "String", "OutputProperty", output_property, True)
     _property(result, "Bool", "Frozen", False, True)
     _property(result, "String", "GeometryKind", kind, True)
     _property(result, "String", "ResultStatus", "Unavailable", True)
+    _property(result, "Bool", "BackgroundResult", kind == "Body" and output_property == "Shape", True)
     result.Proxy = ResultProxy()
     destructive = {"Part::Cut", "Part::Fuse", "Part::MultiFuse", "Part::Common",
                    "Part::MultiCommon", "Part::Fillet", "Part::Chamfer"}
@@ -289,7 +403,11 @@ def publish_result(component, operation, label="Body", output_property="Shape"):
     if App.GuiUp:
         result.ViewObject.Proxy = 0
         result.Visibility = True
-        operation.Visibility = False
+        if background_result(result):
+            import ComponentResultView
+            ComponentResultView.install(result)
+        else:
+            operation.Visibility = False
     return result
 
 
@@ -300,8 +418,8 @@ def extrude(component, profile, length, label="Extrude"):
         raise ValueError("Extrusion length must be positive.")
     with transaction(component.Document, "Extrude"):
         operation = component.Document.addObject("Part::Extrusion", "Extrude")
-        operation.Label = label
         register_object(component, operation, "Operation")
+        operation.Label = next_label(component, "Extrude", operation) if label == "Extrude" else label
         operation.Base = profile
         operation.DirMode = "Normal"
         operation.LengthFwd = length
@@ -624,6 +742,9 @@ def delete_parameters(component, result):
         result.Placement = shape.Placement
         result.Shape = shape
         result.ResultStatus = "Ready"
+        if App.GuiUp:
+            import ComponentResultView
+            ComponentResultView.install(result)
         removed_names = {o.Name for o in removable}
         component.ModelHistory = [n for n in component.ModelHistory if n not in removed_names]
         component.ResultObjects = [n for n in component.ResultObjects if n not in removed_names]
@@ -899,10 +1020,17 @@ def externalize(definition, filename):
             copied_component.ResultObjects = [mapping[name].Name for name in component.ResultObjects]
         metadata(external).RootComponent = new_root
         external.removeObject(empty.Name)
-        # copyObject may disambiguate the root label against the temporary root.
-        # Keep the user's component names after that temporary object is gone.
-        for component in closure:
-            mapping[component.Name].Label = component.Label
+        # Native copying may restore an occurrence before its definition and
+        # disambiguate the definition's label. Release occurrence labels first,
+        # then restore definitions/members before their duplicate-allowed links.
+        linked = [obj for obj in originals if getattr(obj, "ComponentRole", "") == "Occurrence"]
+        for obj in linked:
+            mapping[obj.Name].Label = mapping[obj.Name].Name
+        for obj in originals:
+            if getattr(obj, "ComponentRole", "") and obj not in linked:
+                mapping[obj.Name].Label = obj.Label
+        for obj in linked:
+            mapping[obj.Name].Label = obj.Label
         if App.GuiUp:
             new_root.Visibility = True
         external.recompute()
@@ -1035,6 +1163,11 @@ class ComponentObserver:
                     continue
                 changed = False
                 for component in definitions(doc):
+                    for obj in list(component.Group):
+                        if (background_result(obj) and obj.Producer is None
+                                and not any(consumer != component for consumer in obj.InList)):
+                            doc.removeObject(obj.Name)
+                            changed = True
                     members = {o.Name for o in component.Group}
                     ordered = [n for n in component.ModelHistory if n in members]
                     results = [n for n in component.ResultObjects if n in members]

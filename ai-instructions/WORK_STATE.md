@@ -1,5 +1,251 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 1: pending feedback incorporated into the closed 9/28 build
+
+The owner closed FreeCAD and authorized incorporation/testing. The existing
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\build` now contains all
+pending component feedback, including 7.8.7k and 7.8.7m-u. The desktop
+`FreeCAD.exe - Shortcut.lnk` target and working directory were verified to point
+to this build's `bin\FreeCAD.exe` and `bin`; use that same shortcut. Owner
+preferences were preserved; validation used hidden fork processes and isolated
+user/system settings. No installer, release or publication was performed.
+
+Grouped native App/Gui/PartDesignGui/SketcherGui/resource/PartScripts/AssemblyGui/
+AssemblyTests build completed. The initial 30-minute wrapper deadline expired
+while dependencies were still compiling, without a compiler error; all child
+processes exited before resuming the same incremental directory. The build runner
+now accepts bounded `-TimeoutMinutes`; completion with 45 minutes passed in
+`D:\Temp\Office-PC\freecad-feedback-build-20261001-completion`. Subsequent
+script/resource staging passed in `freecad-feedback-build-20261001-title-fix`,
+`freecad-feedback-build-20261001-integration-fixes`, and
+`freecad-feedback-build-20261001-closed-view-fix` under that same temp parent.
+The configuration has BUILD_SHOW off; the runner stages its required Python
+visibility helpers. Source checkout and binary cache source agree.
+
+Native validation (no source overlay):
+- `freecad-feedback-validation-20261001-final`: 39 feedback checks, exact runtime
+  payload hashes/paths for all eleven loaded changed modules, and compiled native
+  Attributes title/hidden tree verification. Covers actual New Sketch/OK commands,
+  three origin planes, numbering/local duplicate-label permission, selected curves/
+  connected regions with holes, native extrusion limits/offsets, colored previews,
+  protected background results, Models/Assembly deletion, task and selection context.
+- `freecad-feedback-integration-20261001-final`: all 24 display/edit/externalization/
+  file/reference-recovery/save/Undo/BOM checks pass.
+- `freecad-feedback-core-20261001-verified`: all 39 ownership/geometry/conversion/
+  suppression/copy/persistence and Draft/CAM/TechDraw consumer checks pass. Loaded
+  backend/GUI modules verified in the build and equal source; TestComponentDocument
+  no longer unconditionally puts repository Python ahead of built modules.
+
+Validation found and fixed native document title digit stripping (explicit Label),
+wrong-window isolated-view context assignment, closed-view cache reuse after native
+name reuse, and copied definition labels colliding with copied occurrences. The
+reference-error expectation follows its numbered label; conversion tests explicitly
+refresh delayed reference snapshots before publishing downstream evaluated geometry.
+The final 102 automated checks pass with process exit zero. Expected refusal/broken-
+fixture/suppression diagnostics are retained; no unresolved callback exceptions.
+Compiled UI captures for origin planes, flat Models and green/red Extrude volumes
+were reviewed. Physical owner acceptance and broader unscoped workflows remain
+separate; roadmap acceptance boxes stay open. Native validation evidence/logs and
+failed intermediate directories remain under `D:\Temp\Office-PC`.
+
+SHA256 payload identities:
+- FreeCAD.exe: `784D47E370F6E25EBC4674AB630C044DE665E19B8EE83D0041F066742DAD7AB6`
+- FreeCADApp.dll: `2F7F705F89AAB1449DF9BA192512AB0EE30469FA4F7A58A83142608EA84B3F3C`
+- FreeCADGui.dll: `96C60B1F008599588D18A6116AEE8CB9F369AF319A07C3881E2E9B5F7894FAEC`
+- PartDesignGui.pyd: `27CBD3A92F86A55FB21F9ED78AFB269637FAE41B822EAACA161856AA137713D5`
+- SketcherGui.pyd: `CF370F118D1C2CF2CC108CBC66620B500B118D61EC97AA9842721178D44652DA`
+
+## Earlier source-only feedback evidence (superseded by incorporation above)
+
+Pending owner feedback 7.8.7u replaces the duplicate public definition/occurrence
+hierarchy. Components tabs: Models (flat, first), Assembly Structure (linked rows
+only, no root model row), Model History. Models retains owning-file unused models
+and referenced external definitions; counts expand linked nested uses from the file
+root (root context itself has zero instances). Edit opens unused models; Add Instance
+reuses them in the active model. Attributes retains the native View/Data editors;
+ComboView keeps only hidden native tree infrastructure, with existing identifiers
+preserved for saved layouts. Native Std_Delete routes precise occurrence selections
+through ComponentNavigator.delete_selected_instances and refuses definition deletion.
+Context/key deletion is source-validated: remove owning links, retain definitions/
+geometry/UUIDs, clean owning-file representation overrides, invalidate local missing
+references, restore nearest active parent. Shared-parent child deletion applies to
+all parent uses, as before. Six ModelsPaneSmoke source-overlay workflows pass,
+exit 0/empty stderr in `D:\Temp\Office-PC\freecad-models-pane-20261001-undo`:
+one-add/one-row, flat inventory/counts, Attributes tabs/hidden tree, all-instance
+deletion/Undo/reopen/reuse, nested counts/reference missing-source Undo/Redo,
+keyboard deletion, active fallback, unused editing and standard-delete Python adapter.
+Models/Assembly screenshots reviewed. Four BackgroundResultSmoke checks also pass
+in `D:\Temp\Office-PC\freecad-models-background-20261001` (expected deletion warning).
+Prior navigator tests updated for root-row removal; syntax/whitespace checks pass.
+No staging/build/publication. Next grouped Gui/resource build must validate native
+ComboView/Attributes, Std_Delete adapter/definition guard, then ModelsPaneSmoke,
+selection/display/context/task/save/recovery suites without overlay. Broader external
+deletion/representation/consumer acceptance remains pending; running payload unchanged.
+
+Pending owner feedback 7.8.7t: generated solid Body results are protected background
+objects, hidden in native Model/Model History. The producing operation renders the
+solid and supplies public visibility/edit/delete controls. Stable result geometry,
+UUIDs, lineage and reference targets remain intact; operation picks map to results.
+Existing results adopt display; frozen dumb Bodies remain public. Deleting an
+operation cleans unused results in the same Undo transaction; referenced results
+retain unavailable identity for repair. Python GUI deletion veto tested; native
+Std_Delete also filters forced internal-result deletion before dependency prompts.
+Four source-overlay BackgroundResultSmoke checks pass in
+`D:\Temp\Office-PC\freecad-background-result-20261001-final4`: actual Std_Delete,
+Undo, hidden rows/paths, visibility, adoption, conversion, suppression, downstream
+Subtract and .cadprt reopen. Expected deletion warning only; no callback exceptions.
+Ten CurveProfileSmoke regressions pass in
+`D:\Temp\Office-PC\freecad-background-result-parity-20261001-final` (empty stderr).
+Native guard unbuilt/unverified: include ComponentResultView.py in the grouped
+update, run both suites without overlay and check linked/copy/externalized display.
+No staging/publication; owner-running build unchanged.
+
+Pending owner feedback 7.8.7s: root default Part001; embedded/nested definitions
+use the next available Part002/003/etc. within the document. Add Component's Name
+prompt is pre-filled and remains editable. Open/saved labels, external definition
+labels and custom names are reserved. Occurrences reuse the definition label;
+native duplicate-label permission now also covers marked component-owned
+Occurrences, assigned before linking/naming so they do not acquire a new part
+number. Existing labels/identities are not migrated. Source-only native New/Add
+command checks, nested/gap/reserved/custom numbering and .cadprt identity reopen
+pass in `D:\Temp\Office-PC\freecad-default-part-names-20261001-overlay`.
+That isolated old-engine check enabled duplicate labels only in its test profile
+to simulate the pending native occurrence permission; it does not validate the
+compiled narrow permission. LocalNameSmoke adds a default-preference regression
+for definitions/repeated occurrences/legacy uniqueness. Native App build, that
+regression and AddComponentSmoke remain pending the grouped update. No staging
+or publication; owner preferences and running build remain unchanged.
+
+Pending owner feedback 7.8.7r: new-document default basename/title untitled001,
+then untitled002, etc., reserving open native names, labels and saved basenames
+case-insensitively. Explicit labels and root component labels remain separate.
+Actual Std_New twice passes with repository ComponentModel loaded only in an
+isolated process; both native names/titles match, FileName remains empty and a
+custom Bracket label remains. Evidence: `D:\Temp\Office-PC\freecad-untitled-default-20261001`.
+No staging/build/publication; queued for the same feedback batch.
+
+Pending owner feedback 7.8.7q restores component Extrude parity. The task uses the
+existing native PartDesign::Pad extrusion engine directly in the component (no
+PartDesign::Body container), exposing one/two dimensions, symmetric total length,
+Dimension/To first/To last/Up to surface/Up to shape/Through all, independent
+second-side extents, signed start/end offsets, start reference, taper, numeric
+custom direction, normal-length measurement, refinement and automatic preview.
+Filled green previews show added volume; red previews show removed material,
+with temporary target transparency restored on change/Cancel/OK. Existing simple
+Part::Extrusion and Boolean operations remain readable; reviewed editing migrates
+to the native engine while preserving operation/result UUIDs and Undo/Redo.
+Selected profiles are native Part2DObjectPython helpers retaining the sketch's
+signed normal/local frame through exact rigid transforms; earlier face-only
+helpers could invert an XZ sketch normal. Ten source-overlay CurveProfileSmoke
+workflows pass, exit 0 and empty stderr, including placement/center/volume checks,
+all extent types, surface movement, offsets, custom direction/taper, edit migration,
+Undo/Redo, save/reopen, actual native OK, automatic preview colors and appearance
+cleanup. Evidence: `D:\Temp\Office-PC\freecad-extrude-parity-20261001-frame3`;
+green/red captures reviewed. Syntax/whitespace checks pass. No build staging or
+publication; owner-running payload unchanged. Next grouped build must include
+ComponentExtent.py/ComponentProfile.py and GUI resources, then rerun without
+source overlay and perform relevant selection/history/copy/externalization checks.
+Physical acceptance and downstream face-reference/copy behavior remain pending.
+
+Pending owner feedback batch also includes 7.8.7p: selected sketch curves for
+component Extrude. The task lists curves with Add selected curves, Remove, Clear
+and Use all; clicking a filled sketch region collects its outer and hole contours.
+All selected contours must belong to one sketch, be closed/non-self-intersecting,
+and describe one connected region with optional holes (owner clarification).
+An internal native LinkSub profile retains the subset through recompute/edit/save.
+Four source-overlay CurveProfileSmoke workflows pass against the September 28
+fork engine, including native mapped edge picks, filled-region hits, rotated
+sketch/component placement, actual task OK, volume/parameter updates, invalid
+contours, Undo/Redo and .cadprt reopen. Process exit 0, empty stderr; evidence:
+`D:\Temp\Office-PC\freecad-curve-profile-source-20261001-final`.
+This loads repository Python only in an isolated test process; no running-build
+staging or native build occurred. Rerun CurveProfileSmoke without the source
+overlay after the grouped build, alongside LocalNameSmoke and relevant component
+selection/copy/externalization checks. Installed payload and physical owner
+acceptance remain pending. No publication.
+
+Pending owner feedback batch: 7.8.7o, component-local labels. Source displays
+Origin without the native document suffix and allocates default Sketch001,
+Body001, Extrude001 and registered-object names within their owning component.
+Native duplicate-label permission is limited to marked component-owned members;
+global label preference, unique native names/UUIDs and user labels are preserved.
+Run LocalNameSmoke after the next grouped App/script build, together with relevant
+copy/externalization checks. New DocumentObject declaration requires dependent
+native targets to rebuild. Three regression workflows are prepared; syntax and
+whitespace pass. No staging/build/runtime or publication yet; the running owner
+copy is unchanged. Earlier saved non-Origin labels are not bulk-renamed.
+
+OWNER FEEDBACK UPDATE READY (2026-10-01): 7.8.7m/n are incorporated into the
+existing September 28 development build, at the owner's explicit request.
+No FreeCAD process was running before the update. Grouped native GUI/script build
+passed; four panel workflows and three external task-context workflows pass,
+zero failures/errors/skips, both processes exit 0 and empty stderr. Actual native
+OK-button acceptance enters Sketcher without the close-task confirmation and
+creates one sketch. Both New Sketch commands show native XY/XZ/YZ planes, accept
+plane picks and restore visibility on Cancel. Origin-plane captures reviewed.
+Evidence: `D:\Temp\Office-PC\freecad-plus-sketch-feedback-20261001` (`build/`,
+`panel-final/`, `task-context/`, `build-identity.json`). Three runtime Python modules
+match source; source HEAD `937cf0d8a5` plus local feedback changes and binary hashes
+identify this update. About retains an older stamp. Launch with the existing
+desktop shortcut; executable path remains the September 28 build below.
+Physical owner acceptance and broader qualification remain pending. No installer
+or publication. Preserve this copy while the owner tests and batch new feedback.
+
+Built feedback batch includes 7.8.7n: the owner reproduced New Sketch OK
+opening a close-task confirmation. TaskView defers removal while its accept
+callback runs. Source queues Sketcher entry after that callback returns, checks
+the owning-file task is closed and restores context on failure. Panel and
+external task-context regressions now use the actual native OK-button path;
+the panel test detects/dismisses unexpected modal prompts. Earlier direct accept
+tests missed this case. The native button path now passes in the updated build;
+physical owner acceptance remains pending.
+
+Built feedback batch: 7.8.7m, New Sketch origin planes. Source now shows the
+active component's native XY/XZ/YZ planes and labels through a small binding to
+the existing coordinate-system temporary visibility service. Picking a native
+plane sets the task orientation. OK/Cancel restore prior origin/datum visibility
+and remove the selection observer. Panel and external-context regressions
+pass in PanelSmoke and TaskContextSmoke. FreeCADGui and the Python task were updated
+together with the matching ViewProvider binding. Syntax, binding generation and
+whitespace checks pass; physical viewport picking remains pending.
+
+OWNER FEEDBACK BUILD READY (2026-10-01): the owner explicitly requested a fresh
+build. No FreeCAD process was running before the grouped incremental build.
+The established development copy now includes the pending 7.8.7k/l changes below.
+Build and three AddComponentSmoke workflows passed, zero failures/errors/skips,
+process exit 0 and empty stderr. All three changed Python runtime modules match
+source. Evidence: `D:\Temp\Office-PC\freecad-plus-owner-build-20261001`, including
+`build/`, `smoke/` and `build-identity.json` (source HEAD `937cf0d8a5` plus local
+feedback changes and runtime hashes). Native About retains an older version stamp.
+Launch with the existing desktop `FreeCAD.exe - Shortcut`, targeting
+`D:\Temp\Office-PC\freecad-plus-validation-20260928\build\bin\FreeCAD.exe`.
+Ready for owner testing; broad regressions and physical GUI acceptance remain
+pending. No installer, release or publication. Preserve this feedback copy while
+the owner tests; batch further source changes until the next agreed update.
+
+Built feedback: roadmap 7.8.7l, Origin first in Model History.
+Source prepends the existing native component Origin without changing persisted
+feature lists/identities. Empty/root/child/isolated histories retain the row; its eye
+controls visibility, selection keeps the occurrence path, and suppression/conversion
+actions omit the permanent origin. Full Component permits its normally visible
+origin. Origin checks are folded into TestComponentAddCommand's workflows;
+older history-row assertions account for the new first row. Built/staged and
+covered by the three passing workflows above; owner acceptance remains pending.
+
+Built feedback batch: roadmap 7.8.7k, Add Part/Add Component ownership.
+Std_Part still created an unregistered App::Part and changed the native active
+binding. Source now routes standard and Assembly New Part through the component
+service (Add Component wording). Root/child/external ownership follows the native
+active component; the intended parent remains active. File insertion now restores
+the original window, root and occurrence binding on success, cancellation or error.
+Open tasks/unresolved parents are refused before mutation.
+Python syntax and whitespace checks pass. `TestComponentAddCommand.py` passed
+all three focused cases via `RunComponentDocument.ps1 -AddComponentSmoke` after
+the requested grouped native GUI/Assembly script build. Owner documents were
+untouched; no broad qualification or publication was performed.
+
+Last validated batch follows.
+
 Current feedback batch: roadmap 7.8.7j, native component BOM integration.
 Native BOMs count component occurrences, excluding owned history/geometry, honor
 IncludeInBOM independently of Part View/mass flags and use their owning component

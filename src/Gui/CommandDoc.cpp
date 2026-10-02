@@ -39,8 +39,10 @@
 #include <App/DocumentObject.h>
 #include <App/Expression.h>
 #include <App/GeoFeature.h>
+#include <App/PropertyStandard.h>
 #include <Base/Exception.h>
 #include <Base/FileInfo.h>
+#include <Base/Interpreter.h>
 #include <Base/Stream.h>
 #include <Base/Tools.h>
 
@@ -1627,6 +1629,13 @@ void StdCmdDelete::activated(int iMsg)
         // Fixes https://github.com/FreeCAD/FreeCAD/issues/23798
         focusBefore = QApplication::focusWidget();
 
+        // Component occurrence paths select through their root definition. Route
+        // them to the owning-link deletion adapter before generic object deletion.
+        Base::Interpreter().runString(
+            "from freecad.gui import ComponentNavigator\n"
+            "ComponentNavigator.delete_selected_instances()\n"
+        );
+
         // Ensure that the document from which we send the command
         // can undo it (e.g delete a subobject of an assembly
         // from the assembly file)
@@ -1659,6 +1668,26 @@ void StdCmdDelete::activated(int iMsg)
             std::set<QString> affectedLabels;
             bool more = false;
             auto sels = Selection().getSelectionEx();
+            // Published solids are owned by their operation, even when selected by a script.
+            sels.erase(std::remove_if(sels.begin(), sels.end(), [](const auto& sel) {
+                auto obj = sel.getObject();
+                if (!obj) {
+                    return false;
+                }
+                auto background = dynamic_cast<App::PropertyBool*>(obj->getPropertyByName("BackgroundResult"));
+                auto frozen = dynamic_cast<App::PropertyBool*>(obj->getPropertyByName("Frozen"));
+                auto role = dynamic_cast<App::PropertyString*>(obj->getPropertyByName("ComponentRole"));
+                if (role && role->getStrValue() == "Definition") {
+                    Base::Console().warning("Component models are reusable definitions. Delete an assembly instance instead.\n");
+                    return true;
+                }
+                if (background && background->getValue() && frozen && !frozen->getValue()
+                    && role && role->getStrValue() == "Result") {
+                    Base::Console().warning("This is a background result. Delete its producing operation instead.\n");
+                    return true;
+                }
+                return false;
+            }), sels.end());
             bool autoDeletion = true;
             bool forceDeletion = false;
             for (auto& sel : sels) {

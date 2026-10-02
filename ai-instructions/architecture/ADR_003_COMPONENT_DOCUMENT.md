@@ -69,8 +69,10 @@ location. The original is protected from overwrite. Native `App.newDocument` and
 `App.openDocument` retain their API behavior for scripts, legacy tests and internal
 scratch documents. A renamed FCStd without a manifest is not valid `.cadprt`.
 
-Component Structure projects native definitions/links with the root component and
-Part icon. Model History displays owned objects and operations. Native LinkView
+Owner feedback 7.8.7u supersedes the original navigator projection: Models lists
+definitions and instance counts, Assembly Structure projects occurrence links only,
+and Attributes replaces the native Model pane while reusing its property editor.
+Model History displays owned objects and operations. Native LinkView
 projections implement occurrence-path display and isolated views without changing
 the source geometry. This is separate from BOM/mass participation.
 

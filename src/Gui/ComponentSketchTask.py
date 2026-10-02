@@ -19,6 +19,11 @@ class SketchTask:
         Model.activate(component, strict=False)
         self.component, self.support, self.result = component, None, None
         self.context = context
+        self.origin = component.Origin
+        self.origin_planes = {obj.Name: obj.Role.replace("_", " ").replace("Plane", "plane")
+                              for obj in self.origin.OriginFeatures
+                              if getattr(obj, "Role", "") in ("XY_Plane", "XZ_Plane", "YZ_Plane")}
+        self.observing = False
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle(tr("New Sketch"))
         layout = QtWidgets.QFormLayout(self.form)
@@ -37,7 +42,7 @@ class SketchTask:
         self.source.setTextFormat(QtCore.Qt.PlainText)
         self.source.setWordWrap(True)
         layout.addRow(self.source)
-        self.status = QtWidgets.QLabel(tr("The sketch belongs to the active component. OK opens Sketcher."))
+        self.status = QtWidgets.QLabel(tr("Select the XY, XZ or YZ origin plane in the view, or choose a plane below. OK opens Sketcher."))
         self.status.setWordWrap(True)
         self.status.setTextFormat(QtCore.Qt.PlainText)
         layout.addRow(self.status)
@@ -48,6 +53,24 @@ class SketchTask:
         selected = context.selection if context else task_geometry(component)
         if len(selected) == 1 and selected[0][1]:
             self.capture_face(selected)
+
+    def show_origin_planes(self):
+        self.origin.ViewObject.setTemporaryOriginPlanes(True)
+        Gui.Selection.addObserver(self, 0)
+        self.observing = True
+
+    def addSelection(self, document, name, subname, *args):
+        if document != self.component.Document.Name:
+            return
+        base = self.component.Document.getObject(name)
+        if base is None:
+            return
+        obj = base.getSubObject(subname, 1) if subname else base
+        if obj is None or obj.Name not in self.origin_planes:
+            return
+        plane = self.origin_planes[obj.Name]
+        self.plane.setCurrentIndex(self.plane.findData(plane))
+        self.status.setText(tr("Origin plane selected. OK opens Sketcher."))
 
     def update_plane(self, *args):
         self.source.setVisible(self.plane.currentData() == "Selected planar face")
@@ -80,13 +103,26 @@ class SketchTask:
             self.status.setText(str(error))
             return False
         self.finish(restore=False)
-        App.setActiveDocument(self.component.Document.Name)
-        Gui.Selection.clearSelection()
-        if self.context:
-            self.context.edit(self.result)
-        else:
-            Gui.getDocument(self.component.Document.Name).setEdit(self.result.Name)
+        # TaskView defers closeDialog() while the OK callback is running.
+        # Enter Sketcher only after it has removed this task from the panel.
+        QtCore.QTimer.singleShot(0, self.open_editor)
         return True
+
+    def open_editor(self):
+        try:
+            App.setActiveDocument(self.component.Document.Name)
+            gui = Gui.getDocument(self.component.Document.Name)
+            if Gui.Control.activeDialog(gui):
+                raise ValueError(tr("Close the current task before editing the new sketch."))
+            Gui.Selection.clearSelection()
+            if self.context:
+                self.context.edit(self.result)
+            elif not gui.setEdit(self.result.Name):
+                raise ValueError(tr("The new sketch could not enter edit mode."))
+        except Exception as error:
+            if self.context:
+                self.context.restore()
+            App.Console.PrintError(str(error) + "\n")
 
     def reject(self):
         self.finish()
@@ -94,6 +130,10 @@ class SketchTask:
 
     def finish(self, restore=True):
         global _task
+        if self.observing:
+            Gui.Selection.removeObserver(self)
+            self.observing = False
+        self.origin.ViewObject.setTemporaryOriginPlanes(False)
         Gui.Control.closeDialog()
         _task = None
         if restore and self.context:
@@ -111,7 +151,13 @@ def launch(component=None):
         context.enter()
         _task = SketchTask(component, context)
         Gui.Control.showDialog(_task)
+        _task.show_origin_planes()
     except Exception:
+        if _task:
+            if _task.observing:
+                Gui.Selection.removeObserver(_task)
+            _task.origin.ViewObject.setTemporaryOriginPlanes(False)
+            Gui.Control.closeDialog()
         _task = None
         context.restore()
         raise

@@ -50,6 +50,9 @@ class TestComponentConversionIteration(unittest.TestCase):
             Model.register_object(self.root, operation, "Operation")
             operation.Source, operation.Normal = source, App.Vector(1, 0, 0)
             self.doc.recompute()
+            # Refresh explicitly delayed reference snapshots before publishing
+            # another operation that consumes the evaluated result.
+            Model.activate(self.root)
             result = Model.publish_result(self.root, operation, name + " body")
         return operation, result
 

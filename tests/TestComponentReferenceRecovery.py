@@ -2,6 +2,7 @@
 """Three feedback workflows for reference recovery, identity and independent work."""
 import hashlib
 import os
+import re
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -61,7 +62,7 @@ class TestComponentReferenceRecovery(unittest.TestCase):
         self.assertTrue(self.reference.Shape.isNull())
         self.replacement.Shape = Part.makeBox(5, 3, 4)
         self.doc.recompute()
-        with self.assertRaisesRegex(ValueError, "Original reference"):
+        with self.assertRaisesRegex(ValueError, re.escape(self.reference.Label) + ": The source is missing"):
             Model.activate(self.root)
         self.assertAlmostEqual(healthy.Shape.Volume, 60)
         self.assertEqual(healthy.ResultStatus, "Ready")
@@ -122,7 +123,7 @@ class TestComponentReferenceRecovery(unittest.TestCase):
     def testHistoryRepairRefreshAndSuppression(self):
         self.break_reference()
         self.panel.refresh()
-        row = self.panel.history.topLevelItem(0)
+        row = self.panel.history.topLevelItem(1)
         menu = self.panel.build_menu(self.panel.history, row)
         self.assertIn("Repair Reference Object", [action.text() for action in menu.actions()])
         self.assertIn("Refresh References", [action.text() for action in menu.actions()])

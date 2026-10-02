@@ -68,9 +68,25 @@ class TestComponentPanelIteration(unittest.TestCase):
         task.offset.setProperty("rawValue", 3.0)
         Gui.updateGui()
         task.form.grab().save(str(self.output / "component-sketch-task.png"))
-        if not task.accept():
-            self.fail(task.status.text())
+        prompts = []
+        watchdog = QtCore.QTimer()
+        def dismiss_unexpected_prompt():
+            for widget in QtWidgets.QApplication.topLevelWidgets():
+                if isinstance(widget, QtWidgets.QMessageBox) and widget.isVisible():
+                    prompts.append(widget.text())
+                    widget.done(QtWidgets.QMessageBox.No)
+        watchdog.timeout.connect(dismiss_unexpected_prompt)
+        watchdog.start(20)
+        try:
+            # Exercise TaskView's real OK callback, including deferred deletion.
+            Gui.Control.activeTaskDialog().accept()
+            Gui.updateGui()
+        finally:
+            watchdog.stop()
+        self.assertEqual(prompts, [], "OK must enter Sketcher without a close-task prompt")
+        self.assertIsNone(SketchTask._task)
         sketch = task.result
+        self.assertEqual(len(self.doc.Objects), before + 1)
         self.assertEqual(Model.owner(sketch), self.root)
         self.assertTrue(Gui.activeDocument().getInEdit())
         Gui.activeDocument().resetEdit()
@@ -85,6 +101,44 @@ class TestComponentPanelIteration(unittest.TestCase):
         box.Height = 12
         self.doc.recompute()
         self.assertAlmostEqual(attached.Placement.Base.z, 13.0)
+
+    def testOriginPlaneDisplayPickingAndCancel(self):
+        origin = self.root.Origin
+        planes = {obj.Role: obj for obj in origin.OriginFeatures
+                  if getattr(obj, "Role", "") in ("XY_Plane", "XZ_Plane", "YZ_Plane")}
+        self.assertEqual(set(planes), {"XY_Plane", "XZ_Plane", "YZ_Plane"})
+        planes["XY_Plane"].ViewObject.show()
+        axes = [obj for obj in origin.OriginFeatures if obj.isDerivedFrom("App::Line")]
+        axes[0].ViewObject.show()
+        origin.ViewObject.hide()
+        providers = [origin.ViewObject] + [obj.ViewObject for obj in origin.OriginFeatures]
+        before_visibility = [vp.isVisible() for vp in providers]
+        before_objects = [obj.Name for obj in self.doc.Objects]
+        for command in ("PartDesign_NewSketch", "Sketcher_NewSketch"):
+            Gui.Selection.clearSelection()
+            Gui.runCommand(command)
+            task = SketchTask._task
+            self.assertIsNotNone(task)
+            self.assertTrue(origin.ViewObject.isVisible())
+            self.assertTrue(all(obj.ViewObject.isVisible() for obj in planes.values()))
+            self.assertTrue(all(not obj.ViewObject.isVisible() for obj in axes))
+            Gui.activeDocument().activeView().viewAxonometric()
+            Gui.activeDocument().activeView().fitAll()
+            Gui.updateGui()
+            # Let the native viewer paint before grabbing the task's viewport.
+            paint = QtCore.QEventLoop()
+            QtCore.QTimer.singleShot(100, paint.quit)
+            paint.exec()
+            Gui.getMainWindow().grab().save(str(self.output / (command + "-origin-planes.png")))
+            for role, obj in planes.items():
+                Gui.Selection.clearSelection()
+                Gui.Selection.addSelection(self.doc.Name, self.root.Name,
+                                           origin.Name + "." + obj.Name + ".")
+                self.assertEqual(task.plane.currentData(), role.replace("_Plane", " plane"))
+            task.reject()
+            self.assertFalse(task.observing)
+            self.assertEqual([vp.isVisible() for vp in providers], before_visibility)
+            self.assertEqual([obj.Name for obj in self.doc.Objects], before_objects)
 
     def testExtrudeModeTargetIdentityAndReopen(self):
         profile = self.profile(2)
@@ -137,31 +191,29 @@ class TestComponentPanelIteration(unittest.TestCase):
             Model.add_component(self.root, definition,
                                 placement=App.Placement(App.Vector(15 * number, 0, 0), App.Rotation()))
         self.panel.refresh()
-        root_row = self.panel.structure.topLevelItem(0)
-        group = root_row.child(0)
+        root_row = self.panel.models.topLevelItem(0)
+        group = self.panel.structure.topLevelItem(0)
         self.assertEqual(group.text(0), "support angle")
         self.assertEqual(group.text(2), "x5")
         self.assertEqual(group.childCount(), 0)
         self.assertTrue(root_row.font(0).bold())
-        menu = self.panel.build_menu(self.panel.structure, root_row)
+        menu = self.panel.build_menu(self.panel.models, root_row)
         labels = [action.text() for action in menu.actions()]
         self.assertEqual(labels[0], "Edit")
         self.assertNotIn("Open Component in Tab", labels)
         self.assertIn("Add Component", labels)
         self.assertFalse(any(button.text() in ("Add Component", "Add Reference Object")
                              for button in self.panel.findChildren(QtWidgets.QPushButton)))
-        with self.assertRaises(ValueError):
-            self.panel.toggle_component(root_row)
         self.panel.toggle_instances(group)
         self.panel.refresh()
-        group = self.panel.structure.topLevelItem(0).child(0)
+        group = self.panel.structure.topLevelItem(0)
         self.assertEqual(group.childCount(), 5)
         self.assertTrue(group.isExpanded())
         self.assertEqual(group.child(4).text(0), "support_angle#005")
         instance = group.child(4)
         self.panel.activate_item(instance)
         self.panel.refresh()
-        group = self.panel.structure.topLevelItem(0).child(0)
+        group = self.panel.structure.topLevelItem(0)
         self.assertTrue(group.child(4).font(0).bold())
         with self.assertRaises(ValueError):
             self.panel.set_part_view(group, "Hidden")
@@ -188,7 +240,7 @@ class TestComponentPanelIteration(unittest.TestCase):
         self.panel.resize(600, 500)
         Gui.updateGui()
         self.panel.grab().save(str(self.output / "component-grouped-instances.png"))
-        self.panel.activate_item(self.panel.structure.topLevelItem(0))
+        self.panel.edit_model(self.panel.models.topLevelItem(0))
         profile = self.profile(2)
         operation, result = Extrude.create(self.root, profile, 5)
         self.panel.refresh()

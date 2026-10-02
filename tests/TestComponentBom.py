@@ -91,7 +91,7 @@ class TestComponentBom(unittest.TestCase):
         bom.recompute()
         self.assertEqual(rows(bom), expected)
         self.panel.refresh()
-        group = self.panel.structure.topLevelItem(0).child(0)
+        group = self.panel.structure.topLevelItem(0)
         menu = self.panel.build_menu(self.panel.structure, group)
         participation = next(sub for sub in menu.component_submenus if sub.title() == "Bill of Materials")
         next(action for action in participation.actions() if action.text() == "Exclude").trigger()
@@ -122,10 +122,10 @@ class TestComponentBom(unittest.TestCase):
         self.assertEqual(rows(legacy), [("1", "OrdinaryPart", 1), ("1.1", "OrdinaryBox", 1)])
 
     def testExternalTaskOwnershipCancelAndHistoryEdit(self):
-        group = self.panel.structure.topLevelItem(0).child(0)
+        group = self.panel.structure.topLevelItem(0)
         self.panel.toggle_instances(group)
         self.panel.refresh()
-        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0).child(1))
+        self.panel.activate_item(self.panel.structure.topLevelItem(0).child(1))
         self.panel.refresh()
         initial = list(self.part.ModelHistory)
         command = Editor.CommandCreateBom()

@@ -32,7 +32,7 @@ def native_path(root, ids, item=None):
     component = chain[-1].LinkedObject if chain else root
     names = [link.Name for link in chain]
     if item is not None and item != component:
-        if Model.owner(item) != component:
+        if item != component.Origin and Model.owner(item) != component:
             raise ValueError("Select an item owned by this component occurrence.")
         names.append(item.Name)
     return "".join(name + "." for name in names)
@@ -53,6 +53,9 @@ def resolve(root, base, subname=""):
         component, item = base.LinkedObject, None
     else:
         component, item = Model.owner(base), base
+        if base.isDerivedFrom("App::Origin"):
+            component = next((parent for parent in base.InList
+                              if Model.is_component(parent) and parent.Origin == base), component)
         if not Model.is_component(component):
             return []
         starts = definition_paths(root, component)
@@ -61,9 +64,11 @@ def resolve(root, base, subname=""):
     for token in filter(None, subname.split(".")):
         if item is not None:
             # Face/edge/vertex selections still identify the whole evaluated item.
-            element = token
+            # Mapped native picks include a stable token before the legacy suffix
+            # (e.g. Sketch.;g1;SKT.Edge1). Keep the actual edge/face/vertex suffix.
+            element = subname.rsplit(".", 1)[-1]
             break
-        members = [obj for obj in component.Group if obj.Name == token]
+        members = [obj for obj in [component.Origin] + list(component.Group) if obj.Name == token]
         if len(members) != 1:
             return []
         obj = members[0]
@@ -74,6 +79,7 @@ def resolve(root, base, subname=""):
             component = obj.LinkedObject
         else:
             item = obj
+    item = Model.result_for_operation(item) if item is not None else None
     return [Pick(ids + tuple(suffix), component, item, element) for ids in starts]
 
 
