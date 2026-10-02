@@ -5,16 +5,37 @@ import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
 
 PARAM = "User parameter:BaseApp/Preferences/General"
-DESIGN_TABS = ("Home", "Modeling", "Surface", "Sketch", "Mesh", "View")
+DESIGN_TABS = ("Home", "Modeling", "Surface", "Sketch", "Assembly", "Mesh", "View")
 DESIGN_WORKBENCHES = {
     "Home": "PartDesignWorkbench", "Modeling": "PartDesignWorkbench",
     "Surface": "SurfaceWorkbench", "Sketch": "SketcherWorkbench", "Mesh": "MeshWorkbench",
+    "Assembly": "AssemblyWorkbench",
 }
 STANDARD = {"File", "Edit", "Clipboard", "Workbench", "Macro", "View", "Individual Views", "Structure", "Help"}
 SMALL_BUTTON_SIZE = 24
 GRID_SPACING = 2
-GRID_ROWS = 3
-PRIMARY_WIDTH = GRID_HEIGHT = GRID_ROWS * SMALL_BUTTON_SIZE + (GRID_ROWS - 1) * GRID_SPACING
+GRID_ROWS = 6  # Two cells per small button, three per medium button.
+PRIMARY_WIDTH = GRID_HEIGHT = 3 * SMALL_BUTTON_SIZE + 2 * GRID_SPACING
+MEDIUM_HEIGHT = GRID_HEIGHT // 2
+FULL_ICON_SIZE = 40
+MEDIUM_ICON_SIZE = FULL_ICON_SIZE // 2
+SMALL_ICON_SIZE = 16
+COMMON_GROUPS = (
+    ("File", ("Std_New", "Std_Open", "Std_Save", "Std_SaveAs")),
+    ("Edit", ("Std_Undo", "Std_Redo", "Std_Refresh")),
+    ("Clipboard", ("Std_Cut", "Std_Copy", "Std_Paste")),
+)
+HOME_GROUPS = (
+    ("Main", ("Std_NewComponent", "Std_Part", "PartDesign_NewSketch", "Part_CoordinateSystem")),
+    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Fillet", "PartDesign_Pattern")),
+    ("Surface", ("Surface_Filling", "Surface_GeomFillSurface", "Surface_ExtendFace")),
+    ("Sketch", ("Sketcher_EditSketch", "Sketcher_MapSketch", "Sketcher_CompLine",
+                "Sketcher_CompCreateRectangles", "Sketcher_Dimension", "Sketcher_ToggleConstruction")),
+    ("Assembly", ("Assembly_CreateAssembly", "Assembly_Insert", "Assembly_SolveAssembly", "Assembly_CreateJointFixed")),
+    ("Mesh", ("Mesh_Import", "Mesh_FromPartShape", "Mesh_Evaluation")),
+    ("View", ("Std_ViewFitAll", "Std_ViewIsometric", "Std_DrawStyle", "Std_EntitySelectionFilter")),
+)
+COORDINATE_CHOICES = ("Part_CoordinateSystem", "Part_DatumPlane", "Part_DatumLine", "Part_DatumPoint")
 # Presentation priority only: every operation still uses its native QAction.
 PRIMARY_COMMANDS = {
     "Std_New", "Std_Open", "Std_Save", "Std_Part",
@@ -40,6 +61,13 @@ DIMENSION_CHOICES = (
     "Sketcher_ConstrainSnellsLaw",
 )
 COMMAND_FAMILIES = (
+    ("Part_CoordinateSystem", ("Part_CoordinateSystem",), COORDINATE_CHOICES),
+    ("Assembly_CreateJointFixed", ("Assembly_CreateJointFixed",),
+     ("Assembly_CreateJointRigidGroup", "Assembly_CreateJointFixed", "Assembly_CreateJointRevolute",
+      "Assembly_CreateJointCylindrical", "Assembly_CreateJointSlider", "Assembly_CreateJointBall",
+      "Assembly_CreateJointDistance", "Assembly_CreateJointParallel", "Assembly_CreateJointPerpendicular",
+      "Assembly_CreateJointAngle", "Assembly_CreateJointRackPinion", "Assembly_CreateJointScrew",
+      "Assembly_CreateJointGears", "Assembly_CreateJointBelt")),
     ("PartDesign_Pattern",
      ("PartDesign_Pattern", "PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern"),
      ("PartDesign_Pattern", "PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern")),
@@ -106,7 +134,7 @@ def available_modes():
     """Installed/registered workbenches, including addons, regardless of selector filtering."""
     workbenches = Gui.listWorkbenches()
     modes = [("Design", "PartDesignWorkbench")] if "PartDesignWorkbench" in workbenches else []
-    combined = set(DESIGN_WORKBENCHES.values()) | {"NoneWorkbench", "StartWorkbench"}
+    combined = (set(DESIGN_WORKBENCHES.values()) - {"AssemblyWorkbench"}) | {"NoneWorkbench", "StartWorkbench"}
     aliases = {"DraftWorkbench": "Draft", "CAMWorkbench": "CAM", "PathWorkbench": "CAM",
                "FemWorkbench": "FEM", "FEMWorkbench": "FEM", "AssemblyWorkbench": "Assembly",
                "TechDrawWorkbench": "Drawing"}
@@ -131,8 +159,26 @@ class Ribbon(QtCore.QObject):
         self.render_timer.timeout.connect(self.render)
         self.saved_bars = {}
         self.saved_toggles = {}
+        self.home_initialized = False
+        self.placing = False
         self.workbench_name = Gui.activeWorkbench().name()
         self.mode_name = "Design"
+        self.common = QtWidgets.QToolBar(tr("Plus Common"), self.window)
+        self.common.setObjectName("FreeCADPlusCommon")
+        self.common.setMovable(False)
+        self.common.setFloatable(False)
+        self.common.setAllowedAreas(QtCore.Qt.TopToolBarArea)
+        self.common.setIconSize(QtCore.QSize(SMALL_ICON_SIZE, SMALL_ICON_SIZE))
+        for title, commands in COMMON_GROUPS:
+            if self.common.actions():
+                self.common.addSeparator()
+            for name in commands:
+                button = self.make_button(name, self.common, size="small")
+                if button:
+                    self.common.addWidget(button)
+        self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.common)
+        self.common.toggleViewAction().setVisible(False)
+        self.common.hide()
         self.toolbar = QtWidgets.QToolBar(tr("Plus Ribbon"), self.window)
         self.toolbar.setObjectName("FreeCADPlusRibbon")
         self.toolbar.setMovable(False)
@@ -176,12 +222,14 @@ class Ribbon(QtCore.QObject):
         QtWidgets.QApplication.instance().installEventFilter(self)
 
     def eventFilter(self, watched, event):
-        if (watched == self.toolbar and event.type() == QtCore.QEvent.Hide
+        if watched == self.window and event.type() == QtCore.QEvent.Show and self.enabled:
+            self.render_timer.start(0)
+        if (watched in self.plus_bars() and event.type() == QtCore.QEvent.Hide
                 and self.enabled and not self.changing):
             QtCore.QTimer.singleShot(0, self.ensure_plus_visible)
         if (event.type() == QtCore.QEvent.Show and isinstance(watched, QtWidgets.QToolBar)
                 and self.window.isAncestorOf(watched)):
-            if watched == self.toolbar:
+            if watched in self.plus_bars():
                 if not self.enabled:
                     watched.hide()
                 else:
@@ -193,7 +241,26 @@ class Ribbon(QtCore.QObject):
     def ensure_plus_visible(self):
         if self.enabled and not self.changing and self.window.isVisible():
             self.hide_bars()
-            self.toolbar.show()
+            self.place_plus_bars()
+
+    def plus_bars(self):
+        return (self.common, self.toolbar) if hasattr(self, "toolbar") else (self.common,)
+
+    def place_plus_bars(self):
+        """Keep the common bar above a full-width ribbon after saved-state restores."""
+        if self.placing:
+            return
+        self.placing = True
+        try:
+            for bar in self.plus_bars():
+                self.window.removeToolBarBreak(bar)
+            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.common)
+            self.window.addToolBarBreak(QtCore.Qt.TopToolBarArea)
+            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
+            self.common.setVisible(self.enabled)
+            self.toolbar.setVisible(self.enabled)
+        finally:
+            self.placing = False
 
     def current_tab(self):
         return self.tabs.tabData(self.tabs.currentIndex())
@@ -208,9 +275,10 @@ class Ribbon(QtCore.QObject):
         if plus == self.enabled:
             if plus:
                 self.hide_bars()
-                self.toolbar.show()
+                self.place_plus_bars()
             else:
                 self.toolbar.hide()
+                self.common.hide()
             return
         self.enabled = plus
         if plus:
@@ -218,14 +286,15 @@ class Ribbon(QtCore.QObject):
             if Gui.activeWorkbench().name() in ("NoneWorkbench", "StartWorkbench"):
                 self.activate("PartDesignWorkbench")
             self.workbench_changed(Gui.activeWorkbench().name())
-            self.toolbar.show()
+            self.place_plus_bars()
         else:
             self.toolbar.hide()
+            self.common.hide()
             self.restore_bars()
 
     def hide_bars(self):
         for bar in self.window.findChildren(QtWidgets.QToolBar):
-            if bar != self.toolbar:
+            if bar not in self.plus_bars():
                 self.hide_bar(bar)
 
     def hide_bar(self, bar):
@@ -285,6 +354,7 @@ class Ribbon(QtCore.QObject):
             # Restore native state for its outgoing-workbench save with the
             # ribbon hidden, so even the transition displays only one style.
             self.toolbar.hide()
+            self.common.hide()
             self.restore_bars()
             Gui.activateWorkbench(workbench)
         finally:
@@ -293,6 +363,7 @@ class Ribbon(QtCore.QObject):
                 self.hide_bars()
             self.changing = False
             self.toolbar.setVisible(self.enabled)
+            self.common.setVisible(self.enabled)
         return Gui.activeWorkbench().name() == workbench
 
     def mode_changed(self, index):
@@ -333,13 +404,13 @@ class Ribbon(QtCore.QObject):
         bars = Gui.activeWorkbench().getToolbarItems()
         tab = self.current_tab()
         if tab == "Home":
-            groups = [(name, bars.get(name, [])) for name in ("File", "Edit", "Clipboard", "Structure")]
-            groups[0] = ("File", ["Std_New", "Std_Open", "Std_Save", "Std_SaveAs", "Std_Import", "Std_Export"])
-            groups[1] = ("Edit", ["Std_Undo", "Std_Redo", "Std_Delete", "Std_Refresh", "Std_DlgPreferences"])
-            groups[3] = ("Structure", ["Std_ComponentStructure", "Std_Part", "Part_Datums", "Std_Group", "Std_LinkActions", "Std_VarSet", "PartDesign_AddReferenceObject"])
-            if self.mode_name == "Design":
-                groups.append(("Sketch", ["PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch", "Sketcher_ValidateSketch"]))
-                groups.append(("Tools", ["Std_CommandSearch", "Std_Measure", "Std_MassProperties"]))
+            groups = list(HOME_GROUPS) if self.mode_name == "Design" else [
+                ("Main", ("Std_Part", "Std_ComponentStructure")),
+                ("Frequent operations", [command for title, commands in bars.items()
+                                         if title not in STANDARD for command in commands if command != "Separator"][:3])]
+            groups.append(("Structure", ["Std_ComponentStructure", "Std_Group", "Std_LinkActions", "Std_VarSet", "PartDesign_AddReferenceObject"]))
+            groups.append(("Utilities", ["Std_Import", "Std_Export", "Std_DlgPreferences", "Std_CommandSearch",
+                                         "Std_Measure", "Std_MassProperties", "Std_Delete"]))
             groups.append(("Help", bars.get("Help", [])))
             groups.append(("Macro", bars.get("Macro", [])))
             return groups
@@ -354,6 +425,57 @@ class Ribbon(QtCore.QObject):
             return [(name, bars[name]) for name in order if name in bars]
         return [(name, commands) for name, commands in bars.items() if name not in STANDARD]
 
+    def initialize_home(self):
+        if self.home_initialized or Gui.Control.activeDialog() or not self.window.isVisible():
+            return
+        original = Gui.activeWorkbench().name()
+        mode, tab = self.mode_name, self.current_tab()
+        # Native actions from the specialist tabs must be registered before Home
+        # projects them. Initialize after the window is shown: native setup saves
+        # isVisible(), which would erase Classic visibility with a hidden parent.
+        # Initialize each installed workbench once, then restore it.
+        for name in dict.fromkeys((*DESIGN_WORKBENCHES.values(), "PartWorkbench")):
+            if name in Gui.listWorkbenches():
+                self.activate(name)
+        self.activate(original)
+        self.configure(mode, tab)
+        self.home_initialized = True
+
+    def make_button(self, command_name, parent, choices=None, size=None):
+        actions = native_actions(command_name)
+        if not actions:
+            return None
+        captions = {"Std_New": tr("New File"), "Std_Part": tr("Add Component"),
+                    "Sketcher_Dimension": tr("Auto dimension"), "Part_DatumLine": tr("Datum Axis")}
+        button = RibbonButton(captions.get(command_name), parent,
+                              ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
+        button.setObjectName("Ribbon_" + command_name)
+        button.setAutoRaise(True)
+        button.setDefaultAction(actions[0])
+        if size is None:
+            if self.current_tab() == "Home" and command_name not in ("PartDesign_Extrude", "PartDesign_Revolution"):
+                size = "medium" if any(command_name in commands for title, commands in HOME_GROUPS) else "small"
+            else:
+                size = "full" if command_name in PRIMARY_COMMANDS else "small"
+        button.setProperty("ribbonSize", size)
+        button.setProperty("ribbonPriority", "primary" if size == "full" else "secondary")
+        button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly if size == "small" else QtCore.Qt.ToolButtonTextUnderIcon)
+        pixels = {"full": FULL_ICON_SIZE, "medium": MEDIUM_ICON_SIZE, "small": SMALL_ICON_SIZE}[size]
+        button.setIconSize(QtCore.QSize(pixels, pixels))
+        width, height = (SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE) if size == "small" else (
+            PRIMARY_WIDTH, GRID_HEIGHT if size == "full" else MEDIUM_HEIGHT)
+        button.setFixedSize(width, height)
+        if choices:
+            actions = [available[0] for name in choices if (available := native_actions(name))]
+        if len(actions) > 1:
+            menu = QtWidgets.QMenu(button)
+            for action in actions:
+                if not action.isSeparator():
+                    menu.addAction(action)
+            button.setMenu(menu)
+            button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+        return button
+
     def render(self):
         if not self.enabled:
             return
@@ -365,6 +487,8 @@ class Ribbon(QtCore.QObject):
             self.render_timer.start(100)
             return
         self.hide_bars()
+        if self.current_tab() == "Home" and self.mode_name == "Design":
+            self.initialize_home()
         page = QtWidgets.QWidget(self.scroll)
         layout = QtWidgets.QHBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -378,41 +502,15 @@ class Ribbon(QtCore.QObject):
             grid = QtWidgets.QGridLayout()
             grid.setContentsMargins(0, 0, 0, 0)
             grid.setSpacing(GRID_SPACING)
+            grid.setVerticalSpacing(0)
             grid.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
             buttons = []
             for command_name, choices in projected_commands(commands):
-                actions = native_actions(command_name)
-                if not actions:
+                size = "medium" if self.current_tab() == "Home" and title in ("Main", "Frequent operations") else None
+                button = self.make_button(command_name, group, choices, size)
+                if button is None:
                     continue
-                captions = {"Std_New": tr("New File"),
-                            "Std_Part": tr("Add part"), "Sketcher_Dimension": tr("Auto\ndimension")}
-                button = RibbonButton(captions.get(command_name), group,
-                                      ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
-                button.setObjectName("Ribbon_" + command_name)
-                button.setAutoRaise(True)
-                button.setDefaultAction(actions[0])
-                primary = command_name in PRIMARY_COMMANDS
-                button.setProperty("ribbonPriority", "primary" if primary else "secondary")
-                button.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon if primary else QtCore.Qt.ToolButtonIconOnly)
-                button.setIconSize(QtCore.QSize(32, 32) if primary else QtCore.QSize(20, 20))
-                if primary:
-                    button.setFixedSize(PRIMARY_WIDTH, GRID_HEIGHT)
-                else:
-                    button.setFixedSize(SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE)
-                if choices:
-                    actions = []
-                    for name in choices:
-                        available = native_actions(name)
-                        if available:
-                            actions.append(available[0])
-                if len(actions) > 1:
-                    menu = QtWidgets.QMenu(button)
-                    for action in actions:
-                        if not action.isSeparator():
-                            menu.addAction(action)
-                    button.setMenu(menu)
-                    button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
-                buttons.append((button, primary))
+                buttons.append((button, button.property("ribbonSize") == "full"))
             if title in COLLAPSED_GROUPS and buttons:
                 # Rare help operations share one icon; choices retain native states.
                 menu_button = QtWidgets.QToolButton(group)
@@ -421,10 +519,11 @@ class Ribbon(QtCore.QObject):
                 menu_button.setText(tr(title))
                 menu_button.setToolTip(tr(title))
                 menu_button.setIcon(buttons[0][0].icon())
-                menu_button.setIconSize(QtCore.QSize(20, 20))
+                menu_button.setIconSize(QtCore.QSize(SMALL_ICON_SIZE, SMALL_ICON_SIZE))
                 menu_button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
                 menu_button.setFixedSize(SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE)
                 menu_button.setProperty("ribbonPriority", "secondary")
+                menu_button.setProperty("ribbonSize", "small")
                 menu = QtWidgets.QMenu(menu_button)
                 for button, _ in buttons:
                     menu.addAction(button.defaultAction())
@@ -443,10 +542,15 @@ class Ribbon(QtCore.QObject):
             secondary = [button for button, primary in buttons if not primary]
             for column, button in enumerate(primaries):
                 grid.addWidget(button, 0, column, GRID_ROWS, 1)
-            for index, button in enumerate(secondary):
-                grid.addWidget(button, index % GRID_ROWS, len(primaries) + index // GRID_ROWS)
+            column, row = len(primaries), 0
+            for button in secondary:
+                span = 3 if button.property("ribbonSize") == "medium" else 2
+                if row + span > GRID_ROWS:
+                    column, row = column + 1, 0
+                grid.addWidget(button, row, column, span, 1)
+                row += span
             for row in range(GRID_ROWS):
-                grid.setRowMinimumHeight(row, SMALL_BUTTON_SIZE)
+                grid.setRowMinimumHeight(row, SMALL_BUTTON_SIZE // 2)
             group_layout.addLayout(grid)
             caption = {"Part Design Modeling Features": "Modeling", "Part Design Transformation Features": "Transformation",
                        "Part Design Dress-Up Features": "Dress-Up", "Part Design Helper Features": "Helpers"}.get(title, title)

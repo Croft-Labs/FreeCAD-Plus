@@ -1807,8 +1807,38 @@ class AddReferenceCommand:
         panel.run(lambda: panel.add_reference(object_key(component)))
 
 
+class NewComponentCommand:
+    def GetResources(self):
+        return {"MenuText": tr("New Component"),
+                "ToolTip": tr("Create an embedded model with no assembly instances and open it for editing"),
+                "Pixmap": "Geofeaturegroup.svg"}
+
+    def IsActive(self):
+        if Gui.Control.activeDialog():
+            return False
+        try:
+            from freecad.gui.ComponentExtrudeTask import active_component
+            component = active_component()
+            return model().is_component(component) and not component.Document.HasPendingTransaction
+        except (ValueError, NameError):
+            return False
+
+    def Activated(self):
+        from freecad.gui.ComponentExtrudeTask import active_component
+        component = active_component()
+        panel = _dock or show(component.Document)
+
+        def create():
+            definition = model().create_definition(component.Document)
+            panel.open_component_tab(object_key(definition))
+            panel.refresh()
+            panel.tabs.setCurrentWidget(panel.history)
+        panel.run(create)
+
+
 def registerCommands():
     Gui.addCommand("Std_NewComponentDocument", Command(True))
     Gui.addCommand("Std_ComponentStructure", Command())
+    Gui.addCommand("Std_NewComponent", NewComponentCommand())
     Gui.addCommand("PartDesign_AddReferenceObject", AddReferenceCommand())
     install_startup_layout()

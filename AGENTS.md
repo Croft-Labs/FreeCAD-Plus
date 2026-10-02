@@ -42,6 +42,12 @@ Do not claim to have read missing guidance or maintain an independent master cop
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).
 - Record implementation, build, GUI validation, and publication separately in
   [the roadmap](ai-instructions/DEVELOPMENT_ROADMAP.md). A local commit is not a release.
+- Mandatory owner-build delivery gate: every new build intended for the owner
+  MUST update the existing desktop `FreeCADPlus.exe - Shortcut.lnk` to that
+  build's verified `FreeCADPlus.exe`, then reopen the shortcut and verify its
+  target and working directory. Do not report the build ready until this passes.
+  Preserve the shortcut name and unrelated shortcuts. Follow the
+  [shortcut delivery procedure](ai-instructions/DEVELOPMENT_GUIDE.md#owner-build-shortcut).
 - Batch related authorized changes before a costly build and test pass; do not
   rebuild after every change or just to close one feature task. Keep quick checks
   running and record deferred validation. Follow the

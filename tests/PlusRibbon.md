@@ -19,20 +19,26 @@ within that parent. Do not enable source overlays for these phases.
    and create/show a native toolbar: Classic bars must remain hidden and the
    Plus ribbon visible. With Classic selected, attempting to show the ribbon
    must leave it hidden. Neither style may display both presentations.
-2. Design shows Home, Modeling, Surface, Sketch, Mesh and View. Home has File,
-   Edit, Clipboard, Structure, Sketch, common Tools and Help sections. Use the
+2. Design shows Home, Modeling, Surface, Sketch, Assembly, Mesh and View. The
+   common small File/Edit/Clipboard bar stays above the ribbon in every mode/tab.
+   Home has Main and common Modeling/Surface/Sketch/Assembly/Mesh/View actions,
+   Structure, Utilities, Help and Macro sections. Use the
    actual New Sketch, Attach Sketch, Edit Sketch and Add Component buttons in a
    component document; preserve task Cancel/OK, ownership, Undo and selection.
    Check button states match the native menu actions, including no document,
    missing selection and active task cases.
 3. Modeling starts with Modeling, Transformation and Dress-Up sections, with
    helpers following. Native grouped operations keep their dropdown choices.
-   Surface/Sketch/Mesh show their native toolbar groups; View exposes fit,
+   Surface/Sketch/Assembly/Mesh show their native toolbar groups; View exposes fit,
    orientation and display. Narrow the window and use horizontal scrolling to
    reach every section without moving the mode dropdown/tab strip.
    Primary operations (including Extrude/Revolve) share one row of large buttons,
    each spanning the three-row grid. Secondary buttons have icons only and fill
-   three rows; primary captions have a 76 logical pixel button-width limit.
+   three rows; full and medium captions have a 76 logical pixel button-width limit.
+   Full icons are 40px, medium 20px, small 16px; two 38px medium buttons fit a
+   column beside a 76px full button. Main uses medium buttons. New Component
+   creates an unplaced embedded model and opens its editing tab; it must survive
+   Undo/Redo and save/reopen with zero assembly instances.
    Help uses one dropdown. Loft/Pipe/Helix variants share menus. In Sketch,
    Auto Dimension is the primary dimension action; its dropdown offers vertical,
    horizontal, angle, radius, diameter and less common native dimension types.
@@ -45,8 +51,8 @@ within that parent. Do not enable source overlays for these phases.
 5. During New Sketch, try changing modes: keep the current task and component
    context. Cancel, change mode and return to Design. Also activate a workbench
    through the native menu/command search and check ribbon synchronization.
-6. Home Structure includes native Datums (Coordinate System/Plane/Line/Point) and
-   Variable Set. Home Macro is a single dropdown for record, manager and direct
+6. Home Main includes the Coordinate System dropdown (Coordinate System/Plane/Axis/Point);
+   Structure retains Variable Set. Home Macro is a single dropdown for record, manager and direct
    execution. Verify their native enabled states and no duplicate full toolbar.
    Drawing > Tools presents Insert Default Page as a large primary button. Iconless
    native actions have ribbon-only artwork; action-state refresh must not blank it.
@@ -63,7 +69,7 @@ for conditional mode mapping only, not acceptance of an installed printing addon
 Physical touch/keyboard, dark themes, screen-reader and multi-monitor DPI behavior
 remain owner acceptance gates.
 
-When the owner defers build incorporation, run the fourteen source-compatible tests in
+When the owner defers build incorporation, run the source-compatible tests in
 `TestPlusRibbon.py` with `FREECAD_PLUS_PROFILE_SOURCE=1`, `-RibbonSmoke` and an
 explicit `-TestNames` list. Exclude `testNativeGeneralPreferenceApplyAndCancel`,
 which requires a runtime-loaded module, and `testRestoredNativePatternBindings`,

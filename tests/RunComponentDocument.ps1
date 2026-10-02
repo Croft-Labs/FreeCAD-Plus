@@ -39,6 +39,7 @@ param(
     [string]$TestNames,
     [string]$TestFiles,
     [switch]$RibbonSmoke,
+    [switch]$DetachedLauncher,
     [ValidateSet('Bootstrap','Plus','Classic')][string]$RibbonStartupPhase,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
@@ -145,6 +146,16 @@ while (-not $process.WaitForExit(1000)) {
     if ((Get-Date) -gt $deadline -or ((Get-Date) - $lastProgress).TotalSeconds -gt 60) {
         Stop-Process -Id $process.Id
         throw 'Component validation exceeded its bounded deadline.'
+    }
+}
+if ($DetachedLauncher -and $process.ExitCode -eq 0) {
+    # FreeCADPlus.exe launches the native child and returns immediately. Wait for
+    # the macro's completion marker rather than treating launcher exit as GUI exit.
+    while (-not (Test-Path -LiteralPath "$OutputDirectory\validation.done")) {
+        if ((Get-Date) -gt $deadline) {
+            throw 'Detached owner launcher validation exceeded its bounded deadline.'
+        }
+        Start-Sleep -Milliseconds 500
     }
 }
 @{executable=$Executable; exit_code=$process.ExitCode} | ConvertTo-Json |

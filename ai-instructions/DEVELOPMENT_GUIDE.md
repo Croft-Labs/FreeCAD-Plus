@@ -127,6 +127,19 @@ clearance conservative and clear stale paths before any validation that can fail
 
 ## Validation
 
+### Owner build shortcut
+
+Every build handed to the owner must retarget the existing desktop
+`FreeCADPlus.exe - Shortcut.lnk` to the validated build's `FreeCADPlus.exe`.
+This is a mandatory delivery gate, including builds delivered at a new path.
+Use `tools/UpdateOwnerBuildShortcut.ps1 -Executable <validated-launcher>`;
+it requires the existing named shortcut, preserves its other settings, sets
+the working directory to the launcher's folder, and reopens the saved shortcut
+to verify both values. Record the verified target in WORK_STATE and the build
+evidence. Do not modify installed upstream FreeCAD or other desktop shortcuts.
+If the update cannot be performed, report delivery as incomplete rather than
+silently leaving the owner pointing at an older build.
+
 ### Build and test batching
 
 User preference: do not create a new build after every change. When testing one

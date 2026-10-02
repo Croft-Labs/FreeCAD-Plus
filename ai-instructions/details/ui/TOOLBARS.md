@@ -1,8 +1,8 @@
 # FreeCAD Plus toolbar reference
 
-Classic inventory comes first, followed by the proposed Plus layout, the change map, and the function catalog. Each command has its own row. Reference icons are displayed at **11 × 11 px**, approximately one third of the previous 32 px renders.
+Classic inventory comes first, followed by the implemented Plus layout, the change map, and the function catalog. Each command has its own row. Reference icons are displayed at **11 × 11 px**, approximately one third of the previous 32 px renders.
 
-The Plus layout records the owner's revised direction and fills the incomplete outline with proposed placements. **It is not the toolbar layout shipped in the 10/2 build.** Native IDs, icons and command descriptions remain tied to the inspected build. [UI rules](../../UI_UX_SPEC.md#toolbar-ui-styles) govern interaction; [WORK_STATE](../../WORK_STATE.md) records implementation/build acceptance.
+The Plus layout implements the owner's revised direction and completes the incomplete outline with native command placements. **This layout is incorporated in the October 2 audit build; earlier 10/2 folders retain their previous layout.** Native IDs, icons and command descriptions come from the inspected payload. [UI rules](../../UI_UX_SPEC.md#toolbar-ui-styles) govern interaction; [WORK_STATE](../../WORK_STATE.md) records implementation/build acceptance.
 
 - [Classic toolbars](#classic-toolbars)
 - [Plus UI target layout](#plus-ui-target-layout)
@@ -11,7 +11,7 @@ The Plus layout records the owner's revised direction and fills the incomplete o
 
 ## Classic toolbars
 
-Recorded upstream source: `b9609745048b`. Native metadata: application `6be8eda4246a`. Conditional/edit-only toolbars are included; they are not all shown simultaneously. Shared desktop groups are listed once. Plus locations below refer to the proposed layout; menu-only access is explicitly marked.
+Recorded upstream source: `b9609745048b`. Native metadata: application `6be8eda4246a`. Conditional/edit-only toolbars are included; they are not all shown simultaneously. Shared desktop groups are listed once. Plus locations below refer to the implemented layout; menu-only access is explicitly marked.
 
 ### All workbenches — shared desktop
 
@@ -508,7 +508,7 @@ Definition: [`src/Mod/Assembly/InitGui.py`](../../../src/Mod/Assembly/InitGui.py
 | <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Design / Assembly | Home; Assembly; Tools |
 | <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Design / Assembly | Home; Assembly; Tools |
 | <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Design / Assembly | Home; Assembly; Tools |
-| <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgearbelt) | Design / Assembly | Home; Assembly; Tools |
+| <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgearbelt) | Design / Assembly | Assembly; Tools |
 
 <a id="workbench-camworkbench"></a>
 ### CAM workbench
@@ -1102,7 +1102,7 @@ Definition: [`src/Mod/Test/InitGui.py`](../../../src/Mod/Test/InitGui.py).
 | Small | Secondary actions; no visible caption; three-row grid inside the ribbon |
 | Dropdown | A separate property, compatible with any icon size; related or rare choices appear in its menu |
 
-Medium means half the full icon size; exact logical pixel sizes and grid placement await implementation. Documentation icon size is independent of application button size. Every icon retains a tooltip and accessible name.
+Full icons are 40 logical pixels, medium icons 20, and small icons 16. Full buttons span the 76px grid; two medium buttons (38px each) or three small buttons (24px each) fit a column. Documentation icon size is independent of application button size. Every icon retains a tooltip and accessible name.
 
 ### All Modes
 
@@ -1143,7 +1143,7 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| New Component (proposed; binding pending) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> [New Component](#button-std_newcomponent) | Medium (half size) | — |
 | <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
 | <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Medium (half size) | — |
 | <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Medium (half size) | Dropdown |
@@ -1218,7 +1218,8 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 | ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
 | ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
 | ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgearbelt) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
 
 ##### Mesh group
 
@@ -1233,7 +1234,7 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> [Fit All](#button-std_viewfitall) | Medium (half size) | — |
-| — [Std ViewAxonometric](#button-std_viewaxonometric) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewisometric) | Medium (half size) | — |
 | <img src="toolbar-icons/Std_DrawStyle.png" width="11" height="11" alt="As Is"> [As Is](#button-std_drawstyle) | Medium (half size) | Dropdown |
 | ↳ Native choices for [As Is](#button-std_drawstyle) | Menu items | See function catalog |
 | <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filters…"> [Selection filters…](#button-std_entityselectionfilter) | Medium (half size) | — |
@@ -1242,24 +1243,24 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Medium (half size) | Dropdown |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
 | ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Medium (half size) | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -1503,7 +1504,8 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 | ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
 | ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
 | ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgearbelt) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
 | <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Small | — |
 | <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Small | — |
 | <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Small | — |
@@ -1625,7 +1627,7 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -1642,17 +1644,28 @@ Proposed completion: component access, this mode's most frequent operations, and
 | <img src="toolbar-icons/Part_Cylinder.png" width="11" height="11" alt="Cylinder"> [Cylinder](#button-part_cylinder) | Medium (half size) | — |
 | <img src="toolbar-icons/Part_Sphere.png" width="11" height="11" alt="Sphere"> [Sphere](#button-part_sphere) | Medium (half size) | — |
 
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -1744,7 +1757,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -1761,17 +1774,28 @@ Proposed completion: component access, this mode's most frequent operations, and
 | <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Medium (half size) | — |
 | <img src="toolbar-icons/Draft_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-draft_fillet) | Medium (half size) | — |
 
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -1899,16 +1923,66 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
+| <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> [New Component](#button-std_newcomponent) | Medium (half size) | — |
 | <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Medium (half size) | — |
+| <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Medium (half size) | Dropdown |
+| ↳ <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Menu item | — |
+| ↳ <img src="toolbar-icons/Part_DatumPlane.png" width="11" height="11" alt="Datum Plane"> [Datum Plane](#button-part_datumplane) | Menu item | — |
+| ↳ <img src="toolbar-icons/Part_DatumLine.png" width="11" height="11" alt="Datum Line"> [Datum Line](#button-part_datumline) | Menu item | — |
+| ↳ <img src="toolbar-icons/Part_DatumPoint.png" width="11" height="11" alt="Datum Point"> [Datum Point](#button-part_datumpoint) | Menu item | — |
 
-##### Frequent operations group
+##### Modeling group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full size | — |
+| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full size | — |
+| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-partdesign_fillet) | Medium (half size) | — |
+| <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Medium (half size) | Dropdown |
+| ↳ <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Menu item | — |
+| ↳ <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Menu item | — |
+| ↳ <img src="toolbar-icons/PartDesign_PathPattern.png" width="11" height="11" alt="Path Pattern"> [Path Pattern](#button-partdesign_pathpattern) | Menu item | — |
+| ↳ <img src="toolbar-icons/PartDesign_PointPattern.png" width="11" height="11" alt="Point Pattern"> [Point Pattern](#button-partdesign_pointpattern) | Menu item | — |
+
+##### Surface group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Surface_Filling.png" width="11" height="11" alt="Filling"> [Filling](#button-surface_filling) | Medium (half size) | — |
+| <img src="toolbar-icons/Surface_GeomFillSurface.png" width="11" height="11" alt="Fill Boundary Curves"> [Fill Boundary Curves](#button-surface_geomfillsurface) | Medium (half size) | — |
+| <img src="toolbar-icons/Surface_ExtendFace.png" width="11" height="11" alt="Extend Face"> [Extend Face](#button-surface_extendface) | Medium (half size) | — |
+
+##### Sketch group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Medium (half size) | — |
+| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Medium (half size) | — |
+| <img src="toolbar-icons/Sketcher_CompLine.png" width="11" height="11" alt="Polyline"> [Polyline](#button-sketcher_compline) | Medium (half size) | Dropdown |
+| ↳ Native choices for [Polyline](#button-sketcher_compline) | Menu items | See function catalog |
+| <img src="toolbar-icons/Sketcher_CompCreateRectangles.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-sketcher_compcreaterectangles) | Medium (half size) | Dropdown |
+| ↳ Native choices for [Rectangle](#button-sketcher_compcreaterectangles) | Menu items | See function catalog |
+| <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Medium (half size) | Dropdown |
+| ↳ <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceY.png" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-sketcher_constraindistancey) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceX.png" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-sketcher_constraindistancex) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainAngle.png" width="11" height="11" alt="Angle Dimension"> [Angle Dimension](#button-sketcher_constrainangle) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadius.png" width="11" height="11" alt="Radius Dimension"> [Radius Dimension](#button-sketcher_constrainradius) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainDiameter.png" width="11" height="11" alt="Diameter Dimension"> [Diameter Dimension](#button-sketcher_constraindiameter) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistance.png" width="11" height="11" alt="Distance Dimension"> [Distance Dimension](#button-sketcher_constraindistance) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadiam.png" width="11" height="11" alt="Radius/Diameter Dimension"> [Radius/Diameter Dimension](#button-sketcher_constrainradiam) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainLock.png" width="11" height="11" alt="Lock Position"> [Lock Position](#button-sketcher_constrainlock) | Menu item | — |
+| ↳ <img src="toolbar-icons/Sketcher_ConstrainSnellsLaw.png" width="11" height="11" alt="Refraction Constraint"> [Refraction Constraint](#button-sketcher_constrainsnellslaw) | Menu item | — |
+| <img src="toolbar-icons/Sketcher_ToggleConstruction.png" width="11" height="11" alt="Toggle Construction Geometry"> [Toggle Construction Geometry](#button-sketcher_toggleconstruction) | Medium (half size) | — |
+
+##### Assembly group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
@@ -1916,20 +1990,63 @@ Proposed completion: component access, this mode's most frequent operations, and
 | <img src="toolbar-icons/Assembly_Insert.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insert) | Medium (half size) | Dropdown |
 | ↳ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | — |
 | ↳ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> [Add Component](#button-assembly_insertnewpart) | Menu item | — |
-| <img src="toolbar-icons/Part_LinkArrays.png" width="11" height="11" alt="Circular Link Array"> [Circular Link Array](#button-part_linkarrays) | Medium (half size) | Dropdown |
-| ↳ Native choices for [Circular Link Array](#button-part_linkarrays) | Menu items | See function catalog |
+| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Medium (half size) | — |
+| <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Medium (half size) | Dropdown |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
+
+##### Mesh group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Mesh…"> [Import Mesh…](#button-mesh_import) | Medium (half size) | — |
+| <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-mesh_frompartshape) | Medium (half size) | — |
+| <img src="toolbar-icons/Mesh_Evaluation.png" width="11" height="11" alt="Evaluate and Repair"> [Evaluate and Repair](#button-mesh_evaluation) | Medium (half size) | — |
+
+##### View group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> [Fit All](#button-std_viewfitall) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewisometric) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_DrawStyle.png" width="11" height="11" alt="As Is"> [As Is](#button-std_drawstyle) | Medium (half size) | Dropdown |
+| ↳ Native choices for [As Is](#button-std_drawstyle) | Menu items | See function catalog |
+| <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filters…"> [Selection filters…](#button-std_entityselectionfilter) | Medium (half size) | — |
+
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -1984,7 +2101,8 @@ Proposed completion: component access, this mode's most frequent operations, and
 | ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
 | ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
 | ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgearbelt) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
+| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
 | <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Small | — |
 | <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Small | — |
 | <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Small | — |
@@ -2007,7 +2125,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2024,17 +2142,28 @@ Proposed completion: component access, this mode's most frequent operations, and
 | <img src="toolbar-icons/CAM_MeshPreparation.png" width="11" height="11" alt="Review CAM mesh..."> [Review CAM mesh...](#button-cam_meshpreparation) | Medium (half size) | — |
 | <img src="toolbar-icons/CAM_Workplane.png" width="11" height="11" alt="Work Plane"> [Work Plane](#button-cam_workplane) | Medium (half size) | — |
 
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2112,7 +2241,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2129,17 +2258,28 @@ Proposed completion: component access, this mode's most frequent operations, and
 | <img src="toolbar-icons/TechDraw_PageTemplate.png" width="11" height="11" alt="New Page From Template"> [New Page From Template](#button-techdraw_pagetemplate) | Medium (half size) | — |
 | <img src="toolbar-icons/TechDraw_FillTemplateFields.png" width="11" height="11" alt="Update Template Fields"> [Update Template Fields](#button-techdraw_filltemplatefields) | Medium (half size) | — |
 
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2279,7 +2419,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2300,13 +2440,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2472,7 +2612,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2489,17 +2629,28 @@ Proposed completion: component access, this mode's most frequent operations, and
 | <img src="toolbar-icons/Spreadsheet_Import.png" width="11" height="11" alt="Import Spreadsheet"> [Import Spreadsheet](#button-spreadsheet_import) | Medium (half size) | — |
 | <img src="toolbar-icons/Spreadsheet_Export.png" width="11" height="11" alt="Export Spreadsheet"> [Export Spreadsheet](#button-spreadsheet_export) | Medium (half size) | — |
 
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2547,7 +2698,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2562,17 +2713,28 @@ Proposed completion: component access, this mode's most frequent operations, and
 | --- | --- | --- |
 | <img src="toolbar-icons/Material_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-material_edit) | Medium (half size) | — |
 
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2608,7 +2770,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2627,13 +2789,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2669,7 +2831,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2690,13 +2852,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2737,7 +2899,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2758,13 +2920,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2809,7 +2971,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2828,13 +2990,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2870,7 +3032,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2890,13 +3052,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -2933,7 +3095,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -2954,13 +3116,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -3168,7 +3330,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -3189,13 +3351,13 @@ Proposed completion: component access, this mode's most frequent operations, and
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -3250,7 +3412,7 @@ Use the **Design → View** groups and sizes above; each mode activates its nati
 
 #### Home tab
 
-Proposed completion: component access, this mode's most frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
+Component access, this mode's frequent operations, and shared utilities. File/Edit/Clipboard stay in the common toolbar above the ribbon.
 
 ##### Main group
 
@@ -3267,17 +3429,28 @@ Proposed completion: component access, this mode's most frequent operations, and
 | <img src="toolbar-icons/Test_TestAll.png" width="11" height="11" alt="Test all"> [Test all](#button-test_testall) | Medium (half size) | — |
 | <img src="toolbar-icons/Test_TestDoc.png" width="11" height="11" alt="Test Document"> [Test Document](#button-test_testdoc) | Medium (half size) | — |
 
+##### Structure group
+
+| Command | Icon size | Dropdown / choices |
+| --- | --- | --- |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
+| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Medium (half size) | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
 
 ##### Help group
 
@@ -3324,11 +3497,11 @@ Only show a mode when an installed workbench registers it. Use the common toolba
 | Medium / half size | Owner direction; added between full and small, independent of dropdown behavior |
 | Home Main | Owner direction: New Component, Add Component, New Sketch, Coordinate System; medium icons |
 | Coordinate System dropdown | Owner direction: coordinate system, plane, axis, point; mapped to existing Part datum commands |
-| Home domain groups | Owner direction; individual common commands and sizes are proposed fill-ins |
+| Home domain groups | Owner direction; individual common commands and sizes complete the outline |
 | Design Assembly tab | Owner outline; populated with existing Assembly and Assembly Joints groups |
-| Design Sketch tab | Retained as a proposed completion of the incomplete outline |
-| Other modes | Existing native Tools groups retained; frequent Home subsets and sizes are proposed fill-ins |
-| New Component | Proposed command binding remains unresolved; do not bind it to New File or the Components panel |
+| Design Sketch tab | Retained as a completion of the incomplete outline |
+| Other modes | Existing native Tools groups retained; frequent Home subsets and sizes complete the outline |
+| New Component | Std_NewComponent creates an embedded model with zero instances and opens its editing tab; Add Component inserts an occurrence |
 
 ### Classic-to-Plus consolidations
 
@@ -3338,6 +3511,8 @@ Only show a mode when an installed workbench registers it. Use the common toolba
 | <img src="toolbar-icons/PartDesign_Pocket.png" width="11" height="11" alt="Pocket"> [Pocket](#button-partdesign_pocket) | Extrude → Subtract |
 | <img src="toolbar-icons/PartDesign_LinearPattern.png" width="11" height="11" alt="Linear Pattern"> [Linear Pattern](#button-partdesign_linearpattern) | Pattern task → Linear / Circular type |
 | <img src="toolbar-icons/PartDesign_PolarPattern.png" width="11" height="11" alt="Polar Pattern"> [Polar Pattern](#button-partdesign_polarpattern) | Pattern task → Linear / Circular type |
+| <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Coordinate System dropdown / task choices |
+| <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Fixed Joint dropdown / task choices |
 | <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Pattern dropdown / task choices |
 | <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Pattern dropdown / task choices |
 | <img src="toolbar-icons/PartDesign_PathPattern.png" width="11" height="11" alt="Path Pattern"> [Path Pattern](#button-partdesign_pathpattern) | Pattern dropdown / task choices |
@@ -3482,13 +3657,13 @@ No native command addition/removal in the compared toolbar definitions. Plus cha
 
 ## Maintenance
 
-This reference owns command placement; the UI specification owns shared behavior/sizing. The owner's outline is incomplete: group membership and proposed sizes remain reviewable. Refresh native metadata with [ExportToolbarReference.FCMacro](../../../tools/ExportToolbarReference.FCMacro), then `python tools/GenerateToolbarReference.py <inventory.json> <recorded-upstream-ref>`. Review the generator's target placements when owner decisions change.
+This reference owns command placement; the UI specification owns shared behavior/sizing. The owner's outline is incomplete: group membership and sizes remain reviewable. Refresh native metadata with [ExportToolbarReference.FCMacro](../../../tools/ExportToolbarReference.FCMacro), then `python tools/GenerateToolbarReference.py <inventory.json> <recorded-upstream-ref>`. Review the generator's target placements when owner decisions change.
 
 Artwork retains its original [license](../../../LICENSE). HTML width/height attributes scale reference icons without changing PNG/SVG assets.
 
 ## Complete toolbar button/function catalog
 
-Every Classic/Plus command and native compound-button choice is listed below. Native IDs disambiguate similar captions. Descriptions come from native help/status text or source resources. Dropdown child choices have their own rows. The planned New Component entry follows the native catalog and has no invented command ID.
+Every Classic/Plus command and native compound-button choice is listed below. Native IDs disambiguate similar captions. Descriptions come from native help/status text or source resources. Dropdown child choices have their own rows. New Component is a registered native Python command with its own ID and function row.
 
 | Icon | Command / choice | Native ID | Function |
 | --- | --- | --- | --- |
@@ -4152,6 +4327,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> | <a id="button-std_massproperties"></a>Mass Properties | `Std_MassProperties` | Calculates mass properties of selected objects |
 | <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> | <a id="button-std_measure"></a>Measure | `Std_Measure` | Measures a feature |
 | <img src="toolbar-icons/Std_New.png" width="11" height="11" alt="New Document"> | <a id="button-std_new"></a>New Document | `Std_New` | Creates a new empty document |
+| <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> | <a id="button-std_newcomponent"></a>New Component | `Std_NewComponent` | Create an embedded model with no assembly instances and open it for editing |
 | <img src="toolbar-icons/Std_Open.png" width="11" height="11" alt="Open…"> | <a id="button-std_open"></a>Open… | `Std_Open` | Opens a document or imports files |
 | <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> | <a id="button-std_part"></a>Add Component | `Std_Part` | Adds a component to the active component. |
 | <img src="toolbar-icons/Std_Paste.png" width="11" height="11" alt="Paste"> | <a id="button-std_paste"></a>Paste | `Std_Paste` | Pastes the contents of the clipboard |
@@ -4162,7 +4338,6 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Gui/Icons/preferences-workbenches.svg" width="11" height="11" alt="Toolbars"> | <a id="button-std_toolbarmenu"></a>Toolbars | `Std_ToolBarMenu` | Toggles this window |
 | <img src="toolbar-icons/Std_Undo.png" width="11" height="11" alt="Undo"> | <a id="button-std_undo"></a>Undo | `Std_Undo` | Undoes the previous action |
 | <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> | <a id="button-std_varset"></a>Variable Set | `Std_VarSet` | Creates a variable set, which is an object that maintains a set of properties to be used as variables |
-| — | <a id="button-std_viewaxonometric"></a>Std ViewAxonometric | `Std_ViewAxonometric` | Source-only command; consult its linked workbench definition. |
 | <img src="toolbar-icons/Std_ViewBottom.png" width="11" height="11" alt="Bottom"> | <a id="button-std_viewbottom"></a>Bottom | `Std_ViewBottom` | Sets the camera to the bottom view |
 | <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> | <a id="button-std_viewfitall"></a>Fit All | `Std_ViewFitAll` | Fits all content into the 3D view |
 | <img src="toolbar-icons/Std_ViewFitSelection.png" width="11" height="11" alt="Fit Selection"> | <a id="button-std_viewfitselection"></a>Fit Selection | `Std_ViewFitSelection` | Fits the selected content into the 3D view |
@@ -4315,4 +4490,3 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Test_TestAll.png" width="11" height="11" alt="Test all"> | <a id="button-test_testall"></a>Test all | `Test_TestAll` | Runs all tests at once (can take very long!) |
 | <img src="toolbar-icons/Test_TestBase.png" width="11" height="11" alt="Test base"> | <a id="button-test_testbase"></a>Test base | `Test_TestBase` | Test the basic functions of FreeCAD |
 | <img src="toolbar-icons/Test_TestDoc.png" width="11" height="11" alt="Test Document"> | <a id="button-test_testdoc"></a>Test Document | `Test_TestDoc` | Test the document (creation, save, load and destruction) |
-| — | New Component (proposed) | Binding pending | Create a reusable component definition in the owning file; exact occurrence/activation behavior must follow the approved component contract. |

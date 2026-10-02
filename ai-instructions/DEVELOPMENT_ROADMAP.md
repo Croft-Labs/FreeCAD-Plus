@@ -28,7 +28,60 @@ is subsequently changed.
   work selection across the roadmap, including F001-F127 and phase 16; it does not
   waive necessary checks for known correctness or data-integrity problems.
 
+## October 2 conversation and payload audit
+
+The owner opened the earlier `freecad-plus-build-20261002` launcher at native
+source `52495b0cb2`, whose ribbon predates the compact layout. The updated folder
+at `6be8eda4246a` contains that layout. The newest common bar, medium icons,
+expanded Home and Design Assembly tab were documentation-only at the start of
+this audit; they are now implemented and validated in the audit payload.
+
+| Conversation requirement | Incorporated behavior and evidence |
+| --- | --- |
+| New sketch shows XY/XZ/YZ; OK enters Sketcher without an existing-task prompt | Independent ComponentSketchTask, transactional task transition; packaged sketch workflow and task-context checks |
+| Origin and per-component Sketch001/Body001 labels | Local labels preserve global document identities; packaged local-name checks |
+| Selected sketch curves, one connected region with optional holes; viewport annulus selection | One-sketch collector and closed-region validation/picking; packaged curve-profile checks |
+| Green Add/red Subtract previews; dimensional/two-sided/symmetric/surface extents and offset | ComponentExtrudeTask and ComponentExtent; profile/preview/geometry/persistence checks |
+| untitled001 and Part001, Part002… defaults | Document/part naming service; local-name and add-command checks |
+| Bodies remain background results; no exposed deletable duplicate solid | Protected ComponentResultView and navigator filters; background-result checks |
+| Models flat list/counts; linked-only assembly children; retain unplaced definitions | Models and Part Tree ownership service; model-pane, native Delete, Undo/reopen/reuse checks |
+| Attributes replaces Model; View/Data retained | Native attribute editor retained with tree hidden; payload verification and pane-layout checks |
+| Top-level Part001 first; Part Tree/History captions; reference operation button | Root-first tree, operation command and permanent history; model-pane and ribbon checks |
+| Cut/Paste and drag/drop Part Tree | Identity-preserving move/reorder, placement/ownership guards; nine tree and pane-input checks |
+| Origin visible on entry; hidden Origin Planes child; both protected | Native origin visibility/deletion adapters; model-pane checks |
+| Plus/Classic preferences; Plus default; available workbench modes | Native General settings and ribbon routing; packaged ribbon, all-mode and cold-start tests |
+| Design Home/Modeling/Surface/Sketch/Mesh/View and added Assembly | Native workbench sections and curated Home; tab-routing/all-mode checks |
+| Compact big/small grid, bounded captions and dimension/family dropdowns | 76px grid with three small rows, primary buttons and native menus; packaged geometry/state assertions and captures |
+| All-mode common toolbar; medium/half icons and completed outline | Common File/Edit/Clipboard row; 40/20/16px icons; medium Home Main and common domain actions; packaged ribbon checks |
+| New File native icon/caption | Shared Std_New action in common bar; native caption/state checks |
+| Components top-left 2/3; Attributes below 1/3; startup visibility | Native startup layout; four dock-layout and pane-input checks |
+| Tasks: New File/Open, then Sketch/Coordinate System/Datum Plane/Add Component | Native idle task actions; five action checks |
+| Recent files only, no new-file/example cards | Native Start page retained with recent-only layout; three recent-card checks |
+| Notification/navigation/unit controls, Blender and Imperial Decimal defaults | Native status controls and fresh defaults preserving saved choices; four status and cold-start checks |
+| Never display Classic and Plus together | Both Plus bars are suppressed in Classic; native bars suppressed in Plus, including late layout restores; ribbon and three-process startup checks |
+| Governed toolbar inventory, visual mapping and functions | TOOLBARS.md regenerated from audit payload: 644 IDs, 616 PNGs, 11px reference artwork, Classic rows then Plus groups then final function catalog; links/anchors/syntax checks |
+| Desktop shortcut always follows delivered owner build | Mandatory AGENTS/build-guide delivery gate and verified UpdateOwnerBuildShortcut.ps1 procedure |
+| Check upstream commits for compatible imports | Existing October 2 compatibility review covers 62 upstream-only commits at b9609745048b; review is complete, imports/build acceptance are separate and were not performed by that check |
+| Explain signed Windows builds | Informational request; certificate signing was not requested or performed. This local portable build remains unsigned |
+
+New Component now binds to Std_NewComponent: create an embedded definition with
+zero occurrences and open its edit tab. Add Component retains its existing
+occurrence chooser. Its creation/Undo/Redo/save/reopen is covered by the packaged
+ribbon suite. Specialist commands initialize only after the main window is visible,
+preventing native setup from saving all Classic bars as hidden during cold startup.
+No geometry engine or persistent identifiers are replaced by the ribbon changes.
+
+This audit validates the requested fork changes, not every inherited toolbar
+operation. FEM and printing-addon execution remain conditional on actual installed
+modules; the owner configuration still disables FEM. Physical owner acceptance,
+signing and external publication remain separate. WORK_STATE owns exact delivery
+paths, source/native identities, counts, failed diagnostic attempts and final hashes.
+
 ## Current focus
+
+- October 2 conversation audit: revised Plus layout and shortcut delivery gate
+  are implemented; the request-by-request [audit](#october-2-conversation-and-payload-audit)
+  records incorporation and verification, with exact artifact status in WORK_STATE.
 
 - October 2 updated owner build: all queued application changes through
   `6be8eda4246a` are incorporated into the portable Windows x64 Release build.
@@ -46,13 +99,12 @@ is subsequently changed.
 
 - Toolbar governance reference: [visual toolbar catalog](details/ui/TOOLBARS.md)
   governs detailed Classic/Plus placement and command consolidation by workbench.
-  Reorganized into one-command Classic rows, proposed mode/tab/group tables and
-  a final function catalog: 20 workbench sections, 644 command IDs and 615 native
-  icon renders, reusing the updated build inventory and recorded upstream source.
-  The common bar above the ribbon, medium icon size and expanded Design layout
-  are documentation targets pending implementation and native acceptance. All
-  previous catalog commands are retained. Source-only workbenches remain marked;
-  inventory is not acceptance of every command.
+  One-command Classic rows, implemented mode/tab/group tables and a final function
+  catalog: 20 workbench sections, 644 command IDs and 616 native icon renders from
+  the audit payload and recorded upstream source. The common bar, medium icons and
+  expanded Design layout are implemented and packaged. An invalid Isometric-view
+  alias in the draft was corrected to native Std_ViewIsometric. Source-only
+  workbenches remain marked; inventory is not acceptance of every command.
 
 - Owner priority (2026-10-01): complete the component/document architecture under
   **7.8**, using the [approved contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).

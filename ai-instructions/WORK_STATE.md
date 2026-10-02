@@ -1,6 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 2: toolbar document revision
+## October 2: conversation audit — package delivery in progress
+
+The owner opened the earlier source 52495b0cb2 payload; it lacks the compact grid.
+Use the new audit folder, retaining both earlier folders. Common toolbar, medium
+icons, Design Assembly, populated Home and Std_NewComponent are now implemented.
+The mandatory owner-shortcut update is recorded in AGENTS.md/DEVELOPMENT_GUIDE.
+
+Packaged checks pass: ribbon/all-mode 19; feedback 44; sketch workflow 27;
+component pane/tree/layout/Tasks/status/recent 35; cold sketch reopen 3. Fresh
+Plus/Blender/Imperial defaults and persisted Plus/Classic state pass three native
+processes after correcting hidden-window specialist initialization. Final owner
+launcher verification and archive/shortcut integrity are being completed.
+The native engine is reused from 6be8eda4246a; only compatible Python GUI modules
+change. The final metadata must record both native and application source identity.
+
+Failed ribbon draft (invalid Std_ViewAxonometric), two cold-start attempts and a
+detached-launcher harness attempt remain in the audit evidence. They are excluded
+from accepted counts; corrected native command, visible-window initialization and
+detached-launcher-aware runner pass the relevant checks. No upstream patch import,
+installer, signing or publication occurs. The recorded upstream compatibility
+review answers the earlier check request; candidate integration is separate.
+
+
+## October 2: toolbar document revision (historical; superseded by audit build)
 
 [TOOLBARS.md](details/ui/TOOLBARS.md) now separates Classic toolbar inventory,
 proposed Plus mode/tab/group placement, consolidations and the final function

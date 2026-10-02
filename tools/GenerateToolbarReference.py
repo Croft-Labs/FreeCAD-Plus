@@ -257,7 +257,7 @@ def constant(node):
 for node in ribbon_tree.body:
     if isinstance(node,ast.Assign) and isinstance(node.targets[0],ast.Name):
         key = node.targets[0].id
-        if key in ("PRIMARY_COMMANDS", "DIMENSION_CHOICES", "COMMAND_FAMILIES", "ICON_FALLBACKS", "COLLAPSED_GROUPS"):
+        if key in ("PRIMARY_COMMANDS", "DIMENSION_CHOICES", "COMMAND_FAMILIES", "ICON_FALLBACKS", "COLLAPSED_GROUPS", "COORDINATE_CHOICES", "COMMON_GROUPS", "HOME_GROUPS"):
             constants[key] = constant(node.value)
 primary = constants["PRIMARY_COMMANDS"]
 families = constants["COMMAND_FAMILIES"]
@@ -305,8 +305,7 @@ def projection(commands):
         result.append((root, choices))
     return result
 
-# Documentation target: owner decisions plus explicit completion of the outline.
-# These entries do not change the application ribbon or its native bindings.
+# Owner outline completed in the native-action projection; conditional modes retain source groups.
 order = ["PartDesignWorkbench", "PartWorkbench", "SketcherWorkbench", "SurfaceWorkbench", "MeshWorkbench",
          "DraftWorkbench", "AssemblyWorkbench", "CAMWorkbench", "TechDrawWorkbench", "FemWorkbench",
          "SpreadsheetWorkbench", "MaterialWorkbench", "MeshPartWorkbench", "PointsWorkbench", "RobotWorkbench",
@@ -317,14 +316,14 @@ common = {"File": ["Std_New", "Std_Open", "Std_Save", "Std_SaveAs"],
           "Clipboard": ["Std_Cut", "Std_Copy", "Std_Paste"]}
 coordinate_choices = ["Part_CoordinateSystem", "Part_DatumPlane", "Part_DatumLine", "Part_DatumPoint"]
 home = {
-    "Main": ["Planned_NewComponent", "Std_Part", "PartDesign_NewSketch", "Part_CoordinateSystem"],
+    "Main": ["Std_NewComponent", "Std_Part", "PartDesign_NewSketch", "Part_CoordinateSystem"],
     "Modeling": ["PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Fillet", "PartDesign_Pattern"],
     "Surface": ["Surface_Filling", "Surface_GeomFillSurface", "Surface_ExtendFace"],
     "Sketch": ["Sketcher_EditSketch", "Sketcher_MapSketch", "Sketcher_CompLine",
                "Sketcher_CompCreateRectangles", "Sketcher_Dimension", "Sketcher_ToggleConstruction"],
     "Assembly": ["Assembly_CreateAssembly", "Assembly_Insert", "Assembly_SolveAssembly", "Assembly_CreateJointFixed"],
     "Mesh": ["Mesh_Import", "Mesh_FromPartShape", "Mesh_Evaluation"],
-    "View": ["Std_ViewFitAll", "Std_ViewAxonometric", "Std_DrawStyle", "Std_EntitySelectionFilter"],
+    "View": ["Std_ViewFitAll", "Std_ViewIsometric", "Std_DrawStyle", "Std_EntitySelectionFilter"],
     "Structure": ["Std_ComponentStructure", "Std_Group", "Std_LinkActions", "Std_VarSet", "PartDesign_AddReferenceObject"],
     "Utilities": ["Std_Import", "Std_Export", "Std_DlgPreferences", "Std_CommandSearch", "Std_Measure", "Std_MassProperties", "Std_Delete"],
     "Help": dict(design["plus"]["Home"])["Help"], "Macro": dict(design["plus"]["Home"])["Macro"]}
@@ -337,16 +336,15 @@ design_tabs = {"Home": list(home.items()), "Modeling": design["plus"]["Modeling"
 
 def choices_for(name, family_choices=None):
     if name == "Part_CoordinateSystem": return coordinate_choices
-    if name == "Assembly_CreateJointFixed":
-        return [n for g, ns in data["workbenches"]["AssemblyWorkbench"]["plus"]["Tools"]
-                if g == "Assembly Joints" for n in ns if n.startswith("Assembly_CreateJoint")]
+    if name == "Assembly_CreateJointFixed": return list(family_choices or [])
     return list(family_choices or source_choices.get(name, []))
 
 def size_for(name, tab, group):
     if tab == "Common toolbar": return "Small"
     if group == "Main": return "Medium (half size)"
     if tab == "Home":
-        return "Full size" if name in ("PartDesign_Extrude", "PartDesign_Revolution") else "Medium (half size)"
+        if name in ("PartDesign_Extrude", "PartDesign_Revolution"): return "Full size"
+        return "Medium (half size)" if group in dict(constants["HOME_GROUPS"]) or group == "Frequent operations" else "Small"
     return "Full size" if name in primary else "Small"
 
 # Keep placement lookup independent of rendering, so Classic rows map to target.
@@ -405,9 +403,6 @@ def plus_groups(groups, tab, common_bar=False):
                 if name != "Separator": result.append(f"| ↳ {button(name)} | Menu item | — |")
         else:
             for name, family_choices in projection(names):
-                if name == "Planned_NewComponent":
-                    result.append("| New Component (proposed; binding pending) | Medium (half size) | — |")
-                    continue
                 caption = {"Std_Part": "Add Component", "Part_CoordinateSystem": "Coordinate System"}.get(name)
                 command = button(name) if not caption else f"{icon_for(name)} [{caption}](#button-{name.lower()})"
                 choices = [] if common_bar else choices_for(name, family_choices)
@@ -421,17 +416,17 @@ def plus_groups(groups, tab, common_bar=False):
     return result
 
 lines = ["# FreeCAD Plus toolbar reference", "",
-    "Classic inventory comes first, followed by the proposed Plus layout, the change map, and the function catalog. "
+    "Classic inventory comes first, followed by the implemented Plus layout, the change map, and the function catalog. "
     "Each command has its own row. Reference icons are displayed at **11 × 11 px**, approximately one third of the previous 32 px renders.", "",
-    "The Plus layout records the owner's revised direction and fills the incomplete outline with proposed placements. "
-    "**It is not the toolbar layout shipped in the 10/2 build.** Native IDs, icons and command descriptions remain tied to the inspected build. "
+    "The Plus layout implements the owner's revised direction and completes the incomplete outline with native command placements. "
+    "**This layout is incorporated in the October 2 audit build; earlier 10/2 folders retain their previous layout.** Native IDs, icons and command descriptions come from the inspected payload. "
     "[UI rules](../../UI_UX_SPEC.md#toolbar-ui-styles) govern interaction; [WORK_STATE](../../WORK_STATE.md) records implementation/build acceptance.", "",
     "- [Classic toolbars](#classic-toolbars)", "- [Plus UI target layout](#plus-ui-target-layout)",
     "- [Changes and retained access](#changes-and-retained-access)", "- [Complete function catalog](#complete-toolbar-buttonfunction-catalog)", "",
     "## Classic toolbars", "",
     f"Recorded upstream source: `{upstream[:12]}`. Native metadata: application `{data['version'][7][:12]}`. "
     "Conditional/edit-only toolbars are included; they are not all shown simultaneously. Shared desktop groups are listed once. "
-    "Plus locations below refer to the proposed layout; menu-only access is explicitly marked.", "",
+    "Plus locations below refer to the implemented layout; menu-only access is explicitly marked.", "",
     "### All workbenches — shared desktop", ""]
 lines += classic_groups(standard)
 for name in order:
@@ -451,7 +446,7 @@ lines += ["## Plus UI target layout", "",
     "| Medium / half size | Frequently used actions that need less visual weight; bounded captions |",
     "| Small | Secondary actions; no visible caption; three-row grid inside the ribbon |",
     "| Dropdown | A separate property, compatible with any icon size; related or rare choices appear in its menu |", "",
-    "Medium means half the full icon size; exact logical pixel sizes and grid placement await implementation. "
+    "Full icons are 40 logical pixels, medium icons 20, and small icons 16. Full buttons span the 76px grid; two medium buttons (38px each) or three small buttons (24px each) fit a column. "
     "Documentation icon size is independent of application button size. Every icon retains a tooltip and accessible name.", "",
     "### All Modes", "",
     "**Horizontal common toolbar above the ribbon.** These native actions remain visible when modes or tabs change. "
@@ -475,11 +470,11 @@ for name in order:
     if entry.get("source_only"):
         lines += ["**Conditional / source-only:** show this mode only when its workbench is installed and registered.", ""]
     lines += ["#### Home tab", "",
-              "Proposed completion: component access, this mode's most frequent operations, and shared utilities. "
+              "Component access, this mode's frequent operations, and shared utilities. "
               "File/Edit/Clipboard stay in the common toolbar above the ribbon.", ""]
     native_groups = entry.get("plus", {}).get("Tools", [])
     frequent = next(([c for c in ns if c != "Separator"][:3] for g,ns in native_groups if ns), [])
-    mode_home = [("Main", ["Std_Part", "Std_ComponentStructure"]), ("Frequent operations", frequent),
+    mode_home = entry.get("plus", {}).get("Home") or [("Main", ["Std_Part", "Std_ComponentStructure"]), ("Frequent operations", frequent),
                  ("Utilities", home["Utilities"]), ("Help", home["Help"]), ("Macro", home["Macro"])]
     lines += [line.replace("#### ", "##### ", 1) if line.startswith("#### ") else line
               for line in plus_groups(mode_home, "Home")]
@@ -498,11 +493,11 @@ lines += ["### 3D Printing and other addon modes", "",
     "| Medium / half size | Owner direction; added between full and small, independent of dropdown behavior |",
     "| Home Main | Owner direction: New Component, Add Component, New Sketch, Coordinate System; medium icons |",
     "| Coordinate System dropdown | Owner direction: coordinate system, plane, axis, point; mapped to existing Part datum commands |",
-    "| Home domain groups | Owner direction; individual common commands and sizes are proposed fill-ins |",
+    "| Home domain groups | Owner direction; individual common commands and sizes complete the outline |",
     "| Design Assembly tab | Owner outline; populated with existing Assembly and Assembly Joints groups |",
-    "| Design Sketch tab | Retained as a proposed completion of the incomplete outline |",
-    "| Other modes | Existing native Tools groups retained; frequent Home subsets and sizes are proposed fill-ins |",
-    "| New Component | Proposed command binding remains unresolved; do not bind it to New File or the Components panel |", "",
+    "| Design Sketch tab | Retained as a completion of the incomplete outline |",
+    "| Other modes | Existing native Tools groups retained; frequent Home subsets and sizes complete the outline |",
+    "| New Component | Std_NewComponent creates an embedded model with zero instances and opens its editing tab; Add Component inserts an occurrence |", "",
     "### Classic-to-Plus consolidations", "",
     "| Classic commands | Plus access |", "| --- | --- |",
     f"| {button('PartDesign_Pad', True)} | Extrude → Add |",
@@ -533,7 +528,7 @@ for name in order:
 
 lines += ["## Maintenance", "",
     "This reference owns command placement; the UI specification owns shared behavior/sizing. "
-    "The owner's outline is incomplete: group membership and proposed sizes remain reviewable. "
+    "The owner's outline is incomplete: group membership and sizes remain reviewable. "
     "Refresh native metadata with [ExportToolbarReference.FCMacro](../../../tools/ExportToolbarReference.FCMacro), then "
     "`python tools/GenerateToolbarReference.py <inventory.json> <recorded-upstream-ref>`. Review the generator's target placements when owner decisions change.", "",
     "Artwork retains its original [license](../../../LICENSE). HTML width/height attributes scale reference icons without changing PNG/SVG assets.", ""]
@@ -545,7 +540,7 @@ while pending:
 lines += ["## Complete toolbar button/function catalog", "",
     "Every Classic/Plus command and native compound-button choice is listed below. Native IDs disambiguate similar captions. "
     "Descriptions come from native help/status text or source resources. Dropdown child choices have their own rows. "
-    "The planned New Component entry follows the native catalog and has no invented command ID.", "",
+    "New Component is a registered native Python command with its own ID and function row.", "",
     "| Icon | Command / choice | Native ID | Function |", "| --- | --- | --- | --- |"]
 for name in sorted(catalog):
     entries = data["commands"].get(name) or [action(name)]
@@ -555,7 +550,7 @@ for name in sorted(catalog):
         description = description or "Source-only command; consult its linked workbench definition."
         anchor = f'<a id="button-{name.lower()}"></a>' if index == 0 else "↳ "
         lines.append(f"| {icon_for(name, entry)} | {anchor}{cell(clean(entry['text']))} | `{name}` | {cell(description)} |")
-lines += ["| — | New Component (proposed) | Binding pending | Create a reusable component definition in the owning file; exact occurrence/activation behavior must follow the approved component contract. |", ""]
+lines += [""]
 OUT.write_text("\n".join(lines).rstrip()+"\n", encoding="utf-8")
 print(json.dumps({"file": str(OUT), "toolbar_commands": len(catalog), "icon_files": len(used_icons),
-                  "reference_icon_px": 11, "layout_status": "proposed; not incorporated in 10/2 build"}, indent=2))
+                  "reference_icon_px": 11, "layout_status": "incorporated in October 2 audit build"}, indent=2))

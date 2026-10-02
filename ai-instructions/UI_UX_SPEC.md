@@ -41,7 +41,7 @@ elided. Align buttons to a consistent grid. Related variants share dropdowns:
 Auto Dimension is the default dimension action, with vertical, horizontal, angle,
 radius and diameter choices and less common dimension types in its menu.
 
-#### Revised toolbar layout — pending implementation
+#### Revised toolbar layout
 
 The owner's revised outline adds a small-icon horizontal toolbar **above** the
 ribbon, shared by all modes: File (New File/Open/Save/Save As), Edit
@@ -53,21 +53,24 @@ Add **medium / half-size** icons between full-size and small. Size and dropdown
 are independent: any size may have a dropdown. Full and medium captions have
 bounded widths; small icons have tooltips/accessibility but no visible caption.
 Small ribbon icons retain a three-row grid; common-toolbar icons use one row.
-Exact medium pixel sizes and grid allocation remain for implementation.
+Full icons use 40 logical pixels, medium 20, and small 16. The grid is 76px
+high: full buttons span it, two 38px medium buttons or three 24px small buttons
+fit a column. Reference-document artwork sizing is independent of these values.
 
 Design Home contains the most frequently used actions from the other tabs.
 Its Main group has medium New Component, Add Component, New Sketch and Coordinate
 System; Coordinate System has coordinate-system/plane/axis/point choices.
 The [toolbar reference](details/ui/TOOLBARS.md#plus-ui-target-layout) owns the
-detailed placements and proposed fill-ins for the incomplete owner outline,
-including the added Assembly tab and retained Sketch tab. New Component's native
-binding and exact creation/occurrence behavior remain unresolved; use the approved
-component contract when implementing it. Proposed fill-ins are reviewable choices,
-not claims of delivered commands or approval of new geometry workflows.
+detailed placements completing the incomplete owner outline, including the added
+Assembly tab and retained Sketch tab. Std_NewComponent creates an embedded model
+with no assembly occurrences and opens its editing tab. Add Component inserts a
+linked occurrence, reusing or creating a definition through the existing chooser.
+Both follow the approved component contract and native transaction/ownership rules.
 
-The following describes the delivered October 2 layout. The revised common
-toolbar, medium sizing and new grouping above are documented only and require
-application implementation and native acceptance before build incorporation.
+These changes are incorporated in the October 2 audit build. Earlier October 2
+folders retain their previous layout; the owner shortcut must target the validated
+audit payload. Initialize specialist Home actions only after the main window is
+visible, to preserve Classic visibility when native setup saves toolbar state.
 
 Edit > Preferences > General includes UI style: **Plus UI** and **Classic UI**.
 Plus UI is the default when no UI style is saved. Preserve an explicitly saved
@@ -76,7 +79,7 @@ choice; Cancel leaves the unapplied selection unchanged. These are application U
 preferences, separate from document data, themes and geometry operations.
 The styles are mutually exclusive: Plus hides all native Classic toolbars,
 including newly created bars and late workbench/layout show events; Classic hides
-the ribbon. Restoring a saved layout must not override the selected style.
+both Plus bars. Restoring a saved layout must not override the selected style.
 Switching back to Classic restores its toolbar visibility choices.
 
 Plus UI replaces the visible toolbars with a top ribbon. A mode dropdown at the
@@ -86,18 +89,16 @@ are included when registered; do not show invented/unavailable modes. Other
 installed workbenches retain their own labeled mode. Native workbench activation
 keeps the selector synchronized; changing modes during an active task is refused.
 
-Design has **Home, Modeling, Surface, Sketch, Mesh, View**, in that order.
-Home groups File, Edit, Clipboard, Structure, Sketch, common Tools and Help;
-include New/Open/Save/Save As/Import/Export, Undo/Redo/Delete/Recompute/Preferences,
-component/part/group/link structure controls, New Sketch, Attach Sketch, Edit Sketch
-and Validate Sketch.
-The Home New File button uses the standard New Document (`document-new`) icon and
+Design has **Home, Modeling, Surface, Sketch, Assembly, Mesh, View**, in that order.
+Home groups Main, Modeling, Surface, Sketch, Assembly, Mesh, View, Structure,
+Utilities, Help and Macro. File/Edit/Clipboard commands stay in the common bar.
+The New File button uses the standard New Document (`document-new`) icon and
 native Std_New action, which routes to the component-document workflow.
-Home also retains Datums as a native dropdown, Variable Set as a secondary button,
-and Macro actions in one compact dropdown. Iconless native actions use ribbon-only
+Home retains Coordinate System/Plane/Axis/Point in the Coordinate System dropdown,
+Variable Set as a small button, and Macro actions in one compact dropdown. Iconless native actions use ribbon-only
 fallback artwork and retain their original QAction state and menu identity.
 Modeling groups native Part Design Modeling, Transformation, Dress-Up and Helper
-commands, in that order. Surface, Sketch and Mesh reuse the
+commands, in that order. Surface, Sketch, Assembly and Mesh reuse the
 toolbar group boundaries of their corresponding native workbenches. View groups
 standard view orientation/fit and display controls. Unavailable workbench tabs
 are disabled. Other modes use Home, Tools and View; Tools preserves that mode's

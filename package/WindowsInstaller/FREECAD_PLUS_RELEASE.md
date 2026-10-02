@@ -32,6 +32,12 @@ Check that its native `App.Version()` commit agrees with the payload metadata;
 an incremental build can retain an older Version.cpp object despite a current
 generated header. The development guide documents a focused compile/relink when
 that mismatch is demonstrated; revalidate the final staged bytes afterward.
+For compatible Python-only updates, the development guide permits synchronization
+without a native rebuild. Record `native_source_commit` separately from
+`application_source_commit` and the synchronized module hashes; `App.Version()`
+must match the native identity. Do not describe reused native acceptance as rerun.
+Every owner build must also pass the mandatory desktop-shortcut delivery gate in
+root AGENTS.md and the development guide before it is reported ready.
 
 Before publishing, run model/task/CAM regressions against the payload, install the
 actual `.exe` into an isolated directory, check installed file hashes, test launch

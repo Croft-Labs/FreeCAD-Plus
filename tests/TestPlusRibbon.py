@@ -24,6 +24,8 @@ if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1":
         old_ribbon.render_timer.stop()
         old_ribbon.restore_bars()
         old_ribbon.window.workbenchActivated.disconnect(old_ribbon.workbench_changed)
+        old_ribbon.window.removeToolBar(old_ribbon.common)
+        old_ribbon.common.deleteLater()
         old_ribbon.window.removeToolBar(old_ribbon.toolbar)
         old_ribbon.toolbar.deleteLater()
         old_ribbon.deleteLater()
@@ -73,7 +75,80 @@ class TestPlusRibbon(unittest.TestCase):
         Gui.updateGui()
 
     def button(self, command):
-        return self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, "Ribbon_" + command)
+        return (self.ribbon.common.findChild(QtWidgets.QToolButton, "Ribbon_" + command)
+                or self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, "Ribbon_" + command))
+
+    def testCommonToolbarAndMediumHomeAcrossTabs(self):
+        for tab in UI.DESIGN_TABS:
+            self.tab(tab)
+            self.assertFalse(self.ribbon.common.isHidden())
+            for group, commands in UI.COMMON_GROUPS:
+                for name in commands:
+                    button = self.ribbon.common.findChild(QtWidgets.QToolButton, "Ribbon_" + name)
+                    self.assertIsNotNone(button, name)
+                    self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
+                    self.assertEqual(button.defaultAction(), Gui.Command.get(name).getAction()[0])
+                    self.assertIsNone(self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, "Ribbon_" + name))
+        self.tab("Home")
+        for name in ("Std_NewComponent", "Std_Part", "PartDesign_NewSketch", "Part_CoordinateSystem"):
+            button = self.button(name)
+            self.assertIsNotNone(button, name)
+            self.assertEqual(button.property("ribbonSize"), "medium")
+            self.assertEqual(button.iconSize().width(), UI.MEDIUM_ICON_SIZE)
+            self.assertEqual(button.height(), UI.MEDIUM_HEIGHT)
+            self.assertLessEqual(button.width(), UI.PRIMARY_WIDTH)
+        for group, commands in UI.HOME_GROUPS:
+            for name in commands:
+                self.assertIsNotNone(self.button(name), name)
+        self.assertEqual(self.button("Part_CoordinateSystem").menu().actions(),
+                         [Gui.Command.get(name).getAction()[0] for name in UI.COORDINATE_CHOICES])
+        self.ribbon.window.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-full-window.png"))
+
+    def testNewModelCreatesNoExtraAssemblyInstance(self):
+        root = Model.metadata(self.doc).RootComponent
+        self.button("Std_NewComponent").click()
+        settle()
+        models = Model.definitions(self.doc)
+        self.assertEqual(len(models), 2)
+        created = next(model for model in models if model != root)
+        self.assertEqual(created.Label, "Part002")
+        self.assertEqual(Model.children(root), [])
+        self.assertEqual(Model.instance_counts(root).get(created, 0), 0)
+        self.assertEqual(Navigator._dock.active_key, Navigator.object_key(created))
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-new-model.cadprt"
+        self.doc.saveAs(str(path))
+        self.doc.undo()
+        self.assertEqual(len(Model.definitions(self.doc)), 1)
+        self.doc.redo()
+        self.assertEqual(len(Model.definitions(self.doc)), 2)
+        App.closeDocument(self.doc.Name)
+        import CadDocument
+        reopened = CadDocument.open(str(path))
+        self.assertEqual(len(Model.definitions(reopened)), 2)
+        self.assertEqual(Model.children(Model.metadata(reopened).RootComponent), [])
+
+    def testCommonCommandsRemainAvailableInEveryInstalledMode(self):
+        for mode, workbench in UI.available_modes():
+            if mode == "Design":
+                continue
+            index = next(i for i in range(self.ribbon.modes.count())
+                         if self.ribbon.modes.itemData(i)[0] == mode)
+            self.ribbon.modes.setCurrentIndex(index)
+            settle()
+            self.assertEqual(Gui.activeWorkbench().name(), workbench)
+            for tab in range(self.ribbon.tabs.count()):
+                self.ribbon.tabs.setCurrentIndex(tab)
+                settle()
+                self.assertFalse(self.ribbon.common.isHidden(), mode)
+                self.assertFalse(self.ribbon.toolbar.isHidden(), mode)
+                self.assertLess(self.ribbon.common.geometry().bottom(), self.ribbon.toolbar.geometry().top())
+                for group, commands in UI.COMMON_GROUPS:
+                    for name in commands:
+                        button = self.button(name)
+                        self.assertEqual(button.defaultAction(), Gui.Command.get(name).getAction()[0])
+                        self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
+                self.assertTrue(all(bar.isHidden() for bar in self.ribbon.window.findChildren(QtWidgets.QToolBar)
+                                    if bar not in self.ribbon.plus_bars()))
 
     def testWorkbenchInitializationDefersRendering(self):
         incomplete = type("InitializingWorkbench", (), {
@@ -96,7 +171,7 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertTrue(self.ribbon.enabled)
         self.assertFalse(self.ribbon.toolbar.isHidden())
         self.assertEqual(self.button("Std_New").text(), "New File")
-        self.assertEqual(self.button("Std_Part").text(), "Add part")
+        self.assertEqual(self.button("Std_Part").text(), "Add Component")
         for name in ("Std_New", "Std_Open", "Std_Save", "Std_Undo", "Std_Part", "PartDesign_NewSketch",
                      "Sketcher_MapSketch", "Sketcher_EditSketch", "PartDesign_AddReferenceObject"):
             button = self.button(name)
@@ -120,7 +195,8 @@ class TestPlusRibbon(unittest.TestCase):
         self.tab("Modeling")
         for name in ("PartDesign_Extrude", "PartDesign_Fillet", "PartDesign_Mirrored"):
             self.assertIsNotNone(self.button(name), name)
-        for tab, workbench in (("Surface", "SurfaceWorkbench"), ("Sketch", "SketcherWorkbench"), ("Mesh", "MeshWorkbench")):
+        for tab, workbench in (("Surface", "SurfaceWorkbench"), ("Sketch", "SketcherWorkbench"),
+                               ("Assembly", "AssemblyWorkbench"), ("Mesh", "MeshWorkbench")):
             self.tab(tab)
             self.assertEqual(Gui.activeWorkbench().name(), workbench)
             expected = [(name, commands) for name, commands in Gui.activeWorkbench().getToolbarItems().items()
@@ -136,7 +212,7 @@ class TestPlusRibbon(unittest.TestCase):
         self.params.SetString("ToolbarUIStyle", "Classic")
         UI.apply_preferences()
         bars = [bar for bar in Gui.getMainWindow().findChildren(QtWidgets.QToolBar)
-                if bar != self.ribbon.toolbar and bar.toggleViewAction().isVisible()]
+                if bar not in self.ribbon.plus_bars() and bar.toggleViewAction().isVisible()]
         first = next(bar for bar in bars if not bar.isHidden())
         first.hide()
         before = {bar.objectName(): bar.isHidden() for bar in bars}
@@ -154,7 +230,7 @@ class TestPlusRibbon(unittest.TestCase):
     def testLateClassicShowsAndNewToolbarStayHiddenInPlus(self):
         window = Gui.getMainWindow()
         bars = [bar for bar in window.findChildren(QtWidgets.QToolBar)
-                if bar != self.ribbon.toolbar]
+                if bar not in self.ribbon.plus_bars()]
         self.assertTrue(bars)
         for bar in bars:
             bar.show()
@@ -185,7 +261,7 @@ class TestPlusRibbon(unittest.TestCase):
         settle()
         self.assertFalse(self.ribbon.toolbar.isHidden())
         self.assertTrue(all(bar.isHidden() for bar in window.findChildren(QtWidgets.QToolBar)
-                            if bar != self.ribbon.toolbar))
+                            if bar not in self.ribbon.plus_bars()))
         UI.apply_preferences()  # Applying the same choice must enforce it too.
         self.assertFalse(self.ribbon.toolbar.isHidden())
         self.params.SetString("ToolbarUIStyle", "Classic")
@@ -198,12 +274,12 @@ class TestPlusRibbon(unittest.TestCase):
             Gui.activateWorkbench(workbench)
             settle()
             for bar in Gui.getMainWindow().findChildren(QtWidgets.QToolBar):
-                if bar != self.ribbon.toolbar:
+                if bar not in self.ribbon.plus_bars():
                     bar.show()
             settle()
             self.assertFalse(self.ribbon.toolbar.isHidden())
             self.assertTrue(all(bar.isHidden() for bar in Gui.getMainWindow().findChildren(QtWidgets.QToolBar)
-                                if bar != self.ribbon.toolbar))
+                                if bar not in self.ribbon.plus_bars()))
 
     def testAvailableModesTaskGuardAndExternalActivation(self):
         modes = dict(UI.available_modes())
@@ -264,12 +340,12 @@ class TestPlusRibbon(unittest.TestCase):
                 button = grid.itemAt(i).widget()
                 row, column, rows, columns = grid.getItemPosition(i)
                 if button.property("ribbonPriority") == "primary":
-                    self.assertEqual((row, rows, columns), (0, 3, 1))
+                    self.assertEqual((row, rows, columns), (0, UI.GRID_ROWS, 1))
                 else:
                     self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
                     self.assertEqual((button.width(), button.height()), (24, 24))
-                    self.assertLess(row, 3)
-                    self.assertEqual((rows, columns), (1, 1))
+                    self.assertLess(row, UI.GRID_ROWS)
+                    self.assertEqual((rows, columns), (2, 1))
                 self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
                 self.assertLessEqual(button.geometry().bottom(), group.height())
         self.assertLess(self.ribbon.toolbar.height(), 170)
@@ -313,9 +389,9 @@ class TestPlusRibbon(unittest.TestCase):
 
     def testAuditStructureAndMacroAccess(self):
         self.tab("Home")
-        datums = self.button("Part_Datums")
+        datums = self.button("Part_CoordinateSystem")
         self.assertIsNotNone(datums.menu())
-        self.assertEqual(datums.menu().actions(), Gui.Command.get("Part_Datums").getAction())
+        self.assertEqual(datums.menu().actions(), [Gui.Command.get(name).getAction()[0] for name in UI.COORDINATE_CHOICES])
         variables = self.button("Std_VarSet")
         self.assertEqual(variables.defaultAction(), Gui.Command.get("Std_VarSet").getAction()[0])
         variables.click()

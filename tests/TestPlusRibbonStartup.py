@@ -38,7 +38,7 @@ class TestPlusRibbonStartup(unittest.TestCase):
             Gui.activateWorkbench("PartDesignWorkbench")
             settle()
             bars = [bar for bar in window.findChildren(QtWidgets.QToolBar)
-                    if bar != ribbon.toolbar and bar.toggleViewAction().isVisible()]
+                    if bar not in ribbon.plus_bars() and bar.toggleViewAction().isVisible()]
             hidden = next(bar for bar in bars if bar.objectName() == "Structure")
             hidden.hide()
             App.ParamGet("User parameter:BaseApp/MainWindow/Toolbars").SetBool(hidden.objectName(), False)
@@ -60,7 +60,7 @@ class TestPlusRibbonStartup(unittest.TestCase):
             Gui.activateWorkbench("PartDesignWorkbench")
             settle()
             bars = {bar.objectName(): not bar.isHidden() for bar in window.findChildren(QtWidgets.QToolBar)
-                    if bar != ribbon.toolbar and bar.toggleViewAction().isVisible()}
+                    if bar not in ribbon.plus_bars() and bar.toggleViewAction().isVisible()}
             for name, visible in json.loads(expected_file.read_text(encoding="utf-8")).items():
                 self.assertEqual(bars.get(name), visible, name)
         App.saveParameter()
