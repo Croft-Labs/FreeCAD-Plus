@@ -54,6 +54,7 @@ $env:FREECAD_USER_DATA = $OutputDirectory
 $env:FREECAD_USER_TEMP = $OutputDirectory
 $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentDocument.py'
 $env:FREECAD_PLUS_TEST_NAMES = $TestNames
+$env:FREECAD_PLUS_VERIFY_PAYLOAD = '0'
 if ($IterationSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentIteration.py' }
 if ($PanelSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentPanelIteration.py' }
 if ($SelectionSmoke) { $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentSelectionIteration.py' }

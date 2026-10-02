@@ -28,6 +28,9 @@ plane. The regression checks both front occlusion and successful picking with
 geometry behind the sketch. All 44 component feedback checks pass on the staged
 copy. The runner supports explicit TestFiles for grouped native suites; all ten
 existing Circular/Path/Point Pattern geometry checks pass without overlays.
+Sequential runner phases now reset the Feedback-only payload verification flag;
+otherwise an unrelated later suite could pass all its checks yet be rejected for
+not loading Feedback's complete module list. This is a harness-state correction.
 
 ## October 2: toolbar audit corrections queued in source
 
