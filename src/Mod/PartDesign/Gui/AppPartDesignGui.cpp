@@ -149,10 +149,10 @@ PyMOD_INIT_FUNC(PartDesignGui)
     PartDesignGui::ViewProviderTransformed   ::init();
     PartDesignGui::ViewProviderMirrored      ::init();
     PartDesignGui::ViewProviderLinearPattern ::init();
-    PartDesignGui::ViewProviderCircularPattern::init();
     PartDesignGui::ViewProviderPathPattern   ::init();
     PartDesignGui::ViewProviderPointPattern  ::init();
     PartDesignGui::ViewProviderPolarPattern  ::init();
+    PartDesignGui::ViewProviderCircularPattern::init();
     PartDesignGui::ViewProviderScaled        ::init();
     PartDesignGui::ViewProviderMultiTransform::init();
     PartDesignGui::ViewProviderDatum         ::init();

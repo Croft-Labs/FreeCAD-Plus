@@ -149,7 +149,7 @@ while (-not $process.WaitForExit(1000)) {
 if ($process.ExitCode -ne 0) { throw "FreeCAD exited $($process.ExitCode)." }
 $result = Get-Content "$OutputDirectory\results.json" -Raw | ConvertFrom-Json
 $diagnostics = @(Select-String -LiteralPath "$OutputDirectory\stderr.log" -Pattern @(
-    'Unhandled Base::Exception caught in GUIApplication::notify',
+    'Unhandled (Base::Exception|std::exception) caught in GUIApplication::notify',
     'AttributeError: .*__Workbench__',
     'libshiboken: Internal C\+\+ object .*already deleted') | ForEach-Object { $_.Line })
 $result | Add-Member -NotePropertyName unexpected_gui_diagnostics -NotePropertyValue $diagnostics -Force

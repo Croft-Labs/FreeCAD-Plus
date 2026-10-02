@@ -32,6 +32,7 @@
 
 
 #include <algorithm>
+#include <QSignalBlocker>
 #include "GeneralSettingsWidget.h"
 #include <gsl/pointers>
 #include <App/Application.h>
@@ -219,6 +220,10 @@ bool GeneralSettingsWidget::eventFilter(QObject* object, QEvent* event)
 
 void GeneralSettingsWidget::retranslateUi()
 {
+    // Populate controls without applying intermediate first-item values to the
+    // global unit/navigation preferences or recursively notifying observers.
+    const QSignalBlocker unitsBlocker(_unitSystemComboBox);
+    const QSignalBlocker navigationBlocker(_navigationStyleComboBox);
     _languageLabel->setText(createLabelText(tr("Language")));
     _unitSystemLabel->setText(createLabelText(tr("Unit System")));
 

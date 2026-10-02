@@ -30,6 +30,9 @@ class TestPlusRibbonStartup(unittest.TestCase):
         if phase == "Bootstrap":
             self.assertTrue(ribbon.enabled, "A fresh configuration defaults to Plus")
             self.assertEqual(params.GetString("ToolbarUIStyle"), "Plus")
+            self.assertEqual(App.ParamGet("User parameter:BaseApp/Preferences/View").GetString(
+                "NavigationStyle"), "Gui::BlenderNavigationStyle")
+            self.assertEqual(App.Units.getSchema(), App.Units.listSchemas().index("ImperialDecimal"))
             params.SetString("ToolbarUIStyle", "Classic")
             UI.apply_preferences()
             Gui.activateWorkbench("PartDesignWorkbench")

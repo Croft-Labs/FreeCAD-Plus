@@ -80,6 +80,7 @@ StartView::StartView(QWidget* parent)
     );
     auto cardSpacing = hGrp->GetInt("FileCardSpacing", 15);  // NOLINT
     auto showExamples = hGrp->GetBool("ShowExamples", true);
+    const bool recentOnly = hGrp->GetBool("PlusRecentFilesOnly", true);
 
     // Verify that the folder specified in preferences is available before showing it
     std::string customFolder(hGrp->GetASCII("CustomFolder", ""));
@@ -96,9 +97,11 @@ StartView::StartView(QWidget* parent)
 
     auto firstStartRegion = gsl::owner<QHBoxLayout*>(new QHBoxLayout(firstStartScrollWidget));
     firstStartRegion->setAlignment(Qt::AlignCenter);
-    auto firstStartWidget = gsl::owner<FirstStartWidget*>(new FirstStartWidget(this));
-    connect(firstStartWidget, &FirstStartWidget::dismissed, this, &StartView::firstStartWidgetDismissed);
-    firstStartRegion->addWidget(firstStartWidget);
+    if (!recentOnly) {
+        auto firstStartWidget = gsl::owner<FirstStartWidget*>(new FirstStartWidget(this));
+        connect(firstStartWidget, &FirstStartWidget::dismissed, this, &StartView::firstStartWidgetDismissed);
+        firstStartRegion->addWidget(firstStartWidget);
+    }
     _contents->addWidget(firstStartScrollArea);
 
     // Documents page
@@ -184,7 +187,7 @@ StartView::StartView(QWidget* parent)
 
     // Set startup widget according to the first start parameter
     auto firstStart = hGrp->GetBool("FirstStart2024", true);
-    _contents->setCurrentWidget(firstStart ? firstStartScrollArea : documentsWidget);
+    _contents->setCurrentWidget(!recentOnly && firstStart ? firstStartScrollArea : documentsWidget);
     if (customFolderListWidget) {
         configureCustomFolderListWidget(customFolderListWidget);
     }

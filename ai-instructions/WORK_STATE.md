@@ -1,5 +1,26 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2: owner-authorized build incorporation in progress
+
+The owner authorized incorporation of the queued batch. All enabled native Release
+targets pass, with Start and Tux enabled in the existing cache. The staged update
+is under `D:\Temp\Office-PC\freecad-plus-build-20261002-update`; the previous owner
+runtime and ZIP remain intact. Native version metadata required a focused
+Version.cpp compile/relink after the full build retained the previous object.
+
+Packaged acceptance exposed and corrected Circular Pattern view-provider
+registration before its Polar parent, temporary native Start/PySide wrapper
+ownership, empty recent-view focus, and first-run setup construction in the
+recent-only startup view. Start's unit/navigation controls also block signals
+while populating to preserve saved/default settings. The runner now rejects
+unhandled std::exception diagnostics as well as Base::Exception diagnostics.
+
+The corrected packaged recent-files (3), status controls (4), dock layout (4) and
+Tasks actions (5) checks pass with no skipped checks or unexpected GUI exception
+diagnostics. Fresh startup confirms Plus/Blender/Imperial Decimal. Full ribbon,
+component and sketch acceptance is running; archive creation and delivery remain
+pending. This checkpoint does not claim a completed or published build.
+
 ## October 2: toolbar audit corrections queued in source
 
 Audit follow-through restores Datums and Variable Set to Home Structure and Macro

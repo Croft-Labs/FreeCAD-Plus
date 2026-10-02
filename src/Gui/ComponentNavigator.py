@@ -1577,6 +1577,13 @@ def show_recent_files():
             return
         Gui.runCommand("Start_Start")
         view = window.findChild(QtWidgets.QWidget, "StartView")
+    if view is not None and not App.ActiveDocument:
+        mdi = window.findChild(QtWidgets.QMdiArea)
+        if mdi:
+            for sub in mdi.subWindowList():
+                if sub.isAncestorOf(view):
+                    mdi.setActiveSubWindow(sub)
+                    break
     if view is None or view.property("PlusRecentFilesOnly"):
         return
     contents = view.findChild(QtWidgets.QStackedWidget)
@@ -1587,7 +1594,10 @@ def show_recent_files():
         return
     # The upstream Documents page contains the recent heading/cards, creation
     # row, examples and optional custom-folder cards in one content layout.
-    layout = recent.parentWidget().layout()
+    # Keep the native parent wrapper alive while accessing its layout. A
+    # temporary parentWidget() wrapper can invalidate the returned PySide layout.
+    cards_parent = recent.parentWidget()
+    layout = cards_parent.layout()
     heading = layout.itemAt(layout.indexOf(recent) - 1).widget()
     for index in range(layout.count()):
         widget = layout.itemAt(index).widget()
@@ -1597,7 +1607,7 @@ def show_recent_files():
     for widget in documents.findChildren(QtWidgets.QPushButton) + documents.findChildren(QtWidgets.QCheckBox):
         widget.hide()
     contents.setCurrentWidget(documents)
-    empty = QtWidgets.QLabel(tr("No recent files."), recent.parentWidget())
+    empty = QtWidgets.QLabel(tr("No recent files."), cards_parent)
     empty.setObjectName("RecentFilesEmpty")
     layout.insertWidget(layout.indexOf(recent) + 1, empty)
 
@@ -1619,6 +1629,9 @@ def show_recent_files():
     recent.model().rowsInserted.connect(queue_empty_update)
     recent.model().rowsRemoved.connect(queue_empty_update)
     update_empty()
+    # StartView is a native MDI subclass exposed as QWidget. Retain its wrapper
+    # on the main window, not only on itself, until native MDI ownership closes it.
+    window._plus_recent_widgets = (view, contents, cards_parent, layout, heading, recent, empty, empty_timer)
     view.setProperty("PlusRecentFilesOnly", True)
 
 
