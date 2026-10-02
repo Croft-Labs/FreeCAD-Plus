@@ -316,7 +316,7 @@ void DlgSettingsGeneral::loadSettings()
     // search for the language files
     ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("General");
     auto langToStr = Translator::instance()->activeLanguage();
-    ui->toolbarUIStyle->setCurrentIndex(hGrp->GetASCII("ToolbarUIStyle", "Classic") == "Plus" ? 0 : 1);
+    ui->toolbarUIStyle->setCurrentIndex(hGrp->GetASCII("ToolbarUIStyle", "Plus") == "Plus" ? 0 : 1);
     QByteArray language = hGrp->GetASCII("Language", langToStr.c_str()).c_str();
 
     localeIndex = ui->UseLocaleFormatting->currentIndex();

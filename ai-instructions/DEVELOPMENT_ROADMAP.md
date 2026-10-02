@@ -4289,6 +4289,9 @@ preceded grouped testing using engine 2df76790b4; no native build or release cha
   printing modes and reversible Classic toolbar visibility. Source and grouped
   9/28 payload updated October 2. Six native ribbon checks and three cold-start
   processes pass; exact build/payload evidence is recorded in WORK_STATE.
+  Subsequent owner follow-up makes Plus the default for absent UI settings,
+  preserving explicit Classic choices. Updated startup script staged; three
+  further cold-start checks pass. Native source fallback queued for the next build.
 - [   ] 10.9d Validate native General Apply/Cancel, startup/style persistence,
   actual task buttons, availability/dropdowns, mode/task context, narrow-window
   scrolling and Classic restoration across workbench switches. Native automated

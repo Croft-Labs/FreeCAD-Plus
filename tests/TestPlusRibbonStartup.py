@@ -28,7 +28,10 @@ class TestPlusRibbonStartup(unittest.TestCase):
         ribbon = UI._ribbon
         phase = os.environ["FREECAD_PLUS_RIBBON_PHASE"]
         if phase == "Bootstrap":
-            self.assertFalse(ribbon.enabled)
+            self.assertTrue(ribbon.enabled, "A fresh configuration defaults to Plus")
+            self.assertEqual(params.GetString("ToolbarUIStyle"), "Plus")
+            params.SetString("ToolbarUIStyle", "Classic")
+            UI.apply_preferences()
             Gui.activateWorkbench("PartDesignWorkbench")
             settle()
             bars = [bar for bar in window.findChildren(QtWidgets.QToolBar)

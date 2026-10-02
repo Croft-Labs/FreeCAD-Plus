@@ -20,8 +20,8 @@ translatable; quantity fields retain FreeCAD's unit and expression behavior.
 ### Toolbar UI styles
 
 Edit > Preferences > General includes UI style: **Plus UI** and **Classic UI**.
-Classic UI preserves the existing workbench toolbar presentation and is the default
-until the owner chooses Plus UI. Apply/OK switches immediately and persists the
+Plus UI is the default when no UI style is saved. Preserve an explicitly saved
+Classic UI choice and its existing workbench toolbar presentation. Apply/OK switches immediately and persists the
 choice; Cancel leaves the unapplied selection unchanged. These are application UI
 preferences, separate from document data, themes and geometry operations.
 

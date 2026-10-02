@@ -1,5 +1,18 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2 follow-up: Plus UI is the default
+
+Owner requests Plus UI by default. The startup service initializes an absent/empty
+ToolbarUIStyle setting to Plus and preserves explicit Classic choices. Initialization
+also makes the existing native General page display Plus consistently without
+requiring another C++ rebuild. Its source fallback is changed to Plus for the next
+grouped native build. Updated PlusRibbon.py synchronized into the closed 9/28 build;
+no owner preference file changed and no native rebuild required for this behavior.
+Three native cold processes pass in `D:\Temp\Office-PC\freecad-plus-default-cold-20261002`
+(Bootstrap, Plus, Classic): fresh Plus default, persisted Plus and retained Classic
+with prior toolbar visibility. The previous grouped build evidence remains valid
+for unchanged binaries; the script default is superseded by this update.
+
 ## October 1-2 grouped update: Plus UI / Classic UI and queued component feedback
 
 Owner-authorized ribbon UI is implemented and incorporated into the existing

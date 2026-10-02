@@ -87,7 +87,12 @@ class Ribbon(QtCore.QObject):
         return self.tabs.tabData(self.tabs.currentIndex())
 
     def apply(self):
-        plus = App.ParamGet(PARAM).GetString("ToolbarUIStyle", "Classic") == "Plus"
+        params = App.ParamGet(PARAM)
+        if not params.GetString("ToolbarUIStyle", ""):
+            # Initialize the choice so older native General pages also display
+            # the new default consistently. Preserve an explicit Classic choice.
+            params.SetString("ToolbarUIStyle", "Plus")
+        plus = params.GetString("ToolbarUIStyle", "Plus") == "Plus"
         if plus == self.enabled:
             return
         self.enabled = plus

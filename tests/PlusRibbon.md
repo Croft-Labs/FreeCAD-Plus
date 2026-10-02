@@ -9,7 +9,8 @@ one isolated parent: `-RibbonStartupPhase Bootstrap`, then `Plus`, then `Classic
 The runner shares only `ribbon-user.cfg` and the expected Classic visibility file
 within that parent. Do not enable source overlays for these phases.
 
-1. Open Edit > Preferences > General. UI style offers Plus UI and Classic UI.
+1. A fresh configuration starts in Plus UI; an explicitly saved Classic UI choice
+   remains Classic. Open Edit > Preferences > General. UI style offers Plus UI and Classic UI.
    Choose Plus UI and Apply: the ribbon replaces the workbench toolbars immediately.
    Change the selection and Cancel: the last applied style remains. Restart and
    confirm the applied preference persists. Switch to Classic UI to restore the
