@@ -37,6 +37,7 @@ param(
     [switch]$SketchSolver,
     [string]$SketchColdFixtureDirectory,
     [string]$TestNames,
+    [string]$TestFiles,
     [switch]$RibbonSmoke,
     [ValidateSet('Bootstrap','Plus','Classic')][string]$RibbonStartupPhase,
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
@@ -124,6 +125,7 @@ if ($ColdFixtureDirectory) {
     $env:FREECAD_PLUS_COMPONENT_FIXTURES = (Resolve-Path -LiteralPath $ColdFixtureDirectory).Path
     $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestInstalledComponentDocument.py'
 }
+if ($TestFiles) { $env:FREECAD_PLUS_ISSUE_TESTS = $TestFiles }
 $userConfig = if ($RibbonStartupPhase) { Join-Path (Split-Path -Parent $OutputDirectory) 'ribbon-user.cfg' } else { Join-Path $OutputDirectory 'user.cfg' }
 $launchArgs = @('--hidden', '--user-cfg', ('"' + $userConfig + '"'),
     '--system-cfg', ('"' + $OutputDirectory + '\system.cfg"'),

@@ -367,10 +367,19 @@ class TestComponentCurveProfile(unittest.TestCase):
             task.view.fitAll()
             Gui.updateGui()
             position = task.view.getPointOnViewport(App.Vector(7, 0, 0))
-            hit = task.view.getObjectInfo(position)
-            self.assertEqual(hit["Object"], blocker.Name, str(hit))
+            hits = task.view.getObjectsInfo(position)
+            self.assertIn(blocker.Name, [hit["Object"] for hit in hits], str(hits))
             task.pick_region({"State": "DOWN", "Button": "BUTTON1", "Position": position})
             self.assertEqual(task.curve_names(), [], "Other geometry must still block hidden region picks")
+            blocker.Shape = Part.makeBox(2, 2, 2, App.Vector(6, -1, -5))
+            self.doc.recompute()
+            Gui.updateGui()
+            position = task.view.getPointOnViewport(App.Vector(7, 0, 0))
+            task.pick_region({"State": "DOWN", "Button": "BUTTON1", "Position": position})
+            self.assertEqual(task.curve_names(), ["Edge1", "Edge2"],
+                             "Geometry behind the sketch must not block its visible region: "
+                             + str((self.sketch.Visibility, task.view.getObjectsInfo(position),
+                                    task.view.projectPointToLine(position), task.status.text())))
         finally:
             task.stop_selection()
             task.clear_preview()

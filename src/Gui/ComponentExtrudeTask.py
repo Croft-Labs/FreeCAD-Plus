@@ -379,23 +379,6 @@ class ExtrudeTask:
         position = event.get("Position")
         if not position:
             return
-        hit = self.view.getObjectInfo(position)
-        if hit:
-            hit_doc = App.listDocuments().get(hit.get("Document"))
-            hit_object = hit_doc.getObject(hit.get("Object", "")) if hit_doc else None
-            origin = self.component.Origin
-            origin_hit = hit_object == origin or hit_object in origin.OriginFeatures
-            support_plane_hit = (hit_object is not None
-                and hit_object in [ref[0] for ref in source.AttachmentSupport]
-                and (hit_object.isDerivedFrom("PartDesign::Plane")
-                     or hit_object.isDerivedFrom("Part::Plane")))
-            sketch_region_hit = (hit.get("Document") == source.Document.Name
-                                 and hit.get("Object") == source.Name
-                                 and hit.get("Component", "").startswith("InternalFace"))
-            if not origin_hit and not support_plane_hit and not sketch_region_hit:
-                return  # Native edge picks are collected by the selection observer.
-            # Origin helpers and the sketch's own support plane must not block
-            # region projection. Other geometry still blocks occluded picks.
         try:
             import ComponentProfile as Profile
             start, end = self.view.projectPointToLine(position)
@@ -406,6 +389,28 @@ class ExtrudeTask:
             if abs(denominator) < 1e-12:
                 raise ValueError(tr("Turn the view so the sketch plane can be picked."))
             point = start + direction * ((frame.Base - start).dot(normal) / denominator)
+            # Origin helpers can be picked on top of solids regardless of depth.
+            # Inspect the full ray so ignoring a helper never exposes a region
+            # occluded by real geometry. Geometry behind the sketch is harmless.
+            for hit in self.view.getObjectsInfo(position) or []:
+                hit_doc = App.listDocuments().get(hit.get("Document"))
+                hit_object = hit_doc.getObject(hit.get("Object", "")) if hit_doc else None
+                origin = self.component.Origin
+                origin_hit = hit_object == origin or hit_object in origin.OriginFeatures
+                support_plane_hit = (hit_object is not None
+                    and hit_object in [ref[0] for ref in source.AttachmentSupport]
+                    and (hit_object.isDerivedFrom("PartDesign::Plane")
+                         or hit_object.isDerivedFrom("Part::Plane")))
+                sketch_region_hit = (hit.get("Document") == source.Document.Name
+                                     and hit.get("Object") == source.Name
+                                     and hit.get("Component", "").startswith("InternalFace"))
+                if origin_hit or support_plane_hit or sketch_region_hit:
+                    continue
+                if all(axis in hit for axis in ("x", "y", "z")):
+                    hit_point = App.Vector(hit["x"], hit["y"], hit["z"])
+                    if (hit_point - point).dot(direction) / direction.Length > 1e-6:
+                        continue
+                return  # Native edge picks are collected by the selection observer.
             point = self.component.getGlobalPlacement().inverse().multVec(point)
             names = Profile.region(source, point)
             self.set_curves(([] if self.whole_profile else self.curve_names()) + names, False)

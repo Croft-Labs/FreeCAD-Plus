@@ -21,6 +21,14 @@ diagnostics. Fresh startup confirms Plus/Blender/Imperial Decimal. Full ribbon,
 component and sketch acceptance is running; archive creation and delivery remain
 pending. This checkpoint does not claim a completed or published build.
 
+The packaged component regression additionally exposed origin-helper pick
+priority masking an occluding solid. Extrude region picking now inspects the
+full native pick ray and ignores geometry only when it lies behind the sketch
+plane. The regression checks both front occlusion and successful picking with
+geometry behind the sketch. All 44 component feedback checks pass on the staged
+copy. The runner supports explicit TestFiles for grouped native suites; all ten
+existing Circular/Path/Point Pattern geometry checks pass without overlays.
+
 ## October 2: toolbar audit corrections queued in source
 
 Audit follow-through restores Datums and Variable Set to Home Structure and Macro
