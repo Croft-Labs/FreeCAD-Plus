@@ -4,7 +4,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtWidgets
 from freecad.gui.ComponentSectionTask import SectionTask
-from freecad.gui.ComponentExtrudeTask import active_component
+from freecad.gui.ComponentExtrudeTask import active_component, CompactFormLayout
 
 _task = None
 
@@ -120,7 +120,7 @@ class PipeTask(SectionTask):
     def path_picker(self, layout, label, key):
         import ComponentModel as Model
         host = QtWidgets.QWidget()
-        form = QtWidgets.QFormLayout(host)
+        form = CompactFormLayout(host)
         form.setContentsMargins(0, 0, 0, 0)
         source = self.combo(form, "Source", [("Select a path…", None)])
         for obj in Model.history(self.component):

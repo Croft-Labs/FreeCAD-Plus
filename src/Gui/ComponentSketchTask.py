@@ -3,7 +3,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtWidgets
-from freecad.gui.ComponentExtrudeTask import active_component
+from freecad.gui.ComponentExtrudeTask import active_component, CompactFormLayout
 
 _task = None
 
@@ -37,7 +37,7 @@ class SketchTask:
         self.sections = []
         for title in ("Define Plane", "Define Origin", "Define Orientation"):
             section = QtWidgets.QGroupBox(tr(title))
-            QtWidgets.QFormLayout(section)
+            CompactFormLayout(section)
             layout.addWidget(section)
             self.sections.append(section)
         definition, origin, orientation = [section.layout() for section in self.sections]
@@ -92,7 +92,7 @@ class SketchTask:
         self.directions = []
         for label, values in (("X-axis direction", (1, 0, 0)), ("Z-axis direction", (0, 0, 1))):
             row = QtWidgets.QWidget()
-            boxes = QtWidgets.QHBoxLayout(row)
+            boxes = CompactFormLayout(row)
             boxes.setContentsMargins(0, 0, 0, 0)
             controls = []
             for axis, value in zip(("X", "Y", "Z"), values):
@@ -101,8 +101,7 @@ class SketchTask:
                 spin.setDecimals(6)
                 spin.setValue(value)
                 spin.setAccessibleName(tr(label) + " " + axis)
-                spin.setPrefix(axis + ": ")
-                boxes.addWidget(spin)
+                boxes.addRow(axis, spin)
                 controls.append(spin)
             caption = QtWidgets.QLabel(tr(label))
             orientation.addRow(caption, row)

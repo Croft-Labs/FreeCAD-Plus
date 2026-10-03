@@ -38,12 +38,12 @@ class SectionTask(OperationTask):
 
     def buttons(self, layout, entries):
         row = QtWidgets.QWidget()
-        box = QtWidgets.QHBoxLayout(row)
+        box = QtWidgets.QGridLayout(row)
         box.setContentsMargins(0, 0, 0, 0)
-        for label, callback in entries:
+        for index, (label, callback) in enumerate(entries):
             button = QtWidgets.QPushButton(tr(label))
             button.clicked.connect(callback)
-            box.addWidget(button)
+            box.addWidget(button, index // 2, index % 2)
         layout.addRow(row)
 
     def add_row(self, obj, elements, index=None):

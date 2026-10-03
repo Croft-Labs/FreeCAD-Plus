@@ -56,13 +56,13 @@ class PrimitiveTask(OperationTask):
             for sub in subs or [""]:
                 self.support.addItem(source.Name + ("." + sub if sub else ""))
         row = QtWidgets.QWidget()
-        buttons = QtWidgets.QHBoxLayout(row)
+        buttons = QtWidgets.QGridLayout(row)
         buttons.setContentsMargins(0, 0, 0, 0)
-        for label, callback in (("Add selected", self.add_references), ("Remove", self.remove_reference), ("Clear", self.support.clear)):
+        for index, (label, callback) in enumerate((("Add selected", self.add_references), ("Remove", self.remove_reference), ("Clear", self.support.clear))):
             button = QtWidgets.QPushButton(tr(label))
             button.clicked.connect(callback)
             button.clicked.connect(self.changed)
-            buttons.addWidget(button)
+            buttons.addWidget(button, index // 2, index % 2)
         advanced.addRow(row)
         self.support.setToolTip(tr("Select local faces, edges, vertices or datum/origin objects, then Add selected. Order defines the native attachment."))
         self.reverse = QtWidgets.QCheckBox(tr("Reverse attachment"))

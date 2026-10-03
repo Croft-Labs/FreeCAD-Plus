@@ -2,6 +2,11 @@
 
 ## Project at a glance
 
+The October 3 compact-Tasks update makes component modeling forms usable at
+360 logical pixels with vertical scrolling only. Seventeen focused width and
+workflow checks pass; the Python-only owner payload retains the preceding
+native build. See WORK_STATE for delivery, provenance and visual evidence.
+
 The October 3 sketch-feedback build fixes ribbon panel colors, unfilled sketches,
 temporary blue profile regions, interior curve collection and sketch reuse after
 Extrude deletion. The 25 selected checks and owner-shortcut verification pass;

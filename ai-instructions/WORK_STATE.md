@@ -1,5 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 compact Tasks panels
+
+Owner clarified vertical scrolling only. Component Extrude, Revolve, Loft, Pipe,
+Helix, Primitive and Sketch/Datum Plane forms now wrap long rows, bound dropdown
+size hints, stack vector components and arrange collection actions in short rows.
+Reference fields retain usable width with Pick/Clear below; curve lists elide
+long text and expose it on hover without horizontal scrolling. The native Tasks
+scroller and dynamic Primitive height constraints are retained.
+
+Evidence root: `D:/Temp/Office-PC/freecad-plus-compact-tasks-20261003`.
+The incremental Python-only payload copies the prior sketch-feedback owner build
+and updates six GUI modules; no native rebuild was needed. Native About identity
+remains `f8a4d5c408`; the inherited SketcherGui/PartDesignGui fixes remain intact.
+BUILD-VALIDATION and BUILD-MANIFEST record exact application source/module hashes.
+Final `acceptance` runs 17 checks through the staged owner launcher without source
+overlays: seven native Tasks width/vertical-reachability cases and ten focused
+create/edit/preview/selection/sketch regressions. Captures were inspected at
+360 logical-pixel dock width. Initial failures identified reference-field sizing
+and a test focus-proxy scrolling assertion; both were corrected. Sketch regression
+logging now uses App.Console because the GUI launcher has no stderr descriptor.
+Earlier failed reports are retained. Physical owner acceptance remains separate.
+
+Word preserves all 1524 prior paragraphs and every other package member unchanged,
+adding the narrow-panel requirements and acceptance contract. All 44 pages render;
+pages 1-43 match the prior reviewed render byte-for-byte and page 44 was inspected.
+Document QA: `C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a101a6-1dcd-7341-88a5-a100bae38e72/compact-tasks-doc`.
+The existing desktop shortcut targets
+`D:/Temp/Office-PC/freecad-plus-compact-tasks-20261003/FreeCAD-Plus-2026-10-03/FreeCADPlus.exe`;
+`shortcut-verification.json` records the reopened target and working directory.
+`publication.json` records verified origin/main publication separately. Earlier
+owner payloads and unrelated toolbar/document relocations are preserved. No release.
+
 ## October 3 ribbon and sketch/Extrude feedback
 
 Source fixes the ribbon's stale dark child palette after tab/workbench changes,

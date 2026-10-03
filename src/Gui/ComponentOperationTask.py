@@ -2,7 +2,7 @@
 """Shared section layout and transient previews for component operation tasks."""
 import FreeCAD as App
 from PySide import QtCore, QtGui, QtWidgets
-from freecad.gui.ComponentExtrudeTask import ExtrudeTask
+from freecad.gui.ComponentExtrudeTask import ExtrudeTask, CompactFormLayout
 from freecad.gui.OccurrenceMove import Ghost
 
 
@@ -29,7 +29,7 @@ class OperationTask(ExtrudeTask):
             button.setArrowType(QtCore.Qt.DownArrow if expanded else QtCore.Qt.RightArrow)
             body = QtWidgets.QWidget()
             body.setVisible(expanded)
-            layout = QtWidgets.QFormLayout(body)
+            layout = CompactFormLayout(body)
             button.toggled.connect(body.setVisible)
             button.toggled.connect(lambda checked, b=button: b.setArrowType(QtCore.Qt.DownArrow if checked else QtCore.Qt.RightArrow))
             outer.addWidget(button)
@@ -96,13 +96,13 @@ class OperationTask(ExtrudeTask):
         self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         main.addRow(tr("Curves"), self.curves)
         row = QtWidgets.QWidget()
-        buttons = QtWidgets.QHBoxLayout(row)
+        buttons = QtWidgets.QGridLayout(row)
         buttons.setContentsMargins(0, 0, 0, 0)
-        for label, callback in (("Add selected", self.use_selection), ("Remove", self.remove_selected_curves),
-                                ("Clear", lambda: self.set_curves([], False)), ("Use all", self.profile_changed)):
+        for index, (label, callback) in enumerate((("Add selected", self.use_selection), ("Remove", self.remove_selected_curves),
+                                                 ("Clear", lambda: self.set_curves([], False)), ("Use all", self.profile_changed))):
             button = QtWidgets.QPushButton(tr(label))
             button.clicked.connect(callback)
-            buttons.addWidget(button)
+            buttons.addWidget(button, index // 2, index % 2)
         main.addRow(row)
         self.region_pick = QtWidgets.QCheckBox(tr("Pick closed regions in the view"))
         self.region_pick.setChecked(True)

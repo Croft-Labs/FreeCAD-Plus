@@ -3007,6 +3007,13 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   ribbon captures and the owner-shortcut verification pass. Word requirements
   are updated and rendered. Owner physical acceptance remains pending; exact
   delivery and origin publication evidence: WORK_STATE. No release.
+  October 3 compact-Tasks follow-up: seven component modeling forms fit a
+  360 logical-pixel dock using vertical scrolling only. Labels wrap, dropdown
+  text no longer drives minimum width, vector components stack, and collection
+  actions/reference fields remain reachable. Seventeen focused width/workflow
+  checks pass without overlays; captures and the updated Word page were inspected.
+  Python-only incremental owner payload and shortcut verification are recorded
+  separately in WORK_STATE; physical owner acceptance remains pending.
   Source provides a curve list, native edge collection, Remove/Clear/Use all and
   viewport region picking that collects outer and hole contours. Owner requires
   one connected region with optional holes, from one sketch; other sketch curves

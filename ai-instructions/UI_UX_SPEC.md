@@ -92,6 +92,16 @@ Switching back to Classic restores its toolbar visibility choices.
 The ribbon group area and its unused scroll viewport use the surrounding panel
 background from the current theme, including when the window is resized.
 
+Component modeling Tasks fit a narrow panel using vertical scrolling only.
+Extrude, Revolve, Loft, Pipe, Helix, Primitive and Sketch/Datum Plane forms wrap
+labels above fields as needed; long dropdown entries do not set the dock width.
+Vector components are stacked, collection actions use short rows, and reference
+fields retain usable width with Pick/Clear below. Curve lists elide long names
+and expose full text on hover, without horizontal scrolling. Preserve native
+units, values, section defaults, OK/Cancel and preview/edit behavior. Acceptance
+covers a 360 logical-pixel Tasks dock, expanded sections, two-sided Extrude,
+custom directions, Wedge dimensions and vertical access to each visible field.
+
 Sketches display unfilled curves after leaving sketch edit. Component Extrude's
 region collector temporarily displays closed areas in translucent light blue.
 Clicking an area can choose its sketch directly and adds the outer and hole

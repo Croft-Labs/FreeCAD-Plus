@@ -22,6 +22,33 @@ def active_component():
     return component if Model.is_component(component) else Model.metadata(doc).RootComponent
 
 
+class CompactFormLayout(QtWidgets.QFormLayout):
+    """Keep modeling forms usable in a narrow, vertically scrolling Tasks pane."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setRowWrapPolicy(QtWidgets.QFormLayout.WrapLongRows)
+        self.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
+
+    def addRow(self, *args):
+        super().addRow(*args)
+        # Object labels and attachment descriptions must not determine dock width.
+        for arg in args:
+            if isinstance(arg, QtWidgets.QComboBox):
+                arg.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
+                arg.setMinimumContentsLength(12)
+                arg.currentTextChanged.connect(arg.setToolTip)
+                arg.setToolTip(arg.currentText())
+            elif isinstance(arg, QtWidgets.QListWidget):
+                arg.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                arg.setTextElideMode(QtCore.Qt.ElideMiddle)
+                arg.setMouseTracking(True)
+                arg.itemEntered.connect(lambda item: item.setToolTip(item.text()))
+        label = self.itemAt(self.rowCount() - 1, QtWidgets.QFormLayout.LabelRole)
+        if label and isinstance(label.widget(), QtWidgets.QLabel):
+            label.widget().setWordWrap(True)
+
+
 class ExtrudeTask:
     def __init__(self, component, operation=None, preset=None, context=None):
         import ComponentModel as Model
@@ -41,7 +68,7 @@ class ExtrudeTask:
         Model.activate(component, strict=False)
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle(tr("Extrude"))
-        layout = QtWidgets.QFormLayout(self.form)
+        layout = CompactFormLayout(self.form)
         self.mode = QtWidgets.QComboBox()
         for name in Extrude.MODES:
             self.mode.addItem(tr(name), name)
@@ -146,18 +173,21 @@ class ExtrudeTask:
 
     def reference_row(self, layout, label):
         row = QtWidgets.QWidget()
-        box = QtWidgets.QHBoxLayout(row)
+        box = QtWidgets.QVBoxLayout(row)
         box.setContentsMargins(0, 0, 0, 0)
         field = QtWidgets.QLineEdit()
-        field.setMinimumWidth(0)
-        field.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
+        field.setMinimumWidth(120)
+        field.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         field.setPlaceholderText(tr("ObjectName.Face1 or plane/shape name"))
         pick, clear = QtWidgets.QPushButton(tr("Pick")), QtWidgets.QPushButton(tr("Clear"))
         pick.setMaximumWidth(55)
         clear.setMaximumWidth(55)
         box.addWidget(field)
-        box.addWidget(pick)
-        box.addWidget(clear)
+        buttons = QtWidgets.QHBoxLayout()
+        buttons.addWidget(pick)
+        buttons.addWidget(clear)
+        buttons.addStretch()
+        box.addLayout(buttons)
         pick.clicked.connect(lambda: self.begin_reference_pick(field))
         clear.clicked.connect(field.clear)
         field.textChanged.connect(self.changed)
@@ -205,7 +235,7 @@ class ExtrudeTask:
         self.custom = QtWidgets.QCheckBox(tr("Custom direction"))
         layout.addRow(self.custom)
         row = QtWidgets.QWidget()
-        box = QtWidgets.QHBoxLayout(row)
+        box = CompactFormLayout(row)
         box.setContentsMargins(0, 0, 0, 0)
         self.direction = []
         for label, value in (("X", 0.), ("Y", 0.), ("Z", 1.)):
@@ -213,8 +243,7 @@ class ExtrudeTask:
             widget.setRange(-1e6, 1e6)
             widget.setDecimals(6)
             widget.setValue(value)
-            box.addWidget(QtWidgets.QLabel(label))
-            box.addWidget(widget)
+            box.addRow(label, widget)
             self.direction.append(widget)
         self.direction_row = row
         layout.addRow(tr("Direction vector"), row)

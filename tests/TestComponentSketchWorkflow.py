@@ -32,7 +32,7 @@ def settle(ms=150):
 
 class TestComponentSketchWorkflow(unittest.TestCase):
     def setUp(self):
-        os.write(2, ("Sketch workflow: " + self._testMethodName + "\n").encode())
+        App.Console.PrintMessage("Sketch workflow: " + self._testMethodName + "\n")
         Gui.activateWorkbench("PartDesignWorkbench")
         self.doc = Model.new_document("Sketch workflow")
         self.root = Model.metadata(self.doc).RootComponent
