@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 modeling preview separation (7.8)
+
+REQ-014f gives the six shared component modeling tasks a None/Overlay/Result
+Preview type dropdown. Overlay defaults to the full native tool, colored blue,
+green or red for New Body/Add/Subtract; missing targets and disjoint Booleans
+no longer suppress it. Result uses evaluated geometry and normal body appearance.
+OK retains native validation. Seventy-five distinct modeling/selection/width
+checks pass after updating one obsolete green-New-Body test expectation to blue.
+WORK_STATE records the Python-only owner staging, visual/Word review, preserved
+native identity, shortcut verification and publication separately.
+
 ## October 3 combined owner rebuild and cleanup
 
 Current application changes through `03a6f6664448` are incorporated in an all-enabled-

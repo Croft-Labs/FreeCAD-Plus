@@ -12,7 +12,7 @@ undo/redo, property recompute and `.cadprt` save/reopen. Attachment coverage inc
 datum placement changes, native offsets/reversal, type replacement, origin selection
 and task reopen. Invalid edits roll back; cyclic targets and expressions are protected.
 The task checks four section defaults, all shape fields, History routing, blue/green/red
-preview policy, Final Result, failed-OK recovery and Cancel visibility restoration.
+preview policy, Result, failed-OK recovery and Cancel visibility restoration.
 
 Native ellipsoid B-spline Boolean/refinement volumes differ from independent
 `Part.fuse/cut` integration. Compare these against directly configured native
@@ -23,7 +23,7 @@ independent Part Boolean results. Run inherited `PartDesignTests/TestPrimitive.p
 Owner procedure: use either Primitive or a shape in Primitives, switch shapes and
 operations, specify a target, and adjust native dimensions. In Advanced select
 ordered local references and a native attachment mode, edit placement/offset and
-orientation, then compare Overlay/Final Result. Accept, reopen via History, switch
+orientation, then compare Overlay/Result. Accept, reopen via History, switch
 shape or Add/Subtract, undo/redo, edit the support and save/reopen. Confirm Classic
 documents still use native Body tasks. Physical pointer and high-DPI acceptance
 remain separate from scripted Qt captures. Tab remains disabled because no native

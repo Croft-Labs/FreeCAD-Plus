@@ -96,8 +96,22 @@ def feature(doc, mode):
     return doc.addObject("PartDesign::Groove" if mode == "Subtract" else "PartDesign::Revolution", "Revolve")
 
 
-def preview(component, profile, angle, mode="New Body", target=None, reverse=False, elements=None, options=None, volume_only=False):
+def preview(component, profile, angle, mode="New Body", target=None, reverse=False, elements=None, options=None, volume_only=False, tool_only=False):
     values = options or defaults()
+    if tool_only:
+        values = dict(values)
+        active_extents = ("extent", "extent2") if values["sides"] == "Two sides" else ("extent",)
+        # Native Through All is a full turn, including when either side requests
+        # it. Up To Last instead derives an angular bound from the target.
+        if any(values[key] == "ThroughAll" for key in active_extents):
+            values.update(sides="One side", extent="Angle", extent2="Angle")
+            angle = 360.
+            active_extents = ("extent",)
+        bounded = any(values[key] in ("UpToFirst", "UpToLast")
+                      for key in active_extents)
+        if not bounded:
+            target = None
+            mode = "New Body"
     validate(component, profile, angle, mode, target, values, elements=elements)
     scratch = App.newDocument("ComponentRevolvePreview", hidden=True, temp=True)
     try:
@@ -125,6 +139,11 @@ def preview(component, profile, angle, mode="New Body", target=None, reverse=Fal
             values["axis_reference"] = (axis, subs or ["Edge1"])
         operation = feature(scratch, mode)
         configure(operation, copied, angle, base, reverse, values)
+        if tool_only:
+            scratch.recompute()
+            if operation.AddSubShape.isNull():
+                raise ValueError("Cannot preview this revolution. Check the profile, axis and extent references.")
+            return operation.AddSubShape.copy()
         result = evaluate(scratch, operation, mode, base)
         return (base.Shape.cut(result) if mode == "Subtract" else result.cut(base.Shape)) if volume_only and base else result
     finally:

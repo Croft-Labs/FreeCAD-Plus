@@ -166,7 +166,7 @@ class TestComponentLoft(unittest.TestCase):
         task.preview_mode.setCurrentIndex(task.preview_mode.findData("None"))
         self.assertIsNone(task.ghost)
         self.assertFalse(task.preview_timer.isActive())
-        task.preview_mode.setCurrentIndex(task.preview_mode.findData("Final Result"))
+        task.preview_mode.setCurrentIndex(task.preview_mode.findData("Result"))
         self.assertTrue(task.preview(), task.status.text())
         self.assertTrue(task.accept())
         operation = task.operation
@@ -199,7 +199,7 @@ class TestComponentLoft(unittest.TestCase):
             self.assertFalse(task.target.isHidden())
             self.assertTrue(task.preview(), task.status.text())
             self.assertEqual(tuple(task.ghost.node.getChild(2).diffuseColor[0].getValue()), color)
-            task.preview_mode.setCurrentIndex(task.preview_mode.findData("Final Result"))
+            task.preview_mode.setCurrentIndex(task.preview_mode.findData("Result"))
             self.assertTrue(task.preview(), task.status.text())
             self.assertFalse(display.Visibility)
             task.reject()

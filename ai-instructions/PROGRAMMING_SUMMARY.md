@@ -2,11 +2,13 @@
 
 ## Project at a glance
 
-The current owner build incorporates all application changes through `03a6f6664448`
-in an all-enabled-target incremental native rebuild with new portable staging.
-Native/source identity, 61 runtime checks and the desktop shortcut are verified.
-Obsolete FreeCAD temp outputs are removed; historical evidence is archived under
-the new build. See WORK_STATE for delivery, cleanup and retained dependency paths.
+The current owner build adds None/Overlay/Result preview dropdowns to all six
+shared component modeling tasks. Overlays show full blue/green/red tool shapes
+without requiring Boolean contact; Result uses normal appearance. Seventy-five
+workflow checks pass. This is Python-only staging on native identity
+`03a6f6664448`; the desktop shortcut is verified. WORK_STATE records the
+payload, evidence, Word review and source publication. The preceding combined
+native rebuild and temp cleanup remain recorded separately below.
 
 Component curve collectors now select the latest picked list entry, toggle it off
 on a repeated pick and support Delete. Redundant selected-curve capture buttons

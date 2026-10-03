@@ -1,5 +1,20 @@
 # FreeCAD Plus: UI and UX Specification
 
+## Shared component modeling previews
+
+Extrude, Revolve, Loft, Pipe, Helix and Primitive expose **Preview type** as a
+None / Overlay / Result dropdown, defaulting to Overlay with automatic updates.
+Once sufficient geometry is selected, Overlay displays the full tool in blue
+(New Body), green (Add), or red (Subtract), including without a target or Boolean
+contact. It is not clipped to the target: a 5-inch subtract extrusion remains
+5 inches long through a 1-inch body. Native reference-defined extents still need
+their geometric references; the overlay does not invent missing limits or paths.
+Result evaluates the operation and uses normal body appearance, without mode
+colors. Invalid targets/results remain errors in Result and on OK. None, type
+changes, failures and Cancel remove temporary geometry and restore display state.
+Collected curve highlights remain independent of the preview. See
+[preview acceptance](../tests/ComponentPreview.md) and WORK_STATE for evidence.
+
 ## Interface scope
 
 This document specifies the fork's unified Extrude and Pattern task panes,
@@ -357,7 +372,7 @@ entry points and Model History editing use that task. Groove presets Subtract.
 | Main parameters, expanded | New Body/Add/Subtract; target body visible only for Add/Subtract; whole sketch or selected curve collection with region picking; One angle/Two angles/Symmetric; native applicable Type and second-side Type. |
 | Dimensions, expanded | Sketch vertical axis by default, horizontal or local reference axis; angles and synchronized reverse arrows; signed offset and flip arrow; profile-plane, offset or reference start. Angle replaces linear length; rotation uses an axis rather than the extrusion normal. |
 | Advanced, collapsed | Limiting face references, axis projection and refinement. Add retains To last; Subtract retains Through all; both retain Angle, To first and Up to surface. |
-| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result with Overlay default. Blue New Body, green Add, red Subtract. Final Result hides the original display; changing parameters or cancelling restores visibility and removes the ghost. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Result with Overlay default. Blue New Body, green Add, red Subtract. Result hides the original display; changing parameters or cancelling restores visibility and removes the ghost. |
 
 Creation uses native Revolution or Groove and publishes a component result without
 a Body container. Type-changing edits preserve operation ObjectId and published
@@ -398,7 +413,7 @@ is recorded separately in the roadmap.
 | Main parameters, expanded | New Body/Add/Subtract; target visible only for Add/Subtract; ordered section list; whole-profile or selected closed sketch-curve draft; append/replace/remove/clear and row inspection; Smooth/Ruled interpolation. Valid preselection preserves order; empty startup is supported. |
 | Dimensions, expanded | Move up/down and Reverse order. Section placements define the span, so extrusion length/offset and angular extent do not apply. |
 | Advanced, collapsed | Closed joins last to first (at least three sections); Refine; native Fuzzy tolerance from -1 to 1 mm, with zero default and negative automatic tolerance. |
-| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result, Overlay default, blue New Body/green Add/red Subtract. Temporary documents do not mutate source geometry. Cancel restores visibility and removes previews. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Result, Overlay default, blue New Body/green Add/red Subtract. Temporary documents do not mutate source geometry. Cancel restores visibility and removes previews. |
 
 Native AdditiveLoft/SubtractiveLoft own geometry and ordered Profile/Sections links.
 Selected sketch regions reuse `ComponentProfile` associative internal profiles;
@@ -421,7 +436,7 @@ documents retain their native tasks. The native adapter build is a separate gate
 | Main parameters, expanded | New Body/Add/Subtract; explicit target only for Add/Subtract; ordered profile/section list with whole profiles or selected closed sketch curves/regions; append, replace, inspect, remove and clear; Mode Constant/Multisection; Type/corner transition Transformed/Right corner/Round corner. Empty startup is valid. Preselection uses profile, path, then additional sections. |
 | Dimensions, expanded | Explicit sweep-path collector: whole curve object or selected edges from one local object, append/remove/clear picks; move profile sections up/down. Path geometry and section placements define length and direction; extrusion extent/offset fields do not apply. |
 | Advanced, collapsed | Standard/Fixed/Frenet/Auxiliary/Binormal orientation; separate auxiliary-path collector and curvilinear equivalence only for Auxiliary; nonzero XYZ vector only for Binormal; Subtraction/Common only for Subtract; Refine and native Fuzzy tolerance (-1 to 1 mm, zero default, negative automatic). |
-| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result with Overlay default; blue New Body, green Add, red Subtract. Preview geometry is temporary. Cancel restores source/target visibility. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Result with Overlay default; blue New Body, green Add, red Subtract. Preview geometry is temporary. Cancel restores source/target visibility. |
 
 Constant retains dormant additional sections when switching from Multisection.
 Inactive auxiliary references, binormal and stored tangent flags are retained on
@@ -450,7 +465,7 @@ documents retain native tasks. Native command build/delivery are separate gates.
 | Main parameters, expanded | New Body/Add/Subtract with explicit target only for Add/Subtract; whole profile or selected closed sketch curves/regions, automatic curve collection, editable curve list, Remove/Clear/Use all and Delete. Mode retains Pitch-Height-Angle, Pitch-Turns-Angle, Height-Turns-Angle and Height-Turns-Growth. Helix has no independent extent/termination Type or sidedness. Empty startup and preselection are supported. |
 | Dimensions, expanded | Sketch vertical (default), horizontal, normal or construction axis; picked/typed datum, origin, straight-edge or circular-edge reference. Show the mode's independent pitch/height/turns/cone-angle/growth fields. Axial reverse arrow and Left handed remain independent. Mode changes derive dependent values using native laws. Suggest pitch/height uses the native profile-bounds heuristic; initial preselection applies it. Defaults without a profile are pitch 10 mm, height 30 mm, 3 turns and zero angle/growth. Zero height is allowed by the native flat-spiral mode. |
 | Advanced, collapsed | Native Subtraction/Common for Subtract, Refine enabled, fusion tolerance factor (default 0.1, not a length), Fuzzy tolerance (-1 to 1 mm, zero native default, negative automatic). |
-| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result, default Overlay, blue New Body/green Add/red Subtract. Final Result temporarily hides the previous target/result; Cancel removes preview geometry and restores visibility. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Result, default Overlay, blue New Body/green Add/red Subtract. Result temporarily hides the previous target/result; Cancel removes preview geometry and restores visibility. |
 
 Native AdditiveHelix/SubtractiveHelix retain geometry, units, property identities
 and dependent dimensions. Cone angle is limited to -89 through +89 degrees;
@@ -478,7 +493,7 @@ their native Body workflow. Tab has no native implementation and stays disabled.
 | Main parameters, expanded | New Body/Add/Subtract; target visible only for Add/Subtract; Box/Cylinder/Sphere/Cone/Ellipsoid/Torus/Prism/Wedge selector. No sketch profile is required. Default Box; dropdown presets the chosen shape. |
 | Dimensions, expanded | All selected native shape properties, including cylinder/prism X/Y skew, prism sides, sphere/ellipsoid/torus angular limits and all ten wedge bounds. Preserve native defaults and unit-aware values. Switching shape retains each draft's dimensions while the pane is open. |
 | Advanced, collapsed | Native attachment mode and ordered references with Add selected/Remove/Clear; attachment reversal and path parameter; component-local XYZ and yaw/pitch/roll when unattached, or attachment offset when attached. Defaults are unattached, zero translation/rotation. Retain Refine enabled, fuzzy tolerance zero and Subtraction/Common for Subtract. |
-| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result, default Overlay. Blue/green/red indicates New Body/Add/Subtract. Shared preview restores target visibility/transparency on cancel and never publishes scratch geometry. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Result, default Overlay. Blue/green/red indicates New Body/Add/Subtract. Shared preview restores target visibility/transparency on cancel and never publishes scratch geometry. |
 
 History reopens the complete definition. Shape/mode replacement retains operation
 and published result identity, Model History position and downstream references.

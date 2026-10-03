@@ -134,7 +134,10 @@ def evaluate(doc, operation, mode, target):
     return operation.Shape.copy()
 
 
-def preview(component, sections, mode="New Body", target=None, options=None, volume_only=False):
+def preview(component, sections, mode="New Body", target=None, options=None, volume_only=False, tool_only=False):
+    if tool_only:
+        # The overlay is the full native tool, regardless of Boolean contact.
+        mode, target = "New Body", None
     options = options or defaults()
     validate(component, sections, mode, target, options)
     # Resolve native attachment before copying: no live document links in the scratch document.

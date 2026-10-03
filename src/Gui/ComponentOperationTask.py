@@ -3,7 +3,6 @@
 import FreeCAD as App
 from PySide import QtCore, QtGui, QtWidgets
 from freecad.gui.ComponentExtrudeTask import ExtrudeTask, CompactFormLayout, CurveListWidget
-from freecad.gui.OccurrenceMove import Ghost
 
 
 def tr(text):
@@ -43,45 +42,6 @@ class OperationTask(ExtrudeTask):
             widget.addItem(tr(text), value)
         layout.addRow(tr(label), widget)
         return widget
-
-    def clear_preview(self):
-        super().clear_preview()
-        for name, visible in self.preview_visibility.items():
-            obj = self.component.Document.getObject(name)
-            if obj:
-                obj.Visibility = visible
-        self.preview_visibility.clear()
-
-    def preview(self):
-        import ComponentModel as Model
-        self.clear_preview()
-        if self.preview_mode.currentData() == "None":
-            return True
-        try:
-            final = self.preview_mode.currentData() == "Final Result"
-            shape = self.backend.preview(self.component, *self.values(), volume_only=not final)
-            shape.Placement = self.component.getGlobalPlacement().multiply(shape.Placement)
-            color = {"New Body": (0., 0., 1.), "Add": (0., 1., 0.), "Subtract": (1., 0., 0.)}[self.mode.currentData()]
-            self.ghost = Ghost(shape, color=color, filled=True, transparency=0. if final else 0.5)
-            targets = []
-            if self.mode.currentData() != "New Body" and self.target.currentData():
-                targets.append(Model.display_object(self.component.Document.getObject(self.target.currentData())))
-            if self.operation:
-                targets.extend(Model.display_object(obj) for obj in self.operation.InList if getattr(obj, "Producer", None) == self.operation)
-            for obj in targets:
-                if final or obj == self.operation or (self.operation and getattr(obj, "Producer", None) == self.operation):
-                    self.preview_visibility[obj.Name] = bool(obj.Visibility)
-                    obj.Visibility = False
-                else:
-                    self.preview_visibility[obj.Name] = bool(obj.Visibility)
-                    obj.Visibility = True
-                    self.preview_transparency[obj.Name] = obj.ViewObject.Transparency
-                    obj.ViewObject.Transparency = max(75, obj.ViewObject.Transparency)
-            self.status.setText(tr("Preview ready. OK creates or updates the operation."))
-            return True
-        except Exception as error:
-            self.status.setText(str(error))
-            return False
 
     def build_profile_collector(self, main):
         import ComponentModel as Model

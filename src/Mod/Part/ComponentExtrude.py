@@ -54,8 +54,16 @@ def evaluate(doc, operation, mode, target):
 
 
 def preview(component, profile, length, mode="New Body", target=None, reversed_direction=False, elements=None,
-            options=None, volume_only=False):
-    inputs(component, profile, length, mode, target, elements=elements)
+            options=None, volume_only=False, tool_only=False):
+    # Overlay geometry is independent of the Boolean and its target. A target
+    # is retained only when it defines a requested first/last/through extent.
+    if tool_only:
+        mode = "New Body"
+        bounded = options and any(options[key] in ("UpToFirst", "UpToLast", "ThroughAll")
+                                  for key in (("extent", "extent2") if options["sides"] == "Two sides" else ("extent",)))
+        if not bounded:
+            target = None
+    inputs(component, profile, length, mode, None if tool_only else target, elements=elements)
     if options is not None:
         Extent.validate(component, profile, length, mode, target, options)
     scratch = App.newDocument("ComponentExtrudePreview", hidden=True, temp=True)
@@ -64,7 +72,7 @@ def preview(component, profile, length, mode="New Body", target=None, reversed_d
         shape = Profile.face(profile, elements) if elements is not None else Model.current_shape(profile)
         Profile.assign_shape(copied, profile, shape)
         base = None
-        if mode != "New Body":
+        if target is not None:
             base = scratch.addObject("Part::Feature", "Target")
             base.Shape = Model.current_shape(target)
         if options is not None:
@@ -75,6 +83,11 @@ def preview(component, profile, length, mode="New Body", target=None, reversed_d
                 copies[target] = base
             Extent.configure(tool, copied, length, mode, base, reversed_direction,
                              Extent.copy_references(scratch, options, copies))
+            if tool_only:
+                scratch.recompute()
+                if tool.AddSubShape.isNull():
+                    raise ValueError("Cannot preview this extrusion. Check the profile and extent references.")
+                return tool.AddSubShape.copy()
             result = evaluate(scratch, tool, mode, base)
             if volume_only and base:
                 return base.Shape.cut(result) if mode == "Subtract" else result.cut(base.Shape)

@@ -23,7 +23,7 @@ Owner acceptance: open Loft with no selected profiles, then append two placed
 sketches or closed curve subsets. Inspect/reorder/replace/remove sections. Exercise
 New Body, Add and Subtract with explicit targets, Smooth/Ruled and Closed where
 geometrically suitable. Confirm Advanced starts collapsed, target hides for New
-Body, Overlay defaults to blue/green/red, None removes it, Final Result hides the
+Body, Overlay defaults to blue/green/red, None removes it, Result hides the
 previous display, and Cancel restores it. Reopen through History and save/reopen
 the document. Check pointer picking and high-DPI layout separately from scripted
 Qt evidence. Implementation/build/delivery status belongs to the roadmap and WORK_STATE.

@@ -294,7 +294,7 @@ class TestComponentHelix(unittest.TestCase):
             task.fields["height"].setProperty("rawValue", 6.)
             self.assertTrue(task.preview(), task.status.text())
             self.assertEqual(tuple(task.ghost.node.getChild(2).diffuseColor[0].getValue()), color)
-            task.preview_mode.setCurrentIndex(task.preview_mode.findData("Final Result"))
+            task.preview_mode.setCurrentIndex(task.preview_mode.findData("Result"))
             self.assertTrue(task.preview(), task.status.text())
             self.assertFalse(display.Visibility)
             task.reject()

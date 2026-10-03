@@ -1,5 +1,47 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 full modeling overlays and normal result previews
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_modeling_previews/app`.
+Python-only incremental staging from the verified combined-modeling payload;
+no native rebuild. Native About remains `03a6f66644488e2b710f94e828155b9b12c23c60`.
+BUILD-VALIDATION and release-info record the newer application source commit.
+
+Extrude, Revolve, Loft, Pipe, Helix and Primitive use None/Overlay/Result, with
+Overlay default. Full native tool geometry is blue/green/red for New Body/Add/
+Subtract, independent of missing targets or Boolean contact. A 127 mm subtract
+extrusion is untrimmed through a 25.4 mm target; Result shows the evaluated cut
+with normal body color/transparency. Extent references remain geometric inputs.
+OK, native feature identities, undo and persistence retain their strict contracts.
+Shared preview cleanup restores visibility/transparency after switches, errors,
+edit and Cancel, while independent curve emphasis is retained.
+
+Validation in the build parent's `validation` folder:
+- `preview-final`: six focused cases and seven Revolve regressions pass, covering
+  native full-turn Through All overlays as well as six tool backends, missing and
+  disjoint targets, full tool shape/volume, automatic colors, all dropdowns,
+  dimensional offsets, normal Result appearance and create/edit cancellation.
+- `regressions`: 68 of 69 pass on the first run. The only failure is the old
+  Extrude New Body expectation of green; source correctly produces requested blue.
+- `blue-default`: that corrected case passes, including automatic Through All
+  preview and display restoration. The 75 distinct functional checks now pass.
+- Existing operation suites cover native geometry/routing, edit, undo and
+  persistence; all curve display/selection and 360-pixel task-width checks pass.
+- `capture-window` supplies a separate framed overlay/result and dropdown visual
+  probe; first capture evidence is retained. No source overlays or unexpected GUI
+  diagnostics. Physical owner pointer/high-DPI acceptance remains separate.
+
+The existing desktop shortcut has been saved, reopened and verified against this
+launcher and its app working directory. The canonical Word document updates the
+preview labels and full-tool requirement, preserves native numbering and other
+package members, and adds the shared preview contract. Seven changed/new pages
+(35, 37, 38, 41, 42, 43, 46) were inspected; other rendered pages match the prior
+document. Evidence: `modeling-preview-doc/render-final` under the task visual root.
+The payload manifest inherits unchanged verified baseline hashes after file size/
+timestamp checks and rehashes changed files and critical native binaries; the
+method is recorded explicitly. `validation/publication.json` records the origin
+commit and verified remote branch. No installer or published release.
+
 ## October 3 combined native build and temp cleanup
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_combined_modeling/app`.

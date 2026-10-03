@@ -92,7 +92,7 @@ class PrimitiveTask(OperationTask):
         self.auto_preview = QtWidgets.QCheckBox(tr("Recompute on change"))
         self.auto_preview.setChecked(True)
         preview.addRow(self.auto_preview)
-        self.preview_mode = self.combo(preview, "Preview", [(name, name) for name in ("None", "Overlay", "Final Result")])
+        self.preview_mode = self.combo(preview, "Preview type", [(name, name) for name in ("None", "Overlay", "Result")])
         self.preview_mode.setCurrentIndex(1)
         self.preview_button = QtWidgets.QPushButton(tr("Update preview"))
         preview.addRow(self.preview_button)

@@ -77,6 +77,7 @@ class ExtrudeTask:
     def __init__(self, component, operation=None, preset=None, context=None):
         import ComponentModel as Model
         import ComponentExtrude as Extrude
+        self.backend = Extrude
         self.component, self.operation = component, operation
         self.context = context
         self.ghost = None
@@ -88,6 +89,7 @@ class ExtrudeTask:
         self.region_visibility = {}
         self.reference_pick = None
         self.preview_transparency = {}
+        self.preview_visibility = {}
         self.view = Gui.getDocument(component.Document.Name).activeView()
         Model.activate(component, strict=False)
         self.form = QtWidgets.QWidget()
@@ -137,6 +139,11 @@ class ExtrudeTask:
         self.reverse = QtWidgets.QCheckBox(tr("Reverse direction"))
         layout.addRow(self.reverse)
         self.build_extents(layout)
+        self.preview_mode = QtWidgets.QComboBox()
+        for name in ("None", "Overlay", "Result"):
+            self.preview_mode.addItem(tr(name), name)
+        self.preview_mode.setCurrentIndex(1)
+        layout.addRow(tr("Preview type"), self.preview_mode)
         self.auto_preview = QtWidgets.QCheckBox(tr("Update preview automatically"))
         self.auto_preview.setChecked(True)
         layout.addRow(self.auto_preview)
@@ -179,6 +186,7 @@ class ExtrudeTask:
         self.length.valueChanged.connect(self.changed)
         self.reverse.toggled.connect(self.changed)
         self.auto_preview.toggled.connect(self.changed)
+        self.preview_mode.currentIndexChanged.connect(self.changed)
         self.changed()
 
     def getStandardButtons(self):
@@ -341,7 +349,7 @@ class ExtrudeTask:
         self.start_row.setEnabled(self.start.currentData() == "Reference")
         self.direction_row.setEnabled(self.custom.isChecked())
         self.along_normal.setEnabled(self.custom.isChecked())
-        if self.auto_preview.isChecked() and self.profile.currentData():
+        if self.auto_preview.isChecked() and self.profile.currentData() and self.preview_mode.currentData() != "None":
             self.preview_timer.start(300)
         else:
             self.preview_timer.stop()
@@ -613,6 +621,11 @@ class ExtrudeTask:
             if target:
                 target.ViewObject.Transparency = transparency
         self.preview_transparency.clear()
+        for name, visible in self.preview_visibility.items():
+            obj = self.component.Document.getObject(name)
+            if obj:
+                obj.Visibility = visible
+        self.preview_visibility.clear()
 
     def use_selection(self, picks=None, toggle=False):
         from freecad.gui import ComponentSelection as Selection
@@ -658,22 +671,47 @@ class ExtrudeTask:
         return profile, length, mode, target, self.reverse.isChecked(), elements, self.extent_options()
 
     def preview(self):
-        import ComponentExtrude as Extrude
+        import ComponentModel as Model
         self.clear_preview()
+        if self.preview_mode.currentData() == "None":
+            return True
         try:
-            shape = Extrude.preview(self.component, *self.values(), volume_only=True)
+            final = self.preview_mode.currentData() == "Result"
+            shape = self.backend.preview(self.component, *self.values(), tool_only=not final)
             shape.Placement = self.component.getGlobalPlacement().multiply(shape.Placement)
-            self.ghost = Ghost(shape, color=(1., 0., 0.) if self.mode.currentData() == "Subtract" else (0., 1., 0.),
-                               filled=True, transparency=0.5)
+            target = None
             if self.mode.currentData() != "New Body" and self.target.currentData():
-                target = self.component.Document.getObject(self.target.currentData())
-                import ComponentModel as Model
-                target = Model.display_object(target)
-                self.preview_transparency[target.Name] = target.ViewObject.Transparency
-                target.ViewObject.Transparency = max(75, target.ViewObject.Transparency)
-            self.status.setText(tr("Preview ready. OK creates or updates the operation."))
+                target = Model.display_object(self.component.Document.getObject(self.target.currentData()))
+            color = {"New Body": (0., 0., 1.), "Add": (0., 1., 0.), "Subtract": (1., 0., 0.)}[self.mode.currentData()]
+            transparency = 0.5
+            if final:
+                appearance = self.operation or target
+                if appearance:
+                    color = tuple(appearance.ViewObject.ShapeColor[:3])
+                    transparency = appearance.ViewObject.Transparency / 100.
+                else:
+                    packed = App.ParamGet("User parameter:BaseApp/Preferences/View").GetUnsigned("DefaultShapeColor", 0xCCCCCCFF)
+                    color = tuple(((packed >> shift) & 255) / 255. for shift in (24, 16, 8))
+                    transparency = 0.
+            self.ghost = Ghost(shape, color=color, filled=True, transparency=transparency)
+            targets = [target] if target else []
+            if self.operation:
+                targets.append(self.operation)
+                targets.extend(Model.display_object(obj) for obj in self.operation.InList
+                               if getattr(obj, "Producer", None) == self.operation)
+            for obj in set(targets):
+                self.preview_visibility[obj.Name] = bool(obj.Visibility)
+                if final or obj == self.operation:
+                    obj.Visibility = False
+                else:
+                    obj.Visibility = True
+                    self.preview_transparency[obj.Name] = obj.ViewObject.Transparency
+                    obj.ViewObject.Transparency = max(75, obj.ViewObject.Transparency)
+            self.status.setText(tr("Result preview ready. OK creates or updates the operation.") if final else
+                                tr("Tool overlay ready. OK validates the target and final result."))
             return True
         except Exception as error:
+            self.clear_preview()
             self.status.setText(str(error))
             return False
 

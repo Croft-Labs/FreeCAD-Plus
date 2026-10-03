@@ -30,7 +30,7 @@ Owner acceptance: launch Pipe empty; collect a profile and sweep path, switch
 between profile/path/auxiliary picking, add/remove/clear edges and reorder sections.
 Try explicit targets for Add/Subtract, Common, Constant/Multisection, all orientation
 and corner modes, and recover after invalid inputs. Confirm the four collapsible
-sections and default Overlay, blue/green/red colors, None, Final Result and Cancel.
+sections and default Overlay, blue/green/red colors, None, Result and Cancel.
 Edit through History, change an upstream path and save/reopen. Physical pointer and
 high-DPI checks remain separate from scripted Qt tests and task captures. The
 roadmap and WORK_STATE record native build, owner shortcut delivery and evidence.

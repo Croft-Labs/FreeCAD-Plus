@@ -12,7 +12,7 @@ nonmutating previews; mode-edit IDs/downstream consumers, undo/redo and persiste
 whole/selected profiles, construction-axis edits and save/reopen, origin/edge/datum
 axes and placed/rotated profile preview parity; invalid input/rollback, cycles and
 expression protection; four-section defaults, preselection, mode conversion,
-History editing, preview colors, None/Final Result, failed-OK recovery and Cancel.
+History editing, preview colors, None/Result, failed-OK recovery and Cancel.
 
 Native sweep approximation can differ slightly between an explicit reference-line
 preview and a sketch construction axis. The roughly 31.4 cubic mm construction
@@ -33,7 +33,7 @@ Pipe and Loft suites including native aliases, then the owner shortcut delivery 
 Owner acceptance: start empty or with a selected profile, collect closed curves,
 switch the four parameter modes and axis choices, change handedness separately
 from axial direction, and exercise Add/Subtract/Common against explicit targets.
-Compare Overlay/Final Result, cancel, reopen from History, change upstream geometry
+Compare Overlay/Result, cancel, reopen from History, change upstream geometry
 and save/reopen. Inspect normal and expanded controls using the task's scroll area.
 Physical pointer/high-DPI checks remain separate from scripted Qt test captures.
 The roadmap and WORK_STATE own native build, owner delivery and evidence status.
