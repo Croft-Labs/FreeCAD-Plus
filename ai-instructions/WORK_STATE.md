@@ -1,5 +1,34 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 curve-list selection and Delete
+
+Extrude, Revolve, Helix, Loft and Pipe automatically highlight and scroll to the
+latest picked curve in their task lists. A repeated pick removes that curve and
+clears list selection. Native picked edges are released after collection so the
+same edge can be clicked again without Ctrl; task-owned viewport emphasis remains.
+The collector receives keyboard focus so Delete immediately removes highlighted
+entries. Its ShortcutOverride prevents document deletion; no selected row means
+no action. Pipe spine/auxiliary lists share the behavior, including an empty path
+after removing the last edge. Redundant Add selected/Use selected buttons are gone.
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_curve_list`.
+Python-only incremental staging from operation_history updates four GUI modules;
+no native rebuild. Native About identity remains `f8a4d5c408`. Evidence under
+`validation/curve-list-1` passes ten curve-display/list checks, and
+`validation/curve-list-regressions` passes 21 profile, operation and context checks.
+The focused `validation/curve-list-capture` rerun also passes after waiting for the
+viewport repaint and asserting persistent emphasis: 31 distinct checks, 32 passing
+executions, no source overlays or unexpected GUI diagnostics. The final capture
+shows the highlighted list row and edge, with other sketches gray and unfilled.
+Preselection, region boundaries, edit/preview/accept/cancel and source geometry
+remain covered. Physical owner acceptance is separate.
+
+The existing desktop shortcut is updated and reopened to verify target/working
+directory. BUILD-VALIDATION/BUILD-MANIFEST record inherited native provenance;
+`validation/publication.json` records origin/main publication. Word preserves all
+1530 prior paragraphs and other package parts; pages 1-44 match the previous render
+and the edited page 45 was inspected (`curve-list-doc`). No installer or release.
+
 ## October 3 operation entry opens History
 
 Shared component task entry selects History and reveals the Components panel as

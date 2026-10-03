@@ -2,6 +2,11 @@
 
 ## Project at a glance
 
+Component curve collectors now select the latest picked list entry, toggle it off
+on a repeated pick and support Delete. Redundant selected-curve capture buttons
+are removed. Shared profile and Pipe path lists retain persistent viewport emphasis;
+WORK_STATE records the 31 distinct runtime checks and Python-only owner delivery.
+
 Component curve tasks now keep collected geometry highlighted independently of
 native selection. After the first curve, other sketches are light-medium gray
 without region fill; Loft sections and Pipe paths share the behavior. See

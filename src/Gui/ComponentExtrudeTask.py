@@ -49,6 +49,30 @@ class CompactFormLayout(QtWidgets.QFormLayout):
             label.widget().setWordWrap(True)
 
 
+class CurveListWidget(QtWidgets.QListWidget):
+    """Delete edits the task's collector, never the document selection."""
+    removeRequested = QtCore.Signal()
+
+    def event(self, event):
+        if event.type() == QtCore.QEvent.ShortcutOverride and event.key() == QtCore.Qt.Key_Delete:
+            event.accept()
+            return True
+        return super().event(event)
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Delete:
+            self.removeRequested.emit()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
+
+    def highlight(self, row=-1):
+        self.clearSelection()
+        self.setCurrentRow(row)
+        if row >= 0:
+            self.scrollToItem(self.item(row))
+
+
 class ExtrudeTask:
     def __init__(self, component, operation=None, preset=None, context=None):
         import ComponentModel as Model
@@ -80,9 +104,8 @@ class ExtrudeTask:
                     and hasattr(obj, "Shape") and not obj.Shape.Solids and obj.Shape.Edges):
                 self.profile.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
         layout.addRow(tr("Profile"), self.profile)
-        self.capture = QtWidgets.QPushButton(tr("Add selected curves"))
-        layout.addRow(self.capture)
-        self.curves = QtWidgets.QListWidget()
+        self.curves = CurveListWidget()
+        self.curves.removeRequested.connect(self.remove_selected_curves)
         self.curves.setMaximumHeight(100)
         self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         layout.addRow(tr("Selected curves"), self.curves)
@@ -146,7 +169,6 @@ class ExtrudeTask:
                 self.target.setCurrentIndex(self.target.findData(target.Name))
         else:
             self.use_selection(context.profile_selection if context else None)
-        self.capture.clicked.connect(self.use_selection)
         self.preview_button.clicked.connect(self.preview)
         self.mode.currentIndexChanged.connect(self.changed)
         self.remove_curves.clicked.connect(self.remove_selected_curves)
@@ -334,13 +356,15 @@ class ExtrudeTask:
     def curve_names(self):
         return [self.curves.item(i).data(QtCore.Qt.UserRole) for i in range(self.curves.count())]
 
-    def set_curves(self, names, whole=False):
+    def set_curves(self, names, whole=False, current=None):
         self.curves.clear()
         source = self.component.Document.getObject(self.profile.currentData()) if self.profile.currentData() else None
         for name in dict.fromkeys(names):
             item = QtWidgets.QListWidgetItem((source.Label + " / " if source else "") + name)
             item.setData(QtCore.Qt.UserRole, name)
             self.curves.addItem(item)
+        names = self.curve_names()
+        self.curves.highlight(names.index(current) if current in names else -1)
         self.whole_profile = whole
         self.changed()
         self.update_curve_display()
@@ -362,11 +386,30 @@ class ExtrudeTask:
 
     def remove_selected_curves(self):
         removed = {item.data(QtCore.Qt.UserRole) for item in self.curves.selectedItems()}
-        self.set_curves([name for name in self.curve_names() if name not in removed], False)
+        if removed:
+            self.set_curves([name for name in self.curve_names() if name not in removed], False)
+
+    def collect_curves(self, elements, toggle=False):
+        names = [] if self.whole_profile else self.curve_names()
+        current = None
+        for name in dict.fromkeys(elements):
+            if toggle and name in names:
+                names.remove(name)
+                current = None
+            else:
+                if name not in names:
+                    names.append(name)
+                current = name
+        self.set_curves(names, False, current)
+        if self.observing:
+            self.curves.setFocus(QtCore.Qt.OtherFocusReason)
 
     def start_selection(self):
         self.curve_display_active = True
         self.update_regions()
+        # The task owns persistent curve emphasis. Release native preselection so
+        # clicking the same edge produces another pick, including without Ctrl.
+        Gui.Selection.clearSelection()
         Gui.Selection.addObserver(self, 0)
         self.observing = True
         self.mouse_callback = self.view.addEventCallback("SoMouseButtonEvent", self.pick_region)
@@ -497,7 +540,9 @@ class ExtrudeTask:
                 return
             if picks[0].element.startswith("InternalFace"):
                 return  # Region hits are collected using the cursor's sketch-plane point.
-            self.use_selection([(picks[0].item, picks[0].element)])
+            self.use_selection([(picks[0].item, picks[0].element)], toggle=True)
+            if picks[0].element.startswith(("Edge", "Vertex")):
+                Gui.Selection.removeSelection(document, name, subname)
 
     def pick_region(self, event):
         if self.reference_pick is not None or not self.region_pick.isChecked() or event.get("State") != "DOWN" or event.get("Button") != "BUTTON1":
@@ -555,7 +600,7 @@ class ExtrudeTask:
             point = self.component.getGlobalPlacement().inverse().multVec(point)
             names = Profile.region(source, point)
             self.profile.setCurrentIndex(self.profile.findData(source.Name))
-            self.set_curves(([] if self.whole_profile else self.curve_names()) + names, False)
+            self.collect_curves(names)
         except Exception as error:
             self.status.setText(str(error))
 
@@ -569,7 +614,7 @@ class ExtrudeTask:
                 target.ViewObject.Transparency = transparency
         self.preview_transparency.clear()
 
-    def use_selection(self, picks=None):
+    def use_selection(self, picks=None, toggle=False):
         from freecad.gui import ComponentSelection as Selection
         import ComponentModel as Model
         selected = picks if isinstance(picks, list) else [(p.item, p.element) for p in
@@ -595,7 +640,7 @@ class ExtrudeTask:
                 names = ["Edge" + str(i + 1) for i in range(len(source.Shape.Edges))]
                 if any(name not in names for name in elements):
                     raise ValueError(tr("A selected curve is unavailable. Select it again."))
-                self.set_curves(([] if self.whole_profile else self.curve_names()) + elements, False)
+                self.collect_curves(elements, toggle)
             else:
                 self.profile_changed()
         except Exception as error:

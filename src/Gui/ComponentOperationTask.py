@@ -2,7 +2,7 @@
 """Shared section layout and transient previews for component operation tasks."""
 import FreeCAD as App
 from PySide import QtCore, QtGui, QtWidgets
-from freecad.gui.ComponentExtrudeTask import ExtrudeTask, CompactFormLayout
+from freecad.gui.ComponentExtrudeTask import ExtrudeTask, CompactFormLayout, CurveListWidget
 from freecad.gui.OccurrenceMove import Ghost
 
 
@@ -91,14 +91,15 @@ class OperationTask(ExtrudeTask):
             if (getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result") and hasattr(obj, "Shape")
                     and not obj.Shape.Solids and obj.Shape.Edges):
                 self.profile.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        self.curves = QtWidgets.QListWidget()
+        self.curves = CurveListWidget()
+        self.curves.removeRequested.connect(self.remove_selected_curves)
         self.curves.setMaximumHeight(100)
         self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         main.addRow(tr("Curves"), self.curves)
         row = QtWidgets.QWidget()
         buttons = QtWidgets.QGridLayout(row)
         buttons.setContentsMargins(0, 0, 0, 0)
-        for index, (label, callback) in enumerate((("Add selected", self.use_selection), ("Remove", self.remove_selected_curves),
+        for index, (label, callback) in enumerate((("Remove", self.remove_selected_curves),
                                                  ("Clear", lambda: self.set_curves([], False)), ("Use all", self.profile_changed))):
             button = QtWidgets.QPushButton(tr(label))
             button.clicked.connect(callback)

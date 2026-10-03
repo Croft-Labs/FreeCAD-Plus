@@ -4,7 +4,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtWidgets
 from freecad.gui.ComponentSectionTask import SectionTask
-from freecad.gui.ComponentExtrudeTask import active_component, CompactFormLayout
+from freecad.gui.ComponentExtrudeTask import active_component, CompactFormLayout, CurveListWidget
 
 _task = None
 
@@ -126,13 +126,14 @@ class PipeTask(SectionTask):
         for obj in Model.history(self.component):
             if hasattr(obj, "Shape") and obj.Shape.Edges and getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result"):
                 source.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        edges = QtWidgets.QListWidget()
+        edges = CurveListWidget()
+        edges.removeRequested.connect(lambda: self.remove_path_edges(key))
         edges.setMaximumHeight(60)
         edges.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         form.addRow(tr("Edges"), edges)
         self.paths[key] = dict(source=source, edges=edges, host=host, whole=True)
         self.buttons(form, (("Pick edges", lambda: self.set_role(key)),
-                            ("Use selected", lambda: self.collect_path(key)), ("Use whole", lambda: self.whole_path(key))))
+                            ("Use whole", lambda: self.whole_path(key))))
         self.buttons(form, (("Remove edges", lambda: self.remove_path_edges(key)), ("Clear path", lambda: self.clear_path(key))))
         source.currentIndexChanged.connect(lambda: self.whole_path(key))
         layout.addRow(tr(label), host)
@@ -161,16 +162,17 @@ class PipeTask(SectionTask):
                 selected.append((name, elements))
         return selected
 
-    def set_path(self, key, obj, elements):
+    def set_path(self, key, obj, elements, whole=None, current=None):
         fields = self.paths[key]
         fields["source"].setCurrentIndex(fields["source"].findData(obj.Name))
         fields["edges"].clear()
         names = [name for name in elements if name]
-        fields["whole"] = not names
+        fields["whole"] = not names if whole is None else whole
         if names:
             fields["edges"].addItems(names)
-        else:
+        elif fields["whole"]:
             fields["edges"].addItem(tr("Whole path"))
+        fields["edges"].highlight(names.index(current) if current in names else -1)
         self.changed()
 
     def whole_path(self, key):
@@ -196,12 +198,15 @@ class PipeTask(SectionTask):
 
     def remove_path_edges(self, key):
         fields = self.paths[key]
+        if not fields["edges"].selectedItems():
+            return
         for row in sorted((fields["edges"].row(item) for item in fields["edges"].selectedItems()), reverse=True):
             fields["edges"].takeItem(row)
+        fields["edges"].highlight()
         fields["whole"] = False
         self.changed()
 
-    def collect_path(self, key, picks=None):
+    def collect_path(self, key, picks=None, toggle=False):
         from freecad.gui import ComponentSelection as Selection
         picks = picks if picks is not None else [(p.item, p.element) for p in Selection.selected(self.component, Gui.Selection.getSelectionEx("*", 0)) if p.item is not None]
         try:
@@ -211,13 +216,27 @@ class PipeTask(SectionTask):
             fields = self.paths[key]
             if fields["source"].findData(obj.Name) < 0:
                 raise ValueError(tr("Choose a path owned by the active component."))
-            if fields["source"].currentData() == obj.Name and not fields["whole"] and elements:
-                elements = list(dict.fromkeys([fields["edges"].item(i).text() for i in range(fields["edges"].count())] + elements))
             # Incremental disconnected picks remain visible for correction; final
             # path validation occurs at Preview/OK, never silently drops an edge.
             if elements and any(not e.startswith("Edge") or not e[4:].isdigit() for e in elements):
                 raise ValueError(tr("Choose edges for the path."))
-            self.set_path(key, obj, elements)
+            if elements:
+                names = ([fields["edges"].item(i).text() for i in range(fields["edges"].count())]
+                         if fields["source"].currentData() == obj.Name and not fields["whole"] else [])
+                current = None
+                for element in dict.fromkeys(elements):
+                    if toggle and element in names:
+                        names.remove(element)
+                        current = None
+                    else:
+                        if element not in names:
+                            names.append(element)
+                        current = element
+                self.set_path(key, obj, names, whole=False, current=current)
+                if self.observing:
+                    fields["edges"].setFocus(QtCore.Qt.OtherFocusReason)
+            else:
+                self.set_path(key, obj, elements)
         except Exception as error:
             self.status.setText(str(error))
 
@@ -241,7 +260,9 @@ class PipeTask(SectionTask):
             doc = App.listDocuments().get(document)
             obj = doc.getObject(name) if doc else None
             picks = [(p.item, p.element) for p in Selection.resolve(self.component, obj, subname) if p.item is not None]
-            self.collect_path(self.path_role, picks)
+            self.collect_path(self.path_role, picks, toggle=True)
+            if len(picks) == 1 and picks[0][1].startswith("Edge"):
+                Gui.Selection.removeSelection(document, name, subname)
         else:
             super().addSelection(document, name, subname, *args)
 

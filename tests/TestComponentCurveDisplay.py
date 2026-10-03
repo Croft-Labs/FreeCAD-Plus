@@ -12,6 +12,11 @@ import Part
 import ComponentModel as Model
 import ComponentSketch as Sketch
 from pivy import coin
+from PySide import QtCore, QtGui, QtWidgets
+try:
+    from PySide6 import QtTest
+except ImportError:
+    from PySide2 import QtTest
 
 
 class TestComponentCurveDisplay(unittest.TestCase):
@@ -44,7 +49,7 @@ class TestComponentCurveDisplay(unittest.TestCase):
 
     def launch(self, name="Extrude", **kwargs):
         module = importlib.import_module("freecad.gui.Component" + name + "Task")
-        for module_name in ("ComponentExtrudeTask", "ComponentSectionTask", "ComponentPipeTask"):
+        for module_name in ("ComponentExtrudeTask", "ComponentOperationTask", "ComponentSectionTask", "ComponentPipeTask"):
             installed = importlib.import_module("freecad.gui." + module_name)
             path = Path(os.environ["FREECAD_PLUS_SOURCE"]) / "src/Gui" / (module_name + ".py")
             self.assertEqual(hashlib.sha256(path.read_bytes()).digest(),
@@ -138,6 +143,90 @@ class TestComponentCurveDisplay(unittest.TestCase):
                 self.assertFalse(task.curve_highlights)
                 self.assertFalse(task.curve_materials)
                 self.assertFalse(any(s.ViewObject.ShowClosedRegions for s in self.sketches))
+
+    def testLatestCurveToggleAndDeleteAcrossOperations(self):
+        source = self.sketches[0]
+        for name in ("Extrude", "Revolve", "Helix", "Loft", "Pipe"):
+            with self.subTest(operation=name):
+                task = self.launch(name)
+                labels = [b.text() for b in task.form.findChildren(QtWidgets.QPushButton)]
+                self.assertFalse(set(labels) & {"Add selected curves", "Add selected", "Use selected"})
+                for edge in ("Edge1", "Edge2"):
+                    Gui.Selection.addSelection(self.doc.Name, source.Name, edge)
+                    self.assertEqual([i.data(QtCore.Qt.UserRole) for i in task.curves.selectedItems()], [edge])
+                self.assertEqual(task.curve_names(), ["Edge1", "Edge2"])
+                Gui.Selection.addSelection(self.doc.Name, source.Name, "Edge2")
+                self.assertEqual(task.curve_names(), ["Edge1"])
+                self.assertEqual(task.curves.selectedItems(), [])
+                self.assertEqual(task.curves.currentRow(), -1)
+                QtTest.QTest.keyClick(task.curves, QtCore.Qt.Key_Delete)
+                self.assertEqual(task.curve_names(), ["Edge1"])
+                Gui.Selection.addSelection(self.doc.Name, source.Name, "Edge2")
+                Gui.updateGui()
+                QtTest.QTest.keyClick(task.curves, QtCore.Qt.Key_Delete)
+                self.assertEqual(task.curve_names(), ["Edge1"])
+                self.assertEqual(task.curves.selectedItems(), [])
+                task.curves.item(0).setSelected(True)
+                QtTest.QTest.keyClick(task.curves, QtCore.Qt.Key_Delete)
+                self.assertEqual(task.curve_names(), [])
+                self.assertFalse(task.curve_highlights)
+                self.assertIsNotNone(self.doc.getObject(source.Name))
+                task.reject()
+                self.task = None
+
+    def testPipePathLatestToggleAndDelete(self):
+        task = self.launch("Pipe")
+        source = self.sketches[0]
+        task.orientation.setCurrentIndex(task.orientation.findData("Auxiliary"))
+        for role in ("spine", "auxiliary"):
+            with self.subTest(role=role):
+                task.set_role(role)
+                fields = task.paths[role]
+                edges = fields["edges"]
+                for edge in ("Edge1", "Edge2"):
+                    Gui.Selection.addSelection(self.doc.Name, source.Name, edge)
+                    self.assertEqual([i.text() for i in edges.selectedItems()], [edge])
+                Gui.Selection.addSelection(self.doc.Name, source.Name, "Edge2")
+                self.assertEqual([edges.item(i).text() for i in range(edges.count())], ["Edge1"])
+                self.assertEqual(edges.currentRow(), -1)
+                Gui.Selection.addSelection(self.doc.Name, source.Name, "Edge1")
+                self.assertEqual(edges.count(), 0)
+                self.assertFalse(fields["whole"], "Removing the last edge must not select the whole path")
+                Gui.Selection.addSelection(self.doc.Name, source.Name, "Edge1")
+                Gui.Selection.addSelection(self.doc.Name, source.Name, "Edge2")
+                edges.item(0).setSelected(True)
+                QtTest.QTest.keyClick(edges, QtCore.Qt.Key_Delete)
+                self.assertEqual(edges.count(), 0)
+                self.assertEqual(edges.currentRow(), -1)
+                self.assertFalse(fields["whole"])
+                self.assertIsNotNone(self.doc.getObject(source.Name))
+
+    def testRepeatedViewportClickAndKeyboardDelete(self):
+        task = self.launch()
+        Gui.updateGui()
+        viewport = max((w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+                        if "GL" in w.metaObject().className() and w.width() > 100 and w.height() > 100),
+                       key=lambda w: w.width() * w.height())
+        point = App.Vector(10, 5, 0)
+        for expected in (["Edge2"], [], ["Edge2"]):
+            sx, sy = task.view.getPointOnScreen(point)
+            ratio = viewport.devicePixelRatioF()
+            pos = QtCore.QPoint(round(sx / ratio), viewport.height() - round(sy / ratio) - 1)
+            event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pos),
+                                     QtCore.QPointF(viewport.mapToGlobal(pos)), QtCore.Qt.NoButton,
+                                     QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(viewport, event)
+            QtTest.QTest.mouseClick(viewport, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, pos)
+            Gui.updateGui()
+            self.assertEqual(task.curve_names(), expected, task.status.text())
+            self.assertEqual([i.data(QtCore.Qt.UserRole) for i in task.curves.selectedItems()], expected)
+        self.assertEqual(QtWidgets.QApplication.focusWidget(), task.curves)
+        QtTest.QTest.qWait(200)
+        self.assert_emphasis([self.sketches[0].Name], self.sketches[0].Name)
+        Gui.getMainWindow().grab().save(str(self.output / "latest-curve-list.png"))
+        QtTest.QTest.keyClick(QtWidgets.QApplication.focusWidget(), QtCore.Qt.Key_Delete)
+        self.assertEqual(task.curve_names(), [])
+        self.assertIsNotNone(self.doc.getObject(self.sketches[0].Name))
 
     def testLoftRetainsEverySectionHighlight(self):
         first, second, third = self.sketches

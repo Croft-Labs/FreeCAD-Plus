@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 curve-list interaction (7.8)
+
+Shared profile collectors and Pipe path lists select the latest picked entry,
+toggle an existing curve off on a repeated pick, and support Delete without
+deleting source geometry. Redundant selected-curve capture buttons are removed.
+Thirty-one distinct native checks pass, plus a focused repaint/capture rerun.
+WORK_STATE separates Python-only owner staging, Word QA, shortcut verification
+and origin publication. No native rebuild; physical owner acceptance remains open.
+
 ## October 3 component operation History entry (7.8)
 
 Shared component tasks automatically reveal Components and select History when

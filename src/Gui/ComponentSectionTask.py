@@ -4,6 +4,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtWidgets
 from freecad.gui.ComponentOperationTask import OperationTask
+from freecad.gui.ComponentExtrudeTask import CurveListWidget
 
 
 def tr(text):
@@ -26,11 +27,12 @@ class SectionTask(OperationTask):
             if (getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result") and hasattr(obj, "Shape")
                     and not obj.Shape.Solids and (obj.Shape.Edges or len(obj.Shape.Vertexes) == 1)):
                 self.profile.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        self.curves = QtWidgets.QListWidget()
+        self.curves = CurveListWidget()
+        self.curves.removeRequested.connect(self.remove_selected_curves)
         self.curves.setMaximumHeight(65)
         self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         main.addRow(tr("Selected curves"), self.curves)
-        self.buttons(main, (("Add selected", self.use_selection), ("Remove curves", self.remove_selected_curves),
+        self.buttons(main, (("Remove curves", self.remove_selected_curves),
                             ("Use all", self.profile_changed)))
         self.region_pick = QtWidgets.QCheckBox(tr("Pick closed regions in the view"))
         self.region_pick.setChecked(True)
@@ -116,7 +118,7 @@ class SectionTask(OperationTask):
         else:
             self.profile_changed()
 
-    def use_selection(self, picks=None):
+    def use_selection(self, picks=None, toggle=False):
         from freecad.gui import ComponentSelection as Selection
         picks = picks if isinstance(picks, list) else [(p.item, p.element) for p in Selection.selected(self.component, Gui.Selection.getSelectionEx("*", 0)) if p.item is not None]
         # Each section has its own curve collector; choosing another source starts a new draft.
@@ -127,6 +129,6 @@ class SectionTask(OperationTask):
                 self.profile.setCurrentIndex(index)
                 elements = [element for source, element in picks if element]
                 if len(elements) == 1 and elements[0].startswith("Vertex"):
-                    self.set_curves(elements, False)
+                    self.collect_curves(elements, toggle)
                     return
-        super().use_selection(picks)
+        super().use_selection(picks, toggle)

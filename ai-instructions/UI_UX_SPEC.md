@@ -116,6 +116,14 @@ profile, spine and enabled auxiliary inputs. Highlighting survives normal viewpo
 selection clearing and focus changes. Removing/clearing inputs updates emphasis;
 clearing all restores normal colors and candidate fills. OK/Cancel restores prior
 display. Temporary scene overrides do not change saved appearance or geometry.
+Each viewport curve pick highlights and scrolls to that entry in the task list.
+Picking a collected curve again removes it and clears the list highlight. The list
+receives keyboard focus after a pick; Delete removes highlighted entries and does
+nothing when none are highlighted. The source sketch is never deleted by this
+list action. Apply this to all shared profile collectors and Pipe path lists.
+Remove Add selected curves/Add selected/Use selected capture buttons; automatic
+collection, preselection, Remove/Clear, Use all/Use whole and Pipe Pick edges remain.
+Region picks still collect the complete boundary and highlight its final entry.
 Deleting an Extrude removes only its unused internal profile helpers and restores
 the source sketch when no other operation consumes it. Delete/Undo/Redo preserves
 the sketch and supports creating another Extrude by edges or interior region.
@@ -439,7 +447,7 @@ documents retain native tasks. Native command build/delivery are separate gates.
 
 | Section | Behavior |
 | --- | --- |
-| Main parameters, expanded | New Body/Add/Subtract with explicit target only for Add/Subtract; whole profile or selected closed sketch curves/regions, editable curve list, Add selected/Remove/Clear/Use all. Mode retains Pitch-Height-Angle, Pitch-Turns-Angle, Height-Turns-Angle and Height-Turns-Growth. Helix has no independent extent/termination Type or sidedness. Empty startup and preselection are supported. |
+| Main parameters, expanded | New Body/Add/Subtract with explicit target only for Add/Subtract; whole profile or selected closed sketch curves/regions, automatic curve collection, editable curve list, Remove/Clear/Use all and Delete. Mode retains Pitch-Height-Angle, Pitch-Turns-Angle, Height-Turns-Angle and Height-Turns-Growth. Helix has no independent extent/termination Type or sidedness. Empty startup and preselection are supported. |
 | Dimensions, expanded | Sketch vertical (default), horizontal, normal or construction axis; picked/typed datum, origin, straight-edge or circular-edge reference. Show the mode's independent pitch/height/turns/cone-angle/growth fields. Axial reverse arrow and Left handed remain independent. Mode changes derive dependent values using native laws. Suggest pitch/height uses the native profile-bounds heuristic; initial preselection applies it. Defaults without a profile are pitch 10 mm, height 30 mm, 3 turns and zero angle/growth. Zero height is allowed by the native flat-spiral mode. |
 | Advanced, collapsed | Native Subtraction/Common for Subtract, Refine enabled, fusion tolerance factor (default 0.1, not a length), Fuzzy tolerance (-1 to 1 mm, zero native default, negative automatic). |
 | Preview, expanded | Recompute on change enabled; None/Overlay/Final Result, default Overlay, blue New Body/green Add/red Subtract. Final Result temporarily hides the previous target/result; Cancel removes preview geometry and restores visibility. |
@@ -1910,10 +1918,11 @@ can be switched off; Preview remains available. Added volume is filled green,
 removed volume filled red; target transparency is temporary and returns when the
 preview clears or the task ends. The restored native options use the existing
 geometry engine without creating a Part Design Body container.
-for a sketch profile, Selected curves lists each collected curve. Add selected
-curves supports viewport/native multi-selection from that sketch; Remove, Clear
-and Use all revise the list. The first explicit curve/region pick replaces the
-default whole-sketch selection; subsequent picks add curves without duplicates.
+For a sketch profile, Selected curves lists each automatically collected curve.
+Remove, Clear, Delete and Use all revise the list. The first explicit curve/region
+pick replaces the default whole-sketch selection; subsequent curve picks toggle
+individual entries. Highlight the latest added curve; removal clears the list
+highlight. There is no separate Add selected curves button.
 Pick closed regions in the view collects the clicked region's outer contour and
 immediate hole contours, including Sketcher's filled internal-face hits. Preview
 and OK require one connected region with optional holes; open/self-intersecting,
