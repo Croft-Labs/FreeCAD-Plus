@@ -344,6 +344,15 @@ Evidence: `master-tree-20261002/acceptance-final/results.json`, `tests.log`,
 source-overlay macro and Word backups/renders under the October 1 visualization
 workspace. Initial harness retries are retained separately from this passing run.
 
+## October 3 Sketcher grid default
+
+- [ X ] Seed native ShowGrid=false for new sketches while preserving explicit
+  preferences, stored sketch visibility and the native grid toggle.
+- [ X ] Validate the Python-only staged owner payload in an isolated Sketcher
+  edit session, inspect the grid-off capture, update/render the Word requirement,
+  and verify the owner shortcut. See WORK_STATE for exact evidence and identity.
+- [   ] Physical owner acceptance; no release publication.
+
 ## October 2 owner screenshot defaults and Word specification
 
 - [ X ] Root AGENTS.md requires updating `ai-instructions/ui/FreeCAD Plus UI & UX.docx`

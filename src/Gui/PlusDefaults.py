@@ -54,7 +54,8 @@ def screenshot_defaults():
                              + [("Int", "EdgePattern", 0xffff), ("Int", "ConstructionPattern", 0xfcfc),
                                 ("Int", "InternalPattern", 0xfcfc), ("Int", "ExternalPattern", 0xeeee),
                                 ("Int", "ExternalDefiningPattern", 0xffff)],
-        "Mod/Sketcher/General": [("Unsigned", "SketchFaceColor", rgba("cbdff4"))],
+        "Mod/Sketcher/General": [("Unsigned", "SketchFaceColor", rgba("cbdff4")),
+                                 ("Bool", "ShowGrid", False)],
     }
     return defaults
 

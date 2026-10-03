@@ -1785,6 +1785,11 @@ units before module initialization when no preference is saved. Preserve explici
 saved choices and document unit overrides. Units changes keep their native scope:
 global without a document, the active document with one open. The native Blender
 fallback also applies to navigation preference resets.
+Sketcher seeds its native `Mod/Sketcher/General/ShowGrid` preference to false:
+new sketches start without a grid unless the user has saved an explicit choice.
+Retain the native grid toggle, saved sketch visibility and grid spacing. Opening
+sketch edit must not force the grid off again after a user enables it.
+
 The October 2 owner screenshot preset in
 [FreeCAD Plus UI & UX.docx](ui/FreeCAD%20Plus%20UI%20%26%20UX.docx), section 5,
 also governs General, Selection, Display Colors and Sketcher Appearance defaults.

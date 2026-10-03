@@ -1,5 +1,23 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 Sketcher grid default
+
+`PlusDefaults.py` now seeds native `Mod/Sketcher/General/ShowGrid` to false.
+New sketches start with the grid hidden; explicit preferences and saved sketch
+visibility remain intact. The native grid toggle and spacing are retained.
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_sketch_grid`.
+This Python-only incremental update copies the compact-Tasks payload and changes
+only PlusDefaults; no native rebuild. Native About identity remains `f8a4d5c408`.
+The isolated owner-launcher probe in `validation/acceptance` checks startup
+seeding, native sketch edit with grid off, manual grid toggle, the next sketch's
+default and preservation of an explicit saved preference. Its capture is reviewed.
+The existing desktop shortcut is retargeted and reopened to verify its target
+and working directory; evidence is `validation/shortcut-verification.json`.
+BUILD-VALIDATION/BUILD-MANIFEST record source and inherited native identities.
+Word retains its previous paragraphs, numbering and other package parts; the
+edited page is rendered and inspected. Physical owner acceptance remains separate.
+Source publication is verified on origin/main; no release or installer.
+
 ## October 3 compact Tasks panels
 
 Owner clarified vertical scrolling only. Component Extrude, Revolve, Loft, Pipe,
