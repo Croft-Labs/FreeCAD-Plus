@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 exact Design Home ribbon
+
+- [ X ] Exactly Main, Modeling and Sketch with the requested actions and
+  Fillet/Chamfer plus Coordinate System split buttons.
+- [ X ] Ten focused source-overlay GUI checks pass: topology, menu captions/native
+  execution, common toolbar, specialist tabs, compact grid and Plus/Classic exclusion.
+- [ X ] Update toolbar/UI references and canonical DOCX; preserve owner content,
+  heading structure and automatic numbering. Evidence: `home-layout-20261002`.
+- [   ] Include in next batched owner build and verify physical acceptance. Current
+  executable, ZIP and shortcut unchanged; no release publication.
+
 ## October 2 master component and stable Part Tree
 
 - [ X ] Reuse the automatic New File component and persisted `RootComponent` as
@@ -14,10 +25,8 @@
   native selection, Cut/Paste, Undo/Redo and `.cadprt` save/reopen are covered along
   with existing Models, movement and display-context regressions.
 - [ X ] Update component contract, UI specification and programming index.
-- [   ] Save the prepared Word specification merge after the owner finishes editing
-  and closes the document. Its source changed repeatedly during this run; do not
-  overwrite the owner's active edits. The draft preserves original headings and
-  automatic numbering; the canonical DOCX has not received this convention yet.
+- [ X ] Merge the convention into the latest owner Word specification; preserve
+  original paragraphs, headings and automatic numbering. Rendered pages reviewed.
 - [   ] Incorporate into the next packaged build; verify owner interaction there.
   The current owner executable, ZIP and shortcut are unchanged. No build/publication
   claim follows from source-overlay tests.

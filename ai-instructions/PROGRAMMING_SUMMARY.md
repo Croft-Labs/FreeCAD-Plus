@@ -6,6 +6,11 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
+Latest source revises Design Home to exactly Main, Modeling and Sketch with the
+requested actions and Fillet/Chamfer plus Coordinate System dropdowns. Ten focused
+source-overlay GUI checks pass; Word requirements are synchronized. This revision
+awaits the next batched owner build.
+
 October 2 audit build incorporates the conversation's requested UI/workflow
 changes, including the common toolbar above the ribbon, medium icons, completed
 Home groups, Design Assembly tab and unplaced New Component action. Its application
@@ -21,7 +26,7 @@ specialist initialization was corrected to preserve Classic toolbar visibility.
 The desktop owner shortcut now points to this payload; root AGENTS.md makes its
 verified update mandatory for every delivered owner build.
 
-The [toolbar reference](details/ui/TOOLBARS.md) separates Classic command rows,
+The [toolbar reference](ui/TOOLBARS.md) separates Classic command rows,
 implemented Plus groups and the final 644-command function catalog with 616 native
 icon renders. The [conversation audit](DEVELOPMENT_ROADMAP.md#october-2-conversation-and-payload-audit)
 maps each request to incorporation/evidence. [WORK_STATE](WORK_STATE.md) owns exact

@@ -58,16 +58,23 @@ high: full buttons span it, two 38px medium buttons or three 24px small buttons
 fit a column. Reference-document artwork sizing is independent of these values.
 
 Design Home contains the most frequently used actions from the other tabs.
-Its Main group has medium New Component, Add Component, New Sketch and Coordinate
-System; Coordinate System has coordinate-system/plane/axis/point choices.
-The [toolbar reference](details/ui/TOOLBARS.md#plus-ui-target-layout) owns the
+Its only groups, in order, are Main (New Component, Add Component), Modeling
+(Extrude, Revolve, Fillet/Chamfer), and Sketch (New Sketch, Coordinate System).
+Extrude/Revolve retain full-size icons; the other buttons retain medium icons.
+Fillet/Chamfer is one split button with native Fillet and Chamfer choices, defaulting
+to Fillet. Coordinate System has coordinate-system/plane/axis/point choices.
+These seven buttons are the complete Design Home layout; extra groups/actions
+stay in their specialist tabs or native menus. The common File/Edit/Clipboard
+toolbar remains above the ribbon.
+The [toolbar reference](ui/TOOLBARS.md#plus-ui-target-layout) owns the
 detailed placements completing the incomplete owner outline, including the added
 Assembly tab and retained Sketch tab. Std_NewComponent creates an embedded model
 with no assembly occurrences and opens its editing tab. Add Component inserts a
 linked occurrence, reusing or creating a definition through the existing chooser.
 Both follow the approved component contract and native transaction/ownership rules.
 
-These changes are incorporated in the October 2 audit build. Earlier October 2
+The three-group Home revision awaits the next packaged build; it supersedes the
+broader Home layout incorporated in the October 2 audit build. Earlier October 2
 folders retain their previous layout; the owner shortcut must target the validated
 audit payload. Initialize specialist Home actions only after the main window is
 visible, to preserve Classic visibility when native setup saves toolbar state.
@@ -90,12 +97,13 @@ installed workbenches retain their own labeled mode. Native workbench activation
 keeps the selector synchronized; changing modes during an active task is refused.
 
 Design has **Home, Modeling, Surface, Sketch, Assembly, Mesh, View**, in that order.
-Home groups Main, Modeling, Surface, Sketch, Assembly, Mesh, View, Structure,
-Utilities, Help and Macro. File/Edit/Clipboard commands stay in the common bar.
+Home has exactly Main, Modeling and Sketch as listed above.
+File/Edit/Clipboard commands stay in the common bar.
 The New File button uses the standard New Document (`document-new`) icon and
 native Std_New action, which routes to the component-document workflow.
-Home retains Coordinate System/Plane/Axis/Point in the Coordinate System dropdown,
-Variable Set as a small button, and Macro actions in one compact dropdown. Iconless native actions use ribbon-only
+Home retains Coordinate System/Plane/Axis/Point in the Coordinate System dropdown.
+Variable Set and Macro remain available through native menus and other modes.
+Iconless native actions use ribbon-only
 fallback artwork and retain their original QAction state and menu identity.
 Modeling groups native Part Design Modeling, Transformation, Dress-Up and Helper
 commands, in that order. Surface, Sketch, Assembly and Mesh reuse the

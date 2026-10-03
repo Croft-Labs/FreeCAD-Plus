@@ -100,8 +100,8 @@ class TestPlusRibbon(unittest.TestCase):
         for group, commands in UI.HOME_GROUPS:
             for name in commands:
                 self.assertIsNotNone(self.button(name), name)
-        self.assertEqual(self.button("Part_CoordinateSystem").menu().actions(),
-                         [Gui.Command.get(name).getAction()[0] for name in UI.COORDINATE_CHOICES])
+        self.assertEqual([action.objectName() for action in self.button("Part_CoordinateSystem").menu().actions()],
+                         list(UI.COORDINATE_CHOICES))
         self.ribbon.window.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-full-window.png"))
 
     def testNewModelCreatesNoExtraAssemblyInstance(self):
@@ -173,7 +173,7 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertEqual(self.button("Std_New").text(), "New File")
         self.assertEqual(self.button("Std_Part").text(), "Add Component")
         for name in ("Std_New", "Std_Open", "Std_Save", "Std_Undo", "Std_Part", "PartDesign_NewSketch",
-                     "Sketcher_MapSketch", "Sketcher_EditSketch", "PartDesign_AddReferenceObject"):
+                     "Std_NewComponent", "PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Fillet", "Part_CoordinateSystem"):
             button = self.button(name)
             self.assertIsNotNone(button, name)
             self.assertEqual(button.defaultAction(), Gui.Command.get(name).getAction()[0])
@@ -309,9 +309,9 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertTrue(self.ribbon.scroll.widget().findChildren(QtWidgets.QToolButton))
 
     def testNarrowWindowAndNativeDropdownAction(self):
-        self.tab("Home")
+        self.tab("Modeling")
         window = Gui.getMainWindow()
-        window.resize(650, 800)
+        window.resize(360, 800)
         settle()
         scroll = self.ribbon.scroll.horizontalScrollBar()
         self.assertGreater(scroll.maximum(), 0)
@@ -391,7 +391,9 @@ class TestPlusRibbon(unittest.TestCase):
         self.tab("Home")
         datums = self.button("Part_CoordinateSystem")
         self.assertIsNotNone(datums.menu())
-        self.assertEqual(datums.menu().actions(), [Gui.Command.get(name).getAction()[0] for name in UI.COORDINATE_CHOICES])
+        self.assertEqual([action.objectName() for action in datums.menu().actions()], list(UI.COORDINATE_CHOICES))
+        Gui.activateWorkbench("DraftWorkbench")
+        settle()
         variables = self.button("Std_VarSet")
         self.assertEqual(variables.defaultAction(), Gui.Command.get("Std_VarSet").getAction()[0])
         variables.click()
@@ -403,7 +405,8 @@ class TestPlusRibbon(unittest.TestCase):
                 self.assertIn(Gui.Command.get(name).getAction()[0], macro.menu().actions())
 
     def testAuditIconsAndDrawingPagePriority(self):
-        self.tab("Home")
+        Gui.activateWorkbench("DraftWorkbench")
+        settle()
         button = self.button("Std_CommandSearch")
         native = button.defaultAction()
         native_icon = native.icon().cacheKey()
@@ -428,6 +431,36 @@ class TestPlusRibbon(unittest.TestCase):
             self.assertFalse(button.icon().isNull(), button.objectName())
             if button.menu():
                 self.assertFalse(any(action.isSeparator() for action in button.menu().actions()))
+
+    def testExactOwnerDesignHomeLayout(self):
+        self.tab("Home")
+        expected = [("Main", ("Std_NewComponent", "Std_Part")),
+                    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Fillet")),
+                    ("Sketch", ("PartDesign_NewSketch", "Part_CoordinateSystem"))]
+        self.assertEqual(self.ribbon.groups(), expected)
+        groups = self.ribbon.scroll.widget().findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+        self.assertEqual(len(groups), 3)
+        for group, (title, commands) in zip(groups, expected):
+            self.assertEqual([button.objectName() for button in group.findChildren(QtWidgets.QToolButton)],
+                             ["Ribbon_" + command for command in commands])
+        fillet = self.button("PartDesign_Fillet")
+        self.assertEqual(fillet.text(), "Fillet/Chamfer")
+        self.assertEqual(fillet.menu().actions(),
+                         [Gui.Command.get(name).getAction()[0] for name in ("PartDesign_Fillet", "PartDesign_Chamfer")])
+        for action in fillet.menu().actions():
+            self.assertEqual(action.isEnabled(), Gui.Command.get(action.objectName()).getAction()[0].isEnabled())
+        coordinate = self.button("Part_CoordinateSystem").menu()
+        self.assertEqual([action.text() for action in coordinate.actions()], ["Coordinate System", "Plane", "Axis", "Point"])
+        coordinate.aboutToShow.emit()
+        for action in coordinate.actions():
+            native = Gui.Command.get(action.objectName()).getAction()[0]
+            self.assertEqual(action.isEnabled(), native.isEnabled())
+            with patch.object(native, "trigger") as trigger:
+                action.trigger()
+                self.assertEqual(trigger.call_count, int(action.isEnabled()))
+        self.assertIsNone(self.button("PartDesign_Chamfer"))
+        self.assertIsNone(self.button("Sketcher_EditSketch"))
+        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "home-exact.png"))
 
     @unittest.skipIf(os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1", "Restored native pattern bindings require grouped build")
     def testRestoredNativePatternBindings(self):

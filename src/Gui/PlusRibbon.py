@@ -26,14 +26,9 @@ COMMON_GROUPS = (
     ("Clipboard", ("Std_Cut", "Std_Copy", "Std_Paste")),
 )
 HOME_GROUPS = (
-    ("Main", ("Std_NewComponent", "Std_Part", "PartDesign_NewSketch", "Part_CoordinateSystem")),
-    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Fillet", "PartDesign_Pattern")),
-    ("Surface", ("Surface_Filling", "Surface_GeomFillSurface", "Surface_ExtendFace")),
-    ("Sketch", ("Sketcher_EditSketch", "Sketcher_MapSketch", "Sketcher_CompLine",
-                "Sketcher_CompCreateRectangles", "Sketcher_Dimension", "Sketcher_ToggleConstruction")),
-    ("Assembly", ("Assembly_CreateAssembly", "Assembly_Insert", "Assembly_SolveAssembly", "Assembly_CreateJointFixed")),
-    ("Mesh", ("Mesh_Import", "Mesh_FromPartShape", "Mesh_Evaluation")),
-    ("View", ("Std_ViewFitAll", "Std_ViewIsometric", "Std_DrawStyle", "Std_EntitySelectionFilter")),
+    ("Main", ("Std_NewComponent", "Std_Part")),
+    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Fillet")),
+    ("Sketch", ("PartDesign_NewSketch", "Part_CoordinateSystem")),
 )
 COORDINATE_CHOICES = ("Part_CoordinateSystem", "Part_DatumPlane", "Part_DatumLine", "Part_DatumPoint")
 # Presentation priority only: every operation still uses its native QAction.
@@ -404,6 +399,8 @@ class Ribbon(QtCore.QObject):
         bars = Gui.activeWorkbench().getToolbarItems()
         tab = self.current_tab()
         if tab == "Home":
+            if self.mode_name == "Design":
+                return list(HOME_GROUPS)
             groups = list(HOME_GROUPS) if self.mode_name == "Design" else [
                 ("Main", ("Std_Part", "Std_ComponentStructure")),
                 ("Frequent operations", [command for title, commands in bars.items()
@@ -447,6 +444,8 @@ class Ribbon(QtCore.QObject):
             return None
         captions = {"Std_New": tr("New File"), "Std_Part": tr("Add Component"),
                     "Sketcher_Dimension": tr("Auto dimension"), "Part_DatumLine": tr("Datum Axis")}
+        if command_name == "PartDesign_Fillet" and self.mode_name == "Design" and self.current_tab() == "Home":
+            captions["PartDesign_Fillet"] = tr("Fillet/Chamfer")
         button = RibbonButton(captions.get(command_name), parent,
                               ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
         button.setObjectName("Ribbon_" + command_name)
@@ -471,7 +470,17 @@ class Ribbon(QtCore.QObject):
             menu = QtWidgets.QMenu(button)
             for action in actions:
                 if not action.isSeparator():
-                    menu.addAction(action)
+                    labels = dict(zip(COORDINATE_CHOICES, ("Coordinate System", "Plane", "Axis", "Point")))
+                    if command_name == "Part_CoordinateSystem" and self.mode_name == "Design" and self.current_tab() == "Home":
+                        # Keep the short Home captions local; native toolbar actions
+                        # retain their names and remain responsible for execution.
+                        proxy = menu.addAction(action.icon(), tr(labels[action.objectName()]))
+                        proxy.setObjectName(action.objectName())
+                        proxy.setEnabled(action.isEnabled())
+                        proxy.triggered.connect(lambda checked=False, native=action: native.trigger())
+                        menu.aboutToShow.connect(lambda native=action, item=proxy: item.setEnabled(native.isEnabled()))
+                    else:
+                        menu.addAction(action)
             button.setMenu(menu)
             button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         return button
@@ -506,6 +515,8 @@ class Ribbon(QtCore.QObject):
             grid.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
             buttons = []
             for command_name, choices in projected_commands(commands):
+                if self.mode_name == "Design" and self.current_tab() == "Home" and command_name == "PartDesign_Fillet":
+                    choices = ("PartDesign_Fillet", "PartDesign_Chamfer")
                 size = "medium" if self.current_tab() == "Home" and title in ("Main", "Frequent operations") else None
                 button = self.make_button(command_name, group, choices, size)
                 if button is None:

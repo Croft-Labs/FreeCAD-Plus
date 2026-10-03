@@ -1,5 +1,17 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2 exact Design Home layout — source ready
+
+Home now contains only Main (New Component, Add Component), Modeling (Extrude,
+Revolve, Fillet/Chamfer) and Sketch (New Sketch, Coordinate System), in that order.
+Fillet/Chamfer shares a split button. Coordinate System offers Coordinate System,
+Plane, Axis and Point with local captions and native execution/enablement.
+Ten focused packaged-engine GUI tests with explicit PlusRibbon source overlay pass.
+Common toolbar and specialist tabs remain. Word owner content/headings/automatic
+numbering are preserved; rendered changed pages reviewed. Evidence: visualization
+workspace `home-layout-20261002`. Source awaits the next batched build; existing
+owner executable, ZIP and shortcut unchanged.
+
 ## October 2 master component convention — source ready
 
 Owner reauthorized the previously deferred tree convention. `ComponentModel`
@@ -18,15 +30,10 @@ under `C:/Users/Office-PC/.codex/visualizations/2026/10/01/01a0f9bd-b85a-7aa3-a6
 Source provenance is asserted in the harness; existing native command callbacks
 share the source panel in this test process. Earlier harness failures are retained.
 
-Contract/UI specification and programming index are synchronized. The Word update
-is prepared separately, preserving the owner's paragraphs, heading structure and
-automatic numbering. The canonical DOCX is actively changing in the owner's editor;
-initial save was denied, and subsequent version guards detected more owner edits.
-An elevated read/write-handle check succeeds, but saving while that editor continues
-would risk overwriting new owner changes or having this merge replaced by a later
-editor save. Await the requested save/close reply, then merge against the latest
-canonical bytes, render/review and save with a final source-hash guard. Do not treat
-the canonical Word specification as updated with this convention yet.
+Contract/UI specification and programming index are synchronized. The canonical Word
+specification now includes the convention, merged against the latest owner version
+during the Home-layout task. Original paragraphs, headings and automatic numbering
+are preserved; rendered affected pages reviewed.
 
 Source changes await the next batched owner build; the existing runtime, ZIP and
 shortcut remain unchanged, and physical owner acceptance is pending.
