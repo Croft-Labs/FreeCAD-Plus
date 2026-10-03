@@ -18,8 +18,14 @@ own configuration requirements. [CMakeLists.txt](../CMakeLists.txt),
 Do not substitute libraries from the separately installed FreeCAD.
 
 Keep dependency bundles and generated build output outside the Google Drive
-source tree. A suitable local build location is `$env:LOCALAPPDATA\FreeCADPlus\build`;
-choose and record a compatible LibPack directory before configuring. Default
+source tree. All new build folders must follow the owner's naming convention:
+`freecad_plus_[yyyy-mm-dd]_[test_case]`, for example
+`freecad_plus_2026-10-03_extrude_frame`. Use the build date and a descriptive
+underscore-separated test-case name. Apply this convention to owner build output
+folders as well as newly created compilation folders. The parent directory stays
+outside Google Drive, for example `$env:LOCALAPPDATA\FreeCADPlus`. Existing build
+folders and historical evidence paths are not renamed by this documentation update.
+Choose and record a compatible LibPack directory before configuring. Default
 CMake presets place output inside the source tree, so override their build path.
 These locations are a development convention, not evidence of an existing build.
 
@@ -54,7 +60,8 @@ model and GUI regressions remain available:
 if (-not $env:FREECAD_LIBPACK_DIR -or -not (Test-Path -LiteralPath $env:FREECAD_LIBPACK_DIR)) {
     throw 'Set FREECAD_LIBPACK_DIR to a compatible LibPack directory first.'
 }
-$freecadPlusBuild = Join-Path $env:LOCALAPPDATA 'FreeCADPlus\build'
+$freecadPlusBuildName = "freecad_plus_$(Get-Date -Format 'yyyy-MM-dd')_extrude_frame"
+$freecadPlusBuild = Join-Path (Join-Path $env:LOCALAPPDATA 'FreeCADPlus') $freecadPlusBuildName
 $freecadPlusOptions = @(
     '-DBUILD_GUI=ON', '-DBUILD_PART=ON', '-DBUILD_SKETCHER=ON', '-DBUILD_PART_DESIGN=ON',
     '-DBUILD_START=ON', '-DBUILD_TUX=ON',
