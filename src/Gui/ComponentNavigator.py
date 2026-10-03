@@ -300,10 +300,9 @@ class Navigator(QtWidgets.QDockWidget):
         self.structure.viewport().installEventFilter(self)
         self.models.installEventFilter(self)
         self.history.itemSelectionChanged.connect(self.select_history)
+        self.history.viewport().installEventFilter(self)
         self.structure.itemDoubleClicked.connect(lambda item, column: self.run(lambda: self.activate_item(item)) if column == 0 else None)
         self.structure.itemClicked.connect(lambda item, column: self.run(lambda: self.toggle_component(item)) if column == 1 else None)
-        self.history.itemDoubleClicked.connect(lambda item, column: self.run(
-            lambda: self.edit_history(item.data(0, QtCore.Qt.UserRole))) if column == 2 else None)
         self.history.itemClicked.connect(lambda item, column: self.run(lambda: self.toggle_item_view(item)) if column == 1 else None)
         self.history.itemChanged.connect(self.history_checked)
         for tree in (self.models, self.structure, self.history):
@@ -461,7 +460,9 @@ class Navigator(QtWidgets.QDockWidget):
                     item.setToolTip(1, getattr(obj, "ReferenceError", "") or tr("Geometry is unavailable. Restore or repair the item and its inputs."))
                 if obj.ViewObject:
                     item.setIcon(2, obj.ViewObject.Icon)
-                item.setToolTip(2, tr("Component origin") if origin else tr("Operation") if obj.ComponentRole == "Operation" else tr("Object"))
+                item.setToolTip(2, tr("Component origin") if origin else
+                               tr("Double-click to edit sketch") if obj.isDerivedFrom("Sketcher::SketchObject") else
+                               tr("Double-click to edit"))
                 item.setToolTip(3, model().history_detail(obj))
                 if getattr(obj, "ComponentRole", "") == "Reference":
                     item.setToolTip(2, tr("Reference object. Edit to review or replace its direct-child source."))
@@ -753,6 +754,19 @@ class Navigator(QtWidgets.QDockWidget):
         self.tabs.setCurrentWidget(self.history)
 
     def eventFilter(self, watched, event):
+        if (watched == self.history.viewport() and event.type() == QtCore.QEvent.MouseButtonDblClick
+                and event.button() == QtCore.Qt.LeftButton):
+            point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+            index = self.history.indexAt(point)
+            if index.isValid() and index.column() in (2, 3):
+                # A document refresh can replace the row after the first click,
+                # invalidating QTreeWidget's pressed index and itemDoubleClicked.
+                # Resolve the current row at the native double-click, then carry
+                # only its document identity across task startup/tree rebuilds.
+                key = tuple(self.history.itemAt(point).data(0, QtCore.Qt.UserRole))
+                QtCore.QTimer.singleShot(0, lambda key=key: self.run(lambda: self.edit_history(key)))
+                event.accept()
+                return True
         if watched == self.structure.viewport():
             kind = event.type()
             if kind == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:

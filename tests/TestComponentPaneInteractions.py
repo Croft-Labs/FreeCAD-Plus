@@ -196,6 +196,50 @@ class TestComponentPaneInteractions(unittest.TestCase):
         self.assertAlmostEqual(result.Shape.Volume, volume)
         self.assertEqual(self.panel.active_key, Navigator.object_key(self.root))
 
+    def testHistoryStatusDoubleClickOpensOperation(self):
+        profile = Sketch.create(self.root)
+        profile.addGeometry(Part.Circle(App.Vector(), App.Vector(0, 0, 1), 2))
+        self.doc.recompute()
+        operation, result = Extrude.create(self.root, profile, 5)
+        self.panel.refresh()
+        self.tab(2)
+        self.click(self.panel.history, self.history_row(operation), 3, double=True)
+        self.assertIsNotNone(ExtrudeTask._task)
+        self.assertEqual(ExtrudeTask._task.operation, operation)
+        ExtrudeTask._task.reject()
+
+    def testSketchDoubleClickSurvivesRowRefresh(self):
+        profile = Sketch.create(self.root)
+        profile.addGeometry(Part.Circle(App.Vector(), App.Vector(0, 0, 1), 2))
+        self.doc.recompute()
+        self.panel.refresh()
+        self.tab(2)
+        tree = self.panel.history
+        row = self.history_row(profile)
+        point = QtCore.QPoint(tree.header().sectionViewportPosition(2) + 18,
+                             tree.visualItemRect(row).center().y())
+        QtTest.QTest.mouseClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, point)
+        # Model notifications can rebuild the item between the two native clicks.
+        self.panel.refresh()
+        QtTest.QTest.mouseDClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, point)
+        self.settle()
+        editing = Gui.getDocument(self.doc.Name).getInEdit()
+        self.assertIsNotNone(editing)
+        self.assertEqual(editing.Object, profile)
+        Gui.getDocument(self.doc.Name).resetEdit()
+        self.settle()
+        self.assertEqual(self.panel.active_key, Navigator.object_key(self.root))
+
+    def testHistoryDoubleClickNativeFeature(self):
+        self.tab(2)
+        self.click(self.panel.history, self.history_row(self.box), 2, double=True)
+        editing = Gui.getDocument(self.doc.Name).getInEdit()
+        self.assertIsNotNone(editing)
+        self.assertEqual(editing.Object, self.box)
+        self.assertTrue(Gui.Control.activeDialog())
+        Gui.getDocument(self.doc.Name).resetEdit()
+        self.settle()
+
     def testModelsRootEditRefusedDuringTask(self):
         self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0))
         self.panel.refresh()

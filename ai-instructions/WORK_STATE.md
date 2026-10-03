@@ -1,5 +1,40 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 Components double-click editing
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_component_double_click/app`.
+Python-only incremental staging from the modeling-previews payload; only the
+installed ComponentNavigator module changes. All previous modeling preview fixes
+remain included. Native About retains `03a6f66644488e2b710f94e828155b9b12c23c60`;
+release-info and BUILD-VALIDATION identify the newer application source commit.
+No native rebuild, installer or published release.
+
+History double-clicks on name/icon or status open the existing operation/feature
+editor; sketches enter Sketcher directly. The native viewport event resolves the
+current row identity and defers edit startup, avoiding stale pressed indexes when
+History is rebuilt between clicks. Dedicated visibility/suppression controls,
+single-click selection, component navigation and context-menu Edit are unchanged.
+
+Evidence in the build parent's `validation` folder:
+- `before`: reproduces both original failures (status-area operation edit and
+  sketch double-click after a row refresh).
+- `after`: all 20 checks pass: 13 native panel interactions, four component task
+  context cases and three History cases. Includes native Part Box editing,
+  sketch edit/reset, Extrude edit/cancel, visibility/suppression/undo, component
+  navigation, shared occurrence restoration and save/reopen. No source overlays
+  or unexpected GUI diagnostics; the installed module matches source.
+- `shortcut-verification.json`: existing desktop shortcut saved, reopened and
+  verified against the new launcher and working directory.
+- `publication.json`: committed source and matching origin/main identity.
+
+The owner Word document preserves all 1533 existing paragraphs and package
+members except document.xml, appending the double-click contract with native
+numbering/styles intact. Pages 1-45 match the previous render; changed page 46
+was inspected under the task visual root's `component-double-click-doc/render`.
+BUILD-MANIFEST records unchanged hashes inherited from the verified baseline
+following size/timestamp checks, with changed files and critical binaries
+rehashed. Physical owner pointer/high-DPI acceptance remains separate.
+
 ## October 3 full modeling overlays and normal result previews
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_modeling_previews/app`.

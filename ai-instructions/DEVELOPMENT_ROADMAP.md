@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 Components double-click editing (7.8)
+
+History name/icon/status double-clicks open the existing feature/operation task,
+or Sketcher edit for sketches. The event handler resolves a stable document key
+and defers task startup, so replacing a row between clicks no longer drops the
+gesture. Both previously failing mouse cases now pass with the full 20-check
+panel/context/History group. Eyes, suppression, native feature editors, component
+navigation and cancellation are retained. WORK_STATE records Word review,
+Python-only staging, native identity, shortcut and publication separately.
+
 ## October 3 modeling preview separation (7.8)
 
 REQ-014f gives the six shared component modeling tasks a None/Overlay/Result

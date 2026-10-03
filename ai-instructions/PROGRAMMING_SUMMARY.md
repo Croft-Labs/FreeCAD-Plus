@@ -2,7 +2,12 @@
 
 ## Project at a glance
 
-The current owner build adds None/Overlay/Result preview dropdowns to all six
+The Components panel now opens a feature/operation editor or Sketcher directly
+when its History name, icon or status area is double-clicked. Native double-click
+handling survives an intervening row rebuild. Twenty panel, History and component
+context checks pass; WORK_STATE records the Python-only owner build and shortcut.
+
+The modeling preview update adds None/Overlay/Result preview dropdowns to all six
 shared component modeling tasks. Overlays show full blue/green/red tool shapes
 without requiring Boolean contact; Result uses normal appearance. Seventy-five
 workflow checks pass. This is Python-only staging on native identity

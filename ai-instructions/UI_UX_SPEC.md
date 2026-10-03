@@ -1902,6 +1902,14 @@ hidden, including by hiding its parent branch. History places the active /
 suppressed checkbox to the left of the visibility icon and item name. Partial
 checks identify dependent inactivity; visibility does not suppress an item.
 
+Double-click a History item's name, icon or status area to open its existing
+feature/operation edit task. Sketches enter Sketcher edit mode directly. Resolve
+the object identity at the double-click so an intervening History refresh cannot
+discard the gesture. Keep visibility and suppression cells as their dedicated
+controls, and preserve single-click selection and context-menu Edit. Protected
+origins do not open an editor; an active task must be finished first. Closing or
+cancelling returns to the original component/occurrence context.
+
 Component feedback tasks (7.8.5c/d and 7.8.7d/e):
 
 New component documents use the default title/file basename untitled001; further
