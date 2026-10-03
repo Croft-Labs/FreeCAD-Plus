@@ -107,6 +107,15 @@ region collector temporarily displays closed areas in translucent light blue.
 Clicking an area can choose its sketch directly and adds the outer and hole
 boundary curves to Selected curves. Disabling region picking or closing the task
 removes that fill; native curve selection and green/red volume previews remain.
+Collected curves stay highlighted for the lifetime of component Extrude, Revolve,
+Helix, Loft and Pipe tasks, including operation edits and solid previews. The first
+collected curve dims other sketches to light-medium gray (RGB 0.65) and removes
+their region shading. Only the active sketch retains light-blue regions while
+region picking is enabled. Loft highlights all collected sections; Pipe includes
+profile, spine and enabled auxiliary inputs. Highlighting survives normal viewport
+selection clearing and focus changes. Removing/clearing inputs updates emphasis;
+clearing all restores normal colors and candidate fills. OK/Cancel restores prior
+display. Temporary scene overrides do not change saved appearance or geometry.
 Deleting an Extrude removes only its unused internal profile helpers and restores
 the source sketch when no other operation consumes it. Delete/Undo/Redo preserves
 the sketch and supports creating another Extrude by edges or interior region.

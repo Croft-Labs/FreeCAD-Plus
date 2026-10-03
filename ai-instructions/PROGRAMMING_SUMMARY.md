@@ -2,6 +2,11 @@
 
 ## Project at a glance
 
+Component curve tasks now keep collected geometry highlighted independently of
+native selection. After the first curve, other sketches are light-medium gray
+without region fill; Loft sections and Pipe paths share the behavior. See
+WORK_STATE for the staged runtime, focused checks and owner shortcut.
+
 The October 3 compact-Tasks update makes component modeling forms usable at
 360 logical pixels with vertical scrolling only. Seventeen focused width and
 workflow checks pass; the Python-only owner payload retains the preceding

@@ -3007,6 +3007,13 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   feedback checks pass, including duplicate-label policy and externalized custom
   names. Physical owner acceptance remains pending; see WORK_STATE.
 - [   ] 7.8.7p Owner feedback: component Extrude selected sketch curves/regions.
+  Persistent selection follow-up: Extrude/Revolve/Helix/Loft/Pipe tasks keep
+  collected curves highlighted across native selection clearing, field changes
+  and previews. Other sketches become light-medium gray without area fill once
+  curves are collected. Loft sections and Pipe paths retain their highlights;
+  clearing and task closure restore display without saving temporary colors.
+  Python-only owner staging, 24 focused runtime checks, capture/Word review and
+  shortcut verification pass; see WORK_STATE. Physical owner acceptance pending.
   October 3 follow-up: native sketches now default to unfilled outlines; shared
   component profile tasks enable temporary light-blue regions. Interior picking
   resolves component paths and can choose an initially empty profile. Extrude

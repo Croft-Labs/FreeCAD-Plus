@@ -343,6 +343,7 @@ class ExtrudeTask:
             self.curves.addItem(item)
         self.whole_profile = whole
         self.changed()
+        self.update_curve_display()
 
     def profile_changed(self, *args):
         source = self.component.Document.getObject(self.profile.currentData()) if self.profile.currentData() else None
@@ -364,12 +365,15 @@ class ExtrudeTask:
         self.set_curves([name for name in self.curve_names() if name not in removed], False)
 
     def start_selection(self):
+        self.curve_display_active = True
         self.update_regions()
         Gui.Selection.addObserver(self, 0)
         self.observing = True
         self.mouse_callback = self.view.addEventCallback("SoMouseButtonEvent", self.pick_region)
 
     def stop_selection(self):
+        self.curve_display_active = False
+        self.clear_curve_display()
         for name, visible in getattr(self, "region_visibility", {}).items():
             source = self.component.Document.getObject(name)
             if source:
@@ -385,13 +389,92 @@ class ExtrudeTask:
             self.mouse_callback = None
 
     def update_regions(self, *args):
+        self.update_curve_display()
+
+    def curve_display_inputs(self):
+        """Collected geometry, independent of the transient native selection."""
+        name = self.profile.currentData()
+        return [(name, self.curve_names())] if name and self.curves.count() else []
+
+    def active_curve_source(self):
+        return self.profile.currentData()
+
+    def clear_curve_display(self):
+        for highlight in getattr(self, "curve_highlights", {}).values():
+            highlight.remove()
+        self.curve_highlights = {}
+        for root, material in getattr(self, "curve_materials", {}).values():
+            if root.findChild(material) >= 0:
+                root.removeChild(material)
+        self.curve_materials = {}
+
+    def update_curve_display(self, *args):
+        if not getattr(self, "curve_display_active", False):
+            return
+        import Part
+        from pivy import coin
+        self.clear_curve_display()
+        doc = self.component.Document
+        collected = {}
+        for name, elements in self.curve_display_inputs():
+            source = doc.getObject(name) if name else None
+            if source is None or not hasattr(source, "Shape"):
+                continue
+            names = elements if elements is not None else ["Edge" + str(i + 1) for i in range(len(source.Shape.Edges))]
+            if names:
+                collected.setdefault(name, set()).update(names)
+        active = self.active_curve_source()
+        candidates = {self.profile.itemData(i) for i in range(1, self.profile.count())}
         if not hasattr(self, "region_visibility"):
             self.region_visibility = {}
-        for index in range(1, self.profile.count()):
-            source = self.component.Document.getObject(self.profile.itemData(index))
-            if source and hasattr(source.ViewObject, "ShowClosedRegions"):
-                self.region_visibility.setdefault(source.Name, source.ViewObject.ShowClosedRegions)
-                source.ViewObject.ShowClosedRegions = self.region_pick.isChecked()
+        for source in doc.Objects:
+            if not source.isDerivedFrom("Sketcher::SketchObject"):
+                continue
+            view = source.ViewObject
+            if collected and source.Name != active:
+                # Scene-only overrides never alter saved LineColor/PointColor,
+                # appearance arrays, undo history or document persistence.
+                material = coin.SoMaterial()
+                material.diffuseColor = (0.65, 0.65, 0.65)
+                material.setOverride(True)
+                root = view.RootNode
+                root.insertChild(material, 0)
+                self.curve_materials[source.Name] = (root, material)
+            if hasattr(view, "ShowClosedRegions"):
+                self.region_visibility.setdefault(source.Name, view.ShowClosedRegions)
+                if collected:
+                    view.ShowClosedRegions = bool(self.region_pick.isChecked() and source.Name == active
+                                                  and source.Name in candidates)
+                elif source.Name in candidates:
+                    view.ShowClosedRegions = self.region_pick.isChecked()
+                else:
+                    view.ShowClosedRegions = self.region_visibility[source.Name]
+        color = App.ParamGet("User parameter:BaseApp/Preferences/View").GetUnsigned("SelectionColor", 0xffbf00ff)
+        color = tuple(((color >> shift) & 255) / 255. for shift in (24, 16, 8))
+        for name, elements in collected.items():
+            source = doc.getObject(name)
+            shapes = []
+            for element in sorted(elements):
+                try:
+                    shapes.append(source.Shape.getElement(element))
+                except Exception:
+                    continue  # Stale inputs remain in the collector for repair.
+            if not shapes:
+                continue
+            shape = Part.makeCompound(shapes)
+            parent = source.getGlobalPlacement().multiply(source.Placement.inverse())
+            shape.Placement = parent.multiply(shape.Placement)
+            highlight = Ghost(shape, color=color)
+            highlight.node.getChild(1).lineWidth = 3
+            highlight.node.getChild(1).pointSize = 6
+            # Annotation keeps the collected outline visible over solid previews.
+            # Its separator contains all render state; the geometry stays unpickable.
+            annotation = coin.SoAnnotation()
+            annotation.addChild(highlight.node)
+            highlight.root.removeChild(highlight.node)
+            highlight.node = annotation
+            highlight.root.addChild(annotation)
+            self.curve_highlights[name] = highlight
 
     def addSelection(self, document, name, subname, *args):
         from freecad.gui import ComponentSelection as Selection

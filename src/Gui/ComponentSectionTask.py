@@ -15,6 +15,8 @@ class SectionTask(OperationTask):
         import ComponentModel as Model
         component = self.component
         self.ordered = QtWidgets.QListWidget()
+        self.ordered.model().rowsInserted.connect(self.update_curve_display)
+        self.ordered.model().rowsRemoved.connect(self.update_curve_display)
         self.ordered.setMinimumHeight(85)
         self.ordered.setMaximumHeight(125)
         main.addRow(tr(title), self.ordered)
@@ -45,6 +47,10 @@ class SectionTask(OperationTask):
             button.clicked.connect(callback)
             box.addWidget(button, index // 2, index % 2)
         layout.addRow(row)
+
+    def curve_display_inputs(self):
+        sections = [self.ordered.item(i).data(QtCore.Qt.UserRole) for i in range(self.ordered.count())]
+        return sections + super().curve_display_inputs()
 
     def add_row(self, obj, elements, index=None):
         label = obj.Label + " / " + (", ".join(elements) if elements is not None else tr("Whole profile"))

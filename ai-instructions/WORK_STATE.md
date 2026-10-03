@@ -1,5 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 persistent curve-selection feedback
+
+Component Extrude, Revolve, Helix, Loft and Pipe retain collected-curve highlighting
+through selection clearing, field focus, operation editing and solid previews.
+Coin annotation overlays reuse the existing non-pickable Ghost renderer. The first
+collected input dims other sketches to RGB (0.65, 0.65, 0.65) using scene-only material
+overrides and removes their transient region fill. The active profile alone keeps
+blue regions when enabled. Ordered Loft sections and Pipe spine/enabled auxiliary
+paths retain highlights together. Remove/Clear, source/role changes and OK/Cancel
+update or remove emphasis. Original LineColor/PointColor, persisted appearance and
+model geometry are not modified by the temporary display.
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_curve_selection`.
+Python-only incremental staging from the grid-default build updates three GUI
+modules; no native rebuild. Native About identity remains `f8a4d5c408`, with exact
+source and inherited native provenance in BUILD-VALIDATION/BUILD-MANIFEST.
+Final evidence: `validation/curve-acceptance` passes 24 cases without source overlays:
+seven display cases, twelve profile/extent/selection regressions and five shared
+task regressions. Native checks cover one-edge selection, focus/selection clearing,
+all shared collectors, Loft sections, Pipe paths, preview/accept/edit/cancel,
+placed-component coordinates, clearing and save/reopen without persisted dimming.
+Single-edge and solid-preview captures were inspected. The initial display run's
+only error was test code reading a QLabel after successful Accept destroyed it;
+that assertion was corrected before the final run. Earlier reports are retained.
+
+The existing owner shortcut is updated and reopened to verify the new launcher
+and working directory (`validation/shortcut-verification.json`). Word preserves
+all 1528 prior paragraphs and other package members; the appended requirement is
+rendered and inspected. Document QA is in the task's `curve-display-doc` folder.
+Source publication on origin/main is recorded in `validation/publication.json`.
+Physical owner acceptance remains separate; no release or installer.
+
 ## October 3 Sketcher grid default
 
 `PlusDefaults.py` now seeds native `Mod/Sketcher/General/ShowGrid` to false.

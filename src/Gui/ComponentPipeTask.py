@@ -143,6 +143,23 @@ class PipeTask(SectionTask):
         for name, fields in self.paths.items():
             fields["host"].setToolTip(tr("Active path collector") if name == key else "")
         self.status.setText(tr("Picking sweep path edges") if key == "spine" else tr("Picking auxiliary path edges") if key else tr("Picking profile curves; append or replace the section when ready."))
+        self.update_curve_display()
+
+    def active_curve_source(self):
+        if self.path_role:
+            return self.paths[self.path_role]["source"].currentData()
+        return super().active_curve_source()
+
+    def curve_display_inputs(self):
+        selected = super().curve_display_inputs()
+        for key, fields in self.paths.items():
+            if key == "auxiliary" and self.orientation.currentData() != "Auxiliary":
+                continue
+            name = fields["source"].currentData()
+            if name:
+                elements = None if fields["whole"] else [fields["edges"].item(i).text() for i in range(fields["edges"].count())]
+                selected.append((name, elements))
+        return selected
 
     def set_path(self, key, obj, elements):
         fields = self.paths[key]
@@ -256,6 +273,7 @@ class PipeTask(SectionTask):
             self.set_role(self.path_role)
         else:
             self.status.setText(tr("Append a profile and select its sweep path. Add/Subtract require an explicit target."))
+        self.update_curve_display()
 
     def values(self):
         doc = self.component.Document
