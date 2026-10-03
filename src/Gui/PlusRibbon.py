@@ -42,6 +42,47 @@ MODELING_GROUPS = (
     ("Primitives", ("PartDesign_CompPrimitiveAdditive",)),
 )
 PRIMITIVE_LABELS = ("Box", "Cylinder", "Sphere", "Cone", "Ellipsoid", "Torus", "Prism", "Wedge")
+ASSEMBLY_ITEMS = (
+    ("Assembly", (
+        ("Assembly_CreateAssembly", "Create Assembly"),
+        ("Assembly_Insert", "Insert Component"),
+        ("Part_LinkArrays", "Link Arrays"),
+        ("Assembly_SolveAssembly", "Solve Assembly"),
+        ("Assembly_CreateView", "Exploded View"),
+        ("Assembly_CreateSnapshot", "Snapshot"),
+        ("Assembly_CreateSimulation", "Simulation"),
+        ("Assembly_CreateBom", "Bill of Materials"),
+    )),
+    ("Assembly Joints", (
+        ("Assembly_ToggleGrounded", "Toggle Grounded"),
+        ("Assembly_CreateJointRigidGroup", "Create Rigid Group"),
+        ("Assembly_CreateJointFixed", "Fixed Joint"),
+        ("Assembly_CreateJointRevolute", "Revolute Joint"),
+        ("Assembly_CreateJointCylindrical", "Cylindrical Joint"),
+        ("Assembly_CreateJointSlider", "Slider Joint"),
+        ("Assembly_CreateJointBall", "Ball Joint"),
+        ("Assembly_CreateJointDistance", "Distance Joint"),
+        ("Assembly_CreateJointParallel", "Parallel Joint"),
+        ("Assembly_CreateJointPerpendicular", "Perpendicular Joint"),
+        ("Assembly_CreateJointAngle", "Angle Joint"),
+        ("Assembly_CreateJointRackPinion", "Rack and Pinion Joint"),
+        ("Assembly_CreateJointScrew", "Screw Joint"),
+        ("Assembly_CreateJointGearBelt", "Gears Joint"),
+    )),
+)
+ASSEMBLY_GROUPS = tuple((title, tuple(name for name, label in items)) for title, items in ASSEMBLY_ITEMS)
+ASSEMBLY_CAPTIONS = dict(item for title, items in ASSEMBLY_ITEMS for item in items)
+ASSEMBLY_MENUS = {
+    "Assembly_Insert": (("Assembly_InsertLink", "Insert Component"),
+                        ("Assembly_InsertNewPart", "Insert New Part")),
+    "Part_LinkArrays": (("Part_LinkArrayCircular", "Circular Link Array"),
+                        ("Part_LinkArrayLinear", "Linear Link Array"),
+                        ("Part_LinkArrayPath", "Path Link Array"),
+                        ("Part_LinkArrayPoint", "Point Link Array"),
+                        ("Part_LinkArrayPolar", "Polar Link Array")),
+    "Assembly_CreateJointGearBelt": (("Assembly_CreateJointGears", "Gears Joint"),
+                                     ("Assembly_CreateJointBelt", "Belt Join")),
+}
 SKETCH_ITEMS = (('Sketcher',
   (('Sketcher_NewSketch', 'New Sketch'),
    ('Sketcher_EditSketch', 'Edit Sketch'),
@@ -182,6 +223,7 @@ SKETCH_MENUS = {'Sketcher_CompLine': (('Sketcher_CreatePolyline', 'Polyline'), (
 # Presentation priority only: every operation still uses its native QAction.
 PRIMARY_COMMANDS = {
     "Std_New", "Std_Open", "Std_Save", "Std_Part",
+    "Assembly_CreateAssembly", "Assembly_Insert",
     "PartDesign_NewSketch", "Sketcher_NewSketch", "Sketcher_EditSketch",
     "PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_Pattern", "PartDesign_Fillet",
     "Sketcher_CreatePolyline", "Sketcher_CompLine", "Sketcher_CreateRectangle",
@@ -566,6 +608,8 @@ class Ribbon(QtCore.QObject):
             return groups
         if self.mode_name == "Design" and tab == "Sketch":
             return list(SKETCH_GROUPS)
+        if self.mode_name == "Design" and tab == "Assembly":
+            return list(ASSEMBLY_GROUPS)
         if self.mode_name == "Design" and tab == "Modeling":
             return list(MODELING_GROUPS)
         return [(name, commands) for name, commands in bars.items() if name not in STANDARD]
@@ -602,6 +646,8 @@ class Ribbon(QtCore.QObject):
                              "PartDesign_Mirrored": tr("Mirror Feature"), "PartDesign_MultiTransform": tr("Multi Transform")})
         if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Sketch":
             captions.update({name: tr(label) for name, label in SKETCH_CAPTIONS.items()})
+        if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Assembly":
+            captions.update({name: tr(label) for name, label in ASSEMBLY_CAPTIONS.items()})
         button = RibbonButton(captions.get(command_name), parent,
                               ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
         button.setObjectName("Ribbon_" + command_name)
@@ -641,7 +687,7 @@ class Ribbon(QtCore.QObject):
             button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         return button
 
-    def set_sketch_menu(self, button, choices):
+    def set_command_menu(self, button, choices):
         """Local menu captions with native execution and checked/enabled state."""
         menu = QtWidgets.QMenu(button)
         for name, caption in choices:
@@ -695,7 +741,8 @@ class Ribbon(QtCore.QObject):
             buttons = []
             modeling = self.mode_name == "Design" and self.current_tab() == "Modeling"
             sketch = self.mode_name == "Design" and self.current_tab() == "Sketch"
-            entries = ((name, None) for name in commands) if modeling or sketch else projected_commands(commands)
+            assembly = self.mode_name == "Design" and self.current_tab() == "Assembly"
+            entries = ((name, None) for name in commands) if modeling or sketch or assembly else projected_commands(commands)
             for command_name, choices in entries:
                 if modeling and command_name in ("PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix"):
                     choices = (command_name, command_name.replace("Additive", "Subtractive"))
@@ -708,7 +755,9 @@ class Ribbon(QtCore.QObject):
                 if button is None:
                     continue
                 if sketch and command_name in SKETCH_MENUS:
-                    self.set_sketch_menu(button, SKETCH_MENUS[command_name])
+                    self.set_command_menu(button, SKETCH_MENUS[command_name])
+                if assembly and command_name in ASSEMBLY_MENUS:
+                    self.set_command_menu(button, ASSEMBLY_MENUS[command_name])
                 if modeling and command_name == "PartDesign_CompPrimitiveAdditive":
                     if title == "Primitives":
                         button.caption = tr("Primitives")

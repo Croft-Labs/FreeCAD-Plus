@@ -21,15 +21,16 @@ within that parent. Do not enable source overlays for these phases.
    must leave it hidden. Neither style may display both presentations.
 2. Design shows Home, Modeling, Surface, Sketch, Assembly, Mesh and View. The
    common small File/Edit/Clipboard bar stays above the ribbon in every mode/tab.
-   Home has Main and common Modeling/Surface/Sketch/Assembly/Mesh/View actions,
-   Structure, Utilities, Help and Macro sections. Use the
+   Design Home, Modeling, Sketch and Assembly follow the exact owner layouts in
+   `ai-instructions/ui/TOOLBARS.md` and the canonical Word specification. Their
+   latest source revisions await the next batched payload. Use the
    actual New Sketch, Attach Sketch, Edit Sketch and Add Component buttons in a
    component document; preserve task Cancel/OK, ownership, Undo and selection.
    Check button states match the native menu actions, including no document,
    missing selection and active task cases.
 3. Modeling starts with Modeling, Transformation and Dress-Up sections, with
    helpers following. Native grouped operations keep their dropdown choices.
-   Surface/Sketch/Assembly/Mesh show their native toolbar groups; View exposes fit,
+   Surface/Mesh retain native groups; Sketch/Assembly follow the owner groups; View exposes fit,
    orientation and display. Narrow the window and use horizontal scrolling to
    reach every section without moving the mode dropdown/tab strip.
    Primary operations (including Extrude/Revolve) share one row of large buttons,
@@ -78,3 +79,11 @@ object before loading source; test files/settings stay in a new evidence folder.
 This verifies source against the fork's native Qt/actions without copying any
 changed module into the owner build. Record source validation and deferred
 build/payload acceptance separately.
+
+Design Assembly acceptance: verify exactly Assembly and Assembly Joints with every
+listed joint button, plus Insert Component, Link Arrays and Gears Joint dropdowns.
+Use `testExactOwnerDesignAssemblyLayout` and
+`testAssemblyMenusUseNativeContextStatesAndRouting`; verify no task-watcher errors
+when leaving assembly edit mode. Routing probes verify bindings and native states,
+not complete array/joint/solver geometry acceptance. Source-only checks must load
+both `PlusRibbon.py` and the final `UtilsAssembly.py` when verifying the exit guard.

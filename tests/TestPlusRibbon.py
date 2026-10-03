@@ -203,6 +203,8 @@ class TestPlusRibbon(unittest.TestCase):
                         if name not in UI.STANDARD]
             if tab == "Sketch":
                 expected = list(UI.SKETCH_GROUPS)
+            elif tab == "Assembly":
+                expected = list(UI.ASSEMBLY_GROUPS)
             self.assertEqual(self.ribbon.groups(), expected)
             self.assertTrue(self.ribbon.scroll.widget().findChildren(QtWidgets.QToolButton))
         self.tab("View")
@@ -426,6 +428,80 @@ class TestPlusRibbon(unittest.TestCase):
         finally:
             Gui.activeDocument().resetEdit()
             settle()
+
+    def testExactOwnerDesignAssemblyLayout(self):
+        requirement = json.loads((source / "tests/fixtures/PlusRibbonAssembly.json").read_text(encoding="utf-8"))
+        self.tab("Assembly")
+        expected = [(title, tuple(name for name, label in items)) for title, items in requirement["groups"]]
+        self.assertEqual(self.ribbon.groups(), expected)
+        groups = self.ribbon.scroll.widget().findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+        self.assertEqual(len(groups), 2)
+        for group, (title, items) in zip(groups, requirement["groups"]):
+            buttons = group.findChildren(QtWidgets.QToolButton)
+            self.assertEqual([button.objectName() for button in buttons], ["Ribbon_" + name for name, label in items])
+            for button, (name, label) in zip(buttons, items):
+                native = Gui.Command.get(name).getAction()[0]
+                self.assertEqual(button.text(), label)
+                self.assertEqual(button.defaultAction(), native)
+                self.assertEqual(button.isEnabled(), native.isEnabled())
+                if name not in requirement["menus"]:
+                    self.assertIsNone(button.menu(), name)
+        for name, choices in requirement["menus"].items():
+            button = self.button(name)
+            self.assertEqual(button.popupMode(), QtWidgets.QToolButton.InstantPopup)
+            self.assertEqual([(action.objectName(), action.text()) for action in button.menu().actions()],
+                             [tuple(choice) for choice in choices])
+        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "assembly-exact.png"))
+
+    def testAssemblyMenusUseNativeContextStatesAndRouting(self):
+        self.tab("Assembly")
+        # Execute the actual ribbon button, then check each menu in assembly
+        # context and after context is cleared. Routing probes avoid creating
+        # unrelated arrays/joints while testing their native action bindings.
+        self.assertTrue(self.button("Assembly_CreateAssembly").isEnabled())
+        self.button("Assembly_CreateAssembly").click()
+        settle()
+        assemblies = [obj for obj in self.doc.Objects if obj.isDerivedFrom("Assembly::AssemblyObject")]
+        self.assertEqual(len(assemblies), 1)
+        component = self.doc.addObject("Part::Box", "RibbonAssemblyBox")
+        link = assemblies[0].newObject("App::Link", "RibbonAssemblyLink")
+        link.setLink(component)
+        self.doc.recompute()
+        try:
+            checked = 0
+            for selected in (False, True):
+                Gui.Selection.clearSelection()
+                if selected:
+                    Gui.Selection.addSelection(link)
+                settle()
+                for name, choices in UI.ASSEMBLY_MENUS.items():
+                    menu = self.button(name).menu()
+                    menu.aboutToShow.emit()
+                    for proxy, (command, caption) in zip(menu.actions(), choices):
+                        native = Gui.Command.get(command).getAction()[0]
+                        self.assertEqual(proxy.isEnabled(), native.isEnabled(), command)
+                        self.assertEqual(proxy.isChecked(), native.isChecked(), command)
+                        text = native.text()
+                        with patch.object(native, "trigger") as trigger:
+                            proxy.trigger()
+                            self.assertEqual(trigger.call_count, int(native.isEnabled()), command)
+                            checked += int(native.isEnabled())
+                        self.assertEqual(native.text(), text)
+            self.assertGreaterEqual(checked, 9)
+            self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "assembly-active.png"))
+        finally:
+            Gui.Selection.clearSelection()
+            Gui.activeDocument().resetEdit()
+            settle()
+        import UtilsAssembly
+        self.assertIsNone(UtilsAssembly.activeAssembly())
+        for name, choices in UI.ASSEMBLY_MENUS.items():
+            menu = self.button(name).menu()
+            menu.aboutToShow.emit()
+            for proxy, (command, caption) in zip(menu.actions(), choices):
+                self.assertEqual(proxy.isEnabled(), Gui.Command.get(command).getAction()[0].isEnabled())
+        # Stop native Assembly watchers before the fixture document is destroyed.
+        self.tab("Home")
 
     def testRareHelpCommandsRemainAccessible(self):
         self.tab("Home")

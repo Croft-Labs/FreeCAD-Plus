@@ -1,0 +1,146 @@
+{
+  "groups": [
+    [
+      "Assembly",
+      [
+        [
+          "Assembly_CreateAssembly",
+          "Create Assembly"
+        ],
+        [
+          "Assembly_Insert",
+          "Insert Component"
+        ],
+        [
+          "Part_LinkArrays",
+          "Link Arrays"
+        ],
+        [
+          "Assembly_SolveAssembly",
+          "Solve Assembly"
+        ],
+        [
+          "Assembly_CreateView",
+          "Exploded View"
+        ],
+        [
+          "Assembly_CreateSnapshot",
+          "Snapshot"
+        ],
+        [
+          "Assembly_CreateSimulation",
+          "Simulation"
+        ],
+        [
+          "Assembly_CreateBom",
+          "Bill of Materials"
+        ]
+      ]
+    ],
+    [
+      "Assembly Joints",
+      [
+        [
+          "Assembly_ToggleGrounded",
+          "Toggle Grounded"
+        ],
+        [
+          "Assembly_CreateJointRigidGroup",
+          "Create Rigid Group"
+        ],
+        [
+          "Assembly_CreateJointFixed",
+          "Fixed Joint"
+        ],
+        [
+          "Assembly_CreateJointRevolute",
+          "Revolute Joint"
+        ],
+        [
+          "Assembly_CreateJointCylindrical",
+          "Cylindrical Joint"
+        ],
+        [
+          "Assembly_CreateJointSlider",
+          "Slider Joint"
+        ],
+        [
+          "Assembly_CreateJointBall",
+          "Ball Joint"
+        ],
+        [
+          "Assembly_CreateJointDistance",
+          "Distance Joint"
+        ],
+        [
+          "Assembly_CreateJointParallel",
+          "Parallel Joint"
+        ],
+        [
+          "Assembly_CreateJointPerpendicular",
+          "Perpendicular Joint"
+        ],
+        [
+          "Assembly_CreateJointAngle",
+          "Angle Joint"
+        ],
+        [
+          "Assembly_CreateJointRackPinion",
+          "Rack and Pinion Joint"
+        ],
+        [
+          "Assembly_CreateJointScrew",
+          "Screw Joint"
+        ],
+        [
+          "Assembly_CreateJointGearBelt",
+          "Gears Joint"
+        ]
+      ]
+    ]
+  ],
+  "menus": {
+    "Assembly_Insert": [
+      [
+        "Assembly_InsertLink",
+        "Insert Component"
+      ],
+      [
+        "Assembly_InsertNewPart",
+        "Insert New Part"
+      ]
+    ],
+    "Part_LinkArrays": [
+      [
+        "Part_LinkArrayCircular",
+        "Circular Link Array"
+      ],
+      [
+        "Part_LinkArrayLinear",
+        "Linear Link Array"
+      ],
+      [
+        "Part_LinkArrayPath",
+        "Path Link Array"
+      ],
+      [
+        "Part_LinkArrayPoint",
+        "Point Link Array"
+      ],
+      [
+        "Part_LinkArrayPolar",
+        "Polar Link Array"
+      ]
+    ],
+    "Assembly_CreateJointGearBelt": [
+      [
+        "Assembly_CreateJointGears",
+        "Gears Joint"
+      ],
+      [
+        "Assembly_CreateJointBelt",
+        "Belt Join"
+      ]
+    ]
+  }
+}

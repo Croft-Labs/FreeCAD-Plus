@@ -54,7 +54,10 @@ def activePartOrAssembly():
 def activeAssembly():
     active_assembly = activePartOrAssembly()
     if active_assembly is not None and active_assembly.isDerivedFrom("Assembly::AssemblyObject"):
-        if active_assembly.ViewObject.isInEditMode():
+        # Edit exit/document teardown can temporarily expose the base geometry
+        # view provider while Assembly task watchers still query the active part.
+        in_edit_mode = getattr(active_assembly.ViewObject, "isInEditMode", None)
+        if in_edit_mode is not None and in_edit_mode():
             return active_assembly
 
     return None

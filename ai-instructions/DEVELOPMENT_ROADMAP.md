@@ -1,5 +1,22 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 exact Design Assembly ribbon — source ready
+
+Assembly has exactly Assembly and Assembly Joints: 22 buttons and three dropdowns
+with nine ordered choices. Individual joints remain exposed; Belt Join invokes the
+native Belt Joint. Local captions preserve native actions and state. The shared
+menu helper now serves both Sketch and Assembly. An Assembly edit-exit guard
+prevents task watchers calling a missing method on a retiring view provider.
+
+Sixteen selected source-overlay ribbon checks passed against the packaged engine;
+the two affected Assembly checks then passed on final source with empty stderr,
+including actual Create Assembly, selection/context states and dropdown routing.
+Evidence: visualization workspace `assembly-layout-20261002`, final `guard-verified`.
+Canonical Word outline updated, all original paragraphs/heading/numbering and other
+package parts preserved; 40-page render checked, changed pages 30–31 inspected.
+Owner toolbar/UI references synchronized. Next batched build and physical acceptance
+remain pending; existing owner executable, ZIP and shortcut are unchanged.
+
 ## October 2 exact Design Sketch ribbon — source ready
 
 Sketch now has exactly Sketcher, Edit Mode, Geometries, Constraints, Tools,

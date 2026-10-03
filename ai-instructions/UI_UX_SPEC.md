@@ -123,8 +123,14 @@ the requested menus. Dimension Tools has the nine requested choices; Snell's Law
 remains available through native menus. Text is marked Experimental and Group
 Constraint Development preview. Dropdown captions stay local; native execution,
 enabled/checked states and individual command actions are reused without changing
-Classic preferences or command shortcuts. Surface, Assembly and Mesh reuse the
-toolbar group boundaries of their corresponding native workbenches. View groups
+Classic preferences or command shortcuts. Assembly uses exactly Assembly and
+Assembly Joints, with all listed joints exposed individually. Insert Component
+has Insert Component / Insert New Part; Link Arrays has Circular, Linear, Path,
+Point and Polar Link Array; Gears Joint has Gears Joint / Belt Join in that order.
+The last caption invokes the native Belt Joint. Create Assembly and Insert Component
+use full icons; remaining actions use small icons. Reuse native command states
+and execution without consolidating the individual joints. Surface and Mesh reuse
+the toolbar group boundaries of their corresponding native workbenches. View groups
 standard view orientation/fit and display controls. Unavailable workbench tabs
 are disabled. Other modes use Home, Tools and View; Tools preserves that mode's
 native workbench command groups.
