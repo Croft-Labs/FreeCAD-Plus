@@ -2,6 +2,12 @@
 
 ## Project at a glance
 
+The current owner build incorporates all application changes through `03a6f6664448`
+in an all-enabled-target incremental native rebuild with new portable staging.
+Native/source identity, 61 runtime checks and the desktop shortcut are verified.
+Obsolete FreeCAD temp outputs are removed; historical evidence is archived under
+the new build. See WORK_STATE for delivery, cleanup and retained dependency paths.
+
 Component curve collectors now select the latest picked list entry, toggle it off
 on a repeated pick and support Delete. Redundant selected-curve capture buttons
 are removed. Shared profile and Pipe path lists retain persistent viewport emphasis;

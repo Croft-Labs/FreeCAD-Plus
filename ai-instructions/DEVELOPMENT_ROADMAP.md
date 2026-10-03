@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 combined owner rebuild and cleanup
+
+Current application changes through `03a6f6664448` are incorporated in an all-enabled-
+target incremental Release rebuild and new portable staging. Native/source identity
+and 61 distinct workflow/startup checks pass. A verification fixture's incorrect
+module-count threshold was corrected; its original failure remains in evidence.
+The owner shortcut is verified and Word is synchronized. Requested temp cleanup
+removes 33.747 GiB of obsolete FreeCAD entries while retaining compact historical
+evidence, compiler dependencies and the running older application. WORK_STATE owns
+paths, test scope, cleanup manifests and publication. Physical owner acceptance
+remains separate; no clean-build or published-release claim.
+
 ## October 3 curve-list interaction (7.8)
 
 Shared profile collectors and Pipe path lists select the latest picked entry,

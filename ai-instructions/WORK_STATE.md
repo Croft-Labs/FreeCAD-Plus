@@ -1,5 +1,48 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 combined native build and temp cleanup
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_combined_modeling/app`.
+All enabled Release targets pass using the existing configured compiler tree;
+this is an incremental native rebuild with new portable staging, not a clean
+compilation. Application and native About identity both match `03a6f6664448`.
+Version.cpp was explicitly recompiled and FreeCADBase relinked after regenerating
+the version header. The configured workbench scope is retained. The Plus launcher
+is newly compiled; installed upstream FreeCAD is not used.
+
+Runtime verification passes 61 distinct checks: 56 combined modeling/UI checks,
+the native/source identity check, grid-default check and three cold starts. It
+covers all recent curve-list/display, History, compact task, sketch-region,
+combined-operation routing/edit/persistence and startup changes. All 37 checked
+GUI/component Python modules match source. The first combined run's only failure
+was the fixture expecting more than 50 modules; actual hashes and native identity
+already matched. The corrected identity-only rerun passes. Keep that original
+report alongside the final identity evidence; no application change was needed.
+No source overlays or unexpected GUI diagnostics. Curve-list and ribbon captures
+were inspected. Physical owner acceptance remains separate.
+
+The existing desktop shortcut targets the new launcher; its saved target and
+working directory were reopened and verified. BUILD-VALIDATION records the
+individual reports, and BUILD-MANIFEST hashes every packaged file. Build logs,
+runtime evidence and `validation/publication.json` are in the parent build folder.
+The manifest covers 14,715 files (1,618,295,193 bytes), SHA-256
+`ccbc25737eca44047755a68a7a6c79fc277c8c708f423b33fb70c554928349e3`.
+Word retains all 1531 previous paragraphs and other package members; pages 1-44
+match the prior render, and changed page 45 was inspected (`combined-build-doc`).
+No installer or published release.
+
+Requested cleanup removed 742 obsolete entries totaling 36,235,286,833 bytes
+(33.747 GiB), including the superseded portable payloads and old validation runs.
+`cleanup-summary.json` records exact scope. Historical reports, scripts and CAD
+fixtures remain in three CRC-verified, SHA-256-recorded archives: `cleanup`,
+`cleanup-build-evidence` and `cleanup-previous` each contain `historical-evidence.zip`.
+Archive entries retain paths relative to D:/Temp/Office-PC, so older references
+below can be recovered there. Preserve the current compiler tree, LibPack/NSIS
+and formatting tools under `freecad-plus-validation-20260928`, the running
+`freecad-plus-build-20261002-audit` application (PID 17424 during cleanup), and its
+small runtime cache/lock. Unrelated temp files were not removed. All planned
+obsolete deletions completed with resolved-path and running-process checks.
+
 ## October 3 curve-list selection and Delete
 
 Extrude, Revolve, Helix, Loft and Pipe automatically highlight and scroll to the
