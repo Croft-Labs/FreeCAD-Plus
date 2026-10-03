@@ -16,10 +16,14 @@ Implementation and incremental PartDesignGui build pass. Seven packaged acceptan
 tests pass; eight legacy tests also pass, including the 84-case native angular matrix.
 The original UI test failure accessed a deleted status label after successful OK;
 reference fixtures were corrected to recompute and use the normal object role.
-Original evidence is retained. Source overlays are disabled. Additional shared
-Extrude/datum and final layout checks, owner shortcut verification, packaging and
-publication are recorded separately in WORK_STATE. This batch incorporates the
-previously validated datum changes. Physical pointer/high-DPI acceptance remains
+Original evidence is retained. Source overlays are disabled. Shared Extrude/datum,
+final task and three launcher cold-start checks also pass: 26 passing executions.
+The owner payload and CRC-verified archive are delivered with the existing desktop
+shortcut's target and working directory verified. WORK_STATE records exact paths,
+hashes and application/native identities; source milestone is `0ba687c954`.
+This batch incorporates the previously validated datum changes. Source and delivery
+records are committed separately for the authorized origin push; this is not a
+published release. Physical pointer/high-DPI acceptance remains
 separate and the previously reported sketch pointer failure is not marked fixed.
 
 ## October 2 shared datum-plane workflow

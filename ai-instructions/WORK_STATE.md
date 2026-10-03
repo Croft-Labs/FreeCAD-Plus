@@ -1,19 +1,20 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 3 unified Revolve candidate
+## October 3 unified Revolve owner delivery
 
 Implemented unified component Revolution/Groove creation and editing in
 `ComponentRevolve.py` and `ComponentRevolveTask.py`, with native command/history
 routing and the shared associative curve collector. See UI-003 and REQ-014a.
 
-Candidate and evidence root: `D:/Temp/Office-PC/freecad-plus-revolve-20261003`.
+Delivered build and evidence root: `D:/Temp/Office-PC/freecad-plus-revolve-20261003`.
 Payload: `FreeCAD-Plus-2026-10-03`. It incorporates the pending datum modules from
 the previous candidate, new Revolve modules, ComponentProfile/ComponentNavigator
 updates and rebuilt `Mod/PartDesign/PartDesignGui.pyd`. Other native runtime files
 remain from the validated October 2 owner payload (engine version `6be8eda424`).
 Incremental `PartDesignGui` build passed; `native-build/result.json` and `build.log`
 record the external CMake build. App.Version identifies the reused engine, not the
-new command module; the package manifest must record these separately.
+new command module; the package manifest records these separately. Application and
+command-module source commit: `0ba687c954bdc7e7454440db0f0fbcaf62806b4a`.
 
 Packaged acceptance: `acceptance-revolve` 7, `legacy-regression` 8 (including the
 84-case angular matrix), `task-final` 1, `extrude-routing` 2, `extrude-profile` 3,
@@ -26,12 +27,25 @@ by subsequent passing runs. Final task screenshot is readable and reviewed.
 Owner DOCX requirements updated with all original paragraphs and native numbering
 preserved. Rendered 41 pages; pages 1–40 match the previous reviewed render exactly;
 page 41 reviewed. Evidence is in the task visualization folder
-`revolve-20261003/doc`. Launcher cold starts, manifest/archive verification, shortcut
-handoff and publication are the remaining delivery gates at this source milestone.
+`revolve-20261003/doc`. Three further launcher cold starts (`launcher/bootstrap`,
+`launcher/plus`, `launcher/classic`) pass: 26 passing test executions in this batch.
+The existing desktop `FreeCADPlus.exe - Shortcut.lnk` now targets this payload's
+`FreeCADPlus.exe`; saved target and working directory were reopened and verified.
+`shortcut-verification.json` records the handoff. All retained runtime files match
+the previous owner manifest except the six listed Python modules and rebuilt
+PartDesignGui module. `BUILD-MANIFEST.json` and `BUILD-VALIDATION.json` record hashes
+and the mixed native/source identities.
 
-## October 2 datum plane — validated for next batch
+Archive: `FreeCAD-Plus-2026-10-03-Revolve-Windows-x64.zip`, 662,203,052 bytes.
+SHA-256: `6bfe424cf8a966a26fba0f412a241cc915945a9bd6545e57e76a7d3afde03261`.
+ZIP CRC verification passes. This is a local unsigned portable owner build, not a
+published release. Implementation and delivery records are separate coherent
+commits for the authorized origin/main push; remote verification follows the push.
+Physical pointer/high-DPI acceptance remains separate.
 
-Pending runtime incorporation: `src/Gui/ComponentSketchTask.py`,
+## October 2 datum plane — incorporated in October 3 delivery
+
+Runtime modules incorporated above: `src/Gui/ComponentSketchTask.py`,
 `src/Gui/ComponentNavigator.py`, and `src/Mod/Part/ComponentSketch.py`.
 The shared editor serves new-file Tasks and New Sketch; see the roadmap milestone
 and UI specification for behavior. No new native type or persistent schema was added.

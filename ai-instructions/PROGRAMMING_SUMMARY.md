@@ -6,7 +6,7 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-The current batch combines Revolution/Groove as component Revolve, implemented in
+The delivered October 3 batch combines Revolution/Groove as component Revolve, implemented in
 `src/Mod/Part/ComponentRevolve.py` and `src/Gui/ComponentRevolveTask.py`. It reuses
 native geometry and the Extrude curve collector; native command and Model History
 routes share the four-section task. Acceptance: `tests/TestComponentRevolve.py`.
