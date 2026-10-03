@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 fresh owner build delivery
+
+The explicit new-build request is fulfilled by an all-enabled-target Release build
+and fresh portable staging at source/native identity `f8a4d5c408`. A focused
+Version.cpp compile/relink corrected stale incremental version metadata. The staged
+runtime passes 22 modeling, recent-file, status and launcher checks without overlays.
+The existing desktop shortcut now targets this new payload; its saved target and
+working directory are verified. Owner Word validation status is synchronized.
+WORK_STATE owns the payload, manifest and evidence paths. Prior full feature tests
+are retained separately; physical pointer/high-DPI gates remain open. No application
+source, installer, or public release was changed by this delivery.
+
 ## October 3 unified Primitive and grouped native verification
 
 The Primitive audit found that both native command families still opened Classic

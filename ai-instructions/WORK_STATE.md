@@ -1,5 +1,52 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 fresh all-target owner build
+
+Owner explicitly requested a new build and desktop-shortcut update. Built all
+currently enabled Release targets with `tests/BuildComponentDocument.ps1 -AllTargets`
+in the existing external build directory, then staged a fresh payload with
+`package/WindowsInstaller/stage-freecad-plus.py`. FEM remains disabled in the
+existing configuration. No application source was changed for this build request.
+
+Owner payload and verified shortcut target:
+`D:/Temp/Office-PC/freecad-plus-owner-20261003-refresh/FreeCAD-Plus-2026-10-03/FreeCADPlus.exe`.
+The existing desktop `FreeCADPlus.exe - Shortcut.lnk` was updated and reopened;
+target and working directory (the launcher's parent) both match. Evidence root:
+`D:/Temp/Office-PC/freecad-plus-owner-20261003-refresh`.
+
+Source and native runtime identity:
+`f8a4d5c4083ab09e71f0b45c55e1c5b1064a21bc`. The all-target build initially retained
+the old Version.cpp object despite a refreshed generated header. A focused
+Version.cpp compile and FreeCADBase relink corrected it; `identity-relink` records
+success and the native version. The staged GUI reports the same current commit.
+`build` records ALL_BUILD success; `staging.log` records fresh staging. The unchanged
+Plus launcher was copied from the prior verified owner payload and its hash matches.
+
+New staged acceptance: smoke passes 12 selected modeling cases (native routing,
+create/edit task, downstream/undo/save/reopen for Loft/Pipe/Helix/Primitive), three
+recent-file cases and four status-control cases. Bootstrap/Plus/Classic launcher
+cold starts each pass: 22 passing executions total, no failures/errors/skips and
+no source overlays. Runtime module hashes match source. `selected-test-sources.json`
+records the exact selected existing test methods and source hashes. Prior full
+modeling acceptance in the preceding build is retained, not counted as rerun.
+Native recompute/Refine/topology and stylesheet diagnostics remain in logs;
+physical pointer/high-DPI acceptance and the older sketch drawing report stay pending.
+
+BUILD-VALIDATION and BUILD-MANIFEST identify the current source/native commit,
+verification phases, shortcut and exact payload file hashes. The manifest contains
+14,715 files (1,618,280,238 bytes); manifest SHA256:
+`ba3ed6ae8f2cce5b2d7c9379d90d0613a45a5f94123bd6a2258f2b011dd8068c`.
+This is an unsigned
+local portable build; no installer or release publication was requested.
+Word was read first, retains all 1521 previous paragraphs exactly as XML and all
+other package parts, and adds one build-validation note. SHA256:
+`266d07bb28c955b4e816429f48e38a1beae70e54a8c665e1f639c23c74c54b89`.
+Word preservation/render evidence is under
+`C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a0ffe3-14ce-75e0-9c71-b39d69d25490/owner-refresh/doc`.
+Final render-compact has 43 pages: pages 1-42 exactly match the prior reviewed
+render and page 43 was visually inspected. The initial trailing-page draft was
+shortened only in the newly appended note; all prior content remains unchanged.
+
 ## October 3 Primitive and grouped native build
 
 Primitive now combines all eight native additive/subtractive shape pairs in one

@@ -2,6 +2,10 @@
 
 ## Project at a glance
 
+The October 3 fresh owner build compiles all enabled targets and stages source/native
+identity `f8a4d5c408`; 22 focused runtime/startup checks and the desktop shortcut
+verification pass. See WORK_STATE for the latest payload and evidence.
+
 Component Primitive, Helix, Pipe and Loft now combine their native additive/subtractive features
 through `src/Mod/Part/ComponentPrimitive.py` / `ComponentHelix.py` / `ComponentPipe.py` / `ComponentLoft.py` and
 their corresponding `src/Gui/ComponentHelixTask.py` / `ComponentPipeTask.py` /
@@ -37,7 +41,7 @@ Design View has exactly View and Individual Views, with ordered Standard Views a
 Draw Style menus. Word requirements are synchronized. These revisions, master-first
 component trees and screenshot defaults are in the October 2 batched owner payload.
 
-The latest batch incorporates all completed application sources through `4cbb196bee`.
+The October 2 component-feedback batch incorporates application sources through `4cbb196bee`.
 Five compatible Python modules were synchronized onto native engine `6be8eda4246a`;
 no native sources changed. Acceptance retains 57 passing checks without overlays,
 including actual curve creation/save/reopen and three launcher cold restarts.
