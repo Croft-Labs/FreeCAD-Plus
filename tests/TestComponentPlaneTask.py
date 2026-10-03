@@ -195,9 +195,13 @@ class TestComponentPlaneTask(unittest.TestCase):
         self.assertIsNotNone(task.ghost, task.status.text())
         self.assertEqual(len(self.doc.Objects), count)
         self.assertEqual(task.form.styleSheet(), '')
+        # Qt's application stylesheet can itself set WA_SetPalette while polishing.
+        # Compare with an ordinary sibling, not a frozen main-window palette.
+        inherited = QtWidgets.QWidget(task.form.parentWidget())
+        inherited.ensurePolished()
         for role in (QtGui.QPalette.Window, QtGui.QPalette.WindowText, QtGui.QPalette.Base, QtGui.QPalette.Text):
-            self.assertEqual(task.form.palette().color(QtGui.QPalette.Active, role),
-                             Gui.getMainWindow().palette().color(QtGui.QPalette.Active, role))
+            self.assertEqual(task.form.palette().color(role), inherited.palette().color(role))
+        inherited.deleteLater()
         for actual, expected in zip(task.ghost.node.getChild(2).diffuseColor[0].getValue(), (.65, .25, .85)):
             self.assertAlmostEqual(actual, expected, places=5)
         task.preview_enabled.setChecked(False)

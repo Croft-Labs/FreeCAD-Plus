@@ -1,5 +1,12 @@
 # FreeCAD Plus: Development Roadmap
 
+October 3 task-theme follow-up: audited task stylesheets and removed the three
+remaining copied form palettes from shared modeling, Sketch and Datum Plane.
+All eight Plus task types now inherit Qt/theme colors. The development guide and
+Word specification prohibit task-wide forced child colors and frozen palettes.
+WORK_STATE separates 21 focused native checks, document review and Python-only
+incremental owner delivery; no native rebuild or published release.
+
 ## October 3 datum-plane geometry collectors and theme repair (7.8)
 
 Implemented the requested four-section plane create/edit task with mixed-reference

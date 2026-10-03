@@ -29,7 +29,6 @@ class SketchTask:
                               if getattr(obj, "Role", "") in ("XY_Plane", "XZ_Plane", "YZ_Plane")}
         self.observing = False
         self.form = QtWidgets.QWidget()
-        self.form.setPalette(Gui.getMainWindow().palette())
         self.form.setWindowTitle(tr("Datum Plane") if datum_only else tr("New Sketch"))
         layout = QtWidgets.QVBoxLayout(self.form)
         self.plane = QtWidgets.QComboBox()

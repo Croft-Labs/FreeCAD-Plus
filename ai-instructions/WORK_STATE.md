@@ -1,5 +1,38 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 inherited task colors
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_theme_inheritance/app`.
+Python-only incremental staging from datum_plane; native files are unchanged from
+the preceding grouped build at `c9663bf39c`. Removed the three remaining copied
+form palettes in ComponentTaskWidgets, ComponentSketchTask and ComponentPlaneTask.
+The prior broad task stylesheets were already removed. Source audit finds no
+setStyleSheet or setPalette calls in the Plus Python task modules. Native and
+inherited task styles were inspected; control-specific state/layout styling is
+retained, since it does not force palette colors on every descendant.
+
+All eight Plus tasks inherit Qt and active-theme colors. The development guide
+now prohibits task-wide forced foreground/background rules and frozen form
+palettes. Qt's application stylesheet may itself set WA_SetPalette when polishing;
+the updated native check compares a task with an ordinary sibling widget instead
+of requiring a copy of the main-window palette or an unset internal Qt flag.
+
+21 distinct native checks pass: nine shared task-width checks in validation/theme
+and twelve final plane/inheritance/popup checks in validation/final, through the
+owner launcher without source overlays or unexpected GUI diagnostics. Earlier
+palette-copy and Qt-flag expectations in failed suites are superseded by final;
+they are retained as diagnostic evidence. Narrow light-theme fields and dropdowns
+remain readable. This is not a new native compilation or published release.
+
+The Word document changed one requirement paragraph; all other 2782 paragraphs,
+styles, headings, numbering and other package parts remain unchanged. All 78 pages
+rendered; changed pages 72-76 were reviewed and the other 73 are pixel-identical
+to the preceding review. SHA-256:
+`d540f2066e411f1e9bb4868500dde3751c77a9a71295957e8b0953d93d38939a`.
+The desktop shortcut target/working directory and payload provenance are recorded
+in validation/shortcut-verification.json and BUILD-VALIDATION.json. Source
+publication is recorded in Git history and the payload manifest.
+
 ## October 3 datum-plane create and edit
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_datum_plane/app`.

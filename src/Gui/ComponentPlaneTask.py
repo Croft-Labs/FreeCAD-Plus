@@ -26,7 +26,6 @@ class PlaneTask(QtCore.QObject, ModelingTaskUI):
         self.origin_reference = None
         self.original_visibility = operation.Visibility if operation else None
         self.form = QtWidgets.QWidget()
-        self.form.setPalette(Gui.getMainWindow().palette())
         self.form.setWindowTitle(tr('Datum Plane'))
         outer = QtWidgets.QVBoxLayout(self.form)
         self.sections = []

@@ -318,7 +318,6 @@ class ModelingTaskUI:
 
     def build_sections(self):
         self.form = QtWidgets.QWidget()
-        self.form.setPalette(Gui.getMainWindow().palette())
         self.form.setWindowTitle(tr(self.operation_name))
         outer = QtWidgets.QVBoxLayout(self.form)
         self.sections = []

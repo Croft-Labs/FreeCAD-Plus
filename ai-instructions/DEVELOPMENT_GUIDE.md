@@ -6,6 +6,13 @@ the owner of executable commands and the build batching policy.
 
 ## Prerequisites and setup
 
+Task forms must inherit colors from Qt and the active application theme. Do not
+apply task-level stylesheets that force foreground/background palette colors on
+all descendant widgets, and do not copy a palette onto the form. Shared modeling,
+Sketch and Datum Plane forms follow this rule. Keep any necessary state-specific
+styling scoped to the individual control so dropdowns, disabled text and future
+theme changes retain native color handling.
+
 Work from the FreeCAD Plus checkout with recursive submodules initialized.
 `origin` is `Croft-Labs/FreeCAD-Plus`; `upstream` is `FreeCAD/FreeCAD`.
 Inspect current remotes and status before commits or authorized pushes.

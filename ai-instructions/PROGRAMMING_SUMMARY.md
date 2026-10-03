@@ -8,6 +8,10 @@ controls. WORK_STATE records reproduction, native checks and owner delivery.
 
 ## Project at a glance
 
+All Plus task forms now inherit Qt/theme colors: no task-wide color stylesheets
+or copied form palettes. The development guide records this rule; WORK_STATE
+records the focused theme checks and incremental owner payload.
+
 Datum Plane create/edit now uses Plane orientation and location, Orientation,
 Origin selection and Preview. Its mixed-reference lists extend the shared curve
 collector; geometry combinations and explicit offset/normal values define an
