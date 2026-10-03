@@ -1,5 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 follow-up temp-folder cleanup
+
+Removed 310 confirmed empty folder trees and ten obsolete folders from
+`D:/Temp/Office-PC`: six superseded owner payloads (combined_modeling,
+modeling_previews, component_double_click, history_order, history_edit and
+plane_frame), three old SketchSolverTest fixture directories and MSBuildTemp.
+Deleted 10,248,148,956 bytes; the retained 486,955,144-byte evidence archive leaves
+9,761,193,812 bytes (9.091 GiB) reclaimed, excluding filesystem allocation effects.
+
+Preserved 932 evidence files, manifests, scripts and CAD fixtures in
+`freecad_plus_2026-10-03_curve_picker/cleanup/obsolete-evidence.zip`, with paths
+relative to the temp root. Existing historical archives are included intact.
+ZIP CRC and every archived entry's SHA-256 pass; archive SHA-256 is
+`b3221113d91359d8df06d9e83bd2907217f997f7f5b2bc72417a2331a053ecc9`.
+`archive-verification.json` and `cleanup-result.json` in that same folder record
+exact scope. Earlier evidence paths within removed builds are recoverable there.
+
+Retained curve_picker (current shortcut target), sketch_frame (immediate rollback),
+the configured compiler/dependencies, and the still-running October 2 audit build
+(PID 17424 at cleanup). Current/rollback launcher and native executable hashes
+still match their manifests. Resolved deletion paths stayed under the requested
+root; reparse points and running application folders were excluded. Non-recursive
+empty-directory deletion rejected folders that became nonempty or were locked.
+Two empty directories remain: `collab_low` is in use and `hsperfdata_Office-PC`
+returns access denied. No application was stopped and no permissions changed.
+Other nonempty folders with uncertain ownership/obsolescence were retained.
+
+The Word specification's existing cleanup paragraph now covers this follow-up.
+Its 2782 other paragraphs and all other package parts remain unchanged. All 78
+pages render; page 77 was reviewed, and the other 77 are pixel-identical to the
+previously reviewed document. No application code or build changed in this step.
+
 ## October 3 shared curve picker and modeling controls
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_curve_picker/app`.

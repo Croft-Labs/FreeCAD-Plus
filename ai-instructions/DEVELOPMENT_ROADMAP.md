@@ -1,5 +1,10 @@
 # FreeCAD Plus: Development Roadmap
 
+October 3 follow-up cleanup removed empty temp trees and superseded payloads
+after archiving their evidence. Current/rollback builds, active applications and
+build tools remain. WORK_STATE records removal verification, the two locked or
+protected empty directories, and Word review. No application build or release.
+
 ## October 3 shared modeling controls and curve-pick arbitration (7.8)
 
 Reproduced the tilted-view edge/region double handling and fixed it in the shared
