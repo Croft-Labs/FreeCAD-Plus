@@ -356,6 +356,8 @@ class TestPlusRibbon(unittest.TestCase):
         for name in ("PartDesign_SubtractiveLoft", "PartDesign_SubtractivePipe", "PartDesign_SubtractiveHelix"):
             self.assertIsNone(self.button(name), "Rare variants belong in the family menu")
         self.assertIsNone(self.button("PartDesign_AdditiveLoft").menu())
+        self.assertIsNone(self.button("PartDesign_AdditivePipe").menu())
+        self.assertEqual(self.button("PartDesign_AdditivePipe").text(), "Pipe")
 
     def testAutoDimensionChoicesAndSharedNativeStates(self):
         self.tab("Sketch")
@@ -610,7 +612,7 @@ class TestPlusRibbon(unittest.TestCase):
         self.tab("Modeling")
         expected = [("Sketch", ("PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch")),
                     ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AddReferenceObject",
-                                  "PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
+                                  "PartDesign_AdditiveLoft", "PartDesign_AdditivePipe", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
                     ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Chamfer", "PartDesign_Draft", "PartDesign_Thickness", "PartDesign_Defeaturing")),
                     ("Transformation", ("PartDesign_Mirrored", "PartDesign_LinearPattern", "PartDesign_CircularPattern", "PartDesign_MultiTransform")),
                     ("Primitives", ("PartDesign_CompPrimitiveAdditive",))]
@@ -628,7 +630,7 @@ class TestPlusRibbon(unittest.TestCase):
                               ("PartDesign_AdditiveHelix", "Helix"), ("PartDesign_CompPrimitiveAdditive", "Primitive"),
                               ("PartDesign_Thickness", "Shell/Thickness"), ("PartDesign_Defeaturing", "Delete Face/Defeaturing")):
             self.assertEqual(self.button(name).text(), caption)
-        for name in ("PartDesign_Groove", "PartDesign_SubtractiveLoft", "PartDesign_SubtractiveHelix", "PartDesign_CompPrimitiveSubtractive", "PartDesign_AdditivePipe"):
+        for name in ("PartDesign_Groove", "PartDesign_SubtractiveLoft", "PartDesign_SubtractiveHelix", "PartDesign_CompPrimitiveSubtractive"):
             self.assertIsNone(self.button(name))
         self.assertIsNone(self.button("PartDesign_CompPrimitiveAdditive").menu())
         menu = self.button("Primitives").menu()

@@ -107,13 +107,13 @@ Iconless native actions use ribbon-only
 fallback artwork and retain their original QAction state and menu identity.
 Modeling contains exactly Sketch, Modeling, Dress-Up and Transformation groups,
 followed by one Primitives dropdown. Sketch has New Sketch, Attach Sketch and Edit
-Sketch. Modeling has Extrude, Revolve, Add Reference Object, Loft, Helix and Primitive.
+Sketch. Modeling has Extrude, Revolve, Add Reference Object, Loft, Pipe, Helix and Primitive.
 Dress-Up has Fillet, Chamfer, Draft, Shell/Thickness and Delete Face/Defeaturing.
 Transformation has Mirror Feature, Linear Pattern, Circular Pattern and Multi Transform
 as separate buttons. Primitives lists Box, Cylinder, Sphere, Cone, Ellipsoid, Torus,
 Prism, Wedge and Tab. Tab is a disabled future entry until a real creation command
 exists. Use one icon per combined additive/subtractive workflow even before its
-unified task is implemented. Loft now opens one combined task; native Helix variants
+unified task is implemented. Loft and Pipe now open their combined tasks; native Helix variants
 remain in its single-icon menu. Primitive opens the native default primitive action.
 Sketch uses exactly Sketcher, Edit Mode, Geometries, Constraints, Tools, B-Spline
 and Helpers, in that order. The owner outline in the Word specification and toolbar
@@ -368,6 +368,35 @@ Published result links and operation ObjectId survive Boolean mode changes,
 undo/redo and persistence. Formula-driven operations and other native Boolean
 semantics remain protected from task overwrites. The shared `ComponentOperationTask`
 layout/preview implementation also serves Revolve. See [acceptance](../tests/ComponentLoft.md).
+
+### UI-003c: Unified component Pipe
+
+Satisfies REQ-014c. One Pipe action after Loft in Modeling enters `ComponentPipeTask`;
+creation and History editing share it. Component-document native AdditivePipe and
+SubtractivePipe aliases enter this task; the latter presets Subtract. Legacy Body
+documents retain their native tasks. The native adapter build is a separate gate.
+
+| Section | Behavior |
+| --- | --- |
+| Main parameters, expanded | New Body/Add/Subtract; explicit target only for Add/Subtract; ordered profile/section list with whole profiles or selected closed sketch curves/regions; append, replace, inspect, remove and clear; Mode Constant/Multisection; Type/corner transition Transformed/Right corner/Round corner. Empty startup is valid. Preselection uses profile, path, then additional sections. |
+| Dimensions, expanded | Explicit sweep-path collector: whole curve object or selected edges from one local object, append/remove/clear picks; move profile sections up/down. Path geometry and section placements define length and direction; extrusion extent/offset fields do not apply. |
+| Advanced, collapsed | Standard/Fixed/Frenet/Auxiliary/Binormal orientation; separate auxiliary-path collector and curvilinear equivalence only for Auxiliary; nonzero XYZ vector only for Binormal; Subtraction/Common only for Subtract; Refine and native Fuzzy tolerance (-1 to 1 mm, zero default, negative automatic). |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result with Overlay default; blue New Body, green Add, red Subtract. Preview geometry is temporary. Cancel restores source/target visibility. |
+
+Constant retains dormant additional sections when switching from Multisection.
+Inactive auxiliary references, binormal and stored tangent flags are retained on
+edit; native tangent expansion is not implemented and has no new control. Native
+Linear/S-shape/Interpolation scaling laws and point-ended Pipe sections are not
+operational in the inherited engine and receive clear errors, not substitutes.
+Native orientation/transition semantics, including approximated auxiliary surfaces,
+remain authoritative. Paths must form one connected wire; stale/cyclic inputs,
+invalid solids and ineffective Booleans are rejected atomically. Formula-driven
+operations remain protected from task overwrites. Published result links and
+operation identity survive Boolean mode changes, undo/redo and `.cadprt` reopening.
+
+`ComponentNativeOperation` owns common Loft/Pipe binding and transactional lifecycle;
+`ComponentSectionTask` owns their ordered section collector. Both reuse the existing
+`ComponentProfile` and `ComponentOperationTask` services. See [acceptance](../tests/ComponentPipe.md).
 
 ### UI-004: Trim Body task pane
 

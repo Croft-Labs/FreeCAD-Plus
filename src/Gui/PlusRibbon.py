@@ -45,7 +45,7 @@ VIEW_CAPTIONS = dict(item for title, items in VIEW_ITEMS for item in items)
 MODELING_GROUPS = (
     ("Sketch", ("PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch")),
     ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AddReferenceObject",
-                  "PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
+                  "PartDesign_AdditiveLoft", "PartDesign_AdditivePipe", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
     ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Chamfer", "PartDesign_Draft",
                   "PartDesign_Thickness", "PartDesign_Defeaturing")),
     ("Transformation", ("PartDesign_Mirrored", "PartDesign_LinearPattern",
@@ -272,7 +272,7 @@ COMMAND_FAMILIES = (
     ("PartDesign_AdditiveLoft", ("PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft"),
      ("PartDesign_AdditiveLoft",)),
     ("PartDesign_AdditivePipe", ("PartDesign_AdditivePipe", "PartDesign_SubtractivePipe"),
-     ("PartDesign_AdditivePipe", "PartDesign_SubtractivePipe")),
+     ("PartDesign_AdditivePipe",)),
     ("PartDesign_AdditiveHelix", ("PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix"),
      ("PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix")),
 )
@@ -652,7 +652,7 @@ class Ribbon(QtCore.QObject):
         if command_name == "PartDesign_Fillet" and self.mode_name == "Design" and self.current_tab() == "Home":
             captions["PartDesign_Fillet"] = tr("Fillet/Chamfer")
         if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Modeling":
-            captions.update({"Sketcher_MapSketch": tr("Attach Sketch"), "PartDesign_AdditiveLoft": tr("Loft"),
+            captions.update({"Sketcher_MapSketch": tr("Attach Sketch"), "PartDesign_AdditiveLoft": tr("Loft"), "PartDesign_AdditivePipe": tr("Pipe"),
                              "PartDesign_AdditiveHelix": tr("Helix"), "PartDesign_CompPrimitiveAdditive": tr("Primitive"),
                              "PartDesign_Thickness": tr("Shell/Thickness"),
                              "PartDesign_Defeaturing": tr("Delete Face/Defeaturing"),

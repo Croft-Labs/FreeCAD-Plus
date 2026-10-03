@@ -1,5 +1,56 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 unified Pipe — source ready for grouped build
+
+`ComponentPipe.py` / `ComponentPipeTask.py` provide the unified component Pipe
+operation, with single Modeling ribbon action, native command adapters and History
+routing. `ComponentNativeOperation.py` extracts Loft/Pipe binding and transactions;
+`ComponentSectionTask.py` extracts their ordered section collectors. CMake install
+lists include all new modules. See REQ-014c/UI-003c and `tests/ComponentPipe.md`.
+
+Isolated candidate: `D:/Temp/Office-PC/freecad-plus-pipe-20261003/candidate`, copied
+from the previous Loft candidate. Updated Part modules: ComponentPipe,
+ComponentNativeOperation, ComponentLoft. Updated GUI modules: ComponentPipeTask,
+ComponentSectionTask, ComponentLoftTask, ComponentNavigator, PlusRibbon. All other
+files retain the previous candidate provenance, including native engine 6be8eda424
+and the Revolve-built PartDesignGui. This is not an owner payload or shortcut delivery.
+
+Evidence beneath `D:/Temp/Office-PC/freecad-plus-pipe-20261003`:
+`final-pipe` passes seven compatible cases; `path-association` passes the extended
+mode-edit/downstream/undo/reopen case after changing the linked path length;
+`shared-loft` passes all eight compatible Loft cases; `ribbon` passes two. Total:
+17 distinct cases, 18 passing executions, zero failures/errors/skips in these runs,
+matching source hashes and no overlays. Only the path-association test changed
+after final-pipe; production source did not change. Task captures in final-pipe
+were inspected at normal and expanded Auxiliary states.
+
+Preserve `pilot`, `extended`, `native-diagnostics`: initial empty AuxiliarySpine
+read failed and was repaired. Native Auxiliary approximates the analytic circle;
+Transformed corners have different native volume semantics from Right/Round.
+Tests now verify appropriate geometry without changing the engine. Vertex-ended
+Pipe fails in the inherited native face reader despite dormant point branches;
+the task rejects it clearly. Loft's working vertex binding remains unchanged.
+Native scaling laws beyond Constant/Multisection and tangent expansion are still
+unimplemented; existing tangent flags persist. Baseline stylesheet/topology
+warnings remain in retained logs; no claim of clean stderr or physical acceptance.
+
+Word update retained all 1512 previous paragraphs byte-for-byte as XML and all
+package parts except document.xml; three Pipe notes were appended. SHA256:
+`d9a505300bbd815a2469ac54799039db472796111d2943f24166dfe3a20676b6`.
+Evidence: `C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a0ffe3-14ce-75e0-9c71-b39d69d25490/pipe/doc`.
+Render has 42 pages: pages 1–41 exactly match the reviewed Loft render; page 42
+was visually inspected. The sibling update_doc.py records the preservation check.
+
+Next grouped build must compile both Loft and Pipe command adapters and install
+the new shared modules, then run the full TestComponentPipe (eight cases) and
+TestComponentLoft (nine cases), including native routing. Batch remaining
+owner-requested operations before this build, then deliver and verify the existing
+desktop shortcut. Physical pointer/high-DPI checks and the prior sketch-drawing
+report remain separate unresolved gates. Do not repeat passing runtime checks
+unless the final sources/runtime change. Preserve the unrelated toolbar/icon
+relocation, reviews and Archive. Three local Pipe catalog updates in already
+untracked `ui/TOOLBARS.md` remain with that relocation, outside this source commit.
+
 ## October 3 unified Loft — source ready for grouped build
 
 `ComponentLoft.py` and `ComponentLoftTask.py` combine native AdditiveLoft and

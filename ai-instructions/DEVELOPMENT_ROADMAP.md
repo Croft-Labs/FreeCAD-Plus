@@ -1,5 +1,34 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 unified component Pipe
+
+The owner audit found the native additive/subtractive Pipe tasks still separate
+and Pipe absent from the exact Plus Modeling group. Source now provides one Pipe
+action and one component create/edit task under REQ-014c/UI-003c. It retains native
+profile/section/path links, five orientations, three corner transitions,
+Constant/Multisection, auxiliary/binormal controls, Refine/Fuzzy and subtractive
+Common. The shared template supplies four collapsible sections, explicit targets
+and blue/green/red previews. Loft/Pipe share section collection and transactional
+identity handling; the native geometry engines are unchanged.
+
+Seven Pipe cases, eight affected Loft regressions and two ribbon cases pass on an
+isolated candidate with source-matching Python modules and no overlays. A further
+focused Pipe pass verifies changed-path recompute through downstream consumers and
+save/reopen: 17 distinct cases, 18 passing executions. Geometry, previews, mode
+edits, rollback, expressions, undo/redo, persistence and History routing are covered;
+normal and expanded task captures were inspected. Fixed empty auxiliary-link
+reading that initially broke edit/History. Native Auxiliary geometry is approximate;
+Transformed corners differ geometrically from Right/Round. Preserve those semantics.
+Point-ended Pipe sections and unfinished native scaling laws receive explicit
+errors; tangent flags persist without promising unimplemented tangent expansion.
+
+The required Word document is synchronized with preserved paragraphs/numbering and
+reviewed rendering. Native command adapters are implemented but require the grouped
+PartDesignGui build and routing test. Owner build/shortcut delivery and physical
+pointer/high-DPI acceptance remain pending. This advances 3.3.3/3.3.4 and the Pipe
+portion of 3.6.5/7.4.7/8.2.3; those common gates remain open. WORK_STATE owns exact
+candidate/evidence paths and retained failures. No owner delivery or release is claimed.
+
 ## October 3 unified component Loft
 
 The owner review found one Plus icon still opening separate native additive and
@@ -1698,6 +1727,9 @@ the [common acceptance](#feature-task-acceptance), reusing their existing select
   see [the Loft milestone](#october-3-unified-component-loft).
 - [   ] 3.3.3 Additive Pipe: integrate profile, spine, auxiliary references, and section/scaling controls.
 - [   ] 3.3.4 Subtractive Pipe: integrate the equivalent subtractive workflow.
+  Both component Pipe workflows are implemented and pass seven compatible runtime
+  cases; native command build and owner delivery remain pending. See
+  [the Pipe milestone](#october-3-unified-component-pipe).
 
 ### [   ] 3.4 Close complete-editing gaps in solid features
 
@@ -1830,7 +1862,7 @@ retain their own workflows while sharing appropriate selection and task conventi
   checks do not complete the common acceptance criteria for this milestone.
 - [   ] 3.6.4 Implement Revolve, covering both tasks 3.2.3 and 3.2.4.
 - [   ] 3.6.5 Implement Loft and Sweep, covering all four tasks in 3.3.
-  Component Loft implementation/runtime acceptance is recorded above; command build,
+  Component Loft and Pipe implementation/runtime acceptance is recorded above; command build,
   physical acceptance and the Sweep portion remain separate.
 - [   ] 3.6.6 Implement Helix, covering tasks 3.2.5 and 3.2.6.
 - [   ] 3.6.7 Implement paired primitive workflows and decide whether to expose them

@@ -17,6 +17,8 @@ set(Part_Scripts
     ComponentExtrude.py
     ComponentRevolve.py
     ComponentLoft.py
+    ComponentNativeOperation.py
+    ComponentPipe.py
     ComponentExtent.py
     ComponentProfile.py
     ComponentResultView.py

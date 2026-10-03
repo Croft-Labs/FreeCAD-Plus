@@ -2,12 +2,14 @@
 
 ## Project at a glance
 
-Component Loft now combines native AdditiveLoft/SubtractiveLoft through
-`src/Mod/Part/ComponentLoft.py` and `src/Gui/ComponentLoftTask.py`.
-`ComponentOperationTask.py` shares collapsible layout and transient previews with
-Revolve. Eight Loft and four shared-preview/ribbon checks pass on an isolated
-candidate; native command routing and owner delivery await the grouped build.
-See [Loft acceptance](../tests/ComponentLoft.md) and current WORK_STATE.
+Component Pipe and Loft now combine their native additive/subtractive features
+through `src/Mod/Part/ComponentPipe.py` / `ComponentLoft.py` and their corresponding
+`src/Gui/ComponentPipeTask.py` / `ComponentLoftTask.py` tasks.
+`ComponentNativeOperation.py` owns their common binding and transactional lifecycle;
+`ComponentSectionTask.py` owns ordered section collection. `ComponentOperationTask.py`
+shares collapsible layout and transient previews with Revolve. Native command routing
+and owner delivery await the grouped build; see [Pipe acceptance](../tests/ComponentPipe.md),
+[Loft acceptance](../tests/ComponentLoft.md) and current WORK_STATE.
 
 FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
