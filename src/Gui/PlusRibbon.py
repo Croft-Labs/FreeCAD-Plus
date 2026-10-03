@@ -42,6 +42,143 @@ MODELING_GROUPS = (
     ("Primitives", ("PartDesign_CompPrimitiveAdditive",)),
 )
 PRIMITIVE_LABELS = ("Box", "Cylinder", "Sphere", "Cone", "Ellipsoid", "Torus", "Prism", "Wedge")
+SKETCH_ITEMS = (('Sketcher',
+  (('Sketcher_NewSketch', 'New Sketch'),
+   ('Sketcher_EditSketch', 'Edit Sketch'),
+   ('Sketcher_MapSketch', 'Attach Sketch'),
+   ('Sketcher_ReorientSketch', 'Reorient Sketch'),
+   ('Sketcher_ValidateSketch', 'Validate Sketch'),
+   ('Sketcher_MergeSketches', 'Merge Sketches'),
+   ('Sketcher_MirrorSketch', 'Mirror Sketch'))),
+ ('Edit Mode',
+  (('Sketcher_LeaveSketch', 'Leave Sketch'),
+   ('Sketcher_ViewSketch', 'Align View to Sketch'),
+   ('Sketcher_ViewSection', 'Toggle Section View'))),
+ ('Geometries',
+  (('Sketcher_CreatePoint', 'Point'),
+   ('Sketcher_CreateText', 'Text (Experimental)'),
+   ('Sketcher_ToggleConstruction', 'Toggle Construction Geometry'),
+   ('Sketcher_CompLine', 'Line Tools'),
+   ('Sketcher_CreatePolyline', 'Polyline'),
+   ('Sketcher_CreateLine', 'Line'),
+   ('Sketcher_CompCreateArc', 'Arc Tools'),
+   ('Sketcher_CompCreateConic', 'Circle and Conic Tools'),
+   ('Sketcher_CompCreateRectangles', 'Rectangle Tools'),
+   ('Sketcher_CompCreateRegularPolygon', 'Regular Polygon Tools'),
+   ('Sketcher_CompSlot', 'Slot Tools'),
+   ('Sketcher_CompCreateBSpline', 'B-Spline Creation Tools'))),
+ ('Constraints',
+  (('Sketcher_CompDimensionTools', 'Dimension Tools'),
+   ('Sketcher_Dimension', 'Dimension'),
+   ('Sketcher_ConstrainDistanceX', 'Horizontal Dimension'),
+   ('Sketcher_ConstrainDistanceY', 'Vertical Dimension'),
+   ('Sketcher_ConstrainDistance', 'Distance Dimension'),
+   ('Sketcher_CompConstrainRadDia', 'Radius and Diameter Constraints'),
+   ('Sketcher_ConstrainAngle', 'Angle Dimension'),
+   ('Sketcher_ConstrainLock', 'Lock Position'),
+   ('Sketcher_ConstrainCoincidentUnified', 'Coincident / Point-on-object'),
+   ('Sketcher_ConstrainCoincident', 'Coincident Constraint'),
+   ('Sketcher_ConstrainPointOnObject', 'Point-on-object Constraint'),
+   ('Sketcher_CompHorVer', 'Horizontal and Vertical Constraints'),
+   ('Sketcher_ConstrainHorizontal', 'Horizontal Constraint'),
+   ('Sketcher_ConstrainVertical', 'Vertical Constraint'),
+   ('Sketcher_ConstrainParallel', 'Parallel Constraint'),
+   ('Sketcher_ConstrainPerpendicular', 'Perpendicular Constraint'),
+   ('Sketcher_ConstrainTangent', 'Tangent/Collinear Constraint'),
+   ('Sketcher_ConstrainEqual', 'Equal Constraint'),
+   ('Sketcher_ConstrainSymmetric', 'Symmetric Constraint'),
+   ('Sketcher_ConstrainBlock', 'Block Constraint'),
+   ('Sketcher_ConstrainGroup', 'Group Constraint (Development preview)'),
+   ('Sketcher_CompToggleConstraints', 'Constraint State'))),
+ ('Tools',
+  (('Sketcher_CompExternal', 'External Geometry'),
+   ('Sketcher_CarbonCopy', 'Carbon Copy'),
+   ('Sketcher_Translate', 'Move / Array Transform'),
+   ('Sketcher_Rotate', 'Rotate / Polar Transform'),
+   ('Sketcher_Scale', 'Scale'),
+   ('Sketcher_Offset', 'Offset'),
+   ('Sketcher_Symmetry', 'Mirror'),
+   ('Sketcher_RemoveAxesAlignment', 'Remove Axes Alignment'),
+   ('Sketcher_CompCreateFillets', 'Fillet and Chamfer Tools'),
+   ('Sketcher_CompCurveEdition', 'Curve Editing Tools'))),
+ ('B-Spline',
+  (('Sketcher_BSplineConvertToNURBS', 'Geometry to B-Spline'),
+   ('Sketcher_BSplineIncreaseDegree', 'Increase B-Spline Degree'),
+   ('Sketcher_BSplineDecreaseDegree', 'Decrease B-Spline Degree'),
+   ('Sketcher_CompModifyKnotMultiplicity', 'Knot Multiplicity'),
+   ('Sketcher_BSplineInsertKnot', 'Insert Knot'),
+   ('Sketcher_JoinCurves', 'Join Curves'))),
+ ('Helpers',
+  (('Sketcher_SelectConstraints', 'Select Associated Constraints'),
+   ('Sketcher_SelectElementsAssociatedWithConstraints', 'Select Associated Geometry'),
+   ('Sketcher_ArcOverlay', 'Toggle Circular Helper for Arcs'),
+   ('Sketcher_CompBSplineShowHideGeometryInformation', 'B-Spline Geometry Information'),
+   ('Sketcher_RestoreInternalAlignmentGeometry', 'Toggle Internal Geometry'),
+   ('Sketcher_SwitchVirtualSpace', 'Switch Virtual Space'))))
+SKETCH_GROUPS = tuple((title, tuple(name for name, label in items)) for title, items in SKETCH_ITEMS)
+SKETCH_CAPTIONS = dict(item for title, items in SKETCH_ITEMS for item in items)
+SKETCH_MENUS = {'Sketcher_CompLine': (('Sketcher_CreatePolyline', 'Polyline'), ('Sketcher_CreateLine', 'Line')),
+ 'Sketcher_CompCreateArc': (('Sketcher_CreateArc', 'Arc From Center'),
+                            ('Sketcher_Create3PointArc', 'Arc From 3 Points'),
+                            ('Sketcher_CreateArcOfEllipse', 'Elliptical Arc'),
+                            ('Sketcher_CreateArcOfHyperbola', 'Hyperbolic Arc'),
+                            ('Sketcher_CreateArcOfParabola', 'Parabolic Arc')),
+ 'Sketcher_CompCreateConic': (('Sketcher_CreateCircle', 'Circle From Center'),
+                              ('Sketcher_Create3PointCircle', 'Circle From 3 Points'),
+                              ('Sketcher_CreateEllipseByCenter', 'Ellipse From Center'),
+                              ('Sketcher_CreateEllipseBy3Points', 'Ellipse From 3 Points')),
+ 'Sketcher_CompCreateRectangles': (('Sketcher_CreateRectangle', 'Rectangle'),
+                                   ('Sketcher_CreateRectangle_Center', 'Centered Rectangle'),
+                                   ('Sketcher_CreateOblong', 'Rounded Rectangle')),
+ 'Sketcher_CompCreateRegularPolygon': (('Sketcher_CreateTriangle', 'Triangle'),
+                                       ('Sketcher_CreateSquare', 'Square'),
+                                       ('Sketcher_CreatePentagon', 'Pentagon'),
+                                       ('Sketcher_CreateHexagon', 'Hexagon'),
+                                       ('Sketcher_CreateHeptagon', 'Heptagon'),
+                                       ('Sketcher_CreateOctagon', 'Octagon'),
+                                       ('Sketcher_CreateRegularPolygon', 'Polygon')),
+ 'Sketcher_CompSlot': (('Sketcher_CreateSlot', 'Slot'), ('Sketcher_CreateArcSlot', 'Arc Slot')),
+ 'Sketcher_CompCreateBSpline': (('Sketcher_CreateBSpline', 'B-Spline'),
+                                ('Sketcher_CreatePeriodicBSpline', 'Periodic B-Spline'),
+                                ('Sketcher_CreateBSplineByInterpolation', 'B-Spline From Knots'),
+                                ('Sketcher_CreatePeriodicBSplineByInterpolation',
+                                 'Periodic B-Spline From Knots')),
+ 'Sketcher_CompDimensionTools': (('Sketcher_Dimension', 'Dimension'),
+                                 ('Sketcher_ConstrainDistanceX', 'Horizontal Dimension'),
+                                 ('Sketcher_ConstrainDistanceY', 'Vertical Dimension'),
+                                 ('Sketcher_ConstrainDistance', 'Distance Dimension'),
+                                 ('Sketcher_ConstrainRadiam', 'Radius/Diameter Dimension'),
+                                 ('Sketcher_ConstrainRadius', 'Radius Dimension'),
+                                 ('Sketcher_ConstrainDiameter', 'Diameter Dimension'),
+                                 ('Sketcher_ConstrainAngle', 'Angle Dimension'),
+                                 ('Sketcher_ConstrainLock', 'Lock Position')),
+ 'Sketcher_CompConstrainRadDia': (('Sketcher_ConstrainRadius', 'Constrain radius'),
+                                  ('Sketcher_ConstrainDiameter', 'Constrain diameter'),
+                                  ('Sketcher_ConstrainRadiam', 'Constrain auto radius/diameter')),
+ 'Sketcher_CompHorVer': (('Sketcher_ConstrainHorizontal', 'Horizontal Constraint'),
+                         ('Sketcher_ConstrainVertical', 'Vertical Constraint')),
+ 'Sketcher_CompToggleConstraints': (('Sketcher_ToggleDrivingConstraint',
+                                     'Toggle Driving/Reference Constraints'),
+                                    ('Sketcher_ToggleActiveConstraint', 'Toggle Constraints')),
+ 'Sketcher_CompExternal': (('Sketcher_Projection', 'External Projection'),
+                           ('Sketcher_Intersection', 'External Intersection')),
+ 'Sketcher_CompCreateFillets': (('Sketcher_CreateFillet', 'Fillet'), ('Sketcher_CreateChamfer', 'Chamfer')),
+ 'Sketcher_CompCurveEdition': (('Sketcher_Trimming', 'Trim Edge'),
+                               ('Sketcher_Split', 'Split Edge'),
+                               ('Sketcher_Extend', 'Extend Edge')),
+ 'Sketcher_CompModifyKnotMultiplicity': (('Sketcher_BSplineIncreaseKnotMultiplicity',
+                                          'Increase knot multiplicity'),
+                                         ('Sketcher_BSplineDecreaseKnotMultiplicity',
+                                          'Decrease knot multiplicity')),
+ 'Sketcher_CompBSplineShowHideGeometryInformation': (('Sketcher_BSplineDegree', 'Toggle B-Spline Degree'),
+                                                     ('Sketcher_BSplinePolygon',
+                                                      'Toggle B-Spline Control Polygon'),
+                                                     ('Sketcher_BSplineComb',
+                                                      'Toggle B-Spline Curvature Comb'),
+                                                     ('Sketcher_BSplineKnotMultiplicity',
+                                                      'Toggle B-Spline Knot Multiplicity'),
+                                                     ('Sketcher_BSplinePoleWeight',
+                                                      'Toggle B-Spline Control Point Weight'))}
 # Presentation priority only: every operation still uses its native QAction.
 PRIMARY_COMMANDS = {
     "Std_New", "Std_Open", "Std_Save", "Std_Part",
@@ -427,6 +564,8 @@ class Ribbon(QtCore.QObject):
                       if name in ("View", "Individual Views")]
             groups.append(("Display", ["Std_EntitySelectionFilter", "Std_ToolBarMenu", "Std_DockViewMenu", "Std_ViewStatusBar"]))
             return groups
+        if self.mode_name == "Design" and tab == "Sketch":
+            return list(SKETCH_GROUPS)
         if self.mode_name == "Design" and tab == "Modeling":
             return list(MODELING_GROUPS)
         return [(name, commands) for name, commands in bars.items() if name not in STANDARD]
@@ -461,6 +600,8 @@ class Ribbon(QtCore.QObject):
                              "PartDesign_Thickness": tr("Shell/Thickness"),
                              "PartDesign_Defeaturing": tr("Delete Face/Defeaturing"),
                              "PartDesign_Mirrored": tr("Mirror Feature"), "PartDesign_MultiTransform": tr("Multi Transform")})
+        if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Sketch":
+            captions.update({name: tr(label) for name, label in SKETCH_CAPTIONS.items()})
         button = RibbonButton(captions.get(command_name), parent,
                               ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
         button.setObjectName("Ribbon_" + command_name)
@@ -500,6 +641,29 @@ class Ribbon(QtCore.QObject):
             button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         return button
 
+    def set_sketch_menu(self, button, choices):
+        """Local menu captions with native execution and checked/enabled state."""
+        menu = QtWidgets.QMenu(button)
+        for name, caption in choices:
+            actions = native_actions(name)
+            native = actions[0] if actions else None
+            item = menu.addAction(native.icon() if native else Gui.getIcon("preferences-general.svg"), tr(caption))
+            item.setObjectName(name)
+            if native:
+                item.setToolTip(native.toolTip())
+                item.setCheckable(native.isCheckable())
+                def refresh(action=native, proxy=item):
+                    proxy.setEnabled(action.isEnabled())
+                    proxy.setChecked(action.isChecked())
+                refresh()
+                menu.aboutToShow.connect(refresh)
+                item.triggered.connect(lambda checked=False, action=native: action.trigger())
+            else:
+                item.setEnabled(False)
+                item.setToolTip(tr("This command is not available in this build."))
+        button.setMenu(menu)
+        button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+
     def render(self):
         if not self.enabled:
             return
@@ -530,16 +694,21 @@ class Ribbon(QtCore.QObject):
             grid.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
             buttons = []
             modeling = self.mode_name == "Design" and self.current_tab() == "Modeling"
-            entries = ((name, None) for name in commands) if modeling else projected_commands(commands)
+            sketch = self.mode_name == "Design" and self.current_tab() == "Sketch"
+            entries = ((name, None) for name in commands) if modeling or sketch else projected_commands(commands)
             for command_name, choices in entries:
                 if modeling and command_name in ("PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix"):
                     choices = (command_name, command_name.replace("Additive", "Subtractive"))
                 if self.mode_name == "Design" and self.current_tab() == "Home" and command_name == "PartDesign_Fillet":
                     choices = ("PartDesign_Fillet", "PartDesign_Chamfer")
                 size = "medium" if self.current_tab() == "Home" and title in ("Main", "Frequent operations") else None
+                if sketch and command_name in SKETCH_MENUS:
+                    size = "full" if command_name == "Sketcher_CompDimensionTools" else "small"
                 button = self.make_button(command_name, group, choices, size)
                 if button is None:
                     continue
+                if sketch and command_name in SKETCH_MENUS:
+                    self.set_sketch_menu(button, SKETCH_MENUS[command_name])
                 if modeling and command_name == "PartDesign_CompPrimitiveAdditive":
                     if title == "Primitives":
                         button.caption = tr("Primitives")

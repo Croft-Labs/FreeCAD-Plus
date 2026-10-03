@@ -201,6 +201,8 @@ class TestPlusRibbon(unittest.TestCase):
             self.assertEqual(Gui.activeWorkbench().name(), workbench)
             expected = [(name, commands) for name, commands in Gui.activeWorkbench().getToolbarItems().items()
                         if name not in UI.STANDARD]
+            if tab == "Sketch":
+                expected = list(UI.SKETCH_GROUPS)
             self.assertEqual(self.ribbon.groups(), expected)
             self.assertTrue(self.ribbon.scroll.widget().findChildren(QtWidgets.QToolButton))
         self.tab("View")
@@ -356,22 +358,74 @@ class TestPlusRibbon(unittest.TestCase):
 
     def testAutoDimensionChoicesAndSharedNativeStates(self):
         self.tab("Sketch")
-        button = self.button("Sketcher_Dimension")
-        self.assertIsNotNone(button)
-        self.assertEqual(button.defaultAction(), Gui.Command.get("Sketcher_Dimension").getAction()[0])
-        self.assertEqual(button.text().replace("\n", " "), "Auto dimension")
-        self.assertEqual(button.popupMode(), QtWidgets.QToolButton.MenuButtonPopup)
-        expected = [Gui.Command.get(name).getAction()[0] for name in UI.DIMENSION_CHOICES]
-        self.assertEqual(button.menu().actions(), expected)
-        for name in UI.DIMENSION_CHOICES[1:]:
-            self.assertIsNone(self.button(name), "Specific dimensions are menu choices")
-        action = button.defaultAction()
-        native_text = action.text()
-        Gui.Command.update()
-        self.assertEqual(button.text().replace("\n", " "), "Auto dimension")
-        self.assertEqual(action.text(), native_text, "Ribbon captions must not rename native menus")
-        self.assertEqual(button.isEnabled(), action.isEnabled())
+        button = self.button("Sketcher_CompDimensionTools")
+        self.assertEqual(button.text(), "Dimension Tools")
+        self.assertEqual(button.popupMode(), QtWidgets.QToolButton.InstantPopup)
+        self.assertEqual([action.objectName() for action in button.menu().actions()],
+                         [name for name, label in UI.SKETCH_MENUS["Sketcher_CompDimensionTools"]])
+        # The owner explicitly requires independent dimension buttons as well.
+        for name in ("Sketcher_Dimension", "Sketcher_ConstrainDistanceX", "Sketcher_ConstrainDistanceY", "Sketcher_ConstrainDistance", "Sketcher_ConstrainAngle", "Sketcher_ConstrainLock"):
+            individual = self.button(name)
+            self.assertIsNotNone(individual)
+            self.assertEqual(individual.defaultAction(), Gui.Command.get(name).getAction()[0])
+            self.assertIsNone(individual.menu())
+        self.assertEqual(self.button("Sketcher_Dimension").text(), "Dimension")
         self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-sketch.png"))
+
+    def testExactOwnerDesignSketchLayout(self):
+        requirement = json.loads((source / "tests/fixtures/PlusRibbonSketch.json").read_text(encoding="utf-8"))
+        self.tab("Sketch")
+        expected = [(title, tuple(name for name, label in items)) for title, items in requirement["groups"]]
+        self.assertEqual(self.ribbon.groups(), expected)
+        groups = self.ribbon.scroll.widget().findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+        self.assertEqual(len(groups), 7)
+        for group, (title, items) in zip(groups, requirement["groups"]):
+            buttons = group.findChildren(QtWidgets.QToolButton)
+            self.assertEqual([button.objectName() for button in buttons], ["Ribbon_" + name for name, label in items])
+            for button, (name, label) in zip(buttons, items):
+                self.assertEqual(button.text(), label)
+                native = Gui.Command.get(name).getAction()[0]
+                self.assertEqual(button.defaultAction(), native)
+                self.assertEqual(button.isEnabled(), native.isEnabled())
+                if name not in requirement["menus"]:
+                    self.assertIsNone(button.menu(), name)
+        for name, choices in requirement["menus"].items():
+            button = self.button(name)
+            self.assertEqual(button.popupMode(), QtWidgets.QToolButton.InstantPopup)
+            self.assertEqual([(action.objectName(), action.text()) for action in button.menu().actions()], [tuple(choice) for choice in choices])
+        self.assertIsNone(self.button("Sketcher_ConstrainSnellsLaw"))
+        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "sketch-exact.png"))
+
+    def testSketchMenusUseNativeEditStatesAndRouting(self):
+        self.tab("Sketch")
+        body = self.doc.addObject("PartDesign::Body", "RibbonSketchBody")
+        sketch = body.newObject("Sketcher::SketchObject", "RibbonSketch")
+        self.doc.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        self.tab("Sketch")
+        try:
+            routed = 0
+            for name, choices in UI.SKETCH_MENUS.items():
+                menu = self.button(name).menu()
+                menu.aboutToShow.emit()
+                for proxy, (command, caption) in zip(menu.actions(), choices):
+                    native = Gui.Command.get(command).getAction()[0]
+                    self.assertEqual(proxy.isEnabled(), native.isEnabled(), command)
+                    self.assertEqual(proxy.isChecked(), native.isChecked(), command)
+                    text = native.text()
+                    with patch.object(native, "trigger") as trigger:
+                        proxy.trigger()
+                        self.assertEqual(trigger.call_count, int(native.isEnabled()), command)
+                        routed += int(native.isEnabled())
+                    self.assertEqual(native.text(), text)
+            self.assertGreater(routed, 30)
+            self.assertTrue(self.button("Sketcher_CreateLine").isEnabled())
+            self.assertTrue(self.button("Sketcher_CreatePolyline").isEnabled())
+            self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "sketch-edit.png"))
+        finally:
+            Gui.activeDocument().resetEdit()
+            settle()
 
     def testRareHelpCommandsRemainAccessible(self):
         self.tab("Home")

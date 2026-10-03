@@ -1,5 +1,26 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 exact Design Sketch ribbon — source ready
+
+Sketch now has exactly Sketcher, Edit Mode, Geometries, Constraints, Tools,
+B-Spline and Helpers, with all 66 listed buttons and 16 dropdowns (57 menu choices).
+Individual line/dimension/coincident/point-on-object/horizontal/vertical options
+are retained alongside menus. Text is Experimental; Group Constraint is Development
+preview. Each menu preserves the requested captions/order and native action
+execution, enabled/checked states. No solver, geometry, task-field or Classic
+preference changes. Existing shortcuts remain native.
+
+Fourteen focused packaged-engine GUI checks with explicit PlusRibbon source overlay
+pass without failures/errors/skips: exact buttons/groups/menu choices, edit-mode
+routing and native states, dimension options, Home/Modeling regressions, compact grid
+and Plus/Classic exclusion. Native actions are exercised through routing probes;
+this is ribbon evidence, not a new geometry-workflow acceptance claim. Evidence:
+`sketch-layout-20261002` under the visualization workspace. Owner toolbar/UI/Word
+requirements synchronized; original DOCX paragraphs/headings/numbering preserved
+and affected rendered pages reviewed. Next batched build and physical acceptance
+remain pending; existing owner executable, ZIP and shortcut are unchanged.
+
+
 ## October 2 exact Design Modeling ribbon
 
 Sketch, Modeling, Dress-Up and Transformation groups now match the owner list;

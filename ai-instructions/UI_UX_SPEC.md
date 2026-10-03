@@ -73,7 +73,7 @@ with no assembly occurrences and opens its editing tab. Add Component inserts a
 linked occurrence, reusing or creating a definition through the existing chooser.
 Both follow the approved component contract and native transaction/ownership rules.
 
-The exact Home and Modeling revisions await the next packaged build; it supersedes the
+The exact Home, Modeling and Sketch revisions await the next packaged build; it supersedes the
 broader Home layout incorporated in the October 2 audit build. Earlier October 2
 folders retain their previous layout; the owner shortcut must target the validated
 audit payload. Initialize specialist Home actions only after the main window is
@@ -114,7 +114,16 @@ as separate buttons. Primitives lists Box, Cylinder, Sphere, Cone, Ellipsoid, To
 Prism, Wedge and Tab. Tab is a disabled future entry until a real creation command
 exists. Use one icon per combined additive/subtractive workflow even before its
 unified task is implemented; native Loft/Helix variants remain in the single-icon
-menus for now. Primitive opens the native default primitive action. Surface, Sketch, Assembly and Mesh reuse the
+menus for now. Primitive opens the native default primitive action.
+Sketch uses exactly Sketcher, Edit Mode, Geometries, Constraints, Tools, B-Spline
+and Helpers, in that order. The owner outline in the Word specification and toolbar
+reference supplies every button and ordered dropdown choice. Individual line,
+dimension, coincident, point-on-object and horizontal/vertical buttons remain beside
+the requested menus. Dimension Tools has the nine requested choices; Snell's Law
+remains available through native menus. Text is marked Experimental and Group
+Constraint Development preview. Dropdown captions stay local; native execution,
+enabled/checked states and individual command actions are reused without changing
+Classic preferences or command shortcuts. Surface, Assembly and Mesh reuse the
 toolbar group boundaries of their corresponding native workbenches. View groups
 standard view orientation/fit and display controls. Unavailable workbench tabs
 are disabled. Other modes use Home, Tools and View; Tools preserves that mode's
