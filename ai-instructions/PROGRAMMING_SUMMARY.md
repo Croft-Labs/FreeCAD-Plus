@@ -2,15 +2,16 @@
 
 ## Project at a glance
 
-Component Helix, Pipe and Loft now combine their native additive/subtractive features
-through `src/Mod/Part/ComponentHelix.py` / `ComponentPipe.py` / `ComponentLoft.py` and
+Component Primitive, Helix, Pipe and Loft now combine their native additive/subtractive features
+through `src/Mod/Part/ComponentPrimitive.py` / `ComponentHelix.py` / `ComponentPipe.py` / `ComponentLoft.py` and
 their corresponding `src/Gui/ComponentHelixTask.py` / `ComponentPipeTask.py` /
 `ComponentLoftTask.py` tasks.
 `ComponentNativeOperation.py` owns their common binding and transactional lifecycle;
 `ComponentSectionTask.py` owns ordered section collection. `ComponentOperationTask.py`
 shares collapsible layout, transient previews and the single-profile/axis collector
-with Revolve. Native command routing
-and owner delivery await the grouped build; see [Pipe acceptance](../tests/ComponentPipe.md),
+with Revolve. Primitive retains native dimensions, placement and attachment in
+`ComponentPrimitiveTask.py`. The grouped native command build and routing tests pass;
+owner delivery is recorded in WORK_STATE. See [Primitive acceptance](../tests/ComponentPrimitive.md), [Pipe acceptance](../tests/ComponentPipe.md),
 [Loft acceptance](../tests/ComponentLoft.md), [Helix acceptance](../tests/ComponentHelix.md)
 and current WORK_STATE.
 

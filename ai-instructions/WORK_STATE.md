@@ -1,5 +1,46 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 Primitive and grouped native build
+
+Primitive now combines all eight native additive/subtractive shape pairs in one
+component task under REQ-014e/UI-003e. Shared Native lifecycle supports no-profile
+operations and shape replacement. All 16 aliases route to this task in component
+documents; Classic Body tasks remain. See tests/ComponentPrimitive.md.
+
+Built PartDesignGui once in the existing external build directory, compiling the
+Loft/Pipe/Helix and Primitive adapters. Evidence root:
+`D:/Temp/Office-PC/freecad-plus-primitives-20261003`; native-build records success.
+The Helix candidate chain was copied and updated with ComponentPrimitive,
+ComponentNativeOperation, ComponentLoft/Pipe/Helix, ComponentPrimitiveTask,
+ComponentNavigator and rebuilt PartDesignGui. All prior batch modules remain.
+Native engine identity stays 6be8eda4246a15590664ba17772a92ec63aaa448.
+Candidate was renamed to `FreeCAD-Plus-2026-10-03` under that evidence root for
+owner-launcher checks. Prior candidate paths in reports refer to the same bytes.
+
+Final suite selections: native-acceptance Loft 9, Pipe 8 and Helix 9; Primitive in
+that initial grouped report failed and is superseded by primitive-verified:
+Primitive 7 and inherited Primitive 8. task-layout adds 2 passing final task cases
+following the dynamic Wedge minimum-height repair; ribbon 2 and shared-revolve 2
+pass. Thus 45 distinct cases / 47 passing final executions before launcher checks.
+No source overlays; corresponding module hashes match tested source. Preserve
+pilot, native-acceptance and primitive-final failures for diagnosis. Fixes: missing
+Deactivated attachment choice, duplicate origin-container pick, compressed Wedge
+rows. Fixtures corrected datum role and prism intersection; ellipsoid compares
+native Classic geometry because independent Part Boolean integration differs.
+Native Refine/topology/stylesheet warnings remain. Valid solids do not certify
+successful splitter removal. No physical pointer/high-DPI acceptance is claimed.
+
+Normal Wedge and expanded Cylinder task captures were reviewed; final Wedge rows
+are readable. Word preserves all 1518 existing paragraphs exactly as XML and all
+package parts except document.xml; three Primitive notes appended. SHA256:
+`0e0f5e576f61bfd621552798a27fcd2881c39e1c6864713e86e144cdd944d24d`.
+Evidence: `C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a0ffe3-14ce-75e0-9c71-b39d69d25490/primitives/doc`.
+Rendered 43 pages; pages 1-42 are byte-identical to Helix render, page 43 visually
+reviewed. Owner launcher, manifest and shortcut verification follow below once
+complete. Earlier dated source-only build/routing deferrals are superseded by
+this grouped validation. Physical input checks and the earlier sketch drawing
+report remain pending. Preserve unrelated toolbar/icon relocation, reviews/Archive.
+
 ## October 3 unified Helix — source ready for grouped build
 
 `ComponentHelix.py` / `ComponentHelixTask.py` now combine native additive/subtractive

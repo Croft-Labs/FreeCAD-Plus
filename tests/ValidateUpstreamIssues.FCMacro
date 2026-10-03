@@ -63,11 +63,11 @@ except BaseException:
 finally:
     report["source_overlay"] = os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1"
     report["runtime_modules"] = {}
-    for name in ("ComponentModel", "ComponentSketch", "ComponentExtrude", "ComponentRevolve", "ComponentLoft", "ComponentPipe", "ComponentHelix", "ComponentNativeOperation", "ComponentProfile",
+    for name in ("ComponentModel", "ComponentSketch", "ComponentExtrude", "ComponentRevolve", "ComponentLoft", "ComponentPipe", "ComponentHelix", "ComponentPrimitive", "ComponentNativeOperation", "ComponentProfile",
                  "ComponentExtent", "ComponentResultView", "freecad.gui.ComponentNavigator",
                  "freecad.gui.ComponentExtrudeTask", "freecad.gui.ComponentRevolveTask", "freecad.gui.ComponentLoftTask",
                  "freecad.gui.ComponentOperationTask", "freecad.gui.ComponentSectionTask",
-                 "freecad.gui.ComponentPipeTask", "freecad.gui.ComponentHelixTask", "freecad.gui.ComponentSketchTask",
+                 "freecad.gui.ComponentPipeTask", "freecad.gui.ComponentHelixTask", "freecad.gui.ComponentPrimitiveTask", "freecad.gui.ComponentSketchTask",
                  "freecad.gui.ComponentSelection", "freecad.gui.OccurrenceMove", "freecad.gui.PlusRibbon"):
         module = sys.modules.get(name)
         filename = getattr(module, "__file__", "")

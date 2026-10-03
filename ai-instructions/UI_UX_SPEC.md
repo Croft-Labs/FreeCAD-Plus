@@ -114,7 +114,8 @@ as separate buttons. Primitives lists Box, Cylinder, Sphere, Cone, Ellipsoid, To
 Prism, Wedge and Tab. Tab is a disabled future entry until a real creation command
 exists. Use one icon per combined additive/subtractive workflow even before its
 unified task is implemented. Loft, Pipe and Helix now open their combined tasks
-without additive/subtractive menus. Primitive opens the native default primitive action.
+without additive/subtractive menus. Primitive and the Primitives shape dropdown open
+the shared component Primitive task; Classic documents retain their native tasks.
 Sketch uses exactly Sketcher, Edit Mode, Geometries, Constraints, Tools, B-Spline
 and Helpers, in that order. The owner outline in the Word specification and toolbar
 reference supplies every button and ordered dropdown choice. Individual line,
@@ -423,6 +424,29 @@ associative internal line so the original sketch axis remains authoritative.
 `ComponentNativeOperation` supplies lifecycle transactions; `ComponentOperationTask`
 shares the profile collector and reference picking with Revolve, and preview/layout
 with Pipe and Loft. See [acceptance](../tests/ComponentHelix.md).
+
+### UI-003e: Unified component Primitive
+
+REQ-014e combines all eight native additive/subtractive primitive pairs in
+`ComponentPrimitiveTask.py`, backed by `ComponentPrimitive.py` and the common native
+operation lifecycle. Modeling has one Primitive action; Primitives provides shape
+presets in the owner order. Both native command families route to this same pane
+in component documents; subtractive aliases preset Subtract. Classic documents keep
+their native Body workflow. Tab has no native implementation and stays disabled.
+
+| Section | Controls and defaults |
+| --- | --- |
+| Main parameters, expanded | New Body/Add/Subtract; target visible only for Add/Subtract; Box/Cylinder/Sphere/Cone/Ellipsoid/Torus/Prism/Wedge selector. No sketch profile is required. Default Box; dropdown presets the chosen shape. |
+| Dimensions, expanded | All selected native shape properties, including cylinder/prism X/Y skew, prism sides, sphere/ellipsoid/torus angular limits and all ten wedge bounds. Preserve native defaults and unit-aware values. Switching shape retains each draft's dimensions while the pane is open. |
+| Advanced, collapsed | Native attachment mode and ordered references with Add selected/Remove/Clear; attachment reversal and path parameter; component-local XYZ and yaw/pitch/roll when unattached, or attachment offset when attached. Defaults are unattached, zero translation/rotation. Retain Refine enabled, fuzzy tolerance zero and Subtraction/Common for Subtract. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result, default Overlay. Blue/green/red indicates New Body/Add/Subtract. Shared preview restores target visibility/transparency on cancel and never publishes scratch geometry. |
+
+History reopens the complete definition. Shape/mode replacement retains operation
+and published result identity, Model History position and downstream references.
+Native dimensions, attachments and geometry recompute and persist. Invalid solids,
+ineffective Booleans, stale/cyclic inputs and expressions are guarded; failed edits
+roll back. Native field/property identities remain unchanged. See
+[Primitive acceptance](../tests/ComponentPrimitive.md) and the roadmap for evidence.
 
 ### UI-004: Trim Body task pane
 

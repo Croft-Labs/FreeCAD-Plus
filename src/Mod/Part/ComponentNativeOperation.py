@@ -10,9 +10,13 @@ import ComponentModel as Model
 import ComponentProfile as Profile
 
 
+def section_links(operation):
+    return ([operation.Profile] if hasattr(operation, "Profile") else []) + list(getattr(operation, "Sections", []))
+
+
 def read_sections(operation):
     sections = []
-    for obj, elements in [operation.Profile] + list(getattr(operation, "Sections", [])):
+    for obj, elements in section_links(operation):
         if hasattr(obj, "ProfileSource"):
             obj, elements = obj.ProfileSource
             sections.append((obj, list(elements)))
@@ -56,7 +60,7 @@ def create(adapter, component, sections, mode="New Body", target=None, options=N
     Model.activate(component, strict=False)
     doc = component.Document
     with Model.transaction(doc, adapter.NAME):
-        operation = adapter.feature(doc, mode)
+        operation = adapter.feature(doc, mode, options)
         metadata(adapter, component, operation, mode)
         operation.Label = Model.next_label(component, adapter.NAME, operation)
         adapter.configure(operation, bind(component, sections), target, options)
@@ -81,9 +85,11 @@ def edit(adapter, operation, sections, mode, target=None, options=None):
         raise ValueError("This operation uses a different native Boolean operation. Edit its properties to preserve that operation.")
     results = [obj for obj in operation.InList if getattr(obj, "Producer", None) == operation]
     replace = (mode == "Subtract") != (getattr(operation, adapter.MODE_PROPERTY) == "Subtract")
+    if hasattr(adapter, "needs_replacement"):
+        replace = replace or adapter.needs_replacement(operation, options)
     if replace and any(obj not in results + [component] for obj in operation.InList):
         raise ValueError("Use the published result for downstream references before changing operation type.")
-    old_profiles = {obj for obj, elements in [operation.Profile] + list(getattr(operation, "Sections", [])) if hasattr(obj, "ProfileSource")}
+    old_profiles = {obj for obj, elements in section_links(operation) if hasattr(obj, "ProfileSource")}
     if hasattr(adapter, "internal_inputs"):
         old_profiles.update(adapter.internal_inputs(operation))
     if any(obj not in {component, operation} | old_profiles for profile in old_profiles for obj in profile.InList):
@@ -95,7 +101,7 @@ def edit(adapter, operation, sections, mode, target=None, options=None):
         bound = bind(component, sections)
         if replace:
             old, ordered = operation, list(component.ModelHistory)
-            operation = adapter.feature(doc, mode)
+            operation = adapter.feature(doc, mode, options)
             metadata(adapter, component, operation, mode)
             operation.ObjectId, operation.Label = old.ObjectId, old.Label
             Model._property(operation, "Bool", "UserSuppressed", getattr(old, "UserSuppressed", False))

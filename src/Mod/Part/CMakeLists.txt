@@ -20,6 +20,7 @@ set(Part_Scripts
     ComponentNativeOperation.py
     ComponentPipe.py
     ComponentHelix.py
+    ComponentPrimitive.py
     ComponentExtent.py
     ComponentProfile.py
     ComponentResultView.py

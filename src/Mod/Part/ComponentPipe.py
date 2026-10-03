@@ -110,7 +110,7 @@ def validate(component, sections, mode, target, options, operation=None):
             raise ValueError("Pipe cannot target its own downstream result.")
 
 
-def feature(doc, mode):
+def feature(doc, mode, options=None):
     import PartDesign
     return doc.addObject("PartDesign::SubtractivePipe" if mode == "Subtract" else "PartDesign::AdditivePipe", "Pipe")
 

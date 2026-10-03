@@ -1,5 +1,35 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 unified Primitive and grouped native verification
+
+The Primitive audit found that both native command families still opened Classic
+Body tasks. REQ-014e/UI-003e now implement one component task for all eight shapes,
+with New Body/Add/Subtract/Common, native dimensions and skew, full native attachment
+modes and ordered references, placement/offset and orientation, refinement and
+fuzzy tolerance. History opens the same pane. Shared native lifecycle accepts
+profile-free operations and preserves identities/consumers across shape changes.
+Classic documents retain their Body workflows. Tab remains disabled.
+
+The grouped PartDesignGui build includes Loft/Pipe/Helix/Primitive adapters. All
+26 Loft/Pipe/Helix cases pass including routing; seven Primitive cases and eight
+inherited primitive regressions pass. Primitive covers 32 shape/Boolean combinations,
+attachments, preview parity, persistence, downstream recompute, rollback, undo/redo
+and all 16 native aliases. Final task layout verification and owner packaging are
+recorded in WORK_STATE. Visual review caught compressed Wedge rows; minimum layout
+sizing now lets the Tasks scroll area accommodate dynamic dimensions.
+
+Failed pilots remain recorded. Fixture corrections included the component role
+for a datum and a prism intersecting its target. Native ellipsoid Boolean/refinement
+results are compared directly with Classic native features because Part Boolean
+integration differs. Native Refine/topology/startup warnings remain; valid solids
+do not establish successful refinement. Physical pointer/high-DPI and the earlier
+sketch drawing report remain pending. This advances 3.4.5, 3.6.5-3.6.7 and the
+family portions of 7.4.7/8.2.3; it does not close broader manual acceptance.
+
+The preceding dated source-only entries retain their historical evidence; their
+grouped native-build/routing deferrals are superseded by this batch. Owner Word
+requirements and delivery evidence are recorded in WORK_STATE.
+
 ## October 3 unified component Helix
 
 The owner audit found separate native additive/subtractive tasks behind the Helix

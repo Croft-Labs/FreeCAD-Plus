@@ -55,7 +55,7 @@ def validate(component, sections, mode, target, options, operation=None):
             raise ValueError("Loft cannot target its own downstream result.")
 
 
-def feature(doc, mode):
+def feature(doc, mode, options=None):
     import PartDesign
     return doc.addObject("PartDesign::SubtractiveLoft" if mode == "Subtract" else "PartDesign::AdditiveLoft", "Loft")
 

@@ -131,7 +131,7 @@ def internal_inputs(operation):
     return [axis] if axis else []
 
 
-def feature(doc, mode):
+def feature(doc, mode, options=None):
     import PartDesign
     return doc.addObject("PartDesign::SubtractiveHelix" if mode == "Subtract" else "PartDesign::AdditiveHelix", "Helix")
 

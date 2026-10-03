@@ -1532,6 +1532,7 @@ set(FreeCADGui_Scripts
     ComponentSectionTask.py
     ComponentPipeTask.py
     ComponentHelixTask.py
+    ComponentPrimitiveTask.py
     ComponentSketchTask.py
     ProjectPackage.py
     DependencyInspector.py

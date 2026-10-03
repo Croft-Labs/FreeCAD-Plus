@@ -84,6 +84,18 @@ CmdPrimtiveCompAdditive::CmdPrimtiveCompAdditive()
 void CmdPrimtiveCompAdditive::activated(int iMsg)
 {
     App::Document* doc = getDocument();
+    if (!primitiveIntToName(iMsg)) {
+        return;
+    }
+    for (auto* object : doc->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentPrimitiveTask import launch; launch(kind='%s')",
+                      primitiveIntToName(iMsg));
+            return;
+        }
+    }
 
     // We need either an active Body, or for there to be no Body objects
     // (in which case, just make one) to make a new additive shape.
@@ -291,6 +303,18 @@ CmdPrimtiveCompSubtractive::CmdPrimtiveCompSubtractive()
 
 void CmdPrimtiveCompSubtractive::activated(int iMsg)
 {
+    if (!primitiveIntToName(iMsg)) {
+        return;
+    }
+    for (auto* object : getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentPrimitiveTask import launch; launch(preset='Subtract', kind='%s')",
+                      primitiveIntToName(iMsg));
+            return;
+        }
+    }
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
