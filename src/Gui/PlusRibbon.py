@@ -31,6 +31,17 @@ HOME_GROUPS = (
     ("Sketch", ("PartDesign_NewSketch", "Part_CoordinateSystem")),
 )
 COORDINATE_CHOICES = ("Part_CoordinateSystem", "Part_DatumPlane", "Part_DatumLine", "Part_DatumPoint")
+VIEW_ORIENTATIONS = tuple(("Std_View" + name, name) for name in
+                          ("Isometric", "Front", "Top", "Right", "Rear", "Bottom", "Left"))
+VIEW_ITEMS = (
+    ("View", (("Std_ViewFitAll", "Fit All"), ("Std_ViewFitSelection", "Fit Selection"),
+              ("Std_ViewGroup", "Standard Views"), ("Std_AlignToSelection", "Align to Selection"),
+              ("Std_DrawStyle", "Draw Style"), ("Std_Measure", "Measure"),
+              ("Std_MassProperties", "Mass Properties"))),
+    ("Individual Views", VIEW_ORIENTATIONS),
+)
+VIEW_GROUPS = tuple((title, tuple(name for name, label in items)) for title, items in VIEW_ITEMS)
+VIEW_CAPTIONS = dict(item for title, items in VIEW_ITEMS for item in items)
 MODELING_GROUPS = (
     ("Sketch", ("PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch")),
     ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AddReferenceObject",
@@ -602,6 +613,8 @@ class Ribbon(QtCore.QObject):
             groups.append(("Macro", bars.get("Macro", [])))
             return groups
         if tab == "View":
+            if self.mode_name == "Design":
+                return list(VIEW_GROUPS)
             groups = [(name, commands) for name, commands in bars.items()
                       if name in ("View", "Individual Views")]
             groups.append(("Display", ["Std_EntitySelectionFilter", "Std_ToolBarMenu", "Std_DockViewMenu", "Std_ViewStatusBar"]))
@@ -648,6 +661,8 @@ class Ribbon(QtCore.QObject):
             captions.update({name: tr(label) for name, label in SKETCH_CAPTIONS.items()})
         if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Assembly":
             captions.update({name: tr(label) for name, label in ASSEMBLY_CAPTIONS.items()})
+        if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "View":
+            captions.update({name: tr(label) for name, label in VIEW_CAPTIONS.items()})
         button = RibbonButton(captions.get(command_name), parent,
                               ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
         button.setObjectName("Ribbon_" + command_name)
@@ -742,7 +757,8 @@ class Ribbon(QtCore.QObject):
             modeling = self.mode_name == "Design" and self.current_tab() == "Modeling"
             sketch = self.mode_name == "Design" and self.current_tab() == "Sketch"
             assembly = self.mode_name == "Design" and self.current_tab() == "Assembly"
-            entries = ((name, None) for name in commands) if modeling or sketch or assembly else projected_commands(commands)
+            view = self.mode_name == "Design" and self.current_tab() == "View"
+            entries = ((name, None) for name in commands) if modeling or sketch or assembly or view else projected_commands(commands)
             for command_name, choices in entries:
                 if modeling and command_name in ("PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix"):
                     choices = (command_name, command_name.replace("Additive", "Subtractive"))
@@ -758,6 +774,17 @@ class Ribbon(QtCore.QObject):
                     self.set_command_menu(button, SKETCH_MENUS[command_name])
                 if assembly and command_name in ASSEMBLY_MENUS:
                     self.set_command_menu(button, ASSEMBLY_MENUS[command_name])
+                if view and command_name == "Std_ViewGroup":
+                    self.set_command_menu(button, VIEW_ORIENTATIONS)
+                if view and command_name == "Std_DrawStyle":
+                    # The command's first action is the dropdown itself; only
+                    # its seven native mode actions belong inside the menu.
+                    menu = QtWidgets.QMenu(button)
+                    for action in native_actions(command_name):
+                        if action.objectName().startswith("Std_DrawStyle") and action.objectName() != command_name:
+                            menu.addAction(action)
+                    button.setMenu(menu)
+                    button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
                 if modeling and command_name == "PartDesign_CompPrimitiveAdditive":
                     if title == "Primitives":
                         button.caption = tr("Primitives")

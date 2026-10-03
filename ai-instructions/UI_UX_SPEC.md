@@ -73,7 +73,7 @@ with no assembly occurrences and opens its editing tab. Add Component inserts a
 linked occurrence, reusing or creating a definition through the existing chooser.
 Both follow the approved component contract and native transaction/ownership rules.
 
-The exact Home, Modeling and Sketch revisions await the next packaged build; it supersedes the
+The exact Home, Modeling, Sketch, Assembly and View revisions await the next packaged build; they supersede the
 broader Home layout incorporated in the October 2 audit build. Earlier October 2
 folders retain their previous layout; the owner shortcut must target the validated
 audit payload. Initialize specialist Home actions only after the main window is
@@ -130,8 +130,15 @@ Point and Polar Link Array; Gears Joint has Gears Joint / Belt Join in that orde
 The last caption invokes the native Belt Joint. Create Assembly and Insert Component
 use full icons; remaining actions use small icons. Reuse native command states
 and execution without consolidating the individual joints. Surface and Mesh reuse
-the toolbar group boundaries of their corresponding native workbenches. View groups
-standard view orientation/fit and display controls. Unavailable workbench tabs
+the toolbar group boundaries of their corresponding native workbenches. Design View
+has exactly View and Individual Views. View contains Fit All, Fit Selection,
+Standard Views, Align to Selection, Draw Style, Measure and Mass Properties.
+Standard Views lists Isometric, Front, Top, Right, Rear, Bottom and Left; Individual
+Views repeats these seven as separate buttons. Draw Style lists As Is, Points,
+Wireframe, Hidden Line, No Shading, Shaded and Flat Lines. Both menus open as
+dropdowns, retain native actions/states, and keep stable local captions. Fit All
+uses a full icon; all other View buttons use small icons. Other modes retain their
+existing View presentation. Unavailable workbench tabs
 are disabled. Other modes use Home, Tools and View; Tools preserves that mode's
 native workbench command groups.
 

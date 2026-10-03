@@ -1,5 +1,23 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 exact Design View ribbon — source ready
+
+Design View now has exactly View and Individual Views: 14 buttons, with the
+requested seven Standard Views and seven Draw Style choices in order. Native
+camera actions, draw-style checks, shortcuts and enablement are retained. Other
+modes retain their existing View presentation. Owner DOCX and UI references agree.
+
+Five focused native GUI tests passed with only PlusRibbon loaded from source,
+including all seven real camera orientations, native draw-style action checks,
+narrow-window access, tab routing and Classic/Plus visibility. Process exit was
+zero and final stderr empty. Evidence: visualization workspace
+`view-layout-20261002`; the first isolated launch failed before tests because its
+IPC cache directory was missing, corrected with the documented isolated temp path.
+Word retains all 1502 original paragraphs, headings, numbering and other ZIP parts;
+40 pages rendered, pages 1–31 unchanged and affected pages 32–40 visually checked.
+Next batched owner payload incorporation and physical owner acceptance remain
+pending; this milestone does not deliver a new executable or change the shortcut.
+
 ## October 2 exact Design Assembly ribbon — source ready
 
 Assembly has exactly Assembly and Assembly Joints: 22 buttons and three dropdowns

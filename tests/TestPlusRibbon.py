@@ -503,6 +503,51 @@ class TestPlusRibbon(unittest.TestCase):
         # Stop native Assembly watchers before the fixture document is destroyed.
         self.tab("Home")
 
+    def testOwnerViewLayoutAndNativeDisplayActions(self):
+        self.tab("View")
+        groups = self.ribbon.scroll.widget().findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+        self.assertEqual([title for title, commands in self.ribbon.groups()], ["View", "Individual Views"])
+        expected = [
+            ["Fit All", "Fit Selection", "Standard Views", "Align to Selection", "Draw Style", "Measure", "Mass Properties"],
+            ["Isometric", "Front", "Top", "Right", "Rear", "Bottom", "Left"],
+        ]
+        self.assertEqual(len(groups), 2)
+        for group, captions in zip(groups, expected):
+            self.assertEqual([button.text() for button in group.findChildren(QtWidgets.QToolButton)], captions)
+        views = self.button("Std_ViewGroup")
+        styles = self.button("Std_DrawStyle")
+        for button in (views, styles):
+            self.assertEqual(button.popupMode(), QtWidgets.QToolButton.InstantPopup)
+        self.assertEqual([action.text() for action in views.menu().actions()], expected[1])
+        self.assertEqual([action.text() for action in styles.menu().actions()],
+                         ["As Is", "Points", "Wireframe", "Hidden Line", "No Shading", "Shaded", "Flat Lines"])
+        box = self.doc.addObject("Part::Box", "ViewBox")
+        self.doc.recompute()
+        Gui.Selection.addSelection(box)
+        settle()
+        for action in views.menu().actions():
+            action.trigger()
+            settle()
+            menu_rotation = Gui.activeDocument().activeView().getCameraOrientation()
+            # An independent button must produce the same real camera result.
+            Gui.activeDocument().activeView().viewIsometric()
+            self.button(action.objectName()).click()
+            settle()
+            self.assertTrue(menu_rotation.isSame(Gui.activeDocument().activeView().getCameraOrientation(), 1e-10))
+            self.assertIsNone(self.button(action.objectName()).menu())
+        for action, mode in zip(styles.menu().actions(),
+                                ["As Is", "Points", "Wireframe", "Hidden Line", "No Shading", "Shaded", "Flat Lines"]):
+            self.assertIn(action, Gui.Command.get("Std_DrawStyle").getAction())
+            action.trigger()
+            settle()
+            self.assertTrue(action.isChecked(), mode)
+        styles.menu().actions()[0].trigger()
+        for group in groups:
+            for button in group.findChildren(QtWidgets.QToolButton):
+                self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
+                self.assertFalse(button.icon().isNull())
+        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "view-exact.png"))
+
     def testRareHelpCommandsRemainAccessible(self):
         self.tab("Home")
         button = self.button("Group_Help")

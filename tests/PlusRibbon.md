@@ -21,7 +21,7 @@ within that parent. Do not enable source overlays for these phases.
    must leave it hidden. Neither style may display both presentations.
 2. Design shows Home, Modeling, Surface, Sketch, Assembly, Mesh and View. The
    common small File/Edit/Clipboard bar stays above the ribbon in every mode/tab.
-   Design Home, Modeling, Sketch and Assembly follow the exact owner layouts in
+   Design Home, Modeling, Sketch, Assembly and View follow the exact owner layouts in
    `ai-instructions/ui/TOOLBARS.md` and the canonical Word specification. Their
    latest source revisions await the next batched payload. Use the
    actual New Sketch, Attach Sketch, Edit Sketch and Add Component buttons in a
@@ -31,7 +31,9 @@ within that parent. Do not enable source overlays for these phases.
 3. Modeling starts with Modeling, Transformation and Dress-Up sections, with
    helpers following. Native grouped operations keep their dropdown choices.
    Surface/Mesh retain native groups; Sketch/Assembly follow the owner groups; View exposes fit,
-   orientation and display. Narrow the window and use horizontal scrolling to
+   orientation and display in exactly View and Individual Views, with seven ordered
+   Standard Views and seven Draw Style choices. Check each dropdown and individual
+   camera button. Narrow the window and use horizontal scrolling to
    reach every section without moving the mode dropdown/tab strip.
    Primary operations (including Extrude/Revolve) share one row of large buttons,
    each spanning the three-row grid. Secondary buttons have icons only and fill
