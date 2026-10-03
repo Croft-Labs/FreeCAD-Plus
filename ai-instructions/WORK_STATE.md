@@ -1,5 +1,25 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 operation entry opens History
+
+Shared component task entry selects History and reveals the Components panel as
+Sketch, Extrude, Revolve, Loft, Pipe, Helix or Primitive opens. Preselection and
+component/occurrence context remain intact. Four native task-context checks pass,
+including twelve operation/tab combinations, hidden-panel Extrude entry, Sketch
+editing, previews, accept/cancel and isolated History editing. Evidence is
+`D:/Temp/Office-PC/freecad_plus_2026-10-03_operation_history/validation/history-acceptance`;
+there are no source overlays or unexpected GUI diagnostics.
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_operation_history`.
+Python-only incremental staging from the curve-selection payload changes only
+ComponentNavigator; no native rebuild. Native About identity remains `f8a4d5c408`.
+The existing desktop shortcut is retargeted and reopened to verify target and
+working directory. BUILD-VALIDATION/BUILD-MANIFEST retain inherited provenance;
+`validation/publication.json` records origin/main publication separately.
+Word preserves all 1529 prior paragraphs and other package members. Its appended
+requirement is rendered and inspected in the task's `operation-history-doc` folder.
+Physical owner acceptance remains separate; no installer or published release.
+
 ## October 3 persistent curve-selection feedback
 
 Component Extrude, Revolve, Helix, Loft and Pipe retain collected-curve highlighting

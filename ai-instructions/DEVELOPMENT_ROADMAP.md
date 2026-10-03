@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 component operation History entry (7.8)
+
+Shared component tasks automatically reveal Components and select History when
+opening. Four native context regressions pass, including six operation families
+from both Models and Part Tree, hidden-panel Extrude, Sketch and origin-view
+restoration. The Python-only owner update, Word requirement, shortcut verification
+and source publication are recorded separately in WORK_STATE. No native rebuild;
+physical owner acceptance remains pending.
+
 ## October 3 fresh owner build delivery
 
 The explicit new-build request is fulfilled by an all-enabled-target Release build

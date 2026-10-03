@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Three task-transition workflows for component-owned sketches and Extrude."""
 import hashlib
+import importlib
 import math
 import os
 from pathlib import Path
@@ -84,10 +85,12 @@ class TestComponentTaskContext(unittest.TestCase):
                          (self.part, self.root, Selection.native_path(self.root, self.path)))
 
     def testExtrudePreselectionPreviewCancelAndAccept(self):
+        self.panel.tabs.setCurrentWidget(self.panel.models)
         self.select(self.profile)
         count = len(self.external.Objects)
         self.panel.new_extrude()
         task = ExtrudeTask._task
+        self.assertEqual(self.panel.tabs.currentWidget(), self.panel.history)
         self.assertEqual(task.component, self.part)
         self.assertEqual(task.profile.currentData(), self.profile.Name)
         self.assertEqual(App.ActiveDocument, self.external)
@@ -96,9 +99,13 @@ class TestComponentTaskContext(unittest.TestCase):
         self.assertIsNone(task.ghost)
         self.assertEqual(len(self.external.Objects), count)
         self.assert_origin()
+        self.panel.tabs.setCurrentWidget(self.panel.structure)
+        self.panel.hide()
         self.select(self.profile)
         Gui.runCommand("PartDesign_Pad")
         task = ExtrudeTask._task
+        self.assertEqual(self.panel.tabs.currentWidget(), self.panel.history)
+        self.assertTrue(self.panel.isVisible())
         task.length.setProperty("rawValue", 5)
         if not task.accept():
             self.fail(task.status.text())
@@ -112,10 +119,12 @@ class TestComponentTaskContext(unittest.TestCase):
         self.capture("extrude-returned-history.png")
 
     def testSketchFacePreselectionAndNativeEditorReturn(self):
+        self.panel.tabs.setCurrentWidget(self.panel.structure)
         self.select(self.box, "Face6")
         count = len(self.external.Objects)
         self.panel.new_sketch()
         task = SketchTask._task
+        self.assertEqual(self.panel.tabs.currentWidget(), self.panel.history)
         self.assertEqual(task.support, (self.box, "Face6"))
         self.assertTrue(self.part.Origin.ViewObject.isVisible())
         self.assertTrue(all(obj.ViewObject.isVisible() for obj in self.part.Origin.OriginFeatures
@@ -165,6 +174,22 @@ class TestComponentTaskContext(unittest.TestCase):
         self.assertEqual(result.ObjectId, identity)
         self.assertAlmostEqual(result.Shape.Volume, 28 * math.pi)
         self.external.save()
+
+    def testOperationTasksOpenHistoryFromEitherNavigationTab(self):
+        for name in ("Extrude", "Revolve", "Loft", "Pipe", "Helix", "Primitive"):
+            module = importlib.import_module("freecad.gui.Component" + name + "Task")
+            for tab in (self.panel.models, self.panel.structure):
+                with self.subTest(operation=name, tab=self.panel.tabs.indexOf(tab)):
+                    self.panel.tabs.setCurrentWidget(tab)
+                    self.select(self.profile)
+                    task = module.launch()
+                    try:
+                        self.assertTrue(Gui.Control.activeDialog())
+                        self.assertEqual(self.panel.tabs.currentWidget(), self.panel.history)
+                        self.assertEqual(self.panel.active_key, Navigator.object_key(self.part))
+                    finally:
+                        task.reject()
+                    self.assert_origin()
 
     def capture(self, name):
         self.panel.setFloating(True)

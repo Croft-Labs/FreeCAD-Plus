@@ -1758,6 +1758,10 @@ complete self-intersection diagnosis is claimed.
 
 Owner-approved behavior is in the [component document contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md).
 Use Models, Part Tree and History as the tab labels, in that order.
+Starting a component operation selects History as its creation task opens, including
+entry from Models or Part Tree. Reveal the Components panel if hidden. Shared Sketch,
+Extrude, Revolve, Loft, Pipe, Helix and Primitive tasks retain preselection and the
+active component/occurrence context; OK and Cancel return to the originating view.
 Models is flat/non-expandable and lists all owning-file definitions, including
 unused definitions and referenced external models, with expanded assembly-instance
 counts. The root is an editing model/context, with zero linked uses unless explicitly

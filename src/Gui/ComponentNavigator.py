@@ -63,6 +63,9 @@ class TaskContext:
             self.dock.root_key = self.dock.active_key = object_key(self.component)
             self.dock.active_path = []
             self.dock.refresh()
+            self.dock.tabs.setCurrentWidget(self.dock.history)
+            self.dock.show()
+            self.dock.raise_()
 
     def edit(self, obj):
         self.edit_key = object_key(obj)
