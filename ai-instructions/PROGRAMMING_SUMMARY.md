@@ -2,6 +2,11 @@
 
 ## Project at a glance
 
+Model History now supports dependency-clamped drag/drop ordering with its native
+Origin fixed first. Multi-item order, hidden results, expression dependencies,
+Undo/Redo and persistence are covered by 40 distinct native checks. WORK_STATE
+records the Python-only owner payload, Word review and shortcut delivery.
+
 The Components panel now opens a feature/operation editor or Sketcher directly
 when its History name, icon or status area is double-clicked. Native double-click
 handling survives an intervening row rebuild. Twenty panel, History and component

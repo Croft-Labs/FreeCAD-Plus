@@ -36,6 +36,16 @@ acyclic. A folder or display sort cannot change dependencies. The Bodies view is
 the current result set at the chosen history position, not every historical shape.
 Hidden, suppressed, failed, unloaded and rolled-back are separate states.
 
+The component History drag/drop implementation clamps insertion to the nearest
+legal position after every transitive predecessor and before every dependent.
+Native Origin remains the first displayed item and cannot move; origin planes
+are protected. Selected and unselected relative orders are preserved, allowing
+an intervening dependency to remain between selected items. Hidden results move
+with their visible producer. Only ModelHistory order changes, in one undoable
+transaction; links, geometry, ownership and identities remain unchanged. Refuse
+cross-component, stale and active-edit moves. See WORK_STATE for native validation
+and owner delivery; this does not imply the broader migration gates are complete.
+
 An input collector refers to the shared object and optional selected regions;
 it must not secretly copy or reparent a sketch. A body is created by an operation's
 result. Starting a feature does not require a manually created/active Body.

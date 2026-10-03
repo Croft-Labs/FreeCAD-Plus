@@ -365,6 +365,66 @@ def history(component):
             if component.Document.getObject(name) is not None]
 
 
+def history_move_order(component, items, index):
+    """Plan a nearest legal insertion in visible History without changing links."""
+    original = history(component)
+    fixed = {component.Origin, *component.Origin.OriginFeatures}
+    visible = [obj for obj in original if obj not in fixed and not background_result(obj)]
+    selected = set(items)
+    if not selected or not selected <= set(visible):
+        raise ValueError("Select movable history items in the active component; the origin is fixed.")
+    moving = [obj for obj in visible if obj in selected]
+    index = max(0, min(int(index), len(visible)))
+    # Published background results travel with their visible producer. Transitive
+    # inputs include profile binders, expressions and hidden result links.
+    predecessors = {obj: {display_object(dep) for dep in geometry_dependencies(obj)} & set(visible)
+                    for obj in visible}
+    remaining = [obj for obj in visible if obj not in selected]
+    slot = sum(obj not in selected for obj in visible[:index])
+    lower = [max((i + 1 for i, other in enumerate(remaining) if other in predecessors[obj]), default=0)
+             for obj in moving]
+    upper = [min((i for i, other in enumerate(remaining) if obj in predecessors[other]), default=len(remaining))
+             for obj in moving]
+    # Selected items retain their relative order, even when an unselected
+    # predecessor must remain between them. Propagate those ordering bounds,
+    # then clamp each insertion to the requested gap in the unselected sequence.
+    for i in range(1, len(moving)):
+        lower[i] = max(lower[i], lower[i - 1])
+    for i in range(len(moving) - 2, -1, -1):
+        upper[i] = min(upper[i], upper[i + 1])
+    if any(lo > hi for lo, hi in zip(lower, upper)) or any(
+            later in predecessors[obj] for i, obj in enumerate(moving) for later in moving[i:]):
+        raise ValueError("The existing dependency order has no valid insertion position.")
+    slots = [max(lo, min(slot, hi)) for lo, hi in zip(lower, upper)]
+    ordered = []
+    for gap in range(len(remaining) + 1):
+        ordered.extend(obj for obj, position in zip(moving, slots) if position == gap)
+        if gap < len(remaining):
+            ordered.append(remaining[gap])
+    if ordered == visible:
+        return list(component.ModelHistory)
+    groups = {obj: [obj.Name] for obj in visible}
+    for obj in original:
+        if background_result(obj):
+            producer = display_object(obj)
+            if producer not in groups:
+                raise ValueError("Repair the history item's missing producer before reordering.")
+            groups[producer].append(obj.Name)
+    return [obj.Name for obj in original if obj in fixed] + [
+        name for obj in ordered for name in groups[obj]]
+
+
+def reorder_history(component, items, index):
+    """Commit a dependency-clamped order as one undoable metadata change."""
+    if component.Document.HasPendingTransaction:
+        raise ValueError("Finish the active edit before reordering history.")
+    ordered = history_move_order(component, items, index)
+    if ordered != list(component.ModelHistory):
+        with transaction(component.Document, "Reorder model history"):
+            component.ModelHistory = ordered
+    return ordered
+
+
 def _shape_kind(shape, sketch=False):
     if shape.isNull() or not shape.isValid():
         raise ValueError("The source has no valid evaluated geometry.")

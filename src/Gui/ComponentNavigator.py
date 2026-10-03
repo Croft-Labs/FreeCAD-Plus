@@ -238,6 +238,8 @@ class PartTree:
 
 
 class Navigator(QtWidgets.QDockWidget):
+    HISTORY_MIME = "application/x-freecad-plus-history-order"
+
     def __init__(self):
         super().__init__(tr("Components"), Gui.getMainWindow())
         self.setObjectName("ComponentNavigator")
@@ -265,6 +267,14 @@ class Navigator(QtWidgets.QDockWidget):
         self.drop_indicator = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Rectangle, self.structure.viewport())
         self.structure.setHeaderLabels([tr("Part name"), tr("View"), tr("Instances"), tr("Part View")])
         self.history = QtWidgets.QTreeWidget()
+        self.history.setAcceptDrops(True)
+        self.history.viewport().setAcceptDrops(True)
+        self.history_drag_start = None
+        self.history_drop_indicator = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Rectangle, self.history.viewport())
+        self.history_drag_context = None
+        self.history_scroll_timer = QtCore.QTimer(self)
+        self.history_scroll_timer.setInterval(80)
+        self.history_scroll_timer.timeout.connect(self.scroll_history_drag)
         self.history.setHeaderLabels([tr("Active"), tr("View"), tr("Item"), tr("State")])
         for tree in (self.structure, self.history):
             tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -754,6 +764,28 @@ class Navigator(QtWidgets.QDockWidget):
         self.tabs.setCurrentWidget(self.history)
 
     def eventFilter(self, watched, event):
+        if watched == self.history.viewport():
+            kind = event.type()
+            if kind == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:
+                point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+                index = self.history.indexAt(point)
+                row = self.history.itemAt(point)
+                self.history_drag_start = point if (index.isValid() and index.column() in (2, 3)
+                    and not is_origin(resolve(row.data(0, QtCore.Qt.UserRole)))) else None
+            elif kind == QtCore.QEvent.MouseMove and event.buttons() & QtCore.Qt.LeftButton and self.history_drag_start is not None:
+                point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+                if (point - self.history_drag_start).manhattanLength() >= QtWidgets.QApplication.startDragDistance():
+                    self.history_drag_start = None
+                    self.run(self.start_history_drag, refresh=False)
+                    return True
+            elif kind == QtCore.QEvent.MouseButtonRelease:
+                self.history_drag_start = None
+            elif kind in (QtCore.QEvent.DragEnter, QtCore.QEvent.DragMove, QtCore.QEvent.Drop):
+                return self.history_drag_event(event)
+            elif kind == QtCore.QEvent.DragLeave:
+                self.finish_history_drag()
+                event.accept()
+                return True
         if (watched == self.history.viewport() and event.type() == QtCore.QEvent.MouseButtonDblClick
                 and event.button() == QtCore.Qt.LeftButton):
             point = event.position().toPoint() if hasattr(event, "position") else event.pos()
@@ -807,6 +839,115 @@ class Navigator(QtWidgets.QDockWidget):
                     self.run(self.delete_instances)
                 return True
         return super().eventFilter(watched, event)
+
+    def history_move_mime(self):
+        component = resolve(self.active_key)
+        if Gui.Control.activeDialog() or component.Document.HasPendingTransaction:
+            raise ValueError(tr("Finish the current task before reordering history."))
+        items = [resolve(row.data(0, QtCore.Qt.UserRole)) for row in self.history.selectedItems()]
+        items = [obj for obj in items if obj and not is_origin(obj)]
+        model().history_move_order(component, items, 0)  # Validate movable membership.
+        payload = {"component": object_key(component), "id": component.ObjectId,
+                   "items": [(obj.Name, obj.ObjectId) for obj in items]}
+        mime = QtCore.QMimeData()
+        mime.setData(self.HISTORY_MIME, json.dumps(payload).encode("utf-8"))
+        return mime
+
+    def start_history_drag(self):
+        drag = QtGui.QDrag(self.history)
+        drag.setMimeData(self.history_move_mime())
+        try:
+            drag.exec(QtCore.Qt.MoveAction)
+        finally:
+            self.finish_history_drag()
+
+    def finish_history_drag(self):
+        self.history_drop_indicator.hide()
+        self.history_scroll_timer.stop()
+        self.history_drag_context = None
+
+    def scroll_history_drag(self):
+        if not self.history_drag_context:
+            return
+        mime, point = self.history_drag_context
+        bar = self.history.verticalScrollBar()
+        delta = -1 if point.y() < 24 else 1
+        bar.setValue(bar.value() + delta * max(1, bar.singleStep()))
+        try:
+            component, items, index, ordered = self.history_drop_plan(mime, point)
+            self.show_history_drop_indicator(component, items, ordered)
+        except (ValueError, TypeError, KeyError, AttributeError):
+            self.finish_history_drag()
+
+    def show_history_drop_indicator(self, component, items, ordered):
+        moving = {obj.Name for obj in items}
+        visible = [name for name in ordered if not model().background_result(component.Document.getObject(name))]
+        first = next(i for i, name in enumerate(visible) if name in moving)
+        following = next((name for name in visible[first:] if name not in moving), None)
+        rows = [self.history.topLevelItem(i) for i in range(self.history.topLevelItemCount())]
+        row = next((row for row in rows if row.data(0, QtCore.Qt.UserRole) == (component.Document.Name, following)), None)
+        y = self.history.visualItemRect(row).top() if row else self.history.visualItemRect(rows[-1]).bottom()
+        self.history_drop_indicator.setGeometry(0, y, self.history.viewport().width(), 2)
+        self.history_drop_indicator.show()
+
+    def history_drop_plan(self, mime, point):
+        if not mime.hasFormat(self.HISTORY_MIME) or Gui.Control.activeDialog():
+            raise ValueError(tr("Drop history items from the active component."))
+        payload = json.loads(bytes(mime.data(self.HISTORY_MIME)))
+        component = resolve(self.active_key)
+        if (tuple(payload["component"]) != self.active_key or payload["id"] != component.ObjectId
+                or component.Document.HasPendingTransaction):
+            raise ValueError(tr("Drop history items from the active component after finishing its edit."))
+        items = [component.Document.getObject(name) for name, identifier in payload["items"]]
+        if any(obj is None or obj.ObjectId != identifier for obj, (name, identifier) in zip(items, payload["items"])):
+            raise ValueError(tr("The dragged history items have changed. Select them again."))
+        visible = [obj for obj in model().history(component) if not is_origin(obj) and not model().background_result(obj)]
+        row = self.history.itemAt(point)
+        if row:
+            obj = resolve(row.data(0, QtCore.Qt.UserRole))
+            index = (visible.index(obj) + (point.y() > self.history.visualItemRect(row).center().y())) if obj in visible else 0
+        else:
+            index = len(visible)
+        ordered = model().history_move_order(component, items, index)
+        return component, items, index, ordered
+
+    def history_drag_event(self, event):
+        point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+        try:
+            component, items, index, ordered = self.history_drop_plan(event.mimeData(), point)
+        except (ValueError, TypeError, KeyError, AttributeError):
+            self.finish_history_drag()
+            event.ignore()
+            return True
+        if event.type() == QtCore.QEvent.Drop:
+            self.finish_history_drag()
+            # Defer the row rebuild until Qt has finished dispatching the drop.
+            keys = [(object_key(obj), obj.ObjectId) for obj in items]
+            component_key = object_key(component)
+            component_id = component.ObjectId
+            def commit():
+                if self.active_key != component_key or Gui.Control.activeDialog():
+                    return
+                current = resolve(component_key)
+                objects = [resolve(key) for key, identifier in keys]
+                if (current is None or current.ObjectId != component_id
+                        or any(obj is None or obj.ObjectId != identifier for obj, (key, identifier) in zip(objects, keys))):
+                    return
+                model().reorder_history(current, objects, index)
+            QtCore.QTimer.singleShot(0, lambda: self.run(commit))
+        else:
+            self.show_history_drop_indicator(component, items, ordered)
+            if point.y() < 24 or point.y() > self.history.viewport().height() - 24:
+                mime = QtCore.QMimeData()
+                mime.setData(self.HISTORY_MIME, event.mimeData().data(self.HISTORY_MIME))
+                self.history_drag_context = mime, point
+                self.history_scroll_timer.start()
+            else:
+                self.history_scroll_timer.stop()
+                self.history_drag_context = None
+        event.setDropAction(QtCore.Qt.MoveAction)
+        event.accept()
+        return True
 
     def start_tree_drag(self):
         drag = QtGui.QDrag(self.structure)

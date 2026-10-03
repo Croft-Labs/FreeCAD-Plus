@@ -1910,6 +1910,19 @@ controls, and preserve single-click selection and context-menu Edit. Protected
 origins do not open an editor; an active task must be finished first. Closing or
 cancelling returns to the original component/occurrence context.
 
+Drag History names, icons or status areas to reorder objects within the active
+component. Clamp each drop after the latest predecessor and before the earliest
+dependent, following transitive geometry/expression dependencies through hidden
+binders and results. Native Origin stays first and cannot move; its planes are
+also protected. Drops near Origin use the earliest legal position below it.
+Multiple selected items retain their relative order, as do unselected items;
+intervening dependencies remain between selected items when necessary. Show the
+allowed insertion line and scroll at viewport edges. Store one undoable order
+change, preserving geometry, ownership, links and identities across save/reopen.
+Hidden published results travel with their visible producer. Refuse stale,
+cross-component and active-edit moves; existing selection/edit/control behavior
+is retained. Native validation and delivery are recorded in WORK_STATE.
+
 Component feedback tasks (7.8.5c/d and 7.8.7d/e):
 
 New component documents use the default title/file basename untitled001; further

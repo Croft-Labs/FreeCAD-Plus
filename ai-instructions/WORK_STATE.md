@@ -1,5 +1,44 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 dependency-safe Model History ordering
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_history_order/app`.
+Python-only incremental staging from the verified component-double-click payload;
+ComponentModel and ComponentNavigator change. No native rebuild, installer or
+published release. Native About retains `03a6f66644488e2b710f94e828155b9b12c23c60`;
+release-info and BUILD-VALIDATION identify the application source commit.
+
+Drag History names/icons/status to reorder within the active component. Invalid
+drops clamp after the latest predecessor or before the earliest dependent, using
+transitive geometry/expression inputs including hidden binders/results. Origin
+stays first and cannot move; its planes are protected. Multiple selected and
+unselected items preserve relative order, with intervening dependencies retained.
+The allowed insertion line and edge autoscroll guide the drop. One undoable
+ModelHistory transaction preserves geometry, ownership, links and identities.
+Cross-component, stale and active-task/edit moves are refused.
+
+Evidence in the build parent's `validation` folder:
+- `history-order-verified`: all 11 new checks pass against source-matching installed
+  modules, including 441 insertion plans, native Qt drag/drop/mouse initiation,
+  origin constraints, expression inputs, real sketch/Extrude hidden binder/results,
+  multiselection, stale identities, edge scrolling, Undo/Redo and .cadprt reopen.
+- `history-order-final`: all 29 existing panel, Part Tree move, History and task
+  context regressions pass. Ten new checks also passed; the expression fixture
+  used reserved unit name A as an unquoted object identifier. The corrected
+  label expression passes in the verified run. Earlier fixture evidence is retained.
+- Forty distinct native checks pass overall. No source overlays or unexpected GUI
+  diagnostics. Final installed modules are verified by source hashes.
+- `shortcut-verification.json`: existing desktop shortcut saved, reopened and
+  verified against this launcher and app working directory.
+- `publication.json`: committed source and matching origin/main identity.
+
+Word preserves all 1534 existing paragraph XML nodes and all package members
+except document.xml. Pages 1-45 match the preceding render; changed page 46 was
+visually reviewed in `history-order-doc/render` under the task visual root.
+BUILD-MANIFEST inherits unchanged verified baseline hashes after size/timestamp
+checks, rehashing changed files and critical binaries. Physical owner pointer/
+high-DPI acceptance remains separate from the native Qt automation.
+
 ## October 3 Components double-click editing
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_component_double_click/app`.

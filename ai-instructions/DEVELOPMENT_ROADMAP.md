@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 dependency-safe Model History ordering (7.8)
+
+Implemented within-component drag/drop, clamped after all predecessors and before
+all dependents. Native Origin stays first and protected. Transitive inputs include
+expressions, hidden profile binders and published results; selected and unselected
+relative ordering is retained. Drops show their allowed position, support edge
+scrolling and commit one undoable ModelHistory edit without changing links or
+geometry. Forty distinct native checks pass, including 441 insertion plans and
+save/reopen. WORK_STATE separates implementation, Python-only staging, Word review,
+shortcut delivery, source publication and pending physical owner acceptance.
+
 ## October 3 Components double-click editing (7.8)
 
 History name/icon/status double-clicks open the existing feature/operation task,
