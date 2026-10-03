@@ -36,8 +36,20 @@ package parts except document.xml; three Primitive notes appended. SHA256:
 `0e0f5e576f61bfd621552798a27fcd2881c39e1c6864713e86e144cdd944d24d`.
 Evidence: `C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a0ffe3-14ce-75e0-9c71-b39d69d25490/primitives/doc`.
 Rendered 43 pages; pages 1-42 are byte-identical to Helix render, page 43 visually
-reviewed. Owner launcher, manifest and shortcut verification follow below once
-complete. Earlier dated source-only build/routing deferrals are superseded by
+reviewed. Three owner-launcher cold restarts (Bootstrap/Plus/Classic) also pass,
+bringing the final suite selections to 50 passing executions. Existing desktop
+`FreeCADPlus.exe - Shortcut.lnk` is updated and reopened for verification: target
+`D:/Temp/Office-PC/freecad-plus-primitives-20261003/FreeCAD-Plus-2026-10-03/FreeCADPlus.exe`,
+working directory its parent. `shortcut-verification.json` records success.
+
+Application source: `0eeec1e0e1fb3f61307289a51f6d07379a57e1eb`. The payload
+contains 14 changed/new Python modules versus the Revolve owner baseline and one
+rebuilt command module. PartDesignGui SHA256:
+`e101d821d451138c43d8fd1214466772082949747f16c22d9941cd317de76044`.
+BUILD-VALIDATION records the selected passing suites and superseded failures;
+BUILD-MANIFEST records exact files and native/application identities. This is an
+unsigned local portable owner build, not a release or installer. Earlier dated
+source-only build/routing deferrals are superseded by
 this grouped validation. Physical input checks and the earlier sketch drawing
 report remain pending. Preserve unrelated toolbar/icon relocation, reviews/Archive.
 

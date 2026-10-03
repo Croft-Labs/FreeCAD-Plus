@@ -26,6 +26,13 @@ do not establish successful refinement. Physical pointer/high-DPI and the earlie
 sketch drawing report remain pending. This advances 3.4.5, 3.6.5-3.6.7 and the
 family portions of 7.4.7/8.2.3; it does not close broader manual acceptance.
 
+Delivery: source `0eeec1e0e1` is in the grouped owner payload with 14 Python module
+updates and rebuilt PartDesignGui. Three launcher cold restarts also pass, for
+50 passing executions across final suite selections. The existing desktop shortcut
+now targets the new payload and its saved target/working directory were verified.
+Word retains all 1518 prior paragraphs and numbering; its 43-page render was checked
+with only page 43 changed. This is a local portable build, not a published release.
+
 The preceding dated source-only entries retain their historical evidence; their
 grouped native-build/routing deferrals are superseded by this batch. Owner Word
 requirements and delivery evidence are recorded in WORK_STATE.
