@@ -1,5 +1,34 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 unified Revolve candidate
+
+Implemented unified component Revolution/Groove creation and editing in
+`ComponentRevolve.py` and `ComponentRevolveTask.py`, with native command/history
+routing and the shared associative curve collector. See UI-003 and REQ-014a.
+
+Candidate and evidence root: `D:/Temp/Office-PC/freecad-plus-revolve-20261003`.
+Payload: `FreeCAD-Plus-2026-10-03`. It incorporates the pending datum modules from
+the previous candidate, new Revolve modules, ComponentProfile/ComponentNavigator
+updates and rebuilt `Mod/PartDesign/PartDesignGui.pyd`. Other native runtime files
+remain from the validated October 2 owner payload (engine version `6be8eda424`).
+Incremental `PartDesignGui` build passed; `native-build/result.json` and `build.log`
+record the external CMake build. App.Version identifies the reused engine, not the
+new command module; the package manifest must record these separately.
+
+Packaged acceptance: `acceptance-revolve` 7, `legacy-regression` 8 (including the
+84-case angular matrix), `task-final` 1, `extrude-routing` 2, `extrude-profile` 3,
+`datum-final` 2. All pass without source overlays. The full Revolve suite precedes
+only the final start-reset/palette changes, covered by `task-final`. Original
+`pilot`, `extended`, `references` and `shared-regression` failures are preserved:
+fixture/status-lifetime corrections and per-file test-filter misuse are documented
+by subsequent passing runs. Final task screenshot is readable and reviewed.
+
+Owner DOCX requirements updated with all original paragraphs and native numbering
+preserved. Rendered 41 pages; pages 1–40 match the previous reviewed render exactly;
+page 41 reviewed. Evidence is in the task visualization folder
+`revolve-20261003/doc`. Launcher cold starts, manifest/archive verification, shortcut
+handoff and publication are the remaining delivery gates at this source milestone.
+
 ## October 2 datum plane — validated for next batch
 
 Pending runtime incorporation: `src/Gui/ComponentSketchTask.py`,

@@ -6,10 +6,13 @@ FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 [`src/Main/MainGui.cpp`](../src/Main/MainGui.cpp).
 
-The next batch adds the shared component Datum Plane task: Define Plane, Define
-Origin and Define Orientation, with X/Z or Y/Z directions and immediate availability
-as a New Sketch attachment. Isolated runtime checks pass; owner-build incorporation
-is pending the next grouped delivery. See the roadmap and sketch workflow procedure.
+The current batch combines Revolution/Groove as component Revolve, implemented in
+`src/Mod/Part/ComponentRevolve.py` and `src/Gui/ComponentRevolveTask.py`. It reuses
+native geometry and the Extrude curve collector; native command and Model History
+routes share the four-section task. Acceptance: `tests/TestComponentRevolve.py`.
+The batch also incorporates the shared Datum Plane workflow: Define Plane, Define
+Origin and Define Orientation, with immediate availability as a New Sketch attachment.
+See the roadmap and WORK_STATE for verification and owner-delivery status.
 
 Latest source follows the owner's exact Design Home, Modeling, Sketch, Assembly and View layouts. Modeling
 has Sketch, Modeling, Dress-Up, Transformation and one Primitives dropdown;

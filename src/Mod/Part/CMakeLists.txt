@@ -15,6 +15,7 @@ set(Part_Scripts
     Init.py
     ComponentModel.py
     ComponentExtrude.py
+    ComponentRevolve.py
     ComponentExtent.py
     ComponentProfile.py
     ComponentResultView.py

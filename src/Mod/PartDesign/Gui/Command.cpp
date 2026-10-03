@@ -1463,6 +1463,15 @@ void CmdPartDesignRevolution::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
 
+    for (auto* object : getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentRevolveTask import launch; launch(None)");
+            return;
+        }
+    }
+
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
@@ -1524,6 +1533,15 @@ CmdPartDesignGroove::CmdPartDesignGroove()
 void CmdPartDesignGroove::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    for (auto* object : getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentRevolveTask import launch; launch('Subtract')");
+            return;
+        }
+    }
 
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 

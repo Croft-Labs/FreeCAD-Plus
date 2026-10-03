@@ -308,10 +308,27 @@ manual gate; see [the test procedure](../tests/PatternTaskPanel.md).
 
 ### UI-003: Revolve and Groove angular controls
 
-Satisfies REQ-014. The existing **Revolution** command adds material; **Groove**
-subtracts it. Both use the shared Revolution parameters controller for creation
-and editing. This change covers angular controls, without consolidating the two
-commands or changing their profile-selection workflow.
+Satisfies REQ-014. In Plus component documents, **Revolve** combines additive
+Revolution and subtractive Groove in `ComponentRevolveTask`; both native command
+entry points and Model History editing use that task. Groove presets Subtract.
+
+| Section | Component workflow |
+| --- | --- |
+| Main parameters, expanded | New Body/Add/Subtract; target body visible only for Add/Subtract; whole sketch or selected curve collection with region picking; One angle/Two angles/Symmetric; native applicable Type and second-side Type. |
+| Dimensions, expanded | Sketch vertical axis by default, horizontal or local reference axis; angles and synchronized reverse arrows; signed offset and flip arrow; profile-plane, offset or reference start. Angle replaces linear length; rotation uses an axis rather than the extrusion normal. |
+| Advanced, collapsed | Limiting face references, axis projection and refinement. Add retains To last; Subtract retains Through all; both retain Angle, To first and Up to surface. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result with Overlay default. Blue New Body, green Add, red Subtract. Final Result hides the original display; changing parameters or cancelling restores visibility and removes the ghost. |
+
+Creation uses native Revolution or Groove and publishes a component result without
+a Body container. Type-changing edits preserve operation ObjectId and published
+result links. Invalid inputs roll back atomically. Expression-driven operations
+are protected from task overwrites and remain editable through native properties.
+The task reuses the Extrude curve collector and native component/history services.
+Sources: `ComponentRevolve.py`, `ComponentRevolveTask.py`, `ComponentNavigator.py`
+and `PartDesign/Gui/Command.cpp`.
+
+In legacy Body documents the native commands retain their shared Revolution
+parameters controller and the angular behavior below.
 
 | Control | Behavior |
 | --- | --- |

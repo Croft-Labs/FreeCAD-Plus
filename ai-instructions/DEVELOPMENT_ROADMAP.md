@@ -1,5 +1,27 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 unified component Revolve
+
+Owner review found the Plus Revolve button still entered native additive creation,
+with Groove separate. Implemented one component create/edit task with collapsible
+Main parameters, Dimensions, Advanced and Preview sections, explicit New Body/Add/
+Subtract, conditional target, shared sketch/curve/region collection, rotational
+axes, one/two/symmetric angles, signed start offsets and synchronized reverse arrows.
+Native applicable termination, start references, projection and refinement remain.
+Preview defaults to Overlay (blue/green/red); None and Final Result and automatic
+recompute are available. Native Revolution/Groove geometry is retained. Component
+history and published result identities survive type-changing edits and persistence.
+
+Implementation and incremental PartDesignGui build pass. Seven packaged acceptance
+tests pass; eight legacy tests also pass, including the 84-case native angular matrix.
+The original UI test failure accessed a deleted status label after successful OK;
+reference fixtures were corrected to recompute and use the normal object role.
+Original evidence is retained. Source overlays are disabled. Additional shared
+Extrude/datum and final layout checks, owner shortcut verification, packaging and
+publication are recorded separately in WORK_STATE. This batch incorporates the
+previously validated datum changes. Physical pointer/high-DPI acceptance remains
+separate and the previously reported sketch pointer failure is not marked fixed.
+
 ## October 2 shared datum-plane workflow
 
 Implemented the owner-requested Define Plane / Define Origin / Define Orientation

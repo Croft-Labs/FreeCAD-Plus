@@ -1,4 +1,22 @@
-# Revolve and Groove Angular Offset Tests
+# Unified Revolve and Native Angular Offset Tests
+
+## Plus component workflow
+
+`tests/TestComponentRevolve.py` covers the shared `ComponentRevolveTask` reached
+from Revolution and Groove in component documents and from Model History editing.
+Run with `tests/RunComponentDocument.ps1 -TestFiles tests/TestComponentRevolve.py`
+against the packaged candidate, using a fresh external evidence directory.
+
+Acceptance checks New Body/Add/Subtract native geometry without a Body container,
+selected sketch curves, one/two/symmetric angles, signed start offsets, reference
+axes and starts, preview/result agreement, four collapsible sections and defaults,
+blue/green/red overlays, None/Final Result, visibility restoration on Cancel,
+additive/subtractive type changes preserving published result identity, rollback,
+Undo/Redo, save/reopen and both native command entry points. Runtime module hashes
+must match the source with source overlays disabled.
+
+The existing suites below retain coverage of legacy Body documents. Physical
+pointer/keyboard and high-DPI acceptance remain separate from scripted Qt checks.
 
 Behavior is specified by [UI-003](../ai-instructions/UI_UX_SPEC.md#ui-003-revolve-and-groove-angular-controls).
 Record actual evidence and remaining manual checks in
@@ -47,5 +65,6 @@ feature types. Existing Revolve model tests cover face profiles and start refere
 6. Reopen accepted features, edit offsets/expressions, then check Cancel and Undo/Redo.
 7. Inspect keyboard focus/tooltips and task layout at normal and high-DPI scaling.
 
-Use Revolution for Add and Groove for Subtract; this change does not combine the
-commands or change their existing profile preselection workflow.
+In legacy Body documents, Revolution remains additive and Groove subtractive.
+In Plus component documents, both enter the unified Revolve task; Groove presets
+Subtract. Geometry still uses the corresponding native feature type.
