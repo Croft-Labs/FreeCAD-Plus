@@ -1,5 +1,48 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 unified Loft — source ready for grouped build
+
+`ComponentLoft.py` and `ComponentLoftTask.py` combine native AdditiveLoft and
+SubtractiveLoft in a component-owned create/edit task. `ComponentOperationTask.py`
+now shares section layout and transient previews with Revolve. Native command
+adapters, History routing, single Loft ribbon action and CMake installation lists
+are updated. See REQ-014b/UI-003b and `tests/ComponentLoft.md`.
+
+Isolated candidate: `D:/Temp/Office-PC/freecad-plus-loft-20261003/candidate`.
+Copied from the verified Revolve owner payload; only ComponentLoft, ComponentLoftTask,
+ComponentOperationTask, ComponentRevolveTask, ComponentNavigator and PlusRibbon
+Python modules are replaced/added. Native engine/PartDesignGui remain from that
+payload. This candidate is not an owner delivery and has no shortcut update.
+
+Evidence beneath `D:/Temp/Office-PC/freecad-plus-loft-20261003`:
+`final-loft` passes all eight compatible Loft cases; `shared-revolve` passes two
+shared layout/preview cases; `ribbon` passes two layout/action cases. Module hashes
+match source and overlays are disabled. Retain earlier `pilot`, `frames`,
+`acceptance`, `task-placed`, and `extended` diagnostics: copied whole-sketch frames
+initially collapsed preview sections; direct placed-shape copies fixed it. The
+first task check accessed a deleted status label after OK; subsequent checks pass.
+Stderr contains native topology-hasher warnings also seen in Revolve plus baseline
+stylesheet warnings; no assertion failures or skips in the final runs.
+
+Word update preserves all 1509 original paragraphs and every DOCX package part
+except document.xml, appending three Loft notes. Document and visual evidence:
+`C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a0ffe3-14ce-75e0-9c71-b39d69d25490/loft/doc`.
+The revised task screenshot is in `final-loft/loft-task.png` and was reviewed.
+The final Word render remains 41 pages: pages 1–40 match the previous reviewed
+render exactly; page 41 was visually inspected. SHA256:
+`123ff6c86c1546ae36f6d9538d1e4462b20e0c55cc6c6754e7afa1bf4fac7cac`.
+
+Next grouped build must compile PartDesignGui's Loft command adapters and install
+the new Python modules, run all nine TestComponentLoft cases (including native
+command routing), then deliver/verify the existing desktop shortcut. Batch this
+with the transferred owner requests as they arrive. Do not repeat the already
+passing geometry suite unless final sources/runtime change. Physical pointer and
+high-DPI acceptance remain separate; the prior sketch-drawing issue is unresolved.
+Preserve the pre-existing toolbar-catalog/icon relocation and reviews/Archive files;
+only this task's files belong in its implementation commit.
+The relocated, already-untracked `ui/TOOLBARS.md` has three local Loft-description
+updates; its larger owner relocation remains outside the implementation commit.
+
 ## October 3 unified Revolve owner delivery
 
 Implemented unified component Revolution/Groove creation and editing in

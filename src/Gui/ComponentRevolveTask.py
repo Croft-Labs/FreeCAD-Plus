@@ -4,7 +4,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
 from freecad.gui.ComponentExtrudeTask import ExtrudeTask, active_component
-from freecad.gui.OccurrenceMove import Ghost
+from freecad.gui.ComponentOperationTask import OperationTask
 
 _task = None
 
@@ -13,39 +13,20 @@ def tr(text):
     return App.Qt.translate("ComponentRevolve", text)
 
 
-class RevolveTask(ExtrudeTask):
+class RevolveTask(OperationTask):
+    operation_name = "Revolve"
+
     def __init__(self, component, operation=None, preset=None, context=None):
         import ComponentModel as Model
         import ComponentRevolve as Revolve
+        self.backend = Revolve
         import ComponentProfile as Profile
         self.component, self.operation, self.context = component, operation, context
         self.ghost = self.result = self.mouse_callback = self.reference_pick = None
         self.observing, self.whole_profile = False, True
         self.profile_visibility, self.preview_transparency, self.preview_visibility = {}, {}, {}
         self.view = Gui.getDocument(component.Document.Name).activeView()
-        self.form = QtWidgets.QWidget()
-        self.form.setAutoFillBackground(True)
-        self.form.setBackgroundRole(QtGui.QPalette.Base)
-        self.form.setForegroundRole(QtGui.QPalette.Text)
-        self.form.setStyleSheet("QWidget { background-color: palette(base); color: palette(text); }")
-        self.form.setWindowTitle(tr("Revolve"))
-        outer = QtWidgets.QVBoxLayout(self.form)
-        self.sections = []
-        for title, expanded in (("Main parameters", True), ("Dimensions", True), ("Advanced", False), ("Preview", True)):
-            button = QtWidgets.QToolButton()
-            button.setText(tr(title))
-            button.setCheckable(True)
-            button.setChecked(expanded)
-            button.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
-            button.setArrowType(QtCore.Qt.DownArrow if expanded else QtCore.Qt.RightArrow)
-            body = QtWidgets.QWidget()
-            body.setVisible(expanded)
-            layout = QtWidgets.QFormLayout(body)
-            button.toggled.connect(body.setVisible)
-            button.toggled.connect(lambda checked, b=button: b.setArrowType(QtCore.Qt.DownArrow if checked else QtCore.Qt.RightArrow))
-            outer.addWidget(button)
-            outer.addWidget(body)
-            self.sections.append((button, body, layout))
+        outer = self.build_sections()
         main, dimensions, advanced, preview = [section[2] for section in self.sections]
         self.mode = self.combo(main, "Operation", [(name, name) for name in Revolve.MODES])
         self.target = self.combo(main, "Target body", [("Select a target body…", None)])
@@ -140,13 +121,6 @@ class RevolveTask(ExtrudeTask):
             widget.toggled.connect(self.changed)
         self.preview_button.clicked.connect(self.preview)
         self.changed()
-
-    def combo(self, layout, label, items):
-        widget = QtWidgets.QComboBox()
-        for text, value in items:
-            widget.addItem(tr(text), value)
-        layout.addRow(tr(label), widget)
-        return widget
 
     def angle_row_widget(self, layout, label, value, checkable):
         row = QtWidgets.QWidget()
@@ -257,46 +231,6 @@ class RevolveTask(ExtrudeTask):
                     values[key] = values[key][0], [""]
         elements = None if self.whole_profile else self.curve_names()
         return profile, float(self.angle.property("rawValue")), mode, target, self.reverse.isChecked(), elements, values
-
-    def clear_preview(self):
-        super().clear_preview()
-        for name, visible in self.preview_visibility.items():
-            obj = self.component.Document.getObject(name)
-            if obj:
-                obj.Visibility = visible
-        self.preview_visibility.clear()
-
-    def preview(self):
-        import ComponentRevolve as Revolve
-        import ComponentModel as Model
-        self.clear_preview()
-        if self.preview_mode.currentData() == "None":
-            return True
-        try:
-            final = self.preview_mode.currentData() == "Final Result"
-            shape = Revolve.preview(self.component, *self.values(), volume_only=not final)
-            shape.Placement = self.component.getGlobalPlacement().multiply(shape.Placement)
-            color = {"New Body": (0., 0., 1.), "Add": (0., 1., 0.), "Subtract": (1., 0., 0.)}[self.mode.currentData()]
-            self.ghost = Ghost(shape, color=color, filled=True, transparency=0. if final else 0.5)
-            targets = []
-            if self.mode.currentData() != "New Body" and self.target.currentData():
-                targets.append(Model.display_object(self.component.Document.getObject(self.target.currentData())))
-            if self.operation:
-                targets.extend(Model.display_object(obj) for obj in self.operation.InList if getattr(obj, "Producer", None) == self.operation)
-            for obj in targets:
-                if final or obj == self.operation or (self.operation and getattr(obj, "Producer", None) == self.operation):
-                    self.preview_visibility[obj.Name] = bool(obj.Visibility)
-                    obj.Visibility = False
-                else:
-                    self.preview_visibility[obj.Name] = bool(obj.Visibility)
-                    obj.Visibility = True
-                    self.preview_transparency[obj.Name] = obj.ViewObject.Transparency
-                    obj.ViewObject.Transparency = max(75, obj.ViewObject.Transparency)
-            self.status.setText(tr("Preview ready. OK creates or updates Revolve."))
-            return True
-        except Exception as error:
-            self.status.setText(str(error))
-            return False
 
     def accept(self):
         import ComponentRevolve as Revolve

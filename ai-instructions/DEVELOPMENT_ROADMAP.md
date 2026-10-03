@@ -1,5 +1,34 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 unified component Loft
+
+The owner review found one Plus icon still opening separate native additive and
+subtractive tasks. `ComponentLoft.py` and `ComponentLoftTask.py` now implement one
+component create/edit workflow backed by native AdditiveLoft/SubtractiveLoft.
+REQ-014b/UI-003b define ordered whole-profile/selected-curve sections, end vertices,
+New Body/Add/Subtract with explicit targets, Smooth/Ruled, Closed, Refine and Fuzzy
+tolerance. Section order/placements replace extrusion-only dimensions. The shared
+`ComponentOperationTask` supplies collapsible sections and blue/green/red
+None/Overlay/Final Result previews for Loft and Revolve. History editing uses the
+same task. Type changes preserve component operation/result identities and consumers.
+
+Source and compatible-runtime validation pass: eight Loft tests cover geometry,
+preview isolation, placed/selected/vertex/closed sections, upstream recompute,
+rollback, cyclic-target refusal, downstream references, undo/redo, `.cadprt` reopen,
+History task routing, Cancel and expression protection. Four focused shared
+Revolve/ribbon checks also pass. The initial preview placement defect was fixed;
+the task test's post-OK access to a deleted status label was corrected. Original
+failed evidence is retained. Native topology-hasher and startup stylesheet warnings
+remain recorded; tests do not claim clean stderr. Canonical Word requirements are
+updated, with original paragraphs/numbering retained and affected render inspected.
+
+Native AdditiveLoft/SubtractiveLoft command adapters are implemented in source;
+their rebuilt execution test, grouped owner build/shortcut delivery, and physical
+pointer/high-DPI acceptance remain pending under the build-batching policy. This
+advances 3.3.1/3.3.2, the Loft portion of 3.6.5/7.4.7/8.2.3; it does not complete
+the common acceptance gate or the unrequested remainder. WORK_STATE owns exact
+candidate/evidence paths. No new owner payload or release is claimed.
+
 ## October 3 unified component Revolve
 
 Owner review found the Plus Revolve button still entered native additive creation,
@@ -1664,6 +1693,9 @@ the [common acceptance](#feature-task-acceptance), reusing their existing select
 
 - [   ] 3.3.1 Additive Loft: integrate base-profile and ordered-section selection from startup.
 - [   ] 3.3.2 Subtractive Loft: integrate the equivalent subtractive workflow.
+  Both Loft workflows are implemented for component documents; eight compatible
+  runtime checks pass. Native command build and physical acceptance remain pending;
+  see [the Loft milestone](#october-3-unified-component-loft).
 - [   ] 3.3.3 Additive Pipe: integrate profile, spine, auxiliary references, and section/scaling controls.
 - [   ] 3.3.4 Subtractive Pipe: integrate the equivalent subtractive workflow.
 
@@ -1798,6 +1830,8 @@ retain their own workflows while sharing appropriate selection and task conventi
   checks do not complete the common acceptance criteria for this milestone.
 - [   ] 3.6.4 Implement Revolve, covering both tasks 3.2.3 and 3.2.4.
 - [   ] 3.6.5 Implement Loft and Sweep, covering all four tasks in 3.3.
+  Component Loft implementation/runtime acceptance is recorded above; command build,
+  physical acceptance and the Sweep portion remain separate.
 - [   ] 3.6.6 Implement Helix, covering tasks 3.2.5 and 3.2.6.
 - [   ] 3.6.7 Implement paired primitive workflows and decide whether to expose them
   through one Primitive command; validate all eight shapes in both operations.

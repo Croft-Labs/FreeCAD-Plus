@@ -113,8 +113,8 @@ Transformation has Mirror Feature, Linear Pattern, Circular Pattern and Multi Tr
 as separate buttons. Primitives lists Box, Cylinder, Sphere, Cone, Ellipsoid, Torus,
 Prism, Wedge and Tab. Tab is a disabled future entry until a real creation command
 exists. Use one icon per combined additive/subtractive workflow even before its
-unified task is implemented; native Loft/Helix variants remain in the single-icon
-menus for now. Primitive opens the native default primitive action.
+unified task is implemented. Loft now opens one combined task; native Helix variants
+remain in its single-icon menu. Primitive opens the native default primitive action.
 Sketch uses exactly Sketcher, Edit Mode, Geometries, Constraints, Tools, B-Spline
 and Helpers, in that order. The owner outline in the Word specification and toolbar
 reference supplies every button and ordered dropdown choice. Individual line,
@@ -344,6 +344,30 @@ Keyboard/high-DPI/manual viewport acceptance is tracked separately in milestone 
 Source: [`TaskRevolutionParameters.cpp`](../src/Mod/PartDesign/Gui/TaskRevolutionParameters.cpp),
 [`TaskRevolutionParameters.ui`](../src/Mod/PartDesign/Gui/TaskRevolutionParameters.ui).
 Validation: [Revolve task procedure](../tests/RevolveTaskPanel.md).
+
+### UI-003b: Unified component Loft
+
+Satisfies REQ-014b. `ComponentLoftTask` serves creation and History editing.
+The Plus Loft button has no separate additive/subtractive dropdown. Native command
+aliases route component documents to the same task (Subtract presets Subtract);
+legacy Body documents retain their native task. Command-module build acceptance
+is recorded separately in the roadmap.
+
+| Section | Behavior |
+| --- | --- |
+| Main parameters, expanded | New Body/Add/Subtract; target visible only for Add/Subtract; ordered section list; whole-profile or selected closed sketch-curve draft; append/replace/remove/clear and row inspection; Smooth/Ruled interpolation. Valid preselection preserves order; empty startup is supported. |
+| Dimensions, expanded | Move up/down and Reverse order. Section placements define the span, so extrusion length/offset and angular extent do not apply. |
+| Advanced, collapsed | Closed joins last to first (at least three sections); Refine; native Fuzzy tolerance from -1 to 1 mm, with zero default and negative automatic tolerance. |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result, Overlay default, blue New Body/green Add/red Subtract. Temporary documents do not mutate source geometry. Cancel restores visibility and removes previews. |
+
+Native AdditiveLoft/SubtractiveLoft own geometry and ordered Profile/Sections links.
+Selected sketch regions reuse `ComponentProfile` associative internal profiles;
+vertices are supported at open Loft ends. Invalid sections, stale/cyclic inputs,
+invalid solids and ineffective Booleans cannot be accepted. Failed edits roll back.
+Published result links and operation ObjectId survive Boolean mode changes,
+undo/redo and persistence. Formula-driven operations and other native Boolean
+semantics remain protected from task overwrites. The shared `ComponentOperationTask`
+layout/preview implementation also serves Revolve. See [acceptance](../tests/ComponentLoft.md).
 
 ### UI-004: Trim Body task pane
 

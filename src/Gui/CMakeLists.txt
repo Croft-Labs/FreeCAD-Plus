@@ -1527,6 +1527,8 @@ set(FreeCADGui_Scripts
     PlusDefaults.py
     ComponentExtrudeTask.py
     ComponentRevolveTask.py
+    ComponentOperationTask.py
+    ComponentLoftTask.py
     ComponentSketchTask.py
     ProjectPackage.py
     DependencyInspector.py

@@ -355,8 +355,7 @@ class TestPlusRibbon(unittest.TestCase):
         self.assertLess(self.ribbon.toolbar.height(), 170)
         for name in ("PartDesign_SubtractiveLoft", "PartDesign_SubtractivePipe", "PartDesign_SubtractiveHelix"):
             self.assertIsNone(self.button(name), "Rare variants belong in the family menu")
-        self.assertIn(Gui.Command.get("PartDesign_SubtractiveLoft").getAction()[0],
-                      self.button("PartDesign_AdditiveLoft").menu().actions())
+        self.assertIsNone(self.button("PartDesign_AdditiveLoft").menu())
 
     def testAutoDimensionChoicesAndSharedNativeStates(self):
         self.tab("Sketch")

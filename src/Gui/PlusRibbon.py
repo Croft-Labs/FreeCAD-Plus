@@ -270,7 +270,7 @@ COMMAND_FAMILIES = (
     ("Sketcher_Dimension",
      DIMENSION_CHOICES + ("Sketcher_CompDimensionTools", "Sketcher_CompConstrainRadDia"), DIMENSION_CHOICES),
     ("PartDesign_AdditiveLoft", ("PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft"),
-     ("PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft")),
+     ("PartDesign_AdditiveLoft",)),
     ("PartDesign_AdditivePipe", ("PartDesign_AdditivePipe", "PartDesign_SubtractivePipe"),
      ("PartDesign_AdditivePipe", "PartDesign_SubtractivePipe")),
     ("PartDesign_AdditiveHelix", ("PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix"),
@@ -760,7 +760,7 @@ class Ribbon(QtCore.QObject):
             view = self.mode_name == "Design" and self.current_tab() == "View"
             entries = ((name, None) for name in commands) if modeling or sketch or assembly or view else projected_commands(commands)
             for command_name, choices in entries:
-                if modeling and command_name in ("PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix"):
+                if modeling and command_name == "PartDesign_AdditiveHelix":
                     choices = (command_name, command_name.replace("Additive", "Subtractive"))
                 if self.mode_name == "Design" and self.current_tab() == "Home" and command_name == "PartDesign_Fillet":
                     choices = ("PartDesign_Fillet", "PartDesign_Chamfer")
