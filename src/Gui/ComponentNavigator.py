@@ -1296,6 +1296,9 @@ class Navigator(QtWidgets.QDockWidget):
         elif getattr(obj, "OperationKind", "") == "Extrude":
             from freecad.gui.ComponentExtrudeTask import launch
             launch(operation=obj)
+        elif getattr(obj, "OperationKind", "") == "Helix":
+            from freecad.gui.ComponentHelixTask import launch
+            launch(operation=obj)
         elif getattr(obj, "OperationKind", "") == "Pipe":
             from freecad.gui.ComponentPipeTask import launch
             launch(operation=obj)

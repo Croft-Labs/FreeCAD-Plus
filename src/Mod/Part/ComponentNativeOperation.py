@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Native component section operations: binding, transactions and stable result identities.
 
-Loft and Pipe adapters own geometry configuration and validation. This module owns
+Operation adapters own geometry configuration and validation. This module owns
 their common component lifecycle; native features still own recompute and persistence.
 """
 import json
@@ -12,7 +12,7 @@ import ComponentProfile as Profile
 
 def read_sections(operation):
     sections = []
-    for obj, elements in [operation.Profile] + list(operation.Sections):
+    for obj, elements in [operation.Profile] + list(getattr(operation, "Sections", [])):
         if hasattr(obj, "ProfileSource"):
             obj, elements = obj.ProfileSource
             sections.append((obj, list(elements)))
@@ -83,8 +83,10 @@ def edit(adapter, operation, sections, mode, target=None, options=None):
     replace = (mode == "Subtract") != (getattr(operation, adapter.MODE_PROPERTY) == "Subtract")
     if replace and any(obj not in results + [component] for obj in operation.InList):
         raise ValueError("Use the published result for downstream references before changing operation type.")
-    old_profiles = {obj for obj, elements in [operation.Profile] + list(operation.Sections) if hasattr(obj, "ProfileSource")}
-    if any(obj not in (component, operation) for profile in old_profiles for obj in profile.InList):
+    old_profiles = {obj for obj, elements in [operation.Profile] + list(getattr(operation, "Sections", [])) if hasattr(obj, "ProfileSource")}
+    if hasattr(adapter, "internal_inputs"):
+        old_profiles.update(adapter.internal_inputs(operation))
+    if any(obj not in {component, operation} | old_profiles for profile in old_profiles for obj in profile.InList):
         raise ValueError("A selected-curve section has another consumer.")
     previous, consumed = json.loads(operation.PreviousVisibility), list(operation.ConsumedResults)
     target_visibility = previous.get(target.ObjectId, bool(target.Visibility)) if target else None

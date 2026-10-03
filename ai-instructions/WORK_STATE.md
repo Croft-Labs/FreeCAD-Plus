@@ -1,5 +1,59 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 unified Helix — source ready for grouped build
+
+`ComponentHelix.py` / `ComponentHelixTask.py` now combine native additive/subtractive
+Helix in a component task. Single ribbon action, History/native command routes and
+CMake script lists are updated. `ComponentNativeOperation` accepts a single profile
+and adapter-owned internal inputs; `ComponentOperationTask` now shares the single
+profile collector and reference picking with Revolve. See REQ-014d/UI-003d and
+`tests/ComponentHelix.md` for contracts and acceptance procedure.
+
+Candidate: `D:/Temp/Office-PC/freecad-plus-helix-20261003/candidate`, copied from the
+Pipe candidate. Added/replaced Part modules: ComponentHelix, ComponentNativeOperation.
+GUI modules: ComponentHelixTask, ComponentOperationTask, ComponentRevolveTask,
+ComponentNavigator, PlusRibbon. Other runtime provenance remains the Pipe/Loft
+candidate chain and verified Revolve owner payload: native engine 6be8eda424 and
+the Revolve-built PartDesignGui. This candidate is not an owner delivery.
+
+Evidence beneath `D:/Temp/Office-PC/freecad-plus-helix-20261003`:
+`acceptance` passes eight compatible Helix cases. `shared-loft` passes three,
+`shared-pipe` three, `shared-revolve` two, `ribbon-final` two. `task-axes` passes
+two final task cases after adding direct component X/Y/Z choices and a picked-axis
+assertion. Total final evidence: 18 distinct cases, 20 passing executions, zero
+failures/errors/skips in these runs, without source overlays. Module hashes match
+the respective tested sources. Only HelixTask and PlusRibbon changed after the full
+Helix run; their final changes are covered by task-axes and ribbon-final. Normal and
+expanded task captures were inspected, including the final reference-axis state.
+
+Retain failed/diagnostic `pilot`, `extended`, `axes`, `final-helix`, `construction`
+and `shared-ribbon`, plus passing `placed-axes`. Repairs: whole-sketch preview
+placement was being applied twice; native Axis0 links canonicalize to Axis and
+must be normalized for editing; selected profiles need an associative construction
+axis helper with separate Link/String metadata; the Modeling ribbon had a specific
+legacy Helix-menu override. Fixture repairs added missing target/edge recomputes
+and used Sketcher constraints instead of the unavailable movePoint API. Native
+construction-axis versus explicit-line approximation differed by 1.31e-6 cubic mm;
+the volume comparison now uses five decimal places. Native Refine fallback and
+startup stylesheet warnings remain recorded; valid solids do not prove splitter
+removal. No physical pointer/high-DPI acceptance is claimed.
+
+Word update retains all 1515 previous paragraphs exactly as XML and all package
+parts except document.xml; three Helix notes appended. SHA256:
+`c3afc5663d68a3248006548a86fdaafd84941f137343075a18ae8671be7e8f1b`.
+Evidence: `C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a0ffe3-14ce-75e0-9c71-b39d69d25490/helix/doc`.
+Rendered 43 pages: pages 1–41 exactly match the reviewed Pipe render; affected pages
+42–43 were visually inspected. The sibling update_doc.py records preservation.
+
+Next grouped build must compile Loft/Pipe/Helix native command adapters and install
+all new/shared Python modules. Run full TestComponentHelix (nine cases),
+TestComponentPipe (eight) and TestComponentLoft (nine), including native routing;
+then deliver and verify the existing desktop shortcut. Batch remaining related
+owner requests before this build. Physical pointer/high-DPI and the prior sketch
+drawing report remain pending. Preserve unrelated toolbar/icon relocation, reviews
+and Archive. Three local Helix catalog descriptions in already-untracked
+`ui/TOOLBARS.md` remain with that relocation and outside the source commit.
+
 ## October 3 unified Pipe — source ready for grouped build
 
 `ComponentPipe.py` / `ComponentPipeTask.py` provide the unified component Pipe

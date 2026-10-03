@@ -113,8 +113,8 @@ Transformation has Mirror Feature, Linear Pattern, Circular Pattern and Multi Tr
 as separate buttons. Primitives lists Box, Cylinder, Sphere, Cone, Ellipsoid, Torus,
 Prism, Wedge and Tab. Tab is a disabled future entry until a real creation command
 exists. Use one icon per combined additive/subtractive workflow even before its
-unified task is implemented. Loft and Pipe now open their combined tasks; native Helix variants
-remain in its single-icon menu. Primitive opens the native default primitive action.
+unified task is implemented. Loft, Pipe and Helix now open their combined tasks
+without additive/subtractive menus. Primitive opens the native default primitive action.
 Sketch uses exactly Sketcher, Edit Mode, Geometries, Constraints, Tools, B-Spline
 and Helpers, in that order. The owner outline in the Word specification and toolbar
 reference supplies every button and ordered dropdown choice. Individual line,
@@ -397,6 +397,32 @@ operation identity survive Boolean mode changes, undo/redo and `.cadprt` reopeni
 `ComponentNativeOperation` owns common Loft/Pipe binding and transactional lifecycle;
 `ComponentSectionTask` owns their ordered section collector. Both reuse the existing
 `ComponentProfile` and `ComponentOperationTask` services. See [acceptance](../tests/ComponentPipe.md).
+
+### UI-003d: Unified component Helix
+
+Satisfies REQ-014d and the owner's Helix/shared-operation template. One Helix ribbon
+action and component AdditiveHelix/SubtractiveHelix aliases use `ComponentHelixTask`
+for creation and History editing; SubtractiveHelix presets Subtract. Legacy Body
+documents retain native tasks. Native command build/delivery are separate gates.
+
+| Section | Behavior |
+| --- | --- |
+| Main parameters, expanded | New Body/Add/Subtract with explicit target only for Add/Subtract; whole profile or selected closed sketch curves/regions, editable curve list, Add selected/Remove/Clear/Use all. Mode retains Pitch-Height-Angle, Pitch-Turns-Angle, Height-Turns-Angle and Height-Turns-Growth. Helix has no independent extent/termination Type or sidedness. Empty startup and preselection are supported. |
+| Dimensions, expanded | Sketch vertical (default), horizontal, normal or construction axis; picked/typed datum, origin, straight-edge or circular-edge reference. Show the mode's independent pitch/height/turns/cone-angle/growth fields. Axial reverse arrow and Left handed remain independent. Mode changes derive dependent values using native laws. Suggest pitch/height uses the native profile-bounds heuristic; initial preselection applies it. Defaults without a profile are pitch 10 mm, height 30 mm, 3 turns and zero angle/growth. Zero height is allowed by the native flat-spiral mode. |
+| Advanced, collapsed | Native Subtraction/Common for Subtract, Refine enabled, fusion tolerance factor (default 0.1, not a length), Fuzzy tolerance (-1 to 1 mm, zero native default, negative automatic). |
+| Preview, expanded | Recompute on change enabled; None/Overlay/Final Result, default Overlay, blue New Body/green Add/red Subtract. Final Result temporarily hides the previous target/result; Cancel removes preview geometry and restores visibility. |
+
+Native AdditiveHelix/SubtractiveHelix retain geometry, units, property identities
+and dependent dimensions. Cone angle is limited to -89 through +89 degrees;
+invalid dimensions, axes, stale/cyclic dependencies, disconnected results and
+ineffective Booleans cannot be accepted. Failed edits roll back atomically.
+Expression-driven operations remain protected from task overwrites. Type changes
+preserve the component operation ID, published result object, consumers and History
+through undo/redo and `.cadprt` persistence. Selected-curve construction axes use an
+associative internal line so the original sketch axis remains authoritative.
+`ComponentNativeOperation` supplies lifecycle transactions; `ComponentOperationTask`
+shares the profile collector and reference picking with Revolve, and preview/layout
+with Pipe and Loft. See [acceptance](../tests/ComponentHelix.md).
 
 ### UI-004: Trim Body task pane
 

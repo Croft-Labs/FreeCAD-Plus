@@ -28,7 +28,7 @@ Do not claim to have read missing guidance or maintain an independent master cop
   versioned `.cadprt` persistence. Follow the approved component contract; continue
   its integration and acceptance work before unrelated feature rotation.
 - Current implementation scope includes unified Pad/Pocket Extrude and the
-  owner-requested combined Additive/Subtractive Loft and Pipe component workflows, and the
+  owner-requested combined Additive/Subtractive Loft, Pipe and Helix component workflows, and the
   user-requested Linear/Circular Pattern task workflow, and signed angular start
   offsets/direction buttons for Revolution and Groove, and the user-requested
   associative Trim Body workflow and draft-angle Isocline Curves in Part and Part Design.

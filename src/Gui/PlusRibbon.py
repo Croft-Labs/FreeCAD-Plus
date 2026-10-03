@@ -274,7 +274,7 @@ COMMAND_FAMILIES = (
     ("PartDesign_AdditivePipe", ("PartDesign_AdditivePipe", "PartDesign_SubtractivePipe"),
      ("PartDesign_AdditivePipe",)),
     ("PartDesign_AdditiveHelix", ("PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix"),
-     ("PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix")),
+     ("PartDesign_AdditiveHelix",)),
 )
 _ribbon = None
 
@@ -760,8 +760,6 @@ class Ribbon(QtCore.QObject):
             view = self.mode_name == "Design" and self.current_tab() == "View"
             entries = ((name, None) for name in commands) if modeling or sketch or assembly or view else projected_commands(commands)
             for command_name, choices in entries:
-                if modeling and command_name == "PartDesign_AdditiveHelix":
-                    choices = (command_name, command_name.replace("Additive", "Subtractive"))
                 if self.mode_name == "Design" and self.current_tab() == "Home" and command_name == "PartDesign_Fillet":
                     choices = ("PartDesign_Fillet", "PartDesign_Chamfer")
                 size = "medium" if self.current_tab() == "Home" and title in ("Main", "Frequent operations") else None

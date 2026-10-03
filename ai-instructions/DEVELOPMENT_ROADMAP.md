@@ -1,5 +1,34 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 unified component Helix
+
+The owner audit found separate native additive/subtractive tasks behind the Helix
+ribbon menu. Source now implements one component create/edit task and one action
+under REQ-014d/UI-003d. It preserves all four parameter modes, whole/selected
+profiles, sketch/construction/component/datum/edge axes, pitch/height/turns,
+cone angle/growth, handedness, axial reversal, refinement/tolerances and Common.
+The common template supplies explicit targets, four collapsible sections and
+blue/green/red previews. Native geometry is unchanged. Shared transactional code
+now accepts single-profile operations; Revolve/Helix share profile/reference controls.
+
+Eight Helix acceptance cases pass, including mode changes, flat/conical sweeps,
+Boolean/preview geometry, selected construction-axis association and persistence,
+placed/rotated profile and datum preview parity, stable IDs, downstream recompute,
+undo/redo, rollback, expressions, History editing and Cancel. Ten shared
+Loft/Pipe/Revolve/ribbon cases pass; two final task cases additionally cover direct
+component-axis choices and picked references. Normal/expanded task captures were
+inspected. Fixed placed whole-sketch preview transforms, construction-axis zero-index
+canonicalization and the Modeling-specific legacy menu override. Initial fixture
+errors and failed evidence remain retained. Native Refine fallback warnings remain;
+valid solids do not certify successful splitter removal.
+
+The owner Word specification is synchronized with existing paragraphs/numbering
+preserved and affected rendering reviewed. Native command adapters are implemented
+in source; their grouped PartDesignGui build/routing tests, owner shortcut delivery
+and physical pointer/high-DPI acceptance remain pending. This advances 3.2.5/3.2.6,
+3.6.6 and Helix portions of 7.4.7/8.2.3 without closing those delivery gates.
+WORK_STATE owns exact candidate, test and Word evidence. No owner build/release is claimed.
+
 ## October 3 unified component Pipe
 
 The owner audit found the native additive/subtractive Pipe tasks still separate
@@ -1713,6 +1742,9 @@ including profile replacement while editing an existing feature.
 - [   ] 3.2.4 Groove: provide equivalent subtractive profile editing.
 - [   ] 3.2.5 Additive Helix: add profile selection alongside helix controls.
 - [   ] 3.2.6 Subtractive Helix: provide equivalent subtractive profile editing.
+  Both component Helix workflows are implemented with eight compatible runtime
+  cases passing; native command build and owner delivery remain pending. See
+  [the Helix milestone](#october-3-unified-component-helix).
 
 ### [   ] 3.3 Complete Loft and Pipe input workflows
 
@@ -1865,6 +1897,8 @@ retain their own workflows while sharing appropriate selection and task conventi
   Component Loft and Pipe implementation/runtime acceptance is recorded above; command build,
   physical acceptance and the Sweep portion remain separate.
 - [   ] 3.6.6 Implement Helix, covering tasks 3.2.5 and 3.2.6.
+  Component implementation/runtime acceptance passes as recorded above; grouped
+  native routing and owner delivery remain pending.
 - [   ] 3.6.7 Implement paired primitive workflows and decide whether to expose them
   through one Primitive command; validate all eight shapes in both operations.
 - [   ] 3.6.8 Verify Add-to-Subtract and Subtract-to-Add during creation and on reopened

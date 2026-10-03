@@ -357,6 +357,7 @@ class TestPlusRibbon(unittest.TestCase):
             self.assertIsNone(self.button(name), "Rare variants belong in the family menu")
         self.assertIsNone(self.button("PartDesign_AdditiveLoft").menu())
         self.assertIsNone(self.button("PartDesign_AdditivePipe").menu())
+        self.assertIsNone(self.button("PartDesign_AdditiveHelix").menu())
         self.assertEqual(self.button("PartDesign_AdditivePipe").text(), "Pipe")
 
     def testAutoDimensionChoicesAndSharedNativeStates(self):

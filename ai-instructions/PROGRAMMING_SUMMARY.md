@@ -2,14 +2,17 @@
 
 ## Project at a glance
 
-Component Pipe and Loft now combine their native additive/subtractive features
-through `src/Mod/Part/ComponentPipe.py` / `ComponentLoft.py` and their corresponding
-`src/Gui/ComponentPipeTask.py` / `ComponentLoftTask.py` tasks.
+Component Helix, Pipe and Loft now combine their native additive/subtractive features
+through `src/Mod/Part/ComponentHelix.py` / `ComponentPipe.py` / `ComponentLoft.py` and
+their corresponding `src/Gui/ComponentHelixTask.py` / `ComponentPipeTask.py` /
+`ComponentLoftTask.py` tasks.
 `ComponentNativeOperation.py` owns their common binding and transactional lifecycle;
 `ComponentSectionTask.py` owns ordered section collection. `ComponentOperationTask.py`
-shares collapsible layout and transient previews with Revolve. Native command routing
+shares collapsible layout, transient previews and the single-profile/axis collector
+with Revolve. Native command routing
 and owner delivery await the grouped build; see [Pipe acceptance](../tests/ComponentPipe.md),
-[Loft acceptance](../tests/ComponentLoft.md) and current WORK_STATE.
+[Loft acceptance](../tests/ComponentLoft.md), [Helix acceptance](../tests/ComponentHelix.md)
+and current WORK_STATE.
 
 FreeCAD Plus is Croft-Labs' FreeCAD fork, a desktop parametric CAD application
 using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through

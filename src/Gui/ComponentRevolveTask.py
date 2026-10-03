@@ -33,27 +33,7 @@ class RevolveTask(OperationTask):
         for obj in Model.finished_results(component):
             if obj.Shape.Solids and (operation is None or operation not in obj.OutListRecursive):
                 self.target.addItem(Model.display_object(obj).Label, obj.Name)
-        self.profile = self.combo(main, "Profile", [("Select a profile…", None)])
-        for obj in Model.history(component):
-            if (getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result") and hasattr(obj, "Shape")
-                    and not obj.Shape.Solids and obj.Shape.Edges):
-                self.profile.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        self.curves = QtWidgets.QListWidget()
-        self.curves.setMaximumHeight(100)
-        self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        main.addRow(tr("Curves"), self.curves)
-        row = QtWidgets.QWidget()
-        buttons = QtWidgets.QHBoxLayout(row)
-        buttons.setContentsMargins(0, 0, 0, 0)
-        for label, callback in (("Add selected", self.use_selection), ("Remove", self.remove_selected_curves),
-                                ("Clear", lambda: self.set_curves([], False)), ("Use all", self.profile_changed)):
-            button = QtWidgets.QPushButton(tr(label))
-            button.clicked.connect(callback)
-            buttons.addWidget(button)
-        main.addRow(row)
-        self.region_pick = QtWidgets.QCheckBox(tr("Pick closed regions in the view"))
-        self.region_pick.setChecked(True)
-        main.addRow(self.region_pick)
+        self.build_profile_collector(main)
         self.sides = self.combo(main, "Mode", [("One angle", "One side"), ("Two angles", "Two sides"), ("Symmetric", "Symmetric")])
         self.extent = self.combo(main, "Type", [])
         self.extent2 = self.combo(main, "Side 2 type", [])
@@ -190,23 +170,6 @@ class RevolveTask(OperationTask):
     def start_changed(self, *args):
         if self.start.currentData() == "Profile plane":
             self.offset.setProperty("rawValue", 0.)
-
-    def begin_reference_pick(self, field):
-        self.reference_pick = field
-        self.status.setText(tr("Pick a local axis, edge, plane or limiting face."))
-
-    def addSelection(self, document, name, subname, *args):
-        if self.reference_pick is not None:
-            import ComponentModel as Model
-            doc = App.listDocuments().get(document)
-            base = doc.getObject(name) if doc else None
-            item = base.getSubObject(subname, 1) if base and subname else base
-            if item and (Model.owner(item) == self.component or item in self.component.Origin.OriginFeatures):
-                element = subname.rsplit(".", 1)[-1]
-                self.reference_pick.setText(item.Name + ("." + element if element.startswith(("Face", "Edge")) else ""))
-                self.reference_pick = None
-                return
-        super().addSelection(document, name, subname, *args)
 
     def values(self):
         import ComponentExtent as Extent
