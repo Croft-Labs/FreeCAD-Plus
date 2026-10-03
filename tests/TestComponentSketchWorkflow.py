@@ -222,6 +222,86 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         self.assertAlmostEqual((child.Placement.Base - before).z, 5)
         self.assertPlacement(child.Placement, child_plane.Placement)
 
+    def test_datum_axis_directions_origin_recompute_and_reopen(self):
+        box = self.box()
+        for axis, direction in (("X", (0, 1, 0)), ("Y", (1, 0, 0))):
+            plane = Sketch.create_plane(self.root, "Selected planar face", 3, (box, "Face6"),
+                                        origin=(4, 5), directions=(axis, direction, (0, 0, 2)))
+            self.assertAlmostEqual(plane.AttachmentOffset.Base.x, 4)
+            self.assertAlmostEqual(plane.AttachmentOffset.Base.y, 5)
+            local_axis = App.Vector(1, 0, 0) if axis == "X" else App.Vector(0, 1, 0)
+            self.assertLess((plane.AttachmentOffset.Rotation.multVec(local_axis)-App.Vector(*direction)).Length, 1e-7)
+            self.assertLess((plane.AttachmentOffset.Rotation.multVec(App.Vector(0, 0, 1))-App.Vector(0, 0, 1)).Length, 1e-7)
+            sketch = Sketch.create(self.root, "User plane", support=plane)
+            before = sketch.Placement.Base
+            box.Height = box.Height.Value + 5
+            self.doc.recompute()
+            self.assertAlmostEqual((sketch.Placement.Base-before).z, 5)
+            self.assertPlacement(sketch.Placement, plane.Placement)
+        expected = [(obj.Name, obj.ObjectId, obj.Placement) for obj in Model.history(self.root)]
+        path = self.output / "datum-directions.cadprt"
+        self.doc.saveAs(str(path))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        for name, identity, placement in expected:
+            obj = self.doc.getObject(name)
+            self.assertEqual(obj.ObjectId, identity)
+            self.assertPlacement(obj.Placement, placement)
+
+    def test_datum_invalid_directions_cancel_and_atomic_undo(self):
+        task = Task.launch(self.root, datum_only=True)
+        before = [obj.Name for obj in self.doc.Objects]
+        task.orientation_mode.setCurrentIndex(task.orientation_mode.findData("Axis directions"))
+        for control, value in zip(task.directions[0], (0, 0, 1)):
+            control.setValue(value)
+        self.assertFalse(task.accept())
+        self.assertIn("parallel", task.status.text())
+        self.assertEqual([obj.Name for obj in self.doc.Objects], before)
+        task.reject()
+        self.assertEqual([obj.Name for obj in self.doc.Objects], before)
+        for directions in (("X", (0, 0, 0), (0, 0, 1)), ("Y", (1, 0, 0), (0, 0, 0))):
+            with self.assertRaises(ValueError):
+                Sketch.create_plane(self.root, directions=directions)
+        plane = Sketch.create_plane(self.root, "XZ plane", 2, origin=(3, -4))
+        identity = plane.ObjectId
+        self.doc.undo()
+        self.assertEqual([obj.Name for obj in self.doc.Objects], before)
+        self.doc.redo()
+        self.assertEqual(Model.history(self.root)[0].ObjectId, identity)
+
+    def test_datum_created_during_sketch_is_available_immediately(self):
+        task = self.launch()
+        task.plane.setCurrentIndex(task.plane.findData("Create new plane"))
+        task.origins[0].setProperty("rawValue", 6)
+        task.offset.setProperty("rawValue", -2)
+        task.orientation_mode.setCurrentIndex(task.orientation_mode.findData("Axis directions"))
+        task.direction_axis.setCurrentIndex(task.direction_axis.findData("Y"))
+        settle()
+        task.form.grab().save(str(self.output / "datum-three-sections.png"))
+        QtTest.QTest.mouseClick(task.create_datum, QtCore.Qt.LeftButton)
+        settle()
+        self.assertEqual(task.plane.currentData(), "User plane", task.status.text())
+        plane = self.doc.getObject(task.user_plane.currentData())
+        self.assertIn(plane, Sketch.user_planes(self.root))
+        self.assertEqual(len(Model.history(self.root)), 1)
+        self.assertEqual(float(task.offset.property("rawValue")), 0)
+        obj = self.accept(task)
+        self.assertEqual(obj.AttachmentSupport[0][0], plane)
+        self.assertPlacement(obj.Placement, plane.Placement)
+        self.close_editor()
+        task = self.launch()
+        self.assertNotEqual(task.user_plane.findData(plane.Name), -1)
+        task.reject()
+
+    def test_part_datum_plane_is_available_as_sketch_support(self):
+        plane = self.doc.addObject("Part::DatumPlane", "NativeDatum")
+        Model.register_object(self.root, plane)
+        plane.Placement = App.Placement(App.Vector(2, 3, 4), App.Rotation(App.Vector(1, 0, 0), 30))
+        self.doc.recompute()
+        self.assertIn(plane, Sketch.user_planes(self.root))
+        sketch = Sketch.create(self.root, "User plane", support=plane)
+        self.assertPlacement(sketch.Placement, plane.Placement)
+
     def test_invalid_supports_and_new_plane_rollback(self):
         box = self.box()
         cylinder = self.doc.addObject("Part::Cylinder", "Cylinder")

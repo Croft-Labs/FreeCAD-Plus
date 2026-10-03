@@ -38,6 +38,12 @@ class TestComponentStartActions(unittest.TestCase):
         Navigator.install_startup_layout()
         Navigator.install_start_actions()
         self.actions = Navigator._start_actions
+        self.settle()  # Let native startup attach the Tasks overlay host first.
+        # No-document startup assertions require docked Tasks. With the owner's
+        # overlay preset its host is hidden on the Start page (also in baseline).
+        dock = self.window.findChild(QtWidgets.QDockWidget, "Tasks")
+        if dock and dock.parentWidget() != self.window:
+            Gui.runCommand("Std_DockOverlayAll")
         self.messages = []
         self.watchdog = QtCore.QTimer()
         self.watchdog.timeout.connect(self.dismiss_dialogs)
@@ -124,12 +130,12 @@ class TestComponentStartActions(unittest.TestCase):
         self.new_file()
         root = Model.metadata(App.ActiveDocument).RootComponent
         for command, kind in (("Part_CoordinateSystem", "Part::LocalCoordinateSystem"),
-                              ("Part_DatumPlane", "Part::DatumPlane")):
+                              ("Std_ComponentDatumPlane", "PartDesign::Plane")):
             self.click(command)
-            created = [obj for obj in App.ActiveDocument.Objects if obj.isDerivedFrom(kind)]
-            self.assertTrue(created)
-            self.assertIn(created[-1], root.Group)
             self.assertIsNotNone(Gui.Control.activeDialog())
+            if command == "Std_ComponentDatumPlane":
+                self.assertEqual([section.title() for section in SketchTask._task.sections],
+                                 ["Define Plane", "Define Origin", "Define Orientation"])
             boxes = [box for box in self.window.findChildren(QtWidgets.QDialogButtonBox)
                      if box.isVisibleTo(self.window) and box.button(QtWidgets.QDialogButtonBox.Ok)]
             self.assertTrue(boxes)
@@ -137,6 +143,9 @@ class TestComponentStartActions(unittest.TestCase):
             self.settle()
             self.assertFalse(Gui.Control.activeDialog())
             self.assertFalse(App.ActiveDocument.HasPendingTransaction)
+            created = [obj for obj in App.ActiveDocument.Objects if obj.isDerivedFrom(kind)]
+            self.assertTrue(created)
+            self.assertIn(created[-1], root.Group)
         with patch.object(QtWidgets.QInputDialog, "getItem",
                           side_effect=lambda *args: (args[3][0], True)), \
                 patch.object(QtWidgets.QInputDialog, "getText", return_value=("Part002", True)):
@@ -151,6 +160,27 @@ class TestComponentStartActions(unittest.TestCase):
         App.closeDocument(App.ActiveDocument.Name)
         self.settle()
         self.assertEqual(self.labels(), ["New File", "Open"])
+
+    def testDatumPlaneInOverlayTasksAfterNewFile(self):
+        Gui.runCommand("Std_DockOverlayAll")
+        try:
+            # New File is always available in the common toolbar, including
+            # while the overlay host is hidden on the no-document Start page.
+            Gui.runCommand("Std_New")
+            self.settle()
+            self.click("Std_ComponentDatumPlane")
+            task = SketchTask._task
+            self.assertTrue(task.datum_only)
+            self.assertEqual([s.title() for s in task.sections],
+                             ["Define Plane", "Define Origin", "Define Orientation"])
+            Gui.Control.activeTaskDialog().accept()
+            self.settle()
+            root = Model.metadata(App.ActiveDocument).RootComponent
+            self.assertEqual(len(Model.history(root)), 1)
+            self.assertEqual(Model.history(root)[0].TypeId, "PartDesign::Plane")
+            self.assertFalse(Gui.Control.activeDialog())
+        finally:
+            Gui.runCommand("Std_DockOverlayAll")
 
     def testNativeWatchersPreservedOutsideComponentDesign(self):
         doc = App.newDocument("Legacy")

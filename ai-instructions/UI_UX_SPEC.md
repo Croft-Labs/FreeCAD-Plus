@@ -698,13 +698,31 @@ preselection and viewport picks choose the support. Use selected face or plane
 also captures a support explicitly. User plane lists local native datum planes
 and Part planes by label while retaining object identity.
 
-Create new plane reveals Base plane and Rotation X/Y/Z. The base can be an origin
-plane, local planar face or existing user plane. Offset is measured along the
-base normal; rotations apply X, then Y, then Z in the base frame. OK creates a
+Create new plane and the new-file Tasks **Datum Plane** action share three sections:
+**Define Plane** retains origin-plane, selected planar-face and user-plane attachment
+choices; **Define Origin** contains Origin X/Y and Origin Z / Offset in the base
+attachment frame; **Define Orientation** retains Rotation X/Y/Z and adds an Axis
+directions mode. That mode accepts either an X-axis or Y-axis direction and a
+Z-axis direction as numeric XYZ vectors. Z defines the normal; the in-plane vector
+is projected perpendicular to Z. Nonzero, nonparallel vectors are required. Defaults
+remain XY, zero origin/offset and zero rotations. Native Part datum planes are also
+available as sketch supports, without conversion or replacement.
+
+Offset is measured along the base normal; rotations apply X, then Y, then Z in
+the base frame. In New Sketch, OK creates a
 native PartDesign plane and the attached sketch in one creation transaction,
 then opens native Sketcher after the New Sketch task closes. The sketch has zero
 additional offset on its newly created plane. Cancel creates neither object.
 Native Sketcher owns subsequent edit transactions separately.
+
+Alternatively, **Create Datum Plane** explicitly commits the plane while keeping
+New Sketch open, refreshes User plane choices and selects the new plane with zero
+additional sketch offset. The status explains that Cancel now keeps this explicitly
+created plane; Undo removes it. Standalone Datum Plane OK creates only a plane and
+Cancel creates nothing. Both entry points use the same component ownership,
+native attachment engine, validation and transaction service. Invalid inputs keep
+the task open for correction without leaking geometry. Existing datum/property
+identities and native attachment editing remain unchanged.
 
 Planes remain component-owned History objects, named Plane001, Plane002, etc.
 per component; no Body is added. Origin and user-plane sketches use native
@@ -1604,8 +1622,9 @@ Show commands do not reset it.
 With no document open, Tasks shows **New File** and **Open**, including when the
 saved mode is outside Design. New File uses the native New command and enters
 Design; its idle Tasks pane shows **New Sketch**, **Coordinate System**, **Datum
-Plane** and **Add Component**, in that order. These use the existing native sketch,
-datum and component workflows and share command enablement/icons. The buttons
+Plane** and **Add Component**, in that order. Datum Plane opens the shared component
+plane editor described above; the other actions retain their existing workflows.
+All actions expose command enablement and icons. The buttons
 use compact text beside icons. Native operation dialogs take over during editing;
 the idle actions return after finishing or cancelling. Native task watchers remain
 available for legacy documents and other modes with a document open.

@@ -1,5 +1,29 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 shared datum-plane workflow
+
+Implemented the owner-requested Define Plane / Define Origin / Define Orientation
+workflow in the shared component sketch task. New-file Tasks uses a dedicated
+component datum command, preserving native commands for other contexts. The same
+editor in New Sketch retains existing support, offset and Euler choices; adds
+signed origin X/Y and X/Z or Y/Z vectors in the support frame; and immediately
+offers an explicitly created plane as the sketch attachment. Native plane types,
+attachment properties, component identities and transactions remain authoritative.
+Existing Part::DatumPlane objects can now be selected as user-plane supports.
+
+Isolated runtime validation passes 32 sketch workflow checks and six Tasks checks,
+including docked and default-overlay new-file entry, invalid input recovery,
+support recompute, Undo/Redo and `.cadprt` reopen. Final task-layout/rejection
+checks supplement that coverage. No C++ rebuild was required. Source and runtime
+work are complete; the next grouped owner build and physical acceptance remain
+separate gates. WORK_STATE owns candidate/evidence paths; the last delivered
+payload, ZIP and desktop shortcut remain unchanged for batching.
+
+The original startup test failure was reproduced on the preceding owner build:
+with the overlay preset, Tasks has a hidden host on the no-document Start page.
+The suite now explicitly checks docked startup and default-overlay new-file Tasks
+separately. That baseline no-document overlay limitation is not marked fixed.
+
 ## October 2 batched owner incorporation
 
 All completed runtime changes through `4cbb196bee` are incorporated: exact Design

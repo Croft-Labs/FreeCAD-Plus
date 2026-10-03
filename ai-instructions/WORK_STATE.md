@@ -1,5 +1,38 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2 datum plane — validated for next batch
+
+Pending runtime incorporation: `src/Gui/ComponentSketchTask.py`,
+`src/Gui/ComponentNavigator.py`, and `src/Mod/Part/ComponentSketch.py`.
+The shared editor serves new-file Tasks and New Sketch; see the roadmap milestone
+and UI specification for behavior. No new native type or persistent schema was added.
+
+Isolated candidate: `D:/Temp/Office-PC/freecad-plus-datum-20261002/FreeCAD-Plus-2026-10-02`.
+It copies the preceding delivered payload with only those three Python modules
+replaced; source overlays are disabled. Acceptance beneath the same root:
+`sketch-all` passes 32 tests; `start-actions-settled` passes six. Earlier focused
+`datum` passes four checks. Final `datum-layout` checks the settled controls and
+invalid-direction recovery after a wording-only task update. Source/runtime hashes
+are retained in results.json. The full sketch suite predates only that wording
+update and an event-settle addition before its screenshot; targeted final checks
+cover both. Preserve these checks rather than repeating unrelated qualification.
+
+Initial startup failures were baseline overlay-host behavior on the no-document
+Start page (`pane-baseline`, `pane-probe`). `new-file-probe` confirms Tasks becomes
+visible with a document. The test suite now explicitly exercises docked startup
+and overlay new-file entry, with native event settling before switching layout.
+This does not claim to fix the baseline no-document overlay limitation.
+
+Canonical Word retains all 1505 original paragraphs and adds one workflow note;
+headings, automatic numbering and other package parts are unchanged. Render has
+41 pages: pages 1–39 match the previous PNGs; pages 40–41 were visually checked.
+SHA256: `e409d3f790a39ae3d305c852f393e3bbc2930e9a2bf447e4e393020fc04ef804`.
+Document/render evidence: visualization workspace `datum-plane-20261002`.
+
+This is source/runtime validation for the next grouped delivery, not a new owner
+build. The existing owner shortcut and verified archive below remain unchanged.
+Physical acceptance and the earlier sketch drawing report remain separate.
+
 ## October 2 latest batched owner build
 
 The latest batch incorporates every completed runtime change through application

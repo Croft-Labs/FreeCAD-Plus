@@ -58,3 +58,14 @@ The current run and exact incorporation evidence live in
 [WORK_STATE](../ai-instructions/WORK_STATE.md). Automated Qt events establish GUI
 coverage. Physical gestures, additional DPI/themes and exhaustive combinations
 of every native Sketcher tool remain separate acceptance work.
+
+Datum-plane acceptance covers both the new-file Tasks button and New Sketch's
+Create new plane choice. Confirm Define Plane, Define Origin and Define Orientation
+appear in order. Try face and user-plane supports, signed origin coordinates,
+retained Euler rotations and both X/Z and Y/Z direction pairs. Z defines the normal;
+the other vector is projected into the plane. Zero/parallel vectors must reject
+inline with no new history objects. Verify recompute after support movement,
+Undo/Redo and `.cadprt` reopen retain the native plane and sketch attachment.
+Create Datum Plane must leave New Sketch open with the new User plane selected;
+Cancel after that explicit creation keeps the plane, while Cancel before creation
+leaves no objects. `datum-three-sections.png` records the direction controls.

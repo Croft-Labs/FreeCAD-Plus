@@ -1686,10 +1686,12 @@ class StartActions(QtCore.QObject):
     FILE = (("Std_New", "New File"), ("Std_Open", "Open"))
     COMPONENT = (("PartDesign_NewSketch", "New Sketch"),
                  ("Part_CoordinateSystem", "Coordinate System"),
-                 ("Part_DatumPlane", "Datum Plane"), ("Std_Part", "Add Component"))
+                 ("Std_ComponentDatumPlane", "Datum Plane"), ("Std_Part", "Add Component"))
 
     def __init__(self, window):
         super().__init__(window)
+        from freecad.gui.ComponentSketchTask import install_datum_command
+        install_datum_command()
         self.window = window
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.refresh)
