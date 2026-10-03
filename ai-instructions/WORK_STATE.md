@@ -1,5 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2 master component convention — source ready
+
+Owner reauthorized the previously deferred tree convention. `ComponentModel`
+orders definitions by permanent RootComponent identity and supplies master-first
+tree roots with unused assemblies below it. `ComponentNavigator` keeps that tree
+independent of editing/view roots and routes selection, visibility, instance
+deletion and moves through each row's assembly context. No extra master instances
+are created. New File's existing automatic master and native Delete guards remain.
+
+The final isolated packaged-engine run with explicit source overlays passes
+26 Models/Part Tree/display-context tests with no failures/errors/skips. It covers
+New File and master deletion protection, stable ordering while editing, unused
+assemblies/children, selection, deletion, Cut/Paste, Undo/Redo and save/reopen.
+Evidence: `master-tree-20261002/acceptance-final/results.json` and `tests.log`
+under `C:/Users/Office-PC/.codex/visualizations/2026/10/01/01a0f9bd-b85a-7aa3-a6b7-cb05c64fdabd`.
+Source provenance is asserted in the harness; existing native command callbacks
+share the source panel in this test process. Earlier harness failures are retained.
+
+Contract/UI specification and programming index are synchronized. The Word update
+is prepared separately, preserving the owner's paragraphs, heading structure and
+automatic numbering. The canonical DOCX is actively changing in the owner's editor;
+initial save was denied, and subsequent version guards detected more owner edits.
+An elevated read/write-handle check succeeds, but saving while that editor continues
+would risk overwriting new owner changes or having this merge replaced by a later
+editor save. Await the requested save/close reply, then merge against the latest
+canonical bytes, render/review and save with a final source-hash guard. Do not treat
+the canonical Word specification as updated with this convention yet.
+
+Source changes await the next batched owner build; the existing runtime, ZIP and
+shortcut remain unchanged, and physical owner acceptance is pending.
+
 ## October 2 screenshot preferences and Word specification
 
 The closed owner audit build's isolated `AppData/Roaming/FreeCADPlus/user.cfg`
@@ -16,8 +47,9 @@ Its Defaults section contains the screenshot preset and maintenance rule; the
 33-page render is checked (pages 1–31 unchanged, revised 32–33 visually inspected).
 Backups and native verification reports are in task output `default-settings-20261002`
 under `C:/Users/Office-PC/.codex/visualizations/2026/10/01/01a0f9bd-b85a-7aa3-a6b7-cb05c64fdabd`.
-The separately installed FreeCAD profile was not changed. The newer component-tree
-convention is explicitly deferred by the owner and has not been implemented here.
+The separately installed FreeCAD profile was not changed. The component-tree
+convention was deferred during that settings task and implemented in the later
+source milestone above after the owner reauthorized it.
 
 ## October 2: conversation audit — owner build ready
 

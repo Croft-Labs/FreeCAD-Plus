@@ -416,13 +416,16 @@ class Navigator(QtWidgets.QDockWidget):
                     font = row.font(0)
                     font.setBold(True)
                     row.setFont(0, font)
-            root_row = QtWidgets.QTreeWidgetItem(self.structure, [root.Label, "", "", ""])
-            root_row.setData(0, QtCore.Qt.UserRole, (object_key(root), []))
-            root_row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
-            root_row.setFlags((root_row.flags() | QtCore.Qt.ItemIsDropEnabled) & ~QtCore.Qt.ItemIsDragEnabled)
-            self.decorate_component(root_row, root, [[]])
-            root_row.setExpanded(True)
-            self.populate(root_row, root, root, [], set())
+            for tree_root in model().tree_roots(file_root.Document):
+                root_row = QtWidgets.QTreeWidgetItem(self.structure, [tree_root.Label, "", "", ""])
+                root_row.setData(0, QtCore.Qt.UserRole, (object_key(tree_root), []))
+                root_row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
+                root_row.setFlags((root_row.flags() | QtCore.Qt.ItemIsDropEnabled) & ~QtCore.Qt.ItemIsDragEnabled)
+                self.decorate_component(root_row, tree_root, [[]])
+                root_row.setToolTip(0, tr("Master component; permanent document root.") if tree_root == file_root
+                                   else tr("Unused component assembly; separate from the master assembly."))
+                root_row.setExpanded(True)
+                self.populate(root_row, tree_root, tree_root, [], set())
             if not structure_state[0]:
                 self.structure.expandToDepth(1)
             # The native origin exists independently of editable feature history.
@@ -536,8 +539,18 @@ class Navigator(QtWidgets.QDockWidget):
     def members(self, item):
         return item.data(0, QtCore.Qt.UserRole + 1) or [item.data(0, QtCore.Qt.UserRole)]
 
+    def tree_root(self, item):
+        while item.parent():
+            item = item.parent()
+        return resolve(item.data(0, QtCore.Qt.UserRole)[0])
+
     def protected(self, item):
         # The active occurrence and its ancestors must remain visible.
+        if object_key(self.tree_root(item)) != self.root_key:
+            obj = resolve(item.data(0, QtCore.Qt.UserRole)[0])
+            definition = obj.LinkedObject if getattr(obj, "ComponentRole", "") == "Occurrence" else obj
+            return definition is not None and (object_key(definition) == self.active_key
+                   or model()._reachable(definition, resolve(self.active_key)))
         return any(value is not None and list(value[1]) == self.active_path[:len(value[1])]
                    for value in self.members(item))
 
@@ -550,7 +563,7 @@ class Navigator(QtWidgets.QDockWidget):
             return False
 
     def decorate_component(self, item, definition, paths):
-        root = resolve(self.root_key)
+        root = self.tree_root(item)
         visible = not paths or any(self.path_visible(root, ids) for ids in paths)
         self.visibility_icon(item, visible)
         if definition is None:
@@ -558,7 +571,9 @@ class Navigator(QtWidgets.QDockWidget):
             item.setToolTip(3, tr("Right-click and choose Locate Component File. Matching unresolved instances in this file are repaired together."))
         if self.protected(item):
             item.setToolTip(1, tr("The active component and its parent branch cannot be hidden."))
-        if definition and any(list(ids) == self.active_path for ids in paths or [[]]):
+        if definition and ((object_key(root) == self.root_key and
+                            any(list(ids) == self.active_path for ids in paths or [[]]))
+                           or (object_key(root) != self.root_key and object_key(definition) == self.active_key)):
             font = item.font(0)
             font.setBold(True)
             item.setFont(0, font)
@@ -593,7 +608,7 @@ class Navigator(QtWidgets.QDockWidget):
             item.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
             item.setData(0, QtCore.Qt.UserRole, values[0])
             item.setData(0, QtCore.Qt.UserRole + 1, values)
-            group_id = (self.root_key, tuple(path), definition_key)
+            group_id = (object_key(root), tuple(path), definition_key)
             item.setData(0, QtCore.Qt.UserRole + 2, group_id)
             self.decorate_component(item, definition, [value[1] for value in values])
             if len(links) > 1:
@@ -620,10 +635,10 @@ class Navigator(QtWidgets.QDockWidget):
             self.expanded_instances.add(group_id)
         item.setExpanded(group_id in self.expanded_instances)
 
-    def change_part_view(self, updates, show=False):
-        root = resolve(self.root_key)
+    def change_part_view(self, updates, show=False, root=None):
+        root = root or resolve(self.root_key)
         overrides = model().representation_overrides(root, updates)
-        if model().representation(root, self.active_path, root_overrides=overrides) == "Hidden":
+        if object_key(root) == self.root_key and model().representation(root, self.active_path, root_overrides=overrides) == "Hidden":
             raise ValueError(tr("The active component cannot be hidden. Edit another component first."))
         model().set_representations(root, updates, show=show)
 
@@ -631,7 +646,9 @@ class Navigator(QtWidgets.QDockWidget):
         updates = [(ids, setting) for key, ids in self.members(item) if ids]
         if not updates:
             raise ValueError(tr("The root component is displayed in full."))
-        self.change_part_view(updates)
+        if setting == "Hidden" and self.protected(item):
+            raise ValueError(tr("The active component and its parent branch cannot be hidden."))
+        self.change_part_view(updates, root=self.tree_root(item))
 
     def toggle_component(self, item):
         if not item.data(0, QtCore.Qt.UserRole):
@@ -639,7 +656,7 @@ class Navigator(QtWidgets.QDockWidget):
         if any(getattr(resolve(key), "ComponentRole", "") == "Occurrence"
                and resolve(key).LinkedObject is None for key, ids in self.members(item)):
             return
-        root = resolve(self.root_key)
+        root = self.tree_root(item)
         members = self.members(item)
         visible = any(self.path_visible(root, ids) for key, ids in members)
         if visible:
@@ -649,7 +666,7 @@ class Navigator(QtWidgets.QDockWidget):
         overrides = model().representation_overrides(root, updates)
         updates = [(ids, "Bodies Only" if model().representation(root, ids, root_overrides=overrides) == "Hidden"
                     else None) for ids, unused in updates]
-        self.change_part_view(updates, show=True)
+        self.change_part_view(updates, show=True, root=root)
 
     def toggle_item_view(self, item):
         obj = resolve(item.data(0, QtCore.Qt.UserRole))
@@ -693,12 +710,19 @@ class Navigator(QtWidgets.QDockWidget):
             self.selecting = False
 
     def select_structure(self):
-        values = []
-        for row in self.structure.selectedItems():
-            for value in self.members(row):
-                if value:
-                    values.append((value[1], None))
-        self.select_native(values)
+        if self.refreshing or self.selecting:
+            return
+        self.selecting = True
+        try:
+            Gui.Selection.clearSelection()
+            for row in self.structure.selectedItems():
+                root = self.tree_root(row)
+                for value in self.members(row):
+                    if value:
+                        Gui.Selection.addSelection(root.Document.Name, root.Name,
+                                                   Selection.native_path(root, value[1], None))
+        finally:
+            self.selecting = False
 
     def select_models(self):
         if self.refreshing or self.selecting:
@@ -819,7 +843,9 @@ class Navigator(QtWidgets.QDockWidget):
         paths = list(dict.fromkeys(tuple(value[1]) for value in values))
         paths = [path for path in paths if not any(path[:len(parent)] == parent
                                                  for parent in paths if len(parent) < len(path))]
-        root = resolve(self.root_key)
+        root = self.tree_root(rows[0])
+        if any(self.tree_root(row) != root for row in rows):
+            raise ValueError(tr("Cut instances from one component assembly at a time."))
         payload = {"root": root.ObjectId, "document": model().metadata(root.Document).ObjectId,
                    "items": [{"path": path, "id": model()._path(root, path)[-1].ObjectId} for path in paths]}
         mime = QtCore.QMimeData()
@@ -836,7 +862,9 @@ class Navigator(QtWidgets.QDockWidget):
         if not mime.hasFormat(PartTree.MIME):
             raise ValueError(tr("Cut linked instances from this Part Tree first."))
         payload = json.loads(bytes(mime.data(PartTree.MIME)).decode("utf-8"))
-        root = resolve(self.root_key)
+        item = (self.structure.topLevelItem(0) if position == QtWidgets.QAbstractItemView.OnViewport
+                else item or self.structure.currentItem() or self.structure.topLevelItem(0))
+        root = self.tree_root(item)
         if (payload.get("root") != root.ObjectId
                 or payload.get("document") != model().metadata(root.Document).ObjectId):
             raise ValueError(tr("Move parts within the same Part Tree and owning file."))
@@ -844,8 +872,6 @@ class Navigator(QtWidgets.QDockWidget):
         if any(model()._path(root, path)[-1].ObjectId != value["id"]
                for path, value in zip(paths, payload["items"])):
             raise ValueError(tr("The cut selection changed; select and cut it again."))
-        item = (self.structure.topLevelItem(0) if position == QtWidgets.QAbstractItemView.OnViewport
-                else item or self.structure.currentItem() or self.structure.topLevelItem(0))
         values = self.members(item)
         if len(values) != 1:
             raise ValueError(tr("Expand Instances and choose a single destination instance."))
@@ -869,7 +895,7 @@ class Navigator(QtWidgets.QDockWidget):
         changed = model().move_instances(root, paths, destination, before)
         # Follow a moved active branch, including its edited descendants.
         for path in paths:
-            if tuple(self.active_path[:len(path)]) == path:
+            if object_key(root) == self.root_key and tuple(self.active_path[:len(path)]) == path:
                 self.active_path = list(destination + (path[-1],) + tuple(self.active_path[len(path):]))
                 break
         if deferred:
@@ -914,18 +940,22 @@ class Navigator(QtWidgets.QDockWidget):
         root = resolve(self.root_key) if self.root_key else None
         if root is None or self.selecting or self.refreshing:
             return
-        picks = Selection.selected(root, Gui.Selection.getSelectionEx("*", 0))
+        entries = Gui.Selection.getSelectionEx("*", 0)
+        roots = model().tree_roots(root.Document)
+        if root not in roots:
+            roots.append(root)
+        picks = [(context, pick) for context in roots for pick in Selection.selected(context, entries)]
         self.selecting = True
         try:
             # Reveal a precise pick through grouped instances. An ambiguous bare
             # definition selection must never choose an arbitrary occurrence.
             changed = False
-            if len(picks) == 1:
-                prefix, component = [], root
-                for link in model()._path(root, picks[0].ids):
+            for context, pick in picks:
+                prefix, component = [], context
+                for link in model()._path(context, pick.ids):
                     peers = [child for child in model().children(component)
                              if child.LinkedObject == link.LinkedObject]
-                    group = (self.root_key, tuple(prefix), object_key(link.LinkedObject))
+                    group = (object_key(context), tuple(prefix), object_key(link.LinkedObject))
                     if len(peers) > 1 and group not in self.expanded_instances:
                         self.expanded_instances.add(group)
                         changed = True
@@ -936,7 +966,7 @@ class Navigator(QtWidgets.QDockWidget):
             self.structure.clearSelection()
             self.models.clearSelection()
             self.history.clearSelection()
-            for pick in picks:
+            for context, pick in picks:
                 for index in range(self.models.topLevelItemCount()):
                     row = self.models.topLevelItem(index)
                     if row.data(0, QtCore.Qt.UserRole) == object_key(pick.component):
@@ -945,7 +975,8 @@ class Navigator(QtWidgets.QDockWidget):
                 iterator = QtWidgets.QTreeWidgetItemIterator(self.structure)
                 while iterator.value():
                     row = iterator.value()
-                    if any(value and tuple(value[1]) == pick.ids for value in self.members(row)):
+                    if self.tree_root(row) == context and any(
+                            value and tuple(value[1]) == pick.ids for value in self.members(row)):
                         matches.append(row)
                     iterator += 1
                 if matches:
@@ -1020,7 +1051,9 @@ class Navigator(QtWidgets.QDockWidget):
         while parent:
             parent.setExpanded(True)
             parent = parent.parent()
-        root_key = self.root_key
+        root_key = object_key(self.tree_root(item))
+        if root_key != self.root_key:
+            self.open_component_tab(root_key)
         root = resolve(root_key)
         root.Visibility = True
         for depth in range(1, len(value[1]) + 1):
@@ -1384,8 +1417,8 @@ class Navigator(QtWidgets.QDockWidget):
             view = menu.addMenu(tr("Part View"))
             menu.component_submenus.append(view)
             paths = [ids for unused, ids in self.members(item) if ids]
-            modes = {model().representation(resolve(self.root_key), ids) for ids in paths} if definition else set()
-            overrides = model().representation_overrides(resolve(self.root_key), [])
+            modes = {model().representation(self.tree_root(item), ids) for ids in paths} if definition else set()
+            overrides = model().representation_overrides(self.tree_root(item), [])
             for label in model().TYPES + ("Reset to Inherited",):
                 setting = None if label == "Reset to Inherited" else label
                 action = view.addAction(tr(label), lambda checked=False, setting=setting:
@@ -1744,20 +1777,22 @@ def delete_selected_instances():
     # Remove permanent datum selections before native Delete, including precise
     # occurrence paths that select their component root in the native tree.
     root = resolve(_dock.root_key)
+    roots = model().tree_roots(root.Document) if root else []
+    if root and root not in roots:
+        roots.append(root)
     for entry in entries:
         for subname in entry.SubElementNames or [""]:
-            picks = Selection.resolve(root, entry.Object, subname) if root else []
+            picks = [pick for context in roots for pick in Selection.resolve(context, entry.Object, subname)]
             if (protected_origin_item(entry.Object)
                     or any(protected_origin_item(pick.item) for pick in picks)):
                 Gui.Selection.removeSelection(entry.DocumentName, entry.ObjectName, subname)
     entries = Gui.Selection.getSelectionEx("*", 0)
     if not entries or any(model().is_component(entry.Object) and not entry.SubElementNames for entry in entries):
         return False
-    root = resolve(_dock.root_key)
-    picks = Selection.selected(root, entries) if root else []
-    if not picks or any(not pick.ids or pick.item is not None for pick in picks):
+    picks = [(context, pick) for context in roots for pick in Selection.selected(context, entries)]
+    if not picks or any(not pick.ids or pick.item is not None for context, pick in picks):
         return False
-    occurrences = [model()._path(root, pick.ids)[-1] for pick in picks]
+    occurrences = list(dict.fromkeys(model()._path(context, pick.ids)[-1] for context, pick in picks))
     model().remove_instances(occurrences)
     Gui.Selection.clearSelection()
     _dock.refresh()

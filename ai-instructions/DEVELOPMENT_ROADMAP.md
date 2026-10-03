@@ -1,5 +1,31 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 master component and stable Part Tree
+
+- [ X ] Reuse the automatic New File component and persisted `RootComponent` as
+  the permanent master. Models and Part Tree place it first regardless of active
+  component, isolated editing tab or renamed label. Existing native deletion
+  guards protect definitions and the master; no schema or geometry change.
+- [ X ] List unused assemblies below the master as independent top-level trees,
+  including their nested instances, without adding master links or BOM counts.
+  Resolve selection, visibility, rearrangement and instance deletion per tree.
+- [ X ] Focused GUI/model source-overlay checks: **26 tests pass**, no failures,
+  errors or skips. New File/standard Delete, master order, editing unused children,
+  native selection, Cut/Paste, Undo/Redo and `.cadprt` save/reopen are covered along
+  with existing Models, movement and display-context regressions.
+- [ X ] Update component contract, UI specification and programming index.
+- [   ] Save the prepared Word specification merge after the owner finishes editing
+  and closes the document. Its source changed repeatedly during this run; do not
+  overwrite the owner's active edits. The draft preserves original headings and
+  automatic numbering; the canonical DOCX has not received this convention yet.
+- [   ] Incorporate into the next packaged build; verify owner interaction there.
+  The current owner executable, ZIP and shortcut are unchanged. No build/publication
+  claim follows from source-overlay tests.
+
+Evidence: `master-tree-20261002/acceptance-final/results.json`, `tests.log`,
+source-overlay macro and Word backups/renders under the October 1 visualization
+workspace. Initial harness retries are retained separately from this passing run.
+
 ## October 2 owner screenshot defaults and Word specification
 
 - [ X ] Root AGENTS.md requires updating `ai-instructions/ui/FreeCAD Plus UI & UX.docx`

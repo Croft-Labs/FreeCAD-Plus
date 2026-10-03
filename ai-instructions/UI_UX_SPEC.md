@@ -1608,9 +1608,20 @@ is independent of the Origin eye; showing planes also shows the parent Origin.
 Refresh preserves a manual show, and visibility changes support Undo/Redo.
 Neither Origin nor Origin Planes can be suppressed, renamed or deleted. Standard
 Delete also protects their native datum objects; no extra model object is created.
-Part Tree always starts with its top-level component (Part001 by default),
-with linked occurrence rows beneath it. The root row supplies selection/edit
-context, persists even without children, and is not a deletable assembly instance.
+Every New File creates its first component (Part001 by default) as the permanent
+master, identified by the document's persisted RootComponent link. It cannot be
+deleted and always comes first in Models and Part Tree, including after renaming.
+Changing the active component or opening its isolated editing tab updates History
+without replacing the master-first Part Tree. Linked occurrence rows nest beneath
+their assembly roots. Unused definitions appear as separate top-level assemblies
+below the master, with their own children; unused descendants are not duplicated
+as roots. This inventory display creates no links or instance counts in the master
+assembly. Removing the last master use exposes the retained unused assembly;
+placing it again restores its linked branch. Root rows supply selection/edit
+context, persist without children and are not deletable assembly instances.
+Selection, instance deletion, visibility and rearrangement resolve each row's own
+assembly context. Preserve stable master identity and unused trees through Undo/Redo
+and save/reopen.
 Cut/Paste is available in Part Tree's context menu and through Ctrl+X/Ctrl+V.
 Cut keeps the instances in place until Paste succeeds; Paste moves them under the
 selected part. Drag onto a part to make it the parent, or use the row-edge indicator

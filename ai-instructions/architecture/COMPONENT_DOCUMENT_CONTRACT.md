@@ -35,6 +35,16 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   does not increase instance counts. Renaming updates its displayed label. The
   native Model pane is replaced with Attributes, retaining the native View/Data editors.
   Preserve native dock/command identifiers internally for layout compatibility.
+- Every New File creates its first component as the permanent **master component**.
+  Reuse the persisted `RootComponent` identity; renaming does not change its role.
+  It cannot be deleted and is always first in Models and Part Tree. Activating or
+  opening another component changes the editing/History context, never this order.
+  Part Tree displays the master assembly first, followed by separate unused
+  component assemblies at the same top level. Their child instances remain nested
+  beneath them; they are not links in the master assembly and add no master instance
+  or BOM count. Cover unused descendants beneath their unused parent rather than
+  adding duplicate top-level rows. Removing the last master use exposes the retained
+  definition in this unused inventory; adding a use places it back in the master tree.
 - Each `.cadprt` has one root component and embedded definitions, and may link
   definitions in other `.cadprt` files. New definitions are embedded by default.
   Definition identity is distinct from occurrence identity and labels/file paths.

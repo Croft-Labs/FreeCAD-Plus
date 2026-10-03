@@ -56,7 +56,36 @@ def is_component(obj):
 
 
 def definitions(doc):
-    return [o for o in doc.Objects if is_component(o)]
+    items = [o for o in doc.Objects if is_component(o)]
+    roots = [o.RootComponent for o in doc.Objects
+             if getattr(o, "ComponentRole", "") == "Document"]
+    return [o for o in roots if o in items] + [o for o in items if o not in roots]
+
+
+def tree_roots(doc):
+    """Master first, followed by independent unused definition assemblies.
+
+    These extra roots are inventory contexts, never new links in the master.
+    An unused assembly's descendants appear beneath it rather than twice.
+    """
+    master = metadata(doc).RootComponent
+    covered = set()
+    def visit(component):
+        if component in covered:
+            return
+        covered.add(component)
+        for link in children(component):
+            if is_component(link.LinkedObject):
+                visit(link.LinkedObject)
+    visit(master)
+    unused = [o for o in definitions(doc) if o not in covered]
+    nested = {link.LinkedObject for o in unused for link in children(o)}
+    roots = [master]
+    for component in [o for o in unused if o not in nested] + unused:
+        if component not in covered:
+            roots.append(component)
+            visit(component)
+    return roots
 
 
 def next_part_label(doc):

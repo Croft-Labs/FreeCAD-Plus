@@ -100,9 +100,91 @@ class TestComponentModelsPane(unittest.TestCase):
         root.Label = "Main assembly"
         Model.remove_instances([link])
         self.panel.refresh()
-        self.assertEqual(self.panel.structure.topLevelItemCount(), 1)
+        self.assertEqual(self.panel.structure.topLevelItemCount(), 2)
         self.assertEqual(self.panel.structure.topLevelItem(0).text(0), "Main assembly")
         self.assertEqual(self.panel.structure.topLevelItem(0).childCount(), 0)
+        self.assertEqual(self.panel.structure.topLevelItem(1).text(0), "Part002")
+
+    def testMasterStableAcrossModelEditingAndUnusedAssemblies(self):
+        unused = Model.create_definition(self.doc, "Unused assembly")
+        nested = Model.add_component(unused, label="Unused child")
+        self.panel.refresh()
+        self.assertEqual(Model.tree_roots(self.doc), [self.root, unused])
+        self.assertEqual(self.panel.models.topLevelItem(0).data(0, QtCore.Qt.UserRole),
+                         Navigator.object_key(self.root))
+        self.assertEqual(self.panel.structure.topLevelItem(1).child(0).text(0), "Unused child")
+        self.assertEqual(self.model_row(unused).text(1), "0")
+        self.assertEqual(self.model_row(nested.LinkedObject).text(1), "0")
+        self.panel.edit_model(self.model_row(self.part))
+        self.panel.refresh()
+        self.assertEqual(self.panel.active_key, Navigator.object_key(self.part))
+        self.assertEqual(self.panel.structure.topLevelItem(0).text(0), self.root.Label)
+        self.panel.activate_item(self.panel.structure.topLevelItem(1).child(0))
+        self.panel.refresh()
+        self.assertEqual(self.panel.active_key, Navigator.object_key(nested.LinkedObject))
+        self.assertEqual(self.panel.structure.topLevelItem(0).text(0), self.root.Label)
+        self.assertEqual(Model.children(self.root), [self.first])
+        self.assertEqual(Model.tree_roots(self.doc), [self.root, unused])
+
+    def testNewFileCreatesPermanentMaster(self):
+        Gui.runCommand("Std_New")
+        doc = App.ActiveDocument
+        root = Model.metadata(doc).RootComponent
+        self.assertEqual(root.Label, "Part001")
+        self.assertEqual(Model.definitions(doc), [root])
+        self.panel.set_document(doc)
+        self.assertEqual(self.panel.models.topLevelItem(0).text(0), "Part001")
+        self.assertEqual(self.panel.structure.topLevelItem(0).text(0), "Part001")
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(root)
+        Gui.runCommand("Std_Delete")
+        self.assertEqual(Model.metadata(doc).RootComponent, root)
+        self.assertEqual(Model.definitions(doc), [root])
+
+    def testUnusedAssemblySelectionMoveAndPersistence(self):
+        unused = Model.create_definition(self.doc, "Unused")
+        first = Model.add_component(unused, label="First unused")
+        second = Model.add_component(unused, label="Second unused")
+        self.panel.refresh()
+        row = self.panel.structure.topLevelItem(1)
+        row.child(0).setSelected(True)
+        self.panel.select_structure()
+        self.assertTrue(Gui.Selection.getSelectionEx())
+        self.panel.sync_selection()
+        self.assertEqual(self.panel.structure.selectedItems(), [row.child(0)])
+        mime = self.panel.move_mime(row.child(0))
+        self.panel.paste_instances(row.child(1), mime)
+        self.assertEqual(Model.children(unused), [second])
+        self.assertEqual(Model.children(second.LinkedObject), [first])
+        self.assertEqual(Model.children(self.root), [self.first])
+        self.doc.undo()
+        self.assertEqual(Model.children(unused), [first, second])
+        self.doc.redo()
+        import CadDocument
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "MasterUnused.cadprt"
+        self.doc.saveAs(str(path))
+        root_id = self.root.ObjectId
+        App.closeDocument(self.doc.Name)
+        self.doc = CadDocument.open(str(path))
+        self.root = Model.metadata(self.doc).RootComponent
+        self.panel.set_document(self.doc)
+        self.assertEqual(self.root.ObjectId, root_id)
+        self.assertEqual([obj.Label for obj in Model.tree_roots(self.doc)], ["Assembly", "Unused"])
+        self.assertEqual(self.panel.structure.topLevelItem(1).child(0).child(0).text(0), "First unused")
+
+    def testStandardDeleteInUnusedAssemblyKeepsMasterAndModels(self):
+        unused = Model.create_definition(self.doc, "Unused")
+        link = Model.add_component(unused, label="Unused child")
+        child = link.LinkedObject
+        self.panel.refresh()
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(self.doc.Name, unused.Name, link.Name + ".")
+        self.assertTrue(Navigator.delete_selected_instances())
+        self.assertEqual(Model.children(unused), [])
+        self.assertEqual(Model.children(self.root), [self.first])
+        self.assertIn(child, Model.definitions(self.doc))
+        self.doc.undo()
+        self.assertEqual(Model.children(unused), [link])
 
     def testReferenceOperationCommandAndOriginDefaults(self):
         Navigator.registerCommands()
@@ -216,7 +298,7 @@ class TestComponentModelsPane(unittest.TestCase):
         self.assertEqual(len(Model.children(self.root)), 2)
         Model.remove_instances(Model.children(self.root))
         self.panel.refresh()
-        self.assertEqual(self.panel.structure.topLevelItemCount(), 1)
+        self.assertEqual(self.panel.structure.topLevelItemCount(), 2)
         self.assertEqual(self.panel.structure.topLevelItem(0).childCount(), 0)
         self.assertEqual(self.model_row(self.part).text(1), "0")
         self.assertEqual(self.part.ObjectId, identity)
