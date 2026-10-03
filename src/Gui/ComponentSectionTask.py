@@ -4,7 +4,6 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtWidgets
 from freecad.gui.ComponentOperationTask import OperationTask
-from freecad.gui.ComponentExtrudeTask import CurveListWidget
 
 
 def tr(text):
@@ -13,8 +12,6 @@ def tr(text):
 
 class SectionTask(OperationTask):
     def build_collectors(self, main, title):
-        import ComponentModel as Model
-        component = self.component
         self.ordered = QtWidgets.QListWidget()
         self.ordered.model().rowsInserted.connect(self.update_curve_display)
         self.ordered.model().rowsRemoved.connect(self.update_curve_display)
@@ -22,33 +19,8 @@ class SectionTask(OperationTask):
         self.ordered.setMaximumHeight(125)
         main.addRow(tr(title), self.ordered)
         self.buttons(main, (("Remove section", self.remove_section), ("Clear sections", self.clear_sections)))
-        self.profile = self.combo(main, "Section source", [("Select a profile…", None)])
-        for obj in Model.history(component):
-            if (getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result") and hasattr(obj, "Shape")
-                    and not obj.Shape.Solids and (obj.Shape.Edges or len(obj.Shape.Vertexes) == 1)):
-                self.profile.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        self.curves = CurveListWidget()
-        self.curves.removeRequested.connect(self.remove_selected_curves)
-        self.curves.setMaximumHeight(65)
-        self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        main.addRow(tr("Selected curves"), self.curves)
-        self.buttons(main, (("Remove curves", self.remove_selected_curves),
-                            ("Use all", self.profile_changed)))
-        self.region_pick = QtWidgets.QCheckBox(tr("Pick closed regions in the view"))
-        self.region_pick.setChecked(True)
-        self.region_pick.toggled.connect(self.update_regions)
-        main.addRow(self.region_pick)
+        self.build_profile_collector(main, sections=True)
         self.buttons(main, (("Append section", self.append_section), ("Replace section", self.replace_section)))
-
-    def buttons(self, layout, entries):
-        row = QtWidgets.QWidget()
-        box = QtWidgets.QGridLayout(row)
-        box.setContentsMargins(0, 0, 0, 0)
-        for index, (label, callback) in enumerate(entries):
-            button = QtWidgets.QPushButton(tr(label))
-            button.clicked.connect(callback)
-            box.addWidget(button, index // 2, index % 2)
-        layout.addRow(row)
 
     def curve_display_inputs(self):
         sections = [self.ordered.item(i).data(QtCore.Qt.UserRole) for i in range(self.ordered.count())]

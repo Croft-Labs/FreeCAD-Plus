@@ -2,6 +2,7 @@
 """Task-owned curve emphasis, independent of native selection and document colors."""
 import hashlib
 import importlib
+import json
 import os
 from pathlib import Path
 import unittest
@@ -49,7 +50,7 @@ class TestComponentCurveDisplay(unittest.TestCase):
 
     def launch(self, name="Extrude", **kwargs):
         module = importlib.import_module("freecad.gui.Component" + name + "Task")
-        for module_name in ("ComponentExtrudeTask", "ComponentOperationTask", "ComponentSectionTask", "ComponentPipeTask"):
+        for module_name in ("ComponentTaskWidgets", "ComponentExtrudeTask", "ComponentOperationTask", "ComponentSectionTask", "ComponentPipeTask"):
             installed = importlib.import_module("freecad.gui." + module_name)
             path = Path(os.environ["FREECAD_PLUS_SOURCE"]) / "src/Gui" / (module_name + ".py")
             self.assertEqual(hashlib.sha256(path.read_bytes()).digest(),
@@ -227,6 +228,76 @@ class TestComponentCurveDisplay(unittest.TestCase):
         QtTest.QTest.keyClick(QtWidgets.QApplication.focusWidget(), QtCore.Qt.Key_Delete)
         self.assertEqual(task.curve_names(), [])
         self.assertIsNotNone(self.doc.getObject(self.sketches[0].Name))
+
+    def testTiltedViewportEdgePicksDoNotCollectRegions(self):
+        self.check_tilted_clicks("Extrude")
+
+    def testTiltedRevolveEdgePicks(self):
+        self.check_tilted_clicks("Revolve")
+
+    def testTiltedHelixEdgePicks(self):
+        self.check_tilted_clicks("Helix")
+
+    def testTiltedLoftEdgePicks(self):
+        self.check_tilted_clicks("Loft")
+
+    def testTiltedPipeEdgePicks(self):
+        self.check_tilted_clicks("Pipe")
+
+    def check_tilted_clicks(self, operation):
+        task = self.launch(operation)
+        def viewport_click(point, dx=0, dy=0):
+            Gui.updateGui()
+            viewport = max((w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+                            if "GL" in w.metaObject().className() and w.width() > 100 and w.height() > 100),
+                           key=lambda w: w.width() * w.height())
+            sx, sy = task.view.getPointOnScreen(point)
+            ratio = viewport.devicePixelRatioF()
+            pos = QtCore.QPoint(round(sx / ratio) + dx, viewport.height() - round(sy / ratio) - 1 + dy)
+            event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pos),
+                                     QtCore.QPointF(viewport.mapToGlobal(pos)), QtCore.Qt.NoButton,
+                                     QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(viewport, event)
+            hits = task.view.getObjectsInfo((round(pos.x() * ratio), round((viewport.height() - pos.y() - 1) * ratio)))
+            QtTest.QTest.mouseClick(viewport, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, pos)
+            Gui.updateGui()
+            return hits
+        evidence = []
+        for angle in (0, 35, 65):
+            task.view.setCameraOrientation(App.Rotation(App.Vector(1, 1, 0), angle).Q)
+            task.view.fitAll()
+            Gui.updateGui()
+            for point in (App.Vector(5, 0, 0), App.Vector(10, 5, 0), App.Vector(5, 10, 0)):
+                for dx, dy in ((0, 0), (1, 1), (-1, -1), (2, -2), (-2, 2)):
+                    task.set_curves([], False)
+                    picked = []
+                    original = task.use_selection
+                    def observe(picks=None, toggle=False):
+                        picked.extend(element for obj, element in picks or [] if element.startswith("Edge"))
+                        return original(picks, toggle)
+                    task.use_selection = observe
+                    try:
+                        hits = viewport_click(point, dx, dy)
+                    finally:
+                        task.use_selection = original
+                    if picked:
+                        evidence.append(dict(angle=angle, offset=[dx, dy], expected=picked[-1], actual=task.curve_names(), hits=hits))
+            task.set_curves([], False)
+            # Bottom/left edges coincide with the visible origin axes; use the
+            # unobstructed edges for deterministic native sequential picks.
+            for point, expected in ((App.Vector(10, 5, 0), ["Edge2"]),
+                                    (App.Vector(5, 10, 0), ["Edge2", "Edge3"]),
+                                    (App.Vector(5, 10, 0), ["Edge2"])):
+                viewport_click(point)
+                self.assertEqual(task.curve_names(), expected, (operation, angle))
+            self.assertEqual(task.curves.currentRow(), -1)
+            task.set_curves([], False)
+            viewport_click(App.Vector(5, 5, 0))
+            self.assertEqual(set(task.curve_names()), {"Edge1", "Edge2", "Edge3", "Edge4"})
+        (self.output / (operation + "-edge-region-clicks.json")).write_text(json.dumps(evidence, indent=2, default=str), encoding="utf8")
+        self.assertGreater(len(evidence), 10)
+        failures = [e for e in evidence if e["actual"] != [e["expected"]]]
+        self.assertEqual(failures, [], str(failures[:3]))
 
     def testLoftRetainsEverySectionHighlight(self):
         first, second, third = self.sketches

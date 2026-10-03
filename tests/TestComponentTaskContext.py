@@ -143,7 +143,12 @@ class TestComponentTaskContext(unittest.TestCase):
         self.assertEqual(Model.owner(task.result), self.part)
         Gui.activeDocument().resetEdit()
         self.assert_origin()
-        self.assertEqual(str(task.result.MapMode), "FlatFace")
+        # Resilient sketch frames follow a soft reference so deleting the face
+        # can retain the last valid placement without a native attachment error.
+        self.assertEqual(task.result.FrameSupportMode, "FlatFace")
+        self.assertEqual(task.result.FrameSupport[0][0], self.box)
+        self.assertEqual(list(task.result.FrameSupport[0][1]), ["Face6"])
+        self.assertEqual(task.result.FrameSupportStatus, "Following support")
         self.panel.edit_history(Navigator.object_key(task.result))
         self.assertEqual(App.ActiveDocument, self.external)
         Gui.activeDocument().resetEdit()

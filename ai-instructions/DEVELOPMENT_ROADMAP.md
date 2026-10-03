@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 shared modeling controls and curve-pick arbitration (7.8)
+
+Reproduced the tilted-view edge/region double handling and fixed it in the shared
+selection controller. All five curve tasks use one configurable collector; six
+modeling tasks share preview controls and common fields. Focus restoration no
+longer reselects a row after an edge is toggled off. Native geometry and saved
+operation contracts remain unchanged. WORK_STATE separates reproduction, runtime
+checks, Word review, Python-only owner staging, shortcut and source publication.
+
 October 3 documentation correction: Classic Toolbars where-used locations now
 use native child bullets one level below their operations. Text, headings and
 automatic numbering definitions are preserved. WORK_STATE records structural

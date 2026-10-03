@@ -1,5 +1,64 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 shared curve picker and modeling controls
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_curve_picker/app`.
+Python-only incremental staging from sketch-frame, with nine GUI modules
+including the new installed `ComponentTaskWidgets.py`. No native rebuild,
+installer or published release. Native identity remains
+`03a6f66644488e2b710f94e828155b9b12c23c60`; application source is recorded separately
+in the payload manifest and validation report.
+
+Reproduced five incorrect selections in 36 native viewport edge clicks on the
+previous payload (`validation/reproduce-recorded`). At tilted angles the picked
+edge could lie slightly behind the cursor's sketch-plane intersection. Region
+handling collected all four edges before the native observer toggled the clicked
+edge off. The shared controller now gives same-sketch edge/vertex hits precedence
+before depth filtering. Interior regions and solid occlusion retain their rules.
+Focus is assigned before list highlighting so a repeat-click removal cannot
+silently select the first remaining row.
+
+`ComponentTaskWidgets` owns one configurable source/list/action `CurveCollector`
+for Extrude, Revolve, Helix, Loft/Pipe sections and both Pipe path roles. It also
+owns the selection/display lifecycle, toggle policy, preview controls/timer,
+operation/target choices, compact layouts, reference/quantity fields, common
+refinement/fuzzy options and status controls. Existing operation backends retain
+native geometry, validation, transactions, identities and persistence. The former
+Extrude widget imports remain compatible for existing consumers.
+
+86 distinct native checks pass without source overlays or unexpected GUI errors:
+- `validation/selection-final`: 42 checks. The five-operation viewport probe
+  records 170 native edge clicks at 0/35/65 degree views with no wrong collectors.
+  Sequential/repeated picks, interior regions, Delete, persistent highlights,
+  section and path roles, six preview workflows, occlusion and 360-pixel vertical
+  task scrolling pass. Narrow Extrude/Pipe captures were visually reviewed.
+- `validation/operations-final`: all 40 Revolve/Helix/Loft/Pipe/Primitive checks
+  pass, including create/edit/undo/persistence and native command routing.
+  Its TaskContext suite exposed an obsolete native MapMode assertion from before
+  resilient sketch frames. The updated assertion verifies the actual face
+  reference, mode and following status; all four checks pass in
+  `validation/context-final`, including native Sketcher and component return.
+- `validation/launcher-final`: the actual owner launcher repeats the tilted
+  Extrude regression successfully after final whitespace cleanup (87 passing
+  executions across the accepted reports, 86 distinct checks).
+- Earlier reports retain the UTF-8 staging issue and viewport fixture repairs.
+  Origin axes overlap the rectangle's bottom/left edges, so deterministic
+  sequential probes use the unobstructed edges; origin handling remains covered.
+  The final selection report includes the focus-order product correction.
+
+The canonical Word specification changes only two existing requirement paragraphs;
+2781 other paragraphs and every other package part are unchanged. All 78 pages
+render; pages 1-75 are pixel-identical to the reviewed baseline, and pages 76-78
+were visually reviewed. Headings, owner edits and automatic numbering remain.
+SHA-256: `48a82326d2f3e7ea4c81e7da56f2c58c322bdcbce7c5840f5890de2a40005412`.
+Evidence: task visual folder `curve-picker-doc/verification.json` and `render`.
+
+The existing desktop shortcut was updated, reopened and verified for both target
+and working directory (`validation/shortcut-verification.json`). Build provenance,
+module hashes and source revision are recorded in `BUILD-VALIDATION.json` and
+`BUILD-MANIFEST.json`; source publication is to the authorized `origin/main`.
+Physical owner acceptance remains separate from the injected native GUI checks.
+
 ## October 3 Classic toolbar mapping bullet correction
 
 In the canonical UI & UX Word document, section 2.1.1 now places each

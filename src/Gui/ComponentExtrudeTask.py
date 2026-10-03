@@ -4,6 +4,8 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtWidgets
 from freecad.gui.OccurrenceMove import Ghost
+from freecad.gui.ComponentTaskWidgets import (CompactFormLayout, CurveListWidget,
+                                              ModelingTaskUI, CurveSelection)
 
 _task = None
 
@@ -22,58 +24,7 @@ def active_component():
     return component if Model.is_component(component) else Model.metadata(doc).RootComponent
 
 
-class CompactFormLayout(QtWidgets.QFormLayout):
-    """Keep modeling forms usable in a narrow, vertically scrolling Tasks pane."""
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setRowWrapPolicy(QtWidgets.QFormLayout.WrapLongRows)
-        self.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-
-    def addRow(self, *args):
-        super().addRow(*args)
-        # Object labels and attachment descriptions must not determine dock width.
-        for arg in args:
-            if isinstance(arg, QtWidgets.QComboBox):
-                arg.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
-                arg.setMinimumContentsLength(12)
-                arg.currentTextChanged.connect(arg.setToolTip)
-                arg.setToolTip(arg.currentText())
-            elif isinstance(arg, QtWidgets.QListWidget):
-                arg.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-                arg.setTextElideMode(QtCore.Qt.ElideMiddle)
-                arg.setMouseTracking(True)
-                arg.itemEntered.connect(lambda item: item.setToolTip(item.text()))
-        label = self.itemAt(self.rowCount() - 1, QtWidgets.QFormLayout.LabelRole)
-        if label and isinstance(label.widget(), QtWidgets.QLabel):
-            label.widget().setWordWrap(True)
-
-
-class CurveListWidget(QtWidgets.QListWidget):
-    """Delete edits the task's collector, never the document selection."""
-    removeRequested = QtCore.Signal()
-
-    def event(self, event):
-        if event.type() == QtCore.QEvent.ShortcutOverride and event.key() == QtCore.Qt.Key_Delete:
-            event.accept()
-            return True
-        return super().event(event)
-
-    def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Delete:
-            self.removeRequested.emit()
-            event.accept()
-        else:
-            super().keyPressEvent(event)
-
-    def highlight(self, row=-1):
-        self.clearSelection()
-        self.setCurrentRow(row)
-        if row >= 0:
-            self.scrollToItem(self.item(row))
-
-
-class ExtrudeTask:
+class ExtrudeTask(ModelingTaskUI, CurveSelection):
     def __init__(self, component, operation=None, preset=None, context=None):
         import ComponentModel as Model
         import ComponentExtrude as Extrude
@@ -95,41 +46,9 @@ class ExtrudeTask:
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle(tr("Extrude"))
         layout = CompactFormLayout(self.form)
-        self.mode = QtWidgets.QComboBox()
-        for name in Extrude.MODES:
-            self.mode.addItem(tr(name), name)
-        layout.addRow(tr("Operation"), self.mode)
-        self.profile = QtWidgets.QComboBox()
-        self.profile.addItem(tr("Select a profile…"), None)
-        for obj in Model.history(component):
-            if (getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result")
-                    and hasattr(obj, "Shape") and not obj.Shape.Solids and obj.Shape.Edges):
-                self.profile.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        layout.addRow(tr("Profile"), self.profile)
-        self.curves = CurveListWidget()
-        self.curves.removeRequested.connect(self.remove_selected_curves)
-        self.curves.setMaximumHeight(100)
-        self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        layout.addRow(tr("Selected curves"), self.curves)
-        controls = QtWidgets.QWidget()
-        buttons = QtWidgets.QHBoxLayout(controls)
-        buttons.setContentsMargins(0, 0, 0, 0)
-        self.remove_curves = QtWidgets.QPushButton(tr("Remove"))
-        self.clear_curves = QtWidgets.QPushButton(tr("Clear"))
-        self.all_curves = QtWidgets.QPushButton(tr("Use all"))
-        for button in (self.remove_curves, self.clear_curves, self.all_curves):
-            buttons.addWidget(button)
-        layout.addRow(controls)
-        self.region_pick = QtWidgets.QCheckBox(tr("Pick closed regions in the view"))
-        self.region_pick.setChecked(True)
-        self.region_pick.setToolTip(tr("Choose a sketch, then click inside a region. Its outer contour and hole contours are collected together."))
-        layout.addRow(self.region_pick)
-        self.target = QtWidgets.QComboBox()
-        self.target.addItem(tr("Select a target body…"), None)
-        for obj in Model.finished_results(component):
-            if obj.Shape.Solids and (operation is None or operation not in obj.OutListRecursive):
-                self.target.addItem(Model.display_object(obj).Label, obj.Name)
-        layout.addRow(tr("Target body"), self.target)
+        self.mode = self.combo(layout, "Operation", [(name, name) for name in Extrude.MODES])
+        self.build_profile_collector(layout)
+        self.build_target_control(layout)
         self.length = Gui.UiLoader().createWidget("Gui::QuantitySpinBox")
         self.length.setProperty("unit", "mm")
         self.length.setProperty("minimum", 0.001)
@@ -139,23 +58,9 @@ class ExtrudeTask:
         self.reverse = QtWidgets.QCheckBox(tr("Reverse direction"))
         layout.addRow(self.reverse)
         self.build_extents(layout)
-        self.preview_mode = QtWidgets.QComboBox()
-        for name in ("None", "Overlay", "Result"):
-            self.preview_mode.addItem(tr(name), name)
-        self.preview_mode.setCurrentIndex(1)
-        layout.addRow(tr("Preview type"), self.preview_mode)
-        self.auto_preview = QtWidgets.QCheckBox(tr("Update preview automatically"))
-        self.auto_preview.setChecked(True)
-        layout.addRow(self.auto_preview)
-        self.preview_timer = QtCore.QTimer(self.form)
-        self.preview_timer.setSingleShot(True)
-        self.preview_timer.timeout.connect(self.preview)
-        self.preview_button = QtWidgets.QPushButton(tr("Preview"))
-        layout.addRow(self.preview_button)
-        self.status = QtWidgets.QLabel(tr("Choose a profile. No Body container is required."))
-        self.status.setTextFormat(QtCore.Qt.PlainText)
-        self.status.setWordWrap(True)
-        layout.addRow(self.status)
+        self.build_preview_controls(layout)
+        self.build_status(layout)
+        self.status.setText(tr("Choose a profile. No Body container is required."))
         self.profile.currentIndexChanged.connect(self.profile_changed)
         if preset in Extrude.MODES:
             self.mode.setCurrentIndex(Extrude.MODES.index(preset))
@@ -178,10 +83,6 @@ class ExtrudeTask:
             self.use_selection(context.profile_selection if context else None)
         self.preview_button.clicked.connect(self.preview)
         self.mode.currentIndexChanged.connect(self.changed)
-        self.remove_curves.clicked.connect(self.remove_selected_curves)
-        self.clear_curves.clicked.connect(lambda: self.set_curves([], False))
-        self.all_curves.clicked.connect(self.profile_changed)
-        self.region_pick.toggled.connect(self.update_regions)
         self.target.currentIndexChanged.connect(self.changed)
         self.length.valueChanged.connect(self.changed)
         self.reverse.toggled.connect(self.changed)
@@ -192,37 +93,6 @@ class ExtrudeTask:
     def getStandardButtons(self):
         buttons = QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel
         return getattr(buttons, "value", buttons)
-
-    def quantity(self, value=0., unit="mm"):
-        widget = Gui.UiLoader().createWidget("Gui::QuantitySpinBox")
-        widget.setProperty("unit", unit)
-        widget.setProperty("minimum", -1e9)
-        widget.setProperty("maximum", 1e9)
-        widget.setProperty("rawValue", value)
-        return widget
-
-    def reference_row(self, layout, label):
-        row = QtWidgets.QWidget()
-        box = QtWidgets.QVBoxLayout(row)
-        box.setContentsMargins(0, 0, 0, 0)
-        field = QtWidgets.QLineEdit()
-        field.setMinimumWidth(120)
-        field.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        field.setPlaceholderText(tr("ObjectName.Face1 or plane/shape name"))
-        pick, clear = QtWidgets.QPushButton(tr("Pick")), QtWidgets.QPushButton(tr("Clear"))
-        pick.setMaximumWidth(55)
-        clear.setMaximumWidth(55)
-        box.addWidget(field)
-        buttons = QtWidgets.QHBoxLayout()
-        buttons.addWidget(pick)
-        buttons.addWidget(clear)
-        buttons.addStretch()
-        box.addLayout(buttons)
-        pick.clicked.connect(lambda: self.begin_reference_pick(field))
-        clear.clicked.connect(field.clear)
-        field.textChanged.connect(self.changed)
-        layout.addRow(tr(label), row)
-        return field, row
 
     def begin_reference_pick(self, field):
         self.reference_pick = field
@@ -280,9 +150,7 @@ class ExtrudeTask:
         self.along_normal = QtWidgets.QCheckBox(tr("Length along sketch normal"))
         self.along_normal.setChecked(True)
         layout.addRow(self.along_normal)
-        self.refine = QtWidgets.QCheckBox(tr("Refine result"))
-        self.refine.setChecked(True)
-        layout.addRow(self.refine)
+        self.refine = self.checkbox(layout, "Refine result", True)
         for widget in (self.sides, self.extent, self.extent2, self.start):
             widget.currentIndexChanged.connect(self.changed)
         for widget in (self.offset, self.offset2, self.taper, self.taper2, self.length2, self.start_offset, *self.direction):
@@ -361,256 +229,6 @@ class ExtrudeTask:
         else:
             self.status.setText(tr("Select curves from one sketch, or click a closed region. Preview and OK require one connected region with optional holes."))
 
-    def curve_names(self):
-        return [self.curves.item(i).data(QtCore.Qt.UserRole) for i in range(self.curves.count())]
-
-    def set_curves(self, names, whole=False, current=None):
-        self.curves.clear()
-        source = self.component.Document.getObject(self.profile.currentData()) if self.profile.currentData() else None
-        for name in dict.fromkeys(names):
-            item = QtWidgets.QListWidgetItem((source.Label + " / " if source else "") + name)
-            item.setData(QtCore.Qt.UserRole, name)
-            self.curves.addItem(item)
-        names = self.curve_names()
-        self.curves.highlight(names.index(current) if current in names else -1)
-        self.whole_profile = whole
-        self.changed()
-        self.update_curve_display()
-
-    def profile_changed(self, *args):
-        source = self.component.Document.getObject(self.profile.currentData()) if self.profile.currentData() else None
-        self.restore_profile_visibility()
-        if source:
-            self.profile_visibility.setdefault(source.Name, bool(source.Visibility))
-            source.Visibility = True
-        names = ["Edge" + str(i + 1) for i in range(len(source.Shape.Edges))] if source else []
-        self.set_curves(names, True)
-
-    def restore_profile_visibility(self):
-        for name, visible in self.profile_visibility.items():
-            source = self.component.Document.getObject(name)
-            if source:
-                source.Visibility = visible
-
-    def remove_selected_curves(self):
-        removed = {item.data(QtCore.Qt.UserRole) for item in self.curves.selectedItems()}
-        if removed:
-            self.set_curves([name for name in self.curve_names() if name not in removed], False)
-
-    def collect_curves(self, elements, toggle=False):
-        names = [] if self.whole_profile else self.curve_names()
-        current = None
-        for name in dict.fromkeys(elements):
-            if toggle and name in names:
-                names.remove(name)
-                current = None
-            else:
-                if name not in names:
-                    names.append(name)
-                current = name
-        self.set_curves(names, False, current)
-        if self.observing:
-            self.curves.setFocus(QtCore.Qt.OtherFocusReason)
-
-    def start_selection(self):
-        self.curve_display_active = True
-        self.update_regions()
-        # The task owns persistent curve emphasis. Release native preselection so
-        # clicking the same edge produces another pick, including without Ctrl.
-        Gui.Selection.clearSelection()
-        Gui.Selection.addObserver(self, 0)
-        self.observing = True
-        self.mouse_callback = self.view.addEventCallback("SoMouseButtonEvent", self.pick_region)
-
-    def stop_selection(self):
-        self.curve_display_active = False
-        self.clear_curve_display()
-        for name, visible in getattr(self, "region_visibility", {}).items():
-            source = self.component.Document.getObject(name)
-            if source:
-                source.ViewObject.ShowClosedRegions = visible
-        self.region_visibility = {}
-        if getattr(self, "preview_timer", None) is not None:
-            self.preview_timer.stop()
-        if self.observing:
-            Gui.Selection.removeObserver(self)
-            self.observing = False
-        if self.mouse_callback is not None:
-            self.view.removeEventCallback("SoMouseButtonEvent", self.mouse_callback)
-            self.mouse_callback = None
-
-    def update_regions(self, *args):
-        self.update_curve_display()
-
-    def curve_display_inputs(self):
-        """Collected geometry, independent of the transient native selection."""
-        name = self.profile.currentData()
-        return [(name, self.curve_names())] if name and self.curves.count() else []
-
-    def active_curve_source(self):
-        return self.profile.currentData()
-
-    def clear_curve_display(self):
-        for highlight in getattr(self, "curve_highlights", {}).values():
-            highlight.remove()
-        self.curve_highlights = {}
-        for root, material in getattr(self, "curve_materials", {}).values():
-            if root.findChild(material) >= 0:
-                root.removeChild(material)
-        self.curve_materials = {}
-
-    def update_curve_display(self, *args):
-        if not getattr(self, "curve_display_active", False):
-            return
-        import Part
-        from pivy import coin
-        self.clear_curve_display()
-        doc = self.component.Document
-        collected = {}
-        for name, elements in self.curve_display_inputs():
-            source = doc.getObject(name) if name else None
-            if source is None or not hasattr(source, "Shape"):
-                continue
-            names = elements if elements is not None else ["Edge" + str(i + 1) for i in range(len(source.Shape.Edges))]
-            if names:
-                collected.setdefault(name, set()).update(names)
-        active = self.active_curve_source()
-        candidates = {self.profile.itemData(i) for i in range(1, self.profile.count())}
-        if not hasattr(self, "region_visibility"):
-            self.region_visibility = {}
-        for source in doc.Objects:
-            if not source.isDerivedFrom("Sketcher::SketchObject"):
-                continue
-            view = source.ViewObject
-            if collected and source.Name != active:
-                # Scene-only overrides never alter saved LineColor/PointColor,
-                # appearance arrays, undo history or document persistence.
-                material = coin.SoMaterial()
-                material.diffuseColor = (0.65, 0.65, 0.65)
-                material.setOverride(True)
-                root = view.RootNode
-                root.insertChild(material, 0)
-                self.curve_materials[source.Name] = (root, material)
-            if hasattr(view, "ShowClosedRegions"):
-                self.region_visibility.setdefault(source.Name, view.ShowClosedRegions)
-                if collected:
-                    view.ShowClosedRegions = bool(self.region_pick.isChecked() and source.Name == active
-                                                  and source.Name in candidates)
-                elif source.Name in candidates:
-                    view.ShowClosedRegions = self.region_pick.isChecked()
-                else:
-                    view.ShowClosedRegions = self.region_visibility[source.Name]
-        color = App.ParamGet("User parameter:BaseApp/Preferences/View").GetUnsigned("SelectionColor", 0xffbf00ff)
-        color = tuple(((color >> shift) & 255) / 255. for shift in (24, 16, 8))
-        for name, elements in collected.items():
-            source = doc.getObject(name)
-            shapes = []
-            for element in sorted(elements):
-                try:
-                    shapes.append(source.Shape.getElement(element))
-                except Exception:
-                    continue  # Stale inputs remain in the collector for repair.
-            if not shapes:
-                continue
-            shape = Part.makeCompound(shapes)
-            parent = source.getGlobalPlacement().multiply(source.Placement.inverse())
-            shape.Placement = parent.multiply(shape.Placement)
-            highlight = Ghost(shape, color=color)
-            highlight.node.getChild(1).lineWidth = 3
-            highlight.node.getChild(1).pointSize = 6
-            # Annotation keeps the collected outline visible over solid previews.
-            # Its separator contains all render state; the geometry stays unpickable.
-            annotation = coin.SoAnnotation()
-            annotation.addChild(highlight.node)
-            highlight.root.removeChild(highlight.node)
-            highlight.node = annotation
-            highlight.root.addChild(annotation)
-            self.curve_highlights[name] = highlight
-
-    def addSelection(self, document, name, subname, *args):
-        from freecad.gui import ComponentSelection as Selection
-        doc = App.listDocuments().get(document)
-        base = doc.getObject(name) if doc else None
-        if self.reference_pick is not None and base is not None:
-            import ComponentModel as Model
-            item = base.getSubObject(subname, 1) if subname else base
-            if item is not None and (Model.owner(item) == self.component or item in self.component.Origin.OriginFeatures):
-                element = subname.rsplit(".", 1)[-1]
-                self.reference_pick.setText(item.Name + ("." + element if element.startswith("Face") else ""))
-                self.reference_pick = None
-                return
-        picks = Selection.resolve(self.component, base, subname)
-        if len(picks) == 1 and picks[0].item is not None:
-            if self.reference_pick is not None:
-                pick = picks[0]
-                self.reference_pick.setText(pick.item.Name + ("." + pick.element if pick.element else ""))
-                self.reference_pick = None
-                return
-            if picks[0].element.startswith("InternalFace"):
-                return  # Region hits are collected using the cursor's sketch-plane point.
-            self.use_selection([(picks[0].item, picks[0].element)], toggle=True)
-            if picks[0].element.startswith(("Edge", "Vertex")):
-                Gui.Selection.removeSelection(document, name, subname)
-
-    def pick_region(self, event):
-        if self.reference_pick is not None or not self.region_pick.isChecked() or event.get("State") != "DOWN" or event.get("Button") != "BUTTON1":
-            return
-        position = event.get("Position")
-        if not position:
-            return
-        try:
-            import ComponentProfile as Profile
-            from freecad.gui import ComponentSelection as Selection
-            hits = self.view.getObjectsInfo(position) or []
-            source = self.component.Document.getObject(self.profile.currentData()) if self.profile.currentData() else None
-            # An interior click can choose the profile itself. Native hits may
-            # name a component path rather than the sketch directly.
-            resolved_hits = []
-            for hit in hits:
-                hit_doc = App.listDocuments().get(hit.get("Document"))
-                base = hit_doc.getObject(hit.get("Object", "")) if hit_doc else None
-                picks = Selection.resolve(self.component, base, hit.get("Component", ""))
-                pick = picks[0] if len(picks) == 1 else None
-                resolved_hits.append((hit, base, pick))
-                if (source is None and pick and pick.item is not None
-                        and pick.element.startswith("InternalFace")
-                        and self.profile.findData(pick.item.Name) > 0):
-                    source = pick.item
-            if source is None or not source.isDerivedFrom("Sketcher::SketchObject") or not source.Visibility:
-                return
-            start, end = self.view.projectPointToLine(position)
-            frame = self.component.getGlobalPlacement().multiply(source.Placement)
-            normal = frame.Rotation.multVec(App.Vector(0, 0, 1))
-            direction = end - start
-            denominator = direction.dot(normal)
-            if abs(denominator) < 1e-12:
-                raise ValueError(tr("Turn the view so the sketch plane can be picked."))
-            point = start + direction * ((frame.Base - start).dot(normal) / denominator)
-            # Origin helpers can be picked on top of solids regardless of depth.
-            # Inspect the full ray so ignoring a helper never exposes a region
-            # occluded by real geometry. Geometry behind the sketch is harmless.
-            for hit, hit_object, pick in resolved_hits:
-                origin = self.component.Origin
-                origin_hit = hit_object == origin or hit_object in origin.OriginFeatures
-                support_plane_hit = (hit_object is not None
-                    and hit_object in [ref[0] for ref in getattr(source, "FrameSupport", source.AttachmentSupport)]
-                    and (hit_object.isDerivedFrom("PartDesign::Plane")
-                         or hit_object.isDerivedFrom("Part::Plane")))
-                sketch_region_hit = (pick is not None and pick.item == source
-                                     and pick.element.startswith("InternalFace"))
-                if origin_hit or support_plane_hit or sketch_region_hit:
-                    continue
-                if all(axis in hit for axis in ("x", "y", "z")):
-                    hit_point = App.Vector(hit["x"], hit["y"], hit["z"])
-                    if (hit_point - point).dot(direction) / direction.Length > 1e-6:
-                        continue
-                return  # Native edge picks are collected by the selection observer.
-            point = self.component.getGlobalPlacement().inverse().multVec(point)
-            names = Profile.region(source, point)
-            self.profile.setCurrentIndex(self.profile.findData(source.Name))
-            self.collect_curves(names)
-        except Exception as error:
-            self.status.setText(str(error))
 
     def clear_preview(self):
         if self.ghost:
@@ -627,37 +245,6 @@ class ExtrudeTask:
                 obj.Visibility = visible
         self.preview_visibility.clear()
 
-    def use_selection(self, picks=None, toggle=False):
-        from freecad.gui import ComponentSelection as Selection
-        import ComponentModel as Model
-        selected = picks if isinstance(picks, list) else [(p.item, p.element) for p in
-            Selection.selected(self.component, Gui.Selection.getSelectionEx("*", 0)) if p.item is not None]
-        if not selected:
-            return
-        try:
-            sources = {obj for obj, element in selected}
-            if len(sources) != 1:
-                raise ValueError(tr("All selected curves must belong to the same sketch."))
-            source = next(iter(sources))
-            index = self.profile.findData(source.Name)
-            if Model.owner(source) != self.component or index <= 0:
-                raise ValueError(tr("Choose a sketch owned by the active component."))
-            if self.profile.currentData() not in (None, source.Name) and self.curves.count():
-                raise ValueError(tr("Choose the other sketch in the Profile field before collecting its curves."))
-            elements = [element for obj, element in selected if element]
-            if elements and (not source.isDerivedFrom("Sketcher::SketchObject")
-                             or any(not name.startswith("Edge") or not name[4:].isdigit() for name in elements)):
-                raise ValueError(tr("Select curves from one sketch."))
-            self.profile.setCurrentIndex(index)
-            if elements:
-                names = ["Edge" + str(i + 1) for i in range(len(source.Shape.Edges))]
-                if any(name not in names for name in elements):
-                    raise ValueError(tr("A selected curve is unavailable. Select it again."))
-                self.collect_curves(elements, toggle)
-            else:
-                self.profile_changed()
-        except Exception as error:
-            self.status.setText(str(error))
 
     def values(self):
         doc = self.component.Document

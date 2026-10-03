@@ -138,9 +138,20 @@ class TestComponentPreview(unittest.TestCase):
             self.assertEqual(options[key], "ThroughAll")
 
     def testDropdownsAndAutomaticColorsWithoutTarget(self):
+        from freecad.gui.ComponentTaskWidgets import CurveCollector, PreviewControls
         profile = self.rectangle()
         for name in ("Extrude", "Revolve", "Loft", "Pipe", "Helix", "Primitive"):
             task = self.launch(name)
+            self.assertIsInstance(task.preview_controls, PreviewControls)
+            self.assertIs(task.preview_timer.parent(), task.preview_controls)
+            if name != "Primitive":
+                self.assertIsInstance(task.collector, CurveCollector)
+                self.assertIs(task.curves, task.collector.curves)
+                self.assertIs(task.profile, task.collector.source)
+            if name == "Pipe":
+                for fields in task.paths.values():
+                    self.assertIsInstance(fields["host"], CurveCollector)
+                    self.assertIs(fields["edges"], fields["host"].curves)
             self.assertIsInstance(task.preview_mode, QtWidgets.QComboBox)
             self.assertEqual([task.preview_mode.itemData(i) for i in range(task.preview_mode.count())],
                              ["None", "Overlay", "Result"])

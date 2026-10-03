@@ -4,7 +4,8 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtWidgets
 from freecad.gui.ComponentSectionTask import SectionTask
-from freecad.gui.ComponentExtrudeTask import active_component, CompactFormLayout, CurveListWidget
+from freecad.gui.ComponentTaskWidgets import CurveCollector, toggled_curves
+from freecad.gui.ComponentExtrudeTask import active_component
 
 _task = None
 
@@ -29,11 +30,7 @@ class PipeTask(SectionTask):
         self.view = Gui.getDocument(component.Document.Name).activeView()
         outer = self.build_sections()
         main, dimensions, advanced, preview = [section[2] for section in self.sections]
-        self.mode = self.combo(main, "Operation", [(name, name) for name in Pipe.MODES])
-        self.target = self.combo(main, "Target body", [("Select a target body…", None)])
-        for obj in Model.finished_results(component):
-            if obj.Shape.Solids and (operation is None or operation not in obj.OutListRecursive):
-                self.target.addItem(Model.display_object(obj).Label, obj.Name)
+        self.build_operation_controls(main, Pipe.MODES)
         self.build_collectors(main, "Profile then sections")
         self.buttons(main, (("Pick profile curves", lambda: self.set_role(None)),))
         self.transformation = self.combo(main, "Mode", [(name, name) for name in Pipe.TRANSFORMATIONS])
@@ -59,29 +56,10 @@ class PipeTask(SectionTask):
             advanced.addRow(tr("Binormal ") + axis, field)
             self.binormal.append(field)
         self.boolean = self.combo(advanced, "Subtractive result", [("Subtraction", "Subtraction"), ("Common (keep intersection)", "Common")])
-        self.refine = QtWidgets.QCheckBox(tr("Refine result"))
-        self.refine.setChecked(True)
-        advanced.addRow(self.refine)
-        self.fuzzy = self.quantity(0.)
-        self.fuzzy.setProperty("minimum", -1.)
-        self.fuzzy.setProperty("maximum", 1.)
-        self.fuzzy.setToolTip(tr("Zero: native default. Negative: automatic tolerance. Positive: explicit tolerance up to 1 mm."))
-        advanced.addRow(tr("Fuzzy tolerance"), self.fuzzy)
-        self.auto_preview = QtWidgets.QCheckBox(tr("Recompute on change"))
-        self.auto_preview.setChecked(True)
-        preview.addRow(self.auto_preview)
-        self.preview_mode = self.combo(preview, "Preview type", [(name, name) for name in ("None", "Overlay", "Result")])
-        self.preview_mode.setCurrentIndex(1)
-        self.preview_button = QtWidgets.QPushButton(tr("Update preview"))
-        preview.addRow(self.preview_button)
-        self.status = QtWidgets.QLabel()
-        self.status.setTextFormat(QtCore.Qt.PlainText)
-        self.status.setWordWrap(True)
-        outer.addWidget(self.status)
-        outer.addStretch()
-        self.preview_timer = QtCore.QTimer(self.form)
-        self.preview_timer.setSingleShot(True)
-        self.preview_timer.timeout.connect(self.preview)
+        self.refine = self.checkbox(advanced, "Refine result", True)
+        self.fuzzy = self.fuzzy_tolerance(advanced)
+        self.build_preview_controls(preview)
+        self.build_status(outer)
         self.profile.currentIndexChanged.connect(self.profile_changed)
         self.ordered.currentRowChanged.connect(self.inspect_section)
         self.mode.setCurrentIndex(Pipe.MODES.index(preset) if preset in Pipe.MODES else 0)
@@ -118,23 +96,15 @@ class PipeTask(SectionTask):
         self.changed()
 
     def path_picker(self, layout, label, key):
-        import ComponentModel as Model
-        host = QtWidgets.QWidget()
-        form = CompactFormLayout(host)
-        form.setContentsMargins(0, 0, 0, 0)
-        source = self.combo(form, "Source", [("Select a path…", None)])
-        for obj in Model.history(self.component):
-            if hasattr(obj, "Shape") and obj.Shape.Edges and getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result"):
-                source.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        edges = CurveListWidget()
-        edges.removeRequested.connect(lambda: self.remove_path_edges(key))
-        edges.setMaximumHeight(60)
-        edges.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        form.addRow(tr("Edges"), edges)
+        host = CurveCollector(self.component, source_label="Source", placeholder="Select a path…",
+            curves_label="Edges", height=60, allow_solids=True,
+            actions=(("Pick edges", lambda: self.set_role(key)),
+                     ("Use whole", lambda: self.whole_path(key)),
+                     ("Remove edges", lambda: self.remove_path_edges(key)),
+                     ("Clear path", lambda: self.clear_path(key))),
+            remove=lambda: self.remove_path_edges(key))
+        source, edges = host.source, host.curves
         self.paths[key] = dict(source=source, edges=edges, host=host, whole=True)
-        self.buttons(form, (("Pick edges", lambda: self.set_role(key)),
-                            ("Use whole", lambda: self.whole_path(key))))
-        self.buttons(form, (("Remove edges", lambda: self.remove_path_edges(key)), ("Clear path", lambda: self.clear_path(key))))
         source.currentIndexChanged.connect(lambda: self.whole_path(key))
         layout.addRow(tr(label), host)
 
@@ -223,18 +193,10 @@ class PipeTask(SectionTask):
             if elements:
                 names = ([fields["edges"].item(i).text() for i in range(fields["edges"].count())]
                          if fields["source"].currentData() == obj.Name and not fields["whole"] else [])
-                current = None
-                for element in dict.fromkeys(elements):
-                    if toggle and element in names:
-                        names.remove(element)
-                        current = None
-                    else:
-                        if element not in names:
-                            names.append(element)
-                        current = element
-                self.set_path(key, obj, names, whole=False, current=current)
+                names, current = toggled_curves(names, elements, toggle)
                 if self.observing:
                     fields["edges"].setFocus(QtCore.Qt.OtherFocusReason)
+                self.set_path(key, obj, names, whole=False, current=current)
             else:
                 self.set_path(key, obj, elements)
         except Exception as error:

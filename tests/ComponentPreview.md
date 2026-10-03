@@ -25,3 +25,19 @@ placement, exercise automatic updates/colors, and check preview/cancel cleanup.
 Existing operation suites cover geometry, edit/undo/persistence and routing;
 curve and narrow-task suites cover retained selection and vertical scrolling.
 WORK_STATE records reports, visual inspection, build identity and delivery.
+
+Shared control regression: the six tasks must instantiate `PreviewControls` from
+`ComponentTaskWidgets`; all five curve tasks use its `CurveCollector`, including
+both Pipe path roles. The runtime suite checks these actual task instances and
+retains automatic colors, timer ownership and preview/cancel behavior.
+
+Run `TestComponentCurveDisplay.py`, `TestComponentCurveProfile.py` and
+`TestComponentTaskWidth.py` alongside this suite. The native viewport regression
+clicks rectangle edges at 0, 35 and 65 degree view angles, with offsets within
+the pick radius. Each native edge notification must add only that edge. Sequential
+picks accumulate edges; a repeat removes its edge and leaves no list row selected.
+An unobstructed interior click must still collect all four boundary curves.
+Native origin axes deliberately remain visible; the sequential probe uses edges
+that do not coincide with them. The profile suite separately checks solid occlusion,
+origin helpers, placed sketches and region collection. Delete, both Pipe path
+roles, section emphasis and 360-pixel vertical-only task scrolling remain covered.

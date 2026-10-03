@@ -1526,6 +1526,7 @@ set(FreeCADGui_Scripts
     PlusRibbon.py
     PlusDefaults.py
     ComponentExtrudeTask.py
+    ComponentTaskWidgets.py
     ComponentRevolveTask.py
     ComponentOperationTask.py
     ComponentLoftTask.py

@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+Modeling curve picks now arbitrate edge versus region hits before depth filtering.
+`ComponentTaskWidgets.py` owns the reusable profile/section/path collector, selection
+controller, preview controls, common fields and compact layout. Extrude, Revolve,
+Helix, Loft and Pipe share the collector; all six modeling tasks share preview
+controls. WORK_STATE records reproduction, native checks and owner delivery.
+
 ## Project at a glance
 
 Datum Plane and New Sketch now share Surface, Z Direction, Sketch Origin and X
@@ -59,9 +65,9 @@ through `src/Mod/Part/ComponentPrimitive.py` / `ComponentHelix.py` / `ComponentP
 their corresponding `src/Gui/ComponentHelixTask.py` / `ComponentPipeTask.py` /
 `ComponentLoftTask.py` tasks.
 `ComponentNativeOperation.py` owns their common binding and transactional lifecycle;
-`ComponentSectionTask.py` owns ordered section collection. `ComponentOperationTask.py`
-shares collapsible layout, transient previews and the single-profile/axis collector
-with Revolve. Primitive retains native dimensions, placement and attachment in
+`ComponentSectionTask.py` owns ordered section collection. `ComponentTaskWidgets.py`
+shares the collector, selection/display controller and common UI controls.
+`ComponentOperationTask.py` retains the common lifecycle and axis-picking adapter. Primitive retains native dimensions, placement and attachment in
 `ComponentPrimitiveTask.py`. The grouped native command build and routing tests pass;
 owner delivery is recorded in WORK_STATE. See [Primitive acceptance](../tests/ComponentPrimitive.md), [Pipe acceptance](../tests/ComponentPipe.md),
 [Loft acceptance](../tests/ComponentLoft.md), [Helix acceptance](../tests/ComponentHelix.md)
@@ -73,7 +79,7 @@ using C++, Python, Qt, OpenCASCADE, and Coin; the GUI executable enters through
 
 The delivered October 3 batch combines Revolution/Groove as component Revolve, implemented in
 `src/Mod/Part/ComponentRevolve.py` and `src/Gui/ComponentRevolveTask.py`. It reuses
-native geometry and the Extrude curve collector; native command and Model History
+native geometry and the shared modeling curve collector; native command and Model History
 routes share the four-section task. Acceptance: `tests/TestComponentRevolve.py`.
 The batch also incorporates the shared Datum Plane workflow: Define Surface, Z Direction,
 Sketch Origin and X Direction, with immediate availability as a New Sketch attachment.
