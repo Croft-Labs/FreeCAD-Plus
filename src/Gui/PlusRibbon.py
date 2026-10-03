@@ -31,6 +31,17 @@ HOME_GROUPS = (
     ("Sketch", ("PartDesign_NewSketch", "Part_CoordinateSystem")),
 )
 COORDINATE_CHOICES = ("Part_CoordinateSystem", "Part_DatumPlane", "Part_DatumLine", "Part_DatumPoint")
+MODELING_GROUPS = (
+    ("Sketch", ("PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch")),
+    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AddReferenceObject",
+                  "PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
+    ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Chamfer", "PartDesign_Draft",
+                  "PartDesign_Thickness", "PartDesign_Defeaturing")),
+    ("Transformation", ("PartDesign_Mirrored", "PartDesign_LinearPattern",
+                        "PartDesign_CircularPattern", "PartDesign_MultiTransform")),
+    ("Primitives", ("PartDesign_CompPrimitiveAdditive",)),
+)
+PRIMITIVE_LABELS = ("Box", "Cylinder", "Sphere", "Cone", "Ellipsoid", "Torus", "Prism", "Wedge")
 # Presentation priority only: every operation still uses its native QAction.
 PRIMARY_COMMANDS = {
     "Std_New", "Std_Open", "Std_Save", "Std_Part",
@@ -417,9 +428,7 @@ class Ribbon(QtCore.QObject):
             groups.append(("Display", ["Std_EntitySelectionFilter", "Std_ToolBarMenu", "Std_DockViewMenu", "Std_ViewStatusBar"]))
             return groups
         if self.mode_name == "Design" and tab == "Modeling":
-            order = ("Part Design Modeling Features", "Part Design Transformation Features",
-                     "Part Design Dress-Up Features", "Part Design Helper Features")
-            return [(name, bars[name]) for name in order if name in bars]
+            return list(MODELING_GROUPS)
         return [(name, commands) for name, commands in bars.items() if name not in STANDARD]
 
     def initialize_home(self):
@@ -446,6 +455,12 @@ class Ribbon(QtCore.QObject):
                     "Sketcher_Dimension": tr("Auto dimension"), "Part_DatumLine": tr("Datum Axis")}
         if command_name == "PartDesign_Fillet" and self.mode_name == "Design" and self.current_tab() == "Home":
             captions["PartDesign_Fillet"] = tr("Fillet/Chamfer")
+        if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Modeling":
+            captions.update({"Sketcher_MapSketch": tr("Attach Sketch"), "PartDesign_AdditiveLoft": tr("Loft"),
+                             "PartDesign_AdditiveHelix": tr("Helix"), "PartDesign_CompPrimitiveAdditive": tr("Primitive"),
+                             "PartDesign_Thickness": tr("Shell/Thickness"),
+                             "PartDesign_Defeaturing": tr("Delete Face/Defeaturing"),
+                             "PartDesign_Mirrored": tr("Mirror Feature"), "PartDesign_MultiTransform": tr("Multi Transform")})
         button = RibbonButton(captions.get(command_name), parent,
                               ICON_FALLBACKS.get(command_name, "preferences-general.svg"))
         button.setObjectName("Ribbon_" + command_name)
@@ -514,13 +529,37 @@ class Ribbon(QtCore.QObject):
             grid.setVerticalSpacing(0)
             grid.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
             buttons = []
-            for command_name, choices in projected_commands(commands):
+            modeling = self.mode_name == "Design" and self.current_tab() == "Modeling"
+            entries = ((name, None) for name in commands) if modeling else projected_commands(commands)
+            for command_name, choices in entries:
+                if modeling and command_name in ("PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix"):
+                    choices = (command_name, command_name.replace("Additive", "Subtractive"))
                 if self.mode_name == "Design" and self.current_tab() == "Home" and command_name == "PartDesign_Fillet":
                     choices = ("PartDesign_Fillet", "PartDesign_Chamfer")
                 size = "medium" if self.current_tab() == "Home" and title in ("Main", "Frequent operations") else None
                 button = self.make_button(command_name, group, choices, size)
                 if button is None:
                     continue
+                if modeling and command_name == "PartDesign_CompPrimitiveAdditive":
+                    if title == "Primitives":
+                        button.caption = tr("Primitives")
+                        button.restore_caption()
+                        button.setObjectName("Ribbon_Primitives")
+                        menu = QtWidgets.QMenu(button)
+                        for label, native in zip(PRIMITIVE_LABELS, native_actions(command_name)):
+                            item = menu.addAction(native.icon(), tr(label))
+                            item.setObjectName(native.objectName())
+                            item.setEnabled(native.isEnabled())
+                            item.triggered.connect(lambda checked=False, action=native: action.trigger())
+                            menu.aboutToShow.connect(lambda action=native, proxy=item: proxy.setEnabled(action.isEnabled()))
+                        item = menu.addAction(tr("Tab"))
+                        item.setEnabled(False)
+                        item.setToolTip(tr("Tab creation is not implemented yet."))
+                        button.setMenu(menu)
+                        button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+                    else:
+                        button.setMenu(None)
+                        button.setPopupMode(QtWidgets.QToolButton.DelayedPopup)
                 buttons.append((button, button.property("ribbonSize") == "full"))
             if title in COLLAPSED_GROUPS and buttons:
                 # Rare help operations share one icon; choices retain native states.

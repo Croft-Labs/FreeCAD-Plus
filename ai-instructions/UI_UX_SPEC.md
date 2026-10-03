@@ -73,7 +73,7 @@ with no assembly occurrences and opens its editing tab. Add Component inserts a
 linked occurrence, reusing or creating a definition through the existing chooser.
 Both follow the approved component contract and native transaction/ownership rules.
 
-The three-group Home revision awaits the next packaged build; it supersedes the
+The exact Home and Modeling revisions await the next packaged build; it supersedes the
 broader Home layout incorporated in the October 2 audit build. Earlier October 2
 folders retain their previous layout; the owner shortcut must target the validated
 audit payload. Initialize specialist Home actions only after the main window is
@@ -105,8 +105,16 @@ Home retains Coordinate System/Plane/Axis/Point in the Coordinate System dropdow
 Variable Set and Macro remain available through native menus and other modes.
 Iconless native actions use ribbon-only
 fallback artwork and retain their original QAction state and menu identity.
-Modeling groups native Part Design Modeling, Transformation, Dress-Up and Helper
-commands, in that order. Surface, Sketch, Assembly and Mesh reuse the
+Modeling contains exactly Sketch, Modeling, Dress-Up and Transformation groups,
+followed by one Primitives dropdown. Sketch has New Sketch, Attach Sketch and Edit
+Sketch. Modeling has Extrude, Revolve, Add Reference Object, Loft, Helix and Primitive.
+Dress-Up has Fillet, Chamfer, Draft, Shell/Thickness and Delete Face/Defeaturing.
+Transformation has Mirror Feature, Linear Pattern, Circular Pattern and Multi Transform
+as separate buttons. Primitives lists Box, Cylinder, Sphere, Cone, Ellipsoid, Torus,
+Prism, Wedge and Tab. Tab is a disabled future entry until a real creation command
+exists. Use one icon per combined additive/subtractive workflow even before its
+unified task is implemented; native Loft/Helix variants remain in the single-icon
+menus for now. Primitive opens the native default primitive action. Surface, Sketch, Assembly and Mesh reuse the
 toolbar group boundaries of their corresponding native workbenches. View groups
 standard view orientation/fit and display controls. Unavailable workbench tabs
 are disabled. Other modes use Home, Tools and View; Tools preserves that mode's

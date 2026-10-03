@@ -318,9 +318,9 @@ class TestPlusRibbon(unittest.TestCase):
         scroll.setValue(scroll.maximum())
         self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "ribbon-narrow.png"))
         self.tab("Modeling")
-        button = self.button("PartDesign_CompPrimitiveAdditive")
+        button = self.button("Primitives")
         self.assertIsNotNone(button.menu())
-        self.assertEqual(button.menu().actions(), Gui.Command.get("PartDesign_CompPrimitiveAdditive").getAction())
+        self.assertEqual([action.text() for action in button.menu().actions()], list(UI.PRIMITIVE_LABELS) + ["Tab"])
         self.assertIsNotNone(self.button("PartDesign_Fillet"))
 
     def testCompactPrimaryAndSecondaryGrid(self):
@@ -431,6 +431,49 @@ class TestPlusRibbon(unittest.TestCase):
             self.assertFalse(button.icon().isNull(), button.objectName())
             if button.menu():
                 self.assertFalse(any(action.isSeparator() for action in button.menu().actions()))
+
+    def testExactOwnerDesignModelingLayout(self):
+        self.tab("Modeling")
+        expected = [("Sketch", ("PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch")),
+                    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AddReferenceObject",
+                                  "PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
+                    ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Chamfer", "PartDesign_Draft", "PartDesign_Thickness", "PartDesign_Defeaturing")),
+                    ("Transformation", ("PartDesign_Mirrored", "PartDesign_LinearPattern", "PartDesign_CircularPattern", "PartDesign_MultiTransform")),
+                    ("Primitives", ("PartDesign_CompPrimitiveAdditive",))]
+        self.assertEqual(self.ribbon.groups(), expected)
+        groups = self.ribbon.scroll.widget().findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+        self.assertEqual(len(groups), 5)
+        for group, (title, commands) in zip(groups, expected):
+            buttons = group.findChildren(QtWidgets.QToolButton)
+            ids = ["Ribbon_Primitives"] if title == "Primitives" else ["Ribbon_" + name for name in commands]
+            self.assertEqual([button.objectName() for button in buttons], ids)
+            for button, name in zip(buttons, commands):
+                self.assertEqual(button.defaultAction(), Gui.Command.get(name).getAction()[0])
+                self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
+        for name, caption in (("Sketcher_MapSketch", "Attach Sketch"), ("PartDesign_AdditiveLoft", "Loft"),
+                              ("PartDesign_AdditiveHelix", "Helix"), ("PartDesign_CompPrimitiveAdditive", "Primitive"),
+                              ("PartDesign_Thickness", "Shell/Thickness"), ("PartDesign_Defeaturing", "Delete Face/Defeaturing")):
+            self.assertEqual(self.button(name).text(), caption)
+        for name in ("PartDesign_Groove", "PartDesign_SubtractiveLoft", "PartDesign_SubtractiveHelix", "PartDesign_CompPrimitiveSubtractive", "PartDesign_AdditivePipe"):
+            self.assertIsNone(self.button(name))
+        self.assertIsNone(self.button("PartDesign_CompPrimitiveAdditive").menu())
+        menu = self.button("Primitives").menu()
+        self.assertEqual([action.text() for action in menu.actions()], ["Box", "Cylinder", "Sphere", "Cone", "Ellipsoid", "Torus", "Prism", "Wedge", "Tab"])
+        self.assertFalse(menu.actions()[-1].isEnabled())
+        # An active Body enables real native choices; menu proxies must route each
+        # choice once and refresh their states whenever the menu opens.
+        body = self.doc.addObject("PartDesign::Body", "PrimitiveMenuBody")
+        Gui.activeDocument().activeView().setActiveObject("pdbody", body)
+        Gui.Command.update()
+        menu.aboutToShow.emit()
+        for proxy, native in zip(menu.actions(), Gui.Command.get("PartDesign_CompPrimitiveAdditive").getAction()):
+            self.assertEqual(proxy.objectName(), native.objectName())
+            self.assertEqual(proxy.isEnabled(), native.isEnabled())
+            self.assertTrue(proxy.isEnabled())
+            with patch.object(native, "trigger") as trigger:
+                proxy.trigger()
+                trigger.assert_called_once()
+        self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "modeling-exact.png"))
 
     def testExactOwnerDesignHomeLayout(self):
         self.tab("Home")

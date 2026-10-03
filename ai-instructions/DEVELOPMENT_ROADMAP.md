@@ -1,5 +1,24 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 exact Design Modeling ribbon
+
+Sketch, Modeling, Dress-Up and Transformation groups now match the owner list;
+Primitives is one dropdown with Box, Cylinder, Sphere, Cone, Ellipsoid, Torus,
+Prism, Wedge and disabled Tab (no native creation binding yet). Loft/Helix retain
+native Add/Subtract menu choices behind one icon until combined workflows exist.
+Linear/Circular Pattern are separate native buttons. Primitive uses the native
+default additive primitive. No geometry or task-field changes.
+
+Eleven focused packaged-engine GUI checks with explicit PlusRibbon source overlay
+pass without failures/errors/skips, including exact groups/buttons, labels, enabled
+states, every primitive choice routing, preserved Home, compact grid and exclusive
+Plus/Classic styles. Source provenance asserted in `modeling-layout-20261002`
+under the visualization workspace. Toolbar/UI references and canonical Word
+requirements updated; original paragraphs, headings and numbering preserved,
+rendered pages reviewed. Existing owner executable, ZIP and shortcut unchanged.
+Next batched build and physical acceptance remain pending.
+
+
 ## October 2 exact Design Home ribbon
 
 - [ X ] Exactly Main, Modeling and Sketch with the requested actions and
