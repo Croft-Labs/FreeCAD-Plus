@@ -1,8 +1,8 @@
 # FreeCAD Plus toolbar reference
 
-Classic inventory comes first, followed by the implemented Plus layout, the change map, and the function catalog. Each command has its own row. Reference icons are displayed at **11 × 11 px**, approximately one third of the previous 32 px renders.
+Classic inventory comes first, followed by the implemented Plus layout, the change map, and the function catalog. Each command has its own row. Reference icons are displayed at **11 Ã— 11 px**, approximately one third of the previous 32 px renders.
 
-The Plus layout implements the owner's revised direction and completes the incomplete outline with native command placements. **This layout is incorporated in the October 2 audit build; earlier 10/2 folders retain their previous layout.** Native IDs, icons and command descriptions come from the inspected payload. [UI rules](../../UI_UX_SPEC.md#toolbar-ui-styles) govern interaction; [WORK_STATE](../../WORK_STATE.md) records implementation/build acceptance.
+The Plus layout implements the owner's revised direction and completes the incomplete outline with native command placements. **The revised Design Home, Modeling, Sketch and Assembly layouts are source-validated and awaits the next build; the October 2 audit executable retains its prior layout.** Native IDs, icons and command descriptions come from the inspected payload. [UI rules](../UI_UX_SPEC.md#toolbar-ui-styles) govern interaction; [WORK_STATE](../WORK_STATE.md) records implementation/build acceptance.
 
 - [Classic toolbars](#classic-toolbars)
 - [Plus UI target layout](#plus-ui-target-layout)
@@ -11,16 +11,16 @@ The Plus layout implements the owner's revised direction and completes the incom
 
 ## Classic toolbars
 
-Recorded upstream source: `b9609745048b`. Native metadata: application `6be8eda4246a`. Conditional/edit-only toolbars are included; they are not all shown simultaneously. Shared desktop groups are listed once. Plus locations below refer to the implemented layout; menu-only access is explicitly marked.
+Recorded upstream source: `b9609745048b`. Native metadata: application `6be8eda4246a`. Conditional/edit-only toolbars are included; they are not all shown simultaneously. Shared desktop groups are listed once. Classic location mappings record the prior audit layout; the revised Design Home section below governs current source placement. Removed Home actions retain specialist tabs or native menus.
 
-### All workbenches — shared desktop
+### All workbenches â€” shared desktop
 
 #### File
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
 | <img src="toolbar-icons/Std_New.png" width="11" height="11" alt="New Document"> [New Document](#button-std_new) | All | Common toolbar |
-| <img src="toolbar-icons/Std_Open.png" width="11" height="11" alt="Open…"> [Open…](#button-std_open) | All | Common toolbar |
+| <img src="toolbar-icons/Std_Open.png" width="11" height="11" alt="Openâ€¦"> [Openâ€¦](#button-std_open) | All | Common toolbar |
 | <img src="toolbar-icons/Std_Save.png" width="11" height="11" alt="Save"> [Save](#button-std_save) | All | Common toolbar |
 
 #### Edit
@@ -83,7 +83,7 @@ Recorded upstream source: `b9609745048b`. Native metadata: application `6be8eda4
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
 | <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [New Part](#button-std_part) | Design | Home |
-| <img src="toolbar-icons/Part_Datums.png" width="11" height="11" alt="Coordinate System"> [Datums](#button-part_datums) | Design | Home → Coordinate System dropdown |
+| <img src="toolbar-icons/Part_Datums.png" width="11" height="11" alt="Coordinate System"> [Datums](#button-part_datums) | Design | Home â†’ Coordinate System dropdown |
 | <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Design | Home |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Design | Home |
 | <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Design | Home |
@@ -114,13 +114,13 @@ Definition: [`src/Mod/PartDesign/Gui/Workbench.cpp`](../../../src/Mod/PartDesign
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
-| <img src="toolbar-icons/PartDesign_Pad.png" width="11" height="11" alt="Pad"> [Pad](#button-partdesign_pad) | Design | Home / Modeling → Extrude |
+| <img src="toolbar-icons/PartDesign_Pad.png" width="11" height="11" alt="Pad"> [Pad](#button-partdesign_pad) | Design | Home / Modeling â†’ Extrude |
 | <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Design | Home; Modeling |
 | <img src="toolbar-icons/PartDesign_AdditiveLoft.png" width="11" height="11" alt="Additive Loft"> [Additive Loft](#button-partdesign_additiveloft) | Design | Modeling |
 | <img src="toolbar-icons/PartDesign_AdditivePipe.png" width="11" height="11" alt="Additive Pipe"> [Additive Pipe](#button-partdesign_additivepipe) | Design | Modeling |
 | <img src="toolbar-icons/PartDesign_AdditiveHelix.png" width="11" height="11" alt="Additive Helix"> [Additive Helix](#button-partdesign_additivehelix) | Design | Modeling |
 | <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive.png" width="11" height="11" alt="Additive Box"> [Additive Box](#button-partdesign_compprimitiveadditive) | Design | Modeling |
-| <img src="toolbar-icons/PartDesign_Pocket.png" width="11" height="11" alt="Pocket"> [Pocket](#button-partdesign_pocket) | Design | Home / Modeling → Extrude |
+| <img src="toolbar-icons/PartDesign_Pocket.png" width="11" height="11" alt="Pocket"> [Pocket](#button-partdesign_pocket) | Design | Home / Modeling â†’ Extrude |
 | <img src="toolbar-icons/PartDesign_Hole.png" width="11" height="11" alt="Hole"> [Hole](#button-partdesign_hole) | Design | Modeling |
 | <img src="toolbar-icons/PartDesign_Groove.png" width="11" height="11" alt="Groove"> [Groove](#button-partdesign_groove) | Design | Modeling |
 | <img src="toolbar-icons/PartDesign_SubtractiveLoft.png" width="11" height="11" alt="Subtractive Loft"> [Subtractive Loft](#button-partdesign_subtractiveloft) | Design | Modeling |
@@ -144,8 +144,8 @@ Definition: [`src/Mod/PartDesign/Gui/Workbench.cpp`](../../../src/Mod/PartDesign
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
 | <img src="toolbar-icons/PartDesign_Mirrored.png" width="11" height="11" alt="Mirror"> [Mirror](#button-partdesign_mirrored) | Design | Modeling |
-| <img src="toolbar-icons/PartDesign_LinearPattern.png" width="11" height="11" alt="Linear Pattern"> [Linear Pattern](#button-partdesign_linearpattern) | Design | Home / Modeling → Pattern task |
-| <img src="toolbar-icons/PartDesign_PolarPattern.png" width="11" height="11" alt="Polar Pattern"> [Polar Pattern](#button-partdesign_polarpattern) | Design | Home / Modeling → Pattern task |
+| <img src="toolbar-icons/PartDesign_LinearPattern.png" width="11" height="11" alt="Linear Pattern"> [Linear Pattern](#button-partdesign_linearpattern) | Design | Home / Modeling â†’ Pattern task |
+| <img src="toolbar-icons/PartDesign_PolarPattern.png" width="11" height="11" alt="Polar Pattern"> [Polar Pattern](#button-partdesign_polarpattern) | Design | Home / Modeling â†’ Pattern task |
 | <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Design | Home; Modeling |
 | <img src="toolbar-icons/PartDesign_PathPattern.png" width="11" height="11" alt="Path Pattern"> [Path Pattern](#button-partdesign_pathpattern) | Design | Home; Modeling |
 | <img src="toolbar-icons/PartDesign_PointPattern.png" width="11" height="11" alt="Point Pattern"> [Point Pattern](#button-partdesign_pointpattern) | Design | Home; Modeling |
@@ -323,8 +323,8 @@ Definition: [`src/Mod/Mesh/Gui/Workbench.cpp`](../../../src/Mod/Mesh/Gui/Workben
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Mesh…"> [Import Mesh…](#button-mesh_import) | Design | Home; Mesh |
-| <img src="toolbar-icons/Mesh_Export.png" width="11" height="11" alt="Export Mesh…"> [Export Mesh…](#button-mesh_export) | Design | Mesh |
+| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Meshâ€¦"> [Import Meshâ€¦](#button-mesh_import) | Design | Home; Mesh |
+| <img src="toolbar-icons/Mesh_Export.png" width="11" height="11" alt="Export Meshâ€¦"> [Export Meshâ€¦](#button-mesh_export) | Design | Mesh |
 | <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-mesh_frompartshape) | Design | Home; Mesh |
 | <img src="toolbar-icons/Mesh_BuildRegularSolid.png" width="11" height="11" alt="Regular Solid"> [Regular Solid](#button-mesh_buildregularsolid) | Design | Mesh |
 
@@ -399,7 +399,7 @@ Definition: [`src/Mod/Draft/InitGui.py`](../../../src/Mod/Draft/InitGui.py).
 | <img src="toolbar-icons/Draft_Rectangle.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-draft_rectangle) | Draft / BIM | Tools |
 | <img src="toolbar-icons/Draft_Polygon.png" width="11" height="11" alt="Polygon"> [Polygon](#button-draft_polygon) | Draft / BIM | Tools |
 | <img src="toolbar-icons/Draft_BSpline.png" width="11" height="11" alt="B-Spline"> [B-Spline](#button-draft_bspline) | Draft / BIM | Tools |
-| <img src="toolbar-icons/Draft_BezierTools.png" width="11" height="11" alt="Cubic Bézier Curve"> [Cubic Bézier Curve](#button-draft_beziertools) | Draft | Tools |
+| <img src="toolbar-icons/Draft_BezierTools.png" width="11" height="11" alt="Cubic BÃ©zier Curve"> [Cubic BÃ©zier Curve](#button-draft_beziertools) | Draft | Tools |
 | <img src="toolbar-icons/Draft_Point.png" width="11" height="11" alt="Point"> [Point](#button-draft_point) | Draft / BIM | Tools |
 | <img src="toolbar-icons/Draft_Facebinder.png" width="11" height="11" alt="Facebinder"> [Facebinder](#button-draft_facebinder) | Draft / BIM | Tools |
 | <img src="toolbar-icons/Draft_ShapeString.png" width="11" height="11" alt="Shape From Text"> [Shape From Text](#button-draft_shapestring) | Draft | Tools |
@@ -532,7 +532,7 @@ Definition: [`src/Mod/CAM/InitGui.py`](../../../src/Mod/CAM/InitGui.py).
 | <img src="toolbar-icons/CAM_Inspect.png" width="11" height="11" alt="Inspect Toolpath"> [Inspect Toolpath](#button-cam_inspect) | CAM | Tools |
 | <img src="toolbar-icons/CAM_SelectLoop.png" width="11" height="11" alt="Finish Selecting Loop"> [Finish Selecting Loop](#button-cam_selectloop) | CAM | Tools |
 | <img src="toolbar-icons/CAM_OpActiveToggle.png" width="11" height="11" alt="Toggle Operation"> [Toggle Operation](#button-cam_opactivetoggle) | CAM | Tools |
-| <img src="toolbar-icons/CAM_ToolBitDock.png" width="11" height="11" alt="Add Toolbit…"> [Add Toolbit…](#button-cam_toolbitdock) | CAM | Tools |
+| <img src="toolbar-icons/CAM_ToolBitDock.png" width="11" height="11" alt="Add Toolbitâ€¦"> [Add Toolbitâ€¦](#button-cam_toolbitdock) | CAM | Tools |
 
 #### New Operations
 
@@ -640,7 +640,7 @@ Definition: [`src/Mod/TechDraw/Gui/Workbench.cpp`](../../../src/Mod/TechDraw/Gui
 | <img src="toolbar-icons/TechDraw_ExtensionCreateCoordDimensionGroup.png" width="11" height="11" alt="Horizontal Coordinate Dimension"> [Horizontal Coordinate Dimension](#button-techdraw_extensioncreatecoorddimensiongroup) | Menus / shortcuts | No dedicated ribbon button |
 | <img src="toolbar-icons/TechDraw_ExtensionChamferDimensionGroup.png" width="11" height="11" alt="Horizontal Chamfer Dimension"> [Horizontal Chamfer Dimension](#button-techdraw_extensionchamferdimensiongroup) | Menus / shortcuts | No dedicated ribbon button |
 | <img src="toolbar-icons/TechDraw_ExtensionCreateLengthArc.png" width="11" height="11" alt="Arc Length Dimension"> [Arc Length Dimension](#button-techdraw_extensioncreatelengtharc) | Menus / shortcuts | No dedicated ribbon button |
-| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup.png" width="11" height="11" alt="Insert &#x27;⌀&#x27; Prefix"> [Insert '⌀' Prefix](#button-techdraw_extensioninsertprefixgroup) | TechDraw | Tools |
+| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup.png" width="11" height="11" alt="Insert &#x27;âŒ€&#x27; Prefix"> [Insert 'âŒ€' Prefix](#button-techdraw_extensioninsertprefixgroup) | TechDraw | Tools |
 | <img src="toolbar-icons/TechDraw_ExtensionIncreaseDecreaseGroup.png" width="11" height="11" alt="Increase Decimal Places"> [Increase Decimal Places](#button-techdraw_extensionincreasedecreasegroup) | TechDraw | Tools |
 
 #### TechDraw File Access
@@ -697,7 +697,7 @@ Definition: [`src/Mod/Fem/Gui/Workbench.cpp`](../../../src/Mod/Fem/Gui/Workbench
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
-| — [Electromagnetic Boundary Conditions](#button-fem_compemconstraints) | FEM | Tools |
+| â€” [Electromagnetic Boundary Conditions](#button-fem_compemconstraints) | FEM | Tools |
 
 #### Fluid Boundary Conditions
 
@@ -747,16 +747,16 @@ Definition: [`src/Mod/Fem/Gui/Workbench.cpp`](../../../src/Mod/Fem/Gui/Workbench
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGmshFromShape.svg" width="11" height="11" alt="Mesh From Shape by Gmsh"> [Mesh From Shape by Gmsh](#button-fem_meshgmshfromshape) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshRegion.svg" width="11" height="11" alt="Mesh Refinement"> [Mesh Refinement](#button-fem_meshregion) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGroup.svg" width="11" height="11" alt="Mesh Group"> [Mesh Group](#button-fem_meshgroup) | FEM | Tools |
-| — [GMSH Refinements](#button-fem_meshgmshrefinement) | FEM | Tools |
+| â€” [GMSH Refinements](#button-fem_meshgmshrefinement) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_FEMMesh2Mesh.svg" width="11" height="11" alt="FEM Mesh to Mesh"> [FEM Mesh to Mesh](#button-fem_femmesh2mesh) | FEM | Tools |
 
 #### Solve
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
-| — [Solvers](#button-fem_compsolvers) | FEM | Tools |
-| — [Mechanical Equations](#button-fem_compmechequations) | FEM | Tools |
-| — [Electromagnetic Equations](#button-fem_compemequations) | FEM | Tools |
+| â€” [Solvers](#button-fem_compsolvers) | FEM | Tools |
+| â€” [Mechanical Equations](#button-fem_compmechequations) | FEM | Tools |
+| â€” [Electromagnetic Equations](#button-fem_compemequations) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationFlow.svg" width="11" height="11" alt="Flow Equation"> [Flow Equation](#button-fem_equationflow) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationFlux.svg" width="11" height="11" alt="Flux Equation"> [Flux Equation](#button-fem_equationflux) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationHeat.svg" width="11" height="11" alt="Heat Equation"> [Heat Equation](#button-fem_equationheat) | FEM | Tools |
@@ -782,8 +782,8 @@ Definition: [`src/Mod/Fem/Gui/Workbench.cpp`](../../../src/Mod/Fem/Gui/Workbench
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterLinearizedStresses.svg" width="11" height="11" alt="Stress Linearization Plot"> [Stress Linearization Plot](#button-fem_postfilterlinearizedstresses) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterDataAtPoint.svg" width="11" height="11" alt="Data at Point Clip Filter"> [Data at Point Clip Filter](#button-fem_postfilterdataatpoint) | FEM | Tools |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterCalculator.svg" width="11" height="11" alt="Calculator Filter"> [Calculator Filter](#button-fem_postfiltercalculator) | FEM | Tools |
-| — [Filter Functions](#button-fem_postcreatefunctions) | FEM | Tools |
-| — [Data Visualizations](#button-fem_postvisualization) | FEM | Tools |
+| â€” [Filter Functions](#button-fem_postcreatefunctions) | FEM | Tools |
+| â€” [Data Visualizations](#button-fem_postvisualization) | FEM | Tools |
 
 #### Utilities
 
@@ -849,8 +849,8 @@ Definition: [`src/Mod/Points/Gui/Workbench.cpp`](../../../src/Mod/Points/Gui/Wor
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Points…"> [Import Points…](#button-points_import) | Points | Tools |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Points…"> [Export Points…](#button-points_export) | Points | Tools |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Pointsâ€¦"> [Import Pointsâ€¦](#button-points_import) | Points | Tools |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Pointsâ€¦"> [Export Pointsâ€¦](#button-points_export) | Points | Tools |
 | <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Convert.svg" width="11" height="11" alt="Convert to Points"> [Convert to Points](#button-points_convert) | Points | Tools |
 | <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Structure.svg" width="11" height="11" alt="Structured Point Cloud"> [Structured Point Cloud](#button-points_structure) | Points | Tools |
 | <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Merge.svg" width="11" height="11" alt="Merge Point Clouds"> [Merge Point Clouds](#button-points_merge) | Points | Tools |
@@ -885,7 +885,7 @@ Definition: [`src/Mod/ReverseEngineering/Gui/Workbench.cpp`](../../../src/Mod/Re
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
-| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surface…"> [Approximate B-Spline Surface…](#button-reen_approxsurface) | ReverseEngineering | Tools |
+| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surfaceâ€¦"> [Approximate B-Spline Surfaceâ€¦](#button-reen_approxsurface) | ReverseEngineering | Tools |
 
 <a id="workbench-inspectionworkbench"></a>
 ### Inspection workbench
@@ -897,7 +897,7 @@ Definition: [`src/Mod/Inspection/Gui/Workbench.cpp`](../../../src/Mod/Inspection
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
 | <img src="../../../src/Mod/Inspection/Gui/Resources/icons/InspectionWorkbench.svg" width="11" height="11" alt="Visual Inspection"> [Visual Inspection](#button-inspection_visualinspection) | Inspection | Tools |
-| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspection…"> [Inspection…](#button-inspection_inspectelement) | Inspection | Tools |
+| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspectionâ€¦"> [Inspectionâ€¦](#button-inspection_inspectelement) | Inspection | Tools |
 
 <a id="workbench-bimworkbench"></a>
 ### BIM workbench
@@ -983,7 +983,7 @@ Definition: [`src/Mod/BIM/InitGui.py`](../../../src/Mod/BIM/InitGui.py). **Sourc
 | <img src="../../../src/Mod/BIM/Resources/icons/Arch_Axis.svg" width="11" height="11" alt="Axis Tools"> [Axis Tools](#button-bim_axistools) | BIM | Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/Arch_Grid.svg" width="11" height="11" alt="Grid"> [Grid](#button-arch_grid) | BIM | Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/Arch_SectionPlane.svg" width="11" height="11" alt="Section Plane"> [Section Plane](#button-arch_sectionplane) | BIM | Tools |
-| — [Create 2D Views](#button-bim_create2dviews) | BIM | Tools |
+| â€” [Create 2D Views](#button-bim_create2dviews) | BIM | Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_PageDefault.svg" width="11" height="11" alt="New Page"> [New Page](#button-bim_tdpage) | BIM | Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_InsertView.svg" width="11" height="11" alt="New View"> [New View](#button-bim_tdview) | BIM | Tools |
 
@@ -1004,7 +1004,7 @@ Definition: [`src/Mod/BIM/InitGui.py`](../../../src/Mod/BIM/InitGui.py). **Sourc
 
 | Command | Plus mode | Plus tab / location |
 | --- | --- | --- |
-| — [Offset Tools](#button-bim_offsettools) | BIM | Tools |
+| â€” [Offset Tools](#button-bim_offsettools) | BIM | Tools |
 | <img src="../../../src/Mod/Draft/Resources/icons/Draft_Trimex.svg" width="11" height="11" alt="Trimex"> [Trimex](#button-bim_trimex) | BIM | Tools |
 | <img src="toolbar-icons/Draft_Join.png" width="11" height="11" alt="Join"> [Join](#button-draft_join) | Draft / BIM | Tools |
 | <img src="toolbar-icons/Draft_Split.png" width="11" height="11" alt="Split"> [Split](#button-draft_split) | Draft / BIM | Tools |
@@ -1029,7 +1029,7 @@ Definition: [`src/Mod/BIM/InitGui.py`](../../../src/Mod/BIM/InitGui.py). **Sourc
 | <img src="../../../src/Mod/BIM/Resources/icons/Arch_CutPlane.svg" width="11" height="11" alt="Cut With Plane"> [Cut With Plane](#button-arch_cutplane) | BIM | Tools |
 | <img src="../../../src/Mod/Part/Gui/Resources/icons/tools/Part_Extrude.svg" width="11" height="11" alt="Extrude"> [Extrude](#button-bim_extrude) | BIM | Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_ExtrudeFace.svg" width="11" height="11" alt="Extrude Face"> [Extrude Face](#button-bim_extrudeface) | BIM | Tools |
-| — [Boolean Tools](#button-bim_booleantools) | BIM | Tools |
+| â€” [Boolean Tools](#button-bim_booleantools) | BIM | Tools |
 
 #### Manage Tools
 
@@ -1112,233 +1112,103 @@ Full icons are 40 logical pixels, medium icons 20, and small icons 16. Full butt
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_New.png" width="11" height="11" alt="New Document"> [New File](#button-std_new) | Small | — |
-| <img src="toolbar-icons/Std_Open.png" width="11" height="11" alt="Open…"> [Open…](#button-std_open) | Small | — |
-| <img src="toolbar-icons/Std_Save.png" width="11" height="11" alt="Save"> [Save](#button-std_save) | Small | — |
-| <img src="toolbar-icons/Std_SaveAs.png" width="11" height="11" alt="Save As…"> [Save As…](#button-std_saveas) | Small | — |
+| <img src="toolbar-icons/Std_New.png" width="11" height="11" alt="New Document"> [New File](#button-std_new) | Small | â€” |
+| <img src="toolbar-icons/Std_Open.png" width="11" height="11" alt="Openâ€¦"> [Openâ€¦](#button-std_open) | Small | â€” |
+| <img src="toolbar-icons/Std_Save.png" width="11" height="11" alt="Save"> [Save](#button-std_save) | Small | â€” |
+| <img src="toolbar-icons/Std_SaveAs.png" width="11" height="11" alt="Save Asâ€¦"> [Save Asâ€¦](#button-std_saveas) | Small | â€” |
 
 #### Edit group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Undo.png" width="11" height="11" alt="Undo"> [Undo](#button-std_undo) | Small | — |
-| <img src="toolbar-icons/Std_Redo.png" width="11" height="11" alt="Redo"> [Redo](#button-std_redo) | Small | — |
-| <img src="toolbar-icons/Std_Refresh.png" width="11" height="11" alt="Recompute"> [Recompute](#button-std_refresh) | Small | — |
+| <img src="toolbar-icons/Std_Undo.png" width="11" height="11" alt="Undo"> [Undo](#button-std_undo) | Small | â€” |
+| <img src="toolbar-icons/Std_Redo.png" width="11" height="11" alt="Redo"> [Redo](#button-std_redo) | Small | â€” |
+| <img src="toolbar-icons/Std_Refresh.png" width="11" height="11" alt="Recompute"> [Recompute](#button-std_refresh) | Small | â€” |
 
 #### Clipboard group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Cut.png" width="11" height="11" alt="Cut"> [Cut](#button-std_cut) | Small | — |
-| <img src="toolbar-icons/Std_Copy.png" width="11" height="11" alt="Copy"> [Copy](#button-std_copy) | Small | — |
-| <img src="toolbar-icons/Std_Paste.png" width="11" height="11" alt="Paste"> [Paste](#button-std_paste) | Small | — |
+| <img src="toolbar-icons/Std_Cut.png" width="11" height="11" alt="Cut"> [Cut](#button-std_cut) | Small | â€” |
+| <img src="toolbar-icons/Std_Copy.png" width="11" height="11" alt="Copy"> [Copy](#button-std_copy) | Small | â€” |
+| <img src="toolbar-icons/Std_Paste.png" width="11" height="11" alt="Paste"> [Paste](#button-std_paste) | Small | â€” |
 
 ### Design Mode
 
-Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View**. Sketch is retained from the earlier design because the owner's new outline is incomplete. Assembly is added to Design. Home contains curated frequent actions from the other tabs; specialist groups remain in their own tabs.
+Tabs: **Home â†’ Modeling â†’ Surface â†’ Sketch â†’ Assembly â†’ Mesh â†’ View**. Sketch is retained from the earlier design because the owner's new outline is incomplete. Assembly is added to Design. Home contains curated frequent actions from the other tabs; specialist groups remain in their own tabs.
 
 #### Home tab
+
+Exactly three groups in this order. This revision awaits the next owner build. Common File/Edit/Clipboard remains above the ribbon.
 
 ##### Main group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> [New Component](#button-std_newcomponent) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Medium (half size) | — |
-| <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_DatumPlane.png" width="11" height="11" alt="Datum Plane"> [Datum Plane](#button-part_datumplane) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_DatumLine.png" width="11" height="11" alt="Datum Line"> [Datum Line](#button-part_datumline) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_DatumPoint.png" width="11" height="11" alt="Datum Point"> [Datum Point](#button-part_datumpoint) | Menu item | — |
+| <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> [New Component](#button-std_newcomponent) | Medium | â€” |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium | â€” |
 
 ##### Modeling group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full size | — |
-| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full size | — |
-| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-partdesign_fillet) | Medium (half size) | — |
-| <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_PathPattern.png" width="11" height="11" alt="Path Pattern"> [Path Pattern](#button-partdesign_pathpattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_PointPattern.png" width="11" height="11" alt="Point Pattern"> [Point Pattern](#button-partdesign_pointpattern) | Menu item | — |
-
-##### Surface group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/Surface_Filling.png" width="11" height="11" alt="Filling"> [Filling](#button-surface_filling) | Medium (half size) | — |
-| <img src="toolbar-icons/Surface_GeomFillSurface.png" width="11" height="11" alt="Fill Boundary Curves"> [Fill Boundary Curves](#button-surface_geomfillsurface) | Medium (half size) | — |
-| <img src="toolbar-icons/Surface_ExtendFace.png" width="11" height="11" alt="Extend Face"> [Extend Face](#button-surface_extendface) | Medium (half size) | — |
+| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full size | â€” |
+| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full size | â€” |
+| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet/Chamfer"> [Fillet/Chamfer](#button-partdesign_fillet) | Medium; dropdown: Fillet, Chamfer | â€” |
 
 ##### Sketch group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Medium (half size) | — |
-| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Medium (half size) | — |
-| <img src="toolbar-icons/Sketcher_CompLine.png" width="11" height="11" alt="Polyline"> [Polyline](#button-sketcher_compline) | Medium (half size) | Dropdown |
-| ↳ Native choices for [Polyline](#button-sketcher_compline) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompCreateRectangles.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-sketcher_compcreaterectangles) | Medium (half size) | Dropdown |
-| ↳ Native choices for [Rectangle](#button-sketcher_compcreaterectangles) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceY.png" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-sketcher_constraindistancey) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceX.png" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-sketcher_constraindistancex) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainAngle.png" width="11" height="11" alt="Angle Dimension"> [Angle Dimension](#button-sketcher_constrainangle) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadius.png" width="11" height="11" alt="Radius Dimension"> [Radius Dimension](#button-sketcher_constrainradius) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDiameter.png" width="11" height="11" alt="Diameter Dimension"> [Diameter Dimension](#button-sketcher_constraindiameter) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistance.png" width="11" height="11" alt="Distance Dimension"> [Distance Dimension](#button-sketcher_constraindistance) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadiam.png" width="11" height="11" alt="Radius/Diameter Dimension"> [Radius/Diameter Dimension](#button-sketcher_constrainradiam) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainLock.png" width="11" height="11" alt="Lock Position"> [Lock Position](#button-sketcher_constrainlock) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainSnellsLaw.png" width="11" height="11" alt="Refraction Constraint"> [Refraction Constraint](#button-sketcher_constrainsnellslaw) | Menu item | — |
-| <img src="toolbar-icons/Sketcher_ToggleConstruction.png" width="11" height="11" alt="Toggle Construction Geometry"> [Toggle Construction Geometry](#button-sketcher_toggleconstruction) | Medium (half size) | — |
-
-##### Assembly group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/Assembly_CreateAssembly.png" width="11" height="11" alt="New Assembly"> [New Assembly](#button-assembly_createassembly) | Medium (half size) | — |
-| <img src="toolbar-icons/Assembly_Insert.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insert) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> [Add Component](#button-assembly_insertnewpart) | Menu item | — |
-| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Medium (half size) | — |
-| <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
-
-##### Mesh group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Mesh…"> [Import Mesh…](#button-mesh_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-mesh_frompartshape) | Medium (half size) | — |
-| <img src="toolbar-icons/Mesh_Evaluation.png" width="11" height="11" alt="Evaluate and Repair"> [Evaluate and Repair](#button-mesh_evaluation) | Medium (half size) | — |
-
-##### View group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> [Fit All](#button-std_viewfitall) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewisometric) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_DrawStyle.png" width="11" height="11" alt="As Is"> [As Is](#button-std_drawstyle) | Medium (half size) | Dropdown |
-| ↳ Native choices for [As Is](#button-std_drawstyle) | Menu items | See function catalog |
-| <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filters…"> [Selection filters…](#button-std_entityselectionfilter) | Medium (half size) | — |
-
-##### Structure group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
-| <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
-
-##### Utilities group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
-
-##### Help group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
-
-##### Macro group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Medium | â€” |
+| <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Medium; dropdown: Coordinate System, Plane, Axis, Point | â€” |
 
 #### Modeling tab
 
-##### Part Design Modeling Features group
+Exact owner layout, validated in source and awaiting the next build. One icon per combined additive/subtractive operation; no separate subtractive buttons.
 
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full size | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
-| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full size | — |
-| <img src="toolbar-icons/PartDesign_AdditiveLoft.png" width="11" height="11" alt="Additive Loft"> [Additive Loft](#button-partdesign_additiveloft) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/PartDesign_AdditiveLoft.png" width="11" height="11" alt="Additive Loft"> [Additive Loft](#button-partdesign_additiveloft) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_SubtractiveLoft.png" width="11" height="11" alt="Subtractive Loft"> [Subtractive Loft](#button-partdesign_subtractiveloft) | Menu item | — |
-| <img src="toolbar-icons/PartDesign_AdditivePipe.png" width="11" height="11" alt="Additive Pipe"> [Additive Pipe](#button-partdesign_additivepipe) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/PartDesign_AdditivePipe.png" width="11" height="11" alt="Additive Pipe"> [Additive Pipe](#button-partdesign_additivepipe) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_SubtractivePipe.png" width="11" height="11" alt="Subtractive Pipe"> [Subtractive Pipe](#button-partdesign_subtractivepipe) | Menu item | — |
-| <img src="toolbar-icons/PartDesign_AdditiveHelix.png" width="11" height="11" alt="Additive Helix"> [Additive Helix](#button-partdesign_additivehelix) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/PartDesign_AdditiveHelix.png" width="11" height="11" alt="Additive Helix"> [Additive Helix](#button-partdesign_additivehelix) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_SubtractiveHelix.png" width="11" height="11" alt="Subtractive Helix"> [Subtractive Helix](#button-partdesign_subtractivehelix) | Menu item | — |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive.png" width="11" height="11" alt="Additive Box"> [Additive Box](#button-partdesign_compprimitiveadditive) | Small | Dropdown |
-| ↳ Native choices for [Additive Box](#button-partdesign_compprimitiveadditive) | Menu items | See function catalog |
-| <img src="toolbar-icons/PartDesign_Hole.png" width="11" height="11" alt="Hole"> [Hole](#button-partdesign_hole) | Small | — |
-| <img src="toolbar-icons/PartDesign_Groove.png" width="11" height="11" alt="Groove"> [Groove](#button-partdesign_groove) | Small | — |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive.png" width="11" height="11" alt="Subtractive Box"> [Subtractive Box](#button-partdesign_compprimitivesubtractive) | Small | Dropdown |
-| ↳ Native choices for [Subtractive Box](#button-partdesign_compprimitivesubtractive) | Menu items | See function catalog |
-| <img src="toolbar-icons/PartDesign_Boolean.png" width="11" height="11" alt="Boolean Operation"> [Boolean Operation](#button-partdesign_boolean) | Small | — |
-| <img src="toolbar-icons/Part_IsoclineCurve.png" width="11" height="11" alt="Isocline Curve"> [Isocline Curve](#button-part_isoclinecurve) | Small | — |
-| <img src="toolbar-icons/Part_TrimBody.png" width="11" height="11" alt="Trim Body"> [Trim Body](#button-part_trimbody) | Small | — |
+##### Sketch group
 
-##### Part Design Transformation Features group
+| Command | Icon size |
+| --- | --- |
+| <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Full |
+| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Small |
+| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Full |
 
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/PartDesign_Mirrored.png" width="11" height="11" alt="Mirror"> [Mirror](#button-partdesign_mirrored) | Small | — |
-| <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Full size | Dropdown |
-| ↳ <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_PathPattern.png" width="11" height="11" alt="Path Pattern"> [Path Pattern](#button-partdesign_pathpattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_PointPattern.png" width="11" height="11" alt="Point Pattern"> [Point Pattern](#button-partdesign_pointpattern) | Menu item | — |
-| <img src="toolbar-icons/PartDesign_MultiTransform.png" width="11" height="11" alt="Multi-Transform"> [Multi-Transform](#button-partdesign_multitransform) | Small | — |
+##### Modeling group
 
-##### Part Design Dress-Up Features group
+| Command | Icon size |
+| --- | --- |
+| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full |
+| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small |
+| <img src="toolbar-icons/PartDesign_AdditiveLoft.png" width="11" height="11" alt="Loft"> [Loft](#button-partdesign_additiveloft) | Small; unified New Body/Add/Subtract task |
+| <img src="toolbar-icons/PartDesign_AdditivePipe.png" width="11" height="11" alt="Pipe"> [Pipe](#button-partdesign_additivepipe) | Small; unified New Body/Add/Subtract task |
+| <img src="toolbar-icons/PartDesign_AdditiveHelix.png" width="11" height="11" alt="Helix"> [Helix](#button-partdesign_additivehelix) | Small; unified New Body/Add/Subtract task |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive.png" width="11" height="11" alt="Primitive"> [Primitive](#button-partdesign_compprimitiveadditive) | Small |
 
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-partdesign_fillet) | Full size | — |
-| <img src="toolbar-icons/PartDesign_Chamfer.png" width="11" height="11" alt="Chamfer"> [Chamfer](#button-partdesign_chamfer) | Small | — |
-| <img src="toolbar-icons/PartDesign_Draft.png" width="11" height="11" alt="Draft"> [Draft](#button-partdesign_draft) | Small | — |
-| <img src="toolbar-icons/PartDesign_Thickness.png" width="11" height="11" alt="Thickness"> [Thickness](#button-partdesign_thickness) | Small | — |
-| <img src="toolbar-icons/PartDesign_Defeaturing.png" width="11" height="11" alt="Defeaturing"> [Defeaturing](#button-partdesign_defeaturing) | Small | — |
+##### Dress-Up group
 
-##### Part Design Helper Features group
+| Command | Icon size |
+| --- | --- |
+| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-partdesign_fillet) | Full |
+| <img src="toolbar-icons/PartDesign_Chamfer.png" width="11" height="11" alt="Chamfer"> [Chamfer](#button-partdesign_chamfer) | Small |
+| <img src="toolbar-icons/PartDesign_Draft.png" width="11" height="11" alt="Draft"> [Draft](#button-partdesign_draft) | Small |
+| <img src="toolbar-icons/PartDesign_Thickness.png" width="11" height="11" alt="Shell/Thickness"> [Shell/Thickness](#button-partdesign_thickness) | Small |
+| <img src="toolbar-icons/PartDesign_Defeaturing.png" width="11" height="11" alt="Delete Face/Defeaturing"> [Delete Face/Defeaturing](#button-partdesign_defeaturing) | Small |
 
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="toolbar-icons/PartDesign_Body.png" width="11" height="11" alt="New Body"> [New Body](#button-partdesign_body) | Small | — |
-| <img src="toolbar-icons/PartDesign_CompSketches.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_compsketches) | Small | Dropdown |
-| ↳ Native choices for [New Sketch](#button-partdesign_compsketches) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_ValidateSketch.png" width="11" height="11" alt="Validate Sketch"> [Validate Sketch](#button-sketcher_validatesketch) | Small | — |
-| <img src="toolbar-icons/Part_CheckGeometry.png" width="11" height="11" alt="Check Geometry"> [Check Geometry](#button-part_checkgeometry) | Small | — |
-| <img src="toolbar-icons/PartDesign_SubShapeBinder.png" width="11" height="11" alt="Sub-Shape Binder"> [Sub-Shape Binder](#button-partdesign_subshapebinder) | Small | — |
-| <img src="toolbar-icons/PartDesign_Clone.png" width="11" height="11" alt="Clone"> [Clone](#button-partdesign_clone) | Small | — |
+##### Transformation group
+
+| Command | Icon size |
+| --- | --- |
+| <img src="toolbar-icons/PartDesign_Mirrored.png" width="11" height="11" alt="Mirror Feature"> [Mirror Feature](#button-partdesign_mirrored) | Small |
+| <img src="toolbar-icons/PartDesign_LinearPattern.png" width="11" height="11" alt="Linear Pattern"> [Linear Pattern](#button-partdesign_linearpattern) | Small |
+| <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Small |
+| <img src="toolbar-icons/PartDesign_MultiTransform.png" width="11" height="11" alt="Multi Transform"> [Multi Transform](#button-partdesign_multitransform) | Small |
+
+##### Primitives dropdown
+
+One small dropdown button lists **Box, Cylinder, Sphere, Cone, Ellipsoid, Torus, Prism, Wedge, Tab**, in that order. The first eight choices use native additive primitive commands until the unified workflow exists. Tab is visible but disabled because it has no creation command yet.
 
 #### Surface tab
 
@@ -1346,126 +1216,117 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Surface_Filling.png" width="11" height="11" alt="Filling"> [Filling](#button-surface_filling) | Small | — |
-| <img src="toolbar-icons/Surface_GeomFillSurface.png" width="11" height="11" alt="Fill Boundary Curves"> [Fill Boundary Curves](#button-surface_geomfillsurface) | Small | — |
-| <img src="toolbar-icons/Surface_Sections.png" width="11" height="11" alt="Sections"> [Sections](#button-surface_sections) | Small | — |
-| <img src="toolbar-icons/Surface_ExtendFace.png" width="11" height="11" alt="Extend Face"> [Extend Face](#button-surface_extendface) | Full size | — |
-| <img src="toolbar-icons/Surface_CurveOnMesh.png" width="11" height="11" alt="Curve on Mesh"> [Curve on Mesh](#button-surface_curveonmesh) | Small | — |
-| <img src="toolbar-icons/Surface_BlendCurve.png" width="11" height="11" alt="Blend Curve"> [Blend Curve](#button-surface_blendcurve) | Small | — |
+| <img src="toolbar-icons/Surface_Filling.png" width="11" height="11" alt="Filling"> [Filling](#button-surface_filling) | Small | â€” |
+| <img src="toolbar-icons/Surface_GeomFillSurface.png" width="11" height="11" alt="Fill Boundary Curves"> [Fill Boundary Curves](#button-surface_geomfillsurface) | Small | â€” |
+| <img src="toolbar-icons/Surface_Sections.png" width="11" height="11" alt="Sections"> [Sections](#button-surface_sections) | Small | â€” |
+| <img src="toolbar-icons/Surface_ExtendFace.png" width="11" height="11" alt="Extend Face"> [Extend Face](#button-surface_extendface) | Full size | â€” |
+| <img src="toolbar-icons/Surface_CurveOnMesh.png" width="11" height="11" alt="Curve on Mesh"> [Curve on Mesh](#button-surface_curveonmesh) | Small | â€” |
+| <img src="toolbar-icons/Surface_BlendCurve.png" width="11" height="11" alt="Blend Curve"> [Blend Curve](#button-surface_blendcurve) | Small | â€” |
 
 #### Sketch tab
 
+Exact owner layout, source-validated and awaiting the next build. All listed individual buttons remain alongside their dropdowns. Local captions preserve native command names, execution, enabled states and checked states.
+
 ##### Sketcher group
 
-| Command | Icon size | Dropdown / choices |
+| Command | Icon size | Choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-sketcher_newsketch) | Full size | — |
-| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Full size | — |
-| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Small | — |
-| <img src="toolbar-icons/Sketcher_ReorientSketch.png" width="11" height="11" alt="Reorient Sketch"> [Reorient Sketch](#button-sketcher_reorientsketch) | Small | — |
-| <img src="toolbar-icons/Sketcher_ValidateSketch.png" width="11" height="11" alt="Validate Sketch"> [Validate Sketch](#button-sketcher_validatesketch) | Small | — |
-| <img src="toolbar-icons/Sketcher_MergeSketches.png" width="11" height="11" alt="Merge Sketches"> [Merge Sketches](#button-sketcher_mergesketches) | Small | — |
-| <img src="toolbar-icons/Sketcher_MirrorSketch.png" width="11" height="11" alt="Mirror Sketch"> [Mirror Sketch](#button-sketcher_mirrorsketch) | Small | — |
+| <img src="toolbar-icons/Sketcher_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-sketcher_newsketch) | Full | â€” |
+| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Full | â€” |
+| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ReorientSketch.png" width="11" height="11" alt="Reorient Sketch"> [Reorient Sketch](#button-sketcher_reorientsketch) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ValidateSketch.png" width="11" height="11" alt="Validate Sketch"> [Validate Sketch](#button-sketcher_validatesketch) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_MergeSketches.png" width="11" height="11" alt="Merge Sketches"> [Merge Sketches](#button-sketcher_mergesketches) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_MirrorSketch.png" width="11" height="11" alt="Mirror Sketch"> [Mirror Sketch](#button-sketcher_mirrorsketch) | Small | â€” |
 
 ##### Edit Mode group
 
-| Command | Icon size | Dropdown / choices |
+| Command | Icon size | Choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_LeaveSketch.png" width="11" height="11" alt="Leave Sketch"> [Leave Sketch](#button-sketcher_leavesketch) | Small | — |
-| <img src="toolbar-icons/Sketcher_ViewSketch.png" width="11" height="11" alt="Align View to Sketch"> [Align View to Sketch](#button-sketcher_viewsketch) | Small | — |
-| <img src="toolbar-icons/Sketcher_ViewSection.png" width="11" height="11" alt="Toggle Section View"> [Toggle Section View](#button-sketcher_viewsection) | Small | — |
+| <img src="toolbar-icons/Sketcher_LeaveSketch.png" width="11" height="11" alt="Leave Sketch"> [Leave Sketch](#button-sketcher_leavesketch) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ViewSketch.png" width="11" height="11" alt="Align View to Sketch"> [Align View to Sketch](#button-sketcher_viewsketch) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ViewSection.png" width="11" height="11" alt="Toggle Section View"> [Toggle Section View](#button-sketcher_viewsection) | Small | â€” |
 
 ##### Geometries group
 
-| Command | Icon size | Dropdown / choices |
+| Command | Icon size | Choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_CreatePoint.png" width="11" height="11" alt="Point"> [Point](#button-sketcher_createpoint) | Small | — |
-| <img src="toolbar-icons/Sketcher_CompLine.png" width="11" height="11" alt="Polyline"> [Polyline](#button-sketcher_compline) | Full size | Dropdown |
-| ↳ Native choices for [Polyline](#button-sketcher_compline) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompCreateArc.png" width="11" height="11" alt="Arc From Center"> [Arc From Center](#button-sketcher_compcreatearc) | Small | Dropdown |
-| ↳ Native choices for [Arc From Center](#button-sketcher_compcreatearc) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompCreateConic.png" width="11" height="11" alt="Circle From Center"> [Circle From Center](#button-sketcher_compcreateconic) | Small | Dropdown |
-| ↳ Native choices for [Circle From Center](#button-sketcher_compcreateconic) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompCreateRectangles.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-sketcher_compcreaterectangles) | Full size | Dropdown |
-| ↳ Native choices for [Rectangle](#button-sketcher_compcreaterectangles) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon.png" width="11" height="11" alt="Triangle"> [Triangle](#button-sketcher_compcreateregularpolygon) | Small | Dropdown |
-| ↳ Native choices for [Triangle](#button-sketcher_compcreateregularpolygon) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompSlot.png" width="11" height="11" alt="Slot"> [Slot](#button-sketcher_compslot) | Small | Dropdown |
-| ↳ Native choices for [Slot](#button-sketcher_compslot) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompCreateBSpline.png" width="11" height="11" alt="B-Spline"> [B-Spline](#button-sketcher_compcreatebspline) | Small | Dropdown |
-| ↳ Native choices for [B-Spline](#button-sketcher_compcreatebspline) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CreateText.png" width="11" height="11" alt="Text (Experimental)"> [Text (Experimental)](#button-sketcher_createtext) | Small | — |
-| <img src="toolbar-icons/Sketcher_ToggleConstruction.png" width="11" height="11" alt="Toggle Construction Geometry"> [Toggle Construction Geometry](#button-sketcher_toggleconstruction) | Small | — |
+| <img src="toolbar-icons/Sketcher_CreatePoint.png" width="11" height="11" alt="Point"> [Point](#button-sketcher_createpoint) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CreateText.png" width="11" height="11" alt="Text (Experimental)"> [Text (Experimental)](#button-sketcher_createtext) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ToggleConstruction.png" width="11" height="11" alt="Toggle Construction Geometry"> [Toggle Construction Geometry](#button-sketcher_toggleconstruction) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompLine.png" width="11" height="11" alt="Line Tools"> [Line Tools](#button-sketcher_compline) | Small dropdown | Polyline; Line |
+| <img src="toolbar-icons/Sketcher_CreatePolyline.png" width="11" height="11" alt="Polyline"> [Polyline](#button-sketcher_createpolyline) | Full | â€” |
+| <img src="toolbar-icons/Sketcher_CreateLine.png" width="11" height="11" alt="Line"> [Line](#button-sketcher_createline) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompCreateArc.png" width="11" height="11" alt="Arc Tools"> [Arc Tools](#button-sketcher_compcreatearc) | Small dropdown | Arc From Center; Arc From 3 Points; Elliptical Arc; Hyperbolic Arc; Parabolic Arc |
+| <img src="toolbar-icons/Sketcher_CompCreateConic.png" width="11" height="11" alt="Circle and Conic Tools"> [Circle and Conic Tools](#button-sketcher_compcreateconic) | Small dropdown | Circle From Center; Circle From 3 Points; Ellipse From Center; Ellipse From 3 Points |
+| <img src="toolbar-icons/Sketcher_CompCreateRectangles.png" width="11" height="11" alt="Rectangle Tools"> [Rectangle Tools](#button-sketcher_compcreaterectangles) | Small dropdown | Rectangle; Centered Rectangle; Rounded Rectangle |
+| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon.png" width="11" height="11" alt="Regular Polygon Tools"> [Regular Polygon Tools](#button-sketcher_compcreateregularpolygon) | Small dropdown | Triangle; Square; Pentagon; Hexagon; Heptagon; Octagon; Polygon |
+| <img src="toolbar-icons/Sketcher_CompSlot.png" width="11" height="11" alt="Slot Tools"> [Slot Tools](#button-sketcher_compslot) | Small dropdown | Slot; Arc Slot |
+| <img src="toolbar-icons/Sketcher_CompCreateBSpline.png" width="11" height="11" alt="B-Spline Creation Tools"> [B-Spline Creation Tools](#button-sketcher_compcreatebspline) | Small dropdown | B-Spline; Periodic B-Spline; B-Spline From Knots; Periodic B-Spline From Knots |
 
 ##### Constraints group
 
-| Command | Icon size | Dropdown / choices |
+| Command | Icon size | Choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Full size | Dropdown |
-| ↳ <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceY.png" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-sketcher_constraindistancey) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceX.png" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-sketcher_constraindistancex) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainAngle.png" width="11" height="11" alt="Angle Dimension"> [Angle Dimension](#button-sketcher_constrainangle) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadius.png" width="11" height="11" alt="Radius Dimension"> [Radius Dimension](#button-sketcher_constrainradius) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDiameter.png" width="11" height="11" alt="Diameter Dimension"> [Diameter Dimension](#button-sketcher_constraindiameter) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistance.png" width="11" height="11" alt="Distance Dimension"> [Distance Dimension](#button-sketcher_constraindistance) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadiam.png" width="11" height="11" alt="Radius/Diameter Dimension"> [Radius/Diameter Dimension](#button-sketcher_constrainradiam) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainLock.png" width="11" height="11" alt="Lock Position"> [Lock Position](#button-sketcher_constrainlock) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainSnellsLaw.png" width="11" height="11" alt="Refraction Constraint"> [Refraction Constraint](#button-sketcher_constrainsnellslaw) | Menu item | — |
-| <img src="toolbar-icons/Sketcher_ConstrainCoincidentUnified.png" width="11" height="11" alt="Coincident Constraint"> [Coincident Constraint](#button-sketcher_constraincoincidentunified) | Small | — |
-| <img src="toolbar-icons/Sketcher_CompHorVer.png" width="11" height="11" alt="Horizontal Constraint"> [Horizontal Constraint](#button-sketcher_comphorver) | Small | Dropdown |
-| ↳ Native choices for [Horizontal Constraint](#button-sketcher_comphorver) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_ConstrainParallel.png" width="11" height="11" alt="Parallel Constraint"> [Parallel Constraint](#button-sketcher_constrainparallel) | Small | — |
-| <img src="toolbar-icons/Sketcher_ConstrainPerpendicular.png" width="11" height="11" alt="Perpendicular Constraint"> [Perpendicular Constraint](#button-sketcher_constrainperpendicular) | Small | — |
-| <img src="toolbar-icons/Sketcher_ConstrainTangent.png" width="11" height="11" alt="Tangent/Collinear Constraint"> [Tangent/Collinear Constraint](#button-sketcher_constraintangent) | Small | — |
-| <img src="toolbar-icons/Sketcher_ConstrainEqual.png" width="11" height="11" alt="Equal Constraint"> [Equal Constraint](#button-sketcher_constrainequal) | Small | — |
-| <img src="toolbar-icons/Sketcher_ConstrainSymmetric.png" width="11" height="11" alt="Symmetric Constraint"> [Symmetric Constraint](#button-sketcher_constrainsymmetric) | Small | — |
-| <img src="toolbar-icons/Sketcher_ConstrainBlock.png" width="11" height="11" alt="Block Constraint"> [Block Constraint](#button-sketcher_constrainblock) | Small | — |
-| <img src="toolbar-icons/Sketcher_ConstrainGroup.png" width="11" height="11" alt="Group Constraint (Development preview)"> [Group Constraint (Development preview)](#button-sketcher_constraingroup) | Small | — |
-| <img src="toolbar-icons/Sketcher_CompToggleConstraints.png" width="11" height="11" alt="Toggle Driving/Reference Constraints"> [Toggle Driving/Reference Constraints](#button-sketcher_comptoggleconstraints) | Small | Dropdown |
-| ↳ Native choices for [Toggle Driving/Reference Constraints](#button-sketcher_comptoggleconstraints) | Menu items | See function catalog |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools.png" width="11" height="11" alt="Dimension Tools"> [Dimension Tools](#button-sketcher_compdimensiontools) | Full dropdown | Dimension; Horizontal Dimension; Vertical Dimension; Distance Dimension; Radius/Diameter Dimension; Radius Dimension; Diameter Dimension; Angle Dimension; Lock Position |
+| <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Dimension](#button-sketcher_dimension) | Full | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainDistanceX.png" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-sketcher_constraindistancex) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainDistanceY.png" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-sketcher_constraindistancey) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainDistance.png" width="11" height="11" alt="Distance Dimension"> [Distance Dimension](#button-sketcher_constraindistance) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompConstrainRadDia.png" width="11" height="11" alt="Radius and Diameter Constraints"> [Radius and Diameter Constraints](#button-sketcher_compconstrainraddia) | Small dropdown | Constrain radius; Constrain diameter; Constrain auto radius/diameter |
+| <img src="toolbar-icons/Sketcher_ConstrainAngle.png" width="11" height="11" alt="Angle Dimension"> [Angle Dimension](#button-sketcher_constrainangle) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainLock.png" width="11" height="11" alt="Lock Position"> [Lock Position](#button-sketcher_constrainlock) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainCoincidentUnified.png" width="11" height="11" alt="Coincident / Point-on-object"> [Coincident / Point-on-object](#button-sketcher_constraincoincidentunified) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainCoincident.png" width="11" height="11" alt="Coincident Constraint"> [Coincident Constraint](#button-sketcher_constraincoincident) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainPointOnObject.png" width="11" height="11" alt="Point-on-object Constraint"> [Point-on-object Constraint](#button-sketcher_constrainpointonobject) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompHorVer.png" width="11" height="11" alt="Horizontal and Vertical Constraints"> [Horizontal and Vertical Constraints](#button-sketcher_comphorver) | Small dropdown | Horizontal Constraint; Vertical Constraint |
+| <img src="toolbar-icons/Sketcher_ConstrainHorizontal.png" width="11" height="11" alt="Horizontal Constraint"> [Horizontal Constraint](#button-sketcher_constrainhorizontal) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainVertical.png" width="11" height="11" alt="Vertical Constraint"> [Vertical Constraint](#button-sketcher_constrainvertical) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainParallel.png" width="11" height="11" alt="Parallel Constraint"> [Parallel Constraint](#button-sketcher_constrainparallel) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainPerpendicular.png" width="11" height="11" alt="Perpendicular Constraint"> [Perpendicular Constraint](#button-sketcher_constrainperpendicular) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainTangent.png" width="11" height="11" alt="Tangent/Collinear Constraint"> [Tangent/Collinear Constraint](#button-sketcher_constraintangent) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainEqual.png" width="11" height="11" alt="Equal Constraint"> [Equal Constraint](#button-sketcher_constrainequal) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainSymmetric.png" width="11" height="11" alt="Symmetric Constraint"> [Symmetric Constraint](#button-sketcher_constrainsymmetric) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainBlock.png" width="11" height="11" alt="Block Constraint"> [Block Constraint](#button-sketcher_constrainblock) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ConstrainGroup.png" width="11" height="11" alt="Group Constraint (Development preview)"> [Group Constraint (Development preview)](#button-sketcher_constraingroup) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompToggleConstraints.png" width="11" height="11" alt="Constraint State"> [Constraint State](#button-sketcher_comptoggleconstraints) | Small dropdown | Toggle Driving/Reference Constraints; Toggle Constraints |
 
-##### Sketcher Tools group
+##### Tools group
 
-| Command | Icon size | Dropdown / choices |
+| Command | Icon size | Choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_CompCreateFillets.png" width="11" height="11" alt="Fillet"> [Fillet](#button-sketcher_compcreatefillets) | Small | Dropdown |
-| ↳ Native choices for [Fillet](#button-sketcher_compcreatefillets) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompCurveEdition.png" width="11" height="11" alt="Trim Edge"> [Trim Edge](#button-sketcher_compcurveedition) | Small | Dropdown |
-| ↳ Native choices for [Trim Edge](#button-sketcher_compcurveedition) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CompExternal.png" width="11" height="11" alt="External Projection"> [External Projection](#button-sketcher_compexternal) | Small | Dropdown |
-| ↳ Native choices for [External Projection](#button-sketcher_compexternal) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_CarbonCopy.png" width="11" height="11" alt="Carbon Copy"> [Carbon Copy](#button-sketcher_carboncopy) | Small | — |
-| <img src="toolbar-icons/Sketcher_Translate.png" width="11" height="11" alt="Move / Array Transform"> [Move / Array Transform](#button-sketcher_translate) | Small | — |
-| <img src="toolbar-icons/Sketcher_Rotate.png" width="11" height="11" alt="Rotate / Polar Transform"> [Rotate / Polar Transform](#button-sketcher_rotate) | Small | — |
-| <img src="toolbar-icons/Sketcher_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-sketcher_scale) | Small | — |
-| <img src="toolbar-icons/Sketcher_Offset.png" width="11" height="11" alt="Offset"> [Offset](#button-sketcher_offset) | Small | — |
-| <img src="toolbar-icons/Sketcher_Symmetry.png" width="11" height="11" alt="Mirror"> [Mirror](#button-sketcher_symmetry) | Small | — |
-| <img src="toolbar-icons/Sketcher_RemoveAxesAlignment.png" width="11" height="11" alt="Remove Axes Alignment"> [Remove Axes Alignment](#button-sketcher_removeaxesalignment) | Small | — |
+| <img src="toolbar-icons/Sketcher_CompExternal.png" width="11" height="11" alt="External Geometry"> [External Geometry](#button-sketcher_compexternal) | Small dropdown | External Projection; External Intersection |
+| <img src="toolbar-icons/Sketcher_CarbonCopy.png" width="11" height="11" alt="Carbon Copy"> [Carbon Copy](#button-sketcher_carboncopy) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_Translate.png" width="11" height="11" alt="Move / Array Transform"> [Move / Array Transform](#button-sketcher_translate) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_Rotate.png" width="11" height="11" alt="Rotate / Polar Transform"> [Rotate / Polar Transform](#button-sketcher_rotate) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-sketcher_scale) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_Offset.png" width="11" height="11" alt="Offset"> [Offset](#button-sketcher_offset) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_Symmetry.png" width="11" height="11" alt="Mirror"> [Mirror](#button-sketcher_symmetry) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_RemoveAxesAlignment.png" width="11" height="11" alt="Remove Axes Alignment"> [Remove Axes Alignment](#button-sketcher_removeaxesalignment) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompCreateFillets.png" width="11" height="11" alt="Fillet and Chamfer Tools"> [Fillet and Chamfer Tools](#button-sketcher_compcreatefillets) | Small dropdown | Fillet; Chamfer |
+| <img src="toolbar-icons/Sketcher_CompCurveEdition.png" width="11" height="11" alt="Curve Editing Tools"> [Curve Editing Tools](#button-sketcher_compcurveedition) | Small dropdown | Trim Edge; Split Edge; Extend Edge |
 
-##### B-Spline Tools group
+##### B-Spline group
 
-| Command | Icon size | Dropdown / choices |
+| Command | Icon size | Choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_BSplineConvertToNURBS.png" width="11" height="11" alt="Geometry to B-Spline"> [Geometry to B-Spline](#button-sketcher_bsplineconverttonurbs) | Small | — |
-| <img src="toolbar-icons/Sketcher_BSplineIncreaseDegree.png" width="11" height="11" alt="Increase B-Spline Degree"> [Increase B-Spline Degree](#button-sketcher_bsplineincreasedegree) | Small | — |
-| <img src="toolbar-icons/Sketcher_BSplineDecreaseDegree.png" width="11" height="11" alt="Decrease B-Spline Degree"> [Decrease B-Spline Degree](#button-sketcher_bsplinedecreasedegree) | Small | — |
-| <img src="toolbar-icons/Sketcher_CompModifyKnotMultiplicity.png" width="11" height="11" alt="Increase knot multiplicity"> [Increase knot multiplicity](#button-sketcher_compmodifyknotmultiplicity) | Small | Dropdown |
-| ↳ Native choices for [Increase knot multiplicity](#button-sketcher_compmodifyknotmultiplicity) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_BSplineInsertKnot.png" width="11" height="11" alt="Insert Knot"> [Insert Knot](#button-sketcher_bsplineinsertknot) | Small | — |
-| <img src="toolbar-icons/Sketcher_JoinCurves.png" width="11" height="11" alt="Join Curves"> [Join Curves](#button-sketcher_joincurves) | Small | — |
+| <img src="toolbar-icons/Sketcher_BSplineConvertToNURBS.png" width="11" height="11" alt="Geometry to B-Spline"> [Geometry to B-Spline](#button-sketcher_bsplineconverttonurbs) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_BSplineIncreaseDegree.png" width="11" height="11" alt="Increase B-Spline Degree"> [Increase B-Spline Degree](#button-sketcher_bsplineincreasedegree) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_BSplineDecreaseDegree.png" width="11" height="11" alt="Decrease B-Spline Degree"> [Decrease B-Spline Degree](#button-sketcher_bsplinedecreasedegree) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompModifyKnotMultiplicity.png" width="11" height="11" alt="Knot Multiplicity"> [Knot Multiplicity](#button-sketcher_compmodifyknotmultiplicity) | Small dropdown | Increase knot multiplicity; Decrease knot multiplicity |
+| <img src="toolbar-icons/Sketcher_BSplineInsertKnot.png" width="11" height="11" alt="Insert Knot"> [Insert Knot](#button-sketcher_bsplineinsertknot) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_JoinCurves.png" width="11" height="11" alt="Join Curves"> [Join Curves](#button-sketcher_joincurves) | Small | â€” |
 
-##### Visual Helpers group
+##### Helpers group
 
-| Command | Icon size | Dropdown / choices |
+| Command | Icon size | Choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_SelectConstraints.png" width="11" height="11" alt="Select Associated Constraints"> [Select Associated Constraints](#button-sketcher_selectconstraints) | Small | — |
-| <img src="toolbar-icons/Sketcher_SelectElementsAssociatedWithConstraints.png" width="11" height="11" alt="Select Associated Geometry"> [Select Associated Geometry](#button-sketcher_selectelementsassociatedwithconstraints) | Small | — |
-| <img src="toolbar-icons/Sketcher_ArcOverlay.png" width="11" height="11" alt="Toggle Circular Helper for Arcs"> [Toggle Circular Helper for Arcs](#button-sketcher_arcoverlay) | Small | — |
-| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation.png" width="11" height="11" alt="Toggle B-Spline Degree"> [Toggle B-Spline Degree](#button-sketcher_compbsplineshowhidegeometryinformation) | Small | Dropdown |
-| ↳ Native choices for [Toggle B-Spline Degree](#button-sketcher_compbsplineshowhidegeometryinformation) | Menu items | See function catalog |
-| <img src="toolbar-icons/Sketcher_RestoreInternalAlignmentGeometry.png" width="11" height="11" alt="Toggle Internal Geometry"> [Toggle Internal Geometry](#button-sketcher_restoreinternalalignmentgeometry) | Small | — |
-| <img src="toolbar-icons/Sketcher_SwitchVirtualSpace.png" width="11" height="11" alt="Switch Virtual Space"> [Switch Virtual Space](#button-sketcher_switchvirtualspace) | Small | — |
+| <img src="toolbar-icons/Sketcher_SelectConstraints.png" width="11" height="11" alt="Select Associated Constraints"> [Select Associated Constraints](#button-sketcher_selectconstraints) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_SelectElementsAssociatedWithConstraints.png" width="11" height="11" alt="Select Associated Geometry"> [Select Associated Geometry](#button-sketcher_selectelementsassociatedwithconstraints) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_ArcOverlay.png" width="11" height="11" alt="Toggle Circular Helper for Arcs"> [Toggle Circular Helper for Arcs](#button-sketcher_arcoverlay) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation.png" width="11" height="11" alt="B-Spline Geometry Information"> [B-Spline Geometry Information](#button-sketcher_compbsplineshowhidegeometryinformation) | Small dropdown | Toggle B-Spline Degree; Toggle B-Spline Control Polygon; Toggle B-Spline Curvature Comb; Toggle B-Spline Knot Multiplicity; Toggle B-Spline Control Point Weight |
+| <img src="toolbar-icons/Sketcher_RestoreInternalAlignmentGeometry.png" width="11" height="11" alt="Toggle Internal Geometry"> [Toggle Internal Geometry](#button-sketcher_restoreinternalalignmentgeometry) | Small | â€” |
+| <img src="toolbar-icons/Sketcher_SwitchVirtualSpace.png" width="11" height="11" alt="Switch Virtual Space"> [Switch Virtual Space](#button-sketcher_switchvirtualspace) | Small | â€” |
 
 #### Assembly tab
 
@@ -1473,52 +1334,42 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Assembly_CreateAssembly.png" width="11" height="11" alt="New Assembly"> [New Assembly](#button-assembly_createassembly) | Small | — |
-| <img src="toolbar-icons/Assembly_Insert.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insert) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> [Add Component](#button-assembly_insertnewpart) | Menu item | — |
-| <img src="toolbar-icons/Part_LinkArrays.png" width="11" height="11" alt="Circular Link Array"> [Circular Link Array](#button-part_linkarrays) | Small | Dropdown |
-| ↳ Native choices for [Circular Link Array](#button-part_linkarrays) | Menu items | See function catalog |
-| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateView.png" width="11" height="11" alt="Exploded View"> [Exploded View](#button-assembly_createview) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateSnapshot.png" width="11" height="11" alt="Snapshot"> [Snapshot](#button-assembly_createsnapshot) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateSimulation.png" width="11" height="11" alt="Simulation"> [Simulation](#button-assembly_createsimulation) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateBom.png" width="11" height="11" alt="Bill of Materials"> [Bill of Materials](#button-assembly_createbom) | Small | — |
+| <img src="toolbar-icons/Assembly_CreateAssembly.png" width="11" height="11" alt="Create Assembly"> [Create Assembly](#button-assembly_createassembly) | Full | â€” |
+| <img src="toolbar-icons/Assembly_Insert.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insert) | Full | Dropdown |
+| â†³ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Insert New Part"> [Insert New Part](#button-assembly_insertnewpart) | Menu item | â€” |
+| <img src="toolbar-icons/Part_LinkArrays.png" width="11" height="11" alt="Link Arrays"> [Link Arrays](#button-part_linkarrays) | Small | Dropdown |
+| â†³ <img src="toolbar-icons/Part_LinkArrayCircular.png" width="11" height="11" alt="Circular Link Array"> [Circular Link Array](#button-part_linkarraycircular) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_LinkArrayLinear.png" width="11" height="11" alt="Linear Link Array"> [Linear Link Array](#button-part_linkarraylinear) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_LinkArrayPath.png" width="11" height="11" alt="Path Link Array"> [Path Link Array](#button-part_linkarraypath) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_LinkArrayPoint.png" width="11" height="11" alt="Point Link Array"> [Point Link Array](#button-part_linkarraypoint) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_LinkArrayPolar.png" width="11" height="11" alt="Polar Link Array"> [Polar Link Array](#button-part_linkarraypolar) | Menu item | â€” |
+| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateView.png" width="11" height="11" alt="Exploded View"> [Exploded View](#button-assembly_createview) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateSnapshot.png" width="11" height="11" alt="Snapshot"> [Snapshot](#button-assembly_createsnapshot) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateSimulation.png" width="11" height="11" alt="Simulation"> [Simulation](#button-assembly_createsimulation) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateBom.png" width="11" height="11" alt="Bill of Materials"> [Bill of Materials](#button-assembly_createbom) | Small | â€” |
 
 ##### Assembly Joints group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Assembly_ToggleGrounded.png" width="11" height="11" alt="Toggle Grounded"> [Toggle Grounded](#button-assembly_togglegrounded) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
-| <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Small | — |
+| <img src="toolbar-icons/Assembly_ToggleGrounded.png" width="11" height="11" alt="Toggle Grounded"> [Toggle Grounded](#button-assembly_togglegrounded) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Small | â€” |
 | <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgearbelt) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Join"> [Belt Join](#button-assembly_createjointbelt) | Menu item | â€” |
 
 #### Mesh tab
 
@@ -1526,63 +1377,63 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Mesh…"> [Import Mesh…](#button-mesh_import) | Full size | — |
-| <img src="toolbar-icons/Mesh_Export.png" width="11" height="11" alt="Export Mesh…"> [Export Mesh…](#button-mesh_export) | Small | — |
-| <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-mesh_frompartshape) | Small | — |
-| <img src="toolbar-icons/Mesh_BuildRegularSolid.png" width="11" height="11" alt="Regular Solid"> [Regular Solid](#button-mesh_buildregularsolid) | Small | — |
+| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Meshâ€¦"> [Import Meshâ€¦](#button-mesh_import) | Full size | â€” |
+| <img src="toolbar-icons/Mesh_Export.png" width="11" height="11" alt="Export Meshâ€¦"> [Export Meshâ€¦](#button-mesh_export) | Small | â€” |
+| <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-mesh_frompartshape) | Small | â€” |
+| <img src="toolbar-icons/Mesh_BuildRegularSolid.png" width="11" height="11" alt="Regular Solid"> [Regular Solid](#button-mesh_buildregularsolid) | Small | â€” |
 
 ##### Mesh Modify group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_HarmonizeNormals.png" width="11" height="11" alt="Harmonize Normals"> [Harmonize Normals](#button-mesh_harmonizenormals) | Small | — |
-| <img src="toolbar-icons/Mesh_FlipNormals.png" width="11" height="11" alt="Flip Normals"> [Flip Normals](#button-mesh_flipnormals) | Small | — |
-| <img src="toolbar-icons/Mesh_FillupHoles.png" width="11" height="11" alt="Fill Holes"> [Fill Holes](#button-mesh_fillupholes) | Small | — |
-| <img src="toolbar-icons/Mesh_FillInteractiveHole.png" width="11" height="11" alt="Close Hole"> [Close Hole](#button-mesh_fillinteractivehole) | Small | — |
-| <img src="toolbar-icons/Mesh_AddFacet.png" width="11" height="11" alt="Add Triangle"> [Add Triangle](#button-mesh_addfacet) | Small | — |
-| <img src="toolbar-icons/Mesh_RemoveComponents.png" width="11" height="11" alt="Remove Components"> [Remove Components](#button-mesh_removecomponents) | Small | — |
-| <img src="toolbar-icons/Mesh_Smoothing.png" width="11" height="11" alt="Smooth"> [Smooth](#button-mesh_smoothing) | Small | — |
-| <img src="toolbar-icons/Mesh_RemeshGmsh.png" width="11" height="11" alt="Refinement"> [Refinement](#button-mesh_remeshgmsh) | Small | — |
-| <img src="toolbar-icons/Mesh_Decimating.png" width="11" height="11" alt="Decimate"> [Decimate](#button-mesh_decimating) | Small | — |
-| <img src="toolbar-icons/Mesh_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-mesh_scale) | Small | — |
+| <img src="toolbar-icons/Mesh_HarmonizeNormals.png" width="11" height="11" alt="Harmonize Normals"> [Harmonize Normals](#button-mesh_harmonizenormals) | Small | â€” |
+| <img src="toolbar-icons/Mesh_FlipNormals.png" width="11" height="11" alt="Flip Normals"> [Flip Normals](#button-mesh_flipnormals) | Small | â€” |
+| <img src="toolbar-icons/Mesh_FillupHoles.png" width="11" height="11" alt="Fill Holes"> [Fill Holes](#button-mesh_fillupholes) | Small | â€” |
+| <img src="toolbar-icons/Mesh_FillInteractiveHole.png" width="11" height="11" alt="Close Hole"> [Close Hole](#button-mesh_fillinteractivehole) | Small | â€” |
+| <img src="toolbar-icons/Mesh_AddFacet.png" width="11" height="11" alt="Add Triangle"> [Add Triangle](#button-mesh_addfacet) | Small | â€” |
+| <img src="toolbar-icons/Mesh_RemoveComponents.png" width="11" height="11" alt="Remove Components"> [Remove Components](#button-mesh_removecomponents) | Small | â€” |
+| <img src="toolbar-icons/Mesh_Smoothing.png" width="11" height="11" alt="Smooth"> [Smooth](#button-mesh_smoothing) | Small | â€” |
+| <img src="toolbar-icons/Mesh_RemeshGmsh.png" width="11" height="11" alt="Refinement"> [Refinement](#button-mesh_remeshgmsh) | Small | â€” |
+| <img src="toolbar-icons/Mesh_Decimating.png" width="11" height="11" alt="Decimate"> [Decimate](#button-mesh_decimating) | Small | â€” |
+| <img src="toolbar-icons/Mesh_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-mesh_scale) | Small | â€” |
 
 ##### Mesh Boolean group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_Union.png" width="11" height="11" alt="Union"> [Union](#button-mesh_union) | Small | — |
-| <img src="toolbar-icons/Mesh_Intersection.png" width="11" height="11" alt="Intersection"> [Intersection](#button-mesh_intersection) | Small | — |
-| <img src="toolbar-icons/Mesh_Difference.png" width="11" height="11" alt="Difference"> [Difference](#button-mesh_difference) | Small | — |
+| <img src="toolbar-icons/Mesh_Union.png" width="11" height="11" alt="Union"> [Union](#button-mesh_union) | Small | â€” |
+| <img src="toolbar-icons/Mesh_Intersection.png" width="11" height="11" alt="Intersection"> [Intersection](#button-mesh_intersection) | Small | â€” |
+| <img src="toolbar-icons/Mesh_Difference.png" width="11" height="11" alt="Difference"> [Difference](#button-mesh_difference) | Small | â€” |
 
 ##### Mesh Cutting group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_PolyCut.png" width="11" height="11" alt="Cut"> [Cut](#button-mesh_polycut) | Small | — |
-| <img src="toolbar-icons/Mesh_PolyTrim.png" width="11" height="11" alt="Trim"> [Trim](#button-mesh_polytrim) | Small | — |
-| <img src="toolbar-icons/Mesh_TrimByPlane.png" width="11" height="11" alt="Trim With Plane"> [Trim With Plane](#button-mesh_trimbyplane) | Small | — |
-| <img src="toolbar-icons/Mesh_SectionByPlane.png" width="11" height="11" alt="Section From Plane"> [Section From Plane](#button-mesh_sectionbyplane) | Small | — |
-| <img src="toolbar-icons/Mesh_CrossSections.png" width="11" height="11" alt="Cross-Sections"> [Cross-Sections](#button-mesh_crosssections) | Small | — |
+| <img src="toolbar-icons/Mesh_PolyCut.png" width="11" height="11" alt="Cut"> [Cut](#button-mesh_polycut) | Small | â€” |
+| <img src="toolbar-icons/Mesh_PolyTrim.png" width="11" height="11" alt="Trim"> [Trim](#button-mesh_polytrim) | Small | â€” |
+| <img src="toolbar-icons/Mesh_TrimByPlane.png" width="11" height="11" alt="Trim With Plane"> [Trim With Plane](#button-mesh_trimbyplane) | Small | â€” |
+| <img src="toolbar-icons/Mesh_SectionByPlane.png" width="11" height="11" alt="Section From Plane"> [Section From Plane](#button-mesh_sectionbyplane) | Small | â€” |
+| <img src="toolbar-icons/Mesh_CrossSections.png" width="11" height="11" alt="Cross-Sections"> [Cross-Sections](#button-mesh_crosssections) | Small | â€” |
 
 ##### Mesh Segmentation group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_Merge.png" width="11" height="11" alt="Merge"> [Merge](#button-mesh_merge) | Small | — |
-| <img src="toolbar-icons/Mesh_SplitComponents.png" width="11" height="11" alt="Split by Components"> [Split by Components](#button-mesh_splitcomponents) | Small | — |
-| <img src="toolbar-icons/Mesh_Segmentation.png" width="11" height="11" alt="Segmentation"> [Segmentation](#button-mesh_segmentation) | Small | — |
-| <img src="toolbar-icons/Mesh_SegmentationBestFit.png" width="11" height="11" alt="Segmentation From Best-Fit Surfaces"> [Segmentation From Best-Fit Surfaces](#button-mesh_segmentationbestfit) | Small | — |
+| <img src="toolbar-icons/Mesh_Merge.png" width="11" height="11" alt="Merge"> [Merge](#button-mesh_merge) | Small | â€” |
+| <img src="toolbar-icons/Mesh_SplitComponents.png" width="11" height="11" alt="Split by Components"> [Split by Components](#button-mesh_splitcomponents) | Small | â€” |
+| <img src="toolbar-icons/Mesh_Segmentation.png" width="11" height="11" alt="Segmentation"> [Segmentation](#button-mesh_segmentation) | Small | â€” |
+| <img src="toolbar-icons/Mesh_SegmentationBestFit.png" width="11" height="11" alt="Segmentation From Best-Fit Surfaces"> [Segmentation From Best-Fit Surfaces](#button-mesh_segmentationbestfit) | Small | â€” |
 
 ##### Mesh Analyze group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_Evaluation.png" width="11" height="11" alt="Evaluate and Repair"> [Evaluate and Repair](#button-mesh_evaluation) | Small | — |
-| <img src="toolbar-icons/Mesh_EvaluateFacet.png" width="11" height="11" alt="Face Info"> [Face Info](#button-mesh_evaluatefacet) | Small | — |
-| <img src="toolbar-icons/Mesh_VertexCurvature.png" width="11" height="11" alt="Curvature Plot"> [Curvature Plot](#button-mesh_vertexcurvature) | Small | — |
-| <img src="toolbar-icons/Mesh_CurvatureInfo.png" width="11" height="11" alt="Curvature Info"> [Curvature Info](#button-mesh_curvatureinfo) | Small | — |
-| <img src="toolbar-icons/Mesh_EvaluateSolid.png" width="11" height="11" alt="Evaluate Solid"> [Evaluate Solid](#button-mesh_evaluatesolid) | Small | — |
-| <img src="toolbar-icons/Mesh_BoundingBox.png" width="11" height="11" alt="Bounding Box Info"> [Bounding Box Info](#button-mesh_boundingbox) | Small | — |
+| <img src="toolbar-icons/Mesh_Evaluation.png" width="11" height="11" alt="Evaluate and Repair"> [Evaluate and Repair](#button-mesh_evaluation) | Small | â€” |
+| <img src="toolbar-icons/Mesh_EvaluateFacet.png" width="11" height="11" alt="Face Info"> [Face Info](#button-mesh_evaluatefacet) | Small | â€” |
+| <img src="toolbar-icons/Mesh_VertexCurvature.png" width="11" height="11" alt="Curvature Plot"> [Curvature Plot](#button-mesh_vertexcurvature) | Small | â€” |
+| <img src="toolbar-icons/Mesh_CurvatureInfo.png" width="11" height="11" alt="Curvature Info"> [Curvature Info](#button-mesh_curvatureinfo) | Small | â€” |
+| <img src="toolbar-icons/Mesh_EvaluateSolid.png" width="11" height="11" alt="Evaluate Solid"> [Evaluate Solid](#button-mesh_evaluatesolid) | Small | â€” |
+| <img src="toolbar-icons/Mesh_BoundingBox.png" width="11" height="11" alt="Bounding Box Info"> [Bounding Box Info](#button-mesh_boundingbox) | Small | â€” |
 
 #### View tab
 
@@ -1590,38 +1441,27 @@ Tabs: **Home → Modeling → Surface → Sketch → Assembly → Mesh → View*
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> [Fit All](#button-std_viewfitall) | Full size | — |
-| <img src="toolbar-icons/Std_ViewFitSelection.png" width="11" height="11" alt="Fit Selection"> [Fit Selection](#button-std_viewfitselection) | Small | — |
-| <img src="toolbar-icons/Std_ViewGroup.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewgroup) | Small | Dropdown |
-| ↳ Native choices for [Isometric](#button-std_viewgroup) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_AlignToSelection.png" width="11" height="11" alt="Align to Selection"> [Align to Selection](#button-std_aligntoselection) | Small | — |
-| <img src="toolbar-icons/Std_DrawStyle.png" width="11" height="11" alt="As Is"> [As Is](#button-std_drawstyle) | Small | Dropdown |
-| ↳ Native choices for [As Is](#button-std_drawstyle) | Menu items | See function catalog |
-| <img src="toolbar-icons/Part_SelectFilter.png" width="11" height="11" alt="Vertex Selection"> [Vertex Selection](#button-part_selectfilter) | Small | Dropdown |
-| ↳ Native choices for [Vertex Selection](#button-part_selectfilter) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
+| <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> [Fit All](#button-std_viewfitall) | Full size | â€” |
+| <img src="toolbar-icons/Std_ViewFitSelection.png" width="11" height="11" alt="Fit Selection"> [Fit Selection](#button-std_viewfitselection) | Small | â€” |
+| <img src="toolbar-icons/Std_ViewGroup.png" width="11" height="11" alt="Standard Views"> [Standard Views](#button-std_viewgroup) | Small | Dropdown |
+| â†³ Choices for Standard Views | Menu items | Isometric; Front; Top; Right; Rear; Bottom; Left |
+| <img src="toolbar-icons/Std_AlignToSelection.png" width="11" height="11" alt="Align to Selection"> [Align to Selection](#button-std_aligntoselection) | Small | â€” |
+| <img src="toolbar-icons/Std_DrawStyle.png" width="11" height="11" alt="Draw Style"> [Draw Style](#button-std_drawstyle) | Small | Dropdown |
+| â†³ Choices for Draw Style | Menu items | As Is; Points; Wireframe; Hidden Line; No Shading; Shaded; Flat Lines |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
 
 ##### Individual Views group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewisometric) | Small | — |
-| <img src="toolbar-icons/Std_ViewFront.png" width="11" height="11" alt="Front"> [Front](#button-std_viewfront) | Small | — |
-| <img src="toolbar-icons/Std_ViewTop.png" width="11" height="11" alt="Top"> [Top](#button-std_viewtop) | Small | — |
-| <img src="toolbar-icons/Std_ViewRight.png" width="11" height="11" alt="Right"> [Right](#button-std_viewright) | Small | — |
-| <img src="toolbar-icons/Std_ViewRear.png" width="11" height="11" alt="Rear"> [Rear](#button-std_viewrear) | Small | — |
-| <img src="toolbar-icons/Std_ViewBottom.png" width="11" height="11" alt="Bottom"> [Bottom](#button-std_viewbottom) | Small | — |
-| <img src="toolbar-icons/Std_ViewLeft.png" width="11" height="11" alt="Left"> [Left](#button-std_viewleft) | Small | — |
-
-##### Display group
-
-| Command | Icon size | Dropdown / choices |
-| --- | --- | --- |
-| <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filters…"> [Selection filters…](#button-std_entityselectionfilter) | Small | — |
-| <img src="../../../src/Gui/Icons/preferences-workbenches.svg" width="11" height="11" alt="Toolbars"> [Toolbars](#button-std_toolbarmenu) | Small | — |
-| <img src="../../../src/Gui/Icons/Std_ToggleBottomPanels.svg" width="11" height="11" alt="Panels"> [Panels](#button-std_dockviewmenu) | Small | — |
-| <img src="../../../src/Gui/Icons/info.svg" width="11" height="11" alt="Status Bar"> [Status Bar](#button-std_viewstatusbar) | Small | — |
+| <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewisometric) | Small | â€” |
+| <img src="toolbar-icons/Std_ViewFront.png" width="11" height="11" alt="Front"> [Front](#button-std_viewfront) | Small | â€” |
+| <img src="toolbar-icons/Std_ViewTop.png" width="11" height="11" alt="Top"> [Top](#button-std_viewtop) | Small | â€” |
+| <img src="toolbar-icons/Std_ViewRight.png" width="11" height="11" alt="Right"> [Right](#button-std_viewright) | Small | â€” |
+| <img src="toolbar-icons/Std_ViewRear.png" width="11" height="11" alt="Rear"> [Rear](#button-std_viewrear) | Small | â€” |
+| <img src="toolbar-icons/Std_ViewBottom.png" width="11" height="11" alt="Bottom"> [Bottom](#button-std_viewbottom) | Small | â€” |
+| <img src="toolbar-icons/Std_ViewLeft.png" width="11" height="11" alt="Left"> [Left](#button-std_viewleft) | Small | â€” |
 
 ### Part Mode
 
@@ -1633,55 +1473,55 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Part_Box.png" width="11" height="11" alt="Cube"> [Cube](#button-part_box) | Medium (half size) | — |
-| <img src="toolbar-icons/Part_Cylinder.png" width="11" height="11" alt="Cylinder"> [Cylinder](#button-part_cylinder) | Medium (half size) | — |
-| <img src="toolbar-icons/Part_Sphere.png" width="11" height="11" alt="Sphere"> [Sphere](#button-part_sphere) | Medium (half size) | — |
+| <img src="toolbar-icons/Part_Box.png" width="11" height="11" alt="Cube"> [Cube](#button-part_box) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Part_Cylinder.png" width="11" height="11" alt="Cylinder"> [Cylinder](#button-part_cylinder) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Part_Sphere.png" width="11" height="11" alt="Sphere"> [Sphere](#button-part_sphere) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -1689,69 +1529,69 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Part_Box.png" width="11" height="11" alt="Cube"> [Cube](#button-part_box) | Small | — |
-| <img src="toolbar-icons/Part_Cylinder.png" width="11" height="11" alt="Cylinder"> [Cylinder](#button-part_cylinder) | Small | — |
-| <img src="toolbar-icons/Part_Sphere.png" width="11" height="11" alt="Sphere"> [Sphere](#button-part_sphere) | Small | — |
-| <img src="toolbar-icons/Part_Cone.png" width="11" height="11" alt="Cone"> [Cone](#button-part_cone) | Small | — |
-| <img src="toolbar-icons/Part_Torus.png" width="11" height="11" alt="Torus"> [Torus](#button-part_torus) | Small | — |
-| <img src="toolbar-icons/Part_Tube.png" width="11" height="11" alt="Tube"> [Tube](#button-part_tube) | Small | — |
-| <img src="toolbar-icons/Part_Primitives.png" width="11" height="11" alt="Primitive"> [Primitive](#button-part_primitives) | Small | — |
-| <img src="toolbar-icons/Part_Builder.png" width="11" height="11" alt="Shape Builder"> [Shape Builder](#button-part_builder) | Small | — |
+| <img src="toolbar-icons/Part_Box.png" width="11" height="11" alt="Cube"> [Cube](#button-part_box) | Small | â€” |
+| <img src="toolbar-icons/Part_Cylinder.png" width="11" height="11" alt="Cylinder"> [Cylinder](#button-part_cylinder) | Small | â€” |
+| <img src="toolbar-icons/Part_Sphere.png" width="11" height="11" alt="Sphere"> [Sphere](#button-part_sphere) | Small | â€” |
+| <img src="toolbar-icons/Part_Cone.png" width="11" height="11" alt="Cone"> [Cone](#button-part_cone) | Small | â€” |
+| <img src="toolbar-icons/Part_Torus.png" width="11" height="11" alt="Torus"> [Torus](#button-part_torus) | Small | â€” |
+| <img src="toolbar-icons/Part_Tube.png" width="11" height="11" alt="Tube"> [Tube](#button-part_tube) | Small | â€” |
+| <img src="toolbar-icons/Part_Primitives.png" width="11" height="11" alt="Primitive"> [Primitive](#button-part_primitives) | Small | â€” |
+| <img src="toolbar-icons/Part_Builder.png" width="11" height="11" alt="Shape Builder"> [Shape Builder](#button-part_builder) | Small | â€” |
 
 ##### Part Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-sketcher_newsketch) | Full size | — |
-| <img src="toolbar-icons/Part_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-part_extrude) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
-| <img src="toolbar-icons/Part_Revolve.png" width="11" height="11" alt="Revolve"> [Revolve](#button-part_revolve) | Small | — |
-| <img src="toolbar-icons/Part_Mirror.png" width="11" height="11" alt="Mirror"> [Mirror](#button-part_mirror) | Small | — |
-| <img src="toolbar-icons/Part_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-part_scale) | Small | — |
-| <img src="toolbar-icons/Part_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-part_fillet) | Small | — |
-| <img src="toolbar-icons/Part_Chamfer.png" width="11" height="11" alt="Chamfer"> [Chamfer](#button-part_chamfer) | Small | — |
-| <img src="toolbar-icons/Part_MakeFace.png" width="11" height="11" alt="Face From Wires"> [Face From Wires](#button-part_makeface) | Small | — |
-| <img src="toolbar-icons/Part_RuledSurface.png" width="11" height="11" alt="Ruled Surface"> [Ruled Surface](#button-part_ruledsurface) | Small | — |
-| <img src="toolbar-icons/Part_Loft.png" width="11" height="11" alt="Loft"> [Loft](#button-part_loft) | Small | — |
-| <img src="toolbar-icons/Part_Sweep.png" width="11" height="11" alt="Sweep"> [Sweep](#button-part_sweep) | Small | — |
-| <img src="toolbar-icons/Part_Section.png" width="11" height="11" alt="Section"> [Section](#button-part_section) | Small | — |
-| <img src="toolbar-icons/Part_CrossSections.png" width="11" height="11" alt="Cross-Sections"> [Cross-Sections](#button-part_crosssections) | Small | — |
+| <img src="toolbar-icons/Sketcher_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-sketcher_newsketch) | Full size | â€” |
+| <img src="toolbar-icons/Part_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-part_extrude) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
+| <img src="toolbar-icons/Part_Revolve.png" width="11" height="11" alt="Revolve"> [Revolve](#button-part_revolve) | Small | â€” |
+| <img src="toolbar-icons/Part_Mirror.png" width="11" height="11" alt="Mirror"> [Mirror](#button-part_mirror) | Small | â€” |
+| <img src="toolbar-icons/Part_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-part_scale) | Small | â€” |
+| <img src="toolbar-icons/Part_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-part_fillet) | Small | â€” |
+| <img src="toolbar-icons/Part_Chamfer.png" width="11" height="11" alt="Chamfer"> [Chamfer](#button-part_chamfer) | Small | â€” |
+| <img src="toolbar-icons/Part_MakeFace.png" width="11" height="11" alt="Face From Wires"> [Face From Wires](#button-part_makeface) | Small | â€” |
+| <img src="toolbar-icons/Part_RuledSurface.png" width="11" height="11" alt="Ruled Surface"> [Ruled Surface](#button-part_ruledsurface) | Small | â€” |
+| <img src="toolbar-icons/Part_Loft.png" width="11" height="11" alt="Loft"> [Loft](#button-part_loft) | Small | â€” |
+| <img src="toolbar-icons/Part_Sweep.png" width="11" height="11" alt="Sweep"> [Sweep](#button-part_sweep) | Small | â€” |
+| <img src="toolbar-icons/Part_Section.png" width="11" height="11" alt="Section"> [Section](#button-part_section) | Small | â€” |
+| <img src="toolbar-icons/Part_CrossSections.png" width="11" height="11" alt="Cross-Sections"> [Cross-Sections](#button-part_crosssections) | Small | â€” |
 | <img src="toolbar-icons/Part_CompOffset.png" width="11" height="11" alt="3D Offset"> [3D Offset](#button-part_compoffset) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Part_Offset.png" width="11" height="11" alt="3D Offset"> [3D Offset](#button-part_offset) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_Offset2D.png" width="11" height="11" alt="2D Offset"> [2D Offset](#button-part_offset2d) | Menu item | — |
-| <img src="toolbar-icons/Part_Thickness.png" width="11" height="11" alt="Thickness"> [Thickness](#button-part_thickness) | Small | — |
-| <img src="toolbar-icons/Part_ProjectionOnSurface.png" width="11" height="11" alt="Project on Surface"> [Project on Surface](#button-part_projectiononsurface) | Small | — |
-| <img src="toolbar-icons/Part_IsoclineCurve.png" width="11" height="11" alt="Isocline Curve"> [Isocline Curve](#button-part_isoclinecurve) | Small | — |
-| <img src="toolbar-icons/Part_ColorPerFace.png" width="11" height="11" alt="Appearance per Face"> [Appearance per Face](#button-part_colorperface) | Small | — |
+| â†³ <img src="toolbar-icons/Part_Offset.png" width="11" height="11" alt="3D Offset"> [3D Offset](#button-part_offset) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_Offset2D.png" width="11" height="11" alt="2D Offset"> [2D Offset](#button-part_offset2d) | Menu item | â€” |
+| <img src="toolbar-icons/Part_Thickness.png" width="11" height="11" alt="Thickness"> [Thickness](#button-part_thickness) | Small | â€” |
+| <img src="toolbar-icons/Part_ProjectionOnSurface.png" width="11" height="11" alt="Project on Surface"> [Project on Surface](#button-part_projectiononsurface) | Small | â€” |
+| <img src="toolbar-icons/Part_IsoclineCurve.png" width="11" height="11" alt="Isocline Curve"> [Isocline Curve](#button-part_isoclinecurve) | Small | â€” |
+| <img src="toolbar-icons/Part_ColorPerFace.png" width="11" height="11" alt="Appearance per Face"> [Appearance per Face](#button-part_colorperface) | Small | â€” |
 
 ##### Boolean Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | <img src="toolbar-icons/Part_CompCompoundTools.png" width="11" height="11" alt="Compound"> [Compound](#button-part_compcompoundtools) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Part_Compound.png" width="11" height="11" alt="Compound"> [Compound](#button-part_compound) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_ExplodeCompound.png" width="11" height="11" alt="Explode Compound"> [Explode Compound](#button-part_explodecompound) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_CompoundFilter.png" width="11" height="11" alt="Compound Filter"> [Compound Filter](#button-part_compoundfilter) | Menu item | — |
-| <img src="toolbar-icons/Part_Boolean.png" width="11" height="11" alt="Boolean Operation"> [Boolean Operation](#button-part_boolean) | Small | — |
-| <img src="toolbar-icons/Part_Cut.png" width="11" height="11" alt="Cut"> [Cut](#button-part_cut) | Small | — |
-| <img src="toolbar-icons/Part_Fuse.png" width="11" height="11" alt="Union"> [Union](#button-part_fuse) | Small | — |
-| <img src="toolbar-icons/Part_Common.png" width="11" height="11" alt="Intersection"> [Intersection](#button-part_common) | Small | — |
-| <img src="toolbar-icons/Part_TrimBody.png" width="11" height="11" alt="Trim Body"> [Trim Body](#button-part_trimbody) | Small | — |
+| â†³ <img src="toolbar-icons/Part_Compound.png" width="11" height="11" alt="Compound"> [Compound](#button-part_compound) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_ExplodeCompound.png" width="11" height="11" alt="Explode Compound"> [Explode Compound](#button-part_explodecompound) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_CompoundFilter.png" width="11" height="11" alt="Compound Filter"> [Compound Filter](#button-part_compoundfilter) | Menu item | â€” |
+| <img src="toolbar-icons/Part_Boolean.png" width="11" height="11" alt="Boolean Operation"> [Boolean Operation](#button-part_boolean) | Small | â€” |
+| <img src="toolbar-icons/Part_Cut.png" width="11" height="11" alt="Cut"> [Cut](#button-part_cut) | Small | â€” |
+| <img src="toolbar-icons/Part_Fuse.png" width="11" height="11" alt="Union"> [Union](#button-part_fuse) | Small | â€” |
+| <img src="toolbar-icons/Part_Common.png" width="11" height="11" alt="Intersection"> [Intersection](#button-part_common) | Small | â€” |
+| <img src="toolbar-icons/Part_TrimBody.png" width="11" height="11" alt="Trim Body"> [Trim Body](#button-part_trimbody) | Small | â€” |
 | <img src="toolbar-icons/Part_CompJoinFeatures.png" width="11" height="11" alt="Connect Shapes"> [Connect Shapes](#button-part_compjoinfeatures) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Part_JoinConnect.png" width="11" height="11" alt="Connect Shapes"> [Connect Shapes](#button-part_joinconnect) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_JoinEmbed.png" width="11" height="11" alt="Embed Shapes"> [Embed Shapes](#button-part_joinembed) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_JoinCutout.png" width="11" height="11" alt="Cutout Shape"> [Cutout Shape](#button-part_joincutout) | Menu item | — |
+| â†³ <img src="toolbar-icons/Part_JoinConnect.png" width="11" height="11" alt="Connect Shapes"> [Connect Shapes](#button-part_joinconnect) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_JoinEmbed.png" width="11" height="11" alt="Embed Shapes"> [Embed Shapes](#button-part_joinembed) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_JoinCutout.png" width="11" height="11" alt="Cutout Shape"> [Cutout Shape](#button-part_joincutout) | Menu item | â€” |
 | <img src="toolbar-icons/Part_CompSplitFeatures.png" width="11" height="11" alt="Boolean Fragments"> [Boolean Fragments](#button-part_compsplitfeatures) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Part_BooleanFragments.png" width="11" height="11" alt="Boolean Fragments"> [Boolean Fragments](#button-part_booleanfragments) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_SliceApart.png" width="11" height="11" alt="Slice Apart"> [Slice Apart](#button-part_sliceapart) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_Slice.png" width="11" height="11" alt="Slice to Compound"> [Slice to Compound](#button-part_slice) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_XOR.png" width="11" height="11" alt="Boolean XOR"> [Boolean XOR](#button-part_xor) | Menu item | — |
-| <img src="toolbar-icons/Part_CheckGeometry.png" width="11" height="11" alt="Check Geometry"> [Check Geometry](#button-part_checkgeometry) | Small | — |
-| <img src="toolbar-icons/Part_Defeaturing.png" width="11" height="11" alt="Defeaturing"> [Defeaturing](#button-part_defeaturing) | Small | — |
+| â†³ <img src="toolbar-icons/Part_BooleanFragments.png" width="11" height="11" alt="Boolean Fragments"> [Boolean Fragments](#button-part_booleanfragments) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_SliceApart.png" width="11" height="11" alt="Slice Apart"> [Slice Apart](#button-part_sliceapart) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_Slice.png" width="11" height="11" alt="Slice to Compound"> [Slice to Compound](#button-part_slice) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_XOR.png" width="11" height="11" alt="Boolean XOR"> [Boolean XOR](#button-part_xor) | Menu item | â€” |
+| <img src="toolbar-icons/Part_CheckGeometry.png" width="11" height="11" alt="Check Geometry"> [Check Geometry](#button-part_checkgeometry) | Small | â€” |
+| <img src="toolbar-icons/Part_Defeaturing.png" width="11" height="11" alt="Defeaturing"> [Defeaturing](#button-part_defeaturing) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Draft Mode
 
@@ -1763,55 +1603,55 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Medium (half size) | — |
-| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Medium (half size) | — |
-| <img src="toolbar-icons/Draft_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-draft_fillet) | Medium (half size) | — |
+| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Draft_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-draft_fillet) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -1819,105 +1659,105 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Full size | — |
-| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Full size | — |
-| <img src="toolbar-icons/Draft_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-draft_fillet) | Small | — |
+| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Full size | â€” |
+| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Full size | â€” |
+| <img src="toolbar-icons/Draft_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-draft_fillet) | Small | â€” |
 | <img src="toolbar-icons/Draft_ArcTools.png" width="11" height="11" alt="Arc"> [Arc](#button-draft_arctools) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Draft_Arc.png" width="11" height="11" alt="Arc"> [Arc](#button-draft_arc) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_Arc_3Points.png" width="11" height="11" alt="Arc From 3 Points"> [Arc From 3 Points](#button-draft_arc_3points) | Menu item | — |
-| <img src="toolbar-icons/Draft_Circle.png" width="11" height="11" alt="Circle"> [Circle](#button-draft_circle) | Small | — |
-| <img src="toolbar-icons/Draft_Ellipse.png" width="11" height="11" alt="Ellipse"> [Ellipse](#button-draft_ellipse) | Small | — |
-| <img src="toolbar-icons/Draft_Rectangle.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-draft_rectangle) | Small | — |
-| <img src="toolbar-icons/Draft_Polygon.png" width="11" height="11" alt="Polygon"> [Polygon](#button-draft_polygon) | Small | — |
-| <img src="toolbar-icons/Draft_BSpline.png" width="11" height="11" alt="B-Spline"> [B-Spline](#button-draft_bspline) | Small | — |
-| <img src="toolbar-icons/Draft_BezierTools.png" width="11" height="11" alt="Cubic Bézier Curve"> [Cubic Bézier Curve](#button-draft_beziertools) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Draft_CubicBezCurve.png" width="11" height="11" alt="Cubic Bézier Curve"> [Cubic Bézier Curve](#button-draft_cubicbezcurve) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_BezCurve.png" width="11" height="11" alt="Bézier Curve"> [Bézier Curve](#button-draft_bezcurve) | Menu item | — |
-| <img src="toolbar-icons/Draft_Point.png" width="11" height="11" alt="Point"> [Point](#button-draft_point) | Small | — |
-| <img src="toolbar-icons/Draft_Facebinder.png" width="11" height="11" alt="Facebinder"> [Facebinder](#button-draft_facebinder) | Small | — |
-| <img src="toolbar-icons/Draft_ShapeString.png" width="11" height="11" alt="Shape From Text"> [Shape From Text](#button-draft_shapestring) | Small | — |
-| <img src="toolbar-icons/Draft_Hatch.png" width="11" height="11" alt="Hatch"> [Hatch](#button-draft_hatch) | Small | — |
+| â†³ <img src="toolbar-icons/Draft_Arc.png" width="11" height="11" alt="Arc"> [Arc](#button-draft_arc) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_Arc_3Points.png" width="11" height="11" alt="Arc From 3 Points"> [Arc From 3 Points](#button-draft_arc_3points) | Menu item | â€” |
+| <img src="toolbar-icons/Draft_Circle.png" width="11" height="11" alt="Circle"> [Circle](#button-draft_circle) | Small | â€” |
+| <img src="toolbar-icons/Draft_Ellipse.png" width="11" height="11" alt="Ellipse"> [Ellipse](#button-draft_ellipse) | Small | â€” |
+| <img src="toolbar-icons/Draft_Rectangle.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-draft_rectangle) | Small | â€” |
+| <img src="toolbar-icons/Draft_Polygon.png" width="11" height="11" alt="Polygon"> [Polygon](#button-draft_polygon) | Small | â€” |
+| <img src="toolbar-icons/Draft_BSpline.png" width="11" height="11" alt="B-Spline"> [B-Spline](#button-draft_bspline) | Small | â€” |
+| <img src="toolbar-icons/Draft_BezierTools.png" width="11" height="11" alt="Cubic BÃ©zier Curve"> [Cubic BÃ©zier Curve](#button-draft_beziertools) | Small | Dropdown |
+| â†³ <img src="toolbar-icons/Draft_CubicBezCurve.png" width="11" height="11" alt="Cubic BÃ©zier Curve"> [Cubic BÃ©zier Curve](#button-draft_cubicbezcurve) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_BezCurve.png" width="11" height="11" alt="BÃ©zier Curve"> [BÃ©zier Curve](#button-draft_bezcurve) | Menu item | â€” |
+| <img src="toolbar-icons/Draft_Point.png" width="11" height="11" alt="Point"> [Point](#button-draft_point) | Small | â€” |
+| <img src="toolbar-icons/Draft_Facebinder.png" width="11" height="11" alt="Facebinder"> [Facebinder](#button-draft_facebinder) | Small | â€” |
+| <img src="toolbar-icons/Draft_ShapeString.png" width="11" height="11" alt="Shape From Text"> [Shape From Text](#button-draft_shapestring) | Small | â€” |
+| <img src="toolbar-icons/Draft_Hatch.png" width="11" height="11" alt="Hatch"> [Hatch](#button-draft_hatch) | Small | â€” |
 
 ##### Draft Annotation group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Text.png" width="11" height="11" alt="Text"> [Text](#button-draft_text) | Small | — |
-| <img src="toolbar-icons/Draft_Dimension.png" width="11" height="11" alt="Dimension"> [Dimension](#button-draft_dimension) | Small | — |
-| <img src="toolbar-icons/Draft_Label.png" width="11" height="11" alt="Label"> [Label](#button-draft_label) | Small | — |
-| <img src="toolbar-icons/Draft_AnnotationStyleEditor.png" width="11" height="11" alt="Annotation Styles"> [Annotation Styles](#button-draft_annotationstyleeditor) | Small | — |
+| <img src="toolbar-icons/Draft_Text.png" width="11" height="11" alt="Text"> [Text](#button-draft_text) | Small | â€” |
+| <img src="toolbar-icons/Draft_Dimension.png" width="11" height="11" alt="Dimension"> [Dimension](#button-draft_dimension) | Small | â€” |
+| <img src="toolbar-icons/Draft_Label.png" width="11" height="11" alt="Label"> [Label](#button-draft_label) | Small | â€” |
+| <img src="toolbar-icons/Draft_AnnotationStyleEditor.png" width="11" height="11" alt="Annotation Styles"> [Annotation Styles](#button-draft_annotationstyleeditor) | Small | â€” |
 
 ##### Draft Modification group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Move.png" width="11" height="11" alt="Move"> [Move](#button-draft_move) | Small | — |
-| <img src="toolbar-icons/Draft_Rotate.png" width="11" height="11" alt="Rotate"> [Rotate](#button-draft_rotate) | Small | — |
-| <img src="toolbar-icons/Draft_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-draft_scale) | Small | — |
-| <img src="toolbar-icons/Draft_Mirror.png" width="11" height="11" alt="Mirror"> [Mirror](#button-draft_mirror) | Small | — |
-| <img src="toolbar-icons/Draft_Offset.png" width="11" height="11" alt="Offset"> [Offset](#button-draft_offset) | Small | — |
-| <img src="toolbar-icons/Draft_Trimex.png" width="11" height="11" alt="Trimex"> [Trimex](#button-draft_trimex) | Small | — |
-| <img src="toolbar-icons/Draft_Stretch.png" width="11" height="11" alt="Stretch"> [Stretch](#button-draft_stretch) | Small | — |
-| <img src="toolbar-icons/Draft_Clone.png" width="11" height="11" alt="Clone"> [Clone](#button-draft_clone) | Small | — |
+| <img src="toolbar-icons/Draft_Move.png" width="11" height="11" alt="Move"> [Move](#button-draft_move) | Small | â€” |
+| <img src="toolbar-icons/Draft_Rotate.png" width="11" height="11" alt="Rotate"> [Rotate](#button-draft_rotate) | Small | â€” |
+| <img src="toolbar-icons/Draft_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-draft_scale) | Small | â€” |
+| <img src="toolbar-icons/Draft_Mirror.png" width="11" height="11" alt="Mirror"> [Mirror](#button-draft_mirror) | Small | â€” |
+| <img src="toolbar-icons/Draft_Offset.png" width="11" height="11" alt="Offset"> [Offset](#button-draft_offset) | Small | â€” |
+| <img src="toolbar-icons/Draft_Trimex.png" width="11" height="11" alt="Trimex"> [Trimex](#button-draft_trimex) | Small | â€” |
+| <img src="toolbar-icons/Draft_Stretch.png" width="11" height="11" alt="Stretch"> [Stretch](#button-draft_stretch) | Small | â€” |
+| <img src="toolbar-icons/Draft_Clone.png" width="11" height="11" alt="Clone"> [Clone](#button-draft_clone) | Small | â€” |
 | <img src="toolbar-icons/Draft_ArrayTools.png" width="11" height="11" alt="Array"> [Array](#button-draft_arraytools) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Draft_OrthoArray.png" width="11" height="11" alt="Array"> [Array](#button-draft_orthoarray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PolarArray.png" width="11" height="11" alt="Polar Array"> [Polar Array](#button-draft_polararray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_CircularArray.png" width="11" height="11" alt="Circular Array"> [Circular Array](#button-draft_circulararray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PathArray.png" width="11" height="11" alt="Path Array"> [Path Array](#button-draft_patharray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PathLinkArray.png" width="11" height="11" alt="Path Link Array"> [Path Link Array](#button-draft_pathlinkarray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PointArray.png" width="11" height="11" alt="Point Array"> [Point Array](#button-draft_pointarray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PointLinkArray.png" width="11" height="11" alt="Point Link Array"> [Point Link Array](#button-draft_pointlinkarray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PathTwistedArray.png" width="11" height="11" alt="Twisted Path Array"> [Twisted Path Array](#button-draft_pathtwistedarray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PathTwistedLinkArray.png" width="11" height="11" alt="Twisted Path Link Array"> [Twisted Path Link Array](#button-draft_pathtwistedlinkarray) | Menu item | — |
-| <img src="toolbar-icons/Draft_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-draft_edit) | Small | — |
-| <img src="toolbar-icons/Draft_SubelementHighlight.png" width="11" height="11" alt="Highlight Subelements"> [Highlight Subelements](#button-draft_subelementhighlight) | Small | — |
-| <img src="toolbar-icons/Draft_Join.png" width="11" height="11" alt="Join"> [Join](#button-draft_join) | Small | — |
-| <img src="toolbar-icons/Draft_Split.png" width="11" height="11" alt="Split"> [Split](#button-draft_split) | Small | — |
-| <img src="toolbar-icons/Draft_Upgrade.png" width="11" height="11" alt="Upgrade"> [Upgrade](#button-draft_upgrade) | Small | — |
-| <img src="toolbar-icons/Draft_Downgrade.png" width="11" height="11" alt="Downgrade"> [Downgrade](#button-draft_downgrade) | Small | — |
-| <img src="toolbar-icons/Draft_WireToBSpline.png" width="11" height="11" alt="Convert Wire/B-Spline"> [Convert Wire/B-Spline](#button-draft_wiretobspline) | Small | — |
-| <img src="toolbar-icons/Draft_Draft2Sketch.png" width="11" height="11" alt="Draft to Sketch"> [Draft to Sketch](#button-draft_draft2sketch) | Small | — |
-| <img src="toolbar-icons/Draft_Slope.png" width="11" height="11" alt="Set Slope"> [Set Slope](#button-draft_slope) | Small | — |
-| <img src="toolbar-icons/Draft_FlipDimension.png" width="11" height="11" alt="Flip Dimension"> [Flip Dimension](#button-draft_flipdimension) | Small | — |
-| <img src="toolbar-icons/Draft_Shape2DView.png" width="11" height="11" alt="Shape 2D View"> [Shape 2D View](#button-draft_shape2dview) | Small | — |
+| â†³ <img src="toolbar-icons/Draft_OrthoArray.png" width="11" height="11" alt="Array"> [Array](#button-draft_orthoarray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PolarArray.png" width="11" height="11" alt="Polar Array"> [Polar Array](#button-draft_polararray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_CircularArray.png" width="11" height="11" alt="Circular Array"> [Circular Array](#button-draft_circulararray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PathArray.png" width="11" height="11" alt="Path Array"> [Path Array](#button-draft_patharray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PathLinkArray.png" width="11" height="11" alt="Path Link Array"> [Path Link Array](#button-draft_pathlinkarray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PointArray.png" width="11" height="11" alt="Point Array"> [Point Array](#button-draft_pointarray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PointLinkArray.png" width="11" height="11" alt="Point Link Array"> [Point Link Array](#button-draft_pointlinkarray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PathTwistedArray.png" width="11" height="11" alt="Twisted Path Array"> [Twisted Path Array](#button-draft_pathtwistedarray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PathTwistedLinkArray.png" width="11" height="11" alt="Twisted Path Link Array"> [Twisted Path Link Array](#button-draft_pathtwistedlinkarray) | Menu item | â€” |
+| <img src="toolbar-icons/Draft_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-draft_edit) | Small | â€” |
+| <img src="toolbar-icons/Draft_SubelementHighlight.png" width="11" height="11" alt="Highlight Subelements"> [Highlight Subelements](#button-draft_subelementhighlight) | Small | â€” |
+| <img src="toolbar-icons/Draft_Join.png" width="11" height="11" alt="Join"> [Join](#button-draft_join) | Small | â€” |
+| <img src="toolbar-icons/Draft_Split.png" width="11" height="11" alt="Split"> [Split](#button-draft_split) | Small | â€” |
+| <img src="toolbar-icons/Draft_Upgrade.png" width="11" height="11" alt="Upgrade"> [Upgrade](#button-draft_upgrade) | Small | â€” |
+| <img src="toolbar-icons/Draft_Downgrade.png" width="11" height="11" alt="Downgrade"> [Downgrade](#button-draft_downgrade) | Small | â€” |
+| <img src="toolbar-icons/Draft_WireToBSpline.png" width="11" height="11" alt="Convert Wire/B-Spline"> [Convert Wire/B-Spline](#button-draft_wiretobspline) | Small | â€” |
+| <img src="toolbar-icons/Draft_Draft2Sketch.png" width="11" height="11" alt="Draft to Sketch"> [Draft to Sketch](#button-draft_draft2sketch) | Small | â€” |
+| <img src="toolbar-icons/Draft_Slope.png" width="11" height="11" alt="Set Slope"> [Set Slope](#button-draft_slope) | Small | â€” |
+| <img src="toolbar-icons/Draft_FlipDimension.png" width="11" height="11" alt="Flip Dimension"> [Flip Dimension](#button-draft_flipdimension) | Small | â€” |
+| <img src="toolbar-icons/Draft_Shape2DView.png" width="11" height="11" alt="Shape 2D View"> [Shape 2D View](#button-draft_shape2dview) | Small | â€” |
 
 ##### Draft Utility group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_LayerManager.png" width="11" height="11" alt="Manage Layers"> [Manage Layers](#button-draft_layermanager) | Small | — |
-| <img src="toolbar-icons/Draft_AddNamedGroup.png" width="11" height="11" alt="New Named Group"> [New Named Group](#button-draft_addnamedgroup) | Small | — |
-| <img src="toolbar-icons/Draft_SelectGroup.png" width="11" height="11" alt="Select Group"> [Select Group](#button-draft_selectgroup) | Small | — |
-| <img src="toolbar-icons/Draft_AddToLayer.png" width="11" height="11" alt="Add to Layer"> [Add to Layer](#button-draft_addtolayer) | Small | — |
-| <img src="toolbar-icons/Draft_AddToGroup.png" width="11" height="11" alt="Add to Group"> [Add to Group](#button-draft_addtogroup) | Small | — |
-| <img src="toolbar-icons/Draft_AddConstruction.png" width="11" height="11" alt="Add to Construction Group"> [Add to Construction Group](#button-draft_addconstruction) | Small | — |
-| <img src="toolbar-icons/Draft_ToggleDisplayMode.png" width="11" height="11" alt="Toggle Wireframe"> [Toggle Wireframe](#button-draft_toggledisplaymode) | Small | — |
-| <img src="toolbar-icons/Draft_WorkingPlaneProxy.png" width="11" height="11" alt="Working Plane Proxy"> [Working Plane Proxy](#button-draft_workingplaneproxy) | Small | — |
+| <img src="toolbar-icons/Draft_LayerManager.png" width="11" height="11" alt="Manage Layers"> [Manage Layers](#button-draft_layermanager) | Small | â€” |
+| <img src="toolbar-icons/Draft_AddNamedGroup.png" width="11" height="11" alt="New Named Group"> [New Named Group](#button-draft_addnamedgroup) | Small | â€” |
+| <img src="toolbar-icons/Draft_SelectGroup.png" width="11" height="11" alt="Select Group"> [Select Group](#button-draft_selectgroup) | Small | â€” |
+| <img src="toolbar-icons/Draft_AddToLayer.png" width="11" height="11" alt="Add to Layer"> [Add to Layer](#button-draft_addtolayer) | Small | â€” |
+| <img src="toolbar-icons/Draft_AddToGroup.png" width="11" height="11" alt="Add to Group"> [Add to Group](#button-draft_addtogroup) | Small | â€” |
+| <img src="toolbar-icons/Draft_AddConstruction.png" width="11" height="11" alt="Add to Construction Group"> [Add to Construction Group](#button-draft_addconstruction) | Small | â€” |
+| <img src="toolbar-icons/Draft_ToggleDisplayMode.png" width="11" height="11" alt="Toggle Wireframe"> [Toggle Wireframe](#button-draft_toggledisplaymode) | Small | â€” |
+| <img src="toolbar-icons/Draft_WorkingPlaneProxy.png" width="11" height="11" alt="Working Plane Proxy"> [Working Plane Proxy](#button-draft_workingplaneproxy) | Small | â€” |
 
 ##### Draft Snap group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Snap_Lock.png" width="11" height="11" alt="Snap Lock"> [Snap Lock](#button-draft_snap_lock) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Endpoint.png" width="11" height="11" alt="Snap Endpoint"> [Snap Endpoint](#button-draft_snap_endpoint) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Midpoint.png" width="11" height="11" alt="Snap Midpoint"> [Snap Midpoint](#button-draft_snap_midpoint) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Center.png" width="11" height="11" alt="Snap Center"> [Snap Center](#button-draft_snap_center) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Angle.png" width="11" height="11" alt="Snap Angle"> [Snap Angle](#button-draft_snap_angle) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Intersection.png" width="11" height="11" alt="Snap Intersection"> [Snap Intersection](#button-draft_snap_intersection) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Perpendicular.png" width="11" height="11" alt="Snap Perpendicular"> [Snap Perpendicular](#button-draft_snap_perpendicular) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Extension.png" width="11" height="11" alt="Snap Extension"> [Snap Extension](#button-draft_snap_extension) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Parallel.png" width="11" height="11" alt="Snap Parallel"> [Snap Parallel](#button-draft_snap_parallel) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Special.png" width="11" height="11" alt="Snap Special"> [Snap Special](#button-draft_snap_special) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Near.png" width="11" height="11" alt="Snap Near"> [Snap Near](#button-draft_snap_near) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Ortho.png" width="11" height="11" alt="Snap Ortho"> [Snap Ortho](#button-draft_snap_ortho) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Grid.png" width="11" height="11" alt="Snap Grid"> [Snap Grid](#button-draft_snap_grid) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_WorkingPlane.png" width="11" height="11" alt="Snap Working Plane"> [Snap Working Plane](#button-draft_snap_workingplane) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Dimensions.png" width="11" height="11" alt="Snap Dimensions"> [Snap Dimensions](#button-draft_snap_dimensions) | Small | — |
-| <img src="toolbar-icons/Draft_ToggleGrid.png" width="11" height="11" alt="Toggle Grid"> [Toggle Grid](#button-draft_togglegrid) | Small | — |
+| <img src="toolbar-icons/Draft_Snap_Lock.png" width="11" height="11" alt="Snap Lock"> [Snap Lock](#button-draft_snap_lock) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Endpoint.png" width="11" height="11" alt="Snap Endpoint"> [Snap Endpoint](#button-draft_snap_endpoint) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Midpoint.png" width="11" height="11" alt="Snap Midpoint"> [Snap Midpoint](#button-draft_snap_midpoint) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Center.png" width="11" height="11" alt="Snap Center"> [Snap Center](#button-draft_snap_center) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Angle.png" width="11" height="11" alt="Snap Angle"> [Snap Angle](#button-draft_snap_angle) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Intersection.png" width="11" height="11" alt="Snap Intersection"> [Snap Intersection](#button-draft_snap_intersection) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Perpendicular.png" width="11" height="11" alt="Snap Perpendicular"> [Snap Perpendicular](#button-draft_snap_perpendicular) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Extension.png" width="11" height="11" alt="Snap Extension"> [Snap Extension](#button-draft_snap_extension) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Parallel.png" width="11" height="11" alt="Snap Parallel"> [Snap Parallel](#button-draft_snap_parallel) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Special.png" width="11" height="11" alt="Snap Special"> [Snap Special](#button-draft_snap_special) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Near.png" width="11" height="11" alt="Snap Near"> [Snap Near](#button-draft_snap_near) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Ortho.png" width="11" height="11" alt="Snap Ortho"> [Snap Ortho](#button-draft_snap_ortho) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Grid.png" width="11" height="11" alt="Snap Grid"> [Snap Grid](#button-draft_snap_grid) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_WorkingPlane.png" width="11" height="11" alt="Snap Working Plane"> [Snap Working Plane](#button-draft_snap_workingplane) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Dimensions.png" width="11" height="11" alt="Snap Dimensions"> [Snap Dimensions](#button-draft_snap_dimensions) | Small | â€” |
+| <img src="toolbar-icons/Draft_ToggleGrid.png" width="11" height="11" alt="Toggle Grid"> [Toggle Grid](#button-draft_togglegrid) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Assembly Mode
 
@@ -1929,140 +1769,140 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> [New Component](#button-std_newcomponent) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> [New Component](#button-std_newcomponent) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Medium (half size) | â€” |
 | <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_DatumPlane.png" width="11" height="11" alt="Datum Plane"> [Datum Plane](#button-part_datumplane) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_DatumLine.png" width="11" height="11" alt="Datum Line"> [Datum Line](#button-part_datumline) | Menu item | — |
-| ↳ <img src="toolbar-icons/Part_DatumPoint.png" width="11" height="11" alt="Datum Point"> [Datum Point](#button-part_datumpoint) | Menu item | — |
+| â†³ <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_DatumPlane.png" width="11" height="11" alt="Datum Plane"> [Datum Plane](#button-part_datumplane) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_DatumLine.png" width="11" height="11" alt="Datum Line"> [Datum Line](#button-part_datumline) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Part_DatumPoint.png" width="11" height="11" alt="Datum Point"> [Datum Point](#button-part_datumpoint) | Menu item | â€” |
 
 ##### Modeling group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full size | — |
-| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full size | — |
-| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-partdesign_fillet) | Medium (half size) | — |
+| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full size | â€” |
+| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full size | â€” |
+| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-partdesign_fillet) | Medium (half size) | â€” |
 | <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_PathPattern.png" width="11" height="11" alt="Path Pattern"> [Path Pattern](#button-partdesign_pathpattern) | Menu item | — |
-| ↳ <img src="toolbar-icons/PartDesign_PointPattern.png" width="11" height="11" alt="Point Pattern"> [Point Pattern](#button-partdesign_pointpattern) | Menu item | — |
+| â†³ <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/PartDesign_PathPattern.png" width="11" height="11" alt="Path Pattern"> [Path Pattern](#button-partdesign_pathpattern) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/PartDesign_PointPattern.png" width="11" height="11" alt="Point Pattern"> [Point Pattern](#button-partdesign_pointpattern) | Menu item | â€” |
 
 ##### Surface group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Surface_Filling.png" width="11" height="11" alt="Filling"> [Filling](#button-surface_filling) | Medium (half size) | — |
-| <img src="toolbar-icons/Surface_GeomFillSurface.png" width="11" height="11" alt="Fill Boundary Curves"> [Fill Boundary Curves](#button-surface_geomfillsurface) | Medium (half size) | — |
-| <img src="toolbar-icons/Surface_ExtendFace.png" width="11" height="11" alt="Extend Face"> [Extend Face](#button-surface_extendface) | Medium (half size) | — |
+| <img src="toolbar-icons/Surface_Filling.png" width="11" height="11" alt="Filling"> [Filling](#button-surface_filling) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Surface_GeomFillSurface.png" width="11" height="11" alt="Fill Boundary Curves"> [Fill Boundary Curves](#button-surface_geomfillsurface) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Surface_ExtendFace.png" width="11" height="11" alt="Extend Face"> [Extend Face](#button-surface_extendface) | Medium (half size) | â€” |
 
 ##### Sketch group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Medium (half size) | — |
-| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Medium (half size) | — |
+| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Medium (half size) | â€” |
 | <img src="toolbar-icons/Sketcher_CompLine.png" width="11" height="11" alt="Polyline"> [Polyline](#button-sketcher_compline) | Medium (half size) | Dropdown |
-| ↳ Native choices for [Polyline](#button-sketcher_compline) | Menu items | See function catalog |
+| â†³ Native choices for [Polyline](#button-sketcher_compline) | Menu items | See function catalog |
 | <img src="toolbar-icons/Sketcher_CompCreateRectangles.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-sketcher_compcreaterectangles) | Medium (half size) | Dropdown |
-| ↳ Native choices for [Rectangle](#button-sketcher_compcreaterectangles) | Menu items | See function catalog |
+| â†³ Native choices for [Rectangle](#button-sketcher_compcreaterectangles) | Menu items | See function catalog |
 | <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceY.png" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-sketcher_constraindistancey) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistanceX.png" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-sketcher_constraindistancex) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainAngle.png" width="11" height="11" alt="Angle Dimension"> [Angle Dimension](#button-sketcher_constrainangle) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadius.png" width="11" height="11" alt="Radius Dimension"> [Radius Dimension](#button-sketcher_constrainradius) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDiameter.png" width="11" height="11" alt="Diameter Dimension"> [Diameter Dimension](#button-sketcher_constraindiameter) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainDistance.png" width="11" height="11" alt="Distance Dimension"> [Distance Dimension](#button-sketcher_constraindistance) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainRadiam.png" width="11" height="11" alt="Radius/Diameter Dimension"> [Radius/Diameter Dimension](#button-sketcher_constrainradiam) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainLock.png" width="11" height="11" alt="Lock Position"> [Lock Position](#button-sketcher_constrainlock) | Menu item | — |
-| ↳ <img src="toolbar-icons/Sketcher_ConstrainSnellsLaw.png" width="11" height="11" alt="Refraction Constraint"> [Refraction Constraint](#button-sketcher_constrainsnellslaw) | Menu item | — |
-| <img src="toolbar-icons/Sketcher_ToggleConstruction.png" width="11" height="11" alt="Toggle Construction Geometry"> [Toggle Construction Geometry](#button-sketcher_toggleconstruction) | Medium (half size) | — |
+| â†³ <img src="toolbar-icons/Sketcher_Dimension.png" width="11" height="11" alt="Dimension"> [Auto Dimension](#button-sketcher_dimension) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainDistanceY.png" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-sketcher_constraindistancey) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainDistanceX.png" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-sketcher_constraindistancex) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainAngle.png" width="11" height="11" alt="Angle Dimension"> [Angle Dimension](#button-sketcher_constrainangle) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainRadius.png" width="11" height="11" alt="Radius Dimension"> [Radius Dimension](#button-sketcher_constrainradius) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainDiameter.png" width="11" height="11" alt="Diameter Dimension"> [Diameter Dimension](#button-sketcher_constraindiameter) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainDistance.png" width="11" height="11" alt="Distance Dimension"> [Distance Dimension](#button-sketcher_constraindistance) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainRadiam.png" width="11" height="11" alt="Radius/Diameter Dimension"> [Radius/Diameter Dimension](#button-sketcher_constrainradiam) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainLock.png" width="11" height="11" alt="Lock Position"> [Lock Position](#button-sketcher_constrainlock) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Sketcher_ConstrainSnellsLaw.png" width="11" height="11" alt="Refraction Constraint"> [Refraction Constraint](#button-sketcher_constrainsnellslaw) | Menu item | â€” |
+| <img src="toolbar-icons/Sketcher_ToggleConstruction.png" width="11" height="11" alt="Toggle Construction Geometry"> [Toggle Construction Geometry](#button-sketcher_toggleconstruction) | Medium (half size) | â€” |
 
 ##### Assembly group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Assembly_CreateAssembly.png" width="11" height="11" alt="New Assembly"> [New Assembly](#button-assembly_createassembly) | Medium (half size) | — |
+| <img src="toolbar-icons/Assembly_CreateAssembly.png" width="11" height="11" alt="New Assembly"> [New Assembly](#button-assembly_createassembly) | Medium (half size) | â€” |
 | <img src="toolbar-icons/Assembly_Insert.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insert) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> [Add Component](#button-assembly_insertnewpart) | Menu item | — |
-| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Medium (half size) | — |
+| â†³ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> [Add Component](#button-assembly_insertnewpart) | Menu item | â€” |
+| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Medium (half size) | â€” |
 | <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Medium (half size) | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | â€” |
 
 ##### Mesh group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Mesh…"> [Import Mesh…](#button-mesh_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-mesh_frompartshape) | Medium (half size) | — |
-| <img src="toolbar-icons/Mesh_Evaluation.png" width="11" height="11" alt="Evaluate and Repair"> [Evaluate and Repair](#button-mesh_evaluation) | Medium (half size) | — |
+| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Meshâ€¦"> [Import Meshâ€¦](#button-mesh_import) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-mesh_frompartshape) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Mesh_Evaluation.png" width="11" height="11" alt="Evaluate and Repair"> [Evaluate and Repair](#button-mesh_evaluation) | Medium (half size) | â€” |
 
 ##### View group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> [Fit All](#button-std_viewfitall) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewisometric) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_ViewFitAll.png" width="11" height="11" alt="Fit All"> [Fit All](#button-std_viewfitall) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> [Isometric](#button-std_viewisometric) | Medium (half size) | â€” |
 | <img src="toolbar-icons/Std_DrawStyle.png" width="11" height="11" alt="As Is"> [As Is](#button-std_drawstyle) | Medium (half size) | Dropdown |
-| ↳ Native choices for [As Is](#button-std_drawstyle) | Menu items | See function catalog |
-| <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filters…"> [Selection filters…](#button-std_entityselectionfilter) | Medium (half size) | — |
+| â†³ Native choices for [As Is](#button-std_drawstyle) | Menu items | See function catalog |
+| <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filtersâ€¦"> [Selection filtersâ€¦](#button-std_entityselectionfilter) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2070,56 +1910,56 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Assembly_CreateAssembly.png" width="11" height="11" alt="New Assembly"> [New Assembly](#button-assembly_createassembly) | Small | — |
+| <img src="toolbar-icons/Assembly_CreateAssembly.png" width="11" height="11" alt="New Assembly"> [New Assembly](#button-assembly_createassembly) | Small | â€” |
 | <img src="toolbar-icons/Assembly_Insert.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insert) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> [Add Component](#button-assembly_insertnewpart) | Menu item | — |
+| â†³ <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> [Insert Component](#button-assembly_insertlink) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> [Add Component](#button-assembly_insertnewpart) | Menu item | â€” |
 | <img src="toolbar-icons/Part_LinkArrays.png" width="11" height="11" alt="Circular Link Array"> [Circular Link Array](#button-part_linkarrays) | Small | Dropdown |
-| ↳ Native choices for [Circular Link Array](#button-part_linkarrays) | Menu items | See function catalog |
-| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateView.png" width="11" height="11" alt="Exploded View"> [Exploded View](#button-assembly_createview) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateSnapshot.png" width="11" height="11" alt="Snapshot"> [Snapshot](#button-assembly_createsnapshot) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateSimulation.png" width="11" height="11" alt="Simulation"> [Simulation](#button-assembly_createsimulation) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateBom.png" width="11" height="11" alt="Bill of Materials"> [Bill of Materials](#button-assembly_createbom) | Small | — |
+| â†³ Native choices for [Circular Link Array](#button-part_linkarrays) | Menu items | See function catalog |
+| <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> [Solve Assembly](#button-assembly_solveassembly) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateView.png" width="11" height="11" alt="Exploded View"> [Exploded View](#button-assembly_createview) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateSnapshot.png" width="11" height="11" alt="Snapshot"> [Snapshot](#button-assembly_createsnapshot) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateSimulation.png" width="11" height="11" alt="Simulation"> [Simulation](#button-assembly_createsimulation) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateBom.png" width="11" height="11" alt="Bill of Materials"> [Bill of Materials](#button-assembly_createbom) | Small | â€” |
 
 ##### Assembly Joints group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Assembly_ToggleGrounded.png" width="11" height="11" alt="Toggle Grounded"> [Toggle Grounded](#button-assembly_togglegrounded) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Small | — |
+| <img src="toolbar-icons/Assembly_ToggleGrounded.png" width="11" height="11" alt="Toggle Grounded"> [Toggle Grounded](#button-assembly_togglegrounded) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Small | â€” |
 | <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
-| <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Small | — |
-| <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Small | — |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointRigidGroup.png" width="11" height="11" alt="Create Rigid Group"> [Create Rigid Group](#button-assembly_createjointrigidgroup) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointRevolute.png" width="11" height="11" alt="Revolute Joint"> [Revolute Joint](#button-assembly_createjointrevolute) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointCylindrical.png" width="11" height="11" alt="Cylindrical Joint"> [Cylindrical Joint](#button-assembly_createjointcylindrical) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointSlider.png" width="11" height="11" alt="Slider Joint"> [Slider Joint](#button-assembly_createjointslider) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointBall.png" width="11" height="11" alt="Ball Joint"> [Ball Joint](#button-assembly_createjointball) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> [Distance Joint](#button-assembly_createjointdistance) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> [Parallel Joint](#button-assembly_createjointparallel) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> [Perpendicular Joint](#button-assembly_createjointperpendicular) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointAngle.png" width="11" height="11" alt="Angle Joint"> [Angle Joint](#button-assembly_createjointangle) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointRackPinion.png" width="11" height="11" alt="Rack and Pinion Joint"> [Rack and Pinion Joint](#button-assembly_createjointrackpinion) | Small | â€” |
+| <img src="toolbar-icons/Assembly_CreateJointScrew.png" width="11" height="11" alt="Screw Joint"> [Screw Joint](#button-assembly_createjointscrew) | Small | â€” |
 | <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgearbelt) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | — |
-| ↳ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | — |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> [Gears Joint](#button-assembly_createjointgears) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Assembly_CreateJointBelt.png" width="11" height="11" alt="Belt Joint"> [Belt Joint](#button-assembly_createjointbelt) | Menu item | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### CAM Mode
 
@@ -2131,55 +1971,55 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/CAM_Job.png" width="11" height="11" alt="New Job"> [New Job](#button-cam_job) | Medium (half size) | — |
-| <img src="toolbar-icons/CAM_MeshPreparation.png" width="11" height="11" alt="Review CAM mesh..."> [Review CAM mesh...](#button-cam_meshpreparation) | Medium (half size) | — |
-| <img src="toolbar-icons/CAM_Workplane.png" width="11" height="11" alt="Work Plane"> [Work Plane](#button-cam_workplane) | Medium (half size) | — |
+| <img src="toolbar-icons/CAM_Job.png" width="11" height="11" alt="New Job"> [New Job](#button-cam_job) | Medium (half size) | â€” |
+| <img src="toolbar-icons/CAM_MeshPreparation.png" width="11" height="11" alt="Review CAM mesh..."> [Review CAM mesh...](#button-cam_meshpreparation) | Medium (half size) | â€” |
+| <img src="toolbar-icons/CAM_Workplane.png" width="11" height="11" alt="Work Plane"> [Work Plane](#button-cam_workplane) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2187,55 +2027,55 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/CAM_Job.png" width="11" height="11" alt="New Job"> [New Job](#button-cam_job) | Full size | — |
-| <img src="toolbar-icons/CAM_MeshPreparation.png" width="11" height="11" alt="Review CAM mesh..."> [Review CAM mesh...](#button-cam_meshpreparation) | Small | — |
-| <img src="toolbar-icons/CAM_Workplane.png" width="11" height="11" alt="Work Plane"> [Work Plane](#button-cam_workplane) | Small | — |
-| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Holding Tab"> [Holding Tab](#button-cam_holdingtab) | Small | — |
-| <img src="toolbar-icons/CAM_IndexedSetup.png" width="11" height="11" alt="Indexed Setup"> [Indexed Setup](#button-cam_indexedsetup) | Small | — |
-| <img src="toolbar-icons/CAM_Sanity.png" width="11" height="11" alt="Sanity Check"> [Sanity Check](#button-cam_sanity) | Small | — |
+| <img src="toolbar-icons/CAM_Job.png" width="11" height="11" alt="New Job"> [New Job](#button-cam_job) | Full size | â€” |
+| <img src="toolbar-icons/CAM_MeshPreparation.png" width="11" height="11" alt="Review CAM mesh..."> [Review CAM mesh...](#button-cam_meshpreparation) | Small | â€” |
+| <img src="toolbar-icons/CAM_Workplane.png" width="11" height="11" alt="Work Plane"> [Work Plane](#button-cam_workplane) | Small | â€” |
+| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Holding Tab"> [Holding Tab](#button-cam_holdingtab) | Small | â€” |
+| <img src="toolbar-icons/CAM_IndexedSetup.png" width="11" height="11" alt="Indexed Setup"> [Indexed Setup](#button-cam_indexedsetup) | Small | â€” |
+| <img src="toolbar-icons/CAM_Sanity.png" width="11" height="11" alt="Sanity Check"> [Sanity Check](#button-cam_sanity) | Small | â€” |
 | <img src="toolbar-icons/CAM_PostTools.png" width="11" height="11" alt="Post Process"> [Post Process](#button-cam_posttools) | Small | Dropdown |
-| ↳ Native choices for [Post Process](#button-cam_posttools) | Menu items | See function catalog |
+| â†³ Native choices for [Post Process](#button-cam_posttools) | Menu items | See function catalog |
 
 ##### Tool Commands group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | <img src="toolbar-icons/CAM_SimTools.png" width="11" height="11" alt="CAM Simulator"> [CAM Simulator](#button-cam_simtools) | Small | Dropdown |
-| ↳ Native choices for [CAM Simulator](#button-cam_simtools) | Menu items | See function catalog |
-| <img src="toolbar-icons/CAM_Inspect.png" width="11" height="11" alt="Inspect Toolpath"> [Inspect Toolpath](#button-cam_inspect) | Small | — |
-| <img src="toolbar-icons/CAM_SelectLoop.png" width="11" height="11" alt="Finish Selecting Loop"> [Finish Selecting Loop](#button-cam_selectloop) | Small | — |
-| <img src="toolbar-icons/CAM_OpActiveToggle.png" width="11" height="11" alt="Toggle Operation"> [Toggle Operation](#button-cam_opactivetoggle) | Small | — |
-| <img src="toolbar-icons/CAM_ToolBitDock.png" width="11" height="11" alt="Add Toolbit…"> [Add Toolbit…](#button-cam_toolbitdock) | Small | — |
+| â†³ Native choices for [CAM Simulator](#button-cam_simtools) | Menu items | See function catalog |
+| <img src="toolbar-icons/CAM_Inspect.png" width="11" height="11" alt="Inspect Toolpath"> [Inspect Toolpath](#button-cam_inspect) | Small | â€” |
+| <img src="toolbar-icons/CAM_SelectLoop.png" width="11" height="11" alt="Finish Selecting Loop"> [Finish Selecting Loop](#button-cam_selectloop) | Small | â€” |
+| <img src="toolbar-icons/CAM_OpActiveToggle.png" width="11" height="11" alt="Toggle Operation"> [Toggle Operation](#button-cam_opactivetoggle) | Small | â€” |
+| <img src="toolbar-icons/CAM_ToolBitDock.png" width="11" height="11" alt="Add Toolbitâ€¦"> [Add Toolbitâ€¦](#button-cam_toolbitdock) | Small | â€” |
 
 ##### New Operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/CAM_Profile.png" width="11" height="11" alt="Profile"> [Profile](#button-cam_profile) | Small | — |
-| <img src="toolbar-icons/CAM_Pocket_Shape.png" width="11" height="11" alt="Pocket Shape"> [Pocket Shape](#button-cam_pocket_shape) | Small | — |
-| <img src="toolbar-icons/CAM_MillFacing.png" width="11" height="11" alt="Mill Facing"> [Mill Facing](#button-cam_millfacing) | Small | — |
-| <img src="toolbar-icons/CAM_Helix.png" width="11" height="11" alt="Helix"> [Helix](#button-cam_helix) | Small | — |
-| <img src="toolbar-icons/CAM_Adaptive.png" width="11" height="11" alt="Adaptive"> [Adaptive](#button-cam_adaptive) | Small | — |
-| <img src="toolbar-icons/CAM_Slot.png" width="11" height="11" alt="Slot"> [Slot](#button-cam_slot) | Small | — |
+| <img src="toolbar-icons/CAM_Profile.png" width="11" height="11" alt="Profile"> [Profile](#button-cam_profile) | Small | â€” |
+| <img src="toolbar-icons/CAM_Pocket_Shape.png" width="11" height="11" alt="Pocket Shape"> [Pocket Shape](#button-cam_pocket_shape) | Small | â€” |
+| <img src="toolbar-icons/CAM_MillFacing.png" width="11" height="11" alt="Mill Facing"> [Mill Facing](#button-cam_millfacing) | Small | â€” |
+| <img src="toolbar-icons/CAM_Helix.png" width="11" height="11" alt="Helix"> [Helix](#button-cam_helix) | Small | â€” |
+| <img src="toolbar-icons/CAM_Adaptive.png" width="11" height="11" alt="Adaptive"> [Adaptive](#button-cam_adaptive) | Small | â€” |
+| <img src="toolbar-icons/CAM_Slot.png" width="11" height="11" alt="Slot"> [Slot](#button-cam_slot) | Small | â€” |
 | <img src="toolbar-icons/CAM_DrillingTools.png" width="11" height="11" alt="Drilling"> [Drilling](#button-cam_drillingtools) | Small | Dropdown |
-| ↳ Native choices for [Drilling](#button-cam_drillingtools) | Menu items | See function catalog |
+| â†³ Native choices for [Drilling](#button-cam_drillingtools) | Menu items | See function catalog |
 | <img src="toolbar-icons/CAM_EngraveTools.png" width="11" height="11" alt="Engrave"> [Engrave](#button-cam_engravetools) | Small | Dropdown |
-| ↳ Native choices for [Engrave](#button-cam_engravetools) | Menu items | See function catalog |
-| <img src="toolbar-icons/CAM_PlanarSurface.png" width="11" height="11" alt="Parallel / Waterline"> [Parallel / Waterline](#button-cam_planarsurface) | Small | — |
+| â†³ Native choices for [Engrave](#button-cam_engravetools) | Menu items | See function catalog |
+| <img src="toolbar-icons/CAM_PlanarSurface.png" width="11" height="11" alt="Parallel / Waterline"> [Parallel / Waterline](#button-cam_planarsurface) | Small | â€” |
 
 ##### Path Modification group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/CAM_OperationCopy.png" width="11" height="11" alt="Copy Operation"> [Copy Operation](#button-cam_operationcopy) | Small | — |
-| <img src="toolbar-icons/CAM_Array.png" width="11" height="11" alt="Array"> [Array](#button-cam_array) | Small | — |
-| <img src="toolbar-icons/CAM_SimpleCopy.png" width="11" height="11" alt="Simple Copy"> [Simple Copy](#button-cam_simplecopy) | Small | — |
+| <img src="toolbar-icons/CAM_OperationCopy.png" width="11" height="11" alt="Copy Operation"> [Copy Operation](#button-cam_operationcopy) | Small | â€” |
+| <img src="toolbar-icons/CAM_Array.png" width="11" height="11" alt="Array"> [Array](#button-cam_array) | Small | â€” |
+| <img src="toolbar-icons/CAM_SimpleCopy.png" width="11" height="11" alt="Simple Copy"> [Simple Copy](#button-cam_simplecopy) | Small | â€” |
 | <img src="toolbar-icons/CAM_DressupTools.png" width="11" height="11" alt="Array"> [Array](#button-cam_dressuptools) | Small | Dropdown |
-| ↳ Native choices for [Array](#button-cam_dressuptools) | Menu items | See function catalog |
+| â†³ Native choices for [Array](#button-cam_dressuptools) | Menu items | See function catalog |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### TechDraw Mode
 
@@ -2247,55 +2087,55 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_PageDefault.png" width="11" height="11" alt="New Page"> [New Page](#button-techdraw_pagedefault) | Medium (half size) | — |
-| <img src="toolbar-icons/TechDraw_PageTemplate.png" width="11" height="11" alt="New Page From Template"> [New Page From Template](#button-techdraw_pagetemplate) | Medium (half size) | — |
-| <img src="toolbar-icons/TechDraw_FillTemplateFields.png" width="11" height="11" alt="Update Template Fields"> [Update Template Fields](#button-techdraw_filltemplatefields) | Medium (half size) | — |
+| <img src="toolbar-icons/TechDraw_PageDefault.png" width="11" height="11" alt="New Page"> [New Page](#button-techdraw_pagedefault) | Medium (half size) | â€” |
+| <img src="toolbar-icons/TechDraw_PageTemplate.png" width="11" height="11" alt="New Page From Template"> [New Page From Template](#button-techdraw_pagetemplate) | Medium (half size) | â€” |
+| <img src="toolbar-icons/TechDraw_FillTemplateFields.png" width="11" height="11" alt="Update Template Fields"> [Update Template Fields](#button-techdraw_filltemplatefields) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2303,115 +2143,115 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_PageDefault.png" width="11" height="11" alt="New Page"> [New Page](#button-techdraw_pagedefault) | Full size | — |
-| <img src="toolbar-icons/TechDraw_PageTemplate.png" width="11" height="11" alt="New Page From Template"> [New Page From Template](#button-techdraw_pagetemplate) | Small | — |
-| <img src="toolbar-icons/TechDraw_FillTemplateFields.png" width="11" height="11" alt="Update Template Fields"> [Update Template Fields](#button-techdraw_filltemplatefields) | Small | — |
-| <img src="toolbar-icons/TechDraw_RedrawPage.png" width="11" height="11" alt="Redraw Page"> [Redraw Page](#button-techdraw_redrawpage) | Small | — |
-| <img src="toolbar-icons/TechDraw_PrintAll.png" width="11" height="11" alt="Print All Pages"> [Print All Pages](#button-techdraw_printall) | Small | — |
+| <img src="toolbar-icons/TechDraw_PageDefault.png" width="11" height="11" alt="New Page"> [New Page](#button-techdraw_pagedefault) | Full size | â€” |
+| <img src="toolbar-icons/TechDraw_PageTemplate.png" width="11" height="11" alt="New Page From Template"> [New Page From Template](#button-techdraw_pagetemplate) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_FillTemplateFields.png" width="11" height="11" alt="Update Template Fields"> [Update Template Fields](#button-techdraw_filltemplatefields) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_RedrawPage.png" width="11" height="11" alt="Redraw Page"> [Redraw Page](#button-techdraw_redrawpage) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_PrintAll.png" width="11" height="11" alt="Print All Pages"> [Print All Pages](#button-techdraw_printall) | Small | â€” |
 
 ##### TechDraw Views group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_View.png" width="11" height="11" alt="New View"> [New View](#button-techdraw_view) | Small | — |
-| <img src="toolbar-icons/TechDraw_BrokenView.png" width="11" height="11" alt="Broken View"> [Broken View](#button-techdraw_brokenview) | Small | — |
-| <img src="toolbar-icons/TechDraw_ActiveView.png" width="11" height="11" alt="Active View"> [Active View](#button-techdraw_activeview) | Small | — |
+| <img src="toolbar-icons/TechDraw_View.png" width="11" height="11" alt="New View"> [New View](#button-techdraw_view) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_BrokenView.png" width="11" height="11" alt="Broken View"> [Broken View](#button-techdraw_brokenview) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_ActiveView.png" width="11" height="11" alt="Active View"> [Active View](#button-techdraw_activeview) | Small | â€” |
 | <img src="toolbar-icons/TechDraw_SectionGroup.png" width="11" height="11" alt="Section View"> [Section View](#button-techdraw_sectiongroup) | Small | Dropdown |
-| ↳ Native choices for [Section View](#button-techdraw_sectiongroup) | Menu items | See function catalog |
-| <img src="toolbar-icons/TechDraw_DetailView.png" width="11" height="11" alt="Detail View"> [Detail View](#button-techdraw_detailview) | Small | — |
-| <img src="toolbar-icons/TechDraw_DraftView.png" width="11" height="11" alt="Draft View"> [Draft View](#button-techdraw_draftview) | Small | — |
-| <img src="toolbar-icons/TechDraw_SpreadsheetView.png" width="11" height="11" alt="Spreadsheet View"> [Spreadsheet View](#button-techdraw_spreadsheetview) | Small | — |
-| <img src="toolbar-icons/TechDraw_ClipGroup.png" width="11" height="11" alt="Clip Group"> [Clip Group](#button-techdraw_clipgroup) | Small | — |
+| â†³ Native choices for [Section View](#button-techdraw_sectiongroup) | Menu items | See function catalog |
+| <img src="toolbar-icons/TechDraw_DetailView.png" width="11" height="11" alt="Detail View"> [Detail View](#button-techdraw_detailview) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_DraftView.png" width="11" height="11" alt="Draft View"> [Draft View](#button-techdraw_draftview) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_SpreadsheetView.png" width="11" height="11" alt="Spreadsheet View"> [Spreadsheet View](#button-techdraw_spreadsheetview) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_ClipGroup.png" width="11" height="11" alt="Clip Group"> [Clip Group](#button-techdraw_clipgroup) | Small | â€” |
 
 ##### TechDraw Stacking group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | <img src="toolbar-icons/TechDraw_StackGroup.png" width="11" height="11" alt="Stack Top"> [Stack Top](#button-techdraw_stackgroup) | Small | Dropdown |
-| ↳ Native choices for [Stack Top](#button-techdraw_stackgroup) | Menu items | See function catalog |
+| â†³ Native choices for [Stack Top](#button-techdraw_stackgroup) | Menu items | See function catalog |
 
 ##### TechDraw Dimensions group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | <img src="toolbar-icons/TechDraw_CompDimensionTools.png" width="11" height="11" alt="Dimension"> [Dimension](#button-techdraw_compdimensiontools) | Small | Dropdown |
-| ↳ Native choices for [Dimension](#button-techdraw_compdimensiontools) | Menu items | See function catalog |
-| <img src="toolbar-icons/TechDraw_Balloon.png" width="11" height="11" alt="Balloon Annotation"> [Balloon Annotation](#button-techdraw_balloon) | Small | — |
-| <img src="toolbar-icons/TechDraw_AxoLengthDimension.png" width="11" height="11" alt="Axonometric Length Dimension"> [Axonometric Length Dimension](#button-techdraw_axolengthdimension) | Small | — |
-| <img src="toolbar-icons/TechDraw_DimensionRepair.png" width="11" height="11" alt="Repair Dimension References"> [Repair Dimension References](#button-techdraw_dimensionrepair) | Small | — |
+| â†³ Native choices for [Dimension](#button-techdraw_compdimensiontools) | Menu items | See function catalog |
+| <img src="toolbar-icons/TechDraw_Balloon.png" width="11" height="11" alt="Balloon Annotation"> [Balloon Annotation](#button-techdraw_balloon) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_AxoLengthDimension.png" width="11" height="11" alt="Axonometric Length Dimension"> [Axonometric Length Dimension](#button-techdraw_axolengthdimension) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_DimensionRepair.png" width="11" height="11" alt="Repair Dimension References"> [Repair Dimension References](#button-techdraw_dimensionrepair) | Small | â€” |
 
 ##### TechDraw Attributes group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_ExtensionSelectLineAttributes.png" width="11" height="11" alt="Select Line Attributes, Cascade Spacing and Delta Distance"> [Select Line Attributes, Cascade Spacing and Delta Distance](#button-techdraw_extensionselectlineattributes) | Small | — |
-| <img src="toolbar-icons/TechDraw_ExtensionChangeLineAttributes.png" width="11" height="11" alt="Change Line Attributes"> [Change Line Attributes](#button-techdraw_extensionchangelineattributes) | Small | — |
+| <img src="toolbar-icons/TechDraw_ExtensionSelectLineAttributes.png" width="11" height="11" alt="Select Line Attributes, Cascade Spacing and Delta Distance"> [Select Line Attributes, Cascade Spacing and Delta Distance](#button-techdraw_extensionselectlineattributes) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_ExtensionChangeLineAttributes.png" width="11" height="11" alt="Change Line Attributes"> [Change Line Attributes](#button-techdraw_extensionchangelineattributes) | Small | â€” |
 | <img src="toolbar-icons/TechDraw_ExtensionExtendShortenLineGroup.png" width="11" height="11" alt="Extend Line"> [Extend Line](#button-techdraw_extensionextendshortenlinegroup) | Small | Dropdown |
-| ↳ Native choices for [Extend Line](#button-techdraw_extensionextendshortenlinegroup) | Menu items | See function catalog |
-| <img src="toolbar-icons/TechDraw_ExtensionLockUnlockView.png" width="11" height="11" alt="Toggle View Lock"> [Toggle View Lock](#button-techdraw_extensionlockunlockview) | Small | — |
-| <img src="toolbar-icons/TechDraw_ExtensionPositionSectionView.png" width="11" height="11" alt="Position Section View"> [Position Section View](#button-techdraw_extensionpositionsectionview) | Small | — |
-| <img src="toolbar-icons/TechDraw_ExtensionCustomizeFormat.png" width="11" height="11" alt="Customize Format Label"> [Customize Format Label](#button-techdraw_extensioncustomizeformat) | Small | — |
+| â†³ Native choices for [Extend Line](#button-techdraw_extensionextendshortenlinegroup) | Menu items | See function catalog |
+| <img src="toolbar-icons/TechDraw_ExtensionLockUnlockView.png" width="11" height="11" alt="Toggle View Lock"> [Toggle View Lock](#button-techdraw_extensionlockunlockview) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_ExtensionPositionSectionView.png" width="11" height="11" alt="Position Section View"> [Position Section View](#button-techdraw_extensionpositionsectionview) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_ExtensionCustomizeFormat.png" width="11" height="11" alt="Customize Format Label"> [Customize Format Label](#button-techdraw_extensioncustomizeformat) | Small | â€” |
 
 ##### TechDraw Centerlines group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | <img src="toolbar-icons/TechDraw_ExtensionCircleCenterLinesGroup.png" width="11" height="11" alt="Circle Centerlines"> [Circle Centerlines](#button-techdraw_extensioncirclecenterlinesgroup) | Small | Dropdown |
-| ↳ Native choices for [Circle Centerlines](#button-techdraw_extensioncirclecenterlinesgroup) | Menu items | See function catalog |
+| â†³ Native choices for [Circle Centerlines](#button-techdraw_extensioncirclecenterlinesgroup) | Menu items | See function catalog |
 | <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup.png" width="11" height="11" alt="Cosmetic Thread Hole Side View"> [Cosmetic Thread Hole Side View](#button-techdraw_extensionthreadsgroup) | Small | Dropdown |
-| ↳ Native choices for [Cosmetic Thread Hole Side View](#button-techdraw_extensionthreadsgroup) | Menu items | See function catalog |
+| â†³ Native choices for [Cosmetic Thread Hole Side View](#button-techdraw_extensionthreadsgroup) | Menu items | See function catalog |
 | <img src="toolbar-icons/TechDraw_CommandVertexCreationGroup.png" width="11" height="11" alt="Cosmetic Intersection Vertices"> [Cosmetic Intersection Vertices](#button-techdraw_commandvertexcreationgroup) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/TechDraw_ExtensionVertexAtIntersection.png" width="11" height="11" alt="Cosmetic Intersection Vertices"> [Cosmetic Intersection Vertices](#button-techdraw_extensionvertexatintersection) | Menu item | — |
-| ↳ <img src="toolbar-icons/TechDraw_CommandAddOffsetVertex.png" width="11" height="11" alt="Offset Vertex"> [Offset Vertex](#button-techdraw_commandaddoffsetvertex) | Menu item | — |
+| â†³ <img src="toolbar-icons/TechDraw_ExtensionVertexAtIntersection.png" width="11" height="11" alt="Cosmetic Intersection Vertices"> [Cosmetic Intersection Vertices](#button-techdraw_extensionvertexatintersection) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/TechDraw_CommandAddOffsetVertex.png" width="11" height="11" alt="Offset Vertex"> [Offset Vertex](#button-techdraw_commandaddoffsetvertex) | Menu item | â€” |
 | <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup.png" width="11" height="11" alt="Cosmetic 1 Point Circle"> [Cosmetic 1 Point Circle](#button-techdraw_extensiondrawcirclesgroup) | Small | Dropdown |
-| ↳ Native choices for [Cosmetic 1 Point Circle](#button-techdraw_extensiondrawcirclesgroup) | Menu items | See function catalog |
+| â†³ Native choices for [Cosmetic 1 Point Circle](#button-techdraw_extensiondrawcirclesgroup) | Menu items | See function catalog |
 | <img src="toolbar-icons/TechDraw_ExtensionLinePPGroup.png" width="11" height="11" alt="Cosmetic Parallel Line"> [Cosmetic Parallel Line](#button-techdraw_extensionlineppgroup) | Small | Dropdown |
-| ↳ Native choices for [Cosmetic Parallel Line](#button-techdraw_extensionlineppgroup) | Menu items | See function catalog |
+| â†³ Native choices for [Cosmetic Parallel Line](#button-techdraw_extensionlineppgroup) | Menu items | See function catalog |
 
 ##### TechDraw Extend Dimensions group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup.png" width="11" height="11" alt="Insert &#x27;⌀&#x27; Prefix"> [Insert '⌀' Prefix](#button-techdraw_extensioninsertprefixgroup) | Small | Dropdown |
-| ↳ Native choices for [Insert '⌀' Prefix](#button-techdraw_extensioninsertprefixgroup) | Menu items | See function catalog |
+| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup.png" width="11" height="11" alt="Insert &#x27;âŒ€&#x27; Prefix"> [Insert 'âŒ€' Prefix](#button-techdraw_extensioninsertprefixgroup) | Small | Dropdown |
+| â†³ Native choices for [Insert 'âŒ€' Prefix](#button-techdraw_extensioninsertprefixgroup) | Menu items | See function catalog |
 | <img src="toolbar-icons/TechDraw_ExtensionIncreaseDecreaseGroup.png" width="11" height="11" alt="Increase Decimal Places"> [Increase Decimal Places](#button-techdraw_extensionincreasedecreasegroup) | Small | Dropdown |
-| ↳ Native choices for [Increase Decimal Places](#button-techdraw_extensionincreasedecreasegroup) | Menu items | See function catalog |
+| â†³ Native choices for [Increase Decimal Places](#button-techdraw_extensionincreasedecreasegroup) | Menu items | See function catalog |
 
 ##### TechDraw File Access group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_ExportPageSVG.png" width="11" height="11" alt="Export Page as SVG"> [Export Page as SVG](#button-techdraw_exportpagesvg) | Small | — |
-| <img src="toolbar-icons/TechDraw_ExportPageDXF.png" width="11" height="11" alt="Export Page as DXF"> [Export Page as DXF](#button-techdraw_exportpagedxf) | Small | — |
+| <img src="toolbar-icons/TechDraw_ExportPageSVG.png" width="11" height="11" alt="Export Page as SVG"> [Export Page as SVG](#button-techdraw_exportpagesvg) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_ExportPageDXF.png" width="11" height="11" alt="Export Page as DXF"> [Export Page as DXF](#button-techdraw_exportpagedxf) | Small | â€” |
 
 ##### TechDraw Decoration group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_ToggleFrame.png" width="11" height="11" alt="Toggle View Frames"> [Toggle View Frames](#button-techdraw_toggleframe) | Small | — |
-| <img src="toolbar-icons/TechDraw_Hatch.png" width="11" height="11" alt="Image Hatch"> [Image Hatch](#button-techdraw_hatch) | Small | — |
-| <img src="toolbar-icons/TechDraw_GeometricHatch.png" width="11" height="11" alt="Geometric Hatch"> [Geometric Hatch](#button-techdraw_geometrichatch) | Small | — |
+| <img src="toolbar-icons/TechDraw_ToggleFrame.png" width="11" height="11" alt="Toggle View Frames"> [Toggle View Frames](#button-techdraw_toggleframe) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_Hatch.png" width="11" height="11" alt="Image Hatch"> [Image Hatch](#button-techdraw_hatch) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_GeometricHatch.png" width="11" height="11" alt="Geometric Hatch"> [Geometric Hatch](#button-techdraw_geometrichatch) | Small | â€” |
 
 ##### TechDraw Annotation group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/TechDraw_RichTextAnnotation.png" width="11" height="11" alt="Rich Text Annotation"> [Rich Text Annotation](#button-techdraw_richtextannotation) | Small | — |
-| <img src="toolbar-icons/TechDraw_LeaderLine.png" width="11" height="11" alt="Leader Line"> [Leader Line](#button-techdraw_leaderline) | Small | — |
+| <img src="toolbar-icons/TechDraw_RichTextAnnotation.png" width="11" height="11" alt="Rich Text Annotation"> [Rich Text Annotation](#button-techdraw_richtextannotation) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_LeaderLine.png" width="11" height="11" alt="Leader Line"> [Leader Line](#button-techdraw_leaderline) | Small | â€” |
 | <img src="toolbar-icons/TechDraw_CosmeticVertexGroup.png" width="11" height="11" alt="Cosmetic Vertex"> [Cosmetic Vertex](#button-techdraw_cosmeticvertexgroup) | Small | Dropdown |
-| ↳ Native choices for [Cosmetic Vertex](#button-techdraw_cosmeticvertexgroup) | Menu items | See function catalog |
+| â†³ Native choices for [Cosmetic Vertex](#button-techdraw_cosmeticvertexgroup) | Menu items | See function catalog |
 | <img src="toolbar-icons/TechDraw_CenterLineGroup.png" width="11" height="11" alt="Centerline on Face"> [Centerline on Face](#button-techdraw_centerlinegroup) | Small | Dropdown |
-| ↳ Native choices for [Centerline on Face](#button-techdraw_centerlinegroup) | Menu items | See function catalog |
-| <img src="toolbar-icons/TechDraw_2PointCosmeticLine.png" width="11" height="11" alt="Cosmetic Line Through 2 Points"> [Cosmetic Line Through 2 Points](#button-techdraw_2pointcosmeticline) | Small | — |
-| <img src="toolbar-icons/TechDraw_DecorateLine.png" width="11" height="11" alt="Edit Line Appearance"> [Edit Line Appearance](#button-techdraw_decorateline) | Small | — |
-| <img src="toolbar-icons/TechDraw_ShowAll.png" width="11" height="11" alt="Toggle Edge Visibility"> [Toggle Edge Visibility](#button-techdraw_showall) | Small | — |
-| <img src="toolbar-icons/TechDraw_WeldSymbol.png" width="11" height="11" alt="Weld Symbol"> [Weld Symbol](#button-techdraw_weldsymbol) | Small | — |
-| <img src="toolbar-icons/TechDraw_SurfaceFinishSymbols.png" width="11" height="11" alt="Surface Finish Symbol"> [Surface Finish Symbol](#button-techdraw_surfacefinishsymbols) | Small | — |
-| <img src="toolbar-icons/TechDraw_HoleShaftFit.png" width="11" height="11" alt="Hole/Shaft Fit"> [Hole/Shaft Fit](#button-techdraw_holeshaftfit) | Small | — |
+| â†³ Native choices for [Centerline on Face](#button-techdraw_centerlinegroup) | Menu items | See function catalog |
+| <img src="toolbar-icons/TechDraw_2PointCosmeticLine.png" width="11" height="11" alt="Cosmetic Line Through 2 Points"> [Cosmetic Line Through 2 Points](#button-techdraw_2pointcosmeticline) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_DecorateLine.png" width="11" height="11" alt="Edit Line Appearance"> [Edit Line Appearance](#button-techdraw_decorateline) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_ShowAll.png" width="11" height="11" alt="Toggle Edge Visibility"> [Toggle Edge Visibility](#button-techdraw_showall) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_WeldSymbol.png" width="11" height="11" alt="Weld Symbol"> [Weld Symbol](#button-techdraw_weldsymbol) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_SurfaceFinishSymbols.png" width="11" height="11" alt="Surface Finish Symbol"> [Surface Finish Symbol](#button-techdraw_surfacefinishsymbols) | Small | â€” |
+| <img src="toolbar-icons/TechDraw_HoleShaftFit.png" width="11" height="11" alt="Hole/Shaft Fit"> [Hole/Shaft Fit](#button-techdraw_holeshaftfit) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### FEM Mode
 
@@ -2425,44 +2265,44 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_Analysis.svg" width="11" height="11" alt="New Analysis"> [New Analysis](#button-fem_analysis) | Medium (half size) | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialSolid.svg" width="11" height="11" alt="Solid Material"> [Solid Material](#button-fem_materialsolid) | Medium (half size) | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialFluid.svg" width="11" height="11" alt="Fluid Material"> [Fluid Material](#button-fem_materialfluid) | Medium (half size) | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_Analysis.svg" width="11" height="11" alt="New Analysis"> [New Analysis](#button-fem_analysis) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialSolid.svg" width="11" height="11" alt="Solid Material"> [Solid Material](#button-fem_materialsolid) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialFluid.svg" width="11" height="11" alt="Fluid Material"> [Fluid Material](#button-fem_materialfluid) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2470,143 +2310,143 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_Analysis.svg" width="11" height="11" alt="New Analysis"> [New Analysis](#button-fem_analysis) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialSolid.svg" width="11" height="11" alt="Solid Material"> [Solid Material](#button-fem_materialsolid) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialFluid.svg" width="11" height="11" alt="Fluid Material"> [Fluid Material](#button-fem_materialfluid) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialMechanicalNonlinear.svg" width="11" height="11" alt="Non-Linear Mechanical Material"> [Non-Linear Mechanical Material](#button-fem_materialmechanicalnonlinear) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialReinforced.svg" width="11" height="11" alt="Reinforced Material (Concrete)"> [Reinforced Material (Concrete)](#button-fem_materialreinforced) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Material_Group.svg" width="11" height="11" alt="Material Editor"> [Material Editor](#button-fem_materialeditor) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementGeometry1D.svg" width="11" height="11" alt="Beam Cross Section"> [Beam Cross Section](#button-fem_elementgeometry1d) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementRotation1D.svg" width="11" height="11" alt="Beam Rotation"> [Beam Rotation](#button-fem_elementrotation1d) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementGeometry2D.svg" width="11" height="11" alt="Shell Plate Thickness"> [Shell Plate Thickness](#button-fem_elementgeometry2d) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementFluid1D.svg" width="11" height="11" alt="Fluid Section for 1D Flow"> [Fluid Section for 1D Flow](#button-fem_elementfluid1d) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_Analysis.svg" width="11" height="11" alt="New Analysis"> [New Analysis](#button-fem_analysis) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialSolid.svg" width="11" height="11" alt="Solid Material"> [Solid Material](#button-fem_materialsolid) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialFluid.svg" width="11" height="11" alt="Fluid Material"> [Fluid Material](#button-fem_materialfluid) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialMechanicalNonlinear.svg" width="11" height="11" alt="Non-Linear Mechanical Material"> [Non-Linear Mechanical Material](#button-fem_materialmechanicalnonlinear) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MaterialReinforced.svg" width="11" height="11" alt="Reinforced Material (Concrete)"> [Reinforced Material (Concrete)](#button-fem_materialreinforced) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Material_Group.svg" width="11" height="11" alt="Material Editor"> [Material Editor](#button-fem_materialeditor) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementGeometry1D.svg" width="11" height="11" alt="Beam Cross Section"> [Beam Cross Section](#button-fem_elementgeometry1d) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementRotation1D.svg" width="11" height="11" alt="Beam Rotation"> [Beam Rotation](#button-fem_elementrotation1d) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementGeometry2D.svg" width="11" height="11" alt="Shell Plate Thickness"> [Shell Plate Thickness](#button-fem_elementgeometry2d) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ElementFluid1D.svg" width="11" height="11" alt="Fluid Section for 1D Flow"> [Fluid Section for 1D Flow](#button-fem_elementfluid1d) | Small | â€” |
 
 ##### Electromagnetic Boundary Conditions group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| — [Electromagnetic Boundary Conditions](#button-fem_compemconstraints) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintElectromagnetic.svg" width="11" height="11" alt="Electromagnetic Boundary Condition"> [Electromagnetic Boundary Condition](#button-fem_constraintelectromagnetic) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintCurrentDensity.svg" width="11" height="11" alt="Current Density Boundary Condition"> [Current Density Boundary Condition](#button-fem_constraintcurrentdensity) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintMagnetization.svg" width="11" height="11" alt="Magnetization Boundary Condition"> [Magnetization Boundary Condition](#button-fem_constraintmagnetization) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintElectricChargeDensity.svg" width="11" height="11" alt="Electric Charge Density"> [Electric Charge Density](#button-fem_constraintelectricchargedensity) | Menu item | — |
+| â€” [Electromagnetic Boundary Conditions](#button-fem_compemconstraints) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintElectromagnetic.svg" width="11" height="11" alt="Electromagnetic Boundary Condition"> [Electromagnetic Boundary Condition](#button-fem_constraintelectromagnetic) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintCurrentDensity.svg" width="11" height="11" alt="Current Density Boundary Condition"> [Current Density Boundary Condition](#button-fem_constraintcurrentdensity) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintMagnetization.svg" width="11" height="11" alt="Magnetization Boundary Condition"> [Magnetization Boundary Condition](#button-fem_constraintmagnetization) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintElectricChargeDensity.svg" width="11" height="11" alt="Electric Charge Density"> [Electric Charge Density](#button-fem_constraintelectricchargedensity) | Menu item | â€” |
 
 ##### Fluid Boundary Conditions group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintInitialFlowVelocity.svg" width="11" height="11" alt="Initial Flow Velocity Condition"> [Initial Flow Velocity Condition](#button-fem_constraintinitialflowvelocity) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintInitialPressure.svg" width="11" height="11" alt="Initial Pressure Condition"> [Initial Pressure Condition](#button-fem_constraintinitialpressure) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintFlowVelocity.svg" width="11" height="11" alt="Flow Velocity Boundary Condition"> [Flow Velocity Boundary Condition](#button-fem_constraintflowvelocity) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintInitialFlowVelocity.svg" width="11" height="11" alt="Initial Flow Velocity Condition"> [Initial Flow Velocity Condition](#button-fem_constraintinitialflowvelocity) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintInitialPressure.svg" width="11" height="11" alt="Initial Pressure Condition"> [Initial Pressure Condition](#button-fem_constraintinitialpressure) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintFlowVelocity.svg" width="11" height="11" alt="Flow Velocity Boundary Condition"> [Flow Velocity Boundary Condition](#button-fem_constraintflowvelocity) | Small | â€” |
 
 ##### Geometrical Analysis Features group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintPlaneRotation.svg" width="11" height="11" alt="Plane Multi-Point Constraint"> [Plane Multi-Point Constraint](#button-fem_constraintplanerotation) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintSectionPrint.svg" width="11" height="11" alt="Section Print Feature"> [Section Print Feature](#button-fem_constraintsectionprint) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintTransform.svg" width="11" height="11" alt="Local Coordinate System"> [Local Coordinate System](#button-fem_constrainttransform) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintPlaneRotation.svg" width="11" height="11" alt="Plane Multi-Point Constraint"> [Plane Multi-Point Constraint](#button-fem_constraintplanerotation) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintSectionPrint.svg" width="11" height="11" alt="Section Print Feature"> [Section Print Feature](#button-fem_constraintsectionprint) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintTransform.svg" width="11" height="11" alt="Local Coordinate System"> [Local Coordinate System](#button-fem_constrainttransform) | Small | â€” |
 
 ##### Mechanical Boundary Conditions and Loads group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintFixed.svg" width="11" height="11" alt="Fixed Boundary Condition"> [Fixed Boundary Condition](#button-fem_constraintfixed) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintRigidBody.svg" width="11" height="11" alt="Rigid Body Constraint"> [Rigid Body Constraint](#button-fem_constraintrigidbody) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintDisplacement.svg" width="11" height="11" alt="Displacement Boundary Condition"> [Displacement Boundary Condition](#button-fem_constraintdisplacement) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintContact.svg" width="11" height="11" alt="Contact Constraint"> [Contact Constraint](#button-fem_constraintcontact) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintTie.svg" width="11" height="11" alt="Tie Constraint"> [Tie Constraint](#button-fem_constrainttie) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintSpring.svg" width="11" height="11" alt="Spring Boundary Condition"> [Spring Boundary Condition](#button-fem_constraintspring) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintForce.svg" width="11" height="11" alt="Force Load"> [Force Load](#button-fem_constraintforce) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintPressure.svg" width="11" height="11" alt="Pressure Load"> [Pressure Load](#button-fem_constraintpressure) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintCentrif.svg" width="11" height="11" alt="Centrifugal Load"> [Centrifugal Load](#button-fem_constraintcentrif) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintSelfWeight.svg" width="11" height="11" alt="Gravity Load"> [Gravity Load](#button-fem_constraintselfweight) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintFixed.svg" width="11" height="11" alt="Fixed Boundary Condition"> [Fixed Boundary Condition](#button-fem_constraintfixed) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintRigidBody.svg" width="11" height="11" alt="Rigid Body Constraint"> [Rigid Body Constraint](#button-fem_constraintrigidbody) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintDisplacement.svg" width="11" height="11" alt="Displacement Boundary Condition"> [Displacement Boundary Condition](#button-fem_constraintdisplacement) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintContact.svg" width="11" height="11" alt="Contact Constraint"> [Contact Constraint](#button-fem_constraintcontact) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintTie.svg" width="11" height="11" alt="Tie Constraint"> [Tie Constraint](#button-fem_constrainttie) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintSpring.svg" width="11" height="11" alt="Spring Boundary Condition"> [Spring Boundary Condition](#button-fem_constraintspring) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintForce.svg" width="11" height="11" alt="Force Load"> [Force Load](#button-fem_constraintforce) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintPressure.svg" width="11" height="11" alt="Pressure Load"> [Pressure Load](#button-fem_constraintpressure) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintCentrif.svg" width="11" height="11" alt="Centrifugal Load"> [Centrifugal Load](#button-fem_constraintcentrif) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintSelfWeight.svg" width="11" height="11" alt="Gravity Load"> [Gravity Load](#button-fem_constraintselfweight) | Small | â€” |
 
 ##### Thermal Boundary Conditions and Loads group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintInitialTemperature.svg" width="11" height="11" alt="Initial Temperature"> [Initial Temperature](#button-fem_constraintinitialtemperature) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintHeatflux.svg" width="11" height="11" alt="Heat Flux Load"> [Heat Flux Load](#button-fem_constraintheatflux) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintTemperature.svg" width="11" height="11" alt="Temperature Boundary Condition"> [Temperature Boundary Condition](#button-fem_constrainttemperature) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintBodyHeatSource.svg" width="11" height="11" alt="Body Heat Source"> [Body Heat Source](#button-fem_constraintbodyheatsource) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintInitialTemperature.svg" width="11" height="11" alt="Initial Temperature"> [Initial Temperature](#button-fem_constraintinitialtemperature) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintHeatflux.svg" width="11" height="11" alt="Heat Flux Load"> [Heat Flux Load](#button-fem_constraintheatflux) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintTemperature.svg" width="11" height="11" alt="Temperature Boundary Condition"> [Temperature Boundary Condition](#button-fem_constrainttemperature) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintBodyHeatSource.svg" width="11" height="11" alt="Body Heat Source"> [Body Heat Source](#button-fem_constraintbodyheatsource) | Small | â€” |
 
 ##### Mesh group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshNetgenFromShape.svg" width="11" height="11" alt="Mesh From Shape by Netgen"> [Mesh From Shape by Netgen](#button-fem_meshnetgenfromshape) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGmshFromShape.svg" width="11" height="11" alt="Mesh From Shape by Gmsh"> [Mesh From Shape by Gmsh](#button-fem_meshgmshfromshape) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshRegion.svg" width="11" height="11" alt="Mesh Refinement"> [Mesh Refinement](#button-fem_meshregion) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGroup.svg" width="11" height="11" alt="Mesh Group"> [Mesh Group](#button-fem_meshgroup) | Small | — |
-| — [GMSH Refinements](#button-fem_meshgmshrefinement) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshDistance.svg" width="11" height="11" alt="Distance-Based Refinement"> [Distance-Based Refinement](#button-fem_meshdistance) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshBoundaryLayer.svg" width="11" height="11" alt="2D Boundary Layer"> [2D Boundary Layer](#button-fem_meshboundarylayer) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshShape.svg" width="11" height="11" alt="Shape-Based Refinement"> [Shape-Based Refinement](#button-fem_meshshape) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshManipulate.svg" width="11" height="11" alt="Manipulate Refinement"> [Manipulate Refinement](#button-fem_meshmanipulate) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshAdvanced.svg" width="11" height="11" alt="Advanced Refinement Types"> [Advanced Refinement Types](#button-fem_meshadvanced) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshTransfiniteCurve.svg" width="11" height="11" alt="Structured Transfinite Curve"> [Structured Transfinite Curve](#button-fem_meshtransfinitecurve) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshTransfiniteSurface.svg" width="11" height="11" alt="Structured Transfinite Surface"> [Structured Transfinite Surface](#button-fem_meshtransfinitesurface) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshTransfiniteVolume.svg" width="11" height="11" alt="Structured Transfinite Volume"> [Structured Transfinite Volume](#button-fem_meshtransfinitevolume) | Menu item | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_FEMMesh2Mesh.svg" width="11" height="11" alt="FEM Mesh to Mesh"> [FEM Mesh to Mesh](#button-fem_femmesh2mesh) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshNetgenFromShape.svg" width="11" height="11" alt="Mesh From Shape by Netgen"> [Mesh From Shape by Netgen](#button-fem_meshnetgenfromshape) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGmshFromShape.svg" width="11" height="11" alt="Mesh From Shape by Gmsh"> [Mesh From Shape by Gmsh](#button-fem_meshgmshfromshape) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshRegion.svg" width="11" height="11" alt="Mesh Refinement"> [Mesh Refinement](#button-fem_meshregion) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGroup.svg" width="11" height="11" alt="Mesh Group"> [Mesh Group](#button-fem_meshgroup) | Small | â€” |
+| â€” [GMSH Refinements](#button-fem_meshgmshrefinement) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshDistance.svg" width="11" height="11" alt="Distance-Based Refinement"> [Distance-Based Refinement](#button-fem_meshdistance) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshBoundaryLayer.svg" width="11" height="11" alt="2D Boundary Layer"> [2D Boundary Layer](#button-fem_meshboundarylayer) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshShape.svg" width="11" height="11" alt="Shape-Based Refinement"> [Shape-Based Refinement](#button-fem_meshshape) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshManipulate.svg" width="11" height="11" alt="Manipulate Refinement"> [Manipulate Refinement](#button-fem_meshmanipulate) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshAdvanced.svg" width="11" height="11" alt="Advanced Refinement Types"> [Advanced Refinement Types](#button-fem_meshadvanced) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshTransfiniteCurve.svg" width="11" height="11" alt="Structured Transfinite Curve"> [Structured Transfinite Curve](#button-fem_meshtransfinitecurve) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshTransfiniteSurface.svg" width="11" height="11" alt="Structured Transfinite Surface"> [Structured Transfinite Surface](#button-fem_meshtransfinitesurface) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshTransfiniteVolume.svg" width="11" height="11" alt="Structured Transfinite Volume"> [Structured Transfinite Volume](#button-fem_meshtransfinitevolume) | Menu item | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_FEMMesh2Mesh.svg" width="11" height="11" alt="FEM Mesh to Mesh"> [FEM Mesh to Mesh](#button-fem_femmesh2mesh) | Small | â€” |
 
 ##### Solve group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| — [Solvers](#button-fem_compsolvers) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverStandard.svg" width="11" height="11" alt="Solver CalculiX"> [Solver CalculiX](#button-fem_solvercalculix) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverElmer.svg" width="11" height="11" alt="Solver Elmer"> [Solver Elmer](#button-fem_solverelmer) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverMystran.svg" width="11" height="11" alt="Solver Mystran"> [Solver Mystran](#button-fem_solvermystran) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverZ88.svg" width="11" height="11" alt="Solver Z88"> [Solver Z88](#button-fem_solverz88) | Menu item | — |
-| — [Mechanical Equations](#button-fem_compmechequations) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationElasticity.svg" width="11" height="11" alt="Elasticity Equation"> [Elasticity Equation](#button-fem_equationelasticity) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationDeformation.svg" width="11" height="11" alt="Deformation Equation"> [Deformation Equation](#button-fem_equationdeformation) | Menu item | — |
-| — [Electromagnetic Equations](#button-fem_compemequations) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationElectrostatic.svg" width="11" height="11" alt="Electrostatic Equation"> [Electrostatic Equation](#button-fem_equationelectrostatic) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationElectricforce.svg" width="11" height="11" alt="Electricforce Equation"> [Electricforce Equation](#button-fem_equationelectricforce) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationMagnetodynamic.svg" width="11" height="11" alt="Magnetodynamic Equation"> [Magnetodynamic Equation](#button-fem_equationmagnetodynamic) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationMagnetodynamic2D.svg" width="11" height="11" alt="Magnetodynamic 2D Equation"> [Magnetodynamic 2D Equation](#button-fem_equationmagnetodynamic2d) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationStaticCurrent.svg" width="11" height="11" alt="Static Current Equation"> [Static Current Equation](#button-fem_equationstaticcurrent) | Menu item | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationFlow.svg" width="11" height="11" alt="Flow Equation"> [Flow Equation](#button-fem_equationflow) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationFlux.svg" width="11" height="11" alt="Flux Equation"> [Flux Equation](#button-fem_equationflux) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationHeat.svg" width="11" height="11" alt="Heat Equation"> [Heat Equation](#button-fem_equationheat) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverControl.svg" width="11" height="11" alt="Solver Job Control"> [Solver Job Control](#button-fem_solvercontrol) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverRun.svg" width="11" height="11" alt="Run Solver"> [Run Solver](#button-fem_solverrun) | Small | — |
+| â€” [Solvers](#button-fem_compsolvers) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverStandard.svg" width="11" height="11" alt="Solver CalculiX"> [Solver CalculiX](#button-fem_solvercalculix) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverElmer.svg" width="11" height="11" alt="Solver Elmer"> [Solver Elmer](#button-fem_solverelmer) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverMystran.svg" width="11" height="11" alt="Solver Mystran"> [Solver Mystran](#button-fem_solvermystran) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverZ88.svg" width="11" height="11" alt="Solver Z88"> [Solver Z88](#button-fem_solverz88) | Menu item | â€” |
+| â€” [Mechanical Equations](#button-fem_compmechequations) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationElasticity.svg" width="11" height="11" alt="Elasticity Equation"> [Elasticity Equation](#button-fem_equationelasticity) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationDeformation.svg" width="11" height="11" alt="Deformation Equation"> [Deformation Equation](#button-fem_equationdeformation) | Menu item | â€” |
+| â€” [Electromagnetic Equations](#button-fem_compemequations) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationElectrostatic.svg" width="11" height="11" alt="Electrostatic Equation"> [Electrostatic Equation](#button-fem_equationelectrostatic) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationElectricforce.svg" width="11" height="11" alt="Electricforce Equation"> [Electricforce Equation](#button-fem_equationelectricforce) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationMagnetodynamic.svg" width="11" height="11" alt="Magnetodynamic Equation"> [Magnetodynamic Equation](#button-fem_equationmagnetodynamic) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationMagnetodynamic2D.svg" width="11" height="11" alt="Magnetodynamic 2D Equation"> [Magnetodynamic 2D Equation](#button-fem_equationmagnetodynamic2d) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationStaticCurrent.svg" width="11" height="11" alt="Static Current Equation"> [Static Current Equation](#button-fem_equationstaticcurrent) | Menu item | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationFlow.svg" width="11" height="11" alt="Flow Equation"> [Flow Equation](#button-fem_equationflow) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationFlux.svg" width="11" height="11" alt="Flux Equation"> [Flux Equation](#button-fem_equationflux) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_EquationHeat.svg" width="11" height="11" alt="Heat Equation"> [Heat Equation](#button-fem_equationheat) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverControl.svg" width="11" height="11" alt="Solver Job Control"> [Solver Job Control](#button-fem_solvercontrol) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverRun.svg" width="11" height="11" alt="Run Solver"> [Run Solver](#button-fem_solverrun) | Small | â€” |
 
 ##### Results group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ResultsPurge.svg" width="11" height="11" alt="Purge Results"> [Purge Results](#button-fem_resultspurge) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ResultShow.svg" width="11" height="11" alt="Show Result"> [Show Result](#button-fem_resultshow) | Small | — |
-| <img src="../../../src/Gui/Icons/view-refresh.svg" width="11" height="11" alt="Apply Changes to Pipeline"> [Apply Changes to Pipeline](#button-fem_postapplychanges) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostPipelineFromResult.svg" width="11" height="11" alt="Post Pipeline From Result"> [Post Pipeline From Result](#button-fem_postpipelinefromresult) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostBranchFilter.svg" width="11" height="11" alt="Pipeline Branch"> [Pipeline Branch](#button-fem_postbranchfilter) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterWarp.svg" width="11" height="11" alt="Warp Filter"> [Warp Filter](#button-fem_postfilterwarp) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterClipScalar.svg" width="11" height="11" alt="Scalar Clip Filter"> [Scalar Clip Filter](#button-fem_postfilterclipscalar) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterCutFunction.svg" width="11" height="11" alt="Function Cut Filter"> [Function Cut Filter](#button-fem_postfiltercutfunction) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterClipRegion.svg" width="11" height="11" alt="Region Clip Filter"> [Region Clip Filter](#button-fem_postfilterclipregion) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterContours.svg" width="11" height="11" alt="Contours Filter"> [Contours Filter](#button-fem_postfiltercontours) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterGlyph.svg" width="11" height="11" alt="Glyph Filter"> [Glyph Filter](#button-fem_postfilterglyph) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterDataAlongLine.svg" width="11" height="11" alt="Line Clip Filter"> [Line Clip Filter](#button-fem_postfilterdataalongline) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterLinearizedStresses.svg" width="11" height="11" alt="Stress Linearization Plot"> [Stress Linearization Plot](#button-fem_postfilterlinearizedstresses) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterDataAtPoint.svg" width="11" height="11" alt="Data at Point Clip Filter"> [Data at Point Clip Filter](#button-fem_postfilterdataatpoint) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterCalculator.svg" width="11" height="11" alt="Calculator Filter"> [Calculator Filter](#button-fem_postfiltercalculator) | Small | — |
-| — [Filter Functions](#button-fem_postcreatefunctions) | Small | — |
-| — [Data Visualizations](#button-fem_postvisualization) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ResultsPurge.svg" width="11" height="11" alt="Purge Results"> [Purge Results](#button-fem_resultspurge) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ResultShow.svg" width="11" height="11" alt="Show Result"> [Show Result](#button-fem_resultshow) | Small | â€” |
+| <img src="../../../src/Gui/Icons/view-refresh.svg" width="11" height="11" alt="Apply Changes to Pipeline"> [Apply Changes to Pipeline](#button-fem_postapplychanges) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostPipelineFromResult.svg" width="11" height="11" alt="Post Pipeline From Result"> [Post Pipeline From Result](#button-fem_postpipelinefromresult) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostBranchFilter.svg" width="11" height="11" alt="Pipeline Branch"> [Pipeline Branch](#button-fem_postbranchfilter) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterWarp.svg" width="11" height="11" alt="Warp Filter"> [Warp Filter](#button-fem_postfilterwarp) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterClipScalar.svg" width="11" height="11" alt="Scalar Clip Filter"> [Scalar Clip Filter](#button-fem_postfilterclipscalar) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterCutFunction.svg" width="11" height="11" alt="Function Cut Filter"> [Function Cut Filter](#button-fem_postfiltercutfunction) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterClipRegion.svg" width="11" height="11" alt="Region Clip Filter"> [Region Clip Filter](#button-fem_postfilterclipregion) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterContours.svg" width="11" height="11" alt="Contours Filter"> [Contours Filter](#button-fem_postfiltercontours) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterGlyph.svg" width="11" height="11" alt="Glyph Filter"> [Glyph Filter](#button-fem_postfilterglyph) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterDataAlongLine.svg" width="11" height="11" alt="Line Clip Filter"> [Line Clip Filter](#button-fem_postfilterdataalongline) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterLinearizedStresses.svg" width="11" height="11" alt="Stress Linearization Plot"> [Stress Linearization Plot](#button-fem_postfilterlinearizedstresses) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterDataAtPoint.svg" width="11" height="11" alt="Data at Point Clip Filter"> [Data at Point Clip Filter](#button-fem_postfilterdataatpoint) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterCalculator.svg" width="11" height="11" alt="Calculator Filter"> [Calculator Filter](#button-fem_postfiltercalculator) | Small | â€” |
+| â€” [Filter Functions](#button-fem_postcreatefunctions) | Small | â€” |
+| â€” [Data Visualizations](#button-fem_postvisualization) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ClippingPlaneAdd.svg" width="11" height="11" alt="Clipping Plane on Face"> [Clipping Plane on Face](#button-fem_clippingplaneadd) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ClippingPlaneRemoveAll.svg" width="11" height="11" alt="Remove All Clipping Planes"> [Remove All Clipping Planes](#button-fem_clippingplaneremoveall) | Small | — |
-| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FemWorkbench.svg" width="11" height="11" alt="FEM Examples"> [FEM Examples](#button-fem_examples) | Small | — |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ClippingPlaneAdd.svg" width="11" height="11" alt="Clipping Plane on Face"> [Clipping Plane on Face](#button-fem_clippingplaneadd) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ClippingPlaneRemoveAll.svg" width="11" height="11" alt="Remove All Clipping Planes"> [Remove All Clipping Planes](#button-fem_clippingplaneremoveall) | Small | â€” |
+| <img src="../../../src/Mod/Fem/Gui/Resources/icons/FemWorkbench.svg" width="11" height="11" alt="FEM Examples"> [FEM Examples](#button-fem_examples) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Spreadsheet Mode
 
@@ -2618,55 +2458,55 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Spreadsheet_CreateSheet.png" width="11" height="11" alt="New Spreadsheet"> [New Spreadsheet](#button-spreadsheet_createsheet) | Medium (half size) | — |
-| <img src="toolbar-icons/Spreadsheet_Import.png" width="11" height="11" alt="Import Spreadsheet"> [Import Spreadsheet](#button-spreadsheet_import) | Medium (half size) | — |
-| <img src="toolbar-icons/Spreadsheet_Export.png" width="11" height="11" alt="Export Spreadsheet"> [Export Spreadsheet](#button-spreadsheet_export) | Medium (half size) | — |
+| <img src="toolbar-icons/Spreadsheet_CreateSheet.png" width="11" height="11" alt="New Spreadsheet"> [New Spreadsheet](#button-spreadsheet_createsheet) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Spreadsheet_Import.png" width="11" height="11" alt="Import Spreadsheet"> [Import Spreadsheet](#button-spreadsheet_import) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Spreadsheet_Export.png" width="11" height="11" alt="Export Spreadsheet"> [Export Spreadsheet](#button-spreadsheet_export) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2674,25 +2514,25 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Spreadsheet_CreateSheet.png" width="11" height="11" alt="New Spreadsheet"> [New Spreadsheet](#button-spreadsheet_createsheet) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_Import.png" width="11" height="11" alt="Import Spreadsheet"> [Import Spreadsheet](#button-spreadsheet_import) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_Export.png" width="11" height="11" alt="Export Spreadsheet"> [Export Spreadsheet](#button-spreadsheet_export) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_MergeCells.png" width="11" height="11" alt="Merge Cells"> [Merge Cells](#button-spreadsheet_mergecells) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_SplitCell.png" width="11" height="11" alt="Split Cell"> [Split Cell](#button-spreadsheet_splitcell) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_AlignLeft.png" width="11" height="11" alt="Align Left"> [Align Left](#button-spreadsheet_alignleft) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_AlignCenter.png" width="11" height="11" alt="Align Horizontal Center"> [Align Horizontal Center](#button-spreadsheet_aligncenter) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_AlignRight.png" width="11" height="11" alt="Align Right"> [Align Right](#button-spreadsheet_alignright) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_AlignTop.png" width="11" height="11" alt="Align Top"> [Align Top](#button-spreadsheet_aligntop) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_AlignVCenter.png" width="11" height="11" alt="Align Vertical Center"> [Align Vertical Center](#button-spreadsheet_alignvcenter) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_AlignBottom.png" width="11" height="11" alt="Align Bottom"> [Align Bottom](#button-spreadsheet_alignbottom) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_StyleBold.png" width="11" height="11" alt="Bold Text"> [Bold Text](#button-spreadsheet_stylebold) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_StyleItalic.png" width="11" height="11" alt="Italic Text"> [Italic Text](#button-spreadsheet_styleitalic) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_StyleUnderline.png" width="11" height="11" alt="Underline Text"> [Underline Text](#button-spreadsheet_styleunderline) | Small | — |
-| <img src="toolbar-icons/Spreadsheet_SetAlias.png" width="11" height="11" alt="Set Alias"> [Set Alias](#button-spreadsheet_setalias) | Small | — |
+| <img src="toolbar-icons/Spreadsheet_CreateSheet.png" width="11" height="11" alt="New Spreadsheet"> [New Spreadsheet](#button-spreadsheet_createsheet) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_Import.png" width="11" height="11" alt="Import Spreadsheet"> [Import Spreadsheet](#button-spreadsheet_import) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_Export.png" width="11" height="11" alt="Export Spreadsheet"> [Export Spreadsheet](#button-spreadsheet_export) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_MergeCells.png" width="11" height="11" alt="Merge Cells"> [Merge Cells](#button-spreadsheet_mergecells) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_SplitCell.png" width="11" height="11" alt="Split Cell"> [Split Cell](#button-spreadsheet_splitcell) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_AlignLeft.png" width="11" height="11" alt="Align Left"> [Align Left](#button-spreadsheet_alignleft) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_AlignCenter.png" width="11" height="11" alt="Align Horizontal Center"> [Align Horizontal Center](#button-spreadsheet_aligncenter) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_AlignRight.png" width="11" height="11" alt="Align Right"> [Align Right](#button-spreadsheet_alignright) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_AlignTop.png" width="11" height="11" alt="Align Top"> [Align Top](#button-spreadsheet_aligntop) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_AlignVCenter.png" width="11" height="11" alt="Align Vertical Center"> [Align Vertical Center](#button-spreadsheet_alignvcenter) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_AlignBottom.png" width="11" height="11" alt="Align Bottom"> [Align Bottom](#button-spreadsheet_alignbottom) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_StyleBold.png" width="11" height="11" alt="Bold Text"> [Bold Text](#button-spreadsheet_stylebold) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_StyleItalic.png" width="11" height="11" alt="Italic Text"> [Italic Text](#button-spreadsheet_styleitalic) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_StyleUnderline.png" width="11" height="11" alt="Underline Text"> [Underline Text](#button-spreadsheet_styleunderline) | Small | â€” |
+| <img src="toolbar-icons/Spreadsheet_SetAlias.png" width="11" height="11" alt="Set Alias"> [Set Alias](#button-spreadsheet_setalias) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Material Mode
 
@@ -2704,53 +2544,53 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Material_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-material_edit) | Medium (half size) | — |
+| <img src="toolbar-icons/Material_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-material_edit) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2758,11 +2598,11 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Material_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-material_edit) | Small | — |
+| <img src="toolbar-icons/Material_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-material_edit) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### MeshPart Mode
 
@@ -2776,42 +2616,42 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-meshpart_mesher) | Medium (half size) | — |
+| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-meshpart_mesher) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2819,11 +2659,11 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-meshpart_mesher) | Small | — |
+| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Mesh From Shape"> [Mesh From Shape](#button-meshpart_mesher) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Points Mode
 
@@ -2837,44 +2677,44 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Points…"> [Import Points…](#button-points_import) | Medium (half size) | — |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Points…"> [Export Points…](#button-points_export) | Medium (half size) | — |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Convert.svg" width="11" height="11" alt="Convert to Points"> [Convert to Points](#button-points_convert) | Medium (half size) | — |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Pointsâ€¦"> [Import Pointsâ€¦](#button-points_import) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Pointsâ€¦"> [Export Pointsâ€¦](#button-points_export) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Convert.svg" width="11" height="11" alt="Convert to Points"> [Convert to Points](#button-points_convert) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2882,16 +2722,16 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Points…"> [Import Points…](#button-points_import) | Small | — |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Points…"> [Export Points…](#button-points_export) | Small | — |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Convert.svg" width="11" height="11" alt="Convert to Points"> [Convert to Points](#button-points_convert) | Small | — |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Structure.svg" width="11" height="11" alt="Structured Point Cloud"> [Structured Point Cloud](#button-points_structure) | Small | — |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Merge.svg" width="11" height="11" alt="Merge Point Clouds"> [Merge Point Clouds](#button-points_merge) | Small | — |
-| <img src="../../../src/Gui/Icons/PolygonPick.svg" width="11" height="11" alt="Cut Point Cloud"> [Cut Point Cloud](#button-points_polycut) | Small | — |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Pointsâ€¦"> [Import Pointsâ€¦](#button-points_import) | Small | â€” |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Pointsâ€¦"> [Export Pointsâ€¦](#button-points_export) | Small | â€” |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Convert.svg" width="11" height="11" alt="Convert to Points"> [Convert to Points](#button-points_convert) | Small | â€” |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Structure.svg" width="11" height="11" alt="Structured Point Cloud"> [Structured Point Cloud](#button-points_structure) | Small | â€” |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Merge.svg" width="11" height="11" alt="Merge Point Clouds"> [Merge Point Clouds](#button-points_merge) | Small | â€” |
+| <img src="../../../src/Gui/Icons/PolygonPick.svg" width="11" height="11" alt="Cut Point Cloud"> [Cut Point Cloud](#button-points_polycut) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Robot Mode
 
@@ -2905,44 +2745,44 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateRobot.svg" width="11" height="11" alt="Place Robot"> [Place Robot](#button-robot_create) | Medium (half size) | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateTrajectory.svg" width="11" height="11" alt="Trajectory"> [Trajectory](#button-robot_createtrajectory) | Medium (half size) | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_InsertWaypoint.svg" width="11" height="11" alt="Insert in Trajectory"> [Insert in Trajectory](#button-robot_insertwaypoint) | Medium (half size) | — |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateRobot.svg" width="11" height="11" alt="Place Robot"> [Place Robot](#button-robot_create) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateTrajectory.svg" width="11" height="11" alt="Trajectory"> [Trajectory](#button-robot_createtrajectory) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_InsertWaypoint.svg" width="11" height="11" alt="Insert in Trajectory"> [Insert in Trajectory](#button-robot_insertwaypoint) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -2950,20 +2790,20 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateRobot.svg" width="11" height="11" alt="Place Robot"> [Place Robot](#button-robot_create) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateTrajectory.svg" width="11" height="11" alt="Trajectory"> [Trajectory](#button-robot_createtrajectory) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_InsertWaypoint.svg" width="11" height="11" alt="Insert in Trajectory"> [Insert in Trajectory](#button-robot_insertwaypoint) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_InsertWaypointPre.svg" width="11" height="11" alt="Insert in Trajectory"> [Insert in Trajectory](#button-robot_insertwaypointpreselect) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_Edge2Trac.svg" width="11" height="11" alt="Edge to Trajectory"> [Edge to Trajectory](#button-robot_edge2trac) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_TrajectoryDressUp.svg" width="11" height="11" alt="Dress-Up Trajectory"> [Dress-Up Trajectory](#button-robot_trajectorydressup) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_TrajectoryCompound.svg" width="11" height="11" alt="Trajectory Compound"> [Trajectory Compound](#button-robot_trajectorycompound) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_SetHomePos.svg" width="11" height="11" alt="Set Home Position"> [Set Home Position](#button-robot_sethomepos) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_RestoreHomePos.svg" width="11" height="11" alt="Move to Home"> [Move to Home](#button-robot_restorehomepos) | Small | — |
-| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_Simulate.svg" width="11" height="11" alt="Simulate Trajectory"> [Simulate Trajectory](#button-robot_simulate) | Small | — |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateRobot.svg" width="11" height="11" alt="Place Robot"> [Place Robot](#button-robot_create) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateTrajectory.svg" width="11" height="11" alt="Trajectory"> [Trajectory](#button-robot_createtrajectory) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_InsertWaypoint.svg" width="11" height="11" alt="Insert in Trajectory"> [Insert in Trajectory](#button-robot_insertwaypoint) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_InsertWaypointPre.svg" width="11" height="11" alt="Insert in Trajectory"> [Insert in Trajectory](#button-robot_insertwaypointpreselect) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_Edge2Trac.svg" width="11" height="11" alt="Edge to Trajectory"> [Edge to Trajectory](#button-robot_edge2trac) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_TrajectoryDressUp.svg" width="11" height="11" alt="Dress-Up Trajectory"> [Dress-Up Trajectory](#button-robot_trajectorydressup) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_TrajectoryCompound.svg" width="11" height="11" alt="Trajectory Compound"> [Trajectory Compound](#button-robot_trajectorycompound) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_SetHomePos.svg" width="11" height="11" alt="Set Home Position"> [Set Home Position](#button-robot_sethomepos) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_RestoreHomePos.svg" width="11" height="11" alt="Move to Home"> [Move to Home](#button-robot_restorehomepos) | Small | â€” |
+| <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_Simulate.svg" width="11" height="11" alt="Simulate Trajectory"> [Simulate Trajectory](#button-robot_simulate) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### ReverseEngineering Mode
 
@@ -2977,42 +2817,42 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surface…"> [Approximate B-Spline Surface…](#button-reen_approxsurface) | Medium (half size) | — |
+| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surfaceâ€¦"> [Approximate B-Spline Surfaceâ€¦](#button-reen_approxsurface) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -3020,11 +2860,11 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surface…"> [Approximate B-Spline Surface…](#button-reen_approxsurface) | Small | — |
+| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surfaceâ€¦"> [Approximate B-Spline Surfaceâ€¦](#button-reen_approxsurface) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Inspection Mode
 
@@ -3038,43 +2878,43 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/InspectionWorkbench.svg" width="11" height="11" alt="Visual Inspection"> [Visual Inspection](#button-inspection_visualinspection) | Medium (half size) | — |
-| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspection…"> [Inspection…](#button-inspection_inspectelement) | Medium (half size) | — |
+| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/InspectionWorkbench.svg" width="11" height="11" alt="Visual Inspection"> [Visual Inspection](#button-inspection_visualinspection) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspectionâ€¦"> [Inspectionâ€¦](#button-inspection_inspectelement) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -3082,12 +2922,12 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/InspectionWorkbench.svg" width="11" height="11" alt="Visual Inspection"> [Visual Inspection](#button-inspection_visualinspection) | Small | — |
-| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspection…"> [Inspection…](#button-inspection_inspectelement) | Small | — |
+| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/InspectionWorkbench.svg" width="11" height="11" alt="Visual Inspection"> [Visual Inspection](#button-inspection_visualinspection) | Small | â€” |
+| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspectionâ€¦"> [Inspectionâ€¦](#button-inspection_inspectelement) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### BIM Mode
 
@@ -3101,44 +2941,44 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/BIM/Resources/icons/Sketch.svg" width="11" height="11" alt="New Sketch"> [New Sketch](#button-bim_sketch) | Medium (half size) | — |
-| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Medium (half size) | — |
-| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Medium (half size) | — |
+| <img src="../../../src/Mod/BIM/Resources/icons/Sketch.svg" width="11" height="11" alt="New Sketch"> [New Sketch](#button-bim_sketch) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -3146,183 +2986,183 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/BIM/Resources/icons/Sketch.svg" width="11" height="11" alt="New Sketch"> [New Sketch](#button-bim_sketch) | Small | — |
-| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Full size | — |
-| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Full size | — |
-| <img src="toolbar-icons/Draft_Rectangle.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-draft_rectangle) | Small | — |
+| <img src="../../../src/Mod/BIM/Resources/icons/Sketch.svg" width="11" height="11" alt="New Sketch"> [New Sketch](#button-bim_sketch) | Small | â€” |
+| <img src="toolbar-icons/Draft_Line.png" width="11" height="11" alt="Line"> [Line](#button-draft_line) | Full size | â€” |
+| <img src="toolbar-icons/Draft_Wire.png" width="11" height="11" alt="Polyline"> [Polyline](#button-draft_wire) | Full size | â€” |
+| <img src="toolbar-icons/Draft_Rectangle.png" width="11" height="11" alt="Rectangle"> [Rectangle](#button-draft_rectangle) | Small | â€” |
 | <img src="../../../src/Mod/Draft/Resources/icons/Draft_Arc.svg" width="11" height="11" alt="Arc Tools"> [Arc Tools](#button-bim_arctools) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Draft_Arc.png" width="11" height="11" alt="Arc"> [Arc](#button-draft_arc) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_Arc_3Points.png" width="11" height="11" alt="Arc From 3 Points"> [Arc From 3 Points](#button-draft_arc_3points) | Menu item | — |
-| <img src="toolbar-icons/Draft_Circle.png" width="11" height="11" alt="Circle"> [Circle](#button-draft_circle) | Small | — |
-| <img src="toolbar-icons/Draft_Ellipse.png" width="11" height="11" alt="Ellipse"> [Ellipse](#button-draft_ellipse) | Small | — |
-| <img src="toolbar-icons/Draft_Polygon.png" width="11" height="11" alt="Polygon"> [Polygon](#button-draft_polygon) | Small | — |
+| â†³ <img src="toolbar-icons/Draft_Arc.png" width="11" height="11" alt="Arc"> [Arc](#button-draft_arc) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_Arc_3Points.png" width="11" height="11" alt="Arc From 3 Points"> [Arc From 3 Points](#button-draft_arc_3points) | Menu item | â€” |
+| <img src="toolbar-icons/Draft_Circle.png" width="11" height="11" alt="Circle"> [Circle](#button-draft_circle) | Small | â€” |
+| <img src="toolbar-icons/Draft_Ellipse.png" width="11" height="11" alt="Ellipse"> [Ellipse](#button-draft_ellipse) | Small | â€” |
+| <img src="toolbar-icons/Draft_Polygon.png" width="11" height="11" alt="Polygon"> [Polygon](#button-draft_polygon) | Small | â€” |
 | <img src="../../../src/Mod/Draft/Resources/icons/Draft_BSpline.svg" width="11" height="11" alt="Spline Tools"> [Spline Tools](#button-bim_splinetools) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Draft_BSpline.png" width="11" height="11" alt="B-Spline"> [B-Spline](#button-draft_bspline) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_BezCurve.png" width="11" height="11" alt="Bézier Curve"> [Bézier Curve](#button-draft_bezcurve) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_CubicBezCurve.png" width="11" height="11" alt="Cubic Bézier Curve"> [Cubic Bézier Curve](#button-draft_cubicbezcurve) | Menu item | — |
-| <img src="toolbar-icons/Draft_Point.png" width="11" height="11" alt="Point"> [Point](#button-draft_point) | Small | — |
-| <img src="toolbar-icons/Draft_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-draft_fillet) | Small | — |
+| â†³ <img src="toolbar-icons/Draft_BSpline.png" width="11" height="11" alt="B-Spline"> [B-Spline](#button-draft_bspline) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_BezCurve.png" width="11" height="11" alt="BÃ©zier Curve"> [BÃ©zier Curve](#button-draft_bezcurve) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_CubicBezCurve.png" width="11" height="11" alt="Cubic BÃ©zier Curve"> [Cubic BÃ©zier Curve](#button-draft_cubicbezcurve) | Menu item | â€” |
+| <img src="toolbar-icons/Draft_Point.png" width="11" height="11" alt="Point"> [Point](#button-draft_point) | Small | â€” |
+| <img src="toolbar-icons/Draft_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-draft_fillet) | Small | â€” |
 
 ##### Draft Snap group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Snap_Lock.png" width="11" height="11" alt="Snap Lock"> [Snap Lock](#button-draft_snap_lock) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Endpoint.png" width="11" height="11" alt="Snap Endpoint"> [Snap Endpoint](#button-draft_snap_endpoint) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Midpoint.png" width="11" height="11" alt="Snap Midpoint"> [Snap Midpoint](#button-draft_snap_midpoint) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Center.png" width="11" height="11" alt="Snap Center"> [Snap Center](#button-draft_snap_center) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Angle.png" width="11" height="11" alt="Snap Angle"> [Snap Angle](#button-draft_snap_angle) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Intersection.png" width="11" height="11" alt="Snap Intersection"> [Snap Intersection](#button-draft_snap_intersection) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Perpendicular.png" width="11" height="11" alt="Snap Perpendicular"> [Snap Perpendicular](#button-draft_snap_perpendicular) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Extension.png" width="11" height="11" alt="Snap Extension"> [Snap Extension](#button-draft_snap_extension) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Parallel.png" width="11" height="11" alt="Snap Parallel"> [Snap Parallel](#button-draft_snap_parallel) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Special.png" width="11" height="11" alt="Snap Special"> [Snap Special](#button-draft_snap_special) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Near.png" width="11" height="11" alt="Snap Near"> [Snap Near](#button-draft_snap_near) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Ortho.png" width="11" height="11" alt="Snap Ortho"> [Snap Ortho](#button-draft_snap_ortho) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Grid.png" width="11" height="11" alt="Snap Grid"> [Snap Grid](#button-draft_snap_grid) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_WorkingPlane.png" width="11" height="11" alt="Snap Working Plane"> [Snap Working Plane](#button-draft_snap_workingplane) | Small | — |
-| <img src="toolbar-icons/Draft_Snap_Dimensions.png" width="11" height="11" alt="Snap Dimensions"> [Snap Dimensions](#button-draft_snap_dimensions) | Small | — |
-| <img src="toolbar-icons/Draft_ToggleGrid.png" width="11" height="11" alt="Toggle Grid"> [Toggle Grid](#button-draft_togglegrid) | Small | — |
+| <img src="toolbar-icons/Draft_Snap_Lock.png" width="11" height="11" alt="Snap Lock"> [Snap Lock](#button-draft_snap_lock) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Endpoint.png" width="11" height="11" alt="Snap Endpoint"> [Snap Endpoint](#button-draft_snap_endpoint) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Midpoint.png" width="11" height="11" alt="Snap Midpoint"> [Snap Midpoint](#button-draft_snap_midpoint) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Center.png" width="11" height="11" alt="Snap Center"> [Snap Center](#button-draft_snap_center) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Angle.png" width="11" height="11" alt="Snap Angle"> [Snap Angle](#button-draft_snap_angle) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Intersection.png" width="11" height="11" alt="Snap Intersection"> [Snap Intersection](#button-draft_snap_intersection) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Perpendicular.png" width="11" height="11" alt="Snap Perpendicular"> [Snap Perpendicular](#button-draft_snap_perpendicular) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Extension.png" width="11" height="11" alt="Snap Extension"> [Snap Extension](#button-draft_snap_extension) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Parallel.png" width="11" height="11" alt="Snap Parallel"> [Snap Parallel](#button-draft_snap_parallel) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Special.png" width="11" height="11" alt="Snap Special"> [Snap Special](#button-draft_snap_special) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Near.png" width="11" height="11" alt="Snap Near"> [Snap Near](#button-draft_snap_near) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Ortho.png" width="11" height="11" alt="Snap Ortho"> [Snap Ortho](#button-draft_snap_ortho) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Grid.png" width="11" height="11" alt="Snap Grid"> [Snap Grid](#button-draft_snap_grid) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_WorkingPlane.png" width="11" height="11" alt="Snap Working Plane"> [Snap Working Plane](#button-draft_snap_workingplane) | Small | â€” |
+| <img src="toolbar-icons/Draft_Snap_Dimensions.png" width="11" height="11" alt="Snap Dimensions"> [Snap Dimensions](#button-draft_snap_dimensions) | Small | â€” |
+| <img src="toolbar-icons/Draft_ToggleGrid.png" width="11" height="11" alt="Toggle Grid"> [Toggle Grid](#button-draft_togglegrid) | Small | â€” |
 
 ##### 3D/BIM Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Site.svg" width="11" height="11" alt="Site"> [Site](#button-arch_site) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Building.svg" width="11" height="11" alt="Building"> [Building](#button-arch_building) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Floor.svg" width="11" height="11" alt="Level"> [Level](#button-arch_level) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Space.svg" width="11" height="11" alt="Space"> [Space](#button-arch_space) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Wall.svg" width="11" height="11" alt="Wall"> [Wall](#button-arch_wall) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_CurtainWall.svg" width="11" height="11" alt="Curtain Wall"> [Curtain Wall](#button-arch_curtainwall) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Column.svg" width="11" height="11" alt="Column"> [Column](#button-bim_column) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Beam.svg" width="11" height="11" alt="Beam"> [Beam](#button-bim_beam) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Slab.svg" width="11" height="11" alt="Slab"> [Slab](#button-bim_slab) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Door.svg" width="11" height="11" alt="Door"> [Door](#button-bim_door) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Window.svg" width="11" height="11" alt="Window"> [Window](#button-arch_window) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Covering.svg" width="11" height="11" alt="Covering"> [Covering](#button-bim_covering) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Pipe.svg" width="11" height="11" alt="Pipe"> [Pipe](#button-arch_pipe) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_PipeConnector.svg" width="11" height="11" alt="Connector"> [Connector](#button-arch_pipeconnector) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Stairs.svg" width="11" height="11" alt="Stairs"> [Stairs](#button-arch_stairs) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Roof.svg" width="11" height="11" alt="Roof"> [Roof](#button-arch_roof) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Panel.svg" width="11" height="11" alt="Panel"> [Panel](#button-arch_panel) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Frame.svg" width="11" height="11" alt="Frame"> [Frame](#button-arch_frame) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Fence.svg" width="11" height="11" alt="Fence"> [Fence](#button-arch_fence) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Truss.svg" width="11" height="11" alt="Truss"> [Truss](#button-arch_truss) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Equipment.svg" width="11" height="11" alt="Equipment"> [Equipment](#button-arch_equipment) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Rebar.svg" width="11" height="11" alt="Custom Rebar"> [Custom Rebar](#button-arch_rebar) | Small | — |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Site.svg" width="11" height="11" alt="Site"> [Site](#button-arch_site) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Building.svg" width="11" height="11" alt="Building"> [Building](#button-arch_building) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Floor.svg" width="11" height="11" alt="Level"> [Level](#button-arch_level) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Space.svg" width="11" height="11" alt="Space"> [Space](#button-arch_space) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Wall.svg" width="11" height="11" alt="Wall"> [Wall](#button-arch_wall) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_CurtainWall.svg" width="11" height="11" alt="Curtain Wall"> [Curtain Wall](#button-arch_curtainwall) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Column.svg" width="11" height="11" alt="Column"> [Column](#button-bim_column) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Beam.svg" width="11" height="11" alt="Beam"> [Beam](#button-bim_beam) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Slab.svg" width="11" height="11" alt="Slab"> [Slab](#button-bim_slab) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Door.svg" width="11" height="11" alt="Door"> [Door](#button-bim_door) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Window.svg" width="11" height="11" alt="Window"> [Window](#button-arch_window) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Covering.svg" width="11" height="11" alt="Covering"> [Covering](#button-bim_covering) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Pipe.svg" width="11" height="11" alt="Pipe"> [Pipe](#button-arch_pipe) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_PipeConnector.svg" width="11" height="11" alt="Connector"> [Connector](#button-arch_pipeconnector) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Stairs.svg" width="11" height="11" alt="Stairs"> [Stairs](#button-arch_stairs) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Roof.svg" width="11" height="11" alt="Roof"> [Roof](#button-arch_roof) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Panel.svg" width="11" height="11" alt="Panel"> [Panel](#button-arch_panel) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Frame.svg" width="11" height="11" alt="Frame"> [Frame](#button-arch_frame) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Fence.svg" width="11" height="11" alt="Fence"> [Fence](#button-arch_fence) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Truss.svg" width="11" height="11" alt="Truss"> [Truss](#button-arch_truss) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Equipment.svg" width="11" height="11" alt="Equipment"> [Equipment](#button-arch_equipment) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Rebar.svg" width="11" height="11" alt="Custom Rebar"> [Custom Rebar](#button-arch_rebar) | Small | â€” |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Box.svg" width="11" height="11" alt="Generic 3D Tools"> [Generic 3D Tools](#button-bim_generictools) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Profile.svg" width="11" height="11" alt="Profile"> [Profile](#button-arch_profile) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Box.svg" width="11" height="11" alt="Box"> [Box](#button-bim_box) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Part/Gui/Resources/icons/create/Part_Shapebuilder.svg" width="11" height="11" alt="Shape Builder"> [Shape Builder](#button-bim_builder) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_Facebinder.png" width="11" height="11" alt="Facebinder"> [Facebinder](#button-draft_facebinder) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Library.svg" width="11" height="11" alt="Objects Library"> [Objects Library](#button-bim_library) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Component.svg" width="11" height="11" alt="Component"> [Component](#button-arch_component) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Reference.svg" width="11" height="11" alt="External Reference"> [External Reference](#button-arch_reference) | Menu item | — |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Profile.svg" width="11" height="11" alt="Profile"> [Profile](#button-arch_profile) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Box.svg" width="11" height="11" alt="Box"> [Box](#button-bim_box) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Part/Gui/Resources/icons/create/Part_Shapebuilder.svg" width="11" height="11" alt="Shape Builder"> [Shape Builder](#button-bim_builder) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_Facebinder.png" width="11" height="11" alt="Facebinder"> [Facebinder](#button-draft_facebinder) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Library.svg" width="11" height="11" alt="Objects Library"> [Objects Library](#button-bim_library) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Component.svg" width="11" height="11" alt="Component"> [Component](#button-arch_component) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Reference.svg" width="11" height="11" alt="External Reference"> [External Reference](#button-arch_reference) | Menu item | â€” |
 
 ##### Annotation Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionAligned.svg" width="11" height="11" alt="Aligned Dimension"> [Aligned Dimension](#button-bim_dimensionaligned) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionHorizontal.svg" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-bim_dimensionhorizontal) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionVertical.svg" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-bim_dimensionvertical) | Small | — |
-| <img src="../../../src/Mod/Draft/Resources/icons/Draft_Text.svg" width="11" height="11" alt="Text"> [Text](#button-bim_text) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Leader.svg" width="11" height="11" alt="Leader"> [Leader](#button-bim_leader) | Small | — |
-| <img src="toolbar-icons/Draft_Label.png" width="11" height="11" alt="Label"> [Label](#button-draft_label) | Small | — |
-| <img src="toolbar-icons/Draft_Hatch.png" width="11" height="11" alt="Hatch"> [Hatch](#button-draft_hatch) | Small | — |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionAligned.svg" width="11" height="11" alt="Aligned Dimension"> [Aligned Dimension](#button-bim_dimensionaligned) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionHorizontal.svg" width="11" height="11" alt="Horizontal Dimension"> [Horizontal Dimension](#button-bim_dimensionhorizontal) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionVertical.svg" width="11" height="11" alt="Vertical Dimension"> [Vertical Dimension](#button-bim_dimensionvertical) | Small | â€” |
+| <img src="../../../src/Mod/Draft/Resources/icons/Draft_Text.svg" width="11" height="11" alt="Text"> [Text](#button-bim_text) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Leader.svg" width="11" height="11" alt="Leader"> [Leader](#button-bim_leader) | Small | â€” |
+| <img src="toolbar-icons/Draft_Label.png" width="11" height="11" alt="Label"> [Label](#button-draft_label) | Small | â€” |
+| <img src="toolbar-icons/Draft_Hatch.png" width="11" height="11" alt="Hatch"> [Hatch](#button-draft_hatch) | Small | â€” |
 | <img src="../../../src/Mod/BIM/Resources/icons/Arch_Axis.svg" width="11" height="11" alt="Axis Tools"> [Axis Tools](#button-bim_axistools) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Axis.svg" width="11" height="11" alt="Axis"> [Axis](#button-arch_axis) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Axis_System.svg" width="11" height="11" alt="Axis System"> [Axis System](#button-arch_axissystem) | Menu item | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Grid.svg" width="11" height="11" alt="Grid"> [Grid](#button-arch_grid) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_SectionPlane.svg" width="11" height="11" alt="Section Plane"> [Section Plane](#button-arch_sectionplane) | Small | — |
-| — [Create 2D Views](#button-bim_create2dviews) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_ArchView.svg" width="11" height="11" alt="2D Drawing"> [2D Drawing](#button-bim_drawingview) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_BuildingPart_Tree.svg" width="11" height="11" alt="Section View"> [Section View](#button-bim_shape2dview) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_View_Cut.svg" width="11" height="11" alt="Section Cut"> [Section Cut](#button-bim_shape2dcut) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_UpdateShape2DView.png" width="11" height="11" alt="Force 2D View Update"> [Force 2D View Update](#button-draft_updateshape2dview) | Menu item | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_PageDefault.svg" width="11" height="11" alt="New Page"> [New Page](#button-bim_tdpage) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_InsertView.svg" width="11" height="11" alt="New View"> [New View](#button-bim_tdview) | Small | — |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Axis.svg" width="11" height="11" alt="Axis"> [Axis](#button-arch_axis) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Axis_System.svg" width="11" height="11" alt="Axis System"> [Axis System](#button-arch_axissystem) | Menu item | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Grid.svg" width="11" height="11" alt="Grid"> [Grid](#button-arch_grid) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_SectionPlane.svg" width="11" height="11" alt="Section Plane"> [Section Plane](#button-arch_sectionplane) | Small | â€” |
+| â€” [Create 2D Views](#button-bim_create2dviews) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_ArchView.svg" width="11" height="11" alt="2D Drawing"> [2D Drawing](#button-bim_drawingview) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_BuildingPart_Tree.svg" width="11" height="11" alt="Section View"> [Section View](#button-bim_shape2dview) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_View_Cut.svg" width="11" height="11" alt="Section Cut"> [Section Cut](#button-bim_shape2dcut) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_UpdateShape2DView.png" width="11" height="11" alt="Force 2D View Update"> [Force 2D View Update](#button-draft_updateshape2dview) | Menu item | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_PageDefault.svg" width="11" height="11" alt="New Page"> [New Page](#button-bim_tdpage) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_InsertView.svg" width="11" height="11" alt="New View"> [New View](#button-bim_tdview) | Small | â€” |
 
 ##### General Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Move.png" width="11" height="11" alt="Move"> [Move](#button-draft_move) | Small | — |
-| <img src="toolbar-icons/Draft_Rotate.png" width="11" height="11" alt="Rotate"> [Rotate](#button-draft_rotate) | Small | — |
-| <img src="toolbar-icons/Draft_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-draft_scale) | Small | — |
-| <img src="toolbar-icons/Draft_Mirror.png" width="11" height="11" alt="Mirror"> [Mirror](#button-draft_mirror) | Small | — |
+| <img src="toolbar-icons/Draft_Move.png" width="11" height="11" alt="Move"> [Move](#button-draft_move) | Small | â€” |
+| <img src="toolbar-icons/Draft_Rotate.png" width="11" height="11" alt="Rotate"> [Rotate](#button-draft_rotate) | Small | â€” |
+| <img src="toolbar-icons/Draft_Scale.png" width="11" height="11" alt="Scale"> [Scale](#button-draft_scale) | Small | â€” |
+| <img src="toolbar-icons/Draft_Mirror.png" width="11" height="11" alt="Mirror"> [Mirror](#button-draft_mirror) | Small | â€” |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Clone.svg" width="11" height="11" alt="Cloning Tools"> [Cloning Tools](#button-bim_clonetools) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Clone.svg" width="11" height="11" alt="Clone"> [Clone](#button-bim_clone) | Menu item | — |
-| ↳ <img src="../../../src/Gui/Icons/Link.svg" width="11" height="11" alt="Make Link"> [Make Link](#button-bim_linkmake) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Unclone.svg" width="11" height="11" alt="Unclone"> [Unclone](#button-bim_unclone) | Menu item | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Copy.svg" width="11" height="11" alt="Copy"> [Copy](#button-bim_copy) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Tree_Part.svg" width="11" height="11" alt="Simple Copy"> [Simple Copy](#button-bim_simplecopy) | Small | — |
-| <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Compound.svg" width="11" height="11" alt="Compound"> [Compound](#button-bim_compound) | Small | — |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Clone.svg" width="11" height="11" alt="Clone"> [Clone](#button-bim_clone) | Menu item | â€” |
+| â†³ <img src="../../../src/Gui/Icons/Link.svg" width="11" height="11" alt="Make Link"> [Make Link](#button-bim_linkmake) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Unclone.svg" width="11" height="11" alt="Unclone"> [Unclone](#button-bim_unclone) | Menu item | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Copy.svg" width="11" height="11" alt="Copy"> [Copy](#button-bim_copy) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Tree_Part.svg" width="11" height="11" alt="Simple Copy"> [Simple Copy](#button-bim_simplecopy) | Small | â€” |
+| <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Compound.svg" width="11" height="11" alt="Compound"> [Compound](#button-bim_compound) | Small | â€” |
 
 ##### 2D Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| — [Offset Tools](#button-bim_offsettools) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/Part/Gui/Resources/icons/tools/Part_Offset2D.svg" width="11" height="11" alt="2D Offset"> [2D Offset](#button-bim_offset2d) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_Offset.png" width="11" height="11" alt="Offset"> [Offset](#button-draft_offset) | Menu item | — |
-| <img src="../../../src/Mod/Draft/Resources/icons/Draft_Trimex.svg" width="11" height="11" alt="Trimex"> [Trimex](#button-bim_trimex) | Small | — |
-| <img src="toolbar-icons/Draft_Join.png" width="11" height="11" alt="Join"> [Join](#button-draft_join) | Small | — |
-| <img src="toolbar-icons/Draft_Split.png" width="11" height="11" alt="Split"> [Split](#button-draft_split) | Small | — |
-| <img src="toolbar-icons/Draft_Stretch.png" width="11" height="11" alt="Stretch"> [Stretch](#button-draft_stretch) | Small | — |
-| <img src="toolbar-icons/Draft_Draft2Sketch.png" width="11" height="11" alt="Draft to Sketch"> [Draft to Sketch](#button-draft_draft2sketch) | Small | — |
-| <img src="toolbar-icons/Draft_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-draft_edit) | Small | — |
+| â€” [Offset Tools](#button-bim_offsettools) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/Part/Gui/Resources/icons/tools/Part_Offset2D.svg" width="11" height="11" alt="2D Offset"> [2D Offset](#button-bim_offset2d) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_Offset.png" width="11" height="11" alt="Offset"> [Offset](#button-draft_offset) | Menu item | â€” |
+| <img src="../../../src/Mod/Draft/Resources/icons/Draft_Trimex.svg" width="11" height="11" alt="Trimex"> [Trimex](#button-bim_trimex) | Small | â€” |
+| <img src="toolbar-icons/Draft_Join.png" width="11" height="11" alt="Join"> [Join](#button-draft_join) | Small | â€” |
+| <img src="toolbar-icons/Draft_Split.png" width="11" height="11" alt="Split"> [Split](#button-draft_split) | Small | â€” |
+| <img src="toolbar-icons/Draft_Stretch.png" width="11" height="11" alt="Stretch"> [Stretch](#button-draft_stretch) | Small | â€” |
+| <img src="toolbar-icons/Draft_Draft2Sketch.png" width="11" height="11" alt="Draft to Sketch"> [Draft to Sketch](#button-draft_draft2sketch) | Small | â€” |
+| <img src="toolbar-icons/Draft_Edit.png" width="11" height="11" alt="Edit"> [Edit](#button-draft_edit) | Small | â€” |
 
 ##### Object Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Draft_Upgrade.png" width="11" height="11" alt="Upgrade"> [Upgrade](#button-draft_upgrade) | Small | — |
-| <img src="toolbar-icons/Draft_Downgrade.png" width="11" height="11" alt="Downgrade"> [Downgrade](#button-draft_downgrade) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Add.svg" width="11" height="11" alt="Add Component"> [Add Component](#button-arch_add) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Remove.svg" width="11" height="11" alt="Remove Component"> [Remove Component](#button-arch_remove) | Small | — |
+| <img src="toolbar-icons/Draft_Upgrade.png" width="11" height="11" alt="Upgrade"> [Upgrade](#button-draft_upgrade) | Small | â€” |
+| <img src="toolbar-icons/Draft_Downgrade.png" width="11" height="11" alt="Downgrade"> [Downgrade](#button-draft_downgrade) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Add.svg" width="11" height="11" alt="Add Component"> [Add Component](#button-arch_add) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_Remove.svg" width="11" height="11" alt="Remove Component"> [Remove Component](#button-arch_remove) | Small | â€” |
 
 ##### 3D Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | <img src="../../../src/Mod/Draft/Resources/icons/Draft_Array.svg" width="11" height="11" alt="Array Tools"> [Array Tools](#button-bim_arraytools) | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Draft_OrthoArray.png" width="11" height="11" alt="Array"> [Array](#button-draft_orthoarray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PathLinkArray.png" width="11" height="11" alt="Path Link Array"> [Path Link Array](#button-draft_pathlinkarray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PolarArray.png" width="11" height="11" alt="Polar Array"> [Polar Array](#button-draft_polararray) | Menu item | — |
-| ↳ <img src="toolbar-icons/Draft_PointLinkArray.png" width="11" height="11" alt="Point Link Array"> [Point Link Array](#button-draft_pointlinkarray) | Menu item | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/Arch_CutPlane.svg" width="11" height="11" alt="Cut With Plane"> [Cut With Plane](#button-arch_cutplane) | Small | — |
-| <img src="../../../src/Mod/Part/Gui/Resources/icons/tools/Part_Extrude.svg" width="11" height="11" alt="Extrude"> [Extrude](#button-bim_extrude) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_ExtrudeFace.svg" width="11" height="11" alt="Extrude Face"> [Extrude Face](#button-bim_extrudeface) | Small | — |
-| — [Boolean Tools](#button-bim_booleantools) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Fuse.svg" width="11" height="11" alt="Union"> [Union](#button-bim_fuse) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Cut.svg" width="11" height="11" alt="Difference"> [Difference](#button-bim_cut) | Menu item | — |
-| ↳ <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Common.svg" width="11" height="11" alt="Intersection"> [Intersection](#button-bim_common) | Menu item | — |
+| â†³ <img src="toolbar-icons/Draft_OrthoArray.png" width="11" height="11" alt="Array"> [Array](#button-draft_orthoarray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PathLinkArray.png" width="11" height="11" alt="Path Link Array"> [Path Link Array](#button-draft_pathlinkarray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PolarArray.png" width="11" height="11" alt="Polar Array"> [Polar Array](#button-draft_polararray) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Draft_PointLinkArray.png" width="11" height="11" alt="Point Link Array"> [Point Link Array](#button-draft_pointlinkarray) | Menu item | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/Arch_CutPlane.svg" width="11" height="11" alt="Cut With Plane"> [Cut With Plane](#button-arch_cutplane) | Small | â€” |
+| <img src="../../../src/Mod/Part/Gui/Resources/icons/tools/Part_Extrude.svg" width="11" height="11" alt="Extrude"> [Extrude](#button-bim_extrude) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_ExtrudeFace.svg" width="11" height="11" alt="Extrude Face"> [Extrude Face](#button-bim_extrudeface) | Small | â€” |
+| â€” [Boolean Tools](#button-bim_booleantools) | Small | Dropdown |
+| â†³ <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Fuse.svg" width="11" height="11" alt="Union"> [Union](#button-bim_fuse) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Cut.svg" width="11" height="11" alt="Difference"> [Difference](#button-bim_cut) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Common.svg" width="11" height="11" alt="Intersection"> [Intersection](#button-bim_common) | Menu item | â€” |
 
 ##### Manage Tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Gui/Icons/preferences-system.svg" width="11" height="11" alt="BIM Setup"> [BIM Setup](#button-bim_setup) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_ProjectManager.svg" width="11" height="11" alt="Setup Project"> [Setup Project](#button-bim_projectmanager) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Windows.svg" width="11" height="11" alt="Manage Doors and Windows"> [Manage Doors and Windows](#button-bim_windows) | Small | — |
+| <img src="../../../src/Gui/Icons/preferences-system.svg" width="11" height="11" alt="BIM Setup"> [BIM Setup](#button-bim_setup) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_ProjectManager.svg" width="11" height="11" alt="Setup Project"> [Setup Project](#button-bim_projectmanager) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Windows.svg" width="11" height="11" alt="Manage Doors and Windows"> [Manage Doors and Windows](#button-bim_windows) | Small | â€” |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_IfcElements.svg" width="11" height="11" alt="IFC Management"> [IFC Management](#button-bim_ifcmanagetools) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_IfcElements.svg" width="11" height="11" alt="Manage IFC Elements"> [Manage IFC Elements](#button-bim_ifcelements) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_IfcQuantities.svg" width="11" height="11" alt="Manage IFC Quantities"> [Manage IFC Quantities](#button-bim_ifcquantities) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_IfcProperties.svg" width="11" height="11" alt="Manage IFC Properties"> [Manage IFC Properties](#button-bim_ifcproperties) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Classification.svg" width="11" height="11" alt="Manage Classification"> [Manage Classification](#button-bim_classification) | Menu item | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Layers.svg" width="11" height="11" alt="Manage Layers"> [Manage Layers](#button-bim_layers) | Small | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Material.svg" width="11" height="11" alt="Material"> [Material](#button-bim_material) | Small | — |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_IfcElements.svg" width="11" height="11" alt="Manage IFC Elements"> [Manage IFC Elements](#button-bim_ifcelements) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_IfcQuantities.svg" width="11" height="11" alt="Manage IFC Quantities"> [Manage IFC Quantities](#button-bim_ifcquantities) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_IfcProperties.svg" width="11" height="11" alt="Manage IFC Properties"> [Manage IFC Properties](#button-bim_ifcproperties) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Classification.svg" width="11" height="11" alt="Manage Classification"> [Manage Classification](#button-bim_classification) | Menu item | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Layers.svg" width="11" height="11" alt="Manage Layers"> [Manage Layers](#button-bim_layers) | Small | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Material.svg" width="11" height="11" alt="Material"> [Material](#button-bim_material) | Small | â€” |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Report.svg" width="11" height="11" alt="Report Tools"> [Report Tools](#button-bim_reporttools) | Small | Dropdown |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Report.svg" width="11" height="11" alt="Report"> [Report](#button-bim_report) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Schedule.svg" width="11" height="11" alt="Schedule"> [Schedule](#button-arch_schedule) | Menu item | — |
-| ↳ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Survey.svg" width="11" height="11" alt="Survey"> [Survey](#button-arch_survey) | Menu item | — |
-| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Preflight.svg" width="11" height="11" alt="Preflight Checks"> [Preflight Checks](#button-bim_preflight) | Small | — |
-| <img src="toolbar-icons/Draft_AnnotationStyleEditor.png" width="11" height="11" alt="Annotation Styles"> [Annotation Styles](#button-draft_annotationstyleeditor) | Small | — |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/BIM_Report.svg" width="11" height="11" alt="Report"> [Report](#button-bim_report) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Schedule.svg" width="11" height="11" alt="Schedule"> [Schedule](#button-arch_schedule) | Menu item | â€” |
+| â†³ <img src="../../../src/Mod/BIM/Resources/icons/Arch_Survey.svg" width="11" height="11" alt="Survey"> [Survey](#button-arch_survey) | Menu item | â€” |
+| <img src="../../../src/Mod/BIM/Resources/icons/BIM_Preflight.svg" width="11" height="11" alt="Preflight Checks"> [Preflight Checks](#button-bim_preflight) | Small | â€” |
+| <img src="toolbar-icons/Draft_AnnotationStyleEditor.png" width="11" height="11" alt="Annotation Styles"> [Annotation Styles](#button-draft_annotationstyleeditor) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### OpenSCAD Mode
 
@@ -3336,44 +3176,44 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_ReplaceObject.svg" width="11" height="11" alt="Replace Object"> [Replace Object](#button-openscad_replaceobject) | Medium (half size) | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_RemoveSubtree.svg" width="11" height="11" alt="Remove Objects and Children"> [Remove Objects and Children](#button-openscad_removesubtree) | Medium (half size) | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Explode_Group.svg" width="11" height="11" alt="Explode Group"> [Explode Group](#button-openscad_explodegroup) | Medium (half size) | — |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_ReplaceObject.svg" width="11" height="11" alt="Replace Object"> [Replace Object](#button-openscad_replaceobject) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_RemoveSubtree.svg" width="11" height="11" alt="Remove Objects and Children"> [Remove Objects and Children](#button-openscad_removesubtree) | Medium (half size) | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Explode_Group.svg" width="11" height="11" alt="Explode Group"> [Explode Group](#button-openscad_explodegroup) | Medium (half size) | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -3381,32 +3221,32 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_ReplaceObject.svg" width="11" height="11" alt="Replace Object"> [Replace Object](#button-openscad_replaceobject) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_RemoveSubtree.svg" width="11" height="11" alt="Remove Objects and Children"> [Remove Objects and Children](#button-openscad_removesubtree) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Explode_Group.svg" width="11" height="11" alt="Explode Group"> [Explode Group](#button-openscad_explodegroup) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_RefineShapeFeature.svg" width="11" height="11" alt="Refine Shape Feature"> [Refine Shape Feature](#button-openscad_refineshapefeature) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_IncreaseToleranceFeature.svg" width="11" height="11" alt="Increase Tolerance Feature"> [Increase Tolerance Feature](#button-openscad_increasetolerancefeature) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_AddOpenSCADElement.svg" width="11" height="11" alt="Add OpenSCAD Element"> [Add OpenSCAD Element](#button-openscad_addopenscadelement) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_MeshBooleans.svg" width="11" height="11" alt="Mesh Boolean"> [Mesh Boolean](#button-openscad_meshboolean) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Hull.svg" width="11" height="11" alt="Hull"> [Hull](#button-openscad_hull) | Small | — |
-| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Minkowski.svg" width="11" height="11" alt="Minkowski Sum"> [Minkowski Sum](#button-openscad_minkowski) | Small | — |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_ReplaceObject.svg" width="11" height="11" alt="Replace Object"> [Replace Object](#button-openscad_replaceobject) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_RemoveSubtree.svg" width="11" height="11" alt="Remove Objects and Children"> [Remove Objects and Children](#button-openscad_removesubtree) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Explode_Group.svg" width="11" height="11" alt="Explode Group"> [Explode Group](#button-openscad_explodegroup) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_RefineShapeFeature.svg" width="11" height="11" alt="Refine Shape Feature"> [Refine Shape Feature](#button-openscad_refineshapefeature) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_IncreaseToleranceFeature.svg" width="11" height="11" alt="Increase Tolerance Feature"> [Increase Tolerance Feature](#button-openscad_increasetolerancefeature) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_AddOpenSCADElement.svg" width="11" height="11" alt="Add OpenSCAD Element"> [Add OpenSCAD Element](#button-openscad_addopenscadelement) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_MeshBooleans.svg" width="11" height="11" alt="Mesh Boolean"> [Mesh Boolean](#button-openscad_meshboolean) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Hull.svg" width="11" height="11" alt="Hull"> [Hull](#button-openscad_hull) | Small | â€” |
+| <img src="../../../src/Mod/OpenSCAD/Resources/icons/OpenSCAD_Minkowski.svg" width="11" height="11" alt="Minkowski Sum"> [Minkowski Sum](#button-openscad_minkowski) | Small | â€” |
 
 ##### Frequently-used Part WB tools group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Part_CheckGeometry.png" width="11" height="11" alt="Check Geometry"> [Check Geometry](#button-part_checkgeometry) | Small | — |
-| <img src="toolbar-icons/Part_Primitives.png" width="11" height="11" alt="Primitive"> [Primitive](#button-part_primitives) | Small | — |
-| <img src="toolbar-icons/Part_Builder.png" width="11" height="11" alt="Shape Builder"> [Shape Builder](#button-part_builder) | Small | — |
-| <img src="toolbar-icons/Part_Cut.png" width="11" height="11" alt="Cut"> [Cut](#button-part_cut) | Small | — |
-| <img src="toolbar-icons/Part_Fuse.png" width="11" height="11" alt="Union"> [Union](#button-part_fuse) | Small | — |
-| <img src="toolbar-icons/Part_Common.png" width="11" height="11" alt="Intersection"> [Intersection](#button-part_common) | Small | — |
-| <img src="toolbar-icons/Part_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-part_extrude) | Small | — |
-| <img src="toolbar-icons/Part_Revolve.png" width="11" height="11" alt="Revolve"> [Revolve](#button-part_revolve) | Small | — |
+| <img src="toolbar-icons/Part_CheckGeometry.png" width="11" height="11" alt="Check Geometry"> [Check Geometry](#button-part_checkgeometry) | Small | â€” |
+| <img src="toolbar-icons/Part_Primitives.png" width="11" height="11" alt="Primitive"> [Primitive](#button-part_primitives) | Small | â€” |
+| <img src="toolbar-icons/Part_Builder.png" width="11" height="11" alt="Shape Builder"> [Shape Builder](#button-part_builder) | Small | â€” |
+| <img src="toolbar-icons/Part_Cut.png" width="11" height="11" alt="Cut"> [Cut](#button-part_cut) | Small | â€” |
+| <img src="toolbar-icons/Part_Fuse.png" width="11" height="11" alt="Union"> [Union](#button-part_fuse) | Small | â€” |
+| <img src="toolbar-icons/Part_Common.png" width="11" height="11" alt="Intersection"> [Intersection](#button-part_common) | Small | â€” |
+| <img src="toolbar-icons/Part_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-part_extrude) | Small | â€” |
+| <img src="toolbar-icons/Part_Revolve.png" width="11" height="11" alt="Revolve"> [Revolve](#button-part_revolve) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### Test Framework Mode
 
@@ -3418,55 +3258,55 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | — |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | — |
+| <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> [Add Component](#button-std_part) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Medium (half size) | â€” |
 
 ##### Frequent operations group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Self-test..."> [Self-test...](#button-test_test) | Medium (half size) | — |
-| <img src="toolbar-icons/Test_TestAll.png" width="11" height="11" alt="Test all"> [Test all](#button-test_testall) | Medium (half size) | — |
-| <img src="toolbar-icons/Test_TestDoc.png" width="11" height="11" alt="Test Document"> [Test Document](#button-test_testdoc) | Medium (half size) | — |
+| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Self-test..."> [Self-test...](#button-test_test) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Test_TestAll.png" width="11" height="11" alt="Test all"> [Test all](#button-test_testall) | Medium (half size) | â€” |
+| <img src="toolbar-icons/Test_TestDoc.png" width="11" height="11" alt="Test Document"> [Test Document](#button-test_testdoc) | Medium (half size) | â€” |
 
 ##### Structure group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | — |
-| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | — |
+| <img src="toolbar-icons/Std_ComponentStructure.png" width="11" height="11" alt="Components"> [Components](#button-std_componentstructure) | Small | â€” |
+| <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> [New Group](#button-std_group) | Small | â€” |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> [Make Link](#button-std_linkactions) | Small | Dropdown |
-| ↳ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
-| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | — |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | — |
+| â†³ Native choices for [Make Link](#button-std_linkactions) | Menu items | See function catalog |
+| <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> [Variable Set](#button-std_varset) | Small | â€” |
+| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small | â€” |
 
 ##### Utilities group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> [Import…](#button-std_import) | Small | — |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> [Export…](#button-std_export) | Small | — |
-| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | — |
-| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | — |
-| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | — |
-| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | — |
-| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | — |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> [Importâ€¦](#button-std_import) | Small | â€” |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> [Exportâ€¦](#button-std_export) | Small | â€” |
+| <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> [Preferences](#button-std_dlgpreferences) | Small | â€” |
+| <img src="../../../src/Gui/Icons/zoom-in.svg" width="11" height="11" alt="Command search..."> [Command search...](#button-std_commandsearch) | Small | â€” |
+| <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> [Measure](#button-std_measure) | Small | â€” |
+| <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> [Mass Properties](#button-std_massproperties) | Small | â€” |
+| <img src="toolbar-icons/Std_Delete.png" width="11" height="11" alt="Delete"> [Delete](#button-std_delete) | Small | â€” |
 
 ##### Help group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Help | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> [What's This?](#button-std_whatsthis) | Menu item | â€” |
 
 ##### Macro group
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
 | Macro | Small | Dropdown |
-| ↳ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | — |
-| ↳ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | — |
+| â†³ <img src="toolbar-icons/Std_DlgMacroRecord.png" width="11" height="11" alt="Record Macro"> [Record Macro](#button-std_dlgmacrorecord) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecute.png" width="11" height="11" alt="Macros"> [Macros](#button-std_dlgmacroexecute) | Menu item | â€” |
+| â†³ <img src="toolbar-icons/Std_DlgMacroExecuteDirect.png" width="11" height="11" alt="Execute Macro"> [Execute Macro](#button-std_dlgmacroexecutedirect) | Menu item | â€” |
 
 #### Tools tab
 
@@ -3474,14 +3314,14 @@ Component access, this mode's frequent operations, and shared utilities. File/Ed
 
 | Command | Icon size | Dropdown / choices |
 | --- | --- | --- |
-| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Self-test..."> [Self-test...](#button-test_test) | Small | — |
-| <img src="toolbar-icons/Test_TestAll.png" width="11" height="11" alt="Test all"> [Test all](#button-test_testall) | Small | — |
-| <img src="toolbar-icons/Test_TestDoc.png" width="11" height="11" alt="Test Document"> [Test Document](#button-test_testdoc) | Small | — |
-| <img src="toolbar-icons/Test_TestBase.png" width="11" height="11" alt="Test base"> [Test base](#button-test_testbase) | Small | — |
+| <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Self-test..."> [Self-test...](#button-test_test) | Small | â€” |
+| <img src="toolbar-icons/Test_TestAll.png" width="11" height="11" alt="Test all"> [Test all](#button-test_testall) | Small | â€” |
+| <img src="toolbar-icons/Test_TestDoc.png" width="11" height="11" alt="Test Document"> [Test Document](#button-test_testdoc) | Small | â€” |
+| <img src="toolbar-icons/Test_TestBase.png" width="11" height="11" alt="Test base"> [Test base](#button-test_testbase) | Small | â€” |
 
 #### View tab
 
-Use the **Design → View** groups and sizes above; each mode activates its native view actions.
+Use the **Design â†’ View** groups and sizes above; each mode activates its native view actions.
 
 ### 3D Printing and other addon modes
 
@@ -3507,10 +3347,10 @@ Only show a mode when an installed workbench registers it. Use the common toolba
 
 | Classic commands | Plus access |
 | --- | --- |
-| <img src="toolbar-icons/PartDesign_Pad.png" width="11" height="11" alt="Pad"> [Pad](#button-partdesign_pad) | Extrude → Add |
-| <img src="toolbar-icons/PartDesign_Pocket.png" width="11" height="11" alt="Pocket"> [Pocket](#button-partdesign_pocket) | Extrude → Subtract |
-| <img src="toolbar-icons/PartDesign_LinearPattern.png" width="11" height="11" alt="Linear Pattern"> [Linear Pattern](#button-partdesign_linearpattern) | Pattern task → Linear / Circular type |
-| <img src="toolbar-icons/PartDesign_PolarPattern.png" width="11" height="11" alt="Polar Pattern"> [Polar Pattern](#button-partdesign_polarpattern) | Pattern task → Linear / Circular type |
+| <img src="toolbar-icons/PartDesign_Pad.png" width="11" height="11" alt="Pad"> [Pad](#button-partdesign_pad) | Extrude â†’ Add |
+| <img src="toolbar-icons/PartDesign_Pocket.png" width="11" height="11" alt="Pocket"> [Pocket](#button-partdesign_pocket) | Extrude â†’ Subtract |
+| <img src="toolbar-icons/PartDesign_LinearPattern.png" width="11" height="11" alt="Linear Pattern"> [Linear Pattern](#button-partdesign_linearpattern) | Pattern task â†’ Linear / Circular type |
+| <img src="toolbar-icons/PartDesign_PolarPattern.png" width="11" height="11" alt="Polar Pattern"> [Polar Pattern](#button-partdesign_polarpattern) | Pattern task â†’ Linear / Circular type |
 | <img src="toolbar-icons/Part_CoordinateSystem.png" width="11" height="11" alt="Coordinate System"> [Coordinate System](#button-part_coordinatesystem) | Coordinate System dropdown / task choices |
 | <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> [Fixed Joint](#button-assembly_createjointfixed) | Fixed Joint dropdown / task choices |
 | <img src="toolbar-icons/PartDesign_Pattern.png" width="11" height="11" alt="Pattern"> [Pattern](#button-partdesign_pattern) | Pattern dropdown / task choices |
@@ -3529,12 +3369,12 @@ Only show a mode when an installed workbench registers it. Use the common toolba
 | <img src="toolbar-icons/Sketcher_ConstrainSnellsLaw.png" width="11" height="11" alt="Refraction Constraint"> [Refraction Constraint](#button-sketcher_constrainsnellslaw) | Auto Dimension dropdown / task choices |
 | <img src="toolbar-icons/Sketcher_CompDimensionTools.png" width="11" height="11" alt="Dimension"> [Dimension](#button-sketcher_compdimensiontools) | Auto Dimension dropdown / task choices |
 | <img src="toolbar-icons/Sketcher_CompConstrainRadDia.png" width="11" height="11" alt="Constrain radius"> [Constrain radius](#button-sketcher_compconstrainraddia) | Auto Dimension dropdown / task choices |
-| <img src="toolbar-icons/PartDesign_AdditiveLoft.png" width="11" height="11" alt="Additive Loft"> [Additive Loft](#button-partdesign_additiveloft) | Additive Loft dropdown / task choices |
-| <img src="toolbar-icons/PartDesign_SubtractiveLoft.png" width="11" height="11" alt="Subtractive Loft"> [Subtractive Loft](#button-partdesign_subtractiveloft) | Additive Loft dropdown / task choices |
-| <img src="toolbar-icons/PartDesign_AdditivePipe.png" width="11" height="11" alt="Additive Pipe"> [Additive Pipe](#button-partdesign_additivepipe) | Additive Pipe dropdown / task choices |
-| <img src="toolbar-icons/PartDesign_SubtractivePipe.png" width="11" height="11" alt="Subtractive Pipe"> [Subtractive Pipe](#button-partdesign_subtractivepipe) | Additive Pipe dropdown / task choices |
-| <img src="toolbar-icons/PartDesign_AdditiveHelix.png" width="11" height="11" alt="Additive Helix"> [Additive Helix](#button-partdesign_additivehelix) | Additive Helix dropdown / task choices |
-| <img src="toolbar-icons/PartDesign_SubtractiveHelix.png" width="11" height="11" alt="Subtractive Helix"> [Subtractive Helix](#button-partdesign_subtractivehelix) | Additive Helix dropdown / task choices |
+| <img src="toolbar-icons/PartDesign_AdditiveLoft.png" width="11" height="11" alt="Additive Loft"> [Additive Loft](#button-partdesign_additiveloft) | Unified Loft task operation choices |
+| <img src="toolbar-icons/PartDesign_SubtractiveLoft.png" width="11" height="11" alt="Subtractive Loft"> [Subtractive Loft](#button-partdesign_subtractiveloft) | Unified Loft task operation choices |
+| <img src="toolbar-icons/PartDesign_AdditivePipe.png" width="11" height="11" alt="Additive Pipe"> [Additive Pipe](#button-partdesign_additivepipe) | Unified Pipe task operation choices |
+| <img src="toolbar-icons/PartDesign_SubtractivePipe.png" width="11" height="11" alt="Subtractive Pipe"> [Subtractive Pipe](#button-partdesign_subtractivepipe) | Unified Pipe task operation choices |
+| <img src="toolbar-icons/PartDesign_AdditiveHelix.png" width="11" height="11" alt="Additive Helix"> [Additive Helix](#button-partdesign_additivehelix) | Unified Helix task operation choices |
+| <img src="toolbar-icons/PartDesign_SubtractiveHelix.png" width="11" height="11" alt="Subtractive Helix"> [Subtractive Helix](#button-partdesign_subtractivehelix) | Unified Helix task operation choices |
 | <img src="toolbar-icons/Std_Workbench.png" width="11" height="11" alt="Assembly"> [Workbench selector](#button-std_workbench) | Plus mode selector |
 
 Shared native menus and shortcuts remain available. A toolbar omission is not removal of the underlying function. Legacy Body creation is not promoted in Home; component results remain background objects. The restored Circular/Path/Point bindings exist in the inspected build. Toolbar placement here does not expand their geometry scope.
@@ -3705,7 +3545,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Assembly_CreateJointDistance.png" width="11" height="11" alt="Distance Joint"> | <a id="button-assembly_createjointdistance"></a>Distance Joint | `Assembly_CreateJointDistance` | Creates a distance joint that fixes the distance between the selected objects Creates one of several different joints based on the selection. For example, a distance of 0 between a plane and a cylinder creates a tangent joint. A distance of 0 between planes will make them co-planar. |
 | <img src="toolbar-icons/Assembly_CreateJointFixed.png" width="11" height="11" alt="Fixed Joint"> | <a id="button-assembly_createjointfixed"></a>Fixed Joint | `Assembly_CreateJointFixed` | 1 - If an assembly is active : Creates a joint statically locking two parts together, preventing any movement or rotation 2 - If a part is active: Positions sub-parts by matching selected coordinate systems. The second part selected will move. |
 | <img src="toolbar-icons/Assembly_CreateJointGearBelt.png" width="11" height="11" alt="Gears Joint"> | <a id="button-assembly_createjointgearbelt"></a>Gears Joint | `Assembly_CreateJointGearBelt` | Creates a gears joint that links 2 rotating gears together. They will have inverse rotation direction. Select the same coordinate systems as the revolute joints. |
-| <img src="toolbar-icons/Assembly_CreateJointGearBelt_1.png" width="11" height="11" alt="Belt Joint"> | ↳ Belt Joint | `Assembly_CreateJointGearBelt` | Creates a belt joint that links 2 rotating objects together. They will have the same rotation direction. Select the same coordinate systems as the revolute joints. |
+| <img src="toolbar-icons/Assembly_CreateJointGearBelt_1.png" width="11" height="11" alt="Belt Joint"> | â†³ Belt Joint | `Assembly_CreateJointGearBelt` | Creates a belt joint that links 2 rotating objects together. They will have the same rotation direction. Select the same coordinate systems as the revolute joints. |
 | <img src="toolbar-icons/Assembly_CreateJointGears.png" width="11" height="11" alt="Gears Joint"> | <a id="button-assembly_createjointgears"></a>Gears Joint | `Assembly_CreateJointGears` | Creates a gears joint that links 2 rotating gears together. They will have inverse rotation direction. Select the same coordinate systems as the revolute joints. |
 | <img src="toolbar-icons/Assembly_CreateJointParallel.png" width="11" height="11" alt="Parallel Joint"> | <a id="button-assembly_createjointparallel"></a>Parallel Joint | `Assembly_CreateJointParallel` | Creates a parallel joint that makes the Z-axis of the selected coordinate systems parallel |
 | <img src="toolbar-icons/Assembly_CreateJointPerpendicular.png" width="11" height="11" alt="Perpendicular Joint"> | <a id="button-assembly_createjointperpendicular"></a>Perpendicular Joint | `Assembly_CreateJointPerpendicular` | Creates a perpendicular joint that makes the Z-axis of the selected coordinate systems perpendicular |
@@ -3718,7 +3558,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Assembly_CreateSnapshot.png" width="11" height="11" alt="Snapshot"> | <a id="button-assembly_createsnapshot"></a>Snapshot | `Assembly_CreateSnapshot` | Captures the current assembly state (placements and visibility). Double-clicking the Snapshot object restores the assembly to that state. |
 | <img src="toolbar-icons/Assembly_CreateView.png" width="11" height="11" alt="Exploded View"> | <a id="button-assembly_createview"></a>Exploded View | `Assembly_CreateView` | Creates an exploded view of the current assembly |
 | <img src="toolbar-icons/Assembly_Insert.png" width="11" height="11" alt="Insert Component"> | <a id="button-assembly_insert"></a>Insert Component | `Assembly_Insert` | Inserts a component into the active assembly. This will create dynamic links to parts, bodies, primitives, and assemblies. To insert external components, make sure that the file is open in the current session Insert by left clicking items in the list. Remove by right clicking items in the list. Press shift to add several instances of the component while clicking on the view. |
-| <img src="toolbar-icons/Assembly_Insert_1.png" width="11" height="11" alt="Add Component"> | ↳ Add Component | `Assembly_Insert` | Adds a component to the active component or assembly. |
+| <img src="toolbar-icons/Assembly_Insert_1.png" width="11" height="11" alt="Add Component"> | â†³ Add Component | `Assembly_Insert` | Adds a component to the active component or assembly. |
 | <img src="toolbar-icons/Assembly_InsertLink.png" width="11" height="11" alt="Insert Component"> | <a id="button-assembly_insertlink"></a>Insert Component | `Assembly_InsertLink` | Inserts a component into the active assembly. This will create dynamic links to parts, bodies, primitives, and assemblies. To insert external components, make sure that the file is open in the current session Insert by left clicking items in the list. Remove by right clicking items in the list. Press shift to add several instances of the component while clicking on the view. |
 | <img src="toolbar-icons/Assembly_InsertNewPart.png" width="11" height="11" alt="Add Component"> | <a id="button-assembly_insertnewpart"></a>Add Component | `Assembly_InsertNewPart` | Adds a component to the active component or assembly. |
 | <img src="toolbar-icons/Assembly_SolveAssembly.png" width="11" height="11" alt="Solve Assembly"> | <a id="button-assembly_solveassembly"></a>Solve Assembly | `Assembly_SolveAssembly` | Solves the currently active assembly. |
@@ -3727,7 +3567,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Mod/Draft/Resources/icons/Draft_Array.svg" width="11" height="11" alt="Array Tools"> | <a id="button-bim_arraytools"></a>Array Tools | `BIM_ArrayTools` | Array Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/Arch_Axis.svg" width="11" height="11" alt="Axis Tools"> | <a id="button-bim_axistools"></a>Axis Tools | `BIM_AxisTools` | Axis Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Beam.svg" width="11" height="11" alt="Beam"> | <a id="button-bim_beam"></a>Beam | `BIM_Beam` | Creates a beam between two points |
-| — | <a id="button-bim_booleantools"></a>Boolean Tools | `BIM_BooleanTools` | Boolean Tools |
+| â€” | <a id="button-bim_booleantools"></a>Boolean Tools | `BIM_BooleanTools` | Boolean Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Box.svg" width="11" height="11" alt="Box"> | <a id="button-bim_box"></a>Box | `BIM_Box` | Graphically creates a generic box in the current document |
 | <img src="../../../src/Mod/Part/Gui/Resources/icons/create/Part_Shapebuilder.svg" width="11" height="11" alt="Shape Builder"> | <a id="button-bim_builder"></a>Shape Builder | `BIM_Builder` | Advanced utility to create shapes |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Classification.svg" width="11" height="11" alt="Manage Classification"> | <a id="button-bim_classification"></a>Manage Classification | `BIM_Classification` | Manages classification systems and apply classification to objects |
@@ -3738,7 +3578,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Compound.svg" width="11" height="11" alt="Compound"> | <a id="button-bim_compound"></a>Compound | `BIM_Compound` | Creates a compound of several shapes |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Copy.svg" width="11" height="11" alt="Copy"> | <a id="button-bim_copy"></a>Copy | `BIM_Copy` | Copies selected objects to another location |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Covering.svg" width="11" height="11" alt="Covering"> | <a id="button-bim_covering"></a>Covering | `BIM_Covering` | Creates a covering (floor finish, cladding) on a selected face |
-| — | <a id="button-bim_create2dviews"></a>Create 2D Views | `BIM_Create2DViews` | Create 2D Views |
+| â€” | <a id="button-bim_create2dviews"></a>Create 2D Views | `BIM_Create2DViews` | Create 2D Views |
 | <img src="../../../src/Mod/Part/Gui/Resources/icons/booleans/Part_Cut.svg" width="11" height="11" alt="Difference"> | <a id="button-bim_cut"></a>Difference | `BIM_Cut` | Creates a difference between two shapes |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionAligned.svg" width="11" height="11" alt="Aligned Dimension"> | <a id="button-bim_dimensionaligned"></a>Aligned Dimension | `BIM_DimensionAligned` | Creates an aligned dimension |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_DimensionHorizontal.svg" width="11" height="11" alt="Horizontal Dimension"> | <a id="button-bim_dimensionhorizontal"></a>Horizontal Dimension | `BIM_DimensionHorizontal` | Creates an horizontal dimension |
@@ -3759,7 +3599,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Gui/Icons/Link.svg" width="11" height="11" alt="Make Link"> | <a id="button-bim_linkmake"></a>Make Link | `BIM_LinkMake` | Creates a Link to the selected object and immediately enables moving it |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Material.svg" width="11" height="11" alt="Material"> | <a id="button-bim_material"></a>Material | `BIM_Material` | Sets or creates a material for selected objects |
 | <img src="../../../src/Mod/Part/Gui/Resources/icons/tools/Part_Offset2D.svg" width="11" height="11" alt="2D Offset"> | <a id="button-bim_offset2d"></a>2D Offset | `BIM_Offset2D` | Utility to offset planar shapes |
-| — | <a id="button-bim_offsettools"></a>Offset Tools | `BIM_OffsetTools` | Offset Tools |
+| â€” | <a id="button-bim_offsettools"></a>Offset Tools | `BIM_OffsetTools` | Offset Tools |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Preflight.svg" width="11" height="11" alt="Preflight Checks"> | <a id="button-bim_preflight"></a>Preflight Checks | `BIM_Preflight` | Checks several characteristics of this model before exporting to IFC |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_ProjectManager.svg" width="11" height="11" alt="Setup Project"> | <a id="button-bim_projectmanager"></a>Setup Project | `BIM_ProjectManager` | Creates or manages a BIM project |
 | <img src="../../../src/Mod/BIM/Resources/icons/BIM_Report.svg" width="11" height="11" alt="Report"> | <a id="button-bim_report"></a>Report | `BIM_Report` | Create a new BIM Report to query model data with SQL |
@@ -3780,22 +3620,22 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/CAM_Adaptive.png" width="11" height="11" alt="Adaptive"> | <a id="button-cam_adaptive"></a>Adaptive | `CAM_Adaptive` | Adaptive clearing and profiling |
 | <img src="toolbar-icons/CAM_Array.png" width="11" height="11" alt="Array"> | <a id="button-cam_array"></a>Array | `CAM_Array` | Creates an array from selected toolpaths |
 | <img src="toolbar-icons/CAM_DressupTools.png" width="11" height="11" alt="Array"> | <a id="button-cam_dressuptools"></a>Array | `CAM_DressupTools` | Creates an array from a selected toolpath |
-| <img src="toolbar-icons/CAM_DressupTools_1.png" width="11" height="11" alt="Axis Map"> | ↳ Axis Map | `CAM_DressupTools` | Remaps one axis to another |
-| <img src="toolbar-icons/CAM_DressupTools_2.png" width="11" height="11" alt="Boundary"> | ↳ Boundary | `CAM_DressupTools` | Creates a boundary dress-up from a selected toolpath |
-| <img src="toolbar-icons/CAM_DressupTools_3.png" width="11" height="11" alt="Boundary2"> | ↳ Boundary2 | `CAM_DressupTools` | Creates a boundary dress-up from a selected toolpath |
-| <img src="toolbar-icons/CAM_DressupTools_4.png" width="11" height="11" alt="Dogbone"> | ↳ Dogbone | `CAM_DressupTools` | Creates a dogbone dress-up object from a selected toolpath |
-| <img src="toolbar-icons/CAM_DressupTools_5.png" width="11" height="11" alt="Drag Knife"> | ↳ Drag Knife | `CAM_DressupTools` | Modifies a toolpath to add dragknife corner actions |
-| <img src="toolbar-icons/CAM_DressupTools_6.png" width="11" height="11" alt="Lead In/Out"> | ↳ Lead In/Out | `CAM_DressupTools` | Creates entry and exit motions for a selected path |
-| <img src="toolbar-icons/CAM_DressupTools_7.png" width="11" height="11" alt="Mirror"> | ↳ Mirror | `CAM_DressupTools` | Creates mirror of a selected path |
-| <img src="toolbar-icons/CAM_DressupTools_8.png" width="11" height="11" alt="Plunge Milling"> | ↳ Plunge Milling | `CAM_DressupTools` | Creates plunge milling for a selected path |
-| <img src="toolbar-icons/CAM_DressupTools_9.png" width="11" height="11" alt="Ramp Entry"> | ↳ Ramp Entry | `CAM_DressupTools` | Creates a ramp entry dress-up object from a selected toolpath |
-| <img src="toolbar-icons/CAM_DressupTools_10.png" width="11" height="11" alt="Tag"> | ↳ Tag | `CAM_DressupTools` | Creates a tag dress-up object from a selected toolpath |
-| <img src="toolbar-icons/CAM_DressupTools_11.png" width="11" height="11" alt="Z Depth Correction"> | ↳ Z Depth Correction | `CAM_DressupTools` | Corrects Z depth using a probe map |
+| <img src="toolbar-icons/CAM_DressupTools_1.png" width="11" height="11" alt="Axis Map"> | â†³ Axis Map | `CAM_DressupTools` | Remaps one axis to another |
+| <img src="toolbar-icons/CAM_DressupTools_2.png" width="11" height="11" alt="Boundary"> | â†³ Boundary | `CAM_DressupTools` | Creates a boundary dress-up from a selected toolpath |
+| <img src="toolbar-icons/CAM_DressupTools_3.png" width="11" height="11" alt="Boundary2"> | â†³ Boundary2 | `CAM_DressupTools` | Creates a boundary dress-up from a selected toolpath |
+| <img src="toolbar-icons/CAM_DressupTools_4.png" width="11" height="11" alt="Dogbone"> | â†³ Dogbone | `CAM_DressupTools` | Creates a dogbone dress-up object from a selected toolpath |
+| <img src="toolbar-icons/CAM_DressupTools_5.png" width="11" height="11" alt="Drag Knife"> | â†³ Drag Knife | `CAM_DressupTools` | Modifies a toolpath to add dragknife corner actions |
+| <img src="toolbar-icons/CAM_DressupTools_6.png" width="11" height="11" alt="Lead In/Out"> | â†³ Lead In/Out | `CAM_DressupTools` | Creates entry and exit motions for a selected path |
+| <img src="toolbar-icons/CAM_DressupTools_7.png" width="11" height="11" alt="Mirror"> | â†³ Mirror | `CAM_DressupTools` | Creates mirror of a selected path |
+| <img src="toolbar-icons/CAM_DressupTools_8.png" width="11" height="11" alt="Plunge Milling"> | â†³ Plunge Milling | `CAM_DressupTools` | Creates plunge milling for a selected path |
+| <img src="toolbar-icons/CAM_DressupTools_9.png" width="11" height="11" alt="Ramp Entry"> | â†³ Ramp Entry | `CAM_DressupTools` | Creates a ramp entry dress-up object from a selected toolpath |
+| <img src="toolbar-icons/CAM_DressupTools_10.png" width="11" height="11" alt="Tag"> | â†³ Tag | `CAM_DressupTools` | Creates a tag dress-up object from a selected toolpath |
+| <img src="toolbar-icons/CAM_DressupTools_11.png" width="11" height="11" alt="Z Depth Correction"> | â†³ Z Depth Correction | `CAM_DressupTools` | Corrects Z depth using a probe map |
 | <img src="toolbar-icons/CAM_DrillingTools.png" width="11" height="11" alt="Drilling"> | <a id="button-cam_drillingtools"></a>Drilling | `CAM_DrillingTools` | Creates a Drilling toolpath from the features of a base object |
-| <img src="toolbar-icons/CAM_DrillingTools_1.png" width="11" height="11" alt="Thread Milling"> | ↳ Thread Milling | `CAM_DrillingTools` | Creates a Thread Milling toolpath from features of a base object |
+| <img src="toolbar-icons/CAM_DrillingTools_1.png" width="11" height="11" alt="Thread Milling"> | â†³ Thread Milling | `CAM_DrillingTools` | Creates a Thread Milling toolpath from features of a base object |
 | <img src="toolbar-icons/CAM_EngraveTools.png" width="11" height="11" alt="Engrave"> | <a id="button-cam_engravetools"></a>Engrave | `CAM_EngraveTools` | Creates an Engraving toolpath around a Draft ShapeString |
-| <img src="toolbar-icons/CAM_EngraveTools_1.png" width="11" height="11" alt="Deburr"> | ↳ Deburr | `CAM_EngraveTools` | Creates a Deburr toolpath along Edges or around Faces |
-| <img src="toolbar-icons/CAM_EngraveTools_2.png" width="11" height="11" alt="Vcarve"> | ↳ Vcarve | `CAM_EngraveTools` | Creates a medial line engraving toolpath |
+| <img src="toolbar-icons/CAM_EngraveTools_1.png" width="11" height="11" alt="Deburr"> | â†³ Deburr | `CAM_EngraveTools` | Creates a Deburr toolpath along Edges or around Faces |
+| <img src="toolbar-icons/CAM_EngraveTools_2.png" width="11" height="11" alt="Vcarve"> | â†³ Vcarve | `CAM_EngraveTools` | Creates a medial line engraving toolpath |
 | <img src="toolbar-icons/CAM_Helix.png" width="11" height="11" alt="Helix"> | <a id="button-cam_helix"></a>Helix | `CAM_Helix` | Creates a Helical toolpath from the features of a base object |
 | <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Holding Tab"> | <a id="button-cam_holdingtab"></a>Holding Tab | `CAM_HoldingTab` | Creates a stock bridge preserved by Parallel and Waterline paths |
 | <img src="toolbar-icons/CAM_IndexedSetup.png" width="11" height="11" alt="Indexed Setup"> | <a id="button-cam_indexedsetup"></a>Indexed Setup | `CAM_IndexedSetup` | Creates another manually indexed side of a Job, including its stock and tabs |
@@ -3808,15 +3648,15 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/CAM_PlanarSurface.png" width="11" height="11" alt="Parallel / Waterline"> | <a id="button-cam_planarsurface"></a>Parallel / Waterline | `CAM_PlanarSurface` | Machines an STL or CAD model with Parallel or Waterline paths |
 | <img src="toolbar-icons/CAM_Pocket_Shape.png" width="11" height="11" alt="Pocket Shape"> | <a id="button-cam_pocket_shape"></a>Pocket Shape | `CAM_Pocket_Shape` | Creates a pocket toolpath from a face or faces |
 | <img src="toolbar-icons/CAM_PostTools.png" width="11" height="11" alt="Post Process"> | <a id="button-cam_posttools"></a>Post Process | `CAM_PostTools` | Post Processes the selected Job |
-| <img src="toolbar-icons/CAM_PostTools_1.png" width="11" height="11" alt="Post Process Selected"> | ↳ Post Process Selected | `CAM_PostTools` | Post Processes the selected operations |
+| <img src="toolbar-icons/CAM_PostTools_1.png" width="11" height="11" alt="Post Process Selected"> | â†³ Post Process Selected | `CAM_PostTools` | Post Processes the selected operations |
 | <img src="toolbar-icons/CAM_Profile.png" width="11" height="11" alt="Profile"> | <a id="button-cam_profile"></a>Profile | `CAM_Profile` | Profile entire model, selected face(s) or selected edge(s) |
 | <img src="toolbar-icons/CAM_Sanity.png" width="11" height="11" alt="Sanity Check"> | <a id="button-cam_sanity"></a>Sanity Check | `CAM_Sanity` | Checks the CAM job for common errors |
 | <img src="toolbar-icons/CAM_SelectLoop.png" width="11" height="11" alt="Finish Selecting Loop"> | <a id="button-cam_selectloop"></a>Finish Selecting Loop | `CAM_SelectLoop` | Completes the selection of edges or faces that forms a loop. Works in described sequence, but can be forced by modifier key. Face selection: Vertical face: searching loops faces which forms the walls or vertical faces with same center height (SHIFT). Horizontal face: searching inner edges of the face (CTRL), outer edges of the face (CTRL + ALT) or horizontal faces at the same height (SHIFT). Otherwise select all edges of the face (ALT). Edge selection: One edge: searching loop edges in horizontal plane. Two edges: searching loop edges in wires of the shape or tangent edges (CTRL). Otherwise searching horizontal wires which contain selected edges (ALT). Without sub selection: Select all edges, faces (ALT) or vertexes (CTRL) of the model. |
 | <img src="toolbar-icons/CAM_SimTools.png" width="11" height="11" alt="CAM Simulator"> | <a id="button-cam_simtools"></a>CAM Simulator | `CAM_SimTools` | Simulates G-code on stock |
-| <img src="toolbar-icons/CAM_SimTools_1.png" width="11" height="11" alt="Legacy CAM Simulator"> | ↳ Legacy CAM Simulator | `CAM_SimTools` | Simulates G-code on stock |
+| <img src="toolbar-icons/CAM_SimTools_1.png" width="11" height="11" alt="Legacy CAM Simulator"> | â†³ Legacy CAM Simulator | `CAM_SimTools` | Simulates G-code on stock |
 | <img src="toolbar-icons/CAM_SimpleCopy.png" width="11" height="11" alt="Simple Copy"> | <a id="button-cam_simplecopy"></a>Simple Copy | `CAM_SimpleCopy` | Creates a non-parametric copy of another toolpath Several operations can be used with identical tool controller and coolant mode |
 | <img src="toolbar-icons/CAM_Slot.png" width="11" height="11" alt="Slot"> | <a id="button-cam_slot"></a>Slot | `CAM_Slot` | Create a single horizontal slot between two points. Points can be specified through selected geometry or custom points. Allowed selection only from one model: - two vertexes, - one or two edges, - one horizontal or vertical face, - one or two vertical faces. |
-| <img src="toolbar-icons/CAM_ToolBitDock.png" width="11" height="11" alt="Add Toolbit…"> | <a id="button-cam_toolbitdock"></a>Add Toolbit… | `CAM_ToolBitDock` | Opens the toolbit selection dialog |
+| <img src="toolbar-icons/CAM_ToolBitDock.png" width="11" height="11" alt="Add Toolbitâ€¦"> | <a id="button-cam_toolbitdock"></a>Add Toolbitâ€¦ | `CAM_ToolBitDock` | Opens the toolbit selection dialog |
 | <img src="toolbar-icons/CAM_Workplane.png" width="11" height="11" alt="Work Plane"> | <a id="button-cam_workplane"></a>Work Plane | `CAM_Workplane` | Create a named work plane on the Job, from a selected planar face or at the Job origin. Operations can share one work plane. |
 | <img src="toolbar-icons/Draft_AddConstruction.png" width="11" height="11" alt="Add to Construction Group"> | <a id="button-draft_addconstruction"></a>Add to Construction Group | `Draft_AddConstruction` | Adds the selected objects to the construction group, and changes their appearance to the construction style. The construction group is created if it does not exist. |
 | <img src="toolbar-icons/Draft_AddNamedGroup.png" width="11" height="11" alt="New Named Group"> | <a id="button-draft_addnamedgroup"></a>New Named Group | `Draft_AddNamedGroup` | Adds a group with a given name |
@@ -3825,25 +3665,25 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Draft_AnnotationStyleEditor.png" width="11" height="11" alt="Annotation Styles"> | <a id="button-draft_annotationstyleeditor"></a>Annotation Styles | `Draft_AnnotationStyleEditor` | Opens an editor to manage or create annotation styles |
 | <img src="toolbar-icons/Draft_Arc.png" width="11" height="11" alt="Arc"> | <a id="button-draft_arc"></a>Arc | `Draft_Arc` | Creates a circular arc from a center point and a radius |
 | <img src="toolbar-icons/Draft_ArcTools.png" width="11" height="11" alt="Arc"> | <a id="button-draft_arctools"></a>Arc | `Draft_ArcTools` | Creates a circular arc from a center point and a radius |
-| <img src="toolbar-icons/Draft_ArcTools_1.png" width="11" height="11" alt="Arc From 3 Points"> | ↳ Arc From 3 Points | `Draft_ArcTools` | Creates a circular arc from 3 points |
+| <img src="toolbar-icons/Draft_ArcTools_1.png" width="11" height="11" alt="Arc From 3 Points"> | â†³ Arc From 3 Points | `Draft_ArcTools` | Creates a circular arc from 3 points |
 | <img src="toolbar-icons/Draft_Arc_3Points.png" width="11" height="11" alt="Arc From 3 Points"> | <a id="button-draft_arc_3points"></a>Arc From 3 Points | `Draft_Arc_3Points` | Creates a circular arc from 3 points |
 | <img src="toolbar-icons/Draft_ArrayTools.png" width="11" height="11" alt="Array"> | <a id="button-draft_arraytools"></a>Array | `Draft_ArrayTools` | Creates copies of the selected object in an orthogonal pattern |
-| <img src="toolbar-icons/Draft_ArrayTools_1.png" width="11" height="11" alt="Polar Array"> | ↳ Polar Array | `Draft_ArrayTools` | Creates copies of the selected object in a polar pattern |
-| <img src="toolbar-icons/Draft_ArrayTools_2.png" width="11" height="11" alt="Circular Array"> | ↳ Circular Array | `Draft_ArrayTools` | Creates copies of the selected object in a radial pattern with 1 or more circular layers |
-| <img src="toolbar-icons/Draft_ArrayTools_3.png" width="11" height="11" alt="Path Array"> | ↳ Path Array | `Draft_ArrayTools` | Creates copies of the selected object along a selected path |
-| <img src="toolbar-icons/Draft_ArrayTools_4.png" width="11" height="11" alt="Path Link Array"> | ↳ Path Link Array | `Draft_ArrayTools` | Creates linked copies of the selected object along a selected path |
-| <img src="toolbar-icons/Draft_ArrayTools_5.png" width="11" height="11" alt="Point Array"> | ↳ Point Array | `Draft_ArrayTools` | Creates copies of the selected object at the points of a point object |
-| <img src="toolbar-icons/Draft_ArrayTools_6.png" width="11" height="11" alt="Point Link Array"> | ↳ Point Link Array | `Draft_ArrayTools` | Creates linked copies of the selected object at the points of a point object |
-| <img src="toolbar-icons/Draft_ArrayTools_7.png" width="11" height="11" alt="Twisted Path Array"> | ↳ Twisted Path Array | `Draft_ArrayTools` | Creates twisted copies of the selected object along a selected path |
-| <img src="toolbar-icons/Draft_ArrayTools_8.png" width="11" height="11" alt="Twisted Path Link Array"> | ↳ Twisted Path Link Array | `Draft_ArrayTools` | Creates twisted linked copies of the selected object along a selected path |
+| <img src="toolbar-icons/Draft_ArrayTools_1.png" width="11" height="11" alt="Polar Array"> | â†³ Polar Array | `Draft_ArrayTools` | Creates copies of the selected object in a polar pattern |
+| <img src="toolbar-icons/Draft_ArrayTools_2.png" width="11" height="11" alt="Circular Array"> | â†³ Circular Array | `Draft_ArrayTools` | Creates copies of the selected object in a radial pattern with 1 or more circular layers |
+| <img src="toolbar-icons/Draft_ArrayTools_3.png" width="11" height="11" alt="Path Array"> | â†³ Path Array | `Draft_ArrayTools` | Creates copies of the selected object along a selected path |
+| <img src="toolbar-icons/Draft_ArrayTools_4.png" width="11" height="11" alt="Path Link Array"> | â†³ Path Link Array | `Draft_ArrayTools` | Creates linked copies of the selected object along a selected path |
+| <img src="toolbar-icons/Draft_ArrayTools_5.png" width="11" height="11" alt="Point Array"> | â†³ Point Array | `Draft_ArrayTools` | Creates copies of the selected object at the points of a point object |
+| <img src="toolbar-icons/Draft_ArrayTools_6.png" width="11" height="11" alt="Point Link Array"> | â†³ Point Link Array | `Draft_ArrayTools` | Creates linked copies of the selected object at the points of a point object |
+| <img src="toolbar-icons/Draft_ArrayTools_7.png" width="11" height="11" alt="Twisted Path Array"> | â†³ Twisted Path Array | `Draft_ArrayTools` | Creates twisted copies of the selected object along a selected path |
+| <img src="toolbar-icons/Draft_ArrayTools_8.png" width="11" height="11" alt="Twisted Path Link Array"> | â†³ Twisted Path Link Array | `Draft_ArrayTools` | Creates twisted linked copies of the selected object along a selected path |
 | <img src="toolbar-icons/Draft_BSpline.png" width="11" height="11" alt="B-Spline"> | <a id="button-draft_bspline"></a>B-Spline | `Draft_BSpline` | Creates a multiple-point B-spline |
-| <img src="toolbar-icons/Draft_BezCurve.png" width="11" height="11" alt="Bézier Curve"> | <a id="button-draft_bezcurve"></a>Bézier Curve | `Draft_BezCurve` | Creates an n-degree Bézier curve. The more points, the higher the degree. |
-| <img src="toolbar-icons/Draft_BezierTools.png" width="11" height="11" alt="Cubic Bézier Curve"> | <a id="button-draft_beziertools"></a>Cubic Bézier Curve | `Draft_BezierTools` | Creates a Bézier curve made of 2nd degree (quadratic) and 3rd degree (cubic) segments. Clicking and dragging allows to define segments. Control points and properties of each knot can be edited after creation. |
-| <img src="toolbar-icons/Draft_BezierTools_1.png" width="11" height="11" alt="Bézier Curve"> | ↳ Bézier Curve | `Draft_BezierTools` | Creates an n-degree Bézier curve. The more points, the higher the degree. |
+| <img src="toolbar-icons/Draft_BezCurve.png" width="11" height="11" alt="BÃ©zier Curve"> | <a id="button-draft_bezcurve"></a>BÃ©zier Curve | `Draft_BezCurve` | Creates an n-degree BÃ©zier curve. The more points, the higher the degree. |
+| <img src="toolbar-icons/Draft_BezierTools.png" width="11" height="11" alt="Cubic BÃ©zier Curve"> | <a id="button-draft_beziertools"></a>Cubic BÃ©zier Curve | `Draft_BezierTools` | Creates a BÃ©zier curve made of 2nd degree (quadratic) and 3rd degree (cubic) segments. Clicking and dragging allows to define segments. Control points and properties of each knot can be edited after creation. |
+| <img src="toolbar-icons/Draft_BezierTools_1.png" width="11" height="11" alt="BÃ©zier Curve"> | â†³ BÃ©zier Curve | `Draft_BezierTools` | Creates an n-degree BÃ©zier curve. The more points, the higher the degree. |
 | <img src="toolbar-icons/Draft_Circle.png" width="11" height="11" alt="Circle"> | <a id="button-draft_circle"></a>Circle | `Draft_Circle` | Creates a circle (full circular arc) |
 | <img src="toolbar-icons/Draft_CircularArray.png" width="11" height="11" alt="Circular Array"> | <a id="button-draft_circulararray"></a>Circular Array | `Draft_CircularArray` | Creates copies of the selected object in a radial pattern with 1 or more circular layers |
 | <img src="toolbar-icons/Draft_Clone.png" width="11" height="11" alt="Clone"> | <a id="button-draft_clone"></a>Clone | `Draft_Clone` | Creates a clone of the selected objects |
-| <img src="toolbar-icons/Draft_CubicBezCurve.png" width="11" height="11" alt="Cubic Bézier Curve"> | <a id="button-draft_cubicbezcurve"></a>Cubic Bézier Curve | `Draft_CubicBezCurve` | Creates a Bézier curve made of 2nd degree (quadratic) and 3rd degree (cubic) segments. Clicking and dragging allows to define segments. Control points and properties of each knot can be edited after creation. |
+| <img src="toolbar-icons/Draft_CubicBezCurve.png" width="11" height="11" alt="Cubic BÃ©zier Curve"> | <a id="button-draft_cubicbezcurve"></a>Cubic BÃ©zier Curve | `Draft_CubicBezCurve` | Creates a BÃ©zier curve made of 2nd degree (quadratic) and 3rd degree (cubic) segments. Clicking and dragging allows to define segments. Control points and properties of each knot can be edited after creation. |
 | <img src="toolbar-icons/Draft_Dimension.png" width="11" height="11" alt="Dimension"> | <a id="button-draft_dimension"></a>Dimension | `Draft_Dimension` | Creates a linear dimension for a straight edge, a circular edge, or 2 picked points, or an angular dimension for 2 straight edges |
 | <img src="toolbar-icons/Draft_Downgrade.png" width="11" height="11" alt="Downgrade"> | <a id="button-draft_downgrade"></a>Downgrade | `Draft_Downgrade` | Downgrades the selected objects into simpler shapes. The result of the operation depends on the types of objects, which may be downgraded several times in a row. For example, a 3D solid is deconstructed into separate faces, wires, and then edges. Faces can also be subtracted. |
 | <img src="toolbar-icons/Draft_Draft2Sketch.png" width="11" height="11" alt="Draft to Sketch"> | <a id="button-draft_draft2sketch"></a>Draft to Sketch | `Draft_Draft2Sketch` | Converts bidirectionally between Draft objects and sketches. Multiple selected Draft objects are converted into a single sketch. However, a single sketch with disconnected traces is converted into several individual Draft objects. |
@@ -3869,7 +3709,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Draft_PointArray.png" width="11" height="11" alt="Point Array"> | <a id="button-draft_pointarray"></a>Point Array | `Draft_PointArray` | Creates copies of the selected object at the points of a point object |
 | <img src="toolbar-icons/Draft_PointLinkArray.png" width="11" height="11" alt="Point Link Array"> | <a id="button-draft_pointlinkarray"></a>Point Link Array | `Draft_PointLinkArray` | Creates linked copies of the selected object at the points of a point object |
 | <img src="toolbar-icons/Draft_PolarArray.png" width="11" height="11" alt="Polar Array"> | <a id="button-draft_polararray"></a>Polar Array | `Draft_PolarArray` | Creates copies of the selected object in a polar pattern |
-| <img src="toolbar-icons/Draft_Polygon.png" width="11" height="11" alt="Polygon"> | <a id="button-draft_polygon"></a>Polygon | `Draft_Polygon` | Creates a regular polygon (triangle, square, pentagon…) |
+| <img src="toolbar-icons/Draft_Polygon.png" width="11" height="11" alt="Polygon"> | <a id="button-draft_polygon"></a>Polygon | `Draft_Polygon` | Creates a regular polygon (triangle, square, pentagonâ€¦) |
 | <img src="toolbar-icons/Draft_Rectangle.png" width="11" height="11" alt="Rectangle"> | <a id="button-draft_rectangle"></a>Rectangle | `Draft_Rectangle` | Creates a 2-point rectangle |
 | <img src="toolbar-icons/Draft_Rotate.png" width="11" height="11" alt="Rotate"> | <a id="button-draft_rotate"></a>Rotate | `Draft_Rotate` | Rotates the selected objects. If the "Copy" option is active, it will create rotated copies. |
 | <img src="toolbar-icons/Draft_Scale.png" width="11" height="11" alt="Scale"> | <a id="button-draft_scale"></a>Scale | `Draft_Scale` | Scales the selected objects from a base point |
@@ -3877,7 +3717,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Draft_Shape2DView.png" width="11" height="11" alt="Shape 2D View"> | <a id="button-draft_shape2dview"></a>Shape 2D View | `Draft_Shape2DView` | Creates a 2D projection of the selected objects on the XY-plane. The initial projection direction is the opposite of the current active view direction. |
 | <img src="toolbar-icons/Draft_ShapeString.png" width="11" height="11" alt="Shape From Text"> | <a id="button-draft_shapestring"></a>Shape From Text | `Draft_ShapeString` | Creates a shape from a text string and a specified font |
 | <img src="toolbar-icons/Draft_Slope.png" width="11" height="11" alt="Set Slope"> | <a id="button-draft_slope"></a>Set Slope | `Draft_Slope` | Sets the slope of the selected line by changing the value of the Z value of one of its points. If a polyline is selected, it will apply the slope transformation to each of its segments. The slope will always change the Z value, therefore this command only works well for straight Draft lines that are drawn on the XY-plane. |
-| <img src="toolbar-icons/Draft_Snap_Angle.png" width="11" height="11" alt="Snap Angle"> | <a id="button-draft_snap_angle"></a>Snap Angle | `Draft_Snap_Angle` | Snaps to the special cardinal points on circular edges, at multiples of 30° and 45° |
+| <img src="toolbar-icons/Draft_Snap_Angle.png" width="11" height="11" alt="Snap Angle"> | <a id="button-draft_snap_angle"></a>Snap Angle | `Draft_Snap_Angle` | Snaps to the special cardinal points on circular edges, at multiples of 30Â° and 45Â° |
 | <img src="toolbar-icons/Draft_Snap_Center.png" width="11" height="11" alt="Snap Center"> | <a id="button-draft_snap_center"></a>Snap Center | `Draft_Snap_Center` | Snaps to the center point of faces and circular edges, and to the placement point of working plane proxies and building parts |
 | <img src="toolbar-icons/Draft_Snap_Dimensions.png" width="11" height="11" alt="Snap Dimensions"> | <a id="button-draft_snap_dimensions"></a>Snap Dimensions | `Draft_Snap_Dimensions` | Shows temporary X and Y dimensions |
 | <img src="toolbar-icons/Draft_Snap_Endpoint.png" width="11" height="11" alt="Snap Endpoint"> | <a id="button-draft_snap_endpoint"></a>Snap Endpoint | `Draft_Snap_Endpoint` | Snaps to the endpoints of edges |
@@ -3887,7 +3727,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Draft_Snap_Lock.png" width="11" height="11" alt="Snap Lock"> | <a id="button-draft_snap_lock"></a>Snap Lock | `Draft_Snap_Lock` | Enables or disables snapping globally |
 | <img src="toolbar-icons/Draft_Snap_Midpoint.png" width="11" height="11" alt="Snap Midpoint"> | <a id="button-draft_snap_midpoint"></a>Snap Midpoint | `Draft_Snap_Midpoint` | Snaps to the midpoint of edges |
 | <img src="toolbar-icons/Draft_Snap_Near.png" width="11" height="11" alt="Snap Near"> | <a id="button-draft_snap_near"></a>Snap Near | `Draft_Snap_Near` | Snaps to the nearest point on faces and edges |
-| <img src="toolbar-icons/Draft_Snap_Ortho.png" width="11" height="11" alt="Snap Ortho"> | <a id="button-draft_snap_ortho"></a>Snap Ortho | `Draft_Snap_Ortho` | Snaps to imaginary lines that cross the previous point at multiples of 45° |
+| <img src="toolbar-icons/Draft_Snap_Ortho.png" width="11" height="11" alt="Snap Ortho"> | <a id="button-draft_snap_ortho"></a>Snap Ortho | `Draft_Snap_Ortho` | Snaps to imaginary lines that cross the previous point at multiples of 45Â° |
 | <img src="toolbar-icons/Draft_Snap_Parallel.png" width="11" height="11" alt="Snap Parallel"> | <a id="button-draft_snap_parallel"></a>Snap Parallel | `Draft_Snap_Parallel` | Snaps to an imaginary line parallel to straight edges |
 | <img src="toolbar-icons/Draft_Snap_Perpendicular.png" width="11" height="11" alt="Snap Perpendicular"> | <a id="button-draft_snap_perpendicular"></a>Snap Perpendicular | `Draft_Snap_Perpendicular` | Snaps to the perpendicular points on faces and edges |
 | <img src="toolbar-icons/Draft_Snap_Special.png" width="11" height="11" alt="Snap Special"> | <a id="button-draft_snap_special"></a>Snap Special | `Draft_Snap_Special` | Snaps to special points defined by the object |
@@ -3907,10 +3747,10 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_Analysis.svg" width="11" height="11" alt="New Analysis"> | <a id="button-fem_analysis"></a>New Analysis | `FEM_Analysis` | Creates an analysis container with default solver |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ClippingPlaneAdd.svg" width="11" height="11" alt="Clipping Plane on Face"> | <a id="button-fem_clippingplaneadd"></a>Clipping Plane on Face | `FEM_ClippingPlaneAdd` | Adds a clipping plane on a selected face |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ClippingPlaneRemoveAll.svg" width="11" height="11" alt="Remove All Clipping Planes"> | <a id="button-fem_clippingplaneremoveall"></a>Remove All Clipping Planes | `FEM_ClippingPlaneRemoveAll` | Removes all clipping planes |
-| — | <a id="button-fem_compemconstraints"></a>Electromagnetic Boundary Conditions | `FEM_CompEmConstraints` | Electromagnetic boundary conditions |
-| — | <a id="button-fem_compemequations"></a>Electromagnetic Equations | `FEM_CompEmEquations` | Electromagnetic equations for the Elmer solver |
-| — | <a id="button-fem_compmechequations"></a>Mechanical Equations | `FEM_CompMechEquations` | Mechanical equations for the Elmer solver |
-| — | <a id="button-fem_compsolvers"></a>Solvers | `FEM_CompSolvers` | Creates a FEM solver |
+| â€” | <a id="button-fem_compemconstraints"></a>Electromagnetic Boundary Conditions | `FEM_CompEmConstraints` | Electromagnetic boundary conditions |
+| â€” | <a id="button-fem_compemequations"></a>Electromagnetic Equations | `FEM_CompEmEquations` | Electromagnetic equations for the Elmer solver |
+| â€” | <a id="button-fem_compmechequations"></a>Mechanical Equations | `FEM_CompMechEquations` | Mechanical equations for the Elmer solver |
+| â€” | <a id="button-fem_compsolvers"></a>Solvers | `FEM_CompSolvers` | Creates a FEM solver |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintBodyHeatSource.svg" width="11" height="11" alt="Body Heat Source"> | <a id="button-fem_constraintbodyheatsource"></a>Body Heat Source | `FEM_ConstraintBodyHeatSource` | Creates a body heat source |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintCentrif.svg" width="11" height="11" alt="Centrifugal Load"> | <a id="button-fem_constraintcentrif"></a>Centrifugal Load | `FEM_ConstraintCentrif` | Creates a centrifugal load |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ConstraintContact.svg" width="11" height="11" alt="Contact Constraint"> | <a id="button-fem_constraintcontact"></a>Contact Constraint | `FEM_ConstraintContact` | Creates a contact constraint between faces |
@@ -3959,7 +3799,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshAdvanced.svg" width="11" height="11" alt="Advanced Refinement Types"> | <a id="button-fem_meshadvanced"></a>Advanced Refinement Types | `FEM_MeshAdvanced` | Allows to define the mesh size by various advanced means |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshBoundaryLayer.svg" width="11" height="11" alt="2D Boundary Layer"> | <a id="button-fem_meshboundarylayer"></a>2D Boundary Layer | `FEM_MeshBoundaryLayer` | Adds a structured layer of mesh elements on 2D model boundaries |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshDistance.svg" width="11" height="11" alt="Distance-Based Refinement"> | <a id="button-fem_meshdistance"></a>Distance-Based Refinement | `FEM_MeshDistance` | Sets mesh size based on the distance to vertices, edges, and faces |
-| — | <a id="button-fem_meshgmshrefinement"></a>GMSH Refinements | `FEM_MeshGMSHRefinement` | Mesh refinements for the GMSH mesh generation |
+| â€” | <a id="button-fem_meshgmshrefinement"></a>GMSH Refinements | `FEM_MeshGMSHRefinement` | Mesh refinements for the GMSH mesh generation |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGmshFromShape.svg" width="11" height="11" alt="Mesh From Shape by Gmsh"> | <a id="button-fem_meshgmshfromshape"></a>Mesh From Shape by Gmsh | `FEM_MeshGmshFromShape` | Creates a FEM mesh from a shape by Gmsh mesher |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshGroup.svg" width="11" height="11" alt="Mesh Group"> | <a id="button-fem_meshgroup"></a>Mesh Group | `FEM_MeshGroup` | Creates a mesh group |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshManipulate.svg" width="11" height="11" alt="Manipulate Refinement"> | <a id="button-fem_meshmanipulate"></a>Manipulate Refinement | `FEM_MeshManipulate` | Allows to manipulate the output of a refinement in various ways |
@@ -3971,7 +3811,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_MeshTransfiniteVolume.svg" width="11" height="11" alt="Structured Transfinite Volume"> | <a id="button-fem_meshtransfinitevolume"></a>Structured Transfinite Volume | `FEM_MeshTransfiniteVolume` | Creates a structured mesh in a 4- or 5-sided volume bounded by transfinite surfaces |
 | <img src="../../../src/Gui/Icons/view-refresh.svg" width="11" height="11" alt="Apply Changes to Pipeline"> | <a id="button-fem_postapplychanges"></a>Apply Changes to Pipeline | `FEM_PostApplyChanges` | Applies changes to parameters directly and not on recompute only |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostBranchFilter.svg" width="11" height="11" alt="Pipeline Branch"> | <a id="button-fem_postbranchfilter"></a>Pipeline Branch | `FEM_PostBranchFilter` | Branches the pipeline into a new path |
-| — | <a id="button-fem_postcreatefunctions"></a>Filter Functions | `FEM_PostCreateFunctions` | Functions for use in postprocessing filter |
+| â€” | <a id="button-fem_postcreatefunctions"></a>Filter Functions | `FEM_PostCreateFunctions` | Functions for use in postprocessing filter |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterCalculator.svg" width="11" height="11" alt="Calculator Filter"> | <a id="button-fem_postfiltercalculator"></a>Calculator Filter | `FEM_PostFilterCalculator` | Creates a new field from current data |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterClipRegion.svg" width="11" height="11" alt="Region Clip Filter"> | <a id="button-fem_postfilterclipregion"></a>Region Clip Filter | `FEM_PostFilterClipRegion` | Defines a clip filter which uses functions to define the clipped region |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterClipScalar.svg" width="11" height="11" alt="Scalar Clip Filter"> | <a id="button-fem_postfilterclipscalar"></a>Scalar Clip Filter | `FEM_PostFilterClipScalar` | Defines a clip filter which clips a field with a scalar value |
@@ -3983,7 +3823,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterLinearizedStresses.svg" width="11" height="11" alt="Stress Linearization Plot"> | <a id="button-fem_postfilterlinearizedstresses"></a>Stress Linearization Plot | `FEM_PostFilterLinearizedStresses` | Defines a stress linearization plot |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostFilterWarp.svg" width="11" height="11" alt="Warp Filter"> | <a id="button-fem_postfilterwarp"></a>Warp Filter | `FEM_PostFilterWarp` | Warps the geometry along a vector field by a certain factor |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_PostPipelineFromResult.svg" width="11" height="11" alt="Post Pipeline From Result"> | <a id="button-fem_postpipelinefromresult"></a>Post Pipeline From Result | `FEM_PostPipelineFromResult` | Creates a post processing pipeline from a result object |
-| — | <a id="button-fem_postvisualization"></a>Data Visualizations | `FEM_PostVisualization` | Different visualizations to show post processing data in |
+| â€” | <a id="button-fem_postvisualization"></a>Data Visualizations | `FEM_PostVisualization` | Different visualizations to show post processing data in |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ResultShow.svg" width="11" height="11" alt="Show Result"> | <a id="button-fem_resultshow"></a>Show Result | `FEM_ResultShow` | Shows and visualizes the selected result data |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_ResultsPurge.svg" width="11" height="11" alt="Purge Results"> | <a id="button-fem_resultspurge"></a>Purge Results | `FEM_ResultsPurge` | Purges all results from the active analysis |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverStandard.svg" width="11" height="11" alt="Solver CalculiX"> | <a id="button-fem_solvercalculix"></a>Solver CalculiX | `FEM_SolverCalculiX` | Creates a FEM solver CalculiX |
@@ -3992,7 +3832,7 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverMystran.svg" width="11" height="11" alt="Solver Mystran"> | <a id="button-fem_solvermystran"></a>Solver Mystran | `FEM_SolverMystran` | Creates a FEM solver Mystran |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverRun.svg" width="11" height="11" alt="Run Solver"> | <a id="button-fem_solverrun"></a>Run Solver | `FEM_SolverRun` | Runs the calculations for the selected solver |
 | <img src="../../../src/Mod/Fem/Gui/Resources/icons/FEM_SolverZ88.svg" width="11" height="11" alt="Solver Z88"> | <a id="button-fem_solverz88"></a>Solver Z88 | `FEM_SolverZ88` | Creates a FEM solver Z88 |
-| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspection…"> | <a id="button-inspection_inspectelement"></a>Inspection… | `Inspection_InspectElement` | Inspects distance information |
+| <img src="../../../src/Mod/Inspection/Gui/Resources/icons/inspect_pipette.svg" width="11" height="11" alt="Inspectionâ€¦"> | <a id="button-inspection_inspectelement"></a>Inspectionâ€¦ | `Inspection_InspectElement` | Inspects distance information |
 | <img src="../../../src/Mod/Inspection/Gui/Resources/icons/InspectionWorkbench.svg" width="11" height="11" alt="Visual Inspection"> | <a id="button-inspection_visualinspection"></a>Visual Inspection | `Inspection_VisualInspection` | Inspects the objects visually |
 | <img src="toolbar-icons/Material_Edit.png" width="11" height="11" alt="Edit"> | <a id="button-material_edit"></a>Edit | `Material_Edit` | Edits material properties |
 | <img src="../../../src/Gui/Icons/preferences-general.svg" width="11" height="11" alt="Mesh From Shape"> | <a id="button-meshpart_mesher"></a>Mesh From Shape | `MeshPart_Mesher` | Tessellate shape |
@@ -4006,13 +3846,13 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Mesh_EvaluateFacet.png" width="11" height="11" alt="Face Info"> | <a id="button-mesh_evaluatefacet"></a>Face Info | `Mesh_EvaluateFacet` | Displays information about the selected faces |
 | <img src="toolbar-icons/Mesh_EvaluateSolid.png" width="11" height="11" alt="Evaluate Solid"> | <a id="button-mesh_evaluatesolid"></a>Evaluate Solid | `Mesh_EvaluateSolid` | Checks whether the mesh is a solid |
 | <img src="toolbar-icons/Mesh_Evaluation.png" width="11" height="11" alt="Evaluate and Repair"> | <a id="button-mesh_evaluation"></a>Evaluate and Repair | `Mesh_Evaluation` | Opens a dialog to analyze and repair a mesh |
-| <img src="toolbar-icons/Mesh_Export.png" width="11" height="11" alt="Export Mesh…"> | <a id="button-mesh_export"></a>Export Mesh… | `Mesh_Export` | Exports a mesh to a file |
+| <img src="toolbar-icons/Mesh_Export.png" width="11" height="11" alt="Export Meshâ€¦"> | <a id="button-mesh_export"></a>Export Meshâ€¦ | `Mesh_Export` | Exports a mesh to a file |
 | <img src="toolbar-icons/Mesh_FillInteractiveHole.png" width="11" height="11" alt="Close Hole"> | <a id="button-mesh_fillinteractivehole"></a>Close Hole | `Mesh_FillInteractiveHole` | Closes a hole interactively in the mesh |
 | <img src="toolbar-icons/Mesh_FillupHoles.png" width="11" height="11" alt="Fill Holes"> | <a id="button-mesh_fillupholes"></a>Fill Holes | `Mesh_FillupHoles` | Fills holes in the mesh |
 | <img src="toolbar-icons/Mesh_FlipNormals.png" width="11" height="11" alt="Flip Normals"> | <a id="button-mesh_flipnormals"></a>Flip Normals | `Mesh_FlipNormals` | Flips the normals of the selected mesh |
 | <img src="toolbar-icons/Mesh_FromPartShape.png" width="11" height="11" alt="Mesh From Shape"> | <a id="button-mesh_frompartshape"></a>Mesh From Shape | `Mesh_FromPartShape` | Tessellates the selected shape to a mesh |
 | <img src="toolbar-icons/Mesh_HarmonizeNormals.png" width="11" height="11" alt="Harmonize Normals"> | <a id="button-mesh_harmonizenormals"></a>Harmonize Normals | `Mesh_HarmonizeNormals` | Harmonizes the normals of the mesh |
-| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Mesh…"> | <a id="button-mesh_import"></a>Import Mesh… | `Mesh_Import` | Imports a mesh from a file |
+| <img src="toolbar-icons/Mesh_Import.png" width="11" height="11" alt="Import Meshâ€¦"> | <a id="button-mesh_import"></a>Import Meshâ€¦ | `Mesh_Import` | Imports a mesh from a file |
 | <img src="toolbar-icons/Mesh_Intersection.png" width="11" height="11" alt="Intersection"> | <a id="button-mesh_intersection"></a>Intersection | `Mesh_Intersection` | Creates a boolean intersection from the selected meshes |
 | <img src="toolbar-icons/Mesh_Merge.png" width="11" height="11" alt="Merge"> | <a id="button-mesh_merge"></a>Merge | `Mesh_Merge` | Merges selected meshes into one |
 | <img src="toolbar-icons/Mesh_PolyCut.png" width="11" height="11" alt="Cut"> | <a id="button-mesh_polycut"></a>Cut | `Mesh_PolyCut` | Cuts the mesh with a selected polygon |
@@ -4047,24 +3887,24 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> | <a id="button-partdesign_circularpattern"></a>Circular Pattern | `PartDesign_CircularPattern` | Duplicates the selected features or the active body in concentric circular patterns |
 | <img src="toolbar-icons/PartDesign_Clone.png" width="11" height="11" alt="Clone"> | <a id="button-partdesign_clone"></a>Clone | `PartDesign_Clone` | Copies a solid object parametrically as the base feature of a new body |
 | <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive.png" width="11" height="11" alt="Additive Box"> | <a id="button-partdesign_compprimitiveadditive"></a>Additive Box | `PartDesign_CompPrimitiveAdditive` | Creates an additive box by its width, height, and length |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_1.png" width="11" height="11" alt="Additive Cylinder"> | ↳ Additive Cylinder | `PartDesign_CompPrimitiveAdditive` | Creates an additive cylinder by its radius, height, and angle |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_2.png" width="11" height="11" alt="Additive Sphere"> | ↳ Additive Sphere | `PartDesign_CompPrimitiveAdditive` | Creates an additive sphere by its radius and various angles |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_3.png" width="11" height="11" alt="Additive Cone"> | ↳ Additive Cone | `PartDesign_CompPrimitiveAdditive` | Creates an additive cone |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_4.png" width="11" height="11" alt="Additive Ellipsoid"> | ↳ Additive Ellipsoid | `PartDesign_CompPrimitiveAdditive` | Creates an additive ellipsoid |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_5.png" width="11" height="11" alt="Additive Torus"> | ↳ Additive Torus | `PartDesign_CompPrimitiveAdditive` | Creates an additive torus |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_6.png" width="11" height="11" alt="Additive Prism"> | ↳ Additive Prism | `PartDesign_CompPrimitiveAdditive` | Creates an additive prism |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_7.png" width="11" height="11" alt="Additive Wedge"> | ↳ Additive Wedge | `PartDesign_CompPrimitiveAdditive` | Creates an additive wedge |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_1.png" width="11" height="11" alt="Additive Cylinder"> | â†³ Additive Cylinder | `PartDesign_CompPrimitiveAdditive` | Creates an additive cylinder by its radius, height, and angle |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_2.png" width="11" height="11" alt="Additive Sphere"> | â†³ Additive Sphere | `PartDesign_CompPrimitiveAdditive` | Creates an additive sphere by its radius and various angles |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_3.png" width="11" height="11" alt="Additive Cone"> | â†³ Additive Cone | `PartDesign_CompPrimitiveAdditive` | Creates an additive cone |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_4.png" width="11" height="11" alt="Additive Ellipsoid"> | â†³ Additive Ellipsoid | `PartDesign_CompPrimitiveAdditive` | Creates an additive ellipsoid |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_5.png" width="11" height="11" alt="Additive Torus"> | â†³ Additive Torus | `PartDesign_CompPrimitiveAdditive` | Creates an additive torus |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_6.png" width="11" height="11" alt="Additive Prism"> | â†³ Additive Prism | `PartDesign_CompPrimitiveAdditive` | Creates an additive prism |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive_7.png" width="11" height="11" alt="Additive Wedge"> | â†³ Additive Wedge | `PartDesign_CompPrimitiveAdditive` | Creates an additive wedge |
 | <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive.png" width="11" height="11" alt="Subtractive Box"> | <a id="button-partdesign_compprimitivesubtractive"></a>Subtractive Box | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive box by its width, height and length |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_1.png" width="11" height="11" alt="Subtractive Cylinder"> | ↳ Subtractive Cylinder | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive cylinder by its radius, height and angle |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_2.png" width="11" height="11" alt="Subtractive Sphere"> | ↳ Subtractive Sphere | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive sphere by its radius and various angles |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_3.png" width="11" height="11" alt="Subtractive Cone"> | ↳ Subtractive Cone | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive cone |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_4.png" width="11" height="11" alt="Subtractive Ellipsoid"> | ↳ Subtractive Ellipsoid | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive ellipsoid |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_5.png" width="11" height="11" alt="Subtractive Torus"> | ↳ Subtractive Torus | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive torus |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_6.png" width="11" height="11" alt="Subtractive Prism"> | ↳ Subtractive Prism | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive prism |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_7.png" width="11" height="11" alt="Subtractive Wedge"> | ↳ Subtractive Wedge | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive wedge |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_1.png" width="11" height="11" alt="Subtractive Cylinder"> | â†³ Subtractive Cylinder | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive cylinder by its radius, height and angle |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_2.png" width="11" height="11" alt="Subtractive Sphere"> | â†³ Subtractive Sphere | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive sphere by its radius and various angles |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_3.png" width="11" height="11" alt="Subtractive Cone"> | â†³ Subtractive Cone | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive cone |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_4.png" width="11" height="11" alt="Subtractive Ellipsoid"> | â†³ Subtractive Ellipsoid | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive ellipsoid |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_5.png" width="11" height="11" alt="Subtractive Torus"> | â†³ Subtractive Torus | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive torus |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_6.png" width="11" height="11" alt="Subtractive Prism"> | â†³ Subtractive Prism | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive prism |
+| <img src="toolbar-icons/PartDesign_CompPrimitiveSubtractive_7.png" width="11" height="11" alt="Subtractive Wedge"> | â†³ Subtractive Wedge | `PartDesign_CompPrimitiveSubtractive` | Creates a subtractive wedge |
 | <img src="toolbar-icons/PartDesign_CompSketches.png" width="11" height="11" alt="New Sketch"> | <a id="button-partdesign_compsketches"></a>New Sketch | `PartDesign_CompSketches` | Creates a new sketch |
-| <img src="toolbar-icons/PartDesign_CompSketches_1.png" width="11" height="11" alt="Attach Sketch"> | ↳ Attach Sketch | `PartDesign_CompSketches` | Attaches a sketch to the selected geometry element |
-| <img src="toolbar-icons/PartDesign_CompSketches_2.png" width="11" height="11" alt="Edit Sketch"> | ↳ Edit Sketch | `PartDesign_CompSketches` | Opens the selected sketch for editing |
+| <img src="toolbar-icons/PartDesign_CompSketches_1.png" width="11" height="11" alt="Attach Sketch"> | â†³ Attach Sketch | `PartDesign_CompSketches` | Attaches a sketch to the selected geometry element |
+| <img src="toolbar-icons/PartDesign_CompSketches_2.png" width="11" height="11" alt="Edit Sketch"> | â†³ Edit Sketch | `PartDesign_CompSketches` | Opens the selected sketch for editing |
 | <img src="toolbar-icons/PartDesign_Defeaturing.png" width="11" height="11" alt="Defeaturing"> | <a id="button-partdesign_defeaturing"></a>Defeaturing | `PartDesign_Defeaturing` | Removes selected faces from a solid |
 | <img src="toolbar-icons/PartDesign_Draft.png" width="11" height="11" alt="Draft"> | <a id="button-partdesign_draft"></a>Draft | `PartDesign_Draft` | Applies a draft to the selected faces |
 | <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> | <a id="button-partdesign_extrude"></a>Extrude | `PartDesign_Extrude` | Extrudes a profile with Add or Subtract selected in the task panel |
@@ -4096,17 +3936,17 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Part_ColorPerFace.png" width="11" height="11" alt="Appearance per Face"> | <a id="button-part_colorperface"></a>Appearance per Face | `Part_ColorPerFace` | Sets the appearance of individual faces of the selected object |
 | <img src="toolbar-icons/Part_Common.png" width="11" height="11" alt="Intersection"> | <a id="button-part_common"></a>Intersection | `Part_Common` | Intersects the selected shapes |
 | <img src="toolbar-icons/Part_CompCompoundTools.png" width="11" height="11" alt="Compound"> | <a id="button-part_compcompoundtools"></a>Compound | `Part_CompCompoundTools` | Compounds the selected shapes |
-| <img src="toolbar-icons/Part_CompCompoundTools_1.png" width="11" height="11" alt="Explode Compound"> | ↳ Explode Compound | `Part_CompCompoundTools` | Splits up a compound of shapes into separate objects, creating a compound filter for each shape |
-| <img src="toolbar-icons/Part_CompCompoundTools_2.png" width="11" height="11" alt="Compound Filter"> | ↳ Compound Filter | `Part_CompCompoundTools` | Filters out objects from the selected compound by characteristics like volume, area, or length, or by choosing specific items. If a second object is selected, it will be used as reference, for example, for collision or distance filtering. |
+| <img src="toolbar-icons/Part_CompCompoundTools_1.png" width="11" height="11" alt="Explode Compound"> | â†³ Explode Compound | `Part_CompCompoundTools` | Splits up a compound of shapes into separate objects, creating a compound filter for each shape |
+| <img src="toolbar-icons/Part_CompCompoundTools_2.png" width="11" height="11" alt="Compound Filter"> | â†³ Compound Filter | `Part_CompCompoundTools` | Filters out objects from the selected compound by characteristics like volume, area, or length, or by choosing specific items. If a second object is selected, it will be used as reference, for example, for collision or distance filtering. |
 | <img src="toolbar-icons/Part_CompJoinFeatures.png" width="11" height="11" alt="Connect Shapes"> | <a id="button-part_compjoinfeatures"></a>Connect Shapes | `Part_CompJoinFeatures` | Fuses shapes, taking care to preserve voids |
-| <img src="toolbar-icons/Part_CompJoinFeatures_1.png" width="11" height="11" alt="Embed Shapes"> | ↳ Embed Shapes | `Part_CompJoinFeatures` | Fuses one shape into another, taking care to preserve voids |
-| <img src="toolbar-icons/Part_CompJoinFeatures_2.png" width="11" height="11" alt="Cutout Shape"> | ↳ Cutout Shape | `Part_CompJoinFeatures` | Creates a cutout in the selected shape to fit another shape |
+| <img src="toolbar-icons/Part_CompJoinFeatures_1.png" width="11" height="11" alt="Embed Shapes"> | â†³ Embed Shapes | `Part_CompJoinFeatures` | Fuses one shape into another, taking care to preserve voids |
+| <img src="toolbar-icons/Part_CompJoinFeatures_2.png" width="11" height="11" alt="Cutout Shape"> | â†³ Cutout Shape | `Part_CompJoinFeatures` | Creates a cutout in the selected shape to fit another shape |
 | <img src="toolbar-icons/Part_CompOffset.png" width="11" height="11" alt="3D Offset"> | <a id="button-part_compoffset"></a>3D Offset | `Part_CompOffset` | Offsets shapes in 3D |
-| <img src="toolbar-icons/Part_CompOffset_1.png" width="11" height="11" alt="2D Offset"> | ↳ 2D Offset | `Part_CompOffset` | Offsets planar shapes in 2D |
+| <img src="toolbar-icons/Part_CompOffset_1.png" width="11" height="11" alt="2D Offset"> | â†³ 2D Offset | `Part_CompOffset` | Offsets planar shapes in 2D |
 | <img src="toolbar-icons/Part_CompSplitFeatures.png" width="11" height="11" alt="Boolean Fragments"> | <a id="button-part_compsplitfeatures"></a>Boolean Fragments | `Part_CompSplitFeatures` | Creates a boolean union which is sliced at the intersections of the selected shapes |
-| <img src="toolbar-icons/Part_CompSplitFeatures_1.png" width="11" height="11" alt="Slice Apart"> | ↳ Slice Apart | `Part_CompSplitFeatures` | Slices the selected object by other objects, and splits it apart, creating a compound filter for each slide |
-| <img src="toolbar-icons/Part_CompSplitFeatures_2.png" width="11" height="11" alt="Slice to Compound"> | ↳ Slice to Compound | `Part_CompSplitFeatures` | Slices the selected object by using other objects as cutting tools and storing the results in one compound |
-| <img src="toolbar-icons/Part_CompSplitFeatures_3.png" width="11" height="11" alt="Boolean XOR"> | ↳ Boolean XOR | `Part_CompSplitFeatures` | Performs an 'exclusive OR' boolean operation with two or more selected objects, or with the shapes inside a compound. Overlapping volumes of the shapes will be removed. |
+| <img src="toolbar-icons/Part_CompSplitFeatures_1.png" width="11" height="11" alt="Slice Apart"> | â†³ Slice Apart | `Part_CompSplitFeatures` | Slices the selected object by other objects, and splits it apart, creating a compound filter for each slide |
+| <img src="toolbar-icons/Part_CompSplitFeatures_2.png" width="11" height="11" alt="Slice to Compound"> | â†³ Slice to Compound | `Part_CompSplitFeatures` | Slices the selected object by using other objects as cutting tools and storing the results in one compound |
+| <img src="toolbar-icons/Part_CompSplitFeatures_3.png" width="11" height="11" alt="Boolean XOR"> | â†³ Boolean XOR | `Part_CompSplitFeatures` | Performs an 'exclusive OR' boolean operation with two or more selected objects, or with the shapes inside a compound. Overlapping volumes of the shapes will be removed. |
 | <img src="toolbar-icons/Part_Compound.png" width="11" height="11" alt="Compound"> | <a id="button-part_compound"></a>Compound | `Part_Compound` | Compounds the selected shapes |
 | <img src="toolbar-icons/Part_CompoundFilter.png" width="11" height="11" alt="Compound Filter"> | <a id="button-part_compoundfilter"></a>Compound Filter | `Part_CompoundFilter` | Filters out objects from the selected compound by characteristics like volume, area, or length, or by choosing specific items. If a second object is selected, it will be used as reference, for example, for collision or distance filtering. |
 | <img src="toolbar-icons/Part_Cone.png" width="11" height="11" alt="Cone"> | <a id="button-part_cone"></a>Cone | `Part_Cone` | Creates a solid cone |
@@ -4118,9 +3958,9 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Part_DatumPlane.png" width="11" height="11" alt="Datum Plane"> | <a id="button-part_datumplane"></a>Datum Plane | `Part_DatumPlane` | Creates a datum plane that can be attached to other objects |
 | <img src="toolbar-icons/Part_DatumPoint.png" width="11" height="11" alt="Datum Point"> | <a id="button-part_datumpoint"></a>Datum Point | `Part_DatumPoint` | Creates a datum point that can be attached to other objects |
 | <img src="toolbar-icons/Part_Datums.png" width="11" height="11" alt="Coordinate System"> | <a id="button-part_datums"></a>Coordinate System | `Part_Datums` | Creates a coordinate system that can be attached to other objects |
-| <img src="toolbar-icons/Part_Datums_1.png" width="11" height="11" alt="Datum Plane"> | ↳ Datum Plane | `Part_Datums` | Creates a datum plane that can be attached to other objects |
-| <img src="toolbar-icons/Part_Datums_2.png" width="11" height="11" alt="Datum Line"> | ↳ Datum Line | `Part_Datums` | Creates a datum line that can be attached to other objects |
-| <img src="toolbar-icons/Part_Datums_3.png" width="11" height="11" alt="Datum Point"> | ↳ Datum Point | `Part_Datums` | Creates a datum point that can be attached to other objects |
+| <img src="toolbar-icons/Part_Datums_1.png" width="11" height="11" alt="Datum Plane"> | â†³ Datum Plane | `Part_Datums` | Creates a datum plane that can be attached to other objects |
+| <img src="toolbar-icons/Part_Datums_2.png" width="11" height="11" alt="Datum Line"> | â†³ Datum Line | `Part_Datums` | Creates a datum line that can be attached to other objects |
+| <img src="toolbar-icons/Part_Datums_3.png" width="11" height="11" alt="Datum Point"> | â†³ Datum Point | `Part_Datums` | Creates a datum point that can be attached to other objects |
 | <img src="toolbar-icons/Part_Defeaturing.png" width="11" height="11" alt="Defeaturing"> | <a id="button-part_defeaturing"></a>Defeaturing | `Part_Defeaturing` | Removes the selected features from a shape |
 | <img src="toolbar-icons/Part_ExplodeCompound.png" width="11" height="11" alt="Explode Compound"> | <a id="button-part_explodecompound"></a>Explode Compound | `Part_ExplodeCompound` | Splits up a compound of shapes into separate objects, creating a compound filter for each shape |
 | <img src="toolbar-icons/Part_Extrude.png" width="11" height="11" alt="Extrude"> | <a id="button-part_extrude"></a>Extrude | `Part_Extrude` | Extrudes the selected sketch or profile |
@@ -4131,10 +3971,10 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Part_JoinCutout.png" width="11" height="11" alt="Cutout Shape"> | <a id="button-part_joincutout"></a>Cutout Shape | `Part_JoinCutout` | Creates a cutout in the selected shape to fit another shape |
 | <img src="toolbar-icons/Part_JoinEmbed.png" width="11" height="11" alt="Embed Shapes"> | <a id="button-part_joinembed"></a>Embed Shapes | `Part_JoinEmbed` | Fuses one shape into another, taking care to preserve voids |
 | <img src="toolbar-icons/Part_LinkArrays.png" width="11" height="11" alt="Circular Link Array"> | <a id="button-part_linkarrays"></a>Circular Link Array | `Part_LinkArrays` | Creates a concentric circular array of linked objects |
-| <img src="toolbar-icons/Part_LinkArrays_1.png" width="11" height="11" alt="Linear Link Array"> | ↳ Linear Link Array | `Part_LinkArrays` | Creates a linear array of linked objects |
-| <img src="toolbar-icons/Part_LinkArrays_2.png" width="11" height="11" alt="Path Link Array"> | ↳ Path Link Array | `Part_LinkArrays` | Creates an array of linked objects along a path |
-| <img src="toolbar-icons/Part_LinkArrays_3.png" width="11" height="11" alt="Point Link Array"> | ↳ Point Link Array | `Part_LinkArrays` | Creates an array of linked objects at each point of a sketch or shape |
-| <img src="toolbar-icons/Part_LinkArrays_4.png" width="11" height="11" alt="Polar Link Array"> | ↳ Polar Link Array | `Part_LinkArrays` | Creates a polar array of linked objects |
+| <img src="toolbar-icons/Part_LinkArrays_1.png" width="11" height="11" alt="Linear Link Array"> | â†³ Linear Link Array | `Part_LinkArrays` | Creates a linear array of linked objects |
+| <img src="toolbar-icons/Part_LinkArrays_2.png" width="11" height="11" alt="Path Link Array"> | â†³ Path Link Array | `Part_LinkArrays` | Creates an array of linked objects along a path |
+| <img src="toolbar-icons/Part_LinkArrays_3.png" width="11" height="11" alt="Point Link Array"> | â†³ Point Link Array | `Part_LinkArrays` | Creates an array of linked objects at each point of a sketch or shape |
+| <img src="toolbar-icons/Part_LinkArrays_4.png" width="11" height="11" alt="Polar Link Array"> | â†³ Polar Link Array | `Part_LinkArrays` | Creates a polar array of linked objects |
 | <img src="toolbar-icons/Part_Loft.png" width="11" height="11" alt="Loft"> | <a id="button-part_loft"></a>Loft | `Part_Loft` | Lofts the selected profiles |
 | <img src="toolbar-icons/Part_MakeFace.png" width="11" height="11" alt="Face From Wires"> | <a id="button-part_makeface"></a>Face From Wires | `Part_MakeFace` | Creates a face from the selected wires (e.g. from a sketch) |
 | <img src="toolbar-icons/Part_Mirror.png" width="11" height="11" alt="Mirror"> | <a id="button-part_mirror"></a>Mirror | `Part_Mirror` | Mirrors the selected shape |
@@ -4147,9 +3987,9 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Part_Scale.png" width="11" height="11" alt="Scale"> | <a id="button-part_scale"></a>Scale | `Part_Scale` | Scales the selected shape |
 | <img src="toolbar-icons/Part_Section.png" width="11" height="11" alt="Section"> | <a id="button-part_section"></a>Section | `Part_Section` | Sections 2 selected shapes |
 | <img src="toolbar-icons/Part_SelectFilter.png" width="11" height="11" alt="Vertex Selection"> | <a id="button-part_selectfilter"></a>Vertex Selection | `Part_SelectFilter` | Only allows the selection of vertices |
-| <img src="toolbar-icons/Part_SelectFilter_1.png" width="11" height="11" alt="Edge Selection"> | ↳ Edge Selection | `Part_SelectFilter` | Only allows the selection of edges |
-| <img src="toolbar-icons/Part_SelectFilter_2.png" width="11" height="11" alt="Face Selection"> | ↳ Face Selection | `Part_SelectFilter` | Only allows the selection of faces |
-| <img src="toolbar-icons/Part_SelectFilter_3.png" width="11" height="11" alt="No Selection Filters"> | ↳ No Selection Filters | `Part_SelectFilter` | Clears all selection filters |
+| <img src="toolbar-icons/Part_SelectFilter_1.png" width="11" height="11" alt="Edge Selection"> | â†³ Edge Selection | `Part_SelectFilter` | Only allows the selection of edges |
+| <img src="toolbar-icons/Part_SelectFilter_2.png" width="11" height="11" alt="Face Selection"> | â†³ Face Selection | `Part_SelectFilter` | Only allows the selection of faces |
+| <img src="toolbar-icons/Part_SelectFilter_3.png" width="11" height="11" alt="No Selection Filters"> | â†³ No Selection Filters | `Part_SelectFilter` | Clears all selection filters |
 | <img src="toolbar-icons/Part_Slice.png" width="11" height="11" alt="Slice to Compound"> | <a id="button-part_slice"></a>Slice to Compound | `Part_Slice` | Slices the selected object by using other objects as cutting tools and storing the results in one compound |
 | <img src="toolbar-icons/Part_SliceApart.png" width="11" height="11" alt="Slice Apart"> | <a id="button-part_sliceapart"></a>Slice Apart | `Part_SliceApart` | Slices the selected object by other objects, and splits it apart, creating a compound filter for each slide |
 | <img src="toolbar-icons/Part_Sphere.png" width="11" height="11" alt="Sphere"> | <a id="button-part_sphere"></a>Sphere | `Part_Sphere` | Creates a solid sphere |
@@ -4160,12 +4000,12 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Part_Tube.png" width="11" height="11" alt="Tube"> | <a id="button-part_tube"></a>Tube | `Part_Tube` | Creates a tube |
 | <img src="toolbar-icons/Part_XOR.png" width="11" height="11" alt="Boolean XOR"> | <a id="button-part_xor"></a>Boolean XOR | `Part_XOR` | Performs an 'exclusive OR' boolean operation with two or more selected objects, or with the shapes inside a compound. Overlapping volumes of the shapes will be removed. |
 | <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Convert.svg" width="11" height="11" alt="Convert to Points"> | <a id="button-points_convert"></a>Convert to Points | `Points_Convert` | Converts to points |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Points…"> | <a id="button-points_export"></a>Export Points… | `Points_Export` | Exports a point cloud |
-| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Points…"> | <a id="button-points_import"></a>Import Points… | `Points_Import` | Imports a point cloud |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Export_Point_cloud.svg" width="11" height="11" alt="Export Pointsâ€¦"> | <a id="button-points_export"></a>Export Pointsâ€¦ | `Points_Export` | Exports a point cloud |
+| <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Import_Point_cloud.svg" width="11" height="11" alt="Import Pointsâ€¦"> | <a id="button-points_import"></a>Import Pointsâ€¦ | `Points_Import` | Imports a point cloud |
 | <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Merge.svg" width="11" height="11" alt="Merge Point Clouds"> | <a id="button-points_merge"></a>Merge Point Clouds | `Points_Merge` | Merges several point clouds into one |
 | <img src="../../../src/Gui/Icons/PolygonPick.svg" width="11" height="11" alt="Cut Point Cloud"> | <a id="button-points_polycut"></a>Cut Point Cloud | `Points_PolyCut` | Cuts a point cloud with a selected polygon |
 | <img src="../../../src/Mod/Points/Gui/Resources/icons/Points_Structure.svg" width="11" height="11" alt="Structured Point Cloud"> | <a id="button-points_structure"></a>Structured Point Cloud | `Points_Structure` | Converts points to a structured point cloud |
-| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surface…"> | <a id="button-reen_approxsurface"></a>Approximate B-Spline Surface… | `Reen_ApproxSurface` | Approximates a B-spline surface |
+| <img src="../../../src/Mod/ReverseEngineering/Gui/Resources/icons/actions/FitSurface.svg" width="11" height="11" alt="Approximate B-Spline Surfaceâ€¦"> | <a id="button-reen_approxsurface"></a>Approximate B-Spline Surfaceâ€¦ | `Reen_ApproxSurface` | Approximates a B-spline surface |
 | <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateRobot.svg" width="11" height="11" alt="Place Robot"> | <a id="button-robot_create"></a>Place Robot | `Robot_Create` | Places a robot in the scene |
 | <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_CreateTrajectory.svg" width="11" height="11" alt="Trajectory"> | <a id="button-robot_createtrajectory"></a>Trajectory | `Robot_CreateTrajectory` | Creates a new empty trajectory |
 | <img src="../../../src/Mod/Robot/Gui/Resources/icons/Robot_Edge2Trac.svg" width="11" height="11" alt="Edge to Trajectory"> | <a id="button-robot_edge2trac"></a>Edge to Trajectory | `Robot_Edge2Trac` | Generates a trajectory from the selected edges |
@@ -4183,62 +4023,62 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Sketcher_BSplineInsertKnot.png" width="11" height="11" alt="Insert Knot"> | <a id="button-sketcher_bsplineinsertknot"></a>Insert Knot | `Sketcher_BSplineInsertKnot` | Inserts a knot at a given parameter. If a knot already exists at that parameter, its multiplicity is increased by 1. |
 | <img src="toolbar-icons/Sketcher_CarbonCopy.png" width="11" height="11" alt="Carbon Copy"> | <a id="button-sketcher_carboncopy"></a>Carbon Copy | `Sketcher_CarbonCopy` | Copies the geometry of another sketch |
 | <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation.png" width="11" height="11" alt="Toggle B-Spline Degree"> | <a id="button-sketcher_compbsplineshowhidegeometryinformation"></a>Toggle B-Spline Degree | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the degree for all B-splines |
-| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_1.png" width="11" height="11" alt="Toggle B-Spline Control Polygon"> | ↳ Toggle B-Spline Control Polygon | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the control polygons for all B-splines |
-| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_2.png" width="11" height="11" alt="Toggle B-Spline Curvature Comb"> | ↳ Toggle B-Spline Curvature Comb | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the curvature comb for all B-splines |
-| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_3.png" width="11" height="11" alt="Toggle B-Spline Knot Multiplicity"> | ↳ Toggle B-Spline Knot Multiplicity | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the knot multiplicity for all B-splines |
-| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_4.png" width="11" height="11" alt="Toggle B-Spline Control Point Weight"> | ↳ Toggle B-Spline Control Point Weight | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the control point weight for all B-splines |
+| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_1.png" width="11" height="11" alt="Toggle B-Spline Control Polygon"> | â†³ Toggle B-Spline Control Polygon | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the control polygons for all B-splines |
+| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_2.png" width="11" height="11" alt="Toggle B-Spline Curvature Comb"> | â†³ Toggle B-Spline Curvature Comb | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the curvature comb for all B-splines |
+| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_3.png" width="11" height="11" alt="Toggle B-Spline Knot Multiplicity"> | â†³ Toggle B-Spline Knot Multiplicity | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the knot multiplicity for all B-splines |
+| <img src="toolbar-icons/Sketcher_CompBSplineShowHideGeometryInformation_4.png" width="11" height="11" alt="Toggle B-Spline Control Point Weight"> | â†³ Toggle B-Spline Control Point Weight | `Sketcher_CompBSplineShowHideGeometryInformation` | Toggles the visibility of the control point weight for all B-splines |
 | <img src="toolbar-icons/Sketcher_CompConstrainRadDia.png" width="11" height="11" alt="Constrain radius"> | <a id="button-sketcher_compconstrainraddia"></a>Constrain radius | `Sketcher_CompConstrainRadDia` | Fix the radius of an arc or a circle |
-| <img src="toolbar-icons/Sketcher_CompConstrainRadDia_1.png" width="11" height="11" alt="Constrain diameter"> | ↳ Constrain diameter | `Sketcher_CompConstrainRadDia` | Fix the diameter of a circle or an arc |
-| <img src="toolbar-icons/Sketcher_CompConstrainRadDia_2.png" width="11" height="11" alt="Constrain auto radius/diameter"> | ↳ Constrain auto radius/diameter | `Sketcher_CompConstrainRadDia` | Fix the radius/diameter of an arc or a circle |
+| <img src="toolbar-icons/Sketcher_CompConstrainRadDia_1.png" width="11" height="11" alt="Constrain diameter"> | â†³ Constrain diameter | `Sketcher_CompConstrainRadDia` | Fix the diameter of a circle or an arc |
+| <img src="toolbar-icons/Sketcher_CompConstrainRadDia_2.png" width="11" height="11" alt="Constrain auto radius/diameter"> | â†³ Constrain auto radius/diameter | `Sketcher_CompConstrainRadDia` | Fix the radius/diameter of an arc or a circle |
 | <img src="toolbar-icons/Sketcher_CompCreateArc.png" width="11" height="11" alt="Arc From Center"> | <a id="button-sketcher_compcreatearc"></a>Arc From Center | `Sketcher_CompCreateArc` | Creates an arc defined by a center point and an end point |
-| <img src="toolbar-icons/Sketcher_CompCreateArc_1.png" width="11" height="11" alt="Arc From 3 Points"> | ↳ Arc From 3 Points | `Sketcher_CompCreateArc` | Creates an arc defined by 2 end points and 1 point on the arc |
-| <img src="toolbar-icons/Sketcher_CompCreateArc_2.png" width="11" height="11" alt="Elliptical Arc"> | ↳ Elliptical Arc | `Sketcher_CompCreateArc` | Creates an elliptical arc |
-| <img src="toolbar-icons/Sketcher_CompCreateArc_3.png" width="11" height="11" alt="Hyperbolic Arc"> | ↳ Hyperbolic Arc | `Sketcher_CompCreateArc` | Creates a hyperbolic arc |
-| <img src="toolbar-icons/Sketcher_CompCreateArc_4.png" width="11" height="11" alt="Parabolic Arc"> | ↳ Parabolic Arc | `Sketcher_CompCreateArc` | Creates a parabolic arc |
+| <img src="toolbar-icons/Sketcher_CompCreateArc_1.png" width="11" height="11" alt="Arc From 3 Points"> | â†³ Arc From 3 Points | `Sketcher_CompCreateArc` | Creates an arc defined by 2 end points and 1 point on the arc |
+| <img src="toolbar-icons/Sketcher_CompCreateArc_2.png" width="11" height="11" alt="Elliptical Arc"> | â†³ Elliptical Arc | `Sketcher_CompCreateArc` | Creates an elliptical arc |
+| <img src="toolbar-icons/Sketcher_CompCreateArc_3.png" width="11" height="11" alt="Hyperbolic Arc"> | â†³ Hyperbolic Arc | `Sketcher_CompCreateArc` | Creates a hyperbolic arc |
+| <img src="toolbar-icons/Sketcher_CompCreateArc_4.png" width="11" height="11" alt="Parabolic Arc"> | â†³ Parabolic Arc | `Sketcher_CompCreateArc` | Creates a parabolic arc |
 | <img src="toolbar-icons/Sketcher_CompCreateBSpline.png" width="11" height="11" alt="B-Spline"> | <a id="button-sketcher_compcreatebspline"></a>B-Spline | `Sketcher_CompCreateBSpline` | Creates a B-spline curve defined by control points |
-| <img src="toolbar-icons/Sketcher_CompCreateBSpline_1.png" width="11" height="11" alt="Periodic B-Spline"> | ↳ Periodic B-Spline | `Sketcher_CompCreateBSpline` | Creates a periodic B-spline curve defined by control points |
-| <img src="toolbar-icons/Sketcher_CompCreateBSpline_2.png" width="11" height="11" alt="B-Spline From Knots"> | ↳ B-Spline From Knots | `Sketcher_CompCreateBSpline` | Creates a B-spline from knots, i.e. from interpolation |
-| <img src="toolbar-icons/Sketcher_CompCreateBSpline_3.png" width="11" height="11" alt="Periodic B-Spline From Knots"> | ↳ Periodic B-Spline From Knots | `Sketcher_CompCreateBSpline` | Creates a periodic B-spline defined by knots using interpolation |
+| <img src="toolbar-icons/Sketcher_CompCreateBSpline_1.png" width="11" height="11" alt="Periodic B-Spline"> | â†³ Periodic B-Spline | `Sketcher_CompCreateBSpline` | Creates a periodic B-spline curve defined by control points |
+| <img src="toolbar-icons/Sketcher_CompCreateBSpline_2.png" width="11" height="11" alt="B-Spline From Knots"> | â†³ B-Spline From Knots | `Sketcher_CompCreateBSpline` | Creates a B-spline from knots, i.e. from interpolation |
+| <img src="toolbar-icons/Sketcher_CompCreateBSpline_3.png" width="11" height="11" alt="Periodic B-Spline From Knots"> | â†³ Periodic B-Spline From Knots | `Sketcher_CompCreateBSpline` | Creates a periodic B-spline defined by knots using interpolation |
 | <img src="toolbar-icons/Sketcher_CompCreateConic.png" width="11" height="11" alt="Circle From Center"> | <a id="button-sketcher_compcreateconic"></a>Circle From Center | `Sketcher_CompCreateConic` | Creates a circle from a center and rim point |
-| <img src="toolbar-icons/Sketcher_CompCreateConic_1.png" width="11" height="11" alt="Circle From 3 Points"> | ↳ Circle From 3 Points | `Sketcher_CompCreateConic` | Creates a circle from 3 perimeter points |
-| <img src="toolbar-icons/Sketcher_CompCreateConic_2.png" width="11" height="11" alt="Ellipse From Center"> | ↳ Ellipse From Center | `Sketcher_CompCreateConic` | Creates an ellipse from a center and rim point |
-| <img src="toolbar-icons/Sketcher_CompCreateConic_3.png" width="11" height="11" alt="Ellipse From 3 Points"> | ↳ Ellipse From 3 Points | `Sketcher_CompCreateConic` | Creates an ellipse from 3 points on its perimeter |
+| <img src="toolbar-icons/Sketcher_CompCreateConic_1.png" width="11" height="11" alt="Circle From 3 Points"> | â†³ Circle From 3 Points | `Sketcher_CompCreateConic` | Creates a circle from 3 perimeter points |
+| <img src="toolbar-icons/Sketcher_CompCreateConic_2.png" width="11" height="11" alt="Ellipse From Center"> | â†³ Ellipse From Center | `Sketcher_CompCreateConic` | Creates an ellipse from a center and rim point |
+| <img src="toolbar-icons/Sketcher_CompCreateConic_3.png" width="11" height="11" alt="Ellipse From 3 Points"> | â†³ Ellipse From 3 Points | `Sketcher_CompCreateConic` | Creates an ellipse from 3 points on its perimeter |
 | <img src="toolbar-icons/Sketcher_CompCreateFillets.png" width="11" height="11" alt="Fillet"> | <a id="button-sketcher_compcreatefillets"></a>Fillet | `Sketcher_CompCreateFillets` | Creates a fillet between 2 selected curves or at coincident points |
-| <img src="toolbar-icons/Sketcher_CompCreateFillets_1.png" width="11" height="11" alt="Chamfer"> | ↳ Chamfer | `Sketcher_CompCreateFillets` | Creates a chamfer between 2 selected curves or at coincident points |
+| <img src="toolbar-icons/Sketcher_CompCreateFillets_1.png" width="11" height="11" alt="Chamfer"> | â†³ Chamfer | `Sketcher_CompCreateFillets` | Creates a chamfer between 2 selected curves or at coincident points |
 | <img src="toolbar-icons/Sketcher_CompCreateRectangles.png" width="11" height="11" alt="Rectangle"> | <a id="button-sketcher_compcreaterectangles"></a>Rectangle | `Sketcher_CompCreateRectangles` | Creates a rectangle from 2 corner points |
-| <img src="toolbar-icons/Sketcher_CompCreateRectangles_1.png" width="11" height="11" alt="Centered Rectangle"> | ↳ Centered Rectangle | `Sketcher_CompCreateRectangles` | Creates a centered rectangle from a center and a corner point |
-| <img src="toolbar-icons/Sketcher_CompCreateRectangles_2.png" width="11" height="11" alt="Rounded Rectangle"> | ↳ Rounded Rectangle | `Sketcher_CompCreateRectangles` | Creates a rounded rectangle from 2 corner points |
+| <img src="toolbar-icons/Sketcher_CompCreateRectangles_1.png" width="11" height="11" alt="Centered Rectangle"> | â†³ Centered Rectangle | `Sketcher_CompCreateRectangles` | Creates a centered rectangle from a center and a corner point |
+| <img src="toolbar-icons/Sketcher_CompCreateRectangles_2.png" width="11" height="11" alt="Rounded Rectangle"> | â†³ Rounded Rectangle | `Sketcher_CompCreateRectangles` | Creates a rounded rectangle from 2 corner points |
 | <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon.png" width="11" height="11" alt="Triangle"> | <a id="button-sketcher_compcreateregularpolygon"></a>Triangle | `Sketcher_CompCreateRegularPolygon` | Creates an equilateral triangle from a center and corner point |
-| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_1.png" width="11" height="11" alt="Square"> | ↳ Square | `Sketcher_CompCreateRegularPolygon` | Creates a square from a center and corner point |
-| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_2.png" width="11" height="11" alt="Pentagon"> | ↳ Pentagon | `Sketcher_CompCreateRegularPolygon` | Creates a pentagon from a center and corner point |
-| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_3.png" width="11" height="11" alt="Hexagon"> | ↳ Hexagon | `Sketcher_CompCreateRegularPolygon` | Creates a hexagon from a center and corner point |
-| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_4.png" width="11" height="11" alt="Heptagon"> | ↳ Heptagon | `Sketcher_CompCreateRegularPolygon` | Creates a heptagon from a center and corner point |
-| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_5.png" width="11" height="11" alt="Octagon"> | ↳ Octagon | `Sketcher_CompCreateRegularPolygon` | Creates an octagon from a center and corner point |
-| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_6.png" width="11" height="11" alt="Polygon"> | ↳ Polygon | `Sketcher_CompCreateRegularPolygon` | Creates a regular polygon from a center and corner point |
+| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_1.png" width="11" height="11" alt="Square"> | â†³ Square | `Sketcher_CompCreateRegularPolygon` | Creates a square from a center and corner point |
+| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_2.png" width="11" height="11" alt="Pentagon"> | â†³ Pentagon | `Sketcher_CompCreateRegularPolygon` | Creates a pentagon from a center and corner point |
+| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_3.png" width="11" height="11" alt="Hexagon"> | â†³ Hexagon | `Sketcher_CompCreateRegularPolygon` | Creates a hexagon from a center and corner point |
+| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_4.png" width="11" height="11" alt="Heptagon"> | â†³ Heptagon | `Sketcher_CompCreateRegularPolygon` | Creates a heptagon from a center and corner point |
+| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_5.png" width="11" height="11" alt="Octagon"> | â†³ Octagon | `Sketcher_CompCreateRegularPolygon` | Creates an octagon from a center and corner point |
+| <img src="toolbar-icons/Sketcher_CompCreateRegularPolygon_6.png" width="11" height="11" alt="Polygon"> | â†³ Polygon | `Sketcher_CompCreateRegularPolygon` | Creates a regular polygon from a center and corner point |
 | <img src="toolbar-icons/Sketcher_CompCurveEdition.png" width="11" height="11" alt="Trim Edge"> | <a id="button-sketcher_compcurveedition"></a>Trim Edge | `Sketcher_CompCurveEdition` | Trims an edge with respect to the selected position |
-| <img src="toolbar-icons/Sketcher_CompCurveEdition_1.png" width="11" height="11" alt="Split Edge"> | ↳ Split Edge | `Sketcher_CompCurveEdition` | Splits an edge into 2 segments while preserving constraints |
-| <img src="toolbar-icons/Sketcher_CompCurveEdition_2.png" width="11" height="11" alt="Extend Edge"> | ↳ Extend Edge | `Sketcher_CompCurveEdition` | Extends an edge with respect to the selected position |
+| <img src="toolbar-icons/Sketcher_CompCurveEdition_1.png" width="11" height="11" alt="Split Edge"> | â†³ Split Edge | `Sketcher_CompCurveEdition` | Splits an edge into 2 segments while preserving constraints |
+| <img src="toolbar-icons/Sketcher_CompCurveEdition_2.png" width="11" height="11" alt="Extend Edge"> | â†³ Extend Edge | `Sketcher_CompCurveEdition` | Extends an edge with respect to the selected position |
 | <img src="toolbar-icons/Sketcher_CompDimensionTools.png" width="11" height="11" alt="Dimension"> | <a id="button-sketcher_compdimensiontools"></a>Dimension | `Sketcher_CompDimensionTools` | Constrains contextually based on the selection. The type can be changed with the M key. |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_2.png" width="11" height="11" alt="Horizontal Dimension"> | ↳ Horizontal Dimension | `Sketcher_CompDimensionTools` | Constrains the horizontal distance between two points, or from a point to the origin if only one is selected |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_3.png" width="11" height="11" alt="Vertical Dimension"> | ↳ Vertical Dimension | `Sketcher_CompDimensionTools` | Constrains the vertical distance between two points, or from a point to the origin if only one is selected |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_4.png" width="11" height="11" alt="Distance Dimension"> | ↳ Distance Dimension | `Sketcher_CompDimensionTools` | Constrains the vertical distance between two points, or from a point to the origin if one is selected |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_5.png" width="11" height="11" alt="Radius/Diameter Dimension"> | ↳ Radius/Diameter Dimension | `Sketcher_CompDimensionTools` | Constrains the radius of the selected arc or the diameter of the selected circle |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_6.png" width="11" height="11" alt="Radius Dimension"> | ↳ Radius Dimension | `Sketcher_CompDimensionTools` | Constrains the radius of the selected circle or arc |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_7.png" width="11" height="11" alt="Diameter Dimension"> | ↳ Diameter Dimension | `Sketcher_CompDimensionTools` | Constrains the diameter of the selected circle or arc |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_8.png" width="11" height="11" alt="Angle Dimension"> | ↳ Angle Dimension | `Sketcher_CompDimensionTools` | Constrains the angle between two straight lines or between one line and the X-axis of the sketch if only one is selected |
-| <img src="toolbar-icons/Sketcher_CompDimensionTools_9.png" width="11" height="11" alt="Lock Position"> | ↳ Lock Position | `Sketcher_CompDimensionTools` | Constrains the selected vertices by adding horizontal and vertical distance constraints |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_2.png" width="11" height="11" alt="Horizontal Dimension"> | â†³ Horizontal Dimension | `Sketcher_CompDimensionTools` | Constrains the horizontal distance between two points, or from a point to the origin if only one is selected |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_3.png" width="11" height="11" alt="Vertical Dimension"> | â†³ Vertical Dimension | `Sketcher_CompDimensionTools` | Constrains the vertical distance between two points, or from a point to the origin if only one is selected |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_4.png" width="11" height="11" alt="Distance Dimension"> | â†³ Distance Dimension | `Sketcher_CompDimensionTools` | Constrains the vertical distance between two points, or from a point to the origin if one is selected |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_5.png" width="11" height="11" alt="Radius/Diameter Dimension"> | â†³ Radius/Diameter Dimension | `Sketcher_CompDimensionTools` | Constrains the radius of the selected arc or the diameter of the selected circle |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_6.png" width="11" height="11" alt="Radius Dimension"> | â†³ Radius Dimension | `Sketcher_CompDimensionTools` | Constrains the radius of the selected circle or arc |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_7.png" width="11" height="11" alt="Diameter Dimension"> | â†³ Diameter Dimension | `Sketcher_CompDimensionTools` | Constrains the diameter of the selected circle or arc |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_8.png" width="11" height="11" alt="Angle Dimension"> | â†³ Angle Dimension | `Sketcher_CompDimensionTools` | Constrains the angle between two straight lines or between one line and the X-axis of the sketch if only one is selected |
+| <img src="toolbar-icons/Sketcher_CompDimensionTools_9.png" width="11" height="11" alt="Lock Position"> | â†³ Lock Position | `Sketcher_CompDimensionTools` | Constrains the selected vertices by adding horizontal and vertical distance constraints |
 | <img src="toolbar-icons/Sketcher_CompExternal.png" width="11" height="11" alt="External Projection"> | <a id="button-sketcher_compexternal"></a>External Projection | `Sketcher_CompExternal` | Creates the projection of external geometry in the sketch plane |
-| <img src="toolbar-icons/Sketcher_CompExternal_1.png" width="11" height="11" alt="External Intersection"> | ↳ External Intersection | `Sketcher_CompExternal` | Creates the intersection of external geometry with the sketch plane |
+| <img src="toolbar-icons/Sketcher_CompExternal_1.png" width="11" height="11" alt="External Intersection"> | â†³ External Intersection | `Sketcher_CompExternal` | Creates the intersection of external geometry with the sketch plane |
 | <img src="toolbar-icons/Sketcher_CompHorVer.png" width="11" height="11" alt="Horizontal Constraint"> | <a id="button-sketcher_comphorver"></a>Horizontal Constraint | `Sketcher_CompHorVer` | Constrains the selected elements horizontally |
-| <img src="toolbar-icons/Sketcher_CompHorVer_1.png" width="11" height="11" alt="Vertical Constraint"> | ↳ Vertical Constraint | `Sketcher_CompHorVer` | Constrains the selected elements vertically |
+| <img src="toolbar-icons/Sketcher_CompHorVer_1.png" width="11" height="11" alt="Vertical Constraint"> | â†³ Vertical Constraint | `Sketcher_CompHorVer` | Constrains the selected elements vertically |
 | <img src="toolbar-icons/Sketcher_CompLine.png" width="11" height="11" alt="Polyline"> | <a id="button-sketcher_compline"></a>Polyline | `Sketcher_CompLine` | Creates a polyline in the sketch. M key cycles through segment modes. |
-| <img src="toolbar-icons/Sketcher_CompLine_1.png" width="11" height="11" alt="Line"> | ↳ Line | `Sketcher_CompLine` | Creates a line |
+| <img src="toolbar-icons/Sketcher_CompLine_1.png" width="11" height="11" alt="Line"> | â†³ Line | `Sketcher_CompLine` | Creates a line |
 | <img src="toolbar-icons/Sketcher_CompModifyKnotMultiplicity.png" width="11" height="11" alt="Increase knot multiplicity"> | <a id="button-sketcher_compmodifyknotmultiplicity"></a>Increase knot multiplicity | `Sketcher_CompModifyKnotMultiplicity` | Increases the multiplicity of the selected knot of a B-spline |
-| <img src="toolbar-icons/Sketcher_CompModifyKnotMultiplicity_1.png" width="11" height="11" alt="Decrease knot multiplicity"> | ↳ Decrease knot multiplicity | `Sketcher_CompModifyKnotMultiplicity` | Decreases the multiplicity of the selected knot of a B-spline |
+| <img src="toolbar-icons/Sketcher_CompModifyKnotMultiplicity_1.png" width="11" height="11" alt="Decrease knot multiplicity"> | â†³ Decrease knot multiplicity | `Sketcher_CompModifyKnotMultiplicity` | Decreases the multiplicity of the selected knot of a B-spline |
 | <img src="toolbar-icons/Sketcher_CompSlot.png" width="11" height="11" alt="Slot"> | <a id="button-sketcher_compslot"></a>Slot | `Sketcher_CompSlot` | Creates a slot |
-| <img src="toolbar-icons/Sketcher_CompSlot_1.png" width="11" height="11" alt="Arc Slot"> | ↳ Arc Slot | `Sketcher_CompSlot` | Creates an arc slot |
+| <img src="toolbar-icons/Sketcher_CompSlot_1.png" width="11" height="11" alt="Arc Slot"> | â†³ Arc Slot | `Sketcher_CompSlot` | Creates an arc slot |
 | <img src="toolbar-icons/Sketcher_CompToggleConstraints.png" width="11" height="11" alt="Toggle Driving/Reference Constraints"> | <a id="button-sketcher_comptoggleconstraints"></a>Toggle Driving/Reference Constraints | `Sketcher_CompToggleConstraints` | Toggles between driving and reference mode of the selected constraints and commands |
-| <img src="toolbar-icons/Sketcher_CompToggleConstraints_1.png" width="11" height="11" alt="Toggle Constraints"> | ↳ Toggle Constraints | `Sketcher_CompToggleConstraints` | Toggles the state of the selected constraints |
+| <img src="toolbar-icons/Sketcher_CompToggleConstraints_1.png" width="11" height="11" alt="Toggle Constraints"> | â†³ Toggle Constraints | `Sketcher_CompToggleConstraints` | Toggles the state of the selected constraints |
 | <img src="toolbar-icons/Sketcher_ConstrainAngle.png" width="11" height="11" alt="Angle Dimension"> | <a id="button-sketcher_constrainangle"></a>Angle Dimension | `Sketcher_ConstrainAngle` | Constrains the angle between two straight lines or between one line and the X-axis of the sketch if only one is selected |
 | <img src="toolbar-icons/Sketcher_ConstrainBlock.png" width="11" height="11" alt="Block Constraint"> | <a id="button-sketcher_constrainblock"></a>Block Constraint | `Sketcher_ConstrainBlock` | Constrains the selected edges as fixed |
 | <img src="toolbar-icons/Sketcher_ConstrainCoincidentUnified.png" width="11" height="11" alt="Coincident Constraint"> | <a id="button-sketcher_constraincoincidentunified"></a>Coincident Constraint | `Sketcher_ConstrainCoincidentUnified` | Constrains the selected elements to be coincident |
@@ -4308,33 +4148,33 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Std_DlgPreferences.png" width="11" height="11" alt="Preferences"> | <a id="button-std_dlgpreferences"></a>Preferences | `Std_DlgPreferences` | Opens a dialog to edit the preferences |
 | <img src="../../../src/Gui/Icons/Std_ToggleBottomPanels.svg" width="11" height="11" alt="Panels"> | <a id="button-std_dockviewmenu"></a>Panels | `Std_DockViewMenu` | Lists available dock panels |
 | <img src="toolbar-icons/Std_DrawStyle.png" width="11" height="11" alt="As Is"> | <a id="button-std_drawstyle"></a>As Is | `Std_DrawStyle` | Normal mode |
-| <img src="toolbar-icons/Std_DrawStyle_1.png" width="11" height="11" alt="Points"> | ↳ Points | `Std_DrawStyle` | Points mode |
-| <img src="toolbar-icons/Std_DrawStyle_2.png" width="11" height="11" alt="Wireframe"> | ↳ Wireframe | `Std_DrawStyle` | Wireframe mode |
-| <img src="toolbar-icons/Std_DrawStyle_3.png" width="11" height="11" alt="Hidden Line"> | ↳ Hidden Line | `Std_DrawStyle` | Hidden line mode |
-| <img src="toolbar-icons/Std_DrawStyle_4.png" width="11" height="11" alt="No Shading"> | ↳ No Shading | `Std_DrawStyle` | No shading mode |
-| <img src="toolbar-icons/Std_DrawStyle_5.png" width="11" height="11" alt="Shaded"> | ↳ Shaded | `Std_DrawStyle` | Shaded mode |
-| <img src="toolbar-icons/Std_DrawStyle_6.png" width="11" height="11" alt="Flat Lines"> | ↳ Flat Lines | `Std_DrawStyle` | Flat lines mode |
-| <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filters…"> | <a id="button-std_entityselectionfilter"></a>Selection filters… | `Std_EntitySelectionFilter` | Restrict new picks to vertices, edges, faces or whole objects |
-| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Export…"> | <a id="button-std_export"></a>Export… | `Std_Export` | Exports an object in the active document |
+| <img src="toolbar-icons/Std_DrawStyle_1.png" width="11" height="11" alt="Points"> | â†³ Points | `Std_DrawStyle` | Points mode |
+| <img src="toolbar-icons/Std_DrawStyle_2.png" width="11" height="11" alt="Wireframe"> | â†³ Wireframe | `Std_DrawStyle` | Wireframe mode |
+| <img src="toolbar-icons/Std_DrawStyle_3.png" width="11" height="11" alt="Hidden Line"> | â†³ Hidden Line | `Std_DrawStyle` | Hidden line mode |
+| <img src="toolbar-icons/Std_DrawStyle_4.png" width="11" height="11" alt="No Shading"> | â†³ No Shading | `Std_DrawStyle` | No shading mode |
+| <img src="toolbar-icons/Std_DrawStyle_5.png" width="11" height="11" alt="Shaded"> | â†³ Shaded | `Std_DrawStyle` | Shaded mode |
+| <img src="toolbar-icons/Std_DrawStyle_6.png" width="11" height="11" alt="Flat Lines"> | â†³ Flat Lines | `Std_DrawStyle` | Flat lines mode |
+| <img src="../../../src/Gui/Icons/view-select.svg" width="11" height="11" alt="Selection filtersâ€¦"> | <a id="button-std_entityselectionfilter"></a>Selection filtersâ€¦ | `Std_EntitySelectionFilter` | Restrict new picks to vertices, edges, faces or whole objects |
+| <img src="toolbar-icons/Std_Export.png" width="11" height="11" alt="Exportâ€¦"> | <a id="button-std_export"></a>Exportâ€¦ | `Std_Export` | Exports an object in the active document |
 | <img src="toolbar-icons/Std_Group.png" width="11" height="11" alt="New Group"> | <a id="button-std_group"></a>New Group | `Std_Group` | Creates a group, which is a general-purpose container to group objects in the tree view, regardless of their data type. It is a simple folder to organize the objects in a model. |
-| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Import…"> | <a id="button-std_import"></a>Import… | `Std_Import` | Imports a file into the active document |
+| <img src="toolbar-icons/Std_Import.png" width="11" height="11" alt="Importâ€¦"> | <a id="button-std_import"></a>Importâ€¦ | `Std_Import` | Imports a file into the active document |
 | <img src="toolbar-icons/Std_LinkActions.png" width="11" height="11" alt="Make Link"> | <a id="button-std_linkactions"></a>Make Link | `Std_LinkActions` | A link is an object that references another object, either within the same or in another document. Unlike clones, links reference the original shape directly, making them more memory-efficient, which helps with the creation of complex assemblies. |
-| <img src="toolbar-icons/Std_LinkActions_1.png" width="11" height="11" alt="Make Sub-Link"> | ↳ Make Sub-Link | `Std_LinkActions` | Creates a sub-object or sub-element link |
-| <img src="toolbar-icons/Std_LinkActions_2.png" width="11" height="11" alt="Replace With Link"> | ↳ Replace With Link | `Std_LinkActions` | Replaces the selected objects with links |
-| <img src="toolbar-icons/Std_LinkActions_3.png" width="11" height="11" alt="Unlink"> | ↳ Unlink | `Std_LinkActions` | Unlinks the object by placing it directly in the container |
-| <img src="toolbar-icons/Std_LinkActions_4.png" width="11" height="11" alt="Import Links"> | ↳ Import Links | `Std_LinkActions` | Imports selected external links |
-| <img src="toolbar-icons/Std_LinkActions_5.png" width="11" height="11" alt="Import All Links"> | ↳ Import All Links | `Std_LinkActions` | Imports all links of the active document |
+| <img src="toolbar-icons/Std_LinkActions_1.png" width="11" height="11" alt="Make Sub-Link"> | â†³ Make Sub-Link | `Std_LinkActions` | Creates a sub-object or sub-element link |
+| <img src="toolbar-icons/Std_LinkActions_2.png" width="11" height="11" alt="Replace With Link"> | â†³ Replace With Link | `Std_LinkActions` | Replaces the selected objects with links |
+| <img src="toolbar-icons/Std_LinkActions_3.png" width="11" height="11" alt="Unlink"> | â†³ Unlink | `Std_LinkActions` | Unlinks the object by placing it directly in the container |
+| <img src="toolbar-icons/Std_LinkActions_4.png" width="11" height="11" alt="Import Links"> | â†³ Import Links | `Std_LinkActions` | Imports selected external links |
+| <img src="toolbar-icons/Std_LinkActions_5.png" width="11" height="11" alt="Import All Links"> | â†³ Import All Links | `Std_LinkActions` | Imports all links of the active document |
 | <img src="toolbar-icons/Std_MassProperties.png" width="11" height="11" alt="Mass Properties"> | <a id="button-std_massproperties"></a>Mass Properties | `Std_MassProperties` | Calculates mass properties of selected objects |
 | <img src="toolbar-icons/Std_Measure.png" width="11" height="11" alt="Measure"> | <a id="button-std_measure"></a>Measure | `Std_Measure` | Measures a feature |
 | <img src="toolbar-icons/Std_New.png" width="11" height="11" alt="New Document"> | <a id="button-std_new"></a>New Document | `Std_New` | Creates a new empty document |
 | <img src="toolbar-icons/Std_NewComponent.png" width="11" height="11" alt="New Component"> | <a id="button-std_newcomponent"></a>New Component | `Std_NewComponent` | Create an embedded model with no assembly instances and open it for editing |
-| <img src="toolbar-icons/Std_Open.png" width="11" height="11" alt="Open…"> | <a id="button-std_open"></a>Open… | `Std_Open` | Opens a document or imports files |
+| <img src="toolbar-icons/Std_Open.png" width="11" height="11" alt="Openâ€¦"> | <a id="button-std_open"></a>Openâ€¦ | `Std_Open` | Opens a document or imports files |
 | <img src="toolbar-icons/Std_Part.png" width="11" height="11" alt="Add Component"> | <a id="button-std_part"></a>Add Component | `Std_Part` | Adds a component to the active component. |
 | <img src="toolbar-icons/Std_Paste.png" width="11" height="11" alt="Paste"> | <a id="button-std_paste"></a>Paste | `Std_Paste` | Pastes the contents of the clipboard |
 | <img src="toolbar-icons/Std_Redo.png" width="11" height="11" alt="Redo"> | <a id="button-std_redo"></a>Redo | `Std_Redo` | Redoes a previously undone action |
 | <img src="toolbar-icons/Std_Refresh.png" width="11" height="11" alt="Recompute"> | <a id="button-std_refresh"></a>Recompute | `Std_Refresh` | Recomputes the active document |
 | <img src="toolbar-icons/Std_Save.png" width="11" height="11" alt="Save"> | <a id="button-std_save"></a>Save | `Std_Save` | Saves the active document |
-| <img src="toolbar-icons/Std_SaveAs.png" width="11" height="11" alt="Save As…"> | <a id="button-std_saveas"></a>Save As… | `Std_SaveAs` | Saves the active document under a new file name |
+| <img src="toolbar-icons/Std_SaveAs.png" width="11" height="11" alt="Save Asâ€¦"> | <a id="button-std_saveas"></a>Save Asâ€¦ | `Std_SaveAs` | Saves the active document under a new file name |
 | <img src="../../../src/Gui/Icons/preferences-workbenches.svg" width="11" height="11" alt="Toolbars"> | <a id="button-std_toolbarmenu"></a>Toolbars | `Std_ToolBarMenu` | Toggles this window |
 | <img src="toolbar-icons/Std_Undo.png" width="11" height="11" alt="Undo"> | <a id="button-std_undo"></a>Undo | `Std_Undo` | Undoes the previous action |
 | <img src="toolbar-icons/Std_VarSet.png" width="11" height="11" alt="Variable Set"> | <a id="button-std_varset"></a>Variable Set | `Std_VarSet` | Creates a variable set, which is an object that maintains a set of properties to be used as variables |
@@ -4343,12 +4183,12 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Std_ViewFitSelection.png" width="11" height="11" alt="Fit Selection"> | <a id="button-std_viewfitselection"></a>Fit Selection | `Std_ViewFitSelection` | Fits the selected content into the 3D view |
 | <img src="toolbar-icons/Std_ViewFront.png" width="11" height="11" alt="Front"> | <a id="button-std_viewfront"></a>Front | `Std_ViewFront` | Sets the camera to the front view |
 | <img src="toolbar-icons/Std_ViewGroup.png" width="11" height="11" alt="Isometric"> | <a id="button-std_viewgroup"></a>Isometric | `Std_ViewGroup` | Sets the camera to the isometric view |
-| <img src="toolbar-icons/Std_ViewGroup_1.png" width="11" height="11" alt="Front"> | ↳ Front | `Std_ViewGroup` | Sets the camera to the front view |
-| <img src="toolbar-icons/Std_ViewGroup_2.png" width="11" height="11" alt="Top"> | ↳ Top | `Std_ViewGroup` | Sets the camera to the top view |
-| <img src="toolbar-icons/Std_ViewGroup_3.png" width="11" height="11" alt="Right"> | ↳ Right | `Std_ViewGroup` | Sets the camera to the right view |
-| <img src="toolbar-icons/Std_ViewGroup_4.png" width="11" height="11" alt="Rear"> | ↳ Rear | `Std_ViewGroup` | Sets the camera to the rear view |
-| <img src="toolbar-icons/Std_ViewGroup_5.png" width="11" height="11" alt="Bottom"> | ↳ Bottom | `Std_ViewGroup` | Sets the camera to the bottom view |
-| <img src="toolbar-icons/Std_ViewGroup_6.png" width="11" height="11" alt="Left"> | ↳ Left | `Std_ViewGroup` | Sets the camera to the left view |
+| <img src="toolbar-icons/Std_ViewGroup_1.png" width="11" height="11" alt="Front"> | â†³ Front | `Std_ViewGroup` | Sets the camera to the front view |
+| <img src="toolbar-icons/Std_ViewGroup_2.png" width="11" height="11" alt="Top"> | â†³ Top | `Std_ViewGroup` | Sets the camera to the top view |
+| <img src="toolbar-icons/Std_ViewGroup_3.png" width="11" height="11" alt="Right"> | â†³ Right | `Std_ViewGroup` | Sets the camera to the right view |
+| <img src="toolbar-icons/Std_ViewGroup_4.png" width="11" height="11" alt="Rear"> | â†³ Rear | `Std_ViewGroup` | Sets the camera to the rear view |
+| <img src="toolbar-icons/Std_ViewGroup_5.png" width="11" height="11" alt="Bottom"> | â†³ Bottom | `Std_ViewGroup` | Sets the camera to the bottom view |
+| <img src="toolbar-icons/Std_ViewGroup_6.png" width="11" height="11" alt="Left"> | â†³ Left | `Std_ViewGroup` | Sets the camera to the left view |
 | <img src="toolbar-icons/Std_ViewIsometric.png" width="11" height="11" alt="Isometric"> | <a id="button-std_viewisometric"></a>Isometric | `Std_ViewIsometric` | Sets the camera to the isometric view |
 | <img src="toolbar-icons/Std_ViewLeft.png" width="11" height="11" alt="Left"> | <a id="button-std_viewleft"></a>Left | `Std_ViewLeft` | Sets the camera to the left view |
 | <img src="toolbar-icons/Std_ViewRear.png" width="11" height="11" alt="Rear"> | <a id="button-std_viewrear"></a>Rear | `Std_ViewRear` | Sets the camera to the rear view |
@@ -4357,18 +4197,18 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/Std_ViewTop.png" width="11" height="11" alt="Top"> | <a id="button-std_viewtop"></a>Top | `Std_ViewTop` | Sets the camera to the top view |
 | <img src="toolbar-icons/Std_WhatsThis.png" width="11" height="11" alt="What&#x27;s This?"> | <a id="button-std_whatsthis"></a>What's This? | `Std_WhatsThis` | Opens the documentation for the selected command |
 | <img src="toolbar-icons/Std_Workbench.png" width="11" height="11" alt="Assembly"> | <a id="button-std_workbench"></a>Assembly | `Std_Workbench` | Selects the 'Assembly' workbench |
-| <img src="toolbar-icons/Std_Workbench_1.png" width="11" height="11" alt="CAM"> | ↳ CAM | `Std_Workbench` | Selects the 'CAM' workbench |
-| <img src="toolbar-icons/Std_Workbench_2.png" width="11" height="11" alt="Draft"> | ↳ Draft | `Std_Workbench` | Selects the 'Draft' workbench |
-| <img src="toolbar-icons/Std_Workbench_3.png" width="11" height="11" alt="Material"> | ↳ Material | `Std_Workbench` | Selects the 'Material' workbench |
-| <img src="toolbar-icons/Std_Workbench_4.png" width="11" height="11" alt="Mesh"> | ↳ Mesh | `Std_Workbench` | Selects the 'Mesh' workbench |
-| <img src="toolbar-icons/Std_Workbench_5.png" width="11" height="11" alt="Part Design"> | ↳ Part Design | `Std_Workbench` | Selects the 'Part Design' workbench |
-| <img src="toolbar-icons/Std_Workbench_6.png" width="11" height="11" alt="Part"> | ↳ Part | `Std_Workbench` | Selects the 'Part' workbench |
-| <img src="toolbar-icons/Std_Workbench_7.png" width="11" height="11" alt="Sketcher"> | ↳ Sketcher | `Std_Workbench` | Selects the 'Sketcher' workbench |
-| <img src="toolbar-icons/Std_Workbench_8.png" width="11" height="11" alt="Spreadsheet"> | ↳ Spreadsheet | `Std_Workbench` | Selects the 'Spreadsheet' workbench |
-| <img src="toolbar-icons/Std_Workbench_9.png" width="11" height="11" alt="Surface"> | ↳ Surface | `Std_Workbench` | Selects the 'Surface' workbench |
-| <img src="toolbar-icons/Std_Workbench_10.png" width="11" height="11" alt="TechDraw"> | ↳ TechDraw | `Std_Workbench` | Selects the 'TechDraw' workbench |
-| <img src="toolbar-icons/Std_Workbench_11.png" width="11" height="11" alt=""> | ↳  | `Std_Workbench` | Select the ' ' workbench |
-| <img src="toolbar-icons/Std_Workbench_12.png" width="11" height="11" alt="Test Framework"> | ↳ Test Framework | `Std_Workbench` | Select the 'Test Framework' workbench |
+| <img src="toolbar-icons/Std_Workbench_1.png" width="11" height="11" alt="CAM"> | â†³ CAM | `Std_Workbench` | Selects the 'CAM' workbench |
+| <img src="toolbar-icons/Std_Workbench_2.png" width="11" height="11" alt="Draft"> | â†³ Draft | `Std_Workbench` | Selects the 'Draft' workbench |
+| <img src="toolbar-icons/Std_Workbench_3.png" width="11" height="11" alt="Material"> | â†³ Material | `Std_Workbench` | Selects the 'Material' workbench |
+| <img src="toolbar-icons/Std_Workbench_4.png" width="11" height="11" alt="Mesh"> | â†³ Mesh | `Std_Workbench` | Selects the 'Mesh' workbench |
+| <img src="toolbar-icons/Std_Workbench_5.png" width="11" height="11" alt="Part Design"> | â†³ Part Design | `Std_Workbench` | Selects the 'Part Design' workbench |
+| <img src="toolbar-icons/Std_Workbench_6.png" width="11" height="11" alt="Part"> | â†³ Part | `Std_Workbench` | Selects the 'Part' workbench |
+| <img src="toolbar-icons/Std_Workbench_7.png" width="11" height="11" alt="Sketcher"> | â†³ Sketcher | `Std_Workbench` | Selects the 'Sketcher' workbench |
+| <img src="toolbar-icons/Std_Workbench_8.png" width="11" height="11" alt="Spreadsheet"> | â†³ Spreadsheet | `Std_Workbench` | Selects the 'Spreadsheet' workbench |
+| <img src="toolbar-icons/Std_Workbench_9.png" width="11" height="11" alt="Surface"> | â†³ Surface | `Std_Workbench` | Selects the 'Surface' workbench |
+| <img src="toolbar-icons/Std_Workbench_10.png" width="11" height="11" alt="TechDraw"> | â†³ TechDraw | `Std_Workbench` | Selects the 'TechDraw' workbench |
+| <img src="toolbar-icons/Std_Workbench_11.png" width="11" height="11" alt=""> | â†³  | `Std_Workbench` | Select the ' ' workbench |
+| <img src="toolbar-icons/Std_Workbench_12.png" width="11" height="11" alt="Test Framework"> | â†³ Test Framework | `Std_Workbench` | Select the 'Test Framework' workbench |
 | <img src="toolbar-icons/Surface_BlendCurve.png" width="11" height="11" alt="Blend Curve"> | <a id="button-surface_blendcurve"></a>Blend Curve | `Surface_BlendCurve` | Joins 2 edges with continuity |
 | <img src="toolbar-icons/Surface_CurveOnMesh.png" width="11" height="11" alt="Curve on Mesh"> | <a id="button-surface_curveonmesh"></a>Curve on Mesh | `Surface_CurveOnMesh` | Creates an approximated curve on top of a mesh. This command only works with a mesh object. |
 | <img src="toolbar-icons/Surface_ExtendFace.png" width="11" height="11" alt="Extend Face"> | <a id="button-surface_extendface"></a>Extend Face | `Surface_ExtendFace` | Extrapolates the selected face or surface at its boundaries with its local U and V parameters |
@@ -4384,35 +4224,35 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/TechDraw_Balloon.png" width="11" height="11" alt="Balloon Annotation"> | <a id="button-techdraw_balloon"></a>Balloon Annotation | `TechDraw_Balloon` | Inserts a new balloon annotation in the selected view |
 | <img src="toolbar-icons/TechDraw_BrokenView.png" width="11" height="11" alt="Broken View"> | <a id="button-techdraw_brokenview"></a>Broken View | `TechDraw_BrokenView` | Inserts a new broken view for the selected objects or base view and break definition objects |
 | <img src="toolbar-icons/TechDraw_CenterLineGroup.png" width="11" height="11" alt="Centerline on Face"> | <a id="button-techdraw_centerlinegroup"></a>Centerline on Face | `TechDraw_CenterLineGroup` | Adds a centerline to selected faces |
-| <img src="toolbar-icons/TechDraw_CenterLineGroup_1.png" width="11" height="11" alt="Centerline Between 2 Lines"> | ↳ Centerline Between 2 Lines | `TechDraw_CenterLineGroup` | Adds a centerline between 2 selected lines |
-| <img src="toolbar-icons/TechDraw_CenterLineGroup_2.png" width="11" height="11" alt="Centerline Between 2 Points"> | ↳ Centerline Between 2 Points | `TechDraw_CenterLineGroup` | Adds a centerline between 2 selected points |
+| <img src="toolbar-icons/TechDraw_CenterLineGroup_1.png" width="11" height="11" alt="Centerline Between 2 Lines"> | â†³ Centerline Between 2 Lines | `TechDraw_CenterLineGroup` | Adds a centerline between 2 selected lines |
+| <img src="toolbar-icons/TechDraw_CenterLineGroup_2.png" width="11" height="11" alt="Centerline Between 2 Points"> | â†³ Centerline Between 2 Points | `TechDraw_CenterLineGroup` | Adds a centerline between 2 selected points |
 | <img src="toolbar-icons/TechDraw_ClipGroup.png" width="11" height="11" alt="Clip Group"> | <a id="button-techdraw_clipgroup"></a>Clip Group | `TechDraw_ClipGroup` | Inserts a new clip group for the selected view |
 | <img src="toolbar-icons/TechDraw_CommandAddOffsetVertex.png" width="11" height="11" alt="Offset Vertex"> | <a id="button-techdraw_commandaddoffsetvertex"></a>Offset Vertex | `TechDraw_CommandAddOffsetVertex` | Creates an offset from one selected vertex |
 | <img src="toolbar-icons/TechDraw_CommandVertexCreationGroup.png" width="11" height="11" alt="Cosmetic Intersection Vertices"> | <a id="button-techdraw_commandvertexcreationgroup"></a>Cosmetic Intersection Vertices | `TechDraw_CommandVertexCreationGroup` | Cosmetic Intersection Vertices |
-| <img src="toolbar-icons/TechDraw_CommandVertexCreationGroup_1.png" width="11" height="11" alt="Offset Vertex"> | ↳ Offset Vertex | `TechDraw_CommandVertexCreationGroup` | Creates an offset from one selected vertex |
+| <img src="toolbar-icons/TechDraw_CommandVertexCreationGroup_1.png" width="11" height="11" alt="Offset Vertex"> | â†³ Offset Vertex | `TechDraw_CommandVertexCreationGroup` | Creates an offset from one selected vertex |
 | <img src="toolbar-icons/TechDraw_CompDimensionTools.png" width="11" height="11" alt="Dimension"> | <a id="button-techdraw_compdimensiontools"></a>Dimension | `TechDraw_CompDimensionTools` | Inserts new contextual dimensions to the selection. Depending on your selection you might have several dimensions available. You can cycle through them using the M key. Left clicking on empty space will validate the current dimension. Right clicking or pressing Esc will cancel. |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_2.png" width="11" height="11" alt="Length Dimension"> | ↳ Length Dimension | `TechDraw_CompDimensionTools` | Inserts a length dimension of an edge or distance between two points |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_3.png" width="11" height="11" alt="Horizontal Length Dimension"> | ↳ Horizontal Length Dimension | `TechDraw_CompDimensionTools` | Inserts a horizontal length dimension of an edge or distance between two points |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_4.png" width="11" height="11" alt="Vertical Length Dimension"> | ↳ Vertical Length Dimension | `TechDraw_CompDimensionTools` | Inserts a vertical length dimension of an edge or distance between two points |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_5.png" width="11" height="11" alt="Radius Dimension"> | ↳ Radius Dimension | `TechDraw_CompDimensionTools` | Inserts a radius dimension of a circular edge or arc |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_6.png" width="11" height="11" alt="Diameter Dimension"> | ↳ Diameter Dimension | `TechDraw_CompDimensionTools` | Inserts a diameter dimension of a circular edge or arc |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_7.png" width="11" height="11" alt="Angle Dimension"> | ↳ Angle Dimension | `TechDraw_CompDimensionTools` | Inserts an angle dimension between two edges |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_8.png" width="11" height="11" alt="Angle Dimension From 3 Points"> | ↳ Angle Dimension From 3 Points | `TechDraw_CompDimensionTools` | Inserts an angle dimension between 3 selected points |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_9.png" width="11" height="11" alt="Area Annotation"> | ↳ Area Annotation | `TechDraw_CompDimensionTools` | Inserts an annotation showing the area of a selected face |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_10.png" width="11" height="11" alt="Arc Length Dimension"> | ↳ Arc Length Dimension | `TechDraw_CompDimensionTools` | Arc Length Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_12.png" width="11" height="11" alt="Horizontal Extent Dimension"> | ↳ Horizontal Extent Dimension | `TechDraw_CompDimensionTools` | Inserts a dimension showing the horizontal extent (overall length) of an object or feature |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_13.png" width="11" height="11" alt="Vertical Extent Dimension"> | ↳ Vertical Extent Dimension | `TechDraw_CompDimensionTools` | Inserts a dimension showing the vertical extent (overall length) of an object or feature |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_15.png" width="11" height="11" alt="Horizontal Chain Dimension"> | ↳ Horizontal Chain Dimension | `TechDraw_CompDimensionTools` | Horizontal Chain Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_16.png" width="11" height="11" alt="Vertical Chain Dimension"> | ↳ Vertical Chain Dimension | `TechDraw_CompDimensionTools` | Vertical Chain Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_17.png" width="11" height="11" alt="Oblique Chain Dimension"> | ↳ Oblique Chain Dimension | `TechDraw_CompDimensionTools` | Oblique Chain Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_19.png" width="11" height="11" alt="Horizontal Coordinate Dimension"> | ↳ Horizontal Coordinate Dimension | `TechDraw_CompDimensionTools` | Horizontal Coordinate Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_20.png" width="11" height="11" alt="Vertical Coordinate Dimension"> | ↳ Vertical Coordinate Dimension | `TechDraw_CompDimensionTools` | Vertical Coordinate Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_21.png" width="11" height="11" alt="Oblique Coordinate Dimension"> | ↳ Oblique Coordinate Dimension | `TechDraw_CompDimensionTools` | Oblique Coordinate Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_23.png" width="11" height="11" alt="Horizontal Chamfer Dimension"> | ↳ Horizontal Chamfer Dimension | `TechDraw_CompDimensionTools` | Horizontal Chamfer Dimension |
-| <img src="toolbar-icons/TechDraw_CompDimensionTools_24.png" width="11" height="11" alt="Vertical Chamfer Dimension"> | ↳ Vertical Chamfer Dimension | `TechDraw_CompDimensionTools` | Vertical Chamfer Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_2.png" width="11" height="11" alt="Length Dimension"> | â†³ Length Dimension | `TechDraw_CompDimensionTools` | Inserts a length dimension of an edge or distance between two points |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_3.png" width="11" height="11" alt="Horizontal Length Dimension"> | â†³ Horizontal Length Dimension | `TechDraw_CompDimensionTools` | Inserts a horizontal length dimension of an edge or distance between two points |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_4.png" width="11" height="11" alt="Vertical Length Dimension"> | â†³ Vertical Length Dimension | `TechDraw_CompDimensionTools` | Inserts a vertical length dimension of an edge or distance between two points |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_5.png" width="11" height="11" alt="Radius Dimension"> | â†³ Radius Dimension | `TechDraw_CompDimensionTools` | Inserts a radius dimension of a circular edge or arc |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_6.png" width="11" height="11" alt="Diameter Dimension"> | â†³ Diameter Dimension | `TechDraw_CompDimensionTools` | Inserts a diameter dimension of a circular edge or arc |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_7.png" width="11" height="11" alt="Angle Dimension"> | â†³ Angle Dimension | `TechDraw_CompDimensionTools` | Inserts an angle dimension between two edges |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_8.png" width="11" height="11" alt="Angle Dimension From 3 Points"> | â†³ Angle Dimension From 3 Points | `TechDraw_CompDimensionTools` | Inserts an angle dimension between 3 selected points |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_9.png" width="11" height="11" alt="Area Annotation"> | â†³ Area Annotation | `TechDraw_CompDimensionTools` | Inserts an annotation showing the area of a selected face |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_10.png" width="11" height="11" alt="Arc Length Dimension"> | â†³ Arc Length Dimension | `TechDraw_CompDimensionTools` | Arc Length Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_12.png" width="11" height="11" alt="Horizontal Extent Dimension"> | â†³ Horizontal Extent Dimension | `TechDraw_CompDimensionTools` | Inserts a dimension showing the horizontal extent (overall length) of an object or feature |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_13.png" width="11" height="11" alt="Vertical Extent Dimension"> | â†³ Vertical Extent Dimension | `TechDraw_CompDimensionTools` | Inserts a dimension showing the vertical extent (overall length) of an object or feature |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_15.png" width="11" height="11" alt="Horizontal Chain Dimension"> | â†³ Horizontal Chain Dimension | `TechDraw_CompDimensionTools` | Horizontal Chain Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_16.png" width="11" height="11" alt="Vertical Chain Dimension"> | â†³ Vertical Chain Dimension | `TechDraw_CompDimensionTools` | Vertical Chain Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_17.png" width="11" height="11" alt="Oblique Chain Dimension"> | â†³ Oblique Chain Dimension | `TechDraw_CompDimensionTools` | Oblique Chain Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_19.png" width="11" height="11" alt="Horizontal Coordinate Dimension"> | â†³ Horizontal Coordinate Dimension | `TechDraw_CompDimensionTools` | Horizontal Coordinate Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_20.png" width="11" height="11" alt="Vertical Coordinate Dimension"> | â†³ Vertical Coordinate Dimension | `TechDraw_CompDimensionTools` | Vertical Coordinate Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_21.png" width="11" height="11" alt="Oblique Coordinate Dimension"> | â†³ Oblique Coordinate Dimension | `TechDraw_CompDimensionTools` | Oblique Coordinate Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_23.png" width="11" height="11" alt="Horizontal Chamfer Dimension"> | â†³ Horizontal Chamfer Dimension | `TechDraw_CompDimensionTools` | Horizontal Chamfer Dimension |
+| <img src="toolbar-icons/TechDraw_CompDimensionTools_24.png" width="11" height="11" alt="Vertical Chamfer Dimension"> | â†³ Vertical Chamfer Dimension | `TechDraw_CompDimensionTools` | Vertical Chamfer Dimension |
 | <img src="toolbar-icons/TechDraw_CosmeticVertexGroup.png" width="11" height="11" alt="Cosmetic Vertex"> | <a id="button-techdraw_cosmeticvertexgroup"></a>Cosmetic Vertex | `TechDraw_CosmeticVertexGroup` | Inserts a cosmetic vertex into a view |
-| <img src="toolbar-icons/TechDraw_CosmeticVertexGroup_1.png" width="11" height="11" alt="Midpoint Vertices"> | ↳ Midpoint Vertices | `TechDraw_CosmeticVertexGroup` | Inserts cosmetic vertices at the midpoint of the selected edges |
-| <img src="toolbar-icons/TechDraw_CosmeticVertexGroup_2.png" width="11" height="11" alt="Quadrant Vertices"> | ↳ Quadrant Vertices | `TechDraw_CosmeticVertexGroup` | Inserts cosmetic vertices at the quadrant points of the selected circles |
+| <img src="toolbar-icons/TechDraw_CosmeticVertexGroup_1.png" width="11" height="11" alt="Midpoint Vertices"> | â†³ Midpoint Vertices | `TechDraw_CosmeticVertexGroup` | Inserts cosmetic vertices at the midpoint of the selected edges |
+| <img src="toolbar-icons/TechDraw_CosmeticVertexGroup_2.png" width="11" height="11" alt="Quadrant Vertices"> | â†³ Quadrant Vertices | `TechDraw_CosmeticVertexGroup` | Inserts cosmetic vertices at the quadrant points of the selected circles |
 | <img src="toolbar-icons/TechDraw_DecorateLine.png" width="11" height="11" alt="Edit Line Appearance"> | <a id="button-techdraw_decorateline"></a>Edit Line Appearance | `TechDraw_DecorateLine` | Opens the 'Line decoration' dialog to edit the selected lines |
 | <img src="toolbar-icons/TechDraw_DetailView.png" width="11" height="11" alt="Detail View"> | <a id="button-techdraw_detailview"></a>Detail View | `TechDraw_DetailView` | Inserts a new detail view based on the selected view in the current page |
 | <img src="toolbar-icons/TechDraw_DiameterDimension.png" width="11" height="11" alt="Diameter Dimension"> | <a id="button-techdraw_diameterdimension"></a>Diameter Dimension | `TechDraw_DiameterDimension` | Inserts a diameter dimension of a circular edge or arc |
@@ -4424,42 +4264,42 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/TechDraw_ExtensionArcLengthAnnotation.png" width="11" height="11" alt="Arc Length Annotation"> | <a id="button-techdraw_extensionarclengthannotation"></a>Arc Length Annotation | `TechDraw_ExtensionArcLengthAnnotation` | Inserts an annotation with the calculated arc length of the selected edges |
 | <img src="toolbar-icons/TechDraw_ExtensionAreaAnnotation.png" width="11" height="11" alt="Area Annotation"> | <a id="button-techdraw_extensionareaannotation"></a>Area Annotation | `TechDraw_ExtensionAreaAnnotation` | Calculates the area of multiple selected faces |
 | <img src="toolbar-icons/TechDraw_ExtensionChamferDimensionGroup.png" width="11" height="11" alt="Horizontal Chamfer Dimension"> | <a id="button-techdraw_extensionchamferdimensiongroup"></a>Horizontal Chamfer Dimension | `TechDraw_ExtensionChamferDimensionGroup` | Horizontal Chamfer Dimension |
-| <img src="toolbar-icons/TechDraw_ExtensionChamferDimensionGroup_1.png" width="11" height="11" alt="Vertical Chamfer Dimension"> | ↳ Vertical Chamfer Dimension | `TechDraw_ExtensionChamferDimensionGroup` | Vertical Chamfer Dimension |
+| <img src="toolbar-icons/TechDraw_ExtensionChamferDimensionGroup_1.png" width="11" height="11" alt="Vertical Chamfer Dimension"> | â†³ Vertical Chamfer Dimension | `TechDraw_ExtensionChamferDimensionGroup` | Vertical Chamfer Dimension |
 | <img src="toolbar-icons/TechDraw_ExtensionChangeLineAttributes.png" width="11" height="11" alt="Change Line Attributes"> | <a id="button-techdraw_extensionchangelineattributes"></a>Change Line Attributes | `TechDraw_ExtensionChangeLineAttributes` | Change Line Attributes |
 | <img src="toolbar-icons/TechDraw_ExtensionCircleCenterLinesGroup.png" width="11" height="11" alt="Circle Centerlines"> | <a id="button-techdraw_extensioncirclecenterlinesgroup"></a>Circle Centerlines | `TechDraw_ExtensionCircleCenterLinesGroup` | Circle Centerlines |
-| <img src="toolbar-icons/TechDraw_ExtensionCircleCenterLinesGroup_1.png" width="11" height="11" alt="Bolt Circle Centerlines"> | ↳ Bolt Circle Centerlines | `TechDraw_ExtensionCircleCenterLinesGroup` | Bolt Circle Centerlines |
+| <img src="toolbar-icons/TechDraw_ExtensionCircleCenterLinesGroup_1.png" width="11" height="11" alt="Bolt Circle Centerlines"> | â†³ Bolt Circle Centerlines | `TechDraw_ExtensionCircleCenterLinesGroup` | Bolt Circle Centerlines |
 | <img src="toolbar-icons/TechDraw_ExtensionCreateChainDimensionGroup.png" width="11" height="11" alt="Horizontal Chain Dimension"> | <a id="button-techdraw_extensioncreatechaindimensiongroup"></a>Horizontal Chain Dimension | `TechDraw_ExtensionCreateChainDimensionGroup` | Horizontal Chain Dimension |
-| <img src="toolbar-icons/TechDraw_ExtensionCreateChainDimensionGroup_1.png" width="11" height="11" alt="Vertical Chain Dimension"> | ↳ Vertical Chain Dimension | `TechDraw_ExtensionCreateChainDimensionGroup` | Vertical Chain Dimension |
-| <img src="toolbar-icons/TechDraw_ExtensionCreateChainDimensionGroup_2.png" width="11" height="11" alt="Oblique Chain Dimension"> | ↳ Oblique Chain Dimension | `TechDraw_ExtensionCreateChainDimensionGroup` | Oblique Chain Dimension |
+| <img src="toolbar-icons/TechDraw_ExtensionCreateChainDimensionGroup_1.png" width="11" height="11" alt="Vertical Chain Dimension"> | â†³ Vertical Chain Dimension | `TechDraw_ExtensionCreateChainDimensionGroup` | Vertical Chain Dimension |
+| <img src="toolbar-icons/TechDraw_ExtensionCreateChainDimensionGroup_2.png" width="11" height="11" alt="Oblique Chain Dimension"> | â†³ Oblique Chain Dimension | `TechDraw_ExtensionCreateChainDimensionGroup` | Oblique Chain Dimension |
 | <img src="toolbar-icons/TechDraw_ExtensionCreateCoordDimensionGroup.png" width="11" height="11" alt="Horizontal Coordinate Dimension"> | <a id="button-techdraw_extensioncreatecoorddimensiongroup"></a>Horizontal Coordinate Dimension | `TechDraw_ExtensionCreateCoordDimensionGroup` | Horizontal Coordinate Dimension |
-| <img src="toolbar-icons/TechDraw_ExtensionCreateCoordDimensionGroup_1.png" width="11" height="11" alt="Vertical Coordinate Dimension"> | ↳ Vertical Coordinate Dimension | `TechDraw_ExtensionCreateCoordDimensionGroup` | Vertical Coordinate Dimension |
-| <img src="toolbar-icons/TechDraw_ExtensionCreateCoordDimensionGroup_2.png" width="11" height="11" alt="Oblique Coordinate Dimension"> | ↳ Oblique Coordinate Dimension | `TechDraw_ExtensionCreateCoordDimensionGroup` | Oblique Coordinate Dimension |
+| <img src="toolbar-icons/TechDraw_ExtensionCreateCoordDimensionGroup_1.png" width="11" height="11" alt="Vertical Coordinate Dimension"> | â†³ Vertical Coordinate Dimension | `TechDraw_ExtensionCreateCoordDimensionGroup` | Vertical Coordinate Dimension |
+| <img src="toolbar-icons/TechDraw_ExtensionCreateCoordDimensionGroup_2.png" width="11" height="11" alt="Oblique Coordinate Dimension"> | â†³ Oblique Coordinate Dimension | `TechDraw_ExtensionCreateCoordDimensionGroup` | Oblique Coordinate Dimension |
 | <img src="toolbar-icons/TechDraw_ExtensionCreateLengthArc.png" width="11" height="11" alt="Arc Length Dimension"> | <a id="button-techdraw_extensioncreatelengtharc"></a>Arc Length Dimension | `TechDraw_ExtensionCreateLengthArc` | Arc Length Dimension |
 | <img src="toolbar-icons/TechDraw_ExtensionCustomizeFormat.png" width="11" height="11" alt="Customize Format Label"> | <a id="button-techdraw_extensioncustomizeformat"></a>Customize Format Label | `TechDraw_ExtensionCustomizeFormat` | Customizes the format label of a selected dimension or balloon |
 | <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup.png" width="11" height="11" alt="Cosmetic 1 Point Circle"> | <a id="button-techdraw_extensiondrawcirclesgroup"></a>Cosmetic 1 Point Circle | `TechDraw_ExtensionDrawCirclesGroup` | Cosmetic 1 Point Circle |
-| <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup_1.png" width="11" height="11" alt="Cosmetic 2 Point Circle"> | ↳ Cosmetic 2 Point Circle | `TechDraw_ExtensionDrawCirclesGroup` | Cosmetic 2 Point Circle |
-| <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup_2.png" width="11" height="11" alt="Cosmetic 3 Point Circle"> | ↳ Cosmetic 3 Point Circle | `TechDraw_ExtensionDrawCirclesGroup` | Cosmetic 3 Point Circle |
-| <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup_3.png" width="11" height="11" alt="Cosmetic Arc"> | ↳ Cosmetic Arc | `TechDraw_ExtensionDrawCirclesGroup` | Cosmetic Arc |
+| <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup_1.png" width="11" height="11" alt="Cosmetic 2 Point Circle"> | â†³ Cosmetic 2 Point Circle | `TechDraw_ExtensionDrawCirclesGroup` | Cosmetic 2 Point Circle |
+| <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup_2.png" width="11" height="11" alt="Cosmetic 3 Point Circle"> | â†³ Cosmetic 3 Point Circle | `TechDraw_ExtensionDrawCirclesGroup` | Cosmetic 3 Point Circle |
+| <img src="toolbar-icons/TechDraw_ExtensionDrawCirclesGroup_3.png" width="11" height="11" alt="Cosmetic Arc"> | â†³ Cosmetic Arc | `TechDraw_ExtensionDrawCirclesGroup` | Cosmetic Arc |
 | <img src="toolbar-icons/TechDraw_ExtensionExtendShortenLineGroup.png" width="11" height="11" alt="Extend Line"> | <a id="button-techdraw_extensionextendshortenlinegroup"></a>Extend Line | `TechDraw_ExtensionExtendShortenLineGroup` | Extend Line |
-| <img src="toolbar-icons/TechDraw_ExtensionExtendShortenLineGroup_1.png" width="11" height="11" alt="Shorten Line"> | ↳ Shorten Line | `TechDraw_ExtensionExtendShortenLineGroup` | Shorten Line |
+| <img src="toolbar-icons/TechDraw_ExtensionExtendShortenLineGroup_1.png" width="11" height="11" alt="Shorten Line"> | â†³ Shorten Line | `TechDraw_ExtensionExtendShortenLineGroup` | Shorten Line |
 | <img src="toolbar-icons/TechDraw_ExtensionIncreaseDecreaseGroup.png" width="11" height="11" alt="Increase Decimal Places"> | <a id="button-techdraw_extensionincreasedecreasegroup"></a>Increase Decimal Places | `TechDraw_ExtensionIncreaseDecreaseGroup` | Increase Decimal Places |
-| <img src="toolbar-icons/TechDraw_ExtensionIncreaseDecreaseGroup_1.png" width="11" height="11" alt="Decrease Decimal Places"> | ↳ Decrease Decimal Places | `TechDraw_ExtensionIncreaseDecreaseGroup` | Decrease Decimal Places |
-| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup.png" width="11" height="11" alt="Insert &#x27;⌀&#x27; Prefix"> | <a id="button-techdraw_extensioninsertprefixgroup"></a>Insert '⌀' Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Insert '⌀' Prefix |
-| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup_1.png" width="11" height="11" alt="Insert &#x27;□&#x27; Prefix"> | ↳ Insert '□' Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Insert '□' Prefix |
-| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup_2.png" width="11" height="11" alt="Insert &#x27;n×&#x27; Prefix"> | ↳ Insert 'n×' Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Insert 'n×' Prefix |
-| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup_3.png" width="11" height="11" alt="Remove Prefix"> | ↳ Remove Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Remove Prefix |
+| <img src="toolbar-icons/TechDraw_ExtensionIncreaseDecreaseGroup_1.png" width="11" height="11" alt="Decrease Decimal Places"> | â†³ Decrease Decimal Places | `TechDraw_ExtensionIncreaseDecreaseGroup` | Decrease Decimal Places |
+| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup.png" width="11" height="11" alt="Insert &#x27;âŒ€&#x27; Prefix"> | <a id="button-techdraw_extensioninsertprefixgroup"></a>Insert 'âŒ€' Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Insert 'âŒ€' Prefix |
+| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup_1.png" width="11" height="11" alt="Insert &#x27;â–¡&#x27; Prefix"> | â†³ Insert 'â–¡' Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Insert 'â–¡' Prefix |
+| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup_2.png" width="11" height="11" alt="Insert &#x27;nÃ—&#x27; Prefix"> | â†³ Insert 'nÃ—' Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Insert 'nÃ—' Prefix |
+| <img src="toolbar-icons/TechDraw_ExtensionInsertPrefixGroup_3.png" width="11" height="11" alt="Remove Prefix"> | â†³ Remove Prefix | `TechDraw_ExtensionInsertPrefixGroup` | Remove Prefix |
 | <img src="toolbar-icons/TechDraw_ExtensionLinePPGroup.png" width="11" height="11" alt="Cosmetic Parallel Line"> | <a id="button-techdraw_extensionlineppgroup"></a>Cosmetic Parallel Line | `TechDraw_ExtensionLinePPGroup` | Cosmetic Parallel Line |
-| <img src="toolbar-icons/TechDraw_ExtensionLinePPGroup_1.png" width="11" height="11" alt="Cosmetic Perpendicular Line"> | ↳ Cosmetic Perpendicular Line | `TechDraw_ExtensionLinePPGroup` | Cosmetic Perpendicular Line |
+| <img src="toolbar-icons/TechDraw_ExtensionLinePPGroup_1.png" width="11" height="11" alt="Cosmetic Perpendicular Line"> | â†³ Cosmetic Perpendicular Line | `TechDraw_ExtensionLinePPGroup` | Cosmetic Perpendicular Line |
 | <img src="toolbar-icons/TechDraw_ExtensionLockUnlockView.png" width="11" height="11" alt="Toggle View Lock"> | <a id="button-techdraw_extensionlockunlockview"></a>Toggle View Lock | `TechDraw_ExtensionLockUnlockView` | Toggle View Lock |
 | <img src="toolbar-icons/TechDraw_ExtensionPositionSectionView.png" width="11" height="11" alt="Position Section View"> | <a id="button-techdraw_extensionpositionsectionview"></a>Position Section View | `TechDraw_ExtensionPositionSectionView` | Aligns the selected section view with its source view orthogonally or the selected edge in the section view to the selected vertex in the base view |
 | <img src="toolbar-icons/TechDraw_ExtensionSelectLineAttributes.png" width="11" height="11" alt="Select Line Attributes, Cascade Spacing and Delta Distance"> | <a id="button-techdraw_extensionselectlineattributes"></a>Select Line Attributes, Cascade Spacing and Delta Distance | `TechDraw_ExtensionSelectLineAttributes` | Select Line Attributes, Cascade Spacing and Delta Distance |
 | <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup.png" width="11" height="11" alt="Cosmetic Thread Hole Side View"> | <a id="button-techdraw_extensionthreadsgroup"></a>Cosmetic Thread Hole Side View | `TechDraw_ExtensionThreadsGroup` | Cosmetic Thread Hole Side View |
-| <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup_1.png" width="11" height="11" alt="Cosmetic Thread Hole Bottom View"> | ↳ Cosmetic Thread Hole Bottom View | `TechDraw_ExtensionThreadsGroup` | Cosmetic Thread Hole Bottom View |
-| <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup_2.png" width="11" height="11" alt="Cosmetic Thread Bolt Side View"> | ↳ Cosmetic Thread Bolt Side View | `TechDraw_ExtensionThreadsGroup` | Cosmetic Thread Bolt Side View |
-| <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup_3.png" width="11" height="11" alt="Cosmetic Thread Bolt Bottom View"> | ↳ Cosmetic Thread Bolt Bottom View | `TechDraw_ExtensionThreadsGroup` | Cosmetic Thread Bolt Bottom View |
+| <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup_1.png" width="11" height="11" alt="Cosmetic Thread Hole Bottom View"> | â†³ Cosmetic Thread Hole Bottom View | `TechDraw_ExtensionThreadsGroup` | Cosmetic Thread Hole Bottom View |
+| <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup_2.png" width="11" height="11" alt="Cosmetic Thread Bolt Side View"> | â†³ Cosmetic Thread Bolt Side View | `TechDraw_ExtensionThreadsGroup` | Cosmetic Thread Bolt Side View |
+| <img src="toolbar-icons/TechDraw_ExtensionThreadsGroup_3.png" width="11" height="11" alt="Cosmetic Thread Bolt Bottom View"> | â†³ Cosmetic Thread Bolt Bottom View | `TechDraw_ExtensionThreadsGroup` | Cosmetic Thread Bolt Bottom View |
 | <img src="toolbar-icons/TechDraw_ExtensionVertexAtIntersection.png" width="11" height="11" alt="Cosmetic Intersection Vertices"> | <a id="button-techdraw_extensionvertexatintersection"></a>Cosmetic Intersection Vertices | `TechDraw_ExtensionVertexAtIntersection` | Cosmetic Intersection Vertices |
 | <img src="toolbar-icons/TechDraw_ExtentGroup.png" width="11" height="11" alt="Horizontal extent"> | <a id="button-techdraw_extentgroup"></a>Horizontal extent | `TechDraw_ExtentGroup` | Insert horizontal extent dimension |
-| <img src="toolbar-icons/TechDraw_ExtentGroup_1.png" width="11" height="11" alt="Vertical extent"> | ↳ Vertical extent | `TechDraw_ExtentGroup` | Insert vertical extent dimension |
+| <img src="toolbar-icons/TechDraw_ExtentGroup_1.png" width="11" height="11" alt="Vertical extent"> | â†³ Vertical extent | `TechDraw_ExtentGroup` | Insert vertical extent dimension |
 | <img src="toolbar-icons/TechDraw_FillTemplateFields.png" width="11" height="11" alt="Update Template Fields"> | <a id="button-techdraw_filltemplatefields"></a>Update Template Fields | `TechDraw_FillTemplateFields` | Uses document info to populate the template fields |
 | <img src="toolbar-icons/TechDraw_GeometricHatch.png" width="11" height="11" alt="Geometric Hatch"> | <a id="button-techdraw_geometrichatch"></a>Geometric Hatch | `TechDraw_GeometricHatch` | Applies a geometric hatch pattern to the selected faces |
 | <img src="toolbar-icons/TechDraw_Hatch.png" width="11" height="11" alt="Image Hatch"> | <a id="button-techdraw_hatch"></a>Image Hatch | `TechDraw_Hatch` | Applies a hatch pattern to the selected faces using an image file |
@@ -4474,13 +4314,13 @@ Every Classic/Plus command and native compound-button choice is listed below. Na
 | <img src="toolbar-icons/TechDraw_RedrawPage.png" width="11" height="11" alt="Redraw Page"> | <a id="button-techdraw_redrawpage"></a>Redraw Page | `TechDraw_RedrawPage` | Redraws the current page |
 | <img src="toolbar-icons/TechDraw_RichTextAnnotation.png" width="11" height="11" alt="Rich Text Annotation"> | <a id="button-techdraw_richtextannotation"></a>Rich Text Annotation | `TechDraw_RichTextAnnotation` | Inserts a rich text annotation in the current page |
 | <img src="toolbar-icons/TechDraw_SectionGroup.png" width="11" height="11" alt="Section View"> | <a id="button-techdraw_sectiongroup"></a>Section View | `TechDraw_SectionGroup` | Inserts a simple section view |
-| <img src="toolbar-icons/TechDraw_SectionGroup_1.png" width="11" height="11" alt="Complex Section View"> | ↳ Complex Section View | `TechDraw_SectionGroup` | Inserts a complex section view |
+| <img src="toolbar-icons/TechDraw_SectionGroup_1.png" width="11" height="11" alt="Complex Section View"> | â†³ Complex Section View | `TechDraw_SectionGroup` | Inserts a complex section view |
 | <img src="toolbar-icons/TechDraw_ShowAll.png" width="11" height="11" alt="Toggle Edge Visibility"> | <a id="button-techdraw_showall"></a>Toggle Edge Visibility | `TechDraw_ShowAll` | Toggles the visibility of the selected edges |
 | <img src="toolbar-icons/TechDraw_SpreadsheetView.png" width="11" height="11" alt="Spreadsheet View"> | <a id="button-techdraw_spreadsheetview"></a>Spreadsheet View | `TechDraw_SpreadsheetView` | Inserts a view of a spreadsheet in the current page |
 | <img src="toolbar-icons/TechDraw_StackGroup.png" width="11" height="11" alt="Stack Top"> | <a id="button-techdraw_stackgroup"></a>Stack Top | `TechDraw_StackGroup` | Moves the view to the top of the stack |
-| <img src="toolbar-icons/TechDraw_StackGroup_1.png" width="11" height="11" alt="Stack Bottom"> | ↳ Stack Bottom | `TechDraw_StackGroup` | Moves the view to the bottom of the stack |
-| <img src="toolbar-icons/TechDraw_StackGroup_2.png" width="11" height="11" alt="Stack Up"> | ↳ Stack Up | `TechDraw_StackGroup` | Moves the view up one level |
-| <img src="toolbar-icons/TechDraw_StackGroup_3.png" width="11" height="11" alt="Stack Down"> | ↳ Stack Down | `TechDraw_StackGroup` | Moves the view down one level |
+| <img src="toolbar-icons/TechDraw_StackGroup_1.png" width="11" height="11" alt="Stack Bottom"> | â†³ Stack Bottom | `TechDraw_StackGroup` | Moves the view to the bottom of the stack |
+| <img src="toolbar-icons/TechDraw_StackGroup_2.png" width="11" height="11" alt="Stack Up"> | â†³ Stack Up | `TechDraw_StackGroup` | Moves the view up one level |
+| <img src="toolbar-icons/TechDraw_StackGroup_3.png" width="11" height="11" alt="Stack Down"> | â†³ Stack Down | `TechDraw_StackGroup` | Moves the view down one level |
 | <img src="toolbar-icons/TechDraw_SurfaceFinishSymbols.png" width="11" height="11" alt="Surface Finish Symbol"> | <a id="button-techdraw_surfacefinishsymbols"></a>Surface Finish Symbol | `TechDraw_SurfaceFinishSymbols` | Adds a surface finish symbol in the selected view |
 | <img src="toolbar-icons/TechDraw_ToggleFrame.png" width="11" height="11" alt="Toggle View Frames"> | <a id="button-techdraw_toggleframe"></a>Toggle View Frames | `TechDraw_ToggleFrame` | Toggles visibility of view frames and vertices |
 | <img src="toolbar-icons/TechDraw_VerticalDimension.png" width="11" height="11" alt="Vertical Length Dimension"> | <a id="button-techdraw_verticaldimension"></a>Vertical Length Dimension | `TechDraw_VerticalDimension` | Inserts a vertical length dimension of an edge or distance between two points |
