@@ -32,6 +32,7 @@ class SectionTask(OperationTask):
                             ("Use all", self.profile_changed)))
         self.region_pick = QtWidgets.QCheckBox(tr("Pick closed regions in the view"))
         self.region_pick.setChecked(True)
+        self.region_pick.toggled.connect(self.update_regions)
         main.addRow(self.region_pick)
         self.buttons(main, (("Append section", self.append_section), ("Replace section", self.replace_section)))
 

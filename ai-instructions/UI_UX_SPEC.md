@@ -89,6 +89,18 @@ including newly created bars and late workbench/layout show events; Classic hide
 both Plus bars. Restoring a saved layout must not override the selected style.
 Switching back to Classic restores its toolbar visibility choices.
 
+The ribbon group area and its unused scroll viewport use the surrounding panel
+background from the current theme, including when the window is resized.
+
+Sketches display unfilled curves after leaving sketch edit. Component Extrude's
+region collector temporarily displays closed areas in translucent light blue.
+Clicking an area can choose its sketch directly and adds the outer and hole
+boundary curves to Selected curves. Disabling region picking or closing the task
+removes that fill; native curve selection and green/red volume previews remain.
+Deleting an Extrude removes only its unused internal profile helpers and restores
+the source sketch when no other operation consumes it. Delete/Undo/Redo preserves
+the sketch and supports creating another Extrude by edges or interior region.
+
 Plus UI replaces the visible toolbars with a top ribbon. A mode dropdown at the
 upper left lists available workflow workbenches, including Design, Draft, CAM,
 Assembly and Drawing where installed. FEM and installed 3D printing workbenches

@@ -2998,6 +2998,15 @@ Remaining integration is dependency ordered, with this milestone retaining prior
   feedback checks pass, including duplicate-label policy and externalized custom
   names. Physical owner acceptance remains pending; see WORK_STATE.
 - [   ] 7.8.7p Owner feedback: component Extrude selected sketch curves/regions.
+  October 3 follow-up: native sketches now default to unfilled outlines; shared
+  component profile tasks enable temporary light-blue regions. Interior picking
+  resolves component paths and can choose an initially empty profile. Extrude
+  deletion prunes unused internal profiles and restores reusable source sketches
+  within the same undo transaction. Ribbon scroll background follows the panel
+  palette. Grouped native build, 25 selected runtime checks, inspected region/
+  ribbon captures and the owner-shortcut verification pass. Word requirements
+  are updated and rendered. Owner physical acceptance remains pending; exact
+  delivery and origin publication evidence: WORK_STATE. No release.
   Source provides a curve list, native edge collection, Remove/Clear/Use all and
   viewport region picking that collects outer and hole contours. Owner requires
   one connected region with optional holes, from one sketch; other sketch curves

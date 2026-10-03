@@ -336,6 +336,63 @@ class TestComponentCurveProfile(unittest.TestCase):
         self.assertIsNone(task.mouse_callback)
         self.assertFalse(self.sketch.Visibility)
 
+    def testRectangleInteriorChoosesProfileAndRestoresWireDisplay(self):
+        from PySide import QtCore, QtGui, QtWidgets
+        from PySide6 import QtTest
+        rectangle = Sketch.create(self.component)
+        corners = [App.Vector(60, 0, 0), App.Vector(80, 0, 0),
+                   App.Vector(80, 15, 0), App.Vector(60, 15, 0)]
+        for a, b in zip(corners, corners[1:] + corners[:1]):
+            rectangle.addGeometry(Part.LineSegment(a, b))
+        self.doc.recompute()
+        self.assertFalse(rectangle.ViewObject.ShowClosedRegions)
+        Gui.Selection.clearSelection()
+        task = task_module().ExtrudeTask(self.component)
+        Gui.Control.showDialog(task)
+        task.start_selection()
+        try:
+            task.auto_preview.setChecked(False)
+            self.assertIsNone(task.profile.currentData())
+            self.assertTrue(rectangle.ViewObject.ShowClosedRegions)
+            task.view.viewTop()
+            task.view.fitAll()
+            Gui.updateGui()
+            output = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"])
+            Gui.getMainWindow().grab().save(str(output / "rectangle-candidate-blue.png"))
+            position = task.view.getPointOnViewport(App.Vector(70, 7, 0))
+            viewport = max((w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+                            if "GL" in w.metaObject().className() and w.width() > 100 and w.height() > 100),
+                           key=lambda w: w.width() * w.height())
+            sx, sy = task.view.getPointOnScreen(App.Vector(70, 7, 0))
+            ratio = viewport.devicePixelRatioF()
+            pos = QtCore.QPoint(round(sx / ratio), viewport.height() - round(sy / ratio) - 1)
+            event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pos),
+                                     QtCore.QPointF(viewport.mapToGlobal(pos)), QtCore.Qt.NoButton,
+                                     QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(viewport, event)
+            QtTest.QTest.mouseClick(viewport, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, pos)
+            Gui.updateGui()
+            self.assertEqual(task.profile.currentData(), rectangle.Name,
+                             str(task.view.getObjectsInfo(position)) + task.status.text())
+            self.assertEqual(task.curve_names(), ["Edge1", "Edge2", "Edge3", "Edge4"])
+            self.assertTrue(task.preview(), task.status.text())
+            Gui.getMainWindow().grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"])
+                                               / "rectangle-region.png"))
+        finally:
+            task.reject()
+        self.assertFalse(rectangle.ViewObject.ShowClosedRegions)
+        Gui.Selection.clearSelection()
+        Gui.updateGui()
+        Gui.getMainWindow().grab().save(str(output / "rectangle-unfilled.png"))
+        # A transient task highlight must never become saved sketch shading.
+        rectangle.ViewObject.ShowClosedRegions = True
+        name = rectangle.Name
+        saved = output / "RegionDisplay.cadprt"
+        self.doc.saveAs(str(saved))
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(saved))
+        self.assertFalse(self.doc.getObject(name).ViewObject.ShowClosedRegions)
+
     def testOriginHelpersAllowRegionPickingButSolidOcclusionBlocksIt(self):
         from freecad.gui import ComponentNavigator as Navigator
         Navigator.show(self.doc)

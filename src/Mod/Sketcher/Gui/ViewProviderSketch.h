@@ -543,6 +543,7 @@ public:
     App::PropertyBool ForceOrtho;
     App::PropertyBool SectionView;
     App::PropertyBool AutoColor;
+    App::PropertyBool ShowClosedRegions;
     App::PropertyString EditingWorkbench;
     SketcherGui::PropertyVisualLayerList VisualLayerList;
     //@}

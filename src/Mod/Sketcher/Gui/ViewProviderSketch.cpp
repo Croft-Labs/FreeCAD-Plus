@@ -598,6 +598,11 @@ ViewProviderSketch::ViewProviderSketch()
     PartGui::ViewProviderAttachExtension::initExtension(this);
     PartGui::ViewProviderGridExtension::initExtension(this);
 
+    ADD_PROPERTY_TYPE(ShowClosedRegions,
+                      (false),
+                      "Display",
+                      (App::PropertyType)(App::Prop_Transient | App::Prop_Hidden),
+                      "Show temporary closed regions while collecting a modeling profile");
     ADD_PROPERTY_TYPE(Autoconstraints,
                       (true),
                       "Auto Constraints",
@@ -699,6 +704,7 @@ ViewProviderSketch::ViewProviderSketch()
     updateColorPropertiesVisibility();
 
     pcSketchFacesToggle->addChild(pcSketchFaces);
+    pcSketchFacesToggle->on = false;
 }
 
 ViewProviderSketch::~ViewProviderSketch()
@@ -3943,12 +3949,15 @@ void ViewProviderSketch::onChanged(const App::Property* prop)
         return;
     }
 
-    if (prop == &Visibility) {
-        pcSketchFacesToggle->on = Visibility.getValue();
+    if (prop == &Visibility || prop == &ShowClosedRegions) {
+        pcSketchFacesToggle->on = Visibility.getValue() && ShowClosedRegions.getValue();
+        // Region candidates are deliberately distinct from shaded solid faces.
+        pcSketchFaces->color.setValue(SbColor(0.60f, 0.80f, 1.0f));
+        pcSketchFaces->transparency.setValue(0.55f);
         return;
     }
 
-    if (prop == &ShapeAppearance) {
+    if (prop == &ShapeAppearance && !ShowClosedRegions.getValue()) {
         pcSketchFaces->color.setValue(Base::convertTo<SbColor>(ShapeAppearance.getDiffuseColor()));
         pcSketchFaces->transparency.setValue(ShapeAppearance.getTransparency());
     }

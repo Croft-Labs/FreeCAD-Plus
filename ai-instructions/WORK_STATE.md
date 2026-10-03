@@ -1,5 +1,51 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 ribbon and sketch/Extrude feedback
+
+Source fixes the ribbon's stale dark child palette after tab/workbench changes,
+using the current main-window panel color for each regenerated group page.
+Native sketches default to unfilled outlines. Component profile tasks enable a
+transient light-blue region display; an interior viewport click can choose its
+sketch and populate the curve list. Closing the task removes the display, and
+save/reopen does not retain it. Extrude deletion removes unconsumed internal
+helpers and reveals its sketch when no operation still consumes it; shared
+profiles and delete/undo/redo remain intact.
+
+Evidence root: `D:/Temp/Office-PC/freecad-plus-sketch-feedback-20261003`.
+The grouped incremental build passes (`build`), including rebuilt SketcherGui
+and dependent PartDesignGui. Candidate payload is copied from the prior fresh
+owner build, updates those two native modules plus ComponentModel and the four
+GUI Python modules, and retains the prior native About identity `f8a4d5c408`.
+Exact current source and module hashes are recorded in BUILD-VALIDATION and
+BUILD-MANIFEST; the old About identity alone does not identify these changes.
+
+Final focused `acceptance` passes 18 curve-profile/background-result cases through
+the owner launcher. `shared-acceptance` passes five Revolve/Loft/Pipe/Helix task
+checks (and two earlier ribbon checks). `ribbon-delivery` owns final ribbon
+tab/resize checks. No source overlays. Native viewport Qt mouse events select all
+four rectangle edges from an initially empty profile; blue-region and unfilled
+captures were reviewed. Deleted operations can be recreated from the source,
+and shared profiles survive deletion of one consumer. Preserve earlier failed
+reports: native property registration order was corrected within the grouped
+build, test-only Qt imports/transaction setup were corrected, and palette-only
+ribbon attempts were superseded after visual review found stale dark colors.
+Physical owner/high-DPI acceptance remains separate; existing Refine/topology
+and stylesheet warnings remain in the logs.
+
+Word retains all 1522 prior paragraphs and all other package parts unchanged,
+with two owner-requirement paragraphs appended. Rendered 44 pages: pages 1-43
+are byte-identical to the prior reviewed render; page 44 was visually inspected.
+Evidence: `C:/Users/Office-PC/.codex/visualizations/2026/10/03/01a101a6-1dcd-7341-88a5-a100bae38e72/sketch-feedback-doc`.
+The unrelated toolbar/icon relocations and untracked owner material are preserved.
+
+All 25 distinct selected checks pass: 18 profile/result, five shared-task and two
+final ribbon checks. The existing desktop `FreeCADPlus.exe - Shortcut.lnk` now
+targets `D:/Temp/Office-PC/freecad-plus-sketch-feedback-20261003/FreeCAD-Plus-2026-10-03/FreeCADPlus.exe`;
+the saved link was reopened and both target and working directory verified in
+`shortcut-verification.json`. Source publication is separate from local owner
+delivery: `publication.json` records the verified origin/main identity. Earlier
+owner payloads remain intact. No release or installer.
+
 ## October 3 fresh all-target owner build
 
 Owner explicitly requested a new build and desktop-shortcut update. Built all

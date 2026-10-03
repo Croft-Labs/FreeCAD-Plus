@@ -106,6 +106,7 @@ class OperationTask(ExtrudeTask):
         main.addRow(row)
         self.region_pick = QtWidgets.QCheckBox(tr("Pick closed regions in the view"))
         self.region_pick.setChecked(True)
+        self.region_pick.toggled.connect(self.update_regions)
         main.addRow(self.region_pick)
 
     def begin_reference_pick(self, field):

@@ -114,14 +114,50 @@ class TestComponentBackgroundResult(unittest.TestCase):
             self.assertFalse(prompts, str(prompts))
             self.assertIsNone(self.doc.getObject(names[0]))
             self.assertIsNone(self.doc.getObject(names[1]))
+            self.assertTrue(self.sketch.Visibility)
+            self.assertFalse(any(hasattr(obj, "ProfileSource") for obj in self.doc.Objects))
             self.doc.undo()
             self.doc.recompute()
             operation, body = (self.doc.getObject(name) for name in names)
             Model.prepare_result_display(self.component)
             self.assertEqual((operation.ObjectId, body.ObjectId), identities)
             self.assert_display(operation, body)
+            self.assertFalse(self.sketch.Visibility)
+            self.doc.redo()
+            self.doc.recompute()
+            self.assertTrue(self.sketch.Visibility)
+            from freecad.gui.ComponentExtrudeTask import ExtrudeTask
+            task = ExtrudeTask(self.component)
+            task.start_selection()
+            try:
+                Gui.Selection.clearSelection()
+                Gui.Selection.addSelection(self.doc.Name, self.sketch.Name, "Edge1")
+                self.assertEqual(task.curve_names(), ["Edge1"], task.status.text())
+                self.assertTrue(task.accept(), task.status.text())
+                self.assertTrue(task.result.Shape.isValid())
+            finally:
+                task.stop_selection()
+                task.clear_preview()
         finally:
             watchdog.stop()
+
+    def testDeletePreservesSharedProfileAndSketch(self):
+        other, result = Extrude.create(self.component, self.sketch, 6,
+                                       elements=["Edge1"], options=Extent.defaults())
+        unused = other.Profile[0].Name
+        shared = self.operation.Profile[0]
+        with Model.transaction(self.doc, "Share profile fixture"):
+            other.Profile = self.operation.Profile
+            self.doc.removeObject(unused)
+        with Model.transaction(self.doc, "Delete Extrude"):
+            self.doc.removeObject(self.operation.Name)
+        self.assertIsNotNone(self.doc.getObject(shared.Name))
+        self.assertFalse(self.sketch.Visibility)
+        self.assertAlmostEqual(result.Shape.Volume, 150 * 3.141592653589793)
+        with Model.transaction(self.doc, "Delete last Extrude"):
+            self.doc.removeObject(other.Name)
+        self.assertTrue(self.sketch.Visibility)
+        self.assertFalse(any(hasattr(obj, "ProfileSource") for obj in self.doc.Objects))
 
     def testAdoptionAndDumbConversion(self):
         identity = self.body.ObjectId

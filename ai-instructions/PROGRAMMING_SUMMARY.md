@@ -2,6 +2,11 @@
 
 ## Project at a glance
 
+The October 3 sketch-feedback build fixes ribbon panel colors, unfilled sketches,
+temporary blue profile regions, interior curve collection and sketch reuse after
+Extrude deletion. The 25 selected checks and owner-shortcut verification pass;
+see WORK_STATE for the current payload and source/native provenance.
+
 The October 3 fresh owner build compiles all enabled targets and stages source/native
 identity `f8a4d5c408`; 22 focused runtime/startup checks and the desktop shortcut
 verification pass. See WORK_STATE for the latest payload and evidence.

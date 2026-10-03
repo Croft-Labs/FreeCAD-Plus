@@ -1246,6 +1246,7 @@ class ComponentObserver:
     def __init__(self):
         self.busy = False
         self.visibility = {}
+        self.deleted_extrudes = {}
 
     def slotOpenTransaction(self, doc, label):
         self.visibility[doc.Name] = {o.ObjectId: bool(o.Visibility) for o in doc.Objects
@@ -1256,9 +1257,42 @@ class ComponentObserver:
 
     def slotAbortTransaction(self, doc):
         self.visibility.pop(doc.Name, None)
+        self.deleted_extrudes.pop(doc.Name, None)
 
     def slotDeletedDocument(self, doc):
         self.visibility.pop(doc.Name, None)
+        self.deleted_extrudes.pop(doc.Name, None)
+
+    def slotDeletedObject(self, obj):
+        if not obj.Document.HasPendingTransaction or getattr(obj, "OperationKind", "") != "Extrude":
+            return
+        # Snapshot dependencies while native deletion still retains the links.
+        # Apply cleanup before commit so delete/undo remains one transaction.
+        dependencies = geometry_dependencies(obj)
+        self.deleted_extrudes.setdefault(obj.Document.Name, []).append((
+            [dep.Name for dep in dependencies if getattr(dep, "ComponentRole", "") == "Internal"],
+            [dep.Name for dep in dependencies if dep.isDerivedFrom("Sketcher::SketchObject")]))
+
+    def cleanup_extrudes(self, doc):
+        for internal_names, sketch_names in self.deleted_extrudes.pop(doc.Name, []):
+            pending = set(internal_names)
+            while pending:
+                removed = set()
+                for name in pending:
+                    obj = doc.getObject(name)
+                    if obj is None:
+                        removed.add(name)
+                    elif not any(consumer != owner(obj) for consumer in obj.InList):
+                        doc.removeObject(name)
+                        removed.add(name)
+                if not removed:
+                    break  # Preserve internal inputs still used by another feature.
+                pending -= removed
+            for name in sketch_names:
+                sketch = doc.getObject(name)
+                if sketch and not any(getattr(obj, "ComponentRole", "") == "Operation"
+                                      for obj in sketch.InListRecursive):
+                    sketch.Visibility = True
 
     def previous_visibility(self, obj):
         return self.visibility.get(obj.Document.Name, {}).get(obj.ObjectId, bool(obj.Visibility))
@@ -1273,6 +1307,7 @@ class ComponentObserver:
                     continue
                 if not any(getattr(o, "ComponentRole", "") == "Document" for o in doc.Objects):
                     continue
+                self.cleanup_extrudes(doc)
                 changed = False
                 for component in definitions(doc):
                     for obj in list(component.Group):

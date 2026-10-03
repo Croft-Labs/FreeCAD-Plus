@@ -34,6 +34,7 @@ class ExtrudeTask:
         self.observing = False
         self.mouse_callback = None
         self.profile_visibility = {}
+        self.region_visibility = {}
         self.reference_pick = None
         self.preview_transparency = {}
         self.view = Gui.getDocument(component.Document.Name).activeView()
@@ -124,6 +125,7 @@ class ExtrudeTask:
         self.remove_curves.clicked.connect(self.remove_selected_curves)
         self.clear_curves.clicked.connect(lambda: self.set_curves([], False))
         self.all_curves.clicked.connect(self.profile_changed)
+        self.region_pick.toggled.connect(self.update_regions)
         self.target.currentIndexChanged.connect(self.changed)
         self.length.valueChanged.connect(self.changed)
         self.reverse.toggled.connect(self.changed)
@@ -333,11 +335,17 @@ class ExtrudeTask:
         self.set_curves([name for name in self.curve_names() if name not in removed], False)
 
     def start_selection(self):
+        self.update_regions()
         Gui.Selection.addObserver(self, 0)
         self.observing = True
         self.mouse_callback = self.view.addEventCallback("SoMouseButtonEvent", self.pick_region)
 
     def stop_selection(self):
+        for name, visible in getattr(self, "region_visibility", {}).items():
+            source = self.component.Document.getObject(name)
+            if source:
+                source.ViewObject.ShowClosedRegions = visible
+        self.region_visibility = {}
         if getattr(self, "preview_timer", None) is not None:
             self.preview_timer.stop()
         if self.observing:
@@ -346,6 +354,15 @@ class ExtrudeTask:
         if self.mouse_callback is not None:
             self.view.removeEventCallback("SoMouseButtonEvent", self.mouse_callback)
             self.mouse_callback = None
+
+    def update_regions(self, *args):
+        if not hasattr(self, "region_visibility"):
+            self.region_visibility = {}
+        for index in range(1, self.profile.count()):
+            source = self.component.Document.getObject(self.profile.itemData(index))
+            if source and hasattr(source.ViewObject, "ShowClosedRegions"):
+                self.region_visibility.setdefault(source.Name, source.ViewObject.ShowClosedRegions)
+                source.ViewObject.ShowClosedRegions = self.region_pick.isChecked()
 
     def addSelection(self, document, name, subname, *args):
         from freecad.gui import ComponentSelection as Selection
@@ -373,14 +390,29 @@ class ExtrudeTask:
     def pick_region(self, event):
         if self.reference_pick is not None or not self.region_pick.isChecked() or event.get("State") != "DOWN" or event.get("Button") != "BUTTON1":
             return
-        source = self.component.Document.getObject(self.profile.currentData()) if self.profile.currentData() else None
-        if source is None or not source.isDerivedFrom("Sketcher::SketchObject") or not source.Visibility:
-            return
         position = event.get("Position")
         if not position:
             return
         try:
             import ComponentProfile as Profile
+            from freecad.gui import ComponentSelection as Selection
+            hits = self.view.getObjectsInfo(position) or []
+            source = self.component.Document.getObject(self.profile.currentData()) if self.profile.currentData() else None
+            # An interior click can choose the profile itself. Native hits may
+            # name a component path rather than the sketch directly.
+            resolved_hits = []
+            for hit in hits:
+                hit_doc = App.listDocuments().get(hit.get("Document"))
+                base = hit_doc.getObject(hit.get("Object", "")) if hit_doc else None
+                picks = Selection.resolve(self.component, base, hit.get("Component", ""))
+                pick = picks[0] if len(picks) == 1 else None
+                resolved_hits.append((hit, base, pick))
+                if (source is None and pick and pick.item is not None
+                        and pick.element.startswith("InternalFace")
+                        and self.profile.findData(pick.item.Name) > 0):
+                    source = pick.item
+            if source is None or not source.isDerivedFrom("Sketcher::SketchObject") or not source.Visibility:
+                return
             start, end = self.view.projectPointToLine(position)
             frame = self.component.getGlobalPlacement().multiply(source.Placement)
             normal = frame.Rotation.multVec(App.Vector(0, 0, 1))
@@ -392,18 +424,15 @@ class ExtrudeTask:
             # Origin helpers can be picked on top of solids regardless of depth.
             # Inspect the full ray so ignoring a helper never exposes a region
             # occluded by real geometry. Geometry behind the sketch is harmless.
-            for hit in self.view.getObjectsInfo(position) or []:
-                hit_doc = App.listDocuments().get(hit.get("Document"))
-                hit_object = hit_doc.getObject(hit.get("Object", "")) if hit_doc else None
+            for hit, hit_object, pick in resolved_hits:
                 origin = self.component.Origin
                 origin_hit = hit_object == origin or hit_object in origin.OriginFeatures
                 support_plane_hit = (hit_object is not None
                     and hit_object in [ref[0] for ref in source.AttachmentSupport]
                     and (hit_object.isDerivedFrom("PartDesign::Plane")
                          or hit_object.isDerivedFrom("Part::Plane")))
-                sketch_region_hit = (hit.get("Document") == source.Document.Name
-                                     and hit.get("Object") == source.Name
-                                     and hit.get("Component", "").startswith("InternalFace"))
+                sketch_region_hit = (pick is not None and pick.item == source
+                                     and pick.element.startswith("InternalFace"))
                 if origin_hit or support_plane_hit or sketch_region_hit:
                     continue
                 if all(axis in hit for axis in ("x", "y", "z")):
@@ -413,6 +442,7 @@ class ExtrudeTask:
                 return  # Native edge picks are collected by the selection observer.
             point = self.component.getGlobalPlacement().inverse().multVec(point)
             names = Profile.region(source, point)
+            self.profile.setCurrentIndex(self.profile.findData(source.Name))
             self.set_curves(([] if self.whole_profile else self.curve_names()) + names, False)
         except Exception as error:
             self.status.setText(str(error))

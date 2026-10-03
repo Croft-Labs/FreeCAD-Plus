@@ -402,6 +402,10 @@ class Ribbon(QtCore.QObject):
         self.scroll = QtWidgets.QScrollArea()
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QtWidgets.QFrame.NoFrame)
+        # QScrollArea defaults to the palette's dark background role. Match the
+        # surrounding panels, including the unused space beside the groups.
+        self.scroll.setBackgroundRole(QtGui.QPalette.Window)
+        self.scroll.viewport().setBackgroundRole(QtGui.QPalette.Window)
         self.scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scroll.setMinimumWidth(0)
         self.scroll.setFixedHeight(GRID_HEIGHT + self.widget.fontMetrics().height() + 6
@@ -739,6 +743,13 @@ class Ribbon(QtCore.QObject):
         if self.current_tab() == "Home" and self.mode_name == "Design":
             self.initialize_home()
         page = QtWidgets.QWidget(self.scroll)
+        page.setObjectName("PlusRibbonPage")
+        # Toolbar children can inherit a stale dark palette after workbench
+        # activation even while native panels paint with the main-window theme.
+        page.setPalette(self.window.palette())
+        page.setBackgroundRole(QtGui.QPalette.Window)
+        panel_color = self.window.palette().color(QtGui.QPalette.Window).name()
+        page.setStyleSheet("QWidget#PlusRibbonPage { background-color: " + panel_color + "; }")
         layout = QtWidgets.QHBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
