@@ -2,6 +2,11 @@
 
 ## Project at a glance
 
+Editing a History item temporarily suppresses the later history tail through
+shared TaskContext lifecycle handling. Authored suppression is preserved; finish,
+cancel, startup failure and save-time restoration are covered by native checks.
+WORK_STATE records the current Python-only owner payload and validation.
+
 Model History now supports dependency-clamped drag/drop ordering with its native
 Origin fixed first. Multi-item order, hidden results, expression dependencies,
 Undo/Redo and persistence are covered by 40 distinct native checks. WORK_STATE

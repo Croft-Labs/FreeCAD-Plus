@@ -243,7 +243,7 @@ def launch(preset=None, operation=None, kind="Box"):
     component = Model.owner(operation) if operation else active_component()
     context = TaskContext(component)
     try:
-        context.enter()
+        context.enter(operation)
         _task = PrimitiveTask(component, operation, preset, context, kind)
         Gui.Control.showDialog(_task)
     except Exception:

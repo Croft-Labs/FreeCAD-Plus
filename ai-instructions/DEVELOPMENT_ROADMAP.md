@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 temporary History suppression while editing (7.8)
+
+Shared TaskContext now marks the history tail inactive while an earlier item is
+edited, including independent later features and hidden results. Authored flags,
+identities, native Origin and prior visibility are preserved. Finish/Cancel and
+failed startup restore the tail; validation failure retains it. Save-time refresh
+prevents temporary inactive caches from being serialized as current results.
+Forty-seven distinct native checks pass. WORK_STATE records Word review, Python-only
+staging, shortcut and source publication separately.
+
 ## October 3 dependency-safe Model History ordering (7.8)
 
 Implemented within-component drag/drop, clamped after all predecessors and before

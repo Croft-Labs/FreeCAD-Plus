@@ -13,6 +13,14 @@ import uuid
 import FreeCAD as App
 import Part
 
+# Runtime-only History rollback. Authored suppression and saved document data stay intact.
+_edit_rollbacks = {}
+
+
+def edit_suppressed(obj):
+    return any(obj in items for items in _edit_rollbacks.values())
+
+
 SCHEMA = 1
 TYPES = ("Full Component", "Bodies Only", "Hidden")
 
@@ -463,7 +471,7 @@ def current_shape(obj):
     for dep in [obj] + geometry_dependencies(obj):
         if "Invalid" in dep.State or "Touched" in dep.State:
             raise ValueError("Geometry requires update or repair: " + dep.Label)
-        if getattr(dep, "UserSuppressed", False) or getattr(dep, "ResultStatus", "Ready") != "Ready":
+        if edit_suppressed(dep) or getattr(dep, "UserSuppressed", False) or getattr(dep, "ResultStatus", "Ready") != "Ready":
             raise ValueError("Geometry is unavailable: " + dep.Label)
     if obj.Shape.isNull():
         raise ValueError("The selected object has no evaluated geometry.")
@@ -488,6 +496,8 @@ class ResultProxy(PersistentProxy):
                 ComponentResultView.sync(obj)
 
     def update_result(self, obj):
+        if edit_suppressed(obj):
+            return  # Keep cached geometry for native links; exclude it from available results.
         if getattr(obj, "UserSuppressed", False):
             if not obj.Frozen:
                 obj.Shape = Part.Shape()
@@ -648,6 +658,8 @@ def _invalidate_reference(obj, status, message):
 
 class ReferenceProxy(PersistentProxy):
     def execute(self, obj):
+        if edit_suppressed(obj):
+            return
         # Pending snapshots are never accepted by current_shape consumers.
         if getattr(obj, "UserSuppressed", False):
             _invalidate_reference(obj, "Suppressed", "")
@@ -684,7 +696,7 @@ def activate(component, strict=True):
     doc.recompute()
     issues = []
     for obj in history(component):
-        if getattr(obj, "ComponentRole", "") != "Reference":
+        if edit_suppressed(obj) or getattr(obj, "ComponentRole", "") != "Reference":
             continue
         if getattr(obj, "UserSuppressed", False):
             _invalidate_reference(obj, "Suppressed", "")
@@ -1024,7 +1036,7 @@ def make_independent(occurrence, label=None):
 def suppression_sources(obj):
     """Authored flags, including upstream flags, independent of cached shapes."""
     return [dep for dep in [obj] + geometry_dependencies(obj)
-            if getattr(dep, "UserSuppressed", False)]
+            if edit_suppressed(dep) or getattr(dep, "UserSuppressed", False)]
 
 
 def _consumed_results(items, blocked):
@@ -1037,6 +1049,8 @@ def set_items_suppressed(items, suppressed):
     items = list(dict.fromkeys(items))
     if not items:
         return
+    if any(edit_suppressed(obj) for obj in items):
+        raise ValueError("Finish the current edit before changing later History items.")
     component = owner(items[0])
     if (not is_component(component)
             or any(owner(obj) != component or obj not in history(component) for obj in items)):
@@ -1101,6 +1115,8 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if edit_suppressed(obj):
+        return "Temporarily suppressed while an earlier History item is being edited."
     sources = suppression_sources(obj)
     if sources:
         if sources[0] == obj:
@@ -1113,6 +1129,8 @@ def history_detail(obj):
 
 def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
+    if edit_suppressed(obj):
+        return "Suppressed during edit"
     if getattr(obj, "UserSuppressed", False):
         return "Suppressed"
     if any(getattr(dep, "UserSuppressed", False)

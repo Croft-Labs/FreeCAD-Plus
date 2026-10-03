@@ -1,5 +1,50 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 temporary suppression of later History items during edits
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_history_edit/app`.
+Python-only incremental staging from the verified history-order payload. Updated
+modules: ComponentModel, ComponentNavigator and all six modeling task launchers.
+Native About retains `03a6f66644488e2b710f94e828155b9b12c23c60`; BUILD-VALIDATION and
+release-info identify the newer application source. No native rebuild or release.
+
+TaskContext owns the temporary history tail and reuses native TempoVis for display
+restoration/save handling. Authored UserSuppressed flags and Undo history remain
+unchanged. The model excludes later items from evaluated inputs/results and shows
+Suppressed during edit. Published-result caches remain intact for native links,
+then refresh at edit completion or before save. Native geometry links and engines
+are preserved. This is temporary component availability, not a native recompute
+engine freeze. Earlier/edited items and native Origin remain available. Cancel,
+accepted edits, startup failure and document close clear rollback; validation
+failure keeps it active. All six modeling launchers share the context, alongside
+native feature and Sketcher editors; reference/BOM entry points also use it.
+
+Validation evidence in the build parent's `validation` folder:
+- `edit-save-final`: all 46 native checks pass, including 37 existing panel/context,
+  suppression, History ordering and modeling preview regressions.
+- `edit-save-resilience`: all 10 focused lifecycle checks pass on the final module,
+  including save failure before the finish notification and fresh downstream
+  geometry when saving an unfinished edit. Together 47 distinct checks pass, with
+  source-matched installed modules, no overlays and no unexpected GUI diagnostics.
+- `edit-verified`: eight focused checks pass, including all six modeling editors,
+  feature 5 of 10, reordered History, preexisting suppression/visibility choices,
+  edited geometry with dependent mirroring/expressions, Undo/Redo, save/reopen,
+  native Sketcher, failed validation/startup and document close.
+- Earlier `edit-1` and `edit-final` retain fixture failures: legacy extrusion
+  conversion with a direct expression consumer, a Pipe path/profile fixture and
+  accessing the deleted task label after successful Accept. Corrected fixtures
+  pass without weakening application validation.
+- `shortcut-verification.json` records saving and reopening the existing desktop
+  shortcut with its verified target/working directory; `publication.json` records
+  the source commit and matching origin/main identity.
+
+Word preserves all 1535 existing paragraphs and package members except document.xml.
+Original pages 1-46 match the preceding render; new page 47 was inspected in
+`history-edit-doc/render-final` under the task visual root. The payload manifest
+inherits verified unchanged baseline hashes after size/timestamp checks and
+rehashes changed files and critical binaries. Native Qt automation is separate
+from physical owner pointer/high-DPI acceptance, which remains pending.
+
 ## October 3 dependency-safe Model History ordering
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_history_order/app`.

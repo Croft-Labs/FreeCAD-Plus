@@ -42,6 +42,7 @@ class TaskContext:
     """Return from a definition-owned task to the originating component view."""
     def __init__(self, component):
         self.component = component
+        self.document_name = component.Document.Name
         self.selection = task_geometry(component)
         root = resolve(_dock.root_key) if _dock and _dock.root_key else component
         self.profile_selection = [(pick.item, pick.element)
@@ -53,10 +54,16 @@ class TaskContext:
         self.path = list(self.dock.active_path) if self.dock else []
         self.edit_key = None
         self.finished = False
+        self.rollback = None
+        self.monitor = QtCore.QTimer()
+        self.monitor.setInterval(100)
+        self.monitor.timeout.connect(self.check_edit)
 
-    def enter(self):
+    def enter(self, operation=None):
         App.setActiveDocument(self.component.Document.Name)
         Gui.activeDocument().activeView().setActiveObject("part", self.component)
+        if operation is not None:
+            self.begin_history_edit(operation)
         if self.dock:
             # Task inputs/preview use definition-local geometry. Keep the origin
             # window's saved context intact until the task returns there.
@@ -68,6 +75,7 @@ class TaskContext:
             self.dock.raise_()
 
     def edit(self, obj):
+        self.begin_history_edit(obj)
         self.edit_key = object_key(obj)
         Gui.addDocumentObserver(self)
         try:
@@ -77,6 +85,69 @@ class TaskContext:
             self.restore()
             raise
 
+    def begin_history_edit(self, obj):
+        if self.rollback is not None:
+            return
+        items = model().history(self.component)
+        obj = model().display_object(obj)
+        visible = [item for item in items if not model().background_result(item)]
+        if obj not in visible:
+            return
+        later = set(visible[visible.index(obj) + 1:])
+        blocked = {item for item in items if model().display_object(item) in later}
+        from Show import TempoVis
+        self.rollback = TempoVis(self.component.Document)
+        # Capture before any published-result visibility observer mirrors changes.
+        self.rollback.modifyVPProperty(items, "Visibility")
+        App.addDocumentObserver(self)
+        model()._edit_rollbacks[self] = blocked
+        self.rollback.hide(list(blocked))
+        # Expose the result at the edited history position, if later consumers hid it.
+        for result in model().finished_results(self.component):
+            if any(result in getattr(item, "ConsumedResults", []) for item in blocked):
+                self.rollback.show(result)
+        self.monitor.start()
+        if self.dock:
+            self.dock.refresh()
+
+    def slotStartSaveDocument(self, doc, filename):
+        if doc.Name != self.document_name or self.finished:
+            return
+        # Save evaluated geometry, never cached outputs from the temporary history tail.
+        blocked = model()._edit_rollbacks.pop(self, set())
+        try:
+            for obj in blocked:
+                try:
+                    obj.touch()
+                except RuntimeError:
+                    pass
+            doc.recompute()
+        finally:
+            # Restore eligibility even if saving fails before its finish notification.
+            model()._edit_rollbacks[self] = blocked
+
+    def slotFinishSaveDocument(self, doc, filename):
+        if doc.Name == self.document_name:
+            self.check_edit()
+
+    def check_edit(self):
+        if self.finished:
+            return
+        doc = App.listDocuments().get(self.document_name)
+        if doc is None:
+            self.restore()
+            return
+        if not Gui.Control.activeDialog() and not Gui.getDocument(doc.Name).getInEdit():
+            self.restore()
+            return
+        # Native editors/previews may restore visibility while the task is open.
+        for obj in model()._edit_rollbacks.get(self, ()):
+            try:
+                if obj.Visibility:
+                    obj.Visibility = False
+            except RuntimeError:
+                pass  # Deleted objects cannot be restored or displayed.
+
     def slotResetEdit(self, view_provider):
         if object_key(view_provider.Object) == self.edit_key:
             QtCore.QTimer.singleShot(0, self.restore)
@@ -85,6 +156,21 @@ class TaskContext:
         if self.finished:
             return
         self.finished = True
+        self.monitor.stop()
+        blocked = model()._edit_rollbacks.pop(self, set())
+        if self.rollback is not None:
+            App.removeDocumentObserver(self)
+            self.rollback.restore()
+            self.rollback = None
+            doc = App.listDocuments().get(self.document_name)
+            if doc:
+                for obj in blocked:
+                    try:
+                        if doc.getObject(obj.Name) == obj:
+                            obj.touch()
+                    except RuntimeError:
+                        pass
+                doc.recompute()
         if self.edit_key:
             Gui.removeDocumentObserver(self)
         if not self.dock or not self.root_key or not resolve(self.root_key):
@@ -457,9 +543,9 @@ class Navigator(QtWidgets.QDockWidget):
                 if not origin:
                     item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
                 inactive = status == tr("Inactive \u2014 dependency")
-                state = QtCore.Qt.Checked if origin else (QtCore.Qt.Unchecked if getattr(obj, "UserSuppressed", False) else (QtCore.Qt.PartiallyChecked if inactive else QtCore.Qt.Checked))
+                state = QtCore.Qt.Checked if origin else (QtCore.Qt.Unchecked if model().edit_suppressed(obj) or getattr(obj, "UserSuppressed", False) else (QtCore.Qt.PartiallyChecked if inactive else QtCore.Qt.Checked))
                 item.setCheckState(0, state)
-                if origin:
+                if origin or model().edit_suppressed(obj):
                     item.setFlags(item.flags() & ~QtCore.Qt.ItemIsUserCheckable)
                 item.setToolTip(0, model().history_detail(obj) or tr("Unchecked: suppressed. Partially checked: an input is inactive."))
                 if origin:
@@ -1439,7 +1525,13 @@ class Navigator(QtWidgets.QDockWidget):
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing history."))
         if getattr(obj, "ComponentRole", "") == "Reference":
-            self.edit_reference(key)
+            context = TaskContext(model().owner(obj))
+            try:
+                context.enter(obj)
+                context.monitor.stop()  # The reference picker is a modal dialog.
+                self.edit_reference(key)
+            finally:
+                context.restore()
             return
         if getattr(obj, "ComponentRole", "") == "Result" and not obj.Frozen:
             obj = obj.Producer
@@ -1450,7 +1542,13 @@ class Navigator(QtWidgets.QDockWidget):
         self.active_key = object_key(component)
         if obj.TypeId == "Assembly::BomObject":
             from CommandCreateBom import CommandCreateBom
-            CommandCreateBom().Activated(obj)
+            context = TaskContext(component)
+            try:
+                context.enter(obj)
+                CommandCreateBom().Activated(obj)
+            except Exception:
+                context.restore()
+                raise
         elif getattr(obj, "OperationKind", "") == "Extrude":
             from freecad.gui.ComponentExtrudeTask import launch
             launch(operation=obj)

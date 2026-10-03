@@ -1910,6 +1910,19 @@ controls, and preserve single-click selection and context-menu Edit. Protected
 origins do not open an editor; an active task must be finished first. Closing or
 cancelling returns to the original component/occurrence context.
 
+While editing a History feature/object, temporarily suppress every subsequent
+item in the active component's current History order, including independent later
+items and background results. Editing item 5 of 10 suppresses 6-10. Keep earlier
+items, the edited item and native Origin available. Show later items unchecked
+with status Suppressed during edit; hide their geometry and exclude them from
+evaluated inputs/results. Keep authored suppression flags unchanged. Accept or
+Cancel restores previous suppression/display choices and refreshes downstream
+results. Failed validation keeps the task and rollback active; failed startup
+restores them. Apply to native feature/Sketcher editors and all six shared modeling
+tasks. Temporary state adds no Undo entry and must not persist in saves; saving
+an unfinished edit refreshes downstream caches before serialization. Preserve
+component/occurrence context on return. See WORK_STATE for validation and delivery.
+
 Drag History names, icons or status areas to reorder objects within the active
 component. Clamp each drop after the latest predecessor and before the earliest
 dependent, following transitive geometry/expression dependencies through hidden

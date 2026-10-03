@@ -761,7 +761,7 @@ def launch(preset=None, operation=None):
     component = Model.owner(operation) if operation else active_component()
     context = TaskContext(component)
     try:
-        context.enter()
+        context.enter(operation)
         _task = ExtrudeTask(component, operation, preset, context)
         Gui.Control.showDialog(_task)
         _task.start_selection()
