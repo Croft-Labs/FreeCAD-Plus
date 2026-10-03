@@ -29,10 +29,7 @@ class SketchTask:
                               if getattr(obj, "Role", "") in ("XY_Plane", "XZ_Plane", "YZ_Plane")}
         self.observing = False
         self.form = QtWidgets.QWidget()
-        self.form.setAutoFillBackground(True)
-        self.form.setBackgroundRole(QtGui.QPalette.Base)
-        self.form.setForegroundRole(QtGui.QPalette.Text)
-        self.form.setStyleSheet("QWidget { background-color: palette(base); color: palette(text); }")
+        self.form.setPalette(Gui.getMainWindow().palette())
         self.form.setWindowTitle(tr("Datum Plane") if datum_only else tr("New Sketch"))
         layout = QtWidgets.QVBoxLayout(self.form)
         self.plane = QtWidgets.QComboBox()
@@ -458,6 +455,9 @@ class SketchTask:
 
 
 def launch(component=None, datum_only=False):
+    if datum_only:
+        from freecad.gui.ComponentPlaneTask import launch as launch_plane
+        return launch_plane(component)
     global _task
     if Gui.Control.activeDialog():
         raise ValueError(tr("Finish the current task before creating a sketch."))

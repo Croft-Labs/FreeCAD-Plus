@@ -1,5 +1,69 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 datum-plane create and edit
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_datum_plane/app`.
+Grouped incremental native build from the existing configured compiler tree;
+not a clean rebuild. Core GUI, Part, PartDesign, Sketcher and their dependencies
+passed the focused build, and twelve rebuilt native files were staged alongside
+the source Python modules. The inherited executable version string still names
+`03a6f66644488e2b710f94e828155b9b12c23c60`; it is a base stamp, not the new build's
+source identity. BUILD-MANIFEST and BUILD-VALIDATION record the application commit,
+compiled source hashes and staged native hashes separately. No published release.
+
+The standalone Plane action, native component-document Datum Plane command and
+History editor open the new four-section task. Plane geometry supports origin or
+user planes, planar faces, coplanar non-collinear edges/lines, axis plus line,
+three points, and line plus point; planar curves may participate. Enter values
+accepts XYZ offsets and a nonzero normal normalized on acceptance. Orientation
+projects an edge/axis or two points onto the plane, with closest component axis
+as default. Origin selection projects a point/endpoint or the part origin.
+Separate normal, signed-offset and X-direction reversals remain independent.
+Purple preview and automatic recompute default on; previews are transient and
+non-pickable. Disabling automatic updates clears stale preview until refreshed.
+
+ReferenceCollector extends the same CurveCollector used by modeling operations,
+including focus, latest-row highlight, toggle deselection and Delete. Its mixed
+geometry lists add basic plane/axis menus and Under-defined/Defined/Invalid status.
+Native plane identities, association, undo/redo, helper cleanup and persistence
+are retained; importing old projected planes accounts for their former offset/Z
+reversal order. Arbitrary legacy frames retain stored origin and X direction.
+Existing embedded sketch-plane creation and independent/support sketch behavior
+remain available. Native App::Line directions now correctly use their X base axis.
+
+Task forms use the active palette instead of forced dark colors. Ribbon pages
+refresh on palette/style changes, fixing a startup color retained from an older
+palette. Both origin planes and axes, plus the origin point, are shown at twice
+normal scale during plane/sketch placement; finish/cancel restores size/visibility.
+
+62 distinct native checks passed without source overlays or unexpected GUI errors:
+- `validation/delivery`: 12 final plane checks through the owner launcher, covering
+  requested combinations, invalid/under-defined inputs, actual viewport face picks,
+  toggle/Delete, basic-menu focus, 360-pixel vertical scrolling, popup contrast,
+  live palette changes, purple preview, normalization, native command/History entry,
+  edit/cancel, legacy migration, atomic failure, undo/redo, save/reopen and scale restore.
+- `validation/plane-native-2`: nine legacy plane checks and nine shared task-width
+  checks. Its nine earlier plane-task checks were superseded by delivery above.
+- `validation/regression`: 32 curve-picker, modeling-preview and sketch-frame checks,
+  including tilted viewport edge picks across five modeling operations.
+
+Early failed probes are retained for diagnosis and are not acceptance evidence.
+Light task fields, popup text, purple overlay, origin geometry and narrow panel
+captures were reviewed. A pointer probe overlapping the native origin planes picked
+that plane; the body-face toggle test uses separated geometry to avoid ambiguity.
+Physical pointer/high-DPI owner acceptance remains separate.
+
+The Word specification changed only five plane paragraphs, preserving its other
+2778 paragraphs and every other OOXML package part. All 78 pages rendered;
+changed pages 66-76 were reviewed, with the remaining 67 pixel-identical to the
+previous reviewed document. Headings, styles, automatic numbering and Classic
+where-used child bullets remain intact. Word SHA-256:
+`4f1f0d54f68a115a3a85943bd4a92cf1f03ba956dbc2ec1b4ad1cd81c88535ab`.
+
+The existing desktop shortcut was saved and reopened; target and working directory
+match this payload (`validation/shortcut-verification.json`). Source publication
+and full payload integrity are recorded in the delivery manifest and Git history.
+
 ## October 3 follow-up temp-folder cleanup
 
 Removed 310 confirmed empty folder trees and ten obsolete folders from

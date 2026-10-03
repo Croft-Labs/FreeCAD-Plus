@@ -10,6 +10,7 @@ import Part
 import ComponentModel as Model
 import ComponentSketch as Sketch
 from freecad.gui import ComponentSketchTask as Task
+from freecad.gui import ComponentPlaneTask as PlaneTask
 from freecad.gui import ComponentNavigator as Navigator
 from PySide import QtCore
 try:
@@ -33,6 +34,8 @@ class TestComponentPlaneFrame(unittest.TestCase):
         self.output = Path(os.environ['FREECAD_PLUS_VALIDATION_DIR'])
 
     def tearDown(self):
+        if PlaneTask._task:
+            PlaneTask._task.reject()
         if Task._task:
             Task._task.reject()
         for doc in list(App.listDocuments().values()):
@@ -157,16 +160,16 @@ class TestComponentPlaneFrame(unittest.TestCase):
     def testTaskSequencePickingAndReverseButtons(self):
         point, other = self.point('PickedOrigin', (3, 4, 70)), self.point('SecondPoint', (8, 5, 90))
         task = Task.launch(self.part, datum_only=True)
-        self.assertEqual([s.title() for s in task.sections], ['Define Surface', 'Z Direction', 'Sketch Origin', 'X Direction'])
-        self.assertEqual(task.orientation_mode.currentData(), 'Projected references')
+        self.assertEqual([s.title() for s in task.sections], ['1. Plane orientation and location', '2. Orientation', '3. Origin selection', '4. Preview'])
+        self.assertEqual(task.mode.currentData(), 'Select geometry')
         Gui.Selection.clearSelection();Gui.Selection.addSelection(self.box, 'Face6')
-        self.assertEqual(task.base.currentData(), 'Selected planar face')
-        task.origin_pick.click();Gui.Selection.addSelection(point, 'Vertex1')
+        self.assertEqual(task.plane_collector.references(), [(self.box, 'Face6')])
+        task.activate('origin');Gui.Selection.addSelection(point, 'Vertex1')
         self.assertEqual(task.origin_reference[0], point)
-        task.x_source.setCurrentIndex(2)
+        task.activate('axis')
         Gui.Selection.addSelection(point, 'Vertex1');Gui.Selection.addSelection(other, 'Vertex1')
-        self.assertEqual(len(task.axis_references), 2)
-        task.reverse_z.click();task.reverse_x.click()
+        self.assertEqual(len(task.axis_collector.references()), 2)
+        task.reverse_normal.click();task.reverse_axis.click()
         self.settle()
         task.form.grab().save(str(self.output / 'projected-plane-task.png'))
         if not task.accept():self.fail(task.status.text())

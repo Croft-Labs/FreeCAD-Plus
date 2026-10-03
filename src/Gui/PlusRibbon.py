@@ -422,7 +422,8 @@ class Ribbon(QtCore.QObject):
         QtWidgets.QApplication.instance().installEventFilter(self)
 
     def eventFilter(self, watched, event):
-        if watched == self.window and event.type() == QtCore.QEvent.Show and self.enabled:
+        if (watched == self.window and event.type() in (QtCore.QEvent.Show,
+                QtCore.QEvent.PaletteChange, QtCore.QEvent.StyleChange) and self.enabled):
             self.render_timer.start(0)
         if (watched in self.plus_bars() and event.type() == QtCore.QEvent.Hide
                 and self.enabled and not self.changing):

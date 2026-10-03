@@ -142,7 +142,7 @@ class TestComponentTaskWidth(unittest.TestCase):
 
     def testSketchAxisDirections(self):
         task = self.launch("Sketch", datum_only=True)
-        task.orientation_mode.setCurrentIndex(task.orientation_mode.findText("Axis directions"))
+        task.mode.setCurrentIndex(task.mode.findData("Enter values"))
         self.check_width("Sketch")
 
     def testSketchIndependentFrames(self):

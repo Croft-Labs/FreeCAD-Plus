@@ -1550,6 +1550,9 @@ class Navigator(QtWidgets.QDockWidget):
             except Exception:
                 context.restore()
                 raise
+        elif obj.isDerivedFrom("PartDesign::Plane"):
+            from freecad.gui.ComponentPlaneTask import launch
+            launch(operation=obj)
         elif getattr(obj, "OperationKind", "") == "Extrude":
             from freecad.gui.ComponentExtrudeTask import launch
             launch(operation=obj)

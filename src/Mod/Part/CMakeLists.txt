@@ -24,6 +24,7 @@ set(Part_Scripts
     ComponentExtent.py
     ComponentProfile.py
     ComponentResultView.py
+    ComponentPlane.py
     ComponentSketch.py
     CadDocument.py
     InterferenceCheck.py

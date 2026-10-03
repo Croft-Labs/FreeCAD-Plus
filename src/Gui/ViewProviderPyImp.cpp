@@ -212,11 +212,15 @@ PyObject* ViewProviderPy::setTemporaryOriginPlanes(PyObject* args)
     PY_TRY
     {
         if (visible) {
-            origin->setTemporaryVisibility(Gui::DatumElement::Planes);
+            origin->setTemporaryVisibility(Gui::DatumElement::Planes | Gui::DatumElement::Axes
+                                           | Gui::DatumElement::Origin);
+            origin->resetTemporarySize();
+            origin->setTemporaryScale(2.0);
             origin->setPlaneLabelVisibility(true);
         }
         else {
             origin->resetTemporaryVisibility();
+            origin->resetTemporarySize();
             origin->setPlaneLabelVisibility(false);
         }
         Py_Return;

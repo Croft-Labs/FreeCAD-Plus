@@ -80,7 +80,7 @@ def reference_geometry(component, reference, point=False):
     if point and source.isDerivedFrom("App::Point") and not name:
         return transform.Base
     if not point and source.isDerivedFrom("App::Line") and not name:
-        return transform.Rotation.multVec(App.Vector(0, 0, 1))
+        return transform.Rotation.multVec(App.Vector(1, 0, 0))
     shape = Model.current_shape(source)
     element = shape.getElement(name) if name else shape
     # Shape subelements already include the object's local placement.

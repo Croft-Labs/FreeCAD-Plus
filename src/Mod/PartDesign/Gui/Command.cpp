@@ -227,6 +227,14 @@ CmdPartDesignPlane::CmdPartDesignPlane()
 void CmdPartDesignPlane::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    for (auto* object : getDocument()->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            doCommand(Gui::Command::Gui,
+                      "from freecad.gui.ComponentPlaneTask import launch; launch()");
+            return;
+        }
+    }
     UnifiedDatumCommand(*this, Base::Type::fromName("PartDesign::Plane"), "DatumPlane");
 }
 

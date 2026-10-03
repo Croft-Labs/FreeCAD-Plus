@@ -45,6 +45,11 @@ class CompactFormLayout(QtWidgets.QFormLayout):
 class CurveListWidget(QtWidgets.QListWidget):
     """Delete edits the task's collector, never the document selection."""
     removeRequested = QtCore.Signal()
+    focusReceived = QtCore.Signal()
+
+    def focusInEvent(self, event):
+        super().focusInEvent(event)
+        self.focusReceived.emit()
 
     def event(self, event):
         if event.type() == QtCore.QEvent.ShortcutOverride and event.key() == QtCore.Qt.Key_Delete:
@@ -91,18 +96,21 @@ class CurveCollector(QtWidgets.QWidget):
         import ComponentModel as Model
         form = CompactFormLayout(self)
         form.setContentsMargins(0, 0, 0, 0)
-        self.source = QtWidgets.QComboBox()
-        self.source.addItem(tr(placeholder), None)
-        for obj in Model.history(component):
-            if (getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result")
-                    and hasattr(obj, "Shape") and (allow_solids or not obj.Shape.Solids)
-                    and (obj.Shape.Edges or (allow_vertex and len(obj.Shape.Vertexes) == 1))):
-                self.source.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
-        form.addRow(tr(source_label), self.source)
+        self.source = None
+        if source_label is not None:
+            self.source = QtWidgets.QComboBox()
+            self.source.addItem(tr(placeholder), None)
+            for obj in Model.history(component):
+                if (getattr(obj, "ComponentRole", "") in ("Object", "Reference", "Result")
+                        and hasattr(obj, "Shape") and (allow_solids or not obj.Shape.Solids)
+                        and (obj.Shape.Edges or (allow_vertex and len(obj.Shape.Vertexes) == 1))):
+                    self.source.addItem(obj.Label + " (" + obj.Name + ")", obj.Name)
+            form.addRow(tr(source_label), self.source)
         self.curves = CurveListWidget()
         self.curves.setMaximumHeight(height)
         self.curves.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.curves.removeRequested.connect(remove)
+        if remove is not None:
+            self.curves.removeRequested.connect(remove)
         form.addRow(tr(curves_label), self.curves)
         self.actions = button_row(form, actions)
         self.region_pick = None
@@ -112,6 +120,63 @@ class CurveCollector(QtWidgets.QWidget):
             self.region_pick.setToolTip(tr("Click inside a region to collect its outer contour and hole contours. Clicking a curve selects only that curve."))
             self.region_pick.toggled.connect(regions)
             form.addRow(self.region_pick)
+
+
+class ReferenceCollector(CurveCollector):
+    """The same collector with mixed geometry references and basic-choice menu."""
+    changed = QtCore.Signal()
+    activated = QtCore.Signal()
+
+    def __init__(self, component, choices=()):
+        super().__init__(component, source_label=None, curves_label="Geometry", height=90,
+                         actions=(("Remove", self.remove_selected), ("Clear", lambda: self.set_references([]))),
+                         remove=self.remove_selected)
+        self.curves.focusReceived.connect(self.activated)
+        self.basic = QtWidgets.QToolButton()
+        self.basic.setText("...")
+        self.basic.setToolTip(tr("Choose basic reference geometry"))
+        self.basic.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+        menu = QtWidgets.QMenu(self.basic)
+        for label, reference in choices:
+            menu.addAction(tr(label), lambda ref=reference: self.choose_basic(ref))
+        self.basic.setMenu(menu)
+        original_row = self.layout().takeRow(0)
+        row = QtWidgets.QWidget()
+        box = QtWidgets.QHBoxLayout(row)
+        box.setContentsMargins(0, 0, 0, 0)
+        box.addWidget(self.curves)
+        box.addWidget(self.basic, 0, QtCore.Qt.AlignTop)
+        self.layout().insertRow(0, original_row.labelItem.widget(), row)
+        self.status = QtWidgets.QLabel()
+        self.status.setWordWrap(True)
+        self.layout().addRow(self.status)
+
+    def references(self):
+        return [self.curves.item(i).data(QtCore.Qt.UserRole) for i in range(self.curves.count())]
+
+    def choose_basic(self, reference):
+        self.curves.setFocus(QtCore.Qt.OtherFocusReason)
+        self.activated.emit()
+        self.set_references([reference], reference)
+
+    def set_references(self, references, current=None):
+        self.curves.clear()
+        for reference in references:
+            obj, name = reference
+            item = QtWidgets.QListWidgetItem(obj.Label + (" / " + name if name else ""))
+            item.setData(QtCore.Qt.UserRole, reference)
+            self.curves.addItem(item)
+        self.curves.highlight(references.index(current) if current in references else -1)
+        self.changed.emit()
+
+    def collect(self, reference):
+        names, current = toggled_curves(self.references(), [reference], True)
+        self.curves.setFocus(QtCore.Qt.OtherFocusReason)
+        self.set_references(names, current)
+
+    def remove_selected(self):
+        removed = [item.data(QtCore.Qt.UserRole) for item in self.curves.selectedItems()]
+        self.set_references([ref for ref in self.references() if ref not in removed])
 
 
 def button_row(layout, entries):
@@ -253,10 +318,7 @@ class ModelingTaskUI:
 
     def build_sections(self):
         self.form = QtWidgets.QWidget()
-        self.form.setAutoFillBackground(True)
-        self.form.setBackgroundRole(QtGui.QPalette.Base)
-        self.form.setForegroundRole(QtGui.QPalette.Text)
-        self.form.setStyleSheet("QWidget { background-color: palette(base); color: palette(text); }")
+        self.form.setPalette(Gui.getMainWindow().palette())
         self.form.setWindowTitle(tr(self.operation_name))
         outer = QtWidgets.QVBoxLayout(self.form)
         self.sections = []

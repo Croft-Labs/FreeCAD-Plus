@@ -1,5 +1,18 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 datum-plane geometry collectors and theme repair (7.8)
+
+Implemented the requested four-section plane create/edit task with mixed-reference
+lists extending the shared curve collector, basic plane/axis menus, definition
+status, explicit position/normal values, separate normal/offset/X reversals,
+projected origin and purple overlay. Geometry remains associative through native
+datum identity, undo and save/reopen; legacy frames retain their placement.
+Origin axes, planes and point are visible at twice normal size during placement
+editors, then restored. Removed forced dark task colors and refresh ribbon colors
+on palette changes. WORK_STATE separates the grouped incremental native build,
+62 distinct runtime checks, reviewed Word requirements, owner shortcut delivery
+and source publication. Physical owner acceptance remains pending.
+
 October 3 follow-up cleanup removed empty temp trees and superseded payloads
 after archiving their evidence. Current/rollback builds, active applications and
 build tools remain. WORK_STATE records removal verification, the two locked or
