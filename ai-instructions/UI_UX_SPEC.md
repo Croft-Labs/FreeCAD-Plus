@@ -73,10 +73,10 @@ with no assembly occurrences and opens its editing tab. Add Component inserts a
 linked occurrence, reusing or creating a definition through the existing chooser.
 Both follow the approved component contract and native transaction/ownership rules.
 
-The exact Home, Modeling, Sketch, Assembly and View revisions await the next packaged build; they supersede the
-broader Home layout incorporated in the October 2 audit build. Earlier October 2
-folders retain their previous layout; the owner shortcut must target the validated
-audit payload. Initialize specialist Home actions only after the main window is
+The exact Home, Modeling, Sketch, Assembly and View revisions are incorporated in
+the October 2 batched payload; they supersede the broader Home layout in the prior
+audit build. Earlier folders retain their previous layout; the owner shortcut
+targets the validated latest batch. Initialize specialist Home actions only after the main window is
 visible, to preserve Classic visibility when native setup saves toolbar state.
 
 Edit > Preferences > General includes UI style: **Plus UI** and **Classic UI**.

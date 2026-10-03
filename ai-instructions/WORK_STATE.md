@@ -1,5 +1,57 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2 latest batched owner build
+
+The latest batch incorporates every completed runtime change through application
+source `4cbb196bee7e985cb11ab36f78c5380acc9af1a5`. The verified native engine remains
+`6be8eda4246a15590664ba17772a92ec63aaa448`; this is a compatible Python update,
+not a new native compilation. The only runtime changes from the audit payload are
+PlusRibbon, PlusDefaults, ComponentNavigator, ComponentModel and UtilsAssembly.
+All five hashes match source. Exact Home/Modeling/Sketch/Assembly/View, master-first
+trees/unused assemblies and screenshot defaults are now incorporated. Later queued
+feature requests are not represented as implemented by this delivery.
+
+Delivery root: `D:/Temp/Office-PC/freecad-plus-build-20261002-batch`.
+Launcher: `FreeCAD-Plus-2026-10-02/FreeCADPlus.exe` beneath that root.
+The existing desktop `FreeCADPlus.exe - Shortcut.lnk` was retargeted and reopened:
+target is that launcher; working directory is its containing payload folder.
+`shortcut-verification.json` records both verified values. Earlier builds remain intact.
+
+Archive: `FreeCAD-Plus-2026-10-02-Batch-Windows-x64.zip` beneath the delivery root,
+662,190,500 bytes. SHA256:
+`c2e805877416da93c54bef1ca00a0d11ddf8740a79728d7fc23fbb55773d83bd`.
+All 14,703 archived entries passed ZIP CRC verification. `BUILD-MANIFEST.json`
+records file hashes; every unchanged runtime file matches the preceding validated
+audit payload. `artifact-result.json` records completed archive verification.
+
+Acceptance: 57 passing checks without application source overlays or unexpected GUI
+diagnostics. The full ribbon run retained 25 successes; its old Pattern-dropdown
+assertion failed, was corrected to the exact owner layout and passed in
+`acceptance/ribbon-pattern`. Component models/tree moves/display passed 26 checks.
+`acceptance/sketch-menus` passes New File/New Sketch/OK, line/circle/arc/rectangle,
+solver and `.cadprt` save/reopen. The first sketch run expected native QAction
+identity instead of the captioned menu proxy; the test now triggers the actual menu
+entry. Both original failed reports are preserved. Defaults preserve explicit saved
+choices and support preset overwrite; three actual launcher cold starts pass
+Bootstrap/Plus/Classic preference persistence. `build-validation-summary.json`
+and each `acceptance/*/results.json` retain exact hashes, paths and test provenance.
+
+The reported physical sketch drawing failure is still unresolved. Native Qt input
+acceptance is separate from physical pointer acceptance; the earlier capture/input
+tool limitation is not an app fix. The previous audit's 131 checks and native
+baseline qualification are retained evidence, not rerun claims for this batch.
+
+Canonical Word update preserves 1504 original paragraphs except the targeted View
+validation sentence and appends one delivery note; headings, automatic numbering
+and all other DOCX parts are unchanged. Render remains 40 pages: only pages 32 and
+40 changed and were visually checked; the other 38 PNGs match the previous render.
+Word SHA256: `bf23a9f5cc86c65140d01838d39495376b6c2d40a6bf3feb11e6b91c0c64915f`.
+Evidence/scripts: visualization workspace `build-batch-20261002`.
+
+This latest delivery supersedes historical pending-incorporation notes below.
+Focused commits and origin milestone pushes remain required. Existing unrelated
+toolbar-catalog/icon relocation changes are preserved outside this delivery commit.
+
 ## October 2 Plus sketch drawing investigation — unresolved
 
 Owner reports that New File / New Sketch opens the line task but viewport drawing

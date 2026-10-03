@@ -582,12 +582,16 @@ class TestComponentSketchWorkflow(unittest.TestCase):
                 if button is not None:
                     click(button)
                 else:
-                    # Earlier shipped layouts expose these commands in native
-                    # compound menus; use that exact menu action when needed.
-                    native = Gui.Command.get(command).getAction()[0]
+                    # Use the visible menu entry, including locally captioned
+                    # proxies in the owner's exact Sketch layout.
                     menus = [b.menu() for b in ribbon.scroll.widget().findChildren(QtWidgets.QToolButton) if b.menu()]
-                    self.assertTrue(any(native in menu.actions() for menu in menus), command)
-                    native.trigger()
+                    for menu in menus:
+                        menu.aboutToShow.emit()
+                    actions = [action for menu in menus for action in menu.actions()
+                               if action.objectName() == command]
+                    self.assertTrue(actions, command)
+                    self.assertTrue(actions[0].isEnabled(), command)
+                    actions[0].trigger()
                     settle(500)
                 before = obj.GeometryCount
                 for x, y in points:

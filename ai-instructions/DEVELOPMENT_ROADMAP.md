@@ -1,5 +1,24 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 batched owner incorporation
+
+All completed runtime changes through `4cbb196bee` are incorporated: exact Design
+Home/Modeling/Sketch/Assembly/View, master-first components and unused assembly
+trees, screenshot defaults and the Assembly edit-exit guard. Five compatible Python
+modules changed since the audit payload; the verified native engine is reused.
+Implementation and packaged acceptance are complete. The 57 passing checks retain
+25 ribbon successes and a corrected Pattern check, 26 component/tree/display checks,
+one curve/save-reopen flow, one defaults check and three launcher cold restarts.
+Original failed test reports remain recorded: old Pattern-dropdown and native
+QAction-identity assumptions were updated for the exact ribbon and rerun successfully.
+No application fix is claimed for the owner's unresolved physical drawing report.
+
+Latest batch delivery supersedes the source-only incorporation status in the
+historical milestones below. WORK_STATE owns archive, shortcut and validation
+evidence. Canonical Word requirements retain owner formatting and numbering.
+Related changes continue as focused, validated commits with origin pushes at
+completed milestones; local build delivery does not authorize a published release.
+
 ## October 2 Plus sketch drawing investigation — unresolved
 
 Owner reports that New File / New Sketch opens the line task but viewport drawing

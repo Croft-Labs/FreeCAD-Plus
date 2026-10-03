@@ -11,12 +11,19 @@ has Sketch, Modeling, Dress-Up, Transformation and one Primitives dropdown;
 additive/subtractive operations use one icon. Tab is a disabled future primitive.
 Sketch retains the complete seven-group outline, 16 ordered dropdowns and all
 listed individual button options. Assembly exposes all joints individually with
-three ordered dropdowns; its edit-exit task-watcher guard is source-validated.
+three ordered dropdowns; its edit-exit task-watcher guard is packaged and validated.
 Design View has exactly View and Individual Views, with ordered Standard Views and
-Draw Style menus; five focused GUI checks pass. Word requirements are synchronized.
-These revisions await the next batched owner build.
+Draw Style menus. Word requirements are synchronized. These revisions, master-first
+component trees and screenshot defaults are in the October 2 batched owner payload.
 
-October 2 audit build incorporates the conversation's requested UI/workflow
+The latest batch incorporates all completed application sources through `4cbb196bee`.
+Five compatible Python modules were synchronized onto native engine `6be8eda4246a`;
+no native sources changed. Acceptance retains 57 passing checks without overlays,
+including actual curve creation/save/reopen and three launcher cold restarts.
+Two obsolete test assumptions were corrected and their checks rerun. The physical
+sketch drawing report remains unresolved. WORK_STATE owns delivery paths and evidence.
+
+The preceding October 2 audit build incorporated the conversation's UI/workflow
 changes, including the common toolbar above the ribbon, medium icons, completed
 Home groups, Design Assembly tab and unplaced New Component action. Its application
 sources are `ca244c0335`; it reuses the validated native engine at `6be8eda4246a`
@@ -28,7 +35,7 @@ results, selected-profile Extrude, complete sketch workflow/cold reopen, startup
 panes/Tasks/recent files/status and three actual owner-launcher cold restarts.
 Plus/Blender/Imperial Decimal defaults preserve saved choices. Hidden-window
 specialist initialization was corrected to preserve Classic toolbar visibility.
-The desktop owner shortcut now points to this payload; root AGENTS.md makes its
+The desktop owner shortcut now points to the latest batch; root AGENTS.md makes its
 verified update mandatory for every delivered owner build.
 
 The [toolbar reference](ui/TOOLBARS.md) separates Classic command rows,
@@ -38,7 +45,7 @@ maps each request to incorporation/evidence. [WORK_STATE](WORK_STATE.md) owns ex
 source/native identities, launcher/ZIP paths, shortcut verification, file hashes
 and retained acceptance limits.
 
-Both earlier October 2 builds remain intact. Baseline native ALL_BUILD and 138
+Earlier October 2 builds remain intact. Baseline native ALL_BUILD and 138
 executions (136 distinct checks) remain recorded separately; they are not a new
 native build/test claim. Start and Tux remain enabled; FEM remains disabled.
 This is an unsigned local test build ready for owner testing. Physical owner
@@ -55,7 +62,7 @@ acceptance, upstream candidate integration and external publication are separate
 | Window/crossing selection (F039) | [`BoxSelection.cpp`](../src/Gui/Selection/BoxSelection.cpp), [`MouseSelection.cpp`](../src/Gui/MouseSelection.cpp) | Full projected enclosure, directional borders and filter-aware native collection. [Owner procedure](../tests/WindowSelection.md); roadmap 10.5g/h. |
 | Entity selection filters (F035) | [`EntitySelectionFilter.py`](../src/Gui/EntitySelectionFilter.py), native [`Selection.cpp`](../src/Gui/Selection/Selection.cpp) | View > Visibility > Selection filters: session vertex/edge/face/whole-object policy, command-gate intersection and visible reset. [Owner procedure](../tests/EntitySelectionFilter.md); roadmap 10.5e/f owns validation. |
 | Component document architecture | [Approved component contract](architecture/COMPONENT_DOCUMENT_CONTRACT.md) | Active owner priority: roadmap 7.8; Models, Part Tree, History, Attributes and `.cadprt` |
-| Master component and unused assemblies | [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py), [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py), [`TestComponentModelsPane.py`](../tests/TestComponentModelsPane.py) | Permanent automatic first component; master-first inventory/tree independent of edit context; unused assemblies retain their child trees. Source-overlay verification passes; next packaged build pending. |
+| Master component and unused assemblies | [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py), [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py), [`TestComponentModelsPane.py`](../tests/TestComponentModelsPane.py) | Permanent automatic first component; master-first inventory/tree independent of edit context; unused assemblies retain their child trees. Packaged verification passes in the latest October 2 batch. |
 | Part Tree rearrangement | [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py), [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py) | Cut/Paste and drag/drop of existing instances, ordering/reparenting, placement and reference guards; roadmap 7.8.7x; [`TestComponentTreeMove.py`](../tests/TestComponentTreeMove.py). |
 | Origin and planes in History | [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py), native [`CommandDoc.cpp`](../src/Gui/CommandDoc.cpp) | Permanent Origin / hidden-by-default Origin Planes child, grouped native plane visibility and deletion protection; roadmap 7.8.7y; [`TestComponentModelsPane.py`](../tests/TestComponentModelsPane.py). |
 | Component BOM participation | [`BomObject.cpp`](../src/Mod/Assembly/App/BomObject.cpp), [`CommandCreateBom.py`](../src/Mod/Assembly/CommandCreateBom.py), component model/navigator | Native BOM scope, occurrence inclusion, owning-file history editor and saved report policies; roadmap 7.8.7j. |

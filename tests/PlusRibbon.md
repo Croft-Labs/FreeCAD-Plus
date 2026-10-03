@@ -23,13 +23,14 @@ within that parent. Do not enable source overlays for these phases.
    common small File/Edit/Clipboard bar stays above the ribbon in every mode/tab.
    Design Home, Modeling, Sketch, Assembly and View follow the exact owner layouts in
    `ai-instructions/ui/TOOLBARS.md` and the canonical Word specification. Their
-   latest source revisions await the next batched payload. Use the
+   latest revisions are incorporated in the October 2 batched payload. Use the
    actual New Sketch, Attach Sketch, Edit Sketch and Add Component buttons in a
    component document; preserve task Cancel/OK, ownership, Undo and selection.
    Check button states match the native menu actions, including no document,
    missing selection and active task cases.
-3. Modeling starts with Modeling, Transformation and Dress-Up sections, with
-   helpers following. Native grouped operations keep their dropdown choices.
+3. Modeling contains Sketch, Modeling, Dress-Up and Transformation sections, then
+   Primitives. Linear/Circular Pattern are individual buttons; retained native
+   Path/Point Pattern commands are checked independently of this ribbon layout.
    Surface/Mesh retain native groups; Sketch/Assembly follow the owner groups; View exposes fit,
    orientation and display in exactly View and Individual Views, with seven ordered
    Standard Views and seven Draw Style choices. Check each dropdown and individual

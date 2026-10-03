@@ -683,9 +683,14 @@ class TestPlusRibbon(unittest.TestCase):
     @unittest.skipIf(os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1", "Restored native pattern bindings require grouped build")
     def testRestoredNativePatternBindings(self):
         self.tab("Modeling")
-        pattern = self.button("PartDesign_Pattern")
+        # The owner's exact Modeling outline exposes Linear/Circular directly.
+        # Keep coverage of the other native bindings without requiring the old menu.
+        self.assertIsNone(self.button("PartDesign_Pattern"))
+        for name in ("PartDesign_LinearPattern", "PartDesign_CircularPattern"):
+            self.assertEqual(self.button(name).defaultAction(), Gui.Command.get(name).getAction()[0])
         expected = ("PartDesign_Pattern", "PartDesign_CircularPattern", "PartDesign_PathPattern", "PartDesign_PointPattern")
-        self.assertEqual(pattern.menu().actions(), [Gui.Command.get(name).getAction()[0] for name in expected])
+        for name in expected:
+            self.assertIsNotNone(Gui.Command.get(name))
         body = self.doc.addObject("PartDesign::Body", "AuditPatternBody")
         base = body.newObject("PartDesign::AdditiveBox", "AuditPatternBase")
         self.doc.recompute()
