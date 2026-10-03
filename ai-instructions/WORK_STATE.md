@@ -1,5 +1,24 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 2 screenshot preferences and Word specification
+
+The closed owner audit build's isolated `AppData/Roaming/FreeCADPlus/user.cfg`
+now contains the 71 requested preferences for General, Selection, Display Colors
+and Sketcher Appearance. Native profile reload verifies every value; separate
+native checks verify fresh defaults, preserving saved choices and explicit reset.
+`src/Gui/PlusDefaults.py` seeds this preset for future builds. The existing runtime
+payload and ZIP are unchanged; incorporation and GUI preference-page acceptance
+remain for the next packaged build. Existing build/shortcut evidence below is retained.
+
+Root AGENTS.md now requires updating `ai-instructions/ui/FreeCAD Plus UI & UX.docx`
+for every owner change while preserving owner edits, headings and automatic numbering.
+Its Defaults section contains the screenshot preset and maintenance rule; the
+33-page render is checked (pages 1–31 unchanged, revised 32–33 visually inspected).
+Backups and native verification reports are in task output `default-settings-20261002`
+under `C:/Users/Office-PC/.codex/visualizations/2026/10/01/01a0f9bd-b85a-7aa3-a6b7-cb05c64fdabd`.
+The separately installed FreeCAD profile was not changed. The newer component-tree
+convention is explicitly deferred by the owner and has not been implemented here.
+
 ## October 2: conversation audit — owner build ready
 
 The owner opened the earlier source `52495b0cb2` payload, which lacks the compact

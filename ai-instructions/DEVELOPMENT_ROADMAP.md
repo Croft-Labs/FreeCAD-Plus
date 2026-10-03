@@ -1,5 +1,26 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 owner screenshot defaults and Word specification
+
+- [ X ] Root AGENTS.md requires updating `ai-instructions/ui/FreeCAD Plus UI & UX.docx`
+  for every owner change, preserving DOCX headings, owner edits and automatic numbering.
+- [ X ] `PlusDefaults.py` implements the owner screenshot preset: General, Selection,
+  Display Colors and Sketcher Appearance; unset preferences are seeded, saved choices preserved.
+  Native packaged-engine checks cover fresh defaults, saved-choice preservation and explicit reset.
+- [ X ] Apply the requested 71 preferences to the closed owner build's isolated
+  `AppData/Roaming/FreeCADPlus/user.cfg`, retaining a backup; a second native process
+  reloads and verifies every value against that exact profile. Installed FreeCAD remains untouched.
+- [ X ] Update the Word specification's Defaults section. Existing paragraphs,
+  heading structure and numbering definitions are unchanged. Rendered pages 1–31 match
+  the previously reviewed document; revised pages 32–33 are visually checked.
+- [   ] Incorporate new source defaults into the next packaged build and verify the
+  preferences pages in its GUI. No native rebuild, payload modification, ZIP replacement
+  or new release is claimed here. The current owner build receives these settings through its profile.
+
+Evidence: task output `default-settings-20261002` under the October 1 visualization
+workspace contains `native-check.json`, `owner-profile-update.json`,
+`native-owner-reload.json`, the original profile/document backups and rendered pages.
+
 ## Owner directive: functional workflows first, then move on
 
 **Standing development priority, explicitly directed by the owner on 2026-09-30.**

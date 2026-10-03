@@ -42,6 +42,13 @@ Do not claim to have read missing guidance or maintain an independent master cop
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).
 - Record implementation, build, GUI validation, and publication separately in
   [the roadmap](ai-instructions/DEVELOPMENT_ROADMAP.md). A local commit is not a release.
+- Mandatory owner-change documentation gate: every change made for the owner MUST
+  update [FreeCAD Plus UI & UX.docx](ai-instructions/ui/FreeCAD%20Plus%20UI%20%26%20UX.docx)
+  with the affected requirements, retained behavior, defaults or validation status.
+  Read the current file first and preserve owner edits, its DOCX format, heading
+  structure and native automatic numbering. Never replace numbering with text or
+  convert this document to Markdown. Render and verify edited pages before handoff;
+  do not report owner changes complete while this document is out of sync.
 - Mandatory owner-build delivery gate: every new build intended for the owner
   MUST update the existing desktop `FreeCADPlus.exe - Shortcut.lnk` to that
   build's verified `FreeCADPlus.exe`, then reopen the shortcut and verify its

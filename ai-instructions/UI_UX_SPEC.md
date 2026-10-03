@@ -1586,6 +1586,15 @@ units before module initialization when no preference is saved. Preserve explici
 saved choices and document unit overrides. Units changes keep their native scope:
 global without a document, the active document with one open. The native Blender
 fallback also applies to navigation preference resets.
+The October 2 owner screenshot preset in
+[FreeCAD Plus UI & UX.docx](ui/FreeCAD%20Plus%20UI%20%26%20UX.docx), section 5,
+also governs General, Selection, Display Colors and Sketcher Appearance defaults.
+`PlusDefaults.py` seeds unset native preference keys without resetting saved
+choices. The owner's explicit preset application may update the isolated Plus
+profile; it must not change the separately installed FreeCAD profile. Preserve
+the existing Components/Attributes workflow when seeding the native Combined
+Tree View and Property View preference. Every owner change must update the DOCX,
+retaining its headings and automatic numbering, as required by root AGENTS.md.
 Add Reference Object is a modeling operation button beside Extrude in Part Design
 and Part; omit its creation action from Part Tree and History context menus.
 Existing reference repair/change-source actions remain available. The operation
