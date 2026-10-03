@@ -28,6 +28,14 @@ radius/diameter dimensions on active and construction geometry, unit expressions
 and associative external projection. Line/circle/arc/ellipse/B-spline geometry
 families retain active/construction flags through reopen.
 
+`test_plus_new_file_sketch_and_viewport_curves` starts at the Plus New File
+button, clicks New Sketch and the native OK button, then creates line, circle,
+arc and rectangle through ribbon actions and viewport input. It does not force
+the camera or call `setEdit` directly. It checks that the viewport receives the
+clicks, the solver succeeds, and all seven curves survive `.cadprt` save/reopen.
+This is an automated regression; it does not establish physical pointer acceptance
+or resolve a reported failure that cannot yet be reproduced.
+
 With default first-dimension autoscaling, native radius insertion and Scale
 geometries are separate Undo entries. The value-dialog test verifies both Undo
 steps, both Redo steps and Cancel. Preserve that established native behavior;

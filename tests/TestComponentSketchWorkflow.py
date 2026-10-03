@@ -535,6 +535,92 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         self.assertFalse(obj.getConstruction(0))
         self.assertEqual(len(obj.Shape.Edges), 1)
 
+    def test_plus_new_file_sketch_and_viewport_curves(self):
+        """Exercise the owner's entry path without forcing camera or editor state."""
+        from freecad.gui import PlusRibbon as Ribbon
+        params = App.ParamGet(Ribbon.PARAM)
+        previous = params.GetString("ToolbarUIStyle", "Plus")
+        params.SetString("ToolbarUIStyle", "Plus")
+        Ribbon.apply_preferences()
+        settle(500)
+        ribbon = Ribbon._ribbon
+        window = Gui.getMainWindow()
+
+        def click(widget):
+            self.assertIsNotNone(widget)
+            self.assertTrue(widget.isVisible())
+            self.assertTrue(widget.isEnabled())
+            QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton)
+            settle(500)
+
+        try:
+            App.closeDocument(self.doc.Name)
+            click(ribbon.common.findChild(QtWidgets.QToolButton, "Ribbon_Std_New"))
+            self.doc = App.ActiveDocument
+            self.root = Model.metadata(self.doc).RootComponent
+            click(ribbon.scroll.widget().findChild(QtWidgets.QToolButton, "Ribbon_PartDesign_NewSketch"))
+            self.assertIsNotNone(Task._task)
+            buttons = [w for w in window.findChildren(QtWidgets.QPushButton)
+                       if w.isVisible() and w.text().replace("&", "") == "OK"]
+            self.assertEqual(len(buttons), 1)
+            click(buttons[0])
+            obj = next(o for o in self.doc.Objects if o.TypeId == "Sketcher::SketchObject")
+            self.assertEqual(Gui.activeDocument().getInEdit().Object, obj)
+            view = Gui.activeDocument().activeView()
+            viewport = max((w for w in window.findChildren(QtWidgets.QWidget)
+                            if "GL" in w.metaObject().className() and w.isVisible()
+                            and w.width() > 100 and w.height() > 100),
+                           key=lambda w: w.width()*w.height())
+            fixtures = (
+                ("Sketcher_CreateLine", [(2, 3), (12, 8)], 1),
+                ("Sketcher_CreateCircle", [(-8, 4), (-4, 4)], 1),
+                ("Sketcher_CreateArc", [(4, -8), (12, -8), (4, -1)], 1),
+                ("Sketcher_CreateRectangle", [(-18, -12), (-10, -5)], 4),
+            )
+            for command, points, count in fixtures:
+                button = ribbon.scroll.widget().findChild(QtWidgets.QToolButton, "Ribbon_" + command)
+                if button is not None:
+                    click(button)
+                else:
+                    # Earlier shipped layouts expose these commands in native
+                    # compound menus; use that exact menu action when needed.
+                    native = Gui.Command.get(command).getAction()[0]
+                    menus = [b.menu() for b in ribbon.scroll.widget().findChildren(QtWidgets.QToolButton) if b.menu()]
+                    self.assertTrue(any(native in menu.actions() for menu in menus), command)
+                    native.trigger()
+                    settle(500)
+                before = obj.GeometryCount
+                for x, y in points:
+                    sx, sy = view.getPointOnScreen(obj.Placement.multVec(App.Vector(x, y, 0)))
+                    ratio = viewport.devicePixelRatioF()
+                    pos = QtCore.QPoint(round(sx/ratio), viewport.height()-round(sy/ratio)-1)
+                    point = viewport.mapToGlobal(pos)
+                    receiver = window.childAt(window.mapFromGlobal(point))
+                    self.assertEqual(receiver, viewport, "A widget is intercepting the sketch viewport")
+                    event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pos),
+                                             QtCore.QPointF(point), QtCore.Qt.NoButton,
+                                             QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+                    QtWidgets.QApplication.sendEvent(receiver, event)
+                    settle(50)
+                    QtTest.QTest.mouseClick(receiver, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, pos)
+                    settle()
+                QtTest.QTest.keyClick(viewport, QtCore.Qt.Key_Escape)
+                settle()
+                self.assertEqual(obj.GeometryCount, before + count, command)
+            self.assertEqual(obj.solve(), 0)
+            self.close_editor()
+            identity = obj.ObjectId
+            path = self.output / "plus-ribbon-curves.cadprt"
+            self.doc.saveAs(str(path))
+            App.closeDocument(self.doc.Name)
+            self.doc = App.openDocument(str(path))
+            obj = next(o for o in self.doc.Objects if getattr(o, "ObjectId", "") == identity)
+            self.assertEqual(obj.GeometryCount, 7)
+            self.assertEqual(obj.solve(), 0)
+        finally:
+            params.SetString("ToolbarUIStyle", previous)
+            Ribbon.apply_preferences()
+
     def test_native_draw_reference_circle(self):
         obj = self.draw("Sketcher_CreateCircle", [(-8, 4), (-4, 4)], True)
         self.assertEqual(obj.GeometryCount, 1)

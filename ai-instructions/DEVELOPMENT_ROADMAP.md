@@ -1,5 +1,34 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 2 Plus sketch drawing investigation — unresolved
+
+Owner reports that New File / New Sketch opens the line task but viewport drawing
+fails. No application fix is claimed: the failure did not reproduce in native Qt
+input tests. Added `TestComponentSketchWorkflow.test_plus_new_file_sketch_and_viewport_curves`
+covering actual Plus New File/New Sketch/OK controls, ribbon curve actions, viewport
+hit testing, line/circle/arc/rectangle creation, solver and `.cadprt` save/reopen,
+without forcing the camera or directly entering edit mode.
+
+The new regression passed once against the audit payload without application source
+overlays, and once with only latest PlusRibbon source loaded. Separate line probes
+passed with fresh preferences and a copy of the saved FreeCADPlus profile. Existing
+owner preferences remain unchanged. Evidence: visualization workspace
+`sketch-drawing-20261002` (`full-path`, `source-ribbon`, `qt-hit-test`, `owner-profile`).
+The first probe used global widgetAt while the app was not foreground and found no
+receiver; it is not evidence of an application drawing failure.
+
+Physical pointer validation remains blocked: Computer Use approval initially timed
+out; a later launch resolved to the separately installed Plus app and was excluded
+from validation. The verified audit executable was then launched directly with an
+isolated profile. Its graphics capture failed (`FrameArrived timed out`), and its
+accessibility-click attempt failed (`coordinate input geometry is unavailable`).
+No app input or drawing acceptance was inferred from these failures. Await owner
+clarification of whether axes/preview were visible when drawing failed. Do not mark
+this issue fixed or use this regression as a substitute for the reported failure.
+
+Canonical Word validation note updated without changing existing paragraphs,
+headings or numbering. No new owner build, shortcut change or release.
+
 ## October 2 exact Design View ribbon — source ready
 
 Design View now has exactly View and Individual Views: 14 buttons, with the
