@@ -1,5 +1,10 @@
 # FreeCAD Plus: Development Roadmap
 
+October 3 documentation correction: Classic Toolbars where-used locations now
+use native child bullets one level below their operations. Text, headings and
+automatic numbering definitions are preserved. WORK_STATE records structural
+verification and the 78-page visual review. No application build or release.
+
 ## October 3 independent and resilient sketch frames (7.8, F124)
 
 New Sketch accepts origin/user planes, planar faces, two coplanar edges of one

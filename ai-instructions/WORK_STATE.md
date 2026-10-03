@@ -1,5 +1,18 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 Classic toolbar mapping bullet correction
+
+In the canonical UI & UX Word document, section 2.1.1 now places each
+where-used location in a native bullet exactly one level below its operation.
+Converted 1,245 inline location lines under 644 operations; retained the two
+already-correct Pad/Extrude child bullets. All text and existing paragraph
+properties are preserved. Other package parts, including styles and numbering
+definitions, are byte-identical. All 78 rendered pages were visually reviewed.
+Document SHA-256: `1aa217fd42c533f095a6bb8cb75a74129dfbaa85a2fb89e66ff1b3b36f57b791`.
+Evidence: local visualization folder `toolbar-child-bullets/verification.json`
+and `toolbar-child-bullets/render`. This is documentation-only; no application
+build, GUI behavior change, shortcut change or release is included.
+
 ## October 3 independent and resilient sketch frames
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_sketch_frame/app`.
