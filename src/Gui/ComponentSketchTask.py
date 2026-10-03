@@ -41,6 +41,11 @@ class SketchTask:
         layout.addWidget(self.plane)
         self.plane.setAccessibleName(tr("Sketch attachment"))
         self.plane.setVisible(not datum_only)
+        self.follow_support = QtWidgets.QCheckBox(tr("Follow support"))
+        self.follow_support.setChecked(True)
+        self.follow_support.setToolTip(tr("Follow a valid support. If it disappears or fails, keep the last valid sketch frame. Uncheck to copy its frame once."))
+        self.follow_support.setVisible(not datum_only)
+        layout.addWidget(self.follow_support)
         self.sections = []
         for title in ("Define Surface", "Z Direction", "Sketch Origin", "X Direction"):
             section = QtWidgets.QGroupBox(tr(title))
@@ -49,7 +54,7 @@ class SketchTask:
             self.sections.append(section)
         definition, normal, origin, orientation = [section.layout() for section in self.sections]
         self.base = QtWidgets.QComboBox()
-        for name in Sketch.PLANES[:-1]:
+        for name in Sketch.BASE_PLANES:
             self.base.addItem(tr(name), name)
         self.base_label = QtWidgets.QLabel(tr("Base plane"))
         definition.addRow(self.base_label, self.base)
@@ -143,7 +148,7 @@ class SketchTask:
         self.x_pick.clicked.connect(lambda: self.start_frame_pick("axis"))
         self.origin_source.currentIndexChanged.connect(self.origin_source_changed)
         self.x_source.currentIndexChanged.connect(self.x_source_changed)
-        self.capture = QtWidgets.QPushButton(tr("Use selected face or plane"))
+        self.capture = QtWidgets.QPushButton(tr("Use selected geometry"))
         definition.addRow(self.capture)
         self.source = QtWidgets.QLabel(tr("No face selected"))
         self.source.setTextFormat(QtCore.Qt.PlainText)
@@ -163,8 +168,8 @@ class SketchTask:
         self.direction_axis.currentIndexChanged.connect(self.update_axis)
         self.update_plane()
         from freecad.gui.ComponentNavigator import task_geometry
-        selected = context.selection if context else task_geometry(component)
-        if len(selected) == 1:
+        selected = context.profile_selection if context else task_geometry(component, multiple=True)
+        if len(selected) in (1, 2):
             self.capture_face(selected)
         origin = self.selected_origin()
         if origin:
@@ -215,44 +220,56 @@ class SketchTask:
             self.status.setText(tr("Origin plane selected."))
         else:
             from freecad.gui.ComponentNavigator import task_geometry
-            selected = task_geometry(self.component)
-            if len(selected) == 1:
+            selected = task_geometry(self.component, multiple=True)
+            if len(selected) in (1, 2):
                 self.capture_face(selected)
 
     def update_plane(self, *args):
         new = self.creating_plane()
+        independent = self.plane.currentData() == "Independent plane" and not self.datum_only
+        defined = new or independent
+        self.orientation_mode.model().item(0).setEnabled(not independent)
+        if independent and self.orientation_mode.currentData() == "Projected references":
+            self.orientation_mode.setCurrentIndex(1)
+        self.follow_support.setEnabled(not independent)
+        self.follow_support.setVisible(not independent and not self.datum_only)
+        self.capture.setVisible(not independent)
         projected = new and self.orientation_mode.currentData() == "Projected references"
         self.sections[1].setVisible(projected)
-        self.sections[3].setVisible(new)
+        self.sections[3].setVisible(projected or (defined and self.orientation_mode.currentData() == "Axis directions"))
         for widget in (self.origin_source, self.origin_pick, self.origin_selection,
                        self.x_source, self.x_pick, self.x_selection, self.reverse_x):
             widget.setVisible(projected)
-        self.orientation_mode.setVisible(new)
+        self.orientation_mode.setVisible(defined)
+        self.sections[0].layout().labelForField(self.orientation_mode).setVisible(defined)
         choice = self.base.currentData() if new else self.plane.currentData()
         self.base.setVisible(new)
         self.base_label.setVisible(new)
         self.user_plane.setVisible(choice == "User plane")
         self.user_plane_label.setVisible(choice == "User plane")
-        self.source.setVisible(choice == "Selected planar face")
+        self.source.setVisible(choice in ("Selected planar face", "Selected two edges"))
         for caption, control in zip(self.origin_labels, self.origins):
-            caption.setVisible(new and not projected)
-            control.setVisible(new and not projected)
-        self.offset_label.setText(tr("Surface offset") if new else tr("Offset"))
-        self.sections[2].setVisible(new)
-        vectors = self.orientation_mode.currentData() == "Axis directions"
+            caption.setVisible(defined and not projected)
+            control.setVisible(defined and not projected)
+        self.offset_label.setText(tr("Origin Z") if independent else tr("Surface offset") if new else tr("Offset"))
+        self.sections[2].setVisible(defined)
+        vectors = defined and self.orientation_mode.currentData() == "Axis directions"
         for caption, control in zip(self.rotation_labels, self.rotations):
-            caption.setVisible(new and not vectors)
-            control.setVisible(new and not vectors)
+            caption.setVisible(defined and not vectors)
+            control.setVisible(defined and not vectors)
         self.direction_axis_label.setVisible(vectors)
         self.direction_axis.setVisible(vectors)
         self.direction_hint.setVisible(vectors)
         for caption, row in self.direction_rows:
             caption.setVisible(vectors)
             row.setVisible(vectors)
+        self.direction_hint.setText(tr("Origin and directions are measured in the active component. Z sets the normal; X or Y is projected onto its plane.") if independent else
+                                    tr("Directions and origin are measured in the base attachment frame. Z sets the normal; X or Y is projected onto its plane."))
         self.create_datum.setVisible(new and not self.datum_only)
         self.status.setText(tr("OK creates the datum plane. Cancel creates nothing.") if self.datum_only else
                             tr("Create Datum Plane makes it available below. OK creates the plane and sketch together; Cancel creates neither until the plane is explicitly created.")
-                            if new else tr("Select an origin plane, a user plane, or a planar face. OK opens Sketcher."))
+                            if new else tr("Define the origin and orientation in component coordinates. The sketch has no support.") if independent else
+                            tr("Choose a plane, planar face or two coplanar edges. Follow support retains the last valid frame if the support is unavailable. OK opens Sketcher."))
 
     def origin_source_changed(self, index):
         if index == 0:
@@ -324,9 +341,16 @@ class SketchTask:
                 control.setCurrentIndex(control.findData(origin))
                 self.status.setText(tr("Origin plane selected."))
                 return
-            selected = picks if isinstance(picks, list) else task_geometry(self.component)
+            selected = picks if isinstance(picks, list) else task_geometry(self.component, multiple=True)
+            if len(selected) == 2 and not self.creating_plane():
+                Sketch.two_edge_frame(self.component, selected)
+                self.support = selected
+                control.setCurrentIndex(control.findData("Selected two edges"))
+                self.source.setText(" / ".join(obj.Label + ": " + name for obj, name in selected))
+                self.status.setText(tr("Two edges selected. They define the sketch plane."))
+                return
             if len(selected) != 1:
-                raise ValueError(tr("Select one planar face in the active component."))
+                raise ValueError(tr("Select a plane, one planar face, or two coplanar edges in the active component."))
             candidate = selected[0]
             if candidate[0] in Sketch.user_planes(self.component):
                 Sketch.check_plane(self.component, candidate[0])
@@ -336,7 +360,7 @@ class SketchTask:
                 self.support = Sketch.check_support(self.component, candidate)
                 control.setCurrentIndex(control.findData("Selected planar face"))
                 self.source.setText(self.support[0].Label + " / " + self.support[1])
-            self.status.setText(tr("Ready. The attachment will follow this support."))
+            self.status.setText(tr("Support selected. Follow support keeps the last valid frame if the support becomes unavailable."))
         except Exception as error:
             self.status.setText(str(error))
 
@@ -388,7 +412,8 @@ class SketchTask:
             else:
                 self.result = Sketch.create(self.component, self.plane.currentData(),
                                             values["offset"], values["support"], self.base.currentData(),
-                                            values["angles"], values["origin"], values["directions"], values["frame"])
+                                            values["angles"], values["origin"], values["directions"], values["frame"],
+                                            follow_support=self.follow_support.isChecked())
         except Exception as error:
             self.status.setText(str(error))
             return False

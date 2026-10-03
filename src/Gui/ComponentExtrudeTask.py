@@ -593,7 +593,7 @@ class ExtrudeTask:
                 origin = self.component.Origin
                 origin_hit = hit_object == origin or hit_object in origin.OriginFeatures
                 support_plane_hit = (hit_object is not None
-                    and hit_object in [ref[0] for ref in source.AttachmentSupport]
+                    and hit_object in [ref[0] for ref in getattr(source, "FrameSupport", source.AttachmentSupport)]
                     and (hit_object.isDerivedFrom("PartDesign::Plane")
                          or hit_object.isDerivedFrom("Part::Plane")))
                 sketch_region_hit = (pick is not None and pick.item == source

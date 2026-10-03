@@ -107,7 +107,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
                 with self.subTest(plane=name, offset=offset):
                     obj = Sketch.create(self.root, name, offset)
                     self.assertEqual(str(obj.MapMode), "ObjectXY")
-                    self.assertEqual(obj.AttachmentSupport[0][0], Sketch.origin_plane(self.root, name))
+                    self.assertEqual(Sketch.support_references(obj)[0][0], Sketch.origin_plane(self.root, name))
                     self.assertPlacement(obj.Placement, App.Placement(
                         rotation.multVec(App.Vector(0, 0, offset)), rotation))
         self.assertFalse(any(o.TypeId == "PartDesign::Body" for o in self.doc.Objects))
@@ -155,7 +155,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
     def test_existing_native_and_part_planes_and_picker(self):
         datum_sketch = Sketch.create(self.root, "Create new plane", 3,
                                     new_plane_base="XZ plane", angles=(15, 20, 30))
-        datum = datum_sketch.AttachmentSupport[0][0]
+        datum = Sketch.support_references(datum_sketch)[0][0]
         surface = self.doc.addObject("Part::Plane", "UserPlane")
         Model.register_object(self.root, surface)
         surface.Placement = App.Placement(App.Vector(8, 9, 10), App.Rotation(App.Vector(1, 0, 0), 35))
@@ -188,7 +188,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         undo = self.doc.UndoCount
         obj = self.accept(task)
         self.assertEqual(self.doc.UndoCount, undo + 1)
-        plane = obj.AttachmentSupport[0][0]
+        plane = Sketch.support_references(obj)[0][0]
         self.assertEqual(plane.TypeId, "PartDesign::Plane")
         self.assertEqual(plane.Label, "Plane001")
         self.assertEqual(obj.Label, "Sketch001")
@@ -211,9 +211,9 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         box = self.box()
         obj = Sketch.create(self.root, "Create new plane", 4, (box, "Face6"),
                             "Selected planar face", (0, 20, 0))
-        plane = obj.AttachmentSupport[0][0]
+        plane = Sketch.support_references(obj)[0][0]
         child = Sketch.create(self.root, "Create new plane", 3, plane, "User plane")
-        child_plane = child.AttachmentSupport[0][0]
+        child_plane = Sketch.support_references(child)[0][0]
         self.assertEqual(plane.AttachmentSupport[0][0], box)
         self.assertEqual(child_plane.AttachmentSupport[0][0], plane)
         before = child.Placement.Base
@@ -286,7 +286,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         self.assertEqual(len(Model.history(self.root)), 1)
         self.assertEqual(float(task.offset.property("rawValue")), 0)
         obj = self.accept(task)
-        self.assertEqual(obj.AttachmentSupport[0][0], plane)
+        self.assertEqual(Sketch.support_references(obj)[0][0], plane)
         self.assertPlacement(obj.Placement, plane.Placement)
         self.close_editor()
         task = self.launch()
@@ -324,7 +324,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
 
     def test_new_plane_user_selection_and_local_labels(self):
         first = Sketch.create(self.root, "Create new plane")
-        plane = first.AttachmentSupport[0][0]
+        plane = Sketch.support_references(first)[0][0]
         task = self.launch()
         task.plane.setCurrentIndex(task.plane.findData("Create new plane"))
         Gui.Selection.clearSelection()
@@ -334,11 +334,11 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         self.assertEqual(task.base.currentData(), "User plane")
         obj = self.accept(task)
         self.close_editor()
-        self.assertEqual(obj.AttachmentSupport[0][0].Label, "Plane002")
+        self.assertEqual(Sketch.support_references(obj)[0][0].Label, "Plane002")
         child = Model.add_component(self.root).LinkedObject
         child_sketch = Sketch.create(child, "Create new plane")
         self.assertEqual(child_sketch.Label, "Sketch001")
-        self.assertEqual(child_sketch.AttachmentSupport[0][0].Label, "Plane001")
+        self.assertEqual(Sketch.support_references(child_sketch)[0][0].Label, "Plane001")
 
     def edit(self, obj=None):
         self.sketch = obj or Sketch.create(self.root)
@@ -547,14 +547,14 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         settle()
         Gui.getMainWindow().grab().save(str(self.output / "constrained-reference-sketch.png"))
         self.close_editor()
-        identities = obj.ObjectId, obj.AttachmentSupport[0][0].ObjectId, result.ObjectId
+        identities = obj.ObjectId, Sketch.support_references(obj)[0][0].ObjectId, result.ObjectId
         self.doc.saveAs(str(self.output / "constrained-workflow.cadprt"))
         App.closeDocument(self.doc.Name)
         self.doc = App.openDocument(str(self.output / "constrained-workflow.cadprt"))
         self.root = Model.metadata(self.doc).RootComponent
         obj = next(o for o in Model.history(self.root) if o.ObjectId == identities[0])
         result = next(o for o in self.doc.Objects if getattr(o, "ObjectId", "") == identities[2])
-        self.assertEqual(obj.AttachmentSupport[0][0].ObjectId, identities[1])
+        self.assertEqual(Sketch.support_references(obj)[0][0].ObjectId, identities[1])
         self.assertTrue(obj.FullyConstrained)
         self.assertTrue(obj.getConstruction(diagonal))
         self.assertFalse(obj.Constraints[measurement].Driving)
@@ -752,7 +752,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         for i, value in enumerate((10, 20, 30)):
             task.rotations[i].setProperty("rawValue", value)
         obj = self.accept(task)
-        plane = obj.AttachmentSupport[0][0]
+        plane = Sketch.support_references(obj)[0][0]
         self.close_editor()
         surface = plane.ProjectedFrame.Surface.Placement
         normal = surface.Rotation.multVec(App.Vector(0, 0, 1))
@@ -852,7 +852,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
 
     def test_deleted_plane_and_pending_task_refusal(self):
         obj = Sketch.create(self.root, "Create new plane")
-        plane = obj.AttachmentSupport[0][0]
+        plane = Sketch.support_references(obj)[0][0]
         task = self.launch()
         with self.assertRaisesRegex(ValueError, "Finish the current task"):
             Task.launch(self.root)
@@ -871,7 +871,7 @@ class TestComponentSketchWorkflow(unittest.TestCase):
 
     def test_new_plane_sketch_native_extrude_region_acceptance(self):
         obj = Sketch.create(self.root, "Create new plane", 7)
-        plane = obj.AttachmentSupport[0][0]
+        plane = Sketch.support_references(obj)[0][0]
         obj.addGeometry(Part.Circle(App.Vector(), App.Vector(0, 0, 1), 10))
         self.doc.recompute()
         self.assertTrue(plane.Visibility)
@@ -893,4 +893,4 @@ class TestComponentSketchWorkflow(unittest.TestCase):
             self.fail(task.status.text())
         self.assertAlmostEqual(task.result.Shape.Volume, 500 * math.pi)
         self.assertAlmostEqual(task.result.Shape.BoundBox.ZMin, 7)
-        self.assertEqual(obj.AttachmentSupport[0][0], plane)
+        self.assertEqual(Sketch.support_references(obj)[0][0], plane)

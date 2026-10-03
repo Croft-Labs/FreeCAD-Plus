@@ -29,12 +29,13 @@ def resolve(key):
     return doc.getObject(key[1]) if doc else None
 
 
-def task_geometry(component):
-    """One unambiguous evaluated item selected through a component occurrence."""
+def task_geometry(component, multiple=False):
+    """Evaluated geometry in one component; single-item callers stay unambiguous."""
     root = resolve(_dock.root_key) if _dock and _dock.root_key else component
     picks = Selection.selected(root or component, Gui.Selection.getSelectionEx("*", 0))
-    if len(picks) == 1 and picks[0].component == component and picks[0].item is not None:
-        return [(picks[0].item, picks[0].element)]
+    if (picks and (multiple or len(picks) == 1)
+            and all(pick.component == component and pick.item is not None for pick in picks)):
+        return [(pick.item, pick.element) for pick in picks]
     return []
 
 

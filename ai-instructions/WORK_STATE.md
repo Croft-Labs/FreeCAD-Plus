@@ -1,5 +1,58 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 independent and resilient sketch frames
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_sketch_frame/app`.
+Python-only incremental staging from plane-frame; seven installed modules changed.
+No native rebuild, installer or published release. Native identity remains
+`03a6f66644488e2b710f94e828155b9b12c23c60`; BUILD-VALIDATION and release-info record
+application source and baseline provenance separately.
+
+New Sketch offers Independent plane (component-local XYZ and rotation angles or
+axis/normal vectors), origin/user planes, planar faces and two coplanar edges
+from one body. Follow support defaults on for referenced choices; disabling it
+copies the frame once. Independent sketches create no attachment object.
+Native face/user-plane attacher math and a deterministic two-edge frame update
+native Sketcher objects. Persistent hidden references avoid a failed upstream
+feature blocking the sketch; last valid support and sketch placements preserve
+origin/axes on deletion, missing faces or upstream errors. Repaired/undo-restored
+supports resume following; same-name replacements never reattach automatically.
+Cache/status properties are outputs, so failure diagnostics do not dirty valid
+sketch geometry. Native offsets, solver, support replacement and editor remain.
+History predecessor checks include soft frame references; validity checks do not
+reject an intentionally retained frame because its support is unavailable.
+
+78 distinct native checks pass in the staged application without source overlays:
+- `validation/sketch-final`: 36 checks, covering frame creation, direct/indirect
+  failure and repair, movement/rotation, offsets, missing faces, deletion/undo/redo,
+  save/reopen, downstream extrusion, live two-edge picking, independent Sketcher
+  entry, atomic invalid-input rejection, datum planes, History and support editor.
+- `validation/sketch-regressions`: all 32 existing SketchWorkflow checks and one
+  separate-process saved-frame restore check pass. Its width suite initially
+  expected scrolling even when the shorter independent form fit the available
+  height; this fixture assumption is corrected in the following report.
+- `validation/sketch-widths`: all nine checks pass. Independent numeric and vector
+  frames fit 360 logical pixels and scroll vertically at 400 pixels high. Every
+  visible field remains inside the horizontal viewport and vertically reachable.
+- Native GUI captures were reviewed, including the narrow independent frame modes.
+  Earlier failures exposed the cached-status touch flag, single-item picker and
+  old native-only region support lookup; all three product issues are corrected.
+  Early filtered-suite invocation errors remain in their original reports.
+
+The Word specification updates five existing paragraphs, preserving the owner's
+other 1533 paragraphs, paragraph/run formatting, headings, automatic numbering,
+headers/footers and all other package parts. Seventy-seven pages render; pages
+1-66 are pixel-identical to the prior reviewed delivery and changed pages 67-77
+were visually inspected. A final wording correction changed only page 71 and was
+re-rendered/reviewed. Evidence: task visual root `sketch-frame-doc/verification.json`.
+Final Word SHA256: `4954fd0d5c8746c899e541f3e99382d470961b004049903969a952ae230a5ed5`.
+
+The existing desktop shortcut was saved, reopened and target/working-directory
+verified (`validation/shortcut-verification.json`). BUILD-MANIFEST verifies staged
+source, critical binaries and inherited baseline payload; publication.json records
+matching commit/origin identity after the coherent source commit is pushed.
+Physical owner pointer/high-DPI acceptance remains separate from automated checks.
+
 ## October 3 projected datum-plane frame workflow
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_plane_frame/app`.

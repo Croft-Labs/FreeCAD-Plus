@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 3 independent and resilient sketch frames (7.8, F124)
+
+New Sketch accepts origin/user planes, planar faces, two coplanar edges of one
+body, or an independent component-local origin and orientation. Follow support
+is optional. Face/edge/user-plane sketches retain their last valid frame when a
+support is deleted or fails upstream, remain editable and usable downstream, and
+resume following repaired or undo-restored references. Native Sketcher identity,
+solver, offsets, support replacement, undo and persistence remain intact. History
+ordering still respects these references; region picking recognizes them.
+WORK_STATE records native checks, Word review, Python-only incremental owner
+staging, shortcut verification and source publication separately.
+
 October 3 documentation audit: Classic Toolbars in the canonical Word specification
 now carries plain-text mappings for all 873 operations/dropdown entries. Current
 Plus ribbon locations, missing entries and intentionally replaced controls are

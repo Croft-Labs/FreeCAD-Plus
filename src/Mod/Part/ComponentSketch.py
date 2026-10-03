@@ -7,7 +7,8 @@ import Sketcher  # Registers the native sketch type.
 import ComponentModel as Model
 
 ORIGIN_PLANES = ("XY plane", "XZ plane", "YZ plane")
-PLANES = ORIGIN_PLANES + ("Selected planar face", "User plane", "Create new plane")
+BASE_PLANES = ORIGIN_PLANES + ("Selected planar face", "User plane")
+PLANES = BASE_PLANES + ("Selected two edges", "Independent plane", "Create new plane")
 
 
 def user_planes(component):
@@ -212,8 +213,116 @@ def check_support(component, support):
     return source, name
 
 
+def two_edge_frame(component, support, fresh=None):
+    if not support or len(support) != 2 or support[0][0] != support[1][0]:
+        raise ValueError("Select two different edges of one local body.")
+    source = support[0][0]
+    if source is None or Model.owner(source) != component or support[0][1] == support[1][1]:
+        raise ValueError("Select two different edges of one local body.")
+    shape = source.Shape if source == fresh else Model.current_shape(source)
+    edges = [shape.getElement(name) for obj, name in support]
+    if any(edge.ShapeType != "Edge" for edge in edges):
+        raise ValueError("Select two edges defining one flat plane.")
+    flat = Part.makeCompound(edges).findPlane()
+    points = [point for edge in edges for point in edge.discretize(Number=5)]
+    x = edges[0].tangentAt((edges[0].FirstParameter + edges[0].LastParameter) / 2.)
+    normal = next((x.cross(point - points[0]) for point in points if x.cross(point - points[0]).Length > 1e-8), None)
+    if flat is None or normal is None:
+        raise ValueError("The two edges must define one plane; collinear or non-coplanar edges cannot be used.")
+    normal.normalize()
+    x.normalize()
+    local = App.Placement(points[0], App.Rotation(x, normal.cross(x), normal, "ZXY"))
+    transform = component.getGlobalPlacement().inverse().multiply(source.getGlobalPlacement()).multiply(source.Placement.inverse())
+    return transform.multiply(local)
+
+
+def remember_support(sketch, mode=None, references=None):
+    """Keep native sketch/attacher semantics with non-blocking persistent references."""
+    mode = mode or str(sketch.MapMode)
+    references = sketch.AttachmentSupport if references is None else references
+    values = (("LinkSubListHidden", "FrameSupport", references),
+              ("String", "FrameSupportMode", mode),
+              ("Placement", "SavedSketchPlacement", sketch.Placement),
+              ("Placement", "SavedSupportPlacement", sketch.Placement.multiply(sketch.AttachmentOffset.inverse())),
+              ("String", "FrameSupportStatus", "Following support"))
+    for kind, name, value in values:
+        if name not in sketch.PropertiesList:
+            sketch.addProperty("App::Property" + kind, name, "Sketch frame")
+        sketch.setPropertyStatus(name, "NoRecompute")
+        if name.startswith("Saved") or name == "FrameSupportStatus":
+            sketch.setPropertyStatus(name, "Output")
+        setattr(sketch, name, value)
+        sketch.setEditorMode(name, 1 if name.startswith("Saved") or name == "FrameSupportStatus" else 0)
+    sketch.MapMode = "Deactivated"
+    sketch.AttachmentSupport = []
+
+
+def support_references(sketch):
+    """References for managed frames or inherited native sketch attachments."""
+    return sketch.FrameSupport if hasattr(sketch, "FrameSupport") else sketch.AttachmentSupport
+
+
+def sync_support(sketch, fresh=None):
+    if not hasattr(sketch, "FrameSupport") or Model.edit_suppressed(sketch):
+        return
+    # Native Attach Sketch/property edits are adopted rather than silently discarded.
+    if str(sketch.MapMode) != "Deactivated" and sketch.AttachmentSupport:
+        remember_support(sketch)
+    try:
+        refs = sketch.FrameSupport
+        if not refs:
+            raise ValueError("Support deleted")
+        for source, names in refs:
+            if source is None:
+                raise ValueError("Support missing")
+            if source == sketch or sketch in Model.geometry_dependencies(source, include_frames=True):
+                raise ValueError("Support would create a circular dependency")
+            dependencies = [source] + Model.geometry_dependencies(source)
+            for obj in dependencies:
+                if "Invalid" in obj.State or getattr(obj, "UserSuppressed", False) or getattr(obj, "ResultStatus", "Ready") != "Ready":
+                    raise ValueError("Support unavailable")
+            if any("Touched" in obj.State and obj != fresh for obj in dependencies):
+                return  # Never replace a valid snapshot with an intermediate result.
+            if hasattr(source, "Shape") and not source.isDerivedFrom("Part::Datum") and source.Shape.isNull():
+                raise ValueError("Support geometry missing")
+        if sketch.FrameSupportMode == "TwoEdges":
+            pairs = [(obj, name) for obj, names in refs for name in names]
+            base = two_edge_frame(Model.owner(sketch), pairs, fresh)
+            placement = base.multiply(sketch.AttachmentOffset)
+        else:
+            engine = Part.AttachEngine(sketch.Attacher)
+            engine.References = refs
+            engine.Mode = sketch.FrameSupportMode
+            engine.AttachmentOffset = App.Placement()
+            engine.Reverse = sketch.MapReversed
+            engine.Parameter = sketch.MapPathParameter
+            base = engine.calculateAttachedPlacement(sketch.SavedSupportPlacement)
+            engine.AttachmentOffset = sketch.AttachmentOffset
+            placement = engine.calculateAttachedPlacement(sketch.SavedSketchPlacement)
+        if not sketch.Placement.isSame(placement, 1e-10):
+            sketch.Placement = placement
+        if not sketch.SavedSketchPlacement.isSame(placement, 1e-10):
+            sketch.SavedSketchPlacement = placement
+        if not sketch.SavedSupportPlacement.isSame(base, 1e-10):
+            sketch.SavedSupportPlacement = base
+        if sketch.FrameSupportStatus != "Following support":
+            sketch.FrameSupportStatus = "Following support"
+    except (ValueError, RuntimeError, AttributeError, IndexError, Part.OCCError) as error:
+        if not sketch.Placement.isSame(sketch.SavedSketchPlacement, 1e-10):
+            sketch.Placement = sketch.SavedSketchPlacement
+        status = "Saved frame - " + str(error)
+        if sketch.FrameSupportStatus != status:
+            sketch.FrameSupportStatus = status
+
+
+def sync_supports(doc, fresh=None):
+    for sketch in doc.Objects:
+        if hasattr(sketch, "FrameSupport"):
+            sync_support(sketch, fresh)
+
+
 def create(component, plane="XY plane", offset=0.0, support=None,
-           new_plane_base="XY plane", angles=(0.0, 0.0, 0.0), origin=(0.0, 0.0), directions=None, frame=None):
+           new_plane_base="XY plane", angles=(0.0, 0.0, 0.0), origin=(0.0, 0.0), directions=None, frame=None, follow_support=True):
     if not Model.is_component(component) or plane not in PLANES:
         raise ValueError("Choose a component and a sketch plane.")
     Model.activate(component, strict=False)
@@ -224,8 +333,26 @@ def create(component, plane="XY plane", offset=0.0, support=None,
         sketch = component.Document.addObject("Sketcher::SketchObject", "Sketch")
         Model.register_object(component, sketch)
         sketch.Label = Model.next_label(component, "Sketch", sketch)
-        _attach(sketch, component, plane, offset, support)
+        if plane == "Independent plane":
+            sketch.Placement = App.Placement(App.Vector(origin[0], origin[1], offset), plane_rotation(angles, directions))
+        elif plane == "Selected two edges":
+            placement = two_edge_frame(component, support)
+            sketch.AttachmentOffset = App.Placement(App.Vector(0, 0, offset), App.Rotation())
+            sketch.Placement = placement.multiply(sketch.AttachmentOffset)
+            if follow_support:
+                remember_support(sketch, "TwoEdges", [(obj, [name]) for obj, name in support])
+        else:
+            _attach(sketch, component, plane, offset, support)
         component.Document.recompute()
         if "Invalid" in sketch.State:
             raise ValueError("The sketch could not attach to that support.")
+        if plane != "Independent plane" and plane != "Selected two edges":
+            if follow_support and plane not in ORIGIN_PLANES:
+                remember_support(sketch)
+            elif not follow_support:
+                saved = App.Placement(sketch.Placement)
+                sketch.MapMode = "Deactivated"
+                sketch.AttachmentSupport = []
+                sketch.Placement = saved
+        component.Document.recompute()
     return sketch

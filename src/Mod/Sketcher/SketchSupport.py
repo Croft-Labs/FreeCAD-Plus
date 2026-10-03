@@ -58,7 +58,11 @@ def _validate(sketch, support, face_name, policy, allow_cross=False, allow_pendi
         raise ValueError("Support must be another object in the same document")
     if support.isDerivedFrom("App::Link"):
         raise ValueError("Occurrence support requires an explicit definition/occurrence policy")
-    if sketch in support.OutListRecursive:
+    dependencies = list(support.OutListRecursive)
+    if hasattr(sketch, "ComponentRole"):
+        import ComponentModel
+        dependencies = ComponentModel.geometry_dependencies(support, include_frames=True)
+    if sketch in dependencies:
         raise ValueError("Support depends on this sketch; reattachment would create a cycle")
     if any("Invalid" in obj.State or "Touched" in obj.State
            for obj in [support] + list(support.OutListRecursive)):

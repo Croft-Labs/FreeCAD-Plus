@@ -385,7 +385,7 @@ def history_move_order(component, items, index):
     index = max(0, min(int(index), len(visible)))
     # Published background results travel with their visible producer. Transitive
     # inputs include profile binders, expressions and hidden result links.
-    predecessors = {obj: {display_object(dep) for dep in geometry_dependencies(obj)} & set(visible)
+    predecessors = {obj: {display_object(dep) for dep in geometry_dependencies(obj, include_frames=True)} & set(visible)
                     for obj in visible}
     remaining = [obj for obj in visible if obj not in selected]
     slot = sum(obj not in selected for obj in visible[:index])
@@ -447,14 +447,17 @@ def _shape_kind(shape, sketch=False):
     raise ValueError("Select a body, sheet, sketch or curve.")
 
 
-def geometry_dependencies(obj):
+def geometry_dependencies(obj, include_frames=False):
     """Follow geometry inputs without treating component ownership as an input.
 
     A reference's SourceOccurrence establishes placement/context. Traversing its
     whole definition would incorrectly depend on every unrelated history branch.
     SourceObject supplies the actual geometry dependency instead.
     """
-    found, pending = set(), list(obj.OutList)
+    def inputs(item):
+        refs = [source for source, names in getattr(item, "FrameSupport", ()) if source] if include_frames else []
+        return list(item.OutList) + refs
+    found, pending = set(), inputs(obj)
     while pending:
         dep = pending.pop()
         if dep == obj or dep in found:
@@ -462,7 +465,7 @@ def geometry_dependencies(obj):
         if getattr(dep, "ComponentRole", "") in ("Definition", "Occurrence", "Document"):
             continue
         found.add(dep)
-        pending.extend(dep.OutList)
+        pending.extend(inputs(dep))
     return list(found)
 
 
@@ -1325,6 +1328,21 @@ class ComponentObserver:
         self.busy = False
         self.visibility = {}
         self.deleted_extrudes = {}
+
+    def slotBeforeRecomputeDocument(self, doc):
+        if any(hasattr(obj, "FrameSupport") for obj in doc.Objects):
+            import ComponentSketch
+            ComponentSketch.sync_supports(doc)
+
+    def slotRecomputedObject(self, obj):
+        if any(hasattr(item, "FrameSupport") for item in obj.Document.Objects):
+            import ComponentSketch
+            ComponentSketch.sync_supports(obj.Document, obj)
+
+    def slotRecomputedDocument(self, doc):
+        if any(hasattr(obj, "FrameSupport") for obj in doc.Objects):
+            import ComponentSketch
+            ComponentSketch.sync_supports(doc)
 
     def slotOpenTransaction(self, doc, label):
         self.visibility[doc.Name] = {o.ObjectId: bool(o.Visibility) for o in doc.Objects

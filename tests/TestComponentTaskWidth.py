@@ -53,7 +53,7 @@ class TestComponentTaskWidth(unittest.TestCase):
                 button.setChecked(True)
         return self.task
 
-    def check_width(self, name):
+    def check_width(self, name, height=560):
         form = self.task.form
         parent, scroll, dock = form, None, None
         while parent:
@@ -65,7 +65,7 @@ class TestComponentTaskWidth(unittest.TestCase):
         self.assertIsNotNone(scroll)
         self.assertIsNotNone(dock)
         dock.setFloating(True)
-        dock.resize(360, 560)
+        dock.resize(360, height)
         self.settle()
         print(name, "dock", dock.size(), "form", form.size(), "minimum", form.minimumSizeHint(),
               "viewport", scroll.viewport().size(), "vertical", scroll.verticalScrollBar().maximum())
@@ -144,3 +144,10 @@ class TestComponentTaskWidth(unittest.TestCase):
         task = self.launch("Sketch", datum_only=True)
         task.orientation_mode.setCurrentIndex(task.orientation_mode.findText("Axis directions"))
         self.check_width("Sketch")
+
+    def testSketchIndependentFrames(self):
+        task = self.launch("Sketch")
+        task.plane.setCurrentIndex(task.plane.findData("Independent plane"))
+        for mode in ("Rotation angles", "Axis directions"):
+            task.orientation_mode.setCurrentIndex(task.orientation_mode.findData(mode))
+            self.check_width("Independent-" + mode.replace(" ", "-"), height=400)

@@ -81,7 +81,7 @@ class SupportDialog(QtWidgets.QDialog):
 
     def refreshCurrent(self):
         entries = []
-        for obj, subs in self.sketch.AttachmentSupport:
+        for obj, subs in getattr(self.sketch, "FrameSupport", self.sketch.AttachmentSupport):
             entries.append((obj.Label if obj else _tr("Missing object")) + ": " + ", ".join(subs))
         self.current.setText(("; ".join(entries) or _tr("Unattached")) + "\n" +
                              _tr("World placement: ") + _placement(self.sketch.getGlobalPlacement()))
@@ -109,7 +109,7 @@ class SupportDialog(QtWidgets.QDialog):
         return (shape_signature(self.sketch), shape_signature(self.support),
                 tuple(self.sketch.AttachmentOffset.toMatrix().A), self.sketch.MapMode,
                 self.sketch.MapReversed, tuple(self.sketch.ExpressionEngine),
-                tuple((obj.ID if obj else None, tuple(subs)) for obj, subs in self.sketch.AttachmentSupport),
+                tuple((obj.ID if obj else None, tuple(subs)) for obj, subs in getattr(self.sketch, "FrameSupport", self.sketch.AttachmentSupport)),
                 self.face.text().strip(), self.policy.currentData())
 
     def captureFace(self):
