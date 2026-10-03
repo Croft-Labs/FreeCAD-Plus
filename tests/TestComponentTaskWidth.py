@@ -136,6 +136,10 @@ class TestComponentTaskWidth(unittest.TestCase):
         self.launch("Pipe")
         self.check_width("Pipe")
 
+    def testSketchProjectedPlane(self):
+        self.launch("Sketch", datum_only=True)
+        self.check_width("ProjectedPlane")
+
     def testSketchAxisDirections(self):
         task = self.launch("Sketch", datum_only=True)
         task.orientation_mode.setCurrentIndex(task.orientation_mode.findText("Axis directions"))

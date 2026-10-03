@@ -59,13 +59,16 @@ The current run and exact incorporation evidence live in
 coverage. Physical gestures, additional DPI/themes and exhaustive combinations
 of every native Sketcher tool remain separate acceptance work.
 
-Datum-plane acceptance covers both the new-file Tasks button and New Sketch's
-Create new plane choice. Confirm Define Plane, Define Origin and Define Orientation
-appear in order. Try face and user-plane supports, signed origin coordinates,
-retained Euler rotations and both X/Z and Y/Z direction pairs. Z defines the normal;
-the other vector is projected into the plane. Zero/parallel vectors must reject
-inline with no new history objects. Verify recompute after support movement,
-Undo/Redo and `.cadprt` reopen retain the native plane and sketch attachment.
-Create Datum Plane must leave New Sketch open with the new User plane selected;
-Cancel after that explicit creation keeps the plane, while Cancel before creation
-leaves no objects. `datum-three-sections.png` records the direction controls.
+Datum-plane acceptance covers the new-file Tasks action and New Sketch's Create
+new plane choice. Confirm Define Surface, Z Direction, Sketch Origin and X
+Direction appear in order. Projected references defaults to the component origin
+and closest component axis projected onto the surface. Pick a vertex/datum point,
+an edge (curved edges use their midpoint tangent), or two ordered points. Verify
+independent X/Z reversals, right-handed axes and inline rejection of degenerate
+projections. Test tilted/moved supports, moved components, symmetric-axis ties,
+recompute, Undo/Redo, helper cleanup and .cadprt reopen with native attached sketches.
+`TestComponentPlaneFrame.py` owns these checks. Retain explicit legacy Rotation
+angles and Axis directions modes and their existing API tests. Create Datum Plane
+keeps New Sketch open and selects its new attachment; Cancel after explicit
+creation keeps the plane, while Cancel before creation leaves no objects. The
+projected-plane task and 360-pixel width captures record the UI acceptance.

@@ -68,7 +68,113 @@ def plane_rotation(angles, directions=None):
                         "ZXY" if axis == "X" else "ZYX")
 
 
-def _new_plane(component, base, offset, support, angles, origin=(0.0, 0.0), directions=None):
+def reference_geometry(component, reference, point=False):
+    """Resolve a picked point or edge into component-local coordinates."""
+    source, names = reference
+    name = names[0] if isinstance(names, (list, tuple)) and names else names
+    origins = component.Origin.OriginFeatures
+    if source is None or (Model.owner(source) != component and source not in origins):
+        raise ValueError("Choose geometry in the active component, or add a component reference first.")
+    transform = component.getGlobalPlacement().inverse().multiply(source.getGlobalPlacement())
+    if point and source.isDerivedFrom("App::Point") and not name:
+        return transform.Base
+    if not point and source.isDerivedFrom("App::Line") and not name:
+        return transform.Rotation.multVec(App.Vector(0, 0, 1))
+    shape = Model.current_shape(source)
+    element = shape.getElement(name) if name else shape
+    # Shape subelements already include the object's local placement.
+    transform = transform.multiply(source.Placement.inverse())
+    if point:
+        if element.ShapeType != "Vertex":
+            raise ValueError("Select a vertex or datum point for the projected point.")
+        return transform.multVec(element.Point)
+    if element.ShapeType != "Edge":
+        raise ValueError("Select one edge or datum axis for the X direction.")
+    direction = element.tangentAt((element.FirstParameter + element.LastParameter) / 2.)
+    return transform.Rotation.multVec(direction)
+
+
+def projected_frame(component, surface, origin_reference=None, axis_references=(), reverse_z=False, reverse_x=False):
+    """Project component-local references onto the defined flat surface."""
+    normal = surface.Rotation.multVec(App.Vector(0, 0, 1))
+    normal.normalize()
+    point = reference_geometry(component, origin_reference, True) if origin_reference and origin_reference[0] else App.Vector()
+    origin = point - normal * ((point - surface.Base).dot(normal))
+    if len(axis_references) == 2:
+        along = reference_geometry(component, axis_references[1], True) - reference_geometry(component, axis_references[0], True)
+    elif len(axis_references) == 1:
+        along = reference_geometry(component, axis_references[0])
+    elif not axis_references:
+        axes = [App.Vector(1, 0, 0), App.Vector(0, 1, 0), App.Vector(0, 0, 1)]
+        lengths = [(axis - normal * axis.dot(normal)).Length for axis in axes]
+        along = next(axis for axis, length in zip(axes, lengths) if length >= max(lengths) - 1e-12)
+    else:
+        raise ValueError("Select one edge or exactly two points for X.")
+    x = along - normal * along.dot(normal)
+    if x.Length < 1e-9:
+        raise ValueError("The selected X direction projects to zero. Choose another edge or two distinct projected points.")
+    x.normalize()
+    if reverse_x:
+        x = -x
+    if reverse_z:
+        normal = -normal
+    return App.Placement(origin, App.Rotation(x, normal.cross(x), normal, "ZXY"))
+
+
+class ProjectedPlaneFrame(Model.PersistentProxy):
+    def execute(self, obj):
+        try:
+            placement = projected_frame(Model.owner(obj), obj.Surface.Placement,
+                                        obj.OriginReference, obj.AxisReferences, obj.ReverseZ, obj.ReverseX)
+            obj.Shape = Part.makePlane(1, 1)
+            obj.Placement = placement
+        except Exception:
+            obj.Shape = Part.Shape()
+            raise
+
+
+def _projected_plane(component, base, offset, support, angles, frame):
+    import PartDesign
+    doc = component.Document
+    surface = doc.addObject("PartDesign::Plane", "PlaneSurface")
+    component.addObject(surface)
+    Model._identity(surface, "Internal")
+    _attach(surface, component, base, offset, support)
+    surface.AttachmentOffset = App.Placement(App.Vector(0, 0, offset), plane_rotation(angles))
+    doc.recompute()
+    if "Invalid" in surface.State:
+        raise ValueError("The flat surface could not attach to the selected support.")
+    # Validate before constructing the associative frame; transaction rollback owns failures.
+    projected_frame(component, surface.Placement, **frame)
+    helper = doc.addObject("Part::FeaturePython", "PlaneFrame")
+    component.addObject(helper)
+    Model._identity(helper, "Internal")
+    Model._property(helper, "Link", "Surface", surface, True)
+    Model._property(helper, "LinkSub", "OriginReference", frame.get("origin_reference") or (None, []))
+    Model._property(helper, "LinkSubList", "AxisReferences", list(frame.get("axis_references", ())))
+    Model._property(helper, "Bool", "ReverseZ", frame.get("reverse_z", False))
+    Model._property(helper, "Bool", "ReverseX", frame.get("reverse_x", False))
+    helper.Proxy = ProjectedPlaneFrame()
+    doc.recompute()
+    plane = doc.addObject("PartDesign::Plane", "Plane")
+    Model.register_object(component, plane)
+    plane.Label = Model.next_label(component, "Plane", plane)
+    plane.AttachmentSupport = [(helper, "")]
+    plane.MapMode = "ObjectXY"
+    Model._property(plane, "Link", "ProjectedFrame", helper, True)
+    doc.recompute()
+    if "Invalid" in plane.State:
+        raise ValueError("The projected plane frame could not be evaluated.")
+    if App.GuiUp:
+        for obj in (surface, helper):
+            obj.Visibility = False
+            obj.ViewObject.ShowInTree = False
+    return plane
+
+
+def _new_plane(component, base, offset, support, angles, origin=(0.0, 0.0), directions=None, frame=None):
+    if frame is not None:
+        return _projected_plane(component, base, offset, support, angles, frame)
     rotation = plane_rotation(angles, directions)
     # Reuse the native datum and attachment engine without introducing a Body.
     import PartDesign  # Registers PartDesign::Plane.
@@ -84,12 +190,12 @@ def _new_plane(component, base, offset, support, angles, origin=(0.0, 0.0), dire
 
 
 def create_plane(component, base="XY plane", offset=0.0, support=None,
-                 angles=(0.0, 0.0, 0.0), origin=(0.0, 0.0), directions=None):
+                 angles=(0.0, 0.0, 0.0), origin=(0.0, 0.0), directions=None, frame=None):
     if not Model.is_component(component):
         raise ValueError("Choose a component for the datum plane.")
     Model.activate(component, strict=False)
     with Model.transaction(component.Document, "New Datum Plane"):
-        return _new_plane(component, base, offset, support, angles, origin, directions)
+        return _new_plane(component, base, offset, support, angles, origin, directions, frame)
 
 
 def check_support(component, support):
@@ -107,13 +213,13 @@ def check_support(component, support):
 
 
 def create(component, plane="XY plane", offset=0.0, support=None,
-           new_plane_base="XY plane", angles=(0.0, 0.0, 0.0), origin=(0.0, 0.0), directions=None):
+           new_plane_base="XY plane", angles=(0.0, 0.0, 0.0), origin=(0.0, 0.0), directions=None, frame=None):
     if not Model.is_component(component) or plane not in PLANES:
         raise ValueError("Choose a component and a sketch plane.")
     Model.activate(component, strict=False)
     with Model.transaction(component.Document, "New Sketch"):
         if plane == "Create new plane":
-            support = _new_plane(component, new_plane_base, offset, support, angles, origin, directions)
+            support = _new_plane(component, new_plane_base, offset, support, angles, origin, directions, frame)
             plane, offset = "User plane", 0.0
         sketch = component.Document.addObject("Sketcher::SketchObject", "Sketch")
         Model.register_object(component, sketch)

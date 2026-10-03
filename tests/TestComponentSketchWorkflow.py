@@ -754,7 +754,9 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         obj = self.accept(task)
         plane = obj.AttachmentSupport[0][0]
         self.close_editor()
-        self.assertAlmostEqual(plane.Placement.Base.z, 8)
+        surface = plane.ProjectedFrame.Surface.Placement
+        normal = surface.Rotation.multVec(App.Vector(0, 0, 1))
+        self.assertLess((plane.Placement.Base - normal * surface.Base.dot(normal)).Length, 1e-7)
         self.assertPlacement(obj.Placement, plane.Placement)
         task = self.launch()
         task.plane.setCurrentIndex(task.plane.findData("Create new plane"))

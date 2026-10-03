@@ -2,6 +2,11 @@
 
 ## Project at a glance
 
+Datum Plane and New Sketch now share Surface, Z Direction, Sketch Origin and X
+Direction steps. Defaults project the component origin and closest component axis;
+picked points/edges remain associative, with separate X/Z reversal. WORK_STATE
+records native checks, reviewed Word requirements and the owner payload.
+
 Editing a History item temporarily suppresses the later history tail through
 shared TaskContext lifecycle handling. Authored suppression is preserved; finish,
 cancel, startup failure and save-time restoration are covered by native checks.
@@ -70,8 +75,8 @@ The delivered October 3 batch combines Revolution/Groove as component Revolve, i
 `src/Mod/Part/ComponentRevolve.py` and `src/Gui/ComponentRevolveTask.py`. It reuses
 native geometry and the Extrude curve collector; native command and Model History
 routes share the four-section task. Acceptance: `tests/TestComponentRevolve.py`.
-The batch also incorporates the shared Datum Plane workflow: Define Plane, Define
-Origin and Define Orientation, with immediate availability as a New Sketch attachment.
+The batch also incorporates the shared Datum Plane workflow: Define Surface, Z Direction,
+Sketch Origin and X Direction, with immediate availability as a New Sketch attachment.
 See the roadmap and WORK_STATE for verification and owner-delivery status.
 
 Latest source follows the owner's exact Design Home, Modeling, Sketch, Assembly and View layouts. Modeling
@@ -147,7 +152,7 @@ acceptance, upstream candidate integration and external publication are separate
 | Component file recovery | [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py), Component Structure, native `PropertyXLink` | Grouped missing instances, identity-based Locate Component File, partial reference recovery and clearing obsolete saved link targets; roadmap 7.8.3c. |
 | Component reference recovery | [`ComponentModel.py`](../src/Mod/Part/ComponentModel.py), [`CadDocument.py`](../src/Mod/Part/CadDocument.py), History | Repairable missing geometry, independent refresh and identity-preserving direct-child source repair; roadmap 7.8.4a. |
 | Component selection and view context | [`ComponentSelection.py`](../src/Gui/ComponentSelection.py), [`ComponentNavigator.py`](../src/Gui/ComponentNavigator.py) | Native occurrence-path selection, direct-child reference preselection, grouped display Undo and isolated-tab context; roadmap 7.8.7f. |
-| Independent component sketches and datum planes | [`ComponentSketch.py`](../src/Mod/Part/ComponentSketch.py), [`ComponentSketchTask.py`](../src/Gui/ComponentSketchTask.py) | Shared three-section Datum Plane task from new-file Tasks and New Sketch; native attachment, origin and X/Z or Y/Z directions; roadmap 7.8.5d/7.8.7aa and datum-plane milestone; [validation procedure](../tests/SketchWorkflow.md). |
+| Independent component sketches and datum planes | [`ComponentSketch.py`](../src/Mod/Part/ComponentSketch.py), [`ComponentSketchTask.py`](../src/Gui/ComponentSketchTask.py) | Shared four-step projected-frame Datum Plane task from new-file Tasks and New Sketch; native attachment, origin and X/Z or Y/Z directions; roadmap 7.8.5d/7.8.7aa and datum-plane milestone; [validation procedure](../tests/SketchWorkflow.md). |
 | Component Extrude feedback task | [`ComponentExtrude.py`](../src/Mod/Part/ComponentExtrude.py), [`ComponentExtent.py`](../src/Mod/Part/ComponentExtent.py), [`ComponentProfile.py`](../src/Mod/Part/ComponentProfile.py), [`ComponentExtrudeTask.py`](../src/Gui/ComponentExtrudeTask.py), native Part Design command routing | Independent New Body/Add/Subtract/history workflow, associative selected curves/regions, native extent/offset/taper/direction controls and colored volume previews; roadmap 7.8.5c/d, 7.8.7d/e/p/q. |
 | Product intent and boundaries | [Product specification](PRODUCT_SPEC.md) | [UI scope](UI_UX_SPEC.md#interface-scope) |
 | `.cadprt` persistence and legacy conversion | [`CadDocument.py`](../src/Mod/Part/CadDocument.py), native App/Gui document save/open | Versioned manifest with native payloads; automatic GUI conversion, untouched originals and reported limitations. Roadmap 7.8; [owner procedure](../tests/ComponentDocument.md). |

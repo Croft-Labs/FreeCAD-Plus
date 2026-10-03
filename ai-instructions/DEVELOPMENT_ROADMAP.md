@@ -1,5 +1,22 @@
 # FreeCAD Plus: Development Roadmap
 
+October 3 documentation audit: Classic Toolbars in the canonical Word specification
+now carries plain-text mappings for all 873 operations/dropdown entries. Current
+Plus ribbon locations, missing entries and intentionally replaced controls are
+distinguished without changing styles, headings or automatic numbering. This is
+a toolbar-location audit, not implementation of absent workbenches or commands.
+See WORK_STATE for native inventory and document verification evidence.
+
+## October 3 projected datum-plane frame workflow (7.8)
+
+Corrected the shared Datum Plane/New Sketch sequence to Surface, Z Direction,
+Sketch Origin and X Direction. Project the component origin and closest component
+axis by default; retain associative picked points, edges and two-point directions,
+independent reversal buttons and right-handed coordinates. Keep public native
+plane/sketch identities, legacy explicit frame modes, atomic creation and unused
+helper cleanup. WORK_STATE separates runtime checks, Word review, incremental
+Python staging, shortcut delivery and source publication.
+
 ## October 3 temporary History suppression while editing (7.8)
 
 Shared TaskContext now marks the history tail inactive while an earlier item is

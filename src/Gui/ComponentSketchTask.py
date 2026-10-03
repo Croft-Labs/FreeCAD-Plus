@@ -2,7 +2,7 @@
 """Component sketch-plane choice followed by the native Sketcher editor."""
 import FreeCAD as App
 import FreeCADGui as Gui
-from PySide import QtCore, QtWidgets
+from PySide import QtCore, QtGui, QtWidgets
 from freecad.gui.ComponentExtrudeTask import active_component, CompactFormLayout
 
 _task = None
@@ -20,12 +20,19 @@ class SketchTask:
         self.component, self.support, self.result = component, None, None
         self.context = context
         self.datum_only = datum_only
+        self.origin_reference = None
+        self.axis_references = []
+        self.pick_role = None
         self.origin = component.Origin
         self.origin_planes = {obj.Name: obj.Role.replace("_", " ").replace("Plane", "plane")
                               for obj in self.origin.OriginFeatures
                               if getattr(obj, "Role", "") in ("XY_Plane", "XZ_Plane", "YZ_Plane")}
         self.observing = False
         self.form = QtWidgets.QWidget()
+        self.form.setAutoFillBackground(True)
+        self.form.setBackgroundRole(QtGui.QPalette.Base)
+        self.form.setForegroundRole(QtGui.QPalette.Text)
+        self.form.setStyleSheet("QWidget { background-color: palette(base); color: palette(text); }")
         self.form.setWindowTitle(tr("Datum Plane") if datum_only else tr("New Sketch"))
         layout = QtWidgets.QVBoxLayout(self.form)
         self.plane = QtWidgets.QComboBox()
@@ -35,12 +42,12 @@ class SketchTask:
         self.plane.setAccessibleName(tr("Sketch attachment"))
         self.plane.setVisible(not datum_only)
         self.sections = []
-        for title in ("Define Plane", "Define Origin", "Define Orientation"):
+        for title in ("Define Surface", "Z Direction", "Sketch Origin", "X Direction"):
             section = QtWidgets.QGroupBox(tr(title))
             CompactFormLayout(section)
             layout.addWidget(section)
             self.sections.append(section)
-        definition, origin, orientation = [section.layout() for section in self.sections]
+        definition, normal, origin, orientation = [section.layout() for section in self.sections]
         self.base = QtWidgets.QComboBox()
         for name in Sketch.PLANES[:-1]:
             self.base.addItem(tr(name), name)
@@ -67,11 +74,11 @@ class SketchTask:
         self.offset.setProperty("minimum", -1e9)
         self.offset.setProperty("maximum", 1e9)
         self.offset_label = QtWidgets.QLabel(tr("Offset"))
-        origin.addRow(self.offset_label, self.offset)
+        definition.addRow(self.offset_label, self.offset)
         self.orientation_mode = QtWidgets.QComboBox()
-        for name in ("Rotation angles", "Axis directions"):
+        for name in ("Projected references", "Rotation angles", "Axis directions"):
             self.orientation_mode.addItem(tr(name), name)
-        orientation.addRow(tr("Orientation"), self.orientation_mode)
+        definition.addRow(tr("Frame definition"), self.orientation_mode)
         self.rotations = []
         self.rotation_labels = []
         for label in ("Rotation X", "Rotation Y", "Rotation Z"):
@@ -80,7 +87,7 @@ class SketchTask:
             control.setProperty("minimum", -360.0)
             control.setProperty("maximum", 360.0)
             caption = QtWidgets.QLabel(tr(label))
-            orientation.addRow(caption, control)
+            definition.addRow(caption, control)
             self.rotations.append(control)
             self.rotation_labels.append(caption)
         self.direction_axis = QtWidgets.QComboBox()
@@ -110,6 +117,32 @@ class SketchTask:
         self.direction_hint = QtWidgets.QLabel(tr("Directions and origin are measured in the base attachment frame. Z sets the normal; X or Y is projected onto its plane."))
         self.direction_hint.setWordWrap(True)
         orientation.addRow(self.direction_hint)
+        self.reverse_z = QtWidgets.QPushButton(tr("Reverse Z"))
+        self.reverse_z.setCheckable(True)
+        normal.addRow(tr("Z follows the surface normal"), self.reverse_z)
+        self.origin_source = QtWidgets.QComboBox()
+        self.origin_source.addItems([tr("Part origin projected to plane"), tr("Selected point projected to plane")])
+        origin.addRow(self.origin_source)
+        self.origin_pick = QtWidgets.QPushButton(tr("Select origin point"))
+        origin.addRow(self.origin_pick)
+        self.origin_selection = QtWidgets.QLabel(tr("Part origin"))
+        self.origin_selection.setWordWrap(True)
+        origin.addRow(self.origin_selection)
+        self.x_source = QtWidgets.QComboBox()
+        self.x_source.addItems([tr("Closest component axis"), tr("Line or edge"), tr("Two points")])
+        orientation.addRow(self.x_source)
+        self.x_pick = QtWidgets.QPushButton(tr("Select X direction"))
+        orientation.addRow(self.x_pick)
+        self.x_selection = QtWidgets.QLabel(tr("Project the component axis closest to the plane. Ties use X, then Y, then Z."))
+        self.x_selection.setWordWrap(True)
+        orientation.addRow(self.x_selection)
+        self.reverse_x = QtWidgets.QPushButton(tr("Reverse X"))
+        self.reverse_x.setCheckable(True)
+        orientation.addRow(self.reverse_x)
+        self.origin_pick.clicked.connect(lambda: self.start_frame_pick("origin"))
+        self.x_pick.clicked.connect(lambda: self.start_frame_pick("axis"))
+        self.origin_source.currentIndexChanged.connect(self.origin_source_changed)
+        self.x_source.currentIndexChanged.connect(self.x_source_changed)
         self.capture = QtWidgets.QPushButton(tr("Use selected face or plane"))
         definition.addRow(self.capture)
         self.source = QtWidgets.QLabel(tr("No face selected"))
@@ -165,6 +198,9 @@ class SketchTask:
         self.observing = True
 
     def addSelection(self, document, name, subname, *args):
+        if self.pick_role and self.creating_plane():
+            self.capture_frame_pick(document, name, subname)
+            return
         if document != self.component.Document.Name:
             return
         base = self.component.Document.getObject(name)
@@ -185,6 +221,13 @@ class SketchTask:
 
     def update_plane(self, *args):
         new = self.creating_plane()
+        projected = new and self.orientation_mode.currentData() == "Projected references"
+        self.sections[1].setVisible(projected)
+        self.sections[3].setVisible(new)
+        for widget in (self.origin_source, self.origin_pick, self.origin_selection,
+                       self.x_source, self.x_pick, self.x_selection, self.reverse_x):
+            widget.setVisible(projected)
+        self.orientation_mode.setVisible(new)
         choice = self.base.currentData() if new else self.plane.currentData()
         self.base.setVisible(new)
         self.base_label.setVisible(new)
@@ -192,14 +235,14 @@ class SketchTask:
         self.user_plane_label.setVisible(choice == "User plane")
         self.source.setVisible(choice == "Selected planar face")
         for caption, control in zip(self.origin_labels, self.origins):
-            caption.setVisible(new)
-            control.setVisible(new)
-        self.offset_label.setText(tr("Origin Z / Offset") if new else tr("Offset"))
+            caption.setVisible(new and not projected)
+            control.setVisible(new and not projected)
+        self.offset_label.setText(tr("Surface offset") if new else tr("Offset"))
         self.sections[2].setVisible(new)
         vectors = self.orientation_mode.currentData() == "Axis directions"
         for caption, control in zip(self.rotation_labels, self.rotations):
-            caption.setVisible(not vectors)
-            control.setVisible(not vectors)
+            caption.setVisible(new and not vectors)
+            control.setVisible(new and not vectors)
         self.direction_axis_label.setVisible(vectors)
         self.direction_axis.setVisible(vectors)
         self.direction_hint.setVisible(vectors)
@@ -210,6 +253,66 @@ class SketchTask:
         self.status.setText(tr("OK creates the datum plane. Cancel creates nothing.") if self.datum_only else
                             tr("Create Datum Plane makes it available below. OK creates the plane and sketch together; Cancel creates neither until the plane is explicitly created.")
                             if new else tr("Select an origin plane, a user plane, or a planar face. OK opens Sketcher."))
+
+    def origin_source_changed(self, index):
+        if index == 0:
+            self.origin_reference = None
+            self.origin_selection.setText(tr("Part origin"))
+            self.pick_role = None
+        else:
+            self.start_frame_pick("origin")
+
+    def x_source_changed(self, index):
+        self.axis_references = []
+        if index == 0:
+            self.pick_role = None
+            self.x_selection.setText(tr("Project the component axis closest to the plane. Ties use X, then Y, then Z."))
+        else:
+            self.start_frame_pick("axis")
+
+    def start_frame_pick(self, role):
+        if role == "origin":
+            self.origin_source.blockSignals(True)
+            self.origin_source.setCurrentIndex(1)
+            self.origin_source.blockSignals(False)
+            self.origin_reference = None
+            self.origin_selection.setText(tr("Select a vertex or datum point."))
+        else:
+            if self.x_source.currentIndex() == 0:
+                self.x_source.blockSignals(True)
+                self.x_source.setCurrentIndex(1)
+                self.x_source.blockSignals(False)
+            self.axis_references = []
+            self.x_selection.setText(tr("Select two vertices or datum points in order.") if self.x_source.currentIndex() == 2 else
+                                     tr("Select an edge or datum axis. Curved edges use their midpoint tangent."))
+        self.pick_role = role
+        Gui.Selection.clearSelection()
+
+    def capture_frame_pick(self, document, name, subname):
+        import ComponentSketch as Sketch
+        try:
+            doc = App.listDocuments().get(document)
+            base = doc.getObject(name) if doc else None
+            obj = base.getSubObject(subname, 1) if base and subname else base
+            element = subname.rsplit(".", 1)[-1] if subname else ""
+            if not element.startswith(("Vertex", "Edge")):
+                element = ""
+            reference = (obj, [element] if element else [])
+            point = self.pick_role == "origin" or self.x_source.currentIndex() == 2
+            Sketch.reference_geometry(self.component, reference, point)
+            if self.pick_role == "origin":
+                self.origin_reference = reference
+                self.origin_selection.setText(obj.Label + (" / " + element if element else ""))
+                self.pick_role = None
+            else:
+                if reference not in self.axis_references:
+                    self.axis_references.append(reference)
+                self.x_selection.setText(" -> ".join(o.Label + (" / " + n[0] if n else "") for o, n in self.axis_references))
+                if len(self.axis_references) == (2 if point else 1):
+                    self.pick_role = None
+            self.status.setText(tr("Reference selected. It will be projected onto the surface."))
+        except Exception as error:
+            self.status.setText(str(error))
 
     def capture_face(self, picks=None):
         import ComponentSketch as Sketch
@@ -249,7 +352,16 @@ class SketchTask:
         if self.orientation_mode.currentData() == "Axis directions":
             directions = (self.direction_axis.currentData(),
                           *(tuple(control.value() for control in row) for row in self.directions))
-        return dict(base=choice, offset=float(self.offset.property("rawValue")), support=support,
+        frame = None
+        if self.creating_plane() and self.orientation_mode.currentData() == "Projected references":
+            if self.origin_source.currentIndex() and self.origin_reference is None:
+                raise ValueError(tr("Select an origin point or choose the projected part origin."))
+            expected = (0, 1, 2)[self.x_source.currentIndex()]
+            if len(self.axis_references) != expected:
+                raise ValueError(tr("Select one edge or two points for the X direction."))
+            frame = dict(origin_reference=self.origin_reference, axis_references=self.axis_references,
+                         reverse_z=self.reverse_z.isChecked(), reverse_x=self.reverse_x.isChecked())
+        return dict(frame=frame, base=choice, offset=float(self.offset.property("rawValue")), support=support,
                     angles=tuple(float(c.property("rawValue")) for c in self.rotations),
                     origin=tuple(float(c.property("rawValue")) for c in self.origins), directions=directions)
 
@@ -276,7 +388,7 @@ class SketchTask:
             else:
                 self.result = Sketch.create(self.component, self.plane.currentData(),
                                             values["offset"], values["support"], self.base.currentData(),
-                                            values["angles"], values["origin"], values["directions"])
+                                            values["angles"], values["origin"], values["directions"], values["frame"])
         except Exception as error:
             self.status.setText(str(error))
             return False

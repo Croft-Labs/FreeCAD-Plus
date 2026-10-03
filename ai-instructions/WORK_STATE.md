@@ -1,5 +1,57 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 3 projected datum-plane frame workflow
+
+Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_plane_frame/app`.
+Python-only incremental staging from history-edit; changed modules are
+ComponentSketch, ComponentSketchTask and ComponentModel. No native rebuild,
+installer or published release. Native About remains
+`03a6f66644488e2b710f94e828155b9b12c23c60`; release-info and BUILD-VALIDATION record
+the newer application source and inherited baseline provenance.
+
+The default four-step task defines surface, Z normal/reverse, projected sketch
+origin and projected X/reverse. Origin defaults to the component origin; X defaults
+to the most parallel component axis with stable X/Y/Z tie-breaking. Optional
+vertex/datum-point, edge or two-point references remain associative. Curved edges
+use midpoint tangents. Native datum/attachment engines define the base surface;
+a hidden frame proxy projects references and supplies the public PartDesign plane's
+ObjectXY attachment. Sketches keep native attachments. Invalid projections roll
+back; deletion cleans unused helpers in the same transaction. Explicit legacy
+numeric frame modes and existing scripted plane calls retain prior semantics.
+
+55 distinct checks pass. Evidence under the build parent's `validation` folder:
+- `plane-verified`: final projected-frame cases, including symmetric-axis ties,
+  translated/tilted surfaces, moved components, independent reversals, point/edge/
+  two-point picking, source updates, helper cleanup, Undo/Redo and save/reopen.
+- `plane-final`: projected cases and all width/context/History checks pass; its
+  six StartActions cases failed in fixture logging because a detached Windows GUI
+  has no stderr file descriptor. The logger now uses App.Console.PrintMessage.
+- `start-actions`: all six command/startup checks pass with the corrected fixture.
+- `sketch-planes`: all 17 selected plane/sketch regressions pass, including legacy
+  directions, atomic plane+sketch creation, attachments, pending tasks and Extrude.
+  The tilted-surface task assertion now checks the requested projected origin.
+- Native module hashes match staged source; no source overlays or unexpected GUI
+  diagnostics. The projected and legacy task modes fit 360-pixel panels with
+  vertical-only scrolling. See reports for exact counts and retained first runs.
+- `shortcut-verification.json` records the existing desktop shortcut saved,
+  reopened and verified; `publication.json` records matching source/origin identity.
+
+Word updates five affected requirement paragraphs while preserving the owner's
+concurrent save, other paragraph XML, package members and native automatic numbering.
+All existing paragraph properties, heading structure and list levels are retained.
+The Classic Toolbars section annotates all 873 operation/dropdown entries against
+the staged Plus ribbon: 647 mapped, 224 missing from the current ribbon/build and
+two intentionally replaced controls. Existing owner Pad/New Body examples are
+preserved. Plain-text mapping lines use existing paragraphs and native numbering;
+styles, headers, footers and all other package parts are unchanged. The runtime
+command/location audit is in `validation/toolbar-locations/locations.json`; its
+one audit execution passes. Final render review and exhaustive mapping/OOXML
+verification are recorded under `plane-frame-doc` in the task visual root. All
+77 rendered pages were visually reviewed; four final caption-only page changes
+were re-rendered and reviewed again. BUILD-MANIFEST records
+changed/critical-file hashes and verified inherited files. Physical owner pointer/
+high-DPI acceptance remains separate from automated native GUI checks.
+
 ## October 3 temporary suppression of later History items during edits
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_history_edit/app`.

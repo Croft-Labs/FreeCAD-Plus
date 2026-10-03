@@ -1342,7 +1342,14 @@ class ComponentObserver:
         self.deleted_extrudes.pop(doc.Name, None)
 
     def slotDeletedObject(self, obj):
-        if not obj.Document.HasPendingTransaction or getattr(obj, "OperationKind", "") != "Extrude":
+        if not obj.Document.HasPendingTransaction:
+            return
+        if getattr(obj, "ProjectedFrame", None):
+            self.deleted_extrudes.setdefault(obj.Document.Name, []).append((
+                [dep.Name for dep in geometry_dependencies(obj)
+                 if getattr(dep, "ComponentRole", "") == "Internal"], []))
+            return
+        if getattr(obj, "OperationKind", "") != "Extrude":
             return
         # Snapshot dependencies while native deletion still retains the links.
         # Apply cleanup before commit so delete/undo remains one transaction.

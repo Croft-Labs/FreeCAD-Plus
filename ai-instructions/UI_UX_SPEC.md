@@ -872,15 +872,29 @@ preselection and viewport picks choose the support. Use selected face or plane
 also captures a support explicitly. User plane lists local native datum planes
 and Part planes by label while retaining object identity.
 
-Create new plane and the new-file Tasks **Datum Plane** action share three sections:
-**Define Plane** retains origin-plane, selected planar-face and user-plane attachment
-choices; **Define Origin** contains Origin X/Y and Origin Z / Offset in the base
-attachment frame; **Define Orientation** retains Rotation X/Y/Z and adds an Axis
-directions mode. That mode accepts either an X-axis or Y-axis direction and a
-Z-axis direction as numeric XYZ vectors. Z defines the normal; the in-plane vector
-is projected perpendicular to Z. Nonzero, nonparallel vectors are required. Defaults
-remain XY, zero origin/offset and zero rotations. Native Part datum planes are also
-available as sketch supports, without conversion or replacement.
+Create new plane and the new-file Tasks **Datum Plane** action share four sections
+in order: **Define Surface**, **Z Direction**, **Sketch Origin**, **X Direction**.
+Projected references is the default frame definition. Define the flat surface
+using an origin plane, selected planar face or existing user plane, plus surface
+offset and optional rotations. Default Z follows the surface normal; Reverse Z
+changes its sign without changing the physical plane or projected origin.
+
+The sketch origin defaults to the component origin projected orthogonally onto
+the plane. Select a vertex or datum point to project that point instead. Default
+X is the component axis with greatest projected length, with X/Y/Z priority for
+equal lengths. Alternatively select one line/edge or two points in pick order;
+project the direction into the plane. Curved edges use their midpoint tangent.
+Reverse X flips X independently; derive Y to keep a right-handed frame. Reject
+zero-length projected directions inline without leaking objects. Use local
+geometry or an explicit component reference for foreign geometry.
+
+Picked geometry remains associative through native links, recompute and save/reopen.
+The public object remains a native PartDesign plane; hidden internal surface/frame
+objects supply its attachment, and unused helpers are removed when deleting it.
+An attached sketch follows that frame. Existing saved planes and scripting calls
+retain their earlier attachment semantics. Rotation angles and Axis directions
+remain explicit legacy modes with their original numeric origin and X/Z or Y/Z
+vectors. Keep compact fields, readable panel colors and vertical-only scrolling.
 
 Offset is measured along the base normal; rotations apply X, then Y, then Z in
 the base frame. In New Sketch, OK creates a

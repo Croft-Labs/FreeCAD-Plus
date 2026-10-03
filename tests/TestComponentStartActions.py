@@ -86,7 +86,7 @@ class TestComponentStartActions(unittest.TestCase):
                 if button.isVisibleTo(pane)]
 
     def click(self, name):
-        os.write(2, ("Start action: " + name + "\n").encode())
+        App.Console.PrintMessage("Start action: " + name + "\n")
         button = self.pane().findChild(QtWidgets.QToolButton, name)
         self.assertIsNotNone(button)
         self.assertTrue(button.isEnabled())
@@ -135,7 +135,7 @@ class TestComponentStartActions(unittest.TestCase):
             self.assertIsNotNone(Gui.Control.activeDialog())
             if command == "Std_ComponentDatumPlane":
                 self.assertEqual([section.title() for section in SketchTask._task.sections],
-                                 ["Define Plane", "Define Origin", "Define Orientation"])
+                                 ["Define Surface", "Z Direction", "Sketch Origin", "X Direction"])
             boxes = [box for box in self.window.findChildren(QtWidgets.QDialogButtonBox)
                      if box.isVisibleTo(self.window) and box.button(QtWidgets.QDialogButtonBox.Ok)]
             self.assertTrue(boxes)
@@ -172,7 +172,7 @@ class TestComponentStartActions(unittest.TestCase):
             task = SketchTask._task
             self.assertTrue(task.datum_only)
             self.assertEqual([s.title() for s in task.sections],
-                             ["Define Plane", "Define Origin", "Define Orientation"])
+                             ["Define Surface", "Z Direction", "Sketch Origin", "X Direction"])
             Gui.Control.activeTaskDialog().accept()
             self.settle()
             root = Model.metadata(App.ActiveDocument).RootComponent
