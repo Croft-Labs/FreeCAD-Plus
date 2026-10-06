@@ -46,8 +46,8 @@ instance context menu. It moves whole linked component instances and their
 descendants. Models, permanent master/root contexts and geometry subelements are
 not movable instances. Copy remains a separate Part Tree operation. The first
 field is Workflow, ordered Translate, Rotate, Point to Point, Align Axes, Align
-Coordinate Systems, Interactive. Prompt 4 implements Translate; the other entries
-explain that their subsequent queued implementation is pending.
+Coordinate Systems, Interactive. All six workflows are source-prepared; native
+and packaged acceptance remain required before owner delivery.
 
 The next control is the Components list, using the existing add-selection,
 Remove/Delete and Clear collector conventions. The first valid batch establishes
@@ -90,7 +90,7 @@ the pending preview and requires Reset movement inputs; stale placements are nev
 silently applied. Selection changes and removals reset movement inputs. Close the
 task and release observers/preview on document or component-view exit; deleted
 instances leave the list, and deletion of the parent context closes the task.
-The remaining five workflows and native/packaged acceptance are required before
+All six workflows require native/packaged acceptance before
 owner delivery; WORK_STATE records source-overlay evidence and DOCX rendering status.
 
 ## Design Layers

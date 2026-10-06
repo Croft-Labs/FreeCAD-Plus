@@ -2,6 +2,31 @@
 
 ## October 6 recovery sequence resumed in the owner-requested conversation
 
+Move/source integration published to origin/main at
+`85900f48d48cd68aea9925360333743b1f1cd6cb`; ls-remote matched HEAD after push.
+Thirteen affected Python modules parse and the GUI CMake script inventory includes
+them. Native execution is still pending. The foundation's old Point placeholder
+expectation now checks its real Source prompt. Post-reset labels follow each method.
+
+Grouped Release configuration is running in
+`C:/Users/GAMING-PC/AppData/Local/FreeCADPlus/freecad_plus_2026-10-06_recovered_workload`.
+This is a new application build directory, not the toolchain smoke sample and
+not an incremental/copy payload. The initial prebuilt Coin/Pivy setting failed
+because LibPack 3.5.3 has no prebuilt Coin config; corrected to this fork's
+bundled Coin/Pivy as required by UseLibPack3. Existing submodule source is retained.
+Configure/build wrapper and logs are in this conversation's visualization folder
+`01a10f79-1a93-7be0-a261-96a6b7e9c425`; no duplicate build is running.
+
+DOCX rendering is recovered: the saved LibreOffice MSI was administratively
+extracted into a new isolated `dependencies/native/libreoffice` directory under
+the resolved workspace runtime. No desktop renderer was used/modified. The
+Documents plugin's named render_docx.py helper is absent in this installed package;
+the documented manual isolated-profile conversion plus bundled pypdfium2 produces
+all 83 page PNGs. Affected pages 78–83 were inspected at full page resolution:
+no clipping/overlap or broken numbering. Six obsolete status paragraphs were then
+targeted for reconciliation; every other package part is unchanged. The revised
+document is being rendered again before this visual gate is recorded as passed.
+
 Interactive source uses the fork's SoTransformDragger through a new view-only
 createTransformDragger binding. Native arrows, planes and rotation rings remain
 the existing services; zero increments now explicitly mean unsnapped linear/

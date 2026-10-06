@@ -470,8 +470,13 @@ class MoveTask(ModelingTaskUI):
         self.pivot_resolved.clear()
         if self.workflow.currentIndex() == 5 and self.session.paths:
             self.ensure_manipulator()
-        self.status.setText(tr("Choose an axis and angle. Teal geometry previews the move.") if self.workflow.currentIndex() == 1
-                            else tr("Choose a direction and distance. Teal geometry previews the move."))
+        instructions = ("Choose a direction and distance. Teal geometry previews the move.",
+                        "Choose an axis and angle. Teal geometry previews the move.",
+                        "Pick Source and Destination. Orientations and group spacing are preserved.",
+                        "Pick Source and Target axes. Coincident uses the closest target point.",
+                        "Define complete Source and Target coordinate systems.",
+                        "Drag native handles. Release retains preview; Apply commits.")
+        self.status.setText(tr(instructions[self.workflow.currentIndex()]))
 
     def change_workflow(self):
         self.reset()
