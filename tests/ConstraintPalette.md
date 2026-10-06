@@ -12,6 +12,15 @@ committed invalid Make Driving with Undo, save/reopen, structural action eligibi
 disabled tooltips with no mutation, viewport clamping, corridor and timer cancellation.
 The viewport test uses Qt mouse events for click/open, Escape, empty space and drag.
 
+Palette buttons use the corresponding native QAction icon and exact rich tooltip,
+including translated descriptions/shortcuts; native changes refresh their
+presentation. They remain icon-only and keep accessible action names, including
+distinct Make Driving/Make Reference names with the existing batch behavior.
+Disabled reasons are shown in the status bar on hover and remain accessible
+descriptions while the tooltip matches the native toolbar. The presentation
+test covers every action mapping, exact icon/tooltip parity, actual tooltip and
+Equal-button events, persistence, Undo and narrow viewport wrapping.
+
 Native diagnostic acceptance must compare geometry, constraints, document UndoCount
 and solver state before/after repeated hover/update. Test indirect Equal redundancy,
 conflicting dimensions and external-geometry safeguards. Failed batch API validation

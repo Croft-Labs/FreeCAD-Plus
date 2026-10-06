@@ -7,6 +7,41 @@ from freecad.gui import DesignSelection as Selection
 
 _controller = None
 
+# Presentation only: the palette keeps its existing batch/solver execution.
+NATIVE_COMMANDS = {
+    "construction": "Sketcher_ToggleConstruction",
+    "driving": "Sketcher_ToggleDrivingConstraint",
+    "reference": "Sketcher_ToggleDrivingConstraint",
+    "Concentric": "Sketcher_ConstrainCoincident",
+}
+
+
+def native_action(action):
+    name = NATIVE_COMMANDS.get(action.key, action.command or "Sketcher_Constrain" + action.key)
+    command = Gui.Command.get(name)
+    actions = command.getAction() if command else []
+    return actions[0] if actions else None
+
+
+class NativeButton(QtWidgets.QToolButton):
+    """Share native presentation without binding native activation or eligibility."""
+    def __init__(self, action, parent):
+        super().__init__(parent)
+        self.native = native_action(action)
+        self.reason = action.reason
+        if self.native:
+            self.refresh_presentation()
+            self.native.changed.connect(self.refresh_presentation)
+        else:
+            self.setIcon(Gui.getIcon("preferences-general.svg"))
+            self.setToolTip(App.Qt.translate("ConstraintPalette", action.label))
+
+    @QtCore.Slot()
+    def refresh_presentation(self):
+        self.setIcon(self.native.icon())
+        self.setToolTip(self.native.toolTip())
+        self.setStatusTip(self.reason or self.native.statusTip())
+
 
 def backend():
     # Avoid loading Sketcher during application startup.
@@ -74,21 +109,23 @@ class Palette(QtWidgets.QFrame):
             item = self.grid.takeAt(0)
             item.widget().deleteLater()
         self.buttons.clear()
-        # Wrapped text keeps complete labels legible in narrow logical viewports.
-        width = min(360, maximum.width())
-        columns = 2 if width >= 280 else 1
+        icon_size = Gui.getMainWindow().iconSize()
+        cell = max(icon_size.width(), icon_size.height()) + 12
+        spacing = 4
+        columns = max(1, min(6, len(actions), (maximum.width() - 12 + spacing) // (cell + spacing)))
+        width = min(maximum.width(), columns * cell + (columns - 1) * spacing + 12)
+        self.grid.setSpacing(spacing)
         for index, action in enumerate(actions):
-            button = QtWidgets.QToolButton(self.content)
-            cell_width = (width - 18) // columns
-            label = action.label
-            if button.fontMetrics().horizontalAdvance(label) + 16 > cell_width:
-                label = label.replace(" ", "\n")
-            button.setText(label)
+            button = NativeButton(action, self.content)
+            button.setAccessibleName(App.Qt.translate("ConstraintPalette", action.label))
+            button.setAccessibleDescription(action.reason)
+            button.setText("")
             button.setFocusPolicy(QtCore.Qt.NoFocus)
-            button.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
-            button.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Preferred)
-            button.setEnabled(not action.reason)
-            button.setToolTip(action.reason or action.label)
+            button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+            button.setIconSize(icon_size)
+            button.setFixedSize(min(cell, max(1, width - 12)), cell)
+            button.setEnabled(not action.reason and button.native is not None)
+            button.setProperty("disabledReason", action.reason)
             button.setProperty("paletteAction", action.key)
             button.installEventFilter(self)
             button.clicked.connect(lambda checked=False, key=action.key: self.controller.execute(key))
@@ -100,8 +137,11 @@ class Palette(QtWidgets.QFrame):
 
     def eventFilter(self, watched, event):
         if event.type() == QtCore.QEvent.ToolTip:
+            reason = watched.property("disabledReason")
+            if reason:
+                Gui.getMainWindow().statusBar().showMessage(reason, 10000)
             QtWidgets.QToolTip.showText(event.globalPos(), watched.toolTip(), watched)
-            return True  # Disabled controls still explain why they are unavailable.
+            return True  # Native tooltip also works for disabled controls.
         return False
 
 

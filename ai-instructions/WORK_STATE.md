@@ -1,5 +1,53 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 constraint palette icons and native tooltips
+
+Active owner change: replace sketch-edit contextual palette word buttons with
+native toolbar icons and identical native hover tooltips. ConstraintPaletteGui
+copies the registered native QAction icon/full rich tooltip and follows its
+presentation changes through a widget-owned Qt slot. Native activation and
+native enabled state are not rebound: existing eligibility, batch constraints,
+dimension dialogs, construction and separate Driving/Reference semantics remain.
+Icon rows wrap in logical pixels using the native main-window icon size. Retain
+accessible names; disabled reasons remain accessible and appear in the status
+bar while their hover tooltip stays identical to the native toolbar.
+
+Accepted installed evidence: packaged-presentation 2/2, packaged-native full
+TestConstraintPaletteNative 15/15, scaled GUI presentation/hover/pointer 3/3 with
+QT_SCALE_FACTOR=2. Actual desktop shortcut first smoke 3/3, including native
+sketch pointer events, icon/tooltip parity, Equal click and Undo, persistence,
+disabled reason hover, narrow viewport wrapping and native presentation refresh.
+Final shortcut smoke passes 3/3 and records the actual installed module under
+the new payload, matching source hash, Qt DPR 1.5, logical palette 248 by 88
+and 24 by 24 icons. Twenty independent native-command presentation mappings
+match, including shared native toggle icons and the concentric center constraint.
+The scaled capture is 744 by 264 versus normal 372 by 132; its three checks pass.
+
+Owner DOCX is synchronized. Its 86-page canonical render matches the inspected
+proposal; only page 81 changes from the prior accepted render. All other DOCX
+ZIP parts/styles/automatic numbering are unchanged. An existing normal Writer
+session briefly locked the document; it was preserved, the lock cleared, and
+canonical bytes were checked against HEAD before replacement to avoid losing
+intervening owner edits. No owner session was terminated.
+
+Compatible Python owner payload:
+C:\Users\GAMING-PC\AppData\Local\FreeCADPlus\freecad_plus_2026-10-06_constraint_palette_icons_payload
+All 15,121 prior stable manifest entries were hashed: only the installed
+ConstraintPaletteGui.py changed, hash
+eaa77531e440532eec56870d233cd545ded48e8a33f8efda978ac0a24a4bd502.
+Native binaries remain unchanged, with embedded revision
+edf2e742ac92a92005bc3c612980659fbd5be158 and native GUI source snapshot e29d2e5.
+The prior plane-selection/startup fixes are retained. Desktop exact name
+FreeCADPlus.exe - Shortcut.lnk is saved/reopened and target/workdir verified.
+
+Exact current source/publication revision and final inventory are recorded in
+the new payload release-info.json and build-palette-icons/delivery-summary.json.
+Commit this coherent milestone and push origin/main without force; verify its
+remote ref before handoff. Next product acceptance is physical owner feedback
+through the updated desktop shortcut. Physical owner feedback
+remains separate; previous failed legacy sketch-suite qualification is unchanged
+and is not relabeled as current acceptance. Deferred families remain deferred.
+
 ## October 6 New Sketch origin plane picking
 
 Active owner request: clicking an origin plane must select/highlight only that

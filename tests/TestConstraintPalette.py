@@ -210,12 +210,94 @@ class TestConstraintPalette(unittest.TestCase):
             palette.update_actions(actions, parent.size())
             button = palette.buttons["Horizontal"]
             self.assertFalse(button.isEnabled())
+            native = Gui.Command.get("Sketcher_ConstrainHorizontal").getAction()[0]
+            self.assertEqual(button.toolTip(), native.toolTip())
+            self.assertEqual(button.statusTip(), keys["Horizontal"].reason)
             event = QtGui.QHelpEvent(QtCore.QEvent.ToolTip, QtCore.QPoint(1, 1), button.mapToGlobal(QtCore.QPoint(1, 1)))
             QtWidgets.QApplication.sendEvent(button, event)
             self.assertEqual(QtWidgets.QToolTip.text(), button.toolTip())
+            self.assertEqual(Gui.getMainWindow().statusBar().currentMessage(), keys["Horizontal"].reason)
             self.assertEqual(before, (self.sketch.ConstraintCount, self.sketch.Geometry[0].toShape().Length))
         finally:
             QtWidgets.QToolTip.hideText()
+            parent.deleteLater()
+
+    def test_native_icons_tooltips_and_palette_click(self):
+        import os
+        import hashlib
+        import json
+        from freecad.gui import ConstraintPalette as Backend
+        cases = [("construction", "Sketcher_ToggleConstruction"),
+                 ("driving", "Sketcher_ToggleDrivingConstraint"),
+                 ("reference", "Sketcher_ToggleDrivingConstraint"),
+                 ("Concentric", "Sketcher_ConstrainCoincident")]
+        cases += [(key, "Sketcher_Constrain" + key) for key in
+                  ("Block", "Horizontal", "Vertical", "Parallel", "Perpendicular",
+                   "Angle", "Distance", "DistanceX", "DistanceY", "Equal", "Tangent",
+                   "Radius", "Diameter", "Coincident", "PointOnObject", "Symmetric")]
+        parent = QtWidgets.QWidget(Gui.getMainWindow())
+        parent.resize(400, 300)
+        parent.show()
+        palette = UI.Palette(parent, UI._controller)
+        try:
+            # Cover every presentation mapping, including dimension and toggle
+            # actions, without executing fabricated structural selections.
+            palette.update_actions([Backend.Action(key, key) for key, _ in cases], parent.size())
+            palette.show()
+            for key, command in cases:
+                native = Gui.Command.get(command).getAction()[0]
+                button = palette.buttons[key]
+                self.assertEqual(button.text(), "")
+                self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
+                self.assertFalse(button.icon().isNull(), command)
+                self.assertEqual(button.icon().cacheKey(), native.icon().cacheKey(), command)
+                self.assertEqual(button.toolTip(), native.toolTip(), command)
+                self.assertTrue(button.accessibleName())
+            button = palette.buttons["Horizontal"]
+            native = Gui.Command.get("Sketcher_ConstrainHorizontal").getAction()[0]
+            tip = native.toolTip()
+            try:
+                native.setToolTip(tip + " native presentation refresh")
+                self.assertEqual(button.toolTip(), native.toolTip())
+            finally:
+                native.setToolTip(tip)
+            names = self.select("Edge1", "Edge2")
+            controller = UI._controller
+            controller.clicked(parent, parent.mapToGlobal(QtCore.QPoint(200, 200)), controller.generation)
+            controller.poll.stop()
+            actual = controller.palette
+            actual.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "constraint-palette-icons.png"))
+            module = Path(UI.__file__).resolve()
+            self.assertTrue(module.is_relative_to(Path(App.ConfigGet("AppHomePath")).resolve()))
+            source = Path(os.environ["FREECAD_PLUS_SOURCE"]) / "src/Gui/ConstraintPaletteGui.py"
+            digest = hashlib.sha256(module.read_bytes()).hexdigest()
+            self.assertEqual(digest, hashlib.sha256(source.read_bytes()).hexdigest())
+            evidence = {"module": str(module), "sha256": digest,
+                        "device_pixel_ratio": actual.devicePixelRatioF(),
+                        "logical_size": [actual.width(), actual.height()],
+                        "icon_size": [actual.buttons["Equal"].iconSize().width(),
+                                      actual.buttons["Equal"].iconSize().height()],
+                        "native_presentation_mappings": len(cases)}
+            (Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "palette-presentation.json").write_text(json.dumps(evidence, indent=2))
+            equal = actual.buttons["Equal"]
+            event = QtGui.QHelpEvent(QtCore.QEvent.ToolTip, QtCore.QPoint(1, 1), equal.mapToGlobal(QtCore.QPoint(1, 1)))
+            QtWidgets.QApplication.sendEvent(equal, event)
+            self.assertEqual(QtWidgets.QToolTip.text(), Gui.Command.get("Sketcher_ConstrainEqual").getAction()[0].toolTip())
+            QtTest.QTest.mouseClick(equal, QtCore.Qt.LeftButton)
+            settle()
+            self.assertEqual(self.sketch.ConstraintCount, 1)
+            self.assertEqual(Policy.selected(self.sketch), names)
+            self.doc.undo()
+            self.assertEqual(self.sketch.ConstraintCount, 0)
+            # Small viewports wrap icons and retain the viewport clamp.
+            actual.update_actions(Policy.actions(self.sketch, names), QtCore.QSize(100, 120))
+            self.assertLessEqual(actual.width(), 100)
+            self.assertLessEqual(actual.height(), 120)
+            self.assertEqual(actual.scroll.horizontalScrollBar().maximum(), 0)
+        finally:
+            QtWidgets.QToolTip.hideText()
+            UI._controller.close()
+            palette.deleteLater()
             parent.deleteLater()
 
     def test_viewport_clamp_and_corridor_grace(self):

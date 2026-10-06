@@ -1,5 +1,23 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 contextual constraint palette presentation
+
+- [x] Icon-only palette buttons share corresponding native QAction icons and
+  exact rich hover tooltips; follow native presentation changes.
+- [x] Retain native/batch execution, separate Driving/Reference accessible names,
+  disabled reasons in status/accessibility, logical wrapping and hover read-only behavior.
+- [x] Installed native palette 15/15, presentation/hover/pointer scaled subset 3/3,
+  first actual desktop shortcut smoke 3/3, no source overlays.
+- [x] Owner DOCX synchronized; 86 pages, only page 81 changes and is inspected;
+  other ZIP parts, styles, numbering and owner edits retained.
+- [x] Compatible Python payload staged; all 15,121 stable hashes verified, only
+  ConstraintPaletteGui.py differs; native binaries reused unchanged.
+- [x] Exact desktop shortcut target/workdir saved, reopened and verified.
+- [x] Final shortcut smoke 3/3, installed module/source hash match, Qt DPR 1.5
+  and twenty native-command mappings. Exact coherent origin publication revision
+  is recorded in the final payload release-info receipt.
+- [ ] Physical owner sketch-edit/palette feedback remains separate.
+
 ## October 6 New Sketch plane highlighting
 
 - [x] Reproduce native viewport hits selecting the whole Origin container.
