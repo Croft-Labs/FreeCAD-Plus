@@ -1,6 +1,40 @@
 # FreeCAD Plus: Build validation handoff
 
-## Current owner scope: recovery item 4 Align Coordinate Systems source milestone
+## Current owner scope: recovery item 5 Interactive/pivot source milestone
+
+Execute this individual item only; preceding Move milestones remain retained.
+Native view-owned arrows/planes/rings and scoped viewport Escape filtering provide
+real gesture input. Default axes/pivot are parent-aligned and group-centered;
+Edit Pivot never changes component placements/Undo. Movement previews compose
+against baseline and release does not commit. Apply uses shared atomic sibling
+placement guards and resets/recreates or removes the manipulator per persistence.
+Numeric active-handle input and explicit snap-off defaults remain intact.
+
+Earlier packaged-final passes Interactive 5/5. The focused packaged-high-dpi-pivot-
+retest passes 5/5 at DPR 3.0, including actual native mouse press/move/release,
+Escape and pivot-edit events. Current Move core/task/manipulator application hashes
+match the accepted payload. The pre-existing Interactive fixture correction is
+included in this item: pan camera only, ray-pick actual unobscured in-screen
+handles and dispatch real Qt events; never substitute direct placement writes.
+Its successful native event captures are visually reviewed.
+
+This item extends the same five cases with actual plane/ring gestures, default
+pivot recreation, OK-after-Apply without repeat and sibling/descendant native
+Undo/Redo plus FCStd/cadprt round trips after actual events. Syntax checks pass;
+NEW ASSERTIONS HAVE NOT RUN NATIVELY. Defer their runtime execution and costly
+build/packaged/high-DPI acceptance to item 7. The earlier 5/5 runs are evidence
+for their then-current tests, not the added assertions. Owner DOCX is synchronized,
+with other ZIP parts/numbering/styles preserved; affected rendered pages are
+visually reviewed under build-recovery-interactive/owner-docx-review.
+
+Preserve remaining pre-existing Selection Escape source, palette/Selection/window
+fixtures and untracked queue. No new build or shortcut delivery is made. Exact next
+step: await item 6 integration reconciliation; review preserved dirty changes and
+native evidence before edits. Item 7 must repeat all updated Move suites and real
+axis/plane/ring/pivot events, camera/cleanup, persistence, save/reopen and final
+high-DPI/shortcut acceptance. Deferred feature families remain outside scope.
+
+## Earlier item 4 Align Coordinate Systems source milestone
 
 The individual frame-alignment prompt authorizes this item only. Preceding
 Rotate/Point workflows and the item 3 Align Axes source milestone are retained;

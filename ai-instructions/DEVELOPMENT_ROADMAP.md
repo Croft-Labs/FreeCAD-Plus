@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development Roadmap
 
+## Separate recovery item 5 Interactive movement/pivot review
+
+- [x] Retain native handles and shared placement/pivot implementation.
+- [x] Review packaged 5/5 and DPR 3.0 focused 5/5 actual event evidence.
+- [x] Reconcile validated camera-only fixture with this feature; add actual
+  plane/ring events, Apply/OK reset and sibling/descendant persistence checks.
+- [x] Syntax/hash checks; owner DOCX synchronized/rendered/visually inspected.
+- [ ] Execute added assertions in item 7's native/packaged/high-DPI acceptance;
+  no new runtime execution/build/shortcut or owner-ready delivery claim here.
+
 ## Separate recovery item 4 Align Coordinate Systems review
 
 - [x] Retain and review complete frame-alignment implementation in shared Move.

@@ -59,3 +59,11 @@ and Cancel preserving the baseline and Undo count. Syntax checks pass; native
 execution of new assertions is deferred to item 7. Repeat all five there alongside
 the strengthened Axes checks and final integrated acceptance. Application Move
 core/task hashes still match the earlier accepted payload.
+
+Separate recovery item 5: Interactive previously passes 5/5 in packaged-final and
+5/5 in packaged-high-dpi-pivot-retest (DPR 3.0). Camera-only panning and unobscured
+ray-pick fixture changes are reconciled with this item. New assertions extend the
+actual mouse/Escape/pivot test with native plane/ring gestures, default parent
+pivot recreation, non-repeated OK, Undo/Redo and all sibling/descendant placements
+in both saved formats. Syntax/hash checks pass; new assertions require execution
+in item 7. Keep earlier real-event evidence distinct from this deferred validation.

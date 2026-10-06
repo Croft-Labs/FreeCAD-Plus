@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 import unittest
 import os
+import tempfile
 from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -108,12 +109,33 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         target = task.manipulator.node.getPart(handle, False)
         pivot = task.session.frame().multVec(task.manipulator.pivot.Base)
         cx,cy = view.getPointOnScreen(pivot)
+        # Center the active handles in unobscured canvas at small/high-DPI sizes.
+        # This changes only the view camera, never the pivot or component delta.
+        camera = view.getCameraNode()
+        height = camera.height.getValue()
+        orientation = camera.orientation.getValue()
+        right = orientation.multVec(coin.SbVec3f(1,0,0))
+        up = orientation.multVec(coin.SbVec3f(0,1,0))
+        offset_x = (cx/(widget.width()*ratio)-0.25)*height*widget.width()/widget.height()
+        offset_y = (cy/(widget.height()*ratio)-0.5)*height
+        camera.position.setValue(camera.position.getValue()+right*offset_x+up*offset_y)
+        settle(100)
+        cx,cy = view.getPointOnScreen(pivot)
         # Pick the actual native handle in its rendered Coin graph, then send Qt events.
         for radius in range(10,150,5):
             perimeter = [(offset,sign*radius) for offset in range(-radius,radius+1,5) for sign in (-1,1)]
             perimeter += [(sign*radius,offset) for offset in range(-radius,radius+1,5) for sign in (-1,1)]
             for dx,dy in perimeter:
                 sx,sy = round(cx+dx*ratio), round(cy+dy*ratio)
+                point = QtCore.QPoint(round(sx/ratio),widget.height()-round(sy/ratio)-1)
+                if not widget.rect().contains(point):
+                    continue
+                global_point = widget.mapToGlobal(point)
+                if not widget.screen().availableGeometry().contains(global_point):
+                    continue
+                if any(dock.isVisible() and QtCore.QRect(dock.mapToGlobal(QtCore.QPoint()),dock.size()).contains(global_point)
+                       for dock in Gui.getMainWindow().findChildren(QtWidgets.QDockWidget)):
+                    continue
                 action = coin.SoRayPickAction(viewport)
                 action.setPoint(coin.SbVec2s(sx,sy))
                 action.setRadius(3.)
@@ -121,7 +143,7 @@ class TestMoveComponentsInteractive(unittest.TestCase):
                 action.apply(view.getViewer().getSoRenderManager().getSceneGraph())
                 picked = action.getPickedPoint()
                 if picked and picked.getPath().containsNode(target):
-                    return widget, QtCore.QPoint(round(sx/ratio),widget.height()-round(sy/ratio)-1)
+                    return widget, point
         self.fail("No rendered native handle pick found; handle GUI acceptance did not pass.")
 
     def test_actual_native_handle_press_drag_release_and_escape(self):
@@ -163,6 +185,23 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         self.assertFalse(task.session.interactive_delta.isIdentity())
         self.assertEqual(before,task.session.signature())
         self.assertEqual(undo,self.doc.UndoCount)
+        # Exercise native plane/ring picking as well as the axis handle. Each
+        # release composes preview only, with no placement writes or Undo item.
+        for handle in ("xyPlanarTranslatorDragger", "zRotatorDragger.dragger"):
+            previous = App.Placement(task.session.interactive_delta)
+            widget, start = self.handle_pixel(task, handle)
+            end = start + QtCore.QPoint(28, -19)
+            QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, start)
+            event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(end),
+                                     QtCore.QPointF(widget.mapToGlobal(end)), QtCore.Qt.NoButton,
+                                     QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(widget, event)
+            QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, end)
+            settle(60)
+            self.assertFalse(task.manipulator.dragging)
+            self.assertFalse(task.session.interactive_delta.isSame(previous, 1e-8))
+            self.assertEqual(before, task.session.signature())
+            self.assertEqual(undo, self.doc.UndoCount)
         retained = App.Placement(task.session.interactive_delta)
         pivot = App.Placement(task.manipulator.pivot)
         task.pivot_mode.setCurrentIndex(1)
@@ -183,3 +222,25 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         if evidence:
             Gui.getMainWindow().grab().save(str(Path(evidence)/"interactive-native-pivot.png"))
         self.assertTrue(task.apply(),task.status.text())
+        self.assertTrue(task.session.interactive_delta.isIdentity())
+        self.vector(task.manipulator.pivot.Base, task.session.group_pivot())
+        self.assertTrue(task.manipulator.pivot.Rotation.isSame(App.Rotation(), 1e-8))
+        names = (self.first.Name, self.second.Name, self.descendant.Name)
+        placements = [App.Placement(self.doc.getObject(name).LinkPlacement) for name in names]
+        applied_undo = self.doc.UndoCount
+        self.assertTrue(task.accept())
+        self.assertEqual(self.doc.UndoCount, applied_undo)
+        self.doc.undo()
+        self.assertTrue(self.first.LinkPlacement.isSame(App.Placement(), 1e-8))
+        self.doc.redo()
+        files = []
+        for extension in ("FCStd", "cadprt"):
+            filename = str(Path(tempfile.gettempdir()) / ("interactive-event-roundtrip." + extension))
+            self.doc.saveAs(filename)
+            files.append(filename)
+        App.closeDocument(self.doc.Name)
+        for filename in files:
+            document = App.openDocument(filename)
+            for name, placement in zip(names, placements):
+                self.assertTrue(document.getObject(name).LinkPlacement.isSame(placement, 1e-8))
+            App.closeDocument(document.Name)
