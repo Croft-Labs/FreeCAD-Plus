@@ -142,6 +142,8 @@ def open(filename, _opening=None):
                 elif occurrence.DefinitionId != instance["definition"]:
                     raise ValueError("An occurrence definition differs from its saved manifest.")
         # Broken reference geometry remains editable; format/identity failures above still refuse restore.
+        import LegacyConversion
+        LegacyConversion.upgrade_datum_frames(doc)
         Model.activate(meta.RootComponent, strict=False)
         if App.GuiUp and _opening is None:
             from freecad.gui.ComponentNavigator import show
@@ -177,7 +179,7 @@ def convert_legacy(document):
     """Map definitions/instances, retaining native features and usable outputs."""
     import LegacyConversion
     if any(getattr(o, "ComponentRole", "") == "Document" for o in document.Objects):
-        return document
+        return LegacyConversion.upgrade_datum_frames(document)
     shapes = LegacyConversion.recovery_shapes(document)
     try:
         return LegacyConversion.convert_structure(document)

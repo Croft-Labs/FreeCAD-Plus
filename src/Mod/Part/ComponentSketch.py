@@ -14,7 +14,10 @@ PLANES = BASE_PLANES + ("Selected two edges", "Independent plane", "Create new p
 def user_planes(component):
     return [obj for obj in Model.history(component)
             if obj.isDerivedFrom("PartDesign::Plane") or obj.isDerivedFrom("Part::Plane")
-            or obj.isDerivedFrom("Part::DatumPlane")]
+            or obj.isDerivedFrom("Part::DatumPlane")
+            or (getattr(obj, "LegacyDatumSource", None) is not None
+                and (obj.LegacyDatumSource.isDerivedFrom("Part::DatumPlane")
+                     or obj.LegacyDatumSource.isDerivedFrom("PartDesign::Plane")))]
 
 
 def check_plane(component, plane):
@@ -22,7 +25,10 @@ def check_plane(component, plane):
         raise ValueError("Select a user plane in the active component.")
     if "Invalid" in plane.State:
         raise ValueError("Repair the selected plane before using it.")
-    if not plane.isDerivedFrom("Part::DatumPlane"):
+    source = getattr(plane, "LegacyDatumSource", plane)
+    if "Invalid" in source.State:
+        raise ValueError("Repair the retained plane attachment before using it.")
+    if not (source.isDerivedFrom("Part::DatumPlane") or source.isDerivedFrom("PartDesign::Plane")):
         check_support(component, (plane, "Face1"))
     return plane
 

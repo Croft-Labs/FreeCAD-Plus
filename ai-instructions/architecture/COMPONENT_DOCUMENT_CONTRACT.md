@@ -287,6 +287,14 @@ Origins, labels and view providers remain intact. Preserve evaluated placement a
 geometry, expressions and protected source files; unqualified histories remain
 editable native payloads with explicit reports. See
 [Body history pilot and acceptance](../../tests/LegacyBodyHistory.md).
+Native datum/Origin identities and attachment definitions remain retained. Direct
+datums are construction History inputs, not physical results. Body-owned datum
+History links have distinct identities, a complete Body-times-datum frame and
+native source references; they do not reparent inputs or create assembly instances.
+Native attachment editing must preserve formulas/supports, and missing sources must
+be reported. Upgrade recognized older converted content only after manifest/identity
+validation, through one idempotent undoable transaction. See
+[datum frames and acceptance](../../tests/LegacyDatumFrames.md).
 Retain original world geometry through explicit
 definition-frame and occurrence-frame compensation, including native scale modes.
 Original source files remain protected; external converted files are saved to new

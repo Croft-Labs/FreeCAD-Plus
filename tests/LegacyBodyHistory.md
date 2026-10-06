@@ -43,8 +43,10 @@ Other Body histories remain native and editable with an explicit
 `LegacyHistoryState` and conversion report. This includes nonidentity Body frames,
 attached sketches, complex or unrecognized histories, unsupported extents and
 unverified/invalid source geometry. Preserve available final output; do not claim
-these retained native payloads are flattened or fully migrated. Tasks four to
-eleven own their adapters. If a mapping fails after admission, the structural
+these retained native payloads are flattened or fully migrated. Task four now
+exposes retained native datum frames without moving their dependent Body inputs;
+see [datum frames](LegacyDatumFrames.md). Tasks five to eleven continue ownership
+and feature adapters. If a mapping fails after admission, the structural
 transaction aborts and the existing validated dumb body/sheet/curve/point recovery
 path retains native payloads. Unverified cached output and unavailable geometry
 remain explicitly reported, as specified in `LegacyStructureConversion.md`.

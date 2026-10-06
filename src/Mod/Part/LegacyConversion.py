@@ -49,6 +49,89 @@ class BodyOutputProxy:
         pass
 
 
+def is_datum(obj):
+    return (obj.isDerivedFrom("Part::Datum") or obj.isDerivedFrom("App::DatumElement")
+            or obj.isDerivedFrom("App::LocalCoordinateSystem"))
+
+
+def migrate_datum_frames(document, report):
+    """Retain native attachment engines and expose Body-owned datums in History.
+
+    Native Origins and their planes/axes are never replaced or reparented. A datum
+    link changes access, not source ownership, geometry or attachment definitions.
+    """
+    import ComponentModel as Model
+    meta = Model.metadata(document)
+    if getattr(meta, "LegacyFrameVersion", 0) >= 1:
+        return
+    origins = set()
+    for obj in list(document.Objects):
+        if obj.TypeId == "App::Origin":
+            origins.add(obj)
+            origins.update(obj.OriginFeatures)
+    for obj in origins:
+        if not _own_identity(obj):
+            Model._identity(obj, "Internal")
+    for source in list(document.Objects):
+        if source in origins or not is_datum(source):
+            continue
+        parent = Model.owner(source)
+        component = parent
+        while component is not None and not Model.is_component(component):
+            component = Model.owner(component)
+        if component is None:
+            report.append(source.Label + ": native datum retained outside a mapped component; repair ownership before using it.")
+            continue
+        if not _own_identity(source):
+            Model._identity(source, "Internal")
+        Model._property(source, "String", "LegacyDatumState", "Retained native attachment", True)
+        if parent == component:
+            source.ComponentRole = "Object"
+            component.ResultObjects = [n for n in component.ResultObjects if n != source.Name]
+            report.append(source.Label + ": native datum and attachment references retained in component History.")
+            continue
+        if parent.TypeId != "PartDesign::Body" or Model.owner(parent) != component:
+            report.append(source.Label + ": nested native frame retained; direct History mapping requires repair.")
+            continue
+        alias = document.addObject("App::Link", "LegacyDatum")
+        Model.register_object(component, alias, "Object")
+        Model._property(alias, "LinkGlobal", "LegacyDatumSource", source, True)
+        Model._property(alias, "String", "LegacyDatumState", "Linked native attachment", True)
+        alias.setLink(source)
+        # Native attachment engines read a Link's own frame, not its target's
+        # placement. Store the complete datum frame and strip target placement.
+        alias.LinkTransform = False
+        alias.LinkPlacement = parent.Placement.multiply(source.Placement)
+        alias.setExpression("LinkPlacement", parent.Name + ".Placement * " + source.Name + ".Placement")
+        alias.Label = source.Label
+        alias.Visibility = False  # Construction inputs must not compound infinite datum faces into solids.
+        # Present datum access before its retained Body result, without claiming
+        # the other native Body features have been flattened.
+        ordered = [n for n in component.ModelHistory if n != alias.Name]
+        index = ordered.index(parent.Name) if parent.Name in ordered else len(ordered)
+        ordered.insert(index, alias.Name)
+        component.ModelHistory = ordered
+        report.append(source.Label + ": native Body ownership/supports retained; component History links the original datum with its Body frame.")
+    Model._property(meta, "Integer", "LegacyFrameVersion", 1, True)
+
+
+def upgrade_datum_frames(document):
+    """Upgrade previously converted legacy cadprt content after manifest validation."""
+    import ComponentModel as Model
+    meta = Model.metadata(document)
+    legacy_report = any(entry.startswith(("Models and linked Part Tree instances converted",
+                                         "Structural adapter could not complete:"))
+                        for entry in meta.ConversionReport)
+    if (not meta.LegacySource and not legacy_report) or getattr(meta, "LegacyFrameVersion", 0) >= 1:
+        return document
+    with Model.transaction(document, "Expose retained legacy datum frames"):
+        report = list(meta.ConversionReport)
+        migrate_datum_frames(document, report)
+        meta.ConversionReport = report
+        Model.validate(document, allow_unresolved=True)
+    return document
+
+
 def body_history_plan(body, component, source_ready):
     """Admit only the proven independent Sketch -> first Pad pilot."""
     import ComponentModel as Model
@@ -624,6 +707,8 @@ def convert_structure(document, extra_targets=(), visiting=None):
                                  or obj.isDerivedFrom("Sketcher::SketchObject") else "Operation")
             for definition in Model.definitions(document):
                 for obj in Model.history(definition):
+                    if is_datum(obj):
+                        continue  # Datum frames are construction inputs, not solid/sheet results.
                     if "Shape" not in obj.PropertiesList:
                         continue
                     shape = obj.getPropertyByName("Shape")
@@ -638,6 +723,7 @@ def convert_structure(document, extra_targets=(), visiting=None):
                     if obj.TypeId == "PartDesign::Body":
                         report.append(obj.Label + ": native Body Tip and sketch/feature history retained; feature adapters pending.")
             migrate_body_histories(document, report, readiness)
+            migrate_datum_frames(document, report)
             meta.ConversionReport = report + ["Models and linked Part Tree instances converted; native features retained.",
                 "Recovery policy: retained editable native features before explicit validated dumb geometry; no fallback created in this structural step."]
             if external:

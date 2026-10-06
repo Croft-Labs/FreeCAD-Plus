@@ -1119,6 +1119,10 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if getattr(obj, "LegacyDatumState", "") == "Linked native attachment":
+        if getattr(obj, "LegacyDatumSource", None) is None:
+            return "Retained native datum is missing. Repair its source before using this frame."
+        return "Linked native datum. Edit its original attachment without replacing support references."
     if edit_suppressed(obj):
         return "Temporarily suppressed while an earlier History item is being edited."
     sources = suppression_sources(obj)
@@ -1135,6 +1139,11 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    if (getattr(obj, "LegacyDatumState", "") == "Linked native attachment"
+            and (getattr(obj, "LegacyDatumSource", None) is None
+                 or obj.LinkedObject != obj.LegacyDatumSource
+                 or "Invalid" in obj.LegacyDatumSource.State)):
+        return "Needs repair"
     if getattr(obj, "UserSuppressed", False):
         return "Suppressed"
     if any(getattr(dep, "UserSuppressed", False)

@@ -7,6 +7,10 @@ are documented in tests/LegacyStructureConversion.md. The task-three Sketch/Pad
 pilot preserves native identities, orders inputs before the original Body result
 and uses an internal child-scoped Tip bridge. See tests/LegacyBodyHistory.md;
 later feature adapters and installed delivery remain separate.
+Task four exposes native datum frames in component History while retaining original
+Origins, Body owners and attachment engines. LegacyFrameVersion upgrades verified
+older converted files; native editors preserve supports/formulas. Linked planes
+work with new associative sketches. See tests/LegacyDatumFrames.md.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

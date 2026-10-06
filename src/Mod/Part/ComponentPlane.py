@@ -16,6 +16,9 @@ def geometry(component, reference, operation=None):
     obj, element = reference
     if obj is None:
         raise ValueError("A selected reference is missing.")
+    source = getattr(obj, "LegacyDatumSource", obj)
+    if source is None:
+        raise ValueError("The retained native datum is missing; repair its source.")
     origins = component.Origin.OriginFeatures
     if obj != component.Origin and obj not in origins and Model.owner(obj) != component:
         raise ValueError("Choose geometry in the active component.")
@@ -25,6 +28,16 @@ def geometry(component, reference, operation=None):
         raise ValueError("Repair the selected reference first.")
     if obj == component.Origin:
         return "point", App.Vector()
+    if source != obj and "Invalid" in source.State:
+        raise ValueError("Repair the retained native datum attachment first.")
+    if source.isDerivedFrom("Part::Datum"):
+        transform = component.getGlobalPlacement().inverse().multiply(source.getGlobalPlacement())
+        if source.isDerivedFrom("Part::DatumPlane") or source.isDerivedFrom("PartDesign::Plane"):
+            return "plane", transform
+        if source.isDerivedFrom("Part::DatumLine") or source.isDerivedFrom("PartDesign::Line"):
+            return "line", (transform.Base, transform.Rotation.multVec(App.Vector(0, 0, 1)))
+        if source.isDerivedFrom("Part::DatumPoint") or source.isDerivedFrom("PartDesign::Point"):
+            return "point", transform.Base
     transform = component.getGlobalPlacement().inverse().multiply(obj.getGlobalPlacement())
     if not element:
         if obj.isDerivedFrom("App::Plane") or obj.isDerivedFrom("Part::DatumPlane"):
@@ -246,6 +259,8 @@ class PlaneDefinition(Model.PersistentProxy):
 
 
 def apply(component, values, plane=None):
+    if plane is not None and getattr(plane, 'LegacyDatumState', ''):
+        raise ValueError('Edit this retained datum with its native attachment editor to preserve support references and formulas.')
     placement = evaluate(component, values, plane)
     doc = component.Document
     with Model.transaction(doc, 'Edit Datum Plane' if plane else 'New Datum Plane'):

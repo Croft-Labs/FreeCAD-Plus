@@ -18,7 +18,13 @@
   Accept/Cancel, Undo/Redo, recompute and cadprt reopen. Owner DOCX contains only
   affected UI interactions, rendered/inspected; technical evidence in WORK_STATE.
   Installed/build delivery remains batched; this is not owner-payload acceptance.
-- [ ] 4. Origins and datum geometry/attachment frames.
+- [ X ] 4. Origins and datum geometry/attachment frames: retained native identities,
+  supports, offsets, formulas and Body ownership; full-frame History links for
+  planes/axes/points/coordinate systems and associative new-sketch support. Native
+  editor access and idempotent prior-file upgrades pass. Final 64 native source-mode
+  checks include eight datum, 29 prior migration, 21 plane and six background-result
+  cases. UI-only DOCX rendered/inspected; source/publication evidence in WORK_STATE.
+  Native Body feature promotion and installed build delivery remain separate gates.
 - [ ] 5. Sketch ownership, attachments, constraints, expressions and shared inputs.
 - [ ] 6. Pad/Pocket/Extrude parameters, targets and result chains.
 - [ ] 7. Revolution/Groove/Revolve axes, angles and targets.
@@ -32,7 +38,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to three have source/native
+for unrelated feature implementation. Tasks one to four have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).

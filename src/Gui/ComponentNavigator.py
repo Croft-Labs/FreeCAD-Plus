@@ -1534,6 +1534,17 @@ class Navigator(QtWidgets.QDockWidget):
             return
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing history."))
+        if getattr(obj, "LegacyDatumState", ""):
+            component = model().owner(obj)
+            source = getattr(obj, "LegacyDatumSource", obj)
+            if source is None:
+                raise ValueError(tr("Repair the retained native datum before editing its attachment."))
+            context = TaskContext(component)
+            context.enter()
+            Gui.Selection.clearSelection()
+            Gui.Selection.addSelection(source)
+            context.edit(source)
+            return
         if getattr(obj, "ComponentRole", "") == "Reference":
             context = TaskContext(model().owner(obj))
             try:
