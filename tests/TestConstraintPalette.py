@@ -301,10 +301,13 @@ class TestConstraintPalette(unittest.TestCase):
 class TestConstraintPaletteNative(TestConstraintPalette):
     """Additional grouped-build acceptance: no source-overlay substitute."""
     def test_native_probe_is_read_only_and_finds_indirect_redundancy(self):
-        self.sketch.addConstraint([Sketcher.Constraint("Equal", 0, 1), Sketcher.Constraint("Equal", 1, 2)])
+        # Native solver recognizes this indirect dependency. Equality cycles can
+        # be accepted by the kernel, so they are not a redundancy oracle.
+        self.sketch.addConstraint([Sketcher.Constraint("Horizontal", 0),
+                                   Sketcher.Constraint("Parallel", 0, 1)])
         before = (self.doc.UndoCount, self.sketch.ConstraintCount,
                   tuple(g.toShape().Length for g in self.sketch.Geometry), list(self.sketch.State))
-        status = self.sketch.diagnoseConstraintAdditions([Sketcher.Constraint("Equal", 0, 2)])
+        status = self.sketch.diagnoseConstraintAdditions([Sketcher.Constraint("Horizontal", 1)])
         self.assertEqual(status, -2)
         self.assertEqual(before, (self.doc.UndoCount, self.sketch.ConstraintCount,
                          tuple(g.toShape().Length for g in self.sketch.Geometry), list(self.sketch.State)))

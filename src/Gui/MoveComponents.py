@@ -266,10 +266,12 @@ def reference(session, base, subname):
     picks = Selection.resolve(session.root, base, subname)
     if len(picks) > 1:
         raise ValueError("Pick the reference in the viewport with its exact component occurrence path.")
-    if len(picks) == 1 and base != session.root and picks[0].item is not None:
+    if len(picks) == 1 and (base != session.root or (picks[0].item is None and picks[0].ids)):
         pick = picks[0]
         base = session.root
-        if pick.item in pick.component.Origin.OriginFeatures:
+        if pick.item is None:
+            subname = Selection.native_path(base, pick.ids, pick.component.Origin)
+        elif pick.item in pick.component.Origin.OriginFeatures:
             subname = (Selection.native_path(base, pick.ids, pick.component.Origin)
                        + pick.item.Name + "." + pick.element)
         else:
@@ -279,7 +281,7 @@ def reference(session, base, subname):
         raise ValueError("The selected reference is unavailable.")
     if "Invalid" in obj.State:
         raise ValueError("The selected reference is invalid.")
-    frame = base.getSubObject(prefix, 3) if prefix else obj.getGlobalPlacement()
+    frame = base.getSubObject(prefix, 3) if prefix else base.getGlobalPlacement()
     if obj.isDerivedFrom("Sketcher::SketchObject"):
         # Lowercase names select native sketch geometry/point indices, including
         # construction items. Uppercase names can address the evaluated Shape.
@@ -401,6 +403,8 @@ def reference_frame(session, base, subname):
                        or obj.isDerivedFrom("Part::DatumCoordinateSystem")):
         raise ValueError("Pick a component origin or native datum coordinate system, or define Origin/Z/X.")
     # Reject scaled occurrences before Placement conversion can discard scale.
+    if base.isDerivedFrom("App::Link") and (base.Scale != 1 or tuple(base.ScaleVector) != (1, 1, 1)):
+        raise ValueError("A scaled occurrence cannot provide a rigid coordinate system.")
     names = name.split(".")
     for i in range(1, len(names)):
         ancestor = base.getSubObject(".".join(names[:i]) + ".", 1)

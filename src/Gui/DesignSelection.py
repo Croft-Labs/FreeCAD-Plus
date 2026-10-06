@@ -56,6 +56,12 @@ def resolve(root, path):
     """Resolve geometry ownership without replacing the stored occurrence path."""
     path = path or ""
     prefix, _, element = path.rpartition(".")
+    # Native mapped picks append geometry identity (e.g. ;g1.edge1) after
+    # the occurrence/object path. That token is not an owning container.
+    tokens = prefix.split(".") if prefix else []
+    while tokens and tokens[-1].startswith(";"):
+        tokens.pop()
+    prefix = ".".join(tokens)
     prefix = prefix + "." if prefix else ""
     obj = root.getSubObject(prefix, 1) if prefix else root
     if obj is not None:

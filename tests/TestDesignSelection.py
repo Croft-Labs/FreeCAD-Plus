@@ -5,7 +5,11 @@ import unittest
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
-from PySide import QtCore, QtWidgets
+from PySide import QtCore, QtGui, QtWidgets
+try:
+    from PySide6 import QtTest
+except ImportError:
+    from PySide2 import QtTest
 from freecad.gui import DesignSelection as Policy
 
 
@@ -150,6 +154,55 @@ class TestDesignSelectionPolicy(unittest.TestCase):
 
 class TestDesignSelectionNative(TestDesignSelectionPolicy):
     """Run with rebuilt FreeCADGui AND SketcherGui, not a Python-only overlay."""
+    def test_actual_sketch_click_single_connected_tangent_escape_and_empty_space(self):
+        Gui.activateWorkbench("SketcherWorkbench")
+        sketch = self.sketch()
+        window = Gui.getMainWindow()
+        from freecad.gui import PlusRibbon
+        PlusRibbon.apply_preferences()
+        PlusRibbon._ribbon.configure("Design","Sketch")
+        PlusRibbon._ribbon.place_plus_bars()
+        bar = PlusRibbon._ribbon.selection_toolbar
+        self.assertIsNotNone(bar)
+        original, enabled, cursor = bar.intent.currentIndex(), bar._enabled, QtGui.QCursor.pos()
+        Gui.activeDocument().setEdit(sketch.Name)
+        try:
+            bar.set_design_active(True)
+            view = Gui.activeDocument().activeView()
+            view.viewTop()
+            view.fitAll()
+            QtTest.QTest.qWait(200)
+            widgets = [w for w in window.findChildren(QtWidgets.QWidget)
+                       if "GL" in w.metaObject().className() and w.width()>100 and w.height()>100]
+            widget = max(widgets,key=lambda w:w.width()*w.height())
+            ratio = widget.devicePixelRatioF()
+            for mode,expected in ((0,{"Edge1"}),(1,{"Edge1","Edge2","Edge3"}),
+                                  (2,{"Edge1","Edge2"})):
+                bar.intent.setCurrentIndex(mode)
+                Gui.Selection.clearSelection()
+                x,y = view.getPointOnScreen(App.Vector(5,0,0))
+                pixel = QtCore.QPoint(round(x/ratio),widget.height()-round(y/ratio)-1)
+                QtTest.QTest.mouseMove(widget,pixel)
+                QtTest.QTest.qWait(150)
+                QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pixel)
+                QtTest.QTest.qWait(200)
+                selected = {sub.rsplit(".",1)[-1].capitalize()
+                            for entry in Gui.Selection.getSelectionEx("*",0)
+                            for sub in entry.SubElementNames}
+                self.assertEqual(selected,expected)
+            QtTest.QTest.keyClick(widget,QtCore.Qt.Key_Escape)
+            QtTest.QTest.qWait(150)
+            self.assertFalse(Gui.Selection.getSelection())
+            Gui.Selection.addSelection(sketch,"Edge1")
+            QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,QtCore.QPoint(8,8))
+            QtTest.QTest.qWait(150)
+            self.assertFalse(Gui.Selection.getSelection())
+        finally:
+            bar.intent.setCurrentIndex(original)
+            bar.set_design_active(enabled)
+            QtGui.QCursor.setPos(cursor)
+            Gui.activeDocument().resetEdit()
+
     def test_native_gate_intersection(self):
         sketch = self.sketch()
         class FirstOnly:
@@ -195,7 +248,8 @@ class TestDesignSelectionToolbar(unittest.TestCase):
         previous = prefs.GetString("ToolbarUIStyle", "Plus")
         ribbon = None
         try:
-            ribbon = PlusRibbon.Ribbon()
+            PlusRibbon.apply_preferences()
+            ribbon = PlusRibbon._ribbon
             prefs.SetString("ToolbarUIStyle", "Plus")
             ribbon.apply()
             ribbon.configure("Design")
@@ -213,14 +267,11 @@ class TestDesignSelectionToolbar(unittest.TestCase):
             self.assertTrue(ribbon.selection_toolbar.isHidden())
             self.assertFalse(Policy.active())
         finally:
-            if ribbon:
-                ribbon.enabled = False
-                QtWidgets.QApplication.instance().removeEventFilter(ribbon)
-                for bar in ribbon.plus_bars():
-                    bar.hide()
-                    bar.deleteLater()
-                ribbon.deleteLater()
             prefs.SetString("ToolbarUIStyle", previous)
+            if ribbon:
+                ribbon.apply()
+                ribbon.configure("Design")
+                ribbon.place_plus_bars()
             QtWidgets.QApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
 
     def test_controls_settings_and_design_lifetime(self):

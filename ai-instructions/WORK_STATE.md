@@ -1,5 +1,43 @@
 # FreeCAD Plus: Build validation handoff
 
+## Latest recovery gate: native acceptance repairs, October 6
+
+The new grouped Windows x64 Release ALL_BUILD completed successfully in
+6212.578 seconds (configure 588.953 seconds). Build and configure logs/results
+are under visualization task `01a10f79-1a93-7be0-a261-96a6b7e9c425`.
+Actual build home is `C:/Users/GAMING-PC/AppData/Local/FreeCADPlus/freecad_plus_2026-10-06_recovered_workload`.
+Runtime version identifies compiled revision `edf2e742ac92a92005bc3c612980659fbd5be158`;
+later Python fixes are refreshed through FreeCADGui_Resources and checked by SHA-256.
+
+The initial installed 86-check run exposed native mapped sketch token handling,
+dialog deletion lifecycle, fixture mode/ray-picking/vertex/width assumptions and
+an incorrect solver equality-cycle redundancy oracle. These are repaired.
+Focused native evidence: `native-events-retest` passes Selection 18/18 and
+Interactive 5/5, including real rendered handle mouse/Escape/pivot events.
+`native-integration-palette-fix` passes palette 14/14 and integration 5/5,
+including outside-parent viewport point picks, six task layouts at 360 logical
+pixels, external-parent owning-file enforcement and owning-document deletion.
+No application source overlays or skips; launched AppHomePath and module hashes
+match the actual build. System DPR is 1.5. Earlier failed logs are retained.
+
+Current independent delivery blocker: Qt window/framebuffer captures have noisy
+viewport pixels even for a plain cube. Native offscreen saveImage produces a
+clean cube. Screen capture was inconclusive; Windows Computer Use app approval
+timed out. Pixel-store settings are normal and 100% scale shows the same issue.
+Graphics diagnostics remain diagnostic-only (zero acceptance tests), never passes.
+Inspect Qt/Coin context state, repair only with evidence, then repeat graphics and
+full installed acceptance. No payload or Desktop shortcut has been delivered.
+
+Next steps: resolve graphics, rerun full installed suites; reconcile/render/inspect
+owner DOCX and commit/push the native fixes; stage the new payload and existing
+NSIS launcher; run packaged/high-DPI acceptance; create/update and reopen the exact
+owner desktop link, then launch that saved .lnk and verify the runtime home and
+working directory. Update this section and roadmap with actual final evidence.
+Preserve untracked ai-instructions/queue and deferred feature families.
+
+The notes below are chronological source-preparation history, superseded by the
+latest gate above where they describe builds/tests as pending.
+
 ## October 6 recovery sequence resumed in the owner-requested conversation
 
 Current gate: grouped native compilation, then exact-class installed regression
@@ -10,6 +48,31 @@ pivot picks on mode/reset changes, and blocks numeric gestures while a pick is
 pending. Axis markers remain visible for zero-size references. The integration
 fixture preserves its static settle method and checks scene-node removal by count.
 These source changes parse and pass whitespace checks; native execution is pending.
+Reference review also found that a bare selected component occurrence bypassed
+native path normalization. It now resolves through its exact root path, retaining
+the displayed frame and scale guards. A native frame regression is prepared.
+Whole-component picks normalize to their displayed native Origin, including
+linked-definition placement; directly linked datum picks retain the base placement
+and direct scaled links fail rigid-frame validation. Interactive GUI evidence now
+includes an actual Edit Pivot drag and screenshot capture. An integration test
+switches the active document and closes the owning document with handles present.
+All of these new checks are still unexecuted, and the final DOCX validation-status
+update/render remains part of the same grouped delivery gate.
+Additional acceptance now uses real sketch clicks for Single/Connected/Tangent,
+Escape and empty-space clearing, plus native Point-to-Point collector clicks on
+visible points outside the active parent. The recovered box fixture already drives
+the native box commands with Qt press/move/release events. These tests are unrun.
+Interactive numeric fields now enable only the active arrow/plane/ring inputs;
+an inactive plane value is not validated or read for axis/ring gestures. A native
+invalid-plane-to-axis switching regression is prepared; execution and final owner
+DOCX validation-status reconciliation remain pending the grouped runtime gate.
+
+The active build log confirms links for FreeCADBase/FreeCADApp/FreeCADGui,
+FreeCAD.exe, Part/PartGui, Sketcher App, PartDesign App and AssemblyGui; no full
+build outcome or runtime pass is established. After ALL_BUILD finishes, refresh
+only `FreeCADGui_Resources` if script hashes differ, then run `run_acceptance.py`
+against this build's bin/FreeCAD.exe. Use fresh evidence directories and require
+the launched AppHomePath and shipped module hashes; no source application overlays.
 Release configuration completed successfully in
 588.953 seconds; BUILD_GUI/ASSEMBLY/PART/PART_DESIGN/SKETCHER/START/TUX/CAM are ON,
 FEM/ADDONMGR are OFF. One ALL_BUILD is running under the finite monitored wrapper.

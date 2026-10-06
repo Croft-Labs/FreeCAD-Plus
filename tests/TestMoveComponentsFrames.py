@@ -12,6 +12,16 @@ class TestMoveComponentsFrames(unittest.TestCase):
     setUp, tearDown = Rotate.setUp, Rotate.tearDown
     session, vector, pick = Rotate.session, Rotate.vector, Rotate.pick
 
+    def test_bare_occurrence_frame_keeps_displayed_transform_and_rejects_scale(self):
+        session = self.session()
+        expected = session.frame().inverse().multiply(self.root.getSubObject(
+            self.b.Name+"."+self.parent.Origin.Name+".", 3))
+        self.assertTrue(Move.reference_frame(session, self.b, "").isSame(expected, 1e-8))
+        self.assertTrue(Move.reference_frame(session, self.root, self.b.Name+".").isSame(expected, 1e-8))
+        self.b.Scale = 2.
+        with self.assertRaisesRegex(ValueError, "scaled occurrence"):
+            Move.reference_frame(session, self.b, "")
+
     def test_complete_mapping_including_roll_and_group(self):
         session = self.session()
         source = App.Placement(App.Vector(3, 4, 5), App.Rotation(App.Vector(1, 2, 3), 37))

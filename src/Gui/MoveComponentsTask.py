@@ -20,6 +20,7 @@ def tr(text):
 class MoveTask(ModelingTaskUI):
     def __init__(self, root, paths=()):
         self.session = Move.Session(root)
+        self.document_name = root.Document.Name
         mdi = Gui.getMainWindow().findChild(QtWidgets.QMdiArea)
         self.mdi, self.window = mdi, mdi.activeSubWindow() if mdi else None
         self.closed = self.selecting = self.applying = False
@@ -173,6 +174,8 @@ class MoveTask(ModelingTaskUI):
         interactive.addRow(tr("Distance"), self.handle_distance)
         interactive.addRow(tr("Plane second distance"), self.handle_secondary)
         interactive.addRow(tr("Angle"), self.handle_angle)
+        self.active_handle.currentIndexChanged.connect(self.update_active_handle_fields)
+        self.update_active_handle_fields()
         numeric = QtWidgets.QPushButton(tr("Preview numeric gesture"))
         numeric.clicked.connect(self.numeric_gesture)
         interactive.addRow(numeric)
@@ -676,7 +679,7 @@ class MoveTask(ModelingTaskUI):
         self.close()
         return True
 
-    def close(self):
+    def close(self, document_closing=False):
         global _task
         if self.closed:
             return
@@ -689,8 +692,11 @@ class MoveTask(ModelingTaskUI):
         App.removeDocumentObserver(self)
         if _task is self:
             _task = None
-            if App.ActiveDocument is not None:
-                Gui.Control.closeDialog()
+            if not document_closing and self.document_name in App.listDocuments():
+                Gui.Control.closeDialog(Gui.getDocument(self.document_name))
+
+    def autoClosedOnDeletedDocument(self):
+        self.close(document_closing=True)
 
     def check_context(self):
         if self.closed or self.applying:
@@ -752,6 +758,12 @@ class MoveTask(ModelingTaskUI):
             self.manipulator.write()
             self.update_preview()
 
+    def update_active_handle_fields(self, *args):
+        index = self.active_handle.currentIndex()
+        self.handle_distance.setEnabled(index < 6)
+        self.handle_secondary.setEnabled(3 <= index < 6)
+        self.handle_angle.setEnabled(index >= 6)
+
     def numeric_gesture(self):
         try:
             if self.picking_reference:
@@ -764,8 +776,8 @@ class MoveTask(ModelingTaskUI):
             self.status.setText(str(error))
 
     def slotDeletedDocument(self, doc):
-        if doc == self.session.root.Document:
-            self.close()
+        if doc.Name == self.document_name:
+            self.close(document_closing=True)
 
     def slotDeletedObject(self, obj):
         if (obj == self.session.root or obj == self.session.parent
@@ -788,7 +800,8 @@ def open_task(root=None, paths=None):
         raise ValueError(tr("Finish the current edit before moving components."))
     entries = Gui.Selection.getSelectionEx("*", 0) if paths is None else []
     _task = MoveTask(root)
-    Gui.Control.showDialog(_task)
+    dialog = Gui.Control.showDialog(_task)
+    dialog.setAutoCloseOnDeletedDocument(True)
     if paths is not None:
         _task.add_paths(paths)
     elif entries:

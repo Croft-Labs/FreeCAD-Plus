@@ -137,10 +137,11 @@ class Manipulator(QtCore.QObject):
         task = self.task
         index = task.active_handle.currentIndex()
         widget = task.handle_angle if index >= 6 else task.handle_distance
-        if not widget.hasAcceptableInput() or not task.handle_secondary.hasAcceptableInput():
+        plane = 3 <= index < 6
+        if not widget.hasAcceptableInput() or (plane and not task.handle_secondary.hasAcceptableInput()):
             raise ValueError("Enter valid handle values.")
         value = float(widget.property("rawValue"))
-        secondary = float(task.handle_secondary.property("rawValue"))
+        secondary = float(task.handle_secondary.property("rawValue")) if plane else 0.
         if not all(math.isfinite(v) for v in (value, secondary)):
             raise ValueError("Enter finite handle values.")
         self.configure_snap()

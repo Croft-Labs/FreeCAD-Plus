@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 import unittest
+import os
+from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
@@ -44,6 +46,23 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         self.assertTrue(self.first.LinkPlacement.isSame(App.Placement(), 1e-8))
         self.doc.redo()
         self.assertTrue(self.first.LinkPlacement.isSame(expected, 1e-8))
+
+    def test_inactive_plane_input_does_not_block_axis_numeric_gesture(self):
+        task = self.task()
+        task.active_handle.setCurrentIndex(3)
+        editor = task.handle_secondary.findChild(QtWidgets.QLineEdit)
+        self.assertIsNotNone(editor)
+        editor.setText("invalid distance")
+        self.assertFalse(task.handle_secondary.hasAcceptableInput())
+        task.active_handle.setCurrentIndex(0)
+        self.assertFalse(task.handle_secondary.isEnabled())
+        self.assertFalse(task.handle_angle.isEnabled())
+        task.handle_distance.setProperty("rawValue",3.)
+        task.numeric_gesture()
+        self.vector(task.session.interactive_delta.Base,App.Vector(3,0,0))
+        task.active_handle.setCurrentIndex(8)
+        self.assertFalse(task.handle_distance.isEnabled())
+        self.assertTrue(task.handle_angle.isEnabled())
 
     def test_pivot_only_and_native_midpoint_pick(self):
         task = self.task()
@@ -98,7 +117,8 @@ class TestMoveComponentsInteractive(unittest.TestCase):
                 action = coin.SoRayPickAction(viewport)
                 action.setPoint(coin.SbVec2s(sx,sy))
                 action.setRadius(3.)
-                action.apply(task.manipulator.scene)
+                # The user scene excludes the camera; use the full renderer root.
+                action.apply(view.getViewer().getSoRenderManager().getSceneGraph())
                 picked = action.getPickedPoint()
                 if picked and picked.getPath().containsNode(target):
                     return widget, QtCore.QPoint(round(sx/ratio),widget.height()-round(sy/ratio)-1)
@@ -119,6 +139,9 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         self.assertTrue(task.manipulator.dragging)
         self.assertFalse(task.session.interactive_delta.isIdentity())
         self.assertTrue(task.ghosts)
+        evidence = os.environ.get("FREECAD_PLUS_VALIDATION_DIR")
+        if evidence:
+            Gui.getMainWindow().grab().save(str(Path(evidence)/"interactive-native-drag.png"))
         self.assertEqual(before, task.session.signature())
         QtTest.QTest.keyClick(widget, QtCore.Qt.Key_Escape)
         settle(60)
@@ -140,4 +163,23 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         self.assertFalse(task.session.interactive_delta.isIdentity())
         self.assertEqual(before,task.session.signature())
         self.assertEqual(undo,self.doc.UndoCount)
+        retained = App.Placement(task.session.interactive_delta)
+        pivot = App.Placement(task.manipulator.pivot)
+        task.pivot_mode.setCurrentIndex(1)
+        widget, start = self.handle_pixel(task)
+        end = start + QtCore.QPoint(24,-15)
+        QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,start)
+        event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(end),
+                                 QtCore.QPointF(widget.mapToGlobal(end)), QtCore.Qt.NoButton,
+                                 QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+        QtWidgets.QApplication.sendEvent(widget,event)
+        QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,end)
+        settle(60)
+        self.assertFalse(task.manipulator.pivot.isSame(pivot,1e-8))
+        self.assertTrue(task.session.interactive_delta.isSame(retained,1e-8))
+        self.assertEqual(before,task.session.signature())
+        self.assertEqual(undo,self.doc.UndoCount)
+        task.pivot_mode.setCurrentIndex(0)
+        if evidence:
+            Gui.getMainWindow().grab().save(str(Path(evidence)/"interactive-native-pivot.png"))
         self.assertTrue(task.apply(),task.status.text())

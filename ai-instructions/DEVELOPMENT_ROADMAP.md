@@ -4,19 +4,24 @@
 
 - [x] Restore all seven prompts and owner corrections; inspect interrupted Rotate.
 - [x] Retain Rotate source and updated tests; synchronize its DOCX requirement.
-- [ ] Rerun Rotate/Translate against the grouped native Plus build on this host.
+- [x] Rerun Rotate/Translate against the grouped native Plus build on this host:
+  first installed run passes 8/8 Rotate and 12/12 Translate (full repaired rerun pending).
 - [x] Prepare Point to Point, Align Axes, Align Coordinate Systems, Interactive
   sequentially using the shared parent-owned placement services and native handles.
 - [x] Prepare 17 new native regression cases; update the foundation's obsolete
   placeholder expectation and retain the interrupted Rotate's eight checks.
-- [ ] Execute those native tests and repair failures; source is not GUI acceptance.
+- [x] Execute the native workflow tests and repair native-path/lifecycle failures.
+  Point 4/4, Axes 5/5 and Frames 5/5 passed in the initial native run; focused
+  Interactive 5/5 and integration 5/5 pass after repairs. Full repaired rerun pending.
 - [ ] Reconcile Selection/Layers/palette native hooks, render/inspect owner DOCX,
   run packaged GUI acceptance and verify desktop shortcut launch.
 - [x] Resolve renderer with an isolated bundle, render 83 DOCX pages and inspect
   affected pages 78–83 after targeted status reconciliation.
-- [x] Configure the new grouped Release build on this host; native compilation is
-  running, and native/packaged acceptance plus shortcut launch are still pending.
-- [ ] Publish coherent validated milestones to origin and verify remote branch.
+- [x] Configure and complete the new grouped Release ALL_BUILD (6212.578 seconds).
+  Focused native Selection 18/18 and palette 14/14 pass after repairs. Qt viewport
+  capture corruption is under investigation; packaged acceptance/shortcut are pending.
+- [x] Publish coherent source milestones to origin and verify the remote branch.
+  Native repair and final delivery evidence publication continue at their gates.
 
 WORK_STATE owns host/toolchain and actual evidence. Historical source-overlay
 results remain historical; this recovery sequence has not delivered a new build.

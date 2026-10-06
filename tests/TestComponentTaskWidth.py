@@ -69,7 +69,8 @@ class TestComponentTaskWidth(unittest.TestCase):
         self.settle()
         print(name, "dock", dock.size(), "form", form.size(), "minimum", form.minimumSizeHint(),
               "viewport", scroll.viewport().size(), "vertical", scroll.verticalScrollBar().maximum())
-        self.assertLessEqual(dock.width(), 360)
+        # Native floating-dock chrome is outside the logical Tasks scroller.
+        self.assertLessEqual(scroll.width(), 360)
         self.assertEqual(scroll.horizontalScrollBarPolicy(), QtCore.Qt.ScrollBarAlwaysOff)
         self.assertLessEqual(scroll.widget().width(), scroll.viewport().width())
         self.assertGreater(scroll.verticalScrollBar().maximum(), 0)

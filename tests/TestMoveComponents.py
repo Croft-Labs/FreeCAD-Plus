@@ -45,6 +45,10 @@ class TestMoveComponents(unittest.TestCase):
         self.panel.active_key = Navigator.object_key(self.root)
         self.panel.active_path = []
         self.panel.refresh()
+        from freecad.gui import PlusRibbon
+        PlusRibbon.apply_preferences()
+        PlusRibbon._ribbon.configure("Design")
+        PlusRibbon._ribbon.place_plus_bars()
         Gui.Selection.clearSelection()
         DesignSelection.parameters().SetBool("Active", True)
         DesignSelection.parameters().SetBool("Persistent", True)
