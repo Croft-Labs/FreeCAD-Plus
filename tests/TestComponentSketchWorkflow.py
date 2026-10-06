@@ -142,6 +142,80 @@ class TestComponentSketchWorkflow(unittest.TestCase):
         self.doc.recompute()
         self.assertAlmostEqual(obj.Placement.Base.z, 20.5)
 
+    def test_origin_plane_viewport_picks_select_only_the_clicked_plane(self):
+        from freecad.gui import DesignLayersGui as LayersUI
+        from freecad.gui import DesignLayers as Layers
+        before = [o.Name for o in self.doc.Objects]
+        visibility = [o.Visibility for o in self.root.Origin.OriginFeatures]
+        for command in ("PartDesign_NewSketch", "Sketcher_NewSketch"):
+            for name in Sketch.ORIGIN_PLANES:
+                Gui.Selection.clearSelection()
+                Gui.Selection.addSelection(self.root)
+                task = self.launch(command)
+                LayersUI.refresh()
+                view = Gui.activeDocument().activeView()
+                view.viewAxonometric()
+                view.fitAll()
+                settle()
+                widgets = [w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+                           if "GL" in w.metaObject().className() and w.width() > 100
+                           and w.height() > 100]
+                widget = max(widgets, key=lambda w: w.width() * w.height())
+                ratio = widget.devicePixelRatioF()
+                plane = Sketch.origin_plane(self.root, name)
+                # Datums scale in screen space; query the actual native pick ray
+                # instead of projecting an unscaled world-space plane point.
+                hits = []
+                picked_objects = set()
+                for x in range(20, round(widget.width() * ratio) - 20, 16):
+                    for y in range(20, round(widget.height() * ratio) - 20, 16):
+                        hit = view.getObjectInfo((x, y), 0)
+                        if hit:
+                            picked_objects.add(hit["Object"])
+                        if hit and hit["Object"] == plane.Name:
+                            patch = [view.getObjectInfo((x + dx, y + dy), 0)
+                                     for dx, dy in ((-6, -6), (-6, 6), (6, -6), (6, 6))]
+                            if all(info and info["Object"] == plane.Name for info in patch):
+                                hits.append((x, y))
+                self.assertTrue(hits, "Native pick must resolve " + plane.Name + ": " + repr(picked_objects))
+                x, y = hits[len(hits) // 2]
+                pixel = QtCore.QPoint(round(x / ratio), widget.height() - round(y / ratio) - 1)
+                QtTest.QTest.qWait(QtWidgets.QApplication.doubleClickInterval() + 80)
+                QtTest.QTest.mouseMove(widget, pixel)
+                event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pixel),
+                                         QtCore.QPointF(widget.mapToGlobal(pixel)), QtCore.Qt.NoButton,
+                                         QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+                QtWidgets.QApplication.sendEvent(widget, event)
+                settle(50)
+                QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, pixel)
+                QtTest.QTest.mouseMove(widget, QtCore.QPoint(8, 8))
+                settle()
+                entries = Gui.Selection.getSelectionEx("*", 0)
+                self.assertEqual(len(entries), 1, name)
+                entry = entries[0]
+                self.assertEqual(len(entry.SubElementNames), 1)
+                self.assertEqual(entry.Object.getSubObject(entry.SubElementNames[0], 1), plane, name)
+                self.assertEqual(task.plane.currentData(), name)
+                widget.grab().save(str(self.output / (command + "-" + plane.Name + ".png")))
+                task.reject()
+                settle()
+                self.assertEqual([o.Name for o in self.doc.Objects], before)
+                self.assertEqual([o.Visibility for o in self.root.Origin.OriginFeatures], visibility)
+        # Keeping the container traversable must still let Base hide its datums.
+        self.root.Origin.ViewObject.setTemporaryOriginPlanes(True)
+        try:
+            Layers.set_visible(self.doc, Layers.BASE, False)
+            LayersUI.refresh()
+            for name in Sketch.ORIGIN_PLANES:
+                plane = Sketch.origin_plane(self.root, name)
+                gate = plane.ViewObject.SwitchNode.getChild(0)
+                self.assertEqual(gate.whichChild.getValue(), -1)
+                self.assertTrue(plane.Visibility)
+            Layers.set_visible(self.doc, Layers.BASE, True)
+            LayersUI.refresh()
+        finally:
+            self.root.Origin.ViewObject.setTemporaryOriginPlanes(False)
+
     def test_face_picking_after_task_launch(self):
         box = self.box()
         task = self.launch()

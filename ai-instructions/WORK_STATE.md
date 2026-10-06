@@ -1,5 +1,59 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 New Sketch origin plane picking
+
+Active owner request: clicking an origin plane must select/highlight only that
+plane. Native reproduction on the previous startup payload resolves viewport
+hits to Component/Origin. instead of Origin/XY_Plane.; all siblings highlight.
+The Layers gate wrapped the coordinate-system child Group and broke native
+getElementPicked/getDetailPath identity checks. DesignLayersGui now retains
+that native container, removes an earlier gate if present, and gates its
+individual descendants. No geometry, placement, ownership or identities change.
+
+Accepted packaged-plane-picks5: all six actual Qt viewport picks (XY/XZ/YZ in
+both New Sketch commands), exact leaf selection, task selector update, Cancel
+object/visibility restoration and Base layer datum hiding. Captures inspected.
+A native regression on the previous payload fails at XY leaf hit resolution.
+The broad packaged-regression run is NOT acceptance: its legacy Datum Plane
+fixture accesses missing PlaneTask.orientation_mode and leaves a task open,
+with cascading sketch/selection errors. Clean-process focused acceptance passes 10/10, including native attachment,
+Cancel, Undo/Redo, save/reopen and Plus New File/Sketch viewport curves. The
+same PlaneTask.orientation_mode error reproduces on the unchanged previous
+startup payload in legacy-baseline-old; it predates this correction.
+
+Owner DOCX requirement updated, all other ZIP parts retained. Render remains
+86 pages; changed/repaginated pages 67-75 visually inspected, all others exactly
+match the prior accepted render. Compatible Python correction staged in a new
+plane_selection_payload; no C++ changes or new native compilation required.
+
+Stable inventory verification hashes all 15,121 prior manifest entries: only
+Ext/freecad/gui/DesignLayersGui.py differs. Desktop target/workdir are saved,
+reopened and verified for the new payload. Actual shortcut plane/Layers
+acceptance passes 11/11 in actual-shortcut-interior, with strict zero-radius
+interior pick patches, isolated preferences and no source overlays. All six
+plane captures were inspected; siblings retain normal colors. Ten focused
+sketch checks plus eleven shortcut checks cover 20 distinct methods. The first
+tolerance-dependent shortcut fixture remains as failed evidence. No application
+change was required for that fixture repair. No native GUI Python exceptions
+were found in the accepted shortcut log; inherited stylesheet warnings remain.
+
+Delivered launcher:
+C:\Users\GAMING-PC\AppData\Local\FreeCADPlus\freecad_plus_2026-10-06_plane_selection_payload\FreeCADPlus.exe
+Desktop FreeCADPlus.exe - Shortcut.lnk was saved/reopened and its exact target
+and working directory verified, then actually launched through ShellExecute.
+Native embedded revision remains edf2e742ac92a92005bc3c612980659fbd5be158; native
+GUI DLLs are reused from the e29d2e5 startup snapshot. The changed Python module
+hash is 8341d4685cc4f81205936625b247a2b8fb8bb5a344c4fe71508c8283bba747b1.
+Exact current source/publication revision and final manifest are recorded in the
+new payload release-info.json; build-plane-highlight/delivery-summary.json
+records acceptance and limits. Push this coherent milestone to origin/main and
+verify its ref before handoff, without force. Previous startup payload remains
+available unchanged.
+
+Next product acceptance: physical owner feedback using the updated shortcut.
+Full legacy workflow qualification still needs migration/cleanup of its stale
+Datum Plane test fixture; the failed 43-check run is not accepted or concealed.
+
 ## October 6 startup and workspace correction
 
 Authorized objective: remove visible startup theme/workbench transitions, restore

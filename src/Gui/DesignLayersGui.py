@@ -34,12 +34,21 @@ def gate(view, visible):
 
     The Body's Group branch must remain traversable for independently layered
     sketches. Its own Tip branches and each body operation get their own gate.
-    SelectionRoot Group branches are native scene containers, not geometry.
+    SelectionRoot and coordinate-system Group branches are native scene
+    containers, not geometry. Wrapping them breaks native child picking and
+    detail paths; their individual descendants already have layer gates.
     """
     switch = view.SwitchNode
     for index in range(switch.getNumChildren()):
         child = switch.getChild(index)
-        if str(child.getTypeId().getName()) == "SoFCSelectionRoot":
+        branch = (child.getChild(0) if str(child.getName()) == GATE
+                  and child.getNumChildren() == 1 else child)
+        container = (str(branch.getTypeId().getName()) == "SoFCSelectionRoot"
+                     or (str(branch.getTypeId().getName()) == "Group"
+                         and view.Object.isDerivedFrom("App::LocalCoordinateSystem")))
+        if container:
+            if branch != child:
+                switch.replaceChild(index, branch)
             continue
         if str(child.getName()) != GATE:
             wrapper = coin.SoSwitch()

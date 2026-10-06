@@ -1,5 +1,24 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 New Sketch plane highlighting
+
+- [x] Reproduce native viewport hits selecting the whole Origin container.
+- [x] Preserve coordinate-system child containers in Layers gates and keep
+  individual datum visibility gates; no geometry/identity/ownership changes.
+- [x] Six actual plane clicks in both New Sketch commands, exact leaf selection,
+  Cancel restoration and Base layer hiding; ten clean-process sketch checks.
+- [x] Owner DOCX synchronized and rendered; changed pages 67-75 inspected.
+- [x] Compatible Python payload staged; all 15,121 stable inventory hashes
+  checked, only DesignLayersGui.py changed. Native binaries reused unchanged.
+- [x] Desktop shortcut target/workdir saved, reopened and verified.
+- [x] Actual saved shortcut launch: 11/11 plane/Layers checks, zero-radius
+  interior clicks and inspected captures. Exact coherent origin publication
+  revision is recorded in the payload release-info receipt.
+- [ ] Full legacy workflow qualification remains incomplete: obsolete datum
+  fixture fails on both previous and corrected payloads and cascades into later
+  task/selection tests. Keep that failed broad run separate from focused passes.
+- [ ] Physical owner plane-picking feedback remains separate.
+
 ## October 6 startup and saved workspace
 
 - [x] Prepare theme and Plus/Classic controls before showing the main window;

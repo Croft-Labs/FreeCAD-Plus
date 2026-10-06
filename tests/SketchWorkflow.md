@@ -36,6 +36,16 @@ clicks, the solver succeeds, and all seven curves survive `.cadprt` save/reopen.
 This is an automated regression; it does not establish physical pointer acceptance
 or resolve a reported failure that cannot yet be reproduced.
 
+`test_origin_plane_viewport_picks_select_only_the_clicked_plane` starts with
+the component selected and makes actual native viewport clicks on XY, XZ and
+YZ in each New Sketch command. It checks the exact leaf selection and task
+selector, Cancel identity/visibility restoration and Base-layer hiding. Each
+pick starts a fresh task so another expanded selected plane cannot occlude the
+target. Its ray coordinates come from the actual screen-scaled datum geometry.
+Inspect the six plane captures: only the clicked plane should have selection
+color. Layer gates must preserve the native coordinate-system child container;
+its individual descendants retain their own non-destructive visibility gates.
+
 With default first-dimension autoscaling, native radius insertion and Scale
 geometries are separate Undo entries. The value-dialog test verifies both Undo
 steps, both Redo steps and Cancel. Preserve that established native behavior;
