@@ -170,7 +170,10 @@ class Manipulator(QtCore.QObject):
     def close(self):
         if self.closed:
             return
-        self.cancel_drag()
+        try:
+            self.cancel_drag()
+        except (RuntimeError, ReferenceError, ValueError):
+            self.dragging = False  # A deleted owning document still needs callback/node cleanup.
         self.closed = True
         for widget in self.widgets:
             try:

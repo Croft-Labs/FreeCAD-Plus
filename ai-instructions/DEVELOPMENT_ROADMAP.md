@@ -12,6 +12,10 @@
 - [ ] Execute those native tests and repair failures; source is not GUI acceptance.
 - [ ] Reconcile Selection/Layers/palette native hooks, render/inspect owner DOCX,
   run packaged GUI acceptance and verify desktop shortcut launch.
+- [x] Resolve renderer with an isolated bundle, render 83 DOCX pages and inspect
+  affected pages 78–83 after targeted status reconciliation.
+- [x] Configure the new grouped Release build on this host; native compilation is
+  running, and native/packaged acceptance plus shortcut launch are still pending.
 - [ ] Publish coherent validated milestones to origin and verify remote branch.
 
 WORK_STATE owns host/toolchain and actual evidence. Historical source-overlay

@@ -2,6 +2,28 @@
 
 ## October 6 recovery sequence resumed in the owner-requested conversation
 
+Current gate: grouped native compilation, then exact-class installed regression
+and packaged GUI acceptance. Release configuration completed successfully in
+588.953 seconds; BUILD_GUI/ASSEMBLY/PART/PART_DESIGN/SKETCHER/START/TUX/CAM are ON,
+FEM/ADDONMGR are OFF. One ALL_BUILD is running under the finite monitored wrapper.
+Do not launch another build while it is alive. Exact PID/command are in
+`build-process.json` beside `build.log`; build outcome has not been established.
+The revised owner DOCX rendered again to 83 pages; affected pages 78–83 are
+visually verified with no clipping/overlap or damaged numbering. The initial
+render blocker is resolved for this revision, not a new native acceptance claim.
+
+Prepared three additional integration checks: all six Tasks at 360 logical pixels,
+mode-exit handle cleanup and external-parent owning-file refusal/standalone movement.
+The handle ray-pick fixture scans its rendered perimeter rather than assuming an
+axis screen direction. Deleted-document drag cleanup removes native callbacks
+even when its prior placement frame is no longer accessible. These checks/fixes
+are awaiting the installed runtime; all current tests remain unexecuted on this PC.
+
+Portable NSIS 3.11 compiler is available for the existing repository launcher;
+the official ZIP SHA-256 matches
+`c7d27f780ddb6cffb4730138cd1591e841f4b7edb155856901cdf5f214394fa1`.
+No launcher/payload/desktop shortcut has yet been built or changed.
+
 Move/source integration published to origin/main at
 `85900f48d48cd68aea9925360333743b1f1cd6cb`; ls-remote matched HEAD after push.
 Thirteen affected Python modules parse and the GUI CMake script inventory includes

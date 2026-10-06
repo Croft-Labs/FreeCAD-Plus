@@ -90,8 +90,10 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         pivot = task.session.frame().multVec(task.manipulator.pivot.Base)
         cx,cy = view.getPointOnScreen(pivot)
         # Pick the actual native handle in its rendered Coin graph, then send Qt events.
-        for radius in range(12,150,4):
-            for dx,dy in ((radius,0),(-radius,0),(0,radius),(0,-radius),(radius,radius),(-radius,-radius)):
+        for radius in range(10,150,5):
+            perimeter = [(offset,sign*radius) for offset in range(-radius,radius+1,5) for sign in (-1,1)]
+            perimeter += [(sign*radius,offset) for offset in range(-radius,radius+1,5) for sign in (-1,1)]
+            for dx,dy in perimeter:
                 sx,sy = round(cx+dx*ratio), round(cy+dy*ratio)
                 action = coin.SoRayPickAction(viewport)
                 action.setPoint(coin.SbVec2s(sx,sy))
