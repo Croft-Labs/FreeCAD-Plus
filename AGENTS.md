@@ -43,9 +43,12 @@ Do not claim to have read missing guidance or maintain an independent master cop
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).
 - Record implementation, build, GUI validation, and publication separately in
   [the roadmap](ai-instructions/DEVELOPMENT_ROADMAP.md). A local commit is not a release.
-- Mandatory owner-change documentation gate: every change made for the owner MUST
+- Mandatory owner UI/UX documentation gate: every UI/UX change made for the owner MUST
   update [FreeCAD Plus UI & UX.docx](ai-instructions/ui/FreeCAD%20Plus%20UI%20%26%20UX.docx)
-  with the affected requirements, retained behavior, defaults or validation status.
+  with the affected interface requirements, interaction behavior or defaults.
+  This owner-editable DOCX contains UI/UX only. Keep algorithms, architecture,
+  technical contracts and validation/build/publication evidence in the appropriate
+  Markdown documents. Backend-only changes update those Markdown documents.
   Read the current file first and preserve owner edits, its DOCX format, heading
   structure and native automatic numbering. Never replace numbering with text or
   convert this document to Markdown. Render and verify edited pages before handoff;

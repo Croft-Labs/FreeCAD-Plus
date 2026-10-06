@@ -277,6 +277,17 @@ geometry, missing references and unavailable outputs remain explicit. Read-only
 planning records candidates and failures; it does not create fallback objects.
 See [inventory API and acceptance](../../tests/LegacyConversionPlan.md).
 
+Structural migration reuses legacy Part identities and shared native Links, with
+definition/occurrence identity kept distinct. Preserve Body Group/Tip/native inputs
+until feature adapters migrate them. Retain original world geometry through explicit
+definition-frame and occurrence-frame compensation, including native scale modes.
+Original source files remain protected; external converted files are saved to new
+cadprt paths in dependency order. Transaction/Undo boundaries are per document.
+Unresolved occurrences stay visible for repair and cannot silently pass strict save
+validation. Unsafe mappings may present explicitly labelled dumb evaluated outputs
+while retaining native payloads; unverified caches and missing geometry remain
+reported. See [structural mapping and acceptance](../../tests/LegacyStructureConversion.md).
+
 One root with its own body and two instances of an embedded child, plus an external
 child. Independent sketches feed operations without Body containers. Exercise
 direct-child body/sheet/dumb-sketch/curve references, parent-only edits, delayed

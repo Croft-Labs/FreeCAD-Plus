@@ -174,41 +174,16 @@ def legacy_plan(document):
 
 
 def convert_legacy(document):
-    """Adopt compatible native geometry; preserve/report the remaining payloads."""
+    """Map definitions/instances, retaining native features and usable outputs."""
+    import LegacyConversion
     if any(getattr(o, "ComponentRole", "") == "Document" for o in document.Objects):
         return document
-    source_path = document.FileName
-    originals = list(document.Objects)
-    eligible = [o for o in originals if hasattr(o, "Shape") and Model.owner(o) is None
-                and o.TypeId != "App::Link" and not hasattr(o, "ComponentRole")]
-    with Model.transaction(document, "Convert legacy component document"):
-        meta = Model.initialize(document, document.Label)
-        meta.LegacySource = source_path
-        root = meta.RootComponent
-        report = []
-        for obj in eligible:
-            plain = obj.TypeId == "Part::Feature" or obj.isDerivedFrom("Sketcher::SketchObject")
-            Model.register_object(root, obj, "Object" if plain else "Operation")
-            if not obj.Shape.isNull() and obj.Shape.isValid():
-                if obj.Shape.Solids or obj.Shape.Faces:
-                    if plain:
-                        root.ResultObjects = list(root.ResultObjects) + [obj.Name]
-                    elif len(obj.Shape.Solids) <= 1:
-                        Model.publish_result(root, obj, obj.Label + " result")
-                    else:
-                        report.append(obj.Label + ": native multi-solid payload retained; separate result mapping pending.")
-            elif not obj.isDerivedFrom("Sketcher::SketchObject"):
-                report.append(obj.Label + ": native history retained, but evaluated geometry needs repair.")
-            if obj.TypeId == "PartDesign::Body":
-                report.append(obj.Label + ": editable legacy Body history retained behind its evaluated result.")
-        adopted = {o for obj in eligible for o in [obj] + list(obj.OutListRecursive)}
-        unsupported = [o for o in originals if o not in adopted]
-        report.extend(o.Label + " (" + o.TypeId + "): native payload retained; component/history mapping unavailable."
-                      for o in unsupported)
-        meta.ConversionReport = report or ["Native root geometry and editable inputs adopted; original file preserved."]
-    # Never let ordinary Save overwrite the legacy original after conversion.
-    document.FileName = ""
-    return document
+    shapes = LegacyConversion.recovery_shapes(document)
+    try:
+        return LegacyConversion.convert_structure(document)
+    except (ValueError, RuntimeError) as error:
+        return LegacyConversion.recover_structure(document, shapes, error)
+
 
 
 def open_legacy(filename):

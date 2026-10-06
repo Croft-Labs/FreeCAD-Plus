@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Read-only legacy inventory. Plans are evidence, never conversion commands."""
+"""Legacy inventory, structural migration and explicit evaluated recovery."""
 import hashlib
 from pathlib import Path
+
+import FreeCAD as App
 
 
 def _key(obj):
@@ -18,6 +20,66 @@ def _references(value):
 
 def _frame(placement):
     return list(placement.toMatrix().A)
+
+
+def _own_identity(obj):
+    # App::Link forwards target properties. A definition UUID must never be
+    # mistaken for an occurrence's own UUID.
+    try:
+        return obj.getPropertyByName("ObjectId", 1) is not None
+    except AttributeError:
+        return False
+
+
+def recovery_shapes(document):
+    """Capture native top-level output before structural edits, for recovery."""
+    import Part
+    result, hidden = [], []
+    for obj in document.Objects:
+        if obj.TypeId == "App::Origin" or obj.getParentGeoFeatureGroup() is not None:
+            continue
+        if not (obj.TypeId == "App::Part" or obj.isDerivedFrom("Part::Feature")
+                or obj.isDerivedFrom("App::Link")):
+            continue
+        try:
+            shape = Part.getShape(obj, "", needSubElement=False).copy()
+            if not shape.isNull() and shape.isValid():
+                bucket = hidden if App.GuiUp and not obj.ViewObject.Visibility else result
+                stale = any(flag in ("Touched", "Invalid")
+                            for dep in [obj] + list(obj.OutListRecursive) for flag in dep.State)
+                bucket.append((obj.Name, shape, stale))
+        except (RuntimeError, ValueError):
+            pass  # Conversion report below explicitly identifies unavailable output.
+    return result or hidden
+
+
+def recover_structure(document, shapes, error):
+    """Retain native payloads and present validated frozen outputs on failure."""
+    import ComponentModel as Model
+    filename = document.FileName
+    originals = list(document.Objects)
+    with Model.transaction(document, "Recover legacy evaluated component outputs"):
+        meta = Model.initialize(document, document.Label)
+        meta.LegacySource = filename
+        report = ["Structural adapter could not complete: " + str(error),
+                  "Explicit dumb geometry recovery; native feature payloads retained. Parametric component migration is incomplete."]
+        for name, shape, stale in shapes:
+            obj = document.addObject("Part::Feature", "RecoveredLegacyOutput")
+            obj.Label = name + " recovered geometry"
+            obj.Shape = shape
+            Model.register_object(meta.RootComponent, obj, "Object", True)
+            Model._property(obj, "String", "LegacyRecovery", name + ": validated evaluated geometry; parametric history not converted.", True)
+            if stale:
+                obj.LegacyRecovery = name + ": unverified cached geometry; source requires repair; parametric history not converted."
+                report.append(name + ": recovered cached geometry is unverified; original source dependencies require repair.")
+        if not shapes:
+            report.append("No valid top-level evaluated output was available; native payloads retained for repair.")
+        for obj in originals:
+            if App.GuiUp:
+                obj.ViewObject.Visibility = False
+        meta.ConversionReport = report
+    document.FileName = ""
+    return document
 
 
 def inventory(document):
@@ -211,3 +273,258 @@ def inventory(document):
             "recovery_policy": ["convert_with_feature_adapter", "retain_editable_native_feature",
                                 "recover_valid_evaluated_dumb_geometry", "report_unavailable_output"],
             "fallback_requires": "Explicit loss-of-parametrics report; validate cached geometry and placements. Never replace failed features during inventory."}
+
+
+def convert_structure(document, extra_targets=(), visiting=None):
+    """Convert definition/occurrence ownership, retaining native feature payloads.
+
+    Each file is one native transaction. External dependencies convert in memory
+    first; saving them to new cadprt files remains an explicit owner action.
+    """
+    import ComponentModel as Model
+    if any(getattr(o, "ComponentRole", "") == "Document" for o in document.Objects):
+        return document
+    visiting = set() if visiting is None else visiting
+    if document.Name in visiting:
+        raise ValueError("Cyclic legacy external files cannot be mapped to component instances.")
+    visiting.add(document.Name)
+    try:
+        plan = inventory(document)
+        originals = list(document.Objects)
+        links = [o for o in originals if o.isDerivedFrom("App::Link")]
+        # Keep a native target/frame snapshot before any source is reparented.
+        snapshots = {}
+        external = {}
+        arrays = {}
+        for link in links:
+            target = link.LinkedObject
+            if target is None:
+                continue
+            if link.ElementCount:
+                import Part
+                shape = Part.getShape(link, "", needSubElement=False).copy()
+                if shape.isNull() or not shape.isValid() or "Invalid" in link.State:
+                    raise ValueError("Legacy link array has no validated recoverable output.")
+                arrays[link] = shape
+                continue
+            snapshots[link] = (target, App.Placement(link.LinkPlacement), bool(link.LinkTransform),
+                               App.Placement(target.Placement) if hasattr(target, "Placement") else App.Placement())
+            if target.Document != document:
+                external.setdefault(target.Document, []).append(target)
+        for source, targets in external.items():
+            convert_structure(source, targets, visiting)
+
+        parts = [o for o in originals if o.TypeId == "App::Part"]
+        boundaries = {document.getObject(d["source"].split(":", 1)[1]) for d in plan["definitions"]}
+        boundaries.update(extra_targets)
+        boundaries.update(arrays)
+        boundaries.update(target for target, _, _, _ in snapshots.values() if target.Document == document)
+        boundaries.discard(None)
+        # Definition frames are captured in the old ownership hierarchy.
+        world = {o: App.Placement(o.getGlobalPlacement()) for o in parts}
+        for part in parts:
+            if any(prop.lstrip(".").startswith("Placement") for prop, _ in part.ExpressionEngine):
+                raise ValueError("Expression-driven Part frames require explicit frame-expression mapping; native source is retained.")
+            if not part.Placement.isSame(world[part], 1e-9):
+                names = (part.Name + ".Placement", "<<" + part.Label + ">>.Placement")
+                if any(any(name in expression for name in names)
+                       for obj in originals for _, expression in getattr(obj, "ExpressionEngine", [])):
+                    raise ValueError("An expression consumes the legacy local Part frame; preserve native formulas through explicit evaluated recovery.")
+        parents = {o: Model.owner(o) for o in originals}
+        local_frames = {o: App.Placement(o.Placement) for o in parts}
+        labels = {o: o.Label for o in originals}
+        old_filename = document.FileName
+        mapping, report = {}, []
+
+        def annotate_definition(obj):
+            if _own_identity(obj):
+                Model._property(obj, "String", "ComponentRole", "Definition", True)
+            else:
+                Model._identity(obj, "Definition")
+            Model._property(obj, "StringList", "ModelHistory", [], True)
+            Model._property(obj, "StringList", "ResultObjects", [], True)
+            Model._property(obj, "String", "RepresentationOverrides", "{}", True)
+
+        def register(component, obj, role, result=False):
+            target = obj.LinkedObject if obj.isDerivedFrom("App::Link") else None
+            if target is not None:
+                obj.setLink(None)
+            if _own_identity(obj) and not hasattr(obj, "ComponentRole"):
+                Model._property(obj, "String", "ComponentRole", role, True)
+            elif not _own_identity(obj):
+                Model._identity(obj, role)
+            if target is not None:
+                obj.setLink(target)
+            Model.register_object(component, obj, role, result)
+            if obj in labels:
+                obj.Label = labels[obj]
+
+        def occurrence(parent, link, definition):
+            parent.addObject(link)
+            placement = App.Placement(link.LinkPlacement)
+            transform, scale, vector = link.LinkTransform, link.Scale, App.Vector(link.ScaleVector)
+            link.setLink(None)
+            if _own_identity(link):
+                Model._property(link, "String", "ComponentRole", "Occurrence", True)
+            else:
+                Model._identity(link, "Occurrence")
+            link.setLink(definition)
+            link.LinkTransform = transform
+            link.LinkPlacement = placement
+            link.Scale = scale
+            link.ScaleVector = vector
+            Model._property(link, "String", "DefinitionId", definition.ObjectId if definition else "legacy-unresolved:" + link.Name, True)
+            Model._property(link, "Integer", "InstanceNumber", sum(c.LinkedObject == definition for c in Model.children(parent)), True)
+            Model._property(link, "Enumeration", "Representation", list(Model.TYPES))
+            link.Representation = "Bodies Only"
+            Model._property(link, "Bool", "IncludeInBOM", True)
+            Model._property(link, "Bool", "IncludeInMass", True)
+
+        with Model.transaction(document, "Convert legacy component structure"):
+            meta = Model.initialize(document, document.Label)
+            root = meta.RootComponent
+            meta.LegacySource = old_filename
+            for part in parts:
+                annotate_definition(part)
+                mapping[part] = part
+            for obj in sorted(boundaries - set(parts), key=lambda x: x.Name):
+                definition = Model._definition(document, labels[obj])
+                Model._property(definition, "Link", "LegacyDefinitionSource", obj, True)
+                mapping[obj] = definition
+                if obj in arrays:
+                    if not _own_identity(obj):
+                        Model._identity(obj, "LegacyPayload")
+                    for element in obj.ElementList:
+                        if element.TypeId == "App::LinkElement":
+                            Model._identity(element, "LegacyPayload")
+                    frozen = document.addObject("Part::Feature", "RecoveredArray")
+                    frozen.Shape = arrays[obj]
+                    frozen.Label = obj.Label + " recovered geometry"
+                    register(definition, frozen, "Object", True)
+                    Model._property(frozen, "String", "LegacyRecovery", "Dumb evaluated array; native array retained; parametric instance mapping pending.", True)
+                    if parents[obj]:
+                        parents[obj].removeObject(obj)
+                    if App.GuiUp:
+                        obj.Visibility = False
+                    report.append(obj.Label + ": recovered as explicit dumb array geometry; native array identity retained outside component History.")
+                elif parents[obj] is None and not obj.isDerivedFrom("App::Link"):
+                    register(definition, obj, "Object" if obj.TypeId == "Part::Feature"
+                             or obj.isDerivedFrom("Sketcher::SketchObject") else "Operation")
+                else:
+                    # Internal features keep their native Body/Part ownership.
+                    helper = document.addObject("App::Link", "LegacyGeometry")
+                    helper.setLink(obj)
+                    helper.LinkTransform = True
+                    register(definition, helper, "Object", True)
+                    report.append(obj.Label + ": native feature ownership retained through a geometry link.")
+            for part in parts:
+                if parents[part]:
+                    parents[part].removeObject(part)
+                part.Placement = world[part]
+
+            def component_for(parent):
+                while parent is not None:
+                    if parent in mapping:
+                        return mapping[parent]
+                    parent = parents.get(parent)
+                return root
+
+            for source, definition in mapping.items():
+                # A real legacy container is also a placed use. Additional
+                # native Links remain additional uses of the same definition.
+                if source in parts or source in arrays or parents[source] is None:
+                    parent = component_for(parents[source])
+                    link = document.addObject("App::Link", "ComponentInstance")
+                    link.setLink(definition)
+                    link.LinkTransform = False
+                    link.LinkPlacement = local_frames[source] if source in parts else App.Placement()
+                    link.Label = labels[source]
+                    occurrence(parent, link, definition)
+            for link, (target, placement, transform, old_target_frame) in snapshots.items():
+                if target.Document == document:
+                    definition = mapping[target]
+                elif Model.is_component(target):
+                    definition = target
+                else:
+                    candidates = [d for d in Model.definitions(target.Document)
+                                  if getattr(d, "LegacyDefinitionSource", None) == target]
+                    if len(candidates) != 1:
+                        raise ValueError("External legacy target has no unique converted definition.")
+                    definition = candidates[0]
+                parent = component_for(parents[link])
+                if parents[link]:
+                    parents[link].removeObject(link)
+                # A native Part is now in its original world frame. A wrapper
+                # retains its source's local frame. Compensate, never normalize
+                # silently or change shared source geometry.
+                if target in parts or (target.Document != document and Model.is_component(target)):
+                    if transform:
+                        delta = old_target_frame.multiply(definition.Placement.inverse())
+                    else:
+                        delta = App.Placement()
+                elif not transform:
+                    delta = old_target_frame.inverse()
+                else:
+                    delta = App.Placement()
+                scale = App.Matrix()
+                vector = App.Vector(link.ScaleVector)
+                if link.Scale != 1:
+                    vector = App.Vector(link.Scale, link.Scale, link.Scale)
+                scale.A11, scale.A22, scale.A33 = vector.x, vector.y, vector.z
+                matrix = placement.toMatrix().multiply(scale).multiply(delta.toMatrix()).multiply(scale.inverse())
+                placement = App.Placement(matrix)
+                if max(abs(a - b) for a, b in zip(matrix.A, placement.toMatrix().A)) > 1e-9:
+                    raise ValueError("Nonuniform scaled frame compensation requires affine recovery; native payload is retained.")
+                link.setLink(definition)
+                link.LinkTransform = transform
+                link.LinkPlacement = placement
+                link.Label = labels[link]
+                occurrence(parent, link, definition)
+
+            for link in links:
+                if link in arrays or link in snapshots:
+                    continue
+                parent = component_for(parents[link])
+                if parents[link]:
+                    parents[link].removeObject(link)
+                occurrence(parent, link, None)
+                report.append(link.Label + ": unresolved native target retained as a missing Part Tree instance; repair required before saving.")
+
+            for obj in originals:
+                if obj in parts or obj in links or hasattr(obj, "ComponentRole"):
+                    continue
+                owner = Model.owner(obj)
+                if obj.TypeId == "App::Origin" or any(obj in p.Origin.OriginFeatures for p in parts):
+                    continue
+                if owner is None or Model.is_component(owner):
+                    component = owner or root
+                    if "Shape" in obj.PropertiesList:
+                        register(component, obj, "Object" if obj.TypeId == "Part::Feature"
+                                 or obj.isDerivedFrom("Sketcher::SketchObject") else "Operation")
+            for definition in Model.definitions(document):
+                for obj in Model.history(definition):
+                    if "Shape" not in obj.PropertiesList:
+                        continue
+                    shape = obj.getPropertyByName("Shape")
+                    if shape.isNull() or not shape.isValid():
+                        report.append(obj.Label + ": native payload retained; evaluated output needs repair.")
+                    else:
+                        # Structural migration must not duplicate the source
+                        # shape in a native Part compound. Task three owns the
+                        # operation/result-layer migration; use the retained
+                        # editable native output directly in this milestone.
+                        definition.ResultObjects = list(definition.ResultObjects) + [obj.Name]
+                    if obj.TypeId == "PartDesign::Body":
+                        report.append(obj.Label + ": native Body Tip and sketch/feature history retained; feature adapters pending.")
+            meta.ConversionReport = report + ["Models and linked Part Tree instances converted; native features retained.",
+                "Recovery policy: retained editable native features before explicit validated dumb geometry; no fallback created in this structural step."]
+            if external:
+                meta.ConversionReport = list(meta.ConversionReport) + ["Save converted external files as new .cadprt files before saving this parent; legacy originals remain protected."]
+            Model.validate(document, allow_unresolved=True)
+        # Native external-link relocation needs an owner-file reference base
+        # while dependencies are saved first. The manifest's LegacySource guard
+        # prohibits writing this legacy path; Save As must choose a new cadprt.
+        document.FileName = old_filename if external or extra_targets else ""
+        return document
+    finally:
+        visiting.remove(document.Name)

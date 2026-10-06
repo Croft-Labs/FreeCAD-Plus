@@ -8,7 +8,7 @@
   Eight native source-mode checks pass, loaded source hashes verified. No conversion,
   native build, installed-payload qualification or owner GUI delivery is claimed.
   DOCX requirements rendered/inspected; source and publication in WORK_STATE.
-- [ ] 2. Models definitions and Part Tree occurrences; preserve permanent master,
+- [x] 2. Models definitions and Part Tree occurrences; preserve permanent master,
   ownership, shared definitions, nested/local/world placements and external sources.
 - [ ] 3. Body history/results foundation and narrow Sketch → Pad pilot.
 - [ ] 4. Origins and datum geometry/attachment frames.
@@ -25,7 +25,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Only task one is executed in this milestone.
+for unrelated feature implementation. Tasks one and two have source/native milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).
 

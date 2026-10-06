@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+Legacy migration task two routes GUI File Open through native structural conversion:
+Models definitions, shared Part Tree occurrences and retained Body/sketch payloads.
+Exact frames/scales, external save order, missing links and explicit dumb recovery
+are documented in tests/LegacyStructureConversion.md. Task-three history migration
+and installed build delivery remain separate. Owner DOCX is UI/UX only; algorithms,
+technical contracts and test/build/publication evidence belong in Markdown.
+
 Legacy migration task one: CadDocument.legacy_plan delegates to LegacyConversion
 inventory for read-only ownership/dependency/geometry planning. Recovery candidates
 include dumb body/sheet/curve/point; all later feature tasks retain native editability

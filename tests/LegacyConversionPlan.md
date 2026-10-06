@@ -42,4 +42,6 @@ kinds, touched caches, partial fingerprint errors and no mutation. FCStd save/re
 checks preserved Body Group/Tip/sketch constraints and native bidirectional solid
 differences. Source-mode checks use `FREECAD_PLUS_PROFILE_SOURCE=1` and explicitly
 record loaded source hashes; they are not installed-payload or owner-GUI acceptance.
-Batch packaging with subsequent structural conversion work.
+Task two now uses this inventory for structural conversion; see
+[LegacyStructureConversion](LegacyStructureConversion.md). Inventory remains read-only.
+Batch packaging with subsequent integration work.
