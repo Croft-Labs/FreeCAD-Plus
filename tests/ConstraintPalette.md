@@ -9,6 +9,9 @@ empty-click clearing without geometry/constraint/Undo changes. Capture the nativ
 ReportOutput while probing a hypothetical collapsed line; it must be quiet.
 An actual invalid constraint must still produce normal live-solver diagnostics.
 Build these C++ changes together; older binaries are reproduction evidence only.
+Also run `test_point_drag_undo_and_save_reopen`: real native press/move/release
+must move the endpoint without adding a constraint; Undo/Redo and FCStd save/reopen
+must retain its geometry and Sketch identity.
 
 Run `TestConstraintPalette` in the Plus GUI runtime; after the grouped native build
 run `TestConstraintPaletteNative` as well. The native class requires the new cloned

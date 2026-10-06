@@ -474,6 +474,52 @@ class TestConstraintPaletteNative(TestConstraintPalette):
         finally:
             self.doc.abortTransaction()
 
+    def test_point_drag_undo_and_save_reopen(self):
+        window = Gui.getMainWindow()
+        window.resize(1400, 950)
+        Gui.updateGui()
+        settle(150)
+        view = Gui.activeDocument().activeView()
+        view.viewTop()
+        view.fitAll()
+        settle(150)
+        mdi = window.findChild(QtWidgets.QMdiArea).activeSubWindow()
+        widget = max((w for w in mdi.findChildren(QtWidgets.QWidget)
+                      if "GL" in w.metaObject().className() and w.width() > 100),
+                     key=lambda w: w.width() * w.height())
+        sx, sy = view.getPointOnScreen(App.Vector(12, 5, 0))
+        ratio = widget.devicePixelRatioF()
+        point = QtCore.QPoint(round(sx / ratio), widget.height() - round(sy / ratio) - 1)
+        original = self.sketch.Geometry[1].EndPoint
+        self.select("Vertex4")
+        QtTest.QTest.mouseMove(widget, point)
+        settle(100)
+        QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, point)
+        end = point + QtCore.QPoint(35, -25)
+        event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(end),
+                                 QtCore.QPointF(widget.mapToGlobal(end)), QtCore.Qt.NoButton,
+                                 QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+        QtWidgets.QApplication.sendEvent(widget, event)
+        settle(100)
+        QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, end)
+        settle(200)
+        moved = self.sketch.Geometry[1].EndPoint
+        self.assertGreater((moved - original).Length, 0.01)
+        self.assertEqual(self.sketch.ConstraintCount, 0)
+        self.doc.undo()
+        self.assertLess((self.sketch.Geometry[1].EndPoint - original).Length, 1e-7)
+        self.doc.redo()
+        self.assertLess((self.sketch.Geometry[1].EndPoint - moved).Length, 1e-7)
+        Gui.activeDocument().resetEdit()
+        path = Path(tempfile.mkdtemp(prefix="palette_")) / "point-drag.FCStd"
+        self.doc.recompute()
+        self.doc.saveAs(str(path))
+        name = self.sketch.Name
+        App.closeDocument(self.doc.Name)
+        self.doc = App.openDocument(str(path))
+        self.sketch = self.doc.getObject(name)
+        self.assertLess((self.sketch.Geometry[1].EndPoint - moved).Length, 1e-7)
+
     def test_native_probe_is_read_only_and_finds_indirect_redundancy(self):
         # Native solver recognizes this indirect dependency. Equality cycles can
         # be accepted by the kernel, so they are not a redundancy oracle.

@@ -1,39 +1,81 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 6 sketch point selection and quiet feasibility probes — source milestone
+## October 6 sketch point selection and quiet feasibility probes — native delivery
 
-Both owner defects reproduce on modeling_ribbon_payload: two actual plain point
-clicks retain Vertex3 plus Vertex4, and three candidate feasibility checks print
-repeated 'Updating geometry: Error ... Both points are equal' and invalid-solution
-warnings from DogLeg, LevenbergMarquardt, BFGS and SQP. No constraint was applied.
+Both reported defects reproduce on the preceding Modeling payload. Two actual
+plain point clicks retain Vertex3 and Vertex4, and repeated hypothetical coincident
+endpoints print geometry failures and invalid-solution warnings without any applied
+constraint. Source milestone 8746c1076071a7b9decff07577b6a163a0f76ee9 is committed,
+pushed to origin/main and remote-verified.
 
-Prepared native corrections: Design-active left click picks replace selection
-unless Ctrl/Shift is held; repeated plain clicks keep that one item. Shift empty
-clicks now retain selection like Ctrl; plain empty clicks clear it. Native drag,
-box, context-menu and Classic behavior remain scoped separately. Sketch's cloned
-diagnostic instance has a default-false quiet flag; only diagnoseConstraintAdditions
-enables it. Suppress its expected geometry-update/invalid-solution reports while
-preserving native statuses and normal live-operation errors/warnings.
+Plus Design native plain picks now replace selection; Ctrl/Shift retain native
+multiselection, plain empty clicks clear and modified empty clicks retain it.
+Repeated plain clicks keep the one selected item. Persistent Selection still
+controls operation retention. Drag, box, context picks and Classic remain scoped
+separately. Only the cloned diagnostic Sketch is quiet; hypothetical failures keep
+their native status while actual invalid operations still report diagnostics.
+No persisted property/document identity or geometry algorithm is changed.
 
-Two native regressions reproduce the old defects; additional assertions check
-Ctrl/Shift/empty-space semantics, unchanged geometry/constraints/Undo and retained
-diagnostics for an actual invalid operation. Source formatting uses bundled
-clang-format 19.1.5 on changed ranges; Python syntax and whitespace checks pass.
-Owner DOCX current requirements and UI_UX_SPEC are synchronized; render the added
-requirement before committing this source milestone. Runtime acceptance remains
-pending and must not be inferred from the preceding binary.
+One grouped incremental Release/x64 ALL_BUILD is complete. Its first wrapper hit
+the 90-minute deadline before SketcherGui/PartDesignGui finished; process/timestamp
+audits rejected that run as acceptance. No original workers remained. Continuing
+the same tree with retained objects and a 120-minute guard passed ALL_BUILD; this
+was not a clean rebuild or duplicate concurrent build. Native compiled App.Version
+identifies 8746c1076071a7b9decff07577b6a163a0f76ee9. All 66 changed native binaries,
+including core and Sketcher consumers, are staged with verified copy hashes.
 
-Exact next step: commit/push this coherent source milestone, then one grouped
-incremental native ALL_BUILD in the retained external
-freecad_plus_2026-10-06_recovered_workload tree, with output under
-Documents\_temp\freecad\validation\sketch-selection\native-build. Rebuild all
-enabled consumers because Sketch's layout changes. Stage updated native binaries
-into a fresh freecad_plus_2026-10-06_sketch_selection_payload based on the useful
-Modeling payload. Run focused native selection/palette regressions, high-DPI,
-actual shortcut/Undo/save-reopen; inspect DOCX, update durable source/native
-provenance and verify the existing desktop shortcut before owner delivery.
-Preserve any owner session using a preceding payload. Delete reviewed raw task
-validation after canonical summary; keep known BIM/legacy limitations separate.
+Current owner test payload:
+`C:\Users\GAMING-PC\Documents\_temp\freecad\test-builds\freecad_plus_2026-10-06_sketch_selection_payload`.
+It retains the preceding Python/UI configuration, including startup/layout,
+plane highlighting, palette icons and revised Modeling ribbon. Acceptance uses
+installed application modules, with FREECAD_PLUS_PROFILE_SOURCE=0:
+
+- Focused native click/quiet-probe/point-drag checks: 3/3.
+- Complete TestConstraintPaletteNative suite: 18/18 distinct checks.
+- The same three focused checks at QT_SCALE_FACTOR=2: 3/3.
+- Actual saved desktop-shortcut launch of the three focused checks: 3/3.
+
+Actual native mouse events cover sequential and repeated picks, Ctrl/Shift,
+modified/plain empty clicks, point press/move/release, Escape and palette clicks.
+Selection/probe checks preserve geometry, constraints, UndoCount and solver state.
+Native drag and constraint operations cover Undo/Redo and FCStd save/reopen with
+retained Sketch identity. The invalid-operation fixture deliberately prints live
+solver errors, proving they remain enabled. Native action icon/tooltip parity and
+the captured palette are verified; no global console suppression is used.
+
+Broader Design-selection audit: 18/19 checks pass. The unobscured-viewport check
+cannot locate a widget at its pick point (666,611), although its viewport, window
+and screen bounds contain it and the window is visible/exposed at DPR 1.5.
+Visible-window, screen-bounded and foreground attempts remain unsuccessful, not
+acceptance. Experimental fixture changes were removed; original assertions remain.
+The first audit also exposed a sibling-test import failure; the native harness now
+adds selected test directories, not application overlays. Exact remaining step:
+rerun TestDesignSelectionNative.test_actual_sketch_click_single_connected_tangent_escape_and_empty_space
+in a desktop session where QWidget.widgetAt identifies the unobscured viewport.
+Do not infer broader workbench or physical owner acceptance from this delivery.
+
+The existing desktop FreeCADPlus.exe - Shortcut.lnk is saved, reopened and verified
+with target `<payload>\FreeCADPlus.exe` and working directory `<payload>`, then
+actually launched for the accepted tests. Owner DOCX is synchronized, rendered to
+88 pages and page 88 visually inspected; only word/document.xml changes, with all
+other ZIP parts, owner structure and automatic numbering retained. Canonical DOCX
+matches the inspected proposal byte-for-byte. UI_UX_SPEC and regression procedure
+retain the source requirements and native validation contracts.
+
+Full inventory verification hashes all 15,121 prior files and confirms exactly
+66 expected native changes, no missing files and no other application changes.
+All current Python UI hashes are retained. Runtime-generated bytecode (1,020
+candidate files and four source-test caches) is removed. Raw sketch-selection
+validation is deleted after durable summaries. The two obsolete Modeling/palette
+payloads are removed after checking no owner process uses them. Useful candidate,
+incremental native build, dependencies and toolchain remain in test-builds.
+
+Durable release-info.json and payload-manifest.json in the current payload record
+actual native/test/DOCX/shortcut hashes, inventory and cleanup, plus the final
+acceptance milestone's commit and origin/main publication result. Native source
+8746 is already origin-verified. Final acceptance/documentation form one coherent
+milestone; this is a local owner test build, not a release or deployment. Known BIM,
+legacy sketch and protected Windows Temp limitations below remain separate.
 
 ## October 6 Modeling ribbon and complete captions
 
