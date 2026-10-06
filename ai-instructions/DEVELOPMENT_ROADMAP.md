@@ -1,5 +1,24 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 startup and saved workspace
+
+- [x] Prepare theme and Plus/Classic controls before showing the main window;
+  remove eager specialist activation from Home and visible background transitions.
+- [x] Default Tasks to the right, migrate its old implicit overlay once, retain
+  native idle file actions and central recent-file cards.
+- [x] Register custom docks/toolbars before restore and preserve subsequent
+  customized dock areas, floating state, sizing and toolbar locations.
+- [x] Incremental native GUI compilation and concrete startup repair retries pass.
+- [x] Native 13 startup/docking/recent-file checks and six selected ribbon checks.
+- [x] Fresh/customize/cold-reopen acceptance; three packaged saved-style phases;
+  actual-owner profile copy and desktop .lnk cold-reopen acceptance.
+- [x] Owner DOCX synchronized, rendered and repaginated pages 64-86 inspected.
+- [x] New portable startup-workspace payload and exact shortcut target/workdir
+  verified; source/native hashes match. Publication is origin/main without force.
+- [ ] Physical owner startup/layout feedback remains separate. Existing stylesheet
+  warnings and lack of a controlled speed comparison are recorded in WORK_STATE.
+  Previous full recovery qualification is retained at its prior source/payload.
+
 ## Separate recovery item 7 test-build delivery
 
 - [x] Reuse verified grouped native build/capture repair; refresh current resources incrementally.

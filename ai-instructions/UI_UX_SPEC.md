@@ -2018,12 +2018,15 @@ counts. The root is an editing model/context, with zero linked uses unless expli
 instanced elsewhere. Selecting a model shows native attributes; Edit accesses the
 same definition even with zero instances. Add Instance reuses it in the active model.
 Replace the native Model pane with Attributes, retaining its View and Data tabs.
-On application startup, show Components even with no document open. Dock it at
+On first application startup, show Components even with no document open. Dock it at
 the top left above Attributes, using two thirds of the available dock-column
-height for Components and one third for Attributes. Restore this initial layout
-after native saved-state restoration, including previously hidden, floating or
-tabbed panels. Users can resize the split afterward; document changes and panel
-Show commands do not reset it.
+height for Components and one third for Attributes, with Tasks docked on the right.
+On subsequent startups, retain the native saved positions, floating states and sizes
+of panels and toolbars. Plus toolbars are movable and floatable; preference refresh,
+window Show and workbench changes must not relocate them. Migrate the old implicit
+Tasks overlay once while retaining other overlay memberships and later choices.
+Prepare theme, toolbar style and restored workspace before exposing the main window;
+Home imports its required command modules without activating unrelated workbenches.
 With no document open, Tasks shows **New File** and **Open**, including when the
 saved mode is outside Design. New File uses the native New command and enters
 Design; its idle Tasks pane shows **New Sketch**, **Coordinate System**, **Datum

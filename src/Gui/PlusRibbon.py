@@ -362,9 +362,8 @@ class Ribbon(QtCore.QObject):
         self.mode_name = "Design"
         self.common = QtWidgets.QToolBar(tr("Plus Common"), self.window)
         self.common.setObjectName("FreeCADPlusCommon")
-        self.common.setMovable(False)
-        self.common.setFloatable(False)
-        self.common.setAllowedAreas(QtCore.Qt.TopToolBarArea)
+        self.common.setMovable(True)
+        self.common.setFloatable(True)
         self.common.setIconSize(QtCore.QSize(SMALL_ICON_SIZE, SMALL_ICON_SIZE))
         for title, commands in COMMON_GROUPS:
             if self.common.actions():
@@ -384,9 +383,8 @@ class Ribbon(QtCore.QObject):
         self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.layers_toolbar)
         self.toolbar = QtWidgets.QToolBar(tr("Plus Ribbon"), self.window)
         self.toolbar.setObjectName("FreeCADPlusRibbon")
-        self.toolbar.setMovable(False)
-        self.toolbar.setFloatable(False)
-        self.toolbar.setAllowedAreas(QtCore.Qt.TopToolBarArea)
+        self.toolbar.setMovable(True)
+        self.toolbar.setFloatable(True)
         self.widget = QtWidgets.QWidget()
         self.widget.setObjectName("PlusRibbonContents")
         layout = QtWidgets.QVBoxLayout(self.widget)
@@ -421,6 +419,7 @@ class Ribbon(QtCore.QObject):
         self.widget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         self.toolbar.addWidget(self.widget)
         self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
+        self.window.insertToolBarBreak(self.toolbar)
         self.toolbar.toggleViewAction().setVisible(False)
         self.toolbar.hide()
         self.modes.currentIndexChanged.connect(self.mode_changed)
@@ -449,25 +448,21 @@ class Ribbon(QtCore.QObject):
     def ensure_plus_visible(self):
         if self.enabled and not self.changing and self.window.isVisible():
             self.hide_bars()
-            self.place_plus_bars()
+            self.update_plus_visibility()
 
     def plus_bars(self):
         return tuple(getattr(self, name) for name in
                      ("common", "selection_toolbar", "layers_toolbar", "toolbar") if hasattr(self, name))
 
     def place_plus_bars(self):
-        """Keep the common bar above a full-width ribbon after saved-state restores."""
+        """Set the initial layout only; subsequent calls preserve user positions."""
+        self.update_plus_visibility()
+
+    def update_plus_visibility(self):
         if self.placing:
             return
         self.placing = True
         try:
-            for bar in self.plus_bars():
-                self.window.removeToolBarBreak(bar)
-            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.common)
-            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.selection_toolbar)
-            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.layers_toolbar)
-            self.window.addToolBarBreak(QtCore.Qt.TopToolBarArea)
-            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
             self.common.setVisible(self.enabled)
             self.toolbar.setVisible(self.enabled)
             self.selection_toolbar.set_design_active(self.enabled and self.mode_name == "Design")
@@ -655,19 +650,12 @@ class Ribbon(QtCore.QObject):
         return [(name, commands) for name, commands in bars.items() if name not in STANDARD]
 
     def initialize_home(self):
-        if self.home_initialized or Gui.Control.activeDialog() or not self.window.isVisible():
+        if self.home_initialized or Gui.Control.activeDialog():
             return
-        original = Gui.activeWorkbench().name()
-        mode, tab = self.mode_name, self.current_tab()
-        # Native actions from the specialist tabs must be registered before Home
-        # projects them. Initialize after the window is shown: native setup saves
-        # isVisible(), which would erase Classic visibility with a hidden parent.
-        # Initialize each installed workbench once, then restore it.
-        for name in dict.fromkeys((*DESIGN_WORKBENCHES.values(), "PartWorkbench")):
-            if name in Gui.listWorkbenches():
-                self.activate(name)
-        self.activate(original)
-        self.configure(mode, tab)
+        # Home needs Part's datum actions and PartDesign's modeling actions.
+        # Load their commands without activating unrelated specialist workbenches.
+        import PartGui
+        import PartDesignGui
         self.home_initialized = True
 
     def make_button(self, command_name, parent, choices=None, size=None):
@@ -911,4 +899,5 @@ def apply_preferences():
 
 
 def install():
-    QtCore.QTimer.singleShot(0, apply_preferences)
+    # Create named toolbars before native restoreState and the first paint.
+    apply_preferences()

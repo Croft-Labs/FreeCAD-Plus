@@ -36,7 +36,7 @@ def screenshot_defaults():
         "Themes": [("Unsigned", "ThemeAccentColor1", 11272191),
                    ("Unsigned", "ThemeAccentColor2", 3027763199),
                    ("Unsigned", "ThemeAccentColor3", 1434171135)],
-        "DockWindows": [("Bool", "ActivateOverlay", True)],
+        "DockWindows": [("Bool", "ActivateOverlay", False)],
         "DockWindows/ComboView": [("Bool", "Enabled", True)],
         "DockWindows/TreeView": [("Bool", "Enabled", False)],
         "DockWindows/PropertyView": [("Bool", "Enabled", False)],

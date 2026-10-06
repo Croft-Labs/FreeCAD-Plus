@@ -1837,13 +1837,16 @@ class StartupLayout(QtCore.QObject):
         super().__init__(window)
         self.window = window
         self.applied = False
+        self.saved_state = App.ParamGet("User parameter:BaseApp/Preferences/MainWindow").GetString("MainWindowState", "")
+        # Register the named custom dock before native window-state restoration.
+        show()
         window.installEventFilter(self)
         if window.isVisible():
             QtCore.QTimer.singleShot(0, self.apply)
 
     def eventFilter(self, watched, event):
         if watched is self.window and event.type() == QtCore.QEvent.Show:
-            QtCore.QTimer.singleShot(0, self.apply)
+            self.apply()
         return False
 
     def apply(self):
@@ -1851,19 +1854,27 @@ class StartupLayout(QtCore.QObject):
             return
         self.applied = True
         self.window.removeEventFilter(self)
-        panel = show()
+        panel = _dock
         install_start_actions()
+        saved = self.saved_state
         attributes = self.window.findChild(QtWidgets.QDockWidget, "Model")
-        panel.setFloating(False)
-        self.window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, panel)
-        if attributes:
+        if not saved:
+            panel.setFloating(False)
+            self.window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, panel)
+        if attributes and not saved:
             attributes.setFloating(False)
             self.window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, attributes)
             self.window.splitDockWidget(panel, attributes, QtCore.Qt.Vertical)
             attributes.show()
             # Size only after Qt has laid out the newly separated docks.
             QtCore.QTimer.singleShot(0, self.size_panels)
-        QtCore.QTimer.singleShot(0, show_recent_files)
+        if not saved:
+            tasks = self.window.findChild(QtWidgets.QDockWidget, "Tasks")
+            if tasks:
+                tasks.setFloating(False)
+                self.window.addDockWidget(QtCore.Qt.RightDockWidgetArea, tasks)
+                tasks.show()
+        show_recent_files()
 
     def size_panels(self):
         attributes = self.window.findChild(QtWidgets.QDockWidget, "Model")

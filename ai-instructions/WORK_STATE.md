@@ -1,5 +1,57 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 startup and workspace correction
+
+Authorized objective: remove visible startup theme/workbench transitions, restore
+idle New File/Open and central recent-file cards, default Tasks to the right and
+retain user-customized panel/toolbar locations across restarts.
+
+Source: StartupProcess seeds native theme/docking defaults before native managers
+read them, removes only Tasks from old overlay memberships once and exposes the
+window after configured background workbenches. ComponentNavigator registers its
+named dock before restore and applies the initial split only without saved state.
+PlusRibbon installs synchronously, imports only Part/PartDesign for Home and
+updates visibility without relocating toolbars. All Plus bars are movable and
+floatable. The Selection event filter ignores non-widget layout objects.
+
+Completed evidence: incremental FreeCADGui compile and two concrete native
+startup repair retries exit 0. Real cold startup, customize/save and cold reopen
+pass on the native build without --hidden or source overlays. Final native
+startup actions/recent files/docking regression: 13/13, including real card
+opening and valid datum-plane OK events. Selected Home/tab/Classic/native
+General regression: 6/6. Three packaged Plus/Classic preference cold phases pass.
+Packaged fresh startup, isolated actual-owner-profile migration, custom-layout
+save and actual desktop shortcut cold reopen all pass. The latter restores Tasks
+on the customized left, Components on the customized right, floating Attributes,
+and Common/Selection/Layers toolbars at their saved areas. All five changed
+installed modules and three rebuilt native DLLs match their tested source/build
+hashes. Build labels, logs, captures and limits: build-startup-fix/delivery-summary.json.
+
+Owner DOCX requirements are synchronized. Its 86-page render preserves exact
+PNG content on pages 1-63; affected/repaginated pages 64-86 were visually
+inspected, including requirement pages 64, 70 and 71. Other DOCX ZIP parts,
+styles and native numbering are retained.
+
+Delivered launcher:
+C:\Users\GAMING-PC\AppData\Local\FreeCADPlus\freecad_plus_2026-10-06_startup_workspace_payload\FreeCADPlus.exe
+Desktop: C:\Users\GAMING-PC\Desktop\FreeCADPlus.exe - Shortcut.lnk
+Standard helper saved/reopened and verified exact target/working directory;
+the saved .lnk was actually launched through Windows ShellExecute. The old
+recovered workload payload remains available for rollback. Native embedded
+version revision remains edf2e742ac92a92005bc3c612980659fbd5be158; it is not
+relabeled as this later startup-source commit. Current source/native hashes,
+manifest and origin publication receipt are recorded in the new payload.
+
+Earlier failed runs remain available and are not counted as acceptance.
+Existing stylesheet parse warnings remain visible in native logs. Recorded
+cold-process elapsed times include validation and shutdown, so they do not
+establish a controlled comparative speed benchmark. Eager specialist activation
+was removed and final light startup/recent-file/Tasks captures were reviewed.
+The earlier recovery 89/55/26 qualification remains historical to its payload;
+this startup delivery uses focused acceptance. Geometry, identities, parent
+placements and deferred families are unchanged. Next action: physical owner
+startup and layout feedback using the updated shortcut.
+
 ## Owner requested archive publication
 
 The owner requested logical commits and origin publication of the remaining

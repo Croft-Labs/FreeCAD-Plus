@@ -1,5 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
+Startup and workspace persistence: StartupProcess seeds theme/docking preferences
+before native managers initialize and exposes the completed workspace once.
+ComponentNavigator registers its dock before restore and keeps user-customized
+positions. PlusRibbon loads only Home command modules; movable Plus toolbars retain
+saved locations. Native 13-case startup and six-case ribbon checks, packaged cold
+restart/style/profile-copy checks and the actual desktop link launch pass.
+WORK_STATE owns the new startup-workspace payload, hashes and validation limits.
+
 Move Components workflows are in `MoveComponents.py` and
 `MoveComponentsTask.py`: parent-owned native link placements, exact display paths,
 shared-parent transient previews and atomic sibling transactions. The task includes

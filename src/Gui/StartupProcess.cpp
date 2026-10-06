@@ -40,6 +40,8 @@
 #include <Inventor/SoDB.h>
 
 #include <set>
+#include <array>
+#include <utility>
 #include <string>
 #include <ranges>
 
@@ -67,6 +69,47 @@ StartupProcess::StartupProcess() = default;
 
 void StartupProcess::setupApplication()
 {
+    // The style parameter manager and dock manager are constructed before the
+    // Python GUI init script. Seed their defaults before either reads them.
+    auto main = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/MainWindow"
+    );
+    for (const auto& [key, value] : std::array {
+             std::pair {"Theme", "FreeCAD Light"},
+             std::pair {"QtStyle", "FreeCAD"},
+             std::pair {"StyleSheet", "FreeCAD.qss"}}) {
+        if (main->GetASCII(key, "__unset__") == "__unset__") {
+            main->SetASCII(key, value);
+        }
+    }
+    auto workspace = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/PlusWorkspace"
+    );
+    if (workspace->GetInt("DockedStartupLayoutVersion", 0) < 1) {
+        App::GetApplication()
+            .GetParameterGroupByPath("User parameter:BaseApp/Preferences/DockWindows")
+            ->SetBool("ActivateOverlay", false);
+        auto docks = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/MainWindow/DockWindows"
+        );
+        // Overlay restore independently defaults the right area to Tasks,
+        // even when overlay management is disabled. Retain other memberships.
+        for (const char* area : {"OverlayLeft", "OverlayRight", "OverlayTop", "OverlayBottom"}) {
+            auto group = docks->GetGroup(area);
+            std::string members = group->GetASCII("Widgets", "");
+            std::string retained;
+            std::stringstream stream(members);
+            std::string member;
+            while (std::getline(stream, member, ',')) {
+                if (!member.empty() && member != "Tasks") {
+                    retained += member + ',';
+                }
+            }
+            group->SetASCII("Widgets", retained.c_str());
+        }
+        docks->SetBool("Std_TaskView", true);
+        workspace->SetInt("DockedStartupLayoutVersion", 1);
+    }
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
     QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 
@@ -456,10 +499,9 @@ void StartupPostProcess::showMainWindow()
         throw;
     }
 
-    // stop splash screen and set immediately the active window that may be of interest
-    // for scripts using Python binding for Qt
-    mainWindow->stopSplasher();
-    mainWindow->activateWindow();
+    // Defaults are seeded by the GUI init script. Apply them while the main
+    // window is still hidden, before restoring its layout and exposing it.
+    setStyleSheet();
 }
 
 void StartupPostProcess::activateWorkbench()
@@ -500,18 +542,19 @@ void StartupPostProcess::activateWorkbench()
     // 2. the layout of the toolbars is completely broken
     guiApp.activateWorkbench(start.c_str());
 
+    // Initialize explicitly requested background modules before exposing the
+    // window, so their workbench transitions cannot flash through startup.
+    autoloadModules(wb);
+    guiApp.activateWorkbench(start.c_str());
+
     // show the main window
     if (!Application::hiddenMainWindow()) {
         Base::Console().log("Init: Showing main window\n");
         mainWindow->loadWindowSettings();
     }
 
-    // Now run the background autoload, for workbenches that should be loaded at startup, but not
-    // displayed to the user immediately
-    autoloadModules(wb);
-
-    // Reactivate the startup workbench
-    guiApp.activateWorkbench(start.c_str());
+    mainWindow->stopSplasher();
+    mainWindow->activateWindow();
 }
 
 void StartupPostProcess::setStyleSheet()

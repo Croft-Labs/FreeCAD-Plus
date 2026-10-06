@@ -20,9 +20,8 @@ class SelectionToolbar(QtWidgets.QToolBar):
     def __init__(self, window):
         super().__init__(tr("Selection"), window)
         self.setObjectName("FreeCADPlusSelection")
-        self.setMovable(False)
-        self.setFloatable(False)
-        self.setAllowedAreas(QtCore.Qt.TopToolBarArea)
+        self.setMovable(True)
+        self.setFloatable(True)
         self.toggleViewAction().setVisible(False)
         self.intent = QtWidgets.QComboBox(self)
         self.intent.setObjectName("designCurveIntent")
@@ -82,7 +81,7 @@ class SelectionToolbar(QtWidgets.QToolBar):
 
     @staticmethod
     def _viewport(widget):
-        while widget is not None:
+        while isinstance(widget, QtWidgets.QWidget):
             if "View3DInventor" in widget.metaObject().className():
                 return True
             widget = widget.parentWidget() if isinstance(widget, QtWidgets.QWidget) else None

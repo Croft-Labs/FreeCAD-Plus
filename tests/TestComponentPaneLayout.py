@@ -26,7 +26,7 @@ from freecad.gui import ComponentNavigator as Navigator
 class TestComponentPaneLayout(unittest.TestCase):
     def setUp(self):
         self.window = Gui.getMainWindow()
-        self.window.resize(1280, 900)
+        self.window.resize(1280, 1200)
         self.panel = Navigator.show()
         self.attributes = self.window.findChild(QtWidgets.QDockWidget, "Model")
         self.assertIsNotNone(self.attributes)
@@ -46,12 +46,13 @@ class TestComponentPaneLayout(unittest.TestCase):
         Gui.updateGui()
         QtTest.QTest.qWait(200)
 
-    def start(self):
+    def start(self, preserve=False):
         if self.layout:
             self.window.removeEventFilter(self.layout)
             self.layout.deleteLater()
         self.window.hide()
         self.layout = Navigator.StartupLayout(self.window)
+        self.layout.saved_state = "saved" if preserve else ""
         self.window.show()
         self.settle()
 
@@ -86,12 +87,14 @@ class TestComponentPaneLayout(unittest.TestCase):
         self.window.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.panel)
         self.window.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.attributes)
         self.window.tabifyDockWidget(self.panel, self.attributes)
-        self.start()
-        self.assert_layout()
+        self.start(preserve=True)
+        self.assertEqual(self.window.dockWidgetArea(self.panel), QtCore.Qt.RightDockWidgetArea)
+        self.assertIn(self.attributes, self.window.tabifiedDockWidgets(self.panel))
         self.panel.setFloating(True)
         self.attributes.setFloating(True)
-        self.start()
-        self.assert_layout()
+        self.start(preserve=True)
+        self.assertTrue(self.panel.isFloating())
+        self.assertTrue(self.attributes.isFloating())
 
     def testUserResizeSurvivesSubsequentShows(self):
         self.start()
@@ -114,6 +117,7 @@ class TestComponentPaneLayout(unittest.TestCase):
             self.attributes.hide()
             Navigator.registerCommands()
             self.layout = Navigator._startup_layout
+            self.layout.saved_state = ""
             self.assertIsNotNone(self.layout)
             Navigator.registerCommands()
             self.assertIs(Navigator._startup_layout, self.layout)

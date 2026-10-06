@@ -24,6 +24,7 @@ if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1":
 import ComponentModel as Model
 from freecad.gui import ComponentNavigator as Navigator
 from freecad.gui import ComponentSketchTask as SketchTask
+from freecad.gui import ComponentPlaneTask as PlaneTask
 
 
 class TestComponentStartActions(unittest.TestCase):
@@ -57,6 +58,8 @@ class TestComponentStartActions(unittest.TestCase):
                 widget.done(QtWidgets.QMessageBox.No)
 
     def tearDown(self):
+        if PlaneTask._task:
+            PlaneTask._task.reject()
         if SketchTask._task:
             SketchTask._task.reject()
         if Gui.Control.activeDialog():
@@ -134,8 +137,10 @@ class TestComponentStartActions(unittest.TestCase):
             self.click(command)
             self.assertIsNotNone(Gui.Control.activeDialog())
             if command == "Std_ComponentDatumPlane":
-                self.assertEqual([section.title() for section in SketchTask._task.sections],
-                                 ["Define Surface", "Z Direction", "Sketch Origin", "X Direction"])
+                self.assertEqual([section.title() for section in PlaneTask._task.sections],
+                                 ['1. Plane orientation and location', '2. Orientation',
+                                  '3. Origin selection', '4. Preview'])
+                PlaneTask._task.plane_collector.basic.menu().actions()[0].trigger()
             boxes = [box for box in self.window.findChildren(QtWidgets.QDialogButtonBox)
                      if box.isVisibleTo(self.window) and box.button(QtWidgets.QDialogButtonBox.Ok)]
             self.assertTrue(boxes)
@@ -169,10 +174,12 @@ class TestComponentStartActions(unittest.TestCase):
             Gui.runCommand("Std_New")
             self.settle()
             self.click("Std_ComponentDatumPlane")
-            task = SketchTask._task
-            self.assertTrue(task.datum_only)
+            task = PlaneTask._task
+            self.assertIsInstance(task, PlaneTask.PlaneTask)
             self.assertEqual([s.title() for s in task.sections],
-                             ["Define Surface", "Z Direction", "Sketch Origin", "X Direction"])
+                             ['1. Plane orientation and location', '2. Orientation',
+                              '3. Origin selection', '4. Preview'])
+            task.plane_collector.basic.menu().actions()[0].trigger()
             Gui.Control.activeTaskDialog().accept()
             self.settle()
             root = Model.metadata(App.ActiveDocument).RootComponent
