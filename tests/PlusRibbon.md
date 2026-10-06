@@ -1,5 +1,19 @@
 # Plus UI and Classic UI: owner procedure
 
+October 6 supersedes the older size/layout descriptions below. Every tab has
+gray vertical dividers between adjacent groups. Large-button/group captions
+show complete text on up to two lines; their width/height grows when necessary.
+Medium/small buttons are icon-only, retaining native tooltips/accessibility.
+Modeling has exactly Sketch, Modeling, Dress-Up, Transformation, Primitives and
+Other as specified in the canonical DOCX. Use testExactOwnerDesignModelingLayout,
+testReadableCaptionsAndGrayDividers and testCompactPrimaryAndSecondaryGrid for
+membership, native action/menu routing, rendered icons/divider pixels, fitted
+captions and unclipped viewport geometry across the seven Design tabs. Repeat
+at increased QT_SCALE_FACTOR and visually inspect the captured ribbon pages.
+Primitives defaults to Box and Tab remains disabled/unimplemented. Coordinate
+System defaults to Coordinate System; Fillet and Chamfer defaults to Fillet.
+Pipe remains a native command outside this revised Modeling ribbon.
+
 Use this FreeCAD Plus build, rather than installed upstream FreeCAD. Run
 `RunComponentDocument.ps1 -RibbonSmoke` with a fresh evidence directory and source
 overlays disabled against the grouped payload. WORK_STATE records exact build and

@@ -1,5 +1,68 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 Modeling ribbon and complete captions
+
+Current owner payload:
+`C:\Users\GAMING-PC\Documents\_temp\freecad\test-builds\freecad_plus_2026-10-06_modeling_ribbon_payload`.
+PlusRibbon now has the requested Sketch / Modeling / Dress-Up / Transformation /
+Primitives / Other groups. New Sketch, Extrude, Revolve, Fillet and Chamfer and
+Primitives are large; Sketch secondary buttons are small; other secondary buttons
+are medium. Coordinate System defaults to Coordinate System with Plane/Axis/Point
+choices. Fillet and Chamfer defaults to Fillet, and Primitives defaults to Box.
+Tab remains disabled/unimplemented. Pipe stays available through native commands.
+
+Every tab uses gray #808080 one-logical-pixel dividers between adjacent groups.
+Medium/small buttons are icon-only, retaining native tooltips/accessibility and
+action state. Large buttons paint their native icons and complete fitted captions
+on up to two lines; labels expand rather than elide. Group captions also retain
+complete text. Font/style/language changes refresh layout; scroll height grows
+with full caption content and horizontal scrolling retains narrow-window access.
+Native action routing, geometry, identity, transactions and Classic preferences
+remain unchanged. Assembly's preexisting Move Components is restored to its
+stale acceptance fixture, without a new Assembly UI change.
+
+Accepted installed checks: ten native ribbon/layout/menu/common-action checks,
+three increased-DPI checks (QT_SCALE_FACTOR=2), and three checks launched through
+the actual saved desktop shortcut. Default Box uses actual Qt mouse events,
+opens the native component primitive task and Cancel restores object identities.
+The existing embedded-model check covers Undo/Redo and cadprt save/reopen.
+Native captures of all seven Design tabs are visually inspected at both scales;
+pixel checks verify gray dividers and rendered large icons, geometry checks prove
+caption fit and unclipped vertical viewport. No source overlays are used.
+
+Earlier candidate failures are not acceptance: a stale Assembly fixture lacked
+Move Components; the old fixed 170px toolbar assertion conflicted with complete
+caption sizing; a test-only QtTest import needed the actual PySide6/2 package.
+Visual QA caught the QStyleOption icon alias and it is explicitly copied before
+native frame painting. Final accepted checks cover these corrections. The broad
+all-installed-mode audit blocks in inherited BIM initialization because
+addonmanager_utilities is absent; only its task-owned process is stopped. Do not
+claim BIM or every registered workbench qualifies; separately test the explicit
+ready Draft/CAM/Part/Drawing subset. Deferred families remain deferred.
+The explicit Draft/CAM/Part/Drawing all-tab and Drawing-icon checks pass 2/2;
+their mode selector is deliberately restricted in the fixture and is not proof
+of the unavailable BIM workbench. Ordinary native application stylesheet parse
+warnings remain in these runs; inspected ribbon paint/caption checks pass.
+
+All 15,121 stable preceding payload files are hashed; the only application change
+is Ext/freecad/gui/PlusRibbon.py, SHA-256
+6679aace81c5072699e19279a00f543b5b4aeda11e7711a5c9be45d007aeaf30.
+Native binaries retain embedded revision edf2e742ac92a92005bc3c612980659fbd5be158
+and GUI source snapshot e29d2e5; no native compilation was performed. The durable
+release-info/manifest records this Python-only delivery separately. The exact
+desktop FreeCADPlus.exe - Shortcut.lnk target/workdir is saved/reopened and verified.
+The preceding palette payload is retained while the owner's existing process
+still uses it; remove it once that session has closed and it is no longer useful.
+Do not terminate owner sessions to clean old builds.
+
+Owner DOCX outline, affected native command locations and shared presentation
+rules are synchronized. Other ZIP parts/styles/native numbering are retained.
+The canonical 88-page render has affected catalog pages 24-26 and presentation /
+outline pages 56-59 visually inspected. UI_UX_SPEC and TOOLBARS are synchronized.
+Raw task profiles/logs/captures/scripts and DOCX QA are deleted after canonical
+summary per owner policy. Push the coherent milestone to origin/main and verify
+its remote ref; next owner use is a restart through the updated desktop shortcut.
+
 ## October 6 Design Mode toolbar outline
 
 Owner DOCX section 2.1.2.1 now documents the installed Design ribbon using nested

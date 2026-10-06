@@ -263,9 +263,10 @@ visual weight or expand every rare variant into a separate labeled button.
 For Plus ribbon sections, primary commands such as Extrude and Revolve occupy
 one row of large buttons spanning the section's three-row grid. Secondary commands
 use small icons without visible name text, stacked in three rows with as many
-columns as required. Large-button captions have a bounded width (76 logical pixels
-including button padding); retain full names in tooltips/accessibility when
-elided. Align buttons to a consistent grid. Related variants share dropdowns:
+columns as required. Medium and small buttons have no visible text. Large-button
+captions and group labels use complete names on up to two lines, with sufficient
+width/height instead of abbreviation or elision. Separate adjacent groups with
+one gray vertical line on every tab. Align buttons to a consistent grid. Related variants share dropdowns:
 Auto Dimension is the default dimension action, with vertical, horizontal, angle,
 radius and diameter choices and less common dimension types in its menu.
 
@@ -278,12 +279,24 @@ across mode/tab switches. This is an intentional Plus toolbar, not permission to
 show Classic workbench toolbars alongside the ribbon.
 
 Add **medium / half-size** icons between full-size and small. Size and dropdown
-are independent: any size may have a dropdown. Full and medium captions have
-bounded widths; small icons have tooltips/accessibility but no visible caption.
+are independent: any size may have a dropdown. Only full-size buttons show
+captions; medium/small icons retain native tooltips and accessible names.
 Small ribbon icons retain a three-row grid; common-toolbar icons use one row.
 Full icons use 40 logical pixels, medium 20, and small 16. The grid is 76px
 high: full buttons span it, two 38px medium buttons or three 24px small buttons
-fit a column. Reference-document artwork sizing is independent of these values.
+fit a column. Large-button/grid height grows when required to display two full
+caption lines. Reference-document artwork sizing is independent of these values.
+
+October 6 Modeling layout supersedes its prior arrangement: Sketch has large New
+Sketch and a small Edit Sketch/Attach Sketch/Coordinate System cluster (default
+Coordinate System, Plane, Axis, Point). Modeling has large Extrude/Revolve and
+medium Loft/Helix. Dress-Up has large Fillet and Chamfer (default Fillet, Chamfer
+menu) and medium Draft/Shell-Thickness. Transformation has medium Mirror Feature,
+Linear Pattern, Circular Pattern and Multi Transform in two columns. Primitives
+has one large dropdown, default Box, then Cylinder, Sphere, Cone, Ellipsoid,
+Torus, Prism, Wedge and disabled/unimplemented Tab. Other has medium Delete
+Face/Defeaturing and Add Reference Object. Pipe remains available through its
+native commands; this ribbon revision changes no modeling/geometry workflow.
 
 Design Home contains the most frequently used actions from the other tabs.
 Its only groups, in order, are Main (New Component, Add Component), Modeling

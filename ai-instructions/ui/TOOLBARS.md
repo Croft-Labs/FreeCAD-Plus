@@ -1198,50 +1198,19 @@ Exactly three groups in this order. This revision awaits the next owner build. C
 
 #### Modeling tab
 
-Exact owner layout, validated in source and awaiting the next build. One icon per combined additive/subtractive operation; no separate subtractive buttons.
+October 6 owner layout; medium and small buttons show icons only. Large captions and group labels retain complete names, using two lines when needed. Gray vertical dividers separate adjacent groups on every tab. Native actions, tooltips and geometry workflows are retained.
 
-##### Sketch group
+| Group | Large buttons | Medium button clusters (two per column) | Small button cluster |
+| --- | --- | --- | --- |
+| Sketch | New Sketch | — | Edit Sketch; Attach Sketch; Coordinate System dropdown |
+| Modeling | Extrude; Revolve | Loft; Helix | — |
+| Dress-Up | Fillet and Chamfer split button (default Fillet; Chamfer menu choice) | Draft; Shell/Thickness | — |
+| Transformation | — | Mirror Feature; Linear Pattern / Circular Pattern; Multi Transform | — |
+| Primitives | Primitives split dropdown, default Box | — | — |
+| Other | — | Delete Face/Defeaturing; Add Reference Object | — |
 
-| Command | Icon size |
-| --- | --- |
-| <img src="toolbar-icons/PartDesign_NewSketch.png" width="11" height="11" alt="New Sketch"> [New Sketch](#button-partdesign_newsketch) | Full |
-| <img src="toolbar-icons/Sketcher_MapSketch.png" width="11" height="11" alt="Attach Sketch"> [Attach Sketch](#button-sketcher_mapsketch) | Small |
-| <img src="toolbar-icons/Sketcher_EditSketch.png" width="11" height="11" alt="Edit Sketch"> [Edit Sketch](#button-sketcher_editsketch) | Full |
-
-##### Modeling group
-
-| Command | Icon size |
-| --- | --- |
-| <img src="toolbar-icons/PartDesign_Extrude.png" width="11" height="11" alt="Extrude"> [Extrude](#button-partdesign_extrude) | Full |
-| <img src="toolbar-icons/PartDesign_Revolution.png" width="11" height="11" alt="Revolve"> [Revolve](#button-partdesign_revolution) | Full |
-| <img src="toolbar-icons/PartDesign_AddReferenceObject.png" width="11" height="11" alt="Add Reference Object"> [Add Reference Object](#button-partdesign_addreferenceobject) | Small |
-| <img src="toolbar-icons/PartDesign_AdditiveLoft.png" width="11" height="11" alt="Loft"> [Loft](#button-partdesign_additiveloft) | Small; unified New Body/Add/Subtract task |
-| <img src="toolbar-icons/PartDesign_AdditivePipe.png" width="11" height="11" alt="Pipe"> [Pipe](#button-partdesign_additivepipe) | Small; unified New Body/Add/Subtract task |
-| <img src="toolbar-icons/PartDesign_AdditiveHelix.png" width="11" height="11" alt="Helix"> [Helix](#button-partdesign_additivehelix) | Small; unified New Body/Add/Subtract task |
-| <img src="toolbar-icons/PartDesign_CompPrimitiveAdditive.png" width="11" height="11" alt="Primitive"> [Primitive](#button-partdesign_compprimitiveadditive) | Small |
-
-##### Dress-Up group
-
-| Command | Icon size |
-| --- | --- |
-| <img src="toolbar-icons/PartDesign_Fillet.png" width="11" height="11" alt="Fillet"> [Fillet](#button-partdesign_fillet) | Full |
-| <img src="toolbar-icons/PartDesign_Chamfer.png" width="11" height="11" alt="Chamfer"> [Chamfer](#button-partdesign_chamfer) | Small |
-| <img src="toolbar-icons/PartDesign_Draft.png" width="11" height="11" alt="Draft"> [Draft](#button-partdesign_draft) | Small |
-| <img src="toolbar-icons/PartDesign_Thickness.png" width="11" height="11" alt="Shell/Thickness"> [Shell/Thickness](#button-partdesign_thickness) | Small |
-| <img src="toolbar-icons/PartDesign_Defeaturing.png" width="11" height="11" alt="Delete Face/Defeaturing"> [Delete Face/Defeaturing](#button-partdesign_defeaturing) | Small |
-
-##### Transformation group
-
-| Command | Icon size |
-| --- | --- |
-| <img src="toolbar-icons/PartDesign_Mirrored.png" width="11" height="11" alt="Mirror Feature"> [Mirror Feature](#button-partdesign_mirrored) | Small |
-| <img src="toolbar-icons/PartDesign_LinearPattern.png" width="11" height="11" alt="Linear Pattern"> [Linear Pattern](#button-partdesign_linearpattern) | Small |
-| <img src="toolbar-icons/PartDesign_CircularPattern.png" width="11" height="11" alt="Circular Pattern"> [Circular Pattern](#button-partdesign_circularpattern) | Small |
-| <img src="toolbar-icons/PartDesign_MultiTransform.png" width="11" height="11" alt="Multi Transform"> [Multi Transform](#button-partdesign_multitransform) | Small |
-
-##### Primitives dropdown
-
-One small dropdown button lists **Box, Cylinder, Sphere, Cone, Ellipsoid, Torus, Prism, Wedge, Tab**, in that order. The first eight choices use native additive primitive commands until the unified workflow exists. Tab is visible but disabled because it has no creation command yet.
+Coordinate System choices: **Coordinate System (default), Plane, Axis, Point**.
+Primitives choices: **Box (default), Cylinder, Sphere, Cone, Ellipsoid, Torus, Prism, Wedge, Tab**. Tab remains disabled/unimplemented. Native additive/subtractive primitive tasks are retained. Pipe and the standalone Chamfer/Primitive native commands remain available outside this revised ribbon membership.
 
 #### Surface tab
 

@@ -12,6 +12,10 @@
           "Insert Component"
         ],
         [
+          "Std_MoveComponents",
+          "Move Components"
+        ],
+        [
           "Part_LinkArrays",
           "Link Arrays"
         ],

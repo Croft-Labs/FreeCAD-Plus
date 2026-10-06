@@ -1,5 +1,26 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 Modeling ribbon and group presentation
+
+- [x] Implement requested six Modeling groups, large/medium/small sizing and
+  Coordinate System, Fillet/Chamfer and default-Box Primitives menus.
+- [x] Gray dividers between adjacent groups on every tab; complete large/group
+  captions on up to two fitted lines; medium/small buttons are icon-only.
+- [x] Ten packaged native checks, three high-DPI checks and three actual desktop
+  shortcut checks pass without overlays; native captures visually inspected.
+- [x] Two explicit ready-mode checks cover every Draft/CAM/Part/Drawing tab and
+  Drawing icons/captions, retaining the separate inherited BIM limitation.
+- [x] Default Box actual pointer/Cancel and embedded-model Undo/Redo/cadprt
+  save/reopen checks; full preceding payload inventory proves native reuse.
+- [x] Synchronize/render/inspect owner DOCX, UI specification and toolbar reference;
+  verify saved shortcut target/workdir and remove raw temporary validation.
+- [ ] All-registered-workbench audit: inherited BIM initialization lacks
+  addonmanager_utilities. Keep separate from the ready-mode subset and feature
+  acceptance; do not broaden this presentation task into dependency installation.
+
+WORK_STATE records exact useful payload, source/native identities, current
+validation limits and the still-used preceding payload's cleanup condition.
+
 ## October 6 Design Mode outline synchronization
 
 - [x] Read actual installed Design ribbon grids: seven tabs, 168 buttons and

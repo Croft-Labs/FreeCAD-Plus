@@ -141,6 +141,15 @@ class TestPlusRibbon(unittest.TestCase):
                 settle()
                 self.assertFalse(self.ribbon.common.isHidden(), mode)
                 self.assertFalse(self.ribbon.toolbar.isHidden(), mode)
+                page = self.ribbon.scroll.widget()
+                groups = page.findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+                self.assertEqual(len(page.findChildren(QtWidgets.QFrame, "RibbonGroupDivider")), max(0, len(groups) - 1))
+                for group in groups:
+                    label = group.findChildren(QtWidgets.QLabel)[-1]
+                    self.assertEqual(label.text().replace("\n", " "), label.toolTip())
+                    for button in group.findChildren(QtWidgets.QToolButton):
+                        if button.property("ribbonSize") != "full":
+                            self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
                 self.assertLess(self.ribbon.common.geometry().bottom(), self.ribbon.toolbar.geometry().top())
                 for group, commands in UI.COMMON_GROUPS:
                     for name in commands:
@@ -149,6 +158,15 @@ class TestPlusRibbon(unittest.TestCase):
                         self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
                 self.assertTrue(all(bar.isHidden() for bar in self.ribbon.window.findChildren(QtWidgets.QToolBar)
                                     if bar not in self.ribbon.plus_bars()))
+
+    def testCommonCommandsInDraftCamPartAndDrawing(self):
+        modes = [(label, name) for label, name in UI.available_modes()
+                 if label in ("Design", "Draft", "CAM", "Part", "Drawing")]
+        self.assertEqual({label for label, name in modes}, {"Design", "Draft", "CAM", "Part", "Drawing"})
+        # Explicit subset for payloads whose separately registered BIM workbench
+        # cannot initialize without its optional Addon Manager dependency.
+        with patch.object(UI, "available_modes", return_value=modes):
+            self.testCommonCommandsRemainAvailableInEveryInstalledMode()
 
     def testWorkbenchInitializationDefersRendering(self):
         incomplete = type("InitializingWorkbench", (), {
@@ -333,7 +351,7 @@ class TestPlusRibbon(unittest.TestCase):
             button = self.button(name)
             self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonTextUnderIcon)
             self.assertEqual(button.width(), UI.PRIMARY_WIDTH)
-            self.assertEqual(button.height(), UI.GRID_HEIGHT)
+            self.assertGreaterEqual(button.height(), UI.GRID_HEIGHT)
         first = self.button("PartDesign_Extrude")
         second = self.button("PartDesign_Revolution")
         self.assertEqual(first.y(), second.y())
@@ -347,18 +365,18 @@ class TestPlusRibbon(unittest.TestCase):
                     self.assertEqual((row, rows, columns), (0, UI.GRID_ROWS, 1))
                 else:
                     self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
-                    self.assertEqual((button.width(), button.height()), (24, 24))
+                    expected_size = (UI.PRIMARY_WIDTH, UI.MEDIUM_HEIGHT) if button.property("ribbonSize") == "medium" else (24, 24)
+                    self.assertEqual((button.width(), button.height()), expected_size)
                     self.assertLess(row, UI.GRID_ROWS)
-                    self.assertEqual((rows, columns), (2, 1))
+                    self.assertEqual((rows, columns), (3 if button.property("ribbonSize") == "medium" else 2, 1))
                 self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
                 self.assertLessEqual(button.geometry().bottom(), group.height())
-        self.assertLess(self.ribbon.toolbar.height(), 170)
+        self.assertGreaterEqual(self.ribbon.scroll.viewport().height(), max(group.height() for group in groups))
         for name in ("PartDesign_SubtractiveLoft", "PartDesign_SubtractivePipe", "PartDesign_SubtractiveHelix"):
             self.assertIsNone(self.button(name), "Rare variants belong in the family menu")
         self.assertIsNone(self.button("PartDesign_AdditiveLoft").menu())
-        self.assertIsNone(self.button("PartDesign_AdditivePipe").menu())
+        self.assertIsNone(self.button("PartDesign_AdditivePipe"))
         self.assertIsNone(self.button("PartDesign_AdditiveHelix").menu())
-        self.assertEqual(self.button("PartDesign_AdditivePipe").text(), "Pipe")
 
     def testAutoDimensionChoicesAndSharedNativeStates(self):
         self.tab("Sketch")
@@ -602,7 +620,7 @@ class TestPlusRibbon(unittest.TestCase):
         settle()
         page = self.button("TechDraw_PageDefault")
         self.assertEqual(page.property("ribbonPriority"), "primary")
-        self.assertEqual(page.width(), UI.PRIMARY_WIDTH)
+        self.assertGreaterEqual(page.width(), UI.PRIMARY_WIDTH)
         self.assertEqual(page.defaultAction(), Gui.Command.get("TechDraw_PageDefault").getAction()[0])
         for button in self.ribbon.scroll.widget().findChildren(QtWidgets.QToolButton):
             self.assertFalse(button.icon().isNull(), button.objectName())
@@ -611,15 +629,15 @@ class TestPlusRibbon(unittest.TestCase):
 
     def testExactOwnerDesignModelingLayout(self):
         self.tab("Modeling")
-        expected = [("Sketch", ("PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch")),
-                    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AddReferenceObject",
-                                  "PartDesign_AdditiveLoft", "PartDesign_AdditivePipe", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
-                    ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Chamfer", "PartDesign_Draft", "PartDesign_Thickness", "PartDesign_Defeaturing")),
+        expected = [("Sketch", ("PartDesign_NewSketch", "Sketcher_EditSketch", "Sketcher_MapSketch", "Part_CoordinateSystem")),
+                    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix")),
+                    ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Draft", "PartDesign_Thickness")),
                     ("Transformation", ("PartDesign_Mirrored", "PartDesign_LinearPattern", "PartDesign_CircularPattern", "PartDesign_MultiTransform")),
-                    ("Primitives", ("PartDesign_CompPrimitiveAdditive",))]
+                    ("Primitives", ("PartDesign_CompPrimitiveAdditive",)),
+                    ("Other", ("PartDesign_Defeaturing", "PartDesign_AddReferenceObject"))]
         self.assertEqual(self.ribbon.groups(), expected)
         groups = self.ribbon.scroll.widget().findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
-        self.assertEqual(len(groups), 5)
+        self.assertEqual(len(groups), 6)
         for group, (title, commands) in zip(groups, expected):
             buttons = group.findChildren(QtWidgets.QToolButton)
             ids = ["Ribbon_Primitives"] if title == "Primitives" else ["Ribbon_" + name for name in commands]
@@ -628,12 +646,12 @@ class TestPlusRibbon(unittest.TestCase):
                 self.assertEqual(button.defaultAction(), Gui.Command.get(name).getAction()[0])
                 self.assertEqual(button.isEnabled(), button.defaultAction().isEnabled())
         for name, caption in (("Sketcher_MapSketch", "Attach Sketch"), ("PartDesign_AdditiveLoft", "Loft"),
-                              ("PartDesign_AdditiveHelix", "Helix"), ("PartDesign_CompPrimitiveAdditive", "Primitive"),
+                              ("PartDesign_AdditiveHelix", "Helix"),
                               ("PartDesign_Thickness", "Shell/Thickness"), ("PartDesign_Defeaturing", "Delete Face/Defeaturing")):
             self.assertEqual(self.button(name).text(), caption)
         for name in ("PartDesign_Groove", "PartDesign_SubtractiveLoft", "PartDesign_SubtractiveHelix", "PartDesign_CompPrimitiveSubtractive"):
             self.assertIsNone(self.button(name))
-        self.assertIsNone(self.button("PartDesign_CompPrimitiveAdditive").menu())
+        self.assertIsNone(self.button("PartDesign_CompPrimitiveAdditive"))
         menu = self.button("Primitives").menu()
         self.assertEqual([action.text() for action in menu.actions()], ["Box", "Cylinder", "Sphere", "Cone", "Ellipsoid", "Torus", "Prism", "Wedge", "Tab"])
         self.assertFalse(menu.actions()[-1].isEnabled())
@@ -651,6 +669,70 @@ class TestPlusRibbon(unittest.TestCase):
                 proxy.trigger()
                 trigger.assert_called_once()
         self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "modeling-exact.png"))
+
+    def testReadableCaptionsAndGrayDividers(self):
+        for tab in UI.DESIGN_TABS:
+            self.tab(tab)
+            page = self.ribbon.scroll.widget()
+            groups = page.findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+            dividers = page.findChildren(QtWidgets.QFrame, "RibbonGroupDivider")
+            self.assertEqual(len(dividers), len(groups) - 1, tab)
+            for divider in dividers:
+                self.assertEqual(divider.width(), 1)
+                image = divider.grab().toImage()
+                self.assertEqual(image.pixelColor(image.width() // 2, image.height() // 2).name(), "#808080")
+            for group in groups:
+                label = group.findChildren(QtWidgets.QLabel)[-1]
+                self.assertEqual(label.text().replace("\n", " "), label.toolTip())
+                self.assertLessEqual(len(label.text().splitlines()), 2)
+                for line in label.text().splitlines():
+                    self.assertLessEqual(label.fontMetrics().horizontalAdvance(line), label.width())
+                for button in group.findChildren(QtWidgets.QToolButton):
+                    if button.property("ribbonSize") == "full":
+                        self.assertEqual(button.caption_text.replace("\n", " "), button.text().replace("&", "").replace("\n", " "))
+                        self.assertLessEqual(len(button.caption_text.splitlines()), 2)
+                        for line in button.caption_text.splitlines():
+                            self.assertLessEqual(button.fontMetrics().horizontalAdvance(line), button.width() - (24 if button.menu() else 12))
+                        self.assertGreaterEqual(button.height() - UI.FULL_ICON_SIZE - 8, 2 * button.fontMetrics().height())
+                        image = button.grab().toImage()
+                        ratio = image.devicePixelRatio()
+                        face_width = button.width() - (12 if button.menu() else 0)
+                        left = (face_width - button.iconSize().width()) // 2
+                        pixels = {image.pixelColor(round(x * ratio), round(y * ratio)).rgba()
+                                  for x in range(left + 2, left + button.iconSize().width() - 2, 3)
+                                  for y in range(6, 4 + button.iconSize().height() - 2, 3)}
+                        self.assertGreater(len(pixels), 1, button.objectName() + " icon must be painted")
+                    else:
+                        self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
+            self.ribbon.toolbar.grab().save(str(Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / ("ribbon-" + tab + ".png")))
+        self.tab("Modeling")
+        self.assertEqual(self.button("Part_CoordinateSystem").property("ribbonSize"), "small")
+        self.assertEqual([a.text() for a in self.button("Part_CoordinateSystem").menu().actions()], ["Coordinate System", "Plane", "Axis", "Point"])
+        self.assertEqual([a.objectName() for a in self.button("PartDesign_Fillet").menu().actions()], ["PartDesign_Fillet", "PartDesign_Chamfer"])
+        self.assertEqual(self.button("Primitives").property("ribbonSize"), "full")
+
+    def testDefaultBoxRibbonPointerAndCancel(self):
+        try:
+            from PySide6 import QtTest
+        except ImportError:
+            from PySide2 import QtTest
+        from freecad.gui import ComponentPrimitiveTask as PrimitiveTask
+        self.tab("Modeling")
+        button = self.button("Primitives")
+        self.assertTrue(button.isEnabled())
+        before = {obj.Name for obj in self.doc.Objects}
+        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                               QtCore.QPoint(button.width() // 3, button.height() // 3))
+        settle()
+        try:
+            self.assertIsNotNone(PrimitiveTask._task)
+            self.assertEqual(PrimitiveTask._task.kind.currentData(), "Box")
+            self.assertEqual(PrimitiveTask._task.component, Model.metadata(self.doc).RootComponent)
+        finally:
+            if PrimitiveTask._task:
+                PrimitiveTask._task.reject()
+        settle()
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, before)
 
     def testExactOwnerDesignHomeLayout(self):
         self.tab("Home")

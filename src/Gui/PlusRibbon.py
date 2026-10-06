@@ -43,15 +43,21 @@ VIEW_ITEMS = (
 VIEW_GROUPS = tuple((title, tuple(name for name, label in items)) for title, items in VIEW_ITEMS)
 VIEW_CAPTIONS = dict(item for title, items in VIEW_ITEMS for item in items)
 MODELING_GROUPS = (
-    ("Sketch", ("PartDesign_NewSketch", "Sketcher_MapSketch", "Sketcher_EditSketch")),
-    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AddReferenceObject",
-                  "PartDesign_AdditiveLoft", "PartDesign_AdditivePipe", "PartDesign_AdditiveHelix", "PartDesign_CompPrimitiveAdditive")),
-    ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Chamfer", "PartDesign_Draft",
-                  "PartDesign_Thickness", "PartDesign_Defeaturing")),
+    ("Sketch", ("PartDesign_NewSketch", "Sketcher_EditSketch", "Sketcher_MapSketch", "Part_CoordinateSystem")),
+    ("Modeling", ("PartDesign_Extrude", "PartDesign_Revolution", "PartDesign_AdditiveLoft", "PartDesign_AdditiveHelix")),
+    ("Dress-Up", ("PartDesign_Fillet", "PartDesign_Draft", "PartDesign_Thickness")),
     ("Transformation", ("PartDesign_Mirrored", "PartDesign_LinearPattern",
                         "PartDesign_CircularPattern", "PartDesign_MultiTransform")),
     ("Primitives", ("PartDesign_CompPrimitiveAdditive",)),
+    ("Other", ("PartDesign_Defeaturing", "PartDesign_AddReferenceObject")),
 )
+MODELING_SIZES = {
+    name: size for title, commands in MODELING_GROUPS for name in commands
+    for size in ("full" if name in ("PartDesign_NewSketch", "PartDesign_Extrude",
+                                   "PartDesign_Revolution", "PartDesign_Fillet",
+                                   "PartDesign_CompPrimitiveAdditive") else
+                 "small" if title == "Sketch" else "medium",)
+}
 PRIMITIVE_LABELS = ("Box", "Cylinder", "Sphere", "Cone", "Ellipsoid", "Torus", "Prism", "Wedge")
 ASSEMBLY_ITEMS = (
     ("Assembly", (
@@ -298,6 +304,19 @@ def native_actions(name):
     return command.getAction() if command else []
 
 
+def caption_lines(text, metrics, width):
+    """Use at most two complete lines, growing width for long/localized names."""
+    text = text.replace("&", "").replace("\n", " ")
+    if metrics.horizontalAdvance(text) <= width:
+        return text, width
+    words = text.split()
+    if len(words) < 2:
+        return text, max(width, metrics.horizontalAdvance(text))
+    choices = [(" ".join(words[:i]), " ".join(words[i:])) for i in range(1, len(words))]
+    first, second = min(choices, key=lambda pair: max(metrics.horizontalAdvance(part) for part in pair))
+    return first + "\n" + second, max(width, metrics.horizontalAdvance(first), metrics.horizontalAdvance(second))
+
+
 class RibbonButton(QtWidgets.QToolButton):
     """Keep a presentation caption separate from the shared native action text."""
     def __init__(self, caption=None, parent=None, fallback="preferences-general.svg"):
@@ -315,7 +334,41 @@ class RibbonButton(QtWidgets.QToolButton):
             self.setIcon(Gui.getIcon(self.fallback))
         if self.caption:
             self.setText(self.caption)
-            self.setAccessibleName(self.caption.replace("\n", " "))
+        self.setAccessibleName(self.text().replace("&", "").replace("\n", " "))
+        if self.property("ribbonSize") == "full":
+            self.fit_caption()
+
+    def fit_caption(self):
+        padding = 24 if self.menu() else 12
+        self.caption_text, width = caption_lines(self.text(), self.fontMetrics(), PRIMARY_WIDTH - padding)
+        self.setFixedSize(width + padding, max(GRID_HEIGHT, FULL_ICON_SIZE + 2 * self.fontMetrics().height() + 10))
+
+    def changeEvent(self, event):
+        super().changeEvent(event)
+        if event.type() in (QtCore.QEvent.FontChange, QtCore.QEvent.StyleChange) and self.property("ribbonSize") == "full":
+            self.fit_caption()
+
+    def paintEvent(self, event):
+        if self.property("ribbonSize") != "full":
+            return super().paintEvent(event)
+        # Native styles can elide QToolButton labels. Paint complete fitted lines
+        # ourselves while retaining the native frame, hover/focus and menu arrow.
+        painter = QtWidgets.QStylePainter(self)
+        option = QtWidgets.QStyleOptionToolButton()
+        self.initStyleOption(option)
+        icon = QtGui.QIcon(option.icon)
+        option.icon = QtGui.QIcon()
+        option.text = ""
+        painter.drawComplexControl(QtWidgets.QStyle.CC_ToolButton, option)
+        mode = (QtGui.QIcon.Active if self.underMouse() else QtGui.QIcon.Normal) if self.isEnabled() else QtGui.QIcon.Disabled
+        state = QtGui.QIcon.On if self.isChecked() else QtGui.QIcon.Off
+        face_width = self.width() - (12 if self.menu() else 0)
+        rect = QtCore.QRect((face_width - self.iconSize().width()) // 2, 4,
+                            self.iconSize().width(), self.iconSize().height())
+        icon.paint(painter, rect, QtCore.Qt.AlignCenter, mode, state)
+        rect = QtCore.QRect(6, FULL_ICON_SIZE + 6, self.width() - (24 if self.menu() else 12), self.height() - FULL_ICON_SIZE - 8)
+        painter.drawItemText(rect, QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTop,
+                             self.palette(), self.isEnabled(), self.caption_text, QtGui.QPalette.ButtonText)
 
     def actionEvent(self, event):
         super().actionEvent(event)
@@ -429,7 +482,8 @@ class Ribbon(QtCore.QObject):
 
     def eventFilter(self, watched, event):
         if (watched == self.window and event.type() in (QtCore.QEvent.Show,
-                QtCore.QEvent.PaletteChange, QtCore.QEvent.StyleChange) and self.enabled):
+                QtCore.QEvent.PaletteChange, QtCore.QEvent.StyleChange,
+                QtCore.QEvent.FontChange, QtCore.QEvent.LanguageChange) and self.enabled):
             self.render_timer.start(0)
         if (watched in self.plus_bars() and event.type() == QtCore.QEvent.Hide
                 and self.enabled and not self.changing):
@@ -671,7 +725,8 @@ class Ribbon(QtCore.QObject):
                              "PartDesign_AdditiveHelix": tr("Helix"), "PartDesign_CompPrimitiveAdditive": tr("Primitive"),
                              "PartDesign_Thickness": tr("Shell/Thickness"),
                              "PartDesign_Defeaturing": tr("Delete Face/Defeaturing"),
-                             "PartDesign_Mirrored": tr("Mirror Feature"), "PartDesign_MultiTransform": tr("Multi Transform")})
+                             "PartDesign_Mirrored": tr("Mirror Feature"), "PartDesign_MultiTransform": tr("Multi Transform"),
+                             "PartDesign_Fillet": tr("Fillet and Chamfer")})
         if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Sketch":
             captions.update({name: tr(label) for name, label in SKETCH_CAPTIONS.items()})
         if self.mode_name == "Design" and hasattr(self, "tabs") and self.current_tab() == "Assembly":
@@ -690,12 +745,14 @@ class Ribbon(QtCore.QObject):
                 size = "full" if command_name in PRIMARY_COMMANDS else "small"
         button.setProperty("ribbonSize", size)
         button.setProperty("ribbonPriority", "primary" if size == "full" else "secondary")
-        button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly if size == "small" else QtCore.Qt.ToolButtonTextUnderIcon)
+        button.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon if size == "full" else QtCore.Qt.ToolButtonIconOnly)
         pixels = {"full": FULL_ICON_SIZE, "medium": MEDIUM_ICON_SIZE, "small": SMALL_ICON_SIZE}[size]
         button.setIconSize(QtCore.QSize(pixels, pixels))
         width, height = (SMALL_BUTTON_SIZE, SMALL_BUTTON_SIZE) if size == "small" else (
             PRIMARY_WIDTH, GRID_HEIGHT if size == "full" else MEDIUM_HEIGHT)
         button.setFixedSize(width, height)
+        if size == "full":
+            button.fit_caption()
         if choices:
             actions = [available[0] for name in choices if (available := native_actions(name))]
         if len(actions) > 1:
@@ -703,7 +760,7 @@ class Ribbon(QtCore.QObject):
             for action in actions:
                 if not action.isSeparator():
                     labels = dict(zip(COORDINATE_CHOICES, ("Coordinate System", "Plane", "Axis", "Point")))
-                    if command_name == "Part_CoordinateSystem" and self.mode_name == "Design" and self.current_tab() == "Home":
+                    if command_name == "Part_CoordinateSystem" and self.mode_name == "Design" and self.current_tab() in ("Home", "Modeling"):
                         # Keep the short Home captions local; native toolbar actions
                         # retain their names and remain responsible for execution.
                         proxy = menu.addAction(action.icon(), tr(labels[action.objectName()]))
@@ -785,6 +842,12 @@ class Ribbon(QtCore.QObject):
                 if self.mode_name == "Design" and self.current_tab() == "Home" and command_name == "PartDesign_Fillet":
                     choices = ("PartDesign_Fillet", "PartDesign_Chamfer")
                 size = "medium" if self.current_tab() == "Home" and title in ("Main", "Frequent operations") else None
+                if modeling:
+                    size = MODELING_SIZES[command_name]
+                    if command_name == "Part_CoordinateSystem":
+                        choices = COORDINATE_CHOICES
+                    elif command_name == "PartDesign_Fillet":
+                        choices = ("PartDesign_Fillet", "PartDesign_Chamfer")
                 if sketch and command_name in SKETCH_MENUS:
                     size = "full" if command_name == "Sketcher_CompDimensionTools" else "small"
                 button = self.make_button(command_name, group, choices, size)
@@ -821,10 +884,12 @@ class Ribbon(QtCore.QObject):
                         item.setEnabled(False)
                         item.setToolTip(tr("Tab creation is not implemented yet."))
                         button.setMenu(menu)
-                        button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+                        button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
                     else:
                         button.setMenu(None)
                         button.setPopupMode(QtWidgets.QToolButton.DelayedPopup)
+                if button.property("ribbonSize") == "full":
+                    button.fit_caption()
                 buttons.append((button, button.property("ribbonSize") == "full"))
             if title in COLLAPSED_GROUPS and buttons:
                 # Rare help operations share one icon; choices retain native states.
@@ -864,8 +929,9 @@ class Ribbon(QtCore.QObject):
                     column, row = column + 1, 0
                 grid.addWidget(button, row, column, span, 1)
                 row += span
+            grid_height = max(GRID_HEIGHT, FULL_ICON_SIZE + 2 * group.fontMetrics().height() + 10)
             for row in range(GRID_ROWS):
-                grid.setRowMinimumHeight(row, SMALL_BUTTON_SIZE // 2)
+                grid.setRowMinimumHeight(row, (grid_height + GRID_ROWS - 1) // GRID_ROWS)
             group_layout.addLayout(grid)
             caption = {"Part Design Modeling Features": "Modeling", "Part Design Transformation Features": "Transformation",
                        "Part Design Dress-Up Features": "Dress-Up", "Part Design Helper Features": "Helpers"}.get(title, title)
@@ -873,17 +939,24 @@ class Ribbon(QtCore.QObject):
             label.setToolTip(label.text())
             caption_width = max(grid.sizeHint().width(),
                                 min(PRIMARY_WIDTH, label.fontMetrics().horizontalAdvance(label.text()) + 2))
-            label.setText(label.fontMetrics().elidedText(label.text(), QtCore.Qt.ElideRight, caption_width))
-            label.setFixedHeight(label.fontMetrics().height())
+            text, caption_width = caption_lines(label.text(), label.fontMetrics(), caption_width)
+            label.setText(text)
+            label.setFixedSize(caption_width + 4, 2 * label.fontMetrics().height())
             label.setAlignment(QtCore.Qt.AlignCenter)
             group_layout.addWidget(label)
-            group.setFixedHeight(GRID_HEIGHT + label.fontMetrics().height() + 6)
+            group.setFixedHeight(grid.sizeHint().height() + label.height() + 6)
+            if layout.count():
+                separator = QtWidgets.QFrame(page)
+                separator.setObjectName("RibbonGroupDivider")
+                separator.setFixedSize(1, group.height())
+                separator.setStyleSheet("QFrame#RibbonGroupDivider { border: none; background-color: #808080; }")
+                layout.addWidget(separator, 0, QtCore.Qt.AlignTop)
             layout.addWidget(group, 0, QtCore.Qt.AlignTop)
-            separator = QtWidgets.QFrame(page)
-            separator.setFrameShape(QtWidgets.QFrame.VLine)
-            separator.setFixedHeight(group.height())
-            layout.addWidget(separator, 0, QtCore.Qt.AlignTop)
         layout.addStretch()
+        groups = page.findChildren(QtWidgets.QWidget, "PlusRibbonGroup")
+        if groups:
+            self.scroll.setFixedHeight(max(group.height() for group in groups)
+                                       + self.widget.style().pixelMetric(QtWidgets.QStyle.PM_ScrollBarExtent))
         old = self.scroll.takeWidget()
         self.scroll.setWidget(page)
         if old:
