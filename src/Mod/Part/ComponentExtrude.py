@@ -169,6 +169,8 @@ def edit(operation, profile, length, reversed_direction=False, mode=None, target
     tool, old_mode, old_target = parameters(operation)
     if mode is None:
         mode, target = old_mode, old_target
+    if getattr(operation, "LegacyMigration", "") == "Sketch-Pad pilot" and mode != "New Body":
+        raise ValueError("This retained legacy Body supports parameter edits. Operation/target conversion awaits the full extrusion adapter.")
     inputs(component, profile, length, mode, target, operation, elements)
     if options is None and tool.TypeId == "PartDesign::Pad":
         options = Extent.read(tool)

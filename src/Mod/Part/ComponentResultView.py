@@ -95,7 +95,7 @@ def install(result):
             view.DisplayMode = ["Background"]
             view.DisplayMode = "Background"
         sync(result)
-    elif isinstance(view.Proxy, ResultViewProvider):
+    elif isinstance(getattr(view, "Proxy", None), ResultViewProvider):
         view.Proxy = 0
         view.ShowInTree = True
         view.DisplayMode = ["Flat Lines", "Shaded", "Wireframe", "Points"]

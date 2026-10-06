@@ -358,7 +358,8 @@ def register_object(component, obj, role="Object", result=False):
         _identity(obj, role)
     elif obj.ComponentRole != role:
         raise ValueError("The object's existing role cannot be changed implicitly.")
-    component.addObject(obj)
+    if owner(obj) != component:
+        component.addObject(obj)
     if automatic:
         obj.Label = next_label(component, re.sub(r"\d+$", "", obj.Name), obj)
     if obj.Name not in component.ModelHistory:

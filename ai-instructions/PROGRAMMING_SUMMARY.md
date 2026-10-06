@@ -3,8 +3,11 @@
 Legacy migration task two routes GUI File Open through native structural conversion:
 Models definitions, shared Part Tree occurrences and retained Body/sketch payloads.
 Exact frames/scales, external save order, missing links and explicit dumb recovery
-are documented in tests/LegacyStructureConversion.md. Task-three history migration
-and installed build delivery remain separate. Owner DOCX is UI/UX only; algorithms,
+are documented in tests/LegacyStructureConversion.md. The task-three Sketch/Pad
+pilot preserves native identities, orders inputs before the original Body result
+and uses an internal child-scoped Tip bridge. See tests/LegacyBodyHistory.md;
+later feature adapters and installed delivery remain separate.
+Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 
 Legacy migration task one: CadDocument.legacy_plan delegates to LegacyConversion

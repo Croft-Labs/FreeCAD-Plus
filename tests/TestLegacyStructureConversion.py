@@ -73,8 +73,9 @@ class TestLegacyStructureConversion(unittest.TestCase):
         self.assertEqual(self.doc.Use0.LinkedObject, part)
         self.assertEqual(self.doc.Use1.LinkedObject, part)
         self.assertEqual(Model.owner(self.doc.Use0), assembly)
-        self.assertEqual(body.Group, [sketch, pad])
-        self.assertEqual(body.Tip, pad)
+        self.assertEqual(body.LegacyBodyHistory, [sketch.Name, pad.Name])
+        self.assertEqual(body.LegacyTip, pad)
+        self.assertEqual(body.Tip.Producer, pad)
         self.assertTrue(body.getGlobalPlacement().isSame(body_frame, 1e-9))
         self.assertEqual(Model.instance_counts(root)[part], 3)
         for obj in (assembly, self.doc.Use0, self.doc.Use1):
@@ -95,8 +96,9 @@ class TestLegacyStructureConversion(unittest.TestCase):
         App.closeDocument(name)
         self.doc = CadDocument.open(target)
         self.same(shapes["Assembly"], self.shape(self.doc.Assembly))
-        self.assertEqual(self.doc.Body.Tip.Name, "Pad")
-        self.assertEqual([o.Name for o in self.doc.Body.Group], ["Sketch", "Pad"])
+        self.assertEqual(self.doc.Body.LegacyTip.Name, "Pad")
+        self.assertEqual(self.doc.Body.LegacyBodyHistory, ["Sketch", "Pad"])
+        self.assertEqual(self.doc.Body.Group, [self.doc.Body.Tip])
 
     def test_standalone_body_shared_wrapper(self):
         body = self.doc.addObject("PartDesign::Body", "Body")
@@ -200,7 +202,8 @@ class TestLegacyStructureConversion(unittest.TestCase):
         CadDocument.convert_legacy(self.doc)
         self.same(before, self.shape(link))
         self.assertEqual(Model.owner(body), part)
-        self.assertEqual(body.Group, [sketch, pad])
+        self.assertEqual(body.LegacyBodyHistory, [sketch.Name, pad.Name])
+        self.assertEqual(body.Tip.Producer, pad)
 
     def test_root_primitive_legacy_recompute_save_reopen(self):
         from TestComponentDocument import TestComponentDocument

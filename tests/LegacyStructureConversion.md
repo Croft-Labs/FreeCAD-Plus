@@ -11,7 +11,9 @@ Parts remain native history/result payloads; their Groups, Tips, sketches, const
 and feature objects are preserved. Links to internal features use definition-owned
 geometry links without removing the source from its native Body. Native outputs
 are exposed directly in ResultObjects: publishing a second copy would duplicate
-Part compound geometry. Operation/result history migration belongs to task three.
+Part compound geometry. Task three now maps the narrow Sketch/first-Pad history
+through the original Body result carrier; other feature histories retain their
+native payloads. See [Body history pilot](LegacyBodyHistory.md).
 
 Definition frames preserve original native world locations after separation.
 Placed container occurrences retain their previous local placement. Existing Links

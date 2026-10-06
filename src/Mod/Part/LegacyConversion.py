@@ -31,6 +31,119 @@ def _own_identity(obj):
         return False
 
 
+class BodyOutputProxy:
+    """Native Body Tip bridge; the editable producer lives in component History."""
+
+    def execute(self, obj):
+        import Part
+        obj.Shape = Part.Shape()
+        producer = obj.Producer
+        if producer is not None and "Invalid" not in producer.State:
+            obj.Placement = producer.Shape.Placement
+            obj.Shape = producer.Shape.copy()
+
+    def dumps(self):
+        return None
+
+    def loads(self, state):
+        pass
+
+
+def body_history_plan(body, component, source_ready):
+    """Admit only the proven independent Sketch -> first Pad pilot."""
+    import ComponentModel as Model
+    if not body.Placement.isSame(App.Placement(), 1e-9):
+        return None, "Body frame mapping awaits the attachment/frame adapter"
+    pad = body.Tip
+    if pad is None or pad.TypeId != "PartDesign::Pad":
+        return None, "native Tip feature family awaits its adapter"
+    sketch = pad.Profile[0]
+    if sketch is None or not sketch.isDerivedFrom("Sketcher::SketchObject"):
+        return None, "Pad profile is not an independent sketch"
+    if set(body.Group) not in ({sketch, pad}, {pad}) or pad.BaseFeature is not None:
+        return None, "multi-feature native Body history awaits its adapters"
+    if Model.owner(sketch) not in (body, component):
+        return None, "profile belongs to another native owner"
+    if (str(sketch.MapMode) != "Deactivated" or sketch.AttachmentSupport
+            or sketch.ExternalGeometry or pad.Profile[1]):
+        return None, "attached/external/subelement sketch inputs await their adapter"
+    if (str(pad.Type) != "Length" or str(pad.SideType) != "One side"
+            or pad.UseCustomVector or float(pad.TaperAngle) != 0
+            or str(pad.StartType) != "Profile plane"):
+        return None, "Pad extent semantics await the full extrusion adapter"
+    if any(obj.ExpressionEngine for obj in (body, sketch)):
+        return None, "frame/sketch expressions await dependency-aware migration"
+    if not source_ready or any("Invalid" in obj.State for obj in (body, pad, sketch)):
+        return None, "native history needs recompute or repair; cached output is unverified"
+    if body.Shape.isNull() or not body.Shape.isValid() or len(body.Shape.Solids) != 1:
+        return None, "native output needs repair; no solid output is fabricated"
+    return (sketch, pad), ""
+
+
+def migrate_body_histories(document, report, readiness):
+    """Flatten proven histories, retaining other native histories and final outputs.
+
+    Called inside the structural transaction; no new document or feature identities
+    replace legacy objects. Body's native child-scoped Tip uses an internal bridge.
+    """
+    import ComponentModel as Model
+    for component in Model.definitions(document):
+        bodies = [obj for obj in Model.history(component) if obj.TypeId == "PartDesign::Body"]
+        for body in bodies:
+            plan, reason = body_history_plan(body, component, readiness.get(body, False))
+            if plan is None:
+                Model._property(body, "String", "LegacyHistoryState", "Retained native: " + reason, True)
+                report.append(body.Label + ": editable native Body history and available final output retained; " + reason + ".")
+                continue
+            sketch, pad = plan
+            before = body.Shape.copy()
+            names = list(component.ModelHistory)
+            original_group = [obj.Name for obj in body.Group]
+            for obj, role in ((sketch, "Object"), (pad, "Operation")):
+                if Model.owner(obj) == body:
+                    body.removeObject(obj)
+                Model.register_object(component, obj, role)
+            Model._property(pad, "String", "OperationKind", "Extrude", True)
+            Model._property(pad, "String", "ExtrudeMode", "New Body", True)
+            Model._property(pad, "String", "LegacyMigration", "Sketch-Pad pilot", True)
+            bridge = body.newObject("PartDesign::FeaturePython", "LegacyBodyOutput")
+            Model._identity(bridge, "Internal")
+            Model._property(bridge, "LinkGlobal", "Producer", pad, True)
+            bridge.Proxy = BodyOutputProxy()
+            bridge.Label = body.Label + " native output bridge"
+            body.Tip = bridge
+            # Explicit migration of the existing semantic role, never replacement
+            # of the native Body name/type/ObjectId or its downstream references.
+            body.ComponentRole = "Result"
+            Model._property(body, "Link", "Producer", pad, True)
+            Model._property(body, "Bool", "Frozen", False, True)
+            Model._property(body, "String", "GeometryKind", "Body", True)
+            Model._property(body, "String", "OutputProperty", "Shape", True)
+            Model._property(body, "Bool", "BackgroundResult", False, True)
+            Model._property(body, "StringList", "LegacyBodyHistory", original_group, True)
+            Model._property(body, "Link", "LegacyTip", pad, True)
+            Model._property(body, "String", "LegacyHistoryState", "Mapped Sketch-Pad pilot", True)
+            ordered = []
+            for name in names:
+                if name in (sketch.Name, pad.Name):
+                    continue
+                ordered.extend([sketch.Name, pad.Name, body.Name] if name == body.Name else [name])
+            component.ModelHistory = ordered
+            component.ResultObjects = [name for name in component.ResultObjects
+                                       if name not in (sketch.Name, pad.Name)]
+            if App.GuiUp:
+                bridge.Visibility = sketch.Visibility = pad.Visibility = False
+                bridge.ViewObject.ShowInTree = False
+            document.recompute()
+            if "Invalid" in body.State or body.Shape.isNull() or not body.Shape.isValid():
+                raise ValueError("Migrated native Body output failed; retain payloads through evaluated recovery.")
+            if (abs(before.Volume - body.Shape.Volume) > 1e-8
+                    or before.cut(body.Shape).Volume > 1e-8
+                    or body.Shape.cut(before).Volume > 1e-8):
+                raise ValueError("Migrated Body geometry changed; retain native payloads through evaluated recovery.")
+            report.append(body.Label + ": Sketch and Pad precede the original Body result in component History; editable native identities retained.")
+
+
 def recovery_shapes(document):
     """Capture native top-level output before structural edits, for recovery."""
     import Part
@@ -331,6 +444,9 @@ def convert_structure(document, extra_targets=(), visiting=None):
                        for obj in originals for _, expression in getattr(obj, "ExpressionEngine", [])):
                     raise ValueError("An expression consumes the legacy local Part frame; preserve native formulas through explicit evaluated recovery.")
         parents = {o: Model.owner(o) for o in originals}
+        readiness = {o: not any(flag in ("Invalid", "Touched")
+                               for dep in [o] + Model.geometry_dependencies(o) for flag in dep.State)
+                     for o in originals if o.TypeId == "PartDesign::Body"}
         local_frames = {o: App.Placement(o.Placement) for o in parts}
         labels = {o: o.Label for o in originals}
         old_filename = document.FileName
@@ -355,6 +471,11 @@ def convert_structure(document, extra_targets=(), visiting=None):
                 Model._identity(obj, role)
             if target is not None:
                 obj.setLink(target)
+            # Native addObject expands local-scope dependencies. Legacy consumers
+            # may already cross Parts; do not steal their source Body/feature into
+            # the consumer's new definition. Set explicit membership instead.
+            if Model.owner(obj) is None:
+                component.Group = list(component.Group) + [obj]
             Model.register_object(component, obj, role, result)
             if obj in labels:
                 obj.Label = labels[obj]
@@ -516,6 +637,7 @@ def convert_structure(document, extra_targets=(), visiting=None):
                         definition.ResultObjects = list(definition.ResultObjects) + [obj.Name]
                     if obj.TypeId == "PartDesign::Body":
                         report.append(obj.Label + ": native Body Tip and sketch/feature history retained; feature adapters pending.")
+            migrate_body_histories(document, report, readiness)
             meta.ConversionReport = report + ["Models and linked Part Tree instances converted; native features retained.",
                 "Recovery policy: retained editable native features before explicit validated dumb geometry; no fallback created in this structural step."]
             if external:

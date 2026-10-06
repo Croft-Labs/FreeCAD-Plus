@@ -10,7 +10,14 @@
   DOCX requirements rendered/inspected; source and publication in WORK_STATE.
 - [x] 2. Models definitions and Part Tree occurrences; preserve permanent master,
   ownership, shared definitions, nested/local/world placements and external sources.
-- [ ] 3. Body history/results foundation and narrow Sketch → Pad pilot.
+- [ X ] 3. Body history/results foundation and narrow Sketch → Pad pilot:
+  original Sketch/Pad/Body identities, component-owned input/operation order and
+  original Body result carrier with native child-scoped Tip bridge. Retained native
+  histories and explicit dumb recovery remain available. 35 native source-mode
+  checks pass, including nine pilot checks, actual History double-clicks, task
+  Accept/Cancel, Undo/Redo, recompute and cadprt reopen. Owner DOCX contains only
+  affected UI interactions, rendered/inspected; technical evidence in WORK_STATE.
+  Installed/build delivery remains batched; this is not owner-payload acceptance.
 - [ ] 4. Origins and datum geometry/attachment frames.
 - [ ] 5. Sketch ownership, attachments, constraints, expressions and shared inputs.
 - [ ] 6. Pad/Pocket/Extrude parameters, targets and result chains.
@@ -25,7 +32,8 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one and two have source/native milestones; later tasks remain separate.
+for unrelated feature implementation. Tasks one to three have source/native
+milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).
 

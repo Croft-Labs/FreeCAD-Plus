@@ -279,7 +279,15 @@ See [inventory API and acceptance](../../tests/LegacyConversionPlan.md).
 
 Structural migration reuses legacy Part identities and shared native Links, with
 definition/occurrence identity kept distinct. Preserve Body Group/Tip/native inputs
-until feature adapters migrate them. Retain original world geometry through explicit
+until feature adapters migrate them. The narrow Sketch/first-Pad adapter orders
+the native input and operation before the original Body result, preserving their
+names/types/identities and downstream Body references. A hidden internal native
+feature bridges the component-owned Pad to the Body's child-scoped Tip; native
+Origins, labels and view providers remain intact. Preserve evaluated placement and
+geometry, expressions and protected source files; unqualified histories remain
+editable native payloads with explicit reports. See
+[Body history pilot and acceptance](../../tests/LegacyBodyHistory.md).
+Retain original world geometry through explicit
 definition-frame and occurrence-frame compensation, including native scale modes.
 Original source files remain protected; external converted files are saved to new
 cadprt paths in dependency order. Transaction/Undo boundaries are per document.
