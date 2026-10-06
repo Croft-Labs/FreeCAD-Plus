@@ -82,6 +82,14 @@ class SketchObject(Part2DObject):
         """
         ...
 
+    @constmethod
+    def diagnoseConstraintAdditions(self, constraints: List[Constraint], /) -> int:
+        """Return native solve diagnostics on cloned data; leave the sketch and live solver unchanged.
+
+        Uses solve() status codes. Solver nonconvergence (-1) means unknown feasibility.
+        """
+        ...
+
     @overload
     def addGeometry(self, geo: Geometry, is_construction: bool = False, /) -> int: ...
     @overload
@@ -472,6 +480,15 @@ class SketchObject(Part2DObject):
             Args:
                 state: `True` set all datum constraints to driving,
                     `False` configures them as non-driving, i.e. reference.
+        """
+        ...
+
+    def setDrivingBatch(self, indices: List[int], state: bool, /) -> int:
+        """Convert selected dimensions atomically, then solve once.
+
+        API errors leave all inputs unchanged. Solver failure retains converted
+        constraints and returns the solve status; the caller owns the transaction.
+        Reference conversion refuses driving expressions instead of removing them.
         """
         ...
 

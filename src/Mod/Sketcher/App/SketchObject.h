@@ -347,6 +347,10 @@ public:
      *         SolverError, RedundantConstraints.
      */
     SketchSolveStatus solve(bool updateGeoAfterSolving = true);
+    /// Diagnose additions on cloned native solver data, without changing the document or live solver.
+    SketchSolveStatus diagnoseConstraintAdditions(const std::vector<Constraint*>& additions) const;
+    /// Convert a validated batch without intermediate solves or expression removal.
+    SketchSolveStatus setDrivingBatch(const std::vector<int>& indices, bool driving);
     /// set the datum of a Distance or Angle constraint and solve
     SketchSolveStatus setDatum(int ConstrId, double Datum);
     /// get the datum of a Distance or Angle constraint

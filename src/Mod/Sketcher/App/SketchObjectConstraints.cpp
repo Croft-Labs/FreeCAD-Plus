@@ -189,6 +189,45 @@ SketchSolveStatus SketchObject::solve(bool updateGeoAfterSolving /*=true*/)
     return status;
 }
 
+SketchSolveStatus SketchObject::diagnoseConstraintAdditions(const std::vector<Constraint*>& additions) const
+{
+    // The native solver may update geometry extensions and reference datums.
+    // Clone both inputs so neither the saved sketch nor its live solver is touched.
+    std::vector<std::unique_ptr<Part::Geometry>> ownedGeometry;
+    std::vector<Part::Geometry*> geometry;
+    for (const auto* item : getCompleteGeometry()) {
+        ownedGeometry.emplace_back(item->clone());
+        geometry.push_back(ownedGeometry.back().get());
+    }
+    std::vector<std::unique_ptr<Constraint>> ownedConstraints;
+    std::vector<Constraint*> constraints;
+    auto append = [&](const auto& items) {
+        for (const auto* item : items) {
+            ownedConstraints.emplace_back(item->clone());
+            constraints.push_back(ownedConstraints.back().get());
+        }
+    };
+    append(Constraints.getValues());
+    append(additions);
+    Sketch probe;
+    int dof = probe.setUpSketch(geometry, constraints, getExternalGeometryCount());
+    if (dof < 0) {
+        return SketchSolveStatus::Overconstrained;
+    }
+    if (probe.hasConflicts()) {
+        return SketchSolveStatus::ConflictingConstraints;
+    }
+    if (probe.hasMalformedConstraints()) {
+        return SketchSolveStatus::MalformedConstraints;
+    }
+    if (probe.hasRedundancies() || probe.hasPartialRedundancies()) {
+        return SketchSolveStatus::RedundantConstraints;
+    }
+    // Nonconvergence is unknown feasibility, not evidence of a known conflict.
+    return probe.solve() == GCS::SolveStatus::Success
+        ? SketchSolveStatus::Success : SketchSolveStatus::SolverError;
+}
+
 SketchSolveStatus SketchObject::setDatum(int ConstrId, double Datum)
 {
     // no need to check input data validity as this is an sketchobject managed operation.
@@ -262,6 +301,25 @@ int SketchObject::setDriving(int ConstrId, bool isdriving)
         solve();
 
     return 0;
+}
+
+SketchSolveStatus SketchObject::setDrivingBatch(const std::vector<int>& indices, bool driving)
+{
+    for (int index : indices) {
+        if (testDrivingChange(index, driving) != 0) {
+            throw Base::ValueError("A selected constraint does not support this driving state");
+        }
+        if (!driving && getExpression(Constraints.createPath(index)).expression) {
+            throw Base::ValueError("Reference conversion would remove a driving expression");
+        }
+    }
+    {
+        Base::StateLocker lock(noRecomputes, false);
+        for (int index : indices) {
+            setDriving(index, driving);
+        }
+    }
+    return solve();
 }
 
 int SketchObject::getDriving(int ConstrId, bool& isdriving)

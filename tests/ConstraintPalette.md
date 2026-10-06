@@ -1,0 +1,25 @@
+# Contextual Constraint Palette acceptance
+
+Run `TestConstraintPalette` in the Plus GUI runtime; after the grouped native build
+run `TestConstraintPaletteNative` as well. The native class requires the new cloned
+solver diagnostic and single-solve driving batch APIs; do not count an older payload
+with Python overlays as verification of those methods.
+
+Quick checks use real Sketcher geometry, constraints, native transactions and Qt:
+Equal then Construction, mixed construction normal-first, persistent on/off,
+failed input retention, dimension conversion in one Undo step, expression protection,
+committed invalid Make Driving with Undo, save/reopen, structural action eligibility,
+disabled tooltips with no mutation, viewport clamping, corridor and timer cancellation.
+The viewport test uses Qt mouse events for click/open, Escape, empty space and drag.
+
+Native diagnostic acceptance must compare geometry, constraints, document UndoCount
+and solver state before/after repeated hover/update. Test indirect Equal redundancy,
+conflicting dimensions and external-geometry safeguards. Failed batch API validation
+must leave every selected dimension unchanged; solver failure must retain all driving
+conversions and their values/identities as one undoable action.
+
+Prompt 10 additionally covers real pointer travel at viewport corners and multiple
+DPI settings; multiselection and connected-curve expansion; palette action updates
+without jumping; no palette on box selection; undo/redo while visible; task/sketch
+exit, document close and deletion; actual native dimension command dialogs; save and
+reopen after an intentionally invalid conversion. No separate repair workflow is added.

@@ -66,6 +66,34 @@ PyObject* SketchObjectPy::solve(PyObject* args)
     return Py_BuildValue("i", std::to_underlying(status));
 }
 
+PyObject* SketchObjectPy::diagnoseConstraintAdditions(PyObject* args) const
+{
+    PyObject* input;
+    if (!PyArg_ParseTuple(args, "O", &input)) {
+        return nullptr;
+    }
+    PY_TRY {
+        if (!PyList_Check(input) && !PyTuple_Check(input)) {
+            throw Py::TypeError("Expected a sequence of Sketcher constraints");
+        }
+        std::vector<Constraint*> additions;
+        Py::Sequence sequence(input);
+        for (auto it = sequence.begin(); it != sequence.end(); ++it) {
+            if (!PyObject_TypeCheck((*it).ptr(), &ConstraintPy::Type)) {
+                throw Py::TypeError("Expected a Sketcher constraint");
+            }
+            auto* constraint = static_cast<ConstraintPy*>((*it).ptr())->getConstraintPtr();
+            if (!getSketchObjectPtr()->evaluateConstraint(constraint)) {
+                throw Py::IndexError("Constraint has invalid indexes");
+            }
+            additions.push_back(constraint);
+        }
+        return Py_BuildValue("i", std::to_underlying(
+            getSketchObjectPtr()->diagnoseConstraintAdditions(additions)));
+    }
+    PY_CATCH;
+}
+
 PyObject* SketchObjectPy::addGeometry(PyObject* args)
 {
     PyObject* pcObj;
@@ -1048,6 +1076,28 @@ PyObject* SketchObjectPy::setDatumsDriving(PyObject* args)
     }
 
     Py_Return;
+}
+
+PyObject* SketchObjectPy::setDrivingBatch(PyObject* args)
+{
+    PyObject* input;
+    PyObject* driving;
+    if (!PyArg_ParseTuple(args, "OO!", &input, &PyBool_Type, &driving)) {
+        return nullptr;
+    }
+    PY_TRY {
+        if (!PyList_Check(input) && !PyTuple_Check(input)) {
+            throw Py::TypeError("Expected dimension indices");
+        }
+        bool target = Base::asBoolean(driving);
+        std::vector<int> indices;
+        Py::Sequence sequence(input);
+        for (auto it = sequence.begin(); it != sequence.end(); ++it) {
+            indices.push_back(Py::Long(*it));
+        }
+        return Py_BuildValue("i", std::to_underlying(getSketchObjectPtr()->setDrivingBatch(indices, target)));
+    }
+    PY_CATCH;
 }
 
 PyObject* SketchObjectPy::moveDatumsToEnd(PyObject* args)
