@@ -1,5 +1,29 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 Design Mode toolbar outline
+
+Owner DOCX section 2.1.2.1 now documents the installed Design ribbon using nested
+Tab / group / Large Button or Medium/Small Button Cluster / button / dropdown
+choice lists. Seven tabs, 168 rendered buttons and 24 dropdowns were read from
+the actual installed PlusRibbon Qt grid with isolated settings. Installed
+PlusRibbon.py bytes match current source. List order follows visible columns
+left to right and cluster rows top to bottom. Modeling's current small clusters,
+separate Fillet/Chamfer, Pipe, duplicate Primitive entry and lack of Other group
+are recorded accurately; this documentation task does not change application UI.
+Assembly now includes the previously omitted Move Components. Tab primitive
+remains explicitly disabled/unimplemented. Native action/geometry contracts and
+common toolbar placement are retained.
+
+Only the section's outline paragraphs change; preceding/following OOXML content,
+all other ZIP parts, styles and numbering definitions remain unchanged. Native
+automatic heading and bullet numbering are retained. Canonical DOCX renders to
+87 pages (previously 86); outline pages 56-64 and later reflow pages 65-71 are
+visually inspected. Prior pages 1-55 and sixteen later pages match the baseline
+render exactly. Temporary native inventory, scripts and before/after render QA
+are deleted at completion under the owner storage policy. Commit/push this
+documentation milestone to origin/main; no new build or desktop retarget is
+needed, and all prior product acceptance limitations remain unchanged.
+
 ## October 6 artifact relocation and end-of-task cleanup
 
 Owner policy supersedes earlier artifact paths below. Current useful payload:

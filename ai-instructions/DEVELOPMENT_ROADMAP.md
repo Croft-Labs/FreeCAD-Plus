@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 Design Mode outline synchronization
+
+- [x] Read actual installed Design ribbon grids: seven tabs, 168 buttons and
+  24 dropdowns; installed PlusRibbon matches source.
+- [x] Update owner DOCX section 2.1.2.1 with native nested bullet lists for
+  groups, button sizes, medium/small column clusters and dropdown choices.
+- [x] Preserve content outside the section, other DOCX package parts and native
+  automatic numbering. Inspect outline/reflow pages 56-71 in the 87-page render.
+- [x] Delete temporary inventory and render artifacts after canonical summary.
+  Documentation-only milestone; no application change, new build or new feature
+  acceptance is claimed.
+
 ## October 6 owner artifact storage policy
 
 - [x] Relocate the useful current payload, native development tree and build
