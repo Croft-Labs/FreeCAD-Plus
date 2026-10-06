@@ -1,5 +1,25 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 owner artifact storage policy
+
+- [x] Relocate the useful current payload, native development tree and build
+  dependencies/toolchain into the owner's external `test-builds` root.
+- [x] Regenerate CMake paths; save/reopen and verify the exact desktop shortcut;
+  real shortcut launch passes three native checks without source overlays.
+- [x] Confine shared test/build runner output to prescribed roots; isolate
+  TEMP/TMP and suppress source bytecode writes; parsing/path checks pass.
+- [x] Synchronize owner DOCX and visually inspect changed pages 70-76 of its
+  86-page render, preserving other package parts and native numbering.
+- [x] Remove superseded payloads, redundant archive and generated checkout caches;
+  discard reviewed raw validation after recording canonical summaries.
+- [ ] Three generated Windows Temp fixture directories deny enumeration/deletion
+  under the approved cleanup; exact remaining paths are recorded in WORK_STATE.
+  No unrelated user/source data or original workload archive is removed.
+
+Historical validation paths below describe original executions. Current storage,
+build provenance and retained evidence summaries are owned by WORK_STATE and the
+useful payload's release-info/manifest; deleted raw outputs are not available.
+
 ## October 6 contextual constraint palette presentation
 
 - [x] Icon-only palette buttons share corresponding native QAction icons and

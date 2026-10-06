@@ -8,11 +8,15 @@ param(
     [ValidateRange(5,120)][int]$TimeoutMinutes = 30
 )
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../tools/FreeCADArtifactPaths.ps1')
+$OutputDirectory = Resolve-FreeCADArtifactPath -Path $OutputDirectory
+$BuildDirectory = Resolve-FreeCADArtifactPath -Path $BuildDirectory -Kind test-builds
 if ($AllTargets -and ($ScriptsOnly -or $AssemblyConsumer)) {
     throw 'AllTargets cannot be combined with a focused target selection.'
 }
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new build evidence directory.' }
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
+$env:TEMP = $env:TMP = $OutputDirectory
 $targets = @('FreeCADApp', 'FreeCADGui', 'FreeCADGui_Resources', 'PartGui', 'PartDesignGui', 'SketcherGui', 'PartScripts')
 if ($ScriptsOnly) { $targets = @('FreeCADGui_Resources', 'PartScripts') }
 if ($AssemblyConsumer) { $targets += @('AssemblyGui', 'AssemblyTests') }

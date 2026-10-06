@@ -60,6 +60,17 @@ Do not claim to have read missing guidance or maintain an independent master cop
   rebuild after every change or just to close one feature task. Keep quick checks
   running and record deferred validation. Follow the
   [build batching policy](ai-instructions/DEVELOPMENT_GUIDE.md#build-and-test-batching).
+- Store generated validation output only in
+  `C:\Users\GAMING-PC\Documents\_temp\freecad\validation`, including test
+  profiles, logs, captures, render output and temporary CAD fixtures. Summarize
+  actual results in the canonical roadmap/WORK_STATE, then delete task validation
+  files at completion. Do not retain raw validation artifacts in this checkout.
+- Store native compilation trees, owner test payloads and required build
+  dependencies only in `C:\Users\GAMING-PC\Documents\_temp\freecad\test-builds`.
+  Retain the current useful owner/development builds; delete superseded builds
+  and unnecessary downloads. Retarget and verify the desktop shortcut before
+  removing a build it referenced. Preserve tracked source/tests, owner documents,
+  application settings and source archives; this policy concerns generated output.
 - The user authorizes periodic pushes to the configured `origin` GitHub fork.
   Push coherent, validated commits at completed milestones and clean stopping points;
   verify the remote branch afterward. Do not force-push. This does not authorize

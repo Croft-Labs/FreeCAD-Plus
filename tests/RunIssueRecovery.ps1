@@ -3,6 +3,8 @@ param(
     [Parameter(Mandatory=$true)][string]$OutputDirectory
 )
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../tools/FreeCADArtifactPaths.ps1')
+$OutputDirectory = Resolve-FreeCADArtifactPath -Path $OutputDirectory
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new, empty evidence directory.' }
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 $OutputDirectory = (Resolve-Path -LiteralPath $OutputDirectory).Path
@@ -11,6 +13,8 @@ $env:FREECAD_PLUS_SOURCE = Split-Path -Parent $PSScriptRoot
 $env:FREECAD_USER_HOME = $OutputDirectory
 $env:FREECAD_USER_DATA = $OutputDirectory
 $env:FREECAD_USER_TEMP = $OutputDirectory
+$env:TEMP = $env:TMP = $OutputDirectory
+$env:PYTHONDONTWRITEBYTECODE = '1'
 foreach ($phase in @('prepare', 'verify')) {
     $env:FREECAD_PLUS_RECOVERY_PHASE = $phase
     $launchArgs = @('--user-cfg', ('"' + $OutputDirectory + '\user.cfg"'),

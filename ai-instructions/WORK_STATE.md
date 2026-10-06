@@ -1,5 +1,57 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 artifact relocation and end-of-task cleanup
+
+Owner policy supersedes earlier artifact paths below. Current useful payload:
+`C:\Users\GAMING-PC\Documents\_temp\freecad\test-builds\freecad_plus_2026-10-06_constraint_palette_icons_payload`.
+The native development tree `freecad_plus_2026-10-06_recovered_workload`, extracted
+LibPack under `dependencies`, and NSIS under `toolchain` are retained in the same
+test-builds root. CMake configure/generate succeeds after relocating its cache
+and dependency paths; no native compilation was performed for this storage task.
+Original payload source revision remains 5e12817f8e7210418fab547fdc0de93869bf9c23;
+native GUI source snapshot e29d2e5 and embedded native revision edf2e742 remain
+unchanged. Durable payload release-info/manifest describe relocation separately.
+All 15,121 stable payload manifest entries match their pre-relocation hashes;
+only the durable build metadata is then updated to record the new location.
+
+The exact existing desktop FreeCADPlus.exe - Shortcut.lnk was saved, reopened and
+its target/working directory verified against the new payload. A real launch
+through that shortcut passes three native palette presentation/hover/pointer
+tests, without source overlays. Installed module SHA-256 remains
+eaa77531e440532eec56870d233cd545ded48e8a33f8efda978ac0a24a4bd502;
+Qt DPR 1.5, logical palette 248 by 88, native icons 24 by 24, twenty presentation
+mappings. Prior broad-suite limitations and physical owner acceptance remain
+separate; relocation does not establish new feature acceptance.
+
+Ten ignored checkout build/validation directories and task-generated Codex
+visualization output were moved to the requested validation root for review.
+Raw output is discarded after this canonical summary per owner instruction.
+Removed four obsolete AppData payload/build directories, empty checkout tmp,
+redundant LibPack archive and generated source bytecode caches. Original owner
+prompt/context archives, tracked tests, owner documents and preferences remain.
+Three known generated fixtures could not be removed: Windows denies enumeration,
+ACL reads and deletion even in the approved elevated cleanup. Exact remaining
+paths are `C:\Users\GAMING-PC\AppData\Local\Temp\layers_adxj6v8g`,
+`C:\Users\GAMING-PC\AppData\Local\Temp\layers_bfsr0rll` and
+`C:\Users\GAMING-PC\AppData\Local\Temp\palette_sx6go1wk`.
+Do not claim these three directories were deleted or modify unrelated Temp data.
+
+Shared runner output paths are confined to the prescribed roots; TEMP/TMP point
+to the validation task and Python bytecode writes are disabled for GUI runners.
+PowerShell parsing and path escape/sibling rejection checks pass.
+The updated shared runner also passes one native constraint conversion/Undo/
+save-reopen case (process exit 0); its palette_ fixture is created inside the
+validation task directory and no source bytecode cache is left in the checkout.
+Owner DOCX requirement is synchronized: 86 rendered pages, changed pages 70-76 inspected,
+all other package parts and automatic numbering retained. Raw validation and
+render artifacts are deleted at task completion. Source policy/tools/docs form
+one coherent milestone; push only origin/main and verify its remote ref.
+
+Next steps: owner feedback uses the relocated shortcut; future tasks create a
+fresh subdirectory of `validation`, summarize results here and remove their raw
+output before handoff. Reuse the retained development build for batched native
+changes. The three Windows-protected fixtures above need an account with access.
+
 ## October 6 constraint palette icons and native tooltips
 
 Active owner change: replace sketch-edit contextual palette word buttons with

@@ -44,6 +44,8 @@ param(
     [ValidateRange(30,600)][int]$TimeoutSeconds = 180
 )
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../tools/FreeCADArtifactPaths.ps1')
+$OutputDirectory = Resolve-FreeCADArtifactPath -Path $OutputDirectory
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new evidence directory.' }
 $Executable = (Resolve-Path -LiteralPath $Executable).Path
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
@@ -53,6 +55,8 @@ $env:FREECAD_PLUS_SOURCE = Split-Path -Parent $PSScriptRoot
 $env:FREECAD_USER_HOME = $OutputDirectory
 $env:FREECAD_USER_DATA = $OutputDirectory
 $env:FREECAD_USER_TEMP = $OutputDirectory
+$env:TEMP = $env:TMP = $OutputDirectory
+$env:PYTHONDONTWRITEBYTECODE = '1'
 $env:FREECAD_PLUS_ISSUE_TESTS = 'tests/TestComponentDocument.py'
 $env:FREECAD_PLUS_TEST_NAMES = $TestNames
 $env:FREECAD_PLUS_VERIFY_PAYLOAD = '0'

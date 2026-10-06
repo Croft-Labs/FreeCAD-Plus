@@ -29,12 +29,25 @@ source tree. All new build folders must follow the owner's naming convention:
 `freecad_plus_[yyyy-mm-dd]_[test_case]`, for example
 `freecad_plus_2026-10-03_extrude_frame`. Use the build date and a descriptive
 underscore-separated test-case name. Apply this convention to owner build output
-folders as well as newly created compilation folders. The parent directory stays
-outside Google Drive, for example `$env:LOCALAPPDATA\FreeCADPlus`. Existing build
-folders and historical evidence paths are not renamed by this documentation update.
+folders as well as newly created compilation folders. Use
+`C:\Users\GAMING-PC\Documents\_temp\freecad\test-builds` for test payloads,
+native compilation trees and their required dependency/toolchain directories.
+Retain useful builds; delete superseded builds once the current payload launches
+successfully through its saved, retargeted desktop shortcut. Historical evidence
+paths describe the original runs, not current storage locations.
 Choose and record a compatible LibPack directory before configuring. Default
 CMake presets place output inside the source tree, so override their build path.
 These locations are a development convention, not evidence of an existing build.
+
+Put all generated validation output, fixtures, captures, logs and DOCX QA in
+`C:\Users\GAMING-PC\Documents\_temp\freecad\validation`. After reviewing results
+and recording exact summaries and limitations in WORK_STATE/roadmap, delete the
+task's validation directory at completion. Do not retain raw validation in the
+checkout, Codex visualization folders or OS Temp. Preserve tracked test source,
+owner documents/preferences and original workload archives. The shared PowerShell
+runners resolve relative output paths beneath this validation root, reject escaped
+or redirected output paths, and set TEMP/TMP there for Python fixture creation.
+BuildComponentDocument also confines its build directory to the test-builds root.
 
 Ignore the separately installed FreeCAD: do not modify it, launch it to validate
 this fork, or use its behavior as proof that these source changes work.
@@ -68,7 +81,7 @@ if (-not $env:FREECAD_LIBPACK_DIR -or -not (Test-Path -LiteralPath $env:FREECAD_
     throw 'Set FREECAD_LIBPACK_DIR to a compatible LibPack directory first.'
 }
 $freecadPlusBuildName = "freecad_plus_$(Get-Date -Format 'yyyy-MM-dd')_extrude_frame"
-$freecadPlusBuild = Join-Path (Join-Path $env:LOCALAPPDATA 'FreeCADPlus') $freecadPlusBuildName
+$freecadPlusBuild = Join-Path (Join-Path $env:USERPROFILE 'Documents\_temp\freecad\test-builds') $freecadPlusBuildName
 $freecadPlusOptions = @(
     '-DBUILD_GUI=ON', '-DBUILD_PART=ON', '-DBUILD_SKETCHER=ON', '-DBUILD_PART_DESIGN=ON',
     '-DBUILD_START=ON', '-DBUILD_TUX=ON',

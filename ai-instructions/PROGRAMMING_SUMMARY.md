@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+Owner artifact policy: generated validation belongs only in
+`C:\Users\GAMING-PC\Documents\_temp\freecad\validation` and is deleted at task
+completion after recording verified summaries. Useful test payloads, native build
+trees and their dependencies belong in the sibling `test-builds` directory.
+WORK_STATE records the relocated current payload and verified desktop shortcut.
+
 Startup and workspace persistence: StartupProcess seeds theme/docking preferences
 before native managers initialize and exposes the completed workspace once.
 ComponentNavigator registers its dock before restore and keeps user-customized
