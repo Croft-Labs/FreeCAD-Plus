@@ -1119,6 +1119,10 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if getattr(obj, "LegacySketchState", "") == "Linked native sketch":
+        if getattr(obj, "LegacySketchSource", None) is None:
+            return "Retained native sketch is missing. Repair its source before editing or using it."
+        return "Linked native sketch. Edit the original constraints, expressions and attachments shared by its consumers."
     if getattr(obj, "LegacyDatumState", "") == "Linked native attachment":
         if getattr(obj, "LegacyDatumSource", None) is None:
             return "Retained native datum is missing. Repair its source before using this frame."
@@ -1139,6 +1143,11 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    if (getattr(obj, "LegacySketchState", "") == "Linked native sketch"
+            and (getattr(obj, "LegacySketchSource", None) is None
+                 or obj.LinkedObject != obj.LegacySketchSource
+                 or "Invalid" in obj.LegacySketchSource.State)):
+        return "Needs repair"
     if (getattr(obj, "LegacyDatumState", "") == "Linked native attachment"
             and (getattr(obj, "LegacyDatumSource", None) is None
                  or obj.LinkedObject != obj.LegacyDatumSource

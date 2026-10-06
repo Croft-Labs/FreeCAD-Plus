@@ -25,7 +25,14 @@
   checks include eight datum, 29 prior migration, 21 plane and six background-result
   cases. UI-only DOCX rendered/inspected; source/publication evidence in WORK_STATE.
   Native Body feature promotion and installed build delivery remain separate gates.
-- [ ] 5. Sketch ownership, attachments, constraints, expressions and shared inputs.
+- [x] 5. Sketch ownership, attachments, constraints, expressions and shared inputs:
+  original editable native sketches, component inputs or hidden complete-frame
+  History links, dependency order, shared consumers and idempotent older-file
+  upgrade. Safe first-Pad pilot admits dimensional expressions/independent external
+  geometry; native Body-dependent attachments remain retained for feature adapters.
+  Final 45 native source-mode checks pass, including eight sketch checks, actual
+  History double-click, recompute, Undo/Redo and cadprt reopen. UI-only DOCX rendered
+  and inspected; technical evidence/publication in WORK_STATE. Packaging stays batched.
 - [ ] 6. Pad/Pocket/Extrude parameters, targets and result chains.
 - [ ] 7. Revolution/Groove/Revolve axes, angles and targets.
 - [ ] 8. Loft sections and additive/subtractive targets.
@@ -38,7 +45,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to four have source/native
+for unrelated feature implementation. Tasks one to five have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).

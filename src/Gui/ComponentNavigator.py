@@ -1534,11 +1534,11 @@ class Navigator(QtWidgets.QDockWidget):
             return
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing history."))
-        if getattr(obj, "LegacyDatumState", ""):
+        if getattr(obj, "LegacyDatumState", "") or getattr(obj, "LegacySketchState", ""):
             component = model().owner(obj)
-            source = getattr(obj, "LegacyDatumSource", obj)
+            source = getattr(obj, "LegacySketchSource", getattr(obj, "LegacyDatumSource", obj))
             if source is None:
-                raise ValueError(tr("Repair the retained native datum before editing its attachment."))
+                raise ValueError(tr("Repair the retained native input before editing it."))
             context = TaskContext(component)
             context.enter()
             Gui.Selection.clearSelection()

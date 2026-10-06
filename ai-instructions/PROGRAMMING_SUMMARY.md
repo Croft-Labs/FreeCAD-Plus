@@ -11,6 +11,11 @@ Task four exposes native datum frames in component History while retaining origi
 Origins, Body owners and attachment engines. LegacyFrameVersion upgrades verified
 older converted files; native editors preserve supports/formulas. Linked planes
 work with new associative sketches. See tests/LegacyDatumFrames.md.
+Task five retains original sketch constraints/expressions/attachments and shared
+consumers through component inputs or complete-frame History access links. The
+safe Sketch/Pad pilot accepts independent dimensional expressions/external inputs;
+Body-dependent attachments stay native for later feature adapters. See
+tests/LegacySketchInputs.md; installed delivery remains batched.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

@@ -295,6 +295,16 @@ Native attachment editing must preserve formulas/supports, and missing sources m
 be reported. Upgrade recognized older converted content only after manifest/identity
 validation, through one idempotent undoable transaction. See
 [datum frames and acceptance](../../tests/LegacyDatumFrames.md).
+Native sketch constraints, expressions, attachments and external references remain
+on the original editable object. Shared consumers must not acquire independent
+copies. Component-owned sketches stay independent; retained Body-owned sketches
+have distinct-identity hidden History input links with complete native Body/sketch
+frames and dependency order before their Body. Native consumers and ownership stay
+intact until their feature adapter qualifies physical reparenting. The safe first-Pad
+pilot permits dimensional expressions/independent external inputs but refuses
+Body-dependent frames or property expressions. Missing sources require repair;
+recognized older converted files upgrade idempotently after manifest validation.
+See [sketch input mapping and acceptance](../../tests/LegacySketchInputs.md).
 Retain original world geometry through explicit
 definition-frame and occurrence-frame compensation, including native scale modes.
 Original source files remain protected; external converted files are saved to new

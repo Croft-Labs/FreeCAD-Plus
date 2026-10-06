@@ -115,18 +115,84 @@ def migrate_datum_frames(document, report):
     Model._property(meta, "Integer", "LegacyFrameVersion", 1, True)
 
 
+def migrate_sketch_inputs(document, report):
+    """Expose native inputs without copying constraints or breaking Body consumers.
+
+    Feature adapters own later physical reparenting. A hidden access link keeps
+    the original native sketch (including local attachment/external references)
+    as the single editable source for every consumer and shared instance.
+    """
+    import ComponentModel as Model
+    meta = Model.metadata(document)
+    if getattr(meta, "LegacySketchVersion", 0) >= 1:
+        return
+    sketches = [o for o in document.Objects if o.isDerivedFrom("Sketcher::SketchObject")
+                and not o.isDerivedFrom("App::Link")]
+    pending = {o: set(Model.geometry_dependencies(o, include_frames=True)) & set(sketches)
+               for o in sketches}
+    ordered = []
+    while pending:
+        ready = [o for o in sketches if o in pending and not pending[o]]
+        if not ready:
+            report.append("Cyclic native sketch dependencies retained; repair them before feature promotion.")
+            ordered.extend(o for o in sketches if o in pending)
+            break
+        ordered.extend(ready)
+        for source in ready:
+            del pending[source]
+        for dependencies in pending.values():
+            dependencies.difference_update(ready)
+    for source in ordered:
+        parent = Model.owner(source)
+        component = parent
+        while component is not None and not Model.is_component(component):
+            component = Model.owner(component)
+        if not _own_identity(source):
+            Model._identity(source, "Internal")
+        Model._property(source, "String", "LegacySketchState", "Retained native sketch", True)
+        if component is None:
+            report.append(source.Label + ": native sketch retained outside a mapped component; repair ownership before using it.")
+            continue
+        if parent == component:
+            source.ComponentRole = "Object"
+            report.append(source.Label + ": component sketch retains native constraints, expressions, supports and external geometry.")
+            continue
+        if parent.TypeId != "PartDesign::Body" or Model.owner(parent) != component:
+            report.append(source.Label + ": nested native sketch retained; direct History mapping requires repair.")
+            continue
+        alias = document.addObject("App::Link", "LegacySketch")
+        Model.register_object(component, alias, "Object")
+        Model._property(alias, "LinkGlobal", "LegacySketchSource", source, True)
+        Model._property(alias, "String", "LegacySketchState", "Linked native sketch", True)
+        alias.setLink(source)
+        alias.LinkTransform = False
+        alias.LinkPlacement = parent.Placement.multiply(source.Placement)
+        alias.setExpression("LinkPlacement", parent.Name + ".Placement * " + source.Name + ".Placement")
+        alias.Label = source.Label
+        alias.Visibility = False
+        ordered = [n for n in component.ModelHistory if n != alias.Name]
+        index = ordered.index(parent.Name) if parent.Name in ordered else len(ordered)
+        ordered.insert(index, alias.Name)
+        component.ModelHistory = ordered
+        report.append(source.Label + ": History links the original native sketch before its Body; attachment, constraints, formulas and shared consumers retained. Feature adapters own later reparenting.")
+    Model._property(meta, "Integer", "LegacySketchVersion", 1, True)
+
+
 def upgrade_datum_frames(document):
-    """Upgrade previously converted legacy cadprt content after manifest validation."""
+    """Upgrade native datum/sketch access after existing manifest validation."""
     import ComponentModel as Model
     meta = Model.metadata(document)
     legacy_report = any(entry.startswith(("Models and linked Part Tree instances converted",
                                          "Structural adapter could not complete:"))
                         for entry in meta.ConversionReport)
-    if (not meta.LegacySource and not legacy_report) or getattr(meta, "LegacyFrameVersion", 0) >= 1:
+    if (not meta.LegacySource and not legacy_report) or (
+            getattr(meta, "LegacyFrameVersion", 0) >= 1
+            and getattr(meta, "LegacySketchVersion", 0) >= 1):
         return document
-    with Model.transaction(document, "Expose retained legacy datum frames"):
+    with Model.transaction(document, "Expose retained legacy inputs"):
         report = list(meta.ConversionReport)
         migrate_datum_frames(document, report)
+        migrate_sketch_inputs(document, report)
         meta.ConversionReport = report
         Model.validate(document, allow_unresolved=True)
     return document
@@ -147,15 +213,18 @@ def body_history_plan(body, component, source_ready):
         return None, "multi-feature native Body history awaits its adapters"
     if Model.owner(sketch) not in (body, component):
         return None, "profile belongs to another native owner"
-    if (str(sketch.MapMode) != "Deactivated" or sketch.AttachmentSupport
-            or sketch.ExternalGeometry or pad.Profile[1]):
-        return None, "attached/external/subelement sketch inputs await their adapter"
+    if (str(sketch.MapMode) != "Deactivated" or sketch.AttachmentSupport or pad.Profile[1]):
+        return None, "attached/subelement sketch inputs retain native ownership until their feature adapter"
+    if any(dep == body or Model.owner(dep) == body
+           for dep in Model.geometry_dependencies(sketch, include_frames=True)):
+        return None, "sketch depends on its native Body frame/history; retain native ownership"
     if (str(pad.Type) != "Length" or str(pad.SideType) != "One side"
             or pad.UseCustomVector or float(pad.TaperAngle) != 0
             or str(pad.StartType) != "Profile plane"):
         return None, "Pad extent semantics await the full extrusion adapter"
-    if any(obj.ExpressionEngine for obj in (body, sketch)):
-        return None, "frame/sketch expressions await dependency-aware migration"
+    if body.ExpressionEngine or any(not prop.startswith(("Constraints[", "Constraints."))
+                                    for prop, _ in sketch.ExpressionEngine):
+        return None, "frame/sketch property expressions retain native ownership until their feature adapter"
     if not source_ready or any("Invalid" in obj.State for obj in (body, pad, sketch)):
         return None, "native history needs recompute or repair; cached output is unverified"
     if body.Shape.isNull() or not body.Shape.isValid() or len(body.Shape.Solids) != 1:
@@ -724,6 +793,7 @@ def convert_structure(document, extra_targets=(), visiting=None):
                         report.append(obj.Label + ": native Body Tip and sketch/feature history retained; feature adapters pending.")
             migrate_body_histories(document, report, readiness)
             migrate_datum_frames(document, report)
+            migrate_sketch_inputs(document, report)
             meta.ConversionReport = report + ["Models and linked Part Tree instances converted; native features retained.",
                 "Recovery policy: retained editable native features before explicit validated dumb geometry; no fallback created in this structural step."]
             if external:
