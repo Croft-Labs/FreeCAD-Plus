@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development Roadmap
 
+## Separate recovery item 3 Align Axes review
+
+- [x] Inspect retained implementation and verify preceding Rotate/Point source and
+  packaged evidence; do not replay their implementation.
+- [x] Review existing native Align Axes 5/5 evidence and installed task captures.
+- [x] Strengthen five regression cases for anchor/no-op policy, antiparallel roll,
+  stable previews and both native save/reopen formats; syntax checks pass.
+- [x] Synchronize and render/inspect the owner DOCX without numbering/style changes.
+- [ ] Execute newly added assertions in item 7's grouped native/packaged acceptance.
+  No new native run, build or owner-ready claim is made by this separate item.
+
 ## October 6 recovered workload continuation
 
 - [x] Restore all seven prompts and owner corrections; inspect interrupted Rotate.

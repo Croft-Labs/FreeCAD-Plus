@@ -40,3 +40,13 @@ TestMoveComponentsFrames (4), TestMoveComponentsInteractive (4). These are
 prepared native tests, not current pass counts. The Interactive event case picks
 the rendered native Coin arrow and sends Qt mouse/Escape events; direct placement
 writes or numeric-only checks cannot satisfy this acceptance gate.
+
+Separate recovery item 3: retained Align Axes passed 5/5 in packaged-final on this
+host before this test edit. The same five tests now explicitly check parallel
+identity roll, coincident no-op without target-origin sliding, deterministic
+antiparallel roll, repeated baseline previews and sibling/descendant LinkPlacement
+round trips in FCStd and cadprt. These added assertions are syntax-checked only;
+run all five in recovery item 7. Existing shared Move/Rotate checks cover exact
+paths, guards, persistence, Cancel and geometry/identity preservation; final
+integration must verify these retained contracts together. Do not count earlier
+5/5 evidence as execution of the new assertions.

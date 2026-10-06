@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 import unittest
+import tempfile
+from pathlib import Path
 import FreeCAD as App
 import Part
 from freecad.gui import MoveComponents as Move
@@ -21,6 +23,17 @@ class TestMoveComponentsAxes(unittest.TestCase):
         self.vector(delta.Rotation.multVec(App.Vector(1, 0, 0)), App.Vector(0, 0, 1))
         session.coincident = False
         self.vector(session.align_axes().multVec(source), source)
+        # Parallel directions retain roll; coincidence removes only the offset
+        # normal to Target, never sliding to Target's parameter origin.
+        session.source_axis = (source, App.Vector(0, 0, 1))
+        session.coincident = True
+        delta = session.align_axes()
+        self.assertTrue(delta.Rotation.isSame(App.Rotation(), 1e-8))
+        self.vector(delta.multVec(source), App.Vector(10, 8, 4))
+        session.target_axis = (App.Vector(2, 3, 100), App.Vector(0, 0, 1))
+        undo = self.doc.UndoCount
+        self.assertFalse(session.commit(session.align_axes()))
+        self.assertEqual(self.doc.UndoCount, undo)
 
     def test_antiparallel_reverse_noop_and_degenerate(self):
         session = self.session()
@@ -30,6 +43,8 @@ class TestMoveComponentsAxes(unittest.TestCase):
         first = session.align_axes()
         self.vector(first.Rotation.multVec(App.Vector(1, 0, 0)), App.Vector(-1, 0, 0))
         self.assertTrue(first.isSame(session.align_axes(), 1e-12))
+        # Source X crosses the least-aligned parent Y: the stable turn is Z.
+        self.vector(first.Rotation.multVec(App.Vector(0, 1, 0)), App.Vector(0, -1, 0))
         session.reverse_target = True
         undo = self.doc.UndoCount
         self.assertFalse(session.commit(session.align_axes()))
@@ -62,7 +77,8 @@ class TestMoveComponentsAxes(unittest.TestCase):
         session.target_axis = (App.Vector(8, 2, 4), App.Vector(3, -2, 1))
         delta = session.align_axes()
         before = session.signature()
-        self.assertEqual(len(session.preview_shapes(delta)), 4)
+        for _ in range(3):
+            self.assertEqual(len(session.preview_shapes(session.align_axes())), 4)
         self.assertEqual(before, session.signature())
         self.assertTrue(session.commit(delta))
         expected = App.Placement(self.first.LinkPlacement)
@@ -71,6 +87,19 @@ class TestMoveComponentsAxes(unittest.TestCase):
         self.assertTrue(self.first.LinkPlacement.isSame(App.Placement(), 1e-8))
         self.doc.redo()
         self.assertTrue(self.first.LinkPlacement.isSame(expected, 1e-8))
+        names = (self.first.Name, self.second.Name, self.descendant.Name)
+        placements = [App.Placement(self.doc.getObject(name).LinkPlacement) for name in names]
+        files = []
+        for extension in ("FCStd", "cadprt"):
+            filename = str(Path(tempfile.gettempdir()) / ("axes-roundtrip." + extension))
+            self.doc.saveAs(filename)
+            files.append(filename)
+        App.closeDocument(self.doc.Name)
+        for filename in files:
+            document = App.openDocument(filename)
+            for name, placement in zip(names, placements):
+                self.assertTrue(document.getObject(name).LinkPlacement.isSame(placement, 1e-8))
+            App.closeDocument(document.Name)
 
     def test_task_reference_isolation_and_reset(self):
         task = UI.open_task(self.root, self.paths)

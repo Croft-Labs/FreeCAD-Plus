@@ -1,6 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
-## Current owner scope: recovery item 1 complete; await individual follow-ups
+## Current owner scope: recovery item 3 Align Axes source milestone
+
+The individual Align Axes prompt is authorized; stop at its coherent commit/push.
+Rotate is verified complete. Point to Point already exists from the earlier
+omnibus-authorized preparation, and packaged-final reports 4/4 passing checks;
+its source hash matches the accepted Move core/task modules. Do not replay either
+prerequisite or start items 4–7. Their individual follow-up prompts are required.
+
+Align Axes uses the existing shared task, baseline located-axis snapshots,
+minimal rotation, closest Target point / fixed Source anchor policy and explicit
+Target reversal. Native line/circle/cylinder extraction preserves occurrence paths;
+parent-relative sibling commit, repeated parent previews and driven guards remain.
+The earlier packaged-final suite passed 5/5 Align Axes checks, with no source
+application overlays/skips. Existing installed task captures are reviewed.
+
+This item adds assertions to those same five tests for parallel/coincident no-op,
+stable antiparallel roll, repeated baseline previews and FCStd/cadprt round trips
+of both siblings and their implicit descendant. Syntax and accepted application
+module hashes pass quick checks. The changed test assertions have NOT run in a
+native runtime; defer that acceptance and the costly build to item 7 explicitly.
+Owner DOCX preserves other ZIP parts/numbering/styles; affected rendered pages
+are visually reviewed under build-recovery-axes/owner-docx-review.
+
+Preserve the five pre-existing dirty Selection/palette/Interactive fixtures and
+Selection Escape source change listed below, and the untracked queue directory.
+No build, desktop shortcut or final delivery is made by this item. Exact next
+step: await item 4 Align Coordinate Systems; inspect existing source/evidence
+before any changes. Item 7 must run updated TestMoveComponentsAxes (five cases)
+including both round trips and all combined native/packaged/high-DPI gates.
+
+## Earlier scope handoff: recovery item 1
 
 The owner superseded the omnibus execution instruction: stop after Rotate and
 await separate prompts for items 2–7. Rotate was already implemented; it has not
