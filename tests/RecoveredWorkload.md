@@ -1,9 +1,9 @@
 # Recovered workload grouped acceptance
 
 This is the item 7 acceptance procedure, not a second roadmap. WORK_STATE owns
-status. Run the exact classes below using the retained RecoveredAcceptance.FCMacro
-and isolated run_acceptance.py harness in evidence task
-01a10f79-1a93-7be0-a261-96a6b7e9c425; inspect/adapt their current source before use.
+status. Final RecoveredAcceptance.FCMacro and run_acceptance.py are retained in
+this checkout's build-recovery-delivery evidence directory. Earlier originating-task
+evidence remains historical to its source/test snapshots.
 Never add application-source directories to sys.path. Test code alone may come
 from this checkout. Record the tests SHA-256 snapshot before execution.
 
@@ -24,7 +24,7 @@ Full suite: 89 checks. High-DPI subset: Selection/Layers/palette/Interactive/
 integration, 55 checks. Require every suite, no skips, final results.json and
 validation.done; partial progress never establishes acceptance. Counts are a
 sanity check, not permission to omit new tests. The added Axes/Frames/Interactive
-assertions and deferred Escape race case have not run natively yet.
+assertions and deferred Escape race case pass final native packaged acceptance.
 
 1. Verify the configured grouped Plus build and source/native binary snapshots.
    C++ changes require one batched native compile; preserve prior completed
@@ -70,3 +70,11 @@ near-edge hits. Actual hover and multi-event drags precede every press/release;
 single-click cases expire the inherited double-click interval. The Interactive
 case also dispatches native middle-button camera input and asserts unchanged
 placements, pivot and pending movement. Application finish/cancel code is retained.
+
+Final item 7 reports: packaged-delivery-final-full-accepted (89 passing checks), packaged-delivery-final-high-dpi-accepted (55 passing checks), shortcut-delivery-accepted (26 passing checks).
+The saved desktop link was launched. AppHome, cwd, native APIs and application/test
+byte identities are verified. Payload validation contains results/logs/captures,
+owner DOCX visual QA, shortcut and publication receipts. Final fixtures settle
+native workbench/edit/MDI activation. Handle ray picks use Quarter's exact device
+pixel after Qt rounding and unobscured event targets. Notification interception
+is dismissed through actual clicks; curve selection must leave geometry unchanged.

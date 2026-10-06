@@ -1,5 +1,21 @@
 # FreeCAD Plus: Development Roadmap
 
+## Separate recovery item 7 test-build delivery
+
+- [x] Reuse verified grouped native build/capture repair; refresh current resources incrementally.
+- [x] Native packaged full 89/89 and measured DPR 3.0 subset 55/55, without overlays/skips.
+- [x] Execute strengthened Axes/Frames/Interactive assertions, all six methods, actual
+  Qt viewport/handle/pivot/collector events, Undo/Redo and both native persisted formats.
+- [x] Review all six compact Tasks views, handles/pivot and opaque native framebuffer.
+- [x] Synchronize owner DOCX, preserve styles/numbering, render and inspect affected pages.
+- [x] Create missing exact desktop link; standard retarget/reopen target/workdir checks pass.
+- [x] LAUNCH saved desktop .lnk; 26/26 native smoke checks use exact payload/cwd.
+- [x] Stage verified launcher and source/native/resource hashes with stable file manifest.
+- [x] Publish coherent validated milestone commits to origin/main; exact final receipt is
+  retained in payload validation/publication-receipt.json. No force, release or deployment.
+- [ ] Physical owner feedback remains separate; no additional implementation is authorized
+  by this status. Deferred families remain deferred. WORK_STATE holds exact paths/snapshots.
+
 ## Separate recovery item 6 integration reconciliation
 
 - [x] Audit four groups, native hooks/APIs and all six genuine Move workflows.
@@ -7,8 +23,8 @@
 - [x] Four controlled callback ordering checks and eight Python syntax checks pass.
 - [x] Prepare exact item 7 full 89/high-DPI 55/shortcut smoke 26 acceptance plan.
 - [x] Synchronize requirements/owner DOCX and render/inspect affected pages.
-- [ ] Run changed source/tests natively, packaged and high-DPI in item 7; complete
-  final owner shortcut delivery there. No new build/runtime/delivery claim here.
+- [x] Changed native/packaged/high-DPI checks and final shortcut delivery pass in item 7.
+  Item 6 remains the historical source reconciliation milestone.
 
 ## Separate recovery item 5 Interactive movement/pivot review
 
@@ -17,8 +33,8 @@
 - [x] Reconcile validated camera-only fixture with this feature; add actual
   plane/ring events, Apply/OK reset and sibling/descendant persistence checks.
 - [x] Syntax/hash checks; owner DOCX synchronized/rendered/visually inspected.
-- [ ] Execute added assertions in item 7's native/packaged/high-DPI acceptance;
-  no new runtime execution/build/shortcut or owner-ready delivery claim here.
+- [x] Added assertions pass item 7's native/packaged/high-DPI acceptance;
+  item 5 remains the historical source/fixture review milestone.
 
 ## Separate recovery item 4 Align Coordinate Systems review
 
@@ -27,7 +43,7 @@
 - [x] Strengthen five cases for stable previews, displayed parents, Cancel,
   non-repeated OK and sibling/descendant FCStd/cadprt persistence; syntax passes.
 - [x] Synchronize/render/inspect owner DOCX while preserving numbering/styles.
-- [ ] Run changed assertions in item 7's grouped native/packaged acceptance.
+- [x] Changed assertions pass item 7's grouped native/packaged acceptance.
   No new native execution or owner build delivery is claimed in this item.
 
 ## Separate recovery item 3 Align Axes review
@@ -38,7 +54,7 @@
 - [x] Strengthen five regression cases for anchor/no-op policy, antiparallel roll,
   stable previews and both native save/reopen formats; syntax checks pass.
 - [x] Synchronize and render/inspect the owner DOCX without numbering/style changes.
-- [ ] Execute newly added assertions in item 7's grouped native/packaged acceptance.
+- [x] Newly added assertions pass item 7's grouped native/packaged acceptance.
   No new native run, build or owner-ready claim is made by this separate item.
 
 ## October 6 recovered workload continuation

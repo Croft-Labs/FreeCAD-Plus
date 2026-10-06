@@ -50,6 +50,9 @@ def clear_after_escape(guard=None):
             Gui.Selection.clearSelection()
     # Native edit teardown may queue a parent selection during the same key event.
     QtCore.QTimer.singleShot(0, lambda: QtCore.QTimer.singleShot(0, finish))
+    # Tree/edit teardown can post its selection after another layout turn.
+    # The caller's event-generation guard protects a subsequent deliberate click.
+    QtCore.QTimer.singleShot(100, finish)
 
 
 def resolve(root, path):

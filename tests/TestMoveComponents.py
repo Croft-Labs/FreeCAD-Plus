@@ -53,6 +53,13 @@ class TestMoveComponents(unittest.TestCase):
         DesignSelection.parameters().SetBool("Active", True)
         DesignSelection.parameters().SetBool("Persistent", True)
         self.paths = [(self.a.ObjectId, self.first.ObjectId), (self.a.ObjectId, self.second.ObjectId)]
+        # Finish native workbench/MDI/ribbon activation before opening a task;
+        # its lifecycle monitor must bind the settled owning viewport.
+        Gui.updateGui()
+        QtWidgets.QApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
+        loop = QtCore.QEventLoop()
+        QtCore.QTimer.singleShot(250,loop.quit)
+        loop.exec_()
 
     def tearDown(self):
         if UI._task:

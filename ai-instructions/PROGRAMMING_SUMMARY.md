@@ -6,8 +6,9 @@ shared-parent transient previews and atomic sibling transactions. The task inclu
 Translate, recovered Rotate, Point to Point, Align Axes and Align Coordinate Systems.
 `MoveComponentsManipulator.py` uses native view-owned arrows/planes/rings for
 Interactive and pivot editing. Entry points are Design Assembly and Part Tree.
-The October 6 recovery continues grouped build/packaged acceptance; these new
-sources and prepared native tests are not a completed owner delivery.
+October 6 final recovery acceptance passes 89 full native packaged checks,
+55 at DPR 3.0 and 26 launched through the verified saved desktop shortcut.
+The grouped incremental test payload is delivered; physical owner feedback is separate.
 See `tests/MoveComponents.md` and WORK_STATE for evidence and remaining gates.
 
 Design Layers and the Contextual Constraint Palette are implemented in source in
@@ -16,13 +17,14 @@ Design Layers and the Contextual Constraint Palette are implemented in source in
 native Body and Plus result chains keep input sketches independent. The palette
 uses native Sketcher constraints and shared selection persistence. Its cloned-solver
 diagnostic and driving-batch APIs were built in the October 6 grouped runtime;
-current source/test acceptance and owner delivery still require recovery item 7.
+current source/tests pass recovery item 7 native/packaged/high-DPI acceptance
+and verified desktop launch delivery.
 See WORK_STATE, UI_UX_SPEC and the corresponding tests for evidence and remaining gates.
 
 Design Selection toolbar source: `DesignSelection.py` owns semantic categories,
 curve chains and shared persistence; `DesignSelectionToolbar.py` integrates with
 PlusRibbon. Native Selection/box/Sketcher hooks have earlier grouped build evidence.
-The deferred Escape race repair and changed fixtures require item 7 acceptance.
+The guarded late Escape race repair and changed fixtures pass item 7 acceptance.
 See WORK_STATE, `tests/DesignSelection.md` and `tests/RecoveredWorkload.md`;
 the DOCX renderer is resolved and affected pages are reviewed.
 

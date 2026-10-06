@@ -112,8 +112,13 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         self.assertIsNone(task.manipulator)
 
     def handle_pixel(self, task, handle="xTranslatorDragger.dragger"):
+        from freecad.gui.DesignSelectionToolbar import SelectionToolbar
+        settle(QtWidgets.QApplication.doubleClickInterval() + 80)
         view = Gui.activeDocument().activeView()
-        view.viewAxonometric()
+        if handle == "zRotatorDragger.dragger":
+            view.viewTop()  # Expose the Z ring instead of its overlapping axis/plane handles.
+        else:
+            view.viewAxonometric()
         view.fitAll()
         settle(150)
         widgets = [w for w in task.window.findChildren(QtWidgets.QWidget)
@@ -143,6 +148,10 @@ class TestMoveComponentsInteractive(unittest.TestCase):
             for dx,dy in perimeter:
                 sx,sy = round(cx+dx*ratio), round(cy+dy*ratio)
                 point = QtCore.QPoint(round(sx/ratio),widget.height()-round(sy/ratio)-1)
+                # Pick the exact physical pixel produced by Quarter's
+                # InputDevice::toDevicePixelPosition from this Qt event.
+                sx = round(point.x()*ratio)
+                sy = round((widget.height()-point.y()-1)*ratio)
                 if not widget.rect().contains(point):
                     continue
                 global_point = widget.mapToGlobal(point)
@@ -150,6 +159,8 @@ class TestMoveComponentsInteractive(unittest.TestCase):
                     continue
                 if any(dock.isVisible() and QtCore.QRect(dock.mapToGlobal(QtCore.QPoint()),dock.size()).contains(global_point)
                        for dock in Gui.getMainWindow().findChildren(QtWidgets.QDockWidget)):
+                    continue
+                if not SelectionToolbar._viewport(QtWidgets.QApplication.widgetAt(global_point)):
                     continue
                 action = coin.SoRayPickAction(viewport)
                 action.setPoint(coin.SbVec2s(sx,sy))
@@ -174,11 +185,14 @@ class TestMoveComponentsInteractive(unittest.TestCase):
                     settle(25)
                     QtTest.QTest.mouseMove(widget, point)
                     settle(60)
-                    # Each case is a distinct single drag, not the viewer's
-                    # double-click candidate (which defers the next press).
-                    settle(QtWidgets.QApplication.doubleClickInterval() + 80)
+                    # Require an unobscured receiver after native hover too.
+                    if not SelectionToolbar._viewport(QtWidgets.QApplication.widgetAt(global_point)):
+                        continue
                     return widget, point
-        self.fail("No rendered native handle pick found; handle GUI acceptance did not pass.")
+        directory = os.environ.get("FREECAD_PLUS_VALIDATION_DIR")
+        if directory:
+            Gui.getMainWindow().grab().save(str(Path(directory)/"handle-pick-diagnostic.png"))
+        self.fail("No rendered native %s pick found; handle GUI acceptance did not pass." % handle)
 
     def axis_drag_end(self, task, widget, start):
         view = Gui.activeDocument().activeView()

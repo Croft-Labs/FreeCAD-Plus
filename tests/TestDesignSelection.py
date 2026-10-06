@@ -183,28 +183,75 @@ class TestDesignSelectionNative(TestDesignSelectionPolicy):
             ratio = widget.devicePixelRatioF()
             for mode,expected in ((0,{"Edge1"}),(1,{"Edge1","Edge2","Edge3"}),
                                   (2,{"Edge1","Edge2"})):
+                Gui.activeDocument().resetEdit()
+                Gui.activeDocument().setEdit(sketch.Name)
+                Gui.updateGui()
+                QtTest.QTest.qWait(150)
+                view = Gui.activeDocument().activeView()
+                view.viewTop()
+                view.fitAll()
+                QtTest.QTest.qWait(150)
+                mdi = window.findChild(QtWidgets.QMdiArea).activeSubWindow()
+                widgets = [w for w in mdi.findChildren(QtWidgets.QWidget)
+                           if "GL" in w.metaObject().className() and w.width()>100 and w.height()>100]
+                widget = max(widgets,key=lambda w:w.width()*w.height())
+                ratio = widget.devicePixelRatioF()
+                empty = QtCore.QPoint(8, 8)
+                QtTest.QTest.mouseMove(widget, empty)
+                QtTest.QTest.qWait(50)
+                QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, empty)
+                QtTest.QTest.qWait(150)
+                self.assertFalse(Gui.Selection.getSelection())
                 bar.intent.setCurrentIndex(mode)
+                Gui.updateGui()
+                QtTest.QTest.qWait(200)
+                view.fitAll()
+                QtTest.QTest.qWait(200)
                 Gui.Selection.clearSelection()
                 x,y = view.getPointOnScreen(App.Vector(5,5,0))
                 pixel = QtCore.QPoint(round(x/ratio),widget.height()-round(y/ratio)-1)
                 self.assertTrue(5 < pixel.x() < widget.width()-5 and 5 < pixel.y() < widget.height()-5,
                                 repr((pixel, widget.size(), view.getCameraOrientation())))
+                QtTest.QTest.qWait(QtWidgets.QApplication.doubleClickInterval() + 80)
                 # Refresh native preselection between independent intent cases;
                 # moving to the unchanged pixel may emit no mouse motion.
                 QtTest.QTest.mouseMove(widget, pixel + QtCore.QPoint(12, 12))
                 QtTest.QTest.qWait(25)
                 QtTest.QTest.mouseMove(widget,pixel)
-                QtTest.QTest.qWait(150)
-                QtTest.QTest.qWait(QtWidgets.QApplication.doubleClickInterval() + 80)
+                event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pixel),
+                                         QtCore.QPointF(widget.mapToGlobal(pixel)), QtCore.Qt.NoButton,
+                                         QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+                QtWidgets.QApplication.sendEvent(widget,event)
+                QtTest.QTest.qWait(25)
+                at = QtWidgets.QApplication.widgetAt(widget.mapToGlobal(pixel))
+                target_name = (at.metaObject().className(),at.objectName()) if at else None
+                if at and at.metaObject().className() == "Gui::NotificationLabel":
+                    # Native notifications deliberately consume a click. Dismiss
+                    # the visible label as a user would, then retry the unobscured
+                    # viewport pick; keep notifications enabled.
+                    QtTest.QTest.mouseClick(at,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,
+                                           at.mapFromGlobal(widget.mapToGlobal(pixel)))
+                    QtTest.QTest.qWait(400)
+                    QtTest.QTest.mouseMove(widget,pixel + QtCore.QPoint(12,12))
+                    QtTest.QTest.qWait(25)
+                    QtTest.QTest.mouseMove(widget,pixel)
+                    QtTest.QTest.qWait(25)
+                    at = QtWidgets.QApplication.widgetAt(widget.mapToGlobal(pixel))
+                self.assertTrue(bar._viewport(at), "Native click is obscured by %r" % (target_name,))
                 QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pixel)
                 QtTest.QTest.qWait(200)
                 selected = {sub.rsplit(".",1)[-1].capitalize()
                             for entry in Gui.Selection.getSelectionEx("*",0)
                             for sub in entry.SubElementNames}
                 self.assertEqual(selected,expected)
-            QtTest.QTest.keyClick(widget,QtCore.Qt.Key_Escape)
-            QtTest.QTest.qWait(150)
-            self.assertFalse(Gui.Selection.getSelection())
+                self.assertEqual([(tuple(g.StartPoint),tuple(g.EndPoint)) for g in sketch.Geometry],
+                                 [((0.,5.,0.),(10.,5.,0.)),((10.,5.,0.),(20.,5.,0.)),
+                                  ((20.,5.,0.),(20.,15.,0.))])
+                # Start the next intent from explicit native user deselection,
+                # including Sketcher's edit state and contextual palette.
+                QtTest.QTest.keyClick(widget,QtCore.Qt.Key_Escape)
+                QtTest.QTest.qWait(200)
+                self.assertFalse(Gui.Selection.getSelection())
             Gui.Selection.addSelection(sketch,"Edge1")
             QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,QtCore.QPoint(8,8))
             QtTest.QTest.qWait(150)
@@ -263,19 +310,22 @@ class TestDesignSelectionToolbar(unittest.TestCase):
             bar.set_design_active(True)
             generation = bar._generation
             Policy.clear_after_escape(lambda: bar._enabled and generation == bar._generation)
-            bar._generation += 1  # A later viewport click supersedes the Escape.
+            # A deliberate tree/control click must also supersede delayed clear.
+            event = QtGui.QMouseEvent(QtCore.QEvent.MouseButtonPress, QtCore.QPointF(2,2),
+                                     QtCore.Qt.LeftButton, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+            bar.eventFilter(Gui.getMainWindow(), event)
             Gui.Selection.addSelection(obj)
-            QtTest.QTest.qWait(40)
+            QtTest.QTest.qWait(150)
             self.assertIn(obj, Gui.Selection.getSelection())
             generation = bar._generation
             Policy.clear_after_escape(lambda: bar._enabled and generation == bar._generation)
             bar.set_design_active(False)
-            QtTest.QTest.qWait(40)
+            QtTest.QTest.qWait(150)
             self.assertIn(obj, Gui.Selection.getSelection())
             bar.set_design_active(True)
             generation = bar._generation
             Policy.clear_after_escape(lambda: bar._enabled and generation == bar._generation)
-            QtTest.QTest.qWait(40)
+            QtTest.QTest.qWait(150)
             self.assertEqual(Gui.Selection.getSelection(), [])
         finally:
             bar.set_design_active(False)

@@ -69,3 +69,12 @@ in both saved formats. Syntax/hash checks pass; new assertions require execution
 in item 7. Keep earlier real-event evidence distinct from this deferred validation.
 
 Item 7 exact integrated suite/class counts and delivery gates: RecoveredWorkload.md.
+
+Final October 6 item 7: the added Axes five, Frames five and Interactive five
+cases pass packaged-delivery-final-full-accepted (89/89). Interactive also passes
+the final DPR 3.0 subset (55/55). Actual axis/plane/ring and movable-pivot events,
+camera navigation, shared-parent sibling/descendant placements, Undo/Redo and
+FCStd/cadprt persistence pass. All six compact Tasks views are rendered/reviewed;
+saved desktop .lnk launch smoke passes 26/26. Earlier source-review paragraphs
+describe their historical snapshots; these final runs close their deferred gates.
+Physical owner feedback is separate. Delivery evidence: WORK_STATE/payload manifest.

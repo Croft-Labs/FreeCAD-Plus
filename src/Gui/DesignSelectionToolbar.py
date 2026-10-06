@@ -89,7 +89,11 @@ class SelectionToolbar(QtWidgets.QToolBar):
         return False
 
     def eventFilter(self, watched, event):
-        if not self._enabled or not self._viewport(watched):
+        if not self._enabled:
+            return False
+        if not self._viewport(watched):
+            if event.type() == QtCore.QEvent.MouseButtonPress:
+                self._generation += 1  # Tree/palette/control clicks also supersede Escape.
             return False
         if event.type() == QtCore.QEvent.KeyPress and event.key() == QtCore.Qt.Key_Escape:
             from freecad.gui.MoveComponentsTask import _task

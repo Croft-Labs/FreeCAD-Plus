@@ -42,6 +42,10 @@ class TestConstraintPalette(unittest.TestCase):
         self.doc.recompute()
         Gui.activeDocument().setEdit(self.sketch.Name)
         UI.install()
+        # Native workbench/edit activation posts layout and selection updates.
+        # Enter each test only after that real GUI transition has settled.
+        Gui.updateGui()
+        settle(250)
 
     def tearDown(self):
         UI._controller.close()
