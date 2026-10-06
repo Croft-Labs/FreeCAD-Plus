@@ -287,12 +287,12 @@ ribbon, shared by all modes: File (New File/Open/Save/Save As), Edit
 across mode/tab switches. This is an intentional Plus toolbar, not permission to
 show Classic workbench toolbars alongside the ribbon.
 
-Add **medium / half-size** icons between full-size and small. Size and dropdown
+Add **medium / two-row** icons between full-size and small. Size and dropdown
 are independent: any size may have a dropdown. Only full-size buttons show
 captions; medium/small icons retain native tooltips and accessible names.
 Small ribbon icons retain a three-row grid; common-toolbar icons use one row.
-Full icons use 40 logical pixels, medium 20, and small 16. The grid is 76px
-high: full buttons span it, two 38px medium buttons or three 24px small buttons
+Full icons use 40 logical pixels, medium 32, and small 16. The grid starts at 86px
+high: full buttons span it, two 42px medium buttons or three 24px small buttons
 fit a column. Large-button/grid height grows when required to display two full
 caption lines. Reference-document artwork sizing is independent of these values.
 

@@ -1,5 +1,43 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 larger medium ribbon icons
+
+Current owner payload:
+`C:\Users\GAMING-PC\Documents\_temp\freecad\test-builds\freecad_plus_2026-10-06_medium_ribbon_icons_payload`.
+PlusRibbon medium icons grow from 20 to 32 logical pixels and medium buttons from
+38 to 42 pixels high; the shared grid minimum is 86 pixels for two medium rows.
+Large/small icon sizes, icon-only medium/small presentation, native action icons,
+tooltips, enablement, accessibility and user toolbar/dock state remain retained.
+Large captions/group dividers keep complete fitting and scrolling behavior.
+This is compatible Python staging on the unchanged native 8746 engine; no costly
+native rebuild is performed for this presentation change.
+
+Five installed checks pass: actual medium icon painting, all seven Design tab
+captions/dividers, exact Modeling layout, common/Home actions and actual native
+Box pointer/Cancel with object identity preservation. Two increased-scale checks
+pass at DPR 3.0; two checks launched through the actual saved desktop shortcut pass.
+No application overlays are used. Normal painted bounds grow from 20.67x16.67 to
+26.67x25.33 logical pixels (native artwork retains its transparent margins); the
+requested icon slot is 32x32 and fits the 76x42 button. DPR 3.0 painted bounds are
+26.67x25.67 versus the previous 19.67x16.0. Native captures of all seven tabs at both
+scales are inspected. Earlier width-only threshold attempts are not acceptance;
+QIcon reports the correct 32px size, and final paint checks prove increased area,
+growth on both axes and unclipped bounds. The preserved native artwork is not cropped.
+
+The existing desktop shortcut is saved/reopened with the new FreeCADPlus.exe target
+and payload working directory, then actually launched for the accepted checks.
+Complete prior payload inventory is verified: all 15,121 existing files hashed,
+only Ext/freecad/gui/PlusRibbon.py differs, and all native binaries are unchanged.
+Owner DOCX requirements/actual acceptance are synchronized; its final 88-page
+render changes only pages 56 and 88, both visually inspected. All other ZIP parts,
+native numbering and surrounding pagination are retained. Durable release-info
+and payload-manifest record actual checks, UI hash e0f87561d830a383b84b4f622f9c1f124eb7fade948cd407facb0900befc3a0b,
+source/native provenance and final origin/main publication. Raw task validation,
+267 runtime bytecode files and the source-test cache are removed. The preceding
+unused sketch-selection payload is deleted after an owner-process audit; current
+payload, native build and useful dependencies/toolchain remain. Preserve earlier
+sketch/quiet-probe and broader GUI limits below; no deferred family is qualified.
+
 ## October 6 sketch point selection and quiet feasibility probes — native delivery
 
 Both reported defects reproduce on the preceding Modeling payload. Two actual

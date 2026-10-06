@@ -1,5 +1,18 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 medium ribbon icon enlargement
+
+- [x] Medium icons 20→32 logical pixels and buttons 38→42px high; shared minimum
+  grid 86px, native artwork/actions/tooltips and icon-only presentation retained.
+- [x] Five installed native checks, two DPR 3.0 checks and two actual saved-shortcut
+  checks; painted area grows without clipping and seven-tab captures inspected.
+- [x] Full 15,121-file prior inventory proves only PlusRibbon.py application change;
+  native 8746 and the preceding sketch fixes are reused unchanged.
+- [x] Owner DOCX 88-page render with pages 56/88 visually inspected; other ZIP parts,
+  native numbering and surrounding pagination retained. Durable build metadata,
+  scoped raw/bytecode/obsolete payload cleanup and coherent publication receipt
+  in release-info.json; WORK_STATE owns source/native evidence and retained limits.
+
 ## October 6 sketch plain clicks and unapplied-constraint diagnostics
 
 - [x] Reproduce both owner reports on the current native Modeling payload.

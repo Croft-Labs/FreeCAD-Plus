@@ -15,10 +15,11 @@ STANDARD = {"File", "Edit", "Clipboard", "Workbench", "Macro", "View", "Individu
 SMALL_BUTTON_SIZE = 24
 GRID_SPACING = 2
 GRID_ROWS = 6  # Two cells per small button, three per medium button.
-PRIMARY_WIDTH = GRID_HEIGHT = 3 * SMALL_BUTTON_SIZE + 2 * GRID_SPACING
-MEDIUM_HEIGHT = GRID_HEIGHT // 2
+PRIMARY_WIDTH = 3 * SMALL_BUTTON_SIZE + 2 * GRID_SPACING
 FULL_ICON_SIZE = 40
-MEDIUM_ICON_SIZE = FULL_ICON_SIZE // 2
+MEDIUM_ICON_SIZE = 32
+MEDIUM_HEIGHT = MEDIUM_ICON_SIZE + 10  # Allow native style padding around the larger icon.
+GRID_HEIGHT = max(PRIMARY_WIDTH, 2 * MEDIUM_HEIGHT + GRID_SPACING)
 SMALL_ICON_SIZE = 16
 COMMON_GROUPS = (
     ("File", ("Std_New", "Std_Open", "Std_Save", "Std_SaveAs")),

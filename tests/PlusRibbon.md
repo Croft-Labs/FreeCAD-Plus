@@ -52,9 +52,9 @@ within that parent. Do not enable source overlays for these phases.
    reach every section without moving the mode dropdown/tab strip.
    Primary operations (including Extrude/Revolve) share one row of large buttons,
    each spanning the three-row grid. Secondary buttons have icons only and fill
-   three rows; full and medium captions have a 76 logical pixel button-width limit.
-   Full icons are 40px, medium 20px, small 16px; two 38px medium buttons fit a
-   column beside a 76px full button. Main uses medium buttons. New Component
+   three rows for small icons or two for medium icons. Medium/small buttons show no text; full captions start at 76 logical pixels and grow to fit complete lines.
+   Full icons are 40px, medium 32px, small 16px; two 42px medium buttons fit a
+   column beside a full button in the minimum 86px grid. Main uses medium buttons. New Component
    creates an unplaced embedded model and opens its editing tab; it must survive
    Undo/Redo and save/reopen with zero assembly instances.
    Help uses one dropdown. Loft/Pipe/Helix variants share menus. In Sketch,

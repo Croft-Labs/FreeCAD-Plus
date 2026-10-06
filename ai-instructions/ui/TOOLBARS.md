@@ -1135,7 +1135,7 @@ for source checks and pending grouped native acceptance.
 | Small | Secondary actions; no visible caption; three-row grid inside the ribbon |
 | Dropdown | A separate property, compatible with any icon size; related or rare choices appear in its menu |
 
-Full icons are 40 logical pixels, medium icons 20, and small icons 16. Full buttons span the 76px grid; two medium buttons (38px each) or three small buttons (24px each) fit a column. Documentation icon size is independent of application button size. Every icon retains a tooltip and accessible name.
+Full icons are 40 logical pixels, medium icons 32, and small icons 16. Full buttons span the minimum 86px grid; two medium buttons (42px each) or three small buttons (24px each) fit a column. Documentation icon size is independent of application button size. Every icon retains a tooltip and accessible name.
 
 ### All Modes
 

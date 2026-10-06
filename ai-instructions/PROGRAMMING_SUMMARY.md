@@ -4,6 +4,9 @@ The October 6 Modeling ribbon revision is owned by PlusRibbon.MODELING_GROUPS /
 MODELING_SIZES. Gray group dividers apply to all tabs; RibbonButton paints complete
 fitted two-line large captions, while medium/small buttons remain icon-only.
 The canonical DOCX and toolbar reference contain the requested six-group layout.
+Medium ribbon icons are 32 logical pixels in 42px-high buttons; the shared grid
+starts at 86px and grows to fit captions. WORK_STATE owns the installed native/
+scaled/shortcut evidence and the compatible Python owner payload.
 
 Owner artifact policy: generated validation belongs only in
 `C:\Users\GAMING-PC\Documents\_temp\freecad\validation` and is deleted at task
