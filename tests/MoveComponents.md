@@ -9,7 +9,11 @@ offset axes, world reference locations/directions, native points/circle centers,
 two-point/degenerate axes and invalid angles, stable previews and 360-degree no-op,
 successive Translate/Rotate with Undo/Redo and both saved formats, reference-role
 isolation, resets/persistence, invalid task text, pending picks and workflow changes.
-The recovered run predates the final test edits; rerun all eight on this host.
+October 6 native and packaged Plus evidence passes all eight updated Rotate checks
+and all twelve Translate checks without application source overlays or skips.
+See `packaged-final` results/logs and reviewed Rotate task captures in the recovery
+evidence task `01a10f79-1a93-7be0-a261-96a6b7e9c425`. Recovery item 1 is complete;
+items 2–7 require separate owner follow-up prompts. This is not final build delivery.
 
 Coverage: nested rotated/translated parents, multiple transformed uses of one parent,
 standalone parent tab, sibling-only whole selection and implicit descendants,

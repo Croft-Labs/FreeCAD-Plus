@@ -5,7 +5,11 @@
 - [x] Restore all seven prompts and owner corrections; inspect interrupted Rotate.
 - [x] Retain Rotate source and updated tests; synchronize its DOCX requirement.
 - [x] Rerun Rotate/Translate against the grouped native Plus build on this host:
-  first installed run passes 8/8 Rotate and 12/12 Translate (full repaired rerun pending).
+  native and packaged-final runs pass 8/8 Rotate and 12/12 Translate, with native
+  Undo/Redo and FCStd/cadprt reopen. Installed Rotate task captures are reviewed.
+- [x] Recovery item 1 is complete; Rotate DOCX acceptance is synchronized and rendered.
+  Owner steering now requires individual prompts for items 2–7. Preserve already
+  prepared later work; do not continue it autonomously or claim final build delivery.
 - [x] Prepare Point to Point, Align Axes, Align Coordinate Systems, Interactive
   sequentially using the shared parent-owned placement services and native handles.
 - [x] Prepare 17 new native regression cases; update the foundation's obsolete

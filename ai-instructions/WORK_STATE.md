@@ -1,6 +1,42 @@
 # FreeCAD Plus: Build validation handoff
 
-## Latest recovery gate: native acceptance repairs, October 6
+## Current owner scope: recovery item 1 complete; await individual follow-ups
+
+The owner superseded the omnibus execution instruction: stop after Rotate and
+await separate prompts for items 2–7. Rotate was already implemented; it has not
+been replayed. Native and packaged-final evidence passes all 8 updated Rotate
+checks and all 12 Translate checks, with actual task controls, shared-parent
+placements, Undo/Redo and FCStd/cadprt reopen. AppHome/module hashes are verified,
+with no application source overlays or skips. Installed Rotate top/bottom task
+captures are visually reviewed. The owner DOCX Rotate acceptance paragraph is
+updated without changing numbering/styles or other package parts; affected pages
+are rendered and inspected in build-recovery-rotate/owner-docx-review. The renderer
+produced 84 pages; pages 82–83 are visually reviewed. Current Move core/task
+SHA-256 values match the accepted packaged-final payload.
+
+Evidence root: C:/Users/GAMING-PC/.codex/visualizations/2026/10/06/
+01a10f79-1a93-7be0-a261-96a6b7e9c425/acceptance. packaged-final/results.json
+reports all 88 checks passing, including Rotate 8/8 and Translate 12/12.
+The later packaged-accepted rerun has no final results/validation.done; its
+progress records Rotate 8/8 and Translate 12/12 plus earlier suites. Its runner
+session no longer exists and no FreeCAD.exe process is present at the stop audit.
+Do not count that incomplete rerun as final acceptance or restart later suites.
+
+Earlier omnibus-authorized preparation, native build and staged payload are
+preserved. Later uncommitted Selection Escape and test-fixture changes remain in
+DesignSelectionToolbar.py, TestConstraintPalette.py, TestDesignSelection.py,
+TestMoveComponentsInteractive.py and TestWindowSelection.py. ai-instructions/queue
+is preserved and excluded. No owner desktop shortcut or final manifest has been
+delivered. No final build readiness claim is made.
+
+Exact next step: wait for the owner's item 2 prompt; verify existing Point to Point
+source/evidence before any changes. Subsequent integration/final delivery still
+needs reconciliation of the preserved dirty fixes, final combined high-DPI suite,
+DOCX final acceptance and verified actual desktop shortcut launch. Execute those
+only when the corresponding individual prompt is supplied. Historical continuation
+notes below describe the earlier plan and do not authorize resuming it.
+
+## Earlier recovery gate: native acceptance repairs, October 6
 
 The new grouped Windows x64 Release ALL_BUILD completed successfully in
 6212.578 seconds (configure 588.953 seconds). Build and configure logs/results
@@ -28,12 +64,35 @@ The unsuccessful overlay/background hypotheses were removed. Native regression
 checks the actual Qt framebuffer's face pixels, not saveImage's separate action.
 `native-capture-and-entry-retest` passes all seven integration checks, including
 real Assembly tab/button events and Part Tree Move action; the clean screenshot
-is visually inspected. The full repaired 88-check installed run is now running.
+is visually inspected. The full repaired 88-check installed run initially passes
+87/88; a palette mouse fixture fitted its camera before queued layout and projected
+the click to (0, 0). After waiting for layout it passes 14/14. A second full run
+passes the other 70 checks but the Selection click fixture searches GL widgets
+across inactive tabs. That fixture now waits for layout, targets the active MDI
+document and asserts its projected click is inside the viewport. The focused
+Selection rerun is running; full packaged acceptance will repeat all 88 checks.
 Native repair build initially hit MSVC C1001 in generated qrc_translation.cpp;
 the unchanged resource retry with CL_MPCount=1 passed in 51.859 seconds.
 All diagnostic-only captures and failed build/test logs are retained. Windows
 Computer Use app approval timed out, but native Qt evidence now passes directly.
-No payload or Desktop shortcut has been delivered.
+The staged test payload is now
+`C:/Users/GAMING-PC/AppData/Local/FreeCADPlus/freecad_plus_2026-10-06_recovered_workload_payload`.
+Its repository NSIS launcher was compiled successfully; staging copied 15034 files,
+1,636,583,721 bytes. `packaged-final` passes all 88 native checks at DPR 1.5 through
+FreeCADPlus.exe, with exact AppHomePath, payload working directory and module SHA
+verification. That predates the further Escape repair below; final rerun is active.
+
+At DPR 3.0 the first run passes 53/54; the box fixture did not establish actual
+Design mode and requested an offscreen window. Fixtures now activate Design,
+wait for real layout, target the active MDI and fit the physical screen. The next
+run exposes native Sketcher Escape reselecting its parent after initial clearing,
+and an Edit Pivot gesture ray-picked behind a small-screen task overlay. Selection
+now clears the native cancellation result on the next event turn, guarded against
+later clicks/other documents. The drag fixture pans only the camera and picks
+unobscured, in-screen native handles; it never writes pivot/component properties.
+Focused DPR 3.0 reruns pass palette 14/14 and Interactive 5/5 (real pivot events).
+The complete final DPR 1.5 run is active, followed by all 54 DPR 3.0 checks and
+the actual desktop .lnk launch. No desktop shortcut has been delivered yet.
 
 Next steps: finish the full installed suites; reconcile/render/inspect
 owner DOCX and commit/push the native fixes; stage the new payload and existing
