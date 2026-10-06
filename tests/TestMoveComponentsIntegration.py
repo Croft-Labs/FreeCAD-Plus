@@ -5,6 +5,7 @@ import unittest
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
+import os
 from PySide import QtCore, QtWidgets
 try:
     from PySide6 import QtTest
@@ -140,3 +141,82 @@ class TestMoveComponentsIntegration(unittest.TestCase):
         self.vector(second.LinkPlacement.Base,App.Vector(3,0,0))
         external.save()
         self.doc.save()
+
+    def test_native_viewport_overlay_keeps_opaque_face_pixels(self):
+        # Check the live Qt framebuffer, not saveImage's separate render action.
+        doc = App.newDocument("MoveOverlayPixels")
+        box = doc.addObject("Part::Feature", "Box")
+        box.Shape = Part.makeBox(10, 10, 10)
+        box.ViewObject.ShapeColor = (0.7, 0.7, 0.7)
+        doc.recompute()
+        view = Gui.activeDocument().activeView()
+        view.viewFront()
+        view.fitAll()
+        self.settle()
+        QtTest.QTest.qWait(250)
+        image = view.getViewer().grabFramebuffer()
+        x, y = view.getPointOnScreen(App.Vector(5, 0, 5))
+        x, y = round(x), image.height()-round(y)-1
+        self.assertTrue(12 <= x < image.width()-12 and 12 <= y < image.height()-12)
+        shaded = 0
+        for dx in range(-10, 11):
+            for dy in range(-10, 11):
+                color = image.pixelColor(x+dx, y+dy)
+                channels = (color.red(), color.green(), color.blue())
+                shaded += (min(channels) > 30 and max(channels) < 240
+                           and max(channels)-min(channels) < 12)
+        self.assertGreater(shaded, 420, "Live face pixels are corrupted by overlay rendering")
+        output = os.environ.get("FREECAD_PLUS_VALIDATION_DIR")
+        if output:
+            Gui.getMainWindow().grab().save(str(Path(output)/"native-overlay-pixels.png"))
+
+    def test_design_assembly_button_and_part_tree_move_entry(self):
+        from freecad.gui import PlusRibbon
+        from freecad.gui import ComponentSelection
+        # Expand the repeated parent so its displayed occurrence exposes children.
+        parents = QtWidgets.QTreeWidgetItemIterator(self.panel.structure)
+        while parents.value():
+            parent_row = parents.value()
+            if any(tuple(ids) == (self.a.ObjectId,) for key, ids in self.panel.members(parent_row)):
+                group = parent_row.data(0, QtCore.Qt.UserRole+2)
+                if group not in self.panel.expanded_instances:
+                    self.panel.toggle_instances(parent_row)
+                    self.panel.refresh()
+                break
+            parents += 1
+        iterator = QtWidgets.QTreeWidgetItemIterator(self.panel.structure)
+        row = None
+        while iterator.value():
+            candidate = iterator.value()
+            if any(tuple(ids) == self.paths[0] for key, ids in self.panel.members(candidate)):
+                row = candidate
+                break
+            iterator += 1
+        self.assertIsNotNone(row)
+        self.panel.structure.clearSelection()
+        row.setSelected(True)
+        expected = {tuple(ids) for key, ids in self.panel.members(row)}
+        menu = self.panel.build_menu(self.panel.structure, row)
+        next(action for action in menu.actions() if action.text() == "Move Components").trigger()
+        self.settle()
+        self.assertIsNotNone(UI._task)
+        self.assertEqual(set(UI._task.session.paths), expected)
+        UI._task.reject()
+        menu.deleteLater()
+        ribbon = PlusRibbon._ribbon
+        ribbon.configure("Design")
+        assembly = next(i for i in range(ribbon.tabs.count())
+                        if ribbon.tabs.tabData(i) == "Assembly")
+        QtTest.QTest.mouseClick(ribbon.tabs, QtCore.Qt.LeftButton,
+                               QtCore.Qt.NoModifier, ribbon.tabs.tabRect(assembly).center())
+        Gui.Selection.clearSelection()
+        Gui.Selection.addSelection(self.root, ComponentSelection.native_path(self.root, self.paths[0]))
+        self.settle()
+        button = Gui.getMainWindow().findChild(QtWidgets.QToolButton, "Ribbon_Std_MoveComponents")
+        self.assertIsNotNone(button)
+        self.assertTrue(button.isEnabled())
+        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+        self.settle()
+        self.assertIsNotNone(UI._task)
+        self.assertEqual(UI._task.session.paths, self.paths[:1])
+        UI._task.reject()

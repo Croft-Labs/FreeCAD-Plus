@@ -20,15 +20,22 @@ pixels, external-parent owning-file enforcement and owning-document deletion.
 No application source overlays or skips; launched AppHomePath and module hashes
 match the actual build. System DPR is 1.5. Earlier failed logs are retained.
 
-Current independent delivery blocker: Qt window/framebuffer captures have noisy
-viewport pixels even for a plain cube. Native offscreen saveImage produces a
-clean cube. Screen capture was inconclusive; Windows Computer Use app approval
-timed out. Pixel-store settings are normal and 100% scale shows the same issue.
-Graphics diagnostics remain diagnostic-only (zero acceptance tests), never passes.
-Inspect Qt/Coin context state, repair only with evidence, then repeat graphics and
-full installed acceptance. No payload or Desktop shortcut has been delivered.
+The graphics blocker is resolved: Qt paintGL called the inherited asynchronous
+redraw scheduler when it needed to fill a capture framebuffer synchronously.
+QuarterWidget now paints that framebuffer immediately, preserving the ordinary
+frame-rate scheduling and restoring automatic-redraw state with a scope guard.
+The unsuccessful overlay/background hypotheses were removed. Native regression
+checks the actual Qt framebuffer's face pixels, not saveImage's separate action.
+`native-capture-and-entry-retest` passes all seven integration checks, including
+real Assembly tab/button events and Part Tree Move action; the clean screenshot
+is visually inspected. The full repaired 88-check installed run is now running.
+Native repair build initially hit MSVC C1001 in generated qrc_translation.cpp;
+the unchanged resource retry with CL_MPCount=1 passed in 51.859 seconds.
+All diagnostic-only captures and failed build/test logs are retained. Windows
+Computer Use app approval timed out, but native Qt evidence now passes directly.
+No payload or Desktop shortcut has been delivered.
 
-Next steps: resolve graphics, rerun full installed suites; reconcile/render/inspect
+Next steps: finish the full installed suites; reconcile/render/inspect
 owner DOCX and commit/push the native fixes; stage the new payload and existing
 NSIS launcher; run packaged/high-DPI acceptance; create/update and reopen the exact
 owner desktop link, then launch that saved .lnk and verify the runtime home and

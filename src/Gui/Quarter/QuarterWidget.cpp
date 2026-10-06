@@ -65,6 +65,7 @@
 #include <QOpenGLWidget>
 #include <QPaintEvent>
 #include <QResizeEvent>
+#include <QScopeGuard>
 #include <QWindow>
 
 #include <Inventor/C/basic.h>
@@ -191,7 +192,7 @@ public:
     {
         QuarterWidget* qw = qobject_cast<QuarterWidget*>(parentWidget());
         if (qw) {
-            qw->redraw();
+            qw->redrawFramebuffer();
         }
     }
 
@@ -991,6 +992,33 @@ QuarterWidget::redraw()
   // 'processdelayqueue = false' in issueRedraw(). However, it does cause
   // annoying flickering, and actually crash on Windows.
   PRIVATE(this)->requestRedraw();
+}
+
+void QuarterWidget::redrawFramebuffer()
+{
+    // paintGL is also used by QOpenGLWidget::grabFramebuffer(). Scheduling a
+    // future viewport update here leaves that newly allocated capture FBO empty.
+    auto* widget = static_cast<QOpenGLWidget*>(viewport());
+    if (!widget->isValid()) {
+        return;
+    }
+    widget->makeCurrent();
+    if (updateDevicePixelRatio()) {
+        SbViewportRegion region(static_cast<int>(devicePixelRatio() * width()),
+                                static_cast<int>(devicePixelRatio() * height()));
+        getSoRenderManager()->setViewportRegion(region);
+        getSoEventManager()->setViewportRegion(region);
+    }
+    if (!initialized) {
+        getSoRenderManager()->reinitialize();
+        initialized = true;
+    }
+    const bool automaticRedraw = PRIVATE(this)->autoredrawenabled;
+    PRIVATE(this)->autoredrawenabled = false;
+    auto restoreAutomaticRedraw = qScopeGuard([this, automaticRedraw]() {
+        PRIVATE(this)->autoredrawenabled = automaticRedraw;
+    });
+    actualRedraw();
 }
 
 /*!

@@ -189,6 +189,8 @@ public Q_SLOTS:
   virtual void seek();
 
   void redraw();
+  // Qt paintGL/grabFramebuffer must fill the current framebuffer synchronously.
+  void redrawFramebuffer();
 
   void setRenderMode(SIM::Coin3D::Quarter::QuarterWidget::RenderMode mode);
   void setStereoMode(SIM::Coin3D::Quarter::QuarterWidget::StereoMode mode);
