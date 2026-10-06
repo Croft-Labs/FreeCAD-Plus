@@ -50,3 +50,12 @@ run all five in recovery item 7. Existing shared Move/Rotate checks cover exact
 paths, guards, persistence, Cancel and geometry/identity preservation; final
 integration must verify these retained contracts together. Do not count earlier
 5/5 evidence as execution of the new assertions.
+
+Separate recovery item 4: retained TestMoveComponentsFrames passed 5/5 in
+packaged-final before the present test edits. Those same five cases now check
+repeated unmodified frame previews, both displayed parent transforms, OK after
+Apply without repetition, sibling/descendant placements in both persisted formats
+and Cancel preserving the baseline and Undo count. Syntax checks pass; native
+execution of new assertions is deferred to item 7. Repeat all five there alongside
+the strengthened Axes checks and final integrated acceptance. Application Move
+core/task hashes still match the earlier accepted payload.

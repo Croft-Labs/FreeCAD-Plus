@@ -32,11 +32,20 @@ class TestMoveComponentsFrames(unittest.TestCase):
         relative = self.first.LinkPlacement.inverse().multiply(self.second.LinkPlacement)
         descendant = App.Placement(self.descendant.LinkPlacement)
         signature = session.signature()
-        session.preview_shapes(delta)
+        for _ in range(3):
+            self.assertEqual(len(session.preview_shapes(session.align_frames())), 4)
+            self.assertTrue(session.source_frame.isSame(source, 1e-8))
+            self.assertTrue(session.target_frame.isSame(target, 1e-8))
         self.assertEqual(signature, session.signature())
         self.assertTrue(session.commit(delta))
         self.assertTrue(relative.isSame(self.first.LinkPlacement.inverse().multiply(self.second.LinkPlacement), 1e-8))
         self.assertTrue(descendant.isSame(self.descendant.LinkPlacement, 1e-8))
+        # Both displayed parent orientations reflect the same owning placement.
+        from ComponentModel import _component_frame
+        for parent in (self.a, self.b):
+            world_parent = _component_frame(self.root, (parent.ObjectId,))
+            world_child = _component_frame(self.root, (parent.ObjectId, self.first.ObjectId))
+            self.assertTrue(world_child.isSame(world_parent.multiply(self.first.LinkPlacement), 1e-8))
 
     def test_basis_projection_rejects_parallel_nonfinite_reflection_scale(self):
         frame = Move.frame_from_references(App.Vector(2, 3, 4), App.Vector(0, 0, 2), App.Vector(3, 0, 7))
@@ -62,11 +71,14 @@ class TestMoveComponentsFrames(unittest.TestCase):
         self.assertTrue(self.first.LinkPlacement.isSame(expected, 1e-8))
         self.assertIsNone(task.session.source_frame)
         self.assertIsNone(task.session.target_frame)
-        task.accept()
+        undo = self.doc.UndoCount
+        self.assertTrue(task.accept())
+        self.assertEqual(self.doc.UndoCount, undo)
         self.doc.undo()
         self.assertTrue(self.first.LinkPlacement.isSame(App.Placement(), 1e-8))
         self.doc.redo()
-        name = self.first.Name
+        names = (self.first.Name, self.second.Name, self.descendant.Name)
+        placements = [App.Placement(self.doc.getObject(name).LinkPlacement) for name in names]
         files = []
         for extension in ("FCStd", "cadprt"):
             path = str(Path(tempfile.gettempdir()) / ("frame-roundtrip."+extension))
@@ -75,7 +87,8 @@ class TestMoveComponentsFrames(unittest.TestCase):
         App.closeDocument(self.doc.Name)
         for path in files:
             doc = App.openDocument(path)
-            self.assertTrue(doc.getObject(name).LinkPlacement.isSame(expected, 1e-8))
+            for name, placement in zip(names, placements):
+                self.assertTrue(doc.getObject(name).LinkPlacement.isSame(placement, 1e-8))
             App.closeDocument(doc.Name)
 
     def test_partial_input_and_invalid_frame_do_not_commit(self):
@@ -89,4 +102,13 @@ class TestMoveComponentsFrames(unittest.TestCase):
         task.session.target_frame = App.Placement()
         undo = self.doc.UndoCount
         self.assertTrue(task.apply())
+        self.assertEqual(self.doc.UndoCount, undo)
+        task.session.source_frame = App.Placement(App.Vector(2, 3, 4), App.Rotation(App.Vector(1, 2, 3), 51))
+        task.parent_frame("target")
+        signature = task.session.signature()
+        task.update_preview()
+        self.assertEqual(task.session.signature(), signature)
+        self.assertEqual(self.doc.UndoCount, undo)
+        task.reject()
+        self.assertTrue(self.first.LinkPlacement.isSame(App.Placement(), 1e-8))
         self.assertEqual(self.doc.UndoCount, undo)

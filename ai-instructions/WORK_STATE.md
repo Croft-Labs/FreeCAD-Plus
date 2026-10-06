@@ -1,6 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
-## Current owner scope: recovery item 3 Align Axes source milestone
+## Current owner scope: recovery item 4 Align Coordinate Systems source milestone
+
+The individual frame-alignment prompt authorizes this item only. Preceding
+Rotate/Point workflows and the item 3 Align Axes source milestone are retained;
+do not replay them or run later items without individual follow-up prompts.
+
+The retained shared task offers existing origins/datums, explicit Parent frames
+and expandable Origin/Z/X definitions. The core projects X perpendicular to Z,
+derives a right-handed basis and applies Target * inverse Source as one rigid
+parent-relative group delta. Native reference paths preserve displayed transforms;
+scaled/reflected/nonfinite/incomplete inputs are rejected. Triads/resolved values,
+baseline previews and shared Apply/OK/Cancel/persistence/guards remain intact.
+
+Earlier packaged-final evidence passes TestMoveComponentsFrames 5/5 without source
+application overlays/skips. Current Move core/task hashes match that accepted
+payload. Installed frame task captures are visually reviewed. Five existing cases
+now additionally check repeated baseline previews, both displayed parent frames,
+OK after Apply without repeat, all siblings/descendants in both FCStd/cadprt round
+trips and preview/Cancel without mutation. Syntax checks pass; these new assertions
+have NOT run natively. Defer changed-test native/runtime acceptance and the costly
+build/packaged delivery to item 7. Earlier 5/5 is not new-assertion acceptance.
+
+The owner DOCX frame paragraph is synchronized; all other DOCX parts, numbering
+and styles are preserved. Affected pages are rendered/visually inspected under
+build-recovery-frames/owner-docx-review. Preserve pre-existing dirty Selection
+Escape/palette/Interactive fixture files and the untracked queue. No new build,
+desktop shortcut or owner-ready delivery is claimed. Exact next step: await item 5
+Interactive/pivot, inspect existing source and native event evidence before edits.
+Item 7 must run both strengthened Axes/Frames suites plus all integration gates.
+
+## Earlier item 3 Align Axes source milestone
 
 The individual Align Axes prompt is authorized; stop at its coherent commit/push.
 Rotate is verified complete. Point to Point already exists from the earlier

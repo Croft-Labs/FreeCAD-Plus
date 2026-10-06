@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development Roadmap
 
+## Separate recovery item 4 Align Coordinate Systems review
+
+- [x] Retain and review complete frame-alignment implementation in shared Move.
+- [x] Verify existing packaged 5/5 frame evidence and accepted application hashes.
+- [x] Strengthen five cases for stable previews, displayed parents, Cancel,
+  non-repeated OK and sibling/descendant FCStd/cadprt persistence; syntax passes.
+- [x] Synchronize/render/inspect owner DOCX while preserving numbering/styles.
+- [ ] Run changed assertions in item 7's grouped native/packaged acceptance.
+  No new native execution or owner build delivery is claimed in this item.
+
 ## Separate recovery item 3 Align Axes review
 
 - [x] Inspect retained implementation and verify preceding Rotate/Point source and
