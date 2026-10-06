@@ -1,0 +1,65 @@
+{
+  "threadId": "01a10462-f839-7980-b385-3d218d8c1fb9",
+  "items": [
+    {
+      "file": "01-selection-toolbar.txt",
+      "sha256": "19ba5318908d3e06d96480d23b8e81d8644b5322a9e766bfbb52a67345f0dfac",
+      "clientUserMessageId": "72b58adf-6f59-5bbc-b46a-ffca81b76898",
+      "queuedSubmissionId": "01a104ad-abd5-7973-bc4a-8ce120ad64f7"
+    },
+    {
+      "file": "02-layers.txt",
+      "sha256": "ceca52a9cd6716271176b9a4296992773dfc7e766c1abbf473b018bba06ef659",
+      "clientUserMessageId": "3a589cb5-896f-5b2c-b645-c538a23b212e",
+      "queuedSubmissionId": "01a104ad-abd8-7f31-b2c1-fd495c35401c"
+    },
+    {
+      "file": "03-contextual-constraint-palette.txt",
+      "sha256": "f743ce84596aadfa094542973f4650dc794cfc6904a8b34c5b9d9278cb714e91",
+      "clientUserMessageId": "11e02a7b-fab4-5cbc-aa5a-b10492411ef6",
+      "queuedSubmissionId": "01a104ad-abdc-75b2-aa45-76be184eb5a3"
+    },
+    {
+      "file": "04-move-components-foundation-translate.txt",
+      "sha256": "019e5baf137a809aac8ee768c0745abc313e8803ecf4b21d35f1b4d0a090250d",
+      "clientUserMessageId": "b513a746-839f-5d20-90bc-8bdd826fb9dd",
+      "queuedSubmissionId": "01a104ad-abdf-7770-82fb-12b3e87e1217"
+    },
+    {
+      "file": "05-move-components-rotate.txt",
+      "sha256": "1fe7433fd015d27c12a4839d38612372f64e72fc88644fb121a99fa58fdfb9a4",
+      "clientUserMessageId": "979a933a-1884-5114-8cc5-f6a7052c3a1c",
+      "queuedSubmissionId": "01a104ad-abe2-7410-94eb-792711b71f04"
+    },
+    {
+      "file": "06-move-components-point-to-point.txt",
+      "sha256": "b598f535aa959bc6415613fb8027b6d6ba68c8c5a53ae76da3213087ccabfdf2",
+      "clientUserMessageId": "9b785f99-8e81-5796-a9da-abb6ad22f5c7",
+      "queuedSubmissionId": "01a104ad-abe6-7dc0-a899-c7faf3d1b0b9"
+    },
+    {
+      "file": "07-move-components-align-axes.txt",
+      "sha256": "5849c95fe005bdacd4dcddcaec418f96904ed6b27fb36f4376dd5457755f8ce3",
+      "clientUserMessageId": "f62e6a4b-fd02-5491-b0ba-529a7fc8cff1",
+      "queuedSubmissionId": "01a104ad-abea-7ff0-8242-63f9192a9aed"
+    },
+    {
+      "file": "08-move-components-align-coordinate-systems.txt",
+      "sha256": "5160854513787de06e8f6dea90f99311c4bc5b243d8beda4d538f5eb42ede6eb",
+      "clientUserMessageId": "18f763cb-c3ef-52f9-aa05-1ad2ea654d27",
+      "queuedSubmissionId": "01a104ad-abed-7e53-a829-9f7424a7cfcf"
+    },
+    {
+      "file": "09-move-components-interactive-pivot.txt",
+      "sha256": "e67c9846c86b4f7dc836cba9895b8a5e6efb0f08ebfb2dcd22a61e130fa23762",
+      "clientUserMessageId": "b658f451-656f-55fe-88ec-b97b56b72100",
+      "queuedSubmissionId": "01a104ad-abf0-7dc3-8f57-aae8a323f6c8"
+    },
+    {
+      "file": "10-integration-build-delivery.txt",
+      "sha256": "d6985b7ddb751d25997e870e9efe035da408a929c958c7a5a6b7ede60753a76a",
+      "clientUserMessageId": "510a3cb4-9e99-5ab4-985f-e2037a856d8f",
+      "queuedSubmissionId": "01a104ad-abf3-7cd0-9ec5-11b46c99c9fc"
+    }
+  ]
+}

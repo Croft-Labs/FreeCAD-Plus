@@ -1,5 +1,18 @@
 # FreeCAD Plus: Build validation handoff
 
+## Owner requested archive publication
+
+The owner requested logical commits and origin publication of the remaining
+untracked files. The original October 3 workload archive contains ten prompt
+backups and three JSON receipts; JSON parsing and all recorded prompt SHA-256
+checks pass. Original files are preserved byte-for-byte, with a README clarifying
+historical receipt limits and preventing duplicate execution or enqueueing.
+The owner DOCX records this administrative status; its affected final page is
+rendered and visually reviewed before publication. This commit changes no
+implementation or build. The delivered test payload remains the validated
+b75ba0252f19e904d436236602dcfe8a9a2d12de source snapshot. Publication uses
+origin/main without force, followed by exact remote branch verification.
+
 ## Recovery item 7 completed grouped test-build delivery
 
 Selection, Design Layers, Contextual Constraint Palette and all six Move
@@ -52,7 +65,8 @@ only, without force; exact final commit and remote branch verification are in
 payload validation/publication-receipt.json and release-info.json. Earlier pushed
 milestones through e0981cc1ce328bbf7814ee8dde47c982bcd228ae remain published.
 This is a local incremental grouped test build, not a release/deployment.
-Untracked ai-instructions/queue is preserved and excluded from commits.
+At item 7 delivery, ai-instructions/queue was preserved and excluded from commits.
+The subsequent owner-requested archive publication above supersedes that status.
 
 No implementation/build/DOCX/shortcut gate remains for these seven recovered
 items. Next action is physical owner feedback using this shortcut on real work;
