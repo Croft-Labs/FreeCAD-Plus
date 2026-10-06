@@ -694,6 +694,12 @@ public:
     {
         return debugMode;
     }
+    /// Keep hypothetical feasibility failures out of the user report view.
+    /// Real sketch solvers retain their ordinary diagnostics by default.
+    void setDiagnosticMode(bool enabled)
+    {
+        diagnosticMode = enabled;
+    }
     inline void setAutoQRThreshold(int val)
     {
         GCSsys.autoQRThreshold = val;
@@ -789,6 +795,7 @@ public:
 
 private:
     GCS::DebugMode debugMode;
+    bool diagnosticMode {false};
 
 private:
     bool updateGeometry();

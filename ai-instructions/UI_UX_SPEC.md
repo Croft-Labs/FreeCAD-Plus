@@ -145,6 +145,9 @@ actions are absent. Existing constraints and known conflicts/redundancies are di
 with tooltips that remain available on disabled buttons. A cloned native Sketch solver
 diagnoses additions without changing committed geometry, constraints or the live
 solver. Nonconvergence alone is unknown feasibility and does not disable an action.
+Hypothetical solver/geometry failures must be quiet: selecting points or refreshing
+the palette is not an applied constraint operation. Quiet handling belongs only
+to the cloned diagnostic solver; actual operations retain native warnings/errors.
 No hover action adds constraints. Revalidate the live sketch and full selection before
 execution; native dimension dialogs retain their normal units and command safeguards.
 
@@ -166,6 +169,12 @@ selection and close it in either state. Clean up on sketch exit, document close,
 deletion and task/mode changes. No repair feature is introduced here.
 
 ## Design Selection toolbar
+
+During Plus Design sketch editing, plain point/edge/constraint clicks replace
+selection, including a repeat click retaining the selected item. Ctrl/Shift clicks
+permit native multiselection. Plain empty-space clicks clear selection; Ctrl/Shift
+empty clicks retain it. Persistent Selection concerns operation completion, not
+click accumulation. Keep drag, box, context-menu and Classic native semantics.
 
 The Selection toolbar sits beside Save/Edit above the ribbon and is visible only
 in Plus Design mode. In order: **Single Curve / Connected Curves / Tangent Curves**

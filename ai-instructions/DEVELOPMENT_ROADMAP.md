@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 sketch plain clicks and unapplied-constraint diagnostics
+
+- [x] Reproduce both owner reports on the current native Modeling payload.
+- [x] Prepare native plain-click replacement and Ctrl/Shift multiselection/empty
+  space semantics; keep drag, box, context menu and Classic behavior scoped.
+- [x] Keep expected hypothetical geometry/solver failures quiet only in the
+  cloned diagnostic instance; preserve native status and live-operation messages.
+- [x] Native reproduction/regressions and owner requirements prepared.
+- [ ] One grouped native build, packaged/high-DPI/pointer/Undo/save-reopen checks,
+  final owner DOCX and verified desktop shortcut delivery. See WORK_STATE next steps.
+
 ## October 6 Modeling ribbon and group presentation
 
 - [x] Implement requested six Modeling groups, large/medium/small sizing and

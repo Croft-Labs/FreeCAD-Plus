@@ -210,6 +210,7 @@ SketchSolveStatus SketchObject::diagnoseConstraintAdditions(const std::vector<Co
     append(Constraints.getValues());
     append(additions);
     Sketch probe;
+    probe.setDiagnosticMode(true);
     int dof = probe.setUpSketch(geometry, constraints, getExternalGeometryCount());
     if (dof < 0) {
         return SketchSolveStatus::Overconstrained;

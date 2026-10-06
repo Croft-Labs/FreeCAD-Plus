@@ -1,5 +1,40 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 sketch point selection and quiet feasibility probes — source milestone
+
+Both owner defects reproduce on modeling_ribbon_payload: two actual plain point
+clicks retain Vertex3 plus Vertex4, and three candidate feasibility checks print
+repeated 'Updating geometry: Error ... Both points are equal' and invalid-solution
+warnings from DogLeg, LevenbergMarquardt, BFGS and SQP. No constraint was applied.
+
+Prepared native corrections: Design-active left click picks replace selection
+unless Ctrl/Shift is held; repeated plain clicks keep that one item. Shift empty
+clicks now retain selection like Ctrl; plain empty clicks clear it. Native drag,
+box, context-menu and Classic behavior remain scoped separately. Sketch's cloned
+diagnostic instance has a default-false quiet flag; only diagnoseConstraintAdditions
+enables it. Suppress its expected geometry-update/invalid-solution reports while
+preserving native statuses and normal live-operation errors/warnings.
+
+Two native regressions reproduce the old defects; additional assertions check
+Ctrl/Shift/empty-space semantics, unchanged geometry/constraints/Undo and retained
+diagnostics for an actual invalid operation. Source formatting uses bundled
+clang-format 19.1.5 on changed ranges; Python syntax and whitespace checks pass.
+Owner DOCX current requirements and UI_UX_SPEC are synchronized; render the added
+requirement before committing this source milestone. Runtime acceptance remains
+pending and must not be inferred from the preceding binary.
+
+Exact next step: commit/push this coherent source milestone, then one grouped
+incremental native ALL_BUILD in the retained external
+freecad_plus_2026-10-06_recovered_workload tree, with output under
+Documents\_temp\freecad\validation\sketch-selection\native-build. Rebuild all
+enabled consumers because Sketch's layout changes. Stage updated native binaries
+into a fresh freecad_plus_2026-10-06_sketch_selection_payload based on the useful
+Modeling payload. Run focused native selection/palette regressions, high-DPI,
+actual shortcut/Undo/save-reopen; inspect DOCX, update durable source/native
+provenance and verify the existing desktop shortcut before owner delivery.
+Preserve any owner session using a preceding payload. Delete reviewed raw task
+validation after canonical summary; keep known BIM/legacy limitations separate.
+
 ## October 6 Modeling ribbon and complete captions
 
 Current owner payload:

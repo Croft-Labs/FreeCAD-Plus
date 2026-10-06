@@ -1,5 +1,15 @@
 # Contextual Constraint Palette acceptance
 
+October 6 point-click regressions: run native
+`test_plain_point_click_replaces_and_modifiers_extend` and
+`test_candidate_point_constraints_do_not_log_errors`. They reproduce both reported
+defects on the preceding Modeling payload. Check real sequential point clicks,
+repeat click, Ctrl/Shift multiselection, Shift empty-click retention and plain
+empty-click clearing without geometry/constraint/Undo changes. Capture the native
+ReportOutput while probing a hypothetical collapsed line; it must be quiet.
+An actual invalid constraint must still produce normal live-solver diagnostics.
+Build these C++ changes together; older binaries are reproduction evidence only.
+
 Run `TestConstraintPalette` in the Plus GUI runtime; after the grouped native build
 run `TestConstraintPaletteNative` as well. The native class requires the new cloned
 solver diagnostic and single-solve driving batch APIs; do not count an older payload

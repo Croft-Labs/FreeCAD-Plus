@@ -1445,7 +1445,11 @@ bool ViewProviderSketch::mouseButtonPressed(int Button, bool pressed, const SbVe
                 }
                 case STATUS_SKETCH_StartRubberBand:// a single click happened, so clear selection
                                                    // unless user hold control.
-                    if (!(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+                    if (!(QApplication::keyboardModifiers() & Qt::ControlModifier)
+                        && !(App::GetApplication()
+                                 .GetParameterGroupByPath("User parameter:BaseApp/Preferences/DesignSelection")
+                                 ->GetBool("Active", false)
+                             && (QApplication::keyboardModifiers() & Qt::ShiftModifier))) {
                         Gui::Selection().clearSelection();
                     }
                     setSketchMode(STATUS_NONE);
@@ -5664,6 +5668,18 @@ void ViewProviderSketch::preselectToSelection(const std::stringstream& ss,
                                               const Base::Vector3d& pickedPoint,
                                               bool toggle)
 {
+    const bool designSelection = App::GetApplication()
+                                     .GetParameterGroupByPath("User parameter:BaseApp/Preferences/DesignSelection")
+                                     ->GetBool("Active", false);
+    // Native release-time point/edge/constraint picks normally toggle/add. In
+    // Design, a plain click replaces selection; Ctrl/Shift retain native toggling.
+    // Do this only for click picks, so dragging, box selection and context-menu
+    // selection keep their own interaction semantics.
+    if (toggle && designSelection
+        && !(QApplication::keyboardModifiers() & (Qt::ControlModifier | Qt::ShiftModifier))) {
+        Gui::Selection().clearSelection();
+        toggle = false;
+    }
     // If toggle true and preselection already selected remove from selection
     if (toggle && isSelected(ss.str())) {
         rmvSelection(ss.str());

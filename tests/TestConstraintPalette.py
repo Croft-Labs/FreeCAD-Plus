@@ -399,6 +399,81 @@ class TestConstraintPalette(unittest.TestCase):
 
 class TestConstraintPaletteNative(TestConstraintPalette):
     """Additional grouped-build acceptance: no source-overlay substitute."""
+    def test_plain_point_click_replaces_and_modifiers_extend(self):
+        window = Gui.getMainWindow()
+        window.resize(1400, 950)
+        Gui.updateGui()
+        settle(150)
+        view = Gui.activeDocument().activeView()
+        view.viewTop()
+        view.fitAll()
+        settle(150)
+        mdi = window.findChild(QtWidgets.QMdiArea).activeSubWindow()
+        widget = max((w for w in mdi.findChildren(QtWidgets.QWidget)
+                      if "GL" in w.metaObject().className() and w.width() > 100),
+                     key=lambda w: w.width() * w.height())
+        before = (self.doc.UndoCount, self.sketch.ConstraintCount,
+                  tuple(g.toShape().Length for g in self.sketch.Geometry))
+        def click(world=None, modifiers=QtCore.Qt.NoModifier):
+            if world is None:
+                pixel = QtCore.QPoint(25, 25)
+            else:
+                sx, sy = view.getPointOnScreen(App.Vector(*world))
+                ratio = widget.devicePixelRatioF()
+                pixel = QtCore.QPoint(round(sx / ratio), widget.height() - round(sy / ratio) - 1)
+            QtTest.QTest.mouseMove(widget, pixel)
+            settle(80)
+            QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, modifiers, pixel)
+            settle(QtWidgets.QApplication.doubleClickInterval() + 50)
+        Gui.Selection.clearSelection()
+        click((0, 5, 0))
+        self.assertEqual(Policy.selected(self.sketch), ["Vertex3"])
+        click((12, 5, 0))
+        self.assertEqual(Policy.selected(self.sketch), ["Vertex4"])
+        click((12, 5, 0))  # Plain repeat-click retains the one selected point.
+        self.assertEqual(Policy.selected(self.sketch), ["Vertex4"])
+        click((0, 5, 0), QtCore.Qt.ControlModifier)
+        self.assertEqual(set(Policy.selected(self.sketch)), {"Vertex3", "Vertex4"})
+        click((0, 10, 0), QtCore.Qt.ShiftModifier)
+        self.assertEqual(set(Policy.selected(self.sketch)), {"Vertex3", "Vertex4", "Vertex5"})
+        click(None, QtCore.Qt.ShiftModifier)
+        self.assertEqual(set(Policy.selected(self.sketch)), {"Vertex3", "Vertex4", "Vertex5"})
+        click()
+        self.assertFalse(Policy.selected(self.sketch))
+        self.assertEqual(before, (self.doc.UndoCount, self.sketch.ConstraintCount,
+                         tuple(g.toShape().Length for g in self.sketch.Geometry)))
+
+    def test_candidate_point_constraints_do_not_log_errors(self):
+        outputs = [w for w in Gui.getMainWindow().findChildren(QtWidgets.QTextEdit)
+                   if w.metaObject().className().endswith("ReportOutput")]
+        self.assertTrue(outputs, "Native report output must be available")
+        settle()
+        before_text = outputs[0].toPlainText()
+        before = (self.doc.UndoCount, self.sketch.ConstraintCount,
+                  tuple(g.toShape().Length for g in self.sketch.Geometry), list(self.sketch.State))
+        # Collapsing the endpoints of one line is an invalid hypothetical solve,
+        # not a user operation: feasibility probing must remain read-only/quiet.
+        self.select("Vertex3", "Vertex4")
+        for _ in range(3):
+            self.assertTrue(Policy.actions(self.sketch, Policy.selected(self.sketch)))
+        settle(200)
+        added = outputs[0].toPlainText()[len(before_text):]
+        self.assertNotIn("Invalid solution", added)
+        self.assertNotIn("Updating geometry: Error", added)
+        self.assertEqual(before, (self.doc.UndoCount, self.sketch.ConstraintCount,
+                         tuple(g.toShape().Length for g in self.sketch.Geometry), list(self.sketch.State)))
+
+        # The quiet flag belongs to the cloned probe, never the live solver.
+        offset = len(outputs[0].toPlainText())
+        self.doc.openTransaction("Actual invalid coincidence")
+        try:
+            self.sketch.addConstraint(Sketcher.Constraint("Coincident", 1, 1, 1, 2))
+            self.sketch.solve()
+            settle(200)
+            self.assertIn("Updating geometry: Error", outputs[0].toPlainText()[offset:])
+        finally:
+            self.doc.abortTransaction()
+
     def test_native_probe_is_read_only_and_finds_indirect_redundancy(self):
         # Native solver recognizes this indirect dependency. Equality cycles can
         # be accepted by the kernel, so they are not a redundancy oracle.
