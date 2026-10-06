@@ -1,5 +1,34 @@
 # FreeCAD Plus: Development Roadmap
 
+## Legacy migration task sequence — roadmap 7.8
+
+- [x] 1. Read-only native inventory and conversion plan: source identities,
+  Parts/Bodies/Group/Tip, sketches, shared/external links, placement/scale metadata,
+  properties, expressions, dependency order, cycle blockers and evaluated geometry.
+  Eight native source-mode checks pass, loaded source hashes verified. No conversion,
+  native build, installed-payload qualification or owner GUI delivery is claimed.
+  DOCX requirements rendered/inspected; source and publication in WORK_STATE.
+- [ ] 2. Models definitions and Part Tree occurrences; preserve permanent master,
+  ownership, shared definitions, nested/local/world placements and external sources.
+- [ ] 3. Body history/results foundation and narrow Sketch → Pad pilot.
+- [ ] 4. Origins and datum geometry/attachment frames.
+- [ ] 5. Sketch ownership, attachments, constraints, expressions and shared inputs.
+- [ ] 6. Pad/Pocket/Extrude parameters, targets and result chains.
+- [ ] 7. Revolution/Groove/Revolve axes, angles and targets.
+- [ ] 8. Loft sections and additive/subtractive targets.
+- [ ] 9. Pipe profiles, paths and orientation.
+- [ ] 10. Helix and primitive adapters, separated into bounded feature tasks.
+- [ ] 11. Dress-up, pattern/transformation and Boolean adapters, as separate tasks.
+- [ ] 12. Whole-file mixed-history, external/shared consumer and recovery acceptance.
+
+Every later task must preserve mapped/native editable features first, then recover
+available final evaluated output as explicitly reported dumb body/sheet/curve/point
+when necessary. Validate cached freshness, geometry and placement; report loss of
+parametrics and unavailable output. This is conversion scope, not authorization
+for unrelated feature implementation. Only task one is executed in this milestone.
+Batch installed/build delivery with later integration. API/fixtures:
+[LegacyConversionPlan](../tests/LegacyConversionPlan.md).
+
 ## October 6 immediate constraint palette tooltip dismissal
 
 - [x] Reproduce visible native tooltip on entry to solving; synchronously hide it

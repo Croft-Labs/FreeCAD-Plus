@@ -167,6 +167,12 @@ def export(objects, filename):
     document.saveCopy(str(filename))
 
 
+def legacy_plan(document):
+    """Return a read-only inventory and proposed legacy conversion boundaries."""
+    import LegacyConversion
+    return LegacyConversion.inventory(document)
+
+
 def convert_legacy(document):
     """Adopt compatible native geometry; preserve/report the remaining payloads."""
     if any(getattr(o, "ComponentRole", "") == "Document" for o in document.Objects):

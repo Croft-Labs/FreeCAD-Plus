@@ -259,6 +259,24 @@ Cancel leaves the document unchanged.
 
 ## Required end-to-end acceptance
 
+### Incremental legacy conversion planning and recovery
+
+Before changing ownership, inventory native definitions/containers, Body Group and
+Tip, sketches, occurrences, placements, properties, expressions and dependencies.
+Preserve native source identity and geometry evidence. Define shared-model boundaries
+before creating instances; retain the permanent master context. Body-owned inputs
+must be ordered by their actual dependencies, including attachments and expressions.
+Structural ownership backlinks must not create artificial computational cycles.
+
+Every feature-family conversion uses the same recovery order: mapped editable
+feature, retained editable native feature, then explicitly reported dumb body,
+sheet, curve or point from validated evaluated geometry. Recovery must preserve
+the final useful output when available; it must report the loss of parametrics and
+never claim a dumb result is complete feature migration. Stale caches, invalid
+geometry, missing references and unavailable outputs remain explicit. Read-only
+planning records candidates and failures; it does not create fallback objects.
+See [inventory API and acceptance](../../tests/LegacyConversionPlan.md).
+
 One root with its own body and two instances of an embedded child, plus an external
 child. Independent sketches feed operations without Body containers. Exercise
 direct-child body/sheet/dumb-sketch/curve references, parent-only edits, delayed

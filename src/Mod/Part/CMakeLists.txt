@@ -27,6 +27,7 @@ set(Part_Scripts
     ComponentPlane.py
     ComponentSketch.py
     CadDocument.py
+    LegacyConversion.py
     InterferenceCheck.py
     JoinFeatures.py
     MakeBottle.py

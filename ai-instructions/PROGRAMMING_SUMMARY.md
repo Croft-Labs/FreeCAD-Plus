@@ -1,5 +1,10 @@
 # FreeCAD Plus: Programming Summary
 
+Legacy migration task one: CadDocument.legacy_plan delegates to LegacyConversion
+inventory for read-only ownership/dependency/geometry planning. Recovery candidates
+include dumb body/sheet/curve/point; all later feature tasks retain native editability
+before geometry-only recovery. See tests/LegacyConversionPlan.md and WORK_STATE.
+
 ConstraintPaletteGui synchronously hides the palette's native tooltip before
 solving, refresh and close, and hides retired buttons before deferred deletion.
 Native icons/tooltips and the one-second travel grace remain retained; WORK_STATE
