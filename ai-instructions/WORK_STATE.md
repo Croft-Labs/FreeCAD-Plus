@@ -1,5 +1,85 @@
 # FreeCAD Plus: Build validation handoff
 
+## Legacy migration task six — extrusion parameters, targets and result chains
+
+Authorized task six only. `LegacyConversion.extrusion_chain_plan` /
+`migrate_extrusions` map qualified independent native Pad/Pocket chains inside the
+existing native transaction. Original names/types/native IDs/UUIDs/labels, native
+extent parameters/formulas, sketch inputs and downstream feature references stay.
+Intermediate published results become explicit BaseFeature/ConsumedResults targets;
+the original final Body remains the Result with its Origin/view provider and hidden
+child-scoped Tip bridge. Every mapped operation/final Body passes volume and
+bidirectional solid differences. Normal one-sided solid Part Extrusions retain their
+native producer and gain a published result; other native outputs remain retained.
+
+The shared Extrude editor reads native Pocket extents/profile and normalizes its
+legacy inverse normal. Pad/Pocket Add/Subtract/New Body and explicit target edits
+retain the native object/type; New Body clears consumption. Self/downstream targets
+and formula overwrites fail before mutation. Standalone Part Extrusion retains its
+operation kind instead of silently replacing its native identity. Native frame,
+attachment, mixed-family, axis/custom-vector, referenced extent, signed-length and
+unverified cases retain original engines, parameters, ownership and available output.
+Hidden complete-frame History links open original editors; missing sources require
+repair. This is native retention, not a claim of full physical promotion of those
+histories. The evaluated dumb recovery order and protected original files remain.
+Full contract/procedure: tests/LegacyExtrusions.md.
+
+LegacyExtrudeVersion=1 is idempotent. Recognized older converted files upgrade after
+manifest/identity verification in the existing transaction; original sketch UUIDs
+and earlier access-link identities survive promotion. Old access links become hidden
+Internal references following their independent source. Explicit definition reopening
+rebinds a reused window after Undo restores master context, fixing actual History
+editor reopening without modifying model ownership or placement. The earlier pilot
+also now retains original input/operation labels during registration.
+
+Native source-mode acceptance comprises an 80-check combined pass (13 extrusion,
+45 prior migration, 10 edit rollback and 12 curve profile), then a final guarded-source
+35-check pass (14 extrusion, 9 Body history, 12 curve profile), with 34 repeated checks:
+81 distinct checks. Both accepted runs have no errors/failures/skips and native exit 0.
+Native version 26.3.0 revision 8746c1076071a7b9decff07577b6a163a0f76ee9. Actual Qt
+History double-clicks exercise shared Pocket Accept/Cancel/reopening after Undo/Redo
+and retained native Pocket editor close. Geometry/sharing, mode/target edits,
+through-all, two-sided taper, expression edits/refusal, Undo/Redo, original bytes,
+cold cadprt reopen/further edits, prior-file UUID/label upgrades, standalone extrusion
+and custom-vector native preservation/editing pass. Prior origin/datum/sketch/frame,
+structure/inventory, rollback/save-during-edit and profile/preview regressions pass.
+
+The final guard adds custom-vector histories to native retention; experiments showed
+the shared scratch preview lost an elevated profile frame. Failed experiments are
+not acceptance and were removed. Further custom-frame promotion remains an explicit
+integration gate. Earlier failed attempts corrected nullable axis handling, existing
+history metadata, source-overlay GUI package attributes and reused-window context.
+No fake geometry, duplicate worker, owner-process stop or native build was used.
+Installed owner payload/shortcut remain the accepted palette-dismissal delivery;
+packaging is batched, source-mode tests do not qualify installed migration behavior.
+Mixed-feature/external/cross-workbench acceptance remains task twelve.
+
+Nine AST checks and git diff --check pass. The 80-check run records 19 loaded paths;
+only LegacyConversion and the extrusion test changed for the final custom guard.
+All 14 final follow-up module/test paths/hashes match final source. Changed source:
+LegacyConversion 031947c4da9a649a02ac5c0dac3ac81701185328371ee542bb2744bd29712898;
+ComponentModel 5b33d4d0e01954ad7b5668fecf0fa791d7552d543588c41cd007be854e184a83;
+ComponentProfile ebdc2295cba1a3f0042efcd68fab9142ba4c8de6df29a59eb9357e68ce1dfd95;
+ComponentExtent 152b22179cb7c751e5762848877294aeb76d8d002801f078871808f5889fd85a;
+ComponentExtrude b6c9661abf64b4eca75e4501db2d05ea52488fd23c168a6b30077e4dd693b14d;
+ComponentNavigator adccbe0890e0f43676f773c6eef46960daaa5e4fac241803eae431d7bae0c920;
+ComponentExtrudeTask ee23a09761ab0d6e06004c8454c8ce916391f5d43bbcf245d8f772021f71219c;
+extrusion tests 10cc858346afadb1aa249f240bdc8315bbe4d80013d158cc02feceb54aaa7287;
+Body tests f8fa01488eca7756cf5721d2693c03206f4f63bf18fc40eb0cee07fbcb85fb73.
+
+Owner DOCX contains only affected History/mode/target/editor/repair interactions.
+Final render remains 89 pages; only page 89 changes and is visually inspected.
+Other ZIP parts and native numbering remain unchanged. DOCX SHA256
+ce734eea266191873f5b696077506aa93b3982d505025ec3c1cabf79130f4516.
+Validation profiles/logs/captures/fixtures/renders were deleted after recording
+evidence: 393 raw task files and 295 generated bytecode files removed; task validation
+directory is absent. Accepted build inventory, useful builds/dependencies, owner
+settings and source/documents remain. Publication receipt follows the origin push.
+Exact next task is seven: Revolution/Groove/Revolve axes, angles and targets. Preserve
+original identities/geometry, retained attachments/native engines, explicit result
+chains, shared/parent-owned placements, original files and recovery. Do not start it
+without the separate owner prompt.
+
 ## Legacy migration task five — native sketch inputs and shared consumers
 
 Authorized task five only. `LegacyConversion.migrate_sketch_inputs` retains original

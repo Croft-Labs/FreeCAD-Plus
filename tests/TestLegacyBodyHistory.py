@@ -146,7 +146,7 @@ class TestLegacyBodyHistory(unittest.TestCase):
         part, body, sketch, pad = self.build(independent=True)
         CadDocument.convert_legacy(self.doc)
         self.mapped(part, body, sketch, pad)
-        with self.assertRaisesRegex(ValueError, "full extrusion adapter"):
+        with self.assertRaisesRegex(ValueError, "downstream result"):
             Extrude.edit(pad, sketch, 5, mode="Subtract", target=body)
         self.assertEqual(body.Producer, pad)
 

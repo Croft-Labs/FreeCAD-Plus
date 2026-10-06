@@ -305,6 +305,16 @@ pilot permits dimensional expressions/independent external inputs but refuses
 Body-dependent frames or property expressions. Missing sources require repair;
 recognized older converted files upgrade idempotently after manifest validation.
 See [sketch input mapping and acceptance](../../tests/LegacySketchInputs.md).
+Qualified independent native Pad/Pocket chains retain original feature identities
+while replacing implicit previous-feature targets with explicit published results.
+Keep the original final Body as the result carrier with its child-scoped native Tip
+bridge. Preserve native extents/formulas, normalize Pocket direction at the shared
+editor boundary, and update mode/target consumption without replacing native objects.
+Reject downstream self-targets and formula overwrites. Native Body-dependent/reference
+histories remain editable through complete-frame History links with original engines;
+available validated output precedes any explicit dumb recovery. Older converted-file
+upgrades retain sketch/access-link UUIDs and original files. See
+[extrusion mapping and acceptance](../../tests/LegacyExtrusions.md).
 Retain original world geometry through explicit
 definition-frame and occurrence-frame compensation, including native scale modes.
 Original source files remain protected; external converted files are saved to new

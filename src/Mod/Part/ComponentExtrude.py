@@ -159,8 +159,14 @@ def parameters(operation):
         mode, tool = "New Body", operation
     else:
         raise ValueError("Select a component Extrude operation.")
-    target = operation.BaseFeature if tool.TypeId == "PartDesign::Pad" else operation.Base
+    target = operation.BaseFeature if tool.TypeId in ("PartDesign::Pad", "PartDesign::Pocket") else operation.Base
     return tool, mode, target if mode != "New Body" else None
+
+
+def reversed_direction(tool):
+    # Native Pocket reverses its profile normal for legacy compatibility; the
+    # shared Extrude UI uses the same positive profile normal for every mode.
+    return not tool.Reversed if tool.TypeId == "PartDesign::Pocket" else tool.Reversed
 
 
 def edit(operation, profile, length, reversed_direction=False, mode=None, target=None, elements=None, options=None):
@@ -169,16 +175,17 @@ def edit(operation, profile, length, reversed_direction=False, mode=None, target
     tool, old_mode, old_target = parameters(operation)
     if mode is None:
         mode, target = old_mode, old_target
-    if getattr(operation, "LegacyMigration", "") == "Sketch-Pad pilot" and mode != "New Body":
-        raise ValueError("This retained legacy Body supports parameter edits. Operation/target conversion awaits the full extrusion adapter.")
+    legacy = getattr(operation, "LegacyMigration", "") in ("Sketch-Pad pilot", "Native extrusion chain")
+    if legacy and tool.TypeId == "Part::Extrusion" and mode != old_mode:
+        raise ValueError("Preserve this native operation type and result chain. Create a separate Extrude to change its operation mode.")
     inputs(component, profile, length, mode, target, operation, elements)
-    if options is None and tool.TypeId == "PartDesign::Pad":
+    if options is None and tool.TypeId in ("PartDesign::Pad", "PartDesign::Pocket"):
         options = Extent.read(tool)
     if options is not None:
         Extent.validate(component, profile, length, mode, target, options, operation)
-    base_profile = tool.Profile[0] if tool.TypeId == "PartDesign::Pad" else tool.Base
+    base_profile = tool.Profile[0] if tool.TypeId in ("PartDesign::Pad", "PartDesign::Pocket") else tool.Base
     old_profile = base_profile if hasattr(base_profile, "ProfileSource") else None
-    replace = mode != old_mode or (options is not None and tool.TypeId != "PartDesign::Pad")
+    replace = (mode != old_mode and not legacy) or (options is not None and tool.TypeId not in ("PartDesign::Pad", "PartDesign::Pocket"))
     if old_profile and any(obj not in (component, tool) for obj in old_profile.InList):
         raise ValueError("The selected-curve profile has another consumer. Review it before editing.")
     if tool.ExpressionEngine or operation.ExpressionEngine:
@@ -233,15 +240,22 @@ def edit(operation, profile, length, reversed_direction=False, mode=None, target
             if options is None:
                 configure(tool, bound, length, reversed_direction)
             else:
-                Extent.configure(tool, bound, length, mode, target, reversed_direction, options)
+                Extent.configure(tool, bound, length, mode, target,
+                                 not reversed_direction if tool.TypeId == "PartDesign::Pocket" else reversed_direction,
+                                 options)
             if mode != "New Body" and options is None:
                 operation.Base = target
+            if legacy:
+                operation.ExtrudeMode = mode
         if mode != "New Body":
             if not hasattr(operation, "ConsumedResults"):
                 Model._property(operation, "LinkList", "ConsumedResults", [], True)
                 Model._property(operation, "String", "PreviousVisibility", "{}", True)
             operation.ConsumedResults = [target]
             operation.PreviousVisibility = json.dumps({target.ObjectId: target_visibility})
+        elif legacy and hasattr(operation, "ConsumedResults"):
+            operation.ConsumedResults = []
+            operation.PreviousVisibility = "{}"
         evaluate(doc, operation, mode, target)
         if old_profile and old_profile != bound:
             doc.removeObject(old_profile.Name)

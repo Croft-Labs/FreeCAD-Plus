@@ -16,6 +16,11 @@ consumers through component inputs or complete-frame History access links. The
 safe Sketch/Pad pilot accepts independent dimensional expressions/external inputs;
 Body-dependent attachments stay native for later feature adapters. See
 tests/LegacySketchInputs.md; installed delivery remains batched.
+Task six maps qualified native Pad/Pocket chains to explicit component results and
+targets while preserving original feature/Body identities and native extents. Shared
+Extrude edits Pocket directions/modes safely; other attachment/reference histories
+remain editable native engines through History. Normal standalone Part Extrusions
+are published; custom outputs retain native controls. See tests/LegacyExtrusions.md.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

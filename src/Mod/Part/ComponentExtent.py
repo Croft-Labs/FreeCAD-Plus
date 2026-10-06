@@ -16,7 +16,7 @@ def defaults():
 
 def read(tool):
     values = defaults()
-    if tool.TypeId != "PartDesign::Pad":
+    if tool.TypeId not in ("PartDesign::Pad", "PartDesign::Pocket"):
         return values
     values.update(sides=tool.SideType, extent=tool.Type, extent2=tool.Type2,
                   length2=tool.Length2.Value, offset=tool.Offset.Value, offset2=tool.Offset2.Value,

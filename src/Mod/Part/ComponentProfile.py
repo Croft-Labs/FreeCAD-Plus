@@ -99,7 +99,7 @@ def assign_shape(obj, sketch, shape):
 
 
 def selection(tool):
-    base = tool.Profile[0] if tool.TypeId in ("PartDesign::Pad", "PartDesign::Revolution", "PartDesign::Groove") else tool.Base
+    base = tool.Profile[0] if tool.TypeId in ("PartDesign::Pad", "PartDesign::Pocket", "PartDesign::Revolution", "PartDesign::Groove") else tool.Base
     if hasattr(base, "ProfileSource") and getattr(base, "ComponentRole", "") == "Internal":
         sketch, elements = base.ProfileSource
         return sketch, list(elements)

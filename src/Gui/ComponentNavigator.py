@@ -1335,6 +1335,11 @@ class Navigator(QtWidgets.QDockWidget):
                 self.component_views.remove(entry)
                 continue
             if entry["key"] == object_key(obj) and entry.get("window"):
+                # Undo may restore this window's saved master context. An explicit
+                # Models/open request must reopen the requested definition view.
+                entry["window"].setProperty("ComponentKey", object_key(obj))
+                entry["window"].setProperty("ComponentActiveKey", object_key(obj))
+                entry["window"].setProperty("ComponentActivePath", [])
                 self.mdi.setActiveSubWindow(entry["window"])
                 self.view_activated(entry["window"])
                 return entry["view"]
@@ -1534,9 +1539,11 @@ class Navigator(QtWidgets.QDockWidget):
             return
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing history."))
-        if getattr(obj, "LegacyDatumState", "") or getattr(obj, "LegacySketchState", ""):
+        if (getattr(obj, "LegacyDatumState", "") or getattr(obj, "LegacySketchState", "")
+                or getattr(obj, "LegacyExtrudeState", "")):
             component = model().owner(obj)
-            source = getattr(obj, "LegacySketchSource", getattr(obj, "LegacyDatumSource", obj))
+            source = getattr(obj, "LegacyExtrudeSource",
+                             getattr(obj, "LegacySketchSource", getattr(obj, "LegacyDatumSource", obj)))
             if source is None:
                 raise ValueError(tr("Repair the retained native input before editing it."))
             context = TaskContext(component)

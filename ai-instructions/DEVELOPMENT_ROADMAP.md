@@ -33,7 +33,16 @@
   Final 45 native source-mode checks pass, including eight sketch checks, actual
   History double-click, recompute, Undo/Redo and cadprt reopen. UI-only DOCX rendered
   and inspected; technical evidence/publication in WORK_STATE. Packaging stays batched.
-- [ ] 6. Pad/Pocket/Extrude parameters, targets and result chains.
+- [x] 6. Pad/Pocket/Extrude parameters, targets and result chains: qualified native
+  independent chains retain original feature/final Body identities, native extents,
+  explicit results/targets and Add/Subtract/New Body editing. Normal standalone
+  Part Extrusions publish editable results; Body-dependent/reference/custom-vector
+  histories keep native engines, available output and History editor access.
+  Actual shared/native Pocket editor events, Undo/Redo, save/reopen, mode/target
+  changes and older-file UUID/label upgrades pass. WORK_STATE owns the combined
+  native run, custom-vector retention follow-up, source hashes and publication.
+  UI-only DOCX rendered/inspected; owner packaging and custom-frame promotion remain
+  integration gates. The next authorized feature task must arrive separately.
 - [ ] 7. Revolution/Groove/Revolve axes, angles and targets.
 - [ ] 8. Loft sections and additive/subtractive targets.
 - [ ] 9. Pipe profiles, paths and orientation.
@@ -45,7 +54,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to five have source/native
+for unrelated feature implementation. Tasks one to six have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).

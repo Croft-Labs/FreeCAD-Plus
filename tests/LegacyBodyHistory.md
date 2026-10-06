@@ -1,5 +1,11 @@
 # Legacy Body history foundation and Sketch to Pad pilot
 
+Task-six update: [LegacyExtrusions](LegacyExtrusions.md) supersedes the pilot's
+temporary mode/target gate with identity-preserving native Pad/Pocket editing.
+Self/downstream targets still fail before mutation. The following records the
+original task-three admission boundary and native Tip-bridge foundation; broader
+qualified chains and retained-engine access are owned by the task-six contract.
+
 Task three extends `LegacyConversion.convert_structure` inside its existing native
 transaction. `body_history_plan` admits only the proven independent Sketch → first
 Pad history. `migrate_body_histories` preserves native Sketch, Pad and Body names,

@@ -1119,6 +1119,10 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if getattr(obj, "LegacyExtrudeState", ""):
+        if getattr(obj, "LegacyExtrudeSource", obj) is None:
+            return "Retained native extrusion is missing. Repair its source before editing."
+        return "Retained native extrusion. Edit the original extent, profile and target without replacing their references."
     if getattr(obj, "LegacySketchState", "") == "Linked native sketch":
         if getattr(obj, "LegacySketchSource", None) is None:
             return "Retained native sketch is missing. Repair its source before editing or using it."
@@ -1143,6 +1147,12 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    if (getattr(obj, "LegacyExtrudeState", "")
+            and "LegacyExtrudeSource" in obj.PropertiesList
+            and (getattr(obj, "LegacyExtrudeSource", None) is None
+                 or obj.LinkedObject != obj.LegacyExtrudeSource
+                 or "Invalid" in obj.LegacyExtrudeSource.State)):
+        return "Needs repair"
     if (getattr(obj, "LegacySketchState", "") == "Linked native sketch"
             and (getattr(obj, "LegacySketchSource", None) is None
                  or obj.LinkedObject != obj.LegacySketchSource

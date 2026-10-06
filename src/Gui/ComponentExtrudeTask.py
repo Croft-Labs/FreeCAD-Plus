@@ -71,9 +71,9 @@ class ExtrudeTask(ModelingTaskUI, CurveSelection):
             self.profile.setCurrentIndex(self.profile.findData(source.Name))
             if elements is not None:
                 self.set_curves(elements, False)
-            self.length.setProperty("rawValue", tool.Length.Value if tool.TypeId == "PartDesign::Pad" else tool.LengthFwd.Value)
+            self.length.setProperty("rawValue", tool.Length.Value if tool.TypeId in ("PartDesign::Pad", "PartDesign::Pocket") else tool.LengthFwd.Value)
             self.load_extents(tool)
-            self.reverse.setChecked(tool.Reversed)
+            self.reverse.setChecked(Extrude.reversed_direction(tool))
             self.mode.setCurrentIndex(Extrude.MODES.index(mode))
             if target:
                 if self.target.findData(target.Name) < 0:
