@@ -98,7 +98,13 @@ class SelectionToolbar(QtWidgets.QToolBar):
                 return False
             # Do not consume it: native tools still handle cancellation normally.
             self._generation += 1
-            Policy.clear_after_escape()
+            generation = self._generation
+            document = App.ActiveDocument.Name if App.ActiveDocument else None
+            Policy.clear_after_escape(lambda: self._enabled and generation == self._generation)
+            # Native cancellation (notably leaving Sketcher) can reselect a
+            # parent after this filter runs. Clear that result without consuming
+            # cancellation, and never clear a later click or another document.
+            QtCore.QTimer.singleShot(0, lambda: self.finish_escape(generation, document))
         elif event.type() == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:
             self._generation += 1
             document = App.ActiveDocument.Name if App.ActiveDocument else None
@@ -108,6 +114,11 @@ class SelectionToolbar(QtWidgets.QToolBar):
             if press and (event.globalPos() - press[0]).manhattanLength() <= QtWidgets.QApplication.startDragDistance():
                 QtCore.QTimer.singleShot(0, lambda: self.expand_click(press[1], press[2], press[3]))
         return False
+
+    def finish_escape(self, generation, document):
+        current = App.ActiveDocument.Name if App.ActiveDocument else None
+        if self._enabled and generation == self._generation and current == document:
+            Policy.clear_after_escape(lambda: self._enabled and generation == self._generation)
 
     def expand_click(self, previous, generation, document):
         if not self._enabled or generation != self._generation or self.intent.currentIndex() == 0:

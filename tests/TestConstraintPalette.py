@@ -25,6 +25,11 @@ def settle(milliseconds=80):
 class TestConstraintPalette(unittest.TestCase):
     def setUp(self):
         Gui.activateWorkbench("SketcherWorkbench")
+        from freecad.gui import PlusRibbon
+        PlusRibbon.apply_preferences()
+        PlusRibbon._ribbon.configure("Design", "Sketch")
+        PlusRibbon._ribbon.render()
+        PlusRibbon._ribbon.place_plus_bars()
         self.params = Selection.parameters()
         self.saved = (self.params.GetBool("Active", False), self.params.GetBool("Persistent", True))
         self.params.SetBool("Active", True)
@@ -245,7 +250,13 @@ class TestConstraintPalette(unittest.TestCase):
 
     def test_native_pointer_click_escape_empty_and_drag(self):
         window = Gui.getMainWindow()
-        window.resize(1400, 950)
+        available = window.screen().availableGeometry()
+        window.resize(min(1400, available.width()), min(950, available.height()-45))
+        window.move(available.topLeft())
+        # Finish queued dock/window layout before fitting the edit camera. A
+        # zero-sized viewport at fit time can project the click to (0, 0).
+        Gui.updateGui()
+        settle(150)
         view = Gui.activeDocument().activeView()
         view.viewTop()
         view.fitAll()
@@ -258,6 +269,8 @@ class TestConstraintPalette(unittest.TestCase):
         sx, sy = view.getPointOnScreen(App.Vector(5, 0, 0))
         ratio = widget.devicePixelRatioF()
         point = QtCore.QPoint(round(sx / ratio), widget.height() - round(sy / ratio) - 1)
+        self.assertTrue(5 < point.x() < widget.width()-5 and 5 < point.y() < widget.height()-5,
+                        repr((point, widget.size(), view.getCameraOrientation())))
         self.select("Edge1")
         settle()
         self.assertIsNone(UI._controller.palette)  # Programmatic/box selection never opens it.

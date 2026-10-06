@@ -32,14 +32,20 @@ class TestWindowSelection(unittest.TestCase):
         Filters.set_mode(0)
         Gui.Selection.clearSelection()
         self.window = Gui.getMainWindow()
-        self.window.resize(1400, 950)
+        available = self.window.screen().availableGeometry()
+        self.window.resize(min(1400, available.width()), min(950, available.height()-45))
+        self.window.move(available.topLeft())
+        settle()  # Fit only after the real, screen-bounded viewport has a layout.
         self.cursor = QtGui.QCursor.pos()
         self.view = Gui.activeDocument().activeView()
         self.view.setCameraType("Orthographic")
         self.view.viewTop()
         self.view.fitAll()
+        camera = self.view.getCameraNode()
+        camera.height.setValue(camera.height.getValue()*1.25)  # Keep enclosure endpoints in the viewport.
         settle()
-        widgets = [w for w in self.window.findChildren(QtWidgets.QWidget)
+        mdi = self.window.findChild(QtWidgets.QMdiArea).activeSubWindow()
+        widgets = [w for w in mdi.findChildren(QtWidgets.QWidget)
                    if "GL" in w.metaObject().className() and w.width() > 100 and w.height() > 100]
         self.viewport = max(widgets, key=lambda w: w.width() * w.height())
         self.original = self.box.Shape.exportBrepToString()

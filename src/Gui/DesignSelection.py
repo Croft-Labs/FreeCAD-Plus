@@ -35,7 +35,7 @@ def finish_operation():
         Gui.Selection.clearSelection()
 
 
-def clear_after_escape():
+def clear_after_escape(guard=None):
     """Let the native handler cancel/deselect first, then enforce explicit clear.
 
     Clearing before Sketcher receives Escape makes it see an empty selection and
@@ -46,7 +46,7 @@ def clear_after_escape():
     from PySide import QtCore
     document = App.ActiveDocument
     def finish():
-        if App.ActiveDocument == document:
+        if App.ActiveDocument == document and (guard is None or guard()):
             Gui.Selection.clearSelection()
     # Native edit teardown may queue a parent selection during the same key event.
     QtCore.QTimer.singleShot(0, lambda: QtCore.QTimer.singleShot(0, finish))

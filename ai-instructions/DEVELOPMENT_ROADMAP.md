@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development Roadmap
 
+## Separate recovery item 6 integration reconciliation
+
+- [x] Audit four groups, native hooks/APIs and all six genuine Move workflows.
+- [x] Reconcile retained event fixtures; guard nested deferred Escape clearing.
+- [x] Four controlled callback ordering checks and eight Python syntax checks pass.
+- [x] Prepare exact item 7 full 89/high-DPI 55/shortcut smoke 26 acceptance plan.
+- [x] Synchronize requirements/owner DOCX and render/inspect affected pages.
+- [ ] Run changed source/tests natively, packaged and high-DPI in item 7; complete
+  final owner shortcut delivery there. No new build/runtime/delivery claim here.
+
 ## Separate recovery item 5 Interactive movement/pivot review
 
 - [x] Retain native handles and shared placement/pivot implementation.

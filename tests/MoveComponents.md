@@ -36,7 +36,7 @@ Complete all six workflows before publishing an owner payload, verify the owner
 shortcut, render/inspect affected DOCX pages and keep physical acceptance separate.
 
 Recovery suites: TestMoveComponentsPoint (4), TestMoveComponentsAxes (5),
-TestMoveComponentsFrames (4), TestMoveComponentsInteractive (4). These are
+TestMoveComponentsFrames (5), TestMoveComponentsInteractive (5). These are
 prepared native tests, not current pass counts. The Interactive event case picks
 the rendered native Coin arrow and sends Qt mouse/Escape events; direct placement
 writes or numeric-only checks cannot satisfy this acceptance gate.
@@ -67,3 +67,5 @@ actual mouse/Escape/pivot test with native plane/ring gestures, default parent
 pivot recreation, non-repeated OK, Undo/Redo and all sibling/descendant placements
 in both saved formats. Syntax/hash checks pass; new assertions require execution
 in item 7. Keep earlier real-event evidence distinct from this deferred validation.
+
+Item 7 exact integrated suite/class counts and delivery gates: RecoveredWorkload.md.

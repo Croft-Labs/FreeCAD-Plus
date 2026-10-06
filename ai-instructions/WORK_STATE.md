@@ -1,6 +1,43 @@
 # FreeCAD Plus: Build validation handoff
 
-## Current owner scope: recovery item 5 Interactive/pivot source milestone
+## Current owner scope: recovery item 6 integration reconciliation
+
+All four groups and six Move workflows are implemented; no placeholders or new
+feature families are introduced. Audit covers native Selection/preselection/box
+and command-gate intersection, Design-only lifecycle, layer metadata/visibility
+and independent sketches, pointer corridor/one-second timer/disabled tooltips,
+cloned solver diagnostics and committed-invalid driving batch semantics, exact
+Move frames, shared-parent edits, guards, previews, reset and native event paths.
+Native CMake sources, SketchObject.pyi bindings/header/implementation and Python
+consumers are linked; the prior native build and packaged tests establish their
+then-current snapshot. No native API is claimed from a source-only fallback.
+
+Reconcile the four pending feature-related files: Selection Escape toolbar,
+palette/native Selection/window fixtures. A nested deferred-clear race is repaired
+in DesignSelection.py: the final queued clear must check the originating toolbar
+lifecycle/event generation, not just its outer callback. Native cancellation is
+not consumed and active Move drags keep their own Escape priority. Add a native
+regression for superseding click/mode exit; it remains unexecuted until item 7.
+Quick Python callback ordering checks pass 4/4 (valid, later click, mode exit,
+changed document) and syntax passes eight affected Python files. These checks
+use a controlled scheduler and are not Qt/native input acceptance.
+
+Exact item 7 plan is tests/RecoveredWorkload.md: full 89 checks, high-DPI subset
+55, source application hashes/no overlays, native API availability, six compact
+Tasks, real axis/plane/ring/pivot/collector events, owning-file guards, geometry/
+identity/parent invariants, Undo/Redo and FCStd/cadprt, cleanup, DOCX and actual
+saved desktop shortcut launch (Selection+integration smoke 26). Retain prior
+packaged-final 88/88 evidence and failed/partial runs; do not count them as passes
+of the new assertion snapshot. No slow build, packaged suite or shortcut runs here.
+
+Owner DOCX integration note and canonical requirements/summary are synchronized;
+numbering/styles/other DOCX package parts are preserved. Rendered affected pages
+are reviewed under build-recovery-integration/owner-docx-review. The untracked
+queue is preserved/excluded. Exact next step: await item 7 prompt; inspect source,
+existing build/payload and evidence before grouped acceptance/delivery. Maintain
+batching and report compiled revision separately from later Python/docs commits.
+
+## Earlier item 5 Interactive/pivot source milestone
 
 Execute this individual item only; preceding Move milestones remain retained.
 Native view-owned arrows/planes/rings and scoped viewport Escape filtering provide

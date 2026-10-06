@@ -44,3 +44,8 @@ The source-overlay run must not be treated as proof of the new C++ selection gat
 Native projected bounds/tessellation retain their existing accuracy limits. Tests
 and scripted GUI events do not replace physical owner/high-DPI acceptance. The
 owner DOCX must be rendered and visually reviewed before final delivery.
+
+Recovery item 6 adds nested queued Escape lifecycle/generation guards and a native
+later-click/mode-exit regression. Controlled Python scheduler checks pass four
+orderings; native execution remains deferred to item 7. See RecoveredWorkload.md
+for the updated 19-check Selection group and exact grouped acceptance procedure.

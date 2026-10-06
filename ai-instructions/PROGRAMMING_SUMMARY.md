@@ -15,13 +15,16 @@ Design Layers and the Contextual Constraint Palette are implemented in source in
 `ConstraintPaletteGui.py`. Layers use saved metadata without group/dependency edits;
 native Body and Plus result chains keep input sketches independent. The palette
 uses native Sketcher constraints and shared selection persistence. Its cloned-solver
-diagnostic and driving-batch APIs require prompt 10's grouped native rebuild.
+diagnostic and driving-batch APIs were built in the October 6 grouped runtime;
+current source/test acceptance and owner delivery still require recovery item 7.
 See WORK_STATE, UI_UX_SPEC and the corresponding tests for evidence and remaining gates.
 
 Design Selection toolbar source: `DesignSelection.py` owns semantic categories,
 curve chains and shared persistence; `DesignSelectionToolbar.py` integrates with
-PlusRibbon. Native Selection/box/Sketcher hooks require the final grouped rebuild.
-See WORK_STATE and `tests/DesignSelection.md` for checks and the DOCX render blocker.
+PlusRibbon. Native Selection/box/Sketcher hooks have earlier grouped build evidence.
+The deferred Escape race repair and changed fixtures require item 7 acceptance.
+See WORK_STATE, `tests/DesignSelection.md` and `tests/RecoveredWorkload.md`;
+the DOCX renderer is resolved and affected pages are reviewed.
 
 Modeling curve picks now arbitrate edge versus region hits before depth filtering.
 `ComponentTaskWidgets.py` owns the reusable profile/section/path collector, selection

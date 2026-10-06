@@ -2250,3 +2250,10 @@ unsupported geometry-kind, face/edge or expression remapping is refused before c
 A repair notice and state tooltip identify unavailable references. Their visibility
 icon indicates unavailable geometry. Refresh References updates pending snapshots
 without closing the component or blocking independent work on other inputs.
+
+Recovery item 6 integration: deferred Escape selection clearing must recheck the
+originating toolbar event generation, active Design lifecycle and document inside
+the final queued callback. It must preserve later clicks, mode/document transitions
+and Interactive drag Escape priority without consuming native cancellation.
+The updated grouped acceptance procedure is tests/RecoveredWorkload.md; owner
+build/runtime/shortcut delivery remains recovery item 7, not source reconciliation.

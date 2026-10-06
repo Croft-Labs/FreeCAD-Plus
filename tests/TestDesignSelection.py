@@ -168,11 +168,14 @@ class TestDesignSelectionNative(TestDesignSelectionPolicy):
         Gui.activeDocument().setEdit(sketch.Name)
         try:
             bar.set_design_active(True)
+            Gui.updateGui()
+            QtTest.QTest.qWait(150)
             view = Gui.activeDocument().activeView()
             view.viewTop()
             view.fitAll()
             QtTest.QTest.qWait(200)
-            widgets = [w for w in window.findChildren(QtWidgets.QWidget)
+            mdi = window.findChild(QtWidgets.QMdiArea).activeSubWindow()
+            widgets = [w for w in mdi.findChildren(QtWidgets.QWidget)
                        if "GL" in w.metaObject().className() and w.width()>100 and w.height()>100]
             widget = max(widgets,key=lambda w:w.width()*w.height())
             ratio = widget.devicePixelRatioF()
@@ -182,6 +185,8 @@ class TestDesignSelectionNative(TestDesignSelectionPolicy):
                 Gui.Selection.clearSelection()
                 x,y = view.getPointOnScreen(App.Vector(5,0,0))
                 pixel = QtCore.QPoint(round(x/ratio),widget.height()-round(y/ratio)-1)
+                self.assertTrue(5 < pixel.x() < widget.width()-5 and 5 < pixel.y() < widget.height()-5,
+                                repr((pixel, widget.size(), view.getCameraOrientation())))
                 QtTest.QTest.mouseMove(widget,pixel)
                 QtTest.QTest.qWait(150)
                 QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pixel)
@@ -242,6 +247,34 @@ class TestDesignSelectionNative(TestDesignSelectionPolicy):
 
 
 class TestDesignSelectionToolbar(unittest.TestCase):
+    def test_deferred_escape_preserves_later_click_and_mode_exit(self):
+        from freecad.gui.DesignSelectionToolbar import SelectionToolbar
+        document = App.newDocument("DeferredEscape")
+        obj = document.addObject("Part::Feature", "ClickTarget")
+        bar = SelectionToolbar(Gui.getMainWindow())
+        try:
+            bar.set_design_active(True)
+            generation = bar._generation
+            Policy.clear_after_escape(lambda: bar._enabled and generation == bar._generation)
+            bar._generation += 1  # A later viewport click supersedes the Escape.
+            Gui.Selection.addSelection(obj)
+            QtTest.QTest.qWait(40)
+            self.assertIn(obj, Gui.Selection.getSelection())
+            generation = bar._generation
+            Policy.clear_after_escape(lambda: bar._enabled and generation == bar._generation)
+            bar.set_design_active(False)
+            QtTest.QTest.qWait(40)
+            self.assertIn(obj, Gui.Selection.getSelection())
+            bar.set_design_active(True)
+            generation = bar._generation
+            Policy.clear_after_escape(lambda: bar._enabled and generation == bar._generation)
+            QtTest.QTest.qWait(40)
+            self.assertEqual(Gui.Selection.getSelection(), [])
+        finally:
+            bar.set_design_active(False)
+            bar.deleteLater()
+            App.closeDocument(document.Name)
+
     def test_ribbon_mode_and_classic_transitions(self):
         from freecad.gui import PlusRibbon
         prefs = App.ParamGet(PlusRibbon.PARAM)
@@ -320,6 +353,13 @@ class TestDesignSelectionBoxes(unittest.TestCase):
 
     def setUp(self):
         self._fixture_setup()
+        from freecad.gui import PlusRibbon
+        PlusRibbon.apply_preferences()
+        PlusRibbon._ribbon.configure("Design")
+        PlusRibbon._ribbon.render()
+        PlusRibbon._ribbon.place_plus_bars()
+        Gui.updateGui()
+        QtTest.QTest.qWait(150)
         self.params = Policy.parameters()
         self.saved_policy = (self.params.GetBool("Active", False),
                              self.params.GetBool("Directional", True),
