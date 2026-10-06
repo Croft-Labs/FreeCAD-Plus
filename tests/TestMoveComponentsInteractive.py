@@ -80,6 +80,21 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         self.assertEqual(before, task.session.signature())
         task.pivot_reset.click()
         self.vector(task.manipulator.pivot.Base, task.session.group_pivot())
+        widget, point = self.handle_pixel(task)
+        view = Gui.activeDocument().activeView()
+        camera = view.getCamera()
+        pivot = App.Placement(task.manipulator.pivot)
+        start = QtCore.QPoint(round(widget.width()*.6), round(widget.height()*.12))
+        end = start + QtCore.QPoint(45, 25)
+        QtTest.QTest.mouseMove(widget, start)
+        QtTest.QTest.mousePress(widget, QtCore.Qt.MiddleButton, QtCore.Qt.NoModifier, start)
+        self.drag_motion(widget, start, end, QtCore.Qt.MiddleButton)
+        QtTest.QTest.mouseRelease(widget, QtCore.Qt.MiddleButton, QtCore.Qt.NoModifier, end)
+        settle(100)
+        self.assertNotEqual(view.getCamera(), camera, "Native camera navigation must remain available")
+        self.assertEqual(before, task.session.signature())
+        self.assertTrue(task.manipulator.pivot.isSame(pivot, 1e-8))
+        self.assertTrue(task.session.interactive_delta.isIdentity())
 
     def test_snapping_off_defaults_and_persistence_cleanup(self):
         task = self.task()
@@ -105,7 +120,7 @@ class TestMoveComponentsInteractive(unittest.TestCase):
                    if "GL" in w.metaObject().className() and w.width()>100 and w.height()>100]
         widget = max(widgets, key=lambda w:w.width()*w.height())
         ratio = widget.devicePixelRatioF()
-        viewport = coin.SbViewportRegion(round(widget.width()*ratio), round(widget.height()*ratio))
+        viewport = view.getViewer().getSoRenderManager().getViewportRegion()
         target = task.manipulator.node.getPart(handle, False)
         pivot = task.session.frame().multVec(task.manipulator.pivot.Base)
         cx,cy = view.getPointOnScreen(pivot)
@@ -138,25 +153,63 @@ class TestMoveComponentsInteractive(unittest.TestCase):
                     continue
                 action = coin.SoRayPickAction(viewport)
                 action.setPoint(coin.SbVec2s(sx,sy))
-                action.setRadius(3.)
+                action.setRadius(0.)
                 # The user scene excludes the camera; use the full renderer root.
                 action.apply(view.getViewer().getSoRenderManager().getSceneGraph())
                 picked = action.getPickedPoint()
                 if picked and picked.getPath().containsNode(target):
+                    # A near-edge tolerance hit can miss after Qt/DPR rounding.
+                    # Require a small interior patch of the actual native part.
+                    interior = True
+                    for ox, oy in ((-1,-1),(-1,1),(1,-1),(1,1)):
+                        action.setPoint(coin.SbVec2s(sx+ox,sy+oy))
+                        action.apply(view.getViewer().getSoRenderManager().getSceneGraph())
+                        point_pick = action.getPickedPoint()
+                        if not point_pick or not point_pick.getPath().containsNode(target):
+                            interior = False
+                            break
+                    if not interior:
+                        continue
+                    QtTest.QTest.mouseMove(widget, point + QtCore.QPoint(8, 8))
+                    settle(25)
+                    QtTest.QTest.mouseMove(widget, point)
+                    settle(60)
+                    # Each case is a distinct single drag, not the viewer's
+                    # double-click candidate (which defers the next press).
+                    settle(QtWidgets.QApplication.doubleClickInterval() + 80)
                     return widget, point
         self.fail("No rendered native handle pick found; handle GUI acceptance did not pass.")
+
+    def axis_drag_end(self, task, widget, start):
+        view = Gui.activeDocument().activeView()
+        pivot = task.session.frame().multiply(task.manipulator.pivot)
+        x0, y0 = view.getPointOnScreen(pivot.Base)
+        x1, y1 = view.getPointOnScreen(pivot.multVec(App.Vector(10, 0, 0)))
+        dx, dy = x1-x0, y0-y1
+        length = (dx*dx+dy*dy)**.5
+        self.assertGreater(length, 1., "Native X handle must have a usable screen projection")
+        return start + QtCore.QPoint(round(45*dx/length), round(45*dy/length))
+
+    def drag_motion(self, widget, start, end, button=QtCore.Qt.LeftButton):
+        # A real drag supplies a motion stream, including threshold activation.
+        for fraction in (.33, .66, 1.):
+            point = start + QtCore.QPoint(round((end.x()-start.x())*fraction),
+                                         round((end.y()-start.y())*fraction))
+            QtTest.QTest.mouseMove(widget, point)
+            event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(point),
+                                     QtCore.QPointF(widget.mapToGlobal(point)), QtCore.Qt.NoButton,
+                                     button, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(widget, event)
+            settle(25)
 
     def test_actual_native_handle_press_drag_release_and_escape(self):
         task = self.task()
         widget, start = self.handle_pixel(task)
         before, undo = task.session.signature(), self.doc.UndoCount
-        end = start + QtCore.QPoint(32,-18)
+        end = self.axis_drag_end(task, widget, start)
         QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, start)
         settle(20)
-        event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(end),
-                                 QtCore.QPointF(widget.mapToGlobal(end)), QtCore.Qt.NoButton,
-                                 QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
-        QtWidgets.QApplication.sendEvent(widget, event)
+        self.drag_motion(widget, start, end)
         settle(60)
         self.assertTrue(task.manipulator.dragging)
         self.assertFalse(task.session.interactive_delta.isIdentity())
@@ -173,16 +226,18 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         self.assertEqual(undo, self.doc.UndoCount)
         QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, end)
         widget, start = self.handle_pixel(task)
-        end = start + QtCore.QPoint(28,-12)
+        end = self.axis_drag_end(task, widget, start)
         QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, start)
-        event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(end),
-                                 QtCore.QPointF(widget.mapToGlobal(end)), QtCore.Qt.NoButton,
-                                 QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
-        QtWidgets.QApplication.sendEvent(widget,event)
+        settle(30)
+        self.assertTrue(task.manipulator.dragging, repr({"start": (start.x(),start.y()), "ratio": widget.devicePixelRatioF(), "size": (widget.width(),widget.height()), "pivot": str(task.manipulator.pivot), "status": task.status.text()}))
+        self.drag_motion(widget, start, end)
+        released_preview = App.Placement(task.session.interactive_delta)
+        self.assertFalse(released_preview.isIdentity(), "Second native drag did not update its preview")
         QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,end)
         settle(60)
         self.assertFalse(task.manipulator.dragging)
         self.assertFalse(task.session.interactive_delta.isIdentity())
+        self.assertTrue(task.session.interactive_delta.isSame(released_preview, 1e-8))
         self.assertEqual(before,task.session.signature())
         self.assertEqual(undo,self.doc.UndoCount)
         # Exercise native plane/ring picking as well as the axis handle. Each
@@ -192,10 +247,7 @@ class TestMoveComponentsInteractive(unittest.TestCase):
             widget, start = self.handle_pixel(task, handle)
             end = start + QtCore.QPoint(28, -19)
             QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, start)
-            event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(end),
-                                     QtCore.QPointF(widget.mapToGlobal(end)), QtCore.Qt.NoButton,
-                                     QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
-            QtWidgets.QApplication.sendEvent(widget, event)
+            self.drag_motion(widget, start, end)
             QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, end)
             settle(60)
             self.assertFalse(task.manipulator.dragging)
@@ -206,12 +258,9 @@ class TestMoveComponentsInteractive(unittest.TestCase):
         pivot = App.Placement(task.manipulator.pivot)
         task.pivot_mode.setCurrentIndex(1)
         widget, start = self.handle_pixel(task)
-        end = start + QtCore.QPoint(24,-15)
+        end = self.axis_drag_end(task, widget, start)
         QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,start)
-        event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(end),
-                                 QtCore.QPointF(widget.mapToGlobal(end)), QtCore.Qt.NoButton,
-                                 QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
-        QtWidgets.QApplication.sendEvent(widget,event)
+        self.drag_motion(widget, start, end)
         QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,end)
         settle(60)
         self.assertFalse(task.manipulator.pivot.isSame(pivot,1e-8))

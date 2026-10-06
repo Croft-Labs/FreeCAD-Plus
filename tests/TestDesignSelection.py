@@ -30,13 +30,13 @@ class TestDesignSelectionPolicy(unittest.TestCase):
         self.params.SetInt("Categories", self.old[1])
         self.params.SetBool("Persistent", self.old[2])
 
-    def sketch(self, owner=None):
+    def sketch(self, owner=None, offset=0.):
         sketch = self.doc.addObject("Sketcher::SketchObject", "Sketch")
         if owner:
             owner.addObject(sketch)
-        sketch.addGeometry(Part.LineSegment(App.Vector(0, 0, 0), App.Vector(10, 0, 0)))
-        sketch.addGeometry(Part.LineSegment(App.Vector(10, 0, 0), App.Vector(20, 0, 0)), True)
-        sketch.addGeometry(Part.LineSegment(App.Vector(20, 0, 0), App.Vector(20, 10, 0)))
+        sketch.addGeometry(Part.LineSegment(App.Vector(0, offset, 0), App.Vector(10, offset, 0)))
+        sketch.addGeometry(Part.LineSegment(App.Vector(10, offset, 0), App.Vector(20, offset, 0)), True)
+        sketch.addGeometry(Part.LineSegment(App.Vector(20, offset, 0), App.Vector(20, 10+offset, 0)))
         self.doc.recompute()
         return sketch
 
@@ -156,7 +156,9 @@ class TestDesignSelectionNative(TestDesignSelectionPolicy):
     """Run with rebuilt FreeCADGui AND SketcherGui, not a Python-only overlay."""
     def test_actual_sketch_click_single_connected_tangent_escape_and_empty_space(self):
         Gui.activateWorkbench("SketcherWorkbench")
-        sketch = self.sketch()
+        # Keep this intent fixture away from the native H-axis; overlapping
+        # reference-axis disambiguation is a separate selection contract.
+        sketch = self.sketch(offset=5.)
         window = Gui.getMainWindow()
         from freecad.gui import PlusRibbon
         PlusRibbon.apply_preferences()
@@ -183,12 +185,17 @@ class TestDesignSelectionNative(TestDesignSelectionPolicy):
                                   (2,{"Edge1","Edge2"})):
                 bar.intent.setCurrentIndex(mode)
                 Gui.Selection.clearSelection()
-                x,y = view.getPointOnScreen(App.Vector(5,0,0))
+                x,y = view.getPointOnScreen(App.Vector(5,5,0))
                 pixel = QtCore.QPoint(round(x/ratio),widget.height()-round(y/ratio)-1)
                 self.assertTrue(5 < pixel.x() < widget.width()-5 and 5 < pixel.y() < widget.height()-5,
                                 repr((pixel, widget.size(), view.getCameraOrientation())))
+                # Refresh native preselection between independent intent cases;
+                # moving to the unchanged pixel may emit no mouse motion.
+                QtTest.QTest.mouseMove(widget, pixel + QtCore.QPoint(12, 12))
+                QtTest.QTest.qWait(25)
                 QtTest.QTest.mouseMove(widget,pixel)
                 QtTest.QTest.qWait(150)
+                QtTest.QTest.qWait(QtWidgets.QApplication.doubleClickInterval() + 80)
                 QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pixel)
                 QtTest.QTest.qWait(200)
                 selected = {sub.rsplit(".",1)[-1].capitalize()

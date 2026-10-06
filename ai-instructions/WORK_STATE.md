@@ -1,6 +1,55 @@
 # FreeCAD Plus: Build validation handoff
 
-## Current owner scope: recovery item 6 integration reconciliation
+## Item 7 validated fixture milestone; final acceptance active
+
+Retain the application implementation: diagnostic finish/cancellation changes
+and trace instrumentation were removed. Native Qt input coordinates and callback
+traces identify tolerance-only handle picks as unreliable at fractional DPR.
+Fixtures now use the actual renderer viewport, strict interior patches, actual
+hover/motion streams and independent single-click/drag intervals. The Selection
+click fixture is separated from its overlapping native H-axis. No new selection
+family or placement/pivot-write substitute is introduced.
+
+packaged-delivery-selection-unambiguous passes Selection 19/19. The Interactive
+suite in packaged-delivery-events-final passes 5/5 on the retained app, including
+actual axis/plane/ring/pivot events, camera middle-button navigation and both
+saved-format sibling/descendant round trips; that run's earlier Selection failure
+is retained and is not counted as a combined pass. Full 89-check run
+packaged-delivery-accepted is active on the final fixture snapshot. Next: inspect
+its result, run high-DPI 55, verify/create/reopen/LAUNCH saved owner shortcut for
+26 smoke checks, synchronize final DOCX/evidence and manifest, commit/push. No
+owner-ready or shortcut delivery claim yet. Native binaries match build/payload;
+source native files have no changes since the retained capture repair snapshot.
+
+## Active item 7 grouped test-build delivery
+
+Owner supplied final delivery prompt; complete all remaining acceptance and
+shortcut gates. Reuse the verified October 6 native grouped build: native source
+has no .cpp/.h/.pyi changes since 8890fd91a3. Native build was fresh ALL_BUILD
+6212.578 seconds, followed by actual capture repair/retry. Current item performs
+an incremental FreeCADGui_Resources refresh (exit 0, 7.906 seconds), and stages
+current DesignSelection/Toolbar into the retained payload. Label incremental,
+not a second fresh build. Embedded native revision remains edf2e742ac92a92005bc3c612980659fbd5be158.
+
+Current evidence root: build-recovery-delivery in this checkout (ignored artifacts).
+Initial packaged-delivery-full startup gave no macro results; stopped only its
+verified scratch process. packaged-delivery-logged runs all 89 checks with no
+application overlays or harness errors, both required native Sketcher APIs
+available. Layers 10, palette 14, Translate 12, Rotate 8, Point 4, Axes 5, Frames 5
+and integration 7 pass. Selection tangent-click fixture and Interactive first
+axis gesture fail; retain logs. Current fixtures refresh mouse hover between
+intent cases and derive the drag direction from the native rendered parent X
+axis instead of a hardcoded screen offset. Focused Selection/Interactive rerun
+packaged-delivery-fixture-retest is active. These fixes need actual acceptance.
+
+Exact next steps: inspect focused result, fix concrete defects, rerun full 89 and
+high-DPI 55 on final snapshot; inspect native handle/narrow views. Then synchronize
+and render owner DOCX, stage/hash manifest, create/update/reopen exact desktop
+FreeCADPlus.exe - Shortcut.lnk and LAUNCH that saved link for 26 smoke checks.
+No shortcut or final owner-ready claim yet. Commit/push coherent validated fixes
+and final documentation; verify origin. Preserve untracked ai-instructions/queue.
+
+## Earlier item 6 integration reconciliation
 
 All four groups and six Move workflows are implemented; no placeholders or new
 feature families are introduced. Audit covers native Selection/preselection/box

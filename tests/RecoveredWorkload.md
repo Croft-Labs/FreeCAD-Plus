@@ -63,3 +63,10 @@ The item 6 quick check runs the actual deferred Python clear function with a
 controlled scheduler in four orderings: valid Escape, superseding click, mode exit
 and changed document. It is Python callback evidence only, not Qt/native input
 acceptance. Item 7 must execute the corresponding native toolbar regression.
+
+Item 7 fixture note: native click geometry is separated from the sketch H-axis.
+Handle picks use the renderer viewport and strict interior rays, not radius-3
+near-edge hits. Actual hover and multi-event drags precede every press/release;
+single-click cases expire the inherited double-click interval. The Interactive
+case also dispatches native middle-button camera input and asserts unchanged
+placements, pivot and pending movement. Application finish/cancel code is retained.
