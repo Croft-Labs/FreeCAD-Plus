@@ -268,11 +268,15 @@ void SoPlanarDragger::drag()
     }
 
     Base::Quantity quantityX(
-        static_cast<double>(translationIncrementXCount.getValue()) * translationIncrement.getValue(),
+        translationIncrement.getValue() > 0.0
+            ? static_cast<double>(translationIncrementXCount.getValue()) * translationIncrement.getValue()
+            : static_cast<double>(localMovement[0]) * autoScaleResult.getValue(),
         Base::Unit::Length
     );
     Base::Quantity quantityY(
-        static_cast<double>(translationIncrementYCount.getValue()) * translationIncrement.getValue(),
+        translationIncrement.getValue() > 0.0
+            ? static_cast<double>(translationIncrementYCount.getValue()) * translationIncrement.getValue()
+            : static_cast<double>(localMovement[1]) * autoScaleResult.getValue(),
         Base::Unit::Length
     );
 
@@ -319,6 +323,11 @@ SbBool SoPlanarDragger::setUpConnections(SbBool onoff, SbBool doitalways)
 
 SbVec3f SoPlanarDragger::roundTranslation(const SbVec3f& vecIn, float incrementIn)
 {
+    if (incrementIn <= 0.0f) {
+        translationIncrementXCount.setValue(0);
+        translationIncrementYCount.setValue(0);
+        return vecIn;
+    }
     int xCount = 0;
     float xValue = vecIn[0];
 

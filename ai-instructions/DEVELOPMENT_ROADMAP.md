@@ -1,5 +1,88 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 recovered workload continuation
+
+- [x] Restore all seven prompts and owner corrections; inspect interrupted Rotate.
+- [x] Retain Rotate source and updated tests; synchronize its DOCX requirement.
+- [ ] Rerun Rotate/Translate against the grouped native Plus build on this host.
+- [x] Prepare Point to Point, Align Axes, Align Coordinate Systems, Interactive
+  sequentially using the shared parent-owned placement services and native handles.
+- [x] Prepare 17 new native regression cases; update the foundation's obsolete
+  placeholder expectation and retain the interrupted Rotate's eight checks.
+- [ ] Execute those native tests and repair failures; source is not GUI acceptance.
+- [ ] Reconcile Selection/Layers/palette native hooks, render/inspect owner DOCX,
+  run packaged GUI acceptance and verify desktop shortcut launch.
+- [ ] Publish coherent validated milestones to origin and verify remote branch.
+
+WORK_STATE owns host/toolchain and actual evidence. Historical source-overlay
+results remain historical; this recovery sequence has not delivered a new build.
+
+## October 4 Move Components foundation and Translate (authorized prompt 4)
+
+- [ X ] Implement one task panel with the six ordered workflows, sibling collector,
+  immediate parent activation, exact occurrence context and inline recovery.
+- [ X ] Implement parent-owned vector/distance Translate and Reverse; snapshot native
+  straight references with rotation-only frame conversion, guard driven/jointed links.
+- [ X ] Preview shared-parent effects without document mutations; commit siblings in
+  one Undo transaction, retain implicit descendants and reset post-Apply inputs.
+- [ X ] Verify native Apply/OK, Cancel-after-Apply, persistence, repeated/standalone
+  parent views, atomic failure, Undo/Redo and both saved formats with focused tests.
+  WORK_STATE owns exact source-overlay evidence and its limitations.
+- [ X ] Synchronize interaction/ownership requirements, toolbar reference and owner
+  DOCX, preserving previous content and native numbering.
+- [   ] Render and inspect affected DOCX pages: packaged renderer lacks soffice.exe.
+- [   ] Prompts 5–9: finish Rotate, Point to Point, Align Axes, Align Coordinate Systems
+  and Interactive in this task before owner delivery.
+- [   ] Prompt 10: grouped native/packaged acceptance, all Move workflows, filtered
+  reference picking, external parents, high-DPI/lifecycle and verified owner shortcut.
+
+## October 4 Design Layers and Contextual Constraint Palette source preparation (10.5, 11)
+
+- [x] Implement document Layers metadata and transactions, permanent Base/origins,
+  independent sketch/body assignment, native Body and Plus result-chain resolution,
+  compact Design-only toolbar menus and the Layers task panel.
+- [x] Gate layer scene geometry without overwriting authored Visibility, changing
+  dependencies or exposing hidden historical results; preserve sketch traversal.
+- [x] Implement the click-only contextual sketch palette, full-selection eligibility,
+  disabled explanations, viewport clamping, travel corridor and one-second grace.
+- [x] Implement mixed construction normal-first, dimension batches, expression
+  safeguards and committed invalid Make Driving; retain shared persistence semantics.
+- [x] Prepare native cloned-solver diagnostics and a single-solve driving batch API;
+  repair lowercase native sketch selection names and contextual Escape handling.
+- [x] Run focused source-overlay regressions with real Sketcher, document transactions,
+  Coin gates and Qt pointer/timer paths. Exact final counts and evidence are in WORK_STATE.
+- [x] Synchronize canonical interaction requirements and owner DOCX; retain all 2,789
+  previous paragraphs and unchanged numbering/styles/package parts.
+- [ ] Render/review affected DOCX pages: packaged renderer still fails because the
+  selected runtime has no LibreOffice soffice.exe. Visual verification is not passed.
+- [ ] Prompt 10: grouped FreeCADGui, Sketcher App/Gui build; native diagnostic and
+  batch API checks; hidden-layer native gates and packaged mixed-mode/DPI acceptance;
+  owner payload identity, shortcut update/reopen and separate physical acceptance.
+
+The Layers continuation and palette belong to authorized workload prompts 2 and 3.
+No deferred repair/feature-handle work, new queue entries or owner build is included.
+
+## October 3 Design Selection toolbar source preparation (10.5, 11)
+
+- [x] Add the Design-only top toolbar, eight ownership-aware entity categories,
+  click-scoped connected/tangent curves and shared persistent-selection policy.
+- [x] Prepare native gate integration, directional box policy in 3D/Sketcher,
+  enabled-category box union and identity-preserving constraint/construction completion.
+- [x] Run 13 focused Python source-overlay policy/toolbar checks against the existing
+  Plus runtime, including Design/CAM/Classic transitions; native process exit 0.
+- [x] Synchronize requirements and owner DOCX while preserving all 2,783 previous
+  paragraphs, headings, numbering and all other OOXML parts.
+- [ ] Render/review edited DOCX pages: packaged renderer currently fails because
+  soffice.exe is absent; no bundled Windows LibreOffice is available. No visual pass claimed.
+- [ ] Workload prompt 10: grouped native compile, actual filtered picks/preselection,
+  directional boxes, Equal-to-Construction persistence, pointer cleanup and save/reopen
+  acceptance, then owner payload and verified desktop shortcut. No new owner build yet.
+
+The ten prompts are an execution archive, not a replacement roadmap. Only Selection,
+Layers, Contextual Constraint Palette and Move Components are authorized in this batch.
+Sketch Freedom/Constraint Repair, Interactive Feature Handles and Broken Reference
+Repair remain deferred. Evidence and limitations are in WORK_STATE.
+
 October 3 task-theme follow-up: audited task stylesheets and removed the three
 remaining copied form palettes from shared modeling, Sketch and Datum Plane.
 All eight Plus task types now inherit Qt/theme colors. The development guide and

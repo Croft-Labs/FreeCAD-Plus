@@ -51,6 +51,14 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 - Repeated instances share a definition, with independent placements and display
   overrides. Copy to New Part copies the selected definition and its own model;
   child definitions remain shared unless a deep hierarchy copy is explicitly chosen.
+- Move Components changes child LinkPlacement values owned by their immediate
+  parent definition. The change applies to every use of that parent, including
+  its standalone view. Never add a display-occurrence placement override. Accept
+  only whole direct siblings within one exact parent occurrence context; preserve
+  that path for world-reference conversion and transform descendants implicitly.
+  The permanent root/master is a context, not a movable instance. External parents
+  are edited in their owning file. See the Move Components interaction contract in
+  [UI_UX_SPEC](../UI_UX_SPEC.md#move-components).
 - Opening a component in a tab creates a view/edit context of the same definition.
   Embedded edits save with the owning file; external edits save with their file.
   The tab identifies both component and owning file. It is not an extraction.

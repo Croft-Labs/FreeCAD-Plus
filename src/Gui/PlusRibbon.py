@@ -57,6 +57,7 @@ ASSEMBLY_ITEMS = (
     ("Assembly", (
         ("Assembly_CreateAssembly", "Create Assembly"),
         ("Assembly_Insert", "Insert Component"),
+        ("Std_MoveComponents", "Move Components"),
         ("Part_LinkArrays", "Link Arrays"),
         ("Assembly_SolveAssembly", "Solve Assembly"),
         ("Assembly_CreateView", "Exploded View"),
@@ -375,6 +376,12 @@ class Ribbon(QtCore.QObject):
         self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.common)
         self.common.toggleViewAction().setVisible(False)
         self.common.hide()
+        from freecad.gui.DesignSelectionToolbar import SelectionToolbar
+        self.selection_toolbar = SelectionToolbar(self.window)
+        self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.selection_toolbar)
+        from freecad.gui.DesignLayersGui import LayersToolbar
+        self.layers_toolbar = LayersToolbar(self.window)
+        self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.layers_toolbar)
         self.toolbar = QtWidgets.QToolBar(tr("Plus Ribbon"), self.window)
         self.toolbar.setObjectName("FreeCADPlusRibbon")
         self.toolbar.setMovable(False)
@@ -445,7 +452,8 @@ class Ribbon(QtCore.QObject):
             self.place_plus_bars()
 
     def plus_bars(self):
-        return (self.common, self.toolbar) if hasattr(self, "toolbar") else (self.common,)
+        return tuple(getattr(self, name) for name in
+                     ("common", "selection_toolbar", "layers_toolbar", "toolbar") if hasattr(self, name))
 
     def place_plus_bars(self):
         """Keep the common bar above a full-width ribbon after saved-state restores."""
@@ -456,10 +464,14 @@ class Ribbon(QtCore.QObject):
             for bar in self.plus_bars():
                 self.window.removeToolBarBreak(bar)
             self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.common)
+            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.selection_toolbar)
+            self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.layers_toolbar)
             self.window.addToolBarBreak(QtCore.Qt.TopToolBarArea)
             self.window.addToolBar(QtCore.Qt.TopToolBarArea, self.toolbar)
             self.common.setVisible(self.enabled)
             self.toolbar.setVisible(self.enabled)
+            self.selection_toolbar.set_design_active(self.enabled and self.mode_name == "Design")
+            self.layers_toolbar.set_design_active(self.enabled and self.mode_name == "Design")
         finally:
             self.placing = False
 
@@ -480,6 +492,8 @@ class Ribbon(QtCore.QObject):
             else:
                 self.toolbar.hide()
                 self.common.hide()
+                self.selection_toolbar.set_design_active(False)
+                self.layers_toolbar.set_design_active(False)
             return
         self.enabled = plus
         if plus:
@@ -491,6 +505,8 @@ class Ribbon(QtCore.QObject):
         else:
             self.toolbar.hide()
             self.common.hide()
+            self.selection_toolbar.set_design_active(False)
+            self.layers_toolbar.set_design_active(False)
             self.restore_bars()
 
     def hide_bars(self):
@@ -544,6 +560,8 @@ class Ribbon(QtCore.QObject):
             self.tabs.setCurrentIndex(labels.index(tab) if tab in labels else 0)
         finally:
             self.changing = False
+        self.selection_toolbar.set_design_active(self.enabled and mode == "Design")
+        self.layers_toolbar.set_design_active(self.enabled and mode == "Design")
 
     def activate(self, workbench):
         if workbench == Gui.activeWorkbench().name():
@@ -556,6 +574,8 @@ class Ribbon(QtCore.QObject):
             # ribbon hidden, so even the transition displays only one style.
             self.toolbar.hide()
             self.common.hide()
+            self.selection_toolbar.set_design_active(False)
+            self.layers_toolbar.set_design_active(False)
             self.restore_bars()
             Gui.activateWorkbench(workbench)
         finally:
@@ -565,6 +585,8 @@ class Ribbon(QtCore.QObject):
             self.changing = False
             self.toolbar.setVisible(self.enabled)
             self.common.setVisible(self.enabled)
+            self.selection_toolbar.set_design_active(self.enabled and self.mode_name == "Design")
+            self.layers_toolbar.set_design_active(self.enabled and self.mode_name == "Design")
         return Gui.activeWorkbench().name() == workbench
 
     def mode_changed(self, index):

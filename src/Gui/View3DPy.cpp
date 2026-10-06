@@ -32,6 +32,7 @@
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoSeparator.h>
 
 #include <App/Application.h>
 #include <App/Document.h>
@@ -63,6 +64,8 @@
 #include "View3DInventorViewer.h"
 #include "ViewProviderDocumentObject.h"
 #include "ViewProviderExtern.h"
+#include "ViewParams.h"
+#include "Inventor/Draggers/SoTransformDragger.h"
 
 using namespace Gui;
 
@@ -288,6 +291,12 @@ void View3DInventorPy::init_type()
         "Add a DraggerCalback function to the coin node\n"
         "Possibles types :\n"
         "'addFinishCallback','addStartCallback','addMotionCallback','addValueChangedCallback'\n"
+    );
+    add_noargs_method(
+        "createTransformDragger",
+        &View3DInventorPy::createTransformDragger,
+        "createTransformDragger() -> SoDragger\n"
+        "Attach a native, view-only placement dragger. Remove its callbacks and scene node on task exit."
     );
     add_varargs_method(
         "removeDraggerCallback",
@@ -2436,6 +2445,31 @@ Py::Object View3DInventorPy::hasAxisCross()
 {
     SbBool ok = getView3DInventorPtr()->getViewer()->hasAxisCross();
     return Py::Boolean(ok ? true : false);
+}
+
+Py::Object View3DInventorPy::createTransformDragger()
+{
+    // A command owns lifecycle, not a DocumentObject: no property or undo change.
+    auto* dragger = new Gui::SoTransformDragger();
+    dragger->draggerSize.setValue(ViewParams::instance()->getDraggerScale());
+    dragger->translationIncrement.setValue(0.0);
+    dragger->rotationIncrement.setValue(0.0);
+    dragger->showPlanarTranslationXY();
+    dragger->showPlanarTranslationYZ();
+    dragger->showPlanarTranslationZX();
+    auto* viewer = getView3DInventorPtr()->getViewer();
+    dragger->setUpAutoScale(viewer->getSoRenderManager()->getCamera());
+    PyObject* proxy = nullptr;
+    try {
+        proxy = Base::Interpreter().createSWIGPointerObj(
+            "pivy.coin", "SoDragger *", static_cast<void*>(dragger), 0);
+    }
+    catch (const Base::Exception& error) {
+        delete dragger;
+        throw Py::RuntimeError(error.what());
+    }
+    static_cast<SoSeparator*>(viewer->getSceneGraph())->addChild(dragger);
+    return Py::Object(proxy, true);
 }
 
 void View3DInventorPy::draggerCallback(void* ud, SoDragger* n)

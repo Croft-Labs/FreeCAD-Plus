@@ -1,5 +1,28 @@
 # FreeCAD Plus: Programming Summary
 
+Move Components workflows are in `MoveComponents.py` and
+`MoveComponentsTask.py`: parent-owned native link placements, exact display paths,
+shared-parent transient previews and atomic sibling transactions. The task includes
+Translate, recovered Rotate, Point to Point, Align Axes and Align Coordinate Systems.
+`MoveComponentsManipulator.py` uses native view-owned arrows/planes/rings for
+Interactive and pivot editing. Entry points are Design Assembly and Part Tree.
+The October 6 recovery continues grouped build/packaged acceptance; these new
+sources and prepared native tests are not a completed owner delivery.
+See `tests/MoveComponents.md` and WORK_STATE for evidence and remaining gates.
+
+Design Layers and the Contextual Constraint Palette are implemented in source in
+`DesignLayers.py` / `DesignLayersGui.py` and `ConstraintPalette.py` /
+`ConstraintPaletteGui.py`. Layers use saved metadata without group/dependency edits;
+native Body and Plus result chains keep input sketches independent. The palette
+uses native Sketcher constraints and shared selection persistence. Its cloned-solver
+diagnostic and driving-batch APIs require prompt 10's grouped native rebuild.
+See WORK_STATE, UI_UX_SPEC and the corresponding tests for evidence and remaining gates.
+
+Design Selection toolbar source: `DesignSelection.py` owns semantic categories,
+curve chains and shared persistence; `DesignSelectionToolbar.py` integrates with
+PlusRibbon. Native Selection/box/Sketcher hooks require the final grouped rebuild.
+See WORK_STATE and `tests/DesignSelection.md` for checks and the DOCX render blocker.
+
 Modeling curve picks now arbitrate edge versus region hits before depth filtering.
 `ComponentTaskWidgets.py` owns the reusable profile/section/path collector, selection
 controller, preview controls, common fields and compact layout. Extrude, Revolve,

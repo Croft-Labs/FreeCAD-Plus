@@ -591,6 +591,9 @@ del _registerOccurrenceAppearance
 from freecad.gui.OccurrenceMove import registerCommand as _registerOccurrenceMove
 _registerOccurrenceMove()
 del _registerOccurrenceMove
+from freecad.gui.MoveComponentsTask import registerCommand as _registerMoveComponents
+_registerMoveComponents()
+del _registerMoveComponents
 
 from freecad.gui.OccurrenceReplace import registerCommand as _registerOccurrenceReplace
 _registerOccurrenceReplace()
@@ -599,6 +602,19 @@ del _registerOccurrenceReplace
 from freecad.gui.EntitySelectionFilter import registerCommand as _registerEntitySelectionFilter
 _registerEntitySelectionFilter()
 del _registerEntitySelectionFilter
+
+# Runtime mode state must never be restored as a restrictive startup filter.
+# The ribbon activates the policy only after its Design mode is configured.
+FreeCAD.ParamGet("User parameter:BaseApp/Preferences/DesignSelection").SetBool("Active", False)
+FreeCAD.ParamGet("User parameter:BaseApp/Preferences/DesignSelection").SetBool("LayerVisibilityActive", False)
+
+from freecad.gui.DesignLayersGui import install as _installDesignLayers
+_installDesignLayers()
+del _installDesignLayers
+
+from freecad.gui.ConstraintPaletteGui import install as _installConstraintPalette
+_installConstraintPalette()
+del _installConstraintPalette
 
 # Component services register lazily; Part geometry loads only when invoked.
 from freecad.gui.ComponentNavigator import registerCommands as _registerComponentNavigator

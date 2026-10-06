@@ -241,10 +241,12 @@ void SoRotationDragger::drag()
         tempRadians *= -1.0;
         tempVec.negate();
     }
-    int incrementCount = roundIncrement(tempRadians);
+    const bool snapping = rotationIncrement.getValue() > 0.0;
+    int incrementCount = snapping ? roundIncrement(tempRadians) : 0;
     rotationIncrementCount.setValue(incrementCount);
     localRotation
-        = SbRotation(tempVec, incrementCount * static_cast<float>(rotationIncrement.getValue()));
+        = SbRotation(tempVec, snapping
+            ? incrementCount * static_cast<float>(rotationIncrement.getValue()) : tempRadians);
 
     // same problem as described in tDragger::drag.
     if (localRotation.equals(SbRotation(SbVec3f(0.0, 0.0, 1.0), 0.0), 0.00001f)) {
@@ -256,8 +258,8 @@ void SoRotationDragger::drag()
     }
 
     Base::Quantity quantity(
-        static_cast<double>(rotationIncrementCount.getValue()) * (180.0 / std::numbers::pi)
-            * rotationIncrement.getValue(),
+        snapping ? static_cast<double>(rotationIncrementCount.getValue()) * (180.0 / std::numbers::pi)
+            * rotationIncrement.getValue() : static_cast<double>(tempRadians) * (180.0 / std::numbers::pi),
         Base::Unit::Angle
     );
 

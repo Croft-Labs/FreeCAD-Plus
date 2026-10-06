@@ -1,5 +1,218 @@
 # FreeCAD Plus: UI and UX Specification
 
+## Move Components
+
+Interactive uses native parent-aligned translation arrows, plane handles and
+rotation rings. Default pivot is the selected group's parent-frame bounds center,
+or mean selected origins when there is no visible geometry. Move Components and
+Edit Pivot are separate modes; pivot-only changes are command-local with no undo.
+Pick points/centers/edge midpoints, choose explicit orientation frame/axis or Reset
+Pivot. Mouse release retains composed preview; Apply commits siblings atomically.
+Numeric gestures use the active handle; distance and angle snapping default off.
+Escape during drag cancels that gesture and releases capture before broader task
+selection handling. Method/mode/document exit removes callbacks and handles.
+After Apply restore the default pivot for retained selection or remove handles
+when persistence clears the list. No component properties or modeling parameters
+are changed by pivot editing.
+
+Align Coordinate Systems maps the complete Source frame onto Target with roll.
+Pick native origins/datums, choose Parent explicitly, or expand Origin/Z/X picks.
+Normalize Z, project X perpendicular to Z and derive right-handed Y. Reject
+degenerate, scaled, sheared, reflected or nonfinite frames. Show frame triads and
+origins, use one Target times inverse Source rigid delta and clear inputs on Apply.
+
+Align Axes defaults to Make Coincident: minimally rotate Source direction onto
+Target and map the Source anchor to the closest point on Target. Make Parallel
+keeps that anchor fixed. Reverse Target is explicit. Opposite directions rotate
+180 degrees about Source cross the least-aligned parent X/Y/Z basis (X wins ties).
+Straight/reference lines, circle axes and cylindrical faces provide located axes.
+Apply clears both picks and resets Coincident/Reverse-off defaults.
+
+Point to Point is pure Source-to-Destination translation. Any visible occurrence
+may supply native point/origin/circle-center references; snapshot in parent
+coordinates. Orientations and sibling spacing remain unchanged. Show labeled
+points/vector/distance. Coincidence is a no-op; invalid/deleted picks refuse Apply.
+Apply clears both reference fields; shared persistence and lifecycle rules apply.
+
+Rotate resolves a located axis (parent X/Y/Z, native straight reference, or two
+distinct points) and optional parallel-axis pivot. Its 0–360 degree magnitude
+uses the right-hand rule; Reverse negates it. Show the pivot, positive direction
+and signed angle. One rigid delta rotates every sibling's origin and orientation.
+Apply resets axis/pivot/angle/Reverse and follows shared persistence. Native point
+sources include origins, sketch/reference points, vertices and circle centers.
+
+Move Components opens one Tasks panel from Design Assembly or the Part Tree
+instance context menu. It moves whole linked component instances and their
+descendants. Models, permanent master/root contexts and geometry subelements are
+not movable instances. Copy remains a separate Part Tree operation. The first
+field is Workflow, ordered Translate, Rotate, Point to Point, Align Axes, Align
+Coordinate Systems, Interactive. Prompt 4 implements Translate; the other entries
+explain that their subsequent queued implementation is pending.
+
+The next control is the Components list, using the existing add-selection,
+Remove/Delete and Clear collector conventions. The first valid batch establishes
+the immediate parent definition and its exact displayed occurrence path as the
+active editing context. Only direct siblings under that same displayed parent
+are accepted; mixed batches are rejected in full with inline explanation.
+Descendants are implicit and receive no second placement change. Clearing the list
+retains the parent context. Ordinary component clicks outside the task do not
+activate parents. External parent definitions must be opened in their owning file.
+
+A parent definition owns its children's relative LinkPlacement values. Moving
+children changes them in every occurrence of that parent, including its standalone
+component tab. Preserve the selected parent occurrence path for reference conversion;
+do not create a display-path placement override, reparent links, copy definitions
+or change source shapes/history. The task displays this shared-parent consequence.
+Driven, read-only, grounded and relationship-owned instances are refused, including
+native assembly joint references that traverse a root plus a deep subpath.
+
+Translate uses one normalized direction, one nonnegative unit-aware Distance and
+a Reverse toggle, initially direction unset, zero length and Reverse off. Directions
+are Parent X, Parent Y, Parent Z or a picked straight edge, line/reference axis
+from visible geometry. Picked occurrence/world vectors transform by the inverse
+parent rotation only; parent translation does not affect a direction. Reject curved,
+undefined, zero or ambiguous bare shared references. Snapshot the direction without
+adding associative dependencies. All selected siblings receive the same parent-frame
+rigid transform. Reverse changes sign while retaining Distance.
+
+Teal, non-pickable geometry previews intended placements without writing document
+properties or creating document objects/undo records. Show the effects in every
+displayed occurrence of the shared parent, using each occurrence's native frame.
+Apply commits all siblings in one transaction and keeps the panel open. It resets
+Direction, Distance and Reverse; Persistent Selection on retains the list/highlights,
+off clears both. No-op Apply creates no undo record. OK applies a valid nonzero
+pending move and closes; after Apply it simply closes. Cancel discards only the
+pending preview, retaining earlier Apply transactions for Undo. Switching workflows
+discards uncommitted parameters/preview while retaining siblings and parent context.
+
+Errors remain inline in the task. A changed parent or selected placement invalidates
+the pending preview and requires Reset movement inputs; stale placements are never
+silently applied. Selection changes and removals reset movement inputs. Close the
+task and release observers/preview on document or component-view exit; deleted
+instances leave the list, and deletion of the parent context closes the task.
+The remaining five workflows and native/packaged acceptance are required before
+owner delivery; WORK_STATE records source-overlay evidence and DOCX rendering status.
+
+## Design Layers
+
+Each document has permanent Base and exactly one active layer, initially Base.
+Base cannot be renamed or deleted. Origin and origin features always belong to
+Base. New independent model objects take the active layer; missing or foreign
+assignments in an existing document migrate to Base. Layer IDs, labels, visibility,
+active choice and assignments are native saved properties, with undo/redo. Layer
+metadata has NoRecompute semantics and introduces no document dependency links.
+
+A sketch is indivisible and remains independent of every body that consumes it,
+including a sketch nested in a native Body. A Body and its building operations
+share a layer. Native Body membership and explicit Plus Producer/ConsumedResults
+relationships define the body unit; arbitrary dependency recursion is forbidden.
+Selecting several operations of one body resolves to one assignment owner. Sketch
+selection moves only that sketch. New operations inherit their existing body's
+layer. Same-document occurrences resolve the shared definition's model objects;
+external definitions are edited in their owning document, not implicitly reparented.
+
+The Design-only Layers toolbar sits beside Selection/Save/Edit. It contains Layers
+(open task panel), Move to Layer and Change Active Layer. The latter two are compact
+fixed-label whole-button menus, not split buttons or current-value combo boxes.
+Move to Layer is disabled without eligible preselection and changes all deduplicated
+targets in one transaction. Active-layer menu items show the current check mark.
+
+The task panel creates, renames, deletes, assigns and activates layers. Double-click
+a layer to activate it; active text is bold with a check. An eye control toggles each
+row's visibility. Layer hiding gates scene geometry without changing individual
+Visibility properties or taking snapshots. Hidden intermediate results remain hidden,
+individual changes while hidden are respected, and independently layered sketches
+remain traversable in the Body's native Group display. Native container Visibility
+and native Through/Tip display choices continue to govern their own scene traversal.
+Delete moves assignments to Base, never deletes geometry, and activates Base when
+the deleted layer was active. Changes are individually undoable from the task panel.
+
+## Contextual Constraint Palette
+
+Only a click while editing a sketch in Plus Design mode opens the palette. Use the
+entire native selection, including additional selection clicks; box or programmatic
+selection alone never opens it. Place above the click where possible, otherwise
+below or clamp within the viewport. Use logical pixels for DPI scaling. Keep a
+24-pixel-wide travel corridor to the actual palette rectangle, with a 12-pixel
+anchor allowance and a 4-pixel palette margin. Remain visible indefinitely inside;
+outside starts a one-second grace timer and reentry cancels it. New clicks restart
+the travel context. Action updates retain position unless viewport clamping requires
+movement. Dismissal by pointer travel leaves selection intact.
+
+The palette contains only applicable native constraints/dimensions, Construction
+Geometry and separate Make Driving/Make Reference actions. Structurally inapplicable
+actions are absent. Existing constraints and known conflicts/redundancies are disabled
+with tooltips that remain available on disabled buttons. A cloned native Sketch solver
+diagnoses additions without changing committed geometry, constraints or the live
+solver. Nonconvergence alone is unknown feasibility and does not disable an action.
+No hover action adds constraints. Revalidate the live sketch and full selection before
+execution; native dimension dialogs retain their normal units and command safeguards.
+
+Mixed construction selections become all normal, then all construction. Uniform
+selections toggle together. Dimension states are separate from construction flags.
+Dimension conversion validates all inputs, applies one native batch and solves once,
+as one undoable change. Preserve constraint order, names, identities, values and
+expressions. Making an expression-driven dimension reference is disabled because
+native conversion would remove its expression; the user must explicitly remove that
+expression first. Native external-only driving restrictions remain in force.
+
+Make Driving is allowed even when the solver reports a conflict or invalid sketch.
+Commit that converted state, retain the native diagnostic, and allow one Undo of the
+whole batch. An API/input failure aborts the batch; it is not a committed invalid
+solve. Other invalid constraint additions abort normally. Persistent Selection on
+retains native surviving selections and updates the palette in place. Off clears
+selection and closes the palette after success. Escape and empty-space clicks clear
+selection and close it in either state. Clean up on sketch exit, document close,
+deletion and task/mode changes. No repair feature is introduced here.
+
+## Design Selection toolbar
+
+The Selection toolbar sits beside Save/Edit above the ribbon and is visible only
+in Plus Design mode. In order: **Single Curve / Connected Curves / Tangent Curves**
+dropdown, **Selection Filter** checkbox menu, **Directional Selection** toggle,
+**Persistent Selection** toggle. Single Curve is the initial intent. Both toggles
+default on and preserve user preferences across sessions. Theme colors are inherited.
+
+The filter menu contains Planes, Bodies, Surfaces, Faces, Edges, Curves, Points,
+Vertices. Enabled categories form a union intersected with existing native command
+gates; no command gate is removed. Planes are reference planes; Surfaces are sheets
+outside bodies; Faces/Edges/Vertices are body entities. Solid result objects count
+as Bodies, including non-PartDesign native types. Curves are sketch and independent
+3D drawing curves; Points include sketch/reference points and origins. Sketches
+remain drawing geometry even when nested inside a Body. Sheet boundaries retain
+their Surface classification. Containers/constraint annotations retain native rules.
+Occurrence paths remain intact. The legacy session filter remains an additional
+independent restriction when deliberately enabled.
+
+Connected Curves traverses all endpoint-connected branches within the picked sketch
+or shape; Tangent Curves stops at junctions with more than two incident curves and
+at tangent discontinuities. Endpoint tolerance is 1e-7 mm; tangent tolerance is
+1e-5 rad, using orientation-independent endpoint tangents. Closed multi-edge loops
+terminate without duplication; the seam of a single periodic curve is not an
+attachment point. Screen overlap and separate objects never create connectivity.
+Construction curves use Sketcher geometry indices, not the filtered Shape.Edges
+index. Expansion is click-scoped, not a global addSelection observer; non-sketch
+task collectors retain their own reference semantics.
+
+Directional ON uses full enclosure left-to-right and crossing right-to-left;
+OFF requires enclosure in both directions. Solid/dashed rectangle borders distinguish
+these modes in both the 3D viewport and sketch edit. Native projected bounds and
+tessellated geometry determine enclosure/crossing; hidden geometry remains excluded.
+Element boxes collect all enabled kinds rather than stopping at the first category.
+
+Persistent ON preserves surviving selection after identity-preserving operations,
+including Equal then Construction on the same sketch curves. OFF permits normal
+post-operation clearing. Failed constraint inputs remain available for correction.
+Escape and empty-space selection clearing are unconditional; deleted objects are
+removed by native lifecycle handling. Never replay old subelement IDs after a
+topology change. Command collectors can still reset their deliberate input state.
+`DesignSelection.persistent/finish_operation` and native
+`SelectionSingleton::clearSelectionAfterOperation` share this contract for the
+upcoming constraint palette and Move Components workflows.
+
+Validation and remaining native/visual gates: [Selection acceptance](../tests/DesignSelection.md)
+and WORK_STATE. Source preparation is not owner-build delivery.
+
 ## Shared component modeling previews
 
 Extrude, Revolve, Loft, Pipe, Helix and Primitive expose **Preview type** as a

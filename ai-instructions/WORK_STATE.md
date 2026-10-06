@@ -1,5 +1,246 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 6 recovery sequence resumed in the owner-requested conversation
+
+Interactive source uses the fork's SoTransformDragger through a new view-only
+createTransformDragger binding. Native arrows, planes and rotation rings remain
+the existing services; zero increments now explicitly mean unsnapped linear/
+planar/rotational dragging, with native status values retained. Existing positive
+increment behavior is unchanged. No document object or property owns the handles.
+Command-local default pivot uses selected parent-frame geometry bounds (or mean
+instance origin fallback); Edit Pivot, native midpoint picks, explicit frame/axis
+orientation and Reset Pivot do not move geometry or add undo records. Gestures
+compose against unchanged placements; release retains preview. View-scoped
+Escape releases native capture and restores the current gesture's baseline.
+Selection's broader Escape clearing defers to an active manipulator drag.
+
+Four TestMoveComponentsInteractive cases are prepared, including a rendered
+Coin handle pick followed by Qt press/move/release/Escape events. They have NOT
+run. Parsing passes for the nine Move source/test modules. Integration/native
+compile and actual event/packaged acceptance remain required. Next: reconcile
+native services, prepare grouped test harness, then configure/build this fork once.
+
+Align Coordinate Systems source is prepared with existing native origin/datum
+frame picks, explicit Parent and expandable Origin/Z/X definitions. Orthonormal
+right-handed construction rejects parallel/zero input; matrix validation rejects
+scale/reflection/shear, including scaled native occurrence ancestors before
+Placement conversion. Source/Target triads and origins preview complete rigid
+alignment with roll. Four tests in TestMoveComponentsFrames await native execution.
+Next: Interactive native manipulator and pivot; do not substitute numeric-only UI.
+
+Published source milestones (origin/main verified by ls-remote matching HEAD):
+Selection `3f7e7d3ec14962a08e25ccfa49a587559c7112d1`;
+Layers/palette `6fdfac99a1da2530eb28bf47d7cf7132c8f32582`.
+These preserve recovered code with syntax/staged whitespace checks, not new native
+acceptance. Shared ribbon/package wiring and consolidated owner documentation are
+in the subsequent Move/integration group, because those recovered edits couple
+all four feature families. Untracked prompt archives are not staged.
+
+Align Axes source is prepared: native line/circle/cylinder extraction,
+minimal-angle rotation, deterministic antiparallel basis, closest-point Coincident,
+fixed-anchor Parallel, Reverse Target, transient direction markers and reset.
+Five native checks in TestMoveComponentsAxes await the grouped build. Next source
+item is Align Coordinate Systems, followed by genuine Interactive handles.
+
+Point to Point source now uses the existing Session candidates/commit and shared
+task, with separate Source/Destination pick roles, native point resolution,
+finite point validation, labeled markers/vector/distance, reference deletion
+guards and Apply reset. Four native regressions were added in
+`TestMoveComponentsPoint`; they have not run yet because no Plus runtime exists
+on this replacement host. No mock runtime is used as native evidence.
+
+Read all seven saved prompts, context/audit, queue manifest and the complete
+recovered owner conversation. Actual source confirms Selection/Layers/palette/
+Translate preparation and interrupted Rotate. Preserve all recovered modifications;
+the untracked `ai-instructions/queue` is an execution archive, not a new worker queue.
+No duplicate chats/workers or native queue submissions were created.
+
+Rotate source and all eight updated checks were inspected. Ten affected Python
+modules pass parsing on this host. Historical 12 Translate + 8 Rotate results are
+not newly rerun results: the old Office-PC runtime is absent. The current local
+`freecad_plus_2026-10-06_toolchain_smoke` directory is a toolchain sample, not this
+application. MSVC BuildTools 2022, CMake and LibPack 26.3.0-v3.5.3 are available.
+All runtime/GUI/Undo/save-reopen evidence must be rerun after the single grouped
+native build. Owner DOCX was read before edits; Rotate requirement/status appended
+without changing other package parts. Document visual review remains pending.
+
+Next: Point to Point, then Align Axes, Align Coordinate Systems, Interactive,
+integration reconciliation and one grouped native build/package/shortcut delivery.
+Complete these in order; do not stop or claim delivery at Rotate source review.
+No new owner build, shortcut change, source publication or acceptance is claimed
+by this entry. Later entries must record exact actual commits/pushes and tests.
+
+## October 4 Move Components foundation and Translate source preparation
+
+Authorized prompt 4 is implemented in source. `MoveComponents.py` owns reviewed
+component paths, parent-frame direction snapshots, transient geometry evaluation
+and atomic placement commits. `MoveComponentsTask.py` provides the single Tasks
+panel, shared collector controls, unit-aware translation, reset/recovery and native
+Apply/OK/Cancel routing. Design Assembly and the Part Tree context menu expose
+`Std_MoveComponents`. No Copy control or deferred repair/feature-handle work was added.
+Rotate through Interactive remain explicitly awaiting prompts 5–9; no backup was
+enqueued and no native rebuild, owner payload, shortcut change or publication is claimed.
+
+The task activates only the selected instances' immediate parent definition and
+retains its exact displayed path. Only direct siblings in that context are accepted.
+Each commit writes their existing LinkPlacement values once; descendants are implicit
+and source definitions, ownership, geometry and identities remain intact. The preview
+shows every displayed occurrence of that shared parent, each in its own native frame.
+Native joint Reference1/Reference2 paths are checked in addition to direct consumers,
+driven/grounded/read-only guards. External parents require opening their owning file.
+
+Final evidence: **12 distinct Move checks pass**, native process exit 0, in
+`D:/Temp/Office-PC/freecad_plus_2026-10-04_move_source/source-results.json` and
+`policy-tests.log` (8.400 seconds). They use explicit Python source overlays on the
+unchanged `freecad_plus_2026-10-03_theme_inheritance/app/bin/FreeCAD.exe`, not a rebuilt
+or newly packaged executable. Covered: differently transformed shared parent uses,
+standalone parent tab, native shape-path output, implicit descendants, group-relative
+transforms, native axis/edge direction snapshots, reverse, safeguards and rollback,
+native Undo/Redo and FCStd/cadprt reopen, collectors, workflow switches, document
+cleanup and persistence on/off. The actual task-panel Apply and OK buttons pass;
+Cancel discards a pending move while earlier Apply transactions remain undoable.
+Syntax checks and git diff whitespace checks pass; the stylesheet warning is inherited.
+
+Verification repairs: the first round-trip fixture reopened an already-open document
+and then closed that original; it now closes before reopening each saved format.
+Native selection rejects a bare hidden source Link, so ambiguity is tested using an
+explicit input record and command routing uses a real root-qualified native selection.
+Bare Origin axes require their native Origin prefix when qualified through a component.
+Actual Apply-button testing found Qt6 sends a StandardButton enum; the handler now
+accepts that enum as well as integer values. No failure is reported as a passing check.
+
+`move-task.png` and `move-preview.png` were inspected: the live task has the required
+field order and native buttons, unit-aware Distance and teal previews in both parent
+uses. The isolated source-overlay harness retains the original Navigator dock while
+loading the changed module, so its full-window screenshot contains an extra Components
+dock. This is not packaged UI evidence. Native filtered viewport picking, high-DPI
+and clean installed-startup acceptance remain deferred to prompt 10.
+
+Owner DOCX read and updated with six requirement paragraphs; all 2,798 earlier
+paragraphs are byte-preserved at XML paragraph level and every package part except
+document.xml remains unchanged, including headings/styles/native numbering. SHA-256:
+`b3a6ffbf1f6cbfd03116ab1522d41351c0a87a0a217b338ddfb79b9b4923e8e0`.
+The packaged Documents renderer was attempted on this revision and again fails at
+`_resolve_soffice`: `LibreOffice soffice.exe was not found on PATH`. No DOCX page PNGs
+or visual pass exist. Resolve the renderer and inspect affected pages before delivery.
+
+Next: implement Rotate on this same Session/MoveTask machinery in prompt 5. Preserve
+the owning-parent/path contract, rigid group delta, source-free preview, atomic commit,
+shared persistence and post-Apply reset. Prompt 10 runs the installed Move suite and
+all six workflows alongside native Selection/Layers/palette checks, then packaged
+entry points/reference picking, task/mode transitions, owner payload and shortcut.
+Source preparation is not owner-ready delivery or physical acceptance.
+
+## October 4 Layers and Contextual Constraint Palette source preparation
+
+Prompts 2 and 3 are implemented in source. Prompt 2's first runtime launch was
+interrupted; its tests, repairs and documentation were completed alongside prompt 3.
+No prompt backup was enqueued or replayed. No native rebuild, owner payload, shortcut
+change, commit/push or release is claimed for this step.
+
+`DesignLayers.py` owns document-local layer IDs, Base protection, native NoRecompute
+assignment properties and transactions. Native Body membership and Plus
+Producer/ConsumedResults links resolve indivisible bodies; sketches remain independent.
+`DesignLayersGui.py` supplies the task, fixed-label menus and Coin display-branch gates.
+It leaves individual Visibility unchanged and keeps the Body Group scene traversable.
+FCStd and cadprt round trips use the existing native document storage. No new geometry
+groups, ownership links or dependency edges are introduced.
+
+`ConstraintPalette.py` uses native Sketcher constraints and transactions. The GUI
+controller opens only after viewport clicks, keeps a viewport-clamped travel region,
+cancels the one-second outside timer on reentry, and exposes disabled tooltips.
+Construction conversion is normal-first for mixed selections. Driving conversion
+retains invalid committed states and reports native solver diagnostics. Making a
+dimension reference can remove one conflict while another remains; expression-driven
+reference conversion is protected from native expression deletion. There is no repair UI.
+
+New native `diagnoseConstraintAdditions` clones geometry and constraints into the
+existing Sketch solver, leaving saved data and the live solver untouched. New
+`setDrivingBatch` validates all input indices/expression safeguards before changes and
+solves once after the batch. These new C++ APIs are **source-prepared, not built or
+runtime-verified**. Python source-overlay compatibility uses the existing APIs and is
+not a substitute for their grouped-build acceptance.
+
+Prerequisite fixes from runtime evidence: native NoResolve sketch picks can contain
+lowercase edge/vertex names; semantic resolution now recognizes these without changing
+occurrence prefixes. A visible palette consumes its Escape dismissal so a second
+native action cannot exit sketch edit and select the sketch. The ordinary toolbar
+defers explicit deselection until native Escape handling finishes. Layers fixes include
+origin-feature membership recognition, destroyed-toolbar observer cleanup and Qt6
+standard-button conversion. Native geometry comparisons use tolerance after serialization.
+
+Final quick evidence: **35 distinct checks pass** (13 Selection policy/toolbar,
+10 Layers, 12 palette) in
+`D:/Temp/Office-PC/freecad_plus_2026-10-04_design_source/source-results.json` and
+`policy-tests.log`; the native process exits 0. These are explicit Python source overlays on the unchanged
+`freecad_plus_2026-10-03_theme_inheritance/app/bin/FreeCAD.exe`, not a rebuilt or
+newly packaged executable. Qt mouse events traverse the real active sketch viewport;
+the one-second timer/reentry, Escape with and without a palette, empty click, drag
+suppression and disabled tooltip paths pass. Both native-document formats pass.
+Python syntax and `git diff --check` pass. The isolated stylesheet warning is inherited;
+redundant-constraint diagnostics in stderr are expected from the intentional invalid
+driving/partial-reference fixtures. The first pointer fixture found deferred-deletion
+widgets from earlier documents; it now targets only the active MDI view and delivers
+hover events before clicks. No physical pointer or high-DPI owner acceptance is claimed.
+
+Owner DOCX: nine requirement paragraphs added, all 2,789 previous paragraphs retained
+unchanged, and all package parts other than document.xml unchanged. SHA-256:
+`61f2de1f6808f9b2e97f7d8254cac41819de80298a444549371bc9cfd854705c`.
+The bundled Documents renderer was run again on this revision and fails at
+`_resolve_soffice` with `LibreOffice soffice.exe was not found on PATH`. The prior
+runtime inventory found no bundled Windows LibreOffice. No page PNGs or visual pass
+exist for these edits. This remains an explicit owner-document delivery blocker.
+
+Prompt 10 must compile FreeCADGui and Sketcher App/Gui together, run
+`TestDesignSelectionNative`, `TestDesignSelectionBoxes`, `TestDesignLayers` and
+`TestConstraintPaletteNative`, verify native layer gates/collector intersections,
+external and repeated component rendering, dimension dialogs, DPI and task transitions,
+then verify the packaged payload and existing owner shortcut. Resolve the DOCX renderer
+and inspect affected pages before calling any of this owner-ready. Physical owner
+acceptance remains separate.
+
+## October 3 Selection toolbar source preparation
+
+Workload prompt 1 adds `DesignSelection.py`, `DesignSelectionToolbar.py` and the
+PlusRibbon top-row integration. Semantic categories distinguish drawing geometry
+from body subelements, preserve occurrence paths and intersect native command gates.
+Connected chains include construction curves without remapping their indices;
+tangent chains stop at branches. Native Selection now exposes completion-only
+persistence and directional policy; Sketcher constraint/construction completion
+uses it without intercepting explicit clearSelection or replaying stale indices.
+Both 3D and Sketcher box logic honor the directional toggle. Sketcher curve crossing
+also checks sampled segments, including the final endpoint; element boxes collect
+the enabled category union. Native changes are NOT built in this step.
+
+13 distinct focused checks pass in
+`D:/Temp/Office-PC/freecad_plus_2026-10-03_selection_source/source-results.json`:
+11 real-geometry policy checks and two toolbar/lifecycle checks. This uses explicit
+Python source overlays on the unchanged theme_inheritance Plus binary; it is not
+a packaged owner acceptance run. Final native process exit is 0. The first harness
+attempt used the FreeCADGui alias as a package path; the corrected harness loads
+the explicit source modules. A subsequent harness exit-code query was corrected
+to retain the process handle; the final result is clean. The pre-existing isolated
+application stylesheet parse warning remains in stderr and is not attributed to
+the new toolbar. Python syntax and git diff whitespace checks pass.
+
+Owner DOCX: six new requirements paragraphs, all 2,783 pre-existing paragraphs
+unchanged; all package parts except document.xml unchanged, including numbering.
+SHA-256 `a4d73fd20dfc266004da4907718aa7788bd8bf1d5a9fc400624fbdec0b94f32c`.
+The sandbox denied replacing the protected DOCX; the same prepared patch succeeded
+with narrow approved access. Packaged `render_docx.py --emit_pdf --verbose` fails
+at `_resolve_soffice`: soffice.exe is not on PATH and the dependency runtime has no
+bundled Windows LibreOffice. Document visual QA remains BLOCKED, not passed.
+
+Required prompt-10 gates: resolve document rendering and inspect affected pages;
+compile FreeCADGui and SketcherGui plus dependent targets together; run
+TestDesignSelectionNative and TestDesignSelectionBoxes along with relevant prior
+selection/Sketcher/ribbon regressions; verify native clicks, gates, preselection,
+Escape/empty click, curve-intent event paths, persistence on/off, delete/undo/reopen
+and collector isolation. Then deliver the coherent owner payload, update/reopen/
+verify the existing desktop shortcut and record source publication separately.
+Current owner payload/shortcut remain theme_inheritance. This step is source-prepared,
+not owner-ready, not a fresh build and not a release. No deferred feature group started.
+
 ## October 3 inherited task colors
 
 Owner payload: `D:/Temp/Office-PC/freecad_plus_2026-10-03_theme_inheritance/app`.

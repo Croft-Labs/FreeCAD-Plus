@@ -9,6 +9,13 @@ The Plus layout implements the owner's revised direction and completes the incom
 - [Changes and retained access](#changes-and-retained-access)
 - [Complete function catalog](#complete-toolbar-buttonfunction-catalog)
 
+## Design Move Components
+
+The Design Assembly group includes **Move Components** (`Std_MoveComponents`).
+The Part Tree instance context menu opens the same task. Its ordered workflow
+dropdown starts with Translate; the remaining five workflows await their queued
+implementations. See [Move Components](../UI_UX_SPEC.md#move-components).
+
 ## Classic toolbars
 
 Recorded upstream source: `b9609745048b`. Native metadata: application `6be8eda4246a`. Conditional/edit-only toolbars are included; they are not all shown simultaneously. Shared desktop groups are listed once. Classic location mappings record the prior audit layout; the revised Design Home section below governs current source placement. Removed Home actions retain specialist tabs or native menus.
@@ -1092,6 +1099,32 @@ Definition: [`src/Mod/Test/InitGui.py`](../../../src/Mod/Test/InitGui.py).
 | <img src="toolbar-icons/Test_TestBase.png" width="11" height="11" alt="Test base"> [Test base](#button-test_testbase) | Test Framework | Tools |
 
 ## Plus UI target layout
+
+### Design Layers toolbar
+
+Visible only in Plus Design mode, beside Save/Edit and Selection: **Layers** opens
+the task panel; **Move to Layer** and **Change Active Layer** use fixed-label,
+whole-button dropdown menus. Move is disabled without eligible preselection;
+active-layer choices have check marks. No split default action or wide current-value
+combo box is used. The panel provides creation, rename, deletion, assignment, active
+choice and eye controls. Base/origin protection and body/sketch independence follow
+[the interaction requirements](../UI_UX_SPEC.md#design-layers).
+
+The Contextual Constraint Palette is a viewport overlay, not another top toolbar.
+It appears only after sketch selection clicks and uses the shared persistent
+selection policy. See [palette interaction requirements](../UI_UX_SPEC.md#contextual-constraint-palette).
+
+### Design Selection toolbar
+
+Source addition, October 3: `FreeCADPlusSelection` appears alongside the common
+Save/Edit row above the ribbon only in Design mode. Its ordered controls are
+Single Curve / Connected Curves / Tangent Curves; Selection Filter with independent
+Planes, Bodies, Surfaces, Faces, Edges, Curves, Points, Vertices checkboxes;
+Directional Selection; Persistent Selection. Both toggles default on and retain
+saved choices. This is a dedicated toolbar, not an additional ribbon group.
+Classic and non-Design modes hide it and deactivate its policy. See
+[interaction contract](../UI_UX_SPEC.md#design-selection-toolbar) and WORK_STATE
+for source checks and pending grouped native acceptance.
 
 ### Size and dropdown key
 

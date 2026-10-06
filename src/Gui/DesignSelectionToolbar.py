@@ -92,6 +92,10 @@ class SelectionToolbar(QtWidgets.QToolBar):
         if not self._enabled or not self._viewport(watched):
             return False
         if event.type() == QtCore.QEvent.KeyPress and event.key() == QtCore.Qt.Key_Escape:
+            from freecad.gui.MoveComponentsTask import _task
+            if _task and _task.manipulator and _task.manipulator.dragging:
+                # Its viewport-scoped handler cancels the gesture before broader deselection.
+                return False
             # Do not consume it: native tools still handle cancellation normally.
             self._generation += 1
             Policy.clear_after_escape()

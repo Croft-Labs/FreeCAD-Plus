@@ -275,7 +275,9 @@ void SoLinearDragger::drag()
     }
 
     Base::Quantity quantity(
-        static_cast<double>(translationIncrementCount.getValue()) * translationIncrement.getValue(),
+        translationIncrement.getValue() > 0.0
+            ? static_cast<double>(translationIncrementCount.getValue()) * translationIncrement.getValue()
+            : static_cast<double>(localMovement[1]) * autoScaleResult.getValue(),
         Base::Unit::Length
     );
 
@@ -318,6 +320,10 @@ SbBool SoLinearDragger::setUpConnections(SbBool onoff, SbBool doitalways)
 
 SbVec3f SoLinearDragger::roundTranslation(const SbVec3f& vecIn, float incrementIn)
 {
+    if (incrementIn <= 0.0f) {
+        translationIncrementCount.setValue(0);
+        return vecIn;
+    }
     // everything is transformed into local space. That means we only have
     // worry about the y-value.
 

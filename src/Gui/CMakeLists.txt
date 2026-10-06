@@ -1543,9 +1543,18 @@ set(FreeCADGui_Scripts
     UniqueDefinition.py
     OccurrenceAppearance.py
     OccurrenceMove.py
+    MoveComponents.py
+    MoveComponentsTask.py
+    MoveComponentsManipulator.py
     OccurrenceReplace.py
     TemporaryDisplay.py
     EntitySelectionFilter.py
+    DesignSelection.py
+    DesignSelectionToolbar.py
+    DesignLayers.py
+    DesignLayersGui.py
+    ConstraintPalette.py
+    ConstraintPaletteGui.py
     RemoteDebugger.ui
     RemoteDebugger.py
 )

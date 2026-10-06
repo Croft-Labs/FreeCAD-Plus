@@ -1168,6 +1168,15 @@ class Navigator(QtWidgets.QDockWidget):
             self.active_key = object_key(active)
             self.bind_edit_context()
 
+    def move_components(self, item=None):
+        from freecad.gui.MoveComponentsTask import open_task
+        rows = self.structure.selectedItems() if item is None or item.isSelected() else [item]
+        roots = {self.tree_root(row) for row in rows}
+        if len(roots) != 1:
+            raise ValueError(tr("Choose component instances in one Part Tree."))
+        paths = [tuple(ids) for row in rows for key, ids in self.members(row)]
+        open_task(roots.pop(), paths)
+
     def select_history(self):
         self.select_native([(self.active_path, resolve(row.data(0, QtCore.Qt.UserRole)))
                             for row in self.history.selectedItems()])
@@ -1656,6 +1665,7 @@ class Navigator(QtWidgets.QDockWidget):
             menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(target()))).setEnabled(definition is not None)
             if value[1]:
                 menu.addAction(tr("Cut"), lambda: self.run(lambda: self.cut_instances(target())))
+                menu.addAction(tr("Move Components"), lambda: self.run(lambda: self.move_components(target())))
             paste = menu.addAction(tr("Paste"), lambda: self.run(lambda: self.paste_instances(target())))
             paste.setEnabled(definition is not None and QtWidgets.QApplication.clipboard().mimeData().hasFormat(PartTree.MIME))
             if value[1]:
