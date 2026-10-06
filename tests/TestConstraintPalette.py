@@ -300,6 +300,60 @@ class TestConstraintPalette(unittest.TestCase):
             palette.deleteLater()
             parent.deleteLater()
 
+    def test_tooltip_disappears_before_constraint_execution(self):
+        from unittest.mock import patch
+        controller = UI._controller
+        parent = Gui.getMainWindow()
+        self.select("Edge1", "Edge2")
+        controller.clicked(parent, parent.mapToGlobal(QtCore.QPoint(500, 400)), controller.generation)
+        controller.poll.stop()
+        button = controller.palette.buttons["Equal"]
+        event = QtGui.QHelpEvent(QtCore.QEvent.ToolTip, QtCore.QPoint(1, 1),
+                                button.mapToGlobal(QtCore.QPoint(1, 1)))
+        QtWidgets.QApplication.sendEvent(button, event)
+        tips = lambda: [w for w in QtWidgets.QApplication.topLevelWidgets()
+                        if w.windowType() == QtCore.Qt.ToolTip and w.isVisible()]
+        self.assertTrue(tips(), "A real native tooltip must be visible before the click")
+        entered = []
+        original = Policy.execute
+
+        def execute(*args):
+            entered.append(not tips())
+            return original(*args)
+
+        with patch.object(Policy, "execute", execute):
+            QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+        # No settle/sleep: the tooltip must disappear before native solving starts.
+        self.assertEqual(entered, [True])
+        self.assertFalse(tips())
+        self.assertFalse(button.isVisible(), "Retired buttons must hide before deferred deletion")
+        self.assertEqual(self.sketch.ConstraintCount, 1)
+        self.assertEqual(Policy.selected(self.sketch), ["Edge1", "Edge2"])
+        self.assertIsNotNone(controller.palette)
+        self.doc.undo()
+        controller.update()
+        button = controller.palette.buttons["Equal"]
+        event = QtGui.QHelpEvent(QtCore.QEvent.ToolTip, QtCore.QPoint(1, 1),
+                                button.mapToGlobal(QtCore.QPoint(1, 1)))
+        QtWidgets.QApplication.sendEvent(button, event)
+        self.assertTrue(tips())
+        controller.close()
+        self.assertFalse(tips(), "Close must remove tooltip immediately too")
+        self.params.SetBool("Persistent", False)
+        controller.clicked(parent, parent.mapToGlobal(QtCore.QPoint(500, 400)), controller.generation)
+        controller.poll.stop()
+        button = controller.palette.buttons["Equal"]
+        event = QtGui.QHelpEvent(QtCore.QEvent.ToolTip, QtCore.QPoint(1, 1),
+                                button.mapToGlobal(QtCore.QPoint(1, 1)))
+        QtWidgets.QApplication.sendEvent(button, event)
+        self.assertTrue(tips())
+        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+        self.assertFalse(tips())
+        self.assertIsNone(controller.palette)
+        self.assertEqual(Policy.selected(self.sketch), [])
+        self.doc.undo()
+        self.assertEqual(self.sketch.ConstraintCount, 0)
+
     def test_viewport_clamp_and_corridor_grace(self):
         bounds = QtCore.QRect(4, 4, 300, 250)
         for anchor in (QtCore.QPoint(300, 5), QtCore.QPoint(4, 4), QtCore.QPoint(150, 240)):

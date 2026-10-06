@@ -105,8 +105,10 @@ class Palette(QtWidgets.QFrame):
         self.buttons = {}
 
     def update_actions(self, actions, maximum):
+        self.dismiss_tooltip()
         while self.grid.count():
             item = self.grid.takeAt(0)
+            item.widget().hide()
             item.widget().deleteLater()
         self.buttons.clear()
         icon_size = Gui.getMainWindow().iconSize()
@@ -134,6 +136,18 @@ class Palette(QtWidgets.QFrame):
         self.grid.activate()
         desired = self.content.sizeHint()
         self.resize(width, min(maximum.height(), desired.height() + 12))
+
+    def dismiss_tooltip(self):
+        # QToolTip.hideText() starts Qt's delayed hide timer. Native constraint
+        # execution can occupy the GUI thread before it fires, leaving the
+        # tooltip frame/shadow over the sketch. Hide this palette's tooltip
+        # synchronously, retaining Qt ownership and native presentation.
+        if QtWidgets.QToolTip.text() not in {b.toolTip() for b in self.buttons.values()}:
+            return
+        for widget in QtWidgets.QApplication.topLevelWidgets():
+            if widget.windowType() == QtCore.Qt.ToolTip and widget.isVisible():
+                widget.hide()
+        QtWidgets.QToolTip.hideText()
 
     def eventFilter(self, watched, event):
         if event.type() == QtCore.QEvent.ToolTip:
@@ -180,6 +194,7 @@ class Controller(QtCore.QObject):
         self.update_timer.stop()
         self.press = None
         if self.palette:
+            self.palette.dismiss_tooltip()
             self.palette.hide()
             self.palette.deleteLater()
         self.palette = self.sketch = self.region = None
@@ -245,6 +260,8 @@ class Controller(QtCore.QObject):
             return
         self.executing = True
         self.dismiss.stop()
+        if self.palette:
+            self.palette.dismiss_tooltip()
         try:
             backend().execute(self.sketch, backend().selected(self.sketch), key)
         except (RuntimeError, ValueError, IndexError) as error:

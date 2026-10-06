@@ -1,5 +1,12 @@
 # Contextual Constraint Palette acceptance
 
+Run `test_tooltip_disappears_before_constraint_execution` for the October 6
+lingering gray-frame regression. A real native tooltip and Qt button click must
+prove the tooltip is already hidden on entry to the actual constraint backend,
+without a sleep/event-loop settling allowance. Retired buttons are hidden before
+deferred deletion. Check persistent selection on/off, immediate close and Undo;
+retain `test_viewport_clamp_and_corridor_grace` for the separate one-second grace.
+
 October 6 point-click regressions: run native
 `test_plain_point_click_replaces_and_modifiers_extend` and
 `test_candidate_point_constraints_do_not_log_errors`. They reproduce both reported

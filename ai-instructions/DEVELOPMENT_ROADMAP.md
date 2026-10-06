@@ -1,5 +1,18 @@
 # FreeCAD Plus: Development Roadmap
 
+## October 6 immediate constraint palette tooltip dismissal
+
+- [x] Reproduce visible native tooltip on entry to solving; synchronously hide it
+  before action execution, refresh and close. Hide old buttons before deletion.
+  Preserve native presentation, persistent selection and one-second travel grace.
+- [x] Final native palette suite 19/19, increased-scale 2/2 and actual saved desktop
+  shortcut 3/3; no application source overlays. Earlier fixture-error attempt is
+  not acceptance. Native binaries reused unchanged, complete inventory verified.
+- [x] Owner DOCX 88-page render; only page 82 changes and is visually inspected.
+  Native numbering and other ZIP parts retained. Existing desktop shortcut target
+  and working directory saved/reopened and actual launch verified. Durable evidence,
+  scoped cache/raw/obsolete payload cleanup and origin/main publication are tracked
+  in WORK_STATE and the useful payload metadata.
 ## October 6 medium ribbon icon enlargement
 
 - [x] Medium icons 20→32 logical pixels and buttons 38→42px high; shared minimum

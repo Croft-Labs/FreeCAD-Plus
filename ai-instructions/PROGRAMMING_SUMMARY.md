@@ -1,5 +1,9 @@
 # FreeCAD Plus: Programming Summary
 
+ConstraintPaletteGui synchronously hides the palette's native tooltip before
+solving, refresh and close, and hides retired buttons before deferred deletion.
+Native icons/tooltips and the one-second travel grace remain retained; WORK_STATE
+owns the installed 19-check, increased-scale and actual saved-shortcut evidence.
 The October 6 Modeling ribbon revision is owned by PlusRibbon.MODELING_GROUPS /
 MODELING_SIZES. Gray group dividers apply to all tabs; RibbonButton paints complete
 fitted two-line large captions, while medium/small buttons remain icon-only.

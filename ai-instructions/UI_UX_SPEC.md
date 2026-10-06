@@ -139,6 +139,11 @@ outside starts a one-second grace timer and reentry cancels it. New clicks resta
 the travel context. Action updates retain position unless viewport clamping requires
 movement. Dismissal by pointer travel leaves selection intact.
 
+Choosing an action hides its native tooltip window immediately, before native
+solving or a dimension dialog. Refresh/close also hide that tooltip and retired
+buttons before deferred Qt deletion, so no frame remains during the delayed hide
+timer. Preserve native tooltip text/icons and the one-second pointer-travel grace.
+
 The palette contains only applicable native constraints/dimensions, Construction
 Geometry and separate Make Driving/Make Reference actions. Structurally inapplicable
 actions are absent. Existing constraints and known conflicts/redundancies are disabled
