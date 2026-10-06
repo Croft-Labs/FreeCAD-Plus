@@ -498,6 +498,7 @@ class MoveTask(ModelingTaskUI):
             self.status.setText(tr("Drag arrows, plane handles or rings. Release retains preview; Apply commits. Edit Pivot changes handles only."))
 
     def change_direction(self):
+        self.reference_objects.pop("direction", None)
         index = self.direction.currentIndex()
         self.session.direction = App.Vector(*((1, 0, 0), (0, 1, 0), (0, 0, 1))[index - 1]) if 1 <= index <= 3 else None
         self.reference.clear()
@@ -731,8 +732,20 @@ class MoveTask(ModelingTaskUI):
     def change_pivot_mode(self, *args):
         if self.manipulator:
             self.manipulator.cancel_drag()
+        if self.picking_reference:
+            self.picking_reference = False
+            self.ensure_manipulator(self.saved_pivot)
+            self.saved_pivot = None
+            self.highlight()
+            self.update_preview()
 
     def reset_pivot(self):
+        for role in tuple(self.reference_objects):
+            if role.startswith("interactive_"):
+                del self.reference_objects[role]
+        self.picking_reference = False
+        self.ensure_manipulator(self.saved_pivot)
+        self.saved_pivot = None
         if self.manipulator:
             self.manipulator.cancel_drag()
             self.manipulator.pivot = App.Placement(self.session.group_pivot(), App.Rotation())
@@ -741,6 +754,8 @@ class MoveTask(ModelingTaskUI):
 
     def numeric_gesture(self):
         try:
+            if self.picking_reference:
+                raise ValueError(tr("Finish or cancel the pending pivot pick before a numeric gesture."))
             self.ensure_manipulator()
             if self.manipulator is None:
                 raise ValueError(tr("Select components first."))

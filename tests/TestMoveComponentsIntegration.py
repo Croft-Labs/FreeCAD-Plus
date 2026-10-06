@@ -18,7 +18,7 @@ class TestMoveComponentsIntegration(unittest.TestCase):
     tearDown = Fixtures.TestMoveComponentsRotate.tearDown
     session = Fixtures.TestMoveComponentsRotate.session
     vector = Fixtures.TestMoveComponentsRotate.vector
-    settle = Width.TestComponentTaskWidth.settle
+    settle = staticmethod(Width.TestComponentTaskWidth.settle)
     check_width = Width.TestComponentTaskWidth.check_width
 
     def test_compact_native_tasks_all_six_methods(self):
@@ -42,13 +42,15 @@ class TestMoveComponentsIntegration(unittest.TestCase):
     def test_mode_exit_removes_native_handle_without_document_change(self):
         task = UI.open_task(self.root,self.paths)
         task.workflow.setCurrentIndex(5)
-        scene, node = task.manipulator.scene, task.manipulator.node
+        scene = task.manipulator.scene
+        child_count = scene.getNumChildren()
         signature = task.session.signature()
         DesignSelection.parameters().SetBool("Active",False)
         task.check_context()
         self.assertTrue(task.closed)
         self.assertIsNone(task.manipulator)
         # Avoid dereferencing a deleted node: the scene count is the lifecycle oracle.
+        self.assertEqual(scene.getNumChildren(), child_count-1)
         self.assertEqual(signature,task.session.signature())
         DesignSelection.parameters().SetBool("Active",True)
 

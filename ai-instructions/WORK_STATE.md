@@ -3,7 +3,14 @@
 ## October 6 recovery sequence resumed in the owner-requested conversation
 
 Current gate: grouped native compilation, then exact-class installed regression
-and packaged GUI acceptance. Release configuration completed successfully in
+and packaged GUI acceptance.
+
+Pending reference cleanup now discards superseded direction/pivot guards, cancels
+pivot picks on mode/reset changes, and blocks numeric gestures while a pick is
+pending. Axis markers remain visible for zero-size references. The integration
+fixture preserves its static settle method and checks scene-node removal by count.
+These source changes parse and pass whitespace checks; native execution is pending.
+Release configuration completed successfully in
 588.953 seconds; BUILD_GUI/ASSEMBLY/PART/PART_DESIGN/SKETCHER/START/TUX/CAM are ON,
 FEM/ADDONMGR are OFF. One ALL_BUILD is running under the finite monitored wrapper.
 Do not launch another build while it is alive. Exact PID/command are in

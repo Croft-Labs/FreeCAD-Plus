@@ -430,6 +430,7 @@ def reference_alignment_axis(session, base, subname):
 
 
 def axis_geometry(session, axes, size):
+    size = max(1., size)
     pieces = []
     frame = session.frame()
     for anchor, direction in axes:
