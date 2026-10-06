@@ -37,6 +37,7 @@
 #include <App/Link.h>
 #include <Base/Console.h>
 #include <Base/Exception.h>
+#include <Base/Interpreter.h>
 #include <Base/Tools.h>
 #include <Base/PyWrapParseTupleAndKeywords.h>
 #include <Base/UnitsApi.h>
@@ -557,6 +558,35 @@ int entityFilterMode()
 
 bool passesEntityFilter(App::DocumentObject* object, const char* subname)
 {
+    {
+        const auto params = App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/DesignSelection");
+        if ((Selection().isDesignSelectionActive()
+             && (params->GetInt("Categories", 255) & 255) != 255)
+            || params->GetBool("LayerVisibilityActive", false)) {
+            if (!object) {
+                return false;
+            }
+            // Ownership-aware Python policy avoids a Gui -> PartDesign dependency.
+            // Keep the original root/path: resolving here must not lose occurrence identity.
+            Base::PyGILStateLocker lock;
+            PyObject* module = PyImport_ImportModule("freecad.gui.DesignSelection");
+            PyObject* pyObject = object->getPyObject();
+            PyObject* result = module ? PyObject_CallMethod(
+                module, "allows", "Os", pyObject, subname ? subname : "") : nullptr;
+            Py_DECREF(pyObject);
+            Py_XDECREF(module);
+            const int allowed = result ? PyObject_IsTrue(result) : -1;
+            Py_XDECREF(result);
+            if (allowed < 0) {
+                PyErr_Print();
+                return false;
+            }
+            if (!allowed) {
+                return false;
+            }
+        }
+    }
     const int mode = entityFilterMode();
     if (mode < 1 || mode > 4) {
         return true;
@@ -579,6 +609,31 @@ bool passesEntityFilter(App::DocumentObject* object, const char* subname)
 }
 }  // namespace
 
+bool SelectionSingleton::isDesignSelectionActive() const
+{
+    return App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/DesignSelection")->GetBool("Active", false);
+}
+
+bool SelectionSingleton::isDirectionalSelection() const
+{
+    return !isDesignSelectionActive() || App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/DesignSelection")->GetBool("Directional", true);
+}
+
+bool SelectionSingleton::isPersistentSelection() const
+{
+    return isDesignSelectionActive() && App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/DesignSelection")->GetBool("Persistent", true);
+}
+
+void SelectionSingleton::clearSelectionAfterOperation()
+{
+    if (!isPersistentSelection()) {
+        clearSelection();
+    }
+}
+
 bool SelectionSingleton::needPickedList() const
 {
     return _needPickedList;
@@ -588,7 +643,7 @@ SelectionSingleton::SelectionAllowance SelectionSingleton::isSelectionAllowed(co
 {
     if (!passesEntityFilter(sel.pObject, sel.SubName.c_str())) {
         return {.allowed = false,
-                .reason = QT_TRANSLATE_NOOP("SelectionFilter", "Excluded by the entity filter; reset it in Selection filters")};
+                .reason = QT_TRANSLATE_NOOP("SelectionFilter", "Excluded by a selection filter; check the Selection toolbar or Selection filters")};
     }
     if (!ActiveGate) {
         return {.allowed = true, .reason = ""};
@@ -951,7 +1006,13 @@ bool SelectionSingleton::hasSelectionGate(App::Document* /*pDoc*/) const
 
     // auto foundContext = docSelectionContext.find(pDoc);
     // return foundContext != docSelectionContext.end() && foundContext->second.gate;
-    return ActiveGate != nullptr || (entityFilterMode() >= 1 && entityFilterMode() <= 4);
+    const bool designFilter = isDesignSelectionActive()
+        && (App::GetApplication().GetParameterGroupByPath(
+            "User parameter:BaseApp/Preferences/DesignSelection")->GetInt("Categories", 255) & 255) != 255;
+    const bool layerFilter = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/DesignSelection")->GetBool("LayerVisibilityActive", false);
+    return ActiveGate != nullptr || designFilter || layerFilter
+        || (entityFilterMode() >= 1 && entityFilterMode() <= 4);
 }
 
 int SelectionSingleton::setPreselect(
@@ -985,7 +1046,7 @@ int SelectionSingleton::setPreselect(
         if (!passesEntityFilter(doc ? doc->getObject(pObjectName) : nullptr, pSubName)) {
             if (getMainWindow()) {
                 getMainWindow()->showMessage(QCoreApplication::translate(
-                    "SelectionFilter", "Excluded by the entity filter; reset it in Selection filters"));
+                    "SelectionFilter", "Excluded by a selection filter; check the Selection toolbar or Selection filters"));
             }
             return 0;
         }

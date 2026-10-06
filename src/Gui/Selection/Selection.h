@@ -408,6 +408,12 @@ public:
     /// Clear the selection of document \a pDocName. If the document name is not given the selection
     /// of the active document is cleared.
     void clearSelection(const char* pDocName = nullptr, bool clearPreSelect = true);
+    /// Shared Design policy; explicit clearSelection always remains unconditional.
+    bool isDesignSelectionActive() const;
+    bool isDirectionalSelection() const;
+    bool isPersistentSelection() const;
+    /// Only for operations that retain entity identities, never topology edits.
+    void clearSelectionAfterOperation();
     /// Clear the selection of all documents
     void clearCompleteSelection(bool clearPreSelect = true);
     /// Check if selected

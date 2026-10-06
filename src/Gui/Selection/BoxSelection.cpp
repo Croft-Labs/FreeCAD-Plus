@@ -199,9 +199,14 @@ std::vector<std::string> getBoxSelection(
             if ((mode == INTERSECT && isBBox3Valid)
                 || (mode == ENCLOSED && enclosed)
                 || (mode == CENTER && isBBox3Valid && polygon.Contains(bbox.GetCenter()))) {
-                ret.emplace_back("");
+                if (Selection().testSelection(doc, selectionRoot, selectionPrefix.c_str())) {
+                    ret.emplace_back("");
+                    return ret;
+                }
             }
-            return ret;
+            if (!Selection().hasSelectionGate(doc)) {
+                return ret;
+            }
         }
 
         Base::PyGILStateLocker lock;
@@ -242,7 +247,7 @@ std::vector<std::string> getBoxSelection(
         }
 
         for (auto type : allAllowedDocumentTypes) {
-            if (collectAllowed(type)) {
+            if (collectAllowed(type) && !Selection().isDesignSelectionActive()) {
                 break;
             }
         }
@@ -324,7 +329,8 @@ void Gui::applyBoxSelection(
         polygon.Add(Base::Vector2d(pt2[0], pt1[1]));
 
         // Right-to-left crosses projected bounds; left-to-right requires full enclosure.
-        selectionMode = pt1[0] > pt2[0] ? INTERSECT : ENCLOSED;
+        selectionMode = Selection().isDirectionalSelection() && pt1[0] > pt2[0]
+            ? INTERSECT : ENCLOSED;
     }
     else {
         for (const auto& point : glPolygon) {

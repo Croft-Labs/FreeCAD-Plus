@@ -33,6 +33,7 @@
 #include "MouseSelection.h"
 #include "RubberbandOverlay.h"
 #include "Selection/BoxSelection.h"
+#include "Selection/Selection.h"
 #include "Selection/SelectionColors.h"
 #include "View3DInventorViewer.h"
 
@@ -602,7 +603,8 @@ void RubberbandSelection::updateOverlayPosition()
     }
 
     if (directionalSelection) {
-        _pcView3D->rubberbandOverlay().setDashed(m_iXnew < m_iXold);
+        _pcView3D->rubberbandOverlay().setDashed(
+            Selection().isDirectionalSelection() && m_iXnew < m_iXold);
     }
     const qreal dpr = _pcView3D->devicePixelRatio();
     const qreal scale = dpr > 0.0 ? dpr : 1.0;

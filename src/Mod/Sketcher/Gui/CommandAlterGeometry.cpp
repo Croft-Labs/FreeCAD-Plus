@@ -306,7 +306,7 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
         tryAutoRecompute(Obj);
 
         // clear the selection (convenience)
-        getSelection().clearSelection();
+        getSelection().clearSelectionAfterOperation();
     }
 }
 

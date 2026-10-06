@@ -1919,7 +1919,8 @@ bool ViewProviderSketch::mouseMove(const SbVec2s& cursorPos, Gui::View3DInventor
 
             // depending on selection direction (touch selection (right to left) or window selection (left to right))
             // set the appropriate color and line style using theme design tokens
-            bool isRightToLeft = DoubleClick::prvCursorPos.getValue()[0] > DoubleClick::newCursorPos.getValue()[0];
+            bool isRightToLeft = Gui::Selection().isDirectionalSelection()
+                && DoubleClick::prvCursorPos.getValue()[0] > DoubleClick::newCursorPos.getValue()[0];
 
             auto* styleParameterManager = Base::provideService<Gui::StyleParameters::ParameterManager>();
 
@@ -3174,7 +3175,8 @@ void ViewProviderSketch::doBoxSelection(const SbVec2s& startPos, const SbVec2s& 
     bool touchMode = false;
     // check if selection goes from the right to the left side (for touch-selection where even
     // partially boxed objects get selected)
-    if (corners[0].getValue()[0] > corners[1].getValue()[0])
+    if (Gui::Selection().isDirectionalSelection()
+        && corners[0].getValue()[0] > corners[1].getValue()[0])
         touchMode = true;
 
     std::vector<std::string> batchSelection;
@@ -3212,29 +3214,36 @@ void ViewProviderSketch::doBoxSelection(const SbVec2s& startPos, const SbVec2s& 
     };
 
     auto selectEdgeIfInsideBox = [&touchMode, &polygon, &GeoId, &inBBCoords, &selectEdge,
-                                  numSegments = viewProviderParameters.stdCountSegments](auto geo){
-
-        if constexpr (std::is_same<decltype(geo), Part::GeomBSplineCurve>::value) {
-            numSegments *= geo->countKnots();  // one less segments than knots
+                                  numSegments = viewProviderParameters.stdCountSegments](auto geo) {
+        int samples = std::max(1, numSegments);
+        if (const auto* spline = dynamic_cast<const Part::GeomBSplineCurve*>(geo)) {
+            samples *= std::max(1, static_cast<int>(spline->countKnots()));
         }
-
-        double segment = (geo->getLastParameter() - geo->getFirstParameter()) / numSegments;
-
-        bool bpolyInside = true;
-
-        for (int i = 0; i < numSegments; i++) {
+        double segment = (geo->getLastParameter() - geo->getFirstParameter()) / samples;
+        bool bpolyInside = !touchMode;
+        Base::Vector3d previous;
+        for (int i = 0; i <= samples; i++) {
             Base::Vector3d pnt = geo->value(geo->getFirstParameter() + i * segment);
             pnt = inBBCoords(pnt);
-            if (!polygon.Contains(Base::Vector2d(pnt.x, pnt.y))) {
-                    bpolyInside = false;
-                    if (!touchMode) {
-                        break;
-                    }
+            const bool inside = polygon.Contains(Base::Vector2d(pnt.x, pnt.y));
+            if (!touchMode && !inside) {
+                bpolyInside = false;
+                break;
+            }
+            if (touchMode) {
+                Base::Polygon2d segmentPolygon;
+                if (i > 0) {
+                    segmentPolygon.Add(Base::Vector2d(previous.x, previous.y));
+                    segmentPolygon.Add(Base::Vector2d(pnt.x, pnt.y));
                 }
-                else if (touchMode) {
+                // Test each tessellated segment, not only its endpoints. A thin
+                // crossing box may lie entirely between two sampled points.
+                if (inside || (i > 0 && polygon.Intersect(segmentPolygon))) {
                     bpolyInside = true;
                     break;
+                }
             }
+            previous = pnt;
         }
 
         if (bpolyInside) {

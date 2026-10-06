@@ -449,7 +449,7 @@ void finishDatumConstraint(Gui::Command* cmd,
     }
 
     tryAutoRecompute(sketch);
-    cmd->getSelection().clearSelection();
+    cmd->getSelection().clearSelectionAfterOperation();
 }
 
 // Finalize a single datum, setting it non-driving before label placement and the dialog.
@@ -470,7 +470,7 @@ void finishTransactionAndUpdate(Gui::Command* cmd, Sketcher::SketchObject* sketc
 {
     cmd->commitCommand();
     tryAutoRecompute(sketch);
-    Gui::Command::getSelection().clearSelection();
+    Gui::Command::getSelection().clearSelectionAfterOperation();
 }
 
 void showNoConstraintBetweenExternal(const App::DocumentObject* obj)
@@ -4621,8 +4621,7 @@ void CmdSketcherConstrainLock::activated(int iMsg)
                 Obj,
                 QObject::tr("Wrong selection"),
                 QObject::tr("Select one vertex from the sketch other than the origin."));
-            // clear the selection (convenience)
-            getSelection().clearSelection();
+            // Keep the rejected inputs available for correction.
             return;
         }
     }
@@ -4883,8 +4882,7 @@ void CmdSketcherConstrainBlock::activated(int iMsg)
             Gui::TranslatedUserWarning(Obj,
                                        QObject::tr("Wrong selection"),
                                        QObject::tr("Select one edge from the sketch."));
-            // clear the selection
-            getSelection().clearSelection();
+            // Keep the rejected inputs available for correction.
             return;
         }
 
@@ -4917,7 +4915,7 @@ void CmdSketcherConstrainBlock::activated(int iMsg)
     }
 
     // clear the selection (convenience)
-    getSelection().clearSelection();
+    getSelection().clearSelectionAfterOperation();
 }
 
 void CmdSketcherConstrainBlock::applyConstraint(std::vector<SelIdPair>& selSeq, int seqIndex)
@@ -5102,7 +5100,7 @@ bool CmdSketcherConstrainCoincidentUnified::substituteConstraintCombinationsPoin
             notifyConstraintSubstitutions(
                 QObject::tr("Endpoint to edge tangency was applied instead."));
 
-            getSelection().clearSelection();
+            getSelection().clearSelectionAfterOperation();
             return true;
         }
     }
@@ -5276,7 +5274,7 @@ void CmdSketcherConstrainCoincidentUnified::activatedPointOnObject(SketchObject*
     }
     if (cnt) {
         commitCommand();
-        getSelection().clearSelection();
+        getSelection().clearSelectionAfterOperation();
     }
     else {
         abortCommand();
@@ -5359,7 +5357,7 @@ void CmdSketcherConstrainCoincidentUnified::activatedCoincident(SketchObject* ob
         }
         commitCommand();
         tryAutoRecompute(obj);
-        getSelection().clearSelection();
+        getSelection().clearSelectionAfterOperation();
     }
     else {
         abortCommand();
@@ -7700,7 +7698,7 @@ bool CmdSketcherConstrainTangent::substituteConstraintCombinations(SketchObject*
             notifyConstraintSubstitutions(QObject::tr("Endpoint to endpoint tangency was applied. "
                                                       "The coincident constraint was deleted."));
 
-            getSelection().clearSelection();
+            getSelection().clearSelectionAfterOperation();
             return true;
         }
         else if ((*it)->Type == Sketcher::PointOnObject
@@ -7728,7 +7726,7 @@ bool CmdSketcherConstrainTangent::substituteConstraintCombinations(SketchObject*
             notifyConstraintSubstitutions(QObject::tr("Endpoint to edge tangency was applied. The "
                                                       "point on object constraint was deleted."));
 
-            getSelection().clearSelection();
+            getSelection().clearSelectionAfterOperation();
             return true;
         }
     }
@@ -7987,7 +7985,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                                     GeoId2),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
                 else if (isArcOfHyperbola(*geom2)) {
@@ -8001,7 +7999,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                             GeoId1),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
@@ -8016,7 +8014,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                             GeoId1),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
             }
@@ -8043,7 +8041,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                             GeoId2),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
@@ -8058,7 +8056,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                             GeoId1),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
             }
@@ -8085,7 +8083,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                             GeoId2),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
@@ -8100,7 +8098,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                                 GeoId1),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
             }
@@ -8128,7 +8126,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                                                 GeoId2),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
             }
@@ -8137,7 +8135,6 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                     Obj,
                     QObject::tr("Wrong selection"),
                     QObject::tr("Only tangent-via-point is supported with a B-spline."));
-                getSelection().clearSelection();
                 return;
             }
 
@@ -8227,7 +8224,7 @@ void CmdSketcherConstrainTangent::applyConstraint(std::vector<SelIdPair>& selSeq
                                                 GeoId2),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
                 else if (isArcOfHyperbola(*geom2)) {
@@ -8242,7 +8239,7 @@ void CmdSketcherConstrainTangent::applyConstraint(std::vector<SelIdPair>& selSeq
                                                 GeoId1),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
@@ -8257,7 +8254,7 @@ void CmdSketcherConstrainTangent::applyConstraint(std::vector<SelIdPair>& selSeq
                                                 GeoId1),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
             }
@@ -8284,7 +8281,7 @@ void CmdSketcherConstrainTangent::applyConstraint(std::vector<SelIdPair>& selSeq
                                                 GeoId2),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
@@ -8299,7 +8296,7 @@ void CmdSketcherConstrainTangent::applyConstraint(std::vector<SelIdPair>& selSeq
                                                 GeoId1),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
             }
@@ -8326,7 +8323,7 @@ void CmdSketcherConstrainTangent::applyConstraint(std::vector<SelIdPair>& selSeq
                                                 GeoId2),
                                       Obj);
 
-                    getSelection().clearSelection();
+                    getSelection().clearSelectionAfterOperation();
                     return;
                 }
             }
@@ -8713,7 +8710,7 @@ static void activateRadialDimension(CmdSketcherConstraint* cmd, RadialDimension 
         finishDatumConstraint(cmd, Obj, constraintCreationMode == Driving);
 
         // updateActive();
-        cmd->getSelection().clearSelection();
+        cmd->getSelection().clearSelectionAfterOperation();
     }
 
     if (commitNeeded) {
@@ -8785,7 +8782,7 @@ static void applyRadialDimension(Gui::Command* cmd,
             finishDatumConstraint(cmd, Obj, constraintCreationMode == Driving && !fixed);
 
             // updateActive();
-            cmd->getSelection().clearSelection();
+            cmd->getSelection().clearSelectionAfterOperation();
 
             cmd->commitCommand();
 
@@ -10787,7 +10784,7 @@ void CmdSketcherToggleDrivingConstraint::activated(int iMsg)
         tryAutoRecompute(Obj);
 
         // clear the selection (convenience)
-        getSelection().clearSelection();
+        getSelection().clearSelectionAfterOperation();
     }
 }
 
@@ -10874,7 +10871,7 @@ void CmdSketcherToggleActiveConstraint::activated(int iMsg)
         tryAutoRecompute(Obj);
 
         // clear the selection (convenience)
-        getSelection().clearSelection();
+        getSelection().clearSelectionAfterOperation();
     }
 }
 
