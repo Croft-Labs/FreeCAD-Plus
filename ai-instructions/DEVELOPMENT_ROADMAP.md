@@ -9828,7 +9828,7 @@ The 14 merge commits are retained as ancestry rather than imported twice.
 
 ### Integration validation
 
-- Syntax: all 107 changed Python files parse; the broader 490-file CAM scan
+- Syntax: all 108 changed Python files parse; the broader 490-file CAM scan
   also passes. The integration harness asserts actual source-module loading.
 - Existing-engine/source-overlay regression run: 126 cases, 124 passing and
   two fixture failures. Neither failure was an application exception: one

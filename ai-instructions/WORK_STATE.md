@@ -10,7 +10,7 @@ files, preserved Plus behavior and excluded unsafe fallback hunks.
 Rollback branch: `codex/pre-upstream-2026-10-07`. No push was performed.
 
 All 126 distinct source-overlay CAM regressions have passing evidence after
-two fixture corrections; 107 changed Python files pass syntax checks. This
+two fixture corrections; 108 changed Python files pass syntax checks. This
 uses the existing native engine and is not rebuilt C++/Coin validation. The
 owner Word requirements are synchronized and revised pages visually checked.
 
