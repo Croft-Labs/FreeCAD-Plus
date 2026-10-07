@@ -2,6 +2,15 @@
 
 ## Legacy migration task sequence — roadmap 7.8
 
+Final owner-requested audit: all 135 migration cases have passing installed results
+across the unaffected broad checks and corrected GUI rerun. Six archived files
+preserve 123 original identities, 89 evaluated physical shapes and 28 datum frames
+through conversion/save/reopen; nine fresh-process restore checks pass. PadTest has
+an invalid Pad002 before conversion: retained output and explicit repair reporting
+are preservation, not source repair. WORK_STATE records failed fixture attempts,
+installed provenance, cleanup and publication. No production/build/UI change;
+universal compatibility and the unavailable FEM gate remain unclaimed.
+
 - [x] 1. Read-only native inventory and conversion plan: source identities,
   Parts/Bodies/Group/Tip, sketches, shared/external links, placement/scale metadata,
   properties, expressions, dependency order, cycle blockers and evaluated geometry.

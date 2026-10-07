@@ -1,5 +1,60 @@
 # FreeCAD Plus: Build validation handoff
 
+## Final owner-requested legacy import/conversion audit
+
+Entry main was clean at e4d8086c9040aae65908f8e23567c9bbe7d771a0.
+All 135 migration-family cases have passing native installed results: 132 unaffected
+cases in the broad run, then three corrected shared Pocket/Revolve/Loft GUI checks.
+Six archived files additionally pass conversion and cadprt save/reopen: Crank,
+EngineBlock, ModelFromV021, PadTest, PartDesignExample and PocketTest. Across those
+files, 123 original native object identities, 89 evaluated physical shapes and 28
+datum global frames are checked. Names/types/native IDs/labels survive conversion;
+persisted ObjectIds survive restore. Original and copied FCStd hashes are unchanged.
+Physical checks include topology, volume/area/length, exact geometry-derived bounds,
+bidirectional solid differences and sampled curve distances in both directions.
+These are native recomputed baselines, not certification of every original cache.
+
+Initial broad run executed 141 cases and exited zero but had 29 archived subtest
+failures plus three fixture errors; it is not whole-run acceptance. Three errors
+used a nonexistent FreeCAD path API in new test assertions. Archive failures used
+triangulation-dependent cached bounds or infinite datum display shapes. Source
+TopoShapePyImp.cpp confirms optimalBoundingBox(False, False) uses geometry-derived
+AddOptimal bounds; datum frames are checked separately. Corrected nine-case run
+passes with zero failures/errors/skips and 45 application module paths/hashes inside
+the delivered payload matching source. A separate fresh native process passes nine
+restore cases (six archives plus mixed, relocated external and explicit recovery),
+with 29 verified installed application modules, zero failures/errors/skips. Both
+launcher/native exits are zero. Test application source overlays are disabled.
+An additional one-case installed PadTest run passes the new explicit invalid-source
+repair-report assertion, with 29 verified installed modules and native exit zero.
+
+PadTest already has Invalid Pad002 and a touched Body before conversion; its
+available evaluated geometry survives, and the conversion report explicitly asks
+for repair/recompute. This is preservation of a broken source, not successful repair
+or freshness certification. Other touched DesignLayers entries are recorded in the
+raw audit while it exists. All compared baseline physical shapes are geometrically
+valid. Standalone native retention and unsupported/custom histories remain bounded
+compatibility paths; conversion does not physically flatten every native feature.
+FEM remains unavailable (BUILD_FEM=OFF), and exhaustive custom workbench/toolpath/
+drawing-topology/physical-owner qualification remains open as recorded below.
+
+No production migration source or native application binaries changed. Reuse the
+existing legacy_integration_payload and its previous complete inventory. Launcher
+SHA256 remains 05c3a107c9ce1e0e370367a4e84e2ac8afe7a9e8e92cdb7543bc3db9a2547518.
+Existing desktop shortcut target and working directory were reopened/verified,
+with empty arguments, against that useful payload. UI/UX did not change; owner DOCX
+is unchanged at SHA256 7935a0d2ab3a2c144505896983d799b2c4b327a3d535014b7ec41c7cfe9b557f.
+Regression fixtures/contracts are tracked in tests/TestLegacyArchivedFiles.py and
+tests/LegacyIntegration.md. AST checks and git diff --check pass. Cleanup removed
+132 raw validation files, 732 generated payload bytecode files (preserving the
+manifest inventory) and 16 source/test bytecode files. validation/legacy-final-audit
+is absent; no audit FreeCAD/FreeCADPlus process remains. Payload manifest SHA256 is
+unchanged at b10af57ceab8681c0e64d096a0ef5c3d453d869417b1ee3d09ecee9f31355b0d.
+Useful builds, source archives, owner settings/document and desktop link remain.
+Next step: no migration implementation is automatically queued. Future owner-file
+qualification or a FEM-enabled native environment requires its explicit scope.
+Final reporting must retain these boundaries rather than universal compatibility.
+
 ## Legacy migration task twelve — grouped integration and owner delivery complete
 
 Owner authorized task twelve. Entry main was clean at 75cbeb9954. Bounded whole-file

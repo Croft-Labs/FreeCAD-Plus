@@ -220,7 +220,12 @@ class TestLegacyExtrusions(unittest.TestCase):
         part,body,first,pad,second,pocket = self.build()
         CadDocument.convert_legacy(self.doc); self.mapped(part,body,pad,pocket)
         self.open_row(part,pocket)
-        self.assertEqual(Path(Task.__file__).resolve(),Path(os.environ['FREECAD_PLUS_SOURCE']).resolve()/'src/Gui/ComponentExtrudeTask.py')
+        loaded = Path(Task.__file__).resolve()
+        expected = Path(os.environ['FREECAD_PLUS_SOURCE']).resolve() / 'src/Gui/ComponentExtrudeTask.py'
+        self.assertEqual(hashlib.sha256(loaded.read_bytes()).digest(),
+                         hashlib.sha256(expected.read_bytes()).digest())
+        if os.environ.get('FREECAD_PLUS_PROFILE_SOURCE') != '1':
+            self.assertTrue(loaded.is_relative_to(Path(App.ConfigGet('AppHomePath')).resolve()))
         self.assertIsNotNone(Task._task)
         task = Task._task
         self.assertTrue(task.reverse.isChecked()); self.assertEqual(task.target.currentData(),pocket.BaseFeature.Name)

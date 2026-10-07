@@ -54,6 +54,25 @@ link. Preserve useful rollback builds until the new link launches successfully.
 
 ## Boundaries and evidence
 
+Final owner-requested verification also runs every legacy migration family suite
+against installed application modules. GUI module assertions compare source bytes
+and require the installed payload path, rather than assuming source overlays.
+`TestLegacyArchivedFiles` adds six existing archives: PadTest, PocketTest, Crank,
+PartDesignExample, EngineBlock and the FreeCAD 0.21 model. Copy archives into the
+designated validation directory before opening; never write the tracked originals.
+Use the native recomputed document as the conversion baseline. Compare all original
+evaluated physical shapes after conversion and cadprt reopen: topology counts,
+volume, area, length, geometry-derived optimal world bounds without cached display
+triangulation, bidirectional solid differences and sampled curve distances in both
+directions. Infinite construction datum display shapes are not physical results;
+compare their global frames separately. Preserve original
+names/types/native IDs/labels during conversion and persisted ObjectIds on reopen;
+verify both original and copied FCStd bytes remain unchanged. This is preservation
+relative to native evaluation, not certification of an already-invalid legacy model
+or an exhaustive compatibility claim. Run `TestLegacyArchivedFilesCold` in a fresh
+native process against the generated six cadprt files and compare again to their
+native legacy baselines. WORK_STATE records actual results and limits.
+
 Native FEM is disabled in the existing build configuration. Track native FEM
 constraint/mesh/solver acceptance as an explicit separate unavailable gate; do not
 substitute fake FEM objects or skipped tests. Custom Path/Point variants, exhaustive

@@ -216,7 +216,12 @@ class TestLegacyLofts(unittest.TestCase):
         part,body,first,last,added,bottom,top,cut=self.build(third=True); CadDocument.convert_legacy(self.doc)
         Task=importlib.import_module('freecad.gui.ComponentLoftTask')
         self.open_row(part,added)
-        self.assertEqual(Path(Task.__file__).resolve(),Path(os.environ['FREECAD_PLUS_SOURCE']).resolve()/'src/Gui/ComponentLoftTask.py')
+        loaded = Path(Task.__file__).resolve()
+        expected = Path(os.environ['FREECAD_PLUS_SOURCE']).resolve() / 'src/Gui/ComponentLoftTask.py'
+        self.assertEqual(hashlib.sha256(loaded.read_bytes()).digest(),
+                         hashlib.sha256(expected.read_bytes()).digest())
+        if os.environ.get('FREECAD_PLUS_PROFILE_SOURCE') != '1':
+            self.assertTrue(loaded.is_relative_to(Path(App.ConfigGet('AppHomePath')).resolve()))
         self.assertIsNotNone(Task._task); task=Task._task; task.auto_preview.setChecked(False)
         sections=task.values()[0]; task.reverse_sections()
         self.assertEqual(task.values()[0],list(reversed(sections)))

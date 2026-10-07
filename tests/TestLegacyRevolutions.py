@@ -223,7 +223,12 @@ class TestLegacyRevolutions(unittest.TestCase):
         part,body,first,rev,cut,groove=self.build(); CadDocument.convert_legacy(self.doc)
         Task=importlib.import_module('freecad.gui.ComponentRevolveTask')
         self.open_row(part,groove)
-        self.assertEqual(Path(Task.__file__).resolve(),Path(os.environ['FREECAD_PLUS_SOURCE']).resolve()/'src/Gui/ComponentRevolveTask.py')
+        loaded = Path(Task.__file__).resolve()
+        expected = Path(os.environ['FREECAD_PLUS_SOURCE']).resolve() / 'src/Gui/ComponentRevolveTask.py'
+        self.assertEqual(hashlib.sha256(loaded.read_bytes()).digest(),
+                         hashlib.sha256(expected.read_bytes()).digest())
+        if os.environ.get('FREECAD_PLUS_PROFILE_SOURCE') != '1':
+            self.assertTrue(loaded.is_relative_to(Path(App.ConfigGet('AppHomePath')).resolve()))
         self.assertIsNotNone(Task._task)
         task=Task._task; task.auto_preview.setChecked(False)
         self.assertEqual(task.target.currentData(),groove.BaseFeature.Name)
