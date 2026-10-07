@@ -46,6 +46,11 @@ operations through ordered component History access links. Native topology input
 owners, tools/settings and direct standalone outputs remain intact. Separate family
 versions upgrade prior converted files. See tests/LegacyFinishing.md; physical
 flattening and whole-file qualification are not implied by native retention.
+Task twelve qualifies a bounded whole-file mixed/shared/external migration corpus
+and packages the earlier compatible Python changes for owner testing. Legacy
+Draft/CAM/TechDraw consumers, fresh-process restore and the saved desktop shortcut
+are integration gates. See tests/LegacyIntegration.md and current WORK_STATE;
+native FEM and exhaustive custom workbench qualification remain explicit boundaries.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

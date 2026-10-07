@@ -87,15 +87,26 @@
   inspected. WORK_STATE owns hashes, actual evidence, diagnostics and publication.
   Physical flattening, custom Path/Point variants and installed/whole-file
   qualification remain integration gates; owner packaging stays batched.
-- [ ] 12. Whole-file mixed-history, external/shared consumer and recovery acceptance.
+- [x] 12. Bounded whole-file mixed-history, external/shared, enabled consumer and
+  recovery acceptance: installed grouped 37 checks, fresh-process startup/restore
+  four, actual saved desktop shortcut seventeen at observed DPR 2.25, all without
+  failures/errors/skips or application source overlays. Legacy Draft/CAM/TechDraw
+  consume preserved Body results after edit/restore; protected original files,
+  shared placements, relocation and explicit dumb recovery pass. Owner DOCX rendered/
+  inspected; compatible grouped payload and exact desktop link delivered. WORK_STATE
+  owns hashes, build/shortcut/inventory and publication evidence. This bounded corpus
+  does not establish universal legacy compatibility or physical owner acceptance.
+- [ ] 12.FEM. Native FEM constraint/mesh/solver consumer acceptance — unavailable:
+  BUILD_FEM=OFF; fresh installed runtime probe confirms Fem absent. No fake substitute
+  or skipped acceptance. Requires a FEM-enabled native qualification environment.
 
 Every later task must preserve mapped/native editable features first, then recover
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to eleven have source/native
-milestones; later tasks remain separate.
-Batch installed/build delivery with later integration. API/fixtures:
+for unrelated feature implementation. Tasks one to twelve have bounded source/native
+milestones; wider custom-workbench/permutation/physical acceptance remains separate.
+Grouped compatible owner delivery is qualified in task twelve. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).
 
 ## October 6 immediate constraint palette tooltip dismissal

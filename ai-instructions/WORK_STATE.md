@@ -1,5 +1,65 @@
 # FreeCAD Plus: Build validation handoff
 
+## Legacy migration task twelve — grouped integration accepted, delivery finalizing
+
+Owner authorized task twelve. Entry main was clean at 75cbeb9954. Bounded whole-file
+acceptance combines mapped Sketch/Pad and retained Fillet/Linear Pattern histories,
+nested/shared placements and independent siblings, external definitions/relocation,
+source protection, actual GUI Open/History events, Draft/CAM/TechDraw consumers and
+explicit evaluated dumb recovery. Original names/types/IDs/UUIDs, native owners,
+geometry, formulas and FCStd bytes survive the tested paths. Native editable
+retention is not physical flattening or a universal legacy conversion guarantee.
+Technical contract: tests/LegacyIntegration.md.
+
+Grouped installed run passes 37 checks: whole-file 6, finishing 13, structure 12,
+shared previews 6. All 47 recorded application module paths/hashes match source and
+reside inside the payload, without source overlays. Fresh-process startup/restore
+passes four checks with 29 verified installed modules. Both launcher/native process
+exits zero. Actual saved desktop shortcut passes 17 checks: startup 1, cold restore
+3, finishing 13, with 32 verified installed modules and observed DPR 2.25 (requested
+QT_SCALE_FACTOR=1.5 on the host's scaling). All failures/errors/skips zero. Native
+26.3.0devR49296, revision 8746c1076071a7b9decff07577b6a163a0f76ee9. Saved-link process
+7040 is no longer running; its exit status was not separately captured. The managed
+launcher forwards native exit status, verified in the grouped and cold launches.
+
+The initial isolated Open attempt was interrupted; diagnostic fixture sets the
+correct directory and bounds unexpected dialogs. First completed six-case attempt
+had one fixture error: native external links require the parent document to be saved
+first. Corrected saved-parent fixture passes, protecting both originals. Failed
+attempts are not acceptance. No production migration source changed in task twelve;
+tests and delivery tooling qualified the earlier adapters. No owner process or
+duplicate worker was stopped/created. Native warnings include inherited stylesheet,
+hasher/scope, transient null-tool/no-base and deliberately missing-source diagnostics;
+this is not warning-free editing or generated CAM toolpath qualification.
+
+Useful grouped payload:
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-06_legacy_integration_payload
+Compatible Python modules are synchronized onto the verified palette payload;
+application native binaries are reused unchanged. tools/FreeCADPlusLauncher.cs was
+compiled with the fork icon and forwards exact quoted arguments. Actual runtime
+imports prove installed modules, rather than source overlays. The exact desktop
+FreeCADPlus.exe - Shortcut.lnk targets this payload's FreeCADPlus.exe, working
+directory is the payload root, and original shortcut arguments were restored and
+reopened/verified. Owner settings and unrelated shortcuts remain intact.
+
+UI-only DOCX rendered 91 pages: pages 1–90 pixel-identical, changed page 91 inspected;
+other ZIP entries/native automatic numbering unchanged. SHA256:
+7935a0d2ab3a2c144505896983d799b2c4b327a3d535014b7ec41c7cfe9b557f.
+New tests pass AST checks; launcher compilation and git diff --check pass.
+
+Native FEM probe is unavailable and BUILD_FEM=OFF in the configured native tree.
+FEM constraint/mesh/solver acceptance remains a separate explicit unavailable gate.
+Custom Path/Point editors, exhaustive mixed-family permutations, drawing topology/
+dimensions through arbitrary changes, generated toolpaths and physical owner
+feedback remain wider qualification work. No fake FEM substitute or skipped test
+is claimed as acceptance. The approved twelve-task sequence stops after this bounded
+integration/owner delivery; do not expand deferred feature families automatically.
+
+Next: commit source/tests/UI documentation and push origin with exact verification,
+write/verify the final complete payload manifest and native-byte compatibility,
+record source/build/shortcut receipts, clean task validation/bytecode while preserving
+useful rollback/native builds, then publish the final canonical receipt.
+
 ## Legacy migration task eleven — bounded finishing adapters
 
 Task eleven is complete in source and native source-mode acceptance. Three
