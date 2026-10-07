@@ -31,6 +31,11 @@ the shared chain publisher and retained-operation editor links. Converted native
 Loft edits retain their feature type/identity through persisted Boolean presets;
 legacy whole-sketch subreferences/attachments and Part Loft settings remain native.
 LegacyLoftVersion upgrades prior files. See tests/LegacyLofts.md.
+Task nine extends the shared chain publisher to qualified Pipe profile/path sketches
+and explicit targets, retaining native orientation and exact edge references.
+Converted Pipe mode edits preserve native type/identity; unsupported histories and
+standalone Part Sweep retain original editors. LegacyPipeVersion upgrades earlier
+converted files. See tests/LegacyPipes.md; installed delivery remains batched.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

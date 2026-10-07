@@ -1119,6 +1119,10 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if getattr(obj, "LegacyPipeState", ""):
+        if getattr(obj, "LegacyPipeSource", obj) is None:
+            return "Retained native pipe is missing. Repair its source before editing."
+        return "Retained native pipe. Edit the original profiles, paths, orientation and target without replacing their identities."
     if getattr(obj, "LegacyLoftState", ""):
         if getattr(obj, "LegacyLoftSource", obj) is None:
             return "Retained native loft is missing. Repair its source before editing."
@@ -1155,6 +1159,12 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    if (getattr(obj, "LegacyPipeState", "")
+            and "LegacyPipeSource" in obj.PropertiesList
+            and (getattr(obj, "LegacyPipeSource", None) is None
+                 or obj.LinkedObject != obj.LegacyPipeSource
+                 or "Invalid" in obj.LegacyPipeSource.State)):
+        return "Needs repair"
     if (getattr(obj, "LegacyLoftState", "")
             and "LegacyLoftSource" in obj.PropertiesList
             and (getattr(obj, "LegacyLoftSource", None) is None

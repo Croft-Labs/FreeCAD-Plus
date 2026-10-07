@@ -85,9 +85,9 @@ def edit(adapter, operation, sections, mode, target=None, options=None):
         raise ValueError("This operation uses a different native Boolean operation. Edit its properties to preserve that operation.")
     results = [obj for obj in operation.InList if getattr(obj, "Producer", None) == operation]
     replace = (mode == "Subtract") != (getattr(operation, adapter.MODE_PROPERTY) == "Subtract")
-    legacy_loft = adapter.NAME == "Loft" and getattr(operation, "LegacyMigration", "") == "Native loft chain"
-    if legacy_loft:
-        replace = False  # Native Loft's Boolean engine can preserve its original type/ID.
+    legacy_sections = adapter.NAME in ("Loft", "Pipe") and getattr(operation, "LegacyMigration", "") == "Native " + adapter.NAME.lower() + " chain"
+    if legacy_sections:
+        replace = False  # Native section Boolean engine can preserve its original type/ID.
     if hasattr(adapter, "needs_replacement"):
         replace = replace or adapter.needs_replacement(operation, options)
     if replace and any(obj not in results + [component] for obj in operation.InList):
@@ -117,12 +117,12 @@ def edit(adapter, operation, sections, mode, target=None, options=None):
             doc.removeObject(old_name)
             component.ModelHistory = [operation.Name if name == old_name else name for name in ordered]
         adapter.configure(operation, bound, target, options)
-        if legacy_loft:
-            # Loft constructors restrict the visible presets to their native
+        if legacy_sections:
+            # Native section constructors restrict the visible presets to their native
             # additive/subtractive type. The common kernel supports both;
             # persist the expanded enumeration with this original feature.
             operation.Operation = ["Union", "Subtraction", "Common"]
-            operation.Operation = "Subtraction" if mode == "Subtract" else "Union"
+            operation.Operation = options.get("boolean", "Subtraction") if mode == "Subtract" else "Union"
         setattr(operation, adapter.MODE_PROPERTY, mode)
         operation.ConsumedResults = [target] if target else []
         operation.PreviousVisibility = json.dumps({target.ObjectId: target_visibility}) if target else "{}"

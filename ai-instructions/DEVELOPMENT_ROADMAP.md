@@ -60,7 +60,15 @@
   Final 130 native source-mode checks pass; UI-only DOCX rendered/inspected.
   WORK_STATE owns hashes, exact evidence/limitations, cleanup and publication;
   owner packaging and broader frame/whole-file acceptance remain integration gates.
-- [ ] 9. Pipe profiles, paths and orientation.
+- [x] 9. Pipe profiles, paths and orientation: qualified independent native chains
+  retain exact profiles/sections/path/auxiliary picks, orientation settings,
+  original identities and explicit targets/results. Shared converted mode edits
+  preserve native types; unsupported/attached/Common/stale histories and standalone
+  Part Sweep keep native editors and available geometry. Previous-file upgrades,
+  actual shared/native History events, undo and cold persistence pass. Final 151
+  native source-mode checks pass; UI-only DOCX rendered/inspected. WORK_STATE owns
+  exact hashes, diagnostics, cleanup/publication and deferred installed/whole-file
+  acceptance. Owner packaging remains batched with integration.
 - [ ] 10. Helix and primitive adapters, separated into bounded feature tasks.
 - [ ] 11. Dress-up, pattern/transformation and Boolean adapters, as separate tasks.
 - [ ] 12. Whole-file mixed-history, external/shared consumer and recovery acceptance.
@@ -69,7 +77,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to eight have source/native
+for unrelated feature implementation. Tasks one to nine have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).

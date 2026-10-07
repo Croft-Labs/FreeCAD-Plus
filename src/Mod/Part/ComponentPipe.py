@@ -25,8 +25,8 @@ def defaults():
 
 def read(operation):
     values = defaults()
-    values.update(spine=(operation.Spine[0], list(operation.Spine[1])) if operation.Spine else None,
-                  auxiliary=(operation.AuxiliarySpine[0], list(operation.AuxiliarySpine[1])) if operation.AuxiliarySpine else None,
+    values.update(spine=(operation.Spine[0], list(operation.Spine[1])) if operation.Spine and operation.Spine[0] else None,
+                  auxiliary=(operation.AuxiliarySpine[0], list(operation.AuxiliarySpine[1])) if operation.AuxiliarySpine and operation.AuxiliarySpine[0] else None,
                   orientation=operation.Mode, transition=operation.Transition, transformation=operation.Transformation,
                   binormal=tuple(operation.Binormal), curvilinear=operation.AuxiliaryCurvilinear,
                   spine_tangent=operation.SpineTangent, auxiliary_tangent=operation.AuxiliarySpineTangent,
@@ -48,7 +48,10 @@ def path_shape(component, reference, operation=None):
     if names:
         if len(set(names)) != len(names) or any(not name.startswith("Edge") or not name[4:].isdigit() for name in names):
             raise ValueError("Select distinct path edges from one object.")
-        edges = [shape.getElement(name) for name in names]
+        try:
+            edges = [shape.getElement(name) for name in names]
+        except (IndexError, ValueError, RuntimeError) as error:
+            raise ValueError("A selected path edge is unavailable. Repair or replace the path selection.") from error
     else:
         if shape.Solids or shape.Faces:
             raise ValueError("Select edges of the body or face, or a whole curve object.")

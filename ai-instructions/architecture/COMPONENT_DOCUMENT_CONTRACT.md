@@ -315,6 +315,15 @@ histories remain editable through complete-frame History links with original eng
 available validated output precedes any explicit dumb recovery. Older converted-file
 upgrades retain sketch/access-link UUIDs and original files. See
 [extrusion mapping and acceptance](../../tests/LegacyExtrusions.md).
+Qualified native Pipe histories use the same identity-preserving chain publisher,
+with ordered profile sections and exact Spine/AuxiliarySpine references. Independent
+input sketches precede their operations once; native orientation/transition and
+transformation settings remain authored properties. Persisted native Boolean
+presets allow shared mode/target edits without changing converted feature types.
+Attached/non-sketch/unsupported histories retain original owners and native editors;
+standalone Part Sweep retains its distinct solid/Frenet/linearization controls.
+LegacyPipeVersion upgrades recognized earlier conversions after manifest validation.
+See [Pipe mapping and acceptance](../../tests/LegacyPipes.md).
 Retain original world geometry through explicit
 definition-frame and occurrence-frame compensation, including native scale modes.
 Original source files remain protected; external converted files are saved to new
