@@ -675,7 +675,7 @@ class PathData:
     def __init__(self, obj):
         logger.track(obj.Base.Name)
         self.obj = obj
-        path = PathUtils.getPathWithPlacement(obj.Base)
+        path = obj.Base.Path
         self.wire, rapid, _ = Path.Geom.wireForPath(path)
         self.rapid = _RapidEdges(rapid)
         # linking moves are travel between cuts, tags are neither placed on them nor change them
@@ -1212,6 +1212,8 @@ class ObjectTagDressup:
         if not obj.Base.Path.Commands:
             return
 
+        PathDressup.placeWithBase(obj)
+
         pathData = self.setup(obj)
         if not pathData:
             logger.debug("execute - no pathData")
@@ -1229,7 +1231,7 @@ class ObjectTagDressup:
 
         if not self.tags:
             logger.debug("execute - no tags")
-            obj.Path = PathUtils.getPathWithPlacement(obj.Base)
+            obj.Path = obj.Base.Path
             return
 
         try:

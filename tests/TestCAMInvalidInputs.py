@@ -357,7 +357,7 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         # SurfaceScan is not a corner fixture; seed caches to expose stale state.
         dressup.Proxy.bones = [object()]
         dressup.Proxy.boneTips = [App.Vector(1, 2, 3)]
-        with patch.object(DogboneII.PathUtils, "getPathWithPlacement",
+        with patch.object(DogboneII.PathLanguage.Maneuver, "FromPath",
                           side_effect=RuntimeError("Deliberate dogbone failure")):
             dressup.touch()
             self.doc.recompute()
@@ -382,34 +382,39 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         return dressup
 
     def testMirrorDisabledPreservesPlacedBaseAndDoesNotModifySource(self):
-        from PathScripts import PathUtils
+        from Path.Main import Workplane
         dressup = self.makeMirror()
-        self.op.Placement = App.Placement(App.Vector(11, 7, 3),
-                                          App.Rotation(App.Vector(0, 0, 1), 30))
+        self.op.Workplane = Workplane.createWorkplane(
+            self.job, placement=App.Placement(App.Vector(11, 7, 3),
+                                             App.Rotation(App.Vector(0, 0, 1), 30)))
         dressup.MirrorAxis = "None"
         self.doc.recompute()
         source = self.op.Path.toGCode()
-        expected = PathUtils.getPathWithPlacement(self.op).toGCode()
-        self.assertNotEqual(source, expected, "Fixture must exercise placement")
+        expected = self.op.Path.toGCode()
+        self.assertFalse(self.op.Placement.isIdentity(), "Fixture must exercise placement")
         self.assertEqual(dressup.Path.toGCode(), expected)
         self.assertEqual(self.op.Path.toGCode(), source)
+        self.assertTrue(dressup.Placement.isSame(self.op.Placement, 1e-9))
 
     def testMirrorCombinedOutputPreservesBaseAndSource(self):
-        from PathScripts import PathUtils
+        from Path.Main import Workplane
         dressup = self.makeMirror()
+        plane = Workplane.createWorkplane(self.job, placement=App.Placement())
+        self.op.Workplane = plane
         for translation in (App.Vector(), App.Vector(11, 7, 3)):
-            self.op.Placement = App.Placement(translation, App.Rotation())
+            plane.Placement = App.Placement(translation, App.Rotation())
             dressup.KeepBasePath = False
             self.doc.recompute()
             mirrored = dressup.Path.Commands
             original = self.op.Path.toGCode()
-            expected = PathUtils.getPathWithPlacement(self.op).copy()
+            expected = self.op.Path.copy()
             expected.addCommands(mirrored)
             dressup.KeepBasePath = True
             self.doc.recompute()
             self.assertEqual(dressup.Path.toGCode(), expected.toGCode())
             self.assertEqual(self.op.Path.toGCode(), original)
             self.assertNotIn("Touched", self.op.State)
+            self.assertTrue(dressup.Placement.isSame(self.op.Placement, 1e-9))
 
     def testMirrorGenerationFailureClearsAndRecovers(self):
         from unittest.mock import patch
@@ -420,7 +425,7 @@ class TestCAMInvalidInputs(PathTestWithAssets):
             dressup.KeepBasePath = keep
             self.doc.recompute()
             self.assertTrue(dressup.Path.Commands)
-            with patch.object(Mirror.PathUtils, "getPathWithPlacement",
+            with patch.object(Mirror.PathDressup, "placeWithBase",
                               side_effect=RuntimeError("Deliberate mirror failure")):
                 dressup.touch()
                 self.doc.recompute()
@@ -439,17 +444,27 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         dressup = self.makeMirror()
         dressup.KeepBasePath = True
         self.doc.recompute()
-        placed = PathUtils.getPathWithPlacement(self.op)
+        real_base = dressup.Base
         incomplete = Mock()
-        incomplete.copy.return_value = incomplete
         incomplete.addCommands.side_effect = RuntimeError("Deliberate assembly failure")
-        with patch.object(Mirror.PathUtils, "getPathWithPlacement",
-                          side_effect=[placed, incomplete]):
+        first = real_base.Path.copy()
+        base = Mock()
+        base.Path.copy.side_effect = [first, incomplete]
+        base.Path.Commands = first.Commands
+        base.isDerivedFrom.return_value = True
+        proxy_obj = Mock()
+        proxy_obj.Base = base
+        proxy_obj.MirrorAxis = "Y"
+        proxy_obj.CenterModel = False
+        proxy_obj.ReferenceOffset = None
+        proxy_obj.Offset = App.Vector()
+        proxy_obj.KeepBasePath = True
+        with patch.object(Mirror.PathDressup, "requireCurrent"), \
+             patch.object(Mirror.PathDressup, "placeWithBase"):
             with self.assertRaisesRegex(RuntimeError, "Deliberate assembly failure"):
-                dressup.Proxy.execute(dressup)
-        self.assertFalse(dressup.Path.Commands)
-        dressup.touch()
-        self.doc.recompute()
+                dressup.Proxy.execute(proxy_obj)
+        self.assertFalse(proxy_obj.Path.Commands)
+        # The independent failed assembly must not mutate the real source.
         self.assertTrue(dressup.Path.Commands)
 
     def makeAxisMap(self):
@@ -499,7 +514,7 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         dressup = self.makeAxisMap()
         self.doc.recompute()
         original = self.op.Path.toGCode()
-        source = PathUtils.getPathWithPlacement(self.op).Commands
+        source = self.op.Path.Commands
         for mapping in ("X->A", "Y->A", "X->B", "Y->B", "X->C", "Y->C"):
             for reverse in (False, True):
                 dressup.AxisMap = mapping
@@ -588,15 +603,17 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         self.assertTrue(_wrap_op(dressup).Path.Commands)
 
     def testZCorrectClearingProbeUsesUncorrectedPlacedBase(self):
-        from PathScripts import PathUtils
+        from Path.Main import Workplane
         dressup, probe = self.makeZCorrect()
-        self.op.Placement = App.Placement(App.Vector(1, 2, 3), App.Rotation())
+        self.op.Workplane = Workplane.createWorkplane(
+            self.job, placement=App.Placement(App.Vector(1, 2, 3), App.Rotation()))
         dressup.probefile = ""
         self.doc.recompute()
         self.assertNotIn("Invalid", dressup.State)
         self.assertTrue(dressup.interpSurface.isNull())
         self.assertEqual(dressup.Path.toGCode(),
-                         PathUtils.getPathWithPlacement(self.op).toGCode())
+                         self.op.Path.toGCode())
+        self.assertTrue(dressup.Placement.isSame(self.op.Placement, 1e-9))
 
     def testZCorrectNonFiniteProbeCoordinatesRejectAndRecover(self):
         from Path.Post.PostList import _wrap_op
@@ -691,7 +708,7 @@ class TestCAMInvalidInputs(PathTestWithAssets):
         from Path.Dressup.Gui import Dragknife
         from Path.Post.PostList import _wrap_op
         dressup = self.makeEntryDressup("Dragknife")
-        with patch.object(Dragknife.PathUtils, "getPathWithPlacement",
+        with patch.object(Dragknife.PathDressup, "placeWithBase",
                           side_effect=RuntimeError("Deliberate dragknife failure")):
             dressup.touch()
             self.doc.recompute()

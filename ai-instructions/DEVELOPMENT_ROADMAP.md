@@ -9671,3 +9671,180 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
 **Workflow and behavior:** Provide explicit geometry/occurrence/configuration selection, units, placement/orientation, quality/tessellation, and output paths for supported STEP, STL, 3MF, DXF, and other audited formats. Offer reusable presets with visible consequential values. Validate watertightness or supported output properties where relevant and report lost history/metadata; never label a geometry export a parametric native file.
 
 **Complete when:** Export a dimensioned part and selected assembly occurrences using supported formats, reopen/check dimensions and transforms, and compare coarse/fine mesh settings. Stale geometry and unsupported entities are disclosed and presets cannot silently export the wrong configuration.
+
+## October 7 upstream integration
+
+- [ X ] 16.6a Review and incorporate upstream through `e326ee2f07df04d4293035d65a98c96c3eb23380`.
+  Starting fork: `d49cab5745`; common ancestor: `a5908bb06eb554f16b771e545d56128c03fd164f`.
+  The authenticated upstream fetch found 126 missing history commits: 112 non-merge
+  commits and 14 merge commits. The merge preserves upstream authorship and
+  history. Rollback reference: `codex/pre-upstream-2026-10-07`.
+- [   ] 16.6b Validate rebuilt native upstream changes and deliver the next grouped owner build.
+  Native GUI/App/Part/PartDesign/Sketcher/CAM/TechDraw and Coin changes require
+  a matching rebuild. Existing owner payload and shortcut remain the October 6
+  delivery. This source integration is not a new owner-build acceptance claim.
+
+### Compatibility decisions
+
+The textual merge was automatic outside 13 files. Textual applicability is not
+a claim of native runtime compatibility. The adaptations below preserve the
+fork's accepted contracts while keeping the compatible upstream fixes.
+
+| Upstream change | Decision and downstream reason |
+| --- | --- |
+| `426d03d1bd` CAM workplane frames | Incorporated plane-relative stored paths and dressup Placement inheritance. Preserve `requireCurrent`, finite Axis Map radius, atomic Mirror copies and Boundary/ZCorrect input validation. Move the cycle-safe `baseOp` resolver into `Path.Base.Util`, with the dressup API referencing the same implementation. |
+| `426d03d1bd` holding-tag exception fallback | Excluded the fallback to the untagged base path; Plus must clear commands, tag caches and solids and propagate failure. The upstream coordinate-frame changes still apply. |
+| `426d03d1bd` probe-map bounds fallback | Excluded republishing the base path before the out-of-range error. Use upstream world coordinates for probe lookup, retaining an empty path on failure. |
+| `82d3fa0d48` Safe STL Avoid Faces offsets | Incorporated separate machining and STL footprints and updated caller/test signatures. Excluded silent generation-failure returns; selected avoid geometry must fail closed. |
+| `0130baa2ea` native pattern menu/toolbar entries | Preserve `PartDesign_Pattern` in the Plus-transformed menu, toolbar and task watcher instead of replacing it with separate Linear/Polar entries. Incorporate Circular/Path/Point commands, view providers and MultiTransform editors. Deduplicate registrations/includes supplied by both branches. |
+| `e22e537c4b`, `eefae5b29e`, `76337721a4` instance suppression | Incorporated controls, initial refresh and common center/signal logic. Preserve the Plus final recompute when Update View is disabled and refresh instance controls afterward. |
+| `0c0fdc1334` Coin rendering optimization | Incorporated the pinned `50e37f04e7027661ea2318d0425b7836ac819568` dependency; native acceptance remains pending. |
+
+No whole upstream commit was discarded. The excluded behaviors are specific
+hunks above; all remaining upstream changes, including crashes, geometry fixes,
+post processors, Python/C++ regressions, packaging and CI definitions, are part
+of the merge. CI definitions were imported locally, not dispatched.
+
+### Non-merge commit inventory
+
+“Automatic merge” describes Git's applicability check. “Adapted” identifies
+commits touching one of the 13 manually resolved files; decisions are above.
+The 14 merge commits are retained as ancestry rather than imported twice.
+
+| Commit | Subject | Source integration |
+| --- | --- | --- |
+| `fed6d0db9b` | Build: Include graphviz config file in bundles | Automatic merge |
+| `24e37ee764` | Graphviz: Inline startThread and remove unneeded QThread subclass | Automatic merge |
+| `4287581fc1` | Graphviz: Simplifying local refactorings | Automatic merge |
+| `308c7b050c` | Graphviz: Extract path selection and add fallback | Automatic merge |
+| `16fbbd1f42` | Graphviz: Move save into exportGraph | Automatic merge |
+| `cbabd28bad` | Graphviz: Merge export into update | Automatic merge |
+| `aba5311da4` | Graphviz: Use signals instead of blocking gui thread | Automatic merge |
+| `cf35ef83e0` | CAM: Make Command.Parameters assignment replace the parameter set | Automatic merge |
+| `6224b37819` | CAM: Command.Parameters assignment leaves the caller's dictionary intact | Automatic merge |
+| `5591937592` | Merge pull request #32450 from tarman3/simplecopy_taskpanel | Adapted |
+| `293726c5d8` | Part: Add soft limit to number of pattern occurrences (#33056) | Automatic merge |
+| `adb271f4e3` | Pixi: set default XCURSOR_PATH on Linux | Automatic merge |
+| `405815d679` | fix syntax error with FreeCAD.qss | Automatic merge |
+| `005c693b94` | Measure: forget a deleted custom coordinate system in Mass Properties | Automatic merge |
+| `33d332e273` | Gui: fix property editor crash on recompute | Automatic merge |
+| `15938598ee` | Sketcher: fix crash when entering edit mode (#32804) | Automatic merge |
+| `fd593d363e` | CAM: Add preference for Sanity report output file (#32861) | Automatic merge |
+| `622ef41be9` | CAM: Inspect - Truncate long labels | Automatic merge |
+| `ea8d563d30` | CAM: Copy Operation - keep dressup expressions on the copy (#33018) | Automatic merge |
+| `89c034fd97` | CAM: MillFacing - Circular clearing pattern | Automatic merge |
+| `f6f324b916` | pixi: Update CalculiX. | Automatic merge |
+| `370eebc099` | Assembly: Remove unused image assets | Automatic merge |
+| `83ee7f469f` | Spreadsheet: Remove unused image assets | Automatic merge |
+| `28d261fdda` | TechDraw: Remove unused image assets | Automatic merge |
+| `f25d0888ab` | Tux: Remove unused image assets | Automatic merge |
+| `1cf67a01fd` | Sketcher: Remove obsolete icons | Automatic merge |
+| `fb3303dff1` | CAM: Profile - Combine connected faces | Automatic merge |
+| `efaf7b1c6c` | Gui: Remove unused image assets | Automatic merge |
+| `123a79500d` | FEM: Fix vtk_module_compatible method | Automatic merge |
+| `3ffae4b837` | Merge pull request #33069 from sliptonic/fanuc-post-mbpp | Automatic merge |
+| `426d03d1bd` | CAM:  Operations respect workplane frame (#32903) | Adapted |
+| `b8e58b5d71` | Sketcher: fix Fit All and uninitialized axis coordinates | Automatic merge |
+| `180d8cfc32` | partially revert #30615 to previous spacemouse zoom pivot behavior | Automatic merge |
+| `685c62dad3` | Core: remove BufferStreambuf | Automatic merge |
+| `922dcc5be0` | Sketcher: Log through the named Console functions | Automatic merge |
+| `ad0a298134` | Part: Set units in task dialog | Automatic merge |
+| `824d1bfab4` | Revert "Core: remove BufferStreambuf" | Automatic merge |
+| `c97e069823` | CAM: Endmill SVG cutting edge height (H) now ends at top of flutes (#33079) | Automatic merge |
+| `898224c42b` | CI: Remove experimental non-arm Windows build | Automatic merge |
+| `d7e3330043` | [TD]prevent fail on equal projected points (#32880) | Automatic merge |
+| `7111ab3fc7` | TechDraw: list each geometric hatch of a view only once | Automatic merge |
+| `27bf90adc0` | CAM: PocketShape - Add tolerance to combineHorizontalFaces | Automatic merge |
+| `1c26e0d005` | TechDraw: claim each child view only once | Automatic merge |
+| `a24e31523a` | CAM: legacy post scripts silently drop G99 retract mode (#32282) | Automatic merge |
+| `2372eb1c4f` | Assembly: Fix rack and pinion bug (#32922) | Automatic merge |
+| `84ae7a7c8e` | fix[Gui]: property editor FocusOut crash | Automatic merge |
+| `840ce404d2` | CI: Fix gating of CI when label is applied after failure | Automatic merge |
+| `21ed7f01ce` | Assembly: Fix test that only worked on MSVC | Automatic merge |
+| `ab631d9aca` | Fix crash on spaceball motion before a window is active | Automatic merge |
+| `15883e6f4c` | Tests: Add mainWindow nullptr check on macOS | Automatic merge |
+| `0130baa2ea` | PartDesignGui: expose new pattern tools and MultiTransform editors | Adapted |
+| `ad11ee94bc` | PartDesign: clarify new pattern command callbacks | Automatic merge |
+| `e22e537c4b` | PartDesignGui: connect interactive instance suppression to pattern tasks | Adapted |
+| `eefae5b29e` | PartDesign: show suppression controls when editing starts | Adapted |
+| `76337721a4` | PartDesign: reuse pattern center calculation and signal handler | Adapted |
+| `99c5620c5f` | fix[build]: add missing exception include on MacOS | Automatic merge |
+| `43db0a2087` | Bump main version number to 27.1.0-dev | Automatic merge |
+| `3633aaaa89` | CI: Pin Crowdin workflows to 26.3 release branch | Automatic merge |
+| `aba56efbda` | Base: Add moment unit to MKS schema | Automatic merge |
+| `b960974504` | Draft: add Draft_UpdateShape2DView to Draft menu and fix shortcut (#33121) | Automatic merge |
+| `e609d7f2df` | Part: Align link array commans and expose in Part | Automatic merge |
+| `fbfcbe0431` | Bump korthout/backport-action from 4.5.2 to 4.6.1 | Automatic merge |
+| `fb0cef0d2b` | Bump actions/labeler from 6.1.0 to 7.0.0 | Automatic merge |
+| `678f5cf190` | Bump actions/setup-python from 6.2.0 to 7.0.0 | Automatic merge |
+| `f47a33dedb` | Bump actions/checkout from 6.0.2 to 7.0.1 | Automatic merge |
+| `dc876b473c` | TechDraw: do not crash when restoring a view Caption | Automatic merge |
+| `5cf3c96149` | made SuppressedIndices property not Hidden | Automatic merge |
+| `b7defadf1a` | Part: do not crash setting PreviewColor before the preview is attached | Automatic merge |
+| `39f2a043c0` | CAM: Clipper arc fitting fixes (#33049) | Automatic merge |
+| `253ad34322` | CI: Make sure skipped runs return correct result | Automatic merge |
+| `1d6cfdb54b` | Part: Fix clarify selection rendering | Automatic merge |
+| `c04fcd38f2` | Part: Make clarify selection rendering transparent | Automatic merge |
+| `64efac57ce` | update only properties from the newly opened documents | Automatic merge |
+| `8ddde57aa0` | Part/Tests: Add test for XLink update | Automatic merge |
+| `c833856faf` | App: Also refresh when target file re-opens | Automatic merge |
+| `3d63110805` | CMake: Fix printing of ZipIos library path | Automatic merge |
+| `c1c0b50621` | Sketcher: Fix segmentation fault while creating context menu | Automatic merge |
+| `0c0fdc1334` | Update Coin submodule for indexed face rendering optimization (FreeCAD/coin#9) | Automatic merge |
+| `e68e9f3ff3` | Change face finder defaults | Automatic merge |
+| `cd403cb5a7` | CI: Switch from wait loop to concurrency group | Automatic merge |
+| `7d2c4213e9` | Part: Add Datums to Create menu | Automatic merge |
+| `e104a127e0` | PD: Initialize dress-up highlighting flags | Automatic merge |
+| `36c7cf90e9` | fix missing backgroundin TD ordered list icon | Automatic merge |
+| `721e71b4af` | fix unecessary elide in selection window | Automatic merge |
+| `7805de63b7` | Sketcher: Fix PropertyVisualLayerList has no python counterpart  #21516 | Automatic merge |
+| `294dd58ac4` | Sketcher: Test Visual Layer List | Automatic merge |
+| `024f80c8de` | Merge pull request #33047 from oursland/fix-techdraw-hatch-dialog-undo | Automatic merge |
+| `fe1f1b13dd` | Gui: Setup completer in FileDialog only on use | Automatic merge |
+| `fab8e1af6a` | Gui: close a task dialog when its document is deleted | Automatic merge |
+| `3d899008bf` | PartDesign: don't keep raw Body/Sketch pointers in attachment callbacks | Automatic merge |
+| `5f05c77ea9` | Part: stop using the attachment dialog's object after it is deleted | Automatic merge |
+| `100bd750ce` | PartDesign: don't keep raw document pointers in feature-pick timers | Automatic merge |
+| `0ecfd89f62` | Part: cancel the attachment dialog when its object is deleted | Automatic merge |
+| `37559510c7` | Bump korthout/backport-action from 4.6.1 to 4.7.0 | Automatic merge |
+| `6670b61d04` | Bump jurplel/install-qt-action from 4.3.1 to 4.4.1 | Automatic merge |
+| `b5e2b5b855` | TechDraw: fix bad result with OCCT 8.0.1 (#33214) | Automatic merge |
+| `de1c409a94` | Bump github/issue-metrics from 5.0.2 to 5.0.3 | Automatic merge |
+| `7ff88754d3` | Preserve seam edges during face refinement to maintain closed wires | Automatic merge |
+| `994ec17340` | Part: Give collectSeamEdges internal linkage | Automatic merge |
+| `491d61e490` | FEM: Fix vtk_module_compatible method again | Automatic merge |
+| `9f3c2365bf` | TD: fix screen mode exports (#32949) | Automatic merge |
+| `4cb3a68436` | Sketcher: Don't record edit toolbar state if the non-edit toolbar is active | Automatic merge |
+| `4223af9208` | fix32596 | Automatic merge |
+| `171a7c1f52` | [ArchWindow,Equipment,Component] Regression: missing addSketchArchFeature (#33219) | Automatic merge |
+| `9bce1a0abc` | [GUI] Overlay menu dark theme detection (#33262) | Automatic merge |
+| `82d3fa0d48` | CAM: Planar Surface - Fix Avoid faces boundary offset for Safe STL (#33053) | Adapted |
+| `93f831f895` | Verify bidirectional pass extension geometry (#33113) | Automatic merge |
+| `b6c5f3522c` | Gui: Silence Qt accessibility warning | Automatic merge |
+| `a5889ea6c4` | Build: Move WoA build to CMake 4.4.3 | Automatic merge |
+| `3424c41062` | Core: Show bundled Clipper2 version in About | Automatic merge |
+| `876271d660` | TechDraw: clarify face color preference | Automatic merge |
+| `e326ee2f07` | Gui: fix overlay panel remaining visible over Start Page (#33297) | Automatic merge |
+
+### Integration validation
+
+- Syntax: all 107 changed Python files parse; the broader 490-file CAM scan
+  also passes. The integration harness asserts actual source-module loading.
+- Existing-engine/source-overlay regression run: 126 cases, 124 passing and
+  two fixture failures. Neither failure was an application exception: one
+  expected a manual Placement which upstream intentionally derives from Workplane;
+  the other inspected a live object after injecting failure into an independent
+  proxy. Corrected those fixtures and strengthened Workplane inheritance checks.
+- Final focused run: seven passing cases, no failures/errors/skips, covering the
+  four changed Mirror/ZCorrect fixtures plus three shared-resolver checks. Together
+  the accepted runs cover all 126 distinct cases (131 passing executions).
+  CAM safety, avoidance geometry, workplane generation and post-frame regressions
+  passed against source Python and the existing October 6 native engine.
+- Owner Word requirements: three additions and two local superseded statements;
+  other archive parts preserved byte-for-byte. Final render is 91 pages; revised
+  workflow page 71, continuation page 72 and final page 91 visually inspected.
+- No owner payload, shortcut, native build or remote publication was produced.
+  Rebuilt C++/Coin acceptance, full platform suites and physical interface checks
+  remain task 16.6b at the next grouped build checkpoint. Source overlays cannot
+  establish those results. Raw task validation output is removed after recording
+  these summaries, in accordance with the owner artifact policy.

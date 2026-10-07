@@ -342,6 +342,7 @@ SET(PathPythonPost_SRCS
     Path/Post/PostList.py
     Path/Post/Processor.py
     Path/Post/DrillCycleExpander.py
+    Path/Post/TiltedWorkPlane.py
     Path/Post/Utils.py
     Path/Post/UtilsArguments.py
     Path/Post/UtilsExport.py
@@ -363,6 +364,7 @@ SET(PathPythonPostScripts_SRCS
     Path/Post/scripts/estlcam_legacy_post.py
     Path/Post/scripts/fablin_legacy_post.py
     Path/Post/scripts/fanuc_legacy_post.py
+    Path/Post/scripts/fanuc_post.py
     Path/Post/scripts/fangling_legacy_post.py
     Path/Post/scripts/gcode_pre.py
     Path/Post/scripts/generic_post.py
@@ -588,6 +590,7 @@ SET(Tests_SRCS
     CAMTests/TestCentroidLegacyPost.py
     CAMTests/TestCentroidPost.py
     CAMTests/TestDxfPost.py
+    CAMTests/TestFanucLegacyPost.py
     CAMTests/TestFanucPost.py
     CAMTests/TestGenericPost.py
     CAMTests/TestGenericSheetCutting.py
@@ -596,6 +599,7 @@ SET(Tests_SRCS
     CAMTests/TestKineticNCBeamicon2LegacyPost.py
     CAMTests/TestLinuxCNCPost.py
     CAMTests/TestLinuxCNCLegacyPost.py
+    CAMTests/TestLegacyPostRetractMode.py
     CAMTests/TestLinkingGenerator.py
     CAMTests/TestMachine.py
     CAMTests/TestMachineValidate.py
@@ -630,6 +634,7 @@ SET(Tests_SRCS
     CAMTests/TestPathLanguage.py
     CAMTests/TestPathLog.py
     CAMTests/TestPathLogNew.py
+    CAMTests/TestPathMillFacing.py
     CAMTests/TestPathOpDeburr.py
     CAMTests/TestPathOpUtil.py
     CAMTests/TestPostCore.py
@@ -677,6 +682,8 @@ SET(Tests_SRCS
     CAMTests/TestPathVcarve.py
     CAMTests/TestPathVoronoi.py
     CAMTests/TestPathWorkplane.py
+    CAMTests/TestPathWorkplaneFrame.py
+    CAMTests/TestPathTiltedWorkPlane.py
     CAMTests/TestPathSharedWorkplane.py
     CAMTests/TestProcessorOptimizations.py
     CAMTests/TestGrblLegacyPost.py

@@ -129,6 +129,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
           << "Part_PointsFromMesh"
           << "Part_MakeSolid"
           << "Part_ReverseShape" << copy << "Separator" << bop << join << split << compound
+          << "Part_LinkArrays"
           << "Separator";
     if (hasSketcher) {
         *part << "Sketcher_NewSketch";
@@ -218,6 +219,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
     Gui::ToolBarItem* boolop = new Gui::ToolBarItem(root);
     boolop->setCommand("Boolean Tools");
     *boolop << "Part_CompCompoundTools"
+            << "Part_LinkArrays"
             << "Part_Boolean"
             << "Part_Cut"
             << "Part_Fuse"

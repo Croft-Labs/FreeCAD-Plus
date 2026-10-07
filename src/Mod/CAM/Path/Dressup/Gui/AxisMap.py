@@ -165,9 +165,10 @@ class ObjectDressup:
         if not math.isfinite(radius) or radius <= 0:
             raise ValueError("Axis Map radius must be finite and greater than zero; use Reverse to change direction.")
 
+        PathDressup.placeWithBase(obj)
         job = PathUtils.findParentJob(obj)
         deflection = job.GeometryTolerance.Value
-        path = PathUtils.getPathWithPlacement(obj.Base)
+        path = obj.Base.Path
         path = PostUtils.splitArcs(path, deflection=deflection)
 
         newcommandlist = []

@@ -195,16 +195,24 @@ class DressupPathBoundary(object):
             raise ValueError("Boundary stock has no Shape; select a geometric boundary.")
         if obj.Stock.Shape.isNull():
             raise ValueError("Boundary stock shape is empty; restore the boundary before generating.")
-        if obj.Offset and obj.Stock and not obj.Stock.Shape.isNull():
+        PathDressup.placeWithBase(obj)
+        # The base operation's path is in its work plane's frame; the
+        # boundary is world geometry. Bring the boundary into that frame.
+        boundary = obj.Stock.Shape
+        frame = PathUtil.workplaneForOp(obj)
+        if not frame.isIdentity(1e-9):
+            boundary = boundary.transformed(frame.inverse().toMatrix())
+
+        if obj.Offset and obj.Stock and not boundary.isNull():
             offset = obj.Offset
             if obj.Inside:
                 offset = -offset
-            stock = Path.Geom.uncompound(obj.Stock.Shape)
+            stock = Path.Geom.uncompound(boundary)
             shape = [sh.makeOffsetShape(offset, tolerance=0.1, join=2) for sh in stock]
             if not shape or any(sh.isNull() or not sh.isValid() for sh in shape):
                 raise ValueError("Boundary offset is empty or invalid; adjust the offset before generating.")
         else:
-            shape = obj.Stock.Shape
+            shape = boundary
 
         pb = PathBoundary(obj.Base, shape, obj.Inside, obj.RetractThreshold)
         obj.Path = pb.execute()
@@ -269,7 +277,7 @@ class PathBoundary:
         ):
             return Path.Path()
 
-        path = PathUtils.getPathWithPlacement(self.baseOp)
+        path = self.baseOp.Path
         if len(path.Commands) == 0:
             Path.Log.warning("No Path Commands for %s" % self.baseOp.Label)
             return Path.Path()

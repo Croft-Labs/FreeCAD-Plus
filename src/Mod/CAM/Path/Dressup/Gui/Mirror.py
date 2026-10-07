@@ -137,8 +137,10 @@ class ObjectDressup:
             )
             return
 
+        PathDressup.placeWithBase(obj)
+
         if obj.MirrorAxis == "None":
-            obj.Path = PathUtils.getPathWithPlacement(obj.Base).copy()
+            obj.Path = obj.Base.Path.copy()
             return
 
         bb = None
@@ -178,7 +180,7 @@ class ObjectDressup:
                 offsetX += 2 * bb.Center.x
                 offsetY += 2 * bb.Center.y
 
-        commands = PathUtils.getPathWithPlacement(obj.Base).copy().Commands
+        commands = obj.Base.Path.copy().Commands
         for cmd in commands:
             if cmd.Name not in Constants.GCODE_MOVE_ALL:
                 # command without move, change nothing
@@ -216,7 +218,7 @@ class ObjectDressup:
                         cmd.Name = "G3"
 
         if obj.KeepBasePath:
-            result = PathUtils.getPathWithPlacement(obj.Base).copy()
+            result = obj.Base.Path.copy()
             result.addCommands(commands)
         else:
             result = Path.Path(commands)

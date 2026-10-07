@@ -1,5 +1,14 @@
 # FreeCAD Plus: UI and UX Specification
 
+## Inherited upstream interface changes
+
+The October 7 upstream integration retains the Plus command layout and adds
+native pattern instance controls and MultiTransform editors, inherited CAM
+preferences/tasks, and task/toolbar/overlay corrections. The owner-editable
+[Word specification](ui/FreeCAD%20Plus%20UI%20%26%20UX.docx) owns the synchronized
+workflow requirements; [roadmap 16.6](DEVELOPMENT_ROADMAP.md#october-7-upstream-integration)
+separates source incorporation from matching native/physical acceptance.
+
 ## Move Components
 
 Interactive uses native parent-aligned translation arrows, plane handles and

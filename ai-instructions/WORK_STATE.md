@@ -1,5 +1,26 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 7 upstream integration handoff
+
+Current source incorporates upstream `e326ee2f07df04d4293035d65a98c96c3eb23380`
+from clean fork `d49cab5745`, retaining all 126 upstream history commits.
+The [canonical compatibility audit](DEVELOPMENT_ROADMAP.md#october-7-upstream-integration)
+records 105 automatic and seven adapted non-merge commits, the 13 conflict
+files, preserved Plus behavior and excluded unsafe fallback hunks.
+Rollback branch: `codex/pre-upstream-2026-10-07`. No push was performed.
+
+All 126 distinct source-overlay CAM regressions have passing evidence after
+two fixture corrections; 107 changed Python files pass syntax checks. This
+uses the existing native engine and is not rebuilt C++/Coin validation. The
+owner Word requirements are synchronized and revised pages visually checked.
+
+Next action is roadmap 16.6b: batch one matching native rebuild, then validate
+changed GUI task/document lifetimes, Sketcher edit/selection, Part refinement,
+pattern suppression with Update View off, external-link reopen, native CAM
+parameter/arc APIs, TechDraw and Coin rendering. Preserve the October 6 owner
+payload and saved shortcut until a new payload passes delivery gates. The
+current executable still uses the previously accepted native sources.
+
 ## Final owner-requested legacy import/conversion audit
 
 Entry main was clean at e4d8086c9040aae65908f8e23567c9bbe7d771a0.

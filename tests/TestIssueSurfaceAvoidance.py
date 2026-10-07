@@ -33,21 +33,21 @@ class TestSurfaceAvoidanceFailure(unittest.TestCase):
     def testFailedAvoidBoundaryStopsGeneration(self):
         with patch.object(surface_common, "build_optimized_boundary", return_value=None):
             with self.assertRaisesRegex(ValueError, "avoid"):
-                surface_common.build_avoid_boundary([self.avoid], 1, 0.01)
+                surface_common.build_avoid_boundary([self.avoid], 0, 1, 0.01)
 
     def testUnresolvedAvoidFaceIsNotDropped(self):
         with patch.object(surface_common, "_classify_and_cap_faces",
                           return_value=([self.face], [self.avoid])):
             with patch.object(surface_common, "build_optimized_boundary", return_value=None):
                 with self.assertRaisesRegex(ValueError, "avoid"):
-                    surface_common.build_avoid_boundary([self.face, self.avoid], 1, 0.01)
+                    surface_common.build_avoid_boundary([self.face, self.avoid], 0, 1, 0.01)
 
     def testPartialAvoidanceProjectionStopsGeneration(self):
         second = Part.makePlane(5, 5, App.Vector(40, 40, 0))
         # Real grouping finds two isolated faces; only the second projection fails.
         with patch.object(surface_common, "create_boundary_face", side_effect=[self.avoid, None]):
             with self.assertRaisesRegex(ValueError, "boundary"):
-                surface_common.build_avoid_boundary([self.avoid, second], 1, 0.01)
+                surface_common.build_avoid_boundary([self.avoid, second], 0, 1, 0.01)
 
     def testConnectedAvoidanceProjectionStopsGeneration(self):
         with patch.object(surface_common, "_separate_touching_faces",
@@ -69,7 +69,7 @@ class TestSurfaceAvoidanceFailure(unittest.TestCase):
 
     def testDisconnectedAvoidanceRegionsBothPreserved(self):
         second = Part.makePlane(5, 5, App.Vector(40, 40, 0))
-        boundary = surface_common.build_avoid_boundary([self.avoid, second], 1, 0.01)
+        boundary, _ = surface_common.build_avoid_boundary([self.avoid, second], 0, 1, 0.01)
         self.assertTrue(boundary.isValid())
         self.assertAlmostEqual(boundary.common(self.avoid).Area, self.avoid.Area, places=5)
         self.assertAlmostEqual(boundary.common(second).Area, second.Area, places=5)
@@ -112,7 +112,7 @@ class TestSurfaceAvoidanceFailure(unittest.TestCase):
             cutting, avoided = surface_pattern.split_selected_features(
                 [(model, ["Face1"]), (external, ["Face1"])], 1)
             self.assertEqual((len(cutting), len(avoided)), (1, 1))
-            boundary = surface_common.build_avoid_boundary(avoided, 1, 0.01)
+            boundary, _ = surface_common.build_avoid_boundary(avoided, 0, 1, 0.01)
             mask = surface_common.generate_pattern_mask(
                 True, self.face, cutting, boundary, 1, 0, 0.01)
             self.assertGreater(mask.Area, 700)
