@@ -1118,7 +1118,24 @@ def set_suppressed(operation, suppressed):
     set_items_suppressed([operation], suppressed)
 
 
+RETAINED_OPERATION_FAMILIES = ("DressUp", "Transform", "Boolean", "Helix", "Primitive",
+                              "Pipe", "Loft", "Revolve", "Extrude", "Sketch", "Datum")
+
+
+def retained_operation_source(obj):
+    """Resolve native History access by explicit saved family/source identity."""
+    for family in RETAINED_OPERATION_FAMILIES:
+        if getattr(obj, "Legacy" + family + "State", ""):
+            return getattr(obj, "Legacy" + family + "Source", obj)
+    return obj
+
+
 def history_detail(obj):
+    for family in ("DressUp", "Transform", "Boolean"):
+        if getattr(obj, "Legacy" + family + "State", ""):
+            if retained_operation_source(obj) is None:
+                return "Retained native operation is missing. Repair its source before editing."
+            return "Retained native " + family + ". Edit the original topology references, ordered inputs and parameters without replacing their identities."
     if getattr(obj, "LegacyHelixState", ""):
         if getattr(obj, "LegacyHelixSource", obj) is None:
             return "Retained native helix is missing. Repair its source before editing."
@@ -1167,6 +1184,11 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    for family in ("DressUp", "Transform", "Boolean"):
+        if getattr(obj, "Legacy" + family + "State", "") and "Legacy" + family + "Source" in obj.PropertiesList:
+            source = retained_operation_source(obj)
+            if source is None or obj.LinkedObject != source or "Invalid" in source.State:
+                return "Needs repair"
     if (getattr(obj, "LegacyHelixState", "")
             and "LegacyHelixSource" in obj.PropertiesList
             and (getattr(obj, "LegacyHelixSource", None) is None

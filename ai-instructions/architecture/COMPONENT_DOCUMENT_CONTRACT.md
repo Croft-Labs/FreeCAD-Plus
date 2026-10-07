@@ -332,6 +332,15 @@ unsupported references and standalone native engines retain editor access and
 available geometry. Separate LegacyHelixVersion/LegacyPrimitiveVersion upgrades
 recognize prior conversions after manifest validation. See
 [Helix/primitive contracts](../../tests/LegacyHelixPrimitives.md).
+Dress-up, pattern/transformation and Boolean compatibility adapters preserve native
+owners and topology inputs. Hidden distinct-identity History links open original
+editors, ordered by dependencies first and authored native Body Group across
+families where compatible. Keep native
+Originals/Transformations/settings/suppression and Boolean tool/target references;
+standalone outputs remain direct to avoid duplicated compound geometry. Separate
+family versions upgrade recognized older conversions after manifest validation.
+Missing/invalid sources require repair; stale caches are not certified by retention.
+See [bounded finishing adapters](../../tests/LegacyFinishing.md).
 Retain original world geometry through explicit
 definition-frame and occurrence-frame compensation, including native scale modes.
 Original source files remain protected; external converted files are saved to new

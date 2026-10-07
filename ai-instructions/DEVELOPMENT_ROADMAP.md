@@ -78,14 +78,22 @@
   versions upgrade prior files. Final 178 native source-mode checks pass; UI-only
   DOCX rendered/inspected. WORK_STATE owns hashes, exact evidence, corrected external
   regression, cleanup/publication and deferred installed/whole-file acceptance.
-- [ ] 11. Dress-up, pattern/transformation and Boolean adapters, as separate tasks.
+- [x] 11. Three bounded dress-up, pattern/transformation and Boolean compatibility
+  adapters: retained native owners/topology/ordered settings/tools and direct
+  standalone outputs, with distinct History editor links and separate family
+  upgrades. Dependencies precede consumers; compatible authored order is retained.
+  Corrected final 55 native source-mode checks pass; the earlier 129-check attempt
+  found a sketch-order regression and is not acceptance. UI-only DOCX rendered/
+  inspected. WORK_STATE owns hashes, actual evidence, diagnostics and publication.
+  Physical flattening, custom Path/Point variants and installed/whole-file
+  qualification remain integration gates; owner packaging stays batched.
 - [ ] 12. Whole-file mixed-history, external/shared consumer and recovery acceptance.
 
 Every later task must preserve mapped/native editable features first, then recover
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to ten have source/native
+for unrelated feature implementation. Tasks one to eleven have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).

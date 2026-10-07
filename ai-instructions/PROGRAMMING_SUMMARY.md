@@ -41,6 +41,11 @@ retaining native parameter laws, axes/dimensions, original types and explicit ta
 Attached/unsupported histories and standalone Part primitives/Helix retain native
 editors. Separate family versions upgrade older conversions; converted primitive
 shape changes require separate operations. See tests/LegacyHelixPrimitives.md.
+Task eleven exposes retained native dress-up, pattern/transformation and Boolean
+operations through ordered component History access links. Native topology inputs,
+owners, tools/settings and direct standalone outputs remain intact. Separate family
+versions upgrade prior converted files. See tests/LegacyFinishing.md; physical
+flattening and whole-file qualification are not implied by native retention.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

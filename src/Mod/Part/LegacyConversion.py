@@ -193,7 +193,9 @@ def upgrade_datum_frames(document):
             and getattr(meta, "LegacyLoftVersion", 0) >= 1
             and getattr(meta, "LegacyPipeVersion", 0) >= 1
             and getattr(meta, "LegacyHelixVersion", 0) >= 1
-            and getattr(meta, "LegacyPrimitiveVersion", 0) >= 1):
+            and getattr(meta, "LegacyPrimitiveVersion", 0) >= 1
+            and all(getattr(meta, "Legacy" + family + "Version", 0) >= 1
+                    for family in RETAINED_FAMILIES)):
         return document
     with Model.transaction(document, "Expose retained legacy inputs"):
         report = list(meta.ConversionReport)
@@ -203,8 +205,10 @@ def upgrade_datum_frames(document):
         migrate_pipes(document, report)
         migrate_helixes(document, report)
         migrate_primitives(document, report)
+        migrate_retained_features(document, report)
         migrate_datum_frames(document, report)
         migrate_sketch_inputs(document, report)
+        order_retained_inputs(document)
         meta.ConversionReport = report
         Model.validate(document, allow_unresolved=True)
     return document
@@ -803,6 +807,93 @@ def migrate_native_family(document, report, family, types, standalone, readiness
     Model._property(meta, "Integer", version, 1, True)
 
 
+# Keep topology references and native ownership: these families have no equivalent
+# independent shared Python editor contract that can replace their native inputs.
+RETAINED_FAMILIES = {
+    "DressUp": (("PartDesign::Fillet", "PartDesign::Chamfer", "PartDesign::Draft", "PartDesign::Thickness"),
+                ("Part::Fillet", "Part::Chamfer", "Part::Thickness", "Part::Refine", "Part::Defeaturing")),
+    "Transform": (("PartDesign::LinearPattern", "PartDesign::PolarPattern", "PartDesign::CircularPattern",
+                   "PartDesign::PathPattern", "PartDesign::PointPattern", "PartDesign::Mirrored",
+                   "PartDesign::Scaled", "PartDesign::MultiTransform", "PartDesign::Pattern"), ()),
+    "Boolean": (("PartDesign::Boolean",),
+                ("Part::Cut", "Part::Fuse", "Part::Common", "Part::MultiFuse", "Part::MultiCommon")),
+}
+
+
+def migrate_retained_features(document, report, readiness=None):
+    """Expose bounded native dress-up, transformation and Boolean operations."""
+    import ComponentModel as Model
+    meta = Model.metadata(document)
+    for family, (types, standalone) in RETAINED_FAMILIES.items():
+        version = "Legacy" + family + "Version"
+        if getattr(meta, version, 0) >= 1:
+            continue
+        for component in Model.definitions(document):
+            for body in [o for o in Model.history(component) if o.TypeId == "PartDesign::Body"
+                         and not getattr(o, "Producer", None)]:
+                for source in [o for o in body.Group if o.TypeId in types]:
+                    alias = next((o for o in Model.history(component)
+                                  if getattr(o, "Legacy" + family + "Source", None) == source), None)
+                    if alias is None:
+                        alias = retain_native_operation(document, component, body, source, family, family)
+                    fresh = (readiness.get(body, False) if readiness is not None
+                             else not any(flag in ("Touched", "Invalid")
+                                          for dep in [body] + Model.geometry_dependencies(body)
+                                          for flag in dep.State))
+                    report.append(source.Label + ": native " + family + " references, parameters, ownership and evaluated output retained; History opens the original editor."
+                                  + (" Source cache is unverified; repair/recompute required." if not fresh else ""))
+            for source in list(Model.history(component)):
+                state = "Legacy" + family + "State"
+                if source.TypeId not in standalone or getattr(source, state, ""):
+                    continue
+                Model._property(source, "String", state, "Retained native standalone " + family, True)
+                # Reuse the original finished output, never duplicate a Shape in
+                # native compounds/external wrappers. Preserve all original inputs.
+                report.append(source.Label + ": standalone native " + family + " editor, inputs and available output retained; invalid or stale output requires repair/recompute.")
+        Model._property(meta, "Integer", version, 1, True)
+
+
+def order_retained_inputs(document):
+    """Keep native authored order where compatible with input dependencies."""
+    import ComponentModel as Model
+    for component in Model.definitions(document):
+        names = list(component.ModelHistory)
+        for body in [o for o in Model.history(component) if o.TypeId == "PartDesign::Body"]:
+            members = list(body.Group)
+            slots = []
+            for index, name in enumerate(names):
+                alias = document.getObject(name)
+                source = Model.retained_operation_source(alias) if alias is not None else None
+                if alias != source and source in members:
+                    slots.append((index, alias, members.index(source)))
+            authored = sorted(slots, key=lambda entry: entry[2])
+            sources = {Model.retained_operation_source(alias) for _, alias, _ in slots}
+            dependencies = {source: set(Model.geometry_dependencies(source, include_frames=True)) & sources
+                            for source in sources}
+            # Native MultiTransform/helper references can be mutually connected.
+            # Preserve their authored order, without moving independent consumers
+            # ahead of one-way sketch/attachment/feature dependencies.
+            pending = {source: {dep for dep in deps if source not in dependencies[dep]}
+                       for source, deps in dependencies.items()}
+            ordered = []
+            while pending:
+                ready = [entry for entry in authored
+                         if Model.retained_operation_source(entry[1]) in pending
+                         and not pending[Model.retained_operation_source(entry[1])]]
+                if not ready:
+                    ordered.extend(entry for entry in slots
+                                   if Model.retained_operation_source(entry[1]) in pending)
+                    break
+                # One at a time keeps authored order among newly ready sources.
+                entry = ready[0]; source = Model.retained_operation_source(entry[1])
+                ordered.append(entry); del pending[source]
+                for deps in pending.values():
+                    deps.discard(source)
+            for (index, _, _), (_, alias, _) in zip(slots, ordered):
+                names[index] = alias.Name
+        component.ModelHistory = names
+
+
 def recovery_shapes(document):
     """Capture native top-level output before structural edits, for recovery."""
     import Part
@@ -1305,8 +1396,10 @@ def convert_structure(document, extra_targets=(), visiting=None):
             migrate_pipes(document, report, readiness)
             migrate_helixes(document, report, readiness)
             migrate_primitives(document, report, readiness)
+            migrate_retained_features(document, report, readiness)
             migrate_datum_frames(document, report)
             migrate_sketch_inputs(document, report)
+            order_retained_inputs(document)
             meta.ConversionReport = report + ["Models and linked Part Tree instances converted; native features retained.",
                 "Recovery policy: retained editable native features before explicit validated dumb geometry; no fallback created in this structural step."]
             if external:
