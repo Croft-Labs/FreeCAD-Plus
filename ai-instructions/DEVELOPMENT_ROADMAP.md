@@ -43,7 +43,14 @@
   native run, custom-vector retention follow-up, source hashes and publication.
   UI-only DOCX rendered/inspected; owner packaging and custom-frame promotion remain
   integration gates. The next authorized feature task must arrive separately.
-- [ ] 7. Revolution/Groove/Revolve axes, angles and targets.
+- [x] 7. Revolution/Groove/Revolve axes, angles and targets: qualified independent
+  native and mixed extrusion chains preserve original identities, angular settings
+  and explicit results/targets. Rotated/construction-axis scratch previews and
+  conversion-Undo view guards pass. Other frames/references and signed standalone
+  Part Revolutions retain original native engines/editors and available geometry.
+  Final 103 native source-mode checks pass; UI-only DOCX rendered/inspected.
+  WORK_STATE owns counts, hashes, cleanup and publication; owner packaging and
+  broader frame/mixed-history qualification remain batched integration gates.
 - [ ] 8. Loft sections and additive/subtractive targets.
 - [ ] 9. Pipe profiles, paths and orientation.
 - [ ] 10. Helix and primitive adapters, separated into bounded feature tasks.
@@ -54,7 +61,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to six have source/native
+for unrelated feature implementation. Tasks one to seven have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).

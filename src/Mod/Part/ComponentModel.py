@@ -1119,6 +1119,10 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if getattr(obj, "LegacyRevolveState", ""):
+        if getattr(obj, "LegacyRevolveSource", obj) is None:
+            return "Retained native revolution is missing. Repair its source before editing."
+        return "Retained native revolution. Edit the original axis, angles, source and target without replacing their references."
     if getattr(obj, "LegacyExtrudeState", ""):
         if getattr(obj, "LegacyExtrudeSource", obj) is None:
             return "Retained native extrusion is missing. Repair its source before editing."
@@ -1147,6 +1151,12 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    if (getattr(obj, "LegacyRevolveState", "")
+            and "LegacyRevolveSource" in obj.PropertiesList
+            and (getattr(obj, "LegacyRevolveSource", None) is None
+                 or obj.LinkedObject != obj.LegacyRevolveSource
+                 or "Invalid" in obj.LegacyRevolveSource.State)):
+        return "Needs repair"
     if (getattr(obj, "LegacyExtrudeState", "")
             and "LegacyExtrudeSource" in obj.PropertiesList
             and (getattr(obj, "LegacyExtrudeSource", None) is None

@@ -66,6 +66,14 @@ def validate(component, profile, angle, mode, target, values, operation=None, el
             Model.current_shape(obj)
             for sub in subs:
                 if sub:
+                    if (obj == profile and obj.isDerivedFrom("Sketcher::SketchObject")
+                            and sub.startswith("Axis") and (not sub[4:] or sub[4:].isdigit())):
+                        # Native sketch construction axes are not Shape edges.
+                        # The native feature validates the axis index/geometry.
+                        index = int(sub[4:] or "0")
+                        if index >= obj.AxisCount:
+                            raise ValueError("The sketch construction axis is unavailable.")
+                        continue
                     obj.Shape.getElement(sub)
 
 
@@ -115,8 +123,18 @@ def preview(component, profile, angle, mode="New Body", target=None, reverse=Fal
     validate(component, profile, angle, mode, target, values, elements=elements)
     scratch = App.newDocument("ComponentRevolvePreview", hidden=True, temp=True)
     try:
-        copied = scratch.addObject("Part::Part2DObjectPython", "Profile")
-        Profile.assign_shape(copied, profile, Profile.face(profile, elements) if elements is not None else Model.current_shape(profile))
+        if elements is None and profile.isDerivedFrom("Sketcher::SketchObject"):
+            # A shape-only Part2D helper loses the native sketch angular frame
+            # and construction axes. Copy evaluated internal geometry, without
+            # constraints or cross-document links, into a temporary native sketch.
+            copied = scratch.addObject("Sketcher::SketchObject", "Profile")
+            for index, geometry in enumerate(profile.Geometry):
+                copied.addGeometry(geometry, profile.getConstruction(index))
+            copied.Placement = profile.Placement
+            scratch.recompute()
+        else:
+            copied = scratch.addObject("Part::Part2DObjectPython", "Profile")
+            Profile.assign_shape(copied, profile, Profile.face(profile, elements) if elements is not None else Model.current_shape(profile))
         base = None
         copies = {profile: copied}
         if target:
@@ -124,7 +142,9 @@ def preview(component, profile, angle, mode="New Body", target=None, reverse=Fal
             base.Shape = Model.current_shape(target)
             copies[target] = base
         values = Extent.copy_references(scratch, values, copies)
-        if values["axis"] == "Reference":
+        if values["axis"] == "Reference" and values["axis_reference"][0] == profile and copied.isDerivedFrom("Sketcher::SketchObject"):
+            values = dict(values, axis_reference=(copied, list(values["axis_reference"][1])))
+        elif values["axis"] == "Reference":
             obj, subs = values["axis_reference"]
             # An edge copy also represents datum/origin axes without cross-document links.
             axis = scratch.addObject("Part::Feature", "Axis")
@@ -181,6 +201,8 @@ def edit(operation, profile, angle, mode, target=None, reverse=False, elements=N
         raise ValueError("This Revolve uses expressions. Edit its properties to preserve the formulas.")
     results = [obj for obj in operation.InList if getattr(obj, "Producer", None) == operation]
     replace = (mode == "Subtract") != (operation.RevolveMode == "Subtract")
+    if replace and getattr(operation, "LegacyMigration", "") == "Native revolve chain":
+        raise ValueError("Preserve this native Revolution/Groove identity. Create a separate Revolve to change its additive/subtractive type.")
     if replace and any(obj not in results + [component] for obj in operation.InList):
         raise ValueError("Use the published result for downstream references before changing operation type.")
     old_profile = operation.Profile[0] if hasattr(operation.Profile[0], "ProfileSource") else None

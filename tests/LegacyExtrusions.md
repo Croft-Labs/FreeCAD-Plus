@@ -50,6 +50,9 @@ Missing/mismatched/invalid source links show Needs repair. No fake solid or froz
 replacement is created for a valid native feature awaiting its family/frame mapping.
 The shared explicit evaluated dumb recovery policy remains available for failed
 structural mapping; unavailable/stale outputs remain reported.
+Task seven reuses the extracted chain publisher for qualified mixed Pad/Pocket and
+Revolution/Groove histories. Other mixed families remain retained; see
+[LegacyRevolutions](LegacyRevolutions.md) for native angular/axis qualification.
 Native custom-vector Pocket output retains the original engine: an experimental
 shared scratch preview lost the profile's elevated frame and is not qualified.
 Preserve native directions/parameters and editing instead of claiming equivalent

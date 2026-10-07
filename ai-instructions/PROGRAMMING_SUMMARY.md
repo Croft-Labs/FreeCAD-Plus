@@ -21,6 +21,11 @@ targets while preserving original feature/Body identities and native extents. Sh
 Extrude edits Pocket directions/modes safely; other attachment/reference histories
 remain editable native engines through History. Normal standalone Part Extrusions
 are published; custom outputs retain native controls. See tests/LegacyExtrusions.md.
+Task seven reuses native chain publishing for Revolution/Groove and qualified mixed
+extrusion histories, retaining sketch axes, angular settings and explicit targets.
+Other references/frames and standalone signed Part Revolutions retain native editors;
+LegacyRevolveVersion upgrades prior converted files. Whole-sketch Revolve previews
+retain native angular frames/construction axes. See tests/LegacyRevolutions.md.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

@@ -458,6 +458,11 @@ class Navigator(QtWidgets.QDockWidget):
                 finally:
                     tree.blockSignals(blocked)
             root = resolve(self.root_key) if self.root_key else None
+            # Undo of legacy conversion can restore the original native Part
+            # under the same name after removing its component UUID/role.
+            # Treat it as legacy again until Redo/reopen restores the definition.
+            if not model().is_component(root):
+                root = None
             active = None
             if root:
                 active, self.active_path = self.edit_context(root, self.active_path)
@@ -597,6 +602,8 @@ class Navigator(QtWidgets.QDockWidget):
                 apply_representation(component)
         for entry in list(self.component_views):
             component = resolve(entry["key"])
+            if not model().is_component(component):
+                component = None
             paths = visible_paths(component, component, []) if component else []
             entry["snapshot"].setLink(component if paths else None, paths)
             if component and entry.get("window"):
@@ -1540,10 +1547,10 @@ class Navigator(QtWidgets.QDockWidget):
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing history."))
         if (getattr(obj, "LegacyDatumState", "") or getattr(obj, "LegacySketchState", "")
-                or getattr(obj, "LegacyExtrudeState", "")):
+                or getattr(obj, "LegacyExtrudeState", "") or getattr(obj, "LegacyRevolveState", "")):
             component = model().owner(obj)
-            source = getattr(obj, "LegacyExtrudeSource",
-                             getattr(obj, "LegacySketchSource", getattr(obj, "LegacyDatumSource", obj)))
+            source = getattr(obj, "LegacyRevolveSource", getattr(obj, "LegacyExtrudeSource",
+                             getattr(obj, "LegacySketchSource", getattr(obj, "LegacyDatumSource", obj))))
             if source is None:
                 raise ValueError(tr("Repair the retained native input before editing it."))
             context = TaskContext(component)
