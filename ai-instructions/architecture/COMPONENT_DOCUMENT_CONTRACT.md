@@ -324,6 +324,14 @@ Attached/non-sketch/unsupported histories retain original owners and native edit
 standalone Part Sweep retains its distinct solid/Frenet/linearization controls.
 LegacyPipeVersion upgrades recognized earlier conversions after manifest validation.
 See [Pipe mapping and acceptance](../../tests/LegacyPipes.md).
+Bounded Helix/primitive adapters share this publisher without sharing their native
+parameter laws. Keep Helix profile/axis and authored dimensional mode, and native
+primitive shape/dimensions/placement. Converted mode edits preserve native types;
+changing a converted primitive's shape requires a separate operation. Attachments,
+unsupported references and standalone native engines retain editor access and
+available geometry. Separate LegacyHelixVersion/LegacyPrimitiveVersion upgrades
+recognize prior conversions after manifest validation. See
+[Helix/primitive contracts](../../tests/LegacyHelixPrimitives.md).
 Retain original world geometry through explicit
 definition-frame and occurrence-frame compensation, including native scale modes.
 Original source files remain protected; external converted files are saved to new

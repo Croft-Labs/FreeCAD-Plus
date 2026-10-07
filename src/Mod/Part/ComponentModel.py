@@ -1119,6 +1119,14 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if getattr(obj, "LegacyHelixState", ""):
+        if getattr(obj, "LegacyHelixSource", obj) is None:
+            return "Retained native helix is missing. Repair its source before editing."
+        return "Retained native helix. Edit the original profile, axis, parameter laws and target without replacing their identities."
+    if getattr(obj, "LegacyPrimitiveState", ""):
+        if getattr(obj, "LegacyPrimitiveSource", obj) is None:
+            return "Retained native primitive is missing. Repair its source before editing."
+        return "Retained native primitive. Edit the original shape dimensions, attachment and target without replacing their identities."
     if getattr(obj, "LegacyPipeState", ""):
         if getattr(obj, "LegacyPipeSource", obj) is None:
             return "Retained native pipe is missing. Repair its source before editing."
@@ -1159,6 +1167,18 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    if (getattr(obj, "LegacyHelixState", "")
+            and "LegacyHelixSource" in obj.PropertiesList
+            and (getattr(obj, "LegacyHelixSource", None) is None
+                 or obj.LinkedObject != obj.LegacyHelixSource
+                 or "Invalid" in obj.LegacyHelixSource.State)):
+        return "Needs repair"
+    if (getattr(obj, "LegacyPrimitiveState", "")
+            and "LegacyPrimitiveSource" in obj.PropertiesList
+            and (getattr(obj, "LegacyPrimitiveSource", None) is None
+                 or obj.LinkedObject != obj.LegacyPrimitiveSource
+                 or "Invalid" in obj.LegacyPrimitiveSource.State)):
+        return "Needs repair"
     if (getattr(obj, "LegacyPipeState", "")
             and "LegacyPipeSource" in obj.PropertiesList
             and (getattr(obj, "LegacyPipeSource", None) is None

@@ -36,6 +36,11 @@ and explicit targets, retaining native orientation and exact edge references.
 Converted Pipe mode edits preserve native type/identity; unsupported histories and
 standalone Part Sweep retain original editors. LegacyPipeVersion upgrades earlier
 converted files. See tests/LegacyPipes.md; installed delivery remains batched.
+Task ten adds bounded Helix and eight-primitive adapters through the same publisher,
+retaining native parameter laws, axes/dimensions, original types and explicit targets.
+Attached/unsupported histories and standalone Part primitives/Helix retain native
+editors. Separate family versions upgrade older conversions; converted primitive
+shape changes require separate operations. See tests/LegacyHelixPrimitives.md.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

@@ -85,9 +85,11 @@ def edit(adapter, operation, sections, mode, target=None, options=None):
         raise ValueError("This operation uses a different native Boolean operation. Edit its properties to preserve that operation.")
     results = [obj for obj in operation.InList if getattr(obj, "Producer", None) == operation]
     replace = (mode == "Subtract") != (getattr(operation, adapter.MODE_PROPERTY) == "Subtract")
-    legacy_sections = adapter.NAME in ("Loft", "Pipe") and getattr(operation, "LegacyMigration", "") == "Native " + adapter.NAME.lower() + " chain"
+    legacy_sections = adapter.NAME in ("Loft", "Pipe", "Helix", "Primitive") and getattr(operation, "LegacyMigration", "") == "Native " + adapter.NAME.lower() + " chain"
     if legacy_sections:
         replace = False  # Native section Boolean engine can preserve its original type/ID.
+    if legacy_sections and adapter.NAME == "Primitive" and adapter.needs_replacement(operation, options):
+        raise ValueError("Create a separate primitive to change the converted shape type and preserve its original identity.")
     if hasattr(adapter, "needs_replacement"):
         replace = replace or adapter.needs_replacement(operation, options)
     if replace and any(obj not in results + [component] for obj in operation.InList):

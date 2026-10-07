@@ -191,7 +191,9 @@ def upgrade_datum_frames(document):
             and getattr(meta, "LegacyExtrudeVersion", 0) >= 1
             and getattr(meta, "LegacyRevolveVersion", 0) >= 1
             and getattr(meta, "LegacyLoftVersion", 0) >= 1
-            and getattr(meta, "LegacyPipeVersion", 0) >= 1):
+            and getattr(meta, "LegacyPipeVersion", 0) >= 1
+            and getattr(meta, "LegacyHelixVersion", 0) >= 1
+            and getattr(meta, "LegacyPrimitiveVersion", 0) >= 1):
         return document
     with Model.transaction(document, "Expose retained legacy inputs"):
         report = list(meta.ConversionReport)
@@ -199,6 +201,8 @@ def upgrade_datum_frames(document):
         migrate_revolutions(document, report)
         migrate_lofts(document, report)
         migrate_pipes(document, report)
+        migrate_helixes(document, report)
+        migrate_primitives(document, report)
         migrate_datum_frames(document, report)
         migrate_sketch_inputs(document, report)
         meta.ConversionReport = report
@@ -308,7 +312,7 @@ def migrate_body_histories(document, report, readiness):
 
 def native_sections(feature):
     """Keep native section order and subelement spelling, without UI translation."""
-    return [feature.Profile] + (list(feature.Sections) if feature.TypeId in LOFTED + PIPED else [])
+    return ([feature.Profile] if hasattr(feature, "Profile") else []) + (list(feature.Sections) if feature.TypeId in LOFTED + PIPED else [])
 
 
 def native_inputs(feature):
@@ -318,14 +322,16 @@ def native_inputs(feature):
     return links
 
 
-def extrusion_chain_plan(body, component, revolved=False, lofted=False, piped=False):
+def extrusion_chain_plan(body, component, revolved=False, lofted=False, piped=False, helixed=False, primitive=False):
     """Qualify reparenting without rewriting native extent or attachment semantics."""
     import ComponentModel as Model
     if not body.Placement.isSame(App.Placement(), 1e-9) or body.ExpressionEngine:
         return None, "native Body frame/expressions retained"
+    piped = piped or helixed or primitive
     families = (("PartDesign::Pad", "PartDesign::Pocket")
                 + (REVOLVED if revolved or lofted or piped else ())
-                + (LOFTED if lofted or piped else ()) + (PIPED if piped else ()))
+                + (LOFTED if lofted or piped else ()) + (PIPED if piped else ())
+                + (HELIXED if helixed or primitive else ()) + (PRIMITIVES if primitive else ()))
     features = [o for o in body.Group if o.TypeId in families]
     if not features or body.Tip != features[-1]:
         return None, "mixed or inactive native feature history retained"
@@ -344,6 +350,30 @@ def extrusion_chain_plan(body, component, revolved=False, lofted=False, piped=Fa
     previous = None
     for feature in features:
         expected = "Subtraction" if feature.TypeId in ("PartDesign::Pocket", "PartDesign::Groove") else "Union"
+        if feature.TypeId in HELIXED + PRIMITIVES:
+            expected = str(feature.Operation)
+            if expected not in ("Union", "Subtraction"):
+                return None, "native Helix/Primitive Boolean semantics retained"
+            if feature.TypeId in HELIXED:
+                import ComponentHelix as Helix
+                axis = feature.ReferenceAxis
+                if (not axis or axis[0] != feature.Profile[0] or len(axis[1]) != 1
+                        or not (axis[1][0] in ("V_Axis", "H_Axis", "N_Axis", "Axis")
+                                or axis[1][0].startswith("Axis")) or feature.Profile[1]
+                        or not feature.HasBeenEdited or feature.Outside):
+                    return None, "native Helix axis/profile/initialization semantics retained"
+                options = Helix.defaults()
+                options.update(input_mode=str(feature.Mode), pitch=feature.Pitch.Value,
+                               height=feature.Height.Value, turns=feature.Turns,
+                               angle=feature.Angle.Value, growth=feature.Growth.Value,
+                               tolerance=feature.Tolerance, fuzzy=feature.FuzzyTolerance)
+                try:
+                    Helix.normalized(options)
+                except ValueError:
+                    return None, "native Helix parameter law retained"
+            elif (str(feature.MapMode) != "Deactivated" or feature.AttachmentSupport
+                  or any(p.startswith(("Placement", "Attachment", "Map")) for p, _ in feature.ExpressionEngine)):
+                return None, "native Primitive attachment/frame retained"
         if feature.TypeId in PIPED:
             import Part
             import ComponentPipe as Pipe
@@ -392,7 +422,7 @@ def extrusion_chain_plan(body, component, revolved=False, lofted=False, piped=Fa
                     return None, "native whole-sketch subelement semantics retained"
         if (feature.BaseFeature != previous or (previous is None and expected != "Union")
                 or str(feature.Operation) != expected
-                or (feature.TypeId not in LOFTED + PIPED and feature.Profile[1])
+                or (feature.TypeId not in LOFTED + PIPED + PRIMITIVES and feature.Profile[1])
                 or any(p.startswith(("Placement", "Profile", "Sections", "BaseFeature", "Spine", "AuxiliarySpine")) for p, _ in feature.ExpressionEngine)):
             return None, "native target/profile/axis semantics retained"
         if feature.TypeId in REVOLVED:
@@ -409,21 +439,21 @@ def extrusion_chain_plan(body, component, revolved=False, lofted=False, piped=Fa
                     or (str(feature.Type) == "Angle" and not 0 < feature.Angle.Value <= 360)
                     or (str(feature.SideType) == "Two sides" and not 0 < feature.Angle2.Value <= 360)):
                 return None, "native referenced/signed angular extent retained"
-        elif feature.TypeId not in LOFTED + PIPED and (feature.UseCustomVector or (feature.ReferenceAxis and feature.ReferenceAxis[0] is not None)):
+        elif feature.TypeId not in LOFTED + PIPED + HELIXED + PRIMITIVES and (feature.UseCustomVector or (feature.ReferenceAxis and feature.ReferenceAxis[0] is not None)):
             return None, "native target/profile/axis semantics retained"
         # Complex linked start/limit definitions stay on the native engine and
         # editor until their complete reference mapping is qualified.
-        if feature.TypeId not in REVOLVED + LOFTED + PIPED and (str(feature.Type) not in ("Length", "ThroughAll", "UpToFirst", "UpToLast")
+        if feature.TypeId not in REVOLVED + LOFTED + PIPED + HELIXED + PRIMITIVES and (str(feature.Type) not in ("Length", "ThroughAll", "UpToFirst", "UpToLast")
                 or str(feature.Type2) != "Length" or str(feature.StartType) not in ("Profile plane", "Offset")
                 or (previous is None and str(feature.Type) != "Length")):
             return None, "native referenced extent retained"
-        if feature.TypeId not in REVOLVED + LOFTED + PIPED and ((str(feature.Type) == "Length" and feature.Length.Value <= 0)
+        if feature.TypeId not in REVOLVED + LOFTED + PIPED + HELIXED + PRIMITIVES and ((str(feature.Type) == "Length" and feature.Length.Value <= 0)
                 or (str(feature.SideType) == "Two sides" and feature.Length2.Value <= 0)):
             return None, "signed native extent retained"
         if (any("Invalid" in o.State for o in [feature] + [obj for obj, subs in native_inputs(feature)])
                 or feature.Shape.isNull() or not feature.Shape.isValid() or len(feature.Shape.Solids) != 1):
             return None, "native output needs repair"
-        if (feature.TypeId in LOFTED + PIPED and previous is not None
+        if (feature.TypeId in LOFTED + PIPED + HELIXED + PRIMITIVES and previous is not None
                 and abs(feature.Shape.Volume - previous.Shape.Volume) < 1e-9):
             return None, "native no-material section history retained"
         previous = feature
@@ -433,6 +463,10 @@ def extrusion_chain_plan(body, component, revolved=False, lofted=False, piped=Fa
 REVOLVED = ("PartDesign::Revolution", "PartDesign::Groove")
 LOFTED = ("PartDesign::AdditiveLoft", "PartDesign::SubtractiveLoft")
 PIPED = ("PartDesign::AdditivePipe", "PartDesign::SubtractivePipe")
+HELIXED = ("PartDesign::AdditiveHelix", "PartDesign::SubtractiveHelix")
+PRIMITIVE_KINDS = ("Box", "Cylinder", "Sphere", "Cone", "Ellipsoid", "Torus", "Prism", "Wedge")
+PRIMITIVES = tuple("PartDesign::" + prefix + kind for prefix in ("Additive", "Subtractive") for kind in PRIMITIVE_KINDS)
+PART_PRIMITIVES = tuple("Part::" + kind for kind in PRIMITIVE_KINDS)
 
 
 def map_native_chain(document, component, body, features, report, state):
@@ -443,13 +477,14 @@ def map_native_chain(document, component, body, features, report, state):
     labels = {o: o.Label for o in originals}
     shapes = {o: o.Shape.copy() for o in features}
     final_shape = body.Shape.copy()
-    profiles = {o: o.Profile for o in features}
+    profiles = {o: o.Profile for o in features if hasattr(o, "Profile")}
+    axes = {o: o.ReferenceAxis for o in features if o.TypeId in HELIXED}
     sections = {o: list(o.Sections) for o in features if o.TypeId in LOFTED + PIPED}
     paths = {o: (o.Spine, o.AuxiliarySpine) for o in features if o.TypeId in PIPED}
     names = list(component.ModelHistory)
     for alias in list(Model.history(component)):
         source = getattr(alias, "LegacySketchSource", getattr(alias, "LegacyExtrudeSource",
-                         getattr(alias, "LegacyRevolveSource", getattr(alias, "LegacyLoftSource", getattr(alias, "LegacyPipeSource", None)))))
+                         getattr(alias, "LegacyRevolveSource", getattr(alias, "LegacyLoftSource", getattr(alias, "LegacyPipeSource", getattr(alias, "LegacyHelixSource", getattr(alias, "LegacyPrimitiveSource", None)))))))
         if source in originals:
             # Preserve earlier-file alias identities/references while
             # History now presents the original independent sketch.
@@ -466,19 +501,22 @@ def map_native_chain(document, component, body, features, report, state):
         obj.Label = labels[obj]
     chain, previous = [], None
     for feature in features:
-        feature.Profile = profiles[feature]
+        if feature in profiles:
+            feature.Profile = profiles[feature]
+        if feature in axes:
+            feature.ReferenceAxis = axes[feature]
         if feature in sections:
             feature.Sections = sections[feature]
         if feature in paths:
             feature.Spine, feature.AuxiliarySpine = paths[feature]
         feature.BaseFeature = previous
-        kind = "Pipe" if feature.TypeId in PIPED else "Loft" if feature.TypeId in LOFTED else "Revolve" if feature.TypeId in REVOLVED else "Extrude"
+        kind = "Primitive" if feature.TypeId in PRIMITIVES else "Helix" if feature.TypeId in HELIXED else "Pipe" if feature.TypeId in PIPED else "Loft" if feature.TypeId in LOFTED else "Revolve" if feature.TypeId in REVOLVED else "Extrude"
         mode = "Subtract" if feature.TypeId in ("PartDesign::Pocket", "PartDesign::Groove") else "Add" if previous else "New Body"
-        if kind in ("Loft", "Pipe") and str(feature.Operation) == "Subtraction":
+        if kind in ("Loft", "Pipe", "Helix", "Primitive") and str(feature.Operation) == "Subtraction":
             mode = "Subtract"
         Model._property(feature, "String", "OperationKind", kind, True)
         Model._property(feature, "String", kind + "Mode", mode, True)
-        migration = {"Pipe": "Native pipe chain", "Loft": "Native loft chain", "Revolve": "Native revolve chain", "Extrude": "Native extrusion chain"}[kind]
+        migration = {"Primitive": "Native primitive chain", "Helix": "Native helix chain", "Pipe": "Native pipe chain", "Loft": "Native loft chain", "Revolve": "Native revolve chain", "Extrude": "Native extrusion chain"}[kind]
         Model._property(feature, "String", "LegacyMigration", migration, True)
         Model._property(feature, "LinkList", "ConsumedResults", [previous] if previous else [], True)
         Model._property(feature, "String", "PreviousVisibility",
@@ -716,6 +754,53 @@ def migrate_pipes(document, report, readiness=None):
             else:
                 report.append(source.Label + ": native Part Pipe and available sheet/curve/solid output retained; invalid or unverified output needs repair/recompute.")
     Model._property(meta, "Integer", "LegacyPipeVersion", 1, True)
+
+
+def migrate_helixes(document, report, readiness=None):
+    migrate_native_family(document, report, "Helix", HELIXED, ("Part::Helix",), readiness)
+
+
+def migrate_primitives(document, report, readiness=None):
+    migrate_native_family(document, report, "Primitive", PRIMITIVES, PART_PRIMITIVES, readiness)
+
+
+def migrate_native_family(document, report, family, types, standalone, readiness=None):
+    """Bounded adapters share publishing/retention, not native parameter laws."""
+    import ComponentModel as Model
+    meta = Model.metadata(document)
+    version = "Legacy" + family + "Version"
+    if getattr(meta, version, 0) >= 1:
+        return
+    for component in Model.definitions(document):
+        for body in [o for o in Model.history(component) if o.TypeId == "PartDesign::Body"
+                     and not getattr(o, "Producer", None)]:
+            sources = [o for o in body.Group if o.TypeId in types]
+            if not sources:
+                continue
+            features, reason = extrusion_chain_plan(body, component, **{"helixed" if family == "Helix" else "primitive": True})
+            if readiness is not None and not readiness.get(body, False):
+                features, reason = None, "source cache is unverified; native output retained for repair/recompute"
+            if features is not None:
+                map_native_chain(document, component, body, features, report, "Mapped native " + family.lower() + " chain")
+                continue
+            for source in sources:
+                retain_native_operation(document, component, body, source, family, family.lower())
+                report.append(source.Label + ": original native parameters, references, target and available output retained; History opens its native editor; " + reason + ".")
+        for source in list(Model.history(component)):
+            state = "Legacy" + family + "State"
+            if source.TypeId not in standalone or getattr(source, state, ""):
+                continue
+            Model._property(source, "String", state, "Retained native standalone " + family.lower(), True)
+            if ((readiness is None or readiness.get(source, False))
+                    and "Invalid" not in source.State and not source.Shape.isNull()
+                    and source.Shape.isValid() and len(source.Shape.Solids) == 1):
+                # Native Part compounds (including external Links to wrappers)
+                # include both a producer and a separate Shape carrier. Keep
+                # this original native output directly to avoid double geometry.
+                if source.Name not in component.ResultObjects:
+                    component.ResultObjects = list(component.ResultObjects) + [source.Name]
+            report.append(source.Label + ": standalone native " + family + " settings/editor and available output retained; unverified or invalid geometry requires repair/recompute.")
+    Model._property(meta, "Integer", version, 1, True)
 
 
 def recovery_shapes(document):
@@ -1020,7 +1105,7 @@ def convert_structure(document, extra_targets=(), visiting=None):
         parents = {o: Model.owner(o) for o in originals}
         readiness = {o: not any(flag in ("Invalid", "Touched")
                                for dep in [o] + Model.geometry_dependencies(o) for flag in dep.State)
-                     for o in originals if o.TypeId in ("PartDesign::Body", "Part::Extrusion", "Part::Revolution", "Part::Loft", "Part::Sweep")}
+                     for o in originals if o.TypeId in ("PartDesign::Body", "Part::Extrusion", "Part::Revolution", "Part::Loft", "Part::Sweep", "Part::Helix") + PART_PRIMITIVES}
         local_frames = {o: App.Placement(o.Placement) for o in parts}
         labels = {o: o.Label for o in originals}
         old_filename = document.FileName
@@ -1218,6 +1303,8 @@ def convert_structure(document, extra_targets=(), visiting=None):
             migrate_revolutions(document, report, readiness)
             migrate_lofts(document, report, readiness)
             migrate_pipes(document, report, readiness)
+            migrate_helixes(document, report, readiness)
+            migrate_primitives(document, report, readiness)
             migrate_datum_frames(document, report)
             migrate_sketch_inputs(document, report)
             meta.ConversionReport = report + ["Models and linked Part Tree instances converted; native features retained.",

@@ -69,7 +69,15 @@
   native source-mode checks pass; UI-only DOCX rendered/inspected. WORK_STATE owns
   exact hashes, diagnostics, cleanup/publication and deferred installed/whole-file
   acceptance. Owner packaging remains batched with integration.
-- [ ] 10. Helix and primitive adapters, separated into bounded feature tasks.
+- [x] 10. Bounded Helix and eight-native-primitive adapters: qualified chains retain
+  authored parameter laws/axes/dimensions/placements, original feature/final Body
+  identities and explicit targets/results. Shared modes preserve native types;
+  converted primitive shape changes require separate operations. Attached/unsupported/
+  stale histories retain native editors; standalone primitives keep original outputs
+  directly to avoid duplicated native external-compound geometry. Separate family
+  versions upgrade prior files. Final 178 native source-mode checks pass; UI-only
+  DOCX rendered/inspected. WORK_STATE owns hashes, exact evidence, corrected external
+  regression, cleanup/publication and deferred installed/whole-file acceptance.
 - [ ] 11. Dress-up, pattern/transformation and Boolean adapters, as separate tasks.
 - [ ] 12. Whole-file mixed-history, external/shared consumer and recovery acceptance.
 
@@ -77,7 +85,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to nine have source/native
+for unrelated feature implementation. Tasks one to ten have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).
