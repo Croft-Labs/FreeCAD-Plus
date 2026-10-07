@@ -51,7 +51,15 @@
   Final 103 native source-mode checks pass; UI-only DOCX rendered/inspected.
   WORK_STATE owns counts, hashes, cleanup and publication; owner packaging and
   broader frame/mixed-history qualification remain batched integration gates.
-- [ ] 8. Loft sections and additive/subtractive targets.
+- [x] 8. Loft sections and additive/subtractive targets: qualified ordered native
+  sections and mixed prior-family chains retain original identities, geometry,
+  explicit results and targets. Shared converted Loft edits preserve native type
+  through persisted Boolean presets; closed/placed/vertex sections and cold restore
+  pass. Native whole-sketch edge semantics, Common/no-op/attached histories and
+  standalone Part Loft settings retain original engines/editors and output.
+  Final 130 native source-mode checks pass; UI-only DOCX rendered/inspected.
+  WORK_STATE owns hashes, exact evidence/limitations, cleanup and publication;
+  owner packaging and broader frame/whole-file acceptance remain integration gates.
 - [ ] 9. Pipe profiles, paths and orientation.
 - [ ] 10. Helix and primitive adapters, separated into bounded feature tasks.
 - [ ] 11. Dress-up, pattern/transformation and Boolean adapters, as separate tasks.
@@ -61,7 +69,7 @@ Every later task must preserve mapped/native editable features first, then recov
 available final evaluated output as explicitly reported dumb body/sheet/curve/point
 when necessary. Validate cached freshness, geometry and placement; report loss of
 parametrics and unavailable output. This is conversion scope, not authorization
-for unrelated feature implementation. Tasks one to seven have source/native
+for unrelated feature implementation. Tasks one to eight have source/native
 milestones; later tasks remain separate.
 Batch installed/build delivery with later integration. API/fixtures:
 [LegacyConversionPlan](../tests/LegacyConversionPlan.md).

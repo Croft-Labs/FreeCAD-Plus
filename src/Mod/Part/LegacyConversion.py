@@ -189,12 +189,14 @@ def upgrade_datum_frames(document):
             getattr(meta, "LegacyFrameVersion", 0) >= 1
             and getattr(meta, "LegacySketchVersion", 0) >= 1
             and getattr(meta, "LegacyExtrudeVersion", 0) >= 1
-            and getattr(meta, "LegacyRevolveVersion", 0) >= 1):
+            and getattr(meta, "LegacyRevolveVersion", 0) >= 1
+            and getattr(meta, "LegacyLoftVersion", 0) >= 1):
         return document
     with Model.transaction(document, "Expose retained legacy inputs"):
         report = list(meta.ConversionReport)
         migrate_extrusions(document, report)
         migrate_revolutions(document, report)
+        migrate_lofts(document, report)
         migrate_datum_frames(document, report)
         migrate_sketch_inputs(document, report)
         meta.ConversionReport = report
@@ -302,16 +304,22 @@ def migrate_body_histories(document, report, readiness):
             report.append(body.Label + ": Sketch and Pad precede the original Body result in component History; editable native identities retained.")
 
 
-def extrusion_chain_plan(body, component, revolved=False):
+def native_sections(feature):
+    """Keep native section order and subelement spelling, without UI translation."""
+    return [feature.Profile] + (list(feature.Sections) if feature.TypeId in LOFTED else [])
+
+
+def extrusion_chain_plan(body, component, revolved=False, lofted=False):
     """Qualify reparenting without rewriting native extent or attachment semantics."""
     import ComponentModel as Model
     if not body.Placement.isSame(App.Placement(), 1e-9) or body.ExpressionEngine:
         return None, "native Body frame/expressions retained"
-    families = ("PartDesign::Pad", "PartDesign::Pocket") + (REVOLVED if revolved else ())
+    families = (("PartDesign::Pad", "PartDesign::Pocket")
+                + (REVOLVED if revolved or lofted else ()) + (LOFTED if lofted else ()))
     features = [o for o in body.Group if o.TypeId in families]
     if not features or body.Tip != features[-1]:
         return None, "mixed or inactive native feature history retained"
-    sketches = {o.Profile[0] for o in features}
+    sketches = {obj for feature in features for obj, subs in native_sections(feature)}
     if any(o is None or not o.isDerivedFrom("Sketcher::SketchObject") for o in sketches):
         return None, "non-sketch profile retained"
     if set(body.Group) != set(features) | {o for o in sketches if Model.owner(o) == body}:
@@ -326,9 +334,24 @@ def extrusion_chain_plan(body, component, revolved=False):
     previous = None
     for feature in features:
         expected = "Subtraction" if feature.TypeId in ("PartDesign::Pocket", "PartDesign::Groove") else "Union"
+        if feature.TypeId in LOFTED:
+            expected = str(feature.Operation)
+            sections = native_sections(feature)
+            keys = [(obj.Name, tuple(subs)) for obj, subs in sections]
+            if (expected not in ("Union", "Subtraction") or len(sections) < 2
+                    or (feature.Closed and len(sections) < 3) or len(set(keys)) != len(keys)
+                    or not -1 <= feature.FuzzyTolerance <= 1):
+                return None, "native Loft section/Boolean/tolerance semantics retained"
+            for index, (obj, subs) in enumerate(sections):
+                # Legacy Part2D edge references consume the ENTIRE sketch in
+                # native Loft. Shared selected-curve inputs have another contract.
+                if any(subs) and not (len(subs) == 1 and subs[0].startswith("Vertex")
+                                      and index in (0, len(sections) - 1) and not feature.Closed):
+                    return None, "native whole-sketch subelement semantics retained"
         if (feature.BaseFeature != previous or (previous is None and expected != "Union")
-                or str(feature.Operation) != expected or feature.Profile[1]
-                or any(p.startswith(("Placement", "Profile", "BaseFeature")) for p, _ in feature.ExpressionEngine)):
+                or str(feature.Operation) != expected
+                or (feature.TypeId not in LOFTED and feature.Profile[1])
+                or any(p.startswith(("Placement", "Profile", "Sections", "BaseFeature")) for p, _ in feature.ExpressionEngine)):
             return None, "native target/profile/axis semantics retained"
         if feature.TypeId in REVOLVED:
             axis = feature.ReferenceAxis
@@ -344,25 +367,29 @@ def extrusion_chain_plan(body, component, revolved=False):
                     or (str(feature.Type) == "Angle" and not 0 < feature.Angle.Value <= 360)
                     or (str(feature.SideType) == "Two sides" and not 0 < feature.Angle2.Value <= 360)):
                 return None, "native referenced/signed angular extent retained"
-        elif feature.UseCustomVector or (feature.ReferenceAxis and feature.ReferenceAxis[0] is not None):
+        elif feature.TypeId not in LOFTED and (feature.UseCustomVector or (feature.ReferenceAxis and feature.ReferenceAxis[0] is not None)):
             return None, "native target/profile/axis semantics retained"
         # Complex linked start/limit definitions stay on the native engine and
         # editor until their complete reference mapping is qualified.
-        if feature.TypeId not in REVOLVED and (str(feature.Type) not in ("Length", "ThroughAll", "UpToFirst", "UpToLast")
+        if feature.TypeId not in REVOLVED + LOFTED and (str(feature.Type) not in ("Length", "ThroughAll", "UpToFirst", "UpToLast")
                 or str(feature.Type2) != "Length" or str(feature.StartType) not in ("Profile plane", "Offset")
                 or (previous is None and str(feature.Type) != "Length")):
             return None, "native referenced extent retained"
-        if feature.TypeId not in REVOLVED and ((str(feature.Type) == "Length" and feature.Length.Value <= 0)
+        if feature.TypeId not in REVOLVED + LOFTED and ((str(feature.Type) == "Length" and feature.Length.Value <= 0)
                 or (str(feature.SideType) == "Two sides" and feature.Length2.Value <= 0)):
             return None, "signed native extent retained"
-        if (any("Invalid" in o.State for o in (feature, feature.Profile[0]))
+        if (any("Invalid" in o.State for o in [feature] + [obj for obj, subs in native_sections(feature)])
                 or feature.Shape.isNull() or not feature.Shape.isValid() or len(feature.Shape.Solids) != 1):
             return None, "native output needs repair"
+        if (feature.TypeId in LOFTED and previous is not None
+                and abs(feature.Shape.Volume - previous.Shape.Volume) < 1e-9):
+            return None, "native no-material Loft history retained"
         previous = feature
     return features, ""
 
 
 REVOLVED = ("PartDesign::Revolution", "PartDesign::Groove")
+LOFTED = ("PartDesign::AdditiveLoft", "PartDesign::SubtractiveLoft")
 
 
 def map_native_chain(document, component, body, features, report, state):
@@ -374,9 +401,11 @@ def map_native_chain(document, component, body, features, report, state):
     shapes = {o: o.Shape.copy() for o in features}
     final_shape = body.Shape.copy()
     profiles = {o: o.Profile for o in features}
+    sections = {o: list(o.Sections) for o in features if o.TypeId in LOFTED}
     names = list(component.ModelHistory)
     for alias in list(Model.history(component)):
-        source = getattr(alias, "LegacySketchSource", getattr(alias, "LegacyExtrudeSource", None))
+        source = getattr(alias, "LegacySketchSource", getattr(alias, "LegacyExtrudeSource",
+                         getattr(alias, "LegacyRevolveSource", getattr(alias, "LegacyLoftSource", None))))
         if source in originals:
             # Preserve earlier-file alias identities/references while
             # History now presents the original independent sketch.
@@ -393,14 +422,18 @@ def map_native_chain(document, component, body, features, report, state):
         obj.Label = labels[obj]
     chain, previous = [], None
     for feature in features:
-        profile = profiles[feature][0]
         feature.Profile = profiles[feature]
+        if feature in sections:
+            feature.Sections = sections[feature]
         feature.BaseFeature = previous
-        kind = "Revolve" if feature.TypeId in REVOLVED else "Extrude"
+        kind = "Loft" if feature.TypeId in LOFTED else "Revolve" if feature.TypeId in REVOLVED else "Extrude"
         mode = "Subtract" if feature.TypeId in ("PartDesign::Pocket", "PartDesign::Groove") else "Add" if previous else "New Body"
+        if kind == "Loft" and str(feature.Operation) == "Subtraction":
+            mode = "Subtract"
         Model._property(feature, "String", "OperationKind", kind, True)
         Model._property(feature, "String", kind + "Mode", mode, True)
-        Model._property(feature, "String", "LegacyMigration", "Native revolve chain" if kind == "Revolve" else "Native extrusion chain", True)
+        migration = {"Loft": "Native loft chain", "Revolve": "Native revolve chain", "Extrude": "Native extrusion chain"}[kind]
+        Model._property(feature, "String", "LegacyMigration", migration, True)
         Model._property(feature, "LinkList", "ConsumedResults", [previous] if previous else [], True)
         Model._property(feature, "String", "PreviousVisibility",
                         json.dumps({previous.ObjectId: False}) if previous else "{}", True)
@@ -410,8 +443,9 @@ def map_native_chain(document, component, body, features, report, state):
                 or abs(before.Volume - after.Volume) > 1e-8
                 or before.cut(after).Volume > 1e-8 or after.cut(before).Volume > 1e-8):
             raise ValueError("Native feature chain geometry changed; preserve payload through evaluated recovery.")
-        if profile.Name not in chain:
-            chain.append(profile.Name)
+        for profile, subs in native_sections(feature):
+            if profile.Name not in chain:
+                chain.append(profile.Name)
         chain.append(feature.Name)
         if feature != features[-1]:
             previous = Model.publish_result(component, feature)
@@ -457,6 +491,27 @@ def map_native_chain(document, component, body, features, report, state):
     report.append(body.Label + ": native feature chain mapped to component operations with explicit consumed results; original feature and final Body identities retained.")
 
 
+def retain_native_operation(document, component, body, source, family, description):
+    """Expose one original native editor through a hidden complete-frame link."""
+    import ComponentModel as Model
+    if not _own_identity(source):
+        Model._identity(source, "Internal")
+    alias = document.addObject("App::Link", "Legacy" + family)
+    Model.register_object(component, alias, "Operation")
+    Model._property(alias, "LinkGlobal", "Legacy" + family + "Source", source, True)
+    Model._property(alias, "LinkGlobal", "Legacy" + family + "Target", source.BaseFeature, True)
+    Model._property(alias, "String", "Legacy" + family + "State", "Retained native " + description, True)
+    alias.setLink(source)
+    alias.LinkTransform = False
+    alias.setExpression("LinkPlacement", body.Name + ".Placement * " + source.Name + ".Placement")
+    alias.Label = source.Label
+    alias.Visibility = False
+    ordered = [n for n in component.ModelHistory if n != alias.Name]
+    ordered.insert(ordered.index(body.Name), alias.Name)
+    component.ModelHistory = ordered
+    return alias
+
+
 def migrate_extrusions(document, report, readiness=None):
     """Map qualified native chains; expose other extents through native editors."""
     import json
@@ -477,21 +532,7 @@ def migrate_extrusions(document, report, readiness=None):
             for source in body.Group:
                 if source.TypeId not in ("PartDesign::Pad", "PartDesign::Pocket"):
                     continue
-                if not _own_identity(source):
-                    Model._identity(source, "Internal")
-                alias = document.addObject("App::Link", "LegacyExtrude")
-                Model.register_object(component, alias, "Operation")
-                Model._property(alias, "LinkGlobal", "LegacyExtrudeSource", source, True)
-                Model._property(alias, "LinkGlobal", "LegacyExtrudeTarget", source.BaseFeature, True)
-                Model._property(alias, "String", "LegacyExtrudeState", "Retained native extrusion", True)
-                alias.setLink(source)
-                alias.LinkTransform = False
-                alias.setExpression("LinkPlacement", body.Name + ".Placement * " + source.Name + ".Placement")
-                alias.Label = source.Label
-                alias.Visibility = False
-                ordered = [n for n in component.ModelHistory if n != alias.Name]
-                ordered.insert(ordered.index(body.Name), alias.Name)
-                component.ModelHistory = ordered
+                retain_native_operation(document, component, body, source, "Extrude", "extrusion")
                 report.append(source.Label + ": native parameters, target and available output retained; History opens its native editor; " + reason + ".")
         for source in list(Model.history(component)):
             if source.TypeId != "Part::Extrusion" or getattr(source, "OperationKind", ""):
@@ -534,21 +575,7 @@ def migrate_revolutions(document, report, readiness=None):
                 map_native_chain(document, component, body, features, report, "Mapped native revolve chain")
                 continue
             for source in sources:
-                if not _own_identity(source):
-                    Model._identity(source, "Internal")
-                alias = document.addObject("App::Link", "LegacyRevolve")
-                Model.register_object(component, alias, "Operation")
-                Model._property(alias, "LinkGlobal", "LegacyRevolveSource", source, True)
-                Model._property(alias, "LinkGlobal", "LegacyRevolveTarget", source.BaseFeature, True)
-                Model._property(alias, "String", "LegacyRevolveState", "Retained native revolution", True)
-                alias.setLink(source)
-                alias.LinkTransform = False
-                alias.setExpression("LinkPlacement", body.Name + ".Placement * " + source.Name + ".Placement")
-                alias.Label = source.Label
-                alias.Visibility = False
-                ordered = [n for n in component.ModelHistory if n != alias.Name]
-                ordered.insert(ordered.index(body.Name), alias.Name)
-                component.ModelHistory = ordered
+                retain_native_operation(document, component, body, source, "Revolve", "revolution")
                 report.append(source.Label + ": native axis, angular parameters, target and output retained; History opens its native editor; " + reason + ".")
         for source in list(Model.history(component)):
             if source.TypeId != "Part::Revolution" or getattr(source, "LegacyRevolveState", ""):
@@ -566,6 +593,45 @@ def migrate_revolutions(document, report, readiness=None):
             else:
                 report.append(source.Label + ": native Part Revolution and available sheet/curve/solid output retained; invalid or unverified output requires repair/recompute.")
     Model._property(meta, "Integer", "LegacyRevolveVersion", 1, True)
+
+
+def migrate_lofts(document, report, readiness=None):
+    """Map ordered native sections/targets without changing original features."""
+    import ComponentModel as Model
+    meta = Model.metadata(document)
+    if getattr(meta, "LegacyLoftVersion", 0) >= 1:
+        return
+    for component in Model.definitions(document):
+        bodies = [o for o in Model.history(component) if o.TypeId == "PartDesign::Body"
+                  and not getattr(o, "Producer", None)]
+        for body in bodies:
+            sources = [o for o in body.Group if o.TypeId in LOFTED]
+            if not sources:
+                continue
+            features, reason = extrusion_chain_plan(body, component, lofted=True)
+            if readiness is not None and not readiness.get(body, False):
+                features, reason = None, "source cache is unverified; native output retained for repair/recompute"
+            if features is not None:
+                map_native_chain(document, component, body, features, report, "Mapped native loft chain")
+                continue
+            for source in sources:
+                retain_native_operation(document, component, body, source, "Loft", "loft")
+                report.append(source.Label + ": native section order/references, Boolean target and output retained; History opens its native editor; " + reason + ".")
+        for source in list(Model.history(component)):
+            if source.TypeId != "Part::Loft" or getattr(source, "LegacyLoftState", ""):
+                continue
+            # Part Loft includes MaxDegree/Linearize/Solid, unlike the shared
+            # PartDesign task. Preserve its native engine/settings/editor.
+            Model._property(source, "String", "LegacyLoftState", "Retained native standalone loft", True)
+            if ((readiness is None or readiness.get(source, False))
+                    and "Invalid" not in source.State and not source.Shape.isNull()
+                    and source.Shape.isValid() and len(source.Shape.Solids) == 1):
+                Model.publish_result(component, source)
+                component.ResultObjects = [n for n in component.ResultObjects if n != source.Name]
+                report.append(source.Label + ": native Part Loft ordered sections, degree/linearization and other settings retained with a published result.")
+            else:
+                report.append(source.Label + ": native Part Loft and available sheet/curve/solid output retained; invalid or unverified output needs repair/recompute.")
+    Model._property(meta, "Integer", "LegacyLoftVersion", 1, True)
 
 
 def recovery_shapes(document):
@@ -870,7 +936,7 @@ def convert_structure(document, extra_targets=(), visiting=None):
         parents = {o: Model.owner(o) for o in originals}
         readiness = {o: not any(flag in ("Invalid", "Touched")
                                for dep in [o] + Model.geometry_dependencies(o) for flag in dep.State)
-                     for o in originals if o.TypeId in ("PartDesign::Body", "Part::Extrusion", "Part::Revolution")}
+                     for o in originals if o.TypeId in ("PartDesign::Body", "Part::Extrusion", "Part::Revolution", "Part::Loft")}
         local_frames = {o: App.Placement(o.Placement) for o in parts}
         labels = {o: o.Label for o in originals}
         old_filename = document.FileName
@@ -1066,6 +1132,7 @@ def convert_structure(document, extra_targets=(), visiting=None):
             migrate_body_histories(document, report, readiness)
             migrate_extrusions(document, report, readiness)
             migrate_revolutions(document, report, readiness)
+            migrate_lofts(document, report, readiness)
             migrate_datum_frames(document, report)
             migrate_sketch_inputs(document, report)
             meta.ConversionReport = report + ["Models and linked Part Tree instances converted; native features retained.",

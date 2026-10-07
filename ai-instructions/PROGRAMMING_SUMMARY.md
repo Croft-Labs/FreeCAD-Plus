@@ -26,6 +26,11 @@ extrusion histories, retaining sketch axes, angular settings and explicit target
 Other references/frames and standalone signed Part Revolutions retain native editors;
 LegacyRevolveVersion upgrades prior converted files. Whole-sketch Revolve previews
 retain native angular frames/construction axes. See tests/LegacyRevolutions.md.
+Task eight preserves ordered native Loft sections and explicit Boolean targets using
+the shared chain publisher and retained-operation editor links. Converted native
+Loft edits retain their feature type/identity through persisted Boolean presets;
+legacy whole-sketch subreferences/attachments and Part Loft settings remain native.
+LegacyLoftVersion upgrades prior files. See tests/LegacyLofts.md.
 Owner DOCX is UI/UX only; algorithms,
 technical contracts and test/build/publication evidence belong in Markdown.
 

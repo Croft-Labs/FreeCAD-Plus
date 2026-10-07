@@ -1119,6 +1119,10 @@ def set_suppressed(operation, suppressed):
 
 
 def history_detail(obj):
+    if getattr(obj, "LegacyLoftState", ""):
+        if getattr(obj, "LegacyLoftSource", obj) is None:
+            return "Retained native loft is missing. Repair its source before editing."
+        return "Retained native loft. Edit the original ordered sections, references and target without replacing their identities."
     if getattr(obj, "LegacyRevolveState", ""):
         if getattr(obj, "LegacyRevolveSource", obj) is None:
             return "Retained native revolution is missing. Repair its source before editing."
@@ -1151,6 +1155,12 @@ def history_state(obj):
     """Keep authored suppression distinct from unavailable inputs and failures."""
     if edit_suppressed(obj):
         return "Suppressed during edit"
+    if (getattr(obj, "LegacyLoftState", "")
+            and "LegacyLoftSource" in obj.PropertiesList
+            and (getattr(obj, "LegacyLoftSource", None) is None
+                 or obj.LinkedObject != obj.LegacyLoftSource
+                 or "Invalid" in obj.LegacyLoftSource.State)):
+        return "Needs repair"
     if (getattr(obj, "LegacyRevolveState", "")
             and "LegacyRevolveSource" in obj.PropertiesList
             and (getattr(obj, "LegacyRevolveSource", None) is None

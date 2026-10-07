@@ -1547,10 +1547,11 @@ class Navigator(QtWidgets.QDockWidget):
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing history."))
         if (getattr(obj, "LegacyDatumState", "") or getattr(obj, "LegacySketchState", "")
-                or getattr(obj, "LegacyExtrudeState", "") or getattr(obj, "LegacyRevolveState", "")):
+                or getattr(obj, "LegacyExtrudeState", "") or getattr(obj, "LegacyRevolveState", "")
+                or getattr(obj, "LegacyLoftState", "")):
             component = model().owner(obj)
-            source = getattr(obj, "LegacyRevolveSource", getattr(obj, "LegacyExtrudeSource",
-                             getattr(obj, "LegacySketchSource", getattr(obj, "LegacyDatumSource", obj))))
+            source = getattr(obj, "LegacyLoftSource", getattr(obj, "LegacyRevolveSource", getattr(obj, "LegacyExtrudeSource",
+                             getattr(obj, "LegacySketchSource", getattr(obj, "LegacyDatumSource", obj)))))
             if source is None:
                 raise ValueError(tr("Repair the retained native input before editing it."))
             context = TaskContext(component)

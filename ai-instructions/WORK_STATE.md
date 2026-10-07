@@ -1,5 +1,91 @@
 # FreeCAD Plus: Build validation handoff
 
+## Legacy migration task eight — ordered Loft sections and Boolean targets
+
+Task eight is complete in source and native source-mode acceptance. Native Loft
+chains with independent sketches reuse map_native_chain, including qualified mixed
+Pad/Pocket/Revolution/Groove inputs. Original names/types/native IDs/UUIDs/labels,
+ordered Profile/Sections and exact subreferences, constraints/formulas, placements
+and direct consumers remain. Every section input precedes its operation in History.
+Intermediate published results give explicit BaseFeature/ConsumedResults targets;
+the original final Body retains its Origin/view provider and native Tip bridge.
+Every mapped feature/final Body passes volume and bidirectional solid differences.
+
+Smooth/Ruled, Closed, Refine, supported fuzzy tolerance, placed sections and native
+vertex endpoints remain. Shared Loft reorder/preview/parameter/target edits preserve
+original converted feature/type/ID. Native Loft's common Boolean maker supports
+Add/Subtract/New Body; converted edits persist expanded Union/Subtraction/Common
+presets before choosing the requested mode. Native custom-enumeration cold restore
+and both original additive/subtractive types pass. New Plus feature replacement
+behavior is retained. Formulas use properties; self/downstream targets and invalid/
+ineffective edits fail without changing saved parameters. New Body clears consumption.
+
+Body-attached/dependent/non-sketch/reference-formula/unsupported/mixed-family cases,
+Common and native no-material histories retain native owners, parameters and output.
+Legacy Part2D edge picks consume the whole sketch in the native engine; these remain
+native rather than being rewritten as shared subset helpers. Shared section sources
+are not duplicated. retain_native_operation now serves Extrude/Revolve/Loft with
+hidden distinct-UUID complete-frame History links and original native editors.
+LegacyLoftTarget is a conversion-time BaseFeature snapshot; original targets stay
+authoritative. Missing/mismatched/invalid sources show Needs repair.
+
+Standalone native Part Loft preserves ordered Sections, Solid, MaxDegree, Linearize,
+Ruled/Closed and its native editor. Verified solids gain a published result; sheet/
+curve/invalid/unverified output remains retained and reported. LegacyLoftVersion=1
+upgrades recognized older converted files after manifest/identity validation, keeping
+section/sketch and previous access-link UUIDs/labels. Promoted earlier links become
+hidden Internal references. Ordinary new component files are excluded. Original
+FCStd bytes remain protected; shared explicit evaluated dumb body/sheet/curve/point
+recovery remains the last structural fallback and reports stale/unavailable output.
+This is bounded physical mapping/native retention, not universal frame promotion.
+Technical contract/procedure: tests/LegacyLofts.md.
+
+Final native GUI batch: 130 checks in twelve suites — Loft migration 18, shared Loft
+9, revolution migration 15, extrusion migration 14, shared Revolve 7, inventory 8,
+structure 12, Body history 9, datum 8, sketch 8, edit rollback 10, curve profile 12.
+All unittest errors/failures/skips zero; native exit 0. Native 26.3.0devR49296,
+revision 8746c1076071a7b9decff07577b6a163a0f76ee9. All 30 recorded loaded module/test
+paths and hashes match final source. Actual Qt History double-clicks cover retained
+native Loft editor close and shared ordered sections, Preview/Accept/Cancel and
+reopening after Undo/Redo. Geometry/sharing, exact section references, modes/targets,
+closed/placed/vertex sections, native presets/cold persistence, expressions/refusal,
+meaningful invalid-edit rollback, original bytes, cadprt reopen/further edits,
+previous-file upgrades, no-op shared inputs, stale source retention, standalone
+solid/sheet settings and prior external/shared/dumb recovery regressions pass.
+
+Earlier native preset restrictions required a persisted custom enumeration; one
+new fixture needed component section registration. Those failed runs are not
+acceptance. No process was stopped; all isolated runs exited normally. No owner
+process, duplicate worker, new native build or payload/shortcut change occurred.
+Stderr includes old installed Navigator callbacks under payload Ext, stylesheet/
+hasher and recursive native recompute warnings during retained editing, plus deliberate
+missing-source fixture diagnostics. This is not installed or warning-free acceptance.
+Owner payload/shortcut remain the accepted palette-dismissal delivery. Packaging,
+warning-free installed editing, arbitrary frame/non-sketch/other-family promotion,
+external/cross-workbench whole-file qualification and physical feedback remain
+integration gates. Task nine has not started.
+
+Five changed Python AST checks and git diff --check pass. UI-only owner DOCX final
+render has 90 pages: previous 89 pages pixel-identical; new page 90 visually inspected.
+Other ZIP parts and native numbering unchanged; DOCX SHA256
+71559565f5c6347ee78468ca53aa46a3bec3eeaef24eb56da88fac1fcaa66d2e.
+The actual shared legacy Loft task capture was inspected in its narrow isolated
+profile; this is not owner-theme/layout qualification. Technical/backend/evidence
+information stays in Markdown. Cleanup removed 257 raw task files and 300 generated bytecode files; the task
+validation directory is absent. Accepted 15,121-file build inventory, useful
+builds/dependencies, owner settings and source/documents remain. Publication is
+the closing step: commit/push/verify origin/main without force.
+Exact next task: nine, Pipe profiles, paths and orientation, only after its separate
+owner prompt. Native owner-build delivery remains batched.
+
+Final changed source/test SHA256:
+LegacyConversion: 18c7f01680dfbd0b0cef8996972f7397c67679748c72b8a2b7b32f392ff08dd8
+ComponentNativeOperation: 469edf94f787772cb48aafa595b68a49cdc27fcd0aa1224cdb7da0edb4452d6b
+ComponentModel: 3c652e04f918ddbe50a3b74c21961cf75e318faa6c0e2936eb8bf1d3d25eb95c
+freecad.gui.ComponentNavigator: 6392a99744fd8c7829d49b62e132af7bc37b928bcdb80fdbdba55063b73cf24c
+TestLegacyLofts: 53b6663cb78ac659f776280ce800d2a6174a36c477c9a3b3b1c41f4f4afdce9a
+
+
 ## Legacy migration task seven — Revolution/Groove axes, angles and targets
 
 Task seven is complete in source and native source-mode acceptance. The extracted

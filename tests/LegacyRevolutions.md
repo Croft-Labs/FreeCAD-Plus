@@ -27,6 +27,8 @@ Reversed, one/two/symmetric angles, signed start offsets and Groove ThroughAll.
 Linked start/end definitions and Body/datum/external axis frames stay native.
 Other feature families remain outside this task. Pre-edit cache readiness prevents
 promoting stale/invalid source output even if structural edits trigger recompute.
+Task eight extends this same publisher/access-link contract to qualified mixed Loft
+chains; see [LegacyLofts](LegacyLofts.md). Other families remain retained.
 
 Shared Revolve reads these original parameters and edits supported angles, axes,
 direction and compatible explicit targets in place. Formula overwrites and
