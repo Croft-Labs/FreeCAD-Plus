@@ -11,10 +11,12 @@ without an extra Part001. Newly opened older .cadprt files/dependencies now migr
 after identity validation, without writing the originals; bootstrap undo cannot
 remove the file root. File activation refreshes domestic references child-first.
 Legacy conversion/recovery now creates the file root in the same undo transaction
-(7.8.13d2b2b). Ordinary definition deletion is next; owner delivery is batched.
+(7.8.13d2b2b). Definition deletion now has a guarded transactional backend;
+Models/native Delete and edit-context integration are next; owner delivery is batched.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
-ordinary definition deletion remains the next implementation task (7.8.13d2c).
+definition deletion UI integration remains next (7.8.13d2c2). The shared service
+is ComponentModel.delete_definition; TestComponentDefinitionDeletion covers it.
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.

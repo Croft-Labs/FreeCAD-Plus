@@ -1,5 +1,37 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 component definition deletion service
+
+7.8.13d2c1 is implemented and validated in source. ComponentModel now provides
+read-only definition_deletion_plan and transactional delete_definition. The plan
+follows native ownership (Group, Origin and origin features), never linked model
+or geometry input dependencies. It refuses file/metadata roots, nested definition
+ownership and outside consumers, including placed occurrences, native geometry
+references, expressions and loaded external links. Closed-file dependents are not
+covered by an in-memory graph; UI integration must communicate the scope honestly.
+Deletion removes only the reviewed definition/payload, retaining linked child
+models. Pending user transactions are refused. Undo/Redo restores identities and
+native Body ownership; the empty file saves and reopens successfully.
+
+Validation: 19/19 checks pass on the existing verified 2026-10-09 hierarchy-relocation
+native payload with source overlays: 7 deletion-service and 12 file-container
+checks. Failure injection after deletion verifies complete rollback. The first
+run's fixed native-origin object count was replaced by an exact owned-object set
+check. The initial adjacent regression run loaded the older installed Navigator;
+the final harness loads the source Navigator and all checks pass. A native
+PropertyXLink unsaved-document diagnostic remains in the negative fixtures.
+Changed Python syntax and git diff --check pass. No native rebuild, owner payload,
+shortcut or release. This is backend-only; owner UI DOCX remains unchanged because
+no interface behavior is exposed yet. Contract, roadmap, summary and test guide
+updated. Task-generated validation output is removed after recording results.
+Commit/push is a source milestone, separate from grouped owner delivery (13f).
+
+Next task: 7.8.13d2c2, wire Models/native Delete to this service, handle active and
+unused edit contexts and isolated tabs, validate selection and Undo/Redo, and
+update/render the owner UI DOCX. Keep file-row deletion protected. The native
+blanket definition-deletion refusal is intentionally still present until that
+adapter exists. Add Component workflow remains deferred.
+
 ## October 9 legacy conversion file-root integration
 
 7.8.13d2b2b is complete in source. Structural legacy conversion and evaluated

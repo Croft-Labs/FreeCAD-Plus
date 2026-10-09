@@ -276,6 +276,21 @@ Cancel leaves the document unchanged.
 - Both actions are transactional and undoable. Shape equality alone does not
   establish reference preservation or shared-operation correctness.
 
+## Definition deletion
+
+`definition_deletion_plan` reviews the selected definition and its native owned
+Group, Origin and origin features. It never follows occurrence targets or geometry
+inputs. Separate nested definitions are refused rather than recursively erased.
+File containers and the metadata root remain protected. Any outside consumer,
+including an occurrence, geometry dependency, expression or loaded external link,
+blocks deletion until the user removes or repairs it. Closed dependent files cannot
+be inspected by this in-memory guard; this service is not a global reference index.
+`delete_definition` removes the reviewed objects in one transaction and validates
+the surviving document. Undo restores the same identities and native ownership;
+Redo and save/reopen support an empty file. Linked child definitions are retained.
+Pending user edits are refused. This service is backend-only until roadmap
+7.8.13d2c2 connects Models/native Delete and active-edit/tab cleanup.
+
 ## Persistence and conversion
 
 The October 9 file-root revision uses `ComponentModel.ensure_file_container` as an

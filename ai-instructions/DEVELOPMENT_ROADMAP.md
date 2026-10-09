@@ -3462,9 +3462,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
             Native features, source files and external save order are preserved.
             Failure injection checks complete rollback; UI requirements updated
             and rendered. Source-overlay validation recorded in WORK_STATE.
-      - [   ] 7.8.13d2c Next: ordinary domestic definition deletion, including
-        initial Part001, with occurrence/reference guards, undo/redo and native/UI
-        acceptance. Keep the file container protected and permit an empty file.
+      - [   ] 7.8.13d2c Ordinary domestic definition deletion, including initial
+        Part001. Keep the file container protected and permit an empty file.
+        - [ X ] 7.8.13d2c1 Shared deletion service: review owned contents, refuse
+          occurrences/outside consumers, preserve linked child definitions and
+          remove atomically with Undo/Redo and save/reopen acceptance.
+        - [   ] 7.8.13d2c2 Next: connect Models/native Delete to the shared service,
+          handle active/unused edit contexts and isolated tabs, and validate UI
+          selection, Undo/Redo and file-row protection. Update owner UI DOCX.
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
@@ -3482,7 +3487,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13d2c ordinary component definition deletion.
+      Next implementation: 13d2c2 definition deletion UI and edit-context integration.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

@@ -395,6 +395,55 @@ def instance_counts(root):
     return counts
 
 
+def definition_deletion_plan(component):
+    """Review owned objects only; linked definitions and external consumers survive."""
+    if not is_component(component):
+        raise ValueError("Select a component definition.")
+    doc = component.Document
+    if is_file_container(component) or metadata(doc).RootComponent == component:
+        raise ValueError("The file root cannot be deleted.")
+    owned = set()
+    def collect(obj):
+        if obj in owned:
+            return
+        if obj.Document != doc:
+            raise ValueError("Component ownership crosses a file boundary.")
+        if obj != component and is_component(obj):
+            raise ValueError("Separate nested definitions before deleting this component.")
+        owned.add(obj)
+        # Follow native ownership, never Link targets or feature dependencies.
+        if getattr(obj, "ComponentRole", "") == "Occurrence" or obj.isDerivedFrom("App::Link"):
+            return
+        for child in getattr(obj, "Group", []):
+            collect(child)
+        origin = getattr(obj, "Origin", None)
+        if origin is not None:
+            collect(origin)
+        if obj.isDerivedFrom("App::Origin"):
+            for feature in obj.OriginFeatures:
+                collect(feature)
+    collect(component)
+    consumers = {consumer for obj in owned for consumer in obj.InList if consumer not in owned}
+    if consumers:
+        labels = ", ".join(sorted({obj.Document.Label + ": " + obj.Label for obj in consumers}))
+        raise ValueError("Remove component occurrences and outside references before deleting: " + labels)
+    return [obj for obj in doc.Objects if obj in owned]
+
+
+def delete_definition(component):
+    """Delete an unused, unreferenced definition and its owned payload atomically."""
+    doc = component.Document
+    objects = definition_deletion_plan(component)
+    names = [obj.Name for obj in objects]
+    with transaction(doc, "Delete component definition"):
+        # Delete the container first so native group cleanup cannot strand children.
+        doc.removeObject(component.Name)
+        for name in reversed(names):
+            if doc.getObject(name) is not None:
+                doc.removeObject(name)
+        validate(doc, allow_unresolved=True)
+
+
 def remove_instances(occurrences):
     """Remove only owning links; retain models, geometry and reference identities."""
     occurrences = list(dict.fromkeys(occurrences))
