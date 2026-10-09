@@ -37,9 +37,10 @@ hierarchy/core checks against that build, then cold reopen, full payload invento
 and actual saved-shortcut delivery. Include CadDocument.py in the same batch.
 Keep the existing verified owner payload until those gates pass.
 
-**Publication/cleanup:** changes and explicit verification limits are recorded
-locally. Origin publication and cleanup of the four task validation directories
-remain pending.
+**Publication/cleanup:** source milestone 02d919e5d294b736d82437083a08d6897597aa7f
+was pushed to origin/main and the remote hash verified, with native build/runtime
+gates explicitly pending. The four task validation directories were removed after
+recording their results. Owner/development payloads and shortcut are unchanged.
 
 ## October 9 atomic imported-file recovery batch delivered
 
