@@ -37,9 +37,12 @@ update. The prior grouped-sketch inactivity timeouts remain unconfirmed; this
 batch does not close roadmap 16.6c or exhaustive repeated-session qualification.
 No UI/default changes, releases or upstream publication.
 
-**Publication/cleanup:** implementation and acceptance are recorded locally.
-Origin publication verification and deletion of the six task validation directories
-are the remaining housekeeping steps.
+**Publication/cleanup:** implementation 7cc78638bc28a43576368e0d3fa23aaf8cf06103
+and acceptance c05ac9b81c6a7159398a59820c1b70ad907a666f were pushed to
+origin/main, with remote hashes verified. All six hierarchy-manifest/recovery task
+validation directories were removed after recording results. No validation
+FreeCAD/FreeCADPlus processes remain. Useful owner/development builds and the prior
+owner payload are retained.
 
 ## October 9 failed nested-open rollback
 
