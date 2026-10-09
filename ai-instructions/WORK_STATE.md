@@ -1,27 +1,48 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 9 atomic imported-file recovery batch (in progress)
+## October 9 atomic imported-file recovery batch delivered
 
-Roadmap 7.8.12f preflights every matching definition for one imported-file
-recovery, restores import/placement/reference bindings inside one transaction,
-then refreshes affected components. Single-component recovery reuses the same
-planning and binding helpers. One Undo and failed-refresh rollback cover the
-whole file repair. Missing geometry remains separately repairable; identities
-and placements are retained. This is backend transaction work, with no new
-controls/defaults/schema; the owner UI DOCX remains applicable.
+**Implementation:** source 1a4f4692f9bb4d8132f424e31ee45b58ffd0f586 adds roadmap 7.8.12f.
+Imported-file recovery preflights all matching definitions, restores import,
+placement and evaluated-reference bindings in one owning-document transaction,
+then refreshes affected components. Single-component recovery shares the same
+planning/binding helpers. One Undo reverses the whole repair; a refresh failure
+rolls back all definitions. Missing geometry remains separately repairable.
+This batch also delivers the pending 7.8.12e combined import-identity guard.
+No schema, controls or defaults change; the owner UI DOCX remains applicable.
 
-Two native regressions failed before the fix: one Undo and a later refresh
-failure both left the import/earlier definition repaired. Source-overlay tests
-then passed all 28 hierarchy and 27 core cases. The existing three-case recovery
-suite had one stale menu-caption assertion from before the approved copy workflow;
-the assertion now uses Copy to External File, matching the current interface.
+**Validation:** both new native regressions failed before the fix: one Undo and
+a later refresh failure left earlier repairs applied. Source-overlay acceptance
+then passed all 28 hierarchy plus 27 core cases. One older recovery-suite
+assertion still used the former Save to External File caption; it now checks
+the approved Copy to External File action without changing the application UI.
+Final installed acceptance passes all 58 cases (28 hierarchy, 27 core, three
+file-recovery), plus one fresh-process cold hierarchy reopen and one through
+the actual saved desktop shortcut: 60 installed checks total. No failures,
+errors, skips, source overlays or unexpected GUI diagnostics; all exit zero.
+Loaded module hashes match source. Repair Undo/Redo, full failure rollback,
+identities, placements, reference geometry and save/reopen are covered.
 
-This batch also includes the pending 7.8.12e combined import-identity guard.
-Candidate: test-builds/freecad_plus_2026-10-09_hierarchy_import_repair_payload,
-copied from hierarchy_recovery_payload with only Mod/Part/ComponentModel.py
-updated. Native source remains 40f1698230ccbbac5b4f44fc0ba8124a0ee08c60.
-Installed tests, cold reopen, inventory and shortcut delivery remain in progress.
-Task validation uses hierarchy-atomic-repair-* and hierarchy-import-repair-*.
+**Build/delivery:** compatible Python-only owner payload:
+test-builds/freecad_plus_2026-10-09_hierarchy_import_repair_payload.
+Native source remains 40f1698230ccbbac5b4f44fc0ba8124a0ee08c60. No native or
+launcher recompilation. Complete SHA256 inventory verifies 15,583 files;
+only Mod/Part/ComponentModel.py and release-info.json differ from the verified
+hierarchy_recovery_payload baseline. The regenerated payload-manifest.json
+records separate application/native identities. Launcher SHA256 remains
+05c3a107c9ce1e0e370367a4e84e2ac8afe7a9e8e92cdb7543bc3db9a2547518.
+The existing desktop FreeCADPlus.exe - Shortcut.lnk targets this payload;
+its saved target/working directory and actual launch are verified. The preceding
+owner payload is retained for rollback.
+
+**Limits:** broader native baseline qualification was not repeated for this
+single-module update. The earlier grouped-sketch inactivity timeouts remain
+unconfirmed (16.6c); this is not exhaustive repeated-session qualification.
+No release or upstream publication.
+
+**Publication/cleanup:** implementation and acceptance are recorded locally.
+Origin publication verification and deletion of the six task validation directories
+remain pending.
 
 ## October 9 import-graph identity preflight
 
