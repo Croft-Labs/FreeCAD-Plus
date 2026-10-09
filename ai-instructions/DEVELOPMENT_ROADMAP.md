@@ -3397,6 +3397,17 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   - [   ] 7.8.13c Per-view context display: at least 75 percent transparency outside
     the exact active occurrence and descendants, preserve authored appearance and
     selection distinction, restore normal display when the file is active.
+    - [ X ] 7.8.13c1 Shared visible-item traversal and occurrence-exact display plan.
+      Emits native path, source object and transparency floor (0 or 0.75); preserves
+      descendant scope, hidden representations and repeated-instance identity.
+      Five new planning checks plus nine active-editing regressions pass in the
+      existing native GUI with a source overlay. No appearance mutation/rendering
+      claim; the production visible_paths API now shares this traversal.
+    - [   ] 7.8.13c2 Consume the plan in a per-view renderer that preserves each
+      material's colors and greater transparency, retains picking and occurrence
+      placement, and restores the original view on context change. Existing
+      LinkView.setMaterial overrides diffuse color too, so cannot directly satisfy
+      per-face appearance preservation. Validate separate tabs and repeated instances.
   - [   ] 7.8.13d File container and migration: pinned file icon/name/global origin;
     new ordinary Part001 definition plus initial occurrence, activated automatically;
     removable first part, valid empty files; preserve existing geometry and identities.

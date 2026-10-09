@@ -193,8 +193,8 @@ class TaskContext:
         self.dock.refresh()
 
 
-def visible_paths(root, component, ids, prefix=""):
-    """Resolve representation to native sub-object paths, never change sources."""
+def display_items(root, component, ids, prefix=""):
+    """Visible (native path, occurrence IDs, object) without changing appearance."""
     try:
         Gui.getDocument(component.Document.Name)
     except NameError:
@@ -202,7 +202,7 @@ def visible_paths(root, component, ids, prefix=""):
     mode = model().representation(root, ids)
     if mode == "Hidden":
         return []
-    paths = []
+    items = []
     model().prepare_result_display(component)
     results = {model().display_object(o).Name for o in model().finished_results(component)}
     for obj in [component.Origin] + list(component.Group):
@@ -212,12 +212,31 @@ def visible_paths(root, component, ids, prefix=""):
             continue
         if mode == "Bodies Only" and obj.Name not in results:
             continue
-        paths.append(prefix + obj.Name + ".")
+        items.append((prefix + obj.Name + ".", tuple(ids), obj))
     for child in model().children(component):
         if child.LinkedObject and child.Visibility:
-            paths.extend(visible_paths(root, child.LinkedObject, ids + [child.ObjectId],
+            items.extend(display_items(root, child.LinkedObject, ids + [child.ObjectId],
                                        prefix + child.Name + "."))
-    return paths
+    return items
+
+
+def visible_paths(root, component, ids, prefix=""):
+    """Native LinkView paths share the context display traversal."""
+    return [path for path, unused_ids, unused_obj in display_items(root, component, ids, prefix)]
+
+
+def context_display_plan(root, active_ids):
+    """Return native paths with their per-occurrence transparency floor.
+
+    This is view-local render input, not saved materials. Zero means retain the
+    authored appearance. A renderer must take max(authored transparency, floor)
+    separately for each material, retaining its colors and other properties.
+    Validate the complete active path rather than guessing a surviving ancestor.
+    """
+    active_ids = tuple(active_ids)
+    model()._path(root, active_ids)
+    return [(path, obj, 0.0 if ids[:len(active_ids)] == active_ids else 0.75)
+            for path, ids, obj in display_items(root, root, [])]
 
 
 def item_display_available(obj):

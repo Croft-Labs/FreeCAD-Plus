@@ -1,5 +1,25 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 context transparency planning prerequisite
+
+7.8.13c1: ComponentNavigator.display_items is now the shared traversal behind
+visible_paths and context_display_plan. The plan retains native paths/source objects
+and classifies the chosen occurrence plus descendants with floor 0, all other visible
+items with floor 0.75. Hidden branches stay excluded, invalid active paths are
+rejected rather than silently fading a different branch, and root context has no fade.
+No source material, color, geometry or transparency is changed by the planner.
+
+Fourteen native GUI source-overlay tests pass: five new TestComponentContextDisplayPlan
+cases plus nine TestComponentActiveEditing regressions; no failures/errors/skips.
+The actual viewport fade is NOT implemented yet. LinkView.setMaterial overrides
+both diffuse color and transparency (ViewProviderLink.cpp), so applying a single
+material would lose per-face colors. Next task is 7.8.13c2: a per-view renderer that
+consumes the plan while preserving individual materials, greater transparency,
+picking, placements and context restoration. Keep 7.8.13c unchecked until that passes.
+This is backend-only work; the existing owner DOCX transparency requirements remain
+unchanged. No owner payload, shortcut, or native build update; grouped delivery is 13f.
+
+
 ## October 9 unused-model editing task two
 
 Roadmap 7.8.13b adds a per-window temporary LinkView for unused definitions.
