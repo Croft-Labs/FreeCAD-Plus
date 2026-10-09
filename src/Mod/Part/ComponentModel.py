@@ -142,6 +142,7 @@ def validate_file_graph(doc, allow_unresolved=False):
         complete.add(current)
 
     visit(doc, set())
+    return identities
 
 
 def _check_file_import(doc, source, allow_unresolved=False):
@@ -151,8 +152,11 @@ def _check_file_import(doc, source, allow_unresolved=False):
         raise ValueError("A file cannot import itself.")
     if any(not item.FileName.lower().endswith(".cadprt") for item in (doc, source)):
         raise ValueError("Save both component files as .cadprt before importing.")
-    validate_file_graph(doc, allow_unresolved)
-    validate_file_graph(source)
+    current_files = validate_file_graph(doc, allow_unresolved)
+    incoming_files = validate_file_graph(source)
+    if any(ident in current_files and current_files[ident] != incoming
+           for ident, incoming in incoming_files.items()):
+        raise ValueError("Two loaded files claim the same component document identity.")
     pending = [source]
     seen = set()
     while pending:

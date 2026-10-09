@@ -1,5 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 import-graph identity preflight
+
+**Implementation:** roadmap 7.8.12e reuses the identity maps from file-graph
+validation to check the combined destination/incoming graphs before an import
+transaction. Distinct loaded files claiming the same document identity now refuse
+even when the collision is below different import branches. Reusing one loaded
+file through a diamond stays valid. The shared guard also serves external
+placement, copy preflight and recovery. No schema, controls or defaults change;
+the synchronized owner UI DOCX remains applicable.
+
+**Validation:** the new native Save Copy fixture reproduced acceptance of a
+conflicting direct import and a resulting invalid destination before the fix.
+The final fixture isolates direct and nested incoming aliases in separate
+destinations and checks refusal, unchanged objects/imports and no pending
+transaction. All 26 hierarchy and 27 core cases pass (53 total), no failures,
+errors, skips or unexpected GUI diagnostics, exit zero. This is source-overlay
+validation using the verified hierarchy_recovery_payload native runtime;
+loaded source hashes match.
+
+**Build/delivery:** no native rebuild or owner payload was created for this
+isolated backend change, following DEVELOPMENT_GUIDE build batching. The current
+desktop shortcut continues to target hierarchy_recovery_payload. At the next
+related batch, synchronize Mod/Part/ComponentModel.py, verify installed hierarchy
+checks and hashes, regenerate the inventory and repeat saved-shortcut delivery.
+Do not describe this patch as already installed in the owner payload.
+
+**Publication/cleanup:** the implementation and verified results are ready for a
+coherent commit. Origin verification and cleanup of the two
+hierarchy-import-identity-*-20261009 validation directories remain pending.
+
 ## October 9 hierarchy recovery batch delivered
 
 **Implementation:** application source 7cc78638bc28a43576368e0d3fa23aaf8cf06103 adds roadmap 7.8.12d

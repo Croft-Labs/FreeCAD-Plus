@@ -59,6 +59,9 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   directly imported files. Nested imports are visible but are not implicitly imports
   of their ancestors. Import into the active defining file before inserting from
   another file. Block component cycles and file cycles before any graph mutation.
+  Before importing, check the combined existing and incoming file graphs for distinct
+  loaded files claiming one document identity. Reusing the same loaded file through
+  multiple branches remains valid; Save Copy does not create independent identities.
 - Repeated instances share a definition with independent placements and display
   overrides. External edits save in the defining file; assemblies reopening it see
   those saved changes. There is no name-based domestic override or shadowing.

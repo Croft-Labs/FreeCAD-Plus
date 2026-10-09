@@ -144,6 +144,31 @@ class TestComponentFileHierarchy(unittest.TestCase):
         self.assertEqual(Model.external_documents(self.assembly), [self.hardware, coatings])
         self.assertEqual(Model.external_documents(self.hardware), [coatings])
 
+    def testConflictingFileIdentitiesAcrossImportBranchesRefuseBeforeMutation(self):
+        # Save Copy preserves document identity; it is not an independent component copy.
+        alias_path = self.output / "HardwareAlias.cadprt"
+        self.hardware.saveCopy(str(alias_path))
+        alias = CadDocument.open(alias_path)
+        self.assertNotEqual(alias, self.hardware)
+        self.assertEqual(Model.metadata(alias).ObjectId, Model.metadata(self.hardware).ObjectId)
+        first = self.document("FirstBranch")
+        second = self.document("SecondBranch")
+        Model.import_file(first, self.hardware)
+        Model.import_file(second, alias)
+        # Both direct and nested incoming aliases must fail before a transaction.
+        for index, source in enumerate((alias, second)):
+            with self.subTest(source=source.Label):
+                target = self.document("IdentityTarget" + str(index))
+                Model.import_file(target, first)
+                before = [(obj.Name, getattr(obj, "ObjectId", "")) for obj in target.Objects]
+                with self.assertRaisesRegex(ValueError, "same component document identity"):
+                    Model.import_file(target, source)
+                self.assertEqual([(obj.Name, getattr(obj, "ObjectId", ""))
+                                  for obj in target.Objects], before)
+                self.assertFalse(target.HasPendingTransaction)
+                self.assertEqual(Model.external_documents(target), [first])
+                Model.validate(target)
+
     def testLegacyOccurrenceOnlyFilesKeepTheirInventory(self):
         Model.add_component(self.root(self.assembly), self.screw)
         for record in Model.file_imports(self.assembly):

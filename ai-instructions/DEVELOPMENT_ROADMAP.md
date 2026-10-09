@@ -3408,6 +3408,11 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   All 15,583 payload files are inventoried; only CadDocument.py and metadata differ
   from the verified native baseline. Shortcut target, working directory and actual
   launch pass. WORK_STATE separates source/native identity and publication.
+- [ X ] 7.8.12e Reject conflicting document identities across the combined existing
+  and incoming import graphs before mutation. Native Save Copy alias regression
+  covers direct/nested incoming branches; shared-file diamonds remain accepted.
+  Source-overlay runtime passes 26 hierarchy plus 27 core cases. Compatible Python
+  owner delivery remains queued for the next related batch; WORK_STATE owns details.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 

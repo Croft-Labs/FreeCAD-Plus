@@ -50,3 +50,8 @@ placement, mislabel external ownership, and rename a definition record. Malforme
 definitions, occurrence lists/entries, flags and histories must raise ValueError
 before native restoration. Normal domestic/external and older occurrence-only
 archives remain covered by the same hierarchy/core regression batch.
+
+Import identity regression uses a native Save Copy to open a second file retaining
+the original identity. Both a direct alias and an alias below another imported
+branch must refuse before adding objects or opening a transaction. The destination
+remains valid, while the existing shared-file diamond fixture remains accepted.
