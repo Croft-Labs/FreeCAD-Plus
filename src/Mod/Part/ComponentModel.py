@@ -78,17 +78,28 @@ def ensure_file_container(doc):
     if is_file_container(previous):
         return previous
     with transaction(doc, "Create file container"):
-        root = _definition(doc)
-        _property(root, "Bool", "FileContainer", True, True)
-        # The navigator displays doc.Label; native object labels remain unique.
-        root.Label = "File"
-        root.setEditorMode("Placement", 1)
-        occurrence = _add_occurrence(root, previous, placement=App.Placement(previous.Placement))
-        occurrence.Representation = "Full Component"
-        meta.RootComponent = root
-        if App.GuiUp:
-            root.Visibility = True
-        validate(doc, allow_unresolved=True)
+        return _wrap_file_container(doc)
+
+
+def _wrap_file_container(doc):
+    """Join the caller's structural transaction; never create a second undo step."""
+    # Native transactions are lazy: HasPendingTransaction may stay false until
+    # the first mutation. Callers establish the transaction before entering here.
+    meta = validate(doc, allow_unresolved=True)
+    previous = meta.RootComponent
+    if is_file_container(previous):
+        return previous
+    root = _definition(doc)
+    _property(root, "Bool", "FileContainer", True, True)
+    # The navigator displays doc.Label; native object labels remain unique.
+    root.Label = "File"
+    root.setEditorMode("Placement", 1)
+    occurrence = _add_occurrence(root, previous, placement=App.Placement(previous.Placement))
+    occurrence.Representation = "Full Component"
+    meta.RootComponent = root
+    if App.GuiUp:
+        root.Visibility = True
+    validate(doc, allow_unresolved=True)
     return root
 
 

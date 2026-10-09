@@ -941,6 +941,7 @@ def recover_structure(document, shapes, error):
             if App.GuiUp:
                 obj.ViewObject.Visibility = False
         meta.ConversionReport = report
+        Model._wrap_file_container(document)
     document.FileName = ""
     return document
 
@@ -1404,7 +1405,7 @@ def convert_structure(document, extra_targets=(), visiting=None):
                 "Recovery policy: retained editable native features before explicit validated dumb geometry; no fallback created in this structural step."]
             if external:
                 meta.ConversionReport = list(meta.ConversionReport) + ["Save converted external files as new .cadprt files before saving this parent; legacy originals remain protected."]
-            Model.validate(document, allow_unresolved=True)
+            Model._wrap_file_container(document)
         # Native external-link relocation needs an owner-file reference base
         # while dependencies are saved first. The manifest's LegacySource guard
         # prohibits writing this legacy path; Save As must choose a new cadprt.

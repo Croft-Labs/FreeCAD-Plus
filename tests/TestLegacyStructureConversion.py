@@ -69,7 +69,11 @@ class TestLegacyStructureConversion(unittest.TestCase):
         original = hashlib.sha256(path.read_bytes()).hexdigest()
         CadDocument.convert_legacy(self.doc)
         root = Model.metadata(self.doc).RootComponent
-        self.assertEqual(set(Model.definitions(self.doc)), {root, assembly, part})
+        self.assertTrue(Model.is_file_container(root))
+        converted_root = Model.children(root)[0].LinkedObject
+        self.assertEqual(set(Model.definitions(self.doc)), {root, converted_root, assembly, part})
+        self.assertEqual(list(root.ModelHistory), [])
+        root_id = root.ObjectId
         self.assertEqual(self.doc.Use0.LinkedObject, part)
         self.assertEqual(self.doc.Use1.LinkedObject, part)
         self.assertEqual(Model.owner(self.doc.Use0), assembly)
@@ -88,6 +92,7 @@ class TestLegacyStructureConversion(unittest.TestCase):
         self.assertFalse(any(getattr(o, "ComponentRole", "") == "Document" for o in self.doc.Objects))
         self.assertEqual(Model.owner(part), assembly)
         self.doc.redo()
+        self.assertEqual(Model.metadata(self.doc).RootComponent.ObjectId, root_id)
         self.same(shapes["Assembly"], self.shape(self.doc.Assembly))
         target = self.output / "Converted.cadprt"
         self.doc.saveAs(str(target))
@@ -145,12 +150,16 @@ class TestLegacyStructureConversion(unittest.TestCase):
     def test_models_and_part_tree_use_native_converted_definitions(self):
         assembly, part, *_ = self.build()
         CadDocument.convert_legacy(self.doc)
-        from freecad.gui import ComponentNavigator
+        import importlib
+        ComponentNavigator = importlib.import_module("freecad.gui.ComponentNavigator")
         panel = ComponentNavigator.show(self.doc)
         Gui.updateGui()
         self.assertEqual(panel.models.topLevelItemCount(), 3)
         root = Model.metadata(self.doc).RootComponent
-        self.assertEqual(panel.models.topLevelItem(0).data(0, 256), ComponentNavigator.object_key(root))
+        models = {panel.models.topLevelItem(i).data(0, 256) for i in range(panel.models.topLevelItemCount())}
+        self.assertEqual(models, {ComponentNavigator.object_key(obj)
+                                  for obj in (Model.children(root)[0].LinkedObject, assembly, part)})
+        self.assertNotIn(ComponentNavigator.object_key(root), models)
         self.assertEqual(panel.structure.topLevelItem(0).data(0, 256)[0], ComponentNavigator.object_key(root))
         self.assertTrue(Model.children(assembly))
 
@@ -171,7 +180,8 @@ class TestLegacyStructureConversion(unittest.TestCase):
         link = self.doc.addObject("App::Link", "Missing")
         CadDocument.convert_legacy(self.doc)
         root = Model.metadata(self.doc).RootComponent
-        self.assertIn(link, Model.children(root))
+        self.assertTrue(Model.is_file_container(root))
+        self.assertIn(link, Model.children(Model.children(root)[0].LinkedObject))
         self.assertIsNone(link.LinkedObject)
         self.assertTrue(any("unresolved" in m for m in Model.metadata(self.doc).ConversionReport))
         with self.assertRaises(ValueError):
@@ -216,7 +226,7 @@ class TestLegacyStructureConversion(unittest.TestCase):
         before = self.shape(assembly)
         CadDocument.convert_legacy(self.doc)
         root = Model.metadata(self.doc).RootComponent
-        outputs = Model.finished_results(root)
+        outputs = Model.finished_results(Model.children(root)[0].LinkedObject)
         self.assertTrue(outputs, Model.metadata(self.doc).ConversionReport)
         self.same(before, outputs[0].Shape)
         self.assertEqual(Model.owner(part), assembly)
@@ -233,7 +243,53 @@ class TestLegacyStructureConversion(unittest.TestCase):
         before = self.shape(box)
         CadDocument.convert_legacy(self.doc)
         root = Model.metadata(self.doc).RootComponent
-        recovered = next(o for o in Model.finished_results(root) if o.LegacyRecovery.startswith("Consumer:"))
+        recovered = next(o for o in Model.finished_results(Model.children(root)[0].LinkedObject) if o.LegacyRecovery.startswith("Consumer:"))
         self.same(before, recovered.Shape)
         self.assertTrue(box.ExpressionEngine)
         self.assertEqual(Model.owner(part), assembly)
+
+    def test_file_container_failure_rolls_back_complete_conversion(self):
+        from unittest.mock import patch
+        import LegacyConversion
+        assembly, part, body, sketch, pad = self.build()
+        names = {obj.Name for obj in self.doc.Objects}
+        placement = App.Placement(part.Placement)
+        original = Model._wrap_file_container
+        def fail(document):
+            original(document)
+            raise RuntimeError("Injected file container failure")
+        with patch.object(Model, "_wrap_file_container", side_effect=fail):
+            with self.assertRaisesRegex(RuntimeError, "Injected file container"):
+                LegacyConversion.convert_structure(self.doc)
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, names)
+        self.assertFalse(any(getattr(obj, "ComponentRole", "") == "Document" for obj in self.doc.Objects))
+        self.assertEqual(Model.owner(part), assembly)
+        self.assertEqual(body.Group, [sketch, pad])
+        self.assertEqual(body.Tip, pad)
+        self.assertTrue(part.Placement.isSame(placement, 1e-9))
+        self.assertFalse(self.doc.HasPendingTransaction)
+
+    def test_recovery_and_file_container_share_one_undo_step(self):
+        assembly, part, body, sketch, pad = self.build()
+        part.setExpression("Placement.Base.x", "8 mm")
+        self.doc.recompute()
+        names = {obj.Name for obj in self.doc.Objects}
+        before = self.shape(assembly)
+        CadDocument.convert_legacy(self.doc)
+        root = Model.metadata(self.doc).RootComponent
+        self.assertTrue(Model.is_file_container(root))
+        root_id = root.ObjectId
+        recovered_part = Model.children(root)[0].LinkedObject
+        self.assertEqual(list(root.ModelHistory), [])
+        self.assertEqual(Model.finished_results(root), [])
+        self.same(before, Model.finished_results(recovered_part)[0].Shape)
+        self.doc.undo()
+        self.assertEqual({obj.Name for obj in self.doc.Objects}, names)
+        self.assertFalse(any(getattr(obj, "ComponentRole", "") == "Document" for obj in self.doc.Objects))
+        self.assertEqual(body.Group, [sketch, pad])
+        self.assertEqual(Model.owner(part), assembly)
+        self.doc.redo()
+        root = Model.metadata(self.doc).RootComponent
+        self.assertEqual(root.ObjectId, root_id)
+        self.same(before, Model.finished_results(Model.children(root)[0].LinkedObject)[0].Shape)
+        Model.validate(self.doc)

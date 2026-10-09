@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Narrow native legacy history pilot, retained feature and geometry recovery."""
 import hashlib
+import importlib
 import math
 import os
 from pathlib import Path
@@ -31,7 +32,7 @@ class TestLegacyBodyHistory(unittest.TestCase):
         self.output = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"])
 
     def tearDown(self):
-        from freecad.gui import ComponentExtrudeTask as Task
+        Task = importlib.import_module("freecad.gui.ComponentExtrudeTask")
         if Task._task:
             Task._task.reject()
         if Gui.Control.activeDialog():
@@ -199,7 +200,7 @@ class TestLegacyBodyHistory(unittest.TestCase):
         before = self.shape(part)
         CadDocument.convert_legacy(self.doc)
         root = Model.metadata(self.doc).RootComponent
-        results = Model.finished_results(root)
+        results = Model.finished_results(Model.children(root)[0].LinkedObject)
         self.assertTrue(results)
         self.same(before, results[0].Shape)
         self.assertIn("parametric history not converted", results[0].LegacyRecovery)
@@ -207,7 +208,8 @@ class TestLegacyBodyHistory(unittest.TestCase):
         self.assertEqual(body.Tip, pad)
 
     def test_native_history_ui_sketch_edit_cancel(self):
-        from freecad.gui import ComponentNavigator as Navigator
+        import importlib
+        Navigator = importlib.import_module("freecad.gui.ComponentNavigator")
         part, body, sketch, pad = self.build()
         CadDocument.convert_legacy(self.doc)
         panel = Navigator.show(self.doc)
@@ -228,7 +230,8 @@ class TestLegacyBodyHistory(unittest.TestCase):
         self.same(self.shape(body), self.shape(pad))
 
     def double_click_history(self, panel, obj):
-        from freecad.gui import ComponentNavigator as Navigator
+        import importlib
+        Navigator = importlib.import_module("freecad.gui.ComponentNavigator")
         panel.open_component_tab(Navigator.object_key(Model.owner(obj)))
         panel.tabs.setCurrentWidget(panel.history)
         panel.setFloating(True)
@@ -251,8 +254,9 @@ class TestLegacyBodyHistory(unittest.TestCase):
         QtTest.QTest.qWait(100)
 
     def test_native_history_pad_dialog_accept_cancel_and_undo(self):
-        from freecad.gui import ComponentNavigator as Navigator
-        from freecad.gui import ComponentExtrudeTask as Task
+        import importlib
+        Navigator = importlib.import_module("freecad.gui.ComponentNavigator")
+        Task = importlib.import_module("freecad.gui.ComponentExtrudeTask")
         part, body, sketch, pad = self.build()
         CadDocument.convert_legacy(self.doc)
         panel = Navigator.show(self.doc)

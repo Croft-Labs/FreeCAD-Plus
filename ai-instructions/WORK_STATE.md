@@ -1,5 +1,43 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 legacy conversion file-root integration
+
+7.8.13d2b2b is complete in source. Structural legacy conversion and evaluated
+geometry recovery now add the pinned file container inside their existing native
+transaction. One Undo removes both conversion and container; Redo restores the
+same file identity. A failure injected after wrapping restores the original
+objects, ownership, Body Group/Tip and placement. Converted and recovered outputs
+remain in domestic definitions beneath the file, with no extra Part001 and no
+file-owned modeling history/results. Models excludes the file row. Original
+archives, native features, external references and dependency save order remain
+preserved. No Add Component workflow changes.
+
+Validation: 44 distinct checks pass using source overlays on the existing verified
+2026-10-09 hierarchy-relocation native payload: 14 structural conversion, 12 file
+container, 6 integration, 9 native Body history and 3 fresh-process restore cases.
+The first 32 pass in the verified batch; the corrected follow-up passes 12/12.
+Checks cover Undo/Redo, injected rollback, original-file protection, shared/external
+geometry, save/reopen, native sketch/Pad editing, Draft/CAM/drawing consumers and
+relocated dependencies. Changed Python files parse; git diff --check passes.
+Initial runs exposed a lazy native transaction-state assumption (removed), stale
+installed GUI-module imports in the overlay tests, a sorted-Models fixture
+assumption and a missing test cleanup import; corrected cases pass. Native logs
+still include out-of-scope link and consumer recompute warnings; this is not a
+claim of warning-free output or full archived-owner-document qualification.
+
+Owner UI DOCX updated without changing native numbering: converted and recovered
+files have the pinned file row, component-owned results and one-step Undo/Redo.
+Rendered pages 91 and 93 visually reviewed. Contract, test guide, summary and
+roadmap updated. No native rebuild, owner payload/shortcut change or release;
+grouped owner delivery remains 7.8.13f. Task validation files are removed after
+recording these results. This milestone is committed/pushed separately from build
+delivery; publication is confirmed by matching the origin branch to local HEAD.
+
+Next implementation task: 7.8.13d2c, ordinary domestic definition deletion,
+including initial Part001, with occurrence/reference guards, Undo/Redo and native
+UI acceptance. The file container stays protected; an empty file remains valid.
+File-level command/assembly acceptance and grouped owner delivery remain open.
+
 ## October 9 existing .cadprt file-root migration
 
 7.8.13d2b2a is complete in source. CadDocument._open verifies the original native

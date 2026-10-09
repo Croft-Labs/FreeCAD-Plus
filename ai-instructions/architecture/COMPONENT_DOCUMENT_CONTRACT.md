@@ -299,8 +299,15 @@ for the newly loaded migrated file, so Undo cannot remove its pinned container.
 Existing already-open documents are returned unchanged, preserving active edits
 and dependency rollback guarantees. Failed opens discard newly loaded documents
 and retain pre-existing ones. Reopening an upgraded file does not add another root.
-Internal legacy conversion initializers retain their existing behavior; their
-transactional integration remains roadmap 7.8.13d2b2b.
+Legacy structural conversion and evaluated recovery wrap the converted domestic
+definition in the file container before committing their existing transaction.
+The internal _wrap_file_container helper joins that transaction; the public
+ensure_file_container service retains its independent transaction boundary. One
+Undo reverses conversion and container creation together, and Redo restores their
+identities. Failed container creation rolls back the structural conversion. The
+file owns no modeling history/results; recovered geometry belongs to its domestic
+component. No extra Part001 is created. External documents retain separate
+transactions and must still be saved before their parent.
 
 Activating the file refreshes reachable domestic component definitions once each,
 children before parents, so reference snapshots precede their consumers. It does

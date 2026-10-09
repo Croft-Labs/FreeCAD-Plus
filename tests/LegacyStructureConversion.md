@@ -3,7 +3,9 @@
 Task two routes `CadDocument.convert_legacy` / standard native File Open through
 `LegacyConversion.convert_structure`. Existing App::Part containers become
 definitions without replacing native names, Origins or geometry objects. The file
-master is permanent and separate. Placed containers become linked occurrences;
+row is pinned above the converted domestic root and is excluded from Models.
+Its history contains only its Origin; geometry remains component-owned.
+Placed containers become linked occurrences;
 existing scalar Links are reused with occurrence-local identities and shared targets.
 
 Standalone Bodies and linked geometry receive component wrappers. Bodies inside
@@ -23,7 +25,11 @@ geometry under the new definition frame. Never drop nonrigid matrix components.
 Native Link forwarding must not confuse definition and occurrence ObjectIds: identity
 allocation occurs while unbound, followed by restoring target/frame/scale settings.
 
-Each document converts in one undoable native transaction. External documents
+Each document converts in one undoable native transaction, including creation of
+the file container. Recovery follows the same boundary: one Undo removes the
+conversion and file wrapper; Redo restores them without an extra Part001. A
+regression injects a failure after wrapping and verifies complete rollback of
+objects, ownership, Body history and placement. External documents
 convert in memory first, preserving shared references and original file bytes.
 Their transactions are independent; this is not an all-files atomic Undo operation.
 Protected legacy paths may remain as native reference bases for external relocation.

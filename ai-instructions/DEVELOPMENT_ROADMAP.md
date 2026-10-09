@@ -3434,7 +3434,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
         File Edit has origin-only History and the shared modeling resolver requires
         an explicit component. Native Delete cannot remove the file row. Owner DOCX
         updated/rendered; source-overlay GUI checks pass. Owner delivery remains 13f.
-      - [   ] 7.8.13d2b Migrate existing opens/legacy conversions and component-copy
+      - [ X ] 7.8.13d2b Migrate existing opens/legacy conversions and component-copy
         or new-external-file destinations to the same file root. Preserve definition
         identities, paths and placements; validate definition deletion separately.
         - [ X ] 7.8.13d2b1 External destinations: independent copies, the retained
@@ -3444,7 +3444,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
           Clear destination bootstrap undo so the file cannot be unpinned by Undo.
           Copy placement, identity, source retention, reopen and UI import checks
           added; owner DOCX updated/rendered. Installed delivery remains in 13f.
-        - [   ] 7.8.13d2b2 Existing .cadprt open and legacy conversion migration,
+        - [ X ] 7.8.13d2b2 Existing .cadprt open and legacy conversion migration,
           preserving original definitions, references, placements and undo semantics.
           Definition deletion still requires its separate native/UI acceptance.
           - [ X ] 7.8.13d2b2a Newly opened older .cadprt files and dependencies
@@ -3456,9 +3456,15 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
             targets, repeat save/reopen, native file/Models/History UI and nested refs.
             Source/runtime evidence and DOCX review are recorded in WORK_STATE;
             owner build delivery remains batched in 13f.
-          - [   ] 7.8.13d2b2b Next: integrate the container into legacy conversion
-            and evaluated recovery within their existing undoable transactions.
-            Preserve original native features, original files and external save order.
+          - [ X ] 7.8.13d2b2b Legacy conversion and evaluated recovery now add
+            the file container within their existing undoable transactions. One
+            Undo removes the conversion and wrapper; Redo preserves identities.
+            Native features, source files and external save order are preserved.
+            Failure injection checks complete rollback; UI requirements updated
+            and rendered. Source-overlay validation recorded in WORK_STATE.
+      - [   ] 7.8.13d2c Next: ordinary domestic definition deletion, including
+        initial Part001, with occurrence/reference guards, undo/redo and native/UI
+        acceptance. Keep the file container protected and permit an empty file.
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
@@ -3476,7 +3482,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13d2b2b legacy conversion migration.
+      Next implementation: 13d2c ordinary component definition deletion.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

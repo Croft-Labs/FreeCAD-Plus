@@ -10,10 +10,11 @@ External-copy and new-external-component destinations now use the same file root
 without an extra Part001. Newly opened older .cadprt files/dependencies now migrate
 after identity validation, without writing the originals; bootstrap undo cannot
 remove the file root. File activation refreshes domestic references child-first.
-Legacy conversion/recovery integration is next (7.8.13d2b2b); owner delivery is batched.
+Legacy conversion/recovery now creates the file root in the same undo transaction
+(7.8.13d2b2b). Ordinary definition deletion is next; owner delivery is batched.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
-legacy conversion migration remains the next implementation task.
+ordinary definition deletion remains the next implementation task (7.8.13d2c).
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.

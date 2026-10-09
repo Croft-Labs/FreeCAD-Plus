@@ -322,7 +322,8 @@ class TestComponentDocument(unittest.TestCase):
         meta = Model.metadata(converted)
         self.assertEqual(Path(meta.LegacySource).resolve(), original.resolve())
         self.assertTrue(meta.ConversionReport)
-        result = Model.finished_results(meta.RootComponent)[0]
+        self.assertTrue(Model.is_file_container(meta.RootComponent))
+        result = Model.finished_results(Model.children(meta.RootComponent)[0].LinkedObject)[0]
         converted.Box.Length = 7
         converted.recompute()
         self.assertAlmostEqual(result.Shape.Volume, 84)

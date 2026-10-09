@@ -26,9 +26,10 @@ class TestLegacyIntegrationCold(unittest.TestCase):
         self.assertGreater(doc.Body.Shape.Volume, before)
         doc.undo(); doc.recompute(); self.assertAlmostEqual(doc.Body.Shape.Volume, before, places=7)
         doc.redo(); doc.recompute(); self.assertGreater(doc.Body.Shape.Volume, before)
-        from freecad.gui import ComponentNavigator
+        import importlib
+        ComponentNavigator = importlib.import_module("freecad.gui.ComponentNavigator")
         panel = ComponentNavigator.show(doc); panel.refresh()
-        self.assertEqual(panel.structure.topLevelItem(0).text(0), Model.metadata(doc).RootComponent.Label)
+        self.assertEqual(panel.structure.topLevelItem(0).text(0), doc.Label)
 
     def test_relocated_external_full_restore_and_shared_update(self):
         doc = CadDocument.open(self.output / 'relocated' / 'Parent.cadprt')
@@ -43,6 +44,6 @@ class TestLegacyIntegrationCold(unittest.TestCase):
         doc = CadDocument.open(self.output / 'Recovery.cadprt')
         self.assertEqual(doc.Body.Tip, doc.Pad)
         self.assertTrue(doc.Part.ExpressionEngine)
-        outputs = Model.finished_results(Model.metadata(doc).RootComponent)
+        outputs = Model.finished_results(Model.children(Model.metadata(doc).RootComponent)[0].LinkedObject)
         self.assertTrue(outputs); self.assertTrue(all(not o.Shape.isNull() for o in outputs))
         self.assertTrue(any('dumb geometry' in x for x in Model.metadata(doc).ConversionReport))
