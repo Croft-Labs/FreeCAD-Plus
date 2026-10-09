@@ -3399,12 +3399,15 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   Preserve already-open dependencies, unsaved documents and active document on
   nested identity failure or post-restore failure. Recoverable missing files still
   open for repair. Source-overlay runtime passes 23 hierarchy and 27 core cases;
-  compatible Python delivery remains batched for the next owner payload update.
+  delivered with 7.8.12d in the October 9 hierarchy_recovery_payload.
 - [ X ] 7.8.12d Validate saved hierarchy manifests before native restoration:
   record types, unique definition/occurrence names and IDs, complete placements,
   native parent membership and domestic/external designation. Source-overlay
-  regression batch passes 25 hierarchy plus 27 core cases. Installed batch delivery
-  with 7.8.12c is in progress; WORK_STATE owns the current acceptance evidence.
+  regression batch passes 25 hierarchy plus 27 core cases. Installed delivery with
+  7.8.12c passes 54 checks (52 hierarchy/core plus cold and saved-shortcut reopen).
+  All 15,583 payload files are inventoried; only CadDocument.py and metadata differ
+  from the verified native baseline. Shortcut target, working directory and actual
+  launch pass. WORK_STATE separates source/native identity and publication.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 

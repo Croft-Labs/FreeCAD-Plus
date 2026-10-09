@@ -1,24 +1,45 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 9 hierarchy recovery batch (in progress)
+## October 9 hierarchy recovery batch delivered
 
-Roadmap 7.8.12d adds native-archive/manifest consistency checks in CadDocument
-preflight: valid record shapes, unique definition/occurrence identifiers, exact
-occurrence membership under each definition, saved definition identity and
-external-file designation. This is backend persistence validation; schema/version,
-valid file behavior and UI requirements are unchanged. The prior failed-open
-rollback (7.8.12c) is included in this delivery batch.
+**Implementation:** application source 7cc78638bc28a43576368e0d3fa23aaf8cf06103 adds roadmap 7.8.12d
+native-archive/manifest consistency checks before restoration: record shapes,
+unique definition/occurrence identifiers, exact occurrence membership, saved
+definition identity and external-file designation. This batch also delivers
+7.8.12c failed-open rollback. Schema/version and valid-file behavior are unchanged.
+This is backend persistence work; the synchronized owner UI DOCX remains applicable.
 
-Two new corruption tests reproduce seven failures and one incidental TypeError
-before the fix. The corrected source-overlay batch passes 25 hierarchy plus 27
-core cases, exit zero. Final installed tests add incorrect external designation
-and definition-name corruption cases. Compatible Python-only candidate:
-`test-builds/freecad_plus_2026-10-09_hierarchy_recovery_payload`.
-It copies the verified file_hierarchy_payload and changes only Mod/Part/CadDocument.py;
-native source remains 40f1698230ccbbac5b4f44fc0ba8124a0ee08c60, with no native rebuild.
-Installed acceptance, cold reopen, complete inventory comparison and saved desktop
-shortcut launch are pending. The existing desktop shortcut is unchanged so far.
-Task validation uses hierarchy-manifest-* and hierarchy-recovery-* directories.
+**Validation:** the two corruption tests first reproduced seven failures and one
+incidental TypeError. Corrected source-overlay acceptance passed 25 hierarchy plus
+27 core cases. Final installed acceptance (including incorrect external designation
+and definition-name corruption) passed all 52 cases with no source overlays,
+failures, errors, skips or unexpected GUI diagnostics. A fresh-process hierarchy
+reopen passed once directly and once through the actual saved desktop shortcut:
+54 installed checks total, all processes exit zero. Loaded module/source hashes
+match. Nested unused imports, shared external edits, independent domestic copies,
+failed-open cleanup and recoverable missing references are covered.
+
+**Build/delivery:** compatible Python-only update in
+test-builds/freecad_plus_2026-10-09_hierarchy_recovery_payload, based on the
+verified October 9 file_hierarchy_payload. Native source remains
+40f1698230ccbbac5b4f44fc0ba8124a0ee08c60; no native compilation or launcher
+compilation was repeated. Complete SHA256 comparison verifies 15,583 payload
+files; only Mod/Part/CadDocument.py and release-info.json differ from the baseline.
+The regenerated payload-manifest.json records the inventory and separate native
+and application source identities. Launcher SHA256 remains
+05c3a107c9ce1e0e370367a4e84e2ac8afe7a9e8e92cdb7543bc3db9a2547518.
+The existing desktop FreeCADPlus.exe - Shortcut.lnk targets this payload; saved
+target/working directory and an actual shortcut launch are verified. The previous
+payload is retained for rollback.
+
+**Limits:** broader native baseline acceptance was not rerun for this single-module
+update. The prior grouped-sketch inactivity timeouts remain unconfirmed; this
+batch does not close roadmap 16.6c or exhaustive repeated-session qualification.
+No UI/default changes, releases or upstream publication.
+
+**Publication/cleanup:** implementation and acceptance are recorded locally.
+Origin publication verification and deletion of the six task validation directories
+are the remaining housekeeping steps.
 
 ## October 9 failed nested-open rollback
 
