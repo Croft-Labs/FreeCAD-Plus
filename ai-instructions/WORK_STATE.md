@@ -54,9 +54,12 @@ The payload contains release-info.json with per-suite hashes/results and a compl
 15,583-file SHA256 payload-manifest.json. This is a local owner build, not a release.
 General expression copying and unreviewed consumer/path remapping still refuse.
 
-**Publication and cleanup:** acceptance milestone commit/push and remote verification
-are pending closeout. Task validation output will be removed after this canonical
-summary is committed; the useful native tree, dependencies and owner payload remain.
+**Publication and cleanup:** acceptance milestone
+`1b31a9ae78501469029703a9e59757d047e88d42` was pushed to origin/main and the remote
+branch hash verified. All 47 task validation directories were removed after the
+canonical summary was committed. No task native process remains. The useful native
+build tree, dependencies, new owner payload and previous rollback payload remain.
+This documentation closeout is separate from application source and the native build.
 
 ## October 9 domestic/external file hierarchy
 
