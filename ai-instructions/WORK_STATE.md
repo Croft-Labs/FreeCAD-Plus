@@ -1,5 +1,39 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 Fixed relationship Part Tree interface
+
+7.8.13e2b2c2 and the bounded 13e implementation are complete in source. Fix relative
+position connects two direct file occurrences at their current relative position.
+Assembly relationships reviews Ground/Fixed endpoints, selects their occurrences
+without changing Edit, edits detached relative offsets, and removes relationships
+through the existing transactional service. File identity, native joint identity,
+active document and task state are checked again before mutation. Add Component
+remains deferred; other joint kinds remain compatibility scope.
+
+Validation: final grouped run passed all 12 distinct cases (six new
+TestComponentRelationshipsUI plus six TestComponentGroundingUI) in 11.817 seconds.
+The initial 11-case run passed before adding actual offset acceptance/unchanged
+acceptance coverage. Checks include native QAction dispatch, placement and rotation
+preservation, current tab/Edit/origin-only History, endpoint selection, offset
+editing and Undo, removal and Undo, cancellation, unchanged acceptance, and stale
+menu/dialog refusal. Final stderr is empty. Both dialog captures were visually
+reviewed. Python syntax and CRLF-aware diff checks pass.
+
+Runtime: retained verified freecad_plus_2026-10-06_recovered_workload development
+build with source ComponentModel/CadDocument/ComponentNavigator overlays. No native
+source changed and no native rebuild was required. No new owner payload or shortcut
+delivery is claimed. Source milestone is committed and published to origin/main;
+remote verification is performed at handoff, separately from owner delivery.
+
+Owner UI DOCX updated with a local Fixed relationships paragraph; existing content
+and native numbering preserved. Rendered pages 66-69 visually reviewed with no
+clipping or overlap. Canonical summary, contract and roadmap synchronized. Task
+validation/render outputs removed after recording evidence; useful build retained.
+
+Next task: 7.8.13f grouped compatibility qualification (tabs, external ownership,
+Undo/reopen and temporary display persistence), then verified owner payload and
+shortcut delivery. Overall active-component/Part Tree implementation remains open.
+
 ## October 9 Part Tree grounding interface
 
 7.8.13e2b2c1 is complete in source. Part Tree now offers Ground component and

@@ -318,7 +318,7 @@ including joint creation, connector edits and solver-driven placement changes.
 External definitions are referenced through local occurrences; source placements,
 placement locks and saved source files are not modified by assembly transactions.
 
-The Part Tree command adapter is still pending. The accepted backend scope is
+The Part Tree command adapter now uses these services. The accepted backend scope is
 Ground and detached Fixed frames; other native joint types and interactive geometry
 picking are not implied by these services. See TestComponentAssemblySolver,
 TestComponentAssemblyPersistence and TestComponentRelationshipTransactions.
@@ -329,8 +329,19 @@ occurrence, the matching active document and no active task/transaction. Menu ac
 resolve stable row identities at invocation and recheck that context before dispatch.
 Ground state comes from the native ground relationship, not a placement lock alone.
 AssemblyGui loads without switching workbenches/tabs. Models, definitions and nested
-occurrences cannot become file-grounding targets through this adapter. Fixed
-relationship creation/review/edit/removal UI remains a separate step.
+occurrences cannot become file-grounding targets through this adapter.
+
+Fixed creation captures two direct occurrence identities plus the file identity,
+revalidates them at invocation, and supplies first-frame inverse times second-frame
+as the detached connector offset. This preserves the current relative placement.
+FileRelationshipsDialog obtains joints from assembly_record, validates both native
+object identity and ownership before mutation, and uses native occurrence subpaths
+for selection without changing Edit. Editing converts the two local connector
+placements into one relative placement and applies it through the transactional
+service. Unchanged acceptance and cancellation create no transaction. The dialog
+shares the file Edit/task guard with grounding. TestComponentRelationshipsUI covers
+actual QAction dispatch, selection, offset acceptance/cancellation, Undo, removal,
+and stale file/joint refusal; broader compatibility and owner delivery remain 13f.
 
 ## File modeling task guards
 

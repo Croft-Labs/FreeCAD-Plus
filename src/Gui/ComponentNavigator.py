@@ -390,6 +390,150 @@ class ConversionDialog(QtWidgets.QDialog):
         super().accept()
 
 
+class FileRelationshipsDialog(QtWidgets.QDialog):
+    """Review file joints without entering native assembly Edit or changing tabs."""
+    def __init__(self, panel, root):
+        super().__init__(panel)
+        self.panel = panel
+        self.context = (object_key(root), root.ObjectId)
+        self.joints = {}
+        self.setWindowTitle(tr("Assembly relationships"))
+        self.setObjectName("fileRelationshipsDialog")
+        self.resize(620, 340)
+        layout = QtWidgets.QVBoxLayout(self)
+        notice = QtWidgets.QLabel(tr("Select a relationship to highlight its components. Changes apply immediately and support Undo/Redo."))
+        notice.setWordWrap(True)
+        layout.addWidget(notice)
+        self.listing = QtWidgets.QListWidget()
+        self.listing.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        layout.addWidget(self.listing)
+        controls = QtWidgets.QHBoxLayout()
+        self.edit_button = QtWidgets.QPushButton(tr("Edit fixed offset..."))
+        self.remove_button = QtWidgets.QPushButton(tr("Remove selected"))
+        refresh = QtWidgets.QPushButton(tr("Refresh"))
+        controls.addWidget(self.edit_button)
+        controls.addWidget(self.remove_button)
+        controls.addWidget(refresh)
+        layout.addLayout(controls)
+        close = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Close)
+        close.rejected.connect(self.reject)
+        layout.addWidget(close)
+        self.listing.itemSelectionChanged.connect(self.selection_changed)
+        self.edit_button.clicked.connect(lambda: self.panel.run(self.edit_selected))
+        self.remove_button.clicked.connect(lambda: self.panel.run(self.remove_selected))
+        refresh.clicked.connect(lambda: self.panel.run(self.refresh))
+        self.refresh()
+
+    def root(self):
+        root = self.panel.file_relationship_root()
+        if (object_key(root), root.ObjectId) != self.context:
+            raise ValueError(tr("The file changed. Reopen Assembly relationships."))
+        return root
+
+    def refresh(self):
+        root = self.root()
+        record = model().assembly_record(root.Document)
+        self.listing.blockSignals(True)
+        self.listing.clear()
+        self.joints = {}
+        for entry in record["joints"] if record else []:
+            joint = root.Document.getObject(entry["object"])
+            names = []
+            for name in entry["endpoints"]:
+                occurrence = root.Document.getObject(name)
+                names.append(model().component_label(occurrence.LinkedObject, root.Document)
+                             + " #" + str(occurrence.InstanceNumber))
+            kind = tr("Ground") if hasattr(joint, "ObjectToGround") else str(joint.JointType)
+            row = QtWidgets.QListWidgetItem(kind + " — " + " ↔ ".join(names))
+            row.setData(QtCore.Qt.UserRole, joint.Name)
+            self.joints[joint.Name] = joint
+            self.listing.addItem(row)
+        self.listing.blockSignals(False)
+        self.selection_changed()
+
+    def selected_joints(self):
+        root = self.root()
+        record = model().assembly_record(root.Document)
+        names = {entry["object"] for entry in record["joints"]} if record else set()
+        joints = []
+        for row in self.listing.selectedItems():
+            name = row.data(QtCore.Qt.UserRole)
+            joint = root.Document.getObject(name)
+            if name not in names or joint != self.joints.get(name):
+                raise ValueError(tr("A relationship changed. Refresh this list."))
+            joints.append(joint)
+        return joints
+
+    def selection_changed(self):
+        self.edit_button.setEnabled(False)
+        self.remove_button.setEnabled(False)
+        try:
+            joints = self.selected_joints()
+            self.remove_button.setEnabled(bool(joints))
+            self.edit_button.setEnabled(len(joints) == 1
+                and str(getattr(joints[0], "JointType", "")) == "Fixed"
+                and joints[0].Detach1 and joints[0].Detach2)
+            if not joints:
+                return
+            root = self.root()
+            record = model().assembly_record(root.Document)
+            names = {joint.Name for joint in joints}
+            endpoints = {name for entry in record["joints"] if entry["object"] in names
+                         for name in entry["endpoints"]}
+            Gui.Selection.clearSelection()
+            for name in sorted(endpoints):
+                occurrence = root.Document.getObject(name)
+                Gui.Selection.addSelection(root.Document.Name, root.Name,
+                    Selection.native_path(root, [occurrence.ObjectId], None))
+        except (ValueError, RuntimeError, ReferenceError):
+            return  # A stale modal view must not change a new document's selection.
+
+    def remove_selected(self):
+        joints = self.selected_joints()
+        model().remove_relationships(self.root().Document, joints)
+        self.refresh()
+
+    def apply_offset(self, joint, placement):
+        if joint not in self.selected_joints():
+            raise ValueError(tr("Select the fixed relationship again."))
+        model().edit_fixed_relationship(joint, placement, App.Placement())
+        self.refresh()
+
+    def edit_selected(self):
+        joints = self.selected_joints()
+        if len(joints) != 1 or str(getattr(joints[0], "JointType", "")) != "Fixed":
+            raise ValueError(tr("Select one fixed relationship."))
+        joint = joints[0]
+        relative = joint.Placement1 * joint.Placement2.inverse()
+        dialog = QtWidgets.QDialog(self)
+        dialog.setWindowTitle(tr("Fixed relative position"))
+        dialog.setObjectName("fileFixedOffsetDialog")
+        form = QtWidgets.QFormLayout(dialog)
+        caption = QtWidgets.QLabel(tr("Position and orientation of the second component relative to the first component."))
+        caption.setWordWrap(True)
+        form.addRow(caption)
+        values = list(relative.Base) + list(relative.Rotation.toEuler())
+        fields = []
+        for index, label in enumerate(("X", "Y", "Z", "Yaw", "Pitch", "Roll")):
+            field = QtWidgets.QDoubleSpinBox()
+            field.setObjectName("fixedOffset" + label)
+            field.setRange(-1e12 if index < 3 else -36000, 1e12 if index < 3 else 36000)
+            field.setDecimals(9)
+            field.setSuffix(" mm" if index < 3 else " °")
+            field.setValue(values[index])
+            fields.append(field)
+            form.addRow(tr(label), field)
+        initial = [field.value() for field in fields]
+        buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        form.addRow(buttons)
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            updated = [field.value() for field in fields]
+            if updated != initial:
+                self.apply_offset(joint, App.Placement(App.Vector(*updated[:3]), App.Rotation(*updated[3:])))
+
+
 class PartTree:
     MIME = "application/x-freecad-plus-part-tree-move"
 
@@ -2147,15 +2291,19 @@ class Navigator(QtWidgets.QDockWidget):
             iterator += 1
         raise ValueError(tr("The selected item changed. Open the menu again."))
 
-    def file_grounding_target(self, item):
-        """Grounding belongs to a file occurrence, never its shared definition."""
+    def file_relationship_root(self):
         root = resolve(self.root_key) if self.root_key else None
         if (root is None or not model().is_file_container(root)
                 or self.active_key != self.root_key or self.unused_edit()
                 or App.ActiveDocument != root.Document):
-            raise ValueError(tr("Edit the file before changing assembly grounding."))
+            raise ValueError(tr("Edit the file before changing assembly relationships."))
         if Gui.Control.activeDialog() or root.Document.HasPendingTransaction:
-            raise ValueError(tr("Finish the current task before changing assembly grounding."))
+            raise ValueError(tr("Finish the current task before changing assembly relationships."))
+        return root
+
+    def file_grounding_target(self, item):
+        """Grounding belongs to a file occurrence, never its shared definition."""
+        root = self.file_relationship_root()
         rows = self.structure.selectedItems() if item.isSelected() else [item]
         members = self.members(item)
         if (len(rows) != 1 or len(members) != 1 or not members[0]
@@ -2178,6 +2326,40 @@ class Navigator(QtWidgets.QDockWidget):
                       for entry in record["joints"]] if record else []
             grounds = [joint for joint in joints if getattr(joint, "ObjectToGround", None) == occurrence]
             model().remove_relationships(occurrence.Document, grounds)
+
+    def fixed_relationship_selection(self, item):
+        root = self.file_relationship_root()
+        rows = self.structure.selectedItems() if item.isSelected() else [item]
+        if len(rows) != 2 or any(len(self.members(row)) != 1 for row in rows):
+            raise ValueError(tr("Select two individual top-level occurrences. Expand grouped instances first."))
+        members = [self.members(row)[0] for row in rows]
+        if any(not value or len(value[1]) != 1 or self.tree_root(row) != root
+               for row, value in zip(rows, members)):
+            raise ValueError(tr("Select two direct occurrences in this file."))
+        objects = [resolve(value[0]) for value in members]
+        if any(obj not in model().children(root) for obj in objects) or objects[0] == objects[1]:
+            raise ValueError(tr("The selected occurrences changed. Select them again."))
+        return (object_key(root), root.ObjectId), [(object_key(obj), obj.ObjectId) for obj in objects]
+
+    def create_fixed_from_selection(self, context, identities):
+        root = self.file_relationship_root()
+        if context != (object_key(root), root.ObjectId):
+            raise ValueError(tr("The file changed. Select the occurrences again."))
+        objects = [resolve(key) for key, unused in identities]
+        if (len(objects) != 2 or any(obj not in model().children(root) or obj.ObjectId != identity
+                                    for obj, (unused, identity) in zip(objects, identities))):
+            raise ValueError(tr("The selected occurrences changed. Select them again."))
+        import AssemblyGui  # noqa: F401
+        import UtilsAssembly
+        first, second = objects
+        first_frame = UtilsAssembly.getGlobalPlacement((first, ["", ""]))
+        second_frame = UtilsAssembly.getGlobalPlacement((second, ["", ""]))
+        return model().create_fixed_relationship(first, second, first_frame.inverse() * second_frame)
+
+    def show_file_relationships(self):
+        root = self.file_relationship_root()
+        dialog = FileRelationshipsDialog(self, root)
+        dialog.exec()
 
     def build_menu(self, tree, item):
         menu = QtWidgets.QMenu(self)
@@ -2220,6 +2402,25 @@ class Navigator(QtWidgets.QDockWidget):
             if unused and not value[1] and object_key(definition) == unused["key"]:
                 menu.addAction(tr("Open in new window"), lambda: self.run(lambda: self.open_component_tab(value[0])))
                 return menu
+            relationships = menu.addAction(tr("Assembly relationships..."),
+                lambda: self.run(lambda: (target(), self.show_file_relationships())))
+            relationships.setObjectName("fileRelationships")
+            try:
+                self.file_relationship_root()
+            except ValueError as exc:
+                relationships.setEnabled(False)
+                relationships.setToolTip(str(exc))
+            if value[1]:
+                fixed = menu.addAction(tr("Fix relative position"))
+                fixed.setObjectName("fileCreateFixed")
+                fixed.setToolTip(tr("Keep two occurrences at their current relative position. Ground one occurrence or connect it to ground first."))
+                try:
+                    fixed_context, fixed_ids = self.fixed_relationship_selection(item)
+                    fixed.triggered.connect(lambda checked=False, context=fixed_context, identities=fixed_ids:
+                        self.run(lambda: self.create_fixed_from_selection(context, identities)))
+                except ValueError as exc:
+                    fixed.setEnabled(False)
+                    fixed.setToolTip(str(exc))
             if value[1]:
                 assembly = model().assembly_context(obj.Document)
                 grounded = bool(assembly and any(

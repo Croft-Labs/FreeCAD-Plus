@@ -28,8 +28,10 @@ relationship services now create, edit and remove joints transactionally, verify
 fixed connector frames and preserve grounded placements; external definitions stay
 unchanged (TestComponentRelationshipTransactions). Part Tree Ground/Unground now
 requires file Edit and one direct occurrence, with stale-menu and task guards
-(TestComponentGroundingUI). Fixed relationship creation/review/edit/removal UI is
-next; owner delivery and broader compatibility remain pending.
+(TestComponentGroundingUI). Fixed creation preserves current relative placement;
+Part Tree relationship review, offset editing and removal now use the same guarded
+service (TestComponentRelationshipsUI). Grouped compatibility qualification and
+owner-build delivery remain next in 7.8.13f.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI

@@ -3473,7 +3473,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
           rendered pages 65-66 reviewed. Native Delete uses the Python adapter;
           refusal consumes bare/mixed definition selections before generic Delete.
           31 source-overlay checks pass; owner delivery remains batched in 13f.
-  - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
+  - [ X ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
     - [ X ] 7.8.13e1 Shared task guard audit: explicit sketch/plane destinations
@@ -3481,7 +3481,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       disabled during file Edit. Eight shared creation launchers refuse file Edit
       without mutation. File-level occurrence movement retains Undo/Redo and no
       modeling History. Source-overlay checks and DOCX review in WORK_STATE.
-    - [   ] 7.8.13e2 Next: audit remaining native modeling command routes and
+    - [ X ] 7.8.13e2 Completed bounded audit of remaining native modeling command routes and
       assembly relationship ownership/persistence beneath the file. Preserve the
       native solver and keep file History origin-only; do not change Add Component.
       - [ X ] 7.8.13e2a Native Part Primitive, Extrude, Revolve, Loft and Sweep
@@ -3489,7 +3489,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
         PartGui compiled; actual native routing/refusal/cancellation and legacy
         Primitive dialog checks pass. Eight grouped cases pass (WORK_STATE).
         Owner UI DOCX updated/rendered; owner delivery remains in 13f.
-      - [   ] 7.8.13e2b Next: remaining native command routes (including Part
+      - [ X ] 7.8.13e2b Completed remaining native command routes (including Part
         Boolean, copy and shape operations) and assembly relationship integration.
         Native Assembly requires AssemblyObject; a file App::Part is not a solver
         assembly. Resolve ownership/persistence with the existing native solver
@@ -3500,7 +3500,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
           workflows still run, and inspection remains available. PartGui built;
           12 grouped cases pass, including 46 native command refusal subcases.
           Owner UI DOCX updated/rendered; owner delivery remains 13f.
-        - [   ] 7.8.13e2b2 Native assembly relationship ownership, solver
+        - [ X ] 7.8.13e2b2 Native assembly relationship ownership, solver
           connection and persistence beneath the file, without geometry in file
           History. Broader native workbench fallback compatibility remains in 13f.
           - [ X ] 7.8.13e2b2a Native solver membership pilot: opt-in internal
@@ -3525,16 +3525,20 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
               fixed connector frames and unchanged ground placements after native
               success. Twenty grouped executions pass (16 distinct cases); native
               build unchanged, using the retained verified development runtime.
-          - [   ] 7.8.13e2b2c Bind file Edit/Part Tree relationship commands and
+          - [ X ] 7.8.13e2b2c Bind file Edit/Part Tree relationship commands and
             selection to the validated service, keeping Model History origin-only.
             - [ X ] 7.8.13e2b2c1 Ground/Unground context menu for one direct
               occurrence during file Edit. Revalidate stable row/edit context at
               invocation; refuse grouped, nested, multiple and busy selections.
               Six UI and eleven backend regression cases pass; owner DOCX updated
               with native numbering preserved and pages 66-68 rendered/reviewed.
-            - [   ] 7.8.13e2b2c2 Next: Fixed relationship creation plus a review,
-              edit and removal interface in Part Tree; connect selection to the
-              existing transaction service without file-owned modeling history.
+            - [ X ] 7.8.13e2b2c2 Fixed creation preserves current relative position;
+              Part Tree review highlights endpoints without changing Edit, edits
+              detached offsets and removes relationships through the transaction
+              service. Stale context/joint checks and unchanged/Cancel behavior
+              verified. Twelve grouped UI cases pass; owner DOCX numbering retained
+              and pages 66-69 rendered/reviewed. Native build unchanged; owner
+              payload and broader compatibility remain in 13f.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
@@ -3549,7 +3553,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13e2b2 file-level assembly relationship integration.
+      Next task: 13f grouped compatibility qualification and owner-build delivery.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,
