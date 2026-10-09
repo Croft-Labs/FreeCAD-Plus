@@ -3423,14 +3423,16 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   WORK_STATE separates application/native source and publication evidence.
 - [ X ] 7.8.12g Component save preflight refuses paths owned by another open
   document, including direct/nested imports, before writing. Rejected Save As
-  retains location/label and file bytes. Runtime/publication evidence is in WORK_STATE;
-  owner delivery is batched with the native relocation fix below.
-- [   ] 7.8.12h Native Save As/Copy relocation: source now passes the final archive
-  destination through Base::Writer and recalculates external XLink paths without
-  mutating live bindings. Relocation regression reproduced stale native paths despite
-  correct manifest dependencies. Full native rebuild and both relocation cases,
-  unfiltered hierarchy/core acceptance, cold reopen and shortcut delivery remain.
-  Writer layout changes require a consistent rebuilt payload, never a mixed DLL copy.
+  retains location/label and file bytes. Delivered with 7.8.12h; WORK_STATE owns
+  the matching native/runtime, shortcut and publication evidence.
+- [ X ] 7.8.12h Native Save As/Copy relocation uses the final archive destination
+  through Base::Writer to recalculate external XLink paths without mutating live
+  bindings. Full Release ALL_BUILD and both formerly failing relocation cases pass,
+  including referenced geometry, nested imports and Unicode destination paths.
+  Installed delivery accepts 93 checks across hierarchy/core/recovery/save/undo,
+  external copy, legacy integration/extrusion, cold reopen and the actual shortcut.
+  A complete inventory and rebuilt-native binary comparison pass. WORK_STATE records
+  replacement of stale copy-UI assertions and separates build/delivery/publication.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 

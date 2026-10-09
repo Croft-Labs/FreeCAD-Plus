@@ -1,26 +1,51 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 9 native relocation qualification (in progress)
+## October 9 native relocation delivered
 
-Continuing 7.8.12g/h from native/application source
-ec104817c69085d94b2676f219f85a4b46c1bbf8 (implementation 02d919e5d2).
-The full Release default/ALL_BUILD incremental build passed in the existing
-test-builds/freecad_plus_2026-10-06_recovered_workload tree. Writer layout changes
-require all native consumers to be rebuilt. The bounded build uses a two-hour hard
-deadline and ten-minute log-inactivity limit; logs are under validation/
-hierarchy-relocation-build-20261009. No generated install scripts are used.
+**Implementation/build:** 7.8.12g/h now have a matching full Release
+default/ALL_BUILD in test-builds/freecad_plus_2026-10-06_recovered_workload.
+Native source ec104817c69085d94b2676f219f85a4b46c1bbf8; acceptance/source snapshot
+c333146dbed7d4b02422caecf9fe068709460040. The build passed on the first run, using the
+existing pinned LibPack 26.3.0-v3.5.3 and full configured workbench set (FEM off).
+Base::Writer and all dependent runtime modules were rebuilt consistently.
+Dependency deprecation warnings remain; no build failure or install-script use.
+Runtime version is 27.1.0 dev R49468.
 
-The relocation tests now also require evaluated-reference geometry, a nested unused
-import and a destination folder containing spaces and a non-English character.
-A fresh hierarchy_relocation_payload is staged from the complete rebuilt runtime.
-Both focused relocation cases pass. Installed acceptance passes 88 hierarchy/core,
-recovery, save/undo and legacy integration/extrusion cases plus three corrected
-externalization tests. The initial externalization failures were stale expectations
-for the superseded identity-moving UI; the corrected suite checks independent
-copies and retains internal legacy-service coverage. No application change was
-needed. Cold reopen, inventory and saved-shortcut delivery are still in progress.
-The current desktop payload remains hierarchy_import_repair_payload until those
-gates succeed.
+**Behavior:** component saves refuse paths owned by another open document before
+writing. Save As/Copy external native links are serialized relative to the final
+archive destination, matching the manifest without mutating live bindings.
+Both formerly failing relocation cases now pass with evaluated-reference geometry,
+nested imports and a directory containing spaces and a non-English character.
+
+**Installed acceptance:** 93 final accepted checks, no source overlays: 32 hierarchy,
+27 core, three each file recovery/save routing/undo routing/externalization, 20
+legacy integration/extrusion, one cold reopen and one actual saved-shortcut reopen.
+The two focused relocation checks also passed before the broader batch and are
+not added again to the 93 total. The initial externalization suite had two stale
+UI expectations for identity-moving externalization. Its corrected three-case run
+verifies independent-copy identities/geometry, original placements/edit context,
+unfinished-edit refusal, overwrite refusal and cancellation; internal legacy-service
+coverage remains. Only those superseded failures are excluded from final acceptance.
+All other broader-batch suites passed unchanged. Accepted suites have no failures,
+errors, skips or unexpected GUI diagnostics; every process exited zero. Loaded
+module/source hashes match. General repeated-session qualification is not implied.
+
+**Delivery:** a fresh native payload was staged from the complete build directories:
+test-builds/freecad_plus_2026-10-09_hierarchy_relocation_payload.
+The full inventory contains 15,625 files; all
+1564 native DLL/PYD/EXE files match the rebuilt
+runtime byte-for-byte. Native and application identities are separate in
+release-info.json/payload-manifest.json. The unchanged owner launcher SHA256 is
+05c3a107c9ce1e0e370367a4e84e2ac8afe7a9e8e92cdb7543bc3db9a2547518.
+The existing FreeCADPlus.exe - Shortcut.lnk targets this payload; its saved target
+and working directory were reopened and verified, and an actual launch passed.
+The preceding hierarchy_import_repair_payload is retained as fallback.
+No new UI controls/defaults; the synchronized owner UI DOCX remains applicable.
+
+**Limits/publication:** earlier grouped-sketch inactivity timeouts remain unresolved
+(16.6c); they were not rerun in this relocation batch. FEM remains unavailable.
+No release or upstream publication. Origin verification and cleanup of the six task
+validation directories remain pending.
 
 ## October 9 save destination protection and native relocation (build pending)
 
