@@ -86,15 +86,137 @@ def ensure_assembly_context(doc):
     if existing:
         return existing
     with transaction(doc, "Create file relationships"):
-        context = doc.addObject("Assembly::AssemblyObject", "FileRelationships")
-        _property(context, "Link", "ComponentRoot", root, True)
-        _identity(context, "AssemblyContext")
-        context.setEditorMode("Placement", 1)
-        context.newObject("Assembly::JointGroup", "FileJoints")
-        if App.GuiUp:
-            context.ViewObject.ShowInTree = False
-        assembly_record(doc)
+        context = _create_assembly_context(doc)
     return context
+
+
+def _create_assembly_context(doc):
+    """Join the caller's transaction, including creation of the first joint."""
+    context = doc.addObject("Assembly::AssemblyObject", "FileRelationships")
+    _property(context, "Link", "ComponentRoot", metadata(doc).RootComponent, True)
+    _identity(context, "AssemblyContext")
+    context.setEditorMode("Placement", 1)
+    context.newObject("Assembly::JointGroup", "FileJoints")
+    if App.GuiUp:
+        context.ViewObject.ShowInTree = False
+    assembly_record(doc)
+    return context
+
+
+def _relationship_members(doc, occurrences):
+    root = validate(doc).RootComponent
+    if not is_file_container(root) or any(obj not in children(root) for obj in occurrences):
+        raise ValueError("Select direct occurrences in the owning file for relationships.")
+    if any(obj.LinkedObject is None for obj in occurrences):
+        raise ValueError("Repair missing component definitions before creating relationships.")
+
+
+def _relationship_group(context):
+    return next(obj for obj in context.Group if obj.isDerivedFrom("Assembly::JointGroup"))
+
+
+def _solve_file_relationships(context):
+    grounded = {obj: App.Placement(obj.LinkPlacement)
+                for obj in children(context.ComponentRoot)
+                if "ReadOnly" in obj.getPropertyStatus("LinkPlacement")}
+    status = context.solve()
+    if status != 0:
+        raise ValueError("The assembly relationship could not be solved (status %s)." % status)
+    if any(not obj.LinkPlacement.isSame(placement, 1e-7) for obj, placement in grounded.items()):
+        raise ValueError("The assembly relationship could not be solved without moving a grounded occurrence.")
+    validate(context.Document)
+    # Native success alone does not establish that fixed connectors coincide.
+    # Verify the accepted fixed-frame contract against the resulting geometry.
+    import UtilsAssembly
+    for joint in _relationship_group(context).Group:
+        if (str(getattr(joint, "JointType", "")) == "Fixed"
+                and joint.Detach1 and joint.Detach2 and not getattr(joint, "Suppressed", False)):
+            first = UtilsAssembly.getJcsGlobalPlc(joint.Placement1, joint.Reference1)
+            second = UtilsAssembly.getJcsGlobalPlc(joint.Placement2, joint.Reference2)
+            if not first.isSame(second, 1e-7):
+                raise ValueError("The fixed relationship could not be solved: connector frames differ.")
+
+
+def ground_occurrence(occurrence):
+    """Create an explicit native ground in one undo step, without moving geometry."""
+    import JointObject
+    doc = occurrence.Document
+    _relationship_members(doc, [occurrence])
+    context = assembly_context(doc)
+    if context:
+        for joint in _relationship_group(context).Group:
+            if getattr(joint, "ObjectToGround", None) == occurrence:
+                return joint
+    with transaction(doc, "Ground component occurrence"):
+        context = context or _create_assembly_context(doc)
+        # Native context setup can materialize an existing placement lock as a ground.
+        existing = next((obj for obj in _relationship_group(context).Group
+                         if getattr(obj, "ObjectToGround", None) == occurrence), None)
+        if existing:
+            return existing
+        joint = _relationship_group(context).newObject("App::FeaturePython", "GroundedJoint")
+        JointObject.GroundedJoint(joint, occurrence)
+        if App.GuiUp:
+            JointObject.ViewProviderGroundedJoint(joint.ViewObject)
+        _solve_file_relationships(context)
+    return joint
+
+
+def create_fixed_relationship(first, second, placement1=None, placement2=None):
+    """Join local occurrence connector frames using the native Fixed joint engine."""
+    import JointObject
+    doc = first.Document
+    _relationship_members(doc, [first, second])
+    if first == second:
+        raise ValueError("A relationship must join two different occurrences.")
+    frame1, frame2 = App.Placement(placement1 or App.Placement()), App.Placement(placement2 or App.Placement())
+    with transaction(doc, "Create fixed component relationship"):
+        context = assembly_context(doc) or _create_assembly_context(doc)
+        joint = _relationship_group(context).newObject("App::FeaturePython", "FixedJoint")
+        JointObject.Joint(joint, JointObject.JointTypes.index("Fixed"))
+        if App.GuiUp:
+            JointObject.ViewProviderJoint(joint.ViewObject)
+        joint.Detach1 = True
+        joint.Detach2 = True
+        joint.Reference1 = (first, ["", ""])
+        joint.Reference2 = (second, ["", ""])
+        joint.Placement1, joint.Placement2 = frame1, frame2
+        if not context.isPartConnected(first) or not context.isPartConnected(second):
+            raise ValueError("Connect the relationship to a grounded occurrence first.")
+        _solve_file_relationships(context)
+    return joint
+
+
+def edit_fixed_relationship(joint, placement1, placement2):
+    """Edit only detached Fixed connector frames; preserve joint and endpoint identities."""
+    doc = joint.Document
+    record = assembly_record(doc)
+    if (not record or joint.Name not in {item["object"] for item in record["joints"]}
+            or str(getattr(joint, "JointType", "")) != "Fixed"
+            or not joint.Detach1 or not joint.Detach2):
+        raise ValueError("Select a file-owned fixed relationship with explicit connector frames.")
+    frame1, frame2 = App.Placement(placement1), App.Placement(placement2)
+    with transaction(doc, "Edit fixed component relationship"):
+        joint.Placement1, joint.Placement2 = frame1, frame2
+        _solve_file_relationships(assembly_context(doc))
+
+
+def remove_relationships(doc, joints):
+    """Delete reviewed native relationships, releasing ground locks in the same undo step."""
+    joints = list(dict.fromkeys(joints))
+    if not joints:
+        return
+    record = assembly_record(doc)
+    if not record or any(joint.Document != doc or joint.Name not in
+                         {item["object"] for item in record["joints"]} for joint in joints):
+        raise ValueError("Select relationships from one owning file.")
+    with transaction(doc, "Remove component relationships"):
+        for joint in joints:
+            if hasattr(joint, "ObjectToGround"):
+                # Native onBeforeChange releases both Placement and LinkPlacement.
+                joint.ObjectToGround = None
+            doc.removeObject(joint.Name)
+        _solve_file_relationships(assembly_context(doc))
 
 
 def assembly_record(doc):

@@ -3509,7 +3509,9 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
             pass: joint solve/Undo/Redo, per-occurrence grounding, invalid-root
             refusal and legacy membership. No production service or UI creates
             contexts yet; this is not persistence or owner-delivery acceptance.
-          - [   ] 7.8.13e2b2b Transactional context and joint ownership,
+          - [ X ] 7.8.13e2b2b Transactional context and joint ownership
+            accepted for the Ground/Fixed pilot; other joint kinds remain compatibility
+            scope. Context and joint ownership,
             endpoint/deletion guards, required .cadprt capability and native/manifest
             cross-checks; prove save/reopen before enabling relationship commands.
             - [ X ] 7.8.13e2b2b1 Context service, structural/endpoint guards and
@@ -3517,9 +3519,12 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
               partial graphs. Context Undo/Redo/rollback, fixed-joint save/reopen,
               capability/manifest refusal and existing file-root regressions verified;
               see WORK_STATE for grouped and fresh-process results.
-            - [   ] 7.8.13e2b2b2 Next: transactional joint creation/edit/removal,
-              grounding cleanup, invalid-solve rollback and external-definition
-              acceptance before enabling the relationship command adapter.
+            - [ X ] 7.8.13e2b2b2 Ground/Fixed transaction service: creation,
+              detached-frame edits and removal, ground lock cleanup/Undo, failed
+              solve rollback and external-definition save/reopen isolation. Check
+              fixed connector frames and unchanged ground placements after native
+              success. Twenty grouped executions pass (16 distinct cases); native
+              build unchanged, using the retained verified development runtime.
           - [   ] 7.8.13e2b2c Bind file Edit/Part Tree relationship commands and
             selection to the validated service, keeping Model History origin-only.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,

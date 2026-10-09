@@ -1,5 +1,44 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 Ground/Fixed relationship transactions
+
+7.8.13e2b2b2 is complete for the bounded Ground/Fixed pilot. ComponentModel provides
+ground_occurrence, create_fixed_relationship, edit_fixed_relationship and
+remove_relationships. First-ground/context creation is one undo step; repeated
+grounding is idempotent. Fixed joints preserve endpoint identity and use explicit
+local connector frames. Native ground removal releases both placement locks and
+Undo restores them. No occurrence or model definition is replaced by these services.
+
+Transactions check solver status, unchanged grounded occurrence placements and
+coincident active detached Fixed connector frames. The first actual-conflict test
+showed native success despite an incompatible pair of grounded placements. A frame
+check alone did not catch it because the native solve moved a grounded occurrence.
+The final ground-placement check detects that behavior and aborts the transaction.
+Tests verify both failed creation and failed editing restore objects, connectors,
+placements, locks, undo count and transaction state.
+
+Validation: final grouped run passes 20 executions, representing 16 distinct cases
+in TestComponentRelationshipTransactions and TestComponentAssemblyPersistence (the
+four inherited solver cases execute in both). Coverage includes create/edit/remove
+Undo/Redo, first-ground/context Undo/Redo, lock cleanup, invalid/ungrounded refusal,
+actual conflicting-solve rollback, external-definition occurrence solving and
+save/reopen with source file bytes/definition placement/locks unchanged, plus the
+prior context/persistence guards. Final stderr has no diagnostics. Python syntax
+and CRLF-aware diff checks pass. The existing verified development runtime at
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-06_recovered_workload
+was used with source ComponentModel/CadDocument overlays; no native source changed
+and no new native build was needed. Validation files are removed after recording
+results, retaining the useful development build.
+
+Backend-only milestone: no owner interaction changed, so the owner UI DOCX remains
+unchanged. No owner payload/shortcut update or release. Add Component stays deferred.
+Ground and detached Fixed frames are accepted; other joint types and interactive
+geometry picking are not implied by this pilot. Source publication remains separate.
+
+Next task: 7.8.13e2b2c, connect file Edit and Part Tree Ground/Fixed relationship
+commands/selection to these services while keeping file Model History origin-only.
+Overall implementation and grouped owner delivery (13f) remain open.
+
 ## October 9 file relationship context and persistence
 
 7.8.13e2b2b1 is complete. ComponentModel.ensure_assembly_context creates one native

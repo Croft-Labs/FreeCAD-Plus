@@ -301,11 +301,27 @@ restore checks the live graph again. Native connector/solver parameters retain
 native persistence. Older readers lacking the capability refuse the file. Existing
 files without contexts do not acquire the capability.
 
-Relationship creation/edit/removal commands remain disabled pending the joint
-transaction service and UI adapter. The bounded accepted relationship fixture is
-a grounded occurrence plus a fixed joint; other joint types, external-definition
-integration and interactive selection remain later acceptance gates. See
-TestComponentAssemblySolver and TestComponentAssemblyPersistence.
+ComponentModel.ground_occurrence, create_fixed_relationship,
+edit_fixed_relationship and remove_relationships provide the bounded Ground/Fixed
+transaction service. Creating the first ground also creates its context in the
+same Undo step. Fixed relationships connect two direct occurrences using explicit
+local connector frames; creation requires a connection to ground. Editing preserves
+joint/endpoints and changes only detached connector frames. Ground removal clears
+native Placement/LinkPlacement locks, which Undo restores. Relationship deletion
+preserves the component models and occurrence identities.
+
+Solve status alone is insufficient: a native solve may report success while moving
+a grounded occurrence. The service snapshots grounded placements and verifies those
+plus resulting active detached Fixed connector frames (native placement tolerance
+1e-7). A failing status or violated postcondition aborts the complete transaction,
+including joint creation, connector edits and solver-driven placement changes.
+External definitions are referenced through local occurrences; source placements,
+placement locks and saved source files are not modified by assembly transactions.
+
+The Part Tree command adapter is still pending. The accepted backend scope is
+Ground and detached Fixed frames; other native joint types and interactive geometry
+picking are not implied by these services. See TestComponentAssemblySolver,
+TestComponentAssemblyPersistence and TestComponentRelationshipTransactions.
 
 ## File modeling task guards
 
