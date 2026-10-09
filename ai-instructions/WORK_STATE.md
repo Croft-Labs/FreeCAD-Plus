@@ -40,9 +40,11 @@ single-module update. The earlier grouped-sketch inactivity timeouts remain
 unconfirmed (16.6c); this is not exhaustive repeated-session qualification.
 No release or upstream publication.
 
-**Publication/cleanup:** implementation and acceptance are recorded locally.
-Origin publication verification and deletion of the six task validation directories
-remain pending.
+**Publication/cleanup:** implementation 1a4f4692f9bb4d8132f424e31ee45b58ffd0f586
+and delivery evidence 8203b3e4c3faf303ff28e075a784f69be2ef7f88 were pushed
+to origin/main with remote hashes verified. All six task validation directories
+were deleted after recording these results. No FreeCAD/FreeCADPlus validation
+processes remain. Useful owner/development payloads and dependencies are retained.
 
 ## October 9 import-graph identity preflight
 
