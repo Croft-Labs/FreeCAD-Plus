@@ -1,5 +1,54 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 domestic/external file hierarchy
+
+Roadmap 7.8.12 implements the owner-approved hierarchy in ComponentModel,
+CadDocument and ComponentNavigator. File imports persist without placements,
+Models lists domestic definitions before recursively grouped imported files, and
+external labels identify their defining file. New Component supports domestic,
+new external and existing external storage. Active defining-file inventory controls
+insertion. Component/file cycles refuse before mutation. Missing unused imports
+can be repaired by original file identity.
+
+Independent copies regenerate the domestic definition closure's identities and
+retain already-external children as explicit shared imports. The domestic-copy
+prompt defaults to no placement replacement; Cancel retains both the new copy and
+original links. Selected replacement retains placement and occurrence identity.
+The normal UI no longer invokes identity-moving externalization. Expressions,
+outside-owned copy inputs and unreviewed replacement consumers/path overrides are
+explicitly refused. Cross-file creation is not a distributed undo transaction.
+
+The owner UI DOCX was read, surgically updated, rendered to 92 pages and visually
+reviewed at changed sections and reflowed pages. ZIP comparison confirms only
+word/document.xml changed: styles, relationships and native numbering are retained.
+Canonical component contract, ADR 003, UI specification and programming summary are
+synchronized. Tests/ComponentFileHierarchy.md records the validation boundary.
+
+Validation uses explicit source Python overlays on the October 6 native engine,
+revision 8746c1076071a7b9decff07577b6a163a0f76ee9, from the existing
+legacy_integration_payload. This is not rebuilt October 7 C++ acceptance. No new
+owner payload or shortcut delivery is claimed. Batch the matching native build
+and installed/shortcut checks with roadmap 16.6b and 7.8.12b; preserve the current
+owner payload until that delivery passes.
+
+Earlier trial runs exposed fixture encoding/import selection and stale flat-tree
+expectations. Mixed UI runs also retained registered commands bound to the installed
+navigator namespace; the source-overlay fixture now retires the installed observer
+and reloads that namespace in place. The old runner also timed out idle launchers
+while native child tests were still progressing; it now watches log timestamps and
+cleans up its own matching child on timeout. A real Origin Planes regression from
+the file-header key guard was corrected to retain extended row keys.
+Failed/timed-out trials are not acceptance.
+
+Final grouped run hierarchy-regression-18 passes all 64 cases: 20 hierarchy,
+three Add Component command, 14 Models pane and 27 core component document checks.
+Zero failures/errors/skips, zero unexpected GUI diagnostics, launcher exit zero.
+The source-overlay loader verifies the changed core module hashes; the runtime
+report confirms the source navigator and model. Seven changed Python modules pass
+AST syntax checks, the PowerShell runner parses, and git diff --check passes.
+The Models capture confirms domestic-first inventory with Hardware and nested
+Coatings groups. Raw task validation files are removed after recording these results.
+
 ## October 7 upstream integration handoff
 
 Current source incorporates upstream `e326ee2f07df04d4293035d65a98c96c3eb23380`

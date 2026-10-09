@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+October 9 file hierarchy: ComponentModel owns explicit imports, file-cycle guards,
+qualified names and independent domestic hierarchy copies; CadDocument persists the
+additive `component-file-imports-v1` capability. ComponentNavigator provides nested
+Models groups, three storage choices and selected domestic replacement. See
+[acceptance checks](../tests/ComponentFileHierarchy.md), the component contract,
+roadmap 7.8.12 and WORK_STATE for source/runtime versus owner-build status.
+
 Legacy migration task two routes GUI File Open through native structural conversion:
 Models definitions, shared Part Tree occurrences and retained Body/sketch payloads.
 Exact frames/scales, external save order, missing links and explicit dumb recovery

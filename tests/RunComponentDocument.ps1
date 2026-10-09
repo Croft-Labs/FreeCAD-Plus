@@ -147,8 +147,19 @@ while (-not $process.WaitForExit(1000)) {
     $process.Refresh()
     $cpu = $process.TotalProcessorTime.TotalSeconds
     if ($cpu -ne $lastCpu) { $lastProgress = Get-Date; $lastCpu = $cpu }
+    # The launcher waits while its native child runs; its CPU can stay idle.
+    $latestLog = Get-ChildItem -LiteralPath $OutputDirectory -Filter *.log |
+        Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    if ($latestLog -and $latestLog.LastWriteTime -gt $lastProgress) {
+        $lastProgress = $latestLog.LastWriteTime
+    }
     if ((Get-Date) -gt $deadline -or ((Get-Date) - $lastProgress).TotalSeconds -gt 60) {
-        Stop-Process -Id $process.Id
+        # Stop only native children of this timed-out test launcher.
+        Get-CimInstance Win32_Process -Filter "ParentProcessId = $($process.Id)" |
+            Where-Object { $_.Name -eq 'FreeCAD.exe' -and
+                $_.CommandLine.Contains($OutputDirectory + '\user.cfg') } |
+            ForEach-Object { Stop-Process -Id $_.ProcessId -ErrorAction SilentlyContinue }
+        Stop-Process -Id $process.Id -ErrorAction SilentlyContinue
         throw 'Component validation exceeded its bounded deadline.'
     }
 }

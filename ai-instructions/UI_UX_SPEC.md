@@ -2048,9 +2048,18 @@ Starting a component operation selects History as its creation task opens, inclu
 entry from Models or Part Tree. Reveal the Components panel if hidden. Shared Sketch,
 Extrude, Revolve, Loft, Pipe, Helix and Primitive tasks retain preselection and the
 active component/occurrence context; OK and Cancel return to the originating view.
-Models is flat/non-expandable and lists all owning-file definitions, including
-unused definitions and referenced external models, with expanded assembly-instance
-counts. The root is an editing model/context, with zero linked uses unless explicitly
+Models lists domestic definitions first, then collapsible imported-file groups,
+including unused definitions and nested imported files. External labels include the
+defining filename, such as M3 screw (Hardware); domestic names are unqualified.
+Imports remain after the last placement is removed. Counts expand assembly instances.
+New Component offers domestic, new external file and existing external file storage.
+Insertion choices belong to the active component's defining file: domestic definitions
+and direct imports. Importing into an external active component changes that file.
+Circular file or component references are blocked. External edits save to their source.
+Copy to Domestic Components creates independent definitions and prompts which owning
+placements to replace, with nothing initially selected. Cancel retains the copy and
+existing placements. The domestic child hierarchy is copied; existing external children
+remain shared. Copy to External File creates a separate file and retains the original. The root is an editing model/context, with zero linked uses unless explicitly
 instanced elsewhere. Selecting a model shows native attributes; Edit accesses the
 same definition even with zero instances. Add Instance reuses it in the active model.
 Replace the native Model pane with Attributes, retaining its View and Data tabs.
@@ -2155,7 +2164,8 @@ provides Edit first and Add Component; Add Reference Object is an operation
 button. Double-click edits the shared definition. Root editing is available in
 Models and through the first Part Tree row. Instances contains Add
 Instance and Copy to New Part; Part View contains the three display types and Reset
-to Inherited. Save to External File replaces the earlier Externalize wording.
+to Inherited. Copy to External File replaces identity-moving Save to External File.
+The copy workflows follow the October 9 ownership contract above.
 Missing components offer Locate Component File and legacy conversions expose their
 report. Attributes and these projections share native document objects; complete
 native command/edit/picking parity remains an explicit roadmap gate.

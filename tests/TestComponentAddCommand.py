@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Owner feedback: creation commands must preserve component ownership/context."""
 import os
+import sys
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -10,6 +11,8 @@ import FreeCADGui as Gui
 import ComponentModel as Model
 from PySide import QtCore, QtWidgets
 from freecad.gui import ComponentNavigator as Navigator
+if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1":
+    Navigator = sys.modules["freecad.gui.ComponentNavigator"]
 from freecad.gui import ComponentSelection as Selection
 
 
@@ -22,6 +25,8 @@ class TestComponentAddCommand(unittest.TestCase):
         self.doc.saveAs(str(self.output / "Assembly.cadprt"))
         self.panel = Navigator.show(self.doc)
         self.window = self.panel.mdi.activeSubWindow()
+        self.warnings = patch.object(QtWidgets.QMessageBox, "warning").start()
+        self.addCleanup(patch.stopall)
 
     def tearDown(self):
         for doc in reversed(list(App.listDocuments().values())):
@@ -31,6 +36,7 @@ class TestComponentAddCommand(unittest.TestCase):
         with patch.object(QtWidgets.QInputDialog, "getItem", side_effect=lambda *args: (args[3][0], True)), \
                 patch.object(QtWidgets.QInputDialog, "getText", return_value=(label, True)):
             Gui.runCommand(command)
+        self.assertFalse(self.warnings.called, str(self.warnings.call_args))
         self.panel.refresh()
 
     def assert_context(self, component, ids):
@@ -98,12 +104,12 @@ class TestComponentAddCommand(unittest.TestCase):
         self.panel.refresh()
         self.panel.activate_item(self.panel.structure.topLevelItem(0).child(0).child(1))
         self.panel.refresh()
-        with patch.object(QtWidgets.QInputDialog, "getItem", side_effect=lambda *args: (args[3][1], True)), \
+        with patch.object(QtWidgets.QInputDialog, "getItem", side_effect=lambda *args: (args[3][1 if len(args[3]) > 1 else 0], True)), \
                 patch.object(QtWidgets.QFileDialog, "getOpenFileName", return_value=(str(self.output / "Pin.cadprt"), "")):
             self.panel.add_component()
         self.assertEqual(len(Model.children(support)), 1)
         self.assert_context(support, [second.ObjectId])
-        with patch.object(QtWidgets.QInputDialog, "getItem", side_effect=lambda *args: (args[3][1], True)), \
+        with patch.object(QtWidgets.QInputDialog, "getItem", side_effect=lambda *args: (args[3][1 if len(args[3]) > 1 else 0], True)), \
                 patch.object(QtWidgets.QFileDialog, "getOpenFileName", return_value=(str(self.output / "Assembly.cadprt"), "")):
             with self.assertRaises(ValueError):
                 self.panel.add_component()

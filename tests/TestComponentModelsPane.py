@@ -2,6 +2,7 @@
 """Definition inventory, occurrence-only assembly and safe instance deletion."""
 import importlib.util
 import os
+import sys
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -10,13 +11,17 @@ import FreeCADGui as Gui
 import Part
 from PySide import QtCore, QtGui, QtWidgets
 
-if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1":
+if (os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1"
+        and Path(getattr(sys.modules.get("freecad.gui.ComponentNavigator"), "__file__", "")).resolve()
+        != (Path(__file__).resolve().parents[1] / "src/Gui/ComponentNavigator.py")):
     spec = importlib.util.spec_from_file_location("ModelsOverlay", Path(__file__).with_name("TestComponentBackgroundResult.py"))
     overlay = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(overlay)
 
 import ComponentModel as Model
 from freecad.gui import ComponentNavigator as Navigator
+if os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1":
+    Navigator = sys.modules["freecad.gui.ComponentNavigator"]
 
 
 class TestComponentModelsPane(unittest.TestCase):
@@ -30,8 +35,12 @@ class TestComponentModelsPane(unittest.TestCase):
         self.shape.Shape = Part.makeBox(10, 8, 6)
         self.doc.recompute()
         self.panel = Navigator.show(self.doc)
+        warning_patch = patch.object(QtWidgets.QMessageBox, "warning")
+        self.warnings = warning_patch.start()
+        self.addCleanup(warning_patch.stop)
 
     def tearDown(self):
+        self.assertFalse(self.warnings.called, str(self.warnings.call_args))
         Gui.Selection.clearSelection()
         for doc in list(App.listDocuments().values()):
             App.closeDocument(doc.Name)
@@ -44,7 +53,7 @@ class TestComponentModelsPane(unittest.TestCase):
         self.assertEqual([self.panel.tabs.tabText(i) for i in range(3)],
                          ["Models", "Part Tree", "History"])
         self.assertEqual(self.panel.models.topLevelItemCount(), 2)
-        self.assertFalse(self.panel.models.itemsExpandable())
+        self.assertTrue(self.panel.models.itemsExpandable())
         for i in range(2):
             self.assertEqual(self.panel.models.topLevelItem(i).childCount(), 0)
         self.assertEqual(self.model_row(self.part).text(1), "1")

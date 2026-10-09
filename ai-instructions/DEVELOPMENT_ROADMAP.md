@@ -3378,6 +3378,18 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   report tested editable mappings and unsupported/geometry-only content.
 - [   ] 7.8.10 Complete grouped native/runtime, cold reopen, undo/redo, graph/failure,
   downstream and GUI acceptance against the contract's end-to-end example.
+- [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
+  qualified names, storage chooser, active defining-file insertion, cycle guards,
+  identity-based missing-import repair and independent copies with reviewed placement
+  replacement. The owner DOCX and canonical contract supersede earlier flat Models
+  and identity-moving UI requirements. See tests/ComponentFileHierarchy.md.
+  Final grouped source-overlay validation passes 64 cases (20 hierarchy, three
+  creation-command, 14 Models and 27 core), zero failures/errors/skips or unexpected
+  GUI diagnostics, exit zero. DOCX rendered/reviewed; native build status is separate.
+- [   ] 7.8.12b Complete matching native build and installed owner acceptance with
+  shortcut delivery, including the outstanding October 7 integration gates. Source
+  overlays against the October 6 engine do not close this gate. General expression
+  copying and consumer/path remapping remain explicitly refused.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 

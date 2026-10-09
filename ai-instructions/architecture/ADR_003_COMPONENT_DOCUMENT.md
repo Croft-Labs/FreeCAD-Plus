@@ -39,7 +39,8 @@ GUI/view payloads and geometry files. The JSON contains:
 | `required` | `components-v1`, `native-objects-v1`, `evaluated-references-v1` |
 | `document`, `root` | Stable document and root-definition identities |
 | `definitions` | Definition identity/native object name, ordered history/result names, occurrence identity/name/definition/external flag |
-| `dependencies` | External document identity to relative path; absolute path when Windows drives differ |
+| `dependencies` | External document identity to relative path, including unused explicit imports; absolute path when Windows drives differ |
+| `imports` | Optional explicit file-import identity/native object name/document identity list; requires `component-file-imports-v1` |
 
 Native properties retain the actual link graph, placements, parameters, display
 overrides and reference bindings. The manifest is an integrity and capability
@@ -55,11 +56,24 @@ independent reference before reporting broken branches. Locate Component File
 requires the original definition and referenced-object identities.
 
 Save As/Copy preserve semantic identities. Failed Save As restores the original
-location and label. Copy to New Part regenerates copied definition/object/occurrence
-identities and retains child definitions. Externalization moves the embedded
-definition closure to a new file, preserving identities and shared children while
-remapping loaded owner occurrences/references. Expression-driven copies and
-unmapped external consumers fail preflight rather than silently changing bindings.
+location and label. The October 9 copy workflow regenerates the copied domestic
+closure's definition/object/occurrence identities, remaps native links and semantic
+registries, and retains already-external children as explicitly shared imports.
+Selected domestic placement replacement is a separate transaction retaining link
+identity and transform. Expression-driven copies and unmapped external consumers
+fail preflight rather than silently changing bindings. The earlier identity-moving
+`externalize` service remains for legacy/internal callers, not the user copy action.
+
+Explicit imports are hidden native `App::FeaturePython` records with a `PropertyXLink`
+to the source root, stable record identity and expected source document identity.
+They persist unused files without synthesizing placements. Readers cross-check records
+against the envelope. Only files with these records require the additive capability;
+older occurrence-only files retain their previous capability set and derive their
+inventory from links without an automatic write migration. Native restore/preflight
+continues to delegate to CadDocument. Missing imports open for identity-based repair;
+unresolved imports cannot be saved. File-graph DFS allows shared diamonds and blocks
+cycles independently of occurrence-graph validation. Models projects this nested graph;
+insertion choices use the active defining file's domestic/direct-import inventory.
 
 ## Compatibility and integration boundaries
 

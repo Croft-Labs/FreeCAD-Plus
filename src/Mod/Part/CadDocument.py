@@ -11,7 +11,8 @@ import ComponentModel as Model
 
 FORMAT = "org.freecad-plus.component-document"
 MANIFEST = "ComponentManifest.json"
-CAPABILITIES = ("components-v1", "native-objects-v1", "evaluated-references-v1")
+BASE_CAPABILITIES = ("components-v1", "native-objects-v1", "evaluated-references-v1")
+CAPABILITIES = BASE_CAPABILITIES + ("component-file-imports-v1",)
 
 
 def manifest(document, filename=None):
@@ -23,31 +24,36 @@ def manifest(document, filename=None):
         raise ValueError("Save converted content to a new .cadprt file; the legacy original is protected.")
     definitions = []
     dependencies = {}
+    for source in Model.external_documents(document):
+        path = source.FileName
+        if not path or Path(path).suffix.lower() != ".cadprt":
+            raise ValueError("External components must be saved as .cadprt.")
+        try:
+            relative = os.path.relpath(path, Path(destination).parent) if destination else path
+        except ValueError:
+            relative = path  # Different Windows drives cannot be relative.
+        dependencies[Model.metadata(source).ObjectId] = relative
     for component in Model.definitions(document):
         occurrences = []
         for link in Model.children(component):
             source = link.LinkedObject
-            external = source.Document != document
-            if external:
-                path = source.Document.FileName
-                if not path or Path(path).suffix.lower() != ".cadprt":
-                    raise ValueError("External components must be saved as .cadprt.")
-                try:
-                    relative = os.path.relpath(path, Path(destination).parent) if destination else path
-                except ValueError:
-                    relative = path  # Different Windows drives cannot be relative.
-                dependencies[Model.metadata(source.Document).ObjectId] = relative
             occurrences.append({"id": link.ObjectId, "object": link.Name,
-                                "definition": source.ObjectId, "external": external})
+                                "definition": source.ObjectId,
+                                "external": source.Document != document})
         definitions.append({"id": component.ObjectId, "object": component.Name,
                             "history": list(component.ModelHistory),
                             "results": list(component.ResultObjects),
                             "occurrences": occurrences})
-    return json.dumps({"format": FORMAT, "version": Model.SCHEMA,
-                       "required": list(CAPABILITIES), "document": meta.ObjectId,
-                       "root": meta.RootComponent.ObjectId,
-                       "definitions": definitions, "dependencies": dependencies},
-                      ensure_ascii=False, sort_keys=True, indent=2)
+    imports = [{"id": record.ObjectId, "object": record.Name,
+                "document": record.DocumentId} for record in Model.file_imports(document)]
+    data = {"format": FORMAT, "version": Model.SCHEMA,
+            "required": list(BASE_CAPABILITIES), "document": meta.ObjectId,
+            "root": meta.RootComponent.ObjectId,
+            "definitions": definitions, "dependencies": dependencies}
+    if imports:
+        data["imports"] = imports
+        data["required"].append("component-file-imports-v1")
+    return json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2)
 
 
 def preflight(filename):
@@ -66,8 +72,26 @@ def preflight(filename):
     required = data.get("required")
     if not isinstance(required, list) or any(c not in CAPABILITIES for c in required):
         raise ValueError("This component document requires unsupported reader capabilities.")
-    if not set(CAPABILITIES) <= set(required):
+    if not set(BASE_CAPABILITIES) <= set(required):
         raise ValueError("Missing component document capability declarations.")
+    dependencies = data.get("dependencies")
+    if (not isinstance(dependencies, dict)
+            or any(not isinstance(key, str) or not key or not isinstance(value, str) or not value
+                   for key, value in dependencies.items())):
+        raise ValueError("Invalid component file dependency records.")
+    imports = data.get("imports", [])
+    if not isinstance(imports, list) or any(not isinstance(item, dict) for item in imports):
+        raise ValueError("Invalid component file imports.")
+    if bool(imports) != ("component-file-imports-v1" in required):
+        raise ValueError("Component file imports require their reader capability.")
+    for field in ("id", "object", "document"):
+        values = [item.get(field) for item in imports]
+        if (any(not isinstance(value, str) or not value for value in values)
+                or len(values) != len(set(values))):
+            raise ValueError("Duplicate or missing component file import identities.")
+    if any(item["document"] not in dependencies or item["document"] == data.get("document")
+           for item in imports):
+        raise ValueError("Invalid imported component file dependency.")
     definitions = data.get("definitions")
     if not isinstance(definitions, list) or not definitions:
         raise ValueError("Missing component definitions.")
@@ -87,7 +111,8 @@ def preflight(filename):
         saved[obj.get("name")] = {"id": value("ObjectId", "String"),
                                   "role": value("ComponentRole", "String"),
                                   "root": value("RootComponent", "Link"),
-                                  "version": value("SchemaVersion", "Integer")}
+                                  "version": value("SchemaVersion", "Integer"),
+                                  "document": value("DocumentId", "String")}
     documents = [o for o in saved.values() if o["role"] == "Document"]
     if (len(documents) != 1 or documents[0]["id"] != data["document"]
             or documents[0]["version"] != str(Model.SCHEMA)
@@ -95,6 +120,10 @@ def preflight(filename):
         raise ValueError("Component metadata differs from its format manifest.")
     if {o["id"] for o in saved.values() if o["role"] == "Definition"} != set(ids):
         raise ValueError("Component definitions differ from the format manifest.")
+    saved_imports = {name: (item["id"], item["document"]) for name, item in saved.items()
+                     if item["role"] == "FileImport"}
+    if saved_imports != {item["object"]: (item["id"], item["document"]) for item in imports}:
+        raise ValueError("Component file imports differ from their format manifest.")
     return data
 
 
@@ -124,7 +153,7 @@ def open(filename, _opening=None):
             raise ValueError("External file identity differs from the saved component dependency.")
     doc = App.openDocument(filename)
     try:
-        meta = Model.validate(doc, allow_unresolved=bool(missing))
+        meta = Model.validate(doc, allow_unresolved=True)
         if meta.ObjectId != expected["document"] or meta.RootComponent.ObjectId != expected["root"]:
             raise ValueError("The component manifest does not match the saved native objects.")
         for record in expected["definitions"]:

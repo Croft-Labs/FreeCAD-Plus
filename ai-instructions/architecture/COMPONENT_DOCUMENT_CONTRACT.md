@@ -1,6 +1,6 @@
 # Component documents and History
 
-Owner-approved contract, 2026-10-01. Implementation and validation status belong
+Owner-approved contract, 2026-10-01; file hierarchy revision, 2026-10-09. Implementation and validation status belong
 to roadmap 7.8. This supersedes conflicting part/navigator terminology and the
 former opt-in legacy-conversion policy; it does not claim completed implementation.
 
@@ -8,13 +8,18 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 
 - UI names: **Models**, **Part Tree**, **History**, **Attributes**, **Add Component**,
   **Add Reference Object**, **Convert to Dumb Object**, **Instances > Add Instance**,
-  **Instances > Copy to New Part**, **Save to External File**.
+  **Copy to Domestic Components**, **Copy to External File**, **Import Component File**.
   Documentation may say sub-component; UI calls every instance a component.
 - A component definition owns ordered history, evaluated result objects, child
   component instances and optional assembly constraints. Geometry and children
   may coexist. Bodies are results, never prerequisites for sketches or operations.
-- Models is the first tab: a flat, non-expandable inventory of owning-file component
-  definitions, including unused models and referenced external models. Show each
+- Models is the first tab: domestic definitions appear first (master first), then
+  collapsible imported-file groups listing every definition, including unused ones.
+  Imported files can contain nested imported-file groups. File imports exist
+  independently of placements and remain after deleting the last placed instance.
+  Show domestic names without qualification and external names as `M3 screw (Hardware)`;
+  qualify identical filenames by path where needed. Names must be unique within
+  each defining file; matching names across files never merge their identities. Show each
   model's number of linked occurrences in the owning file's assembly, expanding
   repeated nested uses. The file root is a model/context, not an implicit linked
   instance, so it normally has count zero. Selection supplies native Attributes;
@@ -45,12 +50,27 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   or BOM count. Cover unused descendants beneath their unused parent rather than
   adding duplicate top-level rows. Removing the last master use exposes the retained
   definition in this unused inventory; adding a use places it back in the master tree.
-- Each `.cadprt` has one root component and embedded definitions, and may link
-  definitions in other `.cadprt` files. New definitions are embedded by default.
-  Definition identity is distinct from occurrence identity and labels/file paths.
-- Repeated instances share a definition, with independent placements and display
-  overrides. Copy to New Part copies the selected definition and its own model;
-  child definitions remain shared unless a deep hierarchy copy is explicitly chosen.
+- Each `.cadprt` has one root component and domestic definitions. New Component
+  offers domestic storage, a new external file, or an existing external file.
+  Adding to an imported Hardware file creates and saves a domestic definition there;
+  importing that file exposes all its definitions. Definition identity remains
+  distinct from occurrence identity, names and paths.
+- Insertion uses the active component's defining file: its domestic definitions or
+  directly imported files. Nested imports are visible but are not implicitly imports
+  of their ancestors. Import into the active defining file before inserting from
+  another file. Block component cycles and file cycles before any graph mutation.
+- Repeated instances share a definition with independent placements and display
+  overrides. External edits save in the defining file; assemblies reopening it see
+  those saved changes. There is no name-based domestic override or shadowing.
+- Copy to Domestic Components creates independent identities for the copied
+  definition and its domestic child hierarchy. Already-external child definitions
+  remain explicitly imported and shared. Prompt for the owning placements to replace,
+  initially selecting none; cancel retains the new copy and existing placements.
+  Replacement preserves placement and occurrence identity. Unsupported expressions,
+  outside-owned inputs and consumer/path remapping must refuse before mutation.
+- Copy to External File creates a separate independent definition file and retains
+  the original definition and placements. Do not expose identity-moving conversion
+  as a normal user action. Legacy migration services are not the copy workflow.
 - Move Components changes child LinkPlacement values owned by their immediate
   parent definition. The change applies to every use of that parent, including
   its standalone view. Never add a display-occurrence placement override. Accept

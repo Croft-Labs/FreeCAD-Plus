@@ -65,7 +65,7 @@ def is_component(obj):
 
 def definitions(doc):
     items = [o for o in doc.Objects if is_component(o)]
-    roots = [o.RootComponent for o in doc.Objects
+    roots = [getattr(o, "RootComponent", None) for o in doc.Objects
              if getattr(o, "ComponentRole", "") == "Document"]
     return [o for o in roots if o in items] + [o for o in items if o not in roots]
 
@@ -96,11 +96,161 @@ def tree_roots(doc):
     return roots
 
 
+def file_imports(doc):
+    """Explicit file references, independent of placed component instances."""
+    return [obj for obj in doc.Objects if getattr(obj, "ComponentRole", "") == "FileImport"]
+
+
+def external_documents(doc, allow_unresolved=False):
+    """Direct imported files, including references authored by older readers.
+
+    Do not infer imports from unrelated open documents or transitive definitions.
+    Existing occurrence-only documents remain readable without a write migration.
+    """
+    sources = []
+    for record in file_imports(doc):
+        source = record.Source
+        if source is None:
+            if allow_unresolved:
+                continue
+            raise ValueError("Locate the missing imported component file: " + record.Label)
+        if not is_component(source) or metadata(source.Document).ObjectId != record.DocumentId:
+            raise ValueError("The imported file identity changed; repair is required.")
+        sources.append(source.Document)
+    sources.extend(link.LinkedObject.Document for component in definitions(doc)
+                   for link in children(component)
+                   if is_component(link.LinkedObject) and link.LinkedObject.Document != doc)
+    return list(dict.fromkeys(sources))
+
+
+def validate_file_graph(doc, allow_unresolved=False):
+    """Reject file cycles even when their component occurrence graph is acyclic."""
+    complete = set()
+    identities = {}
+
+    def visit(current, ancestors):
+        ident = metadata(current).ObjectId
+        if ident in identities and identities[ident] != current:
+            raise ValueError("Two loaded files claim the same component document identity.")
+        identities[ident] = current
+        if current in ancestors:
+            raise ValueError("Circular component file reference: " + current.Label)
+        if current in complete:
+            return
+        for source in external_documents(current, allow_unresolved):
+            visit(source, ancestors | {current})
+        complete.add(current)
+
+    visit(doc, set())
+
+
+def _check_file_import(doc, source, allow_unresolved=False):
+    metadata(doc)
+    metadata(source)
+    if source == doc:
+        raise ValueError("A file cannot import itself.")
+    if any(not item.FileName.lower().endswith(".cadprt") for item in (doc, source)):
+        raise ValueError("Save both component files as .cadprt before importing.")
+    validate_file_graph(doc, allow_unresolved)
+    validate_file_graph(source)
+    pending = [source]
+    seen = set()
+    while pending:
+        current = pending.pop()
+        if current == doc or metadata(current).ObjectId == metadata(doc).ObjectId:
+            raise ValueError("Import would introduce a circular component file reference.")
+        if current not in seen:
+            seen.add(current)
+            pending.extend(external_documents(current))
+
+
+def _import_file(doc, source):
+    """Register a preflighted import inside the caller's native transaction."""
+    for record in file_imports(doc):
+        if record.DocumentId == metadata(source).ObjectId:
+            if record.Source is None or record.Source.Document != source:
+                raise ValueError("The imported file identity is already assigned to another file.")
+            return record
+    record = doc.addObject("App::FeaturePython", "ComponentFileImport")
+    _identity(record, "FileImport")
+    _property(record, "XLink", "Source", metadata(source).RootComponent, True)
+    _property(record, "String", "DocumentId", metadata(source).ObjectId, True)
+    record.Label = Path(source.FileName).stem
+    if App.GuiUp:
+        record.ViewObject.Visibility = False
+        record.ViewObject.ShowInTree = False
+    return record
+
+
+def import_file(doc, source):
+    """Import every definition in a file without placing any of them."""
+    _check_file_import(doc, source)
+    for record in file_imports(doc):
+        if record.Source is not None and record.Source.Document == source:
+            return record
+    with transaction(doc, "Import component file"):
+        record = _import_file(doc, source)
+    return record
+
+
+def available_definitions(doc):
+    """Domestic definitions followed by all definitions in direct imported files."""
+    return definitions(doc) + [component for source in external_documents(doc, True)
+                               for component in definitions(source)]
+
+def _restore_file_imports(doc, source):
+    for record in file_imports(doc):
+        if record.DocumentId == metadata(source).ObjectId:
+            record.Source = metadata(source).RootComponent
+
+
+def repair_file_import(record, filename):
+    """Restore an unused file import by its saved file identity, never its name."""
+    import CadDocument
+    source = CadDocument.open(filename)
+    if metadata(source).ObjectId != record.DocumentId:
+        raise ValueError("That file does not have the saved imported file identity.")
+    doc = record.Document
+    _check_file_import(doc, source, allow_unresolved=True)
+    # Placed components also need their original object/reference bindings restored.
+    matches = {component.ObjectId: component for component in definitions(source)}
+    unresolved = [link for component in definitions(doc) for link in children(component)
+                  if link.LinkedObject is None and getattr(link, "DefinitionId", "") in matches]
+    if unresolved:
+        # The occurrence recovery service owns geometry/reference remapping.
+        for link in unresolved:
+            if link.LinkedObject is None:
+                repair_component(owner(link), link, filename)
+    else:
+        with transaction(doc, "Locate imported component file"):
+            _restore_file_imports(doc, source)
+    return source
+
+
+def component_label(component, context_document):
+    if component.Document == context_document:
+        return component.Label
+    filename = Path(component.Document.FileName).stem or component.Document.Label
+    # Same filename in different directories must not produce indistinguishable picks.
+    matches = [doc for doc in App.listDocuments().values()
+               if doc.FileName and Path(doc.FileName).stem.casefold() == filename.casefold()]
+    if len(matches) > 1:
+        filename = str(Path(component.Document.FileName))
+    return component.Label + " (" + filename + ")"
+
+
+def definition_label(doc, label, exclude=None):
+    label = label.strip()
+    if not label:
+        raise ValueError("Enter a component name.")
+    if any(obj != exclude and obj.Label.casefold() == label.casefold() for obj in definitions(doc)):
+        raise ValueError("A domestic component already has this name. Choose a unique name.")
+    return label
+
+
 def next_part_label(doc):
     """Reserve visible part names throughout this component document."""
-    labels = {obj.Label.casefold() for obj in doc.Objects}
-    labels.update(obj.LinkedObject.Label.casefold() for obj in doc.Objects
-                  if getattr(obj, "ComponentRole", "") == "Occurrence" and obj.LinkedObject)
+    labels = {obj.Label.casefold() for obj in definitions(doc)}
     number = 1
     while f"Part{number:03d}".casefold() in labels:
         number += 1
@@ -108,7 +258,7 @@ def next_part_label(doc):
 
 
 def _definition(doc, label=None):
-    label = label or next_part_label(doc)
+    label = definition_label(doc, label or next_part_label(doc))
     obj = doc.addObject("App::Part", "Component")
     obj.Label = label
     _identity(obj, "Definition")
@@ -314,7 +464,11 @@ def add_component(parent, definition=None, label=None, placement=None):
         raise ValueError("Save an external component as .cadprt before adding it.")
     if definition is not None and definition.Document != parent.Document and not parent.Document.FileName.lower().endswith(".cadprt"):
         raise ValueError("Save the parent as .cadprt before adding an external component.")
+    if definition is not None and definition.Document != parent.Document:
+        _check_file_import(parent.Document, definition.Document)
     with transaction(parent.Document, "Add Component"):
+        if definition is not None and definition.Document != parent.Document:
+            _import_file(parent.Document, definition.Document)
         if definition is None:
             definition = _definition(parent.Document, label)
         link = parent.Document.addObject("App::Link", "ComponentInstance")
@@ -964,6 +1118,123 @@ def _copy_override_plan(occurrence):
     return plan
 
 
+def copy_definition(source, destination, label=None):
+    """Independent domestic hierarchy copy; existing external children stay shared.
+
+    Native copyObject remaps native properties. Semantic IDs are regenerated and
+    their string registries remapped explicitly. No existing placement is changed.
+    """
+    metadata(destination)
+    label = definition_label(destination, label or source.Label + " copy")
+    closure = []
+    def collect(component):
+        if component in closure:
+            return
+        closure.append(component)
+        for link in children(component):
+            if not is_component(link.LinkedObject):
+                raise ValueError("Repair missing components before copying.")
+            if link.LinkedObject.Document == source.Document:
+                collect(link.LinkedObject)
+    collect(source)
+    originals = []
+    def owned(obj):
+        if obj in originals:
+            return
+        originals.append(obj)
+        if getattr(obj, "ComponentRole", "") == "Occurrence":
+            return
+        for member in getattr(obj, "Group", []):
+            owned(member)
+        origin = getattr(obj, "Origin", None)
+        if origin:
+            owned(origin)
+            for feature in origin.OriginFeatures:
+                owned(feature)
+    for component in closure:
+        owned(component)
+    if any(obj.ExpressionEngine for obj in originals):
+        raise ValueError("Expression-driven copies require reviewed expression remapping.")
+    external_children = {link.LinkedObject for component in closure for link in children(component)
+                         if link.LinkedObject not in closure}
+    if any(dep not in originals and dep not in external_children
+           for obj in originals for dep in obj.OutList):
+        raise ValueError("This component has inputs outside its owned hierarchy. Copy or repair those dependencies first.")
+    for child in external_children:
+        if child.Document != destination:
+            _check_file_import(destination, child.Document)
+    with transaction(destination, "Copy domestic component"):
+        copied = destination.copyObject(originals, False)
+        mapping = dict(zip(originals, copied))
+        ids = {}
+        for old, new in mapping.items():
+            if hasattr(old, "ObjectId"):
+                new.ObjectId = str(uuid.uuid4())
+                ids[old.ObjectId] = new.ObjectId
+        for old, new in mapping.items():
+            if is_component(old):
+                # Child names are unique in the destination; the requested top name
+                # is reserved before assigning generated names to copied children.
+                new.Label = label if old == source else (old.Label if not any(
+                    other != new and other.Label.casefold() == old.Label.casefold()
+                    for other in definitions(destination)) else next_part_label(destination))
+                new.ModelHistory = [mapping[old.Document.getObject(name)].Name for name in old.ModelHistory]
+                new.ResultObjects = [mapping[old.Document.getObject(name)].Name for name in old.ResultObjects]
+                new.RepresentationOverrides = json.dumps({
+                    "/".join(ids.get(part, part) for part in key.split("/")): value
+                    for key, value in json.loads(old.RepresentationOverrides).items()})
+            if getattr(old, "ComponentRole", "") == "Occurrence":
+                target = mapping.get(old.LinkedObject, old.LinkedObject)
+                new.setLink(target)
+                new.DefinitionId = target.ObjectId
+            if getattr(old, "ComponentRole", "") == "Reference" and new.SourceObject:
+                new.SourceObjectId = new.SourceObject.ObjectId
+            if hasattr(old, "PreviousVisibility"):
+                new.PreviousVisibility = json.dumps({ids.get(key, key): value
+                    for key, value in json.loads(old.PreviousVisibility).items()})
+        for child in external_children:
+            if child.Document != destination:
+                _import_file(destination, child.Document)
+        for component in reversed(closure):
+            activate(mapping[component], strict=False)
+        validate(destination)
+    return mapping[source]
+
+
+def replace_instances(source, replacement, occurrences):
+    """Replace reviewed owning placements, preserving transforms and link identities.
+
+    Consumer/path remapping needs a relationship editor; refuse before mutation
+    rather than silently changing the meaning of a subelement reference.
+    """
+    doc = replacement.Document
+    occurrences = list(dict.fromkeys(occurrences))
+    for link in occurrences:
+        if (link.Document != doc or link.LinkedObject != source or not is_component(owner(link))):
+            raise ValueError("Choose placements in the domestic file using the original definition.")
+        if _reachable(replacement, owner(link)):
+            raise ValueError("Replacement would introduce circular component nesting.")
+        if (link.ExpressionEngine or link.ElementCount or link.Scale != 1
+                or tuple(link.ScaleVector) != (1, 1, 1)
+                or any(consumer != owner(link) for consumer in link.InList)):
+            raise ValueError("This placement has driven geometry or downstream references requiring explicit repair.")
+        if any(link.ObjectId in key.split("/") for component in definitions(doc)
+               for key in json.loads(component.RepresentationOverrides)):
+            raise ValueError("Reset placement display overrides before replacing this component.")
+    if not occurrences:
+        return
+    with transaction(doc, "Replace with domestic component"):
+        for link in occurrences:
+            placement = App.Placement(link.LinkPlacement)
+            link.setLink(replacement)
+            link.DefinitionId = replacement.ObjectId
+            link.LinkPlacement = placement
+            peers = [other.InstanceNumber for other in children(owner(link))
+                     if other != link and other.LinkedObject == replacement]
+            link.InstanceNumber = max(peers or [0]) + 1
+        validate(doc)
+
+
 def make_independent(occurrence, label=None):
     """Copy one definition's owned objects; child definitions stay shared."""
     parent = owner(occurrence)
@@ -988,7 +1259,7 @@ def make_independent(occurrence, label=None):
         copied = parent.Document.copyObject(originals, False)
         mapping = {old.Name: new for old, new in zip(originals, copied)}
         definition = mapping[source.Name]
-        definition.Label = label or source.Label + " copy"
+        definition.Label = definition_label(parent.Document, label or source.Label + " copy", definition)
         for obj in copied:
             if hasattr(obj, "ObjectId"):
                 obj.ObjectId = str(uuid.uuid4())
@@ -1257,6 +1528,36 @@ def finished_results(component):
             and history_state(obj) == "Ready" and not obj.Shape.isNull()]
 
 
+def copy_to_external_file(definition, filename):
+    """Write a new independent file, leaving original definitions and uses intact."""
+    destination = Path(filename).resolve()
+    if destination.suffix.lower() != ".cadprt" or destination.exists():
+        raise ValueError("Choose a new .cadprt file for the independent copy.")
+    if definition.Document.HasPendingTransaction:
+        raise ValueError("Finish the active edit before copying a component.")
+    external = new_document("Copy destination " + str(uuid.uuid4()))
+    try:
+        # Cross-file native links require the destination to have a filename.
+        external.saveAs(str(destination))
+        empty = metadata(external).RootComponent
+        copied = copy_definition(definition, external, definition.Label)
+        metadata(external).RootComponent = copied
+        external.removeObject(empty.Name)
+        if App.GuiUp:
+            copied.Visibility = True
+        external.recompute()
+        validate(external)
+        external.save()
+        return copied
+    except Exception:
+        App.closeDocument(external.Name)
+        # This destination was verified absent before this operation; never remove
+        # an existing user file. Failed creation must not leave an empty component.
+        if destination.is_file():
+            destination.unlink()
+        raise
+
+
 def externalize(definition, filename):
     """Move an embedded definition closure, retaining shared identities and links."""
     doc = definition.Document
@@ -1355,6 +1656,7 @@ def externalize(definition, filename):
 
 
 def validate(doc, allow_unresolved=False):
+    validate_file_graph(doc, allow_unresolved)
     meta = metadata(doc)
     if meta.SchemaVersion != SCHEMA or not is_component(meta.RootComponent):
         raise ValueError("Unsupported component schema or missing root component.")
@@ -1398,6 +1700,8 @@ def repair_component(parent, occurrence, filename):
     targets = [link for component in definitions(doc) for link in children(component)
                if link == occurrence or (link.LinkedObject is None
                    and getattr(link, "DefinitionId", "") == occurrence.DefinitionId)]
+    if definition.Document != doc:
+        _check_file_import(doc, definition.Document, allow_unresolved=True)
     if any(_reachable(definition, owner(link)) for link in targets):
         raise ValueError("Repair would introduce a component cycle.")
     sources = {}
@@ -1407,6 +1711,7 @@ def repair_component(parent, occurrence, filename):
             sources.setdefault(ident, []).append(obj)
     affected = list(dict.fromkeys(owner(link) for link in targets))
     with transaction(doc, "Locate Component File"):
+        _restore_file_imports(doc, source)
         for link in targets:
             placement = App.Placement(link.LinkPlacement)
             link.setLink(definition)

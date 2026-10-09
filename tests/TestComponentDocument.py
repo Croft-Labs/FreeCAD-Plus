@@ -608,9 +608,11 @@ class TestComponentDocument(unittest.TestCase):
         import FreeCADGui as Gui
         from PySide import QtCore, QtWidgets
         path = Path(__file__).resolve().parents[1] / "src/Gui/ComponentNavigator.py"
-        spec = importlib.util.spec_from_file_location("ComponentNavigatorTest", path)
-        navigator = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(navigator)
+        navigator = sys.modules.get("freecad.gui.ComponentNavigator")
+        if navigator is None or Path(navigator.__file__).resolve() != path:
+            spec = importlib.util.spec_from_file_location("ComponentNavigatorTest", path)
+            navigator = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(navigator)
         self.box()
         panel = navigator.show(self.doc)
         try:
@@ -648,7 +650,8 @@ class TestComponentDocument(unittest.TestCase):
             self.assertEqual(len(self.doc.Objects), count)
             self.assertEqual(isolated.getActiveObject("part"), self.child)
             self.assertEqual(panel.structure.topLevelItemCount(), 1)
-            self.assertEqual(panel.structure.topLevelItem(0).childCount(), 0)
+            self.assertEqual(panel.structure.topLevelItem(0).text(0), self.root.Label)
+            self.assertEqual(panel.structure.topLevelItem(0).childCount(), 1)
             # Entering a component now displays its permanent origin by default.
             self.assertEqual(set(panel.component_views[0]["snapshot"].SubNames),
                              {Model.display_object(result).Name + ".", self.child.Origin.Name + "."})
@@ -659,6 +662,12 @@ class TestComponentDocument(unittest.TestCase):
             self.assertFalse(bounds.getBoundingBox().isEmpty(), "Isolated component scene must contain geometry")
             isolated.saveImage(str(self.output / "isolated-component.png"), 640, 480, "Current")
         finally:
-            App.removeDocumentObserver(panel)
-            panel.deleteLater()
+            for entry in list(panel.component_views):
+                window = entry.get("window")
+                if window in panel.mdi.subWindowList():
+                    window.close()
+            # Keep the shared navigator alive for subsequent command tests.
+            if navigator is not sys.modules.get("freecad.gui.ComponentNavigator"):
+                App.removeDocumentObserver(panel)
+                panel.deleteLater()
             QtWidgets.QApplication.processEvents()

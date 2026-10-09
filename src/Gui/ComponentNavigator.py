@@ -2,6 +2,7 @@
 """Models, Part Tree and History."""
 import FreeCAD as App
 import json
+from pathlib import Path
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
 from freecad.gui import ComponentSelection as Selection
@@ -25,6 +26,8 @@ def object_key(obj):
 
 
 def resolve(key):
+    if not key or len(key) < 2:
+        return None
     doc = App.listDocuments().get(key[0])
     return doc.getObject(key[1]) if doc else None
 
@@ -342,8 +345,8 @@ class Navigator(QtWidgets.QDockWidget):
         self.tabs = QtWidgets.QTabWidget()
         self.models = QtWidgets.QTreeWidget()
         self.models.setHeaderLabels([tr("Model"), tr("Instances")])
-        self.models.setRootIsDecorated(False)
-        self.models.setItemsExpandable(False)
+        self.models.setRootIsDecorated(True)
+        self.models.setItemsExpandable(True)
         self.models.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.models.header().setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         self.structure = QtWidgets.QTreeWidget()
@@ -497,7 +500,7 @@ class Navigator(QtWidgets.QDockWidget):
                 self.reference_notice.hide()
                 return
             self.conversion.setVisible(bool(model().metadata(active.Document).LegacySource))
-            self.context.setText(tr("Editing: {0}").format(active.Label))
+            self.context.setText(tr("Editing: {0}").format(model().component_label(active, root.Document)))
             references = [obj for obj in model().history(active) if obj.ComponentRole == "Reference"]
             repair = [obj for obj in references if obj.ResultStatus in ("Missing source", "Needs repair")]
             pending = [obj for obj in references if obj.ResultStatus == "Pending"]
@@ -509,17 +512,7 @@ class Navigator(QtWidgets.QDockWidget):
             # Definitions are inventory, not extra instances in the assembly.
             file_root = model().metadata(root.Document).RootComponent
             counts = model().instance_counts(file_root)
-            definitions = list(model().definitions(root.Document))
-            definitions.extend(obj for obj in counts if obj not in definitions)
-            for definition in definitions:
-                row = QtWidgets.QTreeWidgetItem(self.models, [definition.Label, str(counts.get(definition, 0))])
-                row.setData(0, QtCore.Qt.UserRole, object_key(definition))
-                row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
-                row.setToolTip(1, tr("Linked occurrences in this file's assembly, including repeated nested uses. The assembly root is a model, not a linked instance."))
-                if definition == active:
-                    font = row.font(0)
-                    font.setBold(True)
-                    row.setFont(0, font)
+            self.populate_models(self.models, root.Document, root.Document, counts, active, ())
             for tree_root in model().tree_roots(file_root.Document):
                 root_row = QtWidgets.QTreeWidgetItem(self.structure, [tree_root.Label, "", "", ""])
                 root_row.setData(0, QtCore.Qt.UserRole, (object_key(tree_root), []))
@@ -590,6 +583,37 @@ class Navigator(QtWidgets.QDockWidget):
         finally:
             self.refreshing = False
 
+    def populate_models(self, parent, document, context_document, counts, active, ancestors):
+        ident = model().metadata(document).ObjectId
+        if ident in ancestors:
+            return
+        path = ancestors + (ident,)
+        for definition in model().definitions(document):
+            row = QtWidgets.QTreeWidgetItem(parent, [model().component_label(definition, context_document),
+                                                     str(counts.get(definition, 0))])
+            row.setData(0, QtCore.Qt.UserRole, object_key(definition))
+            row.setData(0, QtCore.Qt.UserRole + 4, path)
+            row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
+            row.setToolTip(0, document.FileName or document.Label)
+            row.setToolTip(1, tr("Linked occurrences in this file's assembly, including repeated nested uses. The assembly root is a model, not a linked instance."))
+            if definition == active:
+                font = row.font(0)
+                font.setBold(True)
+                row.setFont(0, font)
+        for source in model().external_documents(document, allow_unresolved=True):
+            row = QtWidgets.QTreeWidgetItem(parent, [Path(source.FileName).stem or source.Label, ""])
+            row.setData(0, QtCore.Qt.UserRole + 3, (document.Name, source.Name))
+            row.setData(0, QtCore.Qt.UserRole + 4, path + (model().metadata(source).ObjectId,))
+            row.setIcon(0, Gui.getIcon("folder.svg"))
+            row.setToolTip(0, source.FileName)
+            self.populate_models(row, source, context_document, counts, active, path)
+        for record in model().file_imports(document):
+            if record.Source is None:
+                row = QtWidgets.QTreeWidgetItem(parent, [record.Label, tr("Missing file")])
+                row.setData(0, QtCore.Qt.UserRole + 3, object_key(record))
+                row.setData(0, QtCore.Qt.UserRole + 4, path + (record.DocumentId,))
+                row.setToolTip(0, tr("Locate the original imported file to restore its component definitions."))
+
     def refresh_representations(self):
         # Native LinkViews belong to definitions, not to the active window. Keep
         # background assemblies current too, evaluating each in its own context.
@@ -613,7 +637,9 @@ class Navigator(QtWidgets.QDockWidget):
     def row_key(item):
         def freeze(value):
             return tuple(freeze(v) for v in value) if isinstance(value, (list, tuple)) else value
-        return freeze(item.data(0, QtCore.Qt.UserRole))
+        key = freeze(item.data(0, QtCore.Qt.UserRole))
+        file_path = freeze(item.data(0, QtCore.Qt.UserRole + 4))
+        return (key, file_path) if file_path else key
 
     def tree_state(self, tree):
         rows = {}
@@ -711,7 +737,7 @@ class Navigator(QtWidgets.QDockWidget):
             definition = links[0].LinkedObject
             values = [(object_key(link), path + [link.ObjectId]) for link in links]
             modes = {model().representation(root, value[1]) for value in values} if definition else {tr("Missing component")}
-            title = definition.Label if definition else links[0].Label
+            title = model().component_label(definition, root.Document) if definition else links[0].Label
             item = QtWidgets.QTreeWidgetItem(row, [title, "", "x" + str(len(links)), modes.pop() if len(modes) == 1 else tr("Mixed")])
             item.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
             item.setData(0, QtCore.Qt.UserRole, values[0])
@@ -849,6 +875,8 @@ class Navigator(QtWidgets.QDockWidget):
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before editing another component."))
         key = item.data(0, QtCore.Qt.UserRole)
+        if not key:
+            return
         if key == self.root_key:
             self.active_key, self.active_path = key, []
             self.bind_edit_context()
@@ -1228,10 +1256,12 @@ class Navigator(QtWidgets.QDockWidget):
             self.models.clearSelection()
             self.history.clearSelection()
             for context, pick in picks:
-                for index in range(self.models.topLevelItemCount()):
-                    row = self.models.topLevelItem(index)
+                model_rows = QtWidgets.QTreeWidgetItemIterator(self.models)
+                while model_rows.value():
+                    row = model_rows.value()
                     if row.data(0, QtCore.Qt.UserRole) == object_key(pick.component):
                         row.setSelected(True)
+                    model_rows += 1
                 matches = []
                 iterator = QtWidgets.QTreeWidgetItemIterator(self.structure)
                 while iterator.value():
@@ -1397,6 +1427,108 @@ class Navigator(QtWidgets.QDockWidget):
             self.run(lambda: model().activate(component, strict=False))
             self.selection_timer.start(0)
 
+    def insert_model(self, key):
+        active = resolve(self.active_key)
+        definition = resolve(key)
+        if definition not in model().available_definitions(active.Document):
+            raise ValueError(tr("Import the component's file into the active component's defining file before adding it."))
+        return model().add_component(active, definition)
+
+    def import_component_file(self, document=None):
+        document = document or resolve(self.active_key).Document
+        if not document.FileName.lower().endswith(".cadprt"):
+            raise ValueError(tr("Save the defining file as .cadprt before importing another file."))
+        path, unused = QtWidgets.QFileDialog.getOpenFileName(self, tr("Import Component File"), "", "Component document (*.cadprt)")
+        if not path:
+            return
+        context = TaskContext(resolve(self.active_key))
+        try:
+            import CadDocument
+            source = CadDocument.open(path)
+            model().import_file(document, source)
+            return source
+        finally:
+            context.restore()
+
+    def locate_import(self, key):
+        path, unused = QtWidgets.QFileDialog.getOpenFileName(self, tr("Locate Component File"), "", "Component document (*.cadprt)")
+        if path:
+            context = TaskContext(resolve(self.active_key))
+            try:
+                model().repair_file_import(resolve(key), path)
+            finally:
+                context.restore()
+
+    def new_component(self, document=None, open_editor=True):
+        active = resolve(self.active_key)
+        document = document or active.Document
+        if Gui.Control.activeDialog() or document.HasPendingTransaction:
+            raise ValueError(tr("Finish the current edit before creating a component."))
+        choices = [tr("Domestic — current defining file"), tr("External — new file"),
+                   tr("External — existing file")]
+        choice, ok = QtWidgets.QInputDialog.getItem(self, tr("New Component"), tr("Store component in"), choices, 0, False)
+        if not ok:
+            return
+        index = choices.index(choice)
+        if index and not document.FileName.lower().endswith(".cadprt"):
+            raise ValueError(tr("Save the defining file as .cadprt before creating an external component."))
+        context = TaskContext(active)
+        created_document = None
+        try:
+            destination = document
+            filename = None
+            if index == 1:
+                filename, unused = QtWidgets.QFileDialog.getSaveFileName(self, tr("New Component File"), "", "Component document (*.cadprt)")
+                if not filename:
+                    return
+                filename = str(Path(filename).with_suffix(".cadprt"))
+                if Path(filename).exists():
+                    raise ValueError(tr("Choose a new file, or use the existing-file storage option."))
+            elif index == 2:
+                filename, unused = QtWidgets.QFileDialog.getOpenFileName(self, tr("Existing Component File"), "", "Component document (*.cadprt)")
+                if not filename:
+                    return
+                import CadDocument
+                destination = CadDocument.open(filename)
+                if destination == document:
+                    raise ValueError(tr("Use domestic storage for the current defining file."))
+                model()._check_file_import(document, destination)
+                if destination.HasPendingTransaction:
+                    raise ValueError(tr("Finish editing the destination file first."))
+            name, ok = QtWidgets.QInputDialog.getText(self, tr("New Component"), tr("Component name"),
+                                                     text=model().next_part_label(destination))
+            if not ok:
+                return
+            name = str(name).strip()
+            if not name:
+                raise ValueError(tr("Enter a component name."))
+            if index != 1:
+                name = model().definition_label(destination, name)
+            if index == 1:
+                created_document = model().new_document(name)
+                destination = created_document
+                definition = model().metadata(destination).RootComponent
+                destination.saveAs(filename)
+            else:
+                definition = model().create_definition(destination, name)
+                if index == 2:
+                    try:
+                        destination.save()
+                    except Exception:
+                        destination.undo()
+                        raise
+            if index:
+                model().import_file(document, destination)
+        except Exception:
+            if created_document and not created_document.FileName:
+                App.closeDocument(created_document.Name)
+            raise
+        finally:
+            context.restore()
+        if open_editor:
+            self.open_component_tab(object_key(definition))
+        return definition
+
     def add_component(self, parent_key=None):
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before adding a component."))
@@ -1405,36 +1537,67 @@ class Navigator(QtWidgets.QDockWidget):
             active = active.LinkedObject
         if not model().is_component(active):
             raise ValueError(tr("Select a resolved component to add to."))
-        if active.Document.HasPendingTransaction:
-            raise ValueError(tr("Finish the active edit before adding a component."))
-        context = TaskContext(active)
-        choices = [d for d in model().definitions(active.Document)
+        choices = [d for d in model().available_definitions(active.Document)
                    if d != active and not model()._reachable(d, active)]
-        labels = [tr("New embedded component…"), tr("Component from file…")] + [f"{d.Label} ({d.Name})" for d in choices]
+        labels = [tr("New component…"), tr("Import component file…")] + [model().component_label(d, active.Document) for d in choices]
         selected, ok = QtWidgets.QInputDialog.getItem(self, tr("Add Component"), tr("Component"), labels, 0, False)
         if not ok:
             return
         index = labels.index(selected)
-        try:
-            if index == 0:
-                label, ok = QtWidgets.QInputDialog.getText(self, tr("Add Component"), tr("Name"),
-                                                         text=model().next_part_label(active.Document))
-                if not ok or not label.strip():
-                    return
-                return model().add_component(active, label=label.strip())
-            elif index == 1:
-                path, unused = QtWidgets.QFileDialog.getOpenFileName(self, tr("Add Component"), "", "Component document (*.cadprt)")
-                if not path:
-                    return
-                import CadDocument
-                definition = model().metadata(CadDocument.open(path)).RootComponent
-            else:
-                definition = choices[index - 2]
+        if index == 0:
+            definition = self.new_component(active.Document, open_editor=False)
+        elif index == 1:
+            source = self.import_component_file(active.Document)
+            if source is None:
+                return
+            choices = model().definitions(source)
+            labels = [model().component_label(d, active.Document) for d in choices]
+            selected, ok = QtWidgets.QInputDialog.getItem(self, tr("Add Component"), tr("Component"), labels, 0, False)
+            if not ok:
+                return  # The explicit file import remains available in Models.
+            definition = choices[labels.index(selected)]
+        else:
+            definition = choices[index - 2]
+        if definition:
             return model().add_component(active, definition)
-        finally:
-            # Opening a source file activates its view. Restore the original root,
-            # exact occurrence and native part binding, also on Cancel or failure.
-            context.restore()
+
+    def copy_domestic(self, key):
+        source = resolve(key)
+        if getattr(source, "ComponentRole", "") == "Occurrence":
+            source = source.LinkedObject
+        document = resolve(self.root_key).Document
+        name, ok = QtWidgets.QInputDialog.getText(self, tr("Copy to Domestic Components"), tr("Component name"),
+                                                 text=source.Label + " copy")
+        if not ok:
+            return
+        copy = model().copy_definition(source, document, name)
+        occurrences = [link for definition in model().definitions(document) for link in model().children(definition)
+                       if link.LinkedObject == source]
+        if not occurrences:
+            return copy
+        dialog = QtWidgets.QDialog(self)
+        dialog.setWindowTitle(tr("Replace with Domestic Copy"))
+        layout = QtWidgets.QVBoxLayout(dialog)
+        notice = QtWidgets.QLabel(tr("The domestic copy is independent. Select placements to replace; leave unchecked to keep their existing definition."))
+        notice.setWordWrap(True)
+        layout.addWidget(notice)
+        listing = QtWidgets.QListWidget()
+        for link in occurrences:
+            row = QtWidgets.QListWidgetItem(model().owner(link).Label + " / " + source.Label + " #" + str(link.InstanceNumber))
+            row.setData(QtCore.Qt.UserRole, object_key(link))
+            row.setFlags(row.flags() | QtCore.Qt.ItemIsUserCheckable)
+            row.setCheckState(QtCore.Qt.Unchecked)
+            listing.addItem(row)
+        layout.addWidget(listing)
+        buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+        layout.addWidget(buttons)
+        if dialog.exec() == QtWidgets.QDialog.Accepted:
+            selected = [resolve(listing.item(i).data(QtCore.Qt.UserRole)) for i in range(listing.count())
+                        if listing.item(i).checkState() == QtCore.Qt.Checked]
+            model().replace_instances(source, copy, selected)
+        return copy
 
     def show_conversion_report(self):
         component = resolve(self.active_key)
@@ -1447,33 +1610,20 @@ class Navigator(QtWidgets.QDockWidget):
         message.exec()
 
     def externalize_component(self, key):
-        occurrence = resolve(key)
-        definition = occurrence.LinkedObject
-        if definition is None or definition.Document != occurrence.Document:
-            raise ValueError(tr("Select an embedded component to save to an external file."))
-        if Gui.Control.activeDialog() or occurrence.Document.HasPendingTransaction:
-            raise ValueError(tr("Finish the current edit before saving a component to an external file."))
-        if any(resolve(entry["key"]) and resolve(entry["key"]).Document == definition.Document
-               and model()._reachable(definition, resolve(entry["key"]))
-               for entry in self.component_views):
-            raise ValueError(tr("Close isolated tabs for this component and its embedded children before saving to an external file."))
-        root_key, active_path = self.root_key, list(self.active_path)
-        window = self.mdi.activeSubWindow() if self.mdi else None
-        filename, unused = QtWidgets.QFileDialog.getSaveFileName(
-            self, tr("Save to External File"), "", "Component document (*.cadprt)")
-        if filename:
-            parent = model().owner(occurrence)
-            try:
-                model().externalize(definition, filename)
-            finally:
-                App.setActiveDocument(parent.Document.Name)
-                if window:
-                    self.mdi.setActiveSubWindow(window)
-                self.root_key, self.active_path = root_key, active_path
-                active, self.active_path = self.edit_context(resolve(root_key), active_path)
-                self.active_key = object_key(active)
-                self.bind_edit_context(window)
-                self.refresh()
+        source = resolve(key)
+        if getattr(source, "ComponentRole", "") == "Occurrence":
+            source = source.LinkedObject
+        filename, unused = QtWidgets.QFileDialog.getSaveFileName(self, tr("Copy to External File"), "", "Component document (*.cadprt)")
+        if not filename:
+            return
+        filename = str(Path(filename).with_suffix(".cadprt"))
+        if Path(filename).exists():
+            raise ValueError(tr("Choose a new file for this independent copy."))
+        context = TaskContext(resolve(self.active_key))
+        try:
+            model().copy_to_external_file(source, filename)
+        finally:
+            context.restore()
 
     def repair_component(self, key):
         occurrence = resolve(key)
@@ -1616,7 +1766,8 @@ class Navigator(QtWidgets.QDockWidget):
         name, ok = QtWidgets.QInputDialog.getText(self, tr("Rename"), tr("Name"), text=obj.Label)
         if ok and name.strip() and name.strip() != obj.Label:
             with model().transaction(obj.Document, "Rename"):
-                obj.Label = name.strip()
+                obj.Label = (model().definition_label(obj.Document, name, obj)
+                             if model().is_component(obj) else name.strip())
 
     def add_instance(self, key):
         occurrence = resolve(key)
@@ -1628,13 +1779,7 @@ class Navigator(QtWidgets.QDockWidget):
     def copy_part(self, key):
         if Gui.Control.activeDialog():
             raise ValueError(tr("Finish the current task before copying a component."))
-        occurrence = resolve(key)
-        if not model().is_component(occurrence.LinkedObject):
-            raise ValueError(tr("Locate the missing component file before copying this instance."))
-        name, ok = QtWidgets.QInputDialog.getText(self, tr("Copy to New Part"), tr("Part name"),
-                                                 text=occurrence.LinkedObject.Label + " copy")
-        if ok and name.strip():
-            model().make_independent(occurrence, label=name.strip())
+        return self.copy_domestic(key)
 
     def new_sketch(self):
         from freecad.gui.ComponentSketchTask import launch
@@ -1672,12 +1817,21 @@ class Navigator(QtWidgets.QDockWidget):
         # Resolve the stable row identity when an action fires, never a dead item.
         target = lambda: self.menu_row(tree, row_key, context)
         if tree == self.models:
-            if item:
+            if item and item.data(0, QtCore.Qt.UserRole):
                 key = item.data(0, QtCore.Qt.UserRole)
                 menu.addAction(tr("Edit"), lambda: self.run(lambda: self.edit_model(target())))
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(key)))
                 menu.addAction(tr("Add Instance"), lambda: self.run(
-                    lambda: model().add_component(resolve(self.active_key), resolve(key))))
+                    lambda: self.insert_model(key)))
+                if resolve(key).Document != root.Document:
+                    menu.addAction(tr("Copy to Domestic Components"), lambda: self.run(lambda: self.copy_domestic(key)))
+            elif item:
+                file_key = item.data(0, QtCore.Qt.UserRole + 3)
+                record = resolve(file_key)
+                if record and getattr(record, "ComponentRole", "") == "FileImport":
+                    menu.addAction(tr("Locate Component File"), lambda: self.run(lambda: self.locate_import(file_key)))
+            menu.addAction(tr("New Component"), lambda: self.run(self.new_component))
+            menu.addAction(tr("Import Component File"), lambda: self.run(self.import_component_file))
             menu.addAction(tr("Add Component"), lambda: self.run(self.add_component))
             return menu
         if tree == self.structure and item:
@@ -1710,9 +1864,9 @@ class Navigator(QtWidgets.QDockWidget):
                     expanded = item.data(0, QtCore.Qt.UserRole + 2) in self.expanded_instances
                     menu.addAction(tr("Collapse Instances") if expanded else tr("Expand Instances"),
                                    lambda: self.run(lambda: self.toggle_instances(target())))
-                externalize = menu.addAction(tr("Save to External File"), lambda: self.run(lambda: self.externalize_component(value[0])))
+                externalize = menu.addAction(tr("Copy to External File"), lambda: self.run(lambda: self.externalize_component(value[0])))
                 externalize.setEnabled(definition is not None and definition.Document == obj.Document)
-                externalize.setToolTip(tr("Move this embedded definition and its embedded children to a new file; all instances stay shared."))
+                externalize.setToolTip(tr("Create an independent component file. Existing definitions and placements are retained."))
                 menu.addAction(tr("Locate Component File"), lambda: self.run(lambda: self.repair_component(value[0])))
                 occurrences = [resolve(key) for key, unused in self.members(item)]
                 participation = menu.addMenu(tr("Bill of Materials"))
@@ -1801,7 +1955,7 @@ class Navigator(QtWidgets.QDockWidget):
                         obj.Visibility = True
                 except ValueError:
                     pass
-        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject", "IncludeInBOM"):
+        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject", "Source", "DocumentId", "IncludeInBOM"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):
@@ -2167,7 +2321,7 @@ class AddReferenceCommand:
 class NewComponentCommand:
     def GetResources(self):
         return {"MenuText": tr("New Component"),
-                "ToolTip": tr("Create an embedded model with no assembly instances and open it for editing"),
+                "ToolTip": tr("Create a domestic or external component and open its defining file for editing"),
                 "Pixmap": "Geofeaturegroup.svg"}
 
     def IsActive(self):
@@ -2186,8 +2340,9 @@ class NewComponentCommand:
         panel = _dock or show(component.Document)
 
         def create():
-            definition = model().create_definition(component.Document)
-            panel.open_component_tab(object_key(definition))
+            definition = panel.new_component(component.Document)
+            if definition is None:
+                return
             panel.refresh()
             panel.tabs.setCurrentWidget(panel.history)
         panel.run(create)
