@@ -61,3 +61,13 @@ definitions and evaluated references. One Undo must clear the recovered import a
 all bindings; Redo/save/reopen retain identities, placements and geometry. An injected
 refresh failure after rebinding both definitions must roll back the complete repair.
 Include TestComponentFileRecovery.py when changing this shared recovery service.
+
+Save collision regressions use native Save Copy against a directly imported file
+and Save As against a nested unused import. Both must refuse without modifying any
+fixture bytes or the assembly location/label. Save As and Save Copy into another
+directory verify dependency paths, shared identities and reopening; Save Copy
+also preserves the original assembly bytes/location. These two relocation tests
+require the new native Writer/PropertyXLink implementation, not a Python overlay.
+They reproduce broken native links on the current owner runtime and must be run
+unfiltered after the next complete native build. Other hierarchy tests can run
+with an explicit test-name filter that excludes these two pending native cases.

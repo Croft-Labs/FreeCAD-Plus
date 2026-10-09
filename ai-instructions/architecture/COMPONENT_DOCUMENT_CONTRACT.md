@@ -291,6 +291,13 @@ Cancel leaves the document unchanged.
   leaving the original untouched. Report unsupported content, partial conversion
   and geometry-only recovery explicitly. Expensive legacy mapping is lower priority
   than the requested architecture; no blanket round-trip compatibility promise.
+- Before writing a component file, reject a destination whose resolved path belongs
+  to another open document, including direct or nested imported files. A refused
+  Save As retains the original location and label; existing file contents remain
+  unchanged. Relocation to a new path retains shared identities and dependencies.
+- Native link serialization uses the final archive destination, not cached relative
+  paths or a temporary ZIP filename. Save Copy must not retarget the live document's
+  links. Export serialization retains its existing absolute-path behavior.
 - Save As changes location without making shared definitions independent. An
   explicit independent-copy operation creates new semantic identities. Relocation
   and externalization must retain or explicitly remap dependency identities.

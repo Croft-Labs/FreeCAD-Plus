@@ -1,5 +1,46 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 save destination protection and native relocation (build pending)
+
+**Implementation:** 7.8.12g adds CadDocument manifest preflight rejecting a final
+output path owned by another open document. It runs before native output is opened.
+Save As failure restores the prior location/label; Save Copy must not overwrite
+direct or nested imported files. Backend save validation only; no new UI controls,
+defaults or schema, and the synchronized owner UI DOCX remains applicable.
+
+**New native gap / source fix:** relocation to another directory exposed correct
+manifest dependencies but stale native XLink paths (Hardware.cadprt instead of
+../Hardware.cadprt). Both Save As and Save Copy reopen with missing links in the
+current native runtime. 7.8.12h source adds a final-document destination to
+Base::Writer, sets it from Document::saveToFile's canonical destination, and uses
+it in PropertyXLink::Save to recalculate external paths. Serialization does not
+mutate live links. Export behavior and writers without document context retain
+their existing paths. This native change is implemented but not compiled or
+runtime-validated; it must not be described as delivered.
+
+**Validation:** two overwrite regressions fail before the Python guard and pass
+afterward with file bytes and document location/label preserved. Thirty selected
+hierarchy cases pass in the final source-overlay run, no failures/errors/skips or
+unexpected GUI diagnostics, exit zero. The preceding run passes all 27 core cases
+but has the newly exposed relocation error. A focused baseline run confirms both
+Save As and Save Copy relocation fail on the unchanged native runtime. Those two
+cases are explicitly excluded from the passing 30-case run, not silently skipped
+or treated as passing. Source diff checks pass. Runtime base:
+test-builds/freecad_plus_2026-10-09_hierarchy_import_repair_payload,
+native 40f1698230ccbbac5b4f44fc0ba8124a0ee08c60.
+
+**Build/delivery handoff:** follow DEVELOPMENT_GUIDE build batching. No new native
+build, owner payload or shortcut change this round. Writer's class layout changed:
+perform a consistent full AllTargets native rebuild before packaging; never drop
+one rebuilt DLL into the old payload. Run both relocation cases and unfiltered
+hierarchy/core checks against that build, then cold reopen, full payload inventory
+and actual saved-shortcut delivery. Include CadDocument.py in the same batch.
+Keep the existing verified owner payload until those gates pass.
+
+**Publication/cleanup:** changes and explicit verification limits are recorded
+locally. Origin publication and cleanup of the four task validation directories
+remain pending.
+
 ## October 9 atomic imported-file recovery batch delivered
 
 **Implementation:** source 1a4f4692f9bb4d8132f424e31ee45b58ffd0f586 adds roadmap 7.8.12f.

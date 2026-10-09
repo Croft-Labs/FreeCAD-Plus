@@ -19,6 +19,14 @@ def manifest(document, filename=None):
     """Called before native save opens its temporary output file."""
     meta = Model.validate(document)
     destination = filename or document.FileName
+    if destination:
+        target = Path(destination).resolve()
+        # Save As temporarily changes document.FileName before this preflight.
+        # Compare the actual output against other documents, never that old path.
+        if any(other != document and other.FileName
+               and Path(other.FileName).resolve() == target
+               for other in App.listDocuments().values()):
+            raise ValueError("Another open document owns this file. Choose a different save location.")
     if (meta.LegacySource and destination
             and Path(meta.LegacySource).resolve() == Path(destination).resolve()):
         raise ValueError("Save converted content to a new .cadprt file; the legacy original is protected.")

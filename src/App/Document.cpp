@@ -2087,6 +2087,7 @@ bool Document::saveToFile(const char* filename) const
         Base::ofstream file(tmp, std::ios::out | std::ios::binary);
 
         Base::ZipWriter writer(file);
+        writer.setDocumentFileName(nativePath);
         if (!file.is_open()) {
             throw Base::FileException("Failed to open file", tmp);
         }

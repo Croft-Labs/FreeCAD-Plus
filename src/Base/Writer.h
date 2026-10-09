@@ -83,6 +83,16 @@ public:
     void setFileVersion(int);
     int getFileVersion() const;
 
+    /// Final document destination (UTF-8), distinct from temporary archive/entry names.
+    void setDocumentFileName(const std::string& name)
+    {
+        documentFileName = name;
+    }
+    const std::string& getDocumentFileName() const
+    {
+        return documentFileName;
+    }
+
     /// put the next entry with a give name
     virtual void putNextEntry(const char* filename, const char* objName = nullptr);
 
@@ -204,6 +214,7 @@ public:
     Writer& operator=(Writer&&) = delete;
 
 private:
+    std::string documentFileName;
     std::unique_ptr<std::ostream> CharStream;
     CharStreamFormat charStreamFormat;
 };

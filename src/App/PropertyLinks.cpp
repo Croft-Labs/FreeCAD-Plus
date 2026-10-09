@@ -4243,6 +4243,27 @@ void PropertyXLink::Save(Base::Writer& writer) const
                 path = _path.c_str();
             }
         }
+        else if (!filePath.empty() && !writer.getDocumentFileName().empty()) {
+            // Save As/Copy can change the output directory without updating the
+            // cached relative path. Serialize against the final archive location
+            // without mutating live links or their undo state.
+            const char* sourcePath = docInfo ? docInfo->filePath() : nullptr;
+            if (_pcLink && _pcLink->getDocument() != owner->getDocument()) {
+                sourcePath = _pcLink->getDocument()->getFileName();
+            }
+            if (!Base::Tools::isNullOrEmpty(sourcePath)) {
+                QString source = QString::fromUtf8(sourcePath);
+                if (source.startsWith(QLatin1String("https://"))) {
+                    _path = sourcePath;
+                }
+                else {
+                    QDir destination(QFileInfo(QString::fromUtf8(
+                        writer.getDocumentFileName().c_str())).absolutePath());
+                    _path = destination.relativeFilePath(source).toUtf8().constData();
+                }
+                path = _path.c_str();
+            }
+        }
         writer.Stream() << writer.ind() << "<XLink file=\"" << encodeAttribute(path)
                         << "\" stamp=\""
                         << (docInfo && docInfo->pcDoc ? docInfo->pcDoc->LastModifiedDate.getValue()

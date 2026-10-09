@@ -388,6 +388,64 @@ class TestComponentFileHierarchy(unittest.TestCase):
         self.assertTrue(all(obj.SourceObject is None for obj in refs))
         self.assertFalse(assembly.HasPendingTransaction)
 
+    def check_dependency_save_collision(self, method, nested):
+        target = self.hardware
+        if nested:
+            target = self.document("ProtectedCoatings")
+            Model.import_file(self.hardware, target)
+            self.hardware.save()
+        Model.import_file(self.assembly, self.hardware)
+        self.assembly.save()
+        original = Path(self.assembly.FileName)
+        label = self.assembly.Label
+        destination = Path(target.FileName)
+        before = {path: path.read_bytes() for path in
+                  (original, Path(self.hardware.FileName), destination)}
+        with self.assertRaises(Exception):
+            getattr(self.assembly, method)(str(destination))
+        self.assertEqual(Path(self.assembly.FileName), original)
+        self.assertEqual(self.assembly.Label, label)
+        for path, content in before.items():
+            self.assertEqual(path.read_bytes(), content)
+        Model.validate(self.assembly)
+
+    def testSaveCopyCannotOverwriteImportedFile(self):
+        self.check_dependency_save_collision("saveCopy", False)
+
+    def testSaveAsCannotOverwriteNestedImportedFile(self):
+        self.check_dependency_save_collision("saveAs", True)
+
+    def check_save_relocation(self, method):
+        Model.import_file(self.assembly, self.hardware)
+        link = Model.add_component(self.root(self.assembly), self.screw)
+        expected = Model.metadata(self.assembly).ObjectId, link.ObjectId, self.screw.ObjectId
+        relocated = self.output / "RelocatedAssembly" / "Assembly.cadprt"
+        relocated.parent.mkdir(exist_ok=True)
+        original_path = Path(self.assembly.FileName)
+        self.assembly.save()
+        original_bytes = original_path.read_bytes()
+        getattr(self.assembly, method)(str(relocated))
+        if method == "saveCopy":
+            self.assertEqual(Path(self.assembly.FileName), original_path)
+            self.assertEqual(original_path.read_bytes(), original_bytes)
+        hardware_path = Path(self.hardware.FileName)
+        data = CadDocument.preflight(relocated)
+        self.assertEqual((relocated.parent / data["dependencies"][
+            Model.metadata(self.hardware).ObjectId]).resolve(), hardware_path.resolve())
+        for doc in list(App.listDocuments().values()):
+            App.closeDocument(doc.Name)
+        assembly = CadDocument.open(relocated)
+        link = Model.children(self.root(assembly))[0]
+        self.assertEqual((Model.metadata(assembly).ObjectId, link.ObjectId,
+                          link.LinkedObject.ObjectId), expected)
+        self.assertEqual(Path(link.LinkedObject.Document.FileName), hardware_path)
+
+    def testSaveAsRelocationKeepsSharedFileIdentity(self):
+        self.check_save_relocation("saveAs")
+
+    def testSaveCopyRelocationKeepsSharedFileIdentity(self):
+        self.check_save_relocation("saveCopy")
+
     def testMissingUnusedImportRecoversByFileIdentity(self):
         record = Model.import_file(self.assembly, self.hardware)
         self.assembly.save()
