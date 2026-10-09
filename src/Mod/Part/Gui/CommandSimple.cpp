@@ -31,6 +31,7 @@
 #include <App/DocumentObserver.h>
 #include <Base/Exception.h>
 #include <Base/Interpreter.h>
+#include "ComponentCommand.h"
 #include <Gui/Application.h>
 #include <Gui/CommandT.h>
 #include <Gui/MainWindow.h>
@@ -62,6 +63,9 @@ CmdPartSimpleCylinder::CmdPartSimpleCylinder()
 
 void CmdPartSimpleCylinder::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     PartGui::DlgPartCylinderImp dlg(Gui::getMainWindow());
     if (dlg.exec() == QDialog::Accepted) {
@@ -93,6 +97,9 @@ void CmdPartSimpleCylinder::activated(int iMsg)
 
 bool CmdPartSimpleCylinder::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -121,6 +128,9 @@ CmdPartShapeFromMesh::CmdPartShapeFromMesh()
 
 void CmdPartShapeFromMesh::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     PartGui::ShapeFromMesh dlg(Gui::getMainWindow());
     dlg.exec();
@@ -128,6 +138,9 @@ void CmdPartShapeFromMesh::activated(int iMsg)
 
 bool CmdPartShapeFromMesh::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return Gui::Selection().countObjectsOfType("Mesh::Feature") > 0;
 }
 //===========================================================================
@@ -149,6 +162,9 @@ CmdPartPointsFromMesh::CmdPartPointsFromMesh()
 
 void CmdPartPointsFromMesh::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     auto getDefaultDistance = [](Part::Feature* geometry) {
@@ -224,6 +240,9 @@ void CmdPartPointsFromMesh::activated(int iMsg)
 
 bool CmdPartPointsFromMesh::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return Gui::Selection().countObjectsOfType<App::GeoFeature>() > 0;
 }
 
@@ -307,12 +326,18 @@ static void _copyShape(const char* cmdName, bool resolve, bool needElement = fal
 
 void CmdPartSimpleCopy::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     _copyShape("Simple copy", true);
 }
 
 bool CmdPartSimpleCopy::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return Gui::Selection().hasSelection();
 }
 
@@ -337,12 +362,18 @@ CmdPartTransformedCopy::CmdPartTransformedCopy()
 
 void CmdPartTransformedCopy::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     _copyShape("Transformed copy", false);
 }
 
 bool CmdPartTransformedCopy::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return Gui::Selection().hasSelection();
 }
 
@@ -365,12 +396,18 @@ CmdPartElementCopy::CmdPartElementCopy()
 
 void CmdPartElementCopy::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     _copyShape("Element copy", false, true);
 }
 
 bool CmdPartElementCopy::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return Gui::Selection().hasSelection();
 }
 
@@ -393,6 +430,9 @@ CmdPartRefineShape::CmdPartRefineShape()
 
 void CmdPartRefineShape::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath(
         "User parameter:BaseApp/Preferences/Mod/Part"
@@ -446,6 +486,9 @@ void CmdPartRefineShape::activated(int iMsg)
 
 bool CmdPartRefineShape::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return Gui::Selection().hasSelection();
 }
 
@@ -468,6 +511,9 @@ CmdPartDefeaturing::CmdPartDefeaturing()
 
 void CmdPartDefeaturing::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     Gui::WaitCursor wc;
     Base::Type partid = Base::Type::fromName("Part::Feature");
@@ -516,6 +562,9 @@ void CmdPartDefeaturing::activated(int iMsg)
 
 bool CmdPartDefeaturing::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     Base::Type partid = Base::Type::fromName("Part::Feature");
     std::vector<Gui::SelectionObject> objs = Gui::Selection().getSelectionEx(nullptr, partid);
     for (const auto& obj : objs) {

@@ -30,6 +30,7 @@
 
 #include <App/Part.h>
 #include <Base/Tools.h>
+#include "ComponentCommand.h"
 #include <Gui/Application.h>
 #include <Gui/Command.h>
 #include <Gui/Document.h>
@@ -79,6 +80,9 @@ CmdPartCylinder::CmdPartCylinder()
 
 void CmdPartCylinder::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::string name = qApp->translate("CmdPartCylinder", "Cylinder").toUtf8().toStdString();
     name = Base::Tools::escapeEncodeString(name);
@@ -96,6 +100,9 @@ void CmdPartCylinder::activated(int iMsg)
 
 bool CmdPartCylinder::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -123,6 +130,9 @@ CmdPartBox::CmdPartBox()
 
 void CmdPartBox::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::string name = qApp->translate("CmdPartBox", "Cube").toUtf8().toStdString();
     name = Base::Tools::escapeEncodeString(name);
@@ -140,6 +150,9 @@ void CmdPartBox::activated(int iMsg)
 
 bool CmdPartBox::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -167,6 +180,9 @@ CmdPartSphere::CmdPartSphere()
 
 void CmdPartSphere::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::string name = qApp->translate("CmdPartSphere", "Sphere").toUtf8().toStdString();
     name = Base::Tools::escapeEncodeString(name);
@@ -184,6 +200,9 @@ void CmdPartSphere::activated(int iMsg)
 
 bool CmdPartSphere::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -211,6 +230,9 @@ CmdPartCone::CmdPartCone()
 
 void CmdPartCone::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::string name = qApp->translate("CmdPartCone", "Cone").toUtf8().toStdString();
     name = Base::Tools::escapeEncodeString(name);
@@ -228,6 +250,9 @@ void CmdPartCone::activated(int iMsg)
 
 bool CmdPartCone::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -255,6 +280,9 @@ CmdPartTorus::CmdPartTorus()
 
 void CmdPartTorus::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::string name = qApp->translate("CmdPartTorus", "Torus").toUtf8().toStdString();
     name = Base::Tools::escapeEncodeString(name);
@@ -272,6 +300,9 @@ void CmdPartTorus::activated(int iMsg)
 
 bool CmdPartTorus::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }

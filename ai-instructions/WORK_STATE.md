@@ -1,5 +1,45 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 native Part geometry guards
+
+7.8.13e2b1 is complete. PartGui::allowComponentModeling checks the marked file root
+and native active component, never selection. Forty-six registered native Part
+Boolean, copy, shape, datum, direct primitive and link-array commands use it in
+both isActive and activated, before dialogs or transactions. Missing active-part
+context cannot fall back to modeling in the file. An explicit non-file Definition
+passes. Legacy documents without marked file roots retain existing behavior.
+Inspection, import/export and display commands are unchanged. This does not adopt
+new native operations into component history or change the Add Component workflow.
+
+Build: incremental Release PartGui succeeds (exit 0) in the retained
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-06_recovered_workload.
+CMake regenerated after adding the common header. Command.cpp, CommandSimple.cpp
+and CommandParametric.cpp compiled; the rebuilt FreeCAD.exe/PartGui runtime was
+used with source Python component overlays. This is a development validation build;
+no owner payload, shortcut or release was changed.
+
+Validation: 12/12 grouped cases pass (4 native guard, 3 native routing, 5 shared
+file command cases). The native refusal case exercises all 46 registered paths
+with geometry selected during file Edit, asserting disabled availability and no
+object, visibility, undo-count, transaction or task-dialog mutation after direct
+invocation. Positive cases cover explicit component Box creation/Undo, legacy
+Box creation/Undo and native geometry inspection availability. Existing five-route
+shared task dispatch and file placement/task guards still pass. Console warnings
+and the five existing shared-launcher ValueError traces are expected refusal
+diagnostics. Python syntax and CRLF-aware git diff --check pass.
+
+Owner UI DOCX updated with native command availability/refusal behavior; native
+numbering preserved and rendered pages 66-67 reviewed. Contract, summary, roadmap
+and test guide updated. Validation files are removed after recording results; keep
+the useful development build. Source commit/push is separate from owner delivery.
+
+Next task: 7.8.13e2b2, native assembly relationship ownership, solver connection
+and persistence beneath the file with origin-only modeling History. Broader native
+workbench fallback compatibility remains a grouped 13f acceptance item. The file
+is still App::Part, while native assembly APIs require Assembly::AssemblyObject;
+do not claim joint compatibility or add JointGroup directly without integrating
+those ownership/persistence contracts.
+
 ## October 9 native Part creation command routing
 
 7.8.13e2a is complete. Part Primitive, Extrude, Revolve, Loft and Sweep now route

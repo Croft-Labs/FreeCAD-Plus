@@ -3494,6 +3494,15 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
         Native Assembly requires AssemblyObject; a file App::Part is not a solver
         assembly. Resolve ownership/persistence with the existing native solver
         before accepting joints under the file; keep modeling History origin-only.
+        - [ X ] 7.8.13e2b1 Native Part geometry guard: shared context check in
+          Boolean/copy/shape/datum/direct primitive/link-array command availability
+          and activation. Verify file selection cannot bypass it, component/legacy
+          workflows still run, and inspection remains available. PartGui built;
+          12 grouped cases pass, including 46 native command refusal subcases.
+          Owner UI DOCX updated/rendered; owner delivery remains 13f.
+        - [   ] 7.8.13e2b2 Next: native assembly relationship ownership, solver
+          connection and persistence beneath the file, without geometry in file
+          History. Broader native workbench fallback compatibility remains in 13f.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
@@ -3508,7 +3517,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13e2b remaining native routes and assembly relationship integration.
+      Next implementation: 13e2b2 file-level assembly relationship integration.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

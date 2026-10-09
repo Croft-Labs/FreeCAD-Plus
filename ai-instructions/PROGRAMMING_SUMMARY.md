@@ -17,8 +17,10 @@ shared modeling launchers now guard file Edit, including explicit sketch/plane
 destinations. Native Part Primitive/Extrude/Revolve/Loft/Sweep now dispatch to the
 shared tasks in component documents, retaining legacy dialogs elsewhere.
 TestComponentNativePartRouting covers the native dispatch; TestComponentFileCommands
-covers task guards and file placement. Remaining native routes and assembly
-relationships still need acceptance; owner delivery is batched.
+covers task guards and file placement. ComponentCommand.h/Command.cpp now share
+file-Edit guards across 46 native Part modeling commands; native guard acceptance
+is TestComponentNativeModelingGuards. Assembly relationships still need integration;
+owner delivery and broader workbench compatibility remain batched.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI

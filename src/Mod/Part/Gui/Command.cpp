@@ -57,6 +57,7 @@
 #include <Mod/Part/App/Datums.h>
 #include <Mod/Part/App/Part2DObject.h>
 
+#include "ComponentCommand.h"
 #include "BoxSelection.h"
 #include "CrossSections.h"
 #include "DlgBooleanOperation.h"
@@ -78,6 +79,42 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #include "TaskLinkArrayParameters.h"
+
+namespace PartGui
+{
+bool allowComponentModeling(bool report)
+{
+    auto* document = App::GetApplication().getActiveDocument();
+    if (!document) {
+        return true;
+    }
+    App::DocumentObject* file = nullptr;
+    for (auto* object : document->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            auto* root = dynamic_cast<App::PropertyLink*>(object->getPropertyByName("RootComponent"));
+            file = root ? root->getValue() : nullptr;
+            break;
+        }
+    }
+    auto* marker = file ? dynamic_cast<App::PropertyBool*>(file->getPropertyByName("FileContainer")) : nullptr;
+    if (!marker || !marker->getValue()) {
+        return true;
+    }
+    auto* view = Gui::Application::Instance->activeView();
+    auto* active = view ? view->getActiveObject<App::DocumentObject*>(PARTKEY) : nullptr;
+    auto* role = active ? dynamic_cast<App::PropertyString*>(active->getPropertyByName("ComponentRole")) : nullptr;
+    auto* activeFile = active ? dynamic_cast<App::PropertyBool*>(active->getPropertyByName("FileContainer")) : nullptr;
+    if (role && role->getStrValue() == "Definition" && (!activeFile || !activeFile->getValue())) {
+        return true;
+    }
+    if (report) {
+        Base::Console().warning("Edit or create a component before starting a modeling command.\n");
+    }
+    return false;
+}
+}  // namespace PartGui
+
 
 namespace
 {
@@ -351,6 +388,9 @@ CmdPartCut::CmdPartCut()
 
 void CmdPartCut::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
@@ -404,6 +444,9 @@ void CmdPartCut::activated(int iMsg)
 
 bool CmdPartCut::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return getSelection().countObjectsOfType<App::DocumentObject>(nullptr, Gui::ResolveMode::FollowLink)
         == 2;
 }
@@ -427,6 +470,9 @@ CmdPartCommon::CmdPartCommon()
 
 void CmdPartCommon::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
@@ -481,6 +527,9 @@ void CmdPartCommon::activated(int iMsg)
 
 bool CmdPartCommon::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return getSelection().countObjectsOfType<App::DocumentObject>(nullptr, Gui::ResolveMode::FollowLink)
         >= 1;
 }
@@ -504,6 +553,9 @@ CmdPartFuse::CmdPartFuse()
 
 void CmdPartFuse::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
@@ -581,6 +633,9 @@ void CmdPartFuse::activated(int iMsg)
 
 bool CmdPartFuse::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return getSelection().countObjectsOfType<App::DocumentObject>(nullptr, Gui::ResolveMode::FollowLink)
         >= 1;
 }
@@ -605,6 +660,9 @@ CmdPartCompJoinFeatures::CmdPartCompJoinFeatures()
 
 void CmdPartCompJoinFeatures::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
     if (iMsg == 0) {
         rcCmdMgr.runCommandByName("Part_JoinConnect");
@@ -691,6 +749,9 @@ void CmdPartCompJoinFeatures::languageChange()
 
 bool CmdPartCompJoinFeatures::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -719,6 +780,9 @@ CmdPartCompSplitFeatures::CmdPartCompSplitFeatures()
 
 void CmdPartCompSplitFeatures::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
     if (iMsg == 0) {
         rcCmdMgr.runCommandByName("Part_BooleanFragments");
@@ -826,6 +890,9 @@ void CmdPartCompSplitFeatures::languageChange()
 
 bool CmdPartCompSplitFeatures::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -853,6 +920,9 @@ CmdPartCompCompoundTools::CmdPartCompCompoundTools()
 
 void CmdPartCompCompoundTools::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
     if (iMsg == 0) {
         rcCmdMgr.runCommandByName("Part_Compound");
@@ -943,6 +1013,9 @@ void CmdPartCompCompoundTools::languageChange()
 
 bool CmdPartCompCompoundTools::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     if (getActiveGuiDocument()) {
         return true;
     }
@@ -971,6 +1044,9 @@ CmdPartCompound::CmdPartCompound()
 
 void CmdPartCompound::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     unsigned int n = getSelection().countObjectsOfType<App::DocumentObject>(
         nullptr,
@@ -1010,6 +1086,9 @@ void CmdPartCompound::activated(int iMsg)
 
 bool CmdPartCompound::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return getSelection().countObjectsOfType<App::DocumentObject>(nullptr, Gui::ResolveMode::FollowLink)
         >= 1;
 }
@@ -1033,6 +1112,9 @@ CmdPartSection::CmdPartSection()
 
 void CmdPartSection::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
@@ -1080,6 +1162,9 @@ void CmdPartSection::activated(int iMsg)
 
 bool CmdPartSection::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return getSelection().countObjectsOfType<App::DocumentObject>(nullptr, Gui::ResolveMode::FollowLink)
         == 2;
 }
@@ -1278,6 +1363,9 @@ CmdPartMakeSolid::CmdPartMakeSolid()
 
 void CmdPartMakeSolid::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<App::DocumentObject*> objs = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId(),
@@ -1348,6 +1436,9 @@ void CmdPartMakeSolid::activated(int iMsg)
 
 bool CmdPartMakeSolid::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return Gui::Selection().countObjectsOfType<App::DocumentObject>(nullptr, Gui::ResolveMode::FollowLink)
         > 0;
 }
@@ -1371,6 +1462,9 @@ CmdPartReverseShape::CmdPartReverseShape()
 
 void CmdPartReverseShape::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<App::DocumentObject*> objs = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId()
@@ -1418,6 +1512,9 @@ void CmdPartReverseShape::activated(int iMsg)
 
 bool CmdPartReverseShape::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return PartGui::hasShapesInSelection();
 }
 
@@ -1440,6 +1537,9 @@ CmdPartBoolean::CmdPartBoolean()
 
 void CmdPartBoolean::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog(getDocument());
     if (!dlg) {
@@ -1450,6 +1550,9 @@ void CmdPartBoolean::activated(int iMsg)
 
 bool CmdPartBoolean::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (hasActiveDocument() && !Gui::Control().activeDialog(getDocument()));
 }
 
@@ -1503,6 +1606,9 @@ CmdPartScale::CmdPartScale()
 
 void CmdPartScale::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     Gui::Control().showDialog(new PartGui::TaskScale());
@@ -1510,6 +1616,9 @@ void CmdPartScale::activated(int iMsg)
 
 bool CmdPartScale::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (hasActiveDocument() && !Gui::Control().activeDialog(getDocument()));
 }
 
@@ -1532,6 +1641,9 @@ CmdPartMakeFace::CmdPartMakeFace()
 
 void CmdPartMakeFace::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     auto sketches = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId(),
@@ -1565,6 +1677,9 @@ void CmdPartMakeFace::activated(int iMsg)
 
 bool CmdPartMakeFace::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (
         Gui::Selection().countObjectsOfType<App::DocumentObject>(nullptr, Gui::ResolveMode::FollowLink)
             > 0
@@ -1622,12 +1737,18 @@ CmdPartFillet::CmdPartFillet()
 
 void CmdPartFillet::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     Gui::Control().showDialog(new PartGui::TaskFilletEdges(nullptr));
 }
 
 bool CmdPartFillet::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (hasActiveDocument() && !Gui::Control().activeDialog(getDocument()));
 }
 
@@ -1650,12 +1771,18 @@ CmdPartChamfer::CmdPartChamfer()
 
 void CmdPartChamfer::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     Gui::Control().showDialog(new PartGui::TaskChamferEdges(nullptr));
 }
 
 bool CmdPartChamfer::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (hasActiveDocument() && !Gui::Control().activeDialog(getDocument()));
 }
 
@@ -1678,12 +1805,18 @@ CmdPartMirror::CmdPartMirror()
 
 void CmdPartMirror::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     Gui::Control().showDialog(new PartGui::TaskMirroring());
 }
 
 bool CmdPartMirror::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (hasActiveDocument() && !Gui::Control().activeDialog(getDocument()));
 }
 
@@ -1706,6 +1839,9 @@ CmdPartCrossSections::CmdPartCrossSections()
 
 void CmdPartCrossSections::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog(getDocument());
     if (!dlg) {
@@ -1721,6 +1857,9 @@ void CmdPartCrossSections::activated(int iMsg)
 
 bool CmdPartCrossSections::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     bool hasShapes = PartGui::hasShapesInSelection();
     return (hasShapes && !Gui::Control().activeDialog(getDocument()));
 }
@@ -1746,12 +1885,18 @@ CmdPartBuilder::CmdPartBuilder()
 
 void CmdPartBuilder::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     Gui::Control().showDialog(new PartGui::TaskShapeBuilder());
 }
 
 bool CmdPartBuilder::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (hasActiveDocument() && !Gui::Control().activeDialog(getDocument()));
 }
 
@@ -1839,6 +1984,9 @@ CmdPartOffset::CmdPartOffset()
 
 void CmdPartOffset::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<App::DocumentObject*> docobjs = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId()
@@ -1878,6 +2026,9 @@ void CmdPartOffset::activated(int iMsg)
 
 bool CmdPartOffset::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     bool hasShapes = PartGui::hasShapesInSelection();
     std::vector<App::DocumentObject*> docobjs = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId()
@@ -1906,6 +2057,9 @@ CmdPartOffset2D::CmdPartOffset2D()
 
 void CmdPartOffset2D::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     std::vector<App::DocumentObject*> docobjs = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId()
@@ -1945,6 +2099,9 @@ void CmdPartOffset2D::activated(int iMsg)
 
 bool CmdPartOffset2D::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     bool hasShapes = PartGui::hasShapesInSelection();
     std::vector<App::DocumentObject*> docobjs = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId()
@@ -1971,6 +2128,9 @@ CmdPartCompOffset::CmdPartCompOffset()
 
 void CmdPartCompOffset::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Gui::CommandManager& rcCmdMgr = Gui::Application::Instance->commandManager();
     if (iMsg == 0) {
         rcCmdMgr.runCommandByName("Part_Offset");
@@ -2048,6 +2208,9 @@ void CmdPartCompOffset::languageChange()
 
 bool CmdPartCompOffset::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     bool hasShapes = PartGui::hasShapesInSelection();
     std::vector<App::DocumentObject*> docobjs = Gui::Selection().getObjectsOfType(
         App::DocumentObject::getClassTypeId()
@@ -2076,6 +2239,9 @@ CmdPartThickness::CmdPartThickness()
 
 void CmdPartThickness::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     const App::DocumentObject* obj = nullptr;
     std::string selection;
@@ -2155,6 +2321,9 @@ void CmdPartThickness::activated(int iMsg)
 
 bool CmdPartThickness::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     bool objectsSelected
         = Gui::Selection().countObjectsOfType<Part::Feature>(nullptr, Gui::ResolveMode::FollowLink)
         > 0;
@@ -2221,6 +2390,9 @@ CmdPartRuledSurface::CmdPartRuledSurface()
 
 void CmdPartRuledSurface::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     bool ok = true;
     TopoDS_Shape curve1, curve2;
@@ -2342,6 +2514,9 @@ void CmdPartRuledSurface::activated(int iMsg)
 
 bool CmdPartRuledSurface::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return getActiveGuiDocument();
 }
 
@@ -2478,6 +2653,9 @@ CmdPartProjectionOnSurface::CmdPartProjectionOnSurface()
 
 void CmdPartProjectionOnSurface::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
     auto dlg = new PartGui::TaskProjectOnSurface(getDocument(nullptr));
     Gui::Control().showDialog(dlg);
@@ -2485,6 +2663,9 @@ void CmdPartProjectionOnSurface::activated(int iMsg)
 
 bool CmdPartProjectionOnSurface::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return (hasActiveDocument() && !Gui::Control().activeDialog(getDocument()));
 }
 
@@ -2682,6 +2863,9 @@ CmdPartLinkArrayCircular::CmdPartLinkArrayCircular()
 
 void CmdPartLinkArrayCircular::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     activateLinkArrayCommand(
@@ -2694,6 +2878,9 @@ void CmdPartLinkArrayCircular::activated(int iMsg)
 
 bool CmdPartLinkArrayCircular::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument() && !Gui::Control().activeDialog(getDocument());
 }
 
@@ -2717,6 +2904,9 @@ CmdPartLinkArrayPath::CmdPartLinkArrayPath()
 
 void CmdPartLinkArrayPath::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     activateLinkArrayCommand(
@@ -2729,6 +2919,9 @@ void CmdPartLinkArrayPath::activated(int iMsg)
 
 bool CmdPartLinkArrayPath::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument() && !Gui::Control().activeDialog(getDocument());
 }
 
@@ -2752,6 +2945,9 @@ CmdPartLinkArrayPoint::CmdPartLinkArrayPoint()
 
 void CmdPartLinkArrayPoint::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     activateLinkArrayCommand(
@@ -2764,6 +2960,9 @@ void CmdPartLinkArrayPoint::activated(int iMsg)
 
 bool CmdPartLinkArrayPoint::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument() && !Gui::Control().activeDialog(getDocument());
 }
 
@@ -2787,6 +2986,9 @@ CmdPartLinkArrayLinear::CmdPartLinkArrayLinear()
 
 void CmdPartLinkArrayLinear::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     activateLinkArrayCommand(
@@ -2799,6 +3001,9 @@ void CmdPartLinkArrayLinear::activated(int iMsg)
 
 bool CmdPartLinkArrayLinear::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument() && !Gui::Control().activeDialog(getDocument());
 }
 
@@ -2822,6 +3027,9 @@ CmdPartLinkArrayPolar::CmdPartLinkArrayPolar()
 
 void CmdPartLinkArrayPolar::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     activateLinkArrayCommand(
@@ -2834,6 +3042,9 @@ void CmdPartLinkArrayPolar::activated(int iMsg)
 
 bool CmdPartLinkArrayPolar::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument() && !Gui::Control().activeDialog(getDocument());
 }
 
@@ -2852,6 +3063,9 @@ CmdPartCoordinateSystem::CmdPartCoordinateSystem()
 
 void CmdPartCoordinateSystem::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Add coordinate system"));
@@ -2870,6 +3084,9 @@ void CmdPartCoordinateSystem::activated(int iMsg)
 
 bool CmdPartCoordinateSystem::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument();
 }
 
@@ -2891,6 +3108,9 @@ CmdPartDatumPlane::CmdPartDatumPlane()
 
 void CmdPartDatumPlane::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Add datum plane"));
@@ -2904,6 +3124,9 @@ void CmdPartDatumPlane::activated(int iMsg)
 
 bool CmdPartDatumPlane::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument();
 }
 
@@ -2925,6 +3148,9 @@ CmdPartDatumLine::CmdPartDatumLine()
 
 void CmdPartDatumLine::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Add datum line"));
@@ -2938,6 +3164,9 @@ void CmdPartDatumLine::activated(int iMsg)
 
 bool CmdPartDatumLine::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument();
 }
 
@@ -2959,6 +3188,9 @@ CmdPartDatumPoint::CmdPartDatumPoint()
 
 void CmdPartDatumPoint::activated(int iMsg)
 {
+    if (!PartGui::allowComponentModeling(true)) {
+        return;
+    }
     Q_UNUSED(iMsg);
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Add datum point"));
@@ -2972,6 +3204,9 @@ void CmdPartDatumPoint::activated(int iMsg)
 
 bool CmdPartDatumPoint::isActive()
 {
+    if (!PartGui::allowComponentModeling(false)) {
+        return false;
+    }
     return hasActiveDocument();
 }
 

@@ -86,6 +86,7 @@ SET(PartGui_SRCS
     BoxSelection.cpp
     BoxSelection.h
     Command.cpp
+    ComponentCommand.h
     CommandFilter.cpp
     CommandSimple.cpp
     CommandParametric.cpp

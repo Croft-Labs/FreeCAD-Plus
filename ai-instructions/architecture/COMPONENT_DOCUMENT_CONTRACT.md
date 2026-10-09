@@ -293,7 +293,15 @@ document metadata and dispatch to the existing Primitive, Extrude, Revolve, Loft
 and Pipe tasks respectively. They inherit the file-Edit guard and ownership
 contract before task creation. A failed shared launch cannot fall through to its
 legacy dialog. Documents without component metadata retain their native dialogs.
-Other Part operations and native Assembly solver ownership remain separate gates.
+The common Part allowComponentModeling check protects Boolean, copy, shape,
+datum, direct primitive and link-array paths in Command.cpp, CommandSimple.cpp
+and CommandParametric.cpp at both availability and activation. In a file-container
+document it requires a native active Definition that is not a file container;
+geometry selection cannot supply that ownership. A missing active part is refused
+as well. Legacy documents without a marked file retain native behavior. This is a
+file-Edit guard, not new feature/history adoption for those operations. Inspection,
+import/export and display routes are unchanged. Native Assembly solver ownership
+and broader workbench fallback compatibility remain separate gates.
 
 ## Definition deletion
 
