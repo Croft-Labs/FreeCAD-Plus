@@ -1,5 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 file-container migration foundation
+
+7.8.13d1 adds an opt-in migration service, not automatic UI migration. It wraps the
+old root in one native occurrence under a marked identity-frame file container;
+old geometry, history, object identities and external links stay intact. The wrapper
+copies the previous placement explicitly and uses Full Component representation,
+preserving the former root's display scope. Existing add-component creation shares
+the same internal occurrence builder without changing its workflow.
+
+Migrated archives require component-file-container-v1 and cross-check the root UUID
+against the native FileContainer marker. Older readers refuse the capability;
+removing its declaration is rejected. Backend validation rejects multiple/non-root
+containers, file-owned geometry/history, moved file frames and container instances.
+Normal documents retain their existing schema and behavior until explicitly migrated.
+
+Validation: six new native migration checks plus all 27 core component regressions
+pass with ComponentModel/CadDocument source overlays on the October 9 relocation
+runtime. Covers exact geometry bounds, identity preservation, external consumer
+save/reopen, undo/redo, injected failure rollback, unfinished edits, empty files,
+and capability tampering. An additional focused six-case run checks the final
+Full Component wrapper default. Initial tests found the missing placement copy;
+fixed and geometry bounds rechecked. A reused test-output directory caused expected
+no-overwrite fixture failures; final regression run used a fresh directory.
+
+No interface changes or owner DOCX changes in this backend step. No native build,
+owner payload or shortcut update. Next: 7.8.13d2 New/Open/legacy and copy-destination
+integration, ordinary active Part001, pinned file name/icon and Models filtering.
+File Edit guards/origin-only History remain 13e; grouped owner delivery remains 13f.
+Add Component workflow stays deferred.
+
+
 ## October 9 context transparency renderer
 
 Roadmap 7.8.13c2 adds a per-window native LinkView scene with transparency-only Coin

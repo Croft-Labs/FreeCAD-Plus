@@ -270,6 +270,26 @@ Cancel leaves the document unchanged.
 
 ## Persistence and conversion
 
+The October 9 file-root revision uses `ComponentModel.ensure_file_container` as an
+explicit migration service. It retains the previous native root definition and all
+its children/history/IDs, adds one native occurrence beneath a new identity-frame
+App::Part, and changes only the metadata root binding. The operation is idempotent
+and transactional, including undo/redo. Existing external links keep targeting the
+previous definition. Automatic New/Open and navigator integration remain roadmap
+7.8.13d; the service does not silently migrate documents on read.
+
+The container retains internal `ComponentRole=Definition` storage for native graph
+and serializer compatibility, with readonly `FileContainer=True` distinguishing it
+from a component model. It is the only marked object, must be the metadata root,
+and cannot be an occurrence source or own modeling history/results/geometry.
+`definitions()` still includes this storage root; UI inventories must filter it via
+`is_file_container`. Its native label is internal; the intended file row displays
+the document label. No existing component is renamed to accommodate that label.
+Saved migrated archives require `component-file-container-v1`, with `file_container`
+equal to the root UUID. Preflight cross-checks this declaration against the native
+marker; readers without this capability must refuse the file before restoration.
+
+
 - Versioned `.cadprt` format/capabilities, stable document/definition/occurrence/
   object identities and explicit external dependency records. A renamed FCStd
   without the component schema is not a valid `.cadprt`.

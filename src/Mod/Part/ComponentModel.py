@@ -63,6 +63,35 @@ def is_component(obj):
     return obj is not None and getattr(obj, "ComponentRole", "") == "Definition"
 
 
+def is_file_container(obj):
+    """File roots retain native definition storage but are not part models."""
+    return is_component(obj) and bool(getattr(obj, "FileContainer", False))
+
+
+def ensure_file_container(doc):
+    """Opt-in, undoable migration; preserve the original root and all native links.
+
+    Creation/open UI integration is separate. Never call during another transaction.
+    """
+    meta = validate(doc, allow_unresolved=True)
+    previous = meta.RootComponent
+    if is_file_container(previous):
+        return previous
+    with transaction(doc, "Create file container"):
+        root = _definition(doc)
+        _property(root, "Bool", "FileContainer", True, True)
+        # The navigator displays doc.Label; native object labels remain unique.
+        root.Label = "File"
+        root.setEditorMode("Placement", 1)
+        occurrence = _add_occurrence(root, previous, placement=App.Placement(previous.Placement))
+        occurrence.Representation = "Full Component"
+        meta.RootComponent = root
+        if App.GuiUp:
+            root.Visibility = True
+        validate(doc, allow_unresolved=True)
+    return root
+
+
 def definitions(doc):
     items = [o for o in doc.Objects if is_component(o)]
     roots = [getattr(o, "RootComponent", None) for o in doc.Objects
@@ -244,14 +273,15 @@ def definition_label(doc, label, exclude=None):
     label = label.strip()
     if not label:
         raise ValueError("Enter a component name.")
-    if any(obj != exclude and obj.Label.casefold() == label.casefold() for obj in definitions(doc)):
+    if any(obj != exclude and not is_file_container(obj)
+           and obj.Label.casefold() == label.casefold() for obj in definitions(doc)):
         raise ValueError("A domestic component already has this name. Choose a unique name.")
     return label
 
 
 def next_part_label(doc):
     """Reserve visible part names throughout this component document."""
-    labels = {obj.Label.casefold() for obj in definitions(doc)}
+    labels = {obj.Label.casefold() for obj in definitions(doc) if not is_file_container(obj)}
     number = 1
     while f"Part{number:03d}".casefold() in labels:
         number += 1
@@ -457,6 +487,8 @@ def _reachable(start, target, visited=None):
 
 
 def add_component(parent, definition=None, label=None, placement=None):
+    if is_file_container(definition):
+        raise ValueError("Select component models; a file cannot be an occurrence.")
     if not is_component(parent) or (definition is not None and not is_component(definition)):
         raise ValueError("Both parent and source must be component definitions.")
     if definition is not None and _reachable(definition, parent):
@@ -472,25 +504,31 @@ def add_component(parent, definition=None, label=None, placement=None):
             _import_file(parent.Document, definition.Document)
         if definition is None:
             definition = _definition(parent.Document, label)
-        link = parent.Document.addObject("App::Link", "ComponentInstance")
-        parent.addObject(link)
-        _identity(link, "Occurrence")
-        link.setLink(definition)
-        link.Label = label or definition.Label
-        peers = [obj for obj in children(parent) if obj != link and obj.LinkedObject == definition]
-        for index, peer in enumerate(peers, 1):
-            if not hasattr(peer, "InstanceNumber"):
-                _property(peer, "Integer", "InstanceNumber", index, True)
-        _property(link, "Integer", "InstanceNumber", max([obj.InstanceNumber for obj in peers] or [0]) + 1, True)
-        _property(link, "String", "DefinitionId", definition.ObjectId, True)
-        _property(link, "Enumeration", "Representation", list(TYPES))
-        link.Representation = "Bodies Only"
-        _property(link, "Bool", "IncludeInBOM", True)
-        _property(link, "Bool", "IncludeInMass", True)
-        if App.GuiUp:
-            link.Visibility = True
-        if placement is not None:
-            link.LinkPlacement = placement
+        link = _add_occurrence(parent, definition, label, placement)
+    return link
+
+
+def _add_occurrence(parent, definition, label=None, placement=None):
+    """Create a native occurrence inside the caller's transaction."""
+    link = parent.Document.addObject("App::Link", "ComponentInstance")
+    parent.addObject(link)
+    _identity(link, "Occurrence")
+    link.setLink(definition)
+    link.Label = label or definition.Label
+    peers = [obj for obj in children(parent) if obj != link and obj.LinkedObject == definition]
+    for index, peer in enumerate(peers, 1):
+        if not hasattr(peer, "InstanceNumber"):
+            _property(peer, "Integer", "InstanceNumber", index, True)
+    _property(link, "Integer", "InstanceNumber", max([obj.InstanceNumber for obj in peers] or [0]) + 1, True)
+    _property(link, "String", "DefinitionId", definition.ObjectId, True)
+    _property(link, "Enumeration", "Representation", list(TYPES))
+    link.Representation = "Bodies Only"
+    _property(link, "Bool", "IncludeInBOM", True)
+    _property(link, "Bool", "IncludeInMass", True)
+    if App.GuiUp:
+        link.Visibility = True
+    if placement is not None:
+        link.LinkPlacement = placement
     return link
 
 
@@ -504,6 +542,8 @@ def next_label(component, base, exclude=None):
 
 
 def register_object(component, obj, role="Object", result=False):
+    if is_file_container(component):
+        raise ValueError("Edit a component before creating modeling geometry.")
     if not is_component(component) or component.Document != obj.Document:
         raise ValueError("An object and its component must belong to the same file.")
     if owner(obj) not in (None, component):
@@ -1579,6 +1619,8 @@ def externalize(definition, filename):
             return
         closure.append(component)
         for child in children(component):
+            if is_file_container(child.LinkedObject):
+                raise ValueError("A file container cannot be a component occurrence.")
             if not is_component(child.LinkedObject):
                 raise ValueError("Repair missing components before externalizing.")
             if child.LinkedObject.Document == doc:
@@ -1661,6 +1703,16 @@ def validate(doc, allow_unresolved=False):
     meta = metadata(doc)
     if meta.SchemaVersion != SCHEMA or not is_component(meta.RootComponent):
         raise ValueError("Unsupported component schema or missing root component.")
+    containers = [o for o in doc.Objects if getattr(o, "FileContainer", False)]
+    if containers and containers != [meta.RootComponent]:
+        raise ValueError("The file container must be the unique document root.")
+    if containers:
+        root = containers[0]
+        if (root.ModelHistory or root.ResultObjects
+                or not root.Placement.isIdentity()
+                or any(obj != root.Origin and getattr(obj, "ComponentRole", "") != "Occurrence"
+                       for obj in root.Group)):
+            raise ValueError("The file container owns only its global origin and occurrences.")
     ids = [o.ObjectId for o in doc.Objects if hasattr(o, "ObjectId")]
     if len(ids) != len(set(ids)) or any(not value for value in ids):
         raise ValueError("Duplicate or missing component object identities.")
@@ -1671,6 +1723,8 @@ def validate(doc, allow_unresolved=False):
                 or not set(component.ResultObjects) <= members):
             raise ValueError("Invalid component history/result membership.")
         for child in children(component):
+            if is_file_container(child.LinkedObject):
+                raise ValueError("A file container cannot be a component occurrence.")
             if not is_component(child.LinkedObject):
                 if allow_unresolved and child.LinkedObject is None:
                     continue

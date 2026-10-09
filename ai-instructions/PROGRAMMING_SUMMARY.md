@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+File-root foundation: ComponentModel.ensure_file_container provides explicit,
+undoable migration preserving old definitions/placements/external references.
+CadDocument cross-checks component-file-container-v1 against the native marker.
+TestComponentFileContainer covers this service. Automatic New/Open and pinned-file
+UI integration are still next (roadmap 7.8.13d2); owner delivery remains batched.
+
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.
 Unused models now use a per-window temporary LinkView and (unused model) tree entry;

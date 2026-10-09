@@ -12,7 +12,7 @@ import ComponentModel as Model
 FORMAT = "org.freecad-plus.component-document"
 MANIFEST = "ComponentManifest.json"
 BASE_CAPABILITIES = ("components-v1", "native-objects-v1", "evaluated-references-v1")
-CAPABILITIES = BASE_CAPABILITIES + ("component-file-imports-v1",)
+CAPABILITIES = BASE_CAPABILITIES + ("component-file-imports-v1", "component-file-container-v1")
 
 
 def manifest(document, filename=None):
@@ -58,6 +58,9 @@ def manifest(document, filename=None):
             "required": list(BASE_CAPABILITIES), "document": meta.ObjectId,
             "root": meta.RootComponent.ObjectId,
             "definitions": definitions, "dependencies": dependencies}
+    if Model.is_file_container(meta.RootComponent):
+        data["file_container"] = meta.RootComponent.ObjectId
+        data["required"].append("component-file-container-v1")
     if imports:
         data["imports"] = imports
         data["required"].append("component-file-imports-v1")
@@ -82,6 +85,10 @@ def preflight(filename):
         raise ValueError("This component document requires unsupported reader capabilities.")
     if not set(BASE_CAPABILITIES) <= set(required):
         raise ValueError("Missing component document capability declarations.")
+    has_container = "component-file-container-v1" in required
+    if (("file_container" in data) != has_container
+            or (has_container and data["file_container"] != data.get("root"))):
+        raise ValueError("Invalid file container capability or identity.")
     dependencies = data.get("dependencies")
     if (not isinstance(dependencies, dict)
             or any(not isinstance(key, str) or not key or not isinstance(value, str) or not value
@@ -137,6 +144,7 @@ def preflight(filename):
         linked = obj.find('./Properties/Property[@name="LinkedObject"]/XLink')
         saved[obj.get("name")] = {"id": value("ObjectId", "String"),
                                   "role": value("ComponentRole", "String"),
+                                  "file_container": value("FileContainer", "Bool") == "true",
                                   "root": value("RootComponent", "Link"),
                                   "version": value("SchemaVersion", "Integer"),
                                   "document": value("DocumentId", "String"),
@@ -152,6 +160,11 @@ def preflight(filename):
     if {name: o["id"] for name, o in saved.items() if o["role"] == "Definition"} != {
             item["object"]: item["id"] for item in definitions}:
         raise ValueError("Component definitions differ from the format manifest.")
+    containers = [item for item in saved.values() if item["file_container"]]
+    if (len(containers) != int(has_container)
+            or (containers and (containers[0]["role"] != "Definition"
+                                or containers[0]["id"] != data["root"]))):
+        raise ValueError("Native file container differs from its format manifest.")
     saved_occurrences = {name: item for name, item in saved.items() if item["role"] == "Occurrence"}
     if set(saved_occurrences) != {item["object"] for item in occurrences}:
         raise ValueError("Component occurrences differ from the format manifest.")

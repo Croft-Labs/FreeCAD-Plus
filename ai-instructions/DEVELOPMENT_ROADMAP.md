@@ -3414,6 +3414,17 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   - [   ] 7.8.13d File container and migration: pinned file icon/name/global origin;
     new ordinary Part001 definition plus initial occurrence, activated automatically;
     removable first part, valid empty files; preserve existing geometry and identities.
+    - [ X ] 7.8.13d1 Opt-in transactional file-root migration and persistence.
+      Preserve the previous definition, native identities, history, transforms and
+      external uses; add one Full Component occurrence under an identity-frame file
+      container. Undo/redo, failure rollback, empty roots and archive capability
+      validation covered by TestComponentFileContainer. Six new migration cases and
+      27 core regressions pass in the native runtime with source overlays. New/Open
+      do not invoke this service yet; no owner-build or UI completion claim.
+    - [   ] 7.8.13d2 Integrate the container with New/Open/legacy conversion and
+      copy/externalization destinations; create/activate ordinary Part001, filter
+      the storage root out of Models, pin the file row using its name/FreeCAD icon,
+      and validate removal/deletion of the first part and existing-file migration.
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
