@@ -216,10 +216,13 @@ checkout and `FREECAD_PLUS_VALIDATION_DIR` set to an isolated external output
 folder. Supply isolated user/system configuration paths. Installed modules are
 tested by default; `FREECAD_PLUS_EDIT_SOURCE_OVERLAY=1` explicitly loads the five
 component modules from source against a compatible native development build.
-The report records that distinction and module paths/hashes. The default eight
-suites cover Edit, contextual display, file workspace, persistence and Ground/Fixed
-relationships. `FREECAD_PLUS_EDIT_SUITES` accepts a comma-separated subset for
+The report records that distinction and module paths/hashes; installed mode requires
+each checked module to match source and reside inside the payload. The default
+eleven suites cover Edit, contextual display, file workspace, persistence, Ground/Fixed
+relationships and native modeling command routing/guards. `FREECAD_PLUS_EDIT_SUITES` accepts a comma-separated subset for
 focused reruns. Require no skipped cases and PASS; inspect failures before reruns.
+For a cold reopen pass, select `TestComponentEditingCold` and set
+`FREECAD_PLUS_EDIT_FIXTURES` to the preceding full batch output directory.
 Use a fresh output directory for each run. Bound the process to fifteen minutes
 and inspect progress at least once per minute. This batch does not establish
 broader workbench compatibility, owner payload acceptance or shortcut delivery.

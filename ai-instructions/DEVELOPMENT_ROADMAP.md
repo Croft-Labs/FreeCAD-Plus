@@ -3378,7 +3378,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   report tested editable mappings and unsupported/geometry-only content.
 - [   ] 7.8.10 Complete grouped native/runtime, cold reopen, undo/redo, graph/failure,
   downstream and GUI acceptance against the contract's end-to-end example.
-- [   ] 7.8.13 Active component and file-container Part Tree revision (owner approved October 9).
+- [ X ] 7.8.13 Active component and file-container Part Tree revision (owner approved October 9).
   Add Component workflow changes remain explicitly deferred. Acceptance is split below;
   this supersedes permanent-master/always-listed-unused-tree requirements in 7.8.7.
   - [ X ] 7.8.13a Placed-definition Edit in the current tab: Models resolves the last
@@ -3539,7 +3539,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
               verified. Twelve grouped UI cases pass; owner DOCX numbering retained
               and pages 66-69 rendered/reviewed. Native build unchanged; owner
               payload and broader compatibility remain in 13f.
-  - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
+  - [ X ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
 
@@ -3561,11 +3561,16 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       legacy test assumptions for all-occurrence bold text and migrated file roots.
       Added ValidateComponentEditing.FCMacro with installed/source mode evidence
       and focused reruns. No product/native/UI requirement changes this step.
-    - [   ] 7.8.13f3 Next: packaged compatibility and owner delivery. Assemble a
-      payload with the verified native file guards/solver and current Python
-      modules; validate without overlays, check native workbench fallbacks and
-      fresh-process reopen, then update and verify the owner desktop shortcut.
-      Broader compatibility remains unaccepted until these checks pass.
+    - [ X ] 7.8.13f3 Packaged compatibility and owner delivery complete. Full
+      enabled-target Release build passes. Final active_edit_payload passes 74
+      installed cases, including native Part routing/guards and legacy fallback,
+      plus two fresh-process relationship/external reopen cases launched through
+      the updated desktop shortcut. No overlays; 53 native binaries and 16 component
+      Python modules verified. Launcher exits 0; shortcut target/working directory
+      reopened and verified. Runtime captures reviewed. WORK_STATE records exact
+      build path, expected refusal diagnostics and source publication separately.
+      This completes 7.8.13; broader migration/workbench qualification remains in
+      7.8.10. Add Component changes and additional joint types remain deferred.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

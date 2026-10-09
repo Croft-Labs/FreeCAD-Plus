@@ -1,5 +1,62 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 Active component and Part Tree owner delivery complete
+
+Roadmap 7.8.13, including 13f3, is complete for the approved active-component and
+file-container Part Tree scope. No implementation task remains in this scope.
+Add Component workflow changes remain deferred; the wider component migration and
+additional joint/workbench qualification remain separate roadmap work.
+
+Build: ScriptsOnly synchronization and the full enabled-target Release build both
+passed with exit 0 in freecad_plus_2026-10-06_recovered_workload. Staged owner build:
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-09_active_edit_payload.
+Native version is 27.1.0, revision 49492, source bdc8a099da69502ccca72a539aeea293fd81de9b.
+The launcher is reused with both binary and current launcher-source hashes verified.
+This is a local owner test build, not a release. No separately installed FreeCAD was
+used or modified.
+
+The initial staged 74-case pass preceded the full build's final output refresh.
+An unnecessarily broad byte comparison of unchanged runtime dependencies was
+stopped after four minutes of continuing progress, then completed using metadata
+for the staged files and hashes for native application outputs. The final refresh
+updated 309 files; all 53 native application binaries match the build, and all 16
+component Python modules match source. Payload metadata records this exact checksum
+coverage, native identity and acceptance. No full dependency checksum claim is made.
+
+Final acceptance: all 74 cases in eleven suites pass without source overlays.
+The runner verifies that checked modules reside in the payload and match source;
+reporting also records test-source hashes. Coverage adds native Part command routing,
+46 command refusal subcases, explicit component modeling, legacy native fallback,
+and shared modeling/file-placement guards to the earlier eight-suite batch.
+All cases pass with no skips. The final launcher exits 0. Stderr contains exactly
+five expected ValueError traces from deliberately invoking the five native modeling
+routes while the file is in Edit, with no unrelated diagnostics.
+
+Cold delivery acceptance: two new TestComponentEditingCold cases pass in a fresh
+process launched through the saved desktop shortcut. Native Ground/Fixed state and
+origin-only file History reopen correctly; an external definition remains unchanged
+through loading and solving. This process also exits 0. Final acceptance comprises
+76 case executions (72 distinct behaviors, with four inherited solver cases repeated
+across two suites); the earlier pre-refresh 74-case pass is separate evidence.
+The relationship list, fixed-offset editor and cold file History captures were
+visually reviewed. Python syntax and CRLF-aware diff checks pass.
+
+Owner shortcut: existing Desktop/FreeCADPlus.exe - Shortcut.lnk now targets
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-09_active_edit_payload/FreeCADPlus.exe,
+with that payload directory as its working directory. UpdateOwnerBuildShortcut
+reopened the saved link and verified both fields; the subsequent cold acceptance
+launched that link successfully. Owner delivery is complete. The owner UI DOCX
+already documents the delivered behavior and was unchanged this turn: this step
+adds tests, acceptance tooling and build delivery, with no new UI requirements.
+
+Canonical summary, guide and roadmap synchronized. Generated validation output is
+removed after recording these results; the current owner and development builds
+are retained; the superseded hierarchy-relocation payload was removed after shortcut
+verification and confirming no process used it. Source changes are committed and published to origin/main with remote
+identity verified at handoff. Publication is not a release.
+
+Next task in the active-component/Part Tree scope: none; all tasks complete.
+
 ## October 9 Grouped active Edit integration
 
 7.8.13f2 is complete for the bounded source integration batch.

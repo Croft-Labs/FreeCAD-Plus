@@ -32,8 +32,10 @@ requires file Edit and one direct occurrence, with stale-menu and task guards
 Part Tree relationship review, offset editing and removal now use the same guarded
 service (TestComponentRelationshipsUI). ValidateComponentEditing.FCMacro now
 provides the bounded eight-suite integration batch; all 62 cases pass after two
-legacy test assumptions were corrected. Packaged compatibility qualification and
-owner-build/shortcut delivery remain next in 7.8.13f3.
+legacy test assumptions were corrected. The final owner payload now passes 74
+installed cases plus two fresh-process reopen cases through the updated desktop
+shortcut, with no source overlays. Roadmap 7.8.13 is complete; see WORK_STATE for
+build identity and delivery evidence. Add Component changes remain deferred.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI
@@ -50,7 +52,7 @@ occurrence fade classification without changing materials. context_scene renders
 per-view transparency floor through native links beside the original selection
 separator; cleanup removes only these view-owned nodes. Native picking and camera
 state stay attached throughout contextual editing and tab switches. Pinned-file
-and grouped delivery remain in roadmap 7.8.13; Add Component is deferred.
+and grouped delivery are accepted in roadmap 7.8.13; Add Component is deferred.
 
 October 9 file hierarchy: ComponentModel owns explicit imports, file-cycle guards,
 qualified names and independent domestic hierarchy copies; CadDocument persists the
