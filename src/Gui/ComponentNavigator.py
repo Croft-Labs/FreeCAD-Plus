@@ -597,9 +597,7 @@ class Navigator(QtWidgets.QDockWidget):
             row.setToolTip(0, document.FileName or document.Label)
             row.setToolTip(1, tr("Linked occurrences in this file's assembly, including repeated nested uses. The assembly root is a model, not a linked instance."))
             if definition == active:
-                font = row.font(0)
-                font.setBold(True)
-                row.setFont(0, font)
+                self.decorate_active(row)
         for source in model().external_documents(document, allow_unresolved=True):
             row = QtWidgets.QTreeWidgetItem(parent, [Path(source.FileName).stem or source.Label, ""])
             row.setData(0, QtCore.Qt.UserRole + 3, (document.Name, source.Name))
@@ -696,6 +694,46 @@ class Navigator(QtWidgets.QDockWidget):
         except ValueError:
             return False
 
+    def decorate_active(self, item):
+        # Use the native active-item preference, independently of selection color.
+        packed = App.ParamGet("User parameter:BaseApp/Preferences/TreeView").GetUnsigned(
+            "TreeActiveColor", 1538528255)
+        color = QtGui.QColor((packed >> 24) & 255, (packed >> 16) & 255,
+                            (packed >> 8) & 255, packed & 255)
+        font = item.font(0)
+        font.setBold(True)
+        item.setFont(0, font)
+        item.setBackground(0, QtGui.QBrush(color))
+
+    def model_edit_path(self, definition):
+        """Resolve a per-tab remembered occurrence, or the first depth-first use."""
+        root = resolve(self.root_key)
+        if definition == root:
+            return []
+        window = self.mdi.activeSubWindow() if self.mdi else None
+        remembered = dict(window.property("ComponentEditPaths") or {}) if window else {}
+        ids = remembered.get(definition.ObjectId)
+        if ids:
+            component, path = self.edit_context(root, ids)
+            if component == definition and path == list(ids):
+                return path
+        def visit(component, path, ancestors):
+            key = object_key(component)
+            if key in ancestors:
+                return None
+            for link in model().children(component):
+                child = link.LinkedObject
+                if not model().is_component(child):
+                    continue
+                child_path = path + [link.ObjectId]
+                if child == definition:
+                    return child_path
+                found = visit(child, child_path, ancestors | {key})
+                if found is not None:
+                    return found
+            return None
+        return visit(root, [], set())
+
     def decorate_component(self, item, definition, paths):
         root = self.tree_root(item)
         visible = not paths or any(self.path_visible(root, ids) for ids in paths)
@@ -705,14 +743,8 @@ class Navigator(QtWidgets.QDockWidget):
             item.setToolTip(3, tr("Right-click and choose Locate Component File. Matching unresolved instances in this file are repaired together."))
         if self.protected(item):
             item.setToolTip(1, tr("The active component and its parent branch cannot be hidden."))
-        if definition and ((object_key(root) == self.root_key and
-                            any(list(ids) == self.active_path for ids in paths or [[]]))
-                           or (object_key(root) != self.root_key and object_key(definition) == self.active_key)):
-            font = item.font(0)
-            font.setBold(True)
-            item.setFont(0, font)
-            item.setBackground(0, self.palette().brush(QtGui.QPalette.Highlight))
-            item.setForeground(0, self.palette().brush(QtGui.QPalette.HighlightedText))
+        if definition and object_key(definition) == self.active_key:
+            self.decorate_active(item)
         if definition and paths:
             overrides = model().representation_overrides(root, [])
             explicit = sum("/".join(ids) in overrides for ids in paths)
@@ -877,10 +909,17 @@ class Navigator(QtWidgets.QDockWidget):
         key = item.data(0, QtCore.Qt.UserRole)
         if not key:
             return
-        if key == self.root_key:
-            self.active_key, self.active_path = key, []
-            self.bind_edit_context()
-            model().activate(resolve(key), strict=False)
+        definition = resolve(key)
+        path = self.model_edit_path(definition)
+        if path is not None:
+            root = resolve(self.root_key)
+            obj = model()._path(root, path)[-1] if path else root
+            # Reuse exactly the same activation/visibility path as Part Tree Edit.
+            root_row = QtWidgets.QTreeWidgetItem()
+            root_row.setData(0, QtCore.Qt.UserRole, (self.root_key, []))
+            row = QtWidgets.QTreeWidgetItem(root_row)
+            row.setData(0, QtCore.Qt.UserRole, (object_key(obj), path))
+            self.activate_item(row)
         else:
             self.open_component_tab(key)
         self.tabs.setCurrentWidget(self.history)
@@ -1356,6 +1395,11 @@ class Navigator(QtWidgets.QDockWidget):
         model().activate(obj, strict=False)
         App.setActiveDocument(root.Document.Name)
         self.root_key, self.active_key, self.active_path = root_key, object_key(obj), list(value[1])
+        window = self.mdi.activeSubWindow() if self.mdi else None
+        if window:
+            remembered = dict(window.property("ComponentEditPaths") or {})
+            remembered[obj.ObjectId] = list(self.active_path)
+            window.setProperty("ComponentEditPaths", remembered)
         self.bind_edit_context()
         self.tabs.setCurrentWidget(self.history)
 
@@ -1820,6 +1864,7 @@ class Navigator(QtWidgets.QDockWidget):
             if item and item.data(0, QtCore.Qt.UserRole):
                 key = item.data(0, QtCore.Qt.UserRole)
                 menu.addAction(tr("Edit"), lambda: self.run(lambda: self.edit_model(target())))
+                menu.addAction(tr("Open in new window"), lambda: self.run(lambda: self.open_component_tab(key)))
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(key)))
                 menu.addAction(tr("Add Instance"), lambda: self.run(
                     lambda: self.insert_model(key)))
@@ -1853,7 +1898,7 @@ class Navigator(QtWidgets.QDockWidget):
             if definition:
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(object_key(definition))))
             if value[1]:
-                menu.addAction(tr("Open Component in Tab"), lambda: self.run(lambda: self.open_component_tab(value[0]))).setEnabled(definition is not None)
+                menu.addAction(tr("Open in new window"), lambda: self.run(lambda: self.open_component_tab(value[0]))).setEnabled(definition is not None)
                 instances = menu.addMenu(tr("Instances"))
                 menu.component_submenus.append(instances)
                 instances.addAction(tr("Add Instance"), lambda: self.run(lambda: self.add_instance(value[0]))).setEnabled(definition is not None)

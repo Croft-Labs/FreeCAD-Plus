@@ -1,5 +1,12 @@
 # FreeCAD Plus: UI and UX Specification
 
+October 9 owner revision: the canonical UI DOCX Model Panel section defines Edit
+activation within the current tab, all-occurrence active styling, temporary unused
+model editing, contextual transparency and the pinned file container. Those
+requirements supersede older permanent-master/unused-tree descriptions. Implementation
+and validation status are tracked separately in roadmap 7.8.13. Add Component workflow
+changes remain deferred.
+
 ## Inherited upstream interface changes
 
 The October 7 upstream integration retains the Plus command layout and adds

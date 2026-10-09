@@ -1,5 +1,26 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 active editing task one
+
+Roadmap 7.8.13a is implemented in ComponentNavigator and covered by five focused
+native GUI checks in TestComponentActiveEditing. Placed Models Edit stays in the
+current file tab, remembers a valid last occurrence per tab, falls back to the first
+nested occurrence after deletion, and highlights every active-definition row using
+TreeActiveColor plus bold text. Both menus offer Open in new window. Add Component
+workflow is unchanged. Existing selection behavior remains separate from Edit.
+
+Validation: the first harness incorrectly exercised the installed navigator rather
+than the changed source; corrected by explicitly injecting the loaded module into
+the test fixture. A subsequent stale-row test error was fixed by resolving each row
+after menu-triggered refresh. Final five-case run passes without failures/errors/skips.
+This is source-overlay GUI evidence against the verified October 9 relocation
+runtime, not a new installed build. Owner payload/shortcut remain unchanged; batch
+installation is deferred to 7.8.13f. Native captures of Models and expanded repeated Part Tree rows also show the expected
+green active fill and bold names. Owner DOCX updated preserving native numbering,
+rendered, affected pages 65-66 visually checked. No claim of complete file-container
+or unused-model behavior. Next task: 7.8.13b temporary unused-model editing.
+
+
 ## October 9 native relocation delivered
 
 **Implementation/build:** 7.8.12g/h now have a matching full Release

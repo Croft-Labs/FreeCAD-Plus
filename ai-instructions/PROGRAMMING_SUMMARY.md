@@ -1,5 +1,10 @@
 # FreeCAD Plus: Programming Summary
 
+Active-editing revision: ComponentNavigator resolves placed Models Edit in the
+current tab with per-tab occurrence memory and native active-color decoration.
+TestComponentActiveEditing covers this first step. Roadmap 7.8.13 owns the remaining
+unused-model, fading, pinned-file and grouped delivery work; Add Component is deferred.
+
 October 9 file hierarchy: ComponentModel owns explicit imports, file-cycle guards,
 qualified names and independent domestic hierarchy copies; CadDocument persists the
 additive `component-file-imports-v1` capability. ComponentNavigator provides nested

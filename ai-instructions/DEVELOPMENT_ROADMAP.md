@@ -3378,6 +3378,32 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   report tested editable mappings and unsupported/geometry-only content.
 - [   ] 7.8.10 Complete grouped native/runtime, cold reopen, undo/redo, graph/failure,
   downstream and GUI acceptance against the contract's end-to-end example.
+- [   ] 7.8.13 Active component and file-container Part Tree revision (owner approved October 9).
+  Add Component workflow changes remain explicitly deferred. Acceptance is split below;
+  this supersedes permanent-master/always-listed-unused-tree requirements in 7.8.7.
+  - [ X ] 7.8.13a Placed-definition Edit in the current tab: Models resolves the last
+    edited occurrence per tab or the first valid nested occurrence; stale paths fall
+    back safely. Both trees mark all active-definition occurrences with bold text and
+    native TreeActiveColor. Single-click remains selection-only. Both context menus
+    expose Open in new window. Five focused native GUI checks pass with the changed
+    source module explicitly loaded over the October 9 runtime. Owner payload not updated.
+  - [   ] 7.8.13b Temporary unused-model editing in the current tab: last tree entry
+    labelled (unused model), external qualification, gray/hide existing entries,
+    edit-only temporary occurrence, restore visibility on context change, exclude
+    temporary state from persistence. Remove the remaining unused-model Edit tab fallback.
+  - [   ] 7.8.13c Per-view context display: at least 75 percent transparency outside
+    the exact active occurrence and descendants, preserve authored appearance and
+    selection distinction, restore normal display when the file is active.
+  - [   ] 7.8.13d File container and migration: pinned file icon/name/global origin;
+    new ordinary Part001 definition plus initial occurrence, activated automatically;
+    removable first part, valid empty files; preserve existing geometry and identities.
+  - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
+    assembly relationships without modeling geometry; explicit component activation
+    required for modeling. Existing file imports stay Models-only.
+  - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
+    transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
+    and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
+
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,
   identity-based missing-import repair and independent copies with reviewed placement
