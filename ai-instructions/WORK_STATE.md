@@ -44,8 +44,14 @@ No new UI controls/defaults; the synchronized owner UI DOCX remains applicable.
 
 **Limits/publication:** earlier grouped-sketch inactivity timeouts remain unresolved
 (16.6c); they were not rerun in this relocation batch. FEM remains unavailable.
-No release or upstream publication. Origin verification and cleanup of the six task
-validation directories remain pending.
+No release or upstream publication. Acceptance milestone
+c333146dbed7d4b02422caecf9fe068709460040 and delivery evidence
+48f15e0109e93d460d3ee33c6504c3c7fe996c7d were pushed to origin/main and remote
+hashes verified. All six task validation directories were deleted after recording
+results. The superseded file_hierarchy_payload and hierarchy_recovery_payload were
+removed after re-verifying the saved shortcut. Current hierarchy_relocation_payload,
+preceding hierarchy_import_repair_payload fallback, native build and dependencies
+are retained. No task FreeCAD/FreeCADPlus processes remained at cleanup.
 
 ## October 9 save destination protection and native relocation (build pending)
 
