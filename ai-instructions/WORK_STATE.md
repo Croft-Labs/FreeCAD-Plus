@@ -1,5 +1,34 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 context transparency renderer
+
+Roadmap 7.8.13c2 adds a per-window native LinkView scene with transparency-only Coin
+material overrides. Each visible item outside the exact edited occurrence/descendants
+uses max(authored material transparency, 0.75); colors and document appearance are
+untouched. The outermost occurrence material override is honored. Root Edit removes
+the context scene, and unused-model entry switches to its existing isolated view.
+The original scene is retained with paired native references, and scene changes
+preserve camera state. Appearance property notifications schedule refresh.
+
+Native picking is retained by an invisible original-scene branch; temporary display
+links are unpickable. This corrected an integration failure where a visually correct
+snapshot had no native occurrence pick. The viewport test verifies a ray pick on the
+faded second occurrence, placement bounds, restoration and camera values. Coin-level
+checks verify transparency-only overrides preserve color; per-face arrays preserve
+90 percent transparency alongside the 75 percent floor. Existing editing/unused-model
+checks remain included. Broad multi-window/native task qualification remains 13f.
+
+Final validation: 17 checks pass (eight context-display/Coin checks and nine
+active-editing checks), zero failures/errors/skips, process exit 0 and empty stderr.
+Camera comparison permits 1e-5 serialization normalization, while retaining position,
+orientation, clipping and zoom values. Validation is source-overlay GUI evidence
+against the October 9 relocation runtime, not installed delivery. Live framebuffer and owner DOCX pages 66-67 reviewed; DOCX
+native numbering retained and the following heading kept with its text. No new native
+build, owner payload or shortcut change. Next task: 7.8.13d pinned file container,
+ordinary automatically activated Part001 occurrence, and existing-file migration.
+Add Component workflow remains deferred.
+
+
 ## October 9 context transparency planning prerequisite
 
 7.8.13c1: ComponentNavigator.display_items is now the shared traversal behind

@@ -239,6 +239,52 @@ def context_display_plan(root, active_ids):
             for path, ids, obj in display_items(root, root, [])]
 
 
+def context_transparencies(root, path, obj, floor):
+    """Keep per-face transparency and the outermost occurrence material override."""
+    component = root
+    provider = obj.ViewObject
+    for token in path.split(".")[:-1]:
+        link = next((link for link in model().children(component) if link.Name == token), None)
+        if link is None:
+            break
+        if getattr(link.ViewObject, "OverrideMaterial", False):
+            provider = link.ViewObject
+            break
+        component = link.LinkedObject
+    materials = getattr(provider, "ShapeAppearance", ())
+    values = [material.Transparency for material in materials]
+    if not values:
+        values = [getattr(provider, "Transparency", 0) / 100.0]
+    return [max(floor, value) for value in values]
+
+
+def context_scene(root, active_ids):
+    """Build a view-owned native link scene with transparency-only overrides."""
+    from pivy import coin
+    scene = coin.SoSeparator()
+    links = []
+    materials = {}
+    for path, obj, floor in context_display_plan(root, active_ids):
+        branch = coin.SoSeparator()
+        if floor:
+            material = coin.SoMaterial()
+            for field in (material.ambientColor, material.diffuseColor,
+                          material.specularColor, material.emissiveColor, material.shininess):
+                field.setIgnored(True)
+            values = context_transparencies(root, path, obj, floor)
+            material.transparency.setValues(0, len(values), values)
+            material.setOverride(True)
+            branch.addChild(material)
+            materials[path] = material
+        link = Gui.LinkView()
+        link.setType(-2, False)
+        link.setLink(root, [path])
+        branch.addChild(link.RootNode)
+        scene.addChild(branch)
+        links.append(link)
+    return scene, links, materials
+
+
 def item_display_available(obj):
     """Use the same availability for history eyes and component representations."""
     return model().history_state(obj) not in (
@@ -364,6 +410,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.selecting = False
         self.component_views = []
         self.unused_views = []
+        self.context_views = []
         self.tabs = QtWidgets.QTabWidget()
         self.models = QtWidgets.QTreeWidget()
         self.models.setHeaderLabels([tr("Model"), tr("Instances")])
@@ -677,11 +724,62 @@ class Navigator(QtWidgets.QDockWidget):
             paths = visible_paths(component, component, [])
             entry["snapshot"].setLink(component if paths else None, paths)
 
+        self.refresh_context_view()
+
+    def clear_context_view(self, window=None, restore=True):
+        window = window or (self.mdi.activeSubWindow() if self.mdi else None)
+        entry = next((entry for entry in self.context_views if entry["window"] == window), None)
+        if entry:
+            if restore:
+                camera = entry["view"].getCamera()
+                entry["view"].getViewer().setSceneGraph(entry["original"])
+                entry["view"].setCamera(camera)
+            self.context_views.remove(entry)
+            entry["original"].unref()
+
+    def refresh_context_view(self):
+        window = self.mdi.activeSubWindow() if self.mdi else None
+        if not window:
+            return
+        if self.unused_edit(window) or not self.active_path or not resolve(self.root_key):
+            self.clear_context_view(window)
+            return
+        root = resolve(self.root_key)
+        scene, links, materials = context_scene(root, self.active_path)
+        entry = next((entry for entry in self.context_views if entry["window"] == window), None)
+        if not entry:
+            view = Gui.getDocument(root.Document.Name).activeView()
+            original = view.getViewer().getSceneGraph()
+            original.ref()
+            entry = {"window": window, "view": view, "original": original,
+                     "document": root.Document.Name}
+            self.context_views.append(entry)
+            window.destroyed.connect(lambda: self.clear_context_view(window, restore=False))
+        from pivy import coin
+        # Preserve the document's native picking/selection path. Draw it invisibly
+        # and render unpickable display links above it; no proxy geometry is picked.
+        picking = coin.SoSeparator()
+        invisible = coin.SoDrawStyle()
+        invisible.style = coin.SoDrawStyle.INVISIBLE
+        invisible.setOverride(True)
+        picking.addChild(invisible)
+        picking.addChild(entry["original"])
+        scene.insertChild(picking, 0)
+        unpickable = coin.SoPickStyle()
+        unpickable.style = coin.SoPickStyle.UNPICKABLE
+        unpickable.setOverride(True)
+        scene.insertChild(unpickable, 1)
+        camera = entry["view"].getCamera()
+        entry["view"].getViewer().setSceneGraph(scene)
+        entry["view"].setCamera(camera)
+        entry.update(scene=scene, links=links, materials=materials)
+
     def unused_edit(self, window=None):
         window = window or (self.mdi.activeSubWindow() if self.mdi else None)
         return next((entry for entry in self.unused_views if entry["window"] == window), None)
 
     def begin_unused_edit(self, key):
+        self.clear_context_view()
         self.end_unused_edit()
         obj = resolve(key)
         window = self.mdi.activeSubWindow()
@@ -694,7 +792,7 @@ class Navigator(QtWidgets.QDockWidget):
         paths = visible_paths(obj, obj, [])
         snapshot.setLink(obj if paths else None, paths)
         entry = {"window": window, "view": view, "snapshot": snapshot,
-                 "scene": view.getViewer().getSoRenderManager().getSceneGraph(),
+                 "scene": view.getViewer().getSceneGraph(),
                  "file_root": self.root_key, "key": tuple(key)}
         # The viewer releases its Coin reference when replacing the scene. A
         # Python wrapper alone does not keep the native graph alive.
@@ -2128,7 +2226,7 @@ class Navigator(QtWidgets.QDockWidget):
                         obj.Visibility = True
                 except ValueError:
                     pass
-        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject", "Source", "DocumentId", "IncludeInBOM"):
+        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject", "Source", "DocumentId", "IncludeInBOM", "Transparency", "ShapeAppearance", "OverrideMaterial"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):
@@ -2139,6 +2237,9 @@ class Navigator(QtWidgets.QDockWidget):
         # Closed MDI widgets can await deferred destruction. Their document names
         # may already be reused; never reuse those views for a new document.
         self.component_views = [entry for entry in self.component_views if entry["key"][0] != name]
+        for entry in list(self.context_views):
+            if entry["document"] == name:
+                self.clear_context_view(entry["window"], restore=False)
         for entry in list(self.unused_views):
             if entry["file_root"][0] == name:
                 self.discard_unused_edit(entry)

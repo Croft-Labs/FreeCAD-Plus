@@ -3394,7 +3394,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     restore the correct display context. Nine focused GUI checks cover this and 13a,
     including child Edit, external unused definitions, save/reopen and visibility
     guards. Owner DOCX updated/rendered; installed delivery remains in 13f.
-  - [   ] 7.8.13c Per-view context display: at least 75 percent transparency outside
+  - [ X ] 7.8.13c Per-view context display: at least 75 percent transparency outside
     the exact active occurrence and descendants, preserve authored appearance and
     selection distinction, restore normal display when the file is active.
     - [ X ] 7.8.13c1 Shared visible-item traversal and occurrence-exact display plan.
@@ -3403,11 +3403,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       Five new planning checks plus nine active-editing regressions pass in the
       existing native GUI with a source overlay. No appearance mutation/rendering
       claim; the production visible_paths API now shares this traversal.
-    - [   ] 7.8.13c2 Consume the plan in a per-view renderer that preserves each
-      material's colors and greater transparency, retains picking and occurrence
-      placement, and restores the original view on context change. Existing
-      LinkView.setMaterial overrides diffuse color too, so cannot directly satisfy
-      per-face appearance preservation. Validate separate tabs and repeated instances.
+    - [ X ] 7.8.13c2 Per-window render scene consumes the plan through native
+      LinkViews and transparency-only Coin materials. Retains per-face colors and
+      greater transparency, outer occurrence material overrides, placements and
+      native picking through an invisible original scene. Original scene/camera
+      restored on root Edit or unused-model entry. Focused source-overlay GUI and
+      Coin checks cover appearance, rendered geometry, native ray picking, camera
+      preservation and prior editing workflows; live framebuffer reviewed. Broader
+      multi-window/task acceptance and owner delivery remain in 13f.
   - [   ] 7.8.13d File container and migration: pinned file icon/name/global origin;
     new ordinary Part001 definition plus initial occurrence, activated automatically;
     removable first part, valid empty files; preserve existing geometry and identities.
