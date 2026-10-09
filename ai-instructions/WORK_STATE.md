@@ -1,5 +1,32 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 unused-model editing task two
+
+Roadmap 7.8.13b adds a per-window temporary LinkView for unused definitions.
+Models Edit keeps the current file tab, appends the qualified (unused model) root,
+grays/hides the permanent assembly in that view, and supports its child editing.
+Ordinary unused definitions no longer appear as permanent extra assembly roots.
+The temporary root cannot be dragged/dropped or used through assembly-occurrence
+context actions. Hidden assembly visibility controls are blocked; authored document
+visibility is untouched, so save/reopen retains geometry but no temporary occurrence.
+External source closure restores the owner view; task return preserves that view.
+
+Validation: nine source-overlay native GUI tests (five earlier placed-edit checks
+plus four unused-model workflows), no failures/errors/skips in the final run.
+Save/reopen retains edited geometry and zero instances of the unused definition.
+The initial runs exposed an unretained native scene on restoration, now fixed by
+explicit paired Coin references; test fixture view readiness and numeric tolerance
+were also corrected. Native captures reviewed for gray permanent rows and active
+unused entry. Owner UI DOCX updated with unchanged native numbering, rendered,
+affected pages 66-67 checked. Source checks remain distinct from owner delivery;
+no native rebuild or owner payload/shortcut change. Prior master/unused-root GUI
+fixtures need reconciliation in the grouped 7.8.13f acceptance pass.
+
+Next task: 7.8.13c per-view transparency of at least 75 percent outside the chosen
+active occurrence and descendants, preserving authored appearance and selection
+context. File container and geometry guards remain 13d/e; Add Component stays deferred.
+
+
 ## October 9 active editing task one
 
 Roadmap 7.8.13a is implemented in ComponentNavigator and covered by five focused

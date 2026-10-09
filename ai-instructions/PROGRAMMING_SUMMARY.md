@@ -2,8 +2,10 @@
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.
-TestComponentActiveEditing covers this first step. Roadmap 7.8.13 owns the remaining
-unused-model, fading, pinned-file and grouped delivery work; Add Component is deferred.
+Unused models now use a per-window temporary LinkView and (unused model) tree entry;
+existing assembly visibility remains authored and is restored by returning its scene.
+TestComponentActiveEditing covers both steps. Roadmap 7.8.13 owns the remaining
+fading, pinned-file and grouped delivery work; Add Component is deferred.
 
 October 9 file hierarchy: ComponentModel owns explicit imports, file-cycle guards,
 qualified names and independent domestic hierarchy copies; CadDocument persists the

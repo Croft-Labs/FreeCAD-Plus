@@ -3387,10 +3387,13 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     native TreeActiveColor. Single-click remains selection-only. Both context menus
     expose Open in new window. Five focused native GUI checks pass with the changed
     source module explicitly loaded over the October 9 runtime. Owner payload not updated.
-  - [   ] 7.8.13b Temporary unused-model editing in the current tab: last tree entry
+  - [ X ] 7.8.13b Temporary unused-model editing in the current tab: last tree entry
     labelled (unused model), external qualification, gray/hide existing entries,
-    edit-only temporary occurrence, restore visibility on context change, exclude
-    temporary state from persistence. Remove the remaining unused-model Edit tab fallback.
+    no persistent occurrence or visibility changes. Native per-view LinkView retains
+    the original scene explicitly until restoration; source close and task return
+    restore the correct display context. Nine focused GUI checks cover this and 13a,
+    including child Edit, external unused definitions, save/reopen and visibility
+    guards. Owner DOCX updated/rendered; installed delivery remains in 13f.
   - [   ] 7.8.13c Per-view context display: at least 75 percent transparency outside
     the exact active occurrence and descendants, preserve authored appearance and
     selection distinction, restore normal display when the file is active.

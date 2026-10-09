@@ -183,7 +183,9 @@ class TaskContext:
             return
         self.dock.mdi.setActiveSubWindow(self.window)
         root = resolve(self.root_key)
-        App.setActiveDocument(root.Document.Name)
+        unused = self.dock.unused_edit(self.window)
+        display_root = resolve(unused["file_root"]) if unused else root
+        App.setActiveDocument(display_root.Document.Name)
         active, path = self.dock.edit_context(root, self.path)
         self.dock.root_key, self.dock.active_key, self.dock.active_path = self.root_key, object_key(active), path
         self.dock.bind_edit_context(self.window)
@@ -342,6 +344,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.refreshing = False
         self.selecting = False
         self.component_views = []
+        self.unused_views = []
         self.tabs = QtWidgets.QTabWidget()
         self.models = QtWidgets.QTreeWidget()
         self.models.setHeaderLabels([tr("Model"), tr("Instances")])
@@ -433,6 +436,7 @@ class Navigator(QtWidgets.QDockWidget):
             QtWidgets.QMessageBox.warning(self, tr("Component operation"), str(exc))
 
     def set_document(self, doc):
+        self.end_unused_edit()
         root = model().metadata(doc).RootComponent
         self.root_key = object_key(root)
         self.active_key = self.root_key
@@ -446,6 +450,9 @@ class Navigator(QtWidgets.QDockWidget):
     def refresh(self):
         if self.refreshing:
             return
+        unused = self.unused_edit()
+        if unused and not model().is_component(resolve(unused["key"])):
+            self.end_unused_edit()
         self.refreshing = True
         structure_state = self.tree_state(self.structure)
         models_state = self.tree_state(self.models)
@@ -510,17 +517,29 @@ class Navigator(QtWidgets.QDockWidget):
             elif pending:
                 self.reference_notice.setText(tr("{0} reference object(s) need updating. Use Refresh References.").format(len(pending)))
             # Definitions are inventory, not extra instances in the assembly.
-            file_root = model().metadata(root.Document).RootComponent
+            unused = self.unused_edit()
+            file_context = resolve(unused["file_root"]) if unused else root
+            file_root = model().metadata(file_context.Document).RootComponent
             counts = model().instance_counts(file_root)
-            self.populate_models(self.models, root.Document, root.Document, counts, active, ())
-            for tree_root in model().tree_roots(file_root.Document):
+            self.populate_models(self.models, file_root.Document, file_root.Document, counts, active, ())
+            roots = [file_root]
+            if unused:
+                roots.append(resolve(unused["key"]))
+            elif root != file_root:
+                roots.append(root)
+            for tree_root in roots:
                 root_row = QtWidgets.QTreeWidgetItem(self.structure, [tree_root.Label, "", "", ""])
                 root_row.setData(0, QtCore.Qt.UserRole, (object_key(tree_root), []))
                 root_row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
                 root_row.setFlags((root_row.flags() | QtCore.Qt.ItemIsDropEnabled) & ~QtCore.Qt.ItemIsDragEnabled)
                 self.decorate_component(root_row, tree_root, [[]])
-                root_row.setToolTip(0, tr("Master component; permanent document root.") if tree_root == file_root
-                                   else tr("Unused component assembly; separate from the master assembly."))
+                temporary = unused and object_key(tree_root) == unused["key"]
+                if temporary:
+                    root_row.setText(0, model().component_label(tree_root, file_root.Document)
+                                     + tr(" (unused model)"))
+                    root_row.setFlags(root_row.flags() & ~QtCore.Qt.ItemIsDropEnabled)
+                root_row.setToolTip(0, tr("Temporary editing view; not an assembly occurrence.") if temporary
+                                   else tr("Master component; permanent document root."))
                 root_row.setExpanded(True)
                 self.populate(root_row, tree_root, tree_root, [], set())
             if not structure_state[0]:
@@ -631,6 +650,69 @@ class Navigator(QtWidgets.QDockWidget):
             if component and entry.get("window"):
                 entry["window"].setWindowTitle(self.component_title(component))
 
+        for entry in list(self.unused_views):
+            component = resolve(entry["key"])
+            if not model().is_component(component):
+                self.end_unused_edit(entry["window"])
+                continue
+            paths = visible_paths(component, component, [])
+            entry["snapshot"].setLink(component if paths else None, paths)
+
+    def unused_edit(self, window=None):
+        window = window or (self.mdi.activeSubWindow() if self.mdi else None)
+        return next((entry for entry in self.unused_views if entry["window"] == window), None)
+
+    def begin_unused_edit(self, key):
+        self.end_unused_edit()
+        obj = resolve(key)
+        window = self.mdi.activeSubWindow()
+        if window is None or not model().is_component(obj):
+            raise ValueError(tr("Activate a file tab before editing this model."))
+        root = resolve(self.root_key)
+        view = Gui.getDocument(root.Document.Name).activeView()
+        snapshot = Gui.LinkView()
+        snapshot.setType(-2, False)
+        paths = visible_paths(obj, obj, [])
+        snapshot.setLink(obj if paths else None, paths)
+        entry = {"window": window, "view": view, "snapshot": snapshot,
+                 "scene": view.getViewer().getSoRenderManager().getSceneGraph(),
+                 "file_root": self.root_key, "key": tuple(key)}
+        # The viewer releases its Coin reference when replacing the scene. A
+        # Python wrapper alone does not keep the native graph alive.
+        entry["scene"].ref()
+        self.unused_views.append(entry)
+        window.destroyed.connect(lambda: self.discard_unused_edit(entry))
+        view.getViewer().setSceneGraph(snapshot.RootNode)
+        window.setProperty("ComponentKey", tuple(key))
+        self.root_key = self.active_key = tuple(key)
+        self.active_path = []
+        self.bind_edit_context(window)
+        model().activate(obj, strict=False)
+
+    def discard_unused_edit(self, entry):
+        if entry in self.unused_views:
+            self.unused_views.remove(entry)
+            entry["scene"].unref()
+
+    def end_unused_edit(self, window=None):
+        entry = self.unused_edit(window)
+        if not entry:
+            return
+        entry["view"].getViewer().setSceneGraph(entry["scene"])
+        self.discard_unused_edit(entry)
+        entry["window"].setProperty("ComponentKey", entry["file_root"])
+        entry["window"].setProperty("ComponentActiveKey", entry["file_root"])
+        entry["window"].setProperty("ComponentActivePath", [])
+        if entry["window"] == self.mdi.activeSubWindow():
+            self.root_key = self.active_key = entry["file_root"]
+            self.active_path = []
+            if resolve(self.root_key):
+                self.bind_edit_context(entry["window"])
+
+    def temporarily_hidden(self, item):
+        entry = self.unused_edit()
+        return bool(entry and object_key(self.tree_root(item)) != entry["key"])
+
     @staticmethod
     def row_key(item):
         def freeze(value):
@@ -737,7 +819,19 @@ class Navigator(QtWidgets.QDockWidget):
     def decorate_component(self, item, definition, paths):
         root = self.tree_root(item)
         visible = not paths or any(self.path_visible(root, ids) for ids in paths)
+        unused = self.unused_edit()
+        if unused and object_key(root) == unused["key"]:
+            # The temporary view ignores the definition's assembly visibility.
+            visible = not paths or any(model().representation(root, ids) != "Hidden"
+                                       and all(link.Visibility for link in model()._path(root, ids))
+                                       for ids in paths)
         self.visibility_icon(item, visible)
+        if self.temporarily_hidden(item):
+            self.visibility_icon(item, False)
+            for column in range(self.structure.columnCount()):
+                item.setForeground(column, QtGui.QBrush(QtGui.QColor(128, 128, 128)))
+            item.setToolTip(1, tr("Hidden while editing an unused model. Edit this component to return."))
+            return
         if definition is None:
             item.setToolTip(1, tr("Locate the component file before changing its display."))
             item.setToolTip(3, tr("Right-click and choose Locate Component File. Matching unresolved instances in this file are repaired together."))
@@ -809,6 +903,8 @@ class Navigator(QtWidgets.QDockWidget):
         model().set_representations(root, updates, show=show)
 
     def set_part_view(self, item, setting):
+        if self.temporarily_hidden(item):
+            raise ValueError(tr("Edit a component in the assembly before changing its visibility."))
         updates = [(ids, setting) for key, ids in self.members(item) if ids]
         if not updates:
             raise ValueError(tr("The root component is displayed in full."))
@@ -817,6 +913,8 @@ class Navigator(QtWidgets.QDockWidget):
         self.change_part_view(updates, root=self.tree_root(item))
 
     def toggle_component(self, item):
+        if self.temporarily_hidden(item):
+            return
         if not item.data(0, QtCore.Qt.UserRole):
             return
         if any(getattr(resolve(key), "ComponentRole", "") == "Occurrence"
@@ -910,6 +1008,7 @@ class Navigator(QtWidgets.QDockWidget):
         if not key:
             return
         definition = resolve(key)
+        self.end_unused_edit()
         path = self.model_edit_path(definition)
         if path is not None:
             root = resolve(self.root_key)
@@ -921,7 +1020,7 @@ class Navigator(QtWidgets.QDockWidget):
             row.setData(0, QtCore.Qt.UserRole, (object_key(obj), path))
             self.activate_item(row)
         else:
-            self.open_component_tab(key)
+            self.begin_unused_edit(key)
         self.tabs.setCurrentWidget(self.history)
 
     def eventFilter(self, watched, event):
@@ -1335,7 +1434,8 @@ class Navigator(QtWidgets.QDockWidget):
         root = resolve(self.root_key)
         try:
             Gui.getDocument(resolve(self.active_key).Document.Name)
-            view = Gui.getDocument(root.Document.Name).activeView()
+            unused = self.unused_edit(window)
+            view = unused["view"] if unused else Gui.getDocument(root.Document.Name).activeView()
         except NameError:
             # Closing MDI views can outlive their GUI document.
             return False
@@ -1382,6 +1482,9 @@ class Navigator(QtWidgets.QDockWidget):
             parent.setExpanded(True)
             parent = parent.parent()
         root_key = object_key(self.tree_root(item))
+        unused = self.unused_edit()
+        if unused and root_key != unused["key"]:
+            self.end_unused_edit()
         if root_key != self.root_key:
             self.open_component_tab(root_key)
         root = resolve(root_key)
@@ -1393,7 +1496,9 @@ class Navigator(QtWidgets.QDockWidget):
             if model().representation(root, ids) == "Hidden":
                 model().set_representation(root, ids, "Bodies Only")
         model().activate(obj, strict=False)
-        App.setActiveDocument(root.Document.Name)
+        unused = self.unused_edit()
+        display_root = resolve(unused["file_root"]) if unused else root
+        App.setActiveDocument(display_root.Document.Name)
         self.root_key, self.active_key, self.active_path = root_key, object_key(obj), list(value[1])
         window = self.mdi.activeSubWindow() if self.mdi else None
         if window:
@@ -1886,6 +1991,10 @@ class Navigator(QtWidgets.QDockWidget):
             obj = resolve(value[0])
             definition = obj.LinkedObject if getattr(obj, "ComponentRole", "") == "Occurrence" else obj
             menu.addAction(tr("Edit"), lambda: self.run(lambda: self.activate_item(target()))).setEnabled(definition is not None)
+            unused = self.unused_edit()
+            if unused and not value[1] and object_key(definition) == unused["key"]:
+                menu.addAction(tr("Open in new window"), lambda: self.run(lambda: self.open_component_tab(value[0])))
+                return menu
             if value[1]:
                 menu.addAction(tr("Cut"), lambda: self.run(lambda: self.cut_instances(target())))
                 menu.addAction(tr("Move Components"), lambda: self.run(lambda: self.move_components(target())))
@@ -2011,6 +2120,11 @@ class Navigator(QtWidgets.QDockWidget):
         # Closed MDI widgets can await deferred destruction. Their document names
         # may already be reused; never reuse those views for a new document.
         self.component_views = [entry for entry in self.component_views if entry["key"][0] != name]
+        for entry in list(self.unused_views):
+            if entry["file_root"][0] == name:
+                self.discard_unused_edit(entry)
+            elif entry["key"][0] == name:
+                self.end_unused_edit(entry["window"])
         self.restored_documents.discard(name)
         self.expanded_instances = {group for group in self.expanded_instances
                                    if group[0][0] != name and group[2][0] != name}

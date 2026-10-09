@@ -16,7 +16,9 @@ class TestComponentActiveEditing(unittest.TestCase):
         self.first = Model.add_component(self.root, label="Bracket")
         self.part = self.first.LinkedObject
         self.second = Model.add_component(self.root, self.part)
+        Gui.updateGui()
         self.panel = Navigator.show(self.doc)
+        Gui.updateGui()
         self.panel.refresh()
         self.window = self.panel.mdi.activeSubWindow()
         self.windows = len(self.panel.mdi.subWindowList())
@@ -95,3 +97,113 @@ class TestComponentActiveEditing(unittest.TestCase):
         self.panel.edit_model(self.row(nested.LinkedObject))
         self.assertEqual(self.panel.active_path, [self.first.ObjectId, nested.ObjectId])
         self.assertEqual(len(self.panel.mdi.subWindowList()), self.windows)
+
+
+    def testUnusedModelStaysInTabWithoutSavedVisibilityChanges(self):
+        before = {obj.Name: obj.Visibility for obj in self.doc.Objects if hasattr(obj, "Visibility")}
+        unused = Model.create_definition(self.doc, "Unused")
+        count = len(Model.children(self.root))
+        self.panel.refresh()
+        self.panel.edit_model(self.row(unused))
+        self.panel.refresh()
+        self.assertEqual(self.panel.mdi.activeSubWindow(), self.window)
+        self.assertEqual(len(self.panel.mdi.subWindowList()), self.windows)
+        self.assertEqual(self.panel.active_key, Navigator.object_key(unused))
+        self.assertEqual(len(Model.children(self.root)), count)
+        self.assertEqual(self.panel.structure.topLevelItemCount(), 2)
+        temporary = self.panel.structure.topLevelItem(1)
+        self.assertEqual(temporary.text(0), "Unused (unused model)")
+        self.assertFalse(temporary.flags() & QtCore.Qt.ItemIsDragEnabled)
+        self.assertFalse(temporary.flags() & QtCore.Qt.ItemIsDropEnabled)
+        regular = self.panel.structure.topLevelItem(0)
+        self.assertTrue(self.panel.temporarily_hidden(regular))
+        self.assertEqual(regular.foreground(0).color().name(), "#808080")
+        self.assertEqual(regular.child(0).foreground(0).color().name(), "#808080")
+        self.panel.toggle_component(regular)
+        with self.assertRaises(ValueError):
+            self.panel.set_part_view(regular.child(0), "Hidden")
+        for name, visible in before.items():
+            self.assertEqual(self.doc.getObject(name).Visibility, visible, name)
+        self.panel.activate_item(regular)
+        self.panel.refresh()
+        self.assertIsNone(self.panel.unused_edit())
+        self.assertEqual(self.panel.structure.topLevelItemCount(), 1)
+        self.assertEqual(self.panel.active_key, Navigator.object_key(self.root))
+
+    def testUnusedDefinitionEditAndSaveDoesNotInsertOccurrence(self):
+        import os
+        from pathlib import Path
+        import Part
+        unused = Model.create_definition(self.doc, "Unused")
+        self.panel.refresh()
+        self.panel.edit_model(self.row(unused))
+        body = self.doc.addObject("Part::Feature", "UnusedBody")
+        Model.register_object(unused, body, "Object", True)
+        body.Shape = Part.makeBox(2, 3, 4)
+        self.doc.recompute()
+        self.panel.refresh()
+        filename = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "UnusedEditing.cadprt"
+        self.doc.saveAs(str(filename))
+        self.assertEqual(len(Model.children(self.root)), 2)
+        self.assertAlmostEqual(body.Shape.Volume, 24)
+        self.panel.edit_model(self.row(self.part))
+        self.panel.refresh()
+        self.assertIsNone(self.panel.unused_edit())
+        self.assertEqual(self.panel.active_path, [self.first.ObjectId])
+        self.assertTrue(all("unused model" not in self.panel.structure.topLevelItem(i).text(0)
+                            for i in range(self.panel.structure.topLevelItemCount())))
+        import CadDocument
+        App.closeDocument(self.doc.Name)
+        reopened = CadDocument.open(str(filename))
+        root = Model.metadata(reopened).RootComponent
+        self.assertEqual(len(Model.children(root)), 2)
+        retained = next(obj for obj in Model.definitions(reopened) if obj.Label == "Unused")
+        self.assertEqual(Model.instance_counts(root).get(retained, 0), 0)
+        self.assertAlmostEqual(reopened.getObject("UnusedBody").Shape.Volume, 24)
+
+    def testUnusedChildEditKeepsTemporaryView(self):
+        unused = Model.create_definition(self.doc, "Unused")
+        child = Model.add_component(unused, label="Child")
+        self.panel.refresh()
+        self.panel.edit_model(self.row(unused))
+        self.panel.refresh()
+        self.panel.activate_item(self.panel.structure.topLevelItem(1).child(0))
+        self.panel.refresh()
+        self.assertIsNotNone(self.panel.unused_edit())
+        self.assertEqual(self.panel.active_key, Navigator.object_key(child.LinkedObject))
+        self.assertEqual(self.panel.active_path, [child.ObjectId])
+        self.assertEqual(len(self.panel.mdi.subWindowList()), self.windows)
+
+
+    def testExternalUnusedModelUsesCurrentViewAndRestoresOnSourceClose(self):
+        import os
+        from pathlib import Path
+        from freecad.gui.ComponentExtrudeTask import active_component
+        output = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"])
+        external = Model.new_document("Hardware")
+        unused = Model.metadata(external).RootComponent
+        external.saveAs(str(output / "Hardware.cadprt"))
+        self.doc.saveAs(str(output / "AssemblyExternal.cadprt"))
+        Model.import_file(self.doc, external)
+        App.setActiveDocument(self.doc.Name)
+        Gui.updateGui()
+        self.panel.set_document(self.doc)
+        window = self.panel.mdi.activeSubWindow()
+        count = len(self.panel.mdi.subWindowList())
+        self.panel.edit_model(self.row(unused))
+        self.panel.refresh()
+        self.assertEqual(self.panel.mdi.activeSubWindow(), window)
+        self.assertEqual(len(self.panel.mdi.subWindowList()), count)
+        self.assertEqual(active_component(), unused)
+        context = Navigator.TaskContext(unused)
+        context.enter()
+        context.restore()
+        self.assertEqual(self.panel.mdi.activeSubWindow(), window)
+        self.assertEqual(active_component(), unused)
+        self.assertIn("Hardware", self.panel.structure.topLevelItem(1).text(0))
+        self.assertEqual(len(Model.children(self.root)), 2)
+        App.closeDocument(external.Name)
+        Gui.updateGui()
+        self.panel.refresh()
+        self.assertIsNone(self.panel.unused_edit())
+        self.assertEqual(self.panel.active_key, Navigator.object_key(self.root))
