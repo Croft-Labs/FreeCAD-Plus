@@ -1,5 +1,39 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 New File and pinned Part Tree workspace
+
+7.8.13d2a connects native New to new_file_document. It creates the file container,
+ordinary Part001 and one occurrence, clears bootstrap undo, and binds the exact
+occurrence as the active part in the current tab. Models excludes marked file roots,
+including imports. Part Tree shows the document label/FreeCAD icon above Part001;
+file renaming changes the document label independently of component names. Removing
+the initial occurrence keeps its definition and a valid empty tree; Undo restores it.
+Native Delete filters file-root selections before generic deletion.
+
+File Edit displays the global Origin and planes and hides History modeling actions.
+The shared active_component resolver rejects a file for modeling, with explicit
+allow_file for component-structure commands. Full modeling-command/assembly guard
+qualification remains 13e. Internal new_document/initialize callers are unchanged:
+existing-file migration, legacy conversion and copy/external destinations remain
+13d2b. The Add Component workflow is still deferred.
+
+Validation: 30 native source-overlay checks pass (seven workspace, six migration,
+nine prior active-editing and eight display-context cases). The final native Delete
+guard passes as an eighth workspace case in a focused follow-up run (31 distinct
+checks passed across runs). Native Delete emits its expected definition-protection
+message; the source adapter also removes the protected file selection. Native New testing
+updates the already-registered Python command implementation because FreeCAD ignores
+duplicate registrations; the installed executable/owner payload is not changed.
+Part Tree/Models captures reviewed: file icon and pinned label, active green/bold
+Part001 and Models occurrence count are correct. Owner DOCX pages 1, 65 and 66
+rendered/reviewed; native numbering XML unchanged. No new build or shortcut update.
+
+The grouped run emitted one queued DesignLayers.initialize callback NameError for
+an already closed untitled001 document. Functional tests passed; this close-boundary
+diagnostic remains for 13f rather than being reported as a clean installed run.
+Next task: 13d2b existing-file/legacy migration and copy/external destination wiring.
+
+
 ## October 9 file-container migration foundation
 
 7.8.13d1 adds an opt-in migration service, not automatic UI migration. It wraps the

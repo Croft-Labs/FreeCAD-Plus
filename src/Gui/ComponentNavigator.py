@@ -501,13 +501,14 @@ class Navigator(QtWidgets.QDockWidget):
         except Exception as exc:
             QtWidgets.QMessageBox.warning(self, tr("Component operation"), str(exc))
 
-    def set_document(self, doc):
+    def set_document(self, doc, edit_path=None):
         self.end_unused_edit()
         root = model().metadata(doc).RootComponent
         self.root_key = object_key(root)
-        self.active_key = self.root_key
-        self.active_path = []
-        Gui.getDocument(doc.Name).activeView().setActiveObject("part", root)
+        active, self.active_path = self.edit_context(root, edit_path or [])
+        self.active_key = object_key(active)
+        Gui.getDocument(doc.Name).activeView().setActiveObject(
+            "part", root, Selection.native_path(root, self.active_path))
         if self.mdi and self.mdi.activeSubWindow():
             self.mdi.activeSubWindow().setProperty("ComponentKey", self.root_key)
             self.store_edit_context(self.mdi.activeSubWindow())
@@ -573,7 +574,9 @@ class Navigator(QtWidgets.QDockWidget):
                 self.reference_notice.hide()
                 return
             self.conversion.setVisible(bool(model().metadata(active.Document).LegacySource))
-            self.context.setText(tr("Editing: {0}").format(model().component_label(active, root.Document)))
+            self.context.setText(tr("Editing: {0}").format(
+                active.Document.Label if model().is_file_container(active)
+                else model().component_label(active, root.Document)))
             references = [obj for obj in model().history(active) if obj.ComponentRole == "Reference"]
             repair = [obj for obj in references if obj.ResultStatus in ("Missing source", "Needs repair")]
             pending = [obj for obj in references if obj.ResultStatus == "Pending"]
@@ -594,9 +597,11 @@ class Navigator(QtWidgets.QDockWidget):
             elif root != file_root:
                 roots.append(root)
             for tree_root in roots:
-                root_row = QtWidgets.QTreeWidgetItem(self.structure, [tree_root.Label, "", "", ""])
+                file_container = model().is_file_container(tree_root)
+                title = tree_root.Document.Label if file_container else tree_root.Label
+                root_row = QtWidgets.QTreeWidgetItem(self.structure, [title, "", "", ""])
                 root_row.setData(0, QtCore.Qt.UserRole, (object_key(tree_root), []))
-                root_row.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
+                root_row.setIcon(0, Gui.getIcon("freecad.svg" if file_container else "Geofeaturegroup.svg"))
                 root_row.setFlags((root_row.flags() | QtCore.Qt.ItemIsDropEnabled) & ~QtCore.Qt.ItemIsDragEnabled)
                 self.decorate_component(root_row, tree_root, [[]])
                 temporary = unused and object_key(tree_root) == unused["key"]
@@ -605,7 +610,8 @@ class Navigator(QtWidgets.QDockWidget):
                                      + tr(" (unused model)"))
                     root_row.setFlags(root_row.flags() & ~QtCore.Qt.ItemIsDropEnabled)
                 root_row.setToolTip(0, tr("Temporary editing view; not an assembly occurrence.") if temporary
-                                   else tr("Master component; permanent document root."))
+                                   else tr("File; fixed global coordinate system.") if file_container
+                                   else tr("Component editing context."))
                 root_row.setExpanded(True)
                 self.populate(root_row, tree_root, tree_root, [], set())
             if not structure_state[0]:
@@ -615,7 +621,7 @@ class Navigator(QtWidgets.QDockWidget):
             model().prepare_result_display(active)
             items = [active.Origin] + [obj for obj in model().history(active)
                                        if obj != active.Origin and not model().background_result(obj)]
-            for obj in active.Group:
+            for obj in ([] if model().is_file_container(active) else active.Group):
                 if getattr(obj, "ComponentRole", "") == "Constraint" and obj not in items:
                     model().register_object(active, obj, "Constraint")
                     items.append(obj)
@@ -674,6 +680,8 @@ class Navigator(QtWidgets.QDockWidget):
             return
         path = ancestors + (ident,)
         for definition in model().definitions(document):
+            if model().is_file_container(definition):
+                continue
             row = QtWidgets.QTreeWidgetItem(parent, [model().component_label(definition, context_document),
                                                      str(counts.get(definition, 0))])
             row.setData(0, QtCore.Qt.UserRole, object_key(definition))
@@ -2029,11 +2037,15 @@ class Navigator(QtWidgets.QDockWidget):
 
     def rename_item(self, key):
         obj = resolve(key)
-        name, ok = QtWidgets.QInputDialog.getText(self, tr("Rename"), tr("Name"), text=obj.Label)
-        if ok and name.strip() and name.strip() != obj.Label:
+        current = obj.Document.Label if model().is_file_container(obj) else obj.Label
+        name, ok = QtWidgets.QInputDialog.getText(self, tr("Rename"), tr("Name"), text=current)
+        if ok and name.strip() and name.strip() != current:
             with model().transaction(obj.Document, "Rename"):
-                obj.Label = (model().definition_label(obj.Document, name, obj)
-                             if model().is_component(obj) else name.strip())
+                if model().is_file_container(obj):
+                    obj.Document.Label = name.strip()
+                else:
+                    obj.Label = (model().definition_label(obj.Document, name, obj)
+                                 if model().is_component(obj) else name.strip())
 
     def add_instance(self, key):
         occurrence = resolve(key)
@@ -2192,7 +2204,7 @@ class Navigator(QtWidgets.QDockWidget):
                         self.run(lambda: model().set_items_suppressed([resolve(key) for key in keys], suppressed)))
                     action.setEnabled(any(bool(getattr(resolve(key), "UserSuppressed", False)) != suppressed for key in keys))
                 menu.addSeparator()
-            if self.active_key:
+            if self.active_key and not model().is_file_container(resolve(self.active_key)):
                 menu.addAction(tr("Refresh References"), lambda: self.run(self.refresh_references))
                 menu.addAction(tr("New Sketch"), lambda: self.run(self.new_sketch))
                 menu.addAction(tr("Extrude"), lambda: self.run(self.new_extrude))
@@ -2265,18 +2277,18 @@ class Navigator(QtWidgets.QDockWidget):
 def add_component_from_command():
     """Route legacy creation commands through the component ownership service."""
     from freecad.gui.ComponentExtrudeTask import active_component
-    component = active_component()
+    component = active_component(allow_file=True)
     panel = _dock or show(component.Document)
     panel.run(lambda: panel.add_component(object_key(component)))
 
 
-def show(doc=None):
+def show(doc=None, edit_path=None):
     global _dock
     if _dock is None:
         _dock = Navigator()
         Gui.getMainWindow().addDockWidget(QtCore.Qt.LeftDockWidgetArea, _dock)
     if doc:
-        _dock.set_document(doc)
+        _dock.set_document(doc, edit_path)
     _dock.show()
     attributes = Gui.getMainWindow().findChild(QtWidgets.QDockWidget, "Model")
     if attributes:
@@ -2538,7 +2550,8 @@ def delete_selected_instances():
     for entry in entries:
         for subname in entry.SubElementNames or [""]:
             picks = [pick for context in roots for pick in Selection.resolve(context, entry.Object, subname)]
-            if (protected_origin_item(entry.Object)
+            if ((model().is_file_container(entry.Object) and not subname)
+                    or protected_origin_item(entry.Object)
                     or any(protected_origin_item(pick.item) for pick in picks)):
                 Gui.Selection.removeSelection(entry.DocumentName, entry.ObjectName, subname)
     entries = Gui.Selection.getSelectionEx("*", 0)
@@ -2570,9 +2583,10 @@ class Command:
             getattr(obj, "ComponentRole", "") == "Document" for obj in App.ActiveDocument.Objects)
 
     def Activated(self):
-        doc = model().new_document() if self.create else App.ActiveDocument
-        Gui.activeDocument().activeView().setActiveObject("part", model().metadata(doc).RootComponent)
-        show(doc)
+        doc = model().new_file_document() if self.create else App.ActiveDocument
+        root = model().metadata(doc).RootComponent
+        initial = [model().children(root)[0].ObjectId] if self.create else []
+        show(doc, initial)
 
 
 class AddReferenceCommand:
@@ -2608,14 +2622,14 @@ class NewComponentCommand:
             return False
         try:
             from freecad.gui.ComponentExtrudeTask import active_component
-            component = active_component()
+            component = active_component(allow_file=True)
             return model().is_component(component) and not component.Document.HasPendingTransaction
         except (ValueError, NameError):
             return False
 
     def Activated(self):
         from freecad.gui.ComponentExtrudeTask import active_component
-        component = active_component()
+        component = active_component(allow_file=True)
         panel = _dock or show(component.Document)
 
         def create():

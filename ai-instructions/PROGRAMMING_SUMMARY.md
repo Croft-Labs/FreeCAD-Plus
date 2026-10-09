@@ -3,8 +3,11 @@
 File-root foundation: ComponentModel.ensure_file_container provides explicit,
 undoable migration preserving old definitions/placements/external references.
 CadDocument cross-checks component-file-container-v1 against the native marker.
-TestComponentFileContainer covers this service. Automatic New/Open and pinned-file
-UI integration are still next (roadmap 7.8.13d2); owner delivery remains batched.
+TestComponentFileContainer covers this service. new_file_document now backs native
+New with an active ordinary Part001 beneath the pinned file;
+TestComponentFileWorkspace covers the UI and empty-tree/undo/reopen behavior.
+Existing-file/legacy and copy-destination integration are next (7.8.13d2b);
+owner delivery remains batched.
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.

@@ -320,6 +320,21 @@ def new_document(label=None):
     return doc
 
 
+def new_file_document(label=None):
+    """User-facing New File; internal copy/conversion initializers stay separate."""
+    doc = new_document()
+    try:
+        if label is not None:
+            doc.Label = label
+        ensure_file_container(doc)
+        # Bootstrap is not an editing action: Undo must never unpin the file root.
+        doc.clearUndos()
+        return doc
+    except Exception:
+        App.closeDocument(doc.Name)
+        raise
+
+
 def initialize(doc, label):
     if any(getattr(o, "ComponentRole", "") == "Document" for o in doc.Objects):
         raise ValueError("This document already has component metadata.")

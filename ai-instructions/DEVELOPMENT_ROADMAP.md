@@ -3425,6 +3425,17 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       copy/externalization destinations; create/activate ordinary Part001, filter
       the storage root out of Models, pin the file row using its name/FreeCAD icon,
       and validate removal/deletion of the first part and existing-file migration.
+      - [ X ] 7.8.13d2a New File workspace: native New creates a fixed file root
+        with ordinary Part001 and one active occurrence. Bootstrap cannot be undone
+        into an unpinned root. Models filters marked file containers, including
+        imported files; Part Tree displays the file label/FreeCAD icon. File and part
+        rename separately; first occurrence removal/undo and save/reopen are covered.
+        File Edit has origin-only History and the shared modeling resolver requires
+        an explicit component. Native Delete cannot remove the file row. Owner DOCX
+        updated/rendered; source-overlay GUI checks pass. Owner delivery remains 13f.
+      - [   ] 7.8.13d2b Migrate existing opens/legacy conversions and component-copy
+        or new-external-file destinations to the same file root. Preserve definition
+        identities, paths and placements; validate definition deletion separately.
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.

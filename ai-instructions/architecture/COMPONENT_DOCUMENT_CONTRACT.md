@@ -275,8 +275,11 @@ explicit migration service. It retains the previous native root definition and a
 its children/history/IDs, adds one native occurrence beneath a new identity-frame
 App::Part, and changes only the metadata root binding. The operation is idempotent
 and transactional, including undo/redo. Existing external links keep targeting the
-previous definition. Automatic New/Open and navigator integration remain roadmap
-7.8.13d; the service does not silently migrate documents on read.
+previous definition. The user-facing new_file_document entry wraps an ordinary
+Part001 and clears bootstrap undo records before the navigator activates its first
+occurrence. Internal new_document/initialize callers retain their existing behavior
+until copy/conversion integration is migrated. Automatic migration on reading older
+files remains roadmap 7.8.13d2b.
 
 The container retains internal `ComponentRole=Definition` storage for native graph
 and serializer compatibility, with readonly `FileContainer=True` distinguishing it

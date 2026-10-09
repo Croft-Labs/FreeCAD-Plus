@@ -14,14 +14,17 @@ def tr(text):
     return App.Qt.translate("ComponentExtrude", text)
 
 
-def active_component():
+def active_component(allow_file=False):
     import ComponentModel as Model
     doc = App.ActiveDocument
     if doc is None:
         raise ValueError(tr("Create or open a component document first."))
     view = Gui.activeDocument().activeView()
     component = view.getActiveObject("part") if hasattr(view, "getActiveObject") else None
-    return component if Model.is_component(component) else Model.metadata(doc).RootComponent
+    component = component if Model.is_component(component) else Model.metadata(doc).RootComponent
+    if Model.is_file_container(component) and not allow_file:
+        raise ValueError(tr("Edit or create a component before starting a modeling command."))
+    return component
 
 
 class ExtrudeTask(ModelingTaskUI, CurveSelection):
