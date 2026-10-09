@@ -138,6 +138,14 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   Indicate the effective Part View choice (no single choice for a mixed group)
   and whether an occurrence inherits its setting or has an override in this context.
 
+- Contextual transparency is a view-only layer. Keep the native viewer root,
+  camera and selection graph attached; hide native drawing within its selection
+  separator and render unpickable per-occurrence display links beside it. Remove
+  only the view-owned hiding/display nodes when leaving the context. Separate
+  component tabs use a dedicated snapshot separator so child editing can apply
+  the same layer without changing shared view providers or saved appearance.
+  Ignore contextual refreshes until a newly created tab has its component context.
+
 - Each child instance defaults to **Bodies Only**. It exposes finished solid/sheet
   results plus child instances evaluated under their own representation settings.
 - **Full Component** also permits normally visible sketches, curves and construction

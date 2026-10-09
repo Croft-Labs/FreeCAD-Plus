@@ -9,9 +9,9 @@ TestComponentFileWorkspace covers the UI and empty-tree/undo/reopen behavior.
 External-copy and new-external-component destinations now use the same file root
 without an extra Part001. Existing-file/legacy migration is next (7.8.13d2b2);
 owner delivery remains batched.
-A broader GUI check exposes an isolated-tab scene-swap crash after contextual fade;
-repair this next (7.8.13f1) before older-file migration. See WORK_STATE for the
-78/79 validation result and removed unsuccessful experiments.
+The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
+place and attaches view-owned display branches. See WORK_STATE for validation;
+older-file migration remains the next implementation task.
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.
@@ -20,9 +20,10 @@ existing assembly visibility remains authored and is restored by returning its s
 TestComponentActiveEditing covers both steps. display_items shares native visibility
 traversal with context_display_plan; TestComponentContextDisplayPlan checks exact
 occurrence fade classification without changing materials. context_scene renders the
-per-view transparency floor through native links, preserving the original scene for
-picking and restoration. Pinned-file and grouped delivery remain in roadmap 7.8.13;
-Add Component is deferred.
+per-view transparency floor through native links beside the original selection
+separator; cleanup removes only these view-owned nodes. Native picking and camera
+state stay attached throughout contextual editing and tab switches. Pinned-file
+and grouped delivery remain in roadmap 7.8.13; Add Component is deferred.
 
 October 9 file hierarchy: ComponentModel owns explicit imports, file-cycle guards,
 qualified names and independent domestic hierarchy copies; CadDocument persists the

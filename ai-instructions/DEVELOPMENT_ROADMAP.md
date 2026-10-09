@@ -3406,8 +3406,9 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     - [ X ] 7.8.13c2 Per-window render scene consumes the plan through native
       LinkViews and transparency-only Coin materials. Retains per-face colors and
       greater transparency, outer occurrence material overrides, placements and
-      native picking through an invisible original scene. Original scene/camera
-      restored on root Edit or unused-model entry. Focused source-overlay GUI and
+      native picking through invisible native drawing. As repaired in 13f1, keep
+      the native root/camera attached and remove only view-owned display nodes
+      on root Edit or unused-model entry. Focused source-overlay GUI and
       Coin checks cover appearance, rendered geometry, native ray picking, camera
       preservation and prior editing workflows; live framebuffer reviewed. Broader
       multi-window/task acceptance and owner delivery remain in 13f.
@@ -3453,13 +3454,17 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
 
-    - [   ] 7.8.13f1 Next priority: reproduce/fix isolated component tab scene swap
-      after a published-result component is active with contextual transparency.
-      The 79-case destination integration run passes 78; the core navigator case
-      fails at viewer.setSceneGraph with native access violation/break signal,
-      including a fresh-process reproduction. Simple original-scene retention and
-      clearing the current fade were ineffective and reverted. Keep owner delivery
-      blocked on this GUI check and the remaining grouped acceptance.
+    - [ X ] 7.8.13f1 Isolated component tab/contextual display crash repaired in
+      source. Preserve the native viewer root and selection graph, adding temporary
+      hiding/display nodes within each view. Separate component snapshots have a
+      dedicated separator for child Edit; skip refresh before a new tab is bound.
+      Regress published results, repeated open/close/return, camera position/scale,
+      child editing, native picking, material preservation and display cleanup.
+      97 distinct source-overlay checks pass across the grouped run and four
+      corrected harness reruns (WORK_STATE records the setup errors). No native
+      scene-swap exception remains in these runs. Owner DOCX updated and pages
+      65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
+      Next implementation: 13d2b2 existing-file and legacy migration.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

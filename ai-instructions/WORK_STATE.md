@@ -1,5 +1,48 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 active component tab scene repair
+
+7.8.13f1 is complete in source. Contextual transparency no longer replaces the
+native viewer root. It hides native drawing inside the view's selection separator,
+retains native picking, and adds unpickable occurrence display branches beside it.
+Cleanup removes only the temporary nodes. Separate component tabs wrap their native
+snapshot in a dedicated separator so editing a child supports the same fade layer.
+Refreshes emitted before a new tab receives its component context are ignored.
+No authored appearance, geometry, placements or file persistence is changed.
+
+Diagnosis: disabling contextual display removed the reproducible isolated-tab crash;
+using only one context scene, removing the picking branch or omitting camera restore
+did not. Attaching the display in place eliminated the scene-swap failure. The core
+GUI test now expects the existing file tree plus the separately viewed component.
+New regression checks repeated open/close/return with a published result, editing
+children in isolated tabs, stable native roots, retained edited occurrence and camera
+position/orientation/scale, and complete display cleanup. Native automatic clipping
+planes are excluded from the camera comparison. Existing checks retain native ray
+picking, per-face material preservation, unused-model editing and save behavior.
+
+Validation: 97 distinct source-overlay cases pass on the existing verified fork
+runtime: 8 file-container, 9 file-workspace, 3 externalization, 32 file-hierarchy,
+27 core, 9 contextual-display and 9 active-editing checks. The grouped run passed
+93/97: three externalization setup identity checks loaded the installed Navigator,
+and one core externalization refused a leftover AssemblyExternal.cadprt from the
+prior focused run. Explicit source binding and a fresh fixture folder passed those
+four checks without further source changes. The grouped run has no scene-swap or
+context-refresh exception; deliberate recovery/capability errors are expected.
+The 19-case focused run also passed before the final initialization guard. Final
+corrected run exited normally; Python syntax and diff checks pass. Reviewed the
+context framebuffer and owner DOCX pages 65-67; native numbering is unchanged.
+Task-generated validation/render output is removed after recording this evidence.
+
+No native rebuild, owner payload update or shortcut retargeting in this milestone.
+The installed owner build remains hierarchy_relocation_payload. This is source and
+bounded native-runtime acceptance, not completed grouped owner delivery. Changes
+are committed and published to origin/main at this milestone; no release is created.
+
+Next task: 7.8.13d2b2 migrate existing .cadprt opens and legacy conversions to the
+file container while preserving identities, references, placements and undo.
+Definition deletion, remaining file-level command/assembly guards and grouped owner
+delivery remain outstanding. Add Component workflow changes remain deferred.
+
 ## October 9 external destination file roots
 
 7.8.13d2b1 wraps independent Copy to External File destinations, the retained

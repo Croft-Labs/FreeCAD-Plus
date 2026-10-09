@@ -650,7 +650,8 @@ class TestComponentDocument(unittest.TestCase):
             panel.refresh()
             self.assertEqual(len(self.doc.Objects), count)
             self.assertEqual(isolated.getActiveObject("part"), self.child)
-            self.assertEqual(panel.structure.topLevelItemCount(), 1)
+            self.assertEqual(panel.structure.topLevelItemCount(), 2)
+            self.assertEqual(panel.structure.topLevelItem(1).text(0), self.child.Label)
             self.assertEqual(panel.structure.topLevelItem(0).text(0), self.root.Label)
             self.assertEqual(panel.structure.topLevelItem(0).childCount(), 1)
             # Entering a component now displays its permanent origin by default.

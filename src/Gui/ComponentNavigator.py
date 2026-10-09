@@ -738,48 +738,53 @@ class Navigator(QtWidgets.QDockWidget):
         window = window or (self.mdi.activeSubWindow() if self.mdi else None)
         entry = next((entry for entry in self.context_views if entry["window"] == window), None)
         if entry:
-            if restore:
-                camera = entry["view"].getCamera()
-                entry["view"].getViewer().setSceneGraph(entry["original"])
-                entry["view"].setCamera(camera)
+            # These nodes belong to this view, not to shared view providers. Remove
+            # them even during window destruction while the retained root is alive.
+            entry["selection"].removeChild(entry["hidden"])
+            entry["original"].removeChild(entry["scene"])
             self.context_views.remove(entry)
             entry["original"].unref()
 
     def refresh_context_view(self):
         window = self.mdi.activeSubWindow() if self.mdi else None
-        if not window:
+        # Native view creation can refresh before its isolated scene and component
+        # context are registered. Do not apply the previous tab's context yet.
+        if not window or not window.property("ComponentKey"):
             return
         if self.unused_edit(window) or not self.active_path or not resolve(self.root_key):
             self.clear_context_view(window)
             return
+        from pivy import coin
         root = resolve(self.root_key)
         scene, links, materials = context_scene(root, self.active_path)
         entry = next((entry for entry in self.context_views if entry["window"] == window), None)
         if not entry:
             view = Gui.getDocument(root.Document.Name).activeView()
             original = view.getViewer().getSceneGraph()
+            isolated = next((item for item in self.component_views if item.get("window") == window), None)
+            selection = isolated["selection"] if isolated else next(
+                original.getChild(i) for i in range(original.getNumChildren())
+                if original.getChild(i).getTypeId().getName() == "SoFCUnifiedSelection")
             original.ref()
+            hidden = coin.SoDrawStyle()
+            hidden.style = coin.SoDrawStyle.INVISIBLE
+            hidden.setOverride(True)
+            selection.insertChild(hidden, 0)
             entry = {"window": window, "view": view, "original": original,
-                     "document": root.Document.Name}
+                     "selection": selection, "hidden": hidden, "document": root.Document.Name}
             self.context_views.append(entry)
             window.destroyed.connect(lambda: self.clear_context_view(window, restore=False))
-        from pivy import coin
-        # Preserve the document's native picking/selection path. Draw it invisibly
-        # and render unpickable display links above it; no proxy geometry is picked.
-        picking = coin.SoSeparator()
-        invisible = coin.SoDrawStyle()
-        invisible.style = coin.SoDrawStyle.INVISIBLE
-        invisible.setOverride(True)
-        picking.addChild(invisible)
-        picking.addChild(entry["original"])
-        scene.insertChild(picking, 0)
+        # Keep the viewer's native root, camera and selection graph in place. Full
+        # scene replacement here can invalidate native state when another view is
+        # created. Hide native drawing inside its selection separator, retaining
+        # native picking; render unpickable per-occurrence links beside it.
         unpickable = coin.SoPickStyle()
         unpickable.style = coin.SoPickStyle.UNPICKABLE
         unpickable.setOverride(True)
-        scene.insertChild(unpickable, 1)
-        camera = entry["view"].getCamera()
-        entry["view"].getViewer().setSceneGraph(scene)
-        entry["view"].setCamera(camera)
+        scene.insertChild(unpickable, 0)
+        if "scene" in entry:
+            entry["original"].removeChild(entry["scene"])
+        entry["original"].addChild(scene)
         entry.update(scene=scene, links=links, materials=materials)
 
     def unused_edit(self, window=None):
@@ -1662,9 +1667,15 @@ class Navigator(QtWidgets.QDockWidget):
         snapshot.setType(-2, False)
         paths = visible_paths(obj, obj, [])
         snapshot.setLink(obj if paths else None, paths)
-        view.getViewer().setSceneGraph(snapshot.RootNode)
+        from pivy import coin
+        scene = coin.SoSeparator()
+        selection = coin.SoSeparator()
+        selection.addChild(snapshot.RootNode)
+        scene.addChild(selection)
+        view.getViewer().setSceneGraph(scene)
         view.setActiveObject("part", obj)
-        entry = {"key": object_key(obj), "view": view, "snapshot": snapshot}
+        entry = {"key": object_key(obj), "view": view, "snapshot": snapshot,
+                 "scene": scene, "selection": selection}
         self.component_views.append(entry)
         windows = [window for window in self.mdi.subWindowList() if window not in existing_windows] if self.mdi else []
         if windows:
