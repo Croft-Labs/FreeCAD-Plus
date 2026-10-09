@@ -68,6 +68,89 @@ def is_file_container(obj):
     return is_component(obj) and bool(getattr(obj, "FileContainer", False))
 
 
+def assembly_context(doc):
+    """Return the unique file solver context without creating or solving anything."""
+    items = [o for o in doc.Objects if getattr(o, "ComponentRole", "") == "AssemblyContext"]
+    if len(items) > 1:
+        raise ValueError("A file can own only one assembly relationship context.")
+    return items[0] if items else None
+
+
+def ensure_assembly_context(doc):
+    """Create a native joint owner without moving file-owned occurrences."""
+    meta = validate(doc)
+    root = meta.RootComponent
+    if not is_file_container(root):
+        raise ValueError("Assembly relationships require a file container.")
+    existing = assembly_context(doc)
+    if existing:
+        return existing
+    with transaction(doc, "Create file relationships"):
+        context = doc.addObject("Assembly::AssemblyObject", "FileRelationships")
+        _property(context, "Link", "ComponentRoot", root, True)
+        _identity(context, "AssemblyContext")
+        context.setEditorMode("Placement", 1)
+        context.newObject("Assembly::JointGroup", "FileJoints")
+        if App.GuiUp:
+            context.ViewObject.ShowInTree = False
+        assembly_record(doc)
+    return context
+
+
+def assembly_record(doc):
+    """Validate native joint ownership and return its persistence identity record.
+
+    Endpoints are local occurrences even when their definitions are external.
+    Native joint parameters and connectors remain native properties.
+    """
+    context = assembly_context(doc)
+    if context is None:
+        return None
+    root = metadata(doc).RootComponent
+    if (not context.isDerivedFrom("Assembly::AssemblyObject")
+            or not getattr(context, "ObjectId", "")
+            or not is_file_container(root)
+            or getattr(context, "ComponentRoot", None) != root
+            or not context.Placement.isIdentity()
+            or any(context in getattr(obj, "Group", []) for obj in doc.Objects)):
+        raise ValueError("Invalid file assembly context ownership or placement.")
+    groups = [o for o in context.Group if o.isDerivedFrom("Assembly::JointGroup")]
+    if len(groups) != 1:
+        raise ValueError("File relationships require one native joint group.")
+    group = groups[0]
+    joints = list(group.Group)
+    if any(group in getattr(obj, "Group", []) for obj in doc.Objects if obj != context):
+        raise ValueError("The file joint group cannot have another owner.")
+    if any(o not in [context.Origin, group] + joints for o in context.Group):
+        raise ValueError("The file relationship context cannot own geometry.")
+    members = set(children(root))
+    records = []
+    for joint in joints:
+        if any(joint in getattr(obj, "Group", []) for obj in doc.Objects
+               if obj not in (context, group)):
+            raise ValueError("A file relationship cannot have another owner.")
+        if hasattr(joint, "ObjectToGround"):
+            endpoints = [joint.ObjectToGround]
+        elif hasattr(joint, "Reference1") and hasattr(joint, "Reference2"):
+            endpoints = [ref[0] if ref else None for ref in (joint.Reference1, joint.Reference2)]
+            if endpoints[0] == endpoints[1]:
+                raise ValueError("A relationship must join two different occurrences.")
+        else:
+            raise ValueError("Unsupported file relationship object.")
+        if any(obj not in members or obj.Document != doc for obj in endpoints):
+            raise ValueError("File relationships must reference direct occurrences in this file.")
+        records.append({"object": joint.Name, "endpoints": [obj.Name for obj in endpoints]})
+    return {"id": context.ObjectId, "object": context.Name, "root": root.Name,
+            "group": group.Name, "joints": sorted(records, key=lambda item: item["object"])}
+
+
+def _guard_relationship_removal(doc, occurrences):
+    record = assembly_record(doc)
+    names = {obj.Name for obj in occurrences}
+    if record and any(names.intersection(joint["endpoints"]) for joint in record["joints"]):
+        raise ValueError("Remove assembly relationships before removing or reparenting these occurrences.")
+
+
 def ensure_file_container(doc):
     """Undoable migration; preserve the original root and all native links.
 
@@ -453,6 +536,7 @@ def remove_instances(occurrences):
     if any(obj.Document != doc or getattr(obj, "ComponentRole", "") != "Occurrence"
            or not is_component(owner(obj)) for obj in occurrences):
         raise ValueError("Select linked instances from one owning file.")
+    _guard_relationship_removal(doc, occurrences)
     ids = {obj.ObjectId for obj in occurrences}
     with transaction(doc, "Delete assembly instances"):
         for component in definitions(doc):
@@ -498,6 +582,7 @@ def move_instances(root, paths, destination_ids=(), before=None):
     placements = {}
     reparented = [link for link in links if owner(link) != destination]
     if reparented:
+        _guard_relationship_removal(doc, reparented)
         destination_frame = _component_frame(root, destination_ids)
         for link, path in zip(links, paths):
             if link not in reparented:
@@ -1836,6 +1921,7 @@ def validate(doc, allow_unresolved=False):
                 _path(component, key.split("/"))
             if value not in TYPES:
                 raise ValueError("Unsupported representation override.")
+    assembly_record(doc)
     return meta
 
 

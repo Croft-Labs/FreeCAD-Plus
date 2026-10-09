@@ -1,5 +1,45 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 file relationship context and persistence
+
+7.8.13e2b2b1 is complete. ComponentModel.ensure_assembly_context creates one native
+solver context/JointGroup transactionally without moving file occurrences. Context,
+group and endpoint ownership are validated; referenced occurrences cannot be removed
+or reparented. CadDocument writes component-file-assembly-v1 plus context/group/joint
+endpoint identities, checks native XML before restore and verifies the restored graph.
+Existing context-free documents retain their prior capability set. The fixture covers
+grounding and a native fixed joint; no relationship creation UI is enabled yet.
+
+The new context-creation Undo test exposed native updateSolveStatus solving a partially
+replayed graph. It now defers during restore and Undo/Redo/rollback. Incremental native
+Release Assembly built successfully (exit 0) in the retained development build:
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-06_recovered_workload.
+This remains development validation, not an owner payload/shortcut delivery.
+
+Validation: all 21 distinct cases pass across TestComponentAssemblyPersistence
+(nine, including four inherited native solver cases) and TestComponentFileContainer
+(twelve). Checks include context identity/idempotence, Undo/Redo, injected-failure
+rollback, solve placement and Undo, invalid endpoints/context refusal, occurrence
+removal/reparent guards, save/reopen, unsupported/missing capability and manifest
+mismatch refusal, and existing migration/reference/copy behavior. First run found
+the native replay bug and used a stale installed Navigator in one UI assertion.
+The corrected native build/source Navigator run passed 19 cases; two file-copy
+cases refused to overwrite the first run's fixtures. Those two pass in fresh task
+output folders. A separate fresh process also reopened file-relationships.cadprt,
+matched its identities, moved the occurrence away and solved it back to the saved
+fixed connector position, retaining empty file History/results. The inherited
+PropertyXLink unsaved-export warning appears in the external-copy fixture; no replay
+exceptions remain in the final runs. Python syntax and CRLF-aware diff checks pass.
+
+Backend-only change: owner UI DOCX unchanged. No Add Component workflow change,
+owner shortcut update or release. Task validation files are removed after recording
+results; retain the useful development build. Source publication is separate.
+
+Next task: 7.8.13e2b2b2, transactional joint creation/edit/removal, grounding cleanup,
+invalid-solve rollback and external-definition acceptance. Then 13e2b2c connects
+file Edit/Part Tree relationship commands and selection. Overall implementation
+and grouped owner delivery (13f) remain open.
+
 ## October 9 file assembly solver pilot
 
 Current step 7.8.13e2b2a is complete. The internal AssemblyContext/ComponentRoot

@@ -370,6 +370,13 @@ int AssemblyObject::solve(bool enableRedo)
 
 void AssemblyObject::updateSolveStatus()
 {
+    // Restore and Undo/Redo temporarily disconnect the file-owned occurrence root.
+    // Do not validate or solve an incomplete dependency graph during replay.
+    if (getDocument() && (getDocument()->isPerformingTransaction()
+                          || App::GetApplication().isRestoring())) {
+        return;
+    }
+
     lastRedundantJoints.clear();
     lastHasRedundancies = false;
 

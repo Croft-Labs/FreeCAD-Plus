@@ -12,7 +12,8 @@ import ComponentModel as Model
 FORMAT = "org.freecad-plus.component-document"
 MANIFEST = "ComponentManifest.json"
 BASE_CAPABILITIES = ("components-v1", "native-objects-v1", "evaluated-references-v1")
-CAPABILITIES = BASE_CAPABILITIES + ("component-file-imports-v1", "component-file-container-v1")
+CAPABILITIES = BASE_CAPABILITIES + ("component-file-imports-v1", "component-file-container-v1",
+                                    "component-file-assembly-v1")
 
 
 def manifest(document, filename=None):
@@ -64,6 +65,10 @@ def manifest(document, filename=None):
     if imports:
         data["imports"] = imports
         data["required"].append("component-file-imports-v1")
+    assembly = Model.assembly_record(document)
+    if assembly is not None:
+        data["assembly"] = assembly
+        data["required"].append("component-file-assembly-v1")
     return json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2)
 
 
@@ -89,6 +94,9 @@ def preflight(filename):
     if (("file_container" in data) != has_container
             or (has_container and data["file_container"] != data.get("root"))):
         raise ValueError("Invalid file container capability or identity.")
+    has_assembly = "component-file-assembly-v1" in required
+    if (("assembly" in data) != has_assembly or (has_assembly and not has_container)):
+        raise ValueError("Invalid file assembly capability declaration.")
     dependencies = data.get("dependencies")
     if (not isinstance(dependencies, dict)
             or any(not isinstance(key, str) or not key or not isinstance(value, str) or not value
@@ -146,6 +154,13 @@ def preflight(filename):
                                   "role": value("ComponentRole", "String"),
                                   "file_container": value("FileContainer", "Bool") == "true",
                                   "root": value("RootComponent", "Link"),
+                                  "assembly_root": value("ComponentRoot", "Link"),
+                                  "ground": value("ObjectToGround", "Link"),
+                                  "references": [
+                                      (ref.get("name"), ref.get("file")) if ref is not None else None
+                                      for ref in [obj.find(
+                                          './Properties/Property[@name="%s"]/XLink' % name)
+                                          for name in ("Reference1", "Reference2")]],
                                   "version": value("SchemaVersion", "Integer"),
                                   "document": value("DocumentId", "String"),
                                   "definition": value("DefinitionId", "String"),
@@ -182,6 +197,37 @@ def preflight(filename):
                      if item["role"] == "FileImport"}
     if saved_imports != {item["object"]: (item["id"], item["document"]) for item in imports}:
         raise ValueError("Component file imports differ from their format manifest.")
+    contexts = [(name, item) for name, item in saved.items() if item["role"] == "AssemblyContext"]
+    if len(contexts) != int(has_assembly):
+        raise ValueError("File assembly context differs from its manifest.")
+    if contexts:
+        name, native = contexts[0]
+        types = {obj.get("name"): obj.get("type") for obj in xml.findall("./Objects/Object")}
+        groups = [child for child in native["group"] if types.get(child) == "Assembly::JointGroup"]
+        if (types.get(name) != "Assembly::AssemblyObject" or len(groups) != 1
+                or native["assembly_root"] != documents[0]["root"]):
+            raise ValueError("Invalid native file assembly ownership.")
+        group = groups[0]
+        joints = []
+        root_members = saved[native["assembly_root"]]["group"]
+        for child in saved[group]["group"]:
+            joint = saved.get(child, {})
+            if joint.get("ground"):
+                endpoints = [joint["ground"]]
+            else:
+                refs = joint.get("references", [])
+                if len(refs) != 2 or any(ref is None or ref[1] for ref in refs):
+                    raise ValueError("Invalid native file relationship endpoints.")
+                endpoints = [ref[0] for ref in refs]
+            if (len(set(endpoints)) != len(endpoints)
+                    or any(endpoint not in root_members or endpoint not in saved_occurrences
+                           for endpoint in endpoints)):
+                raise ValueError("File relationship endpoint is not a direct occurrence.")
+            joints.append({"object": child, "endpoints": endpoints})
+        record = {"id": native["id"], "object": name, "root": native["assembly_root"],
+                  "group": group, "joints": sorted(joints, key=lambda item: item["object"])}
+        if record != data["assembly"]:
+            raise ValueError("File assembly relationships differ from their manifest.")
     return data
 
 
@@ -246,6 +292,8 @@ def _open(filename, _opening=None):
                     Model._property(occurrence, "String", "DefinitionId", instance["definition"], True)
                 elif occurrence.DefinitionId != instance["definition"]:
                     raise ValueError("An occurrence definition differs from its saved manifest.")
+        if Model.assembly_record(doc) != expected.get("assembly"):
+            raise ValueError("Restored file relationships differ from their manifest.")
         # Broken reference geometry remains editable; format/identity failures above still refuse restore.
         import LegacyConversion
         LegacyConversion.upgrade_datum_frames(doc)

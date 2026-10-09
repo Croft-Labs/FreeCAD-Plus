@@ -20,9 +20,12 @@ TestComponentNativePartRouting covers the native dispatch; TestComponentFileComm
 covers task guards and file placement. ComponentCommand.h/Command.cpp now share
 file-Edit guards across 46 native Part modeling commands; native guard acceptance
 is TestComponentNativeModelingGuards. The native assembly solver now supports an
-internal context borrowing file occurrences (TestComponentAssemblySolver). Its
-transactional ownership and .cadprt persistence adapter is next; relationship UI,
-owner delivery and broader workbench compatibility remain pending.
+internal context borrowing file occurrences (TestComponentAssemblySolver).
+ensure_assembly_context now creates its joint owner transactionally; CadDocument
+cross-checks component-file-assembly-v1 on save/open. TestComponentAssemblyPersistence
+covers ownership, endpoint guards and native fixed-joint persistence. Transactional
+joint creation/edit/removal is next; relationship UI, owner delivery and broader
+workbench compatibility remain pending.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI

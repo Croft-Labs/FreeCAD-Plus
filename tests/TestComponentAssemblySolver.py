@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Native solver pilot: borrow file occurrences without transferring ownership.
 
-No UI or persistence adapter creates this internal context yet. These fixtures
-establish the native membership contract before that adapter is enabled.
+The file service creates the solver context; native joint fixtures establish
+solver membership independently of the upcoming relationship UI.
 """
 import unittest
 import FreeCAD as App
@@ -23,12 +23,8 @@ class TestComponentAssemblySolver(unittest.TestCase):
         Model.register_object(self.definition, box, "Operation")
         self.second = Model.add_component(self.root, self.definition)
         self.second.LinkPlacement = App.Placement(App.Vector(40, 0, 0), App.Rotation())
-        self.context = self.doc.addObject("Assembly::AssemblyObject", "FileRelationships")
-        self.context.addProperty("App::PropertyLink", "ComponentRoot")
-        self.context.ComponentRoot = self.root
-        self.context.addProperty("App::PropertyString", "ComponentRole")
-        self.context.ComponentRole = "AssemblyContext"
-        self.joints = self.context.newObject("Assembly::JointGroup", "Joints")
+        self.context = Model.ensure_assembly_context(self.doc)
+        self.joints = next(o for o in self.context.Group if o.isDerivedFrom("Assembly::JointGroup"))
         self.doc.recompute()
 
     def tearDown(self):

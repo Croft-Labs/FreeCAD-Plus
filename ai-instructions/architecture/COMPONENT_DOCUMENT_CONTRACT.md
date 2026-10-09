@@ -286,13 +286,26 @@ flatten component definitions or put solver geometry in file History. Existing
 AssemblyObjects without this opt-in retain ordinary native Group traversal. Invalid
 root/type/frame or non-occurrence membership is refused before gathering bodies.
 
-This is an internal native pilot, not an enabled relationship-creation workflow.
-No application service currently creates these contexts. Before enabling them,
-add transactional context/joint ownership, endpoint membership and deletion guards,
-a required .cadprt capability with manifest/native cross-checks and save/reopen
-acceptance. UI selection and native assembly command activation then use that
-service; do not expose raw context construction as a supported save workflow.
-The native placement/grounding regression is TestComponentAssemblySolver.
+ComponentModel.ensure_assembly_context creates the unique context and its native
+JointGroup transactionally and idempotently. Model.validate/assembly_record check
+context/group ownership, fixed context placement, absence of geometry, and native
+ground or two-endpoint joint membership. Endpoints must be distinct direct file
+occurrences; definition ownership may be external. Occurrence removal/reparenting
+refuses referenced endpoints until their relationships are removed. Native solver
+status updates defer during restore and Undo/Redo, when links are incomplete.
+
+CadDocument declares component-file-assembly-v1 only when a context exists. Its
+assembly record identifies the context UUID/native name, root, joint group and
+joint native names/endpoints. Preflight cross-checks these against native XML;
+restore checks the live graph again. Native connector/solver parameters retain
+native persistence. Older readers lacking the capability refuse the file. Existing
+files without contexts do not acquire the capability.
+
+Relationship creation/edit/removal commands remain disabled pending the joint
+transaction service and UI adapter. The bounded accepted relationship fixture is
+a grounded occurrence plus a fixed joint; other joint types, external-definition
+integration and interactive selection remain later acceptance gates. See
+TestComponentAssemblySolver and TestComponentAssemblyPersistence.
 
 ## File modeling task guards
 
