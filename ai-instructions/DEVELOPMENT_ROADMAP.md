@@ -3400,6 +3400,11 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   nested identity failure or post-restore failure. Recoverable missing files still
   open for repair. Source-overlay runtime passes 23 hierarchy and 27 core cases;
   compatible Python delivery remains batched for the next owner payload update.
+- [ X ] 7.8.12d Validate saved hierarchy manifests before native restoration:
+  record types, unique definition/occurrence names and IDs, complete placements,
+  native parent membership and domestic/external designation. Source-overlay
+  regression batch passes 25 hierarchy plus 27 core cases. Installed batch delivery
+  with 7.8.12c is in progress; WORK_STATE owns the current acceptance evidence.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 

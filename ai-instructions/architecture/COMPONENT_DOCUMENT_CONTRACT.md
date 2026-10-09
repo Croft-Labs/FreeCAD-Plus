@@ -269,6 +269,12 @@ Cancel leaves the document unchanged.
   payloads and native type/property identities rather than rebuilding serializers.
 - Validate required capabilities before restoration; refuse unsupported required
   content. Save atomically, retain backups and preserve recovery behavior.
+- Before native restoration, validate manifest record types and unique identities,
+  match definition names/IDs and every occurrence against native archive records,
+  and verify each occurrence's owning definition and domestic/external designation.
+  Missing, duplicated or reparented placements are format errors, not repairable
+  missing-reference states. Earlier files without native DefinitionId still use
+  the existing identity-upgrade path after restoration.
 - A failed component-file open rolls back the entire newly loaded dependency graph,
   including native auto-loaded documents. Preserve previously open documents, their
   unsaved edits and the prior active document. Recoverable missing references still

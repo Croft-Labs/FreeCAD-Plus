@@ -95,6 +95,24 @@ def preflight(filename):
     definitions = data.get("definitions")
     if not isinstance(definitions, list) or not definitions:
         raise ValueError("Missing component definitions.")
+    def strings(values):
+        return (isinstance(values, list)
+                and all(isinstance(value, str) and value for value in values)
+                and len(values) == len(set(values)))
+    if any(not isinstance(item, dict)
+           or any(not isinstance(item.get(key), str) or not item[key] for key in ("id", "object"))
+           or not strings(item.get("history")) or not strings(item.get("results"))
+           or not isinstance(item.get("occurrences"), list) for item in definitions):
+        raise ValueError("Invalid component definition records.")
+    occurrences = [instance for item in definitions for instance in item["occurrences"]]
+    if any(not isinstance(item, dict)
+           or any(not isinstance(item.get(key), str) or not item[key]
+                  for key in ("id", "object", "definition"))
+           or type(item.get("external")) is not bool for item in occurrences):
+        raise ValueError("Invalid component occurrence records.")
+    if (not strings([item["object"] for item in definitions])
+            or any(not strings([item[key] for item in occurrences]) for key in ("id", "object"))):
+        raise ValueError("Duplicate component definition or occurrence records.")
     ids = [item["id"] for item in definitions]
     if len(ids) != len(set(ids)) or data.get("root") not in ids or not data.get("document"):
         raise ValueError("Invalid root or duplicate component identities.")
@@ -108,18 +126,37 @@ def preflight(filename):
             prop = properties.get(name)
             child = prop.find(tag) if prop is not None else None
             return child.get("value") if child is not None else None
+        linked = obj.find('./Properties/Property[@name="LinkedObject"]/XLink')
         saved[obj.get("name")] = {"id": value("ObjectId", "String"),
                                   "role": value("ComponentRole", "String"),
                                   "root": value("RootComponent", "Link"),
                                   "version": value("SchemaVersion", "Integer"),
-                                  "document": value("DocumentId", "String")}
+                                  "document": value("DocumentId", "String"),
+                                  "definition": value("DefinitionId", "String"),
+                                  "group": [link.get("value") for link in obj.findall(
+                                      './Properties/Property[@name="Group"]/LinkList/Link')],
+                                  "external": bool(linked is not None and linked.get("file"))}
     documents = [o for o in saved.values() if o["role"] == "Document"]
     if (len(documents) != 1 or documents[0]["id"] != data["document"]
             or documents[0]["version"] != str(Model.SCHEMA)
             or saved.get(documents[0]["root"], {}).get("id") != data["root"]):
         raise ValueError("Component metadata differs from its format manifest.")
-    if {o["id"] for o in saved.values() if o["role"] == "Definition"} != set(ids):
+    if {name: o["id"] for name, o in saved.items() if o["role"] == "Definition"} != {
+            item["object"]: item["id"] for item in definitions}:
         raise ValueError("Component definitions differ from the format manifest.")
+    saved_occurrences = {name: item for name, item in saved.items() if item["role"] == "Occurrence"}
+    if set(saved_occurrences) != {item["object"] for item in occurrences}:
+        raise ValueError("Component occurrences differ from the format manifest.")
+    for definition in definitions:
+        native = saved[definition["object"]]
+        if {name for name in native["group"] if name in saved_occurrences} != {
+                item["object"] for item in definition["occurrences"]}:
+            raise ValueError("Component occurrence ownership differs from the format manifest.")
+    for instance in occurrences:
+        native = saved_occurrences[instance["object"]]
+        if (native["id"] != instance["id"] or native["external"] != instance["external"]
+                or (native["definition"] is not None and native["definition"] != instance["definition"])):
+            raise ValueError("Component occurrence identity differs from the format manifest.")
     saved_imports = {name: (item["id"], item["document"]) for name, item in saved.items()
                      if item["role"] == "FileImport"}
     if saved_imports != {item["object"]: (item["id"], item["document"]) for item in imports}:

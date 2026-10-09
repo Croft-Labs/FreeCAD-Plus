@@ -1,5 +1,25 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 hierarchy recovery batch (in progress)
+
+Roadmap 7.8.12d adds native-archive/manifest consistency checks in CadDocument
+preflight: valid record shapes, unique definition/occurrence identifiers, exact
+occurrence membership under each definition, saved definition identity and
+external-file designation. This is backend persistence validation; schema/version,
+valid file behavior and UI requirements are unchanged. The prior failed-open
+rollback (7.8.12c) is included in this delivery batch.
+
+Two new corruption tests reproduce seven failures and one incidental TypeError
+before the fix. The corrected source-overlay batch passes 25 hierarchy plus 27
+core cases, exit zero. Final installed tests add incorrect external designation
+and definition-name corruption cases. Compatible Python-only candidate:
+`test-builds/freecad_plus_2026-10-09_hierarchy_recovery_payload`.
+It copies the verified file_hierarchy_payload and changes only Mod/Part/CadDocument.py;
+native source remains 40f1698230ccbbac5b4f44fc0ba8124a0ee08c60, with no native rebuild.
+Installed acceptance, cold reopen, complete inventory comparison and saved desktop
+shortcut launch are pending. The existing desktop shortcut is unchanged so far.
+Task validation uses hierarchy-manifest-* and hierarchy-recovery-* directories.
+
 ## October 9 failed nested-open rollback
 
 Roadmap 7.8.12c adds an outer restore boundary in CadDocument.open. Recursive/native

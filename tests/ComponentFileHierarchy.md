@@ -44,3 +44,9 @@ Failed-open regressions cover a replaced external file's identity mismatch after
 nested dependencies have loaded, with and without a dependency already open, plus
 failure after native root restoration. Only newly opened documents may close;
 pre-existing unsaved documents and the active document must be retained.
+
+Manifest preflight cases alter saved archives to omit, duplicate or reparent a
+placement, mislabel external ownership, and rename a definition record. Malformed
+definitions, occurrence lists/entries, flags and histories must raise ValueError
+before native restoration. Normal domestic/external and older occurrence-only
+archives remain covered by the same hierarchy/core regression batch.

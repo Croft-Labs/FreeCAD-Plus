@@ -471,3 +471,60 @@ class TestComponentFileHierarchy(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "root activation failure"):
                 CadDocument.open(filename)
         self.assertEqual(App.listDocuments(), {})
+
+    def testManifestRejectsOmittedDuplicateAndReparentedPlacements(self):
+        Model.add_component(self.root(self.assembly), self.screw)
+        Model.create_definition(self.assembly, "Other parent")
+        self.assembly.save()
+        with zipfile.ZipFile(self.assembly.FileName) as archive:
+            entries = {name: archive.read(name) for name in archive.namelist()}
+        for mode in ("omitted", "duplicate", "reparented", "external-kind", "definition-name"):
+            with self.subTest(mode=mode):
+                data = json.loads(entries[CadDocument.MANIFEST])
+                parent = next(d for d in data["definitions"] if d["occurrences"])
+                other = next(d for d in data["definitions"] if d != parent)
+                if mode == "omitted":
+                    parent["occurrences"] = []
+                elif mode == "duplicate":
+                    parent["occurrences"].append(dict(parent["occurrences"][0]))
+                elif mode == "reparented":
+                    other["occurrences"] = parent["occurrences"]
+                    parent["occurrences"] = []
+                elif mode == "external-kind":
+                    parent["occurrences"][0]["external"] = False
+                else:
+                    parent["object"] = "UnknownDefinition"
+                path = self.output / (mode + "-placements.cadprt")
+                with zipfile.ZipFile(path, "w") as archive:
+                    for name, payload in entries.items():
+                        archive.writestr(name, json.dumps(data).encode("utf-8")
+                                         if name == CadDocument.MANIFEST else payload)
+                with self.assertRaises(ValueError):
+                    CadDocument.preflight(path)
+
+    def testManifestRejectsMalformedHierarchyRecords(self):
+        Model.add_component(self.root(self.assembly), self.screw)
+        self.assembly.save()
+        with zipfile.ZipFile(self.assembly.FileName) as archive:
+            entries = {name: archive.read(name) for name in archive.namelist()}
+        for mode in ("definition", "occurrences", "occurrence", "external", "history"):
+            with self.subTest(mode=mode):
+                data = json.loads(entries[CadDocument.MANIFEST])
+                parent = next(d for d in data["definitions"] if d["occurrences"])
+                if mode == "definition":
+                    data["definitions"] = [None]
+                elif mode == "occurrences":
+                    parent["occurrences"] = None
+                elif mode == "occurrence":
+                    parent["occurrences"] = [None]
+                elif mode == "external":
+                    parent["occurrences"][0]["external"] = "true"
+                else:
+                    parent["history"] = "Not a history list"
+                path = self.output / (mode + "-malformed.cadprt")
+                with zipfile.ZipFile(path, "w") as archive:
+                    for name, payload in entries.items():
+                        archive.writestr(name, json.dumps(data).encode("utf-8")
+                                         if name == CadDocument.MANIFEST else payload)
+                with self.assertRaises(ValueError):
+                    CadDocument.preflight(path)
