@@ -1,5 +1,28 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 atomic imported-file recovery batch (in progress)
+
+Roadmap 7.8.12f preflights every matching definition for one imported-file
+recovery, restores import/placement/reference bindings inside one transaction,
+then refreshes affected components. Single-component recovery reuses the same
+planning and binding helpers. One Undo and failed-refresh rollback cover the
+whole file repair. Missing geometry remains separately repairable; identities
+and placements are retained. This is backend transaction work, with no new
+controls/defaults/schema; the owner UI DOCX remains applicable.
+
+Two native regressions failed before the fix: one Undo and a later refresh
+failure both left the import/earlier definition repaired. Source-overlay tests
+then passed all 28 hierarchy and 27 core cases. The existing three-case recovery
+suite had one stale menu-caption assertion from before the approved copy workflow;
+the assertion now uses Copy to External File, matching the current interface.
+
+This batch also includes the pending 7.8.12e combined import-identity guard.
+Candidate: test-builds/freecad_plus_2026-10-09_hierarchy_import_repair_payload,
+copied from hierarchy_recovery_payload with only Mod/Part/ComponentModel.py
+updated. Native source remains 40f1698230ccbbac5b4f44fc0ba8124a0ee08c60.
+Installed tests, cold reopen, inventory and shortcut delivery remain in progress.
+Task validation uses hierarchy-atomic-repair-* and hierarchy-import-repair-*.
+
 ## October 9 import-graph identity preflight
 
 **Implementation:** roadmap 7.8.12e reuses the identity maps from file-graph

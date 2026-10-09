@@ -3413,6 +3413,12 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   covers direct/nested incoming branches; shared-file diamonds remain accepted.
   Source-overlay runtime passes 26 hierarchy plus 27 core cases. Compatible Python
   owner delivery remains queued for the next related batch; WORK_STATE owns details.
+- [ X ] 7.8.12f Recover all matching definitions in one imported file as a single
+  owning-document transaction. Preflight every repair before mutation, bind all
+  placements/references before refresh, and preserve complete Undo/Redo/rollback.
+  Native regressions reproduce partial recovery before the fix; 28 hierarchy and
+  27 core source-overlay checks pass. Installed delivery with 7.8.12e is in progress;
+  WORK_STATE owns final recovery-suite, inventory and shortcut evidence.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 

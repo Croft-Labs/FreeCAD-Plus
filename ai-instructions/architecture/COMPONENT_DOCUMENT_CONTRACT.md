@@ -243,6 +243,11 @@ Locate Component File resolves the saved definition identity and restores matchi
 unresolved instances in the same owning document together, preserving occurrence
 identity and placement. Missing evaluated objects remain separate reference-repair
 items; they do not prevent recovery of healthy geometry from that component.
+Recovering an imported file preflights all matching definitions, then restores its
+file reference, placements and evaluated-reference bindings in one owning-document
+transaction. Refresh only after all bindings are restored. One Undo reverses the
+complete file repair, and a failure rolls it all back. Single-component recovery
+uses the same binding service; unavailable geometry remains independently repairable.
 Component Structure retains missing instance groups and numbered rows, and prevents
 geometry-dependent actions from implicitly creating replacement definitions.
 

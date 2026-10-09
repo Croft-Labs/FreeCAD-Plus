@@ -321,6 +321,73 @@ class TestComponentFileHierarchy(unittest.TestCase):
         self.assertNotIn(self.hardware, Model.external_documents(copy.Document))
         CadDocument.preflight(filename)
 
+    def missing_hardware_instances(self):
+        definitions = [self.screw, next(obj for obj in Model.definitions(self.hardware)
+                                       if obj.Label == "M4 screw")]
+        links, refs = [], []
+        for index, definition in enumerate(definitions):
+            body = self.hardware.addObject("Part::Feature", "HardwareBody")
+            Model.register_object(definition, body, "Object", True)
+            body.Shape = Part.makeBox(index + 2, 3, 4)
+            link = Model.add_component(self.root(self.assembly), definition,
+                                      placement=App.Placement(App.Vector(index * 10, 2, 0), App.Rotation()))
+            links.append(link.Name)
+            refs.append(Model.add_reference(self.root(self.assembly), link, body).Name)
+        self.hardware.save()
+        self.assembly.save()
+        filename = self.assembly.FileName
+        sourcefile = Path(self.hardware.FileName)
+        moved = sourcefile.with_name(self._testMethodName + ".cadprt")
+        for doc in list(App.listDocuments().values()):
+            App.closeDocument(doc.Name)
+        sourcefile.rename(moved)
+        assembly = CadDocument.open(filename)
+        links = [assembly.getObject(name) for name in links]
+        refs = [assembly.getObject(name) for name in refs]
+        self.assertTrue(all(link.LinkedObject is None for link in links))
+        self.assertTrue(all(obj.SourceObject is None for obj in refs))
+        return assembly, Model.file_imports(assembly)[0], links, refs, moved
+
+    def testImportedFileRecoveryIsOneUndoStep(self):
+        assembly, record, links, refs, moved = self.missing_hardware_instances()
+        identities = [obj.ObjectId for obj in links + refs]
+        placements = [list(link.LinkPlacement.toMatrix().A) for link in links]
+        Model.repair_file_import(record, moved)
+        self.assertTrue(all(link.LinkedObject is not None for link in links))
+        self.assertEqual([round(Model.current_shape(obj).Volume) for obj in refs], [24, 36])
+        assembly.undo()
+        Model.activate(self.root(assembly), strict=False)
+        self.assertIsNone(record.Source)
+        self.assertTrue(all(link.LinkedObject is None for link in links))
+        self.assertTrue(all(obj.SourceObject is None for obj in refs))
+        assembly.redo()
+        Model.activate(self.root(assembly))
+        self.assertEqual([obj.ObjectId for obj in links + refs], identities)
+        self.assertEqual([list(link.LinkPlacement.toMatrix().A) for link in links], placements)
+        self.assertEqual([round(Model.current_shape(obj).Volume) for obj in refs], [24, 36])
+        assembly.save()
+        filename, names = assembly.FileName, [obj.Name for obj in refs]
+        for doc in list(App.listDocuments().values()):
+            App.closeDocument(doc.Name)
+        restored = CadDocument.open(filename)
+        self.assertEqual([round(Model.current_shape(restored.getObject(name)).Volume)
+                          for name in names], [24, 36])
+
+    def testImportedFileRecoveryFailureRollsBackEveryDefinition(self):
+        assembly, record, links, refs, moved = self.missing_hardware_instances()
+        original = Model.activate
+        def fail_after_all_links(component, *args, **kwargs):
+            if all(link.LinkedObject is not None for link in links):
+                raise RuntimeError("Injected recovery failure")
+            return original(component, *args, **kwargs)
+        with patch.object(Model, "activate", side_effect=fail_after_all_links):
+            with self.assertRaisesRegex(RuntimeError, "Injected recovery failure"):
+                Model.repair_file_import(record, moved)
+        self.assertIsNone(record.Source)
+        self.assertTrue(all(link.LinkedObject is None for link in links))
+        self.assertTrue(all(obj.SourceObject is None for obj in refs))
+        self.assertFalse(assembly.HasPendingTransaction)
+
     def testMissingUnusedImportRecoversByFileIdentity(self):
         record = Model.import_file(self.assembly, self.hardware)
         self.assembly.save()

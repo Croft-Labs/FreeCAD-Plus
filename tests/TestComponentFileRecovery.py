@@ -90,7 +90,7 @@ class TestComponentFileRecovery(unittest.TestCase):
         menu = self.panel.build_menu(self.panel.structure, row)
         actions = {action.text(): action for action in menu.actions()}
         self.assertFalse(actions["Edit"].isEnabled())
-        self.assertFalse(actions["Save to External File"].isEnabled())
+        self.assertFalse(actions["Copy to External File"].isEnabled())
         self.assertTrue(actions["Locate Component File"].isEnabled())
         instances = next(sub for sub in menu.component_submenus if sub.title() == "Instances")
         self.assertTrue(all(not action.isEnabled() for action in instances.actions()))

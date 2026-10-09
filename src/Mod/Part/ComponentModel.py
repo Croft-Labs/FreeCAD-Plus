@@ -220,14 +220,11 @@ def repair_file_import(record, filename):
     matches = {component.ObjectId: component for component in definitions(source)}
     unresolved = [link for component in definitions(doc) for link in children(component)
                   if link.LinkedObject is None and getattr(link, "DefinitionId", "") in matches]
-    if unresolved:
-        # The occurrence recovery service owns geometry/reference remapping.
-        for link in unresolved:
-            if link.LinkedObject is None:
-                repair_component(owner(link), link, filename)
-    else:
-        with transaction(doc, "Locate imported component file"):
-            _restore_file_imports(doc, source)
+    representatives = {link.DefinitionId: link for link in unresolved}
+    plans = [_component_repair_plan(owner(link), link, source)
+             for link in representatives.values()]
+    with transaction(doc, "Locate imported component file"):
+        _apply_component_repairs(doc, source, plans)
     return source
 
 
@@ -1690,12 +1687,10 @@ def validate(doc, allow_unresolved=False):
     return meta
 
 
-def repair_component(parent, occurrence, filename):
-    """Locate a saved definition and restore its unresolved instances in this file."""
+def _component_repair_plan(parent, occurrence, source):
+    """Validate recovery without changing native links or reference bindings."""
     if occurrence not in children(parent):
         raise ValueError("Select a direct component instance to repair.")
-    import CadDocument
-    source = CadDocument.open(filename)
     matches = [d for d in definitions(source) if d.ObjectId == occurrence.DefinitionId]
     if len(matches) != 1:
         raise ValueError("That file does not contain the saved component definition identity.")
@@ -1713,23 +1708,42 @@ def repair_component(parent, occurrence, filename):
         ident = getattr(obj, "ObjectId", "")
         if ident:
             sources.setdefault(ident, []).append(obj)
-    affected = list(dict.fromkeys(owner(link) for link in targets))
-    with transaction(doc, "Locate Component File"):
-        _restore_file_imports(doc, source)
+    return definition, targets, sources
+
+
+def _apply_component_repairs(doc, source, plans):
+    """Apply preflighted bindings inside the caller's single transaction."""
+    _restore_file_imports(doc, source)
+    affected = []
+    for definition, targets, sources in plans:
         for link in targets:
             placement = App.Placement(link.LinkPlacement)
             link.setLink(definition)
             link.LinkPlacement = placement
-        for component in affected:
+        for component in dict.fromkeys(owner(link) for link in targets):
+            if component not in affected:
+                affected.append(component)
             for obj in history(component):
                 if getattr(obj, "ComponentRole", "") != "Reference" or obj.SourceOccurrence not in targets:
                     continue
                 candidates = sources.get(obj.SourceObjectId, [])
-                # Keep missing/ambiguous geometry repairable without undoing the
-                # recovered component or binding a different object by its label.
+                # Missing/ambiguous geometry stays repairable without rebinding by label.
                 obj.SourceObject = candidates[0] if len(candidates) == 1 else None
-            activate(component, strict=False)
-    return definition
+    # All definitions must be rebound before dependent geometry is refreshed.
+    for component in affected:
+        activate(component, strict=False)
+
+
+def repair_component(parent, occurrence, filename):
+    """Locate a saved definition and restore its unresolved instances in this file."""
+    if occurrence not in children(parent):
+        raise ValueError("Select a direct component instance to repair.")
+    import CadDocument
+    source = CadDocument.open(filename)
+    plan = _component_repair_plan(parent, occurrence, source)
+    with transaction(parent.Document, "Locate Component File"):
+        _apply_component_repairs(parent.Document, source, [plan])
+    return plan[0]
 
 
 class ComponentObserver:

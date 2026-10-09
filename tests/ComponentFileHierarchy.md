@@ -55,3 +55,9 @@ Import identity regression uses a native Save Copy to open a second file retaini
 the original identity. Both a direct alias and an alias below another imported
 branch must refuse before adding objects or opening a transaction. The destination
 remains valid, while the existing shared-file diamond fixture remains accepted.
+
+Multi-definition file-recovery fixtures move a Hardware file containing two placed
+definitions and evaluated references. One Undo must clear the recovered import and
+all bindings; Redo/save/reopen retain identities, placements and geometry. An injected
+refresh failure after rebinding both definitions must roll back the complete repair.
+Include TestComponentFileRecovery.py when changing this shared recovery service.
