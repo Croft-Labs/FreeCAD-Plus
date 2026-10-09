@@ -13,7 +13,9 @@ remove the file root. File activation refreshes domestic references child-first.
 Legacy conversion/recovery now creates the file root in the same undo transaction
 (7.8.13d2b2b). Definition deletion now has a guarded transactional backend;
 Models/native Delete now use it with unused-edit and isolated-tab cleanup;
-file-level command/assembly acceptance is next; owner delivery is batched.
+shared modeling launchers now guard file Edit, including explicit sketch/plane
+destinations. Native command and assembly-relationship acceptance is next; owner
+delivery is batched. TestComponentFileCommands covers guards and file placement.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI

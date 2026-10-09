@@ -14,6 +14,14 @@ def tr(text):
     return App.Qt.translate("ComponentExtrude", text)
 
 
+def modeling_component(component):
+    """Validate explicit task destinations as well as the active view's owner."""
+    import ComponentModel as Model
+    if not Model.is_component(component) or Model.is_file_container(component):
+        raise ValueError(tr("Edit or create a component before starting a modeling command."))
+    return component
+
+
 def active_component(allow_file=False):
     import ComponentModel as Model
     doc = App.ActiveDocument
@@ -22,9 +30,7 @@ def active_component(allow_file=False):
     view = Gui.activeDocument().activeView()
     component = view.getActiveObject("part") if hasattr(view, "getActiveObject") else None
     component = component if Model.is_component(component) else Model.metadata(doc).RootComponent
-    if Model.is_file_container(component) and not allow_file:
-        raise ValueError(tr("Edit or create a component before starting a modeling command."))
-    return component
+    return component if allow_file else modeling_component(component)
 
 
 class ExtrudeTask(ModelingTaskUI, CurveSelection):

@@ -322,12 +322,12 @@ class PlaneTask(QtCore.QObject, ModelingTaskUI):
 
 def launch(component=None, operation=None):
     global _task
-    from freecad.gui.ComponentExtrudeTask import active_component
+    from freecad.gui.ComponentExtrudeTask import active_component, modeling_component
     from freecad.gui.ComponentNavigator import TaskContext
     import ComponentModel as Model
     if Gui.Control.activeDialog():
         raise ValueError(tr('Finish the current task before editing a plane.'))
-    component = Model.owner(operation) if operation else component or active_component()
+    component = modeling_component(Model.owner(operation) if operation else component or active_component())
     context = TaskContext(component)
     try:
         context.enter(operation)

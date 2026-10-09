@@ -3476,6 +3476,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
+    - [ X ] 7.8.13e1 Shared task guard audit: explicit sketch/plane destinations
+      now use the modeling-component validator before task entry; Datum Plane is
+      disabled during file Edit. Eight shared creation launchers refuse file Edit
+      without mutation. File-level occurrence movement retains Undo/Redo and no
+      modeling History. Source-overlay checks and DOCX review in WORK_STATE.
+    - [   ] 7.8.13e2 Next: audit remaining native modeling command routes and
+      assembly relationship ownership/persistence beneath the file. Preserve the
+      native solver and keep file History origin-only; do not change Add Component.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
@@ -3490,7 +3498,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13e file-level command and assembly guard audit.
+      Next implementation: 13e2 native command routes and file-level assembly relationships.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

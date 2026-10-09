@@ -276,6 +276,18 @@ Cancel leaves the document unchanged.
 - Both actions are transactional and undoable. Shape equality alone does not
   establish reference preservation or shared-operation correctness.
 
+## File modeling task guards
+
+The shared active_component resolver rejects file containers for modeling and
+accepts them only for callers explicitly requesting allow_file. The shared
+modeling_component validator also checks explicit sketch/plane task destinations
+before TaskContext entry, previews or document mutation. Datum Plane availability
+uses the edited component rather than selection. Existing feature editors retain
+their owning component; the file cannot own modeling history/results. Occurrence
+movement changes links under the file transactionally while its global frame stays
+fixed and its History remains origin-only. This does not establish native assembly
+joint storage compatibility; that audit remains roadmap 7.8.13e2.
+
 ## Definition deletion
 
 `definition_deletion_plan` reviews the selected definition and its native owned

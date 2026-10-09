@@ -3,7 +3,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide import QtCore, QtGui, QtWidgets
-from freecad.gui.ComponentExtrudeTask import active_component, CompactFormLayout
+from freecad.gui.ComponentExtrudeTask import active_component, modeling_component, CompactFormLayout
 
 _task = None
 
@@ -460,7 +460,7 @@ def launch(component=None, datum_only=False):
     global _task
     if Gui.Control.activeDialog():
         raise ValueError(tr("Finish the current task before creating a sketch."))
-    component = component or active_component()
+    component = modeling_component(component or active_component())
     from freecad.gui.ComponentNavigator import TaskContext
     context = TaskContext(component)
     try:
@@ -486,9 +486,13 @@ class DatumPlaneCommand:
                 "Pixmap": "Std_Plane"}
 
     def IsActive(self):
-        return bool(App.ActiveDocument and sum(getattr(obj, "ComponentRole", "") == "Document"
-                                              for obj in App.ActiveDocument.Objects) == 1
-                    and not Gui.Control.activeDialog())
+        if Gui.Control.activeDialog():
+            return False
+        try:
+            active_component()
+            return True
+        except (ValueError, RuntimeError):
+            return False
 
     def Activated(self):
         launch(datum_only=True)

@@ -1,5 +1,38 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 shared file Edit modeling command guards
+
+7.8.13e1 is complete in source. The shared modeling_component validator is now
+used for explicit Sketch and Datum Plane destinations as well as active-component
+resolution. Passing the file directly can no longer open these task panels before
+the later backend ownership rejection. Datum Plane IsActive now follows the edited
+component and stays disabled for file Edit or an active task. Selection alone does
+not activate modeling. Existing owning-component feature editing is preserved.
+
+Validation: TestComponentFileCommands passes 5/5 cases on the verified 2026-10-09
+hierarchy-relocation native payload with source overlays. One case exercises eight
+shared launchers (Extrude, Revolve, Loft, Pipe, Helix, Primitive, Sketch and Plane)
+for file refusal with unchanged objects, undo count and transaction state. Other
+cases verify explicit destination rejection before TaskContext creation, datum
+availability, ordinary component sketch/plane opening and cancellation, and file
+occurrence movement with Undo/Redo, fixed global frame and no file History/results.
+The initial four cases passed; the final run adds the positive task-open case and
+passes all five. Changed Python syntax and git diff --check pass. This is not a
+native workbench-wide command audit or joint solver/persistence acceptance.
+
+Owner UI DOCX updated with datum availability, pre-task refusal and occurrence
+placement behavior. Native numbering preserved; rendered pages 66-67 reviewed.
+Contract, test guide, summary and roadmap updated. No native rebuild, owner payload
+or shortcut change, or release. Task validation output is removed after recording
+results; owner build delivery remains grouped in 13f. Source commit/push is separate
+from owner-build acceptance. Add Component workflow remains deferred.
+
+Next task: 7.8.13e2, audit remaining native modeling command routes and file-level
+assembly relationship ownership/persistence while retaining native solvers and
+origin-only file History. Current file validation allows only Origin and occurrence
+members in Group, so native joint containers require deliberate compatibility
+review before declaring the entire 13e requirement complete.
+
 ## October 9 component definition deletion UI
 
 7.8.13d2c2 and the 13d file-container source integration are complete. Models now
