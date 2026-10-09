@@ -1,0 +1,90 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Grouped component Edit acceptance in a fork GUI with an isolated profile.
+
+Set FREECAD_PLUS_SOURCE and FREECAD_PLUS_VALIDATION_DIR. By default this tests
+installed modules; FREECAD_PLUS_EDIT_SOURCE_OVERLAY=1 explicitly tests source
+against a compatible native development build. Neither mode establishes owner
+shortcut delivery or physical mouse/keyboard acceptance.
+FREECAD_PLUS_EDIT_SUITES may name a comma-separated subset for focused reruns.
+"""
+import hashlib
+import importlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import sys
+import traceback
+import unittest
+import FreeCAD as App
+import FreeCADGui as Gui
+from PySide import QtCore, QtWidgets
+
+sys.dont_write_bytecode = True
+source = Path(os.environ['FREECAD_PLUS_SOURCE'])
+output = Path(os.environ['FREECAD_PLUS_VALIDATION_DIR'])
+output.mkdir(parents=True, exist_ok=True)
+sys.path.insert(0, str(source / 'tests'))
+report = {'application': App.ConfigGet('AppHomePath'), 'version': App.Version(),
+          'source_overlay': os.environ.get('FREECAD_PLUS_EDIT_SOURCE_OVERLAY') == '1',
+          'modules': {}, 'suites': []}
+modules = {'ComponentModel': 'src/Mod/Part/ComponentModel.py',
+           'CadDocument': 'src/Mod/Part/CadDocument.py',
+           'freecad.gui.ComponentSelection': 'src/Gui/ComponentSelection.py',
+           'freecad.gui.ComponentNavigator': 'src/Gui/ComponentNavigator.py',
+           'freecad.gui.ComponentExtrudeTask': 'src/Gui/ComponentExtrudeTask.py'}
+suites = ('TestComponentActiveEditing', 'TestComponentContextDisplayPlan',
+          'TestComponentDisplayContext', 'TestComponentFileWorkspace',
+          'TestComponentAssemblyPersistence', 'TestComponentRelationshipTransactions',
+          'TestComponentGroundingUI', 'TestComponentRelationshipsUI')
+try:
+    requested = os.environ.get('FREECAD_PLUS_EDIT_SUITES')
+    if requested:
+        selected = tuple(name.strip() for name in requested.split(','))
+        if not selected or any(name not in suites for name in selected):
+            raise ValueError('Unknown component editing suite')
+        suites = selected
+    if report['source_overlay']:
+        nav = importlib.import_module('freecad.gui.ComponentNavigator')
+        old_command = nav.Command
+        if nav._dock:
+            dock = nav._dock
+            App.removeDocumentObserver(dock)
+            Gui.removeDocumentObserver(dock)
+            Gui.Selection.removeObserver(dock)
+            for timer in dock.findChildren(QtCore.QTimer):
+                timer.stop()
+            dock.hide()
+            dock.deleteLater()
+            QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
+        for name, relative in modules.items():
+            module = importlib.import_module(name)
+            spec = importlib.util.spec_from_file_location(name, source / relative)
+            module.__file__ = str(source / relative)
+            spec.loader.exec_module(module)
+        old_command.Activated = nav.Command.Activated
+    for name in modules:
+        module = importlib.import_module(name)
+        path = Path(module.__file__)
+        report['modules'][name] = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+    for name in suites:
+        module = importlib.import_module(name)
+        with (output / (name + '.log')).open('w', encoding='utf-8', buffering=1) as stream:
+            result = unittest.TextTestRunner(stream=stream, verbosity=2).run(
+                unittest.defaultTestLoader.loadTestsFromTestCase(getattr(module, name)))
+        report['suites'].append({'name': name, 'run': result.testsRun,
+                                'passed': result.wasSuccessful(),
+                                'skipped': [(str(t), reason) for t, reason in result.skipped],
+                                'failures': [(str(t), detail) for t, detail in result.failures],
+                                'errors': [(str(t), detail) for t, detail in result.errors]})
+        (output / 'results.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+        Gui.updateGui()
+    report['passed'] = all(s['passed'] and not s['skipped'] for s in report['suites'])
+except BaseException:
+    report['harness_error'] = traceback.format_exc()
+    report['passed'] = False
+finally:
+    report['tests_run'] = sum(s['run'] for s in report['suites'])
+    (output / 'results.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+    (output / 'validation.done').write_text('PASS' if report['passed'] else 'FAIL')
+    QtCore.QTimer.singleShot(100, QtWidgets.QApplication.instance().quit)

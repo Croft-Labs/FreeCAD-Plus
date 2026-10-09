@@ -210,6 +210,20 @@ check. This multiplies the operating-system scale; inspect the recorded device-p
 ratio rather than claiming an absolute 150% display setting. Automated results
 remain distinct from native mouse/keyboard acceptance.
 
+For the bounded active-component/Part Tree integration batch, run
+`tests/ValidateComponentEditing.FCMacro` with `FREECAD_PLUS_SOURCE` set to this
+checkout and `FREECAD_PLUS_VALIDATION_DIR` set to an isolated external output
+folder. Supply isolated user/system configuration paths. Installed modules are
+tested by default; `FREECAD_PLUS_EDIT_SOURCE_OVERLAY=1` explicitly loads the five
+component modules from source against a compatible native development build.
+The report records that distinction and module paths/hashes. The default eight
+suites cover Edit, contextual display, file workspace, persistence and Ground/Fixed
+relationships. `FREECAD_PLUS_EDIT_SUITES` accepts a comma-separated subset for
+focused reruns. Require no skipped cases and PASS; inspect failures before reruns.
+Use a fresh output directory for each run. Bound the process to fifteen minutes
+and inspect progress at least once per minute. This batch does not establish
+broader workbench compatibility, owner payload acceptance or shortcut delivery.
+
 Source formatting, syntax, build success, passing GUI tests, visual acceptance,
 and published artifacts are separate evidence levels. For this native GUI change,
 run tests in the actual rebuilt fork and manually verify model selection and

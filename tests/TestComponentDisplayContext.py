@@ -125,7 +125,7 @@ class TestComponentDisplayContext(unittest.TestCase):
         self.panel.refresh()
         group = self.panel.structure.topLevelItem(0).child(0)
         self.assertTrue(group.font(0).bold())
-        self.assertFalse(group.child(0).font(0).bold())
+        self.assertTrue(group.child(0).font(0).bold())
         self.assertTrue(group.child(1).font(0).bold())
         menu, actions = self.menu(group.child(1))
         self.assertFalse(actions["Hidden"].isEnabled())
@@ -174,13 +174,19 @@ class TestComponentDisplayContext(unittest.TestCase):
         self.panel.refresh()
         self.assertIsNone(self.second.ViewObject.LinkView.LinkedView)
         ids = self.first.ObjectId, self.second.ObjectId
+        root_id = self.root.ObjectId
         body_name, curve_name = self.body.Name + ".", self.curve.Name + "."
         self.external.save()
         self.doc.save()
         for doc in reversed(list(App.listDocuments().values())):
             App.closeDocument(doc.Name)
         self.doc = CadDocument.open(self.output / "Assembly.cadprt")
-        self.root = Model.metadata(self.doc).RootComponent
+        file_root = Model.metadata(self.doc).RootComponent
+        self.assertTrue(Model.is_file_container(file_root))
+        # Opening this legacy fixture adds a file root above its existing assembly.
+        self.root = next(obj for obj in self.doc.Objects
+                         if getattr(obj, "ObjectId", None) == root_id)
+        self.assertIn(self.root, [link.LinkedObject for link in Model.children(file_root)])
         self.panel = Navigator.show(self.doc)
         self.panel.refresh()
         links = {link.ObjectId: link for link in Model.children(self.root)}

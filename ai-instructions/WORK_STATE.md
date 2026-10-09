@@ -1,5 +1,47 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 Grouped active Edit integration
+
+7.8.13f2 is complete for the bounded source integration batch.
+ValidateComponentEditing.FCMacro runs eight suites against installed modules by
+default, or five explicit source overlays when requested. It records application
+version, module paths/hashes, suite errors/failures/skips and final status. Named
+suite selection supports focused reruns in fresh output directories. The guide
+records isolated profiles, external output and bounded process monitoring.
+
+Validation: the initial grouped run executed 62 cases. All passed except two
+outdated TestComponentDisplayContext expectations: one expected the other occurrence
+of the edited definition not to be bold; the other looked for legacy assembly
+children immediately under the new file root after reopen. The corrected tests
+retain all-occurrence bold expectations and verify the original assembly identity
+and its occurrences beneath the new pinned file root. A fresh-process rerun of all
+three display cases passed. Accepted coverage is 62 suite case executions (58
+distinct behaviors, with four inherited native solver cases in both persistence
+and transaction suites); total executions including the rerun were 65. No skips.
+Both validation processes exited, and stderr is empty in both runs. Source syntax
+and CRLF-aware diff checks pass. Two display captures were visually reviewed.
+
+The eight suites are TestComponentActiveEditing, TestComponentContextDisplayPlan,
+TestComponentDisplayContext, TestComponentFileWorkspace,
+TestComponentAssemblyPersistence, TestComponentRelationshipTransactions,
+TestComponentGroundingUI and TestComponentRelationshipsUI. They cover repeated tab
+open/close, exact occurrence fade and appearance preservation, unused edit/save,
+external views and visibility, file migration/identity, native New, relationship
+solve/persistence/Undo and stale UI refusal.
+
+Runtime: retained verified freecad_plus_2026-10-06_recovered_workload development
+build with explicit source ComponentModel, CadDocument, ComponentSelection,
+ComponentNavigator and ComponentExtrudeTask overlays. No product code, native code
+or UI requirements changed; no new build or owner delivery is claimed. The owner
+DOCX remains unchanged because this step only corrects tests and adds a validation
+runner. Generated evidence is removed after recording results. Source milestone
+publication is to origin/main, with remote identity verified at handoff.
+
+Next task: 7.8.13f3 packaged compatibility and owner delivery: prepare the current
+native/Python payload, validate without source overlays and check native workbench
+fallbacks/fresh-process reopen, then retarget and verify the owner shortcut. The
+full active-component/Part Tree task is still open. Add Component remains deferred.
+
 ## October 9 Fixed relationship Part Tree interface
 
 7.8.13e2b2c2 and the bounded 13e implementation are complete in source. Fix relative

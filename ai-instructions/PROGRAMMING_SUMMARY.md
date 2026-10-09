@@ -30,8 +30,10 @@ unchanged (TestComponentRelationshipTransactions). Part Tree Ground/Unground now
 requires file Edit and one direct occurrence, with stale-menu and task guards
 (TestComponentGroundingUI). Fixed creation preserves current relative placement;
 Part Tree relationship review, offset editing and removal now use the same guarded
-service (TestComponentRelationshipsUI). Grouped compatibility qualification and
-owner-build delivery remain next in 7.8.13f.
+service (TestComponentRelationshipsUI). ValidateComponentEditing.FCMacro now
+provides the bounded eight-suite integration batch; all 62 cases pass after two
+legacy test assumptions were corrected. Packaged compatibility qualification and
+owner-build/shortcut delivery remain next in 7.8.13f3.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI

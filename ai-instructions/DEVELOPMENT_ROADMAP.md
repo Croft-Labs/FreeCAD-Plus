@@ -3553,7 +3553,19 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next task: 13f grouped compatibility qualification and owner-build delivery.
+    - [ X ] 7.8.13f2 Bounded source integration batch: eight suites cover active
+      Edit, per-view display, external references, file workspace, relationship
+      persistence and Ground/Fixed controls. All 62 case executions pass across the
+      grouped run and focused three-case rerun; four inherited solver cases occur
+      in both persistence/transaction suites (58 distinct behaviors). Corrected
+      legacy test assumptions for all-occurrence bold text and migrated file roots.
+      Added ValidateComponentEditing.FCMacro with installed/source mode evidence
+      and focused reruns. No product/native/UI requirement changes this step.
+    - [   ] 7.8.13f3 Next: packaged compatibility and owner delivery. Assemble a
+      payload with the verified native file guards/solver and current Python
+      modules; validate without overlays, check native workbench fallbacks and
+      fresh-process reopen, then update and verify the owner desktop shortcut.
+      Broader compatibility remains unaccepted until these checks pass.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,
