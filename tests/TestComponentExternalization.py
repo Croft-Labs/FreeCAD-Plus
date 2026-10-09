@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Three feedback workflows for moving embedded components to an external file."""
+"""Legacy identity-moving service and independent external-copy UI acceptance."""
 import hashlib
 import os
 from pathlib import Path
@@ -110,10 +110,11 @@ class TestComponentExternalization(unittest.TestCase):
         try:
             with self.assertRaisesRegex(ValueError, "Finish"):
                 Model.externalize(self.part, self.destination)
-            with patch.object(QtWidgets.QFileDialog, "getSaveFileName") as picker:
+            with patch.object(QtWidgets.QFileDialog, "getSaveFileName",
+                              return_value=(str(self.destination), "")) as picker:
                 with self.assertRaisesRegex(ValueError, "Finish"):
                     self.panel.externalize_component(Navigator.object_key(self.first))
-                picker.assert_not_called()
+                picker.assert_called_once()
         finally:
             self.doc.abortTransaction()
         self.assertFalse(self.destination.exists())
@@ -128,10 +129,9 @@ class TestComponentExternalization(unittest.TestCase):
         self.assertEqual(set(App.listDocuments()), documents)
         self.assertEqual(self.first.LinkedObject, self.part)
         self.panel.open_component_tab(Navigator.object_key(self.child))
-        with patch.object(QtWidgets.QFileDialog, "getSaveFileName") as picker:
-            with self.assertRaisesRegex(ValueError, "Close isolated tabs"):
-                self.panel.externalize_component(Navigator.object_key(self.first))
-            picker.assert_not_called()
+        # Independent copying does not move definitions out of isolated tabs.
+        with patch.object(QtWidgets.QFileDialog, "getSaveFileName", return_value=("", "")):
+            self.panel.externalize_component(Navigator.object_key(self.first))
         self.assertFalse(self.destination.exists())
 
     def testMenuAndEditingContext(self):
@@ -143,6 +143,18 @@ class TestComponentExternalization(unittest.TestCase):
         with patch.object(QtWidgets.QFileDialog, "getSaveFileName", return_value=(str(self.destination), "")):
             self.panel.externalize_component(Navigator.object_key(self.first))
         moved = self.first.LinkedObject
+        self.assertEqual(moved, self.part)
+        self.assertEqual(self.second.LinkedObject, self.part)
+        copied_doc = next(doc for doc in App.listDocuments().values()
+                          if doc.FileName and Path(doc.FileName) == self.destination)
+        copied = Model.metadata(copied_doc).RootComponent
+        self.assertNotEqual(copied.ObjectId, self.part.ObjectId)
+        self.assertNotEqual(Model.children(copied)[0].LinkedObject.ObjectId,
+                            self.child.LinkedObject.ObjectId)
+        copied_reference = next(obj for obj in Model.history(copied)
+                                if getattr(obj, "ComponentRole", "") == "Reference")
+        self.assertAlmostEqual(Model.current_shape(copied_reference).Volume, 24)
+        self.assertEqual(self.reference.SourceObject, self.local)
         self.assertEqual(App.ActiveDocument, self.doc)
         self.assertEqual(self.panel.mdi.activeSubWindow(), window)
         self.assertEqual(self.panel.root_key, root_key)
@@ -151,12 +163,14 @@ class TestComponentExternalization(unittest.TestCase):
         self.assertEqual(Gui.getDocument(self.doc.Name).activeView().getActiveObject("part"), moved)
         row = self.panel.structure.topLevelItem(0).child(0)
         menu = self.panel.build_menu(self.panel.structure, row)
-        action = next(a for a in menu.actions() if a.text() == "Save to External File")
-        self.assertFalse(action.isEnabled())
-        with patch.object(QtWidgets.QFileDialog, "getSaveFileName") as picker:
-            with self.assertRaisesRegex(ValueError, "embedded"):
+        action = next(a for a in menu.actions() if a.text() == "Copy to External File")
+        self.assertTrue(action.isEnabled())
+        saved_copy = self.destination.read_bytes()
+        with patch.object(QtWidgets.QFileDialog, "getSaveFileName",
+                          return_value=(str(self.destination), "")):
+            with self.assertRaisesRegex(ValueError, "new file"):
                 self.panel.externalize_component(Navigator.object_key(self.first))
-            picker.assert_not_called()
+        self.assertEqual(self.destination.read_bytes(), saved_copy)
         self.panel.setFloating(True)
         self.panel.resize(850, 650)
         Gui.updateGui()

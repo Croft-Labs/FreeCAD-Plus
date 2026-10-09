@@ -1,5 +1,27 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 native relocation qualification (in progress)
+
+Continuing 7.8.12g/h from native/application source
+ec104817c69085d94b2676f219f85a4b46c1bbf8 (implementation 02d919e5d2).
+The full Release default/ALL_BUILD incremental build passed in the existing
+test-builds/freecad_plus_2026-10-06_recovered_workload tree. Writer layout changes
+require all native consumers to be rebuilt. The bounded build uses a two-hour hard
+deadline and ten-minute log-inactivity limit; logs are under validation/
+hierarchy-relocation-build-20261009. No generated install scripts are used.
+
+The relocation tests now also require evaluated-reference geometry, a nested unused
+import and a destination folder containing spaces and a non-English character.
+A fresh hierarchy_relocation_payload is staged from the complete rebuilt runtime.
+Both focused relocation cases pass. Installed acceptance passes 88 hierarchy/core,
+recovery, save/undo and legacy integration/extrusion cases plus three corrected
+externalization tests. The initial externalization failures were stale expectations
+for the superseded identity-moving UI; the corrected suite checks independent
+copies and retains internal legacy-service coverage. No application change was
+needed. Cold reopen, inventory and saved-shortcut delivery are still in progress.
+The current desktop payload remains hierarchy_import_repair_payload until those
+gates succeed.
+
 ## October 9 save destination protection and native relocation (build pending)
 
 **Implementation:** 7.8.12g adds CadDocument manifest preflight rejecting a final

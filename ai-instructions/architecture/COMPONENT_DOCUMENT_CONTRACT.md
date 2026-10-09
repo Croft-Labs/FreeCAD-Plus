@@ -131,8 +131,8 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
 - **Edit** is the first context action; double-click also activates the definition
   for editing. **Add Component** adds to that definition. Omit **Open Component in
   Tab** on the root row, which is already its own view. Use an **Instances** submenu
-  for **Add Instance** and **Copy to New Part**, and **Save to External File** for
-  externalization. **Part View** contains Full Component, Bodies Only, Hidden and
+  for **Add Instance** and **Copy to New Part**, and **Copy to External File** for
+  independent copying. **Part View** contains Full Component, Bodies Only, Hidden and
   Reset to Inherited. The view root is displayed in full; these settings apply to
   occurrences added to a parent.
   Indicate the effective Part View choice (no single choice for a mixed group)

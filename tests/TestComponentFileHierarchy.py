@@ -416,10 +416,18 @@ class TestComponentFileHierarchy(unittest.TestCase):
         self.check_dependency_save_collision("saveAs", True)
 
     def check_save_relocation(self, method):
+        coatings = self.document("RelocationCoatings")
+        Model.import_file(self.hardware, coatings)
+        body = self.hardware.addObject("Part::Feature", "RelocationBody")
+        Model.register_object(self.screw, body, "Object", True)
+        body.Shape = Part.makeBox(2, 3, 4)
+        self.hardware.save()
         Model.import_file(self.assembly, self.hardware)
         link = Model.add_component(self.root(self.assembly), self.screw)
+        reference = Model.add_reference(self.root(self.assembly), link, body)
+        reference_name, reference_id, body_id = reference.Name, reference.ObjectId, body.ObjectId
         expected = Model.metadata(self.assembly).ObjectId, link.ObjectId, self.screw.ObjectId
-        relocated = self.output / "RelocatedAssembly" / "Assembly.cadprt"
+        relocated = self.output / "Relocated assembly Ω" / "Assembly.cadprt"
         relocated.parent.mkdir(exist_ok=True)
         original_path = Path(self.assembly.FileName)
         self.assembly.save()
@@ -439,6 +447,11 @@ class TestComponentFileHierarchy(unittest.TestCase):
         self.assertEqual((Model.metadata(assembly).ObjectId, link.ObjectId,
                           link.LinkedObject.ObjectId), expected)
         self.assertEqual(Path(link.LinkedObject.Document.FileName), hardware_path)
+        reference = assembly.getObject(reference_name)
+        self.assertEqual(reference.ObjectId, reference_id)
+        self.assertEqual(reference.SourceObject.ObjectId, body_id)
+        self.assertAlmostEqual(Model.current_shape(reference).Volume, 24)
+        self.assertEqual(len(Model.external_documents(link.LinkedObject.Document)), 1)
 
     def testSaveAsRelocationKeepsSharedFileIdentity(self):
         self.check_save_relocation("saveAs")

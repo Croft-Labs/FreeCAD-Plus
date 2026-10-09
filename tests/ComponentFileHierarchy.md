@@ -66,8 +66,16 @@ Save collision regressions use native Save Copy against a directly imported file
 and Save As against a nested unused import. Both must refuse without modifying any
 fixture bytes or the assembly location/label. Save As and Save Copy into another
 directory verify dependency paths, shared identities and reopening; Save Copy
-also preserves the original assembly bytes/location. These two relocation tests
-require the new native Writer/PropertyXLink implementation, not a Python overlay.
-They reproduce broken native links on the current owner runtime and must be run
-unfiltered after the next complete native build. Other hierarchy tests can run
-with an explicit test-name filter that excludes these two pending native cases.
+also preserves the original assembly bytes/location. Both fixtures include evaluated
+reference geometry, a nested unused import and a destination with spaces and a
+non-English character. These two relocation tests
+require the native Writer/PropertyXLink implementation, not a Python overlay.
+They reproduced broken links on the pre-fix runtime. Run them unfiltered with the
+full hierarchy suite on a consistently rebuilt runtime; WORK_STATE records the
+native and installed delivery evidence.
+
+TestComponentExternalization.py retains the internal identity-moving service
+regressions and separately checks the approved independent-copy GUI: original
+placements/edit context remain, copied identities differ, reference geometry is
+retained, unfinished edits refuse before writing, existing files cannot be
+overwritten, and cancel does not move definitions out of isolated tabs.
