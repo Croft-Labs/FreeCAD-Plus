@@ -6,8 +6,12 @@ CadDocument cross-checks component-file-container-v1 against the native marker.
 TestComponentFileContainer covers this service. new_file_document now backs native
 New with an active ordinary Part001 beneath the pinned file;
 TestComponentFileWorkspace covers the UI and empty-tree/undo/reopen behavior.
-Existing-file/legacy and copy-destination integration are next (7.8.13d2b);
+External-copy and new-external-component destinations now use the same file root
+without an extra Part001. Existing-file/legacy migration is next (7.8.13d2b2);
 owner delivery remains batched.
+A broader GUI check exposes an isolated-tab scene-swap crash after contextual fade;
+repair this next (7.8.13f1) before older-file migration. See WORK_STATE for the
+78/79 validation result and removed unsuccessful experiments.
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.

@@ -1782,6 +1782,8 @@ class Navigator(QtWidgets.QDockWidget):
                 created_document = model().new_document(name)
                 destination = created_document
                 definition = model().metadata(destination).RootComponent
+                model().ensure_file_container(destination)
+                destination.clearUndos()
                 destination.saveAs(filename)
             else:
                 definition = model().create_definition(destination, name)

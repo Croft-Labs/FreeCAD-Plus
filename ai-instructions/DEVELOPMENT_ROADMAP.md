@@ -3436,12 +3436,30 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       - [   ] 7.8.13d2b Migrate existing opens/legacy conversions and component-copy
         or new-external-file destinations to the same file root. Preserve definition
         identities, paths and placements; validate definition deletion separately.
+        - [ X ] 7.8.13d2b1 External destinations: independent copies, the retained
+          externalize compatibility service and New Component/new external file
+          wrap the intended definition beneath a file container before final save.
+          No extra Part001; callers and existing links retain the actual component.
+          Clear destination bootstrap undo so the file cannot be unpinned by Undo.
+          Copy placement, identity, source retention, reopen and UI import checks
+          added; owner DOCX updated/rendered. Installed delivery remains in 13f.
+        - [   ] 7.8.13d2b2 Existing .cadprt open and legacy conversion migration,
+          preserving original definitions, references, placements and undo semantics.
+          Definition deletion still requires its separate native/UI acceptance.
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
+
+    - [   ] 7.8.13f1 Next priority: reproduce/fix isolated component tab scene swap
+      after a published-result component is active with contextual transparency.
+      The 79-case destination integration run passes 78; the core navigator case
+      fails at viewer.setSceneGraph with native access violation/break signal,
+      including a fresh-process reproduction. Simple original-scene retention and
+      clearing the current fade were ineffective and reverted. Keep owner delivery
+      blocked on this GUI check and the remaining grouped acceptance.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

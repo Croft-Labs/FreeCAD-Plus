@@ -277,9 +277,12 @@ App::Part, and changes only the metadata root binding. The operation is idempote
 and transactional, including undo/redo. Existing external links keep targeting the
 previous definition. The user-facing new_file_document entry wraps an ordinary
 Part001 and clears bootstrap undo records before the navigator activates its first
-occurrence. Internal new_document/initialize callers retain their existing behavior
-until copy/conversion integration is migrated. Automatic migration on reading older
-files remains roadmap 7.8.13d2b.
+occurrence. Independent external copies, the retained externalize compatibility
+service, and New Component with new-external-file storage wrap their completed
+component in the same file container before final save and clear bootstrap undo.
+They return the actual component definition, not the file container, and never add
+an extra Part001 to the destination. Internal conversion initializers retain their
+existing behavior; automatic older-file/legacy migration remains roadmap 7.8.13d2b.
 
 The container retains internal `ComponentRole=Definition` storage for native graph
 and serializer compatibility, with readonly `FileContainer=True` distinguishing it

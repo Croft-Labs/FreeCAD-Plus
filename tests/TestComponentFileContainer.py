@@ -140,3 +140,36 @@ class TestComponentFileContainer(unittest.TestCase):
             self.assertEqual({obj.Name for obj in self.doc.Objects}, names)
         finally:
             self.doc.abortTransaction()
+
+    def testExternalCopyHasFileRootAndIndependentPlacedDefinition(self):
+        source_ids = {obj.Name: getattr(obj, "ObjectId", None) for obj in self.doc.Objects}
+        filename = self.output / "independent-copy.cadprt"
+        copied = Model.copy_to_external_file(self.part, filename)
+        destination = copied.Document
+        root = Model.metadata(destination).RootComponent
+        self.assertTrue(Model.is_file_container(root))
+        self.assertFalse(Model.is_file_container(copied))
+        self.assertEqual(Model.children(root)[0].LinkedObject, copied)
+        self.assertNotEqual(copied.ObjectId, self.part.ObjectId)
+        self.assertEqual(copied.Placement.toMatrix(), self.part.Placement.toMatrix())
+        self.assertEqual(Model.children(root)[0].LinkPlacement.toMatrix(), copied.Placement.toMatrix())
+        self.assertEqual(destination.UndoCount, 0)
+        self.assertEqual(source_ids, {obj.Name: getattr(obj, "ObjectId", None) for obj in self.doc.Objects})
+        ids = root.ObjectId, copied.ObjectId
+        App.closeDocument(destination.Name)
+        reopened = CadDocument.open(str(filename))
+        root = Model.metadata(reopened).RootComponent
+        self.assertEqual((root.ObjectId, Model.children(root)[0].LinkedObject.ObjectId), ids)
+        self.assertEqual(len([obj for obj in Model.definitions(reopened) if obj.Label == "Part001"]), 0)
+
+    def testLegacyExternalizeKeepsReturnedDefinitionBelowFile(self):
+        self.doc.saveAs(str(self.output / "externalize-owner.cadprt"))
+        source_id = self.child.LinkedObject.ObjectId
+        moved = Model.externalize(self.child.LinkedObject, self.output / "externalized-child.cadprt")
+        root = Model.metadata(moved.Document).RootComponent
+        self.assertTrue(Model.is_file_container(root))
+        self.assertEqual(Model.children(root)[0].LinkedObject, moved)
+        self.assertEqual(moved.ObjectId, source_id)
+        self.assertEqual(self.child.LinkedObject, moved)
+        self.assertEqual(moved.Document.UndoCount, 0)
+        Model.validate(self.doc)

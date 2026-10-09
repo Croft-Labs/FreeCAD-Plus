@@ -1602,6 +1602,8 @@ def copy_to_external_file(definition, filename):
         if App.GuiUp:
             copied.Visibility = True
         external.recompute()
+        ensure_file_container(external)
+        external.clearUndos()
         validate(external)
         external.save()
         return copied
@@ -1691,6 +1693,8 @@ def externalize(definition, filename):
         # the saved file contains current geometry throughout the moved closure.
         for component in refresh_order:
             activate(mapping[component.Name], strict=False)
+        ensure_file_container(external)
+        external.clearUndos()
         validate(external)
         external.saveAs(str(destination))
         with transaction(doc, "Externalize Component"):

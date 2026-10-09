@@ -145,3 +145,23 @@ class TestComponentFileWorkspace(unittest.TestCase):
         Navigator.delete_selected_instances()
         self.assertEqual(Gui.Selection.getSelection(), [])
         self.assertEqual(Model.children(self.root)[0].LinkedObject, self.part)
+
+    def testNewExternalComponentUsesFileRootWithoutExtraPart(self):
+        output = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"])
+        self.doc.saveAs(str(output / "external-create-owner.cadprt"))
+        destination = output / "Fasteners.cadprt"
+        def choose_storage(parent, title, prompt, choices, *args):
+            return choices[1], True
+        with patch.object(QtWidgets.QInputDialog, "getItem", side_effect=choose_storage), \
+             patch.object(QtWidgets.QInputDialog, "getText", return_value=("M3 screw", True)), \
+             patch.object(QtWidgets.QFileDialog, "getSaveFileName", return_value=(str(destination), "")):
+            definition = self.panel.new_component(self.doc, open_editor=False)
+        root = Model.metadata(definition.Document).RootComponent
+        self.assertTrue(Model.is_file_container(root))
+        self.assertEqual(Model.children(root)[0].LinkedObject, definition)
+        self.assertEqual(definition.Label, "M3 screw")
+        self.assertEqual([obj.Label for obj in Model.definitions(definition.Document)
+                          if not Model.is_file_container(obj)], ["M3 screw"])
+        self.assertEqual(Model.children(self.root), [self.link])
+        self.assertIn(definition.Document, Model.external_documents(self.doc))
+        CadDocument.preflight(destination)

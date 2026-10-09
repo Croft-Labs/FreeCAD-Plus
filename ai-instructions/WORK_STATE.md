@@ -1,5 +1,46 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 external destination file roots
+
+7.8.13d2b1 wraps independent Copy to External File destinations, the retained
+externalize compatibility service and New Component/new external file destinations
+in the validated file container before final save. Each contains one occurrence of
+the intended definition, with its placement preserved and no extra Part001. Return
+values and source assembly links still refer to component definitions, not the file
+container. Destination bootstrap undo is cleared; original-file edits/undo remain
+separate. The identity-moving compatibility service is not newly exposed in the UI.
+
+New tests cover independent identity/source retention, placements, destination
+save/reopen, retained identity-moving consumers and named external creation without
+adding an instance to the host assembly. External-copy UI acceptance now resolves
+the copied definition beneath its file container. Add Component workflow unchanged.
+Owner DOCX creation/copy requirements updated; pages 68-70 rendered/reviewed, native
+numbering preserved, and the affected Make Sub-Link heading kept with its text.
+No native build, owner payload or shortcut update.
+
+Validation: the corrected source-overlay run passes 78 of 79 checks (eight file
+container, nine workspace, three externalization, 32 hierarchy and 27 core cases).
+All destination-specific checks pass. The initial run left the installed navigator
+observers alive and additionally lost New File activation; removing those observers
+eliminated that overlap. One existing core GUI check still fails reproducibly in a
+fresh process: testNavigatorRootIsComponentAndHistoryIsSeparate encounters a native
+access violation/break signal when replacing the scene for an isolated component tab
+after editing a published result with contextual transparency. Retaining the new
+view's original scene did not fix it; restoring the existing context scene also
+failed. Both attempted changes were removed. This is not a clean grouped acceptance
+or an owner-ready build. The already-recorded Layers close callback diagnostic also
+recurs. Generated test/render files are removed after this summary.
+
+Immediate next task: 13f1 repair and regress the isolated-tab/context-scene transition
+before resuming older-file migration. New-file and copy destinations are implemented;
+Open in new window integration is not accepted as complete.
+
+Next: 13d2b2 migrate existing .cadprt opens and legacy conversions after verifying
+saved identities, preserving placements/references and conversion undo semantics.
+Definition deletion, complete file-level command/assembly guards and grouped owner
+delivery remain outstanding. No existing files are automatically migrated by this step.
+
+
 ## October 9 New File and pinned Part Tree workspace
 
 7.8.13d2a connects native New to new_file_document. It creates the file container,

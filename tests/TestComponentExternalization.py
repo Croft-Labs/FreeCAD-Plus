@@ -147,7 +147,9 @@ class TestComponentExternalization(unittest.TestCase):
         self.assertEqual(self.second.LinkedObject, self.part)
         copied_doc = next(doc for doc in App.listDocuments().values()
                           if doc.FileName and Path(doc.FileName) == self.destination)
-        copied = Model.metadata(copied_doc).RootComponent
+        file_root = Model.metadata(copied_doc).RootComponent
+        self.assertTrue(Model.is_file_container(file_root))
+        copied = Model.children(file_root)[0].LinkedObject
         self.assertNotEqual(copied.ObjectId, self.part.ObjectId)
         self.assertNotEqual(Model.children(copied)[0].LinkedObject.ObjectId,
                             self.child.LinkedObject.ObjectId)
