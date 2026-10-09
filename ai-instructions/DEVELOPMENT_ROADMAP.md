@@ -3484,6 +3484,16 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     - [   ] 7.8.13e2 Next: audit remaining native modeling command routes and
       assembly relationship ownership/persistence beneath the file. Preserve the
       native solver and keep file History origin-only; do not change Add Component.
+      - [ X ] 7.8.13e2a Native Part Primitive, Extrude, Revolve, Loft and Sweep
+        dispatch to the shared component tasks, preserving legacy document dialogs.
+        PartGui compiled; actual native routing/refusal/cancellation and legacy
+        Primitive dialog checks pass. Eight grouped cases pass (WORK_STATE).
+        Owner UI DOCX updated/rendered; owner delivery remains in 13f.
+      - [   ] 7.8.13e2b Next: remaining native command routes (including Part
+        Boolean, copy and shape operations) and assembly relationship integration.
+        Native Assembly requires AssemblyObject; a file App::Part is not a solver
+        assembly. Resolve ownership/persistence with the existing native solver
+        before accepting joints under the file; keep modeling History origin-only.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.
@@ -3498,7 +3508,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13e2 native command routes and file-level assembly relationships.
+      Next implementation: 13e2b remaining native routes and assembly relationship integration.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

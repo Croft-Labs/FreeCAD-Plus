@@ -79,6 +79,29 @@
 
 #include "TaskLinkArrayParameters.h"
 
+namespace
+{
+bool launchComponentTask(Gui::Command* command, const char* module)
+{
+    auto* document = command->getDocument();
+    if (!document) {
+        return false;
+    }
+    for (auto* object : document->getObjects()) {
+        auto* role = dynamic_cast<App::PropertyString*>(object->getPropertyByName("ComponentRole"));
+        if (role && role->getStrValue() == "Document") {
+            // Shared tasks validate the edited component before creating a dialog
+            // or transaction. Never fall back to a legacy dialog after refusal.
+            command->doCommand(Gui::Command::Gui,
+                               "from freecad.gui.%s import launch; launch()", module);
+            return true;
+        }
+    }
+    return false;
+}
+}  // namespace
+
+
 //===========================================================================
 // Part_PickCurveNet
 //===========================================================================
@@ -232,6 +255,9 @@ CmdPartPrimitives::CmdPartPrimitives()
 void CmdPartPrimitives::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (launchComponentTask(this, "ComponentPrimitiveTask")) {
+        return;
+    }
     PartGui::TaskPrimitives* dlg = new PartGui::TaskPrimitives();
     Gui::Control().showDialog(dlg);
 }
@@ -1447,6 +1473,9 @@ CmdPartExtrude::CmdPartExtrude()
 void CmdPartExtrude::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (launchComponentTask(this, "ComponentExtrudeTask")) {
+        return;
+    }
     Gui::Control().showDialog(new PartGui::TaskExtrusion());
 }
 
@@ -1563,6 +1592,9 @@ CmdPartRevolve::CmdPartRevolve()
 void CmdPartRevolve::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (launchComponentTask(this, "ComponentRevolveTask")) {
+        return;
+    }
     Gui::Control().showDialog(new PartGui::TaskRevolution());
 }
 
@@ -1744,6 +1776,9 @@ CmdPartLoft::CmdPartLoft()
 void CmdPartLoft::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (launchComponentTask(this, "ComponentLoftTask")) {
+        return;
+    }
     Gui::Control().showDialog(new PartGui::TaskLoft());
 }
 
@@ -1773,6 +1808,9 @@ CmdPartSweep::CmdPartSweep()
 void CmdPartSweep::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (launchComponentTask(this, "ComponentPipeTask")) {
+        return;
+    }
     Gui::Control().showDialog(new PartGui::TaskSweep());
 }
 

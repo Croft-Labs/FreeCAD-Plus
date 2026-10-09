@@ -1,5 +1,44 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 native Part creation command routing
+
+7.8.13e2a is complete. Part Primitive, Extrude, Revolve, Loft and Sweep now route
+component documents through their existing shared Primitive, Extrude, Revolve,
+Loft and Pipe tasks. The native helper checks document metadata; no new geometry
+backend or assembly ownership is introduced. Shared file-Edit refusal runs before
+a dialog/transaction and cannot fall through into a legacy task. Legacy documents
+retain native Part dialogs. Add Component remains deferred.
+
+Build: incremental Release PartGui target completed with exit 0 in
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-06_recovered_workload.
+The rebuilt PartGui.pyd was exercised through that tree's FreeCAD.exe, with source
+Python overlays for the component modules/tasks. This is a development validation
+build, not a new owner payload. No desktop shortcut change or release.
+
+Validation: 8/8 cases pass: 3 TestComponentNativePartRouting and 5
+TestComponentFileCommands. The native tests invoke all five actual Part commands,
+verify shared task opening/cancellation in a domestic component, and verify file
+refusal without object, undo-count or pending-transaction changes. A legacy
+Primitive opens its original dialog. The initial run paused at the expected native
+error dialog; the corrected test dismisses native message boxes during refusal
+checks. Expected ValueError traces remain for the five file refusals; these are
+not application crashes. Shared task guards, explicit sketch/plane rejection,
+datum availability and file occurrence placement Undo/Redo pass in the same run.
+Python syntax and CRLF-aware git diff --check pass.
+
+Owner UI DOCX describes the native command routes and legacy fallback boundary.
+Native numbering preserved; rendered pages 66-67 reviewed. Contract, summary,
+roadmap and test guide synchronized. Generated validation output removed after
+recording results; the useful development build is retained. Source publication
+remains separate from owner payload/shortcut delivery (13f).
+
+Next task: 7.8.13e2b, remaining native Boolean/copy/shape routes and assembly
+relationship integration. Inspection confirms native Assembly activeAssembly
+requires Assembly::AssemblyObject, while the pinned file is App::Part. Current
+component validation admits only Origin and occurrences in the file Group. Do not
+simply place a JointGroup there or label the file an Assembly; preserve native
+solver ownership and establish persistence before claiming joint compatibility.
+
 ## October 9 shared file Edit modeling command guards
 
 7.8.13e1 is complete in source. The shared modeling_component validator is now

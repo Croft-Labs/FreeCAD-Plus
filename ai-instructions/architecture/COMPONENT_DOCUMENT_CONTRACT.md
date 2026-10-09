@@ -288,6 +288,13 @@ movement changes links under the file transactionally while its global frame sta
 fixed and its History remains origin-only. This does not establish native assembly
 joint storage compatibility; that audit remains roadmap 7.8.13e2.
 
+Native Part Primitive, Extrude, Revolve, Loft and Sweep commands inspect component
+document metadata and dispatch to the existing Primitive, Extrude, Revolve, Loft
+and Pipe tasks respectively. They inherit the file-Edit guard and ownership
+contract before task creation. A failed shared launch cannot fall through to its
+legacy dialog. Documents without component metadata retain their native dialogs.
+Other Part operations and native Assembly solver ownership remain separate gates.
+
 ## Definition deletion
 
 `definition_deletion_plan` reviews the selected definition and its native owned

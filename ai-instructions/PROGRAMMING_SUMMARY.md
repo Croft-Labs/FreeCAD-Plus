@@ -14,8 +14,11 @@ Legacy conversion/recovery now creates the file root in the same undo transactio
 (7.8.13d2b2b). Definition deletion now has a guarded transactional backend;
 Models/native Delete now use it with unused-edit and isolated-tab cleanup;
 shared modeling launchers now guard file Edit, including explicit sketch/plane
-destinations. Native command and assembly-relationship acceptance is next; owner
-delivery is batched. TestComponentFileCommands covers guards and file placement.
+destinations. Native Part Primitive/Extrude/Revolve/Loft/Sweep now dispatch to the
+shared tasks in component documents, retaining legacy dialogs elsewhere.
+TestComponentNativePartRouting covers the native dispatch; TestComponentFileCommands
+covers task guards and file placement. Remaining native routes and assembly
+relationships still need acceptance; owner delivery is batched.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI
