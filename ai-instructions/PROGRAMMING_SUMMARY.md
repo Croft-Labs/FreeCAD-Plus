@@ -26,8 +26,10 @@ cross-checks component-file-assembly-v1 on save/open. TestComponentAssemblyPersi
 covers ownership, endpoint guards and native fixed-joint persistence. Ground/fixed
 relationship services now create, edit and remove joints transactionally, verify
 fixed connector frames and preserve grounded placements; external definitions stay
-unchanged (TestComponentRelationshipTransactions). Part Tree/file Edit command
-integration is next; owner delivery and broader compatibility remain pending.
+unchanged (TestComponentRelationshipTransactions). Part Tree Ground/Unground now
+requires file Edit and one direct occurrence, with stale-menu and task guards
+(TestComponentGroundingUI). Fixed relationship creation/review/edit/removal UI is
+next; owner delivery and broader compatibility remain pending.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
 definition deletion UI integration is covered by TestComponentDefinitionDeletionUI

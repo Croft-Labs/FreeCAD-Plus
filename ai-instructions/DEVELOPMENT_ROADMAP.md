@@ -3527,6 +3527,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
               build unchanged, using the retained verified development runtime.
           - [   ] 7.8.13e2b2c Bind file Edit/Part Tree relationship commands and
             selection to the validated service, keeping Model History origin-only.
+            - [ X ] 7.8.13e2b2c1 Ground/Unground context menu for one direct
+              occurrence during file Edit. Revalidate stable row/edit context at
+              invocation; refuse grouped, nested, multiple and busy selections.
+              Six UI and eleven backend regression cases pass; owner DOCX updated
+              with native numbering preserved and pages 66-68 rendered/reviewed.
+            - [   ] 7.8.13e2b2c2 Next: Fixed relationship creation plus a review,
+              edit and removal interface in Part Tree; connect selection to the
+              existing transaction service without file-owned modeling history.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.

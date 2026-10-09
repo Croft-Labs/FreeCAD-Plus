@@ -323,6 +323,15 @@ Ground and detached Fixed frames; other native joint types and interactive geome
 picking are not implied by these services. See TestComponentAssemblySolver,
 TestComponentAssemblyPersistence and TestComponentRelationshipTransactions.
 
+The first UI adapter is ComponentNavigator.file_grounding_target/set_file_grounding.
+It requires the current file root to remain edited, a single ungrouped direct owning
+occurrence, the matching active document and no active task/transaction. Menu actions
+resolve stable row identities at invocation and recheck that context before dispatch.
+Ground state comes from the native ground relationship, not a placement lock alone.
+AssemblyGui loads without switching workbenches/tabs. Models, definitions and nested
+occurrences cannot become file-grounding targets through this adapter. Fixed
+relationship creation/review/edit/removal UI remains a separate step.
+
 ## File modeling task guards
 
 The shared active_component resolver rejects file containers for modeling and

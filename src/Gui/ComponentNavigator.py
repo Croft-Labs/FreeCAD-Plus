@@ -2147,6 +2147,38 @@ class Navigator(QtWidgets.QDockWidget):
             iterator += 1
         raise ValueError(tr("The selected item changed. Open the menu again."))
 
+    def file_grounding_target(self, item):
+        """Grounding belongs to a file occurrence, never its shared definition."""
+        root = resolve(self.root_key) if self.root_key else None
+        if (root is None or not model().is_file_container(root)
+                or self.active_key != self.root_key or self.unused_edit()
+                or App.ActiveDocument != root.Document):
+            raise ValueError(tr("Edit the file before changing assembly grounding."))
+        if Gui.Control.activeDialog() or root.Document.HasPendingTransaction:
+            raise ValueError(tr("Finish the current task before changing assembly grounding."))
+        rows = self.structure.selectedItems() if item.isSelected() else [item]
+        members = self.members(item)
+        if (len(rows) != 1 or len(members) != 1 or not members[0]
+                or len(members[0][1]) != 1 or self.tree_root(item) != root):
+            raise ValueError(tr("Select one top-level occurrence. Expand grouped instances first."))
+        occurrence = resolve(members[0][0])
+        if occurrence not in model().children(root):
+            raise ValueError(tr("The occurrence changed. Select it again."))
+        return occurrence
+
+    def set_file_grounding(self, item, grounded):
+        occurrence = self.file_grounding_target(item)
+        # Register the native engine/view providers without switching workbenches or tabs.
+        import AssemblyGui  # noqa: F401
+        if grounded:
+            model().ground_occurrence(occurrence)
+        else:
+            record = model().assembly_record(occurrence.Document)
+            joints = [occurrence.Document.getObject(entry["object"])
+                      for entry in record["joints"]] if record else []
+            grounds = [joint for joint in joints if getattr(joint, "ObjectToGround", None) == occurrence]
+            model().remove_relationships(occurrence.Document, grounds)
+
     def build_menu(self, tree, item):
         menu = QtWidgets.QMenu(self)
         # Retain the Python submenu wrappers throughout popup execution.
@@ -2188,6 +2220,22 @@ class Navigator(QtWidgets.QDockWidget):
             if unused and not value[1] and object_key(definition) == unused["key"]:
                 menu.addAction(tr("Open in new window"), lambda: self.run(lambda: self.open_component_tab(value[0])))
                 return menu
+            if value[1]:
+                assembly = model().assembly_context(obj.Document)
+                grounded = bool(assembly and any(
+                    getattr(joint, "ObjectToGround", None) == obj
+                    for group in assembly.Group if group.isDerivedFrom("Assembly::JointGroup")
+                    for joint in group.Group))
+                action = menu.addAction(tr("Unground component") if grounded else tr("Ground component"),
+                    lambda checked=False, grounded=grounded:
+                        self.run(lambda: self.set_file_grounding(target(), not grounded)))
+                action.setObjectName("fileUngroundOccurrence" if grounded else "fileGroundOccurrence")
+                action.setToolTip(tr("Fix this occurrence at its current position in the file. Shared component definitions are unchanged."))
+                try:
+                    self.file_grounding_target(item)
+                except ValueError as exc:
+                    action.setEnabled(False)
+                    action.setToolTip(str(exc))
             if value[1]:
                 menu.addAction(tr("Cut"), lambda: self.run(lambda: self.cut_instances(target())))
                 menu.addAction(tr("Move Components"), lambda: self.run(lambda: self.move_components(target())))

@@ -1,5 +1,45 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 Part Tree grounding interface
+
+7.8.13e2b2c1 is complete in source. Part Tree now offers Ground component and
+Unground component for a single direct occurrence while the file is in Edit.
+ComponentNavigator rechecks file/active-document/task/transaction and stable-row
+identity at invocation. Single-click file selection cannot substitute for Edit;
+unused-model, nested, grouped and multiple selections cannot ground file instances.
+The native engine loads without switching workbenches or tabs. Menu state reflects
+an actual GroundedJoint, allowing an existing placement lock to be adopted exactly
+once as an explicit ground. The file's History remains origin-only.
+
+Validation: six TestComponentGroundingUI cases and eleven
+TestComponentRelationshipTransactions cases pass (17 distinct). Actual menu actions
+verify grounding/ungrounding, native placement locks, unchanged definition placement
+locks, file Edit, origin-only History, current tab/count and Undo/Redo. Additional
+checks cover stale Edit and deleted targets, refresh-safe menus, unfinished
+transactions, grouped/nested/multiple refusal and existing-lock adoption. The initial
+nested-row fixture attempted to find children before expanding and refreshing its
+group. Correcting that fixture produced the six-case passing run; a final targeted
+run also proves an expanded individual is enabled before a multi-row selection
+makes it disabled. Backend regressions include actual conflicting-solve rollback and
+external-definition save/reopen isolation. Final runtime stderr is empty. Python
+syntax and CRLF-aware diff checks pass.
+
+Runtime: retained verified development build
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-06_recovered_workload,
+with source ComponentModel/CadDocument/ComponentNavigator overlays. No native source
+changed, so no native rebuild was needed. This is not a new owner payload or shortcut
+delivery. Source publication and owner delivery remain separate.
+
+Owner UI DOCX updated locally in its Part Tree paragraph; native automatic numbering
+preserved. Rendered pages 66-68 reviewed with no clipping/overlap in the affected text.
+Summary, contract and roadmap synchronized. Generated validation/render output is
+removed after recording results; the useful development build is retained.
+
+Next task: 7.8.13e2b2c2, Fixed relationship creation and a Part Tree review/edit/removal
+interface backed by the existing transaction service. Overall active-component/Part
+Tree implementation and grouped owner delivery (13f) remain open. Add Component
+workflow remains deferred.
+
 ## October 9 Ground/Fixed relationship transactions
 
 7.8.13e2b2b2 is complete for the bounded Ground/Fixed pilot. ComponentModel provides
