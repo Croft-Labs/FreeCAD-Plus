@@ -3386,10 +3386,15 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   Final grouped source-overlay validation passes 64 cases (20 hierarchy, three
   creation-command, 14 Models and 27 core), zero failures/errors/skips or unexpected
   GUI diagnostics, exit zero. DOCX rendered/reviewed; native build status is separate.
-- [   ] 7.8.12b Complete matching native build and installed owner acceptance with
-  shortcut delivery, including the outstanding October 7 integration gates. Source
-  overlays against the October 6 engine do not close this gate. General expression
-  copying and consumer/path remapping remain explicitly refused.
+- [ X ] 7.8.12b Matching native Release AllTargets build and installed owner delivery
+  completed October 9. The 250-case final acceptance set uses installed modules,
+  no overlays, and includes relocated nested-file/shared-edit/domestic-copy reopen
+  plus an actual saved-shortcut launch (exit zero). The desktop shortcut targets
+  freecad_plus_2026-10-09_file_hierarchy_payload; 15,583 files are inventoried.
+  WORK_STATE separates build retry, tests, delivery and publication. Grouped sketch
+  inactivity timeouts remain unconfirmed; all 33 cases pass independently. This
+  closes bounded hierarchy delivery, not exhaustive repeated-session qualification.
+  General expression copying and consumer/path remapping remain explicitly refused.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 
@@ -9691,10 +9696,18 @@ real indexed-job export and recovery. Broader input/output-state tracking remain
   The authenticated upstream fetch found 126 missing history commits: 112 non-merge
   commits and 14 merge commits. The merge preserves upstream authorship and
   history. Rollback reference: `codex/pre-upstream-2026-10-07`.
-- [   ] 16.6b Validate rebuilt native upstream changes and deliver the next grouped owner build.
-  Native GUI/App/Part/PartDesign/Sketcher/CAM/TechDraw and Coin changes require
-  a matching rebuild. Existing owner payload and shortcut remain the October 6
-  delivery. This source integration is not a new owner-build acceptance claim.
+- [ X ] 16.6b Matching native AllTargets rebuild and bounded installed acceptance
+  completed October 9. Native GUI/App/Part/PartDesign/Sketcher/CAM/TechDraw,
+  Assembly and pinned Coin are in the new file_hierarchy_payload. Final acceptance
+  includes native camera/document lifecycle, 33 independent sketch workflows,
+  Pattern task/suppression/persistence, removeSplitter and 123 CAM regressions.
+  Owner shortcut target/workdir and actual saved-shortcut launch pass; WORK_STATE
+  records the full 250-case delivery set and complete payload inventory.
+- [   ] 16.6c Investigate grouped sketch-suite inactivity timeouts at differing cases.
+  The stale datum-plane test and leaking test observer were repaired, but subsequent
+  grouped runs still timed out. All 33 cases pass in separate installed processes;
+  cause remains unconfirmed. Repeated-session and physical owner qualification are
+  not established by these isolated checks.
 
 ### Compatibility decisions
 

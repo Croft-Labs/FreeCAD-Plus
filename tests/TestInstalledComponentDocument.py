@@ -147,17 +147,29 @@ class TestInstalledComponentDocument(unittest.TestCase):
         self.assertNotEqual(reference.SourceObject.Document, doc)
         panel = ComponentNavigator.show(doc)
         self.assertEqual(panel.structure.topLevelItem(0).text(0), root.Label)
-        from PySide import QtCore
+        from PySide import QtCore, QtWidgets
         self.assertEqual([panel.tabs.tabText(i) for i in range(panel.tabs.count())],
                          ["Models", "Part Tree", "History"])
         counts = Model.instance_counts(root)
-        expected = set(Model.definitions(doc)) | set(counts)
+        expected, visited, pending = set(), set(), [doc]
+        while pending:
+            current = pending.pop()
+            if current in visited:
+                continue
+            visited.add(current)
+            expected.update(Model.definitions(current))
+            pending.extend(Model.external_documents(current))
         actual = {}
-        for index in range(panel.models.topLevelItemCount()):
-            row = panel.models.topLevelItem(index)
-            self.assertEqual(row.childCount(), 0)
+        iterator = QtWidgets.QTreeWidgetItemIterator(panel.models)
+        while iterator.value():
+            row = iterator.value()
             component = ComponentNavigator.resolve(row.data(0, QtCore.Qt.UserRole))
-            actual[component] = int(row.text(1))
+            if component is not None:
+                self.assertEqual(row.childCount(), 0)
+                actual[component] = int(row.text(1))
+            else:
+                self.assertTrue(row.childCount(), "Imported file groups expose their definitions")
+            iterator += 1
         self.assertEqual(actual, {component: counts.get(component, 0) for component in expected})
         root_row = panel.structure.topLevelItem(0)
         self.assertEqual(root_row.childCount(), len(Model.children(root)))

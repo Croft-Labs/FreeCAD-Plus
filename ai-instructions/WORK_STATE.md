@@ -1,5 +1,63 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 hierarchy native build and owner delivery
+
+Implementation remains native/application source
+`40f1698230ccbbac5b4f44fc0ba8124a0ee08c60`, incorporating hierarchy milestone
+`be18640254d44c9a99ca789dd6140457e2bcc580`. This continuation changes acceptance
+tests and documentation only. The previously synchronized and rendered 92-page
+owner UI DOCX remains applicable; no new UI requirement or application edit.
+
+**Build:** matching Windows Release AllTargets passed in
+`test-builds/freecad_plus_2026-10-06_recovered_workload`, with pinned LibPack
+26.3.0-v3.5.3 and Coin 50e37f04e7027661ea2318d0425b7836ac819568. The first full
+pass failed when Assembly's CMake autogen process exited -1073741819; an incremental
+AllTargets retry passed without source changes. Generated install scripts contain
+absolute Program Files/FreeCAD paths and were not run. Runtime directories were
+copied into the independent owner payload below. FEM remains disabled.
+
+**Installed acceptance:** 250 final cases pass, no failures/errors/skips or
+unexpected captured GUI diagnostics, no source overlays, and successful launcher
+exits. Loaded application module hashes match the checkout. Breakdown:
+
+- 71 hierarchy/Models/core/create/Save/Undo (21/14/27/3/3/3).
+- One fresh-process hierarchy test after relocating the related files together:
+  nested unused imports, stable document/definition/occurrence identities, retained
+  placement, external edits shared by two assemblies, and a same-name domestic
+  copy that remains independent through another saved source edit and reopen.
+- 12 installed document/preview cases (6/6), including native camera/view closing,
+  standard New/Open/Save As/Save Copy, legacy conversion and nested Models traversal.
+- Eight Pattern cases (three task-dialog and five suppression/persistence), plus
+  one native removeSplitter geometry case.
+- 123 CAM cases: 23 workplane-frame, 82 invalid-input/recovery and 18 surface-avoidance.
+- All 33 sketch workflow cases in independent fresh processes.
+- One additional cold hierarchy case launched through the actual saved desktop shortcut.
+
+Acceptance test repairs remove an accidental source-navigator overlay, update the
+Models traversal and its QtWidgets import, and replace obsolete datum-plane test
+controls with the adopted numeric controls. PlaneTask cleanup prevents a failing
+test from leaving a selection observer attached. This fixes the initial cascading
+selection failures. Subsequent grouped sketch runs still reached the inactivity
+guard at differing cases. Their cause is unconfirmed; individual cases all pass.
+Do not treat the incomplete grouped runs as acceptance or claim exhaustive repeated
+GUI-session stability. Physical owner feedback remains separate.
+
+**Owner delivery:**
+`C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-09_file_hierarchy_payload/FreeCADPlus.exe`.
+The existing desktop `FreeCADPlus.exe - Shortcut.lnk` was retargeted, saved and
+reopened to verify target and working directory. An actual shortcut launch used
+that payload, passed the relocated cold hierarchy case and exited zero. No task
+native process remains. The accepted October 6 payload is retained as rollback.
+The launcher is reused, not recompiled: SHA256
+`05c3a107c9ce1e0e370367a4e84e2ac8afe7a9e8e92cdb7543bc3db9a2547518`.
+The payload contains release-info.json with per-suite hashes/results and a complete
+15,583-file SHA256 payload-manifest.json. This is a local owner build, not a release.
+General expression copying and unreviewed consumer/path remapping still refuse.
+
+**Publication and cleanup:** acceptance milestone commit/push and remote verification
+are pending closeout. Task validation output will be removed after this canonical
+summary is committed; the useful native tree, dependencies and owner payload remain.
+
 ## October 9 domestic/external file hierarchy
 
 Implementation commit `be18640254d44c9a99ca789dd6140457e2bcc580` was pushed to

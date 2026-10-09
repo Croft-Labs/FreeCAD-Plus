@@ -14,6 +14,7 @@ import ComponentModel as Model
 import ComponentSketch as Sketch
 import ComponentExtrude as Extrude
 from freecad.gui import ComponentSketchTask as Task
+from freecad.gui import ComponentPlaneTask as PlaneTask
 from freecad.gui import ComponentNavigator as Navigator
 from freecad.gui import ComponentExtrudeTask as ExtrudeTask
 from PySide import QtCore, QtGui, QtWidgets
@@ -52,6 +53,8 @@ class TestComponentSketchWorkflow(unittest.TestCase):
                 widget.done(QtWidgets.QMessageBox.No)
 
     def tearDown(self):
+        if PlaneTask._task:
+            PlaneTask._task.reject()
         if Task._task:
             Task._task.reject()
         if ExtrudeTask._task:
@@ -325,11 +328,11 @@ class TestComponentSketchWorkflow(unittest.TestCase):
     def test_datum_invalid_directions_cancel_and_atomic_undo(self):
         task = Task.launch(self.root, datum_only=True)
         before = [obj.Name for obj in self.doc.Objects]
-        task.orientation_mode.setCurrentIndex(task.orientation_mode.findData("Axis directions"))
-        for control, value in zip(task.directions[0], (0, 0, 1)):
-            control.setValue(value)
+        task.mode.setCurrentIndex(task.mode.findData("Enter values"))
+        for control in task.normal:
+            control.setValue(0)
         self.assertFalse(task.accept())
-        self.assertIn("parallel", task.status.text())
+        self.assertIn("nonzero", task.status.text())
         self.assertEqual([obj.Name for obj in self.doc.Objects], before)
         task.reject()
         self.assertEqual([obj.Name for obj in self.doc.Objects], before)

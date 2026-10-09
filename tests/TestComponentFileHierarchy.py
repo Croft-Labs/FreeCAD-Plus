@@ -389,3 +389,38 @@ class TestComponentFileHierarchy(unittest.TestCase):
             Model.copy_definition(self.screw, self.assembly, "Refused")
         self.assertEqual(len(self.assembly.Objects), before)
         self.assertFalse(self.assembly.HasPendingTransaction)
+
+    def testWriteColdHierarchyFixture(self):
+        assembly = self.document("ColdAssembly")
+        hardware = self.document("ColdHardware")
+        coatings = self.document("ColdCoatings")
+        other = self.document("ColdOtherAssembly")
+        screw = Model.create_definition(hardware, "M3 screw")
+        zinc = Model.create_definition(coatings, "Zinc")
+        coatings.save()
+        shape = hardware.addObject("Part::Box", "ScrewGeometry")
+        shape.Length = 3
+        Model.register_object(screw, shape, "Object", True)
+        hardware.recompute()
+        Model.import_file(hardware, coatings)
+        hardware.save()
+        first = Model.add_component(self.root(assembly), screw,
+            placement=App.Placement(App.Vector(12, 3, 4), App.Rotation()))
+        shared = Model.add_component(self.root(assembly), screw)
+        Model.add_component(self.root(other), screw)
+        domestic = Model.copy_definition(screw, assembly, "M3 screw")
+        Model.replace_instances(screw, domestic, [first])
+        shape.Length = 7
+        hardware.recompute()
+        hardware.save()
+        assembly.recompute()
+        assembly.save()
+        other.save()
+        expected = {"assembly": Model.metadata(assembly).ObjectId,
+                    "hardware": Model.metadata(hardware).ObjectId,
+                    "coatings": Model.metadata(coatings).ObjectId,
+                    "screw": screw.ObjectId, "domestic": domestic.ObjectId,
+                    "replaced": first.ObjectId, "shared": shared.ObjectId,
+                    "zinc": zinc.ObjectId}
+        (self.output / "cold-hierarchy.json").write_text(
+            json.dumps(expected, indent=2), encoding="utf-8")

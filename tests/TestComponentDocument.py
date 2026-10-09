@@ -608,8 +608,9 @@ class TestComponentDocument(unittest.TestCase):
         import FreeCADGui as Gui
         from PySide import QtCore, QtWidgets
         path = Path(__file__).resolve().parents[1] / "src/Gui/ComponentNavigator.py"
-        navigator = sys.modules.get("freecad.gui.ComponentNavigator")
-        if navigator is None or Path(navigator.__file__).resolve() != path:
+        navigator = importlib.import_module("freecad.gui.ComponentNavigator")
+        if (os.environ.get("FREECAD_PLUS_PROFILE_SOURCE") == "1"
+                and Path(navigator.__file__).resolve() != path):
             spec = importlib.util.spec_from_file_location("ComponentNavigatorTest", path)
             navigator = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(navigator)
