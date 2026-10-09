@@ -8,5 +8,9 @@ initial Part001, empty save/reopen, identity-preserving Undo/Redo, native owned
 Body payloads, child occurrence removal without deleting linked definitions,
 loaded external occurrences, geometry/expression consumers, pending edits and
 failure rollback. TestComponentFileContainer provides the adjacent migration
-regression suite. UI deletion/edit-context acceptance remains roadmap 7.8.13d2c2;
-these backend tests do not establish native Delete or Models menu behavior.
+regression suite. TestComponentDefinitionDeletionUI covers Models menu/keyboard, actual native Delete,
+file protection, blocked referenced definitions, unused-edit cleanup, isolated-tab
+closing, the last-tab replacement file view and Undo/Redo. Run it alongside
+TestComponentActiveEditing and TestComponentFileWorkspace. Source-overlay runs
+must replace the installed navigator command adapter and bind the test modules to
+the source navigator; otherwise they exercise the older installed implementation.

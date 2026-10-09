@@ -1,5 +1,39 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 component definition deletion UI
+
+7.8.13d2c2 and the 13d file-container source integration are complete. Models now
+provides Delete component and handles Delete for a single domestic definition.
+Native bare-definition Delete routes through the existing Python adapter to the
+same guarded service. Refusal clears native selection so generic deletion cannot
+bypass ownership checks; file origins/root remain protected. Part Tree deletion
+continues to remove occurrences only. Imported definitions require opening their
+own file/tab. Preflight and pending-edit checks precede view changes.
+
+Successful deletion ends temporary unused views and closes isolated views of the
+definition, then activates the file. When only an isolated tab remains, a file view
+is created before closing it, preserving the open document. Undo restores the model
+and native contents without reopening closed tabs. The fallback native C++ blanket
+guard remains for selections without an active navigator; no C++ change/build was
+needed for this adapter integration. Add Component workflow remains deferred.
+
+Validation: 31/31 source-overlay native checks pass on the verified 2026-10-09
+hierarchy-relocation payload: 6 deletion UI, 7 backend deletion, 9 active-editing
+and 9 file-workspace cases. UI cases include Models menu/keyboard, actual Std_Delete,
+file protection, referenced refusal, unused edit cleanup, isolated/last-tab closing
+and Undo/Redo. The first run mixed installed GUI-module imports with source modules;
+the corrected overlay binds source test modules and the native command adapter.
+The final run has no stderr output. Changed Python syntax and git diff --check pass.
+Owner UI DOCX updated with deletion interactions; native numbering preserved and
+rendered pages 65-66 reviewed. Contract, test guide, summary and roadmap synchronized.
+Generated validation output is removed after recording results. No native rebuild,
+owner payload/shortcut change or release; grouped delivery remains 13f. Source
+commit/push is recorded separately from installed owner-build acceptance.
+
+Next implementation task: 7.8.13e, audit file Edit command guards and file-level
+placement/assembly relationships, ensuring origin-only History and no file-owned
+modeling geometry. Then complete grouped integration and owner delivery in 13f.
+
 ## October 9 component definition deletion service
 
 7.8.13d2c1 is implemented and validated in source. ComponentModel now provides

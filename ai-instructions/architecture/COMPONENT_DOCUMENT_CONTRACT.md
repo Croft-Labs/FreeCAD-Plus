@@ -288,8 +288,16 @@ be inspected by this in-memory guard; this service is not a global reference ind
 `delete_definition` removes the reviewed objects in one transaction and validates
 the surviving document. Undo restores the same identities and native ownership;
 Redo and save/reopen support an empty file. Linked child definitions are retained.
-Pending user edits are refused. This service is backend-only until roadmap
-7.8.13d2c2 connects Models/native Delete and active-edit/tab cleanup.
+Pending user edits are refused. Models Delete (one selected definition) and the
+native bare-definition Delete adapter call the same service. The current file
+context must own the definition; imported models require opening their defining
+file. Preflight runs before view cleanup, so a refused operation retains the edit
+context. Successful deletion ends temporary unused views, closes the definition's
+isolated tabs, and activates the file view. If only an isolated tab remains, create
+a file view before closing it so the document survives. Undo restores objects but
+not closed view tabs. Part Tree occurrence deletion stays separate. Native mixed
+selections are consumed and refused instead of falling through to generic deletion.
+The native blanket definition guard remains a fallback when no navigator is active.
 
 ## Persistence and conversion
 

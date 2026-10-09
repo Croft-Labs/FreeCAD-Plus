@@ -3412,7 +3412,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       Coin checks cover appearance, rendered geometry, native ray picking, camera
       preservation and prior editing workflows; live framebuffer reviewed. Broader
       multi-window/task acceptance and owner delivery remain in 13f.
-  - [   ] 7.8.13d File container and migration: pinned file icon/name/global origin;
+  - [ X ] 7.8.13d File container and migration: pinned file icon/name/global origin;
     new ordinary Part001 definition plus initial occurrence, activated automatically;
     removable first part, valid empty files; preserve existing geometry and identities.
     - [ X ] 7.8.13d1 Opt-in transactional file-root migration and persistence.
@@ -3422,7 +3422,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       validation covered by TestComponentFileContainer. Six new migration cases and
       27 core regressions pass in the native runtime with source overlays. New/Open
       do not invoke this service yet; no owner-build or UI completion claim.
-    - [   ] 7.8.13d2 Integrate the container with New/Open/legacy conversion and
+    - [ X ] 7.8.13d2 Integrate the container with New/Open/legacy conversion and
       copy/externalization destinations; create/activate ordinary Part001, filter
       the storage root out of Models, pin the file row using its name/FreeCAD icon,
       and validate removal/deletion of the first part and existing-file migration.
@@ -3462,14 +3462,17 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
             Native features, source files and external save order are preserved.
             Failure injection checks complete rollback; UI requirements updated
             and rendered. Source-overlay validation recorded in WORK_STATE.
-      - [   ] 7.8.13d2c Ordinary domestic definition deletion, including initial
+      - [ X ] 7.8.13d2c Ordinary domestic definition deletion, including initial
         Part001. Keep the file container protected and permit an empty file.
         - [ X ] 7.8.13d2c1 Shared deletion service: review owned contents, refuse
           occurrences/outside consumers, preserve linked child definitions and
           remove atomically with Undo/Redo and save/reopen acceptance.
-        - [   ] 7.8.13d2c2 Next: connect Models/native Delete to the shared service,
+        - [ X ] 7.8.13d2c2 Connect Models/native Delete to the shared service,
           handle active/unused edit contexts and isolated tabs, and validate UI
-          selection, Undo/Redo and file-row protection. Update owner UI DOCX.
+          selection, Undo/Redo and file-row protection. Owner UI DOCX updated;
+          rendered pages 65-66 reviewed. Native Delete uses the Python adapter;
+          refusal consumes bare/mixed definition selections before generic Delete.
+          31 source-overlay checks pass; owner delivery remains batched in 13f.
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
@@ -3487,7 +3490,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13d2c2 definition deletion UI and edit-context integration.
+      Next implementation: 13e file-level command and assembly guard audit.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

@@ -12,11 +12,13 @@ after identity validation, without writing the originals; bootstrap undo cannot
 remove the file root. File activation refreshes domestic references child-first.
 Legacy conversion/recovery now creates the file root in the same undo transaction
 (7.8.13d2b2b). Definition deletion now has a guarded transactional backend;
-Models/native Delete and edit-context integration are next; owner delivery is batched.
+Models/native Delete now use it with unused-edit and isolated-tab cleanup;
+file-level command/assembly acceptance is next; owner delivery is batched.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
-definition deletion UI integration remains next (7.8.13d2c2). The shared service
-is ComponentModel.delete_definition; TestComponentDefinitionDeletion covers it.
+definition deletion UI integration is covered by TestComponentDefinitionDeletionUI
+(7.8.13d2c2). ComponentModel.delete_definition retains the shared ownership guards;
+TestComponentDefinitionDeletion covers its backend transaction semantics.
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.

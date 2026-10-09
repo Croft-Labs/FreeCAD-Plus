@@ -1225,8 +1225,8 @@ class Navigator(QtWidgets.QDockWidget):
                 return True
             if event.key() == QtCore.Qt.Key_Delete:
                 event.accept()
-                if event.type() == QtCore.QEvent.KeyPress and watched == self.structure:
-                    self.run(self.delete_instances)
+                if event.type() == QtCore.QEvent.KeyPress:
+                    self.run(self.delete_instances if watched == self.structure else self.delete_models)
                 return True
         return super().eventFilter(watched, event)
 
@@ -1458,6 +1458,56 @@ class Navigator(QtWidgets.QDockWidget):
         self.refresh()
         if resolve(self.root_key):
             self.bind_edit_context()
+
+    def delete_models(self):
+        rows = self.models.selectedItems()
+        if len(rows) != 1 or not rows[0].data(0, QtCore.Qt.UserRole):
+            raise ValueError(tr("Select one domestic component definition to delete."))
+        self.delete_model(rows[0].data(0, QtCore.Qt.UserRole))
+
+    def delete_model(self, key):
+        if Gui.Control.activeDialog():
+            raise ValueError(tr("Finish the current task before deleting a component."))
+        component = resolve(key)
+        unused = self.unused_edit()
+        context = resolve(unused["file_root"] if unused else self.root_key)
+        if not model().is_component(component) or context is None or component.Document != context.Document:
+            raise ValueError(tr("Open the defining file before deleting an external component."))
+        doc = component.Document
+        if doc.HasPendingTransaction:
+            raise ValueError(tr("Finish the active edit before deleting a component."))
+        model().definition_deletion_plan(component)
+        key = object_key(component)
+        root = model().metadata(doc).RootComponent
+        root_key = object_key(root)
+        # Release temporary scenes before their native providers are removed.
+        for entry in list(self.unused_views):
+            if entry["key"] == key:
+                self.end_unused_edit(entry["window"])
+        views = [entry for entry in self.component_views if entry["key"] == key]
+        windows = list(self.mdi.subWindowList())
+        file_window = next((window for window in windows
+                            if tuple(window.property("ComponentKey") or ()) == root_key), None)
+        if views and file_window is None:
+            before = list(self.mdi.subWindowList())
+            Gui.getDocument(doc.Name).createView("Gui::View3DInventor")
+            file_window = next(window for window in self.mdi.subWindowList() if window not in before)
+            self.mdi.setActiveSubWindow(file_window)
+            self.set_document(doc)
+        for entry in views:
+            window = entry.get("window")
+            self.clear_context_view(window)
+            entry["snapshot"].setLink(None)
+            if window in self.mdi.subWindowList():
+                window.close()
+            if entry in self.component_views:
+                self.component_views.remove(entry)
+        if file_window is not None:
+            self.mdi.setActiveSubWindow(file_window)
+            self.set_document(doc)
+        Gui.Selection.clearSelection()
+        model().delete_definition(component)
+        self.refresh()
 
     def delete_instances(self, item=None):
         if Gui.Control.activeDialog():
@@ -2113,6 +2163,7 @@ class Navigator(QtWidgets.QDockWidget):
                 menu.addAction(tr("Edit"), lambda: self.run(lambda: self.edit_model(target())))
                 menu.addAction(tr("Open in new window"), lambda: self.run(lambda: self.open_component_tab(key)))
                 menu.addAction(tr("Rename"), lambda: self.run(lambda: self.rename_item(key)))
+                menu.addAction(tr("Delete component"), lambda: self.run(lambda: self.delete_model(key)))
                 menu.addAction(tr("Add Instance"), lambda: self.run(
                     lambda: self.insert_model(key)))
                 if resolve(key).Document != root.Document:
@@ -2550,7 +2601,7 @@ def install_start_actions():
 
 
 def delete_selected_instances():
-    """Std_Delete adapter for precise occurrence picks, never bare model selections."""
+    """Std_Delete adapter for guarded definitions and precise occurrence picks."""
     if _dock is None or Gui.Control.activeDialog() or not _dock.root_key:
         return False
     entries = Gui.Selection.getSelectionEx("*", 0)
@@ -2568,7 +2619,18 @@ def delete_selected_instances():
                     or any(protected_origin_item(pick.item) for pick in picks)):
                 Gui.Selection.removeSelection(entry.DocumentName, entry.ObjectName, subname)
     entries = Gui.Selection.getSelectionEx("*", 0)
-    if not entries or any(model().is_component(entry.Object) and not entry.SubElementNames for entry in entries):
+    definitions = [entry for entry in entries
+                   if model().is_component(entry.Object) and not entry.SubElementNames]
+    if definitions:
+        # Consume the selection even on refusal; never fall through to native deletion.
+        Gui.Selection.clearSelection()
+        def delete_definition_selection():
+            if len(entries) != 1:
+                raise ValueError(tr("Select one component definition to delete."))
+            _dock.delete_model(object_key(definitions[0].Object))
+        _dock.run(delete_definition_selection)
+        return True
+    if not entries:
         return False
     picks = [(context, pick) for context in roots for pick in Selection.selected(context, entries)]
     if not picks or any(not pick.ids or pick.item is not None for context, pick in picks):
