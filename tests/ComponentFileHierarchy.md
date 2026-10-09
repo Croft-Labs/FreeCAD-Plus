@@ -39,3 +39,8 @@ The cold process copies the four files together into its own validation director
 before opening them. This checks relocation and keeps the writer fixtures unchanged
 for the later saved-shortcut run. Installed acceptance records application location,
 loaded module hashes and process exit; source-overlay passes cannot substitute for it.
+
+Failed-open regressions cover a replaced external file's identity mismatch after
+nested dependencies have loaded, with and without a dependency already open, plus
+failure after native root restoration. Only newly opened documents may close;
+pre-existing unsaved documents and the active document must be retained.

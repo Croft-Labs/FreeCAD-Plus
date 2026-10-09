@@ -269,6 +269,10 @@ Cancel leaves the document unchanged.
   payloads and native type/property identities rather than rebuilding serializers.
 - Validate required capabilities before restoration; refuse unsupported required
   content. Save atomically, retain backups and preserve recovery behavior.
+- A failed component-file open rolls back the entire newly loaded dependency graph,
+  including native auto-loaded documents. Preserve previously open documents, their
+  unsaved edits and the prior active document. Recoverable missing references still
+  open for repair; they are not failed restores.
 - Open supported `.FCStd` content as an in-memory conversion. Save a new `.cadprt`,
   leaving the original untouched. Report unsupported content, partial conversion
   and geometry-only recovery explicitly. Expensive legacy mapping is lower priority

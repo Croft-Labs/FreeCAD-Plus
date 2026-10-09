@@ -3395,6 +3395,11 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   inactivity timeouts remain unconfirmed; all 33 cases pass independently. This
   closes bounded hierarchy delivery, not exhaustive repeated-session qualification.
   General expression copying and consumer/path remapping remain explicitly refused.
+- [ X ] 7.8.12c Roll back newly loaded file graphs when component opening fails.
+  Preserve already-open dependencies, unsaved documents and active document on
+  nested identity failure or post-restore failure. Recoverable missing files still
+  open for repair. Source-overlay runtime passes 23 hierarchy and 27 core cases;
+  compatible Python delivery remains batched for the next owner payload update.
 - [ X ] 7.8.11 Commit coherent verified milestones and push to origin; record exact
   remote branch verification. Packaging/public release require separate authority.
 

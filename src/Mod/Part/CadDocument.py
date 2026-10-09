@@ -128,6 +128,24 @@ def preflight(filename):
 
 
 def open(filename, _opening=None):
+    """Restore a file graph without leaving partial loads after a failed open."""
+    if _opening is not None:
+        return _open(filename, _opening)
+    existing = set(App.listDocuments())
+    active = App.ActiveDocument.Name if App.ActiveDocument else ""
+    try:
+        return _open(filename)
+    except Exception:
+        # Include native auto-loaded documents, not just explicit recursive opens.
+        # Previously open dependencies and unsaved user documents remain untouched.
+        for name in reversed(list(App.listDocuments())):
+            if name not in existing:
+                App.closeDocument(name)
+        App.setActiveDocument(active)
+        raise
+
+
+def _open(filename, _opening=None):
     filename = str(Path(filename).resolve())
     for existing in App.listDocuments().values():
         if existing.FileName and Path(existing.FileName).resolve() == Path(filename):

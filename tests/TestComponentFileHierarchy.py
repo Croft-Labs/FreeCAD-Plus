@@ -424,3 +424,50 @@ class TestComponentFileHierarchy(unittest.TestCase):
                     "zinc": zinc.ObjectId}
         (self.output / "cold-hierarchy.json").write_text(
             json.dumps(expected, indent=2), encoding="utf-8")
+
+    def testFailedNestedOpenRestoresPreviouslyOpenDocuments(self):
+        coatings = self.document("RollbackCoatings")
+        Model.import_file(self.hardware, coatings)
+        self.hardware.save()
+        Model.import_file(self.assembly, self.hardware)
+        self.assembly.save()
+        assembly_path, coatings_path = self.assembly.FileName, coatings.FileName
+        # A valid file was replaced by another definition at the expected path.
+        import uuid
+        Model.metadata(self.hardware).ObjectId = str(uuid.uuid4())
+        self.hardware.save()
+        for doc in list(App.listDocuments().values()):
+            App.closeDocument(doc.Name)
+        for retain_dependency in (False, True):
+            with self.subTest(retain_dependency=retain_dependency):
+                if retain_dependency:
+                    CadDocument.open(coatings_path)
+                existing = Model.new_document("UnsavedWork")
+                self.root(existing).Label = "Keep my unsaved edits"
+                before = dict(App.listDocuments())
+                App.setActiveDocument(existing.Name)
+                with self.assertRaisesRegex(ValueError, "identity differs"):
+                    CadDocument.open(assembly_path)
+                self.assertEqual(App.listDocuments(), before)
+                self.assertEqual(App.ActiveDocument, existing)
+                self.assertEqual(self.root(existing).Label, "Keep my unsaved edits")
+                self.assertEqual(existing.FileName, "")
+            for doc in list(App.listDocuments().values()):
+                App.closeDocument(doc.Name)
+
+    def testFailedRootRestoreClosesNewDependencyGraph(self):
+        Model.import_file(self.assembly, self.hardware)
+        self.assembly.save()
+        filename = self.assembly.FileName
+        for doc in list(App.listDocuments().values()):
+            App.closeDocument(doc.Name)
+        activate = Model.activate
+        def fail_root(component, strict=True):
+            path = component.Document.FileName
+            if path and Path(path).resolve() == Path(filename).resolve():
+                raise ValueError("Injected root activation failure")
+            return activate(component, strict)
+        with patch.object(Model, "activate", side_effect=fail_root):
+            with self.assertRaisesRegex(ValueError, "root activation failure"):
+                CadDocument.open(filename)
+        self.assertEqual(App.listDocuments(), {})

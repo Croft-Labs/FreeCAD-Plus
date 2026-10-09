@@ -1,5 +1,30 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 failed nested-open rollback
+
+Roadmap 7.8.12c adds an outer restore boundary in CadDocument.open. Recursive/native
+loads are included in failure cleanup; documents open before the call and their
+unsaved work remain, and the previous active document is restored. The native
+serialization, schema, identity checks and recoverable missing-file behavior are
+unchanged. This is backend failure cleanup; no UI controls/defaults or owner DOCX
+requirements changed.
+
+Before the fix, the nested identity-mismatch regression left Hardware and/or its
+Coatings dependency open. The post-root failure fixture initially compared differently
+formatted paths, so its injection did not trigger; the corrected test normalizes
+paths and verifies root/dependency cleanup. After the fix, 23 hierarchy plus 27 core
+cases pass, no failures/errors/skips or unexpected GUI diagnostics, exit zero.
+Validation uses explicit source overlays on the verified October 9 native payload.
+A focused final rerun passes both rollback cases after preserving source line endings,
+with matching loaded module hashes and exit zero. Publication and validation-output
+cleanup are pending closeout.
+
+Delivery remains batched per DEVELOPMENT_GUIDE: the current desktop shortcut and
+15,583-file owner payload still contain the prior CadDocument.py. No new native
+build or owner payload was created for this isolated backend change. At the next
+related batch, synchronize this compatible Python module, verify installed hashes
+and failed-open cases, update the payload inventory, and repeat shortcut delivery.
+
 ## October 9 hierarchy native build and owner delivery
 
 Implementation remains native/application source
