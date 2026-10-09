@@ -16,8 +16,10 @@ paths and verifies root/dependency cleanup. After the fix, 23 hierarchy plus 27 
 cases pass, no failures/errors/skips or unexpected GUI diagnostics, exit zero.
 Validation uses explicit source overlays on the verified October 9 native payload.
 A focused final rerun passes both rollback cases after preserving source line endings,
-with matching loaded module hashes and exit zero. Publication and validation-output
-cleanup are pending closeout.
+with matching loaded module hashes and exit zero. Milestone
+`3b8851a8407e8cf82e0163a401145cc9c97879e9` was pushed to origin/main and its remote
+hash verified. The three task validation directories were deleted after recording
+these results. No owner payload or shortcut was changed.
 
 Delivery remains batched per DEVELOPMENT_GUIDE: the current desktop shortcut and
 15,583-file owner payload still contain the prior CadDocument.py. No new native
