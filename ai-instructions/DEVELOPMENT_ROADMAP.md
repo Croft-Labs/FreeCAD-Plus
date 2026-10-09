@@ -3447,6 +3447,18 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
         - [   ] 7.8.13d2b2 Existing .cadprt open and legacy conversion migration,
           preserving original definitions, references, placements and undo semantics.
           Definition deletion still requires its separate native/UI acceptance.
+          - [ X ] 7.8.13d2b2a Newly opened older .cadprt files and dependencies
+            gain the file container only after saved identity verification. Preserve
+            all prior definitions/placements/targets; do not save implicitly. Clear
+            bootstrap undo and keep already-open user documents unchanged. File Edit
+            refreshes reachable domestic references child-first without file History.
+            Regression checks cover immutable originals, failure rollback, imported
+            targets, repeat save/reopen, native file/Models/History UI and nested refs.
+            Source/runtime evidence and DOCX review are recorded in WORK_STATE;
+            owner build delivery remains batched in 13f.
+          - [   ] 7.8.13d2b2b Next: integrate the container into legacy conversion
+            and evaluated recovery within their existing undoable transactions.
+            Preserve original native features, original files and external save order.
   - [   ] 7.8.13e File Edit guards and origin-only History, file-owned placement and
     assembly relationships without modeling geometry; explicit component activation
     required for modeling. Existing file imports stay Models-only.
@@ -3464,7 +3476,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       corrected harness reruns (WORK_STATE records the setup errors). No native
       scene-swap exception remains in these runs. Owner DOCX updated and pages
       65-67 rendered/reviewed; owner build/shortcut delivery remains in 13f.
-      Next implementation: 13d2b2 existing-file and legacy migration.
+      Next implementation: 13d2b2b legacy conversion migration.
 
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,

@@ -156,7 +156,10 @@ class TestComponentActiveEditing(unittest.TestCase):
         App.closeDocument(self.doc.Name)
         reopened = CadDocument.open(str(filename))
         root = Model.metadata(reopened).RootComponent
-        self.assertEqual(len(Model.children(root)), 2)
+        self.assertTrue(Model.is_file_container(root))
+        self.assertEqual(len(Model.children(root)), 1)
+        original = Model.children(root)[0].LinkedObject
+        self.assertEqual(len(Model.children(original)), 2)
         retained = next(obj for obj in Model.definitions(reopened) if obj.Label == "Unused")
         self.assertEqual(Model.instance_counts(root).get(retained, 0), 0)
         self.assertAlmostEqual(reopened.getObject("UnusedBody").Shape.Volume, 24)

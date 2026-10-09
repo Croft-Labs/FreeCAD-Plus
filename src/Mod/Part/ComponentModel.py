@@ -69,9 +69,9 @@ def is_file_container(obj):
 
 
 def ensure_file_container(doc):
-    """Opt-in, undoable migration; preserve the original root and all native links.
+    """Undoable migration; preserve the original root and all native links.
 
-    Creation/open UI integration is separate. Never call during another transaction.
+    Creation/open callers manage bootstrap undo. Never nest inside a transaction.
     """
     meta = validate(doc, allow_unresolved=True)
     previous = meta.RootComponent
@@ -907,6 +907,25 @@ def add_reference(parent, occurrence, source):
 def activate(component, strict=True):
     """Refresh all independent references before reporting any broken branches."""
     doc = component.Document
+    if is_file_container(component):
+        # The file has no History of its own, but its displayed assembly must
+        # refresh child reference snapshots before their domestic consumers.
+        # Each shared definition is refreshed once; external files own their edits.
+        seen, issues = set(), []
+        def refresh(definition):
+            if definition in seen or definition.Document != doc:
+                return
+            seen.add(definition)
+            for link in children(definition):
+                if is_component(link.LinkedObject):
+                    refresh(link.LinkedObject)
+            if definition != component:
+                issues.extend(activate(definition, strict=False))
+        refresh(component)
+        doc.recompute()
+        if strict and issues:
+            raise ValueError("\n".join(obj.Label + ": " + message for obj, message in issues))
+        return issues
     doc.recompute()
     issues = []
     for obj in history(component):

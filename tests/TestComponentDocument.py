@@ -24,6 +24,7 @@ class TestComponentDocument(unittest.TestCase):
     def setUp(self):
         self.doc = Model.new_document("Root component")
         self.root = Model.metadata(self.doc).RootComponent
+        self.root_name = self.root.Name
         self.child = Model.create_definition(self.doc, "Child")
         self.link = Model.add_component(self.root, self.child)
         self.output = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"])
@@ -409,7 +410,7 @@ class TestComponentDocument(unittest.TestCase):
         for doc in list(App.listDocuments().values()):
             App.closeDocument(doc.Name)
         self.doc = CadDocument.open(owner_path)
-        self.root = Model.metadata(self.doc).RootComponent
+        self.root = self.doc.getObject(self.root_name)
         links = Model.children(self.root)
         moved = links[0].LinkedObject
         self.assertEqual(Model.children(moved)[0].LinkedObject, links[1].LinkedObject)
@@ -477,7 +478,7 @@ class TestComponentDocument(unittest.TestCase):
         relocated = self.output / "RelocatedSource.cadprt"
         source_path.rename(relocated)
         self.doc = CadDocument.open(parent_path)
-        self.root = Model.metadata(self.doc).RootComponent
+        self.root = self.doc.getObject(self.root_name)
         reference = next(o for o in self.doc.Objects if getattr(o, "ObjectId", "") == reference_id)
         self.assertIsNone(reference.SourceObject)
         self.assertTrue(reference.Shape.isNull())

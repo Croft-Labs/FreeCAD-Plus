@@ -1,5 +1,52 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 existing .cadprt file-root migration
+
+7.8.13d2b2a is complete in source. CadDocument._open verifies the original native
+objects against the saved manifest before wrapping newly loaded older files in the
+file container. Recursive newly loaded dependencies receive the same upgrade. All
+previous component names, identities, geometry ownership, placements and external
+reference targets remain intact. No extra Part001 is created. Original archives
+remain byte-for-byte unchanged until explicit Save. The added bootstrap undo is
+cleared so Undo cannot remove the pinned file. Save/reopen retains one container.
+Already-open documents retain their edits and undo history; failed opens discard
+only newly loaded documents and restore the previously active document.
+
+File activation now refreshes reachable domestic definitions once each, children
+before parents, so nested reference snapshots are current before their consumers.
+External definitions retain their own editing ownership. The file itself still has
+no modeling history/results. Existing legacy fixtures now assert their original
+assembly definition below the file, rather than treating the new file as that part.
+Tests also verify the migrated file label/tree, Origin-only History and exclusion
+of the file container from Models. No Add Component workflow changes.
+
+Validation: 101 distinct checks pass on the existing verified native fork with
+source overlays: 12 file-container, 32 hierarchy, 27 core, 9 file-workspace,
+9 active-editing, 9 contextual-display and 3 externalization cases. The corrected
+integration batch passes 80/80; a 33/33 follow-up includes the 12 container checks
+with added GUI assertions plus the 21 editing/display/externalization checks.
+The initial batch exposed old-root fixture assumptions and the missing file-level
+reference refresh; both were corrected before these passing runs. Save/reopen,
+missing-file recovery/Undo, relocation, downstream consumers and failed-load
+rollback are covered by the existing native suites. Separate fresh-process owner
+payload acceptance remains in 13f. The core run emits two recursive-recompute and
+an empty Mirror diagnostic during its mixed reference/conversion sequence, without
+assertion failure; review those in grouped owner acceptance rather than claiming
+stderr-clean validation. Deliberate missing-file/capability errors are expected.
+
+Owner DOCX open/save/Undo and file Edit requirements are updated; pages 65-67 were
+rendered and reviewed, and native numbering is unchanged. Reviewed the migrated
+Models panel capture. Python syntax and diff checks pass. Task-generated validation
+and render output is removed after recording these results.
+No native build, payload or desktop shortcut changes. Current owner build remains
+hierarchy_relocation_payload; source changes are committed/pushed to origin/main
+at this milestone, with no release.
+
+Next task: 7.8.13d2b2b integrate the file container into legacy structural conversion
+and evaluated recovery in the same undoable transaction. Preserve native features,
+legacy originals and external save order. Definition deletion, full file-level
+command/assembly guards and grouped owner delivery remain outstanding.
+
 ## October 9 active component tab scene repair
 
 7.8.13f1 is complete in source. Contextual transparency no longer replaces the

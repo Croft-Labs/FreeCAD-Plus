@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Opt-in file-root migration preserves native components and archive identities."""
+"""Explicit and open-time file-root migration preserve native identities."""
 import json
 import os
 from pathlib import Path
@@ -117,6 +117,7 @@ class TestComponentFileContainer(unittest.TestCase):
         occurrence = Model.add_component(Model.metadata(consumer).RootComponent, self.part)
         part_id = self.part.ObjectId
         source_name = self.part.Name
+        occurrence_name = occurrence.Name
         Model.ensure_file_container(self.doc)
         self.assertEqual(occurrence.LinkedObject, self.part)
         Model.validate(consumer)
@@ -125,7 +126,7 @@ class TestComponentFileContainer(unittest.TestCase):
         App.closeDocument(consumer.Name)
         App.closeDocument(self.doc.Name)
         consumer = CadDocument.open(str(self.output / "consumer.cadprt"))
-        restored = Model.children(Model.metadata(consumer).RootComponent)[0].LinkedObject
+        restored = consumer.getObject(occurrence_name).LinkedObject
         self.assertEqual(restored.ObjectId, part_id)
         self.assertEqual(restored.Name, source_name)
         self.assertFalse(Model.is_file_container(restored))
@@ -173,3 +174,112 @@ class TestComponentFileContainer(unittest.TestCase):
         self.assertEqual(self.child.LinkedObject, moved)
         self.assertEqual(moved.Document.UndoCount, 0)
         Model.validate(self.doc)
+
+    def testOpenUpgradesVerifiedOldFileWithoutChangingOriginal(self):
+        filename = self.output / "open-old-file.cadprt"
+        self.doc.saveAs(str(filename))
+        original = filename.read_bytes()
+        part_name, part_id = self.part.Name, self.part.ObjectId
+        identities = {obj.Name: getattr(obj, "ObjectId", None) for obj in self.doc.Objects}
+        placement = list(self.part.Placement.toMatrix().A)
+        box_name = self.box.Name
+        App.closeDocument(self.doc.Name)
+        self.doc = CadDocument.open(filename)
+        root = Model.metadata(self.doc).RootComponent
+        self.assertTrue(Model.is_file_container(root))
+        self.assertEqual(list(root.ModelHistory), [])
+        part = self.doc.getObject(part_name)
+        self.assertEqual(part.ObjectId, part_id)
+        self.assertEqual(part.Label, "Existing assembly")
+        self.assertEqual(list(part.Placement.toMatrix().A), placement)
+        self.assertEqual(Model.owner(self.doc.getObject(box_name)), part)
+        self.assertEqual(Model.children(root)[0].LinkedObject, part)
+        self.assertEqual(list(Model.children(root)[0].LinkPlacement.toMatrix().A), placement)
+        for name, identity in identities.items():
+            self.assertEqual(getattr(self.doc.getObject(name), "ObjectId", None), identity)
+        self.assertEqual(filename.read_bytes(), original)
+        if App.GuiUp:
+            import sys
+            from PySide import QtCore
+            navigator = sys.modules["freecad.gui.ComponentNavigator"]
+            panel = navigator.show(self.doc)
+            panel.refresh()
+            self.assertEqual(panel.active_key, navigator.object_key(root))
+            self.assertEqual(panel.structure.topLevelItemCount(), 1)
+            self.assertEqual(panel.structure.topLevelItem(0).text(0), self.doc.Label)
+            self.assertEqual(panel.history.topLevelItemCount(), 1)  # File Origin only.
+            models = [panel.models.topLevelItem(i).data(0, QtCore.Qt.UserRole)
+                      for i in range(panel.models.topLevelItemCount())]
+            self.assertIn(navigator.object_key(part), models)
+            self.assertNotIn(navigator.object_key(root), models)
+            panel.grab().save(str(self.output / "migrated-file-panel.png"))
+        self.doc.undo()
+        self.assertEqual(Model.metadata(self.doc).RootComponent, root)
+        root_id = root.ObjectId
+        self.doc.save()
+        self.assertEqual(CadDocument.preflight(filename)["file_container"], root_id)
+        count = len(self.doc.Objects)
+        App.closeDocument(self.doc.Name)
+        self.doc = CadDocument.open(filename)
+        self.assertEqual(Model.metadata(self.doc).RootComponent.ObjectId, root_id)
+        self.assertEqual(len(self.doc.Objects), count)
+
+    def testFailedOpenMigrationRollsBackNewGraphOnly(self):
+        filename = self.output / "failed-old-open.cadprt"
+        self.doc.saveAs(str(filename))
+        original = filename.read_bytes()
+        App.closeDocument(self.doc.Name)
+        retained = Model.new_document("Unsaved user document")
+        before = [(obj.Name, getattr(obj, "ObjectId", None)) for obj in retained.Objects]
+        with patch.object(Model, "ensure_file_container", side_effect=RuntimeError("migration failed")):
+            with self.assertRaisesRegex(RuntimeError, "migration failed"):
+                CadDocument.open(filename)
+        self.assertEqual(list(App.listDocuments()), [retained.Name])
+        self.assertEqual(App.ActiveDocument, retained)
+        self.assertEqual([(obj.Name, getattr(obj, "ObjectId", None)) for obj in retained.Objects], before)
+        self.assertEqual(filename.read_bytes(), original)
+
+    def testOpenMigratesDependenciesAndPreservesExternalTargets(self):
+        source_path = self.output / "old-dependency.cadprt"
+        self.doc.saveAs(str(source_path))
+        source_id = self.part.ObjectId
+        consumer = Model.new_document("Old consumer")
+        target_path = self.output / "old-consumer.cadprt"
+        consumer.saveAs(str(target_path))
+        occurrence = Model.add_component(Model.metadata(consumer).RootComponent, self.part)
+        name, occurrence_id = occurrence.Name, occurrence.ObjectId
+        consumer.save()
+        source_bytes, target_bytes = source_path.read_bytes(), target_path.read_bytes()
+        for doc in list(App.listDocuments().values()):
+            App.closeDocument(doc.Name)
+        consumer = CadDocument.open(target_path)
+        occurrence = consumer.getObject(name)
+        source = occurrence.LinkedObject.Document
+        self.assertTrue(Model.is_file_container(Model.metadata(consumer).RootComponent))
+        self.assertTrue(Model.is_file_container(Model.metadata(source).RootComponent))
+        self.assertEqual(occurrence.ObjectId, occurrence_id)
+        self.assertEqual(occurrence.LinkedObject.ObjectId, source_id)
+        self.assertFalse(Model.is_file_container(occurrence.LinkedObject))
+        self.assertEqual(source_path.read_bytes(), source_bytes)
+        self.assertEqual(target_path.read_bytes(), target_bytes)
+        Model.validate(consumer)
+
+    def testFileActivationRefreshesNestedDomesticReferences(self):
+        import Part
+        middle = self.child.LinkedObject
+        inner = Model.add_component(middle, label="Source")
+        shape = self.doc.addObject("Part::Feature", "ReferenceSource")
+        shape.Shape = Part.makeBox(2, 3, 4)
+        Model.register_object(inner.LinkedObject, shape, "Object", True)
+        self.doc.recompute()
+        intermediate = Model.add_reference(middle, inner, shape)
+        outer = Model.add_reference(self.part, self.child, intermediate)
+        root = Model.ensure_file_container(self.doc)
+        shape.Shape = Part.makeBox(5, 3, 4)
+        self.doc.recompute()
+        Model.activate(root)
+        self.assertAlmostEqual(Model.current_shape(intermediate).Volume, 60)
+        self.assertAlmostEqual(Model.current_shape(outer).Volume, 60)
+        self.assertEqual(list(root.ModelHistory), [])
+        self.assertEqual(Model.owner(intermediate), middle)
+        self.assertEqual(Model.owner(outer), self.part)

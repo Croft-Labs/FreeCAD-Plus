@@ -7,11 +7,13 @@ TestComponentFileContainer covers this service. new_file_document now backs nati
 New with an active ordinary Part001 beneath the pinned file;
 TestComponentFileWorkspace covers the UI and empty-tree/undo/reopen behavior.
 External-copy and new-external-component destinations now use the same file root
-without an extra Part001. Existing-file/legacy migration is next (7.8.13d2b2);
-owner delivery remains batched.
+without an extra Part001. Newly opened older .cadprt files/dependencies now migrate
+after identity validation, without writing the originals; bootstrap undo cannot
+remove the file root. File activation refreshes domestic references child-first.
+Legacy conversion/recovery integration is next (7.8.13d2b2b); owner delivery is batched.
 The isolated-tab/contextual-fade repair (7.8.13f1) keeps native viewer roots in
 place and attaches view-owned display branches. See WORK_STATE for validation;
-older-file migration remains the next implementation task.
+legacy conversion migration remains the next implementation task.
 
 Active-editing revision: ComponentNavigator resolves placed Models Edit in the
 current tab with per-tab occurrence memory and native active-color decoration.

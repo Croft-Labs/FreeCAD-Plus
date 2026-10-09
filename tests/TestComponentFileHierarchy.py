@@ -72,7 +72,10 @@ class TestComponentFileHierarchy(unittest.TestCase):
         return doc
 
     def root(self, doc):
-        return Model.metadata(doc).RootComponent
+        # These legacy fixtures retain their original assembly definition beneath
+        # the new file root after reopen. Assertions still concern that definition.
+        root = Model.metadata(doc).RootComponent
+        return Model.children(root)[0].LinkedObject if Model.is_file_container(root) else root
 
     def testImportExposesUnusedDefinitionsWithoutPlacingThem(self):
         record = Model.import_file(self.assembly, self.hardware)
@@ -110,7 +113,7 @@ class TestComponentFileHierarchy(unittest.TestCase):
         hardware = Model.external_documents(assembly)[0]
         coating = Model.external_documents(hardware)[0]
         self.assertEqual([Model.metadata(doc).ObjectId for doc in (assembly, hardware, coating)], ids)
-        self.assertEqual([obj.Label for obj in Model.definitions(hardware)],
+        self.assertEqual([obj.Label for obj in Model.definitions(hardware) if not Model.is_file_container(obj)],
                          ["Hardware", "M3 screw", "M4 screw"])
         self.assertEqual(Model.children(self.root(assembly)), [])
         Model.validate(assembly)

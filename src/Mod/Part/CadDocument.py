@@ -249,6 +249,14 @@ def _open(filename, _opening=None):
         # Broken reference geometry remains editable; format/identity failures above still refuse restore.
         import LegacyConversion
         LegacyConversion.upgrade_datum_frames(doc)
+        # Verify the saved graph above before adding the file-only root. Keep the
+        # original definition and every reference target; only the in-memory file
+        # gains a container until the owner explicitly saves it.
+        if not Model.is_file_container(meta.RootComponent):
+            Model.ensure_file_container(doc)
+            # This is an open-time upgrade, not an editable assembly operation.
+            # Undo must never remove the pinned file root of a newly opened file.
+            doc.clearUndos()
         Model.activate(meta.RootComponent, strict=False)
         if App.GuiUp and _opening is None:
             from freecad.gui.ComponentNavigator import show

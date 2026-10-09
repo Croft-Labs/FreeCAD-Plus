@@ -289,8 +289,23 @@ occurrence. Independent external copies, the retained externalize compatibility
 service, and New Component with new-external-file storage wrap their completed
 component in the same file container before final save and clear bootstrap undo.
 They return the actual component definition, not the file container, and never add
-an extra Part001 to the destination. Internal conversion initializers retain their
-existing behavior; automatic older-file/legacy migration remains roadmap 7.8.13d2b.
+an extra Part001 to the destination.
+
+CadDocument._open now applies the same migration to newly loaded older .cadprt
+files and dependencies, after verifying their saved manifests/native identities
+and upgrading retained datum frames. It does not rewrite the original archive;
+an explicit save records the new capability/root. Bootstrap undo is cleared only
+for the newly loaded migrated file, so Undo cannot remove its pinned container.
+Existing already-open documents are returned unchanged, preserving active edits
+and dependency rollback guarantees. Failed opens discard newly loaded documents
+and retain pre-existing ones. Reopening an upgraded file does not add another root.
+Internal legacy conversion initializers retain their existing behavior; their
+transactional integration remains roadmap 7.8.13d2b2b.
+
+Activating the file refreshes reachable domestic component definitions once each,
+children before parents, so reference snapshots precede their consumers. It does
+not take ownership of external edits or add file-owned History/geometry. Broken
+branches are collected without preventing independent domestic refreshes.
 
 The container retains internal `ComponentRole=Definition` storage for native graph
 and serializer compatibility, with readonly `FileContainer=True` distinguishing it
