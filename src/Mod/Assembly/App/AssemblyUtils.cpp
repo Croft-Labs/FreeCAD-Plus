@@ -827,6 +827,41 @@ std::vector<App::DocumentObject*> getAssemblyComponents(const AssemblyObject* as
         return {};
     }
 
+    // File-level relationships borrow occurrences from the pinned file root.
+    // The solver owns joints, not geometry or a second copy of the part tree.
+    auto* role = dynamic_cast<App::PropertyString*>(assembly->getPropertyByName("ComponentRole"));
+    if (role && std::string(role->getValue()) == "AssemblyContext") {
+        auto* reference = dynamic_cast<App::PropertyLink*>(
+            assembly->getPropertyByName("ComponentRoot"));
+        auto* root = reference ? dynamic_cast<App::Part*>(reference->getValue()) : nullptr;
+        auto* marker = root ? dynamic_cast<App::PropertyBool*>(
+            root->getPropertyByName("FileContainer")) : nullptr;
+        auto* rootRole = root ? dynamic_cast<App::PropertyString*>(
+            root->getPropertyByName("ComponentRole")) : nullptr;
+        if (!root || root == assembly || root->getDocument() != assembly->getDocument()
+            || !marker || !marker->getValue() || !rootRole
+            || std::string(rootRole->getValue()) != "Definition"
+            || !root->Placement.getValue().isIdentity()
+            || !assembly->Placement.getValue().isIdentity()) {
+            throw Base::ValueError("Invalid file assembly component root");
+        }
+        std::vector<App::DocumentObject*> components;
+        for (auto* object : root->Group.getValues()) {
+            if (object == root->Origin.getValue()) {
+                continue;
+            }
+            auto* memberRole = dynamic_cast<App::PropertyString*>(
+                object->getPropertyByName("ComponentRole"));
+            auto* link = dynamic_cast<App::Link*>(object);
+            if (!link || !memberRole || std::string(memberRole->getValue()) != "Occurrence") {
+                throw Base::ValueError("File assembly root contains a non-occurrence");
+            }
+            // Each occurrence is one rigid solver body; never flatten its definition.
+            collectComponentsRecursively({object}, components);
+        }
+        return components;
+    }
+
     std::vector<App::DocumentObject*> components;
     collectComponentsRecursively(assembly->Group.getValues(), components);
     return components;

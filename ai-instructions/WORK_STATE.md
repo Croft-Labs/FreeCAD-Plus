@@ -1,5 +1,36 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 9 file assembly solver pilot
+
+Current step 7.8.13e2b2a is complete. The internal AssemblyContext/ComponentRoot
+opt-in lets the native solver borrow file-owned Occurrence links as rigid bodies.
+It does not replace the file App::Part, reparent/copy links, flatten definitions or
+write geometry into file History. Invalid root/type/frame/membership is refused;
+ordinary native assemblies retain their existing Group traversal. See the component
+contract for the boundary: no application service or UI creates these contexts yet.
+
+Build: incremental native Release Assembly succeeds (exit 0) in
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-06_recovered_workload.
+AssemblyUtils.cpp compiled and AssemblyApp.pyd linked. The retained development
+runtime, with source ComponentModel/CadDocument overlays, passes all four
+TestComponentAssemblySolver cases. The tests verify actual fixed-joint occurrence
+movement, transaction Undo/Redo, independent grounding of shared-definition
+occurrences, unchanged file ownership/History/results/definition placement,
+invalid-root refusal before movement and legacy native grounding. The first fixture
+incorrectly locked Placement rather than the link's LinkPlacement; correcting that
+fixture produced the four-case passing run. No unexpected stderr diagnostics.
+Python syntax and CRLF-aware diff checks pass. Validation output is removed after
+recording evidence; the useful development build is retained.
+
+This backend-only pilot changes no user interaction, so the owner UI DOCX is
+unchanged. It is not an owner payload; desktop shortcut/delivery remains 13f.
+Source publication is separate from owner delivery and release.
+
+Next task: 7.8.13e2b2b, transactional solver-context/joint ownership, endpoint and
+removal guards, and capability-protected .cadprt persistence with save/reopen tests.
+Then 13e2b2c connects file Edit and Part Tree relationship commands/selection.
+Add Component workflow remains deferred.
+
 ## October 9 native Part geometry guards
 
 7.8.13e2b1 is complete. PartGui::allowComponentModeling checks the marked file root

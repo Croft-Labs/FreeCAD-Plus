@@ -3500,9 +3500,20 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
           workflows still run, and inspection remains available. PartGui built;
           12 grouped cases pass, including 46 native command refusal subcases.
           Owner UI DOCX updated/rendered; owner delivery remains 13f.
-        - [   ] 7.8.13e2b2 Next: native assembly relationship ownership, solver
+        - [   ] 7.8.13e2b2 Native assembly relationship ownership, solver
           connection and persistence beneath the file, without geometry in file
           History. Broader native workbench fallback compatibility remains in 13f.
+          - [ X ] 7.8.13e2b2a Native solver membership pilot: opt-in internal
+            AssemblyContext borrows the file's occurrences without reparenting or
+            flattening definitions. Native Assembly build and four runtime cases
+            pass: joint solve/Undo/Redo, per-occurrence grounding, invalid-root
+            refusal and legacy membership. No production service or UI creates
+            contexts yet; this is not persistence or owner-delivery acceptance.
+          - [   ] 7.8.13e2b2b Next: transactional context and joint ownership,
+            endpoint/deletion guards, required .cadprt capability and native/manifest
+            cross-checks; prove save/reopen before enabling relationship commands.
+          - [   ] 7.8.13e2b2c Bind file Edit/Part Tree relationship commands and
+            selection to the validated service, keeping Model History origin-only.
   - [   ] 7.8.13f Grouped integration: tab isolation, external ownership, undo/reopen,
     transient visibility/save behavior, UI acceptance, verified owner payload/shortcut
     and publication. Owner DOCX requirements updated; affected rendered pages 65-66 reviewed.

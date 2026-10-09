@@ -276,6 +276,24 @@ Cancel leaves the document unchanged.
 - Both actions are transactional and undoable. Shape equality alone does not
   establish reference preservation or shared-operation correctness.
 
+## File assembly solver boundary
+
+The native solver membership pilot recognizes an Assembly::AssemblyObject marked
+ComponentRole=AssemblyContext with a ComponentRoot link to a same-document marked
+file App::Part. Both placements must remain identity. getAssemblyComponents borrows
+the file's direct Occurrence links as rigid bodies; it does not reparent occurrences,
+flatten component definitions or put solver geometry in file History. Existing
+AssemblyObjects without this opt-in retain ordinary native Group traversal. Invalid
+root/type/frame or non-occurrence membership is refused before gathering bodies.
+
+This is an internal native pilot, not an enabled relationship-creation workflow.
+No application service currently creates these contexts. Before enabling them,
+add transactional context/joint ownership, endpoint membership and deletion guards,
+a required .cadprt capability with manifest/native cross-checks and save/reopen
+acceptance. UI selection and native assembly command activation then use that
+service; do not expose raw context construction as a supported save workflow.
+The native placement/grounding regression is TestComponentAssemblySolver.
+
 ## File modeling task guards
 
 The shared active_component resolver rejects file containers for modeling and
