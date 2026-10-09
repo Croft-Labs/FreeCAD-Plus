@@ -2,6 +2,11 @@
 
 ## October 9 domestic/external file hierarchy
 
+Implementation commit `be18640254d44c9a99ca789dd6140457e2bcc580` was pushed to
+origin/main and the remote branch hash verified. No release or owner build was
+published. All 20 task validation directories were removed after recording the
+results below; no task native process remains.
+
 Roadmap 7.8.12 implements the owner-approved hierarchy in ComponentModel,
 CadDocument and ComponentNavigator. File imports persist without placements,
 Models lists domestic definitions before recursively grouped imported files, and
