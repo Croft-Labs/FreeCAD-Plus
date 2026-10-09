@@ -26,9 +26,10 @@ related batch, synchronize Mod/Part/ComponentModel.py, verify installed hierarch
 checks and hashes, regenerate the inventory and repeat saved-shortcut delivery.
 Do not describe this patch as already installed in the owner payload.
 
-**Publication/cleanup:** the implementation and verified results are ready for a
-coherent commit. Origin verification and cleanup of the two
-hierarchy-import-identity-*-20261009 validation directories remain pending.
+**Publication/cleanup:** milestone 7b44c41accd3366c941649c9273438bbb92ef10a
+was pushed to origin/main and the remote hash verified. Both task validation
+directories were deleted after recording the results. Owner/development payloads
+and their inventories remain unchanged.
 
 ## October 9 hierarchy recovery batch delivered
 
