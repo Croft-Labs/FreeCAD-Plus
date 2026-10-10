@@ -1,11 +1,11 @@
 # FreeCAD Plus: Development Roadmap
 
-## [   ] 7.8.16 Preserve existing fork as a reference archive (October 10)
+## [ X ] 7.8.16 Preserve existing fork as a reference archive (October 10)
 
 - [ X ] Record archive scope/recovery and segregate generated workspace artifacts.
-- [   ] Capture complete checkout and local Git/submodule data outside the workspace.
-- [   ] Verify file hashes and a restored checkout; publish the named checkpoint.
-- [   ] Record final archive location and validation results.
+- [ X ] Capture complete checkout and local Git/submodule data outside the workspace.
+- [ X ] Verify file hashes and a restored checkout; publish the named checkpoint.
+- [ X ] Record final archive location and validation results.
 
 The owner has directed preservation before a clean upstream restart. Historical
 implementation milestones below are not an instruction to resume development.

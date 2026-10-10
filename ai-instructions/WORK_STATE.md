@@ -1,14 +1,33 @@
 # FreeCAD Plus: Build validation handoff
 
-## October 10 reference-fork archive preparation
+## October 10 reference-fork archive verified
 
-Owner requested preservation of this fork before a clean restart. Prepared the
-archive reference, entry-point status and focused generated-output ignore rules.
-The working tree and all seven initialized submodule checkouts were clean before
-these documentation/ignore edits. Complete checkout size was approximately 0.82 GiB.
-Archive integrity, restore verification and publication are recorded after capture;
-this preparation record alone does not establish successful archival.
-No application implementation, build, shortcut or settings changed.
+Preserved checkpoint: 29496214b34a53fa1d479f35ab5669b41ed4fb18, published as
+archive/freecad-plus-2026-10-10. Remote main and the peeled annotated tag matched
+that commit at capture; the subsequent documentation commit records verification.
+Archive directory:
+C:/Users/GAMING-PC/Documents/__Apps/freecad-archives/freecad-plus-2026-10-10-pre-reset.
+
+Verification: all 26,999 files (879,875,538 bytes) match both the source and a full
+restored checkout. Restored HEAD matches; main and all seven recursive submodule
+working trees are clean. ZIP is 490,791,599 bytes, SHA-256
+b3bc602148c1232079fbee95932c5742708d1e3721dcebfeee0cd43d0fade0f5.
+Manifest, verification record and recovery README are beside the ZIP. The original
+is a partial clone: current source and local Git data are complete in this snapshot;
+uncached historical blobs can still require the original remotes. No claim of
+fully offline historical Git coverage is made.
+
+Workspace changes: added directory-level Python cache ignores, compiler intermediate
+patterns and guards for accidental in-checkout build/validation/archive output.
+Representative source, tests, UI specs and archived owner DOCX remain unignored.
+Git untracked-cache filesystem probe passed; core.untrackedCache is enabled and
+the generated commit graph passed verification. Documentation/ignore whitespace
+checks pass. These are repository housekeeping changes, not a UI jitter fix.
+
+Temporary restoration and validation script are removed after recording results.
+The verified archive and active checkout remain; builds, shortcut, app preferences
+and separately installed FreeCAD are untouched. No source implementation, new
+build, clean upstream clone or release was created by this archive task.
 
 ## October 10 unverified implementation review inventory
 

@@ -18,6 +18,16 @@ approval to carry its implementation choices into that baseline.
 - Archive data stays outside the active checkout and is not committed as a large
   binary to the fork. A published Git tag provides a separate named checkpoint.
 
+## Verification result
+
+Archive completed and restored successfully on October 10, 2026. Checkpoint:
+`29496214b34a53fa1d479f35ab5669b41ed4fb18`. All 26,999 source/restored file hashes
+match; restored HEAD, clean working tree and all seven recursive submodules pass.
+ZIP size: 490,791,599 bytes. SHA-256:
+`b3bc602148c1232079fbee95932c5742708d1e3721dcebfeee0cd43d0fade0f5`.
+The version of this document inside the ZIP is the pre-capture preparation record;
+the external verification files and current WORK_STATE record completion.
+
 ## Recovery
 
 1. Check the ZIP SHA-256 against the external verification record.

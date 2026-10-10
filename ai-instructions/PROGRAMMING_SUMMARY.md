@@ -1,6 +1,6 @@
 # FreeCAD Plus: Programming Summary
 
-Archive preparation: the owner requested preserving this fork for later reference
+Verified reference archive: the owner requested preserving this fork for later reference
 before a clean upstream restart. Do not resume the historical feature backlog.
 See [archive and recovery reference](ARCHIVE_REFERENCE.md); the UI specifications
 and unverified-change inventory remain available for subsequent review.
