@@ -6,8 +6,8 @@
 - [x] Start clean branch from official 1.1.4 commit with its pinned submodules.
 - [x] Preserve owner UI specifications/evidence and segregate old implementation documents.
 - [x] Verify source equivalence and preserved-document integrity.
-- [ ] Publish the baseline branch and make it the fork's default working branch.
-- [ ] Record final status and remove temporary staging.
+- [x] Publish the baseline branch and make it the fork's default working branch.
+- [x] Record final status and remove temporary staging.
 
 Source checkout, build, runtime validation and owner delivery are separate stages.
 No baseline build or GUI acceptance is claimed. Original workbench source is retained.

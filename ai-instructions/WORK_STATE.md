@@ -23,7 +23,12 @@ Integrity checks pass: all original application source matches upstream 1.1.4;
 all four pinned submodules are clean; requirement wording in the five specifications
 is unchanged apart from evidence-link destinations; 664 historical documents/assets
 are byte-preserved. Active documentation links/icons and staged whitespace pass.
-Publication is pending. No compilation, runtime test,
+Published baseline commit f608ea07afffa1ed3a426b09d207b59bf4e8bfd7 to
+origin/codex/freecad-1.1.4-baseline and verified the remote hash. GitHub default
+branch and local origin/HEAD now point to this baseline. Old main and the archive
+tag remain intact. A final documentation commit records this completed handoff.
+Committed archival blob hashes also match all 664 preserved documents/assets.
+Temporary staging is removed after checks. No compilation, runtime test,
 owner build, release or shortcut/settings change is claimed. Existing external
 builds still run the archived fork.
 
