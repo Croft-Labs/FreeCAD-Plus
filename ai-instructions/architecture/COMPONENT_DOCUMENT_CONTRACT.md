@@ -115,6 +115,15 @@ elsewhere its effective type is Excluded, with the authored value preserved.
 Nested exclusions still win. Editing an excluded component directly restores its
 own context without changing the outer owner's exclusion.
 
+active_part_type/set_active_part_type own the optional hidden native String
+ActivePartType on the definition. It defaults to Full Component without adding
+a property; an explicit Bodies Only or Full Component choice is saved in one
+undoable transaction. None resets to Full Component. Reference/Excluded are
+direct-child types, not valid active-self choices. effective_part_type uses the
+saved choice only for the exact active path; occurrences in parent contexts keep
+their owner's child type. Sharing and native definition copies carry this setting;
+an external occurrence never stores or modifies its source's choice implicitly.
+
 part_type_allows_geometry is the consumer policy boundary for unpromoted
 occurrence geometry: Reference and Excluded paths are refused independently of
 their display visibility. Reference geometry requires the explicit Add Reference
@@ -178,10 +187,17 @@ or altered values. Older readers must refuse these files. Files without authored
 new properties retain their old capability set. Rollback to an older reader
 requires an explicit reviewed conversion, not stripping the capability.
 
-Pending integration includes saved active-self overrides, activation and double
-click, Part Type labels/menus, shown/hidden separation and effective Excluded
-visibility refusal and legacy nested-rule reconciliation. Parent/sibling contextual transparency remains at least 75%;
-children retain their authored appearance. The existing UI is not yet changed.
+Explicit ActivePartType properties require component-active-part-type-v1.
+The definition manifest record contains active_part_type; preflight checks values,
+capability presence and native/manifest agreement before opening. Omitting the
+property preserves the older capability set. The active-self capability is
+independent of the direct-child capability, including across external files.
+
+Part Tree double-click now survives row replacement (7.8.14c1). Pending integration
+includes Part Type labels/menus, shown/hidden separation, applying saved active-self
+display, effective Excluded visibility refusal and legacy nested-rule reconciliation.
+Parent/sibling contextual transparency remains at least 75%; children retain their
+authored appearance. Saved active-self settings are not yet exposed in the UI.
 
 ## Part Tree and representation
 

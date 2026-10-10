@@ -3619,6 +3619,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     - [   ] 7.8.14c2 Integrate Part Type menus and display policy, independent
       Shown/Hidden visibility, saved active-self settings and direct-child context
       restoration. Reconcile legacy nested overrides and update/render the DOCX.
+      - [ X ] 7.8.14c2a Saved active-self backend: definition-owned ActivePartType,
+        Full Component default, atomic reset/Undo and effective-context resolution.
+        Independent component-active-part-type-v1 capability cross-checks native
+        data. Eight new native cases and nineteen existing type/output cases pass.
+        Backend only; controls and viewport integration remain below.
+      - [   ] 7.8.14c2b Connect the reviewed self/child services to Part Tree menus
+        and viewport traversal; separate visibility, reconcile legacy nested rules,
+        verify switching contexts, and update/render the owner UI DOCX.
   - [   ] 7.8.14d Grouped acceptance, fresh-process restore and compatible owner
     payload delivery; verify saved desktop shortcut and publish milestone evidence.
   The later Add Reference Feature/Promote workflow expansion is separate scope;

@@ -1414,17 +1414,41 @@ def set_part_types(parent, updates):
             child.PartType = value or "Bodies Only"
 
 
+def active_part_type(component):
+    """Saved display of this definition when active, independent of its uses."""
+    if not is_component(component):
+        raise ValueError("Select a component definition.")
+    value = getattr(component, "ActivePartType", "Full Component")
+    if value not in ("Full Component", "Bodies Only"):
+        raise ValueError("Unsupported active component part type.")
+    return value
+
+
+def set_active_part_type(component, value=None):
+    """Save the active-self override; None resets to Full Component."""
+    active_part_type(component)
+    if value is not None and value not in ("Full Component", "Bodies Only"):
+        raise ValueError("An active component must be Full Component or Bodies Only.")
+    with transaction(component.Document, "Active component part type"):
+        if "ActivePartType" not in component.PropertiesList:
+            _property(component, "String", "ActivePartType", "Full Component", True)
+            component.setEditorMode("ActivePartType", 2)
+        component.ActivePartType = value or "Full Component"
+
+
 def effective_part_type(root, ids, active_ids=()):
     """Resolve editing display policy without mutating authored child types.
 
-    An active component is Full Component even if an ancestor excludes it.
+    An active component uses its saved display even if an ancestor excludes it.
     Reference is visible only under its directly active owner; elsewhere it is
     Excluded. An excluded branch cannot be revealed by native visibility.
     """
     ids, active_ids = tuple(ids), tuple(active_ids)
     chain = _path(root, ids)
     _path(root, active_ids)
-    if ids == active_ids or not ids:
+    if ids == active_ids:
+        return active_part_type(chain[-1].LinkedObject if chain else root)
+    if not ids:
         return "Full Component"
     start = len(active_ids) if ids[:len(active_ids)] == active_ids else 0
     value = "Full Component"
@@ -2274,6 +2298,7 @@ def validate(doc, allow_unresolved=False):
     if len(ids) != len(set(ids)) or any(not value for value in ids):
         raise ValueError("Duplicate or missing component object identities.")
     for component in definitions(doc):
+        active_part_type(component)
         members = {o.Name for o in component.Group}
         if (len(component.ModelHistory) != len(set(component.ModelHistory))
                 or not set(component.ModelHistory) <= members

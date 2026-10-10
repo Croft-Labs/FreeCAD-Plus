@@ -13,7 +13,8 @@ FORMAT = "org.freecad-plus.component-document"
 MANIFEST = "ComponentManifest.json"
 BASE_CAPABILITIES = ("components-v1", "native-objects-v1", "evaluated-references-v1")
 CAPABILITIES = BASE_CAPABILITIES + ("component-file-imports-v1", "component-file-container-v1",
-                                    "component-file-assembly-v1", "component-part-types-v1")
+                                    "component-file-assembly-v1", "component-part-types-v1",
+                                    "component-active-part-type-v1")
 
 
 def manifest(document, filename=None):
@@ -55,6 +56,8 @@ def manifest(document, filename=None):
                             "history": list(component.ModelHistory),
                             "results": list(component.ResultObjects),
                             "occurrences": occurrences})
+        if "ActivePartType" in component.PropertiesList:
+            definitions[-1]["active_part_type"] = Model.active_part_type(component)
     imports = [{"id": record.ObjectId, "object": record.Name,
                 "document": record.DocumentId} for record in Model.file_imports(document)]
     data = {"format": FORMAT, "version": Model.SCHEMA,
@@ -63,6 +66,8 @@ def manifest(document, filename=None):
             "definitions": definitions, "dependencies": dependencies}
     if any("part_type" in link for item in definitions for link in item["occurrences"]):
         data["required"].append("component-part-types-v1")
+    if any("active_part_type" in item for item in definitions):
+        data["required"].append("component-active-part-type-v1")
     if Model.is_file_container(meta.RootComponent):
         data["file_container"] = meta.RootComponent.ObjectId
         data["required"].append("component-file-container-v1")
@@ -131,6 +136,12 @@ def preflight(filename):
            or not strings(item.get("history")) or not strings(item.get("results"))
            or not isinstance(item.get("occurrences"), list) for item in definitions):
         raise ValueError("Invalid component definition records.")
+    if (any("active_part_type" in item
+            and item["active_part_type"] not in ("Full Component", "Bodies Only")
+            for item in definitions)
+            or any("active_part_type" in item for item in definitions)
+            != ("component-active-part-type-v1" in required)):
+        raise ValueError("Invalid active component part type capability or value.")
     occurrences = [instance for item in definitions for instance in item["occurrences"]]
     if any(not isinstance(item, dict)
            or any(not isinstance(item.get(key), str) or not item[key]
@@ -162,6 +173,7 @@ def preflight(filename):
         saved[obj.get("name")] = {"id": value("ObjectId", "String"),
                                   "role": value("ComponentRole", "String"),
                                   "part_type": value("PartType", "String"),
+                                  "active_part_type": value("ActivePartType", "String"),
                                   "file_container": value("FileContainer", "Bool") == "true",
                                   "root": value("RootComponent", "Link"),
                                   "assembly_root": value("ComponentRoot", "Link"),
@@ -195,6 +207,8 @@ def preflight(filename):
         raise ValueError("Component occurrences differ from the format manifest.")
     for definition in definitions:
         native = saved[definition["object"]]
+        if native["active_part_type"] != definition.get("active_part_type"):
+            raise ValueError("Native active component part type differs from its manifest.")
         if {name for name in native["group"] if name in saved_occurrences} != {
                 item["object"] for item in definition["occurrences"]}:
             raise ValueError("Component occurrence ownership differs from the format manifest.")

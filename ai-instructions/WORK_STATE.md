@@ -1,5 +1,45 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Saved active component display (7.8.14c2a)
+
+ComponentModel.active_part_type/set_active_part_type now own optional
+ActivePartType on each definition. Full Component remains the default without
+mutating old files; Bodies Only and explicit reset are transaction-backed.
+effective_part_type reads this choice for the exact active occurrence. A parent's
+Excluded/Reference assignments, child settings and visibility remain independent.
+Native definition copy and Copy to New Part preserve the setting; an external
+occurrence does not store or implicitly change its source's active choice.
+
+CadDocument records active_part_type per definition and requires the additive
+component-active-part-type-v1 capability only for explicitly authored settings.
+Native/manifest mismatch, stripped declarations, invalid active values and readers
+without the capability are refused. This is separate from direct-child PartType.
+
+Accepted source-overlay coverage: eight new TestComponentActivePartType cases,
+ten TestComponentPartTypes and nine TestComponentOutput (27 distinct cases).
+Undo/Redo, rollback, reset, shared/independent copies, external ownership,
+save/reopen and capability tamper checks pass. The initial 27-case batch's copy
+fixture tried to create two copies with the same name and correctly hit the
+existing naming guard. Giving the independent copy its own name yielded eight
+passing cases on focused rerun; the other nineteen already passed. These are
+35 executions, no final failures/errors/skips; final PASS marker and exit 0.
+The final stderr contains seven PropertyXLink export-without-saving diagnostics
+from native copy fixtures; the initial batch also has the deliberate RawFuse
+out-of-scope warning. No claim of empty stderr or fresh-process reopen is made.
+
+Used retained development fork freecad_plus_2026-10-06_recovered_workload,
+revision 49496 / 872610fb762d5ffc4bf2664a08b5c37e66dae8a9, with six explicit
+hash-checked source overlays. Runtime import and CRLF-aware diff checks pass.
+No native rebuild, owner payload or shortcut update. This is backend storage and
+resolution only; menus/viewport do not yet consume the new setting, so the owner
+UI DOCX remains unchanged. Task output under validation/part-type-active-setting
+is removed after recording evidence. Source publication is tracked in Git.
+
+Next task: 7.8.14c2b connect saved self/child settings to Part Type menus and
+viewport traversal, enforce Excluded/Reference display and independent visibility,
+reconcile legacy nested overrides, verify active-context switching and update/render
+the owner UI DOCX. Grouped owner delivery remains 7.8.14d.
+
 ## October 10 Part Tree double-click activation (7.8.14c1)
 
 ComponentNavigator now handles the Part Tree's native double-click before Qt
