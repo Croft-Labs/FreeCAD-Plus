@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Schema 1: native document, definition catalog, and a single placed component.
+"""Versioned native document, definition catalog, and a single placed component.
 
-This deliberately bounded pilot is not a converter for legacy or archived Plus files.
+Legacy conversion is explicitly handled by conversion.py, never by ordinary open.
 Native object names qualified by Document.Uid supply persistent identity.
 """
 from contextlib import contextmanager
@@ -12,7 +12,8 @@ import zipfile
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 1
+SCHEMA = 2
+SUPPORTED_SCHEMAS = (1, 2)
 
 
 @contextmanager
@@ -44,14 +45,14 @@ def validate(doc):
         raise ValueError("Expected exactly one component file root")
     root = roots[0]
     if (root.TypeId != "App::Part" or root.PlusFormat != FORMAT
-            or getattr(root, "PlusSchema", None) != SCHEMA):
+            or getattr(root, "PlusSchema", None) not in SUPPORTED_SCHEMAS):
         raise ValueError("Unsupported component document format or schema")
     if not root.Placement.isSame(App.Placement(), 1e-9):
         raise ValueError("The file coordinate frame must remain fixed")
     definitions = list(root.Definitions)
     instances = list(root.Group)
     if len(definitions) > 1 or len(instances) > 1:
-        raise ValueError("Schema 1 pilot supports at most one definition and occurrence")
+        raise ValueError("The current pilot supports at most one definition and occurrence")
     if len(set(definitions)) != len(definitions):
         raise ValueError("Duplicate component identity")
     for definition in definitions:
@@ -59,8 +60,12 @@ def validate(doc):
             raise ValueError("Invalid domestic definition")
         if not definition.Placement.isSame(App.Placement(), 1e-9):
             raise ValueError("Place the occurrence, not the stored definition")
-        if any(o.TypeId != "PartDesign::Body" for o in definition.Group):
-            raise ValueError("Pilot modeling content must use native backend Bodies")
+        for obj in definition.Group:
+            if obj.TypeId == "PartDesign::Body":
+                continue
+            if root.PlusSchema >= 2 and obj.isDerivedFrom("Part::Feature"):
+                continue
+            raise ValueError("Unsupported component modeling content for this schema")
     for instance in instances:
         if (instance.TypeId != "App::Link" or instance.Document != doc
                 or instance.LinkedObject not in definitions or instance.LinkTransform
@@ -87,21 +92,27 @@ def validate(doc):
     return root
 
 
+def create_file_root(doc):
+    """Create metadata/frame only; conversion must not insert a default Part001."""
+    root = doc.addObject("App::Part", "File")
+    root.Label = doc.Label
+    root.addProperty("App::PropertyString", "PlusFormat", "Component document")
+    root.PlusFormat = FORMAT
+    root.addProperty("App::PropertyInteger", "PlusSchema", "Component document")
+    root.PlusSchema = SCHEMA
+    root.addProperty("App::PropertyLinkList", "Definitions", "Component document")
+    for prop in ("PlusFormat", "PlusSchema", "Definitions", "Placement"):
+        root.setEditorMode(prop, 1)
+    return root
+
+
 def new_document(name="Unnamed"):
     """Create once; opening an existing document never calls this initializer."""
     doc = App.newDocument(name)
     doc.UndoMode = 1
     try:
         with transaction(doc, "New component document"):
-            root = doc.addObject("App::Part", "File")
-            root.Label = doc.Label
-            root.addProperty("App::PropertyString", "PlusFormat", "Component document")
-            root.PlusFormat = FORMAT
-            root.addProperty("App::PropertyInteger", "PlusSchema", "Component document")
-            root.PlusSchema = SCHEMA
-            root.addProperty("App::PropertyLinkList", "Definitions", "Component document")
-            for prop in ("PlusFormat", "PlusSchema", "Definitions", "Placement"):
-                root.setEditorMode(prop, 1)
+            root = create_file_root(doc)
             definition = doc.addObject("App::Part", "Part001")
             root.Definitions = [definition]
             instance = doc.addObject("App::Link", "Part001Instance")
@@ -127,7 +138,8 @@ def history(doc, definition=None):
         return [root.Origin] + [o for o in root.Origin.OriginFeatures if o.TypeId == "App::Plane"]
     if definition not in root.Definitions:
         raise ValueError("Definition does not belong to this file")
-    return [feature for body in definition.Group for feature in body.Group]
+    return [feature for obj in definition.Group
+            for feature in (obj.Group if obj.TypeId == "PartDesign::Body" else [obj])]
 
 
 def inspect_archive(filename):
@@ -143,7 +155,7 @@ def inspect_archive(filename):
     roots = [o for o in tree.findall("./ObjectData/Object")
              if o.find("./Properties/Property[@name='PlusFormat']") is not None]
     version = roots[0].find("./Properties/Property[@name='PlusSchema']/Integer")
-    if version is None or version.get("value") != str(SCHEMA):
+    if version is None or version.get("value") not in {str(v) for v in SUPPORTED_SCHEMAS}:
         raise ValueError("Unsupported component schema; the source was not changed")
     return path.resolve()
 

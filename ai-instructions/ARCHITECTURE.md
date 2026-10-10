@@ -1,7 +1,7 @@
 # Component/document architecture
 
-Status: G1.2 single-component pilot implemented and validated, October 10, 2026.
-The native service module is opt-in; the complete panel, conversion and later Group 1
+Status: G1.3 initial legacy conversion implemented and validated, October 10, 2026.
+The native service module is opt-in; the complete panel, broader conversion and later Group 1
 behavior below remain target design until their roadmap stages are completed.
 Engineering choices below implement confirmed behavior; they do not approve
 DOCX candidates or restore archived Plus code. The [component specification](ui-ux-specs/COMPONENT_PANEL.md)
@@ -87,15 +87,17 @@ It is not a renamed legacy file with an assumed component structure. No historic
 `.cadprt` schema is adopted implicitly. No owner files have been converted.
 
 The schema owner is [freecad_plus/document.py](../src/Mod/FreeCADPlus/freecad_plus/document.py).
-Schema 1 is deliberately bounded to zero or one domestic definition and occurrence:
+Schemas 1 and 2 are bounded to zero or one domestic definition and occurrence.
+New files and conversions use schema 2. Existing schema-1 files are read and saved
+without an implicit upgrade; their Body-only ownership contract is retained:
 
-| Stored item | Schema 1 representation |
+| Stored item | Native representation |
 | --- | --- |
 | Marker | File-root `PlusFormat = FreeCADPlus.ComponentDocument` |
-| Revision | File-root integer `PlusSchema = 1` |
+| Revision | File-root integer `PlusSchema`: 1 or 2 |
 | Definition catalog | File-root native `Definitions` PropertyLinkList |
 | Placements | File-root native Group containing App::Link; LinkTransform false, copy-on-change disabled, no array elements |
-| Definition content | Native App::Part Group containing backend PartDesign Bodies |
+| Definition content | Native App::Part Group containing backend PartDesign Bodies; schema 2 also permits directly owned Part features/geometry |
 | Identity | Native Document.Uid and object Name; native object IDs also survive tested reopen |
 | World frame | File-root Placement fixed at identity; native Origin/planes reused |
 | Definition frame | Identity in the pilot; placement is authored on the occurrence |
@@ -103,7 +105,7 @@ Schema 1 is deliberately bounded to zero or one domestic definition and occurren
 Ownership validation follows native groups and Origins, not arbitrary dependency
 links. Orphaned objects, multiple roots, invalid targets and external dependencies
 are rejected. Empty files and unused domestic definitions are valid. Nested,
-external and other modeling-content schemas require explicit extension/migration;
+external and further modeling-content schemas require explicit extension/migration;
 these pilot bounds are not final product restrictions.
 
 [editing.py](../src/Mod/FreeCADPlus/freecad_plus/editing.py) uses the native per-view
@@ -163,6 +165,39 @@ parametric editing or unresolved dependency. Do not silently discard content.
 Reparenting must preserve world placement and valid subelement references; it
 cannot be considered successful merely because the final shape looks similar.
 Validate conversion by editing, recomputing, saving, closing and reopening.
+The initial converter is [conversion.convert_file](../src/Mod/FreeCADPlus/freecad_plus/conversion.py).
+Its supported fixtures are empty files, a single native Body and its owned features,
+a single Part Box, or a standalone static Part feature (including curve geometry).
+It creates only the required file root, definition wrapper and linked occurrence;
+it never calls the new-file Part001 initializer. Names, labels, native object IDs,
+authored placements, expressions and dependencies are checked before publication.
+Native restore must account for every archived object. Part containers, multiple
+components, existing links, external references and other graphs are deferred to
+later conversion cases, with no output written on rejection.
+
+Conversion reads the on-disk FCStd into a separate native document, even when the
+source is open with unsaved changes. The source is never saved or mutated. The
+converted file gets a distinct native document UUID; its source UUID and original
+object inventory are retained in the file-root ConversionReport JSON. This makes
+the two retained files distinct while preserving native object identity within the
+converted graph. FreeCAD itself regenerates duplicate document UUIDs on concurrent
+restore; conversion deliberately assigns a new one consistently, regardless of
+whether the source is open. This is not an external-reference migration.
+
+Unknown standalone valid Part-derived shapes can be recovered only with explicit
+`allow_geometry_fallback=True`. The new copy becomes a static Part::Feature,
+retaining its name, label, shape and placement; source type is stored on the result.
+ConversionReport records lost parameters/expressions and replacement object ID.
+Body graphs are not silently flattened. Ordinary supported static geometry is kept
+as its existing native type. No owner files have been converted during validation.
+
+The destination must be new. Native safe-save runs in a temporary directory beside
+it; an exclusive atomic hard link publishes the completed archive, then staging is
+removed. Filesystems without hard-link support fail without replacing a source or
+destination. Failed restore, conversion, validation or save closes only the working
+copy and restores the prior active document. ConversionReport and the return value
+make fallback warnings inspectable without inventing a conversion dialog.
+
 Older fork `.cadprt` files need their own identified migration fixtures; do not
 interpret them using the new schema merely because their extensions match.
 Export back to `.FCStd` and direct `.cadprt` opening in stock FreeCAD are not
@@ -217,3 +252,6 @@ The native source establishes reused mechanisms; the pilot tests establish the b
 
 - [Pilot acceptance suite](../src/Mod/FreeCADPlus/TestComponentPilot.py): native ownership,
   context isolation, geometry, rollback/Undo/Redo, persistence and legacy controls.
+
+- [Legacy conversion tests](../src/Mod/FreeCADPlus/TestLegacyConversion.py): native feature
+  preservation, explicit fallback, source protection and fresh-process editing.

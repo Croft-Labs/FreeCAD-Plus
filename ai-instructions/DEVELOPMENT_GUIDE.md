@@ -118,3 +118,27 @@ with `include(AddFileDependencies)`, the repository's FreeCadMacros.cmake, and
 `add_subdirectory` pointing to src/Mod/FreeCADPlus. Build FreeCADPlusScripts and
 install under the designated test-builds root; compare all copied files to source.
 This does not constitute a full native application build or owner delivery.
+
+## Legacy conversion validation
+
+Use the same isolated GUI profile/module-path setup as the pilot. Set PLUS_TEST_DIR
+to a fresh task directory under the validation root; conversion deliberately refuses
+existing destinations, so do not reuse earlier fixture outputs. Run TestLegacyConversion
+alongside TestComponentPilot with unittest. In a second process, run
+`TestLegacyConversion.verify_fresh_process(output_directory)` against those fixtures.
+The cases include an open source with unsaved edits, expressions, origin attachment,
+placement, native IDs, Undo/Redo, curve/empty files, fallback reporting and failures.
+
+The opt-in entry point is:
+
+```python
+from freecad_plus.conversion import convert_file
+converted_doc, report = convert_file(source_fcstd, new_cadprt_path)
+```
+
+Only explicitly requested standalone shape recovery uses
+`allow_geometry_fallback=True`; inspect report["warnings"] and the persisted file-root
+ConversionReport. Never bulk-convert owner files as a test. Supported structures and
+schema/identity boundaries are in ARCHITECTURE.md. The destination's filesystem must
+support an exclusive hard link for publication; failure never replaces an existing
+file. Full conversion UI and broader hierarchy cases remain separate roadmap stages.

@@ -50,9 +50,15 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   native Sketch/Pad editor acceptance; clean normal framebuffer inspected. Script-only
   CMake build/install passed. No native rebuild, full panel or owner-build delivery.
   Detailed evidence and stopping boundary are in [WORK_STATE](WORK_STATE.md).
-- [   ] **G1.3 — Initial legacy conversion.** Simple `.FCStd` fixtures; preserve
+- [ X ] **G1.3 — Initial legacy conversion.** Simple `.FCStd` fixtures; preserve
   originals and editability, explicitly report fallback geometry, test fresh reopen.
-- [   ] **G1.4 — Hierarchy and shared instances.** Nested components, shared edits,
+  Completed for empty files, single native Bodies, Boxes and static shapes/curves;
+  explicitly requested standalone geometry fallback is persistently reported.
+  Eleven native-process tests (five conversion, six pilot regression) and a separate
+  process reopen/edit/save passed. Schema 1 remains readable; schema 2 adds direct
+  geometry ownership. Script build/install passed. No owner executable or full UI
+  delivery. See WORK_STATE for source protection, limits and identity handling.
+- [   ] **G1.4 — Hierarchy and shared instances (next).** Nested components, shared edits,
   parent-owned transforms, cycle prevention and matching conversion cases.
 - [   ] **G1.5 — External definitions.** Nested import catalogs, source-file ownership,
   independent copies and explicit cross-file failure/recovery checks.

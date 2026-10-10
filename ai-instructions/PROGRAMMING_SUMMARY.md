@@ -6,8 +6,9 @@ This checkout starts from official **FreeCAD 1.1.4** source at
 `4fd3bf320d9566a27e60069fc8387448aaa3a094`, plus owner documentation, an agent entry
 point and focused generated-file ignore rules. Branch: `codex/freecad-1.1.4-baseline`.
 No previous Plus application changes have been carried into this branch. Group 1
-now has a validated, opt-in single-component pilot under src/Mod/FreeCADPlus.
-The next task is G1.3 initial legacy conversion; stop until continuation is requested.
+now has a validated, opt-in single-component pilot and initial legacy converter
+under src/Mod/FreeCADPlus. Next is G1.4 hierarchy and shared instances; stop until
+continuation is requested.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
@@ -32,6 +33,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/document.py: schema, ownership, creation/open/save.
 - src/Mod/FreeCADPlus/freecad_plus/editing.py: per-view Edit, backend Body and native feature adapters.
 - src/Mod/FreeCADPlus/TestComponentPilot.py: G1.2 regression suite and fresh-process check.
+- src/Mod/FreeCADPlus/freecad_plus/conversion.py: isolated legacy conversion and persisted loss report.
+- src/Mod/FreeCADPlus/TestLegacyConversion.py: G1.3 fixtures and fresh-process acceptance.
 - tests and per-workbench tests: upstream test infrastructure.
 - CMakeLists.txt, CMakePresets.json and .github/workflows: this release's build definitions.
 - .gitmodules: this release's pinned GSL, OndselSolver, AddonManager and GoogleTest.

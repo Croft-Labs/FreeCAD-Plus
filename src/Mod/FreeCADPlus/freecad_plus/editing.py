@@ -28,7 +28,7 @@ def edit(instance):
     definition = instance.LinkedObject
     view.setActiveObject(_KEY, root, instance.Name + ".")
     view.setActiveObject("part", definition)
-    bodies = definition.Group
+    bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
     view.setActiveObject("pdbody", bodies[-1] if bodies else None)
     return definition
 
@@ -57,7 +57,8 @@ def new_sketch(doc):
     """Create/route the backend Body automatically; retain the native Sketch editor."""
     definition, occurrence = context(doc)
     with transaction(doc, "Create component sketch"):
-        body = definition.Group[-1] if definition.Group else definition.newObject("PartDesign::Body", "Body")
+        bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
+        body = bodies[-1] if bodies else definition.newObject("PartDesign::Body", "Body")
         sketch = body.newObject("Sketcher::SketchObject", "Sketch")
     edit(occurrence)
     return sketch
@@ -66,7 +67,7 @@ def new_sketch(doc):
 def pad(doc, sketch, length):
     """Narrow native-feature adapter, without replacing PartDesign_Pad or its editor."""
     definition, occurrence = context(doc)
-    bodies = [body for body in definition.Group if sketch in body.Group]
+    bodies = [body for body in definition.Group if body.TypeId == "PartDesign::Body" and sketch in body.Group]
     if sketch.TypeId != "Sketcher::SketchObject" or len(bodies) != 1:
         raise ValueError("The sketch must belong to the explicitly edited component")
     with transaction(doc, "Pad component sketch"):

@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import unittest
 import zipfile
+import xml.etree.ElementTree as ET
 
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -164,7 +165,9 @@ class TestComponentPilot(unittest.TestCase):
             for name in source.namelist():
                 content = source.read(name)
                 if name == "Document.xml":
-                    content = content.replace(b'<Integer value="1"/>', b'<Integer value="99"/>')
+                    tree = ET.fromstring(content)
+                    tree.find("./ObjectData/Object/Properties/Property[@name='PlusSchema']/Integer").set("value", "99")
+                    content = ET.tostring(tree)
                 dest.writestr(name, content)
         digest = hashlib.sha256(future.read_bytes()).hexdigest()
         documents = set(App.listDocuments())

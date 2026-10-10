@@ -2,13 +2,58 @@
 
 ## Authorized objective and stopping boundary
 
-Owner authorized Group 1 (component panel/document structure), one reviewable task
-at a time, and instructed stopping after the current checks pass. **G1.2 is complete;
-stop here.** Next: **G1.3 initial legacy conversion** using simple `.FCStd` fixtures,
-preserving the original files and editable features, then testing fresh reopen.
-Do not begin G1.3 or other groups without the next continuation request.
+Owner authorized Group 1 one reviewable task at a time and instructed stopping after
+the current checks pass. **G1.3 is complete; stop here.** Next: **G1.4 hierarchy and
+shared instances**, including nested components, shared edits, parent-owned
+transforms, cycle prevention and matching legacy conversion cases. Do not begin
+that stage or other groups without the next continuation request.
 
-## G1.2 implementation and acceptance � October 10, 2026
+## G1.3 implementation and acceptance - October 10, 2026
+
+**Implementation:** isolated `conversion.convert_file` plus schema-2 support for
+native standalone geometry. Preserves native single-Body features, sketch attachment
+and profile references, expressions, names, labels, object IDs and placements.
+Empty files, native Boxes and static shapes/curves are supported. Unknown standalone
+Part-derived geometry requires explicit fallback; loss reporting persists in the
+new file. Unsupported graphs fail without an output file. The [architecture](ARCHITECTURE.md)
+owns the complete conversion and schema contract.
+
+**Runtime:** eleven tests passed in 5.253 seconds in the matching official 1.1.4 GUI
+process: five conversion tests and the six existing pilot tests. A separate process
+then passed reopen/edit/recompute/save of the converted Body. Final processes exited
+normally with code 0. Checks used only generated fixtures in an isolated profile.
+No owner document was converted or modified.
+
+The native Body fixture retained translation/rotation, an origin-plane sketch
+attachment, Pad Profile and an expression-driven Length. The converted input changed
+from 5 to 7 with Length changing from 10 to 14 mm; Undo/Redo restored those values.
+A fresh process verified identity/reference/placement persistence and changed the
+input to 8, producing Length 16 mm and valid geometry before saving a separate file.
+The original FCStd hash remained unchanged. An open source's deliberately different,
+unsaved input stayed at 9 and remained dirty; conversion used the saved disk version.
+
+Other checks covered an editable native Box, a static curve, a valid empty file,
+explicit geometry-only recovery and persisted warnings after reopen, rejection of
+multiple roots, injected save failure, existing-destination protection and staging
+cleanup. Schema-1 files reopened and saved without upgrading. Adding a new sketch
+to a converted direct-geometry component still creates the backend Body correctly.
+The new converted file deliberately has a distinct Document.Uid, with source/output
+UUIDs recorded in ConversionReport; native object IDs remain stable except for the
+explicitly reported replacement of a geometry-only fallback object.
+
+**Build and delivery:** script-only CMake build/install passed; all eight scripts
+matched source byte-for-byte and syntax/whitespace checks passed. Native C++ was
+not rebuilt. No new owner executable, conversion dialog or full panel is delivered;
+the desktop shortcut remains on the archived fork. No unrelated workbench/UI
+behavior was changed or baseline display testing repeated.
+
+**Publication/cleanup:** the coherent G1.3 milestone is committed and pushed to
+origin/codex/freecad-1.1.4-baseline with the remote hash verified at handoff.
+Task-generated profiles, fixtures, logs and temporary script-build outputs were
+removed after recording results. Tracked fixtures remain reproducible through the
+[guide](DEVELOPMENT_GUIDE.md#legacy-conversion-validation).
+
+## G1.2 implementation and acceptance — October 10, 2026
 
 **Implementation:** a new opt-in script module under src/Mod/FreeCADPlus and its
 CMake inclusion. One native file root, domestic Part001 catalog definition and
@@ -90,7 +135,7 @@ Committed archival blob hashes also match all 664 preserved documents/assets.
 Temporary source staging was removed after checks. The subsequent runtime check
 below uses the official binary; this checkout has not been compiled locally.
 
-## Stable baseline inventory and light runtime check — October 10, 2026
+## Stable baseline inventory and light runtime check â€” October 10, 2026
 
 **Result: provenance, source integrity, core functionality and the light baseline
 display check pass.** The earlier viewport artifacts were reproduced only through
@@ -185,7 +230,7 @@ OpenSCAD's workbench loaded, but reported its external OpenSCAD executable was
 not found. Operations requiring that program are not verified or ready. Other
 external solvers/toolchains were not validated.
 
-### Display gate resolved — October 10, 2026
+### Display gate resolved â€” October 10, 2026
 
 The owner requested resolution and was unavailable for manual tests. The agent
 completed an automated comparison and interaction check using the same official
