@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Versioned native document, definition catalog, and a single placed component.
+"""Versioned native document, definition catalog, and shared component hierarchies.
 
 Legacy conversion is explicitly handled by conversion.py, never by ordinary open.
 Native object names qualified by Document.Uid supply persistent identity.
@@ -12,8 +12,8 @@ import zipfile
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 2
-SUPPORTED_SCHEMAS = (1, 2)
+SCHEMA = 3
+SUPPORTED_SCHEMAS = (1, 2, 3)
 
 
 @contextmanager
@@ -24,6 +24,7 @@ def transaction(doc, label):
     doc.openTransaction(label)
     try:
         yield
+        validate(doc)
         doc.recompute()
         validate(doc)
     except Exception:
@@ -51,16 +52,19 @@ def validate(doc):
         raise ValueError("The file coordinate frame must remain fixed")
     definitions = list(root.Definitions)
     instances = list(root.Group)
-    if len(definitions) > 1 or len(instances) > 1:
+    if root.PlusSchema < 3 and (len(definitions) > 1 or len(instances) > 1):
         raise ValueError("The current pilot supports at most one definition and occurrence")
     if len(set(definitions)) != len(definitions):
         raise ValueError("Duplicate component identity")
     for definition in definitions:
         if definition.Document != doc or definition.TypeId != "App::Part" or definition == root:
             raise ValueError("Invalid domestic definition")
-        if not definition.Placement.isSame(App.Placement(), 1e-9):
+        if root.PlusSchema < 3 and not definition.Placement.isSame(App.Placement(), 1e-9):
             raise ValueError("Place the occurrence, not the stored definition")
         for obj in definition.Group:
+            if root.PlusSchema >= 3 and obj.TypeId == "App::Link":
+                instances.append(obj)
+                continue
             if obj.TypeId == "PartDesign::Body":
                 continue
             if root.PlusSchema >= 2 and obj.isDerivedFrom("Part::Feature"):
@@ -68,9 +72,27 @@ def validate(doc):
             raise ValueError("Unsupported component modeling content for this schema")
     for instance in instances:
         if (instance.TypeId != "App::Link" or instance.Document != doc
-                or instance.LinkedObject not in definitions or instance.LinkTransform
+                or instance.LinkedObject not in definitions or (root.PlusSchema < 3 and instance.LinkTransform)
                 or instance.LinkCopyOnChange != "Disabled" or instance.ElementCount):
             raise ValueError("Invalid shared component occurrence")
+        if instance.Scale != 1 or not instance.ScaleVector.isEqual(App.Vector(1, 1, 1), 1e-9):
+            raise ValueError("Scaled component links require a separate migration case")
+    # Detect cycles across definitions, including unused catalog entries, before
+    # native recompute traverses links. Shared DAG branches are visited only once.
+    visited, active = set(), set()
+    def visit(definition):
+        if definition in active:
+            raise ValueError("Circular component nesting is not allowed")
+        if definition in visited:
+            return
+        active.add(definition)
+        for child in definition.Group:
+            if child.TypeId == "App::Link":
+                visit(child.LinkedObject)
+        active.remove(definition)
+        visited.add(definition)
+    for definition in definitions:
+        visit(definition)
     # Follow ownership only, never general dependency links (which could hide orphans).
     owned = set()
     def collect(obj):
@@ -139,7 +161,8 @@ def history(doc, definition=None):
     if definition not in root.Definitions:
         raise ValueError("Definition does not belong to this file")
     return [feature for obj in definition.Group
-            for feature in (obj.Group if obj.TypeId == "PartDesign::Body" else [obj])]
+            for feature in (obj.Group if obj.TypeId == "PartDesign::Body" else [obj])
+            if obj.TypeId != "App::Link"]
 
 
 def inspect_archive(filename):

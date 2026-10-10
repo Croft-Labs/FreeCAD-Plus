@@ -7,6 +7,7 @@ Models/Part Tree/History panel will consume these services in its own stage.
 import FreeCAD as App
 import FreeCADGui as Gui
 from .document import transaction, validate
+from . import hierarchy
 
 _KEY = "PlusEdit"
 
@@ -18,18 +19,22 @@ def _view(doc):
 
 
 def edit(instance):
-    doc = instance.Document
+    path = tuple(instance) if isinstance(instance, (tuple, list)) else (instance,)
+    if not path:
+        raise ValueError("Edit requires an occurrence path")
+    doc = path[0].Document
     root = validate(doc)
-    if instance not in root.Group:
-        raise ValueError("Edit requires a placed component in this file")
+    definition, path = hierarchy.resolve(doc, path)
     view = _view(doc)
     if Gui.activeDocument().getInEdit():
         raise ValueError("Finish the native feature editor first")
-    definition = instance.LinkedObject
-    view.setActiveObject(_KEY, root, instance.Name + ".")
-    view.setActiveObject("part", definition)
+    view.setActiveObject(_KEY, root, hierarchy.subname(path))
+    view.setActiveObject("part", root, hierarchy.subname(path))
     bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
-    view.setActiveObject("pdbody", bodies[-1] if bodies else None)
+    if bodies:
+        view.setActiveObject("pdbody", root, hierarchy.subname(path) + bodies[-1].Name + ".")
+    else:
+        view.setActiveObject("pdbody", None)
     return definition
 
 
@@ -42,20 +47,27 @@ def edit_file(doc):
     view.setActiveObject("pdbody", None)
 
 
-def context(doc):
+def context_path(doc):
     root = validate(doc)
     if Gui.getDocument(doc.Name).getInEdit():
         raise ValueError("Finish the native feature editor first")
     resolved, parent, subname = _view(doc).getActiveObject(_KEY, False)
-    occurrences = [o for o in root.Group if subname == o.Name + "."]
-    if parent != root or len(occurrences) != 1 or resolved != occurrences[0].LinkedObject:
+    if parent != root or not subname:
         raise ValueError("Explicitly Edit a component before creating modeling geometry")
-    return resolved, occurrences[0]
+    definition, path = hierarchy.resolve(doc, subname.rstrip(".").split("."))
+    if definition != resolved:
+        raise ValueError("The component Edit context is stale")
+    return definition, path
+
+
+def context(doc):
+    definition, path = context_path(doc)
+    return definition, path[-1]
 
 
 def new_sketch(doc):
     """Create/route the backend Body automatically; retain the native Sketch editor."""
-    definition, occurrence = context(doc)
+    definition, occurrence = context_path(doc)
     with transaction(doc, "Create component sketch"):
         bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
         body = bodies[-1] if bodies else definition.newObject("PartDesign::Body", "Body")
@@ -66,7 +78,7 @@ def new_sketch(doc):
 
 def pad(doc, sketch, length):
     """Narrow native-feature adapter, without replacing PartDesign_Pad or its editor."""
-    definition, occurrence = context(doc)
+    definition, occurrence = context_path(doc)
     bodies = [body for body in definition.Group if body.TypeId == "PartDesign::Body" and sketch in body.Group]
     if sketch.TypeId != "Sketcher::SketchObject" or len(bodies) != 1:
         raise ValueError("The sketch must belong to the explicitly edited component")

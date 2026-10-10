@@ -58,9 +58,14 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   process reopen/edit/save passed. Schema 1 remains readable; schema 2 adds direct
   geometry ownership. Script build/install passed. No owner executable or full UI
   delivery. See WORK_STATE for source protection, limits and identity handling.
-- [   ] **G1.4 — Hierarchy and shared instances (next).** Nested components, shared edits,
+- [ X ] **G1.4 — Hierarchy and shared instances.** Nested components, shared edits,
   parent-owned transforms, cycle prevention and matching conversion cases.
-- [   ] **G1.5 — External definitions.** Nested import catalogs, source-file ownership,
+  Sixteen native-process tests (five hierarchy plus eleven prior regressions), fresh
+  reopen/edit/save of both new and converted hierarchies, and native Sketch/Pad
+  editing through the second occurrence passed. Clean four-solid viewport inspected;
+  script build/install passed. No owner executable or full panel delivery claimed.
+  WORK_STATE records evidence and the explicit schema-3 upgrade boundary.
+- [   ] **G1.5 — External definitions (next).** Nested import catalogs, source-file ownership,
   independent copies and explicit cross-file failure/recovery checks.
 - [   ] **G1.6 — Component panel.** Models/Part Tree/History, file row, explicit Edit,
   occurrence tracking, confirmed actions and temporary unused-model editing.

@@ -141,4 +141,27 @@ Only explicitly requested standalone shape recovery uses
 ConversionReport. Never bulk-convert owner files as a test. Supported structures and
 schema/identity boundaries are in ARCHITECTURE.md. The destination's filesystem must
 support an exclusive hard link for publication; failure never replaces an existing
-file. Full conversion UI and broader hierarchy cases remain separate roadmap stages.
+file. Full conversion UI and remaining unsupported graph cases are separate work.
+
+## Hierarchy validation
+
+Run TestComponentHierarchy together with TestComponentPilot and TestLegacyConversion
+in an isolated GUI process and fresh PLUS_TEST_DIR as described above. In a second
+process, run `TestComponentHierarchy.verify_fresh_process(output_directory)`.
+It reopens both new and legacy-converted hierarchies and verifies shared edits,
+identity, placement and source preservation before saving separate edited files.
+
+The service entry points are `hierarchy.create_definition`, `add_instance`,
+`move_instance`, `resolve` and `world_placement`. Use `editing.edit((root_link,
+child_link, ...))` for nested Edit; bare nested links are deliberately ambiguous.
+Use `editing.context_path(doc)` when a caller needs the complete occurrence.
+Older schema files require explicit `hierarchy.upgrade(doc)` before hierarchy
+mutations; opening/saving alone never upgrades them.
+
+For native GUI acceptance, select the second root occurrence's child with Edit,
+then call `Gui.activeDocument().setEdit(file_root.Name, 0, subname)` using the full
+link path followed by Body and Sketch/Pad names. Check getInEdit, close with native
+resetEdit, and confirm the occurrence context and geometry remain intact. Inspect
+normal framebuffer pixels with the existing capture procedure. Script build/install
+checks use the same standalone CMake harness; no native recompilation is required
+for this module-only change. Do not treat these checks as full panel delivery.

@@ -1,6 +1,6 @@
 # Component/document architecture
 
-Status: G1.3 initial legacy conversion implemented and validated, October 10, 2026.
+Status: G1.4 domestic hierarchy and shared instances implemented and validated, October 10, 2026.
 The native service module is opt-in; the complete panel, broader conversion and later Group 1
 behavior below remain target design until their roadmap stages are completed.
 Engineering choices below implement confirmed behavior; they do not approve
@@ -13,8 +13,8 @@ owns implementation order and acceptance status.
 Reuse FreeCAD documents, native feature/property identities, geometry, solvers,
 transactions and links. Introduce component ownership and presentation around
 these services. Keep the original workbench inventory and geometry algorithms.
-The first pilot covers one domestic component only; nested definitions, external
-files, broad legacy conversion and full panel behavior follow in separate stages.
+Current services cover domestic component hierarchies and shared native instances.
+External files, further legacy conversion and the full panel follow in separate stages.
 
 The Plus/Legacy interface preference and redesigned modeling dialogs are outside
 this stage. Component storage must not depend on the chosen toolbar presentation.
@@ -33,9 +33,9 @@ The archived fork is reference material, not a source of implicit requirements.
 | Edit context | Per-view/tab selection of defining component and occurrence path, separate from ordinary selection and saved model identity |
 | Persistence adapter | Native FreeCAD document serialization plus explicitly versioned component metadata; validated `.cadprt` open/save entry points |
 
-The pilot proves the `App::Part`/`App::Link` mapping for one domestic component.
-The definition is hidden and its one linked occurrence is visible, avoiding a
-duplicate rendered definition. Broader command integration remains deferred. Backend grouping must not
+The tests prove the `App::Part`/`App::Link` mapping for nested domestic definitions
+and repeated parents. Stored definitions are hidden; placed links render the
+instances without additional visible definition geometry. Broader command integration remains deferred. Backend grouping must not
 introduce dependency cycles or silently change placement transforms.
 
 ## Data model and lifecycle
@@ -87,33 +87,52 @@ It is not a renamed legacy file with an assumed component structure. No historic
 `.cadprt` schema is adopted implicitly. No owner files have been converted.
 
 The schema owner is [freecad_plus/document.py](../src/Mod/FreeCADPlus/freecad_plus/document.py).
-Schemas 1 and 2 are bounded to zero or one domestic definition and occurrence.
-New files and conversions use schema 2. Existing schema-1 files are read and saved
-without an implicit upgrade; their Body-only ownership contract is retained:
+New files and conversions use schema 3. Schemas 1 and 2 remain readable/savable
+with their original single-definition/single-instance bounds (schema 1 is Body-only).
+Hierarchy operations require the explicit, undoable `hierarchy.upgrade(doc)` on an
+older file; it validates the existing graph before changing only the schema marker:
 
 | Stored item | Native representation |
 | --- | --- |
 | Marker | File-root `PlusFormat = FreeCADPlus.ComponentDocument` |
-| Revision | File-root integer `PlusSchema`: 1 or 2 |
+| Revision | File-root integer `PlusSchema`: 1, 2 or 3 |
 | Definition catalog | File-root native `Definitions` PropertyLinkList |
-| Placements | File-root native Group containing App::Link; LinkTransform false, copy-on-change disabled, no array elements |
-| Definition content | Native App::Part Group containing backend PartDesign Bodies; schema 2 also permits directly owned Part features/geometry |
+| Placements | File-root or parent-definition Group containing App::Link; copy-on-change disabled, no array elements or scale |
+| Definition content | Native App::Part Group containing backend Bodies/geometry; schema 3 additionally owns child App::Links |
 | Identity | Native Document.Uid and object Name; native object IDs also survive tested reopen |
 | World frame | File-root Placement fixed at identity; native Origin/planes reused |
-| Definition frame | Identity in the pilot; placement is authored on the occurrence |
+| Definition frame | Schema 3 preserves native definition Placement, including legacy Part frames; native LinkTransform controls how occurrence placement composes with it |
 
 Ownership validation follows native groups and Origins, not arbitrary dependency
 links. Orphaned objects, multiple roots, invalid targets and external dependencies
-are rejected. Empty files and unused domestic definitions are valid. Nested,
-external and further modeling-content schemas require explicit extension/migration;
+are rejected. Empty files and unused domestic definitions are valid. External
+and further modeling-content schemas require explicit extension/migration;
 these pilot bounds are not final product restrictions.
 
 [editing.py](../src/Mod/FreeCADPlus/freecad_plus/editing.py) uses the native per-view
 `PlusEdit` active-object slot with a file-root-relative occurrence path, plus native
-`part`/`pdbody` slots. Selection never updates this context. A fresh reopen starts
+`part`/`pdbody` slots carrying the same full occurrence path. Selection never updates this context. A fresh reopen starts
 in File Edit. Sketch creation supplies a Body automatically; the Pad adapter creates
-the native PartDesign feature. History is a projection of native Body contents.
+the native PartDesign feature. History includes owned sketches/features/geometry
+while excluding Body containers and child-instance links.
 Native Sketch and Pad editors are retained and tested.
+
+[hierarchy.py](../src/Mod/FreeCADPlus/freecad_plus/hierarchy.py) owns domestic
+creation, placement, movement and occurrence resolution. Definitions have one catalog
+entry regardless of how many times they are placed. A child link belongs to its
+parent definition, so its local placement is shared by every occurrence of that
+parent. A full path of links selects one occurrence; a bare nested link is ambiguous
+and is rejected. Native getSubObject composes world placement, including rotations
+and LinkTransform. New hierarchy links use LinkTransform=true to include an existing
+definition frame; legacy link transform modes and authored placements are preserved.
+
+Add-instance checks reachability before creating a native link or transaction.
+Validation checks all definitions, including unused ones, for cycles and checks
+structural ownership separately from dependencies. Transaction validation now runs
+before recompute as well as afterward, preventing invalid component graphs from
+being traversed by recompute. Shared DAG branches are not mistaken for cycles.
+Removing/undoing an occurrence invalidates its Edit path rather than selecting
+another occurrence. Per-view contexts remain independent.
 
 These are opt-in Python entry points, not replacements for File > New or arbitrary
 workbench commands. Their ownership/Edit guards apply at these entry points. The
@@ -166,14 +185,27 @@ Reparenting must preserve world placement and valid subelement references; it
 cannot be considered successful merely because the final shape looks similar.
 Validate conversion by editing, recomputing, saving, closing and reopening.
 The initial converter is [conversion.convert_file](../src/Mod/FreeCADPlus/freecad_plus/conversion.py).
-Its supported fixtures are empty files, a single native Body and its owned features,
-a single Part Box, or a standalone static Part feature (including curve geometry).
+Its supported fixtures include domestic native Part trees/shared Part links, empty
+files, a single native Body and its owned features, a single Part Box, and standalone
+static Part features (including curves).
 It creates only the required file root, definition wrapper and linked occurrence;
 it never calls the new-file Part001 initializer. Names, labels, native object IDs,
 authored placements, expressions and dependencies are checked before publication.
-Native restore must account for every archived object. Part containers, multiple
-components, existing links, external references and other graphs are deferred to
-later conversion cases, with no output written on rejection.
+Native restore must account for every archived object. External references, scaled
+or array/copy-on-change links, scripted Body graphs, mixed unowned content and other
+unsupported graphs remain deferred, with no output written on rejection.
+
+[legacy_hierarchy.py](../src/Mod/FreeCADPlus/freecad_plus/legacy_hierarchy.py) reuses
+existing App::Parts as definitions, including their original Placement, Origin,
+names, labels and IDs. Direct nested Part membership is replaced by an identity
+App::Link with LinkTransform=true; original child links keep their targets and
+transform settings. Former top-level Parts receive corresponding root occurrences;
+top-level existing links remain instances. Original placement visibility is copied
+to new occurrences before stored definitions are hidden. ConversionReport records
+part_instances and replaced_group_edges. Only those intentional structural edge
+replacements are excluded from the native dependency-preservation comparison;
+other native references, expressions and authored placements remain checked.
+Supported Parts can own geometry/Bodies and child instances at the same time.
 
 Conversion reads the on-disk FCStd into a separate native document, even when the
 source is open with unsaved changes. The source is never saved or mutated. The
@@ -243,7 +275,7 @@ The native source establishes reused mechanisms; the pilot tests establish the b
 - [Part](../src/App/Part.h) and [origin groups](../src/App/OriginGroupExtension.h):
   native geometric grouping and Origin ownership.
 - [Link](../src/App/Link.h): shared target, LinkPlacement, LinkTransform and copy-on-change.
-  The pilot must choose transform behavior explicitly and keep ordinary instances shared.
+  Schema 3 retains native transform behavior and keeps ordinary instances shared.
 - [PartDesign Body](../src/Mod/PartDesign/App/Body.h): native feature grouping and Tip semantics.
 - [Confirmed component behavior](ui-ux-specs/COMPONENT_PANEL.md#confirmed-requirements),
   [movement ownership](ui-ux-specs/TASK_PANEL.md#move-components),
@@ -255,3 +287,6 @@ The native source establishes reused mechanisms; the pilot tests establish the b
 
 - [Legacy conversion tests](../src/Mod/FreeCADPlus/TestLegacyConversion.py): native feature
   preservation, explicit fallback, source protection and fresh-process editing.
+
+- [Hierarchy acceptance](../src/Mod/FreeCADPlus/TestComponentHierarchy.py): shared edits,
+  native occurrence contexts, placement, cycles, schema upgrade and legacy Part/link conversion.

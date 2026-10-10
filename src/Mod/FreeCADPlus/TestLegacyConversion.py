@@ -60,7 +60,7 @@ class TestLegacyConversion(unittest.TestCase):
         self.assertTrue(Gui.getDocument(doc.Name).Modified)
         self.assertEqual(doc.FileName, str(source))
         root = component.validate(converted)
-        self.assertEqual(root.PlusSchema, 2)
+        self.assertEqual(root.PlusSchema, component.SCHEMA)
         self.assertEqual(len(root.Definitions), 1)
         self.assertIsNone(converted.getObject("Part001"))
         self.assertNotEqual(str(doc.Uid), str(converted.Uid))

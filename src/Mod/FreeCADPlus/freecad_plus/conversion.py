@@ -34,6 +34,9 @@ def _body_objects(body):
 def _choose_content(doc, report, allow_geometry_fallback):
     if doc.Partial or doc.OutList or any("PlusFormat" in obj.PropertiesList for obj in doc.Objects):
         raise ConversionError("Expected a complete, domestic legacy FCStd document", report)
+    if any(o.TypeId == "App::Part" for o in doc.Objects):
+        from .legacy_hierarchy import preflight
+        return preflight(doc, ConversionError, report), False
     if not doc.Objects:
         return None, False
     bodies = [obj for obj in doc.Objects if obj.TypeId == "PartDesign::Body"]
@@ -60,8 +63,8 @@ def _choose_content(doc, report, allow_geometry_fallback):
 def convert_file(source, destination, *, allow_geometry_fallback=False):
     """Return (converted document, report); the on-disk FCStd is always the source.
 
-    Supported: empty files, one native Body with its owned features, or one Box/static
-    Part feature. An explicitly requested standalone shape fallback discards its
+    Supported: domestic Part hierarchies/shared Part links, empty files, one native
+    Body with its owned features, or one Box/static Part feature. An explicitly requested standalone shape fallback discards its
     parametric behavior only in the new file and records this loss persistently.
     The destination must not exist. Native save is staged beside it, then published
     without replacement via an atomic hard link (failure leaves the source intact).
@@ -121,7 +124,10 @@ def convert_file(source, destination, *, allow_geometry_fallback=False):
                     f"{name}: preserved final geometry only; {original_type} parameters, "
                     "expressions and native object ID are not retained in the converted copy.")
             root = component.create_file_root(doc)
-            if content:
+            if isinstance(content, list):
+                from .legacy_hierarchy import convert
+                convert(doc, content, root, report)
+            elif content:
                 definition = doc.addObject("App::Part", "Component")
                 definition.Label = content.Label
                 definition.addObject(content)
@@ -146,7 +152,8 @@ def convert_file(source, destination, *, allow_geometry_fallback=False):
                     raise ConversionError("Conversion changed a native object identity", report)
                 if list(obj.ExpressionEngine) != item["expressions"]:
                     raise ConversionError("Conversion changed a native expression", report)
-                if not set(item["dependencies"]).issubset({o.Name for o in obj.OutList}):
+                replaced = report.get("replaced_group_edges", {}).get(obj.Name, {})
+                if not (set(item["dependencies"]) - set(replaced)).issubset({o.Name for o in obj.OutList}):
                     raise ConversionError("Conversion lost a native dependency", report)
             if item["placement"] is not None and any(
                     abs(a-b) > 1e-9 for a, b in zip(item["placement"], obj.Placement.toMatrix().A)):

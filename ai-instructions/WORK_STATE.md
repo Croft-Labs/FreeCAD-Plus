@@ -3,10 +3,54 @@
 ## Authorized objective and stopping boundary
 
 Owner authorized Group 1 one reviewable task at a time and instructed stopping after
-the current checks pass. **G1.3 is complete; stop here.** Next: **G1.4 hierarchy and
-shared instances**, including nested components, shared edits, parent-owned
-transforms, cycle prevention and matching legacy conversion cases. Do not begin
-that stage or other groups without the next continuation request.
+the current checks pass. **G1.4 is complete; stop here.** Next: **G1.5 external
+definitions**, covering nested import catalogs, defining-file ownership, independent
+copies and cross-file failure/recovery. Do not begin that stage or other groups
+without the next continuation request.
+
+## G1.4 implementation and acceptance - October 10, 2026
+
+**Implementation:** schema 3 supports nested domestic definitions and shared native
+App::Link instances, parent-owned local placements, full occurrence paths and cycle
+preflight. Native Plus Edit, Part and Body contexts carry the selected path; History
+omits child links and Body rows. Legacy Part/link trees convert with native IDs,
+frames and shared targets preserved, with intentional group-edge replacements
+recorded. Schemas 1/2 retain their previous bounds until an explicit undoable upgrade.
+The [architecture](ARCHITECTURE.md) owns the full contract and remaining limitations.
+
+**Runtime:** sixteen tests passed in 7.358 seconds using the verified official
+1.1.4 GUI runtime, an isolated profile and this checkout's scripts. Five hierarchy
+cases joined all eleven existing pilot/conversion regressions. They covered shared
+Pad edits in repeated parents, composed rotations/translations, moving one child
+placement across all parent occurrences, Undo/Redo, cycle/cross-file rejection,
+rollback, independent view contexts, stale/ambiguous paths and explicit schema upgrade.
+Definitions could retain their own geometry and child components simultaneously.
+
+A second process reopened both a newly created hierarchy and a converted legacy
+assembly, retained object IDs/paths/placements, edited shared geometry and saved
+separate results. In the native fixture a 2 mm radius Pad changed from 9 to 11 mm;
+in the converted fixture three occurrence paths reflected Box lengths of 5 then
+7 mm (volumes 60 then 84 mm3). Legacy Part and link placements, native transform
+modes, geometry centers and shared targets survived conversion. The source FCStd
+hash remained unchanged. No owner files were converted.
+
+**GUI:** original Sketch and Pad editors opened through the second repeated
+occurrence and exited using native resetEdit. The full Edit path remained selected
+and the original 9 mm Pad remained valid. A normal viewport framebuffer capture
+(2301 x 1202) showed exactly two parent boxes and two shared child cylinders, with
+no extra visible stored definitions or capture corruption. The check did not claim
+full panel interaction, mouse-driven acceptance or long-session jitter testing.
+
+**Build/delivery:** script-only CMake copy/install passed; all eleven module/test
+scripts matched source and syntax/whitespace passed. Native C++ was not rebuilt.
+No new owner executable or full panel is delivered; the desktop shortcut remains
+on the archived fork. External-file work and panel construction have not started.
+
+**Publication/cleanup:** the coherent G1.4 milestone is committed and pushed to
+origin/codex/freecad-1.1.4-baseline with the remote hash verified at handoff.
+Task-generated fixtures, profiles, captures, logs and temporary script-build outputs
+were removed after results were recorded. Tracked tests are reproducible through
+the [guide](DEVELOPMENT_GUIDE.md#hierarchy-validation).
 
 ## G1.3 implementation and acceptance - October 10, 2026
 
