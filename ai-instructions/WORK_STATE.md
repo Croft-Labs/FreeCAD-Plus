@@ -1,5 +1,48 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Part type evaluated output and cache guards (7.8.14b2a)
+
+ComponentModel.output_shapes now traverses finished, unconsumed/unsuppressed
+results and normal children, omitting Reference/Excluded branches independently
+of visibility. Owned promoted bodies remain output geometry exactly once when
+their source occurrence is Reference. Explicit native leaf paths preserve
+placement/scaling. export_objects supplies temporary evaluated Part::Feature
+snapshots to synchronous native writers and cleans up on failure.
+
+require_geometry_inputs guards current_shape and publish_result against raw
+foreign component inputs while stopping at explicitly owned Reference features.
+ResultProxy clears a previously published shape if its producer later acquires
+an unauthorized native input. The original native operation cache is not erased;
+direct native consumers outside these boundaries still require integration.
+
+Validation: final native source-overlay batch passes 20 cases: nine new
+TestComponentOutput, eight TestComponentGeometryAccess and three
+TestComponentReferenceRecovery. Zero failures/errors/skips, PASS marker, recorded
+exit 0. Native STEP round trip contains two solids totaling 36 cubic mm; STL
+round trip is closed and has the same volume, with no duplicate Reference source.
+Scaled occurrence, hidden result, nested exclusion, changed native producer,
+promoted-body update and failure cleanup checks pass. The first run found an
+occurrence-frame API mismatch and an invalid disconnected-solid fixture; native
+leaf resolution and the corrected existing-result fixture pass on rerun.
+Final stderr contains the expected native out-of-scope warning from deliberately
+assigning the forbidden raw input. Syntax and CRLF-aware diff checks pass.
+
+Used the retained freecad_plus_2026-10-06_recovered_workload development fork,
+revision 49492 / bdc8a099da69502ccca72a539aeea293fd81de9b, with six hash-checked
+source overlays. No native build, owner payload update or shortcut change.
+The owner UI DOCX is unchanged because this is backend output/policy work with
+no new interface exposed. Generated validation/part-type-output and
+validation/part-type-output-fixed evidence is removed after recording results.
+Source publication is tracked in Git, separately from owner delivery.
+
+Next task: 7.8.14b2b connect native export entry points and standard File Export
+to the output policy, preserving ordinary exports and complete native .cadprt
+saves. The tested adapter is not yet invoked by those entry points, so direct
+exports of original component containers remain unguarded. Verify remaining
+native consumer bypasses and format behavior in the grouped native build before
+closing 7.8.14b2. UI/activation and owner delivery remain 7.8.14c/d.
+
+
 ## October 10 Part type shared geometry access (7.8.14b1)
 
 Implemented require_geometry_access in ComponentModel and wired it into

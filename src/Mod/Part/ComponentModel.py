@@ -990,9 +990,35 @@ def require_geometry_access(obj, subname="", component=None, aggregate=True):
         check_children(definition)
 
 
+def require_geometry_inputs(obj):
+    """Reject unpromoted native dependency chains at the evaluated-result boundary.
+
+    An owned Reference is the explicit source boundary. Do not follow its source
+    links as if they were raw modeling inputs. Ordinary legacy objects outside
+    component ownership retain their existing native dependency behavior.
+    """
+    component = owner(obj)
+    if not is_component(component):
+        return
+    seen = set()
+    def visit(item):
+        if item in seen:
+            return
+        seen.add(item)
+        if getattr(item, "ComponentRole", "") == "Reference" and owner(item) == component:
+            return
+        for source in item.OutList:
+            if getattr(source, "ComponentRole", "") == "Document":
+                continue
+            require_geometry_access(source, component=component)
+            visit(source)
+    visit(obj)
+
+
 def current_shape(obj):
     """Never certify stale native caches as evaluated component results."""
     require_geometry_access(obj)
+    require_geometry_inputs(obj)
     for dep in [obj] + geometry_dependencies(obj):
         if "Invalid" in dep.State or "Touched" in dep.State:
             raise ValueError("Geometry requires update or repair: " + dep.Label)
@@ -1040,6 +1066,10 @@ class ResultProxy(PersistentProxy):
                 getattr(dep, "ResultStatus", "Ready") != "Ready" or getattr(dep, "UserSuppressed", False)
                 for dep in [source] + geometry_dependencies(source)):
             return
+        try:
+            require_geometry_inputs(source)
+        except ValueError:
+            return  # The result was cleared above; never publish a forbidden cache.
         shape = getattr(source, obj.OutputProperty, None)
         if shape is None or shape.isNull():
             return
@@ -1084,6 +1114,7 @@ def prepare_result_display(component):
 def publish_result(component, operation, label="Body", output_property="Shape"):
     if owner(operation) != component:
         raise ValueError("The operation must belong to the active component.")
+    require_geometry_inputs(operation)
     shape = getattr(operation, output_property)
     kind = _shape_kind(shape)
     result = component.Document.addObject("Part::FeaturePython", "Result")
@@ -1990,6 +2021,95 @@ def finished_results(component):
     results = [component.Document.getObject(name) for name in component.ResultObjects]
     return [obj for obj in results if obj is not None and obj not in consumed
             and history_state(obj) == "Ready" and not obj.Shape.isNull()]
+
+
+def output_shapes(component):
+    """Return placed finished geometry, independent of display visibility.
+
+    Native sub-object resolution retains occurrence transforms/scales. Traverse
+    owned results rather than native container compounds so construction geometry
+    and Reference/Excluded branches cannot leak into exchange output.
+    """
+    root = component
+    if getattr(root, "ComponentRole", "") == "Occurrence":
+        require_geometry_access(root, aggregate=False)
+        component = root.LinkedObject
+    if not is_component(component):
+        raise ValueError("Select a component definition or occurrence.")
+    paths = []
+    def collect(parent, prefix, ancestors):
+        if parent in ancestors:
+            raise ValueError("Cyclic component output.")
+        items = history(parent)
+        consumed = _consumed_results(items, {obj: bool(suppression_sources(obj)) for obj in items})
+        for name in parent.ResultObjects:
+            result = parent.Document.getObject(name)
+            if result is None:
+                raise ValueError("A component output is missing; repair it before exporting.")
+            if result in consumed or suppression_sources(result):
+                continue
+            current_shape(result)
+            paths.append(prefix + result.Name + ".")
+        for child in children(parent):
+            if part_type(parent, child) in ("Reference", "Excluded"):
+                continue
+            if not is_component(child.LinkedObject):
+                raise ValueError("Repair missing component output before exporting.")
+            collect(child.LinkedObject, prefix + child.Name + ".", ancestors | {parent})
+    collect(component, "", set())
+    from BasicShapes.ShapeReferences import linked_shape
+    return [linked_shape((root, [path])) for path in paths]
+
+
+@contextmanager
+def export_objects(objects):
+    """Provide native writers with disposable evaluated component output objects.
+
+    Source documents, visibility and identities are never changed. Ordinary
+    objects are passed through. The caller must keep this context alive for the
+    entire synchronous native writer call.
+    """
+    objects = list(dict.fromkeys(objects))
+    prepared = []
+    for obj in objects:
+        role = getattr(obj, "ComponentRole", "")
+        if role == "Definition":
+            shapes = output_shapes(obj)
+        elif role == "Occurrence":
+            shapes = output_shapes(obj)
+        elif is_component(owner(obj)) and hasattr(obj, "Shape"):
+            current_shape(obj)
+            from BasicShapes.ShapeReferences import linked_shape
+            shapes = [linked_shape((obj, []))]
+        else:
+            prepared.append((obj, None))
+            continue
+        if not shapes:
+            raise ValueError("The selected component has no exportable finished geometry.")
+        prepared.append((obj, shapes))
+    scratch = None
+    previous = App.ActiveDocument
+    try:
+        output = []
+        for source, shapes in prepared:
+            if shapes is None:
+                output.append(source)
+                continue
+            if scratch is None:
+                scratch = App.newDocument("ComponentExchange", hidden=True, temp=True)
+            for index, shape in enumerate(shapes):
+                result = scratch.addObject("Part::Feature", "ComponentOutput")
+                result.Label = source.Label if len(shapes) == 1 else source.Label + " " + str(index + 1)
+                result.Shape = shape
+                output.append(result)
+        if scratch is not None:
+            scratch.recompute()
+        yield output
+    finally:
+        if scratch is not None:
+            App.closeDocument(scratch.Name)
+        if previous is not None and previous.Name in App.listDocuments():
+            App.setActiveDocument(previous.Name)
 
 
 def copy_to_external_file(definition, filename):

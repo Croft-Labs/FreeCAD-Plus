@@ -6,7 +6,9 @@ part_type_allows_geometry supplies the pending consumer guard. CadDocument gates
 explicit values with component-part-types-v1. See the component contract, roadmap
 7.8.14 and TestComponentPartTypes. require_geometry_access now guards current_shape
 and BasicShapes.ShapeReferences native paths/owned input validation; see
-TestComponentGeometryAccess. Native output/consumer and UI integration remain pending.
+TestComponentGeometryAccess. require_geometry_inputs guards result publication;
+output_shapes/export_objects provide filtered native-writer inputs, covered by
+TestComponentOutput. Native export routing and UI integration remain pending.
 
 
 File-root foundation: ComponentModel.ensure_file_container provides explicit,

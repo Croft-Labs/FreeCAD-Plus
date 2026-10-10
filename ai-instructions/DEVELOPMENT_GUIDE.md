@@ -224,7 +224,9 @@ focused reruns. Require no skipped cases and PASS; inspect failures before rerun
 The optional TestComponentPartTypes suite verifies roadmap 7.8.14a backend
 policy/persistence. TestComponentGeometryAccess checks shared shape-access guards;
 TestComponentReferenceRecovery and TestManufacturingExport can be selected for
-their affected compatibility checks. Set TEMP/TMP inside the validation folder
+their affected compatibility checks. TestComponentOutput adds native STEP/STL
+round trips through the filtered output adapter and producer-cache guards.
+Set TEMP/TMP inside the validation folder
 when running export fixtures. These do not establish native exporter integration.
 For a cold reopen pass, select `TestComponentEditingCold` and set
 `FREECAD_PLUS_EDIT_FIXTURES` to the preceding full batch output directory.

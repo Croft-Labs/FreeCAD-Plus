@@ -143,6 +143,28 @@ Adding a reference does not reclassify the child. Native cached operation shapes
 direct native exchange exporters and other consumers bypassing these shared
 services still need integration. No blanket native export protection is claimed.
 
+Evaluated output now has two additional boundaries. require_geometry_inputs walks
+native input chains for a component-owned object and stops at explicitly owned
+Reference features. current_shape and publish_result reject raw foreign inputs;
+ResultProxy clears its old shape and leaves Unavailable when a producer later
+acquires such an input. This prevents publishing a stale native cache through the
+component result service; it does not alter the original native operation shape.
+
+output_shapes collects unconsumed, unsuppressed finished results and recursively
+includes normal child occurrences. It skips Reference/Excluded branches, keeps
+owned promoted results, refuses missing/unavailable output, and ignores display
+visibility. Explicit native leaf paths preserve placement and scaling without
+building an unfiltered container compound. It accepts definitions or occurrences.
+
+export_objects is a synchronous context manager providing native writers with
+temporary Part::Feature snapshots of that output. It validates before creating
+the scratch document, restores the active document and cleans up on writer
+failure. Ordinary non-component objects pass through. STEP/STL round trips
+through this adapter are tested; the snapshots are evaluated geometry, not
+parametric history or assembly-identity-preserving exports. Native writer entry
+points and standard File Export still need to invoke the adapter. Direct writer
+calls on original component containers remain an explicit integration gap.
+
 Files containing explicit PartType properties require component-part-types-v1.
 The manifest records each authored value with its occurrence identity; preflight
 cross-checks it against Document.xml and rejects missing capability declarations

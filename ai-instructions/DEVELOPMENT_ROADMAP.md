@@ -3592,6 +3592,16 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       STEP/STL and other native export paths, reject raw native operation/cache
       bypasses, and verify promoted bodies contribute without duplicate source
       geometry. Keep this gate open before exposing new types in the UI.
+      - [ X ] 7.8.14b2a Evaluated output adapter and publication guard:
+        output_shapes/export_objects omit source-only branches, preserve native
+        occurrence transforms and include promoted results once. Raw foreign
+        producer inputs are rejected on creation/read and clear published caches.
+        Nine output checks plus eleven access/recovery cases pass; native STEP/STL
+        round trips use the adapter. No native exporter routing is claimed.
+      - [   ] 7.8.14b2b Route native geometry export entry points and standard File
+        Export through the reviewed component output policy; preserve ordinary
+        documents and native .cadprt saves. Verify remaining raw native consumer
+        bypasses, format behavior and direct API calls in a grouped native build.
   - [   ] 7.8.14c Integrate Part Tree activation/double-click, Part Type menu and
     Excluded/Reference labels, distinct Shown/Hidden controls, saved active-self
     overrides and direct-child context restore; reconcile existing nested rules.
