@@ -139,9 +139,9 @@ ShapeReferences retains its ReferenceError contract.
 Owned reference features deliberately stop this access check at their own object.
 Their SourceOccurrence/SourceObject links remain the explicit authorization and
 associative dependency, including when the source occurrence becomes Excluded.
-Adding a reference does not reclassify the child. Native cached operation shapes,
-direct native exchange exporters and other consumers bypassing these shared
-services still need integration. No blanket native export protection is claimed.
+Adding a reference does not reclassify the child. Native operation caches remain
+readable through low-level APIs; component publication and supported native
+export entry points enforce the evaluated-input policy described below.
 
 Evaluated output now has two additional boundaries. require_geometry_inputs walks
 native input chains for a component-owned object and stops at explicitly owned
@@ -161,9 +161,15 @@ temporary Part::Feature snapshots of that output. It validates before creating
 the scratch document, restores the active document and cleans up on writer
 failure. Ordinary non-component objects pass through. STEP/STL round trips
 through this adapter are tested; the snapshots are evaluated geometry, not
-parametric history or assembly-identity-preserving exports. Native writer entry
-points and standard File Export still need to invoke the adapter. Direct writer
-calls on original component containers remain an explicit integration gap.
+parametric history or assembly-identity-preserving exports.
+App::ComponentExport keeps this context alive around Part.export, Import.export,
+ImportGui.export and Mesh.export. Standard File Export already dispatches to
+these bindings, so it shares the same policy. Ordinary selections without
+component metadata bypass the adapter entirely. Native .cadprt saves are not
+exchange exports and do not pass through this path. Writer options remain handled
+by the original binding. Mixed ordinary color tuples pass through; explicit
+face-color tuples on component inputs are refused before writing because
+flattened multi-result face indices cannot be silently reassigned.
 
 Files containing explicit PartType properties require component-part-types-v1.
 The manifest records each authored value with its occurrence identity; preflight
@@ -174,8 +180,7 @@ requires an explicit reviewed conversion, not stripping the capability.
 
 Pending integration includes saved active-self overrides, activation and double
 click, Part Type labels/menus, shown/hidden separation and effective Excluded
-visibility refusal, legacy nested-rule reconciliation, reference use guards and
-output traversal. Parent/sibling contextual transparency remains at least 75%;
+visibility refusal and legacy nested-rule reconciliation. Parent/sibling contextual transparency remains at least 75%;
 children retain their authored appearance. The existing UI is not yet changed.
 
 ## Part Tree and representation

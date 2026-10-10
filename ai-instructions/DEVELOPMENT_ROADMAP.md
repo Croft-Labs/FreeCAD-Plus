@@ -3580,7 +3580,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     source-overlay cases pass, covering owner examples, Undo/Redo, failed batches,
     copy/sharing, external ownership, save/reopen and capability stripping.
     Legacy UI/geometry consumers remain unchanged; see WORK_STATE.
-  - [   ] 7.8.14b Integrate geometry-use and output guards. Reference/Excluded
+  - [ X ] 7.8.14b Integrate geometry-use and output guards. Reference/Excluded
     native occurrence shapes must not bypass the policy; only explicit owned
     reference features permit modeling use. Preserve linked reference updates.
     - [ X ] 7.8.14b1 Shared geometry access: guard current_shape, native subpaths
@@ -3588,20 +3588,25 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       Reject Reference/Excluded links and unfiltered aggregates; retain permitted
       sibling occurrences and explicitly owned reference updates/reopen.
       TestComponentGeometryAccess and existing reference recovery pass.
-    - [   ] 7.8.14b2 Native output/consumer integration: filter final geometry for
+    - [ X ] 7.8.14b2 Native output/consumer integration: filter final geometry for
       STEP/STL and other native export paths, reject raw native operation/cache
       bypasses, and verify promoted bodies contribute without duplicate source
-      geometry. Keep this gate open before exposing new types in the UI.
+      geometry. Bounded component-owned publication and native export gate verified.
       - [ X ] 7.8.14b2a Evaluated output adapter and publication guard:
         output_shapes/export_objects omit source-only branches, preserve native
         occurrence transforms and include promoted results once. Raw foreign
         producer inputs are rejected on creation/read and clear published caches.
         Nine output checks plus eleven access/recovery cases pass; native STEP/STL
-        round trips use the adapter. No native exporter routing is claimed.
-      - [   ] 7.8.14b2b Route native geometry export entry points and standard File
+        round trips use the adapter. Native routing is tracked separately below.
+      - [ X ] 7.8.14b2b Route native geometry export entry points and standard File
         Export through the reviewed component output policy; preserve ordinary
         documents and native .cadprt saves. Verify remaining raw native consumer
         bypasses, format behavior and direct API calls in a grouped native build.
+        All four native targets compiled/linked; final command failure was only
+        the nonexistent ScriptsOnly target. Installed acceptance passes 33 distinct
+        cases after correcting one dialog fixture; no overlays. Low-level Shape
+        reads and arbitrary third-party exporters are outside this bounded gate.
+        WORK_STATE records build identity, diagnostics and deferred owner delivery.
   - [   ] 7.8.14c Integrate Part Tree activation/double-click, Part Type menu and
     Excluded/Reference labels, distinct Shown/Hidden controls, saved active-self
     overrides and direct-child context restore; reconcile existing nested rules.

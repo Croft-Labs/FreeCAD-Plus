@@ -8,7 +8,9 @@ explicit values with component-part-types-v1. See the component contract, roadma
 and BasicShapes.ShapeReferences native paths/owned input validation; see
 TestComponentGeometryAccess. require_geometry_inputs guards result publication;
 output_shapes/export_objects provide filtered native-writer inputs, covered by
-TestComponentOutput. Native export routing and UI integration remain pending.
+TestComponentOutput. App/ComponentExport.h routes the four native export bindings
+through the adapter; TestComponentNativeExport covers direct calls and File Export.
+Part Tree UI integration remains pending.
 
 
 File-root foundation: ComponentModel.ensure_file_container provides explicit,

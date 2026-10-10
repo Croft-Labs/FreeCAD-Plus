@@ -1,5 +1,48 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Part type native export routing (7.8.14b2b)
+
+App::ComponentExport now keeps evaluated component output alive through Part,
+Import, ImportGui and Mesh native writers. Standard File Export reaches the same
+policy. Reference/Excluded source geometry and raw foreign-input operation caches
+are refused before output creation; owned reference results export once.
+Ordinary documents bypass the adapter. Mixed ordinary color tuples retain native
+behavior; explicit component face-color tuples are refused because filtering
+changes face correspondence. Native .cadprt persistence is unchanged.
+
+Grouped development build compiled and linked all four requested Release targets
+(Part, Import, ImportGui, Mesh). The command subsequently exited 1 because its
+additional ScriptsOnly target does not exist; this is not a compiler failure or
+a successful overall command. Six Python runtime files were then synchronized
+and hash-verified manually. Optional Doxygen and OCCT deprecation warnings remain.
+Retained development tree: test-builds/freecad_plus_2026-10-06_recovered_workload,
+runtime revision 49496 / 872610fb762d5ffc4bf2664a08b5c37e66dae8a9 with this
+milestone's source changes, build timestamp 2026/10/10 15:16:42.
+
+Accepted installed-mode coverage is 33 distinct cases: 13 native export, nine
+evaluated output, eight geometry access and three reference recovery. No source
+overlays; all six module paths and hashes match the installed development tree.
+The initial 33-case batch had one File Export fixture filename assertion failure:
+the dialog retained its suggested filename. Staging filter selection and filename
+entry fixed the fixture; all 13 native export cases pass on focused rerun, PASS
+marker and process exit 0. The other 20 cases passed in the initial batch.
+These are 46 executions, not 46 distinct cases. Final stderr contains the expected
+raw-link scope warning and deliberately induced missing-directory writer error.
+STEP contains two solids of total volume 36; STL is closed with the same volume.
+Direct keyword/options calls, legacy STEP, duplicate selection, ordinary exports,
+native saves, refusal-before-write and scratch-document cleanup are covered.
+
+This closes the bounded component-owned geometry/native-export gate. Low-level
+native Shape cache reads and arbitrary third-party exporters are not universally
+intercepted. No new owner interface was exposed, so the UI DOCX is unchanged.
+No owner payload or desktop shortcut update is claimed. Generated task output
+under validation/part-type-native-routing is removed after recording evidence.
+Source publication is tracked in Git separately from owner delivery.
+
+Next task: 7.8.14c integrate Part Tree activation/double-click, Part Type menus,
+Excluded/Reference and separate visibility, saved active-self/direct-child context
+restoration, and update/render the owner UI DOCX. Owner delivery remains 7.8.14d.
+
 ## October 10 Part type evaluated output and cache guards (7.8.14b2a)
 
 ComponentModel.output_shapes now traverses finished, unconsumed/unsuppressed

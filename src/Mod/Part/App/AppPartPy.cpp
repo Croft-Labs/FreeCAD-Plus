@@ -87,6 +87,7 @@
 
 #include <App/Application.h>
 #include <App/Document.h>
+#include <App/ComponentExport.h>
 #include <App/DocumentObjectPy.h>
 #include <App/ElementNamingUtils.h>
 #include <Base/Console.h>
@@ -965,6 +966,9 @@ private:
 
         std::string EncodedName = std::string(Name);
         PyMem_Free(Name);
+
+        App::ComponentExport componentOutput(object);
+        object = componentOutput.objects();
 
         BRep_Builder builder;
         TopoDS_Compound comp;

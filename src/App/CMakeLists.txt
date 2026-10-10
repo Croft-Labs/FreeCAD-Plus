@@ -291,6 +291,7 @@ SET(Properties_HPP_SRCS
     PropertyGeo.h
     PropertyLinks.h
     PropertyPythonObject.h
+    ComponentExport.h
     PropertyStandard.h
     PropertyUnits.h
     PropertyExpressionEngine.h

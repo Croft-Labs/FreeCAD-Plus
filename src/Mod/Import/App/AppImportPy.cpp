@@ -53,6 +53,7 @@
 #include "SketchExportHelper.h"
 #include <App/Application.h>
 #include <App/Document.h>
+#include <App/ComponentExport.h>
 #include <App/DocumentObjectPy.h>
 #include <Base/Console.h>
 #include <Base/PyWrapParseTupleAndKeywords.h>
@@ -274,6 +275,9 @@ private:
 
         std::string Utf8Name = std::string(Name);
         PyMem_Free(Name);
+
+        App::ComponentExport componentOutput(object);
+        object = componentOutput.objects();
 
         // clang-format off
         // determine export options

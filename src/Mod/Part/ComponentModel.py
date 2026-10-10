@@ -2069,9 +2069,18 @@ def export_objects(objects):
     objects are passed through. The caller must keep this context alive for the
     entire synchronous native writer call.
     """
-    objects = list(dict.fromkeys(objects))
+    objects = list(objects)
     prepared = []
+    seen = set()
     for obj in objects:
+        if isinstance(obj, tuple):
+            if len(obj) == 2 and getattr(obj[0], "ComponentRole", ""):
+                raise ValueError("Export component results without explicit face-color tuples.")
+            prepared.append((obj, None))
+            continue
+        if obj in seen:
+            continue
+        seen.add(obj)
         role = getattr(obj, "ComponentRole", "")
         if role == "Definition":
             shapes = output_shapes(obj)

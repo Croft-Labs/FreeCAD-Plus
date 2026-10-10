@@ -29,6 +29,7 @@
 
 #include <App/Application.h>
 #include <App/Document.h>
+#include <App/ComponentExport.h>
 #include <App/DocumentObjectPy.h>
 #include <Base/GeometryPyCXX.h>
 #include <Base/Interpreter.h>
@@ -240,6 +241,9 @@ private:
 
         std::string outputFileName(fileNamePy);
         PyMem_Free(fileNamePy);
+
+        App::ComponentExport componentOutput(objects);
+        objects = componentOutput.objects();
 
         // Construct list of objects to export before making the Exporter, so
         // we don't get empty exports if the list can't be constructed.

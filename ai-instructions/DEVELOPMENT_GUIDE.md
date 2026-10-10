@@ -226,8 +226,12 @@ policy/persistence. TestComponentGeometryAccess checks shared shape-access guard
 TestComponentReferenceRecovery and TestManufacturingExport can be selected for
 their affected compatibility checks. TestComponentOutput adds native STEP/STL
 round trips through the filtered output adapter and producer-cache guards.
+TestComponentNativeExport requires rebuilt Part, Import, ImportGui and Mesh targets;
+it checks their direct bindings and the standard File Export command. Build these
+targets together, then synchronize/hash-check the six runtime Python modules.
+ScriptsOnly is not a CMake target in the retained Windows development tree.
 Set TEMP/TMP inside the validation folder
-when running export fixtures. These do not establish native exporter integration.
+when running export fixtures. Only the native-export suite against those rebuilt targets establishes that routing.
 For a cold reopen pass, select `TestComponentEditingCold` and set
 `FREECAD_PLUS_EDIT_FIXTURES` to the preceding full batch output directory.
 Use a fresh output directory for each run. Bound the process to fifteen minutes
