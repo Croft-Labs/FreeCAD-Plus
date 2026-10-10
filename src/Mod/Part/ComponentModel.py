@@ -23,6 +23,7 @@ def edit_suppressed(obj):
 
 SCHEMA = 1
 TYPES = ("Full Component", "Bodies Only", "Hidden")
+PART_TYPES = ("Full Component", "Bodies Only", "Excluded", "Reference")
 
 
 def _property(obj, kind, name, value, readonly=False):
@@ -1297,6 +1298,84 @@ def _path(root, ids):
     return chain
 
 
+def part_type(parent, child):
+    """Authored type of a direct occurrence, owned by its parent definition.
+
+    The optional native property is additive. Older files retain their original
+    display registries; only a direct legacy rule supplies the initial value.
+    Nested legacy path overrides are not silently migrated into shared children.
+    """
+    if not is_component(parent) or child not in children(parent):
+        raise ValueError("Select a direct child of the owning component.")
+    if "PartType" in child.PropertiesList:
+        value = child.PartType
+    else:
+        value = json.loads(parent.RepresentationOverrides).get(
+            child.ObjectId, str(child.Representation))
+        value = "Excluded" if value == "Hidden" else value
+    if value not in PART_TYPES:
+        raise ValueError("Unsupported component part type.")
+    return value
+
+
+def set_part_types(parent, updates):
+    """Save direct-child types atomically without changing visibility or sources.
+
+    None resets to Bodies Only. Types belong to occurrence objects owned by the
+    parent, so all uses of that parent share them, while other parents do not.
+    This backend does not enable the pending Part Tree UI integration.
+    """
+    updates = list(updates)
+    for child, value in updates:
+        part_type(parent, child)
+        if value is not None and value not in PART_TYPES:
+            raise ValueError("Unsupported component part type.")
+    if not updates:
+        return
+    with transaction(parent.Document, "Component part types"):
+        for child, value in updates:
+            if "PartType" not in child.PropertiesList:
+                _property(child, "String", "PartType", "Bodies Only", True)
+                child.setEditorMode("PartType", 2)
+            child.PartType = value or "Bodies Only"
+
+
+def effective_part_type(root, ids, active_ids=()):
+    """Resolve editing display policy without mutating authored child types.
+
+    An active component is Full Component even if an ancestor excludes it.
+    Reference is visible only under its directly active owner; elsewhere it is
+    Excluded. An excluded branch cannot be revealed by native visibility.
+    """
+    ids, active_ids = tuple(ids), tuple(active_ids)
+    chain = _path(root, ids)
+    _path(root, active_ids)
+    if ids == active_ids or not ids:
+        return "Full Component"
+    start = len(active_ids) if ids[:len(active_ids)] == active_ids else 0
+    value = "Full Component"
+    for depth in range(start, len(chain)):
+        parent = root if depth == 0 else chain[depth - 1].LinkedObject
+        value = part_type(parent, chain[depth])
+        if value == "Reference" and ids[:depth] != active_ids:
+            value = "Excluded"
+        if value == "Excluded":
+            return value
+    return value
+
+
+def part_type_allows_geometry(root, ids):
+    """Policy gate for unpromoted occurrence geometry, independent of editing.
+
+    An explicit reference feature is a separate owned object and is not tested
+    through its source occurrence here. Consumers must integrate this gate before
+    the new types are exposed by the UI.
+    """
+    chain = _path(root, ids)
+    return all(part_type(root if depth == 0 else chain[depth - 1].LinkedObject, link)
+               not in ("Reference", "Excluded") for depth, link in enumerate(chain))
+
+
 def representation_overrides(root, updates):
     overrides = json.loads(root.RepresentationOverrides)
     for ids, value in updates:
@@ -1922,6 +2001,7 @@ def externalize(definition, filename):
             return
         closure.append(component)
         for child in children(component):
+            part_type(component, child)
             if is_file_container(child.LinkedObject):
                 raise ValueError("A file container cannot be a component occurrence.")
             if not is_component(child.LinkedObject):
@@ -2028,6 +2108,7 @@ def validate(doc, allow_unresolved=False):
                 or not set(component.ResultObjects) <= members):
             raise ValueError("Invalid component history/result membership.")
         for child in children(component):
+            part_type(component, child)
             if is_file_container(child.LinkedObject):
                 raise ValueError("A file container cannot be a component occurrence.")
             if not is_component(child.LinkedObject):

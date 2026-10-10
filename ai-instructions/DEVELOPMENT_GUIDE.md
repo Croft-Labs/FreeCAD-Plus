@@ -221,6 +221,8 @@ each checked module to match source and reside inside the payload. The default
 eleven suites cover Edit, contextual display, file workspace, persistence, Ground/Fixed
 relationships and native modeling command routing/guards. `FREECAD_PLUS_EDIT_SUITES` accepts a comma-separated subset for
 focused reruns. Require no skipped cases and PASS; inspect failures before reruns.
+The optional TestComponentPartTypes suite verifies roadmap 7.8.14a backend
+policy/persistence; it does not establish UI or downstream geometry integration.
 For a cold reopen pass, select `TestComponentEditingCold` and set
 `FREECAD_PLUS_EDIT_FIXTURES` to the preceding full batch output directory.
 Use a fresh output directory for each run. Bound the process to fifteen minutes

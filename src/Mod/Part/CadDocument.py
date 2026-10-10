@@ -13,7 +13,7 @@ FORMAT = "org.freecad-plus.component-document"
 MANIFEST = "ComponentManifest.json"
 BASE_CAPABILITIES = ("components-v1", "native-objects-v1", "evaluated-references-v1")
 CAPABILITIES = BASE_CAPABILITIES + ("component-file-imports-v1", "component-file-container-v1",
-                                    "component-file-assembly-v1")
+                                    "component-file-assembly-v1", "component-part-types-v1")
 
 
 def manifest(document, filename=None):
@@ -49,6 +49,8 @@ def manifest(document, filename=None):
             occurrences.append({"id": link.ObjectId, "object": link.Name,
                                 "definition": source.ObjectId,
                                 "external": source.Document != document})
+            if "PartType" in link.PropertiesList:
+                occurrences[-1]["part_type"] = Model.part_type(component, link)
         definitions.append({"id": component.ObjectId, "object": component.Name,
                             "history": list(component.ModelHistory),
                             "results": list(component.ResultObjects),
@@ -59,6 +61,8 @@ def manifest(document, filename=None):
             "required": list(BASE_CAPABILITIES), "document": meta.ObjectId,
             "root": meta.RootComponent.ObjectId,
             "definitions": definitions, "dependencies": dependencies}
+    if any("part_type" in link for item in definitions for link in item["occurrences"]):
+        data["required"].append("component-part-types-v1")
     if Model.is_file_container(meta.RootComponent):
         data["file_container"] = meta.RootComponent.ObjectId
         data["required"].append("component-file-container-v1")
@@ -133,6 +137,11 @@ def preflight(filename):
                   for key in ("id", "object", "definition"))
            or type(item.get("external")) is not bool for item in occurrences):
         raise ValueError("Invalid component occurrence records.")
+    if (any("part_type" in item and item["part_type"] not in Model.PART_TYPES
+            for item in occurrences)
+            or any("part_type" in item for item in occurrences)
+            != ("component-part-types-v1" in required)):
+        raise ValueError("Invalid component part type capability or value.")
     if (not strings([item["object"] for item in definitions])
             or any(not strings([item[key] for item in occurrences]) for key in ("id", "object"))):
         raise ValueError("Duplicate component definition or occurrence records.")
@@ -152,6 +161,7 @@ def preflight(filename):
         linked = obj.find('./Properties/Property[@name="LinkedObject"]/XLink')
         saved[obj.get("name")] = {"id": value("ObjectId", "String"),
                                   "role": value("ComponentRole", "String"),
+                                  "part_type": value("PartType", "String"),
                                   "file_container": value("FileContainer", "Bool") == "true",
                                   "root": value("RootComponent", "Link"),
                                   "assembly_root": value("ComponentRoot", "Link"),
@@ -190,6 +200,8 @@ def preflight(filename):
             raise ValueError("Component occurrence ownership differs from the format manifest.")
     for instance in occurrences:
         native = saved_occurrences[instance["object"]]
+        if native["part_type"] != instance.get("part_type"):
+            raise ValueError("Native component part type differs from its manifest.")
         if (native["id"] != instance["id"] or native["external"] != instance["external"]
                 or (native["definition"] is not None and native["definition"] != instance["definition"])):
             raise ValueError("Component occurrence identity differs from the format manifest.")

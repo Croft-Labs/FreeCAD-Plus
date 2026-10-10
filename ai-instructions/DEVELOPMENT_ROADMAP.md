@@ -3572,6 +3572,26 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       This completes 7.8.13; broader migration/workbench qualification remains in
       7.8.10. Add Component changes and additional joint types remain deferred.
 
+- [   ] 7.8.14 Owner Part Type revision (October 10): direct-child saved settings,
+  Excluded versus visibility, contextual Reference and reliable activation.
+  - [ X ] 7.8.14a Backend foundation: parent-owned native PartType property,
+    atomic direct-child updates, effective context resolver and explicit geometry
+    policy API; capability-gated manifest/native cross-checks. Ten focused native
+    source-overlay cases pass, covering owner examples, Undo/Redo, failed batches,
+    copy/sharing, external ownership, save/reopen and capability stripping.
+    Legacy UI/geometry consumers remain unchanged; see WORK_STATE.
+  - [   ] 7.8.14b Integrate geometry-use and output guards. Reference/Excluded
+    native occurrence shapes must not bypass the policy; only explicit owned
+    reference features permit modeling use. Preserve linked reference updates.
+  - [   ] 7.8.14c Integrate Part Tree activation/double-click, Part Type menu and
+    Excluded/Reference labels, distinct Shown/Hidden controls, saved active-self
+    overrides and direct-child context restore; reconcile existing nested rules.
+    Preserve contextual transparency and update/render the owner UI DOCX.
+  - [   ] 7.8.14d Grouped acceptance, fresh-process restore and compatible owner
+    payload delivery; verify saved desktop shortcut and publish milestone evidence.
+  The later Add Reference Feature/Promote workflow expansion is separate scope;
+  existing explicit reference services should be reused and guarded first.
+
 - [ X ] 7.8.12a Domestic/external file hierarchy source: explicit unused/nested imports,
   qualified names, storage chooser, active defining-file insertion, cycle guards,
   identity-based missing-import repair and independent copies with reviewed placement

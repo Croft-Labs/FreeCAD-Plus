@@ -1,5 +1,48 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Part type backend foundation (7.8.14a)
+
+The new owner request is tracked separately from completed 7.8.13. Implemented
+the additive direct-child PartType contract in ComponentModel: authored settings,
+atomic batch writes/reset, active-context effective types and a geometry-policy
+query. Settings stay with the owning definition's occurrence; copying preserves
+them, and external source definitions remain untouched. CadDocument declares
+component-part-types-v1 only when explicit new properties exist and checks native
+values against the manifest before restoration. Older direct Hidden values read
+as Excluded; legacy nested overrides are retained, not silently migrated.
+
+Validation: TestComponentPartTypes passes ten native source-overlay cases.
+The final compatibility batch passes 22 cases across TestComponentPartTypes (10),
+TestComponentDisplayContext (3) and TestComponentFileWorkspace (9), zero failures,
+errors or skips; validation.done is PASS and the process ended. The wrapper's
+45-second wait expired before exit, so its process exit code was not captured.
+The initial ten-case pass is separate evidence, not additional distinct coverage.
+Both runs report three PropertyXLink export-without-saving diagnostics; native
+save/reopen assertions pass. No claim of empty stderr or complete cross-workbench
+acceptance is made. Syntax and CRLF-aware diff checks pass.
+
+Runtime: retained freecad_plus_2026-10-06_recovered_workload development fork,
+native revision 49492 / bdc8a099da69502ccca72a539aeea293fd81de9b, with explicit
+source overlays and module hash checks. No native build, owner payload update or
+shortcut change was performed. The owner UI DOCX is unchanged because this step
+changes only backend APIs/persistence; no new part type is exposed in the UI.
+Generated output under validation/part-types-foundation and
+validation/part-types-compatibility is removed after recording these results.
+
+Important remaining boundary: existing display/modeling/export consumers still
+use legacy services/native Link shapes. The new policy query is not yet wired
+into them. Active-self overrides and legacy nested-rule reconciliation are also
+pending. Do not describe the requested visible workflow as complete or distribute
+this foundation as a completed owner build. The later Promote-like command is
+separate from the current Part Type implementation.
+
+Next task: 7.8.14b integrate geometry-use and output guards so Reference/Excluded
+occurrence geometry cannot bypass the explicit Add Reference Feature requirement.
+Then 7.8.14c integrates activation/double-click, Part Type/visibility controls and
+owner DOCX updates; 7.8.14d owns grouped acceptance and shortcut delivery.
+Source milestone publication is tracked in Git; it is not an owner release.
+
+
 ## October 9 Active component and Part Tree owner delivery complete
 
 Roadmap 7.8.13, including 13f3, is complete for the approved active-component and

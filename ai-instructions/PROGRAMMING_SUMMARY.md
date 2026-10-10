@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+Part type revision backend: ComponentModel.part_type / set_part_types own direct
+child settings; effective_part_type resolves edit context and
+part_type_allows_geometry supplies the pending consumer guard. CadDocument gates
+explicit values with component-part-types-v1. See the component contract, roadmap
+7.8.14 and TestComponentPartTypes. UI and consumer integration remain pending.
+
+
 File-root foundation: ComponentModel.ensure_file_container provides explicit,
 undoable migration preserving old definitions/placements/external references.
 CadDocument cross-checks component-file-container-v1 against the native marker.

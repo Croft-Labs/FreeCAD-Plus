@@ -89,6 +89,55 @@ former opt-in legacy-conversion policy; it does not claim completed implementati
   and transactions remain reusable infrastructure. A new component/result layer
   owns the semantic contracts; tree flattening alone cannot implement them.
 
+## Part type revision (October 10 owner contract)
+
+This revision supersedes the older Hidden/path-override display contract below
+when the new workflow is integrated. The first backend milestone is additive;
+the existing Part Tree still uses the legacy representation service.
+
+Part types are Full Component, Bodies Only, Excluded and Reference. An authored
+type belongs to the owning part's direct occurrence, shared by every use of that
+owning definition. Other parents referencing the same child remain independent.
+The optional native String property PartType on the occurrence stores an
+explicit setting. Absence reads the owner's direct legacy override, then the
+occurrence's Representation; legacy Hidden maps to Excluded. Nested legacy
+overrides remain intact and are not silently written into shared definitions.
+An explicit reset stores Bodies Only. Native copying carries the property with
+the occurrence, without creating a new UUID registry or remapping labels.
+
+ComponentModel.set_part_types validates the whole direct-child batch before one
+native transaction. It changes neither linked source definitions nor visibility,
+BOM/mass flags, placements, history or native engineering shapes.
+effective_part_type resolves a requested occurrence path against an explicit
+active path. The active part defaults to Full Component, its children default
+to Bodies Only. A Reference is displayed only when its direct owner is active;
+elsewhere its effective type is Excluded, with the authored value preserved.
+Nested exclusions still win. Editing an excluded component directly restores its
+own context without changing the outer owner's exclusion.
+
+part_type_allows_geometry is the consumer policy boundary for unpromoted
+occurrence geometry: Reference and Excluded paths are refused independently of
+their display visibility. Reference geometry requires the explicit Add Reference
+Feature operation before any modeling use. A promoted Reference Body is an owned
+body of the active part with an associative source link. Merely setting Reference
+does not create that feature. The later Promote-like workflow is separate scope.
+Connecting the policy to selection, modeling and export consumers is a required
+subsequent gate; this backend API alone does not prevent existing consumers from
+using raw native Link shapes.
+
+Files containing explicit PartType properties require component-part-types-v1.
+The manifest records each authored value with its occurrence identity; preflight
+cross-checks it against Document.xml and rejects missing capability declarations
+or altered values. Older readers must refuse these files. Files without authored
+new properties retain their old capability set. Rollback to an older reader
+requires an explicit reviewed conversion, not stripping the capability.
+
+Pending integration includes saved active-self overrides, activation and double
+click, Part Type labels/menus, shown/hidden separation and effective Excluded
+visibility refusal, legacy nested-rule reconciliation, reference use guards and
+output traversal. Parent/sibling contextual transparency remains at least 75%;
+children retain their authored appearance. The existing UI is not yet changed.
+
 ## Part Tree and representation
 
 - The Components panel identifies the active component, without a filename/path or
