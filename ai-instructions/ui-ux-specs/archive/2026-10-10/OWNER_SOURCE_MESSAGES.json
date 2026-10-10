@@ -1,0 +1,570 @@
+[
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T00:49:20.3960000Z",
+    "role": "user",
+    "text": "Do not start any work yet. I want to work through a few features that you can do and hash out all of the details, and once we have done that, you are to implement them. So the first thing that I think of is that we still need to make a selection toolbar. This toolbar can be just like the save and edit toolbars, with those in the top toolbar, although it would only show when in design mode. The first can be a drop down box for a single curve, connected curves, or tangent curves. and the second drop-down box would be the selection filter, where when it's dropped down, it is checkboxes for things like planes, bodies, surfaces, curves and points. \n\nWhat other features can we outline and fully define right now",
+    "id": "U001"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T00:55:55.1610000Z",
+    "role": "user",
+    "text": "For the purposes of the selection toolbar, I would say that surfaces are sheets not associated with bodies, and faces are their own category in which must be associated with a body. Edges must also be associated with a body. Curves are specifically drawing items, whether it's a 2D curve on a sketch or a 3D curve in space, like an isocline. However, I would say that the same goes for points. A point would be in a sketch, or it can also be the origin. However, a vertex would be the corners on a body. Other selection options, I think the biggest one is dragging left to right and right to left. In the toolbar, you can have a button that enables and disables directional selection. I would also say that there should be a toggle button for persistent selection. What I mean by this is that if you select three curves and make them all equal length by adding the equal constraint, the program does not immediately clear the selection. With persistent selection toggled on, it keeps those three lines highlighted so that the user can then additionally do something like make all three construction geometry at once.",
+    "id": "U002"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T00:59:06.2030000Z",
+    "role": "user",
+    "text": "Directional selection and persistent selection should both default to on. For the single connected tangent curves, I guess it can apply to both drawing curves and body edges. Escape and clicking empty space should deselect all items, even when persistent selection is turned on. Otherwise, use all suggestions that you had for these items that you had suggested earlier. Do not use or implement any of the other selection features that you had suggested at this time. Still don't do anything yet. Let's move on to the next feature to fully define.",
+    "id": "U003"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:00:15.3720000Z",
+    "role": "user",
+    "text": "Does FreeCAD implement layers?",
+    "id": "U004"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:02:33.8460000Z",
+    "role": "user",
+    "text": "Yes, I want to implement a layer system for the design mode. We can have a toolbar for it in the top toolbar as well that only shows in design mode. Clicking the Layers button will open the Layers task panel. We should have a default work layer in which the origin must always reside, and then all other items within the model history should be able to be moved from one layer to another.",
+    "id": "U005"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:09:51.6190000Z",
+    "role": "user",
+    "text": "With regard to your suggestions, I would say that something like the work layer should be renamed to something like the base layer, because one of the first things I forgot to mention is that we should be able to make it so that the user is able to switch between layers, making one layer active or another, and while that layer is active, all things that they do are attributed immediately to that layer. So I would scratch your new items start on work layer, or if we're going to call it the base layer, unless the user is currently working on a different layer. The task panel should support all of those features, and deleting a layer should move geometry back to the base layer. It should not be able to delete geometry, and they should be saved with the document and support undo redo. There should be an eye next to the layers in the task panel to toggle visibility. It should also be able to double-click a layer to make it active, and then likely signify that that layer is active by making the text bold, and maybe a check mark next to it to indicate that it is active. And when it comes to sketch contents and just whole items in general, I feel like a whole sketch should be required to be assigned to a single layer, and I also feel like bodies should be assigned to a single layer, not able to be separated by a single body created by a loft, a revolve, and a subtract extrude. Those all end up in creating a single body, and therefore it would not make sense to try to separate them out to different layers.",
+    "id": "U006"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:15:17.0160000Z",
+    "role": "user",
+    "text": "Your rule does not fully capture my intent. My thought is that a single object cannot be split between multiple layers. So a sketch is a single object, and thus the curves within a sketch should not be able to be separated between multiple layers. A sketch and a body are two separate objects. So even if a sketch is used to create a body, that sketch can still remain on a different layer than the body. However, if a single body is made by multiple operations, such as extrude and revolve, what's really being assigned to the layer is the body, not the operations that created that single object body. Therefore, by default, all of the operations to correct the body must reside on a single layer. We should also add that the top toolbar can have more buttons on it. We could have a button for Move to Layer, in which all pre-selected items would then be moved to a layer chosen as a drop-down of that button. Similar, there could be a Change Active Layer button that doesn't work like a traditional button in that pressing the button opens a drop-down of which layer to select yet again. I don't know if that is making sense, but I think it's a way to have a drop-down box without having the normal wide box with the current value. It would just be a button that drops down all of the options to be selected.",
+    "id": "U007"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:16:43.9060000Z",
+    "role": "user",
+    "text": "What other extremely high utility features were outlined in the development roadmap?",
+    "id": "U008"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:20:54.5070000Z",
+    "role": "user",
+    "text": "Here are the items that I want to set in the current workload queue: the contextual constraint palette, the precise move, copy, and movable pivot workflow, the sketch freedom and constraint repair, interactive feature handles, and broken reference repair. Start with the first one and ask any questions that you need until we've fully defined and outlined.",
+    "id": "U009"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:24:39.3370000Z",
+    "role": "user",
+    "text": "I suggest having it appear when an object is clicked. However, it can be relatively easy to make disappear, either by moving the pointer away from the palette box, or just a simple five-second timeout. It should only contain constraints and the construction geometry toggle, as well as driving and reference dimension toggles.",
+    "id": "U010"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:30:18.1570000Z",
+    "role": "user",
+    "text": "I would say that the timer should actually be one second if it travels outside of a small travel corridor. I would also say that the palette should appear above the pointer. And so the workflow would be click a geometry, constraint palette shows above the pointer. The user can then choose something on the palette, or if they move outside of the travel corridor, it quickly disappears within one second. That allows the user to be able to move the mouse, and if they don't move it perfectly directly towards the palette, it stays visible with a very short grace period. But if they move outside of that corridor, it also disappears very quickly. I would also say that multiple selections should indeed update the palette for the entire current selection, and it should indeed restart the timer. With persistent selection turned on, the palette should also stay visible until the user leaves the travel corridor. If persistent selection is turned off, then of course as soon as the constraint is applied, there would be nothing selected anymore for the palette to refer to, and thus it should disappear. Conflicting or existing constraints should simply be grayed out with a tool tip upon hover, and constraints that do not apply to the selected geometry types should not be visible.",
+    "id": "U011"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:34:35.3500000Z",
+    "role": "user",
+    "text": "If the pointer is too close to the boundary of the viewport, you may move it to wherever is needed to stay within the viewport. So even if it's supposed to be above the pointer, but the pointer is in the top right-hand corner of the viewport, the palette can be shown to the bottom left of it. With the mix of construction geometry, I would say that the first click should make all curves normal, and a second click makes them all construction. When dimensions are selected, you can have two buttons on the palette, one for make driving and one for make reference. It can support multiple all at one time, and if it causes a conflict and an invalid sketch, it can just throw that error.",
+    "id": "U012"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:36:17.1960000Z",
+    "role": "user",
+    "text": "With regard to if make driving produces an invalid sketch, I would say just keep it as invalid and the user can either click undo, or they can troubleshoot it one dimension at a time.",
+    "id": "U013"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:39:25.9810000Z",
+    "role": "user",
+    "text": "The move feature should only refer to whole components, which would include all of its child components as well. If the user is doing a copy, this would just be another instance of that component, in which we have already defined that all instances in the part tree are merely linked copies of the components in the model tab. All moves should be one task panel and always open in the task panel. From there, there should be several workflows depending upon the first drop-down box, also the first field in the panel, which can be translate, rotate, point-to-point, align axes, align coordinate systems, or interactive, or something like the word interactive, in which the user uses handles to push and pull or rotate the object manually.",
+    "id": "U014"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:43:52.2430000Z",
+    "role": "user",
+    "text": "I would actually say that creating a copy causes issues here. If a user wants to create a copy, they can do a copy and paste in the part tree, and then move it afterwards. Otherwise placement in the part tree does become difficult. Thus the buttons can then easily be... actually I take it back. Since moves can often be a series of translates and rotations, I would say that Apply, OK, and Cancel should all be available, where OK applies and closes the box, or the panel, task panel, whereas Apply, of course, applies that move but leaves the task panel open with the same selected components. In addition, I would say that even before, or maybe you can put it after the movement type drop-down box, have a list box for all the components to be moved, so that the user can move multiple components at once. And again, it is not necessary for a user to select a component and its child. Once a user selects a component, only that component is recorded in the list box, and all of its children are automatically included.",
+    "id": "U015"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:45:47.8340000Z",
+    "role": "user",
+    "text": "Translate should always be a vector and a distance. The vector can be local axes, global axes, or something like an edge or a line. It should also have a reverse button just in case the direction was opposite of desired.",
+    "id": "U016"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:49:42.3980000Z",
+    "role": "user",
+    "text": "I would say we should actually do away with the local axes. I think since a part or component belongs to the next higher assembly, moving a part should always be with respect to the next higher part. And so if the user clicks a component, it should immediately make the next higher assembly the active component. And from that point on, the user can only select other components or sibling components within that parent. After apply, I would say that the components can still remain highlighted if persistent selection is turned on. However, the direction, the reverse state, and the distance should all be reset.",
+    "id": "U017"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:54:11.7660000Z",
+    "role": "user",
+    "text": "Before we go there, do you get what I mean by the parent owns the location of a component within its assembly? Because if you open that component in its own window, the parent component, that is, the child component isn't measured with regard to its location to the top-level assembly. A component is always located based upon its parent. And so editing one component within a parent will move the component within all instances of the top-level assembly, which could cause, which would most likely cause adverse effects. And so the components selected must always be under a single parent, and the movement is in relation to the parent coordinate system, always. With regard to rotate, persistent selection off should also apply the empty component list after applying a rotation. For both this, by this I mean rotate and translate, any visible geometry may be utilized for the vector or axis of rotation. However, the resulting location and orientation is again recorded with respect to its parent, not the global coordinate system. And yes, only siblings may be moved, multiple at one time, within an active parent.",
+    "id": "U018"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:56:19.9430000Z",
+    "role": "user",
+    "text": "Is this now done for movement? What feature groups have we completed? What feature groups still need to be defined and outlined?",
+    "id": "U019"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T01:59:47.9400000Z",
+    "role": "user",
+    "text": "I need to go to sleep, so I want you to create a queue of prompts, making it as many prompts as needed, especially for the Move Components. You are to make the prompts to implement the Selection Toolbar, the Layers implementation and its toolbar, and Contextual Constraint Palette. You are to also implement the Move Components, utilize the outlines that I have already given to you, and extrapolate to determine what to do for the other workflows within the Move Components workflow only. Leave the other queued items, including Sketch Freedom and Constraint Repair, Interactive Feature Handles, and Broken Reference Repair for later. We will outline and define them before you work them. So again, you are going to create a series of prompts, one or more prompt per feature group, enter them into the queue, and then work them sequentially to completion for the Selection Toolbar, Layers, Context Constraint Palette, and Move Components.",
+    "id": "U020"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T02:11:15.5970000Z",
+    "role": "user",
+    "text": "Implement the owner-defined Selection toolbar for FreeCAD Plus Design mode. This is prompt 1 of 10 in the owner's explicitly authorized sequential workload. The earlier discussion-only hold is lifted for Selection, Layers, Contextual Constraint Palette, and Move Components only. Do not implement Sketch Freedom and Constraint Repair, Interactive Feature Handles, Broken Reference Repair, or any other previously suggested selection features.\n\nWork in this checkout. Read PROGRAMMING_SUMMARY first, applicable AGENTS and central/workspace rules, the adopted guidelines, and relevant current source/tests. Preserve unrelated work and reuse existing selection/native services. Follow the component/document contract and preserve identities, ownership, references, geometry, undo, and persistence. Implement, do proportionate quick checks, and update the canonical roadmap/WORK_STATE and affected requirements. Read and update ai-instructions/ui/FreeCAD Plus UI & UX.docx, preserving owner edits, headings, DOCX format and native numbering; use the Documents skill and render/verify affected pages. Do not create a duplicate status roadmap. Batch costly native rebuild and packaged acceptance across these related prompts, with explicit deferred validation for prompt 10. Do not call source-prepared work owner-ready. Do not stop at a plan or stub. Do not ask the sleeping owner to repeat settled decisions. Use routine implementation judgment without adding new product scope.\n\nCreate a top toolbar alongside the Save and Edit toolbars, visible only in Design mode. The first control is a dropdown labeled by selection intent with Single Curve, Connected Curves, Tangent Curves; apply these modes to both drawing curves and body edges. Default to Single Curve. Reuse native connectivity/tangency handling where appropriate; define deterministic branch, loop, shared endpoint and tolerance behavior in the canonical requirements and test it, without silently crossing independent sketches/bodies or treating screen overlap as geometric connection. Do not introduce extra selection modes.\n\nThe second control is a checkbox filter dropdown with Planes, Bodies, Surfaces, Faces, Edges, Curves, Points, Vertices. Independent enabled categories form the eligible selection set, intersected with current command input gates. Planes are reference planes; Bodies are whole bodies; Surfaces are sheets not associated with bodies; Faces belong to bodies; Edges belong to bodies; Curves are drawing items, including sketch curves and standalone 3D curves such as isoclines; Points are sketch points, standalone reference points and origins; Vertices are body corners/vertices. Do not classify every TopoDS edge as a body Edge or every face as a body Face. Preserve occurrence identity when resolving selected objects. Category filters must work with native clicking, preselection and directional box selection, and not break task-specific reference collectors.\n\nAdd Directional Selection and Persistent Selection toggle buttons, both ON by default and remembering the user's choices between sessions. Directional ON: left-to-right box selection requires full enclosure; right-to-left also includes intersected items. OFF: both directions require full enclosure. Give enclosure and crossing rectangles distinct appearance and honor filters in both modes. Persistent ON: successful operations retain surviving selected entities for successive actions, e.g. select three lines, apply Equal, then make them Construction without reselecting. Failed operations retain selection; deleted items leave selection. Persistent OFF follows normal post-operation clearing. Escape and clicking empty space deselect everything even when Persistent is ON. Ordinary selection replacement/addition still behaves normally. Use a shared policy that the upcoming constraint palette and Move task can consume; do not implement persistence by indiscriminately restoring stale subelement indices or overriding active collector ownership.\n\nAcceptance: verify toolbar Design-only lifecycle including switching modes, saved toggle defaults/settings, entity taxonomy, native filter intersections, left/right directional behavior, connected/tangent selection, Equal then Construction with persistent selection, deletion/failure cleanup, Escape/empty click, undo/redo, and no command-gate regression. Carry native runtime/build checks requiring a grouped rebuild to prompt 10 explicitly. Continue through implementation and documentation; the next native queued prompt is Layers. The .txt files in this folder are prompt backups, not an instruction to enqueue or execute duplicates.\n",
+    "id": "U021"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T02:27:25.9440000Z",
+    "role": "user",
+    "text": "Implement the owner-defined Design Layers system, task panel and toolbar. This is prompt 2 of 10 in the authorized sequential workload. Inspect the preceding Selection implementation and resolve unfinished prerequisite defects before dependent work. Do not implement deferred Sketch Freedom and Constraint Repair, Interactive Feature Handles, Broken Reference Repair, or additional selection features. No renewed product-design approval is needed for the settled requirements below.\n\nFollow current project/central/workspace guidance starting with PROGRAMMING_SUMMARY. Preserve unrelated changes. Reuse native Draft layers or compatible existing services where they satisfy this contract; do not change component ownership/history merely to fit a layer group. Preserve document identities, component definitions/occurrences, feature dependencies and model geometry. Implement proportionate tests and synchronize the existing canonical roadmap/WORK_STATE and requirements. Read/update the owner DOCX using the Documents skill, retain native numbering/headings and owner edits, and render/verify changed pages. Batch expensive native build/packaged checks into prompt 10 and label any deferred evidence accurately. Do not finish at a plan, UI-only shell, or untested data model.\n\nEvery document has a permanent layer named Base. It cannot be deleted or renamed. Origin objects always reside on Base and cannot be reassigned. Exactly one layer is active, initially Base. New independent objects immediately receive the active layer. All other eligible Model History objects can move between layers subject to the indivisible-object rule below. Each object has exactly one layer assignment. Layers and assignments are document data, saved/reopened in supported native documents and undoable/redoable, including active-layer changes. Migration of existing documents assigns previously unassigned eligible objects to Base without destructive replacement.\n\nA sketch is one object: all its curves/points remain together. A body is one object: its body-building operations follow its layer; do not put successive extrude/revolve/subtract operations for the same body on separate layers. A sketch and the body consuming it are SEPARATE objects and can reside on different layers, even when native ownership nests the sketch under a Body. Moving the body must NOT move its input sketches. Selecting a body operation for reassignment resolves to the owning body; selecting a sketch moves that sketch only. New operations on an existing body retain the body's layer without reassigning independent input sketches. Do not let a broad native container recursion swallow this explicit distinction.\n\nAdd a Layers top toolbar alongside existing toolbars, visible only in Design mode. It contains Layers, Move to Layer (compact menu button), and Change Active Layer (compact menu button). These are fixed-label buttons opening a dropdown on the whole button, not wide current-value combo boxes and not split default-action buttons. Layers opens the Layers task panel. Move to Layer lists document layers and moves preselected eligible objects to the chosen layer in one transaction; disable when no eligible selection exists, preserve the fixed Origin rule and deduplicate bodies resolved from multiple operations. Change Active Layer lists layers and marks the active one with a check. It changes the layer for subsequently created independent objects.\n\nThe task panel supports creating, renaming, deleting, assigning objects and choosing the active layer. Double-click a layer to activate it; show its name bold plus a check mark. Each row has an eye visibility control. Hide gates layer members' visibility without destroying their individual visibility states; showing restores those states and must not expose historical intermediate body results. Keep sketches on other layers independently visible/hidden. Avoid recompute or dependency changes from visibility alone. Deleting any non-Base layer moves its objects to Base and NEVER deletes geometry. Deleting the active layer activates Base. Preserve object-level visibility semantics and explicit individual visibility changes while hidden without destructive snapshots.\n\nAcceptance must cover Base/origin protection, active creation, independent sketch/body assignment, operation-to-body resolution, multi-object reassignment, layer deletion with geometry unchanged, active fallback, native undo/redo, save/reopen including .cadprt where supported, old-document initialization, visibility restoration without intermediate-result leakage, repeated component contexts, task/toolbar lifecycle and saved data integrity. Record runtime checks deferred to the final grouped build. Continue to a working implementation; prompt 3 then implements the constraint palette. Backups here must not be reenqueued.\n",
+    "id": "U022"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T11:35:14.5730000Z",
+    "role": "user",
+    "text": "Implement the fully specified Contextual Constraint Palette in FreeCAD Plus. This is prompt 3 of 10 in the authorized sequential workload, after Selection and Layers. Reuse and repair prerequisites as necessary. The owner authorizes implementation now; the earlier planning hold no longer applies to these four feature groups. Keep Sketch Freedom and Constraint Repair, Interactive Feature Handles, Broken Reference Repair and other selection features deferred. Reporting native solver errors is required here but does not authorize building the separate repair feature.\n\nFollow PROGRAMMING_SUMMARY and current applicable project/central/workspace instructions. Inspect and reuse native Sketcher constraints, selection and solver services. Preserve current changes and constraint/document identities. Implement real behavior and meaningful quick regression checks. Update canonical roadmap/WORK_STATE, interaction requirements, and the owner DOCX using the Documents skill; preserve owner edits, headings and automatic numbering and render/verify changed pages. Batch expensive native build/packaged checks into prompt 10 and report deferred verification honestly. Do not end at a mocked palette or duplicate solver.\n\nWhile editing a sketch, clicking geometry opens the palette above the pointer and bases its actions on the ENTIRE current selection. Additional selection clicks update that selection/action set and reset dismissal timing. Box selection alone does not open it. Prefer above the click, but reposition in any direction, including bottom-left near the top-right corner, to keep the full palette inside the sketch viewport. Maintain a small usable travel corridor from the triggering pointer position to the actual palette rectangle. While inside the palette or corridor, it stays visible indefinitely. Leaving the combined region starts a one-second timer; reentering cancels it. Do not use the earlier five-second suggestion or a fixed timeout while inside. Layout must remain usable with narrow views and high DPI without jumping under the pointer during action updates. Dismissing it by pointer travel does not clear selection.\n\nOnly show applicable constraints, Construction Geometry, and Make Driving/Make Reference. Hide structurally inapplicable constraints. Existing, redundant and known-conflicting constraint actions are greyed out with hover explanations; the tooltip must work on disabled actions. Hover may highlight affected geometry but never applies or adds a constraint. Revalidate actions against the current sketch/selection before execution; unknown solver feasibility is not automatically a known conflict. Use native eligibility/solver checks without mutating the committed sketch merely for preview.\n\nConstruction conversion: a mixed normal/construction curve selection becomes ALL NORMAL on the first toggle, then ALL CONSTRUCTION on the next. Uniform all-normal selections become all-construction and uniform all-construction become all-normal. Do not confuse reference dimensions with construction geometry.\n\nFor selected dimensions, provide two separate buttons, Make Driving and Make Reference; both support multiple dimensions as one undoable action. Explicit owner exception: allow Make Driving to be attempted even when it results in a solver conflict/invalid sketch. Keep the converted state and display the native solver error, so the user may Undo the entire batch or troubleshoot dimensions individually. Do not silently roll back or delete constraints to obtain a valid result. Preserve dimension values, identities, expressions, existing relationships and native unsupported-operation safeguards; distinguish a committed invalid solve from an API/input failure. Other known-conflicting constraint additions stay disabled as specified.\n\nPersistent Selection ON: retain surviving selected geometry/dimensions after an action, keep the palette visible until the pointer leaves its travel region, and update actions in place. OFF: successfully applied actions clear the selection and close the palette. Escape and empty-space clicking clear selection and close the palette. Clean up timers/observers/highlight on sketch exit, document close, task transitions and deletion. Failed uncommitted actions preserve selection; committed invalid Make Driving remains undoable and reports its error.\n\nAcceptance: actual pointer/click corridor behavior and one-second cancellation, viewport edge repositioning, multiselection updates, disabled-action tooltips, no mutation on hover, Equal then Construction, mixed conversion normal-first, multiple driving/reference conversion, intentionally invalid committed driving conversion with Undo, persistent on/off, Escape/empty click, undo/redo and save/reopen. Record any checks awaiting prompt 10's grouped native runtime. Implement completely before proceeding to the Move Components sequence; do not enqueue copies of these backup prompts.\n",
+    "id": "U023"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T12:21:40.7850000Z",
+    "role": "user",
+    "text": "continue this task if it wasnt completed:\n\nImplement the owner-defined Design Layers system, task panel and toolbar. This is prompt 2 of 10 in the authorized sequential workload. Inspect the preceding Selection implementation and resolve unfinished prerequisite defects before dependent work. Do not implement deferred Sketch Freedom and Constraint Repair, Interactive Feature Handles, Broken Reference Repair, or additional selection features. No renewed product-design approval is needed for the settled requirements below.\nFollow current project/central/workspace guidance starting with PROGRAMMING_SUMMARY. Preserve unrelated changes. Reuse native Draft layers or compatible existing services where they satisfy this contract; do not change component ownership/history merely to fit a layer group. Preserve document identities, component definitions/occurrences, feature dependencies and model geometry. Implement proportionate tests and synchronize the existing canonical roadmap/WORK_STATE and requirements. Read/update the owner DOCX using the Documents skill, retain native numbering/headings and owner edits, and render/verify changed pages. Batch expensive native build/packaged checks into prompt 10 and label any deferred evidence accurately. Do not finish at a plan, UI-only shell, or untested data model.\nEvery document has a permanent layer named Base. It cannot be deleted or renamed. Origin objects always reside on Base and cannot be reassigned. Exactly one layer is active, initially Base. New independent objects immediately receive the active layer. All other eligible Model History objects can move between layers subject to the indivisible-object rule below. Each object has exactly one layer assignment. Layers and assignments are document data, saved/reopened in supported native documents and undoable/redoable, including active-layer changes. Migration of existing documents assigns previously unassigned eligible objects to Base without destructive replacement.\nA sketch is one object: all its curves/points remain together. A body is one object: its body-building operations follow its layer; do not put successive extrude/revolve/subtract operations for the same body on separate layers. A sketch and the body consuming it are SEPARATE objects and can reside on different layers, even when native ownership nests the sketch under a Body. Moving the body must NOT move its input sketches. Selecting a body operation for reassignment resolves to the owning body; selecting a sketch moves that sketch only. New operations on an existing body retain the body's layer without reassigning independent input sketches. Do not let a broad native container recursion swallow this explicit distinction.\nAdd a Layers top toolbar alongside existing toolbars, visible only in Design mode. It contains Layers, Move to Layer (compact menu button), and Change Active Layer (compact menu button). These are fixed-label buttons opening a dropdown on the whole button, not wide current-value combo boxes and not split default-action buttons. Layers opens the Layers task panel. Move to Layer lists document layers and moves preselected eligible objects to the chosen layer in one transaction; disable when no eligible selection exists, preserve the fixed Origin rule and deduplicate bodies resolved from multiple operations. Change Active Layer lists layers and marks the active one with a check. It changes the layer for subsequently created independent objects.\nThe task panel supports creating, renaming, deleting, assigning objects and choosing the active layer. Double-click a layer to activate it; show its name bold plus a check mark. Each row has an eye visibility control. Hide gates layer members' visibility without destroying their individual visibility states; showing restores those states and must not expose historical intermediate body results. Keep sketches on other layers independently visible/hidden. Avoid recompute or dependency changes from visibility alone. Deleting any non-Base layer moves its objects to Base and NEVER deletes geometry. Deleting the active layer activates Base. Preserve object-level visibility semantics and explicit individual visibility changes while hidden without destructive snapshots.\nAcceptance must cover Base/origin protection, active creation, independent sketch/body assignment, operation-to-body resolution, multi-object reassignment, layer deletion with geometry unchanged, active fallback, native undo/redo, save/reopen including .cadprt where supported, old-document initialization, visibility restoration without intermediate-result leakage, repeated component contexts, task/toolbar lifecycle and saved data integrity. Record runtime checks deferred to the final grouped build. Continue to a working implementation; prompt 3 then implements the constraint palette. Backups here must not be reenqueued.\n\n",
+    "id": "U024"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T12:23:47.5770000Z",
+    "role": "user",
+    "text": "Implement the Move Components task foundation and Translate workflow. This is prompt 4 of 10 in the owner's sequential workload. The user explicitly authorizes extrapolating the remaining Move Components workflows only; reasonable concrete defaults below refine that authorization without requiring the sleeping owner to answer. Do not implement Copy in this task, Sketch Freedom and Constraint Repair, Interactive Feature Handles, Broken Reference Repair, or other unrelated roadmap items.\n\nFollow current project instructions starting with PROGRAMMING_SUMMARY, component/document contract, shared-code guidance and applicable source. Inspect existing ComponentModel, ComponentNavigator, occurrence movement/placement and native link transforms before changing them. Finish outstanding prerequisites from prompts 1-3 where required. Preserve unrelated changes. Implement meaningful tests and update canonical roadmap/WORK_STATE, requirements and the owner DOCX (read first, Documents skill, preserve owner edits/native numbering, render and verify). Batch costly native rebuild/packaged acceptance across this sequence into prompt 10. Do not declare a source-only implementation owner-ready.\n\nMove acts only on whole COMPONENT INSTANCES in the Part Tree, including their descendants. Component definitions live in Models; Part Tree instances are linked copies. Copying is done through existing Part Tree copy/paste, outside this command. Do not duplicate shapes, create independent definitions, add Copy controls or change ownership while moving.\n\nCRITICAL OWNERSHIP: a parent component DEFINITION owns each child instance's relative placement within it. Selecting the first movable instance activates its immediate parent assembly as the edit context. Subsequently accept only siblings directly under that same parent. A child is stored relative to its parent, never to top-level/world coordinates. Editing a child in shared parent A changes the corresponding child in every occurrence of A. Do not create a display-occurrence-only placement override. A top-level/root without a movable parent must be handled explicitly using the project's root/master contract, not guessed as a freely movable global object. Maintain the exact selected occurrence path for converting displayed references when parent definitions appear multiple times. Verify this by opening the parent independently and by rendering multiple differently transformed occurrences of it.\n\nAlways open one TASK PANEL, not a modal standalone dialog. First field: workflow dropdown in exact order Translate, Rotate, Point to Point, Align Axes, Align Coordinate Systems, Interactive. Next: component selection list with add/remove/clear through existing collector conventions. Each listed parent carries all its descendants implicitly; no expanded child list and no double transform. First eligible preselection establishes context; reject incompatible cross-parent selections with inline explanation instead of moving a partial unexpected set. Several siblings move as one rigid group with their relative placements preserved. Do not hijack ordinary component clicks outside the Move task to activate parents.\n\nProvide Apply, OK, Cancel. Preview is transient and clearly shows intended placements without committing document mutations. Apply commits all selected siblings atomically as one undoable action, keeps the panel open and resets all movement inputs. OK applies any valid nonzero pending movement and closes; after Apply, OK simply closes instead of reapplying. Cancel discards current preview, closes and keeps already-applied transactions available through Undo. Persistent Selection ON retains the list/highlights; OFF clears both after Apply. Workflow changes discard only uncommitted movement parameters/preview while preserving eligible selected siblings and active parent. No-op Apply must not create undo records. Errors leave a recoverable panel. Respect existing constrained/driven/read-only instance guards; do not silently break assembly joints.\n\nTranslate is ALWAYS one normalized direction vector plus a nonnegative length Distance and a Reverse button. Direction choices: active PARENT X/Y/Z or picked straight edge, line/reference axis from ANY visible geometry. No global-vs-local dropdown and no independent per-child frames or XYZ displacement triplets. Convert picked world/occurrence direction into active-parent coordinates; distinguish direction vectors from positions so parent translation does not affect the vector. Reject zero/undefined or unsuitable curved references clearly. Snapshot references for a placement operation, not new associative model dependencies. Reverse flips the direction, retaining distance. All siblings use the same parent-frame vector and distance. After Apply: direction unset, Reverse OFF, Distance zero; parent context remains for a series of moves.\n\nBuild the reusable transform/reference/preview/commit machinery for the actual upcoming six workflows without speculative unrelated frameworks. Remaining workflow entries may be identified as awaiting their next queued implementation, but do not claim those methods complete. Acceptance: nested rotated parents, shared parent occurrences and standalone-parent opening, siblings only, implicit descendants, correct frame conversions using any visible reference, unchanged source definitions/geometry, group relative transforms, reverse/distance, Apply-then-OK, Cancel after Apply, persistent on/off, atomic undo/redo and save/reopen. Later prompts must finish all six workflows before owner delivery. Do not reenqueue backup files.\n",
+    "id": "U025"
+  },
+  {
+    "source": "R03",
+    "thread": "01a10462-f839-7980-b385-3d218d8c1fb9",
+    "timestamp": "2026-10-04T12:39:32.7880000Z",
+    "role": "user",
+    "text": "Implement Rotate in the same Move Components task panel established by prompt 4. This is prompt 5 of 10. Read that prompt's backup and current implementation as the full shared Move contract; finish its prerequisite defects before adding Rotate. Do not start the deferred Sketch Freedom/Constraint Repair, Interactive Feature Handles, Broken Reference Repair, Copy mode, or any other new feature family. The owner permits extrapolation of unspecified Move interactions only.\n\nKeep the mandatory owner contract: only whole sibling component instances under a single active immediate parent; children follow implicitly; parent definitions own child relative placements so shared parent occurrences all reflect edits. No world-stored or display-instance-only override. First field remains movement method, next the component list. Use any visible geometry as references, converting positions AND directions through the chosen displayed parent occurrence into that parent's coordinates. Reuse the Translate preview, selection, transaction and Apply/OK/Cancel infrastructure.\n\nProvide Rotate controls for an axis, angular magnitude and Reverse. Offer active-parent X/Y/Z axes initially through the parent origin, or a picked straight line/edge/reference axis, or an axis defined by two distinct picked points. A picked line/axis supplies both direction and its line location. Permit an explicit picked pivot point to relocate a parallel axis without changing its direction; show the resolved axis and pivot in preview. Point sources can be vertices, sketch/reference points, origins or well-defined circle centers through existing pick helpers. Any visible geometry may be used even outside the active parent, but moved items remain siblings. Do not treat an axis as direction alone and accidentally rotate around global origin. Label resolved axis/pivot and use model units. Reuse native angular controls and define positive rotation by right-hand rule about displayed direction, with Reverse explicitly negating it; no hidden sign ambiguity. Reject degenerate axes and invalid angle input without mutation.\n\nApply the SAME parent-frame rigid rotation about the common axis to all listed siblings, changing both orientation and origin position as required, preserving relative group placement. This is an immediate placement edit, not an associative rotational feature or assembly joint. Reference picking must not alter the component list. Preview captures an unmodified baseline so mouse/angle updates never accumulate numerical drift. Switching method discards uncommitted rotation. After Apply, axis/direction/pivot selections unset, Reverse OFF and angle zero; selection remains only if Persistent is ON, otherwise list/highlights empty. OK after Apply closes without repeating; Cancel discards only the current preview. Committed steps are separately undoable.\n\nFollow current AGENTS/project rules. Read/update owner DOCX with Documents skill preserving native structure/numbering and render/verify affected pages; synchronize canonical requirements/roadmap/WORK_STATE. Run focused quick checks for non-origin pivots, arbitrary world references under rotated nested parent occurrences, reverse, antiparallel/reference degeneracy, successive Translate/Rotate steps, selection isolation, shared parent propagation, preview baseline, undo/redo and save/reopen. Defer costly grouped native build to prompt 10 with an honest evidence boundary. Continue to a working Rotate implementation rather than a placeholder. Next prompt is Point to Point; backups must not be reenqueued.\n",
+    "id": "U026"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T04:29:23.385Z",
+    "role": "user",
+    "text": "Run the recovered FreeCAD Plus unfinished-work queue sequentially to completion in this conversation. The owner authorizes these seven recovery items and the final test build/desktop shortcut; do not ask again for settled scope.\r\nRead C:\\Users\\GAMING-PC.codex\\visualizations\\2026\\10\\06\\01a10f2c-6b4c-7a83-a2c4-f29c1bb71625\\freecad-recovery-queue\\context-and-audit.txt and C:\\Users\\GAMING-PC.codex\\visualizations\\2026\\10\\06\\01a10f2c-6b4c-7a83-a2c4-f29c1bb71625\\freecad-recovery-queue\\recovered-conversation.txt to restore the complete owner clarification context. Work only in C:\\Users\\GAMING-PC\\Documents__Apps\\freecad. Read the project instructions and current source/evidence before implementation; preserve current unrelated modifications. Read C:\\Users\\GAMING-PC.codex\\visualizations\\2026\\10\\06\\01a10f2c-6b4c-7a83-a2c4-f29c1bb71625\\freecad-recovery-queue\\queue.json and execute its seven prompt files in order, beginning by finishing the interrupted Rotate implementation rather than recreating it. Source preparation for Selection/Layers/palette/Translate is already complete; carry their native/packaged/DOCX acceptance into integration/final build. Use C:\\Users\\GAMING-PC.codex\\visualizations\\2026\\10\\06\\01a10f2c-6b4c-7a83-a2c4-f29c1bb71625\\freecad-recovery-queue\\all-seven-prompts.txt if convenient.\r\nContinue through Rotate, Point to Point, Align Axes, Align Coordinate Systems, Interactive movement/pivot, integration reconciliation, and the final grouped test-build delivery with the verified desktop FreeCADPlus.exe - Shortcut.lnk. Follow each saved prompt's full contract. Create logically grouped, validated commits throughout the sequence, push each coherent milestone to configured GitHub origin without force, and verify the remote branch; preserve unrelated work and record any deferred native validation honestly. Run quick meaningful checks, batch expensive native build once, synchronize/render/inspect the owner DOCX, preserve identities/geometry/parent-owned sibling placements and all shared parent instances, and test actual native GUI events/undo/save/reopen. Keep deferred feature families deferred. Do not recursively enqueue these files or create duplicate workers. If interrupted, use canonical WORK_STATE/roadmap and actual source to resume. Report only actual evidence and continue independent work through concrete blockers.\r\nThis is the owner's explicitly requested new FreeCAD Plus conversation. Execute the saved sequence here. Native app queue entries were not submitted by the originating conversation; do not represent them as such. Read every saved prompt and context file, preserve the original approved contracts, and continue the authorized sequence to completion. Treat the saved source-only completion audit as a starting point to verify against actual files. Do not stop after Rotate merely because it is the first saved item. Do not re-enqueue backups, create more chats, or start duplicate workers. Update canonical WORK_STATE with completed milestones and exact next steps so recovery remains possible.\n\n",
+    "id": "U027"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T12:03:42.576Z",
+    "role": "user",
+    "text": "The owner requires the recovery workload to appear as separate prompts, rather than one omnibus prompt. This supersedes the original starter's instruction to execute all seven items in one turn. For the current implementation turn, complete only recovery item 1, finishing interrupted Rotate, then stop at that coherent milestone. Read and execute C:\\Users\\GAMING-PC.codex\\visualizations\\2026\\10\\06\\01a10f2c-6b4c-7a83-a2c4-f29c1bb71625\\freecad-recovery-queue\\01-finish-rotate.txt with context-and-audit.txt and recovered-conversation.txt from the same directory. Preserve every original contract, logical commits and GitHub origin push requirements, DOCX gates and honest validation evidence. If Rotate has already finished when this message is delivered, inspect the actual recorded evidence and acknowledge completion without replaying changes. Later recovery items will be supplied as individual follow-up prompts; do not autonomously run items 2-7 from the old omnibus starter.\n",
+    "id": "U028"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T12:10:41.539Z",
+    "role": "user",
+    "text": "\n# Files pasted by the user:\n\n## \"Implement Align Axes in the shared Move Components task panel. This is recovery…\": C:\\Users\\GAMING-PC\\.codex/attachments/be543420-1e7f-46da-b112-b9adaca0e99a/Pasted text.txt\n\nPasted text contains the user's request.\n\n## My request:\n\n",
+    "id": "U029"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T12:13:18.161Z",
+    "role": "user",
+    "text": "\n# Files pasted by the user:\n\n## \"Implement Align Coordinate Systems in the existing Move Components task panel. …\": C:\\Users\\GAMING-PC\\.codex/attachments/0987de9d-ba26-4658-8b9c-862e2ff36dd7/Pasted text.txt\n\nPasted text contains the user's request.\n\n## My request:\n\n",
+    "id": "U030"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T12:15:55.180Z",
+    "role": "user",
+    "text": "\n# Files pasted by the user:\n\n## \"Implement Interactive movement and the movable pivot in the SAME Move Component…\": C:\\Users\\GAMING-PC\\.codex/attachments/79d336fb-e72a-4d79-bd21-47efb13560f1/Pasted text.txt\n\nPasted text contains the user's request.\n\n## My request:\n\n",
+    "id": "U031"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T12:18:15.901Z",
+    "role": "user",
+    "text": "\n# Files pasted by the user:\n\n## \"Recovery item 6 of 7: Reconcile all four feature groups before the grouped test…\": C:\\Users\\GAMING-PC\\.codex/attachments/f492e714-7fd6-44f6-830f-dc35c6ac020c/Pasted text.txt\n\nPasted text contains the user's request.\n\n## My request:\n\n",
+    "id": "U032"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T12:22:26.763Z",
+    "role": "user",
+    "text": "\n# Files pasted by the user:\n\n## \"Recovery item 7 of 7: Create and deliver the requested FreeCAD Plus test build …\": C:\\Users\\GAMING-PC\\.codex/attachments/b38fd198-552b-4030-bd23-0307c37e2720/Pasted text.txt\n\nPasted text contains the user's request.\n\n## My request:\n\n",
+    "id": "U033"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T14:21:52.126Z",
+    "role": "user",
+    "text": "you have many changes that are note committed. group them into logical commits and then push them to github\n",
+    "id": "U034"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T14:28:33.996Z",
+    "role": "user",
+    "text": "if a build doesnt exist, create one now and place the shortcut for it on the desktop\n",
+    "id": "U035"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T14:59:29.596Z",
+    "role": "user",
+    "text": "fix the startup. it takes a long time to load, shows the old dark UI, then changes, then changes again but doesnt have the startup task panel with new file, open file, etc. the main window also doesnt show the recent files. \n\nthe tasks panel should always be docked to the right hand side by default. however, it should also store the last location of all panels and toolbars as customized by the user so that they dont have to move them again on the next startup\n",
+    "id": "U036"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T16:09:17.592Z",
+    "role": "user",
+    "text": "when creating a new sketch, i clicked the xy plane but all highlighted. make it such that only the selected plane highlights\n",
+    "id": "U037"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T16:37:11.025Z",
+    "role": "user",
+    "text": "when editing a sketch, the constraint palette shows buttons with words on them. replace the buttons with the icons from the toolbar. display the same hover tooltip that displays when hovering over the native toolbar\n",
+    "id": "U038"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T16:56:35.766Z",
+    "role": "user",
+    "text": "it looks like you are putting validation files in the main project folder. move them here and delete them each time after you finish your task:\nC:\\Users\\GAMING-PC\\Documents\\_temp\\freecad\\validation\n\nalso use this folder to store all test builds here, again cleaning up and deleting old builds when the are no longer useful:\nC:\\Users\\GAMING-PC\\Documents\\_temp\\freecad\\test-builds\n\nafter you have moved all necessary files to those folders, delete any other temp files and folders elsewhere\n\n",
+    "id": "U039"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T17:11:02.087Z",
+    "role": "user",
+    "text": "update section \"2.1.2.1 Design Mode\" toolbar outline. Make the document accurate to the current configuration. format as follows. I dont have any \"small button clusters\" in this tab, but you should use them as well:\n\n    • Modeling Tab\r\n        ◦ Sketch group: \r\n            ▪ New Sketch, \r\n            ▪ Medium Button Cluster\r\n                • Edit Sketch\r\n                • Attach Sketch\r\n        ◦ Modeling group: \r\n            ▪ Extrude (Large Button)\r\n            ▪ Revolve  (Large Button)\r\n            ▪ Medium Button Cluster\r\n                • Loft\r\n                • Helix\r\n        ◦ Dress-Up group: \r\n            ▪ Fillet and Chamfer  (Large Button)\r\n            ▪ Medium Button Cluster\r\n                • Draft, \r\n                • Shell/Thickness\r\n        ◦ Transformation group: \r\n            ▪ Medium Button Cluster\r\n                • Mirror Feature\r\n                • Linear Pattern\r\n                • Circular Pattern\r\n                • Multi Transform\r\n        ◦ Primitives Group\r\n            ▪ Big Button Dropdown\r\n                • Box (Default)\r\n                • Cylinder\r\n                • Sphere\r\n                • Cone\r\n                • Ellipsoid\r\n                • Torus\r\n                • Prism\r\n                • Wedge\r\n                • Tab\r\n        ◦ Other Group:\r\n            ▪ Medium Button Cluster\r\n                • Delete Face/Defeaturing\r\n                • Add Reference Object \n\n",
+    "id": "U040"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T17:26:05.044Z",
+    "role": "user",
+    "text": "update the tabbed toolbars to have gray vertical line dividers between the groups on each tab. make text two lines when necessary and ensure that  the text is not abbreviated or cut off. do not show text for medium or small buttons\n\nUpdate the modeling toolbar to the following:\n• Modeling Tab\n    ◦ Sketch group: \n        ▪ New Sketch, \n        ▪ Small Button Cluster\n            • Edit Sketch\n            • Attach Sketch                \n            • Coordinate System (Small Button Dropdown) \n                    ◦ Coordinate System (Default) \n                    ◦ Plane\r\n                    ◦ Axis\r\n                    ◦ Point\n    ◦ Modeling group: \n        ▪ Extrude (Large Button)\n        ▪ Revolve  (Large Button)\n        ▪ Medium Button Cluster\n            • Loft\n            • Helix\n    ◦ Dress-Up group: \n        ▪ Fillet and Chamfer  (Large Button)\n        ▪ Medium Button Cluster\n            • Draft, \n            • Shell/Thickness\n    ◦ Transformation group: \n        ▪ Medium Button Cluster\n            • Mirror Feature\n            • Linear Pattern\n            • Circular Pattern\n            • Multi Transform\n    ◦ Primitives Group\n        ▪ Big Button Dropdown\n            • Box (Default)\n            • Cylinder\n            • Sphere\n            • Cone\n            • Ellipsoid\n            • Torus\n            • Prism\n            • Wedge\n            • Tab\n    ◦ Other Group:\n        ▪ Medium Button Cluster\n            • Delete Face/Defeaturing\n            • Add Reference Object \n\n\n",
+    "id": "U041"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T18:05:45.917Z",
+    "role": "user",
+    "text": "two issues while editing a sketch:\n\n#1: clicking one point then another without pressing shift of ctrl highlights both. it should only select the item clicked unless a multiselect key is also being held down at the time of the click. clicking off any sketch items without holding shift or ctrl should still clear the selection\n\n#2: clicking two points was showing a significant number of error or warning messages, when all i had done was select them. I hadnt applied any additional constraints yet\n",
+    "id": "U042"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T20:35:07.612Z",
+    "role": "user",
+    "text": "also make the medium sized buttons for the tabbed toolbars larger. it seems like you took out the text but didnt resize the icons, leaving unused space\n\n",
+    "id": "U043"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T20:58:42.444Z",
+    "role": "user",
+    "text": "When I make a selection to the constraint pallet while editing A Sketch it seems like the top Shadow or at least just a gray bar from the top of the constraint pallet box lingers for an extra half second to a full second. Fix it",
+    "id": "U044"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T21:10:56.373Z",
+    "role": "user",
+    "text": "What is the current state for opening Legacy free CAD files and having them be converted to the new CAD part files? Is it functional? Will there be issues with how bodies and sketches are handled?",
+    "id": "U045"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T21:17:49.748Z",
+    "role": "user",
+    "text": "It seems like you just have the ability to retain a body, but there are sort of several functional changes that wouldn't be that difficult to convert over. For example, right now a sketch could be independent or belong to a body. However, with how the new CAD part structure is set up, that sketch just needs to come before the body in the part history. Similarly, the solid operation such as extrude or revolve also needs to come before it. With regard to the part tree, every link just shows as an instance of that part, and every part definition gets moved to the Models tab. I do understand that the way we have changed some of the operations may make it difficult to convert over, such as the definition of a plane. But I get the feeling that it could work through part by part if needed to do some sort of filling in of missing data, but not necessarily have any true gaps. I do understand that the modeling is highly sequential and that it's very interrelated, but I feel like most things should translate over, regardless of the vast and significant differences that we've made. Give your analysis. Be extremely concise on your suggestions of what to do in making a file conversion module fully functional.",
+    "id": "U046"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T21:21:05.182Z",
+    "role": "user",
+    "text": "Create an outline of how to break this up into several smaller tasks. My assumption is that in the Components panel, moving all of the model definitions to the Model tab and repopulating the Part tree with linked component instances is the easiest thing to do. And then after that, you would have to address each feature separately, maybe doing datum planes in one task, converting sketches in another, and so on and so forth. Analyze the current file structure and the legacy FreeCAD structure to inform your decision on how to break the tasks up into smaller pieces.",
+    "id": "U047"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T21:25:13.262Z",
+    "role": "user",
+    "text": "I should also note your error handling portion of it. My intuition says that your preservation of legacy features is a good way to go. I should also say that if all else fails, but you can still have something like a dumb body or a dumb curve conversion tool. That would mean that even if the conversion of the old file to the new file fails, the end result of the body, which is generally the most important, can show up in the part tree as a dumb body rather than showing up as nothing. Take this into consideration and incorporate dumb features into your planning for task number one and all subsequent tasks. Continue working task number one.",
+    "id": "U048"
+  },
+  {
+    "source": "C06",
+    "thread": "01a10f79-1a93-7be0-a261-96a6b7e9c425",
+    "timestamp": "2026-10-06T21:56:00.581Z",
+    "role": "user",
+    "text": "Note that only the UX and UI elements are meant to be stored in the docx document so that I can edit it. Everything else should me documented in markdown documents",
+    "id": "U049"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T13:44:36.950Z",
+    "role": "user",
+    "text": "So there is a conflict of file structure that has arisen because we've been trying to implement both FreeCAD's traditional file structure that essentially makes all parts, or in my case, as I call them components, an attribute of the top-level file, whereas Siemens NX makes each part, or component, its own separate file in which the assembly pulls in, or a part/component pulls in every single time the file is opened. And so, in order to facilitate both of those, I see the need for a few accommodations. First off, when creating a new component, it should be an option to either save it externally or save it within the current file. And what this will do is the user can choose where to store it on their drive, or if it gets stored in the assembly, or I should say in the current file. And in this way, in the components panel, in the Models tab, all components that belong to the current file should show up first. And then there should be a section underneath it that has other files that have been brought in, naming that file plus all of the components as an expandable tree, a single-level tree, just listing all of the components in that file. And so, in the components panel, Models tab, first all the components that are native to the current file are listed, and then each additional file referenced is given a collapsible single-level tree listing all of the components from that file. Do not implement; just ask any clarification questions if you have them.",
+    "id": "U050"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T13:50:57.351Z",
+    "role": "user",
+    "text": "For your first question, I would say that they should have an option to import and store it within an externally stored component that already exists. In this way, a user could create a file called Hardware that is heavily reused, and by importing that Hardware file, all of the hardware within it, such as M3 screws, M4 screws, M5 screws, all import with it, and thus they can add one more component to it. I do see the conflict now, where if you have an external file component list that has another external file within that external file, it is necessary to have a multi-level list in the Models tab. And so, for that reason, I take back what I previously said, and you will need to allow that nested file structure in the Models tab. Users should not be able to move components freely between internal and external files. The user should be prompted with a copy that creates a completely separate file definition, and as such there would be a necessity to have uniquely named components if you're adding a component to the file. So there might need to be some sort of designation, a prefix added to the part name, such that if in the current file I have an M3 screw, and in the imported external file also has an M3 screw, that would be a component name conflict. And in any file structure, there should only be one definition. And so a prefix like F1 for file 1, or something like that, might be required. Or it might just be best to have it such that a component in an external file becomes grayed out, and the component definition in the main file is the one that's utilized. In that way, we have a hierarchy in which only a single definition is allowed, or multiple definitions are allowed but designated for external files with some sort of prefix or marking, as if to say they are not the same file definition, or I should say they are not the same component definition.",
+    "id": "U051"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T13:56:09.654Z",
+    "role": "user",
+    "text": "Yes, I would say that adding a file qualification is necessary. However, I wouldn't put current file M3 screw. I would just say M3 screw, as it's understood then that it's a part of the current file. However, if it's an external file, then yes, hardware M3 screw would need to be the component name, or the other way around, have it as M3 screw and then in parentheses hardware, hardware being the file name, designating it such that in the part tree it's clear that the M3 screw is derived from the hardware file. When adding an external component or an external file and then editing a component within that file will indeed edit and save to that file. So if I import a hardware file and then I edit the M3 screw within that file, the next time another file that uses the hardware file is opened, that M3 screw component will be updated with the edit made in a different assembly. If a component from an external file, like hardware, is copied over into the file that's currently being worked, those become two separate definitions that are unlinked, which is why it's advantageous to reuse a hardware file, keeping the part definition in that file, such that if an edit is made, it's reflected in all files that use the hardware file. However, if for some reason an edit needs to be made and they only want it to be reflected in that single file, that's when creating a copy becomes advantageous because that component then becomes a component of the current file in addition to still being a component that is separately defined in the hardware file.",
+    "id": "U052"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T14:01:21.525Z",
+    "role": "user",
+    "text": "When copying an external component to the local file, in which we should really be calling them domestic components for components defined in the file, and external components for components defined in a separate file that's imported. When a component is copied from an external file into the domestic components list, the user should be prompted to replace components with this newly created domestic component copy. However, it should be noted that in order for a component to be added as a sub-component in the part tree, that component must be under that component's domestic part model tree, whether it is a domestic component itself or an imported component. As such, a user should not be able to have a local file in which they import the hardware and add an M3 screw to the domestic part tree and then add a domestic component to the external M3 screw as a sub-component. This behavior will restrict recursive part nesting.",
+    "id": "U053"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T14:03:43.362Z",
+    "role": "user",
+    "text": "Of course, the user can make the M3 screw the active component of what would technically be an external file, add a component or a file that is external to the hardware file, making a second level or multi-level list, as we discussed earlier. And then, given that a component is within the hardware file's externally imported component list, that component can then be added to the M3 screw. And as you correctly noted, anything that causes a circular reference should immediately be flagged and blocked.",
+    "id": "U054"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T14:04:47.601Z",
+    "role": "user",
+    "text": "Create an action plan, set of tasks, in order to implement this new file structure hierarchy. Do not begin implementing the plan yet.",
+    "id": "U055"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T14:13:46.272Z",
+    "role": "user",
+    "text": "ask a me for permission to do all necessary actions. I will approve and you will then have every permission needed\n",
+    "id": "U056"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T14:14:05.050Z",
+    "role": "user",
+    "text": "<send_user_message_question_reply>\n[{\"questionItemId\":\"[\\\"request_user_input_async\\\",\\\"call_33b1ca10ff0b478a8dcf4715ce6da512\\\",0]\",\"question\":\"Do you authorize all actions necessary to implement and validate this file hierarchy: editing project code, tests and documentation; running builds and tests; managing task-generated temporary files; updating the existing FreeCAD Plus desktop shortcut for a verified build; and committing and pushing validated changes to origin? This excludes unrelated files, the separately installed FreeCAD, force-pushes and releases.\",\"answer\":\"Approve all listed actions\"}]\n</send_user_message_question_reply>",
+    "id": "U057"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T14:17:02.250Z",
+    "role": "user",
+    "text": "reboot/re-initialize/whatever is need so that the sandbox error goes away and I dont have to keep approving things\n",
+    "id": "U058"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T18:37:58.239Z",
+    "role": "user",
+    "text": "what is the current status of the structure conversion? how many tasks are left?\n",
+    "id": "U059"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T18:49:07.543Z",
+    "role": "user",
+    "text": "there are still more cascading issues that now arise from the new file structure to address:\n - when creating a new document, it should automatically create the first component, Part001\n - the first part is also automatically added as the first part in the part tree\n - the first part should no longer remain pinned as the top level component. the file is now the top level component and should be pinned as such\n - The file should have the origin and origin planes, which can be shown or hidden in the modeling history tab. However, no other features or geometry are allowed to be created or edited to the file. as such, give it a freecad icon differentiate it as a file in the part tree.\n\nas questions until this new structure is fully defined. give suggested options and identify the recommended option\n",
+    "id": "U060"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T18:52:29.894Z",
+    "role": "user",
+    "text": "When creating a document, should Part001 become active automatically?\n- Recommended: Create a domestic definition named Part001, insert one occurrence beneath the file in the Part Tree, and activate it immediately.\n\nCan the user delete or remove that initial Part001?\n- Recommended: Treat it like any other component: allow renaming, removal from the Part Tree, or deletion. An empty file is valid; only the file row stays pinned.\n\nWhat should happen when the file row is activated and the user starts a modeling command?\n- Recommended: Require the user to activate or create a component first. Never silently choose a component or create geometry under the file.\n\nHow should the file’s origin interact with components?\n- Recommended: The file owns a fixed origin and three origin planes. They support visibility, placement and assembly alignment; sketches and features must belong to a component. Every component retains its own origin.\nAgreed and additional note: the files origin and coordinate system merely establishes the global coordinates\n\nWhat should Model History show when the file is selected?\n- Recommended: Only its Origin group and origin planes, with visibility controls. Making a component the active component (edit mode) shows that component’s modeling history.\n\nHow should existing documents transition?\n- Recommended: Add the file container above the existing Part Tree while preserving all component names, geometry, placements and references. Do not create another Part001 in existing documents.\n",
+    "id": "U061"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T19:00:28.066Z",
+    "role": "user",
+    "text": "first we need to clarify the meaning of edit and active component. For the sake of the UI, we will use the term edit. However, edit and active component will essentially mean the same thing, but the term active component is better to describe how the UI handles the action. \n\ndouble clicking a component either within the  components -> models tab or components -> part tree tab makes that component active. The active component should be highlighted with the active item fill color (i think that I defaulted it to green) and the component name text should be bold in both the models and part tree tabs. this also make the model history tab show that parts history\n\nmaking a component active does not automatically open a new file tab for that part. It merely makes the part the active component in the current file tab. right clicking a component in either the models or part tree and selection \"open in new window\" creates a new file tab and opens that.\n\n\n\nDoes double clicking or right click -> edit put the file row in edit mode?\n- Recommended: Yes. It shows the file’s origin-only Model History and disables geometry creation until a component is explicitly activated. \n\nWhere do assembly relationships between top-level components belong?\n- Recommended: Allow file-level assembly relationships and placement controls, managed in the Part Tree. These organize components without creating file-owned geometry; the file’s Model History remains origin-only.\n\nWhat happens when an external file is inserted into the Part Tree?\n - it should not be possible to insert an entire external part file into the pare tree. we are going to change the add component work flow later. for right now it should suffice to say that importing external models from a file merely puts them into the models list tab. then the user selects one or more models from that list to be added to the active part or other designated part, which will be evident in the part three. we will work that out next. do not implement now\n",
+    "id": "U062"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T19:04:17.561Z",
+    "role": "user",
+    "text": "If a component has several occurrences in the Part Tree, which should be highlighted?\n- Recommended: All occurrences of the edited definition receive the active fill and bold text. The occurrence used to enter Edit also retains a separate selection indicator, identifying the placement being viewed or edited in context. All other components visible that are not geometry of the selected active component instance or its children should also become 75% transparent\n\nShould a single click change the active component or Model History?\n- Recommended: No. A single click only selects; double-click or Edit changes the active component and its history. This also applies to the file row.\n",
+    "id": "U063"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T19:12:06.564Z",
+    "role": "user",
+    "text": "Does “75% transparent” mean a fixed transparency or additional fading?\n- Recommended: Non-active geometry is at least 75% transparent, preserving any greater existing transparency. Restore its normal appearance when the edit context changes.\n\nWhat happens when Edit is entered from Models, where no occurrence is selected?\n- Recommended: Reuse that definition’s last edited occurrence in the current tab; otherwise use its first occurrence in Part Tree. \n - For a model with no occurrence, the font color of all items in the part tree should turn grey and visibility in the main window forced off. temporarily display the component as the last item in the part tree. do not insert it into the permanent part tree\n\nWhat happens when the file row is active?\n- Recommended: Show all components at their normal transparency because they belong beneath the active file. Geometry creation remains disabled.\n",
+    "id": "U064"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T19:15:08.649Z",
+    "role": "user",
+    "text": "How should the temporary tree item appear and behave?\n- Recommended: Label it Component name (unused model), retain external-file qualification when applicable, and apply the active fill and bold text. It supports editing but cannot be reordered or used as a permanent assembly occurrence.\n\nHow should this state end and restore visibility?\n- Recommended: Editing another component or the file removes the unused item and restores the previous visibility settings. Grayed entries remain selectable and available for Edit, but visibility controls cannot override their temporary hiding. Saving preserves component edits without saving the temporary tree item or hiding state.\n",
+    "id": "U065"
+  },
+  {
+    "source": "C09",
+    "thread": "01a120e8-8951-7b32-a7e4-3557c9a2ec40",
+    "timestamp": "2026-10-09T19:18:56.373Z",
+    "role": "user",
+    "text": "we will still defer the changes to the \"add component\" workflow. begin work on implementing the new active component and part tree behavior. at the end, print the next task of the implementation. if all tasks of the new active component and part tree behavior implementation are complete, say so and dont do any work\n",
+    "id": "U066"
+  },
+  {
+    "source": "C10",
+    "thread": "01a12645-26b9-7d32-b338-529e73a9c0d4",
+    "timestamp": "2026-10-10T14:43:57.675Z",
+    "role": "user",
+    "text": "we need to fix some features of freecad plus. do not start work yet. add clarification questions of the following if necessary:\n\ndouble clicking a component in the part tree should make it the active component but it isnt working\n\nlets change the \"part view\" to \"part type\"\n\nwe also need to differentiate part type -> \"hidden\" meaning. lets change it to \"excluded\". this is makes it distinctly different from visibility with options shown and hidden. an part assigned the type excluded can not be shown until the part type is changed\n\nWe also need to add the part type \"reference\". when editing a component, its direct children with \"reference\" will show the entire part while editing that component. if the parent is then made active, the \"references\" of its children will be defaulted to \"excluded\". in this way, a reference can easily be used to create a part and then become excluded in the final part geometry automatically.\n\nmaking a component active should also activate the part view of itself and its children as saved for that part. all parts should be view full component by default when they are active. all of its children should be bodies only by default. so all can be true for the following part tree depending on which part is active\n\nthe following shows the default interaction. however, this can be overridden and the override setting always being saved to the active component\n\ncase 1:\ntower case  <-- ACTIVE\nfan assy\n - fan 120 mm, x2\n - fan mount bottom plate\n - - fan 120 mm, x2 (excluded)\n - fan mount top plate\n - - fan mount bottom plate (excluded)\n - - - fan 120 mm, x2 (exclude)\n\ncase 2:\ntower case\nfan assy\n - fan 120 mm, x2\n - fan mount bottom plate\n - - fan 120 mm, x2 (excluded)\n - fan mount top plate  <-- ACTIVE\n - - fan mount bottom plate (reference)\n - - - fan 120 mm, x2 (excluded)\n\n\n\n\n\n\n\n",
+    "id": "U067"
+  },
+  {
+    "source": "C10",
+    "thread": "01a12645-26b9-7d32-b338-529e73a9c0d4",
+    "timestamp": "2026-10-10T14:52:16.160Z",
+    "role": "user",
+    "text": "Reference geometry: Should Reference parts be visible and selectable for sketches, attachments and other modeling references, but excluded from the component’s resulting geometry and exports?\nwe are going to add something similar to the \"promote\" command in siemens NX later. this will add a linked copy to the active part's history as \"reference sketch\", \"reference body\", etc\n\nContext switching: When activating a parent, should a child’s Reference parts merely behave as Excluded in that parent’s context, preserving their Reference setting when you reactivate the child? yes.\n\nNested references: In case 2, the bottom plate is Reference, but its fans remain Excluded. Does “show the entire part” mean showing that reference’s geometry while still respecting exclusions within it? yes. if a user wants to add reference geometry of the fan it would have to look like this:\nmodified case 2:\ntower case\nfan assy\n - fan 120 mm, x2\n - fan mount bottom plate\n -   fan 120 mm, x2 (excluded)\n - fan mount top plate  <-- ACTIVE\n   - fan mount bottom plate (reference)\n     - fan 120 mm, x2 (excluded)\n   - fan 120 mm, x2 (reference)\n\nSaved overrides: Should these settings persist through save/reopen, and apply independently to each occurrence of a reused component, or be shared by every occurrence? they should persist. they are attributes saved to a part with regard to its direct children\n\nTree structure: Is fan assy a child of tower case, or are they separate top-level components? When the top plate is active, should its siblings and ancestors remain visible, become hidden, or retain their previous visibility? \nin that example, the tower case and fan assy were siblings\nas for visibility we have already covered this. the siblings and parents become 75% transparent or more. the children stay fully visibly\n",
+    "id": "U068"
+  },
+  {
+    "source": "C10",
+    "thread": "01a12645-26b9-7d32-b338-529e73a9c0d4",
+    "timestamp": "2026-10-10T14:56:24.941Z",
+    "role": "user",
+    "text": "One point remains: for this change, should Reference children contribute nothing to the active part’s final geometry and exports, while remaining visible and selectable during editing? \na body that is promoted to \"reference body\" becomes a body of that part, although derived and linked to the reference child component. any geometry of the reference child that has not been added as a reference feature to the active component cannot be used in any way. \"add reference feature\" is a critical and required step in being able to use a reference child's features\n",
+    "id": "U069"
+  },
+  {
+    "source": "CURRENT",
+    "thread": "01a12764-59aa-71d0-9ca1-93a2be5e1dc9",
+    "timestamp": "2026-10-10T19:57:37.264Z",
+    "role": "user",
+    "text": "I am finding that you are making changes to previously specified and defined UI and workflow features, despite the \"FreeCAD Plus UI & UX.docx\" file. so we are going to transfer over all that is in there into separate markdown files. you are also going to go thru all conversations and \n\n\n\"TOOLBARS_AND_BUTTONS.md\" \n - section 1 - the FC Plus modes, tabs, groups, and icons with size, subgroups, dropdowns, etc. \n - section 2 - the legacy freecad toolbars and if/where the buttons are used in the FC Plus toolbars\n - section 3 - combination of all legacy FC and FC Plus buttons grouped by legacy FC workbench, with a short description\n\n\n\"COMPONENT_PANEL.md\" \n - should contain the models tab, part tree tab, history tab, formatting, right click menus, file/component/instances structures, etc\n - structural changes of how the components function as both parts and assemblies, with impacts to the part tree\n - modeling changes of how bodies are now backend items, with the users only interacting with sketches, operations/features, and other geometry\n\n\"TASK_PANEL.md\"\n - which common operations show when not editing a feature/operation\n - define common items like feature selection listbox, collapsible sections, preview modes, etc\n - defines the workflow for each button operation/feature\n\n\"DEFAULT_SETTINGS.md\"\n\n\"MODEL_VIEW_WINDOW.md\"\n\nplace all of the files in this folder:\n\"C:\\Users\\GAMING-PC\\Documents\\__Apps\\freecad\\ai-instructions\\ui-ux-specs\"\n\nArchive all files that have been replaced. Remove or archive redundant information if it exists other places. Files like UI_UX_SPEC.md can have their detailed content removed and just point to the newly created files.\n\nUtilize past conversations to create these files. If there is conflicting information, the most recent conversations should override older ones. Do not rely on the current state of the UI, UX, or other agent instruction in markdown files. The main purpose of this is to create a  single collection of my intended changes, filtering out the changes that have been made without me specifically instructing you do to so\n\nask any clarification questions needed before starting\n",
+    "id": "U070"
+  },
+  {
+    "source": "CURRENT",
+    "thread": "01a12764-59aa-71d0-9ca1-93a2be5e1dc9",
+    "timestamp": "2026-10-10T19:59:47.890Z",
+    "role": "user",
+    "text": "Conversation sources: Should I include all FreeCAD-related Codex and ChatGPT conversations, including archived chats and any history recovered from the old computer? Are there exports or backups outside the app I should include? yes\n\nUnconfirmed DOCX content: If a requirement appears in the DOCX but I cannot find a supporting instruction from you, should I retain it as an existing requirement or mark it “Needs owner confirmation”?  mark it for confirmation so potentially unauthorized changes don’t become authoritative again.\n\nLegacy button inventory: Should sections 2–3 cover every built-in FreeCAD workbench, including ones outside FC Plus modes, or only workbenches involved in your intended workflows? use the original freecad workbench list. I found that you removed several workbenches without me instructing you to do so\n",
+    "id": "U071"
+  }
+]

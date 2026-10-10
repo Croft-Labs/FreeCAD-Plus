@@ -1,0 +1,2 @@
+# Source archives preserve exact bytes, including original line endings and Markdown hard breaks.
+** -text whitespace=-blank-at-eol

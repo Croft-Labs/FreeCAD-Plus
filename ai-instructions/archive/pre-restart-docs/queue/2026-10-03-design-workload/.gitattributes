@@ -1,0 +1,3 @@
+# Preserve historical bytes and recorded prompt hashes on every checkout.
+*.txt -text
+*.json -text whitespace=cr-at-eol

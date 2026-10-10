@@ -1,0 +1,646 @@
+[
+  {
+    "hash": "cf35ef83e080158219cfa53042373c62b0a181bc",
+    "subject": "CAM: Make Command.Parameters assignment replace the parameter set",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/App/Command.pyi",
+      "src/Mod/CAM/App/CommandPyImp.cpp",
+      "src/Mod/CAM/CAMTests/TestPathCore.py",
+      "src/Mod/CAM/Path/Post/scripts/dxf_post.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "6224b37819ee02e025db918f4ed312853d73c009",
+    "subject": "CAM: Command.Parameters assignment leaves the caller's dictionary intact",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/App/CommandPyImp.cpp",
+      "src/Mod/CAM/CAMTests/TestPathCore.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "5591937592c863c59a7b3497fbe6ee06ff4b440e",
+    "subject": "Merge pull request #32450 from tarman3/simplecopy_taskpanel",
+    "result": "excluded",
+    "files": [
+      "src/Mod/CAM/Path/Dressup/Utils.py",
+      "src/Mod/CAM/Path/Op/Gui/Base.py",
+      "src/Mod/CAM/Path/Op/Gui/Custom.py",
+      "src/Mod/CAM/Path/Op/Gui/SimpleCopy.py"
+    ]
+  },
+  {
+    "hash": "293726c5d8f907591cfe470aec412e7f35a31c5f",
+    "subject": "Part: Add soft limit to number of pattern occurrences (#33056)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Part/App/CMakeLists.txt",
+      "src/Mod/Part/App/LinearPatternExtension.cpp",
+      "src/Mod/Part/App/LinearPatternExtension.h",
+      "src/Mod/Part/App/PatternConstants.cpp",
+      "src/Mod/Part/App/PatternConstants.h",
+      "src/Mod/Part/App/PolarPatternExtension.cpp",
+      "src/Mod/Part/App/PolarPatternExtension.h",
+      "src/Mod/PartDesign/App/FeatureDressUp.cpp",
+      "src/Mod/PartDesign/Gui/ViewProviderDressUp.cpp",
+      "src/Mod/PartDesign/PartDesignTests/TestLinearPattern.py"
+    ],
+    "error": "<stdin>:77: trailing whitespace.\n// SPDX-License-Identifier: LGPL-2.1-or-later\r\n<stdin>:78: trailing whitespace.\n// SPDX-FileCopyrightText: 2026 The FreeCAD project association AISBL\r\n<stdin>:79: trailing whitespace.\n// SPDX-FileNotice: Part of the FreeCAD project.\r\n<stdin>:80: trailing whitespace.\n\r\n<stdin>:81: trailing whitespace.\n/******************************************************************************\r\nwarning: squelched 41 whitespace errors\nwarning: 46 lines add whitespace errors."
+  },
+  {
+    "hash": "adb271f4e31cc423d7cc6f7d0cd7597775b1895e",
+    "subject": "Pixi: set default XCURSOR_PATH on Linux",
+    "result": "batch-applies",
+    "files": [
+      "pixi.toml"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "405815d67964e435c0d58e04bbaf36df1218422f",
+    "subject": "fix syntax error with FreeCAD.qss",
+    "result": "batch-applies",
+    "files": [
+      "src/Gui/Stylesheets/FreeCAD.qss"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "005c693b94e5b0ba2c3a4c2f01984c034a11a8c1",
+    "subject": "Measure: forget a deleted custom coordinate system in Mass Properties",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Measure/Gui/TaskMassProperties.cpp",
+      "src/Mod/Measure/Gui/TaskMassProperties.h"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "33d332e273988d623f503cdcb715c93924582d3a",
+    "subject": "Gui: fix property editor crash on recompute",
+    "result": "batch-applies",
+    "files": [
+      "src/Gui/propertyeditor/PropertyEditor.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "15938598ee51dd8f0a294abc5e91ced44632edc9",
+    "subject": "Sketcher: fix crash when entering edit mode (#32804)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Sketcher/Gui/EditModeGeometryCoinManager.cpp",
+      "src/Mod/Sketcher/Gui/ViewProviderSketch.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "fd593d363e297986f02cab0bce1aeda3a840585d",
+    "subject": "CAM: Add preference for Sanity report output file (#32861)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/Gui/Resources/preferences/PathJob.ui",
+      "src/Mod/CAM/Path/Main/Gui/PreferencesJob.py",
+      "src/Mod/CAM/Path/Main/Gui/SanityCmd.py",
+      "src/Mod/CAM/Path/Post/Utils.py",
+      "src/Mod/CAM/Path/Preferences.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "622ef41be9b9b9f1781e29242a61c99bc65930ab",
+    "subject": "CAM: Inspect - Truncate long labels",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/Path/Main/Gui/Inspect.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "ea8d563d30f6176b71d395db6a1cda2725946b01",
+    "subject": "CAM: Copy Operation - keep dressup expressions on the copy (#33018)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/PathCommands.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "89c034fd976be2afde30e1097a9292c2c173118c",
+    "subject": "CAM: MillFacing - Circular clearing pattern",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/CAMTests/TestPathMillFacing.py",
+      "src/Mod/CAM/CMakeLists.txt",
+      "src/Mod/CAM/Gui/Resources/panels/PageOpMillFacingEdit.ui",
+      "src/Mod/CAM/Path/Op/Gui/MillFacing.py",
+      "src/Mod/CAM/Path/Op/MillFacing.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "f6f324b91626a8735f4696eb9f47d8d2fbbbb00c",
+    "subject": "pixi: Update CalculiX.",
+    "result": "batch-applies",
+    "files": [
+      "pixi.lock"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "370eebc099ebbd087df2e1685518f9f000db22ba",
+    "subject": "Assembly: Remove unused image assets",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Assembly/Gui/Resources/icons/AssemblyWorkbench_alternate.svg"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "83ee7f469f362f2e0e76b0de0ac0a7d79cefed6e",
+    "subject": "Spreadsheet: Remove unused image assets",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Spreadsheet/Resources/icons/SpreadsheetPropertyController.svg"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "28d261fddaf8a8026ac73c2cd347a34b622939c7",
+    "subject": "TechDraw: Remove unused image assets",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/angularity.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/circular run-out.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/circularity.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/concentricity.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/cylindricity.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/flatness.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/flatness_editable.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/parallelism.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/perpendicularity.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/position.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/profile of line.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/profile of surface.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/reference_editable.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/straightness.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/symmetrie.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/tolerance_editable.svg",
+      "src/Mod/TechDraw/Gui/Resources/ToleranceSymbols/total run-out.svg"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "f25d0888aba3a855d82772961c378a66587a607d",
+    "subject": "Tux: Remove unused image assets",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Tux/Resources/icons/NavigationCADAlt.svg"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "1cf67a01fd9e1b22091eb0d733c15459c3ff0c16",
+    "subject": "Sketcher: Remove obsolete icons",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Sketcher/Gui/Resources/Sketcher.qrc",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ConstrainCoincident_old.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ConstrainDistance_old.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ConstrainHorizontal_old.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ConstrainParallel_old.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ConstrainVertical_old.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_DraftLine.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ProfilesHexagon1.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ToggleConstruction_old.svg",
+      "src/Mod/Sketcher/Gui/Resources/icons/obsolete/Sketcher_ToggleNormal.svg"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "fb3303dff19792475892003c2af3cbd9080f95cb",
+    "subject": "CAM: Profile - Combine connected faces",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/CAMTests/TestPathGeom.py",
+      "src/Mod/CAM/CAMTests/TestSlicer.py",
+      "src/Mod/CAM/Path/Geom.py",
+      "src/Mod/CAM/Path/Op/Profile.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "efaf7b1c6ced190f8b1303b79899e864e299b087",
+    "subject": "Gui: Remove unused image assets",
+    "result": "batch-applies",
+    "files": [
+      "src/Gui/Icons/Material.svg",
+      "src/Gui/Icons/SpNav-PanLR.png",
+      "src/Gui/Icons/SpNav-PanUD.png",
+      "src/Gui/Icons/SpNav-Roll.png",
+      "src/Gui/Icons/SpNav-Spin.png",
+      "src/Gui/Icons/SpNav-Tilt.png",
+      "src/Gui/Icons/SpNav-Zoom.png",
+      "src/Gui/Icons/Std_ViewIvStereoInterleavedColumns.svg",
+      "src/Gui/Icons/Std_ViewIvStereoInterleavedRows.svg",
+      "src/Gui/Icons/Std_ViewIvStereoOff.svg",
+      "src/Gui/Icons/Std_ViewIvStereoQuadBuff.svg",
+      "src/Gui/Icons/Std_ViewIvStereoRedGreen.svg",
+      "src/Gui/Icons/breakpoint.png",
+      "src/Gui/Icons/debug-marker.png",
+      "src/Gui/Icons/delete.png",
+      "src/Gui/Icons/freecadabout.svg",
+      "src/Gui/Icons/list-add.png",
+      "src/Gui/Icons/list-remove.png",
+      "src/Gui/Icons/mouse_pointer.png"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "123a79500da1831b4b5cf2c81adfc7269745c0ce",
+    "subject": "FEM: Fix vtk_module_compatible method",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Fem/CMakeLists.txt",
+      "src/Mod/Fem/femguiutils/vtk_module_compatibility_check.py",
+      "src/Mod/Fem/femguiutils/vtk_module_handling.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "3ffae4b83766817d5645d7709f0cff787ddd21e7",
+    "subject": "Merge pull request #33069 from sliptonic/fanuc-post-mbpp",
+    "result": "excluded",
+    "files": [
+      "src/Mod/CAM/CAMTests/TestFanucLegacyPost.py",
+      "src/Mod/CAM/CAMTests/TestFanucPost.py",
+      "src/Mod/CAM/CMakeLists.txt",
+      "src/Mod/CAM/Path/Post/scripts/fanuc_post.py"
+    ]
+  },
+  {
+    "hash": "426d03d1bdbfab508be4476852b9e1756cbba6f0",
+    "subject": "CAM:  Operations respect workplane frame (#32903)",
+    "result": "excluded",
+    "files": [
+      "src/Mod/CAM/CAMTests/TestLinuxCNCPost.py",
+      "src/Mod/CAM/CAMTests/TestPathOpUtil.py",
+      "src/Mod/CAM/CAMTests/TestPathSharedWorkplane.py",
+      "src/Mod/CAM/CAMTests/TestPathTiltedWorkPlane.py",
+      "src/Mod/CAM/CAMTests/TestPathWorkplane.py",
+      "src/Mod/CAM/CAMTests/TestPathWorkplaneFrame.py",
+      "src/Mod/CAM/CAMTests/TestPlanarSurfaceOp.py",
+      "src/Mod/CAM/CAMTests/TestPostOutput.py",
+      "src/Mod/CAM/CMakeLists.txt",
+      "src/Mod/CAM/Machine/models/__init__.py",
+      "src/Mod/CAM/Machine/models/machine.py",
+      "src/Mod/CAM/Machine/ui/editor/machine_editor.py",
+      "src/Mod/CAM/Path/Base/Generator/linking.py",
+      "src/Mod/CAM/Path/Base/Util.py",
+      "src/Mod/CAM/Path/Dressup/Array.py",
+      "src/Mod/CAM/Path/Dressup/Boundary.py",
+      "src/Mod/CAM/Path/Dressup/DogboneII.py",
+      "src/Mod/CAM/Path/Dressup/Gui/AxisMap.py",
+      "src/Mod/CAM/Path/Dressup/Gui/Boundary2.py",
+      "src/Mod/CAM/Path/Dressup/Gui/Dragknife.py",
+      "src/Mod/CAM/Path/Dressup/Gui/LeadInOut.py",
+      "src/Mod/CAM/Path/Dressup/Gui/Mirror.py",
+      "src/Mod/CAM/Path/Dressup/Gui/PlungeMilling.py",
+      "src/Mod/CAM/Path/Dressup/Gui/RampEntry.py",
+      "src/Mod/CAM/Path/Dressup/Gui/Tags.py",
+      "src/Mod/CAM/Path/Dressup/Gui/ZCorrect.py",
+      "src/Mod/CAM/Path/Dressup/Tags.py",
+      "src/Mod/CAM/Path/Dressup/Utils.py",
+      "src/Mod/CAM/Path/Main/Gui/Inspect.py",
+      "src/Mod/CAM/Path/Main/Gui/Simulator.py",
+      "src/Mod/CAM/Path/Main/Gui/WorkplaneCmd.py",
+      "src/Mod/CAM/Path/Main/Job.py",
+      "src/Mod/CAM/Path/Main/Sanity/Sanity.py",
+      "src/Mod/CAM/Path/Main/Workplane.py",
+      "src/Mod/CAM/Path/Op/Area.py",
+      "src/Mod/CAM/Path/Op/Base.py",
+      "src/Mod/CAM/Path/Op/CircularHoleBase.py",
+      "src/Mod/CAM/Path/Op/Engrave.py",
+      "src/Mod/CAM/Path/Op/EngraveBase.py",
+      "src/Mod/CAM/Path/Op/Gui/Base.py",
+      "src/Mod/CAM/Path/Op/Helix.py",
+      "src/Mod/CAM/Path/Op/PlanarSurface.py",
+      "src/Mod/CAM/Path/Op/Slot.py",
+      "src/Mod/CAM/Path/Op/Surface.py",
+      "src/Mod/CAM/Path/Op/Util.py",
+      "src/Mod/CAM/Path/Op/Waterline.py",
+      "src/Mod/CAM/Path/Post/PostList.py",
+      "src/Mod/CAM/Path/Post/Processor.py",
+      "src/Mod/CAM/Path/Post/TiltedWorkPlane.py",
+      "src/Mod/CAM/PathScripts/PathUtils.py",
+      "src/Mod/CAM/Roadmap/ADR/ADR-000.md"
+    ]
+  },
+  {
+    "hash": "b8e58b5d71f3664f5392d46c2169204ed68c2992",
+    "subject": "Sketcher: fix Fit All and uninitialized axis coordinates",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Sketcher/Gui/EditModeCoinManager.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "180d8cfc323ebe98d0bf90b07285bc025c2df89f",
+    "subject": "partially revert #30615 to previous spacemouse zoom pivot behavior",
+    "result": "batch-applies",
+    "files": [
+      "src/Gui/Navigation/NavigationStyle.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "685c62dad354ff5732227d5d75ee5af90e8e2ee6",
+    "subject": "Core: remove BufferStreambuf",
+    "result": "excluded",
+    "files": [
+      "src/Base/Stream.cpp",
+      "src/Base/Stream.h",
+      "src/Mod/Start/App/FcstdInfoSource.cpp",
+      "tests/src/Base/Stream.cpp"
+    ]
+  },
+  {
+    "hash": "922dcc5be0f50a4aaa0c2e63cacf1c5730444a09",
+    "subject": "Sketcher: Log through the named Console functions",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Sketcher/App/SketchObject.cpp",
+      "src/Mod/Sketcher/App/SketchObjectConstraints.cpp",
+      "src/Mod/Sketcher/Gui/DrawSketchHandlerBSpline.h"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "ad0a29813420595983f3876b1286bd6b0066961a",
+    "subject": "Part: Set units in task dialog",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Part/Gui/PatternPathParametersWidget.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "824d1bfab472352cec94d5c1b8e97eaaad5ac0cf",
+    "subject": "Revert \"Core: remove BufferStreambuf\"",
+    "result": "excluded",
+    "files": [
+      "src/Base/Stream.cpp",
+      "src/Base/Stream.h",
+      "src/Mod/Start/App/FcstdInfoSource.cpp",
+      "tests/src/Base/Stream.cpp"
+    ]
+  },
+  {
+    "hash": "c97e069823942cd5f7c1d9299536a3967f1b6586",
+    "subject": "CAM: Endmill SVG cutting edge height (H) now ends at top of flutes (#33079)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/Tools/Shape/endmill.svg",
+      "src/Mod/CAM/Tools/Shape/svg_source/endmill.svg"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "898224c42bdd37352cccaa6e3ac96622790742d9",
+    "subject": "CI: Remove experimental non-arm Windows build",
+    "result": "excluded",
+    "files": [
+      ".github/workflows/build_release.yml"
+    ]
+  },
+  {
+    "hash": "d7e3330043c596ab7b5ddfc879e43ff629c8e3fd",
+    "subject": "[TD]prevent fail on equal projected points (#32880)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/TechDraw/App/DrawViewPartPyImp.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "7111ab3fc7747965256c8aea982a4db3ea90b4a2",
+    "subject": "TechDraw: list each geometric hatch of a view only once",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/TechDraw/App/DrawViewPart.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "27bf90adc0b8fec7195e973f89725a798ed95a00",
+    "subject": "CAM: PocketShape - Add tolerance to combineHorizontalFaces",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/CAM/CAMTests/TestPathGeom.py",
+      "src/Mod/CAM/Path/Geom.py",
+      "src/Mod/CAM/Path/Op/PocketBase.py",
+      "src/Mod/CAM/Path/Op/PocketShape.py",
+      "src/Mod/CAM/Path/Op/Profile.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "1c26e0d005994e1e5041afbc8607c709eded76ee",
+    "subject": "TechDraw: claim each child view only once",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/TechDraw/Gui/ViewProviderViewPart.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "a24e31523a66bf98a7c3ef85bf168eb38e32f791",
+    "subject": "CAM: legacy post scripts silently drop G99 retract mode (#32282)",
+    "result": "excluded",
+    "files": [
+      "src/Mod/CAM/CAMTests/TestFanucLegacyPost.py",
+      "src/Mod/CAM/CAMTests/TestLegacyPostRetractMode.py",
+      "src/Mod/CAM/CAMTests/TestLinuxCNCLegacyPost.py",
+      "src/Mod/CAM/CAMTests/TestPostCore.py",
+      "src/Mod/CAM/CMakeLists.txt",
+      "src/Mod/CAM/Path/Main/Gui/JobCmd.py",
+      "src/Mod/CAM/Path/Main/Gui/JobDlg.py",
+      "src/Mod/CAM/Path/Main/Job.py",
+      "src/Mod/CAM/Path/Post/Utils.py",
+      "src/Mod/CAM/Path/Post/scripts/KineticNCBeamicon2_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/centroid_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/dynapath_4060_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/dynapath_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/estlcam_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/fanuc_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/fanuc_post.py",
+      "src/Mod/CAM/Path/Post/scripts/grbl_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/linuxcnc_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/mach3_mach4_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/marlin_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/rrf_legacy_post.py",
+      "src/Mod/CAM/Path/Post/scripts/uccnc_legacy_post.py",
+      "src/Mod/CAM/PathScripts/PathUtils.py"
+    ]
+  },
+  {
+    "hash": "2372eb1c4fd6fb31d3dcf6bcdacd5530c810408b",
+    "subject": "Assembly: Fix rack and pinion bug (#32922)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Assembly/App/AssemblyObject.cpp",
+      "src/Mod/Assembly/AssemblyTests/TestCore.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "84ae7a7c8ee9e9c2c86c739f364ace4822caf950",
+    "subject": "fix[Gui]: property editor FocusOut crash",
+    "result": "batch-applies",
+    "files": [
+      "src/Gui/propertyeditor/PropertyItemDelegate.cpp",
+      "tests/src/Gui/propertyeditor/CMakeLists.txt",
+      "tests/src/Gui/propertyeditor/PropertyEditorFocus.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "840ce404d275965ab22ed7b70d330399ad25b118",
+    "subject": "CI: Fix gating of CI when label is applied after failure",
+    "result": "excluded",
+    "files": [
+      ".github/workflows/CI_approved.yml"
+    ]
+  },
+  {
+    "hash": "21ed7f01ced614ace0aebd332a45a72969c4805c",
+    "subject": "Assembly: Fix test that only worked on MSVC",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Assembly/AssemblyTests/TestCore.py"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "ab631d9acaef9e4286f57216fb262f797f04a6c1",
+    "subject": "Fix crash on spaceball motion before a window is active",
+    "result": "batch-applies",
+    "files": [
+      "src/Gui/MainWindow.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "15883e6f4c0ecdce9e3ab5547732302042866367",
+    "subject": "Tests: Add mainWindow nullptr check on macOS",
+    "result": "batch-applies",
+    "files": [
+      "src/Gui/propertyeditor/PropertyEditor.cpp"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "0130baa2ea88769ef859b9f30f6e6e07f6372442",
+    "subject": "PartDesignGui: expose new pattern tools and MultiTransform editors",
+    "result": "excluded",
+    "files": [
+      "src/Mod/PartDesign/Gui/AppPartDesignGui.cpp",
+      "src/Mod/PartDesign/Gui/CMakeLists.txt",
+      "src/Mod/PartDesign/Gui/Command.cpp",
+      "src/Mod/PartDesign/Gui/TaskMultiTransformParameters.cpp",
+      "src/Mod/PartDesign/Gui/TaskMultiTransformParameters.h",
+      "src/Mod/PartDesign/Gui/ViewProviderCircularPattern.cpp",
+      "src/Mod/PartDesign/Gui/ViewProviderCircularPattern.h",
+      "src/Mod/PartDesign/Gui/ViewProviderPathPattern.cpp",
+      "src/Mod/PartDesign/Gui/ViewProviderPathPattern.h",
+      "src/Mod/PartDesign/Gui/ViewProviderPointPattern.cpp",
+      "src/Mod/PartDesign/Gui/ViewProviderPointPattern.h",
+      "src/Mod/PartDesign/Gui/Workbench.cpp"
+    ]
+  },
+  {
+    "hash": "ad11ee94bcd6ec538e32043dc299680be1a171e3",
+    "subject": "PartDesign: clarify new pattern command callbacks",
+    "result": "excluded",
+    "files": [
+      "src/Mod/PartDesign/Gui/Command.cpp",
+      "src/Mod/PartDesign/Gui/TaskMultiTransformParameters.cpp"
+    ]
+  },
+  {
+    "hash": "e22e537c4b129cb8d3bd1933a74ebd7ff2209e82",
+    "subject": "PartDesignGui: connect interactive instance suppression to pattern tasks",
+    "result": "excluded",
+    "files": [
+      "src/Mod/PartDesign/Gui/TaskPatternParameters.cpp",
+      "src/Mod/PartDesign/Gui/TaskPatternParameters.h"
+    ]
+  },
+  {
+    "hash": "eefae5b29e399041b6dbb86fce7e73929d72cf4b",
+    "subject": "PartDesign: show suppression controls when editing starts",
+    "result": "excluded",
+    "files": [
+      "src/Mod/PartDesign/Gui/TaskPatternParameters.cpp"
+    ]
+  },
+  {
+    "hash": "76337721a4604f78c917f1bd49b0c5171cf1a20d",
+    "subject": "PartDesign: reuse pattern center calculation and signal handler",
+    "result": "excluded",
+    "files": [
+      "src/Mod/PartDesign/Gui/TaskPatternParameters.cpp"
+    ]
+  },
+  {
+    "hash": "99c5620c5f739ca5c308849dda95ac468fec8b79",
+    "subject": "fix[build]: add missing exception include on MacOS",
+    "result": "batch-applies",
+    "files": [
+      "src/3rdParty/salomesmesh/inc/Utils_ExceptHandlers.hxx"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "43db0a208782821917627116ecd732880e818e8e",
+    "subject": "Bump main version number to 27.1.0-dev",
+    "result": "excluded",
+    "files": [
+      "package/fedora/freecad.spec",
+      "pixi.toml",
+      "version.json"
+    ]
+  },
+  {
+    "hash": "3633aaaa8986733dd03fbee5ac2b4fa033f3e792",
+    "subject": "CI: Pin Crowdin workflows to 26.3 release branch",
+    "result": "excluded",
+    "files": [
+      ".github/workflows/fetch_crowdin_translations.yml",
+      ".github/workflows/push_crowdin_translations.yml"
+    ]
+  },
+  {
+    "hash": "aba56efbdacebe9367b13c1903b7a27ac0c2bea6",
+    "subject": "Base: Add moment unit to MKS schema",
+    "result": "batch-applies",
+    "files": [
+      "src/Base/UnitsSchemasData.h"
+    ],
+    "error": ""
+  },
+  {
+    "hash": "b9609745048b3848b923bf25ee44d63c180b2094",
+    "subject": "Draft: add Draft_UpdateShape2DView to Draft menu and fix shortcut (#33121)",
+    "result": "batch-applies",
+    "files": [
+      "src/Mod/Draft/draftguitools/gui_shape2dview.py",
+      "src/Mod/Draft/draftutils/init_tools.py"
+    ],
+    "error": ""
+  }
+]

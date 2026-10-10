@@ -1,0 +1,338 @@
+# FreeCAD Plus: Development Guide
+
+Follow the [adopted execution guidelines](DEVELOPMENT_GUIDELINES.md) for reuse,
+architecture gates, risk-based validation and completion records. This guide remains
+the owner of executable commands and the build batching policy.
+
+## Prerequisites and setup
+
+Task forms must inherit colors from Qt and the active application theme. Do not
+apply task-level stylesheets that force foreground/background palette colors on
+all descendant widgets, and do not copy a palette onto the form. Shared modeling,
+Sketch and Datum Plane forms follow this rule. Keep any necessary state-specific
+styling scoped to the individual control so dropdowns, disabled text and future
+theme changes retain native color handling.
+
+Work from the FreeCAD Plus checkout with recursive submodules initialized.
+`origin` is `Croft-Labs/FreeCAD-Plus`; `upstream` is `FreeCAD/FreeCAD`.
+Inspect current remotes and status before commits or authorized pushes.
+
+For Windows, use the source-defined CMake/MSVC configuration and a compatible
+LibPack. The [LibPack workflow](../.github/workflows/actions/windows/getLibpack/action.yml)
+owns the current bundle reference; [build options](../cMake/FreeCAD_Helpers/InitializeFreeCADBuildOptions.cmake)
+own configuration requirements. [CMakeLists.txt](../CMakeLists.txt),
+[pixi.toml](../pixi.toml), and [pixi.lock](../pixi.lock) own tool/dependency requirements.
+Do not substitute libraries from the separately installed FreeCAD.
+
+Keep dependency bundles and generated build output outside the Google Drive
+source tree. All new build folders must follow the owner's naming convention:
+`freecad_plus_[yyyy-mm-dd]_[test_case]`, for example
+`freecad_plus_2026-10-03_extrude_frame`. Use the build date and a descriptive
+underscore-separated test-case name. Apply this convention to owner build output
+folders as well as newly created compilation folders. Use
+`C:\Users\GAMING-PC\Documents\_temp\freecad\test-builds` for test payloads,
+native compilation trees and their required dependency/toolchain directories.
+Retain useful builds; delete superseded builds once the current payload launches
+successfully through its saved, retargeted desktop shortcut. Historical evidence
+paths describe the original runs, not current storage locations.
+Choose and record a compatible LibPack directory before configuring. Default
+CMake presets place output inside the source tree, so override their build path.
+These locations are a development convention, not evidence of an existing build.
+
+Put all generated validation output, fixtures, captures, logs and DOCX QA in
+`C:\Users\GAMING-PC\Documents\_temp\freecad\validation`. After reviewing results
+and recording exact summaries and limitations in WORK_STATE/roadmap, delete the
+task's validation directory at completion. Do not retain raw validation in the
+checkout, Codex visualization folders or OS Temp. Preserve tracked test source,
+owner documents/preferences and original workload archives. The shared PowerShell
+runners resolve relative output paths beneath this validation root, reject escaped
+or redirected output paths, and set TEMP/TMP there for Python fixture creation.
+BuildComponentDocument also confines its build directory to the test-builds root.
+
+Ignore the separately installed FreeCAD: do not modify it, launch it to validate
+this fork, or use its behavior as proof that these source changes work.
+
+## Commands
+
+Commands below use PowerShell from the repository root unless stated otherwise.
+Resolve executable paths in the current environment; tool availability and
+successful execution are separate facts.
+
+| Purpose | Working directory / shell | Command or authoritative procedure | Prerequisites and evidence |
+| --- | --- | --- | --- |
+| Inspect work and remotes | Root / PowerShell | `git status --short --branch`; `git remote -v` | Verified during setup and documentation adoption. |
+| Inspect submodules | Root / PowerShell | `git submodule status --recursive` | Verified during clone setup. |
+| Initialize submodules | Root / PowerShell | `git submodule update --init --recursive` | Requires network access and permission to write Git metadata. |
+| C++ style | Root / PowerShell | `clang-format --dry-run --Werror src/Mod/PartDesign/Gui/TaskPadParameters.cpp src/Mod/PartDesign/Gui/TaskPadParameters.h src/Mod/PartDesign/Gui/TaskExtrudeParameters.h` | Formatting checked with clang-format 19.1.5; repository hooks specify their own version. |
+| Python syntax | Root / PowerShell | `python -c "import ast,pathlib; ast.parse(pathlib.Path('src/Mod/PartDesign/PartDesignTests/TestPadTaskPanel.py').read_text())"` | Syntax checked; does not import or execute FreeCAD. |
+| Whitespace | Root / PowerShell | `git -c core.whitespace=cr-at-eol diff --check` | Accommodates existing tracked CRLF files without normalizing unrelated lines. |
+| Configure/build | Root / PowerShell | Windows procedure below; [upstream build workflow](../.github/workflows/sub_buildWindows.yml) | Focused native targets built; [results](DEVELOPMENT_ROADMAP.md#extrude-validation-evidence). |
+| Run focused GUI tests | Built fork / Python console | [Pad test procedure](../tests/PadTaskPanel.md) | Requires the rebuilt application and matching copied test modules; [results](DEVELOPMENT_ROADMAP.md#extrude-validation-evidence). |
+| Run Pattern regressions | Built fork / Python console or FreeCADCmd | [Pattern test procedure](../tests/PatternTaskPanel.md) | Requires rebuilt PartDesign App/Gui and matching test modules; results belong to roadmap 3.7. |
+| Broader regression gates | Built fork / upstream CI procedures | [Python tests](../.github/workflows/actions/runPythonTests/action.yml), [C++ tests](../.github/workflows/actions/runCPPTests/runAllTests/action.yml) | Choose relevant cases; no remote workflow dispatch is authorized by these references. |
+
+Focused Windows configuration for the Extrude and Pattern workflows. In a shell with CMake
+available, set `FREECAD_LIBPACK_DIR` to the source-pinned LibPack directory first.
+This omits unrelated workbenches and the C++ developer test framework; Python
+model and GUI regressions remain available:
+
+```powershell
+if (-not $env:FREECAD_LIBPACK_DIR -or -not (Test-Path -LiteralPath $env:FREECAD_LIBPACK_DIR)) {
+    throw 'Set FREECAD_LIBPACK_DIR to a compatible LibPack directory first.'
+}
+$freecadPlusBuildName = "freecad_plus_$(Get-Date -Format 'yyyy-MM-dd')_extrude_frame"
+$freecadPlusBuild = Join-Path (Join-Path $env:USERPROFILE 'Documents\_temp\freecad\test-builds') $freecadPlusBuildName
+$freecadPlusOptions = @(
+    '-DBUILD_GUI=ON', '-DBUILD_PART=ON', '-DBUILD_SKETCHER=ON', '-DBUILD_PART_DESIGN=ON',
+    '-DBUILD_START=ON', '-DBUILD_TUX=ON',
+    '-DFREECAD_RELEASE_PDB=OFF', '-DENABLE_DEVELOPER_TESTS=OFF',
+    '-DFREECAD_COPY_DEPEND_DIRS_TO_BUILD=ON', '-DFREECAD_COPY_LIBPACK_BIN_TO_BUILD=ON',
+    '-DFREECAD_COPY_PLUGINS_BIN_TO_BUILD=ON', '-DFREECAD_3DCONNEXION_SUPPORT=None'
+)
+$unusedWorkbenches = @(
+    'FEM', 'ADDONMGR', 'BIM', 'DRAFT', 'HELP', 'IMPORT', 'INSPECTION', 'MESH_PART',
+    'FLAT_MESH', 'OPENSCAD', 'CAM', 'ASSEMBLY', 'PLOT', 'POINTS', 'REVERSEENGINEERING',
+    'ROBOT', 'SHOW', 'SPREADSHEET', 'TECHDRAW', 'WEB', 'SURFACE'
+)
+$freecadPlusOptions += $unusedWorkbenches | ForEach-Object { "-DBUILD_$_=OFF" }
+cmake -S . -B $freecadPlusBuild -G 'Visual Studio 17 2022' -A x64 "-DFREECAD_LIBPACK_DIR=$env:FREECAD_LIBPACK_DIR" @freecadPlusOptions
+if ($LASTEXITCODE -ne 0) { throw 'FreeCAD Plus configuration failed.' }
+cmake --build $freecadPlusBuild --config Release --parallel 3
+if ($LASTEXITCODE -ne 0) { throw 'FreeCAD Plus build failed.' }
+```
+
+Identify the resulting executable from the actual build output; do not resolve
+an unrelated `FreeCAD` on PATH. Bound build operations by a finite hard deadline
+and an inactivity timeout, and inspect progress at least once per minute.
+The startup recent-file page requires `BUILD_START=ON`. Existing configurations
+made from the older focused command may cache it as OFF: explicitly reconfigure
+with `-DBUILD_START=ON` during the next authorized build, then include the Start
+App/Gui modules and resources in the packaged runtime. Run `-RecentFilesSmoke`
+against that staged copy; no skipped native Start checks count as acceptance.
+Also enable `-DBUILD_TUX=ON` in previously configured caches and package its Python
+modules/generated `Tux_rc` resources. This restores the upstream status-bar
+navigation chooser. PlusDefaults seeds Blender navigation and Imperial Decimal
+units before module initialization, preserving saved user choices. Run
+`-StatusControlsSmoke` on the staged runtime without source overlays.
+Keep MSBuild file tracking enabled for normal incremental builds. The validation
+rebuild with `TrackFileAccess=false` recompiled dependencies. If only a
+C++ implementation file changes and all dependencies are already built, MSBuild's
+`ClCompile` target with `SelectedFiles` can compile that file, then `PrepareForBuild;_Link`
+can relink its project with `BuildProjectReferences=false`. This assumes unchanged
+headers/generated files and all required objects/resources exist; missing resources
+must also be compiled. Do not treat a compiler-only exit code as a completed build.
+
+### CAM-enabled configuration
+
+For STL Parallel/Waterline and geometric holding tabs, additionally enable
+`BUILD_CAM`, `BUILD_DRAFT`, `BUILD_MESH_PART`, `BUILD_TECHDRAW`,
+`BUILD_SPREADSHEET`, and `BUILD_IMPORT`. These override the earlier focused build's
+OFF settings; keep all existing LibPack/toolchain options. The Draft dependency
+chain requires TechDraw, Spreadsheet and Import. OpenCAMLib is provided by the
+pinned LibPack. Run [CAM validation](../tests/CAMMeshMachining.md) after rebuilding.
+
+The first mesh workflow uses an associative Mesh::FeaturePython model clone;
+stock bounds and surfacing consume the mesh directly. The bounding CAD plane is
+only a scan boundary, never a replacement machining surface. Holding tabs are
+linked Part::FeaturePython stock bridges. Each supported operation depends on the
+actual tab objects so dimension/placement edits invalidate its path. Keep cutter
+clearance conservative and clear stale paths before any validation that can fail.
+
+## Development conventions
+
+- Reuse the shared task/selection/transaction classes indexed in
+  [the programming summary](PROGRAMMING_SUMMARY.md#common-code-and-libraries).
+- Preserve `PartDesign::Pad`, `Profile`, other persisted identifiers, existing
+  geometry semantics, and upstream module boundaries. Brand naming is not a schema migration.
+- Keep public text translatable and retain unit/expression handling.
+- Follow [formatter configuration](../.clang-format), [pre-commit configuration](../.pre-commit-config.yaml),
+  [contribution guidance](../CONTRIBUTING.md), and [AI disclosure policy](../AI_POLICY.md).
+  Upstream PR submission requirements do not constitute authorization to submit one.
+- Preserve file line endings and avoid unrelated formatting. Keep dependencies
+  and generated output out of source edits. Do not modify submodules incidentally.
+- Put durable task status in the roadmap and screen behavior in the UI specification.
+
+## Validation
+
+### Owner build shortcut
+
+Every build handed to the owner must retarget the existing desktop
+`FreeCADPlus.exe - Shortcut.lnk` to the validated build's `FreeCADPlus.exe`.
+This is a mandatory delivery gate, including builds delivered at a new path.
+Use `tools/UpdateOwnerBuildShortcut.ps1 -Executable <validated-launcher>`;
+it requires the existing named shortcut, preserves its other settings, sets
+the working directory to the launcher's folder, and reopens the saved shortcut
+to verify both values. Record the verified target in WORK_STATE and the build
+evidence. Do not modify installed upstream FreeCAD or other desktop shortcuts.
+If the update cannot be performed, report delivery as incomplete rather than
+silently leaving the owner pointing at an older build.
+
+### Build and test batching
+
+User preference: do not create a new build after every change. When testing one
+feature would require a lengthy build, defer that build and its dependent tests
+until several related, authorized changes are ready to validate together.
+
+For the current component/Model History feedback rounds (owner direction,
+2026-10-01), implement several related changes, then use one grouped incremental
+build and a small workflow smoke check. Do not repeatedly run the full component
+or cross-workbench qualification suites before owner feedback. Keep broader schema,
+compatibility, recovery and interaction acceptance explicitly pending; address any
+concrete defect found by the smoke check before handing over the iteration.
+
+- Continue quick source review, formatting, syntax checks and tests that can run
+  against compatible existing binaries while developing the batch.
+- Record each changed feature and its pending build/runtime checks in the roadmap.
+  Do not mark those checks complete based on an older executable.
+- At the batch checkpoint, build once and run the relevant tests for all included
+  changes together. An explicit user request for a build or immediate validation
+  can bring that checkpoint forward.
+- Reuse the existing build directory and the smallest required incremental
+  targets. For compatible Python-only changes, synchronize the changed modules
+  and verify their identities without rebuilding native binaries.
+- Do not start a slow build merely to close an individual task or conversation
+  turn. If no further authorized changes are ready, leave an explicit validation
+  handoff for the next batch; do not expand implementation scope to fill it.
+
+This changes when build-dependent checks run, not the acceptance criteria below.
+
+### Runtime validation
+
+For a consolidated check of all implemented workflows and the related legacy
+geometry suites, launch [`tests/ValidateWorkflows.FCMacro`](../tests/ValidateWorkflows.FCMacro)
+with the explicitly resolved development executable. Set `FREECAD_PLUS_VALIDATION_DIR`
+to an external output directory and supply isolated `--user-cfg` and `--system-cfg`
+paths. The macro exits after writing per-suite logs, `results.json`, and
+`validation.done`; require PASS, no skipped tests, and a successful process exit.
+It records runtime module paths and hashes, application version, and display scale.
+Use a fresh process with `QT_SCALE_FACTOR=1.5` for an additional 1.5x Qt scaling
+check. This multiplies the operating-system scale; inspect the recorded device-pixel
+ratio rather than claiming an absolute 150% display setting. Automated results
+remain distinct from native mouse/keyboard acceptance.
+
+For the bounded active-component/Part Tree integration batch, run
+`tests/ValidateComponentEditing.FCMacro` with `FREECAD_PLUS_SOURCE` set to this
+checkout and `FREECAD_PLUS_VALIDATION_DIR` set to an isolated external output
+folder. Supply isolated user/system configuration paths. Installed modules are
+tested by default; `FREECAD_PLUS_EDIT_SOURCE_OVERLAY=1` explicitly loads the six
+component/shape modules from source against a compatible native development build.
+The report records that distinction and module paths/hashes; installed mode requires
+each checked module to match source and reside inside the payload. The default
+eleven suites cover Edit, contextual display, file workspace, persistence, Ground/Fixed
+relationships and native modeling command routing/guards. `FREECAD_PLUS_EDIT_SUITES` accepts a comma-separated subset for
+focused reruns. Require no skipped cases and PASS; inspect failures before reruns.
+The optional TestComponentPartTypes suite verifies roadmap 7.8.14a backend
+policy/persistence. TestComponentGeometryAccess checks shared shape-access guards;
+TestComponentReferenceRecovery and TestManufacturingExport can be selected for
+their affected compatibility checks. TestComponentOutput adds native STEP/STL
+round trips through the filtered output adapter and producer-cache guards.
+TestComponentNativeExport requires rebuilt Part, Import, ImportGui and Mesh targets;
+it checks their direct bindings and the standard File Export command. Build these
+targets together, then synchronize/hash-check the six runtime Python modules.
+ScriptsOnly is not a CMake target in the retained Windows development tree.
+Set TEMP/TMP inside the validation folder
+when running export fixtures. Only the native-export suite against those rebuilt targets establishes that routing.
+The Part Type delivery set adds TestComponentPartTypeUI, TestComponentTreeActivation,
+TestComponentContextDisplayPlan, TestComponentDisplayContext,
+TestComponentPartTypes, TestComponentActivePartType, TestComponentOutput,
+TestComponentNativeExport, TestComponentGeometryAccess, TestComponentReferenceRecovery
+and TestComponentActiveEditing. Run against installed modules without overlays.
+The UI suite writes part-type-context.cadprt and native-export suite writes
+native-save.cadprt. In a fresh process, select TestComponentPartTypeCold and set
+FREECAD_PLUS_EDIT_FIXTURES to that installed batch directory. It verifies restored
+self/child display, context switching, refusal of raw Reference geometry, native
+export without duplication and owned reference updates. Include
+Mod/Part/BasicShapes/ShapeReferences.py in payload synchronization and hash coverage;
+the older component-only payload inventory omitted this shared adapter.
+
+For a cold reopen pass, select `TestComponentEditingCold` and set
+`FREECAD_PLUS_EDIT_FIXTURES` to the preceding full batch output directory.
+Use a fresh output directory for each run. Bound the process to fifteen minutes
+and inspect progress at least once per minute. This batch does not establish
+broader workbench compatibility, owner payload acceptance or shortcut delivery.
+
+Source formatting, syntax, build success, passing GUI tests, visual acceptance,
+and published artifacts are separate evidence levels. For this native GUI change,
+run tests in the actual rebuilt fork and manually verify model selection and
+preview behavior. Check Pocket when shared extrusion code changes.
+
+Run the five suites in [the test procedure](../tests/PadTaskPanel.md) against matching
+source-built modules. The GUI must have initialized document views. The fixtures
+reopen through `ViewObject.doubleClicked()` to include the user edit transaction;
+calling `Gui.Document.setEdit()` directly is not equivalent for Cancel/Undo tests.
+Results and remaining manual checks are owned by [milestone 2.2](DEVELOPMENT_ROADMAP.md#pad-validation).
+
+Changes to `TaskPadPocketParameters.ui` require Qt autogen followed by recompiling
+both `TaskExtrudeParameters.cpp` and `TaskPadParameters.cpp`, which consume the
+generated header, then linking PartDesignGui. Replacing a widget requires updating
+both consumers. The start-offset/reversal regressions live in the existing
+`TestExtrudeTaskPanel` suite; native geometry assertions and saved-file checks run
+inside the built GUI. Their procedure is in [start-offset tests](../tests/PadTaskPanel.md#start-offset-and-direction-buttons).
+
+For Revolution/Groove angular controls, regenerate Qt autogen and compile
+`TaskRevolutionParameters.cpp`, the consumer of `TaskRevolutionParameters.ui`,
+then link PartDesignGui. Run [the Revolve task tests](../tests/RevolveTaskPanel.md)
+against the matching GUI module. For curved-solid bounds after GUI rendering,
+use `Shape.optimalBoundingBox(False)` to avoid display-triangulation approximations;
+retain exact volume and bidirectional shape-difference assertions.
+
+For Trim Body, install the new `BOPTools/TrimAPI.py`, `TrimFeatures.py`, `TrimGui.py`,
+and `TrimBody.svg` through Part's CMake script list. Update both workbench InitGui
+scripts and rebuild/link the PartGui and PartDesignGui Workbench.cpp entries.
+The existing Part/BOPTools geometry kernel is reused; no new dependency is needed.
+Run [Trim Body model and GUI regressions](../tests/TrimBody.md), followed by the
+existing task suites to check selection, transaction, and scene-graph cleanup.
+The model suite is also registered with TestPartApp; GUI tests with TestPartGui.
+Keep source and runtime test files synchronized. A main executable's older About
+stamp does not identify the incrementally rebuilt GUI modules.
+
+Trim results are `Part::FeaturePython` objects linked to original inputs. The hidden
+PlacementSupport links trigger recomputation for moved parent containers. Validate
+links before geometry execution and clear stale Shape on failure. Cancel must abort
+the transaction before GUI resetEdit, which otherwise commits the pending edit.
+New saved results need these Python modules for recomputation in another installation.
+
+For Isocline Curve, rebuild Part's `AppPartPy.cpp` and link Part, then rebuild/link
+both GUI workbench command entries. Install the `BasicShapes` scripts/icon listed
+in Part's CMake file, both InitGui files, and matching test scripts. The kernel
+binding `Part.makeIsocline(face, direction, angle=0, tolerance=1e-5)` wraps existing
+[OpenCASCADE Contap_Contour](https://dev.opencascade.org/doc/refman/html/class_contap___contour.html).
+No external numerical library is introduced. Contap's draft sign is converted to
+`normal dot pull = sin(angle)`; walking UV coordinates use the solver's S2 slots.
+Analytical curves and interpolated UV curves are clipped against the trimmed face.
+3D approximation tolerance defaults to 1e-5 model units; the native routine accepts
+1e-7 through 0.01. Freeform fits are checked at 401 samples for normalized dot-product
+residual <= 1e-5. This sampled check is not a proof of arbitrary-surface completeness.
+
+Run [Isocline tests](../tests/IsoclineCurve.md) with the rebuilt Part module. The
+shared ShapeReferences and FeatureTask helpers also serve Trim Body, so rerun both
+Trim suites when changing them. MainWindow updates toolbar enablement on a delayed
+150 ms timer; GUI action tests must allow that event loop to settle. For visual
+arrow checks capture the native window: viewport image export omits annotations.
+Saved Isocline objects need both these Python scripts and the new native Part API;
+unmodified upstream FreeCAD is not a supported recomputation environment.
+
+## Release and recovery
+
+The user authorized Windows installers and GitHub pre-releases 0.0.4 and then 0.0.2
+on 2026-09-30.
+Use the [fork packaging procedure](../package/WindowsInstaller/FREECAD_PLUS_RELEASE.md).
+Local commits do not imply a push, passing CI, or distribution. The user authorizes periodic milestone
+pushes to the configured origin fork. Remote builds, releases, and upstream
+submissions still require task-specific authorization under the workspace rules.
+Use focused commits and non-destructive recovery; preserve unrelated changes.
+Any future package must retain upstream attribution and document compatibility.
+
+## Known development issues
+
+- Configuration needs a compatible LibPack even when MSVC/CMake are installed.
+  Use the source-owned dependency references above; tested setup is recorded in 2.2.
+- Set `FREECAD_USER_HOME`, `FREECAD_USER_DATA`, and `FREECAD_USER_TEMP` to existing
+  isolated directories and pass separate `--user-cfg` / `--system-cfg` files for
+  automated runs. Startup still creates a standard versioned cache directory;
+  this required authorized filesystem access in the validation sandbox.
+- MSBuild warns about incremental builds under the system temporary directory
+  (MSB8029). Prefer the stable local build directory shown above for ongoing work.
+- Google Drive is the source location; use the local-output convention above for builds.
+- Shared instruction files live outside this Git root. A fresh clone elsewhere
+  needs accessible central guidance or an explicit missing-guidance report.
