@@ -10,13 +10,29 @@
 - [x] Record final status and remove temporary staging.
 
 Source checkout, build, runtime validation and owner delivery are separate stages.
-No baseline build or GUI acceptance is claimed. Original workbench source is retained.
+Original workbench source is retained.
+
+## Light baseline verification — October 10, 2026
+
+- [x] Confirm stable-release status and successful upstream release/CI workflows.
+- [x] Recheck source equivalence and four pinned submodules.
+- [x] Verify official Windows package checksum and executable signature.
+- [x] Inventory runtime versions, shipped modules and all registered workbenches.
+- [x] Check basic modeling, recompute, Undo/Redo, expressions, links and file exchange.
+- [x] Check FCStd save/reopen and separate-process reopen/recompute.
+- [x] Inspect exported model image; verify event processing and normal test exits.
+- [ ] Resolve viewport capture artifacts and establish visible GUI acceptance.
+
+[WORK_STATE](WORK_STATE.md#stable-baseline-inventory-and-light-runtime-check--october-10-2026)
+owns inventory, provenance, results and limitations. Core checks pass using the
+official binary matching this checkout. No local compilation or owner shortcut
+delivery occurred; do not claim the display/jitter gate has passed.
 
 ## Subsequent work
 
-Owner review of unconfirmed requirements remains open. A separately requested
-baseline build and interaction check can establish behavior before specific approved
-features are reimplemented. Reimplementation is not started by this roadmap.
+Resolve the visible display gate before UI reimplementation. Owner review of
+unconfirmed requirements remains open. A local source build remains a separate
+stage when needed for development. Reimplementation is not started by this roadmap.
 
 The [old roadmap](archive/pre-restart-docs/DEVELOPMENT_ROADMAP.md) records archived
 work only. Its checked milestones and outstanding tasks do not describe this source

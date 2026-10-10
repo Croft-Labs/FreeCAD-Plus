@@ -18,7 +18,11 @@ build definition or test is changed. The old fork's extra modules are absent.
 
 ## Build and validation
 
-This task did not configure, compile or launch the baseline. Use this release's
+The source checkout has not been configured or compiled locally. The official
+portable binary matching this revision has undergone light runtime checks; see
+[WORK_STATE](WORK_STATE.md#stable-baseline-inventory-and-light-runtime-check--october-10-2026)
+for provenance, installed location, inventory and the remaining display gate.
+Use this release's
 [CMakeLists.txt](../CMakeLists.txt), [presets](../CMakePresets.json) and
 [Windows workflow](../.github/workflows/sub_buildWindows.yml) to establish a compatible
 build environment when requested. Old build commands, dependency versions and output
@@ -29,6 +33,15 @@ Validation output: `C:/Users/GAMING-PC/Documents/_temp/freecad/validation`.
 Existing owner builds and settings remain associated with the old fork. Keep a new
 baseline build separate. Batch related work before costly builds and record actual
 validation in WORK_STATE/roadmap, then remove task-generated validation output.
+
+For isolated runtime checks, create a task directory under the validation root
+with its own profile and temp directories. Supply `FREECAD_USER_HOME`,
+`FREECAD_USER_DATA` and `FREECAD_USER_TEMP` only to the test process, plus explicit
+`-u <profile/user.cfg>` and `-s <profile/system.cfg>` arguments. Run the exact
+baseline executable, not an installed FreeCAD or archived Plus payload. A temporary
+`.FCMacro` can perform bounded modeling/persistence checks through the real GUI.
+Handle first-use welcome dialogs in that profile. Verify visual results separately:
+a successful image-save call is not proof of on-screen rendering.
 
 ## Owner delivery
 
