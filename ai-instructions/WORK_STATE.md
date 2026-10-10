@@ -25,10 +25,13 @@ New specification/index links, section anchors and icons pass validation;
 git diff --check passes. UI/runtime/build validation is not applicable to this
 documentation-only migration and no owner-ready build is claimed.
 
-Publication: documentation milestone prepared for a coherent origin push; remote
-verification is recorded by the completing chat. Remaining work is owner review
-of explicitly flagged requirements and any later recovery of missing history,
-not automatic implementation of those candidates.
+Publication: migration commit 858fa10c02 was pushed to origin/main and its full
+remote hash matched local HEAD after publication. No release was created. The
+committed DOCX, old toolbar reference and old UI specification match their archived
+source bytes exactly; archive attributes preserve original line endings and hard
+breaks. Task-generated validation files were deleted after recording these results.
+Remaining work is owner review of explicitly flagged requirements and any later
+recovery of missing history, not automatic implementation of those candidates.
 
 ## October 10 Part Types owner delivery complete (7.8.14d)
 
