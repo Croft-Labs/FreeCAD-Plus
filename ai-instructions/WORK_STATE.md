@@ -1,5 +1,18 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 unverified implementation review inventory
+
+Created ui-ux-specs/UNVERIFIED_IMPLEMENTED_CHANGES.md at the owner's request.
+It segregates 56 archived custom screens, 24 component/document choices, 13
+interface-integration topics and all 223 transferred DOCX confirmation paragraphs.
+Linked source establishes implementation evidence only; confirmed goals remain
+separate from unverified details. Source reviewed at 8d4b0a3610. No application
+behavior, build, source archive or approval status changed. Owner review remains
+pending; runtime/GUI acceptance is not claimed by this documentation task.
+Verification: all inventory file links and archive anchors resolve; every numbered
+archived screen and transferred confirmation paragraph is accounted for;
+git diff --check passes. No generated validation artifacts were retained.
+
 ## October 10 owner-intent UI documentation migration
 
 Documentation implementation: five specifications now live in ui-ux-specs, with

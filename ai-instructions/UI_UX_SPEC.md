@@ -10,6 +10,8 @@ The owner replaced the former DOCX and detailed UI_UX_SPEC with this collection 
 | [DEFAULT_SETTINGS.md](ui-ux-specs/DEFAULT_SETTINGS.md) | Defaults, customization and unconfirmed preset values. |
 | [MODEL_VIEW_WINDOW.md](ui-ux-specs/MODEL_VIEW_WINDOW.md) | Startup, viewport display, selection, contextual fading, palette and movement feedback. |
 
+[Unverified implemented changes](ui-ux-specs/UNVERIFIED_IMPLEMENTED_CHANGES.md) separately inventories implemented additions and details without established owner approval. It is a review register, not an approved specification.
+
 [Evidence and decisions](ui-ux-specs/EVIDENCE_AND_DECISIONS.md) records source coverage, conflicts, confirmation questions and archive fingerprints. The disconnected old drive and unavailable older messages leave explicit evidence gaps. Original FreeCAD workbench coverage is retained; missing Plus placement is not permission to remove functionality.
 
 The [original source documents](ui-ux-specs/archive/2026-10-10/README.md) are historical evidence only. Read them to trace a requirement, not as a parallel specification or task queue. Technical contracts remain under architecture; implementation, build, GUI validation and publication remain separately recorded in the roadmap and WORK_STATE.

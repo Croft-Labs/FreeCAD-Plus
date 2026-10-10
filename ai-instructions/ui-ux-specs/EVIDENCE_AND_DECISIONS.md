@@ -162,3 +162,7 @@ Times below are Eastern (UTC−04:00 for these dates). Full text is in the sourc
 | FreeCAD Plus UI & UX.docx | `428a89d39c3345cf0c788ff3476b0c775f90ddc0ba3be40e3b33c772a5213919` |
 | TOOLBARS.md | `e4ecd3b016d2babb6760262633d8f737b24c1d24b75ba4c1b7e35f647a19ff14` |
 | UI_UX_SPEC.md | `2d07c418af727f2dbf6a1ef02f23114cb604896b2e5963e6a3980383968eb7d7` |
+
+## Unverified implementation inventory
+
+At the owner's October 10 request, [UNVERIFIED_IMPLEMENTED_CHANGES.md](UNVERIFIED_IMPLEMENTED_CHANGES.md) segregates source-backed additions and details without established approval: all 56 numbered archived custom screens, 24 component/document choices, 13 interface-integration topics, and an index of all 223 transferred DOCX candidates. Source existence is not approval or current runtime acceptance. Confirmed goals are not demoted by overlapping entries; missing owner evidence remains unresolved.

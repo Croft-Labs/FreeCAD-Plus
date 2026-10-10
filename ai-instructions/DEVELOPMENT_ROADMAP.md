@@ -14,6 +14,11 @@
   conversations if the disconnected drive becomes available. This is a review
   gate, not permission to implement unconfirmed behavior.
 
+- [ X ] 7.8.15f Add the owner-requested unverified-implementation review inventory:
+  56 archived custom screens, 24 structural choices, 13 integration topics and
+  the complete 223-paragraph DOCX confirmation register. Source presence is
+  distinguished from approval and runtime acceptance.
+
 Documentation migration is complete; requirement confirmation remains open.
 No application code, build, GUI smoothness fix, fresh fork or release is claimed.
 Prior implementation milestones below remain historical evidence, not UI authority.
