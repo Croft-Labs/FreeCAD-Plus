@@ -58,6 +58,9 @@ class TestComponentContextDisplayPlan(unittest.TestCase):
         self.assertFalse(any(path.startswith(self.second.Name + ".") for path in plan))
         self.assertEqual(set(plan), set(Navigator.visible_paths(self.root, self.root, [])))
         Model.set_representation(self.root, [self.first.ObjectId, self.child.ObjectId], "Hidden")
+        # Editing the child owner restores its own saved context.
+        self.assertTrue(any(self.child.Name + "." in path for path in self.plan([self.first.ObjectId])))
+        Model.set_part_types(self.shared, [(self.child, "Excluded")])
         plan = self.plan([self.first.ObjectId])
         self.assertFalse(any(self.child.Name + "." in path for path in plan))
 

@@ -193,11 +193,20 @@ capability presence and native/manifest agreement before opening. Omitting the
 property preserves the older capability set. The active-self capability is
 independent of the direct-child capability, including across external files.
 
-Part Tree double-click now survives row replacement (7.8.14c1). Pending integration
-includes Part Type labels/menus, shown/hidden separation, applying saved active-self
-display, effective Excluded visibility refusal and legacy nested-rule reconciliation.
-Parent/sibling contextual transparency remains at least 75%; children retain their
-authored appearance. Saved active-self settings are not yet exposed in the UI.
+Part Tree uses the self/child services for Part Type menus and context rendering.
+Only active-self and directly owned child rows can change type; stale menus reject
+a changed active context. Visibility writes native Visibility independently and
+cannot reveal an effective Excluded branch. Activation does not rewrite ancestor
+types. The renderer can traverse an excluded ancestor to reach the directly edited
+component without revealing the excluded ancestor's own geometry.
+
+Legacy nested overrides remain untouched and are evaluated within the current
+editing context only while the affected child lacks an explicit PartType.
+Explicit PartType wins over old outer overrides; changing the active owner restores
+its own context. Inactive native LinkViews and isolated views use the same traversal.
+Active-self Bodies Only uses a view-local scene even at the root. Contextual
+transparency remains at least 75% outside the active branch; no saved materials,
+shapes, BOM or mass settings are changed. Owner delivery remains a separate gate.
 
 ## Part Tree and representation
 

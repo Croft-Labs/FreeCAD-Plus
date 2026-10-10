@@ -12,7 +12,8 @@ TestComponentOutput. App/ComponentExport.h routes the four native export binding
 through the adapter; TestComponentNativeExport covers direct calls and File Export.
 Part Tree double-click activation now resolves stable row identities after refresh;
 TestComponentTreeActivation covers native mouse events. Part Type controls and
-saved display-context UI integration remain pending (7.8.14c2b).
+context rendering use effective_part_type; TestComponentPartTypeUI covers saved
+self/child settings, visibility, Reference/Excluded and legacy rules (7.8.14c2b).
 active_part_type/set_active_part_type now persist the active-self choice on the
 definition with component-active-part-type-v1; see TestComponentActivePartType.
 

@@ -193,14 +193,15 @@ class TaskContext:
         self.dock.refresh()
 
 
-def display_items(root, component, ids, prefix=""):
+def display_items(root, component, ids, prefix="", active_ids=()):
     """Visible (native path, occurrence IDs, object) without changing appearance."""
     try:
         Gui.getDocument(component.Document.Name)
     except NameError:
         return []  # External GUI providers are removed before their App objects.
-    mode = model().representation(root, ids)
-    if mode == "Hidden":
+    mode = model().effective_part_type(root, ids, active_ids)
+    active_branch = tuple(active_ids[:len(ids)]) == tuple(ids)
+    if mode == "Excluded" and not active_branch:
         return []
     items = []
     model().prepare_result_display(component)
@@ -210,13 +211,13 @@ def display_items(root, component, ids, prefix=""):
             continue
         if not obj.ViewObject or not obj.Visibility or not item_display_available(obj):
             continue
-        if mode == "Bodies Only" and obj.Name not in results:
+        if mode == "Excluded" or (mode == "Bodies Only" and obj.Name not in results):
             continue
         items.append((prefix + obj.Name + ".", tuple(ids), obj))
     for child in model().children(component):
         if child.LinkedObject and child.Visibility:
             items.extend(display_items(root, child.LinkedObject, ids + [child.ObjectId],
-                                       prefix + child.Name + "."))
+                                       prefix + child.Name + ".", active_ids))
     return items
 
 
@@ -236,7 +237,7 @@ def context_display_plan(root, active_ids):
     active_ids = tuple(active_ids)
     model()._path(root, active_ids)
     return [(path, obj, 0.0 if ids[:len(active_ids)] == active_ids else 0.75)
-            for path, ids, obj in display_items(root, root, [])]
+            for path, ids, obj in display_items(root, root, [], active_ids=active_ids)]
 
 
 def context_transparencies(root, path, obj, floor):
@@ -568,7 +569,7 @@ class Navigator(QtWidgets.QDockWidget):
         self.drag_start = None
         self.drop_position = QtWidgets.QAbstractItemView.OnItem
         self.drop_indicator = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Rectangle, self.structure.viewport())
-        self.structure.setHeaderLabels([tr("Part name"), tr("View"), tr("Instances"), tr("Part View")])
+        self.structure.setHeaderLabels([tr("Part name"), tr("View"), tr("Instances"), tr("Part Type")])
         self.history = QtWidgets.QTreeWidget()
         self.history.setAcceptDrops(True)
         self.history.viewport().setAcceptDrops(True)
@@ -584,6 +585,9 @@ class Navigator(QtWidgets.QDockWidget):
             for column in range(3):
                 tree.header().setSectionResizeMode(column, QtWidgets.QHeaderView.ResizeToContents)
             tree.header().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
+        self.structure.header().setStretchLastSection(False)
+        self.structure.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.structure.header().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
         self.history.setRootIsDecorated(False)
         self.tabs.addTab(self.models, tr("Models"))
         self.tabs.addTab(self.structure, tr("Part Tree"))
@@ -747,6 +751,7 @@ class Navigator(QtWidgets.QDockWidget):
                 root_row.setData(0, QtCore.Qt.UserRole, (object_key(tree_root), []))
                 root_row.setIcon(0, Gui.getIcon("freecad.svg" if file_container else "Geofeaturegroup.svg"))
                 root_row.setFlags((root_row.flags() | QtCore.Qt.ItemIsDropEnabled) & ~QtCore.Qt.ItemIsDragEnabled)
+                root_row.setText(3, self.display_type(tree_root, []))
                 self.decorate_component(root_row, tree_root, [[]])
                 temporary = unused and object_key(tree_root) == unused["key"]
                 if temporary:
@@ -895,7 +900,8 @@ class Navigator(QtWidgets.QDockWidget):
         # context are registered. Do not apply the previous tab's context yet.
         if not window or not window.property("ComponentKey"):
             return
-        if self.unused_edit(window) or not self.active_path or not resolve(self.root_key):
+        if (self.unused_edit(window) or not resolve(self.root_key)
+                or (not self.active_path and model().active_part_type(resolve(self.root_key)) == "Full Component")):
             self.clear_context_view(window)
             return
         from pivy import coin
@@ -1042,10 +1048,13 @@ class Navigator(QtWidgets.QDockWidget):
         return any(value is not None and list(value[1]) == self.active_path[:len(value[1])]
                    for value in self.members(item))
 
-    @staticmethod
-    def path_visible(root, ids):
+    def display_type(self, root, ids):
+        active = self.active_path if object_key(root) == self.root_key else ()
+        return model().effective_part_type(root, ids, active)
+
+    def path_visible(self, root, ids):
         try:
-            return bool(root.Visibility) and model().representation(root, ids) != "Hidden" and all(
+            return bool(root.Visibility) and self.display_type(root, ids) != "Excluded" and all(
                 link.Visibility for link in model()._path(root, ids))
         except ValueError:
             return False
@@ -1096,7 +1105,7 @@ class Navigator(QtWidgets.QDockWidget):
         unused = self.unused_edit()
         if unused and object_key(root) == unused["key"]:
             # The temporary view ignores the definition's assembly visibility.
-            visible = not paths or any(model().representation(root, ids) != "Hidden"
+            visible = not paths or any(self.display_type(root, ids) != "Excluded"
                                        and all(link.Visibility for link in model()._path(root, ids))
                                        for ids in paths)
         self.visibility_icon(item, visible)
@@ -1113,13 +1122,8 @@ class Navigator(QtWidgets.QDockWidget):
             item.setToolTip(1, tr("The active component and its parent branch cannot be hidden."))
         if definition and object_key(definition) == self.active_key:
             self.decorate_active(item)
-        if definition and paths:
-            overrides = model().representation_overrides(root, [])
-            explicit = sum("/".join(ids) in overrides for ids in paths)
-            detail = (tr("Inherited from the component definition.") if not explicit else
-                      tr("Override in this view's root component. Reset to Inherited removes it.")
-                      if explicit == len(paths) else tr("Mixed inherited settings and occurrence overrides."))
-            item.setToolTip(3, detail)
+        if definition:
+            item.setToolTip(3, tr("Saved on the edited component. Edit a component to change its own type or its direct children's types."))
 
     def populate(self, row, component, root, path, seen):
         key = object_key(component)
@@ -1136,7 +1140,7 @@ class Navigator(QtWidgets.QDockWidget):
         for definition_key, links in groups.items():
             definition = links[0].LinkedObject
             values = [(object_key(link), path + [link.ObjectId]) for link in links]
-            modes = {model().representation(root, value[1]) for value in values} if definition else {tr("Missing component")}
+            modes = {self.display_type(root, value[1]) for value in values} if definition else {tr("Missing component")}
             title = model().component_label(definition, root.Document) if definition else links[0].Label
             item = QtWidgets.QTreeWidgetItem(row, [title, "", "x" + str(len(links)), modes.pop() if len(modes) == 1 else tr("Mixed")])
             item.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
@@ -1150,7 +1154,7 @@ class Navigator(QtWidgets.QDockWidget):
                     for index, (link, value) in enumerate(zip(links, values), 1):
                         number = getattr(link, "InstanceNumber", index)
                         name = "_".join(title.split()) + "#" + str(number).zfill(3)
-                        mode = model().representation(root, value[1]) if definition else tr("Missing component")
+                        mode = self.display_type(root, value[1]) if definition else tr("Missing component")
                         instance = QtWidgets.QTreeWidgetItem(item, [name, "", "", mode])
                         instance.setData(0, QtCore.Qt.UserRole, value)
                         instance.setIcon(0, Gui.getIcon("Geofeaturegroup.svg"))
@@ -1186,25 +1190,53 @@ class Navigator(QtWidgets.QDockWidget):
             raise ValueError(tr("The active component and its parent branch cannot be hidden."))
         self.change_part_view(updates, root=self.tree_root(item))
 
-    def toggle_component(self, item):
+    def part_type_target(self, item):
+        if self.temporarily_hidden(item) or object_key(self.tree_root(item)) != self.root_key:
+            raise ValueError(tr("Edit the owning component before changing Part Type."))
+        active = resolve(self.active_key)
+        paths = [list(ids) for key, ids in self.members(item)]
+        if self.active_path in paths:
+            return active, None
+        if not paths or any(ids[:-1] != self.active_path for ids in paths):
+            raise ValueError(tr("Edit the owning component to change its direct children's Part Type."))
+        links = [model()._path(self.tree_root(item), ids)[-1] for ids in paths]
+        return active, links
+
+    def set_part_type(self, item, setting, context=None):
+        if context is not None and context != (self.active_key, tuple(self.active_path)):
+            raise ValueError(tr("The edited component changed. Open the Part Type menu again."))
+        active, links = self.part_type_target(item)
+        if links is None:
+            model().set_active_part_type(active, setting)
+        else:
+            model().set_part_types(active, [(link, setting) for link in links])
+
+    def set_component_visibility(self, item, shown):
         if self.temporarily_hidden(item):
             return
-        if not item.data(0, QtCore.Qt.UserRole):
-            return
-        if any(getattr(resolve(key), "ComponentRole", "") == "Occurrence"
-               and resolve(key).LinkedObject is None for key, ids in self.members(item)):
-            return
+        if self.protected(item) and not shown:
+            raise ValueError(tr("The active component and its parent branch cannot be hidden."))
         root = self.tree_root(item)
         members = self.members(item)
-        visible = any(self.path_visible(root, ids) for key, ids in members)
-        if visible:
-            self.set_part_view(item, "Hidden")
+        if shown and any(self.display_type(root, ids) == "Excluded" for key, ids in members):
+            raise ValueError(tr("Change Part Type from Excluded before showing this component."))
+        objects = [resolve(key) for key, ids in members]
+        if any(obj is None or (getattr(obj, "ComponentRole", "") == "Occurrence"
+                               and obj.LinkedObject is None) for obj in objects):
             return
-        updates = [(ids, None) for key, ids in members if ids]
-        overrides = model().representation_overrides(root, updates)
-        updates = [(ids, "Bodies Only" if model().representation(root, ids, root_overrides=overrides) == "Hidden"
-                    else None) for ids, unused in updates]
-        self.change_part_view(updates, show=True, root=root)
+        documents = {obj.Document for obj in objects}
+        if len(documents) != 1:
+            raise ValueError(tr("Change visibility in one owning file at a time."))
+        with model().transaction(objects[0].Document, "Component visibility"):
+            for obj in objects:
+                obj.Visibility = shown
+
+    def toggle_component(self, item):
+        if self.temporarily_hidden(item) or not item.data(0, QtCore.Qt.UserRole):
+            return
+        root = self.tree_root(item)
+        visible = any(self.path_visible(root, ids) for key, ids in self.members(item))
+        self.set_component_visibility(item, not visible)
 
     def toggle_item_view(self, item):
         obj = resolve(item.data(0, QtCore.Qt.UserRole))
@@ -1845,8 +1877,7 @@ class Navigator(QtWidgets.QDockWidget):
             ids = value[1][:depth]
             link = model()._path(root, ids)[-1]
             link.Visibility = True
-            if model().representation(root, ids) == "Hidden":
-                model().set_representation(root, ids, "Bodies Only")
+
         model().activate(obj, strict=False)
         unused = self.unused_edit()
         display_root = resolve(unused["file_root"]) if unused else root
@@ -2501,23 +2532,39 @@ class Navigator(QtWidgets.QDockWidget):
                     action.setCheckable(True)
                     action.setChecked(all(bool(link.IncludeInBOM) == included for link in occurrences))
                     action.setToolTip(tr("Changes this occurrence in its owning component, including all uses of that component. Display and mass settings are separate. Refresh existing BOMs in their editor."))
-            view = menu.addMenu(tr("Part View"))
+            visibility = menu.addMenu(tr("Visibility"))
+            menu.component_submenus.append(visibility)
+            shown = any(self.path_visible(self.tree_root(item), ids) for key, ids in self.members(item))
+            excluded = any(self.display_type(self.tree_root(item), ids) == "Excluded"
+                           for key, ids in self.members(item))
+            for state, label in ((True, "Shown"), (False, "Hidden")):
+                action = visibility.addAction(tr(label), lambda checked=False, state=state:
+                    self.run(lambda: self.set_component_visibility(target(), state)))
+                action.setCheckable(True)
+                action.setChecked(shown == state)
+                action.setEnabled(definition is not None and not self.temporarily_hidden(item)
+                                  and not (state and excluded) and not (not state and self.protected(item)))
+            view = menu.addMenu(tr("Part Type"))
             menu.component_submenus.append(view)
-            paths = [ids for unused, ids in self.members(item) if ids]
-            modes = {model().representation(self.tree_root(item), ids) for ids in paths} if definition else set()
-            overrides = model().representation_overrides(self.tree_root(item), [])
-            for label in model().TYPES + ("Reset to Inherited",):
-                setting = None if label == "Reset to Inherited" else label
+            try:
+                active, links = self.part_type_target(item)
+                modes = ({model().active_part_type(active)} if links is None else
+                         {model().part_type(active, link) for link in links})
+                choices = ("Full Component", "Bodies Only") if links is None else model().PART_TYPES
+                reason = ""
+            except ValueError as exc:
+                modes, choices, reason = set(), (), str(exc)
+            type_context = (self.active_key, tuple(self.active_path))
+            for label in model().PART_TYPES + ("Reset to Default",):
+                setting = None if label == "Reset to Default" else label
                 action = view.addAction(tr(label), lambda checked=False, setting=setting:
-                    self.run(lambda: self.set_part_view(target(), setting)))
-                action.setEnabled(definition is not None and bool(value[1]) and not (setting == "Hidden" and self.protected(item)))
+                    self.run(lambda: self.set_part_type(target(), setting, type_context)))
+                action.setEnabled(definition is not None and not reason
+                                  and (setting is None or setting in choices))
+                action.setToolTip(reason or tr("Saved on the active component and shared by all its instances."))
                 if setting is not None:
                     action.setCheckable(True)
                     action.setChecked(modes == {setting})
-                else:
-                    action.setEnabled(definition is not None and any("/".join(ids) in overrides for ids in paths))
-                if not value[1]:
-                    action.setToolTip(tr("The root is displayed in full. Part View applies to components added to a parent."))
         else:
             if item and is_origin(resolve(item.data(0, QtCore.Qt.UserRole))):
                 origin = resolve(item.data(0, QtCore.Qt.UserRole))
@@ -2579,7 +2626,7 @@ class Navigator(QtWidgets.QDockWidget):
                         obj.Visibility = True
                 except ValueError:
                     pass
-        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject", "Source", "DocumentId", "IncludeInBOM", "Transparency", "ShapeAppearance", "OverrideMaterial"):
+        if prop in ("Label", "Group", "ModelHistory", "ResultObjects", "Representation", "RepresentationOverrides", "PartType", "ActivePartType", "ResultStatus", "Shape", "Visibility", "UserSuppressed", "ReferenceError", "LinkedObject", "Source", "DocumentId", "IncludeInBOM", "Transparency", "ShapeAppearance", "OverrideMaterial"):
             self.timer.start(100)
 
     def slotDeletedObject(self, obj):

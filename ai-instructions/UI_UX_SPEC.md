@@ -2160,8 +2160,9 @@ the last instance is removed. Missing instance references require repair; Undo
 restores identities. The shared-parent child ownership contract still applies.
 Add Component
 adds a child instance to the active component; Add Reference Object selects evaluated
-geometry from a direct child only. Full Component / Bodies Only / Hidden and Reset
-to Inherited control occurrence-path representation. No Reference Only role is added.
+geometry from a direct child only. Part Type offers Full Component, Bodies Only,
+Reference and Excluded; Reset to Default restores Full Component for the active
+part and Bodies Only for its children. Visibility uses separate Shown/Hidden controls.
 Convert to Dumb Object offers Delete Parameters and Extract Dumb Body. Component
 edit tabs identify the shared definition and owning file; they do not make copies.
 Definition-owned constraints remain in History, outside occurrence rows.
@@ -2170,20 +2171,32 @@ only the edited component name, without a file path or creation buttons. Right-c
 provides Edit first and Add Component; Add Reference Object is an operation
 button. Double-click edits the shared definition. Root editing is available in
 Models and through the first Part Tree row. Instances contains Add
-Instance and Copy to New Part; Part View contains the three display types and Reset
-to Inherited. Copy to External File replaces identity-moving Save to External File.
+Instance and Copy to New Part; Part Type contains the saved types and Reset
+to Default. Copy to External File replaces identity-moving Save to External File.
 The copy workflows follow the October 9 ownership contract above.
 Missing components offer Locate Component File and legacy conversions expose their
 report. Attributes and these projections share native document objects; complete
 native command/edit/picking parity remains an explicit roadmap gate.
 
 Part Tree's first column shows part names, with a visibility control,
-instance count and Part View columns. Same-definition instances under a parent
+instance count and Part Type columns. Same-definition instances under a parent
 start grouped (x5); Expand Instances reveals support_angle#001 through #005, and
 Collapse Instances regroups them. The active part is highlighted and cannot be
 hidden, including by hiding its parent branch. History places the active /
 suppressed checkbox to the left of the visibility icon and item name. Partial
 checks identify dependent inactivity; visibility does not suppress an item.
+
+Part Type edits apply to the active definition or its direct children, shared
+across uses of that definition and restored on activation/save/reopen. Edit the
+owning component before changing deeper children. A Reference child displays full
+geometry only while its direct owner is active and still respects nested exclusions;
+it behaves as Excluded in ancestor contexts without overwriting Reference.
+Excluded cannot be shown with visibility controls. Reference source geometry
+requires Add Reference Feature before modeling use and contributes no final output
+unless made into an explicitly owned reference feature. Existing nested legacy
+display rules remain stored; explicit new child types supersede those rules.
+Switching edit contexts ignores outer legacy rules in favor of the active owner's
+saved self/child settings. Stale menus cannot write to a newly edited owner.
 
 Double-click a Part Tree component name or icon to edit that exact occurrence
 and show History in the current tab. Preserve nested/repeated occurrence identity

@@ -1,5 +1,57 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Part Type controls and context display (7.8.14c2b)
+
+Part Tree now labels its column/menu Part Type and offers Full Component, Bodies
+Only, Reference, Excluded and Reset to Default. Active-self choices are limited to
+Full Component/Bodies Only. Direct-child choices save on the active definition;
+deeper rows require editing their owner, and stale menus reject a changed editing
+context. Visibility has separate Shown/Hidden actions and native Visibility writes.
+It cannot reveal an effective Excluded branch, and hiding the active branch stays
+blocked. The Part Type column stays visible in a narrow panel.
+
+Display traversal now consumes effective_part_type in native LinkViews, isolated
+views and active-context scenes. Reference children show full visible geometry only
+while their direct owner is active, respecting deeper exclusions. Ancestor editing
+excludes them without overwriting their saved Reference choice. Active-self display
+restores on context changes, including root Bodies Only. Editing beneath an excluded
+ancestor traverses to the active branch without showing the excluded ancestor's own
+geometry or rewriting its type. Outside geometry retains the 75% transparency floor.
+
+Legacy nested display rules remain stored. A child without explicit PartType still
+reads applicable legacy context rules; a new explicit type supersedes them. Editing
+a child owner restores its own rules rather than an ancestor's old path override.
+The former set_part_view Python helper remains for legacy compatibility; new menus
+use the self/direct-child services.
+
+Acceptance combines 55 distinct cases: ten new UI, six native tree activation,
+nine context display, three external/separate-window display, ten child types,
+eight active-self persistence and nine evaluated output cases. The initial 24-case
+run had one old context assertion expecting an ancestor rule to persist while
+editing its child; it was updated to the approved restore-own-context behavior.
+The integrated 48-case batch passed. A final ten-case UI rerun verifies the added
+stale-menu guard, and the six mouse cases are rerun after the column layout change.
+Final batches have zero failures/errors/skips, PASS markers and exit 0.
+These are 88 executions rather than 88 distinct cases. Runtime mode is six explicit
+hash-verified source overlays in retained freecad_plus_2026-10-06_recovered_workload,
+native revision 49496 / 872610fb762d5ffc4bf2664a08b5c37e66dae8a9.
+The broad batch reports the existing native copy-fixture PropertyXLink diagnostics
+and deliberately forbidden RawFuse warning; focused final UI stderr is empty.
+
+The owner UI DOCX adds Part Type, Reference, defaults, ownership and visibility
+requirements. Other package entries, including styles/numbering, are byte-preserved.
+Full render succeeded; edited page 66 and following page 67 were visually checked.
+The native tree capture matches the owner top-plate/fan example and was reviewed.
+Runtime imports and CRLF-aware diff checks pass. No native rebuild or owner
+payload/shortcut change; installed/fresh-process delivery remains explicitly
+unverified in this step. Generated validation/part-type-ui output is removed after
+recording evidence. Source publication is tracked in Git separately.
+
+Next task: 7.8.14d grouped installed acceptance, fresh-process save/reopen and
+owner-build packaging, then retarget/reopen/verify the desktop shortcut. Include
+native export policy, Part Type menus, context switching and geometry-use guards
+in the delivered payload checks before declaring the implementation complete.
+
 ## October 10 Saved active component display (7.8.14c2a)
 
 ComponentModel.active_part_type/set_active_part_type now own optional

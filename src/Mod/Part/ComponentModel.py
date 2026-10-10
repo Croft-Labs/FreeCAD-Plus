@@ -1455,6 +1455,15 @@ def effective_part_type(root, ids, active_ids=()):
     for depth in range(start, len(chain)):
         parent = root if depth == 0 else chain[depth - 1].LinkedObject
         value = part_type(parent, chain[depth])
+        if "PartType" not in chain[depth].PropertiesList:
+            # Preserve old context-local nested display rules until this child
+            # receives an explicit new type. Never migrate them into shared data.
+            for start_depth in range(depth - 1, start - 1, -1):
+                context = root if start_depth == 0 else chain[start_depth - 1].LinkedObject
+                legacy = json.loads(context.RepresentationOverrides)
+                value = legacy.get("/".join(ids[start_depth:depth + 1]), value)
+            if value == "Hidden":
+                value = "Excluded"
         if value == "Reference" and ids[:depth] != active_ids:
             value = "Excluded"
         if value == "Excluded":

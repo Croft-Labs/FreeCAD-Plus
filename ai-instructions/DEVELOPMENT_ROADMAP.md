@@ -3607,7 +3607,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
         cases after correcting one dialog fixture; no overlays. Low-level Shape
         reads and arbitrary third-party exporters are outside this bounded gate.
         WORK_STATE records build identity, diagnostics and deferred owner delivery.
-  - [   ] 7.8.14c Integrate Part Tree activation/double-click, Part Type menu and
+  - [ X ] 7.8.14c Integrate Part Tree activation/double-click, Part Type menu and
     Excluded/Reference labels, distinct Shown/Hidden controls, saved active-self
     overrides and direct-child context restore; reconcile existing nested rules.
     Preserve contextual transparency and update/render the owner UI DOCX.
@@ -3616,7 +3616,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       activation, with stale-context and open-task guards. Six new regressions
       and nine active-editing cases pass in the development fork with source
       overlays. Owner UI DOCX updated and rendered; owner delivery remains 7.8.14d.
-    - [   ] 7.8.14c2 Integrate Part Type menus and display policy, independent
+    - [ X ] 7.8.14c2 Integrate Part Type menus and display policy, independent
       Shown/Hidden visibility, saved active-self settings and direct-child context
       restoration. Reconcile legacy nested overrides and update/render the DOCX.
       - [ X ] 7.8.14c2a Saved active-self backend: definition-owned ActivePartType,
@@ -3624,9 +3624,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
         Independent component-active-part-type-v1 capability cross-checks native
         data. Eight new native cases and nineteen existing type/output cases pass.
         Backend only; controls and viewport integration remain below.
-      - [   ] 7.8.14c2b Connect the reviewed self/child services to Part Tree menus
+      - [ X ] 7.8.14c2b Connect the reviewed self/child services to Part Tree menus
         and viewport traversal; separate visibility, reconcile legacy nested rules,
         verify switching contexts, and update/render the owner UI DOCX.
+        Saved self/direct-child types now drive menus and native/view-local display;
+        visibility is separate and cannot reveal Excluded geometry. Legacy nested
+        display rules remain stored; new child types override them. Context switching
+        restores the active owner's rules. DOCX rendered/reviewed; WORK_STATE owns
+        native source-overlay acceptance evidence. Owner delivery remains 7.8.14d.
   - [   ] 7.8.14d Grouped acceptance, fresh-process restore and compatible owner
     payload delivery; verify saved desktop shortcut and publish milestone evidence.
   The later Add Reference Feature/Promote workflow expansion is separate scope;
