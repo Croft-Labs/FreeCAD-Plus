@@ -1,7 +1,8 @@
 # Component/document architecture
 
-Status: G1.1 structural contract, October 10, 2026. Target design for the authorized
-Group 1 reimplementation; **application implementation is not present yet**.
+Status: G1.2 single-component pilot implemented and validated, October 10, 2026.
+The native service module is opt-in; the complete panel, conversion and later Group 1
+behavior below remain target design until their roadmap stages are completed.
 Engineering choices below implement confirmed behavior; they do not approve
 DOCX candidates or restore archived Plus code. The [component specification](ui-ux-specs/COMPONENT_PANEL.md)
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
@@ -25,16 +26,16 @@ The archived fork is reference material, not a source of implicit requirements.
 | --- | --- |
 | File | One native `App::Document`; one marked file-root container represents its global frame and top-level placements |
 | Definition catalog | File-owned definitions, including unused ones; imported-file catalog follows later |
-| Component definition | Native `App::Part` is the initial implementation candidate; owns modeling content and child placements and can serve as part and assembly simultaneously |
+| Component definition | Native `App::Part`, proven by the pilot, owns modeling content and child placements and can serve as part and assembly simultaneously |
 | Placed instance | Native `App::Link` targets a definition; root instances belong to the file, child instances to their parent definition |
 | Modeling content | Existing sketches, Part/PartDesign operations, geometry and required backend Bodies retain their native types and relationships |
 | Component panel | Models, Part Tree and History are projections of the document model; tree rows do not own or duplicate geometry |
 | Edit context | Per-view/tab selection of defining component and occurrence path, separate from ordinary selection and saved model identity |
 | Persistence adapter | Native FreeCAD document serialization plus explicitly versioned component metadata; validated `.cadprt` open/save entry points |
 
-The first pilot must prove the `App::Part`/`App::Link` mapping before it becomes a
-widespread command dependency. It must avoid rendering both a stored definition
-and its placed link as duplicate assembly geometry. Backend grouping must not
+The pilot proves the `App::Part`/`App::Link` mapping for one domestic component.
+The definition is hidden and its one linked occurrence is visible, avoiding a
+duplicate rendered definition. Broader command integration remains deferred. Backend grouping must not
 introduce dependency cycles or silently change placement transforms.
 
 ## Data model and lifecycle
@@ -80,11 +81,50 @@ must not turn them into permanent placements or authored visibility changes.
 
 ### Persistence contract
 
-`.cadprt` will retain the native FreeCAD archive and object/property serialization,
+`.cadprt` retains the native FreeCAD archive and object/property serialization,
 with component metadata that explicitly identifies the format and schema revision.
-It is not a renamed legacy file with an assumed component structure. The pilot
-must define and test the actual metadata fields in the implementation before any
-owner files are converted. No historical `.cadprt` schema is adopted implicitly.
+It is not a renamed legacy file with an assumed component structure. No historical
+`.cadprt` schema is adopted implicitly. No owner files have been converted.
+
+The schema owner is [freecad_plus/document.py](../src/Mod/FreeCADPlus/freecad_plus/document.py).
+Schema 1 is deliberately bounded to zero or one domestic definition and occurrence:
+
+| Stored item | Schema 1 representation |
+| --- | --- |
+| Marker | File-root `PlusFormat = FreeCADPlus.ComponentDocument` |
+| Revision | File-root integer `PlusSchema = 1` |
+| Definition catalog | File-root native `Definitions` PropertyLinkList |
+| Placements | File-root native Group containing App::Link; LinkTransform false, copy-on-change disabled, no array elements |
+| Definition content | Native App::Part Group containing backend PartDesign Bodies |
+| Identity | Native Document.Uid and object Name; native object IDs also survive tested reopen |
+| World frame | File-root Placement fixed at identity; native Origin/planes reused |
+| Definition frame | Identity in the pilot; placement is authored on the occurrence |
+
+Ownership validation follows native groups and Origins, not arbitrary dependency
+links. Orphaned objects, multiple roots, invalid targets and external dependencies
+are rejected. Empty files and unused domestic definitions are valid. Nested,
+external and other modeling-content schemas require explicit extension/migration;
+these pilot bounds are not final product restrictions.
+
+[editing.py](../src/Mod/FreeCADPlus/freecad_plus/editing.py) uses the native per-view
+`PlusEdit` active-object slot with a file-root-relative occurrence path, plus native
+`part`/`pdbody` slots. Selection never updates this context. A fresh reopen starts
+in File Edit. Sketch creation supplies a Body automatically; the Pad adapter creates
+the native PartDesign feature. History is a projection of native Body contents.
+Native Sketch and Pad editors are retained and tested.
+
+These are opt-in Python entry points, not replacements for File > New or arbitrary
+workbench commands. Their ownership/Edit guards apply at these entry points. The
+complete component panel and broader command routing are later stages; the stock
+tree is still present. No new toolbar placement or interface preference is implied.
+
+The importer checks archive metadata before restoration and validates the restored
+native graph. Unknown/future versions and renamed legacy archives are refused.
+The save adapter assigns the exact FileName and invokes native save(), preserving
+CheckExtension and native backup settings. It requires native safe-save BackupPolicy
+rather than disabling safeguards. Pending transactions and partial loads are refused;
+failed saves restore the previous filename/root label and retain GUI dirty state.
+Only successful native save and archive verification clear that state.
 
 Persist the file root, definition catalog, instance targets/local placements,
 component ownership and necessary history associations. Later stages add import
@@ -161,7 +201,7 @@ reverse `.FCStd` export is wanted. The pilot must report its limits explicitly.
 
 ## Source references
 
-These source inspections establish reusable mechanisms, not tested Plus behavior:
+The native source establishes reused mechanisms; the pilot tests establish the bounded behavior above:
 
 - [Document](../src/App/Document.h) and [serialization/save implementation](../src/App/Document.cpp):
   native Uid, ZIP/Document.xml serialization, save/restore and filename handling.
@@ -174,3 +214,6 @@ These source inspections establish reusable mechanisms, not tested Plus behavior
   [movement ownership](ui-ux-specs/TASK_PANEL.md#move-components),
   [edit display](ui-ux-specs/MODEL_VIEW_WINDOW.md#component-editing-display), and
   [owner evidence](ui-ux-specs/EVIDENCE_AND_DECISIONS.md): authoritative intent.
+
+- [Pilot acceptance suite](../src/Mod/FreeCADPlus/TestComponentPilot.py): native ownership,
+  context isolation, geometry, rollback/Undo/Redo, persistence and legacy controls.

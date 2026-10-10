@@ -12,13 +12,15 @@ or force-push. The old main history and archive tag remain available for referen
 ## Source verification
 
 Use Git status and recursive submodule status. All release-pinned submodule commits
-must match. Changes from upstream-1.1.4 are restricted to AGENTS.md, .gitignore and
-ai-instructions for this source-only baseline task; no original source, workbench,
-build definition or test is changed. The old fork's extra modules are absent.
+must match. The original baseline overlay changed only AGENTS.md, .gitignore and ai-instructions.
+G1.2 adds src/Mod/FreeCADPlus and its src/Mod/CMakeLists.txt inclusion. Original native
+application/workbench code and submodule pins remain unchanged. Do not restore old
+fork modules implicitly.
 
 ## Build and validation
 
-The source checkout has not been configured or compiled locally. The official
+The native application has not been compiled locally. G1.2 script-only CMake
+copy/install was verified separately with the actual module and repository helper. The official
 portable binary matching this revision has undergone light runtime checks; see
 [WORK_STATE](WORK_STATE.md#stable-baseline-inventory-and-light-runtime-check--october-10-2026)
 for provenance, installed location, inventory and the completed light display check.
@@ -81,3 +83,38 @@ A new owner build must have its executable verified before the existing desktop
 correct executable and working directory, reopen the shortcut and verify both.
 Do not remove its previous build until the replacement has been checked. The
 source-only checkout does not retarget the shortcut or constitute delivery.
+
+## Component pilot validation
+
+The pilot is opt-in; it does not replace File > New or the original workbenches.
+In an isolated FreeCAD 1.1.4 GUI test process, add this checkout's
+`src/Mod/FreeCADPlus` to `sys.path`, set `sys.dont_write_bytecode = True`, and set
+`PLUS_TEST_DIR` to a task directory under the validation root. Set the profile
+variables described above before launch. Run:
+
+```python
+import unittest
+import TestComponentPilot
+suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestComponentPilot.TestComponentPilot)
+result = unittest.TextTestRunner(verbosity=2).run(suite)
+assert result.wasSuccessful()
+```
+
+In a second isolated process with the same output directory and module path, run
+`TestComponentPilot.verify_fresh_process(output_directory)`. It checks the first
+process's saved fixture and writes a separate edited file. Without PLUS_TEST_DIR
+the suite skips instead of writing fixtures into an owner profile or checkout.
+
+For the native editor check, use `document.new_document()`,
+`editing.new_sketch(doc)` and a closed native sketch; enter/exit its original
+Sketch editor, select it and invoke `Gui.runCommand("PartDesign_Pad")`. Accept the
+existing task's OK button and check valid shape, Body Tip and component ownership.
+Use the normal framebuffer procedure above for visual evidence. These adapters
+require explicit component Edit and do not globally intercept unrelated commands.
+
+CMake includes the script module when Part, PartDesign and Sketcher are built.
+The standalone packaging check uses a temporary `project(... LANGUAGES NONE)`
+with `include(AddFileDependencies)`, the repository's FreeCadMacros.cmake, and
+`add_subdirectory` pointing to src/Mod/FreeCADPlus. Build FreeCADPlusScripts and
+install under the designated test-builds root; compare all copied files to source.
+This does not constitute a full native application build or owner delivery.

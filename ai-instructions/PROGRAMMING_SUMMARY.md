@@ -2,11 +2,12 @@
 
 ## Current baseline
 
-This is the clean official **FreeCAD 1.1.4** source at
+This checkout starts from official **FreeCAD 1.1.4** source at
 `4fd3bf320d9566a27e60069fc8387448aaa3a094`, plus owner documentation, an agent entry
 point and focused generated-file ignore rules. Branch: `codex/freecad-1.1.4-baseline`.
 No previous Plus application changes have been carried into this branch. Group 1
-has begun with its structural contract; its first application pilot is next.
+now has a validated, opt-in single-component pilot under src/Mod/FreeCADPlus.
+The next task is G1.3 initial legacy conversion; stop until continuation is requested.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
@@ -28,6 +29,9 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 
 - src/App and src/Gui: upstream document/application and desktop services.
 - src/Mod: original workbench modules; retain their source and availability.
+- src/Mod/FreeCADPlus/freecad_plus/document.py: schema, ownership, creation/open/save.
+- src/Mod/FreeCADPlus/freecad_plus/editing.py: per-view Edit, backend Body and native feature adapters.
+- src/Mod/FreeCADPlus/TestComponentPilot.py: G1.2 regression suite and fresh-process check.
 - tests and per-workbench tests: upstream test infrastructure.
 - CMakeLists.txt, CMakePresets.json and .github/workflows: this release's build definitions.
 - .gitmodules: this release's pinned GSL, OndselSolver, AddonManager and GoogleTest.

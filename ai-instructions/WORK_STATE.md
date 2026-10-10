@@ -3,18 +3,61 @@
 ## Authorized objective and stopping boundary
 
 Owner authorized Group 1 (component panel/document structure), one reviewable task
-at a time, and instructed stopping after the current checks pass. **G1.1 is complete;
-stop here.** The next task is **G1.2, the single-component pilot**, with acceptance
-criteria in [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure).
-The structural contract is in [ARCHITECTURE](ARCHITECTURE.md).
+at a time, and instructed stopping after the current checks pass. **G1.2 is complete;
+stop here.** Next: **G1.3 initial legacy conversion** using simple `.FCStd` fixtures,
+preserving the original files and editable features, then testing fresh reopen.
+Do not begin G1.3 or other groups without the next continuation request.
 
-Current execution: documentation/design only; native application code remains the
-verified 1.1.4 baseline. Source inspection established native document, Part, Origin,
-Link and Body services and the `.cadprt` filename-integration requirement. Contract
-traceability, local document links and whitespace were checked. No new runtime
-features, conversion support, compilation, GUI build or shortcut delivery is claimed.
-No owner decision blocks the single-component pilot; later unconfirmed interactions
-remain deferred. The completed baseline evidence below remains applicable.
+## G1.2 implementation and acceptance — October 10, 2026
+
+**Implementation:** a new opt-in script module under src/Mod/FreeCADPlus and its
+CMake inclusion. One native file root, domestic Part001 catalog definition and
+linked occurrence; native per-view explicit Edit; automatically owned backend Body;
+native Sketch/Pad adapters; Body-free history projection; validated schema-1 `.cadprt`
+open/save. No archived application code was restored. Original native application
+and workbench source and submodule pins remain unchanged. The [architecture](ARCHITECTURE.md)
+owns metadata, invariants and pilot limits.
+
+**Runtime validation:** this checkout's scripts loaded into the verified official
+1.1.4 executable listed below, with an isolated temporary profile. Six regression
+cases passed in 2.109 seconds: structure/empty file, per-view Edit isolation,
+modeling/ownership/rollback/Undo/Redo, persistence, future-schema/failed-save
+protection, and unchanged native legacy modeling. All final test processes exited 0.
+
+The rectangle Sketch -> Pad produced 1000 mm3 at 5 mm and 1600 mm3 at 8 mm;
+Undo/Redo restored both states. Invalid Pad and unowned geometry transactions
+rolled back. A valid empty component file saved successfully. Selecting a component
+while in File Edit did not grant the adapter an editing target. Independent views
+retained separate contexts.
+
+Exact `.cadprt` filenames, preserved CheckExtension, idempotent reopen, native
+Document.Uid/object names/IDs, linked targets and rotated/translated occurrence
+placement passed. A second process reopened the saved pilot, changed its native
+Pad to 7 mm (1400 mm3), recomputed and saved a separate edited file. Future-schema
+files were refused without content changes; a native save failure preserved the
+prior valid file, pending edit and dirty state. A renamed FCStd was refused as
+unversioned. A normal FCStd native Body/Sketch/Pad control remained functional.
+
+**GUI validation:** the pilot sketch entered/exited the original Sketch editor.
+The original PartDesign_Pad command opened its native task and accepted through
+its existing OK button, producing a valid 2000 mm3 solid and the correct Body Tip.
+The normal viewport buffer (2301 x 1202) showed one clean solid with definition
+hidden and linked instance visible. Capture used the previously established
+framebuffer-read procedure. Full panel, physical monitor and long-session jitter
+acceptance are not claimed.
+
+**Build:** this script-only module configured, copied and installed successfully
+using the repository's CMake helper and existing Ninja. No unchanged native C++
+code was rebuilt. Build/install outputs were byte-compared to source. No new owner
+executable was produced; the desktop shortcut still targets the archived fork.
+This is a development pilot, not a delivered component-panel UI. Original file and
+workbench commands are not globally overridden. The full panel is G1.6.
+
+**Publication and cleanup:** the coherent G1.2 milestone is committed and pushed
+to origin/codex/freecad-1.1.4-baseline, with the remote hash verified at handoff.
+Task-generated profiles, fixtures, captures, logs and the temporary script-build
+harness/output were removed after recording these results. Tracked tests remain
+reproducible using the [development guide](DEVELOPMENT_GUIDE.md#component-pilot-validation).
 
 ## Clean FreeCAD 1.1.4 baseline
 

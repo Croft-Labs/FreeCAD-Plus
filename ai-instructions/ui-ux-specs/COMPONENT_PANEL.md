@@ -2,6 +2,8 @@
 
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).
 
+Implementation planning and acceptance are owned by the [Group 1 roadmap](../DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure) and [component contract](../ARCHITECTURE.md). An opt-in service pilot does not establish completion of this panel or approve any deferred UI detail.
+
 ## Confirmed requirements
 
 ### Component, definition and instance

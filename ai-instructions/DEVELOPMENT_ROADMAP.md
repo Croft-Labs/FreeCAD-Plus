@@ -45,7 +45,11 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   Acceptance: correct ownership/instance count, valid editable geometry, recompute,
   transaction rollback and Undo/Redo, save/reopen in a fresh process, stable identities
   and placement, exact filename, no duplicate root on reopen, and unchanged original
-  command behavior outside the pilot. Resolve the native mapping before expansion.
+  command behavior outside the pilot. Native mapping validated in the opt-in module.
+  Six native GUI-process tests passed, plus separate-process reopen/edit/save and
+  native Sketch/Pad editor acceptance; clean normal framebuffer inspected. Script-only
+  CMake build/install passed. No native rebuild, full panel or owner-build delivery.
+  Detailed evidence and stopping boundary are in [WORK_STATE](WORK_STATE.md).
 - [   ] **G1.3 — Initial legacy conversion.** Simple `.FCStd` fixtures; preserve
   originals and editability, explicitly report fallback geometry, test fresh reopen.
 - [   ] **G1.4 — Hierarchy and shared instances.** Nested components, shared edits,
