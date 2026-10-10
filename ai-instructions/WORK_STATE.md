@@ -1,5 +1,21 @@
 # FreeCAD Plus: Current work state
 
+## Authorized objective and stopping boundary
+
+Owner authorized Group 1 (component panel/document structure), one reviewable task
+at a time, and instructed stopping after the current checks pass. **G1.1 is complete;
+stop here.** The next task is **G1.2, the single-component pilot**, with acceptance
+criteria in [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure).
+The structural contract is in [ARCHITECTURE](ARCHITECTURE.md).
+
+Current execution: documentation/design only; native application code remains the
+verified 1.1.4 baseline. Source inspection established native document, Part, Origin,
+Link and Body services and the `.cadprt` filename-integration requirement. Contract
+traceability, local document links and whitespace were checked. No new runtime
+features, conversion support, compilation, GUI build or shortcut delivery is claimed.
+No owner decision blocks the single-component pilot; later unconfirmed interactions
+remain deferred. The completed baseline evidence below remains applicable.
+
 ## Clean FreeCAD 1.1.4 baseline
 
 Owner requested the clean latest stable source in the existing fork on October 10,

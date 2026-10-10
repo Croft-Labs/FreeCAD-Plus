@@ -29,11 +29,39 @@ official binary matching this checkout. No local compilation or owner shortcut
 delivery occurred. The light baseline display gate is closed; exhaustive GUI or
 long-session jitter acceptance is not claimed.
 
-## Subsequent work
+## Group 1 — component panel and document structure
 
-The baseline is ready for separately authorized, staged reimplementation. Owner
-review of unconfirmed requirements remains open. A local source build remains a separate
-stage when needed for development. Reimplementation is not started by this roadmap.
+Owner authorized Group 1 on October 10, 2026, with a stop after the current task's
+checks pass. Work proceeds in reviewable stages; subsequent groups remain outside
+scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
+
+- [ X ] **G1.1 — Structural contract.** Define native service reuse, file/definition/
+  instance ownership, persistent identity, `.cadprt` storage and legacy-conversion
+  boundaries. Checked against confirmed requirements and current native source;
+  documentation links and whitespace pass. No runtime implementation claimed.
+- [   ] **G1.2 — Single-component pilot (next).** File root, one domestic Part001
+  definition and one native linked instance; explicit Edit context; an existing
+  Sketch -> Pad workflow with backend Body; genuine versioned `.cadprt` persistence.
+  Acceptance: correct ownership/instance count, valid editable geometry, recompute,
+  transaction rollback and Undo/Redo, save/reopen in a fresh process, stable identities
+  and placement, exact filename, no duplicate root on reopen, and unchanged original
+  command behavior outside the pilot. Resolve the native mapping before expansion.
+- [   ] **G1.3 — Initial legacy conversion.** Simple `.FCStd` fixtures; preserve
+  originals and editability, explicitly report fallback geometry, test fresh reopen.
+- [   ] **G1.4 — Hierarchy and shared instances.** Nested components, shared edits,
+  parent-owned transforms, cycle prevention and matching conversion cases.
+- [   ] **G1.5 — External definitions.** Nested import catalogs, source-file ownership,
+  independent copies and explicit cross-file failure/recovery checks.
+- [   ] **G1.6 — Component panel.** Models/Part Tree/History, file row, explicit Edit,
+  occurrence tracking, confirmed actions and temporary unused-model editing.
+- [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
+  restrictions and edit display; resolve undefined task interactions first.
+- [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
+  persistence, dependency, original-workbench and responsiveness regression checks.
+
+Each stage records implementation, runtime validation and owner delivery separately.
+Do not claim all Group 1 tests are complete because G1.1 documentation checks pass.
+Do not repeat the completed baseline checks without a new relevant concern.
 
 The [old roadmap](archive/pre-restart-docs/DEVELOPMENT_ROADMAP.md) records archived
 work only. Its checked milestones and outstanding tasks do not describe this source
