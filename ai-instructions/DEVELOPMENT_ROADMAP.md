@@ -1,5 +1,24 @@
 # FreeCAD Plus: Development Roadmap
 
+## [   ] 7.8.15 Owner-intent UI specification consolidation (October 10)
+
+- [ X ] 7.8.15a Create the five requested Markdown specifications in ui-ux-specs;
+  distinguish confirmed owner requirements, superseded statements and candidates.
+- [ X ] 7.8.15b Preserve original FreeCAD workbench coverage and map intended Plus
+  placements without treating current-build omissions as approved removals.
+- [ X ] 7.8.15c Archive replaced DOCX/toolbar/UI specifications, retire duplicated
+  UI wording and update the AGENTS gate and UI_UX_SPEC index.
+- [ X ] 7.8.15d Verify source preservation, complete DOCX paragraph coverage,
+  specification links/anchors/icons and documentation whitespace.
+- [   ] 7.8.15e Owner confirmation of flagged requirements; recover missing older
+  conversations if the disconnected drive becomes available. This is a review
+  gate, not permission to implement unconfirmed behavior.
+
+Documentation migration is complete; requirement confirmation remains open.
+No application code, build, GUI smoothness fix, fresh fork or release is claimed.
+Prior implementation milestones below remain historical evidence, not UI authority.
+Source coverage and publication state are recorded in WORK_STATE.
+
 ## Legacy migration task sequence — roadmap 7.8
 
 Final owner-requested audit: all 135 migration cases have passing installed results
@@ -922,7 +941,7 @@ workspace. Initial harness retries are retained separately from this passing run
 
 ## October 2 owner screenshot defaults and Word specification
 
-- [ X ] Root AGENTS.md requires updating `ai-instructions/ui/FreeCAD Plus UI & UX.docx`
+- [ X ] Historical October 2 gate (superseded October 10): AGENTS.md required updating the DOCX
   for every owner change, preserving DOCX headings, owner edits and automatic numbering.
 - [ X ] `PlusDefaults.py` implements the owner screenshot preset: General, Selection,
   Display Colors and Sketcher Appearance; unset preferences are seeded, saved choices preserved.
@@ -1040,7 +1059,7 @@ paths, source/native identities, counts, failed diagnostic attempts and final ha
   [WORK_STATE](WORK_STATE.md) owns exact source/build/validation/artifact evidence.
   Physical owner acceptance and publication remain separate from this local build.
 
-- Toolbar governance reference: [visual toolbar catalog](details/ui/TOOLBARS.md)
+- Toolbar governance reference: [visual toolbar catalog](details/ui-ux-specs/TOOLBARS_AND_BUTTONS.md)
   governs detailed Classic/Plus placement and command consolidation by workbench.
   One-command Classic rows, implemented mode/tab/group tables and a final function
   catalog: 20 workbench sections, 644 command IDs and 616 native icon renders from
@@ -2126,7 +2145,7 @@ Complete when: the root router, five core documents, and their references are ch
 
 ## [   ] Phase 2: Pad task-pane workflow
 
-Outcome: validated creation and editing through [UI-001](UI_UX_SPEC.md#ui-001-pad-task-pane).
+Outcome: validated creation and editing through [UI-001](UI_UX_SPEC.md).
 Depends on: Phase 1.
 
 ### [ X ] 2.1 Implement the source change
@@ -2158,7 +2177,7 @@ Complete when: this fork builds and the focused suite plus manual UI acceptance 
   Automated selection, visibility, Cancel, Undo/Redo, and Pocket regressions pass.
   Physical viewport/tree picking, rotated previews, keyboard navigation, and the
   complete advanced-parameter click-through remain manual acceptance work.
-  Acceptance: [UI-001](UI_UX_SPEC.md#ui-001-pad-task-pane) and [test procedure](../tests/PadTaskPanel.md).
+  Acceptance: [UI-001](UI_UX_SPEC.md) and [test procedure](../tests/PadTaskPanel.md).
 - [ X ] 2.2.4 Consolidate the configured application build and rerun all implemented
   workflow and related legacy regressions against matching runtime modules.
   Evidence: [2026-09-29 validation](#consolidated-validation), including two display
@@ -2425,7 +2444,7 @@ conditional wizard scope is explicitly resolved.
 
 Outcome: implement the user's preferred one-command workflow with Add/Subtract in
 the task pane, as defined by [REQ-008/009](PRODUCT_SPEC.md#capabilities-and-requirements)
-and the [shared interaction](UI_UX_SPEC.md#planned-unified-feature-interaction).
+and the [shared interaction](UI_UX_SPEC.md).
 Depends on: 2.2, operation-specific selection coverage in 3.2/3.3/3.4, and a safe
 operation-switching design. These can be developed together by feature family;
 finishing all separate commands first is not required.
@@ -2540,7 +2559,7 @@ retain their own workflows while sharing appropriate selection and task conventi
 
 ### [   ] 3.7 Combined Linear/Circular Pattern workflow
 
-Outcome: [UI-002](UI_UX_SPEC.md#ui-002-pattern-task-pane) satisfies REQ-010/011/012.
+Outcome: [UI-002](UI_UX_SPEC.md) satisfies REQ-010/011/012.
 Authorized by the user's request to combine pattern buttons with type first,
 features second, and direction/axis and parameters after them. This advances the
 Linear/Polar portion of 3.4.2; Mirror, Path, Point, concentric CircularPattern, and
@@ -2695,7 +2714,7 @@ consolidation, push/publication, and release packaging remain outside this task.
 
 Outcome: select a target solid/sheet, cutter, and side to keep in one complete
 create/edit task, available from Part and Part Design. User-authorized scope;
-requirements REQ-015 through REQ-017 and [UI-004](UI_UX_SPEC.md#ui-004-trim-body-task-pane).
+requirements REQ-015 through REQ-017 and [UI-004](UI_UX_SPEC.md).
 Depends on: the existing Part geometry engine and native development build.
 
 ### [ X ] 4.1 Implement geometry and shared task
@@ -2873,7 +2892,7 @@ established. The output is associative but does not insert a new Part Design Bod
 
 Outcome: trace a selected draft angle on one or more faces relative to an editable
 pull direction. User-authorized scope; REQ-018 through REQ-020 and
-[UI-005](UI_UX_SPEC.md#ui-005-isocline-curve-task-pane).
+[UI-005](UI_UX_SPEC.md).
 Depends on: the existing OpenCASCADE Part kernel and native development build.
 
 ### [ X ] 5.1 Implement contour geometry and complete editor

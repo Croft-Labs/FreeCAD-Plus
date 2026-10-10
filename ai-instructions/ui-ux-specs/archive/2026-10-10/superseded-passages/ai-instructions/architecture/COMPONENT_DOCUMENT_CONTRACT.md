@@ -1,20 +1,60 @@
 # Component documents and History
 
-Technical implementation reference, retained 2026-10-10. This file is not UI
-authority. The [owner-intent collection](../UI_UX_SPEC.md) supersedes UI wording;
-older interface passages are archived. Technical statements describe the existing
-fork's contracts and are not automatic requirements for a fresh implementation.
-Implementation and validation status belong to roadmap 7.8.
+Owner-approved contract, 2026-10-01; file hierarchy revision, 2026-10-09. Implementation and validation status belong
+to roadmap 7.8. This supersedes conflicting part/navigator terminology and the
+former opt-in legacy-conversion policy; it does not claim completed implementation.
 
 ## Ownership, instances and files
 
+- UI names: **Models**, **Part Tree**, **History**, **Attributes**, **Add Component**,
+  **Add Reference Object**, **Convert to Dumb Object**, **Instances > Add Instance**,
+  **Copy to Domestic Components**, **Copy to External File**, **Import Component File**.
+  Documentation may say sub-component; UI calls every instance a component.
 - A component definition owns ordered history, evaluated result objects, child
   component instances and optional assembly constraints. Geometry and children
   may coexist. Bodies are results, never prerequisites for sketches or operations.
-- A `.cadprt` stores domestic definitions and external-file references. File-container
-  and component identities are distinct. Definition identity remains distinct from
-  occurrence identity, names and paths. User-facing creation and storage choices
-  belong to the Component Panel specification.
+- Models is the first tab: domestic definitions appear first (master first), then
+  collapsible imported-file groups listing every definition, including unused ones.
+  Imported files can contain nested imported-file groups. File imports exist
+  independently of placements and remain after deleting the last placed instance.
+  Show domestic names without qualification and external names as `M3 screw (Hardware)`;
+  qualify identical filenames by path where needed. Names must be unique within
+  each defining file; matching names across files never merge their identities. Show each
+  model's number of linked occurrences in the owning file's assembly, expanding
+  repeated nested uses. The file root is a model/context, not an implicit linked
+  instance, so it normally has count zero. Selection supplies native Attributes;
+  Edit opens the same model, including models with no placed instances. Add Instance
+  inserts that model into the active component without creating another definition.
+- Add Reference Object is an operation command/button beside Extrude, not a
+  creation entry in the Part Tree or History context menus. It uses the active
+  component and preserves the existing direct-child evaluated-geometry contract.
+- Entering a component makes its Origin visible by default in History. The eye
+  remains editable; refresh preserves a deliberate hide until the next entry.
+  Origin Planes is a child row controlling the native XY/XZ/YZ planes together.
+  It starts hidden on entry; manual visibility persists through refresh and is
+  undoable. Showing planes also shows their Origin parent. Both rows are permanent,
+  cannot be suppressed or deleted, and reuse native origin/datum identities.
+- Part Tree starts with the top-level component (Part001 by default),
+  with linked occurrences beneath it. This permanent root context is selectable
+  and editable, not a linked instance; it cannot be deleted as an instance and
+  does not increase instance counts. Renaming updates its displayed label. The
+  native Model pane is replaced with Attributes, retaining the native View/Data editors.
+  Preserve native dock/command identifiers internally for layout compatibility.
+- Every New File creates its first component as the permanent **master component**.
+  Reuse the persisted `RootComponent` identity; renaming does not change its role.
+  It cannot be deleted and is always first in Models and Part Tree. Activating or
+  opening another component changes the editing/History context, never this order.
+  Part Tree displays the master assembly first, followed by separate unused
+  component assemblies at the same top level. Their child instances remain nested
+  beneath them; they are not links in the master assembly and add no master instance
+  or BOM count. Cover unused descendants beneath their unused parent rather than
+  adding duplicate top-level rows. Removing the last master use exposes the retained
+  definition in this unused inventory; adding a use places it back in the master tree.
+- Each `.cadprt` has one root component and domestic definitions. New Component
+  offers domestic storage, a new external file, or an existing external file.
+  Adding to an imported Hardware file creates and saves a domestic definition there;
+  importing that file exposes all its definitions. Definition identity remains
+  distinct from occurrence identity, names and paths.
 - Insertion uses the active component's defining file: its domestic definitions or
   directly imported files. Nested imports are visible but are not implicitly imports
   of their ancestors. Import into the active defining file before inserting from
@@ -28,7 +68,7 @@ Implementation and validation status belong to roadmap 7.8.
 - Copy to Domestic Components creates independent identities for the copied
   definition and its domestic child hierarchy. Already-external child definitions
   remain explicitly imported and shared. Prompt for the owning placements to replace,
-  with UI defaults and cancellation behavior subject to the Task Panel confirmation gate.
+  initially selecting none; cancel retains the new copy and existing placements.
   Replacement preserves placement and occurrence identity. Unsupported expressions,
   outside-owned inputs and consumer/path remapping must refuse before mutation.
 - Copy to External File creates a separate independent definition file and retains
@@ -39,9 +79,9 @@ Implementation and validation status belong to roadmap 7.8.
   its standalone view. Never add a display-occurrence placement override. Accept
   only whole direct siblings within one exact parent occurrence context; preserve
   that path for world-reference conversion and transform descendants implicitly.
-  The file container is a context, not a movable instance. External parents
+  The permanent root/master is a context, not a movable instance. External parents
   are edited in their owning file. See the Move Components interaction contract in
-  [UI_UX_SPEC](../UI_UX_SPEC.md).
+  [UI_UX_SPEC](../UI_UX_SPEC.md#move-components).
 - Opening a component in a tab creates a view/edit context of the same definition.
   Embedded edits save with the owning file; external edits save with their file.
   The tab identifies both component and owning file. It is not an extraction.
@@ -49,13 +89,9 @@ Implementation and validation status belong to roadmap 7.8.
   and transactions remain reusable infrastructure. A new component/result layer
   owns the semantic contracts; tree flattening alone cannot implement them.
 
-UI structure, labels, display defaults, creation actions and context menus are
-owned by [Component Panel](../ui-ux-specs/COMPONENT_PANEL.md). Superseded UI
-passages are retained in the source archive rather than maintained here.
-
 ## Part type revision (October 10 owner contract)
 
-This technical revision supersedes the archived Hidden/path-override display contract
+This revision supersedes the older Hidden/path-override display contract below
 when the new workflow is integrated. The first backend milestone is additive;
 the existing Part Tree still uses the legacy representation service.
 
@@ -174,12 +210,52 @@ shapes, BOM or mass settings are changed. Owner delivery remains a separate gate
 
 ## Part Tree and representation
 
-User-facing tree structure, display roles, context menus, Edit and visibility
-rules are owned by [Component Panel](../ui-ux-specs/COMPONENT_PANEL.md) and
-[Model View Window](../ui-ux-specs/MODEL_VIEW_WINDOW.md). The former master-root,
-Part View/Hidden and no-Reference UI descriptions have been archived and must not
-be reapplied. The original passage is preserved in the archive for technical
-history and comparison.
+- The Components panel identifies the active component, without a filename/path or
+  inline creation buttons. Add Component lives in context menus; Add Reference
+  Object lives beside Extrude in the modeling toolbar/menu. Component tabs may
+  still identify their owning file.
+- The first tree column is the part name. Repeated occurrences of the same definition
+  under one parent collapse into one row by default, with an instance count such as
+  **x5**. **Expand Instances** reveals rows such as **support_angle#005**; **Collapse
+  Instances** restores the grouped view. The number is a persistent display number,
+  separate from the occurrence UUID; labels and numbers are not reference identities.
+- Highlight the active component and provide a show/hide control. The active component
+  and its ancestor branch cannot be hidden. Group actions apply to the represented
+  occurrences; Copy to New Part requires an individual occurrence.
+  Expanded instance rows identify the exact active occurrence; the grouped row
+  remains highlighted when it contains that occurrence.
+- Delete Instance/Instances and Delete key remove only represented owning links,
+  never definitions, their geometry/history, or child definitions. Deleting a shared
+  model's child link changes that child in all uses of the shared parent model,
+  consistent with definition ownership. Deleting every placed use leaves Models
+  showing the reusable definition with zero instances. Undo/Redo and save/reopen
+  preserve unused definitions. References to removed instances keep their identity
+  and become missing-source items for repair; cached geometry is not current.
+  The generic Delete command also protects definitions and routes precise occurrence
+  picks to link deletion. Removing the active occurrence returns editing to its
+  nearest surviving parent. Models does not offer destructive definition deletion.
+- Part Tree Cut/Paste and drag/drop rearrange existing owning links within one
+  root and owning file. Cut stages a selection without deleting it; Paste appends
+  it under the chosen part. Drop on a part reparents; drop above/below an instance
+  orders siblings; drop on empty space appends at the root. The root cannot move.
+  Group rows move all represented instances; expand a grouped destination first.
+  Selected branches include their descendants once. Preserve identities, model
+  reuse, geometry and placement in the chosen occurrence context. Reserve existing
+  destination instance numbers, assigning a new number only to an incoming clash.
+  Shared definition child-list changes apply to every use of that definition.
+  One transaction supports Undo/Redo and persisted Group ordering. Refuse cycles,
+  stale clipboard paths, cross-file edits, driven/scaled links, consumer relationships
+  and path display overrides before reparenting; sibling ordering remains available
+  with references/overrides. Relationship repair/remapping is separate scope.
+- **Edit** is the first context action; double-click also activates the definition
+  for editing. **Add Component** adds to that definition. Omit **Open Component in
+  Tab** on the root row, which is already its own view. Use an **Instances** submenu
+  for **Add Instance** and **Copy to New Part**, and **Copy to External File** for
+  independent copying. **Part View** contains Full Component, Bodies Only, Hidden and
+  Reset to Inherited. The view root is displayed in full; these settings apply to
+  occurrences added to a parent.
+  Indicate the effective Part View choice (no single choice for a mixed group)
+  and whether an occurrence inherits its setting or has an override in this context.
 
 - Contextual transparency is a view-only layer. Keep the native viewer root,
   camera and selection graph attached; hide native drawing within its selection
@@ -189,6 +265,23 @@ history and comparison.
   the same layer without changing shared view providers or saved appearance.
   Ignore contextual refreshes until a newly created tab has its component context.
 
+- Each child instance defaults to **Bodies Only**. It exposes finished solid/sheet
+  results plus child instances evaluated under their own representation settings.
+- **Full Component** also permits normally visible sketches, curves and construction
+  objects; it does not reveal hidden inputs or every historical intermediate.
+- **Hidden** hides the complete branch. It does not imply suppression, unloading,
+  exclusion from BOM/mass, or removal of geometry needed by a dependency.
+- Parent levels inherit child settings. A higher-level override is keyed by the
+  occurrence path, never by label, and does not modify the shared child definition.
+  **Reset to Inherited** removes that override. A Hidden ancestor wins.
+- Do not introduce a Reference Only component role. BOM/mass inclusion remains
+  separate. The owner may revisit reference-only display behavior later.
+  BOM participation belongs to the occurrence in its owning component; changing
+  a shared definition's child applies to all uses of that definition. Excluding an
+  occurrence omits that branch from BOM counting without changing display or mass
+  settings. Component BOM rows represent components, not their modeling history.
+- Definition-owned constraints belong in History, not among occurrence rows
+  in Part Tree.
 
 ## History and evaluated objects
 
@@ -214,6 +307,20 @@ they do not create a new part number. Native object names/UUIDs retain their rol
   Extrusions/Booleans remain readable and migrate only on reviewed editing, with
   stable operation/result UUIDs and transactional rollback/Undo. Preview overlays
   and temporary target transparency never persist as model geometry.
+- Every component always shows its native **Origin** as the first History
+  item, including empty components and isolated views. It is permanent and cannot
+  be suppressed or deleted; its visibility can be toggled. Origin Planes is its
+  permanent child visibility item, hidden by default. Reuse native identities.
+- The Components pane displays that item as **Origin**, without a document-wide
+  numeric suffix. Default object/operation labels are numbered within their owning
+  component, starting at **001**: Sketch001, Body001, Extrude001, etc. A second
+  component starts its own sequence at 001 even in the same file. Preserve custom
+  labels; reserve labels already used in that component. Native object names and
+  UUIDs remain unique identities, and references never resolve by these labels.
+- An **item** means an object or an operation. Show a suppression checkbox, then
+  a visibility icon, then the item name. Checked means active, unchecked means
+  explicitly suppressed, and partially checked means inactive because of an input.
+  Visibility is separate from suppression and does not change dependencies.
 - Display objects and operations in creation/history order. Reusable inputs and
   result identities are separate from producing operations. Solid/sheet results
   expose geometry; editable parameters remain on their operations.
@@ -231,8 +338,6 @@ they do not create a new part number. Native object names/UUIDs retain their rol
   suppression on other operations. Blocked, suppressed and failed are distinct.
 - Retain the stable result lineage and reference-repair rules in
   [the history contract](PART_HISTORY_CONTRACT.md#identity-and-dependencies-714).
-
-History layout, naming and controls are specified in the [Component Panel](../ui-ux-specs/COMPONENT_PANEL.md); unconfirmed details must not be inferred from backend behavior.
 
 ## Add Reference Object
 
@@ -256,8 +361,8 @@ History layout, naming and controls are specified in the [Component Panel](../ui
   or prevent independent references/operations from updating. Report each broken
   reference in History and retain its saved source identity for repair. This
   does not relax format, component-graph or external-definition identity checks.
-- Adding a reference does not change its source's stored display type. Snapshot
-  and conversion UI choices remain subject to the owner-intent Task Panel specification.
+- No separate snapshot option in this command: independent copies use Convert
+  to Dumb Object. Adding a reference does not change its source's display type.
 
 ## Missing component files
 
@@ -275,9 +380,9 @@ geometry-dependent actions from implicitly creating replacement definitions.
 
 ## Convert to Dumb Object
 
-The existing conversion service supports parameter deletion and body extraction.
-Its user-facing dropdown and review interaction remain unconfirmed; consult the
-Task Panel specification and archived UI source before altering that interface.
+The dropdown has **Delete Parameters** and **Extract Dumb Body**. The conversion
+review identifies exclusive history to remove and shared upstream items to retain;
+Cancel leaves the document unchanged.
 
 - Delete Parameters freezes the selected current body/sheet, preserves its object
   identity and valid downstream references, and removes only history exclusively
@@ -496,7 +601,7 @@ marker; readers without this capability must refuse the file before restoration.
 Before changing ownership, inventory native definitions/containers, Body Group and
 Tip, sketches, occurrences, placements, properties, expressions and dependencies.
 Preserve native source identity and geometry evidence. Define shared-model boundaries
-before creating instances; retain component identity beneath the pinned file container. Body-owned inputs
+before creating instances; retain the permanent master context. Body-owned inputs
 must be ordered by their actual dependencies, including attachments and expressions.
 Structural ownership backlinks must not create artificial computational cycles.
 

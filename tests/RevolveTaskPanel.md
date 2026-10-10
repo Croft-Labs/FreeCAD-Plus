@@ -18,7 +18,7 @@ must match the source with source overlays disabled.
 The existing suites below retain coverage of legacy Body documents. Physical
 pointer/keyboard and high-DPI acceptance remain separate from scripted Qt checks.
 
-Behavior is specified by [UI-003](../ai-instructions/UI_UX_SPEC.md#ui-003-revolve-and-groove-angular-controls).
+Behavior is specified by [UI-003](../ai-instructions/UI_UX_SPEC.md).
 Record actual evidence and remaining manual checks in
 [the roadmap](../ai-instructions/DEVELOPMENT_ROADMAP.md). Use this checkout's built
 FreeCAD Plus, with [isolated GUI setup](../ai-instructions/DEVELOPMENT_GUIDE.md#validation).

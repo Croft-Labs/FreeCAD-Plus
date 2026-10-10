@@ -1,6 +1,6 @@
 # Isocline Curve Tests
 
-Behavior: [UI-005](../ai-instructions/UI_UX_SPEC.md#ui-005-isocline-curve-task-pane).
+Behavior: [UI-005](../ai-instructions/UI_UX_SPEC.md).
 Actual build/test evidence: [roadmap](../ai-instructions/DEVELOPMENT_ROADMAP.md#isocline-curve).
 Use this checkout's rebuilt Part, PartGui and PartDesignGui modules with isolated
 user settings. The separately installed FreeCAD is outside this validation.

@@ -1,5 +1,35 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 owner-intent UI documentation migration
+
+Documentation implementation: five specifications now live in ui-ux-specs, with
+UI_UX_SPEC.md as their index. AGENTS.md uses the Markdown collection instead of
+the archived DOCX gate. Preserved the owner's existing folder/icon moves and
+archived the original DOCX, toolbar reference and detailed UI specification.
+Retired duplicate/conflicting UI passages from the product/component documents;
+technical contracts remain separate. No application source or build changed.
+
+Evidence: recovered October 3–4 owner transcript, accessible October 6–10 primary
+Codex user messages, and original upstream revision b9609745048b. The old F: drive
+is disconnected; older conversations and October 2 screenshot evidence are not
+available. Recent ChatGPT inspection supplied no additional Plus UI requirements;
+full historical ChatGPT coverage is not claimed. Unsupported DOCX and older
+Markdown-only details remain Needs owner confirmation. EVIDENCE_AND_DECISIONS.md
+records source coverage and supersession; no fresh-fork implementation is started.
+
+Documentation verification: all 2,911 DOCX body blocks have destination/status
+coverage; archive SHA-256 matches the source. The original workbench inventory is
+retained, with 871 legacy toolbar/options rows, 1,162 resolved command-resource
+records and 120 separately described options without a resolved standalone ID.
+New specification/index links, section anchors and icons pass validation;
+git diff --check passes. UI/runtime/build validation is not applicable to this
+documentation-only migration and no owner-ready build is claimed.
+
+Publication: documentation milestone prepared for a coherent origin push; remote
+verification is recorded by the completing chat. Remaining work is owner review
+of explicitly flagged requirements and any later recovery of missing history,
+not automatic implementation of those candidates.
+
 ## October 10 Part Types owner delivery complete (7.8.14d)
 
 Roadmap 7.8.14 is complete for the approved Part Type revision. No implementation
@@ -4375,7 +4405,7 @@ then deliver and verify the existing desktop shortcut. Batch remaining related
 owner requests before this build. Physical pointer/high-DPI and the prior sketch
 drawing report remain pending. Preserve unrelated toolbar/icon relocation, reviews
 and Archive. Three local Helix catalog descriptions in already-untracked
-`ui/TOOLBARS.md` remain with that relocation and outside the source commit.
+`ui-ux-specs/TOOLBARS_AND_BUTTONS.md` remain with that relocation and outside the source commit.
 
 ## October 3 unified Pipe — source ready for grouped build
 
@@ -4426,7 +4456,7 @@ desktop shortcut. Physical pointer/high-DPI checks and the prior sketch-drawing
 report remain separate unresolved gates. Do not repeat passing runtime checks
 unless the final sources/runtime change. Preserve the unrelated toolbar/icon
 relocation, reviews and Archive. Three local Pipe catalog updates in already
-untracked `ui/TOOLBARS.md` remain with that relocation, outside this source commit.
+untracked `ui-ux-specs/TOOLBARS_AND_BUTTONS.md` remain with that relocation, outside this source commit.
 
 ## October 3 unified Loft — source ready for grouped build
 
@@ -4468,7 +4498,7 @@ passing geometry suite unless final sources/runtime change. Physical pointer and
 high-DPI acceptance remain separate; the prior sketch-drawing issue is unresolved.
 Preserve the pre-existing toolbar-catalog/icon relocation and reviews/Archive files;
 only this task's files belong in its implementation commit.
-The relocated, already-untracked `ui/TOOLBARS.md` has three local Loft-description
+The relocated, already-untracked `ui-ux-specs/TOOLBARS_AND_BUTTONS.md` has three local Loft-description
 updates; its larger owner relocation remains outside the implementation commit.
 
 ## October 3 unified Revolve owner delivery
@@ -4751,7 +4781,7 @@ native checks verify fresh defaults, preserving saved choices and explicit reset
 payload and ZIP are unchanged; incorporation and GUI preference-page acceptance
 remain for the next packaged build. Existing build/shortcut evidence below is retained.
 
-Root AGENTS.md now requires updating `ai-instructions/ui/FreeCAD Plus UI & UX.docx`
+Historical October 2 gate (superseded October 10): AGENTS.md required updating the DOCX
 for every owner change while preserving owner edits, headings and automatic numbering.
 Its Defaults section contains the screenshot preset and maintenance rule; the
 33-page render is checked (pages 1–31 unchanged, revised 32–33 visually inspected).
@@ -4816,7 +4846,7 @@ owner acceptance remain conditional/separate as documented in the audit.
 
 ## October 2: toolbar document revision (historical; superseded by audit build)
 
-[TOOLBARS.md](details/ui/TOOLBARS.md) now separates Classic toolbar inventory,
+[TOOLBARS.md](details/ui-ux-specs/TOOLBARS_AND_BUTTONS.md) now separates Classic toolbar inventory,
 proposed Plus mode/tab/group placement, consolidations and the final function
 catalog. Classic rows contain one command each with 11px reference icons. The
 owner's common toolbar above the ribbon and medium/half-size treatment are
@@ -4924,7 +4954,7 @@ the existing native General preference and cold-start acceptance gates.
 ## October 2: toolbar governance and visual catalog
 
 The owner requested a governing Markdown reference by workbench. The
-[toolbar reference](details/ui/TOOLBARS.md) records shared desktop groups and 20
+[toolbar reference](details/ui-ux-specs/TOOLBARS_AND_BUTTONS.md) records shared desktop groups and 20
 workbench sections, Classic upstream groups, Plus changes/consolidations, Plus
 tab/section placement and a final function catalog (638 command IDs, with native
 compound choices expanded). It embeds 605 native-rendered PNG icons and links to

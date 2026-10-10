@@ -1,6 +1,6 @@
 # Trim Body Tests
 
-Behavior is specified by [UI-004](../ai-instructions/UI_UX_SPEC.md#ui-004-trim-body-task-pane).
+Behavior is specified by [UI-004](../ai-instructions/UI_UX_SPEC.md).
 Use this checkout's native FreeCAD Plus build and isolated user settings; record
 actual results in [the roadmap](../ai-instructions/DEVELOPMENT_ROADMAP.md#trim-body).
 

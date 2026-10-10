@@ -36,7 +36,7 @@ within that parent. Do not enable source overlays for these phases.
 2. Design shows Home, Modeling, Surface, Sketch, Assembly, Mesh and View. The
    common small File/Edit/Clipboard bar stays above the ribbon in every mode/tab.
    Design Home, Modeling, Sketch, Assembly and View follow the exact owner layouts in
-   `ai-instructions/ui/TOOLBARS.md` and the canonical Word specification. Their
+   `ai-instructions/ui-ux-specs/TOOLBARS_AND_BUTTONS.md` and the canonical Word specification. Their
    latest revisions are incorporated in the October 2 batched payload. Use the
    actual New Sketch, Attach Sketch, Edit Sketch and Add Component buttons in a
    component document; preserve task Cancel/OK, ownership, Undo and selection.

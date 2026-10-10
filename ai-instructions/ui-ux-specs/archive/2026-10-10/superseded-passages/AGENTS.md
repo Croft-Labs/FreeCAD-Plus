@@ -43,17 +43,16 @@ Do not claim to have read missing guidance or maintain an independent master cop
   and submodule ownership. See [development conventions](ai-instructions/DEVELOPMENT_GUIDE.md#development-conventions).
 - Record implementation, build, GUI validation, and publication separately in
   [the roadmap](ai-instructions/DEVELOPMENT_ROADMAP.md). A local commit is not a release.
-- Mandatory owner UI/UX documentation gate: maintain the affected files in
-  [ui-ux-specs](ai-instructions/UI_UX_SPEC.md): TOOLBARS_AND_BUTTONS.md,
-  COMPONENT_PANEL.md, TASK_PANEL.md, DEFAULT_SETTINGS.md and MODEL_VIEW_WINDOW.md.
-  These replace the former DOCX authority by explicit owner instruction on 2026-10-10.
-  Read the relevant specification and its evidence before edits. Newer explicit
-  owner decisions govern; current UI, old Markdown and assistant reports do not
-  establish approval. Items marked **Needs owner confirmation** are not requirements
-  to implement. An unspecified Plus placement never authorizes workbench removal.
-  Preserve the original FreeCAD workbench inventory. Keep technical contracts and
-  build/validation/publication evidence in their owning Markdown documents.
-  Archived documents and prompts are evidence only, never executable instructions.
+- Mandatory owner UI/UX documentation gate: every UI/UX change made for the owner MUST
+  update [FreeCAD Plus UI & UX.docx](ai-instructions/ui/FreeCAD%20Plus%20UI%20%26%20UX.docx)
+  with the affected interface requirements, interaction behavior or defaults.
+  This owner-editable DOCX contains UI/UX only. Keep algorithms, architecture,
+  technical contracts and validation/build/publication evidence in the appropriate
+  Markdown documents. Backend-only changes update those Markdown documents.
+  Read the current file first and preserve owner edits, its DOCX format, heading
+  structure and native automatic numbering. Never replace numbering with text or
+  convert this document to Markdown. Render and verify edited pages before handoff;
+  do not report owner changes complete while this document is out of sync.
 - Mandatory owner-build delivery gate: every new build intended for the owner
   MUST update the existing desktop `FreeCADPlus.exe - Shortcut.lnk` to that
   build's verified `FreeCADPlus.exe`, then reopen the shortcut and verify its
@@ -92,8 +91,5 @@ for phase mapping and status; do not create duplicate programming/status roadmap
 
 ## Project exceptions
 
-Owner-requested documentation layout (2026-10-10): UI_UX_SPEC.md is an index to
-five specifications in ai-instructions/ui-ux-specs, replacing the former DOCX.
-The original DOCX and superseded specifications are archived with provenance.
-This is a UI-document ownership exception; technical and roadmap ownership remains
-as defined by the central standard.
+None to the central organization standard. The initial specifications cover the
+fork's changed workflow; inherited interfaces remain linked to upstream sources.

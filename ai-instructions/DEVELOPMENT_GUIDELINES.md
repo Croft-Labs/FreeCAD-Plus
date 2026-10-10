@@ -163,17 +163,16 @@ When an upstream edit makes a reference ambiguous, report it and offer repair. A
 
 ## 7. Preserve the requested workflow while testing defaults
 
-Standing owner direction (2026-10-02): apply the action hierarchy in
-[the UI specification](UI_UX_SPEC.md#toolbar-ui-styles) to every new or modified
-interface. Prioritize common actions, use compact secondary controls and group
-rare related choices in dropdowns. Ribbon changes use one row of large primary
-buttons and three rows of small icons, with bounded captions and native command
-states. This is an ongoing UX rule, not permission to redesign unrelated screens.
+The owner-intent [UI collection](UI_UX_SPEC.md) owns presentation and interaction.
+Read the affected specification and its evidence before changing a UI. Older
+execution guidelines, architecture plans and implementation reports do not approve
+UI requirements marked Needs owner confirmation. Preserve the original workbench
+inventory and do not infer removals from the current build.
 
 Keep capabilities, default choices, and storage implementation distinct.
 
 - Support part-owned history and a part definition containing both geometry and child occurrences.
-- Apply the product specification's creation-time New Body/Unite suggestion policy and explicit supported operations. Do not resurrect the superseded unconditional default or infer new intent when editing/recomputing.
+- Creation suggestions and operation defaults require confirmation against the owner-intent Task Panel specification; the older product plan is not UI authorization. Preserve saved operation intent when editing/recomputing.
 - Persist the intended operation and target references; do not resolve targets from whichever body happens to be active when reopening or recomputing.
 - A conceptual tool body need not become an unnecessary permanent document object. Choose its representation through the ownership/history ADR.
 - Treat full/reference/empty representations separately from suppression, loading, and BOM participation.

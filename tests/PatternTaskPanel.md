@@ -2,7 +2,7 @@
 
 Use this checkout's rebuilt FreeCAD Plus, with the matching PartDesign test modules.
 Do not use the installed FreeCAD. Requirements are defined in
-[UI-002](../ai-instructions/UI_UX_SPEC.md#ui-002-pattern-task-pane); current evidence
+[UI-002](../ai-instructions/UI_UX_SPEC.md); current evidence
 belongs to [roadmap 3.7](../ai-instructions/DEVELOPMENT_ROADMAP.md#combined-pattern-workflow).
 
 ## Automated checks

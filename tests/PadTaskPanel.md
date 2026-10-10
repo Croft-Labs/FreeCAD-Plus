@@ -1,7 +1,7 @@
 # FreeCAD Plus: Extrude and Pad task-panel regressions
 
 This file owns the focused regression procedure. Intended behavior belongs in
-[UI-001](../ai-instructions/UI_UX_SPEC.md#ui-001-pad-task-pane); current validation
+[UI-001](../ai-instructions/UI_UX_SPEC.md); current validation
 status and remaining acceptance checks belong in the
 [roadmap](../ai-instructions/DEVELOPMENT_ROADMAP.md).
 For environment setup, use [the development guide](../ai-instructions/DEVELOPMENT_GUIDE.md).

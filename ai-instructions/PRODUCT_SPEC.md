@@ -1,5 +1,10 @@
 # FreeCAD Plus: Product Specification
 
+UI authority: the [five owner-intent specifications](UI_UX_SPEC.md) govern
+interaction. Historical product pilots below describe capability and implementation
+scope; they do not confirm custom UI choices. Read their confirmation status before
+using them to justify an interface change.
+
 ## Purpose and users
 
 Improve FreeCAD's feature workflows for CAD users who want to create and edit
@@ -11,7 +16,7 @@ Users can start Extrude without preselection, choose Add/Subtract in the first
 dropdown, select a valid profile, preview the result, and accept or cancel.
 Editing an existing Pad or Pocket exposes
 the same controls and preserves working document history. Acceptance is defined
-in [the UI specification](UI_UX_SPEC.md#ui-001-pad-task-pane); implementation and
+in [the UI specification](UI_UX_SPEC.md); implementation and
 validation status belong in [the roadmap](DEVELOPMENT_ROADMAP.md).
 
 Pattern users can choose Linear/Circular, select features after opening the command,
@@ -56,7 +61,7 @@ in the same document. Definition parameters are not silently localized to an
 occurrence. Document/configuration scopes, where-used navigation, publication,
 existing-description editing and automatic cross-document references remain future
 increments. The usable pilot and owner acceptance are tracked separately in
-[roadmap 10.8](DEVELOPMENT_ROADMAP.md#f122) and [UI-007](UI_UX_SPEC.md#ui-007-named-parameters-roadmap-108).
+[roadmap 10.8](DEVELOPMENT_ROADMAP.md#f122) and [UI-007](UI_UX_SPEC.md).
 
 ## Capabilities and requirements
 
@@ -186,26 +191,12 @@ and validation records above are not declarations that these changes exist.
 The [active version 2 inventory](DEVELOPMENT_ROADMAP.md#version-2-objective-coverage)
 supersedes the archived baseline. These are requirements, not installed behavior.
 
-- At creation, suggest New Body when no eligible body intersects; suggest Unite
-  only for one eligible target with a valid union. Multiple eligible targets require
-  deliberate selection. Invalid contact/Boolean results require corrective guidance.
-  Target eligibility respects work-part ownership, occurrence/edit context, reference
-  access and geometry. Intersection with another component alone never authorizes
-  modifying that component. Explicit New Body, Unite, Subtract and Intersect choices
-  take precedence wherever supported. Keep Tools is an explicit option.
-- Distinguish inference from commitment. Update uncommitted suggestions coherently
-  without oscillation near tolerance boundaries. Once chosen, preserve the user's
-  mode/targets. Store accepted operation and target identities. Editing/recompute
-  uses saved intent and reports invalid/missing references; it never reruns a
-  heuristic to silently switch target or operation.
-- Guided/direct entry and Pad/Pocket/Revolution/Groove aliases share one model,
-  validation and transaction path. Pocket/Groove preset Subtract. Guidance changes
-  neither geometry semantics nor saved types. Keep legacy editing adapters pending
-  explicit supported conversion, and preserve the operation-first task layout.
-- General/Sketcher plain picking replaces, Ctrl toggles/adds and Shift extends by
-  documented context. Window picking can collect a group. An active feature input
-  collector retains REQ-004's deliberate accumulation; leaving it restores ordinary
-  selection. Inference suppression uses a separate nonconflicting shortcut.
+Creation suggestions, operation aliases, task layout and picking behavior belong
+to [Task Panel](ui-ux-specs/TASK_PANEL.md) and
+[Model View Window](ui-ux-specs/MODEL_VIEW_WINDOW.md). Earlier proposed UI rules
+are archived pending primary-source confirmation. Persist accepted operation and
+target identities; recompute must not silently change committed intent.
+
 - One Sketcher eligibility service distinguishes structural applicability from
   solver proof and Valid/Already Applied/Redundant/Conflicting/Unsupported/Unverified.
   No guessed conflicts, duplicate constraints, silent constraint deletion or live
@@ -229,7 +220,7 @@ execution, and native commands retain selection, transactions and document types
 Missing workbenches and active tasks receive recovery guidance. The pilot is ready
 for owner workflow testing under roadmap 8.4.2a/b; favorites, broader context
 explanations and physical/high-DPI acceptance remain pending. See
-[UI-008](UI_UX_SPEC.md#ui-008-command-search-f033-roadmap-842-104) and the
+[UI-008](UI_UX_SPEC.md) and the
 [owner procedure](../tests/CommandSearch.md).
 
 ## Current temporary-display pilot (F040)
