@@ -3583,6 +3583,15 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
   - [   ] 7.8.14b Integrate geometry-use and output guards. Reference/Excluded
     native occurrence shapes must not bypass the policy; only explicit owned
     reference features permit modeling use. Preserve linked reference updates.
+    - [ X ] 7.8.14b1 Shared geometry access: guard current_shape, native subpaths
+      through ShapeReferences and component-owned associative input validation.
+      Reject Reference/Excluded links and unfiltered aggregates; retain permitted
+      sibling occurrences and explicitly owned reference updates/reopen.
+      TestComponentGeometryAccess and existing reference recovery pass.
+    - [   ] 7.8.14b2 Native output/consumer integration: filter final geometry for
+      STEP/STL and other native export paths, reject raw native operation/cache
+      bypasses, and verify promoted bodies contribute without duplicate source
+      geometry. Keep this gate open before exposing new types in the UI.
   - [   ] 7.8.14c Integrate Part Tree activation/double-click, Part Type menu and
     Excluded/Reference labels, distinct Shown/Hidden controls, saved active-self
     overrides and direct-child context restore; reconcile existing nested rules.

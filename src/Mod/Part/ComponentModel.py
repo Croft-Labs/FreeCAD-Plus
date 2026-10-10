@@ -948,8 +948,51 @@ def geometry_dependencies(obj, include_frames=False):
     return list(found)
 
 
+def require_geometry_access(obj, subname="", component=None, aggregate=True):
+    """Guard native occurrence paths before a consumer reads their geometry.
+
+    Explicit reference features are owned inputs; their source links are not
+    recursively treated as direct use. A bare foreign definition member has lost
+    its occurrence path, so a component consumer must first create an owned
+    reference instead of guessing a placement or a permitted instance.
+    """
+    if obj is None:
+        raise ValueError("Select an input object.")
+    path = list(obj.getSubObjectList(subname)) if subname else [obj]
+    if not path:
+        raise ValueError("The selected geometry path is unavailable.")
+    for item in path:
+        if getattr(item, "ComponentRole", "") == "Occurrence":
+            parent = owner(item)
+            if part_type(parent, item) in ("Reference", "Excluded"):
+                raise ValueError("Add Reference Feature before using Reference component geometry; "
+                                 "Excluded components cannot supply direct geometry.")
+    target = path[-1]
+    if component is not None and is_component(component):
+        target_owner = owner(target)
+        if (is_component(target_owner) and target_owner != component
+                and getattr(target, "ComponentRole", "") != "Occurrence"):
+            raise ValueError("Add Reference Feature to the active component before using child geometry.")
+    # A whole container/link shape also contains its descendants. Do not return
+    # an unfiltered native aggregate with Reference or Excluded geometry inside.
+    definition = target.LinkedObject if getattr(target, "ComponentRole", "") == "Occurrence" else target
+    seen = set()
+    def check_children(parent):
+        if not is_component(parent) or parent in seen:
+            return
+        seen.add(parent)
+        for child in children(parent):
+            if part_type(parent, child) in ("Reference", "Excluded"):
+                raise ValueError("The component contains Reference or Excluded geometry. "
+                                 "Use an owned result instead of its whole native shape.")
+            check_children(child.LinkedObject)
+    if aggregate:
+        check_children(definition)
+
+
 def current_shape(obj):
     """Never certify stale native caches as evaluated component results."""
+    require_geometry_access(obj)
     for dep in [obj] + geometry_dependencies(obj):
         if "Invalid" in dep.State or "Touched" in dep.State:
             raise ValueError("Geometry requires update or repair: " + dep.Label)

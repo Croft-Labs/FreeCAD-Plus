@@ -27,6 +27,11 @@ def linked_shape(link):
     if len(subs) > 1:
         raise ReferenceError("Select one object or one face for each field.")
     sub = subs[0] if subs else ""
+    import ComponentModel
+    try:
+        ComponentModel.require_geometry_access(obj, sub)
+    except ValueError as error:
+        raise ReferenceError(str(error)) from error
     shape = Part.getShape(obj, sub, needSubElement=True, transform=True)
     # getShape includes the object's placement, but not its enclosing App::Part/Body.
     if hasattr(obj, "getGlobalPlacement") and hasattr(obj, "Placement"):
@@ -46,6 +51,11 @@ def linked_shape(link):
 def validate_link(feature, obj):
     if obj is None or obj.Document != feature.Document:
         raise ReferenceError("Select an object in this document.")
+    import ComponentModel
+    try:
+        ComponentModel.require_geometry_access(obj, component=ComponentModel.owner(feature), aggregate=False)
+    except ValueError as error:
+        raise ReferenceError(str(error)) from error
     if obj == feature or obj in feature.InListRecursive:
         raise ReferenceError("A feature cannot reference itself or a dependent feature.")
 

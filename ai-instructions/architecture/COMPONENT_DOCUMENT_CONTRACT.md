@@ -125,6 +125,24 @@ Connecting the policy to selection, modeling and export consumers is a required
 subsequent gate; this backend API alone does not prevent existing consumers from
 using raw native Link shapes.
 
+The first consumer integration is ComponentModel.require_geometry_access.
+current_shape and BasicShapes.ShapeReferences.linked_shape call it before reading
+geometry. It inspects native occurrence paths, rejects Reference/Excluded links,
+and refuses an unfiltered whole-component aggregate containing a forbidden
+descendant. A permitted sibling path is checked independently: referencing one
+use of a shared definition does not forbid its other normal occurrences.
+The shared validate_link also requires a component-owned consumer to use an
+owned reference instead of a bare foreign component member whose occurrence
+placement is missing. Ordinary non-component geometry keeps its native behavior.
+ShapeReferences retains its ReferenceError contract.
+
+Owned reference features deliberately stop this access check at their own object.
+Their SourceOccurrence/SourceObject links remain the explicit authorization and
+associative dependency, including when the source occurrence becomes Excluded.
+Adding a reference does not reclassify the child. Native cached operation shapes,
+direct native exchange exporters and other consumers bypassing these shared
+services still need integration. No blanket native export protection is claimed.
+
 Files containing explicit PartType properties require component-part-types-v1.
 The manifest records each authored value with its occurrence identity; preflight
 cross-checks it against Document.xml and rejects missing capability declarations

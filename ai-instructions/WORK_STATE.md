@@ -1,5 +1,49 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Part type shared geometry access (7.8.14b1)
+
+Implemented require_geometry_access in ComponentModel and wired it into
+current_shape plus BasicShapes.ShapeReferences.linked_shape/validate_link.
+Native occurrence paths refuse Reference/Excluded geometry, even if visible.
+Whole native container aggregates with forbidden descendants are refused; owned
+results and permitted sibling occurrences remain usable. A component-owned
+associative consumer cannot take a bare foreign member in place of an explicitly
+owned reference feature. ShapeReferences preserves its ReferenceError type.
+
+Explicit references remain associated with SourceOccurrence/SourceObject and
+refresh after source edits, after source display exclusion, and through
+Undo/save/reopen. The check does not follow an owned reference back into its
+source and falsely reject an already authorized dependency.
+
+Validation: initial source-overlay batch passes 21 cases: eight new
+TestComponentGeometryAccess, three TestComponentReferenceRecovery and ten
+TestComponentPartTypes. Final batch after preserving the shared exception
+contract passes 20 cases: eight geometry-access, three reference-recovery and
+nine TestManufacturingExport. Both runs have zero failures/errors/skips, PASS
+completion markers and recorded process exit 0. These are 41 executions of
+30 distinct cases, not 41 distinct behaviors. Both runs report two recursive
+recompute diagnostics; the initial batch also reports the three PropertyXLink
+export-without-saving diagnostics already recorded for the part-type fixture.
+All assertions passed; no claim of empty stderr is made.
+
+Used the retained freecad_plus_2026-10-06_recovered_workload native fork
+(revision 49492 / bdc8a099da69502ccca72a539aeea293fd81de9b) with six explicit,
+hash-checked source overlays. Syntax and CRLF-aware diff checks pass.
+No native build or owner payload/shortcut update. Owner UI DOCX remains unchanged:
+this step changes backend access validation, with no Part Tree UI exposure.
+Generated validation/part-type-geometry and validation/part-type-geometry-final
+output is removed after recording this evidence. Source publication is tracked
+in Git, separately from owner delivery.
+
+Next task: 7.8.14b2 native output/consumer integration. Direct native STEP/STL
+exporters and cached native operation shapes can still bypass these shared Python
+services. Filter final component output by part type, include explicitly owned
+promoted bodies without duplicate source geometry, and close native input/cache
+bypasses before exposing Reference/Excluded in the Part Tree. The full 7.8.14b
+gate remains open. Then 7.8.14c owns activation, menus, saved active-self settings
+and the owner DOCX; 7.8.14d owns grouped build/acceptance and shortcut delivery.
+
+
 ## October 10 Part type backend foundation (7.8.14a)
 
 The new owner request is tracked separately from completed 7.8.13. Implemented
