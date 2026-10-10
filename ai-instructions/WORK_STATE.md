@@ -1,5 +1,66 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Part Types owner delivery complete (7.8.14d)
+
+Roadmap 7.8.14 is complete for the approved Part Type revision. No implementation
+task remains in this scope. The later Add Reference Feature/Promote expansion and
+broader component/workbench migration remain separate scope.
+
+Delivered owner payload:
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-10_part_types_payload.
+Application sources are c65b2944fbead683e31f64677d6f57f2aa363077. Native engine
+27.1.0 revision 49496 reports snapshot 872610fb762d5ffc4bf2664a08b5c37e66dae8a9,
+timestamp 2026/10/10 15:16:42; compiled native export changes are the a24c385852
+milestone described below. No native recompile was needed this turn. Reused the
+four successfully compiled export targets and their native application outputs,
+then synchronized current Python modules into a new licensed baseline payload.
+The earlier native command's nonexistent ScriptsOnly-target failure remains
+recorded separately and is not relabeled a successful full build.
+
+The initial installed check stopped before tests: the previous component-only
+inventory omitted BasicShapes/ShapeReferences.py. Source changes since the old
+owner build were audited; the missing shape-access adapter was synchronized and
+added to inventory. Final post-acceptance checks verify 53 native application
+binaries against the retained development build, 17 component/shape Python modules
+against source, and the unchanged launcher/source identity (71 payload files).
+Dependency files/licenses were copied from the validated owner baseline; no full
+dependency checksum or new full enabled-target compilation claim is made.
+release-info.json and payload-manifest.json record exact provenance and coverage.
+
+Installed acceptance through FreeCADPlus.exe: 89 cases in eleven suites pass,
+zero failures/errors/skips, PASS marker and launcher exit 0. All six runtime
+module paths/hashes are inside the new payload and match source; no overlays.
+Coverage includes native mouse activation, reference/excluded context display,
+legacy and separate-window display, self/child persistence, geometry-use guards,
+reference recovery, evaluated output and direct/standard native export entry
+points. The warm batch has the existing PropertyXLink copy-fixture diagnostics,
+two deliberately forbidden raw native scope warnings and the deliberately induced
+missing-directory writer error.
+
+Fresh-process acceptance: two TestComponentPartTypeCold cases pass through the
+actual saved desktop shortcut, no overlays, PASS marker and exit 0. Reopened
+settings restore Bodies Only on the active component, Reference on direct children
+and nested Excluded values; switching to the ancestor and back preserves those
+choices. Owned linked reference geometry exports as exactly two solids of volume
+36, raw source use remains refused and a source edit updates the result volume
+to 60. These are 91 accepted cases/executions; the earlier packaging stop ran
+zero cases. Shortcut-run stderr was not separately redirected, so no empty-stderr
+claim is made. Native tree capture reviewed; no new interface requirement was
+introduced this turn and the previously rendered owner UI DOCX stays unchanged.
+
+Existing desktop FreeCADPlus.exe - Shortcut.lnk now targets:
+C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_plus_2026-10-10_part_types_payload/FreeCADPlus.exe.
+Working directory is that payload folder. UpdateOwnerBuildShortcut reopened and
+verified both fields; subsequent cold launch succeeded and both fields were checked
+again before cleanup. The superseded October 9 active_edit_payload was removed
+only after confirming its resolved path, the replacement shortcut and no running
+process using it. The new owner payload and retained development tree remain.
+Generated validation/part-type-delivery files are removed after this evidence is
+recorded. Source/test/documentation publication is tracked in Git, not a release.
+
+Next task: none for the Part Type implementation. Do not rotate into unrelated
+roadmap work without a new owner request.
+
 ## October 10 Part Type controls and context display (7.8.14c2b)
 
 Part Tree now labels its column/menu Part Type and offers Full Component, Bodies

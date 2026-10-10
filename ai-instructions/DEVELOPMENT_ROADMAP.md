@@ -3572,7 +3572,7 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
       This completes 7.8.13; broader migration/workbench qualification remains in
       7.8.10. Add Component changes and additional joint types remain deferred.
 
-- [   ] 7.8.14 Owner Part Type revision (October 10): direct-child saved settings,
+- [ X ] 7.8.14 Owner Part Type revision (October 10): direct-child saved settings,
   Excluded versus visibility, contextual Reference and reliable activation.
   - [ X ] 7.8.14a Backend foundation: parent-owned native PartType property,
     atomic direct-child updates, effective context resolver and explicit geometry
@@ -3632,8 +3632,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
         display rules remain stored; new child types override them. Context switching
         restores the active owner's rules. DOCX rendered/reviewed; WORK_STATE owns
         native source-overlay acceptance evidence. Owner delivery remains 7.8.14d.
-  - [   ] 7.8.14d Grouped acceptance, fresh-process restore and compatible owner
+  - [ X ] 7.8.14d Grouped acceptance, fresh-process restore and compatible owner
     payload delivery; verify saved desktop shortcut and publish milestone evidence.
+    Completed October 10: part_types_payload passes 89 installed cases and two
+    fresh-process cases launched through the saved desktop shortcut, no overlays.
+    All 53 native application binaries, 17 component/shape modules and launcher
+    hash-verified. Shortcut target/working directory rechecked; superseded owner
+    payload removed. WORK_STATE separates reused native build evidence, packaging,
+    initial adapter-inventory correction, acceptance and publication.
   The later Add Reference Feature/Promote workflow expansion is separate scope;
   existing explicit reference services should be reused and guarded first.
 

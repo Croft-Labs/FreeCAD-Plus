@@ -166,3 +166,10 @@ class TestComponentPartTypeUI(unittest.TestCase):
             self.panel.set_part_type(self.row([self.assembly.ObjectId]), "Bodies Only", context)
         self.assertNotIn("ActivePartType", self.parent.PropertiesList)
         self.assertNotIn("PartType", self.assembly.PropertiesList)
+    def testSaveContextForColdReopen(self):
+        self.types()
+        self.edit(self.top_path)
+        self.panel.set_part_type(self.row(self.top_path), "Bodies Only")
+        path = Path(os.environ["FREECAD_PLUS_VALIDATION_DIR"]) / "part-type-context.cadprt"
+        self.doc.saveAs(str(path))
+        self.assertEqual(Model.active_part_type(self.top.LinkedObject), "Bodies Only")

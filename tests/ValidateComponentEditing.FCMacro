@@ -44,7 +44,7 @@ try:
     requested = os.environ.get('FREECAD_PLUS_EDIT_SUITES')
     if requested:
         selected = tuple(name.strip() for name in requested.split(','))
-        if not selected or any(name not in suites + ('TestComponentEditingCold', 'TestComponentPartTypes', 'TestComponentGeometryAccess', 'TestComponentReferenceRecovery', 'TestManufacturingExport', 'TestComponentOutput', 'TestComponentNativeExport', 'TestComponentTreeActivation', 'TestComponentActivePartType', 'TestComponentPartTypeUI') for name in selected):
+        if not selected or any(name not in suites + ('TestComponentEditingCold', 'TestComponentPartTypes', 'TestComponentGeometryAccess', 'TestComponentReferenceRecovery', 'TestManufacturingExport', 'TestComponentOutput', 'TestComponentNativeExport', 'TestComponentTreeActivation', 'TestComponentActivePartType', 'TestComponentPartTypeUI', 'TestComponentPartTypeCold') for name in selected):
             raise ValueError('Unknown component editing suite')
         suites = selected
     if report['source_overlay']:

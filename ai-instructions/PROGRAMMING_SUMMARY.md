@@ -16,6 +16,9 @@ context rendering use effective_part_type; TestComponentPartTypeUI covers saved
 self/child settings, visibility, Reference/Excluded and legacy rules (7.8.14c2b).
 active_part_type/set_active_part_type now persist the active-self choice on the
 definition with component-active-part-type-v1; see TestComponentActivePartType.
+Part Type implementation and owner delivery (7.8.14) are complete. The installed
+part_types_payload passes 89 cases plus two TestComponentPartTypeCold reopen cases
+through the verified desktop shortcut; see WORK_STATE. No Part Type task remains.
 
 
 File-root foundation: ComponentModel.ensure_file_container provides explicit,

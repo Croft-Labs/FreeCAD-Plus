@@ -232,6 +232,19 @@ targets together, then synchronize/hash-check the six runtime Python modules.
 ScriptsOnly is not a CMake target in the retained Windows development tree.
 Set TEMP/TMP inside the validation folder
 when running export fixtures. Only the native-export suite against those rebuilt targets establishes that routing.
+The Part Type delivery set adds TestComponentPartTypeUI, TestComponentTreeActivation,
+TestComponentContextDisplayPlan, TestComponentDisplayContext,
+TestComponentPartTypes, TestComponentActivePartType, TestComponentOutput,
+TestComponentNativeExport, TestComponentGeometryAccess, TestComponentReferenceRecovery
+and TestComponentActiveEditing. Run against installed modules without overlays.
+The UI suite writes part-type-context.cadprt and native-export suite writes
+native-save.cadprt. In a fresh process, select TestComponentPartTypeCold and set
+FREECAD_PLUS_EDIT_FIXTURES to that installed batch directory. It verifies restored
+self/child display, context switching, refusal of raw Reference geometry, native
+export without duplication and owned reference updates. Include
+Mod/Part/BasicShapes/ShapeReferences.py in payload synchronization and hash coverage;
+the older component-only payload inventory omitted this shared adapter.
+
 For a cold reopen pass, select `TestComponentEditingCold` and set
 `FREECAD_PLUS_EDIT_FIXTURES` to the preceding full batch output directory.
 Use a fresh output directory for each run. Bound the process to fifteen minutes
