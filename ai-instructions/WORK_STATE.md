@@ -33,9 +33,11 @@ below uses the official binary; this checkout has not been compiled locally.
 
 ## Stable baseline inventory and light runtime check — October 10, 2026
 
-**Result: provenance, source integrity and core functionality pass. Local viewport
-visual acceptance remains open. Do not describe this as an entirely verified GUI
-baseline or as an owner-ready Plus build.** No application source was changed.
+**Result: provenance, source integrity, core functionality and the light baseline
+display check pass.** The earlier viewport artifacts were reproduced only through
+the capture method; direct display-buffer reads are clean. This is a bounded
+baseline check, not exhaustive GUI acceptance or an owner-ready Plus build.
+No application source was changed.
 
 ### External release evidence
 
@@ -104,7 +106,7 @@ configuration paths. Existing owner preferences and addons were not used.
 | FCStd persistence | Pass; 15-object model, expression and link survived save/reopen and separate-process restart; subsequent edits recomputed correctly |
 | Model image export | Pass; visually inspected image shows both solid instances and their circular pockets correctly |
 | Event processing and process exit | Pass; timed Qt callbacks and view switching completed; successful primary and cold runs exited normally with code 0 |
-| Visible viewport / jitter acceptance | **Open**; widget and native framebuffer captures showed stippling/colored artifacts; see below |
+| Baseline viewport rendering and responsiveness | Pass in the focused follow-up below; capture-induced artifacts isolated, camera/resize/workbench checks clean. No comprehensive jitter benchmark claimed |
 
 The primary run passed 10 automated check groups and the fresh-process run passed
 four, including repeated startup/render/event-loop checks. Successful capture calls
@@ -124,21 +126,50 @@ OpenSCAD's workbench loaded, but reported its external OpenSCAD executable was
 not found. Operations requiring that program are not verified or ready. Other
 external solvers/toolchains were not validated.
 
-### Remaining display gate and next action
+### Display gate resolved — October 10, 2026
 
-Offscreen model export is correct, while QWidget and native QOpenGLWidget
-framebuffer captures show artifacts. A separate run without image export still
-showed artifacts in its framebuffer capture. Desktop-region captures were occluded
-and cannot establish FreeCAD's visible result. Native window inspection through
-the computer-use runtime could not initialize. The cause remains unresolved:
-capture/readback versus on-screen graphics behavior has not been distinguished,
-and the old fork's reported jitter has not been shown fixed.
+The owner requested resolution and was unavailable for manual tests. The agent
+completed an automated comparison and interaction check using the same official
+binary with fresh temporary settings. Native computer-use inspection still failed
+to initialize (Windows sandbox helper setup), so FreeCAD's own GUI/OpenGL APIs
+provided the evidence. No owner visual test or mouse-driven test is claimed.
 
-Before UI reimplementation, inspect this exact official payload's visible viewport
-with an isolated profile and a simple solid: rotate/zoom, switch workbenches and
-resize the window. If artifacts occur on screen, investigate the renderer/driver
-and relevant FreeCAD settings in a temporary profile before changing source.
-No driver, global graphics setting or application-code workaround was applied.
+**Finding:** `QOpenGLWidget.grabFramebuffer()` produces the stippled/colored image
+on this system. Reading the existing viewport framebuffer directly with
+`glReadPixels`, without invoking a capture-triggered redraw, produces the correct
+image, including both blue solids, circular pockets, navigation cube and axes.
+The normal display buffers before capture, after capture and after an ordinary
+redraw were visually clean and byte-identical. This isolates the observed defect
+to the capture path; it does not establish the precise underlying Qt/Coin/driver
+fault. No application or graphics-driver workaround was necessary.
+
+| Evidence | Observed result |
+| --- | --- |
+| Renderer | NVIDIA GeForce GTX 970/PCIe/SSE2; OpenGL 4.6.0 NVIDIA 560.94 |
+| Qt / display scaling | Qt 6.8.3; device pixel ratio 1.5 |
+| Initial display buffer | Default FBO 2 was bound; color attachment read; no OpenGL read error |
+| Clean before/after/redraw images | All SHA256 `798ad968468a15cfc27962dcabf38c17f78e8baaea4834a6d165fd881a6ea040` |
+| Corrupt Qt capture | SHA256 `9fb219e96b5cdf5ee91f865e2aa79dc63e906e1d79f05c14bc09569222b68133` |
+| Camera changes | Front view, 13 orientation updates through 48 degrees, zoom to 80% of prior camera height, and restored isometric view completed |
+| Window resizing | 1280 x 900 -> 1100 x 760 -> 1280 x 900 logical window sizes; viewport resized correctly |
+| Workbench changes | Part -> Sketcher -> Part Design completed with clean viewport buffers |
+| Display captures | Eight interaction-stage buffer reads, all without OpenGL errors; inspected front, rotated, zoomed, resized, switched-workbench and restored views were clean |
+| Idle stability | Final view and repeat after a one-second idle interval were byte-identical: SHA256 `057eba7ce2c0cf4f4f4adea10f3feda72f22864970fb965b1f7307c38cc44252` |
+| Event processing | 262 callbacks on a 50 ms timer; largest observed gap 0.344 seconds, including workbench initialization/capture overhead |
+| Geometry and exit | Sample remained a valid solid at its expected volume; successful diagnostic and interaction runs exited with code 0 |
+
+The first interaction harness omitted the Pivy camera binding import and stopped
+advancing at zoom. Only its own process was terminated; importing the binding made
+the complete rerun pass. This was a probe error, not an application crash. A Pivy
+SWIG deprecation warning did not affect the completed check.
+
+This closes the light baseline display gate without requiring owner testing.
+It establishes clean rendered viewport contents and bounded API-driven interaction
+on this PC; it is not a monitor/video capture, frame-rate benchmark, long-session
+stress test, or proof about the archived fork's unrelated UI jitter. No source,
+owner settings, global graphics settings or driver changes were made. The
+[development guide](DEVELOPMENT_GUIDE.md#viewport-capture-validation) records the
+capture method for future checks.
 
 The existing desktop `FreeCADPlus.exe - Shortcut.lnk` still targets
 `test-builds/freecad_plus_2026-10-10_part_types_payload/FreeCADPlus.exe`, with that

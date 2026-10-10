@@ -17,7 +17,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 | Conversation evidence and conflicts | [Evidence ledger](ui-ux-specs/EVIDENCE_AND_DECISIONS.md) |
 | Prior fork recovery | [Archive reference](ARCHIVE_REFERENCE.md) |
 | Current work/status | [Roadmap](DEVELOPMENT_ROADMAP.md), [WORK_STATE](WORK_STATE.md) |
-| Stable baseline inventory and local checks | [Runtime evidence and pending display gate](WORK_STATE.md#stable-baseline-inventory-and-light-runtime-check--october-10-2026) |
+| Stable baseline inventory and local checks | [Runtime inventory and completed display check](WORK_STATE.md#stable-baseline-inventory-and-light-runtime-check--october-10-2026) |
 | Execution/build guidance | [Development guidelines](DEVELOPMENT_GUIDELINES.md), [guide](DEVELOPMENT_GUIDE.md) |
 | Product scope | [Product specification](PRODUCT_SPEC.md) |
 | Old implementation records | [Historical documents](archive/pre-restart-docs/README.md) |

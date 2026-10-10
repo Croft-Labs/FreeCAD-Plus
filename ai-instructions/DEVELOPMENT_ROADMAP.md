@@ -21,17 +21,18 @@ Original workbench source is retained.
 - [x] Check basic modeling, recompute, Undo/Redo, expressions, links and file exchange.
 - [x] Check FCStd save/reopen and separate-process reopen/recompute.
 - [x] Inspect exported model image; verify event processing and normal test exits.
-- [ ] Resolve viewport capture artifacts and establish visible GUI acceptance.
+- [x] Isolate capture artifacts; verify clean viewport buffers through automated rotation, zoom, resizing, workbench changes and idle stability.
 
 [WORK_STATE](WORK_STATE.md#stable-baseline-inventory-and-light-runtime-check--october-10-2026)
 owns inventory, provenance, results and limitations. Core checks pass using the
 official binary matching this checkout. No local compilation or owner shortcut
-delivery occurred; do not claim the display/jitter gate has passed.
+delivery occurred. The light baseline display gate is closed; exhaustive GUI or
+long-session jitter acceptance is not claimed.
 
 ## Subsequent work
 
-Resolve the visible display gate before UI reimplementation. Owner review of
-unconfirmed requirements remains open. A local source build remains a separate
+The baseline is ready for separately authorized, staged reimplementation. Owner
+review of unconfirmed requirements remains open. A local source build remains a separate
 stage when needed for development. Reimplementation is not started by this roadmap.
 
 The [old roadmap](archive/pre-restart-docs/DEVELOPMENT_ROADMAP.md) records archived
