@@ -1,5 +1,41 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 Part Tree double-click activation (7.8.14c1)
+
+ComponentNavigator now handles the Part Tree's native double-click before Qt
+discards a pressed row replaced by refresh. It queues only a stable row identity,
+edited context and window, then resolves the current row before activation.
+Nested/repeated occurrences retain their exact path. A removed row or changed
+context is ignored; the existing active-task guard still applies. Single-click
+selection and the current-tab History transition are retained.
+
+Accepted coverage: six TestComponentTreeActivation cases plus nine existing
+TestComponentActiveEditing cases (15 distinct cases). The first launch used an
+incorrect executable filename and did not start. The first harness run stopped
+before tests on a QtTest import; this now uses the fork's PySide6/PySide2 pattern.
+The next batch passed all nine existing cases and five new cases; its task-guard
+fixture tried to patch a read-only native object. Replacing that mock with a real
+native task dialog yielded six passing new cases, no skips, PASS and exit 0.
+These are 21 test executions, not 21 distinct cases. Final stderr is empty.
+
+Validation used the retained freecad_plus_2026-10-06_recovered_workload fork,
+native revision 49496 / 872610fb762d5ffc4bf2664a08b5c37e66dae8a9, with six
+explicit hash-verified source overlays. No native build was needed or performed.
+This does not establish installed owner delivery or physical input acceptance;
+Qt mouse events exercised the native GUI. The owner payload and shortcut remain
+unchanged, with grouped delivery deferred to 7.8.14d.
+
+The owner UI DOCX activation paragraph is updated. All other ZIP package entries,
+including numbering and styles, are byte-preserved. Full DOCX render succeeded;
+edited page 66 and following page 67 were visually reviewed without clipping or
+numbering loss. Syntax/runtime and CRLF-aware diff checks pass. Generated task
+output under validation/part-type-activation is removed after this evidence is
+recorded. Source publication is tracked in Git.
+
+Next task: 7.8.14c2 Part Type menus and display integration, Excluded/Reference,
+independent Shown/Hidden visibility, saved active-self and direct-child context
+restore, legacy nested-rule reconciliation, and owner UI DOCX synchronization.
+
 ## October 10 Part type native export routing (7.8.14b2b)
 
 App::ComponentExport now keeps evaluated component output alive through Part,

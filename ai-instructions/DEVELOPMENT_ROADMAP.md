@@ -3611,6 +3611,14 @@ operations -> navigators/edit contexts -> migration/downstream acceptance. Exist
     Excluded/Reference labels, distinct Shown/Hidden controls, saved active-self
     overrides and direct-child context restore; reconcile existing nested rules.
     Preserve contextual transparency and update/render the owner UI DOCX.
+    - [ X ] 7.8.14c1 Part Tree double-click activation survives tree refreshes.
+      Native mouse input retains exact occurrence identity through deferred
+      activation, with stale-context and open-task guards. Six new regressions
+      and nine active-editing cases pass in the development fork with source
+      overlays. Owner UI DOCX updated and rendered; owner delivery remains 7.8.14d.
+    - [   ] 7.8.14c2 Integrate Part Type menus and display policy, independent
+      Shown/Hidden visibility, saved active-self settings and direct-child context
+      restoration. Reconcile legacy nested overrides and update/render the DOCX.
   - [   ] 7.8.14d Grouped acceptance, fresh-process restore and compatible owner
     payload delivery; verify saved desktop shortcut and publish milestone evidence.
   The later Add Reference Feature/Promote workflow expansion is separate scope;

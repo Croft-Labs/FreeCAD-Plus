@@ -10,7 +10,9 @@ TestComponentGeometryAccess. require_geometry_inputs guards result publication;
 output_shapes/export_objects provide filtered native-writer inputs, covered by
 TestComponentOutput. App/ComponentExport.h routes the four native export bindings
 through the adapter; TestComponentNativeExport covers direct calls and File Export.
-Part Tree UI integration remains pending.
+Part Tree double-click activation now resolves stable row identities after refresh;
+TestComponentTreeActivation covers native mouse events. Part Type controls and
+saved display-context UI integration remain pending (7.8.14c2).
 
 
 File-root foundation: ComponentModel.ensure_file_container provides explicit,

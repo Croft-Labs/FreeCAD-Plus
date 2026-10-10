@@ -1337,6 +1337,21 @@ class Navigator(QtWidgets.QDockWidget):
             kind = event.type()
             if kind == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:
                 self.drag_start = event.position().toPoint() if hasattr(event, "position") else event.pos()
+            elif kind == QtCore.QEvent.MouseButtonDblClick and event.button() == QtCore.Qt.LeftButton:
+                point = event.position().toPoint() if hasattr(event, "position") else event.pos()
+                index = self.structure.indexAt(point)
+                item = self.structure.itemAt(point)
+                if index.isValid() and index.column() == 0 and item:
+                    # A refresh between clicks invalidates Qt's pressed row.
+                    # Retain only identity; resolve again after event dispatch.
+                    key = self.row_key(item)
+                    context = (self.root_key, self.active_key, tuple(self.active_path))
+                    window = self.mdi.activeSubWindow() if self.mdi else None
+                    self.drag_start = None
+                    QtCore.QTimer.singleShot(0, lambda: self.run(
+                        lambda: self.activate_tree_row(key, context, window)))
+                    event.accept()
+                    return True
             elif kind == QtCore.QEvent.MouseMove and event.buttons() & QtCore.Qt.LeftButton and self.drag_start is not None:
                 point = event.position().toPoint() if hasattr(event, "position") else event.pos()
                 if (point - self.drag_start).manhattanLength() >= QtWidgets.QApplication.startDragDistance():
@@ -1789,6 +1804,19 @@ class Navigator(QtWidgets.QDockWidget):
                 pass
             ids.pop()
         return root, []
+
+    def activate_tree_row(self, key, context, window):
+        """Resolve a deferred tree activation without retaining a Qt row."""
+        current = (self.root_key, self.active_key, tuple(self.active_path))
+        if current != context or (self.mdi and self.mdi.activeSubWindow() != window):
+            return  # A queued click must not activate a different view's row.
+        iterator = QtWidgets.QTreeWidgetItemIterator(self.structure)
+        while iterator.value():
+            item = iterator.value()
+            if self.row_key(item) == key:
+                self.activate_item(item)
+                return
+            iterator += 1
 
     def activate_item(self, item):
         value = item.data(0, QtCore.Qt.UserRole)

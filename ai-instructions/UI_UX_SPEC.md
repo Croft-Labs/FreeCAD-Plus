@@ -2185,6 +2185,12 @@ hidden, including by hiding its parent branch. History places the active /
 suppressed checkbox to the left of the visibility icon and item name. Partial
 checks identify dependent inactivity; visibility does not suppress an item.
 
+Double-click a Part Tree component name or icon to edit that exact occurrence
+and show History in the current tab. Preserve nested/repeated occurrence identity
+when rows refresh between clicks. Discard queued activation if the occurrence is
+removed or the editing context/tab changes; an open modeling task still blocks
+editing another component. Single-click remains selection only.
+
 Double-click a History item's name, icon or status area to open its existing
 feature/operation edit task. Sketches enter Sketcher edit mode directly. Resolve
 the object identity at the double-click so an intervening History refresh cannot
