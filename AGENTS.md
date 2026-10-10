@@ -19,6 +19,14 @@ Central references are relative to this checkout. If unavailable, report the
 limitation once, follow accessible local guidance, and continue independent work.
 Do not claim to have read missing guidance or maintain an independent master copy.
 
+## Archive status — October 10, 2026
+
+The owner requested preserving this fork for reference before a clean upstream
+restart. Treat its implementation backlog below as historical context; do not
+resume feature work automatically. Archive/restore procedures and the preserved
+checkpoint are in [ARCHIVE_REFERENCE.md](ai-instructions/ARCHIVE_REFERENCE.md).
+The clean upstream checkout and feature reimplementation are separate next steps.
+
 ## Project boundaries
 
 - Work on this FreeCAD Plus checkout. Ignore the separately installed FreeCAD;

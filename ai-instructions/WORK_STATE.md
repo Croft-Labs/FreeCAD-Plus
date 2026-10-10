@@ -1,5 +1,15 @@
 # FreeCAD Plus: Build validation handoff
 
+## October 10 reference-fork archive preparation
+
+Owner requested preservation of this fork before a clean restart. Prepared the
+archive reference, entry-point status and focused generated-output ignore rules.
+The working tree and all seven initialized submodule checkouts were clean before
+these documentation/ignore edits. Complete checkout size was approximately 0.82 GiB.
+Archive integrity, restore verification and publication are recorded after capture;
+this preparation record alone does not establish successful archival.
+No application implementation, build, shortcut or settings changed.
+
 ## October 10 unverified implementation review inventory
 
 Created ui-ux-specs/UNVERIFIED_IMPLEMENTED_CHANGES.md at the owner's request.

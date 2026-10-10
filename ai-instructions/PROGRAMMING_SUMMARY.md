@@ -1,5 +1,10 @@
 # FreeCAD Plus: Programming Summary
 
+Archive preparation: the owner requested preserving this fork for later reference
+before a clean upstream restart. Do not resume the historical feature backlog.
+See [archive and recovery reference](ARCHIVE_REFERENCE.md); the UI specifications
+and unverified-change inventory remain available for subsequent review.
+
 UI/UX authority: read [the five owner-intent specifications](UI_UX_SPEC.md) and
 their evidence before any interface work. The former DOCX is archived. Source and
 validation notes below are implementation references, not approval of UI choices.

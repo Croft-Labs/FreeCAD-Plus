@@ -74,3 +74,18 @@ tsupdate_stdout.log
 # pixi environments
 *.egg-info
 .pixi
+
+# Local generated artifacts: prune cache directories from status/search traversal.
+__pycache__/
+*.pyo
+*$py.class
+*.pdb
+*.ilk
+*.idb
+*.tlog/
+# Build/validation output belongs under Documents/_temp/freecad, not this checkout.
+/validation/
+/test-builds/
+# Source snapshots belong beside the checkout, never inside its indexed tree.
+/archives/
+/source-archives/
