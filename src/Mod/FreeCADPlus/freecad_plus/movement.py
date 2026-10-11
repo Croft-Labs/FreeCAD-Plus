@@ -54,6 +54,8 @@ class MoveTask(QtCore.QObject):
         self.axis_points = [None, None]
         self.pivot_snapshot = None
         self.angle_error = None
+        self.point_snapshots = [None, None]
+        self.point_sources = [None, None]
         self.closed = False
         self.busy = False
         self.overlay = None
@@ -122,6 +124,19 @@ class MoveTask(QtCore.QObject):
         self.angle.setProperty('rawValue', 0.0); rotate_layout.addWidget(self.angle)
         rotate_layout.addWidget(QtWidgets.QLabel('Positive follows the axis arrow by the right-hand rule.'))
         self.rotate_form.hide()
+        self.point_form = QtWidgets.QWidget()
+        point_layout = QtWidgets.QVBoxLayout(self.point_form)
+        point_layout.setContentsMargins(0,0,0,0)
+        self.point_buttons = []; self.point_labels = []
+        for index, title in enumerate(('Source', 'Destination')):
+            button = QtWidgets.QPushButton('Use selected ' + title.lower() + ' point')
+            button.clicked.connect(lambda checked=False, i=index: self.run(lambda: self.pick_point(i)))
+            label = QtWidgets.QLabel(title + ': not selected'); label.setWordWrap(True)
+            point_layout.addWidget(button); point_layout.addWidget(label)
+            self.point_buttons.append(button); self.point_labels.append(label)
+        self.point_distance = QtWidgets.QLabel('Choose source and destination points.')
+        self.point_distance.setWordWrap(True); point_layout.addWidget(self.point_distance)
+        layout.addWidget(self.point_form); self.point_form.hide()
         self.reverse = QtWidgets.QCheckBox('Reverse'); layout.addWidget(self.reverse)
         self.message = QtWidgets.QLabel(); self.message.setWordWrap(True); layout.addWidget(self.message)
         layout.addWidget(QtWidgets.QLabel('Preview is a temporary wire outline; existing geometry remains selectable.'))
@@ -287,6 +302,61 @@ class MoveTask(QtCore.QObject):
             else: raise ValueError('Choose a vertex, point, origin or circular edge center')
         return self.parent_frame().inverse().multVec(point)
 
+    def pick_point(self, index):
+        from .panel import identity
+        point = self.selected_point()
+        obj, sub = self.selected_reference()
+        if not all(math.isfinite(v) for v in point): raise ValueError('Choose a finite point')
+        self.point_snapshots[index] = point
+        self.point_sources[index] = (identity(obj), sub, tuple(identity(o) for o in obj.getSubObjectList(sub)))
+        title = ('Source', 'Destination')[index]
+        self.point_labels[index].setText(title + ' (parent): ' + ', '.join(
+            App.Units.Quantity(v, App.Units.Length).UserString for v in point))
+        self.update_preview()
+
+    def check_points(self):
+        from .panel import lookup, identity
+        for reference in self.point_sources:
+            if reference is None: continue
+            ref, sub, chain = reference
+            try:
+                obj = lookup(ref)
+                if tuple(identity(o) for o in obj.getSubObjectList(sub)) != chain:
+                    raise ValueError('Reference path changed')
+                if not visible_reference(obj, sub): raise ValueError('Reference is hidden')
+                target = obj.getSubObject(sub, 1) if sub else obj
+                if target is None: raise ValueError('Reference was deleted')
+                if target.TypeId not in ('App::Origin', 'App::Placement', 'PartDesign::CoordinateSystem'):
+                    shape = Part.getShape(obj, sub, needSubElement=True)
+                    if shape.isNull() or not (shape.ShapeType == 'Vertex' or
+                        (shape.ShapeType == 'Edge' and isinstance(shape.Curve, Part.Circle))):
+                        raise ValueError('Point is no longer available')
+            except (ValueError, RuntimeError, ReferenceError) as error:
+                raise ValueError('A picked point is unavailable; pick it again or reset movement inputs') from error
+
+    def point_preview(self, overlay):
+        frame = self.parent_frame()
+        points = [frame.multVec(p) for p in self.point_snapshots if p is not None]
+        if not points: return
+        node = coin.SoSeparator()
+        style = coin.SoDrawStyle(); style.pointSize = 9; style.setOverride(True); node.addChild(style)
+        coords = coin.SoCoordinate3(); coords.point.setValues(0,len(points),[tuple(p) for p in points]); node.addChild(coords)
+        node.addChild(coin.SoPointSet())
+        if len(points) == 2:
+            vector = points[1]-points[0]
+            self.point_distance.setText('Distance: ' + App.Units.Quantity(vector.Length, App.Units.Length).UserString)
+            if vector.Length > 1e-9:
+                direction = App.Vector(vector).normalize()
+                side = direction.cross(App.Vector(0,0,1))
+                if side.Length < 1e-6: side = direction.cross(App.Vector(0,1,0))
+                side.normalize(); length = vector.Length
+                arrow = [points[0], points[1], points[1]-direction*(length*.18)+side*(length*.08),
+                         points[1], points[1]-direction*(length*.18)-side*(length*.08)]
+                line = coin.SoSeparator(); c = coin.SoCoordinate3()
+                c.point.setValues(0,5,[tuple(p) for p in arrow]); line.addChild(c)
+                lines = coin.SoLineSet(); lines.numVertices.setValue(5); line.addChild(lines); node.addChild(line)
+        overlay.addChild(node)
+
     def pick_direction(self):
         self.direction_snapshot = self.selected_line()[1]
         self.direction.setCurrentIndex(4); self.update_preview()
@@ -332,6 +402,11 @@ class MoveTask(QtCore.QObject):
     def motion(self):
         if self.workflow.currentIndex() == 0:
             return App.Placement(self.delta(), App.Rotation())
+        if self.workflow.currentIndex() == 2:
+            self.check_points()
+            if all(p is None for p in self.point_snapshots): return App.Placement()
+            if any(p is None for p in self.point_snapshots): raise ValueError('Choose both source and destination points')
+            return App.Placement(self.point_snapshots[1]-self.point_snapshots[0], App.Rotation())
         if self.workflow.currentIndex() != 1:
             raise ValueError('This movement workflow awaits its next implementation increment')
         if self.angle_error or not self.angle.hasAcceptableInput():
@@ -401,18 +476,22 @@ class MoveTask(QtCore.QObject):
         self.clear_preview()
         try:
             owner, links = self.check()
-            motion = self.motion()
+            pointing = self.workflow.currentIndex() == 2
+            if pointing: self.check_points()
+            incomplete = pointing and any(p is None for p in self.point_snapshots)
+            motion = App.Placement() if incomplete else self.motion()
             rotating = self.workflow.currentIndex() == 1
             if rotating: self.rotation_axis()
-            if not links or (motion.isSame(App.Placement(),1e-12) and not rotating):
-                self.message.setText('Select components and set a direction and distance.'); return
+            has_points = pointing and any(p is not None for p in self.point_snapshots)
+            if not links or (motion.isSame(App.Placement(),1e-12) and not rotating and not has_points):
+                self.message.setText('Select components and set movement inputs.'); return
             root = document.validate(self.doc)
             parents = isolation.occurrences(self.doc, owner) if owner != root else [()]
             overlay = coin.SoSeparator()
             pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE; overlay.addChild(pick)
             style = coin.SoDrawStyle(); style.style = coin.SoDrawStyle.LINES; style.lineWidth = 2; style.setOverride(True); overlay.addChild(style)
             material = coin.SoBaseColor(); material.rgb = (0.1, 0.8, 1.0); material.setOverride(True); overlay.addChild(material)
-            for parent in parents:
+            for parent in (() if incomplete else parents):
                 frame = hierarchy.world_placement(self.doc, parent) if parent else App.Placement()
                 transform = frame.multiply(motion).multiply(frame.inverse())
                 for link in links:
@@ -424,8 +503,10 @@ class MoveTask(QtCore.QObject):
                     source = coin.SoInput(); source.setBuffer(shape.writeInventor())
                     overlay.addChild(coin.SoDB.readAll(source))
             if rotating: self.axis_preview(overlay, links)
+            if pointing: self.point_preview(overlay)
             self.scene.addChild(overlay); self.overlay = overlay
-            self.message.setText('Preview only. Apply commits one group movement.')
+            self.message.setText('Choose both source and destination points.' if incomplete else
+                                 'Preview only. Apply commits one group movement.')
         except (ValueError, RuntimeError, ReferenceError) as error:
             self.message.setText(str(error))
 
@@ -436,9 +517,14 @@ class MoveTask(QtCore.QObject):
         self.axis_snapshot = None; self.axis_points = [None,None]; self.pivot_snapshot = None
         self.axis.setCurrentIndex(0); self.angle.setProperty('rawValue',0.0)
         self.resolved_axis.setText('Choose an axis.')
+        self.point_snapshots = [None,None]; self.point_sources = [None,None]
+        for label, title in zip(self.point_labels, ('Source', 'Destination')):
+            label.setText(title + ': not selected')
+        self.point_distance.setText('Choose source and destination points.')
         method = self.workflow.currentIndex()
         self.translate_form.setVisible(method == 0); self.rotate_form.setVisible(method == 1)
-        self.reverse.setEnabled(method in (0,1))
+        self.point_form.setVisible(method == 2)
+        self.reverse.setVisible(method in (0,1)); self.reverse.setEnabled(method in (0,1))
         self.busy = False; self.update_preview()
 
     def apply(self):
