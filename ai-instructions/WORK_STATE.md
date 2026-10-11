@@ -3,7 +3,7 @@
 ## Authorized objective and stopping boundary
 
 Continue Group 1 only. **G1.7b3h Loft/Pipe reference admission and its planned
-runtime checks are complete.** Finish final records/publication and stop; do not
+runtime checks are complete.** Publication is verified. Stop here; do not
 repeat passed suites or start another operation. Next: shared dress-up and
 transformed-feature input collectors. Group 1/G1.7b3 remain incomplete. Check latest
 owner conversations for new design questions; operation redesign is outside this work.
@@ -55,7 +55,9 @@ payload byte-for-byte; 143 local links in changed Markdown resolve; whitespace c
 pass. Task validation artifacts `g1_7b3h_sweeps` were deleted after recording these
 results; the development build is retained. No further runtime work is required.
 
-**Publication:** prepared for the authorized origin milestone push.
+**Publication:** source milestone `0fdfdbf08a48d3418e8a03fdb056a0a2320ebe67`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This increment is complete; stop here.
 
 ## G1.7b3g separate attachment and Extrude inputs - October 11, 2026
 
