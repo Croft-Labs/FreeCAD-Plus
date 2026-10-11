@@ -151,6 +151,11 @@ public:
     {
         ActiveObjects.setObject(o, n, subname);
     }
+    /// Explicit, transient catalog selection and external editing context.
+    /// Neither context changes document ownership, visibility or preferences.
+    void setDocumentContext(App::DocumentObject* catalog, App::DocumentObject* editRoot);
+    bool containsDocumentContext(const App::DocumentObject* object) const;
+
     bool hasActiveObject(const char* n) const
     {
         return ActiveObjects.hasObject(n);
@@ -209,6 +214,7 @@ private:
     ActiveObjectList ActiveObjects;
     using Connection = boost::signals2::connection;
     Connection connectDelObject;  // remove active object upon delete.
+    Connection connectDelDocument;  // includes external document contexts.
 
     friend class MainWindow;
 };

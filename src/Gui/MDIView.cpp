@@ -20,6 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <algorithm>
+#include <Base/Exception.h>
+#include <App/DocumentObject.h>
 #include <boost/signals2.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <QAction>
@@ -66,8 +69,15 @@ MDIView::MDIView(Gui::Document* pcDocument, QWidget* parent, Qt::WindowFlags wfl
 
     if (pcDocument) {
         // NOLINTBEGIN
-        connectDelObject = pcDocument->signalDeletedObject.connect(
-            std::bind(&ActiveObjectList::objectDeleted, &ActiveObjects, sp::_1)
+        connectDelObject = Application::Instance->signalDeletedObject.connect(
+            [this](const ViewProvider& vp) {
+                if (auto objectVp = dynamic_cast<const ViewProviderDocumentObject*>(&vp)) {
+                    ActiveObjects.objectDeleted(*objectVp);
+                }
+            }
+        );
+        connectDelDocument = Application::Instance->signalDeleteDocument.connect(
+            std::bind(&ActiveObjectList::documentDeleted, &ActiveObjects, sp::_1)
         );
         assert(connectDelObject.connected());
         // NOLINTEND
@@ -94,9 +104,8 @@ MDIView::~MDIView()
             }
         }
     }
-    if (connectDelObject.connected()) {
-        connectDelObject.disconnect();
-    }
+    connectDelObject.disconnect();
+    connectDelDocument.disconnect();
 
     if (pythonObject) {
         Base::PyGILStateLocker lock;
@@ -535,3 +544,34 @@ void MDIView::setWindowTitle(const QString& title)
 }
 
 #include "moc_MDIView.cpp"
+
+void MDIView::setDocumentContext(App::DocumentObject* catalog, App::DocumentObject* editRoot)
+{
+    if (catalog && (!catalog->isAttachedToDocument() || catalog->getDocument() != getAppDocument())) {
+        throw Base::ValueError("The catalog must belong to this view's document");
+    }
+    if (editRoot) {
+        if (!catalog || !editRoot->isAttachedToDocument()) {
+            throw Base::ValueError("Editing requires an attached catalog definition");
+        }
+        auto objects = catalog->getOutListRecursive();
+        if (editRoot != catalog && std::find(objects.begin(), objects.end(), editRoot) == objects.end()) {
+            throw Base::ValueError("The editing definition is not in this catalog");
+        }
+    }
+    ActiveObjects.setObject(catalog, "SelectionContext", "", HighlightMode::UserDefined, false);
+    ActiveObjects.setObject(editRoot, "ExternalEditContext", "", HighlightMode::UserDefined, false);
+}
+
+bool MDIView::containsDocumentContext(const App::DocumentObject* object) const
+{
+    auto catalog = getActiveObject<App::DocumentObject*>("SelectionContext");
+    if (!catalog || catalog->getDocument() != getAppDocument() || !object) {
+        return false;
+    }
+    if (catalog == object) {
+        return true;
+    }
+    auto objects = catalog->getOutListRecursive();
+    return std::find(objects.begin(), objects.end(), object) != objects.end();
+}

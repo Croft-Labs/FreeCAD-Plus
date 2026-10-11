@@ -145,6 +145,6 @@ if(BUILD_WEB)
 endif(BUILD_WEB)
 
 # Opt-in component pilot; retain all original workbench modules.
-if(BUILD_PART AND BUILD_PARTDESIGN AND BUILD_SKETCHER)
+if(BUILD_PART AND BUILD_PART_DESIGN AND BUILD_SKETCHER)
     add_subdirectory(FreeCADPlus)
 endif()

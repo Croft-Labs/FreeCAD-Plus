@@ -66,6 +66,7 @@ public:
     Py::Object supportMessage(const Py::Tuple&);
     Py::Object fitAll(const Py::Tuple&);
     Py::Object setActiveObject(const Py::Tuple&);
+    Py::Object setDocumentContext(const Py::Tuple&);
     Py::Object getActiveObject(const Py::Tuple&);
     Py::Object cast_to_base(const Py::Tuple&);
 

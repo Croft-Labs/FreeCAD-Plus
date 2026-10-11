@@ -64,6 +64,9 @@ App::DocumentObject* ActiveObjectList::getObject(
 
 void ActiveObjectList::setHighlight(const ObjectInfo& info, HighlightMode mode, bool enable)
 {
+    if (!info.highlight) {
+        return;
+    }
     auto obj = getObject(info, false);
     if (!obj) {
         return;
@@ -174,10 +177,19 @@ bool Gui::ActiveObjectList::hasObject(App::DocumentObject* obj, const char* name
 }
 
 void Gui::ActiveObjectList::setObject(
+    App::DocumentObject* obj, const char* name, const char* subname,
+    const Gui::HighlightMode& mode
+)
+{
+    setObject(obj, name, subname, mode, true);
+}
+
+void Gui::ActiveObjectList::setObject(
     App::DocumentObject* obj,
     const char* name,
     const char* subname,
-    const Gui::HighlightMode& mode
+    const Gui::HighlightMode& mode,
+    bool highlight
 )
 {
     auto it = _ObjectMap.find(name);
@@ -187,7 +199,7 @@ void Gui::ActiveObjectList::setObject(
     }
 
     if (!obj) {
-        if (_Doc) {
+        if (_Doc && highlight) {
             _Doc->signalActivatedViewProvider(nullptr, name);
         }
         return;
@@ -203,11 +215,12 @@ void Gui::ActiveObjectList::setObject(
         return;
     }
 
+    info.highlight = highlight;
     _ObjectMap[name] = info;
     setHighlight(info, mode, true);
 
     auto vp = freecad_cast<ViewProviderDocumentObject*>(Application::Instance->getViewProvider(obj));
-    if (vp) {
+    if (vp && highlight) {
         vp->getDocument()->signalActivatedViewProvider(vp, name);
     }
 }
@@ -236,6 +249,9 @@ void ActiveObjectList::objectDeleted(const ViewProviderDocumentObject& vp)
 App::DocumentObject* ActiveObjectList::getObjectWithExtension(const Base::Type extensionTypeId) const
 {
     for (const auto& pair : _ObjectMap) {
+        if (!pair.second.highlight) {
+            continue;  // Routing context is not a modeling active object.
+        }
         App::DocumentObject* obj = getObject(pair.second, true);
         if (obj && obj->hasExtension(extensionTypeId)) {
             return obj;
@@ -243,4 +259,16 @@ App::DocumentObject* ActiveObjectList::getObjectWithExtension(const Base::Type e
     }
 
     return nullptr;
+}
+
+void ActiveObjectList::documentDeleted(const Document& document)
+{
+    for (auto it = _ObjectMap.begin(); it != _ObjectMap.end();) {
+        if (it->second.obj->getDocument() == document.getDocument()) {
+            it = _ObjectMap.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
 }

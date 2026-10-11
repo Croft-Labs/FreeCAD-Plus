@@ -1,6 +1,6 @@
 # Component/document architecture
 
-Status: G1.6b domestic unused-model increment validated; external unused-model integration remains open, October 10, 2026.
+Status: G1.6b domestic/external unused-model editing validated in the native development build, October 10, 2026.
 The native service module and panel foundation are opt-in; the complete panel, broader conversion and later Group 1
 behavior below remain target design until their roadmap stages are completed.
 Engineering choices below implement confirmed behavior; they do not approve
@@ -85,7 +85,7 @@ must not turn them into permanent placements or authored visibility changes.
 `show_panel()` opt-in. One Components dock contains Models, Part Tree and History.
 This is a developer entry point, not an owner-build delivery, startup replacement,
 or authorization to remove the native tree/workbenches or create new toolbar groups.
-G1.6b/c retain the rest of the confirmed panel work.
+G1.6c retains the remaining confirmed panel actions.
 
 Models projects domestic definitions and nested imported-file groups using qualified
 external names. Part Tree projects full native occurrence paths beneath one file
@@ -111,25 +111,28 @@ place, preserving expansion and avoiding repeated row reconstruction. There is n
 idle refresh timer. Pending native transactions defer projection until commit/abort.
 The panel's close path unregisters all observers/context callbacks and stops updates.
 
-### Unused domestic definitions (G1.6b partial)
+### Unused definitions (G1.6b)
 
-`editing.edit_unused(doc, definition)` isolates a domestic definition in the current
-view. The panel adds one temporary last child beneath the pinned file row, labeled
+`editing.edit_unused(doc, definition)` isolates a domestic or imported definition in
+the current view, retaining the defining-file qualifier for external models. The panel adds one temporary last child beneath the pinned file row, labeled
 `Component name (unused model)`, with active fill/bold text and no drag flag. Existing
 file/occurrence rows are gray but selectable and still support Edit. History routes
 to the definition's native sketches/features; native Bodies stay out of the panel.
 The Sketch/Pad adapters use the same owning-document transactions as placed edits.
 
 [isolation.py](../src/Mod/FreeCADPlus/freecad_plus/isolation.py) owns transient view
-sessions. It copies the native definition's Coin display graph, forcing only the
-copied top-level display switch. It temporarily wraps the native ObjectGroup,
+sessions. A transient separator borrows the definition's live native display
+children, bypassing only its top-level visibility switch. Native child identities,
+picking metadata, transforms and editor preview updates remain live. Detached deep
+copies are unsuitable because they lose native pick-path identity. Isolation wraps
+native ObjectGroup,
 GroupOnTop and RootDimensions in hidden scene switches. Keeping the original groups
 alive preserves native add/remove behavior. Native EditingRoot remains available for
 the Sketch editor. No App objects, instance links, Visibility properties, schema
 fields or Undo entries are created by isolation. Save therefore persists definition
 edits without persisting a temporary occurrence or hidden assembly state.
 
-Relevant native observer bursts refresh the detached display once per queued update;
+Relevant native observer bursts reconcile the display wrapper once per queued update;
 there is no idle polling. Commit/abort defers incomplete graphs. Each session belongs
 to one native view and resolves the definition by document UUID/object Name/ID.
 Changing Edit, closing the panel/view/document, losing the definition/import, or
@@ -139,17 +142,48 @@ reopening isolation. Native feature editing must finish before switching context
 The implementation is checked against 1.1.4's scene-group layout and refuses an
 unrecognized definition display before replacing an existing context.
 
-**Open boundary:** in-place Edit of an unused external definition is refused before
-mutation; existing domestic isolation survives that refusal. A failed exploratory
-check showed native source selection activating the defining-file tab. Native
-Document::trySetEdit also requires a local parent (an external subobject reached
-through a placed link is supported). The next G1.6b increment must integrate external
-unused selection/native editors without adding saveable temporary links, changing
-owner preferences or redirecting the source's geometry ownership. The external
-qualifier remains in Models; prior placed-external editing remains supported. Native
-selection of an unplaced external catalog item can still activate its source tab.
-This limitation does not change the confirmed UI requirement or mark G1.6b complete.
-Component windows/remaining actions are G1.6c; Part Type/fading are G1.7.
+### Explicit native document contexts (G1.6b integration)
+
+The native development build passed the bounded G1.6b acceptance. The opt-in panel
+binds a view to its native file-root catalog with
+`view.setDocumentContext(catalog, editRoot=None)`. The catalog must belong to that
+view's document; an optional editing root must be an attached catalog dependency.
+These are silent, transient ActiveObjectList entries, excluded from generic active
+Body/Part discovery. They create no document objects, saved properties, highlighting
+side effects or preference changes. Ordinary views without a context retain native
+selection and editing behavior.
+
+Tree selection stays in the active view only for objects reachable from its explicit
+catalog context. Unrelated objects retain ordinary view synchronization. An unused
+external definition additionally supplies the explicit editing root; native setEdit
+accepts that parent only in the active owning view and while it remains reachable.
+Other external-parent calls retain the original refusal. The existing native editor
+still edits the source feature and source document; no temporary native link is
+inserted into the assembly. History double-click uses `editing.edit_feature` to
+resolve the current component and open its native editor through the correct path.
+It starts the native active command transaction, matching a native feature double
+click; the dialog owns commit/cancel. Existing transactions are not consumed, and
+failed editor entry aborts only the new transaction. Source-owned Pad Undo/Redo is
+verified after accepting a real parameter edit.
+
+Native picking first retains ordinary document-map lookup. If it finds no provider,
+Document resolves live foreign nodes only when the pick path contains the matching
+view's scene root, that view has an explicit external editing root still reachable
+from its catalog, and the provider belongs to that root's dependency graph. This
+supports both mouse selection and native pick APIs without global foreign-object
+selection or a temporary document object.
+
+Changing component Edit clears the external editing root while retaining panel
+selection context. Closing the panel clears its visited views' contexts. Native
+object/document deletion clears references across views before freeing external
+objects; existing native source-deletion handling closes an active feature editor.
+Imported catalog membership is rechecked before native editing. Per-view contexts
+are neither cloned into a new view nor serialized. The remaining component-window
+and context-action work is G1.6c; Part Type/fading is G1.7.
+
+The original official 1.1.4 binary lacks this API. With that runtime, domestic
+unused editing remains supported but external unused Edit reports the required
+native document-context build; it does not start a partial isolation session.
 
 ### Persistence contract
 
@@ -413,3 +447,11 @@ The native source establishes reused mechanisms; the pilot tests establish the b
 - [Panel interaction acceptance](../src/Mod/FreeCADPlus/TestComponentPanel.py): actual
   Qt single/double clicks, native occurrence selection, tab/stale-row guards, external
   Edit, origin visibility Undo/save/reopen and observer cleanup/idle behavior.
+
+- [Native view context](../src/Gui/MDIView.cpp),
+  [Python entry point](../src/Gui/MDIViewPy.cpp),
+  [active-object lifetime](../src/Gui/ActiveObjectList.cpp),
+  [native editor routing](../src/Gui/Document.cpp) and
+  [tree view synchronization](../src/Gui/Tree.cpp): explicit, transient catalog routing.
+- [Unused-model acceptance](../src/Mod/FreeCADPlus/TestUnusedModels.py): domestic and
+  external selection/editing, source ownership/save, isolation, view and deletion lifecycle.

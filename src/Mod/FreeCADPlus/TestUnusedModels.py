@@ -104,25 +104,148 @@ class TestUnusedModels(unittest.TestCase):
         self.assertEqual({o.Name:o.ID for o in self.doc.Objects}, expected['ids'])
         self.assertFalse(any(r.kind == 'unused' for _, r in self.rows(1)))
 
-    def test_external_unused_refused_without_mutation_or_context_change(self):
+    def external_fixture(self):
+        if not hasattr(Gui.activeDocument().activeView(), 'setDocumentContext'):
+            self.skipTest('Requires the native document-context build')
         document.save_document(self.doc, self.output/'Assembly.cadprt')
         source = document.new_document('Hardware')
         definition = hierarchy.create_definition(source, 'Unused screw')
         document.save_document(source, self.output/'Hardware.cadprt')
         external.import_file(self.doc, source)
+        document.save_document(self.doc)
         App.setActiveDocument(self.doc.Name); settle()
-        self.activate()
+        return source, definition
+
+    def test_external_unused_selection_edit_undo_save(self):
+        source, definition = self.external_fixture()
         original = visibility(source)
         ids = {o.Name:o.ID for o in self.doc.Objects}
-        session = isolation.current(Gui.activeDocument().activeView())
-        with self.assertRaisesRegex(ValueError, 'defining file'):
-            self.widget.edit_row(self.model(definition).data(0, panel._ROLE))
-        self.assertEqual(editing.context_path(self.doc), (self.unused, ()))
+        undo = self.doc.UndoCount
+        before = editing.context_path(self.doc)
+        prefs = App.ParamGet('User parameter:BaseApp/Preferences/TreeView')
+        sync = prefs.GetBool('SyncView', True)
+        self.click(0, self.model(definition))
+        QtTest.QTest.qWait(350)  # Native tree selection synchronization is deferred.
         self.assertEqual(App.ActiveDocument, self.doc)
-        self.assertIs(isolation.current(Gui.activeDocument().activeView()), session)
-        self.assertEqual(visibility(source), original)
+        self.assertEqual(editing.context_path(self.doc), before)
+        self.click(0, self.model(definition), double=True)
+        QtTest.QTest.qWait(350)
+        self.assertEqual(editing.context_path(self.doc), (definition, ()))
+        self.assertIn('Unused screw (Hardware) (unused model)', [r.label for _,r in self.rows(1)])
+        self.assertEqual(self.doc.UndoCount, undo)
+        sketch, pad = self.geometry()
+        self.assertEqual(pad.Document, source)
+        name = pad.Name
+        source.undo(); source.recompute(); settle()
+        self.assertIsNone(source.getObject(name))
+        source.redo(); source.recompute(); settle()
+        pad = source.getObject(name)
+        self.assertAlmostEqual(pad.Shape.Volume, 63 * 3.141592653589793)
+        view = Gui.activeDocument().activeView()
+        view.viewAxonometric(); view.fitAll(); QtTest.QTest.qWait(300)
+        Gui.Selection.clearSelection()
+        viewport = view.graphicsView().viewport()
+        QtTest.QTest.mouseClick(viewport, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, viewport.rect().center())
+        QtTest.QTest.qWait(350)
+        self.assertTrue(Gui.Selection.getSelectionEx(source.Name), 'The isolated external geometry must remain selectable')
+        self.assertEqual(App.ActiveDocument, self.doc)
         self.assertEqual({o.Name:o.ID for o in self.doc.Objects}, ids)
-        self.assertIn('Unused screw (Hardware)', [r.label for _,r in self.rows(0)])
+        self.assertEqual({name:visibility(source)[name] for name in original}, original)
+        external.save_definition(definition)
+        document.save_document(self.doc)
+        expected = {'assembly': ids, 'source': {o.Name:o.ID for o in source.Objects},
+                    'definition': definition.Name, 'pad': pad.Name, 'source_uid': str(source.Uid)}
+        (self.output/'external-expected.json').write_text(json.dumps(expected))
+        self.assertEqual(prefs.GetBool('SyncView', True), sync)
+        self.assertEqual(App.ActiveDocument, self.doc)
+        editing.edit_file(self.doc); settle()
+        self.assertFalse(isolation._sessions)
+
+    def test_external_history_native_editors_and_context_guards(self):
+        source, definition = self.external_fixture()
+        self.widget.edit_row(self.model(definition).data(0, panel._ROLE)); settle()
+        sketch, pad = self.geometry()
+        gui = Gui.getDocument(self.doc.Name)
+        for feature in (sketch, pad):
+            item = next(item for item,row in self.rows(2) if row.ref == panel.identity(feature))
+            self.click(2, item, double=True)
+            QtTest.QTest.qWait(250)
+            self.assertIsNotNone(gui.getInEdit(), self.widget.message.text())
+            self.assertEqual(gui.getInEdit().Object, feature)
+            self.assertEqual(App.ActiveDocument, self.doc)
+            with self.assertRaisesRegex(ValueError, 'Finish'):
+                editing.edit_file(self.doc)
+            if feature == pad:
+                length = next(w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+                              if w.objectName() == 'lengthEdit' and w.isVisible())
+                self.assertTrue(length.setProperty('rawValue', 9.0))
+                buttons = [box.button(QtWidgets.QDialogButtonBox.Ok)
+                           for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox)]
+                ok = next(button for button in buttons if button and button.isVisible())
+                QtTest.QTest.mouseClick(ok, QtCore.Qt.LeftButton); settle()
+                self.assertIsNone(gui.getInEdit())
+                self.assertEqual(pad.Length.Value, 9)
+                source.undo(); source.recompute(); settle()
+                self.assertEqual(pad.Length.Value, 7)
+                source.redo(); source.recompute(); settle()
+                self.assertEqual(pad.Length.Value, 9)
+            else:
+                gui.resetEdit(); settle()
+            self.assertEqual(editing.context_path(self.doc), (definition, ()))
+        self.assertTrue(pad.Shape.isValid())
+        # Ordinary native external-parent calls remain refused without opt-in.
+        editing.edit_file(self.doc); settle()
+        body = pad.getParentGeoFeatureGroup()
+        self.assertFalse(gui.setEdit(definition, 0, body.Name+'.'+sketch.Name+'.'))
+        self.assertIsNone(gui.getInEdit())
+        view = gui.activeView()
+        with self.assertRaises(ValueError):
+            view.setDocumentContext(document.validate(source), definition)
+        other = document.new_document('Unrelated')
+        App.setActiveDocument(self.doc.Name); settle()
+        with self.assertRaises(ValueError):
+            view.setDocumentContext(self.root, document.validate(other).Definitions[0])
+        self.assertIsNone(view.getActiveObject('ExternalEditContext'))
+
+    def test_external_isolation_close_source_and_panel_cleanup(self):
+        source, definition = self.external_fixture()
+        editing.edit_unused(self.doc, definition); settle()
+        sketch, pad = self.geometry()
+        view = Gui.activeDocument().activeView()
+        session = isolation.current(view)
+        editing.edit_feature(self.doc, sketch); settle()
+        self.assertIsNotNone(Gui.getDocument(self.doc.Name).getInEdit())
+        # Native beforeDelete must close the editor before deleting its source VP.
+        App.closeDocument(source.Name); settle()
+        self.assertIsNone(Gui.getDocument(self.doc.Name).getInEdit())
+        self.assertTrue(session.closed)
+        self.assertFalse(isolation._sessions)
+        self.widget.close(); settle()
+        self.assertIsNone(view.getActiveObject('SelectionContext'))
+        self.assertIsNone(view.getActiveObject('ExternalEditContext'))
+        self.widget = panel.show_panel()
+
+    def test_external_context_is_per_view_and_rechecks_removed_import(self):
+        source, definition = self.external_fixture()
+        editing.edit_unused(self.doc, definition); settle()
+        first = Gui.activeDocument().activeView()
+        Gui.activeDocument().createView('Gui::View3DInventor'); settle()
+        second = Gui.activeDocument().activeView()
+        self.assertIsNone(second.getActiveObject('ExternalEditContext'))
+        self.assertEqual(first.getActiveObject('ExternalEditContext'), definition)
+        # Removing the catalog dependency invalidates the first view's context.
+        with document.transaction(self.doc, 'Remove import'):
+            self.root.Imports = []
+            self.root.ImportIdentities = "[]"
+        settle()
+        self.assertFalse(isolation._sessions)
+        self.assertIsNone(first.getActiveObject('ExternalEditContext'))
+        self.doc.undo(); self.doc.recompute(); settle()
+        self.assertIsNone(first.getActiveObject('ExternalEditContext'))
+        self.widget.close(); settle()
+        self.assertIsNone(first.getActiveObject('SelectionContext'))
+        self.assertIsNone(second.getActiveObject('SelectionContext'))
+        self.widget = panel.show_panel()
 
     def test_isolation_is_per_view_and_panel_close_cleans_up(self):
         first_view = Gui.activeDocument().activeView()
@@ -193,3 +316,31 @@ def verify_fresh_process(output):
     assert abs(doc.getObject(expected['pad']).Shape.Volume - 81*3.141592653589793) < 1e-8
     document.save_document(doc, folder/'Unused-edited.cadprt')
     widget.close(); App.closeDocument(doc.Name)
+
+
+def verify_external_fresh_process(output):
+    import hashlib
+    folder = Path(output)/'test_external_unused_selection_edit_undo_save'
+    expected = json.loads((folder/'external-expected.json').read_text())
+    assembly = folder/'Assembly.cadprt'
+    checksum = hashlib.sha256(assembly.read_bytes()).hexdigest()
+    doc = document.open_document(assembly)
+    source = next(d for d in App.listDocuments().values() if str(d.Uid) == expected['source_uid'])
+    assert {o.Name:o.ID for o in doc.Objects} == expected['assembly']
+    assert {o.Name:o.ID for o in source.Objects} == expected['source']
+    definition = source.getObject(expected['definition'])
+    widget = panel.show_panel(); settle()
+    assert not isolation._sessions
+    editing.edit_unused(doc, definition)
+    with document.transaction(source, 'Fresh external unused edit'):
+        source.getObject(expected['pad']).Length = 9
+    source.recompute(); settle()
+    assert abs(source.getObject(expected['pad']).Shape.Volume - 81*3.141592653589793) < 1e-8
+    external.save_definition(definition)
+    assert hashlib.sha256(assembly.read_bytes()).hexdigest() == checksum
+    assert App.ActiveDocument == doc
+    widget.close(); App.closeDocument(doc.Name); App.closeDocument(source.Name)
+    doc = document.open_document(assembly)
+    source = next(d for d in App.listDocuments().values() if str(d.Uid) == expected['source_uid'])
+    assert source.getObject(expected['pad']).Length.Value == 9
+    App.closeDocument(doc.Name); App.closeDocument(source.Name)

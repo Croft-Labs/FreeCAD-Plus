@@ -2,13 +2,75 @@
 
 ## Authorized objective and stopping boundary
 
-Owner authorized Group 1 one reviewable task at a time and instructed stopping after
-the current checks pass. **The domestic portion of G1.6b is validated; stop here.**
-G1.6b remains incomplete. Next: **unused external-definition selection and native
-feature editing in the assembly tab**, preserving defining-file ownership and
-save-safe isolation. Do not start G1.6c component tabs/actions or another group yet.
+The current **G1.6b unused-model increment is complete**. Owner authorized continuing
+Group 1 and stopping after this increment's checks. Next is **G1.6c: component
+windows and remaining confirmed panel actions**. That implementation has not started.
+Do not repeat passing tests or rotate to other features without a new relevant need
+or owner continuation.
+
+## G1.6b external completion and native acceptance — October 10, 2026
+
+**Implementation:** unused external definitions stay in the assembly view for Models
+selection, Edit, native Sketch/Pad History editing and viewport picking. Native
+per-view catalog/edit contexts validate ownership and imported reachability, remain
+silent/transient, and clear safely on view/panel/source/object teardown. A view-only
+separator borrows live native display children rather than detached copies, preserving
+picking and live editor preview. History starts the same active transaction as native
+feature double-click, so accepted parameter edits support source-owned Undo/Redo.
+No temporary App objects/links, visibility writes by isolation or schema changes.
+The [architecture](ARCHITECTURE.md#unused-definitions-g16b) owns the contract.
+
+**Build:** native development targets passed in
+`C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_1.1.4_context`.
+Release-pinned LibPack 3.1.1.3 was taken from this tag's Windows workflow; local tools
+were MSVC 19.44, CMake 3.31.6, Ninja, Python 3.12 and Qt/PySide 6.8.3. The release
+preset kept default workbench options; three compile jobs and native precompiled
+headers were used. One internal MSVC C1001 in unchanged TaskDressUpParameters.cpp
+passed an unchanged single-file retry; the remaining build then passed.
+
+Application/Part/Sketcher/PartDesign native libraries and script targets were built,
+plus FreeCADPlusScripts and the standard materials, appearance/models, Show,
+stylesheet/interface and Part Design data targets listed in DEVELOPMENT_GUIDE.
+The initial narrow payload lacked material data and Show/styles; those setup gaps
+were corrected before acceptance. Native configuration also exposed the old Plus
+module condition `BUILD_PARTDESIGN`; src/Mod/CMakeLists.txt now correctly uses
+`BUILD_PART_DESIGN`, so its script target participates in the native build.
+
+**Validation:** the final focused run passed **9/9** cases, and the combined pilot,
+legacy conversion, hierarchy, external-file, panel and unused-model suite passed
+**38/38**, with **zero skips**. All loaded modeling/interface modules came from the
+new development build. Two actual workflow failures were found and fixed: History
+entry lacked the native command transaction, and detached display copies were not
+natively pickable. Tests now cover source-owned accepted Pad Undo/Redo, real viewport
+selection retaining the assembly tab, per-view contexts, invalid/removed imports,
+ordinary external-parent refusal, and closing the source during a native Sketch edit.
+
+Fresh-process domestic/external reopen checks passed with object identities intact.
+An external Pad changed from 7 to 9 mm and saved through its defining file; the
+assembly archive checksum stayed unchanged, and another reopen retained 9 mm.
+Normal OpenGL framebuffer captures were inspected: two assembly cylinders before
+isolation, one external cylinder during isolation, clean native Sketch editing,
+a shortened native Pad preview without an old solid, and the original two cylinders
+restored afterward. The qualified temporary Part Tree row was bold/active and last;
+other rows remained gray/selectable. Capture used the normal framebuffer, not
+QOpenGLWidget.grabFramebuffer.
+
+**Packaging/checks:** all seventeen Python source/test files parsed and matched the
+native build's copied payload byte for byte. Diff whitespace and 115 local Markdown
+link targets passed. Task-only profiles, fixtures, logs and captures were removed
+from `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6b_external` after
+recording the results. The extracted pinned LibPack and useful native development
+build remain; the unneeded downloaded LibPack archive was removed.
+
+**Publication/delivery:** milestone commit/push pending. No release, deployment or
+owner-build delivery. This bounded development payload is not full-workbench or
+long-session responsiveness acceptance. The existing owner desktop shortcut was
+not changed; original workbench source/configuration remains intact.
 
 ## G1.6b domestic increment and acceptance - October 10, 2026
+
+Historical checkpoint: its external-editing limitations are resolved by the native
+completion record above; the following preserves the earlier evidence.
 
 **Implementation:** unused domestic definitions support Edit in the current view,
 a temporary last Part Tree child, active fill/bold text, gray selectable assembly
@@ -17,7 +79,7 @@ view-only scene switches while a detached native definition display is shown.
 No temporary App objects, instance links, authored Visibility writes or Undo entries
 are used for isolation. File/placed Edit and panel/view/document close clean up;
 definition removal clears isolation and Undo does not reopen it. The
-[architecture](ARCHITECTURE.md#unused-domestic-definitions-g16b-partial) owns details.
+[architecture](ARCHITECTURE.md#unused-definitions-g16b) owns details.
 
 **Runtime:** all thirty-five combined tests passed in 34.668 seconds using this
 checkout's scripts in the verified 1.1.4 GUI runtime with an isolated profile.

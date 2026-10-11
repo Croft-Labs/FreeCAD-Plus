@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <algorithm>
 #include <tuple>
 #include <memory>
 #include <list>
@@ -658,7 +659,11 @@ bool Document::trySetEdit(Gui::ViewProvider* p, int ModNum, const char* subname)
             _subname = finder.getSubname();
             obj = finder.getObject();
             vp = finder.getViewProvider();
-            if (vp->getDocument() != this) {
+            auto contextView = dynamic_cast<MDIView*>(getActiveView());
+            bool explicitContext = contextView
+                && contextView->getActiveObject<App::DocumentObject*>("ExternalEditContext") == obj
+                && contextView->containsDocumentContext(obj);
+            if (vp->getDocument() != this && !explicitContext) {
                 resetIfEditing();
 
                 return vp->getDocument()->setEdit(vp, ModNum, _subname.c_str());
@@ -673,7 +678,15 @@ bool Document::trySetEdit(Gui::ViewProvider* p, int ModNum, const char* subname)
     // using the current selection before closing the previous edit.
     resetIfEditing();
 
-    d->throwIfNotInMap(obj, getDocument());
+    // An explicit per-view catalog context permits an unplaced external root.
+    // Ordinary setEdit calls retain their original local-parent requirement.
+    auto contextView = dynamic_cast<MDIView*>(getActiveView());
+    bool externalContext = contextView && Application::Instance->activeDocument() == this
+        && contextView->getActiveObject<App::DocumentObject*>("ExternalEditContext") == obj
+        && contextView->containsDocumentContext(obj);
+    if (!externalContext) {
+        d->throwIfNotInMap(obj, getDocument());
+    }
 
     Application::Instance->setEditDocument(this);
 
@@ -1333,6 +1346,39 @@ bool Document::isAboutToClose() const
     return d->_isClosing;
 }
 
+namespace {
+// Resolve borrowed native nodes only inside the view that explicitly owns the
+// external edit context. Ordinary document picks keep their existing map lookup.
+ViewProviderDocumentObject* contextViewProvider(const Document& document, SoPath* path, bool fromTail)
+{
+    for (auto mdi : document.getMDIViews()) {
+        auto view = dynamic_cast<View3DInventor*>(mdi);
+        if (!view || path->findNode(view->getViewer()->getSceneGraph()) < 0) {
+            continue;
+        }
+        auto root = view->getActiveObject<App::DocumentObject*>("ExternalEditContext");
+        if (!root || root->getDocument() == document.getDocument()
+            || !view->containsDocumentContext(root)) {
+            continue;
+        }
+        auto source = Application::Instance->getDocument(root->getDocument());
+        if (!source) {
+            continue;
+        }
+        auto objects = root->getOutListRecursive();
+        for (int i = 0; i < path->getLength(); ++i) {
+            auto node = fromTail ? path->getNodeFromTail(i) : path->getNode(i);
+            auto vp = source->getViewProvider(node);
+            if (vp && (vp->getObject() == root
+                || std::find(objects.begin(), objects.end(), vp->getObject()) != objects.end())) {
+                return vp;
+            }
+        }
+    }
+    return nullptr;
+}
+}
+
 ViewProviderDocumentObject* Document::getViewProviderByPathFromTail(SoPath* path) const
 {
     // Get the lowest root node in the pick path!
@@ -1346,7 +1392,7 @@ ViewProviderDocumentObject* Document::getViewProviderByPathFromTail(SoPath* path
         }
     }
 
-    return nullptr;
+    return contextViewProvider(*this, path, true);
 }
 
 ViewProviderDocumentObject* Document::getViewProviderByPathFromHead(SoPath* path) const
@@ -1361,7 +1407,7 @@ ViewProviderDocumentObject* Document::getViewProviderByPathFromHead(SoPath* path
         }
     }
 
-    return nullptr;
+    return contextViewProvider(*this, path, false);
 }
 
 ViewProviderDocumentObject* Document::getViewProvider(SoNode* node) const

@@ -77,10 +77,13 @@ def _preview(definition):
     index = original.findChild(vp.SwitchNode)
     if index < 0 or vp.SwitchNode.getNumChildren() != 1:
         raise ValueError('This component display cannot be isolated safely')
-    # Native Coin copying preserves native selection metadata, transforms,
-    # appearances and nested geometry. Only this detached display switch is forced.
-    result = original.copy(False)
-    result.getChild(index).whichChild = 0
+    # Borrow live native children so picking and native editor previews retain
+    # their view-provider identity. Bypass only the definition's display switch;
+    # its persistent visibility and every child switch remain untouched.
+    result = coin.SoSeparator()
+    for child_index in range(original.getNumChildren()):
+        child = original.getChild(child_index)
+        result.addChild(vp.SwitchNode.getChild(0) if child_index == index else child)
     return result
 
 
@@ -178,6 +181,8 @@ class Isolation:
         # Do not leave a hidden definition active after its preview is gone.
         try:
             root = document.validate(self.doc)
+            if hasattr(self.view, 'setDocumentContext'):
+                self.view.setDocumentContext(root)
             self.view.setActiveObject('PlusEdit', root)
             self.view.setActiveObject('part', None)
             self.view.setActiveObject('pdbody', None)

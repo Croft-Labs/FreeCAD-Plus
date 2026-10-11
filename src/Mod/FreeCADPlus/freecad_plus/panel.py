@@ -260,6 +260,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 self._message('Open a component document to use Components.')
             else:
                 doc, view = current
+                self._state(current)  # Own context cleanup for every visited view.
+                if hasattr(view, 'setDocumentContext') and view.getActiveObject('SelectionContext') is None:
+                    view.setDocumentContext(document.validate(doc))
                 try:
                     active, path = self._context(doc, view)
                     self._message('')
@@ -356,6 +359,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
             editing.edit_file(doc)
         elif row.kind == 'occurrence':
             editing.edit(tuple(lookup(ref) for ref in row.path))
+        elif row.kind == 'history':
+            editing.edit_feature(doc, obj)
+            return
         elif row.kind == 'unused':
             editing.edit_unused(doc, obj)
         elif row.kind == 'model':
@@ -475,6 +481,12 @@ class ComponentPanel(QtWidgets.QDockWidget):
         editing.remove_context_observer(self.schedule)
         if self._mdi:
             self._mdi.subWindowActivated.disconnect(self.schedule)
+        for (doc, view), state in self._states:
+            try:
+                if hasattr(view, 'setDocumentContext'):
+                    view.setDocumentContext()
+            except (RuntimeError, ReferenceError):
+                pass
         self._states.clear()
         self._binding = None
 

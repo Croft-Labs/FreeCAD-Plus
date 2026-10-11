@@ -75,8 +75,13 @@ public:
         const char* subname = nullptr,
         const Gui::HighlightMode& m = HighlightMode::UserDefined
     );
+    void setObject(
+        App::DocumentObject*, const char*, const char* subname,
+        const Gui::HighlightMode& m, bool highlight
+    );
     bool hasObject(const char*) const;
     void objectDeleted(const ViewProviderDocumentObject& viewProviderIn);
+    void documentDeleted(const Document& document);
     bool hasObject(App::DocumentObject* obj, const char*, const char* subname = nullptr) const;
 
     App::DocumentObject* getObjectWithExtension(Base::Type extensionTypeId) const;
@@ -97,6 +102,7 @@ private:
     {
         App::DocumentObject* obj;
         std::string subname;
+        bool highlight {true};
     };
     std::map<std::string, ObjectInfo> _ObjectMap;
     Document* _Doc;

@@ -221,8 +221,8 @@ components = panel.show_panel()
 It is not installed into an owner executable or automatically enabled at startup.
 Closing it unregisters observers; calling show_panel again creates one fresh dock.
 Do not hide/remove the legacy tree to make screenshots imply completed replacement.
-Domestic unused-model Edit is supported; external unused-model Edit and the remaining
-panel actions are still pending. See the bounded contract in ARCHITECTURE.md.
+Domestic and external unused-model Edit are supported in the native context build;
+component windows and the remaining confirmed panel actions are still pending. See the bounded contract in ARCHITECTURE.md.
 
 For a fresh-process visual check, open the generated Panel.cadprt from the visibility
 persistence case, show the panel and edit the second shared-child occurrence. Inspect
@@ -235,16 +235,22 @@ Panel construction is script-only. Use the existing CMake copy/install harness a
 compare all module files. Do not treat passing panel tests or packaging as owner
 shortcut delivery, completion of G1.6/G1.7, or long-session jitter acceptance.
 
-## Unused domestic-model validation
+## Unused-model validation
 
-Include TestUnusedModels with the preceding five suites in an isolated native GUI
-process and a fresh PLUS_TEST_DIR. Its six cases exercise actual Qt domestic Edit,
-transient rows, assembly hiding/selection, native Sketch editing, Undo/Redo, saving
-while isolated, per-view state, cleanup/removal and refusal of external unused Edit
-without mutation. Refusal coverage is not external-workflow acceptance.
-In a second process run `TestUnusedModels.verify_fresh_process(output_directory)`.
-It reopens the saved unused fixture, compares native IDs/visibility/link inventory,
-changes the unused Pad from 7 to 9 mm and saves a separate edited file.
+Use the native development build with `view.setDocumentContext`; the original
+binary cannot validate external unused editing. Include TestUnusedModels with the
+preceding five suites in an isolated GUI process and a fresh PLUS_TEST_DIR. Its
+nine cases cover domestic/external Edit, native viewport picking, temporary rows,
+assembly hiding/restoration, History opening Sketch/Pad editors, accepted Pad
+Undo/Redo in the defining file, save during isolation, per-view state and cleanup.
+Source closure during a native editor, removed imports, unrelated roots and ordinary
+external-parent refusal are covered. Require zero skipped cases.
+
+In a second process run `TestUnusedModels.verify_fresh_process(output_directory)`
+and `TestUnusedModels.verify_external_fresh_process(output_directory)`. They compare
+native identities and saved visibility/link inventory, edit a reopened Pad, and
+verify the external source saves without changing the assembly archive. The external
+check reopens again to prove the source-only edit persisted.
 
 For display acceptance, open Unused.cadprt from the modeling/Undo case. Capture the
 normal framebuffer in File Edit, then Edit of its unused definition, then File Edit.
@@ -253,4 +259,17 @@ cylinder; exit restores the two originals. Inspect the Part Tree capture for the
 last temporary row, active fill and gray selectable assembly rows. A theme can
 provide identical active/disabled palette colors, so inspect pixels as well as row
 brush state. Use the existing native framebuffer procedure, not grabFramebuffer.
-The script-only CMake copy/install check now covers seventeen source/test scripts.
+Inspect the external qualified temporary row and the viewport while native Sketch
+and Pad editors are open; check that a shortened Pad preview has no stale solid.
+The module contains seventeen source/test scripts; compare them with the native
+build's copied module payload.
+
+The bounded native build uses this release's pinned Windows LibPack and the release
+preset. Build the application, PartGui, SketcherGui, PartDesignGui and corresponding
+script targets, including FreeCADPlusScripts. Required runtime data also includes
+FreeCADGui_Resources, Stylesheets_data, Show, MaterialScripts, MaterialToolsLib,
+MaterialLib, FluidMaterialLib, AppearanceLib, PatternLib, MachiningLib,
+MaterialModelLib, PartDesignHole and WizardShaft. Library compilation alone does
+not populate these data targets. Keep all workbench configuration/source intact;
+a targeted developer build is not a complete owner package or workbench inventory
+acceptance. WORK_STATE owns the current paths, toolchain and actual build results.

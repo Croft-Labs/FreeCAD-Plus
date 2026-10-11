@@ -74,9 +74,11 @@ def edit_unused(doc, definition):
     view = _view(doc)
     if Gui.getDocument(doc.Name).getInEdit():
         raise ValueError("Finish the native feature editor first")
-    if definition.Document != doc:
-        raise ValueError("Unused external definitions must be edited in their defining file; in-place editing is not available yet")
+    if definition.Document != doc and not hasattr(view, "setDocumentContext"):
+        raise ValueError("External unused editing requires the native document-context build")
     isolation.begin(doc, view, definition)
+    if hasattr(view, "setDocumentContext"):
+        view.setDocumentContext(validate(doc), definition)
     view.setActiveObject(_KEY, definition, "")
     view.setActiveObject("part", definition, "")
     bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
@@ -148,3 +150,27 @@ def pad(doc, sketch, length):
         sketch.Visibility = False
     _restore(doc, definition, occurrence)
     return feature
+
+
+def edit_feature(doc, feature):
+    """Open the native feature editor in the explicitly edited component/view."""
+    from .document import history
+    definition, path = context_path(doc)
+    if feature not in history(doc, definition):
+        raise ValueError("The feature must belong to the edited component")
+    body = feature.getParentGeoFeatureGroup()
+    subname = (body.Name + "." if body and body.TypeId == "PartDesign::Body" else "") + feature.Name + "."
+    parent = validate(doc) if path else definition
+    if path:
+        subname = hierarchy.subname(path) + subname
+    if App.getActiveTransaction() or any(owner.HasPendingTransaction for owner in App.listDocuments().values()):
+        raise ValueError("Finish the current operation first")
+    # Match native feature double-click: the dialog owns commit/cancel, and
+    # mutations are recorded in the defining document even from another view.
+    transaction_id = App.setActiveTransaction("Edit " + feature.Label)
+    try:
+        if not Gui.getDocument(doc.Name).setEdit(parent, 0, subname):
+            raise ValueError("This item has no available native editor")
+    except Exception:
+        App.closeActiveTransaction(True, transaction_id)
+        raise

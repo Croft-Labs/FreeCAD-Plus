@@ -3831,6 +3831,11 @@ void TreeWidget::setupText()
 void TreeWidget::syncView(ViewProviderDocumentObject* vp)
 {
     if (currentDocItem && TreeParams::getSyncView()) {
+        auto doc = Application::Instance->activeDocument();
+        auto view = doc ? doc->getActiveView() : nullptr;
+        if (vp && view && view->containsDocumentContext(vp->getObject())) {
+            return;  // Explicit catalog selection stays in its owning view.
+        }
         bool focus = hasFocus();
         currentDocItem->document()->setActiveView(vp);
         if (focus) {

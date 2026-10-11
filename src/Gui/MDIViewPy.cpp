@@ -63,6 +63,12 @@ void MDIViewPy::init_type()
         &MDIViewPy::getActiveObject,
         "getActiveObject(name,resolve=True)\nreturns the active object for the given type"
     );
+    add_varargs_method(
+        "setDocumentContext", &MDIViewPy::setDocumentContext,
+        "setDocumentContext(catalog=None, editRoot=None)\n"
+        "Retain catalog selections and explicitly edit its external definition in this view. "
+        "Contexts are transient; pass None to clear them."
+    );
     add_varargs_method("cast_to_base", &MDIViewPy::cast_to_base, "cast_to_base() cast to MDIView class");
 }
 
@@ -319,4 +325,27 @@ Py::Object MDIViewPy::getActiveObject(const Py::Tuple& args)
 Py::Object MDIViewPy::cast_to_base(const Py::Tuple&)
 {
     return Py::Object(this);
+}
+
+Py::Object MDIViewPy::setDocumentContext(const Py::Tuple& args)
+{
+    PyObject* catalog = Py_None;
+    PyObject* editRoot = Py_None;
+    if (!PyArg_ParseTuple(args.ptr(), "|OO", &catalog, &editRoot)) {
+        throw Py::Exception();
+    }
+    try {
+        Base::PyTypeCheck(&catalog, &App::DocumentObjectPy::Type, "Expected a catalog object or None");
+        Base::PyTypeCheck(&editRoot, &App::DocumentObjectPy::Type, "Expected an edit root or None");
+        if (_view) {
+            _view->setDocumentContext(
+                catalog ? static_cast<App::DocumentObjectPy*>(catalog)->getDocumentObjectPtr() : nullptr,
+                editRoot ? static_cast<App::DocumentObjectPy*>(editRoot)->getDocumentObjectPtr() : nullptr
+            );
+        }
+    }
+    catch (const Base::Exception& e) {
+        throw Py::Exception(e.getPyExceptionType(), e.what());
+    }
+    return Py::None();
 }
