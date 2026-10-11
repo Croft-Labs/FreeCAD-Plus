@@ -3,7 +3,7 @@
 ## Authorized objective and stopping boundary
 
 Continue Group 1 only. **G1.7b3m placed external export context and its planned
-checks are complete.** Record publication and stop here. Group 1 remains incomplete.
+checks are complete.** Publication is verified; stop here. Group 1 remains incomplete.
 Next: Boolean input eligibility, pending the owner's cross-component tool decision.
 No answer was assumed; remaining direct exporters/view output are separate work.
 
@@ -57,7 +57,9 @@ payload byte-for-byte; 121 local file links in changed Markdown resolve; whitesp
 passes. Task artifacts `g1_7b3m_external_export` are removed after recording these
 results; the useful native development build is retained. No further runtime work.
 
-**Publication:** source commit/push verification pending; no owner delivery.
+**Publication:** source milestone `b9d36924725bc8fcf10907d856e16255605f311c`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This increment is complete; stop here.
 
 ## G1.7b3l legacy Boolean conversion - October 11, 2026
 
