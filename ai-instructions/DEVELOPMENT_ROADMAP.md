@@ -106,7 +106,8 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Validation:** 6 focused and 44 combined tests passed, zero skips; fresh-process
   identity/source-only save/reopen and inspected tab/panel/viewport captures passed.
   Test cameras were made deterministic after diagnosing an animation/fitAll race.
-  **Publication:** milestone commit/push pending; no release or owner-build delivery.
+  **Publication:** source milestone `a7c3adf492` pushed to origin/codex/freecad-1.1.4-baseline
+  and remote revision verified; no release or owner-build delivery.
   WORK_STATE records evidence and limitations. Stop; G1.6c2 has not started.
 - [   ] **G1.6c2 — Linked-instance Copy/Paste.** Next bounded action: Part Tree
   Copy/Paste creates another shared instance for subsequent movement. Not started.

@@ -58,7 +58,9 @@ whitespace passed. Task-only profiles, fixtures, captures, probes and logs were
 removed from `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_windows`
 after recording the results. Useful native build/dependencies and tracked tests remain.
 
-**Publication/cleanup:** milestone commit/push pending; task validation cleanup complete. No broader
+**Publication/cleanup:** source milestone `a7c3adf4927648fb50213d95bda180af796b3654`
+was committed and pushed to origin/codex/freecad-1.1.4-baseline; the remote revision
+was verified. Task validation cleanup is complete. No broader
 G1.6 completion, full-workbench inventory or long-session jitter acceptance claimed.
 The development payload is retained; no owner delivery or shortcut change.
 
