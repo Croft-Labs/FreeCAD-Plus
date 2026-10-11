@@ -31,6 +31,8 @@
 #include <App/Origin.h>
 #include <Gui/CommandT.h>
 #include <Gui/Document.h>
+#include <Gui/ComponentGeometry.h>
+#include <Gui/Notifications.h>
 #include <Gui/MainWindow.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Tools.h>
@@ -317,6 +319,25 @@ bool TaskPipeParameters::referenceSelected(const SelectionChanges& msg) const
         const char* fname = getObject()->getNameInDocument();
         if (strcmp(msg.pObjectName, fname) == 0) {
             return false;
+        }
+
+        if (selectionMode == StateHandlerTaskPipe::SelectionModes::refProfile
+            || selectionMode == StateHandlerTaskPipe::SelectionModes::refSpine
+            || selectionMode == StateHandlerTaskPipe::SelectionModes::refSpineEdgeAdd
+            || selectionMode == StateHandlerTaskPipe::SelectionModes::refSpineEdgeRemove) {
+            const auto* original = &msg;
+            while (original->pOriginalMsg) {
+                original = original->pOriginalMsg;
+            }
+            const auto inputError = Gui::componentGeometryError(
+                getObject(), std::vector<App::SubObjectT> {original->Object}
+            );
+            if (!inputError.empty()) {
+                Gui::NotifyError(getViewObject<ViewProvider>(),
+                                 QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                 inputError.c_str());
+                return false;
+            }
         }
 
         switch (selectionMode) {
@@ -782,6 +803,20 @@ bool TaskPipeOrientation::referenceSelected(const SelectionChanges& msg) const
             return false;
         }
 
+        const auto* original = &msg;
+        while (original->pOriginalMsg) {
+            original = original->pOriginalMsg;
+        }
+        const auto inputError = Gui::componentGeometryError(
+            getObject(), std::vector<App::SubObjectT> {original->Object}
+        );
+        if (!inputError.empty()) {
+            Gui::NotifyError(getViewObject<ViewProvider>(),
+                             QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                             inputError.c_str());
+            return false;
+        }
+
         if (const auto pipe = getObject<PartDesign::Pipe>()) {
             // change the references
             const std::string subName(msg.pSubName);
@@ -1035,6 +1070,22 @@ bool TaskPipeScaling::referenceSelected(const SelectionChanges& msg) const
         const char* fname = getObject()->getNameInDocument();
         if (strcmp(msg.pObjectName, fname) == 0) {
             return false;
+        }
+
+        if (selectionMode == StateHandlerTaskPipe::SelectionModes::refSectionAdd) {
+            const auto* original = &msg;
+            while (original->pOriginalMsg) {
+                original = original->pOriginalMsg;
+            }
+            const auto inputError = Gui::componentGeometryError(
+                getObject(), std::vector<App::SubObjectT> {original->Object}
+            );
+            if (!inputError.empty()) {
+                Gui::NotifyError(getViewObject<ViewProvider>(),
+                                 QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                 inputError.c_str());
+                return false;
+            }
         }
 
         // change the references

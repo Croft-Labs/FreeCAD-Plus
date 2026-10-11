@@ -215,8 +215,15 @@ Point to Point.
   Batched native build, five focused cases across bounded corrective runs and
   independent saved-file/downstream checks passed. WORK_STATE records the actual
   transaction fix, driver correction and retained native link-scope warning.
-  Source milestone `7bf802ac7a` pushed to origin; exact remote revision verified. Stop; no owner delivery. Next: remaining Loft/Pipe section/
-  path collectors. Full G1.7b3 and Group 1 remain incomplete.
+  Source milestone `7bf802ac7a` pushed to origin; exact remote revision verified.
+  No owner delivery.
+- [ X ] **G1.7b3h — Loft/Pipe reference admission.** Shared component eligibility
+  before picked profiles/sections and main/auxiliary path mutation; native workflows,
+  legacy bypass and section cleanup remain. Batched native build, four focused cases
+  across bounded driver corrections, and independent saved-file/source-update checks
+  passed. WORK_STATE records exact runs and limits. Publication pending; no owner
+  delivery. Stop here. Next: shared dress-up and transformed-feature input collectors.
+  Full G1.7b3 and Group 1 remain incomplete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

@@ -29,6 +29,8 @@
 #include <Gui/Application.h>
 #include <Gui/CommandT.h>
 #include <Gui/Document.h>
+#include <Gui/ComponentGeometry.h>
+#include <Gui/Notifications.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Tools.h>
 #include <Mod/PartDesign/App/FeatureLoft.h>
@@ -195,6 +197,22 @@ bool TaskLoftParameters::referenceSelected(const Gui::SelectionChanges& msg) con
         const char* fname = getObject()->getNameInDocument();
         if (strcmp(msg.pObjectName, fname) == 0) {
             return false;
+        }
+
+        if (selectionMode != refRemove) {
+            const auto* original = &msg;
+            while (original->pOriginalMsg) {
+                original = original->pOriginalMsg;
+            }
+            const auto inputError = Gui::componentGeometryError(
+                getObject(), std::vector<App::SubObjectT> {original->Object}
+            );
+            if (!inputError.empty()) {
+                Gui::NotifyError(getViewObject<ViewProvider>(),
+                                 QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                 inputError.c_str());
+                return false;
+            }
         }
 
         // every selection needs to be a profile in itself, hence currently only full objects are

@@ -544,3 +544,14 @@ Apply then Cancel, including lazy transaction cleanup. Cover original occurrence
 mutation, both shape sides, legacy bypass, Undo/Redo and independent saved-file
 reopen with downstream attachment placement/Pad geometry changes. Rerun only affected
 cases after corrections, record actual boundaries, remove task artifacts and stop.
+
+## Loft/Pipe input validation
+
+Batch PartDesignGui and FreeCADPlusScripts in the retained native development tree.
+TestComponentSweepInputs uses native task widgets and selection notifications for
+Loft profile/sections and Pipe profile/main path, auxiliary path and sections. Check
+original occurrence rejection before mutation, accepted references, removal without
+new admission, Cancel, one-step Undo/Redo, ordinary legacy bypass and independent
+saved-file reopen/source edits. Compare all 34 Plus Python scripts to the build
+payload. Run the focused cases once; after a failure rerun only affected cases.
+Record actual results, delete this increment's temporary artifacts and stop.

@@ -610,6 +610,27 @@ routes and existing-dependency reclassification. This is not universal enforceme
 or a new attachment/Extrude workflow. TestComponentInputEditors owns the focused
 acceptance; WORK_STATE records runtime coverage separately from this contract.
 
+### Loft/Pipe profile, section and path intake (G1.7b3h)
+
+`TaskLoftParameters` and the three `TaskPipeParameters` task boxes use the shared
+component eligibility bridge before assigning a picked profile, adding a section,
+or replacing/extending a main or auxiliary path. Checks follow `pOriginalMsg` to
+the original occurrence before native reference normalization. A rejected pick
+preserves the prior properties, section/edge lists, preview geometry and transaction;
+existing native picker exit/reset behavior remains. Ordinary legacy documents bypass
+the Plus policy. Existing C10/U069 rules govern; no new operation workflow is added.
+
+Removing a Loft/Pipe section is cleanup and remains available even if that occurrence
+is now ineligible. Pipe edge-removal picks also assign the selected source object in
+the native implementation, so those picks need the same admission check; list Delete
+continues to remove from the stored reference without introducing another source.
+Native geometry, reference-copy dialogs and section ordering remain unchanged.
+
+This is picked-input admission, not a recompute hook or retrospective validation of
+stored dependencies. It does not cover raw property/Python writes, other operation
+collectors or deferred Add Reference Feature design. Tests and bounded acceptance
+are recorded in WORK_STATE; this is not full Group 1 acceptance or owner delivery.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

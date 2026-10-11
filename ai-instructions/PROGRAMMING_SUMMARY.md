@@ -37,9 +37,10 @@ eligibility. Its focused native tests and independent reopen/source-update check
 passed. G1.7b3f native attachment and shared picked axis/direction/plane references
 also passed focused native and independent reopen/downstream checks. G1.7b3g covers
 the separate attachment editor and Extrude face/shape intake, with validated Apply/
-Cancel cleanup and independent downstream checks. Stop here. Next: remaining Loft/
-Pipe section/path reference collectors. Direct exporter/view-output paths still need
-integration. Check latest
+Cancel cleanup and independent downstream checks. G1.7b3h Loft/Pipe picked profiles,
+sections and main/auxiliary paths passed focused native and independent reopen checks.
+Stop here. Next: shared dress-up and transformed-feature input collectors.
+Direct exporter/view-output paths still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
 The complete G1.6 panel is unfinished.
@@ -83,6 +84,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/geometry.py: occurrence-aware Reference/Excluded geometry eligibility, independent of display/selection.
 - src/Mod/FreeCADPlus/TestComponentEligibility.py: consumer guard, shared/external ownership and fresh-process acceptance.
 - src/Gui/ComponentGeometry.h: shared native modeling eligibility bridge for PartDesign/Sketcher.
+- src/Mod/FreeCADPlus/TestComponentSweepInputs.py: Loft/Pipe reference admission, native transactions and independent recompute/persistence checks.
+- src/Mod/PartDesign/Gui/TaskLoftParameters.cpp and TaskPipeParameters.cpp: picked profile, section and main/auxiliary path admission.
 - src/Mod/FreeCADPlus/TestComponentInputEditors.py: Python attachment/Extrude input acceptance, confirmation/Undo and independent downstream checks.
 - src/Mod/Part/AttachmentEditor/TaskAttachmentEditor.py and src/Mod/PartDesign/Gui/TaskExtrudeParameters.cpp: component admission for remaining attachment and Extrude face/shape inputs.
 - src/Mod/FreeCADPlus/TestComponentReferences.py: native attachment/axis collector, atomic rejection, legacy bypass and downstream acceptance.

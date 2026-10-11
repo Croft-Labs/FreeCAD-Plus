@@ -2,11 +2,60 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3g separate attachment and Extrude face/shape inputs
-and their planned checks are complete.** Stop here; do not repeat passing suites
-or start another operation. Next: remaining Loft/Pipe section/path reference collectors.
-Group 1/G1.7b3 remain incomplete. Search latest owner conversations if a new design
-choice needs definition; right-click access does not authorize new operation workflows.
+Continue Group 1 only. **G1.7b3h Loft/Pipe reference admission and its planned
+runtime checks are complete.** Finish final records/publication and stop; do not
+repeat passed suites or start another operation. Next: shared dress-up and
+transformed-feature input collectors. Group 1/G1.7b3 remain incomplete. Check latest
+owner conversations for new design questions; operation redesign is outside this work.
+
+## G1.7b3h Loft/Pipe reference admission - October 11, 2026
+
+**Implementation:** original-occurrence component eligibility before native Loft
+profile/section and Pipe profile/main-path/auxiliary-path/section mutation. Section
+removal remains cleanup; picked Pipe edge removal needs eligibility because it also
+assigns the selected source. Native picker behavior and legacy bypass are retained.
+See the [contract](ARCHITECTURE.md#loftpipe-profile-section-and-path-intake-g17b3h).
+Existing C10/U069 requirements suffice; no new design decision was required.
+
+**Build:** one batched PartDesignGui/FreeCADPlusScripts build passed in the retained
+`test-builds/freecad_1.1.4_context` tree, native exit 0. Both changed collector files
+compiled and linked. Later test-driver corrections were copied to the development
+payload; no further native build was needed. No owner package/shortcut delivery.
+
+**Validation:** initial four-case native run stopped at a shared test-driver form
+lookup mismatch (Qt generates `PartDesignGui__Task...` names): 4 failures, zero
+errors/skips, 6.188 seconds, native exit 0. Corrected run: 2 passed (Loft and legacy
+Loft/Pipe), 2 Pipe assertion failures, zero errors/skips, 10.338 seconds, exit 0.
+The two assertions expected unmapped edge names; actual calls correctly retained
+the original occurrence with FreeCAD's mapped sketch-edge suffix. The driver now
+checks occurrence/object path and edge suffix. Only those two Pipe cases were rerun:
+2 passed, zero failures/errors/skips, 7.028 seconds, exit 0. No production correction
+was needed after the first build; passing cases and previous suites were not repeated.
+
+Actual native collectors prove rejection before profile/path/section/list, preview
+volume, Undo/transaction or object-identity mutation; correct original-occurrence
+admission; accepted Loft/Pipe profiles/sections and main/auxiliary paths/edges;
+existing-section removal; Pipe Cancel restoration; Loft one-step Undo/Redo; and
+ordinary legacy bypass. An independent fresh process reopened both saved `.cadprt`
+fixtures and passed exact object IDs, stored references and volumes, then changed
+each source profile and obtained valid recomputed results with increased volume.
+Native exit 0. Expected ineligible-geometry notifications and the pre-existing
+`Std_Measure` startup notice were the only messages in the completed native logs.
+
+**Limits:** this tests additive native Loft/Pipe; the shared collector code also
+serves their subtractive variants, but separate subtractive geometry acceptance is
+not claimed. This increment is picked-input admission, not retrospective policing
+of existing dependencies, property/Python writes or every other collector. No new
+operation workflow, schema, workbench removal, rendering/performance claim or owner
+build delivery. The original C10/U069 owner message was re-read; its rule suffices.
+Group 1 remains incomplete.
+
+**Final checks:** all 34 Plus Python scripts parse and match the retained development
+payload byte-for-byte; 143 local links in changed Markdown resolve; whitespace checks
+pass. Task validation artifacts `g1_7b3h_sweeps` were deleted after recording these
+results; the development build is retained. No further runtime work is required.
+
+**Publication:** prepared for the authorized origin milestone push.
 
 ## G1.7b3g separate attachment and Extrude inputs - October 11, 2026
 
