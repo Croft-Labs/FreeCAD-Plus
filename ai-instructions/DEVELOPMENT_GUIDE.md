@@ -418,3 +418,21 @@ within half a channel step plus float rounding, while identities and transparenc
 remain exact. Relevant visibility/window/unused-editor regression is proportional.
 Compare all twenty-six Python files with the copied payload. Do not repeat completed
 checks unless a failure, code correction or specific material concern warrants it.
+
+## Unused-preview saved display validation
+
+Build FreeCADGui and FreeCADPlusScripts together. Run TestUnusedModels and the
+existing TestComponentVisibility cases for the shared native hiding implementation.
+Cover saved self/child hiding, direct/nested Reference, source-owned external state,
+Undo/recompute, separate placed/unused views, invalid paths, cleanup and idle behavior.
+Native linked-document undo can create a mirrored assembly entry; verify the defining
+file owns the display properties and reversal rather than assuming no mirrored entry.
+Drain queued save notifications before asserting idle refresh counts.
+
+Run TestUnusedModels.verify_display_fresh_process(output_directory) once for exact
+identity, visibility and saved-filter persistence. Its capture_display_fresh_process
+helper performs a separate visual check without repeating persistence assertions.
+Import QtOpenGLWidgets before creating test views so PySide binds the native viewport
+correctly. Explicitly expose the test main window before capture; an unpainted flat
+buffer does not count as evidence. Inspect the normal framebuffer before cleanup.
+Stop after affected checks pass; no unrelated suite or next-stage implementation.

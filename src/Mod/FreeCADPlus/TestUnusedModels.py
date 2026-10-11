@@ -8,9 +8,9 @@ import unittest
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
-from PySide6 import QtCore, QtTest, QtWidgets
+from PySide6 import QtCore, QtTest, QtWidgets, QtOpenGLWidgets
 from pivy import coin
-from freecad_plus import document, hierarchy, editing, external, panel, isolation
+from freecad_plus import document, hierarchy, editing, external, panel, isolation, display
 import TestComponentPanel as panel_tests
 from TestComponentPanel import settle
 
@@ -303,6 +303,70 @@ class TestUnusedModels(unittest.TestCase):
         self.assertFalse(isolation._sessions)
 
 
+    def test_saved_unused_display_reference_undo_and_persistence(self):
+        direct=hierarchy.add_instance(self.unused,self.child)
+        branch=hierarchy.add_instance(self.unused,self.parent,App.Placement(App.Vector(25,0,0),App.Rotation()))
+        own=self.doc.addObject('Part::Feature','UnusedOwnGeometry')
+        own.Shape=Part.makeBox(2,2,2,App.Vector(10,0,0));self.unused.addObject(own)
+        self.doc.recompute()
+        display.set_state(self.unused,direct,part_type='Reference')
+        display.set_state(self.parent,self.nested,part_type='Reference')
+        ids={o.Name:o.ID for o in self.doc.Objects};vis=visibility(self.doc)
+        self.activate();view=Gui.activeDocument().activeView()
+        hit=lambda x:view.getObjectInfoRay(App.Vector(x+.3,.2,20),App.Vector(0,0,-1))
+        self.assertIsNotNone(hit(0));self.assertIsNone(hit(25));self.assertIsNotNone(hit(10))
+        display.set_state(self.unused,direct,shown=False);settle();self.assertIsNone(hit(0))
+        self.doc.undo();self.doc.recompute();settle();self.assertIsNotNone(hit(0))
+        display.set_state(self.unused,shown=False);settle()
+        self.assertIsNone(hit(0));self.assertIsNone(hit(10))
+        display.set_state(self.unused,shown=True);settle();self.assertIsNotNone(hit(10))
+        display.set_state(self.unused,direct,part_type='Excluded');settle();self.assertIsNone(hit(0))
+        with self.assertRaises(ValueError):view.setComponentPreviewHiddenPaths(self.unused,['Missing.'])
+        self.assertIsNone(hit(0));self.assertIsNotNone(hit(10))
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids);self.assertEqual(visibility(self.doc),vis)
+        document.save_document(self.doc,self.output/'UnusedDisplay.cadprt')
+        (self.output/'display-expected.json').write_text(json.dumps({'ids':ids,'visibility':vis,'definition':self.unused.Name}))
+        settle()  # Drain the save notification before measuring an idle interval.
+        count=self.widget.refresh_count;QtTest.QTest.qWait(250);self.assertEqual(count,self.widget.refresh_count)
+        editing.edit_file(self.doc);settle()
+        # The shared parent's saved Reference child is excluded in File Edit.
+        self.assertIsNone(hit(0));self.assertIsNone(hit(25));self.assertIsNone(hit(10))
+        display.set_state(self.parent,self.nested,part_type='Full Component');settle()
+        self.assertIsNotNone(hit(0));self.assertIsNotNone(hit(25))
+        names=[str(view.getSceneGraph().getChild(i).getName()) for i in range(view.getSceneGraph().getNumChildren())]
+        self.assertNotIn('PlusUnusedVisibilityContext',names);self.assertNotIn('PlusUnusedPreview',names)
+
+    def test_unused_filters_do_not_leak_into_placed_view(self):
+        direct=hierarchy.add_instance(self.unused,self.child)
+        self.activate();view=Gui.activeDocument().activeView()
+        other=self.widget.open_row(self.occurrence((self.first,)).data(0,panel._ROLE));settle()
+        display.set_state(self.unused,direct,shown=False);settle()
+        ray=(App.Vector(.3,.2,20),App.Vector(0,0,-1))
+        self.assertIsNone(view.getObjectInfoRay(*ray));self.assertIsNotNone(other.getObjectInfoRay(*ray))
+        self.widget.close();settle()
+        self.assertIsNotNone(view.getObjectInfoRay(*ray));self.assertIsNotNone(other.getObjectInfoRay(*ray))
+
+    def test_external_unused_saved_child_display(self):
+        source,definition=self.external_fixture()
+        child=hierarchy.create_definition(source,'External child')
+        solid=source.addObject('Part::Feature','ExternalSolid');solid.Shape=Part.makeBox(2,2,2);child.addObject(solid)
+        link=hierarchy.add_instance(definition,child);source.recompute()
+        ids={o.Name:o.ID for o in self.doc.Objects};vis=visibility(source)
+        editing.edit_unused(self.doc,definition);settle();view=Gui.activeDocument().activeView()
+        ray=(App.Vector(.3,.2,20),App.Vector(0,0,-1))
+        self.assertIsNotNone(view.getObjectInfoRay(*ray))
+        undo=source.UndoCount
+        display.set_state(definition,link,part_type='Excluded');settle();self.assertIsNone(view.getObjectInfoRay(*ray))
+        self.assertEqual(source.UndoCount,undo+1)
+        # Native linked-document undo adds a mirrored assembly entry. The actual
+        # display properties and reversal belong to the defining source document.
+        self.assertTrue(any('-> Change component display setting' in name for name in self.doc.UndoNames))
+        self.assertFalse(any(display.CHILD[0] in obj.PropertiesList for obj in self.doc.Objects))
+        source.undo();source.recompute();settle();self.assertIsNotNone(view.getObjectInfoRay(*ray))
+        self.assertEqual(display.state(link),('Bodies Only',True));self.assertEqual(visibility(source),vis)
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+
+
 def verify_fresh_process(output):
     folder = Path(output)/'test_modeling_undo_and_save_during_isolation'
     expected = json.loads((folder/'expected.json').read_text())
@@ -347,3 +411,36 @@ def verify_external_fresh_process(output):
     source = next(d for d in App.listDocuments().values() if str(d.Uid) == expected['source_uid'])
     assert source.getObject(expected['pad']).Length.Value == 9
     App.closeDocument(doc.Name); App.closeDocument(source.Name)
+
+
+def verify_display_fresh_process(output):
+    folder=Path(output)/'test_saved_unused_display_reference_undo_and_persistence'
+    expected=json.loads((folder/'display-expected.json').read_text())
+    doc=document.open_document(folder/'UnusedDisplay.cadprt');widget=None
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        assert visibility(doc)==expected['visibility']
+        widget=panel.show_panel();editing.edit_unused(doc,doc.getObject(expected['definition']));settle()
+        view=Gui.activeDocument().activeView()
+        for x in (0,25):assert view.getObjectInfoRay(App.Vector(x+.3,.2,20),App.Vector(0,0,-1)) is None
+        assert view.getObjectInfoRay(App.Vector(10.3,.2,20),App.Vector(0,0,-1)) is not None
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+    finally:
+        if widget:widget.close()
+        App.closeDocument(doc.Name)
+
+
+def capture_display_fresh_process(output):
+    folder=Path(output)/'test_saved_unused_display_reference_undo_and_persistence'
+    expected=json.loads((folder/'display-expected.json').read_text())
+    doc=document.open_document(folder/'UnusedDisplay.cadprt');widget=None
+    try:
+        widget=panel.show_panel();editing.edit_unused(doc,doc.getObject(expected['definition']));settle()
+        view=Gui.activeDocument().activeView()
+        view.setAnimationEnabled(False);view.viewTop();view.fitAll()
+        main=Gui.getMainWindow();main.hide();main.showNormal();QtTest.QTest.qWait(200)
+        from TestComponentFading import capture
+        capture(view,folder/'unused_filtered_reopened.png')
+    finally:
+        if widget:widget.close()
+        App.closeDocument(doc.Name)

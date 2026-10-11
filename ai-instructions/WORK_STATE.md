@@ -2,11 +2,67 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b2 contextual fading and its planned checks are complete.**
-Stopped at this milestone; no G1.7b3 or movement work started. Group 1 is not complete.
-The next increment is G1.7b3 remaining Part Type content/eligibility integration.
-Bodies Only descendant traversal still awaits the owner's answer; do not infer it.
-Unused-definition display choices remain an independently actionable confirmed item.
+Continue Group 1 only. **G1.7b3a saved display in unused previews and its planned checks
+are complete.** Stop here; no next implementation or further runtime tests started.
+Group 1/G1.7b3 remain incomplete. Next: Bodies Only content filtering, after the owner
+clarifies whether it includes descendant components' bodies or only directly owned
+bodies. The question was presented again this turn and remains unanswered. Reference
+use eligibility also remains open; the Add Reference Feature operation is undefined.
+
+## G1.7b3a unused-preview saved display — October 11, 2026
+
+**Implementation:** unused-model previews now apply saved self Shown/Hidden/Excluded
+and child Hidden/Excluded/nested Reference choices through the existing resolver and
+native per-view selection context. A direct Reference remains visible; its own nested
+exclusions remain hidden. The catalog definition's native visibility is still bypassed
+only for temporary display. No new instances, identity/placement/geometry writes or
+native Visibility changes. External choices remain source-owned. Recompute, Undo,
+context exit and panel/view/source closure clear or reapply the temporary filtering.
+
+`setComponentPreviewHiddenPaths` shares the existing native hide implementation,
+using a separate scene context around PlusUnusedPreview. Resolution starts at the
+first borrowed child provider to bypass the unused definition's hidden catalog switch.
+Each preview has its own native key; other placed views retain their own visibility.
+Refresh clears the wrapper before replacing borrowed display nodes; native wrapper
+teardown clears its secondary entries. A private preview switch applies the self choice.
+Bodies Only filtering and reference-use eligibility are not implemented by this increment.
+
+**Build:** one batched FreeCADGui/FreeCADPlusScripts build passed in the retained
+`C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_1.1.4_context` tree.
+Subsequent scripts-only copies corrected test expectations/capture setup; production
+code did not change after that build. No owner package or shortcut delivery.
+
+**Validation:** the initial 17-case unused-model/placed-visibility run passed 15,
+with two assertion failures, zero errors/skips, native exit 0 (32.901 seconds). All
+existing unused-model/native-editor/window/source cleanup and all five placed-visibility
+cases passed. The new separate-view filtering case also passed. Source-owned external
+state, Undo and visibility passed after correcting the test's assumption that native
+linked documents cannot receive a mirrored undo entry. A trace confirmed source-owned
+PlusChild properties and the native assembly entry `-> Change component display setting`.
+
+The remaining domestic test passed in a focused run (2.676 seconds), zero errors,
+failures/skips, native exit 0. Its corrections drain a queued save refresh before the
+idle check and expect saved nested Reference exclusion when returning to File Edit.
+It covers self/child hiding, Excluded, direct/nested Reference, Undo/recompute, native
+picking, invalid-path preservation, exact identities/native visibility, save, idle
+stability and final cleanup/restoration. No successful suite was rerun.
+
+**Independent reopen and visual check:** exact IDs, saved choices, unchanged native
+visibility and correct filtered ray picking passed in a separate process, native exit 0.
+QtOpenGLWidgets must be imported before views are created, otherwise PySide can retain
+a generic viewport wrapper. The first successful buffer read was unpainted and was
+not accepted. Only capture was repeated after explicitly exposing/redrawing the window.
+The inspected 1521 x 1128 normal framebuffer shows only the component's own box top;
+the excluded child and nested Reference geometry are absent. This does not claim a
+physical-monitor or long-session performance test. No further runtime checks followed.
+
+**Static checks/cleanup:** all 26 Python scripts parse and byte-match the development
+payload; 283 canonical local Markdown paths resolve, and whitespace checks pass.
+Task output in validation/g1_7b3_unused is removed after recording these results.
+Useful native builds/dependencies remain. No further runtime checks or implementation.
+
+**Publication:** pending the coherent validated source milestone on origin.
+No release or owner-build delivery.
 
 ## G1.7b2 contextual fading — October 11, 2026
 

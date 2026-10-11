@@ -161,8 +161,14 @@ Point to Point.
   WORK_STATE owns evidence. No saved material property mutation or owner-build delivery.
 - [   ] **G1.7b3 — Remaining content/eligibility integration.** Bodies Only filtering
   needs owner clarification on descendant traversal; the question is pending.
-  Reference-use eligibility and unused-definition display choices remain unfinished.
+  Reference-use eligibility remains unfinished. Saved unused-preview display is
+  complete in G1.7b3a below.
   Do not infer Bodies Only semantics from archived assistant text or current UI.
+- [ X ] **G1.7b3a — Saved display in unused previews.** Self/child Hidden/Excluded
+  and nested Reference choices apply without creating instances or changing native
+  visibility. Native build, focused behavior/regression checks, independent reopen
+  and inspected normal-buffer display passed. Planned checks complete; stopped.
+  WORK_STATE owns evidence/publication. No owner-build delivery.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

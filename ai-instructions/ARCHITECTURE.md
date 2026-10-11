@@ -422,6 +422,29 @@ paint per model/context invalidation; subsequent paints do not poll or rebuild i
 Bodies Only traversal, Reference modeling eligibility and operation dialogs remain
 outside this increment. WORK_STATE records actual validation and remaining limits.
 
+### Saved display in unused previews (G1.7b3a)
+
+`display.unused_hidden_paths` shares the placed-occurrence resolver, rooted at the
+unused definition. Its direct Reference children are visible, nested Reference and
+explicit Hidden/Excluded children are omitted. The preview's own private SoSwitch
+applies its saved self visibility/type; native definition/child switches are unchanged.
+
+`view.setComponentPreviewHiddenPaths(definition, paths)` reuses the native hiding
+implementation with a separate PlusUnusedVisibilityContext around PlusUnusedPreview.
+The preview borrows native child nodes, so resolution starts at the first child
+provider and continues through its native detail path. This works for domestic and
+external definitions without requiring them to be a provider in the assembly's document.
+Names are validated before existing filters are disturbed. Empty/no arguments restore
+the original preview. The context destructor clears secondary entries from borrowed nodes.
+
+Isolation refresh clears its native wrapper before replacing the preview and reapplies
+saved choices afterward. Close restores the preview before removing it and returning
+the original assembly nodes. These are transient per-view contexts, not new document
+objects, saved native Visibility, material changes, geometry copies or Undo operations.
+Native linked-document transactions may mirror source-owned edits in an assembly undo
+list; the actual saved display properties remain on the defining source's objects.
+Bodies Only content rules and Reference-use eligibility remain separate unresolved work.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

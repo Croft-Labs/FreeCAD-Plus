@@ -8,7 +8,7 @@ try:
 except ImportError:
     from PySide import QtGui as QtWidgets
 from pivy import coin
-from . import document, external
+from . import document, external, display
 
 _sessions = []
 
@@ -84,7 +84,11 @@ def _preview(definition):
     for child_index in range(original.getNumChildren()):
         child = original.getChild(child_index)
         result.addChild(vp.SwitchNode.getChild(0) if child_index == index else child)
-    return result
+    preview = coin.SoSwitch()
+    preview.setName('PlusUnusedPreview')
+    preview.whichChild = coin.SO_SWITCH_ALL if display.resolved(definition)[1] else coin.SO_SWITCH_NONE
+    preview.addChild(result)
+    return preview
 
 
 class Isolation:
@@ -116,6 +120,19 @@ class Isolation:
         self.window.destroyed.connect(self.close)
         App.addDocumentObserver(self)
         Gui.addDocumentObserver(self)
+        try:
+            self._apply_display(definition)
+        except Exception:
+            self.close()
+            raise
+
+    def _apply_display(self, definition):
+        if hasattr(self.view, 'setComponentPreviewHiddenPaths'):
+            self.view.setComponentPreviewHiddenPaths(definition, display.unused_hidden_paths(definition))
+
+    def _clear_display(self):
+        if hasattr(self.view, 'setComponentPreviewHiddenPaths'):
+            self.view.setComponentPreviewHiddenPaths()
 
     def definition(self):
         definition = _resolve(self.ref)
@@ -154,8 +171,10 @@ class Isolation:
                 self.close()
                 return
             preview = _preview(definition)
+            self._clear_display()
             self.scene.replaceChild(self.preview, preview)
             self.preview = preview
+            self._apply_display(definition)
         except (ValueError, RuntimeError, ReferenceError):
             self.close()
 
@@ -171,6 +190,10 @@ class Isolation:
             self.window.destroyed.disconnect(self.close)
         except (RuntimeError, TypeError):
             pass
+        try:
+            self._clear_display()
+        except (RuntimeError, ReferenceError):
+            pass  # Native view teardown owns final selection-context cleanup.
         if self.scene.findChild(self.preview) >= 0:
             self.scene.removeChild(self.preview)
         for node, switch in self.hidden:

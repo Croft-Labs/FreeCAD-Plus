@@ -10,9 +10,10 @@ Hidden/Excluded and nested Reference filtering/restoration; the
 G1.7b2 view-local fading is validated in the development payload, including active
 shared mixed-material geometry and independent reopen. Its
 [render-state contract](../ARCHITECTURE.md#contextual-fading-g17b2) and WORK_STATE
-separate implementation from acceptance. Bodies Only content filtering, reference
-eligibility and unused-preview choices remain unfinished; Bodies Only descendant
-traversal awaits clarification.
+separate implementation from acceptance. G1.7b3a also applies saved self/child
+visibility and nested Reference filtering in unused previews, with acceptance in
+WORK_STATE. Bodies Only content filtering and reference eligibility remain unfinished;
+Bodies Only descendant traversal awaits clarification.
 The requirements below are unchanged by that implementation boundary.
 
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).

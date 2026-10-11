@@ -102,6 +102,18 @@ def hidden_paths(doc, active=None, active_path=()):
         raise ValueError('The active component occurrence changed')
     if active is not None and not active_path:
         return ()  # Unused-definition isolation owns its separate borrowed display.
+    return _hidden_paths(root, active, active_path)
+
+
+def unused_hidden_paths(definition):
+    """Use the same saved child choices in a temporary unused-definition display."""
+    if definition not in document.validate(definition.Document).Definitions:
+        raise ValueError('Choose a component definition')
+    return _hidden_paths(definition, None, ())
+
+
+def _hidden_paths(root, active, active_path):
+    from . import hierarchy
     hidden = []
     def visit(owner, path=()):
         for link in owner.Group:

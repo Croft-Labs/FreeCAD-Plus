@@ -255,6 +255,8 @@ void View3DInventorPy::init_type()
     add_noargs_method("getSceneGraph", &View3DInventorPy::getSceneGraph, "getSceneGraph()");
     add_varargs_method("setComponentHiddenPaths", &View3DInventorPy::setComponentHiddenPaths,
                       "setComponentHiddenPaths(root, paths): transient per-view whole-object hiding; no arguments clears it.");
+    add_varargs_method("setComponentPreviewHiddenPaths", &View3DInventorPy::setComponentPreviewHiddenPaths,
+                      "setComponentPreviewHiddenPaths(definition, paths): view-local unused preview hiding; no arguments clears it.");
     add_varargs_method("setComponentFade", &View3DInventorPy::setComponentFade,
                       "setComponentFade(root, activePath): view-local contextual fading; no arguments clears it.");
     add_noargs_method("getViewer", &View3DInventorPy::getViewer, "getViewer()");
@@ -2380,6 +2382,16 @@ protected:
 
 Py::Object View3DInventorPy::setComponentHiddenPaths(const Py::Tuple& args)
 {
+    return setComponentHiddenPathsImpl(args, false);
+}
+
+Py::Object View3DInventorPy::setComponentPreviewHiddenPaths(const Py::Tuple& args)
+{
+    return setComponentHiddenPathsImpl(args, true);
+}
+
+Py::Object View3DInventorPy::setComponentHiddenPathsImpl(const Py::Tuple& args, bool preview)
+{
     PyObject* rootArg = nullptr;
     PyObject* pathsArg = nullptr;
     if (!PyArg_ParseTuple(args.ptr(), "|O!O", &App::DocumentObjectPy::Type, &rootArg, &pathsArg)) {
@@ -2389,14 +2401,17 @@ Py::Object View3DInventorPy::setComponentHiddenPaths(const Py::Tuple& args)
         throw Py::ValueError("Supply a root and a sequence of whole-object paths, or no arguments");
     }
     auto scene = static_cast<SoSeparator*>(getView3DInventorPtr()->getViewer()->getSceneGraph());
+    const SbName contextName(preview ? "PlusUnusedVisibilityContext" : "PlusVisibilityContext");
+    const SbName objectName(preview ? "PlusUnusedPreview" : "ObjectGroup");
+    App::DocumentObject* root = nullptr;
     SoFCSelectionRoot* context = nullptr;
     SoNode* objects = nullptr;
     for (int i = 0; i < scene->getNumChildren(); ++i) {
         auto node = scene->getChild(i);
-        if (node->getName() == SbName("PlusVisibilityContext")) {
+        if (node->getName() == contextName) {
             context = dynamic_cast<SoFCSelectionRoot*>(node);
         }
-        else if (node->getName() == SbName("ObjectGroup")) {
+        else if (node->getName() == objectName) {
             objects = node;
         }
     }
@@ -2407,8 +2422,9 @@ Py::Object View3DInventorPy::setComponentHiddenPaths(const Py::Tuple& args)
         if (!obj || !obj->isAttachedToDocument()) {
             throw Py::ValueError("The component root is no longer available");
         }
+        root = obj;
         provider = Application::Instance->getViewProvider(obj);
-        if (!provider || !getView3DInventorPtr()->getViewer()->containsViewProvider(provider)) {
+        if (!provider || (!preview && !getView3DInventorPtr()->getViewer()->containsViewProvider(provider))) {
             throw Py::ValueError("The component root is not displayed in this view");
         }
         Py::Sequence paths(pathsArg);
@@ -2440,14 +2456,28 @@ Py::Object View3DInventorPy::setComponentHiddenPaths(const Py::Tuple& args)
             throw Py::ValueError("This view has no available native object group");
         }
         context = new ComponentVisibilityRoot();
-        context->setName("PlusVisibilityContext");
+        context->setName(contextName);
         context->addChild(objects);
         scene->replaceChild(objects, context);
     }
     try {
         for (const auto& name : names) {
+            // An unused preview borrows the definition's live child display while
+            // bypassing its hidden catalog switch. Start at the first child provider
+            // actually present in that preview, then resolve the remaining native path.
+            auto pathProvider = provider;
+            const char* subname = name.c_str();
+            if (preview) {
+                const auto dot = name.find('.');
+                auto child = root->getSubObject(name.substr(0, dot + 1).c_str());
+                pathProvider = Application::Instance->getViewProvider(child);
+                subname += dot + 1;
+            }
+            if (!pathProvider) {
+                throw Py::ValueError("The component child has no native display provider");
+            }
             SoSearchAction search;
-            search.setNode(provider->getRoot());
+            search.setNode(pathProvider->getRoot());
             search.setInterest(SoSearchAction::FIRST);
             search.setSearchingAll(true);
             search.apply(context);
@@ -2458,7 +2488,7 @@ Py::Object View3DInventorPy::setComponentHiddenPaths(const Py::Tuple& args)
             path->ref();
             path->pop();
             SoDetail* detail = nullptr;
-            bool found = provider->getDetailPath(name.c_str(), path, true, detail);
+            bool found = pathProvider->getDetailPath(subname, path, true, detail);
             delete detail;
             if (!found) {
                 path->unref();
