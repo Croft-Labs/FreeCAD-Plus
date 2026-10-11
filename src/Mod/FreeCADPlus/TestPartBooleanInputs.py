@@ -340,7 +340,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         document.validate(self.doc);self.doc.undo();self.doc.recompute();settle()
         self.assertEqual(result.Links,[a])
 
-    def open_compound_links(self,result):
+    def open_compound_links(self,result,property_name="Links"):
         objects=result if isinstance(result,list) else [result]
         self.select(objects[0])
         for obj in objects[1:]:Gui.Selection.addSelection(obj.Document.Name,obj.Name)
@@ -353,14 +353,18 @@ class TestPartBooleanInputs(unittest.TestCase):
             model=tree.model()
             for row in range(model.rowCount(parent)):
                 index=model.index(row,0,parent)
-                if index.data()=='Links':return index.siblingAtColumn(1)
+                if index.data()==property_name and index.siblingAtColumn(1).flags() & QtCore.Qt.ItemIsEditable:
+                    return index.siblingAtColumn(1)
                 child=find(index)
                 if child.isValid():return child
             return QtCore.QModelIndex()
-        index=find();self.assertTrue(index.isValid(),'Compound Links property missing')
-        tree.scrollTo(index);tree.setCurrentIndex(index);tree.edit(index);settle()
+        index=find();self.assertTrue(index.isValid(),property_name+' property missing')
+        tree.scrollTo(index);tree.setCurrentIndex(index);settle()
+        if property_name=='Links':tree.edit(index)
+        else:QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,tree.visualRect(index).center())
+        settle()
         buttons=[w for w in tree.findChildren(QtWidgets.QPushButton) if w.isVisible()]
-        self.assertTrue(buttons,'Links edit button missing');buttons[-1].click();settle()
+        self.assertTrue(buttons,property_name+' edit button missing on '+objects[0].Name);buttons[-1].click();settle()
         return next(w for w in Gui.getMainWindow().findChildren(QtWidgets.QDialog)
                     if 'DlgPropertyLink' in w.metaObject().className() and w.isVisible())
 
@@ -543,6 +547,132 @@ class TestPartBooleanInputs(unittest.TestCase):
 
 
 
+    split_property_cases = (
+        ('FeatureBooleanFragments','Objects'), ('FeatureXOR','Objects'),
+        ('FeatureSlice','Base'), ('FeatureSlice','Tools'),
+        ('FeatureConnect','Objects'), ('FeatureEmbed','Base'), ('FeatureEmbed','Tool'),
+        ('FeatureCutout','Base'), ('FeatureCutout','Tool'),
+        ('_CompoundFilter','Base'), ('_CompoundFilter','Stencil'))
+
+    def editable_split_property(self,kind,prop,owner=None):
+        from BOPTools import SplitFeatures,JoinFeatures
+        from CompoundTools import CompoundFilter
+        owner=owner or self.child
+        a,b=self.boxes(owner);c,_=self.boxes(owner)
+        create=owner.addObject if hasattr(owner,'Objects') else owner.newObject
+        result=create('Part::FeaturePython','EditableSplitJoin')
+        module=CompoundFilter if kind=='_CompoundFilter' else (
+            SplitFeatures if hasattr(SplitFeatures,kind) else JoinFeatures)
+        getattr(module,kind)(result)
+        view='_ViewProviderCompoundFilter' if kind=='_CompoundFilter' else kind.replace('Feature','ViewProvider',1)
+        getattr(module,view)(result.ViewObject)
+        if prop in ('Tool','Tools','Objects'):c.Placement=b.Placement
+        if hasattr(result,'Objects'):result.Objects=[a,b]
+        elif kind=='_CompoundFilter':
+            compound=create('Part::Compound','FilterSource');compound.Links=[a,b]
+            result.Base=compound;result.Stencil=a;result.FilterType='collision-pass'
+            if prop=='Base':
+                replacement=create('Part::Compound','FilterReplacement');replacement.Links=[c,b];c=replacement
+        else:
+            result.Base=a
+            if hasattr(result,'Tools'):result.Tools=[b];result.Mode='Split'
+            else:result.Tool=b
+        result.Document.recompute();settle()
+        return result,c
+
+    def test_split_property_all_inputs_reject_then_accept_undo_save(self):
+        source=hierarchy.create_definition(self.doc,'Property reference')
+        foreign,_=self.boxes(source);link=hierarchy.add_instance(self.child,source)
+        display.set_state(self.child,link,part_type='Reference');settle()
+        expected=[]
+        for kind,prop in self.split_property_cases:
+            result,new=self.editable_split_property(kind,prop)
+            old=getattr(result,prop)
+            dlg=self.open_compound_links(result,prop)
+            self.choose_compound_links(dlg,[foreign]);before=self.snapshot()
+            with messages() as errors:dlg.accept();settle()
+            self.assertTrue(errors,(kind,prop));self.assertTrue(dlg.isVisible())
+            self.assertEqual(getattr(result,prop),old);self.assertEqual(self.snapshot(),before)
+            # List properties keep the first input, except Slice Tools which has one.
+            new_values=[old[0],new] if prop=='Objects' else [new]
+            self.choose_compound_links(dlg,new_values)
+            with messages() as errors:dlg.accept();settle()
+            self.assertFalse(errors,(kind,prop,errors))
+            from shiboken6 import isValid
+            self.assertTrue(not isValid(dlg) or not dlg.isVisible())
+            actual=getattr(result,prop)
+            self.assertEqual(set(actual if isinstance(actual,list) else [actual]),set(new_values))
+            self.doc.recompute();self.assertTrue(result.Shape.isValid(),(kind,prop))
+            volume=result.Shape.Volume;self.assertGreater(volume,0)
+            App.closeActiveTransaction();self.doc.undo();self.doc.recompute();settle()
+            self.assertEqual(getattr(result,prop),old,(kind,prop))
+            self.doc.redo();self.doc.recompute();settle();document.validate(self.doc)
+            self.assertAlmostEqual(result.Shape.Volume,volume)
+            expected.append({'result':result.Name,'property':prop,'links':[o.Name for o in new_values],
+                             'volume':volume,'solids':len(result.Shape.Solids)})
+        document.save_document(self.doc,self.output/'SplitProperties.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':{o.Name:o.ID for o in self.doc.Objects},
+            'definition':self.child.Name,'results':expected}))
+
+    def test_split_property_context_rejection_cleanup_and_multi_atomic(self):
+        result,new=self.editable_split_property('FeatureConnect','Objects')
+        old=list(result.Objects)
+        for context,word in [('file','Edit a component'),('other','belong to the edited component')]:
+            if context=='file':editing.edit_file(self.doc)
+            else:editing.edit_unused(self.doc,self.unused)
+            dlg=self.open_compound_links(result,'Objects');self.choose_compound_links(dlg,[*old,new])
+            before=self.snapshot()
+            with messages() as errors:dlg.accept();settle()
+            self.assertTrue(any(word in e for e in errors),errors)
+            self.assertEqual(result.Objects,old);self.assertEqual(self.snapshot(),before)
+            dlg.reject();settle()
+        editing.edit_file(self.doc)
+        dlg=self.open_compound_links(result,'Objects');self.choose_compound_links(dlg,[old[0]])
+        with messages() as errors:dlg.accept();settle()
+        self.assertFalse(errors,errors);self.assertEqual(result.Objects,[old[0]])
+        editing.edit((self.second,self.nested))
+        other,_=self.editable_split_property('FeatureConnect','Objects',self.unused)
+        old_other=list(other.Objects)
+        dlg=self.open_compound_links([result,other],'Objects');self.choose_compound_links(dlg,[old[0],new])
+        before=self.snapshot()
+        with messages() as errors:dlg.accept();settle()
+        self.assertTrue(errors);self.assertEqual(result.Objects,[old[0]])
+        self.assertEqual(other.Objects,old_other);self.assertEqual(self.snapshot(),before)
+        if dlg.isVisible():dlg.reject();settle()
+
+    def test_split_property_excluded_and_full_component_rejection(self):
+        result,new=self.editable_split_property('FeatureSlice','Tools')
+        source=hierarchy.create_definition(self.doc,'Foreign properties')
+        foreign,_=self.boxes(source);link=hierarchy.add_instance(self.child,source)
+        old=list(result.Tools)
+        for kind in ('Excluded','Full Component'):
+            display.set_state(self.child,link,part_type=kind);settle()
+            dlg=self.open_compound_links(result,'Tools');self.choose_compound_links(dlg,[foreign]);before=self.snapshot()
+            with messages() as errors:dlg.accept();settle()
+            self.assertTrue(errors,(kind,errors));self.assertTrue(dlg.isVisible())
+            self.assertEqual(result.Tools,old);self.assertEqual(self.snapshot(),before)
+            dlg.reject();settle()
+
+    def test_split_property_legacy_and_unrelated_python_bypass(self):
+        legacy=App.newDocument('LegacySplitProperties')
+        for kind,prop in [('FeatureConnect','Objects'),('FeatureEmbed','Tool'),('_CompoundFilter','Stencil')]:
+            result,new=self.editable_split_property(kind,prop,legacy)
+            with patch.object(geometry,'is_part_input_property',side_effect=AssertionError('Legacy entered Plus')):
+                dlg=self.open_compound_links(result,prop);self.choose_compound_links(dlg,[new])
+                with messages() as errors:dlg.accept();settle()
+                self.assertFalse(errors,errors)
+                actual=getattr(result,prop);self.assertEqual(actual,[new] if prop=='Objects' else new)
+        App.setActiveDocument(self.doc.Name);editing.edit_file(self.doc)
+        unknown=self.child.newObject('Part::FeaturePython','UnrelatedPythonFeature')
+        unknown.addProperty('App::PropertyLink','Base');local,_=self.boxes()
+        unknown.Base=local;unknown.Shape=local.Shape;foreign,_=self.boxes(self.unused)
+        self.doc.recompute();settle()
+        dlg=self.open_compound_links(unknown,'Base');self.choose_compound_links(dlg,[foreign])
+        with messages() as errors:dlg.accept();settle()
+        self.assertFalse(errors,errors);self.assertEqual(unknown.Base,foreign)
+
+
+
 def verify_fresh_process(output):
     folder=Path(output)/'test_commands_preserve_input_ownership_undo_history_and_save'
     expected=json.loads((folder/'expected.json').read_text())
@@ -638,4 +768,27 @@ def verify_split_join_fresh_process(output):
         a.Height=6;b.Height=6;doc.recompute();document.validate(doc)
         assert all(o.Shape.isValid() for o in filters)
         assert abs(sum(o.Shape.Volume for o in filters)-96)<1e-7
+    finally:App.closeDocument(doc.Name)
+
+
+def verify_split_property_fresh_process(output):
+    folder=Path(output)/'test_split_property_all_inputs_reject_then_accept_undo_save'
+    expected=json.loads((folder/'expected.json').read_text())
+    doc=document.open_document(folder/'SplitProperties.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        owner=doc.getObject(expected['definition'])
+        for case in expected['results']:
+            result=doc.getObject(case['result']);links=getattr(result,case['property'])
+            links=links if isinstance(links,list) else [links]
+            assert {o.Name for o in links}==set(case['links'])
+            assert all(o in owner.Group for o in [result,*links])
+            assert abs(result.Shape.Volume-case['volume'])<1e-7
+        for obj in owner.Group:
+            if obj.TypeId=='Part::Box':obj.Height=6
+        doc.recompute();document.validate(doc)
+        for case in expected['results']:
+            result=doc.getObject(case['result'])
+            assert result.Shape.isValid() and len(result.Shape.Solids)==case['solids']
+            assert abs(result.Shape.Volume-case['volume']*1.5)<1e-7,case
     finally:App.closeDocument(doc.Name)

@@ -160,6 +160,28 @@ def require_export(doc, objects):
         raise ValueError('The export selection changed; select the component geometry again')
 
 
+def part_input_properties(consumer):
+    """Explicit native input-editor scope; unrelated Python features stay native."""
+    if consumer.isDerivedFrom('Part::Compound'):
+        return ('Links',)
+    if consumer.TypeId != 'Part::FeaturePython':
+        return ()
+    proxy_type = type(consumer.Proxy)
+    return {
+        ('BOPTools.SplitFeatures', 'FeatureBooleanFragments'): ('Objects',),
+        ('BOPTools.SplitFeatures', 'FeatureSlice'): ('Base', 'Tools'),
+        ('BOPTools.SplitFeatures', 'FeatureXOR'): ('Objects',),
+        ('BOPTools.JoinFeatures', 'FeatureConnect'): ('Objects',),
+        ('BOPTools.JoinFeatures', 'FeatureEmbed'): ('Base', 'Tool'),
+        ('BOPTools.JoinFeatures', 'FeatureCutout'): ('Base', 'Tool'),
+        ('CompoundTools.CompoundFilter', '_CompoundFilter'): ('Base', 'Stencil'),
+    }.get((proxy_type.__module__, proxy_type.__name__), ())
+
+
+def is_part_input_property(consumer, name):
+    return name in part_input_properties(consumer)
+
+
 def require_modeling_inputs(consumer, inputs=None):
     """Check native modeling intake without replacing its own geometry rules.
 
@@ -191,14 +213,15 @@ def require_modeling_inputs(consumer, inputs=None):
     if inputs is None:
         inputs = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*', 0)
                   for sub in entry.SubElementNames or ('',)]
-    if consumer.isDerivedFrom('Part::Compound') and consumer.Document != doc:
-        raise ValueError('Open the defining file to edit Compound inputs')
+    local_inputs = bool(part_input_properties(consumer))
+    if local_inputs and consumer.Document != doc:
+        raise ValueError('Open the defining file to edit these Part inputs')
     for obj, sub in inputs:
         require_access(doc, obj, sub, active=active, active_path=path)
-        if consumer.isDerivedFrom('Part::Compound'):
+        if local_inputs:
             target = obj.getSubObject(sub, 1) if sub else obj
             if _owned_path(active, target) is None or target == active:
-                raise ValueError('Compound inputs must be owned by the edited component')
+                raise ValueError('These Part inputs must be owned by the edited component')
 
 
 def require_part_boolean_inputs(doc, inputs=None):

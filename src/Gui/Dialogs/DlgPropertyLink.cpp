@@ -775,9 +775,29 @@ std::string DlgPropertyLink::componentLinkError(
 {
     App::DocumentObjectT target(prop);
     auto obj = target.getObject();
-    if (!obj || target.getPropertyName() != "Links"
-        || !obj->isDerivedFrom(Base::Type::fromName("Part::Compound"))) {
+    if (!obj || (!obj->isDerivedFrom(Base::Type::fromName("Part::Compound"))
+                 && !obj->isDerivedFrom(Base::Type::fromName("Part::FeaturePython")))) {
         return {};
+    }
+    const auto objects = obj->getDocument()->getObjects();
+    if (std::none_of(objects.begin(), objects.end(), [](const auto object) {
+            return object->getPropertyByName("PlusFormat") != nullptr;
+        })) {
+        return {};  // Do not import Plus policy for ordinary legacy documents.
+    }
+    Base::PyGILStateLocker lock;
+    try {
+        Py::Module module(PyImport_ImportModule("freecad_plus.geometry"), true);
+        Py::Boolean guarded(module.callMemberFunction(
+            "is_part_input_property",
+            Py::TupleN(Py::Object(obj->getPyObject(), true), Py::String(target.getPropertyName()))));
+        if (!guarded) {
+            return {};
+        }
+    }
+    catch (Py::Exception&) {
+        Base::PyException error;
+        return error.what();
     }
     auto current = getLinksFromProperty(static_cast<const App::PropertyLinkBase*>(prop));
     std::vector<App::SubObjectT> added;

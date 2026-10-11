@@ -319,6 +319,12 @@ Point to Point.
   split/join input editing admission. Source checkpoint `6416f489b1` pushed to origin;
   exact remote revision verified. No owner delivery.
 
+- [ X ] **G1.7b3t - Split/join property-editor admission.** Eleven explicit native
+  input properties share atomic dialog/property-item admission, cleanup and edited
+  owner checks. Four focused cases, two affected Compound regressions and independent
+  reopen/source-edit passed. WORK_STATE records build evidence, harness corrections
+  and limits. Next: split/join tree drop/replacement. No owner delivery.
+
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

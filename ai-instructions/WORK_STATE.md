@@ -2,11 +2,76 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3s split/join creation integration and its planned
-checks are complete.** Stop runtime work here. Next: split/join input editing
-admission through existing native link/property editors. Group 1 remains incomplete.
-Add Reference Feature and cross-component Full Component transfer workflows remain
-separately unresolved. No owner delivery.
+Continue Group 1 only. **G1.7b3t split/join property-editor admission and its
+planned checks are complete.** Stop runtime work here. Next: split/join tree drop
+and replacement admission. Group 1 remains incomplete. Add Reference Feature and
+cross-component Full Component transfer workflows remain separately unresolved.
+No owner delivery.
+
+## G1.7b3t Split/join property-editor admission - October 11, 2026
+
+**Authority and scope:** applies the owner's Reference prerequisite and existing
+edited-component ownership contract to native property input editing. No new design
+choice or operation workflow was needed. Tree drop/replacement is a separate entry
+point and remains next. See the [technical contract](ARCHITECTURE.md#splitjoin-property-editor-admission-g17b3t).
+
+**Implementation:** the existing native link-dialog/property-item preflight uses an
+explicit mapping of seven upstream Python proxy types and eleven input properties:
+Fragments/XOR/Connect Objects, Slice Base/Tools, Embed/Cutout Base/Tool and generated
+CompoundFilter Base/Stencil. It checks additions before mutation, keeps the dialog
+open on refusal, permits removal, and checks every selected target before any
+multi-feature write. Only local inputs in the edited definition's defining file
+are supported. Legacy documents bypass the Plus import; unrelated Python feature
+properties retain native behavior. Native algorithms and dependency links remain.
+
+**Build:** FreeCADGui + FreeCADPlusScripts passed, exit 0, 153.62 seconds, using the
+retained `test-builds/freecad_1.1.4_context` tree. No production corrections or
+additional native builds were needed after this build.
+
+**Harness corrections and bounded runs:** the initial six cases ran in 25.089
+seconds (native exit 0, 30.09 seconds overall): four passed, two stopped on harness
+issues. An accepted dialog may already be destroyed, so its lifetime check was
+corrected. The replacement fixture now preserves the replaced box's offset, avoiding
+an unintended empty XOR. A two-case rerun took 9.662 seconds (native 14.55 seconds)
+and exposed missing property-click transaction setup and an unopened Base editor.
+The new tests now click the actual property cell and explicitly finish its native
+transaction before Undo; their unrelated-feature fixture uses an ordinary local
+input rather than a nested Body feature. Four affected new cases then took 24.257
+seconds (native 28.91 seconds): two passed, while the two Base-editor cases exposed
+a category/property naming collision. Source inspection confirmed the default
+category is also called Base. The helper now selects only an editable property row.
+This was test-harness work, not repeated unrelated regression or a product redesign.
+
+**Final acceptance:** all six planned cases have passed: two original Compound
+regressions from the initial run, two context/refusal cases from the corrected
+four-case run, and the final two cases after the Base-row fix. That last run had
+zero failures/errors/skips, 42.339 seconds (native exit 0, 46.95 seconds overall).
+The complete eleven-property case tests refusal without state mutation, continued
+acceptance in the same dialog, valid geometry, retained ownership, Undo/Redo and
+save. Other cases cover Excluded and unsupported Full Component input; file/wrong
+Edit refusal; removal outside component Edit; atomic multi-feature rejection;
+legacy list/single/filter properties; and unrelated Python feature bypass. The
+existing Compound dialog and legacy checks passed without production changes.
+
+Independent fresh-process reopen/source-edit passed, native exit 0, 6.58 seconds.
+All saved object identities, edited input links and owners survived. Increasing
+local box heights from 4 to 6 recomputed all eleven valid results to 1.5 times their
+saved volumes with unchanged solid counts. Runtime checks stop here. Final logs
+retain the known Std_Measure notices. Earlier harness runs also produced editor
+activation notices and one scoped-link warning from the superseded Body fixture.
+No warning-free claim is made.
+
+**Limits:** these are actual native Qt property dialogs, with API-driven selection
+and new-case property-cell mouse activation. No tree drag/replacement coverage,
+raw Python assignment interception, new Add Reference Feature workflow, owner
+package or shortcut delivery is claimed. Group 1 remains incomplete.
+
+**Final checks:** all 43 Plus Python scripts parse and match the development
+payload byte-for-byte. All 126 local links in changed Markdown resolve; whitespace
+checks pass. The native edited file retains its original Git LF line endings.
+Task artifacts `g1_7b3t_split_properties` are removed after recording these results.
+Useful builds remain; no additional runtime work.
+
 
 ## G1.7b3s Split/join creation integration - October 11, 2026
 

@@ -1194,3 +1194,25 @@ This boundary covers command creation, not later link/property editing, raw Pyth
 assignment, file restoration or recompute. Those editing consumers are next.
 TestPartBooleanInputs owns the focused command/ownership/Undo/persistence cases;
 WORK_STATE records actual acceptance and limits. Add Reference Feature is separate.
+
+### Split/join property-editor admission (G1.7b3t)
+
+The existing DlgPropertyLink and PropertyLinkItem preflight now recognizes the
+specific upstream Python proxy types for Boolean Fragments, XOR and Connect
+(Objects), Slice (Base/Tools), Embed and Cutout (Base/Tool), and CompoundFilter
+(Base/Stencil). The explicit proxy/property mapping lives in geometry.py. Matching
+a generic Base or Objects property name alone does not opt another Python feature
+into this policy. Ordinary legacy documents bypass the policy import.
+
+Only newly admitted links are checked. The shared modeling validator requires the
+consumer and new inputs to belong to the edited definition in its defining file,
+and checks Reference/Excluded access before mutation. Removal/reordering remains
+available without admitting new geometry. Rejected dialog acceptance leaves the
+dialog open; the existing property item preflights every selected target before
+writing any of a multi-feature edit. Native algorithms, property types, dependency
+links, Undo and restore/recompute services remain unchanged.
+
+This increment covers the property editor only. Split/join tree drop and replacement
+are separate consumers and remain next; direct Python assignment is not intercepted.
+No new workflow, automatic Add Reference Feature or foreign ownership policy is
+inferred. WORK_STATE owns build/runtime evidence and the stopping boundary.
