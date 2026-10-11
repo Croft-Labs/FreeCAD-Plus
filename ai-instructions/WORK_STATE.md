@@ -2,11 +2,87 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3t split/join property-editor admission and its
-planned checks are complete.** Stop runtime work here. Next: split/join tree drop
-and replacement admission. Group 1 remains incomplete. Add Reference Feature and
-cross-component Full Component transfer workflows remain separately unresolved.
-No owner delivery.
+The owner's October 11 instruction explicitly authorizes independent Classic/Plus
+presentation preferences and normal Components startup. **G1.6d and its bounded
+checks are complete.** Stop runtime work here. Components is now available through
+normal startup/Preferences/Panels in the development build. All three selectors
+default to Plus; toolbar/task presentations intentionally still match Classic.
+Group 1 remains incomplete. Next priority is remaining normal component-document
+command integration and shared Classic adapters; split/join tree drop/replacement
+also remains unfinished. Do not treat choosing Classic as an old-backend bypass.
+
+## G1.6d Independent Classic/Plus UI sections - October 11, 2026
+
+**Authority:** direct owner instruction, recorded in the [evidence ledger](ui-ux-specs/EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026).
+Three independent dropdowns lead General/Application: model/components, toolbars,
+and task-panel workflows. All default to Plus. This supersedes the developer-only
+startup boundary. Both presentations share the updated backend; toolbar/task Plus
+presentations start from Classic definitions and are redesigned later.
+
+**Implementation:** native General preferences persist the three choices. InitGui
+installs an event-driven presentation controller. Plus shows Components and keeps
+the native property editor; Classic restores the native tree. Both combined and
+independent native tree/property layouts are handled. Components has a normal
+Panels-menu toggle. Hiding or switching its managed dock retains backend observers,
+Edit context and active tasks. Workbench changes restore its menu availability;
+there is no idle polling. Toolbar/task options share the existing native command
+and task definitions initially, avoiding a second callback/modeling engine.
+
+Pad and Pocket already route to the same native FeatureExtrude engine with their
+additive/subtractive options. Existing component admission rules remain independent
+of presentation. This increment preserves that route; it does not claim a completed
+consolidated Plus Extrude task or all future Classic adapters. The [technical
+contract](ARCHITECTURE.md#independent-ui-presentations-g16d) records the boundary.
+
+**Build:** FreeCADGui + FreeCADPlusScripts passed, exit 0, 207.42 seconds, in the
+retained `test-builds/freecad_1.1.4_context` tree. Original native source line endings
+were retained. Later changes needed only script deployment; no native corrective
+build was required.
+
+**Bounded validation and corrections:** the first harness looked for Preferences
+before it was ready and left its modal call waiting. Only that recorded test PID
+was stopped after 55.39 seconds; this is not an application crash. Dialog discovery
+now uses top-level widgets and a finite readiness retry. The four-case run then took
+8.399 seconds (native exit 0, 13.09 seconds overall): startup/defaults/Cancel, all
+eight combinations and Apply/persistence passed; the task test used a direct Length
+assignment that the native dialog replaced on acceptance. It now sets the actual
+length field. The affected task case and persistence fixture passed in 4.816 seconds
+(native exit 0, 9.52 seconds). No production correction was needed for those failures.
+
+Source review identified the existing independent tree/property layout as a second
+native tree presentation. The controller now also hides/restores that standalone
+tree without hiding Properties. Its one focused case passed in 2.800 seconds
+(native exit 0, 7.44 seconds). All five acceptance groups have passed; completed
+unrelated geometry suites were not repeated.
+
+Covered normal Plus startup, actual Preferences row order/text/defaults, Cancel,
+Apply, mixed settings, all eight combinations, unchanged object IDs/Undo/Edit and
+toolbar command identities, menu close/reopen, workbench changes, both native tree
+layouts, and live native Pad/Pocket tasks across mode switches. The cylinder and
+pocket volumes were 20*pi and 19.5*pi; Pocket Undo/Redo and Reference refusal in both
+presentations passed. The actual Application-group capture was visually inspected:
+three aligned dropdowns precede Theme and existing settings; no clipping. The capture
+shows the cancelled Classic draft; default Plus values were separately asserted.
+
+Independent restart passed, native exit 0, 5.45 seconds: Classic/Plus/Classic choices
+persisted, saved object identities and feature links survived, and increasing the
+pocket depth to 3 recomputed the valid model to 19.25*pi. Final logs retain known
+Std_Measure notices. No long-session jitter or complete Group 1 acceptance is claimed.
+
+**Development delivery:** reopened both desktop shortcuts. `freecad plus 0.1.0.lnk`
+points to the rebuilt `freecad_1.1.4_context/bin/FreeCAD.exe`, with that bin directory
+as its working directory. The old `FreeCADPlus.exe - Shortcut.lnk` still points to
+`freecad_plus_2026-10-10_part_types_payload/FreeCADPlus.exe`. Both targets exist;
+no shortcut or owner settings were changed during validation. The new shortcut now
+loads automatic UI-mode integration on its next launch. No separate release package
+was created. Earlier manual-activation-only delivery notes below are historical.
+
+**Final checks:** all 45 Plus Python scripts parse and match the retained payload;
+UI XML parses; original native LF/CRLF choices are retained and whitespace passes.
+Test mode acceptance skips outside an explicitly isolated PLUS_TEST_DIR. The final
+test guard/docstring-only edits were deployed and syntax checked; runtime work is
+complete. Task artifacts `g1_ui_modes` are removed after recording durable results.
+
 
 ## Separate development shortcut - October 11, 2026
 

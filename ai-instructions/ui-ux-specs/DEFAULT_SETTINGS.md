@@ -29,6 +29,20 @@ Defaults and user customization are distinct. The explicit saved choices below r
 
 Evidence keys resolve in [Evidence and Decisions](EVIDENCE_AND_DECISIONS.md). The detailed behaviors have one home in the other four specifications; this table is a lookup of their defaults.
 
+### Independent UI modes
+
+The first three options in **Preferences > General > Application**, in order, are:
+
+1. **Model / components panel**
+2. **Toolbars**
+3. **Task panel (workflow)**
+
+Each is an independent dropdown with **Plus UI Mode** and **Classic UI Mode**;
+all default to **Plus UI Mode** and retain the user's saved choices. Mixed
+combinations are supported. Plus toolbars and task workflows initially copy the
+Classic presentations; their later redesign is separate. UI mode does not select a
+different document schema or modeling engine. [Owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026).
+
 ## Decisions requiring owner confirmation
 
 The accessible history does not include the October 2 screenshots or the complete older conversations. Therefore the DOCX's exact theme, navigation style, units, colors, pixel sizes, numeric formatting, grid visibility and initial left-panel split remain **Needs owner confirmation**. Do not use the present application settings to confirm them. Medium icons must be larger per C06, but the specific 32 px icon / 42 px button dimensions in the DOCX are not established by that request alone.
@@ -41,7 +55,7 @@ The following source candidates are not instructions to implement. Exact values,
 
 **D2800 — Needs owner confirmation:** Create the first automatic part as Part001 and use untitled001 for the default file name.
 
-**D2806 — Needs owner confirmation:** Toolbar interface: Plus UI.
+**D2806 — Confirmed by October 11 owner instruction:** Toolbar interface defaults to Plus UI Mode; the independent selectors above govern.
 
 **D2807 — Needs owner confirmation:** Navigation style: Blender.
 

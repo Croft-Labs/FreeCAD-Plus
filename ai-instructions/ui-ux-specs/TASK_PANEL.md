@@ -458,3 +458,15 @@ The [separate implemented-change inventory](UNVERIFIED_IMPLEMENTED_CHANGES.md) l
 The former [UI specification](archive/2026-10-10/UI_UX_SPEC.md) retains detailed custom dialogs for Trim Body, Isocline, CAM/STL machining and holding tabs, named parameters, command search, temporary display, export, sketch support, dependency inspection, measurement, occurrence appearance, interference, sketch repair, Mirror, section planes, feature organization, Make Unique, drawing setup, document updates, mesh preparation, reusable sketches, BOM, Shape Builder, source replacement, face deviation, Select Other, thickening, CAM templates/simulation, exploded views, intersection curves, freedom guidance, dimension repair, joints, ordered Loft sections, CAM model review, state columns, Sweep, project packaging, Hole, selection filters, fillet/chamfer recovery, Trim gestures, Shell and face extension. These are preserved **only as archived candidates**; no accessible original owner message confirms their detailed custom UI. Native upstream workflows remain the baseline unless a confirmed owner requirement above changes them.
 
 The removed [component-contract UI passages](archive/2026-10-10/superseded-passages/ai-instructions/architecture/COMPONENT_DOCUMENT_CONTRACT.md) similarly preserve proposed instance grouping, deletion/reparenting, context menus, Add Reference Object, missing-file repair and dumb conversion details. Use them to ask targeted confirmation questions, never to infer approval from implementation.
+
+## Classic and Plus workflow presentations
+
+Task panel (workflow) has its own Classic/Plus selector, independent of toolbars
+and model/components presentation. Plus starts as a copy of the Classic workflows;
+new Plus workflows are developed later. Both presentations use the same updated
+component structure and operation services. Switching presentation does not cancel
+or duplicate an active task. Pad/Pocket are additive/subtractive adapters to the
+shared extrusion operation. Do not fork a legacy backend when building a Classic
+adapter; investigate incompatibilities as they arise.
+
+See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026) and [mode defaults](DEFAULT_SETTINGS.md#independent-ui-modes).

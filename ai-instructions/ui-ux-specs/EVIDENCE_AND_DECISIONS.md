@@ -220,3 +220,19 @@ At the owner's October 10 request, [UNVERIFIED_IMPLEMENTED_CHANGES.md](UNVERIFIE
 ## Clean baseline transition — October 10
 
 The owner requested a clean checkout of the latest stable official FreeCAD source. Official releases/latest resolved to 1.1.4; 26.3 RC1 is a prerelease. The active source now starts at 4fd3bf320d9566a27e60069fc8387448aaa3a094. Requirements and confirmation statuses are unchanged. The original command inventory still records its stated historical source revision; it is not silently regenerated from the new baseline. Implementation links refer to the preserved old fork, and old technical/roadmap documents are historical.
+
+## Independent Classic and Plus UI sections - October 11, 2026
+
+Direct owner instruction in the current conversation: create Classic UI Mode and
+Plus UI Mode independently for the model/components panel, toolbars, and task-panel
+workflows. Place three dropdowns as the first three options in Preferences > General
+> Application, all defaulting to Plus UI Mode. Plus toolbars and task workflows
+initially copy Classic behavior and are customized later.
+
+Both presentations must use the updated Plus component structure and common
+operation backends. Classic names/buttons are adapters, not a separate old engine:
+Pad and Pocket select additive/subtractive behavior in shared Extrude. Apply this
+pattern wherever compatible and resolve genuine incompatibilities as they arise.
+This instruction authorizes the preference/startup integration now and supersedes
+any developer-only presentation constraint. It does not authorize inventing the
+remaining operation workflows or treating unconfirmed DOCX details as approved.

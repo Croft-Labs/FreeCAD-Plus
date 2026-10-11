@@ -1216,3 +1216,38 @@ This increment covers the property editor only. Split/join tree drop and replace
 are separate consumers and remain next; direct Python assignment is not intercepted.
 No new workflow, automatic Add Reference Feature or foreign ownership policy is
 inferred. WORK_STATE owns build/runtime evidence and the stopping boundary.
+
+### Independent UI presentations (G1.6d)
+
+General/Application owns three independent integer preferences: ModelPanelUIMode,
+ToolbarUIMode and TaskPanelUIMode. Zero (and an absent key) selects Plus; one selects
+Classic. The first three Application rows are the corresponding PrefComboBoxes.
+Apply persists each choice and invokes the shared presentation controller. Cancel
+does not apply draft choices. Native preference reset restores the Plus defaults.
+
+FreeCADPlus/InitGui.py installs ui_modes at ordinary startup. A single-shot timer
+coalesces startup/workbench events, without idle polling. Plus shows the Components
+dock and hides the native tree while retaining the native property editor. Classic
+hides Components and restores the native Model tree. Independent tree/property dock
+layouts are also respected. Components is discoverable through the native Panels
+menu. Closing/hiding the managed dock retains backend observers and Edit/view
+contexts; changing UI mode never changes geometry eligibility or document schema.
+The component panel can still be constructed explicitly by developer tests.
+
+Toolbar and task modes initially use the same native presentation definitions and
+commands. This is the owner's requested Classic-copy starting point; no new toolbar
+layout or consolidated task workflow is claimed. Keeping command identities avoids
+duplicated callbacks, features and Undo. Future Plus presentations must bind to the
+same updated component/operation services as Classic adapters. In particular, native
+Pad and Pocket already share PartDesign::FeatureExtrude::buildExtrusion, with fusion
+and subtraction options supplied by their adapters. Both use the existing component
+input protections independently of UI choice. This does not claim completion of the
+planned consolidated Plus Extrude interface or every legacy adapter.
+
+UI selection is presentation state, not a feature flag for using an old backend.
+Native object/property identities and existing-file restore/recompute stay intact.
+The native property editor and active native tasks remain available while mode
+changes. Remaining normal component command/legacy-conversion integration and
+unimplemented operation workflows retain their separate scope. TestUIModes (inside
+TestComponentPanel.py) owns bounded acceptance with an isolated settings profile;
+WORK_STATE owns results and delivery evidence.

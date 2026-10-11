@@ -3248,3 +3248,15 @@ These preserve all remaining DOCX inventory items, grouped by their original wor
 | Original option | Short description | Trace |
 | --- | --- | --- |
 | Horizontal extent > Vertical extent | Dimensions the overall vertical extent of projected geometry. | D2083; Plus placement unspecified |
+
+## Classic and Plus command adapters
+
+The toolbar selector is independent of panel and task workflow selectors. Plus
+toolbars initially copy Classic toolbar contents and command behavior. Both bind
+to the same updated operation backends; a Classic label does not restore an old
+engine or bypass component rules. In particular, Pad and Pocket select additive
+and subtractive behavior in the common Extrude backend. Extend this adapter pattern
+where compatible; resolve incompatible features individually rather than silently
+changing their meaning.
+
+See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026) and [mode defaults](DEFAULT_SETTINGS.md#independent-ui-modes).

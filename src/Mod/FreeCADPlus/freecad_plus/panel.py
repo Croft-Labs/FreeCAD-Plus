@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Opt-in component panel foundation; rows project native ownership, never own it.
+"""Component panel foundation; rows project native ownership, never own it.
 
 Placed and unused definitions share Edit and History. Temporary isolation is view-only;
 component tabs reuse native views; other confirmed actions remain separate increments.
@@ -762,6 +762,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.schedule()
 
     def closeEvent(self, event):
+        if getattr(self, '_ui_mode_managed', False):
+            self.hide()
+            event.ignore()
+            return
         self.dispose()
         super().closeEvent(event)
 
@@ -796,7 +800,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
 
 def show_panel():
-    """Explicit developer opt-in; never removes the native tree/workbenches."""
+    """Create or show the shared panel; ui_modes controls normal presentation."""
     global _panel
     if _panel is None or _panel._closed:
         if _panel is not None:

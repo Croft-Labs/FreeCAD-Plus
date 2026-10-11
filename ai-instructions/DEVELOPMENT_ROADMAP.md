@@ -104,6 +104,13 @@ Point to Point.
   and remote revision verified; no release or owner-build delivery.
   This is a bounded development build, not full-workbench or complete-panel acceptance.
   WORK_STATE records details; the remaining panel actions are separate increments.
+- [ X ] **G1.6d - Independent Classic/Plus presentations.** Three Plus-default
+  General/Application selectors, normal Components startup/menu access, combined
+  and independent native tree/property layouts, and shared backend context. Toolbar
+  and task presentations initially share Classic definitions. Native Pad/Pocket
+  share extrusion; future consolidated workflows remain separate. WORK_STATE owns
+  focused runtime and shortcut delivery evidence.
+
 - [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs, structural
   actions and confirmed menu routing. A menu entry opens its separately owned operation;
   it does not authorize implementing that operation within Group 1. Deferred Add

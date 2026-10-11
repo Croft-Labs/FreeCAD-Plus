@@ -213,15 +213,19 @@ file-origin visibility, Undo/save/reopen and observer lifecycle. An initial visi
 fixture must explicitly hide the plane as well as its parent Origin before testing
 Show; the child's authored visibility can remain true while the Origin is hidden.
 
-The panel is explicitly enabled from the module path with:
+Normal startup now uses the three General/Application UI selectors. Plus panel
+mode is the default; Classic and Plus share the backend. For explicit developer
+construction, the existing entry point remains:
 
 ```python
 from freecad_plus import panel
 components = panel.show_panel()
 ```
 
-It is not installed into an owner executable or automatically enabled at startup.
-Closing it unregisters observers; calling show_panel again creates one fresh dock.
+The module is deployed into the development build linked by `freecad plus 0.1.0`.
+The startup-managed panel hides without discarding backend context; developer-only
+unmanaged panels still unregister observers on close. UI-mode acceptance uses a
+fresh isolated profile; normal fixture tests continue using their existing entry points.
 Do not hide/remove the legacy tree to make screenshots imply completed replacement.
 Domestic and external unused-model Edit are supported in the native context build;
 component tabs use additional native views. Other confirmed panel actions remain

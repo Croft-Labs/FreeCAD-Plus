@@ -257,3 +257,15 @@ The following source candidates are not instructions to implement. Exact values,
 ### Editing an earlier History item
 
 **D2865 — Needs owner confirmation:** Editing Model History: temporarily suppress every subsequent feature or object in the active component, following the current reordered History sequence. Editing item 5 of 10 suppresses items 6 through 10, including independent later items and their background results. Keep the edited item, earlier items and native Origin available. Apply this shared behavior to sketches, native feature editors and combined modeling tasks. Later items show an unchecked Suppressed during edit state, are hidden and are unavailable as evaluated component inputs or results until editing ends. Keep existing authored suppression unchanged. Accept or Cancel restores prior suppression and display choices; a failed validation keeps the edit and temporary suppression active, while failed editor startup restores them. Refresh downstream results after completion. Temporary state must not create an Undo entry, alter object identities or persist when saving during an edit. Preserve component and occurrence context on return.
+
+## Classic and Plus presentation
+
+Plus UI Mode presents the Components panel (Models, Part Tree, History); Classic
+UI Mode presents the native Model tree. The choice belongs to the model/components
+selector and is independent of toolbar and task workflow choices. Both operate on
+the same updated component/document backend; switching presentation must not
+recreate objects, change ownership or discard Edit/task context. The property
+editor remains available. Components must be available through normal startup and
+the panel menu, not only a developer Python call.
+
+See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026) and [mode defaults](DEFAULT_SETTINGS.md#independent-ui-modes).

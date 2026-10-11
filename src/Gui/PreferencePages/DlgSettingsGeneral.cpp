@@ -34,6 +34,7 @@
 
 #include <App/Document.h>
 #include <Base/Parameter.h>
+#include <Base/Interpreter.h>
 #include <Base/UnitsApi.h>
 
 #include <Gui/Document.h>
@@ -245,6 +246,10 @@ void DlgSettingsGeneral::saveSettings()
 {
     saveUnitSystemSettings();
 
+    ui->ModelPanelUIMode->onSave();
+    ui->ToolbarUIMode->onSave();
+    ui->TaskPanelUIMode->onSave();
+    Base::Interpreter().runString("from freecad_plus import ui_modes; ui_modes.apply_modes()");
     ui->RecentFiles->onSave();
     ui->EnableCursorBlinking->onSave();
     ui->SplashScreen->onSave();
@@ -300,6 +305,9 @@ void DlgSettingsGeneral::loadSettings()
     ui->comboBox_FracInch->setCurrentIndex(cbIndex);
     ui->SubstituteDecimal->onRestore();
     ui->UseLocaleFormatting->onRestore();
+    ui->ModelPanelUIMode->onRestore();
+    ui->ToolbarUIMode->onRestore();
+    ui->TaskPanelUIMode->onRestore();
     ui->RecentFiles->onRestore();
     ui->EnableCursorBlinking->onRestore();
     ui->SplashScreen->onRestore();

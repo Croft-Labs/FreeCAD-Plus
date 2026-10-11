@@ -74,6 +74,13 @@ and replacement. Other consumers remain unfinished; WORK_STATE owns support/stop
 boundaries.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
+G1.6d supersedes the developer-only startup boundary: General/Application now has
+independent model/components, toolbar and task-workflow selectors, all Plus by
+default. InitGui installs the panel presentation controller; Classic preserves the
+same component backend. Toolbar/tasks initially share Classic definitions. Native
+Pad/Pocket share FeatureExtrude; a consolidated Plus task is still future work.
+WORK_STATE records startup, mixed-mode, active-task and persistence acceptance.
+
 ## Where to go
 
 | Task | Reference |

@@ -219,3 +219,197 @@ class TestComponentPanel(unittest.TestCase):
         self.assertEqual(self.widget.refresh_count, before)
         self.widget = panel.show_panel(); settle()
         self.assertEqual(len(editing._context_observers), callbacks)
+
+
+class TestUIModes(unittest.TestCase):
+    """Normal startup, real preference dialogs, mixed modes and shared native tasks."""
+    def setUp(self):
+        if 'PLUS_TEST_DIR' not in os.environ:
+            self.skipTest('Use an isolated profile and PLUS_TEST_DIR for UI-mode acceptance')
+        from freecad_plus import ui_modes
+        self.modes=ui_modes
+        self.prefs=App.ParamGet('User parameter:BaseApp/Preferences/General')
+        self.window=Gui.getMainWindow()
+        self.before=set(App.listDocuments())
+        self.output=Path(os.environ['PLUS_TEST_DIR'])
+
+    def tearDown(self):
+        for name in set(App.listDocuments())-self.before:
+            gui=Gui.getDocument(name)
+            if gui.getInEdit():gui.resetEdit()
+            if App.getActiveTransaction():App.closeActiveTransaction(True)
+            App.closeDocument(name)
+        settle()
+
+    def choose_modes(self,values):
+        for key,value in zip(self.modes.KEYS,values):self.prefs.SetInt(key,value)
+        self.modes.apply_modes();settle()
+
+    def check_model(self,plus):
+        self.assertEqual(panel._panel.isVisible(),plus)
+        dock=self.window.findChild(QtWidgets.QDockWidget,'Model')
+        self.assertIsNotNone(dock)
+        trees=[w for w in dock.findChildren(QtWidgets.QWidget) if w.metaObject().className()=='Gui::TreePanel']
+        self.assertTrue(trees)
+        self.assertEqual(trees[0].isHidden(),plus)
+        self.assertEqual(dock.windowTitle(),'Properties' if plus else 'Model')
+        self.assertTrue(dock.findChild(QtWidgets.QTreeView,'propertyEditorData'))
+
+    def preferences(self,callback):
+        errors=[];completed=[];attempts=[0]
+        def interact():
+            dialogs=[w for w in QtWidgets.QApplication.topLevelWidgets() if isinstance(w,QtWidgets.QDialog)]
+            dlg=next((w for w in dialogs if 'DlgPreferencesImp' in w.metaObject().className() and w.isVisible()),None)
+            attempts[0]+=1
+            if dlg is None and attempts[0]<100:
+                QtCore.QTimer.singleShot(50,interact)
+                return
+            try:
+                self.assertIsNotNone(dlg)
+                boxes=[dlg.findChild(QtWidgets.QComboBox,key) for key in self.modes.KEYS]
+                self.assertTrue(all(boxes))
+                callback(dlg,boxes);completed.append(True)
+            except BaseException as error:errors.append(error)
+            finally:
+                if dlg is not None:dlg.reject()
+                else:
+                    for visible in dialogs:
+                        if visible.isVisible():visible.reject()
+        QtCore.QTimer.singleShot(250,interact)
+        Gui.showPreferences('General',0);QtTest.QTest.qWait(400)
+        if errors:raise errors[0]
+        self.assertTrue(completed)
+
+    def test_01_default_startup_and_preferences_cancel(self):
+        self.assertEqual(self.modes.modes(),('Plus','Plus','Plus'))
+        self.check_model(True)
+        self.assertTrue(panel._panel.toggleViewAction().isVisible())
+        def check(dlg,boxes):
+            group=dlg.findChild(QtWidgets.QGroupBox,'GroupBox3')
+            self.assertEqual(group.title(),'Application')
+            for row,box in enumerate(boxes):
+                self.assertEqual(box.currentText(),'Plus UI Mode')
+                self.assertEqual([box.itemText(i) for i in range(box.count())],['Plus UI Mode','Classic UI Mode'])
+                self.assertEqual(group.layout().getItemPosition(group.layout().indexOf(box))[:2],(row,1))
+                box.setCurrentIndex(1)
+            group.grab().save(str(self.output/'preferences.png'))
+        self.preferences(check)
+        self.assertEqual(self.modes.modes(),('Plus','Plus','Plus'))
+        self.check_model(True)
+
+    def test_02_mixed_modes_preserve_backend_and_menu(self):
+        import itertools
+        doc=document.new_document('MixedModes');root=document.validate(doc)
+        sketch=editing.new_sketch(doc);sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),2),False)
+        feature=editing.pad(doc,sketch,5);doc.recompute()
+        ids={o.Name:o.ID for o in doc.Objects};undo=doc.UndoCount
+        owner,path=editing.context_path(doc)
+        Gui.activateWorkbench('PartDesignWorkbench');settle()
+        def toolbar_actions():
+            return {bar.objectName():tuple(a.objectName() for a in bar.actions())
+                    for bar in self.window.findChildren(QtWidgets.QToolBar)}
+        actions=toolbar_actions()
+        for values in itertools.product((0,1),repeat=3):
+            self.choose_modes(values);self.check_model(values[0]==0)
+            self.assertEqual({o.Name:o.ID for o in doc.Objects},ids);self.assertEqual(doc.UndoCount,undo)
+            self.assertEqual(editing.context_path(doc),(owner,path))
+            self.assertEqual(toolbar_actions(),actions);self.assertTrue(feature.Shape.isValid())
+            self.assertAlmostEqual(feature.Shape.Volume,20*3.141592653589793)
+            document.validate(doc)
+        self.choose_modes((0,1,0))
+        panel._panel.close();settle();self.assertFalse(panel._panel._closed)
+        self.assertFalse(panel._panel.isVisible())
+        panel._panel.toggleViewAction().trigger();settle();self.check_model(True)
+        Gui.activateWorkbench('PartWorkbench');settle();self.check_model(True)
+        self.assertTrue(panel._panel.toggleViewAction().isVisible())
+
+    def test_03_native_pad_pocket_survive_presentation_changes(self):
+        import json,math
+        from TestComponentModeling import accept_task,messages
+        from freecad_plus import geometry,display
+        doc=document.new_document('SharedExtrude');root=document.validate(doc);owner=root.Definitions[0]
+        Gui.activateWorkbench('PartDesignWorkbench');self.choose_modes((1,1,1))
+        sketch=editing.new_sketch(doc);sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),2),False)
+        doc.recompute();Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+        with messages() as errors:Gui.runCommand('PartDesign_Pad');settle()
+        self.assertFalse(errors,errors)
+        pad=Gui.getDocument(doc.Name).getInEdit().Object
+        length=next(w for w in self.window.findChildren(QtWidgets.QWidget) if w.objectName()=='lengthEdit' and w.isVisible())
+        self.assertTrue(length.setProperty('rawValue',5.0));settle()
+        task=Gui.Control.activeDialog();transaction=App.getActiveTransaction()
+        self.choose_modes((0,0,0))
+        self.assertEqual(Gui.Control.activeDialog(),task);self.assertEqual(App.getActiveTransaction(),transaction)
+        self.assertEqual(Gui.getDocument(doc.Name).getInEdit().Object,pad)
+        accept_task();doc.recompute();self.assertAlmostEqual(pad.Shape.Volume,20*math.pi)
+        profile=editing.new_sketch(doc);profile.Placement.Base=App.Vector(0,0,5)
+        profile.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),0.5),False)
+        doc.recompute();Gui.Selection.clearSelection();Gui.Selection.addSelection(profile)
+        with messages() as errors:Gui.runCommand('PartDesign_Pocket');settle()
+        self.assertFalse(errors,errors)
+        pocket=Gui.getDocument(doc.Name).getInEdit().Object
+        length=next(w for w in self.window.findChildren(QtWidgets.QWidget) if w.objectName()=='lengthEdit' and w.isVisible())
+        self.assertTrue(length.setProperty('rawValue',2.0));settle()
+        self.choose_modes((1,0,1));self.assertEqual(Gui.getDocument(doc.Name).getInEdit().Object,pocket)
+        accept_task();doc.recompute();self.assertTrue(pocket.Shape.isValid())
+        self.assertAlmostEqual(pocket.Shape.Volume,19.5*math.pi)
+        name=pocket.Name;doc.undo();doc.recompute();self.assertIsNone(doc.getObject(name))
+        doc.redo();doc.recompute();pocket=doc.getObject(name)
+        self.assertAlmostEqual(pocket.Shape.Volume,19.5*math.pi)
+        source=hierarchy.create_definition(doc,'Reference')
+        foreign=source.newObject('Part::Box','Foreign');link=hierarchy.add_instance(owner,source)
+        display.set_state(owner,link,part_type='Reference');doc.recompute()
+        for mode in (0,1):
+            self.choose_modes((mode,mode,mode))
+            with self.assertRaises(ValueError):geometry.require_modeling_inputs(profile,[(foreign,'')])
+        name=pocket.Name;document.validate(doc)
+        document.save_document(doc,self.output/'UIModes.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':{o.Name:o.ID for o in doc.Objects},
+            'pad':pad.Name,'pocket':name,'profile':profile.Name,'volume':pocket.Shape.Volume}))
+
+    def test_04_preferences_apply_and_persist(self):
+        self.choose_modes((0,0,0))
+        def apply(dlg,boxes):
+            for box,value in zip(boxes,(1,0,1)):box.setCurrentIndex(value)
+            buttons=dlg.findChild(QtWidgets.QDialogButtonBox)
+            buttons.button(QtWidgets.QDialogButtonBox.Apply).click();settle()
+            self.assertEqual(self.modes.modes(),('Classic','Plus','Classic'));self.check_model(False)
+        self.preferences(apply)
+        self.preferences(lambda dlg,boxes:self.assertEqual([b.currentIndex() for b in boxes],[1,0,1]))
+        App.saveParameter()
+
+
+    def test_05_independent_native_tree_layout(self):
+        groups={name:App.ParamGet('User parameter:BaseApp/Preferences/DockWindows/'+name)
+                for name in ('ComboView','TreeView','PropertyView')}
+        old={name:group.GetBool('Enabled',name=='ComboView') for name,group in groups.items()}
+        try:
+            for name,group in groups.items():group.SetBool('Enabled',name!='ComboView')
+            QtTest.QTest.qWait(1200)
+            self.choose_modes((0,0,0))
+            tree=self.window.findChild(QtWidgets.QDockWidget,'Tree view')
+            self.assertIsNotNone(tree);self.assertTrue(tree.isHidden())
+            self.assertFalse(tree.toggleViewAction().isVisible())
+            self.choose_modes((1,0,0));self.assertFalse(tree.isHidden())
+            self.assertTrue(tree.toggleViewAction().isVisible())
+            properties=self.window.findChild(QtWidgets.QDockWidget,'Property view')
+            self.assertIsNotNone(properties);self.assertFalse(properties.isHidden())
+            self.choose_modes((0,0,0));self.assertTrue(tree.isHidden())
+        finally:
+            for name,group in groups.items():group.SetBool('Enabled',old[name])
+            QtTest.QTest.qWait(1200)
+            self.choose_modes((1,0,1));App.saveParameter()
+
+
+def verify_ui_modes_reopen(output):
+    import json,math
+    from freecad_plus import ui_modes
+    assert ui_modes.modes()==('Classic','Plus','Classic')
+    assert panel._panel is not None and not panel._panel.isVisible()
+    expected=json.loads((Path(output)/'expected.json').read_text())
+    doc=document.open_document(Path(output)/'UIModes.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        pocket=doc.getObject(expected['pocket']);assert abs(pocket.Shape.Volume-expected['volume'])<1e-7
+        pocket.Length=3;doc.recompute();document.validate(doc)
+        assert pocket.Shape.isValid() and abs(pocket.Shape.Volume-19.25*math.pi)<1e-7
+    finally:App.closeDocument(doc.Name)
