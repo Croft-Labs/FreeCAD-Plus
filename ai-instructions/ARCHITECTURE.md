@@ -347,9 +347,39 @@ independent copies reuse native property copying and upgrade their destination.
 
 This increment exposes saved choices through checked menus and contextual tree
 tooltips. It does **not** apply viewport filtering, fading, reference eligibility or
-export rules. Those are subsequent integration gates in G1.7b; this opt-in development
-panel is not a delivered owner UI. No global Visibility mutation is used to simulate
-per-view behavior. WORK_STATE owns actual acceptance evidence.
+export rules. G1.7b1 below applies explicit hiding; remaining content, fading and
+eligibility gates remain open. This opt-in development panel is not a delivered owner
+UI. WORK_STATE owns actual acceptance evidence.
+
+### View-local explicit hiding (G1.7b1)
+
+`display.hidden_paths` resolves Hidden/Excluded and nested Reference to whole native
+occurrence paths. The active occurrence uses its definition's self choice; entering
+Edit traverses its ancestors even when a parent had excluded that occurrence.
+Direct Reference is visible in the exact active parent occurrence; its corresponding
+child beneath another occurrence is treated as nested, without rewriting saved state.
+These are explicit resolver conventions, not new owner-approved requirements.
+
+`view.setComponentHiddenPaths(root, paths)` adds one scene-owned selection root around
+that view's native ObjectGroup. The unique outer root keys secondary Hide entries on
+existing view-provider paths. Geometry, object identities, placements and saved native
+Visibility remain unchanged; hidden paths also disappear from native ray picking.
+An empty path list/no-argument call restores the original ObjectGroup. Native wrapper
+teardown clears its secondary entries while child nodes are still available. Invalid
+whole-object names are refused before disturbing existing filters. A temporarily
+unavailable native scene path clears the temporary hide entries and reports failure.
+
+The opt-in panel reapplies paths through its existing coalesced native events, including
+recompute and Undo; there is no idle polling. Each visited view resolves its own Edit
+and unused-isolation context. Missing/deleted Edit contexts use the same file projection
+as the tree, without creating an Edit state. Entering unused isolation first restores
+ObjectGroup; returning reapplies the placed view's saved choices. Panel disposal clears
+every tracked view. No shared ViewProvider partial-render or Visibility writes are used.
+
+This increment does not implement fading, Bodies Only content filtering, Reference
+modeling eligibility, export policy, or saved display filtering inside an unused-model
+preview. Bodies Only descendant semantics remain a pending owner question. Those limits
+must not be treated as completion of G1.7b or as approval for a new operation dialog.
 
 ### Persistence contract
 

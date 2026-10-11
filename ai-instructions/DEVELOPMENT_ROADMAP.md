@@ -40,7 +40,7 @@ of Component Panel implementation. Group 1 owns Models/Part Tree/History, docume
 and instance structure, selection/Edit context, tabs, presentation and menu routing.
 Move Components workflows belong to operation/task-panel work. They are not gates
 for completing Group 1. Their historical IDs and completed evidence are retained
-under the separate operation section below. Next increment: **G1.7b**, not
+under the separate operation section below. Next increment: **G1.7b2 contextual fading**, not
 Point to Point.
 
 - [ X ] **G1.1 — Structural contract.** Define native service reuse, file/definition/
@@ -139,10 +139,24 @@ Point to Point.
   Source milestone `47f766073d` pushed to origin/codex/freecad-1.1.4-baseline;
   remote revision verified. No owner-build delivery.
   See [saved-state contract](ARCHITECTURE.md#saved-part-type-and-visibility-state-g17a).
-- [   ] **G1.7b — Contextual viewport integration.** Next: apply saved Part Type and
+- [   ] **G1.7b — Contextual viewport integration.** Apply saved Part Type and
   visibility without global visibility leaks, restore per-view state, fade other
   occurrences, and enforce Reference/Excluded eligibility. Separate Add Reference
-  Feature operation remains deferred. Not started.
+  Feature operation remains deferred. Split into bounded increments below.
+- [ X ] **G1.7b1 — Explicit per-view hiding.** Hidden/Excluded and nested Reference
+  filtering use native view-local paths; clear on context changes, unused isolation,
+  panel/view closure. No native Visibility writes. Native build, focused tests,
+  affected regressions, independent reopen and normal-buffer inspection are recorded
+  in WORK_STATE. Final five display/lifecycle cases passed, zero failures/errors/skips.
+  Implementation and planned checks are complete; stopped. No owner-build delivery.
+- [   ] **G1.7b2 — Contextual fading.** Next: active occurrence and descendants keep
+  authored appearance; other occurrences use at least 75% transparency, preserving
+  greater authored transparency. File Edit and context exit restore appearance.
+  Implement/test per-view material overrides without saved property mutation.
+- [   ] **G1.7b3 — Remaining content/eligibility integration.** Bodies Only filtering
+  needs owner clarification on descendant traversal; the question is pending.
+  Reference-use eligibility and unused-definition display choices remain unfinished.
+  Do not infer Bodies Only semantics from archived assistant text or current UI.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

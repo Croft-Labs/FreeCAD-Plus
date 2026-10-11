@@ -2,10 +2,63 @@
 
 ## Authorized objective and stopping boundary
 
-The owner authorized continuation of Group 1. Current increment is **G1.7a saved
-Part Type and visibility state**, including parent-owned persistence and panel menus.
-Implementation and planned checks are complete; stopped. Next is **G1.7b contextual viewport integration**;
-do not implement it or resume the parked Point to Point operation in this increment.
+The owner authorized continuation of Group 1. Current increment is **G1.7b1 explicit
+per-view hiding/restoration**. Implementation and planned checks are complete; stopped.
+No further runtime verification or feature work is needed for this increment. Next is **G1.7b2 contextual
+fading**. Do not resume the parked Point to Point operation. Bodies Only descendant
+traversal was asked asynchronously and remains unconfirmed.
+
+## G1.7b1 explicit per-view hiding — October 10, 2026
+
+**Implementation:** Hidden/Excluded and nested Reference are resolved per occurrence
+and applied through a unique native view context around existing geometry. No saved
+native Visibility, identity or placement changes. Context transitions, Undo/recompute,
+unused isolation and panel/view cleanup restore or reapply the appropriate paths.
+The same saved shared-parent choice can produce different visibility in different
+Edit views. Active self/ancestor traversal conventions are stated in ARCHITECTURE.
+Fading, Bodies Only content filtering, Reference-use eligibility and saved display
+choices inside unused previews are not implemented. Group 1/G1.7b remain incomplete.
+
+**Build:** FreeCADGui and FreeCADPlusScripts passed in the retained development tree
+with the VS BuildTools environment. The first plain-shell attempt lacked MSVCRT.lib;
+initializing the compiler environment resolved that setup failure. The final native
+wrapper-teardown rebuild also passed. No owner package/shortcut delivery.
+
+**Validation:** initial four new cases passed (6.563 seconds). The affected 27-case
+panel/window/unused-editor/saved-state run passed 25 and found two failures caused
+by a missing/deleted Edit context in another visited view clearing panel rows.
+The per-view update now uses the same file projection fallback as the tree. Review
+also found an active-view unused lookup where an explicit view was required; corrected
+and covered with simultaneous isolated/filtered views. Eight focused follow-up cases
+passed (14.540 seconds), zero errors/failures/skips, native exit 0. This rerun covered
+the four new cases, both failures and two affected external/window cleanup cases.
+No complete Group 1 rerun was performed.
+
+Independent reopen passed with exact IDs, saved display choices, unchanged native
+visibility and recomputed Pad length. The initial framebuffer captures were uniform
+unpainted buffers, not visual acceptance. Only the capture harness was repeated after
+exposing and normally redrawing the test window; persistence was not repeated.
+Inspected normal buffers show two original cylinders, one filtered occurrence with
+the other intact, separate component-view context with both visible, and restored
+geometry after panel closure. Native selection highlighting remains visible. Captures
+were 1521 x 1128 on NVIDIA GTX 970, correct per-widget FBO, OpenGL error 0. This is
+normal-buffer inspection, not a physical-monitor or long-session performance claim.
+
+Native secondary Hide entries live on shared provider nodes. A final wrapper-destructor
+cleanup and close/reopen case were added to prevent stale entries after view teardown.
+The final five display/lifecycle cases all passed (8.309 seconds), zero errors, failures
+or skips, native exit 0. No additional runtime tests followed. All twenty-five Python
+files parse and match the development payload; 238 checked local Markdown targets
+resolve and diff whitespace passes. The bounded payload's known unavailable Std_Measure
+warning remains unrelated to this increment.
+
+**Cleanup:** task profiles, fixtures, logs, helper scripts and captures in
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_7b_visibility` are removed
+after recording these results. Useful native development build/dependencies remain.
+
+**Publication:** validated milestone prepared for origin/codex/freecad-1.1.4-baseline;
+publication verification will be recorded after push. No owner delivery, shortcut
+change, release or deployment.
 
 ## G1.7a saved display state — October 10, 2026
 

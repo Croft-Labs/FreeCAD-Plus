@@ -383,3 +383,22 @@ rendering test; native Visibility/geometry must remain unchanged. Filtering, fad
 and eligibility tests belong to the next viewport integration increment. Repeat
 only failed/affected checks after a correction; do not rerun completed acceptance
 without a new material concern.
+
+## Per-view explicit hiding validation
+
+Build `FreeCADGui` and `FreeCADPlusScripts` in the retained native development tree.
+On Windows first call the installed VS 2022 BuildTools `VsDevCmd.bat -arch=x64
+-host_arch=x64` in the same command environment; a plain shell lacks the MSVCRT.lib
+link search path. Keep helper scripts/logs in the task validation directory. Compare
+all twenty-five module Python files with the copied payload after the script target.
+
+Run TestComponentVisibility in an isolated native process. It covers whole-occurrence
+ray picking, independent view contexts, Hidden/Excluded/nested Reference, Undo,
+recompute, invalid paths, unused isolation, panel/view close and reopening. Run only
+relevant existing panel/window/unused-editor/saved-state cases; repeat failed or
+changed paths only. Run `TestComponentVisibility.verify_fresh_process(output_directory)`
+once independently and inspect original, hidden, separate-view and restored normal
+framebuffer captures. Explicitly expose and normally redraw the test window before
+reading a buffer; a uniform unpainted buffer is inconclusive. Do not change renderer
+settings to compensate for an unpainted capture. Full fading, Bodies Only, eligibility,
+long-session responsiveness and owner-delivery checks are separate gates.

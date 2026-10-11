@@ -76,7 +76,13 @@ def edit_unused(doc, definition):
         raise ValueError("Finish the native feature editor first")
     if definition.Document != doc and not hasattr(view, "setDocumentContext"):
         raise ValueError("External unused editing requires the native document-context build")
-    isolation.begin(doc, view, definition)
+    if hasattr(view, 'setComponentHiddenPaths'):
+        view.setComponentHiddenPaths()
+    try:
+        isolation.begin(doc, view, definition)
+    except Exception:
+        _notify_context()  # Restore the previous placed-context filter after failed entry.
+        raise
     if hasattr(view, "setDocumentContext"):
         view.setDocumentContext(validate(doc), definition)
     view.setActiveObject(_KEY, definition, "")

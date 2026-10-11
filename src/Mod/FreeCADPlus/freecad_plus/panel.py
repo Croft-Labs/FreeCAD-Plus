@@ -267,9 +267,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def _context(self, doc, view):
         root = document.validate(doc)
-        unused = editing.unused_context(doc)
+        unused = isolation.current(view)
         if unused is not None:
-            return unused, ()
+            return unused.definition(), ()
         resolved, parent, sub = view.getActiveObject('PlusEdit', False)
         if resolved == root and not sub:
             return None, ()
@@ -336,6 +336,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                         item.setToolTip(0, 'Part Type: ' + effective + (' (saved: ' + part_type + ')' if effective != part_type else '')
                                         + '\nVisibility: ' + ('Shown' if shown else 'Hidden')
                                         + ('\nExcluded cannot be shown.' if effective == 'Excluded' else ''))
+            self._update_display_views()
             self.refresh_count += 1
         except (ValueError, RuntimeError, ReferenceError) as error:
             self._message(str(error))
@@ -345,6 +346,24 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._updating = False
             self.setUpdatesEnabled(True)
         self._sync_selection()
+
+    def _update_display_views(self):
+        for (doc, view), state in self._states:
+            if not hasattr(view, 'setComponentHiddenPaths'):
+                continue  # Earlier bounded native builds retain their original display.
+            try:
+                active, path = self._context(doc, view)
+            except ValueError:
+                # Match the panel's file projection after an uninitialized or deleted
+                # Edit occurrence; never erase another view's rows for that context.
+                active, path = None, ()
+            hidden = display.hidden_paths(doc, active, path)
+            # Native scene paths can change after recompute even with identical names.
+            # Refresh is event-coalesced; there is no idle polling or property mutation.
+            if isolation.current(view) is not None:
+                view.setComponentHiddenPaths()
+            else:
+                view.setComponentHiddenPaths(document.validate(doc), hidden)
 
     def _reconcile(self, index, rows):
         tree, previous, current = self.trees[index], self._maps[index], {}
@@ -667,6 +686,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._mdi.subWindowActivated.disconnect(self.schedule)
         for (doc, view), state in self._states:
             try:
+                if hasattr(view, 'setComponentHiddenPaths'):
+                    view.setComponentHiddenPaths()
                 if hasattr(view, 'setDocumentContext'):
                     view.setDocumentContext()
             except (RuntimeError, ReferenceError):

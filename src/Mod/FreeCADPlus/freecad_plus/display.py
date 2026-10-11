@@ -87,3 +87,33 @@ def resolved(obj, *, direct=True):
     part_type, shown = state(obj)
     effective = 'Excluded' if part_type == 'Reference' and not direct else part_type
     return effective, shown and effective != 'Excluded'
+
+
+def hidden_paths(doc, active=None, active_path=()):
+    """Resolve explicit Hidden/Excluded and nested Reference for placed occurrences.
+
+    Bodies Only content filtering and transparency are later display integration.
+    The route into Edit takes precedence over an ancestor's saved child override.
+    """
+    from . import hierarchy
+    root = document.validate(doc)
+    active_path = tuple(active_path)
+    if active_path and hierarchy.resolve(doc, active_path)[0] != active:
+        raise ValueError('The active component occurrence changed')
+    if active is not None and not active_path:
+        return ()  # Unused-definition isolation owns its separate borrowed display.
+    hidden = []
+    def visit(owner, path=()):
+        for link in owner.Group:
+            if link.TypeId != 'App::Link': continue
+            route = (*path, link)
+            if active_path and active_path[:len(route)] == route:
+                kind, visible = resolved(active) if route == active_path else ('Full Component', True)
+            else:
+                kind, visible = resolved(link, direct=(path == active_path))
+            if not visible:
+                hidden.append(hierarchy.subname(route))
+            else:
+                visit(link.LinkedObject, route)
+    visit(root)
+    return tuple(hidden)

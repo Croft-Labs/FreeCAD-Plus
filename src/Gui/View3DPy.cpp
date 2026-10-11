@@ -26,6 +26,9 @@
 #include <QImage>
 
 #include <Inventor/SoPickedPoint.h>
+#include <Inventor/SoFullPath.h>
+#include <Inventor/details/SoDetail.h>
+#include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/annex/HardCopy/SoVectorizePSAction.h>
 #include <Inventor/draggers/SoDragger.h>
@@ -49,7 +52,9 @@
 
 #include "View3DPy.h"
 
+#include "Application.h"
 #include "Camera.h"
+#include "SoFCUnifiedSelection.h"
 #include "Document.h"
 #include "Inventor/SoMouseWheelEvent.h"
 #include "Navigation/NavigationStyle.h"
@@ -248,6 +253,8 @@ void View3DInventorPy::init_type()
     add_varargs_method("setAnnotation", &View3DInventorPy::setAnnotation, "setAnnotation()");
     add_varargs_method("removeAnnotation", &View3DInventorPy::removeAnnotation, "removeAnnotation()");
     add_noargs_method("getSceneGraph", &View3DInventorPy::getSceneGraph, "getSceneGraph()");
+    add_varargs_method("setComponentHiddenPaths", &View3DInventorPy::setComponentHiddenPaths,
+                      "setComponentHiddenPaths(root, paths): transient per-view whole-object hiding; no arguments clears it.");
     add_noargs_method("getViewer", &View3DInventorPy::getViewer, "getViewer()");
     add_varargs_method(
         "addEventCallbackPivy",
@@ -2353,6 +2360,119 @@ Py::Object View3DInventorPy::getSceneGraph()
     catch (const Base::Exception& e) {
         throw Py::RuntimeError(e.what());
     }
+}
+
+namespace {
+// Secondary entries live on shared provider nodes, not on the outer view key.
+// Clear them while the wrapper still owns its children, including view teardown.
+class ComponentVisibilityRoot : public SoFCSelectionRoot
+{
+protected:
+    ~ComponentVisibilityRoot() override
+    {
+        SoSelectionElementAction clear(SoSelectionElementAction::Show, true);
+        clear.apply(this);
+    }
+};
+}
+
+Py::Object View3DInventorPy::setComponentHiddenPaths(const Py::Tuple& args)
+{
+    PyObject* rootArg = nullptr;
+    PyObject* pathsArg = nullptr;
+    if (!PyArg_ParseTuple(args.ptr(), "|O!O", &App::DocumentObjectPy::Type, &rootArg, &pathsArg)) {
+        throw Py::Exception();
+    }
+    if ((rootArg == nullptr) != (pathsArg == nullptr)) {
+        throw Py::ValueError("Supply a root and a sequence of whole-object paths, or no arguments");
+    }
+    auto scene = static_cast<SoSeparator*>(getView3DInventorPtr()->getViewer()->getSceneGraph());
+    SoFCSelectionRoot* context = nullptr;
+    SoNode* objects = nullptr;
+    for (int i = 0; i < scene->getNumChildren(); ++i) {
+        auto node = scene->getChild(i);
+        if (node->getName() == SbName("PlusVisibilityContext")) {
+            context = dynamic_cast<SoFCSelectionRoot*>(node);
+        }
+        else if (node->getName() == SbName("ObjectGroup")) {
+            objects = node;
+        }
+    }
+    ViewProvider* provider = nullptr;
+    std::vector<std::string> names;
+    if (rootArg) {
+        auto obj = static_cast<App::DocumentObjectPy*>(rootArg)->getDocumentObjectPtr();
+        if (!obj || !obj->isAttachedToDocument()) {
+            throw Py::ValueError("The component root is no longer available");
+        }
+        provider = Application::Instance->getViewProvider(obj);
+        if (!provider || !getView3DInventorPtr()->getViewer()->containsViewProvider(provider)) {
+            throw Py::ValueError("The component root is not displayed in this view");
+        }
+        Py::Sequence paths(pathsArg);
+        for (Py_ssize_t i = 0; i < paths.size(); ++i) {
+            std::string name = Py::String(paths[i]);
+            if (name.empty() || name.back() != '.' || !obj->getSubObject(name.c_str())) {
+                throw Py::ValueError("Choose a valid whole-object occurrence path");
+            }
+            names.push_back(std::move(name));
+        }
+    }
+    // The extra selection root gives every secondary override a unique view key.
+    // Do not call partialRender on a shared ViewProvider: that affects other views.
+    if (context) {
+        SoSelectionElementAction clear(SoSelectionElementAction::Show, true);
+        clear.apply(context);
+    }
+    if (names.empty()) {
+        if (context) {
+            objects = context->getChild(0);
+            objects->ref();
+            scene->replaceChild(context, objects);
+            objects->unref();
+        }
+        return Py::Long(0);
+    }
+    if (!context) {
+        if (!objects) {
+            throw Py::ValueError("This view has no available native object group");
+        }
+        context = new ComponentVisibilityRoot();
+        context->setName("PlusVisibilityContext");
+        context->addChild(objects);
+        scene->replaceChild(objects, context);
+    }
+    try {
+        for (const auto& name : names) {
+            SoSearchAction search;
+            search.setNode(provider->getRoot());
+            search.setInterest(SoSearchAction::FIRST);
+            search.setSearchingAll(true);
+            search.apply(context);
+            if (!search.getPath()) {
+                throw Py::ValueError("The component root has no native display path");
+            }
+            auto path = static_cast<SoFullPath*>(search.getPath()->copy());
+            path->ref();
+            path->pop();
+            SoDetail* detail = nullptr;
+            bool found = provider->getDetailPath(name.c_str(), path, true, detail);
+            delete detail;
+            if (!found) {
+                path->unref();
+                throw Py::ValueError("A component display path is temporarily unavailable");
+            }
+            SoSelectionElementAction hide(SoSelectionElementAction::Hide, true);
+            hide.apply(path);
+            path->unref();
+        }
+    }
+    catch (...) {
+        SoSelectionElementAction clear(SoSelectionElementAction::Show, true);
+        clear.apply(context);
+        throw;
+    }
+    return Py::Long(names.size());
 }
 
 Py::Object View3DInventorPy::getViewer()
