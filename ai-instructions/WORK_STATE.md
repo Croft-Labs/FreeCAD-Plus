@@ -3,8 +3,7 @@
 ## Authorized objective and stopping boundary
 
 Continue Group 1 only. **G1.7b3j command-start component admission and its planned
-runtime checks are complete.** Stop implementation/testing here; publication is
-pending below. Next: component eligibility for existing PartDesign Boolean inputs.
+runtime checks are complete.** Publication is verified. Stop here. Next: component eligibility for existing PartDesign Boolean inputs.
 Other collectors and direct exporter/view-output paths remain open. Group 1 remains
 incomplete. Check latest owner conversations for any new design question; this work
 applies component rules without operation redesign. No new owner build.
@@ -77,7 +76,9 @@ payload byte-for-byte; 147 local links in changed Markdown resolve; whitespace p
 Task-generated `g1_7b3j_commands` validation artifacts are removed after recording
 these results; the useful native build is retained. No more runtime work is needed.
 
-**Publication:** pending authorized origin commit/push and remote verification.
+**Publication:** source milestone `b35f8423e1eece2f1f687bbff84beab2317c1b8b`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This increment is complete; stop here.
 
 ## G1.7b3i shared dress-up/transformed inputs - October 11, 2026
 

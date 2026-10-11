@@ -238,7 +238,8 @@ Point to Point.
   native builds, eight focused cases across bounded corrective runs, and independent
   three-file reopen/source-change checks passed. WORK_STATE records the actual
   cleanup fix, driver corrections and unavailable upstream Scale command coverage.
-  Publication pending. No owner delivery. Stop here. Next: component eligibility for
+  Source milestone `b35f8423e1` pushed to origin; exact remote revision verified.
+  No owner delivery. Stop here. Next: component eligibility for
   existing PartDesign Boolean inputs. Full G1.7b3 and Group 1 remain incomplete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
