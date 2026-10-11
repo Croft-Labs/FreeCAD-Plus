@@ -126,7 +126,8 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Validation:** 56 combined cases passed; six affected cases passed after final
   visibility/label corrections. Independent save/reopen and inspected preview,
   Cancel, committed placement and Tasks captures passed. WORK_STATE owns details.
-  **Publication:** source milestone pending; no owner-build or shortcut delivery.
+  **Publication:** source milestone `6e18b9289d` pushed to
+  origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
 - [   ] **G1.6c4 — Rotate.** Next increment, not started: parent/picked/two-point
   axis, optional pivot, angle/Reverse and rigid group rotation in the same task.
   Remaining Point to Point, Align Axes, Align Coordinate Systems and Interactive

@@ -62,7 +62,8 @@ were removed from
 `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_translate`
 after recording results. Useful native build/dependencies and tracked tests remain.
 
-**Publication:** validated source milestone pending publication; no owner-build
+**Publication:** source milestone `6e18b9289d` pushed to
+`origin/codex/freecad-1.1.4-baseline`; remote revision verified. No owner-build
 delivery, desktop shortcut change, release or deployment.
 
 ## G1.6c2 linked-instance Copy/Paste — October 10, 2026
