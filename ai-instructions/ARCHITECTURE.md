@@ -1119,3 +1119,24 @@ Four focused cases in TestPartBooleanInputs cover command refusal, accepted
 ownership/Undo/save, the existing dialog's Section Apply/Undo, and legacy parenting/
 policy bypass. A separate-process fixture checks persisted identity, dependencies
 and source-driven section recompute. WORK_STATE owns the results and limitations.
+
+
+### Part Compound integration (G1.7b3q)
+
+Part_Compound checks the complete unresolved selection through the existing Part
+preflight before native normalization or transaction creation. Its component path
+creates the native Part::Compound in the edited definition; original input owners
+remain unchanged. The original ordered, duplicate-free Links assignment and native
+shape algorithm are retained. Links are dependencies, not ownership edges. Native
+ViewProviderCompound still hides the sources and propagates their face appearance.
+History includes the owned inputs before the compound. Legacy documents use the
+original command creation path and bypass the component policy.
+
+The same local-input/defining-document support limit as G1.7b3o applies, including
+unused-model editing. The helper retains its existing require_part_boolean_inputs
+name; its support/error wording now covers both Boolean and Compound consumers.
+No cross-component transfer policy or Add Reference Feature workflow is inferred.
+Compound link editing/drag-and-drop and other geometry consumers remain separate
+intake paths; this milestone covers creation through Part_Compound only.
+TestPartBooleanInputs adds four focused Compound cases and a separate-process
+identity/dependency/source-edit probe. WORK_STATE owns build and runtime results.

@@ -964,6 +964,13 @@ CmdPartCompound::CmdPartCompound()
 void CmdPartCompound::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    auto doc = App::GetApplication().getActiveDocument();
+    const auto error = PartGui::componentBooleanError(doc);
+    if (!error.empty()) {
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                             QString::fromUtf8(error.c_str()));
+        return;
+    }
     unsigned int n = getSelection().countObjectsOfType<App::DocumentObject>(
         nullptr,
         Gui::ResolveMode::FollowLink
@@ -994,7 +1001,16 @@ void CmdPartCompound::activated(int iMsg)
     str << "]";
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Compound"));
-    doCommand(Doc, "App.activeDocument().addObject(\"Part::Compound\",\"%s\")", FeatName.c_str());
+    if (PartGui::isComponentBooleanDocument(doc)) {
+        // Links remain dependencies; the edited definition owns the new feature.
+        doCommand(Doc, "from freecad_plus import geometry");
+        doCommand(Doc,
+                  "geometry.require_part_boolean_inputs(App.activeDocument()).newObject("
+                  "\"Part::Compound\",\"%s\")", FeatName.c_str());
+    }
+    else {
+        doCommand(Doc, "App.activeDocument().addObject(\"Part::Compound\",\"%s\")", FeatName.c_str());
+    }
     runCommand(Doc, str.str().c_str());
     updateActive();
     commitCommand();

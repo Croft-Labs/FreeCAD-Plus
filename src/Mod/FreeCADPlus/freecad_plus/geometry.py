@@ -196,7 +196,7 @@ def require_modeling_inputs(consumer, inputs=None):
 
 
 def require_part_boolean_inputs(doc, inputs=None):
-    """Preflight the currently supported Part Boolean path before native mutation.
+    """Preflight supported Part Boolean/Compound inputs before native mutation.
 
     Result and inputs retain ownership in the edited definition. Foreign component
     transfer/reference workflows are not inferred from the native flattening helper.
@@ -212,7 +212,7 @@ def require_part_boolean_inputs(doc, inputs=None):
     if active is None or active == document.validate(gui.Document):
         raise ValueError('Edit a component before using modeling geometry')
     if active.Document != doc:
-        raise ValueError('Open the defining file to use this Part Boolean operation')
+        raise ValueError('Open the defining file to use this Part operation')
     if inputs is None:
         inputs = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*', 0)
                   for sub in entry.SubElementNames or ('',)]
@@ -220,5 +220,5 @@ def require_part_boolean_inputs(doc, inputs=None):
     for obj, sub in inputs:
         target = obj.getSubObject(sub, 1) if sub else obj
         if _owned_path(active, target) is None or target == active:
-            raise ValueError('This Part Boolean path currently requires inputs owned by the edited component')
+            raise ValueError('This Part operation currently requires inputs owned by the edited component')
     return active

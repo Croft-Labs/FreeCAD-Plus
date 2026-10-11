@@ -2,12 +2,57 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3p direct Part Section integration and its planned
-checks are complete.** Stop runtime work here. Next: compound input and result
-ownership integration. Group 1 remains incomplete; split/join and direct output
-paths are also outside this milestone. The mandatory Add Reference Feature
-prerequisite remains unchanged; its operation workflow is separately scoped.
-Cross-component Full Component workflows remain undefined. No owner delivery.
+Continue Group 1 only. **G1.7b3q Compound creation integration and its planned
+checks are complete.** Stop runtime work here. Next: Compound link-edit intake,
+including native drag/drop, under the same Reference prerequisite. Group 1 remains
+incomplete; split/join and direct output paths are also unfinished. The Add Reference
+Feature operation workflow is separately scoped. Cross-component Full Component
+workflows remain undefined. No owner delivery.
+
+## G1.7b3q Part Compound creation integration - October 11, 2026
+
+**Authority:** applies the owner's explicit Reference prerequisite and confirmed
+component-owned feature/History contract. No new operation workflow or design
+decision was required. Existing compound dependencies are not component ownership.
+
+**Implementation:** Part_Compound checks the complete unresolved selection before
+native normalization and transaction creation. The component path creates its
+Part::Compound in the edited definition, retaining original source ownership,
+ordered/deduplicated Links and the native shape algorithm. Native source hiding and
+appearance propagation remain in ViewProviderCompound. Ordinary legacy creation
+bypasses Plus policy and retains its upstream behavior. See the
+[contract](ARCHITECTURE.md#part-compound-integration-g17b3q).
+
+**Build:** one PartGui + FreeCADPlusScripts build passed in retained
+`test-builds/freecad_1.1.4_context`, exit 0, 265.42 seconds. No corrective source,
+build or test-harness changes were needed after the build began.
+
+**Validation:** four focused native cases passed first run, zero failures/errors/
+skips, 11.020 seconds; native exit 0, 16.05 seconds overall. Covered atomic rejection
+of Reference/Excluded, unsupported foreign Full Component input and missing Edit;
+accepted occurrence-selected inputs with repeated face selections; ordered unique
+Links; retained source and result ownership; History order; native input hiding;
+Undo/Redo; save; unused-model single-input creation; and unchanged legacy behavior
+with Plus preflight explicitly bypassed. The previous Boolean/Section cases were
+not rerun. Native logs contain only the existing Std_Measure notices alongside
+normal startup output.
+
+Independent fresh-process reopen/source-edit passed, native exit 0, 6.31 seconds.
+Exact document identities, ownership and ordered Links survived. The two-solid
+compound retained volume 128; increasing one source box's height from 4 to 6
+recomputed a valid two-solid compound with volume 160. Runtime checks stop here.
+
+**Limits:** this covers command creation only. Existing-compound link edits and
+drag/drop require their own intake integration. The same local-input/defining-file
+support limit as G1.7b3o remains. No cross-component transfer/copy policy, automatic
+reference promotion, new Compound workflow or complete consumer coverage is implied.
+No manual visual acceptance, owner package or desktop shortcut delivery.
+
+**Final checks:** all 43 Plus Python scripts parse and match the retained payload
+byte-for-byte; 120 local links in changed Markdown resolve; whitespace passes.
+Task artifacts `g1_7b3q_compound` were removed after recording these results. Useful
+builds remain. No further runtime work. Publication is recorded after exact remote
+verification.
 
 ## G1.7b3p direct Part Section integration - October 11, 2026
 

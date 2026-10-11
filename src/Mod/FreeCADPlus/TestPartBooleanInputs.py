@@ -203,6 +203,78 @@ class TestPartBooleanInputs(unittest.TestCase):
         self.assertEqual(result.ViewObject.LineMaterial.DiffuseColor,a.ViewObject.ShapeAppearance[0].DiffuseColor)
 
 
+    def test_compound_rejection_preserves_state(self):
+        a,b=self.boxes()
+        source=hierarchy.create_definition(self.doc,'Compound source')
+        foreign,_=self.boxes(source);link=hierarchy.add_instance(self.child,source)
+        path=hierarchy.subname((self.second,self.nested,link))+foreign.Name+'.'
+        for kind in ('Reference','Excluded','Full Component'):
+            display.set_state(self.child,link,part_type=kind);settle()
+            self.select(a);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
+            before=self.snapshot()
+            with messages() as errors:Gui.runCommand('Part_Compound');settle()
+            expected=kind if kind!='Full Component' else 'owned by the edited component'
+            self.assertTrue(any(expected in error for error in errors),errors)
+            self.assertEqual(self.snapshot(),before);document.validate(self.doc)
+        editing.edit_file(self.doc);self.select(a)
+        before=self.snapshot()
+        with messages() as errors:Gui.runCommand('Part_Compound');settle()
+        self.assertTrue(any('Edit a component' in error for error in errors),errors)
+        self.assertEqual(self.snapshot(),before)
+
+    def test_compound_ownership_order_undo_and_save(self):
+        a,b=self.boxes();ids={o.Name:o.ID for o in self.doc.Objects}
+        path=hierarchy.subname((self.second,self.nested))
+        self.select(self.root,path+b.Name+'.Face1')
+        Gui.Selection.addSelection(self.doc.Name,self.root.Name,path+b.Name+'.Face2')
+        Gui.Selection.addSelection(self.doc.Name,self.root.Name,path+a.Name+'.')
+        with messages() as errors:Gui.runCommand('Part_Compound');settle()
+        self.assertFalse(errors,errors)
+        result=next(o for o in self.doc.Objects if o.Name not in ids)
+        self.assertEqual(result.TypeId,'Part::Compound');self.assertEqual(result.Links,[b,a])
+        self.assertTrue(result.Shape.isValid());self.assertEqual(len(result.Shape.Solids),2)
+        self.assertAlmostEqual(result.Shape.Volume,128)
+        self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+        self.assertEqual(document.owned_children(result),[])
+        history=document.history(self.doc,self.child)
+        self.assertLess(history.index(a),history.index(result));self.assertLess(history.index(b),history.index(result))
+        self.assertFalse(a.Visibility);self.assertFalse(b.Visibility)
+        name=result.Name;self.doc.undo();self.doc.recompute();settle()
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+        self.assertTrue(a.Visibility);self.assertTrue(b.Visibility)
+        self.doc.redo();self.doc.recompute();settle();result=self.doc.getObject(name)
+        self.assertEqual(result.Links,[b,a]);document.validate(self.doc)
+        document.save_document(self.doc,self.output/'Compound.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':{o.Name:o.ID for o in self.doc.Objects},
+            'definition':self.child.Name,'result':name,'base':a.Name,'tool':b.Name}))
+
+    def test_compound_unused_single_input(self):
+        editing.edit_unused(self.doc,self.unused)
+        a,_=self.boxes(self.unused);ids={o.Name:o.ID for o in self.doc.Objects}
+        self.select(a)
+        with messages() as errors:Gui.runCommand('Part_Compound');settle()
+        self.assertFalse(errors,errors)
+        result=next(o for o in self.doc.Objects if o.Name not in ids)
+        self.assertEqual(result.Links,[a]);self.assertTrue(result.Shape.isValid())
+        self.assertAlmostEqual(result.Shape.Volume,64)
+        self.assertTrue(a in self.unused.Group and result in self.unused.Group)
+        self.assertIn(result,document.history(self.doc,self.unused));document.validate(self.doc)
+        self.doc.undo();self.doc.recompute();settle()
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+
+    def test_compound_legacy_parenting_and_policy_bypass(self):
+        legacy=App.newDocument('LegacyCompound');a,b=self.boxes(legacy)
+        before=set(legacy.Objects);self.select(b);Gui.Selection.addSelection(legacy.Name,a.Name)
+        with patch.object(geometry,'require_part_boolean_inputs',side_effect=AssertionError('Legacy entered Plus')):
+            with messages() as errors:Gui.runCommand('Part_Compound');settle()
+        self.assertFalse(errors,errors)
+        result=next(o for o in legacy.Objects if o not in before)
+        self.assertEqual(result.TypeId,'Part::Compound');self.assertEqual(result.Links,[b,a])
+        self.assertIsNone(result.getParentGeoFeatureGroup())
+        self.assertAlmostEqual(result.Shape.Volume,128);self.assertEqual(len(result.Shape.Solids),2)
+        self.assertFalse(a.Visibility);self.assertFalse(b.Visibility)
+
+
 
 def verify_fresh_process(output):
     folder=Path(output)/'test_commands_preserve_input_ownership_undo_history_and_save'
@@ -233,4 +305,21 @@ def verify_section_fresh_process(output):
         assert result.Base==a and result.Tool==b and abs(result.Shape.Length-16)<1e-7
         a.Length=3;doc.recompute();document.validate(doc)
         assert result.Shape.isValid() and abs(result.Shape.Length-14)<1e-7
+    finally:App.closeDocument(doc.Name)
+
+
+def verify_compound_fresh_process(output):
+    folder=Path(output)/'test_compound_ownership_order_undo_and_save'
+    expected=json.loads((folder/'expected.json').read_text())
+    doc=document.open_document(folder/'Compound.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        owner=doc.getObject(expected['definition']);result=doc.getObject(expected['result'])
+        a=doc.getObject(expected['base']);b=doc.getObject(expected['tool'])
+        assert all(o in owner.Group for o in (a,b,result))
+        assert result.Links==[b,a] and abs(result.Shape.Volume-128)<1e-7
+        a.Height=6;doc.recompute();document.validate(doc)
+        assert result.Shape.isValid() and len(result.Shape.Solids)==2
+        assert abs(result.Shape.Volume-160)<1e-7
+        assert result.Links==[b,a] and all(o in owner.Group for o in (a,b,result))
     finally:App.closeDocument(doc.Name)
