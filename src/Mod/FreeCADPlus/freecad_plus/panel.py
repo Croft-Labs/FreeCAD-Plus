@@ -173,6 +173,16 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.refresh()
 
     def eventFilter(self, watched, event):
+        if not self._closed and event.type() == QtCore.QEvent.Paint:
+            for _, state in self._states:
+                if (watched == state.get('viewport') and state.get('fade_pending')
+                        and not state.get('fade_retried')):
+                    # One retry after native linked snapshots have had a draw.
+                    # Further paints do not poll/rebuild the panel if still unavailable.
+                    state['fade_retried'] = True
+                    if not self._timer.isActive():
+                        self._timer.start(0)
+                    break
         if (len(self.trees) > 1 and watched in (self.trees[1], self.trees[1].viewport())
                 and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress)
                 and (event.matches(QtGui.QKeySequence.Copy) or event.matches(QtGui.QKeySequence.Paste))):
@@ -203,6 +213,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         return super().eventFilter(watched, event)
 
     def schedule(self, *args):
+        for _, state in self._states:
+            state['fade_retried'] = False
         if not self._closed and not self._timer.isActive():
             self._timer.start(0)
 
@@ -257,10 +269,22 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if self._mdi and 'window' not in state and binding == self._current():
             # Dock removal/layout changes can temporarily clear activeSubWindow
             # while the native document still owns a valid active view.
-            widget = binding[1].graphicsView()
-            window = next((w for w in self._mdi.subWindowList() if w.isAncestorOf(widget)), None)
+            window = self._mdi.activeSubWindow()
             if window is not None:
                 state['window'] = window
+                # Obtain the viewport through Qt's live child tree. The native
+                # graphicsView wrapper may outlive its C++ widget during closure.
+                viewport = None
+                for child in window.widget().findChildren(QtWidgets.QWidget):
+                    try:
+                        if child.inherits('QOpenGLWidget'):
+                            viewport = child
+                            break
+                    except RuntimeError:
+                        continue  # A Qt wrapper queued for invalidation during teardown.
+                if viewport is not None:
+                    state['viewport'] = viewport
+                    viewport.installEventFilter(self)
                 state['component_window'] = bool(window.property('FreeCADPlusComponentWindow'))
                 window.destroyed.connect(lambda *args: self._forget_view(binding))
         return state
@@ -349,7 +373,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def _update_display_views(self):
         for (doc, view), state in self._states:
-            if not hasattr(view, 'setComponentHiddenPaths'):
+            try:
+                supports_display = hasattr(view, 'setComponentHiddenPaths')
+            except (RuntimeError, ReferenceError):
+                # Native view destruction may precede the Qt window notification.
+                self._forget_view((doc, view))
+                continue
+            if not supports_display:
                 continue  # Earlier bounded native builds retain their original display.
             try:
                 active, path = self._context(doc, view)
@@ -364,6 +394,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 view.setComponentHiddenPaths()
             else:
                 view.setComponentHiddenPaths(document.validate(doc), hidden)
+            if hasattr(view, 'setComponentFade'):
+                if path and isolation.current(view) is None:
+                    state['fade_pending'] = not view.setComponentFade(
+                        document.validate(doc), hierarchy.subname(path))
+                else:
+                    state['fade_pending'] = False
+                    view.setComponentFade()
 
     def _reconcile(self, index, rows):
         tree, previous, current = self.trees[index], self._maps[index], {}
@@ -686,6 +723,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self._mdi.subWindowActivated.disconnect(self.schedule)
         for (doc, view), state in self._states:
             try:
+                if hasattr(view, 'setComponentFade'):
+                    view.setComponentFade()
                 if hasattr(view, 'setComponentHiddenPaths'):
                     view.setComponentHiddenPaths()
                 if hasattr(view, 'setDocumentContext'):

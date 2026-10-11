@@ -58,8 +58,10 @@ menu controls/tooltips in the opt-in development panel; see the
 [saved-state contract](../ARCHITECTURE.md#saved-part-type-and-visibility-state-g17a).
 G1.7b1 adds explicit view-local Hidden/Excluded and nested Reference filtering and
 restoration; see the [view-local contract](../ARCHITECTURE.md#view-local-explicit-hiding-g17b1).
-Fading, Bodies Only content filtering, Reference-use enforcement and unused-preview
-choices remain pending. Bodies Only descendant traversal needs owner clarification.
+G1.7b2 contextual fading is validated in the development payload, including shared
+mixed face materials; Model View Window and WORK_STATE state its acceptance boundary.
+Bodies Only content filtering, Reference-use enforcement and unused-preview choices
+remain pending. Bodies Only descendant traversal needs owner clarification.
 Saved metadata alone does not establish the full behavior below. WORK_STATE owns validation.
 
 Use **Part Type**, replacing Part View. The types are **Full Component**, **Bodies Only**, **Reference**, and **Excluded**. Shown/Hidden is separate visibility state; Excluded is not another name for Hidden and cannot be overridden with Show. [C10](EVIDENCE_AND_DECISIONS.md#c10)

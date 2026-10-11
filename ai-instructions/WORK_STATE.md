@@ -2,11 +2,65 @@
 
 ## Authorized objective and stopping boundary
 
-The owner authorized continuation of Group 1. Current increment is **G1.7b1 explicit
-per-view hiding/restoration**. Implementation and planned checks are complete; stopped.
-No further runtime verification or feature work is needed for this increment. Next is **G1.7b2 contextual
-fading**. Do not resume the parked Point to Point operation. Bodies Only descendant
-traversal was asked asynchronously and remains unconfirmed.
+Continue Group 1 only. **G1.7b2 contextual fading and its planned checks are complete.**
+Stopped at this milestone; no G1.7b3 or movement work started. Group 1 is not complete.
+The next increment is G1.7b3 remaining Part Type content/eligibility integration.
+Bodies Only descendant traversal still awaits the owner's answer; do not infer it.
+Unused-definition display choices remain an independently actionable confirmed item.
+
+## G1.7b2 contextual fading — October 11, 2026
+
+**Implementation:** per-view native occurrence context, 75% transparency floor outside
+its edited occurrence and descendants, preserved authored higher transparency, and
+context/file/panel cleanup. No saved material/geometry/identity writes. The native
+traversal callback and stack element preserve the authored render state. Missing native
+linked draw paths preserve panel rows and receive one post-paint retry per invalidation,
+without idle polling. Active Qt window tracking handles native wrapper teardown.
+
+**Resolved defect:** actual draw-path tracing showed correct active/inactive matching
+and authored [0,0.9] face transparency in both ordinary and transparent passes. Sorted
+transparent triangles bypass the ordinary Part face draw. Coin's primitive color cache
+was built without a material dependency: another occurrence could reuse its faded
+per-face colors. SoBrepFaceSet::generatePrimitives now registers that dependency with
+SoGLLazyElement::sendOnlyDiffuseColor during GL rendering. Native sorting, buffers and
+preferences remain intact. Temporary diagnostics were removed. Earlier VBO/material-ID
+hypotheses alone did not fix the defect and are not recorded as its cause.
+
+**Build:** final FreeCADGui, PartGui and FreeCADPlusScripts build passed in
+`C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_1.1.4_context`.
+The development executable is bin/FreeCAD.exe. The subsequent scripts-only refresh
+changed the reopen verifier, not production code. No owner package or shortcut change.
+
+**Runtime acceptance:** all five TestComponentFading cases passed, zero failures,
+errors or skips, native exit 0 (18.274 seconds). These cover the exact single-face 75%
+blend, active descendants/context switching, shared mixed per-face opacity, authored
+90% transparency, independent views and panel closure, unavailable-path recovery with
+zero idle refresh, identity/picking/recompute/Undo/hiding/isolation/save. The corrected
+mixed-material normal framebuffer was inspected: the inactive red face fades while
+the active red face remains opaque; both authored transparent blue faces retain their
+appearance. This is normal-buffer inspection, not a physical-monitor or long-session
+performance claim.
+
+All six window cases, all nine unused-model cases and its window-cleanup prerequisite,
+and all five explicit-hiding cases passed in the preceding affected runs. They were
+not repeated after the narrowly targeted primitive material-cache correction.
+
+**Independent reopen:** passed, native exit 0, exact native IDs and saved visibility,
+zero saved transparency and preserved authored color at native serialization precision.
+The first reopen failed an exact floating-point color comparison. Native
+PropertyMaterialList stores rounded 8-bit RGBA; the verifier now permits only half an
+8-bit channel step plus float rounding. Only this failed reopen was repeated. No
+persistence implementation or saved fixture was changed.
+
+**Checks and cleanup:** all 26 Python scripts parse and byte-match the development
+payload; 283 canonical local Markdown paths resolve, and the whitespace check passes.
+Task validation profiles, fixtures, diagnostics and captures under the approved
+`validation/g1_7b2_fading` directory are removed after recording these results. The useful
+native development build and required dependencies remain. No additional runtime tests
+or subsequent implementation are authorized by completion of this increment.
+
+**Publication:** pending the coherent validated source milestone on
+origin/codex/freecad-1.1.4-baseline. No release or owner delivery.
 
 ## G1.7b1 explicit per-view hiding — October 10, 2026
 

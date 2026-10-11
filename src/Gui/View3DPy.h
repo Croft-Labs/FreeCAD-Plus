@@ -106,6 +106,7 @@ public:
     Py::Object removeAnnotation(const Py::Tuple&);
     Py::Object getSceneGraph();
     Py::Object setComponentHiddenPaths(const Py::Tuple&);
+    Py::Object setComponentFade(const Py::Tuple&);
     Py::Object getViewer();
     Py::Object addEventCallbackPivy(const Py::Tuple&);
     Py::Object removeEventCallbackPivy(const Py::Tuple&);

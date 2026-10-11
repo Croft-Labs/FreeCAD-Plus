@@ -40,6 +40,7 @@
 #include <Inventor/bundles/SoMaterialBundle.h>
 #include <Inventor/bundles/SoTextureCoordinateBundle.h>
 #include <Inventor/elements/SoLazyElement.h>
+#include <Inventor/elements/SoGLLazyElement.h>
 #include <Inventor/elements/SoOverrideElement.h>
 #include <Inventor/elements/SoCoordinateElement.h>
 #include <Inventor/elements/SoGLCoordinateElement.h>
@@ -1120,6 +1121,15 @@ void SoBrepFaceSet::generatePrimitives(SoAction* action)
         return;
     }
     SoState* state = action->getState();
+
+    if (action->isOfType(SoGLRenderAction::getClassTypeId())) {
+        // Sorted transparent triangles store per-face colors in Coin's primitive
+        // cache. Register its dependency on the current material while that cache
+        // is open; the send in GLRender occurs before cache construction. Without
+        // this, linked occurrences can reuse another occurrence's faded colors.
+        SoGLLazyElement::sendOnlyDiffuseColor(state);
+    }
+
 
     if (this->vertexProperty.getValue()) {
         state->push();

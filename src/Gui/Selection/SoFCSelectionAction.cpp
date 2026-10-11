@@ -24,6 +24,10 @@
 
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
+#include <Inventor/elements/SoSubElement.h>
+#include <Inventor/elements/SoCacheElement.h>
+#include <Inventor/elements/SoLazyElement.h>
+#include <Inventor/elements/SoOverrideElement.h>
 #include <Inventor/elements/SoComplexityElement.h>
 #include <Inventor/elements/SoComplexityTypeElement.h>
 #include <Inventor/elements/SoCoordinateElement.h>
@@ -927,6 +931,9 @@ public:
     SoBaseColor* basecolor {nullptr};
     SoTempPath* postprocpath {nullptr};
     SoPath* highlightPath {nullptr};
+    SoPath* componentEditPath {nullptr};
+    SoNode* componentScope {nullptr};
+    SoSeparator* componentMaterialKey {nullptr};
     SoSeparator* localRoot {nullptr};
     SoMatrixTransform* xform {nullptr};
     SoCube* cube {nullptr};
@@ -1032,12 +1039,49 @@ void SoBoxSelectionRenderActionP::updateBbox(const SoPath* path)
     this->localRoot->removeChild(0);
 }
 
+// Keep the pre-fade material on the same traversal stack as SoLazyElement.
+// Before the next node is visited it is restored; leaving a separator pops both
+// elements together. No document/scene material field is modified.
+class ComponentFadeElement : public SoElement
+{
+    SO_ELEMENT_HEADER(ComponentFadeElement);
+public:
+    static void initClass();
+    void init(SoState*) override { pending = false; }
+    void push(SoState*) override
+    {
+        auto previous = static_cast<const ComponentFadeElement*>(getNextInStack());
+        pending = previous->pending;
+        authored = previous->authored;
+        faded = previous->faded;
+    }
+    SbBool matches(const SoElement*) const override { return false; }
+    SoElement* copyMatchInfo() const override { return new ComponentFadeElement; }
+    static ComponentFadeElement* get(SoState* state)
+    {
+        return static_cast<ComponentFadeElement*>(getElement(state, classStackIndex));
+    }
+    bool pending {false};
+    std::vector<float> authored;
+    std::vector<float> faded;
+    SoColorPacker restorePacker;
+    SoColorPacker fadePacker;
+};
+
+SO_ELEMENT_SOURCE(ComponentFadeElement)
+void ComponentFadeElement::initClass()
+{
+    SO_ELEMENT_INIT_CLASS(ComponentFadeElement, SoElement);
+}
+
 SO_ACTION_SOURCE(SoBoxSelectionRenderAction)
 
 // Overridden from parent class.
 void SoBoxSelectionRenderAction::initClass()
 {
     SO_ACTION_INIT_CLASS(SoBoxSelectionRenderAction, SoGLRenderAction);
+    ComponentFadeElement::initClass();
+    SO_ENABLE(SoBoxSelectionRenderAction, ComponentFadeElement);
 }
 
 SoBoxSelectionRenderAction::SoBoxSelectionRenderAction()
@@ -1063,6 +1107,8 @@ void SoBoxSelectionRenderAction::constructorCommon()
 
     // Initialize local variables
     PRIVATE(this)->initBoxGraph();
+    PRIVATE(this)->componentMaterialKey = new SoSeparator;
+    PRIVATE(this)->componentMaterialKey->ref();
 
     this->hlVisible = false;
 
@@ -1082,6 +1128,10 @@ void SoBoxSelectionRenderAction::constructorCommon()
 
 SoBoxSelectionRenderAction::~SoBoxSelectionRenderAction()
 {
+    if (PRIVATE(this)->componentEditPath) {
+        PRIVATE(this)->componentEditPath->unref();
+    }
+    PRIVATE(this)->componentMaterialKey->unref();
     // clear highlighting node
     if (PRIVATE(this)->highlightPath) {
         PRIVATE(this)->highlightPath->unref();
@@ -1094,6 +1144,112 @@ SoBoxSelectionRenderAction::~SoBoxSelectionRenderAction()
     delete PRIVATE(this)->camerasearch;
     delete PRIVATE(this)->bboxaction;
     delete PRIVATE(this);
+}
+
+void SoBoxSelectionRenderAction::setComponentEditPath(SoPath* path, SoNode* scope)
+{
+    auto& previous = PRIVATE(this)->componentEditPath;
+    if ((!previous && !path) || (previous && path && *previous == *path
+                                && PRIVATE(this)->componentScope == scope)) {
+        return;
+    }
+    // Invalidate pre-existing opaque caches once when the edit context changes.
+    // Faded draws below invalidate their open caches, without changing scene fields.
+    SoSearchAction search;
+    search.setType(SoShape::getClassTypeId());
+    search.setInterest(SoSearchAction::ALL);
+    search.setSearchingAll(true);
+    if (auto root = scope ? scope : PRIVATE(this)->componentScope) {
+        search.apply(root);
+        const auto& paths = search.getPaths();
+        for (int i = 0; i < paths.getLength(); ++i) {
+            paths[i]->getTail()->touch();
+        }
+    }
+    if (path) {
+        path->ref();
+    }
+    if (previous) {
+        previous->unref();
+    }
+    previous = path;
+    PRIVATE(this)->componentScope = scope;
+    setAbortCallback(path ? componentTraversal : nullptr, path ? this : nullptr);
+}
+
+SoGLRenderAction::AbortCode SoBoxSelectionRenderAction::componentTraversal(void* data)
+{
+    auto render = static_cast<SoBoxSelectionRenderAction*>(data);
+    auto action = static_cast<SoGLRenderAction*>(render);
+    auto state = action->getState();
+    auto current = static_cast<const SoFullPath*>(action->getCurPath());
+    auto node = current->getTail();
+    auto material = ComponentFadeElement::get(state);
+    auto key = PRIVATE(render)->componentMaterialKey;
+    if (material->pending) {
+        key->touch();
+        SoLazyElement::setTransparency(state, key, static_cast<int>(material->authored.size()),
+                                      material->authored.data(), &material->restorePacker);
+        material->pending = false;
+    }
+    if (!node->isOfType(SoShape::getClassTypeId())) {
+        return CONTINUE;
+    }
+    auto active = static_cast<SoFullPath*>(PRIVATE(render)->componentEditPath);
+    bool inScope = false;
+    bool inActive = false;
+    if (active) {
+        for (int i = 0; i < current->getLength(); ++i) {
+            inScope = inScope || current->getNode(i) == PRIVATE(render)->componentScope;
+            if (current->getNode(i) != active->getHead()
+                || current->getLength() - i < active->getLength()) {
+                continue;
+            }
+            inActive = true;
+            for (int j = 1; j < active->getLength(); ++j) {
+                if (current->getNode(i + j) != active->getNode(j)
+                    || current->getIndex(i + j) != active->getIndex(j)) {
+                    inActive = false;
+                    break;
+                }
+            }
+            if (inActive) {
+                break;
+            }
+        }
+    }
+    if (!active || !inScope) {
+        return CONTINUE;
+    }
+    const int count = SoLazyElement::getInstance(state)->getNumTransparencies();
+    if (inActive && count == 1) {
+        return CONTINUE;
+    }
+    SoCacheElement::invalidate(state);
+    std::vector<float> authored;
+    authored.reserve(count);
+    for (int i = 0; i < count; ++i) {
+        authored.push_back(SoLazyElement::getTransparency(state, i));
+    }
+    material->authored = std::move(authored);
+    material->faded = material->authored;
+    if (!inActive) {
+        for (auto& value : material->faded) {
+            value = std::max(0.75f, value);
+        }
+    }
+    material->pending = true;
+    // Coin caches material arrays by the supplying node ID, not their values.
+    // Use a fresh private identity for each temporary array; using the shared
+    // shape/material ID aliases faded and authored colors across occurrences.
+    // Re-publish active per-face arrays unchanged as well: the same native shape
+    // may just have rendered its faded occurrence in a transparent pass.
+    key->touch();
+    SoLazyElement::setTransparency(state, key, count, material->faded.data(),
+                                  &material->fadePacker);
+    // Continue the native draw, including Coin's delayed transparency passes.
+    // PRUNE would also skip later siblings in optimized separator traversal.
+    return CONTINUE;
 }
 
 void SoBoxSelectionRenderAction::apply(SoNode* node)

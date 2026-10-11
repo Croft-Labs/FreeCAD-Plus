@@ -40,7 +40,7 @@ of Component Panel implementation. Group 1 owns Models/Part Tree/History, docume
 and instance structure, selection/Edit context, tabs, presentation and menu routing.
 Move Components workflows belong to operation/task-panel work. They are not gates
 for completing Group 1. Their historical IDs and completed evidence are retained
-under the separate operation section below. Next increment: **G1.7b2 contextual fading**, not
+under the separate operation section below. Next increment: **G1.7b3 remaining Part Type integration**, not
 Point to Point.
 
 - [ X ] **G1.1 — Structural contract.** Define native service reuse, file/definition/
@@ -151,10 +151,14 @@ Point to Point.
   Implementation and planned checks are complete; stopped. Source milestone
   `8b7b382834` pushed to origin/codex/freecad-1.1.4-baseline; remote verified.
   No owner-build delivery.
-- [   ] **G1.7b2 — Contextual fading.** Next: active occurrence and descendants keep
+- [ X ] **G1.7b2 — Contextual fading.** Active occurrence and descendants keep
   authored appearance; other occurrences use at least 75% transparency, preserving
   greater authored transparency. File Edit and context exit restore appearance.
-  Implement/test per-view material overrides without saved property mutation.
+  Native development build, all five fading cases, independent reopen and normal
+  framebuffer inspection passed. Shared mixed-material fading is corrected by a
+  native primitive-cache material dependency. Planned checks complete; stopped.
+  WORK_STATE owns evidence and publication; no saved material property mutation
+  or owner-build delivery.
 - [   ] **G1.7b3 — Remaining content/eligibility integration.** Bodies Only filtering
   needs owner clarification on descendant traversal; the question is pending.
   Reference-use eligibility and unused-definition display choices remain unfinished.

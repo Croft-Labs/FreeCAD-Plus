@@ -402,3 +402,19 @@ framebuffer captures. Explicitly expose and normally redraw the test window befo
 reading a buffer; a uniform unpainted buffer is inconclusive. Do not change renderer
 settings to compensate for an unpainted capture. Full fading, Bodies Only, eligibility,
 long-session responsiveness and owner-delivery checks are separate gates.
+
+## Contextual fading validation
+
+Use the same VS environment and isolated profiles as the hiding increment. Build
+FreeCADGui, PartGui and FreeCADPlusScripts: sorted-transparent face material cache
+dependencies live in the native Part renderer. Run TestComponentFading: it reads the already-painted normal
+framebuffer and compares a single visible face with its normal and background pixels.
+This avoids mistaking two transparent surfaces for a single 75% blend. Retain per-face
+material arrays, compare separate-view contexts and authored 90% transparency, and
+check Undo/recompute, identities, saved properties, hiding and isolation transitions.
+The test leaves PNGs only in PLUS_TEST_DIR for visual inspection. Run its fresh-process
+verifier once; native persisted colors are rounded 8-bit RGBA, so compare channels
+within half a channel step plus float rounding, while identities and transparency
+remain exact. Relevant visibility/window/unused-editor regression is proportional.
+Compare all twenty-six Python files with the copied payload. Do not repeat completed
+checks unless a failure, code correction or specific material concern warrants it.

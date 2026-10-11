@@ -24,8 +24,11 @@ workflows within Group 1. The unvalidated Point to Point increment is parked on 
 separate local branch; WORK_STATE records its exact state. G1.7a saved Part Type
 and visibility state is validated in the development payload; WORK_STATE records
 acceptance and limits. G1.7b1 adds view-local explicit hiding/restoration; WORK_STATE
-records its current validation. Next is G1.7b2 contextual fading. Bodies Only traversal
-awaits owner clarification; full G1.7b and Group 1 remain incomplete.
+records its validation. G1.7b2 contextual fading is validated in the development
+payload, including shared mixed face materials and independent reopen. Its planned
+checks are complete; stop at this milestone. Next: G1.7b3 remaining Part Type display
+and eligibility integration. Bodies Only traversal awaits owner clarification;
+full G1.7b and Group 1 remain incomplete. WORK_STATE owns acceptance evidence.
 The complete G1.6 panel is unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
@@ -67,7 +70,9 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/movement.py: parent-owned Translate/Rotate task, transient preview and atomic commit.
 - src/Mod/FreeCADPlus/TestComponentMove.py: task/placement/source ownership and fresh-process persistence checks.
 - src/Mod/FreeCADPlus/freecad_plus/display.py: schema-5 saved self/direct-child choices and occurrence hide-path resolution.
-- src/Gui/View3DPy.cpp: native per-view hide wrapper; no shared Visibility changes.
+- src/Gui/View3DPy.cpp: native per-view hide wrapper and fading context; no saved display-property changes.
+- src/Gui/Selection/SoFCSelectionAction.cpp: per-view transparency floor in native shape rendering.
+- src/Mod/FreeCADPlus/TestComponentFading.py: normal-framebuffer blending, separate views, material/identity and reopen checks.
 - src/Mod/FreeCADPlus/TestComponentVisibility.py: hiding, independent views, cleanup, recompute and reopen checks.
 - src/Mod/FreeCADPlus/TestComponentDisplay.py: panel/state ownership, migration, copy and persistence checks.
 - src/Mod/FreeCADPlus/TestComponentRotate.py: located-axis/pivot rotation, shared placement and fresh-process acceptance.

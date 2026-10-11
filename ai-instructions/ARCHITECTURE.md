@@ -381,6 +381,47 @@ modeling eligibility, export policy, or saved display filtering inside an unused
 preview. Bodies Only descendant semantics remain a pending owner question. Those limits
 must not be treated as completion of G1.7b or as approval for a new operation dialog.
 
+### Contextual fading (G1.7b2)
+
+Validated in the native development payload; WORK_STATE owns bounded acceptance
+and remaining Group 1 limits.
+
+`view.setComponentFade(root, activePath)` resolves the actual native occurrence path
+and stores it on that view's existing `SoBoxSelectionRenderAction`. The no-argument
+form clears it. The traversal callback compares full node/index paths within ObjectGroup,
+so a repeated definition is opaque only at its edited occurrence and descendants.
+Viewport furniture outside ObjectGroup retains its native appearance.
+
+Immediately before native shape rendering, the traversal callback clamps each current
+material transparency to at least 0.75, retaining larger authored values and native
+colors/material bindings. A Coin stack element retains the authored array and restores
+it before the next node; separator exit discards both temporary states together.
+No document/view-provider property writes, geometry copies, additional objects or Undo
+records are used. The callback always continues native drawing, including delayed
+transparent passes; it never prunes siblings or substitutes its own geometry draw.
+Temporary arrays use a private, changing Coin node identity: lazy material/color
+packing caches are keyed by the supplying node ID, not the array contents. Reusing
+a shared shape's ID risks aliasing faded and authored material arrays. Active per-face
+arrays are re-published unchanged. Native geometry buffers and renderer preferences
+remain unchanged. Sorted transparent faces use Coin primitive caches, whose generated
+per-face colors must depend on the current material. SoBrepFaceSet::generatePrimitives
+sends only diffuse material while a GL primitive cache is being constructed, registering
+that dependency. Without it, shared occurrences can reuse faded vertex colors even
+when the incoming material state and occurrence classification are correct. Faded draws invalidate
+open render caches; context changes touch existing shapes once to discard prior opaque
+caches. Equal paths do not repeat that invalidation. This is render-state behavior,
+not a saved preference or a Part Type change.
+
+The panel applies the context separately in every visited view. File Edit, missing
+Edit context, unused isolation and panel disposal clear it; the native action releases
+its retained path on view destruction. Hidden/Excluded filtering remains independent.
+An invalid requested occurrence is rejected before changing the prior fading context.
+A valid context whose native linked snapshot is not yet available returns false and
+clears fading without clearing panel rows. The panel retries once after a viewport
+paint per model/context invalidation; subsequent paints do not poll or rebuild it.
+Bodies Only traversal, Reference modeling eligibility and operation dialogs remain
+outside this increment. WORK_STATE records actual validation and remaining limits.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

@@ -328,6 +328,8 @@ public:
     void apply(SoNode* node) override;
     void apply(SoPath* path) override;
     void apply(const SoPathList& pathlist, SbBool obeysrules = false) override;
+    void setComponentEditPath(SoPath* path, SoNode* scope);
+
     void setVisible(SbBool b)
     {
         hlVisible = b;
@@ -347,6 +349,7 @@ protected:
     SbBool hlVisible;
 
 private:
+    static AbortCode componentTraversal(void* data);
     void constructorCommon();
     void drawBoxes(SoPath* pathtothis, const SoPathList* pathlist);
 

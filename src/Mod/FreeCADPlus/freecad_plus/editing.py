@@ -76,6 +76,8 @@ def edit_unused(doc, definition):
         raise ValueError("Finish the native feature editor first")
     if definition.Document != doc and not hasattr(view, "setDocumentContext"):
         raise ValueError("External unused editing requires the native document-context build")
+    if hasattr(view, 'setComponentFade'):
+        view.setComponentFade()
     if hasattr(view, 'setComponentHiddenPaths'):
         view.setComponentHiddenPaths()
     try:

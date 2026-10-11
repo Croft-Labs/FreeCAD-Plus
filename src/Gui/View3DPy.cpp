@@ -255,6 +255,8 @@ void View3DInventorPy::init_type()
     add_noargs_method("getSceneGraph", &View3DInventorPy::getSceneGraph, "getSceneGraph()");
     add_varargs_method("setComponentHiddenPaths", &View3DInventorPy::setComponentHiddenPaths,
                       "setComponentHiddenPaths(root, paths): transient per-view whole-object hiding; no arguments clears it.");
+    add_varargs_method("setComponentFade", &View3DInventorPy::setComponentFade,
+                      "setComponentFade(root, activePath): view-local contextual fading; no arguments clears it.");
     add_noargs_method("getViewer", &View3DInventorPy::getViewer, "getViewer()");
     add_varargs_method(
         "addEventCallbackPivy",
@@ -2473,6 +2475,61 @@ Py::Object View3DInventorPy::setComponentHiddenPaths(const Py::Tuple& args)
         throw;
     }
     return Py::Long(names.size());
+}
+
+Py::Object View3DInventorPy::setComponentFade(const Py::Tuple& args)
+{
+    PyObject* rootArg = nullptr;
+    const char* name = nullptr;
+    if (!PyArg_ParseTuple(args.ptr(), "|O!s", &App::DocumentObjectPy::Type, &rootArg, &name)) {
+        throw Py::Exception();
+    }
+    if ((rootArg == nullptr) != (name == nullptr)) {
+        throw Py::ValueError("Supply a root and active occurrence path, or no arguments");
+    }
+    auto viewer = getView3DInventorPtr()->getViewer();
+    auto render = dynamic_cast<SoBoxSelectionRenderAction*>(viewer->getSoRenderManager()->getGLRenderAction());
+    if (!render) {
+        throw Py::RuntimeError("This view has no component-aware render action");
+    }
+    if (!rootArg) {
+        render->setComponentEditPath(nullptr, nullptr);
+        viewer->redraw();
+        return Py::Boolean(true);
+    }
+    auto root = static_cast<App::DocumentObjectPy*>(rootArg)->getDocumentObjectPtr();
+    if (!root || !root->isAttachedToDocument() || !name[0]
+        || name[std::strlen(name) - 1] != '.' || !root->getSubObject(name)) {
+        throw Py::ValueError("Choose a valid active component occurrence");
+    }
+    auto provider = Application::Instance->getViewProvider(root);
+    if (!provider || !viewer->containsViewProvider(provider)) {
+        throw Py::ValueError("The component root is not displayed in this view");
+    }
+    SoSearchAction search;
+    search.setName("ObjectGroup");
+    search.setInterest(SoSearchAction::FIRST);
+    search.setSearchingAll(true);
+    search.apply(viewer->getSceneGraph());
+    if (!search.getPath()) {
+        throw Py::ValueError("This view has no native object group");
+    }
+    auto path = new SoPath();
+    path->ref();
+    SoDetail* detail = nullptr;
+    bool found = provider->getDetailPath(name, static_cast<SoFullPath*>(path), true, detail);
+    delete detail;
+    if (!found) {
+        path->unref();
+        // Native linked snapshots can be unavailable before the first draw, or
+        // while their root is hidden. This is not an invalid document context.
+        render->setComponentEditPath(nullptr, nullptr);
+        return Py::Boolean(false);
+    }
+    render->setComponentEditPath(path, search.getPath()->getTail());
+    path->unref();
+    viewer->redraw();
+    return Py::Boolean(true);
 }
 
 Py::Object View3DInventorPy::getViewer()
