@@ -58,6 +58,7 @@
 #include "BoxSelection.h"
 #include "CrossSections.h"
 #include "DlgBooleanOperation.h"
+#include "ComponentBoolean.h"
 #include "DlgExtrusion.h"
 #include "DlgScale.h"
 #include "DlgFilletEdges.h"
@@ -322,6 +323,13 @@ CmdPartCut::CmdPartCut()
 void CmdPartCut::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    const auto error = PartGui::componentBooleanError(App::GetApplication().getActiveDocument());
+    if (!error.empty()) {
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                             QString::fromUtf8(error.c_str()));
+        return;
+    }
+
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
         App::DocumentObject::getClassTypeId(),
@@ -398,6 +406,13 @@ CmdPartCommon::CmdPartCommon()
 void CmdPartCommon::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    const auto error = PartGui::componentBooleanError(App::GetApplication().getActiveDocument());
+    if (!error.empty()) {
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                             QString::fromUtf8(error.c_str()));
+        return;
+    }
+
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
         App::DocumentObject::getClassTypeId(),
@@ -475,6 +490,13 @@ CmdPartFuse::CmdPartFuse()
 void CmdPartFuse::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    const auto error = PartGui::componentBooleanError(App::GetApplication().getActiveDocument());
+    if (!error.empty()) {
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                             QString::fromUtf8(error.c_str()));
+        return;
+    }
+
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
         App::DocumentObject::getClassTypeId(),

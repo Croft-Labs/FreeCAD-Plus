@@ -44,6 +44,7 @@
 #include <Mod/Part/App/PartFeature.h>
 
 #include "DlgBooleanOperation.h"
+#include "ComponentBoolean.h"
 #include "ui_DlgBooleanOperation.h"
 
 
@@ -446,6 +447,13 @@ void DlgBooleanOperation::accept()
             windowTitle(),
             tr("One of the selected objects does not exist anymore")
         );
+        return;
+    }
+
+    const std::vector<App::SubObjectT> inputs {{obj1, ""}, {obj2, ""}};
+    const auto error = PartGui::componentBooleanError(activeDoc, inputs);
+    if (!error.empty()) {
+        QMessageBox::warning(this, tr("Ineligible geometry"), QString::fromUtf8(error.c_str()));
         return;
     }
 

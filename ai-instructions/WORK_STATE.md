@@ -2,14 +2,65 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3n PartDesign Boolean input admission and its planned
-checks are complete.** Stop runtime work here. Next: component eligibility at the
-remaining Part-workbench Boolean entry points. Group 1 remains incomplete; direct
-exporter/view-output integration and the separately scoped Add Reference Feature
-operation are also unfinished. The owner's latest rule requires all Reference
-geometry to enter the active component's History through Add Reference Feature
-before use. Cross-component Full Component tool ownership remains undefined.
-No owner package/shortcut delivery is claimed.
+Continue Group 1 only. **G1.7b3o core Part Boolean eligibility/ownership and its
+planned checks are complete.** Stop runtime work here. Next: the separate Part
+Section command's input and result-ownership integration. Group 1 remains incomplete;
+other compound/split/join and direct output paths are not covered by this milestone.
+Add Reference Feature remains a separately scoped operation; its mandatory
+prerequisite is unchanged. Cross-component Full Component tool workflow remains
+undefined. No owner package/shortcut delivery is claimed.
+
+## G1.7b3o core Part Boolean eligibility and ownership - October 11, 2026
+
+**Authority:** the latest explicit in-chat Reference prerequisite and the confirmed
+component contract require eligible inputs and component-owned sketches/features/
+geometry. No new owner operation workflow is inferred. Inspection found that native
+BOPFeatures removes inputs from their parents; treating its Base/Tool dependencies
+as ownership would leave component content outside the established ownership graph.
+The local component path now preserves those inputs and owns the result explicitly.
+
+**Implementation:** Cut/Common/Fuse preflight unresolved selections before shape
+checks/transactions; the Boolean dialog checks actual list inputs before Apply.
+The shared Reference/Excluded policy, explicit Edit requirement and current local
+ownership support boundary are enforced by require_part_boolean_inputs. BOPFeatures
+also preflights before object creation, preserves input containers, hides consumed
+inputs and adds the native result to the edited definition. Legacy files retain
+the upstream service behavior. See the
+[contract](ARCHITECTURE.md#part-boolean-eligibility-and-ownership-g17b3o).
+
+**Build:** one PartGui + PartScripts + FreeCADPlusScripts build passed in retained
+`test-builds/freecad_1.1.4_context`, exit 0, 433.83 seconds. CMake regeneration also
+rebuilt generated resources and GUI dependencies. No corrective build or source
+correction was required after runtime began. No owner delivery.
+
+**Validation:** all four focused native cases passed first run, zero failures/errors/
+skips, 11.180 seconds; native exit 0, 16.16 seconds overall. Covered Reference and
+Excluded mixed command input refusal, missing Edit, unchanged identities/ownership/
+visibility/Undo on refusal, accepted Cut/Common/Fuse with expected volumes, preserved
+input containers and History, native Undo/Redo, dialog foreign-input refusal followed
+by successful local Apply, and legacy command/dialog bypass. The ordinary legacy
+checks assert the Plus policy is never called.
+
+Independent fresh-process reopen/source-edit recompute passed, native exit 0,
+5.59 seconds. Exact object identities and ownership survived; all three saved native
+results retained expected volumes, and increasing both input heights from 4 to 6
+produced valid results at 1.5 times each original volume. Runtime validation stops
+here. Logs contain the existing Std_Measure startup notice.
+
+**Limits:** this supported path requires owned local inputs and a result in the
+edited defining document. Cross-component bare catalog inputs and foreign source
+routing through an importing assembly are refused, not given invented transfer/copy
+semantics. The dialog supports native section creation through the same service,
+but its Section mode was not independently exercised. Direct Part_Section and other
+compound/split/join consumers remain separate work. No manual visual acceptance or
+claim of complete Reference enforcement, Group 1 completion, or owner delivery.
+
+**Final checks:** all 43 Plus Python scripts and BOPFeatures parse and match the
+retained development payload byte-for-byte; 161 local links in changed Markdown
+resolve; whitespace passes. Task artifacts `g1_7b3o_part_boolean` were removed after
+recording these results. Useful development builds remain. No further runtime work.
+
+**Publication:** validated checkpoint pending origin publication.
 
 ## G1.7b3n PartDesign Boolean input admission - October 11, 2026
 

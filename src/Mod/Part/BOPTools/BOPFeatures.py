@@ -34,65 +34,85 @@ class BOPFeatures:
     def __init__(self, doc):
         self.doc = doc
 
+    def component_target(self, inputNames):
+        if any("PlusFormat" in obj.PropertiesList for obj in self.doc.Objects):
+            from freecad_plus.geometry import require_part_boolean_inputs
+            return require_part_boolean_inputs(
+                self.doc, [(self.doc.getObject(name), "") for name in inputNames])
+        return None
+
     def make_section(self, inputNames):
+        component = self.component_target(inputNames)
         obj = self.doc.addObject("Part::Section", "Section")
         obj.Base = self.doc.getObject(inputNames[0])
         obj.Tool = self.doc.getObject(inputNames[1])
         self.copy_visual_attributes(obj, obj.Base)
-        target = self.move_input_objects([obj.Base, obj.Tool])
+        target = self.move_input_objects([obj.Base, obj.Tool], component)
         if target:
             target.addObject(obj)
         return obj
 
     def make_cut(self, inputNames):
+        component = self.component_target(inputNames)
         obj = self.doc.addObject("Part::Cut", "Cut")
         obj.Base = self.doc.getObject(inputNames[0])
         obj.Tool = self.doc.getObject(inputNames[1])
         self.copy_visual_attributes(obj, obj.Base)
-        target = self.move_input_objects([obj.Base, obj.Tool])
+        target = self.move_input_objects([obj.Base, obj.Tool], component)
         if target:
             target.addObject(obj)
         return obj
 
     def make_common(self, inputNames):
+        component = self.component_target(inputNames)
         obj = self.doc.addObject("Part::Common", "Common")
         obj.Base = self.doc.getObject(inputNames[0])
         obj.Tool = self.doc.getObject(inputNames[1])
         self.copy_visual_attributes(obj, obj.Base)
-        target = self.move_input_objects([obj.Base, obj.Tool])
+        target = self.move_input_objects([obj.Base, obj.Tool], component)
         if target:
             target.addObject(obj)
         return obj
 
     def make_multi_common(self, inputNames):
+        component = self.component_target(inputNames)
         obj = self.doc.addObject("Part::MultiCommon", "Common")
         obj.Shapes = [self.doc.getObject(name) for name in inputNames]
         self.copy_visual_attributes(obj, obj.Shapes[0])
-        target = self.move_input_objects(obj.Shapes)
+        target = self.move_input_objects(obj.Shapes, component)
         if target:
             target.addObject(obj)
         return obj
 
     def make_fuse(self, inputNames):
+        component = self.component_target(inputNames)
         obj = self.doc.addObject("Part::Fuse", "Fusion")
         obj.Base = self.doc.getObject(inputNames[0])
         obj.Tool = self.doc.getObject(inputNames[1])
         self.copy_visual_attributes(obj, obj.Base)
-        target = self.move_input_objects([obj.Base, obj.Tool])
+        target = self.move_input_objects([obj.Base, obj.Tool], component)
         if target:
             target.addObject(obj)
         return obj
 
     def make_multi_fuse(self, inputNames):
+        component = self.component_target(inputNames)
         obj = self.doc.addObject("Part::MultiFuse", "Fusion")
         obj.Shapes = [self.doc.getObject(name) for name in inputNames]
         self.copy_visual_attributes(obj, obj.Shapes[0])
-        target = self.move_input_objects(obj.Shapes)
+        target = self.move_input_objects(obj.Shapes, component)
         if target:
             target.addObject(obj)
         return obj
 
-    def move_input_objects(self, objects):
+    def move_input_objects(self, objects, component=None):
+        if component is not None:
+            # Native Part dependencies are references, not component ownership.
+            # Keep the input features in their original containers and own only
+            # the new result in the edited definition.
+            for obj in objects:
+                obj.Visibility = False
+            return component
         targetGroup = None
         for obj in objects:
             obj.Visibility = False

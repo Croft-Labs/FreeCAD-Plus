@@ -284,6 +284,12 @@ Point to Point.
   revision verified. This does not decide cross-component Full Component tool
   ownership. Next: remaining Part-workbench Boolean entry points.
 
+- [ X ] **G1.7b3o - Core Part Boolean eligibility/ownership.** Cut/Common/Fuse
+  and dialog Apply preflight component inputs. Native results retain input ownership
+  and join the edited definition's History; legacy behavior remains. One native build,
+  four focused cases and independent reopen/source-edit passed first run. WORK_STATE
+  owns exact evidence, support limits and publication. Next: direct Part Section.
+
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

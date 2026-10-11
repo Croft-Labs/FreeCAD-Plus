@@ -1,0 +1,141 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Part Boolean component eligibility, ownership, native tasks and persistence."""
+import json
+from pathlib import Path
+import unittest
+from unittest.mock import patch
+import FreeCAD as App
+import FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets
+from freecad_plus import document, display, editing, geometry, hierarchy
+from TestComponentPanel import TestComponentPanel, settle
+from TestComponentModeling import TestComponentModeling, messages
+from TestComponentReferences import TestComponentReferences
+from TestComponentInputEditors import TestComponentInputEditors
+
+
+class TestPartBooleanInputs(unittest.TestCase):
+    setUp = TestComponentPanel.setUp
+    tearDown = TestComponentModeling.tearDown
+    select = TestComponentModeling.select
+    control = TestComponentReferences.control
+    task_button = TestComponentInputEditors.task_button
+
+    def boxes(self, owner=None):
+        Gui.activateWorkbench('PartWorkbench')
+        owner = owner or self.child
+        create = owner.addObject if hasattr(owner, 'Objects') else owner.newObject
+        a=create('Part::Box','BooleanBase'); b=create('Part::Box','BooleanTool')
+        for obj in (a,b): obj.Length=4; obj.Width=4; obj.Height=4
+        b.Placement.Base=App.Vector(2,0,0)
+        doc = owner if hasattr(owner, 'Objects') else owner.Document
+        doc.recompute(); settle()
+        return a,b
+
+    def snapshot(self):
+        return ({o.Name:o.ID for o in self.doc.Objects},self.doc.UndoCount,App.getActiveTransaction(),
+                [(o.Name,tuple(c.Name for c in document.owned_children(o))) for o in self.doc.Objects],
+                [(o.Name,o.Visibility) for o in self.doc.Objects if hasattr(o,'Visibility')])
+
+    def test_commands_reject_reference_excluded_and_missing_edit_atomically(self):
+        a,b=self.boxes()
+        source=hierarchy.create_definition(self.doc,'Reference tool')
+        foreign,_=self.boxes(source); link=hierarchy.add_instance(self.child,source)
+        path=hierarchy.subname((self.second,self.nested,link))+foreign.Name+'.'
+        for kind in ('Reference','Excluded'):
+            display.set_state(self.child,link,part_type=kind);settle()
+            for command in ('Part_Cut','Part_Common','Part_Fuse'):
+                self.select(a);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
+                before=self.snapshot()
+                with messages() as errors:Gui.runCommand(command);settle()
+                self.assertTrue(any(kind in e for e in errors),(command,errors))
+                self.assertEqual(self.snapshot(),before);document.validate(self.doc)
+        editing.edit_file(self.doc);self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
+        before=self.snapshot()
+        with messages() as errors:Gui.runCommand('Part_Cut');settle()
+        self.assertTrue(any('Edit a component' in e for e in errors),errors)
+        self.assertEqual(self.snapshot(),before)
+
+    def test_commands_preserve_input_ownership_undo_history_and_save(self):
+        expected=[]
+        for command,kind,volume in [('Part_Cut','Part::Cut',32),('Part_Common','Part::MultiCommon',32),('Part_Fuse','Part::MultiFuse',96)]:
+            a,b=self.boxes();before_ids={o.Name:o.ID for o in self.doc.Objects}
+            self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
+            with messages() as errors:Gui.runCommand(command);settle()
+            self.assertFalse(errors,errors)
+            result=next(o for o in self.doc.Objects if o.Name not in before_ids)
+            self.assertEqual(result.TypeId,kind);self.assertTrue(result.Shape.isValid())
+            self.assertAlmostEqual(result.Shape.Volume,volume)
+            self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+            self.assertFalse(a.Visibility);self.assertFalse(b.Visibility)
+            history=document.history(self.doc,self.child)
+            self.assertLess(history.index(a),history.index(result));self.assertLess(history.index(b),history.index(result))
+            name=result.Name;self.doc.undo();self.doc.recompute();settle()
+            self.assertEqual({o.Name:o.ID for o in self.doc.Objects},before_ids)
+            self.assertTrue(a.Visibility);self.assertTrue(b.Visibility)
+            self.doc.redo();self.doc.recompute();settle();result=self.doc.getObject(name)
+            document.validate(self.doc)
+            expected.append({'result':name,'base':a.Name,'tool':b.Name,'volume':volume})
+        document.save_document(self.doc,self.output/'PartBooleans.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':{o.Name:o.ID for o in self.doc.Objects},
+            'definition':self.child.Name,'results':expected}))
+
+    def choose(self,name,obj):
+        tree=self.control(QtWidgets.QTreeWidget,name)
+        for i in range(tree.topLevelItemCount()):
+            parent=tree.topLevelItem(i)
+            for j in range(parent.childCount()):
+                item=parent.child(j);item.setCheckState(0,QtCore.Qt.Checked if item.data(0,QtCore.Qt.UserRole)==obj.Name else QtCore.Qt.Unchecked)
+
+    def test_dialog_apply_rejects_foreign_input_then_accepts_owned_geometry(self):
+        a,b=self.boxes();source=hierarchy.create_definition(self.doc,'Reference catalog')
+        foreign,_=self.boxes(source);link=hierarchy.add_instance(self.child,source)
+        display.set_state(self.child,link,part_type='Reference');settle()
+        Gui.Selection.clearSelection();Gui.runCommand('Part_Boolean');settle()
+        self.choose('firstShape',a);self.choose('secondShape',foreign)
+        before=self.snapshot()
+        with messages() as errors:self.task_button(QtWidgets.QDialogButtonBox.Apply)
+        self.assertTrue(errors,errors);self.assertEqual(self.snapshot(),before)
+        self.assertTrue(Gui.Control.activeDialog())
+        self.choose('secondShape',b);self.control(QtWidgets.QRadioButton,'unionButton').setChecked(True)
+        with messages() as errors:self.task_button(QtWidgets.QDialogButtonBox.Apply)
+        self.assertFalse(errors,errors)
+        result=next(o for o in self.doc.Objects if o.Name not in before[0])
+        self.assertAlmostEqual(result.Shape.Volume,96);self.assertTrue(result.Shape.isValid())
+        self.assertTrue(all(o in self.child.Group for o in (a,b,result)));document.validate(self.doc)
+        Gui.Control.closeDialog();settle()
+
+    def test_legacy_commands_and_dialog_bypass_component_policy(self):
+        legacy=App.newDocument('LegacyPartBoolean')
+        with patch.object(geometry,'require_part_boolean_inputs',side_effect=AssertionError('Legacy entered Plus')):
+            for command,volume in [('Part_Cut',32),('Part_Common',32),('Part_Fuse',96)]:
+                a,b=self.boxes(legacy);before=set(legacy.Objects)
+                self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
+                with messages() as errors:Gui.runCommand(command);settle()
+                self.assertFalse(errors,errors)
+                result=next(o for o in legacy.Objects if o not in before)
+                self.assertAlmostEqual(result.Shape.Volume,volume)
+            a,b=self.boxes(legacy);Gui.Selection.clearSelection();Gui.runCommand('Part_Boolean');settle()
+            self.choose('firstShape',a);self.choose('secondShape',b)
+            self.control(QtWidgets.QRadioButton,'interButton').setChecked(True);before=set(legacy.Objects)
+            with messages() as errors:self.task_button(QtWidgets.QDialogButtonBox.Apply)
+            self.assertFalse(errors,errors)
+            result=next(o for o in legacy.Objects if o not in before);self.assertAlmostEqual(result.Shape.Volume,32)
+            Gui.Control.closeDialog();settle()
+
+
+def verify_fresh_process(output):
+    folder=Path(output)/'test_commands_preserve_input_ownership_undo_history_and_save'
+    expected=json.loads((folder/'expected.json').read_text())
+    doc=document.open_document(folder/'PartBooleans.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        definition=doc.getObject(expected['definition'])
+        for case in expected['results']:
+            result=doc.getObject(case['result']);a=doc.getObject(case['base']);b=doc.getObject(case['tool'])
+            assert all(o in definition.Group for o in (a,b,result))
+            assert abs(result.Shape.Volume-case['volume'])<1e-7
+            a.Height=6;b.Height=6;doc.recompute()
+            assert result.Shape.isValid() and abs(result.Shape.Volume-case['volume']*1.5)<1e-7
+        document.validate(doc)
+    finally:App.closeDocument(doc.Name)

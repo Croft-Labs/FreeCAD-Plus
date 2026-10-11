@@ -1074,3 +1074,30 @@ operation types, recompute and existing dependencies are unchanged. Existing sav
 features are not rewritten on recompute. TestComponentBooleanInputs covers refusal,
 context checks, native picker continuation/removal and legacy bypass; the affected
 Boolean ownership tests cover accepted creation, Undo/Cancel and persistence.
+
+### Part Boolean eligibility and ownership (G1.7b3o)
+
+Cut, Common and Fuse check the full unresolved selection before native shape checks
+or transactions. DlgBooleanOperation checks its actual two list inputs before Apply
+can create geometry. A Part-local bridge calls geometry.require_part_boolean_inputs,
+which reuses the shared occurrence policy and requires an edited component. The
+currently supported destination is that component's defining document; inputs must
+be owned by the edited definition. The dialog's bare catalog objects cannot infer a
+foreign occurrence, so such inputs are refused rather than acquiring permission
+from an unrelated current selection. Reference geometry still requires the explicit
+Add Reference Feature prerequisite.
+
+BOPFeatures preflights component inputs before creating the native result. For this
+component path, its existing move_input_objects service hides inputs but preserves
+their original containers and returns the edited definition as result owner. Native
+Base/Tool/Shapes dependencies are references, not ownership edges. Keeping source
+features owned preserves History, document validation, Undo and save/reopen. Native
+legacy files retain the upstream remove-from-parent behavior. This covers the six
+existing BOPFeatures creation methods; it does not replace native shape algorithms.
+
+This bounded integration does not define cross-component tool transfer/copy or
+source-file routing through an importing assembly. Unsupported destinations/inputs
+are refused before mutation. Direct Section, compound/split/join commands and other
+geometry consumers remain separate. TestPartBooleanInputs covers command refusal,
+accepted Cut/Common/Fuse ownership and Undo, dialog refusal/Apply, legacy bypass,
+and independent persistence/source-edit recompute. WORK_STATE owns acceptance.

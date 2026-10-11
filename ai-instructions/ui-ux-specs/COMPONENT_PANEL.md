@@ -128,6 +128,12 @@ prerequisite for every geometry consumer, including Boolean inputs; direct sourc
 use or automatic reference creation does not satisfy it. See the
 [latest owner clarification](EVIDENCE_AND_DECISIONS.md#reference-geometry-prerequisite---october-11-2026).
 
+Part Boolean results and their inputs retain ownership in the edited definition;
+the original source features remain in History. G1.7b3o implements this for its
+supported local Part Boolean path; see the [ownership contract](../ARCHITECTURE.md#part-boolean-eligibility-and-ownership-g17b3o).
+This preserves the existing component/feature model rather than treating native
+Boolean dependencies as another component container.
+
 ### Context-menu requirements and deferred decisions
 
 | Location | Confirmed action | Required behavior |

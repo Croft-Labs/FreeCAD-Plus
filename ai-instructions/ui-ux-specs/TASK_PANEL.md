@@ -16,6 +16,13 @@ A modeling operation requires an edited component. The pinned file cannot own sk
 
 Component geometry inputs must respect the confirmed [Part Type rules](COMPONENT_PANEL.md#part-type-and-visibility): unpromoted Reference and Excluded geometry cannot be used. [C10/U069](EVIDENCE_AND_DECISIONS.md#c10) The owner reaffirmed that all Reference geometry must first be added to the active component's History through **Add Reference Feature**, before any use in that component. Direct selection or silent automatic reference creation cannot bypass this prerequisite. [October 11 clarification](EVIDENCE_AND_DECISIONS.md#reference-geometry-prerequisite---october-11-2026)
 
+G1.7b3o extends eligibility checks to Part Cut, Intersection, Union and the Boolean
+operation dialog's Apply action. Accepted local operations keep input ownership
+and place the result in the edited component's History. Cross-component inputs and
+external destinations through an importing assembly remain outside this supported
+path; the [technical contract](../ARCHITECTURE.md#part-boolean-eligibility-and-ownership-g17b3o)
+records the boundary. This does not approve a new Boolean workflow.
+
 G1.7b3n applies the same prerequisite at PartDesign Boolean command start and tool
 addition, before native selection normalization or ownership mutation. Refusal keeps
 the current task and tool list intact; removal remains available. This is component
