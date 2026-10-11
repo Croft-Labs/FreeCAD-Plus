@@ -57,7 +57,11 @@ eligibility, Add Reference Feature and Group 1 acceptance remain unfinished.
 payload; 136 local documentation link targets exist and whitespace checks pass.
 Task profiles, fixtures, logs and diagnostic output under
 `validation/g1_7b3c_eligibility` were deleted after recording the results. The useful
-development build is retained. Publication is recorded separately below after push.
+development build is retained.
+
+**Publication:** source milestone `10ae70841366fda1d12e710c6ff98fef515840ba` was pushed to origin
+`codex/freecad-1.1.4-baseline`; the exact remote revision was verified. No owner
+package, shortcut update, release or deployment.
 
 ## G1.7b3b Bodies Only filtering - October 11, 2026
 

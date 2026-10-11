@@ -182,6 +182,7 @@ Point to Point.
   reference reads, preserving Edit access and owned derived features. Native scripts
   build, five eligibility cases, affected Move/Rotate/display regressions and an
   independent reopen passed. WORK_STATE records corrections and exact results.
+  Source milestone `10ae708413` pushed to origin; exact remote revision verified.
   Stop here; no new operation or owner delivery. Remaining native modeling/export
   consumers still need integration; full G1.7b3 is not complete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
