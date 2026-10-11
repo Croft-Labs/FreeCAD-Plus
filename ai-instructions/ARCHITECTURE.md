@@ -1025,3 +1025,29 @@ action. The dialog rechecks tab, identity, catalog membership, current name and
 native task/transaction state before committing. Native observers update labels and
 component window titles without polling or replacing stable rows. External names
 remain qualified by defining file, and saving uses that source's existing service.
+
+### Models file import (G1.6c6)
+
+The Models menu, including its blank background and imported-file group rows,
+exposes Import Models from File. The chooser names the defining file of the active
+Edit component; file Edit targets that file itself. The action rechecks the tab,
+active definition and native task/transaction state on acceptance. C09's October 9
+14:03 and 19:00 UTC owner messages establish source-owned nested catalogs and the
+separation of import from placement; the menu label/location is an implementation
+choice. Add Component placement remains deferred.
+
+external.import_path uses the existing archive/identity preflight and import_file
+transaction. document.open_document(hidden=True) uses native hidden loading and
+restores the previously active document without creating a source view or changing
+Edit. Existing open source documents remain open. Failure closes only documents
+opened during this attempt; expected archive/XML/file errors become panel feedback.
+Successful imports remain open as native cross-file dependencies. Destination and
+source must already be saved; the action does not silently save either file.
+
+Only the owning file's Imports and ImportIdentities change in one native Undo step.
+Repeated direct imports are no-ops; file cycles are rejected. Models projects nested
+catalogs through the existing observer path. No definition/object identity, native
+placement or Part Tree instance is created or rewritten. Cancel and refused actions
+create no Undo step. Persistence uses the existing defining-file save service.
+TestComponentImport covers the native menus/chooser, closed nested sources, external
+Edit ownership, cancellation/duplicate/cycle/error guards and independent reopen.

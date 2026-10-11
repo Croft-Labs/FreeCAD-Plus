@@ -26,6 +26,18 @@ classification of remaining Move Components methods as Group 1 panel increments.
 The panel owns menu access and selection/context handoff; the launched operation's
 workflow belongs to TASK_PANEL. Existing confirmed movement behavior is unchanged.
 
+### Reference geometry prerequisite - October 11, 2026
+
+The owner clarified in this chat: "all geometry from a part type reference must be
+added to the active component history via "Add Reference Feature" before the user
+is able to use that geometry in the active component in any way". This confirms
+and sharpens C10/U069: the prerequisite is an explicit feature in the active
+component's History, applies to every consuming operation, and cannot be bypassed
+by directly selecting the source geometry or silently creating a reference.
+This statement concerns Reference geometry; it does not specify ownership transfer
+for Boolean tools from a different Full Component. Operation workflow design and
+implementation completeness remain separate from this confirmed requirement.
+
 ## R03
 
 Recovered thread `01a10462-f839-7980-b385-3d218d8c1fb9`, October 3–4, 2026 Eastern. Read the recovered user/assistant transcript to interpret corrections, but only owner messages/adopted prompts establish requirements. Source copy: `freecad-recovered-conversation.json`, recovered October 6 from the now-disconnected Office-PC drive. Relevant user messages are retained in [OWNER_SOURCE_MESSAGES.json](archive/2026-10-10/OWNER_SOURCE_MESSAGES.json).

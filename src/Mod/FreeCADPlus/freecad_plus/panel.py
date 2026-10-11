@@ -619,18 +619,47 @@ class ComponentPanel(QtWidgets.QDockWidget):
         display.set_state(owner, child, part_type=part_type, shown=shown)
         self.refresh()
 
+    def _import_target(self):
+        self._clipboard_guard()
+        if Gui.Control.activeDialog():
+            raise ValueError('Finish the current task first')
+        if self._binding is None or self._current() != self._binding:
+            raise ValueError('Activate a component file before importing models')
+        doc, view = self._binding
+        active, route = self._context(doc, view)
+        target = active.Document if active is not None else doc
+        root = document.validate(target)
+        return target, (self._binding, identity(root), identity(active) if active is not None else None)
+
+    def import_models(self, row=None):
+        target, expected = self._import_target()
+        title = Path(target.FileName).stem if target.FileName else target.Label
+        filename, selected_filter = QtWidgets.QFileDialog.getOpenFileName(
+            self, 'Import Models into ' + title, '', 'FreeCAD Plus component (*.cadprt)')
+        if not filename:
+            return None
+        target, current = self._import_target()
+        if current != expected:
+            raise ValueError('The editing context changed; reopen Import Models')
+        result = external.import_path(target, filename)
+        self.refresh()
+        return result
+
     def _menu(self, tree, point):
         item = tree.itemAt(point)
-        if item is None:
-            return
-        row = item.data(0, _ROLE)  # Immutable identity, not a pointer into mutable rows.
-        if row.kind not in ('file', 'model', 'occurrence', 'unused'):
+        row = item.data(0, _ROLE) if item else None
+        component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused')
+        if not component_row and tree != self.trees[0]:
             return
         menu = QtWidgets.QMenu(self)
-        actions = {menu.addAction('Edit'): self.edit_row}
-        if row.kind != 'file':
-            actions[menu.addAction('Open in new window')] = self.open_row
-            actions[menu.addAction('Rename')] = self.rename_row
+        actions = {}
+        if tree == self.trees[0]:
+            actions[menu.addAction('Import Models from File')] = self.import_models
+        if component_row:
+            actions[menu.addAction('Edit')] = self.edit_row
+            if row.kind != 'file':
+                actions[menu.addAction('Open in new window')] = self.open_row
+                actions[menu.addAction('Rename')] = self.rename_row
         if tree == self.trees[1]:
             selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
             menu.addSeparator()
@@ -642,6 +671,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 paste.setEnabled(bool(self._clipboard))
                 actions[paste] = self.paste_row
         try:
+            if not component_row:
+                raise ValueError('No component setting for this row')
             owner, child = self._display_target(row)
         except ValueError:
             pass

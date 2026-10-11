@@ -154,6 +154,22 @@ def import_file(doc, source):
     return target
 
 
+def import_path(doc, filename):
+    """Load a catalog without a new view; failure preserves already-open documents."""
+    document.validate(doc)
+    before = set(App.listDocuments())
+    try:
+        _saved(doc)
+        source = document.open_document(filename, hidden=True)
+        return import_file(doc, source)
+    except Exception as error:
+        for name in set(App.listDocuments()) - before:
+            App.closeDocument(name)
+        if isinstance(error, (OSError, zipfile.BadZipFile, ET.ParseError, KeyError)):
+            raise ValueError("Cannot import component file: " + str(error)) from error
+        raise
+
+
 def save_definition(definition):
     """Save the owning file, not whichever assembly tab supplied Edit context."""
     owner = definition.Document

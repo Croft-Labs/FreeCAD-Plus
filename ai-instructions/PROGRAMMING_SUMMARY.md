@@ -55,6 +55,11 @@ owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
 G1.6c5 shared definition Rename passed native menu/dialog, source-owned Undo and
 independent reopen checks. The complete G1.6 panel is unfinished.
+G1.6c6 Models file import passed native menus/chooser, source-owned catalog/Undo,
+closed-source hidden loading and independent reopen. It creates no placed instances.
+The October 11 owner clarification explicitly requires all Reference geometry to
+enter the active component's History through Add Reference Feature before any use.
+Remaining Boolean input integration and other Group 1 work are unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
@@ -89,6 +94,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/external.py: native import catalogs, file identity/preflight, defining-file saves and independent copies.
 - src/Mod/FreeCADPlus/TestExternalDefinitions.py: G1.5 regression and fresh-process checks.
 - src/Mod/FreeCADPlus/freecad_plus/panel.py: opt-in panel, stable row projection, selection/Edit and native document observers.
+- src/Mod/FreeCADPlus/TestComponentImport.py: Models import menus/chooser, nested catalogs, external ownership, guards and independent reopen.
 - src/Mod/FreeCADPlus/TestComponentRename.py: shared definition Rename, native menus/dialogs, source-owned Undo and persistence.
 - src/Mod/FreeCADPlus/TestComponentPanel.py: G1.6a actual Qt interaction, lifecycle and persistence tests.
 - src/Mod/FreeCADPlus/freecad_plus/isolation.py: transient per-view unused-definition display and cleanup.

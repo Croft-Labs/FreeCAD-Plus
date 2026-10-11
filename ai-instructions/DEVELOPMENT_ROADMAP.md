@@ -134,6 +134,12 @@ Point to Point.
   external reopen passed across the bounded status-observation correction. WORK_STATE
   owns exact evidence and limits. Source milestone `50d9d1c4ab` pushed to origin;
   exact remote revision verified. No owner delivery; stop here.
+- [ X ] **G1.6c6 - Models file import.** Menu/chooser imports saved catalogs into
+  the edited definition's owning file without placement or extra tabs. Nested
+  catalogs, external Edit, Undo, cancellation, duplicate/cycle/error guards and
+  independent domestic/external reopen passed. Five distinct native cases completed
+  across bounded test-driver/fixture corrections; WORK_STATE owns exact evidence.
+  Script build passed; final publication recorded there. No owner delivery; stop here.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [ X ] **G1.7a — Part Type and visibility state.** Completed saved-state increment:

@@ -2,10 +2,70 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.6c5 component Rename and its planned checks are
-complete.** Publication is verified; stop here. Group 1 remains incomplete. Next:
-Boolean input eligibility remains pending the owner's cross-component tool decision;
-other unconfirmed/deferred panel actions are not implicitly authorized by this rename.
+Continue Group 1 only. **G1.6c6 Models file import and its planned checks are
+complete.** Stop runtime work here; Group 1 remains incomplete. Next: remaining
+Boolean input eligibility under the mandatory Add Reference Feature prerequisite.
+The October 11 owner clarification confirms all Reference geometry must first
+enter the active component's History through that operation. It does not resolve
+ownership of a Boolean tool from another Full Component. Add Component remains
+deferred; no owner package/shortcut delivery is claimed.
+
+## G1.6c6 Models file import - October 11, 2026
+
+**Authority:** reread C09's original October 9 owner records: 14:03:43 UTC permits
+importing files into an externally edited component's defining file; 19:00:28 UTC
+separates importing a catalog into Models from placing components. Nested file
+catalogs and immediate cycle rejection are confirmed. The menu wording/location
+is a disclosed implementation choice. The new in-chat Reference prerequisite is
+recorded separately in the evidence ledger, Component Panel and Task Panel specs;
+it does not change this independent import action.
+
+**Implementation:** Import Models from File is available on Models rows and its
+background. The chooser names the target defining file. It uses the existing
+saved-file/identity/cycle preflight and native import transaction. Closed sources
+load hidden; the edited tab/context, domestic IDs and Part Tree placements remain.
+External Edit imports into its own defining file. Cancel, duplicate import and
+refusal create no transaction; native Undo/Redo belongs to the importing file.
+Expected malformed archive/file errors are shown as panel feedback. Failed loads
+close only documents newly opened by that attempt. See the
+[contract](ARCHITECTURE.md#models-file-import-g16c6).
+
+**Build:** FreeCADPlusScripts passed in retained
+`test-builds/freecad_1.1.4_context`, exit 0, 59.11 seconds including configuration.
+This is a Python-only increment; no native C++ rebuild or owner delivery.
+
+**Validation:** five distinct native cases are complete, zero skips. Initial run:
+one affected Rename menu regression passed; four new import cases timed out because
+the test driver used selectFile before the visible chooser's directory model was
+ready. Five cases, 63.887 seconds; native exit 0, 71.95 seconds overall. Corrected
+the driver to enter the filename field and reran only the four unfinished cases:
+three passed; one encountered an identity mismatch in a stale generated nested
+fixture from the first run. Four cases, 18.968 seconds; native exit 0, 25.09 seconds
+overall. Removed only that case's generated folder and reran it: passed, 4.709
+seconds; native exit 0, 11.11 seconds overall. Neither correction required a
+production change or another build; the corrected test script was copied to the
+retained payload.
+
+Covered actual Qt menus/chooser, closed nested catalogs without extra views,
+unchanged IDs/placements/Edit, owning-file Undo/Redo, external unused Edit import,
+Cancel, duplicate import, circular import refusal, stale editing context and invalid
+archive feedback. Independent fresh-process reopen of both saved domestic and
+externally owned catalog fixtures passed, native exit 0, 8.38 seconds. Exact domestic
+and source identities and nested catalog ownership survived. Runtime checks stop
+here. Native logs contain the existing Std_Measure startup notice.
+
+**Limits:** accepts saved .cadprt catalogs, not arbitrary legacy-file conversion or
+placement. No Add Component dialog, source relocation, new save UI or owner build.
+Full Reference eligibility and Group 1 remain incomplete. Native chooser behavior
+was exercised with Qt's non-platform dialog for deterministic automation; no manual
+visual acceptance or platform shell-dialog coverage is claimed.
+
+**Final checks:** all 41 Plus Python files parse and match the retained development
+payload byte-for-byte. All 161 local links in changed Markdown resolve; whitespace
+passes. Task artifacts `g1_6c6_import` were removed after recording the results;
+the useful development build is retained. No further runtime work.
+
+**Publication:** validated checkpoint pending origin publication.
 
 ## G1.6c5 component definition Rename - October 11, 2026
 

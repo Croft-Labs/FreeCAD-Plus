@@ -31,6 +31,13 @@ The file owns a fixed Origin and three origin planes defining global coordinates
 
 List domestic definitions first, followed by expandable imported-file groups containing all definitions from each file. Include nested imported files: the later multi-level requirement replaces the earlier single-level outline. Importing a file populates Models; it does not place the entire file in Part Tree. Unused definitions remain available. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
+The Models **Import Models from File** action imports a saved component catalog
+into the file owning the edited definition, including while editing an external
+component. It keeps the editing tab/context and creates no placed instances.
+The menu placement and label are implementation choices for C09's confirmed
+import behavior, not a recovered exact owner layout. The chooser states the target
+file. See the [import contract](../ARCHITECTURE.md#models-file-import-g16c6).
+
 New Component allows storage in the current defining file, a new external file, or an existing external file such as Hardware. Use **domestic** and **external** terminology. Names must be unique within a file; equal names in different files remain distinct definitions. Show a domestic name without a qualifier, and an external name as **M3 screw (Hardware)**. Do not silently substitute a domestic definition for an external one with the same name. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
 Editing an external definition edits and saves its defining file. Other files using it receive the saved change when reopened. Child components must come from the active definition's own file or from files imported into that defining file. An external Hardware component cannot simply acquire a component from the importing assembly's domestic list. Edit Hardware and import the required file there first. Immediately flag and block circular file references and circular component nesting. [C09](EVIDENCE_AND_DECISIONS.md#c09)
@@ -110,6 +117,13 @@ This does not establish the unsettled handling of Boolean tools from another com
 editable native graphs in standalone Bodies and existing Part/shared-link structures;
 its tested boundaries are in the [conversion contract](../ARCHITECTURE.md#legacy-boolean-tool-ownership-g17b3l).
 This is preservation of authored content, not a new Boolean operation workflow.
+
+The owner reaffirmed on October 11 that **all geometry from a Reference component
+must first be added to the active component's History through Add Reference
+Feature before it can be used in that component in any way**. This is a mandatory
+prerequisite for every geometry consumer, including Boolean inputs; direct source
+use or automatic reference creation does not satisfy it. See the
+[latest owner clarification](EVIDENCE_AND_DECISIONS.md#reference-geometry-prerequisite---october-11-2026).
 
 ### Context-menu requirements and deferred decisions
 

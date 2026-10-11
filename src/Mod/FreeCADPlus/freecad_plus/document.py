@@ -208,7 +208,7 @@ def inspect_archive(filename):
     return Path(filename).resolve()
 
 
-def open_document(filename):
+def open_document(filename, *, hidden=False):
     from .external import archive_graph
     graph = archive_graph(filename)
     path = Path(filename).resolve()
@@ -227,11 +227,13 @@ def open_document(filename):
             if existing.FileName and Path(existing.FileName).resolve() == path:
                 validate(existing)
                 return existing
-        doc = App.openDocument(str(path))
+        doc = App.openDocument(str(path), hidden=hidden)
         validate(doc)
-        if App.GuiUp:
+        if App.GuiUp and not hidden:
             from . import editing
             editing.edit_file(doc)
+        if hidden and previous and previous.Name in App.listDocuments():
+            App.setActiveDocument(previous.Name)
         return doc
     except Exception:
         for name in set(App.listDocuments()) - before:
