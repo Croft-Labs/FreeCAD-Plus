@@ -51,8 +51,12 @@ No manual visual acceptance, owner package or desktop shortcut delivery.
 **Final checks:** all 43 Plus Python scripts parse and match the retained payload
 byte-for-byte; 120 local links in changed Markdown resolve; whitespace passes.
 Task artifacts `g1_7b3q_compound` were removed after recording these results. Useful
-builds remain. No further runtime work. Publication is recorded after exact remote
-verification.
+builds remain. No further runtime work.
+
+**Publication:** source/acceptance checkpoint
+`abcfa2a26008347147ece76ca2be30e50da7925b` pushed to
+origin/codex/freecad-1.1.4-baseline; exact remote revision verified. No release,
+owner package or shortcut delivery. This publication record is a separate docs commit.
 
 ## G1.7b3p direct Part Section integration - October 11, 2026
 

@@ -301,7 +301,8 @@ Point to Point.
 - [ X ] **G1.7b3q - Part Compound creation integration.** Shared input preflight,
   edited-definition result ownership and unchanged native Links/geometry. One build,
   four focused cases and independent reopen/source-edit passed first run. WORK_STATE
-  owns evidence and limits. Next: Compound link-edit intake. No owner delivery.
+  owns evidence and limits. Source checkpoint `abcfa2a260` pushed to origin;
+  exact remote revision verified. Next: Compound link-edit intake. No owner delivery.
 
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
