@@ -12,6 +12,7 @@ from . import panel
 KEYS = ('ModelPanelUIMode', 'ToolbarUIMode', 'TaskPanelUIMode')
 _installed = False
 _model_mode = None
+_property_dock = None
 _timer = None
 
 
@@ -22,7 +23,7 @@ def modes():
 
 def apply_modes():
     """Change presentation only; keep document identity, Edit and tasks intact."""
-    global _model_mode
+    global _model_mode, _property_dock
     window = Gui.getMainWindow()
     model, toolbar, task = modes()
     changed = model != _model_mode
@@ -42,6 +43,8 @@ def apply_modes():
     elif changed:
         dock.show()
         dock.raise_()
+    properties = None
+    dock_prefs = App.ParamGet('User parameter:BaseApp/Preferences/DockWindows')
     # Keep the native property editor: only replace the Model tree presentation.
     for native in window.findChildren(QtWidgets.QDockWidget):
         if native.objectName() == 'Model':
@@ -50,6 +53,11 @@ def apply_modes():
                 if tree.metaObject().className() == 'Gui::TreePanel':
                     tree.setVisible(model == 'Classic')
             native.setWindowTitle('Model' if model == 'Classic' else 'Properties')
+            if dock_prefs.GetGroup('ComboView').GetBool('Enabled', True):
+                properties = native
+        elif native.objectName() == 'Property view':
+            if dock_prefs.GetGroup('PropertyView').GetBool('Enabled', False):
+                properties = native
         elif native.objectName() == 'Tree view':
             # Also respect FreeCAD's existing independent tree/property layout.
             enabled = App.ParamGet('User parameter:BaseApp/Preferences/DockWindows/TreeView').GetBool('Enabled', False)
@@ -58,6 +66,17 @@ def apply_modes():
                 native.hide()
             elif changed and enabled:
                 native.show()
+    if model == 'Plus' and properties is not None:
+        if changed or properties is not _property_dock:
+            # Establish the owner layout on startup/mode or native-layout changes.
+            # Ordinary workbench refreshes must not reset the user's dock sizing.
+            dock.setFloating(False)
+            properties.setFloating(False)
+            window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock)
+            window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, properties)
+            window.splitDockWidget(dock, properties, QtCore.Qt.Vertical)
+            properties.show()
+    _property_dock = properties
     _model_mode = model
 
 

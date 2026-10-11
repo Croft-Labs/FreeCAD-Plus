@@ -236,3 +236,9 @@ pattern wherever compatible and resolve genuine incompatibilities as they arise.
 This instruction authorizes the preference/startup integration now and supersedes
 any developer-only presentation constraint. It does not authorize inventing the
 remaining operation workflows or treating unconfirmed DOCX details as approved.
+
+## Components above Properties - October 11, 2026
+
+Direct owner instruction: "first thing, the components panel should be at the top
+of the left panel, with properties below it". This defines the Plus model-panel
+layout: vertically stacked on the left, Components first and Properties below.

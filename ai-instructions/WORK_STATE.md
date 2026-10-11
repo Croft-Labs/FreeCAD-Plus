@@ -11,6 +11,29 @@ Group 1 remains incomplete. Next priority is remaining normal component-document
 command integration and shared Classic adapters; split/join tree drop/replacement
 also remains unfinished. Do not treat choosing Classic as an old-backend bypass.
 
+## Components above Properties follow-up - October 11, 2026
+
+**Authority and implementation:** the owner explicitly places Components at the
+left top with Properties below. The presentation controller establishes a vertical
+left dock split on Plus startup, return from Classic, or a changed native property
+dock. Routine workbench refreshes do not repeat docking or resize the split.
+Both combined and independent native property layouts use their existing editor.
+
+**Build and bounded check:** FreeCADPlusScripts deployment passed (exit 0).
+One isolated native process passed all four placement checks in 7.50 seconds,
+exit 0: combined startup, PartDesign workbench switch, Classic-to-Plus return,
+and independent Property view. Both docks were visible, in the left dock area,
+aligned at the same width and vertically separated rather than tabbed. At startup
+Components occupied y=124..397 and Properties y=402..818; workbench activation
+retained the exact geometry. No unrelated geometry suites were repeated.
+
+**Delivery:** source syntax and payload byte equality checked; the existing
+`freecad plus 0.1.0.lnk` still targets this retained development build and bin working
+directory. The archived shortcut remains unchanged. Restart the application from
+the current shortcut to load the correction. This is development build delivery,
+not a separate release. Validation artifacts in `g1_components_dock_order` are
+removed after recording these results. All scoped checks passed; stop here.
+
 ## G1.6d Independent Classic/Plus UI sections - October 11, 2026
 
 **Authority:** direct owner instruction, recorded in the [evidence ledger](ui-ux-specs/EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026).

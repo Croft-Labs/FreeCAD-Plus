@@ -265,7 +265,8 @@ UI Mode presents the native Model tree. The choice belongs to the model/componen
 selector and is independent of toolbar and task workflow choices. Both operate on
 the same updated component/document backend; switching presentation must not
 recreate objects, change ownership or discard Edit/task context. The property
-editor remains available. Components must be available through normal startup and
+editor remains available. In Plus UI Mode, Components occupies the top of the left
+dock area, with Properties directly below it. Components must be available through normal startup and
 the panel menu, not only a developer Python call.
 
 See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classic-and-plus-ui-sections---october-11-2026) and [mode defaults](DEFAULT_SETTINGS.md#independent-ui-modes).

@@ -1229,7 +1229,10 @@ FreeCADPlus/InitGui.py installs ui_modes at ordinary startup. A single-shot time
 coalesces startup/workbench events, without idle polling. Plus shows the Components
 dock and hides the native tree while retaining the native property editor. Classic
 hides Components and restores the native Model tree. Independent tree/property dock
-layouts are also respected. Components is discoverable through the native Panels
+layouts are also respected. On Plus startup/entry or replacement of the native
+property dock, the controller stacks Components above Properties in the left dock
+area. Ordinary workbench refreshes preserve the dock sizes. Components is
+discoverable through the native Panels
 menu. Closing/hiding the managed dock retains backend observers and Edit/view
 contexts; changing UI mode never changes geometry eligibility or document schema.
 The component panel can still be constructed explicitly by developer tests.
