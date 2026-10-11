@@ -59,6 +59,12 @@ in changed Markdown resolve, and whitespace checks pass. Task validation artifac
 `g1_7b3s_split_join` are removed after recording these results; useful builds remain.
 
 
+**Publication:** source/acceptance checkpoint
+`6416f489b13181e13986765c8c92150a58d442ac` pushed to
+origin/codex/freecad-1.1.4-baseline; exact remote revision verified. No release,
+owner package or shortcut delivery. This publication record is a separate docs commit.
+
+
 ## G1.7b3r Compound link-edit admission - October 11, 2026
 
 **Authority:** applies the confirmed Reference prerequisite and component ownership

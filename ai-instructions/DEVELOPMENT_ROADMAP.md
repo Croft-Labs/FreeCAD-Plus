@@ -316,7 +316,8 @@ Point to Point.
   native Slice/filter features directly in History; legacy grouping remains. Five
   focused cases and independent reopen/source-edit passed after correcting duplicate
   related-filter batch insertion. WORK_STATE owns evidence and limits. Next:
-  split/join input editing admission. No owner delivery.
+  split/join input editing admission. Source checkpoint `6416f489b1` pushed to origin;
+  exact remote revision verified. No owner delivery.
 
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
