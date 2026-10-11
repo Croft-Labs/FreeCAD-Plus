@@ -2,9 +2,29 @@
 
 ## Authorized objective and stopping boundary
 
-The owner authorized continuation to **G1.6c4 Rotate** in Move Components.
-Implementation and planned checks are complete; work has stopped. Next is
-**G1.6c5 Point to Point**, not started. Do not start subsequent Move workflows or unrelated component/UI features.
+The owner clarified that Point to Point is an operation, not Component Panel work.
+A right-click entry provides access but does not bring the operation into Group 1.
+Next actual panel increment is **G1.7a Part Type and visibility state**, not started.
+No additional runtime verification is required for this scope correction.
+
+## Scope correction and parked operation — October 10, 2026
+
+Point to Point implementation began after the owner allowed necessary new work,
+but was stopped when the owner corrected its classification. Its unfinished source
+and five proposed regression cases are preserved on local branch
+`codex/point-to-point-parked`, commit `288f99e69c`; the branch was not pushed.
+Python parsing and the script-copy target passed. **No runtime tests ran** and
+no functional acceptance is claimed. The baseline checkout retains the previously
+validated Translate/Rotate implementation. The development payload's twenty-two
+scripts were restored byte-for-byte from that baseline and the new test copy removed;
+no owner package, settings or shortcut was changed. Future CMake builds must use
+the active branch's source configuration, as usual.
+
+Group 1 owns panel/document structure and menu integration. Task-operation behavior
+is tracked separately even where launched by that menu; its completion is not a
+Group 1 gate. The roadmap preserves historical operation IDs/evidence without using
+them as the next panel queue. For subsequent increments, run only relevant acceptance
+checks once; repeat only in response to a failure, a fix or a material new concern.
 
 ## G1.6c4 Rotate — October 10, 2026
 

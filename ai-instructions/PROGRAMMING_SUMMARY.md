@@ -19,7 +19,10 @@ G1.6c3 Move Components foundation/Translate is validated in the development buil
 WORK_STATE records regression, independent persistence and inspected visual acceptance.
 G1.6c4 Rotate is validated in the development build; WORK_STATE records 62 combined
 cases, independent persistence and inspected visual acceptance.
-Next is G1.6c5 Point to Point; do not start it until continuation.
+Move Components is operation/task-panel work; right-click access does not place its
+workflows within Group 1. The unvalidated Point to Point increment is parked on a
+separate local branch; WORK_STATE records its exact state. Next panel increment is
+G1.7a Part Type and visibility state, not started.
 The complete G1.6 panel is unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 

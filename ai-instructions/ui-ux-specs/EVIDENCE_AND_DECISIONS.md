@@ -17,6 +17,15 @@ Owner messages in this chat, October 10, 2026, request five separate Markdown sp
 
 The owner confirmed that the old F: drive is disconnected. Discussion of a possible fresh fork is a design decision still under consideration, with this fork retained as reference. The owner reports recurring bugs and jittery UI. No application code change, fresh fork or rebuild is part of this documentation migration.
 
+### Component Panel scope clarification — October 10, 2026
+
+The owner stated in this chat: "point to point movement is an operation that is not
+a part of the component panel" and required distinguishing panel operations from
+operations conveniently presented by right-click. This supersedes the assistant's
+classification of remaining Move Components methods as Group 1 panel increments.
+The panel owns menu access and selection/context handoff; the launched operation's
+workflow belongs to TASK_PANEL. Existing confirmed movement behavior is unchanged.
+
 ## R03
 
 Recovered thread `01a10462-f839-7980-b385-3d218d8c1fb9`, October 3–4, 2026 Eastern. Read the recovered user/assistant transcript to interpret corrections, but only owner messages/adopted prompts establish requirements. Source copy: `freecad-recovered-conversation.json`, recovered October 6 from the now-disconnected Office-PC drive. Relevant user messages are retained in [OWNER_SOURCE_MESSAGES.json](archive/2026-10-10/OWNER_SOURCE_MESSAGES.json).

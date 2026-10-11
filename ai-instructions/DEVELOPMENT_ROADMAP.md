@@ -35,6 +35,14 @@ Owner authorized Group 1 on October 10, 2026, with a stop after the current task
 checks pass. Work proceeds in reviewable stages; subsequent groups remain outside
 scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
 
+**Owner scope correction:** menu access does not make the launched operation part
+of Component Panel implementation. Group 1 owns Models/Part Tree/History, document
+and instance structure, selection/Edit context, tabs, presentation and menu routing.
+Move Components workflows belong to operation/task-panel work. They are not gates
+for completing Group 1. Their historical IDs and completed evidence are retained
+under the separate operation section below. Next panel increment: **G1.7a**, not
+Point to Point.
+
 - [ X ] **G1.1 — Structural contract.** Define native service reuse, file/definition/
   instance ownership, persistent identity, `.cadprt` storage and legacy-conversion
   boundaries. Checked against confirmed requirements and current native source;
@@ -96,10 +104,10 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   and remote revision verified; no release or owner-build delivery.
   This is a bounded development build, not full-workbench or complete-panel acceptance.
   WORK_STATE records details; the remaining panel actions are separate increments.
-- [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs and the
-  confirmed context actions; integrate shared workflows only against their approved
-  contracts. Deferred Add Component and unconfirmed checklist/destructive-action
-  details are not approved by this task list.
+- [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs, structural
+  actions and confirmed menu routing. A menu entry opens its separately owned operation;
+  it does not authorize implementing that operation within Group 1. Deferred Add
+  Component and unconfirmed checklist/destructive-action details remain unapproved.
 - [ X ] **G1.6c1 — Component file tabs.** Open in new window from Models/Part Tree;
   retain per-view Edit/camera and source ownership, native editor guards and cleanup.
   **Build:** eighteen-script payload copied/verified in the existing native development build.
@@ -119,6 +127,26 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Publication:** source milestone `e092033275` pushed to
   origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
   The announced destination convention remains subject to owner correction.
+- [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
+  restrictions and edit display; resolve undefined task interactions first.
+- [   ] **G1.7a — Part Type and visibility state.** Next panel/structure increment:
+  parent-owned saved direct-child settings, separate Shown/Hidden state, corresponding
+  tree controls and restoration on Edit. Follow the confirmed Component Panel contract.
+  Viewport rendering belongs to MODEL_VIEW_WINDOW; Add Reference Feature and other
+  operation dialogs remain separately scoped. Not started.
+- [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
+  persistence, dependency, original-workbench and responsiveness regression checks.
+
+Each stage records implementation, runtime validation and owner delivery separately.
+Do not claim all Group 1 tests are complete because G1.1 documentation checks pass.
+Do not repeat the completed baseline checks without a new relevant concern.
+
+## Operation workflows reached from the panel — outside Group 1
+
+Historical IDs below remain stable for existing references; the G1 prefix does not
+make these operations Component Panel scope. Translate/Rotate remain implemented;
+their passing checks need no repetition for this documentation-only scope correction.
+
 - [ X ] **G1.6c3 — Move Components foundation and Translate.** Implemented:
   sibling/parent context, component collector, transient preview/Apply/OK/Cancel,
   parent axes/picked directions and native length input. Copy remains separate.
@@ -136,18 +164,11 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   WORK_STATE owns detailed results and limitations. Stopped after planned acceptance.
   **Publication:** source milestone `b14a8bc724` pushed to
   origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
-- [   ] **G1.6c5 — Point to Point.** Next increment, not started: separate source
-  and destination point collectors, pure parent-frame translation, reference snapshots
-  and the same preview/Apply/OK/Cancel semantics.
-  Align Axes, Align Coordinate Systems and Interactive follow as separate increments.
-- [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
-  restrictions and edit display; resolve undefined task interactions first.
-- [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
-  persistence, dependency, original-workbench and responsiveness regression checks.
-
-Each stage records implementation, runtime validation and owner delivery separately.
-Do not claim all Group 1 tests are complete because G1.1 documentation checks pass.
-Do not repeat the completed baseline checks without a new relevant concern.
+- [   ] **G1.6c5 — Point to Point (operation, parked).** Unvalidated source and tests
+  preserved locally on `codex/point-to-point-parked`, commit `288f99e69c`.
+  Static parse/script copy completed; no runtime tests ran. Not on the baseline branch
+  or active development payload. Resume only as separately scoped operation work.
+  Align Axes, Align Coordinate Systems and Interactive also remain outside Group 1.
 
 The [old roadmap](archive/pre-restart-docs/DEVELOPMENT_ROADMAP.md) records archived
 work only. Its checked milestones and outstanding tasks do not describe this source

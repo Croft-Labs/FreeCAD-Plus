@@ -135,8 +135,9 @@ original view reactivated. Closed views are removed from panel state. When dock 
 clear the active subwindow, state resolves the subwindow owning the native view;
 it does not assume that activeSubWindow is always available. Source loss
 uses the existing validated isolation/context teardown. File close/save prompts and
-view ownership remain native. Linked Copy/Paste, Move Components and independent
-storage-copy interaction are separate remaining G1.6c actions.
+view ownership remain native. Linked Copy/Paste is a structural panel action.
+Move Components and independent storage-copy dialogs are operation workflows;
+menu routing belongs to the panel, but the dialogs do not become Group 1 work.
 
 ### Linked-instance clipboard (G1.6c2)
 
@@ -171,6 +172,10 @@ requires a file or placed parent. Closing the panel discards the clipboard. No n
 persistent UI/model metadata is introduced.
 
 ### Move Components foundation and Translate (G1.6c3)
+
+Scope correction: Move Components is an operation reached through the panel's menu,
+not part of panel implementation. Historical IDs are retained for evidence links;
+unimplemented movement methods do not block Group 1 acceptance.
 
 `freecad_plus/movement.py` owns the native Tasks dialog and its transient controller.
 Part Tree Move Components accepts whole occurrence rows. The first eligible row
