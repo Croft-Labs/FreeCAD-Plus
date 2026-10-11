@@ -58,7 +58,10 @@ payload byte-for-byte; all 158 local links in changed Markdown resolve; whitespa
 passes. The exact task validation directory `g1_7b3n_boolean_inputs` was removed
 after recording durable results. Useful development builds remain. Stop here.
 
-**Publication:** validated checkpoint pending origin publication.
+**Publication:** source/acceptance checkpoint
+`751e77cbb2b246fe618b8ec8b09bb702e065a81b` pushed to
+origin/codex/freecad-1.1.4-baseline and exact remote revision verified. No release,
+owner package or shortcut delivery. This publication record is a separate docs commit.
 
 ## G1.6c6 Models file import - October 11, 2026
 

@@ -280,8 +280,9 @@ Point to Point.
   unresolved command selection and original picked occurrence checked before native
   mutation. Rejected picker state and removal cleanup retained. One native build,
   six focused cases and independent reopen/source-edit passed; WORK_STATE owns
-  exact acceptance and publication. This does not decide cross-component Full
-  Component tool ownership. Next: remaining Part-workbench Boolean entry points.
+  exact acceptance. Source checkpoint `751e77cbb2` pushed to origin; exact remote
+  revision verified. This does not decide cross-component Full Component tool
+  ownership. Next: remaining Part-workbench Boolean entry points.
 
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
