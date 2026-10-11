@@ -136,7 +136,8 @@ Point to Point.
   operation dialogs remain separately scoped. Native script-copy build passed.
   Six new state cases and affected regressions passed after focused corrections;
   independent reopen and inspected menus passed. WORK_STATE owns exact run evidence.
-  Publication pending; no owner-build delivery.
+  Source milestone `47f766073d` pushed to origin/codex/freecad-1.1.4-baseline;
+  remote revision verified. No owner-build delivery.
   See [saved-state contract](ARCHITECTURE.md#saved-part-type-and-visibility-state-g17a).
 - [   ] **G1.7b — Contextual viewport integration.** Next: apply saved Part Type and
   visibility without global visibility leaks, restore per-view state, fade other

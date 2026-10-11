@@ -54,8 +54,9 @@ new failure, change or material concern.
 were recorded. Useful native build/dependencies and tracked tests remain. All 121
 checked local Markdown file targets resolve.
 
-**Publication:** pending validated source commit/push. No owner delivery, shortcut
-change, release or deployment.
+**Publication:** source milestone `47f766073d` pushed to
+`origin/codex/freecad-1.1.4-baseline`; remote revision verified. No owner delivery,
+shortcut change, release or deployment.
 
 ## Scope correction and parked operation — October 10, 2026
 
