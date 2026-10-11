@@ -65,7 +65,10 @@ payload byte-for-byte. All 161 local links in changed Markdown resolve; whitespa
 passes. Task artifacts `g1_6c6_import` were removed after recording the results;
 the useful development build is retained. No further runtime work.
 
-**Publication:** validated checkpoint pending origin publication.
+**Publication:** source/acceptance checkpoint
+`6eda0296fcd867d61f77cbacafac99e8521afaca` pushed to
+origin/codex/freecad-1.1.4-baseline and exact remote revision verified. No release,
+owner package or shortcut delivery. This record is a separate documentation commit.
 
 ## G1.6c5 component definition Rename - October 11, 2026
 

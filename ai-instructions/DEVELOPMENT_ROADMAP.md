@@ -139,7 +139,8 @@ Point to Point.
   catalogs, external Edit, Undo, cancellation, duplicate/cycle/error guards and
   independent domestic/external reopen passed. Five distinct native cases completed
   across bounded test-driver/fixture corrections; WORK_STATE owns exact evidence.
-  Script build passed; final publication recorded there. No owner delivery; stop here.
+  Script build passed; source checkpoint `6eda0296fc` pushed to origin and exact
+  remote revision verified. No owner delivery; stop here.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [ X ] **G1.7a — Part Type and visibility state.** Completed saved-state increment:
