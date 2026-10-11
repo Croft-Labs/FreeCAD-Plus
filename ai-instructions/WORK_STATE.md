@@ -3,7 +3,7 @@
 ## Authorized objective and stopping boundary
 
 Continue Group 1 only. **G1.6c5 component Rename and its planned checks are
-complete.** Record publication and stop here. Group 1 remains incomplete. Next:
+complete.** Publication is verified; stop here. Group 1 remains incomplete. Next:
 Boolean input eligibility remains pending the owner's cross-component tool decision;
 other unconfirmed/deferred panel actions are not implicitly authorized by this rename.
 
@@ -58,7 +58,9 @@ payload byte-for-byte; 123 local file links in changed Markdown resolve; whitesp
 passes. Task artifacts `g1_6c5_rename` are removed after recording these results;
 the useful development build is retained. No further runtime work.
 
-**Publication:** source commit/push verification pending; no owner delivery.
+**Publication:** source milestone `50d9d1c4ab5f6f6eda9c223eae42f8c3df184bf7`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This increment is complete; stop here.
 
 ## G1.7b3m placed external export context - October 11, 2026
 

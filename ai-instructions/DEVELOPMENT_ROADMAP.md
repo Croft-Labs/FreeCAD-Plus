@@ -132,7 +132,8 @@ Point to Point.
   per-file names, no-op/Cancel, guarded dialogs and native Undo are supported. Script
   build, four new cases plus one affected window regression, and independent domestic/
   external reopen passed across the bounded status-observation correction. WORK_STATE
-  owns exact evidence and limits. No owner delivery; stop here.
+  owns exact evidence and limits. Source milestone `50d9d1c4ab` pushed to origin;
+  exact remote revision verified. No owner delivery; stop here.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [ X ] **G1.7a — Part Type and visibility state.** Completed saved-state increment:
