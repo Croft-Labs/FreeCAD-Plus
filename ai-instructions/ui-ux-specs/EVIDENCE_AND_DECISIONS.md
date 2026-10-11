@@ -44,6 +44,28 @@ Thread **freecad plus 1.0**, `01a120e8-8951-7b32-a7e4-3557c9a2ec40`, October 9 E
 
 Thread **Fix component activation and part**, `01a12645-26b9-7d32-b338-529e73a9c0d4`, October 10 Eastern. Direct messages confirm double-click activation, Part Type replacing Part View, Excluded replacing ambiguous Hidden, saved parent-owned direct-child settings, context-dependent Reference and mandatory Add Reference Feature before use. The October 10 10:56 EDT clarification forbids directly using unpromoted Reference geometry and supersedes that earlier suggestion.
 
+### Part Type source recheck - October 11, 2026
+
+At the owner's request, reread the original conversation and retained owner messages
+U067-U069 in [OWNER_SOURCE_MESSAGES.json](archive/2026-10-10/OWNER_SOURCE_MESSAGES.json).
+U067 (October 10, 10:43 EDT) explicitly says: "all parts should be view full
+component by default when they are active. all of its children should be bodies
+only by default." Its tower-case/fan-assembly example retains ordinary nested fans
+and plates while marking their reference copies Excluded. U068 (10:52 EDT) confirms
+that tower case and fan assy are siblings, nested exclusions remain effective, and
+the saved choices belong to a part with regard to its direct children. U069
+(10:56 EDT) requires Add Reference Feature before using reference-child geometry.
+
+Implementation interpretation of that owner-authored example: Bodies Only must
+retain eligible bodies through ordinary nested component branches, applying the
+saved child types and contextual Reference/Excluded rules. Treating it as a blanket
+cutoff at directly owned bodies would remove the ordinary fan-assembly contents
+shown in the example. This is an inference from the example, not a verbatim
+definition of Bodies Only or approval of the archived implementation. The repeated
+direct-versus-nested clarification blocker was therefore unnecessary; resume from
+this evidence rather than asking the same question again. Detailed Add Reference
+Feature operation design remains a separate, unfinished task.
+
 ## Source coverage and limitations
 
 - Read all locally available primary FreeCAD Codex session user messages identified by checkout and topic, including recent recovery, hierarchy and Part Type chats. Excluded automated subagent records and unrelated app conversations from requirement evidence.

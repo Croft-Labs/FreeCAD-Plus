@@ -160,7 +160,9 @@ Point to Point.
   Source milestone `fbcecf8440` pushed to origin; remote revision verified.
   WORK_STATE owns evidence. No saved material property mutation or owner-build delivery.
 - [   ] **G1.7b3 — Remaining content/eligibility integration.** Bodies Only filtering
-  needs owner clarification on descendant traversal; the question is pending.
+  follows the owner-example descendant interpretation in
+  [Component Panel](ui-ux-specs/COMPONENT_PANEL.md#part-type-and-visibility).
+  The October 11 conversation recheck removed the repeated clarification blocker.
   Reference-use eligibility remains unfinished. Saved unused-preview display is
   complete in G1.7b3a below.
   Do not infer Bodies Only semantics from archived assistant text or current UI.

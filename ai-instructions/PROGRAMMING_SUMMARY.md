@@ -28,7 +28,7 @@ records its validation. G1.7b2 contextual fading is validated in the development
 payload, including shared mixed face materials and independent reopen. Its planned
 checks are complete. G1.7b3a saved self/child display in domestic/external unused
 previews is also validated; stop at this milestone. Next: Bodies Only filtering,
-whose descendant traversal awaits owner clarification. Reference eligibility remains open;
+using the owner-example interpretation in COMPONENT_PANEL. Reference eligibility remains open;
 full G1.7b and Group 1 remain incomplete. WORK_STATE owns acceptance evidence.
 The complete G1.6 panel is unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.

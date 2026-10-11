@@ -62,13 +62,20 @@ G1.7b2 contextual fading is validated in the development payload, including shar
 mixed face materials; Model View Window and WORK_STATE state its acceptance boundary.
 G1.7b3a applies saved self/child visibility and nested Reference choices in domestic
 and external unused previews; its validation is recorded in WORK_STATE. Bodies Only
-content filtering and Reference-use enforcement remain pending. Bodies Only descendant
-traversal needs owner clarification.
+content filtering and Reference-use enforcement remain pending. The descendant
+interpretation is recorded in the [Part Type source recheck](EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
 Saved metadata alone does not establish the full behavior below. WORK_STATE owns validation.
 
 Use **Part Type**, replacing Part View. The types are **Full Component**, **Bodies Only**, **Reference**, and **Excluded**. Shown/Hidden is separate visibility state; Excluded is not another name for Hidden and cannot be overridden with Show. [C10](EVIDENCE_AND_DECISIONS.md#c10)
 
 The active component defaults to Full Component; its direct children default to Bodies Only. Save overrides on the component for itself and its direct children, persist them through save/reopen, and restore them when that component is edited again. The parent's definition owns its child choices, so all instances of that parent share them. Do not substitute a global display preference or independent per-occurrence override. [C10](EVIDENCE_AND_DECISIONS.md#c10)
+
+The owner's fan-assembly example retains ordinary nested component contents and
+excludes reference copies according to context. For Bodies Only implementation,
+interpret this as retaining eligible descendant bodies while respecting the saved
+child types and exclusions, rather than discarding every nested component. This
+descendant rule is inferred from the owner's example; see the
+[source recheck](EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
 
 A direct Reference child displays its full geometry while its parent is edited, respecting its own nested exclusions. Editing an ancestor makes that reference behave as Excluded without erasing its saved Reference setting. Reactivating its owner restores Reference. To use an excluded nested component as a reference, add that component separately as a direct Reference child. [C10](EVIDENCE_AND_DECISIONS.md#c10)
 

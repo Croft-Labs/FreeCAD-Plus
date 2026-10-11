@@ -4,10 +4,15 @@
 
 Continue Group 1 only. **G1.7b3a saved display in unused previews and its planned checks
 are complete.** Stop here; no next implementation or further runtime tests started.
-Group 1/G1.7b3 remain incomplete. Next: Bodies Only content filtering, after the owner
-clarifies whether it includes descendant components' bodies or only directly owned
-bodies. The question was presented again this turn and remains unanswered. Reference
-use eligibility also remains open; the Add Reference Feature operation is undefined.
+Group 1/G1.7b3 remain incomplete. Next: Bodies Only content filtering, using the
+owner's fan-assembly example as described in COMPONENT_PANEL. The October 11 source
+recheck removed the repeated direct-versus-nested clarification blocker: eligible
+ordinary descendant bodies remain, subject to saved types and contextual exclusions.
+That traversal interpretation is inferred from owner messages U067-U069, not an
+additional verbatim owner definition; see the [evidence](ui-ux-specs/EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
+This source-recovery turn changed documentation only; no application changes,
+builds or runtime tests. Reference use eligibility also remains open; the detailed
+Add Reference Feature operation is undefined.
 
 ## G1.7b3a unused-preview saved display — October 11, 2026
 

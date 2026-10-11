@@ -13,7 +13,8 @@ shared mixed-material geometry and independent reopen. Its
 separate implementation from acceptance. G1.7b3a also applies saved self/child
 visibility and nested Reference filtering in unused previews, with acceptance in
 WORK_STATE. Bodies Only content filtering and reference eligibility remain unfinished;
-Bodies Only descendant traversal awaits clarification.
+Bodies Only descendant traversal follows the owner-example interpretation in
+[Component Panel](COMPONENT_PANEL.md#part-type-and-visibility).
 The requirements below are unchanged by that implementation boundary.
 
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).

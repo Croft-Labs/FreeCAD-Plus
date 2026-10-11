@@ -378,7 +378,8 @@ every tracked view. No shared ViewProvider partial-render or Visibility writes a
 
 This increment does not implement fading, Bodies Only content filtering, Reference
 modeling eligibility, export policy, or saved display filtering inside an unused-model
-preview. Bodies Only descendant semantics remain a pending owner question. Those limits
+preview. Bodies Only traversal follows the owner-example interpretation in
+[Component Panel](ui-ux-specs/COMPONENT_PANEL.md#part-type-and-visibility). Those limits
 must not be treated as completion of G1.7b or as approval for a new operation dialog.
 
 ### Contextual fading (G1.7b2)
