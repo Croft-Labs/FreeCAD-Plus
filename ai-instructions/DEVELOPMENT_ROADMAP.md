@@ -39,7 +39,7 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   instance ownership, persistent identity, `.cadprt` storage and legacy-conversion
   boundaries. Checked against confirmed requirements and current native source;
   documentation links and whitespace pass. No runtime implementation claimed.
-- [   ] **G1.2 — Single-component pilot (next).** File root, one domestic Part001
+- [ X ] **G1.2 — Single-component pilot.** File root, one domestic Part001
   definition and one native linked instance; explicit Edit context; an existing
   Sketch -> Pad workflow with backend Body; genuine versioned `.cadprt` persistence.
   Acceptance: correct ownership/instance count, valid editable geometry, recompute,
@@ -65,9 +65,16 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   editing through the second occurrence passed. Clean four-solid viewport inspected;
   script build/install passed. No owner executable or full panel delivery claimed.
   WORK_STATE records evidence and the explicit schema-3 upgrade boundary.
-- [   ] **G1.5 — External definitions (next).** Nested import catalogs, source-file ownership,
-  independent copies and explicit cross-file failure/recovery checks.
-- [   ] **G1.6 — Component panel.** Models/Part Tree/History, file row, explicit Edit,
+- [ X ] **G1.5 — External definitions.** Nested native import catalogs, defining-file
+  Edit/save ownership, independent recursive copies and explicit replacement selection.
+  Twenty-three native-process tests (seven external cases plus sixteen prior regressions),
+  fresh-process identity/reopen/shared-update checks, and native Sketch/Pad editors
+  through a nested external occurrence passed. Missing/wrong/future dependencies,
+  unsaved source/catalog ordering and failed saves were refused and recovery checked.
+  Clean two-instance viewport inspected; all thirteen script build/install files matched.
+  No owner executable, full panel or storage/replacement dialogs delivered. WORK_STATE
+  and ARCHITECTURE record schema-4 boundaries and exact-path recovery limitations.
+- [   ] **G1.6 — Component panel (next).** Models/Part Tree/History, file row, explicit Edit,
   occurrence tracking, confirmed actions and temporary unused-model editing.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.

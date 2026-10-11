@@ -6,8 +6,9 @@ This checkout starts from official **FreeCAD 1.1.4** source at
 `4fd3bf320d9566a27e60069fc8387448aaa3a094`, plus owner documentation, an agent entry
 point and focused generated-file ignore rules. Branch: `codex/freecad-1.1.4-baseline`.
 No previous Plus application changes have been carried into this branch. Group 1
-now has validated, opt-in domestic hierarchy, shared-instance and legacy-conversion
-services under src/Mod/FreeCADPlus. Next is G1.5 external definitions; stop until
+now has validated, opt-in domestic/external catalogs, hierarchy, shared-instance,
+independent-copy and legacy-conversion services under src/Mod/FreeCADPlus.
+Next is G1.6 component panel (Models/Part Tree/History); stop until
 continuation is requested.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
@@ -38,6 +39,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/hierarchy.py: domestic graph, placement and occurrence paths.
 - src/Mod/FreeCADPlus/freecad_plus/legacy_hierarchy.py: native Part/link conversion.
 - src/Mod/FreeCADPlus/TestComponentHierarchy.py: G1.4 regression and fresh-process checks.
+- src/Mod/FreeCADPlus/freecad_plus/external.py: native import catalogs, file identity/preflight, defining-file saves and independent copies.
+- src/Mod/FreeCADPlus/TestExternalDefinitions.py: G1.5 regression and fresh-process checks.
 - tests and per-workbench tests: upstream test infrastructure.
 - CMakeLists.txt, CMakePresets.json and .github/workflows: this release's build definitions.
 - .gitmodules: this release's pinned GSL, OndselSolver, AddonManager and GoogleTest.

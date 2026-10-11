@@ -165,3 +165,37 @@ resetEdit, and confirm the occurrence context and geometry remain intact. Inspec
 normal framebuffer pixels with the existing capture procedure. Script build/install
 checks use the same standalone CMake harness; no native recompilation is required
 for this module-only change. Do not treat these checks as full panel delivery.
+
+## External-definition validation
+
+Run TestExternalDefinitions with the preceding three suites in the same isolated
+GUI process and a fresh PLUS_TEST_DIR. Then run
+`TestExternalDefinitions.verify_fresh_process(output_directory)` in a second process.
+It reopens nested native references, checks source identities/object IDs, edits/saves
+only the defining file and verifies that reopening the unchanged assembly receives
+the saved update. It changes a generated Pad from 5 to 8 mm; use fresh suite output
+before repeating this fresh-process acceptance helper.
+
+Create/save the two component documents before `external.import_file(importer,
+source_doc)`. Importing does not place geometry; use `hierarchy.add_instance` explicitly.
+Older files require `external.upgrade(doc)` before importing. `external.catalog` and
+`qualified_label` supply the panel projection. `editing.edit` accepts a full path
+across files; Sketch/Pad creation writes to the resolved defining document.
+`external.save_definition` saves that owner. Save source definitions/catalog changes
+before dependents that reference those new entries. Do not use assembly Save as an
+implicit save-all operation. Full contracts/limits are in ARCHITECTURE.md.
+
+For independent copies, provide destination names and an explicit
+`placements_to_replace` tuple; do not infer the user's future checklist selection.
+The native recursive copy must have no surviving source dependencies. Copy failure
+rolls back the destination transaction. Missing-file recovery is restoring the exact
+source path/identity then retrying; no automated relocation or name substitution.
+
+For the native editor check, use the saved external-edit fixture's second full
+occurrence path followed by the source Body and Sketch/Pad names in the existing
+`setEdit(file_root.Name, 0, subname)` procedure. Confirm the current assembly tab,
+resolved source feature and occurrence context survive `resetEdit`. When capturing,
+import PySide6.QtOpenGLWidgets before querying widgets and restrict the normal
+framebuffer read to QOpenGLWidget descendants of the active QMdiSubWindow; another
+native editor window can also have an OpenGL widget. These are service/editor checks,
+not acceptance of the full panel, mouse-driven flows or long-session jitter.

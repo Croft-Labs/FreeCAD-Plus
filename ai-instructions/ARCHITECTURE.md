@@ -1,6 +1,6 @@
 # Component/document architecture
 
-Status: G1.4 domestic hierarchy and shared instances implemented and validated, October 10, 2026.
+Status: G1.5 external-definition services implemented and validated, October 10, 2026.
 The native service module is opt-in; the complete panel, broader conversion and later Group 1
 behavior below remain target design until their roadmap stages are completed.
 Engineering choices below implement confirmed behavior; they do not approve
@@ -13,8 +13,8 @@ owns implementation order and acceptance status.
 Reuse FreeCAD documents, native feature/property identities, geometry, solvers,
 transactions and links. Introduce component ownership and presentation around
 these services. Keep the original workbench inventory and geometry algorithms.
-Current services cover domestic component hierarchies and shared native instances.
-External files, further legacy conversion and the full panel follow in separate stages.
+Current services cover domestic/external catalogs, component hierarchies and shared
+native instances. Further legacy conversion and the full panel remain separate stages.
 
 The Plus/Legacy interface preference and redesigned modeling dialogs are outside
 this stage. Component storage must not depend on the chosen toolbar presentation.
@@ -25,7 +25,7 @@ The archived fork is reference material, not a source of implicit requirements.
 | Responsibility | Target ownership / native service |
 | --- | --- |
 | File | One native `App::Document`; one marked file-root container represents its global frame and top-level placements |
-| Definition catalog | File-owned definitions, including unused ones; imported-file catalog follows later |
+| Definition catalog | File-owned definitions, including unused ones; nested native imported-file catalogs |
 | Component definition | Native `App::Part`, proven by the pilot, owns modeling content and child placements and can serve as part and assembly simultaneously |
 | Placed instance | Native `App::Link` targets a definition; root instances belong to the file, child instances to their parent definition |
 | Modeling content | Existing sketches, Part/PartDesign operations, geometry and required backend Bodies retain their native types and relationships |
@@ -87,27 +87,31 @@ It is not a renamed legacy file with an assumed component structure. No historic
 `.cadprt` schema is adopted implicitly. No owner files have been converted.
 
 The schema owner is [freecad_plus/document.py](../src/Mod/FreeCADPlus/freecad_plus/document.py).
-New files and conversions use schema 3. Schemas 1 and 2 remain readable/savable
+New files and conversions use schema 4. Schemas 1 and 2 remain readable/savable
 with their original single-definition/single-instance bounds (schema 1 is Body-only).
 Hierarchy operations require the explicit, undoable `hierarchy.upgrade(doc)` on an
-older file; it validates the existing graph before changing only the schema marker:
+older file; it validates the existing graph before changing only the schema marker.
+External imports require `external.upgrade(doc)` to schema 4, adding native import
+metadata in an undoable transaction. Schema 3 remains readable/savable without
+automatically enabling external catalogs:
 
 | Stored item | Native representation |
 | --- | --- |
 | Marker | File-root `PlusFormat = FreeCADPlus.ComponentDocument` |
-| Revision | File-root integer `PlusSchema`: 1, 2 or 3 |
+| Revision | File-root integer `PlusSchema`: 1, 2, 3 or 4 |
 | Definition catalog | File-root native `Definitions` PropertyLinkList |
+| Imported catalogs | Schema-4 file-root `Imports` PropertyXLinkList targeting external file roots, with ordered source document UUIDs in `ImportIdentities` |
 | Placements | File-root or parent-definition Group containing App::Link; copy-on-change disabled, no array elements or scale |
-| Definition content | Native App::Part Group containing backend Bodies/geometry; schema 3 additionally owns child App::Links |
+| Definition content | Native App::Part Group containing backend Bodies/geometry; schemas 3/4 additionally own child App::Links |
 | Identity | Native Document.Uid and object Name; native object IDs also survive tested reopen |
 | World frame | File-root Placement fixed at identity; native Origin/planes reused |
 | Definition frame | Schema 3 preserves native definition Placement, including legacy Part frames; native LinkTransform controls how occurrence placement composes with it |
 
 Ownership validation follows native groups and Origins, not arbitrary dependency
-links. Orphaned objects, multiple roots, invalid targets and external dependencies
-are rejected. Empty files and unused domestic definitions are valid. External
-and further modeling-content schemas require explicit extension/migration;
-these pilot bounds are not final product restrictions.
+links. Orphaned objects, multiple roots and invalid targets are rejected. Schema 4 permits
+native external catalog and instance links; arbitrary cross-file modeling dependencies
+remain refused. Empty files and unused definitions are valid. Further content
+migrations remain explicit; these service bounds are not final product restrictions.
 
 [editing.py](../src/Mod/FreeCADPlus/freecad_plus/editing.py) uses the native per-view
 `PlusEdit` active-object slot with a file-root-relative occurrence path, plus native
@@ -117,8 +121,8 @@ the native PartDesign feature. History includes owned sketches/features/geometry
 while excluding Body containers and child-instance links.
 Native Sketch and Pad editors are retained and tested.
 
-[hierarchy.py](../src/Mod/FreeCADPlus/freecad_plus/hierarchy.py) owns domestic
-creation, placement, movement and occurrence resolution. Definitions have one catalog
+[hierarchy.py](../src/Mod/FreeCADPlus/freecad_plus/hierarchy.py) owns definition
+creation, placement, movement and occurrence resolution across defining files. Definitions have one catalog
 entry regardless of how many times they are placed. A child link belongs to its
 parent definition, so its local placement is shared by every occurrence of that
 parent. A full path of links selects one occurrence; a bare nested link is ambiguous
@@ -148,8 +152,8 @@ failed saves restore the previous filename/root label and retain GUI dirty state
 Only successful native save and archive verification clear that state.
 
 Persist the file root, definition catalog, instance targets/local placements,
-component ownership and necessary history associations. Later stages add import
-references and confirmed parent-owned Part Type settings. Native objects retain
+component ownership, import references and necessary history associations. Later
+stages add confirmed parent-owned Part Type settings. Native objects retain
 features, expressions, attachment references, geometry and appearance data.
 Do not serialize transient edit-isolation rows or their temporary display changes.
 
@@ -172,7 +176,45 @@ An external definition remains owned by its defining file; importing catalogs
 and placing selected definitions are distinct actions. Cross-file references must
 identify the actual file and definition, never substitute a same-named domestic
 item. Validate file-import and component-nesting cycles before committing mutations.
-Exact reference-location recovery interactions are deferred to their stage.
+The implemented [external service](../src/Mod/FreeCADPlus/freecad_plus/external.py)
+uses native `PropertyXLinkList` for imported file roots and ordinary `App::Link` for
+placed definitions. `import_file(doc, source_doc)` requires both files already saved
+as `.cadprt`, matching the native XLink prerequisite. It imports the complete catalog
+without creating an occurrence. `catalog(doc)` projects domestic definitions first,
+then nested imported-file groups; `qualified_label` qualifies external names by file.
+Labels never resolve identity. A shared imported file in two branches is valid;
+file cycles and component cycles are refused before mutation/recompute.
+
+Occurrence resolution changes defining document at each link in the full path.
+The native per-view Part/Body contexts stay rooted in the assembly tab. Sketch/Pad
+adapters transact against `definition.Document`; `save_definition(definition)` saves
+only that defining file. Native cross-document dependency updates can add Undo
+entries to importing files as well. This is native transaction behavior, not a
+multi-file atomic disk save. Saving the assembly does not save dirty source geometry.
+Save new external definitions and changed intermediate import catalogs before an
+assembly that references them; otherwise preflight refuses to replace its archive.
+A defining file with open dependents cannot change location through this Save API.
+
+Before native restore, `archive_graph` reads every declared dependency's native
+XLink path, format/schema, document UUID, root and definition names. Missing files,
+wrong identities, unknown schemas, undeclared targets and import cycles fail before
+opening any documents. Open-document identity conflicts are refused; a later native
+restore/validation failure closes only newly opened documents. There is no same-name
+fallback. Recovery at this stage is restoring the original file/path/identity and
+retrying, which is tested. Relocation/search dialogs and path rewriting remain
+unimplemented. Concurrent external replacement between preflight and native I/O is
+not an atomic filesystem guarantee; retain native backups and check save failures.
+
+`copy_definition(source, destination, label, placements_to_replace=..., child_labels=...)`
+creates an independent native recursive graph in either storage direction. Nested
+shared targets are copied once and remapped by the native copy service. It refuses
+any surviving source dependency and rolls back unsupported graphs. Destination
+names must be unique; callers provide conflicting child names explicitly. Replacement
+placements must be explicitly supplied (an empty tuple retains all); only selected,
+destination-owned links targeting the source are retargeted, preserving placement.
+Copies and replacements are one undoable destination transaction. The original
+external definition remains usable. The owner-facing placement checklist and storage
+selection dialogs are still future UI work, not implicit defaults approved here.
 
 Legacy conversion means `.FCStd` -> a separately saved `.cadprt`, preserving the
 original source file. Inventory objects, native links, expressions, attachments
@@ -258,8 +300,9 @@ Preserve unknown/unsupported native content where safely possible; report the
 limitation rather than pretending it is a fully migrated editable feature.
 Ambiguous external targets and missing definitions must not resolve by matching
 labels. Do not overwrite a legacy source or silently downgrade a newer schema.
-Native transactions are not a multi-file atomic-save guarantee; external-file
-failure/recovery must be designed and tested in the external-definition stage.
+Native transactions are not a multi-file atomic-save guarantee. G1.5 checks missing,
+replaced and unsupported dependencies, missing definition targets, unsaved catalog/
+definition ordering, failed defining-file saves, retry and source-only persistence.
 
 No owner clarification is required to begin the single-component pilot. Before
 later dependent stages, resolve the deferred Add Component/Add Reference Feature
@@ -290,3 +333,7 @@ The native source establishes reused mechanisms; the pilot tests establish the b
 
 - [Hierarchy acceptance](../src/Mod/FreeCADPlus/TestComponentHierarchy.py): shared edits,
   native occurrence contexts, placement, cycles, schema upgrade and legacy Part/link conversion.
+
+- [External-definition acceptance](../src/Mod/FreeCADPlus/TestExternalDefinitions.py):
+  nested catalogs, external Edit/save ownership, independent copies, source protection,
+  cycle rejection, failed save/recovery and fresh-process shared updates.

@@ -3,10 +3,61 @@
 ## Authorized objective and stopping boundary
 
 Owner authorized Group 1 one reviewable task at a time and instructed stopping after
-the current checks pass. **G1.4 is complete; stop here.** Next: **G1.5 external
-definitions**, covering nested import catalogs, defining-file ownership, independent
-copies and cross-file failure/recovery. Do not begin that stage or other groups
-without the next continuation request.
+the current checks pass. **G1.5 is complete; stop here.** Next: **G1.6 component
+panel**, covering Models/Part Tree/History, the file row, explicit Edit and occurrence
+tracking, confirmed actions and temporary unused-model editing. Do not begin that
+stage or other groups without the next continuation request.
+
+## G1.5 implementation and acceptance - October 10, 2026
+
+**Implementation:** schema 4 adds native imported-file catalogs with persisted
+source UUIDs and pre-restore dependency checks. Importing includes nested catalogs
+without placing geometry. Native linked occurrences resolve across defining files;
+Sketch/Pad edits transact in the source file while retaining the assembly tab/context.
+Explicit source Save writes only that file. Independent recursive copies preserve
+native graphs and require an explicit placement-replacement selection. Circular
+imports/nesting are refused before mutation. Schemas 1-3 remain supported with an
+explicit undoable upgrade before external imports. Full contracts, save ordering,
+exact-path recovery and remaining UI boundaries are in [ARCHITECTURE](ARCHITECTURE.md).
+
+**Runtime:** twenty-three tests passed in 14.221 seconds in the verified official
+1.1.4 GUI runtime using this checkout's module and an isolated profile: seven new
+external-definition cases and all sixteen prior regressions. They cover nested
+unused catalogs, same-name distinct definitions, source-only geometry ownership,
+source Undo/Redo, domestic/external independent copies with nested shared links,
+explicit selected-placement replacement and Undo/Redo, unimported targets, file and
+component cycles, schema upgrade, unsaved files, missing/wrong/future dependencies,
+missing definition targets, failed defining-file saves and recovery. A review-found
+save-order case now refuses unsaved intermediate import catalogs before overwriting
+the assembly. Native dependent-file Undo entries are expected, not evidence that
+model geometry moved into the importing file.
+
+A separate process reopened the Assembly -> Hardware -> Fasteners fixture, retained
+native source UUID/object IDs and full occurrence paths, changed the external Pad
+from 5 to 8 mm and saved only Fasteners. The assembly archive hash stayed unchanged;
+its two occurrences updated to 32*pi mm3 and retained the 8 mm length on reopen.
+Missing dependency recovery restored the original exact file/path and retried;
+identity mismatches never fell back to same-named definitions. Failure preflight
+opened no documents and preserved fixture archives. No owner files were touched.
+
+**GUI:** native Sketch and Pad editors entered/exited through the second nested
+external occurrence using setEdit/resetEdit. The assembly stayed active; resolved
+source feature and Edit path remained correct. The normal framebuffer (3441 x 1767)
+showed exactly two clean cylinder instances. Initial capture-harness attempts found
+an additional native OpenGL widget and an unloaded Qt binding; selecting the active
+MDI window and importing QtOpenGLWidgets resolved capture, without product changes.
+This does not claim full panel, mouse-driven flow or long-session jitter acceptance.
+
+**Build/delivery:** script-only CMake copy/install passed; all thirteen module/test
+scripts matched source and syntax/whitespace passed. Native C++ was not rebuilt.
+No new owner executable or panel is delivered; the desktop shortcut remains on the
+archived fork. G1.6 and other groups have not begun. Reproduction is documented in
+[external-definition validation](DEVELOPMENT_GUIDE.md#external-definition-validation).
+
+**Publication/cleanup:** the coherent G1.5 milestone is committed and pushed to
+origin/codex/freecad-1.1.4-baseline, with the remote hash verified at handoff.
+Task-generated profiles, fixtures, captures, logs and temporary script-build outputs
+are removed after the recorded checks; tracked tests remain available.
 
 ## G1.4 implementation and acceptance - October 10, 2026
 

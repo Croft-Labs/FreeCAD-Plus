@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Transient, per-view Edit routing for the single-component pilot.
+"""Transient, per-view Edit routing for component occurrences, including external definitions.
 
 No selection observer, command replacement, or new toolbar placement. The full
 Models/Part Tree/History panel will consume these services in its own stage.
@@ -68,7 +68,7 @@ def context(doc):
 def new_sketch(doc):
     """Create/route the backend Body automatically; retain the native Sketch editor."""
     definition, occurrence = context_path(doc)
-    with transaction(doc, "Create component sketch"):
+    with transaction(definition.Document, "Create component sketch"):
         bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
         body = bodies[-1] if bodies else definition.newObject("PartDesign::Body", "Body")
         sketch = body.newObject("Sketcher::SketchObject", "Sketch")
@@ -82,11 +82,11 @@ def pad(doc, sketch, length):
     bodies = [body for body in definition.Group if body.TypeId == "PartDesign::Body" and sketch in body.Group]
     if sketch.TypeId != "Sketcher::SketchObject" or len(bodies) != 1:
         raise ValueError("The sketch must belong to the explicitly edited component")
-    with transaction(doc, "Pad component sketch"):
+    with transaction(definition.Document, "Pad component sketch"):
         feature = bodies[0].newObject("PartDesign::Pad", "Pad")
         feature.Profile = sketch
         feature.Length = length
-        doc.recompute()
+        definition.Document.recompute()
         if feature.Shape.isNull() or not feature.Shape.isValid() or "Invalid" in feature.State:
             raise ValueError("The native Pad could not produce valid geometry")
         sketch.Visibility = False

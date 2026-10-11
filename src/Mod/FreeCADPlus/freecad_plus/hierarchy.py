@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Domestic definitions and occurrences; placement remains native App::Link data."""
+"""Definitions and occurrences; placement remains native App::Link data."""
 import FreeCAD as App
 from .document import transaction, validate
 
@@ -36,8 +36,9 @@ def create_definition(doc, label):
 def add_instance(owner, definition, placement=None):
     doc = owner.Document
     root = _root(doc)
-    if owner not in [root, *root.Definitions] or definition not in root.Definitions:
-        raise ValueError("Owner and definition must belong to this defining file")
+    from .external import available_definitions
+    if owner not in [root, *root.Definitions] or definition not in available_definitions(root):
+        raise ValueError("The target must belong to this defining file or its imported catalog")
     # Preflight reachability before creating a native link or opening a transaction.
     todo, seen = [definition], set()
     while todo:
@@ -67,7 +68,7 @@ def resolve(doc, path):
         raise ValueError("An occurrence requires a complete path from the file")
     owner, links = root, []
     for token in path:
-        link = doc.getObject(token) if isinstance(token, str) else token
+        link = owner.Document.getObject(token) if isinstance(token, str) else token
         if not link or link.TypeId != "App::Link" or link not in owner.Group:
             raise ValueError("Invalid or stale component occurrence path")
         links.append(link)

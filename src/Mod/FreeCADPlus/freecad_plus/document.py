@@ -6,14 +6,12 @@ Native object names qualified by Document.Uid supply persistent identity.
 """
 from contextlib import contextmanager
 from pathlib import Path
-import xml.etree.ElementTree as ET
-import zipfile
 
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 3
-SUPPORTED_SCHEMAS = (1, 2, 3)
+SCHEMA = 4
+SUPPORTED_SCHEMAS = (1, 2, 3, 4)
 
 
 @contextmanager
@@ -36,11 +34,15 @@ def transaction(doc, label):
 
 
 def validate(doc):
-    """Return the unique root, rejecting unsupported or inconsistent ownership."""
+    """Validate the complete imported-file DAG and each file's owned graph."""
+    from .external import validate_graph
+    return validate_graph(doc)
+
+
+def _validate_local(doc, external_definitions=()):
+    """Check ownership separately from imported definition availability."""
     if doc.Partial:
         raise ValueError("A partially loaded component document cannot be edited or saved")
-    if doc.OutList:
-        raise ValueError("External definitions require a later schema and migration")
     roots = [o for o in doc.Objects if "PlusFormat" in o.PropertiesList]
     if len(roots) != 1:
         raise ValueError("Expected exactly one component file root")
@@ -72,7 +74,8 @@ def validate(doc):
             raise ValueError("Unsupported component modeling content for this schema")
     for instance in instances:
         if (instance.TypeId != "App::Link" or instance.Document != doc
-                or instance.LinkedObject not in definitions or (root.PlusSchema < 3 and instance.LinkTransform)
+                or instance.LinkedObject not in [*definitions, *external_definitions]
+                or (root.PlusSchema < 3 and instance.LinkTransform)
                 or instance.LinkCopyOnChange != "Disabled" or instance.ElementCount):
             raise ValueError("Invalid shared component occurrence")
         if instance.Scale != 1 or not instance.ScaleVector.isEqual(App.Vector(1, 1, 1), 1e-9):
@@ -123,6 +126,8 @@ def create_file_root(doc):
     root.addProperty("App::PropertyInteger", "PlusSchema", "Component document")
     root.PlusSchema = SCHEMA
     root.addProperty("App::PropertyLinkList", "Definitions", "Component document")
+    from .external import add_properties
+    add_properties(root)
     for prop in ("PlusFormat", "PlusSchema", "Definitions", "Placement"):
         root.setEditorMode(prop, 1)
     return root
@@ -158,7 +163,8 @@ def history(doc, definition=None):
     root = validate(doc)
     if definition is None:
         return [root.Origin] + [o for o in root.Origin.OriginFeatures if o.TypeId == "App::Plane"]
-    if definition not in root.Definitions:
+    from .external import available_definitions
+    if definition not in available_definitions(root):
         raise ValueError("Definition does not belong to this file")
     return [feature for obj in definition.Group
             for feature in (obj.Group if obj.TypeId == "PartDesign::Body" else [obj])
@@ -166,39 +172,42 @@ def history(doc, definition=None):
 
 
 def inspect_archive(filename):
-    """Refuse unknown schemas before FreeCAD restores any objects from the file."""
-    path = Path(filename)
-    if path.suffix.lower() != ".cadprt":
-        raise ValueError("Component documents require an exact .cadprt filename")
-    with zipfile.ZipFile(path) as archive:
-        tree = ET.fromstring(archive.read("Document.xml"))
-    markers = tree.findall("./ObjectData/Object/Properties/Property[@name='PlusFormat']")
-    if len(markers) != 1 or markers[0].find("String").get("value") != FORMAT:
-        raise ValueError("Not a versioned component document; conversion is required")
-    roots = [o for o in tree.findall("./ObjectData/Object")
-             if o.find("./Properties/Property[@name='PlusFormat']") is not None]
-    version = roots[0].find("./Properties/Property[@name='PlusSchema']/Integer")
-    if version is None or version.get("value") not in {str(v) for v in SUPPORTED_SCHEMAS}:
-        raise ValueError("Unsupported component schema; the source was not changed")
-    return path.resolve()
+    """Preflight the complete dependency graph before native restoration."""
+    from .external import archive_graph
+    archive_graph(filename)
+    return Path(filename).resolve()
 
 
 def open_document(filename):
-    path = inspect_archive(filename)
-    # Never close or replace a document the caller already has open on validation failure.
+    from .external import archive_graph
+    graph = archive_graph(filename)
+    path = Path(filename).resolve()
+    before = set(App.listDocuments())
+    # Native restore otherwise silently regenerates duplicate UUIDs. Never let an
+    # already-open different file masquerade as a saved dependency (or vice versa).
     for existing in App.listDocuments().values():
-        if existing.FileName and Path(existing.FileName).resolve() == path:
-            validate(existing)
-            return existing
-    doc = App.openDocument(str(path))
+        existing_path = Path(existing.FileName).resolve() if existing.FileName else None
+        for saved_path, info in graph.items():
+            if ((existing_path == saved_path and str(existing.Uid) != info["uid"])
+                    or (str(existing.Uid) == info["uid"] and existing_path != saved_path)):
+                raise ValueError("An open document conflicts with the saved file identity")
+    previous = App.ActiveDocument
     try:
+        for existing in App.listDocuments().values():
+            if existing.FileName and Path(existing.FileName).resolve() == path:
+                validate(existing)
+                return existing
+        doc = App.openDocument(str(path))
         validate(doc)
         if App.GuiUp:
             from . import editing
             editing.edit_file(doc)
         return doc
     except Exception:
-        App.closeDocument(doc.Name)
+        for name in set(App.listDocuments()) - before:
+            App.closeDocument(name)
+        if previous and previous.Name in App.listDocuments():
+            App.setActiveDocument(previous.Name)
         raise
 
 
@@ -215,6 +224,10 @@ def save_document(doc, filename=None):
     if path.suffix.lower() != ".cadprt":
         raise ValueError("Choose a .cadprt filename")
     path = path.resolve()
+    if doc.InList and doc.FileName and path != Path(doc.FileName).resolve():
+        raise ValueError("A referenced defining file cannot change location during Save")
+    from .external import check_saved_targets
+    check_saved_targets(root)
     prefs = App.ParamGet("User parameter:BaseApp/Preferences/Document")
     if not prefs.GetBool("BackupPolicy", True):
         raise ValueError("Enable native safe-save BackupPolicy before saving a component file")
