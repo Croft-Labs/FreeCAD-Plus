@@ -24,7 +24,7 @@ Hide/show preserves individual visibility choices and must not reveal intermedia
 
 ### Move Components
 
-Implementation boundary: G1.6c3 implements the shared task and Translate only; the [technical contract](../ARCHITECTURE.md#move-components-foundation-and-translate-g16c3) and WORK_STATE own acceptance. Other methods below remain confirmed requirements for subsequent increments.
+Implementation boundary: G1.6c3 supplies the shared task and Translate; G1.6c4 adds [Rotate](../ARCHITECTURE.md#rotate-g16c4). The [technical contract](../ARCHITECTURE.md#move-components-foundation-and-translate-g16c3) and WORK_STATE own acceptance. Other methods below remain confirmed requirements for subsequent increments.
 
 This is one task panel for whole linked **component instances**, including descendants. Copy is performed separately through Part Tree Copy/Paste. The first field is Workflow, in this order: **Translate, Rotate, Point to Point, Align Axes, Align Coordinate Systems, Interactive**. Next is the Components list with selection, Remove/Delete and Clear. [R03](EVIDENCE_AND_DECISIONS.md#r03)
 

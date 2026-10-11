@@ -265,7 +265,7 @@ provide identical active/disabled palette colors, so inspect pixels as well as r
 brush state. Use the existing native framebuffer procedure, not grabFramebuffer.
 Inspect the external qualified temporary row and the viewport while native Sketch
 and Pad editors are open; check that a shortened Pad preview has no stale solid.
-The module contains twenty-one source/test scripts; compare them with the native
+The module contains twenty-two source/test scripts; compare them with the native
 build's copied module payload.
 
 The bounded native build uses this release's pinned Windows LibPack and the release
@@ -296,7 +296,7 @@ confirm the test window is exposed before accepting normal rendered pixels. Insp
 normal framebuffer captures for domestic/external component tabs
 and the restored original view, plus dock/tab-bar captures for active labels and
 History. Update only FreeCADPlusScripts when native sources are unchanged; compare
-the copied twenty-one-script payload. This does not deliver an owner build or complete
+the copied twenty-two-script payload. This does not deliver an owner build or complete
 remaining panel actions, contextual display or responsiveness acceptance.
 
 ## Linked-instance Copy/Paste validation
@@ -319,7 +319,7 @@ animation on test-owned cameras before fitting and use the exposed-window/normal
 framebuffer procedure above. Native delayed SyncView selection must settle before
 the unrelated document-switch scenario in TestComponentPanel; do not change the
 owner's SyncView preference to make tests pass. Update only FreeCADPlusScripts and
-compare all twenty-one packaged Python files. No owner delivery is implied.
+compare all twenty-two packaged Python files. No owner delivery is implied.
 
 ## Move Components Translate validation
 
@@ -347,5 +347,24 @@ After Tasks closes and changes viewport layout, request normal view.redraw befor
 reading its settled buffer; a freshly cleared buffer is not visual acceptance.
 Drain delayed native SyncView selection before creating each independent panel fixture.
 Only the existing FreeCADPlusScripts copy target is needed for these script changes;
-compare all twenty-one Python files with the native development payload. This is
+compare all twenty-two Python files with the native development payload. This is
 not owner-build delivery, all six Move workflows or complete Group 1 acceptance.
+
+## Move Components Rotate validation
+
+Run TestComponentRotate alongside TestComponentMove first, then the preceding eight
+Group 1 suites in the isolated native development runtime. Cover actual task input
+and Apply, non-origin pivots, located references under rotated shared parents,
+two-point/reversed axes, circle centers/origins, reference snapshot stability,
+nonaccumulating preview, rigid relative placements, Translate/Rotate switching,
+invalid angles, late rollback, no-op full turns, Undo/Redo and persistence.
+
+Run `TestComponentRotate.verify_fresh_process(output_directory)` in an independent
+process. Verify exact IDs, rotated positions/orientations, unchanged feature geometry,
+and the external parent opened independently and through the unchanged assembly.
+Inspect normal framebuffer pixels for the located arrow/pivot and shared previews,
+Cancel cleanup and committed rotation, plus native task fields/units. Retain existing
+exposed-window, native redraw and test-camera settling procedures. Tasks focus can
+leave activeSubWindow empty: find the MDI subwindow owning the model graphics view
+when capturing its normal framebuffer. Compare all twenty-two Python files with the copied script payload. No additional native build
+or owner delivery is implied; do not start Point to Point after these checks.

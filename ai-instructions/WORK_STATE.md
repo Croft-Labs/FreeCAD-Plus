@@ -2,11 +2,56 @@
 
 ## Authorized objective and stopping boundary
 
-The owner-authorized **G1.6c3 Move Components foundation and Translate** is
-complete in the native development build. Planned checks passed; implementation
-and runtime testing have stopped. Next is
-**G1.6c4 Rotate**, not started. Do not start later Move methods, Add Component,
-Part Type or other feature groups during this increment.
+The owner authorized continuation to **G1.6c4 Rotate** in Move Components.
+Implementation and planned checks are complete; work has stopped. Next is
+**G1.6c5 Point to Point**, not started. Do not start subsequent Move workflows or unrelated component/UI features.
+
+## G1.6c4 Rotate — October 10, 2026
+
+**Implementation:** the existing native task supports located parent/picked/two-point
+axes, an optional picked pivot, native angular magnitude and Reverse. Both positions
+and orientations change through one parent-frame rigid transform. Point references
+include vertices/points, origins and circular-edge centers; references remain snapshots.
+The view-only preview includes an axis arrow/pivot marker and corresponding shared
+occurrences. Translate now uses the same placement-transform path. Existing atomic
+source-owned Apply, Undo, reset, Persistent Selection, OK/Cancel and lifecycle guards
+are reused. No modeling feature, joint, definition copy or persistence schema is added.
+
+**Build:** FreeCADPlusScripts passed in the retained G1.6b native development tree.
+Only the script payload changed; no native rebuild or owner/shortcut delivery.
+
+**Validation:** **12/12 focused Translate/Rotate cases** passed (24.327 seconds),
+then **62/62 combined Group 1 cases** passed (98.016 seconds). Both runs had zero
+failures/errors/skips and normal native application exit. Coverage includes non-origin
+pivots, located axes under rotated shared parents, two-point/reversed axes, circle
+centers/origins, snapshot stability, rigid relative placement, nonaccumulating preview,
+method switching, invalid angles, atomic rollback, full-turn no-op and Undo/Redo.
+
+An independent process retained exact native IDs, rotated positions/orientations and
+unchanged feature geometry. External source rotation survived standalone and assembly
+reopen; source-only save left the assembly checksum unchanged. Inspected normal
+framebuffer captures show clean shared previews with a located cyan axis arrow,
+Cancel restoring original geometry without ghosts/axis overlay, and committed rigid
+rotation matching the preview. Native task and Part Tree captures show the intended
+controls, units and shared hierarchy. Camera, document identities and Undo state were
+checked across preview/Cancel/Apply. The initial capture harness assumed an active
+MDI subwindow while Tasks had focus; selecting the subwindow owning the model view
+resolved that capture-only failure. The independent persistence verifier had already
+passed and was not repeated. No renderer or owner-setting changes were made.
+
+**Packaging/checks:** all twenty-two Python source/test scripts parse and match the
+copied native development payload. All 117 checked local Markdown file targets
+resolve; diff whitespace passed. Complete Group 1, remaining Move methods, original
+workbench and long-session responsiveness acceptance remain unfinished. The bounded
+development payload's known unavailable Std_Measure warning remains a limitation.
+No further feature implementation or runtime tests followed planned acceptance.
+
+**Cleanup:** task-only profiles, fixtures, captures and logs were removed from
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_rotate`
+after recording results. Useful native build/dependencies and tracked tests remain.
+
+**Publication:** pending commit/push of the validated milestone. No owner-build
+delivery, desktop shortcut change, release or deployment.
 
 ## G1.6c3 Move Components foundation and Translate — October 10, 2026
 

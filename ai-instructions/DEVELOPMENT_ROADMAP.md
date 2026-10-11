@@ -128,10 +128,17 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   Cancel, committed placement and Tasks captures passed. WORK_STATE owns details.
   **Publication:** source milestone `6e18b9289d` pushed to
   origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
-- [   ] **G1.6c4 — Rotate.** Next increment, not started: parent/picked/two-point
-  axis, optional pivot, angle/Reverse and rigid group rotation in the same task.
-  Remaining Point to Point, Align Axes, Align Coordinate Systems and Interactive
-  methods follow as separate reviewable increments before complete Move acceptance.
+- [ X ] **G1.6c4 — Rotate.** Implemented in the shared task: parent/picked/two-point
+  axes, optional pivot, native angle/Reverse, rigid group rotation and axis display.
+  **Build:** FreeCADPlusScripts passed in the existing native development tree.
+  **Validation:** 12 focused and 62 combined cases passed; independent save/reopen
+  and inspected preview, Cancel, committed rotation, task and tree captures passed.
+  WORK_STATE owns detailed results and limitations. Stopped after planned acceptance.
+  **Publication:** pending validated milestone commit/push; no owner-build delivery.
+- [   ] **G1.6c5 — Point to Point.** Next increment, not started: separate source
+  and destination point collectors, pure parent-frame translation, reference snapshots
+  and the same preview/Apply/OK/Cancel semantics.
+  Align Axes, Align Coordinate Systems and Interactive follow as separate increments.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined

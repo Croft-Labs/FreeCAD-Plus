@@ -200,14 +200,48 @@ Undo entry. Inputs reset after Apply; Persistent Selection defaults on and retai
 component rows/highlights, while off clears both. Cancel removes pending preview
 but leaves earlier committed moves; OK commits only a pending nonzero movement.
 
-The workflow list preserves the six confirmed entries in order. Translate is
-implemented; selecting another method clears pending inputs, retains siblings and
-parent, and explains that the method awaits implementation. This is a staged
+The workflow list preserves the six confirmed entries in order. Translate and Rotate are
+implemented; selecting an unfinished method clears pending inputs, retains siblings
+and parent, and explains that the method awaits implementation. This is a staged
 boundary, not removal of the other confirmed workflows. Native Tasks owns the form;
 closing the task, panel, source/view, changing Edit or switching file/workbench
 releases the overlay and event subscriptions. Camera interaction remains native.
 The original workbenches and owner settings are unchanged. Acceptance is recorded
 in WORK_STATE; subsequent Move methods and complete owner delivery remain separate.
+
+### Rotate (G1.6c4)
+
+Rotate extends the same `movement.MoveTask`, not a separate dialog or document
+feature. The shared motion contract is now an `App.Placement`: a rigid transform
+left-multiplied onto each selected sibling's existing LinkPlacement. Translate is
+a translation-only instance of this contract. Rotate computes a common rotation
+about its resolved parent-frame axis/pivot, changing both position and orientation.
+Native LinkTransform, shared definitions, nested descendants, geometry and IDs remain.
+
+Axis choices are parent X/Y/Z through the parent origin, a visible straight edge,
+line or native infinite axis with its location, or two distinct picked points.
+An optional point relocates a parallel axis without changing direction. Point picks
+accept vertices/native points, origins/coordinate systems and circular-edge centers.
+Native shape extraction includes the picked occurrence transform; the chosen parent
+frame's inverse transforms positions, while its inverse rotation transforms vectors.
+All reference values are snapshots. They do not introduce persistent dependencies,
+joints or changing placement inputs as the preview moves.
+
+The native angle field accepts nonnegative angular magnitude. Positive follows the
+shown axis arrow by the right-hand rule; Reverse negates the angle. Invalid units,
+angles, incomplete axes and coincident points cannot commit movement. A full-turn
+identity transform is a no-op. The resolved axis direction and pivot are labeled
+in parent coordinates using native length units. An unpickable axis arrow and pivot
+marker accompany the pending geometry in the originating view.
+
+Preview uses `parent_world * motion * parent_world.inverse()` against freshly
+extracted original geometry for each visible parent occurrence. It never updates
+LinkPlacement or accumulates successive preview transforms. Apply retains the
+existing source-owned atomic transaction, resets all axis/point/pivot/angle/Reverse
+inputs and follows Persistent Selection. Method changes discard pending inputs;
+Cancel and OK retain their existing semantics. The remaining four Move methods,
+scaled-frame support and full owner delivery are separate work. WORK_STATE owns
+build, native regression, persistence, visual and publication evidence.
 
 ### Unused definitions (G1.6b)
 

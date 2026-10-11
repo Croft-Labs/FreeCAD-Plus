@@ -139,7 +139,7 @@ class TestComponentMove(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'siblings'):task.add_rows([self.row((self.second,self.nested))])
         self.assertEqual(task.paths,before)
         self.inputs(task)
-        task.workflow.setCurrentIndex(1);settle()
+        task.workflow.setCurrentIndex(2);settle()
         self.assertIsNone(task.overlay);self.assertEqual(task.paths,before)
         self.assertIn('awaits',task.message.text())
         task.workflow.setCurrentIndex(0)
