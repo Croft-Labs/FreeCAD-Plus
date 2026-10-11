@@ -142,6 +142,9 @@ class TestUnusedModels(unittest.TestCase):
         pad = source.getObject(name)
         self.assertAlmostEqual(pad.Shape.Volume, 63 * 3.141592653589793)
         view = Gui.activeDocument().activeView()
+        # A pending native rotation can overwrite fitAll's camera/clipping range.
+        # Make this test-owned camera deterministic without changing preferences.
+        view.setAnimationEnabled(False)
         view.viewAxonometric(); view.fitAll(); QtTest.QTest.qWait(300)
         Gui.Selection.clearSelection()
         viewport = view.graphicsView().viewport()

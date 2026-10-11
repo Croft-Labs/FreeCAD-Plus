@@ -13,14 +13,15 @@ or force-push. The old main history and archive tag remain available for referen
 
 Use Git status and recursive submodule status. All release-pinned submodule commits
 must match. The original baseline overlay changed only AGENTS.md, .gitignore and ai-instructions.
-G1.2 adds src/Mod/FreeCADPlus and its src/Mod/CMakeLists.txt inclusion. Original native
-application/workbench code and submodule pins remain unchanged. Do not restore old
-fork modules implicitly.
+G1.2 adds src/Mod/FreeCADPlus and its src/Mod/CMakeLists.txt inclusion. G1.6b adds
+bounded native per-view context and editing integration. Original workbench source
+and submodule pins are retained. Do not restore old fork modules implicitly.
 
 ## Build and validation
 
-The native application has not been compiled locally. G1.2 script-only CMake
-copy/install was verified separately with the actual module and repository helper. The official
+A bounded native development build passed for G1.6b; WORK_STATE records its targets
+and runtime resources. It is not a complete owner package. G1.2 script-only CMake
+copy/install was also verified separately with the module and repository helper. The official
 portable binary matching this revision has undergone light runtime checks; see
 [WORK_STATE](WORK_STATE.md#stable-baseline-inventory-and-light-runtime-check--october-10-2026)
 for provenance, installed location, inventory and the completed light display check.
@@ -222,7 +223,8 @@ It is not installed into an owner executable or automatically enabled at startup
 Closing it unregisters observers; calling show_panel again creates one fresh dock.
 Do not hide/remove the legacy tree to make screenshots imply completed replacement.
 Domestic and external unused-model Edit are supported in the native context build;
-component windows and the remaining confirmed panel actions are still pending. See the bounded contract in ARCHITECTURE.md.
+component tabs use additional native views. Other confirmed panel actions remain
+separate increments. See the bounded contract in ARCHITECTURE.md.
 
 For a fresh-process visual check, open the generated Panel.cadprt from the visibility
 persistence case, show the panel and edit the second shared-child occurrence. Inspect
@@ -244,7 +246,9 @@ nine cases cover domestic/external Edit, native viewport picking, temporary rows
 assembly hiding/restoration, History opening Sketch/Pad editors, accepted Pad
 Undo/Redo in the defining file, save during isolation, per-view state and cleanup.
 Source closure during a native editor, removed imports, unrelated roots and ordinary
-external-parent refusal are covered. Require zero skipped cases.
+external-parent refusal are covered. Require zero skipped cases. Camera tests disable animation on their test-owned view
+before rotation/fitAll: a pending native rotation can otherwise overwrite the fitted
+camera/clipping range and make geometry disappear. Do not change owner preferences.
 
 In a second process run `TestUnusedModels.verify_fresh_process(output_directory)`
 and `TestUnusedModels.verify_external_fresh_process(output_directory)`. They compare
@@ -261,7 +265,7 @@ provide identical active/disabled palette colors, so inspect pixels as well as r
 brush state. Use the existing native framebuffer procedure, not grabFramebuffer.
 Inspect the external qualified temporary row and the viewport while native Sketch
 and Pad editors are open; check that a shortened Pad preview has no stale solid.
-The module contains seventeen source/test scripts; compare them with the native
+The module contains eighteen source/test scripts; compare them with the native
 build's copied module payload.
 
 The bounded native build uses this release's pinned Windows LibPack and the release
@@ -273,3 +277,24 @@ MaterialModelLib, PartDesignHole and WizardShaft. Library compilation alone does
 not populate these data targets. Keep all workbench configuration/source intact;
 a targeted developer build is not a complete owner package or workbench inventory
 acceptance. WORK_STATE owns the current paths, toolchain and actual build results.
+
+## Component-window validation
+
+Run TestComponentWindows with the preceding six Group 1 suites in the isolated
+native development runtime/profile. Its six GUI cases exercise both context menus,
+exact/remembered occurrence routing, original camera/context preservation, child
+Edit without another tab, native editor/stale-row/stale-menu guards, failed-entry
+rollback, independent unused isolation, view/source closure, event-driven titles and
+panel reopening. External Sketch/Pad creation and native editing stay source-owned;
+no App objects or opening-related Undo entries are introduced by the extra view.
+
+Run `TestComponentWindows.verify_fresh_process(output_directory)` against the
+combined run's fixtures in a second process. It verifies native identities, absence
+of saved isolation, and source-only Pad save/reopen with an unchanged assembly file
+checksum. After a hidden process launch, use an explicit hide/showNormal transition and
+confirm the test window is exposed before accepting normal rendered pixels. Inspect
+normal framebuffer captures for domestic/external component tabs
+and the restored original view, plus dock/tab-bar captures for active labels and
+History. Update only FreeCADPlusScripts when native sources are unchanged; compare
+the copied eighteen-script payload. This does not deliver an owner build or complete
+remaining panel actions, contextual display or responsiveness acceptance.

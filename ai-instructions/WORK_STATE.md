@@ -2,11 +2,65 @@
 
 ## Authorized objective and stopping boundary
 
-The current **G1.6b unused-model increment is complete**. Owner authorized continuing
-Group 1 and stopping after this increment's checks. Next is **G1.6c: component
-windows and remaining confirmed panel actions**. That implementation has not started.
-Do not repeat passing tests or rotate to other features without a new relevant need
-or owner continuation.
+The current **G1.6c1 component-file-tab increment is complete**. Owner authorized
+continuing Group 1 and stopping after this increment's checks. The next task is
+**G1.6c2: Part Tree linked-instance Copy/Paste**; it has not started. Do not repeat
+passing tests or start additional implementation without owner continuation.
+
+## G1.6c1 component file tabs — October 10, 2026
+
+**Implementation:** the two component context menus offer Open in new window.
+It creates another native view of the current file with the selected occurrence's
+Edit context, or the existing view-only isolation for an unused definition. Models
+uses the originating tab's remembered occurrence. The original tab's context/camera
+are retained, the new tab is labeled for its edited component, and the same native
+source objects/transactions/save services are reused. No new document, placement,
+model property, schema or permanent window record is introduced. Native feature
+editors/pending operations block opening; stale menu actions are rejected. Failed
+entry closes only the new view and returns to the original. View closure clears
+panel state; panel reopening recognizes component tabs through a transient Qt property.
+The component-window contract is in ARCHITECTURE.md.
+
+**Build:** the existing native G1.6b development payload is reused; only the
+FreeCADPlusScripts target changed. Its copy target passed. No native recompilation,
+owner build, desktop shortcut change, release or deployment is part of this increment.
+
+**Validation:** six focused GUI cases passed, followed by **44/44 combined Group 1
+cases**, zero failures/errors/skips, normal application exit. These cover Models and
+Part Tree menus, exact/remembered occurrence paths, child Edit in the same new tab,
+original camera/context, source-owned Sketch/Pad and Undo/Redo, pending-editor and
+stale-menu/row refusal, failed-open rollback, independent isolation, source/view
+closure, event-driven labels and panel reopening.
+
+The independent fresh-process verifier retained native IDs and source ownership,
+changed a source Pad from 7 to 9 mm, saved it without changing the importing assembly's
+archive checksum, then reopened again to confirm 9 mm. Inspected normal OpenGL
+captures show the domestic component tab with its assembly context, a clean isolated
+external cylinder, and the original two-cylinder assembly restored. Panel/tab-bar
+captures show component/qualified external labels, active rows and Sketch/Pad History.
+The original camera and Edit context remained intact. Contextual fading is still G1.7.
+
+Two initial test expectations were corrected: native coordinated Undo legitimately
+adds forwarding entries in dependent files for source changes (opening adds none),
+and routine panel refresh clears transient menu feedback. The first combined runs'
+sole picking failure was traced to the test fitting geometry before native camera
+animation completed, producing an invalid camera/clipping combination. Test-owned
+views now disable animation before rotation/fitAll; application defaults are unchanged.
+The first visual harness also needed camera settling and an explicit hide/showNormal
+transition after the hidden process launch before normal rendered pixels were
+available. Renderer/read/draw framebuffer state was checked; final exposed-window
+captures were clean. Earlier blank/widget-grab captures are not application display
+acceptance. No renderer/driver/owner-preference change was made.
+
+**Packaging/checks:** eighteen Python source/test files parse and match the copied
+native-build payload byte for byte; 115 local Markdown link targets resolve. Diff
+whitespace passed. Task-only profiles, fixtures, captures, probes and logs were
+removed from `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_windows`
+after recording the results. Useful native build/dependencies and tracked tests remain.
+
+**Publication/cleanup:** milestone commit/push pending; task validation cleanup complete. No broader
+G1.6 completion, full-workbench inventory or long-session jitter acceptance claimed.
+The development payload is retained; no owner delivery or shortcut change.
 
 ## G1.6b external completion and native acceptance — October 10, 2026
 

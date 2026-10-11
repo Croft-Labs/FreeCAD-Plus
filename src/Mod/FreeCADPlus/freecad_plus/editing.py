@@ -174,3 +174,51 @@ def edit_feature(doc, feature):
     except Exception:
         App.closeActiveTransaction(True, transaction_id)
         raise
+
+
+def open_component_view(doc, definition, path=()):
+    """Open another native file view; share the model, not the original Edit state."""
+    from .external import available_definitions
+    original = _view(doc)
+    root = validate(doc)
+    if definition not in available_definitions(root):
+        raise ValueError("The definition is not in this file catalog")
+    if path:
+        target, path = hierarchy.resolve(doc, path)
+        if target != definition:
+            raise ValueError("The selected occurrence changed; select it again")
+    elif isolation.occurrences(doc, definition):
+        raise ValueError("Choose a placed occurrence of this component")
+    if any(Gui.getDocument(owner.Name).getInEdit() for owner in App.listDocuments().values()):
+        raise ValueError("Finish the native feature editor first")
+    if App.getActiveTransaction() or any(owner.HasPendingTransaction for owner in App.listDocuments().values()):
+        raise ValueError("Finish the current operation first")
+    if definition.Document != doc and not path and not hasattr(original, "setDocumentContext"):
+        raise ValueError("External unused editing requires the native document-context build")
+    from PySide import QtWidgets
+    mdi = Gui.getMainWindow().findChild(QtWidgets.QMdiArea)
+    previous = mdi.activeSubWindow()
+    camera = original.getCamera()
+    view = Gui.getDocument(doc.Name).createView("Gui::View3DInventor")
+    window = mdi.activeSubWindow()
+    try:
+        if view is None or view == original or window == previous:
+            raise RuntimeError("Could not create a component file tab")
+        if hasattr(view, "setDocumentContext"):
+            view.setDocumentContext(root)
+        if path:
+            edit(path)
+        else:
+            edit_unused(doc, definition)
+        view.setCamera(camera)
+        if not path:
+            view.fitAll()
+        return view
+    except Exception:
+        if view is not None and view != original:
+            isolation.end(view)
+        if window != previous:
+            window.close()
+        mdi.setActiveSubWindow(previous)
+        _notify_context()
+        raise

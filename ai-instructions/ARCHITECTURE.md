@@ -111,6 +111,31 @@ place, preserving expansion and avoiding repeated row reconstruction. There is n
 idle refresh timer. Pending native transactions defer projection until commit/abort.
 The panel's close path unregisters all observers/context callbacks and stops updates.
 
+### Component file tabs (G1.6c1)
+
+`editing.open_component_view` creates an ordinary native MDI view of the current
+catalog document. A placed component retains its full assembly occurrence path;
+an unused definition uses the existing independent per-view isolation. No file,
+definition or placement is cloned, and no presentation state is serialized. The
+owning document and native source-file save/Undo behavior are unchanged. Native
+coordinated transactions may create forwarding Undo entries in dependent documents;
+opening a view itself creates none. Contextual fading/Part Type remain G1.7.
+
+The Models/Part Tree Open in new window action resolves identities and the preferred
+occurrence before creating the view, preserving the originating tab's context and
+camera. Ordinary Edit still stays in its current tab. New tabs have component labels
+and a transient Qt marker so the opt-in panel can resume title tracking when reopened.
+The panel coalesces existing notifications; no polling or persistent UI property is
+added. Child Edit continues through the same full occurrence-path service.
+
+Opening is refused during any native feature editor or pending transaction. The
+menu captures its originating document/view to reject a tab switch while it is open.
+If entry fails after native view creation, the new view/isolation is removed and the
+original view reactivated. Closed views are removed from panel state. Source loss
+uses the existing validated isolation/context teardown. File close/save prompts and
+view ownership remain native. Linked Copy/Paste, Move Components and independent
+storage-copy interaction are separate remaining G1.6c actions.
+
 ### Unused definitions (G1.6b)
 
 `editing.edit_unused(doc, definition)` isolates a domestic or imported definition in
@@ -178,8 +203,9 @@ selection context. Closing the panel clears its visited views' contexts. Native
 object/document deletion clears references across views before freeing external
 objects; existing native source-deletion handling closes an active feature editor.
 Imported catalog membership is rechecked before native editing. Per-view contexts
-are neither cloned into a new view nor serialized. The remaining component-window
-and context-action work is G1.6c; Part Type/fading is G1.7.
+are neither implicitly cloned into a new view nor serialized. G1.6c1 explicitly
+initializes each new component view; other context actions remain G1.6c and
+Part Type/fading remains G1.7.
 
 The original official 1.1.4 binary lacks this API. With that runtime, domestic
 unused editing remains supported but external unused Edit reports the required

@@ -2,7 +2,7 @@
 """Opt-in component panel foundation; rows project native ownership, never own it.
 
 Placed and unused definitions share Edit and History. Temporary isolation is view-only;
-component windows and other confirmed actions remain G1.6c, not implied defaults.
+component tabs reuse native views; other confirmed actions remain separate increments.
 """
 from dataclasses import dataclass
 from pathlib import Path
@@ -224,11 +224,23 @@ class ComponentPanel(QtWidgets.QDockWidget):
             return None
         return doc, Gui.getDocument(doc.Name).activeView()
 
+    def _forget_view(self, binding):
+        self._states = [(bound, state) for bound, state in self._states if bound != binding]
+        if self._binding == binding:
+            self._binding = None
+        self._press = None
+        self.schedule()
+
     def _state(self, binding):
         for bound, state in self._states:
             if bound == binding:
                 return state
         state = {'last': {}}
+        if self._mdi and binding == self._current():
+            window = self._mdi.activeSubWindow()
+            state['window'] = window
+            state['component_window'] = bool(window.property('FreeCADPlusComponentWindow'))
+            window.destroyed.connect(lambda *args: self._forget_view(binding))
         self._states.append((binding, state))
         return state
 
@@ -270,6 +282,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     active, path = None, ()
                     self._message(str(error))
                 rows = projection(doc, active, path)
+                state = self._state(current)
+                if state.get('component_window'):
+                    label = external.qualified_label(active, doc) if active else doc.Label
+                    state['window'].widget().setWindowTitle(label + ' [*]')
                 if active and path:
                     self._state(current)['last'][identity(active)] = tuple(identity(o) for o in path)
             self._updating = True
@@ -353,6 +369,26 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 raise ValueError('The selected occurrence changed; select it again')
         return doc, obj
 
+    def _model_route(self, row):
+        options = [item.data(0, _ROLE).path for item in self._maps[1].values()
+                   if item.data(0, _ROLE).kind == 'occurrence' and item.data(0, _ROLE).ref == row.ref]
+        preferred = self._state(self._binding)['last'].get(row.ref)
+        return preferred if preferred in options else (options[0] if options else ())
+
+    def open_row(self, row):
+        doc, obj = self._checked(row)
+        if row.kind not in ('model', 'occurrence', 'unused'):
+            raise ValueError('Choose a component to open in a new window')
+        route = row.path if row.kind == 'occurrence' else self._model_route(row)
+        view = editing.open_component_view(doc, obj, tuple(lookup(ref) for ref in route))
+        binding = (doc, view)
+        self._mdi.activeSubWindow().setProperty('FreeCADPlusComponentWindow', True)
+        state = self._state(binding)
+        state['component_window'] = True
+        self.refresh()
+        self._select_context(doc)
+        return view
+
     def edit_row(self, row):
         doc, obj = self._checked(row)
         if row.kind == 'file':
@@ -365,11 +401,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         elif row.kind == 'unused':
             editing.edit_unused(doc, obj)
         elif row.kind == 'model':
-            options = [item.data(0, _ROLE).path for item in self._maps[1].values()
-                       if item.data(0, _ROLE).kind == 'occurrence' and item.data(0, _ROLE).ref == row.ref]
-            preferred = self._state(self._binding)['last'].get(row.ref)
-            route = preferred if preferred in options else (options[0] if options else None)
-            if route is None:
+            route = self._model_route(row)
+            if not route:
                 editing.edit_unused(doc, obj)
             else:
                 editing.edit(tuple(lookup(ref) for ref in route))
@@ -378,18 +411,21 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.refresh()
         # Entering Edit marks the exact occurrence separately from all active rows.
         if row.kind != 'file':
-            definition, route = editing.context_path(doc)
-            root = document.validate(doc)
-            self._selecting = True
-            try:
-                Gui.Selection.clearSelection()
-                if route:
-                    Gui.Selection.addSelection(doc.Name, root.Name, hierarchy.subname(route))
-                else:
-                    Gui.Selection.addSelection(definition.Document.Name, definition.Name)
-            finally:
-                self._selecting = False
-            self._sync_selection()
+            self._select_context(doc)
+
+    def _select_context(self, doc):
+        definition, route = editing.context_path(doc)
+        root = document.validate(doc)
+        self._selecting = True
+        try:
+            Gui.Selection.clearSelection()
+            if route:
+                Gui.Selection.addSelection(doc.Name, root.Name, hierarchy.subname(route))
+            else:
+                Gui.Selection.addSelection(definition.Document.Name, definition.Name)
+        finally:
+            self._selecting = False
+        self._sync_selection()
 
     def _edit_clicked(self, item):
         try:
@@ -405,10 +441,16 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if row.kind not in ('file', 'model', 'occurrence', 'unused'):
             return
         menu = QtWidgets.QMenu(self)
-        action = menu.addAction('Edit')
-        if menu.exec_(tree.viewport().mapToGlobal(point)) == action:
+        actions = {menu.addAction('Edit'): self.edit_row}
+        if row.kind != 'file':
+            actions[menu.addAction('Open in new window')] = self.open_row
+        binding = self._binding
+        chosen = menu.exec_(tree.viewport().mapToGlobal(point))
+        if chosen in actions:
             try:
-                self.edit_row(row)
+                if self._current() != binding:
+                    raise ValueError('The active file tab changed; select the item again')
+                actions[chosen](row)
             except (ValueError, RuntimeError, ReferenceError) as error:
                 self._message(str(error))
         menu.deleteLater()

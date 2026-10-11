@@ -95,11 +95,21 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Publication:** source milestone `54ea2843a3` pushed to origin/codex/freecad-1.1.4-baseline
   and remote revision verified; no release or owner-build delivery.
   This is a bounded development build, not full-workbench or complete-panel acceptance.
-  WORK_STATE records details. Stop; G1.6c has not started.
+  WORK_STATE records details; the remaining panel actions are separate increments.
 - [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs and the
   confirmed context actions; integrate shared workflows only against their approved
   contracts. Deferred Add Component and unconfirmed checklist/destructive-action
   details are not approved by this task list.
+- [ X ] **G1.6c1 — Component file tabs.** Open in new window from Models/Part Tree;
+  retain per-view Edit/camera and source ownership, native editor guards and cleanup.
+  **Build:** eighteen-script payload copied/verified in the existing native development build.
+  **Validation:** 6 focused and 44 combined tests passed, zero skips; fresh-process
+  identity/source-only save/reopen and inspected tab/panel/viewport captures passed.
+  Test cameras were made deterministic after diagnosing an animation/fitAll race.
+  **Publication:** milestone commit/push pending; no release or owner-build delivery.
+  WORK_STATE records evidence and limitations. Stop; G1.6c2 has not started.
+- [   ] **G1.6c2 — Linked-instance Copy/Paste.** Next bounded action: Part Tree
+  Copy/Paste creates another shared instance for subsequent movement. Not started.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
