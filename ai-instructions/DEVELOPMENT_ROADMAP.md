@@ -108,9 +108,19 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   Test cameras were made deterministic after diagnosing an animation/fitAll race.
   **Publication:** source milestone `a7c3adf492` pushed to origin/codex/freecad-1.1.4-baseline
   and remote revision verified; no release or owner-build delivery.
-  WORK_STATE records evidence and limitations. Stop; G1.6c2 has not started.
-- [   ] **G1.6c2 — Linked-instance Copy/Paste.** Next bounded action: Part Tree
-  Copy/Paste creates another shared instance for subsequent movement. Not started.
+  WORK_STATE records evidence and limitations; remaining actions are separate increments.
+- [ X ] **G1.6c2 — Linked-instance Copy/Paste.** Part Tree menu/keyboard actions
+  create shared native links under the selected parent, preserving copied local
+  placements. Batch preflight/Undo and source-file ownership are implemented.
+  **Build:** script payload updated in the existing native development tree.
+  **Validation:** six focused and 50 combined tests passed, followed by independent
+  save/reopen and inspected viewport/tree/menu captures. Dock reopening also handles
+  a temporarily absent active subwindow. WORK_STATE records evidence and limitations.
+  **Publication:** final repository bookkeeping pending; no owner-build delivery.
+  The announced destination convention remains subject to owner correction.
+- [   ] **G1.6c3 — Move Components foundation and Translate.** Next increment:
+  shared sibling/parent context, component list, preview/Apply/OK/Cancel and the
+  confirmed Translate workflow. Not started; Copy remains a separate Part Tree action.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined

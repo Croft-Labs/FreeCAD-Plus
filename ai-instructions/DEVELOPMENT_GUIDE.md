@@ -265,7 +265,7 @@ provide identical active/disabled palette colors, so inspect pixels as well as r
 brush state. Use the existing native framebuffer procedure, not grabFramebuffer.
 Inspect the external qualified temporary row and the viewport while native Sketch
 and Pad editors are open; check that a shortened Pad preview has no stale solid.
-The module contains eighteen source/test scripts; compare them with the native
+The module contains nineteen source/test scripts; compare them with the native
 build's copied module payload.
 
 The bounded native build uses this release's pinned Windows LibPack and the release
@@ -296,5 +296,27 @@ confirm the test window is exposed before accepting normal rendered pixels. Insp
 normal framebuffer captures for domestic/external component tabs
 and the restored original view, plus dock/tab-bar captures for active labels and
 History. Update only FreeCADPlusScripts when native sources are unchanged; compare
-the copied eighteen-script payload. This does not deliver an owner build or complete
+the copied nineteen-script payload. This does not deliver an owner build or complete
 remaining panel actions, contextual display or responsiveness acceptance.
+
+## Linked-instance Copy/Paste validation
+
+Run TestComponentClipboard with the preceding seven Group 1 suites in the isolated
+native development runtime. Six cases exercise real context menus and scoped
+Ctrl+C/Ctrl+V, shared geometry and later independent placement movement, parent/child
+selection normalization, copied placement/visibility/LinkTransform snapshots, one
+Undo/Redo for a batch, cycle/import preflight, late transactional rollback, external
+parent ownership, stale menus/source closure and native-editor/pending-transaction
+guards. The clipboard is session-only and does not serialize or clone definitions.
+
+Run `TestComponentClipboard.verify_fresh_process(output_directory)` in a second
+process against the combined run's fixtures. Check native IDs, unchanged definition
+inventory, shared links and placements after reopen. An external parent's pasted
+child is saved/moved in its source file without changing the importing assembly's
+archive checksum; a second reopen must retain that move. Inspect the saved three
+shared-geometry occurrences, expanded Part Tree and real Copy/Paste menu. Disable
+animation on test-owned cameras before fitting and use the exposed-window/normal
+framebuffer procedure above. Native delayed SyncView selection must settle before
+the unrelated document-switch scenario in TestComponentPanel; do not change the
+owner's SyncView preference to make tests pass. Update only FreeCADPlusScripts and
+compare all nineteen packaged Python files. No owner delivery is implied.

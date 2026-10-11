@@ -34,30 +34,45 @@ def create_definition(doc, label):
 
 
 def add_instance(owner, definition, placement=None):
+    return add_instances(owner, [(definition, placement, True, True)], 'Place shared component')[0]
+
+
+def add_instances(owner, entries, label='Paste component instances'):
+    """Place a complete batch in one native transaction; never clone definitions."""
     doc = owner.Document
     root = _root(doc)
     from .external import available_definitions
-    if owner not in [root, *root.Definitions] or definition not in available_definitions(root):
-        raise ValueError("The target must belong to this defining file or its imported catalog")
-    # Preflight reachability before creating a native link or opening a transaction.
-    todo, seen = [definition], set()
-    while todo:
-        current = todo.pop()
-        if current == owner:
-            raise ValueError("Circular component nesting is not allowed")
-        if current in seen:
-            continue
-        seen.add(current)
-        todo.extend(o.LinkedObject for o in current.Group if o.TypeId == "App::Link")
-    with transaction(doc, "Place shared component"):
-        instance = doc.addObject("App::Link", "ComponentInstance")
-        instance.setLink(definition)
-        instance.LinkTransform = True
-        instance.LinkPlacement = placement if placement is not None else App.Placement()
-        owner.addObject(instance)
-        if App.GuiUp:
-            instance.Visibility = True
-    return instance
+    available = available_definitions(root)
+    entries = tuple(entries)
+    if not entries:
+        raise ValueError('Copy at least one component instance first')
+    if owner not in [root, *root.Definitions]:
+        raise ValueError('The destination must belong to its defining file')
+    # Preflight the entire batch before creating any native objects or Undo entry.
+    for definition, placement, transform, visible in entries:
+        if definition not in available:
+            raise ValueError('Import this component into the destination defining file first')
+        todo, seen = [definition], set()
+        while todo:
+            current = todo.pop()
+            if current == owner:
+                raise ValueError('Circular component nesting is not allowed')
+            if current in seen:
+                continue
+            seen.add(current)
+            todo.extend(o.LinkedObject for o in current.Group if o.TypeId == 'App::Link')
+    result = []
+    with transaction(doc, label):
+        for definition, placement, transform, visible in entries:
+            instance = doc.addObject('App::Link', 'ComponentInstance')
+            instance.setLink(definition)
+            instance.LinkTransform = transform
+            instance.LinkPlacement = placement if placement is not None else App.Placement()
+            owner.addObject(instance)
+            if App.GuiUp:
+                instance.Visibility = visible
+            result.append(instance)
+    return result
 
 
 def resolve(doc, path):

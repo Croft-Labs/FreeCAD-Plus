@@ -2,10 +2,70 @@
 
 ## Authorized objective and stopping boundary
 
-The current **G1.6c1 component-file-tab increment is complete**. Owner authorized
-continuing Group 1 and stopping after this increment's checks. The next task is
-**G1.6c2: Part Tree linked-instance Copy/Paste**; it has not started. Do not repeat
-passing tests or start additional implementation without owner continuation.
+The owner-authorized **G1.6c2 Part Tree linked-instance Copy/Paste** is complete.
+Its focused, combined, fresh-process and visual checks passed; implementation has
+stopped. Next is **G1.6c3:
+Move Components task foundation and Translate**, not started. Do not expand this
+increment into Move, Add Component, independent definition copies or Part Type.
+
+## G1.6c2 linked-instance Copy/Paste — October 10, 2026
+
+**Implementation:** context-menu Copy/Paste and focused-tree Ctrl+C/Ctrl+V create
+native links to the same definitions. A copied parent includes its children through
+that shared definition; descendant selections are not pasted again. Repeated visible
+occurrences remain distinct selections. Clipboard snapshots use document UUID/object
+Name/ID plus copied local placement, LinkTransform and visibility. Paste preflights
+all definitions and cycles, then creates the whole batch in one defining-document
+transaction. External destinations require their own file's catalog/imports. No
+implicit import, definition clone, schema change or system-clipboard override.
+Failed transactions roll back all new links. New occurrences are selected; Edit,
+History and camera remain unchanged. Native editors/pending operations and stale
+menus/rows are guarded; panel closure discards its transient clipboard.
+
+**Destination convention:** the owner notes confirm shared Copy/Paste followed by
+movement but do not specify the exact Paste destination. An optional clarification
+was asked; no answer had arrived when implementation began. The announced default
+is the explicitly selected file/component parent, with copied placements retained
+relative to that parent. This is an implementation convention, not recovered owner
+approval. The technical contract records it; newer owner direction supersedes it.
+
+**Build:** FreeCADPlusScripts passed in the existing native G1.6b development tree.
+Only scripts changed; no native rebuild, owner delivery or shortcut change.
+
+**Validation:** six focused cases and **50/50 combined Group 1 cases** passed,
+zero failures/errors/skips, normal application exit (combined run 60.597 seconds). Two initial fixture assumptions
+were corrected: a missing imported source removes invalid panel rows, and an empty
+native transaction need not report HasPendingTransaction. Tests now retain the stale
+row before closure and make an actual caller change before testing its transaction
+guard. The first combined run's existing tab-switch check also required native
+delayed SyncView selection to finish before starting its independent new-document
+scenario; the isolated diagnostic confirmed this without changing application
+preferences or selection behavior. A subsequent combined run exposed a real dock
+reopen error: activeSubWindow could be temporarily absent while a native view still
+existed. Panel state now finds the subwindow owning that view, and the singleton
+releases the retiring panel before constructing its replacement. The clipboard's
+panel-reopen case explicitly covers an absent activeSubWindow. The final combined
+run passed after these fixes.
+
+An independent process reopened domestic and external `.cadprt` fixtures with exact
+native IDs, shared definitions/links and copied placements retained. A subsequent
+external source-only change saved without changing the importing assembly checksum;
+a second reopen retained that change. Clipboard contents correctly did not persist.
+Inspected normal OpenGL pixels show three clean shared cylinders; the Part Tree
+shows three parent occurrences with their shared children. The context menu shows
+Copy and the expected disabled Paste after fresh startup. No owner preference or
+renderer changes were made. These checks finish this increment; no further feature
+implementation or runtime testing follows.
+
+**Packaging/checks:** nineteen Python source/test files parse and match the copied
+native development payload byte for byte. All 93 checked local Markdown file targets
+resolve. Final diff whitespace passed. Task-only profiles, fixtures, captures and
+logs were removed from
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_clipboard`
+after recording the results; useful native build/dependencies and tracked tests remain.
+
+**Publication:** acceptance complete; source milestone publication pending.
+No owner build, shortcut delivery, release or deployment was performed.
 
 ## G1.6c1 component file tabs — October 10, 2026
 

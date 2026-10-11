@@ -135,6 +135,8 @@ class TestComponentPanel(unittest.TestCase):
         settle()
         self.assertEqual(Gui.activeDocument().activeView(), old_view)
         self.assertEqual(editing.context_path(self.doc)[1], (self.second, self.nested))
+        # Finish native delayed SyncView selection before the independent tab guard check.
+        QtTest.QTest.qWait(350)
         other = document.new_document('OtherPanelFile')
         with self.assertRaises(ValueError): self.widget.edit_row(old_row)
         settle()

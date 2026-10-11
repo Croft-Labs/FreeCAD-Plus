@@ -131,10 +131,44 @@ added. Child Edit continues through the same full occurrence-path service.
 Opening is refused during any native feature editor or pending transaction. The
 menu captures its originating document/view to reject a tab switch while it is open.
 If entry fails after native view creation, the new view/isolation is removed and the
-original view reactivated. Closed views are removed from panel state. Source loss
+original view reactivated. Closed views are removed from panel state. When dock layout changes temporarily
+clear the active subwindow, state resolves the subwindow owning the native view;
+it does not assume that activeSubWindow is always available. Source loss
 uses the existing validated isolation/context teardown. File close/save prompts and
 view ownership remain native. Linked Copy/Paste, Move Components and independent
 storage-copy interaction are separate remaining G1.6c actions.
+
+### Linked-instance clipboard (G1.6c2)
+
+The Part Tree clipboard is panel-owned transient data, distinct from native document
+Copy/Paste and from independent storage copying. Copy snapshots definition identities
+(document name/UUID, object Name/ID), local LinkPlacement, LinkTransform and visibility.
+It creates no objects or Undo entries. Selected descendants are omitted when a copied
+ancestor already includes them. The same underlying child under different selected
+parent occurrences remains two distinct copied occurrences.
+
+Paste uses the explicitly selected file/placed-component row as its parent and retains
+copied placements relative to that parent; this is the announced implementation
+convention while an optional owner preference remains unanswered, not a recovered
+owner requirement. No world-frame conversion or movement command is implied. The
+parent definition owns new child links, so they appear under all its occurrences.
+This is not the deferred Add Component dialog or independent external/domestic copy.
+
+`hierarchy.add_instances` is the shared batch placement service; single-instance
+creation delegates to it. It preflights the whole batch against the destination's
+own catalog and circular nesting before mutation, then uses one native transaction.
+External-parent Paste modifies its defining document; native coordinated Undo can
+add forwarding records in dependent files. Existing imported definitions are reused;
+no file import or same-label substitution is performed implicitly. Late failure
+aborts every added link. Save/reopen remains ordinary schema-4 native persistence.
+
+The opt-in panel scopes menu actions and keyboard interception to Part Tree. It
+never replaces the operating-system clipboard or global FreeCAD shortcuts. Paste
+selects the new instances without changing Edit. Missing identities, invalid source
+catalogs, changed tabs/rows, active feature editors and pending transactions are
+rejected. File/unused/model/history rows cannot be copied as placed instances; Paste
+requires a file or placed parent. Closing the panel discards the clipboard. No new
+persistent UI/model metadata is introduced.
 
 ### Unused definitions (G1.6b)
 

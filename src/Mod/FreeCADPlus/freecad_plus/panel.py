@@ -130,6 +130,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._updating = False
         self._selecting = False
         self._press = None
+        self._clipboard = ()
         self.refresh_count = 0
         self.tabs = QtWidgets.QTabWidget()
         self.trees = []
@@ -143,6 +144,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             tree.setItemDelegate(_Delegate(tree))
             tree.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
             tree.viewport().installEventFilter(self)
+            tree.installEventFilter(self)
             tree.itemSelectionChanged.connect(lambda t=tree: self._selection_changed(t))
             tree.itemDoubleClicked.connect(lambda item, column: self._edit_clicked(item))
             tree.customContextMenuRequested.connect(lambda point, t=tree: self._menu(t, point))
@@ -171,6 +173,22 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.refresh()
 
     def eventFilter(self, watched, event):
+        if (len(self.trees) > 1 and watched in (self.trees[1], self.trees[1].viewport())
+                and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress)
+                and (event.matches(QtGui.QKeySequence.Copy) or event.matches(QtGui.QKeySequence.Paste))):
+            event.accept()  # Keep the native global document clipboard out of this tree action.
+            if event.type() == QtCore.QEvent.KeyPress:
+                try:
+                    rows = tuple(item.data(0, _ROLE) for item in self.trees[1].selectedItems())
+                    if event.matches(QtGui.QKeySequence.Copy):
+                        self.copy_rows(rows)
+                    elif len(rows) == 1:
+                        self.paste_row(rows[0])
+                    else:
+                        raise ValueError('Select one file or component as the Paste destination')
+                except (ValueError, RuntimeError, ReferenceError) as error:
+                    self._message(str(error))
+            return True
         if event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonDblClick):
             tree = next((t for t in self.trees if t.viewport() == watched), None)
             if tree and event.button() == QtCore.Qt.LeftButton:
@@ -232,16 +250,19 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.schedule()
 
     def _state(self, binding):
-        for bound, state in self._states:
-            if bound == binding:
-                return state
-        state = {'last': {}}
-        if self._mdi and binding == self._current():
-            window = self._mdi.activeSubWindow()
-            state['window'] = window
-            state['component_window'] = bool(window.property('FreeCADPlusComponentWindow'))
-            window.destroyed.connect(lambda *args: self._forget_view(binding))
-        self._states.append((binding, state))
+        state = next((state for bound, state in self._states if bound == binding), None)
+        if state is None:
+            state = {'last': {}}
+            self._states.append((binding, state))
+        if self._mdi and 'window' not in state and binding == self._current():
+            # Dock removal/layout changes can temporarily clear activeSubWindow
+            # while the native document still owns a valid active view.
+            widget = binding[1].graphicsView()
+            window = next((w for w in self._mdi.subWindowList() if w.isAncestorOf(widget)), None)
+            if window is not None:
+                state['window'] = window
+                state['component_window'] = bool(window.property('FreeCADPlusComponentWindow'))
+                window.destroyed.connect(lambda *args: self._forget_view(binding))
         return state
 
     def _context(self, doc, view):
@@ -369,6 +390,57 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 raise ValueError('The selected occurrence changed; select it again')
         return doc, obj
 
+    def _clipboard_guard(self):
+        if any(Gui.getDocument(doc.Name).getInEdit() for doc in App.listDocuments().values()):
+            raise ValueError('Finish the native feature editor first')
+        if App.getActiveTransaction() or any(doc.HasPendingTransaction for doc in App.listDocuments().values()):
+            raise ValueError('Finish the current operation first')
+
+    def copy_rows(self, rows):
+        self._clipboard_guard()
+        rows = tuple(rows)
+        if not rows or any(row.kind != 'occurrence' for row in rows):
+            raise ValueError('Select placed component instances in Part Tree to Copy')
+        for row in rows:
+            self._checked(row)
+        # A selected parent already includes its descendants through its definition.
+        selected = {row.path for row in rows}
+        snapshot = []
+        seen = set()
+        for row in rows:
+            if row.path in seen or any(row.path[:n] in selected for n in range(1, len(row.path))):
+                continue
+            seen.add(row.path)
+            instance = lookup(row.path[-1])
+            snapshot.append((row.ref, tuple(instance.LinkPlacement.toMatrix().A),
+                             bool(instance.LinkTransform), bool(instance.Visibility)))
+        self._clipboard = tuple(snapshot)
+        self._message('Copied component instances. Select a destination and Paste.')
+
+    def paste_row(self, row):
+        self._clipboard_guard()
+        doc, owner = self._checked(row)
+        if row.kind not in ('file', 'occurrence'):
+            raise ValueError('Select a file or placed component as the Paste destination')
+        if not self._clipboard:
+            raise ValueError('Copy component instances in Part Tree first')
+        entries = [(lookup(ref), App.Placement(App.Matrix(*matrix)), transform, visible)
+                   for ref, matrix, transform, visible in self._clipboard]
+        instances = hierarchy.add_instances(owner, entries)
+        # Keep Edit and History unchanged; select only the newly placed occurrences.
+        self.refresh()
+        root = document.validate(doc)
+        parent_path = tuple(lookup(ref) for ref in row.path)
+        self._selecting = True
+        try:
+            Gui.Selection.clearSelection()
+            for instance in instances:
+                Gui.Selection.addSelection(doc.Name, root.Name, hierarchy.subname((*parent_path, instance)))
+        finally:
+            self._selecting = False
+        self._sync_selection()
+        return instances
+
     def _model_route(self, row):
         options = [item.data(0, _ROLE).path for item in self._maps[1].values()
                    if item.data(0, _ROLE).kind == 'occurrence' and item.data(0, _ROLE).ref == row.ref]
@@ -444,6 +516,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
         actions = {menu.addAction('Edit'): self.edit_row}
         if row.kind != 'file':
             actions[menu.addAction('Open in new window')] = self.open_row
+        if tree == self.trees[1]:
+            selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
+            menu.addSeparator()
+            if row.kind == 'occurrence':
+                actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
+            if row.kind in ('file', 'occurrence'):
+                paste = menu.addAction('Paste')
+                paste.setEnabled(bool(self._clipboard))
+                actions[paste] = self.paste_row
         binding = self._binding
         chosen = menu.exec_(tree.viewport().mapToGlobal(point))
         if chosen in actions:
@@ -530,6 +611,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             except (RuntimeError, ReferenceError):
                 pass
         self._states.clear()
+        self._clipboard = ()
         self._binding = None
 
 
@@ -538,8 +620,9 @@ def show_panel():
     global _panel
     if _panel is None or _panel._closed:
         if _panel is not None:
-            Gui.getMainWindow().removeDockWidget(_panel)
-            _panel.deleteLater()
+            previous, _panel = _panel, None
+            Gui.getMainWindow().removeDockWidget(previous)
+            previous.deleteLater()
         _panel = ComponentPanel(Gui.getMainWindow())
         Gui.getMainWindow().addDockWidget(QtCore.Qt.LeftDockWidgetArea, _panel)
     _panel.show()
