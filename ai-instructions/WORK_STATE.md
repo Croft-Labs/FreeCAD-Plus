@@ -63,7 +63,9 @@ in changed Markdown resolve; whitespace checks pass. Task validation artifacts
 `g1_7b3g_inputs` were deleted after recording these results; the development build
 is retained. No further runtime work is required for this increment.
 
-**Publication:** prepared for the authorized origin milestone push.
+**Publication:** source milestone `7bf802ac7a07ff8c6d8a220beed7925ada0a1353`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This increment is complete; stop here.
 
 ## G1.7b3f attachment and shared task references - October 11, 2026
 
