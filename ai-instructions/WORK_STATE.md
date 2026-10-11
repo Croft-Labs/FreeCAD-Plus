@@ -62,8 +62,9 @@ from `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6b_external` afte
 recording the results. The extracted pinned LibPack and useful native development
 build remain; the unneeded downloaded LibPack archive was removed.
 
-**Publication/delivery:** milestone commit/push pending. No release, deployment or
-owner-build delivery. This bounded development payload is not full-workbench or
+**Publication/delivery:** source milestone `54ea2843a3f8c3fe89d2a495964fa290274708cf`
+was committed and pushed to origin/codex/freecad-1.1.4-baseline; the remote revision
+was verified. No release, deployment or owner-build delivery. This bounded development payload is not full-workbench or
 long-session responsiveness acceptance. The existing owner desktop shortcut was
 not changed; original workbench source/configuration remains intact.
 

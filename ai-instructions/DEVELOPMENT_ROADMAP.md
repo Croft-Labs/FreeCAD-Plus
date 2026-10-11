@@ -92,7 +92,8 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Validation:** 9/9 focused and 38/38 combined tests, zero skips; fresh-process
   identity/save/reopen and source-only save checks passed. Normal viewport captures
   verified isolation/restoration and live Sketch/Pad preview; Part Tree inspected.
-  **Publication:** pending milestone commit/push; no release or owner-build delivery.
+  **Publication:** source milestone `54ea2843a3` pushed to origin/codex/freecad-1.1.4-baseline
+  and remote revision verified; no release or owner-build delivery.
   This is a bounded development build, not full-workbench or complete-panel acceptance.
   WORK_STATE records details. Stop; G1.6c has not started.
 - [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs and the
