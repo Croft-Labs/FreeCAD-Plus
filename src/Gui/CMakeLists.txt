@@ -541,6 +541,7 @@ SET(Command_SRCS
     ActionFunction.h
     Command.h
     CommandT.h
+    ComponentGeometry.h
     ShortcutManager.h
     CommandCompleter.h
     CommandActionPy.h

@@ -191,9 +191,16 @@ Point to Point.
   Native build, four actual Export cases, five shared-policy regressions and an
   independent reopen passed; WORK_STATE records initial failures and corrections.
   Source milestone `8baa8ca44e` pushed to origin; exact remote revision verified.
-  Stop here; no owner delivery. Next: native modeling input consumers, starting
-  with Sketch/PartDesign reference intake. Direct exporter and view-output routes
-  remain separate integration work; full G1.7b3 is unfinished.
+  No owner delivery. Direct exporter and view-output routes remain separate
+  integration work; full G1.7b3 is unfinished.
+- [ X ] **G1.7b3e — Native modeling intake eligibility.** Shared native bridge checks
+  PartDesign profile preparation/picking and Sketcher Projection/Intersection inputs
+  before mutation, using original occurrence and explicit component Edit ownership.
+  Batched native build, four focused modeling cases, five shared-policy cases and
+  independent Pad/projection reopen passed across bounded corrective runs. WORK_STATE
+  records exact coverage, fixture corrections and the inherited seam-reference limit.
+  Publication pending. Stop here; no owner delivery. Next: attachment and existing
+  task-dialog reference collectors. Full G1.7b3 and Group 1 remain incomplete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

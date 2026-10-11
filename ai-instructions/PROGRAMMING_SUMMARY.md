@@ -32,9 +32,10 @@ and unused views, with bounded native link-snapshot synchronization. G1.7b3c add
 validated occurrence-aware Reference/Excluded eligibility and guards the existing
 Move Components reference consumers. G1.7b3d guards native File > Export before
 options/writing and fixes source selection for external unused component exports.
-Its native tests and independent reopen passed. Stop at this milestone. Next:
-native modeling input consumers, starting with Sketch/PartDesign reference intake;
-remaining direct exporter/view-output paths still need integration. Check latest
+G1.7b3e adds native PartDesign profile and Sketcher Projection/Intersection input
+eligibility. Its focused native tests and independent reopen/source-update checks
+passed. Stop at this increment. Next: attachment and existing task-dialog reference
+collectors; remaining direct exporter/view-output paths still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
 The complete G1.6 panel is unfinished.
@@ -77,6 +78,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/TestComponentClipboard.py: linked Copy/Paste menus/keys, batch Undo, shared identity, source ownership and save/reopen.
 - src/Mod/FreeCADPlus/freecad_plus/geometry.py: occurrence-aware Reference/Excluded geometry eligibility, independent of display/selection.
 - src/Mod/FreeCADPlus/TestComponentEligibility.py: consumer guard, shared/external ownership and fresh-process acceptance.
+- src/Gui/ComponentGeometry.h: shared native modeling eligibility bridge for PartDesign/Sketcher.
+- src/Mod/FreeCADPlus/TestComponentModeling.py: native intake, transactions, legacy bypass and independent reopen checks.
 - src/Mod/FreeCADPlus/TestComponentExport.py: native File > Export rejection, BREP/legacy/source-owned export and independent reopen.
 - src/Gui/Application.cpp and CommandDoc.cpp: component-only export preflight and external unused source-selection routing.
 - src/Mod/FreeCADPlus/freecad_plus/movement.py: parent-owned Translate/Rotate task, transient preview and atomic commit.

@@ -2,13 +2,74 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3d native File > Export eligibility and its planned
-checks are complete.** Stop at this increment; do not repeat passed tests or begin
-another operation. Group 1/G1.7b3 remain incomplete. Next: native modeling input
-consumers, starting with Sketch/PartDesign reference intake. Direct exporter calls
-and view-output routes also remain outside the completed boundary. Search the latest
-relevant owner conversations before treating design details as undefined. Right-click
-access does not authorize an Add Reference Feature operation as Component Panel work.
+Continue Group 1 only. **G1.7b3e native modeling intake and its planned checks
+are complete.** Stop at this increment; do not repeat passed tests or begin another
+operation. Group 1/G1.7b3 remain incomplete. Next: attachment and existing task-dialog
+reference collectors. Direct exporter/view-output routes and existing dependency
+reclassification also remain unfinished. Search the latest relevant owner conversations
+before treating design details as undefined. Right-click access does not authorize
+an Add Reference Feature operation as Component Panel work.
+
+## G1.7b3e native modeling intake - October 11, 2026
+
+**Implementation:** shared ComponentGeometry.h bridge applies the existing occurrence
+policy to native PartDesign profile preparation and Sketcher Projection/Intersection
+intake. PartDesign checks unresolved selection and the later actual profile-picker
+candidate before feature creation. Sketcher checks the original occurrence before
+addExternal; rejection preserves the current editor transaction. Explicit component
+Edit and consumer ownership are required. Legacy documents bypass the Python guard.
+No global selection filter, schema change or new operation dialog. See the
+[native intake contract](ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e).
+
+**Owner source:** original C10/U068-U069 messages in **Fix component activation and
+part** were rechecked. U069's required promotion of Reference geometry governs;
+no further design decision was needed for these existing input consumers.
+
+**Build:** one batched SketcherGui/PartDesignGui/FreeCADPlusScripts build passed in
+`test-builds/freecad_1.1.4_context`. Subsequent corrections affected only the test
+fixture/driver and were copied to that payload. No owner package or shortcut delivery.
+
+**Validation:** initial 9-case native modeling/shared-policy run: 6 passed, 3 errors,
+zero failures/skips, native exit 0 (11.839 seconds). All five existing eligibility
+cases and the external-unused service-context case passed. The three errors were a
+test helper colliding with the inherited fixture's sketch attribute, before commands
+ran. Renaming the helper resolved them; the affected 3-case run passed with zero
+failures/errors/skips, native exit 0 (7.292 seconds). Passing policy cases were not rerun.
+
+These checks drive actual PartDesign_Pad task acceptance and Sketcher_Projection
+selection. They cover shared Reference/Excluded refusal before mutation, allowed
+occurrences, Pad shape/Tip and Undo/Redo, no-selection profile-picker recheck, native
+legacy Pad bypass, original Sketcher selection and preserved editor transaction.
+External unused/wrong-consumer checks exercise the shared service, not a complete
+native external Pad workflow. Other profile commands and Intersection share the
+reviewed native path but were not separately driven.
+
+Independent Pad reopen passed exact IDs, native visibility, Profile/Tip and volume.
+Projection reopen initially exposed a tuple/list comparison error in the test;
+normalizing the reference representation then exposed the fixture's cylindrical
+seam losing its reference after a Length change. A bounded ordinary legacy-document
+reproduction in this same build showed the same loss without invoking the Plus guard.
+The seam projects to a point in this plane; it did not prove real projected geometry.
+The fixture now chooses a circular rim and asserts two actual sketch edges. The
+corrected native projection case passed (1 case, 2.862 seconds, zero failures/errors/
+skips, native exit 0). Its independent fresh-process reopen/source-Length update
+passed exact IDs/reference, two projected/local edges and updated Pad volume, native
+exit 0. The passing Pad checks were not repeated. The inherited seam-reference loss
+remains unfixed; do not treat this increment as its resolution or general topology
+stability certification. No viewport/rendering change or performance claim.
+
+**Limits:** task-dialog reference fields, attachment, other non-profile commands,
+raw Python writes and existing-dependency reclassification are outside this increment.
+Full G1.7b3 and Group 1 remain unfinished. Add Reference Feature is separate operation
+work. No owner build is being delivered.
+
+**Final checks:** all 31 Python files parse and byte-match the native payload; 137
+local documentation link targets resolve and diff whitespace checks pass. Task
+profiles, fixtures, logs and launchers in `validation/g1_7b3e_modeling` were deleted
+after recording results. The useful native development build is retained.
+
+**Publication:** source milestone prepared for the authorized origin push; no owner
+package, shortcut update, release or deployment.
 
 ## G1.7b3d native export eligibility - October 11, 2026
 

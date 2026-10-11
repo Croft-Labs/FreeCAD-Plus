@@ -493,3 +493,26 @@ not just callback counts. Independently run TestComponentExport.verify_fresh_pro
 against its saved fixture. Parse/compare all 30 Python payload files, record results
 and remove validation artifacts. Do not repeat passed unrelated suites or begin the
 next consumer integration after these checks pass. Owner delivery is a separate gate.
+
+## Native modeling intake validation
+
+Build SketcherGui, PartDesignGui and FreeCADPlusScripts together in the retained
+native development tree. TestComponentModeling uses actual PartDesign_Pad and
+Sketcher_Projection commands, not a mocked feature constructor. Run it with the
+existing shared eligibility cases for the initial integration; after corrections,
+rerun only affected cases. Native modal notifications are closed by a test-owned
+Qt timer within the bounded isolated process.
+
+Cover rejected shared occurrences before feature/transaction creation, accepted
+native Pad and Undo/Redo, no-selection profile-picking recheck, legacy bypass,
+Sketcher original-occurrence rejection without aborting the existing editor, accepted
+native external geometry, and external unused/wrong-consumer context checks. Run
+TestComponentModeling.verify_fresh_process independently for native Profile/Tip,
+geometry, IDs and external projection persistence/downstream recompute. Choose an
+edge that projects to real geometry (the cylinder rim, not its perpendicular seam),
+and assert actual projected geometry as well as a surviving reference. These checks
+do not establish coverage of all task-dialog reference fields or raw Python writes.
+
+Parse and compare all 31 Python files to the native payload. Record actual results,
+remove task-generated validation files, and stop once this increment's checks pass.
+Owner packaging and desktop-shortcut delivery remain separate gates.

@@ -534,6 +534,32 @@ Reference enforcement or a new export UI. TestComponentExport drives Std_Export,
 its actual dialogs and a writer probe backed by native BREP export; WORK_STATE owns
 build/runtime results and limitations.
 
+### Native modeling intake eligibility (G1.7b3e)
+
+`Gui::componentGeometryError` in ComponentGeometry.h is the shared native-to-Python
+bridge for two concrete consumers. It calls `geometry.require_modeling_inputs` only
+for a consumer in a component document; ordinary FreeCAD documents retain their
+native workflow. The adapter resolves the current view's placed/unused Edit context,
+requires the consumer to belong to that component, and applies the existing
+occurrence policy to every input. It does not traverse existing feature dependencies.
+
+PartDesign's shared prepareProfileBased path checks unresolved selection before
+creating a feature or opening a transaction. Its later native profile-picker callback
+rechecks the actual candidate before creation, so a delayed picker cannot rely only
+on an earlier selection. Native profile/body/geometry validity checks still apply.
+Sketcher's Projection/Intersection external-geometry handler follows pOriginalMsg to
+the original occurrence before addExternal and before opening an undo command. A
+rejection reports its reason and clears the attempted selection without aborting the
+surrounding sketch edit. The existing tool-specific selection gate stays in place;
+no global selection gate, shape-reader override or recompute hook is introduced.
+
+This is input admission, not universal reference enforcement. Existing references
+and raw Python property/method writes are not reclassified during recompute. Other
+attachment, task-dialog reference and non-profile commands still require integration.
+No new Add Reference Feature, Sketcher or PartDesign operation workflow is defined.
+TestComponentModeling owns focused native intake acceptance; WORK_STATE records
+build/runtime evidence separately from the source contract.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

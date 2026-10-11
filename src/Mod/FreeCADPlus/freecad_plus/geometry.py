@@ -151,3 +151,38 @@ def require_export(doc, objects):
     # mismatched/fallback catalog payload must not acquire permission by accident.
     if any(obj is None or obj not in approved for obj in objects):
         raise ValueError('The export selection changed; select the component geometry again')
+
+
+def require_modeling_inputs(consumer, inputs=None):
+    """Check native modeling intake without replacing its own geometry rules.
+
+    None means the current unresolved selection (command start); an explicit list
+    means the native picker/selection callback's actual references. Existing feature
+    dependencies are not traversed or rewritten on recompute.
+    """
+    import FreeCADGui as Gui
+    from . import isolation
+
+    gui = Gui.activeDocument()
+    if gui is None:
+        raise ValueError('Edit a component before using modeling geometry')
+    doc = gui.Document
+    root = document.validate(doc)
+    view = gui.activeView()
+    unused = isolation.current(view)
+    if unused is not None:
+        active, path = unused.definition(), ()
+    else:
+        resolved, parent, sub = view.getActiveObject('PlusEdit', False)
+        if parent != root or not sub:
+            raise ValueError('Edit a component before using modeling geometry')
+        active, path = hierarchy.resolve(doc, sub.rstrip('.').split('.'))
+        if active != resolved:
+            raise ValueError('The component Edit context changed')
+    if _owned_path(active, consumer) is None:
+        raise ValueError('The modeling object must belong to the edited component')
+    if inputs is None:
+        inputs = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*', 0)
+                  for sub in entry.SubElementNames or ('',)]
+    for obj, sub in inputs:
+        require_access(doc, obj, sub, active=active, active_path=path)

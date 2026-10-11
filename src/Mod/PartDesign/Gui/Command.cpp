@@ -36,6 +36,7 @@
 #include <Base/Tools.h>
 #include <Gui/Application.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentGeometry.h>
 #include <Gui/CommandT.h>
 #include <Gui/Control.h>
 #include <Gui/Document.h>
@@ -856,8 +857,30 @@ void prepareProfileBased(
     std::function<void(Part::Feature*, App::DocumentObject*)> func
 )
 {
+    const auto inputError = Gui::componentGeometryError(pcActiveBody);
+    if (!inputError.empty()) {
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                             QString::fromUtf8(inputError.c_str()));
+        return;
+    }
     auto base_worker = [=](App::DocumentObject* feature, const std::vector<std::string>& subs) {
         if (!feature || !feature->isDerivedFrom<Part::Feature>()) {
+            return;
+        }
+        // Recheck after the native sketch picker, before a feature or transaction exists.
+        std::vector<App::SubObjectT> inputs;
+        if (subs.empty()) {
+            inputs.emplace_back(feature);
+        }
+        else {
+            for (const auto& sub : subs) {
+                inputs.emplace_back(feature, sub.c_str());
+            }
+        }
+        const auto inputError = Gui::componentGeometryError(pcActiveBody, inputs);
+        if (!inputError.empty()) {
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QString::fromUtf8(inputError.c_str()));
             return;
         }
 

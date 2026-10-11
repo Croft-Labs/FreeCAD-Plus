@@ -29,6 +29,7 @@
 #include <Gui/Notifications.h>
 #include <Gui/Selection/SelectionFilter.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentGeometry.h>
 #include <Gui/CommandT.h>
 #include <Gui/View3DInventor.h>
 #include <Gui/View3DInventorViewer.h>
@@ -165,6 +166,19 @@ public:
     bool onSelectionChanged(const Gui::SelectionChanges& msg) override
     {
         if (msg.Type == Gui::SelectionChanges::AddSelection) {
+            const auto* original = &msg;
+            while (original->pOriginalMsg) {
+                original = original->pOriginalMsg;
+            }
+            const auto inputError = Gui::componentGeometryError(
+                sketchgui->getObject(), std::vector<App::SubObjectT> {original->Object}
+            );
+            if (!inputError.empty()) {
+                Gui::NotifyError(sketchgui, QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                 inputError.c_str());
+                Gui::Selection().clearSelection();
+                return true;  // Do not abort the sketch editor's existing transaction.
+            }
             App::DocumentObject* obj = sketchgui->getObject()->getDocument()->getObject(
                 msg.pObjectName
             );

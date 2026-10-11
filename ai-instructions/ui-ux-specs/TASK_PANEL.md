@@ -14,6 +14,13 @@ Use sketches, operations/features and other geometry as the user's modeling voca
 
 A modeling operation requires an edited component. The pinned file cannot own sketches or modeling geometry; selecting a component once does not enter Edit. Definitions, storage, external edits and the deferred Add Component workflow follow [Component Panel](COMPONENT_PANEL.md). [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
+Component geometry inputs must respect the confirmed [Part Type rules](COMPONENT_PANEL.md#part-type-and-visibility): unpromoted Reference and Excluded geometry cannot be used. [C10/U069](EVIDENCE_AND_DECISIONS.md#c10)
+
+Implementation boundary: G1.7b3e guards native PartDesign profile intake and Sketcher
+Projection/Intersection reference admission using the shared component policy. Their
+native editors and geometry rules remain the baseline. Other task reference fields
+and attachment paths remain unfinished; see the [technical contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e).
+
 ### Layers
 
 Open Layers in Tasks from the Design-only toolbar. Support create, rename, delete, assignment and choosing the active layer. Double-click a layer to activate it; show bold text and a check mark. Provide an eye on each row for visibility. Base is permanent and cannot be deleted or renamed; Origin stays on Base. [R03](EVIDENCE_AND_DECISIONS.md#r03)
