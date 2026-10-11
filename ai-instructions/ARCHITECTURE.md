@@ -1101,3 +1101,21 @@ are refused before mutation. Direct Section, compound/split/join commands and ot
 geometry consumers remain separate. TestPartBooleanInputs covers command refusal,
 accepted Cut/Common/Fuse ownership and Undo, dialog refusal/Apply, legacy bypass,
 and independent persistence/source-edit recompute. WORK_STATE owns acceptance.
+
+### Direct Part Section integration (G1.7b3p)
+
+Part_Section checks unresolved component selections through the existing Part
+Boolean preflight before transaction creation. Component files then reuse
+BOPFeatures.make_section: inputs keep their original ownership, the native
+Part::Section result belongs to the edited definition, and History includes its
+sources before the result. The command retains the upstream line material inherited
+from the base shape. Ordinary legacy files execute their original command body,
+including unchanged parenting and appearance. The shared component-document probe
+is factored out of the existing Part Boolean bridge without changing its policy.
+
+The same local-input/defining-document support boundary as G1.7b3o applies. No new
+Section algorithm, task workflow or cross-component transfer policy is introduced.
+Four focused cases in TestPartBooleanInputs cover command refusal, accepted
+ownership/Undo/save, the existing dialog's Section Apply/Undo, and legacy parenting/
+policy bypass. A separate-process fixture checks persisted identity, dependencies
+and source-driven section recompute. WORK_STATE owns the results and limitations.

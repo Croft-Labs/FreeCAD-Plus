@@ -291,6 +291,12 @@ Point to Point.
   owns exact evidence and support limits. Source checkpoint `eae09d9177` pushed to
   origin; exact remote revision verified. Next: direct Part Section.
 
+- [ X ] **G1.7b3p - Direct Part Section integration.** Shared input preflight and
+  component-aware native result creation preserve ownership/History and line color.
+  Original legacy parenting remains. One native build, four focused cases and
+  independent reopen/source-edit passed first run. WORK_STATE owns evidence and
+  publication. Next: compound input/result ownership. No owner delivery.
+
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

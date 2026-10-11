@@ -16,6 +16,11 @@ A modeling operation requires an edited component. The pinned file cannot own sk
 
 Component geometry inputs must respect the confirmed [Part Type rules](COMPONENT_PANEL.md#part-type-and-visibility): unpromoted Reference and Excluded geometry cannot be used. [C10/U069](EVIDENCE_AND_DECISIONS.md#c10) The owner reaffirmed that all Reference geometry must first be added to the active component's History through **Add Reference Feature**, before any use in that component. Direct selection or silent automatic reference creation cannot bypass this prerequisite. [October 11 clarification](EVIDENCE_AND_DECISIONS.md#reference-geometry-prerequisite---october-11-2026)
 
+G1.7b3p applies that same component preflight and ownership to the separate
+Part Section command, preserving the existing Section algorithm and base-derived
+line appearance. Its [technical contract](../ARCHITECTURE.md#direct-part-section-integration-g17b3p)
+records the supported scope; WORK_STATE records acceptance.
+
 G1.7b3o extends eligibility checks to Part Cut, Intersection, Union and the Boolean
 operation dialog's Apply action. Accepted local operations keep input ownership
 and place the result in the edited component's History. Cross-component inputs and

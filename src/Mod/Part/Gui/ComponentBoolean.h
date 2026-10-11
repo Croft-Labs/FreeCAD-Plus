@@ -6,21 +6,23 @@
 
 namespace PartGui
 {
+inline bool isComponentBooleanDocument(App::Document* doc)
+{
+    if (doc) {
+        for (auto obj : doc->getObjects()) {
+            if (obj->getPropertyByName("PlusFormat")) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 inline std::string componentBooleanError(
     App::Document* doc,
     const std::optional<std::vector<App::SubObjectT>>& inputs = std::nullopt)
 {
-    if (!doc) {
-        return {};
-    }
-    bool component = false;
-    for (auto obj : doc->getObjects()) {
-        if (obj->getPropertyByName("PlusFormat")) {
-            component = true;
-            break;
-        }
-    }
-    if (!component) {
+    if (!isComponentBooleanDocument(doc)) {
         return {};
     }
     Base::PyGILStateLocker lock;

@@ -2,13 +2,60 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3o core Part Boolean eligibility/ownership and its
-planned checks are complete.** Stop runtime work here. Next: the separate Part
-Section command's input and result-ownership integration. Group 1 remains incomplete;
-other compound/split/join and direct output paths are not covered by this milestone.
-Add Reference Feature remains a separately scoped operation; its mandatory
-prerequisite is unchanged. Cross-component Full Component tool workflow remains
-undefined. No owner package/shortcut delivery is claimed.
+Continue Group 1 only. **G1.7b3p direct Part Section integration and its planned
+checks are complete.** Stop runtime work here. Next: compound input and result
+ownership integration. Group 1 remains incomplete; split/join and direct output
+paths are also outside this milestone. The mandatory Add Reference Feature
+prerequisite remains unchanged; its operation workflow is separately scoped.
+Cross-component Full Component workflows remain undefined. No owner delivery.
+
+## G1.7b3p direct Part Section integration - October 11, 2026
+
+**Authority:** applies the owner's confirmed Reference prerequisite and the existing
+component-owned feature/History contract. No new design choice or operation
+workflow was needed. The direct command had its own result creation path, separate
+from the previously guarded dialog and Boolean commands.
+
+**Implementation:** Part_Section checks unresolved inputs before transaction
+creation. Component files reuse BOPFeatures.make_section to preserve source
+ownership and own the new native result in the edited definition. The base shape's
+line material is retained. Ordinary legacy files execute the original command body,
+including its parenting. The shared component-document probe was factored out of
+the existing bridge without policy changes. See the
+[contract](ARCHITECTURE.md#direct-part-section-integration-g17b3p).
+
+**Build:** one PartGui + FreeCADPlusScripts build passed in retained
+`test-builds/freecad_1.1.4_context`, exit 0, 251.59 seconds. No corrective native
+build was needed. Before the first runtime run, the test's appearance assertion
+was refined to compare actual material color values, with a distinctive base color;
+that test script was copied to the retained payload. No production correction.
+
+**Validation:** four focused native cases passed first run, zero failures/errors/
+skips, 7.767 seconds; native exit 0, 12.58 seconds overall. Covered Reference/Excluded
+and missing-Edit rejection with unchanged state, owned native Section dependencies,
+History order, source visibility, line-color inheritance, Undo/Redo and save, the
+existing dialog's Section Apply/Undo, and unchanged legacy parenting/policy bypass.
+The previous Boolean cases were not rerun. Logs contain the existing Std_Measure
+notice. The legacy grouped-input probe also emitted the native link-scope warning
+for its unparented Section referencing features inside LegacyPart; this unchanged
+legacy behavior is preserved, not claimed fixed by the component integration.
+
+Independent fresh-process reopen/source-edit passed, native exit 0, 5.47 seconds.
+Exact identities, source/result ownership and native Base/Tool links survived.
+The section of a 4 x 4 box at z=2 retained length 16; changing the source length to
+3 recomputed a valid section of length 14. Runtime checks stop here.
+
+**Limits:** same supported local inputs/defining-document destination as G1.7b3o.
+No cross-component transfer/copy policy, new geometry algorithm or complete consumer
+coverage. Compound/split/join and direct exporter/view-output integration remain.
+No manual visual acceptance, owner package or shortcut delivery.
+
+**Final checks:** all 43 Plus Python scripts parse and match the retained payload
+byte-for-byte; 118 local links in changed Markdown resolve; whitespace passes.
+Task artifacts `g1_7b3p_section` were removed after recording these results. Useful
+builds remain. No further runtime work.
+
+**Publication:** validated checkpoint pending origin publication.
 
 ## G1.7b3o core Part Boolean eligibility and ownership - October 11, 2026
 

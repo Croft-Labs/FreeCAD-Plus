@@ -61,8 +61,9 @@ closed-source hidden loading and independent reopen. It creates no placed instan
 The October 11 owner clarification explicitly requires all Reference geometry to
 enter the active component's History through Add Reference Feature before any use.
 G1.7b3o core Part Boolean admission and retained input/result ownership passed native
-and independent reopen/source-edit checks. Direct Part Section and other consumers
-remain unfinished; WORK_STATE records supported inputs and the stopping boundary.
+and independent reopen/source-edit checks. G1.7b3p direct Part Section also passed
+native command/dialog and independent reopen/source-edit checks. Compound and other
+consumers remain unfinished; WORK_STATE owns the support and stopping boundaries.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
@@ -85,7 +86,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/App and src/Gui: upstream document/application and desktop services.
 - src/Mod: original workbench modules; retain their source and availability.
 - src/Mod/FreeCADPlus/freecad_plus/document.py: schema, native owned_children/owned_path traversal, History projection and creation/open/save.
-- src/Mod/FreeCADPlus/TestPartBooleanInputs.py: native Part Boolean admission, input/result ownership, Undo, dialog Apply, legacy bypass and persistence.
+- src/Mod/FreeCADPlus/TestPartBooleanInputs.py: native Part Boolean/Section admission, input/result ownership, Undo, dialog Apply, legacy bypass and persistence.
 - src/Mod/Part/Gui/ComponentBoolean.h and src/Mod/Part/BOPTools/BOPFeatures.py: Part Boolean preflight bridge and component-owned native result creation.
 - src/Mod/FreeCADPlus/TestComponentBooleanInputs.py: Boolean command/picker occurrence admission, atomic rejection, cleanup and legacy bypass.
 - src/Mod/FreeCADPlus/TestComponentBooleanOwnership.py: same-component Boolean ownership, nested History/Edit, Undo/Cancel and independent persistence checks.

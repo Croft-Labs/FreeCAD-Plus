@@ -1026,6 +1026,14 @@ CmdPartSection::CmdPartSection()
 void CmdPartSection::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    auto doc = App::GetApplication().getActiveDocument();
+    const auto error = PartGui::componentBooleanError(doc);
+    if (!error.empty()) {
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                             QString::fromUtf8(error.c_str()));
+        return;
+    }
+
     std::vector<Gui::SelectionObject> Sel = getSelection().getSelectionEx(
         nullptr,
         App::DocumentObject::getClassTypeId(),
@@ -1045,6 +1053,17 @@ void CmdPartSection::activated(int iMsg)
     std::string ToolName = Sel[1].getFeatName();
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Section"));
+    if (PartGui::isComponentBooleanDocument(doc)) {
+        // Reuse the component-aware native service without changing legacy parenting.
+        doCommand(Doc, "from BOPTools import BOPFeatures");
+        doCommand(Doc, "__section = BOPFeatures.BOPFeatures(App.activeDocument()).make_section([%s,%s])",
+                  Base::Tools::quoted(BaseName).c_str(), Base::Tools::quoted(ToolName).c_str());
+        doCommand(Gui, "__section.ViewObject.LineMaterial = __section.Base.ViewObject.ShapeAppearance[0]");
+        doCommand(Doc, "del __section");
+        updateActive();
+        commitCommand();
+        return;
+    }
     doCommand(Doc, "App.activeDocument().addObject(\"Part::Section\",\"%s\")", FeatName.c_str());
     doCommand(
         Doc,

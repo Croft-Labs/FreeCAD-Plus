@@ -123,6 +123,86 @@ class TestPartBooleanInputs(unittest.TestCase):
             result=next(o for o in legacy.Objects if o not in before);self.assertAlmostEqual(result.Shape.Volume,32)
             Gui.Control.closeDialog();settle()
 
+    def section_shapes(self, owner=None):
+        Gui.activateWorkbench('PartWorkbench')
+        owner = owner or self.child
+        a=owner.newObject('Part::Box','SectionBase')
+        a.Length=4;a.Width=4;a.Height=4
+        material=a.ViewObject.ShapeAppearance[0];material.DiffuseColor=(0.2,0.4,0.6)
+        a.ViewObject.ShapeAppearance=[material]
+        b=owner.newObject('Part::Plane','SectionPlane')
+        b.Length=4;b.Width=4;b.Placement.Base=App.Vector(0,0,2)
+        owner.Document.recompute();settle()
+        return a,b
+
+    def test_section_command_rejection_preserves_state(self):
+        a,b=self.section_shapes()
+        source=hierarchy.create_definition(self.doc,'Reference section source')
+        foreign,_=self.section_shapes(source);link=hierarchy.add_instance(self.child,source)
+        path=hierarchy.subname((self.second,self.nested,link))+foreign.Name+'.'
+        for kind in ('Reference','Excluded'):
+            display.set_state(self.child,link,part_type=kind);settle()
+            self.select(b);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
+            before=self.snapshot()
+            with messages() as errors:Gui.runCommand('Part_Section');settle()
+            self.assertTrue(any(kind in error for error in errors),errors)
+            self.assertEqual(self.snapshot(),before)
+        editing.edit_file(self.doc);self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
+        before=self.snapshot()
+        with messages() as errors:Gui.runCommand('Part_Section');settle()
+        self.assertTrue(any('Edit a component' in error for error in errors),errors)
+        self.assertEqual(self.snapshot(),before)
+
+    def test_section_command_ownership_undo_and_save(self):
+        a,b=self.section_shapes();ids={o.Name:o.ID for o in self.doc.Objects}
+        self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
+        with messages() as errors:Gui.runCommand('Part_Section');settle()
+        self.assertFalse(errors,errors)
+        result=next(o for o in self.doc.Objects if o.Name not in ids)
+        self.assertEqual(result.TypeId,'Part::Section');self.assertTrue(result.Shape.isValid())
+        self.assertAlmostEqual(result.Shape.Length,16)
+        self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+        self.assertEqual((result.Base,result.Tool),(a,b))
+        history=document.history(self.doc,self.child)
+        self.assertLess(history.index(a),history.index(result));self.assertLess(history.index(b),history.index(result))
+        self.assertFalse(a.Visibility);self.assertFalse(b.Visibility)
+        self.assertEqual(result.ViewObject.LineMaterial.DiffuseColor,a.ViewObject.ShapeAppearance[0].DiffuseColor)
+        name=result.Name;self.doc.undo();self.doc.recompute();settle()
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+        self.assertTrue(a.Visibility);self.assertTrue(b.Visibility)
+        self.doc.redo();self.doc.recompute();settle();result=self.doc.getObject(name)
+        document.validate(self.doc);document.save_document(self.doc,self.output/'Section.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':{o.Name:o.ID for o in self.doc.Objects},
+            'definition':self.child.Name,'result':name,'base':a.Name,'tool':b.Name}))
+
+    def test_section_dialog_apply_and_undo(self):
+        a,b=self.section_shapes();Gui.Selection.clearSelection();Gui.runCommand('Part_Boolean');settle()
+        self.choose('firstShape',a);self.choose('secondShape',b)
+        self.control(QtWidgets.QRadioButton,'sectionButton').setChecked(True)
+        ids={o.Name:o.ID for o in self.doc.Objects}
+        with messages() as errors:self.task_button(QtWidgets.QDialogButtonBox.Apply)
+        self.assertFalse(errors,errors)
+        result=next(o for o in self.doc.Objects if o.Name not in ids)
+        self.assertEqual(result.TypeId,'Part::Section');self.assertAlmostEqual(result.Shape.Length,16)
+        self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+        document.validate(self.doc);Gui.Control.closeDialog();settle()
+        self.doc.undo();self.doc.recompute();settle()
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+
+    def test_section_legacy_parenting_and_policy_bypass(self):
+        legacy=App.newDocument('LegacySection');owner=legacy.addObject('App::Part','LegacyPart')
+        a,b=self.section_shapes(owner);before=set(legacy.Objects)
+        self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
+        with patch.object(geometry,'require_part_boolean_inputs',side_effect=AssertionError('Legacy entered Plus')):
+            with messages() as errors:Gui.runCommand('Part_Section');settle()
+        self.assertFalse(errors,errors)
+        result=next(o for o in legacy.Objects if o not in before)
+        self.assertTrue(a in owner.Group and b in owner.Group)
+        self.assertNotIn(result,owner.Group)
+        self.assertAlmostEqual(result.Shape.Length,16)
+        self.assertEqual(result.ViewObject.LineMaterial.DiffuseColor,a.ViewObject.ShapeAppearance[0].DiffuseColor)
+
+
 
 def verify_fresh_process(output):
     folder=Path(output)/'test_commands_preserve_input_ownership_undo_history_and_save'
@@ -138,4 +218,19 @@ def verify_fresh_process(output):
             a.Height=6;b.Height=6;doc.recompute()
             assert result.Shape.isValid() and abs(result.Shape.Volume-case['volume']*1.5)<1e-7
         document.validate(doc)
+    finally:App.closeDocument(doc.Name)
+
+
+def verify_section_fresh_process(output):
+    folder=Path(output)/'test_section_command_ownership_undo_and_save'
+    expected=json.loads((folder/'expected.json').read_text())
+    doc=document.open_document(folder/'Section.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        owner=doc.getObject(expected['definition']);result=doc.getObject(expected['result'])
+        a=doc.getObject(expected['base']);b=doc.getObject(expected['tool'])
+        assert all(o in owner.Group for o in (a,b,result))
+        assert result.Base==a and result.Tool==b and abs(result.Shape.Length-16)<1e-7
+        a.Length=3;doc.recompute();document.validate(doc)
+        assert result.Shape.isValid() and abs(result.Shape.Length-14)<1e-7
     finally:App.closeDocument(doc.Name)
