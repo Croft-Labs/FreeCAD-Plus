@@ -57,8 +57,9 @@ dependency reclassification remain outside this increment. Full Group 1 is unfin
 profiles, fixtures, logs and launchers in `validation/g1_7b3f_references` were deleted
 after recording results. The useful native development build is retained.
 
-**Publication:** source milestone prepared for the authorized origin push. No owner
-package, desktop-shortcut update, release or deployment.
+**Publication:** source milestone `5212b219b3af00a0188417e21457ba286f353e5a`
+was pushed to origin `codex/freecad-1.1.4-baseline`; the exact remote revision was
+verified. No owner package, desktop-shortcut update, release or deployment.
 
 ## G1.7b3e native modeling intake - October 11, 2026
 

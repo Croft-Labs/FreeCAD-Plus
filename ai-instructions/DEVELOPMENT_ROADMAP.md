@@ -206,8 +206,9 @@ Point to Point.
   PartDesign axis/direction/plane collector checks original occurrence before native
   copy/reference handling. Batched native build, four focused cases and independent
   saved attachment/axis downstream checks passed. WORK_STATE records exact driver
-  corrections and limits. Publication pending. Stop; no owner delivery. Next: separate
-  Python attachment editor and remaining collectors, starting with Extrude up-to-face/shape.
+  corrections and limits. Source milestone `5212b219b3` pushed to origin; exact remote
+  revision verified. Stop; no owner delivery. Next: separate Python attachment editor
+  and remaining collectors, starting with Extrude up-to-face/shape.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 
