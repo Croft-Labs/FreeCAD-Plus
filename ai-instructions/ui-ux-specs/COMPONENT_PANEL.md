@@ -70,7 +70,10 @@ states the boundary. G1.7b3d adds the native File > Export preflight: a selectio
 containing unpromoted Reference/Excluded geometry is rejected before exporter options
 or writing. Mixed aggregates are refused rather than silently rewritten. This bounded
 integration does not establish filtering for every export format or modeling command;
-see the [export contract](../ARCHITECTURE.md#native-export-eligibility-g17b3d).
+see the [export contract](../ARCHITECTURE.md#native-export-eligibility-g17b3d). G1.7b3m preserves
+the original assembly occurrence when exporting a placed external member; the
+[source-context contract](../ARCHITECTURE.md#placed-external-export-context-g17b3m)
+records the integration boundary. This does not change the export workflow.
 G1.7b3e adds native PartDesign profile and Sketcher Projection/Intersection intake
 checks. G1.7b3f extends the same rules to native attachment and the shared picked
 axis/direction/plane collector; [Task Panel](TASK_PANEL.md#shared-task-patterns)

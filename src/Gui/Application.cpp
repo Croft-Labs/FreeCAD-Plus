@@ -933,32 +933,37 @@ void Application::exportTo(const char* FileName, const char* DocName, const char
 
     if (Module) {
         try {
-            std::vector<App::DocumentObject*> sel
-                = Gui::Selection().getObjectsOfType(App::DocumentObject::getClassTypeId(), DocName);
-            if (sel.empty()) {
-                App::Document* doc = App::GetApplication().getDocument(DocName);
-                sel = doc->getObjectsOfType(App::DocumentObject::getClassTypeId());
-            }
-
-            std::stringstream str;
-            std::set<App::DocumentObject*> unique_objs;
-            str << "__objs__ = []\n";
-            for (auto it : sel) {
-                if (unique_objs.insert(it).second) {
-                    str << "__objs__.append(FreeCAD.getDocument(\"" << DocName << "\").getObject(\""
-                        << it->getNameInDocument() << "\"))\n";
+            App::Document* exportDoc = App::GetApplication().getDocument(DocName);
+            bool component = false;
+            for (auto obj : exportDoc->getObjects()) {
+                if (obj->getPropertyByName("PlusFormat")) {
+                    component = true;
+                    break;
                 }
             }
 
-            // Component files retain occurrence restrictions even though exporters
-            // consume a resolved object list. Ordinary FreeCAD files keep their path.
-            App::Document* exportDoc = App::GetApplication().getDocument(DocName);
-            for (auto obj : exportDoc->getObjects()) {
-                if (obj->getPropertyByName("PlusFormat")) {
-                    str << "__import__('freecad_plus.geometry', fromlist=['require_export'])"
-                        << ".require_export(FreeCAD.getDocument(\"" << DocName
-                        << "\"), __objs__)\n";
-                    break;
+            std::stringstream str;
+            if (component) {
+                // External members resolve to their defining document, but their
+                // originating selection retains the assembly occurrence policy.
+                str << "__objs__ = __import__('freecad_plus.geometry', "
+                       "fromlist=['export_objects']).export_objects(FreeCAD.getDocument(\""
+                    << DocName << "\"))\n";
+            }
+            else {
+                auto sel = Gui::Selection().getObjectsOfType(
+                    App::DocumentObject::getClassTypeId(), DocName
+                );
+                if (sel.empty()) {
+                    sel = exportDoc->getObjectsOfType(App::DocumentObject::getClassTypeId());
+                }
+                std::set<App::DocumentObject*> unique_objs;
+                str << "__objs__ = []\n";
+                for (auto it : sel) {
+                    if (unique_objs.insert(it).second) {
+                        str << "__objs__.append(FreeCAD.getDocument(\"" << DocName
+                            << "\").getObject(\"" << it->getNameInDocument() << "\"))\n";
+                    }
                 }
             }
 

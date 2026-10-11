@@ -2,10 +2,62 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3l legacy Boolean conversion and its planned
-checks are complete.** Next: Boolean input eligibility, pending the owner's
-cross-component tool decision documented below. The independent legacy conversion
-gap is closed and publication is verified. Group 1 remains incomplete; stop here.
+Continue Group 1 only. **G1.7b3m placed external export context and its planned
+checks are complete.** Record publication and stop here. Group 1 remains incomplete.
+Next: Boolean input eligibility, pending the owner's cross-component tool decision.
+No answer was assumed; remaining direct exporters/view output are separate work.
+
+## G1.7b3m placed external export context - October 11, 2026
+
+**Authority/finding:** checked the latest relevant chat, "Fix component activation
+and part," plus the existing confirmed C09 source ownership and C10 Reference-use
+rules. No newer cross-component Boolean decision was present. The native export
+probe confirmed that an allowed placed external feature failed with "Select a
+component occurrence or an owned feature to export": the resolved source file
+had no original selection. Initial reproduction: one expected failing case,
+3.302 seconds, native exit 0, 8.22 seconds including startup/shutdown.
+
+**Implementation:** geometry.export_objects retains the originating assembly
+selection when a selected external feature resolves into its defining file.
+Native export dispatch obtains the resolved, deduplicated payload from that
+selection and applies the existing require_export checks before options/writing.
+Empty source selections never cause export of the source catalog. Ordinary legacy
+dispatch and source-owned unused editing retain their existing behavior. See the
+[contract](ARCHITECTURE.md#placed-external-export-context-g17b3m).
+
+**Build:** one FreeCADGui/FreeCADPlusScripts build passed in the retained
+`test-builds/freecad_1.1.4_context`, native exit 0, 205.56 seconds including
+configuration and generated resources. The final added test case was copied into
+the script payload before acceptance. No second native build, owner package or
+shortcut delivery.
+
+**Validation:** initial reproduction is recorded above. After the fix, three new
+external export cases and two affected existing regressions all passed in one run:
+5 passed, zero failures/errors/skips, 11.263 seconds; native exit 0, 16.17 seconds
+including startup/shutdown. Actual Std_Export, its dialog, exporter options/writer
+probe and BREP output exercised allowed external geometry, blocked Reference and
+mixed Excluded occurrences, exact object identities, unchanged visibility and Undo,
+source-only deduplication, no catalog fallback and bare foreign-member refusal.
+Existing active-owned/derived, external-unused and ordinary legacy export passed.
+Logs contain intentional eligibility rejection traces, the existing Std_Measure
+startup notice and the existing OwnedReferenceResult/Pad scope warning fixture.
+
+Independent fresh-process reopen of the assembly/source pair passed exact IDs in
+both files, allowed BREP export with valid expected geometry, and Reference rejection
+before writer/options. Native exit 0, 6.17 seconds including startup/shutdown.
+Runtime checks are complete; no further tests are required for this increment.
+
+**Limits:** whole-object native selection payload and a BREP-backed exporter probe;
+this does not certify every format, occurrence-placement semantics, direct Python
+writers, view-image/PDF output or arbitrary mixed-file export workflows. No modeling
+operations or ownership policies changed. Group 1 remains incomplete.
+
+**Final checks:** all 39 Plus Python scripts parse and match the development
+payload byte-for-byte; 121 local file links in changed Markdown resolve; whitespace
+passes. Task artifacts `g1_7b3m_external_export` are removed after recording these
+results; the useful native development build is retained. No further runtime work.
+
+**Publication:** source commit/push verification pending; no owner delivery.
 
 ## G1.7b3l legacy Boolean conversion - October 11, 2026
 

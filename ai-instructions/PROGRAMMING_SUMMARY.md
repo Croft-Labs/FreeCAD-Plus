@@ -46,7 +46,9 @@ reopen checks, including the Chamfer rejected-selection cleanup correction.
 G1.7b3k same-component native Boolean ownership, History and nested edit paths passed
 focused native and independent reopen checks. G1.7b3l extends isolated legacy
 conversion to those native Boolean-owned tool graphs; focused conversion and
-independent reopen/source-edit checks passed. Stop here. Next: Boolean input
+independent reopen/source-edit checks passed. G1.7b3m placed external export context
+passed native build, focused export and independent reopen checks. Stop here.
+WORK_STATE owns acceptance evidence. Next: Boolean input
 eligibility, pending the owner's cross-component tool decision. Direct exporter/view-output paths
 still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
@@ -104,6 +106,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/TestComponentReferences.py: native attachment/axis collector, atomic rejection, legacy bypass and downstream acceptance.
 - src/Mod/Part/Gui/TaskAttacher.cpp and src/Mod/PartDesign/Gui/ReferenceSelection.cpp: component input guards for native attachment/shared picked references.
 - src/Mod/FreeCADPlus/TestComponentModeling.py: native intake, transactions, legacy bypass and independent reopen checks.
+- src/Mod/FreeCADPlus/TestComponentExternalExport.py: original external export occurrences, source payload and independent reopen checks.
 - src/Mod/FreeCADPlus/TestComponentExport.py: native File > Export rejection, BREP/legacy/source-owned export and independent reopen.
 - src/Gui/Application.cpp and CommandDoc.cpp: component-only export preflight and external unused source-selection routing.
 - src/Mod/FreeCADPlus/freecad_plus/movement.py: parent-owned Translate/Rotate task, transient preview and atomic commit.

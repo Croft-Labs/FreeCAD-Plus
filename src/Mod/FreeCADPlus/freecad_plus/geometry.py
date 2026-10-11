@@ -89,6 +89,30 @@ def require_access(doc, obj, sub='', *, active=None, active_path=()):
     return current
 
 
+def export_objects(doc):
+    """Build the native resolved payload from its original component selection.
+
+    A placed external feature resolves into its defining file, while the selection
+    and saved occurrence restrictions belong to the visible assembly. Never replace
+    that selection with all objects in the source catalog.
+    """
+    import FreeCADGui as Gui
+
+    context = doc
+    if not Gui.Selection.getSelectionEx(doc.Name, 0):
+        gui = Gui.activeDocument()
+        if gui is not None and gui.Document != doc:
+            candidate = gui.Document
+            if any('PlusFormat' in obj.PropertiesList for obj in candidate.Objects):
+                resolved = Gui.Selection.getSelectionEx(candidate.Name)
+                if any(entry.Object.Document == doc for entry in resolved):
+                    context = candidate
+    objects = list(dict.fromkeys(entry.Object for entry in
+                                 Gui.Selection.getSelectionEx(context.Name)))
+    require_export(context, objects)
+    return objects
+
+
 def require_export(doc, objects):
     """Check the native File > Export payload before options or a writer run.
 

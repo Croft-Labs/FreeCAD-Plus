@@ -509,9 +509,10 @@ shape reads. WORK_STATE records runtime evidence and scope limits.
 ### Native export eligibility (G1.7b3d)
 
 `Gui::Application::exportTo` adds a preflight only for documents carrying PlusFormat.
-It calls `geometry.require_export` after constructing the native export payload and
-before importing the exporter or invoking its options/writer. Legacy documents keep
-their original dispatch. The recorded export command includes the same check.
+It calls geometry.export_objects to construct and validate the native export payload
+before importing the exporter or invoking its options/writer. That adapter calls
+geometry.require_export with the originating document. Legacy documents keep their
+original dispatch. The recorded export command includes the same check.
 
 The adapter checks unresolved native selection paths with the shared eligibility
 service, then verifies that every actual payload object was approved. This preserves
@@ -533,6 +534,23 @@ native modeling commands remain separate integration work. This is not universal
 Reference enforcement or a new export UI. TestComponentExport drives Std_Export,
 its actual dialogs and a writer probe backed by native BREP export; WORK_STATE owns
 build/runtime results and limitations.
+
+#### Placed external export context (G1.7b3m)
+
+Native selection can resolve an external member into its defining document while
+its unresolved occurrence remains selected in the assembly view. export_objects
+first checks selection in the export document; if absent, it uses the current
+component view only when its resolved selection includes an object from that export
+document. Native resolved selection supplies the actual deduplicated object payload;
+require_export checks every originating unresolved occurrence before options/writing.
+An allowed duplicate cannot mask a rejected Reference/Excluded occurrence.
+
+The adapter never substitutes the defining file's whole catalog when its own
+selection is empty. Source-owned unused Edit continues using its source selection
+and the existing isolation context. Bare foreign members still need an occurrence;
+no arbitrary source-link traversal, visibility change or new export geometry is
+introduced. File names/options and native writer semantics remain upstream behavior.
+Direct writer APIs and view-output paths remain outside this dispatch integration.
 
 ### Native modeling intake eligibility (G1.7b3e)
 

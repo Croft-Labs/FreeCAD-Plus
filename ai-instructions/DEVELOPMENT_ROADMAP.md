@@ -255,6 +255,12 @@ Point to Point.
   two affected regressions and independent two-file reopen/source-edit passed.
   WORK_STATE owns exact evidence and limits. Source milestone `82028b9c0a` pushed
   to origin; exact revision verified. No owner delivery; stop here.
+- [ X ] **G1.7b3m - Placed external export context.** Native dispatch retains
+  originating assembly occurrences when external members resolve into their source
+  file. Reference/Excluded checks precede exporter options/writing; source catalog
+  fallback is refused. One native build, three new export cases, two affected
+  regressions and independent assembly/source reopen passed. WORK_STATE owns exact
+  evidence and limits. No owner delivery; stop here.
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

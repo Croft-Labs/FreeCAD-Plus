@@ -611,3 +611,15 @@ process against the saved fixtures to check persisted ownership, placements,
 expressions and downstream source edits. Record durable results and remove only the
 task validation directory. Passing these bounded checks closes this increment;
 additional Boolean modes, deeper nesting and input policy are separate work.
+
+## Placed external export validation
+
+After changing native export dispatch, build FreeCADGui and FreeCADPlusScripts once.
+Run TestComponentExternalExport plus the affected owned/external-unused and legacy
+cases in TestComponentExport. The native Std_Export dialog is handled with the same
+bounded helper and writer probe; check actual BREP output, rejected writer/options,
+mixed shared occurrences and source-only payload/no catalog fallback. Then call
+TestComponentExternalExport.verify_fresh_process in a separate FreeCAD process to
+reopen the saved assembly/source pair and exercise allowed and rejected exports.
+Record results before removing the exact task validation directory. Do not repeat
+completed unrelated modeling/Boolean suites for this export-only change.
