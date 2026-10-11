@@ -584,6 +584,32 @@ reference reclassification remain outside this increment. No new promotion/copy
 workflow is authorized. TestComponentReferences owns focused native acceptance;
 WORK_STATE owns the actual build, runtime and publication evidence.
 
+### Python attachment and Extrude face/shape intake (G1.7b3g)
+
+The separate Part AttachmentEditor applies the same component policy before adding
+an attachment extension or opening a transaction when taking initial selection.
+Picked references are checked before shortening their original occurrence paths.
+Parsed text references are checked as a complete batch before replacing the attach
+engine's references or calculating a preview. Apply and OK recheck component input
+text, so forbidden text cannot commit an earlier valid preview; rejection preserves
+the open task/transaction. Component-task Cancel explicitly closes the application
+transaction before display restoration, including the lazy empty transaction left
+by Apply, so cleanup cannot create an extra Undo entry. Ordinary legacy files do not
+import the Plus policy and retain their existing confirmation/transaction behavior.
+
+TaskExtrudeParameters checks original occurrences for up-to-face, up-to-shape and
+selected shape-face inputs on either side before mutation, selection clearing or
+picker-mode changes. Typed up-to-face object ownership is checked before the native
+setUpToFace helper, which itself writes and recomputes the feature. Rejection leaves
+the prior property/field metadata and preview in place and uses existing notifications.
+Native face parsing, geometry validation and Pad/Pocket semantics remain unchanged.
+
+Remaining work includes Loft/Pipe section collectors, other feature inputs, stored
+combo references, property-editor/raw Python writes, direct exporter/view-output
+routes and existing-dependency reclassification. This is not universal enforcement
+or a new attachment/Extrude workflow. TestComponentInputEditors owns the focused
+acceptance; WORK_STATE records runtime coverage separately from this contract.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

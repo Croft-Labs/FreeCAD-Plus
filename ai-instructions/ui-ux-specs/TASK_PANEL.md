@@ -21,9 +21,11 @@ Projection/Intersection reference admission using the shared component policy. T
 native editors and geometry rules remain the baseline. G1.7b3f extends this to native
 attachment inputs (picked, initial batch and typed) and the shared PartDesign picked
 axis/direction/plane collector. A rejected input keeps the existing reference and
-editor transaction. The separate Python attachment editor and other task collectors
-remain unfinished; see the [intake contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e)
-and [attachment/reference boundary](../ARCHITECTURE.md#attachment-and-shared-task-reference-intake-g17b3f).
+editor transaction. G1.7b3g adds the separate attachment editor's input/preview and
+Apply/OK checks, plus Extrude up-to-face/shape intake. Other collectors remain
+unfinished; see the [intake contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e),
+[attachment/reference boundary](../ARCHITECTURE.md#attachment-and-shared-task-reference-intake-g17b3f)
+and [attachment/Extrude boundary](../ARCHITECTURE.md#python-attachment-and-extrude-faceshape-intake-g17b3g).
 
 ### Layers
 

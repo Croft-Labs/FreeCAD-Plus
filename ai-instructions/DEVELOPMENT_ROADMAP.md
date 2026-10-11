@@ -207,8 +207,16 @@ Point to Point.
   copy/reference handling. Batched native build, four focused cases and independent
   saved attachment/axis downstream checks passed. WORK_STATE records exact driver
   corrections and limits. Source milestone `5212b219b3` pushed to origin; exact remote
-  revision verified. Stop; no owner delivery. Next: separate Python attachment editor
-  and remaining collectors, starting with Extrude up-to-face/shape.
+  revision verified. No owner delivery.
+- [ X ] **G1.7b3g — Separate attachment and Extrude face/shape inputs.** Python
+  attachment guards initial/picked/typed references, preview and Apply/OK; component
+  Cancel closes Apply's lazy transaction before restoring display state. Native
+  Extrude guards both sides' face/shape picks and typed face ownership before mutation.
+  Batched native build, five focused cases across bounded corrective runs and
+  independent saved-file/downstream checks passed. WORK_STATE records the actual
+  transaction fix, driver correction and retained native link-scope warning.
+  Publication pending. Stop; no owner delivery. Next: remaining Loft/Pipe section/
+  path collectors. Full G1.7b3 and Group 1 remain incomplete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

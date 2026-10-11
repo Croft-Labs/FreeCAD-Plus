@@ -531,3 +531,16 @@ Run only affected cases after a correction; do not repeat the prior modeling/exp
 suites. Parse/compare the 32 Python payload files. Record exact coverage and limits,
 then delete this increment's temporary validation directory. These native checks do
 not validate the separate Python AttachmentEditor or every task reference control.
+
+## Separate attachment and Extrude input validation
+
+Batch PartDesignGui and PartScripts, then synchronize FreeCADPlusScripts. The changed
+AttachmentEditor Python file is part of the Part payload, not the Plus module; compare
+it separately alongside all 33 Plus Python files. TestComponentInputEditors drives
+the Python task's real selection observer, preview and Apply/OK/Cancel controls and
+native Pad face/shape collectors. Explicitly select Flat Face in the Python editor;
+it retains Deactivated until the user chooses a mode. Check one-step Undo/Redo after
+Apply then Cancel, including lazy transaction cleanup. Cover original occurrences, typed refusal before
+mutation, both shape sides, legacy bypass, Undo/Redo and independent saved-file
+reopen with downstream attachment placement/Pad geometry changes. Rerun only affected
+cases after corrections, record actual boundaries, remove task artifacts and stop.

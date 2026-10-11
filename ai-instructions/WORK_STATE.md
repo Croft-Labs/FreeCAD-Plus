@@ -2,12 +2,68 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3f native attachment and shared picked references,
-including their planned checks, are complete.** Stop here; do not repeat passing
-suites or start another collector. Next: the separate Python attachment editor and
-remaining task reference collectors (starting with Extrude up-to-face/shape).
-Group 1/G1.7b3 remain incomplete. Search latest owner conversations if design needs
-clarification; right-click access does not authorize new operation/promotion workflows.
+Continue Group 1 only. **G1.7b3g separate attachment and Extrude face/shape inputs
+and their planned checks are complete.** Stop here; do not repeat passing suites
+or start another operation. Next: remaining Loft/Pipe section/path reference collectors.
+Group 1/G1.7b3 remain incomplete. Search latest owner conversations if a new design
+choice needs definition; right-click access does not authorize new operation workflows.
+
+## G1.7b3g separate attachment and Extrude inputs - October 11, 2026
+
+**Implementation:** component checks before Python attachment initial mutations,
+original picked-path shortening, parsed-reference preview and Apply/OK; native
+Extrude guards both sides' face/shape picks and typed face ownership before the
+mutating native parser. Rejection preserves previous references/preview. Component
+attachment Cancel now closes Apply's lazy application transaction before display
+restoration, preventing a cleanup-only Undo entry. Legacy files retain their previous
+confirmation/transaction path. See the
+[contract](ARCHITECTURE.md#python-attachment-and-extrude-faceshape-intake-g17b3g).
+Existing C10/U069 rules govern; no further design choice was needed.
+
+**Build:** batched PartDesignGui/PartScripts native build passed in the retained
+`test-builds/freecad_1.1.4_context` tree. FreeCADPlusScripts/PartScripts synchronization
+passed. The later cancellation correction was Python-only and copied to the Part
+payload; no additional native build was needed. No owner package/shortcut delivery.
+
+**Validation:** initial five-case run: 4 passed, 1 failure, zero errors/skips, native
+exit 0 (15.505 seconds). Native Extrude face/typed input, both sides' shape/face lists,
+legacy Python attachment/Extrude bypass and initial mixed-batch rejection all passed.
+The attachment Apply/Cancel case failed one-step Undo. One affected-case diagnostic
+showed Apply left a lazy transaction with no document changes; document-only abort
+could not close it before display restoration. The component-specific application
+transaction close fixed it; that case passed (2.810 seconds). The four passing cases
+were not repeated.
+
+The first independent reopen then found the driver had left the Python editor in
+Deactivated mode. It now explicitly selects Flat Face and asserts actual preview
+placement before testing rejection and confirmation. Final affected-case run passed
+(1 case, 2.870 seconds, zero failures/errors/skips, native exit 0). Independent fresh
+reopen of both fixtures passed exact IDs/references, attachment following changed
+source height and valid up-to-face Pad volume after moving its limit, native exit 0.
+
+Checks drive actual selection observers, Qt text/control signals and native editors.
+They prove no initial transaction/object mutation on mixed rejection; original
+occurrence distinctions; typed rejection before property/metadata or preview change;
+blocked Python Apply/OK retaining the task; accepted Apply, Cancel and one-step
+Undo/Redo; and native legacy bypass. Both Extrude shape sides are checked for input
+admission and cancellation, not successful two-sided machining geometry. No previous
+modeling/export/native attachment suites were repeated.
+
+**Limits:** the native Pad still reports an out-of-Body link-scope warning for the
+fixture's owned limit box outside its backend Body (also seen in the ordinary legacy
+fixture). Measured geometry/reopen/source updates pass; this increment does not
+resolve that native scope warning or certify all cross-Body dependency handling.
+Loft/Pipe and other collectors, stored combo references, property-editor/raw Python
+writes, existing-dependency reclassification and direct exporter/view-output paths
+remain unfinished. No rendering/performance change is claimed; Group 1 is incomplete.
+
+**Final checks:** 33 Plus Python scripts and the changed Part attachment script
+parse and match the retained development payload byte-for-byte; 141 local links
+in changed Markdown resolve; whitespace checks pass. Task validation artifacts
+`g1_7b3g_inputs` were deleted after recording these results; the development build
+is retained. No further runtime work is required for this increment.
+
+**Publication:** prepared for the authorized origin milestone push.
 
 ## G1.7b3f attachment and shared task references - October 11, 2026
 

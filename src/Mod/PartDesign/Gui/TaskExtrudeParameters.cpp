@@ -28,6 +28,8 @@
 #include <Base/Tools.h>
 #include <Base/UnitsApi.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentGeometry.h>
+#include <Gui/Notifications.h>
 #include <Gui/Tools.h>
 #include <Gui/Inventor/Draggers/Gizmo.h>
 #include <Gui/Inventor/Draggers/SoLinearDragger.h>
@@ -443,6 +445,22 @@ void TaskExtrudeParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
     auto& sideCtrl = getSideController(activeSelectionSide);
 
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
+        if (selectionMode == SelectFace || selectionMode == SelectShape
+            || selectionMode == SelectShapeFaces) {
+            const auto* original = &msg;
+            while (original->pOriginalMsg) {
+                original = original->pOriginalMsg;
+            }
+            const auto inputError = Gui::componentGeometryError(
+                getObject(), std::vector<App::SubObjectT> {original->Object}
+            );
+            if (!inputError.empty()) {
+                Gui::NotifyError(getViewObject<ViewProvider>(),
+                                 QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                 inputError.c_str());
+                return;  // Preserve the current reference, preview and picker mode.
+            }
+        }
         switch (selectionMode) {
             case SelectShape:
                 selectedShape(msg, sideCtrl);
@@ -1114,6 +1132,17 @@ void TaskExtrudeParameters::changeFaceName(QLineEdit* lineEdit, const QString& t
         if (name.isValid()) {
             parts[0] = name.toString();
             QString uptoface = parts.join(QStringLiteral(":"));
+            auto ref = getAppDocument()->getObject(name.toByteArray().constData());
+            // setUpToFace mutates/recomputes the feature, so check ownership first.
+            const auto inputError = Gui::componentGeometryError(
+                getObject(), std::vector<App::SubObjectT> {{ref, ""}}
+            );
+            if (!inputError.empty()) {
+                Gui::NotifyError(getViewObject<ViewProvider>(),
+                                 QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                 inputError.c_str());
+                return;
+            }
             lineEdit->setProperty("FeatureName", name);
             lineEdit->setProperty("FaceName", setUpToFace(uptoface));
         }

@@ -35,9 +35,10 @@ options/writing and fixes source selection for external unused component exports
 G1.7b3e adds native PartDesign profile and Sketcher Projection/Intersection input
 eligibility. Its focused native tests and independent reopen/source-update checks
 passed. G1.7b3f native attachment and shared picked axis/direction/plane references
-also passed focused native and independent reopen/downstream checks. Stop here.
-Next: the separate Python attachment editor and remaining task reference collectors,
-starting with Extrude up-to-face/shape. Direct exporter/view-output paths still need
+also passed focused native and independent reopen/downstream checks. G1.7b3g covers
+the separate attachment editor and Extrude face/shape intake, with validated Apply/
+Cancel cleanup and independent downstream checks. Stop here. Next: remaining Loft/
+Pipe section/path reference collectors. Direct exporter/view-output paths still need
 integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
@@ -82,6 +83,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/geometry.py: occurrence-aware Reference/Excluded geometry eligibility, independent of display/selection.
 - src/Mod/FreeCADPlus/TestComponentEligibility.py: consumer guard, shared/external ownership and fresh-process acceptance.
 - src/Gui/ComponentGeometry.h: shared native modeling eligibility bridge for PartDesign/Sketcher.
+- src/Mod/FreeCADPlus/TestComponentInputEditors.py: Python attachment/Extrude input acceptance, confirmation/Undo and independent downstream checks.
+- src/Mod/Part/AttachmentEditor/TaskAttachmentEditor.py and src/Mod/PartDesign/Gui/TaskExtrudeParameters.cpp: component admission for remaining attachment and Extrude face/shape inputs.
 - src/Mod/FreeCADPlus/TestComponentReferences.py: native attachment/axis collector, atomic rejection, legacy bypass and downstream acceptance.
 - src/Mod/Part/Gui/TaskAttacher.cpp and src/Mod/PartDesign/Gui/ReferenceSelection.cpp: component input guards for native attachment/shared picked references.
 - src/Mod/FreeCADPlus/TestComponentModeling.py: native intake, transactions, legacy bypass and independent reopen checks.

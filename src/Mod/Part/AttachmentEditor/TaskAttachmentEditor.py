@@ -145,6 +145,14 @@ def GetSelectionAsLinkSubList():
     return result
 
 
+def _component_inputs(obj, references):
+    # Ordinary FreeCAD files must not import or depend on the Plus module.
+    if any("PlusFormat" in item.PropertiesList for item in obj.Document.Objects):
+        from freecad_plus.geometry import require_modeling_inputs
+
+        require_modeling_inputs(obj, references)
+
+
 def PlacementsFuzzyCompare(plm1, plm2):
     pos_eq = (plm1.Base - plm2.Base).Length < 1e-7  # 1e-7 is OCC's Precision::Confusion
 
@@ -222,6 +230,11 @@ class AttachmentEditorTaskPanel(FrozenClass):
         self.callback_Apply = callback_Apply
 
         self.obj = obj_to_attach
+        initial_refs = []
+        if take_selection and not getattr(self.obj, "AttachmentSupport", ()):
+            initial_refs = [ref for ref in GetSelectionAsLinkSubList() if ref[0] is not self.obj]
+        # Refuse before adding an extension or opening an edit transaction.
+        _component_inputs(self.obj, initial_refs)
         try:
             if not self.obj.hasExtension("Part::AttachExtension"):
                 self.obj.addExtension("Part::AttachExtensionPython")
@@ -357,11 +370,7 @@ class AttachmentEditorTaskPanel(FrozenClass):
         self.readParameters()
 
         if len(self.attacher.References) == 0 and take_selection:
-            sel = GetSelectionAsLinkSubList()
-            for i in range(len(sel))[::-1]:
-                if sel[i][0] is obj_to_attach:
-                    sel.pop(i)
-            self.attacher.References = sel
+            self.attacher.References = initial_refs
             # need to update textboxes
             self.fillAllRefLines()
 
@@ -393,6 +402,8 @@ class AttachmentEditorTaskPanel(FrozenClass):
 
     def clicked(self, button):
         if button == QtGui.QDialogButtonBox.Apply:
+            if not self.validateComponentReferences():
+                return
             if self.obj_is_attachable:
                 self.writeParameters()
             if self.create_transaction:
@@ -407,6 +418,8 @@ class AttachmentEditorTaskPanel(FrozenClass):
                 self.callback_Apply()
 
     def accept(self):
+        if not self.validateComponentReferences():
+            return False
         if self.obj_is_attachable:
             self.writeParameters()
         if self.create_transaction:
@@ -418,7 +431,13 @@ class AttachmentEditorTaskPanel(FrozenClass):
 
     def reject(self):
         if self.create_transaction:
-            self.obj.Document.abortTransaction()
+            if any("PlusFormat" in item.PropertiesList for item in self.obj.Document.Objects):
+                # Apply opens a lazy transaction that may have no document changes.
+                # Document.abortTransaction() cannot close that empty transaction;
+                # close it before TempoVis restores display properties into it.
+                App.closeActiveTransaction(True)
+            else:
+                self.obj.Document.abortTransaction()
         self.cleanUp()
         Gui.Control.closeDialog()
         if self.callback_Cancel:
@@ -429,6 +448,11 @@ class AttachmentEditorTaskPanel(FrozenClass):
         i = self.i_active_ref
         if i < 0:
             # not selecting any reference
+            return
+        try:
+            _component_inputs(self.obj, [(App.getDocument(docname).getObject(objname), subname)])
+        except ValueError as error:
+            self.form.message.setText(str(error))
             return
         if i > 0 and self.auto_next:
             prevref = LinkFromStr(self.refLines[i - 1].text(), self.obj.Document)
@@ -591,9 +615,19 @@ class AttachmentEditorTaskPanel(FrozenClass):
             self.block = old_block
 
     def parseAllRefLines(self):
-        self.attacher.References = RefsFromStrList(
-            [le.text() for le in self.refLines], self.obj.Document
-        )
+        references = RefsFromStrList([le.text() for le in self.refLines], self.obj.Document)
+        _component_inputs(self.obj, references)
+        self.attacher.References = references
+
+    def validateComponentReferences(self):
+        # Apply/OK must not commit the last valid preview while forbidden text remains.
+        if any("PlusFormat" in item.PropertiesList for item in self.obj.Document.Objects):
+            try:
+                self.parseAllRefLines()
+            except Exception as error:
+                self.form.message.setText(str(error))
+                return False
+        return True
 
     def updateListOfModes(self):
         """needs suggestor to have been called, and assigned to self.last_sugr"""
