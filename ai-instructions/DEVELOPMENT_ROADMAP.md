@@ -185,6 +185,14 @@ Point to Point.
   Source milestone `10ae708413` pushed to origin; exact remote revision verified.
   Stop here; no new operation or owner delivery. Remaining native modeling/export
   consumers still need integration; full G1.7b3 is not complete.
+- [ X ] **G1.7b3d — Native export eligibility.** File > Export validates unresolved
+  occurrences and its actual object payload before exporter options/writing. The
+  existing source-owned unused Edit context supplies external export selections.
+  Native build, four actual Export cases, five shared-policy regressions and an
+  independent reopen passed; WORK_STATE records initial failures and corrections.
+  Stop here; no owner delivery. Next: native modeling input consumers, starting
+  with Sketch/PartDesign reference intake. Direct exporter and view-output routes
+  remain separate integration work; full G1.7b3 is unfinished.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

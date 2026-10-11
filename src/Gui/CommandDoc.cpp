@@ -429,6 +429,18 @@ void StdCmdExport::activated(int iMsg)
 
     auto selection = Gui::Selection().getObjectsOfType(App::DocumentObject::getClassTypeId());
     if (selection.empty()) {
+        auto guiDoc = getActiveGuiDocument();
+        auto view = guiDoc ? qobject_cast<View3DInventor*>(guiDoc->getActiveView()) : nullptr;
+        auto source = view ? view->getActiveObject<App::DocumentObject*>("ExternalEditContext")
+                           : nullptr;
+        if (source) {
+            // The visible assembly tab can edit a source-owned unused component.
+            selection = Gui::Selection().getObjectsOfType(
+                App::DocumentObject::getClassTypeId(), source->getDocument()->getName()
+            );
+        }
+    }
+    if (selection.empty()) {
         QMessageBox::warning(
             Gui::getMainWindow(),
             QCoreApplication::translate("StdCmdExport", "No selection"),

@@ -66,7 +66,11 @@ Bodies Only content filtering is validated in placed and unused development view
 see the [technical contract](../ARCHITECTURE.md#bodies-only-content-filtering-g17b3b).
 G1.7b3c adds the shared eligibility guard and applies it to existing Move Components
 reference reads; navigation/Edit remain available. The [technical contract](../ARCHITECTURE.md#geometry-eligibility-g17b3c)
-states the boundary: remaining native modeling/export consumers are not yet guarded.
+states the boundary. G1.7b3d adds the native File > Export preflight: a selection
+containing unpromoted Reference/Excluded geometry is rejected before exporter options
+or writing. Mixed aggregates are refused rather than silently rewritten. This bounded
+integration does not establish filtering for every export format or modeling command;
+see the [export contract](../ARCHITECTURE.md#native-export-eligibility-g17b3d).
 Full Reference-use enforcement remains pending. The descendant interpretation is recorded
 in the [Part Type source recheck](EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
 Saved metadata alone does not establish the full behavior below. WORK_STATE owns validation.

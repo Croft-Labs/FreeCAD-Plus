@@ -950,6 +950,18 @@ void Application::exportTo(const char* FileName, const char* DocName, const char
                 }
             }
 
+            // Component files retain occurrence restrictions even though exporters
+            // consume a resolved object list. Ordinary FreeCAD files keep their path.
+            App::Document* exportDoc = App::GetApplication().getDocument(DocName);
+            for (auto obj : exportDoc->getObjects()) {
+                if (obj->getPropertyByName("PlusFormat")) {
+                    str << "__import__('freecad_plus.geometry', fromlist=['require_export'])"
+                        << ".require_export(FreeCAD.getDocument(\"" << DocName
+                        << "\"), __objs__)\n";
+                    break;
+                }
+            }
+
             // check for additional export options
             str << "import " << Module << '\n';
             str << "if hasattr(" << Module << ", \"exportOptions\"):\n"

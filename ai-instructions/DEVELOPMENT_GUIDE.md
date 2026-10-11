@@ -476,3 +476,20 @@ TestComponentEligibility.verify_fresh_process(output_directory) for exact saved
 identity/visibility and eligibility. Record initial failures and final results in
 WORK_STATE, remove task artifacts, and stop. Remaining native consumer integration
 and owner-build delivery are separate gates.
+
+## Native export eligibility validation
+
+Build FreeCADGui and FreeCADPlusScripts together in the retained development tree.
+Run TestComponentExport with TestComponentEligibility for initial integration;
+after a correction rerun only affected cases. TestComponentExport invokes Std_Export
+through a bounded Qt dialog handler and an exporter probe backed by Part.export
+BREP writing. The handler explicitly sets the fileNameEdit text; selectFile alone
+can retain FreeCAD's suggested name in the already-open native wrapper.
+
+Cover Reference/Excluded rejection before options/writer calls, shared eligible
+occurrences, whole-file/aggregate and mixed selections, owned derived features,
+external unused source routing and legacy export bypass. Verify actual BREP geometry,
+not just callback counts. Independently run TestComponentExport.verify_fresh_process
+against its saved fixture. Parse/compare all 30 Python payload files, record results
+and remove validation artifacts. Do not repeat passed unrelated suites or begin the
+next consumer integration after these checks pass. Owner delivery is a separate gate.

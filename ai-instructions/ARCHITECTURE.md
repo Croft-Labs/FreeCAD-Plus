@@ -506,6 +506,34 @@ external unused ownership, no foreign-member bypass, owned source-linked feature
 Undo/Redo, exact identity/visibility persistence and actual consumer rejection before
 shape reads. WORK_STATE records runtime evidence and scope limits.
 
+### Native export eligibility (G1.7b3d)
+
+`Gui::Application::exportTo` adds a preflight only for documents carrying PlusFormat.
+It calls `geometry.require_export` after constructing the native export payload and
+before importing the exporter or invoking its options/writer. Legacy documents keep
+their original dispatch. The recorded export command includes the same check.
+
+The adapter checks unresolved native selection paths with the shared eligibility
+service, then verifies that every actual payload object was approved. This preserves
+shared-occurrence distinctions that the resolved export list otherwise loses.
+Source-owned unused editing uses the originating assembly view. Std_Export falls
+back to that view's ExternalEditContext source selection only when its ordinary
+active-document selection is empty; legacy selection routing remains unchanged.
+Whole-file export
+uses saved restrictions without the active branch's temporary Edit override. With no
+matching selection, refuse the native fallback that would export all document objects,
+including unused catalog entries. Save/Save As and native archive persistence do not
+pass through this geometry-export boundary and continue retaining Reference sources.
+
+This increment refuses a selected aggregate containing forbidden geometry; it does
+not silently strip child objects or create a replacement compound. Bare catalog or
+foreign members still need an unambiguous editing/occurrence context. Direct calls to
+individual exporter modules (including Python calls), view-image/PDF export paths and
+native modeling commands remain separate integration work. This is not universal
+Reference enforcement or a new export UI. TestComponentExport drives Std_Export,
+its actual dialogs and a writer probe backed by native BREP export; WORK_STATE owns
+build/runtime results and limitations.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

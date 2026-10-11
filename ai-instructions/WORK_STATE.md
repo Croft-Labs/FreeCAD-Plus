@@ -2,12 +2,62 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3c shared geometry eligibility and its planned checks
-are complete.** Stop at this increment; do not repeat completed tests or begin
-another operation. Group 1/G1.7b3 remain incomplete. Next: connect the shared
-eligibility policy to remaining native modeling/export consumers. Search the latest
+Continue Group 1 only. **G1.7b3d native File > Export eligibility and its planned
+checks are complete.** Stop at this increment; do not repeat passed tests or begin
+another operation. Group 1/G1.7b3 remain incomplete. Next: native modeling input
+consumers, starting with Sketch/PartDesign reference intake. Direct exporter calls
+and view-output routes also remain outside the completed boundary. Search the latest
 relevant owner conversations before treating design details as undefined. Right-click
 access does not authorize an Add Reference Feature operation as Component Panel work.
+
+## G1.7b3d native export eligibility - October 11, 2026
+
+**Implementation:** native File > Export now checks component occurrence eligibility
+before exporter import/options/writing. It verifies both unresolved selections and
+the resolved object payload, rejects forbidden aggregates/mixed selections and
+refuses the all-document catalog fallback. Whole-file export cannot inherit a
+branch's temporary Edit override. Legacy files keep the original export dispatch.
+The native command also recognizes the existing ExternalEditContext source selection
+when editing an unused external component from the assembly tab. Document Save keeps
+Reference source content. See the [export contract](ARCHITECTURE.md#native-export-eligibility-g17b3d).
+
+**Owner source:** rechecked the original U068/U069 user messages in **Fix component
+activation and part**, October 10 10:52/10:56 EDT. The later explicit prohibition on
+using unpromoted Reference geometry governs. No new operation workflow was inferred.
+
+**Build:** FreeCADGui and FreeCADPlusScripts passed in the retained native development
+tree, including a corrective build for external unused selection routing. The initial
+launcher quoting issue occurred before compilation and was corrected. Native patches
+are limited to export dispatch/routing; no owner package or shortcut delivery.
+
+**Validation:** initial 9-case export/shared-eligibility run: 6 passed, 1 failure,
+2 errors, zero skips, native exit 0 (15.122 seconds). All five existing eligibility
+cases and aggregate rejection passed. Two errors were the test file dialog retaining
+FreeCAD's suggested filename; explicitly setting fileNameEdit fixed the driver.
+The remaining failure exposed native Export ignoring the source selection while
+an assembly tab edited an unused external component; the context routing fix above
+resolved it. Final affected run: all 4 export cases passed, zero failures/errors/skips,
+native exit 0 (8.570 seconds). The passing five shared-policy cases were not repeated.
+
+Checks drive Std_Export's actual dialogs and prove rejection before exporter options
+or writer calls, successful native BREP output/volume, shared occurrence distinctions,
+owned source-linked results, source-owned unused geometry, exact identity/visibility,
+no new Undo entries, payload mismatch refusal and legacy export bypass. Independent
+fresh-process reopen passed blocked/allowed native exports, actual BREP geometry and
+exact saved identities/native visibility, native exit 0. All 30 Python files parse
+and byte-match the development payload. No viewport rendering change or new display
+performance claim.
+
+**Limits:** aggregates containing forbidden geometry are refused, not filtered into
+replacement geometry. Direct exporter-module/Python calls, view-image/PDF paths and
+native modeling consumers are not universally guarded. Full G1.7b3 and Group 1
+acceptance remain unfinished. Add Reference Feature is separate operation work.
+
+**Final checks:** all 30 Python files parse and match the native payload; 108
+local documentation link targets resolve and diff whitespace checks pass. Task
+profiles, CAD/BREP fixtures, logs and launcher files under
+`validation/g1_7b3d_export` were deleted after recording the results. The useful
+native development build is retained.
 
 ## G1.7b3c shared geometry eligibility - October 11, 2026
 

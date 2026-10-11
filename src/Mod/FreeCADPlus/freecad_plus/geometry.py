@@ -104,3 +104,50 @@ def require_access(doc, obj, sub='', *, active=None, active_path=()):
     if current.TypeId == 'App::Part':
         check_aggregate(current, route)
     return current
+
+
+def require_export(doc, objects):
+    """Check the native File > Export payload before options or a writer run.
+
+    Preserve unresolved occurrence paths before the exporter's object-only list
+    loses them. Never infer an occurrence from a shared definition's first use.
+    Whole-file fallback would include unused catalog/source objects, so require
+    an explicit selection in component files. Ordinary files do not call here.
+    """
+    import FreeCAD as App
+    import FreeCADGui as Gui
+    from . import isolation
+
+    root = document.validate(doc)
+    selections = Gui.Selection.getSelectionEx(doc.Name, 0)
+    if not selections:
+        raise ValueError('Select a component occurrence or an owned feature to export')
+    context_doc, active, path = doc, None, ()
+    gui = Gui.activeDocument()
+    if gui is not None:
+        view = gui.activeView()
+        unused = isolation.current(view)
+        if unused is not None and unused.definition().Document == doc:
+            context_doc, active = unused.doc, unused.definition()
+        elif App.ActiveDocument == doc:
+            resolved, parent, sub = view.getActiveObject('PlusEdit', False)
+            if parent == root and sub:
+                active, path = hierarchy.resolve(doc, sub.rstrip('.').split('.'))
+                if active != resolved:
+                    raise ValueError('The component Edit context changed')
+
+    approved = set()
+    for entry in selections:
+        for sub in entry.SubElementNames or ('',):
+            # Exporting the file must respect every saved exclusion, even when
+            # its currently edited branch has a temporary display override.
+            whole_file = entry.Object == root and not sub
+            result = require_access(context_doc, entry.Object, sub,
+                                    active=None if whole_file else active,
+                                    active_path=() if whole_file else path)
+            approved.add(result)
+            approved.add(entry.Object.getSubObject(sub, 1) if sub else entry.Object)
+    # Check the actual object list as well as its originating selections. A
+    # mismatched/fallback catalog payload must not acquire permission by accident.
+    if any(obj is None or obj not in approved for obj in objects):
+        raise ValueError('The export selection changed; select the component geometry again')
