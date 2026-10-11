@@ -510,6 +510,35 @@ class ComponentPanel(QtWidgets.QDockWidget):
         preferred = self._state(self._binding)['last'].get(row.ref)
         return preferred if preferred in options else (options[0] if options else ())
 
+    def rename_row(self, row):
+        self._clipboard_guard()
+        if Gui.Control.activeDialog():
+            raise ValueError('Finish the current task first')
+        def target():
+            doc, obj = self._checked(row)
+            if (row.kind not in ('model', 'occurrence', 'unused') or
+                    obj not in external.available_definitions(document.validate(doc))):
+                raise ValueError('Choose an available component to rename')
+            return obj
+        definition = target()
+        binding, previous = self._binding, definition.Label
+        label, accepted = QtWidgets.QInputDialog.getText(
+            self, 'Rename Component', 'Component name (all instances):',
+            QtWidgets.QLineEdit.Normal, previous)
+        if not accepted:
+            return False
+        self._clipboard_guard()
+        if Gui.Control.activeDialog():
+            raise ValueError('Finish the current task first')
+        if self._current() != binding:
+            raise ValueError('The active file tab changed; reopen Rename')
+        target()
+        if definition.Label != previous:
+            raise ValueError('The component name changed; reopen Rename')
+        changed = hierarchy.rename_definition(definition, label)
+        self.refresh()
+        return changed
+
     def open_row(self, row):
         doc, obj = self._checked(row)
         if row.kind not in ('model', 'occurrence', 'unused'):
@@ -601,6 +630,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         actions = {menu.addAction('Edit'): self.edit_row}
         if row.kind != 'file':
             actions[menu.addAction('Open in new window')] = self.open_row
+            actions[menu.addAction('Rename')] = self.rename_row
         if tree == self.trees[1]:
             selected = tuple(entry.data(0, _ROLE) for entry in tree.selectedItems()) if item.isSelected() else (row,)
             menu.addSeparator()

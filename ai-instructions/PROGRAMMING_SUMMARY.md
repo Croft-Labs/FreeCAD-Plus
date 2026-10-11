@@ -53,7 +53,8 @@ eligibility, pending the owner's cross-component tool decision. Direct exporter/
 still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
-The complete G1.6 panel is unfinished.
+G1.6c5 shared definition Rename passed native menu/dialog, source-owned Undo and
+independent reopen checks. The complete G1.6 panel is unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
@@ -88,6 +89,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/external.py: native import catalogs, file identity/preflight, defining-file saves and independent copies.
 - src/Mod/FreeCADPlus/TestExternalDefinitions.py: G1.5 regression and fresh-process checks.
 - src/Mod/FreeCADPlus/freecad_plus/panel.py: opt-in panel, stable row projection, selection/Edit and native document observers.
+- src/Mod/FreeCADPlus/TestComponentRename.py: shared definition Rename, native menus/dialogs, source-owned Undo and persistence.
 - src/Mod/FreeCADPlus/TestComponentPanel.py: G1.6a actual Qt interaction, lifecycle and persistence tests.
 - src/Mod/FreeCADPlus/freecad_plus/isolation.py: transient per-view unused-definition display and cleanup.
 - src/Mod/FreeCADPlus/TestUnusedModels.py: unused-model interaction, native editors/picking, source-owned Undo/save and lifecycle checks.

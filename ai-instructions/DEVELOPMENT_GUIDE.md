@@ -623,3 +623,14 @@ TestComponentExternalExport.verify_fresh_process in a separate FreeCAD process t
 reopen the saved assembly/source pair and exercise allowed and rejected exports.
 Record results before removing the exact task validation directory. Do not repeat
 completed unrelated modeling/Boolean suites for this export-only change.
+
+## Component rename validation
+
+Build FreeCADPlusScripts for this Python-only panel/service change. Run
+TestComponentRename with PLUS_TEST_DIR set to a fresh task validation directory,
+plus the affected TestComponentWindows label-refresh case. The bounded Qt driver
+uses actual Rename menu actions and the native text dialog; check shared rows,
+Part001, external source ownership, Undo/Redo, same-name/cancel/invalid-name behavior,
+read-only names, concurrent rename refusal and native editor protection. Call
+TestComponentRename.verify_fresh_process in a separate process for the two saved
+domestic/external fixtures. Record evidence, then remove only the task artifacts.

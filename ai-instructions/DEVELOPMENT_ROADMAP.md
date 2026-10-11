@@ -127,6 +127,12 @@ Point to Point.
   **Publication:** source milestone `e092033275` pushed to
   origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
   The announced destination convention remains subject to owner correction.
+- [ X ] **G1.6c5 - Shared definition Rename.** Component menus rename the defining
+  object in its own file, updating all occurrences while retaining identity. Unique
+  per-file names, no-op/Cancel, guarded dialogs and native Undo are supported. Script
+  build, four new cases plus one affected window regression, and independent domestic/
+  external reopen passed across the bounded status-observation correction. WORK_STATE
+  owns exact evidence and limits. No owner delivery; stop here.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [ X ] **G1.7a — Part Type and visibility state.** Completed saved-state increment:

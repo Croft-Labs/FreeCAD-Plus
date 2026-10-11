@@ -2,10 +2,63 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3m placed external export context and its planned
-checks are complete.** Publication is verified; stop here. Group 1 remains incomplete.
-Next: Boolean input eligibility, pending the owner's cross-component tool decision.
-No answer was assumed; remaining direct exporters/view output are separate work.
+Continue Group 1 only. **G1.6c5 component Rename and its planned checks are
+complete.** Record publication and stop here. Group 1 remains incomplete. Next:
+Boolean input eligibility remains pending the owner's cross-component tool decision;
+other unconfirmed/deferred panel actions are not implicitly authorized by this rename.
+
+## G1.6c5 component definition Rename - October 11, 2026
+
+**Authority:** reread the original C09 owner message of October 9, 18:52 UTC:
+Part001 is an ordinary component that can be renamed, removed or deleted. The
+confirmed Models contract requires names unique within a defining file, allows equal
+names in separate files and assigns external edits to their source. The latest
+related chat has no newer Boolean ownership decision. Rename is independent of that
+pending question. Its menu placement is a disclosed implementation choice, not a
+recovered exact owner menu layout.
+
+**Implementation:** Models/Part Tree and the unused row expose Rename; the dialog
+states that the name applies to all instances. hierarchy.rename_definition writes
+only the defining object's Label in one defining-file transaction. Native names,
+IDs, links, placements and geometry remain. Empty/duplicate/read-only names are
+refused; unchanged names/Cancel do not create Undo. Dialog acceptance rechecks tab,
+identity, catalog availability, current label and native task/transaction state.
+Existing observers refresh shared rows and component window titles. See the
+[contract](ARCHITECTURE.md#definition-rename-g16c5).
+
+**Build:** FreeCADPlusScripts passed in the retained
+`test-builds/freecad_1.1.4_context`, exit 0, 38.86 seconds including configuration.
+Python-only increment; no native C++ rebuild or owner package/shortcut delivery.
+
+**Validation:** initial native run: 5 cases, 4 passed and 1 failed status observation,
+zero errors/skips, 9.900 seconds; native exit 0, 14.44 seconds including startup/
+shutdown. Shared Part001 rename, stable rows, unchanged editing context/geometry/IDs,
+one-step Undo/Redo, external defining-file edits, equal names in different files,
+Cancel/unchanged/invalid/read-only checks and the existing window-title/no-polling
+regression passed. The stale-dialog case preserved the concurrent name correctly;
+its expected feedback was cleared by the existing queued observer refresh before the
+assertion. The test now captures the rejection when emitted. Reran only that unfinished
+case: 1 passed, zero failures/errors/skips, 2.472 seconds; native exit 0, 7.23 seconds
+including startup/shutdown. This also completed the native editor guard check. No
+production correction or second build was needed. All five distinct cases are complete.
+
+Independent fresh-process reopen passed both domestic and external fixtures: names,
+exact identities in the defining/assembly files, shared targets and domestic geometry
+were retained. Native exit 0, 5.77 seconds including startup/shutdown. Runtime checks
+stop here. Logs contain the existing Std_Measure startup notice.
+
+**Limits:** this is shared definition Rename, not per-instance aliases, file rename,
+delete/removal, storage transfer or a new naming convention. Native status feedback
+is cleared by subsequent observer refresh as before. Stale-tab/catalog guards are
+implemented; their full interaction matrix was not separately exercised. Group 1
+remains incomplete and no owner build was delivered.
+
+**Final checks:** all 40 Plus Python scripts parse and match the development
+payload byte-for-byte; 123 local file links in changed Markdown resolve; whitespace
+passes. Task artifacts `g1_6c5_rename` are removed after recording these results;
+the useful development build is retained. No further runtime work.
+
+**Publication:** source commit/push verification pending; no owner delivery.
 
 ## G1.7b3m placed external export context - October 11, 2026
 

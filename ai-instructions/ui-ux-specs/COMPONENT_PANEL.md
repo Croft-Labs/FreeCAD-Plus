@@ -117,9 +117,16 @@ This is preservation of authored content, not a new Boolean operation workflow.
 | --- | --- | --- |
 | Models / Part Tree | Edit | Edit definition in the current tab; retain occurrence context. |
 | Models / Part Tree | Open in new window | Open a component file tab. |
+| Models / Part Tree | Rename | Rename the shared definition in its defining file; update all its occurrences, retain identity and support Undo. Names remain unique within that file. |
 | Part Tree | Copy / Paste | Create another linked instance for subsequent movement; do not embed Copy in Move Components. |
 | Part Tree instance | Move Components | Open the shared task described in [Task Panel](TASK_PANEL.md#move-components). |
 | Models / storage copy | Copy external to domestic | Independent definition; prompt for placements to replace. |
+
+G1.6c5 offers Rename through these menus and the temporary unused row. This menu
+placement is an implementation choice for the confirmed C09 rename permission;
+its exact position was not recovered from owner messages. The dialog states that
+all instances share the name. Cancellation and unchanged names make no edit.
+See the [rename contract](../ARCHITECTURE.md#definition-rename-g16c5).
 
 The changed **Add Component** task remains explicitly deferred. Importing external models and placing selected models are separate actions; do not invent a finished placement dialog from the current code. The detailed delete/grounding/fixed-relationship menus, grouped instance presentation, status columns, History drag/drop and suppression rules below need source confirmation where not supported by the cited owner messages.
 

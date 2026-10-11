@@ -1005,3 +1005,23 @@ The native source establishes reused mechanisms; the pilot tests establish the b
   [tree view synchronization](../src/Gui/Tree.cpp): explicit, transient catalog routing.
 - [Unused-model acceptance](../src/Mod/FreeCADPlus/TestUnusedModels.py): domestic and
   external selection/editing, source ownership/save, isolation, view and deletion lifecycle.
+
+### Definition rename (G1.6c5)
+
+hierarchy.rename_definition changes only the native definition Label in a single
+transaction owned by the defining document. Names must be nonempty and unique
+among that file's domestic definitions; equal labels in separate files remain
+valid. Native names/IDs, shared links, placement and geometry are retained. Cancel,
+unchanged names and preflight refusal do not add an Undo entry. Read-only Label
+properties are refused; if the native assignment alters the requested name, the
+transaction rolls back rather than silently substituting another name.
+
+The Component Panel offers Rename for Models, placed occurrences and the temporary
+unused row. Renaming an occurrence renames its shared definition and all displayed
+uses; it is not a per-instance alias. The prompt makes that scope explicit. Menu
+placement is a routine implementation choice for the owner's C09 rename permission,
+not a recovered exact menu layout. File rows and History features are outside this
+action. The dialog rechecks tab, identity, catalog membership, current name and
+native task/transaction state before committing. Native observers update labels and
+component window titles without polling or replacing stable rows. External names
+remain qualified by defining file, and saving uses that source's existing service.

@@ -33,6 +33,25 @@ def create_definition(doc, label):
     return definition
 
 
+def rename_definition(definition, label):
+    """Rename the shared definition in its owning file without replacing identity."""
+    doc = definition.Document
+    root = validate(doc)
+    if definition not in root.Definitions:
+        raise ValueError('Choose a component definition to rename')
+    if not label.strip() or any(d != definition and d.Label == label for d in root.Definitions):
+        raise ValueError('Choose a nonempty component name unique within this file')
+    if label == definition.Label:
+        return False
+    if any(flag in definition.getPropertyStatus('Label') for flag in ('ReadOnly', 'Immutable')):
+        raise ValueError('This component name is read-only')
+    with transaction(doc, 'Rename component'):
+        definition.Label = label
+        if definition.Label != label:
+            raise ValueError('The native document could not retain the requested component name')
+    return True
+
+
 def add_instance(owner, definition, placement=None):
     return add_instances(owner, [(definition, placement, True, True)], 'Place shared component')[0]
 
