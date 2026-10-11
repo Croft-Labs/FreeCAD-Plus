@@ -5,7 +5,7 @@
 Continue Group 1 only. **G1.7b3l legacy Boolean conversion and its planned
 checks are complete.** Next: Boolean input eligibility, pending the owner's
 cross-component tool decision documented below. The independent legacy conversion
-gap is closed. Group 1 remains incomplete; stop after recording/publication.
+gap is closed and publication is verified. Group 1 remains incomplete; stop here.
 
 ## G1.7b3l legacy Boolean conversion - October 11, 2026
 
@@ -54,7 +54,9 @@ payload byte-for-byte; 119 local file links in changed Markdown resolve; whitesp
 passes. Runtime validation is closed. Task artifacts `g1_7b3l_legacy_boolean` are
 removed after recording these results; the useful development build is retained.
 
-**Publication:** source commit/push verification pending; no owner delivery.
+**Publication:** source milestone `82028b9c0a859412cc9286d460cef01f034e959c`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This increment is complete; stop here.
 
 ## G1.7b3k native Boolean ownership prerequisite - October 11, 2026
 

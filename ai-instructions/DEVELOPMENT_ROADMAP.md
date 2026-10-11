@@ -253,7 +253,8 @@ Point to Point.
   expressions, identity and editing. Shared preflight rejects unsupported nested
   scripts and unowned content. Script payload build, four new conversion cases,
   two affected regressions and independent two-file reopen/source-edit passed.
-  WORK_STATE owns exact evidence and limits. No owner delivery; stop here.
+  WORK_STATE owns exact evidence and limits. Source milestone `82028b9c0a` pushed
+  to origin; exact revision verified. No owner delivery; stop here.
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally
