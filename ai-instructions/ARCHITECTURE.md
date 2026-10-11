@@ -1169,3 +1169,28 @@ No new task workflow, reference promotion or foreign component transfer policy i
 introduced. TestPartBooleanInputs owns focused native drop/replacement/property
 editor checks and independent persistence; WORK_STATE owns actual acceptance and
 remaining coverage limits.
+
+### Split/join creation integration (G1.7b3s)
+
+Native Boolean Fragments, Slice to Compound, Slice Apart, XOR, Connect, Embed and
+Cutout preflight the full unresolved GUI selection before opening a transaction.
+The shared component policy rejects unpromoted Reference, Excluded, missing Edit
+and unsupported foreign inputs. Accepted inputs belong to the edited definition,
+in its defining document. Native input links, algorithms and error dialogs remain.
+This applies component rules to existing operations; no new operation workflow or
+cross-component transfer policy is established.
+
+New native feature results join the edited definition within the same transaction.
+Slice Apart uses the native explode helper's ungrouped option and owns its Slice
+and each native filter directly in component History. A separate document group is
+not introduced into the component schema. Insertion is sequential because upstream
+GeoFeatureGroup batch insertion expands shared coordinate-system dependencies
+against the old membership and can duplicate related filters. Each sequential call
+sees updated membership. Inputs retain their original ownership; native Abort rolls
+back result creation and ownership together. Ordinary legacy documents retain
+native parenting, including the Slice Apart group.
+
+This boundary covers command creation, not later link/property editing, raw Python
+assignment, file restoration or recompute. Those editing consumers are next.
+TestPartBooleanInputs owns the focused command/ownership/Undo/persistence cases;
+WORK_STATE records actual acceptance and limits. Add Reference Feature is separate.

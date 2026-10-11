@@ -34,11 +34,12 @@ class BOPFeatures:
     def __init__(self, doc):
         self.doc = doc
 
-    def component_target(self, inputNames):
+    def component_target(self, inputNames=None):
         if any("PlusFormat" in obj.PropertiesList for obj in self.doc.Objects):
             from freecad_plus.geometry import require_part_boolean_inputs
             return require_part_boolean_inputs(
-                self.doc, [(self.doc.getObject(name), "") for name in inputNames])
+                self.doc, None if inputNames is None else
+                [(self.doc.getObject(name), "") for name in inputNames])
         return None
 
     def make_section(self, inputNames):
@@ -139,3 +140,34 @@ class BOPFeatures:
                 displayMode = src.ViewObject.DisplayMode
             if displayMode in target.ViewObject.getEnumerationsOfProperty("DisplayMode"):
                 target.ViewObject.DisplayMode = displayMode
+
+
+def prepare_component_command():
+    """Preflight unresolved GUI inputs before opening a split/join transaction."""
+    import FreeCADGui
+    from PySide import QtGui
+
+    try:
+        return True, BOPFeatures(FreeCAD.ActiveDocument).component_target()
+    except ValueError as error:
+        QtGui.QMessageBox.warning(
+            FreeCADGui.getMainWindow(),
+            FreeCAD.Qt.translate("Part", "Ineligible geometry"), str(error))
+        return False, None
+
+
+def own_command_results(component, objects_expression):
+    """Record ownership in the native command's macro and transaction.
+
+    objects_expression is an internal Python expression naming the result list.
+    Ordinary legacy commands keep their original parenting.
+    """
+    if component is not None:
+        import FreeCADGui
+        # Related filters can expand to the same native coordinate-system links.
+        # Insert sequentially so each native call sees the updated membership.
+        FreeCADGui.doCommand(
+            "for __component_result in {}: "
+            "App.getDocument({!r}).getObject({!r}).addObject(__component_result)".format(
+                objects_expression, component.Document.Name, component.Name))
+        FreeCADGui.doCommand("globals().pop('__component_result', None)")

@@ -311,6 +311,13 @@ Point to Point.
   correction history and limits. Source checkpoint `0dae6b5743` pushed to origin;
   exact remote revision verified. Next: split/join inputs/result ownership. No owner delivery.
 
+- [ X ] **G1.7b3s - Split/join creation integration.** Seven native commands share
+  occurrence-aware admission and edited-component ownership. Slice Apart keeps its
+  native Slice/filter features directly in History; legacy grouping remains. Five
+  focused cases and independent reopen/source-edit passed after correcting duplicate
+  related-filter batch insertion. WORK_STATE owns evidence and limits. Next:
+  split/join input editing admission. No owner delivery.
+
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

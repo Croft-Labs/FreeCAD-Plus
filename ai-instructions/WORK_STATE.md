@@ -2,11 +2,61 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3r Compound link-edit admission and its planned
-checks are complete.** Stop runtime work here. Next: split/join input eligibility
-and result ownership. Group 1 remains incomplete. Add Reference Feature and
-cross-component Full Component transfer workflows remain separately unresolved.
-No owner delivery.
+Continue Group 1 only. **G1.7b3s split/join creation integration and its planned
+checks are complete.** Stop runtime work here. Next: split/join input editing
+admission through existing native link/property editors. Group 1 remains incomplete.
+Add Reference Feature and cross-component Full Component transfer workflows remain
+separately unresolved. No owner delivery.
+
+## G1.7b3s Split/join creation integration - October 11, 2026
+
+**Authority:** applies the owner's explicit Reference prerequisite and existing
+component feature/History ownership contract. No new design choice was required.
+See the [technical contract](ARCHITECTURE.md#splitjoin-creation-integration-g17b3s).
+
+**Implementation:** Boolean Fragments, Slice to Compound, Slice Apart, XOR, Connect,
+Embed and Cutout check unresolved occurrence context before a transaction. Accepted
+local native results belong to the edited definition; inputs stay owned there.
+Slice Apart owns its intermediate Slice and individual native filters directly.
+Legacy behavior, native geometry algorithms and Abort/Continue dialogs remain.
+
+**Build and correction:** PartScripts + FreeCADPlusScripts deployment passed in the
+retained `test-builds/freecad_1.1.4_context` tree, exit 0, 8.08 seconds. No native
+compilation was needed. The initial five native cases took 19.022 seconds (process
+exit 0, 23.67 seconds overall): four passed and Slice Apart failed validation.
+A targeted diagnostic took 2.106 seconds (process 6.70 seconds) and established
+that the generated pieces had the intended owner but duplicate entries within its
+Group. Source inspection identified native batch insertion expanding overlapping
+coordinate-system links before membership was updated. Sequential native insertion
+corrected this; an explicit unique-membership assertion remains. Script deployment
+passed after correction. Temporary console-variable cleanup also tolerates an empty
+result list; that cleanup-only adjustment was inspected and redeployed.
+
+**Final validation:** all five focused cases have passed: two unaffected initial
+cases plus the three ownership/Abort cases rerun after correction, zero failures,
+errors or skips, 9.427 seconds (native exit 0, 14.00 seconds overall). Covered all
+seven commands' Reference/Excluded/unsupported foreign and file-Edit refusal before
+mutation; accepted occurrence-qualified inputs; valid expected volumes and solid
+counts; source/result ownership and History; source hiding; Undo/Redo; forced native
+Abort rollback including nested Slice Apart; and ordinary legacy policy bypass and
+Slice Apart grouping. Earlier Boolean/Compound tests were not repeated.
+
+Independent fresh-process reopen/source-edit passed, native exit 0, 6.19 seconds.
+Exact saved object identities, links and owners survived. Raising both input box
+heights from 4 to 6 recomputed all six core results to 1.5 times their original
+volumes with unchanged solid counts. Slice Apart filters remained valid and their
+combined volume changed from 64 to 96. Final logs contain the existing Std_Measure
+notices; duplicate-child notices from the failed initial run are absent after the
+correction. No warning-free or pointer-driven interaction claim is made.
+
+**Limits and stop:** this covers command creation only. Later split/join property
+input edits remain next, and other consumers remain unfinished. Same local-input /
+defining-file support boundary as the preceding increments. No reference promotion,
+raw assignment hook, owner package, shortcut update or Group 1 completion is claimed.
+Runtime work stops here. All 43 Plus scripts and the three changed Part scripts
+parse and match the retained development payload byte-for-byte. All 124 local links
+in changed Markdown resolve, and whitespace checks pass. Task validation artifacts
+`g1_7b3s_split_join` are removed after recording these results; useful builds remain.
 
 
 ## G1.7b3r Compound link-edit admission - October 11, 2026

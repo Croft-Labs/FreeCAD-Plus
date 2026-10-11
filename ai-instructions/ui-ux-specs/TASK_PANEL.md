@@ -16,6 +16,11 @@ A modeling operation requires an edited component. The pinned file cannot own sk
 
 Component geometry inputs must respect the confirmed [Part Type rules](COMPONENT_PANEL.md#part-type-and-visibility): unpromoted Reference and Excluded geometry cannot be used. [C10/U069](EVIDENCE_AND_DECISIONS.md#c10) The owner reaffirmed that all Reference geometry must first be added to the active component's History through **Add Reference Feature**, before any use in that component. Direct selection or silent automatic reference creation cannot bypass this prerequisite. [October 11 clarification](EVIDENCE_AND_DECISIONS.md#reference-geometry-prerequisite---october-11-2026)
 
+G1.7b3s applies the prerequisite and edited-component result ownership to existing
+split/join command creation, including individual Slice Apart results in History.
+The [technical boundary](../ARCHITECTURE.md#splitjoin-creation-integration-g17b3s)
+records supported inputs and deferred input editing; this defines no new workflow.
+
 G1.7b3r extends that admission boundary to existing Compound link additions through
 native drop/replacement hooks and the Links editor. Refusal retains current links;
 removal remains available. See the [technical boundary](../ARCHITECTURE.md#compound-link-edit-admission-g17b3r).

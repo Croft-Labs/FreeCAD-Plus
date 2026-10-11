@@ -29,6 +29,7 @@ __doc__ = "Implementation of document objects (features) for connect, ebmed and 
 
 from . import JoinAPI
 import FreeCAD
+from .BOPFeatures import prepare_component_command, own_command_results
 import Part
 
 if FreeCAD.GuiUp:
@@ -60,6 +61,9 @@ def getParamRefine():
 
 def cmdCreateJoinFeature(name, mode):
     """cmdCreateJoinFeature(name, mode): generalized implementation of GUI commands."""
+    allowed, component = prepare_component_command()
+    if not allowed:
+        return False
     sel = FreeCADGui.Selection.getSelectionEx()
 
     FreeCAD.ActiveDocument.openTransaction("Create " + mode)
@@ -78,6 +82,8 @@ def cmdCreateJoinFeature(name, mode):
         )
     else:
         raise ValueError("cmdCreateJoinFeature: Unexpected mode {mode}".format(mode=repr(mode)))
+
+    own_command_results(component, "[j]")
 
     try:
         FreeCADGui.doCommand("j.Proxy.execute(j)")

@@ -29,6 +29,7 @@ __doc__ = "Shape splitting document objects (features)."
 
 from . import SplitAPI
 import FreeCAD
+from .BOPFeatures import prepare_component_command, own_command_results
 import Part
 
 if FreeCAD.GuiUp:
@@ -167,6 +168,9 @@ class ViewProviderBooleanFragments:
 def cmdCreateBooleanFragmentsFeature(name, mode):
     """cmdCreateBooleanFragmentsFeature(name, mode): implementation of GUI command to create
     BooleanFragments feature (GFA). Mode can be "Standard", "Split", or "CompSolid"."""
+    allowed, component = prepare_component_command()
+    if not allowed:
+        return False
     sel = FreeCADGui.Selection.getSelectionEx()
     FreeCAD.ActiveDocument.openTransaction("Create Boolean Fragments")
     FreeCADGui.addModule("BOPTools.SplitFeatures")
@@ -179,6 +183,8 @@ def cmdCreateBooleanFragmentsFeature(name, mode):
         )
     )
     FreeCADGui.doCommand("j.Mode = {mode}".format(mode=repr(mode)))
+
+    own_command_results(component, "[j]")
 
     try:
         FreeCADGui.doCommand("j.Proxy.execute(j)")
@@ -371,6 +377,9 @@ class ViewProviderSlice:
 def cmdCreateSliceFeature(name, mode, transaction=True):
     """cmdCreateSliceFeature(name, mode): implementation of GUI command to create
     Slice feature. Mode can be "Standard", "Split", or "CompSolid"."""
+    allowed, component = prepare_component_command()
+    if not allowed:
+        return False
     sel = FreeCADGui.Selection.getSelectionEx()
     if transaction:
         FreeCAD.ActiveDocument.openTransaction("Create Slice")
@@ -383,6 +392,8 @@ def cmdCreateSliceFeature(name, mode, transaction=True):
         )
     )
     FreeCADGui.doCommand("f.Mode = {mode}".format(mode=repr(mode)))
+
+    own_command_results(component, "[f]")
 
     try:
         FreeCADGui.doCommand("f.Proxy.execute(f)")
@@ -421,12 +432,22 @@ def cmdCreateSliceFeature(name, mode, transaction=True):
 
 
 def cmdSliceApart():
+    allowed, component = prepare_component_command()
+    if not allowed:
+        return
     FreeCAD.ActiveDocument.openTransaction("Slice apart")
     made = cmdCreateSliceFeature(name="Slice", mode="Split", transaction=False)
 
     if made:
         FreeCADGui.addModule("CompoundTools.Explode")
-        FreeCADGui.doCommand("CompoundTools.Explode.explodeCompound(f)")
+        if component is None:
+            FreeCADGui.doCommand("CompoundTools.Explode.explodeCompound(f)")
+        else:
+            # The edited component owns each filter feature directly in History.
+            FreeCADGui.doCommand(
+                "__slice_children = CompoundTools.Explode.explodeCompound(f, False)[1]")
+            own_command_results(component, "__slice_children")
+            FreeCADGui.doCommand("del __slice_children")
         FreeCADGui.doCommand("f.ViewObject.hide()")
         FreeCAD.ActiveDocument.commitTransaction()
         FreeCADGui.doCommand("App.ActiveDocument.recompute()")
@@ -616,6 +637,9 @@ class ViewProviderXOR:
 def cmdCreateXORFeature(name):
     """cmdCreateXORFeature(name): implementation of GUI command to create
     XOR feature (GFA). Mode can be "Standard", "Split", or "CompSolid"."""
+    allowed, component = prepare_component_command()
+    if not allowed:
+        return False
     sel = FreeCADGui.Selection.getSelectionEx()
     FreeCAD.ActiveDocument.openTransaction("Create Boolean XOR")
     FreeCADGui.addModule("BOPTools.SplitFeatures")
@@ -625,6 +649,8 @@ def cmdCreateXORFeature(name):
             sel="[" + ", ".join(["App.ActiveDocument." + so.Object.Name for so in sel]) + "]"
         )
     )
+
+    own_command_results(component, "[j]")
 
     try:
         FreeCADGui.doCommand("j.Proxy.execute(j)")

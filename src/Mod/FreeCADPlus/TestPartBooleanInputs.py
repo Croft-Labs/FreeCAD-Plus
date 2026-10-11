@@ -423,6 +423,125 @@ class TestPartBooleanInputs(unittest.TestCase):
         legacy.recompute();self.assertAlmostEqual(result.Shape.Volume,128)
 
 
+    split_join_cases = (
+        ('Part_BooleanFragments',96,3), ('Part_Slice',64,2), ('Part_XOR',64,2),
+        ('Part_JoinConnect',96,1), ('Part_JoinEmbed',96,1), ('Part_JoinCutout',32,1))
+
+    def test_split_join_rejection_is_atomic(self):
+        a,b=self.boxes();source=hierarchy.create_definition(self.doc,'SplitJoin source')
+        foreign,_=self.boxes(source);link=hierarchy.add_instance(self.child,source)
+        path=hierarchy.subname((self.second,self.nested,link))+foreign.Name+'.'
+        commands=[c[0] for c in self.split_join_cases]+['Part_SliceApart']
+        for kind in ('Reference','Excluded','Full Component'):
+            display.set_state(self.child,link,part_type=kind);settle()
+            for command in commands:
+                self.select(a);Gui.Selection.addSelection(self.doc.Name,self.root.Name,path)
+                before=self.snapshot()
+                with messages() as errors:Gui.runCommand(command);settle()
+                expected=kind if kind!='Full Component' else 'owned by the edited component'
+                self.assertTrue(any(expected in e for e in errors),(command,errors))
+                self.assertEqual(self.snapshot(),before);document.validate(self.doc)
+        editing.edit_file(self.doc)
+        for command in commands:
+            self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name);before=self.snapshot()
+            with messages() as errors:Gui.runCommand(command);settle()
+            self.assertTrue(any('Edit a component' in e for e in errors),(command,errors))
+            self.assertEqual(self.snapshot(),before)
+
+    def test_split_join_core_ownership_undo_save(self):
+        expected=[]
+        for command,volume,solids in self.split_join_cases:
+            a,b=self.boxes();ids={o.Name:o.ID for o in self.doc.Objects}
+            path=hierarchy.subname((self.second,self.nested))
+            self.select(self.root,path+a.Name+'.')
+            Gui.Selection.addSelection(self.doc.Name,self.root.Name,path+b.Name+'.')
+            with messages() as errors:Gui.runCommand(command);settle()
+            self.assertFalse(errors,(command,errors));self.doc.recompute()
+            result=next(o for o in self.doc.Objects if o.Name not in ids)
+            self.assertEqual(result.TypeId,'Part::FeaturePython');self.assertTrue(result.Shape.isValid())
+            self.assertAlmostEqual(result.Shape.Volume,volume);self.assertEqual(len(result.Shape.Solids),solids)
+            self.assertEqual(result.ViewObject.Proxy.claimChildren(),[a,b])
+            self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+            self.assertFalse(a.Visibility);self.assertFalse(b.Visibility)
+            history=document.history(self.doc,self.child)
+            self.assertLess(history.index(a),history.index(result));self.assertLess(history.index(b),history.index(result))
+            name=result.Name;self.doc.undo();self.doc.recompute();settle()
+            self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+            self.assertTrue(a.Visibility);self.assertTrue(b.Visibility)
+            self.doc.redo();self.doc.recompute();settle();result=self.doc.getObject(name)
+            document.validate(self.doc)
+            expected.append({'result':name,'base':a.Name,'tool':b.Name,'volume':volume,'solids':solids})
+        document.save_document(self.doc,self.output/'SplitJoin.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':{o.Name:o.ID for o in self.doc.Objects},
+            'definition':self.child.Name,'results':expected}))
+
+    def test_split_join_slice_apart_ownership_undo_save(self):
+        a,b=self.boxes();ids={o.Name:o.ID for o in self.doc.Objects}
+        self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
+        with messages() as errors:Gui.runCommand('Part_SliceApart');settle()
+        self.assertFalse(errors,errors)
+        created=[o for o in self.doc.Objects if o.Name not in ids]
+        self.assertEqual(len(created),3)
+        sliced=next(o for o in created if hasattr(o,'Tools'))
+        filters=[o for o in created if o!=sliced]
+        self.assertEqual(sliced.Base,a);self.assertEqual(sliced.Tools,[b])
+        self.assertFalse(sliced.Visibility)
+        self.assertTrue(all(o in self.child.Group for o in [a,b,*created]))
+        self.assertEqual(len(self.child.Group),len(set(self.child.Group)))
+        history=document.history(self.doc,self.child)
+        self.assertTrue(all(history.index(sliced)<history.index(o) for o in filters))
+        self.assertTrue(all(o.Base==sliced and o.Shape.isValid() for o in filters))
+        self.assertAlmostEqual(sum(o.Shape.Volume for o in filters),64)
+        names=[o.Name for o in filters];name=sliced.Name
+        self.doc.undo();self.doc.recompute();settle()
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+        self.assertTrue(a.Visibility);self.assertTrue(b.Visibility)
+        self.doc.redo();self.doc.recompute();settle();document.validate(self.doc)
+        document.save_document(self.doc,self.output/'SliceApart.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':{o.Name:o.ID for o in self.doc.Objects},
+            'definition':self.child.Name,'result':name,'filters':names,'base':a.Name,'tool':b.Name}))
+
+    def test_split_join_native_abort_rolls_back(self):
+        from BOPTools import SplitAPI,JoinAPI
+        a,b=self.boxes()
+        for command,module,method in [('Part_BooleanFragments',SplitAPI,'booleanFragments'),
+                ('Part_JoinConnect',JoinAPI,'connect'),('Part_SliceApart',SplitAPI,'slice')]:
+            self.select(a);Gui.Selection.addSelection(self.doc.Name,b.Name)
+            before=self.snapshot();seen=[];timer=QtCore.QTimer()
+            def abort():
+                modal=QtWidgets.QApplication.activeModalWidget()
+                if isinstance(modal,QtWidgets.QMessageBox):
+                    seen.append(modal.text());modal.button(QtWidgets.QMessageBox.Abort).click()
+            timer.timeout.connect(abort);timer.start(25)
+            try:
+                with patch.object(module,method,side_effect=RuntimeError('Focused abort probe')):
+                    Gui.runCommand(command);settle()
+            finally:timer.stop();timer.deleteLater()
+            self.assertTrue(any('Focused abort probe' in error for error in seen),(command,seen))
+            self.assertEqual(self.snapshot(),before);document.validate(self.doc)
+
+    def test_split_join_legacy_bypass_and_slice_group(self):
+        legacy=App.newDocument('LegacySplitJoin')
+        with patch.object(geometry,'require_part_boolean_inputs',side_effect=AssertionError('Legacy entered Plus')):
+            for command,volume,solids in self.split_join_cases:
+                a,b=self.boxes(legacy);before=set(legacy.Objects)
+                self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
+                with messages() as errors:Gui.runCommand(command);settle()
+                self.assertFalse(errors,(command,errors));legacy.recompute()
+                result=next(o for o in legacy.Objects if o not in before)
+                self.assertIsNone(result.getParentGeoFeatureGroup())
+                self.assertTrue(result.Shape.isValid());self.assertAlmostEqual(result.Shape.Volume,volume)
+                self.assertEqual(len(result.Shape.Solids),solids)
+            a,b=self.boxes(legacy);before=set(legacy.Objects)
+            self.select(a);Gui.Selection.addSelection(legacy.Name,b.Name)
+            with messages() as errors:Gui.runCommand('Part_SliceApart');settle()
+            self.assertFalse(errors,errors)
+            created=[o for o in legacy.Objects if o not in before]
+            group=next(o for o in created if o.TypeId=='App::DocumentObjectGroup')
+            self.assertEqual(len(group.Group),2)
+            self.assertAlmostEqual(sum(o.Shape.Volume for o in group.Group),64)
+
+
 
 def verify_fresh_process(output):
     folder=Path(output)/'test_commands_preserve_input_ownership_undo_history_and_save'
@@ -486,4 +605,37 @@ def verify_compound_links_fresh_process(output):
         b.Height=6;doc.recompute();document.validate(doc)
         assert result.Shape.isValid() and abs(result.Shape.Volume-160)<1e-7
         assert result.Links==[a,b]
+    finally:App.closeDocument(doc.Name)
+
+
+def verify_split_join_fresh_process(output):
+    folder=Path(output)/'test_split_join_core_ownership_undo_save'
+    expected=json.loads((folder/'expected.json').read_text())
+    doc=document.open_document(folder/'SplitJoin.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        owner=doc.getObject(expected['definition'])
+        for case in expected['results']:
+            result=doc.getObject(case['result']);a=doc.getObject(case['base']);b=doc.getObject(case['tool'])
+            assert all(o in owner.Group for o in (a,b,result))
+            assert result.ViewObject.Proxy.claimChildren()==[a,b]
+            assert abs(result.Shape.Volume-case['volume'])<1e-7
+            a.Height=6;b.Height=6;doc.recompute()
+            assert result.Shape.isValid() and len(result.Shape.Solids)==case['solids']
+            assert abs(result.Shape.Volume-case['volume']*1.5)<1e-7
+        document.validate(doc)
+    finally:App.closeDocument(doc.Name)
+    folder=Path(output)/'test_split_join_slice_apart_ownership_undo_save'
+    expected=json.loads((folder/'expected.json').read_text())
+    doc=document.open_document(folder/'SliceApart.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        owner=doc.getObject(expected['definition']);sliced=doc.getObject(expected['result'])
+        filters=[doc.getObject(name) for name in expected['filters']]
+        a=doc.getObject(expected['base']);b=doc.getObject(expected['tool'])
+        assert all(o in owner.Group for o in [a,b,sliced,*filters])
+        assert all(o.Base==sliced for o in filters)
+        a.Height=6;b.Height=6;doc.recompute();document.validate(doc)
+        assert all(o.Shape.isValid() for o in filters)
+        assert abs(sum(o.Shape.Volume for o in filters)-96)<1e-7
     finally:App.closeDocument(doc.Name)

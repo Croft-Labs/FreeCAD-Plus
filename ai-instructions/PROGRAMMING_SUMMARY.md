@@ -65,8 +65,11 @@ and independent reopen/source-edit checks. G1.7b3p direct Part Section also pass
 native command/dialog and independent reopen/source-edit checks. G1.7b3q Compound
 creation passed four focused native cases and independent reopen/source-edit.
 G1.7b3r Compound drop/replacement and Links-editor intake passed six focused native
-cases after two targeted corrections, plus independent reopen/source-edit. Split/join
-and other consumers remain unfinished; WORK_STATE owns support/stopping boundaries.
+cases after two targeted corrections, plus independent reopen/source-edit.
+G1.7b3s split/join command admission and result ownership passed five focused native
+cases after correcting related-filter insertion, plus independent reopen/source-edit.
+Next: split/join input editing. Other consumers remain unfinished; WORK_STATE owns
+support/stopping boundaries.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
