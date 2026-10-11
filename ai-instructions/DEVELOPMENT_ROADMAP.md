@@ -295,7 +295,8 @@ Point to Point.
   component-aware native result creation preserve ownership/History and line color.
   Original legacy parenting remains. One native build, four focused cases and
   independent reopen/source-edit passed first run. WORK_STATE owns evidence and
-  publication. Next: compound input/result ownership. No owner delivery.
+  limits. Source checkpoint `e6b3183c69` pushed to origin; exact remote revision
+  verified. Next: compound input/result ownership. No owner delivery.
 
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned

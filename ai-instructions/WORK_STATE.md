@@ -55,7 +55,10 @@ byte-for-byte; 118 local links in changed Markdown resolve; whitespace passes.
 Task artifacts `g1_7b3p_section` were removed after recording these results. Useful
 builds remain. No further runtime work.
 
-**Publication:** validated checkpoint pending origin publication.
+**Publication:** source/acceptance checkpoint
+`e6b3183c69808957c2e889bc3ebd0cdd4eef9e41` pushed to
+origin/codex/freecad-1.1.4-baseline and exact remote revision verified. No release,
+owner package or shortcut delivery. This publication record is a separate docs commit.
 
 ## G1.7b3o core Part Boolean eligibility and ownership - October 11, 2026
 
