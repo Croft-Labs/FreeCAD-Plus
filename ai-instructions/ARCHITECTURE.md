@@ -1254,3 +1254,23 @@ changes. Remaining normal component command/legacy-conversion integration and
 unimplemented operation workflows retain their separate scope. TestUIModes (inside
 TestComponentPanel.py) owns bounded acceptance with an isolated settings profile;
 WORK_STATE owns results and delivery evidence.
+
+## Native New File and definition-only New Part
+
+Std_New calls document.new_document in both UI presentations: it creates the file
+root, ordinary Part001 definition and its initial linked occurrence, then enters
+Edit on Part001 as specified. Low-level App.newDocument remains unchanged for
+upstream callers, macros and legacy fixtures.
+
+Std_Part calls hierarchy.new_part for component documents or genuinely empty
+native documents. It adds one unique PartNNN definition to the current defining
+file's catalog, without creating links, moving selected objects, or activating the
+new definition. Editing an external model targets that model's defining file and
+Undo stack. Existing component Edit and selection context stay intact. The empty
+native-document case initializes only the file frame and one unused definition in
+one transaction, then edits the file. Existing nonempty legacy documents retain
+the native Part path; this command does not silently convert loaded legacy content.
+
+The native command is shared across Classic/Plus presentations; the full storage
+chooser and separate instance-placement workflow remain deferred. Acceptance is
+owned by TestNativeComponentCreation and WORK_STATE.

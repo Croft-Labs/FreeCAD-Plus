@@ -24,6 +24,7 @@
 
 #include <App/GroupExtension.h>
 #include <App/Document.h>
+#include <App/DocumentObject.h>
 
 #include "Command.h"
 #include "ActiveObjectList.h"
@@ -60,6 +61,21 @@ StdCmdPart::StdCmdPart()
 void StdCmdPart::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    // Both UI presentations use definitions for component documents. Existing
+    // legacy files keep their native ownership until explicitly converted.
+    auto* doc = getDocument();
+    bool component = doc->getObjects().empty();
+    for (auto* obj : doc->getObjects()) {
+        if (obj->getPropertyByName("PlusFormat")) {
+            component = true;
+            break;
+        }
+    }
+    if (component) {
+        doCommand(Doc, "from freecad_plus import hierarchy\nhierarchy.new_part()");
+        return;
+    }
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Add a part"));
     std::string FeatName = getUniqueObjectName("Part");

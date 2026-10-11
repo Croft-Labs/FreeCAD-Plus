@@ -38,6 +38,11 @@ The menu placement and label are implementation choices for C09's confirmed
 import behavior, not a recovered exact owner layout. The chooser states the target
 file. See the [import contract](../ARCHITECTURE.md#models-file-import-g16c6).
 
+**New Part creates a definition in Models only.** It does not place an instance
+in Part Tree or enter unused-model Edit automatically. Placement in Part Tree is
+a separate action. This October 11 owner clarification confirms the creation/
+placement distinction without defining the deferred placement task.
+
 New Component allows storage in the current defining file, a new external file, or an existing external file such as Hardware. Use **domestic** and **external** terminology. Names must be unique within a file; equal names in different files remain distinct definitions. Show a domestic name without a qualifier, and an external name as **M3 screw (Hardware)**. Do not silently substitute a domestic definition for an external one with the same name. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 
 Editing an external definition edits and saves its defining file. Other files using it receive the saved change when reopened. Child components must come from the active definition's own file or from files imported into that defining file. An external Hardware component cannot simply acquire a component from the importing assembly's domestic list. Edit Hardware and import the required file there first. Immediately flag and block circular file references and circular component nesting. [C09](EVIDENCE_AND_DECISIONS.md#c09)

@@ -80,6 +80,9 @@ default. InitGui installs the panel presentation controller; Classic preserves t
 same component backend. Toolbar/tasks initially share Classic definitions. Native
 Pad/Pocket share FeatureExtrude; a consolidated Plus task is still future work.
 WORK_STATE records startup, mixed-mode, active-task and persistence acceptance.
+G1.6e connects native New File to document.new_document and New Part to
+hierarchy.new_part: a catalog definition only, with placement kept separate.
+WORK_STATE records bounded native command/Undo/reopen acceptance.
 
 ## Where to go
 

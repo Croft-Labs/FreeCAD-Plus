@@ -413,3 +413,132 @@ def verify_ui_modes_reopen(output):
         pocket.Length=3;doc.recompute();document.validate(doc)
         assert pocket.Shape.isValid() and abs(pocket.Shape.Volume-19.25*math.pi)<1e-7
     finally:App.closeDocument(doc.Name)
+
+
+class TestNativeComponentCreation(unittest.TestCase):
+    """Drive the ordinary command entry points, not only backend fixtures."""
+    def setUp(self):
+        if 'PLUS_TEST_DIR' not in os.environ:
+            self.skipTest('Set PLUS_TEST_DIR to an isolated validation directory')
+        from freecad_plus import ui_modes
+        self.modes = ui_modes
+        self.before = set(App.listDocuments())
+        self.prefs = App.ParamGet('User parameter:BaseApp/Preferences/General')
+        self.old = self.prefs.GetInt('ModelPanelUIMode', 0)
+        self.output = Path(os.environ['PLUS_TEST_DIR'])
+
+    def tearDown(self):
+        Gui.Selection.clearSelection()
+        for name in set(App.listDocuments()) - self.before:
+            App.closeDocument(name)
+        self.prefs.SetInt('ModelPanelUIMode', self.old)
+        self.modes.apply_modes()
+        settle()
+
+    def model_names(self):
+        return {item.data(0, panel._ROLE).ref for item in panel._panel._maps[0].values()
+                if item.data(0, panel._ROLE).kind == 'model'}
+
+    def test_new_file_and_part_both_presentations(self):
+        import json
+        for mode in (0, 1):
+            self.prefs.SetInt('ModelPanelUIMode', mode)
+            self.modes.apply_modes()
+            Gui.runCommand('Std_New'); settle()
+            doc = App.ActiveDocument
+            root = document.validate(doc)
+            self.assertEqual([d.Label for d in root.Definitions], ['Part001'])
+            self.assertEqual(len(root.Group), 1)
+            self.assertEqual(root.Group[0].LinkedObject, root.Definitions[0])
+            self.assertEqual(editing.context(doc)[0], root.Definitions[0])
+            context = Gui.activeDocument().activeView().getActiveObject('PlusEdit', False)
+            existing = {o.Name: o.ID for o in doc.Objects}
+            placed = tuple(o.Name for o in root.Group)
+            undo = doc.UndoCount
+            Gui.runCommand('Std_Part'); settle()
+            document.validate(doc)
+            self.assertEqual([d.Label for d in root.Definitions], ['Part001', 'Part002'])
+            created = root.Definitions[-1]
+            name = created.Name
+            self.assertIn(panel.identity(created), self.model_names())
+            self.assertEqual(tuple(o.Name for o in root.Group), placed)
+            self.assertEqual(sum(o.TypeId == 'App::Link' for o in doc.Objects), 1)
+            self.assertFalse(any(item.data(0, panel._ROLE).kind == 'unused'
+                                 for item in panel._panel._maps[1].values()))
+            self.assertEqual(Gui.activeDocument().activeView().getActiveObject('PlusEdit', False), context)
+            self.assertEqual({n: doc.getObject(n).ID for n in existing}, existing)
+            self.assertEqual(doc.UndoCount, undo + 1)
+            doc.undo(); settle()
+            self.assertIsNone(doc.getObject(name)); self.assertEqual(len(self.model_names()), 1)
+            doc.redo(); settle()
+            self.assertIn(panel.identity(doc.getObject(name)), self.model_names())
+            self.assertEqual(tuple(o.Name for o in root.Group), placed)
+            Gui.runCommand('Std_Part'); settle()
+            self.assertEqual([d.Label for d in root.Definitions], ['Part001', 'Part002', 'Part003'])
+            if mode == 0:
+                document.save_document(doc, self.output/'CreatedModels.cadprt')
+                (self.output/'creation_expected.json').write_text(json.dumps({
+                    'ids': {o.Name:o.ID for o in doc.Objects}, 'definitions':[d.Name for d in root.Definitions],
+                    'instances':list(placed)}), encoding='utf-8')
+            App.closeDocument(doc.Name); settle()
+
+    def test_external_definition_owns_new_part(self):
+        source = document.new_document('CreationSource')
+        document.save_document(source, self.output/'CreationSource.cadprt')
+        doc = document.new_document('CreationAssembly')
+        document.save_document(doc, self.output/'CreationAssembly.cadprt')
+        external.import_file(doc, source)
+        imported = document.validate(source).Definitions[0]
+        editing.edit_unused(doc, imported); settle()
+        root = document.validate(doc)
+        domestic = tuple(d.Name for d in root.Definitions)
+        source_root = document.validate(source)
+        links = tuple(o.Name for o in source_root.Group)
+        undo = source.UndoCount
+        Gui.runCommand('Std_Part'); settle()
+        self.assertEqual(tuple(d.Name for d in root.Definitions), domestic)
+        self.assertEqual(len(source_root.Definitions), 2)
+        self.assertEqual(source.UndoCount, undo + 1)
+        created = source_root.Definitions[-1]
+        self.assertIn(panel.identity(created), self.model_names())
+        self.assertEqual(tuple(o.Name for o in source_root.Group), links)
+        self.assertEqual(editing.context(doc)[0], imported)
+        source.undo(); settle()
+        self.assertEqual(len(source_root.Definitions), 1)
+        document.validate(doc)
+
+    def test_empty_document_and_existing_legacy(self):
+        doc = App.newDocument('EmptyNative'); doc.UndoMode = 1
+        Gui.runCommand('Std_Part'); settle()
+        root = document.validate(doc)
+        self.assertEqual([d.Label for d in root.Definitions], ['Part001'])
+        self.assertEqual(list(root.Group), [])
+        self.assertEqual(len(self.model_names()), 1)
+        self.assertEqual(panel._panel.trees[1].topLevelItem(0).childCount(), 0)
+        doc.undo(); settle(); self.assertEqual(list(doc.Objects), [])
+        doc.redo(); settle(); self.assertEqual(len(document.validate(doc).Definitions), 1)
+        legacy = App.newDocument('ExistingLegacy')
+        box = legacy.addObject('Part::Box', 'Box'); legacy.recompute()
+        old_id = box.ID
+        Gui.runCommand('Std_Part'); settle()
+        self.assertFalse(any('PlusFormat' in o.PropertiesList for o in legacy.Objects))
+        self.assertEqual(legacy.getObject('Box').ID, old_id)
+        self.assertTrue(any(o.TypeId == 'App::Part' for o in legacy.Objects))
+
+
+def verify_native_creation_reopen(output):
+    import json
+    output = Path(output)
+    expected = json.loads((output/'creation_expected.json').read_text(encoding='utf-8'))
+    doc = document.open_document(output/'CreatedModels.cadprt')
+    try:
+        root = document.validate(doc)
+        assert {o.Name:o.ID for o in doc.Objects} == expected['ids']
+        assert [d.Name for d in root.Definitions] == expected['definitions']
+        assert [o.Name for o in root.Group] == expected['instances']
+        editing.edit_file(doc); settle()
+        assert len([item for item in panel._panel._maps[0].values()
+                    if item.data(0,panel._ROLE).kind == 'model']) == 3
+        assert panel._panel.trees[1].topLevelItem(0).childCount() == 1
+    finally:
+        App.closeDocument(doc.Name)

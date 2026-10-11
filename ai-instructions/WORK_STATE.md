@@ -7,9 +7,54 @@ presentation preferences and normal Components startup. **G1.6d and its bounded
 checks are complete.** Stop runtime work here. Components is now available through
 normal startup/Preferences/Panels in the development build. All three selectors
 default to Plus; toolbar/task presentations intentionally still match Classic.
-Group 1 remains incomplete. Next priority is remaining normal component-document
-command integration and shared Classic adapters; split/join tree drop/replacement
-also remains unfinished. Do not treat choosing Classic as an old-backend bypass.
+Native New File/New Part integration is now validated as recorded below. Group 1
+remains incomplete. Remaining component-document commands, shared Classic adapters,
+and split/join tree drop/replacement are still unfinished. Do not treat choosing Classic as an old-backend bypass.
+
+## Native New Part catalog correction - October 11, 2026
+
+**Owner decision:** New Part creates a Models definition only; Part Tree placement
+is a different action. See the evidence ledger and Component Panel specification.
+
+**Reproduction:** native Std_New + Std_Part created an ordinary App::Part without
+PlusFormat, leaving both Models and Part Tree empty. Calling the established
+component document initializer populated both tabs. The defect was missing native
+command integration, not a missing panel refresh.
+
+**Implementation:** Std_New uses the existing component initializer in both UI
+presentations, preserving the separately confirmed Part001/initial-instance/Edit
+contract. Std_Part uses hierarchy.new_part in component/empty documents, creating
+one uniquely named definition only. It preserves current Edit/selection and creates
+no occurrence or temporary unused-edit row. External editing targets the defining
+file's catalog and Undo stack. Empty native files initialize a frame plus unused
+definition atomically. Nonempty legacy files retain native ownership; implicit
+migration is not part of this correction. The full storage chooser and separate
+placement task remain unfinished. ARCHITECTURE owns the technical boundary.
+
+**Build:** FreeCADGui and FreeCADPlusScripts passed, exit 0, retained
+`test-builds/freecad_1.1.4_context`. Native build log ended at 144.848 seconds.
+A command quoting error was corrected before compilation; no application defect.
+The completed test script was then deployed with FreeCADPlusScripts only.
+
+**Acceptance:** three focused native cases passed on the first test run in 3.095
+seconds (process exit 0, 8.23 seconds). Covered actual Std_New/Std_Part entry points,
+Plus and Classic, automatic Part001, repeated unique definitions, Models refresh,
+unchanged instance count/Edit/object identities, one-step Undo/Redo, empty native
+initialization, external source-owned creation and Undo, and existing legacy
+ownership preservation. Independent reopen passed in 5.14 seconds, exit 0: exact
+object identities, three Models definitions, and only the original Part Tree
+instance. Logs contain the already-known Std_Measure notices. No unrelated geometry
+or operation suites were repeated. All scoped acceptance checks are complete.
+
+**Development delivery:** modified Python sources parse and match the retained
+payload; native source line endings and whitespace were checked. The reopened
+`freecad plus 0.1.0.lnk` targets that build's bin/FreeCAD.exe with bin working
+directory; the old shortcut remains unchanged. Restart using the current shortcut
+and create a new document to use this corrected path. Existing nonempty legacy
+files still require their separately scoped conversion flow. No release package
+was created. Task-owned `g1_component_creation` artifacts are removed after this
+record. Stop; next implementation is the separately scoped placement workflow or
+remaining normal component-document integration, only when requested.
 
 ## Components above Properties follow-up - October 11, 2026
 

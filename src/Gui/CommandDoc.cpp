@@ -728,7 +728,7 @@ void StdCmdNew::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     QString cmd;
-    cmd = QStringLiteral("App.newDocument()");
+    cmd = QStringLiteral("from freecad_plus import document\ndocument.new_document()");
     runCommand(Command::Doc, cmd.toUtf8());
     doCommand(Command::Gui, "Gui.activeDocument().activeView().viewDefaultOrientation()");
 

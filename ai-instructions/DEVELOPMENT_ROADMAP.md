@@ -112,6 +112,13 @@ Point to Point.
   focused runtime and shortcut delivery evidence. Source checkpoint `8cbfa2cad8`
   pushed to origin; exact remote revision verified.
 
+- [ X ] **G1.6e - Native creation command integration.** New File initializes the
+  specified Part001 component document; New Part adds only a definition to Models
+  in both presentations, with source-owned Undo when editing external components.
+  Creation/placement are separate. Native command, Undo/Redo and independent reopen
+  checks passed; WORK_STATE owns evidence. Storage chooser, instance-placement task
+  and remaining Open/Save/legacy workflow integration are not completed here.
+
 - [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs, structural
   actions and confirmed menu routing. A menu entry opens its separately owned operation;
   it does not authorize implementing that operation within Group 1. Deferred Add

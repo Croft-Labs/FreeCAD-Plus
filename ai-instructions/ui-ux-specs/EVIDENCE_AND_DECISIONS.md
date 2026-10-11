@@ -242,3 +242,11 @@ remaining operation workflows or treating unconfirmed DOCX details as approved.
 Direct owner instruction: "first thing, the components panel should be at the top
 of the left panel, with properties below it". This defines the Plus model-panel
 layout: vertically stacked on the left, Components first and Properties below.
+
+## New Part creates a model only - October 11, 2026
+
+The owner identified the failing control as New Part: "when I click that, it
+should add the part the models tab. adding it to the part tree tab should be a
+different action". Create a catalog definition without placing an instance.
+The separate New File requirement still creates Part001 and its first instance.
+The later placement action and external-storage chooser remain separately scoped.
