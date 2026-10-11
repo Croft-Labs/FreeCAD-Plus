@@ -8,6 +8,22 @@ and replacement admission. Group 1 remains incomplete. Add Reference Feature and
 cross-component Full Component transfer workflows remain separately unresolved.
 No owner delivery.
 
+## Separate development shortcut - October 11, 2026
+
+At the owner's explicit request, created desktop `freecad plus 0.1.0.lnk` targeting
+`C:/Users/GAMING-PC/Documents/_temp/freecad/test-builds/freecad_1.1.4_context/bin/FreeCAD.exe`,
+with the same `bin` directory as its working directory. Reopened the saved shortcut
+and verified both paths and executable existence. The original desktop
+`FreeCADPlus.exe - Shortcut.lnk` still targets the archived fork; its SHA256 was
+identical before and after creation. Preserve that link/build for future reference.
+
+This is access to the latest development executable and deployed G1.7b3t
+implementation, not a new package or Group 1 completion. No executable rebuild or
+additional runtime test was performed for this shortcut-only request. The component
+panel remains explicitly enabled; this direct executable shortcut adds no startup
+macro or automatic activation. Current shortcut instructions now preserve both links.
+
+
 ## G1.7b3t Split/join property-editor admission - October 11, 2026
 
 **Authority and scope:** applies the owner's Reference prerequisite and existing

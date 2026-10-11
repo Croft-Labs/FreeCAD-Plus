@@ -79,11 +79,12 @@ results. Do not alter renderer defaults or drivers solely to repair a capture to
 
 ## Owner delivery
 
-A new owner build must have its executable verified before the existing desktop
-`FreeCADPlus.exe - Shortcut.lnk` is retargeted. Preserve the shortcut name, set the
-correct executable and working directory, reopen the shortcut and verify both.
-Do not remove its previous build until the replacement has been checked. The
-source-only checkout does not retarget the shortcut or constitute delivery.
+The owner's October 11 decision supersedes the earlier retargeting instruction:
+preserve `FreeCADPlus.exe - Shortcut.lnk` and its archived-fork build for reference.
+The separate desktop `freecad plus 0.1.0.lnk` targets the latest development build.
+Verify the executable, then reopen the saved shortcut and verify target and working
+directory after updates. Preserve unrelated shortcuts. This development shortcut
+does not imply completed packaging, automatic panel startup or Group 1 acceptance.
 
 ## Component pilot validation
 

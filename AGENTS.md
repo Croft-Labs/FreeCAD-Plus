@@ -37,10 +37,11 @@ specific reimplementation work is authorized.
   Reuse upstream services; confirm ownership/reference contracts before migration.
 - Record implementation, build, GUI validation and publication separately. A source
   checkout or local commit is not a tested application or owner-ready build.
-- Existing builds and desktop shortcut remain associated with the archived fork.
-  Every new owner build must update the existing `FreeCADPlus.exe - Shortcut.lnk`
-  to its verified executable, then reopen/check target and working directory.
-  Preserve its name and unrelated shortcuts. Do not claim delivery before verification.
+- Owner decision October 11: preserve `FreeCADPlus.exe - Shortcut.lnk` and its
+  archived-fork target for reference. Use the separate `freecad plus 0.1.0.lnk`
+  for the new development build. Verify its executable and reopen/check target
+  and working directory after updates. Preserve unrelated shortcuts and retained
+  reference builds. A verified shortcut is not a claim of completed owner packaging.
 - Batch related authorized changes before costly builds; use proportionate quick
   checks and record deferred runtime validation.
 - Generated validation output belongs only in
