@@ -308,7 +308,8 @@ Point to Point.
   property-link additions share component checks; component drops preserve ownership.
   Six focused cases passed after correcting transfer permission and stable reference
   comparison; independent reopen/source-edit passed. WORK_STATE owns build evidence,
-  correction history and limits. Next: split/join inputs/result ownership. No owner delivery.
+  correction history and limits. Source checkpoint `0dae6b5743` pushed to origin;
+  exact remote revision verified. Next: split/join inputs/result ownership. No owner delivery.
 
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned

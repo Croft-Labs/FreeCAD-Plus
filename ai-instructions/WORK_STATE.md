@@ -65,8 +65,14 @@ Compound creation; other geometry consumers remain unfinished. No owner delivery
 **Final checks:** all 43 Plus Python scripts parse and match the retained development
 payload byte-for-byte; 122 local links in changed Markdown resolve; whitespace passes.
 Task artifacts `g1_7b3r_compound_links` were removed after recording the results.
-Useful builds remain. No additional runtime work. Publication is recorded after
-exact remote verification.
+Useful builds remain. No additional runtime work. Before publication, three native
+files' original Git LF endings were restored to remove checkout-induced formatting
+churn; code text was unchanged. Other native files retain their original CRLF.
+
+**Publication:** source/acceptance checkpoint
+`0dae6b5743f924e85489f52b95a6480806a09e10` pushed to
+origin/codex/freecad-1.1.4-baseline; exact remote revision verified. No release,
+owner package or shortcut delivery. This publication record is a separate docs commit.
 
 ## G1.7b3q Part Compound creation integration - October 11, 2026
 
