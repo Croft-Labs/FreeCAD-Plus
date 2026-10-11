@@ -1,7 +1,7 @@
 # Component/document architecture
 
-Status: G1.5 external-definition services implemented and validated, October 10, 2026.
-The native service module is opt-in; the complete panel, broader conversion and later Group 1
+Status: G1.6a panel foundation implemented and validated, October 10, 2026.
+The native service module and panel foundation are opt-in; the complete panel, broader conversion and later Group 1
 behavior below remain target design until their roadmap stages are completed.
 Engineering choices below implement confirmed behavior; they do not approve
 DOCX candidates or restore archived Plus code. The [component specification](ui-ux-specs/COMPONENT_PANEL.md)
@@ -79,6 +79,44 @@ This does not authorize History reordering or temporary suppression workflows.
 Temporary unused-model occurrences and contextual fading are view state; saving
 must not turn them into permanent placements or authored visibility changes.
 
+### Panel foundation (G1.6a)
+
+[panel.py](../src/Mod/FreeCADPlus/freecad_plus/panel.py) provides the explicit
+`show_panel()` opt-in. One Components dock contains Models, Part Tree and History.
+This is a developer entry point, not an owner-build delivery, startup replacement,
+or authorization to remove the native tree/workbenches or create new toolbar groups.
+G1.6b/c retain the rest of the confirmed panel work.
+
+Models projects domestic definitions and nested imported-file groups using qualified
+external names. Part Tree projects full native occurrence paths beneath one file
+row bearing the file name/FreeCAD icon. History projects owned sketches/features and
+geometry without Body rows; File Edit shows its Origin and three planes with native
+visibility controls in an undoable transaction. Plane visibility and its parent
+Origin visibility are separate native states; showing a plane enables its Origin.
+
+Single-click/native selection never changes Edit. Double-click or context-menu Edit
+resolves a placed component in the current tab; Models uses its last edited occurrence
+in that view, otherwise the first occurrence. All occurrences and the model row use
+bold/configured native TreeActiveColor fill. A separate outline marks the edited
+occurrence; ordinary selection remains distinct. The full native Part/Body context
+continues to drive the existing feature adapters. Native feature editors prevent
+switching Edit until they finish. No new modeling or task-dialog semantics are added.
+
+Rows carry immutable native document UUID/object Name/ID and complete link identities,
+not labels or pointers into a rebuilt tree. Actions recheck the active document/view,
+current graph and occurrence target before using a row. Double-click verifies that
+its first press referred to the same view/item. Native document/GUI/selection events
+coalesce into a single queued refresh; existing QTreeWidgetItems are reconciled in
+place, preserving expansion and avoiding repeated row reconstruction. There is no
+idle refresh timer. Pending native transactions defer projection until commit/abort.
+The panel's close path unregisters all observers/context callbacks and stops updates.
+
+Selecting an unused definition is available; Edit reports that unused-model editing
+is not yet available and creates no temporary or permanent instance. Temporary
+unused-model rows/isolation, component windows, other confirmed context actions and
+G1.7 contextual fading/Part Type remain unimplemented. This foundation changes no
+persistence schema, default settings or legacy workbench UI.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,
@@ -140,8 +178,8 @@ another occurrence. Per-view contexts remain independent.
 
 These are opt-in Python entry points, not replacements for File > New or arbitrary
 workbench commands. Their ownership/Edit guards apply at these entry points. The
-complete component panel and broader command routing are later stages; the stock
-tree is still present. No new toolbar placement or interface preference is implied.
+complete component panel and broader command routing remain later work; the stock
+tree is still present alongside the explicit panel opt-in. No new toolbar placement or interface preference is implied.
 
 The importer checks archive metadata before restoration and validates the restored
 native graph. Unknown/future versions and renamed legacy archives are refused.
@@ -337,3 +375,7 @@ The native source establishes reused mechanisms; the pilot tests establish the b
 - [External-definition acceptance](../src/Mod/FreeCADPlus/TestExternalDefinitions.py):
   nested catalogs, external Edit/save ownership, independent copies, source protection,
   cycle rejection, failed save/recovery and fresh-process shared updates.
+
+- [Panel interaction acceptance](../src/Mod/FreeCADPlus/TestComponentPanel.py): actual
+  Qt single/double clicks, native occurrence selection, tab/stale-row guards, external
+  Edit, origin visibility Undo/save/reopen and observer cleanup/idle behavior.

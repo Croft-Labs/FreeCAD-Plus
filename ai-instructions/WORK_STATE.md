@@ -3,10 +3,60 @@
 ## Authorized objective and stopping boundary
 
 Owner authorized Group 1 one reviewable task at a time and instructed stopping after
-the current checks pass. **G1.5 is complete; stop here.** Next: **G1.6 component
-panel**, covering Models/Part Tree/History, the file row, explicit Edit and occurrence
-tracking, confirmed actions and temporary unused-model editing. Do not begin that
-stage or other groups without the next continuation request.
+the current checks pass. **G1.6a is complete; stop here.** The overall G1.6 panel
+stage remains incomplete. Next: **G1.6b unused-model editing**, with a temporary last
+Part Tree row, definition editing and save-safe hiding/restoration of the assembly.
+G1.6c retains component tabs and remaining confirmed actions. Do not begin the next
+increment or other groups without the next continuation request.
+
+## G1.6a implementation and acceptance - October 10, 2026
+
+**Implementation:** opt-in Components dock with Models/Part Tree/History, nested
+external catalogs, one pinned file row, placed-component Edit, full occurrence
+tracking and native selection. All shared occurrences/model rows have active fill
+and bold text; the edited occurrence has a separate outline. Models reuses the last
+occurrence per view. File History has undoable Origin/plane visibility controls.
+Rows retain identity across updates; document/GUI events coalesce, idle has no polling,
+invalid/stale actions are refused and closing unregisters observers. The
+[architecture](ARCHITECTURE.md#panel-foundation-g16a) owns the detailed contract.
+Unused-model editing, component windows, remaining context actions, Part Type and
+contextual fading are not implemented by this increment.
+
+**Runtime:** all twenty-nine combined tests passed in 24.228 seconds in the verified
+1.1.4 GUI runtime with the checkout's scripts and an isolated profile. Six panel
+cases joined all twenty-three prior regressions. Actual Qt mouse events checked
+single-click selection without Edit, double-click Edit, occurrence memory and shared
+highlighting. Tests also covered row preservation across rename/refresh, independent
+view contexts, changed-tab/stale-row refusal, Undo of occurrence removal, external
+Edit staying in the assembly, origin visibility Undo/Redo/save/reopen, observer cleanup
+and no idle refresh. Twenty rename events coalesced into at most two refreshes.
+Panel presentation created no native objects or Undo transactions.
+
+The first focused run had a click-selection failure and an origin fixture that
+assumed a hidden Origin implied a hidden plane. The fixture now explicitly hides
+the plane before Show. The click failure did not reproduce in the next focused run
+or the full suite; no speculative application fix is claimed for that first result.
+The two final suites exited normally with no panel observer errors. Baseline regression
+logs contained their expected invalid-Pad and source-copy UUID diagnostics.
+
+**GUI/fresh process:** a separate process opened the saved panel fixture, retained
+all native object IDs and Undo count through panel interaction, and returned to the
+four file-origin History rows. Inspected captures of Models, Part Tree, component
+History and file History were clean/readable. Both shared-child occurrences were
+highlighted and the second had the Edit outline; History showed Sketch/Pad without
+Body rows. This is bounded automated interaction evidence, not long-session jitter
+acceptance or full panel completion.
+
+**Build/delivery:** CMake script copy/install passed and all fifteen module/test
+scripts matched source; syntax and whitespace passed. Native C++ was not rebuilt.
+The developer panel is opt-in and the original tree/workbenches remain. No owner
+executable was delivered or desktop shortcut changed. Reproduction is in the
+[guide](DEVELOPMENT_GUIDE.md#component-panel-foundation-validation).
+
+**Publication/cleanup:** the coherent G1.6a milestone is committed and pushed to
+origin/codex/freecad-1.1.4-baseline, with remote hash verification at handoff. Task-only
+profiles, generated CAD fixtures, captures, logs and script packaging outputs are
+removed after recording results. Tracked implementation and tests are retained.
 
 ## G1.5 implementation and acceptance - October 10, 2026
 

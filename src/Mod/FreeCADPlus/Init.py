@@ -3,4 +3,4 @@ import FreeCAD
 
 FreeCAD.addImportType("FreeCAD Plus component (*.cadprt)", "freecad_plus.document_import")
 
-FreeCAD.__unit_test__ += ["TestComponentPilot", "TestLegacyConversion", "TestComponentHierarchy", "TestExternalDefinitions"]
+FreeCAD.__unit_test__ += ["TestComponentPilot", "TestLegacyConversion", "TestComponentHierarchy", "TestExternalDefinitions", "TestComponentPanel"]

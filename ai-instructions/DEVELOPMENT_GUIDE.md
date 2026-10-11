@@ -199,3 +199,37 @@ import PySide6.QtOpenGLWidgets before querying widgets and restrict the normal
 framebuffer read to QOpenGLWidget descendants of the active QMdiSubWindow; another
 native editor window can also have an OpenGL widget. These are service/editor checks,
 not acceptance of the full panel, mouse-driven flows or long-session jitter.
+
+## Component panel foundation validation
+
+Use the same isolated GUI runtime/profile and a fresh PLUS_TEST_DIR. Run
+TestComponentPanel with TestComponentPilot, TestLegacyConversion,
+TestComponentHierarchy and TestExternalDefinitions. The panel suite uses PySide6
+QtTest mouse events and native document APIs; it requires the actual GUI runtime.
+It checks selection versus Edit, occurrence memory, native external ownership,
+file-origin visibility, Undo/save/reopen and observer lifecycle. An initial visibility
+fixture must explicitly hide the plane as well as its parent Origin before testing
+Show; the child's authored visibility can remain true while the Origin is hidden.
+
+The panel is explicitly enabled from the module path with:
+
+```python
+from freecad_plus import panel
+components = panel.show_panel()
+```
+
+It is not installed into an owner executable or automatically enabled at startup.
+Closing it unregisters observers; calling show_panel again creates one fresh dock.
+Do not hide/remove the legacy tree to make screenshots imply completed replacement.
+Unused-model Edit and the remaining panel actions are still later increments.
+
+For a fresh-process visual check, open the generated Panel.cadprt from the visibility
+persistence case, show the panel and edit the second shared-child occurrence. Inspect
+Models, Part Tree and History, then File Edit History. Compare document object IDs
+and Undo count before/after presentation. QWidget.grab on the non-OpenGL Components
+dock captures these controls; the viewport itself still requires the separate normal
+framebuffer procedure. Inspect saved panel pixels, not just image-save success.
+
+Panel construction is script-only. Use the existing CMake copy/install harness and
+compare all module files. Do not treat passing panel tests or packaging as owner
+shortcut delivery, completion of G1.6/G1.7, or long-session jitter acceptance.

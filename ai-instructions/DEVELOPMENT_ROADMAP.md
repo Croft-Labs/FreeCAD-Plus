@@ -74,8 +74,21 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   Clean two-instance viewport inspected; all thirteen script build/install files matched.
   No owner executable, full panel or storage/replacement dialogs delivered. WORK_STATE
   and ARCHITECTURE record schema-4 boundaries and exact-path recovery limitations.
-- [   ] **G1.6 — Component panel (next).** Models/Part Tree/History, file row, explicit Edit,
-  occurrence tracking, confirmed actions and temporary unused-model editing.
+- [   ] **G1.6 — Component panel.** Overall panel stage remains incomplete; split into
+  reviewable increments so the owner can stop after each increment's checks.
+- [ X ] **G1.6a — Panel foundation.** Opt-in Models/Part Tree/History, pinned file row,
+  nested imported catalogs, placed-component Edit, occurrence tracking/highlighting,
+  native selection and file-origin visibility controls. Stable rows and coalesced
+  native observers preserve interaction state; no polling while idle. Twenty-nine
+  combined native/Qt tests passed, plus fresh-process panel reopen/identity checks,
+  inspection of all three tabs and file History, and fifteen-script build/install.
+  No owner executable or full G1.6 completion claimed; WORK_STATE records boundaries.
+- [   ] **G1.6b — Unused-model editing (next).** Temporary last Part Tree row,
+  definition editing, assembly hiding/restoration and save-safe transient isolation.
+- [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs and the
+  confirmed context actions; integrate shared workflows only against their approved
+  contracts. Deferred Add Component and unconfirmed checklist/destructive-action
+  details are not approved by this task list.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined

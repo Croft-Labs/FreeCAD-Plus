@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Transient, per-view Edit routing for component occurrences, including external definitions.
 
-No selection observer, command replacement, or new toolbar placement. The full
-Models/Part Tree/History panel will consume these services in its own stage.
+The opt-in panel consumes these services through transient context notifications.
+Selection alone never calls Edit; original workbench commands remain unchanged.
 """
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -10,6 +10,23 @@ from .document import transaction, validate
 from . import hierarchy
 
 _KEY = "PlusEdit"
+_context_observers = []
+
+
+def add_context_observer(callback):
+    if callback not in _context_observers:
+        _context_observers.append(callback)
+
+
+def remove_context_observer(callback):
+    if callback in _context_observers:
+        _context_observers.remove(callback)
+
+
+def _notify_context():
+    for callback in tuple(_context_observers):
+        callback()
+
 
 
 def _view(doc):
@@ -35,6 +52,7 @@ def edit(instance):
         view.setActiveObject("pdbody", root, hierarchy.subname(path) + bodies[-1].Name + ".")
     else:
         view.setActiveObject("pdbody", None)
+    _notify_context()
     return definition
 
 
@@ -45,6 +63,7 @@ def edit_file(doc):
     view.setActiveObject(_KEY, validate(doc))
     view.setActiveObject("part", None)
     view.setActiveObject("pdbody", None)
+    _notify_context()
 
 
 def context_path(doc):
