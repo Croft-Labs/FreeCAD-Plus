@@ -3,7 +3,7 @@
 ## Authorized objective and stopping boundary
 
 Continue Group 1 only. **G1.7b3i shared dress-up/transformed input guards and their
-planned runtime checks are complete.** Finish final records/publication and stop;
+planned runtime checks are complete.** Publication is verified. Stop here;
 do not repeat passed cases or begin another operation. Next: dress-up/transformation
 command-start selection checks (`dressupGetSelected` and `prepareTransformed`).
 Group 1 remains incomplete. Check latest owner conversations for any new design
@@ -70,7 +70,9 @@ byte-for-byte; 145 local links in changed Markdown resolve; whitespace checks pa
 Task artifacts `g1_7b3i_collectors` were deleted after recording these results. The
 useful development build is retained. No further runtime work is required.
 
-**Publication:** prepared for the authorized origin milestone push.
+**Publication:** source milestone `4a047f0cb36e7f0716b4f3fea1b61a06e6cd2176`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This increment is complete; stop here.
 
 ## G1.7b3h Loft/Pipe reference admission - October 11, 2026
 

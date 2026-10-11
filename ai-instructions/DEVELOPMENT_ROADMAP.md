@@ -229,8 +229,9 @@ Point to Point.
   cleanup and native legacy behavior remain. One batched native build, four focused
   cases across bounded driver corrections and independent reopen/source-change
   checks passed. WORK_STATE records the notification timeout, corrections and limits.
-  Publication pending; no owner delivery. Stop here. Next: dress-up/transformation
-  command-start selection checks. Full G1.7b3 and Group 1 remain incomplete.
+  Source milestone `4a047f0cb3` pushed to origin; exact remote revision verified.
+  No owner delivery. Stop here. Next: dress-up/transformation command-start selection
+  checks and Pattern rejection feedback cleanup. Full G1.7b3 and Group 1 remain incomplete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 
