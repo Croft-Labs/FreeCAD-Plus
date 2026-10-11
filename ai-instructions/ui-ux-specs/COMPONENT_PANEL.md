@@ -99,6 +99,12 @@ A direct Reference child displays its full geometry while its parent is edited, 
 
 Show the active component's sequential sketches, operations/features and other geometry. Background Bodies must not reappear as separately managed rows. A legacy conversion should retain editable features where possible, putting required sketches and producing operations before their results. Move definitions to Models and represent links as Part Tree instances. If a feature cannot be converted parametrically, preserve recoverable final geometry as explicitly identified dumb body/curve geometry rather than losing it. The current backend's conversion limits are not restrictions on the intended workflow. [C06](EVIDENCE_AND_DECISIONS.md#c06), [current owner direction](EVIDENCE_AND_DECISIONS.md#current)
 
+Implementation boundary: G1.7b3k recognizes native Boolean-owned tools in the
+component file and projects their features before the Boolean in History, keeping
+backend Bodies hidden and retaining full selection/Edit paths. See the
+[native ownership contract](../ARCHITECTURE.md#native-boolean-ownership-within-a-component-g17b3k).
+This does not establish the unsettled handling of Boolean tools from another component.
+
 ### Context-menu requirements and deferred decisions
 
 | Location | Confirmed action | Required behavior |

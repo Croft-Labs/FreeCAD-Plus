@@ -39,6 +39,30 @@ def validate(doc):
     return validate_graph(doc)
 
 
+def owned_children(obj):
+    """Native ownership only, never general feature dependencies or linked definitions."""
+    if obj.TypeId in ("App::Part", "PartDesign::Body"):
+        return [obj.Origin, *obj.Group]
+    if obj.TypeId == "App::Origin":
+        return list(obj.OriginFeatures)
+    if obj.TypeId == "PartDesign::Boolean":
+        # Boolean is a native GeoFeatureGroup: its tools move into its ownership.
+        return list(obj.Group)
+    return []
+
+
+def owned_path(owner, target, ancestors=()):
+    if owner == target:
+        return ()
+    if owner in ancestors:
+        raise ValueError("Cyclic component ownership")
+    for child in owned_children(owner):
+        found = owned_path(child, target, (*ancestors, owner))
+        if found is not None:
+            return (child, *found)
+    return None
+
+
 def _validate_local(doc, external_definitions=()):
     """Check ownership separately from imported definition availability."""
     if doc.Partial:
@@ -104,13 +128,8 @@ def _validate_local(doc, external_definitions=()):
         if obj in owned:
             raise ValueError("Cyclic or multiply owned component content")
         owned.add(obj)
-        if obj.TypeId in ("App::Part", "PartDesign::Body"):
-            collect(obj.Origin)
-            for child in obj.Group:
-                collect(child)
-        elif obj.TypeId == "App::Origin":
-            for child in obj.OriginFeatures:
-                collect(child)
+        for child in owned_children(obj):
+            collect(child)
     collect(root)
     for definition in definitions:
         collect(definition)
@@ -168,9 +187,18 @@ def history(doc, definition=None):
     from .external import available_definitions
     if definition not in available_definitions(root):
         raise ValueError("Definition does not belong to this file")
-    return [feature for obj in definition.Group
-            for feature in (obj.Group if obj.TypeId == "PartDesign::Body" else [obj])
-            if obj.TypeId != "App::Link"]
+    def features(obj):
+        if obj.TypeId == "App::Link":
+            return  # A child component has its own History.
+        if obj.TypeId == "PartDesign::Body":
+            for child in obj.Group:
+                yield from features(child)
+        else:
+            if obj.TypeId == "PartDesign::Boolean":
+                for tool in owned_children(obj):
+                    yield from features(tool)
+            yield obj
+    return [feature for obj in definition.Group for feature in features(obj)]
 
 
 def inspect_archive(filename):

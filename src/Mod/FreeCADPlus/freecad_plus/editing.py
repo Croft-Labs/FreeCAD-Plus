@@ -166,8 +166,8 @@ def edit_feature(doc, feature):
     definition, path = context_path(doc)
     if feature not in history(doc, definition):
         raise ValueError("The feature must belong to the edited component")
-    body = feature.getParentGeoFeatureGroup()
-    subname = (body.Name + "." if body and body.TypeId == "PartDesign::Body" else "") + feature.Name + "."
+    from .document import owned_path
+    subname = "".join(obj.Name + "." for obj in owned_path(definition, feature))
     parent = validate(doc) if path else definition
     if path:
         subname = hierarchy.subname(path) + subname

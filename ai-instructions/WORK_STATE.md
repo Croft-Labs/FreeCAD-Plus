@@ -2,11 +2,69 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3j command-start component admission and its planned
-runtime checks are complete.** Publication is verified. Stop here. Next: component eligibility for existing PartDesign Boolean inputs.
-Other collectors and direct exporter/view-output paths remain open. Group 1 remains
-incomplete. Check latest owner conversations for any new design question; this work
-applies component rules without operation redesign. No new owner build.
+Continue Group 1 only. **G1.7b3k same-component Boolean ownership support and its
+planned checks are complete.** Stop here; publication is pending below. Next:
+Boolean input eligibility, pending the owner's cross-component tool decision.
+Group 1 remains incomplete. No native Boolean input guards were added in this
+increment; the independent structural prerequisite was completed first.
+
+## G1.7b3k native Boolean ownership prerequisite - October 11, 2026
+
+**Finding/authority:** inspection of native GeoFeatureGroup addObjects showed that
+Boolean tools move into the Boolean's ownership group. The component validator
+recognized only Part/Body/Origin ownership, so an accepted same-component operation
+could leave its tools classified as orphans and prevent save. Reviewed preserved
+owner messages C06 (editable sequential feature preservation), C09 (definitions and
+ownership), C10/U069 (mandatory promoted Reference features), and the current
+backend-Body direction. Checked the latest relevant chat, “Fix component activation
+and part,” and preserved owner sources. No explicit Boolean cross-component transfer
+policy was found. The disconnected old-computer source remains unavailable.
+
+**Outstanding owner question:** native Boolean tools from a different Full Component
+would leave their source definition and change all its instances. Should FC Plus
+require an owned linked reference first (recommended), create one automatically, or
+allow that transfer? Asked via the conversation's pending clarification. No answer
+has been assumed. The same-component ownership prerequisite is independent of it.
+
+**Implementation:** document.owned_children/owned_path own the native traversal
+contract, including Boolean-owned tools. Validation and geometry eligibility share
+it; general feature dependencies and component links are not ownership. History
+places owned tool features before the consuming Boolean and hides Body containers.
+Panel selection and native feature Edit use the complete ownership path. No native
+operation algorithm, cross-component intake policy or document schema was changed.
+See the [contract](ARCHITECTURE.md#native-boolean-ownership-within-a-component-g17b3k).
+
+**Build:** FreeCADPlusScripts payload build passed in the retained
+`test-builds/freecad_1.1.4_context`, exit 0, 44.55 seconds including configuration.
+No native C++ changes/recompilation, owner package or desktop shortcut delivery.
+
+**Validation:** four new native GUI cases and two affected existing regressions
+passed in one run: 6 passed, zero failures/errors/skips, 9.983 seconds, native exit
+0 (14.98 seconds including startup/shutdown). Verified valid same-component Fuse,
+Boolean tool ownership, hidden Body History ordering, nested feature selection and
+native Edit/Cancel, creation Cancel, one-step Undo/Redo, unchanged existing object
+IDs, no general-dependency ownership traversal, and orphan rejection. Existing panel
+projection and edited-component eligibility regression cases passed. The existing
+OwnedDerived/Pad regression fixture emitted a native link-scope warning; startup
+also reported the existing Std_Measure notice. No test correction or repeated suite.
+
+Independent fresh-process reopen passed exact IDs, stored Boolean tools, History,
+Body Tip and saved volume; changing the source tool length produced a valid result
+with the expected volume increase. Native exit 0, 5.83 seconds including startup/
+shutdown. Runtime checks are complete; no more are required for this increment.
+
+**Limits:** same-component native Fuse and one level of Boolean tool nesting were
+exercised. Other Boolean modes, deeper nesting, foreign/external tools and removal
+of consumed tools are not certified here. Boolean command/picker input admission
+remains pending, along with the cross-component decision. This prerequisite does
+not make all Boolean workflows or Group 1 complete.
+
+**Final checks:** all 37 Plus Python scripts parse and match the development
+payload byte-for-byte; 150 local links in changed Markdown resolve; whitespace
+passes. Task artifacts `g1_7b3k_boolean_ownership` are removed after recording these
+results; the useful development build is retained. No further runtime work.
+
+**Publication:** pending authorized origin commit/push and remote verification.
 
 ## G1.7b3j dress-up/transformation command admission - October 11, 2026
 

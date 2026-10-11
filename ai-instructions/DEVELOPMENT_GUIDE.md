@@ -584,3 +584,16 @@ identities/references/Tip/volumes, then changes source dimensions and recomputes
 Use the isolated bounded runner and `messages()` for expected command rejections.
 A rejected command must retain object identities, selection, Tip, shape and Undo/
 transaction state. Do not rerun previously passing intake suites for this increment.
+
+## Native Boolean ownership validation
+
+Build FreeCADPlusScripts in the retained native development tree; this ownership
+change is Python-only. TestComponentBooleanOwnership drives the native Boolean
+command within one component and checks accepted creation, ownership transfer inside
+the component, hidden Body History projection, full-path selection and nested input
+Edit/Cancel, creation Cancel, one-step Undo/Redo and rejection of unowned dependencies.
+Run the affected existing panel projection and owned-feature eligibility cases once.
+Its independent verifier reopens the saved file, checks exact identities, tool
+ownership, History, Tip and geometry, then changes a source tool and recomputes.
+These checks do not certify cross-component intake or all Boolean geometry modes.
+Stop after acceptance; retain the build and clean only task-generated validation data.

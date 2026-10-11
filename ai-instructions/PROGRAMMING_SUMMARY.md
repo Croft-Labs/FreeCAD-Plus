@@ -42,8 +42,10 @@ sections and main/auxiliary paths passed focused native and independent reopen c
 G1.7b3i shared dress-up/transformed input guards, including whole-edge controls,
 passed targeted native and independent reopen checks. G1.7b3j command-start
 selection checks and Pattern feedback routing passed focused native and independent
-reopen checks, including the Chamfer rejected-selection cleanup correction. Stop
-here. Next: component eligibility for existing PartDesign Boolean inputs. Direct exporter/view-output paths
+reopen checks, including the Chamfer rejected-selection cleanup correction.
+G1.7b3k same-component native Boolean ownership, History and nested edit paths passed
+focused native and independent reopen checks. Stop here. Next: Boolean input
+eligibility, pending the owner's cross-component tool decision. Direct exporter/view-output paths
 still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
@@ -69,7 +71,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 
 - src/App and src/Gui: upstream document/application and desktop services.
 - src/Mod: original workbench modules; retain their source and availability.
-- src/Mod/FreeCADPlus/freecad_plus/document.py: schema, ownership, creation/open/save.
+- src/Mod/FreeCADPlus/freecad_plus/document.py: schema, native owned_children/owned_path traversal, History projection and creation/open/save.
+- src/Mod/FreeCADPlus/TestComponentBooleanOwnership.py: same-component Boolean ownership, nested History/Edit, Undo/Cancel and independent persistence checks.
 - src/Mod/FreeCADPlus/freecad_plus/editing.py: per-view Edit, backend Body and native feature adapters.
 - src/Mod/FreeCADPlus/TestComponentPilot.py: G1.2 regression suite and fresh-process check.
 - src/Mod/FreeCADPlus/freecad_plus/conversion.py: isolated legacy conversion and persisted loss report.

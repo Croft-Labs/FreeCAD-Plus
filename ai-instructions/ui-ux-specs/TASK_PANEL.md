@@ -30,6 +30,7 @@ G1.7b3j adds command-start checks before dress-up/transformation selection
 normalization or mutation, including Multi-Transform conversion, and prevents a
 rejected Pattern Original being treated as a direction; see the
 [command boundary](../ARCHITECTURE.md#dress-up-and-transformation-command-admission-g17b3j).
+G1.7b3k supplies the same-component [native Boolean ownership prerequisite](../ARCHITECTURE.md#native-boolean-ownership-within-a-component-g17b3k), including History/Edit and persistence. Boolean input guards and cross-component tool handling remain pending; native Boolean tasks have not been redesigned.
 Other collectors remain unfinished; see the [intake contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e),
 [attachment/reference boundary](../ARCHITECTURE.md#attachment-and-shared-task-reference-intake-g17b3f)
 and [attachment/Extrude boundary](../ARCHITECTURE.md#python-attachment-and-extrude-faceshape-intake-g17b3g).

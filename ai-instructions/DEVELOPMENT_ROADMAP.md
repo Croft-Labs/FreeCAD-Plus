@@ -241,6 +241,18 @@ Point to Point.
   Source milestone `b35f8423e1` pushed to origin; exact remote revision verified.
   No owner delivery. Stop here. Next: component eligibility for
   existing PartDesign Boolean inputs. Full G1.7b3 and Group 1 remain incomplete.
+- [ X ] **G1.7b3k — Same-component Boolean ownership prerequisite.** Native
+  Boolean tool ownership is recognized by validation and eligibility; History hides
+  nested Body containers and preserves tool features before their consuming Boolean.
+  Full owned paths support selection/Edit. Script payload build, four new cases,
+  two affected existing regressions and independent reopen/source-change passed.
+  WORK_STATE records exact evidence and limits. Publication pending; no owner delivery.
+- [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
+  grouping can transfer tools out of another shared component. Ask whether an owned
+  linked reference is required first, created automatically, or ownership intentionally
+  transferred. The question is outstanding; do not choose from current UI behavior.
+  Complete command-start/picker guards once settled. Do not rerun G1.7b3k's completed
+  checks without an affected change.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

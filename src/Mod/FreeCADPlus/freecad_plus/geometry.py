@@ -7,25 +7,8 @@ filter and does not intercept arbitrary native commands or direct Python access.
 from . import document, display, hierarchy, external
 
 
-def _children(obj):
-    if obj.TypeId in ('App::Part', 'PartDesign::Body'):
-        return [obj.Origin, *obj.Group]
-    if obj.TypeId == 'App::Origin':
-        return list(obj.OriginFeatures)
-    return []
-
-
-def _owned_path(owner, target):
-    if owner == target:
-        return ()
-    for child in _children(owner):
-        if child == target:
-            return (child,)
-        if child.TypeId != 'App::Link':
-            found = _owned_path(child, target)
-            if found is not None:
-                return (child, *found)
-    return None
+# Keep eligibility and persistence on the same native ownership contract.
+_owned_path = document.owned_path
 
 
 def require_access(doc, obj, sub='', *, active=None, active_path=()):

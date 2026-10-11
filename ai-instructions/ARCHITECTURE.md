@@ -673,6 +673,33 @@ active-Body resolution remains upstream behavior; the guard runs once a Body is
 available. Other command families, raw writes and existing dependency reclassification
 remain separate coverage boundaries. WORK_STATE records build and runtime evidence.
 
+### Native Boolean ownership within a component (G1.7b3k)
+
+Native PartDesign Boolean `Group` is an ownership group, not merely a list of
+source dependencies: adding a tool removes it from its former GeoFeatureGroup.
+`document.owned_children` recognizes that native ownership alongside Part/Body and
+Origin ownership. Document validation and `document.owned_path` share that contract;
+geometry eligibility reuses the same path traversal. Arbitrary property links,
+BaseFeature dependencies and component-linked definitions are never traversed as
+ownership. Orphans, cycles and multiply owned contents still fail validation.
+
+History projects a Boolean's owned tool features before the Boolean and recursively
+hides backend Body containers. Panel selection and feature Edit use the full native
+ownership path, retaining nested tool feature editing without changing identities,
+geometry algorithms or serialized native data. No schema migration is introduced.
+This fixes same-component Boolean results previously appearing to contain orphaned
+tools and thus failing component save validation.
+
+Cross-component Boolean intake is unresolved: native grouping can transfer a tool
+out of a different shared definition, altering all its instances. The reviewed C06,
+C09 and C10/current owner instructions settle preservation, hidden backend Bodies
+and mandatory promotion of Reference geometry, but do not specify Boolean tools
+from another Full Component. An owner question is pending: require an owned linked
+reference first (recommended), create one automatically, or intentionally move the
+source tool. Do not infer a decision from native behavior. This increment implements
+only the independent ownership prerequisite; Boolean command/picker eligibility
+checks and cross-component behavior remain unfinished. WORK_STATE owns acceptance.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

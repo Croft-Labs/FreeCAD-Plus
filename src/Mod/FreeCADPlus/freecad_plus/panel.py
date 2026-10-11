@@ -91,10 +91,7 @@ def projection(doc, active=None, active_path=()):
                 sub += obj.Name + '.'
         else:
             sub = hierarchy.subname(active_path)
-            body = obj.getParentGeoFeatureGroup()
-            if body and body.TypeId == 'PartDesign::Body':
-                sub += body.Name + '.'
-            sub += obj.Name + '.'
+            sub += ''.join(member.Name + '.' for member in document.owned_path(active, obj))
         history.append(Row(('history', identity(obj)), 'history', obj.Label, identity(obj),
                            selection=((doc.Name, root.Name, sub) if active is None or active_path
                                       else (active.Document.Name, active.Name, sub)),
