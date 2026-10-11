@@ -59,6 +59,10 @@ profiles, CAD/BREP fixtures, logs and launcher files under
 `validation/g1_7b3d_export` were deleted after recording the results. The useful
 native development build is retained.
 
+**Publication:** source milestone `8baa8ca44e45070882ef5fcc2711b1d4fc5fc322` was pushed to origin
+`codex/freecad-1.1.4-baseline`; the exact remote revision was verified. No owner
+package, shortcut update, release or deployment.
+
 ## G1.7b3c shared geometry eligibility - October 11, 2026
 
 **Owner source:** reread the original user messages in **Fix component activation

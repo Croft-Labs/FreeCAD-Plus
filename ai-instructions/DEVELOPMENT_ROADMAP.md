@@ -190,6 +190,7 @@ Point to Point.
   existing source-owned unused Edit context supplies external export selections.
   Native build, four actual Export cases, five shared-policy regressions and an
   independent reopen passed; WORK_STATE records initial failures and corrections.
+  Source milestone `8baa8ca44e` pushed to origin; exact remote revision verified.
   Stop here; no owner delivery. Next: native modeling input consumers, starting
   with Sketch/PartDesign reference intake. Direct exporter and view-output routes
   remain separate integration work; full G1.7b3 is unfinished.
