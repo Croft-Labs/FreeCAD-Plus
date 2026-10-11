@@ -73,6 +73,12 @@ Task artifacts `g1_7b3t_split_properties` are removed after recording these resu
 Useful builds remain; no additional runtime work.
 
 
+**Publication:** source/acceptance checkpoint
+`3d6e6ddfdfa73ca2866bc8108ed2333f0ed59bac` pushed to
+origin/codex/freecad-1.1.4-baseline; exact remote revision verified. No release,
+owner package or shortcut delivery. This publication record is a separate docs commit.
+
+
 ## G1.7b3s Split/join creation integration - October 11, 2026
 
 **Authority:** applies the owner's explicit Reference prerequisite and existing
