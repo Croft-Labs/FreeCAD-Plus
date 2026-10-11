@@ -18,8 +18,12 @@ Component geometry inputs must respect the confirmed [Part Type rules](COMPONENT
 
 Implementation boundary: G1.7b3e guards native PartDesign profile intake and Sketcher
 Projection/Intersection reference admission using the shared component policy. Their
-native editors and geometry rules remain the baseline. Other task reference fields
-and attachment paths remain unfinished; see the [technical contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e).
+native editors and geometry rules remain the baseline. G1.7b3f extends this to native
+attachment inputs (picked, initial batch and typed) and the shared PartDesign picked
+axis/direction/plane collector. A rejected input keeps the existing reference and
+editor transaction. The separate Python attachment editor and other task collectors
+remain unfinished; see the [intake contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e)
+and [attachment/reference boundary](../ARCHITECTURE.md#attachment-and-shared-task-reference-intake-g17b3f).
 
 ### Layers
 

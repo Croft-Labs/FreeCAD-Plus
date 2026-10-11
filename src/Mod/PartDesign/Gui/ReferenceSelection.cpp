@@ -27,6 +27,7 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <QDialog>
+#include <QMessageBox>
 
 
 #include <App/Document.h>
@@ -35,6 +36,7 @@
 #include <App/Part.h>
 #include <Base/Tools.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentGeometry.h>
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
 #include <Mod/Part/App/Part2DObject.h>
@@ -310,6 +312,22 @@ bool getReferencedSelection(
 
     if (strcmp(thisObj->getDocument()->getName(), msg.pDocName) != 0) {
         return false;
+    }
+
+    // Keep the occurrence before the resolved task selection loses its context.
+    // Reject before the native external-reference dialog can create a copy.
+    const auto* original = &msg;
+    while (original->pOriginalMsg) {
+        original = original->pOriginalMsg;
+    }
+    const auto inputError = Gui::componentGeometryError(
+        const_cast<App::DocumentObject*>(thisObj),
+        std::vector<App::SubObjectT> {original->Object}
+    );
+    if (!inputError.empty()) {
+        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                             QString::fromUtf8(inputError.c_str()));
+        return false;  // selObj stays null; callers retain their existing references.
     }
 
     selObj = thisObj->getDocument()->getObject(msg.pObjectName);

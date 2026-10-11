@@ -560,6 +560,30 @@ No new Add Reference Feature, Sketcher or PartDesign operation workflow is defin
 TestComponentModeling owns focused native intake acceptance; WORK_STATE records
 build/runtime evidence separately from the source contract.
 
+### Attachment and shared task reference intake (G1.7b3f)
+
+The native Part TaskAttacher checks the complete unresolved initial-selection batch
+before converting occurrence paths or setting any AttachmentSupport entry. The same
+boundary checks individual picked references. Typed nonempty references are checked
+before changing Support or the line's RefName metadata; removing a reference remains
+possible. Rejection uses the existing inline attachment message and leaves the
+current support, placement and editor transaction intact.
+
+PartDesign's getReferencedSelection checks the original selection message through
+ComponentGeometry.h before resolving it into a shared definition or offering the
+native external-reference/copy dialog. The output remains null on rejection, so its
+existing callers retain their references. This covers picked Extrude direction,
+Revolution/Groove and Helix axes, Draft neutral plane/pull direction, Mirrored plane
+and Pattern direction/axis through that shared collector. Ordinary legacy documents
+still bypass the component policy; native validity and reference behavior remain.
+
+This does not cover every reference editor. The separate Python AttachmentEditor,
+other task collectors (including Extrude up-to-face/shape and Loft/Pipe sections),
+combo-box stored references, property-editor/direct Python writes and existing
+reference reclassification remain outside this increment. No new promotion/copy
+workflow is authorized. TestComponentReferences owns focused native acceptance;
+WORK_STATE owns the actual build, runtime and publication evidence.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

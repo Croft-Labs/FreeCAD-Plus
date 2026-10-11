@@ -14,6 +14,7 @@ set(FreeCADPlus_SRCS
     TestComponentEligibility.py
     TestComponentExport.py
     TestComponentModeling.py
+    TestComponentReferences.py
     TestComponentDisplay.py
     TestComponentRotate.py
     TestComponentMove.py
@@ -34,7 +35,7 @@ set(FreeCADPlus_SRCS
 )
 add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
 fc_copy_sources(FreeCADPlusScripts "${CMAKE_BINARY_DIR}/Mod/FreeCADPlus" ${FreeCADPlus_SRCS})
-install(FILES Init.py TestComponentPilot.py TestLegacyConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentModeling.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
+install(FILES Init.py TestComponentPilot.py TestLegacyConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentModeling.py TestComponentReferences.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
 install(FILES
     freecad_plus/__init__.py
     freecad_plus/display.py

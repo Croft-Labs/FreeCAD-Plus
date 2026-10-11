@@ -34,8 +34,11 @@ Move Components reference consumers. G1.7b3d guards native File > Export before
 options/writing and fixes source selection for external unused component exports.
 G1.7b3e adds native PartDesign profile and Sketcher Projection/Intersection input
 eligibility. Its focused native tests and independent reopen/source-update checks
-passed. Stop at this increment. Next: attachment and existing task-dialog reference
-collectors; remaining direct exporter/view-output paths still need integration. Check latest
+passed. G1.7b3f native attachment and shared picked axis/direction/plane references
+also passed focused native and independent reopen/downstream checks. Stop here.
+Next: the separate Python attachment editor and remaining task reference collectors,
+starting with Extrude up-to-face/shape. Direct exporter/view-output paths still need
+integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
 The complete G1.6 panel is unfinished.
@@ -79,6 +82,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/geometry.py: occurrence-aware Reference/Excluded geometry eligibility, independent of display/selection.
 - src/Mod/FreeCADPlus/TestComponentEligibility.py: consumer guard, shared/external ownership and fresh-process acceptance.
 - src/Gui/ComponentGeometry.h: shared native modeling eligibility bridge for PartDesign/Sketcher.
+- src/Mod/FreeCADPlus/TestComponentReferences.py: native attachment/axis collector, atomic rejection, legacy bypass and downstream acceptance.
+- src/Mod/Part/Gui/TaskAttacher.cpp and src/Mod/PartDesign/Gui/ReferenceSelection.cpp: component input guards for native attachment/shared picked references.
 - src/Mod/FreeCADPlus/TestComponentModeling.py: native intake, transactions, legacy bypass and independent reopen checks.
 - src/Mod/FreeCADPlus/TestComponentExport.py: native File > Export rejection, BREP/legacy/source-owned export and independent reopen.
 - src/Gui/Application.cpp and CommandDoc.cpp: component-only export preflight and external unused source-selection routing.

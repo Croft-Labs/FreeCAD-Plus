@@ -2,13 +2,63 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3e native modeling intake and its planned checks
-are complete.** Stop at this increment; do not repeat passed tests or begin another
-operation. Group 1/G1.7b3 remain incomplete. Next: attachment and existing task-dialog
-reference collectors. Direct exporter/view-output routes and existing dependency
-reclassification also remain unfinished. Search the latest relevant owner conversations
-before treating design details as undefined. Right-click access does not authorize
-an Add Reference Feature operation as Component Panel work.
+Continue Group 1 only. **G1.7b3f native attachment and shared picked references,
+including their planned checks, are complete.** Stop here; do not repeat passing
+suites or start another collector. Next: the separate Python attachment editor and
+remaining task reference collectors (starting with Extrude up-to-face/shape).
+Group 1/G1.7b3 remain incomplete. Search latest owner conversations if design needs
+clarification; right-click access does not authorize new operation/promotion workflows.
+
+## G1.7b3f attachment and shared task references - October 11, 2026
+
+**Implementation:** native TaskAttacher prechecks the entire initial reference batch,
+individual picks and typed references before AttachmentSupport/RefName mutation.
+Shared getReferencedSelection checks the original occurrence before the native
+external reference/copy dialog. Rejected input preserves the current reference and
+transaction. Legacy documents retain the native path. See the
+[contract](ARCHITECTURE.md#attachment-and-shared-task-reference-intake-g17b3f).
+Existing C10/U069 promotion rules govern; no new design decision was needed.
+
+**Build:** one bounded batched PartGui/PartDesignGui build passed in the retained
+`test-builds/freecad_1.1.4_context` tree; FreeCADPlusScripts synchronization passed.
+Both changed native files compiled and linked. Subsequent corrections affected only
+test drivers and were copied to that payload. No owner package or shortcut delivery.
+
+**Validation:** initial four-case run: 3 failures, 1 error, zero skips, native exit 0
+(5.876 seconds). The driver used a non-attachable App::Plane instead of Part::DatumPlane,
+expected native datum acceptance to clear edit mode, omitted the direction combo's
+activated signal, and compared a legacy origin reference without resolving its native
+container path. These were test assumptions; no production correction was needed.
+The corrected four-case run passed, zero failures/errors/skips, native exit 0
+(7.265 seconds). No prior modeling/export suites were rerun.
+
+Actual native checks prove: a mixed initial batch reaches the policy with both
+unresolved references and mutates neither; rejected picked and typed occurrences
+leave support, RefName, placement and editor transaction unchanged; accepted native
+attachment supports Cancel and Undo/Redo; the Pad direction picker rejects the
+forbidden shared occurrence before mutation and accepts the eligible occurrence;
+and ordinary legacy attachment bypasses the component guard. The datum editor's
+native lingering edit mode is explicitly reset after successful acceptance in the
+driver, not changed by this increment.
+
+Independent fresh-process reopen passed exact saved object IDs, attachment support
+and axis identities. Changing source Pad Length moved the attached plane to the new
+height; changing the axis-driven Pad Length retained valid geometry and expected
+volume. Native exit 0. No viewport rendering or performance change is claimed.
+
+**Limits:** runtime coverage drives native attachment and Pad direction, not every
+shared collector caller. Revolution/Groove, Helix, Draft, Mirrored and Pattern use
+the inspected shared resolver. The separate Python AttachmentEditor, other task
+collectors, stored combo references, property-editor/raw Python writes and existing
+dependency reclassification remain outside this increment. Full Group 1 is unfinished.
+
+**Final checks:** all 32 Python files parse and byte-match the development payload;
+139 local documentation link targets resolve and whitespace checks pass. Temporary
+profiles, fixtures, logs and launchers in `validation/g1_7b3f_references` were deleted
+after recording results. The useful native development build is retained.
+
+**Publication:** source milestone prepared for the authorized origin push. No owner
+package, desktop-shortcut update, release or deployment.
 
 ## G1.7b3e native modeling intake - October 11, 2026
 

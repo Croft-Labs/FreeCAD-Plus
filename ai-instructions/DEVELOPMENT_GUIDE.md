@@ -516,3 +516,18 @@ do not establish coverage of all task-dialog reference fields or raw Python writ
 Parse and compare all 31 Python files to the native payload. Record actual results,
 remove task-generated validation files, and stop once this increment's checks pass.
 Owner packaging and desktop-shortcut delivery remain separate gates.
+
+## Attachment and shared task reference validation
+
+Batch PartGui and PartDesignGui for native collector changes, then synchronize the
+FreeCADPlusScripts target. TestComponentReferences drives the native datum attachment
+editor and Pad direction picker with original component occurrences. Cover initial
+mixed-batch atomicity, picked and typed rejection without losing a prior reference,
+Cancel and Undo/Redo, native legacy attachment bypass and allowed axis selection.
+Independently reopen the saved attachment/axis fixtures, verify identities/references
+and change the source/feature to prove downstream placement and geometry.
+
+Run only affected cases after a correction; do not repeat the prior modeling/export
+suites. Parse/compare the 32 Python payload files. Record exact coverage and limits,
+then delete this increment's temporary validation directory. These native checks do
+not validate the separate Python AttachmentEditor or every task reference control.

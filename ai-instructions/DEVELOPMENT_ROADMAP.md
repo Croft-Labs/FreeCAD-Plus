@@ -200,8 +200,14 @@ Point to Point.
   independent Pad/projection reopen passed across bounded corrective runs. WORK_STATE
   records exact coverage, fixture corrections and the inherited seam-reference limit.
   Source milestone `8aeb91a305` pushed to origin; exact remote revision verified.
-  Stop here; no owner delivery. Next: attachment and existing task-dialog reference
-  collectors. Full G1.7b3 and Group 1 remain incomplete.
+  No owner delivery. Full G1.7b3 and Group 1 remain incomplete.
+- [ X ] **G1.7b3f — Native attachment and shared picked references.** Native attachment
+  checks picked/typed inputs and the full initial batch before mutation. The shared
+  PartDesign axis/direction/plane collector checks original occurrence before native
+  copy/reference handling. Batched native build, four focused cases and independent
+  saved attachment/axis downstream checks passed. WORK_STATE records exact driver
+  corrections and limits. Publication pending. Stop; no owner delivery. Next: separate
+  Python attachment editor and remaining collectors, starting with Extrude up-to-face/shape.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

@@ -40,6 +40,7 @@
 #include <Gui/Application.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/CommandT.h>
+#include <Gui/ComponentGeometry.h>
 #include <Gui/Document.h>
 #include <Gui/DocumentObserver.h>
 #include <Gui/Selection/Selection.h>
@@ -608,6 +609,19 @@ void TaskAttacher::addToReference(const std::vector<SubAndObjName>& pairs)
     App::DocumentObject* obj = ViewProvider->getObject();
     Part::AttachExtension* pcAttach = obj->getExtensionByType<Part::AttachExtension>();
 
+    // Validate the complete unresolved batch before context conversion or mutation.
+    std::vector<App::SubObjectT> inputs;
+    for (const auto& pair : pairs) {
+        inputs.emplace_back(obj->getDocument()->getObject(pair.objName.c_str()),
+                            pair.subName.c_str());
+    }
+    const auto inputError = Gui::componentGeometryError(obj, inputs);
+    if (!inputError.empty()) {
+        ui->message->setText(QString::fromUtf8(inputError.c_str()));
+        ui->message->setStyleSheet(QStringLiteral("QLabel{color: red;}"));
+        return;
+    }
+
     for (auto& pair : pairs) {
         std::vector<App::DocumentObject*> refs = pcAttach->AttachmentSupport.getValues();
         std::vector<std::string> refnames = pcAttach->AttachmentSupport.getSubValues();
@@ -947,9 +961,18 @@ void TaskAttacher::onRefName(const QString& text, unsigned idx)
 
         auto name = getSubshapeName(parts[1]);
 
-        line->setProperty("RefName", QByteArray(name.c_str()));
         subElement = name;
     }
+
+    const auto inputError = Gui::componentGeometryError(
+        ViewProvider->getObject(), std::vector<App::SubObjectT> {{obj, subElement.c_str()}}
+    );
+    if (!inputError.empty()) {
+        ui->message->setText(QString::fromUtf8(inputError.c_str()));
+        ui->message->setStyleSheet(QStringLiteral("QLabel{color: red;}"));
+        return;
+    }
+    line->setProperty("RefName", QByteArray(subElement.c_str()));
 
     Part::AttachExtension* pcAttach
         = ViewProvider->getObject()->getExtensionByType<Part::AttachExtension>();
