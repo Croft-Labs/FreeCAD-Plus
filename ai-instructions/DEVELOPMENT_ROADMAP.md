@@ -246,7 +246,8 @@ Point to Point.
   nested Body containers and preserves tool features before their consuming Boolean.
   Full owned paths support selection/Edit. Script payload build, four new cases,
   two affected existing regressions and independent reopen/source-change passed.
-  WORK_STATE records exact evidence and limits. Publication pending; no owner delivery.
+  WORK_STATE records exact evidence and limits. Source milestone `2c48da7f9d`
+  pushed to origin; exact remote revision verified. No owner delivery.
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

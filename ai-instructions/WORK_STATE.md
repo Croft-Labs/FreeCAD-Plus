@@ -3,7 +3,7 @@
 ## Authorized objective and stopping boundary
 
 Continue Group 1 only. **G1.7b3k same-component Boolean ownership support and its
-planned checks are complete.** Stop here; publication is pending below. Next:
+planned checks are complete.** Publication is verified. Stop here. Next:
 Boolean input eligibility, pending the owner's cross-component tool decision.
 Group 1 remains incomplete. No native Boolean input guards were added in this
 increment; the independent structural prerequisite was completed first.
@@ -64,7 +64,9 @@ payload byte-for-byte; 150 local links in changed Markdown resolve; whitespace
 passes. Task artifacts `g1_7b3k_boolean_ownership` are removed after recording these
 results; the useful development build is retained. No further runtime work.
 
-**Publication:** pending authorized origin commit/push and remote verification.
+**Publication:** source milestone `2c48da7f9d8ae7272e419f8a01a340def0b0e9cf`
+pushed to `origin/codex/freecad-1.1.4-baseline`; exact remote revision verified.
+No owner delivery. This prerequisite increment is complete; stop here.
 
 ## G1.7b3j dress-up/transformation command admission - October 11, 2026
 
