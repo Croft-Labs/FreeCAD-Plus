@@ -7,7 +7,7 @@ Selection alone never calls Edit; original workbench commands remain unchanged.
 import FreeCAD as App
 import FreeCADGui as Gui
 from .document import transaction, validate
-from . import hierarchy
+from . import hierarchy, isolation
 
 _KEY = "PlusEdit"
 _context_observers = []
@@ -45,6 +45,7 @@ def edit(instance):
     view = _view(doc)
     if Gui.activeDocument().getInEdit():
         raise ValueError("Finish the native feature editor first")
+    isolation.end(view)
     view.setActiveObject(_KEY, root, hierarchy.subname(path))
     view.setActiveObject("part", root, hierarchy.subname(path))
     bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
@@ -60,16 +61,52 @@ def edit_file(doc):
     view = _view(doc)
     if Gui.activeDocument().getInEdit():
         raise ValueError("Finish the native feature editor first")
-    view.setActiveObject(_KEY, validate(doc))
+    root = validate(doc)
+    isolation.end(view)
+    view.setActiveObject(_KEY, root)
     view.setActiveObject("part", None)
     view.setActiveObject("pdbody", None)
     _notify_context()
+
+
+def edit_unused(doc, definition):
+    """Edit a catalog definition in this tab without adding a native occurrence."""
+    view = _view(doc)
+    if Gui.getDocument(doc.Name).getInEdit():
+        raise ValueError("Finish the native feature editor first")
+    if definition.Document != doc:
+        raise ValueError("Unused external definitions must be edited in their defining file; in-place editing is not available yet")
+    isolation.begin(doc, view, definition)
+    view.setActiveObject(_KEY, definition, "")
+    view.setActiveObject("part", definition, "")
+    bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
+    if bodies:
+        view.setActiveObject("pdbody", definition, bodies[-1].Name + ".")
+    else:
+        view.setActiveObject("pdbody", None)
+    _notify_context()
+    return definition
+
+
+def unused_context(doc):
+    session = isolation.current(_view(doc))
+    return session.definition() if session else None
+
+
+def _restore(doc, definition, path):
+    if path:
+        edit(path)
+    else:
+        edit_unused(doc, definition)
 
 
 def context_path(doc):
     root = validate(doc)
     if Gui.getDocument(doc.Name).getInEdit():
         raise ValueError("Finish the native feature editor first")
+    unused = unused_context(doc)
+    if unused is not None:
+        return unused, ()
     resolved, parent, subname = _view(doc).getActiveObject(_KEY, False)
     if parent != root or not subname:
         raise ValueError("Explicitly Edit a component before creating modeling geometry")
@@ -81,7 +118,7 @@ def context_path(doc):
 
 def context(doc):
     definition, path = context_path(doc)
-    return definition, path[-1]
+    return definition, path[-1] if path else None
 
 
 def new_sketch(doc):
@@ -91,7 +128,7 @@ def new_sketch(doc):
         bodies = [obj for obj in definition.Group if obj.TypeId == "PartDesign::Body"]
         body = bodies[-1] if bodies else definition.newObject("PartDesign::Body", "Body")
         sketch = body.newObject("Sketcher::SketchObject", "Sketch")
-    edit(occurrence)
+    _restore(doc, definition, occurrence)
     return sketch
 
 
@@ -109,5 +146,5 @@ def pad(doc, sketch, length):
         if feature.Shape.isNull() or not feature.Shape.isValid() or "Invalid" in feature.State:
             raise ValueError("The native Pad could not produce valid geometry")
         sketch.Visibility = False
-    edit(occurrence)
+    _restore(doc, definition, occurrence)
     return feature

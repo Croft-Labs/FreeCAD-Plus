@@ -221,7 +221,8 @@ components = panel.show_panel()
 It is not installed into an owner executable or automatically enabled at startup.
 Closing it unregisters observers; calling show_panel again creates one fresh dock.
 Do not hide/remove the legacy tree to make screenshots imply completed replacement.
-Unused-model Edit and the remaining panel actions are still later increments.
+Domestic unused-model Edit is supported; external unused-model Edit and the remaining
+panel actions are still pending. See the bounded contract in ARCHITECTURE.md.
 
 For a fresh-process visual check, open the generated Panel.cadprt from the visibility
 persistence case, show the panel and edit the second shared-child occurrence. Inspect
@@ -233,3 +234,23 @@ framebuffer procedure. Inspect saved panel pixels, not just image-save success.
 Panel construction is script-only. Use the existing CMake copy/install harness and
 compare all module files. Do not treat passing panel tests or packaging as owner
 shortcut delivery, completion of G1.6/G1.7, or long-session jitter acceptance.
+
+## Unused domestic-model validation
+
+Include TestUnusedModels with the preceding five suites in an isolated native GUI
+process and a fresh PLUS_TEST_DIR. Its six cases exercise actual Qt domestic Edit,
+transient rows, assembly hiding/selection, native Sketch editing, Undo/Redo, saving
+while isolated, per-view state, cleanup/removal and refusal of external unused Edit
+without mutation. Refusal coverage is not external-workflow acceptance.
+In a second process run `TestUnusedModels.verify_fresh_process(output_directory)`.
+It reopens the saved unused fixture, compares native IDs/visibility/link inventory,
+changes the unused Pad from 7 to 9 mm and saves a separate edited file.
+
+For display acceptance, open Unused.cadprt from the modeling/Undo case. Capture the
+normal framebuffer in File Edit, then Edit of its unused definition, then File Edit.
+The assembly has two small cylinders; isolation shows only the larger unused
+cylinder; exit restores the two originals. Inspect the Part Tree capture for the
+last temporary row, active fill and gray selectable assembly rows. A theme can
+provide identical active/disabled palette colors, so inspect pixels as well as row
+brush state. Use the existing native framebuffer procedure, not grabFramebuffer.
+The script-only CMake copy/install check now covers seventeen source/test scripts.

@@ -83,8 +83,14 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   combined native/Qt tests passed, plus fresh-process panel reopen/identity checks,
   inspection of all three tabs and file History, and fifteen-script build/install.
   No owner executable or full G1.6 completion claimed; WORK_STATE records boundaries.
-- [   ] **G1.6b — Unused-model editing (next).** Temporary last Part Tree row,
-  definition editing, assembly hiding/restoration and save-safe transient isolation.
+- [   ] **G1.6b - Unused-model editing (partial).** Domestic unused definitions now
+  have a temporary last Part Tree row, native Sketch/Pad editing, assembly display
+  hiding/restoration and save-safe transient isolation. Thirty-five combined tests,
+  fresh-process persistence, viewport/panel inspection and seventeen-script packaging
+  passed for this bounded increment. **Next: unused external definitions**, including
+  native selection/editor routing that retains the assembly tab and defining-file
+  ownership. That case is explicitly refused by Edit pending integration; do not
+  advance to G1.6c or claim the complete G1.6b acceptance gate has passed.
 - [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs and the
   confirmed context actions; integrate shared workflows only against their approved
   contracts. Deferred Add Component and unconfirmed checklist/destructive-action

@@ -1,6 +1,6 @@
 # Component/document architecture
 
-Status: G1.6a panel foundation implemented and validated, October 10, 2026.
+Status: G1.6b domestic unused-model increment validated; external unused-model integration remains open, October 10, 2026.
 The native service module and panel foundation are opt-in; the complete panel, broader conversion and later Group 1
 behavior below remain target design until their roadmap stages are completed.
 Engineering choices below implement confirmed behavior; they do not approve
@@ -111,11 +111,45 @@ place, preserving expansion and avoiding repeated row reconstruction. There is n
 idle refresh timer. Pending native transactions defer projection until commit/abort.
 The panel's close path unregisters all observers/context callbacks and stops updates.
 
-Selecting an unused definition is available; Edit reports that unused-model editing
-is not yet available and creates no temporary or permanent instance. Temporary
-unused-model rows/isolation, component windows, other confirmed context actions and
-G1.7 contextual fading/Part Type remain unimplemented. This foundation changes no
-persistence schema, default settings or legacy workbench UI.
+### Unused domestic definitions (G1.6b partial)
+
+`editing.edit_unused(doc, definition)` isolates a domestic definition in the current
+view. The panel adds one temporary last child beneath the pinned file row, labeled
+`Component name (unused model)`, with active fill/bold text and no drag flag. Existing
+file/occurrence rows are gray but selectable and still support Edit. History routes
+to the definition's native sketches/features; native Bodies stay out of the panel.
+The Sketch/Pad adapters use the same owning-document transactions as placed edits.
+
+[isolation.py](../src/Mod/FreeCADPlus/freecad_plus/isolation.py) owns transient view
+sessions. It copies the native definition's Coin display graph, forcing only the
+copied top-level display switch. It temporarily wraps the native ObjectGroup,
+GroupOnTop and RootDimensions in hidden scene switches. Keeping the original groups
+alive preserves native add/remove behavior. Native EditingRoot remains available for
+the Sketch editor. No App objects, instance links, Visibility properties, schema
+fields or Undo entries are created by isolation. Save therefore persists definition
+edits without persisting a temporary occurrence or hidden assembly state.
+
+Relevant native observer bursts refresh the detached display once per queued update;
+there is no idle polling. Commit/abort defers incomplete graphs. Each session belongs
+to one native view and resolves the definition by document UUID/object Name/ID.
+Changing Edit, closing the panel/view/document, losing the definition/import, or
+placing the previously unused model removes the preview and restores native groups.
+Cleanup clears the unused Part/Body context. Undo of removal restores data without
+reopening isolation. Native feature editing must finish before switching contexts.
+The implementation is checked against 1.1.4's scene-group layout and refuses an
+unrecognized definition display before replacing an existing context.
+
+**Open boundary:** in-place Edit of an unused external definition is refused before
+mutation; existing domestic isolation survives that refusal. A failed exploratory
+check showed native source selection activating the defining-file tab. Native
+Document::trySetEdit also requires a local parent (an external subobject reached
+through a placed link is supported). The next G1.6b increment must integrate external
+unused selection/native editors without adding saveable temporary links, changing
+owner preferences or redirecting the source's geometry ownership. The external
+qualifier remains in Models; prior placed-external editing remains supported. Native
+selection of an unplaced external catalog item can still activate its source tab.
+This limitation does not change the confirmed UI requirement or mark G1.6b complete.
+Component windows/remaining actions are G1.6c; Part Type/fading are G1.7.
 
 ### Persistence contract
 

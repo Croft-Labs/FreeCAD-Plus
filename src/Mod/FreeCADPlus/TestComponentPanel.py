@@ -118,8 +118,8 @@ class TestComponentPanel(unittest.TestCase):
         with self.assertRaises(ValueError): editing.context_path(self.doc)
         self.assertEqual(len(self.rows(2)), 4)
         before = len(self.doc.Objects)
-        with self.assertRaisesRegex(ValueError, 'unused models'):
-            self.widget.edit_row(self.model(self.unused).data(0, panel._ROLE))
+        self.widget.edit_row(self.model(self.unused).data(0, panel._ROLE))
+        self.assertEqual(editing.context_path(self.doc), (self.unused, ()))
         self.assertEqual(len(self.doc.Objects), before)
 
     def test_tab_guard_stale_rows_and_per_view_context(self):

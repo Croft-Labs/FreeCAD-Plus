@@ -1,5 +1,9 @@
 # Model view window
 
+Implementation tracking: domestic unused-model isolation has bounded validation in
+[WORK_STATE](../WORK_STATE.md); external unused-model integration remains pending.
+The requirements below are unchanged by that implementation boundary.
+
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).
 
 ## Confirmed requirements

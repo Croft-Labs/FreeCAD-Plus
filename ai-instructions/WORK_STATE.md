@@ -3,11 +3,62 @@
 ## Authorized objective and stopping boundary
 
 Owner authorized Group 1 one reviewable task at a time and instructed stopping after
-the current checks pass. **G1.6a is complete; stop here.** The overall G1.6 panel
-stage remains incomplete. Next: **G1.6b unused-model editing**, with a temporary last
-Part Tree row, definition editing and save-safe hiding/restoration of the assembly.
-G1.6c retains component tabs and remaining confirmed actions. Do not begin the next
-increment or other groups without the next continuation request.
+the current checks pass. **The domestic portion of G1.6b is validated; stop here.**
+G1.6b remains incomplete. Next: **unused external-definition selection and native
+feature editing in the assembly tab**, preserving defining-file ownership and
+save-safe isolation. Do not start G1.6c component tabs/actions or another group yet.
+
+## G1.6b domestic increment and acceptance - October 10, 2026
+
+**Implementation:** unused domestic definitions support Edit in the current view,
+a temporary last Part Tree child, active fill/bold text, gray selectable assembly
+rows, native History and Sketch/Pad adapters. Native display groups are hidden by
+view-only scene switches while a detached native definition display is shown.
+No temporary App objects, instance links, authored Visibility writes or Undo entries
+are used for isolation. File/placed Edit and panel/view/document close clean up;
+definition removal clears isolation and Undo does not reopen it. The
+[architecture](ARCHITECTURE.md#unused-domestic-definitions-g16b-partial) owns details.
+
+**Runtime:** all thirty-five combined tests passed in 34.668 seconds using this
+checkout's scripts in the verified 1.1.4 GUI runtime with an isolated profile.
+Six new cases cover actual Qt domestic Edit/selection, temporary row placement,
+native visibility commands remaining hidden, restoration, native Sketch editor and
+context-exit guard, geometry/History ownership, Undo/Redo, save while isolated,
+per-view state, panel/view/document cleanup and source-removal recovery. IDs, native
+link inventory and authored visibility survive saving; no temporary instance is
+serialized. External-unused Edit is tested for refusal without mutation or losing
+an existing domestic isolation session. All twenty-nine earlier regressions passed,
+including legacy conversion and placed-external editing.
+
+**Known remaining case:** two focused attempts at external unused Edit failed when
+native selection activated the source tab. A trace localized the switch after panel
+Edit returned; native Tree sync and Document::trySetEdit's local-parent requirement
+explain why an unplaced external definition does not have the same editor route as
+a placed link. The unsupported route is now refused before isolation starts, with
+a message directing editing to the defining file. Selecting its catalog row can
+still activate that source tab. This is a bounded partial implementation, not a
+change to owner requirements or a passed external-unused workflow. The next task
+is to finish that integration, including source-only save and Undo checks.
+
+**Fresh process / visual:** the saved isolated fixture reopened without isolation,
+with all IDs, visibility and native link names intact. Editing its unused Pad from
+7 to 9 mm produced valid 81*pi mm3 geometry and saved a separate file. Inspected
+3441 x 1767 normal framebuffer captures show two assembly cylinders before editing,
+only the larger unused cylinder during editing and both originals after exit.
+The initial panel capture exposed a theme whose disabled text was white; explicit
+gray inactive-row styling corrects that confirmed presentation requirement.
+The repeated fresh-process/visual check passed and the final panel pixels show gray
+assembly rows and the green/bold temporary last child. These are bounded automated
+checks, not complete panel or long-session responsiveness acceptance.
+
+**Build / delivery:** CMake script copy/install and syntax checks passed for all
+seventeen module/test scripts. Native C++ was not rebuilt. No owner executable was
+delivered or desktop shortcut changed; the panel remains developer opt-in.
+
+**Publication / cleanup:** this domestic increment is committed and pushed to
+origin/codex/freecad-1.1.4-baseline with remote hash verification at handoff. Task-only
+profiles, fixtures, captures, logs and script packaging outputs are removed after
+recording these results. Tracked code/tests and useful baseline builds are retained.
 
 ## G1.6a implementation and acceptance - October 10, 2026
 

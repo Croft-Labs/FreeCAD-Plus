@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Opt-in component panel foundation; rows project native ownership, never own it.
 
-G1.6a covers placed-component Edit, selection and History. Unused-model isolation,
-component windows and other confirmed actions remain G1.6b, not implied defaults.
+Placed and unused definitions share Edit and History. Temporary isolation is view-only;
+component windows and other confirmed actions remain G1.6c, not implied defaults.
 """
 from dataclasses import dataclass
 from pathlib import Path
@@ -15,7 +15,7 @@ try:
 except ImportError:
     QtWidgets = QtGui
 
-from . import document, editing, external, hierarchy
+from . import document, editing, external, hierarchy, isolation
 
 _ROLE = QtCore.Qt.UserRole
 _ACTIVE = _ROLE + 1
@@ -77,6 +77,12 @@ def projection(doc, active=None, active_path=()):
     file_row = Row(('file', identity(root)), 'file', Path(doc.FileName).stem if doc.FileName else doc.Label,
                    identity(root), selection=(doc.Name, root.Name, ''),
                    children=tuple(occurrences(root)))
+    if active is not None and not active_path:
+        temporary = Row(('unused', identity(active)), 'unused',
+                        external.qualified_label(active, doc) + ' (unused model)', identity(active),
+                        selection=(active.Document.Name, active.Name, ''))
+        file_row = Row(file_row.key, file_row.kind, file_row.label, file_row.ref,
+                       selection=file_row.selection, children=(*file_row.children, temporary))
     history = []
     for obj in document.history(doc, active):
         if active is None:
@@ -90,7 +96,8 @@ def projection(doc, active=None, active_path=()):
                 sub += body.Name + '.'
             sub += obj.Name + '.'
         history.append(Row(('history', identity(obj)), 'history', obj.Label, identity(obj),
-                           selection=(doc.Name, root.Name, sub),
+                           selection=((doc.Name, root.Name, sub) if active is None or active_path
+                                      else (active.Document.Name, active.Name, sub)),
                            visible=bool(obj.Visibility) if active is None else None))
     return (tuple(models(external.catalog(doc))), (file_row,), tuple(history))
 
@@ -227,6 +234,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def _context(self, doc, view):
         root = document.validate(doc)
+        unused = editing.unused_context(doc)
+        if unused is not None:
+            return unused, ()
         resolved, parent, sub = view.getActiveObject('PlusEdit', False)
         if resolved == root and not sub:
             return None, ()
@@ -257,7 +267,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     active, path = None, ()
                     self._message(str(error))
                 rows = projection(doc, active, path)
-                if active:
+                if active and path:
                     self._state(current)['last'][identity(active)] = tuple(identity(o) for o in path)
             self._updating = True
             self.setUpdatesEnabled(False)
@@ -268,12 +278,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 self._reconcile(index, entries)
                 for item in self._maps[index].values():
                     row = item.data(0, _ROLE)
-                    is_active = bool(active and row.ref == identity(active) and row.kind in ('model', 'occurrence'))
+                    is_active = bool(active and row.ref == identity(active) and row.kind in ('model', 'occurrence', 'unused'))
                     is_file = current and not active and row.kind == 'file'
                     font = item.font(0); font.setBold(bool(is_active or is_file)); item.setFont(0, font)
                     item.setData(0, _ACTIVE, bool(is_active or is_file))
                     item.setData(0, _EDITED, bool(target and row.kind == 'occurrence' and row.path == target))
                     item.setBackground(0, QtGui.QBrush(fill) if is_active or is_file else QtGui.QBrush())
+                    dimmed = active is not None and not path and row.kind in ('file', 'occurrence')
+                    item.setForeground(0, QtGui.QBrush(QtGui.QColor(128, 128, 128))
+                                       if dimmed else QtGui.QBrush())
             self.refresh_count += 1
         except (ValueError, RuntimeError, ReferenceError) as error:
             self._message(str(error))
@@ -343,25 +356,31 @@ class ComponentPanel(QtWidgets.QDockWidget):
             editing.edit_file(doc)
         elif row.kind == 'occurrence':
             editing.edit(tuple(lookup(ref) for ref in row.path))
+        elif row.kind == 'unused':
+            editing.edit_unused(doc, obj)
         elif row.kind == 'model':
             options = [item.data(0, _ROLE).path for item in self._maps[1].values()
                        if item.data(0, _ROLE).kind == 'occurrence' and item.data(0, _ROLE).ref == row.ref]
             preferred = self._state(self._binding)['last'].get(row.ref)
             route = preferred if preferred in options else (options[0] if options else None)
             if route is None:
-                raise ValueError('Editing unused models is not available yet')
-            editing.edit(tuple(lookup(ref) for ref in route))
+                editing.edit_unused(doc, obj)
+            else:
+                editing.edit(tuple(lookup(ref) for ref in route))
         else:
             return
         self.refresh()
         # Entering Edit marks the exact occurrence separately from all active rows.
         if row.kind != 'file':
-            _, route = editing.context_path(doc)
+            definition, route = editing.context_path(doc)
             root = document.validate(doc)
             self._selecting = True
             try:
                 Gui.Selection.clearSelection()
-                Gui.Selection.addSelection(doc.Name, root.Name, hierarchy.subname(route))
+                if route:
+                    Gui.Selection.addSelection(doc.Name, root.Name, hierarchy.subname(route))
+                else:
+                    Gui.Selection.addSelection(definition.Document.Name, definition.Name)
             finally:
                 self._selecting = False
             self._sync_selection()
@@ -377,7 +396,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if item is None:
             return
         row = item.data(0, _ROLE)  # Immutable identity, not a pointer into mutable rows.
-        if row.kind not in ('file', 'model', 'occurrence'):
+        if row.kind not in ('file', 'model', 'occurrence', 'unused'):
             return
         menu = QtWidgets.QMenu(self)
         action = menu.addAction('Edit')
@@ -448,6 +467,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if self._closed:
             return
         self._closed = True
+        isolation.close_all()
         self._timer.stop()
         App.removeDocumentObserver(self)
         Gui.removeDocumentObserver(self)
