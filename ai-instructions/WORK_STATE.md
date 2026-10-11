@@ -84,6 +84,13 @@ test guard/docstring-only edits were deployed and syntax checked; runtime work i
 complete. Task artifacts `g1_ui_modes` are removed after recording durable results.
 
 
+**Publication:** source/acceptance checkpoint
+`8cbfa2cad86b8c0f4f00e7c156e71a65d7c5a023` pushed to
+origin/codex/freecad-1.1.4-baseline; exact remote revision verified. Development
+shortcut delivery is verified above; no separate release package. This publication
+record is a separate documentation commit.
+
+
 ## Separate development shortcut - October 11, 2026
 
 At the owner's explicit request, created desktop `freecad plus 0.1.0.lnk` targeting

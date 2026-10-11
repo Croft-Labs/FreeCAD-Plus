@@ -109,7 +109,8 @@ Point to Point.
   and independent native tree/property layouts, and shared backend context. Toolbar
   and task presentations initially share Classic definitions. Native Pad/Pocket
   share extrusion; future consolidated workflows remain separate. WORK_STATE owns
-  focused runtime and shortcut delivery evidence.
+  focused runtime and shortcut delivery evidence. Source checkpoint `8cbfa2cad8`
+  pushed to origin; exact remote revision verified.
 
 - [   ] **G1.6c — Remaining confirmed panel actions.** Component file tabs, structural
   actions and confirmed menu routing. A menu entry opens its separately owned operation;
