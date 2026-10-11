@@ -51,8 +51,14 @@ public:
     bool canDragObject(App::DocumentObject*) const override;
     void dragObject(App::DocumentObject*) override;
     bool canDropObjects() const override;
+    bool canDragAndDropObject(App::DocumentObject*) const override;
     bool canDropObject(App::DocumentObject*) const override;
     void dropObject(App::DocumentObject*) override;
+    bool canDropObjectEx(App::DocumentObject*, App::DocumentObject*, const char*,
+                         const std::vector<std::string>&) const override;
+    std::string dropObjectEx(App::DocumentObject*, App::DocumentObject*, const char*,
+                             const std::vector<std::string>&) override;
+    int replaceObject(App::DocumentObject*, App::DocumentObject*) override;
 
 protected:
     void updateData(const App::Property*) override;

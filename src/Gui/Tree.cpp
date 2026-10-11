@@ -2794,6 +2794,16 @@ bool TreeWidget::dropInObject(
                 da = Qt::LinkAction;
             }
         }
+        // Replacement later passes only object identities. Check Compound intake
+        // here while the dragged occurrence is still available, before mutation.
+        if (da == Qt::LinkAction && targetItemObj->getParentItem()) {
+            auto parent = targetItemObj->getParentItem()->object();
+            if (parent->getObject()->isDerivedFrom(Base::Type::fromName("Part::Compound"))
+                && !parent->canDropObjectEx(obj, owner, info.subname.c_str(), item->mySubs)) {
+                committer.close(true);
+                return false;
+            }
+        }
     }
 
     try {

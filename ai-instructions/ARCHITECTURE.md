@@ -1140,3 +1140,32 @@ Compound link editing/drag-and-drop and other geometry consumers remain separate
 intake paths; this milestone covers creation through Part_Compound only.
 TestPartBooleanInputs adds four focused Compound cases and a separate-process
 identity/dependency/source-edit probe. WORK_STATE owns build and runtime results.
+
+
+### Compound link-edit admission (G1.7b3r)
+
+ViewProviderCompound preflights new inputs at native drop eligibility, full-context
+drop, bare drop and replacement hooks. Occurrence-qualified drops retain their
+owner/subname until the shared component policy checks Reference/Excluded state.
+Tree replacement also queries the Compound parent's full-context drop preflight
+before its later identity-only replaceObject call and before any model mutation.
+The target compound must belong to the edited component. The currently supported
+inputs belong to that same definition, edited from its defining file, matching the
+creation support boundary. Component compounds explicitly force drop-only behavior,
+overriding the native extension's transfer permission to preserve original owners.
+Legacy transfer permission is unchanged; Links remain dependencies. Removal through dragObject retains its native cleanup
+behavior without an admission check.
+
+DlgPropertyLink checks additions to Part::Compound.Links before accepting and keeps
+the dialog open on refusal. PropertyLinkItem repeats the same preflight for every
+selected target before its first write, protecting multi-object property edits.
+The validator compares stable document/object/subpath identity, ignoring the cached
+labels that native SubObjectT equality also compares, so removal/reordering
+without additions remains available. Other object types/properties and ordinary
+legacy documents retain their native behavior. This is a GUI consumer boundary:
+scripting, file restore and recompute do not acquire a global property hook.
+
+No new task workflow, reference promotion or foreign component transfer policy is
+introduced. TestPartBooleanInputs owns focused native drop/replacement/property
+editor checks and independent persistence; WORK_STATE owns actual acceptance and
+remaining coverage limits.

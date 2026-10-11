@@ -4769,6 +4769,15 @@ QVariant PropertyLinkItem::value(const App::Property* prop) const
 void PropertyLinkItem::setValue(const QVariant& value)
 {
     auto links = qvariant_cast<QList<App::SubObjectT>>(value);
+    // Preflight every selected property before a multi-object edit writes any of them.
+    for (const auto prop : propertyItems) {
+        const auto error = DlgPropertyLink::componentLinkError(prop, links);
+        if (!error.empty()) {
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QString::fromUtf8(error.c_str()));
+            return;
+        }
+    }
     setPropertyValue(DlgPropertyLink::linksToPython(links));
 }
 

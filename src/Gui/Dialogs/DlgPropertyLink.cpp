@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <sstream>
 #include <QStyledItemDelegate>
+#include <QMessageBox>
+#include <Gui/ComponentGeometry.h>
 #include <QTreeWidgetItem>
 
 #include <App/Document.h>
@@ -768,8 +770,40 @@ void DlgPropertyLink::onSelectionChanged(const Gui::SelectionChanges& msg)
     }
 }
 
+std::string DlgPropertyLink::componentLinkError(
+    const App::Property* prop, const QList<App::SubObjectT>& links)
+{
+    App::DocumentObjectT target(prop);
+    auto obj = target.getObject();
+    if (!obj || target.getPropertyName() != "Links"
+        || !obj->isDerivedFrom(Base::Type::fromName("Part::Compound"))) {
+        return {};
+    }
+    auto current = getLinksFromProperty(static_cast<const App::PropertyLinkBase*>(prop));
+    std::vector<App::SubObjectT> added;
+    for (const auto& link : links) {
+        // SubObjectT equality also compares a cached label, which the picker
+        // does not populate. Compare stable identity/path, not presentation.
+        const bool retained = std::any_of(current.cbegin(), current.cend(), [&](const auto& old) {
+            return old.getDocumentName() == link.getDocumentName()
+                && old.getObjectName() == link.getObjectName()
+                && old.getSubName() == link.getSubName();
+        });
+        if (!retained) {
+            added.push_back(link);
+        }
+    }
+    // Removal/reordering is cleanup, not admission of new geometry.
+    return added.empty() ? std::string() : Gui::componentGeometryError(obj, added);
+}
+
 void DlgPropertyLink::accept()
 {
+    const auto error = componentLinkError(objProp.getProperty(), currentLinks());
+    if (!error.empty()) {
+        QMessageBox::warning(this, tr("Ineligible geometry"), QString::fromUtf8(error.c_str()));
+        return;
+    }
     QDialog::accept();
 }
 

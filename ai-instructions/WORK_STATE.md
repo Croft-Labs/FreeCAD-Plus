@@ -2,12 +2,71 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3q Compound creation integration and its planned
-checks are complete.** Stop runtime work here. Next: Compound link-edit intake,
-including native drag/drop, under the same Reference prerequisite. Group 1 remains
-incomplete; split/join and direct output paths are also unfinished. The Add Reference
-Feature operation workflow is separately scoped. Cross-component Full Component
-workflows remain undefined. No owner delivery.
+Continue Group 1 only. **G1.7b3r Compound link-edit admission and its planned
+checks are complete.** Stop runtime work here. Next: split/join input eligibility
+and result ownership. Group 1 remains incomplete. Add Reference Feature and
+cross-component Full Component transfer workflows remain separately unresolved.
+No owner delivery.
+
+
+## G1.7b3r Compound link-edit admission - October 11, 2026
+
+**Authority:** applies the confirmed Reference prerequisite and component ownership
+contract to existing native Compound inputs. No new operation workflow, reference
+promotion or cross-component transfer decision is inferred. See the
+[technical contract](ARCHITECTURE.md#compound-link-edit-admission-g17b3r).
+
+**Implementation:** native Compound drop, replacement and Links-property additions
+preflight the actual inputs and edited owner. Qualified drops preserve occurrence
+context; tree replacement checks that context before its identity-only mutation.
+Component compounds force drop-only behavior to retain input ownership. The property
+editor checks every selected target before writing any, and its dialog stays open
+when admission fails. Removal/reordering does not admit new geometry and bypasses
+the addition check. Other property types and legacy behavior remain unchanged.
+
+**Build and corrections:** initial PartGui + FreeCADPlusScripts build passed,
+395.88 seconds. Pre-runtime review found that tree replacement lost occurrence
+context; its preflight was added and an incremental build passed, 115.55 seconds.
+Both used the retained `test-builds/freecad_1.1.4_context` tree.
+
+The initial six native cases ran in 18.286 seconds (native exit 0, 23.17 seconds
+wall time): four passed; two failed. The drop case exposed the native extension's
+transfer permission despite the base provider's default; component Compound now
+explicitly overrides that permission while preserving legacy behavior. The removal
+case exposed SubObjectT equality comparing a cached label that picker references
+do not populate. A single targeted diagnostic (5.159 seconds, native 10.00 seconds)
+confirmed the same target/input identities; admission now compares stable document,
+object and subpath identity. Diagnostic instrumentation was removed. The corrective
+build passed, exit 0, 289.12 seconds. No further production correction was needed.
+
+**Final validation:** all six focused cases have passed: the two unaffected cases
+from the initial run plus four affected cases rerun after correction, zero failures/
+errors/skips, 10.685 seconds (native exit 0, 15.56 seconds overall). Covered
+Reference/Excluded occurrence rejection, a shared source through a different
+Reference occurrence, unsupported foreign input, missing/wrong Edit, drop-only
+ownership, native replacement, cleanup, actual Links-dialog refusal/continuation/
+removal, atomic multi-property refusal, legacy bypass/transfer behavior, Undo/Redo
+and save. Previous creation/Boolean/Section tests were not repeated.
+
+Independent fresh-process reopen/source-edit passed, native exit 0, 5.31 seconds.
+Exact identities, source/result owners and ordered Links survived; changing the
+added source height from 4 to 6 recomputed the valid two-solid Compound from volume
+128 to 160. Runtime work stops here. Logs contain the existing Std_Measure notices
+and one Qt `edit: editing failed` notice when the harness requests editing an already
+open property editor; its actual dialog continuation/removal assertions passed.
+No claim of warning-free logs.
+
+**Limits:** native drop/replacement hooks are exercised through their GUI Python
+APIs; no end-to-end pointer drag is claimed. Property editing uses the actual Qt
+editor/dialog. This GUI consumer boundary does not hook raw Python assignments,
+file restoration or recompute. Same local-input/defining-file support limit as
+Compound creation; other geometry consumers remain unfinished. No owner delivery.
+
+**Final checks:** all 43 Plus Python scripts parse and match the retained development
+payload byte-for-byte; 122 local links in changed Markdown resolve; whitespace passes.
+Task artifacts `g1_7b3r_compound_links` were removed after recording the results.
+Useful builds remain. No additional runtime work. Publication is recorded after
+exact remote verification.
 
 ## G1.7b3q Part Compound creation integration - October 11, 2026
 

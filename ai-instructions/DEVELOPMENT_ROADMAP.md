@@ -304,6 +304,12 @@ Point to Point.
   owns evidence and limits. Source checkpoint `abcfa2a260` pushed to origin;
   exact remote revision verified. Next: Compound link-edit intake. No owner delivery.
 
+- [ X ] **G1.7b3r - Compound link-edit admission.** Native drop/replacement and
+  property-link additions share component checks; component drops preserve ownership.
+  Six focused cases passed after correcting transfer permission and stable reference
+  comparison; independent reopen/source-edit passed. WORK_STATE owns build evidence,
+  correction history and limits. Next: split/join inputs/result ownership. No owner delivery.
+
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtTest, QtWidgets
 from freecad_plus import document, display, editing, geometry, hierarchy
 from TestComponentPanel import TestComponentPanel, settle
 from TestComponentModeling import TestComponentModeling, messages
@@ -275,6 +275,154 @@ class TestPartBooleanInputs(unittest.TestCase):
         self.assertFalse(a.Visibility);self.assertFalse(b.Visibility)
 
 
+    def editable_compound(self):
+        a,b=self.boxes()
+        result=self.child.newObject('Part::Compound','EditableCompound');result.Links=[a]
+        self.doc.recompute();settle()
+        return result,a,b
+
+    def test_compound_links_drop_rejection_and_cleanup(self):
+        result,a,b=self.editable_compound()
+        source=hierarchy.create_definition(self.doc,'Link source')
+        foreign,_=self.boxes(source);link=hierarchy.add_instance(self.child,source)
+        path=hierarchy.subname((self.second,self.nested,link))+foreign.Name+'.'
+        for kind in ('Reference','Excluded','Full Component'):
+            display.set_state(self.child,link,part_type=kind);settle()
+            before=self.snapshot();links=list(result.Links)
+            self.assertFalse(result.ViewObject.canDropObject(foreign,self.root,path,[]))
+            with self.assertRaises(Exception):result.ViewObject.dropObject(foreign,self.root,path,[])
+            self.assertEqual(result.Links,links);self.assertEqual(self.snapshot(),before)
+        # Same source identity through a Reference occurrence must still be rejected.
+        display.set_state(self.root,self.first,part_type='Reference');settle()
+        path=hierarchy.subname((self.first,self.nested))+b.Name+'.'
+        self.assertFalse(result.ViewObject.canDropObject(b,self.root,path,[]))
+        before=self.snapshot()
+        with self.assertRaisesRegex(Exception,'Reference|Excluded'):result.ViewObject.dropObject(b,self.root,path,[])
+        self.assertEqual(self.snapshot(),before)
+        editing.edit_file(self.doc);before=self.snapshot()
+        self.assertFalse(result.ViewObject.canDropObject(b))
+        with self.assertRaisesRegex(Exception,'Edit a component'):result.ViewObject.dropObject(b)
+        self.assertEqual(self.snapshot(),before)
+        result.ViewObject.dragObject(a);self.doc.recompute();settle()
+        self.assertEqual(result.Links,[]);self.assertIn(a,self.child.Group)
+
+    def test_compound_links_drop_undo_save(self):
+        result,a,b=self.editable_compound();ids={o.Name:o.ID for o in self.doc.Objects}
+        path=hierarchy.subname((self.second,self.nested))+b.Name+'.'
+        self.assertTrue(result.ViewObject.canDropObject(b,self.root,path,[]))
+        self.assertFalse(result.ViewObject.canDragAndDropObject(b))
+        self.doc.openTransaction('Add Compound input')
+        result.ViewObject.dropObject(b,self.root,path,[]);self.doc.recompute();self.doc.commitTransaction();settle()
+        self.assertEqual(result.Links,[a,b]);self.assertAlmostEqual(result.Shape.Volume,128)
+        self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+        self.assertFalse(b.Visibility);document.validate(self.doc)
+        self.doc.undo();self.doc.recompute();settle()
+        self.assertEqual(result.Links,[a]);self.assertTrue(b.Visibility)
+        self.doc.redo();self.doc.recompute();settle()
+        self.assertEqual(result.Links,[a,b]);self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
+        document.save_document(self.doc,self.output/'CompoundLinks.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'ids':ids,'definition':self.child.Name,
+            'result':result.Name,'base':a.Name,'tool':b.Name}))
+
+    def test_compound_links_replace_admission_and_undo(self):
+        result,a,b=self.editable_compound()
+        source=hierarchy.create_definition(self.doc,'Replacement source');foreign,_=self.boxes(source)
+        before=self.snapshot()
+        with self.assertRaises(Exception):result.ViewObject.replaceObject(a,foreign)
+        self.assertEqual(result.Links,[a]);self.assertEqual(self.snapshot(),before)
+        editing.edit((self.first,));before=self.snapshot()
+        with self.assertRaisesRegex(Exception,'belong to the edited component'):result.ViewObject.replaceObject(a,b)
+        self.assertEqual(self.snapshot(),before)
+        editing.edit((self.second,self.nested));self.doc.openTransaction('Replace Compound input')
+        self.assertEqual(result.ViewObject.replaceObject(a,b),1)
+        self.doc.recompute();self.doc.commitTransaction();settle()
+        self.assertEqual(result.Links,[b]);self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+        document.validate(self.doc);self.doc.undo();self.doc.recompute();settle()
+        self.assertEqual(result.Links,[a])
+
+    def open_compound_links(self,result):
+        objects=result if isinstance(result,list) else [result]
+        self.select(objects[0])
+        for obj in objects[1:]:Gui.Selection.addSelection(obj.Document.Name,obj.Name)
+        QtTest.QTest.qWait(400)
+        tabs=Gui.getMainWindow().findChild(QtWidgets.QTabWidget,'propertyTab')
+        tabs.setCurrentIndex(1);settle()
+        tree=Gui.getMainWindow().findChild(QtWidgets.QTreeView,'propertyEditorData')
+        tree.show();tree.expandAll();settle()
+        def find(parent=QtCore.QModelIndex()):
+            model=tree.model()
+            for row in range(model.rowCount(parent)):
+                index=model.index(row,0,parent)
+                if index.data()=='Links':return index.siblingAtColumn(1)
+                child=find(index)
+                if child.isValid():return child
+            return QtCore.QModelIndex()
+        index=find();self.assertTrue(index.isValid(),'Compound Links property missing')
+        tree.scrollTo(index);tree.setCurrentIndex(index);tree.edit(index);settle()
+        buttons=[w for w in tree.findChildren(QtWidgets.QPushButton) if w.isVisible()]
+        self.assertTrue(buttons,'Links edit button missing');buttons[-1].click();settle()
+        return next(w for w in Gui.getMainWindow().findChildren(QtWidgets.QDialog)
+                    if 'DlgPropertyLink' in w.metaObject().className() and w.isVisible())
+
+    def choose_compound_links(self,dlg,objects):
+        tree=dlg.findChild(QtWidgets.QTreeWidget,'treeWidget')
+        check=dlg.findChild(QtWidgets.QCheckBox,'checkObjectType')
+        check.setChecked(False);settle()
+        tree.clearSelection()
+        found=set()
+        def visit(item):
+            name=bytes(item.data(0,QtCore.Qt.UserRole) or b'').decode()
+            if name in {o.Name for o in objects}:
+                item.setSelected(True);found.add(name)
+            for n in range(item.childCount()):visit(item.child(n))
+        for n in range(tree.topLevelItemCount()):
+            root=tree.topLevelItem(n);root.setExpanded(True);visit(root)
+        self.assertEqual(found,{o.Name for o in objects});settle()
+
+    def test_compound_links_property_dialog_reject_continue_remove(self):
+        result,a,b=self.editable_compound()
+        source=hierarchy.create_definition(self.doc,'Property source');foreign,_=self.boxes(source)
+        dlg=self.open_compound_links(result);self.choose_compound_links(dlg,[a,foreign]);before=self.snapshot()
+        with messages() as errors:dlg.accept();settle()
+        self.assertTrue(errors,errors);self.assertTrue(dlg.isVisible())
+        self.assertEqual(result.Links,[a]);self.assertEqual(self.snapshot(),before)
+        self.choose_compound_links(dlg,[a,b])
+        with messages() as errors:dlg.accept();settle()
+        self.assertFalse(errors,errors);self.assertFalse(dlg.isVisible())
+        self.assertEqual(set(result.Links),{a,b});self.assertTrue(all(o in self.child.Group for o in (a,b,result)))
+        self.doc.recompute();self.assertAlmostEqual(result.Shape.Volume,128);document.validate(self.doc)
+        editing.edit_file(self.doc)
+        dlg=self.open_compound_links(result);self.choose_compound_links(dlg,[a])
+        with messages() as errors:dlg.accept();settle()
+        self.assertFalse(errors,errors);self.assertEqual(result.Links,[a])
+
+    def test_compound_links_multi_property_edit_is_atomic(self):
+        result,a,b=self.editable_compound()
+        foreign,_=self.boxes(self.unused)
+        other=self.unused.newObject('Part::Compound','OtherCompound');other.Links=[foreign]
+        self.doc.recompute();settle()
+        dlg=self.open_compound_links([result,other]);self.choose_compound_links(dlg,[a,b])
+        before=self.snapshot()
+        with messages() as errors:dlg.accept();settle()
+        self.assertTrue(errors,errors)
+        self.assertEqual(result.Links,[a]);self.assertEqual(other.Links,[foreign])
+        self.assertEqual(self.snapshot(),before);document.validate(self.doc)
+        if dlg.isVisible():dlg.reject();settle()
+
+    def test_compound_links_legacy_bypass(self):
+        legacy=App.newDocument('LegacyCompoundLinks');a,b=self.boxes(legacy)
+        result=legacy.addObject('Part::Compound','Compound');result.Links=[a];legacy.recompute();settle()
+        with patch.object(geometry,'require_modeling_inputs',side_effect=AssertionError('Legacy entered Plus')):
+            self.assertTrue(result.ViewObject.canDragAndDropObject(b))
+            self.assertTrue(result.ViewObject.canDropObject(b));result.ViewObject.dropObject(b)
+            self.assertEqual(result.Links,[a,b]);result.ViewObject.dragObject(b)
+            self.assertEqual(result.ViewObject.replaceObject(a,b),1);self.assertEqual(result.Links,[b])
+            dlg=self.open_compound_links(result);self.choose_compound_links(dlg,[a,b])
+            with messages() as errors:dlg.accept();settle()
+            self.assertFalse(errors,errors);self.assertEqual(set(result.Links),{a,b})
+        legacy.recompute();self.assertAlmostEqual(result.Shape.Volume,128)
+
+
 
 def verify_fresh_process(output):
     folder=Path(output)/'test_commands_preserve_input_ownership_undo_history_and_save'
@@ -322,4 +470,20 @@ def verify_compound_fresh_process(output):
         assert result.Shape.isValid() and len(result.Shape.Solids)==2
         assert abs(result.Shape.Volume-160)<1e-7
         assert result.Links==[b,a] and all(o in owner.Group for o in (a,b,result))
+    finally:App.closeDocument(doc.Name)
+
+
+def verify_compound_links_fresh_process(output):
+    folder=Path(output)/'test_compound_links_drop_undo_save'
+    expected=json.loads((folder/'expected.json').read_text())
+    doc=document.open_document(folder/'CompoundLinks.cadprt')
+    try:
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        owner=doc.getObject(expected['definition']);result=doc.getObject(expected['result'])
+        a=doc.getObject(expected['base']);b=doc.getObject(expected['tool'])
+        assert result.Links==[a,b] and all(o in owner.Group for o in (a,b,result))
+        assert abs(result.Shape.Volume-128)<1e-7
+        b.Height=6;doc.recompute();document.validate(doc)
+        assert result.Shape.isValid() and abs(result.Shape.Volume-160)<1e-7
+        assert result.Links==[a,b]
     finally:App.closeDocument(doc.Name)

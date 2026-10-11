@@ -64,8 +64,9 @@ G1.7b3o core Part Boolean admission and retained input/result ownership passed n
 and independent reopen/source-edit checks. G1.7b3p direct Part Section also passed
 native command/dialog and independent reopen/source-edit checks. G1.7b3q Compound
 creation passed four focused native cases and independent reopen/source-edit.
-Compound link-edit intake and other consumers remain unfinished; WORK_STATE owns
-the support and stopping boundaries.
+G1.7b3r Compound drop/replacement and Links-editor intake passed six focused native
+cases after two targeted corrections, plus independent reopen/source-edit. Split/join
+and other consumers remain unfinished; WORK_STATE owns support/stopping boundaries.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
@@ -90,6 +91,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/document.py: schema, native owned_children/owned_path traversal, History projection and creation/open/save.
 - src/Mod/FreeCADPlus/TestPartBooleanInputs.py: native Part Boolean/Section/Compound admission, input/result ownership, Undo, dialog Apply, legacy bypass and persistence.
 - src/Mod/Part/Gui/ComponentBoolean.h and src/Mod/Part/BOPTools/BOPFeatures.py: Part Boolean preflight bridge and component-owned native result creation.
+- src/Mod/Part/Gui/ViewProviderCompound.cpp and src/Gui/Dialogs/DlgPropertyLink.cpp: Compound native input-edit admission; Tree and PropertyItem preflight context/multi-target edits.
 - src/Mod/FreeCADPlus/TestComponentBooleanInputs.py: Boolean command/picker occurrence admission, atomic rejection, cleanup and legacy bypass.
 - src/Mod/FreeCADPlus/TestComponentBooleanOwnership.py: same-component Boolean ownership, nested History/Edit, Undo/Cancel and independent persistence checks.
 - src/Mod/FreeCADPlus/freecad_plus/editing.py: per-view Edit, backend Body and native feature adapters.

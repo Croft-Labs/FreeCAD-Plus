@@ -191,8 +191,14 @@ def require_modeling_inputs(consumer, inputs=None):
     if inputs is None:
         inputs = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*', 0)
                   for sub in entry.SubElementNames or ('',)]
+    if consumer.isDerivedFrom('Part::Compound') and consumer.Document != doc:
+        raise ValueError('Open the defining file to edit Compound inputs')
     for obj, sub in inputs:
         require_access(doc, obj, sub, active=active, active_path=path)
+        if consumer.isDerivedFrom('Part::Compound'):
+            target = obj.getSubObject(sub, 1) if sub else obj
+            if _owned_path(active, target) is None or target == active:
+                raise ValueError('Compound inputs must be owned by the edited component')
 
 
 def require_part_boolean_inputs(doc, inputs=None):

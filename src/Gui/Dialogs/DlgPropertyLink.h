@@ -48,6 +48,7 @@ public:
     ~DlgPropertyLink() override;
 
     void accept() override;
+    static std::string componentLinkError(const App::Property*, const QList<App::SubObjectT>&);
 
     QList<App::SubObjectT> currentLinks() const;
     QList<App::SubObjectT> originalLinks() const;

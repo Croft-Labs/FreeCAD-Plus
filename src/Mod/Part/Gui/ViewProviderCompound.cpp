@@ -30,10 +30,12 @@
 
 #include <App/Document.h>
 #include <Gui/Application.h>
+#include <Gui/ComponentGeometry.h>
 #include <Gui/MainWindow.h>
 #include <Mod/Part/App/FeatureCompound.h>
 
 #include "ViewProviderCompound.h"
+#include "ComponentBoolean.h"
 
 
 using namespace PartGui;
@@ -228,6 +230,13 @@ void ViewProviderCompound::dragObject(App::DocumentObject* obj)
     }
 }
 
+bool ViewProviderCompound::canDragAndDropObject(App::DocumentObject* obj) const
+{
+    // A Compound dependency must not remove a feature from its component owner.
+    return !PartGui::isComponentBooleanDocument(getObject()->getDocument())
+        && ViewProviderPart::canDragAndDropObject(obj);
+}
+
 bool ViewProviderCompound::canDropObjects() const
 {
     return true;
@@ -235,11 +244,53 @@ bool ViewProviderCompound::canDropObjects() const
 
 bool ViewProviderCompound::canDropObject(App::DocumentObject* obj) const
 {
-    return obj->isDerivedFrom<Part::Feature>();
+    return obj && obj->isDerivedFrom<Part::Feature>()
+        && Gui::componentGeometryError(getObject(), std::vector<App::SubObjectT>{{obj, ""}}).empty();
+}
+
+bool ViewProviderCompound::canDropObjectEx(
+    App::DocumentObject* obj, App::DocumentObject* owner, const char* subname,
+    const std::vector<std::string>& elements) const
+{
+    if (!ViewProviderPart::canDropObjectEx(obj, owner, subname, elements)) {
+        return false;
+    }
+    return Gui::componentGeometryError(getObject(), std::vector<App::SubObjectT>{
+        {owner ? owner : obj, owner && subname ? subname : ""}}).empty();
+}
+
+std::string ViewProviderCompound::dropObjectEx(
+    App::DocumentObject* obj, App::DocumentObject* owner, const char* subname,
+    const std::vector<std::string>& elements)
+{
+    const auto error = Gui::componentGeometryError(getObject(), std::vector<App::SubObjectT>{
+        {owner ? owner : obj, owner && subname ? subname : ""}});
+    if (!error.empty()) {
+        throw Base::RuntimeError(error);
+    }
+    return ViewProviderPart::dropObjectEx(obj, owner, subname, elements);
+}
+
+int ViewProviderCompound::replaceObject(App::DocumentObject* oldObj, App::DocumentObject* newObj)
+{
+    const auto& links = getObject<Part::Compound>()->Links.getValues();
+    if (std::ranges::find(links, oldObj) != links.end()) {
+        const auto error = Gui::componentGeometryError(
+            getObject(), std::vector<App::SubObjectT>{{newObj, ""}});
+        if (!error.empty()) {
+            throw Base::RuntimeError(error);
+        }
+    }
+    return ViewProviderPart::replaceObject(oldObj, newObj);
 }
 
 void ViewProviderCompound::dropObject(App::DocumentObject* obj)
 {
+    const auto error = Gui::componentGeometryError(
+        getObject(), std::vector<App::SubObjectT>{{obj, ""}});
+    if (!error.empty()) {
+        throw Base::RuntimeError(error);
+    }
     Part::Compound* pComp = getObject<Part::Compound>();
     std::vector<App::DocumentObject*> pShapes = pComp->Links.getValues();
     pShapes.push_back(obj);
