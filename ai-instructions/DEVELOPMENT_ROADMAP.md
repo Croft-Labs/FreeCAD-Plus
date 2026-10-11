@@ -119,9 +119,18 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Publication:** source milestone `e092033275` pushed to
   origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
   The announced destination convention remains subject to owner correction.
-- [   ] **G1.6c3 — Move Components foundation and Translate.** Next increment:
-  shared sibling/parent context, component list, preview/Apply/OK/Cancel and the
-  confirmed Translate workflow. Not started; Copy remains a separate Part Tree action.
+- [ X ] **G1.6c3 — Move Components foundation and Translate.** Implemented:
+  sibling/parent context, component collector, transient preview/Apply/OK/Cancel,
+  parent axes/picked directions and native length input. Copy remains separate.
+  **Build:** script copy passed in the existing native development tree.
+  **Validation:** 56 combined cases passed; six affected cases passed after final
+  visibility/label corrections. Independent save/reopen and inspected preview,
+  Cancel, committed placement and Tasks captures passed. WORK_STATE owns details.
+  **Publication:** source milestone pending; no owner-build or shortcut delivery.
+- [   ] **G1.6c4 — Rotate.** Next increment, not started: parent/picked/two-point
+  axis, optional pivot, angle/Reverse and rigid group rotation in the same task.
+  Remaining Point to Point, Align Axes, Align Coordinate Systems and Interactive
+  methods follow as separate reviewable increments before complete Move acceptance.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined

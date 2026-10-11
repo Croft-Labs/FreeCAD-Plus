@@ -265,7 +265,7 @@ provide identical active/disabled palette colors, so inspect pixels as well as r
 brush state. Use the existing native framebuffer procedure, not grabFramebuffer.
 Inspect the external qualified temporary row and the viewport while native Sketch
 and Pad editors are open; check that a shortened Pad preview has no stale solid.
-The module contains nineteen source/test scripts; compare them with the native
+The module contains twenty-one source/test scripts; compare them with the native
 build's copied module payload.
 
 The bounded native build uses this release's pinned Windows LibPack and the release
@@ -296,7 +296,7 @@ confirm the test window is exposed before accepting normal rendered pixels. Insp
 normal framebuffer captures for domestic/external component tabs
 and the restored original view, plus dock/tab-bar captures for active labels and
 History. Update only FreeCADPlusScripts when native sources are unchanged; compare
-the copied nineteen-script payload. This does not deliver an owner build or complete
+the copied twenty-one-script payload. This does not deliver an owner build or complete
 remaining panel actions, contextual display or responsiveness acceptance.
 
 ## Linked-instance Copy/Paste validation
@@ -319,4 +319,33 @@ animation on test-owned cameras before fitting and use the exposed-window/normal
 framebuffer procedure above. Native delayed SyncView selection must settle before
 the unrelated document-switch scenario in TestComponentPanel; do not change the
 owner's SyncView preference to make tests pass. Update only FreeCADPlusScripts and
-compare all nineteen packaged Python files. No owner delivery is implied.
+compare all twenty-one packaged Python files. No owner delivery is implied.
+
+## Move Components Translate validation
+
+Run TestComponentMove with the preceding eight Group 1 suites in the isolated native
+runtime and a new PLUS_TEST_DIR. Its six cases cover the actual Part Tree menu and
+Tasks Apply button, transient preview, rotated parent frames, shared children,
+rigid sibling movement, direction snapshots/curve rejection, source-owned external
+save, persistent selection, list Delete/Remove/Clear, invalid native length input,
+method reset, expression/read-only guards, late rollback and task lifecycle cleanup.
+Native origin axes are infinite edges: use their tangent rather than assuming
+endpoint vertices. Include hidden-reference/occurrence and qualified model-label checks.
+Use the quantity widget's `rawValue` property; a dynamic `value` property does not
+emit native input signals. Delete must accept ShortcutOverride inside the collector
+so the global document Delete command cannot consume it. Native task closure owns
+and clears its form. File Edit is valid movement context but deliberately invalid
+for the modeling-only `editing.context_path` adapter.
+
+In a second process run `TestComponentMove.verify_fresh_process(output_directory)`.
+Check exact domestic/external identities, saved group placements and source-only
+save with unchanged assembly checksum; reopen the parent independently as well as
+through its assembly. Inspect the real Tasks controls, settled native framebuffer
+preview of shared parent occurrences, committed movement and Cancel cleanup. Use
+the exposed-window capture procedure and disable animation only on test-owned views.
+After Tasks closes and changes viewport layout, request normal view.redraw before
+reading its settled buffer; a freshly cleared buffer is not visual acceptance.
+Drain delayed native SyncView selection before creating each independent panel fixture.
+Only the existing FreeCADPlusScripts copy target is needed for these script changes;
+compare all twenty-one Python files with the native development payload. This is
+not owner-build delivery, all six Move workflows or complete Group 1 acceptance.

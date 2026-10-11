@@ -15,7 +15,9 @@ per-view cleanup. G1.6c1 component file tabs are validated in the development
 build; WORK_STATE records tests, fresh-process persistence and inspected captures.
 G1.6c2 Part Tree linked-instance Copy/Paste is validated in the development build;
 WORK_STATE records 50 combined tests, fresh-process persistence and inspected captures.
-Next is G1.6c3 Move Components foundation/Translate; do not start it until continuation.
+G1.6c3 Move Components foundation/Translate is validated in the development build;
+WORK_STATE records regression, independent persistence and inspected visual acceptance.
+Next is G1.6c4 Rotate in the same task; do not start it until continuation.
 The complete G1.6 panel is unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
@@ -54,6 +56,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/TestUnusedModels.py: unused-model interaction, native editors/picking, source-owned Undo/save and lifecycle checks.
 - src/Mod/FreeCADPlus/TestComponentWindows.py: component-tab menus, per-view context/camera, guards, cleanup and fresh-process persistence.
 - src/Mod/FreeCADPlus/TestComponentClipboard.py: linked Copy/Paste menus/keys, batch Undo, shared identity, source ownership and save/reopen.
+- src/Mod/FreeCADPlus/freecad_plus/movement.py: parent-owned Translate task, transient preview and atomic commit.
+- src/Mod/FreeCADPlus/TestComponentMove.py: task/placement/source ownership and fresh-process persistence checks.
 - tests and per-workbench tests: upstream test infrastructure.
 - CMakeLists.txt, CMakePresets.json and .github/workflows: this release's build definitions.
 - .gitmodules: this release's pinned GSL, OndselSolver, AddonManager and GoogleTest.

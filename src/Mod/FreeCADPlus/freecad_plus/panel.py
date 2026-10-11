@@ -521,6 +521,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             menu.addSeparator()
             if row.kind == 'occurrence':
                 actions[menu.addAction('Copy')] = lambda unused: self.copy_rows(selected)
+                actions[menu.addAction('Move Components')] = lambda unused: self.move_rows(selected)
             if row.kind in ('file', 'occurrence'):
                 paste = menu.addAction('Paste')
                 paste.setEnabled(bool(self._clipboard))
@@ -535,6 +536,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
             except (ValueError, RuntimeError, ReferenceError) as error:
                 self._message(str(error))
         menu.deleteLater()
+
+    def move_rows(self, rows):
+        from .movement import open_task
+        return open_task(self, rows)
 
     def _selection_changed(self, tree):
         if self._updating or self._selecting or self._closed:
@@ -595,6 +600,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def dispose(self):
         if self._closed:
             return
+        from . import movement
+        if movement._active is not None and movement._active.panel is self:
+            movement._active.finish()
         self._closed = True
         isolation.close_all()
         self._timer.stop()

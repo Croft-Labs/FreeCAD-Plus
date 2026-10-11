@@ -22,6 +22,9 @@ class TestComponentPanel(unittest.TestCase):
         self.output = Path(os.environ['PLUS_TEST_DIR']) / self._testMethodName
         self.output.mkdir(exist_ok=True)
         self.before = set(App.listDocuments())
+        # Drain native delayed SyncView selection before creating the next fixture.
+        Gui.Selection.clearSelection()
+        QtTest.QTest.qWait(350)
         self.doc = document.new_document('PanelFixture')
         self.root = document.validate(self.doc)
         self.parent = self.root.Definitions[0]

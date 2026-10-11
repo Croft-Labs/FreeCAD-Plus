@@ -170,6 +170,45 @@ rejected. File/unused/model/history rows cannot be copied as placed instances; P
 requires a file or placed parent. Closing the panel discards the clipboard. No new
 persistent UI/model metadata is introduced.
 
+### Move Components foundation and Translate (G1.6c3)
+
+`freecad_plus/movement.py` owns the native Tasks dialog and its transient controller.
+Part Tree Move Components accepts whole occurrence rows. The first eligible row
+establishes its immediate parent occurrence as Edit; all supplied rows must be
+siblings under that same exact path. Mixed parent/child selections are refused as
+a whole. The file container owns root placements. A shared definition owns nested
+placements in its own document, including external definitions; moving a child
+therefore changes that child in all occurrences of its parent. Existing links,
+LinkTransform, orientations, descendants, definitions and schema identities remain.
+
+Translate is one normalized parent-frame vector, nonnegative native length input
+and Reverse. Parent X/Y/Z are explicit choices. Native `Part.getShape` resolves a
+picked visible straight edge/line/axis through its occurrence transform, then the
+parent rotation converts the direction (never its position). The result is a
+snapshot, with no persistent reference or expression. Invalid geometry/length,
+read-only/driven/constrained links and stale context are refused before mutation.
+Scaled frames are explicitly unsupported in this bounded increment; they must not
+silently produce incorrect movement.
+
+Preview adds an unpickable Coin wire outline to the originating view. It includes
+corresponding children under every visible parent occurrence; existing geometry
+remains available for reference selection. No document placement, visibility,
+geometry, object or transaction is changed by preview. Apply preflights all links,
+adds the same translation to each native LinkPlacement and commits one transaction
+in the defining file. Late failure aborts the entire group. No-op Apply creates no
+Undo entry. Inputs reset after Apply; Persistent Selection defaults on and retains
+component rows/highlights, while off clears both. Cancel removes pending preview
+but leaves earlier committed moves; OK commits only a pending nonzero movement.
+
+The workflow list preserves the six confirmed entries in order. Translate is
+implemented; selecting another method clears pending inputs, retains siblings and
+parent, and explains that the method awaits implementation. This is a staged
+boundary, not removal of the other confirmed workflows. Native Tasks owns the form;
+closing the task, panel, source/view, changing Edit or switching file/workbench
+releases the overlay and event subscriptions. Camera interaction remains native.
+The original workbenches and owner settings are unchanged. Acceptance is recorded
+in WORK_STATE; subsequent Move methods and complete owner delivery remain separate.
+
 ### Unused definitions (G1.6b)
 
 `editing.edit_unused(doc, definition)` isolates a domestic or imported definition in

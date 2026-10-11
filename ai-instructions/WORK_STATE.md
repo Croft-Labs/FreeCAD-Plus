@@ -2,11 +2,68 @@
 
 ## Authorized objective and stopping boundary
 
-The owner-authorized **G1.6c2 Part Tree linked-instance Copy/Paste** is complete.
-Its focused, combined, fresh-process and visual checks passed; implementation has
-stopped. Next is **G1.6c3:
-Move Components task foundation and Translate**, not started. Do not expand this
-increment into Move, Add Component, independent definition copies or Part Type.
+The owner-authorized **G1.6c3 Move Components foundation and Translate** is
+complete in the native development build. Planned checks passed; implementation
+and runtime testing have stopped. Next is
+**G1.6c4 Rotate**, not started. Do not start later Move methods, Add Component,
+Part Type or other feature groups during this increment.
+
+## G1.6c3 Move Components foundation and Translate — October 10, 2026
+
+**Implementation:** the Part Tree action opens native Tasks. Whole sibling instances
+move in their immediate parent's coordinates; shared/external parents own changes
+in their defining file. Translate uses parent axes or a snapshot of a visible straight
+reference, one nonnegative unit-aware length and Reverse. A temporary, unpickable
+wire outline previews corresponding shared occurrences without document mutations.
+Apply is one atomic Undo group; no-op, reset, Persistent Selection, Cancel after
+Apply and OK behavior follow the confirmed workflow. Other workflow entries explain
+that they await later implementation. No definitions/geometry/schema are copied.
+The technical contract is in ARCHITECTURE, owner behavior in TASK_PANEL.
+
+**Build:** existing G1.6b native development tree; FreeCADPlusScripts passed. Script
+changes only, no native rebuild, owner package or desktop shortcut change.
+
+**Validation:** **56/56 combined Group 1 cases** passed, zero failures/errors/skips,
+normal application exit (79.406 seconds). After final preview-visibility and component
+label corrections, the affected six movement cases passed again (14.677 seconds,
+zero failures/errors/skips). Native context-menu entry and the Tasks Apply button,
+preview without document mutations, rigid sibling movement, rotated/shared parents,
+reverse, no-op, Apply/OK/Cancel, selection retention/removal and atomic Undo/Redo are
+covered. Picked lines and infinite origin axes convert to parent coordinates; curved
+or hidden references and invalid lengths are refused. Expression/read-only guards,
+late-failure rollback, panel/file/Edit-context cleanup and external source ownership
+also passed. Scaled frames remain explicitly unsupported; other Move methods and
+complete Group 1/workbench/long-session responsiveness acceptance remain unfinished.
+
+The independent fresh process retained exact native IDs, domestic placements and
+external-source placements when opened both independently and through the assembly.
+A further source-only save left the assembly archive checksum unchanged; a second
+reopen retained that movement. Inspected viewport captures show temporary cyan wire
+previews for shared children in differently rotated parents, restored original
+placements after Cancel, and corresponding committed movement after Apply. Part Tree
+shows the shared parent Edit state and the exact selected child; Tasks shows the
+component's qualified model label, controls and unit-aware distance. Camera orientation
+and document identities were retained. No owner settings or renderer changes were made.
+
+Initial failures led to corrections for native form ownership, file-root context,
+InputField rawValue/signals, Delete ShortcutOverride and qualified expression paths.
+The first combined run had one old clipboard-fixture failure from delayed native
+SyncView selection; draining that event before each independent fixture resolved it.
+A final source review caught infinite axes without endpoints and preview of hidden
+occurrences. Visual inspection caught internal link labels and a blank framebuffer
+after the Tasks layout transition. The label is fixed; normal view.redraw before
+capture produced clean Cancel pixels. That blank capture is not accepted evidence
+of a renderer or on-screen display defect. No new feature work followed acceptance.
+
+**Packaging/checks:** all twenty-one Python source/test scripts parse and match the
+copied native development payload. All 115 checked local Markdown file targets
+resolve. Diff whitespace passed. Task-only profiles, fixtures, captures and logs
+were removed from
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_translate`
+after recording results. Useful native build/dependencies and tracked tests remain.
+
+**Publication:** validated source milestone pending publication; no owner-build
+delivery, desktop shortcut change, release or deployment.
 
 ## G1.6c2 linked-instance Copy/Paste — October 10, 2026
 
