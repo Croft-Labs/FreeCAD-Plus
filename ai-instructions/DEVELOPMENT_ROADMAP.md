@@ -157,8 +157,8 @@ Point to Point.
   Native development build, all five fading cases, independent reopen and normal
   framebuffer inspection passed. Shared mixed-material fading is corrected by a
   native primitive-cache material dependency. Planned checks complete; stopped.
-  WORK_STATE owns evidence and publication; no saved material property mutation
-  or owner-build delivery.
+  Source milestone `fbcecf8440` pushed to origin; remote revision verified.
+  WORK_STATE owns evidence. No saved material property mutation or owner-build delivery.
 - [   ] **G1.7b3 — Remaining content/eligibility integration.** Bodies Only filtering
   needs owner clarification on descendant traversal; the question is pending.
   Reference-use eligibility and unused-definition display choices remain unfinished.

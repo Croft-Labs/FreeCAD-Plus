@@ -59,8 +59,9 @@ Task validation profiles, fixtures, diagnostics and captures under the approved
 native development build and required dependencies remain. No additional runtime tests
 or subsequent implementation are authorized by completion of this increment.
 
-**Publication:** pending the coherent validated source milestone on
-origin/codex/freecad-1.1.4-baseline. No release or owner delivery.
+**Publication:** source milestone `fbcecf84401b0f28675a4976035a880bcbaf75a8`
+pushed to origin/codex/freecad-1.1.4-baseline; exact remote revision verified.
+Task validation output was deleted after recording results. No release or owner delivery.
 
 ## G1.7b1 explicit per-view hiding — October 10, 2026
 
