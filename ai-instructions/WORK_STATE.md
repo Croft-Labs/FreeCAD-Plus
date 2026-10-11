@@ -60,8 +60,11 @@ Add Reference Feature operation design and full Group 1 acceptance remain unfini
 payload; 130 local link targets in the affected canonical documents resolve and
 whitespace checks pass. Task profiles, fixtures, logs and captures under
 `validation/g1_7b3b_bodies` were deleted after recording/inspecting the evidence.
-The useful development build and dependencies are retained. Publication is recorded
-separately after the coherent source commit is pushed and verified.
+The useful development build and dependencies are retained.
+
+**Publication:** source milestone `93f6ac4f388af962a527297da3a94402b7e92576`
+was pushed to origin `codex/freecad-1.1.4-baseline`; the exact remote revision was
+verified. No owner package, desktop shortcut update, release or deployment.
 
 ## G1.7b3a unused-preview saved display — October 11, 2026
 

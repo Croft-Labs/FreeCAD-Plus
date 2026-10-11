@@ -175,7 +175,8 @@ Point to Point.
   Saved types, native visibility, identities and source ownership are preserved.
   Script target, affected native regressions, Sketch editor, independent reopen
   and inspected normal-framebuffer comparison passed. WORK_STATE owns the exact
-  initial failures, bounded snapshot fix and focused results. Stop; no owner delivery.
+  initial failures, bounded snapshot fix and focused results. Source milestone
+  `93f6ac4f38` pushed to origin; exact remote revision verified. Stop; no owner delivery.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 
