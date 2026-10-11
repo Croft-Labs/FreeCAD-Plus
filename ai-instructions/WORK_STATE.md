@@ -68,8 +68,9 @@ local documentation link targets resolve and diff whitespace checks pass. Task
 profiles, fixtures, logs and launchers in `validation/g1_7b3e_modeling` were deleted
 after recording results. The useful native development build is retained.
 
-**Publication:** source milestone prepared for the authorized origin push; no owner
-package, shortcut update, release or deployment.
+**Publication:** source milestone `8aeb91a3057b1dbbe59816772a9b4b2f15df698e`
+was pushed to origin `codex/freecad-1.1.4-baseline`; the exact remote revision was
+verified. No owner package, shortcut update, release or deployment.
 
 ## G1.7b3d native export eligibility - October 11, 2026
 

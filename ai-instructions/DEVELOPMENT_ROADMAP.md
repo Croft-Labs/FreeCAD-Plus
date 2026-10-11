@@ -199,8 +199,9 @@ Point to Point.
   Batched native build, four focused modeling cases, five shared-policy cases and
   independent Pad/projection reopen passed across bounded corrective runs. WORK_STATE
   records exact coverage, fixture corrections and the inherited seam-reference limit.
-  Publication pending. Stop here; no owner delivery. Next: attachment and existing
-  task-dialog reference collectors. Full G1.7b3 and Group 1 remain incomplete.
+  Source milestone `8aeb91a305` pushed to origin; exact remote revision verified.
+  Stop here; no owner delivery. Next: attachment and existing task-dialog reference
+  collectors. Full G1.7b3 and Group 1 remain incomplete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 
