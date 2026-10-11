@@ -148,7 +148,9 @@ Point to Point.
   panel/view closure. No native Visibility writes. Native build, focused tests,
   affected regressions, independent reopen and normal-buffer inspection are recorded
   in WORK_STATE. Final five display/lifecycle cases passed, zero failures/errors/skips.
-  Implementation and planned checks are complete; stopped. No owner-build delivery.
+  Implementation and planned checks are complete; stopped. Source milestone
+  `8b7b382834` pushed to origin/codex/freecad-1.1.4-baseline; remote verified.
+  No owner-build delivery.
 - [   ] **G1.7b2 — Contextual fading.** Next: active occurrence and descendants keep
   authored appearance; other occurrences use at least 75% transparency, preserving
   greater authored transparency. File Edit and context exit restore appearance.

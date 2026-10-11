@@ -56,9 +56,9 @@ warning remains unrelated to this increment.
 `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_7b_visibility` are removed
 after recording these results. Useful native development build/dependencies remain.
 
-**Publication:** validated milestone prepared for origin/codex/freecad-1.1.4-baseline;
-publication verification will be recorded after push. No owner delivery, shortcut
-change, release or deployment.
+**Publication:** source milestone `8b7b382834` pushed to
+`origin/codex/freecad-1.1.4-baseline`; exact remote revision verified. No owner delivery,
+shortcut change, release or deployment.
 
 ## G1.7a saved display state — October 10, 2026
 
