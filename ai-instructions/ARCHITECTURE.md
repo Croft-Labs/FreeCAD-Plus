@@ -1051,3 +1051,26 @@ placement or Part Tree instance is created or rewritten. Cancel and refused acti
 create no Undo step. Persistence uses the existing defining-file save service.
 TestComponentImport covers the native menus/chooser, closed nested sources, external
 Edit ownership, cancellation/duplicate/cycle/error guards and independent reopen.
+
+### Boolean input admission (G1.7b3n)
+
+PartDesign_Boolean calls the existing componentInputsAllowed helper before opening
+its transaction, creating the Boolean or handing a normalized selection to native
+addObjects. The complete unresolved selection is checked; a mixed selection is
+rejected as one command before any tool can change ownership.
+
+TaskBooleanParameters checks the original selection event through
+Gui::componentGeometryError before adding a tool. It follows pOriginalMsg back to
+the assembly occurrence so shared/external definitions cannot lose their contextual
+Reference/Excluded restriction during native selection resolution. Refusal reports
+the existing component-policy error, leaves the current list/model/transaction
+unchanged and retains Add mode. Removal remains cleanup and bypasses admission.
+Ordinary non-component FreeCAD documents bypass the Plus policy.
+
+This integrates the October 11 Reference prerequisite with existing native Boolean
+intake. It neither implements Add Reference Feature nor defines cross-component
+Full Component tool transfer/copy behavior. Native same-component ownership,
+operation types, recompute and existing dependencies are unchanged. Existing saved
+features are not rewritten on recompute. TestComponentBooleanInputs covers refusal,
+context checks, native picker continuation/removal and legacy bypass; the affected
+Boolean ownership tests cover accepted creation, Undo/Cancel and persistence.

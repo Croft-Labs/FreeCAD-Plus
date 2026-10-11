@@ -48,9 +48,10 @@ focused native and independent reopen checks. G1.7b3l extends isolated legacy
 conversion to those native Boolean-owned tool graphs; focused conversion and
 independent reopen/source-edit checks passed. G1.7b3m placed external export context
 passed native build, focused export and independent reopen checks. Stop here.
-WORK_STATE owns acceptance evidence. Next: Boolean input
-eligibility, pending the owner's cross-component tool decision. Direct exporter/view-output paths
-still need integration. Check latest
+WORK_STATE owns acceptance evidence. Boolean Reference/Excluded command and picker
+admission passed focused native and independent reopen checks in G1.7b3n;
+ownership of tools from another Full Component is
+still undefined. Direct exporter/view-output paths still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
 G1.6c5 shared definition Rename passed native menu/dialog, source-owned Undo and
@@ -59,7 +60,7 @@ G1.6c6 Models file import passed native menus/chooser, source-owned catalog/Undo
 closed-source hidden loading and independent reopen. It creates no placed instances.
 The October 11 owner clarification explicitly requires all Reference geometry to
 enter the active component's History through Add Reference Feature before any use.
-Remaining Boolean input integration and other Group 1 work are unfinished.
+Remaining Part-workbench Boolean input integration and other Group 1 work are unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
 ## Where to go
@@ -82,6 +83,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/App and src/Gui: upstream document/application and desktop services.
 - src/Mod: original workbench modules; retain their source and availability.
 - src/Mod/FreeCADPlus/freecad_plus/document.py: schema, native owned_children/owned_path traversal, History projection and creation/open/save.
+- src/Mod/FreeCADPlus/TestComponentBooleanInputs.py: Boolean command/picker occurrence admission, atomic rejection, cleanup and legacy bypass.
 - src/Mod/FreeCADPlus/TestComponentBooleanOwnership.py: same-component Boolean ownership, nested History/Edit, Undo/Cancel and independent persistence checks.
 - src/Mod/FreeCADPlus/freecad_plus/editing.py: per-view Edit, backend Body and native feature adapters.
 - src/Mod/FreeCADPlus/TestComponentPilot.py: G1.2 regression suite and fresh-process check.

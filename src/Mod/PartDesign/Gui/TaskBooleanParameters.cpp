@@ -32,6 +32,8 @@
 #include <Gui/Application.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentGeometry.h>
+#include <Gui/Notifications.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Tools.h>
 #include <Gui/ViewProvider.h>
@@ -100,6 +102,23 @@ void TaskBooleanParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
     }
 
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
+        // Preserve the selected occurrence before native Body resolution or ownership changes.
+        // Removing an existing tool is cleanup and must remain available.
+        if (selectionMode == bodyAdd) {
+            const auto* original = &msg;
+            while (original->pOriginalMsg) {
+                original = original->pOriginalMsg;
+            }
+            const std::vector<App::SubObjectT> inputs {original->Object};
+            const auto error = Gui::componentGeometryError(BooleanView->getObject(), inputs);
+            if (!error.empty()) {
+                Gui::NotifyError(BooleanView,
+                                 QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                 error.c_str());
+                return;
+            }
+        }
+
         if (strcmp(msg.pDocName, BooleanView->getObject()->getDocument()->getName()) != 0) {
             return;
         }

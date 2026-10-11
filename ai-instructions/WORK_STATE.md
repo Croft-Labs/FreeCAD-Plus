@@ -2,13 +2,63 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.6c6 Models file import and its planned checks are
-complete.** Stop runtime work here; Group 1 remains incomplete. Next: remaining
-Boolean input eligibility under the mandatory Add Reference Feature prerequisite.
-The October 11 owner clarification confirms all Reference geometry must first
-enter the active component's History through that operation. It does not resolve
-ownership of a Boolean tool from another Full Component. Add Component remains
-deferred; no owner package/shortcut delivery is claimed.
+Continue Group 1 only. **G1.7b3n PartDesign Boolean input admission and its planned
+checks are complete.** Stop runtime work here. Next: component eligibility at the
+remaining Part-workbench Boolean entry points. Group 1 remains incomplete; direct
+exporter/view-output integration and the separately scoped Add Reference Feature
+operation are also unfinished. The owner's latest rule requires all Reference
+geometry to enter the active component's History through Add Reference Feature
+before use. Cross-component Full Component tool ownership remains undefined.
+No owner package/shortcut delivery is claimed.
+
+## G1.7b3n PartDesign Boolean input admission - October 11, 2026
+
+**Authority:** the owner's latest in-chat statement requires Add Reference Feature
+in the active component's History before any use of Reference geometry. Rechecked
+C10's latest related chat; no newer owner decision changes this rule or settles
+Full Component tool transfer. This increment implements eligibility at existing
+Boolean intake, without inventing that ownership policy or a new operation workflow.
+
+**Implementation:** PartDesign_Boolean checks the entire unresolved selection and
+active consumer before opening a transaction or calling native addObjects. Its
+TaskBooleanParameters Add picker checks the original selection event before Body
+resolution or mutation, retaining occurrence-specific Reference/Excluded state.
+Refusal preserves IDs, tool ownership, list, visibility and transaction; Add remains
+active. Removal bypasses admission as cleanup. Ordinary legacy documents bypass
+the component policy. See the [contract](ARCHITECTURE.md#boolean-input-admission-g17b3n).
+
+**Build:** one PartDesignGui + FreeCADPlusScripts build in retained
+`test-builds/freecad_1.1.4_context` passed, exit 0, 814.19 seconds. CMake regeneration
+rebuilt generated resources and GUI/workbench dependencies as well as the two
+changed native files. It progressed within its 900-second deadline; no restart or
+corrective build was needed. This is a development payload, not owner delivery.
+
+**Validation:** six native cases passed on their first run, zero failures/errors/
+skips, 14.145 seconds; native exit 0, 21.44 seconds including startup/shutdown.
+Four new cases cover direct Reference and Excluded command rejection, mixed-batch
+atomicity, forbidden shared occurrences, missing Edit context, empty-selection
+Cancel, original-occurrence picker refusal, subsequent owned-tool acceptance,
+removal cleanup and legacy command/picker bypass. Two affected ownership cases
+confirm accepted Boolean geometry/History, Undo/Redo, save and Cancel restoration.
+
+Independent fresh-process reopen/source-edit recompute passed, native exit 0,
+5.83 seconds: exact identities, tool ownership, History, Body Tip and volume were
+retained; changing the tool recomputed the valid Boolean to its expected new volume.
+Logs contain the existing Std_Measure startup notice and the expected Reference
+rejection message. No repeated runtime tests or visual capture were necessary.
+
+**Limits:** PartDesign command-start and Add-picker intake only. No blanket claim
+for all geometry consumers, direct Python property edits, existing dependency
+rewrites, Part-workbench Boolean commands or the future Add Reference Feature
+workflow. Native same-component ownership and existing legacy behavior remain.
+Foreign Full Component tool transfer/copy remains a separate design question.
+
+**Final checks:** all 42 Plus Python files parse and match the retained development
+payload byte-for-byte; all 158 local links in changed Markdown resolve; whitespace
+passes. The exact task validation directory `g1_7b3n_boolean_inputs` was removed
+after recording durable results. Useful development builds remain. Stop here.
+
+**Publication:** validated checkpoint pending origin publication.
 
 ## G1.6c6 Models file import - October 11, 2026
 

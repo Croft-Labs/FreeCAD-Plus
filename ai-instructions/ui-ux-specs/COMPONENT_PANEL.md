@@ -113,7 +113,10 @@ Implementation boundary: G1.7b3k recognizes native Boolean-owned tools in the
 component file and projects their features before the Boolean in History, keeping
 backend Bodies hidden and retaining full selection/Edit paths. See the
 [native ownership contract](../ARCHITECTURE.md#native-boolean-ownership-within-a-component-g17b3k).
-This does not establish the unsettled handling of Boolean tools from another component. G1.7b3l extends legacy conversion to preserve these
+G1.7b3n checks command/tool intake against the Reference/Excluded prerequisite;
+[its contract](../ARCHITECTURE.md#boolean-input-admission-g17b3n) records that bounded
+integration. This does not establish the unsettled handling of Boolean tools from
+another Full Component. G1.7b3l extends legacy conversion to preserve these
 editable native graphs in standalone Bodies and existing Part/shared-link structures;
 its tested boundaries are in the [conversion contract](../ARCHITECTURE.md#legacy-boolean-tool-ownership-g17b3l).
 This is preservation of authored content, not a new Boolean operation workflow.

@@ -2641,6 +2641,10 @@ void CmdPartDesignBoolean::activated(int iMsg)
         return;
     }
 
+    if (!componentInputsAllowed(pcActiveBody)) {
+        return;
+    }
+
     Gui::SelectionFilter BodyFilter("SELECT Part::Feature COUNT 1..");
 
     openCommand(QT_TRANSLATE_NOOP("Command", "Create Boolean"));

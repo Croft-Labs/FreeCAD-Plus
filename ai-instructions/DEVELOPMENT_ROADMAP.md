@@ -276,6 +276,13 @@ Point to Point.
   regressions and independent assembly/source reopen passed. WORK_STATE owns exact
   evidence and limits. Source milestone `b9d3692472` pushed to origin; exact remote
   revision verified. No owner delivery; stop here.
+- [ X ] **G1.7b3n - PartDesign Boolean Reference/Excluded input admission.** Full
+  unresolved command selection and original picked occurrence checked before native
+  mutation. Rejected picker state and removal cleanup retained. One native build,
+  six focused cases and independent reopen/source-edit passed; WORK_STATE owns
+  exact acceptance and publication. This does not decide cross-component Full
+  Component tool ownership. Next: remaining Part-workbench Boolean entry points.
+
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

@@ -16,6 +16,14 @@ A modeling operation requires an edited component. The pinned file cannot own sk
 
 Component geometry inputs must respect the confirmed [Part Type rules](COMPONENT_PANEL.md#part-type-and-visibility): unpromoted Reference and Excluded geometry cannot be used. [C10/U069](EVIDENCE_AND_DECISIONS.md#c10) The owner reaffirmed that all Reference geometry must first be added to the active component's History through **Add Reference Feature**, before any use in that component. Direct selection or silent automatic reference creation cannot bypass this prerequisite. [October 11 clarification](EVIDENCE_AND_DECISIONS.md#reference-geometry-prerequisite---october-11-2026)
 
+G1.7b3n applies the same prerequisite at PartDesign Boolean command start and tool
+addition, before native selection normalization or ownership mutation. Refusal keeps
+the current task and tool list intact; removal remains available. This is component
+eligibility integration, not a redesigned Boolean or Add Reference Feature workflow.
+See the [technical boundary](../ARCHITECTURE.md#boolean-input-admission-g17b3n);
+WORK_STATE owns build/runtime acceptance. Cross-component Full Component tool
+ownership remains undefined by the latest Reference-only clarification.
+
 Implementation boundary: G1.7b3e guards native PartDesign profile intake and Sketcher
 Projection/Intersection reference admission using the shared component policy. Their
 native editors and geometry rules remain the baseline. G1.7b3f extends this to native
