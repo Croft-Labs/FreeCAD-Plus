@@ -314,8 +314,11 @@ void TaskPatternParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
         return;
     }
 
-    if (originalSelected(msg)) {
-        exitSelectionMode();
+    if (selectionMode == SelectionMode::AddFeature || selectionMode == SelectionMode::RemoveFeature) {
+        if (originalSelected(msg)) {
+            exitSelectionMode();
+        }
+        // A rejected or duplicate Original is not a direction/axis selection.
         return;
     }
 

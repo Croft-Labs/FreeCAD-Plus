@@ -1818,6 +1818,18 @@ bool CmdPartDesignSubtractiveHelix::isActive()
 // Common utility functions for Dressup features
 //===========================================================================
 
+// Check the unresolved selection before native command preparation loses its occurrence path.
+static bool componentInputsAllowed(PartDesign::Body* body)
+{
+    const auto error = Gui::componentGeometryError(body);
+    if (error.empty()) {
+        return true;
+    }
+    QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                         QString::fromUtf8(error.c_str()));
+    return false;
+}
+
 bool dressupGetSelected(
     Gui::Command* cmd,
     const std::string& which,
@@ -1829,6 +1841,10 @@ bool dressupGetSelected(
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
+        return false;
+    }
+
+    if (!componentInputsAllowed(pcActiveBody)) {
         return false;
     }
 
@@ -1948,13 +1964,13 @@ void finishDressupFeature(
     }
 }
 
-void makeChamferOrFillet(Gui::Command* cmd, const std::string& which)
+bool makeChamferOrFillet(Gui::Command* cmd, const std::string& which)
 {
     bool useAllEdges = false;
     bool noSelection = false;
     Gui::SelectionObject selected;
     if (!dressupGetSelected(cmd, which, selected, useAllEdges, noSelection)) {
-        return;
+        return false;
     }
 
     Part::Feature* base;
@@ -1968,6 +1984,7 @@ void makeChamferOrFillet(Gui::Command* cmd, const std::string& which)
     }
 
     finishDressupFeature(cmd, which, base, SubNames, useAllEdges);
+    return true;
 }
 
 //===========================================================================
@@ -2018,8 +2035,9 @@ CmdPartDesignChamfer::CmdPartDesignChamfer()
 void CmdPartDesignChamfer::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    makeChamferOrFillet(this, "Chamfer");
-    doCommand(Gui, "Gui.Selection.clearSelection()");
+    if (makeChamferOrFillet(this, "Chamfer")) {
+        doCommand(Gui, "Gui.Selection.clearSelection()");
+    }
 }
 
 bool CmdPartDesignChamfer::isActive()
@@ -2166,6 +2184,10 @@ void prepareTransformed(
     std::function<void(App::DocumentObject*, std::vector<App::DocumentObject*>)> func
 )
 {
+    if (!componentInputsAllowed(pcActiveBody)) {
+        return;
+    }
+
     std::string FeatName = cmd->getUniqueObjectName(which.c_str(), pcActiveBody);
 
     auto worker = [=](std::vector<App::DocumentObject*> features) {
@@ -2489,6 +2511,10 @@ void CmdPartDesignMultiTransform::activated(int iMsg)
     // Check if a Transformed feature has been selected, convert it to MultiTransform
     features = getSelection().getObjectsOfType(PartDesign::Transformed::getClassTypeId());
     if (!features.empty()) {
+        if (!componentInputsAllowed(pcActiveBody)) {
+            return;
+        }
+
         // Throw out MultiTransform features, we don't want to nest them
         for (std::vector<App::DocumentObject*>::iterator f = features.begin(); f != features.end();) {
             if ((*f)->isDerivedFrom<PartDesign::MultiTransform>()) {

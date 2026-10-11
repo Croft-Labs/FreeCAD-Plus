@@ -567,6 +567,20 @@ Use QAbstractButton for native add/remove controls (the transformation controls 
 QPushButtons). Acknowledge and inspect expected modal rejections with the existing
 messages() test helper, so notification preferences cannot block unattended runs.
 Use the numeric value in a dimensional property's existing units for source edits.
-Compare all 35 Plus Python scripts to the retained development payload. Use the
+Compare all Plus Python scripts to the retained development payload. Use the
 bounded isolated native runner; rerun only cases affected by a concrete correction.
 Record actual results and limits, remove task-generated artifacts, and stop.
+
+## Dress-up/transformation command-start validation
+
+Finish CMake/test registration and preserve stored line endings before starting
+the batched PartDesignGui/FreeCADPlusScripts build; later CMake-file edits can
+trigger configuration and generated GUI rebuilds. TestComponentCommandInputs covers
+both shared command helpers, the separate Multi-Transform conversion branch,
+unresolved mixed selections, missing Edit with empty selection, native Cancel,
+Fillet/Chamfer/Linear Pattern creation and Undo/Redo, legacy bypass and Pattern feedback
+routing. Its independent verifier reopens the three saved component fixtures, checks
+identities/references/Tip/volumes, then changes source dimensions and recomputes.
+Use the isolated bounded runner and `messages()` for expected command rejections.
+A rejected command must retain object identities, selection, Tip, shape and Undo/
+transaction state. Do not rerun previously passing intake suites for this increment.

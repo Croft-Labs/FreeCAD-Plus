@@ -230,8 +230,16 @@ Point to Point.
   cases across bounded driver corrections and independent reopen/source-change
   checks passed. WORK_STATE records the notification timeout, corrections and limits.
   Source milestone `4a047f0cb3` pushed to origin; exact remote revision verified.
-  No owner delivery. Stop here. Next: dress-up/transformation command-start selection
-  checks and Pattern rejection feedback cleanup. Full G1.7b3 and Group 1 remain incomplete.
+  No owner delivery; command-start coverage follows in G1.7b3j.
+- [ X ] **G1.7b3j — Dress-up/transformation command admission.** Full unresolved
+  selection and active consumer checked before shared preparation and separate
+  Multi-Transform conversion. Pattern Original picks no longer fall into direction
+  parsing. Chamfer retains selection when preparation rejects. Initial and corrective
+  native builds, eight focused cases across bounded corrective runs, and independent
+  three-file reopen/source-change checks passed. WORK_STATE records the actual
+  cleanup fix, driver corrections and unavailable upstream Scale command coverage.
+  Publication pending. No owner delivery. Stop here. Next: component eligibility for
+  existing PartDesign Boolean inputs. Full G1.7b3 and Group 1 remain incomplete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

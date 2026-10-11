@@ -649,10 +649,29 @@ task is involved. Existing-entry removal remains available. Ordinary legacy file
 bypass these Plus checks; native geometry, dialogs and operation choices remain.
 
 This integrates C10/U069 eligibility, not new operation workflows. Command-start
-preselection, other collectors, raw property/Python writes and retrospective
-reclassification of stored dependencies are separate coverage boundaries. Tests use
+preselection is covered by the following G1.7b3j boundary; other collectors, raw
+property/Python writes and retrospective reclassification remain separate. Tests use
 native Fillet/Chamfer controls and a Linear Pattern; this does not certify every
 geometry variant served by the shared classes. WORK_STATE owns runtime acceptance.
+
+### Dress-up and transformation command admission (G1.7b3j)
+
+`Command.cpp` checks the active backend Body and the unresolved complete selection
+through `componentGeometryError` before dress-up selection clearing/edge expansion,
+transformation Feature filtering, transaction creation or feature/Tip mutation.
+The same check precedes the separate conversion of an existing transformation into
+Multi-Transform. An empty selection still requires explicit component Edit and
+consumer ownership; native whole-shape/no-selection behavior then remains available.
+Legacy documents bypass the Plus policy before its Python import. Chamfer clears
+preselection only after shared preparation succeeds; rejection retains the selection.
+
+The Pattern task routes Add/Remove Original selections only to the Original
+collector. Rejected or duplicate Originals no longer fall through to direction/axis
+parsing, and a rejected addition leaves the picker available for another selection.
+This adds no operation workflow, new geometry semantics or saved schema. Native
+active-Body resolution remains upstream behavior; the guard runs once a Body is
+available. Other command families, raw writes and existing dependency reclassification
+remain separate coverage boundaries. WORK_STATE records build and runtime evidence.
 
 ### Persistence contract
 

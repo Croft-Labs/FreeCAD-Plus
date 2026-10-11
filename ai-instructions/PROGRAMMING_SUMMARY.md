@@ -40,8 +40,10 @@ the separate attachment editor and Extrude face/shape intake, with validated App
 Cancel cleanup and independent downstream checks. G1.7b3h Loft/Pipe picked profiles,
 sections and main/auxiliary paths passed focused native and independent reopen checks.
 G1.7b3i shared dress-up/transformed input guards, including whole-edge controls,
-passed targeted native and independent reopen checks. Stop here. Next: dress-up/
-transformation command-start selection checks. Direct exporter/view-output paths
+passed targeted native and independent reopen checks. G1.7b3j command-start
+selection checks and Pattern feedback routing passed focused native and independent
+reopen checks, including the Chamfer rejected-selection cleanup correction. Stop
+here. Next: component eligibility for existing PartDesign Boolean inputs. Direct exporter/view-output paths
 still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
 remain incomplete. WORK_STATE owns acceptance evidence.
@@ -86,6 +88,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/geometry.py: occurrence-aware Reference/Excluded geometry eligibility, independent of display/selection.
 - src/Mod/FreeCADPlus/TestComponentEligibility.py: consumer guard, shared/external ownership and fresh-process acceptance.
 - src/Gui/ComponentGeometry.h: shared native modeling eligibility bridge for PartDesign/Sketcher.
+- src/Mod/FreeCADPlus/TestComponentCommandInputs.py: native dress-up/transformation command starts, Pattern routing and independent persistence checks.
 - src/Mod/FreeCADPlus/TestComponentDressUpInputs.py: native dress-up/transformed admission, whole-edge context guards, transactions and independent persistence checks.
 - src/Mod/PartDesign/Gui/TaskDressUpParameters.cpp and TaskTransformedParameters.cpp: shared picked-input guards; TaskFilletParameters.cpp and TaskChamferParameters.cpp also guard Use All Edges.
 - src/Mod/FreeCADPlus/TestComponentSweepInputs.py: Loft/Pipe reference admission, native transactions and independent recompute/persistence checks.

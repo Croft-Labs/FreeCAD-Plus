@@ -2,12 +2,82 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3i shared dress-up/transformed input guards and their
-planned runtime checks are complete.** Publication is verified. Stop here;
-do not repeat passed cases or begin another operation. Next: dress-up/transformation
-command-start selection checks (`dressupGetSelected` and `prepareTransformed`).
-Group 1 remains incomplete. Check latest owner conversations for any new design
-question; this work applies component eligibility without operation redesign.
+Continue Group 1 only. **G1.7b3j command-start component admission and its planned
+runtime checks are complete.** Stop implementation/testing here; publication is
+pending below. Next: component eligibility for existing PartDesign Boolean inputs.
+Other collectors and direct exporter/view-output paths remain open. Group 1 remains
+incomplete. Check latest owner conversations for any new design question; this work
+applies component rules without operation redesign. No new owner build.
+
+## G1.7b3j dress-up/transformation command admission - October 11, 2026
+
+**Implementation:** shared dress-up and transformation command starts validate the
+active component consumer and full unresolved selection before clearing, expansion,
+Feature filtering or document mutation. The separate Multi-Transform conversion
+branch uses the same check before changing Originals or Tip. Empty selection still
+requires explicit Edit. Pattern Add/Remove Original picks no longer fall through to
+direction/axis parsing; duplicates and rejected additions retain their picker.
+Chamfer now clears selection only after shared preparation succeeds. See the
+[contract](ARCHITECTURE.md#dress-up-and-transformation-command-admission-g17b3j).
+Existing C09/C10 requirements suffice; no new design decision was required.
+
+**Build:** initial batched PartDesignGui/FreeCADPlusScripts build passed, exit 0,
+935.83 seconds. The runtime-discovered Chamfer cleanup issue required a second
+native build, which passed with exit 0 in 685.25 seconds. CMake-file line-ending
+normalization performed after the first build
+started caused configuration/generated GUI dependencies to rebuild again; future
+increments must finish that normalization before launching the build. The retained
+`test-builds/freecad_1.1.4_context` remains the development tree. No owner package or
+shortcut delivery.
+
+**Validation:** the first launch macro had a quoting error before any test
+ran; the exact isolated process was closed after identifying it (70.38 seconds).
+Corrected launcher: 7 cases, 5 passed and 2 failed expectations, zero errors/skips,
+17.907 seconds, native exit 0. Both expected Reference wording, while these
+occurrences correctly become effectively Excluded outside their owner's Edit
+context. Correcting that expectation and rerunning only those two cases gave
+1 pass and 1 failure, 4.663 seconds, native exit 0. The remaining failure exposed
+Chamfer's unconditional selection clear after rejected preparation. Corrective
+checks cover that actual defect, the unfinished command batch, accepted Chamfer
+creation/Undo and the extended legacy case. Earlier unrelated passing suites remain
+closed. The corrective three-case run gave 2 passes (accepted Chamfer with Undo/
+Redo and extended legacy bypass) and 1 test-driver error, 7.937 seconds, native exit
+0: `PartDesign_Scaled` exists in source but is deliberately not registered upstream.
+No command availability was changed. Removing that unavailable command from the
+rejection matrix and rerunning only the unfinished case gave 1 pass, zero failures/
+errors/skips, 5.196 seconds, native exit 0. All eight distinct focused cases are now
+complete; no additional native fix or build was needed after the Chamfer correction.
+
+Coverage includes all eight registered commands using these shared helpers with
+configured Reference/effectively Excluded and Excluded occurrences, an unresolved
+mixed batch, empty-selection Edit rejection and Cancel, unchanged identities/Tip/
+geometry/selection/Undo/transaction on rejection, and rejected Multi-Transform
+conversion without Originals mutation. Fillet/Chamfer/Linear Pattern accepted
+creation and one-step Undo/Redo pass; ordinary legacy creation bypasses Plus policy.
+Pattern rejected/duplicate Originals do not invoke direction parsing; accepted
+Original additions and removal cleanup remain available.
+
+Independent fresh-process reopen passed all three saved component fixtures: exact
+object identities, Base/Originals, Body Tip and volumes were retained. Changing the
+source box length recomputed valid results with increased volume. Native exit 0,
+6.58 seconds including application startup/shutdown. Final logs contain the existing
+Std_Measure startup notice, without a new application error. Runtime checks stop here.
+
+**Limits:** representative successful geometry uses Fillet, Chamfer and Linear
+Pattern; command admission covers the shared helpers and Multi-Transform conversion
+rejection. This is not certification of every operation's geometry, nested
+transformation or external context. Native active-Body resolution still precedes
+these checks. Other collectors/command families, direct exporters/view output,
+raw property/Python writes and retrospective dependency reclassification remain
+outside this increment. Scale command runtime coverage is unavailable because
+upstream does not register it. Group 1 is incomplete.
+
+**Final checks:** all 36 Plus Python scripts parse and match the retained development
+payload byte-for-byte; 147 local links in changed Markdown resolve; whitespace passes.
+Task-generated `g1_7b3j_commands` validation artifacts are removed after recording
+these results; the useful native build is retained. No more runtime work is needed.
+
+**Publication:** pending authorized origin commit/push and remote verification.
 
 ## G1.7b3i shared dress-up/transformed inputs - October 11, 2026
 

@@ -26,8 +26,11 @@ Apply/OK checks, plus Extrude up-to-face/shape intake. G1.7b3h adds picked Loft/
 profile, section, main-path and auxiliary-path admission; its [bounded contract](../ARCHITECTURE.md#loftpipe-profile-section-and-path-intake-g17b3h) preserves native operation workflows. G1.7b3i adds shared dress-up edge/face and
 transformed-feature Original admission, including whole-edge controls; see its
 [bounded contract](../ARCHITECTURE.md#shared-dress-up-and-transformed-feature-intake-g17b3i).
-Other collectors remain
-unfinished; see the [intake contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e),
+G1.7b3j adds command-start checks before dress-up/transformation selection
+normalization or mutation, including Multi-Transform conversion, and prevents a
+rejected Pattern Original being treated as a direction; see the
+[command boundary](../ARCHITECTURE.md#dress-up-and-transformation-command-admission-g17b3j).
+Other collectors remain unfinished; see the [intake contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e),
 [attachment/reference boundary](../ARCHITECTURE.md#attachment-and-shared-task-reference-intake-g17b3f)
 and [attachment/Extrude boundary](../ARCHITECTURE.md#python-attachment-and-extrude-faceshape-intake-g17b3g).
 
