@@ -2,14 +2,62 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3b Bodies Only filtering and its planned checks are
-complete.** Stop at this increment; do not repeat completed tests or start another
-operation. Group 1/G1.7b3 remain incomplete. Next: Reference-use eligibility
-integration and its panel/operation boundary. Before treating any design detail as
-undefined, search the latest relevant owner conversations, as the owner explicitly
-instructed this turn. Right-click access does not authorize implementing a separate
-Add Reference Feature operation as panel work. Its detailed workflow needs source
-recovery before further clarification, not another repeated unanswered question.
+Continue Group 1 only. **G1.7b3c shared geometry eligibility and its planned checks
+are complete.** Stop at this increment; do not repeat completed tests or begin
+another operation. Group 1/G1.7b3 remain incomplete. Next: connect the shared
+eligibility policy to remaining native modeling/export consumers. Search the latest
+relevant owner conversations before treating design details as undefined. Right-click
+access does not authorize an Add Reference Feature operation as Component Panel work.
+
+## G1.7b3c shared geometry eligibility - October 11, 2026
+
+**Owner source:** reread the original user messages in **Fix component activation
+and part** (`01a12645-26b9-7d32-b338-529e73a9c0d4`), retained as U067-U069/C10.
+U069, October 10 10:56 EDT, requires Add Reference Feature before reference-child
+geometry can be used in any way. This overrides the earlier any-visible-geometry
+reference allowance; owned derived features remain usable without traversing their
+outgoing source dependencies.
+
+**Implementation:** new read-only `geometry.require_access` resolves the originating
+view's Edit context and native occurrence chain. It rejects Reference/Excluded
+branches, bare foreign members and aggregates containing forbidden descendants,
+while preserving shared-instance distinctions, source-owned unused definitions and
+the active editing override. Hidden is separate from eligibility. Existing Move
+Components direction, axis, axis-point and pivot consumers call the guard before
+reading a shape. Panel tooltips state the restriction; selection and Edit still work.
+No global selection gate, native shape override, schema or geometry mutation, new
+operation workflow, or Add Reference Feature dialog is introduced. See the
+[contract](ARCHITECTURE.md#geometry-eligibility-g17b3c).
+
+**Build:** FreeCADPlusScripts completed in the retained native development tree;
+existing native libraries were reused. No C++ change or owner-build/shortcut delivery.
+
+**Validation:** initial 9-case eligibility/Move/Rotate/display run passed 8, with
+one error, zero failures/skips, native exit 0 (12.824 seconds). All five new cases
+passed. The remaining direction regression exposed mapped topology names containing
+dots; a focused correction then exposed native origin axes lacking a direct shape.
+The final resolver uses FreeCAD's native object-chain parser and object-identity
+lookup. Final affected run: all five eligibility cases and that Move regression
+passed (6 cases, zero failures/errors/skips, 8.630 seconds, native exit 0).
+Independent fresh-process reopen passed saved Reference rejection, allowed shared
+occurrence access and exact object IDs/native visibility, native exit 0.
+
+Checks include domestic/external unused ownership, active Edit overrides, aggregates,
+foreign-member bypass prevention, owned source-linked features, Undo/Redo, read-only
+queries and actual panel navigation/tooltips. Consumer tests fail deliberately if
+forbidden geometry reaches Part.getShape; direction/axis/point/pivot rejection occurs
+before that boundary. The successful Rotate/display regressions were not repeated.
+No viewport rendering changed; this increment makes no new visual-performance claim.
+
+**Limits:** the shared policy is not yet wired into all native modeling or export
+consumers and does not intercept arbitrary direct Python shape reads. Full Reference
+eligibility, Add Reference Feature and Group 1 acceptance remain unfinished.
+
+**Final checks/cleanup:** all 29 Python files parse and byte-match the development
+payload; 136 local documentation link targets exist and whitespace checks pass.
+Task profiles, fixtures, logs and diagnostic output under
+`validation/g1_7b3c_eligibility` were deleted after recording the results. The useful
+development build is retained. Publication is recorded separately below after push.
 
 ## G1.7b3b Bodies Only filtering - October 11, 2026
 

@@ -460,3 +460,19 @@ Only and Full Component. Inspect the pair: body results remain, the edited curve
 returns only in Full Component, and the repeated Bodies Only occurrence stays
 filtered. Record results in WORK_STATE, delete task validation artifacts, and stop
 when this increment's checks pass. Owner delivery remains a separate gate.
+
+## Geometry eligibility validation
+
+Build FreeCADPlusScripts in the retained native development tree; G1.7b3c changes
+no C++ libraries. Parse and byte-compare all 29 Python files against that payload.
+Run TestComponentEligibility plus the affected existing Move direction, Rotate
+located-line/two-point and Excluded display cases, with bounded isolated native
+processes/profiles. The consumer checks must reject before Part.getShape, while
+actual panel Edit remains available. Native mapped element names can contain dots;
+origin axes can resolve as objects without returning a shape.
+
+After a correction, rerun only failed/affected cases. Independently run
+TestComponentEligibility.verify_fresh_process(output_directory) for exact saved
+identity/visibility and eligibility. Record initial failures and final results in
+WORK_STATE, remove task artifacts, and stop. Remaining native consumer integration
+and owner-build delivery are separate gates.

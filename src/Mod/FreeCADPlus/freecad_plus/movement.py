@@ -259,6 +259,9 @@ class MoveTask(QtCore.QObject):
                       for sub in entry.SubElementNames or ('',)]
         if len(selections) != 1: raise ValueError('Select exactly one visible reference')
         obj, sub = selections[0]
+        from . import geometry
+        active, path = self.panel._context(self.doc, self.view)
+        geometry.require_access(self.doc, obj, sub, active=active, active_path=path)
         if not visible_reference(obj, sub): raise ValueError('Choose a visible reference')
         return obj, sub
 

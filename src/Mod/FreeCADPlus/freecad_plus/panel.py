@@ -359,7 +359,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                         effective, visible = display.resolved(obj, direct=direct)
                         item.setToolTip(0, 'Part Type: ' + effective + (' (saved: ' + part_type + ')' if effective != part_type else '')
                                         + '\nVisibility: ' + ('Shown' if shown else 'Hidden')
-                                        + ('\nExcluded cannot be shown.' if effective == 'Excluded' else ''))
+                                        + ('\nExcluded cannot be shown or used as geometry.' if effective == 'Excluded' else '')
+                                        + ('\nAdd Reference Feature before using this geometry.' if part_type == 'Reference' else ''))
             self._update_display_views()
             self.refresh_count += 1
         except (ValueError, RuntimeError, ReferenceError) as error:

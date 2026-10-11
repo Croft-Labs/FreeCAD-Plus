@@ -474,6 +474,38 @@ Undo/recompute, native Sketch editing, cleanup and independent save/reopen. Actu
 results and visual acceptance are in WORK_STATE. Reference-use eligibility and
 separate operation workflows remain outside this completed increment.
 
+### Geometry eligibility (G1.7b3c)
+
+`geometry.require_access(doc, obj, sub, active=..., active_path=...)` is the shared
+read-only boundary for consumers of component geometry. Call it before reading a
+native shape, using the originating view's Edit context. It validates catalog and
+occurrence ownership and delegates mapped topology/object paths to FreeCAD's native
+parser. Native origin axes use object-identity lookup, not shape availability.
+
+Each crossed component link applies its effective saved Part Type. Active Edit
+uses its self setting and overrides ancestor restrictions only on the editing route.
+Reference and Excluded geometry are rejected. Shared source definitions do not erase
+occurrence distinctions; bare foreign members must supply an occurrence path.
+Domestic/external unused definitions use their source-owned state. Hidden alone is
+not an eligibility restriction; consumers retain their separate visibility checks.
+A selected component aggregate is refused if any descendant is forbidden; no partial
+replacement shape is constructed. An owned derived feature is checked at its own
+identity without following outgoing source links. This supports the U069 ownership
+rule but does not implement the separate promotion operation.
+
+Existing Move Components reference reads use this boundary for directions, axes,
+axis points and pivots. Their accepted references remain one-time placement snapshots.
+Panel tooltips explain the restriction while selection and Edit remain available.
+Do not install a global SelectionGate or override Part.getShape: navigation and
+native command-specific selection gates have separate responsibilities. Remaining
+native modeling/export consumers still need explicit integration; this service alone
+does not establish universal enforcement or intercept direct Python shape reads.
+
+TestComponentEligibility covers shared/aggregate rejection, editing overrides,
+external unused ownership, no foreign-member bypass, owned source-linked features,
+Undo/Redo, exact identity/visibility persistence and actual consumer rejection before
+shape reads. WORK_STATE records runtime evidence and scope limits.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,

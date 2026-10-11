@@ -177,6 +177,13 @@ Point to Point.
   and inspected normal-framebuffer comparison passed. WORK_STATE owns the exact
   initial failures, bounded snapshot fix and focused results. Source milestone
   `93f6ac4f38` pushed to origin; exact remote revision verified. Stop; no owner delivery.
+- [ X ] **G1.7b3c — Shared geometry eligibility and existing consumers.** Read-only
+  occurrence checks reject raw Reference/Excluded geometry before existing Move
+  reference reads, preserving Edit access and owned derived features. Native scripts
+  build, five eligibility cases, affected Move/Rotate/display regressions and an
+  independent reopen passed. WORK_STATE records corrections and exact results.
+  Stop here; no new operation or owner delivery. Remaining native modeling/export
+  consumers still need integration; full G1.7b3 is not complete.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

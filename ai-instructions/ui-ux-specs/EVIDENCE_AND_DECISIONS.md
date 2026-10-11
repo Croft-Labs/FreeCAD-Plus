@@ -66,6 +66,13 @@ direct-versus-nested clarification blocker was therefore unnecessary; resume fro
 this evidence rather than asking the same question again. Detailed Add Reference
 Feature operation design remains a separate, unfinished task.
 
+The G1.7b3c source recheck again read the original U069 user message: geometry of a
+Reference child that has not been added as a reference feature "cannot be used in
+any way." This newer rule also qualifies R03's earlier any-visible-geometry allowance
+for Move Components. The eligibility consumer integration does not authorize a new
+operation workflow. Owner-created reference features are owned derived geometry;
+their outgoing source association does not make them unpromoted child geometry.
+
 ## Source coverage and limitations
 
 - Read all locally available primary FreeCAD Codex session user messages identified by checkout and topic, including recent recovery, hierarchy and Part Type chats. Excluded automated subagent records and unrelated app conversations from requirement evidence.

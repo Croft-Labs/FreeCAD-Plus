@@ -64,7 +64,10 @@ G1.7b3a applies saved self/child visibility and nested Reference choices in dome
 and external unused previews; its validation is recorded in WORK_STATE. G1.7b3b
 Bodies Only content filtering is validated in placed and unused development views;
 see the [technical contract](../ARCHITECTURE.md#bodies-only-content-filtering-g17b3b).
-Reference-use enforcement remains pending. The descendant interpretation is recorded
+G1.7b3c adds the shared eligibility guard and applies it to existing Move Components
+reference reads; navigation/Edit remain available. The [technical contract](../ARCHITECTURE.md#geometry-eligibility-g17b3c)
+states the boundary: remaining native modeling/export consumers are not yet guarded.
+Full Reference-use enforcement remains pending. The descendant interpretation is recorded
 in the [Part Type source recheck](EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
 Saved metadata alone does not establish the full behavior below. WORK_STATE owns validation.
 
