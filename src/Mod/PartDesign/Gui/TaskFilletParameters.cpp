@@ -22,6 +22,7 @@
 
 
 #include <QAction>
+#include <QSignalBlocker>
 #include <QListWidget>
 #include <QMessageBox>
 
@@ -129,6 +130,11 @@ void TaskFilletParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 void TaskFilletParameters::onCheckBoxUseAllEdgesToggled(bool checked)
 {
     if (auto fillet = getObject<PartDesign::Fillet>()) {
+        if (checked && !isComponentInputAllowed()) {
+            QSignalBlocker blocker(ui->checkBoxUseAllEdges);
+            ui->checkBoxUseAllEdges->setChecked(fillet->UseAllEdges.getValue());
+            return;
+        }
         if (checked) {
             setSelectionMode(none);
         }

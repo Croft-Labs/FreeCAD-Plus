@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include <QAction>
+#include <QSignalBlocker>
 #include <QFontMetrics>
 #include <QListWidget>
 #include <QMessageBox>
@@ -182,6 +183,11 @@ void TaskChamferParameters::onSelectionChanged(const Gui::SelectionChanges& msg)
 void TaskChamferParameters::onCheckBoxUseAllEdgesToggled(bool checked)
 {
     if (auto chamfer = getObject<PartDesign::Chamfer>()) {
+        if (checked && !isComponentInputAllowed()) {
+            QSignalBlocker blocker(ui->checkBoxUseAllEdges);
+            ui->checkBoxUseAllEdges->setChecked(chamfer->UseAllEdges.getValue());
+            return;
+        }
         if (checked) {
             setSelectionMode(none);
         }

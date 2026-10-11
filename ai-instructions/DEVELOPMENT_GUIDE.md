@@ -555,3 +555,18 @@ new admission, Cancel, one-step Undo/Redo, ordinary legacy bypass and independen
 saved-file reopen/source edits. Compare all 34 Plus Python scripts to the build
 payload. Run the focused cases once; after a failure rerun only affected cases.
 Record actual results, delete this increment's temporary artifacts and stop.
+
+## Shared dress-up/transformed input validation
+
+Batch PartDesignGui and FreeCADPlusScripts. TestComponentDressUpInputs drives native
+Fillet edge toggles, Fillet/Chamfer Add All Edges/Use All Edges and shared Linear
+Pattern Original collectors. Cover original occurrence rejection, removal cleanup,
+missing Edit context without checkbox/property divergence, accepted inputs,
+Undo/Redo, Cancel, legacy bypass and independent saved-file/source-change checks.
+Use QAbstractButton for native add/remove controls (the transformation controls are
+QPushButtons). Acknowledge and inspect expected modal rejections with the existing
+messages() test helper, so notification preferences cannot block unattended runs.
+Use the numeric value in a dimensional property's existing units for source edits.
+Compare all 35 Plus Python scripts to the retained development payload. Use the
+bounded isolated native runner; rerun only cases affected by a concrete correction.
+Record actual results and limits, remove task-generated artifacts, and stop.

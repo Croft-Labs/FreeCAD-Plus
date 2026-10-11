@@ -23,7 +23,10 @@ attachment inputs (picked, initial batch and typed) and the shared PartDesign pi
 axis/direction/plane collector. A rejected input keeps the existing reference and
 editor transaction. G1.7b3g adds the separate attachment editor's input/preview and
 Apply/OK checks, plus Extrude up-to-face/shape intake. G1.7b3h adds picked Loft/Pipe
-profile, section, main-path and auxiliary-path admission; its [bounded contract](../ARCHITECTURE.md#loftpipe-profile-section-and-path-intake-g17b3h) preserves native operation workflows. Other collectors remain
+profile, section, main-path and auxiliary-path admission; its [bounded contract](../ARCHITECTURE.md#loftpipe-profile-section-and-path-intake-g17b3h) preserves native operation workflows. G1.7b3i adds shared dress-up edge/face and
+transformed-feature Original admission, including whole-edge controls; see its
+[bounded contract](../ARCHITECTURE.md#shared-dress-up-and-transformed-feature-intake-g17b3i).
+Other collectors remain
 unfinished; see the [intake contract](../ARCHITECTURE.md#native-modeling-intake-eligibility-g17b3e),
 [attachment/reference boundary](../ARCHITECTURE.md#attachment-and-shared-task-reference-intake-g17b3f)
 and [attachment/Extrude boundary](../ARCHITECTURE.md#python-attachment-and-extrude-faceshape-intake-g17b3g).

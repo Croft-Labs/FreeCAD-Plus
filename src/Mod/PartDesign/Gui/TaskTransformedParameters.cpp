@@ -35,6 +35,8 @@
 #include <Gui/ViewProvider.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentGeometry.h>
+#include <Gui/Notifications.h>
 #include <Gui/Tools.h>
 #include <Mod/PartDesign/App/Body.h>
 #include <Mod/PartDesign/App/FeatureAddSub.h>
@@ -236,6 +238,20 @@ bool TaskTransformedParameters::originalSelected(const Gui::SelectionChanges& ms
             const auto or_iter = std::ranges::find(originals, selectedObject);
             if (selectionMode == SelectionMode::AddFeature) {
                 if (or_iter == originals.end()) {
+                    const auto* original = &msg;
+                    while (original->pOriginalMsg) {
+                        original = original->pOriginalMsg;
+                    }
+                    const auto inputError = Gui::componentGeometryError(
+                        getTopTransformedObject(),
+                        std::vector<App::SubObjectT> {original->Object}
+                    );
+                    if (!inputError.empty()) {
+                        Gui::NotifyError(getTopTransformedView(),
+                                         QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                                         inputError.c_str());
+                        return false;
+                    }
                     originals.push_back(selectedObject);
                     addObject(selectedObject);
                 }

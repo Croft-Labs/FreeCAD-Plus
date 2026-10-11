@@ -34,6 +34,8 @@
 #include <App/DocumentObject.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/Command.h>
+#include <Gui/ComponentGeometry.h>
+#include <Gui/Notifications.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Tools.h>
 #include <Gui/WaitCursor.h>
@@ -95,6 +97,28 @@ void TaskDressUpParameters::setupTransaction()
     transactionID = App::GetApplication().setActiveTransaction(n.c_str());
 }
 
+bool TaskDressUpParameters::isComponentInputAllowed(const Gui::SelectionChanges* msg)
+{
+    std::vector<App::SubObjectT> inputs;
+    if (msg) {
+        while (msg->pOriginalMsg) {
+            msg = msg->pOriginalMsg;
+        }
+        inputs.push_back(msg->Object);
+    }
+    else {
+        inputs.emplace_back(getBase(), "");
+    }
+    const auto inputError = Gui::componentGeometryError(getObject(), inputs);
+    if (!inputError.empty()) {
+        Gui::NotifyError(getViewObject(),
+                         QT_TRANSLATE_NOOP("Notifications", "Ineligible geometry"),
+                         inputError.c_str());
+        return false;
+    }
+    return true;
+}
+
 void TaskDressUpParameters::referenceSelected(const Gui::SelectionChanges& msg, QListWidget* widget)
 {
     if (strcmp(msg.pDocName, DressUpView->getObject()->getDocument()->getName()) != 0) {
@@ -120,6 +144,9 @@ void TaskDressUpParameters::referenceSelected(const Gui::SelectionChanges& msg, 
         removeItemFromListWidget(widget, msg.pSubName);
     }
     else {
+        if (!isComponentInputAllowed(&msg)) {
+            return;
+        }
         refs.push_back(subName);  // not yet in the list so we add it
         widget->addItem(QString::fromStdString(msg.pSubName));
     }
@@ -137,7 +164,7 @@ void TaskDressUpParameters::addAllEdges(QListWidget* widget)
 
     PartDesign::DressUp* pcDressUp = DressUpView->getObject<PartDesign::DressUp>();
     App::DocumentObject* base = pcDressUp->Base.getValue();
-    if (!base) {
+    if (!base || !isComponentInputAllowed()) {
         return;
     }
     int count = Part::Feature::getTopoShape(

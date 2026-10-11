@@ -2,11 +2,75 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3h Loft/Pipe reference admission and its planned
-runtime checks are complete.** Publication is verified. Stop here; do not
-repeat passed suites or start another operation. Next: shared dress-up and
-transformed-feature input collectors. Group 1/G1.7b3 remain incomplete. Check latest
-owner conversations for new design questions; operation redesign is outside this work.
+Continue Group 1 only. **G1.7b3i shared dress-up/transformed input guards and their
+planned runtime checks are complete.** Finish final records/publication and stop;
+do not repeat passed cases or begin another operation. Next: dress-up/transformation
+command-start selection checks (`dressupGetSelected` and `prepareTransformed`).
+Group 1 remains incomplete. Check latest owner conversations for any new design
+question; this work applies component eligibility without operation redesign.
+
+## G1.7b3i shared dress-up/transformed inputs - October 11, 2026
+
+**Implementation:** shared native dress-up edge/face additions, Add All Edges and
+Fillet/Chamfer Use All Edges require eligible component inputs before mutation;
+rejected checkbox enabling restores the prior UI state. Shared transformed-feature
+Original additions check original occurrences before list/property/transaction
+changes. Existing-entry removal remains available. See the
+[contract](ARCHITECTURE.md#shared-dress-up-and-transformed-feature-intake-g17b3i).
+The owner's latest clarification keeps this as component-rule integration, not
+operation workflow implementation. No new design choice required clarification.
+
+**Build:** one batched PartDesignGui/FreeCADPlusScripts build passed in the retained
+`test-builds/freecad_1.1.4_context` tree, native exit 0. All changed native files
+compiled and linked. Later corrections affected only the test driver/verifier and
+were copied to the development payload; no additional native build was needed.
+No owner package or desktop shortcut delivery.
+
+**Validation:** initial four-case run: 2 passed (dress-up pick/cleanup/Undo and
+Fillet/Chamfer whole-edge routes/context loss/Cancel), 2 errors, zero failures/skips,
+11.812 seconds, native exit 0. The two transformation cases stopped at the driver's
+QToolButton lookup; those native controls are QPushButtons. The driver now uses
+QAbstractButton for the shared lookup. The first affected-case rerun reached the
+expected Ineligible geometry modal notification and hit the runner's 180-second
+deadline; the isolated process was terminated by that deadline. This was a test
+acknowledgment omission, not a stuck modeling operation. The driver now uses the
+existing `messages()` helper and checks that captured dialogs contain the expected
+rejection reason. It also supports the whole-edge test's expected context errors.
+Only the two unfinished cases were rerun: 2 passed, zero failures/errors/skips,
+5.886 seconds, native exit 0. Earlier passing cases and unrelated suites were not
+repeated. No production correction was needed after the initial build.
+
+Actual native checks prove original-occurrence rejection before stored references,
+list entries, preview volume, Undo/transaction or object identities change; accepted
+Fillet edges and Linear Pattern Originals; removal of existing entries via an
+ineligible occurrence; one-step Undo/Redo; both Fillet/Chamfer whole-edge rejection
+when Edit context is lost, including checkbox/enablement consistency; accepted
+whole-edge actions and Cancel restoration; and ordinary legacy bypass.
+
+The first independent reopen stopped in the verifier's source edit because it added
+a dimensionless number to a FreeCAD Quantity. The driver now sets the numeric value
+in the property's existing units. The corrected fresh process passed exact IDs,
+stored Fillet Base/Pattern Originals and saved volumes, then changed each source
+box's length and obtained valid recomputed results with increased volume. Exit 0.
+
+**Limits:** the shared collector is exercised through Fillet and Linear Pattern,
+with both Fillet/Chamfer whole-edge controls. Other dress-up geometry variants and
+nested MultiTransform are not separately certified. Command-start preselection,
+other collectors, raw property/Python writes and retrospective reclassification of
+existing dependencies remain outside this increment. No operation redesign, schema
+change, workbench removal or rendering/performance claim; Group 1 remains incomplete.
+The unchanged Pattern selection handler falls through to its direction parser after
+an Original is rejected and emits a secondary invalid-selection notice. The tests
+confirm unchanged stored state; feedback routing remains a follow-up alongside
+command-start admission. Completed logs otherwise contain expected eligibility
+notifications and the pre-existing Std_Measure startup notice.
+
+**Final checks:** all 35 Plus Python scripts parse and match the development payload
+byte-for-byte; 145 local links in changed Markdown resolve; whitespace checks pass.
+Task artifacts `g1_7b3i_collectors` were deleted after recording these results. The
+useful development build is retained. No further runtime work is required.
+
+**Publication:** prepared for the authorized origin milestone push.
 
 ## G1.7b3h Loft/Pipe reference admission - October 11, 2026
 

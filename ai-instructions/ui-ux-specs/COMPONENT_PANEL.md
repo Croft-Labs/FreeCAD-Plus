@@ -75,7 +75,8 @@ G1.7b3e adds native PartDesign profile and Sketcher Projection/Intersection inta
 checks. G1.7b3f extends the same rules to native attachment and the shared picked
 axis/direction/plane collector; [Task Panel](TASK_PANEL.md#shared-task-patterns)
 records these integration boundaries, including G1.7b3g's separate attachment editor
-and Extrude face/shape inputs and G1.7b3h's Loft/Pipe input admission. Full Reference-use enforcement remains pending. The descendant interpretation is recorded
+and Extrude face/shape inputs, G1.7b3h's Loft/Pipe input admission and G1.7b3i's
+shared dress-up/transformed input checks. Full Reference-use enforcement remains pending. The descendant interpretation is recorded
 in the [Part Type source recheck](EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
 Saved metadata alone does not establish the full behavior below. WORK_STATE owns validation.
 

@@ -631,6 +631,29 @@ stored dependencies. It does not cover raw property/Python writes, other operati
 collectors or deferred Add Reference Feature design. Tests and bounded acceptance
 are recorded in WORK_STATE; this is not full Group 1 acceptance or owner delivery.
 
+### Shared dress-up and transformed-feature intake (G1.7b3i)
+
+`TaskDressUpParameters` checks the original picked occurrence before appending an
+edge/face to the stored Base reference. Toggling an existing entry off and list
+Delete remain cleanup, without admitting new geometry. Its shared check also guards
+Add All Edges before reading geometry or opening a transaction. Fillet/Chamfer Use
+All Edges checks the stored base before enabling; rejection restores the checkbox
+without changing the property, picker/list state or preview. Disabling remains
+available. A stored-base action has no picked occurrence; it checks the current
+component Edit context and the stored source ownership through the shared policy.
+
+`TaskTransformedParameters` checks a newly picked Original against that policy
+before list/property mutation or transaction creation, retaining the original
+occurrence path. The top transformation is the consumer when a nested transformation
+task is involved. Existing-entry removal remains available. Ordinary legacy files
+bypass these Plus checks; native geometry, dialogs and operation choices remain.
+
+This integrates C10/U069 eligibility, not new operation workflows. Command-start
+preselection, other collectors, raw property/Python writes and retrospective
+reclassification of stored dependencies are separate coverage boundaries. Tests use
+native Fillet/Chamfer controls and a Linear Pattern; this does not certify every
+geometry variant served by the shared classes. WORK_STATE owns runtime acceptance.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,
