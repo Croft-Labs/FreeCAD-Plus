@@ -61,8 +61,9 @@ payload; 283 canonical local Markdown paths resolve, and whitespace checks pass.
 Task output in validation/g1_7b3_unused is removed after recording these results.
 Useful native builds/dependencies remain. No further runtime checks or implementation.
 
-**Publication:** pending the coherent validated source milestone on origin.
-No release or owner-build delivery.
+**Publication:** source milestone `ad4fa8d26a643dac90f979bd4beba500a987a39f`
+pushed to origin/codex/freecad-1.1.4-baseline; exact remote revision verified.
+Task validation output was deleted. No release or owner-build delivery.
 
 ## G1.7b2 contextual fading — October 11, 2026
 
