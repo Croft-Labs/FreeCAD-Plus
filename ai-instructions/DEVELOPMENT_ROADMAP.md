@@ -134,7 +134,8 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Validation:** 12 focused and 62 combined cases passed; independent save/reopen
   and inspected preview, Cancel, committed rotation, task and tree captures passed.
   WORK_STATE owns detailed results and limitations. Stopped after planned acceptance.
-  **Publication:** pending validated milestone commit/push; no owner-build delivery.
+  **Publication:** source milestone `b14a8bc724` pushed to
+  origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
 - [   ] **G1.6c5 — Point to Point.** Next increment, not started: separate source
   and destination point collectors, pure parent-frame translation, reference snapshots
   and the same preview/Apply/OK/Cancel semantics.

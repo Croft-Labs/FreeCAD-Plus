@@ -50,7 +50,8 @@ No further feature implementation or runtime tests followed planned acceptance.
 `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_rotate`
 after recording results. Useful native build/dependencies and tracked tests remain.
 
-**Publication:** pending commit/push of the validated milestone. No owner-build
+**Publication:** source milestone `b14a8bc724` pushed to
+`origin/codex/freecad-1.1.4-baseline`; remote revision verified. No owner-build
 delivery, desktop shortcut change, release or deployment.
 
 ## G1.6c3 Move Components foundation and Translate — October 10, 2026
