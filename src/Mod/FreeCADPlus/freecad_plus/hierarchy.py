@@ -37,7 +37,7 @@ def add_instance(owner, definition, placement=None):
     return add_instances(owner, [(definition, placement, True, True)], 'Place shared component')[0]
 
 
-def add_instances(owner, entries, label='Paste component instances'):
+def add_instances(owner, entries, label='Paste component instances', display_states=None):
     """Place a complete batch in one native transaction; never clone definitions."""
     doc = owner.Document
     root = _root(doc)
@@ -61,9 +61,14 @@ def add_instances(owner, entries, label='Paste component instances'):
                 continue
             seen.add(current)
             todo.extend(o.LinkedObject for o in current.Group if o.TypeId == 'App::Link')
+    from . import display
+    choices = tuple(display_states) if display_states is not None else (None,) * len(entries)
+    if len(choices) != len(entries) or any(value is not None and
+            (len(value) != 2 or value[0] not in display.TYPES or type(value[1]) is not bool) for value in choices):
+        raise ValueError('Invalid copied component display settings')
     result = []
     with transaction(doc, label):
-        for definition, placement, transform, visible in entries:
+        for (definition, placement, transform, visible), choice in zip(entries, choices):
             instance = doc.addObject('App::Link', 'ComponentInstance')
             instance.setLink(definition)
             instance.LinkTransform = transform
@@ -71,6 +76,8 @@ def add_instances(owner, entries, label='Paste component instances'):
             owner.addObject(instance)
             if App.GuiUp:
                 instance.Visibility = visible
+            if choice is not None and choice != display.state(instance):
+                display.enable(root); display.write_state(instance, choice)
             result.append(instance)
     return result
 

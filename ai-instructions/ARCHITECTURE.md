@@ -161,7 +161,7 @@ own catalog and circular nesting before mutation, then uses one native transacti
 External-parent Paste modifies its defining document; native coordinated Undo can
 add forwarding records in dependent files. Existing imported definitions are reused;
 no file import or same-label substitution is performed implicitly. Late failure
-aborts every added link. Save/reopen remains ordinary schema-4 native persistence.
+aborts every added link. Save/reopen uses native persistence; schema 5 additionally preserves copied display choices.
 
 The opt-in panel scopes menu actions and keyboard interception to Part Tree. It
 never replaces the operating-system clipboard or global FreeCAD shortcuts. Paste
@@ -323,6 +323,34 @@ The original official 1.1.4 binary lacks this API. With that runtime, domestic
 unused editing remains supported but external unused Edit reports the required
 native document-context build; it does not start a partial isolation session.
 
+### Saved Part Type and visibility state (G1.7a)
+
+`display.py` owns the schema-5 state contract. Optional native properties on a
+component definition store its self Part Type/Shown choice; optional properties on
+its owned child links store the parent's direct-child choices. Self and child
+properties have distinct names to avoid native Link property forwarding. Defaults
+are Full Component/Shown for self and Bodies Only/Shown for children. Reading old
+files, panel refresh and entering Edit do not add properties or upgrade a file.
+Changing a setting upgrades only its defining file, in the same Undo transaction.
+Schema 1–4 remain readable; schema 5 prevents old readers silently accepting new
+semantics. Missing optional choices have defaults; partial/wrongly typed metadata
+is rejected. Native identities, geometry, placements and Visibility are unchanged.
+
+Part Tree/active model menus resolve the active component's self or direct child
+through exact occurrence paths, rechecking view, context and identity before write.
+Native editors/pending tasks guard mutations. Choices are source-owned for external
+parents and shared across their occurrences. Excluded cannot be made Shown; its
+saved visibility is retained separately. Nested Reference resolves as Excluded
+without erasing the saved Reference choice. No reference geometry becomes usable
+for modeling through this state API. Linked Copy/Paste snapshots these choices;
+independent copies reuse native property copying and upgrade their destination.
+
+This increment exposes saved choices through checked menus and contextual tree
+tooltips. It does **not** apply viewport filtering, fading, reference eligibility or
+export rules. Those are subsequent integration gates in G1.7b; this opt-in development
+panel is not a delivered owner UI. No global Visibility mutation is used to simulate
+per-view behavior. WORK_STATE owns actual acceptance evidence.
+
 ### Persistence contract
 
 `.cadprt` retains the native FreeCAD archive and object/property serialization,
@@ -331,7 +359,7 @@ It is not a renamed legacy file with an assumed component structure. No historic
 `.cadprt` schema is adopted implicitly. No owner files have been converted.
 
 The schema owner is [freecad_plus/document.py](../src/Mod/FreeCADPlus/freecad_plus/document.py).
-New files and conversions use schema 4. Schemas 1 and 2 remain readable/savable
+New files and conversions use schema 5; optional saved display choices extend schema 4. Schemas 1 and 2 remain readable/savable
 with their original single-definition/single-instance bounds (schema 1 is Body-only).
 Hierarchy operations require the explicit, undoable `hierarchy.upgrade(doc)` on an
 older file; it validates the existing graph before changing only the schema marker.

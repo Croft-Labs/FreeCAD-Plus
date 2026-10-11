@@ -4,7 +4,9 @@ Implementation tracking: domestic/external unused-model isolation, native pickin
 and Sketch/Pad editor display have bounded native-build validation in
 [WORK_STATE](../WORK_STATE.md). Component file tabs reuse native views and preserve
 the originating tab context/camera; their bounded acceptance is recorded there. Later
-contextual display work remains pending.
+contextual display work remains pending. G1.7a adds saved Part Type/visibility
+state and panel controls only; G1.7b must apply that state to viewport filtering,
+fading and eligibility. Saved metadata is not completed viewport behavior.
 The requirements below are unchanged by that implementation boundary.
 
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).

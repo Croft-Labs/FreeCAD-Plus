@@ -21,8 +21,9 @@ G1.6c4 Rotate is validated in the development build; WORK_STATE records 62 combi
 cases, independent persistence and inspected visual acceptance.
 Move Components is operation/task-panel work; right-click access does not place its
 workflows within Group 1. The unvalidated Point to Point increment is parked on a
-separate local branch; WORK_STATE records its exact state. Next panel increment is
-G1.7a Part Type and visibility state, not started.
+separate local branch; WORK_STATE records its exact state. G1.7a saved Part Type
+and visibility state is validated in the development payload; WORK_STATE records
+acceptance and limits. Next is G1.7b contextual viewport integration, not started.
 The complete G1.6 panel is unfinished.
 The official 26.3 RC1 is a prerelease, not the stable version selected by the owner.
 
@@ -63,6 +64,8 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/TestComponentClipboard.py: linked Copy/Paste menus/keys, batch Undo, shared identity, source ownership and save/reopen.
 - src/Mod/FreeCADPlus/freecad_plus/movement.py: parent-owned Translate/Rotate task, transient preview and atomic commit.
 - src/Mod/FreeCADPlus/TestComponentMove.py: task/placement/source ownership and fresh-process persistence checks.
+- src/Mod/FreeCADPlus/freecad_plus/display.py: schema-5 saved self/direct-child display choices.
+- src/Mod/FreeCADPlus/TestComponentDisplay.py: panel/state ownership, migration, copy and persistence checks.
 - src/Mod/FreeCADPlus/TestComponentRotate.py: located-axis/pivot rotation, shared placement and fresh-process acceptance.
 - tests and per-workbench tests: upstream test infrastructure.
 - CMakeLists.txt, CMakePresets.json and .github/workflows: this release's build definitions.

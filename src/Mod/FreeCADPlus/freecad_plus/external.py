@@ -308,6 +308,9 @@ def copy_definition(source, destination, label, *, placements_to_replace, child_
             copied.Label = name
             if App.GuiUp:
                 copied.Visibility = False
+        if any(any(name in obj.PropertiesList for name in ('PlusSelfPartType','PlusChildPartType')) for obj in created):
+            from .display import enable
+            enable(root)
         root.Definitions = [*root.Definitions, *copies]
         for instance in replacements:
             placement, transform = instance.LinkPlacement, instance.LinkTransform

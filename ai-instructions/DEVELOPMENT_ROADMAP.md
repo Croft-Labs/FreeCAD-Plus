@@ -40,7 +40,7 @@ of Component Panel implementation. Group 1 owns Models/Part Tree/History, docume
 and instance structure, selection/Edit context, tabs, presentation and menu routing.
 Move Components workflows belong to operation/task-panel work. They are not gates
 for completing Group 1. Their historical IDs and completed evidence are retained
-under the separate operation section below. Next panel increment: **G1.7a**, not
+under the separate operation section below. Next increment: **G1.7b**, not
 Point to Point.
 
 - [ X ] **G1.1 — Structural contract.** Define native service reuse, file/definition/
@@ -129,11 +129,19 @@ Point to Point.
   The announced destination convention remains subject to owner correction.
 - [   ] **G1.7 — Contextual display.** Confirmed Part Type, visibility, reference
   restrictions and edit display; resolve undefined task interactions first.
-- [   ] **G1.7a — Part Type and visibility state.** Next panel/structure increment:
+- [ X ] **G1.7a — Part Type and visibility state.** Completed saved-state increment:
   parent-owned saved direct-child settings, separate Shown/Hidden state, corresponding
   tree controls and restoration on Edit. Follow the confirmed Component Panel contract.
   Viewport rendering belongs to MODEL_VIEW_WINDOW; Add Reference Feature and other
-  operation dialogs remain separately scoped. Not started.
+  operation dialogs remain separately scoped. Native script-copy build passed.
+  Six new state cases and affected regressions passed after focused corrections;
+  independent reopen and inspected menus passed. WORK_STATE owns exact run evidence.
+  Publication pending; no owner-build delivery.
+  See [saved-state contract](ARCHITECTURE.md#saved-part-type-and-visibility-state-g17a).
+- [   ] **G1.7b — Contextual viewport integration.** Next: apply saved Part Type and
+  visibility without global visibility leaks, restore per-view state, fade other
+  occurrences, and enforce Reference/Excluded eligibility. Separate Add Reference
+  Feature operation remains deferred. Not started.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

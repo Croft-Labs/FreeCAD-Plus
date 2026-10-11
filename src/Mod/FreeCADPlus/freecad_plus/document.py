@@ -10,8 +10,8 @@ from pathlib import Path
 import FreeCAD as App
 
 FORMAT = "FreeCADPlus.ComponentDocument"
-SCHEMA = 4
-SUPPORTED_SCHEMAS = (1, 2, 3, 4)
+SCHEMA = 5
+SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5)
 
 
 @contextmanager
@@ -80,6 +80,8 @@ def _validate_local(doc, external_definitions=()):
             raise ValueError("Invalid shared component occurrence")
         if instance.Scale != 1 or not instance.ScaleVector.isEqual(App.Vector(1, 1, 1), 1e-9):
             raise ValueError("Scaled component links require a separate migration case")
+    from .display import validate_local
+    validate_local(root, definitions, instances)
     # Detect cycles across definitions, including unused catalog entries, before
     # native recompute traverses links. Shared DAG branches are visited only once.
     visited, active = set(), set()

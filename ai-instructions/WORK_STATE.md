@@ -2,10 +2,60 @@
 
 ## Authorized objective and stopping boundary
 
-The owner clarified that Point to Point is an operation, not Component Panel work.
-A right-click entry provides access but does not bring the operation into Group 1.
-Next actual panel increment is **G1.7a Part Type and visibility state**, not started.
-No additional runtime verification is required for this scope correction.
+The owner authorized continuation of Group 1. Current increment is **G1.7a saved
+Part Type and visibility state**, including parent-owned persistence and panel menus.
+Implementation and planned checks are complete; stopped. Next is **G1.7b contextual viewport integration**;
+do not implement it or resume the parked Point to Point operation in this increment.
+
+## G1.7a saved display state — October 10, 2026
+
+**Implementation:** schema-5 optional self/direct-child choices, old-schema defaults
+without read-time migration, source-owned transactions, context-qualified checked
+menus/tooltips, Excluded/Shown guard and non-destructive nested Reference resolution.
+Structural Copy/Paste and independent definition copies preserve choices. Viewport
+filtering/fading, reference-use enforcement and export integration are not implemented
+by this increment. Existing native Visibility and geometry remain unchanged.
+
+**Build:** FreeCADPlusScripts copy target passed in the existing development tree;
+no native rebuild or owner delivery.
+
+**Validation:** all six new saved-state cases passed, including real nested-menu
+selection, self/direct-child defaults, shared context restoration, Excluded/Shown
+refusal, schema-4 lazy reads and Undo/Redo upgrade, source-owned external state,
+atomic rollback, independent copies and copied-instance choices. The initial run
+passed all 35 existing affected pilot/conversion/hierarchy/external/panel/clipboard
+cases before the menu harness stalled; that process was stopped and is not reported
+as a completed passing suite. Follow-up checks were restricted to failures and code
+affected by fixes. The final 18-case display/clipboard/window run passed 17 cases
+and exposed one Copy-menu variable collision. After correcting it, both affected
+Copy and Move menu cases passed (4.354 seconds), zero failures/errors/skips, native
+exit 0. No unrelated complete-suite rerun was performed.
+
+Corrections: internal metadata is hidden rather than marked read-only, allowing
+panel edits while retaining actual read-only protection; the copy fixture supplies
+unique nested definition labels; menu automation uses bounded native keyboard
+navigation. Nested QAction wrappers were invalidated at popup return, so dispatch
+captures the Python callback from the native triggered signal. Its callback list
+has a distinct name from the selected component rows. Existing component-window,
+stale-menu, native-editor and Copy/Move routing checks passed after relevant changes.
+
+The independent process retained exact native identities and display choices for
+domestic and external documents, both standalone and imported; the assembly checksum
+was unchanged by source-only save, and Pad geometry was unchanged. Native exit 0.
+Inspected actual menu captures show all four Part Types with Reference checked,
+separate Visibility with Shown disabled for Excluded, and the intact tree hierarchy.
+No viewport-rendering claim is made: no filtering/fading was implemented or tested.
+All twenty-four Python files parse and match the copied development payload; whitespace
+checks passed. Planned runtime verification is finished; do not repeat it absent a
+new failure, change or material concern.
+
+**Cleanup:** task profiles, fixtures, logs and captures were removed from
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_7a_display` after results
+were recorded. Useful native build/dependencies and tracked tests remain. All 121
+checked local Markdown file targets resolve.
+
+**Publication:** pending validated source commit/push. No owner delivery, shortcut
+change, release or deployment.
 
 ## Scope correction and parked operation — October 10, 2026
 

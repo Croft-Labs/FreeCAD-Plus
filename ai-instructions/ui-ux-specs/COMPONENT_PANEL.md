@@ -53,6 +53,12 @@ Editing another component or the file removes the temporary entry and restores t
 
 ### Part Type and visibility
 
+Implementation boundary: G1.7a adds saved self/direct-child state and contextual
+menu controls/tooltips in the opt-in development panel; see the
+[saved-state contract](../ARCHITECTURE.md#saved-part-type-and-visibility-state-g17a).
+Viewport filtering/fading and Reference-use enforcement remain G1.7b. Saved metadata
+alone does not establish the full behavior below. WORK_STATE owns validation.
+
 Use **Part Type**, replacing Part View. The types are **Full Component**, **Bodies Only**, **Reference**, and **Excluded**. Shown/Hidden is separate visibility state; Excluded is not another name for Hidden and cannot be overridden with Show. [C10](EVIDENCE_AND_DECISIONS.md#c10)
 
 The active component defaults to Full Component; its direct children default to Bodies Only. Save overrides on the component for itself and its direct children, persist them through save/reopen, and restore them when that component is edited again. The parent's definition owns its child choices, so all instances of that parent share them. Do not substitute a global display preference or independent per-occurrence override. [C10](EVIDENCE_AND_DECISIONS.md#c10)

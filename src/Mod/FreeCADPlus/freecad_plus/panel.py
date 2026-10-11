@@ -15,7 +15,7 @@ try:
 except ImportError:
     QtWidgets = QtGui
 
-from . import document, editing, external, hierarchy, isolation
+from . import document, editing, external, hierarchy, isolation, display
 
 _ROLE = QtCore.Qt.UserRole
 _ACTIVE = _ROLE + 1
@@ -327,6 +327,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     dimmed = active is not None and not path and row.kind in ('file', 'occurrence')
                     item.setForeground(0, QtGui.QBrush(QtGui.QColor(128, 128, 128))
                                        if dimmed else QtGui.QBrush())
+                    if index == 1 and row.kind in ('occurrence', 'unused'):
+                        obj = lookup(row.path[-1]) if row.path else lookup(row.ref)
+                        if row.path == target or row.kind == 'unused': obj = lookup(row.ref)
+                        direct = row.kind == 'unused' or row.path == target or (row.path[:-1] == target)
+                        part_type, shown = display.state(obj)
+                        effective, visible = display.resolved(obj, direct=direct)
+                        item.setToolTip(0, 'Part Type: ' + effective + (' (saved: ' + part_type + ')' if effective != part_type else '')
+                                        + '\nVisibility: ' + ('Shown' if shown else 'Hidden')
+                                        + ('\nExcluded cannot be shown.' if effective == 'Excluded' else ''))
             self.refresh_count += 1
         except (ValueError, RuntimeError, ReferenceError) as error:
             self._message(str(error))
@@ -413,7 +422,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             seen.add(row.path)
             instance = lookup(row.path[-1])
             snapshot.append((row.ref, tuple(instance.LinkPlacement.toMatrix().A),
-                             bool(instance.LinkTransform), bool(instance.Visibility)))
+                             bool(instance.LinkTransform), bool(instance.Visibility), display.state(instance)))
         self._clipboard = tuple(snapshot)
         self._message('Copied component instances. Select a destination and Paste.')
 
@@ -425,8 +434,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if not self._clipboard:
             raise ValueError('Copy component instances in Part Tree first')
         entries = [(lookup(ref), App.Placement(App.Matrix(*matrix)), transform, visible)
-                   for ref, matrix, transform, visible in self._clipboard]
-        instances = hierarchy.add_instances(owner, entries)
+                   for ref, matrix, transform, visible, choice in self._clipboard]
+        instances = hierarchy.add_instances(owner, entries, display_states=[entry[4] for entry in self._clipboard])
         # Keep Edit and History unchanged; select only the newly placed occurrences.
         self.refresh()
         root = document.validate(doc)
@@ -505,6 +514,28 @@ class ComponentPanel(QtWidgets.QDockWidget):
         except (ValueError, RuntimeError, ReferenceError) as error:
             self._message(str(error))
 
+    def _display_target(self, row):
+        doc, obj = self._checked(row)
+        active, route = self._context(doc, self._binding[1])
+        owner = active or document.validate(doc)
+        refs = tuple(identity(o) for o in route)
+        if row.kind in ('model', 'unused') and obj == active:
+            return owner, None
+        if row.kind == 'occurrence':
+            if row.path == refs: return owner, None
+            if row.path[:-1] == refs: return owner, lookup(row.path[-1])
+        raise ValueError('Edit the component or its immediate parent to change this setting')
+
+    def set_display(self, row, *, part_type=None, shown=None, expected=None):
+        self._clipboard_guard()
+        if Gui.Control.activeDialog(): raise ValueError('Finish the current task first')
+        owner, child = self._display_target(row)
+        current = (identity(owner), identity(child) if child is not None else None)
+        if expected is not None and current != expected:
+            raise ValueError('The editing context changed; reopen the menu')
+        display.set_state(owner, child, part_type=part_type, shown=shown)
+        self.refresh()
+
     def _menu(self, tree, point):
         item = tree.itemAt(point)
         if item is None:
@@ -526,13 +557,35 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 paste = menu.addAction('Paste')
                 paste.setEnabled(bool(self._clipboard))
                 actions[paste] = self.paste_row
+        try:
+            owner, child = self._display_target(row)
+        except ValueError:
+            pass
+        else:
+            expected = (identity(owner), identity(child) if child is not None else None)
+            part_type, shown = display.state(child if child is not None else owner)
+            menu.addSeparator()
+            types = menu.addMenu('Part Type')
+            for title in display.TYPES:
+                action = types.addAction(title); action.setCheckable(True); action.setChecked(title == part_type)
+                actions[action] = lambda r, value=title: self.set_display(r, part_type=value, expected=expected)
+            visibility = menu.addMenu('Visibility')
+            for title, value in (('Shown', True), ('Hidden', False)):
+                action = visibility.addAction(title); action.setCheckable(True); action.setChecked(value == shown)
+                action.setEnabled(not (value and part_type == 'Excluded'))
+                actions[action] = lambda r, value=value: self.set_display(r, shown=value, expected=expected)
         binding = self._binding
-        chosen = menu.exec_(tree.viewport().mapToGlobal(point))
-        if chosen in actions:
+        # Capture a Python callback while the native action is alive. Qt may
+        # replace nested QAction wrappers as the popup closes.
+        chosen_callbacks = []
+        for action, callback in actions.items():
+            action.triggered.connect(lambda checked=False, callback=callback: chosen_callbacks.append(callback))
+        menu.exec_(tree.viewport().mapToGlobal(point))
+        if chosen_callbacks:
             try:
                 if self._current() != binding:
                     raise ValueError('The active file tab changed; select the item again')
-                actions[chosen](row)
+                chosen_callbacks[-1](row)
             except (ValueError, RuntimeError, ReferenceError) as error:
                 self._message(str(error))
         menu.deleteLater()
