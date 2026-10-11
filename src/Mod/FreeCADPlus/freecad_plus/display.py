@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Saved component display choices; resolution is read-only and view-independent.
 
-This state layer does not yet filter viewport geometry or grant reference eligibility.
+Path resolution drives per-view filtering; it never grants reference eligibility.
 """
 from . import document
 
@@ -92,7 +92,7 @@ def resolved(obj, *, direct=True):
 def hidden_paths(doc, active=None, active_path=()):
     """Resolve explicit Hidden/Excluded and nested Reference for placed occurrences.
 
-    Bodies Only content filtering and transparency are later display integration.
+    Bodies Only hides construction/history content through the same native paths.
     The route into Edit takes precedence over an ancestor's saved child override.
     """
     from . import hierarchy
@@ -115,7 +115,9 @@ def unused_hidden_paths(definition):
 def _hidden_paths(root, active, active_path):
     from . import hierarchy
     hidden = []
-    def visit(owner, path=()):
+    def visit(owner, path=(), kind='Full Component'):
+        if kind == 'Bodies Only':
+            hidden.extend(_construction_paths(owner, hierarchy.subname(path)))
         for link in owner.Group:
             if link.TypeId != 'App::Link': continue
             route = (*path, link)
@@ -126,6 +128,51 @@ def _hidden_paths(root, active, active_path):
             if not visible:
                 hidden.append(hierarchy.subname(route))
             else:
-                visit(link.LinkedObject, route)
-    visit(root)
+                visit(link.LinkedObject, route, kind)
+    visit(root, kind=resolved(root)[0] if active is None and not hasattr(root, 'PlusFormat') else 'Full Component')
     return tuple(hidden)
+
+
+def _construction_paths(owner, prefix):
+    """Whole-object display paths only; retain native Body Tips and face-bearing results.
+
+    Component links are traversed separately with their own saved types. Filtering
+    never creates proxy geometry or changes an object's persistent Visibility.
+    """
+    result = []
+    def hide(obj, base):
+        # Invisible providers need no override and may have no native scene path.
+        if obj is not None and obj.Visibility:
+            result.append(base + obj.Name + '.')
+    hide(owner.Origin, prefix)
+    for obj in owner.Group:
+        if obj.TypeId == 'App::Link':
+            continue
+        if obj.TypeId == 'PartDesign::Body':
+            body_prefix = prefix + obj.Name + '.'
+            hide(obj.Origin, body_prefix)
+            for feature in obj.Group:
+                if feature != obj.Tip:
+                    hide(feature, body_prefix)
+        elif not hasattr(obj, 'Shape') or not obj.Shape.Faces:
+            hide(obj, prefix)
+    return result
+
+
+def apply_hidden(view, root, paths, *, preview=False):
+    """Apply view-local paths, synchronizing queued native link snapshots once.
+
+    LinkInfo rebuilds child snapshots through Coin's delayed sensors. A Qt paint
+    can precede that queue. Retry only this specific transient condition after
+    draining it once; invalid paths and persistent failures still propagate.
+    There is no polling, event-loop wait or recurring retry.
+    """
+    method = view.setComponentPreviewHiddenPaths if preview else view.setComponentHiddenPaths
+    try:
+        method(root, paths)
+    except ValueError as error:
+        if str(error) != 'A component display path is temporarily unavailable':
+            raise
+        from pivy import coin
+        coin.SoDB.getSensorManager().processDelayQueue(True)
+        method(root, paths)

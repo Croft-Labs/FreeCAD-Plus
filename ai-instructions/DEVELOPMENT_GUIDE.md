@@ -436,3 +436,27 @@ Import QtOpenGLWidgets before creating test views so PySide binds the native vie
 correctly. Explicitly expose the test main window before capture; an unpainted flat
 buffer does not count as evidence. Inspect the normal framebuffer before cleanup.
 Stop after affected checks pass; no unrelated suite or next-stage implementation.
+
+
+## Bodies Only validation
+
+Build FreeCADPlusScripts in the retained native development tree; this increment
+changes no native libraries. Compare all 27 Python files to the copied payload.
+Run TestComponentBodiesOnly with affected TestComponentVisibility/TestUnusedModels
+regressions, using the same bounded isolated native process/profile convention.
+The suite covers native Body history, solid/sheet retention and standalone curves,
+shared/nested saved choices, external unused ownership, Undo/recompute, exact native
+visibility/identity, separate views, native Sketch editing and cleanup. Expose the
+normal main window so linked snapshot and paint events occur during checks.
+
+A newly added linked child can initially lack a native detail path. The shared
+filter helper synchronizes pending Coin link sensors once on that exact error and
+retries once. A persistent error remains a failure; do not hide it with polling or
+repeated full-suite runs. Run only failed/affected cases after a correction.
+
+Run TestComponentBodiesOnly.verify_fresh_process(output_directory) independently.
+It checks the saved fixture and captures the existing normal framebuffer in Bodies
+Only and Full Component. Inspect the pair: body results remain, the edited curve
+returns only in Full Component, and the repeated Bodies Only occurrence stays
+filtered. Record results in WORK_STATE, delete task validation artifacts, and stop
+when this increment's checks pass. Owner delivery remains a separate gate.

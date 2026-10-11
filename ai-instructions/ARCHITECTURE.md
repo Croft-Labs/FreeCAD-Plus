@@ -444,7 +444,35 @@ the original assembly nodes. These are transient per-view contexts, not new docu
 objects, saved native Visibility, material changes, geometry copies or Undo operations.
 Native linked-document transactions may mirror source-owned edits in an assembly undo
 list; the actual saved display properties remain on the defining source's objects.
-Bodies Only content rules and Reference-use eligibility remain separate unresolved work.
+Bodies Only filtering is implemented by G1.7b3b below. Reference-use eligibility remains unfinished.
+
+### Bodies Only content filtering (G1.7b3b)
+
+`display._hidden_paths` resolves the saved effective type at each occurrence,
+including the active-self override and the route into Edit. For Bodies Only,
+`_construction_paths` adds visible origin/non-Tip Body history and standalone
+non-face-bearing objects to the existing native whole-object hide paths. Body Tips
+remain the native result; standalone solids, shells and faces remain represented by
+their original feature. Mixed compounds with faces are retained whole, not split or
+rewritten. This is a display classification, not new persisted modeling semantics.
+
+Nested links are traversed with their own saved choices. A Bodies Only parent does
+not discard ordinary descendants or erase an explicit nested Full Component choice.
+Reference/Excluded context continues through the existing resolver. Unused previews
+apply their definition's saved self type and use the same child traversal. Native
+Visibility is honored, not set; filtering never reveals an authored hidden result.
+
+Placed and unused paths share `display.apply_hidden`. Native LinkInfo child
+snapshots are rebuilt by delayed Coin sensors; on the specific native temporary-path
+error, drain that queue once and retry once. Other errors and persistent failures
+propagate. No recurring retry, Qt event-loop wait, native C++ patch, schema upgrade,
+proxy geometry or independent identity registry is introduced.
+
+TestComponentBodiesOnly covers native ray picking, Body history, curve/solid/sheet
+content, nested overrides, shared views, source-owned external unused filtering,
+Undo/recompute, native Sketch editing, cleanup and independent save/reopen. Actual
+results and visual acceptance are in WORK_STATE. Reference-use eligibility and
+separate operation workflows remain outside this completed increment.
 
 ### Persistence contract
 

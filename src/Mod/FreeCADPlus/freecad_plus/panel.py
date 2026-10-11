@@ -393,7 +393,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             if isolation.current(view) is not None:
                 view.setComponentHiddenPaths()
             else:
-                view.setComponentHiddenPaths(document.validate(doc), hidden)
+                display.apply_hidden(view, document.validate(doc), hidden)
             if hasattr(view, 'setComponentFade'):
                 if path and isolation.current(view) is None:
                     state['fade_pending'] = not view.setComponentFade(

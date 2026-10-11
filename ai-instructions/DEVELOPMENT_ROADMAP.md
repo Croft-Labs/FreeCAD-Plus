@@ -159,19 +159,23 @@ Point to Point.
   native primitive-cache material dependency. Planned checks complete; stopped.
   Source milestone `fbcecf8440` pushed to origin; remote revision verified.
   WORK_STATE owns evidence. No saved material property mutation or owner-build delivery.
-- [   ] **G1.7b3 — Remaining content/eligibility integration.** Bodies Only filtering
-  follows the owner-example descendant interpretation in
-  [Component Panel](ui-ux-specs/COMPONENT_PANEL.md#part-type-and-visibility).
-  The October 11 conversation recheck removed the repeated clarification blocker.
-  Reference-use eligibility remains unfinished. Saved unused-preview display is
-  complete in G1.7b3a below.
-  Do not infer Bodies Only semantics from archived assistant text or current UI.
+- [   ] **G1.7b3 — Remaining content/eligibility integration.** Reference-use
+  eligibility and its panel/operation boundary remain unfinished. Recover the latest
+  owner conversation before treating further workflow details as undefined. Saved
+  unused-preview display and Bodies Only filtering are complete in the increments
+  below. Right-click access does not make a separate operation part of Group 1.
 - [ X ] **G1.7b3a — Saved display in unused previews.** Self/child Hidden/Excluded
   and nested Reference choices apply without creating instances or changing native
   visibility. Native build, focused behavior/regression checks, independent reopen
   and inspected normal-buffer display passed. Planned checks complete; stopped.
   Source milestone `ad4fa8d26a` pushed to origin; remote verified.
   WORK_STATE owns evidence. No owner-build delivery.
+- [ X ] **G1.7b3b — Bodies Only content filtering.** Native body results and eligible
+  nested components remain; construction/history content is filtered per view.
+  Saved types, native visibility, identities and source ownership are preserved.
+  Script target, affected native regressions, Sketch editor, independent reopen
+  and inspected normal-framebuffer comparison passed. WORK_STATE owns the exact
+  initial failures, bounded snapshot fix and focused results. Stop; no owner delivery.
 - [   ] **G1.8 — Group acceptance.** Representative legacy fixtures and combined
   persistence, dependency, original-workbench and responsiveness regression checks.
 

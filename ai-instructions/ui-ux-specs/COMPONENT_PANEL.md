@@ -61,9 +61,11 @@ restoration; see the [view-local contract](../ARCHITECTURE.md#view-local-explici
 G1.7b2 contextual fading is validated in the development payload, including shared
 mixed face materials; Model View Window and WORK_STATE state its acceptance boundary.
 G1.7b3a applies saved self/child visibility and nested Reference choices in domestic
-and external unused previews; its validation is recorded in WORK_STATE. Bodies Only
-content filtering and Reference-use enforcement remain pending. The descendant
-interpretation is recorded in the [Part Type source recheck](EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
+and external unused previews; its validation is recorded in WORK_STATE. G1.7b3b
+Bodies Only content filtering is validated in placed and unused development views;
+see the [technical contract](../ARCHITECTURE.md#bodies-only-content-filtering-g17b3b).
+Reference-use enforcement remains pending. The descendant interpretation is recorded
+in the [Part Type source recheck](EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
 Saved metadata alone does not establish the full behavior below. WORK_STATE owns validation.
 
 Use **Part Type**, replacing Part View. The types are **Full Component**, **Bodies Only**, **Reference**, and **Excluded**. Shown/Hidden is separate visibility state; Excluded is not another name for Hidden and cannot be overridden with Show. [C10](EVIDENCE_AND_DECISIONS.md#c10)

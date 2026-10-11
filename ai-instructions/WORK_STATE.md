@@ -2,17 +2,66 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3a saved display in unused previews and its planned checks
-are complete.** Stop here; no next implementation or further runtime tests started.
-Group 1/G1.7b3 remain incomplete. Next: Bodies Only content filtering, using the
-owner's fan-assembly example as described in COMPONENT_PANEL. The October 11 source
-recheck removed the repeated direct-versus-nested clarification blocker: eligible
-ordinary descendant bodies remain, subject to saved types and contextual exclusions.
-That traversal interpretation is inferred from owner messages U067-U069, not an
-additional verbatim owner definition; see the [evidence](ui-ux-specs/EVIDENCE_AND_DECISIONS.md#part-type-source-recheck---october-11-2026).
-This source-recovery turn changed documentation only; no application changes,
-builds or runtime tests. Reference use eligibility also remains open; the detailed
-Add Reference Feature operation is undefined.
+Continue Group 1 only. **G1.7b3b Bodies Only filtering and its planned checks are
+complete.** Stop at this increment; do not repeat completed tests or start another
+operation. Group 1/G1.7b3 remain incomplete. Next: Reference-use eligibility
+integration and its panel/operation boundary. Before treating any design detail as
+undefined, search the latest relevant owner conversations, as the owner explicitly
+instructed this turn. Right-click access does not authorize implementing a separate
+Add Reference Feature operation as panel work. Its detailed workflow needs source
+recovery before further clarification, not another repeated unanswered question.
+
+## G1.7b3b Bodies Only filtering - October 11, 2026
+
+**Implementation:** saved Bodies Only choices now filter native display paths in
+placed and domestic/external unused views. Native Body Tips and standalone
+face-bearing results remain; visible origins, non-Tip Body history, standalone
+curves and points are filtered without persistent Visibility, geometry, placement,
+identity or schema changes. Ordinary nested components remain subject to their own
+saved types; explicit Full Component and contextual Reference/Excluded behavior
+are preserved. See the [contract](ARCHITECTURE.md#bodies-only-content-filtering-g17b3b).
+
+**Resolved defect:** newly added native link children could have stale Coin
+snapshots when the filter ran. `display.apply_hidden` handles only the native
+"temporarily unavailable" path condition by draining the queued Coin sensors once
+and retrying once. A Qt post-paint retry alone did not resolve that ordering; the
+extra retry machinery was removed. No polling, recurring timer or native C++ change.
+
+**Build:** FreeCADPlusScripts completed in the retained native development tree.
+The existing verified native libraries were reused; no C++ recompilation was needed.
+All 27 Python files parse and exactly match the development payload. This is not
+an owner build or shortcut delivery.
+
+**Validation:** initial 21-case Bodies Only/visibility/unused-model suite: 19 passed,
+one failure and one error, zero skips, native exit 0, 48.203 seconds. Both failures
+were the native snapshot ordering defect above. After the final bounded fix, the
+two affected cases plus four relevant editor/view lifecycle regressions passed
+(6 cases, zero failures/errors/skips, 13.677 seconds, native exit 0). A separate new
+Bodies Only native Sketch editor check passed (1 case, 2.413 seconds, native exit 0).
+No complete successful suite was repeated. These runs cover all five new cases
+and the 17 existing visibility/unused-model cases across the initial/focused runs.
+
+Covered shared/repeated occurrences, nested saved Full/Reference/Excluded choices,
+Body history, solid/sheet retention, curve filtering, Undo/Redo, recompute, independent
+views, domestic/external unused editing, source-owned state, exact identity/native
+visibility, idle refresh stability, editor entry/exit and panel/view cleanup.
+Independent fresh-process reopen passed exact saved identity/visibility and resolved
+filter checks, native exit 0. Inspected 2301x1278 normal-framebuffer images show the
+active and faded repeated solid/sheet results retained, curves absent in Bodies Only,
+and the edited occurrence's curve restored by Full Component while the other stays
+filtered. This is bounded native-buffer evidence, not physical-monitor or long-session
+responsiveness certification.
+
+**Limits:** whole-object filtering does not split mixed solid/curve compounds into
+new geometry. Native Body Tips remain authoritative. Reference-use eligibility,
+Add Reference Feature operation design and full Group 1 acceptance remain unfinished.
+
+**Final checks/cleanup:** all 27 Python files parse and byte-match the development
+payload; 130 local link targets in the affected canonical documents resolve and
+whitespace checks pass. Task profiles, fixtures, logs and captures under
+`validation/g1_7b3b_bodies` were deleted after recording/inspecting the evidence.
+The useful development build and dependencies are retained. Publication is recorded
+separately after the coherent source commit is pushed and verified.
 
 ## G1.7b3a unused-preview saved display — October 11, 2026
 

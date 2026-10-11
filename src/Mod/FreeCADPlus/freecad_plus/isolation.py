@@ -128,7 +128,7 @@ class Isolation:
 
     def _apply_display(self, definition):
         if hasattr(self.view, 'setComponentPreviewHiddenPaths'):
-            self.view.setComponentPreviewHiddenPaths(definition, display.unused_hidden_paths(definition))
+            display.apply_hidden(self.view, definition, display.unused_hidden_paths(definition), preview=True)
 
     def _clear_display(self):
         if hasattr(self.view, 'setComponentPreviewHiddenPaths'):
