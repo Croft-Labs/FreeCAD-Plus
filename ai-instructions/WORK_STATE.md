@@ -2,11 +2,59 @@
 
 ## Authorized objective and stopping boundary
 
-Continue Group 1 only. **G1.7b3k same-component Boolean ownership support and its
-planned checks are complete.** Publication is verified. Stop here. Next:
-Boolean input eligibility, pending the owner's cross-component tool decision.
-Group 1 remains incomplete. No native Boolean input guards were added in this
-increment; the independent structural prerequisite was completed first.
+Continue Group 1 only. **G1.7b3l legacy Boolean conversion and its planned
+checks are complete.** Next: Boolean input eligibility, pending the owner's
+cross-component tool decision documented below. The independent legacy conversion
+gap is closed. Group 1 remains incomplete; stop after recording/publication.
+
+## G1.7b3l legacy Boolean conversion - October 11, 2026
+
+**Authority/finding:** the confirmed C06 editable legacy conversion requirement and
+current owner compatibility direction apply. Standalone conversion counted nested
+Boolean-owned tool Bodies as independent roots, while Part conversion inspected
+only direct Body features. Both rejected otherwise supported native editable graphs.
+This work preserves existing authored content and makes no new cross-component
+Boolean intake decision. The earlier pending owner question remains unanswered.
+
+**Implementation:** both paths reuse legacy_hierarchy.body_objects and the canonical
+document.owned_children structural contract. One outer Body can contain Boolean-owned
+tool Bodies; Part/shared-link conversion retains them within the original definition.
+Nested scripted features, unsupported/unowned content and independent outer Bodies
+remain refused. No geometry algorithm, command/picker, native schema or UI workflow
+was changed. See the [contract](ARCHITECTURE.md#legacy-boolean-tool-ownership-g17b3l).
+
+**Build:** FreeCADPlusScripts passed in the retained
+`test-builds/freecad_1.1.4_context`, exit 0, 38.86 seconds including configuration.
+Python payload only; no native C++ compilation, owner package or shortcut delivery.
+
+**Validation:** four new conversion cases and two affected native Body/Part shared-
+link regressions passed first run: 6 passed, zero failures/errors/skips, 5.620 seconds;
+native exit 0, 10.88 seconds including startup/shutdown. Checked exact original
+names/types/IDs/labels, expressions, authored placements, Boolean Group, Body Tips,
+History without Body rows, shared definition identity, editing and one-step Undo/Redo.
+Live unsaved source edits were neither converted nor overwritten; source hashes
+remained unchanged. Nested scripted features are refused even with explicit fallback;
+general linked dependencies do not legitimize unowned geometry and independent root
+Bodies remain refused without output. Logs contain expected UUID reassignment on
+isolated restore, native scope warnings for deliberately unowned negative fixtures,
+and the existing Std_Measure startup notice. No correction or repeated test run.
+
+Separate fresh-process reopen of both converted Boolean fixtures passed exact IDs,
+History, ownership, expressions, placements and geometry; changing the source tool's
+expression input recomputed valid results with the expected volume increase.
+Native exit 0, 5.67 seconds including startup/shutdown. Runtime checks are complete.
+
+**Limits:** representative native Fuse with one nested tool Body, standalone and
+inside a shared Part definition. Other Boolean modes, deeper nesting, external
+legacy graphs and new cross-component Boolean tool intake are not certified here.
+No owner files were converted. Group 1 remains incomplete.
+
+**Final checks:** all 38 Plus Python scripts parse and match the development
+payload byte-for-byte; 119 local file links in changed Markdown resolve; whitespace
+passes. Runtime validation is closed. Task artifacts `g1_7b3l_legacy_boolean` are
+removed after recording these results; the useful development build is retained.
+
+**Publication:** source commit/push verification pending; no owner delivery.
 
 ## G1.7b3k native Boolean ownership prerequisite - October 11, 2026
 

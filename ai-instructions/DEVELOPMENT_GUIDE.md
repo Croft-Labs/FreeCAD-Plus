@@ -597,3 +597,17 @@ Its independent verifier reopens the saved file, checks exact identities, tool
 ownership, History, Tip and geometry, then changes a source tool and recomputes.
 These checks do not certify cross-component intake or all Boolean geometry modes.
 Stop after acceptance; retain the build and clean only task-generated validation data.
+
+## Legacy Boolean conversion validation
+
+For Python-only conversion changes, build FreeCADPlusScripts in the retained
+native development tree. With PLUS_TEST_DIR pointing to a fresh task validation
+directory, run TestLegacyBooleanConversion plus the affected existing native Body
+and Part/shared-link conversion cases. The new fixtures cover standalone and Part-
+owned Boolean graphs, expressions, exact identities, History, shared links, source
+isolation, Undo/Redo and unsupported nested-script/unowned/independent-Body rejection.
+Then call TestLegacyBooleanConversion.verify_fresh_process in a separate FreeCAD
+process against the saved fixtures to check persisted ownership, placements,
+expressions and downstream source edits. Record durable results and remove only the
+task validation directory. Passing these bounded checks closes this increment;
+additional Boolean modes, deeper nesting and input policy are separate work.

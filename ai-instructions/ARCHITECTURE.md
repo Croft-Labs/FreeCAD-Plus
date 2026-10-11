@@ -870,6 +870,23 @@ replacements are excluded from the native dependency-preservation comparison;
 other native references, expressions and authored placements remain checked.
 Supported Parts can own geometry/Bodies and child instances at the same time.
 
+#### Legacy Boolean tool ownership (G1.7b3l)
+
+Both standalone Body and Part-hierarchy conversion use legacy_hierarchy.body_objects
+with document.owned_children. A standalone supported graph has one outer Body;
+Boolean-owned tool Bodies are nested content rather than independent roots. Native
+Boolean Group, nested Body/Origin/features, expressions and dependencies stay intact.
+The converter wraps only the outer Body or reuses the existing Part definition.
+General dependencies and link targets never establish structural ownership.
+
+Preflight rejects circular/multiple ownership, scripted features at any owned depth,
+Parts inside Body graphs, independent root Bodies and unowned content. Existing
+isolated restore, identity checks, explicit fallback and exclusive publication rules
+remain. This preserves already-authored legacy graphs; it does not decide how new
+Boolean commands may consume tools from another component. Acceptance uses one
+nested tool Body in a Fuse, standalone and within a shared Part hierarchy. Other
+Boolean modes and deeper graphs are not certified by this increment.
+
 Conversion reads the on-disk FCStd into a separate native document, even when the
 source is open with unsaved changes. The source is never saved or mutated. The
 converted file gets a distinct native document UUID; its source UUID and original

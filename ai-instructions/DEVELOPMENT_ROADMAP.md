@@ -248,6 +248,12 @@ Point to Point.
   two affected existing regressions and independent reopen/source-change passed.
   WORK_STATE records exact evidence and limits. Source milestone `2c48da7f9d`
   pushed to origin; exact remote revision verified. No owner delivery.
+- [ X ] **G1.7b3l - Preserve legacy Boolean-owned tool graphs.** Standalone Body
+  and native Part/shared-link conversion retain nested native tool ownership,
+  expressions, identity and editing. Shared preflight rejects unsupported nested
+  scripts and unowned content. Script payload build, four new conversion cases,
+  two affected regressions and independent two-file reopen/source-edit passed.
+  WORK_STATE owns exact evidence and limits. No owner delivery; stop here.
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned
   linked reference is required first, created automatically, or ownership intentionally

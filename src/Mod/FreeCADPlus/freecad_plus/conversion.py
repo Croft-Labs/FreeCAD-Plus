@@ -27,10 +27,6 @@ def _inventory(doc):
             for obj in doc.Objects]
 
 
-def _body_objects(body):
-    return {body, body.Origin, *body.Origin.OriginFeatures, *body.Group}
-
-
 def _choose_content(doc, report, allow_geometry_fallback):
     if doc.Partial or doc.OutList or any("PlusFormat" in obj.PropertiesList for obj in doc.Objects):
         raise ConversionError("Expected a complete, domestic legacy FCStd document", report)
@@ -39,13 +35,13 @@ def _choose_content(doc, report, allow_geometry_fallback):
         return preflight(doc, ConversionError, report), False
     if not doc.Objects:
         return None, False
-    bodies = [obj for obj in doc.Objects if obj.TypeId == "PartDesign::Body"]
-    if len(bodies) == 1 and _body_objects(bodies[0]) == set(doc.Objects):
+    from .legacy_hierarchy import body_objects
+    children = {child for obj in doc.Objects for child in component.owned_children(obj)}
+    bodies = [obj for obj in doc.Objects
+              if obj.TypeId == "PartDesign::Body" and obj not in children]
+    if len(bodies) == 1 and body_objects(bodies[0], ConversionError, report) == set(doc.Objects):
         if any("Invalid" in obj.State or "Error" in obj.State for obj in doc.Objects):
             raise ConversionError("Repair the legacy feature errors before conversion", report)
-        # Scripted features need their own migration, not an implicit claim of editability.
-        if any("Python" in obj.TypeId for obj in bodies[0].Group):
-            raise ConversionError("Scripted Body features require a later conversion case", report)
         return bodies[0], False
     if len(doc.Objects) == 1:
         obj = doc.Objects[0]

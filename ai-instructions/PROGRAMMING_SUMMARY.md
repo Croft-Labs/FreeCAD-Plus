@@ -44,7 +44,9 @@ passed targeted native and independent reopen checks. G1.7b3j command-start
 selection checks and Pattern feedback routing passed focused native and independent
 reopen checks, including the Chamfer rejected-selection cleanup correction.
 G1.7b3k same-component native Boolean ownership, History and nested edit paths passed
-focused native and independent reopen checks. Stop here. Next: Boolean input
+focused native and independent reopen checks. G1.7b3l extends isolated legacy
+conversion to those native Boolean-owned tool graphs; focused conversion and
+independent reopen/source-edit checks passed. Stop here. Next: Boolean input
 eligibility, pending the owner's cross-component tool decision. Direct exporter/view-output paths
 still need integration. Check latest
 owner conversations before asking design questions. Full G1.7b and Group 1
@@ -76,6 +78,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 - src/Mod/FreeCADPlus/freecad_plus/editing.py: per-view Edit, backend Body and native feature adapters.
 - src/Mod/FreeCADPlus/TestComponentPilot.py: G1.2 regression suite and fresh-process check.
 - src/Mod/FreeCADPlus/freecad_plus/conversion.py: isolated legacy conversion and persisted loss report.
+- src/Mod/FreeCADPlus/TestLegacyBooleanConversion.py: native Boolean graph conversion, source isolation and independent persistence checks.
 - src/Mod/FreeCADPlus/TestLegacyConversion.py: G1.3 fixtures and fresh-process acceptance.
 - src/Mod/FreeCADPlus/freecad_plus/hierarchy.py: domestic graph, placement and occurrence paths.
 - src/Mod/FreeCADPlus/freecad_plus/legacy_hierarchy.py: native Part/link conversion.

@@ -1,6 +1,26 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Domestic native Part trees and shared Part links, preserving authored frames."""
 import FreeCAD as App
+from . import document as component
+
+
+def body_objects(body, error, report):
+    """Collect native structural ownership, including nested Boolean tool Bodies."""
+    owned = set()
+
+    def visit(obj):
+        if obj in owned:
+            raise error("Legacy Body content has circular or multiple structural ownership", report)
+        if "Python" in obj.TypeId:
+            raise error("Scripted Body features require a separate migration", report)
+        if obj.TypeId == "App::Part":
+            raise error("Unsupported Part definition inside a legacy Body", report)
+        owned.add(obj)
+        for child in component.owned_children(obj):
+            visit(child)
+
+    visit(body)
+    return owned
 
 
 def preflight(doc, error, report):
@@ -28,10 +48,7 @@ def preflight(doc, error, report):
                 continue
             own(child)
             if child.TypeId == "PartDesign::Body":
-                origin(child)
-                for feature in child.Group:
-                    if "Python" in feature.TypeId:
-                        raise error("Scripted Body features require a separate migration", report)
+                for feature in body_objects(child, error, report) - {child}:
                     own(feature)
             elif child.TypeId not in ("App::Link", "Part::Box", "Part::Feature"):
                 raise error("Unsupported legacy Part content; no output written", report)
