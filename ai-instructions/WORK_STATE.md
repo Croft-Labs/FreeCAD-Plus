@@ -64,7 +64,8 @@ logs were removed from
 `C:/Users/GAMING-PC/Documents/_temp/freecad/validation/g1_6c_clipboard`
 after recording the results; useful native build/dependencies and tracked tests remain.
 
-**Publication:** acceptance complete; source milestone publication pending.
+**Publication:** source milestone `e092033275` pushed to
+`origin/codex/freecad-1.1.4-baseline`; remote revision verified.
 No owner build, shortcut delivery, release or deployment was performed.
 
 ## G1.6c1 component file tabs — October 10, 2026

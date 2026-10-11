@@ -116,7 +116,8 @@ scope. [ARCHITECTURE](ARCHITECTURE.md) owns the structural contract.
   **Validation:** six focused and 50 combined tests passed, followed by independent
   save/reopen and inspected viewport/tree/menu captures. Dock reopening also handles
   a temporarily absent active subwindow. WORK_STATE records evidence and limitations.
-  **Publication:** final repository bookkeeping pending; no owner-build delivery.
+  **Publication:** source milestone `e092033275` pushed to
+  origin/codex/freecad-1.1.4-baseline and remote revision verified; no owner-build delivery.
   The announced destination convention remains subject to owner correction.
 - [   ] **G1.6c3 — Move Components foundation and Translate.** Next increment:
   shared sibling/parent context, component list, preview/Apply/OK/Cancel and the
