@@ -288,7 +288,8 @@ Point to Point.
   and dialog Apply preflight component inputs. Native results retain input ownership
   and join the edited definition's History; legacy behavior remains. One native build,
   four focused cases and independent reopen/source-edit passed first run. WORK_STATE
-  owns exact evidence, support limits and publication. Next: direct Part Section.
+  owns exact evidence and support limits. Source checkpoint `eae09d9177` pushed to
+  origin; exact remote revision verified. Next: direct Part Section.
 
 - [   ] **Boolean input eligibility — pending owner decision.** Native Boolean
   grouping can transfer tools out of another shared component. Ask whether an owned

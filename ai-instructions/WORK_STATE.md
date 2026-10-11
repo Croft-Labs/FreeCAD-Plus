@@ -60,7 +60,10 @@ retained development payload byte-for-byte; 161 local links in changed Markdown
 resolve; whitespace passes. Task artifacts `g1_7b3o_part_boolean` were removed after
 recording these results. Useful development builds remain. No further runtime work.
 
-**Publication:** validated checkpoint pending origin publication.
+**Publication:** source/acceptance checkpoint
+`eae09d917762147a5ee65f744960055e36a55c03` pushed to
+origin/codex/freecad-1.1.4-baseline and exact remote revision verified. No release,
+owner package or shortcut delivery. This publication record is a separate docs commit.
 
 ## G1.7b3n PartDesign Boolean input admission - October 11, 2026
 
