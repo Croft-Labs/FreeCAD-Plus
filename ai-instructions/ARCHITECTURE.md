@@ -1552,3 +1552,22 @@ returns directly on abort and applies retention only after commit. Unsupported d
 B-spline tangency preserves usable Plus inputs even with persistence off; Classic
 keeps its existing rejection clearing. WORK_STATE records tested geometry families
 and does not imply exhaustive conic, spline or external-geometry acceptance.
+
+## Selected constraint states and Refraction (TB.2c2h)
+
+Native Toggle Driving/Reference and Toggle Active now pass their actual mutation
+outcome to finishConstraintSelection. A separate flag records successful native
+constraint calls without changing the native transaction success counter. Selected
+constraint identities and any additional geometry inputs survive successful commands
+when Plus persistence is on. Rejected/no-op Plus inputs remain selected even with
+persistence off. Classic keeps its existing cleanup. Geometry-only/no-selection
+Driving/Reference still changes native constraint creation mode and command icons;
+that branch does not enter operation-completion cleanup.
+
+Refraction retains its native menu-only placement, ratio dialog, validation,
+addConstraintSafely, solver and transaction owner. Only successful preselected
+completion enters the same retention policy. Cancel/rejection returns with the
+original selection and no committed operation. Invalid object/empty selection now
+returns after the native warning, before accessing the first selection object.
+The Plus ribbon uses the same native toggle group actions, including that group's
+special non-remembering configuration. Ordinary remembered split groups are unchanged.

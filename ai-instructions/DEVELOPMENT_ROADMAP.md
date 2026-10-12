@@ -434,6 +434,14 @@ Do not repeat the completed baseline checks without a new relevant concern.
   tests passed in two bounded batches; WORK_STATE owns visual, full Classic inventory,
   independent restart and precise geometry-family acceptance limits.
 
+- [ X ] **TB.2c2h — Constraint states and Refraction persistence.** Connect native
+  selected Driving/Reference and Active toggles plus Refraction completion to the
+  existing Plus policy. Preserve creation-mode icons, menu placement, native
+  transactions/solver and Classic cleanup; retain rejected/no-op Plus inputs.
+  Return safely after invalid Refraction object selection. Native build and all
+  51 toolbar tests passed; WORK_STATE owns visual, full Classic inventory and
+  independent restart evidence. Other operation integrations and Layers remain open.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

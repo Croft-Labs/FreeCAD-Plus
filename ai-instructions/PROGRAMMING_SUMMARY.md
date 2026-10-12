@@ -110,7 +110,12 @@ dimensions through native dialog completion, including Cancel and reference/no-d
 paths, and fixes Curve Intent icon/arrow sizing under native styles. Contextual/
 continuous dimension handlers keep native cleanup. TB.2c2g connects direct Tangent/
 Perpendicular completion and conic commit outcomes to the same retention policy;
-WORK_STATE owns native acceptance and geometry-family limits. Other operation integrations, Layers and unfinished Plus workflows remain outstanding.
+WORK_STATE owns native acceptance and geometry-family limits. TB.2c2h extends
+retention to selected Driving/Reference and Active toggles and menu-only Refraction,
+including rejection/no-op handling and native creation-mode preservation. All 51
+toolbar cases, full Classic inventory and independent restart passed; WORK_STATE
+owns evidence. Other operation integrations, Layers and unfinished Plus workflows
+remain outstanding.
 
 ## Where to go
 

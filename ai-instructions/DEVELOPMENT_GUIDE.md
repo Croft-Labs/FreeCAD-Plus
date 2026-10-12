@@ -793,3 +793,21 @@ input names, one Undo transaction and Undo/Redo. Include coincidence/Point-on-Ob
 substitutions, conic helper-point creation and its removal on Undo, rejected direct
 B-spline tangency with persistence off, and repeated continuous viewport picks with
 Escape. Do not infer conic or external-geometry coverage beyond exercised fixtures.
+
+
+Constraint-state retention acceptance clicks the actual Plus native toggle-group
+arrow/actions and compares Plus on/off with Classic. Exercise single constraints,
+multiple constraints with additional geometry input, repeated toggles without
+reselection when retained, native getDriving/getActive, solve/shape validity and
+Undo/Redo. Geometry-only/no-selection Driving/Reference must still update creation
+mode icons without a document transaction. Rejected non-dimensional Driving input
+and geometry-only Active no-ops must retain usable Plus inputs without an Undo entry.
+
+Refraction is menu-only upstream: click its native menu action, enter the ratio in
+the actual datum dialog and use OK/Cancel. Verify native SnellsLaw, retained endpoint/
+boundary names, solve success, shape validity and Undo/Redo across Plus on/off and
+Classic. Empty selection keeps the native action disabled. Cancel, wrong input
+counts and mixed-object rejection must preserve inputs and create no constraint or
+Undo entry; test the mixed-object guard through an enabled native menu action. Inspect a normal-framebuffer capture of selected
+constraint symbols after state changes. These checks do not establish arbitrary
+operation persistence or contextual Sketcher_Dimension completion.

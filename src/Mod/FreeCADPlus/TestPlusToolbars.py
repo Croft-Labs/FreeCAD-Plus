@@ -522,6 +522,8 @@ class TestPlusToolbars(unittest.TestCase):
     def sketch_command(self, name):
         button = self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_' + name)
         groups = {
+            'Sketcher_CompToggleConstraints': ('Sketcher_ToggleDrivingConstraint',
+                                               'Sketcher_ToggleActiveConstraint'),
             'Sketcher_CompHorVer': ('Sketcher_ConstrainHorVer', 'Sketcher_ConstrainHorizontal',
                                    'Sketcher_ConstrainVertical'),
             'Sketcher_CompDimensionTools': ('Sketcher_Dimension', None, 'Sketcher_ConstrainDistanceX',
@@ -961,6 +963,183 @@ class TestPlusToolbars(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(len(seen), 1)
         settle()
+
+    def constraint_state_modes(self):
+        for classic, persistent in ((False, True), (False, False), (True, True)):
+            self.prefs.SetInt('ToolbarUIMode', 0)
+            ui_modes.apply_modes()
+            self.persistent(persistent)
+            if classic:
+                self.prefs.SetInt('ToolbarUIMode', 1)
+                ui_modes.apply_modes()
+            yield classic, persistent
+
+    def check_constraint_state(self, suffix, getter):
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        doc = sketch.Document
+        sketch.addConstraint(Sketcher.Constraint('Distance', 0, 20.0))
+        sketch.addConstraint(Sketcher.Constraint('Distance', 1, 20.0))
+        doc.recompute()
+        doc.UndoMode = 1
+        command = 'Sketcher_Toggle' + suffix + 'Constraint'
+        for classic, persistent in self.constraint_state_modes():
+            for names, indices in ((('Constraint1',), (0,)),
+                                   (('Constraint1', 'Constraint2', 'Edge1'), (0, 1))):
+                with self.subTest(classic=classic, persistent=persistent, names=names):
+                    self.constraint_inputs(sketch, names)
+                    undo = doc.UndoCount
+                    for state in (False, True):
+                        if state and (classic or not persistent):
+                            self.constraint_inputs(sketch, names)
+                        if classic:
+                            Gui.runCommand(command)
+                            settle()
+                        else:
+                            self.sketch_command(command)
+                        self.assertEqual([getter(sketch, i) for i in indices], [state]*len(indices))
+                        self.assertEqual(sketch.ConstraintCount, 2)
+                        self.assertEqual(sketch.GeometryCount, 2)
+                        self.assertEqual(sketch.solve(), 0)
+                        self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
+                        self.assertEqual(self.selected_subelements(),
+                                         set(names) if persistent and not classic else set())
+                        self.assertEqual(doc.UndoCount, undo + (2 if state else 1))
+                        if suffix == 'Driving' and not state and not classic and persistent:
+                            view.fitAll()
+                            settle()
+                            output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-constraint-state.png'
+                            if os.name == 'nt':
+                                from TestComponentFading import capture
+                                capture(view, output, prepare=False)
+                            else:
+                                view.graphicsView().viewport().grabFramebuffer().save(str(output))
+                    doc.undo()
+                    settle()
+                    self.assertTrue(all(not getter(sketch, i) for i in indices))
+                    doc.redo()
+                    settle()
+                    self.assertTrue(all(getter(sketch, i) for i in indices))
+                    doc.undo()
+                    doc.undo()
+                    settle()
+                    self.assertEqual(doc.UndoCount, undo)
+                    self.assertTrue(all(getter(sketch, i) for i in range(2)))
+
+    def test_constraint_state_driving(self):
+        self.check_constraint_state('Driving', lambda sketch, index: sketch.getDriving(index))
+
+    def test_constraint_state_active(self):
+        self.check_constraint_state('Active', lambda sketch, index: sketch.getActive(index))
+
+    def test_constraint_state_rejected_and_noop(self):
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        sketch.addConstraint(Sketcher.Constraint('Horizontal', 0))
+        sketch.Document.recompute()
+        sketch.Document.UndoMode = 1
+        timer = self.constraint_warning_timer()
+        self.addCleanup(timer.stop)
+        for classic, persistent in self.constraint_state_modes():
+            for command, names in (('Sketcher_ToggleDrivingConstraint', ('Constraint1',)),
+                                    ('Sketcher_ToggleActiveConstraint', ('Edge1',))):
+                self.constraint_inputs(sketch, names)
+                undo = sketch.Document.UndoCount
+                if classic:
+                    Gui.runCommand(command)
+                    settle()
+                else:
+                    self.sketch_command(command)
+                self.assertEqual(sketch.Document.UndoCount, undo)
+                self.assertEqual(sketch.ConstraintCount, 1)
+                self.assertTrue(sketch.getActive(0))
+                self.assertEqual(self.selected_subelements(), set() if classic else set(names))
+
+    def test_constraint_creation_mode_keeps_native_behavior(self):
+        sketch, view = self.sketch_click_fixture()
+        command = 'Sketcher_ToggleDrivingConstraint'
+        action = Gui.Command.get(command).getAction()[0]
+        for classic, persistent in self.constraint_state_modes():
+            for names in ((), ('Edge1',)):
+                self.constraint_inputs(sketch, names)
+                undo = sketch.Document.UndoCount
+                icons = []
+                for unused in range(2):
+                    icons.append(action.icon().cacheKey())
+                    if classic:
+                        Gui.runCommand(command)
+                        settle()
+                    else:
+                        self.sketch_command(command)
+                    self.assertNotEqual(action.icon().cacheKey(), icons[-1])
+                    self.assertEqual(self.selected_subelements(), set(names))
+                    self.assertEqual(sketch.ConstraintCount, 0)
+                    self.assertEqual(sketch.Document.UndoCount, undo)
+
+    def native_constraint_menu(self, command):
+        # Refraction is intentionally menu-only in Classic; retain that placement.
+        action = Gui.Command.get(command).getAction()[0]
+        menu = next(menu for menu in Gui.getMainWindow().findChildren(QtWidgets.QMenu)
+                    if action in menu.actions())
+        self.assertTrue(action.isEnabled())
+        menu.popup(Gui.getMainWindow().mapToGlobal(QtCore.QPoint(200, 180)))
+        settle()
+        self.assertTrue(menu.isVisible())
+        QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                               menu.actionGeometry(action).center())
+        settle()
+
+    def test_refraction_retention(self):
+        sketch, view = self.sketch_click_fixture(lines=[((-5, 5), (0, 0)),
+                                                       ((0, 0), (5, -5)),
+                                                       ((-8, 0), (8, 0))])
+        command = 'Sketcher_ConstrainSnellsLaw'
+        def dispatch(command, classic):
+            self.dimension_action(command, classic, text='1',
+                                  invoke=lambda: self.native_constraint_menu(command))
+            self.assertAlmostEqual(sketch.Constraints[-1].Value, 1.0)
+        self.check_constraint_retention(sketch, command, ('Vertex2', 'Vertex3', 'Edge3'),
+                                        'SnellsLaw', dispatch)
+
+    def test_refraction_cancel_and_rejection(self):
+        sketch, view = self.sketch_click_fixture(lines=[((-5, 5), (0, 0)),
+                                                       ((0, 0), (5, -5)),
+                                                       ((-8, 0), (8, 0))])
+        command = 'Sketcher_ConstrainSnellsLaw'
+        other = sketch.Document.addObject('Part::Feature', 'Other')
+        other.Visibility = False
+        sketch.Document.UndoMode = 1
+        for classic, persistent in self.constraint_state_modes():
+            names = ('Vertex2', 'Vertex3', 'Edge3')
+            self.constraint_inputs(sketch, names)
+            undo = sketch.Document.UndoCount
+            self.dimension_action(command, classic, text='1.25', accept=False,
+                                  invoke=lambda: self.native_constraint_menu(command))
+            self.assertEqual(self.selected_subelements(), set(names))
+            self.assertEqual(sketch.ConstraintCount, 0)
+            self.assertEqual(sketch.Document.UndoCount, undo)
+            timer = self.constraint_warning_timer()
+            try:
+                for rejected in ((), ('Edge1',)):
+                    self.constraint_inputs(sketch, rejected)
+                    if rejected:
+                        self.native_constraint_menu(command)
+                    else:
+                        self.assertFalse(Gui.Command.get(command).getAction()[0].isEnabled())
+                    self.assertEqual(self.selected_subelements(), set(rejected))
+                    self.assertEqual(sketch.ConstraintCount, 0)
+                    self.assertEqual(sketch.Document.UndoCount, undo)
+                self.constraint_inputs(sketch, ('Edge1',))
+                Gui.Selection.addSelection(other)
+                settle()
+                self.assertEqual(len(Gui.Selection.getSelection()), 2)
+                self.native_constraint_menu(command)
+                self.assertEqual(len(Gui.Selection.getSelection()), 2)
+                self.assertEqual(self.selected_subelements(), {'Edge1'})
+                self.assertEqual(sketch.ConstraintCount, 0)
+                self.assertEqual(sketch.Document.UndoCount, undo)
+            finally:
+                timer.stop()
 
     def dimension_preferences(self, show=True):
         prefs = App.ParamGet('User parameter:BaseApp/Preferences/Mod/Sketcher')

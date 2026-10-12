@@ -3,13 +3,75 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1 and TB.2c2a through TB.2c2g below are implemented and validated in
+TB.2b, TB.2c1 and TB.2c2a through TB.2c2h below are implemented and validated in
 the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2h Constraint states and Refraction — October 12, 2026
+
+**Implementation:** native Toggle Driving/Reference and Toggle Active now use the
+existing Plus completion policy, retaining selected constraints and any accompanying
+geometry when persistence is on. A separate applied flag preserves rejected/no-op
+Plus inputs even with persistence off without changing native commit/abort counting.
+Creation-mode toggling, command icons, constraint identities and the Classic cleanup
+path remain native. Refraction still uses its original menu, ratio dialog, solver,
+transaction and helper-constraint creation; successful completion observes Plus
+persistence. An invalid-object/empty-selection branch now returns after its native
+warning instead of accessing selection[0]. No Classic workbench/toolbar definition,
+submodule pin or licensing changed.
+
+**Build:** SketcherGui and FreeCADPlusScripts built successfully in the retained
+freecad_1.1.4_context tree, MSVC 19.44 / Qt 6.8.3 / Python 3.12, concurrency 3.
+All 51 Plus Python files parse and match the development payload byte for byte.
+Native non-ASCII text is preserved.
+
+**Focused validation and corrections:** the first six-case run completed in
+100.609 seconds, exit 0. Creation-mode icons, both repeated constraint toggles,
+rejected/no-op selection, Refraction acceptance and Undo/Redo passed. The Refraction
+rejection fixture incorrectly expected an enabled menu action with empty selection;
+native isCreateConstraintActive disables it. Corrected that assertion and added an
+enabled mixed-object rejection case for the safety guard. The fixture also deleted
+a warning timer already owned by unittest cleanup; removed that duplicate deletion.
+The two corrected Refraction cases passed in 34.156 seconds, native exit 0, empty
+stderr, no failures/errors/skips or popup-watchdog interventions.
+
+The intentionally rejected non-dimensional Driving toggle emits its native ValueError
+and command diagnostic once in each Plus-on, Plus-off and Classic matrix case.
+These expected diagnostics are retained; production error handling is unchanged.
+The inspected native framebuffer shows green selected reference-dimension symbols
+and the additionally selected first edge; the other edge remains unselected.
+
+**Combined native/visual acceptance:** all 51 TestPlusToolbars cases passed in three
+non-overlapping isolated native processes: 17 in 273.187 seconds, 17 in 227.407
+seconds and 17 in 292.171 seconds (792.765 total). Recorded IDs match the source
+inventory exactly, with no duplicates, failures, errors, skips or popup-watchdog
+interventions. All three processes exited 0. First/third stderr are empty; second
+stderr contains exactly the three expected native rejection diagnostics described
+above and no other output. The final native framebuffer was inspected and confirms
+retained green constraint symbols and first-edge selection.
+
+**Complete inventory/restart:** the separate audit passed all nineteen Classic
+workbenches plus None: 240 native toolbar-group instances and 1,169 per-workbench
+command occurrences, native exit 0. Its only stderr notice was the previously known
+missing external OpenSCAD executable. Separate prepare/restart processes passed with
+exit 0 and empty stderr, retaining Persistent/Directional off, Tangent Curves,
+Faces unchecked, remembered Pocket choice and hidden File/shown Edit Classic settings.
+Both desktop shortcuts were reopened/read: development targets
+freecad_1.1.4_context/bin/FreeCAD.exe with that bin directory as working directory;
+the archived-fork reference target/working directory remain unchanged and exist.
+
+**Source/publication/cleanup:** final Python parse/payload parity and whitespace
+checks pass. No push, release or owner-ready packaging is claimed. The owned
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/plus_constraint_states`
+validation directory was removed after recording these durable results; all native
+validation processes exited. Useful builds, settings, dependencies
+and reference shortcuts are retained. This increment is prepared as a focused local
+commit. Layers, the contextual palette, contextual Sketcher_Dimension and other
+operation persistence remain unfinished. TB.2 and Group 1 remain incomplete.
 
 ## TB.2c2g Direct Tangent/Perpendicular retention — October 12, 2026
 

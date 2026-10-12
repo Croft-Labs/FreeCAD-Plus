@@ -96,7 +96,7 @@ bool isCreateConstraintActive(Gui::Document* doc)
 
 namespace
 {
-// Only completed operations on preselected sketch geometry use this policy.
+// Only completed operations on preselected sketch geometry or constraints use this policy.
 // Interactive constraint handlers still own their picking/reset sequence.
 void finishConstraintSelection(bool applied = true)
 {
@@ -10168,6 +10168,7 @@ void CmdSketcherConstrainSnellsLaw::activated(int iMsg)
         Gui::TranslatedUserWarning(getActiveGuiDocument()->getDocument(),
                                    QObject::tr("Wrong selection"),
                                    std::move(strError));
+        return;
     }
 
     // get the needed lists and objects
@@ -10313,7 +10314,7 @@ void CmdSketcherConstrainSnellsLaw::activated(int iMsg)
     }
 
     // clear the selection (convenience)
-    getSelection().clearSelection();
+    finishConstraintSelection();
 }
 
 bool CmdSketcherConstrainSnellsLaw::isActive()
@@ -10497,6 +10498,7 @@ void CmdSketcherToggleDrivingConstraint::activated(int iMsg)
         openCommand(QT_TRANSLATE_NOOP("Command", "Toggle constraint to driving/reference"));
 
         int successful = SubNames.size();
+        bool applied = false;
         // go through the selected subelements
         for (auto& subname : SubNames) {
             // only handle constraints
@@ -10505,6 +10507,7 @@ void CmdSketcherToggleDrivingConstraint::activated(int iMsg)
                 try {
                     // issue the actual commands to toggle
                     Gui::cmdAppObjectArgs(selection[0].getObject(), "toggleDriving(%d)", ConstrId);
+                    applied = true;
                 }
                 catch (const Base::Exception&) {
                     successful--;
@@ -10522,7 +10525,7 @@ void CmdSketcherToggleDrivingConstraint::activated(int iMsg)
         tryAutoRecompute(Obj);
 
         // clear the selection (convenience)
-        getSelection().clearSelection();
+        finishConstraintSelection(applied);
     }
 }
 
@@ -10584,6 +10587,7 @@ void CmdSketcherToggleActiveConstraint::activated(int iMsg)
         openCommand(QT_TRANSLATE_NOOP("Command", "Activate/Deactivate constraints"));
 
         int successful = SubNames.size();
+        bool applied = false;
 
         for (auto& subname : SubNames) {
 
@@ -10592,6 +10596,7 @@ void CmdSketcherToggleActiveConstraint::activated(int iMsg)
                 try {
                     // issue the actual commands to toggle
                     Gui::cmdAppObjectArgs(selection[0].getObject(), "toggleActive(%d)", ConstrId);
+                    applied = true;
                 }
                 catch (const Base::Exception&) {
                     successful--;
@@ -10609,7 +10614,7 @@ void CmdSketcherToggleActiveConstraint::activated(int iMsg)
         tryAutoRecompute(Obj);
 
         // clear the selection (convenience)
-        getSelection().clearSelection();
+        finishConstraintSelection(applied);
     }
 }
 
