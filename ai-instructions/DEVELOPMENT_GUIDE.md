@@ -753,3 +753,17 @@ child isVisible() reflects ancestor visibility as well as the child's own flag.
 Verify unchanged actions/parent, availability through Classic/Plus changes and
 native hide/show when leaving/returning to BIM. It must never enter Plus's ribbon
 visibility bookkeeping, even though its class matches ordinary native toolbars.
+
+Basic constraint persistence acceptance compares Plus on, Plus off and Classic for
+Horizontal/Vertical/HorVer, Parallel, Block, point alignment, coincidence, Point on
+Object, concentric curves and every native Symmetric input form. Dispatch native
+Plus buttons, verify resulting constraint types, native solve success and valid
+geometry, and exercise Undo/Redo. Use corresponding line endpoints for Vertical
+point alignment; the opposing-endpoint fixture can collapse a line in the native
+solver and is unsuitable for successful-operation acceptance. Rejected Block points and an already-coincident pair must retain Plus
+inputs without a new Undo entry, including with persistence off. Exercise native
+tangency substitutions through coincidence and Point on Object, preserving selected
+geometry while constraint indices change. Also run continuous native constraint
+picking and verify sequence cleanup and Escape without closing the sketch. Inspect
+a normal-framebuffer capture of retained Parallel inputs. These checks do not
+establish dimension dialogs or persistence across arbitrary modeling operations.

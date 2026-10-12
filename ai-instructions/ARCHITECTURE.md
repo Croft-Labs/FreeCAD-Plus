@@ -1468,8 +1468,37 @@ in charge. Rejected Equal inputs stay selected with either toggle value.
 The change does not intercept generic clearSelection, wrap QActions, replay stale
 subelement names, or change drawing-handler, deletion, Undo, Escape, empty-click or
 editor-exit cleanup. Classic retains its original post-command clearing. This is
-only the confirmed Equal-to-Construction retention increment; other constraints,
-geometry-changing commands, asynchronous modeling tasks, the contextual palette
-and Move Components' task-local retention choice are not integrated by this hook.
+the confirmed Equal-to-Construction retention increment; TB.2c2e below extends it
+to basic preselected constraints. Geometry-changing commands, asynchronous modeling
+tasks, the contextual palette and Move Components' task-local retention choice
+are not integrated by this hook.
 Broader retention must establish surviving-entity identity and operation completion
 at each owning service before sharing this preference. WORK_STATE owns validation.
+
+## Basic preselected constraint retention (TB.2c2e)
+
+The existing Persistent Selection policy also covers the native Horizontal/Vertical
+(and automatic HorVer), Parallel, Block, Coincident/concentric, Point on Object and
+all three Symmetric input forms. The native legacy coincidence commands share the
+same implementation as Unified Coincident; no command identities or menu dispatch
+are replaced. Equal uses the same completion helper. Dimensions, direct Tangent/
+Perpendicular and other unlisted operations remain outside this increment.
+
+CommandConstraints.cpp owns finishConstraintSelection(applied). It retains native
+selection only in Plus Design with an idle edited Sketcher view and either a
+successful operation with persistence on, or a rejected operation. All other cases
+use native clearing. No global clearSelection interception or selection replay is
+introduced. Constraint creation preserves input geometry identities; the selection
+therefore continues to refer to native points/edges after the solver changes their
+coordinates. The native solver, transaction boundaries, warnings and Undo remain
+unchanged, including Block's existing per-edge transactions.
+
+Coincident/Point-on-Object can replace existing tangency constraints. Their shared
+substitution cleanup uses the same helper: these callers select geometry, not the
+constraint indices being removed/replaced. The helper checks STATUS_NONE, so active
+continuous constraint handlers retain their own clearing/reset behavior. Coincident
+passes whether any constraint was applied after its commit/abort decision. Block's
+rejected point/external input path similarly keeps Plus inputs with either toggle
+value; Classic retains its previous rejection cleanup. Native deletion, sketch exit,
+ordinary empty click and Escape are not redirected by this integration. WORK_STATE
+owns build, interaction, inventory and restart acceptance.

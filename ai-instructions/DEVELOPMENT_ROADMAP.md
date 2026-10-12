@@ -412,6 +412,14 @@ Do not repeat the completed baseline checks without a new relevant concern.
   passed; WORK_STATE owns combined, visual, inventory and restart acceptance.
   Other operation integrations and the contextual palette remain unfinished.
 
+- [ X ] **TB.2c2e — Basic preselected constraint persistence.** Extend the saved
+  policy to Horizontal/Vertical/HorVer, Parallel, Block, coincidence/concentric,
+  Point on Object and all Symmetric input forms. Preserve native input identities,
+  transactions, off/Classic behavior and continuous picking cleanup. Rejected Plus
+  inputs remain selected; native tangency substitutions preserve selected geometry.
+  Native build and six focused cases passed; WORK_STATE owns combined, visual,
+  inventory and restart acceptance. Dimensions and other operations remain unfinished.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

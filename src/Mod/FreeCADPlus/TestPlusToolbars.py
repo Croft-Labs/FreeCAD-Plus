@@ -474,12 +474,13 @@ class TestPlusToolbars(unittest.TestCase):
         self.prefs.SetInt('ToolbarUIMode',1);ui_modes.apply_modes()
         self.assertIn('Edge1',click())
 
-    def sketch_click_fixture(self, connected=False):
+    def sketch_click_fixture(self, connected=False, lines=None):
         import Part
         self.tab('Sketch')
         doc = App.newDocument('PlusSketchClicks')
         sketch = doc.addObject('Sketcher::SketchObject', 'Sketch')
-        lines = [((-10, 5), (10, 5)), ((-10, -5), (10, -5))]
+        if lines is None:
+            lines = [((-10, 5), (10, 5)), ((-10, -5), (10, -5))]
         if connected:
             lines = [((-10, 5), (0, 5)), ((0, 5), (10, 5)), ((-10, -5), (10, -5))]
         for start, end in lines:
@@ -520,15 +521,203 @@ class TestPlusToolbars(unittest.TestCase):
 
     def sketch_command(self, name):
         button = self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_' + name)
+        horver = ('Sketcher_ConstrainHorVer', 'Sketcher_ConstrainHorizontal', 'Sketcher_ConstrainVertical')
+        grouped = button is None and name in horver
+        if grouped:
+            button = self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_Sketcher_CompHorVer')
         self.assertIsNotNone(button, name)
         self.ribbon.scroll.ensureWidgetVisible(button)
         settle()
         self.assertTrue(button.isEnabled(), name)
-        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+        if grouped:
+            menu = button.menu()
+            action = menu.actions()[horver.index(name)]
+            spy = QtTest.QSignalSpy(action.triggered)
+            def choose():
+                QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                       menu.actionGeometry(action).center())
+            QtCore.QTimer.singleShot(100, choose)
+            QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                   QtCore.QPoint(button.width()-4, button.height()//2))
+            self.assertEqual(spy.count(), 1)
+        else:
+            QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
         settle()
 
     def selected_subelements(self):
         return {s for e in Gui.Selection.getSelectionEx() for s in e.SubElementNames}
+
+    def constraint_inputs(self, sketch, names):
+        Gui.Selection.clearSelection()
+        for name in names:
+            Gui.Selection.addSelection(sketch, name)
+        settle()
+        self.assertEqual(self.selected_subelements(), set(names))
+
+    def check_constraint_retention(self, sketch, command, names, kind):
+        doc = sketch.Document
+        doc.UndoMode = 1
+        geometry_count = sketch.GeometryCount
+        for classic, persistent in ((False, True), (False, False), (True, True)):
+            with self.subTest(command=command, classic=classic, persistent=persistent):
+                self.prefs.SetInt('ToolbarUIMode', 0)
+                ui_modes.apply_modes()
+                self.persistent(persistent)
+                if classic:
+                    self.prefs.SetInt('ToolbarUIMode', 1)
+                    ui_modes.apply_modes()
+                self.constraint_inputs(sketch, names)
+                undo = doc.UndoCount
+                if classic:
+                    Gui.runCommand(command)
+                    settle()
+                else:
+                    self.sketch_command(command)
+                self.assertEqual(sketch.ConstraintCount, 1)
+                self.assertEqual(sketch.Constraints[0].Type, kind)
+                self.assertEqual(sketch.solve(), 0)
+                self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
+                self.assertEqual(sketch.GeometryCount, geometry_count)
+                self.assertEqual(doc.UndoCount, undo + 1)
+                self.assertEqual(self.selected_subelements(),
+                                 set(names) if persistent and not classic else set())
+                if command == 'Sketcher_ConstrainParallel' and persistent and not classic:
+                    view = Gui.activeDocument().activeView()
+                    output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-parallel.png'
+                    if os.name == 'nt':
+                        from TestComponentFading import capture
+                        capture(view, output, prepare=False)
+                    else:
+                        view.graphicsView().viewport().grabFramebuffer().save(str(output))
+                doc.undo()
+                settle()
+                self.assertEqual(sketch.ConstraintCount, 0)
+                self.assertEqual(sketch.GeometryCount, geometry_count)
+                doc.redo()
+                settle()
+                self.assertEqual(sketch.ConstraintCount, 1)
+                doc.undo()
+                settle()
+        self.prefs.SetInt('ToolbarUIMode', 0)
+        ui_modes.apply_modes()
+
+    def test_constraint_retention_line_operations(self):
+        sketch, view = self.sketch_click_fixture(lines=[((-10, 4), (8, 6)),
+                                                       ((-8, -6), (10, -4))])
+        for suffix, names, kind in (
+                ('HorVer', ('Edge1',), 'Horizontal'),
+                ('Horizontal', ('Edge1',), 'Horizontal'),
+                ('Vertical', ('Edge1',), 'Vertical'),
+                ('Parallel', ('Edge1', 'Edge2'), 'Parallel'),
+                ('Block', ('Edge1',), 'Block')):
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain' + suffix, names, kind)
+
+    def test_constraint_retention_points_and_symmetry(self):
+        sketch, view = self.sketch_click_fixture()
+        for command, names, kind in (
+                ('Horizontal', ('Vertex1', 'Vertex3'), 'Horizontal'),
+                ('Vertical', ('Vertex1', 'Vertex3'), 'Vertical'),
+                ('CoincidentUnified', ('Vertex2', 'Vertex3'), 'Coincident'),
+                ('CoincidentUnified', ('Vertex1', 'Edge2'), 'PointOnObject'),
+                ('Symmetric', ('Edge1', 'Vertex3'), 'Symmetric'),
+                ('Symmetric', ('Vertex1', 'Vertex2', 'Vertex3'), 'Symmetric'),
+                ('Symmetric', ('Vertex1', 'Vertex2', 'V_Axis'), 'Symmetric')):
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain' + command, names, kind)
+
+    def test_constraint_retention_concentric(self):
+        import Part
+        sketch, view = self.sketch_click_fixture()
+        Gui.activeDocument().resetEdit()
+        sketch.delGeometries([0, 1])
+        for center, radius in ((App.Vector(-4, 3, 0), 3), (App.Vector(4, -3, 0), 5)):
+            sketch.addGeometry(Part.Circle(center, App.Vector(0, 0, 1), radius), False)
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        self.check_constraint_retention(sketch, 'Sketcher_ConstrainCoincidentUnified',
+                                        ('Edge1', 'Edge2'), 'Coincident')
+
+    def constraint_warning_timer(self):
+        timer = QtCore.QTimer()
+        def dismiss():
+            modal = QtWidgets.QApplication.activeModalWidget()
+            if isinstance(modal, QtWidgets.QDialog):
+                modal.accept()
+        timer.timeout.connect(dismiss)
+        timer.start(25)
+        self.addCleanup(timer.deleteLater)
+        self.addCleanup(timer.stop)
+        return timer
+
+    def test_constraint_retention_rejections(self):
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        sketch.Document.UndoMode = 1
+        timer = self.constraint_warning_timer()
+        for persistent in (True, False):
+            self.persistent(persistent)
+            self.constraint_inputs(sketch, ('Vertex1',))
+            undo = sketch.Document.UndoCount
+            self.sketch_command('Sketcher_ConstrainBlock')
+            self.assertEqual(sketch.ConstraintCount, 0)
+            self.assertEqual(sketch.Document.UndoCount, undo)
+            self.assertEqual(self.selected_subelements(), {'Vertex1'})
+        sketch.addConstraint(Sketcher.Constraint('Coincident', 0, 2, 1, 1))
+        sketch.Document.recompute()
+        self.constraint_inputs(sketch, ('Vertex2', 'Vertex3'))
+        undo = sketch.Document.UndoCount
+        self.sketch_command('Sketcher_ConstrainCoincidentUnified')
+        self.assertEqual(sketch.ConstraintCount, 1)
+        self.assertEqual(sketch.Document.UndoCount, undo)
+        self.assertEqual(self.selected_subelements(), {'Vertex2', 'Vertex3'})
+        timer.stop()
+
+    def test_constraint_retention_tangency_substitution(self):
+        import math
+        import Part
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        Gui.activeDocument().resetEdit()
+        sketch.delGeometries([0, 1])
+        sketch.addGeometry(Part.LineSegment(App.Vector(-10, 0, 0), App.Vector(0, 0, 0)), False)
+        sketch.addGeometry(Part.ArcOfCircle(Part.Circle(App.Vector(0, 5, 0), App.Vector(0, 0, 1), 5),
+                                          -math.pi/2, 0), False)
+        sketch.addConstraint(Sketcher.Constraint('Tangent', 0, 1))
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        sketch.Document.UndoMode = 1
+        timer = self.constraint_warning_timer()
+        for names in (('Vertex2', 'Vertex3'), ('Vertex2', 'Edge2')):
+            self.constraint_inputs(sketch, names)
+            undo = sketch.Document.UndoCount
+            self.sketch_command('Sketcher_ConstrainCoincidentUnified')
+            self.assertEqual(sketch.ConstraintCount, 1)
+            constraint = sketch.Constraints[0]
+            self.assertEqual(constraint.Type, 'Tangent')
+            self.assertEqual(constraint.FirstPos, 2)
+            self.assertEqual(constraint.SecondPos, 1 if names[1] == 'Vertex3' else 0)
+            self.assertEqual(self.selected_subelements(), set(names))
+            self.assertEqual(sketch.GeometryCount, 2)
+            self.assertEqual(sketch.Document.UndoCount, undo + 1)
+            sketch.Document.undo()
+            settle()
+            self.assertEqual(sketch.Constraints[0].FirstPos, 0)
+        timer.stop()
+
+    def test_constraint_retention_interactive_picker_cleanup(self):
+        sketch, view = self.sketch_click_fixture()
+        Gui.Selection.clearSelection()
+        self.sketch_command('Sketcher_ConstrainHorizontal')
+        self.assertFalse(self.sketch_click(view, (-5, 5)))
+        self.assertEqual(sketch.ConstraintCount, 1)
+        self.assertFalse(self.sketch_click(view, (-5, -5)))
+        self.assertEqual(sketch.ConstraintCount, 2)
+        self.assertTrue(all(c.Type == 'Horizontal' for c in sketch.Constraints))
+        QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+        settle()
+        self.assertIsNotNone(Gui.activeDocument().getInEdit())
+        self.assertFalse(self.selected_subelements())
 
     def test_persistent_control_scope_and_saved_choice(self):
         selection_toolbar.preferences().RemBool('Persistent')

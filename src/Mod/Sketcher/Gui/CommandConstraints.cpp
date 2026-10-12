@@ -94,6 +94,25 @@ bool isCreateConstraintActive(Gui::Document* doc)
     return false;
 }
 
+namespace
+{
+// Only completed operations on preselected sketch geometry use this policy.
+// Interactive constraint handlers still own their picking/reset sequence.
+void finishConstraintSelection(bool applied = true)
+{
+    const auto policy = Gui::plusSelectionPolicy();
+    if (policy.enabled) {
+        auto* doc = Gui::Application::Instance->editDocument();
+        auto* vp = doc ? dynamic_cast<ViewProviderSketch*>(doc->getInEdit()) : nullptr;
+        if (vp && vp->getSketchMode() == ViewProviderSketch::STATUS_NONE
+            && (!applied || policy.persistent)) {
+            return;
+        }
+    }
+    Gui::Selection().clearSelection();
+}
+} // namespace
+
 // Utility method to avoid repeating the same code over and over again
 void finishDatumConstraint(Gui::Command* cmd,
                            Sketcher::SketchObject* sketch,
@@ -3429,8 +3448,8 @@ void horVerActivated(CmdSketcherConstraint* cmd, std::string type)
 
     tryAutoRecompute(Obj);
 
-    // clear the selection (convenience)
-    Gui::Command::getSelection().clearSelection();
+    // Finish the preselected operation.
+    finishConstraintSelection();
 }
 
 void horVerApplyConstraint(CmdSketcherConstraint* cmd, std::string type, std::vector<SelIdPair>& selSeq, int seqIndex)
@@ -4048,8 +4067,8 @@ void CmdSketcherConstrainBlock::activated(int iMsg)
                                            QObject::tr("Wrong selection"),
                                            QObject::tr("Select only edges from the sketch."));
             }
-            // clear the selection
-            getSelection().clearSelection();
+            // A rejected Plus operation keeps its usable inputs, even with persistence off.
+            finishConstraintSelection(false);
             return;
         }
 
@@ -4082,8 +4101,8 @@ void CmdSketcherConstrainBlock::activated(int iMsg)
         }
     }
 
-    // clear the selection (convenience)
-    getSelection().clearSelection();
+    // Finish the preselected operation without changing native entity identities.
+    finishConstraintSelection();
 }
 
 void CmdSketcherConstrainBlock::applyConstraint(std::vector<SelIdPair>& selSeq, int seqIndex)
@@ -4227,7 +4246,7 @@ bool CmdSketcherConstrainCoincidentUnified::substituteConstraintCombinationsPoin
             notifyConstraintSubstitutions(
                 QObject::tr("Endpoint to edge tangency was applied instead."));
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return true;
         }
     }
@@ -4275,7 +4294,7 @@ bool CmdSketcherConstrainCoincidentUnified::substituteConstraintCombinationsCoin
                 notifyConstraintSubstitutions(
                     QObject::tr("Endpoint to endpoint tangency was applied instead."));
 
-                getSelection().clearSelection();
+                finishConstraintSelection();
                 return true;
             }
             else if (isBsplineKnot(Obj, GeoId1) != isBsplineKnot(Obj, GeoId2)) {
@@ -4295,7 +4314,7 @@ bool CmdSketcherConstrainCoincidentUnified::substituteConstraintCombinationsCoin
                     notifyConstraintSubstitutions(
                         QObject::tr("B-spline knot to endpoint tangency was applied instead."));
 
-                    getSelection().clearSelection();
+                    finishConstraintSelection();
                     return true;
                 }
             }
@@ -4419,7 +4438,7 @@ void CmdSketcherConstrainCoincidentUnified::activatedPointOnObject(SketchObject*
     }
     if (cnt) {
         commitCommand();
-        getSelection().clearSelection();
+        finishConstraintSelection();
     }
     else {
         abortCommand();
@@ -4500,8 +4519,8 @@ void CmdSketcherConstrainCoincidentUnified::activatedCoincident(SketchObject* ob
 
     tryAutoRecompute(obj);
 
-    // clear the selection (convenience)
-    getSelection().clearSelection();
+    // Finish the preselected operation without changing native entity identities.
+    finishConstraintSelection(constraintsAdded);
 }
 
 void CmdSketcherConstrainCoincidentUnified::applyConstraint(std::vector<SelIdPair>& selSeq, int seqIndex)
@@ -6145,8 +6164,8 @@ void CmdSketcherConstrainParallel::activated(int iMsg)
 
     tryAutoRecompute(Obj);
 
-    // clear the selection (convenience)
-    getSelection().clearSelection();
+    // Finish the preselected operation without changing native entity identities.
+    finishConstraintSelection();
 }
 
 void CmdSketcherConstrainParallel::applyConstraint(std::vector<SelIdPair>& selSeq, int seqIndex)
@@ -9672,10 +9691,7 @@ void CmdSketcherConstrainEqual::activated(int iMsg)
     commitCommand();
     tryAutoRecompute(Obj);
 
-    // Retain the native input entities only after this completed operation.
-    if (!Gui::plusSelectionPolicy().persistent) {
-        getSelection().clearSelection();
-    }
+    finishConstraintSelection();
 }
 
 void CmdSketcherConstrainEqual::applyConstraint(std::vector<SelIdPair>& selSeq, int seqIndex)
@@ -9859,8 +9875,8 @@ void CmdSketcherConstrainSymmetric::activated(int iMsg)
                 commitCommand();
                 tryAutoRecompute(Obj);
 
-                // clear the selection (convenience)
-                getSelection().clearSelection();
+                // Finish the preselected operation.
+                finishConstraintSelection();
                 return;
             }
         }
@@ -9917,8 +9933,8 @@ void CmdSketcherConstrainSymmetric::activated(int iMsg)
                 commitCommand();
                 tryAutoRecompute(Obj);
 
-                // clear the selection (convenience)
-                getSelection().clearSelection();
+                // Finish the preselected operation.
+                finishConstraintSelection();
                 return;
             }
         }
@@ -9939,8 +9955,8 @@ void CmdSketcherConstrainSymmetric::activated(int iMsg)
             commitCommand();
             tryAutoRecompute(Obj);
 
-            // clear the selection (convenience)
-            getSelection().clearSelection();
+            // Finish the preselected operation.
+            finishConstraintSelection();
             return;
         }
     }

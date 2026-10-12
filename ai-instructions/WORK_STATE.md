@@ -3,12 +3,82 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1, TB.2c2a, TB.2c2b, TB.2c2c and TB.2c2d below are implemented and validated in the development payload.
+TB.2b, TB.2c1, TB.2c2a, TB.2c2b, TB.2c2c, TB.2c2d and TB.2c2e below are
+implemented and validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2e Basic preselected constraint persistence — October 12, 2026
+
+**Implementation:** extended the Design Persistent Selection setting to native
+Horizontal/Vertical/HorVer, Parallel, Block, coincidence/concentric, Point on Object
+and all three Symmetric input forms. Equal shares the native completion helper.
+These commands retain existing input geometry selection after success with the
+setting on; off and Classic retain native clearing. Native coincidence/Point-on-
+Object tangency substitutions keep selected geometry while replacing constraints.
+Rejected Block point/external inputs and an already-coincident abort retain Plus
+inputs even with persistence off. Continuous handlers keep their native reset
+sequence through an explicit idle-Sketcher check. No selection replay, native action
+replacement, geometry identity change, toolbar definition or submodule-pin change
+was introduced. Architecture owns the completion contract and limits.
+
+**Build/source checks:** SketcherGui and dependencies built successfully in the
+retained freecad_1.1.4_context tree with MSVC 19.44, Qt 6.8.3, Python 3.12 and the
+existing libpack, concurrency 3. Final FreeCADPlusScripts synchronization passed.
+All 51 Plus Python files parse and match the development payload byte for byte.
+
+**Focused native acceptance:** six new cases passed in 138.151 seconds, zero
+failures, errors or skips and normal exit 0. Tests compare Plus on, Plus off and
+Classic, verifying constraint types, geometry counts, one native transaction for
+each tested operation, Undo/Redo and selection. They cover edge and point alignment,
+concentric curves, every Symmetric input form, rejected inputs without new Undo,
+endpoint tangency substitutions, repeated continuous picks and Escape cleanup.
+The inspected normal-framebuffer capture shows both selected parallel lines and
+native constraint symbols.
+
+**Validation correction:** the first focused run had eleven assertions caused by
+a test assumption that Horizontal/Vertical were standalone buttons. The default
+Classic layout exposes them through Sketcher_CompHorVer. The test helper now opens
+the real arrow and selects the native menu action. All six corrected cases passed;
+no production change was needed for this fixture correction.
+
+The 33-case combined suite passed its original assertions in 348.459 seconds,
+with no test failures, errors or skips and normal exit 0. Its stderr exposed a
+second fixture problem: Vertical alignment of opposing endpoints could collapse a
+line in the native solver. A traced follow-up with explicit solve/geometry checks
+caught this failure; subsequent subcases then accumulated constraints because that
+failed assertion preceded Undo. The fixture now selects corresponding endpoints,
+and the matrix requires native solve success and valid geometry. Final affected
+acceptance is recorded below; no application code changed for this correction.
+
+**Final affected acceptance:** all six corrected cases passed in 137.866 seconds,
+zero failures, errors or skips, normal exit 0 and empty stderr. The final matrix
+requires native solve success and valid geometry as well as constraint/selection,
+Undo/Redo and mode behavior. All 51 final Python files parse and byte-match the
+payload; whitespace checks pass. The 27 unchanged cases already passed in the
+combined run above; only test fixtures/assertions changed afterward.
+
+**Inventory/restart acceptance:** the independent audit passed all twenty registered
+workbenches (nineteen baseline workbenches plus None), 240 native toolbar-group
+instances and 1,169 per-workbench command occurrences. No missing Plus commands,
+widget ownership or Classic restoration failures were found. Audit exit was 0;
+stderr contains only the existing missing OpenSCAD executable notice, so external
+tool availability is not certified. Separate prepare/shutdown and restart processes
+passed with exit 0 and empty stderr. Persistent and Directional off, Tangent Curves,
+Faces unchecked, Pocket default and hidden File/shown Edit Classic toolbar
+preferences survived restart. The native application was unchanged by subsequent
+fixture-only corrections.
+
+**Delivery/stopping boundary:** dimensions, direct Tangent/Perpendicular and other
+operation integrations, Layers and separately owned Plus workflows remain unfinished.
+Both retained desktop shortcut targets and working directories are verified and
+unchanged. No remote publication or release was performed. This is development
+payload validation, not owner packaging. The coherent increment is committed locally;
+task-generated validation output is removed after recording these durable results.
+Useful builds, owner settings and both reference/development shortcuts are retained.
 
 ## TB.2c2d Equal/Construction persistence and status controls — October 12, 2026
 

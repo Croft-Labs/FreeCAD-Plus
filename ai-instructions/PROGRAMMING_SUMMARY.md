@@ -102,7 +102,10 @@ selected Escape handling. Native build and focused point/edge/constraint interac
 checks passed; WORK_STATE owns combined acceptance and coverage evidence.
 TB.2c2d adds the saved Persistent Selection toggle and native Equal-to-Construction
 retention, plus a correction that preserves BIM status-toolbar ownership. WORK_STATE
-owns native acceptance. Persistence for other operations, Layers and unfinished
+owns native acceptance. TB.2c2e extends retention to basic preselected sketch
+constraints, including point alignment, coincidence, symmetry and native tangency
+substitutions. Continuous constraint picking retains its own cleanup. WORK_STATE
+owns acceptance. Dimensions, other operation integrations, Layers and unfinished
 Plus workflows remain outstanding.
 
 ## Where to go
