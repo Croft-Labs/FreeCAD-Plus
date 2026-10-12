@@ -1337,3 +1337,24 @@ owner-requested Tab entry without modifying Classic's menu. Missing Plus operati
 remain disabled; no command is substituted for Add Reference Object. Consolidated
 operation tasks and complete ribbon placement remain separate from this adapter.
 WORK_STATE owns build, native interaction and persistence evidence.
+
+## Plus Design directional selection (TB.2c1)
+
+`freecad_plus/selection_toolbar.py` owns the Design-only top-row control. It saves
+`Directional` (default true) under `BaseApp/Preferences/FreeCADPlus/Selection`.
+The active Plus Design presentation exposes that value as the transient main-window
+property `FreeCADPlusDirectionalSelection`; Classic and other modes remove it.
+No document properties, object identities, occurrence paths or geometry are changed.
+
+`Gui/Selection/PlusSelection.h` reads this policy for native consumers. An absent
+property leaves Classic semantics intact. Standard Box Selection/Box Element
+Selection use native intersection for right-to-left when enabled, otherwise full
+enclosure for rectangles in Plus. Classic retains its native center test and crossing
+behavior; polygon selection retains its native policy. Nested object traversal,
+transforms, subelement extraction and final command gate admission remain native.
+The standard selection callback marks its viewer only for that tool's lifetime;
+rectangle styling uses this marker so Box Zoom and feature-specific pickers retain
+native visuals. Sketcher uses the same policy for its existing enclosure/touch tests
+and themed solid/dashed feedback. Existing command selection gates are never replaced.
+Curve intent, category filtering, operation persistence and Layers are separate,
+unimplemented parts of the Selection/Layers scope. Runtime evidence belongs in WORK_STATE.

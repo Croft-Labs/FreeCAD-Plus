@@ -47,6 +47,7 @@
 #include <Base/Console.h>
 #include <Base/ServiceProvider.h>
 #include <Base/Vector3D.h>
+#include <Gui/Selection/PlusSelection.h>
 #include <Gui/Application.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/CommandT.h>
@@ -1588,7 +1589,8 @@ bool ViewProviderSketch::mouseMove(const SbVec2s& cursorPos, Gui::View3DInventor
 
             // depending on selection direction (touch selection (right to left) or window selection (left to right))
             // set the appropriate color and line style using theme design tokens
-            bool isRightToLeft = DoubleClick::prvCursorPos.getValue()[0] > DoubleClick::newCursorPos.getValue()[0];
+            bool isRightToLeft = Gui::plusSelectionPolicy().crossing(
+                DoubleClick::prvCursorPos.getValue()[0] > DoubleClick::newCursorPos.getValue()[0]);
 
             auto* styleParameterManager = Base::provideService<Gui::StyleParameters::ParameterManager>();
 
@@ -2622,7 +2624,7 @@ void ViewProviderSketch::doBoxSelection(const SbVec2s& startPos, const SbVec2s& 
     bool touchMode = false;
     // check if selection goes from the right to the left side (for touch-selection where even
     // partially boxed objects get selected)
-    if (corners[0].getValue()[0] > corners[1].getValue()[0])
+    if (Gui::plusSelectionPolicy().crossing(corners[0].getValue()[0] > corners[1].getValue()[0]))
         touchMode = true;
 
     std::vector<std::string> batchSelection;

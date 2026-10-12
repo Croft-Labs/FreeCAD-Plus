@@ -10,6 +10,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtWidgets
 from . import toolbar_layout as layout
+from . import selection_toolbar
 
 _controller = None
 
@@ -148,6 +149,7 @@ class Ribbon(QtCore.QObject):
         if enabled:
             self.refresh()
         else:
+            selection_toolbar.apply(False)
             self.bar.hide()
             for bar in self.native_bars():
                 visible = bar.property('FreeCADPlusClassicVisible')
@@ -399,6 +401,7 @@ class Ribbon(QtCore.QObject):
                 if button:
                     row.addWidget(button)
             self._divider(row)
+        selection_toolbar.append_controls(row, self.mode == 'Design')
         self.top_layout.replaceWidget(self.common, common)
         self.common.deleteLater()
         self.common = common

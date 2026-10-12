@@ -13,16 +13,20 @@ import TestComponentPanel as fixtures
 from TestUnusedModels import visibility
 
 
-def capture(view, output):
-    main=Gui.getMainWindow();area=main.findChild(QtWidgets.QMdiArea)
-    window=next(w for w in area.subWindowList() if w.isAncestorOf(view.graphicsView()))
-    area.setActiveSubWindow(window);window.showMaximized()
-    main.showNormal();main.raise_();main.activateWindow()
-    Gui.Selection.clearSelection()
+def capture(view, output, *, prepare=True):
     widget=view.graphicsView().viewport()
-    QtTest.QTest.mouseMove(widget,QtCore.QPoint(5,5))
+    if prepare:
+        main=Gui.getMainWindow();area=main.findChild(QtWidgets.QMdiArea)
+        window=next(w for w in area.subWindowList() if w.isAncestorOf(view.graphicsView()))
+        area.setActiveSubWindow(window);window.showMaximized()
+        main.showNormal();main.raise_();main.activateWindow()
+        Gui.Selection.clearSelection()
+        widget=view.graphicsView().viewport()
+        QtTest.QTest.mouseMove(widget,QtCore.QPoint(5,5))
     QtTest.QTest.qWait(150);view.redraw();QtTest.QTest.qWait(150)
     assert isinstance(widget,QtOpenGLWidgets.QOpenGLWidget)
+    previous=QtGui.QOpenGLContext.currentContext()
+    surface=previous.surface() if previous else None
     widget.makeCurrent();gl=ctypes.WinDLL('opengl32')
     def integer(key):
         value=ctypes.c_int();gl.glGetIntegerv(key,ctypes.byref(value));return value.value
@@ -42,7 +46,11 @@ def capture(view, output):
         return image,ratio
     finally:
         for key,value in saved.items():gl.glPixelStorei(key,value)
-        gl.glReadBuffer(read);widget.doneCurrent()
+        gl.glReadBuffer(read)
+        if previous and surface:
+            previous.makeCurrent(surface)
+        else:
+            widget.doneCurrent()
 
 
 def sample(view,frame,x):

@@ -642,7 +642,7 @@ domestic/external fixtures. Record evidence, then remove only the task artifacts
 
 ## Plus toolbar foundation validation
 
-Build FreeCADGui and FreeCADPlusScripts in the retained development tree with the
+Build FreeCADGui, SketcherGui and FreeCADPlusScripts in the retained development tree with the
 VS environment described above. Run TestPlusToolbars in an isolated profile with
 PLUS_TEST_DIR set. Cover actual native split-button arrow/icon mouse clicks,
 remembered group icons, Classic restoration in and out of Sketcher edit, mode/tab
@@ -652,7 +652,8 @@ widget captures; these are ordinary Qt controls, not viewport rendering evidence
 
 Run TestPlusToolbars.prepare_fresh_process(), close the main window normally, then
 run verify_fresh_process() in a separate native process with the same isolated
-profile. Verify saved Plus-group choice and hidden/shown Classic toolbar preferences.
+profile. Verify saved Plus-group choice, the saved Directional Selection toggle and
+hidden/shown Classic toolbar preferences.
 Keep native menu/action dispatch separate from the Plus-only group selection test,
 which deliberately emits its menu notification without creating modeling features.
 Record initial failures and bounded fixes in WORK_STATE; remove task-owned validation
@@ -679,3 +680,13 @@ The caption/control case also resizes the native window and rebuilds at normal a
 vertical viewport fit and horizontal overflow; restore the application font/window
 in finally. Synchronize programmatic workbench activation before checking mode labels
 or taking captures. This is a Qt ribbon check, not viewport rendering evidence.
+
+The directional-selection cases use actual viewport mouse drags against objects,
+subelements and an edited sketch. Check partial/full enclosure in both directions,
+the saved toggle (including its absent-key default), Design-only scope, Classic
+restoration, native command selection gates and Escape/Box Zoom marker cleanup.
+Use the Windows normal-framebuffer helper in TestComponentFading with prepare=False
+for captures during an active drag; preparation would clear selection and move the
+mouse. Preserve the prior OpenGL context after reading pixels so the release event
+can complete native selection. Inspect crossing/enclosure captures as well as
+selection results; a successful image write is not proof of rendered content.

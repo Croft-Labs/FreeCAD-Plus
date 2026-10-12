@@ -91,7 +91,9 @@ custom toolbars. Eight interaction tests, every-workbench inventory audit and
 independent restart passed. WORK_STATE owns evidence and the stopping boundary;
 remaining curated layouts and Plus-only workflows are still separate work.
 TB.2b adds validated complete two-line captions and icon-only unavailable controls;
-nine interaction/layout cases and all-workbench coverage passed. Selection/Layers
+nine interaction/layout cases and all-workbench coverage passed. TB.2c1 adds the
+saved Design Directional Selection control and native model/Sketcher behavior.
+WORK_STATE owns its build and runtime evidence. Remaining Selection controls, Layers
 and unfinished Plus workflows remain outstanding.
 
 ## Where to go
@@ -112,6 +114,7 @@ and unfinished Plus workflows remain outstanding.
 ## Source map
 
 - src/Mod/FreeCADPlus/freecad_plus/toolbars.py: separate Plus ribbon widgets, native action/menu adapters and Classic visibility restoration.
+- src/Mod/FreeCADPlus/freecad_plus/selection_toolbar.py and src/Gui/Selection/PlusSelection.h: saved Design selection toggle and transient native selection policy.
 - src/Mod/FreeCADPlus/freecad_plus/toolbar_layout.py: Plus mode/tab/group definitions.
 - src/Mod/FreeCADPlus/TestPlusToolbars.py: native split-button, mode/tab, independent preference and Classic restoration acceptance.
 

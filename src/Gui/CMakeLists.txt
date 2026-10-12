@@ -1347,6 +1347,7 @@ SET(Selection_SRCS
     Selection/SelectionObject.h
     Selection/SelectionObject.cpp
     Selection/Selection.h
+    Selection/PlusSelection.h
     Selection/Selection.cpp
     Selection/SelectionFilter.h
     Selection/SelectionFilter.cpp

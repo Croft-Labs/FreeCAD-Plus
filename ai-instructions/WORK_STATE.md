@@ -2,13 +2,75 @@
 
 ## Authorized objective and stopping boundary
 
-The owner continued Plus toolbar work after complete Classic coverage. TB.2a and
-TB.2b below are implemented and validated in the development payload. All nineteen
-Classic workbenches plus None remain included. TB.2 as a whole is not complete:
-Selection/Layers integration and remaining Plus-only workflows still need their
+The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
+TB.2b and TB.2c1 below are implemented and validated in the development payload.
+All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
+complete: remaining Selection controls, Layers and Plus-only workflows still need their
 own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c1 Design Directional Selection — October 11, 2026
+
+**Implementation:** the separate Plus module now provides the confirmed Directional
+Selection control beside the common Design tools. It defaults on and saves its
+choice. The transient policy is removed in Classic and other modes. Standard native
+Box Selection/Box Element Selection and Sketcher's existing selection mechanism
+apply full enclosure left-to-right and crossing right-to-left when on; off requires
+full enclosure in either direction. Native traversal, geometry extraction and
+command selection gates remain authoritative. Classic retains its original center/
+crossing behavior. Crossing and enclosure have distinct dashed/solid colored
+feedback. The standard-tool marker is cleared on completion/Escape; Box Zoom and
+feature-specific pickers retain their own native behavior. No document identities,
+properties, geometry or source ownership change. Architecture owns the integration
+contract. Curve intent, category filtering, operation persistence and Layers remain
+unimplemented; this does not complete TB.2 or the Selection toolbar.
+
+**Build/source checks:** FreeCADGui, SketcherGui and FreeCADPlusScripts built
+successfully in the retained `freecad_1.1.4_context` tree with the existing MSVC/
+Qt/Python/libpack configuration and concurrency 3. Final script synchronization
+passed. All 49 Plus Python files parsed and match the development payload byte for
+byte. Diff whitespace checks passed. Original toolbar definitions, workbench
+availability, submodule pins and licensing remain intact.
+
+**Native/visual acceptance:** all twelve TestPlusToolbars cases passed together in
+60.725 seconds, zero failures/errors/skips, normal application exit 0. New actual
+mouse drags validate partial/full enclosure for model objects, subelements and
+sketch edges, saved/default toggle state, Design-only scope, Classic restoration,
+command gate rejection and Escape/Box Zoom cleanup. Existing split-arrow/icon clicks,
+last-used choices, specialized widgets, custom groups and caption checks also pass.
+Inspected normal-framebuffer captures show green dashed crossing and solid enclosure
+rectangles around the actual model and sketch geometry.
+
+The separate all-workbench audit also passed with normal exit 0: all nineteen
+Classic workbenches plus None, 240 toolbar-group instances and 1,169 per-workbench
+command occurrences, without omissions. Classic action/widget ownership, visibility
+restoration and Plus suppression passed. The OpenSCAD external-executable notice
+remains; toolbar coverage does not certify external CAD/CAM/FEM executables.
+
+Independent prepare/normal shutdown and restart processes both exited 0. Directional
+Selection remained off after restart, while the saved Pocket choice and hidden File/
+shown Edit Classic toolbar preferences also survived. Both shortcut targets and
+working directories were re-read and verified; the new development shortcut still
+points to the retained development executable and the archived reference shortcut
+remains intact.
+
+**Validation corrections:** ordinary Qt viewport grabs returned black images. The
+existing Windows normal-framebuffer reader was extended to capture an active drag
+without changing selection/mouse position and to restore the prior OpenGL context.
+Initially releasing that context caused a native release-event exception and left
+the standard box tool active; the isolated case and final full suite pass after
+the helper correction, with empty final stderr. An isolated capture was blank;
+final suite captures were inspected for actual geometry and rectangle feedback.
+A legacy Windows PowerShell wrapper lost the completed audit's process exit code;
+its inventory assertions passed, and the final audit passed with exit 0 using the
+established PowerShell runtime. These were harness corrections, not additional product behavior.
+
+**Delivery/stopping boundary:** this is a validated development increment. No remote
+publication or release was performed. Preserve the complete Classic inventory and
+continue remaining confirmed Selection/Layers work separately. Remove this task's
+generated validation output after the durable record; retain the useful build and
+all unrelated profiles/reference payloads.
 
 ## TB.2b Complete captions and icon-only unavailable controls — October 11, 2026
 

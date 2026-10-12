@@ -6,8 +6,8 @@ from pathlib import Path
 from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
-from PySide6 import QtCore, QtGui, QtTest, QtWidgets
-from freecad_plus import toolbars, ui_modes
+from PySide6 import QtCore, QtGui, QtOpenGLWidgets, QtTest, QtWidgets
+from freecad_plus import toolbars, ui_modes, selection_toolbar
 
 
 def settle():
@@ -21,6 +21,8 @@ class TestPlusToolbars(unittest.TestCase):
         self.before = set(App.listDocuments())
         self.prefs = App.ParamGet('User parameter:BaseApp/Preferences/General')
         self.saved = [self.prefs.GetInt(key, 0) for key in ui_modes.KEYS]
+        self.saved_directional = selection_toolbar.preferences().GetBool('Directional', True)
+        selection_toolbar.preferences().SetBool('Directional', True)
         self.prefs.SetInt('ToolbarUIMode', 0)
         Gui.activateWorkbench('PartDesignWorkbench')
         ui_modes.apply_modes()
@@ -34,6 +36,7 @@ class TestPlusToolbars(unittest.TestCase):
             Gui.activeDocument().resetEdit()
         for name in set(App.listDocuments()) - self.before:
             App.closeDocument(name)
+        selection_toolbar.preferences().SetBool('Directional', self.saved_directional)
         for key, value in zip(ui_modes.KEYS, self.saved):
             self.prefs.SetInt(key, value)
         ui_modes.apply_modes()
@@ -206,6 +209,155 @@ class TestPlusToolbars(unittest.TestCase):
             self.ribbon.refresh()
             window.showMaximized()
             settle()
+
+    def directional(self, checked):
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection')
+        self.assertIsNotNone(button)
+        if button.isChecked() != checked:
+            QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+        self.assertEqual(button.isChecked(), checked)
+        self.assertEqual(selection_toolbar.preferences().GetBool('Directional'), checked)
+
+    def drag_box(self, view, start, end, command=None, capture=None):
+        widget = view.graphicsView().viewport()
+        self.assertIsInstance(widget, QtOpenGLWidgets.QOpenGLWidget)
+        ratio = widget.devicePixelRatioF()
+        def point(xy):
+            screen = view.getPointOnScreen(App.Vector(*xy, 0))
+            pos = QtCore.QPoint(round(screen[0] / ratio), widget.height() - 1 - round(screen[1] / ratio))
+            self.assertTrue(widget.rect().contains(pos), (pos, widget.rect()))
+            return pos
+        first, last = point(start), point(end)
+        Gui.Selection.clearSelection()
+        if command:
+            Gui.runCommand(command)
+            settle()
+        QtTest.QTest.mouseMove(widget, first)
+        QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, first)
+        for step in range(1, 9):
+            pos = first + (last - first) * (step / 8)
+            event = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pos),
+                                     QtCore.QPointF(widget.mapToGlobal(pos)), QtCore.Qt.NoButton,
+                                     QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(widget, event)
+            QtTest.QTest.qWait(20)
+        if capture:
+            view.redraw()
+            settle()
+            path = Path(os.environ['PLUS_TEST_DIR']) / capture
+            if os.name == 'nt':
+                from TestComponentFading import capture as framebuffer
+                image, _ = framebuffer(view, path, prepare=False)
+            else:
+                image = widget.grabFramebuffer()
+                image.save(str(path))
+            self.assertTrue(any(image.pixelColor(image.width() * x // 4, image.height() * y // 4).value()
+                                for x in (1, 2, 3) for y in (1, 2, 3)), 'Empty framebuffer capture')
+        QtTest.QTest.mouseRelease(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, last)
+        settle()
+        if command:
+            self.assertIsNone(view.graphicsView().property('FreeCADPlusBoxSelection'))
+        return Gui.Selection.getSelectionEx()
+
+    def test_directional_control_scope_and_saved_choice(self):
+        selection_toolbar.preferences().RemBool('Directional')
+        self.ribbon.refresh()
+        self.assertTrue(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection').isChecked())
+        self.directional(False)
+        self.tab('Home')
+        self.assertFalse(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection').isChecked())
+        Gui.activateWorkbench('FemWorkbench')
+        ui_modes.apply_modes()
+        self.assertIsNone(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection'))
+        self.assertIsNone(Gui.getMainWindow().property('FreeCADPlusDirectionalSelection'))
+        Gui.activateWorkbench('PartDesignWorkbench')
+        ui_modes.apply_modes()
+        self.assertFalse(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection').isChecked())
+        self.prefs.SetInt('ToolbarUIMode', 1)
+        ui_modes.apply_modes()
+        self.assertIsNone(Gui.getMainWindow().property('FreeCADPlusDirectionalSelection'))
+        self.prefs.SetInt('ToolbarUIMode', 0)
+        ui_modes.apply_modes()
+        self.assertFalse(Gui.getMainWindow().property('FreeCADPlusDirectionalSelection'))
+
+    def test_directional_native_object_and_element_boxes(self):
+        import Part
+        doc = App.newDocument('DirectionalBoxes')
+        box = doc.addObject('Part::Feature', 'Box')
+        box.Shape = Part.makeBox(20, 10, 4, App.Vector(-10, -5, 0))
+        doc.recompute()
+        view = Gui.activeDocument().activeView()
+        view.setCameraType('Orthographic')
+        view.viewTop()
+        view.fitAll()
+        view.getCameraNode().height = 40
+        settle()
+        # The marker is scoped to standard picking, including Escape cleanup.
+        for command, picking in (('Std_BoxSelection', True), ('Std_ViewBoxZoom', False)):
+            Gui.runCommand(command)
+            settle()
+            self.assertEqual(view.graphicsView().property('FreeCADPlusBoxSelection'), picking)
+            QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+            settle()
+            self.assertIsNone(view.graphicsView().property('FreeCADPlusBoxSelection'))
+        left, right = (-12, 7), (2, -7)
+        for enabled in (True, False):
+            self.directional(enabled)
+            self.assertFalse(self.drag_box(view, left, right, 'Std_BoxSelection'))
+            picked = self.drag_box(view, (2, 7), (-12, -7), 'Std_BoxSelection',
+                                   'box-crossing.png' if enabled else 'box-enclosure.png')
+            self.assertEqual(bool(picked), enabled)
+            self.assertTrue(self.drag_box(view, (-12, 7), (12, -7), 'Std_BoxSelection'))
+        # Native Classic left-to-right selection uses the box center, unchanged.
+        self.prefs.SetInt('ToolbarUIMode', 1)
+        ui_modes.apply_modes()
+        self.assertTrue(self.drag_box(view, left, right, 'Std_BoxSelection'))
+        self.prefs.SetInt('ToolbarUIMode', 0)
+        ui_modes.apply_modes()
+        self.directional(True)
+        class Refuse:
+            def allow(self, doc, obj, sub):
+                return False
+        Gui.Selection.addSelectionGate(Refuse())
+        try:
+            self.assertFalse(self.drag_box(view, (2, 7), (-12, -7), 'Std_BoxSelection'))
+        finally:
+            Gui.Selection.removeSelectionGate()
+        box.Visibility = False
+        curve = doc.addObject('Part::Feature', 'Curve')
+        curve.Shape = Part.makeLine(App.Vector(-10, 0, 0), App.Vector(10, 0, 0))
+        doc.recompute()
+        for enabled in (True, False):
+            self.directional(enabled)
+            self.assertFalse(self.drag_box(view, (-12, 3), (2, -3), 'Std_BoxElementSelection'))
+            self.assertEqual(bool(self.drag_box(view, (2, 3), (-12, -3), 'Std_BoxElementSelection')), enabled)
+            self.assertTrue(self.drag_box(view, (-12, 3), (12, -3), 'Std_BoxElementSelection'))
+
+    def test_directional_native_sketch_boxes(self):
+        import Part
+        self.tab('Sketch')
+        doc = App.newDocument('DirectionalSketch')
+        sketch = doc.addObject('Sketcher::SketchObject', 'Sketch')
+        sketch.addGeometry(Part.LineSegment(App.Vector(-10, 0, 0), App.Vector(10, 0, 0)), False)
+        doc.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        view = Gui.activeDocument().activeView()
+        view.viewTop()
+        view.fitAll()
+        view.getCameraNode().height = 40
+        settle()
+        def has_edge(picked):
+            return any('Edge1' in entry.SubElementNames for entry in picked)
+        for enabled in (True, False):
+            self.directional(enabled)
+            self.assertFalse(has_edge(self.drag_box(view, (-12, 3), (2, -3))))
+            self.assertEqual(has_edge(self.drag_box(view, (2, 3), (-12, -3),
+                             capture='sketch-crossing.png' if enabled else 'sketch-enclosure.png')), enabled)
+            self.assertTrue(has_edge(self.drag_box(view, (-12, 3), (12, -3))))
+        self.prefs.SetInt('ToolbarUIMode', 1)
+        ui_modes.apply_modes()
+        self.assertTrue(has_edge(self.drag_box(view, (2, 3), (-12, -3))))
 
     def test_native_arc_split_and_last_used(self):
         r = self.ribbon
@@ -419,6 +571,7 @@ def prepare_fresh_process():
     prefs.SetInt('ToolbarUIMode', 0)
     ui_modes.apply_modes()
     toolbars.preferences().SetString('PartDesign_Pad', 'PartDesign_Pocket')
+    selection_toolbar.preferences().SetBool('Directional', False)
     App.saveParameter()
 
 
@@ -429,6 +582,9 @@ def verify_fresh_process():
     settle()
     r = toolbars._controller
     assert r.bar.isVisible()
+    directional = r.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection')
+    assert directional is not None and not directional.isChecked()
+    assert Gui.getMainWindow().property('FreeCADPlusDirectionalSelection') is False
     assert all(b.isHidden() for b in r.native_bars())
     button = r.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_PartDesign_Pad')
     assert button.defaultAction() == Gui.Command.get('PartDesign_Pocket').getAction()[0]

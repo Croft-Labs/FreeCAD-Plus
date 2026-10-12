@@ -32,6 +32,7 @@
 #include <FCConfig.h>
 
 #include "MouseSelection.h"
+#include "Selection/PlusSelection.h"
 #include "View3DInventorViewer.h"
 
 
@@ -636,6 +637,13 @@ int RubberbandSelection::locationEvent(const SoLocation2Event* const, const QPoi
 {
     m_iXnew = pos.x();
     m_iYnew = pos.y();
+    const auto policy = plusSelectionPolicy();
+    if (policy.enabled && _pcView3D->property("FreeCADPlusBoxSelection").toBool()) {
+        const bool crossing = policy.crossing(m_iXold > m_iXnew);
+        rubberband.setColor(crossing ? 0.0f : 0.27f, crossing ? 0.7f : 0.4f,
+                            crossing ? 0.0f : 1.0f, 0.5f);
+        rubberband.setLineStipple(crossing);
+    }
     rubberband.setCoords(m_iXold, m_iYold, m_iXnew, m_iYnew);
     draw();
     return Continue;

@@ -52,6 +52,7 @@
 #include <Base/Parameter.h>
 #include <Base/Tools.h>
 
+#include "Selection/PlusSelection.h"
 #include "Command.h"
 #include "Action.h"
 #include "Application.h"
@@ -2763,6 +2764,8 @@ public:
             );
             currentSelectionHandler->prevSelectionEn = viewer->isSelectionEnabled();
             viewer->setSelectionEnabled(false);
+            viewer->setProperty("FreeCADPlusBoxSelection",
+                                selectionMode == View3DInventorViewer::Rubberband);
             viewer->startSelection(selectionMode);
         }
     }
@@ -2823,6 +2826,7 @@ public:
                 selectionHandler
             );
             view->setSelectionEnabled(selectionHandler->prevSelectionEn);
+            view->setProperty("FreeCADPlusBoxSelection", QVariant());
         }
         Application::Instance->commandManager().testActive();
         currentSelectionHandler = nullptr;
@@ -2909,6 +2913,7 @@ StdBoxSelection::StdBoxSelection()
 using SelectionMode = enum
 {
     CENTER,
+    ENCLOSE,
     INTERSECT
 };
 
@@ -2954,7 +2959,7 @@ static std::vector<std::string> getBoxSelection(
     const auto& subs = obj->getSubObjects(App::DocumentObject::GS_SELECT);
     if (subs.empty()) {
         if (!selectElement) {
-            if (mode == INTERSECT || polygon.Contains(bbox.GetCenter())) {
+            if (mode == INTERSECT || (mode == CENTER && polygon.Contains(bbox.GetCenter()))) {
                 ret.emplace_back("");
             }
             return ret;
@@ -3012,6 +3017,13 @@ static std::vector<std::string> getBoxSelection(
                 }
                 if (mode == CENTER && !polygon.Contains(loop.CalcBoundBox().GetCenter())) {
                     continue;
+                }
+                if (mode == ENCLOSE) {
+                    const auto bounds = loop.CalcBoundBox();
+                    if (!polygon.Contains(Base::Vector2d(bounds.MinX, bounds.MinY))
+                        || !polygon.Contains(Base::Vector2d(bounds.MaxX, bounds.MaxY))) {
+                        continue;
+                    }
                 }
                 ret.push_back(element);
             }
@@ -3086,7 +3098,11 @@ static void doSelect(void* ud, SoEventCallback* cb)
 
         // when selecting from right to left then select by intersection
         // otherwise if the center is inside the rectangle
-        if (picked[0][0] > picked[1][0]) {
+        const auto policy = Gui::plusSelectionPolicy();
+        if (policy.enabled) {
+            selectionMode = policy.crossing(picked[0][0] > picked[1][0]) ? INTERSECT : ENCLOSE;
+        }
+        else if (picked[0][0] > picked[1][0]) {
             selectionMode = INTERSECT;
         }
     }

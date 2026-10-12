@@ -36,6 +36,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/ui_modes.py
     freecad_plus/toolbar_layout.py
     freecad_plus/toolbars.py
+    freecad_plus/selection_toolbar.py
     freecad_plus/display.py
     freecad_plus/geometry.py
     freecad_plus/document.py
@@ -57,6 +58,7 @@ install(FILES
     freecad_plus/ui_modes.py
     freecad_plus/toolbar_layout.py
     freecad_plus/toolbars.py
+    freecad_plus/selection_toolbar.py
     freecad_plus/display.py
     freecad_plus/geometry.py
     freecad_plus/document.py
