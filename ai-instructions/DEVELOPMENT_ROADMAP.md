@@ -397,6 +397,13 @@ Do not repeat the completed baseline checks without a new relevant concern.
   Curves choices, Classic and scripted selection. Native build and nineteen toolbar
   cases passed; WORK_STATE owns inventory, restart and visual acceptance evidence.
 
+- [ X ] **TB.2c2c — Sketcher click-selection semantics.** Completed Plus plain
+  point/edge/constraint replacement, repeated-click retention, Ctrl/Shift native
+  multiselection, modified empty-click preservation and selected Escape clearing.
+  Preserve Classic, Curve Intent, boxes and drag initiation. Native build and three
+  focused cases passed; WORK_STATE owns combined regression/coverage evidence.
+  This is a prerequisite to Persistent Selection, not operation retention itself.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

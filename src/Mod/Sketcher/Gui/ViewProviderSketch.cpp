@@ -869,6 +869,14 @@ bool ViewProviderSketch::keyPressed(bool pressed, int key)
                 return true;
             }
             if (isInEditMode()) {
+                if (pressed && Mode == STATUS_NONE && Gui::plusSelectionPolicy().enabled
+                    && Gui::Selection().hasSelection()) {
+                    Gui::Selection().clearSelection();
+                    // Consume this Escape pair without closing the sketch. The
+                    // native unmatched-release guard below consumes its release.
+                    viewProviderParameters.buttonPress = false;
+                    return true;
+                }
                 // #0001479: 'Escape' key dismissing dialog cancels Sketch editing
                 // If we receive a button release event but not a press event before
                 // then ignore this one.
@@ -1077,6 +1085,17 @@ bool ViewProviderSketch::mouseButtonPressed(int Button, bool pressed, const SbVe
             }
         }
         else {// Button 1 released
+            const auto modifiers = QApplication::keyboardModifiers();
+            const bool replaceSelection = Gui::plusSelectionPolicy().enabled
+                && !(modifiers & (Qt::ControlModifier | Qt::ShiftModifier));
+            if (replaceSelection && pp
+                && (Mode == STATUS_SELECT_Point || Mode == STATUS_SELECT_Edge
+                    || Mode == STATUS_SELECT_Cross || Mode == STATUS_SELECT_Constraint)) {
+                // Only a completed plain click replaces the selection. Drags,
+                // right-click picks and modified clicks keep native semantics.
+                // Retain the native hover metadata needed to commit this pick.
+                Gui::Selection().clearSelection(nullptr, false);
+            }
             // Do things depending on the mode of the user interaction
             switch (Mode) {
                 case STATUS_SELECT_Point:
@@ -1180,9 +1199,12 @@ bool ViewProviderSketch::mouseButtonPressed(int Button, bool pressed, const SbVe
                     setSketchMode(STATUS_NONE);
                     return true;
                 }
-                case STATUS_SKETCH_StartRubberBand:// a single click happened, so clear selection
-                                                   // unless user hold control.
-                    if (!(QApplication::keyboardModifiers() & Qt::ControlModifier)) {
+                case STATUS_SKETCH_StartRubberBand:// A plain empty click clears selection;
+                                                   // modified clicks retain the scoped policy.
+                    if (!(QApplication::keyboardModifiers()
+                          & (Gui::plusSelectionPolicy().enabled
+                                 ? (Qt::ControlModifier | Qt::ShiftModifier)
+                                 : Qt::ControlModifier))) {
                         Gui::Selection().clearSelection();
                     }
                     setSketchMode(STATUS_NONE);

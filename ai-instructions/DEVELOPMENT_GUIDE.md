@@ -715,3 +715,15 @@ Inspect stderr for Python gate exceptions, which the native wrapper reports whil
 retaining its upstream fallback. Fresh-process checks also verify a saved unchecked
 Faces category. Run the full toolbar suite and all-workbench inventory audit after
 changes to this native Selection integration.
+
+Sketcher click acceptance uses real native viewport hover/click events without
+clearing selection between assertions. Check sequential and repeated plain edge/
+point/constraint clicks, Ctrl and Shift addition/removal, modified/unmodified empty clicks,
+selected Escape without leaving edit mode, and Classic's unchanged toggle behavior.
+Run with Directional off as well: Design presence scopes clicks independently of
+that toggle. Check Connected Curves replacing the prior selection, then box picking
+multiple curves and a subsequent plain replacement. Preserve the full toolbar suite
+and all-workbench audit after this native integration; operation persistence is not
+established by passing click-selection checks. The constraint case finds the native
+symbol with bounded viewport hover, then clicks it; no synthetic selection callback
+stands in for picking the rendered constraint.

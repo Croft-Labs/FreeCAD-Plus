@@ -97,6 +97,9 @@ TB.2c2a adds the saved Single/Connected/Tangent Curve Intent split button with n
 viewport edge traversal and mapped Sketcher/occurrence handling. WORK_STATE owns
 build and runtime evidence. TB.2c2b adds saved category-checkbox filtering with an
 independent native selection gate, including model and Sketcher batch admission.
+TB.2c2c corrects Plus Sketcher plain-click replacement, modified empty clicks and
+selected Escape handling. Native build and focused point/edge/constraint interaction
+checks passed; WORK_STATE owns combined acceptance and coverage evidence.
 Persistent Selection, Layers and unfinished Plus workflows remain outstanding.
 
 ## Where to go

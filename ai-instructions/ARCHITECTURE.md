@@ -1420,3 +1420,24 @@ the scope. The property and classification cache clear at the next Qt turn or
 presentation change. Mode changes unregister only the Plus gate. Checkbox changes
 clear stale preselection but do not remove an existing selection. Curve-intent
 expansion enters the same admission path. WORK_STATE owns runtime evidence.
+
+## Plus Sketcher click selection (TB.2c2c)
+
+The existing Design-only `PlusSelectionPolicy.enabled` presence flag also scopes
+Sketcher click semantics; the Directional value itself does not govern clicks.
+In `ViewProviderSketch::mouseButtonPressed`, only a completed plain left click on
+a point, edge, axis or constraint clears the preceding selection before native
+admission, retaining the current hover metadata needed to commit the pick.
+Repeating a plain click retains the clicked item. Clearing happens at
+release, after native drag/click classification, so drag initiation, box selection
+and right-click picks retain native handling. Ctrl/Shift clicks keep native toggle
+behavior. Native mapped names, occurrence paths, command/category gates and Curve
+Intent expansion remain authoritative for the replacement selection.
+
+An ordinary empty click clears selection. Plus Ctrl/Shift empty clicks preserve it;
+Classic retains its existing modifier policy. An idle Escape press with a selection
+clears it and uses the native unmatched-release guard to consume the release without
+closing the sketch. Active drawing handlers, geometry/constraint drags and empty
+Escape handling remain native. No persistent preference, geometry change, command
+wrapper or operation-completion policy is introduced. Operation persistence and its
+toolbar toggle remain separate work. WORK_STATE owns acceptance evidence.

@@ -3,12 +3,75 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1, TB.2c2a and TB.2c2b below are implemented and validated in the development payload.
+TB.2b, TB.2c1, TB.2c2a, TB.2c2b and TB.2c2c below are implemented and validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: Persistent Selection, Layers and Plus-only workflows need their
 own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2c Plus Sketcher click selection — October 11–12, 2026
+
+**Implementation:** completed plain point/edge/constraint clicks in Plus Design now
+replace the preceding selection; repeated plain clicks retain the clicked item.
+Ctrl/Shift retain native multiselection and modified empty clicks preserve the
+selection. An ordinary empty click clears it. Escape with an idle selection clears
+it without exiting sketch edit. Drawing-handler/drag Escape behavior remains native.
+The existing Design presence flag scopes these rules independently of Directional
+Selection's checked state. Classic keeps its original click/toggle behavior.
+
+Replacement occurs on release after native click/drag classification and retains
+hover metadata needed to commit the native pick. It does not preempt drag starts,
+box selection or right-click handling. Native admission, mapped names, occurrence
+paths and Curve Intent expansion remain in use. No document identities, geometry,
+properties, command wrappers or saved preferences were added. This implements the
+confirmed click prerequisite; it does not implement operation retention or expose
+a nonfunctional Persistent Selection toggle. Architecture owns the detailed scope.
+
+**Build/source checks:** SketcherGui and its required dependencies built in the
+retained `freecad_1.1.4_context` tree with the existing MSVC 19.44, Qt 6.8.3,
+Python 3.12/libpack configuration and concurrency 3. Final FreeCADPlusScripts
+synchronization passed. All 51 Plus Python files parsed and match the payload byte
+for byte; whitespace checks passed. The only production source change is the
+scoped ViewProviderSketch integration. Classic toolbar/workbench definitions,
+submodule pins and licensing are unchanged.
+
+**Native/visual acceptance:** three focused cases passed in 36.828 seconds. All
+22 TestPlusToolbars cases then passed together in 158.107 seconds, zero failures,
+errors or skips, normal exit 0 and empty stderr. New native mouse/key tests cover
+sequential/repeated point, edge and constraint picks; Ctrl/Shift addition/removal
+and empty clicks; plain empty clearing; selected Escape remaining in edit; Classic
+toggling; Directional-off independence; Connected Curves replacing prior picks;
+and multi-curve box selection followed by a plain replacement. The constraint case
+locates the rendered native symbol through bounded hover before clicking it.
+Inspected viewport pixels show only the newly clicked third curve highlighted,
+with the previously selected connected pair unselected. Existing categories,
+directional selection, native split buttons, custom toolbars, Spreadsheet widgets,
+caption layout and idle behavior also pass.
+
+The separate audit passed all twenty registered workbenches with exit 0: 240
+Classic toolbar-group instances and 1,169 per-workbench command occurrences, no
+omissions, preserved native action/widget ownership and restored visibility. Audit
+stderr contains only the existing missing OpenSCAD executable notice; this does
+not certify external executable availability. Separate prepare/shutdown and restart
+processes both exited 0 with empty stderr. Saved category/Curve Intent/Directional,
+Pocket default and hidden File/shown Edit Classic toolbar preferences persisted.
+
+**Validation corrections:** source review identified that the ordinary selection
+clear also resets hover; replacement now explicitly retains that native metadata.
+The first focused run exposed malformed temporary profile XML and the existing
+synthetic box-after-click fixture ordering issue. The isolated profile is now
+created and parsed with ElementTree, and the established box-before-click sequence
+verifies the intended native interaction. Final focused and full results include
+these corrections; the point/edge/modifier/Escape and rendered-constraint cases
+also passed before the fixture correction.
+
+**Delivery/stopping boundary:** Persistent Selection, Layers, remaining curated
+placements and separately owned Plus operation/task workflows remain unfinished.
+This is not completion of TB.2 or owner packaging. Both development/reference
+shortcuts' targets and working directories remain verified. No remote publication
+or release was performed. Remove only task-generated validation output after
+recording results, retaining the development build, reference build and settings.
 
 ## TB.2c2b Design selection categories — October 11, 2026
 

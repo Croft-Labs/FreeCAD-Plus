@@ -435,6 +435,128 @@ class TestPlusToolbars(unittest.TestCase):
         self.prefs.SetInt('ToolbarUIMode',1);ui_modes.apply_modes()
         self.assertIn('Edge1',click())
 
+    def sketch_click_fixture(self, connected=False):
+        import Part
+        self.tab('Sketch')
+        doc = App.newDocument('PlusSketchClicks')
+        sketch = doc.addObject('Sketcher::SketchObject', 'Sketch')
+        lines = [((-10, 5), (10, 5)), ((-10, -5), (10, -5))]
+        if connected:
+            lines = [((-10, 5), (0, 5)), ((0, 5), (10, 5)), ((-10, -5), (10, -5))]
+        for start, end in lines:
+            sketch.addGeometry(Part.LineSegment(App.Vector(*start, 0), App.Vector(*end, 0)), False)
+        doc.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        view = Gui.activeDocument().activeView()
+        view.viewTop()
+        view.fitAll()
+        view.getCameraNode().height = 40
+        settle()
+        return sketch, view
+
+    def sketch_click(self, view, xy, modifiers=QtCore.Qt.NoModifier):
+        widget = view.graphicsView().viewport()
+        ratio = widget.devicePixelRatioF()
+        screen = view.getPointOnScreen(App.Vector(*xy, 0))
+        pos = QtCore.QPoint(round(screen[0]/ratio), widget.height()-1-round(screen[1]/ratio))
+        self.assertTrue(widget.rect().contains(pos))
+        hover = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pos),
+                                 QtCore.QPointF(widget.mapToGlobal(pos)), QtCore.Qt.NoButton,
+                                 QtCore.Qt.NoButton, modifiers)
+        QtWidgets.QApplication.sendEvent(widget, hover)
+        settle()
+        QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, modifiers, pos)
+        settle()
+        return {s for e in Gui.Selection.getSelectionEx() for s in e.SubElementNames}
+
+    def test_sketch_plain_click_replacement_and_modifiers(self):
+        sketch, view = self.sketch_click_fixture()
+        # Directional off still uses Plus click semantics.
+        self.directional(False)
+        click = lambda xy, modifiers=QtCore.Qt.NoModifier: self.sketch_click(view, xy, modifiers)
+        self.assertEqual(click((-5, 5)), {'Edge1'})
+        self.assertEqual(click((-5, -5)), {'Edge2'})
+        self.assertEqual(click((-5, -5)), {'Edge2'})
+        self.assertEqual(click((-10, 5)), {'Vertex1'})
+        self.assertEqual(click((-10, -5)), {'Vertex3'})
+        for modifier in (QtCore.Qt.ControlModifier, QtCore.Qt.ShiftModifier):
+            self.assertEqual(click((-5, 5)), {'Edge1'})
+            self.assertEqual(click((-5, -5), modifier), {'Edge1', 'Edge2'})
+            self.assertEqual(click((15, 10), modifier), {'Edge1', 'Edge2'})
+            self.assertEqual(click((-5, -5), modifier), {'Edge1'})
+        self.assertFalse(click((15, 10)))
+        self.assertEqual(click((-5, 5)), {'Edge1'})
+        QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+        settle()
+        self.assertFalse(Gui.Selection.getSelection())
+        self.assertIsNotNone(Gui.activeDocument().getInEdit())
+        self.assertEqual(sketch.GeometryCount, 2)
+        self.prefs.SetInt('ToolbarUIMode', 1)
+        ui_modes.apply_modes()
+        settle()
+        self.assertEqual(click((-5, 5)), {'Edge1'})
+        self.assertEqual(click((-5, -5)), {'Edge1', 'Edge2'})
+        self.assertEqual(click((-5, -5)), {'Edge1'})
+        self.assertFalse(click((15, 10)))
+
+    def test_sketch_plain_constraint_click(self):
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        sketch.addConstraint(Sketcher.Constraint('Horizontal', 0))
+        sketch.Document.recompute()
+        settle()
+        widget = view.graphicsView().viewport()
+        ratio = widget.devicePixelRatioF()
+        center = view.getPointOnScreen(App.Vector(0, 5, 0))
+        center = QtCore.QPoint(round(center[0]/ratio), widget.height()-1-round(center[1]/ratio))
+        target = None
+        # Locate the rendered native symbol using real hover, allowing its
+        # theme/DPI-dependent placement instead of inventing a selection callback.
+        for y in range(-96, 97, 6):
+            for x in range(-96, 97, 6):
+                pos = center + QtCore.QPoint(x, y)
+                hover = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(pos),
+                                         QtCore.QPointF(widget.mapToGlobal(pos)), QtCore.Qt.NoButton,
+                                         QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+                QtWidgets.QApplication.sendEvent(widget, hover)
+                if 'Constraint1' in Gui.Selection.getPreselection().SubElementNames:
+                    target = pos
+                    break
+            if target is not None:
+                break
+        self.assertIsNotNone(target, 'Native horizontal-constraint symbol was not found')
+        self.assertEqual(self.sketch_click(view, (-5, -5)), {'Edge2'})
+        for repeat in range(2):
+            hover = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(target),
+                                     QtCore.QPointF(widget.mapToGlobal(target)), QtCore.Qt.NoButton,
+                                     QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(widget, hover)
+            settle()
+            QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, target)
+            settle()
+            self.assertEqual({s for e in Gui.Selection.getSelectionEx() for s in e.SubElementNames},
+                             {'Constraint1'})
+        self.assertEqual(self.sketch_click(view, (-5, -5)), {'Edge2'})
+        self.assertEqual(sketch.ConstraintCount, 1)
+
+    def test_sketch_plain_click_curve_intent_and_box(self):
+        sketch, view = self.sketch_click_fixture(connected=True)
+        self.curve_intent(1)
+        picked = self.drag_box(view, (-12, 7), (12, -7))
+        self.assertTrue({'Edge1', 'Edge2', 'Edge3'} <= {s for e in picked for s in e.SubElementNames})
+        self.assertEqual(self.sketch_click(view, (-5, 5)), {'Edge1', 'Edge2'})
+        self.assertEqual(self.sketch_click(view, (-5, -5)), {'Edge3'})
+        self.assertEqual(self.sketch_click(view, (5, 5)), {'Edge1', 'Edge2'})
+        self.assertEqual(self.sketch_click(view, (-5, -5)), {'Edge3'})
+        self.assertEqual(sketch.GeometryCount, 3)
+        path = Path(os.environ['PLUS_TEST_DIR'])/'sketch-plain-replacement.png'
+        if os.name == 'nt':
+            from TestComponentFading import capture
+            capture(view, path, prepare=False)
+        else:
+            view.graphicsView().viewport().grabFramebuffer().save(str(path))
+
     def curve_intent(self, index):
         button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent')
         menu = button.menu()
