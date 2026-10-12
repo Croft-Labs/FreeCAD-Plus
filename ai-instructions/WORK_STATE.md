@@ -3,13 +3,57 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1 and TB.2c2a through TB.2c2k below are implemented and validated in
-the development payload.
+TB.2a1, TB.2b, TB.2c1 and TB.2c2a through TB.2c2k below are implemented and
+validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2a1 Workbench mode identity — October 12, 2026
+
+**Implementation/build:** Plus routes modes by their native registered workbench
+identity instead of display text. An added workbench named Design no longer gets
+Design tabs/selection policy, and duplicate labels cannot select another mode's
+row. Label changes refresh without changing the route. Existing native identifiers,
+labels, actions, toolbar definitions and saved preferences are unchanged. Only the
+Plus Python adapter changed; FreeCADPlusScripts synchronized successfully into the
+retained development tree. No C++ rebuild was needed.
+
+**Native acceptance:** the new regression first reproduced the wrong selector
+owner for a Design-named workbench (2.503 seconds in unittest, 7.656 with setup).
+After the fix, the case passed (17.051/22.141 seconds), exercising four added
+workbenches: Design, CAM and two identical custom labels. It verifies selector and
+native activation, non-Design tabs/policy, actual native command-button dispatch,
+complete toolbar inventory/Classic restoration, active-label rename and return to
+actual Design. The inspected ribbon capture shows the renamed mode, its own toolbar
+and Home/Tools/View/All Tools tabs without Design selection controls.
+
+All 14 affected regressions passed (65.149/70.234 seconds): native arc split/default
+memory, Plus grouped-command memory, native widgets and Spreadsheet colors, added
+and live custom toolbars, BIM status ownership, Classic independent preferences,
+caption sizing, tabs/idle refresh and category/curve/directional/persistent control
+scope. Together these are 15 distinct cases with no failures, errors, skips or
+timeouts; the suite now contains 63 cases. Unaffected native geometry operations
+were not rerun. Focused/regression stderr is empty and every native process exited 0.
+
+**Preservation/restart:** all nineteen baseline workbenches plus None passed the
+full native inventory audit: 240 toolbar groups and 1169 per-workbench command
+entries, with no unavailable Classic-command placeholders and preserved native
+ownership/restoration (57.766 seconds). Audit stderr contains only the known missing
+external OpenSCAD executable notice. Separate prepare/restart passed (5.265/0.969
+seconds) with empty stderr, preserving selection preferences, remembered Pocket
+choice and independent Classic toolbar visibility. All 51 Plus Python files parse
+and match the payload byte-for-byte; original CRLF endings and whitespace checks
+pass. Both shortcut targets/working directories were reread; development and
+archived executables exist and shortcuts remain unchanged.
+
+**Delivery/limits:** this is a local development increment, not publication or an
+owner-ready package. No Classic source, submodule pin or license changed. The
+native audit certifies toolbar coverage, not every modeling/CAM/FEM operation.
+Owned validation/plus_mode_identity output was removed after recording evidence.
+Layers, the contextual palette and other Plus operation integrations remain open.
 
 ## TB.2c2k Delete All Constraints — October 12, 2026
 

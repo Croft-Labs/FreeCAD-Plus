@@ -664,7 +664,11 @@ this Python 3.12 development tree. Use the same VS environment and bounded concu
 
 Run the extended TestPlusToolbars suite for separate native widget ownership, expanded
 command groups, global/live custom toolbar inclusion and workbenches registered after
-startup. The Spreadsheet case exercises copied native color pickers against actual
+startup. The mode-name collision case registers added workbenches labeled Design, CAM and
+an identical pair of custom names. Verify selector ownership, native activation,
+non-Design tabs and selection-policy scope, command dispatch and complete toolbar
+restoration for each; rename a label while active and return to actual Design.
+The Spreadsheet case exercises copied native color pickers against actual
 selected cells, with one handler dispatch, one Undo entry and preserved Classic widgets.
 The legacy Spreadsheet view.select API takes integer flags: use the Qt 6 enum
 `.value`, not the enum object.

@@ -373,6 +373,11 @@ Do not repeat the completed baseline checks without a new relevant concern.
   Complete native build, eight interaction cases, all twenty registered-workbench
   audits and independent restart passed. WORK_STATE owns the exact evidence.
 
+- [ X ] **TB.2a1 — Preserve workbench routes with duplicate mode names.** Route
+  modes and Design controls by native workbench identity, retaining display labels.
+  Native duplicate/renamed-label acceptance, affected toolbar regressions and full
+  Classic inventory checks are recorded in WORK_STATE.
+
 - [ X ] **TB.2b — Caption and unavailable-control presentation.** Keep medium/small
   placeholders icon-only with accessible names/tooltips; retain full captions in
   at most two lines and reserve scrollbar height. Nine native interaction/layout

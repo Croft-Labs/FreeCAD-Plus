@@ -1275,7 +1275,15 @@ The native command is shared across Classic/Plus presentations; the full storage
 chooser and separate instance-placement workflow remain deferred. Acceptance is
 owned by TestNativeComponentCreation and WORK_STATE.
 
-## Independent Plus toolbar presentation (TB.1 / TB.2a / TB.2b)
+## Independent Plus toolbar presentation (TB.1 / TB.2a / TB.2a1 / TB.2b)
+
+Ribbon.mode_workbench identifies the mode by its registered native workbench name;
+Ribbon.mode is display text only. Design tabs share PartDesignWorkbench as their
+mode owner, while every additional workbench owns its own route. Mode selection,
+selector refresh, tab construction and Design selection-policy scope use that
+identity. Duplicate, translated or renamed display labels cannot select another
+workbench's row or give an added workbench the Design layout/policy. No workbench
+identifier, visible label, command, toolbar definition or saved preference changes.
 
 `freecad_plus/toolbar_layout.py` owns Plus modes, tab routing and Modeling groups.
 `freecad_plus/toolbars.py` owns a separate Qt toolbar/ribbon widget tree, installed

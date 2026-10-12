@@ -76,6 +76,7 @@ class Ribbon(QtCore.QObject):
         self.inventory_names = set()
         self.workbench = ''
         self.mode = 'Design'
+        self.mode_workbench = 'PartDesignWorkbench'
         self.tab = 'Modeling'
         self.tabs = []
         self.bar = QtWidgets.QToolBar('Plus ribbon', window)
@@ -197,7 +198,8 @@ class Ribbon(QtCore.QObject):
         if self._navigate(workbench):
             self.workbench = Gui.activeWorkbench().name()
             self.mode = mode
-            self.tab = 'Modeling' if mode == 'Design' else 'Home'
+            self.mode_workbench = workbench
+            self.tab = 'Modeling' if workbench == 'PartDesignWorkbench' else 'Home'
         self.refresh()
 
     def select_tab(self, index):
@@ -222,7 +224,11 @@ class Ribbon(QtCore.QObject):
         modes = self._modes(available)
         blocker = QtCore.QSignalBlocker(self.selector)
         self.selector.mode_model.replace(modes, available)
-        self.selector.setCurrentIndex(next((i for i, (m, _) in enumerate(modes) if m == self.mode), 0))
+        # Labels can be translated, renamed or shared by different workbenches.
+        index = next((i for i, (_, owner) in enumerate(modes)
+                      if owner == self.mode_workbench), 0)
+        self.selector.setCurrentIndex(index)
+        self.mode = modes[index][0]
         del blocker
 
     def refresh(self):
@@ -233,10 +239,9 @@ class Ribbon(QtCore.QObject):
             wb = Gui.activeWorkbench()
             name = wb.name()
             available = Gui.listWorkbenches()
-            modes = self._modes(available)
             if name != self.workbench:
                 design = next((tab for tab, owner in layout.DESIGN_TABS if owner == name), None)
-                self.mode = 'Design' if design else next((m for m, w in modes if w == name), 'Design')
+                self.mode_workbench = 'PartDesignWorkbench' if design else name
                 if design:
                     # PartDesign defaults to the specified Modeling tab.
                     self.tab = 'Modeling' if name == 'PartDesignWorkbench' else design
@@ -249,7 +254,7 @@ class Ribbon(QtCore.QObject):
                 if not action.property('FreeCADPlusObserved'):
                     action.triggered.connect(self.customization_opened)
                     action.setProperty('FreeCADPlusObserved', True)
-            self.tabs = list(layout.DESIGN_TABS) if self.mode == 'Design' else [
+            self.tabs = list(layout.DESIGN_TABS) if self.mode_workbench == 'PartDesignWorkbench' else [
                 ('Home', name), ('Tools', name), ('View', None), ('All Tools', None)]
             while self.tabbar.count():
                 self.tabbar.removeTab(0)
@@ -410,7 +415,7 @@ class Ribbon(QtCore.QObject):
                 if button:
                     row.addWidget(button)
             self._divider(row)
-        selection_toolbar.append_controls(row, self.mode == 'Design')
+        selection_toolbar.append_controls(row, self.mode_workbench == 'PartDesignWorkbench')
         self.top_layout.replaceWidget(self.common, common)
         self.common.deleteLater()
         self.common = common
@@ -503,7 +508,7 @@ class Ribbon(QtCore.QObject):
         row = QtWidgets.QHBoxLayout(page)
         row.setContentsMargins(0, 2, 0, 0)
         row.setSpacing(0)
-        if self.mode == 'Design' and self.tab == 'Modeling':
+        if self.mode_workbench == 'PartDesignWorkbench' and self.tab == 'Modeling':
             for title, entries in layout.MODELING:
                 self._group(row, title, entries)
         else:

@@ -90,6 +90,8 @@ plus None; All Tools preserves native groups, commands, specialized widgets and
 custom toolbars. Eight interaction tests, every-workbench inventory audit and
 independent restart passed. WORK_STATE owns evidence and the stopping boundary;
 remaining curated layouts and Plus-only workflows are still separate work.
+TB.2a1 routes modes by native workbench identity so duplicate/renamed labels preserve
+added-workbench access and Design-only control scope; WORK_STATE owns acceptance.
 TB.2b adds validated complete two-line captions and icon-only unavailable controls;
 nine interaction/layout cases and all-workbench coverage passed. TB.2c1 adds the
 saved Design Directional Selection control and native model/Sketcher behavior.

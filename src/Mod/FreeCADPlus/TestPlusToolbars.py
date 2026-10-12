@@ -2309,6 +2309,70 @@ class TestPlusToolbars(unittest.TestCase):
             Gui.activateWorkbench('PartDesignWorkbench')
             Gui.removeWorkbench('PlusCoverageWorkbench')
 
+    def test_workbench_mode_name_collisions(self):
+        class CollisionWorkbench(Gui.Workbench):
+            ToolTip = 'Isolated duplicate-mode-name fixture'
+
+            def Initialize(self):
+                self.appendToolbar('Collision ' + self.name(), ['Std_ViewFront', 'Separator',
+                                                               'Std_ViewRear'])
+
+            def GetClassName(self):
+                return 'Gui::PythonWorkbench'
+
+        fixtures = [(name, type(name, (CollisionWorkbench,), {'MenuText': label})())
+                    for name, label in (('PlusDesignCollision', '&Design'),
+                                        ('PlusCAMCollision', 'CAM'),
+                                        ('PlusDuplicateOne', 'Duplicate'),
+                                        ('PlusDuplicateTwo', 'Duplicate'))]
+        for _, wb in fixtures:
+            Gui.addWorkbench(wb)
+        r = self.ribbon
+        try:
+            for name, wb in fixtures:
+                with self.subTest(workbench=name):
+                    r.selector.showPopup()
+                    r.selector.hidePopup()
+                    index = next(i for i in range(r.selector.count())
+                                 if r.selector.itemData(i)[1] == name)
+                    r.selector.setCurrentIndex(index)
+                    settle()
+                    self.assertEqual(Gui.activeWorkbench().name(), name)
+                    self.assertEqual(r.selector.currentData(), (wb.MenuText.replace('&', ''), name))
+                    self.assertEqual([r.tabbar.tabText(i) for i in range(r.tabbar.count())],
+                                     ['Home', 'Tools', 'View', 'All Tools'])
+                    self.assertIsNone(r.common.findChild(QtWidgets.QToolButton,
+                                                        'PlusPersistentSelection'))
+                    self.assertIsNone(Gui.getMainWindow().property('FreeCADPlusPersistentSelection'))
+                    self.assertTrue(r.scroll.widget().findChild(QtWidgets.QWidget,
+                                                               'PlusGroup_Collision ' + name))
+                    doc = App.newDocument('ModeCollision')
+                    action = Gui.Command.get('Std_ViewFront').getAction()[0]
+                    spy = QtTest.QSignalSpy(action.triggered)
+                    self.sketch_command('Std_ViewFront')
+                    self.assertEqual(spy.count(), 1)
+                    App.closeDocument(doc.Name)
+                    audit_workbench(name)
+                    self.assertEqual(r.selector.currentData()[1], name)
+                    # Native workbench activation must resolve the same stable route.
+                    Gui.activateWorkbench('PartDesignWorkbench')
+                    ui_modes.apply_modes()
+                    Gui.activateWorkbench(name)
+                    ui_modes.apply_modes()
+                    self.assertEqual(r.selector.currentData()[1], name)
+            fixtures[-1][1].MenuText = 'Renamed duplicate'
+            r.refresh_modes()
+            self.assertEqual(r.selector.currentData(), ('Renamed duplicate', fixtures[-1][0]))
+            self.assertEqual(r.mode, 'Renamed duplicate')
+            r.host.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'mode-collision.png'))
+        finally:
+            Gui.activateWorkbench('PartDesignWorkbench')
+            for name, _ in fixtures:
+                Gui.removeWorkbench(name)
+            ui_modes.apply_modes()
+        self.assertEqual(r.selector.currentData(), ('Design', 'PartDesignWorkbench'))
+        self.assertIsNotNone(r.common.findChild(QtWidgets.QToolButton, 'PlusPersistentSelection'))
+
     def test_live_customization_refresh(self):
         window = Gui.getMainWindow()
         Gui.Command.get('Std_DlgCustomize').getAction()[0].trigger()
