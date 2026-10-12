@@ -690,3 +690,14 @@ for captures during an active drag; preparation would clear selection and move t
 mouse. Preserve the prior OpenGL context after reading pixels so the release event
 can complete native selection. Inspect crossing/enclosure captures as well as
 selection results; a successful image write is not proof of rendered content.
+
+Curve Intent acceptance covers real split-arrow/menu/icon clicks, mode/Classic scope,
+remembered choice and independent restart. Use native edges to check tangent and
+corner joins, branches, closed edges, independent overlapping solids, linked
+occurrence paths and Sketcher construction indices. Native viewport tests must
+include a real Sketcher click (which supplies a mapped element name), normal-view
+shape edges, box selection and an active command filter. Keep scripted command
+selection unchanged. Place click fixtures away from sketch axes and send explicit
+hover motion before clicking; do not substitute a synthetic selection callback for
+native pick acceptance. The existing full toolbar suite and all-workbench audit
+verify preserved Classic inventory and interactions after the top-row change.

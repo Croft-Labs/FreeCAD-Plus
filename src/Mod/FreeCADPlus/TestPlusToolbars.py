@@ -7,7 +7,7 @@ from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtGui, QtOpenGLWidgets, QtTest, QtWidgets
-from freecad_plus import toolbars, ui_modes, selection_toolbar
+from freecad_plus import toolbars, ui_modes, selection_toolbar, curve_selection
 
 
 def settle():
@@ -21,6 +21,8 @@ class TestPlusToolbars(unittest.TestCase):
         self.before = set(App.listDocuments())
         self.prefs = App.ParamGet('User parameter:BaseApp/Preferences/General')
         self.saved = [self.prefs.GetInt(key, 0) for key in ui_modes.KEYS]
+        self.saved_intent = curve_selection.intent()
+        selection_toolbar.preferences().SetString('CurveIntent', 'Single Curve')
         self.saved_directional = selection_toolbar.preferences().GetBool('Directional', True)
         selection_toolbar.preferences().SetBool('Directional', True)
         self.prefs.SetInt('ToolbarUIMode', 0)
@@ -36,6 +38,7 @@ class TestPlusToolbars(unittest.TestCase):
             Gui.activeDocument().resetEdit()
         for name in set(App.listDocuments()) - self.before:
             App.closeDocument(name)
+        selection_toolbar.preferences().SetString('CurveIntent', self.saved_intent)
         selection_toolbar.preferences().SetBool('Directional', self.saved_directional)
         for key, value in zip(ui_modes.KEYS, self.saved):
             self.prefs.SetInt(key, value)
@@ -258,6 +261,145 @@ class TestPlusToolbars(unittest.TestCase):
         if command:
             self.assertIsNone(view.graphicsView().property('FreeCADPlusBoxSelection'))
         return Gui.Selection.getSelectionEx()
+
+    def curve_intent(self, index):
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent')
+        menu = button.menu()
+        action = menu.actions()[index]
+        observed = []
+        def choose():
+            observed.append(menu.isVisible())
+            QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                   menu.actionGeometry(action).center())
+        QtCore.QTimer.singleShot(100, choose)
+        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                               QtCore.QPoint(button.width()-4, button.height()//2))
+        settle()
+        self.assertEqual(observed, [True])
+        self.assertEqual(button.defaultAction(), action)
+        self.assertEqual(curve_selection.intent(), curve_selection.INTENTS[index])
+        self.assertFalse(button.icon().isNull())
+        self.assertEqual(len(menu.actions()), 3)
+        self.assertEqual(sum(a.isChecked() for a in menu.actions()), 1)
+        return button
+
+    def test_curve_intent_control_and_scope(self):
+        selection_toolbar.preferences().RemString('CurveIntent')
+        self.ribbon.refresh()
+        self.assertEqual(curve_selection.intent(), 'Single Curve')
+        button = self.curve_intent(2)
+        spy = QtTest.QSignalSpy(button.defaultAction().triggered)
+        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                               QtCore.QPoint(8, button.height()//2))
+        self.assertEqual(spy.count(), 1)
+        self.assertFalse(button.menu().isVisible())
+        self.tab('Home')
+        self.assertEqual(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent').text(),
+                         'Tangent Curves')
+        Gui.activateWorkbench('FemWorkbench')
+        ui_modes.apply_modes()
+        self.assertFalse(curve_selection._controller.active)
+        self.assertIsNone(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent'))
+        Gui.activateWorkbench('PartDesignWorkbench')
+        ui_modes.apply_modes()
+        self.assertTrue(curve_selection._controller.active)
+        self.prefs.SetInt('ToolbarUIMode', 1)
+        ui_modes.apply_modes()
+        self.assertFalse(curve_selection._controller.active)
+        self.assertEqual(curve_selection.intent(), 'Tangent Curves')
+
+    def test_curve_intent_native_topology(self):
+        import Part
+        v = App.Vector
+        line = lambda a,b: Part.makeLine(v(*a,0), v(*b,0))
+        edges = {1:line((-10,0),(0,0)), 2:line((0,0),(10,0)), 3:line((10,0),(10,10))}
+        self.assertEqual(curve_selection.connected(edges, 1), [1,2,3])
+        self.assertEqual(curve_selection.connected(edges, 1, True), [1,2])
+        edges[4] = line((0,0),(0,10))
+        self.assertEqual(curve_selection.connected(edges, 1), [1,2,3,4])
+        self.assertEqual(curve_selection.connected(edges, 1, True), [1])
+        circle = Part.makeCircle(5, v(0,5,0))
+        edges[5] = circle
+        self.assertEqual(curve_selection.connected(edges, 5), [5])
+        self.assertNotIn(5, curve_selection.connected(edges, 1))
+        arc = Part.Arc(v(0,0,0),v(7.071067811865,2.928932188135,0),v(10,10,0)).toShape()
+        smooth = {1:edges[1], 2:arc, 3:line((10,10),(10,20))}
+        self.assertEqual(curve_selection.connected(smooth, 1, True), [1,2,3])
+        box = Part.makeBox(10,10,10)
+        combined = dict(enumerate(Part.makeCompound([box,box.copy()]).Edges,1))
+        self.assertEqual(len(curve_selection.connected(combined, 1, topology=True)),12)
+        doc = App.newDocument('CurveOwners')
+        sketch = doc.addObject('Sketcher::SketchObject','Sketch')
+        sketch.addGeometry(Part.Point(v(25,25,0)),True)
+        sketch.addGeometry(Part.LineSegment(v(-10,0,0),v(0,0,0)),False)
+        sketch.addGeometry(Part.LineSegment(v(0,0,0),v(10,0,0)),True)
+        doc.recompute()
+        self.assertEqual(curve_selection.candidates(sketch,'Edge1','Connected Curves'),['Edge1'])
+        root = doc.addObject('App::Part','Root')
+        link = doc.addObject('App::Link','Occurrence');link.setLink(sketch);root.addObject(link)
+        doc.recompute()
+        self.tab('Sketch')
+        Gui.activeDocument().setEdit(sketch.Name);settle()
+        self.assertEqual(curve_selection.candidates(sketch,'Edge2','Connected Curves'),['Edge2','Edge3'])
+        self.assertEqual(curve_selection.candidates(root,'Occurrence.Edge2','Connected Curves'),
+                         ['Occurrence.Edge2','Occurrence.Edge3'])
+
+    def test_curve_intent_native_viewport_and_filters(self):
+        import Part
+        v = App.Vector
+        doc = App.newDocument('CurvePicks')
+        obj = doc.addObject('Part::Feature','Curves')
+        obj.Shape = Part.makeCompound([Part.makeLine(v(-10,0,0),v(0,0,0)),
+                                      Part.makeLine(v(0,0,0),v(10,0,0)),
+                                      Part.makeLine(v(10,0,0),v(10,10,0))])
+        separate = doc.addObject('Part::Feature','Separate')
+        separate.Shape = Part.makeLine(v(10,10,0),v(15,10,0))
+        doc.recompute()
+        view = Gui.activeDocument().activeView()
+        view.setCameraType('Orthographic');view.viewTop();view.fitAll()
+        view.getCameraNode().height = 40
+        settle()
+        def picked():
+            return {sub for entry in self.drag_box(view,(-11,2),(1,-2),'Std_BoxElementSelection')
+                    for sub in entry.SubElementNames if entry.Object == obj}
+        for index, expected in ((0,{'Edge1'}),(1,{'Edge1','Edge2','Edge3'}),(2,{'Edge1','Edge2'})):
+            self.curve_intent(index)
+            self.assertEqual(picked(),expected)
+            self.assertNotIn(separate,Gui.Selection.getSelection())
+        self.curve_intent(1)
+        class OnlyFirst:
+            def allow(self, doc, obj, sub): return sub == 'Edge1'
+        Gui.Selection.addSelectionGate(OnlyFirst())
+        try:
+            self.assertEqual(picked(),{'Edge1'})
+        finally:
+            Gui.Selection.removeSelectionGate()
+        # Programmatic command/collector selection and Classic are unchanged.
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(obj,'Edge1');settle()
+        self.assertEqual(Gui.Selection.getSelectionEx()[0].SubElementNames,('Edge1',))
+        self.prefs.SetInt('ToolbarUIMode',1);ui_modes.apply_modes()
+        self.assertEqual(picked(),{'Edge1'})
+        self.prefs.SetInt('ToolbarUIMode',0);ui_modes.apply_modes()
+        obj.Visibility=False;separate.Visibility=False
+        self.tab('Sketch')
+        sketch=doc.addObject('Sketcher::SketchObject','Sketch')
+        sketch.addGeometry(Part.LineSegment(v(-10,5,0),v(0,5,0)),False)
+        sketch.addGeometry(Part.LineSegment(v(0,5,0),v(10,5,0)),True)
+        doc.recompute();Gui.activeDocument().setEdit(sketch.Name);settle()
+        view.viewTop();view.getCameraNode().height=40;settle()
+        self.curve_intent(1)
+        widget=view.graphicsView().viewport();ratio=widget.devicePixelRatioF()
+        screen=view.getPointOnScreen(v(-5,5,0))
+        position=QtCore.QPoint(round(screen[0]/ratio),widget.height()-1-round(screen[1]/ratio))
+        Gui.Selection.clearSelection()
+        event=QtGui.QMouseEvent(QtCore.QEvent.MouseMove,QtCore.QPointF(position),
+                               QtCore.QPointF(widget.mapToGlobal(position)),QtCore.Qt.NoButton,
+                               QtCore.Qt.NoButton,QtCore.Qt.NoModifier)
+        QtWidgets.QApplication.sendEvent(widget,event);settle()
+        QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,position);settle()
+        self.assertEqual({s for entry in Gui.Selection.getSelectionEx() for s in entry.SubElementNames},
+                         {'Edge1','Edge2'})
+        self.ribbon.host.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'ribbon-curve-intent.png'))
 
     def test_directional_control_scope_and_saved_choice(self):
         selection_toolbar.preferences().RemBool('Directional')
@@ -572,6 +714,7 @@ def prepare_fresh_process():
     ui_modes.apply_modes()
     toolbars.preferences().SetString('PartDesign_Pad', 'PartDesign_Pocket')
     selection_toolbar.preferences().SetBool('Directional', False)
+    selection_toolbar.preferences().SetString('CurveIntent', 'Tangent Curves')
     App.saveParameter()
 
 
@@ -582,6 +725,8 @@ def verify_fresh_process():
     settle()
     r = toolbars._controller
     assert r.bar.isVisible()
+    assert r.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent').text() == 'Tangent Curves'
+    assert curve_selection.intent() == 'Tangent Curves'
     directional = r.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection')
     assert directional is not None and not directional.isChecked()
     assert Gui.getMainWindow().property('FreeCADPlusDirectionalSelection') is False

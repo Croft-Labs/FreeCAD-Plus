@@ -1356,5 +1356,34 @@ The standard selection callback marks its viewer only for that tool's lifetime;
 rectangle styling uses this marker so Box Zoom and feature-specific pickers retain
 native visuals. Sketcher uses the same policy for its existing enclosure/touch tests
 and themed solid/dashed feedback. Existing command selection gates are never replaced.
-Curve intent, category filtering, operation persistence and Layers are separate,
-unimplemented parts of the Selection/Layers scope. Runtime evidence belongs in WORK_STATE.
+Category filtering, operation persistence and Layers remain unimplemented parts of
+the Selection/Layers scope. Curve intent is implemented by the adapter below. Runtime evidence belongs in WORK_STATE.
+
+## Plus Design curve intent (TB.2c2a)
+
+`freecad_plus/curve_selection.py` expands edge picks from native viewport left-button
+events in Plus Design. The Selection toolbar owns a separate icon/arrow split
+button with Single Curve, Connected Curves and Tangent Curves. Its selected action
+is saved as `CurveIntent` under the existing Plus Selection preference group; the
+default is Single Curve. Rebuilding the ribbon retains this choice. Classic and
+other modes disable the observer's expansion; programmatic command/collector and
+tree selections are not expanded. The adapter never replaces native selection gates.
+
+Native `resolveSubElement` and `Part.splitSubname` resolve mapped geometry names and
+preserve the original occurrence prefix. Traversal uses only the selected owner's
+geometry, never spatial proximity to other document objects or occurrences. During
+Sketcher edit it uses native Geometry indices, including construction curves; outside
+edit it uses displayed Shape edge indices. Solid-edge joins require shared native
+vertices, so overlapping independent solids do not become connected. Drawing edges
+use native endpoint positions/tolerances, floored at OCCT linear confusion (1e-7 mm).
+Closed single edges remain single items. Tangent traversal requires an unbranched
+junction and parallel native normalized endpoint tangents (cross magnitude at most
+1e-7); undefined tangents stop traversal. These are implementation tolerances, not
+new owner-specified UI values.
+
+A spatial endpoint index builds the adjacency graph; it is reused only within one
+input event and discarded at the next event-loop turn. No graph or geometry snapshot
+survives later edits. Expanded entries enter `Gui.Selection.addSelection` with their
+original root/path, so current native command filters still apply. No geometry,
+Undo entries, document properties or persistent identities are created by selection.
+WORK_STATE owns native interaction, coverage and restart evidence.

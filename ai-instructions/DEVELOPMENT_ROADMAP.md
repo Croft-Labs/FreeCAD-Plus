@@ -382,9 +382,14 @@ Do not repeat the completed baseline checks without a new relevant concern.
   and opt-in native model/Sketcher enclosure/crossing policy. Preserve Classic, native
   selection gates and distinct rectangle feedback. Native build, twelve toolbar
   cases and independent preference restart passed; WORK_STATE owns exact evidence.
-- [   ] **TB.2c2 — Remaining Selection/Layers controls.** Implement confirmed curve
-  intent, category filtering, operation persistence and Layers behavior through
-  their owning native services. Do not introduce nonfunctional toggles.
+- [   ] **TB.2c2 — Remaining Selection/Layers controls.** Complete category filtering,
+  operation persistence and Layers behavior through their owning native services.
+  Do not introduce nonfunctional toggles.
+- [ X ] **TB.2c2a — Curve Intent.** Add the saved Single/Connected/Tangent split button
+  and native viewport traversal within the selected geometry owner. Preserve mapped
+  names, construction indices, occurrence paths, native filters and Classic behavior.
+  Script synchronization and fifteen native toolbar cases passed; WORK_STATE owns
+  coverage, restart evidence and remaining scope.
 
 ## Operation workflows reached from the panel — outside Group 1
 

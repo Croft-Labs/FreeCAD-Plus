@@ -3,12 +3,72 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b and TB.2c1 below are implemented and validated in the development payload.
+TB.2b, TB.2c1 and TB.2c2a below are implemented and validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
-complete: remaining Selection controls, Layers and Plus-only workflows still need their
+complete: category filtering, Persistent Selection, Layers and Plus-only workflows need their
 own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2a Design Curve Intent — October 11, 2026
+
+**Implementation:** the separate Plus Selection row now includes a native-icon
+split button for Single Curve, Connected Curves and Tangent Curves. The arrow opens
+all choices, selecting one changes the main icon/action, and the saved choice
+survives tab rebuilds and presentation changes. Single Curve is the default.
+Expansion applies to viewport edge picks in Plus Design only; Classic, other modes
+and scripted command/collector selections retain their existing behavior.
+
+Native geometry supplies endpoint topology, tolerances and tangents. Traversal
+stays within the selected owner/occurrence, stops at tangent branches or corners,
+and keeps closed single curves separate. Solid edges require shared vertices.
+Mapped element names use native resolution; edited sketches retain construction
+geometry indices while normal views use displayed shape indices. Every expanded
+entry goes through native selection admission. A per-input-event adjacency cache
+avoids repeated graph construction during box selection and is discarded before
+later edits. No document geometry, identities, ownership or Undo state changes.
+Architecture owns the detailed contract and implementation tolerances.
+
+**Build/source checks:** CMake generation and FreeCADPlusScripts synchronization
+passed in the retained full `freecad_1.1.4_context` development tree. All 50 Plus
+Python files parsed and match the payload byte for byte; whitespace checks passed.
+This increment changes Plus Python code/tests/manifests only. Native workbench
+source, Classic toolbar definitions, submodule pins and licensing are unchanged;
+the existing full native build remains applicable.
+
+**Native/visual acceptance:** all fifteen TestPlusToolbars cases passed together in
+84.587 seconds, zero failures/errors/skips, normal exit 0 and empty stderr. New
+cases cover actual split-menu/icon clicks, default/saved state, mode scope, native
+line/arc tangent chains, branches, closed curves, overlapping independent solids,
+linked occurrence paths and Sketcher construction indices. Real model box picks
+exercise all three intents and native filter rejection; a real Sketcher click
+exercises mapped names and connected construction geometry. Programmatic selections
+and Classic remain unchanged. Existing directional selection, native arc defaults,
+custom toolbars, Spreadsheet widgets, captions and idle behavior also pass.
+The inspected native ribbon capture confirms the separate icon/arrow control in
+the top Selection row with the original ribbon groups intact.
+
+The separate native audit passed all twenty registered workbenches with exit 0:
+240 toolbar-group instances and 1,169 per-workbench command occurrences, no
+omissions, preserved Classic action/widget ownership and restored visibility.
+The existing OpenSCAD external-executable notice remains; this verifies toolbar
+coverage, not external solver availability. Separate prepare/shutdown and restart
+processes both exited 0. Tangent Curves, Directional Selection off, the Pocket
+default and hidden File/shown Edit Classic toolbar preferences all persisted.
+
+**Validation corrections:** the first Sketcher click fixture overlapped its axis
+and needed explicit hover motion. Subsequent native clicks exposed mapped names
+that the initial plain-edge parser missed; native element resolution corrected
+this. The construction-index case also distinguished edited geometry from normal
+Shape edge numbering; the implementation now follows the active native context.
+Final focused and full-suite results above include these fixes.
+
+**Delivery/stopping boundary:** Category filtering, Persistent Selection and Layers
+remain unfinished, as do separately owned Plus operation/task workflows. This
+increment is not completion of TB.2. Both development/reference shortcut targets
+and working directories were re-read and verified. No remote publication or release
+was performed. Remove task-generated validation output after recording results;
+retain the development build, reference payload and unrelated settings.
 
 ## TB.2c1 Design Directional Selection — October 11, 2026
 
