@@ -61,7 +61,8 @@ def append_controls(row, active):
                           'Coincident, Point on Object, Block, Symmetry and\n'
                           'preselected dimensions (including contextual Dimension).\n'
                           'Also keep inputs after Refraction, constraint state toggles,\n'
-                          'and B-spline degree increase.\n'
+                          'and B-spline degree increase. Keep surviving geometry after\n'
+                          'Delete All Constraints.\n'
                           'Continuous dimension tools and other operations retain native cleanup.')
 
     def persistence_changed(checked):

@@ -44,6 +44,7 @@
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
 #include <Gui/Notifications.h>
+#include <Gui/Selection/PlusSelection.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Selection/SelectionObject.h>
 #include <Gui/ViewProvider.h>
@@ -1713,8 +1714,17 @@ void TaskSketcherConstraints::slotConstraintsChanged()
     const std::vector<Sketcher::Constraint*>& vals = sketch->Constraints.getValues();
 
     /* Remove entries, if any */
-    for (std::size_t i = ui->listWidgetConstraints->count(); i > vals.size(); --i)
-        delete ui->listWidgetConstraints->takeItem(i - 1);
+    {
+        // A model refresh is not a user selection change. The Plus command owns
+        // pruning deleted constraints while retaining surviving geometry inputs.
+        QSignalBlocker block(ui->listWidgetConstraints);
+        if (!(Gui::plusSelectionPolicy().enabled
+              && sketchView->getSketchMode() == ViewProviderSketch::STATUS_NONE)) {
+            block.unblock();
+        }
+        for (std::size_t i = ui->listWidgetConstraints->count(); i > vals.size(); --i)
+            delete ui->listWidgetConstraints->takeItem(i - 1);
+    }
 
     /* Add new entries, if any */
     for (std::size_t i = ui->listWidgetConstraints->count(); i < vals.size(); ++i)

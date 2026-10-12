@@ -853,3 +853,21 @@ Plus inputs while preserving native transaction behavior. Keep mixed-selection w
 Inspect a normal-framebuffer capture and rerun Classic inventory and split-button
 regressions. These checks do not certify the separate degree-reduction, conversion
 or knot-editing paths.
+
+
+Delete All Constraints acceptance invokes the original native menu action and
+clicks the real Yes/Cancel buttons. Compare Plus persistence on/off and Classic
+for mixed edge, vertex, origin and constraint selection; confirm deleted constraint
+entries leave selection while surviving geometry remains only in Plus/on. Exercise
+both AutoRecompute settings, native geometry/solve validity and Undo/Redo. A
+constraint-only selection becomes empty. Cancel keeps inputs and adds no transaction;
+a no-op retains Plus geometry and preserves Classic transaction behavior.
+
+Include an edited sketch inside a Part with raw Sketch.Edge/Constraint selection
+paths and verify that only the deleted paths are removed. Compare the actual raw
+native mapped edge reference, not an invented unqualified name. After Undo restores
+constraints, click a real Constraints-list row and verify native user selection;
+programmatic removal must not leave signals blocked. Inspect the normal
+framebuffer after deletion and run affected selection/menu regressions, full Classic
+inventory and independent remembered-dropdown/preferences restart checks. Other
+geometry-deleting or renumbering operations need their own identity handling.

@@ -1613,3 +1613,29 @@ A no-op retains usable inputs with either toggle setting. Classic and commands
 invoked during an interactive handler keep their original cleanup. This contract
 does not cover degree reduction, knot modification or conversion: those operations
 have different identity and completion behavior and retain their native handling.
+
+
+## Delete All Constraints selection cleanup (TB.2c2k)
+
+The native menu-only Sketcher_DeleteAllConstraints command uses the Plus policy
+only for an idle edited sketch. Cancel retains the native early return. After Yes,
+Plus keeps geometry selected while the existing deleteAllConstraints transaction
+runs. That service empties Constraints without replacing or renumbering Geometry.
+Actual constraint-count reduction controls completion cleanup: persistence off
+clears selection, while on removes only selected constraints belonging to the
+edited sketch. An unchanged/aborted operation keeps usable Plus inputs.
+
+Before deletion, the command collects owned App::SubObjectT references from native
+raw selection, filters by the resolved sketch and identifies Constraint elements
+through getOldElementName. After deletion it removes those exact original paths;
+resolving mapped names after their constraints disappear would be unreliable.
+Surviving geometry is never cleared/replayed. Classic and active interactive
+handlers retain native pre-operation cleanup. Native confirmation, solver/recompute,
+Undo/Redo and menu placement are unchanged.
+
+
+During idle Plus constraint-list refresh, native row removal blocks the widget's
+signals. Without this guard, deleting a selected row emits itemSelectionChanged
+and clears the whole viewport selection before the command can prune its deleted
+constraints. The guard ends immediately after row removal; ordinary list clicks,
+Classic mode and active interactive handlers retain their native synchronization.

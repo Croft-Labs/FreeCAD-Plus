@@ -718,6 +718,148 @@ class TestPlusToolbars(unittest.TestCase):
             self.assertEqual(sketch.Document.UndoCount, before + 1)
             self.assertEqual(self.selected_subelements(), set() if classic else {'Vertex3'})
 
+    def delete_constraints_action(self, accept=True):
+        seen = []
+        timer = QtCore.QTimer()
+        def answer():
+            modal = QtWidgets.QApplication.activeModalWidget()
+            if (isinstance(modal, QtWidgets.QMessageBox)
+                    and modal.windowTitle() == 'Delete All Constraints'):
+                seen.append(modal.text())
+                timer.stop()
+                button = modal.button(QtWidgets.QMessageBox.Yes if accept else QtWidgets.QMessageBox.Cancel)
+                QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+        timer.timeout.connect(answer)
+        timer.start(25)
+        try:
+            self.native_constraint_menu('Sketcher_DeleteAllConstraints')
+        finally:
+            timer.stop()
+            timer.deleteLater()
+        self.assertEqual(len(seen), 1)
+
+    def test_delete_all_constraints_retention(self):
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        doc = sketch.Document
+        sketch.addConstraint([Sketcher.Constraint('Horizontal', 0),
+                              Sketcher.Constraint('Horizontal', 1)])
+        doc.recompute()
+        doc.UndoMode = 1
+        preferences = App.ParamGet('User parameter:BaseApp/Preferences/Mod/Sketcher')
+        self.addCleanup(preferences.SetBool, 'AutoRecompute', preferences.GetBool('AutoRecompute', False))
+        names = ('Edge1', 'Vertex4', 'RootPoint', 'Constraint1', 'Constraint2')
+        for auto_recompute in (False, True):
+            preferences.SetBool('AutoRecompute', auto_recompute)
+            for classic, persistent in self.constraint_state_modes():
+                self.constraint_inputs(sketch, names)
+                before = doc.UndoCount
+                self.delete_constraints_action()
+                self.assertEqual(sketch.ConstraintCount, 0)
+                self.assertEqual(sketch.GeometryCount, 2)
+                self.assertEqual(sketch.solve(), 0)
+                self.assertTrue(sketch.Shape.isValid())
+                self.assertAlmostEqual(sketch.Geometry[0].length(), 20.)
+                self.assertAlmostEqual(sketch.Geometry[1].length(), 20.)
+                self.assertEqual(self.selected_subelements(),
+                                 {'Edge1', 'Vertex4', 'RootPoint'} if persistent and not classic else set())
+                self.assertEqual(doc.UndoCount, before + 1)
+                if not classic and persistent:
+                    from TestComponentFading import capture
+                    capture(view, Path(os.environ['PLUS_TEST_DIR'])/'delete-constraints.png', prepare=False)
+                doc.undo()
+                settle()
+                self.assertEqual(sketch.ConstraintCount, 2)
+                doc.redo()
+                settle()
+                self.assertEqual(sketch.ConstraintCount, 0)
+                doc.undo()
+                settle()
+        # Selecting only constraints leaves nothing after a successful deletion.
+        self.prefs.SetInt('ToolbarUIMode', 0)
+        ui_modes.apply_modes()
+        self.persistent(True)
+        self.constraint_inputs(sketch, ('Constraint1', 'Constraint2'))
+        self.delete_constraints_action()
+        self.assertEqual(self.selected_subelements(), set())
+        self.assertEqual(sketch.GeometryCount, 2)
+
+    def test_delete_all_constraints_cancel_and_noop(self):
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        doc = sketch.Document
+        sketch.addConstraint(Sketcher.Constraint('Horizontal', 0))
+        doc.recompute()
+        doc.UndoMode = 1
+        for classic, persistent in self.constraint_state_modes():
+            names = ('Edge1', 'Constraint1')
+            self.constraint_inputs(sketch, names)
+            before = doc.UndoCount
+            self.delete_constraints_action(accept=False)
+            self.assertEqual(sketch.ConstraintCount, 1)
+            self.assertEqual(self.selected_subelements(), set(names))
+            self.assertEqual(doc.UndoCount, before)
+        sketch.delConstraint(0)
+        doc.recompute()
+        deltas = []
+        for classic, persistent in self.constraint_state_modes():
+            self.constraint_inputs(sketch, ('Edge1', 'Vertex4'))
+            before = doc.UndoCount
+            self.delete_constraints_action()
+            self.assertEqual(sketch.ConstraintCount, 0)
+            self.assertEqual(sketch.GeometryCount, 2)
+            self.assertEqual(self.selected_subelements(), set() if classic else {'Edge1', 'Vertex4'})
+            deltas.append(doc.UndoCount - before)
+        self.assertEqual(len(set(deltas)), 1, 'Plus must preserve native no-op transactions')
+
+    def test_delete_all_constraints_nested_selection(self):
+        import Sketcher
+        sketch, view = self.sketch_click_fixture()
+        Gui.activeDocument().resetEdit()
+        doc = sketch.Document
+        root = doc.addObject('App::Part', 'Root')
+        root.addObject(sketch)
+        sketch.addConstraint(Sketcher.Constraint('Horizontal', 0))
+        doc.recompute()
+        self.assertTrue(Gui.activeDocument().setEdit(root, 0, sketch.Name + '.'))
+        settle()
+        doc.UndoMode = 1
+        for classic, persistent in self.constraint_state_modes():
+            Gui.Selection.clearSelection()
+            for name in ('Edge1', 'Constraint1'):
+                Gui.Selection.addSelection(root, sketch.Name + '.' + name)
+            settle()
+            raw = Gui.Selection.getSelectionEx('*', 0)
+            self.assertEqual(len(raw), 1)
+            self.assertEqual(raw[0].Object, root)
+            original_names = tuple(raw[0].SubElementNames)
+            self.assertEqual(len(original_names), 2)
+            self.assertEqual(self.selected_subelements(), {'Edge1', 'Constraint1'})
+            edge_name = next(name for name in original_names if name.endswith('.Edge1'))
+            self.assertTrue(edge_name.startswith('Sketch.'))
+            self.delete_constraints_action()
+            self.assertEqual(sketch.ConstraintCount, 0)
+            raw = Gui.Selection.getSelectionEx('*', 0)
+            if persistent and not classic:
+                self.assertEqual(len(raw), 1)
+                self.assertEqual(raw[0].Object, root)
+                self.assertEqual(tuple(raw[0].SubElementNames), (edge_name,))
+            else:
+                self.assertEqual(raw, [])
+            doc.undo()
+            settle()
+            self.assertEqual(sketch.ConstraintCount, 1)
+            # Programmatic row-removal blocking must end before the next user click.
+            listing = Gui.getMainWindow().findChild(QtWidgets.QListWidget, 'listWidgetConstraints')
+            self.assertIsNotNone(listing)
+            self.assertTrue(listing.isVisible())
+            listing.scrollToItem(listing.item(0))
+            settle()
+            QtTest.QTest.mouseClick(listing.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                   listing.visualItemRect(listing.item(0)).center())
+            settle()
+            self.assertEqual(self.selected_subelements(), {'Constraint1'})
+
     def test_constraint_retention_line_operations(self):
         sketch, view = self.sketch_click_fixture(lines=[((-10, 4), (8, 6)),
                                                        ((-8, -6), (10, -4))])
@@ -1163,7 +1305,7 @@ class TestPlusToolbars(unittest.TestCase):
                     self.assertEqual(sketch.Document.UndoCount, undo)
 
     def native_constraint_menu(self, command):
-        # Refraction is intentionally menu-only in Classic; retain that placement.
+        # These commands are intentionally menu-only in Classic; retain that placement.
         action = Gui.Command.get(command).getAction()[0]
         menu = next(menu for menu in Gui.getMainWindow().findChildren(QtWidgets.QMenu)
                     if action in menu.actions())

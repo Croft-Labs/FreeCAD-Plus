@@ -31,6 +31,7 @@
 #include <Inventor/SbString.h>
 
 #include <App/Application.h>
+#include <App/DocumentObserver.h>
 #include <Base/Console.h>
 #include <Base/Reader.h>
 #include <Base/Writer.h>
@@ -42,6 +43,7 @@
 #include <Gui/MainWindow.h>
 #include <Gui/Notifications.h>
 #include <Gui/View3DInventor.h>
+#include <Gui/Selection/PlusSelection.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Selection/SelectionObject.h>
 #include <Mod/Sketcher/App/PythonConverter.h>
@@ -2159,8 +2161,30 @@ void CmdSketcherDeleteAllConstraints::activated(int iMsg)
         QMessageBox::Cancel);
 
     if (ret == QMessageBox::Yes) {
-        getSelection().clearSelection();
         Sketcher::SketchObject* Obj = getSketchObject();
+        const auto policy = Gui::plusSelectionPolicy();
+        auto* doc = Gui::Application::Instance->editDocument();
+        auto* vp = doc ? dynamic_cast<ViewProviderSketch*>(doc->getInEdit()) : nullptr;
+        const bool plusIdle = policy.enabled && vp
+            && vp->getSketchMode() == ViewProviderSketch::STATUS_NONE;
+        std::vector<App::SubObjectT> selectedConstraints;
+        if (plusIdle) {
+            // Keep owned raw references: deleted mapped names cannot be resolved afterward.
+            for (const auto& selected : getSelection().getSelection("*", Gui::ResolveMode::NoResolve)) {
+                if (selected.pResolvedObject != Obj) {
+                    continue;
+                }
+                App::SubObjectT reference(selected.pObject, selected.SubName);
+                int index;
+                if (reference.getOldElementName(&index) == "Constraint") {
+                    selectedConstraints.push_back(std::move(reference));
+                }
+            }
+        }
+        else {
+            getSelection().clearSelection();
+        }
+        const auto constraintCount = Obj->Constraints.getSize();
 
         try {
             Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Delete all constraints"));
@@ -2183,6 +2207,20 @@ void CmdSketcherDeleteAllConstraints::activated(int iMsg)
             Gui::Command::updateActive();
         else
             Obj->solve();
+
+        if (plusIdle && Obj->Constraints.getSize() < constraintCount) {
+            if (!policy.persistent) {
+                getSelection().clearSelection();
+            }
+            else {
+                // Geometry survives this command; only remove constraints actually deleted.
+                for (const auto& reference : selectedConstraints) {
+                    getSelection().rmvSelection(reference.getDocumentName().c_str(),
+                                                reference.getObjectName().c_str(),
+                                                reference.getSubName().c_str());
+                }
+            }
+        }
     }
     else if (ret == QMessageBox::Cancel) {
         // do nothing

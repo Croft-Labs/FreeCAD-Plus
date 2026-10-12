@@ -3,13 +3,70 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1 and TB.2c2a through TB.2c2j below are implemented and validated in
+TB.2b, TB.2c1 and TB.2c2a through TB.2c2k below are implemented and validated in
 the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2k Delete All Constraints — October 12, 2026
+
+**Implementation/build:** the native menu-only command now keeps usable Plus idle
+inputs through confirmation/completion and prunes deleted constraint references.
+Geometry is not cleared/replayed. Persistent off clears after actual deletion;
+Cancel/no-op preserves Plus inputs. Native dialogs, transactions, solver/recompute
+and Classic cleanup remain unchanged. The native Constraints-list refresh now
+blocks programmatic row-removal signals only in idle Plus, preventing the selected
+row's removal from clearing surviving viewport geometry. Normal list clicks are
+unblocked immediately. SketcherGui and FreeCADPlusScripts rebuilt successfully in
+the retained development tree with concurrency 3.
+
+**Focused acceptance:** all three cases passed (54.565 seconds in unittest, 54.984
+with runner setup), native exit 0 and empty stderr. This covers mixed edge/vertex/
+origin/constraint inputs, constraint-only input, Cancel/no-op, both AutoRecompute
+settings, nested Part edit paths, geometry/solver validity, Undo/Redo and real
+Constraints-list clicks after Undo. The inspected framebuffer shows the retained
+green line, endpoint and origin with constraint symbols removed.
+
+The first run passed Cancel/no-op, then exposed an incorrect test assumption about
+raw names: FreeCAD stores the nested edge with its mapped name. Comparing that
+actual name exposed the programmatic list-row removal that cleared all selection.
+A first exact-text patch missed the file's CRLF endings and led to one unchanged
+repeat of that failure; the actual signal fix preserves the original line endings
+and passed after rebuilding. Native model geometry/transaction code was not changed.
+
+**Affected regressions:** all 12 core cases passed in 272.745 seconds (273.094 with
+setup), covering B-spline elevation, basic/point/concentric constraints, interactive
+picking, rejected/no-op inputs, state toggles and tangency substitutions. All 11
+UI cases passed in 99.573 seconds (99.922 with setup): contextual/named dimension
+Cancel/no-op, Classic restoration, Equal/Construction, native constraint picking,
+mode routing, arc split/default memory, native widgets, custom/added-workbench
+coverage, live customization and Plus group memory. Together with the focused
+cases, 26 distinct cases passed with no failures, errors, skips or timeouts. The
+suite now has 62 cases; unrelated completed cases were not rerun. Every final
+native process exited 0. Focused/UI stderr is empty; core stderr contains exactly
+three expected non-dimensional Driving rejection tracebacks and no other output.
+
+**Preservation/restart:** the native audit passed all nineteen Classic workbenches
+plus None: 240 toolbar groups and 1169 per-workbench command entries, with no
+unavailable Classic-command placeholders and preserved native ownership/restoration.
+Audit took 54.235 seconds; stderr contains only the known external OpenSCAD missing-
+executable notice. Separate prepare/restart passed in 0.531/1.031 seconds with empty
+stderr, preserving selection preferences, remembered Pocket choice and independent
+Classic File/Edit visibility. Native build stderr is empty. All 51 Plus Python files
+parse and match the payload byte-for-byte, native non-ASCII text is preserved and
+whitespace checks pass.
+
+**Delivery/limits:** both shortcut targets and working directories were reread and
+verified; the development executable exists and the archived reference shortcut is
+unchanged. Task-owned validation/plus_delete_constraints files were removed after
+recording these results. No Classic toolbar/workbench definition, submodule pin or
+licensing changed. This is a local development increment, not publication or an
+owner-ready package. Cancel/no-op and native Undo/Redo passed; arbitrary native
+exception/abort paths were not fault-injected. Other deletion/renumbering operations,
+Layers and the contextual palette remain unfinished.
 
 ## TB.2c2j B-spline degree elevation — October 12, 2026
 

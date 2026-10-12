@@ -119,8 +119,10 @@ activation, dialog/commit and handler teardown while preserving continuous picki
 and native autoscale transactions. All 57 toolbar cases, complete Classic inventory
 and independent restart passed; WORK_STATE owns acceptance limits. TB.2c2j adds
 idle B-spline degree-elevation retention through the existing native identity and
-transaction services. WORK_STATE owns targeted acceptance and preservation checks.
-Other operation integrations, Layers and unfinished Plus workflows remain outstanding.
+transaction services. TB.2c2k retains surviving geometry through Delete All Constraints
+and prevents native list refresh from clearing idle Plus selection. Native cleanup
+uses original selection references for deleted constraints, including nested paths.
+WORK_STATE owns targeted acceptance and preservation checks. Other operation integrations, Layers and unfinished Plus workflows remain outstanding.
 
 ## Where to go
 

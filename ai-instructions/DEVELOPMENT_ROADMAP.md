@@ -457,6 +457,13 @@ Do not repeat the completed baseline checks without a new relevant concern.
   affected toolbar regressions passed. WORK_STATE owns inventory/restart evidence
   and limits. Other B-spline operations, Layers and the contextual palette remain open.
 
+- [ X ] **TB.2c2k — Delete All Constraints selection cleanup.** Preserve surviving
+  Plus geometry inputs after confirmed deletion, remove deleted constraint entries,
+  and retain Cancel/no-op inputs. Prevent programmatic Constraints-list row removal
+  from clearing Plus viewport selection; keep native user clicks and Classic cleanup.
+  Native build, three focused cases and 23 affected regressions passed. WORK_STATE
+  owns exact inventory/restart evidence and remaining scope.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not
