@@ -117,12 +117,20 @@ class Ribbon(QtCore.QObject):
         self.bar.hide()
         QtWidgets.QApplication.instance().focusChanged.connect(self.observe_customization)
 
+    def is_status_control(self, bar):
+        # BIM uses Gui::ToolBar inside QStatusBar. Remember its native ownership
+        # even if workbench layout restoration temporarily reparents it.
+        if self.window.statusBar().isAncestorOf(bar):
+            bar.setProperty('FreeCADPlusStatusControl', True)
+        return bool(bar.property('FreeCADPlusStatusControl'))
+
     def native_bars(self):
         # Customization can create a plain QToolBar before the next workbench
         # activation. Include only declared native groups, never nested Plus
         # controls or separate Draft status widgets.
         return [bar for bar in self.window.findChildren(QtWidgets.QToolBar)
-                if bar is not self.bar and (bar.inherits('Gui::ToolBar')
+                if bar is not self.bar and not self.is_status_control(bar)
+                and (bar.inherits('Gui::ToolBar')
                 or bar.property('FreeCADPlusClassicVisible') is not None
                 or (bar.parentWidget() == self.window and bar.objectName() in self.inventory_names))]
 
@@ -161,7 +169,8 @@ class Ribbon(QtCore.QObject):
                     bar.setVisible(visible)
 
     def suppress_native(self, bar, visible):
-        if self.enabled and visible and not bar.property('FreeCADPlusUpdatingNative'):
+        if (self.enabled and visible and not self.is_status_control(bar)
+                and not bar.property('FreeCADPlusUpdatingNative')):
             bar.setProperty('FreeCADPlusClassicVisible', True)
             bar.toggleViewAction().setVisible(False)
             bar.hide()

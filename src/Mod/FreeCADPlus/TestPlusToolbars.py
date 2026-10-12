@@ -27,6 +27,8 @@ class TestPlusToolbars(unittest.TestCase):
             category_selection.preferences().SetBool(key, True)
         self.saved_intent = curve_selection.intent()
         selection_toolbar.preferences().SetString('CurveIntent', 'Single Curve')
+        self.saved_persistent = selection_toolbar.preferences().GetBool('Persistent', True)
+        selection_toolbar.preferences().SetBool('Persistent', True)
         self.saved_directional = selection_toolbar.preferences().GetBool('Directional', True)
         selection_toolbar.preferences().SetBool('Directional', True)
         self.prefs.SetInt('ToolbarUIMode', 0)
@@ -46,6 +48,7 @@ class TestPlusToolbars(unittest.TestCase):
             category_selection.preferences().SetBool(key, value)
         selection_toolbar.preferences().SetString('CurveIntent', self.saved_intent)
         selection_toolbar.preferences().SetBool('Directional', self.saved_directional)
+        selection_toolbar.preferences().SetBool('Persistent', self.saved_persistent)
         for key, value in zip(ui_modes.KEYS, self.saved):
             self.prefs.SetInt(key, value)
         ui_modes.apply_modes()
@@ -84,6 +87,42 @@ class TestPlusToolbars(unittest.TestCase):
             self.assertEqual(bar.parentWidget(), parent)
             self.assertEqual(bar.actions(), actions)
         file_bar.show()
+
+    def test_bim_status_controls_keep_native_ownership(self):
+        App.ParamGet('User parameter:BaseApp/Preferences/Mod/BIM').SetBool('FirstTime', False)
+        Gui.activateWorkbench('BIMWorkbench')
+        ui_modes.apply_modes()
+        settle()
+        window = Gui.getMainWindow()
+        self.addCleanup(window.statusBar().setVisible, not window.statusBar().isHidden())
+        window.statusBar().show()
+        settle()
+        status = window.statusBar().findChild(QtWidgets.QToolBar, 'BIMStatusWidget')
+        self.assertIsNotNone(status)
+        self.assertTrue(status.isVisible())
+        parent, actions = status.parentWidget(), status.actions()
+        self.assertNotIn(status, self.ribbon.native_bars())
+        self.assertIsNone(status.property('FreeCADPlusClassicVisible'))
+        self.assertTrue(actions)
+        for mode in (1, 0):
+            self.prefs.SetInt('ToolbarUIMode', mode)
+            ui_modes.apply_modes()
+            settle()
+            self.assertTrue(status.isVisible())
+            self.assertEqual(status.parentWidget(), parent)
+            self.assertEqual(status.actions(), actions)
+        Gui.activateWorkbench('PartDesignWorkbench')
+        ui_modes.apply_modes()
+        settle()
+        self.assertTrue(status.isHidden())
+        self.assertNotIn(status, self.ribbon.native_bars())
+        Gui.activateWorkbench('BIMWorkbench')
+        ui_modes.apply_modes()
+        settle()
+        self.assertTrue(status.isVisible())
+        self.assertEqual(status.parentWidget(), parent)
+        self.assertEqual(status.actions(), actions)
+        self.assertNotIn(status, self.ribbon.native_bars())
 
     def test_spreadsheet_native_color_widgets(self):
         Gui.activateWorkbench('SpreadsheetWorkbench')
@@ -449,6 +488,7 @@ class TestPlusToolbars(unittest.TestCase):
         Gui.activeDocument().setEdit(sketch.Name)
         settle()
         view = Gui.activeDocument().activeView()
+        view.setAnimationEnabled(False)
         view.viewTop()
         view.fitAll()
         view.getCameraNode().height = 40
@@ -469,6 +509,161 @@ class TestPlusToolbars(unittest.TestCase):
         QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, modifiers, pos)
         settle()
         return {s for e in Gui.Selection.getSelectionEx() for s in e.SubElementNames}
+
+    def persistent(self, checked):
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusPersistentSelection')
+        self.assertIsNotNone(button)
+        if button.isChecked() != checked:
+            QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+            settle()
+        self.assertEqual(selection_toolbar.preferences().GetBool('Persistent', True), checked)
+
+    def sketch_command(self, name):
+        button = self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_' + name)
+        self.assertIsNotNone(button, name)
+        self.ribbon.scroll.ensureWidgetVisible(button)
+        settle()
+        self.assertTrue(button.isEnabled(), name)
+        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+        settle()
+
+    def selected_subelements(self):
+        return {s for e in Gui.Selection.getSelectionEx() for s in e.SubElementNames}
+
+    def test_persistent_control_scope_and_saved_choice(self):
+        selection_toolbar.preferences().RemBool('Persistent')
+        self.ribbon.refresh()
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusPersistentSelection')
+        self.assertTrue(button.isChecked())
+        self.assertFalse(button.icon().isNull())
+        self.persistent(False)
+        self.tab('Home')
+        self.assertFalse(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusPersistentSelection').isChecked())
+        Gui.activateWorkbench('FemWorkbench')
+        ui_modes.apply_modes()
+        self.assertIsNone(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusPersistentSelection'))
+        self.assertIsNone(Gui.getMainWindow().property('FreeCADPlusPersistentSelection'))
+        Gui.activateWorkbench('PartDesignWorkbench')
+        ui_modes.apply_modes()
+        self.persistent(True)
+        self.prefs.SetInt('ToolbarUIMode', 1)
+        ui_modes.apply_modes()
+        self.assertIsNone(Gui.getMainWindow().property('FreeCADPlusPersistentSelection'))
+        self.prefs.SetInt('ToolbarUIMode', 0)
+        ui_modes.apply_modes()
+        self.assertTrue(Gui.getMainWindow().property('FreeCADPlusPersistentSelection'))
+
+    def test_persistent_equal_construction_and_cleanup(self):
+        sketch, view = self.sketch_click_fixture()
+        doc = sketch.Document
+        doc.UndoMode = 1
+        self.sketch_click(view, (-5, 5))
+        self.sketch_click(view, (-5, -5), QtCore.Qt.ShiftModifier)
+        inputs = {'Edge1', 'Edge2'}
+        self.assertEqual(self.selected_subelements(), inputs)
+        undo = doc.UndoCount
+        self.sketch_command('Sketcher_ConstrainEqual')
+        self.assertEqual(sketch.ConstraintCount, 1)
+        self.assertEqual(sketch.Constraints[0].Type, 'Equal')
+        self.assertEqual(doc.UndoCount, undo + 1)
+        self.assertEqual(self.selected_subelements(), inputs)
+        self.sketch_command('Sketcher_ToggleConstruction')
+        self.assertTrue(all(sketch.getConstruction(i) for i in range(2)))
+        self.assertEqual(doc.UndoCount, undo + 2)
+        self.assertEqual(self.selected_subelements(), inputs)
+        output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-construction.png'
+        if os.name == 'nt':
+            from TestComponentFading import capture
+            capture(view, output, prepare=False)
+        else:
+            view.graphicsView().viewport().grabFramebuffer().save(str(output))
+        # A second command consumes the retained native construction indices.
+        self.sketch_command('Sketcher_ToggleConstruction')
+        self.assertFalse(any(sketch.getConstruction(i) for i in range(2)))
+        self.assertEqual(self.selected_subelements(), inputs)
+        doc.undo()
+        settle()
+        self.assertTrue(all(sketch.getConstruction(i) for i in range(2)))
+        doc.undo()
+        settle()
+        self.assertFalse(any(sketch.getConstruction(i) for i in range(2)))
+        doc.undo()
+        settle()
+        self.assertEqual(sketch.ConstraintCount, 0)
+        doc.redo()
+        settle()
+        self.assertEqual(sketch.ConstraintCount, 1)
+        self.assertEqual(self.sketch_click(view, (-5, 5)), {'Edge1'})
+        QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+        settle()
+        self.assertFalse(self.selected_subelements())
+        self.assertIsNotNone(Gui.activeDocument().getInEdit())
+        self.sketch_click(view, (-5, 5))
+        self.assertFalse(self.sketch_click(view, (15, 10)))
+        self.sketch_click(view, (-5, 5))
+        QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Delete)
+        settle()
+        self.assertEqual(sketch.GeometryCount, 1)
+        self.assertFalse(self.selected_subelements())
+        Gui.activeDocument().resetEdit()
+        settle()
+        self.assertFalse(self.selected_subelements())
+
+    def test_persistent_off_and_classic_commands(self):
+        sketch, view = self.sketch_click_fixture()
+        self.persistent(False)
+        self.sketch_click(view, (-5, 5))
+        self.sketch_click(view, (-5, -5), QtCore.Qt.ControlModifier)
+        self.sketch_command('Sketcher_ConstrainEqual')
+        self.assertEqual(sketch.ConstraintCount, 1)
+        self.assertFalse(self.selected_subelements())
+        self.sketch_click(view, (-5, 5))
+        self.sketch_click(view, (-5, -5), QtCore.Qt.ControlModifier)
+        self.sketch_command('Sketcher_ToggleConstruction')
+        self.assertTrue(all(sketch.getConstruction(i) for i in range(2)))
+        self.assertFalse(self.selected_subelements())
+        # A saved ON preference must not change the original Classic command.
+        self.persistent(True)
+        self.prefs.SetInt('ToolbarUIMode', 1)
+        ui_modes.apply_modes()
+        settle()
+        Gui.Selection.addSelection(sketch, 'Edge1')
+        Gui.Selection.addSelection(sketch, 'Edge2')
+        Gui.runCommand('Sketcher_ToggleConstruction')
+        settle()
+        self.assertFalse(any(sketch.getConstruction(i) for i in range(2)))
+        self.assertFalse(self.selected_subelements())
+        sketch.delConstraint(0)
+        Gui.Selection.addSelection(sketch, 'Edge1')
+        Gui.Selection.addSelection(sketch, 'Edge2')
+        Gui.runCommand('Sketcher_ConstrainEqual')
+        settle()
+        self.assertEqual(sketch.ConstraintCount, 1)
+        self.assertFalse(self.selected_subelements())
+
+    def test_persistent_rejected_equal_preserves_inputs(self):
+        sketch, view = self.sketch_click_fixture()
+        sketch.Document.UndoMode = 1
+        # This rejection happens before transaction creation and must keep inputs
+        # even with persistence OFF. Native notifications remain visible.
+        self.persistent(False)
+        self.sketch_click(view, (-5, 5))
+        undo = sketch.Document.UndoCount
+        timer = QtCore.QTimer()
+        def dismiss_warning():
+            modal = QtWidgets.QApplication.activeModalWidget()
+            if isinstance(modal, QtWidgets.QMessageBox):
+                modal.accept()
+        timer.timeout.connect(dismiss_warning)
+        timer.start(25)
+        try:
+            self.sketch_command('Sketcher_ConstrainEqual')
+        finally:
+            timer.stop()
+            timer.deleteLater()
+        self.assertEqual(sketch.ConstraintCount, 0)
+        self.assertEqual(sketch.Document.UndoCount, undo)
+        self.assertEqual(self.selected_subelements(), {'Edge1'})
 
     def test_sketch_plain_click_replacement_and_modifiers(self):
         sketch, view = self.sketch_click_fixture()
@@ -1009,6 +1204,7 @@ def prepare_fresh_process():
     ui_modes.apply_modes()
     toolbars.preferences().SetString('PartDesign_Pad', 'PartDesign_Pocket')
     selection_toolbar.preferences().SetBool('Directional', False)
+    selection_toolbar.preferences().SetBool('Persistent', False)
     selection_toolbar.preferences().SetString('CurveIntent', 'Tangent Curves')
     category_selection.preferences().SetBool('Faces', False)
     App.saveParameter()
@@ -1030,6 +1226,9 @@ def verify_fresh_process():
     directional = r.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection')
     assert directional is not None and not directional.isChecked()
     assert Gui.getMainWindow().property('FreeCADPlusDirectionalSelection') is False
+    persistent = r.common.findChild(QtWidgets.QToolButton, 'PlusPersistentSelection')
+    assert persistent is not None and not persistent.isChecked()
+    assert Gui.getMainWindow().property('FreeCADPlusPersistentSelection') is False
     assert all(b.isHidden() for b in r.native_bars())
     button = r.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_PartDesign_Pad')
     assert button.defaultAction() == Gui.Command.get('PartDesign_Pocket').getAction()[0]

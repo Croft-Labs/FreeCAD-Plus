@@ -28,6 +28,7 @@
 #include <Gui/MainWindow.h>
 #include <Gui/Notifications.h>
 #include <Gui/Selection/Selection.h>
+#include <Gui/Selection/PlusSelection.h>
 #include <Gui/Selection/SelectionObject.h>
 #include <Mod/Sketcher/App/SketchObject.h>
 
@@ -232,8 +233,10 @@ void CmdSketcherToggleConstruction::activated(int iMsg)
 
         tryAutoRecompute(Obj);
 
-        // clear the selection (convenience)
-        getSelection().clearSelection();
+        // Construction changes do not replace the native selected entities.
+        if (!Gui::plusSelectionPolicy().persistent) {
+            getSelection().clearSelection();
+        }
     }
 }
 

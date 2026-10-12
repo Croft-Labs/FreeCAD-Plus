@@ -100,7 +100,10 @@ independent native selection gate, including model and Sketcher batch admission.
 TB.2c2c corrects Plus Sketcher plain-click replacement, modified empty clicks and
 selected Escape handling. Native build and focused point/edge/constraint interaction
 checks passed; WORK_STATE owns combined acceptance and coverage evidence.
-Persistent Selection, Layers and unfinished Plus workflows remain outstanding.
+TB.2c2d adds the saved Persistent Selection toggle and native Equal-to-Construction
+retention, plus a correction that preserves BIM status-toolbar ownership. WORK_STATE
+owns native acceptance. Persistence for other operations, Layers and unfinished
+Plus workflows remain outstanding.
 
 ## Where to go
 

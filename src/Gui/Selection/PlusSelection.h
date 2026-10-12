@@ -13,6 +13,7 @@ struct PlusSelectionPolicy
 {
     bool enabled = false;
     bool directional = true;
+    bool persistent = false;
 
     bool crossing(bool rightToLeft) const
     {
@@ -27,7 +28,8 @@ inline PlusSelectionPolicy plusSelectionPolicy()
         return {};
     }
     const auto value = window->property("FreeCADPlusDirectionalSelection");
-    return {value.isValid(), value.isValid() ? value.toBool() : true};
+    return {value.isValid(), value.isValid() ? value.toBool() : true,
+            value.isValid() && window->property("FreeCADPlusPersistentSelection").toBool()};
 }
 }  // namespace Gui
 #endif

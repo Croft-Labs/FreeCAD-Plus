@@ -44,6 +44,7 @@
 #include <Gui/MainWindow.h>
 #include <Gui/Notifications.h>
 #include <Gui/Selection/Selection.h>
+#include <Gui/Selection/PlusSelection.h>
 #include <Gui/Selection/SelectionFilter.h>
 #include <Gui/Selection/SelectionObject.h>
 #include <Mod/Sketcher/App/GeometryFacade.h>
@@ -9671,8 +9672,10 @@ void CmdSketcherConstrainEqual::activated(int iMsg)
     commitCommand();
     tryAutoRecompute(Obj);
 
-    // clear the selection (convenience)
-    getSelection().clearSelection();
+    // Retain the native input entities only after this completed operation.
+    if (!Gui::plusSelectionPolicy().persistent) {
+        getSelection().clearSelection();
+    }
 }
 
 void CmdSketcherConstrainEqual::applyConstraint(std::vector<SelIdPair>& selSeq, int seqIndex)

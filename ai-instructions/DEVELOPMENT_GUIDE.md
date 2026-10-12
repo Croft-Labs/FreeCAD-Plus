@@ -727,3 +727,29 @@ and all-workbench audit after this native integration; operation persistence is 
 established by passing click-selection checks. The constraint case finds the native
 symbol with bounded viewport hover, then clicks it; no synthetic selection callback
 stands in for picking the rendered constraint.
+
+Persistent Selection acceptance must dispatch actual native commands from the Plus
+buttons. Select two sketch edges through viewport clicks, apply Equal, then
+Construction without reselection; verify native constraints/construction state,
+retained selection, one Undo entry per command and Undo/Redo. Repeat with persistence
+off and with Classic selected while the saved Plus preference is on. Check absent-key
+default, mode/rebuild scope and independent restart. Rejected Equal inputs must
+remain selected without creating an Undo entry. After retention, check plain click,
+empty click, Escape, native Delete and sketch-exit cleanup. Inspect normal-framebuffer
+pixels of retained construction geometry. These checks establish the two-command
+scope only, not arbitrary operation or contextual-palette persistence.
+
+When a validation process is launched hidden, explicitly hide/show the Qt main
+window before maximizing it and require windowHandle().isExposed() for visual
+acceptance. A Qt-visible window can still have an unexposed native surface and an
+empty framebuffer. Disable view animation before setting the sketch fixture's
+camera: a pending fit animation can leave camera position and clipping distances
+inconsistent. Neither a blank framebuffer nor successful image saving establishes
+visible geometry; inspect the final capture from the exposed native view.
+
+Status-control coverage also checks BIM's actual Gui::ToolBar in the native status
+bar. Make its parent visible for the check and restore that parent afterward;
+child isVisible() reflects ancestor visibility as well as the child's own flag.
+Verify unchanged actions/parent, availability through Classic/Plus changes and
+native hide/show when leaving/returning to BIM. It must never enter Plus's ribbon
+visibility bookkeeping, even though its class matches ordinary native toolbars.

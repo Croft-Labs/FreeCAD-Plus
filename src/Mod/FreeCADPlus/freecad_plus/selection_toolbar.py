@@ -16,6 +16,8 @@ def apply(active):
     # None removes the transient property, restoring native Classic behavior.
     value = preferences().GetBool('Directional', True) if active else None
     Gui.getMainWindow().setProperty('FreeCADPlusDirectionalSelection', value)
+    persistent = preferences().GetBool('Persistent', True) if active else None
+    Gui.getMainWindow().setProperty('FreeCADPlusPersistentSelection', persistent)
 
 
 def append_controls(row, active):
@@ -45,6 +47,24 @@ def append_controls(row, active):
 
     button.toggled.connect(changed)
     row.addWidget(button)
+    persistent = QtWidgets.QToolButton()
+    persistent.setObjectName('PlusPersistentSelection')
+    persistent.setAccessibleName('Persistent Selection')
+    persistent.setText('Persistent Selection')
+    persistent.setIcon(Gui.getIcon('edit-select-all'))
+    persistent.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+    persistent.setAutoRaise(True)
+    persistent.setCheckable(True)
+    persistent.setChecked(preferences().GetBool('Persistent', True))
+    persistent.setToolTip('Persistent Selection\nKeep sketch selection after Equal and Construction.\n'
+                          'Other operation integrations are not yet available.')
+
+    def persistence_changed(checked):
+        preferences().SetBool('Persistent', checked)
+        apply(True)
+
+    persistent.toggled.connect(persistence_changed)
+    row.addWidget(persistent)
 
 
 def append_curve_intent(row):

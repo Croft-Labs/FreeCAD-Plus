@@ -1313,6 +1313,11 @@ This creates separate specialized widgets (including the native workbench select
 and complete expanded groups, without stealing Classic's single-widget actions.
 Ordinary split buttons still share their native action/menu. Status-bar controls
 created outside the normal toolbar inventory retain their native location/lifecycle.
+The Plus native-toolbar scan recognizes QStatusBar descendants even when their
+class is Gui::ToolBar (as in BIM). A transient FreeCADPlusStatusControl marker
+preserves that ownership if upstream layout restoration reparents the widget.
+These controls do not acquire Plus visibility bookkeeping or suppression; their
+native owner continues to show/hide them when workbenches change.
 Spreadsheet appends two QtColorPicker widgets outside the command inventory.
 Plus discovers those untagged QWidgetActions in the realized toolbar and uses the
 opt-in SpreadsheetGui.copyColorPicker(source, toolbar) factory. It creates and
@@ -1441,3 +1446,30 @@ closing the sketch. Active drawing handlers, geometry/constraint drags and empty
 Escape handling remain native. No persistent preference, geometry change, command
 wrapper or operation-completion policy is introduced. Operation persistence and its
 toolbar toggle remain separate work. WORK_STATE owns acceptance evidence.
+
+## Plus operation selection retention: Equal / Construction (TB.2c2d)
+
+The Design Selection row owns the `Persistent` boolean (default true) in the
+existing Plus Selection preference group. It publishes the transient
+`FreeCADPlusPersistentSelection` main-window property alongside Directional;
+Classic and other modes remove it. `PlusSelectionPolicy.persistent` requires the
+Design presence flag as well as the checked value. The icon-only control uses a
+native icon and explicitly describes the currently integrated command scope.
+
+Native Sketcher Equal and Toggle Construction consult this policy only at their
+successful completion cleanup. They keep the existing native selection instead of
+clearing and reconstructing it from names or shape indices. Equal does not replace
+input geometry; Construction changes its geometry mode without changing its
+Sketcher identity. The same selected construction edges can therefore feed another
+native command even though construction geometry is excluded from the public Shape.
+Native transactions, solver diagnostics, command filters and failure paths remain
+in charge. Rejected Equal inputs stay selected with either toggle value.
+
+The change does not intercept generic clearSelection, wrap QActions, replay stale
+subelement names, or change drawing-handler, deletion, Undo, Escape, empty-click or
+editor-exit cleanup. Classic retains its original post-command clearing. This is
+only the confirmed Equal-to-Construction retention increment; other constraints,
+geometry-changing commands, asynchronous modeling tasks, the contextual palette
+and Move Components' task-local retention choice are not integrated by this hook.
+Broader retention must establish surviving-entity identity and operation completion
+at each owning service before sharing this preference. WORK_STATE owns validation.

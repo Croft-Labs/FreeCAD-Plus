@@ -404,6 +404,14 @@ Do not repeat the completed baseline checks without a new relevant concern.
   focused cases passed; WORK_STATE owns combined regression/coverage evidence.
   This is a prerequisite to Persistent Selection, not operation retention itself.
 
+- [ X ] **TB.2c2d — Equal/Construction persistence and native status ownership.** Add
+  the saved default-on Persistent Selection toggle and retain native sketch inputs
+  after Equal and Construction. Preserve off/Classic clearing, rejected inputs,
+  native Undo and selection cleanup. Exclude BIM's native status toolbar from Plus
+  ribbon visibility ownership. Native build and focused persistence/status tests
+  passed; WORK_STATE owns combined, visual, inventory and restart acceptance.
+  Other operation integrations and the contextual palette remain unfinished.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

@@ -3,12 +3,79 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1, TB.2c2a, TB.2c2b and TB.2c2c below are implemented and validated in the development payload.
+TB.2b, TB.2c1, TB.2c2a, TB.2c2b, TB.2c2c and TB.2c2d below are implemented and validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
-complete: Persistent Selection, Layers and Plus-only workflows need their
-own implementation, while unconfirmed precise tab placements remain review material.
+complete: persistence for other operations, Layers and Plus-only workflows need
+their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2d Equal/Construction persistence and status controls — October 12, 2026
+
+**Implementation:** added the saved, default-on Persistent Selection control to
+Plus Design. Native Equal and Toggle Construction retain their existing selected
+sketch entities at successful completion when it is on; off and Classic retain
+native post-command clearing. This enables the confirmed Equal-to-Construction
+sequence without reselection. No stale selection names are replayed. Other native
+operations and the contextual palette remain unintegrated, and the tooltip states
+the current command scope. Architecture owns the policy and completion contract.
+
+The exposed-window inventory audit also identified that BIM's status widget uses
+the same Gui::ToolBar class as ribbon toolbars. Plus now recognizes status-bar
+ownership and keeps a transient marker through upstream reparenting. Such controls
+never acquire Plus visibility bookkeeping or suppression. Native actions, parent,
+location and workbench-driven hide/show remain authoritative. Classic command
+behavior and toolbar/workbench definitions are preserved. No submodule pin,
+document identity or geometry service changed.
+
+**Build/source checks:** SketcherGui and dependencies built successfully in the
+retained freecad_1.1.4_context tree with MSVC 19.44, Qt 6.8.3, Python 3.12 and the
+existing libpack, concurrency 3. Final Plus scripts were synchronized afterward.
+All 51 Plus Python files parse and match the development payload byte for byte;
+whitespace checks pass.
+
+**Native/visual acceptance:** four focused persistence cases passed in 33.901
+seconds. The focused BIM status-control case passed in 6.235 seconds. The final
+27-case TestPlusToolbars suite passed in 204.516 seconds, zero failures, errors or
+skips, normal exit 0 and empty stderr. Tests use native Plus button clicks and viewport picks to
+verify Equal followed by Construction, retained construction indices, one Undo
+entry per command, Undo/Redo, off/Classic behavior, rejected inputs with no Undo,
+plain replacement, Escape, empty click, Delete and sketch-exit cleanup. The saved
+toggle's default, rebuild and Design-only scope pass. The BIM case verifies native
+parent/actions and visibility through presentation and workbench changes. Existing
+categories, Curve Intent, directional boxes, native split defaults, custom toolbars,
+Spreadsheet controls, captions and idle behavior also pass.
+
+The inspected final native framebuffer shows both dashed construction lines
+selected with native Equal constraint symbols. The earlier focused image was blank
+and was not accepted as visual evidence; the combined run produced visible geometry.
+
+**Validation corrections:** the initial operation fixtures picked nothing because
+an animated camera retained inconsistent position/clipping while the native window
+was unexposed. The sketch fixture now disables animation before camera setup; the
+isolated runner explicitly hide/shows and exposes its own Qt window. A diagnostic
+then verified native picks and exposure. The first exposed inventory run found the
+BIM status-toolbar ownership bug corrected above. The first focused BIM assertion
+also assumed a visible status-bar parent; the test now shows that parent and restores
+its original state. Neither fixture correction changes application preferences or
+production rendering. Final combined acceptance includes the production fixes.
+
+**Inventory/restart acceptance:** the separate audit passed all twenty registered
+workbenches (nineteen baseline workbenches plus None), 240 native toolbar-group
+instances and 1,169 per-workbench command occurrences. No omissions, stolen native
+widgets/actions or Classic restoration failures remain in this audit. Exit was 0;
+stderr contains only the existing missing OpenSCAD executable notice, so external
+executable availability is not certified. Separate prepare/shutdown and restart
+processes both passed with exit 0 and empty stderr. Persistent and Directional off,
+Tangent Curves, Faces unchecked, Pocket default and hidden File/shown Edit Classic
+toolbar preferences survived independent restart.
+
+**Delivery/stopping boundary:** full Persistent Selection across operations, Layers,
+remaining confirmed placements and separately owned Plus operations/tasks are still
+unfinished. Both development/reference shortcut targets and working directories
+remain verified; neither shortcut was changed. No remote publication or release was
+performed. This is a development-payload increment, not owner packaging. Remove only
+this task's generated validation output after recording results and committing.
 
 ## TB.2c2c Plus Sketcher click selection — October 11–12, 2026
 
