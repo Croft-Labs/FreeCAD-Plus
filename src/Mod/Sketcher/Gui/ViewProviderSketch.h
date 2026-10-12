@@ -543,7 +543,7 @@ public:
     /// sets an DrawSketchHandler in control
     void activateHandler(std::unique_ptr<DrawSketchHandler> newHandler);
     /// removes the active handler
-    void purgeHandler();
+    void purgeHandler(bool clearSelection = true);
     //@}
 
 

@@ -1267,6 +1267,207 @@ class TestPlusToolbars(unittest.TestCase):
         self.assertIsNotNone(Gui.activeDocument().getInEdit())
         self.assertFalse(self.selected_subelements())
 
+    def contextual_preferences(self, continuous=True, show=True, auto_scale=False):
+        prefs = App.ParamGet('User parameter:BaseApp/Preferences/Mod/Sketcher')
+        self.addCleanup(prefs.SetBool, 'ContinuousCreationMode',
+                        prefs.GetBool('ContinuousCreationMode', True))
+        prefs.SetBool('ContinuousCreationMode', continuous)
+        dimensioning = App.ParamGet('User parameter:BaseApp/Preferences/Mod/Sketcher/dimensioning')
+        self.addCleanup(dimensioning.SetInt, 'AutoScaleMode', dimensioning.GetInt('AutoScaleMode', 0))
+        dimensioning.SetInt('AutoScaleMode', 0 if auto_scale else 1)
+        self.dimension_preferences(show)
+
+    def contextual_action(self, view, classic=False, continuous=True, text=None,
+                          accept=True, dialog=True, cycle=False, reference=False):
+        command = 'Sketcher_Dimension'
+        view.viewTop()
+        view.fitAll()
+        camera = view.getCameraNode()
+        camera.position = (0.0, 0.0, float(camera.position.getValue()[2]))
+        camera.height = 40
+        settle()
+        if classic:
+            Gui.runCommand(command)
+            settle()
+        else:
+            self.sketch_command(command)
+        if cycle:
+            QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_M)
+            settle()
+        finish = lambda: self.sketch_click(view, (14, 12))
+        if dialog:
+            self.dimension_action(command, text=text, accept=accept, reference=reference, invoke=finish)
+        else:
+            finish()
+        if classic and continuous:
+            # Native Classic starts a new sequence; leave it before Undo/reselection.
+            QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+            settle()
+        self.assertIsNotNone(Gui.activeDocument().getInEdit())
+        if not classic:
+            # This command is enabled only in STATUS_NONE with sketch selection.
+            selected = self.selected_subelements()
+            sketch = Gui.activeDocument().getInEdit().Object
+            if not selected:
+                Gui.Selection.addSelection(sketch, 'Edge1')
+                settle()
+            self.assertTrue(Gui.Command.get('Sketcher_ConstrainSnellsLaw').getAction()[0].isEnabled())
+            if not selected:
+                Gui.Selection.clearSelection()
+                settle()
+
+    def test_contextual_dimension_native_autoscale(self):
+        self.contextual_preferences(auto_scale=True)
+        sketch, view = self.dimension_circles()
+        doc = sketch.Document
+        doc.UndoMode = 1
+        for classic, persistent in self.constraint_state_modes():
+            self.constraint_inputs(sketch, ('Edge1',))
+            undo = doc.UndoCount
+            self.contextual_action(view, classic, text='10 mm')
+            self.assertEqual(sketch.ConstraintCount, 1)
+            self.assertEqual(sketch.Constraints[0].Type, 'Diameter')
+            self.assertAlmostEqual(sketch.Geometry[0].Radius, 5.0)
+            self.assertAlmostEqual(sketch.Geometry[1].Radius, 4.0*5.0/3.0, places=6)
+            self.assertEqual(sketch.solve(), 0)
+            self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
+            self.assertEqual(self.selected_subelements(), {'Edge1'} if persistent and not classic else set())
+            # Native contextual Dimension commits creation before the separate autoscale.
+            self.assertEqual(doc.UndoCount, undo+2)
+            self.assertEqual(doc.UndoNames[:2], ['Scale geometries', 'Add radius constraint'])
+            doc.undo()
+            settle()
+            self.assertEqual(sketch.ConstraintCount, 1)
+            self.assertAlmostEqual(sketch.Geometry[0].Radius, 3.0)
+            self.assertAlmostEqual(sketch.Geometry[1].Radius, 4.0)
+            doc.undo()
+            settle()
+            self.assertEqual(sketch.ConstraintCount, 0)
+            self.assertEqual(doc.UndoCount, undo)
+            doc.redo()
+            doc.redo()
+            settle()
+            self.assertEqual(sketch.ConstraintCount, 1)
+            self.assertAlmostEqual(sketch.Geometry[0].Radius, 5.0)
+            doc.undo()
+            doc.undo()
+            settle()
+            self.assertEqual(sketch.ConstraintCount, 0)
+
+    def test_contextual_dimension_preselected_length(self):
+        sketch, view = self.sketch_click_fixture()
+        for continuous in (True, False):
+            self.contextual_preferences(continuous)
+            def dispatch(command, classic):
+                self.contextual_action(view, classic, continuous, text='22 mm')
+                self.assertAlmostEqual(sketch.Constraints[0].Value, 22.0)
+                if not classic and selection_toolbar.preferences().GetBool('Persistent'):
+                    view.fitAll()
+                    settle()
+                    output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-contextual-dimension.png'
+                    if os.name == 'nt':
+                        from TestComponentFading import capture
+                        capture(view, output, prepare=False)
+                    else:
+                        view.graphicsView().viewport().grabFramebuffer().save(str(output))
+                    # Keep subsequent placement clicks in the same fixture view.
+                    view.getCameraNode().height = 40
+                    settle()
+            self.check_constraint_retention(sketch, 'Sketcher_Dimension', ('Edge1',), 'Distance', dispatch)
+
+    def test_contextual_dimension_circle_and_geometric_mode(self):
+        self.contextual_preferences()
+        sketch, view = self.dimension_circles()
+        def circular(command, classic):
+            self.contextual_action(view, classic, text='10 mm')
+            self.assertAlmostEqual(sketch.Geometry[0].Radius, 5.0)
+        self.check_constraint_retention(sketch, 'Sketcher_Dimension', ('Edge1',), 'Diameter', circular)
+        Gui.activeDocument().resetEdit()
+        App.closeDocument(sketch.Document.Name)
+        settle()
+        sketch, view = self.sketch_click_fixture(lines=[((-10, 4), (10, 6)), ((-10, -5), (10, -5))])
+        def geometric(command, classic):
+            self.contextual_action(view, classic, dialog=False, cycle=True)
+        self.check_constraint_retention(sketch, 'Sketcher_Dimension', ('Edge1',), 'Horizontal', geometric)
+
+    def test_contextual_dimension_cancel_and_noop(self):
+        sketch, view = self.sketch_click_fixture()
+        sketch.Document.UndoMode = 1
+        for continuous in (True, False):
+            self.contextual_preferences(continuous)
+            for classic, persistent in self.constraint_state_modes():
+                for names, dialog in ((('Edge1',), True), (('RootPoint',), False)):
+                    self.constraint_inputs(sketch, names)
+                    undo = sketch.Document.UndoCount
+                    self.contextual_action(view, classic, continuous, text='24 mm',
+                                           accept=False, dialog=dialog)
+                    self.assertEqual(sketch.ConstraintCount, 0)
+                    self.assertEqual(sketch.Document.UndoCount, undo)
+                    self.assertEqual(self.selected_subelements(), set() if classic else set(names))
+                    self.assertEqual(sketch.solve(), 0)
+                    self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
+
+    def test_contextual_dimension_reference_and_no_dialog(self):
+        sketch, view = self.sketch_click_fixture()
+        self.contextual_preferences()
+        def reference(command, classic):
+            self.contextual_action(view, classic, reference=True)
+            self.assertFalse(sketch.getDriving(0))
+        self.check_constraint_retention(sketch, 'Sketcher_Dimension', ('Edge1',), 'Distance', reference)
+        self.contextual_preferences(show=False)
+        def no_dialog(command, classic):
+            self.contextual_action(view, classic, dialog=False)
+        self.check_constraint_retention(sketch, 'Sketcher_Dimension', ('Edge1',), 'Distance', no_dialog)
+
+    def test_contextual_dimension_continuous_and_escape(self):
+        sketch, view = self.sketch_click_fixture()
+        self.contextual_preferences(show=False)
+        doc = sketch.Document
+        doc.UndoMode = 1
+        for classic, persistent in self.constraint_state_modes():
+            self.constraint_inputs(sketch, ())
+            undo = doc.UndoCount
+            if classic:
+                Gui.runCommand('Sketcher_Dimension')
+                settle()
+            else:
+                self.sketch_command('Sketcher_Dimension')
+            for point, count in (((-5, 5), 1), ((-5, -5), 2)):
+                self.sketch_click(view, point)
+                self.sketch_click(view, (14, 12))
+                self.assertEqual(sketch.ConstraintCount, count)
+                self.assertFalse(self.selected_subelements())
+                self.assertEqual(doc.UndoCount, undo+count)
+                self.assertEqual(sketch.solve(), 0)
+            QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+            settle()
+            self.assertIsNotNone(Gui.activeDocument().getInEdit())
+            doc.undo()
+            doc.undo()
+            settle()
+            self.assertEqual(sketch.ConstraintCount, 0)
+        self.prefs.SetInt('ToolbarUIMode', 0)
+        ui_modes.apply_modes()
+        self.persistent(True)
+        self.constraint_inputs(sketch, ('Edge1',))
+        undo = doc.UndoCount
+        self.sketch_command('Sketcher_Dimension')
+        self.assertEqual(sketch.ConstraintCount, 1)  # uncommitted native preview
+        QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+        settle()
+        self.assertEqual(sketch.ConstraintCount, 0)
+        self.assertEqual(doc.UndoCount, undo)
+        self.assertFalse(self.selected_subelements())
+        # After cancelling the preselected preview, the retained handler is continuous.
+        self.sketch_click(view, (-5, -5))
+        self.sketch_click(view, (14, 12))
+        self.assertEqual(sketch.ConstraintCount, 1)
+        self.assertFalse(self.selected_subelements())
+        self.assertEqual(doc.UndoCount, undo+1)
+        QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+        settle()
+        self.assertIsNotNone(Gui.activeDocument().getInEdit())
+
     def test_persistent_control_scope_and_saved_choice(self):
         selection_toolbar.preferences().RemBool('Persistent')
         self.ribbon.refresh()

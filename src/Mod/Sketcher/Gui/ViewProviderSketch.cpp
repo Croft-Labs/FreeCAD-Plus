@@ -737,10 +737,12 @@ void ViewProviderSketch::deactivateHandler()
 }
 
 /// removes the active handler
-void ViewProviderSketch::purgeHandler()
+void ViewProviderSketch::purgeHandler(bool clearSelection)
 {
     deactivateHandler();
-    Gui::Selection().clearSelection();
+    if (clearSelection) {
+        Gui::Selection().clearSelection();
+    }
 
     // ensure that we are in sketch only selection mode
     auto* view = dynamic_cast<Gui::View3DInventor*>(Gui::Application::Instance->editDocument()->getActiveView());

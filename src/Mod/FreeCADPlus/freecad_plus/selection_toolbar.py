@@ -59,7 +59,7 @@ def append_controls(row, active):
     persistent.setToolTip('Persistent Selection\nKeep sketch selection after Construction, Equal,\n'
                           'Horizontal/Vertical, Parallel, Tangent, Perpendicular,\n'
                           'Coincident, Point on Object, Block, Symmetry and\n'
-                          'preselected distance/angle/radius dimensions.\n'
+                          'preselected dimensions (including contextual Dimension).\n'
                           'Also keep inputs after Refraction and constraint state toggles.\n'
                           'Continuous dimension tools and other operations retain native cleanup.')
 

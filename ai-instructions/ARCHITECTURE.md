@@ -1522,10 +1522,11 @@ as does every active continuous handler through the existing STATUS_NONE guard.
 
 The integration covers the shared named distance, angle and circular dimension
 completion path, including native batch radius/equality constraints and reference
-or preference-suppressed dialogs. The contextual Sketcher_Dimension drawing handler
-retains its own selection lifecycle; this increment does not change it, add dimension
-conversion actions, implement the contextual palette or certify every specialized
-weight/refraction/external-geometry combination. WORK_STATE owns measured acceptance.
+or preference-suppressed dialogs. TB.2c2i below extends the separate contextual
+Sketcher_Dimension handler while preserving native continuous picking. These
+integrations do not add dimension conversion actions, implement the contextual
+palette or certify every specialized weight/external-geometry combination.
+TB.2c2h covers Refraction; WORK_STATE owns measured acceptance.
 
 CurveIntentButton retains QToolButton's native painting and popup behavior. Its
 size hint reserves at least a square icon area plus the current style's menu-arrow
@@ -1571,3 +1572,27 @@ original selection and no committed operation. Invalid object/empty selection no
 returns after the native warning, before accessing the first selection object.
 The Plus ribbon uses the same native toggle group actions, including that group's
 special non-remembering configuration. Ordinary remembered split groups are unchanged.
+
+## Preselected contextual Dimension retention (TB.2c2i)
+
+The native contextual Dimension handler records whether its current sequence began
+with preselection. After native datum completion or a geometric/no-dialog commit,
+Plus returns that preselected operation to ordinary sketch picking. It retains the
+current inputs when Persistent Selection is on or no operation committed (Cancel/
+no-op), and clears them after a successful operation with persistence off. The
+handler records actual EditDatumDialog success; if a native multi-datum sequence
+commits before a later cancellation, it remains an applied operation. Constraint
+creation, M-key alternatives, solver and transaction ownership remain native.
+
+Native ActivateHandler clears selection before activating a new tool. The Plus
+preselected Dimension branch instead uses the same view-provider purge/activate
+services with selection clearing disabled, so initial inputs remain part of the
+actual selection throughout preview and are updated by the native picker.
+
+ViewProviderSketch::purgeHandler takes an optional clearSelection argument, default
+true. The new caller can preserve inputs through native handler deletion, focus and
+viewer cleanup without clearing/reselecting or accessing a deleted handler. All
+existing callers retain their original cleanup. Native Classic behavior and tools
+started without preselection still follow ContinuousCreationMode. resetTool clears
+the preselection flag, so Escape/Undo reset does not turn later continuous picks into
+preselected operations. Explicit Escape continues to clear the cancelled sequence.

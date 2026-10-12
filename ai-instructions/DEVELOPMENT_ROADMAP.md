@@ -442,6 +442,14 @@ Do not repeat the completed baseline checks without a new relevant concern.
   51 toolbar tests passed; WORK_STATE owns visual, full Classic inventory and
   independent restart evidence. Other operation integrations and Layers remain open.
 
+- [ X ] **TB.2c2i — Preselected contextual Dimension persistence.** Preserve Plus
+  inputs through native activation and completed preselected Dimension operations;
+  retain Cancel/no-op inputs and preserve native continuous picking, M-key choices,
+  dialogs, autoscale transactions and Classic cleanup. Native build and all 57
+  toolbar cases passed; WORK_STATE owns final visual, complete Classic inventory,
+  independent restart and geometry-family acceptance limits. Layers, the contextual
+  palette and other operation integrations remain unfinished.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

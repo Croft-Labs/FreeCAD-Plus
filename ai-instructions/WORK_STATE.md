@@ -3,13 +3,98 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1 and TB.2c2a through TB.2c2h below are implemented and validated in
+TB.2b, TB.2c1 and TB.2c2a through TB.2c2i below are implemented and validated in
 the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2i Preselected contextual Dimension — October 12, 2026
+
+**Implementation:** contextual Dimension now preserves Plus preselection through
+native view-provider activation and returns a completed preselected operation to
+ordinary sketch picking. Persistent on retains inputs; off clears them after a
+commit. Cancel/no-op preserves usable Plus inputs. Native M-key alternatives,
+datum dialogs, constraint creation and transaction ownership remain unchanged.
+The existing purgeHandler service has an optional clearSelection argument with
+its original true default for every existing caller. Native Classic and sequences
+started without preselection retain continuous creation. Escape/Undo resets the
+new preselection flag before subsequent picks. No Classic toolbar/workbench
+definition, submodule pin or licensing changed.
+
+**Build:** SketcherGui and FreeCADPlusScripts built successfully in the retained
+freecad_1.1.4_context development tree with concurrency 3. The corrected activation
+path was rebuilt successfully before rerunning native acceptance.
+
+**Validation corrections:** the initial run exposed that native ActivateHandler
+clears selection before activating the handler; merely preserving selection at
+completion was insufficient. The Plus preselected command now uses the same native
+view-provider purge/activate services with clearing disabled. The generated test
+profile also had a missing closing XML element; repaired it and parsed the XML
+before launching. Native datum autoscaling survived Undo and moved later placement
+clicks outside the viewport, so each contextual fixture now normalizes the top view
+and camera extent before dispatch.
+
+The initial runner continued through failed active-preview placement assertions;
+later edit reset reported an access violation, followed by repeated native paint/
+RTTI diagnostics. Only the precisely identified task-owned validation process was
+stopped; no complete result was claimed. The runner now stops on the first failure
+to avoid continuing through a failed preview sequence. The next run passed Cancel/
+no-op but stopped on an Undo-count assertion after circular completion (47.156 seconds,
+native exit 0, no native diagnostics). An independent Classic/Plus comparison showed
+both produce the same two native transactions when first-dimension autoscaling is
+on: Add radius constraint, then Scale geometries. First Undo restores the unscaled
+geometry while leaving its constraint; second removes the constraint. Plus retains
+the selected edge while Classic clears it. No transaction behavior was changed.
+Ordinary completion fixtures now disable autoscale in isolated preferences, with a
+separate native-autoscale Undo/Redo matrix retaining the real default behavior.
+The corrected run passed Cancel/no-op, circular/M-key geometric modes and repeated
+continuous/Escape behavior, then stopped on the autoscale radius tolerance
+(107.031 seconds, native exit 0). Native formatted scaling produced 6.666667 rather
+than the exact fraction 20/3; the assertion now uses six decimal places. The three
+remaining cases (native autoscale, preselected length, reference/no-dialog) passed
+in 87.875 seconds, native exit 0, empty stderr, no failures/errors/skips or watchdog
+interventions. The earlier paint/access-violation diagnostics did not recur in the
+corrected runs. The inspected native framebuffer shows the retained green line with
+its red 22 mm dimension and the other unselected white line.
+
+**Combined native/visual acceptance:** all 57 toolbar cases passed in four
+non-overlapping isolated native processes: 14 in 210.985 seconds, 14 in 292.704,
+14 in 206.203 and 15 in 265.234 (975.126 total). Recorded IDs exactly match the
+source inventory, with no duplicates, failures, errors, skips or popup-watchdog
+interventions. All processes exited 0. First/third/fourth stderr are empty; second
+contains exactly the three expected native non-dimensional Driving rejection
+messages from TB.2c2h and nothing else. The final native framebuffer was inspected:
+the 22 mm line remains green, its dimension is red and the other line is white.
+The initial paint/access-violation diagnostics did not recur.
+
+Runtime coverage includes line and circular dimensions, M-key geometric alternatives,
+Cancel/no-op, reference/no-dialog, native autoscale, repeated continuous picking and
+Escape, with native solve/shape checks and Undo/Redo. It does not certify every
+contextual geometry combination or multi-datum/external-geometry dialog sequence.
+Native transaction/solver behavior is retained rather than replaced.
+
+**Complete inventory/restart:** the separate audit passed all nineteen Classic
+workbenches plus None: 240 native toolbar-group instances and 1,169 per-workbench
+command occurrences, native exit 0. Its only stderr notice was the known missing
+external OpenSCAD executable. Separate prepare/restart processes passed with exit 0
+and empty stderr, retaining Persistent/Directional off, Tangent Curves, Faces
+unchecked, remembered Pocket choice and hidden File/shown Edit Classic settings.
+Both shortcuts were reopened/read: the development executable and working directory
+still point to freecad_1.1.4_context/bin; the archived-fork reference target and
+working directory remain unchanged and exist.
+
+**Source/publication/cleanup:** all 51 Plus Python files parse and match the
+retained development payload. Native non-ASCII text and source whitespace checks
+pass. No push, release or owner-ready packaging is claimed. The owned
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/plus_contextual_dimension`
+validation directory was removed after recording these durable results; all native
+validation processes exited. Useful builds, settings,
+dependencies and reference shortcuts are retained. This increment is prepared as a
+focused local commit. Layers, the contextual palette and other operation persistence
+remain unfinished; TB.2 and Group 1 remain incomplete.
 
 ## TB.2c2h Constraint states and Refraction — October 12, 2026
 

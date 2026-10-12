@@ -811,3 +811,33 @@ counts and mixed-object rejection must preserve inputs and create no constraint 
 Undo entry; test the mixed-object guard through an enabled native menu action. Inspect a normal-framebuffer capture of selected
 constraint symbols after state changes. These checks do not establish arbitrary
 operation persistence or contextual Sketcher_Dimension completion.
+
+
+Contextual Dimension retention acceptance must launch the actual native Dimension
+choice in the Plus split menu, move/place its preview in the viewport and complete
+the native datum dialog. Compare Plus on/off and Classic with ContinuousCreationMode
+both on and off. Verify resulting length/circular constraints, M-key geometric
+alternatives, reference/no-dialog completion, selected names, solve/shape validity
+and native Undo/Redo. Cancel and an origin-only no-op preserve Plus inputs without
+committing. An enabled native command guarded by STATUS_NONE confirms that Plus
+preselected completion returned to ordinary sketch picking.
+
+With no initial selection, exercise repeated native contextual picks and completion
+without retaining the previous sequence. Cancel a preselected preview with Escape,
+then pick/complete another sequence and confirm native continuous cleanup. Inspect
+a normal-framebuffer capture of retained dimensioned input. Preserve existing
+handler-consumer regressions, full Classic toolbar inventory and independent saved
+preference/dropdown restart checks after changing native handler teardown.
+
+Validate generated isolated-profile XML before launching FreeCAD. For contextual
+Dimension placement matrices, normalize the top view/camera extent before each
+command: native datum autoscaling survives document Undo and can move a later test
+click outside the viewport. Stop the runner on its first failure; do not continue
+Undo/edit-reset assertions through a failed active-preview placement sequence.
+
+Contextual Dimension's native first-dimension autoscale creates two Undo entries:
+constraint creation, then Scale geometries. Preserve and test both in Plus/Classic,
+including whole-sketch scaling and two-step Undo/Redo. Test ordinary single-transaction
+completion separately with dimensioning/AutoScaleMode=Never (1) in isolated test
+preferences, restoring it afterward. Do not change native transactions merely to
+satisfy the one-operation fixture's Undo count.

@@ -2069,6 +2069,7 @@ protected:
     std::vector<SelIdPair> selSplineAndCo;
 
     std::vector<std::string> initialSelection;
+    bool preselectedOperation = false;
 
     std::vector<int> cstrIndexes;
 
@@ -2089,6 +2090,7 @@ protected:
             return;
         }
 
+        preselectedOperation = true;
         availableConstraint = AvailableConstraint::FIRST;
 
         // Add the selected elements to their corresponding selection vectors
@@ -2132,19 +2134,32 @@ protected:
         const std::vector<Sketcher::Constraint*>& ConStr = Obj->Constraints.getValues();
 
         bool commandHandledInEditDatum = false;
+        bool applied = false;
         for (int index : cstrIndexes | boost::adaptors::reversed) {
             if (show && ConStr[index]->isDimensional() && ConStr[index]->isDriving) {
                 commandHandledInEditDatum = true;
                 EditDatumDialog editDatumDialog(sketchgui, index);
                 editDatumDialog.exec();
-                if (!editDatumDialog.isSuccess()) {
+                const bool success = editDatumDialog.isSuccess();
+                applied |= success;
+                if (!success) {
                     break;
                 }
             }
         }
 
-        if (!commandHandledInEditDatum)
+        if (!commandHandledInEditDatum) {
+            applied = !cstrIndexes.empty();
             Gui::Command::commitCommand();
+        }
+
+        // A Plus operation begun with preselection returns to ordinary sketch picking.
+        // Dialog cancellation preserves usable inputs even when persistence is off.
+        const auto policy = Gui::plusSelectionPolicy();
+        if (preselectedOperation && policy.enabled) {
+            sketchgui->purgeHandler(applied && !policy.persistent);
+            return; // purgeHandler deletes this handler
+        }
 
         // This code enables the continuous creation mode.
         bool continuousMode = hGrp->GetBool("ContinuousCreationMode", true);
@@ -3190,6 +3205,7 @@ protected:
 
     void resetTool()
     {
+        preselectedOperation = false;
         Gui::Command::abortCommand();
         Gui::Selection().clearSelection();
         Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Dimension"));
@@ -3230,7 +3246,17 @@ void CmdSketcherDimension::activated(int iMsg)
         SubNames = selection[0].getSubNames();
     }
 
-    ActivateHandler(getActiveGuiDocument(), std::make_unique<DrawSketchHandlerDimension>(SubNames));
+    if (!SubNames.empty() && Gui::plusSelectionPolicy().enabled) {
+        auto* doc = getActiveGuiDocument();
+        auto* vp = doc ? dynamic_cast<ViewProviderSketch*>(doc->getInEdit()) : nullptr;
+        if (vp) {
+            vp->purgeHandler(false);
+            vp->activateHandler(std::make_unique<DrawSketchHandlerDimension>(SubNames));
+        }
+    }
+    else {
+        ActivateHandler(getActiveGuiDocument(), std::make_unique<DrawSketchHandlerDimension>(SubNames));
+    }
 }
 
 void CmdSketcherDimension::updateAction(int mode)
