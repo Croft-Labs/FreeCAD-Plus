@@ -148,6 +148,65 @@ class TestPlusToolbars(unittest.TestCase):
         self.tab('Modeling')
         r.host.grab().save(str(output/'ribbon-modeling.png'))
 
+    def test_captions_and_icon_only_controls_on_narrow_window(self):
+        window = Gui.getMainWindow()
+        original_font = QtWidgets.QApplication.font()
+        try:
+            window.showNormal()
+            window.resize(1000, 760)
+            for scale in (1.0, 1.5):
+                font = QtGui.QFont(original_font)
+                if font.pointSizeF() > 0:
+                    font.setPointSizeF(font.pointSizeF() * scale)
+                else:
+                    font.setPixelSize(round(font.pixelSize() * scale))
+                QtWidgets.QApplication.setFont(font)
+                self.ribbon.refresh()
+                self.tab('Modeling')
+                page = self.ribbon.scroll.widget()
+                pending = [b for b in page.findChildren(QtWidgets.QToolButton)
+                           if b.property('PlusUnavailable') is not None]
+                self.assertTrue(pending)
+                for button in pending:
+                    self.assertFalse(button.isEnabled())
+                    self.assertFalse(button.icon().isNull())
+                    self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonIconOnly)
+                    self.assertTrue(button.accessibleName())
+                    self.assertIn('not available', button.toolTip())
+                # Check actual full-inventory groups, including long native captions.
+                Gui.activateWorkbench('FemWorkbench')
+                ui_modes.apply_modes()
+                self.assertEqual(self.ribbon.mode, 'FEM')
+                self.tab('All Tools')
+                captions = self.ribbon.scroll.widget().findChildren(QtWidgets.QLabel, 'PlusCaption')
+                self.assertTrue(captions)
+                self.assertTrue(any('\n' in c.text() for c in captions))
+                for label in captions:
+                    lines = label.text().split('\n')
+                    self.assertLessEqual(len(lines), 2)
+                    self.assertEqual(' '.join(lines), label.accessibleName())
+                    metrics = label.fontMetrics()
+                    self.assertGreaterEqual(label.contentsRect().width(),
+                                            max(metrics.horizontalAdvance(line) for line in lines))
+                    self.assertGreaterEqual(label.contentsRect().height(),
+                                            metrics.height() + (len(lines) - 1) * metrics.lineSpacing())
+                    top = label.mapTo(self.ribbon.scroll.widget(), QtCore.QPoint())
+                    self.assertLessEqual(top.y() + label.height(), self.ribbon.scroll.viewport().height())
+                scroll = self.ribbon.scroll.horizontalScrollBar()
+                self.assertGreater(scroll.maximum(), 0)
+                scroll.setValue(scroll.maximum())
+                settle()
+                self.ribbon.host.grab().save(str(Path(os.environ['PLUS_TEST_DIR']) /
+                                                ('ribbon-narrow-' + str(scale) + '.png')))
+                Gui.activateWorkbench('PartDesignWorkbench')
+                ui_modes.apply_modes()
+                self.tab('Modeling')
+        finally:
+            QtWidgets.QApplication.setFont(original_font)
+            self.ribbon.refresh()
+            window.showMaximized()
+            settle()
+
     def test_native_arc_split_and_last_used(self):
         r = self.ribbon
         self.tab('Sketch')

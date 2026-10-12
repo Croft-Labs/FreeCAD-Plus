@@ -673,3 +673,9 @@ Plus controls with native commands/actions, checks specialized widget classes an
 routes, and captures representative first/end horizontal-scroll positions. Record any
 commands absent from Classic separately. This certifies inventory/control coverage;
 it does not certify every modeling/CAM/FEM operation or unfinished Plus task workflow.
+
+The caption/control case also resizes the native window and rebuilds at normal and
+1.5-times UI font sizes. Check complete captions against per-line font metrics,
+vertical viewport fit and horizontal overflow; restore the application font/window
+in finally. Synchronize programmatic workbench activation before checking mode labels
+or taking captures. This is a Qt ribbon check, not viewport rendering evidence.

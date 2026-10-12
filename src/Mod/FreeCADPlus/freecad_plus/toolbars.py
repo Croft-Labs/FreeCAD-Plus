@@ -410,6 +410,25 @@ class Ribbon(QtCore.QObject):
         divider.setStyleSheet('color: gray;')
         row.addWidget(divider)
 
+    @staticmethod
+    def _caption(text, width):
+        """Keep complete captions on at most two lines, growing for long words."""
+        label = QtWidgets.QLabel()
+        label.setObjectName('PlusCaption')
+        label.setTextFormat(QtCore.Qt.PlainText)
+        label.setAlignment(QtCore.Qt.AlignCenter)
+        label.setAccessibleName(text)
+        metrics = label.fontMetrics()
+        lines = [text]
+        if metrics.horizontalAdvance(text) > width:
+            splits = [(text[:i], text[i + 1:]) for i, char in enumerate(text) if char == ' ']
+            if splits:
+                lines = min(splits, key=lambda pair: max(metrics.horizontalAdvance(t) for t in pair))
+        label.setText('\n'.join(lines))
+        # Explicit line breaks prevent Qt from squeezing a caption into three or
+        # more rows. Its natural minimum width keeps even long words intact.
+        return label
+
     def _group(self, row, title, entries):
         group = QtWidgets.QWidget()
         group.setObjectName('PlusGroup_' + title)
@@ -434,6 +453,7 @@ class Ribbon(QtCore.QObject):
                 button.setEnabled(False)
                 button.setProperty('PlusUnavailable', list(commands))
                 button.setText(caption)
+                button.setIcon(Gui.getIcon('forbidden'))
                 button.setToolTip(caption + ' is not available in this build.')
                 button.setAccessibleName(caption)
             span = {'large': 6, 'medium': 3, 'small': 2}[size]
@@ -449,9 +469,7 @@ class Ribbon(QtCore.QObject):
                 button.setIconSize(QtCore.QSize(32, 32))
                 button.setMinimumHeight(55)
                 cell_box.addWidget(button)
-                label = QtWidgets.QLabel(caption)
-                label.setAlignment(QtCore.Qt.AlignCenter)
-                label.setWordWrap(True)
+                label = self._caption(caption, 82)
                 label.setMinimumWidth(82)
                 cell_box.addWidget(label)
                 grid.addWidget(cell, slot, column, span, 1)
@@ -463,8 +481,7 @@ class Ribbon(QtCore.QObject):
             slot += span
         box.addLayout(grid)
         box.addStretch()
-        label = QtWidgets.QLabel(title)
-        label.setAlignment(QtCore.Qt.AlignCenter)
+        label = self._caption(title, grid.minimumSize().width())
         box.addWidget(label)
         row.addWidget(group)
         self._divider(row)
@@ -508,6 +525,9 @@ class Ribbon(QtCore.QObject):
         row.addStretch()
         old = self.scroll.takeWidget()
         self.scroll.setWidget(page)
+        # Reserve the horizontal scrollbar without clipping the bottom captions.
+        height = page.minimumSizeHint().height() + self.scroll.horizontalScrollBar().sizeHint().height()
+        self.scroll.setMinimumHeight(max(137, height))
         if old:
             old.deleteLater()
 

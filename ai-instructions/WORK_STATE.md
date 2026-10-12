@@ -2,12 +2,63 @@
 
 ## Authorized objective and stopping boundary
 
-The October 11 owner continuation requires all Classic workbenches and toolbars to
-be preserved and included in Plus. TB.2a is implemented and validated in the complete
-development payload. This increment is complete: stop after recording delivery and
-the focused local commit. Precise remaining curated placements, Selection/Layers and
-unfinished Plus operation workflows remain separately scoped. TB.2 and Group 1 as
-a whole remain incomplete; do not restart completed coverage checks without a new change.
+The owner continued Plus toolbar work after complete Classic coverage. TB.2a and
+TB.2b below are implemented and validated in the development payload. All nineteen
+Classic workbenches plus None remain included. TB.2 as a whole is not complete:
+Selection/Layers integration and remaining Plus-only workflows still need their
+own implementation, while unconfirmed precise tab placements remain review material.
+Do not repeat completed checks unless new changes justify them. Group 1 remains
+incomplete and is not activated by this toolbar continuation.
+
+## TB.2b Complete captions and icon-only unavailable controls — October 11, 2026
+
+**Implementation:** the separate Plus ribbon now keeps unavailable medium/small
+controls icon-only, using the existing native forbidden icon with their complete
+accessible names and explanatory tooltips. They remain disabled. Available commands
+retain their original icons, shared actions and split menus. Large-button and group
+captions use literal text with at most two balanced lines; long words retain their
+natural width. The ribbon reserves enough height for its content and horizontal
+scrollbar, so bottom captions remain visible. This implements the existing confirmed
+presentation rules; no new pixel-size specification, operation or geometry behavior
+is introduced.
+
+**Build/source checks:** FreeCADPlusScripts synchronization passed in the retained
+complete `freecad_1.1.4_context` development tree. All 48 Plus Python files parsed
+and match that payload byte for byte. Diff whitespace checks passed. This change
+is Python presentation/test code only; the prior full native build remains applicable.
+
+**Native/visual acceptance:** all nine TestPlusToolbars cases passed together in
+31.014 seconds, zero failures/errors/skips and normal application exit 0. The new
+case requests a 1000 by 760 logical-pixel window and checks the normal font and a
+1.5-times font. Actual FEM captions retain their complete text in at most two lines,
+fit their rendered width/height and remain above the scrollbar; overflow still
+scrolls to the final groups. Modeling placeholders have native icons, disabled state,
+tooltips and accessible names. Inspected final narrow/enlarged FEM and Modeling
+captures confirm these behaviors. Existing actual arc clicks, remembered choices,
+Classic restoration, custom groups, specialized widgets and no-idle-rebuild tests
+also passed.
+
+A separate native audit passed all twenty registered workbenches after the shared
+layout changes: the same 240 toolbar-group instances and 1,169 per-workbench command
+occurrences as TB.2a, no missing commands or widget controls, and preserved Classic
+parents/actions/visibility. These repeated common groups are not unique command totals.
+An OpenSCAD external-executable-not-found notice was recorded; it did not affect
+workbench/toolbar inclusion and this audit does not certify external CAD/CAM solvers.
+Independent preference restart was already validated in TB.2a and was not repeated
+for this presentation-only change.
+
+**Validation corrections:** the first generated test profile had malformed XML;
+it was corrected and parsed before the final fresh-profile run. The first caption
+assertion incorrectly measured a multiline string as one line; the final check
+measures each rendered line and its combined height. Programmatic workbench switches
+now explicitly refresh presentation before captures, matching native queued UI refresh.
+These were harness corrections; they do not establish pre-existing application faults.
+
+**Delivery:** both shortcut targets and working directories were re-read and verified.
+Use `freecad plus 0.1.0.lnk` for the updated development payload. The archived shortcut,
+reference build, original workbench source, native toolbar definitions and submodules
+remain untouched. No remote publication or release was performed. Task-generated
+validation output is removed after this durable record; useful builds are retained.
 
 ## TB.2a Complete Classic workbench/toolbar inclusion — October 11, 2026
 

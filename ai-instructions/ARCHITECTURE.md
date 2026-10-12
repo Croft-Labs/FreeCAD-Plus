@@ -1275,7 +1275,7 @@ The native command is shared across Classic/Plus presentations; the full storage
 chooser and separate instance-placement workflow remain deferred. Acceptance is
 owned by TestNativeComponentCreation and WORK_STATE.
 
-## Independent Plus toolbar presentation (TB.1 / TB.2a)
+## Independent Plus toolbar presentation (TB.1 / TB.2a / TB.2b)
 
 `freecad_plus/toolbar_layout.py` owns Plus modes, tab routing and Modeling groups.
 `freecad_plus/toolbars.py` owns a separate Qt toolbar/ribbon widget tree, installed
@@ -1287,6 +1287,12 @@ Plus-only combined groups save their selected command under
 command data rather than Python QAction wrapper identity. Shared actions retain native enablement,
 checked state, shortcuts, tooltips, icons and transactions. Native commands remain
 available through the copied Home/All Tools groups and the original workbench menus.
+
+Plus owns caption layout: complete plain text, at most two balanced lines, with
+natural minimum widths for long words. The scroll area's minimum height includes
+page content and its horizontal scrollbar. Unavailable controls use the native
+forbidden icon while keeping full accessible names/tooltips and disabled state;
+this preserves the medium/small icon-only hierarchy without inventing operations.
 
 Tab/mode navigation activates the corresponding available workbench, so its native
 command lifecycle remains authoritative. An active task/editor prevents a ribbon

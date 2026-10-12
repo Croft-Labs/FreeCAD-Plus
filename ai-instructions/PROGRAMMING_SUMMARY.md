@@ -90,6 +90,9 @@ plus None; All Tools preserves native groups, commands, specialized widgets and
 custom toolbars. Eight interaction tests, every-workbench inventory audit and
 independent restart passed. WORK_STATE owns evidence and the stopping boundary;
 remaining curated layouts and Plus-only workflows are still separate work.
+TB.2b adds validated complete two-line captions and icon-only unavailable controls;
+nine interaction/layout cases and all-workbench coverage passed. Selection/Layers
+and unfinished Plus workflows remain outstanding.
 
 ## Where to go
 

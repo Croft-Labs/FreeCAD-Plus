@@ -373,6 +373,11 @@ Do not repeat the completed baseline checks without a new relevant concern.
   Complete native build, eight interaction cases, all twenty registered-workbench
   audits and independent restart passed. WORK_STATE owns the exact evidence.
 
+- [ X ] **TB.2b — Caption and unavailable-control presentation.** Keep medium/small
+  placeholders icon-only with accessible names/tooltips; retain full captions in
+  at most two lines and reserve scrollbar height. Nine native interaction/layout
+  cases and all twenty workbench inventory audits passed; WORK_STATE owns evidence.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not
