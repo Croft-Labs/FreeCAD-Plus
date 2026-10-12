@@ -3,13 +3,63 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2a1, TB.2b, TB.2c1 and TB.2c2a through TB.2c2k below are implemented and
-validated in the development payload.
+TB.2a1, TB.2a2, TB.2b, TB.2c1 and TB.2c2a through TB.2c2k below are implemented
+and validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2a2 Split-button availability — October 12, 2026
+
+**Implementation/build:** Plus-only combined command groups keep their menu arrow
+usable when the remembered action is unavailable but another visible choice is
+enabled. Native QAction availability is unchanged; an unavailable icon does not
+execute, available menu choices execute once, and an available default executes
+immediately. All-unavailable groups disable. The remembered command survives state
+changes and tab rebuilds. A small QToolButton subclass updates aggregate enablement
+from native action events/signals without polling, page rebuilding, proxy actions
+or custom painting. Native Classic split groups remain unchanged. FreeCADPlusScripts
+synchronized into the retained development tree; no C++ rebuild was needed.
+
+**Native acceptance:** the new native Python-command fixture reproduced the blocked
+arrow before the fix (3.061 seconds in unittest, 8.218 with setup). Its first fixed
+run exposed a stale QAction reference in the test's popup callback and was stopped
+using the uniquely identified isolated process's executable/start time. Callback
+cleanup now hides the menu in finally and reports errors. A second fixture failure
+at the post-rebuild identity assertion (5.152/10.313 seconds) confirmed that retired
+wrappers must not be compared; the test reads current menu/native actions and checks
+stable command data after rebuilding. No native action lifetime implementation changed.
+
+The final focused case passed (10.314/15.484 seconds), covering three alternating
+availability changes, all-disabled states, unavailable-icon clicks, actual menu and
+icon dispatch counts, native enabled states, icons, preference memory and tab
+rebuilds. The inspected Qt captures show the remembered icon/arrow and native menu
+with Choice A disabled and Choice B enabled. Eleven affected regressions passed
+(66.443/71.531 seconds): arc split/default memory, Plus group memory, captions,
+Classic restoration, native widgets/Spreadsheet colors, added/custom toolbars,
+BIM status ownership, mode/idle behavior and duplicate workbench labels. These are
+12 distinct cases with no final failures, errors, skips or timeouts; the suite now
+has 64 cases. Final focused/regression stderr is empty and processes exited 0.
+Unrelated geometry-operation cases were not rerun.
+
+**Preservation/restart:** all nineteen Classic workbenches plus None passed the
+native inventory audit: 240 toolbar groups and 1169 per-workbench command entries,
+with no unavailable Classic-command placeholders and preserved native ownership/
+restoration (58.110 seconds). Audit stderr contains only the known missing external
+OpenSCAD executable notice. Separate prepare/restart passed (5.266/0.985 seconds),
+with empty stderr and exit 0, preserving saved dropdown/selection preferences and
+independent Classic toolbar visibility. All 51 Plus Python files parse and match
+the payload byte-for-byte. Edited files preserve CRLF; whitespace checks pass.
+Both shortcut targets and working directories were reread and remain unchanged;
+the development and archived reference executables exist.
+
+**Delivery/limits:** this is a local development increment, not publication or an
+owner-ready package. Classic source, workbench/toolbar definitions, submodule pins
+and licensing are unchanged. Owned validation/plus_split_availability output was
+removed after recording evidence. Layers, the contextual palette and other Plus
+operation integrations remain unfinished.
 
 ## TB.2a1 Workbench mode identity — October 12, 2026
 

@@ -2409,6 +2409,110 @@ class TestPlusToolbars(unittest.TestCase):
             native.deleteLater()
             settle()
 
+    def test_plus_split_available_alternative(self):
+        class Choice:
+            def __init__(self, label, icon, active):
+                self.label, self.icon, self.active = label, icon, active
+                self.calls = 0
+
+            def GetResources(self):
+                return {'MenuText': self.label, 'ToolTip': self.label, 'Pixmap': self.icon}
+
+            def IsActive(self):
+                return self.active
+
+            def Activated(self):
+                self.calls += 1
+
+        commands = ('PlusSplitChoiceA', 'PlusSplitChoiceB')
+        choices = (Choice('Choice A', 'view-front', False), Choice('Choice B', 'view-rear', True))
+        for name, choice in zip(commands, choices):
+            Gui.addCommand(name, choice)
+
+        class PlusSplitFixture(Gui.Workbench):
+            MenuText = 'Split availability fixture'
+
+            def Initialize(self):
+                self.appendToolbar('Split fixture', list(commands))
+
+            def GetClassName(self):
+                return 'Gui::PythonWorkbench'
+
+        Gui.addWorkbench(PlusSplitFixture())
+        r = self.ribbon
+        try:
+            Gui.activateWorkbench('PlusSplitFixture')
+            ui_modes.apply_modes()
+            Gui.activateWorkbench('PartDesignWorkbench')
+            ui_modes.apply_modes()
+            with patch.object(toolbars.layout, 'MODELING', (('Split choices', (
+                    ('Choices', 'large', commands),)),)):
+                r.refresh()
+                settle()
+                for available in (1, 0, 1):
+                    with self.subTest(available=available):
+                        choices[0].active = choices[1].active = False
+                        Gui.Command.update()
+                        settle()
+                        button = r.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_' + commands[0])
+                        self.assertFalse(button.isEnabled())
+                        remembered = button.defaultAction()
+                        choices[available].active = True
+                        Gui.Command.update()
+                        settle()
+                        self.assertTrue(button.isEnabled(), 'An enabled alternative must remain reachable')
+                        self.assertEqual(button.defaultAction(), remembered)
+                        self.assertFalse(remembered.isEnabled())
+                        self.assertEqual([Gui.Command.get(c).getAction()[0].isEnabled() for c in commands],
+                                         [choice.active for choice in choices])
+                        before = [c.calls for c in choices]
+                        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                               QtCore.QPoint(8, button.height()//2))
+                        settle()
+                        self.assertEqual([c.calls for c in choices], before)
+                        menu = button.menu()
+                        actions = menu.actions()
+                        observed, errors = [], []
+                        def choose():
+                            try:
+                                observed.append(menu.isVisible())
+                                menu.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'split-availability-menu.png'))
+                                r.host.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'split-availability-ribbon.png'))
+                                QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                                       menu.actionGeometry(actions[available]).center())
+                            except Exception as error:
+                                errors.append(str(error))
+                            finally:
+                                menu.hide()
+                        QtCore.QTimer.singleShot(100, choose)
+                        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                               QtCore.QPoint(button.width()-4, button.height()//2))
+                        settle()
+                        self.assertEqual(errors, [])
+                        self.assertEqual(observed, [True])
+                        before[available] += 1
+                        self.assertEqual([c.calls for c in choices], before)
+                        self.assertEqual(button.defaultAction(), actions[available])
+                        self.assertEqual(button.icon().cacheKey(), actions[available].icon().cacheKey())
+                        self.assertEqual(toolbars.preferences().GetString(commands[0]), commands[available])
+                        # The main icon still dispatches immediately once its action is available.
+                        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                               QtCore.QPoint(8, button.height()//2))
+                        before[available] += 1
+                        self.assertEqual([c.calls for c in choices], before)
+                        self.tab('Home')
+                        self.tab('Modeling')
+                        rebuilt = r.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_' + commands[0])
+                        # Native commands can recreate their actions during a page rebuild.
+                        self.assertEqual(rebuilt.defaultAction().data(), commands[available])
+                        self.assertEqual(rebuilt.defaultAction(),
+                                         Gui.Command.get(commands[available]).getAction()[0])
+        finally:
+            toolbars.preferences().RemString(commands[0])
+            Gui.activateWorkbench('PartDesignWorkbench')
+            Gui.removeWorkbench('PlusSplitFixture')
+            r.refresh()
+
     def test_plus_group_last_choice_and_native_state(self):
         r = self.ribbon
         button = r.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_PartDesign_Pad')

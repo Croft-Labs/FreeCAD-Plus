@@ -1296,6 +1296,16 @@ command data rather than Python QAction wrapper identity. Shared actions retain 
 checked state, shortcuts, tooltips, icons and transactions. Native commands remain
 available through the copied Home/All Tools groups and the original workbench menus.
 
+For Plus-only combined groups, SplitButton enables the control whenever a visible
+menu choice is enabled. QToolButton's default behavior would disable the arrow
+along with an unavailable remembered action. Native QAction states are never
+changed: clicking an unavailable default dispatches nothing, while its enabled
+alternatives remain accessible through the menu. When every choice is unavailable,
+the control disables. Native action events/signals update this aggregate state
+without polling or page rebuilds. The remembered command changes only on selection,
+and Qt continues to own the appearance, popup, keyboard and dispatch behavior.
+Native Classic groups and their existing availability logic are unchanged (TB.2a2).
+
 Plus owns caption layout: complete plain text, at most two balanced lines, with
 natural minimum widths for long words. The scroll area's minimum height includes
 page content and its horizontal scrollbar. Unavailable controls use the native

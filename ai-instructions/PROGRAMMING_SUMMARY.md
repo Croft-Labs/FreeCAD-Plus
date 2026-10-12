@@ -92,6 +92,8 @@ independent restart passed. WORK_STATE owns evidence and the stopping boundary;
 remaining curated layouts and Plus-only workflows are still separate work.
 TB.2a1 routes modes by native workbench identity so duplicate/renamed labels preserve
 added-workbench access and Design-only control scope; WORK_STATE owns acceptance.
+TB.2a2 keeps enabled alternatives reachable in Plus split groups when the remembered
+command is unavailable, without changing native command state or last-choice memory.
 TB.2b adds validated complete two-line captions and icon-only unavailable controls;
 nine interaction/layout cases and all-workbench coverage passed. TB.2c1 adds the
 saved Design Directional Selection control and native model/Sketcher behavior.

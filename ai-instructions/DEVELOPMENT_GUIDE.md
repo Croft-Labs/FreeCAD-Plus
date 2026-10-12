@@ -650,6 +650,14 @@ routing, missing-workbench disablement, unchanged native action/widget ownership
 independent UI preferences and absence of idle rebuilds. Inspect the three ribbon
 widget captures; these are ordinary Qt controls, not viewport rendering evidence.
 
+The Plus split-availability case registers two native Python commands with
+independent IsActive results. Test all-disabled and alternating available choices,
+an unavailable remembered icon, actual arrow/menu selection and immediate enabled
+icon dispatch, unchanged native action state and last-choice persistence through
+page rebuilds. Read actions from the current menu after each rebuild; native action
+wrappers can be retired. Popup timer callbacks must report errors and hide their
+menu in finally so a fixture failure cannot strand a modal popup.
+
 Run TestPlusToolbars.prepare_fresh_process(), close the main window normally, then
 run verify_fresh_process() in a separate native process with the same isolated
 profile. Verify saved Plus-group choice, the saved Directional Selection toggle and

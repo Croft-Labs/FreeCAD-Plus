@@ -65,6 +65,20 @@ class ModeSelector(QtWidgets.QComboBox):
         super().showPopup()
 
 
+class SplitButton(QtWidgets.QToolButton):
+    """Keep available choices reachable without enabling the remembered action."""
+    def sync_enabled(self):
+        menu = self.menu()
+        if menu is not None:
+            self.setEnabled(any(a.isEnabled() and a.isVisible() and not a.isSeparator()
+                                for a in menu.actions()))
+
+    def actionEvent(self, event):
+        # QToolButton otherwise disables the arrow with its default QAction.
+        super().actionEvent(event)
+        self.sync_enabled()
+
+
 class Ribbon(QtCore.QObject):
     def __init__(self, window):
         super().__init__(window)
@@ -380,13 +394,14 @@ class Ribbon(QtCore.QObject):
             return None
         key = commands[0]
         selected = preferences().GetString(key, key)
-        button = QtWidgets.QToolButton(parent)
+        button = SplitButton(parent)
         button.setObjectName('Plus_' + key)
         button.setAutoRaise(True)
         button.setAccessibleName(caption)
         menu = QtWidgets.QMenu(button)
         for command, action in actions:
             menu.addAction(action)
+            action.changed.connect(button.sync_enabled)
         button.setMenu(menu)
         button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         button.setDefaultAction(next((a for c, a in actions if c == selected), actions[0][1]))

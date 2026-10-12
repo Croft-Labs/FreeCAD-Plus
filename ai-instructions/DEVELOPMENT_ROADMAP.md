@@ -378,6 +378,11 @@ Do not repeat the completed baseline checks without a new relevant concern.
   Native duplicate/renamed-label acceptance, affected toolbar regressions and full
   Classic inventory checks are recorded in WORK_STATE.
 
+- [ X ] **TB.2a2 — Available alternatives in Plus split groups.** Keep the arrow
+  usable when the remembered command is unavailable but another choice is enabled.
+  Preserve native action states, unavailable-action guards and last-choice memory.
+  WORK_STATE owns native interaction and preservation acceptance.
+
 - [ X ] **TB.2b — Caption and unavailable-control presentation.** Keep medium/small
   placeholders icon-only with accessible names/tooltips; retain full captions in
   at most two lines and reserve scrollbar height. Nine native interaction/layout
