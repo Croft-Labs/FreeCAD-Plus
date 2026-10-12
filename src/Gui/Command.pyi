@@ -119,6 +119,17 @@ class Command(PyObjectBase):
         """
         ...
 
+    def addToToolbar(self, toolbar: Any) -> None:
+        """
+        addToToolbar(toolbar) -> None
+
+        Add this command through its native toolbar widget factory. The caller
+        owns the QToolBar; native actions, menus and command state remain shared.
+        This also creates specialized controls and expanded command groups.
+        Must be called on the GUI thread with a PySide QToolBar.
+        """
+        ...
+
     @staticmethod
     def createCustomCommand(
         *,

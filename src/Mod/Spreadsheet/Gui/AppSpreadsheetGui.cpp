@@ -24,6 +24,9 @@
  ***************************************************************************/
 
 
+#include <QSignalBlocker>
+#include <QToolBar>
+
 #include <App/Application.h>
 #include <App/Document.h>
 #include <Base/Console.h>
@@ -33,6 +36,7 @@
 #include <Gui/Application.h>
 #include <Gui/Language/Translator.h>
 #include <Gui/MainWindow.h>
+#include <Gui/PythonWrapper.h>
 #include <Gui/WidgetFactory.h>
 #include <Mod/Spreadsheet/App/Sheet.h>
 
@@ -40,6 +44,7 @@
 #include "SheetTableViewAccessibleInterface.h"
 #include "ViewProviderSpreadsheet.h"
 #include "Workbench.h"
+#include "qtcolorpicker.h"
 
 // use a different name to CreateCommand()
 void CreateSpreadsheetCommands();
@@ -62,10 +67,46 @@ public:
     {
         add_varargs_method("open", &Module::open);
         add_varargs_method("insert", &Module::insert);
+        add_varargs_method("copyColorPicker", &Module::copyColorPicker,
+                           "Create a separate toolbar color picker sharing a native picker's handler.");
         initialize("This module is the SpreadsheetGui module.");  // register with Python
     }
 
 private:
+    Py::Object copyColorPicker(const Py::Tuple& args)
+    {
+        PyObject* sourceObject;
+        PyObject* parentObject;
+        if (!PyArg_ParseTuple(args.ptr(), "OO", &sourceObject, &parentObject)) {
+            throw Py::Exception();
+        }
+        Gui::PythonWrapper wrap;
+        wrap.loadWidgetsModule();
+        auto* source = qobject_cast<QtColorPicker*>(wrap.toQObject(Py::Object(sourceObject)));
+        auto* parent = qobject_cast<QToolBar*>(wrap.toQObject(Py::Object(parentObject)));
+        if (!source || !parent) {
+            throw Py::TypeError("Expected a native Spreadsheet color picker and a QToolBar parent");
+        }
+        auto* copy = new QtColorPicker(parent);
+        copy->setStandardColors();
+        for (int index = 17; source->color(index).isValid(); ++index) {
+            copy->insertColor(source->color(index), QtColorPicker::tr("Custom Color"));
+        }
+        copy->setColorDialogEnabled(source->colorDialogEnabled());
+        copy->setCurrentColor(source->currentColor());
+        copy->setToolTip(source->toolTip());
+        copy->setStatusTip(source->statusTip());
+        copy->setWhatsThis(source->whatsThis());
+        copy->setEnabled(source->isEnabled());
+        QObject::connect(copy, &QtColorPicker::colorSet, source, &QtColorPicker::setCurrentColor);
+        QObject::connect(source, &QtColorPicker::colorChanged, copy, [copy](const QColor& color) {
+            const QSignalBlocker blocker(copy);
+            copy->setCurrentColor(color);
+        });
+        parent->addWidget(copy);
+        return Py::None();
+    }
+
     void load(App::Document* pcDoc, const std::string& Name)
     {
         try {

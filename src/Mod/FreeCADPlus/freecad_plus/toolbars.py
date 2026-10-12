@@ -18,6 +18,52 @@ def preferences():
     return App.ParamGet('User parameter:BaseApp/Preferences/FreeCADPlus/Toolbars')
 
 
+class ModeModel(QtCore.QAbstractListModel):
+    """Own plain mode data without transient QStandardItem Python wrappers."""
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.entries = []
+
+    def rowCount(self, parent=QtCore.QModelIndex()):
+        return 0 if parent.isValid() else len(self.entries)
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if not index.isValid() or not 0 <= index.row() < len(self.entries):
+            return None
+        mode, owner, enabled = self.entries[index.row()]
+        if role == QtCore.Qt.DisplayRole:
+            return mode
+        if role == QtCore.Qt.UserRole:
+            return (mode, owner)
+        if role == QtCore.Qt.ToolTipRole and not enabled:
+            return 'This workbench is not available in this build.'
+        return None
+
+    def flags(self, index):
+        if not index.isValid() or not 0 <= index.row() < len(self.entries):
+            return QtCore.Qt.NoItemFlags
+        return (QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+                if self.entries[index.row()][2] else QtCore.Qt.NoItemFlags)
+
+    def replace(self, modes, available):
+        self.beginResetModel()
+        self.entries = [(mode, owner, owner in available) for mode, owner in modes]
+        self.endResetModel()
+
+
+class ModeSelector(QtWidgets.QComboBox):
+    def __init__(self, refresh):
+        super().__init__()
+        self._refresh = refresh
+        self.mode_model = ModeModel(self)
+        self.setModel(self.mode_model)
+
+    def showPopup(self):
+        # Include workbenches registered since the last tab/workbench change.
+        self._refresh()
+        super().showPopup()
+
+
 class Ribbon(QtCore.QObject):
     def __init__(self, window):
         super().__init__(window)
@@ -26,6 +72,7 @@ class Ribbon(QtCore.QObject):
         self.refreshing = False
         self.sources = {}
         self.native = {}
+        self.inventory_names = set()
         self.workbench = ''
         self.mode = 'Design'
         self.tab = 'Modeling'
@@ -43,7 +90,7 @@ class Ribbon(QtCore.QObject):
         self.top = QtWidgets.QWidget()
         self.top_layout = QtWidgets.QHBoxLayout(self.top)
         self.top_layout.setContentsMargins(0, 0, 0, 0)
-        self.selector = QtWidgets.QComboBox()
+        self.selector = ModeSelector(self.refresh_modes)
         self.selector.setObjectName('PlusModeSelector')
         self.selector.setAccessibleName('Plus mode')
         self.selector.currentIndexChanged.connect(self.select_mode)
@@ -67,12 +114,30 @@ class Ribbon(QtCore.QObject):
         self.bar.addWidget(self.host)
         window.addToolBar(QtCore.Qt.TopToolBarArea, self.bar)
         self.bar.hide()
-        self.observed = set()
+        QtWidgets.QApplication.instance().focusChanged.connect(self.observe_customization)
 
     def native_bars(self):
-        # Only upstream Gui::ToolBar instances, never Plus's separate QToolBar.
+        # Customization can create a plain QToolBar before the next workbench
+        # activation. Include only declared native groups, never nested Plus
+        # controls or separate Draft status widgets.
         return [bar for bar in self.window.findChildren(QtWidgets.QToolBar)
-                if bar.inherits('Gui::ToolBar')]
+                if bar is not self.bar and (bar.inherits('Gui::ToolBar')
+                or bar.property('FreeCADPlusClassicVisible') is not None
+                or (bar.parentWidget() == self.window and bar.objectName() in self.inventory_names))]
+
+    def customization_opened(self):
+        for dialog in self.window.findChildren(QtWidgets.QDialog):
+            self.observe_customization(None, dialog)
+
+    def observe_customization(self, previous, current):
+        if current is None:
+            return
+        dialog = current.window()
+        if (isinstance(dialog, QtWidgets.QDialog)
+                and dialog.inherits('Gui::Dialog::DlgCustomizeImp')
+                and not dialog.property('FreeCADPlusObserved')):
+            dialog.setProperty('FreeCADPlusObserved', True)
+            dialog.finished.connect(lambda result: QtCore.QTimer.singleShot(0, self.refresh))
 
     def apply(self, enabled):
         if self.enabled == enabled:
@@ -109,7 +174,7 @@ class Ribbon(QtCore.QObject):
             return False
         try:
             Gui.activateWorkbench(workbench)
-            return True
+            return Gui.activeWorkbench().name() == workbench
         except Exception as exc:
             App.Console.PrintError('Plus toolbar: %s\n' % exc)
             return False
@@ -119,6 +184,7 @@ class Ribbon(QtCore.QObject):
             return
         mode, workbench = self.selector.itemData(index)
         if self._navigate(workbench):
+            self.workbench = Gui.activeWorkbench().name()
             self.mode = mode
             self.tab = 'Modeling' if mode == 'Design' else 'Home'
         self.refresh()
@@ -128,6 +194,7 @@ class Ribbon(QtCore.QObject):
             return
         tab, workbench = self.tabs[index]
         if self._navigate(workbench):
+            self.workbench = Gui.activeWorkbench().name()
             self.tab = tab
         self.refresh()
 
@@ -138,6 +205,14 @@ class Ribbon(QtCore.QObject):
             if name not in mapped:
                 modes.append((str(wb.MenuText).replace('&', ''), name))
         return modes
+
+    def refresh_modes(self):
+        available = Gui.listWorkbenches()
+        modes = self._modes(available)
+        blocker = QtCore.QSignalBlocker(self.selector)
+        self.selector.mode_model.replace(modes, available)
+        self.selector.setCurrentIndex(next((i for i, (m, _) in enumerate(modes) if m == self.mode), 0))
+        del blocker
 
     def refresh(self):
         if not self.enabled or self.refreshing:
@@ -157,16 +232,14 @@ class Ribbon(QtCore.QObject):
                 else:
                     self.tab = 'Home'
                 self.workbench = name
-            self.selector.clear()
-            for mode, owner in modes:
-                self.selector.addItem(mode, (mode, owner))
-                item = self.selector.model().item(self.selector.count() - 1)
-                item.setEnabled(owner in available)
-                if owner not in available:
-                    item.setToolTip('This workbench is not available in this build.')
-            self.selector.setCurrentIndex(next((i for i, (m, _) in enumerate(modes) if m == self.mode), 0))
+            self.refresh_modes()
+            customize = Gui.Command.get('Std_DlgCustomize')
+            for action in customize.getAction() if customize else ():
+                if not action.property('FreeCADPlusObserved'):
+                    action.triggered.connect(self.customization_opened)
+                    action.setProperty('FreeCADPlusObserved', True)
             self.tabs = list(layout.DESIGN_TABS) if self.mode == 'Design' else [
-                ('Home', name), ('Tools', name), ('View', None)]
+                ('Home', name), ('Tools', name), ('View', None), ('All Tools', None)]
             while self.tabbar.count():
                 self.tabbar.removeTab(0)
             for tab, owner in self.tabs:
@@ -176,6 +249,7 @@ class Ribbon(QtCore.QObject):
                     self.tabbar.setTabToolTip(i, 'This workbench is not available in this build.')
             self.tabbar.setCurrentIndex(next((i for i, (t, _) in enumerate(self.tabs) if t == self.tab), 0))
             items = wb.getToolbarItems()
+            self.inventory_names = set(items)
             self.native = {bar.objectName(): bar for bar in self.native_bars()}
             self.sources = {}
             for bar_name, bar in self.native.items():
@@ -183,9 +257,9 @@ class Ribbon(QtCore.QObject):
                     key = action.data() or action.objectName()
                     if isinstance(key, str) and key != 'Separator':
                         self.sources[key] = (action, bar.widgetForAction(action))
-                if bar_name not in self.observed:
+                if not bar.property('FreeCADPlusObserved'):
                     bar.visibilityChanged.connect(lambda visible, b=bar: self.suppress_native(b, visible))
-                    self.observed.add(bar_name)
+                    bar.setProperty('FreeCADPlusObserved', True)
                 if bar.property('FreeCADPlusClassicVisible') is None:
                     bar.setProperty('FreeCADPlusClassicVisible', not bar.isHidden())
                     bar.setProperty('FreeCADPlusClassicAvailable', bar.toggleViewAction().isVisible())
@@ -201,22 +275,59 @@ class Ribbon(QtCore.QObject):
     def _source(self, command):
         if command in self.sources:
             return self.sources[command]
-        if command in Gui.listCommands():
-            actions = Gui.Command.get(command).getAction()
+        native = Gui.Command.get(command)
+        if native is not None:
+            actions = native.getAction()
             if len(actions) == 1:
                 return actions[0], None
         return None
 
+    def _native_control(self, command, parent):
+        """Use the original factory for expanded groups and specialized widgets."""
+        native = Gui.Command.get(command)
+        if native is None:
+            return None
+        control = QtWidgets.QToolBar(parent)
+        control.setObjectName('PlusControl_' + command)
+        control.setProperty('PlusCommands', [command])
+        control.setMovable(False)
+        control.setFloatable(False)
+        control.toggleViewAction().setVisible(False)
+        native.addToToolbar(control)
+        if not control.actions():
+            control.deleteLater()
+            return None
+        return control
+
+    def _spreadsheet_color(self, original, parent):
+        import SpreadsheetGui
+        control = QtWidgets.QToolBar(parent)
+        control.setObjectName('PlusControl_Widget_' + original.objectName())
+        control.setMovable(False)
+        control.setFloatable(False)
+        control.toggleViewAction().setVisible(False)
+        SpreadsheetGui.copyColorPicker(original, control)
+        copy = control.widgetForAction(control.actions()[0])
+        copy.setObjectName('PlusWidget_' + original.objectName())
+        return control
+
     def _button(self, command, parent):
         source = self._source(command)
         if source is None:
-            return None
+            return self._native_control(command, parent)
         action, original = source
-        # A QWidgetAction may own a single live input widget: never steal it.
-        if isinstance(action, QtWidgets.QWidgetAction):
-            return None
+        if isinstance(action, QtWidgets.QWidgetAction) and original and original.inherits('QtColorPicker'):
+            return self._spreadsheet_color(original, parent)
+        native = Gui.Command.get(command)
+        expanded = (native is not None and len(native.getAction()) > 1
+                    and isinstance(original, QtWidgets.QToolButton) and original.menu() is None)
+        if isinstance(action, QtWidgets.QWidgetAction) or expanded:
+            # Asking the native factory for a new control preserves live widgets
+            # and expanded groups without moving Classic's single-widget actions.
+            return self._native_control(command, parent)
         button = QtWidgets.QToolButton(parent)
         button.setObjectName('Plus_' + command)
+        button.setProperty('PlusCommands', [command])
         button.setDefaultAction(action)
         button.setAutoRaise(True)
         button.setAccessibleName(action.text().replace('&', ''))
@@ -264,8 +375,12 @@ class Ribbon(QtCore.QObject):
         button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         button.setDefaultAction(next((a for c, a in actions if c == selected), actions[0][1]))
         def remember(action):
-            button.setDefaultAction(action)
-            preferences().SetString(key, next(c for c, a in actions if a == action))
+            # Native actions can acquire a new Python wrapper after workbench
+            # recreation. Persist their stable command data, not wrapper identity.
+            command = action.data()
+            if command in commands:
+                preferences().SetString(key, command)
+                button.setDefaultAction(action)
         menu.triggered.connect(remember)
         return button
 
@@ -305,10 +420,19 @@ class Ribbon(QtCore.QObject):
         grid.setSpacing(2)
         column, slot = 0, 0
         for caption, size, commands in entries:
+            if size == 'separator':
+                column += 1
+                slot = 0
+                separator = QtWidgets.QFrame()
+                separator.setFrameShape(QtWidgets.QFrame.VLine)
+                grid.addWidget(separator, 0, column, 6, 1)
+                column += 1
+                continue
             button = self._split(commands, caption, group) if commands else None
             if button is None:
                 button = QtWidgets.QToolButton(group)
                 button.setEnabled(False)
+                button.setProperty('PlusUnavailable', list(commands))
                 button.setText(caption)
                 button.setToolTip(caption + ' is not available in this build.')
                 button.setAccessibleName(caption)
@@ -356,8 +480,8 @@ class Ribbon(QtCore.QObject):
         else:
             if self.tab == 'View':
                 names = layout.VIEW
-            elif self.tab == 'More':
-                names = [n for n in items if n not in layout.COMMON and n != 'Workbench']
+            elif self.tab == 'All Tools':
+                names = list(items)
             elif self.tab == 'Tools':
                 names = [n for n in items if n not in layout.COMMON and n not in layout.VIEW and n != 'Workbench']
             else:
@@ -366,10 +490,20 @@ class Ribbon(QtCore.QObject):
                 if self.tab == 'Home':
                     names += [n for n in ('Structure', 'Macro', 'Help') if n in items]
             for name in names:
-                entries = [(re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', c.split('_', 1)[-1]),
-                            'small', (c,)) for c in items.get(name, ()) if c != 'Separator']
-                if entries:
-                    native = self.native.get(name)
+                entries = [(None, 'separator', ()) if c == 'Separator' else
+                           (re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', c.split('_', 1)[-1]),
+                            'small', (c,)) for c in items.get(name, ())]
+                native = self.native.get(name)
+                if native:
+                    # Spreadsheet appends its native color pickers after command
+                    # setup. They have no command ID and are absent from items.
+                    for index, action in enumerate(native.actions()):
+                        if isinstance(action, QtWidgets.QWidgetAction) and not action.data():
+                            original = native.widgetForAction(action)
+                            key = '__widget_%s_%d' % (name, index)
+                            self.sources[key] = (action, original)
+                            entries.append((original.toolTip(), 'small', (key,)))
+                if entries or self.tab == 'All Tools':
                     self._group(row, native.windowTitle() if native else name, entries)
         row.addStretch()
         old = self.scroll.takeWidget()

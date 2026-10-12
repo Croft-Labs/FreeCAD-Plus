@@ -50,6 +50,16 @@ This supersedes the unconfirmed status of the mode/tab framework and ordinary
 split-button behavior. It does not approve unrelated archived task implementations.
 TOOLBARS_AND_BUTTONS owns the resulting interaction requirements.
 
+### Preserve every Classic toolbar and workbench — October 11, 2026
+
+The owner requested continuing Plus toolbar work and explicitly stated: "ensure
+that all workbenches & toolbars from the classic UI are preserved and included in
+the plus toolbars". This authorizes completing the development workbench payload
+and correcting omitted commands, expanded groups and specialized controls. The
+complete Classic inventory is an acceptance requirement, not an optional fallback.
+It does not activate unrelated component/geometry roadmaps or undocumented new
+operation workflows. TOOLBARS_AND_BUTTONS owns the inclusion/navigation rules.
+
 ## R03
 
 Recovered thread `01a10462-f839-7980-b385-3d218d8c1fb9`, October 3–4, 2026 Eastern. Read the recovered user/assistant transcript to interpret corrections, but only owner messages/adopted prompts establish requirements. Source copy: `freecad-recovered-conversation.json`, recovered October 6 from the now-disconnected Office-PC drive. Relevant user messages are retained in [OWNER_SOURCE_MESSAGES.json](archive/2026-10-10/OWNER_SOURCE_MESSAGES.json).

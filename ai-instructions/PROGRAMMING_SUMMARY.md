@@ -84,6 +84,13 @@ G1.6e connects native New File to document.new_document and New Part to
 hierarchy.new_part: a catalog definition only, with placement kept separate.
 WORK_STATE records bounded native command/Undo/reopen acceptance.
 
+TB.2a completes Classic workbench/toolbar inclusion in the separate Plus module.
+The full native development build now contains all nineteen baseline workbenches
+plus None; All Tools preserves native groups, commands, specialized widgets and
+custom toolbars. Eight interaction tests, every-workbench inventory audit and
+independent restart passed. WORK_STATE owns evidence and the stopping boundary;
+remaining curated layouts and Plus-only workflows are still separate work.
+
 ## Where to go
 
 | Task | Reference |

@@ -1275,7 +1275,7 @@ The native command is shared across Classic/Plus presentations; the full storage
 chooser and separate instance-placement workflow remain deferred. Acceptance is
 owned by TestNativeComponentCreation and WORK_STATE.
 
-## Independent Plus toolbar presentation (TB.1)
+## Independent Plus toolbar presentation (TB.1 / TB.2a)
 
 `freecad_plus/toolbar_layout.py` owns Plus modes, tab routing and Modeling groups.
 `freecad_plus/toolbars.py` owns a separate Qt toolbar/ribbon widget tree, installed
@@ -1283,16 +1283,38 @@ through `ui_modes`. Classic toolbar widgets retain their parents, actions and na
 layout. Plus shares native QActions/QMenus rather than command callbacks or feature
 implementations. Native grouped commands therefore own their remembered choice;
 Plus-only combined groups save their selected command under
-`BaseApp/Preferences/FreeCADPlus/Toolbars`. Shared actions retain native enablement,
+`BaseApp/Preferences/FreeCADPlus/Toolbars`, resolving a selection by its native
+command data rather than Python QAction wrapper identity. Shared actions retain native enablement,
 checked state, shortcuts, tooltips, icons and transactions. Native commands remain
-available through the copied Home/More groups and the original workbench menus.
+available through the copied Home/All Tools groups and the original workbench menus.
 
 Tab/mode navigation activates the corresponding available workbench, so its native
 command lifecycle remains authoritative. An active task/editor prevents a ribbon
 switch to a different workbench. View is presentation-only. Missing workbenches are
 disabled; other registered workbenches remain selectable. There is no idle polling.
-Specialized QWidgetActions with one live input widget are not reparented; their full
-Plus adaptation is outside the initial ordinary-button coverage.
+All Tools uses the complete ordered `Workbench.getToolbarItems()` inventory, which
+includes workbench and global custom toolbars plus workbench manipulators. Every
+separator and expanded command-group child is retained. The mode selector refreshes
+its registry when opened, so later-added workbenches acquire routes without polling.
+Closing the native Customize dialog queues one refresh. Plain QToolBars created by
+that dialog are included when their names belong to the current native inventory;
+Plus never observes/rebuilds pages on ordinary idle or toolbar paint/layout events.
+
+The opt-in `Gui.Command.get(name).addToToolbar(toolbar)` API calls the existing
+native `Command::addTo` factory on a separately owned Plus QToolBar. It validates the
+PySide QToolBar argument and leaves native callbacks and action lifetime authoritative.
+This creates separate specialized widgets (including the native workbench selector)
+and complete expanded groups, without stealing Classic's single-widget actions.
+Ordinary split buttons still share their native action/menu. Status-bar controls
+created outside the normal toolbar inventory retain their native location/lifecycle.
+Spreadsheet appends two QtColorPicker widgets outside the command inventory.
+Plus discovers those untagged QWidgetActions in the realized toolbar and uses the
+opt-in SpreadsheetGui.copyColorPicker(source, toolbar) factory. It creates and
+attaches the same native picker class/palette to the separately owned QToolBar,
+returns None, forwards colorSet to the original picker, and
+mirrors native color changes with signals blocked. Existing Spreadsheet handlers,
+selection and Undo remain authoritative; originals retain their parents/names.
+Transient nested Plus toolbars are excluded from the Classic manager's widget scan.
 
 While Plus hides Classic widgets, `FreeCADPlusClassicVisible` and
 `FreeCADPlusClassicAvailable` preserve their logical native state. The small scoped

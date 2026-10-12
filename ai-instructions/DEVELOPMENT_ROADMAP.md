@@ -362,9 +362,16 @@ Do not repeat the completed baseline checks without a new relevant concern.
   four focused interaction cases and independent restart passed;
   WORK_STATE owns exact evidence and remaining coverage boundaries.
 - [   ] **TB.2 — Remaining ribbon coverage.** Complete precise tab/group sizing and
-  placements, unavailable-workbench build coverage, specialized widget controls,
-  Selection/Layers integration and remaining Plus-only commands. Preserve original
+  placements, Selection/Layers integration and remaining Plus-only commands. Preserve original
   access and keep operation/task implementations separately scoped.
+
+- [ X ] **TB.2a — Complete Classic workbench/toolbar inclusion.** Build all enabled
+  source workbenches; expose their full toolbar groups in every mode's All Tools
+  tab, including native widget controls, expanded groups and custom toolbars.
+  Compare realized native/Plus actions in all nineteen baseline workbenches plus
+  None; verify Classic restoration, native split behavior and new-workbench routing.
+  Complete native build, eight interaction cases, all twenty registered-workbench
+  audits and independent restart passed. WORK_STATE owns the exact evidence.
 
 ## Operation workflows reached from the panel — outside Group 1
 

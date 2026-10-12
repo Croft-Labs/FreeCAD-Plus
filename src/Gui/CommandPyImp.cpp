@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include <sstream>
+#include <QToolBar>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 
@@ -307,6 +308,33 @@ PyObject* CommandPy::getAction(PyObject* args)
     }
 }
 
+
+PyObject* CommandPy::addToToolbar(PyObject* args)
+{
+    PyObject* pyToolbar;
+    if (!PyArg_ParseTuple(args, "O", &pyToolbar)) {
+        return nullptr;
+    }
+
+    PY_TRY
+    {
+        PythonWrapper wrap;
+        wrap.loadWidgetsModule();
+        auto* toolbar = qobject_cast<QToolBar*>(wrap.toQObject(Py::Object(pyToolbar)));
+        if (!toolbar) {
+            PyErr_SetString(PyExc_TypeError, "Expected a PySide QToolBar");
+            return nullptr;
+        }
+        Command* cmd = this->getCommandPtr();
+        if (!cmd) {
+            PyErr_SetString(PyExc_RuntimeError, "Command is no longer available");
+            return nullptr;
+        }
+        cmd->addTo(toolbar);
+        Py_Return;
+    }
+    PY_CATCH;
+}
 
 PyObject* CommandPy::createCustomCommand(PyObject* args, PyObject* kw)
 {

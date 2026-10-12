@@ -36,6 +36,28 @@ additive/subtractive operations may remain distinct menu choices while the separ
 owned consolidated task workflows are unfinished. Implementation/build coverage and
 remaining exact placements belong in WORK_STATE, not this intent specification.
 
+### Complete Classic coverage — October 11, 2026
+
+The owner explicitly requires every Classic workbench and toolbar to be preserved
+and included in Plus. The mode/tab framework must provide a route to every registered
+Classic workbench, including workbenches registered later. Draft and Drawing/TechDraw
+remain separate. Upstream optional/unregistered examples do not become new modes
+solely because their source exists.
+
+Plus must expose the active workbench's complete native toolbar groups in their
+original order, including File, Edit, Clipboard,
+Workbench, Macro, View, Individual Views, Structure, Help and custom toolbars where
+present. Keep separators and every action of expanded groups. Specialized native
+controls must remain functional through separate Plus widgets; they must not be
+silently replaced by a disabled placeholder or stolen from Classic. Existing native
+status-bar controls remain available in their original location in Plus.
+
+The curated ribbon tabs provide convenient placements; they do not replace or
+truncate the complete native inventory. Workbench availability in the development
+payload and actual command/control coverage require runtime verification, not just
+source-preservation claims. Native commands absent from Classic itself may be shown
+unavailable; record those gaps separately from missing Plus controls.
+
 ### Confirmed presentation rules
 
 Use gray vertical dividers between groups on every tab. Allow complete labels on two lines where needed; never abbreviate or clip them. Medium and small buttons are icon-only. Increase medium icon size to use the button area; exact pixel dimensions require confirmation. The latest October 6 Modeling outline supersedes its earlier medium Edit/Attach cluster. [C06](EVIDENCE_AND_DECISIONS.md#c06)

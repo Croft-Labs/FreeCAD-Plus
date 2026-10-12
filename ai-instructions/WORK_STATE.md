@@ -2,13 +2,105 @@
 
 ## Authorized objective and stopping boundary
 
-The October 11 owner instruction authorizes beginning a separate Plus toolbar/layout
-module, the documented modes/tabbed ribbon and Classic split-button appearance and
-remembered action behavior. **TB.1 foundation is implemented and validated below.**
-The remaining complete ribbon coverage is TB.2, not a claim of finished UI or a
-restart of unrelated component/operation work. Group 1 remains incomplete.
+The October 11 owner continuation requires all Classic workbenches and toolbars to
+be preserved and included in Plus. TB.2a is implemented and validated in the complete
+development payload. This increment is complete: stop after recording delivery and
+the focused local commit. Precise remaining curated placements, Selection/Layers and
+unfinished Plus operation workflows remain separately scoped. TB.2 and Group 1 as
+a whole remain incomplete; do not restart completed coverage checks without a new change.
+
+## TB.2a Complete Classic workbench/toolbar inclusion — October 11, 2026
+
+**Implementation:** All Tools copies the complete ordered native toolbar inventory
+into Plus-owned groups, including common/global groups, workbench/global custom
+bars, separators, expanded command groups and specialized controls. All registered
+workbenches retain mode/tab routes; opening the selector discovers later registrations.
+Closing Customize refreshes live changes. Native command/widget factories create
+separate workbench selectors and Spreadsheet color pickers without moving Classic
+widgets. Icons, native split menus, command state and dispatch remain shared.
+Plus combined groups remember stable command IDs across native wrapper recreation.
+Original workbench source, baseline build flags, submodule pins, licensing and
+Classic toolbar ownership remain unchanged.
+
+**Build:** retained `freecad_1.1.4_context` under the mandated test-builds root;
+`cmake --build ... --target src/all data/all --parallel 3` finished all 4,225 steps
+with exit 0. This uses the existing MSVC 19.44, Qt 6.8.3/Python 3.12 libpack 3.1.1.3
+configuration. The final SpreadsheetGui adapter rebuild and FreeCADPlusScripts
+synchronization also passed. No official Python 3.11 binaries were mixed into this
+payload. All 48 Plus Python files parsed and match the deployed scripts byte for byte.
+
+**Native acceptance:** eight TestPlusToolbars cases passed together in 24.110 seconds,
+zero failures/errors/skips, normal application exit 0. Coverage includes actual
+Sketcher dropdown-arrow/menu/icon clicks, last-used icons, editor navigation guards,
+Home/tab navigation, independent preferences, Classic contextual restoration,
+separate native controls, expanded groups, later-added workbenches, global and live
+custom toolbars, and no idle rebuild. Spreadsheet foreground/background selections
+changed actual A1 cell colors, each through one native handler dispatch and one
+Undo entry; Undo restored state and the originals kept their parents.
+
+A separate native process audited every registered workbench (nineteen plus None).
+All passed: no missing commands, missing widget copies, substitute placeholders for
+registered commands, or omitted workbench routes. Native action identity, separate
+widget class/ownership, original toolbar parents/actions, restored visibility and
+Plus suppression were checked. Counts below are per workbench; common groups and
+commands recur across rows (240 group instances, 1,169 command occurrences total).
+
+| Workbench | Native/Plus groups | Commands |
+| --- | ---: | ---: |
+| Assembly | 11 | 53 |
+| BIM | 18 | 142 |
+| CAM | 13 | 55 |
+| Draft | 14 | 96 |
+| Fem | 19 | 99 |
+| Inspection | 9 | 34 |
+| Material | 10 | 35 |
+| Mesh | 15 | 66 |
+| None | 0 | 0 |
+| OpenSCAD | 11 | 47 |
+| PartDesign | 13 | 62 |
+| Part | 12 | 68 |
+| Points | 10 | 40 |
+| ReverseEngineering | 10 | 35 |
+| Robot | 10 | 44 |
+| Sketcher | 16 | 86 |
+| Spreadsheet | 10 | 49 |
+| Surface | 10 | 40 |
+| TechDraw | 19 | 80 |
+| Test | 10 | 38 |
+
+**Restart and visual acceptance:** prepare/normal shutdown and a separate restart
+both exited 0. The saved Pocket default reappeared in Plus; Classic restored hidden
+File and shown Edit toolbars. Inspected Modeling, CAM, Assembly, Draft, FEM, Drawing
+and Spreadsheet ribbon captures: original icons and split arrows, named groups,
+separate native workbench selector/color widgets and reachable overflow groups.
+FEM and Drawing end positions visibly expose the rightmost groups through horizontal
+scrolling. These are Qt ribbon captures, not 3D-rendering or every-operation evidence.
+
+**Failures resolved during validation:** a dynamic workbench exposed a stale
+QStandardItem wrapper, so the selector now owns plain mode data in a QAbstractListModel.
+The combined test then reproduced an invalid captured QAction wrapper with the same
+native pointer as the live menu action; remembering native command data fixes selection
+persistence without changing shared Qt wrapper infrastructure. The live custom-bar
+fixture now explicitly shows its initial native bar before testing visibility restore.
+Spreadsheet's legacy test selection API requires integer flags; passing a Qt 6 enum
+caused native failures. Using `.value` fixes the test; native editor code is unchanged.
+The copied picker is attached/owned directly by its separate native QToolBar.
+Final combined, audit and independent-restart runs passed after these corrections.
+
+**Development delivery and limits:** `freecad plus 0.1.0.lnk` still targets this
+build's `bin/FreeCAD.exe` with its `bin` working directory, and the target exists.
+The archived `FreeCADPlus.exe - Shortcut.lnk` and reference payload remain unchanged.
+Restart using the development shortcut to load the complete workbench build.
+This closes Classic inventory coverage, not every underlying CAD/CAM/FEM operation,
+remaining curated Plus layouts, Selection/Layers, or unfinished Plus-only commands.
+No release, deployment or remote publication was performed. Task-generated validation
+files are removed after this durable record; the complete build and unrelated saved
+profiles/reference builds remain available.
 
 ## TB.1 Separate Plus toolbar foundation — October 11, 2026
+
+Historical acceptance below used the earlier partial payload. TB.2a above supersedes
+its workbench/widget coverage limits; its original evidence remains recorded.
 
 **Implementation:** Plus owns its layout and widget tree in toolbar_layout.py and
 toolbars.py. It copies ordinary native toolbar actions/menus without moving Classic

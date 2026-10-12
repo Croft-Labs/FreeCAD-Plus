@@ -10,7 +10,7 @@ DESIGN_TABS = (
     ('Mesh', 'MeshWorkbench'),
     ('View', None),
     ('Part', 'PartWorkbench'),
-    ('More', None),
+    ('All Tools', None),
 )
 MODE_WORKBENCHES = (
     ('Draft', 'DraftWorkbench'),
