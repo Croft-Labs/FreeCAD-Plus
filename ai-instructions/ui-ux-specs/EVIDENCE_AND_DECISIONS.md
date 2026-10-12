@@ -38,6 +38,18 @@ This statement concerns Reference geometry; it does not specify ownership transf
 for Boolean tools from a different Full Component. Operation workflow design and
 implementation completeness remain separate from this confirmed requirement.
 
+### Separate Plus toolbar implementation — October 11, 2026
+
+The owner explicitly instructed: "create a copy of the classic toolbars and layout
+and make this a completely separate module", using the same icons and generally the
+same button functionality, with the documented tabbed ribbon and modes. The owner
+also explicitly confirmed Classic split-button appearance, immediate icon execution,
+right-hand arrow menus, and remembering each group's last-used operation. The
+three-point arc example clarifies interaction, not a reduced command inventory.
+This supersedes the unconfirmed status of the mode/tab framework and ordinary
+split-button behavior. It does not approve unrelated archived task implementations.
+TOOLBARS_AND_BUTTONS owns the resulting interaction requirements.
+
 ## R03
 
 Recovered thread `01a10462-f839-7980-b385-3d218d8c1fb9`, October 3–4, 2026 Eastern. Read the recovered user/assistant transcript to interpret corrections, but only owner messages/adopted prompts establish requirements. Source copy: `freecad-recovered-conversation.json`, recovered October 6 from the now-disconnected Office-PC drive. Relevant user messages are retained in [OWNER_SOURCE_MESSAGES.json](archive/2026-10-10/OWNER_SOURCE_MESSAGES.json).

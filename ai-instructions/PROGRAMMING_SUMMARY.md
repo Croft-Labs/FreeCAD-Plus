@@ -77,7 +77,7 @@ The official 26.3 RC1 is a prerelease, not the stable version selected by the ow
 G1.6d supersedes the developer-only startup boundary: General/Application now has
 independent model/components, toolbar and task-workflow selectors, all Plus by
 default. InitGui installs the panel presentation controller; Classic preserves the
-same component backend. Toolbar/tasks initially share Classic definitions. Native
+same component backend. Plus toolbars now have a separate ribbon module; tasks still share Classic definitions. Native
 Pad/Pocket share FeatureExtrude; a consolidated Plus task is still future work.
 WORK_STATE records startup, mixed-mode, active-task and persistence acceptance.
 G1.6e connects native New File to document.new_document and New Part to
@@ -100,6 +100,10 @@ WORK_STATE records bounded native command/Undo/reopen acceptance.
 | Old implementation records | [Historical documents](archive/pre-restart-docs/README.md) |
 
 ## Source map
+
+- src/Mod/FreeCADPlus/freecad_plus/toolbars.py: separate Plus ribbon widgets, native action/menu adapters and Classic visibility restoration.
+- src/Mod/FreeCADPlus/freecad_plus/toolbar_layout.py: Plus mode/tab/group definitions.
+- src/Mod/FreeCADPlus/TestPlusToolbars.py: native split-button, mode/tab, independent preference and Classic restoration acceptance.
 
 - src/App and src/Gui: upstream document/application and desktop services.
 - src/Mod: original workbench modules; retain their source and availability.

@@ -639,3 +639,22 @@ Part001, external source ownership, Undo/Redo, same-name/cancel/invalid-name beh
 read-only names, concurrent rename refusal and native editor protection. Call
 TestComponentRename.verify_fresh_process in a separate process for the two saved
 domestic/external fixtures. Record evidence, then remove only the task artifacts.
+
+## Plus toolbar foundation validation
+
+Build FreeCADGui and FreeCADPlusScripts in the retained development tree with the
+VS environment described above. Run TestPlusToolbars in an isolated profile with
+PLUS_TEST_DIR set. Cover actual native split-button arrow/icon mouse clicks,
+remembered group icons, Classic restoration in and out of Sketcher edit, mode/tab
+routing, missing-workbench disablement, unchanged native action/widget ownership,
+independent UI preferences and absence of idle rebuilds. Inspect the three ribbon
+widget captures; these are ordinary Qt controls, not viewport rendering evidence.
+
+Run TestPlusToolbars.prepare_fresh_process(), close the main window normally, then
+run verify_fresh_process() in a separate native process with the same isolated
+profile. Verify saved Plus-group choice and hidden/shown Classic toolbar preferences.
+Keep native menu/action dispatch separate from the Plus-only group selection test,
+which deliberately emits its menu notification without creating modeling features.
+Record initial failures and bounded fixes in WORK_STATE; remove task-owned validation
+output after recording results. Missing native workbenches and specialized toolbar
+widgets require their own coverage; do not claim full ribbon completion.

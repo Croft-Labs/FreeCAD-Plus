@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Independent presentation choices over the same component/operation backend.
 
-Toolbar and task presentations initially share their unchanged native definitions.
+The Plus toolbar owns its presentation; native actions and tasks remain shared.
 Their saved choices are independent; future Plus adapters must reuse the same commands.
 """
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtWidgets
-from . import panel
+from . import panel, toolbars
 
 KEYS = ('ModelPanelUIMode', 'ToolbarUIMode', 'TaskPanelUIMode')
 _installed = False
@@ -27,8 +27,7 @@ def apply_modes():
     window = Gui.getMainWindow()
     model, toolbar, task = modes()
     changed = model != _model_mode
-    # These two presentations intentionally start from the same native definition.
-    # Do not duplicate QAction callbacks, task dialogs or feature implementations.
+    toolbars.apply(toolbar)
     window.setProperty('ToolbarUIMode', toolbar)
     window.setProperty('TaskPanelUIMode', task)
     window.setProperty('ModelPanelUIMode', model)

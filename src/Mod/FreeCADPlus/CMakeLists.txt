@@ -2,6 +2,7 @@
 set(FreeCADPlus_SRCS
     Init.py
     InitGui.py
+    TestPlusToolbars.py
     TestComponentPilot.py
     TestLegacyConversion.py
     TestLegacyBooleanConversion.py
@@ -33,6 +34,8 @@ set(FreeCADPlus_SRCS
     TestComponentClipboard.py
     freecad_plus/__init__.py
     freecad_plus/ui_modes.py
+    freecad_plus/toolbar_layout.py
+    freecad_plus/toolbars.py
     freecad_plus/display.py
     freecad_plus/geometry.py
     freecad_plus/document.py
@@ -48,10 +51,12 @@ set(FreeCADPlus_SRCS
 )
 add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
 fc_copy_sources(FreeCADPlusScripts "${CMAKE_BINARY_DIR}/Mod/FreeCADPlus" ${FreeCADPlus_SRCS})
-install(FILES Init.py InitGui.py TestComponentPilot.py TestLegacyConversion.py TestLegacyBooleanConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestComponentRename.py TestComponentImport.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentExternalExport.py TestComponentModeling.py TestComponentReferences.py TestComponentInputEditors.py TestComponentSweepInputs.py TestComponentDressUpInputs.py TestComponentCommandInputs.py TestComponentBooleanOwnership.py TestComponentBooleanInputs.py TestPartBooleanInputs.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
+install(FILES Init.py InitGui.py TestPlusToolbars.py TestComponentPilot.py TestLegacyConversion.py TestLegacyBooleanConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestComponentRename.py TestComponentImport.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentExternalExport.py TestComponentModeling.py TestComponentReferences.py TestComponentInputEditors.py TestComponentSweepInputs.py TestComponentDressUpInputs.py TestComponentCommandInputs.py TestComponentBooleanOwnership.py TestComponentBooleanInputs.py TestPartBooleanInputs.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
 install(FILES
     freecad_plus/__init__.py
     freecad_plus/ui_modes.py
+    freecad_plus/toolbar_layout.py
+    freecad_plus/toolbars.py
     freecad_plus/display.py
     freecad_plus/geometry.py
     freecad_plus/document.py

@@ -2,14 +2,72 @@
 
 ## Authorized objective and stopping boundary
 
-The owner's October 11 instruction explicitly authorizes independent Classic/Plus
-presentation preferences and normal Components startup. **G1.6d and its bounded
-checks are complete.** Stop runtime work here. Components is now available through
-normal startup/Preferences/Panels in the development build. All three selectors
-default to Plus; toolbar/task presentations intentionally still match Classic.
-Native New File/New Part integration is now validated as recorded below. Group 1
-remains incomplete. Remaining component-document commands, shared Classic adapters,
-and split/join tree drop/replacement are still unfinished. Do not treat choosing Classic as an old-backend bypass.
+The October 11 owner instruction authorizes beginning a separate Plus toolbar/layout
+module, the documented modes/tabbed ribbon and Classic split-button appearance and
+remembered action behavior. **TB.1 foundation is implemented and validated below.**
+The remaining complete ribbon coverage is TB.2, not a claim of finished UI or a
+restart of unrelated component/operation work. Group 1 remains incomplete.
+
+## TB.1 Separate Plus toolbar foundation — October 11, 2026
+
+**Implementation:** Plus owns its layout and widget tree in toolbar_layout.py and
+toolbars.py. It copies ordinary native toolbar actions/menus without moving Classic
+widgets, duplicating command callbacks or adding shortcut copies. Design has the
+six-group Modeling arrangement plus Home/Sketch/Surface/Assembly/Mesh/View and
+retained Part/More access. Other registered modes use copied native groups with
+Home/Tools/View. File/Edit/Clipboard remain above the ribbon. Mode/tab navigation
+uses native workbench activation and protects active tasks/editors. Missing
+workbenches are disabled, while all registered workbenches remain selectable.
+
+Native group menus retain Classic right-arrow/main-icon behavior and last-used
+choice. Separate Plus combined groups persist their selected command. Primitives
+keeps the unimplemented Tab option disabled without changing Classic's menu.
+Unimplemented Add Reference Object is disabled. The toolbar preference remains
+independent of model and task preferences. A narrowly scoped native guard preserves
+Classic logical visibility during existing native workbench setup/save/restore and
+Sketcher context operations; ARCHITECTURE owns this contract.
+
+**Build:** FreeCADGui and FreeCADPlusScripts passed in the retained
+`test-builds/freecad_1.1.4_context` tree (exit 0; 33 native build steps). Final script
+synchronization passed. This required no new dependency or submodule changes.
+
+**Native validation:** final four-case run passed, zero failures/errors/skips,
+12.288 seconds, normal process exit 0. Covered real mouse clicks on the native arc
+arrow, child menu choice and main icon; exactly one invocation, remembered icon,
+unchanged menu contents, Classic/Plus switching inside a live sketch and correct
+native contextual toolbars after leaving edit; widget/action ownership; independent
+preferences; mode/tab navigation and active-task guard; disabled unavailable
+workbenches; preserved native primitive menu with Plus-only disabled Tab; saved
+combined-group selection and no idle page rebuilds. Modeling, Sketch and View Qt
+widget captures were inspected. This does not claim viewport/framebuffer acceptance.
+
+**Independent restart:** normal close preparation and a second native process both
+passed (exit 0). Plus reopened, Pocket remained the selected Extrude-group action,
+and switching to Classic restored the saved hidden File and shown Edit toolbars.
+No geometry/persistence suites were repeated for this presentation-only change.
+
+**Corrections and limits:** the first event-filter implementation caused a native
+access violation on workbench change; it was replaced by a narrow visibility signal
+handler and the failed arc case then passed. A later assertion incorrectly expected
+Sketcher's context-only Geometries toolbar outside editing. Inspection also exposed
+native SaveState persistence under Plus suppression; the opt-in native guard fixes
+that path while retaining the native policy branches. The final suite includes both
+in-edit and out-of-edit restoration. Logs retain the known missing Std_Measure notices
+in this partial development payload; the corresponding ribbon control is disabled.
+CAM, Draft/Drawing, FEM, Surface, Assembly and Mesh runtime coverage is not claimed:
+this payload registers None, Material, Part, PartDesign and Sketcher only. Full
+workbench build coverage, precise remaining tab layouts/sizing, single-widget custom
+toolbar controls, Selection/Layers and unfinished Plus operations remain TB.2/separate
+operation work. Native menus retain access to original commands.
+
+**Development delivery:** the existing `freecad plus 0.1.0.lnk` was reopened and
+verified to target this tree's `bin/FreeCAD.exe`, with its `bin` working directory
+and executable present. The archived `FreeCADPlus.exe - Shortcut.lnk` and its
+`freecad_plus_2026-10-10_part_types_payload/FreeCADPlus.exe` target were preserved.
+Restart through the development shortcut to load the rebuilt native library and
+scripts. No release packaging or remote publication was performed. Task-generated
+validation output is removed after this durable record; the useful build/profile
+outside this task's validation directory is retained.
 
 ## Native New Part catalog correction - October 11, 2026
 

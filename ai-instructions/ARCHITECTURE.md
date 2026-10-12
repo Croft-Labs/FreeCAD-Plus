@@ -1274,3 +1274,38 @@ the native Part path; this command does not silently convert loaded legacy conte
 The native command is shared across Classic/Plus presentations; the full storage
 chooser and separate instance-placement workflow remain deferred. Acceptance is
 owned by TestNativeComponentCreation and WORK_STATE.
+
+## Independent Plus toolbar presentation (TB.1)
+
+`freecad_plus/toolbar_layout.py` owns Plus modes, tab routing and Modeling groups.
+`freecad_plus/toolbars.py` owns a separate Qt toolbar/ribbon widget tree, installed
+through `ui_modes`. Classic toolbar widgets retain their parents, actions and native
+layout. Plus shares native QActions/QMenus rather than command callbacks or feature
+implementations. Native grouped commands therefore own their remembered choice;
+Plus-only combined groups save their selected command under
+`BaseApp/Preferences/FreeCADPlus/Toolbars`. Shared actions retain native enablement,
+checked state, shortcuts, tooltips, icons and transactions. Native commands remain
+available through the copied Home/More groups and the original workbench menus.
+
+Tab/mode navigation activates the corresponding available workbench, so its native
+command lifecycle remains authoritative. An active task/editor prevents a ribbon
+switch to a different workbench. View is presentation-only. Missing workbenches are
+disabled; other registered workbenches remain selectable. There is no idle polling.
+Specialized QWidgetActions with one live input widget are not reparented; their full
+Plus adaptation is outside the initial ordinary-button coverage.
+
+While Plus hides Classic widgets, `FreeCADPlusClassicVisible` and
+`FreeCADPlusClassicAvailable` preserve their logical native state. The small scoped
+`ClassicToolbarStateGuard` in ToolBarManager exposes that state only during existing
+setup/save/restore/context operations, then captures the native result and hides the
+widgets again before returning to Qt. Nested guards skip already-managed operations;
+unmarked toolbars follow unchanged native logic. This prevents Sketcher's explicit
+enter/leave SaveState calls from persisting Plus suppression as user visibility.
+Returning to Classic removes these transient properties and restores the native
+contextual state. No document/property identities or geometry services change.
+
+The separate primitive menu shares original native actions and adds the disabled
+owner-requested Tab entry without modifying Classic's menu. Missing Plus operations
+remain disabled; no command is substituted for Add Reference Object. Consolidated
+operation tasks and complete ribbon placement remain separate from this adapter.
+WORK_STATE owns build, native interaction and persistence evidence.

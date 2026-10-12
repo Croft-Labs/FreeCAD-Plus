@@ -4,6 +4,38 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Section 1 — FC Plus modes, tabs, groups and buttons
 
+### Independent Plus ribbon and Classic split buttons — October 11, 2026
+
+The owner explicitly authorized starting a separate Plus toolbar/layout module,
+using a copy of the Classic toolbar presentation with the same native icons and
+generally the same command functionality. Classic remains independently selectable.
+Plus uses the documented tabbed ribbon and mode structure: Design, Draft, Drawing
+(TechDraw), CAM and available additional workbenches. Design includes Home, Modeling,
+Sketch, Surface, Assembly, Mesh and View. Missing placements do not remove original
+workbench access. Unavailable workbenches may be shown disabled in a partial build.
+This confirms the mode/tab framework previously marked for confirmation below;
+unrelated proposed task fields and unfinished operations are not approved by it.
+
+For ordinary grouped command buttons, preserve Classic appearance and interaction:
+
+- The icon invokes the currently selected action immediately.
+- The distinct down arrow at its right opens every option in the group.
+- Selecting an option invokes it and makes it the main icon/action for subsequent
+  clicks. Each group retains its last-used choice, as Classic does; rebuilding tabs
+  or changing presentation must not reset it.
+- Keep native icons, menus, tooltips, enabled/checked states and keyboard behavior.
+  Do not turn the entire ordinary split button into a menu-only control.
+
+For example, choosing the three-point arc from the arc dropdown makes it the main
+arc action while the arrow continues to expose the complete native arc group. The
+example does not limit the number of available native arc variants. The explicitly
+specified full-button Layers menus below retain their distinct interaction.
+
+The same split-button rule applies to the combined Fillet/Chamfer control. Native
+additive/subtractive operations may remain distinct menu choices while the separately
+owned consolidated task workflows are unfinished. Implementation/build coverage and
+remaining exact placements belong in WORK_STATE, not this intent specification.
+
 ### Confirmed presentation rules
 
 Use gray vertical dividers between groups on every tab. Allow complete labels on two lines where needed; never abbreviate or clip them. Medium and small buttons are icon-only. Increase medium icon size to use the button area; exact pixel dimensions require confirmation. The latest October 6 Modeling outline supersedes its earlier medium Edit/Attach cluster. [C06](EVIDENCE_AND_DECISIONS.md#c06)
@@ -16,7 +48,7 @@ Groups run left to right in this order. Ordered clusters follow the owner's outl
 | --- | --- | --- |
 | Sketch | New Sketch; cluster of Edit Sketch, Attach Sketch, Coordinate System | New Sketch size unstated in the final prompt (DOCX says large); remaining cluster small. Coordinate System dropdown: Coordinate System (default), Plane, Axis, Point. |
 | Modeling | Extrude; Revolve; Loft, Helix | Extrude/Revolve large; Loft/Helix medium cluster. |
-| Dress-Up | Fillet and Chamfer; Draft, Shell/Thickness | Combined Fillet and Chamfer large; Draft/Shell medium cluster. Exact split/default behavior of the combined button needs confirmation. |
+| Dress-Up | Fillet and Chamfer; Draft, Shell/Thickness | Combined Fillet and Chamfer large; Draft/Shell medium cluster. Use the remembered split-button behavior above; Fillet is the initial choice. |
 | Transformation | Mirror Feature, Linear Pattern, Circular Pattern, Multi Transform | Medium cluster. |
 | Primitives | Box, Cylinder, Sphere, Cone, Ellipsoid, Torus, Prism, Wedge, Tab | Large dropdown; Box default. The owner included Tab; its absence from the implementation is not approval to remove it. |
 | Other | Delete Face/Defeaturing, Add Reference Object | Medium cluster. |

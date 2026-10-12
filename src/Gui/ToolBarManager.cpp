@@ -49,6 +49,49 @@
 
 using namespace Gui;
 
+namespace {
+// Only Plus marks its hidden Classic toolbar widgets with these properties.
+// Briefly expose their logical state to existing native policy/persistence code;
+// keep that code unchanged and hide the widgets again before returning to Qt.
+class ClassicToolbarStateGuard
+{
+public:
+    ClassicToolbarStateGuard()
+    {
+        const auto bars = getMainWindow()->findChildren<QToolBar*>();
+        for (auto* bar : bars) {
+            const auto visible = bar->property("FreeCADPlusClassicVisible");
+            if (!visible.isValid() || bar->property("FreeCADPlusUpdatingNative").toBool()) {
+                continue;
+            }
+            bar->setProperty("FreeCADPlusUpdatingNative", true);
+            bars_.append(bar);
+            bar->toggleViewAction()->setVisible(
+                bar->property("FreeCADPlusClassicAvailable").toBool());
+            bar->setVisible(visible.toBool());
+        }
+    }
+
+    ~ClassicToolbarStateGuard()
+    {
+        for (const auto& bar : bars_) {
+            if (!bar) {
+                continue;
+            }
+            bar->setProperty("FreeCADPlusClassicVisible", !bar->isHidden());
+            bar->setProperty("FreeCADPlusClassicAvailable", bar->toggleViewAction()->isVisible());
+            bar->toggleViewAction()->setVisible(false);
+            bar->hide();
+            bar->setProperty("FreeCADPlusUpdatingNative", false);
+        }
+    }
+
+private:
+    QList<QPointer<QToolBar>> bars_;
+};
+}  // namespace
+
+
 ToolBarItem::ToolBarItem()
     : visibilityPolicy(DefaultVisibility::Visible)
 {}
@@ -667,6 +710,7 @@ void ToolBarManager::setToolBarIconSize(QToolBar* toolbar)
 
 void ToolBarManager::setup(ToolBarItem* toolBarItems)
 {
+    const ClassicToolbarStateGuard presentationState;
     if (!toolBarItems) {
         return;  // empty menu bar
     }
@@ -840,6 +884,7 @@ void ToolBarManager::onTimer()
 
 void ToolBarManager::saveState() const
 {
+    const ClassicToolbarStateGuard presentationState;
     auto ignoreSave = [](QAction* action) {
         // Only save state for toolbars whose toggle action is user-visible.
         return !action->isVisible();
@@ -862,6 +907,7 @@ void ToolBarManager::saveState() const
 
 void ToolBarManager::restoreState() const
 {
+    const ClassicToolbarStateGuard presentationState;
     std::map<int, QToolBar*> sbToolBars;
     std::map<int, QToolBar*> mbRightToolBars;
     std::map<int, QToolBar*> mbLeftToolBars;
@@ -1265,6 +1311,7 @@ void ToolBarManager::setState(const QList<QString>& names, State state)
 
 void ToolBarManager::setState(const QString& name, State state)
 {
+    const ClassicToolbarStateGuard presentationState;
     auto visibility = [this, name](bool defaultvalue) {
         return hPref->GetBool(name.toStdString().c_str(), defaultvalue);
     };

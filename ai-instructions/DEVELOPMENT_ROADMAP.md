@@ -354,6 +354,18 @@ Each stage records implementation, runtime validation and owner delivery separat
 Do not claim all Group 1 tests are complete because G1.1 documentation checks pass.
 Do not repeat the completed baseline checks without a new relevant concern.
 
+## Plus toolbars — authorized October 11, 2026
+
+- [ X ] **TB.1 — Separate ribbon foundation.** Plus-owned widgets/layout, documented
+  modes and tabs, copied native toolbar actions and remembered Classic split menus,
+  independent presentation preference and Classic layout restoration. Native build,
+  four focused interaction cases and independent restart passed;
+  WORK_STATE owns exact evidence and remaining coverage boundaries.
+- [   ] **TB.2 — Remaining ribbon coverage.** Complete precise tab/group sizing and
+  placements, unavailable-workbench build coverage, specialized widget controls,
+  Selection/Layers integration and remaining Plus-only commands. Preserve original
+  access and keep operation/task implementations separately scoped.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not
