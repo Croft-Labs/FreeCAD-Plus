@@ -3,13 +3,86 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1, TB.2c2a, TB.2c2b, TB.2c2c, TB.2c2d, TB.2c2e and TB.2c2f below are
-implemented and validated in the development payload.
+TB.2b, TB.2c1 and TB.2c2a through TB.2c2g below are implemented and validated in
+the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2g Direct Tangent/Perpendicular retention — October 12, 2026
+
+**Implementation:** native preselected Tangent/Perpendicular cleanup now uses
+finishConstraintSelection for edge pairs, endpoint pairs, endpoint-to-curve and
+via-point forms, plus native constraint substitutions and helper-point conics.
+The four conic tangency helpers return their native commit/abort outcome; transaction,
+solver, recompute and geometry ownership remain native. Continuous handlers retain
+their original source and STATUS_NONE-guarded substitution cleanup. Unsupported direct
+B-spline tangency preserves Plus input selection on rejection even with persistence
+off. No Classic workbench/toolbar definition, submodule pin or licensing changed.
+**Build:** SketcherGui and dependencies built successfully in the retained development
+tree, MSVC 19.44 / Qt 6.8.3 / Python 3.12, concurrency 3.
+
+**Validation corrections:** the first six-case run completed in 143.125 seconds.
+Conic helper-point Undo/Redo, continuous picking, preselected forms, B-spline rejection
+and native substitutions passed. All six via-point matrix assertions expected two
+constraints, but native IsPointAlreadyOnCurve uses geometric membership: a point
+already on both curves needs no extra PointOnObject constraints in either Plus or
+Classic. Corrected that assertion and added an independent off-curve point fixture.
+A transient native DogLeg/degenerate-line diagnostic occurred although final solve/
+shape checks passed. Continuous and preselected fixtures now use geometry near their
+intended tangent/perpendicular orientation. Production solver behavior is unchanged.
+A second run also exposed fixture-document interference in selection setup after
+Undo; each completed fixture now closes its document before the next is created.
+The corrected three-case rerun passed in 119.835 seconds, no failures/errors/
+skips or watchdog interventions, native exit 0 and empty stderr. It covers all
+preselected forms, geometrically-on-curve and independent off-curve via-points, plus
+repeated continuous picks, valid solves/shapes and Undo.
+
+The temporary runner attempted to serialize unittest subtest objects after failures,
+preventing its result write/close. Only the precisely identified task-owned validation
+process was stopped. The runner now serializes test names and tracebacks. Source checks preserve native
+non-ASCII text and unchanged continuous handler bodies; all 51 Plus Python files
+parse and match the development payload byte for byte.
+
+Conic runtime fixtures exercise ellipse/circle tangency and ellipse/line
+perpendicularity, including helper-point creation and Undo/Redo. The arc-of-ellipse,
+hyperbola and parabola helper outcome changes compile with their native consumers;
+this increment does not claim exhaustive runtime coverage of every conic pair,
+B-spline endpoint/knot or external-geometry combination. Native diagnostics remain
+visible; a committed but unsolved sketch is not relabeled as a successful solve.
+
+**Final native/visual acceptance:** all 45 TestPlusToolbars cases passed in two
+non-overlapping isolated processes: 22 in 345.871 seconds and 23 in 338.631 seconds.
+The recorded case IDs exactly match the source test inventory, with no duplicates,
+failures, errors, skips or popup-watchdog interventions. Both processes exited 0
+with empty stderr. This includes all six new constraint cases and all 39 preceding
+ribbon, native split-button/default-memory, category/directional, persistent,
+dimension, Classic-restore, custom-toolbar and specialized-widget regressions.
+The final native framebuffer was inspected: the line and arc remain green after
+Tangent, with the native constraint glyph visible. Final runs did not reproduce
+the diagnostic from the early unstable fixture.
+
+**Complete inventory/restart:** the separate audit passed all nineteen Classic
+workbenches plus None, 240 native toolbar-group instances and 1,169 per-workbench
+command occurrences, exit 0. Its only stderr notice was the previously known
+missing external OpenSCAD executable. Both independent prepare/restart processes
+passed with exit 0 and empty stderr, retaining Persistent/Directional off, Tangent
+Curves, Faces unchecked, remembered Pocket choice and hidden File/shown Edit Classic
+preferences. The two desktop shortcuts were reopened/read: development still targets
+freecad_1.1.4_context/bin/FreeCAD.exe with that bin directory as working directory;
+the archived-fork reference target and working directory remain unchanged and exist.
+
+**Source/publication/cleanup:** whitespace and source/payload checks pass. No push,
+release or owner-ready packaging is claimed. The owned
+`C:/Users/GAMING-PC/Documents/_temp/freecad/validation/plus_tangent_selection`
+validation directory was removed after recording results. Native validation processes
+exited; useful build payloads, settings, dependencies and reference shortcuts remain.
+This increment is prepared as a focused validated local commit. Layers, the contextual palette, contextual
+Sketcher_Dimension and other operation persistence remain unfinished; exact unconfirmed
+placements remain review material. This completes TB.2c2g only; TB.2 and Group 1
+remain incomplete.
 
 ## TB.2c2f Preselected dimensions and Curve Intent sizing — October 12, 2026
 

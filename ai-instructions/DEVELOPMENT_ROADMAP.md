@@ -427,6 +427,13 @@ Do not repeat the completed baseline checks without a new relevant concern.
   hit areas for Curve Intent using native style metrics. Build and 39-case combined
   acceptance passed; WORK_STATE owns visual, full inventory and restart evidence.
 
+- [ X ] **TB.2c2g — Direct Tangent/Perpendicular persistence.** Connect native
+  preselected edge/endpoint/via-point and conic-helper completion, including native
+  constraint substitutions and rejected B-spline input. Preserve continuous picks,
+  solver/transaction ownership and Classic clearing. Native build and all 45 toolbar
+  tests passed in two bounded batches; WORK_STATE owns visual, full Classic inventory,
+  independent restart and precise geometry-family acceptance limits.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

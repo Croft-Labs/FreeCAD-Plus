@@ -1482,7 +1482,7 @@ The existing Persistent Selection policy also covers the native Horizontal/Verti
 all three Symmetric input forms. The native legacy coincidence commands share the
 same implementation as Unified Coincident; no command identities or menu dispatch
 are replaced. Equal uses the same completion helper. TB.2c2f below extends preselected dimensions;
-direct Tangent/Perpendicular and other unlisted operations remain separate work.
+TB.2c2g below extends direct Tangent/Perpendicular. Other unlisted operations remain separate work.
 
 CommandConstraints.cpp owns finishConstraintSelection(applied). It retains native
 selection only in Plus Design with an idle edited Sketcher view and either a
@@ -1533,3 +1533,22 @@ width. Some styles otherwise assign most of the icon-only button to the arrow,
 causing apparent icon clicks to open the menu. No fixed pixel dimensions or custom
 arrow/icon painting are introduced. Tests check the native arrow boundary, direct
 main-action dispatch, dropdown choice and retained default.
+
+## Direct Tangent/Perpendicular retention (TB.2c2g)
+
+Native preselected Tangent and Perpendicular completion now uses the same
+finishConstraintSelection policy for edge pairs, endpoint pairs, endpoint-to-curve,
+and two-curves-plus-point forms. Constraint substitutions preserve the selected
+geometry while the native command replaces coincidence or Point-on-Object constraints.
+The STATUS_NONE guard preserves cleanup when substitutions run in continuous handlers.
+No command, solver, geometry index, menu or transaction owner is replaced.
+
+The four native conic tangency helpers still own their original commit/abort and
+recompute. They now return whether they committed. Preselected callers pass that
+outcome to selection completion; existing drawing/autoconstraint/continuous callers
+may ignore it and retain their native behavior. Helper points append geometry without
+renumbering the selected inputs. Perpendicular's inline helper-point branch already
+returns directly on abort and applies retention only after commit. Unsupported direct
+B-spline tangency preserves usable Plus inputs even with persistence off; Classic
+keeps its existing rejection clearing. WORK_STATE records tested geometry families
+and does not imply exhaustive conic, spline or external-geometry acceptance.

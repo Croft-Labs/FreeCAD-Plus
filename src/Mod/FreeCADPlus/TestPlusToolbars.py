@@ -564,12 +564,13 @@ class TestPlusToolbars(unittest.TestCase):
         settle()
         self.assertEqual(self.selected_subelements(), set(names))
 
-    def check_constraint_retention(self, sketch, command, names, kind, dispatch=None):
+    def check_constraint_retention(self, sketch, command, names, kind, dispatch=None, added_geometry=0):
+        kinds = (kind,) if isinstance(kind, str) else kind
         doc = sketch.Document
         doc.UndoMode = 1
         geometry_count = sketch.GeometryCount
         for classic, persistent in ((False, True), (False, False), (True, True)):
-            with self.subTest(command=command, classic=classic, persistent=persistent):
+            with self.subTest(command=command, names=names, classic=classic, persistent=persistent):
                 self.prefs.SetInt('ToolbarUIMode', 0)
                 ui_modes.apply_modes()
                 self.persistent(persistent)
@@ -586,11 +587,11 @@ class TestPlusToolbars(unittest.TestCase):
                         settle()
                     else:
                         self.sketch_command(command)
-                    self.assertEqual(sketch.ConstraintCount, 1)
-                    self.assertEqual(sketch.Constraints[0].Type, kind)
+                    self.assertEqual(sketch.ConstraintCount, len(kinds))
+                    self.assertCountEqual([c.Type for c in sketch.Constraints], kinds)
                     self.assertEqual(sketch.solve(), 0)
                     self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
-                    self.assertEqual(sketch.GeometryCount, geometry_count)
+                    self.assertEqual(sketch.GeometryCount, geometry_count + added_geometry)
                     self.assertEqual(doc.UndoCount, undo + 1)
                     self.assertEqual(self.selected_subelements(),
                                      set(names) if persistent and not classic else set())
@@ -602,13 +603,24 @@ class TestPlusToolbars(unittest.TestCase):
                             capture(view, output, prepare=False)
                         else:
                             view.graphicsView().viewport().grabFramebuffer().save(str(output))
+                    if (command == 'Sketcher_ConstrainTangent' and persistent and not classic
+                            and names == ('Edge1', 'Edge2') and not added_geometry):
+                        view = Gui.activeDocument().activeView()
+                        view.fitAll()
+                        settle()
+                        output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-tangent.png'
+                        if os.name == 'nt':
+                            from TestComponentFading import capture
+                            capture(view, output, prepare=False)
+                        else:
+                            view.graphicsView().viewport().grabFramebuffer().save(str(output))
                     doc.undo()
                     settle()
                     self.assertEqual(sketch.ConstraintCount, 0)
                     self.assertEqual(sketch.GeometryCount, geometry_count)
                     doc.redo()
                     settle()
-                    self.assertEqual(sketch.ConstraintCount, 1)
+                    self.assertEqual(sketch.ConstraintCount, len(kinds))
                     doc.undo()
                     settle()
                 finally:
@@ -735,6 +747,172 @@ class TestPlusToolbars(unittest.TestCase):
         settle()
         self.assertIsNotNone(Gui.activeDocument().getInEdit())
         self.assertFalse(self.selected_subelements())
+
+    def tangent_fixture(self, perpendicular=False, point=False):
+        import math
+        import Part
+        sketch, view = self.sketch_click_fixture()
+        Gui.activeDocument().resetEdit()
+        sketch.delGeometries([0, 1])
+        start = App.Vector(0, -10, 0) if perpendicular else App.Vector(-10, 0, 0)
+        sketch.addGeometry(Part.LineSegment(start, App.Vector(0, 0, 0)), False)
+        sketch.addGeometry(Part.ArcOfCircle(Part.Circle(App.Vector(0, 5, 0), App.Vector(0, 0, 1), 5),
+                                          -math.pi/2, 0), False)
+        if point:
+            sketch.addGeometry(Part.Point(App.Vector(0.5, 0.5, 0)), True)
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        return sketch, view
+
+    def test_tangent_perpendicular_preselected_forms(self):
+        for suffix in ('Tangent', 'Perpendicular'):
+            sketch, view = self.tangent_fixture(perpendicular=suffix == 'Perpendicular')
+            for names in (('Edge1', 'Edge2'), ('Vertex2', 'Vertex3'), ('Vertex2', 'Edge2')):
+                self.check_constraint_retention(sketch, 'Sketcher_Constrain' + suffix, names, suffix)
+            Gui.activeDocument().resetEdit()
+            App.closeDocument(sketch.Document.Name)
+            settle()
+
+    def test_tangent_perpendicular_via_point(self):
+        for suffix in ('Tangent', 'Perpendicular'):
+            sketch, view = self.tangent_fixture(perpendicular=suffix == 'Perpendicular', point=True)
+            # Native geometric admission adds no PointOnObject when the point is already on both curves.
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain' + suffix,
+                ('Edge1', 'Edge2', 'Vertex2'), suffix)
+            vertex = 'Vertex' + str(next(i + 1 for i in range(8) if sketch.getGeoVertexIndex(i)[0] == 2))
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain' + suffix,
+                ('Edge1', 'Edge2', vertex), ('PointOnObject', 'PointOnObject', suffix))
+            Gui.activeDocument().resetEdit()
+            App.closeDocument(sketch.Document.Name)
+            settle()
+
+    def test_tangent_perpendicular_conic_helper(self):
+        import Part
+        sketch, view = self.sketch_click_fixture()
+        Gui.activeDocument().resetEdit()
+        sketch.delGeometries([0, 1])
+        sketch.addGeometry(Part.Ellipse(App.Vector(0, 0, 0), 6, 3), False)
+        sketch.addGeometry(Part.Circle(App.Vector(9, 0, 0), App.Vector(0, 0, 1), 3), False)
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        self.check_constraint_retention(sketch, 'Sketcher_ConstrainTangent',
+            ('Edge1', 'Edge2'), ('PointOnObject', 'PointOnObject', 'Tangent'), added_geometry=1)
+        Gui.activeDocument().resetEdit()
+        sketch.delGeometry(1)
+        sketch.addGeometry(Part.LineSegment(App.Vector(4, 0, 0), App.Vector(10, 0, 0)), False)
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        self.check_constraint_retention(sketch, 'Sketcher_ConstrainPerpendicular',
+            ('Edge1', 'Edge2'), ('PointOnObject', 'PointOnObject', 'Perpendicular'), added_geometry=1)
+
+    def test_tangent_substitution_retention(self):
+        import Sketcher
+        sketch, view = self.tangent_fixture()
+        doc = sketch.Document
+        doc.UndoMode = 1
+        timer = self.constraint_warning_timer()
+        for kind, args in (('Coincident', (0, 2, 1, 1)), ('PointOnObject', (0, 2, 1))):
+            sketch.addConstraint(Sketcher.Constraint(kind, *args))
+            doc.recompute()
+            for classic, persistent in ((False, True), (False, False), (True, True)):
+                self.prefs.SetInt('ToolbarUIMode', 0)
+                ui_modes.apply_modes()
+                self.persistent(persistent)
+                if classic:
+                    self.prefs.SetInt('ToolbarUIMode', 1)
+                    ui_modes.apply_modes()
+                self.constraint_inputs(sketch, ('Edge1', 'Edge2'))
+                undo = doc.UndoCount
+                if classic:
+                    Gui.runCommand('Sketcher_ConstrainTangent')
+                    settle()
+                else:
+                    self.sketch_command('Sketcher_ConstrainTangent')
+                self.assertEqual(sketch.ConstraintCount, 1)
+                self.assertEqual(sketch.Constraints[0].Type, 'Tangent')
+                self.assertEqual(sketch.Constraints[0].FirstPos, 2)
+                self.assertEqual(sketch.Constraints[0].SecondPos, 1 if kind == 'Coincident' else 0)
+                self.assertEqual(sketch.solve(), 0)
+                self.assertEqual(doc.UndoCount, undo + 1)
+                self.assertEqual(self.selected_subelements(),
+                                 {'Edge1', 'Edge2'} if persistent and not classic else set())
+                doc.undo()
+                settle()
+                self.assertEqual(sketch.Constraints[0].Type, kind)
+                doc.redo()
+                settle()
+                self.assertEqual(sketch.Constraints[0].Type, 'Tangent')
+                doc.undo()
+                settle()
+            sketch.delConstraint(0)
+        timer.stop()
+
+    def test_tangent_rejected_bspline_selection(self):
+        import Part
+        sketch, view = self.sketch_click_fixture()
+        Gui.activeDocument().resetEdit()
+        sketch.delGeometry(1)
+        spline = Part.BSplineCurve()
+        spline.interpolate([App.Vector(-10, -5, 0), App.Vector(0, -2, 0), App.Vector(10, -5, 0)])
+        sketch.addGeometry(spline, False)
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        timer = self.constraint_warning_timer()
+        for classic, persistent in ((False, True), (False, False), (True, True)):
+            self.prefs.SetInt('ToolbarUIMode', 0)
+            ui_modes.apply_modes()
+            self.persistent(persistent)
+            if classic:
+                self.prefs.SetInt('ToolbarUIMode', 1)
+                ui_modes.apply_modes()
+            self.constraint_inputs(sketch, ('Edge1', 'Edge2'))
+            undo = sketch.Document.UndoCount
+            if classic:
+                Gui.runCommand('Sketcher_ConstrainTangent')
+                settle()
+            else:
+                self.sketch_command('Sketcher_ConstrainTangent')
+            self.assertEqual(sketch.ConstraintCount, 0)
+            self.assertEqual(sketch.Document.UndoCount, undo)
+            self.assertEqual(self.selected_subelements(), set() if classic else {'Edge1', 'Edge2'})
+        timer.stop()
+
+    def test_tangent_perpendicular_continuous_cleanup(self):
+        cases = (
+            ('Perpendicular', [((-10, 5), (-2, 5)), ((0, 0), (0, 8)),
+                ((4, -5), (12, -5)), ((8, -10), (8, -2))],
+                (((-6, 5), (0, 3)), ((5, -5), (8, -8)))),
+            ('Tangent', [((-10, 5), (-2, 5)), ((0, 4), (8, 4)),
+                ((-10, -5), (-2, -5)), ((0, -4), (8, -4))],
+                (((-6, 5), (4, 4)), ((-6, -5), (4, -4)))))
+        for suffix, lines, picks in cases:
+            sketch, view = self.sketch_click_fixture(lines=lines)
+            sketch.Document.UndoMode = 1
+            Gui.Selection.clearSelection()
+            self.sketch_command('Sketcher_Constrain' + suffix)
+            for first, second in picks:
+                before = sketch.ConstraintCount
+                self.sketch_click(view, first)
+                self.assertFalse(self.sketch_click(view, second))
+                self.assertEqual(sketch.ConstraintCount, before + 1)
+                self.assertEqual(sketch.Constraints[-1].Type, suffix)
+                self.assertEqual(sketch.solve(), 0)
+                self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
+            QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+            settle()
+            self.assertIsNotNone(Gui.activeDocument().getInEdit())
+            self.assertFalse(self.selected_subelements())
+            sketch.Document.undo()
+            sketch.Document.undo()
+            settle()
+            self.assertEqual(sketch.ConstraintCount, 0)
+            Gui.activeDocument().resetEdit()
+            App.closeDocument(sketch.Document.Name)
+            settle()
 
     def dimension_action(self, command, classic=False, text=None, accept=True,
                          reference=False, invoke=None):

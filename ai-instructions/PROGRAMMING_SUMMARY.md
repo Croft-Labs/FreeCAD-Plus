@@ -108,8 +108,9 @@ substitutions. Continuous constraint picking retains its own cleanup. WORK_STATE
 owns acceptance. TB.2c2f integrates named preselected distance, angle and circular
 dimensions through native dialog completion, including Cancel and reference/no-dialog
 paths, and fixes Curve Intent icon/arrow sizing under native styles. Contextual/
-continuous dimension handlers keep native cleanup. Other operation
-integrations, Layers and unfinished Plus workflows remain outstanding.
+continuous dimension handlers keep native cleanup. TB.2c2g connects direct Tangent/
+Perpendicular completion and conic commit outcomes to the same retention policy;
+WORK_STATE owns native acceptance and geometry-family limits. Other operation integrations, Layers and unfinished Plus workflows remain outstanding.
 
 ## Where to go
 

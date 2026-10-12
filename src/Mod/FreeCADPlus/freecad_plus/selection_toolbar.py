@@ -57,8 +57,9 @@ def append_controls(row, active):
     persistent.setCheckable(True)
     persistent.setChecked(preferences().GetBool('Persistent', True))
     persistent.setToolTip('Persistent Selection\nKeep sketch selection after Construction, Equal,\n'
-                          'Horizontal/Vertical, Parallel, Coincident, Point on Object,\n'
-                          'Block, Symmetry and preselected distance/angle/radius dimensions.\n'
+                          'Horizontal/Vertical, Parallel, Tangent, Perpendicular,\n'
+                          'Coincident, Point on Object, Block, Symmetry and\n'
+                          'preselected distance/angle/radius dimensions.\n'
                           'Continuous dimension tools and other operations retain native cleanup.')
 
     def persistence_changed(checked):

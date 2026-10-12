@@ -56,9 +56,9 @@ bool calculateAngle(
 /// geoId1 => geoid of the ellipse
 /// geoId2 => geoid of geom2
 /// NOTE: A command must be opened before calling this function, which this function
-/// commits or aborts as appropriate. The reason is for compatibility reasons with
-/// other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
-void makeTangentToEllipseviaNewPoint(
+/// commits or aborts as appropriate and returns whether it committed.
+/// The reason is compatibility with other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
+bool makeTangentToEllipseviaNewPoint(
     Sketcher::SketchObject* Obj,
     const Part::GeomEllipse* ellipse,
     const Part::Geometry* geom2,
@@ -71,9 +71,9 @@ void makeTangentToEllipseviaNewPoint(
 /// geoId1 => geoid of the arc of ellipse
 /// geoId2 => geoid of geom2
 /// NOTE: A command must be opened before calling this function, which this function
-/// commits or aborts as appropriate. The reason is for compatibility reasons with
-/// other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
-void makeTangentToArcOfEllipseviaNewPoint(
+/// commits or aborts as appropriate and returns whether it committed.
+/// The reason is compatibility with other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
+bool makeTangentToArcOfEllipseviaNewPoint(
     Sketcher::SketchObject* Obj,
     const Part::GeomArcOfEllipse* aoe,
     const Part::Geometry* geom2,
@@ -87,9 +87,9 @@ void makeTangentToArcOfEllipseviaNewPoint(
 /// geoId1 => geoid of the arc of hyperbola
 /// geoId2 => geoid of geom2
 /// NOTE: A command must be opened before calling this function, which this function
-/// commits or aborts as appropriate. The reason is for compatibility reasons with
-/// other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
-void makeTangentToArcOfHyperbolaviaNewPoint(
+/// commits or aborts as appropriate and returns whether it committed.
+/// The reason is compatibility with other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
+bool makeTangentToArcOfHyperbolaviaNewPoint(
     Sketcher::SketchObject* Obj,
     const Part::GeomArcOfHyperbola* aoh,
     const Part::Geometry* geom2,
@@ -106,8 +106,8 @@ void makeTangentToArcOfHyperbolaviaNewPoint(
 /// NOTE: A command must
 /// be opened before calling this function, which this function commits or aborts as appropriate.
 /// The reason is for compatibility reasons with other code e.g. "Autoconstraints" in
-/// DrawSketchHandler.cpp
-void makeTangentToArcOfParabolaviaNewPoint(
+/// DrawSketchHandler.cpp. Returns whether the transaction committed.
+bool makeTangentToArcOfParabolaviaNewPoint(
     Sketcher::SketchObject* Obj,
     const Part::GeomArcOfParabola* aop,
     const Part::Geometry* geom2,

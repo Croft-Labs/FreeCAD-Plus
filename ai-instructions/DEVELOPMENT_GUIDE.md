@@ -786,3 +786,10 @@ trigger without a popup. Native style metrics can differ from a hard-coded click
 coordinate. Inspect the separate button capture. Temporary validation runners may
 use a bounded popup watchdog, but any watchdog intervention must fail the run;
 closing a stuck menu is diagnostic, not a passing interaction.
+
+Direct Tangent/Perpendicular acceptance checks edge, endpoint and via-point input
+forms in Plus on/off and Classic. Verify native constraint types, solve, surviving
+input names, one Undo transaction and Undo/Redo. Include coincidence/Point-on-Object
+substitutions, conic helper-point creation and its removal on Undo, rejected direct
+B-spline tangency with persistence off, and repeated continuous viewport picks with
+Escape. Do not infer conic or external-geometry coverage beyond exercised fixtures.

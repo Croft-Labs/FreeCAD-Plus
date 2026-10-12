@@ -407,9 +407,9 @@ bool SketcherGui::calculateAngle(Sketcher::SketchObject* Obj, int& GeoId1, int& 
 /// geoId1 => geoid of the ellipse
 /// geoId2 => geoid of geom2
 /// NOTE: A command must be opened before calling this function, which this function
-/// commits or aborts as appropriate. The reason is for compatibility reasons with
-/// other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
-void SketcherGui::makeTangentToEllipseviaNewPoint(Sketcher::SketchObject* Obj,
+/// commits or aborts as appropriate and returns whether it committed.
+/// The reason is compatibility with other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
+bool SketcherGui::makeTangentToEllipseviaNewPoint(Sketcher::SketchObject* Obj,
                                                   const Part::GeomEllipse* ellipse,
                                                   const Part::Geometry* geom2,
                                                   int geoId1,
@@ -477,11 +477,12 @@ void SketcherGui::makeTangentToEllipseviaNewPoint(Sketcher::SketchObject* Obj,
         Gui::Command::abortCommand();
 
         tryAutoRecompute(Obj);
-        return;
+        return false;
     }
 
     Gui::Command::commitCommand();
     tryAutoRecompute(Obj);
+    return true;
 }
 
 /// Makes a simple tangency constraint using extra point + tangent via point
@@ -490,9 +491,9 @@ void SketcherGui::makeTangentToEllipseviaNewPoint(Sketcher::SketchObject* Obj,
 /// geoId1 => geoid of the arc of ellipse
 /// geoId2 => geoid of geom2
 /// NOTE: A command must be opened before calling this function, which this function
-/// commits or aborts as appropriate. The reason is for compatibility reasons with
-/// other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
-void SketcherGui::makeTangentToArcOfEllipseviaNewPoint(Sketcher::SketchObject* Obj,
+/// commits or aborts as appropriate and returns whether it committed.
+/// The reason is compatibility with other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
+bool SketcherGui::makeTangentToArcOfEllipseviaNewPoint(Sketcher::SketchObject* Obj,
                                                        const Part::GeomArcOfEllipse* aoe,
                                                        const Part::Geometry* geom2,
                                                        int geoId1,
@@ -557,11 +558,12 @@ void SketcherGui::makeTangentToArcOfEllipseviaNewPoint(Sketcher::SketchObject* O
         Gui::Command::abortCommand();
 
         tryAutoRecompute(Obj);
-        return;
+        return false;
     }
 
     Gui::Command::commitCommand();
     tryAutoRecompute(Obj);
+    return true;
 }
 
 /// Makes a simple tangency constraint using extra point + tangent via point
@@ -570,9 +572,9 @@ void SketcherGui::makeTangentToArcOfEllipseviaNewPoint(Sketcher::SketchObject* O
 /// geoId1 => geoid of the arc of hyperbola
 /// geoId2 => geoid of geom2
 /// NOTE: A command must be opened before calling this function, which this function
-/// commits or aborts as appropriate. The reason is for compatibility reasons with
-/// other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
-void SketcherGui::makeTangentToArcOfHyperbolaviaNewPoint(Sketcher::SketchObject* Obj,
+/// commits or aborts as appropriate and returns whether it committed.
+/// The reason is compatibility with other code e.g. "Autoconstraints" in DrawSketchHandler.cpp
+bool SketcherGui::makeTangentToArcOfHyperbolaviaNewPoint(Sketcher::SketchObject* Obj,
                                                          const Part::GeomArcOfHyperbola* aoh,
                                                          const Part::Geometry* geom2,
                                                          int geoId1,
@@ -654,12 +656,13 @@ void SketcherGui::makeTangentToArcOfHyperbolaviaNewPoint(Sketcher::SketchObject*
         Gui::Command::abortCommand();
 
         tryAutoRecompute(Obj);
-        return;
+        return false;
     }
 
     Gui::Command::commitCommand();
 
     tryAutoRecompute(Obj);
+    return true;
 }
 
 /// Makes a simple tangency constraint using extra point + tangent via point
@@ -668,8 +671,8 @@ void SketcherGui::makeTangentToArcOfHyperbolaviaNewPoint(Sketcher::SketchObject*
 /// (of circle) geoId1 => geoid of the arc of parabola geoId2 => geoid of geom2 NOTE: A command must
 /// be opened before calling this function, which this function commits or aborts as appropriate.
 /// The reason is for compatibility reasons with other code e.g. "Autoconstraints" in
-/// DrawSketchHandler.cpp
-void SketcherGui::makeTangentToArcOfParabolaviaNewPoint(Sketcher::SketchObject* Obj,
+/// DrawSketchHandler.cpp. Returns whether the transaction committed.
+bool SketcherGui::makeTangentToArcOfParabolaviaNewPoint(Sketcher::SketchObject* Obj,
                                                         const Part::GeomArcOfParabola* aop,
                                                         const Part::Geometry* geom2,
                                                         int geoId1,
@@ -745,11 +748,12 @@ void SketcherGui::makeTangentToArcOfParabolaviaNewPoint(Sketcher::SketchObject* 
         Gui::Command::abortCommand();
 
         tryAutoRecompute(Obj);
-        return;
+        return false;
     }
 
     Gui::Command::commitCommand();
     tryAutoRecompute(Obj);
+    return true;
 }
 
 void SketcherGui::doEndpointTangency(Sketcher::SketchObject* Obj,
@@ -6403,7 +6407,7 @@ void CmdSketcherConstrainPerpendicular::activated(int iMsg)
                 tryAutoRecompute(Obj);
             }
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
 
             return;
         }
@@ -6448,7 +6452,7 @@ void CmdSketcherConstrainPerpendicular::activated(int iMsg)
             commitCommand();
             tryAutoRecompute(Obj);
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return;
         }
         else if ((isVertex(GeoId1, PosId1) && isEdge(GeoId2, PosId2))
@@ -6486,7 +6490,7 @@ void CmdSketcherConstrainPerpendicular::activated(int iMsg)
             commitCommand();
             tryAutoRecompute(Obj);
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return;
         }
         else if (isEdge(GeoId1, PosId1)
@@ -6647,7 +6651,7 @@ void CmdSketcherConstrainPerpendicular::activated(int iMsg)
                 commitCommand();
                 tryAutoRecompute(Obj);
 
-                getSelection().clearSelection();
+                finishConstraintSelection();
                 return;
             }
 
@@ -6659,7 +6663,7 @@ void CmdSketcherConstrainPerpendicular::activated(int iMsg)
             commitCommand();
             tryAutoRecompute(Obj);
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return;
         }
     }
@@ -7058,7 +7062,7 @@ bool CmdSketcherConstrainTangent::substituteConstraintCombinations(SketchObject*
             notifyConstraintSubstitutions(QObject::tr("Endpoint to endpoint tangency was applied. "
                                                       "The coincident constraint was deleted."));
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return true;
         }
         else if ((*it)->Type == Sketcher::PointOnObject
@@ -7086,7 +7090,7 @@ bool CmdSketcherConstrainTangent::substituteConstraintCombinations(SketchObject*
             notifyConstraintSubstitutions(QObject::tr("Endpoint to edge tangency was applied. The "
                                                       "point on object constraint was deleted."));
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return true;
         }
     }
@@ -7234,7 +7238,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                 tryAutoRecompute(Obj);
             }
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
 
             return;
         }
@@ -7281,7 +7285,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
             commitCommand();
             tryAutoRecompute(Obj);
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return;
         }
         else if ((isVertex(GeoId1, PosId1) && isEdge(GeoId2, PosId2))
@@ -7334,7 +7338,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                 commitCommand();
                 tryAutoRecompute(Obj);
 
-                getSelection().clearSelection();
+                finishConstraintSelection();
             }
             return;
         }
@@ -7372,36 +7376,36 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                 if (isEllipse(*geom2) || isArcOfEllipse(*geom2) || isCircle(*geom2) || isArcOfCircle(*geom2)) {
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToEllipseviaNewPoint(Obj,
+                    bool applied = makeTangentToEllipseviaNewPoint(Obj,
                                                     static_cast<const Part::GeomEllipse*>(geom1),
                                                     geom2,
                                                     GeoId1,
                                                     GeoId2);
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
                 else if (isArcOfHyperbola(*geom2)) {
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToArcOfHyperbolaviaNewPoint(
+                    bool applied = makeTangentToArcOfHyperbolaviaNewPoint(
                         Obj,
                         static_cast<const Part::GeomArcOfHyperbola*>(geom2),
                         geom1,
                         GeoId2,
                         GeoId1);
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToArcOfParabolaviaNewPoint(
+                    bool applied = makeTangentToArcOfParabolaviaNewPoint(
                         Obj,
                         static_cast<const Part::GeomArcOfParabola*>(geom2),
                         geom1,
                         GeoId2,
                         GeoId1);
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
             }
@@ -7419,26 +7423,26 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
 
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToArcOfEllipseviaNewPoint(
+                    bool applied = makeTangentToArcOfEllipseviaNewPoint(
                         Obj,
                         static_cast<const Part::GeomArcOfEllipse*>(geom1),
                         geom2,
                         GeoId1,
                         GeoId2);
 
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToArcOfParabolaviaNewPoint(
+                    bool applied = makeTangentToArcOfParabolaviaNewPoint(
                         Obj,
                         static_cast<const Part::GeomArcOfParabola*>(geom2),
                         geom1,
                         GeoId2,
                         GeoId1);
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
             }
@@ -7456,25 +7460,25 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
 
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToArcOfHyperbolaviaNewPoint(
+                    bool applied = makeTangentToArcOfHyperbolaviaNewPoint(
                         Obj,
                         static_cast<const Part::GeomArcOfHyperbola*>(geom1),
                         geom2,
                         GeoId1,
                         GeoId2);
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
                 else if (isArcOfParabola(*geom2)) {
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToArcOfParabolaviaNewPoint(
+                    bool applied = makeTangentToArcOfParabolaviaNewPoint(
                         Obj,
                         static_cast<const Part::GeomArcOfParabola*>(geom2),
                         geom1,
                         GeoId2,
                         GeoId1);
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
             }
@@ -7493,13 +7497,13 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
 
                     Gui::Command::openCommand(
                         QT_TRANSLATE_NOOP("Command", "Add tangent constraint point"));
-                    makeTangentToArcOfParabolaviaNewPoint(
+                    bool applied = makeTangentToArcOfParabolaviaNewPoint(
                         Obj,
                         static_cast<const Part::GeomArcOfParabola*>(geom1),
                         geom2,
                         GeoId1,
                         GeoId2);
-                    getSelection().clearSelection();
+                    finishConstraintSelection(applied);
                     return;
                 }
             }
@@ -7508,7 +7512,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
                     Obj,
                     QObject::tr("Wrong selection"),
                     QObject::tr("Only tangent-via-point is supported with a B-spline."));
-                getSelection().clearSelection();
+                finishConstraintSelection(false);
                 return;
             }
 
@@ -7520,7 +7524,7 @@ void CmdSketcherConstrainTangent::activated(int iMsg)
             commitCommand();
             tryAutoRecompute(Obj);
 
-            getSelection().clearSelection();
+            finishConstraintSelection();
             return;
         }
     }
