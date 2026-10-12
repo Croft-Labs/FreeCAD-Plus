@@ -521,17 +521,27 @@ class TestPlusToolbars(unittest.TestCase):
 
     def sketch_command(self, name):
         button = self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_' + name)
-        horver = ('Sketcher_ConstrainHorVer', 'Sketcher_ConstrainHorizontal', 'Sketcher_ConstrainVertical')
-        grouped = button is None and name in horver
-        if grouped:
-            button = self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_Sketcher_CompHorVer')
+        groups = {
+            'Sketcher_CompHorVer': ('Sketcher_ConstrainHorVer', 'Sketcher_ConstrainHorizontal',
+                                   'Sketcher_ConstrainVertical'),
+            'Sketcher_CompDimensionTools': ('Sketcher_Dimension', None, 'Sketcher_ConstrainDistanceX',
+                'Sketcher_ConstrainDistanceY', 'Sketcher_ConstrainDistance', 'Sketcher_ConstrainRadiam',
+                'Sketcher_ConstrainRadius', 'Sketcher_ConstrainDiameter', 'Sketcher_ConstrainAngle',
+                'Sketcher_ConstrainLock'),
+        }
+        grouped = None
+        if button is None:
+            grouped = next((choices for group, choices in groups.items() if name in choices), None)
+            if grouped:
+                group = next(group for group, choices in groups.items() if choices == grouped)
+                button = self.ribbon.scroll.widget().findChild(QtWidgets.QToolButton, 'Plus_' + group)
         self.assertIsNotNone(button, name)
         self.ribbon.scroll.ensureWidgetVisible(button)
         settle()
         self.assertTrue(button.isEnabled(), name)
         if grouped:
             menu = button.menu()
-            action = menu.actions()[horver.index(name)]
+            action = menu.actions()[grouped.index(name)]
             spy = QtTest.QSignalSpy(action.triggered)
             def choose():
                 QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
@@ -554,7 +564,7 @@ class TestPlusToolbars(unittest.TestCase):
         settle()
         self.assertEqual(self.selected_subelements(), set(names))
 
-    def check_constraint_retention(self, sketch, command, names, kind):
+    def check_constraint_retention(self, sketch, command, names, kind, dispatch=None):
         doc = sketch.Document
         doc.UndoMode = 1
         geometry_count = sketch.GeometryCount
@@ -568,36 +578,43 @@ class TestPlusToolbars(unittest.TestCase):
                     ui_modes.apply_modes()
                 self.constraint_inputs(sketch, names)
                 undo = doc.UndoCount
-                if classic:
-                    Gui.runCommand(command)
-                    settle()
-                else:
-                    self.sketch_command(command)
-                self.assertEqual(sketch.ConstraintCount, 1)
-                self.assertEqual(sketch.Constraints[0].Type, kind)
-                self.assertEqual(sketch.solve(), 0)
-                self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
-                self.assertEqual(sketch.GeometryCount, geometry_count)
-                self.assertEqual(doc.UndoCount, undo + 1)
-                self.assertEqual(self.selected_subelements(),
-                                 set(names) if persistent and not classic else set())
-                if command == 'Sketcher_ConstrainParallel' and persistent and not classic:
-                    view = Gui.activeDocument().activeView()
-                    output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-parallel.png'
-                    if os.name == 'nt':
-                        from TestComponentFading import capture
-                        capture(view, output, prepare=False)
+                try:
+                    if dispatch:
+                        dispatch(command, classic)
+                    elif classic:
+                        Gui.runCommand(command)
+                        settle()
                     else:
-                        view.graphicsView().viewport().grabFramebuffer().save(str(output))
-                doc.undo()
-                settle()
-                self.assertEqual(sketch.ConstraintCount, 0)
-                self.assertEqual(sketch.GeometryCount, geometry_count)
-                doc.redo()
-                settle()
-                self.assertEqual(sketch.ConstraintCount, 1)
-                doc.undo()
-                settle()
+                        self.sketch_command(command)
+                    self.assertEqual(sketch.ConstraintCount, 1)
+                    self.assertEqual(sketch.Constraints[0].Type, kind)
+                    self.assertEqual(sketch.solve(), 0)
+                    self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
+                    self.assertEqual(sketch.GeometryCount, geometry_count)
+                    self.assertEqual(doc.UndoCount, undo + 1)
+                    self.assertEqual(self.selected_subelements(),
+                                     set(names) if persistent and not classic else set())
+                    if command == 'Sketcher_ConstrainParallel' and persistent and not classic:
+                        view = Gui.activeDocument().activeView()
+                        output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-parallel.png'
+                        if os.name == 'nt':
+                            from TestComponentFading import capture
+                            capture(view, output, prepare=False)
+                        else:
+                            view.graphicsView().viewport().grabFramebuffer().save(str(output))
+                    doc.undo()
+                    settle()
+                    self.assertEqual(sketch.ConstraintCount, 0)
+                    self.assertEqual(sketch.GeometryCount, geometry_count)
+                    doc.redo()
+                    settle()
+                    self.assertEqual(sketch.ConstraintCount, 1)
+                    doc.undo()
+                    settle()
+                finally:
+                    if doc.UndoCount > undo:
+                        doc.undo()
+                        settle()
         self.prefs.SetInt('ToolbarUIMode', 0)
         ui_modes.apply_modes()
 
@@ -714,6 +731,180 @@ class TestPlusToolbars(unittest.TestCase):
         self.assertFalse(self.sketch_click(view, (-5, -5)))
         self.assertEqual(sketch.ConstraintCount, 2)
         self.assertTrue(all(c.Type == 'Horizontal' for c in sketch.Constraints))
+        QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
+        settle()
+        self.assertIsNotNone(Gui.activeDocument().getInEdit())
+        self.assertFalse(self.selected_subelements())
+
+    def dimension_action(self, command, classic=False, text=None, accept=True,
+                         reference=False, invoke=None):
+        seen, errors = [], []
+        timer = QtCore.QTimer()
+        def respond():
+            dialog = QtWidgets.QApplication.activeModalWidget()
+            if not dialog or dialog.objectName() != 'SketcherGui__InsertDatum':
+                return
+            timer.stop()
+            seen.append(dialog.windowTitle())
+            try:
+                if text is not None:
+                    quantity = dialog.findChild(QtWidgets.QWidget, 'labelEdit')
+                    editor = quantity.findChild(QtWidgets.QLineEdit)
+                    self.assertIsNotNone(editor)
+                    editor.setFocus()
+                    QtTest.QTest.keyClick(editor, QtCore.Qt.Key_A, QtCore.Qt.ControlModifier)
+                    QtTest.QTest.keyClicks(editor, text)
+                    QtTest.QTest.keyClick(editor, QtCore.Qt.Key_Tab)
+                if reference:
+                    check = dialog.findChild(QtWidgets.QCheckBox, 'cbDriving')
+                    QtTest.QTest.mouseClick(check, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                           QtCore.QPoint(8, check.height()//2))
+                    self.assertTrue(check.isChecked())
+                box = dialog.findChild(QtWidgets.QDialogButtonBox, 'buttonBox')
+                role = QtWidgets.QDialogButtonBox.Ok if accept else QtWidgets.QDialogButtonBox.Cancel
+                self.assertTrue(box.button(role).isEnabled())
+                QtTest.QTest.mouseClick(box.button(role), QtCore.Qt.LeftButton)
+            except BaseException as error:
+                errors.append(repr(error))
+                dialog.reject()
+        timer.timeout.connect(respond)
+        timer.start(25)
+        try:
+            if invoke:
+                invoke()
+            elif classic:
+                Gui.runCommand(command)
+                settle()
+            else:
+                self.sketch_command(command)
+        finally:
+            timer.stop()
+            timer.deleteLater()
+        self.assertEqual(errors, [])
+        self.assertEqual(len(seen), 1)
+        settle()
+
+    def dimension_preferences(self, show=True):
+        prefs = App.ParamGet('User parameter:BaseApp/Preferences/Mod/Sketcher')
+        self.addCleanup(prefs.SetBool, 'ShowDialogOnDistanceConstraint',
+                        prefs.GetBool('ShowDialogOnDistanceConstraint', True))
+        prefs.SetBool('ShowDialogOnDistanceConstraint', show)
+
+    def dimension_circles(self):
+        import Part
+        sketch, view = self.sketch_click_fixture()
+        Gui.activeDocument().resetEdit()
+        sketch.delGeometries([0, 1])
+        for x, radius in ((-6, 3), (6, 4)):
+            sketch.addGeometry(Part.Circle(App.Vector(x, 0, 0), App.Vector(0, 0, 1), radius), False)
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        return sketch, view
+
+    def test_dimension_retention_lengths_and_angle(self):
+        self.dimension_preferences()
+        sketch, view = self.sketch_click_fixture(lines=[((-10, 4), (8, 6)), ((-8, -6), (10, -4))])
+        for suffix, kind, value in (('DistanceX', 'DistanceX', '25 mm'),
+                                    ('DistanceY', 'DistanceY', '8 mm'),
+                                    ('Distance', 'Distance', '22 mm'),
+                                    ('Angle', 'Angle', '30 deg')):
+            def dispatch(command, classic):
+                self.dimension_action(command, classic, text=value)
+                expected = App.Units.Quantity(value).Value
+                if kind == 'Angle':
+                    import math
+                    expected = math.radians(expected)
+                self.assertAlmostEqual(sketch.Constraints[0].Value, expected, places=5)
+                if suffix == 'DistanceX' and not classic and selection_toolbar.preferences().GetBool('Persistent'):
+                    # Native datum autoscaling changes camera scale; Undo restores geometry only.
+                    view.fitAll()
+                    settle()
+                    output = Path(os.environ['PLUS_TEST_DIR'])/'persistent-dimension.png'
+                    if os.name == 'nt':
+                        from TestComponentFading import capture
+                        capture(view, output, prepare=False)
+                    else:
+                        view.graphicsView().viewport().grabFramebuffer().save(str(output))
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain' + suffix,
+                                            ('Edge1',), kind, dispatch)
+
+    def test_dimension_retention_circular(self):
+        self.dimension_preferences()
+        sketch, view = self.dimension_circles()
+        for suffix, kind, value in (('Radius', 'Radius', '5 mm'),
+                                    ('Diameter', 'Diameter', '10 mm'),
+                                    ('Radiam', 'Diameter', '10 mm')):
+            def dispatch(command, classic):
+                self.dimension_action(command, classic, text=value)
+                self.assertAlmostEqual(sketch.Constraints[0].Value, 5 if kind == 'Radius' else 10)
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain' + suffix,
+                                            ('Edge1',), kind, dispatch)
+
+    def test_dimension_retention_cancel(self):
+        self.dimension_preferences()
+        sketch, view = self.dimension_circles()
+        sketch.Document.UndoMode = 1
+        for classic, persistent in ((False, True), (False, False), (True, True)):
+            self.prefs.SetInt('ToolbarUIMode', 0)
+            ui_modes.apply_modes()
+            self.persistent(persistent)
+            if classic:
+                self.prefs.SetInt('ToolbarUIMode', 1)
+                ui_modes.apply_modes()
+            names = ('Edge1', 'Edge2')
+            self.constraint_inputs(sketch, names)
+            undo = sketch.Document.UndoCount
+            before = [g.Radius for g in sketch.Geometry]
+            self.dimension_action('Sketcher_ConstrainRadius', classic, text='8 mm', accept=False)
+            self.assertEqual(sketch.ConstraintCount, 0)
+            self.assertEqual(sketch.Document.UndoCount, undo)
+            self.assertEqual([g.Radius for g in sketch.Geometry], before)
+            self.assertEqual(self.selected_subelements(), set() if classic else set(names))
+            self.assertEqual(sketch.solve(), 0)
+
+    def test_dimension_retention_reference_and_no_dialog(self):
+        self.dimension_preferences()
+        sketch, view = self.sketch_click_fixture()
+        def dispatch(command, classic):
+            self.dimension_action(command, classic, reference=True)
+            self.assertFalse(sketch.getDriving(0))
+        self.check_constraint_retention(sketch, 'Sketcher_ConstrainDistance', ('Edge1',), 'Distance', dispatch)
+        self.dimension_preferences(show=False)
+        self.check_constraint_retention(sketch, 'Sketcher_ConstrainDistance', ('Edge1',), 'Distance')
+
+    def test_dimension_retention_batch_radius(self):
+        self.dimension_preferences()
+        sketch, view = self.dimension_circles()
+        sketch.Document.UndoMode = 1
+        self.constraint_inputs(sketch, ('Edge1', 'Edge2'))
+        undo = sketch.Document.UndoCount
+        self.dimension_action('Sketcher_ConstrainRadius', text='5 mm')
+        self.assertEqual([c.Type for c in sketch.Constraints], ['Equal', 'Radius'])
+        self.assertEqual(sketch.solve(), 0)
+        self.assertTrue(all(g.toShape().isValid() for g in sketch.Geometry))
+        self.assertTrue(all(abs(g.Radius-5) < 1e-7 for g in sketch.Geometry))
+        self.assertEqual(self.selected_subelements(), {'Edge1', 'Edge2'})
+        self.assertEqual(sketch.Document.UndoCount, undo+1)
+        sketch.Document.undo()
+        settle()
+        self.assertEqual(sketch.ConstraintCount, 0)
+        self.assertEqual([g.Radius for g in sketch.Geometry], [3, 4])
+        sketch.Document.redo()
+        settle()
+        self.assertEqual(sketch.ConstraintCount, 2)
+        self.assertTrue(all(abs(g.Radius-5) < 1e-7 for g in sketch.Geometry))
+
+    def test_dimension_retention_continuous(self):
+        self.dimension_preferences()
+        sketch, view = self.sketch_click_fixture()
+        Gui.Selection.clearSelection()
+        self.sketch_command('Sketcher_ConstrainDistance')
+        for point, count in (((-5, 5), 1), ((-5, -5), 2)):
+            self.dimension_action(None, invoke=lambda: self.sketch_click(view, point))
+            self.assertEqual(sketch.ConstraintCount, count)
+            self.assertFalse(self.selected_subelements())
+            self.assertEqual(sketch.solve(), 0)
         QtTest.QTest.keyClick(view.graphicsView().viewport(), QtCore.Qt.Key_Escape)
         settle()
         self.assertIsNotNone(Gui.activeDocument().getInEdit())
@@ -942,6 +1133,8 @@ class TestPlusToolbars(unittest.TestCase):
             view.graphicsView().viewport().grabFramebuffer().save(str(path))
 
     def curve_intent(self, index):
+        # Rebuilt controls still have their default geometry until Qt lays them out.
+        settle()
         button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent')
         menu = button.menu()
         action = menu.actions()[index]
@@ -967,11 +1160,17 @@ class TestPlusToolbars(unittest.TestCase):
         self.ribbon.refresh()
         self.assertEqual(curve_selection.intent(), 'Single Curve')
         button = self.curve_intent(2)
+        option = QtWidgets.QStyleOptionToolButton()
+        button.initStyleOption(option)
+        arrow = button.style().subControlRect(QtWidgets.QStyle.CC_ToolButton, option,
+                                               QtWidgets.QStyle.SC_ToolButtonMenu, button)
+        self.assertGreaterEqual(arrow.left(), button.iconSize().width())
         spy = QtTest.QSignalSpy(button.defaultAction().triggered)
         QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
-                               QtCore.QPoint(8, button.height()//2))
+                               QtCore.QPoint(arrow.left()//2, button.height()//2))
         self.assertEqual(spy.count(), 1)
         self.assertFalse(button.menu().isVisible())
+        button.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'curve-intent-split.png'))
         self.tab('Home')
         self.assertEqual(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent').text(),
                          'Tangent Curves')

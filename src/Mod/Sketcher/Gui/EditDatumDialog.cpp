@@ -85,6 +85,7 @@ EditDatumDialog::EditDatumDialog(ViewProviderSketch* vp, int ConstrNbr)
 EditDatumDialog::EditDatumDialog(Sketcher::SketchObject* pcSketch, int ConstrNbr)
     : sketch(pcSketch)
     , ConstrNbr(ConstrNbr)
+    , success(false)
 {
     const std::vector<Sketcher::Constraint*>& Constraints = sketch->Constraints.getValues();
     Constr = Constraints[ConstrNbr];

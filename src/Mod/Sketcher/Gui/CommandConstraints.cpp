@@ -174,10 +174,13 @@ void finishDatumConstraint(Gui::Command* cmd,
 
     bool show = hGrp->GetBool("ShowDialogOnDistanceConstraint", true);
 
+    // The native dialog owns commit/abort; only a committed datum is a success.
+    bool applied = true;
     // Ask for the value of the distance immediately
     if (show && isDriving) {
         EditDatumDialog editDatumDialog(sketch, ConStr.size() - 1);
         editDatumDialog.exec();
+        applied = editDatumDialog.isSuccess();
     }
     else {
         // no dialog was shown so commit the command
@@ -185,7 +188,7 @@ void finishDatumConstraint(Gui::Command* cmd,
     }
 
     tryAutoRecompute(sketch);
-    cmd->getSelection().clearSelection();
+    finishConstraintSelection(applied);
 }
 
 void showNoConstraintBetweenExternal(const App::DocumentObject* obj)
@@ -8102,9 +8105,6 @@ void CmdSketcherConstrainRadius::activated(int iMsg)
         }
 
         finishDatumConstraint(this, Obj, constraintCreationMode == Driving);
-
-        // updateActive();
-        getSelection().clearSelection();
     }
 
     if (commitNeeded) {
@@ -8424,9 +8424,6 @@ void CmdSketcherConstrainDiameter::activated(int iMsg)
         }
 
         finishDatumConstraint(this, Obj, constraintCreationMode == Driving);
-
-        // updateActive();
-        getSelection().clearSelection();
     }
 
     if (commitNeeded) {
@@ -8793,9 +8790,6 @@ void CmdSketcherConstrainRadiam::activated(int iMsg)
         }
 
         finishDatumConstraint(this, Obj, constraintCreationMode == Driving);
-
-        // updateActive();
-        getSelection().clearSelection();
     }
 
     if (commitNeeded) {

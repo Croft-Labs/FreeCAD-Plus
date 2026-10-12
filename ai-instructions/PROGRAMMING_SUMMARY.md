@@ -105,8 +105,11 @@ retention, plus a correction that preserves BIM status-toolbar ownership. WORK_S
 owns native acceptance. TB.2c2e extends retention to basic preselected sketch
 constraints, including point alignment, coincidence, symmetry and native tangency
 substitutions. Continuous constraint picking retains its own cleanup. WORK_STATE
-owns acceptance. Dimensions, other operation integrations, Layers and unfinished
-Plus workflows remain outstanding.
+owns acceptance. TB.2c2f integrates named preselected distance, angle and circular
+dimensions through native dialog completion, including Cancel and reference/no-dialog
+paths, and fixes Curve Intent icon/arrow sizing under native styles. Contextual/
+continuous dimension handlers keep native cleanup. Other operation
+integrations, Layers and unfinished Plus workflows remain outstanding.
 
 ## Where to go
 

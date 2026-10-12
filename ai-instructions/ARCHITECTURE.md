@@ -1481,8 +1481,8 @@ The existing Persistent Selection policy also covers the native Horizontal/Verti
 (and automatic HorVer), Parallel, Block, Coincident/concentric, Point on Object and
 all three Symmetric input forms. The native legacy coincidence commands share the
 same implementation as Unified Coincident; no command identities or menu dispatch
-are replaced. Equal uses the same completion helper. Dimensions, direct Tangent/
-Perpendicular and other unlisted operations remain outside this increment.
+are replaced. Equal uses the same completion helper. TB.2c2f below extends preselected dimensions;
+direct Tangent/Perpendicular and other unlisted operations remain separate work.
 
 CommandConstraints.cpp owns finishConstraintSelection(applied). It retains native
 selection only in Plus Design with an idle edited Sketcher view and either a
@@ -1502,3 +1502,34 @@ rejected point/external input path similarly keeps Plus inputs with either toggl
 value; Classic retains its previous rejection cleanup. Native deletion, sketch exit,
 ordinary empty click and Escape are not redirected by this integration. WORK_STATE
 owns build, interaction, inventory and restart acceptance.
+
+## Preselected dimension retention (TB.2c2f)
+
+The existing native finishDatumConstraint path now delegates selection cleanup to
+finishConstraintSelection(applied). For a driving dimension with a value dialog,
+applied comes from EditDatumDialog::isSuccess(), not merely the dialog's Accepted
+result: the native accepted handler can abort on invalid data. Both constructors
+initialize that success flag to false. Native accepted/rejected handlers retain
+transaction, expression, solver and recompute ownership. Without a dialog, the
+native command commits before selection cleanup as before.
+
+Successful preselected dimensions retain their original input geometry in Plus
+Design when Persistent is on; off and Classic clear. Cancel/failed completion keeps
+usable Plus input selection with either toggle value. No geometry/selection snapshot
+is replayed. Radius, Diameter and Radiam no longer clear a second time after this
+shared completion. Their continuous applyConstraint handlers still clear normally,
+as does every active continuous handler through the existing STATUS_NONE guard.
+
+The integration covers the shared named distance, angle and circular dimension
+completion path, including native batch radius/equality constraints and reference
+or preference-suppressed dialogs. The contextual Sketcher_Dimension drawing handler
+retains its own selection lifecycle; this increment does not change it, add dimension
+conversion actions, implement the contextual palette or certify every specialized
+weight/refraction/external-geometry combination. WORK_STATE owns measured acceptance.
+
+CurveIntentButton retains QToolButton's native painting and popup behavior. Its
+size hint reserves at least a square icon area plus the current style's menu-arrow
+width. Some styles otherwise assign most of the icon-only button to the arrow,
+causing apparent icon clicks to open the menu. No fixed pixel dimensions or custom
+arrow/icon painting are introduced. Tests check the native arrow boundary, direct
+main-action dispatch, dropdown choice and retained default.

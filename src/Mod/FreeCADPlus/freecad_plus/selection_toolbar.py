@@ -58,7 +58,8 @@ def append_controls(row, active):
     persistent.setChecked(preferences().GetBool('Persistent', True))
     persistent.setToolTip('Persistent Selection\nKeep sketch selection after Construction, Equal,\n'
                           'Horizontal/Vertical, Parallel, Coincident, Point on Object,\n'
-                          'Block and Symmetry. Other operations are not yet integrated.')
+                          'Block, Symmetry and preselected distance/angle/radius dimensions.\n'
+                          'Continuous dimension tools and other operations retain native cleanup.')
 
     def persistence_changed(checked):
         preferences().SetBool('Persistent', checked)
@@ -68,8 +69,21 @@ def append_controls(row, active):
     row.addWidget(persistent)
 
 
+class CurveIntentButton(QtWidgets.QToolButton):
+    def sizeHint(self):
+        size = super().sizeHint()
+        option = QtWidgets.QStyleOptionToolButton()
+        self.initStyleOption(option)
+        arrow = self.style().subControlRect(QtWidgets.QStyle.CC_ToolButton, option,
+                                            QtWidgets.QStyle.SC_ToolButtonMenu, self)
+        # Some native styles omit the menu width from an icon-only size hint.
+        # Keep a full icon-sized button area beside their native arrow area.
+        size.setWidth(max(size.width(), size.height() + arrow.width()))
+        return size
+
+
 def append_curve_intent(row):
-    button = QtWidgets.QToolButton()
+    button = CurveIntentButton()
     button.setObjectName('PlusCurveIntent')
     button.setAccessibleName('Curve intent')
     button.setAutoRaise(True)

@@ -420,6 +420,13 @@ Do not repeat the completed baseline checks without a new relevant concern.
   Native build and six focused cases passed; WORK_STATE owns combined, visual,
   inventory and restart acceptance. Dimensions and other operations remain unfinished.
 
+- [ X ] **TB.2c2f — Preselected dimensions and Curve Intent sizing.** Route native dimension
+  completion through Persistent Selection, preserving native dialog commit/abort,
+  expressions, solver, Undo and continuous picking. Cover distance, angle, circular,
+  batch, reference/no-dialog and Cancel paths. Reserve separate native icon/arrow
+  hit areas for Curve Intent using native style metrics. Build and 39-case combined
+  acceptance passed; WORK_STATE owns visual, full inventory and restart evidence.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

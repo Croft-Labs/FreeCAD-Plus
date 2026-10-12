@@ -3,13 +3,93 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1, TB.2c2a, TB.2c2b, TB.2c2c, TB.2c2d and TB.2c2e below are
+TB.2b, TB.2c1, TB.2c2a, TB.2c2b, TB.2c2c, TB.2c2d, TB.2c2e and TB.2c2f below are
 implemented and validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2f Preselected dimensions and Curve Intent sizing — October 12, 2026
+
+**Implementation:** the native finishDatumConstraint path now observes the dialog's
+actual commit-success flag and uses the existing Plus completion policy. Named
+preselected distance, angle and circular dimensions retain native inputs with
+Persistent on; off and Classic clear. Cancel keeps usable Plus input selection with
+either toggle value. Both native dialog constructors initialize the success flag.
+Removed Radius/Diameter/Radiam's redundant post-completion clear; their continuous
+handlers keep native cleanup. Transaction, solver, expression, autoscale, command,
+geometry identity and icon/menu ownership remain native. No Classic toolbar/workbench
+definition, submodule pin or license changed. Architecture owns the scope and contracts.
+
+The combined audit exposed a separate Curve Intent sizing defect in the active Qt
+style: its 25-pixel button allocated 17 pixels to the arrow, leaving an 8-pixel main
+hit area. The Plus button now reserves a square icon area plus the native arrow
+width through sizeHint, preserving native painting and popup behavior. Tests wait
+for layout after rebuilding, verify adequate main hit area and click that area.
+A temporary popup watchdog recorded the blocked call and failed the diagnostic
+instead of allowing an open menu to hang indefinitely. Layout settling alone did
+not fix the native style allocation; the production size hint does.
+
+**Build:** SketcherGui and dependencies built successfully in the retained
+freecad_1.1.4_context tree with MSVC 19.44, Qt 6.8.3, Python 3.12 and existing libpack,
+concurrency 3. Final script synchronization and source checks are recorded below.
+
+**Focused checks:** batch radius/Equal with Undo/Redo, Plus-on/off/Classic Cancel,
+circular values and repeated continuous picks passed. Corrected distance/angle and
+reference/no-dialog cases passed together in 68.805 seconds, zero failures, errors
+or skips, exit 0 and empty stderr. Tests dispatch real native dropdown actions,
+quantity-field input and dialog buttons, and require native solve success, valid
+geometry, expected values, selection and Undo behavior.
+
+**Validation corrections and limits:** the first harness used the XML namespace
+instead of Qt's generated SketcherGui__InsertDatum object name, leaving the dialog
+open. Only the identified task-owned process was stopped. A subsequent attempt
+reported an access violation and exited -1073740791; Windows Application Error
+identified nvoglv64.dll 32.0.15.6094, exception 0xc0000409, as the faulting module.
+The exact trigger is unknown. The same traced batch case passed in 9.214 seconds
+without a source fix, and later focused runs did not reproduce the crash. No driver
+or graphics settings were changed; this does not establish long-session stability.
+
+The next complete focused run exposed test assertions that compared native radians
+to degrees and missed the checkbox indicator. Those were corrected, including
+native reference-state verification; failed matrix cases now undo their operation
+before the next case. No production changes were required for those fixture fixes.
+The first dimension capture was too small to accept: native autoscaling changes
+camera scale while Undo restores geometry only. The capture fixture now refits the
+view and captures the first dimension before repeated camera/label autoscaling;
+final visual acceptance is separate from command assertions.
+
+**Final combined/visual/source acceptance:** all 39 TestPlusToolbars cases passed
+in 511.119 seconds, zero failures, errors, skips or popup-watchdog interventions,
+normal exit 0 and empty stderr. This includes the six dimension cases, Curve Intent
+split-area regression, native arc/group memory, categories, directional selection,
+Classic restoration, custom toolbars, BIM status ownership and Spreadsheet widgets.
+The final focused Curve Intent/dimension pair also passed in 51.277 seconds with
+clean diagnostics. Inspected final-code captures show a green retained edge with
+its 25 mm dimension and distinct native icon/arrow areas on Curve Intent. All 51
+Plus Python files parse and match the synchronized development payload byte for byte;
+whitespace checks pass. The early driver fault did not recur in these final runs,
+but its precise trigger and long-session stability remain unestablished.
+
+**Inventory/restart acceptance:** the independent audit passed all twenty registered
+workbenches (nineteen baseline Classic workbenches plus None), 240 toolbar-group
+instances and 1,169 per-workbench command occurrences. No omissions, stolen native
+widgets/actions or Classic restoration failures were found. Exit was 0; stderr has
+only the existing missing OpenSCAD executable notice. Separate prepare/shutdown and
+restart processes passed with exit 0 and empty stderr. Persistent and Directional
+off, Tangent Curves, Faces unchecked, Pocket default and hidden File/shown Edit
+Classic toolbar preferences survived independent restart.
+
+**Delivery boundary:** the contextual Sketcher_Dimension drawing handler, direct
+Tangent/Perpendicular and other operations, Layers and separately owned Plus workflows
+remain unfinished. Native specialized weight/refraction/external combinations are
+not exhaustively certified. Both retained shortcut targets and working directories
+were reverified unchanged. This is a development increment, not owner packaging.
+The coherent changes are committed locally; no remote publication or release was
+performed. Task-generated validation output is removed after recording these results;
+useful builds, both shortcuts and owner settings remain preserved.
 
 ## TB.2c2e Basic preselected constraint persistence — October 12, 2026
 

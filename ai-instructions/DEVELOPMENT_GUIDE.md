@@ -767,3 +767,22 @@ geometry while constraint indices change. Also run continuous native constraint
 picking and verify sequence cleanup and Escape without closing the sketch. Inspect
 a normal-framebuffer capture of retained Parallel inputs. These checks do not
 establish dimension dialogs or persistence across arbitrary modeling operations.
+
+Dimension retention acceptance uses the actual Sketcher_CompDimensionTools arrow,
+native menu action, quantity field and OK/Cancel buttons. Test changed Distance,
+DistanceX/Y, Angle, Radius, Diameter and Radiam values in Plus on/off and Classic;
+require valid geometry, native solve success, retained input names and Undo/Redo.
+Check reference-checkbox acceptance, dialogs suppressed by preference, batch radius
+with native Equal constraints, Cancel restoring original geometry with no Undo,
+and repeated continuous dimension picks with native selection reset. Inspect a
+normal-framebuffer capture of retained dimensioned geometry. The generated Qt datum
+dialog object name is SketcherGui__InsertDatum. Run the full toolbar suite and
+all-workbench inventory/restart checks after changes to shared native completion.
+
+For Curve Intent split acceptance, wait for rebuilt controls to be laid out before
+using their geometry. Require the native arrow subcontrol to leave at least the
+icon width for the main action, then click that main region and verify one action
+trigger without a popup. Native style metrics can differ from a hard-coded click
+coordinate. Inspect the separate button capture. Temporary validation runners may
+use a bounded popup watchdog, but any watchdog intervention must fail the run;
+closing a stuck menu is diagnostic, not a passing interaction.
