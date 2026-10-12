@@ -450,6 +450,13 @@ Do not repeat the completed baseline checks without a new relevant concern.
   independent restart and geometry-family acceptance limits. Layers, the contextual
   palette and other operation integrations remain unfinished.
 
+- [ X ] **TB.2c2j — B-spline degree elevation persistence.** Connect the native
+  Increase B-spline Degree command to idle Plus selection retention. Preserve
+  native curve identity, helper geometry, warnings, transactions and Classic
+  cleanup; retain Plus no-op inputs. Native build, two focused cases and ten
+  affected toolbar regressions passed. WORK_STATE owns inventory/restart evidence
+  and limits. Other B-spline operations, Layers and the contextual palette remain open.
+
 ## Operation workflows reached from the panel — outside Group 1
 
 Historical IDs below remain stable for existing references; the G1 prefix does not

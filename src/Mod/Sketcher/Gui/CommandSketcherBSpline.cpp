@@ -32,6 +32,7 @@
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
 #include <Gui/Notifications.h>
+#include <Gui/Selection/PlusSelection.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Selection/SelectionObject.h>
 #include <Mod/Sketcher/App/SketchObject.h>
@@ -218,6 +219,7 @@ void CmdSketcherIncreaseDegree::activated(int iMsg)
     openCommand(QT_TRANSLATE_NOOP("Command", "Increase B-spline degree"));
 
     bool ignored = false;
+    bool applied = false;
 
     for (size_t i = 0; i < SubNames.size(); i++) {
         // only handle edges
@@ -226,9 +228,14 @@ void CmdSketcherIncreaseDegree::activated(int iMsg)
             const Part::Geometry* geo = Obj->getGeometry(GeoId);
 
             if (geo->is<Part::GeomBSplineCurve>()) {
+                const int degree = static_cast<const Part::GeomBSplineCurve*>(geo)->getDegree();
+                const int geometryCount = Obj->getHighestCurveIndex();
                 Gui::cmdAppObjectArgs(Obj, "increaseBSplineDegree(%d) ", GeoId);
                 // add new control points
                 Gui::cmdAppObjectArgs(Obj, "exposeInternalGeometry(%d)", GeoId);
+                applied |= static_cast<const Part::GeomBSplineCurve*>(Obj->getGeometry(GeoId))
+                                   ->getDegree() != degree
+                    || Obj->getHighestCurveIndex() != geometryCount;
             }
             else {
                 ignored = true;
@@ -249,7 +256,15 @@ void CmdSketcherIncreaseDegree::activated(int iMsg)
 
     commitCommand();
     tryAutoRecomputeIfNotSolve(Obj);
-    getSelection().clearSelection();
+    // Degree elevation preserves the curve identity; exposure only appends helpers.
+    // Continuous handlers still own their selection cleanup.
+    const auto policy = Gui::plusSelectionPolicy();
+    auto* doc = Gui::Application::Instance->editDocument();
+    auto* vp = doc ? dynamic_cast<ViewProviderSketch*>(doc->getInEdit()) : nullptr;
+    if (!(policy.enabled && vp && vp->getSketchMode() == ViewProviderSketch::STATUS_NONE
+          && (!applied || policy.persistent))) {
+        getSelection().clearSelection();
+    }
 }
 
 bool CmdSketcherIncreaseDegree::isActive()

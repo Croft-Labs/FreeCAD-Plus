@@ -117,8 +117,10 @@ toolbar cases, full Classic inventory and independent restart passed; WORK_STATE
 owns evidence. TB.2c2i integrates preselected contextual Dimension through native
 activation, dialog/commit and handler teardown while preserving continuous picking
 and native autoscale transactions. All 57 toolbar cases, complete Classic inventory
-and independent restart passed; WORK_STATE owns acceptance limits. Other operation
-integrations, Layers and unfinished Plus workflows remain outstanding.
+and independent restart passed; WORK_STATE owns acceptance limits. TB.2c2j adds
+idle B-spline degree-elevation retention through the existing native identity and
+transaction services. WORK_STATE owns targeted acceptance and preservation checks.
+Other operation integrations, Layers and unfinished Plus workflows remain outstanding.
 
 ## Where to go
 

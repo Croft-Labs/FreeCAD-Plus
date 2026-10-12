@@ -841,3 +841,15 @@ including whole-sketch scaling and two-step Undo/Redo. Test ordinary single-tran
 completion separately with dimensioning/AutoScaleMode=Never (1) in isolated test
 preferences, restoring it afterward. Do not change native transactions merely to
 satisfy the one-operation fixture's Undo count.
+
+
+B-spline degree-elevation acceptance uses actual Plus All Tools buttons and native
+Classic dispatch. Compare Persistent Selection on/off and Classic for a single
+curve and mixed line/multiple-spline selections. Increase twice, using the retained
+selection directly when enabled; verify native degree, sampled curve shape, solve,
+shape validity, selected names, helper geometry and Undo/Redo. An endpoint-only
+selection enables the native action but is not an edge operation: it should keep
+Plus inputs while preserving native transaction behavior. Keep mixed-selection warnings.
+Inspect a normal-framebuffer capture and rerun Classic inventory and split-button
+regressions. These checks do not certify the separate degree-reduction, conversion
+or knot-editing paths.

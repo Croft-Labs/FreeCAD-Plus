@@ -1596,3 +1596,20 @@ existing callers retain their original cleanup. Native Classic behavior and tool
 started without preselection still follow ContinuousCreationMode. resetTool clears
 the preselection flag, so Escape/Undo reset does not turn later continuous picks into
 preselected operations. Explicit Escape continues to clear the cancelled sequence.
+
+
+## B-spline degree elevation retention (TB.2c2j)
+
+Sketcher_BSplineIncreaseDegree uses the existing Plus Selection policy only when
+an edited sketch is idle. Native increaseBSplineDegree copies the geometry identity
+into the elevated curve at the same index; exposeInternalGeometry appends missing
+helper geometry. Keeping the current selection therefore does not require name
+replay or remapping. Native curve modification, helper constraints, warnings,
+recompute and transaction ownership are unchanged.
+
+Completion detects actual degree or helper-geometry changes. In Plus Design,
+Persistent Selection on retains the selection; off clears it after a change.
+A no-op retains usable inputs with either toggle setting. Classic and commands
+invoked during an interactive handler keep their original cleanup. This contract
+does not cover degree reduction, knot modification or conversion: those operations
+have different identity and completion behavior and retain their native handling.

@@ -3,13 +3,66 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1 and TB.2c2a through TB.2c2i below are implemented and validated in
+TB.2b, TB.2c1 and TB.2c2a through TB.2c2j below are implemented and validated in
 the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
 complete: persistence for other operations, Layers and Plus-only workflows need
 their own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2j B-spline degree elevation — October 12, 2026
+
+**Implementation:** native Increase B-spline Degree now honors Persistent Selection
+for idle Plus Design sketches. On retains the actual selected entities; off clears
+after a degree/helper-geometry change. A no-op retains usable Plus inputs. Native
+curve identity, helper creation, warnings, recompute, transactions and Classic
+cleanup remain unchanged. No selection replay, Classic toolbar/workbench definition,
+submodule pin or licensing change was introduced. Degree reduction, knot changes
+and conversion retain their separate native paths.
+
+**Build:** SketcherGui and FreeCADPlusScripts built successfully in the retained
+freecad_1.1.4_context development tree with concurrency 3 and empty build stderr.
+All 51 Plus Python files parse and match the synchronized payload byte-for-byte;
+native non-ASCII text is preserved and the whitespace check passes.
+
+**Validation:** the first endpoint-only case stopped on its incorrect assumption
+that a native no-op adds no Undo entry (12.703 seconds, native exit 0). The original
+commit/recompute path records one entry even without a degree change. Corrected
+the expectation without changing production transaction code; the final matrix
+confirmed the same entry in Plus on/off and Classic.
+
+Both focused native cases then passed (43.521 seconds in unittest; 43.937 including
+runner setup). Coverage includes single and mixed line/two-spline inputs, two
+successive elevations without reselection when enabled, native degrees and sampled
+curve shape, solver/shape validity, selection names, helper counts and Undo/Redo.
+Endpoint-only no-op retention passed in all three modes. Native framebuffer capture
+was inspected: both splines and the selected line remain green after elevation,
+with the native curvature combs, blue helper circles and constraint markers visible.
+This does not certify every rational/periodic spline or maximum-degree kernel failure.
+
+Ten affected toolbar regressions passed (52.780 seconds in unittest; 53.140 with
+setup): Classic restoration, mode routing, Persistent Selection controls and
+Equal/Construction, Curve Intent, native arc split/default memory, native widgets,
+added-workbench/custom-toolbar coverage, live customization and Plus group memory.
+There were no failures, errors, skips or timeouts in the final focused/regression
+runs; both native processes exited 0 with empty stderr. The full suite now contains
+59 cases; the unrelated completed cases were not rerun for this scoped change.
+
+**Preservation/restart:** the native audit passed all nineteen Classic workbenches
+plus None: 240 toolbar groups and 1169 per-workbench command entries, no unavailable
+Classic-command placeholders, preserved action/widget ownership and Classic
+restoration. Audit took 62.391 seconds, native exit 0; stderr contains only the known
+external OpenSCAD executable-not-found notice. Separate prepare/restart processes
+passed (0.594/1.016 seconds), native exit 0, empty stderr, including saved selection
+preferences, remembered Pocket choice and independent Classic File/Edit visibility.
+
+**Delivery/remaining:** the development executable and both shortcut targets/working
+directories were reread and verified; the archived reference shortcut is unchanged.
+Task-generated validation files were removed after recording this evidence. This is
+a local development increment, not a release or completed owner package. Layers,
+the contextual palette and other operation integrations remain unfinished. Classic
+workbench/toolbar inclusion is complete and requires no duplicate implementation.
 
 ## TB.2c2i Preselected contextual Dimension — October 12, 2026
 

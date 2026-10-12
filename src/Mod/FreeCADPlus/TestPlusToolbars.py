@@ -632,6 +632,92 @@ class TestPlusToolbars(unittest.TestCase):
         self.prefs.SetInt('ToolbarUIMode', 0)
         ui_modes.apply_modes()
 
+    def bspline_degree_fixture(self):
+        import Part
+        sketch, view = self.sketch_click_fixture(lines=[((-10, -8), (10, -8))])
+        Gui.activeDocument().resetEdit()
+        for y in (0, 6):
+            spline = Part.BSplineCurve()
+            spline.buildFromPolesMultsKnots(
+                [App.Vector(-10, y, 0), App.Vector(0, y+4, 0), App.Vector(10, y, 0)],
+                [3, 3], [0., 1.], False, 2)
+            sketch.addGeometry(spline, False)
+        sketch.Document.recompute()
+        Gui.activeDocument().setEdit(sketch.Name)
+        settle()
+        self.tab('All Tools')
+        sketch.Document.UndoMode = 1
+        return sketch, view
+
+    def test_bspline_degree_retention(self):
+        sketch, view = self.bspline_degree_fixture()
+        doc = sketch.Document
+        command = 'Sketcher_BSplineIncreaseDegree'
+        samples = [sketch.Geometry[1].value(t) for t in (0., .25, .5, .75, 1.)]
+        timer = self.constraint_warning_timer()
+        for names in (('Edge2',), ('Edge1', 'Edge2', 'Edge3')):
+            for classic, persistent in self.constraint_state_modes():
+                self.constraint_inputs(sketch, names)
+                before = doc.UndoCount
+                geometry_count, constraint_count = sketch.GeometryCount, sketch.ConstraintCount
+                for repetition in (1, 2):
+                    if repetition == 2 and (classic or not persistent):
+                        self.constraint_inputs(sketch, names)
+                    if classic:
+                        Gui.runCommand(command)
+                        settle()
+                    else:
+                        self.sketch_command(command)
+                    self.assertEqual(sketch.Geometry[1].Degree, 2 + repetition)
+                    self.assertEqual(sketch.Geometry[2].Degree,
+                                     2 + repetition if 'Edge3' in names else 2)
+                    self.assertEqual(self.selected_subelements(),
+                                     set(names) if persistent and not classic else set())
+                    self.assertEqual(sketch.solve(), 0)
+                    self.assertTrue(sketch.Shape.isValid())
+                    self.assertEqual(doc.UndoCount, before + repetition)
+                    for t, original in zip((0., .25, .5, .75, 1.), samples):
+                        self.assertLess((sketch.Geometry[1].value(t) - original).Length, 1e-7)
+                if not classic and persistent:
+                    from TestComponentFading import capture
+                    view.viewTop()
+                    view.fitAll()
+                    settle()
+                    capture(view, Path(os.environ['PLUS_TEST_DIR'])/'bspline-degree.png', prepare=False)
+                doc.undo()
+                settle()
+                self.assertEqual(sketch.Geometry[1].Degree, 3)
+                doc.redo()
+                settle()
+                self.assertEqual(sketch.Geometry[1].Degree, 4)
+                doc.undo()
+                doc.undo()
+                settle()
+                self.assertEqual(sketch.Geometry[1].Degree, 2)
+                self.assertEqual(sketch.Geometry[2].Degree, 2)
+                self.assertEqual(sketch.GeometryCount, geometry_count)
+                self.assertEqual(sketch.ConstraintCount, constraint_count)
+        timer.stop()
+
+    def test_bspline_degree_noop_selection(self):
+        sketch, view = self.bspline_degree_fixture()
+        # A spline endpoint enables the native command, but only edges are processed.
+        self.assertEqual(sketch.getGeoVertexIndex(2), (1, 1))
+        for classic, persistent in self.constraint_state_modes():
+            self.constraint_inputs(sketch, ('Vertex3',))
+            before = sketch.Document.UndoCount
+            if classic:
+                Gui.runCommand('Sketcher_BSplineIncreaseDegree')
+                settle()
+            else:
+                self.sketch_command('Sketcher_BSplineIncreaseDegree')
+            self.assertEqual(sketch.Geometry[1].Degree, 2)
+            self.assertEqual(sketch.GeometryCount, 3)
+            self.assertEqual(sketch.ConstraintCount, 0)
+            # Native commit/recompute records an Undo entry even for this no-op.
+            self.assertEqual(sketch.Document.UndoCount, before + 1)
+            self.assertEqual(self.selected_subelements(), set() if classic else {'Vertex3'})
+
     def test_constraint_retention_line_operations(self):
         sketch, view = self.sketch_click_fixture(lines=[((-10, 4), (8, 6)),
                                                        ((-8, -6), (10, -4))])
