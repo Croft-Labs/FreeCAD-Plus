@@ -3,7 +3,7 @@
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtGui, QtWidgets
-from . import curve_selection
+from . import curve_selection, category_selection
 
 
 def preferences():
@@ -12,6 +12,7 @@ def preferences():
 
 def apply(active):
     curve_selection.apply(active)
+    category_selection.apply(active)
     # None removes the transient property, restoring native Classic behavior.
     value = preferences().GetBool('Directional', True) if active else None
     Gui.getMainWindow().setProperty('FreeCADPlusDirectionalSelection', value)
@@ -25,6 +26,7 @@ def append_controls(row, active):
     label.setObjectName('PlusSelectionLabel')
     row.addWidget(label)
     append_curve_intent(row)
+    category_selection.append_controls(row)
     button = QtWidgets.QToolButton()
     button.setObjectName('PlusDirectionalSelection')
     button.setAccessibleName('Directional Selection')

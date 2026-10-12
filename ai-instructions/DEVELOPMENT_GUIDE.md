@@ -701,3 +701,17 @@ selection unchanged. Place click fixtures away from sketch axes and send explici
 hover motion before clicking; do not substitute a synthetic selection callback for
 native pick acceptance. The existing full toolbar suite and all-workbench audit
 verify preserved Classic inventory and interactions after the top-row change.
+
+Category acceptance uses actual checkbox-menu clicks and native model/Sketcher
+clicks and box drags, with disabled/enabled categories and Classic restoration.
+Check all eight native geometry classifications, linked occurrence paths, native
+command-gate intersection in single and batch paths, and independent gate removal.
+Programmatic command selections must retain their native behavior outside viewport
+input. For direct preselection hook checks use the native object signature:
+`Gui.Selection.setPreselection(obj, 'Face1', tp=0)`; the default internal signal
+intentionally bypasses hover admission. A manually armed scope is suitable only
+for that hook check, never as a substitute for real viewport interaction tests.
+Inspect stderr for Python gate exceptions, which the native wrapper reports while
+retaining its upstream fallback. Fresh-process checks also verify a saved unchecked
+Faces category. Run the full toolbar suite and all-workbench inventory audit after
+changes to this native Selection integration.

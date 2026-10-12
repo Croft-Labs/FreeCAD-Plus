@@ -7,7 +7,7 @@ from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtCore, QtGui, QtOpenGLWidgets, QtTest, QtWidgets
-from freecad_plus import toolbars, ui_modes, selection_toolbar, curve_selection
+from freecad_plus import toolbars, ui_modes, selection_toolbar, curve_selection, category_selection
 
 
 def settle():
@@ -21,6 +21,10 @@ class TestPlusToolbars(unittest.TestCase):
         self.before = set(App.listDocuments())
         self.prefs = App.ParamGet('User parameter:BaseApp/Preferences/General')
         self.saved = [self.prefs.GetInt(key, 0) for key in ui_modes.KEYS]
+        self.saved_categories = {k: category_selection.preferences().GetBool(k, True)
+                                 for k in category_selection.CATEGORIES}
+        for key in category_selection.CATEGORIES:
+            category_selection.preferences().SetBool(key, True)
         self.saved_intent = curve_selection.intent()
         selection_toolbar.preferences().SetString('CurveIntent', 'Single Curve')
         self.saved_directional = selection_toolbar.preferences().GetBool('Directional', True)
@@ -38,6 +42,8 @@ class TestPlusToolbars(unittest.TestCase):
             Gui.activeDocument().resetEdit()
         for name in set(App.listDocuments()) - self.before:
             App.closeDocument(name)
+        for key, value in self.saved_categories.items():
+            category_selection.preferences().SetBool(key, value)
         selection_toolbar.preferences().SetString('CurveIntent', self.saved_intent)
         selection_toolbar.preferences().SetBool('Directional', self.saved_directional)
         for key, value in zip(ui_modes.KEYS, self.saved):
@@ -236,6 +242,13 @@ class TestPlusToolbars(unittest.TestCase):
             Gui.runCommand(command)
             settle()
         QtTest.QTest.mouseMove(widget, first)
+        # Deliver hover before press even when the OS cursor already occupies
+        # this position after a preceding test drag or a toolbar-menu click.
+        hover = QtGui.QMouseEvent(QtCore.QEvent.MouseMove, QtCore.QPointF(first),
+                                 QtCore.QPointF(widget.mapToGlobal(first)), QtCore.Qt.NoButton,
+                                 QtCore.Qt.NoButton, QtCore.Qt.NoModifier)
+        QtWidgets.QApplication.sendEvent(widget, hover)
+        QtTest.QTest.qWait(50)
         QtTest.QTest.mousePress(widget, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, first)
         for step in range(1, 9):
             pos = first + (last - first) * (step / 8)
@@ -261,6 +274,166 @@ class TestPlusToolbars(unittest.TestCase):
         if command:
             self.assertIsNone(view.graphicsView().property('FreeCADPlusBoxSelection'))
         return Gui.Selection.getSelectionEx()
+
+    def category_toggle(self, name, enabled):
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+        menu = button.menu()
+        action = next(a for a in menu.actions() if a.text() == name)
+        if action.isChecked() != enabled:
+            def choose():
+                QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                       menu.actionGeometry(action).center())
+            QtCore.QTimer.singleShot(100, choose)
+            QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+            settle()
+        self.assertEqual(action.isChecked(), enabled)
+        self.assertEqual(category_selection.preferences().GetBool(name, True), enabled)
+
+    def test_category_menu_scope_and_gate_ownership(self):
+        import Part
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+        self.assertEqual([a.text() for a in button.menu().actions()],list(category_selection.CATEGORIES))
+        self.assertTrue(all(a.isChecked() for a in button.menu().actions()))
+        self.assertFalse(button.icon().isNull())
+        doc=App.newDocument('CategoryScope');obj=doc.addObject('Part::Feature','Box')
+        obj.Shape=Part.makeBox(10,10,10);doc.recompute()
+        class Refuse:
+            def allow(self, doc, obj, sub): return False
+        Gui.Selection.addSelectionGate(Refuse())
+        try:
+            self.category_toggle('Faces',False)
+            self.tab('Home')
+            button=self.ribbon.common.findChild(QtWidgets.QToolButton,'PlusSelectionCategories')
+            self.assertFalse(next(a for a in button.menu().actions() if a.text()=='Faces').isChecked())
+            for mode in (1,0):
+                self.prefs.SetInt('ToolbarUIMode',mode);ui_modes.apply_modes()
+                Gui.Selection.addSelection(obj,'Face1')
+                self.assertFalse(Gui.Selection.getSelection())
+            Gui.activateWorkbench('FemWorkbench');ui_modes.apply_modes()
+            self.assertFalse(category_selection._controller.active)
+            self.assertIsNone(self.ribbon.common.findChild(QtWidgets.QToolButton,'PlusSelectionCategories'))
+            Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+            self.assertTrue(category_selection._controller.active)
+        finally:
+            Gui.Selection.removeSelectionGate()
+        # A category preference must not interfere with command-driven selection.
+        Gui.Selection.addSelection(obj,'Face1')
+        self.assertTrue(Gui.Selection.getSelection())
+        self.assertIsNone(Gui.getMainWindow().property('FreeCADPlusCategoryPicking'))
+
+    def test_category_geometry_and_batch_admission(self):
+        import Part
+        doc=App.newDocument('CategoryKinds')
+        box=doc.addObject('Part::Feature','Box');box.Shape=Part.makeBox(10,10,10)
+        sheet=doc.addObject('Part::Feature','Sheet');sheet.Shape=Part.makePlane(10,10)
+        curve=doc.addObject('Part::Feature','Curve');curve.Shape=Part.makeLine(App.Vector(0,0,0),App.Vector(10,0,0))
+        point=doc.addObject('Part::Feature','Point');point.Shape=Part.Vertex(0,0,0)
+        body=doc.addObject('PartDesign::Body','Body')
+        plane=body.newObject('PartDesign::Plane','Plane')
+        sketch=body.newObject('Sketcher::SketchObject','Sketch')
+        sketch.addGeometry(Part.LineSegment(App.Vector(0,0,0),App.Vector(10,0,0)),False)
+        root=doc.addObject('App::Part','Root')
+        link=doc.addObject('App::Link','Occurrence');link.setLink(box);root.addObject(link)
+        doc.recompute()
+        cases=((box,'','Bodies'),(box,'Face1','Faces'),(box,'Edge1','Edges'),
+               (box,'Vertex1','Vertices'),(sheet,'','Surfaces'),(sheet,'Edge1','Surfaces'),
+               (curve,'Edge1','Curves'),(curve,'Vertex1','Points'),(point,'','Points'),
+               (plane,'','Planes'),(body.Origin,'','Points'),(sketch,'Edge1','Curves'),
+               (sketch,'Vertex1','Points'),(root,'Occurrence.Face1','Faces'))
+        for obj,sub,expected in cases:
+            self.assertEqual(category_selection.category(obj,sub),expected,(obj.Name,sub))
+        # Exercise the same native hook used by box-selection batches. Its scope
+        # is explicitly armed here; actual mouse routing is covered below.
+        class OnlyFace:
+            def allow(self, doc, obj, sub): return sub == 'Face1'
+        Gui.Selection.addSelectionGate(OnlyFace())
+        try:
+            for allowed in (False,True):
+                self.category_toggle('Faces',allowed)
+                Gui.Selection.clearSelection()
+                Gui.getMainWindow().setProperty('FreeCADPlusCategoryPicking',True)
+                try:
+                    Gui.Selection.addSelection(box,['Face1','Edge1'])
+                    self.assertEqual([sub for e in Gui.Selection.getSelectionEx() for sub in e.SubElementNames],
+                                     ['Face1'] if allowed else [])
+                    Gui.Selection.clearPreselection()
+                    Gui.Selection.setPreselection(box,'Face1',tp=0)
+                    self.assertEqual(bool(Gui.Selection.getPreselection().ObjectName),allowed)
+                finally:
+                    category_selection._controller.end_pick()
+        finally:
+            Gui.Selection.removeSelectionGate()
+        self.category_toggle('Faces',False)
+        self.ribbon.host.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'ribbon-categories.png'))
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+        def capture_menu():
+            button.menu().grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'category-menu.png'))
+            button.menu().close()
+        QtCore.QTimer.singleShot(100, capture_menu)
+        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+
+    def test_category_native_model_boxes(self):
+        import Part
+        doc=App.newDocument('CategoryBoxes');box=doc.addObject('Part::Feature','Box')
+        box.Shape=Part.makeBox(20,10,4,App.Vector(-10,-5,0));doc.recompute()
+        view=Gui.activeDocument().activeView()
+        view.setCameraType('Orthographic');view.viewTop();view.fitAll();view.getCameraNode().height=40;settle()
+        self.category_toggle('Bodies',False)
+        self.assertFalse(self.drag_box(view,(-12,7),(12,-7),'Std_BoxSelection'))
+        self.category_toggle('Bodies',True)
+        self.assertTrue(self.drag_box(view,(-12,7),(12,-7),'Std_BoxSelection'))
+        box.Visibility=False
+        curve=doc.addObject('Part::Feature','Curve');curve.Shape=Part.makeLine(App.Vector(-10,5,0),App.Vector(10,5,0))
+        doc.recompute();settle()
+        self.category_toggle('Curves',False)
+        self.assertFalse(self.drag_box(view,(-12,7),(12,3),'Std_BoxElementSelection'))
+        self.category_toggle('Curves',True)
+        self.assertTrue(self.drag_box(view,(-12,7),(12,3),'Std_BoxElementSelection'))
+        self.category_toggle('Curves',False)
+        self.prefs.SetInt('ToolbarUIMode',1);ui_modes.apply_modes()
+        self.assertTrue(self.drag_box(view,(-12,7),(12,3),'Std_BoxElementSelection'))
+
+    def test_category_native_sketch_click_and_box(self):
+        import Part
+        self.tab('Sketch');doc=App.newDocument('CategorySketch')
+        sketch=doc.addObject('Sketcher::SketchObject','Sketch')
+        sketch.addGeometry(Part.LineSegment(App.Vector(-10,5,0),App.Vector(10,5,0)),False)
+        doc.recompute();Gui.activeDocument().setEdit(sketch.Name);settle()
+        view=Gui.activeDocument().activeView();view.viewTop();view.getCameraNode().height=40;settle()
+        def click():
+            Gui.Selection.clearSelection()
+            widget=view.graphicsView().viewport();ratio=widget.devicePixelRatioF()
+            screen=view.getPointOnScreen(App.Vector(-5,5,0))
+            position=QtCore.QPoint(round(screen[0]/ratio),widget.height()-1-round(screen[1]/ratio))
+            event=QtGui.QMouseEvent(QtCore.QEvent.MouseMove,QtCore.QPointF(position),
+                                   QtCore.QPointF(widget.mapToGlobal(position)),QtCore.Qt.NoButton,
+                                   QtCore.Qt.NoButton,QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(widget,event);settle()
+            QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,position);settle()
+            return [s for entry in Gui.Selection.getSelectionEx() for s in entry.SubElementNames]
+        for allowed in (False,True):
+            self.category_toggle('Curves',allowed)
+            picked=self.drag_box(view,(-12,7),(12,3),capture='category-sketch-box.png' if allowed else None)
+            self.assertEqual(any('Edge1' in e.SubElementNames for e in picked),allowed,
+                             ([e.SubElementNames for e in picked],str(sketch.Geometry)))
+            self.assertEqual('Edge1' in click(),allowed)
+        # Removing a command's gate must not remove category admission, and an
+        # active gate must still restrict Sketcher's batch-selection path.
+        class Refuse:
+            def allow(self,doc,obj,sub):return False
+        Gui.Selection.addSelectionGate(Refuse())
+        try:
+            self.assertFalse(self.drag_box(view,(-12,7),(12,3)))
+        finally:
+            Gui.Selection.removeSelectionGate()
+        self.category_toggle('Curves',False)
+        picked = [s for e in self.drag_box(view,(-12,7),(12,3)) for s in e.SubElementNames]
+        self.assertNotIn('Edge1', picked)
+        self.assertIn('Vertex1', picked)  # Points remain independently enabled.
+        self.category_toggle('Points',False)
+        self.assertFalse(self.drag_box(view,(-12,7),(12,3)))
+        self.prefs.SetInt('ToolbarUIMode',1);ui_modes.apply_modes()
+        self.assertIn('Edge1',click())
 
     def curve_intent(self, index):
         button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent')
@@ -715,6 +888,7 @@ def prepare_fresh_process():
     toolbars.preferences().SetString('PartDesign_Pad', 'PartDesign_Pocket')
     selection_toolbar.preferences().SetBool('Directional', False)
     selection_toolbar.preferences().SetString('CurveIntent', 'Tangent Curves')
+    category_selection.preferences().SetBool('Faces', False)
     App.saveParameter()
 
 
@@ -727,6 +901,10 @@ def verify_fresh_process():
     assert r.bar.isVisible()
     assert r.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent').text() == 'Tangent Curves'
     assert curve_selection.intent() == 'Tangent Curves'
+    categories = r.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+    assert categories is not None
+    assert not next(a for a in categories.menu().actions() if a.text() == 'Faces').isChecked()
+    assert category_selection._controller.active
     directional = r.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection')
     assert directional is not None and not directional.isChecked()
     assert Gui.getMainWindow().property('FreeCADPlusDirectionalSelection') is False

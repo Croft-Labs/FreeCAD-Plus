@@ -1356,7 +1356,7 @@ The standard selection callback marks its viewer only for that tool's lifetime;
 rectangle styling uses this marker so Box Zoom and feature-specific pickers retain
 native visuals. Sketcher uses the same policy for its existing enclosure/touch tests
 and themed solid/dashed feedback. Existing command selection gates are never replaced.
-Category filtering, operation persistence and Layers remain unimplemented parts of
+Operation persistence and Layers remain unimplemented parts of
 the Selection/Layers scope. Curve intent is implemented by the adapter below. Runtime evidence belongs in WORK_STATE.
 
 ## Plus Design curve intent (TB.2c2a)
@@ -1387,3 +1387,36 @@ survives later edits. Expanded entries enter `Gui.Selection.addSelection` with t
 original root/path, so current native command filters still apply. No geometry,
 Undo entries, document properties or persistent identities are created by selection.
 WORK_STATE owns native interaction, coverage and restart evidence.
+
+## Plus Design selection categories (TB.2c2b)
+
+`freecad_plus/category_selection.py` owns the eight checked categories in the
+Design Selection row: Planes, Bodies, Surfaces, Faces, Edges, Curves, Points and
+Vertices. Values live under the Plus Selection `Categories` preference group;
+absent values are true to preserve existing selection access. This checkbox menu
+has no default command. Existing command split buttons retain their icon/arrow
+and last-used behavior.
+
+Classification resolves native mapped subelement names and linked occurrence
+owners. Datum planes map to Planes; origins/datum points to Points. Sketch edges
+are Curves, including construction geometry; sketch vertices are Points. Solid
+owners supply Bodies/Faces/Edges/Vertices. Sheets without solids are Surfaces;
+standalone edges and points supply Curves/Points. Native constraint/axis editing
+and workbench objects outside this geometry taxonomy retain their native admission.
+No document properties, topology, identities, ownership or Undo state change.
+
+The native Selection singleton owns a separate Python-backed Plus gate. Its
+`setPlusSelectionGate` entry point does not replace `ActiveGate`, and removing a
+command gate does not remove the Plus gate. The gate reference is released under
+the Python GIL during singleton destruction. The new private member is appended
+to the class, preserving existing member offsets for native consumers.
+
+A viewport mouse event temporarily sets `FreeCADPlusCategoryPicking` on the main
+window. During that event, native preselection and single/batch selection must
+pass category admission and any active command gate. Previously ungated batch
+paths check the command gate only in this Plus scope; Classic and programmatic
+batch behavior remain unchanged. Non-viewport tree/script selections are outside
+the scope. The property and classification cache clear at the next Qt turn or
+presentation change. Mode changes unregister only the Plus gate. Checkbox changes
+clear stale preselection but do not remove an existing selection. Curve-intent
+expansion enters the same admission path. WORK_STATE owns runtime evidence.

@@ -816,6 +816,29 @@ void SelectionSingleton::slotSelectionChanged(const SelectionChanges& msg)
     }
 }
 
+bool SelectionSingleton::plusGateActive() const
+{
+    auto* window = getMainWindow();
+    return PlusGate && window && window->property("FreeCADPlusCategoryPicking").toBool();
+}
+
+bool SelectionSingleton::allowPlusSelection(_SelObj& selection, bool checkCommandGate) const
+{
+    if (!plusGateActive()) {
+        return true;
+    }
+    if (!PlusGate->allow(selection.pDoc, selection.pObject, selection.SubName.c_str())) {
+        return false;
+    }
+    if (checkCommandGate && ActiveGate) {
+        const char* element = nullptr;
+        auto* object = getObjectOfType(selection, App::DocumentObject::getClassTypeId(),
+                                       gateResolve, &element);
+        return ActiveGate->allow(object ? object->getDocument() : selection.pDoc, object, element);
+    }
+    return true;
+}
+
 int SelectionSingleton::setPreselect(
     const char* pDocName,
     const char* pObjectName,
@@ -839,6 +862,14 @@ int SelectionSingleton::setPreselect(
     }
 
     rmvPreselect();
+
+    if (plusGateActive() && signal != SelectionChanges::MsgSource::Internal) {
+        auto* doc = getDocument(pDocName);
+        auto* object = doc ? doc->getObject(pObjectName) : nullptr;
+        if (!object || !PlusGate->allow(doc, object, pSubName)) {
+            return 0;
+        }
+    }
 
     if (ActiveGate && signal != SelectionChanges::MsgSource::Internal) {
         App::Document* pDoc = getDocument(pDocName);
@@ -1217,6 +1248,10 @@ bool SelectionSingleton::addSelection(
     temp.y = y;
     temp.z = z;
 
+    if (!allowPlusSelection(temp)) {
+        return false;
+    }
+
     // check for a Selection Gate
     if (ActiveGate) {
         const char* subelement = nullptr;
@@ -1458,7 +1493,7 @@ bool SelectionSingleton::addSelections(
     for (const auto& pSubName : pSubNames) {
         _SelObj temp;
         int ret = checkSelection(pDocName, pObjectName, pSubName.c_str(), ResolveMode::NoResolve, temp);
-        if (ret != 0) {
+        if (ret != 0 || !allowPlusSelection(temp, true)) {
             continue;
         }
 
@@ -1819,7 +1854,7 @@ void SelectionSingleton::setSelection(const char* pDocName, const std::vector<Ap
         _SelObj temp;
         int ret
             = checkSelection(pDocName, obj->getNameInDocument(), nullptr, ResolveMode::NoResolve, temp);
-        if (ret != 0) {
+        if (ret != 0 || !allowPlusSelection(temp, true)) {
             continue;
         }
         touched = true;
@@ -2194,7 +2229,11 @@ SelectionSingleton::SelectionSingleton()
  * A destructor.
  * A more elaborate description of the destructor.
  */
-SelectionSingleton::~SelectionSingleton() = default;
+SelectionSingleton::~SelectionSingleton()
+{
+    Base::PyGILStateLocker lock;
+    PlusGate.reset();
+}
 
 SelectionSingleton* SelectionSingleton::_pcSingleton = nullptr;
 
@@ -2431,6 +2470,11 @@ PyMethodDef SelectionSingleton::Methods[] = {
      "    def allow(self,doc,obj,sub):\n"
      "        return (sub[0:4] == 'Face')\n"
      "Gui.Selection.addSelectionGate(Gate())"},
+    {"setPlusSelectionGate",
+     (PyCFunction)SelectionSingleton::sSetPlusSelectionGate,
+     METH_VARARGS,
+     "setPlusSelectionGate(gateOrNone)\n"
+     "Set the independent Plus viewport category gate. Command gates remain unchanged."},
     {"removeSelectionGate",
      (PyCFunction)SelectionSingleton::sRemoveSelectionGate,
      METH_VARARGS,
@@ -3059,6 +3103,25 @@ PyObject* SelectionSingleton::sAddSelectionGate(PyObject* /*self*/, PyObject* ar
     PyErr_SetString(PyExc_ValueError, "Argument is neither string nor SelectionFiler nor SelectionGate");
 
     return nullptr;
+}
+
+PyObject* SelectionSingleton::sSetPlusSelectionGate(PyObject* /*self*/, PyObject* args)
+{
+    PyObject* gate;
+    if (!PyArg_ParseTuple(args, "O", &gate)) {
+        return nullptr;
+    }
+    PY_TRY
+    {
+        if (gate == Py_None) {
+            Selection().PlusGate.reset();
+        }
+        else {
+            Selection().PlusGate = std::make_unique<SelectionGatePython>(Py::Object(gate, false));
+        }
+        Py_Return;
+    }
+    PY_CATCH;
 }
 
 PyObject* SelectionSingleton::sRemoveSelectionGate(PyObject* /*self*/, PyObject* args)

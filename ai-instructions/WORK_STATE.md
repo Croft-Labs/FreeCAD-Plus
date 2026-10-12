@@ -3,12 +3,77 @@
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,
-TB.2b, TB.2c1 and TB.2c2a below are implemented and validated in the development payload.
+TB.2b, TB.2c1, TB.2c2a and TB.2c2b below are implemented and validated in the development payload.
 All nineteen Classic workbenches plus None remain included. TB.2 as a whole is not
-complete: category filtering, Persistent Selection, Layers and Plus-only workflows need their
+complete: Persistent Selection, Layers and Plus-only workflows need their
 own implementation, while unconfirmed precise tab placements remain review material.
 Do not repeat completed checks unless new changes justify them. Group 1 remains
 incomplete and is not activated by this toolbar continuation.
+
+## TB.2c2b Design selection categories — October 11, 2026
+
+**Implementation:** the separate Plus Selection row now includes the confirmed
+checkbox menu for Planes, Bodies, Surfaces, Faces, Edges, Curves, Points and
+Vertices. All start checked to preserve existing access; changes are saved across
+ribbon rebuilds, presentation changes and independent restart. Classification uses
+native geometry, mapped element resolution and linked occurrence ownership. Sketch
+endpoints remain independently selectable as Points when Curves is off. Objects
+outside this geometry taxonomy retain their native admission.
+
+A dedicated native Plus gate intersects command rules for viewport hover and
+single/batch selection, including Sketcher's existing box-selection path. It never
+replaces the command gate; removing a command gate leaves category filtering
+intact. The scope exists only during native viewport input in Plus Design. Classic,
+other modes and programmatic/tree selections retain their native behavior. Existing
+selection is not retroactively cleared by checkbox changes. No geometry, document
+properties, identities, ownership or Undo state change. Architecture owns the gate
+lifetime, event scope and classification contract.
+
+**Build/source checks:** FreeCADGui and FreeCADPlusScripts built successfully in
+the retained full `freecad_1.1.4_context` tree using the existing MSVC 19.44,
+Qt 6.8.3, Python 3.12 and libpack configuration, concurrency 3. The final corrected
+scripts were synchronized afterward. All 51 Plus Python files parsed and match the
+payload byte for byte; whitespace checks passed. Native changes are confined to
+the shared Selection integration. Classic toolbar/workbench definitions, submodule
+pins and licensing are unchanged.
+
+**Native/visual acceptance:** four focused category cases passed together in
+30.264 seconds. The complete nineteen-case TestPlusToolbars suite then passed in
+120.922 seconds, zero failures/errors/skips, normal exit 0 and empty stderr. New
+checks cover real checkbox-menu clicks, all eight geometry classifications, linked
+paths, native hover and command-gate intersection, standard object/element box
+selection, mapped Sketcher clicks, Sketcher batch selection and independent Points/
+Curves filtering. Classic/programmatic selection and command-gate ownership are
+preserved. Existing split-button defaults, custom toolbars, Spreadsheet widgets,
+Curve Intent, Directional Selection, captions and idle behavior also pass. Inspected
+native captures confirm all eight checkbox labels/check states, the top Selection
+row and the Sketcher enclosure rectangle.
+
+The separate audit passed all twenty registered workbenches with exit 0: 240 native
+toolbar-group instances and 1,169 per-workbench command occurrences, no omissions,
+preserved action/widget ownership and restored Classic visibility. This verifies
+command/control inclusion. Audit stderr contains only the existing missing OpenSCAD
+executable notice; external executable availability is not certified. Separate
+prepare/shutdown and restart processes both exited 0; Faces
+unchecked, Tangent Curves, Directional Selection off, the Pocket default and hidden
+File/shown Edit Classic toolbar preferences persisted.
+
+**Validation corrections:** the first run exposed an incorrect preselection-clear
+API name; the controller/test now use native `clearPreselection`. The Sketcher
+fixture now supplies explicit hover and exercises box selection before its click
+assertion so the intended rubber-band input is realized. Its rejection assertion
+was corrected to preserve independently enabled endpoint Points; disabling Points
+as well produces an empty box selection. Native traces and the inspected rectangle
+confirmed actual batch admission. Final focused/full results include these changes;
+no production Sketcher source changes were required.
+
+**Delivery/stopping boundary:** Persistent Selection, Layers, remaining curated
+placements and separately owned Plus operation/task workflows are unfinished; TB.2
+is not complete. The development and retained reference shortcuts' exact targets
+and working directories were re-read and verified. This is a development-payload
+increment, not a packaged release. No remote publication was performed. Remove only
+this task's temporary validation output after recording evidence; preserve both
+builds and unrelated settings.
 
 ## TB.2c2a Design Curve Intent — October 11, 2026
 

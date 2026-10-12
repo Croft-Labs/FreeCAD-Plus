@@ -27,6 +27,7 @@
 
 #include <deque>
 #include <list>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -740,6 +741,7 @@ protected:
     static PyObject* sRemSelObserver(PyObject* self, PyObject* args);
     static PyObject* sAddSelectionGate(PyObject* self, PyObject* args);
     static PyObject* sRemoveSelectionGate(PyObject* self, PyObject* args);
+    static PyObject* sSetPlusSelectionGate(PyObject* self, PyObject* args);
     static PyObject* sGetPickedList(PyObject* self, PyObject* args);
     static PyObject* sEnablePickedList(PyObject* self, PyObject* args);
     static PyObject* sPreselect(PyObject* self, PyObject* args);
@@ -847,6 +849,11 @@ protected:
     bool clarifySelectionActive = false;
 
     SelectionStyle selectionStyle;
+
+    // Plus viewport categories intersect, and never replace, the command gate.
+    std::unique_ptr<Gui::SelectionGate> PlusGate;
+    bool plusGateActive() const;
+    bool allowPlusSelection(_SelObj& selection, bool checkCommandGate = false) const;
 };
 
 /**

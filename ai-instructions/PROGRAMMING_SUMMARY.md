@@ -95,8 +95,9 @@ nine interaction/layout cases and all-workbench coverage passed. TB.2c1 adds the
 saved Design Directional Selection control and native model/Sketcher behavior.
 TB.2c2a adds the saved Single/Connected/Tangent Curve Intent split button with native
 viewport edge traversal and mapped Sketcher/occurrence handling. WORK_STATE owns
-build and runtime evidence. Category filtering, Persistent Selection, Layers and
-unfinished Plus workflows remain outstanding.
+build and runtime evidence. TB.2c2b adds saved category-checkbox filtering with an
+independent native selection gate, including model and Sketcher batch admission.
+Persistent Selection, Layers and unfinished Plus workflows remain outstanding.
 
 ## Where to go
 

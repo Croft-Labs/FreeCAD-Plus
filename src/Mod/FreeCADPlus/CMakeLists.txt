@@ -38,6 +38,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/toolbars.py
     freecad_plus/selection_toolbar.py
     freecad_plus/curve_selection.py
+    freecad_plus/category_selection.py
     freecad_plus/display.py
     freecad_plus/geometry.py
     freecad_plus/document.py
@@ -61,6 +62,7 @@ install(FILES
     freecad_plus/toolbars.py
     freecad_plus/selection_toolbar.py
     freecad_plus/curve_selection.py
+    freecad_plus/category_selection.py
     freecad_plus/display.py
     freecad_plus/geometry.py
     freecad_plus/document.py
