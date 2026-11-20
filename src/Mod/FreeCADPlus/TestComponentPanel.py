@@ -439,6 +439,69 @@ class TestNativeComponentCreation(unittest.TestCase):
         return {item.data(0, panel._ROLE).ref for item in panel._panel._maps[0].values()
                 if item.data(0, panel._ROLE).kind == 'model'}
 
+    def test_start_card_creates_shared_component(self):
+        start_prefs = App.ParamGet('User parameter:BaseApp/Preferences/Mod/Start')
+        old_close = start_prefs.GetBool('closeStart', False)
+        old_first = start_prefs.GetBool('FirstStart2024', True)
+        old_workbench = Gui.activeWorkbench().name()
+        sentinel = App.newDocument('StartupExisting')
+        box = sentinel.addObject('Part::Box', 'ExistingBox')
+        sentinel.recompute()
+        existing = {o.Name: o.ID for o in sentinel.Objects}
+        try:
+            start_prefs.SetBool('FirstStart2024', False)
+            for mode in (0, 1):
+                self.prefs.SetInt('ModelPanelUIMode', mode)
+                self.modes.apply_modes()
+                start_prefs.SetBool('closeStart', bool(mode))
+                Gui.runCommand('Start_Start'); settle()
+                start = Gui.getMainWindow().findChild(QtWidgets.QWidget, 'StartView')
+                self.assertIsNotNone(start)
+                # Existing first-run views may already have selected the welcome page.
+                start.findChild(QtWidgets.QStackedWidget).setCurrentIndex(1)
+                row = start.findChild(QtWidgets.QWidget, 'CreateNewRow')
+                cards = row.findChildren(QtWidgets.QPushButton)
+                self.assertEqual(len(cards), 5)
+                translate = lambda text: QtCore.QCoreApplication.translate('StartGui::StartView', text)
+                labels = [[label.text() for label in card.findChildren(QtWidgets.QLabel)]
+                          for card in cards]
+                expected = ['New Component', '2D Draft', 'BIM/Architecture', 'Empty File', 'Open File']
+                for texts, heading in zip(labels, expected):
+                    self.assertIn(translate(heading), texts)
+                self.assertTrue(any(not label.pixmap().isNull()
+                                    for label in cards[0].findChildren(QtWidgets.QLabel)))
+                settle()
+                self.assertTrue(cards[0].isVisible())
+                if mode == 0:
+                    self.assertGreater(row.width(), 300)
+                    self.assertTrue(row.grab().save(str(self.output / 'startup-cards.png')))
+                before = set(App.listDocuments())
+                QtTest.QTest.mouseClick(cards[0], QtCore.Qt.LeftButton); settle()
+                self.assertEqual(len(set(App.listDocuments()) - before), 1)
+                doc = App.ActiveDocument
+                root = document.validate(doc)
+                self.assertEqual(len(root.Definitions), 1)
+                self.assertEqual(len(root.Group), 1)
+                self.assertEqual(root.Group[0].LinkedObject, root.Definitions[0])
+                self.assertEqual(editing.context(doc)[0], root.Definitions[0])
+                self.assertFalse(any(o.isDerivedFrom('PartDesign::Body') for o in doc.Objects))
+                self.assertEqual(Gui.activeWorkbench().name(), 'PartDesignWorkbench')
+                self.assertEqual({o.Name: o.ID for o in sentinel.Objects}, existing)
+                self.assertAlmostEqual(box.Shape.Volume, 1000)
+                if mode == 0:
+                    # A single component can contain both its own geometry and children.
+                    parent = root.Definitions[0]
+                    parent.newObject('Part::Box', 'OwnGeometry')
+                    child = hierarchy.create_definition(doc, 'Child')
+                    hierarchy.add_instance(parent, child)
+                    doc.recompute()
+                    document.save_document(doc, self.output / 'StartupComponent.cadprt')
+                App.closeDocument(doc.Name); settle()
+        finally:
+            start_prefs.SetBool('closeStart', old_close)
+            start_prefs.SetBool('FirstStart2024', old_first)
+            Gui.activateWorkbench(old_workbench)
+
     def test_new_file_and_part_both_presentations(self):
         import json
         for mode in (0, 1):

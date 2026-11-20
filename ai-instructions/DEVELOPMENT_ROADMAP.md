@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Unified startup component card — November 20, 2026
+
+- [x] Owner approved the isolated Qt proposal directly in chat; see
+  [startup specification and evidence](ui-ux-specs/MODEL_VIEW_WINDOW.md#startup-and-workspace-stability).
+- [x] Replace Parametric Body/Assembly with New Component using shared creation.
+- [x] Build, native card interaction in both presentations, existing creation
+  regressions, independent save/reopen and local app module update verified.
+
+[WORK_STATE](WORK_STATE.md#unified-startup-component-card--november-20-2026)
+records evidence and the restart requirement for the already-running owner app.
+
 ## Clean stable baseline — October 10, 2026
 
 - [x] Verify official latest stable is 1.1.4; distinguish 26.3 RC1 prerelease.

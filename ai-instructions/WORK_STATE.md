@@ -1,5 +1,42 @@
 # FreeCAD Plus: Current work state
 
+## Unified startup component card — November 20, 2026
+
+**Implementation:** the Start page now offers New Component in place of Parametric
+Body and Assembly. It runs the existing Std_New component-document initializer,
+then opens Design with the initial component active. It adds neither a Body nor a
+separate assembly object. Remaining startup actions, settings, native workbench
+availability, document schema and geometry services are unchanged. The approved
+workflow and isolated Qt preview are recorded in
+[Model View Window](ui-ux-specs/MODEL_VIEW_WINDOW.md#startup-and-workspace-stability).
+
+**Build and runtime:** targeted StartGui compilation/linking passed in the current
+machine's retained `__Apps/_temp builds/FreeCAD-Plus/build` tree (the older
+GAMING-PC paths elsewhere in these instructions do not describe this machine).
+All four TestNativeComponentCreation cases passed against the build and the
+updated app, with no failures, errors or skips. The new case clicks the actual
+native card in both model-panel presentations, verifies the five card labels and
+icon, one definition/instance, active component, no eager Body, Design workbench,
+and preservation of a pre-existing document. Existing native creation, Undo/Redo,
+external ownership and legacy checks also passed. Separate fresh-process checks
+passed against both payloads: saved own geometry and a child component survive
+reopen, and existing native creation fixture identities remain unchanged.
+
+**Visual and delivery:** inspected the
+[native startup-card capture](ui-ux-specs/evidence/startup-component-20261120/native.png)
+against the approved mockup. Labels, icon and ordering match; the native capture
+uses the app's dark theme and display scaling. This is a Qt widget capture of the
+card region, not a viewport geometry/framebuffer claim. The installed
+`app/lib/StartGui.pyd` matches the compiled module byte-for-byte (SHA-256
+`ed985575ce82dbb9d13c02cdc7f1303a4b63e6e21f676b0d08b9d861a60f4eaf`).
+The installed-app tests and independent reopen exited successfully with empty
+stderr. The desktop `freecad plus 0.1.0.lnk` still targets the existing launch batch
+file and its working directory, whose app executable exists. No shortcut changed.
+The owner's running process was preserved; it needs a restart to load the update.
+Its loaded previous module remains under `StartGui.previous-20261120.pyd` for
+safe rollback. Unrelated `project.previewfirst.json` remains untracked and excluded.
+This updates the local development app; it is not a release or deployment.
+
 ## Authorized objective and stopping boundary
 
 The owner continued Plus toolbar work after complete Classic coverage. TB.2a,

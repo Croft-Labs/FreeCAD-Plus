@@ -24,6 +24,26 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ### Startup and workspace stability
 
+Owner decision, November 20, 2026: replace the Start page's **Parametric Body**
+and **Assembly** cards with one **New Component** card, described as
+"Creates a component for a part or an assembly". A component serves both roles.
+Clicking creates a new component document with one definition and one instance,
+opens that component for editing in Design, and leaves Body creation to modeling
+tools. Preserve the remaining startup cards, recent files, examples, existing
+documents, startup settings and all viewport/coordinate graphics.
+
+The owner approved the source-derived Qt card mockup directly in chat ("approved")
+on November 20, 2026. This explicitly accepts the isolated Qt mockup review method:
+the companion does not support this repository's submodules. Review `f5c83deb67f0`
+used startup source from `d19b36afce`, an isolated snapshot baseline
+`3ca1c4b52b66cb9bf2b02840c4953cf8c83811b7`, and fingerprint
+`3b542d164ae2fc7fdfdbe647be323bf89131e60f0b26c3f363927d3e150153f7`.
+The only preview source change was `src/Mod/Start/Gui/StartView.cpp`; the card's
+action was disconnected. [Before](evidence/startup-component-20261120/before.png)
+and [approved proposal](evidence/startup-component-20261120/approved.png) are Qt
+mockups, not full native application captures. No tool approval state was changed.
+Native implementation and validation are recorded separately in [WORK_STATE](../WORK_STATE.md).
+
 Show recent files in the main viewing area at startup and New File/Open in Tasks. Initialize the chosen interface and theme without displaying a sequence of old/different interfaces. Tasks is docked on the right by default. Restore the user's customized panel and toolbar positions on later startups. [C06](EVIDENCE_AND_DECISIONS.md#c06)
 
 The owner reports a jittery interface on October 10. Smooth, stable interaction is a requirement to assess; the cause has not been diagnosed by this documentation task. Preserve this fork as reference if a clean reimplementation is later chosen; no restart or code migration has been authorized by that discussion. [Current owner direction](EVIDENCE_AND_DECISIONS.md#current)

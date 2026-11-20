@@ -212,15 +212,10 @@ void StartView::configureNewFileButtons(QLayout* layout) const
          tr("Opens an existing CAD file or 3D model"),
          QLatin1String(":/icons/document-open.svg")}
     ));
-    auto partDesign = gsl::owner<NewFileButton*>(new NewFileButton(
-        {tr("Parametric Body"),
-         tr("Creates a body with the Part Design workbench"),
-         QLatin1String(":/icons/PartDesignWorkbench.svg")}
-    ));
-    auto assembly = gsl::owner<NewFileButton*>(new NewFileButton(
-        {tr("Assembly"),
-         tr("Creates an assembly project"),
-         QLatin1String(":/icons/AssemblyWorkbench.svg")}
+    auto component = gsl::owner<NewFileButton*>(new NewFileButton(
+        {tr("New Component"),
+         tr("Creates a component for a part or an assembly"),
+         QLatin1String(":/icons/Geofeaturegroup.svg")}
     ));
     auto draft = gsl::owner<NewFileButton*>(new NewFileButton(
         {tr("2D Draft"), tr("Creates a 2D Draft document"), QLatin1String(":/icons/DraftWorkbench.svg")}
@@ -232,8 +227,7 @@ void StartView::configureNewFileButtons(QLayout* layout) const
     ));
 
     // TODO: Ensure all of the required WBs are actually available
-    layout->addWidget(partDesign);
-    layout->addWidget(assembly);
+    layout->addWidget(component);
     layout->addWidget(draft);
     layout->addWidget(arch);
     layout->addWidget(newEmptyFile);
@@ -241,8 +235,7 @@ void StartView::configureNewFileButtons(QLayout* layout) const
 
     connect(newEmptyFile, &QPushButton::clicked, this, &StartView::newEmptyFile);
     connect(openFile, &QPushButton::clicked, this, &StartView::openExistingFile);
-    connect(partDesign, &QPushButton::clicked, this, &StartView::newPartDesignFile);
-    connect(assembly, &QPushButton::clicked, this, &StartView::newAssemblyFile);
+    connect(component, &QPushButton::clicked, this, &StartView::newComponentFile);
     connect(draft, &QPushButton::clicked, this, &StartView::newDraftFile);
     connect(arch, &QPushButton::clicked, this, &StartView::newArchFile);
 }
@@ -302,11 +295,12 @@ void StartView::newEmptyFile()
     postStart(PostStartBehavior::switchWorkbench);
 }
 
-void StartView::newPartDesignFile()
+void StartView::newComponentFile()
 {
+    // Std_New creates and edits the initial shared part/assembly component.
+    // A Body is created lazily by modeling tools, not by this startup action.
     Gui::Application::Instance->commandManager().runCommandByName("Std_New");
     Gui::Application::Instance->activateWorkbench("PartDesignWorkbench");
-    Gui::Application::Instance->commandManager().runCommandByName("PartDesign_Body");
     postStart(PostStartBehavior::doNotSwitchWorkbench);
 }
 
@@ -320,15 +314,6 @@ void StartView::openExistingFile()
         // open file dialog)
         postStart(PostStartBehavior::switchWorkbench);
     }
-}
-
-void StartView::newAssemblyFile()
-{
-    Gui::Application::Instance->commandManager().runCommandByName("Std_New");
-    Gui::Application::Instance->activateWorkbench("AssemblyWorkbench");
-    Gui::Application::Instance->commandManager().runCommandByName("Assembly_CreateAssembly");
-    Gui::Application::Instance->commandManager().runCommandByName("Std_Refresh");
-    postStart(PostStartBehavior::doNotSwitchWorkbench);
 }
 
 void StartView::newDraftFile()
