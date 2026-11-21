@@ -5,7 +5,9 @@
 The owner paused selected-plane New Sketch integration to redesign New Plane first.
 The revised native Tasks prototype removes the mode dropdown/Select button, keeps
 origin-plane shortcuts, and shows a temporary purple plane with origin/X/Y/Z frame
-and collapsible value summaries. The latest revision combines Origin and Orientation,
+and a combined Origin and Orientation section. The latest owner refinement removes
+its numeric origin-coordinate and X/Y/Z-vector summaries while retaining the 3D frame.
+The combined section
 limits origin input to a point with projected universal-origin fallback, and offers
 X/Y reference assignment plus Flip normal. Native presentation-fixture checks passed
 for origin clear, X/Y assignment and flipping Z without moving the plane.
