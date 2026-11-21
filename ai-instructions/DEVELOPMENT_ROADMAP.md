@@ -1,5 +1,20 @@
 # FreeCAD Plus: Development roadmap
 
+## Feature-centered command integration — November 21, 2026
+
+- [x] Connect the existing ribbon New Sketch command to component-owned sketches
+  using its native orientation/attachment dialogs and editor.
+- [x] Connect Extrude's new-solid Pad path, including single/multiple profile
+  selection, selected curves and native OK/Cancel transaction ownership.
+- [x] Preserve profile ownership/visibility on Cancel and one-step Undo/Redo.
+- [x] Preserve external source ownership and native Sketcher selection restoration.
+- [x] Verify native backend/command compatibility, installed app and fresh-process
+  persistence; see [WORK_STATE](WORK_STATE.md#feature-centered-command-integration--november-21-2026).
+
+No UI redesign was implemented. Add/Subtract result targeting, the separate native
+PartDesign New Sketch workflow, profile reuse and deletion cleanup remain outside
+this increment; visible changes still require owner preview/approval.
+
 ## Feature-centered modeling foundation — November 21, 2026
 
 - [x] Adopt owner terminology: body-centered modeling / feature-centered modeling.
@@ -8,7 +23,8 @@
   atomic rollback/Undo and native parameter/identity preservation.
 - [x] Validate component/source ownership, independent solids, rejection paths,
   existing body-centered regressions and fresh-process save/reopen/recompute.
-- [ ] Integrate existing native New Sketch/feature commands and Apply/Cancel lifecycle.
+- [x] Integrate ribbon New Sketch/new-solid Extrude and native OK/Cancel lifecycle;
+  see the command-integration increment above for scope and compatibility paths.
 - [ ] Extend explicit feature-result targets for additive/subtractive operations.
 - [ ] Define and implement source-sketch reuse and feature deletion cleanup.
 

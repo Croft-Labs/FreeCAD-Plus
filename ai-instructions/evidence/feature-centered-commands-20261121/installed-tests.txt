@@ -1,0 +1,23 @@
+test_external_native_sketch_and_pad_cancel_accept (TestFeatureCenteredModeling.TestFeatureCenteredCommands.test_external_native_sketch_and_pad_cancel_accept) ... ok
+test_native_extrude_cancel_restores_standalone_sketch (TestFeatureCenteredModeling.TestFeatureCenteredCommands.test_native_extrude_cancel_restores_standalone_sketch) ... ok
+test_native_face_attached_sketch_keeps_support_without_body (TestFeatureCenteredModeling.TestFeatureCenteredCommands.test_native_face_attached_sketch_keeps_support_without_body) ... ok
+test_native_multiple_profile_picker_cancel_and_accept (TestFeatureCenteredModeling.TestFeatureCenteredCommands.test_native_multiple_profile_picker_cancel_and_accept) ... ok
+test_native_selected_curve_and_invalid_task_cancel (TestFeatureCenteredModeling.TestFeatureCenteredCommands.test_native_selected_curve_and_invalid_task_cancel) ... ok
+test_native_sketch_cancel_and_extrude_accept_undo (TestFeatureCenteredModeling.TestFeatureCenteredCommands.test_native_sketch_cancel_and_extrude_accept_undo) ... ok
+test_context_and_pending_transaction_rejection (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_context_and_pending_transaction_rejection) ... ok
+test_external_unused_result_is_owned_and_undone_in_source (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_external_unused_result_is_owned_and_undone_in_source) ... ok
+test_extrusion_creates_body_atomically_and_recomputes (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_extrusion_creates_body_atomically_and_recomputes) ... ok
+test_independent_results_do_not_reuse_active_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_independent_results_do_not_reuse_active_body) ... ok
+test_invalid_geometry_and_lengths_leave_no_body (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_invalid_geometry_and_lengths_leave_no_body) ... ok
+test_sketch_without_body_and_undo (TestFeatureCenteredModeling.TestFeatureCenteredModeling.test_sketch_without_body_and_undo) ... ok
+test_empty_selection_picker_and_legacy_passthrough (TestComponentModeling.TestComponentModeling.test_empty_selection_picker_and_legacy_passthrough) ... ok
+test_external_unused_context_and_wrong_consumer (TestComponentModeling.TestComponentModeling.test_external_unused_context_and_wrong_consumer) ... ok
+test_profile_shared_occurrence_rejection_and_native_pad (TestComponentModeling.TestComponentModeling.test_profile_shared_occurrence_rejection_and_native_pad) ... ok
+test_sketch_projection_checks_original_occurrence_before_mutation (TestComponentModeling.TestComponentModeling.test_sketch_projection_checks_original_occurrence_before_mutation) ... ok
+test_external_history_native_editors_and_context_guards (TestUnusedModels.TestUnusedModels.test_external_history_native_editors_and_context_guards) ... ok
+test_03_native_pad_pocket_survive_presentation_changes (TestComponentPanel.TestUIModes.test_03_native_pad_pocket_survive_presentation_changes) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 27.955s
+
+OK

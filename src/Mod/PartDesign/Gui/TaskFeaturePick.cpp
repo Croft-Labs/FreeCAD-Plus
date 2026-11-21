@@ -601,10 +601,12 @@ TaskDlgFeaturePick::TaskDlgFeaturePick(
     std::function<bool(std::vector<App::DocumentObject*>)> afunc,
     std::function<void(std::vector<App::DocumentObject*>)> wfunc,
     bool singleFeatureSelect,
-    std::function<void(void)> abortfunc /* = NULL */
+    std::function<void(void)> abortfunc /* = NULL */,
+    bool resolveBodyReferences
 )
     : TaskDialog()
     , accepted(false)
+    , resolveBodyReferences(resolveBodyReferences)
 {
     pick = new TaskFeaturePick(objects, status, singleFeatureSelect);
     Content.push_back(pick);
@@ -620,7 +622,8 @@ TaskDlgFeaturePick::~TaskDlgFeaturePick()
     // function could not open another dialog
     if (accepted) {
         try {
-            workFunction(pick->buildFeatures());
+            // Component-owned profiles need no Body reference/copy conversion.
+            workFunction(resolveBodyReferences ? pick->buildFeatures() : pick->getFeatures());
         }
         catch (...) {
         }

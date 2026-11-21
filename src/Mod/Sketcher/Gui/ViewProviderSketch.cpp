@@ -3865,7 +3865,10 @@ void ViewProviderSketch::setEditViewer(Gui::View3DInventorViewer* viewer, int Mo
         ViewProviderDocumentObject* parent = nullptr;
         editDoc->getInEdit(&parent, &editSubName);
         if (parent) {
-            editDocName = editDoc->getDocument()->getName();
+            // An unused external component is edited in an assembly view, but
+            // its edit parent belongs to the source file. Selection must use
+            // that parent's document, not the document hosting the view.
+            editDocName = parent->getObject()->getDocument()->getName();
             editObjName = parent->getObject()->getNameInDocument();
         }
     }

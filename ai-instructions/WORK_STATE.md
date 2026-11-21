@@ -1,5 +1,58 @@
 # FreeCAD Plus: Current work state
 
+## Feature-centered command integration — November 21, 2026
+
+**Implementation:** the existing ribbon New Sketch (`Sketcher_NewSketch`) and
+new-solid Extrude (`PartDesign_Pad`) commands now reach the feature-centered backend
+in component documents. Native orientation/attachment choices, profile picking,
+Sketcher editing and Pad parameters remain unchanged. The command transaction
+contains the provisional Body, original-profile ownership move and feature, so
+native Cancel/Undo removes the Body and restores the sketch. Preselected curves,
+initial sketch visibility and external defining-file ownership are preserved.
+The native picker gained an internal component-profile route without its prior
+Body prerequisite. Cancellation uses weak Body references to avoid accessing a
+Body removed by rollback. External Sketcher selection restoration now names the
+edit parent's source document instead of its hosting assembly view.
+
+The [architecture](ARCHITECTURE.md#feature-centered-command-integration--november-21-2026)
+owns the routing and compatibility boundary. No labels, icons, dialogs/forms,
+field lists, toolbar layout or dock layout were changed. Existing Body-owned Pad
+chains, Pocket and the separate PartDesign New Sketch workflow remain native
+compatibility paths. Add/Subtract result targeting, source-profile reuse, deletion
+cleanup and removal of idle New Body prompts remain separate work requiring a
+preview before any UI changes.
+
+**Validation:** all 18 native tests passed in both the retained build (27.975 s)
+and installed app (27.955 s), with zero failures/errors/skips. The six new command
+cases exercise actual orientation accept/cancel, attached sketches, native editor
+completion, multiple-profile picker accept/cancel, preselected curves, invalid
+task OK followed by Cancel, visible/hidden profile rollback, one-step Undo/Redo
+and external source-file operations/reselection. Six backend cases and six native
+compatibility/input/editor cases also passed. The earlier external `Object not
+found` selection diagnostic is resolved. Remaining diagnostics are deliberate
+negative cases: two open-wire failures, excluded-geometry refusal and an existing
+external-editor guard test that intentionally calls setEdit without its required
+context. Logs are retained with the
+[build results](evidence/feature-centered-commands-20261121/build-tests.txt) and
+[installed results](evidence/feature-centered-commands-20261121/installed-tests.txt).
+
+An independent process using the final installed app reopened backend-created and
+native-command-created domestic/external files, checked persistent identities,
+Profile/Tip ownership and recomputed geometry after changing feature lengths. It
+exited 0 with empty stderr. See the
+[acceptance artifact](evidence/feature-centered-commands-20261121/acceptance.json).
+
+**Build/delivery:** SketcherGui, PartDesignGui and FreeCADPlusScripts built
+successfully using the retained current-machine compiler/build configuration.
+The installed native modules match the build hashes; Python source/build/app copies
+match as recorded in acceptance. The owner payload remains under
+`__Apps/_temp builds/FreeCAD-Plus/app`. Its launcher/desktop shortcut are unchanged.
+Previous native binaries are retained as `*.before-feature-commands-20261121.pyd`
+because the owner session may still have them loaded. Open documents/settings
+were preserved; restart is required to load the new native commands. Temporary
+validation profiles were removed after retaining durable evidence. Unrelated
+`project.previewfirst.json` remains excluded from the commit.
+
 ## Feature-centered modeling foundation — November 21, 2026
 
 **Authority/scope:** the owner named original FreeCAD's method body-centered

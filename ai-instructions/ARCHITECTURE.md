@@ -22,14 +22,57 @@ The archived fork is reference material, not a source of implicit requirements.
 
 ## Components and data flow
 
+### Feature-centered command integration — November 21, 2026
+
+The existing ribbon's `Sketcher_NewSketch` and new-solid `PartDesign_Pad` entry
+points now call the feature-centered services in component documents. The native
+orientation/attachment dialogs, profile picker, Sketcher editor and Pad task remain
+in use. No command labels, icons, forms, field lists, toolbar layout or task-panel
+layout were changed. Ordinary FreeCAD documents bypass the component hooks.
+
+Sketch creation preflights the original selection and explicit component Edit
+context before opening the existing dialog. After its choices are accepted,
+`modeling.begin_sketch` creates the sketch directly in the defining component and
+enters the native editor using the occurrence or unused-definition route. The
+native editor owns transaction completion. Canceling orientation creates nothing.
+An attached sketch keeps its native attachment support without acquiring a Body.
+
+For Pad, selected standalone component sketches or the existing profile picker
+feed `modeling.begin_extrusion`. The picker can now return the original component
+profile without requiring a Body or performing native cross-Body reference/copy
+conversion. This is an internal routing option; existing body-centered callers
+retain the default conversion behavior. Preselected native subelements are retained
+in `Profile`, so a selected closed curve does not become a whole-sketch extrusion.
+
+`begin_extrusion` uses the same mutation helper as `extrude_new_solid`, inside an
+application command transaction held by the native task. Its Body, profile move
+and Pad are committed together on OK and removed/restored together on Cancel.
+The Body requires a single solid. Invalid geometry remains in the native task for
+correction or cancellation. Native cancellation now checks weak Body ownership
+before reading a rolled-back Body, and retains transaction-restored source-sketch
+visibility when the provisional Body has also been removed.
+
+External unused-component Sketcher selection uses the edit parent's defining
+document, not the assembly document hosting its view. This preserves source-owned
+geometry and correct selection when the sketch editor closes. Placed occurrence
+parents continue to use their own assembly document.
+
+Scope: this connects the ribbon's New Sketch and Extrude new-solid path. Existing
+Body-owned profile chains, Pocket and the separate `PartDesign_NewSketch` workflow
+remain native body-centered compatibility paths. Feature-centered Add/Subtract
+result targeting, already-consumed sketch reuse, deletion cleanup and changes to
+idle New Body prompts remain separate work. Any UI changes require a preview and
+owner approval first.
+
 ### Feature-centered modeling foundation — November 21, 2026
 
 The owner names the original method **body-centered modeling** and the Plus
 method **feature-centered modeling**. Bodies remain native implementation objects;
 they are no longer a prerequisite of sketch creation in the new service.
 
-`freecad_plus.modeling` is a backend API, with no command, toolbar, panel or task
-registration. `new_sketch(doc)` resolves the explicitly edited component and creates
+The initial `freecad_plus.modeling` increment was a backend API with no command,
+toolbar, panel or task registration; native command integration is described above.
+`new_sketch(doc)` resolves the explicitly edited component and creates
 a native Sketcher sketch directly in its definition. `extrude_new_solid(doc, sketch,
 length)` consumes a direct, unconsumed sketch and returns a native PartDesign Pad.
 The positive finite length is in millimeters. This entry point creates one new
@@ -51,9 +94,9 @@ assembly view's Edit context is preserved. No automatic conversion of existing
 body-centered chains is performed. Existing `editing.new_sketch`/`editing.pad`
 adapters and native commands retain their compatibility behavior.
 
-Next: integrate feature-centered routing with existing native commands and their
-Apply/Cancel transactions, then extend explicit feature-result targeting for
-additive/subtractive operations. Reusing already consumed sketches, deleting a
+Native ribbon command/transaction integration is now covered by the increment
+above. Next: extend explicit feature-result targeting for additive/subtractive
+operations. Reusing already consumed sketches, deleting a
 feature while retaining its source sketch, and migration of existing chains remain
 separate work. Any visible workflow changes require a preview and owner approval.
 

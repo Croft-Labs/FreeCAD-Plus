@@ -37,6 +37,7 @@
 #include <Gui/ViewProvider.h>
 #include <Mod/Part/App/DatumFeature.h>
 #include <Mod/PartDesign/App/FeatureSketchBased.h>
+#include <Mod/PartDesign/App/Body.h>
 #include <Mod/Sketcher/App/SketchObject.h>
 
 #include "TaskSketchBasedParameters.h"
@@ -331,13 +332,17 @@ bool TaskDlgSketchBasedParameters::reject()
     }
 
     App::DocumentObjectWeakPtrT weakptr(feature);
+    auto body = PartDesign::Body::findBodyOf(feature);
+    App::DocumentObjectWeakPtrT bodyWeakptr(body);
     auto sketch = dynamic_cast<Sketcher::SketchObject*>(feature->Profile.getValue());
 
     bool value = TaskDlgFeatureParameters::reject();
 
     // if abort command deleted the object the sketch is visible again.
     // The previous one feature already should be made visible
-    if (weakptr.expired()) {
+    if (weakptr.expired() && (!body || !bodyWeakptr.expired())) {
+        // A provisional Body may also have been rolled back. In that case keep
+        // the original profile visibility restored by the native transaction.
         // Make the sketch visible
         if (sketch && Gui::Application::Instance->getViewProvider(sketch)) {
             Gui::Application::Instance->getViewProvider(sketch)->show();

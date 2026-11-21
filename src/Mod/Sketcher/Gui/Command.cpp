@@ -38,6 +38,7 @@
 #include <Gui/Application.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/CommandT.h>
+#include <Gui/ComponentModeling.h>
 #include <Gui/Control.h>
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
@@ -162,6 +163,10 @@ CmdSketcherNewSketch::CmdSketcherNewSketch()
 void CmdSketcherNewSketch::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    const bool component = Gui::isComponentModelingDocument(getDocument());
+    if (component) {
+        doCommand(Doc, "from freecad_plus import modeling\nmodeling.preflight_sketch()");
+    }
     Attacher::eMapMode mapmode = Attacher::mmDeactivated;
     std::string groupName;
     bool bAttach = false;
@@ -240,6 +245,12 @@ void CmdSketcherNewSketch::activated(int iMsg)
         Gui::Selection().getAsPropertyLinkSubList(support);
         std::string supportString = support.getPyReprString();
 
+        if (component) {
+            doCommand(Doc, "modeling.begin_sketch(map_mode='%s', support=%s)",
+                      AttachEngine::getModeName(mapmode).c_str(), supportString.c_str());
+            return;
+        }
+
         // create Sketch on Face
         std::string FeatName = getUniqueObjectName("Sketch");
 
@@ -281,6 +292,14 @@ void CmdSketcherNewSketch::activated(int iMsg)
             return;// canceled
         Base::Vector3d p = Dlg.Pos.getPosition();
         Base::Rotation r = Dlg.Pos.getRotation();
+
+        if (component) {
+            doCommand(Doc,
+                      "modeling.begin_sketch(App.Placement(App.Vector(%f, %f, %f), "
+                      "App.Rotation(%f, %f, %f, %f)))",
+                      p.x, p.y, p.z, r[0], r[1], r[2], r[3]);
+            return;
+        }
 
         std::string FeatName = getUniqueObjectName("Sketch");
 

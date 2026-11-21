@@ -115,7 +115,8 @@ public:
         std::function<bool(std::vector<App::DocumentObject*>)> acceptfunc,
         std::function<void(std::vector<App::DocumentObject*>)> workfunc,
         bool singleFeatureSelect,
-        std::function<void(void)> abortfunc = 0
+        std::function<void(void)> abortfunc = 0,
+        bool resolveBodyReferences = true
     );
     ~TaskDlgFeaturePick() override;
 
@@ -146,6 +147,7 @@ public:
 protected:
     TaskFeaturePick* pick;
     bool accepted;
+    bool resolveBodyReferences;
     std::function<bool(std::vector<App::DocumentObject*>)> acceptFunction;
     std::function<void(std::vector<App::DocumentObject*>)> workFunction;
     std::function<void(void)> abortFunction;

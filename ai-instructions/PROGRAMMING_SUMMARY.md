@@ -5,11 +5,16 @@
 November 21 owner terminology: original FreeCAD uses **body-centered modeling**;
 FreeCAD Plus uses **feature-centered modeling**. The new backend module
 `freecad_plus/modeling.py` creates sketches without Bodies and atomically supplies
-a native Body when extruding a new solid. Existing command/panel/task UI is unchanged.
+a native Body when extruding a new solid. The existing ribbon New Sketch and
+Extrude new-solid commands now route to these services using their unchanged native
+dialogs/editors. Existing Body-owned chains and Pocket retain native compatibility.
 See [architecture](ARCHITECTURE.md#feature-centered-modeling-foundation--november-21-2026)
 for API scope and [WORK_STATE](WORK_STATE.md#feature-centered-modeling-foundation--november-21-2026)
-for native acceptance. Command integration, result targeting and feature deletion
-remain outstanding; this is not a completed replacement of the existing workflow.
+for initial native acceptance and the newer
+[command integration](WORK_STATE.md#feature-centered-command-integration--november-21-2026)
+for command/installed-app validation. Add/Subtract result targeting, profile reuse,
+feature deletion and the alternate native PartDesign New Sketch workflow remain
+outstanding; this is not a completed replacement of every body-centered workflow.
 
 This checkout starts from official **FreeCAD 1.1.4** source at
 `4fd3bf320d9566a27e60069fc8387448aaa3a094`, plus owner documentation, an agent entry

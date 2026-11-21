@@ -1,0 +1,41 @@
+{
+  "reopen_stderr_bytes": 0,
+  "hashes": [
+    {
+      "installed": "579A1FEEB97F4A83EF120E1B89079E1A5926789E345896C3D50E5AD6FC10A0E9",
+      "build": "579A1FEEB97F4A83EF120E1B89079E1A5926789E345896C3D50E5AD6FC10A0E9",
+      "file": "SketcherGui.pyd"
+    },
+    {
+      "installed": "A6A59331115E85403FC440ACDFECE6F0CC2FF09F076B6088BF9B87BFAF4C14FD",
+      "build": "A6A59331115E85403FC440ACDFECE6F0CC2FF09F076B6088BF9B87BFAF4C14FD",
+      "file": "PartDesignGui.pyd"
+    },
+    {
+      "installed": "AC90B8E23F14284E7234D43FB3377A867B0445CEDB27B95423DCD2C20D60A6C8",
+      "build": "AC90B8E23F14284E7234D43FB3377A867B0445CEDB27B95423DCD2C20D60A6C8",
+      "source": "AC90B8E23F14284E7234D43FB3377A867B0445CEDB27B95423DCD2C20D60A6C8",
+      "file": "freecad_plus/modeling.py"
+    },
+    {
+      "installed": "5B3F6676BFF9F2EFE9B417DFDC40A7F9247A612604982DE1B2D128280B9F637C",
+      "build": "5B3F6676BFF9F2EFE9B417DFDC40A7F9247A612604982DE1B2D128280B9F637C",
+      "source": "5B3F6676BFF9F2EFE9B417DFDC40A7F9247A612604982DE1B2D128280B9F637C",
+      "file": "TestFeatureCenteredModeling.py"
+    }
+  ],
+  "expected_negative_case_diagnostics": "Pad: Wire is not closed.\nPad: Wire is not closed.\nChange Part Type before using Excluded geometry\n<Gui> Document.cpp(610): cannot edit object 'Component': not found in document 'PanelFixture'",
+  "installed": {
+    "ok": true,
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\modeling.py",
+    "tests": {
+      "run": 18,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    }
+  },
+  "reopen": {
+    "ok": true
+  }
+}

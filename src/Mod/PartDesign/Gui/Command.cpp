@@ -45,6 +45,8 @@
 #include <Gui/Selection/SelectionObject.h>
 #include <Mod/Sketcher/App/SketchObject.h>
 #include <Mod/PartDesign/App/Body.h>
+#include <App/DocumentObjectPy.h>
+#include <Gui/ComponentModeling.h>
 #include <Mod/PartDesign/App/FeatureBoolean.h>
 #include <Mod/PartDesign/App/FeatureGroove.h>
 #include <Mod/PartDesign/App/FeatureMultiTransform.h>
@@ -1206,6 +1208,51 @@ void finishProfileBased(const Gui::Command* cmd, const Part::Feature* sketch, Ap
 
 void prepareProfileBased(Gui::Command* cmd, const std::string& which, double length)
 {
+    if (which == "Pad" && Gui::isComponentModelingDocument(cmd->getDocument())) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module module(PyImport_ImportModule("freecad_plus.modeling"), true);
+            Py::Object candidates = module.callMemberFunction("extrusion_candidates", Py::Tuple());
+            if (!candidates.isNone()) {
+                std::vector<App::DocumentObject*> sketches;
+                Py::List items(candidates);
+                for (Py_ssize_t i = 0; i < items.length(); ++i) {
+                    Py::Object item = items[i];
+                    sketches.push_back(static_cast<App::DocumentObjectPy*>(item.ptr())->getDocumentObjectPtr());
+                }
+                if (sketches.empty()) {
+                    QMessageBox::warning(Gui::getMainWindow(), QObject::tr("No sketch to work on"),
+                                         QObject::tr("No sketch is available in the document"));
+                    return;
+                }
+                auto worker = [](const std::vector<App::DocumentObject*>& features) {
+                    if (!features.empty() && features.front()) {
+                        Gui::Command::doCommand(Gui::Command::Doc,
+                            "from freecad_plus import modeling\nmodeling.begin_extrusion(%s)",
+                            Gui::Command::getObjectCmd(features.front()).c_str());
+                    }
+                };
+                if (sketches.size() == 1) {
+                    worker(sketches);
+                }
+                else {
+                    std::vector<PartDesignGui::TaskFeaturePick::featureStatus> status(
+                        sketches.size(), PartDesignGui::TaskFeaturePick::validFeature);
+                    Gui::Control().showDialog(new PartDesignGui::TaskDlgFeaturePick(
+                        sketches, status,
+                        [](const std::vector<App::DocumentObject*>& features) { return features.size() == 1; },
+                        worker, true, nullptr, false));
+                }
+                return;
+            }
+        }
+        catch (Py::Exception&) {
+            Base::PyException error;
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QString::fromUtf8(error.what()));
+            return;
+        }
+    }
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {

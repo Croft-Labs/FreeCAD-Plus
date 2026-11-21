@@ -245,6 +245,7 @@ bool TaskDlgFeatureParameters::reject()
     App::Document* document = feature->getDocument();
 
     PartDesign::Body* body = PartDesign::Body::findBodyOf(feature);
+    App::DocumentObjectWeakPtrT bodyWeakptr(body);
 
     // Find out previous feature we won't be able to do it after abort
     // (at least in the body case)
@@ -270,7 +271,7 @@ bool TaskDlgFeatureParameters::reject()
         if (previous && Gui::Application::Instance->getViewProvider(previous)) {
             Gui::Application::Instance->getViewProvider(previous)->show();
         }
-        else if (body) {
+        else if (body && !bodyWeakptr.expired()) {
             App::DocumentObject* tip = body->Tip.getValue();
             if (tip && Gui::Application::Instance->getViewProvider(tip)) {
                 Gui::Application::Instance->getViewProvider(tip)->show();
