@@ -1,5 +1,36 @@
 # FreeCAD Plus: Current work state
 
+## Ribbon theme background — November 21, 2026
+
+**Implementation:** the Plus ribbon scroll viewport and each newly installed
+content page no longer fill with the underlying Qt palette. The existing themed
+toolbar paints their background. No fixed colors, theme-specific branches,
+command/state changes, geometry changes or UI layout changes were introduced.
+Production UI code matches the approved candidate, with repository line endings
+preserved. The [toolbar specification](ui-ux-specs/TOOLBARS_AND_BUTTONS.md#ribbon-theme-background--november-21-2026)
+owns the approval and preview evidence.
+
+**Validation:** the new pixel-based native regression first reproduced the bug
+against the old installed module: content `#3c3c3c` versus Light toolbar `#f0f0f0`.
+After the fix, all six focused cases passed in the installed app (30.100 seconds,
+zero failures/errors/skips): existing/rebuilt ribbon pages during Light/Dark/Light
+switching, Classic restoration and independent preferences, modes/tabs/idle,
+narrow-window captions, native arc split/last-used behavior, and Spreadsheet
+native color controls. The test compares actual rendered backgrounds and confirms
+Light differs from Dark and returns to the original Light color. Inspected native
+[Light](ui-ux-specs/evidence/ribbon-theme-20261121/native-light.png) and
+[Dark](ui-ux-specs/evidence/ribbon-theme-20261121/native-dark.png) widget captures
+confirm the corrected content background; viewport rendering is outside this task.
+The isolated app exited 0 with empty stderr. Owner settings/documents were untouched.
+
+**Build/delivery:** FreeCADPlusScripts copied both changed Python files successfully;
+no C++ rebuild was required. The source, retained build and installed toolbar module
+match byte-for-byte (SHA-256
+`eda49c1bd46c1f45d96714ef4fd66d45dcbfc0bfb63142f76192a54aabfffe5e`).
+The app remains at `__Apps/_temp builds/FreeCAD-Plus/app`; its existing launcher and
+shortcut were not changed. The already-running owner session needs a restart to
+load the module. Unrelated `project.previewfirst.json` remains untracked/excluded.
+
 ## Unified startup component card — November 20, 2026
 
 **Implementation:** the Start page now offers New Component in place of Parametric

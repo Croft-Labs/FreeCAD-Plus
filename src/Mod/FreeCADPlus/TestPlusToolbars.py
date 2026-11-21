@@ -60,6 +60,42 @@ class TestPlusToolbars(unittest.TestCase):
         self.ribbon.tabbar.setCurrentIndex(index)
         settle()
 
+    def test_ribbon_background_follows_theme(self):
+        prefs = App.ParamGet('User parameter:BaseApp/Preferences/MainWindow')
+        saved = {key: prefs.GetString(key) for key in ('Theme', 'StyleSheet')}
+        r = self.ribbon
+        colors = []
+
+        def background_colors():
+            image = r.bar.grab().toImage()
+            scale = image.devicePixelRatio()
+            positions = [r.top.mapTo(r.bar, QtCore.QPoint(r.top.width() - 12, r.top.height() // 2)),
+                         r.scroll.viewport().mapTo(r.bar, QtCore.QPoint(r.scroll.viewport().width() - 12, 1))]
+            return [image.pixelColor(round(p.x() * scale), round(p.y() * scale)).name()
+                    for p in positions]
+
+        try:
+            prefs.SetString('StyleSheet', 'FreeCAD.qss')
+            for theme in ('FreeCAD Light', 'FreeCAD Dark', 'FreeCAD Light'):
+                prefs.SetString('Theme', theme)
+                QtTest.QTest.qWait(700)
+                # Theme changes must also repaint the page already on screen.
+                top, page = background_colors()
+                self.assertEqual(page, top, theme + ' existing page')
+                colors.append(top)
+                for tab in ('Sketch', 'Modeling'):
+                    self.tab(tab)
+                    top, page = background_colors()
+                    self.assertEqual(page, top, theme + ' rebuilt ' + tab)
+                path = Path(os.environ['PLUS_TEST_DIR']) / (theme.replace(' ', '-') + '-ribbon.png')
+                self.assertTrue(r.bar.grab().save(str(path)))
+            self.assertNotEqual(colors[0], colors[1])
+            self.assertEqual(colors[0], colors[2])
+        finally:
+            for key, value in saved.items():
+                prefs.SetString(key, value)
+            settle()
+
     def test_classic_restore_and_independent_preferences(self):
         r = self.ribbon
         self.assertTrue(r.bar.isVisible())

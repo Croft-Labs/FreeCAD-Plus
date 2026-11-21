@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Ribbon theme background — November 21, 2026
+
+- [x] Owner approved the native Light/Dark preview directly in chat; see the
+  [toolbar specification](ui-ux-specs/TOOLBARS_AND_BUTTONS.md#ribbon-theme-background--november-21-2026).
+- [x] Make the ribbon content background inherit the selected application theme.
+- [x] Reproduce the original bug, pass six native checks, inspect both themes and
+  update the local app module. [WORK_STATE](WORK_STATE.md#ribbon-theme-background--november-21-2026)
+  records evidence and the restart requirement for the open owner session.
+
 ## Unified startup component card — November 20, 2026
 
 - [x] Owner approved the isolated Qt proposal directly in chat; see

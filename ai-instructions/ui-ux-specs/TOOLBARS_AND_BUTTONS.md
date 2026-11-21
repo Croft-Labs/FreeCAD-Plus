@@ -4,6 +4,28 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Section 1 — FC Plus modes, tabs, groups and buttons
 
+### Ribbon theme background — November 21, 2026
+
+The Plus ribbon content background follows the selected application theme,
+including changes between Light and Dark while the app is running and after
+rebuilding a tab. Do not paint a separate fixed color or the underlying operating
+system palette over the themed toolbar. Preserve tab layout, captions, icons,
+native command states/actions, spacing, scrolling and coordinate/viewport graphics.
+
+The owner approved the isolated native preview directly in chat ("approved") on
+November 21, 2026. Companion review `ab093f8c6a1b` used the ribbon UI from
+`7b478731dd`, isolated snapshot baseline `c9fb8c3d4e11c0ffdfe31773697bd4b70ec7d826`,
+and fingerprint `3b9f7b6ecbb1d5fe904f8064aa45647efb89e3f07859d1d1ccfae98282e2c98b`.
+Only `src/Mod/FreeCADPlus/freecad_plus/toolbars.py` changed in the candidate.
+The installed FreeCAD executable loaded that candidate Python UI with its native
+commands in an isolated profile; Light, Dark and Light again were captured. The
+two Light captures were identical. No owner profile/document or tool approval
+record was changed. Direct screenshots:
+[before](evidence/ribbon-theme-20261121/before-light.png),
+[approved Light](evidence/ribbon-theme-20261121/approved-light.png),
+[approved Dark](evidence/ribbon-theme-20261121/approved-dark.png).
+Implementation and installed-app validation are recorded in [WORK_STATE](../WORK_STATE.md).
+
 ### Independent Plus ribbon and Classic split buttons — October 11, 2026
 
 The owner explicitly authorized starting a separate Plus toolbar/layout module,

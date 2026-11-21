@@ -124,6 +124,7 @@ class Ribbon(QtCore.QObject):
         self.scroll = QtWidgets.QScrollArea()
         self.scroll.setWidgetResizable(True)
         self.scroll.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.scroll.viewport().setAutoFillBackground(False)
         self.scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.scroll.setMinimumHeight(137)
         root.addWidget(self.scroll)
@@ -557,6 +558,8 @@ class Ribbon(QtCore.QObject):
         row.addStretch()
         old = self.scroll.takeWidget()
         self.scroll.setWidget(page)
+        # setWidget enables palette filling; let the themed toolbar show through.
+        page.setAutoFillBackground(False)
         # Reserve the horizontal scrollbar without clipping the bottom captions.
         height = page.minimumSizeHint().height() + self.scroll.horizontalScrollBar().sizeHint().height()
         self.scroll.setMinimumHeight(max(137, height))
