@@ -34,18 +34,30 @@ Owner direction: New Plane opens in the right-hand Tasks panel. Remove the
 Select geometry/Enter values dropdown and the separate Select button. Geometry
 selection is active immediately; retain the XY/XZ/YZ plane shortcuts. Once the
 selected elements define a plane, show a purple preview with its origin and
-orientation. Origin and Orientation remain expandable for adjustments, with their
-current values readable while collapsed. The preview's coordinate frame is local
+orientation. A combined **Origin and Orientation** section expands for adjustments,
+with current values readable while collapsed. Origin accepts only a selected point;
+clearing/deselecting that point defaults to the universal origin projected onto the
+plane. Choose X or Y, then use a line, edge or two points to define that axis. The
+proposal uses first-to-second point order for direction and derives the other axis
+to maintain a right-handed frame. **Flip normal** reverses the preview's Z axis,
+preserving the plane position and chosen in-plane axis. No numeric origin/vector
+entry fields are proposed. Off-plane point and non-directional/curved-edge handling
+remain solver contracts to settle before functional implementation.
+The preview's coordinate frame is local
 to the proposed plane; existing global coordinate graphics stay unchanged.
 
 This is a design revision, not an installed workflow. The native Qt prototype
 uses a disposable plane-selection example and transient overlay; general
 multi-reference solving, final plane creation and persistence are not implemented.
-Direct screenshot review remains pending. Session `b81d0fbb375d`, fingerprint
-`bad2a03b098dcd1b2eb5de9530d1c2942f506d40582d72d8afa292ce84127084`:
-[defined plane](evidence/plane-task-20261121/proposed.png),
-[expanded sections](evidence/plane-task-20261121/details.png),
-[native prototype checks](evidence/plane-task-20261121/prototype.json).
+Direct screenshot review remains pending. Revised session `bb9622ce36bb`, fingerprint
+`75645ae54ec15242d84c5bbfce3bc1f4eb7e1e21ab9d2a82a858b9542bace311`:
+[combined section](evidence/plane-task-20261121/combined.png),
+[flipped normal](evidence/plane-task-20261121/flipped.png),
+[native prototype checks](evidence/plane-task-20261121/combined-prototype.json).
+This supersedes session `b81d0fbb375d`; its separate-section screenshots remain historical.
+Point and directional inputs in this revision use presentation fixtures. Checks cover
+the shown frame's flip/clear behavior and deferred numeric recompute, not general
+reference selection, plane solving or persistence.
 This direction supersedes conflicting unconfirmed plane-form proposals below.
 
 ### Numerical field updates

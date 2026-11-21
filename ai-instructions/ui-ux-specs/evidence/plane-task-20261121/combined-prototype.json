@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\bb9622ce36bb\\candidate\\ui\\plane_task.py",
+  "sha256": "6cc8b231074ae5c2b932f39dc73127a329d51c60572380d51677f66a835d9e87",
+  "numeric_commit": {
+    "no_updates_while_typing": true,
+    "one_update_after_focus_leaves": true,
+    "automatic_off_keeps_last_preview": true,
+    "explicit_refresh_uses_committed_value": true
+  },
+  "frame_checks": {
+    "flip_preserves_plane_and_origin": true,
+    "flip_preserves_selected_axis": true,
+    "clear_origin_projects_universal_origin": true,
+    "two_point_y_axis_fixture": true
+  },
+  "no_model_objects_added": true
+}
