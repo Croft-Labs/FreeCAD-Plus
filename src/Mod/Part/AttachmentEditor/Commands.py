@@ -67,6 +67,11 @@ def editAttachment(
     if feature is None:
         feature = Gui.Selection.getSelectionEx()[0].Object
 
+    if getattr(feature, 'PlusSketchPlacementVersion', None) == 1:
+        from freecad_plus import sketch_task
+        taskd = sketch_task.show(feature)
+        return taskd
+
     try:
         taskd = TaskAttachmentEditor.AttachmentEditorTaskPanel(
             feature,

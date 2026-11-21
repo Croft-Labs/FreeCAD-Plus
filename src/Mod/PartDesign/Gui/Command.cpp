@@ -597,6 +597,10 @@ CmdPartDesignNewSketch::CmdPartDesignNewSketch()
 void CmdPartDesignNewSketch::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        doCommand(Doc, "from freecad_plus import sketch_task\nsketch_task.show()");
+        return;
+    }
     PartDesignGui::SketchWorkflow creator(getActiveGuiDocument());
     creator.createSketch();
 }

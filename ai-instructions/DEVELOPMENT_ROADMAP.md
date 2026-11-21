@@ -4,9 +4,11 @@
 
 - [x] Render the plane/face → origin/orientation → sketch creation proposal and
   verify preselection in the isolated native task.
-- [ ] Obtain approval of the [direct preview](ui-ux-specs/TASK_PANEL.md#new-sketch-placement-workflow--november-21-2026).
-- [ ] Integrate creation and placement editing, preserving sketch identity,
+- [x] Obtain approval of the [direct preview](ui-ux-specs/TASK_PANEL.md#new-sketch-placement-workflow--november-21-2026).
+- [x] Integrate creation and placement editing, preserving sketch identity,
   native drawing/constraints, references, Cancel/Undo and deferred numeric updates.
+- [x] Verify native build, installed workflow, affected regressions and independent
+  reopen; see [acceptance](WORK_STATE.md#new-sketch-placement-implementation--november-21-2026).
 
 ## New Plane workflow — November 21, 2026
 
@@ -18,7 +20,7 @@
 - [x] Apply focus-leave numeric updates to shared Qt/native editors and Move/Rotate.
 - [x] Verify installed command/task, focused native tests and fresh-process
   downstream recompute; [acceptance and baseline failures](WORK_STATE.md#new-plane-implementation--november-21-2026).
-- [ ] Resume the separately requested History-plane-to-New-Sketch entry workflow.
+- [x] Connect History plane preselection through the approved New Sketch task above.
 
 ## Grouped History and left-margin visibility — November 21, 2026
 

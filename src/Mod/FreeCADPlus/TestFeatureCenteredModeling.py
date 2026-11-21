@@ -227,33 +227,17 @@ class TestFeatureCenteredCommands(unittest.TestCase):
     def new_sketch_command(self, accept=True):
         definition = editing.context_path(self.doc)[0]
         Gui.Selection.clearSelection()
-        seen, errors = [], []
-        attempts = [0]
-        def choose():
-            dlg = QtWidgets.QApplication.activeModalWidget()
-            attempts[0] += 1
-            if dlg is None and attempts[0] < 100:
-                QtCore.QTimer.singleShot(30, choose)
-                return
-            try:
-                self.assertIsNotNone(dlg)
-                self.assertIn('SketchOrientationDialog', dlg.metaObject().className())
-                self.assertTrue(dlg.findChild(QtWidgets.QRadioButton, 'XY_radioButton').isChecked())
-                self.assertIsNotNone(dlg.findChild(QtWidgets.QCheckBox, 'Reverse_checkBox'))
-                offset = dlg.findChild(QtWidgets.QWidget, 'Offset_doubleSpinBox')
-                self.assertIsNotNone(offset)
-                offset.setProperty('rawValue', 2.0)
-                seen.append(True)
-                dlg.accept() if accept else dlg.reject()
-            except BaseException as error:
-                errors.append(error)
-                if dlg: dlg.reject()
-        QtCore.QTimer.singleShot(30, choose)
+        from freecad_plus import sketch_task
         Gui.runCommand('Sketcher_NewSketch')
+        QtTest.QTest.qWait(100)
+        task = sketch_task._active
+        self.assertIsNotNone(task)
+        task.choose('XY Plane')
+        if not accept:
+            task.reject()
+            return
+        self.assertTrue(task.accept())
         QtTest.QTest.qWait(200)
-        if errors: raise errors[0]
-        self.assertTrue(seen)
-        if not accept: return
         sketch = Gui.getDocument(self.doc.Name).getInEdit().Object
         self.assertEqual(sketch.TypeId, 'Sketcher::SketchObject')
         self.assertEqual(sketch.getParentGeoFeatureGroup(), definition)
@@ -288,7 +272,7 @@ class TestFeatureCenteredCommands(unittest.TestCase):
         sketch = self.new_sketch_command()
         self.assertFalse(any(o.TypeId == 'PartDesign::Body' for o in self.doc.Objects))
         self.finish_sketch(sketch)
-        self.assertAlmostEqual(sketch.Placement.Base.z, 2)
+        self.assertAlmostEqual(sketch.Placement.Base.z, 0)
         before = self.snapshot()
         feature = self.start_pad(sketch)
         name = feature.Name
@@ -322,23 +306,14 @@ class TestFeatureCenteredCommands(unittest.TestCase):
         face = next('Face' + str(i) for i, f in enumerate(base.Shape.Faces, 1)
                     if isinstance(f.Surface, Part.Plane) and f.CenterOfMass.z > 4)
         Gui.Selection.clearSelection(); Gui.Selection.addSelection(base, face)
-        from TestComponentModeling import messages
-        timer = QtCore.QTimer()
-        def attachment_choice():
-            dlg = QtWidgets.QApplication.activeModalWidget()
-            if isinstance(dlg, QtWidgets.QInputDialog):
-                dlg.accept()  # Keep the native suggested attachment mode.
-        timer.timeout.connect(attachment_choice); timer.start(30)
-        with messages() as errors:
-            try:
-                Gui.runCommand('Sketcher_NewSketch'); QtTest.QTest.qWait(200)
-            finally:
-                timer.stop(); timer.deleteLater()
-        self.assertFalse(errors, errors)
+        from freecad_plus import sketch_task
+        Gui.runCommand('Sketcher_NewSketch'); QtTest.QTest.qWait(100)
+        self.assertTrue(sketch_task._active.accept())
+        QtTest.QTest.qWait(200)
         sketch = Gui.getDocument(self.doc.Name).getInEdit().Object
         self.assertEqual(sketch.getParentGeoFeatureGroup(), self.owner)
         self.assertEqual([o.Name for o in self.doc.Objects if o.TypeId == 'PartDesign::Body'], bodies)
-        self.assertEqual(sketch.AttachmentSupport[0][0], base)
+        self.assertEqual(sketch.PlaneReferences[0][0], base)
         self.finish_sketch(sketch)
         self.assertAlmostEqual(sketch.Placement.Base.z, 5)
 

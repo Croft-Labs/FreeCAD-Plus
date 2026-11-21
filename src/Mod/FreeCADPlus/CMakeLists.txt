@@ -22,6 +22,7 @@ set(FreeCADPlus_SRCS
     TestComponentModeling.py
     TestFeatureCenteredModeling.py
     TestComponentPlanes.py
+    TestSketchPlacement.py
     TestComponentReferences.py
     TestComponentInputEditors.py
     TestComponentSweepInputs.py
@@ -55,6 +56,8 @@ set(FreeCADPlus_SRCS
     freecad_plus/modeling.py
     freecad_plus/planes.py
     freecad_plus/plane_task.py
+    freecad_plus/sketch_task.py
+    freecad_plus/sketch_placement.py
     freecad_plus/numeric_fields.py
     freecad_plus/document_import.py
 )
@@ -62,7 +65,7 @@ add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
 fc_copy_sources(FreeCADPlusScripts "${CMAKE_BINARY_DIR}/Mod/FreeCADPlus" ${FreeCADPlus_SRCS})
 install(FILES Init.py InitGui.py TestPlusToolbars.py TestComponentPilot.py TestLegacyConversion.py TestLegacyBooleanConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestComponentRename.py TestComponentImport.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentExternalExport.py TestComponentModeling.py TestComponentReferences.py TestComponentInputEditors.py TestComponentSweepInputs.py TestComponentDressUpInputs.py TestComponentCommandInputs.py TestComponentBooleanOwnership.py TestComponentBooleanInputs.py TestPartBooleanInputs.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
 install(FILES
-    TestFeatureCenteredModeling.py TestComponentPlanes.py DESTINATION Mod/FreeCADPlus)
+    TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py DESTINATION Mod/FreeCADPlus)
 install(FILES
     freecad_plus/__init__.py
     freecad_plus/ui_modes.py
@@ -85,6 +88,8 @@ install(FILES
     freecad_plus/modeling.py
     freecad_plus/planes.py
     freecad_plus/plane_task.py
+    freecad_plus/sketch_task.py
+    freecad_plus/sketch_placement.py
     freecad_plus/numeric_fields.py
     freecad_plus/document_import.py
     DESTINATION Mod/FreeCADPlus/freecad_plus

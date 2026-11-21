@@ -81,6 +81,8 @@
 #include <HLRBRep_HLRToShape.hxx>
 
 #include <App/Application.h>
+#include <Base/Interpreter.h>
+#include <Base/PyObjectBase.h>
 #include <App/Document.h>
 #include <App/ElementNamingUtils.h>
 #include <App/Expression.h>
@@ -261,6 +263,19 @@ short SketchObject::mustExecute() const
 
 App::DocumentObjectExecReturn* SketchObject::execute()
 {
+    // Opt-in Plus placement preserves the native sketch, solver and dependency
+    // graph. Saved native links schedule this before downstream solid features.
+    if (getPropertyByName("PlusSketchPlacementVersion")) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module module(PyImport_ImportModule("freecad_plus.sketch_placement"), true);
+            module.callMemberFunction("recompute", Py::TupleN(Py::Object(getPyObject(), true)));
+        }
+        catch (Py::Exception&) {
+            Base::PyException error;
+            return new App::DocumentObjectExecReturn(error.what());
+        }
+    }
     try {
         App::DocumentObjectExecReturn* rtn = Part2DObject::execute();// to positionBySupport
         if (rtn != App::DocumentObject::StdReturn)

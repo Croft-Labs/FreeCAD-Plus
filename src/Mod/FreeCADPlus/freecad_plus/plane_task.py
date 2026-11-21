@@ -156,13 +156,7 @@ class PlaneTask(QtCore.QObject):
         for field in (self.references, self.origin_ref, self.axis_ref):
             field.installEventFilter(self)
         if feature is not None:
-            self.refs = planes.flatten(feature.PlaneReferences)
-            self.origin_refs = planes.flatten(feature.OriginPoint)
-            self.axis_refs = planes.flatten(feature.AxisReferences)
-            self.offset.setValue(feature.Offset.Value)
-            self.committed_offset = feature.Offset.Value
-            self.y_choice.setChecked(feature.DefinedAxis == 'Y')
-            self.flip.setChecked(feature.FlipNormal)
+            self.load_feature(feature)
         else:
             raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0)
                    for sub in entry.SubElementNames or ('',)]
@@ -172,6 +166,15 @@ class PlaneTask(QtCore.QObject):
         App.addDocumentObserver(self)
         editing.add_context_observer(self.context_changed)
         self.refresh_fields()
+
+    def load_feature(self, feature):
+        self.refs = planes.flatten(feature.PlaneReferences)
+        self.origin_refs = planes.flatten(feature.OriginPoint)
+        self.axis_refs = planes.flatten(feature.AxisReferences)
+        self.offset.setValue(feature.Offset.Value)
+        self.committed_offset = feature.Offset.Value
+        self.y_choice.setChecked(feature.DefinedAxis == 'Y')
+        self.flip.setChecked(feature.FlipNormal)
 
     def check(self):
         if self.closed or Gui.activeDocument() is None or Gui.activeDocument().activeView() != self.view:

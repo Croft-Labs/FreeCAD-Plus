@@ -2,6 +2,12 @@
 
 ## Current baseline
 
+November 21 approved New Sketch placement is installed: plane/face preselection,
+automatic plane-frame inheritance or part-origin/X projection, editable references,
+and the shared placement-edit task. Sketches retain native identity and drawing;
+placement remains associative after extrusion and save/reopen. See
+[installed acceptance](WORK_STATE.md#new-sketch-placement-implementation--november-21-2026).
+
 Owner rule: every feature/operation must reuse its creation task for editing, with
 saved inputs prefilled, identity-preserving acceptance and unchanged Cancel. Plane
 editing has been verified through both existing entry routes; follow the
@@ -26,8 +32,9 @@ November 21 owner terminology: original FreeCAD uses **body-centered modeling**;
 FreeCAD Plus uses **feature-centered modeling**. The new backend module
 `freecad_plus/modeling.py` creates sketches without Bodies and atomically supplies
 a native Body when extruding a new solid. The existing ribbon New Sketch and
-Extrude new-solid commands now route to these services using their unchanged native
-dialogs/editors. Pad/Pocket now also route standalone sketches to current owned
+Extrude new-solid commands route to these services. The newer approved sketch
+placement task above replaces the initial native placement dialog; drawing stays
+native. Pad/Pocket also route standalone sketches to current owned
 results for Add/Subtract, independently of the active Body. Sketch-only Pad stays
 New Solid; Pocket can infer the sole eligible result. Existing Body-owned chains
 retain native compatibility.
@@ -38,8 +45,7 @@ for initial native acceptance and the newer
 for command/installed-app validation. The newer
 [Add/Subtract increment](WORK_STATE.md#feature-centered-addsubtract-targets--november-21-2026)
 records target routing, Cancel/Undo/Redo and persistence acceptance. Arbitrary
-imported Part targets, consumed-profile reuse, feature deletion and the alternate
-native PartDesign New Sketch workflow remain
+imported Part targets, consumed-profile reuse and feature deletion remain
 outstanding; this is not a completed replacement of every body-centered workflow.
 
 This checkout starts from official **FreeCAD 1.1.4** source at

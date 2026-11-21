@@ -24,10 +24,12 @@
 
 #include <QAction>
 #include <QMenu>
+#include <App/Document.h>
 
 #include <Gui/ActionFunction.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/Control.h>
+#include <Gui/Command.h>
 #include <Mod/Part/App/AttachExtension.h>
 
 #include "ViewProviderAttachExtension.h"
@@ -110,6 +112,13 @@ void ViewProviderAttachExtension::showAttachmentEditor(
     std::function<void()> onReject
 )
 {
+    auto* object = getExtendedViewProvider()->getObject();
+    if (object->getPropertyByName("PlusSketchPlacementVersion")) {
+        Gui::Command::doCommand(Gui::Command::Gui,
+            "from freecad_plus import sketch_task\nsketch_task.show(App.getDocument('%s').getObject('%s'))",
+            object->getDocument()->getName(), object->getNameInDocument());
+        return;
+    }
     if (Gui::Control().activeDialog()) {
         Gui::Control().closeDialog();
     }

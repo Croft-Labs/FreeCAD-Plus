@@ -8,6 +8,38 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Associative native sketch placement — November 21, 2026
+
+`sketch_placement.py` stores version-1 placement inputs on the original native
+`Sketcher::SketchObject`: `PlusSketchPlacementVersion`, `PlaneReferences`,
+`OriginPoint`, `AxisReferences`, `DefinedAxis` and `FlipNormal`. Reference properties
+use native `PropertyLinkSubListGlobal` and mapped topology identities. Inputs are
+hidden from the property editor and edited through the shared task. Existing
+sketches are not migrated implicitly, and the document schema is unchanged.
+
+An opt-in hook in `SketchObject::execute` evaluates these references before the
+native sketch solve and shape build. Native links supply dependency ordering,
+persistence and Undo; no auxiliary plane/controller object or Body is created.
+Plane supports supply their complete saved frame. Faces use the component-local
+origin and X projected onto the face; a vanishing X projection requires an explicit
+direction. After extrusion transfers a sketch into its internal Body, the solver
+converts the component-space result into that Body's coordinates. Recompute errors
+become native execution errors. Ordinary sketches retain native attachment behavior.
+
+`sketch_task.py` reuses the approved New Plane controls and selection/overlay
+machinery. Both New Sketch commands open it for component documents. OK creates
+the native sketch and defers entry into native drawing until the retiring task's
+OK callback has unwound; the native drawing transaction owns completion. Cancel
+before OK is mutation-free. Reorient Sketch, Attach Sketch, the attachment context
+menu/property editor, Placement property and Python attachment entry reopen this same task for managed
+sketches. Placement edits preserve sketch identity, geometry and constraints, and
+commit in the defining file. Normal drawing/constraint editing stays native.
+
+Intake canonicalizes eligible owned references and rejects self/downstream
+dependencies. Transient task context guards remain shared with New Plane. The
+UI contract lives in [TASK_PANEL](ui-ux-specs/TASK_PANEL.md#new-sketch-placement-workflow--november-21-2026);
+installed/native evidence lives in [WORK_STATE](WORK_STATE.md#new-sketch-placement-implementation--november-21-2026).
+
 ## Component construction planes and numeric commits — November 21, 2026
 
 `planes.py` creates a component-owned `Part::FeaturePython` with a versioned,

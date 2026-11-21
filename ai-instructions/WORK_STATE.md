@@ -1,19 +1,43 @@
 # FreeCAD Plus: Current work state
 
-## New Sketch placement preview — November 21, 2026
+## New Sketch placement implementation — November 21, 2026
 
-The owner requested plane/face selection, origin/orientation designation, then
-sketch creation, with preselection populated on task entry. An isolated native
-task prototype follows the implemented New Plane layout. Face and History-plane
-preselection checks passed, including readable mapped-face labels; ambiguous or
-empty selections require correction. The preview creates no model objects.
-The revised preview automatically inherits a selected plane's frame, or projects
-the part-local origin and X axis onto a planar face. Native prototype checks passed
-for a translated/rotated plane, transformed part, clearing an origin override, and
-requiring an explicit direction when the part-X projection vanishes.
+The approved task is implemented and installed in the development payload used by
+`freecad plus 0.1.0.lnk`. Both New Sketch commands populate preselected plane/face
+references. A plane supplies its origin and orientation; a planar face uses the
+projected part-local origin and X. Overrides and Flip normal persist, and clearing
+an override restores automatic defaults. OK enters native sketch drawing without
+creating a Body. Reorient/Attach Sketch and attachment editing reopen the same
+placement task with saved inputs; ordinary sketch drawing remains native.
 The [owning task specification](ui-ux-specs/TASK_PANEL.md#new-sketch-placement-workflow--november-21-2026)
-records direct screenshots and the exact candidate. Approval and production
-integration are pending; the installed New Sketch command is unchanged.
+records the approved exact preview. The [architecture](ARCHITECTURE.md#associative-native-sketch-placement--november-21-2026)
+records persistence and compatibility; existing sketches are not implicitly migrated.
+
+**Build and native acceptance:** Sketcher, SketcherGui, PartGui and PartDesignGui
+built successfully. All 11 focused checks passed in both the build and installed
+app: real OK-button handoff, saved editing, Cancel, identity-preserving Undo/Redo,
+native Placement-property entry, preselection, plane/face defaults, projected-axis rejection/recovery,
+point/two-point picking, external source ownership and transformed target Body
+placement. [Installed results](evidence/sketch-20261121/sketch_check.txt).
+All 39 affected New Plane/numeric and feature-centered Sketch/Extrude/Add/Subtract
+regressions passed in the build. [Regression results](evidence/sketch-20261121/sketch_regression.txt).
+
+**Persistence and visuals:** independent installed-app processes reopened local
+and external component files, changed support geometry, verified downstream
+extrusion placement and preserved identities, and reopened saved placement tasks.
+[Reopen evidence](evidence/sketch-20261121/sketch_reopen.json).
+The installed [face defaults](evidence/sketch-20261121/installed-face.png),
+[plane defaults](evidence/sketch-20261121/installed-plane.png) and
+[placement editing](evidence/sketch-20261121/installed-edit.png) were captured; face
+and edit renders were inspected against the approved form. The GUI exercise also
+created a real sketch, entered drawing and reopened its placement task.
+[GUI evidence](evidence/sketch-20261121/sketch_visual.json).
+
+**Delivery:** eleven changed payload files were backed up and installed with matching
+source/build hashes. [Manifest](evidence/sketch-20261121/installation.json).
+The existing desktop shortcut still targets `Launch FreeCAD Plus.bat` in the
+external FreeCAD-Plus build root, which launches `app/bin/FreeCAD.exe`. Owner
+documents and profile were untouched; validation used isolated profiles.
 
 ## Shared creation and editing tasks — November 21, 2026
 
@@ -39,7 +63,7 @@ command now opens the approved right-hand task for component documents. The
 component owns an associative plane directly; no Body is required or created.
 Real geometry selection, origin/axis assignment, normal flip, Cancel, source-owned
 Undo/Redo, History editing and persistence are implemented. The separately requested
-History-plane-to-New-Sketch entry workflow remains paused.
+History-plane-to-New-Sketch entry workflow is now covered by the sketch task above.
 
 **Native acceptance:** final installed `TestComponentPlanes` ran 15 checks with
 zero failures/errors. Coverage includes native command entry, actual point/edge

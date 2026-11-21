@@ -70,11 +70,11 @@ This direction supersedes conflicting unconfirmed plane-form proposals below.
 
 Owner direction: choose a plane or face, designate origin and orientation, then
 create the sketch. Preselected items must appear as the sketch-plane references
-when the task opens. The proposed task reuses New Plane's visual structure:
+when the task opens. The approved task reuses New Plane's visual structure:
 **Sketch plane**, **Origin and Orientation**, and **Preview**. It retains XY/XZ/YZ
 shortcuts and point-origin/X-or-Y-direction/Flip normal controls, without coordinate
 readouts, a Select button, a selection-mode dropdown or plane-creation offset fields.
-The sketch lies on the selected support. Proposed OK creates the sketch and proceeds
+The sketch lies on the selected support. OK creates the sketch and proceeds
 to native drawing/constraint editing; Cancel creates nothing. Placement editing must
 reuse this same task with saved inputs under the shared create/edit rule.
 
@@ -89,11 +89,18 @@ selection. These sketch defaults do not change the New Plane origin rule.
 The proposal accepts one plane or planar face. Multiple preselected references are
 shown without silently choosing one; the user removes extras to obtain a valid
 support. References retain native mapped identities but display readable face names.
-No new production sketch-creation or placement-editing integration is implemented.
-The native candidate uses existing read-only plane/frame calculation and a transient
-overlay; its OK action is a simulation and does not create a sketch, plane or Body.
+The original preview candidate used read-only frame calculation and a transient
+overlay; its OK action was a simulation. The approved implementation now creates
+a native sketch, enters drawing, and reuses the task for saved placement editing.
+Reorient Sketch and attachment editing open that workflow for sketches created by
+it; regular sketch drawing/constraint editing remains native. See
+[installed acceptance](../WORK_STATE.md#new-sketch-placement-implementation--november-21-2026).
 
-Preview approval is pending: revised session `a2bc3ec0e274` supersedes `c01f5acbdf83`, seed
+Owner approved this revised workflow and authorized creation/placement-editing
+implementation in chat on November 21, 2026: "approved. implement the new sketch
+workflow with these automatic origin and orientation defaults, and make sure
+editing sketch placement opens the same workflow."
+Approved session `a2bc3ec0e274` supersedes `c01f5acbdf83`, seed
 `f4fe8fd90a4b432e238d95aca4a62b7b11f89f12`, candidate fingerprint
 `64b13aadcffc48e2218b08dd30990acce93548ad83826dadf361dfe4b6d70d67`.
 Direct renders: [current attachment dialog](evidence/sketch-task-20261121/baseline.png),

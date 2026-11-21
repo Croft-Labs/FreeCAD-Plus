@@ -25,6 +25,7 @@
 #include <cmath>
 
 #include <Gui/Application.h>
+#include <Gui/Command.h>
 #include <Gui/Control.h>
 #include <Gui/ViewProviderDocumentObject.h>
 
@@ -81,6 +82,12 @@ void PropertyEnumAttacherItem::openTask()
 
             if (parent->isDerivedFrom<App::DocumentObject>()) {
                 App::DocumentObject* obj = static_cast<App::DocumentObject*>(parent);
+                if (obj->getPropertyByName("PlusSketchPlacementVersion")) {
+                    Gui::Command::doCommand(Gui::Command::Gui,
+                        "from freecad_plus import sketch_task\nsketch_task.show(%s)",
+                        Gui::Command::getObjectCmd(obj).c_str());
+                    return;
+                }
                 Gui::ViewProvider* view = Gui::Application::Instance->getViewProvider(obj);
 
                 if (view->isDerivedFrom<Gui::ViewProviderDocumentObject>()) {

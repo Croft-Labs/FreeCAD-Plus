@@ -165,7 +165,8 @@ void CmdSketcherNewSketch::activated(int iMsg)
     Q_UNUSED(iMsg);
     const bool component = Gui::isComponentModelingDocument(getDocument());
     if (component) {
-        doCommand(Doc, "from freecad_plus import modeling\nmodeling.preflight_sketch()");
+        doCommand(Doc, "from freecad_plus import sketch_task\nsketch_task.show()");
+        return;
     }
     Attacher::eMapMode mapmode = Attacher::mmDeactivated;
     std::string groupName;
@@ -468,6 +469,11 @@ void CmdSketcherReorientSketch::activated(int iMsg)
     Q_UNUSED(iMsg);
     Sketcher::SketchObject* sketch =
         Gui::Selection().getObjectsOfType<Sketcher::SketchObject>().front();
+    if (sketch->getPropertyByName("PlusSketchPlacementVersion")) {
+        doCommand(Gui, "from freecad_plus import sketch_task\nsketch_task.show(%s)",
+                  getObjectCmd(sketch).c_str());
+        return;
+    }
     if (sketch->AttachmentSupport.getValue()) {
         int ret = QMessageBox::question(
             Gui::getMainWindow(),
@@ -603,6 +609,12 @@ CmdSketcherMapSketch::CmdSketcherMapSketch()
 void CmdSketcherMapSketch::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    auto selected = Gui::Selection().getObjectsOfType<Sketcher::SketchObject>();
+    if (selected.size() == 1 && selected.front()->getPropertyByName("PlusSketchPlacementVersion")) {
+        doCommand(Gui, "from freecad_plus import sketch_task\nsketch_task.show(%s)",
+                  getObjectCmd(selected.front()).c_str());
+        return;
+    }
     QString msg_str;
     try {
         Attacher::eMapMode suggMapMode;
@@ -671,6 +683,11 @@ void CmdSketcherMapSketch::activated(int iMsg)
             return;
         int index = items.indexOf(text);
         Part2DObject* sketch = static_cast<Part2DObject*>(sketches[index]);
+        if (sketch->getPropertyByName("PlusSketchPlacementVersion")) {
+            doCommand(Gui, "from freecad_plus import sketch_task\nsketch_task.show(%s)",
+                      getObjectCmd(sketch).c_str());
+            return;
+        }
 
         // check circular dependency
         std::vector<Gui::SelectionObject> selobjs = Gui::Selection().getSelectionEx();
