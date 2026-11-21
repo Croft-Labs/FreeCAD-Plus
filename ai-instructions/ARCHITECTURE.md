@@ -8,6 +8,45 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Component construction planes and numeric commits — November 21, 2026
+
+`planes.py` creates a component-owned `Part::FeaturePython` with a versioned,
+stateless Python proxy and native `PropertyLinkSubListGlobal` references. Global
+link scope permits references into the component's internal Bodies; intake still
+validates original occurrence eligibility and reduces only owned references to
+canonical source links. Native subname parsing preserves mapped topology names.
+The property-editor admission table also covers these plane reference properties.
+No document schema or existing feature identity is changed.
+
+The solver uses native Part shapes and FreeCAD vectors/placements. It supports
+planar faces/planes, three noncollinear points, line-plus-point and two coplanar
+lines. It projects the source file's universal origin (expressed in the definition
+frame), or a selected point, onto the offset plane. An explicit X/Y direction is
+projected in-plane; the other direction is derived as a right-handed frame. Flip
+normal preserves the selected direction, geometric plane and displayed rectangle.
+Infinite fundamental faces are sampled at finite UV coordinates for stability.
+Degenerate, curved-direction and skew-line inputs are refused. Recompute replaces
+the plane face and Placement from persistent references; broken inputs clear the
+shape and record an error. Existing native attached sketches can consume Face1.
+
+`plane_task.py` stages reference/parameter edits in memory and draws an unpickable
+Coin overlay in the originating view. Only OK creates/updates the feature in one
+defining-document transaction. Cancel discards staging/overlay, and selection,
+context and document observers are removed at completion or document close.
+History double-click reopens the same task. Classic documents retain the original
+native datum command. UI layout follows the approved candidate; it is not a claim
+that the separate selected-History-plane New Sketch entry has been integrated.
+
+`numeric_fields.py` defers ordinary Qt integer/decimal editor value notifications
+until focus leave and treats Enter as leaving the field. Native QuantitySpinBox
+caches values without notifying focused consumers, including step changes.
+Native InputField parses locally while focused, defers value notifications and
+bound-expression writes, and commits on focus leave. Move/Rotate no longer rebuild
+previews from textChanged or focused parse errors. New Plane retains a committed
+offset separate from its edit buffer; automatic updates off retains the old preview
+until refresh, while OK always validates current input. Installed evidence and
+known pre-existing regression failures are recorded in WORK_STATE.
+
 ## System boundaries
 
 Reuse FreeCAD documents, native feature/property identities, geometry, solvers,

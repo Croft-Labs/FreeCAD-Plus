@@ -629,7 +629,7 @@ void QuantitySpinBox::userInput(const QString& text)
         // temporarily invalid
         const QString trimmedText = text.trimmed();
         static const QRegularExpression partialNumberRegex(QStringLiteral(R"([+-]?(\d+)?(\.,\d*)?)"));
-        if (trimmedText.isEmpty() || !trimmedText.contains(partialNumberRegex)) {
+        if (!hasFocus() && (trimmedText.isEmpty() || !trimmedText.contains(partialNumberRegex))) {
             // we have to emit here signal explicitly as validator will not pass
             // this value further but we want to check it to disable isSet flag if
             // it has been set previously
@@ -679,12 +679,18 @@ void QuantitySpinBox::openFormulaDialog()
 
 void QuantitySpinBox::handlePendingEmit(bool updateUnit /* = true */)
 {
+    // Numerical edits commit when focus leaves, including fields whose task
+    // explicitly enabled keyboard tracking. Intermediate input is only cached.
+    if (hasFocus()) {
+        return;
+    }
     updateFromCache(true, updateUnit);
 }
 
 void QuantitySpinBox::updateFromCache(bool notify, bool updateUnit /* = true */)
 {
     Q_D(QuantitySpinBox);
+    notify = notify && !hasFocus();
     if (d->pendingEmit) {
         double factor;
         const Base::Quantity& res = d->cached;

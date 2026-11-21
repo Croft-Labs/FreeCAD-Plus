@@ -1,0 +1,20 @@
+test_attached_sketch_recomputes_with_plane (TestComponentPlanes.TestComponentPlanes.test_attached_sketch_recomputes_with_plane) ... ok
+test_axis_origin_flip_and_clear (TestComponentPlanes.TestComponentPlanes.test_axis_origin_flip_and_clear) ... ok
+test_body_face_transforms_and_two_point_axis (TestComponentPlanes.TestComponentPlanes.test_body_face_transforms_and_two_point_axis) ... ok
+test_cancel_and_deferred_numeric_task (TestComponentPlanes.TestComponentPlanes.test_cancel_and_deferred_numeric_task) ... ok
+test_command_opens_component_task_without_body (TestComponentPlanes.TestComponentPlanes.test_command_opens_component_task_without_body) ... ok
+test_create_undo_recompute_save (TestComponentPlanes.TestComponentPlanes.test_create_undo_recompute_save) ... ok
+test_external_source_and_occurrence_guards (TestComponentPlanes.TestComponentPlanes.test_external_source_and_occurrence_guards) ... ok
+test_planar_face_line_point_two_lines (TestComponentPlanes.TestComponentPlanes.test_planar_face_line_point_two_lines) ... ok
+test_real_picking_and_accept (TestComponentPlanes.TestComponentPlanes.test_real_picking_and_accept) ... ok
+test_reject_degenerate_and_cycles (TestComponentPlanes.TestComponentPlanes.test_reject_degenerate_and_cycles) ... ok
+test_rotated_definition_projects_universal_origin (TestComponentPlanes.TestComponentPlanes.test_rotated_definition_projects_universal_origin) ... ok
+test_task_cleans_up_when_document_closes (TestComponentPlanes.TestComponentPlanes.test_task_cleans_up_when_document_closes) ... ok
+test_three_points_and_reference_updates (TestComponentPlanes.TestComponentPlanes.test_three_points_and_reference_updates) ... ok
+test_typing_does_not_rebuild_move_preview (TestComponentPlanes.TestMoveNumericCommit.test_typing_does_not_rebuild_move_preview) ... ok
+test_shared_editors_wait_for_focus_leave (TestComponentPlanes.TestNumericCommit.test_shared_editors_wait_for_focus_leave) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 5.355s
+
+OK

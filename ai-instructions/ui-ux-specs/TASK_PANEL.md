@@ -43,23 +43,27 @@ plane. Choose X or Y, then use a line, edge or two points to define that axis. T
 proposal uses first-to-second point order for direction and derives the other axis
 to maintain a right-handed frame. **Flip normal** reverses the preview's Z axis,
 preserving the plane position and chosen in-plane axis. No numeric origin/vector
-entry fields are proposed. Off-plane point and non-directional/curved-edge handling
-remain solver contracts to settle before functional implementation.
+entry fields are present. A selected off-plane point is projected onto the plane.
+Direction references must be straight edges/lines or two distinct points; their
+direction is projected into the plane. Degenerate/perpendicular directions are refused.
 The preview's coordinate frame is local
 to the proposed plane; existing global coordinate graphics stay unchanged.
 
-This is a design revision, not an installed workflow. The native Qt prototype
-uses a disposable plane-selection example and transient overlay; general
-multi-reference solving, final plane creation and persistence are not implemented.
-Direct screenshot review remains pending. Revised session `bb9622ce36bb`, fingerprint
+The owner approved this simplified UI in chat and explicitly requested implementation.
+The approved native prototype is session `bb9622ce36bb`, fingerprint
 `26f40e674d694d71da62c2ad1da6a1ac8b5d4703e7c4915dbce94f4fb4e9bec9`:
 [combined section](evidence/plane-task-20261121/combined.png),
 [flipped normal](evidence/plane-task-20261121/flipped.png),
 [native prototype checks](evidence/plane-task-20261121/combined-prototype.json).
 This supersedes session `b81d0fbb375d`; its separate-section screenshots remain historical.
-Point and directional inputs in this revision use presentation fixtures. Checks cover
-the shown frame's flip/clear behavior and deferred numeric recompute, not general
-reference selection, plane solving or persistence.
+Those prototype images used presentation fixtures. The implemented task now accepts
+real geometry picks, creates/edits associative component-owned planes, and supports
+native Undo/Redo and save/reopen. Plane definition accepts a planar face/plane,
+three noncollinear points, a line and off-line point, or two distinct coplanar lines.
+The existing New Plane command opens this task for Plus component documents without
+requiring a Body. Legacy documents retain their native datum command.
+Approval is the owner's chat instruction; no tool approval record was modified.
+See [installed acceptance](../WORK_STATE.md#new-plane-implementation--november-21-2026).
 This direction supersedes conflicting unconfirmed plane-form proposals below.
 
 ### Numerical field updates
@@ -71,9 +75,12 @@ while the user is still editing the field. Tab or clicking another control commi
 the field; valid committed values trigger recompute only when that option is on.
 When it is off, keep the prior preview until an explicit refresh or final acceptance.
 Final acceptance validates the latest values before creating/updating geometry.
-This is application-wide intent, including native and Plus task forms. The revised
-New Plane prototype demonstrates it; retrofitting existing forms is still pending
-and must not be reported as implemented from this specification alone.
+This is application-wide intent, including native and Plus task forms. Shared Qt
+integer/decimal editors, native QuantitySpinBox/InputField and Plus Move/Rotate
+preview consumers now defer numerical value updates until focus leaves. Bound
+InputField expressions also avoid document writes while typing. Final acceptance
+reads the latest valid value. The [acceptance record](../WORK_STATE.md#new-plane-implementation--november-21-2026)
+distinguishes tested editor families and workflows from arbitrary third-party editors.
 
 ### Shared task patterns
 

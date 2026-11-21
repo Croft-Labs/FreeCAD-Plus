@@ -168,6 +168,7 @@ def part_input_properties(consumer):
         return ()
     proxy_type = type(consumer.Proxy)
     return {
+        ('freecad_plus.planes', 'Plane'): ('PlaneReferences', 'OriginPoint', 'AxisReferences'),
         ('BOPTools.SplitFeatures', 'FeatureBooleanFragments'): ('Objects',),
         ('BOPTools.SplitFeatures', 'FeatureSlice'): ('Base', 'Tools'),
         ('BOPTools.SplitFeatures', 'FeatureXOR'): ('Objects',),

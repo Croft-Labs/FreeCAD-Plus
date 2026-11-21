@@ -130,12 +130,10 @@ class MoveTask(QtCore.QObject):
         self.distance_error = None
         self.distance.valueChanged.connect(self.valid_distance)
         self.distance.parseError.connect(self.invalid_distance)
-        self.distance.textChanged.connect(self.update_preview)
         self.reverse.toggled.connect(self.update_preview)
         self.axis.currentIndexChanged.connect(self.update_preview)
         self.angle.valueChanged.connect(self.valid_angle)
         self.angle.parseError.connect(self.invalid_angle)
-        self.angle.textChanged.connect(self.update_preview)
         try:
             self.add_rows(rows)
         except Exception:
@@ -330,7 +328,8 @@ class MoveTask(QtCore.QObject):
         self.angle_error = None; self.update_preview()
 
     def invalid_angle(self, error):
-        self.angle_error = error; self.update_preview()
+        self.angle_error = error
+        if not self.angle.hasFocus(): self.update_preview()
 
     def motion(self):
         if self.workflow.currentIndex() == 0:
@@ -379,7 +378,7 @@ class MoveTask(QtCore.QObject):
 
     def invalid_distance(self, error):
         self.distance_error = error
-        self.update_preview()
+        if not self.distance.hasFocus(): self.update_preview()
 
     def delta(self):
         if self.workflow.currentIndex() != 0:

@@ -200,6 +200,18 @@ CmdPartDesignPlane::CmdPartDesignPlane()
 void CmdPartDesignPlane::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module module(PyImport_ImportModule("freecad_plus.plane_task"), true);
+            module.callMemberFunction("show", Py::Tuple());
+        }
+        catch (Py::Exception&) {
+            Base::PyException error;
+            Base::Console().error("%s\n", error.what());
+        }
+        return;
+    }
     UnifiedDatumCommand(*this, Base::Type::fromName("PartDesign::Plane"), "DatumPlane");
 }
 

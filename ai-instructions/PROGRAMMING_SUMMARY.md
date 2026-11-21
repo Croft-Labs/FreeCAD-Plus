@@ -2,6 +2,14 @@
 
 ## Current baseline
 
+November 21 approved New Plane workflow is installed: the existing command opens
+the right-hand task panel for Plus components, with associative geometry references,
+point-only origin, X/Y direction assignment and Flip normal. Planes belong directly
+to the component; no Body is created. Shared numerical editors and Move/Rotate
+previews defer updates until focus leaves. See
+[WORK_STATE](WORK_STATE.md#new-plane-implementation--november-21-2026) for installed
+acceptance, persistence evidence and two independently reproduced baseline test failures.
+
 November 21 approved History UI: component activation opens History, with native
 Origin grouping its three axes and three fundamental planes. Every part History
 item has a fixed left-margin visibility eye. Source-owned native visibility,

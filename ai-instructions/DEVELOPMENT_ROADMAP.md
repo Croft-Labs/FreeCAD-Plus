@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development roadmap
 
+## New Plane workflow — November 21, 2026
+
+- [x] Obtain approval for the simplified combined Origin and Orientation UI;
+  [task contract](ui-ux-specs/TASK_PANEL.md#new-plane-workflow-revision--november-21-2026).
+- [x] Route New Plane to component-owned associative planes with real selection,
+  purple preview/frame, point-origin fallback, X/Y references and Flip normal.
+- [x] Preserve Cancel, source-owned transactions, Undo/Redo and persistence.
+- [x] Apply focus-leave numeric updates to shared Qt/native editors and Move/Rotate.
+- [x] Verify installed command/task, focused native tests and fresh-process
+  downstream recompute; [acceptance and baseline failures](WORK_STATE.md#new-plane-implementation--november-21-2026).
+- [ ] Resume the separately requested History-plane-to-New-Sketch entry workflow.
+
 ## Grouped History and left-margin visibility — November 21, 2026
 
 - [x] Obtain direct screenshot approval for automatic History, grouped Origin/

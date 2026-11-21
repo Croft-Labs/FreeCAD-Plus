@@ -277,6 +277,7 @@ class TestFeatureCenteredCommands(unittest.TestCase):
         length = next(w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
                       if w.objectName() == 'lengthEdit' and w.isVisible())
         self.assertTrue(length.setProperty('rawValue', 5.0))
+        length.clearFocus()  # Numerical inputs now commit when the field is left.
         QtTest.QTest.qWait(100)
         return feature
 

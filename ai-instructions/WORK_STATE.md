@@ -1,28 +1,51 @@
 # FreeCAD Plus: Current work state
 
-## New Plane design review — November 21, 2026
+## New Plane implementation — November 21, 2026
 
-The owner paused selected-plane New Sketch integration to redesign New Plane first.
-The revised native Tasks prototype removes the mode dropdown/Select button, keeps
-origin-plane shortcuts, and shows a temporary purple plane with origin/X/Y/Z frame
-and a combined Origin and Orientation section. The latest owner refinement removes
-its numeric origin-coordinate and X/Y/Z-vector summaries while retaining the 3D frame.
-The combined section
-limits origin input to a point with projected universal-origin fallback, and offers
-X/Y reference assignment plus Flip normal. Native presentation-fixture checks passed
-for origin clear, X/Y assignment and flipping Z without moving the plane.
-Original/installed UI and CAD backend are unchanged;
-general selection solving, real plane creation and save remain pending approval and
+The owner approved the simplified combined section and explicitly requested
 implementation. The [task specification](ui-ux-specs/TASK_PANEL.md#new-plane-workflow-revision--november-21-2026)
-owns the direct screenshots, session and exact scope.
+owns approval, screenshots and exact UI scope. The existing `PartDesign_Plane`
+command now opens the approved right-hand task for component documents. The
+component owns an associative plane directly; no Body is required or created.
+Real geometry selection, origin/axis assignment, normal flip, Cancel, source-owned
+Undo/Redo, History editing and persistence are implemented. The separately requested
+History-plane-to-New-Sketch entry workflow remains paused.
 
-The owner's numerical-field rule is recorded as application-wide intent: no
-recompute while typing; recompute valid committed input on focus leave only when
-automatic updates are enabled. Native Qt prototype checks verified no updates
-while typing, one after focus leave, no automatic recompute with the option off,
-and explicit refresh using the committed value. No document objects were added.
-These checks do not establish global enforcement in existing task forms. Their
-retrofit is still pending. No new UI approval or installation is claimed.
+**Native acceptance:** final installed `TestComponentPlanes` ran 15 checks with
+zero failures/errors. Coverage includes native command entry, actual point/edge
+selection, face/three-point/line-based construction, rotated Body/definition
+references, external occurrence/source ownership, attached sketch recompute,
+degenerate/cyclic rejection, Cancel, Undo/Redo and document-close cleanup.
+Shared integer, decimal, unit-aware spin box and InputField checks verify zero
+value notifications while typing and one on focus leave; a Move preview check
+verifies no redraw while typing. New Plane's automatic-update-off behavior also
+passed. [Focused results](evidence/plane-20261121/plane_check.txt).
+
+**Regression limits:** the affected Sketch/Extrude/Add/Subtract and Move/Rotate
+run completed 48 tests: 46 passed, two dock-close lifecycle assertions failed.
+Both failures were reproduced independently against the unchanged installed
+baseline before installation. They concern closing the managed component dock,
+not numeric editing or plane creation, and remain unresolved outside this scope.
+[Regression results](evidence/plane-20261121/plane_regression.txt),
+[baseline comparison](evidence/plane-20261121/plane_baseline.txt).
+The final two focused additions test rotated universal-origin projection and task
+cleanup and passed in the installed 15-test run; the broader suite predates them.
+
+**Persistence/GUI:** independent installed-app processes reopened domestic and
+external saved files, changed a plane offset, and verified downstream sketch/source
+recompute. [Reopen evidence](evidence/plane-20261121/plane_reopen.json).
+The installed command's [task](evidence/plane-20261121/implemented-task.png),
+[normal flip](evidence/plane-20261121/implemented-flip.png) and
+[created History plane](evidence/plane-20261121/created-plane.png) were inspected.
+The camera harness reports only a known Pivy deprecation warning.
+
+**Installation:** built native GUI/PartDesign modules and Python modules/tests were
+installed into the existing `_temp builds/FreeCAD-Plus/app` payload with backups.
+[SHA-256 manifest](evidence/plane-20261121/installation.json) records all 11 files.
+The existing `freecad plus 0.1.0.lnk` still points through the existing launcher to
+that executable and owner profile; no shortcut or owner settings were rewritten.
+This certifies the tested shared editor families and affected workflows, not every
+third-party custom numeric editor or every native dialog.
 
 ## Grouped History and left-margin visibility — November 21, 2026
 

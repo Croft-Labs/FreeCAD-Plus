@@ -26,6 +26,7 @@
 #include <QPixmapCache>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QSignalBlocker>
 
 #include <App/Application.h>
 #include <App/DocumentObject.h>
@@ -264,9 +265,12 @@ void InputField::newInput(const QString& text)
                 ExpressionParser::parse(getPath().getDocumentObject(), input.toUtf8())
             );
 
-            setExpression(e);
-
-            std::unique_ptr<Expression> evalRes(getExpression()->eval());
+            // Parse/evaluate locally while typing; writing the expression can
+            // itself update a document even when value signals are deferred.
+            if (!hasFocus()) {
+                setExpression(e);
+            }
+            std::unique_ptr<Expression> evalRes(e->eval());
 
             auto* value = freecad_cast<NumberExpression*>(evalRes.get());
             if (value) {
@@ -322,9 +326,12 @@ void InputField::newInput(const QString& text)
     res.setFormat(this->actQuantity.getFormat());
     actQuantity = res;
 
-    // signaling
-    Q_EMIT valueChanged(res);
-    Q_EMIT valueChanged(res.getValue());
+    // Keep parsing/validation responsive, but do not recompute consumers while
+    // the user is still editing this numerical field.
+    if (!hasFocus()) {
+        Q_EMIT valueChanged(res);
+        Q_EMIT valueChanged(res.getValue());
+    }
 }
 
 void InputField::pushToHistory(const QString& valueq)
@@ -673,6 +680,7 @@ void InputField::focusInEvent(QFocusEvent* event)
 
 void InputField::focusOutEvent(QFocusEvent* event)
 {
+    const QString committedInput = this->text();
     try {
         if (Quantity::parse(this->text().toStdString()).isDimensionless()) {
             // if user didn't enter a unit, we virtually compensate
@@ -686,7 +694,13 @@ void InputField::focusOutEvent(QFocusEvent* event)
     catch (const Base::ParserError&) {
         // do nothing, let apply the last known good value
     }
-    this->setText(QString::fromStdString(actQuantity.getUserString()));
+    // setText may emit textChanged, which also calls newInput. Publish exactly
+    // once, including when the formatted text is identical to the typed text.
+    {
+        QSignalBlocker blocker(this);
+        this->setText(QString::fromStdString(actQuantity.getUserString()));
+    }
+    newInput(isBound() ? committedInput : this->text());
     QLineEdit::focusOutEvent(event);
 }
 
