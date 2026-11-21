@@ -22,6 +22,28 @@ The archived fork is reference material, not a source of implicit requirements.
 
 ## Components and data flow
 
+### Grouped component History and visibility — November 21, 2026
+
+The component panel projects the native definition Origin with six axis/plane
+children before the existing feature-only `document.history` sequence. No extra
+document objects, copies, schema fields or managed Body rows are introduced.
+Selection routes retain the defining object and full occurrence path. Origin
+labels are presentation-only; native names/identities remain intact.
+
+Part History uses a fixed left eye column independent of the name column's tree
+indentation. Successful component Edit switches to History; single-click selection
+does not. Native file History keeps its existing controls. Eyes show effective
+visibility through internal ownership ancestors, excluding the component's stored
+catalog visibility and occurrence display settings. Showing an item reveals its
+internal Origin/Body containers; hiding leaves native child flags intact. Changes
+are one transaction in the defining document. FreeCAD retains its normal Undo
+forwarding entry in an active assembly when the source is external.
+
+Eye and Space actions validate the exact current component/occurrence route and
+reject stale rows, active tasks/editors and pending operations before mutation.
+They preserve selection and do not open editors. The approved appearance/workflow
+is owned by [the component specification](ui-ux-specs/COMPONENT_PANEL.md#history-and-legacy-files).
+
 ### Feature-centered Add/Subtract targets — November 21, 2026
 
 The existing Pad/Pocket commands now route standalone component sketches to an

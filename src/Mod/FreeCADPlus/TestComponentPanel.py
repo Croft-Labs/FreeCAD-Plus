@@ -81,7 +81,9 @@ class TestComponentPanel(unittest.TestCase):
         self.assertEqual(len([r for _, r in self.rows(0) if r.kind == 'model']), 3)
         self.assertEqual(len([r for _, r in self.rows(1) if r.kind == 'occurrence']), 4)
         history = [panel.lookup(r.ref) for _, r in self.rows(2)]
-        self.assertEqual(history, [self.sketch, self.pad])
+        self.assertEqual(history, [self.child.Origin, *[o for o in self.child.Origin.OriginFeatures
+                                                     if o.TypeId in ('App::Line', 'App::Plane')],
+                                   self.sketch, self.pad])
         self.assertNotIn('PartDesign::Body', [o.TypeId for o in history])
         # A repeated refresh must not recreate rows, geometry or transactions.
         row = self.occurrence((self.second, self.nested))
@@ -103,6 +105,7 @@ class TestComponentPanel(unittest.TestCase):
         settle()
         self.assertIs(first_child, self.occurrence((self.first, self.nested)))
         self.click(1, first_child, double=True)
+        self.assertEqual(self.widget.tabs.currentIndex(), 2)
         self.assertEqual(editing.context_path(self.doc), (self.child, (self.first, self.nested)))
         for item, row in self.rows(1):
             if row.kind == 'occurrence' and row.ref == panel.identity(self.child):
@@ -113,6 +116,7 @@ class TestComponentPanel(unittest.TestCase):
         self.click(1, self.occurrence((self.second, self.nested)), double=True)
         self.click(1, self.occurrence((self.first,)), double=True)
         self.click(0, self.model(self.child), double=True)
+        self.assertEqual(self.widget.tabs.currentIndex(), 2)
         self.assertEqual(editing.context_path(self.doc)[1], (self.second, self.nested))
         file_item = self.widget.trees[1].topLevelItem(0)
         self.click(1, file_item)
@@ -177,7 +181,10 @@ class TestComponentPanel(unittest.TestCase):
         self.assertEqual(editing.context_path(self.doc), (source_root.Definitions[0], (link,)))
         sketch = editing.new_sketch(self.doc); settle()
         self.assertEqual(sketch.Document, source)
-        self.assertEqual([panel.lookup(r.ref) for _, r in self.rows(2)], [sketch])
+        definition = source_root.Definitions[0]
+        self.assertEqual([panel.lookup(r.ref) for _, r in self.rows(2)],
+                         [definition.Origin, *[o for o in definition.Origin.OriginFeatures
+                                              if o.TypeId in ('App::Line', 'App::Plane')], sketch])
 
     def test_file_origin_visibility_persistence_and_no_display_model_mutation(self):
         editing.edit_file(self.doc); settle()
@@ -219,6 +226,162 @@ class TestComponentPanel(unittest.TestCase):
         self.assertEqual(self.widget.refresh_count, before)
         self.widget = panel.show_panel(); settle()
         self.assertEqual(len(editing._context_observers), callbacks)
+
+
+class TestHistoryVisibility(unittest.TestCase):
+    setUp = TestComponentPanel.setUp
+    tearDown = TestComponentPanel.tearDown
+    rows = TestComponentPanel.rows
+    model = TestComponentPanel.model
+    occurrence = TestComponentPanel.occurrence
+    click = TestComponentPanel.click
+
+    def item(self, obj):
+        return next(item for item, row in self.rows(2) if row.ref == panel.identity(obj))
+
+    def eye(self, obj):
+        self.widget.tabs.setCurrentIndex(2)
+        tree = self.widget.trees[2]
+        item = self.item(obj)
+        tree.scrollToItem(item); settle()
+        point = tree.visualItemRect(item).center()
+        point.setX(tree.columnViewportPosition(1) + tree.columnWidth(1) // 2)
+        QtTest.QTest.mouseClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, point)
+        settle()
+
+    def test_origin_group_and_left_margin_survive_resize_and_collapse(self):
+        self.click(0, self.model(self.unused), double=True)
+        tree = self.widget.trees[2]
+        self.assertEqual(self.widget.tabs.currentIndex(), 2)
+        self.assertEqual(tree.topLevelItemCount(), 1)
+        origin = tree.topLevelItem(0)
+        self.assertEqual(origin.text(0), 'Origin')
+        self.assertEqual([origin.child(i).text(0) for i in range(origin.childCount())],
+                         ['X Axis', 'Y Axis', 'Z Axis', 'XY Plane', 'XZ Plane', 'YZ Plane'])
+        for width in (240, 450):
+            self.widget.resize(width, 650); settle()
+            self.assertEqual(tree.columnViewportPosition(1), 0)
+            self.assertEqual(tree.header().visualIndex(1), 0)
+            for item, row in self.rows(2):
+                self.assertFalse(item.icon(1).isNull())
+        origin.setExpanded(False); settle()
+        self.assertEqual(tree.columnViewportPosition(1), 0)
+        origin.setExpanded(True); settle()
+        self.assertEqual(origin.childCount(), 6)
+
+    def test_eye_and_keyboard_preserve_selection_geometry_and_undo(self):
+        body = self.pad.getParentGeoFeatureGroup()
+        body.Visibility = True; self.pad.Visibility = True; self.sketch.Visibility = False
+        self.widget.refresh()
+        Gui.Selection.clearSelection(); Gui.Selection.addSelection(self.pad)
+        settle()
+        selected = Gui.Selection.getSelection()
+        ids = {obj.Name: obj.ID for obj in self.doc.Objects}
+        volume = self.pad.Shape.Volume
+        before = self.doc.UndoCount
+        self.eye(self.sketch)
+        self.assertTrue(self.sketch.Visibility)
+        self.assertEqual(self.item(self.sketch).toolTip(1), 'Hide Sketch')
+        self.assertEqual(Gui.Selection.getSelection(), selected)
+        self.assertIsNone(Gui.getDocument(self.doc.Name).getInEdit())
+        self.assertEqual(self.doc.UndoCount, before + 1)
+        self.doc.undo(); settle(); self.assertFalse(self.sketch.Visibility)
+        self.doc.redo(); settle(); self.assertTrue(self.sketch.Visibility)
+        tree = self.widget.trees[2]
+        tree.setCurrentItem(self.item(self.sketch), 0)
+        QtTest.QTest.keyClick(tree, QtCore.Qt.Key_Space); settle()
+        self.assertFalse(self.sketch.Visibility)
+        self.assertEqual({obj.Name: obj.ID for obj in self.doc.Objects}, ids)
+        self.assertAlmostEqual(self.pad.Shape.Volume, volume)
+
+    def test_hidden_origin_and_body_reveal_in_single_transaction(self):
+        origin = self.child.Origin
+        plane = next(obj for obj in origin.OriginFeatures if obj.Role == 'XY_Plane')
+        axis = next(obj for obj in origin.OriginFeatures if obj.Role == 'X_Axis')
+        origin.Visibility = False; plane.Visibility = False; settle()
+        self.eye(plane)
+        self.assertTrue(origin.Visibility)
+        self.assertTrue(panel.history_visible(self.child, plane))
+        self.doc.undo(); settle()
+        self.assertFalse(origin.Visibility); self.assertFalse(plane.Visibility)
+        self.doc.redo(); settle()
+        self.assertTrue(panel.history_visible(self.child, plane))
+        self.eye(origin); self.assertFalse(origin.Visibility)
+        self.eye(axis); self.assertTrue(panel.history_visible(self.child, axis))
+        body = self.pad.getParentGeoFeatureGroup()
+        body.Visibility = False; self.pad.Visibility = False; settle()
+        self.eye(self.pad)
+        self.assertTrue(body.Visibility); self.assertTrue(self.pad.Visibility)
+        self.doc.undo(); settle()
+        self.assertFalse(body.Visibility); self.assertFalse(self.pad.Visibility)
+
+    def test_stale_context_pending_transaction_and_task_guards(self):
+        row = self.item(self.pad).data(0, panel._ROLE)
+        editing.edit((self.first, self.nested)); settle()
+        before = (self.doc.UndoCount, self.pad.Visibility)
+        with self.assertRaises(ValueError): self.widget.toggle_history_visibility(row)
+        self.assertEqual((self.doc.UndoCount, self.pad.Visibility), before)
+        current = self.item(self.pad).data(0, panel._ROLE)
+        self.doc.openTransaction('Caller transaction')
+        self.child.Label = 'Pending caller edit'
+        try:
+            with self.assertRaises(ValueError): self.widget.toggle_history_visibility(current)
+            self.assertTrue(self.doc.HasPendingTransaction)
+        finally: self.doc.abortTransaction()
+        editing.edit_feature(self.doc, self.pad); settle()
+        try:
+            with self.assertRaises(ValueError): self.widget.toggle_history_visibility(current)
+        finally:
+            from TestFeatureCenteredModeling import TestFeatureCenteredCommands
+            TestFeatureCenteredCommands.task_button(self, QtWidgets.QDialogButtonBox.Cancel)
+
+    def test_external_visibility_is_source_owned_and_persists(self):
+        import json
+        document.save_document(self.doc, self.output / 'Assembly.cadprt')
+        source = document.new_document('HistorySource')
+        definition = document.validate(source).Definitions[0]
+        document.save_document(source, self.output / 'Source.cadprt')
+        external.import_file(self.doc, source)
+        App.setActiveDocument(self.doc.Name)
+        editing.edit_unused(self.doc, definition); settle()
+        origin = definition.Origin
+        axis = next(obj for obj in origin.OriginFeatures if obj.Role == 'Z_Axis')
+        origin.Visibility = False; axis.Visibility = False; settle()
+        before_names = self.doc.UndoNames
+        assembly_ids = {obj.Name: obj.ID for obj in self.doc.Objects}
+        assembly_visibility = {obj.Name: obj.Visibility for obj in self.doc.Objects}
+        self.eye(axis)
+        self.assertTrue(panel.history_visible(definition, axis))
+        # FreeCAD may add an Undo forwarding marker in the active assembly.
+        self.assertEqual(self.doc.UndoNames[1:], before_names)
+        self.assertEqual(self.doc.UndoNames[0], '-> ' + source.UndoNames[0])
+        self.assertEqual({obj.Name: obj.ID for obj in self.doc.Objects}, assembly_ids)
+        self.assertEqual({obj.Name: obj.Visibility for obj in self.doc.Objects}, assembly_visibility)
+        source.undo(); settle(); self.assertFalse(origin.Visibility)
+        source.redo(); settle(); self.assertTrue(panel.history_visible(definition, axis))
+        document.save_document(source); document.save_document(self.doc)
+        (self.output / 'expected.json').write_text(json.dumps({
+            'source_ids': {obj.Name: obj.ID for obj in source.Objects},
+            'definition': definition.Name, 'axis': axis.Name}))
+
+
+def verify_history_fresh_process(output):
+    import json
+    folder = Path(output) / 'test_external_visibility_is_source_owned_and_persists'
+    expected = json.loads((folder / 'expected.json').read_text())
+    doc = document.open_document(folder / 'Assembly.cadprt')
+    source = next(owner for owner in App.listDocuments().values() if owner != doc)
+    assert {obj.Name: obj.ID for obj in source.Objects} == expected['source_ids']
+    definition = source.getObject(expected['definition'])
+    axis = source.getObject(expected['axis'])
+    assert panel.history_visible(definition, axis)
+    App.setActiveDocument(doc.Name); editing.edit_unused(doc, definition)
+    widget = panel.show_panel(); settle()
+    origin = widget.trees[2].topLevelItem(0)
+    assert origin.text(0) == 'Origin' and origin.childCount() == 6
+    item = next(item for item in widget._maps[2].values() if item.data(0, panel._ROLE).ref == panel.identity(axis))
+    assert item.toolTip(1) == 'Hide Z Axis'
+    App.closeDocument(doc.Name); App.closeDocument(source.Name)
 
 
 class TestTaskDockDefault(unittest.TestCase):

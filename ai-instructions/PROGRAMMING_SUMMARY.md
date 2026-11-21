@@ -2,6 +2,13 @@
 
 ## Current baseline
 
+November 21 approved History UI: component activation opens History, with native
+Origin grouping its three axes and three fundamental planes. Every part History
+item has a fixed left-margin visibility eye. Source-owned native visibility,
+parent containers, task/context guards and Undo/Redo remain in use. See
+[WORK_STATE](WORK_STATE.md#grouped-history-and-left-margin-visibility--november-21-2026)
+for installed/native evidence and the component specification for direct approval.
+
 November 21 owner terminology: original FreeCAD uses **body-centered modeling**;
 FreeCAD Plus uses **feature-centered modeling**. The new backend module
 `freecad_plus/modeling.py` creates sketches without Bodies and atomically supplies

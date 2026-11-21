@@ -112,6 +112,34 @@ A direct Reference child displays its full geometry while its parent is edited, 
 
 ### History and legacy files
 
+November 21, 2026 owner-approved History update: activating a part with double-click
+or Edit in Models or Part Tree opens its History in the current file tab. History
+starts with an expandable Origin containing X Axis, Y Axis, Z Axis, XY Plane,
+XZ Plane and YZ Plane, including for empty components. Existing sketches and
+features follow. Use these clean display labels without changing native identities.
+Each part History row, including Origin and every child, has a visibility eye in
+a fixed column at the far-left margin. Tree depth affects only the name/icon column;
+eyes stay aligned when Origin expands/collapses or the dock is resized. Open eyes
+mean shown; crossed eyes mean hidden. Clicking an eye toggles visibility without
+selecting a different item or entering an editor. Tooltips identify Show/Hide and
+the item; Space on a History item performs the same action. Visibility uses native
+Origin/Body parent semantics and defining-file Undo/Redo/save. File-level History
+retains its existing controls; coordinate graphics and initial visibility defaults
+are unchanged.
+
+Approval: the owner said "approved. implement the history changes with the grouped
+origin, axes and planes, and the visibility eyes fixed to the left margin." in this
+chat on November 21. This approves the direct
+[screenshot](../evidence/history-20261121/approved.png), companion session
+`13924304d75b`, fingerprint
+`5b74dd441f12f6e86c40dfdca5ff43072fd2a7c143584086364ec59349995841`.
+The isolated panel snapshot matches source commit `2b42f56e03`; its snapshot commit
+is `2aabfa2316a400c39c64b564a6c766286b5e01e7`. Approval was given directly in chat;
+no companion approval state was changed on the owner's behalf. This supersedes
+earlier flat-plane/right-eye previews and conflicting unconfirmed origin proposals
+below. [WORK_STATE](../WORK_STATE.md#grouped-history-and-left-margin-visibility--november-21-2026)
+records implementation and native acceptance separately.
+
 Show the active component's sequential sketches, operations/features and other geometry. Background Bodies must not reappear as separately managed rows. A legacy conversion should retain editable features where possible, putting required sketches and producing operations before their results. Move definitions to Models and represent links as Part Tree instances. If a feature cannot be converted parametrically, preserve recoverable final geometry as explicitly identified dumb body/curve geometry rather than losing it. The current backend's conversion limits are not restrictions on the intended workflow. [C06](EVIDENCE_AND_DECISIONS.md#c06), [current owner direction](EVIDENCE_AND_DECISIONS.md#current)
 
 Implementation boundary: G1.7b3k recognizes native Boolean-owned tools in the

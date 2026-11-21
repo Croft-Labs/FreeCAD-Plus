@@ -1,5 +1,18 @@
 # FreeCAD Plus: Development roadmap
 
+## Grouped History and left-margin visibility — November 21, 2026
+
+- [x] Obtain direct screenshot approval for automatic History, grouped Origin/
+  axes/planes and fixed left-margin eyes; see the
+  [owning UI contract](ui-ux-specs/COMPONENT_PANEL.md#history-and-legacy-files).
+- [x] Implement component activation, native origin projection and independent
+  eye/name columns without adding model objects or exposing backend Bodies.
+- [x] Wire native visibility, internal parent containers, source-owned Undo/Redo,
+  exact occurrence/context validation and task/pending-operation guards.
+- [x] Validate the affected panel, native editing and feature-centered modeling;
+  installed-app and persistence evidence is recorded in
+  [WORK_STATE](WORK_STATE.md#grouped-history-and-left-margin-visibility--november-21-2026).
+
 ## Feature-centered Add/Subtract targets — November 21, 2026
 
 - [x] Route existing Pad/Pocket commands from standalone component sketches to

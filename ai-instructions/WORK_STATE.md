@@ -1,5 +1,55 @@
 # FreeCAD Plus: Current work state
 
+## Grouped History and left-margin visibility — November 21, 2026
+
+**Authority/implementation:** the owner approved the direct preview and explicitly
+requested implementation. The
+[component specification](ui-ux-specs/COMPONENT_PANEL.md#history-and-legacy-files)
+records the exact approval, screenshot, session and fingerprint. Component Edit
+from Models or Part Tree now switches to History. An expandable native Origin
+groups X/Y/Z axes and XY/XZ/YZ planes ahead of sketches/features. Every part History
+row has an open/crossed eye in a fixed far-left column, independent of nesting,
+expansion or dock width. The name/icon column retains selection and native editing.
+No document objects/schema changes or backend Body rows were added. The native
+origin's additional point object is not a separate row in the approved grouping.
+
+Eye/Space actions use effective internal ownership visibility and source-owned
+transactions. Showing a child reveals necessary native Origin/Body containers;
+hiding retains native child flags. Context/occurrence identity, pending-operation
+and task/editor guards run before mutation. Eyes do not change selection or open
+editors. Existing file History checkboxes and viewport coordinate graphics remain
+unchanged. Native cross-file Undo forwarding markers remain available in the
+active assembly, while the visibility change belongs to its defining file.
+
+**Validation:** 40 native tests passed in the retained build (58.137 s) and
+installed app (58.135 s), zero failures/errors/skips. Five new History cases cover
+empty parts, grouping, fixed-column alignment through resize/collapse, real mouse
+and keyboard visibility, selection/geometry preservation, hidden parent containers,
+Undo/Redo, stale occurrence/pending/task guards and external ownership/save.
+Six existing panel tests and the prior 29 modeling/command compatibility cases
+also passed. Updated expectations account for the approved frame rows, native
+Origin's extra point object, nonempty pending transactions and native Undo
+forwarding; implementation behavior was checked directly rather than treating
+those initial assertion mismatches as acceptance. Logs:
+[build](evidence/history-20261121/build-tests.txt) and
+[installed](evidence/history-20261121/installed-tests.txt).
+
+An independent installed process reopened the saved assembly/source pair and
+verified source identities, persisted axis/Origin visibility, grouped rows and
+eye state. It exited 0 with empty stderr. The native installed UI was rendered
+with real eye clicks and inspected against the approved screenshot. The
+[installed screenshot](evidence/history-20261121/installed.png) and
+[acceptance artifact](evidence/history-20261121/acceptance.json) record runtime
+provenance, checks and source/build/app hashes. Suite diagnostics are unchanged
+deliberate negative modeling/editor cases, recorded in acceptance.
+
+**Build/delivery:** FreeCADPlusScripts synchronized successfully. Updated panel
+and test modules are installed in `__Apps/_temp builds/FreeCAD-Plus/app`; this
+increment needs no C++ rebuild. The launcher/desktop shortcut are unchanged.
+The owner session/documents/settings were preserved; restart loads the updated
+Python panel. Task-generated validation files were removed after retaining
+durable evidence. Unrelated `project.previewfirst.json` stays excluded.
+
 ## Feature-centered Add/Subtract targets — November 21, 2026
 
 **Implementation:** existing Pad/Pocket commands route standalone component

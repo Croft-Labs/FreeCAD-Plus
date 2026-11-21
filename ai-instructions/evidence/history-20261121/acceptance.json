@@ -1,0 +1,70 @@
+{
+  "approval": {
+    "channel": "Direct user approval in chat",
+    "source_commit": "2b42f56e030ef09464a06b52d88fc8e7f33bb6b0",
+    "fingerprint": "5b74dd441f12f6e86c40dfdca5ff43072fd2a7c143584086364ec59349995841",
+    "session": "13924304d75b"
+  },
+  "reopen": {
+    "ok": true
+  },
+  "native_ui": {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "6340c45f99c69e30311c1714f2a485fe28df1c2ad66a555e7ba06409848f5f2f",
+    "ok": true,
+    "runtime_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "empty_objects": 19,
+    ".models": {
+      "tab": "History",
+      "history": [
+        "Origin"
+      ]
+    },
+    ".tree": {
+      "tab": "History",
+      "history": [
+        "Origin"
+      ]
+    },
+    ".features": {
+      "tab": "History",
+      "history": [
+        "Origin",
+        "Sketch",
+        "Pad"
+      ]
+    },
+    "eye_click": {
+      "tooltip": "Hide Sketch",
+      "cad_visibility_unchanged": false,
+      "native_editor_opened": false
+    }
+  },
+  "expected_negative_case_diagnostics": "Pad001: Result has multiple solids: enable 'Allow Compound' in the active body.\nPad: Wire is not closed.\nPad: Wire is not closed.\nChange Part Type before using Excluded geometry\n<Gui> Document.cpp(610): cannot edit object 'Component': not found in document 'PanelFixture'",
+  "reopen_stderr_bytes": 0,
+  "installed": {
+    "ok": true,
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "tests": {
+      "run": 40,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    }
+  },
+  "hashes": [
+    {
+      "build": "6340C45F99C69E30311C1714F2A485FE28DF1C2AD66A555E7BA06409848F5F2F",
+      "installed": "6340C45F99C69E30311C1714F2A485FE28DF1C2AD66A555E7BA06409848F5F2F",
+      "source": "6340C45F99C69E30311C1714F2A485FE28DF1C2AD66A555E7BA06409848F5F2F",
+      "file": "freecad_plus/panel.py"
+    },
+    {
+      "build": "7717FF33724264E627EC08A5652F122B34DEC371843AE7CD4A071D3E29C40325",
+      "installed": "7717FF33724264E627EC08A5652F122B34DEC371843AE7CD4A071D3E29C40325",
+      "source": "7717FF33724264E627EC08A5652F122B34DEC371843AE7CD4A071D3E29C40325",
+      "file": "TestComponentPanel.py"
+    }
+  ],
+  "ui_stderr_bytes": 0
+}

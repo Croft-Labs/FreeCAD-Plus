@@ -83,8 +83,7 @@ def projection(doc, active=None, active_path=()):
                         selection=(active.Document.Name, active.Name, ''))
         file_row = Row(file_row.key, file_row.kind, file_row.label, file_row.ref,
                        selection=file_row.selection, children=(*file_row.children, temporary))
-    history = []
-    for obj in document.history(doc, active):
+    def history_row(obj, label=None, children=()):
         if active is None:
             sub = root.Origin.Name + '.'
             if obj != root.Origin:
@@ -92,11 +91,51 @@ def projection(doc, active=None, active_path=()):
         else:
             sub = hierarchy.subname(active_path)
             sub += ''.join(member.Name + '.' for member in document.owned_path(active, obj))
-        history.append(Row(('history', identity(obj)), 'history', obj.Label, identity(obj),
-                           selection=((doc.Name, root.Name, sub) if active is None or active_path
-                                      else (active.Document.Name, active.Name, sub)),
-                           visible=bool(obj.Visibility) if active is None else None))
+        shown = history_visible(active, obj) if active is not None else bool(obj.Visibility)
+        return Row(('history', identity(obj)), 'history', label or obj.Label, identity(obj),
+                   selection=((doc.Name, root.Name, sub) if active is None or active_path
+                              else (active.Document.Name, active.Name, sub)),
+                   children=children, visible=shown)
+    history = [history_row(obj) for obj in document.history(doc, active)]
+    if active is not None:
+        features = {obj.Role: obj for obj in active.Origin.OriginFeatures}
+        roles = ('X_Axis', 'Y_Axis', 'Z_Axis', 'XY_Plane', 'XZ_Plane', 'YZ_Plane')
+        children = tuple(history_row(features[role], role.replace('_', ' ')) for role in roles)
+        history.insert(0, history_row(active.Origin, 'Origin', children))
     return (tuple(models(external.catalog(doc))), (file_row,), tuple(history))
+
+
+def history_visible(definition, obj):
+    """Visibility within the component, independent of catalog/occurrence hiding."""
+    route = document.owned_path(definition, obj)
+    return route is not None and all(member.Visibility for member in route)
+
+
+def _eye_icon(shown, color):
+    pixmap = QtGui.QPixmap(24, 24)
+    pixmap.fill(QtCore.Qt.transparent)
+    painter = QtGui.QPainter(pixmap)
+    painter.setRenderHint(QtGui.QPainter.Antialiasing)
+    color = QtGui.QColor(color)
+    if not shown:
+        color.setAlpha(145)
+    painter.setPen(QtGui.QPen(color, 1.6))
+    path = QtGui.QPainterPath()
+    path.moveTo(3, 12)
+    path.cubicTo(7, 5, 17, 5, 21, 12)
+    path.cubicTo(17, 19, 7, 19, 3, 12)
+    painter.drawPath(path)
+    painter.setBrush(color)
+    painter.drawEllipse(QtCore.QPointF(12, 12), 2.5, 2.5)
+    if not shown:
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Clear)
+        painter.setPen(QtGui.QPen(QtCore.Qt.transparent, 4))
+        painter.drawLine(4, 20, 20, 4)
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_SourceOver)
+        painter.setPen(QtGui.QPen(color, 1.6))
+        painter.drawLine(4, 20, 20, 4)
+    painter.end()
+    return QtGui.QIcon(pixmap)
 
 
 class _Delegate(QtWidgets.QStyledItemDelegate):
@@ -128,6 +167,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._selecting = False
         self._press = None
         self._clipboard = ()
+        self._history_eyes = False
         self.refresh_count = 0
         self.tabs = QtWidgets.QTabWidget()
         self.trees = []
@@ -135,6 +175,16 @@ class ComponentPanel(QtWidgets.QDockWidget):
             tree = QtWidgets.QTreeWidget()
             tree.setObjectName('Plus' + label.replace(' ', ''))
             tree.setHeaderHidden(True)
+            if label == 'History':
+                tree.setColumnCount(2)
+                tree.header().setStretchLastSection(False)
+                tree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+                tree.header().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+                tree.setColumnWidth(1, 28)
+                tree.header().moveSection(1, 0)
+                tree.header().setSectionsMovable(False)
+                tree.setTreePosition(0)
+                tree.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
             tree.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
             tree.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
             tree.setUniformRowHeights(True)
@@ -169,7 +219,52 @@ class ComponentPanel(QtWidgets.QDockWidget):
         editing.add_context_observer(self.schedule)
         self.refresh()
 
+    def toggle_history_visibility(self, row):
+        self._clipboard_guard()
+        if Gui.Control.activeDialog():
+            raise ValueError('Finish the current task first')
+        doc, obj = self._checked(row)
+        definition, path = editing.context_path(doc)
+        route = document.owned_path(definition, obj)
+        if row.kind != 'history' or not route:
+            raise ValueError('Choose an item in the edited component History')
+        sub = hierarchy.subname(path) + ''.join(member.Name + '.' for member in route)
+        expected = ((doc.Name, document.validate(doc).Name, sub) if path
+                    else (definition.Document.Name, definition.Name, sub))
+        if row.selection != expected:
+            raise ValueError('The edited component changed; select the item again')
+        shown = not history_visible(definition, obj)
+        with document.transaction(obj.Document, ('Show ' if shown else 'Hide ') + obj.Label):
+            if shown:
+                # Native Origin/Body containers must be visible for their child
+                # to draw. Never reveal the catalog definition or another occurrence.
+                for member in route[:-1]:
+                    member.Visibility = True
+            obj.Visibility = shown
+        self.refresh()
+
+    def _toggle_history_eye(self, item):
+        try:
+            self.toggle_history_visibility(item.data(0, _ROLE))
+        except (ValueError, RuntimeError, ReferenceError) as error:
+            self._message(str(error))
+
     def eventFilter(self, watched, event):
+        if self._history_eyes and watched == self.trees[2].viewport():
+            if event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonRelease,
+                                QtCore.QEvent.MouseButtonDblClick):
+                tree = self.trees[2]
+                item = tree.itemAt(event.pos())
+                if item and tree.columnAt(event.pos().x()) == 1:
+                    if event.type() == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:
+                        self._toggle_history_eye(item)
+                    return True
+        if self._history_eyes and watched == self.trees[2] and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
+            if event.key() == QtCore.Qt.Key_Space and self.trees[2].currentItem():
+                event.accept()
+                if event.type() == QtCore.QEvent.KeyPress and not event.isAutoRepeat():
+                    self._toggle_history_eye(self.trees[2].currentItem())
+                return True
         if not self._closed and event.type() == QtCore.QEvent.Paint:
             for _, state in self._states:
                 if (watched == state.get('viewport') and state.get('fade_pending')
@@ -330,6 +425,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     state['window'].widget().setWindowTitle(label + ' [*]')
                 if active and path:
                     self._state(current)['last'][identity(active)] = tuple(identity(o) for o in path)
+            self._history_eyes = active is not None
+            self.trees[2].setColumnHidden(1, not self._history_eyes)
             self._updating = True
             self.setUpdatesEnabled(False)
             color = App.ParamGet('User parameter:BaseApp/Preferences/TreeView').GetUnsigned('TreeActiveColor', 1538528255)
@@ -419,7 +516,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 obj = lookup(row.ref)
                 item.setIcon(0, QtGui.QIcon(':/icons/freecad.svg') if row.kind in ('file', 'import') else obj.ViewObject.Icon)
                 flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
-                if row.visible is not None:
+                if index == 2 and self._history_eyes:
+                    shown = row.visible
+                    item.setIcon(1, _eye_icon(shown, tree.palette().text().color()))
+                    action = ('Hide ' if shown else 'Show ') + row.label
+                    item.setToolTip(1, action)
+                    item.setData(1, QtCore.Qt.AccessibleTextRole, action)
+                    item.setData(0, QtCore.Qt.CheckStateRole, None)
+                elif row.visible is not None:
+                    item.setIcon(1, QtGui.QIcon())
                     flags |= QtCore.Qt.ItemIsUserCheckable
                     item.setCheckState(0, QtCore.Qt.Checked if row.visible else QtCore.Qt.Unchecked)
                 item.setFlags(flags)
@@ -576,6 +681,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         # Entering Edit marks the exact occurrence separately from all active rows.
         if row.kind != 'file':
             self._select_context(doc)
+            self.tabs.setCurrentIndex(2)
 
     def _select_context(self, doc):
         definition, route = editing.context_path(doc)
