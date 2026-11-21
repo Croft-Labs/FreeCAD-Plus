@@ -221,6 +221,56 @@ class TestComponentPanel(unittest.TestCase):
         self.assertEqual(len(editing._context_observers), callbacks)
 
 
+class TestTaskDockDefault(unittest.TestCase):
+    """Run in an isolated profile; restart persistence is checked separately."""
+    def setUp(self):
+        if 'PLUS_TEST_DIR' not in os.environ:
+            self.skipTest('Use an isolated native profile')
+        from freecad_plus import ui_modes
+        self.modes = ui_modes
+        self.window = Gui.getMainWindow()
+        self.tasks = self.window.findChild(QtWidgets.QDockWidget, 'Tasks')
+        self.workspace = App.ParamGet('User parameter:BaseApp/Preferences/FreeCADPlus/Workspace')
+
+    def test_startup_is_docked_right(self):
+        self.assertIsNotNone(self.tasks)
+        self.assertTrue(self.workspace.GetBool('TasksDockedRight', False))
+        self.assertIs(self.tasks.parentWidget(), self.window)
+        self.assertFalse(self.tasks.isFloating())
+        self.assertTrue(self.tasks.isVisible())
+        self.assertEqual(self.window.dockWidgetArea(self.tasks), QtCore.Qt.RightDockWidgetArea)
+        for side in ('Left', 'Right', 'Top', 'Bottom'):
+            group = App.ParamGet('User parameter:BaseApp/MainWindow/DockWindows/Overlay' + side)
+            self.assertNotIn('Tasks', group.GetString('Widgets').split(','))
+
+    def test_later_layout_choices_are_not_reset(self):
+        self.assertTrue(self.workspace.GetBool('TasksDockedRight', False))
+        original = Gui.activeWorkbench().name()
+        try:
+            self.window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.tasks)
+            self.window.resizeDocks([self.tasks], [360], QtCore.Qt.Horizontal)
+            QtTest.QTest.qWait(350)
+            self.modes.apply_modes(); settle()
+            self.assertEqual(self.window.dockWidgetArea(self.tasks), QtCore.Qt.LeftDockWidgetArea)
+            self.tasks.setFloating(True)
+            self.tasks.resize(380, 460)
+            self.tasks.hide()
+            self.modes.apply_modes(); settle()
+            self.assertTrue(self.tasks.isFloating())
+            self.assertTrue(self.tasks.isHidden())
+            self.assertEqual(self.tasks.size(), QtCore.QSize(380, 460))
+            self.tasks.show()
+            Gui.activateWorkbench('PartWorkbench'); settle()
+            Gui.activateWorkbench(original); settle()
+            self.assertTrue(self.tasks.isFloating())
+        finally:
+            self.tasks.setFloating(False)
+            self.window.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.tasks)
+            self.tasks.show()
+            self.window.resizeDocks([self.tasks], [320], QtCore.Qt.Horizontal)
+            Gui.activateWorkbench(original)
+
+
 class TestUIModes(unittest.TestCase):
     """Normal startup, real preference dialogs, mixed modes and shared native tasks."""
     def setUp(self):

@@ -1,0 +1,113 @@
+[
+  {
+    "ok": true,
+    "phase": "initial",
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\ui_modes.py",
+    "initial": {
+      "parent": "Gui::MainWindow",
+      "area": 2,
+      "floating": false,
+      "hidden": false,
+      "width": 320,
+      "height": 738
+    },
+    "tests": {
+      "run": 4,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    "profile": "fresh"
+  },
+  {
+    "ok": true,
+    "phase": "right-reopen",
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\ui_modes.py",
+    "initial": {
+      "parent": "Gui::MainWindow",
+      "area": 2,
+      "floating": false,
+      "hidden": false,
+      "width": 320,
+      "height": 831
+    },
+    "tests": {
+      "run": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    "profile": "fresh"
+  },
+  {
+    "ok": true,
+    "phase": "custom-reopen",
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\ui_modes.py",
+    "initial": {
+      "parent": "Gui::MainWindow",
+      "area": 2,
+      "floating": true,
+      "hidden": true,
+      "width": 380,
+      "height": 460
+    },
+    "profile": "fresh"
+  },
+  {
+    "ok": true,
+    "phase": "initial",
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\ui_modes.py",
+    "other_overlay": "Report view,",
+    "initial": {
+      "parent": "Gui::MainWindow",
+      "area": 2,
+      "floating": false,
+      "hidden": false,
+      "width": 320,
+      "height": 738
+    },
+    "tests": {
+      "run": 4,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    "profile": "existing-overlay"
+  },
+  {
+    "ok": true,
+    "phase": "right-reopen",
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\ui_modes.py",
+    "other_overlay": "Report view,",
+    "initial": {
+      "parent": "Gui::MainWindow",
+      "area": 2,
+      "floating": false,
+      "hidden": false,
+      "width": 320,
+      "height": 831
+    },
+    "tests": {
+      "run": 1,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    "profile": "existing-overlay"
+  },
+  {
+    "ok": true,
+    "phase": "custom-reopen",
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\ui_modes.py",
+    "other_overlay": "Report view,",
+    "initial": {
+      "parent": "Gui::MainWindow",
+      "area": 2,
+      "floating": true,
+      "hidden": true,
+      "width": 380,
+      "height": 460
+    },
+    "profile": "existing-overlay"
+  }
+]

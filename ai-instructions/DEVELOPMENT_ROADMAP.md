@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development roadmap
 
+## Right-hand Tasks dock — November 21, 2026
+
+- [x] Owner approved the native docked preview directly in chat.
+- [x] Apply the right-hand default once, preserving subsequent customization and
+  other overlay memberships.
+- [x] Build/install, verify fresh and existing profiles, native modeling tasks,
+  independent restarts and installed screenshots.
+
+[WORK_STATE](WORK_STATE.md#right-hand-tasks-dock--november-21-2026) records runtime
+evidence and the restart requirement for the open owner session.
+
+
 ## Ribbon theme background — November 21, 2026
 
 - [x] Owner approved the native Light/Dark preview directly in chat; see the

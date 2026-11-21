@@ -8,6 +8,26 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 Before a document exists, show **New File** and **Open**. Dock Tasks at the right initially and preserve the user's later customized location. The DOCX's proposed actions after New File are retained below for confirmation. Do not derive additional idle actions from whichever commands the current build happens to display. [C06](EVIDENCE_AND_DECISIONS.md#c06)
 
+### Right-hand Tasks dock — November 21, 2026
+
+The owner approved the docked Tasks preview in chat and instructed implementation.
+Tasks initially occupies a resizable dock to the right of the modeling viewport,
+both while idle and during an operation. Existing Tasks overlay/floating layouts
+receive this default once. Subsequent user choices of location, width, floating
+state and visibility are remembered; other overlay memberships are preserved.
+The initial width is 320 logical pixels. Native task contents are unchanged.
+
+Approved native screenshots: [before](evidence/tasks-dock-20261121/before.png),
+[docked task](evidence/tasks-dock-20261121/approved-task.png) and
+[docked idle](evidence/tasks-dock-20261121/approved-idle.png).
+Companion session `c074100600fa` used an isolated source snapshot at
+`b9f1a232a8c99be460c910180515ca82a295ca31` because the main repository's preview
+configuration/submodules prevented direct review creation. Candidate fingerprint:
+`11ae30691ad140ce547dd63dec99b1f701823dd8137c8d52ff216805a8c6daa5`.
+Approval is the owner's chat instruction; no tool approval state was changed.
+Installed-app and persistence evidence is in
+[WORK_STATE](../WORK_STATE.md#right-hand-tasks-dock--november-21-2026).
+
 ### Shared task patterns
 
 Use sketches, operations/features and other geometry as the user's modeling vocabulary. Background Body ownership must not require independent Body management. Feature selection lists, collapsible sections, preview choices and their exact defaults are preserved in the DOCX-derived sections below; most earlier authorizing conversations are unavailable. Do not silently remove fields just because a toolbar action is consolidated. [Current owner direction](EVIDENCE_AND_DECISIONS.md#current)

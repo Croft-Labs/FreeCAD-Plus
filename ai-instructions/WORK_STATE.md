@@ -1,5 +1,43 @@
 # FreeCAD Plus: Current work state
 
+## Right-hand Tasks dock — November 21, 2026
+
+**Implementation:** the approved Tasks dock starts on the right at 320 logical
+pixels, beside the viewport. `ui_modes` removes only Tasks from native overlay
+membership, preserving other members and their corresponding size entries, then
+waits for the native asynchronous reload before docking. A persisted
+`FreeCADPlus/Workspace/TasksDockedRight` marker makes this a one-time default for
+new and existing profiles. Later mode/workbench changes and restarts preserve the
+user's location, size, floating state and visibility. Task contents, native
+commands and document ownership are unchanged. The
+[task specification](ui-ux-specs/TASK_PANEL.md#right-hand-tasks-dock--november-21-2026)
+owns the approval evidence.
+
+**Validation:** two isolated installed-app profiles passed four native tests each:
+right-hand startup, subsequent custom layouts, all mixed UI modes/backend
+preservation, and real Pad/Pocket operations with presentation changes and Undo/Redo.
+One profile started fresh; the other had explicit `Report view,Tasks,` overlay
+membership. Migration preserved `Report view,`. Each profile passed two separate
+process restarts: the default remained right/docked at width 320; a later hidden,
+floating Tasks panel retained its 380-by-460 size. All six processes exited 0,
+without failures, errors, skips or stderr. Results are retained in
+[acceptance.json](ui-ux-specs/evidence/tasks-dock-20261121/acceptance.json).
+Inspected installed native captures while
+[idle](ui-ux-specs/evidence/tasks-dock-20261121/native-idle.png) and during
+[Pad](ui-ux-specs/evidence/tasks-dock-20261121/native-task.png) match the approved
+layout. Captures use QScreen to include the actual OpenGL viewport. The native
+New Body idle prompt remains; the component-first workflow is a separate milestone.
+
+**Build/delivery:** FreeCADPlusScripts completed successfully. Source, build and
+installed `ui_modes.py` match SHA-256
+`2799dce71e2b1e98e32ea7f5f49c442fe78e69bd62a34ebdce8b50c5b945d312`.
+The current machine's retained build/payload is under
+`__Apps/_temp builds/FreeCAD-Plus`, superseding the old GAMING-PC paths for this run.
+The existing desktop shortcut still targets that payload's launcher and working
+directory. The owner's running app/documents were preserved; restart is required
+to load the updated script. Unrelated `project.previewfirst.json` remains excluded.
+
+
 ## Ribbon theme background — November 21, 2026
 
 **Implementation:** the Plus ribbon scroll viewport and each newly installed

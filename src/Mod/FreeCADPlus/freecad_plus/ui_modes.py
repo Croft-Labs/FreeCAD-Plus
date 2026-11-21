@@ -14,6 +14,56 @@ _installed = False
 _model_mode = None
 _property_dock = None
 _timer = None
+_task_dock_timer = None
+
+
+def _ensure_task_dock_default(window):
+    """Apply the right-hand Tasks default once, then keep native saved layouts."""
+    global _task_dock_timer
+    prefs = App.ParamGet('User parameter:BaseApp/Preferences/FreeCADPlus/Workspace')
+    if prefs.GetBool('TasksDockedRight', False) or _task_dock_timer is not None:
+        return
+    if window.findChild(QtWidgets.QDockWidget, 'Tasks') is None:
+        return  # The initial workbench may not have created its docks yet.
+
+    for side in ('Left', 'Right', 'Top', 'Bottom'):
+        group = App.ParamGet('User parameter:BaseApp/MainWindow/DockWindows/Overlay' + side)
+        names = group.GetString('Widgets', 'Tasks,' if side == 'Right' else '').split(',')
+        if 'Tasks' not in names:
+            continue
+        sizes = group.GetString('Sizes').split(',')
+        keep = [i for i, name in enumerate(names) if name and name != 'Tasks']
+        # Preserve the ordering and corresponding sizes of all other members.
+        group.SetString('Widgets', ''.join(names[i] + ',' for i in keep))
+        group.SetString('Sizes', ','.join(sizes[i] for i in keep if i < len(sizes)))
+
+    timer = QtCore.QTimer(window)
+    timer.setSingleShot(True)
+    _task_dock_timer = timer
+    attempts = [0]
+
+    def finish_docking():
+        global _task_dock_timer
+        tasks = window.findChild(QtWidgets.QDockWidget, 'Tasks')
+        # OverlayManager reloads membership asynchronously. Let it finish before
+        # moving the dock, rather than leaving a stale overlay ownership record.
+        if tasks is None or tasks.parentWidget() is not window:
+            attempts[0] += 1
+            if attempts[0] < 20:
+                timer.start(150)
+                return
+            App.Console.PrintWarning('Tasks docking is not ready; the default will retry on the next workbench change.\n')
+        else:
+            tasks.setFloating(False)
+            window.addDockWidget(QtCore.Qt.RightDockWidgetArea, tasks)
+            tasks.show()
+            window.resizeDocks([tasks], [320], QtCore.Qt.Horizontal)
+            prefs.SetBool('TasksDockedRight', True)
+        _task_dock_timer = None
+        timer.deleteLater()
+
+    timer.timeout.connect(finish_docking)
+    timer.start(150)
 
 
 def modes():
@@ -77,6 +127,7 @@ def apply_modes():
             properties.show()
     _property_dock = properties
     _model_mode = model
+    _ensure_task_dock_default(window)
 
 
 def schedule(*args):

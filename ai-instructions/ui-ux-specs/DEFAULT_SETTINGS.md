@@ -8,7 +8,7 @@ Defaults and user customization are distinct. The explicit saved choices below r
 
 | Setting | Confirmed value or behavior | Evidence |
 | --- | --- | --- |
-| Initial Tasks docking | Right side; restore subsequent user customization of panels and toolbars | C06 |
+| Initial Tasks docking | Right side; migrate Tasks overlay once, then restore subsequent user customization | C06; [November 21 approval](TASK_PANEL.md#right-hand-tasks-dock--november-21-2026) |
 | New file's first component | Part001, domestic, placed once and immediately active | C09 |
 | Active component Part Type | Full Component | C10 |
 | Direct children Part Type | Bodies Only, with saved parent-owned overrides | C10 |
