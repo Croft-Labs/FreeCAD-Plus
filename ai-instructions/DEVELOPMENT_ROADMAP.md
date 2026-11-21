@@ -1,5 +1,13 @@
 # FreeCAD Plus: Development roadmap
 
+## Extrude task workflow — November 21, 2026
+
+- [x] Render the isolated New Solid/Add/Subtract proposal with profile and target
+  selection, length controls and deferred preview updates.
+- [ ] Obtain approval of the [direct preview](ui-ux-specs/TASK_PANEL.md#extrude-task-proposal--november-21-2026).
+- [ ] Implement the approved task and shared operation editing; verify geometry,
+  targets, identity, Cancel, Undo/Redo and save/reopen separately from the mockup.
+
 ## New Sketch placement workflow — November 21, 2026
 
 - [x] Render the plane/face → origin/orientation → sketch creation proposal and

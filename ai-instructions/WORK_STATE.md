@@ -1,5 +1,17 @@
 # FreeCAD Plus: Current work state
 
+## Extrude task preview — November 21, 2026
+
+The owner requested a preview of a unified task with New Solid/Add/Subtract and
+target selection. An isolated native candidate matches the existing section style
+and shows profile preselection, explicit target picking, length/sides/direction
+and deferred numeric preview controls. New Solid, Add, Subtract and missing-target
+renders are recorded in the [owning UI proposal](ui-ux-specs/TASK_PANEL.md#extrude-task-proposal--november-21-2026).
+Prototype interaction checks passed with unchanged model inventory and Undo count.
+Only presentation simulation and review documentation are complete; approval,
+production task integration and editing/persistence work remain pending. The
+installed native Pad/Pocket workflows and feature-centered backend are unchanged.
+
 ## New Sketch placement implementation — November 21, 2026
 
 The approved task is implemented and installed in the development payload used by

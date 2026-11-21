@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\45e8bcfeb03a\\candidate\\ui\\extrude_task.py",
+  "sha256": "f19d0ee9dce4096773dad98f7aa7c33be4e7feff2b4b9018dd1938713c5fe589",
+  "preselected_profile_and_new_solid_without_target": true,
+  "add_requires_target": true,
+  "target_picking_populates_add": true,
+  "subtract_keeps_selected_target": true,
+  "numeric_preview_waits_for_focus_leave": true,
+  "automatic_off_keeps_preview": true,
+  "side_controls_switch": true,
+  "candidate_does_not_create_or_edit_features": true
+}

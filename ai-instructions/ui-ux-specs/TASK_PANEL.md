@@ -115,6 +115,42 @@ recovery, preservation of multiple selections, invalid empty support and no
 model-object creation. No tool approval state has been modified. This new owner
 direction supersedes conflicting unconfirmed New Sketch proposals below.
 
+### Extrude task proposal — November 21, 2026
+
+Owner request: preview a similar Extrude task with **New Solid**, **Add** and
+**Subtract**, including target selection, before implementation. The isolated
+native proposal reuses the New Plane/New Sketch section style: **Operation**,
+**Profile**, **Extent** and **Preview**. New Solid hides the target field. Add and
+Subtract show **Target solid**; click the field and pick the current result in
+History or the model. Clear removes that target; OK requires one for these modes.
+Selected sketch/curve references populate Profile, with Remove/Clear controls.
+
+This first proposal covers length-based extrusion: One side, Symmetric or Two
+sides (revealing Second length), Sketch normal and Reverse. Alternative native
+termination types, custom directions and taper are not part of this first UI
+proposal and remain available in the unchanged installed native task. The
+proposal uses blue/green/red translucent tool volumes for New Solid/Add/Subtract,
+including the full removal volume through the target. These are tool overlays,
+not evaluated Boolean results. Show preview and Recompute on update follow the
+existing task pattern; numbers redraw only after focus leaves their field.
+Future creation and operation editing must share this task with saved inputs.
+
+**Approval pending.** Companion session `45e8bcfeb03a`, isolated seed
+`b81bd2ded194f80b2d3aa95a5c24ed7a14f7bc30`, exact allowlist `ui/extrude_task.py`,
+candidate fingerprint `0890da6ef6250cd9f5060eec482d2c43cbd9d2b7b162dcfc64b47c75162a3607`.
+Direct screenshots: [current native task](evidence/extrude-task-20261121/baseline.png),
+[New Solid](evidence/extrude-task-20261121/new-solid.png),
+[Add](evidence/extrude-task-20261121/add.png),
+[Subtract](evidence/extrude-task-20261121/subtract.png),
+[missing target](evidence/extrude-task-20261121/missing-target.png).
+[Prototype checks](evidence/extrude-task-20261121/prototype.json) verify preselection,
+mode/target controls, selection, deferred numeric redraw, automatic-update-off and
+unchanged model object inventory/Undo count. The candidate renders a disposable
+fixture through transient Coin geometry; OK is simulated. No production command,
+extrusion/Boolean backend, persistence or installed payload has been changed.
+No companion approval state was modified. This proposal does not approve the
+conflicting historical/unconfirmed Extrude items below.
+
 ### Numerical field updates
 
 **Numeric recompute rule — owner instruction, November 21, 2026:** all numerical
