@@ -78,6 +78,14 @@ The sketch lies on the selected support. Proposed OK creates the sketch and proc
 to native drawing/constraint editing; Cancel creates nothing. Placement editing must
 reuse this same task with saved inputs under the shared create/edit rule.
 
+Owner refinement: choosing a plane automatically inherits its origin and complete
+orientation. Choosing a planar face instead projects the part-local origin and
+part X axis onto that face. The existing fields show readable automatic reference
+labels, without coordinates or vectors. Explicit point/direction overrides remain
+available; clearing an override restores the support-dependent default. If part X
+is perpendicular to the face, its zero-length projection requires an explicit axis
+selection. These sketch defaults do not change the New Plane origin rule.
+
 The proposal accepts one plane or planar face. Multiple preselected references are
 shown without silently choosing one; the user removes extras to obtain a valid
 support. References retain native mapped identities but display readable face names.
@@ -85,15 +93,18 @@ No new production sketch-creation or placement-editing integration is implemente
 The native candidate uses existing read-only plane/frame calculation and a transient
 overlay; its OK action is a simulation and does not create a sketch, plane or Body.
 
-Preview approval is pending: session `c01f5acbdf83`, seed
+Preview approval is pending: revised session `a2bc3ec0e274` supersedes `c01f5acbdf83`, seed
 `f4fe8fd90a4b432e238d95aca4a62b7b11f89f12`, candidate fingerprint
-`c7f7b00ab859769c11e8509138fcd85cd36043eb47591d6624cd269f80e9b50c`.
+`64b13aadcffc48e2218b08dd30990acce93548ad83826dadf361dfe4b6d70d67`.
 Direct renders: [current attachment dialog](evidence/sketch-task-20261121/baseline.png),
 [preselected face](evidence/sketch-task-20261121/preselected-face.png),
 [origin/orientation](evidence/sketch-task-20261121/origin-orientation.png),
+[inherited plane frame](evidence/sketch-task-20261121/inherited-plane.png),
 [preselected History plane](evidence/sketch-task-20261121/history-plane.png).
 [Prototype checks](evidence/sketch-task-20261121/prototype.json) verify face/History
-preselection, preservation of multiple selections, invalid empty support and no
+preselection, translated/rotated plane frame inheritance, part-local face defaults
+under a moved/rotated part, restoring defaults, degenerate projection feedback and
+recovery, preservation of multiple selections, invalid empty support and no
 model-object creation. No tool approval state has been modified. This new owner
 direction supersedes conflicting unconfirmed New Sketch proposals below.
 

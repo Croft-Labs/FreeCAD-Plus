@@ -7,6 +7,10 @@ sketch creation, with preselection populated on task entry. An isolated native
 task prototype follows the implemented New Plane layout. Face and History-plane
 preselection checks passed, including readable mapped-face labels; ambiguous or
 empty selections require correction. The preview creates no model objects.
+The revised preview automatically inherits a selected plane's frame, or projects
+the part-local origin and X axis onto a planar face. Native prototype checks passed
+for a translated/rotated plane, transformed part, clearing an origin override, and
+requiring an explicit direction when the part-X projection vanishes.
 The [owning task specification](ui-ux-specs/TASK_PANEL.md#new-sketch-placement-workflow--november-21-2026)
 records direct screenshots and the exact candidate. Approval and production
 integration are pending; the installed New Sketch command is unchanged.

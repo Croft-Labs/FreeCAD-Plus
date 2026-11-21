@@ -1,9 +1,14 @@
 {
   "ok": true,
-  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\c01f5acbdf83\\candidate\\ui\\sketch_task.py",
-  "sha256": "586dc0e3b943701fb4234d0340274acdd2f5de62dfdaa0b7ceb495f782414132",
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\a2bc3ec0e274\\candidate\\ui\\sketch_task.py",
+  "sha256": "456e28bbe2e3ff9bcd1654a7b00a5e9d45968c46eaf27eab878d3fd440ec6343",
   "preselected_face_populated": true,
+  "face_uses_projected_part_frame": true,
   "preselected_history_plane_populated": true,
+  "translated_rotated_plane_frame_inherited": true,
+  "clear_restores_support_origin": true,
+  "face_defaults_remain_part_local_when_part_moves": true,
+  "zero_x_projection_requires_axis_and_recovers": true,
   "multiple_preselected_items_retained_and_require_choice": true,
   "missing_plane_invalid": true,
   "no_model_objects_created": true
