@@ -1,0 +1,44 @@
+{
+  "native_build": "SketcherGui, PartDesignGui and FreeCADPlusScripts completed successfully; final Python-only changes synchronized with FreeCADPlusScripts.",
+  "reopen_stderr_bytes": 0,
+  "shortcut": {
+    "path": "C:/Users/dgium/Desktop/freecad plus 0.1.0.lnk",
+    "working_directory": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus",
+    "verified": true,
+    "target": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus/Launch FreeCAD Plus.bat"
+  },
+  "hashes": [
+    {
+      "installed": "6082E0266C0E3E46E195C5142CC4E4B367685BC8D0DE0F5AEC6530EA7D3CDBA9",
+      "build": "6082E0266C0E3E46E195C5142CC4E4B367685BC8D0DE0F5AEC6530EA7D3CDBA9",
+      "source": "6082E0266C0E3E46E195C5142CC4E4B367685BC8D0DE0F5AEC6530EA7D3CDBA9",
+      "file": "freecad_plus/modeling.py"
+    },
+    {
+      "installed": "DA3362855E9B9AE8904738006A89899425B43BA9F709CE2630E7F2592AD88107",
+      "build": "DA3362855E9B9AE8904738006A89899425B43BA9F709CE2630E7F2592AD88107",
+      "source": "DA3362855E9B9AE8904738006A89899425B43BA9F709CE2630E7F2592AD88107",
+      "file": "TestFeatureCenteredModeling.py"
+    },
+    {
+      "installed": "8C7F8F87BCB67724C5D262995B33A7EF3CAECE00459E939959194C016299AFE4",
+      "build": "8C7F8F87BCB67724C5D262995B33A7EF3CAECE00459E939959194C016299AFE4",
+      "file": "PartDesignGui.pyd"
+    }
+  ],
+  "reopen": {
+    "ok": true
+  },
+  "preserved_backup": "app/lib/PartDesignGui.before-feature-targets-20261121.pyd",
+  "expected_negative_case_diagnostics": "Pad001: Result has multiple solids: enable 'Allow Compound' in the active body.\nPad: Wire is not closed.\nPad: Wire is not closed.\nChange Part Type before using Excluded geometry\n<Gui> Document.cpp(610): cannot edit object 'Component': not found in document 'PanelFixture'",
+  "installed": {
+    "ok": true,
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\modeling.py",
+    "tests": {
+      "run": 29,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    }
+  }
+}

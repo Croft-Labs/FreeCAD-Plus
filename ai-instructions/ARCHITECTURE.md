@@ -22,6 +22,40 @@ The archived fork is reference material, not a source of implicit requirements.
 
 ## Components and data flow
 
+### Feature-centered Add/Subtract targets — November 21, 2026
+
+The existing Pad/Pocket commands now route standalone component sketches to an
+owned result feature. Sketch-only Pad retains New Solid behavior; selecting a
+sketch and a current result routes Pad to Add. Pocket uses an explicitly selected
+result, or the sole eligible result in the edited component. Multiple possible
+targets require explicit selection before mutation. The active Body never chooses
+the result. Target-only selection retains the target while the existing native
+profile picker selects among standalone sketches. No controls, forms or layouts
+were added or changed.
+
+`modeling.extrude(doc, sketch, length, operation='new', target=None)` provides the
+atomic API; `add` and `subtract` require an explicit target. A target must be the
+current valid single-solid PartDesign result of a Body directly owned by the
+edited component. Earlier features, Boolean-owned tool Bodies, foreign components
+and ineligible Reference/Excluded occurrences are rejected. Original occurrence
+selection is checked before resolving to definition objects. Imported arbitrary
+Part solids and reuse of consumed profiles remain outside this increment.
+
+The native picker retains a weak target reference and an explicit edit-context
+token, then revalidates both before starting the operation. Add/Subtract append
+native Pad/Pocket features to the target's internal Body. Free sketches retain
+their global placement when moved into a transformed Body; attached sketches
+retain native support. Result appearance is inherited from the target. The native
+task's active Body is set to the selected result's Body for reference collectors.
+Existing AllowCompound settings and native geometry semantics are preserved.
+
+Profile reparenting, feature creation, Tip changes and placement are one defining-
+file transaction. Cancel preserves the exact original profile/target visibility;
+Undo/Redo restores ownership and geometry. External component operations remain
+source-owned. Existing Body-owned profiles and native face workflows retain their
+compatibility route. Native save/reopen/recompute and installed-app checks are
+recorded in [WORK_STATE](WORK_STATE.md#feature-centered-addsubtract-targets--november-21-2026).
+
 ### Feature-centered command integration — November 21, 2026
 
 The existing ribbon's `Sketcher_NewSketch` and new-solid `PartDesign_Pad` entry
@@ -57,10 +91,10 @@ document, not the assembly document hosting its view. This preserves source-owne
 geometry and correct selection when the sketch editor closes. Placed occurrence
 parents continue to use their own assembly document.
 
-Scope: this connects the ribbon's New Sketch and Extrude new-solid path. Existing
-Body-owned profile chains, Pocket and the separate `PartDesign_NewSketch` workflow
-remain native body-centered compatibility paths. Feature-centered Add/Subtract
-result targeting, already-consumed sketch reuse, deletion cleanup and changes to
+Scope of this initial increment: the ribbon's New Sketch and Extrude new-solid
+path. Add/Subtract routing is now covered above. Existing Body-owned profile chains
+and the separate `PartDesign_NewSketch` workflow retain native body-centered
+compatibility. Already-consumed sketch reuse, deletion cleanup and changes to
 idle New Body prompts remain separate work. Any UI changes require a preview and
 owner approval first.
 
@@ -94,9 +128,8 @@ assembly view's Edit context is preserved. No automatic conversion of existing
 body-centered chains is performed. Existing `editing.new_sketch`/`editing.pad`
 adapters and native commands retain their compatibility behavior.
 
-Native ribbon command/transaction integration is now covered by the increment
-above. Next: extend explicit feature-result targeting for additive/subtractive
-operations. Reusing already consumed sketches, deleting a
+Native ribbon command/transaction integration and explicit feature-result targets
+for additive/subtractive operations are covered above. Reusing consumed sketches, deleting a
 feature while retaining its source sketch, and migration of existing chains remain
 separate work. Any visible workflow changes require a preview and owner approval.
 

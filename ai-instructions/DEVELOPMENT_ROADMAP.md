@@ -1,5 +1,21 @@
 # FreeCAD Plus: Development roadmap
 
+## Feature-centered Add/Subtract targets — November 21, 2026
+
+- [x] Route existing Pad/Pocket commands from standalone component sketches to
+  explicit current results; retain sketch-only New Solid and sole-target Pocket.
+- [x] Preserve target and edited-component context through the native profile picker.
+- [x] Enforce ownership and original-occurrence eligibility before mutation.
+- [x] Preserve transformed/attached profiles, visibility, native geometry and
+  source-owned Cancel/Undo/Redo.
+- [x] Verify 29 native checks in build and installed app, plus independent
+  save/reopen/recompute; see [WORK_STATE](WORK_STATE.md#feature-centered-addsubtract-targets--november-21-2026).
+
+No UI changes. Current targets are single-solid current PartDesign results in the
+edited component's directly owned Bodies. Imported Part targets, consumed-profile
+reuse, deletion cleanup and the alternate PartDesign New Sketch path remain work
+to define and implement. Any UI change still requires preview/approval first.
+
 ## Feature-centered command integration — November 21, 2026
 
 - [x] Connect the existing ribbon New Sketch command to component-owned sketches
@@ -11,9 +27,9 @@
 - [x] Verify native backend/command compatibility, installed app and fresh-process
   persistence; see [WORK_STATE](WORK_STATE.md#feature-centered-command-integration--november-21-2026).
 
-No UI redesign was implemented. Add/Subtract result targeting, the separate native
-PartDesign New Sketch workflow, profile reuse and deletion cleanup remain outside
-this increment; visible changes still require owner preview/approval.
+No UI redesign was implemented. Add/Subtract result targeting is covered above.
+The separate native PartDesign New Sketch workflow, profile reuse and deletion
+cleanup remain outside this increment; visible changes require owner preview/approval.
 
 ## Feature-centered modeling foundation — November 21, 2026
 
@@ -25,7 +41,7 @@ this increment; visible changes still require owner preview/approval.
   existing body-centered regressions and fresh-process save/reopen/recompute.
 - [x] Integrate ribbon New Sketch/new-solid Extrude and native OK/Cancel lifecycle;
   see the command-integration increment above for scope and compatibility paths.
-- [ ] Extend explicit feature-result targets for additive/subtractive operations.
+- [x] Extend explicit current PartDesign result targets for Add/Subtract; see above.
 - [ ] Define and implement source-sketch reuse and feature deletion cleanup.
 
 UI changes require preview and owner approval before implementation. This increment

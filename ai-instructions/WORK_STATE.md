@@ -1,5 +1,54 @@
 # FreeCAD Plus: Current work state
 
+## Feature-centered Add/Subtract targets — November 21, 2026
+
+**Implementation:** existing Pad/Pocket commands route standalone component
+sketches to owned current PartDesign results. Sketch-only Pad remains New Solid;
+sketch plus result selects Add. Pocket uses the explicit target or the sole
+eligible result. Ambiguity, stale results, foreign ownership and ineligible
+occurrences are rejected before mutation. Target and edit context survive the
+native profile picker and are rechecked before starting the task. The active Body
+does not choose the target. No labels, controls, forms, toolbar or dock layouts
+were changed. The [architecture](ARCHITECTURE.md#feature-centered-addsubtract-targets--november-21-2026)
+owns API semantics and scope, including the current single-solid PartDesign target
+boundary and remaining consumed-profile/imported-target work.
+
+Native Pad/Pocket tasks own the source-file transaction. Free sketch placement is
+preserved when entering a transformed target Body, attachment support remains
+native, and result appearance follows the target. Cancel restores original
+profile and target visibility, including initially hidden objects, without the
+legacy show-defaults overriding rollback. Native reference collectors receive the
+actual target Body while editing. Existing Body-owned chains retain compatibility.
+
+**Validation:** 29 native tests passed in both the retained build (41.679 s) and
+installed app (41.828 s), with zero failures/errors/skips. Eleven target cases
+cover Add/Subtract geometry, several independent results, active-Body independence,
+transformed and attached profiles, picker retention/context changes, ownership
+and original-occurrence guards, hidden-state Cancel, source-owned external edits,
+Undo/Redo and saves. The preceding 18 backend/command/compatibility cases also
+passed. See [build results](evidence/feature-centered-targets-20261121/build-tests.txt)
+and [installed results](evidence/feature-centered-targets-20261121/installed-tests.txt).
+Initial test assertions were corrected for floating-point recompute noise and
+the existing Reference/Excluded diagnostic; the final runs above passed.
+
+Separate build and installed processes reopened the saved domestic/external
+models, checked identities, Profile/BaseFeature/Tip relationships, and recomputed
+geometry after changing lengths. Both exited 0; the final installed reopen had
+empty stderr. Expected suite diagnostics are the deliberately disconnected Add,
+two open wires, an excluded-geometry refusal and the existing external-editor
+guard called without its required context. The
+[acceptance artifact](evidence/feature-centered-targets-20261121/acceptance.json)
+records results, diagnostics and source/build/app hashes.
+
+**Build/delivery:** the native build succeeded; the updated PartDesignGui and
+Python modules are installed in `__Apps/_temp builds/FreeCAD-Plus/app`. The desktop
+shortcut still targets the retained launcher with its original working directory.
+`PartDesignGui.before-feature-targets-20261121.pyd` and earlier native backups are
+retained for the owner's open session. No owner document/settings were changed.
+Restart is required to load this native update. Temporary validation output was
+removed after preserving evidence. Unrelated `project.previewfirst.json` remains
+excluded from the commit. Routine publication targets the configured origin fork.
+
 ## Feature-centered command integration — November 21, 2026
 
 **Implementation:** the existing ribbon New Sketch (`Sketcher_NewSketch`) and

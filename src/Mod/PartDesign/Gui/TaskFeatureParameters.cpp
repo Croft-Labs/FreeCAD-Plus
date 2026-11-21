@@ -30,6 +30,7 @@
 #include <Gui/MainWindow.h>
 #include <Gui/BitmapFactory.h>
 #include <Mod/PartDesign/App/Feature.h>
+#include <Mod/PartDesign/App/FeatureSketchBased.h>
 #include <Mod/PartDesign/App/Body.h>
 
 #include "ui_TaskPreviewParameters.h"
@@ -246,6 +247,8 @@ bool TaskDlgFeatureParameters::reject()
 
     PartDesign::Body* body = PartDesign::Body::findBodyOf(feature);
     App::DocumentObjectWeakPtrT bodyWeakptr(body);
+    auto profileFeature = dynamic_cast<PartDesign::ProfileBased*>(feature);
+    App::DocumentObjectWeakPtrT profileWeakptr(profileFeature ? profileFeature->Profile.getValue() : nullptr);
 
     // Find out previous feature we won't be able to do it after abort
     // (at least in the body case)
@@ -264,8 +267,14 @@ bool TaskDlgFeatureParameters::reject()
     // roll back the done things which may delete the feature
     Gui::Command::abortCommand();
 
+    // A component sketch moved into an existing target Body is returned to its
+    // definition by rollback. Keep the exact profile/target visibility restored
+    // by that transaction instead of applying the body-centered show defaults.
+    const bool restoredComponentProfile = body && !profileWeakptr.expired()
+        && (bodyWeakptr.expired() || !body->hasObject(profileWeakptr.get<App::DocumentObject>()));
+
     // if abort command deleted the object make the previous feature visible again
-    if (weakptr.expired()) {
+    if (weakptr.expired() && !restoredComponentProfile) {
         // Make the tip or the previous feature visible again with preference to the previous one
         // TODO: ViewProvider::onDelete has the same code. May be this one is excess?
         if (previous && Gui::Application::Instance->getViewProvider(previous)) {

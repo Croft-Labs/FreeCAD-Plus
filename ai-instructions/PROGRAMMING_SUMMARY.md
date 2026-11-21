@@ -7,13 +7,19 @@ FreeCAD Plus uses **feature-centered modeling**. The new backend module
 `freecad_plus/modeling.py` creates sketches without Bodies and atomically supplies
 a native Body when extruding a new solid. The existing ribbon New Sketch and
 Extrude new-solid commands now route to these services using their unchanged native
-dialogs/editors. Existing Body-owned chains and Pocket retain native compatibility.
+dialogs/editors. Pad/Pocket now also route standalone sketches to current owned
+results for Add/Subtract, independently of the active Body. Sketch-only Pad stays
+New Solid; Pocket can infer the sole eligible result. Existing Body-owned chains
+retain native compatibility.
 See [architecture](ARCHITECTURE.md#feature-centered-modeling-foundation--november-21-2026)
 for API scope and [WORK_STATE](WORK_STATE.md#feature-centered-modeling-foundation--november-21-2026)
 for initial native acceptance and the newer
 [command integration](WORK_STATE.md#feature-centered-command-integration--november-21-2026)
-for command/installed-app validation. Add/Subtract result targeting, profile reuse,
-feature deletion and the alternate native PartDesign New Sketch workflow remain
+for command/installed-app validation. The newer
+[Add/Subtract increment](WORK_STATE.md#feature-centered-addsubtract-targets--november-21-2026)
+records target routing, Cancel/Undo/Redo and persistence acceptance. Arbitrary
+imported Part targets, consumed-profile reuse, feature deletion and the alternate
+native PartDesign New Sketch workflow remain
 outstanding; this is not a completed replacement of every body-centered workflow.
 
 This checkout starts from official **FreeCAD 1.1.4** source at

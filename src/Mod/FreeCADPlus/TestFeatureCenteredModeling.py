@@ -443,3 +443,295 @@ def verify_commands_fresh_process(output):
         document.validate(doc)
         App.closeDocument(doc.Name)
         if source != doc: App.closeDocument(source.Name)
+
+
+class TestFeatureCenteredTargets(unittest.TestCase):
+    setUp = TestFeatureCenteredCommands.setUp
+    tearDown = TestFeatureCenteredCommands.tearDown
+    circle = TestFeatureCenteredModeling.circle
+    task_button = TestFeatureCenteredCommands.task_button
+
+    def snapshot(self, doc=None):
+        doc = doc or self.doc
+        return (TestFeatureCenteredModeling.snapshot(self, doc),
+                {o.Name: o.Tip.Name if o.Tip else None for o in doc.Objects if o.TypeId == 'PartDesign::Body'},
+                {o.Name: tuple(o.Placement.Matrix.A) for o in doc.Objects if hasattr(o, 'Placement')},
+                {o.Name: round(o.Shape.Volume, 9) for o in doc.Objects if hasattr(o, 'Shape')})
+
+    def base(self, x=0):
+        sketch = self.circle(3)
+        sketch.Placement.Base = App.Vector(x, 0, 0)
+        self.doc.recompute()
+        return modeling.extrude_new_solid(self.doc, sketch, 10)
+
+    def profile(self, radius=1, z=10, x=0):
+        sketch = self.circle(radius)
+        sketch.Placement.Base = App.Vector(x, 0, z)
+        sketch.Document.recompute()
+        return sketch
+
+    def start(self, which, sketch, target=None, length=2):
+        from TestComponentModeling import messages
+        Gui.Selection.clearSelection()
+        if target is not None: Gui.Selection.addSelection(target, 'Face1')
+        Gui.Selection.addSelection(sketch)
+        with messages() as errors:
+            Gui.runCommand('PartDesign_' + which); QtTest.QTest.qWait(200)
+        self.assertFalse(errors, errors)
+        feature = Gui.getDocument(self.doc.Name).getInEdit().Object
+        self.assertEqual(feature.TypeId, 'PartDesign::' + which)
+        edit = next(w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+                    if w.objectName() == 'lengthEdit' and w.isVisible())
+        self.assertTrue(edit.setProperty('rawValue', float(length)))
+        QtTest.QTest.qWait(100)
+        return feature
+
+    def test_backend_add_subtract_chain_undo_and_save(self):
+        base = self.base()
+        body = base.getParentGeoFeatureGroup()
+        add_sketch = self.profile(2)
+        before = self.snapshot()
+        add = modeling.extrude(self.doc, add_sketch, 4, operation='add', target=base)
+        self.assertEqual(add.BaseFeature, base)
+        self.assertEqual(body.Tip, add)
+        self.assertAlmostEqual(add.Shape.Volume, 106 * math.pi)
+        name = add.Name
+        self.doc.undo(); self.doc.recompute()
+        self.assertEqual(self.snapshot(), before)
+        self.doc.redo(); self.doc.recompute()
+        add = self.doc.getObject(name)
+        cut_sketch = self.profile(1, z=14)
+        before = self.snapshot()
+        cut = modeling.extrude(self.doc, cut_sketch, 3, operation='subtract', target=add)
+        self.assertEqual(cut.BaseFeature, add)
+        self.assertEqual(body.Tip, cut)
+        self.assertAlmostEqual(cut.Shape.Volume, 103 * math.pi)
+        name = cut.Name
+        self.doc.undo(); self.doc.recompute()
+        self.assertEqual(self.snapshot(), before)
+        self.doc.redo(); self.doc.recompute()
+        cut = self.doc.getObject(name)
+        self.assertEqual(len([o for o in self.owner.Group if o.TypeId == 'PartDesign::Body']), 1)
+        document.save_document(self.doc, self.output / 'Targets.cadprt')
+        (self.output / 'expected.json').write_text(json.dumps({
+            'ids': {o.Name: o.ID for o in self.doc.Objects}, 'cut': name, 'add': add.Name,
+            'base': base.Name, 'profile': cut_sketch.Name, 'body': body.Name}))
+
+    def test_backend_failed_or_stale_target_is_atomic(self):
+        base = self.base()
+        sketch = self.profile(x=30)
+        before = self.snapshot()
+        with self.assertRaises(ValueError):
+            modeling.extrude(self.doc, sketch, 2, operation='add', target=base)
+        self.assertEqual(self.snapshot(), before)
+        sketch.Placement.Base = App.Vector(0, 0, 10)
+        self.doc.recompute()
+        added = modeling.extrude(self.doc, sketch, 2, operation='add', target=base)
+        fresh = self.profile(z=12)
+        before = self.snapshot()
+        for target in (base, self.owner, None):
+            with self.assertRaises(ValueError):
+                modeling.extrude(self.doc, fresh, 1, operation='subtract', target=target)
+            self.assertEqual(self.snapshot(), before)
+        other = hierarchy.create_definition(self.doc, 'Other target owner')
+        editing.edit_unused(self.doc, other)
+        foreign = self.base()
+        editing.edit(self.root.Group[0])
+        before = self.snapshot()
+        with self.assertRaises(ValueError):
+            modeling.extrude(self.doc, fresh, 1, operation='subtract', target=foreign)
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(added.getParentGeoFeatureGroup().Tip, added)
+
+    def test_target_body_placement_preserves_profile_position(self):
+        base = self.base()
+        body = base.getParentGeoFeatureGroup()
+        body.Placement = App.Placement(App.Vector(20, 0, 0), App.Rotation(App.Vector(0, 0, 1), 35))
+        self.doc.recompute()
+        sketch = self.profile(x=20)
+        original = sketch.getGlobalPlacement()
+        before = self.snapshot()
+        result = modeling.extrude(self.doc, sketch, 2, operation='subtract', target=base)
+        self.assertLess((sketch.getGlobalPlacement().Base - original.Base).Length, 1e-7)
+        self.assertLess(sketch.getGlobalPlacement().Rotation.Angle, 1e-7)
+        self.assertAlmostEqual(result.Shape.Volume, 88 * math.pi)
+        self.doc.undo(); self.doc.recompute()
+        self.assertEqual(self.snapshot(), before)
+
+    def test_native_explicit_target_ignores_active_body(self):
+        first = self.base()
+        second = self.base(30)
+        second_body = second.getParentGeoFeatureGroup()
+        sketch = self.profile()
+        self.assertEqual(Gui.activeDocument().activeView().getActiveObject('pdbody'), second_body)
+        before = self.snapshot()
+        result = self.start('Pad', sketch, first)
+        self.assertEqual(result.BaseFeature, first)
+        self.assertEqual(result.getParentGeoFeatureGroup(), first.getParentGeoFeatureGroup())
+        self.assertEqual(Gui.activeDocument().activeView().getActiveObject('pdbody'),
+                         first.getParentGeoFeatureGroup())
+        self.task_button(QtWidgets.QDialogButtonBox.Ok)
+        self.assertAlmostEqual(result.Shape.Volume, 92 * math.pi)
+        self.assertAlmostEqual(second.Shape.Volume, 90 * math.pi)
+        self.assertEqual(second_body.Tip, second)
+        name = result.Name
+        self.doc.undo(); self.doc.recompute()
+        self.assertEqual(self.snapshot(), before)
+        self.doc.redo(); self.doc.recompute()
+        self.assertAlmostEqual(self.doc.getObject(name).Shape.Volume, 92 * math.pi)
+
+    def test_attached_profile_keeps_target_support(self):
+        target = self.base()
+        sketch = self.circle(1)
+        face = next('Face' + str(i) for i, f in enumerate(target.Shape.Faces, 1)
+                    if isinstance(f.Surface, Part.Plane) and f.CenterOfMass.z > 9)
+        sketch.AttachmentSupport = [(target, [face])]
+        sketch.MapMode = 'FlatFace'
+        self.doc.recompute()
+        original = sketch.getGlobalPlacement()
+        result = modeling.extrude(self.doc, sketch, 2, operation='add', target=target)
+        self.assertEqual(sketch.AttachmentSupport[0][0], target)
+        self.assertLess((sketch.getGlobalPlacement().Base - original.Base).Length, 1e-7)
+        self.assertAlmostEqual(result.Shape.Volume, 92 * math.pi)
+
+    def test_native_cancel_preserves_hidden_profile_and_target(self):
+        target = self.base()
+        sketch = self.profile()
+        for which in ('Pad', 'Pocket'):
+            sketch.Visibility = False
+            target.Visibility = False
+            before = self.snapshot()
+            result = self.start(which, sketch, target)
+            self.assertEqual(result.BaseFeature, target)
+            self.task_button(QtWidgets.QDialogButtonBox.Cancel)
+            self.assertEqual(self.snapshot(), before)
+            self.assertFalse(App.getActiveTransaction())
+
+    def test_native_unique_target_and_ambiguous_target_rejection(self):
+        from TestComponentModeling import messages
+        target = self.base()
+        sketch = self.profile()
+        result = self.start('Pocket', sketch)
+        self.assertEqual(result.BaseFeature, target)
+        self.task_button(QtWidgets.QDialogButtonBox.Cancel)
+        self.base(30)
+        Gui.Selection.clearSelection(); Gui.Selection.addSelection(sketch)
+        before = self.snapshot()
+        with messages() as errors:
+            Gui.runCommand('PartDesign_Pocket'); QtTest.QTest.qWait(150)
+        self.assertTrue(any('target' in error for error in errors), errors)
+        self.assertFalse(Gui.Control.activeDialog())
+        self.assertEqual(self.snapshot(), before)
+
+    def test_native_target_survives_profile_picker(self):
+        target = self.base()
+        self.base(30)
+        self.profile(2)
+        chosen = self.profile(1)
+        Gui.Selection.clearSelection(); Gui.Selection.addSelection(target)
+        Gui.runCommand('PartDesign_Pocket'); QtTest.QTest.qWait(200)
+        listing = next(w for w in Gui.getMainWindow().findChildren(QtWidgets.QListWidget)
+                       if w.objectName() == 'listWidget' and w.isVisible())
+        self.assertEqual(listing.count(), 2)
+        QtTest.QTest.mouseClick(listing.viewport(), QtCore.Qt.LeftButton,
+                               pos=listing.visualItemRect(listing.item(1)).center())
+        self.task_button(QtWidgets.QDialogButtonBox.Ok)
+        result = Gui.getDocument(self.doc.Name).getInEdit().Object
+        self.assertEqual(result.Profile[0], chosen)
+        self.assertEqual(result.BaseFeature, target)
+        self.task_button(QtWidgets.QDialogButtonBox.Cancel)
+
+    def test_target_occurrence_eligibility_is_checked_before_resolution(self):
+        from freecad_plus import display
+        from TestComponentModeling import messages
+        target = self.base()
+        sketch = self.profile()
+        other = hierarchy.add_instance(self.root, self.owner)
+        display.set_state(self.root, other, part_type='Reference')
+        body = target.getParentGeoFeatureGroup()
+        Gui.Selection.clearSelection(); Gui.Selection.addSelection(sketch)
+        Gui.Selection.addSelection(self.root, other.Name + '.' + body.Name + '.' + target.Name + '.Face1')
+        before = self.snapshot()
+        with messages() as errors:
+            Gui.runCommand('PartDesign_Pocket'); QtTest.QTest.qWait(150)
+        self.assertTrue(any('Reference' in error or 'Excluded' in error for error in errors), errors)
+        self.assertEqual(self.snapshot(), before)
+        self.assertFalse(Gui.Control.activeDialog())
+
+    def test_native_picker_rechecks_edited_component(self):
+        from TestComponentModeling import messages
+        target = self.base()
+        self.profile(1); self.profile(2)
+        other = hierarchy.create_definition(self.doc, 'Other edit context')
+        Gui.Selection.clearSelection(); Gui.Selection.addSelection(target)
+        Gui.runCommand('PartDesign_Pocket'); QtTest.QTest.qWait(200)
+        listing = next(w for w in Gui.getMainWindow().findChildren(QtWidgets.QListWidget)
+                       if w.objectName() == 'listWidget' and w.isVisible())
+        editing.edit_unused(self.doc, other)
+        before = self.snapshot()
+        QtTest.QTest.mouseClick(listing.viewport(), QtCore.Qt.LeftButton,
+                               pos=listing.visualItemRect(listing.item(0)).center())
+        with messages() as errors:
+            self.task_button(QtWidgets.QDialogButtonBox.Ok)
+        self.assertTrue(any('changed' in error for error in errors), errors)
+        self.assertEqual(self.snapshot(), before)
+        self.assertFalse(Gui.Control.activeDialog())
+
+    def test_external_target_operations_stay_in_defining_file(self):
+        document.save_document(self.doc, self.output / 'Assembly.cadprt')
+        source = document.new_document('TargetSource')
+        definition = hierarchy.create_definition(source, 'External target')
+        document.save_document(source, self.output / 'Source.cadprt')
+        external.import_file(self.doc, source)
+        App.setActiveDocument(self.doc.Name); editing.edit_unused(self.doc, definition)
+        target = self.base()
+        sketch = self.profile()
+        before = self.snapshot(source)
+        assembly_ids = {o.Name: o.ID for o in self.doc.Objects}
+        cut = self.start('Pocket', sketch, target)
+        self.task_button(QtWidgets.QDialogButtonBox.Cancel)
+        self.assertEqual(self.snapshot(source), before)
+        cut = self.start('Pocket', sketch, target)
+        self.task_button(QtWidgets.QDialogButtonBox.Ok)
+        self.assertEqual(cut.Document, source)
+        self.assertEqual(cut.BaseFeature, target)
+        self.assertAlmostEqual(cut.Shape.Volume, 88 * math.pi)
+        self.assertEqual({o.Name: o.ID for o in self.doc.Objects}, assembly_ids)
+        self.assertEqual(editing.context_path(self.doc), (definition, ()))
+        cut_name = cut.Name
+        source.undo(); source.recompute()
+        self.assertEqual(self.snapshot(source), before)
+        source.redo(); source.recompute()
+        cut = source.getObject(cut_name)
+        document.save_document(source); document.save_document(self.doc)
+        (self.output / 'expected.json').write_text(json.dumps({
+            'source_ids': {o.Name: o.ID for o in source.Objects}, 'assembly_ids': assembly_ids,
+            'cut': cut.Name, 'target': target.Name}))
+
+
+def verify_targets_fresh_process(output):
+    output = Path(output)
+    folder = output / 'test_backend_add_subtract_chain_undo_and_save'
+    expected = json.loads((folder / 'expected.json').read_text())
+    doc = document.open_document(folder / 'Targets.cadprt')
+    assert {o.Name: o.ID for o in doc.Objects} == expected['ids']
+    cut = doc.getObject(expected['cut'])
+    assert cut.BaseFeature == doc.getObject(expected['add'])
+    assert cut.Profile[0] == doc.getObject(expected['profile'])
+    assert doc.getObject(expected['body']).Tip == cut
+    assert abs(cut.Shape.Volume - 103 * math.pi) < 1e-7
+    cut.Length = 4; doc.recompute()
+    assert cut.Shape.isValid() and abs(cut.Shape.Volume - 102 * math.pi) < 1e-7
+    App.closeDocument(doc.Name)
+    folder = output / 'test_external_target_operations_stay_in_defining_file'
+    expected = json.loads((folder / 'expected.json').read_text())
+    doc = document.open_document(folder / 'Assembly.cadprt')
+    source = next(d for d in App.listDocuments().values() if d != doc)
+    assert {o.Name: o.ID for o in doc.Objects} == expected['assembly_ids']
+    assert {o.Name: o.ID for o in source.Objects} == expected['source_ids']
+    cut = source.getObject(expected['cut'])
+    assert cut.BaseFeature == source.getObject(expected['target'])
+    cut.Length = 4; source.recompute(); doc.recompute()
+    assert cut.Shape.isValid() and abs(cut.Shape.Volume - 86 * math.pi) < 1e-7
+    document.validate(doc)
+    App.closeDocument(doc.Name); App.closeDocument(source.Name)

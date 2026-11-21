@@ -1208,14 +1208,15 @@ void finishProfileBased(const Gui::Command* cmd, const Part::Feature* sketch, Ap
 
 void prepareProfileBased(Gui::Command* cmd, const std::string& which, double length)
 {
-    if (which == "Pad" && Gui::isComponentModelingDocument(cmd->getDocument())) {
+    if (Gui::isComponentModelingDocument(cmd->getDocument())) {
         Base::PyGILStateLocker lock;
         try {
             Py::Module module(PyImport_ImportModule("freecad_plus.modeling"), true);
-            Py::Object candidates = module.callMemberFunction("extrusion_candidates", Py::Tuple());
-            if (!candidates.isNone()) {
+            Py::Object request = module.callMemberFunction("extrusion_request", Py::TupleN(Py::String(which)));
+            if (!request.isNone()) {
+                Py::Dict routing(request);
                 std::vector<App::DocumentObject*> sketches;
-                Py::List items(candidates);
+                Py::List items(routing["profiles"]);
                 for (Py_ssize_t i = 0; i < items.length(); ++i) {
                     Py::Object item = items[i];
                     sketches.push_back(static_cast<App::DocumentObjectPy*>(item.ptr())->getDocumentObjectPtr());
@@ -1225,11 +1226,38 @@ void prepareProfileBased(Gui::Command* cmd, const std::string& which, double len
                                          QObject::tr("No sketch is available in the document"));
                     return;
                 }
-                auto worker = [](const std::vector<App::DocumentObject*>& features) {
-                    if (!features.empty() && features.front()) {
+                Py::Object targetObject = routing["target"];
+                auto target = targetObject.isNone() ? nullptr
+                    : static_cast<App::DocumentObjectPy*>(targetObject.ptr())->getDocumentObjectPtr();
+                auto targetRef = std::make_shared<App::DocumentObjectWeakPtrT>(target);
+                const bool hasTarget = target != nullptr;
+                const std::string context = Py::String(routing["context"]).as_std_string();
+                auto worker = [which, targetRef, hasTarget, context](const std::vector<App::DocumentObject*>& features) {
+                    if (features.empty() || !features.front()) {
+                        return;
+                    }
+                    Base::PyGILStateLocker lock;
+                    try {
+                        Py::Module module(PyImport_ImportModule("freecad_plus.modeling"), true);
+                        module.callMemberFunction("validate_extrusion_context", Py::TupleN(Py::String(context)));
+                        if (hasTarget && targetRef->expired()) {
+                            throw Base::ValueError("The target result no longer exists");
+                        }
+                        const std::string targetCommand = hasTarget
+                            ? Gui::Command::getObjectCmd(targetRef->get<App::DocumentObject>()) : "None";
                         Gui::Command::doCommand(Gui::Command::Doc,
-                            "from freecad_plus import modeling\nmodeling.begin_extrusion(%s)",
-                            Gui::Command::getObjectCmd(features.front()).c_str());
+                            "from freecad_plus import modeling\nmodeling.begin_extrusion(%s, '%s', %s)",
+                            Gui::Command::getObjectCmd(features.front()).c_str(),
+                            which.c_str(), targetCommand.c_str());
+                    }
+                    catch (Py::Exception&) {
+                        Base::PyException error;
+                        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                             QString::fromUtf8(error.what()));
+                    }
+                    catch (const Base::Exception& error) {
+                        QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                             QString::fromUtf8(error.what()));
                     }
                 };
                 if (sketches.size() == 1) {

@@ -340,7 +340,7 @@ bool TaskDlgSketchBasedParameters::reject()
 
     // if abort command deleted the object the sketch is visible again.
     // The previous one feature already should be made visible
-    if (weakptr.expired() && (!body || !bodyWeakptr.expired())) {
+    if (weakptr.expired() && (!body || (!bodyWeakptr.expired() && body->hasObject(sketch)))) {
         // A provisional Body may also have been rolled back. In that case keep
         // the original profile visibility restored by the native transaction.
         // Make the sketch visible
