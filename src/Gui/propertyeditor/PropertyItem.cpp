@@ -2637,6 +2637,18 @@ PlacementEditor::~PlacementEditor() = default;
 
 void PlacementEditor::browse()
 {
+    if (propertyname == QLatin1String("Placement")) {
+        auto selected = Gui::Selection().getSelection();
+        if (selected.size() == 1) {
+            auto* object = selected.front().pObject;
+            if (object && object->getPropertyByName("PlusSketchPlacementVersion")) {
+                Gui::Command::doCommand(Gui::Command::Gui,
+                    "from freecad_plus import sketch_task\nsketch_task.show(%s)",
+                    Gui::Command::getObjectCmd(object).c_str());
+                return;
+            }
+        }
+    }
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     Gui::Dialog::TaskPlacement* task {};
     task = qobject_cast<Gui::Dialog::TaskPlacement*>(dlg);
