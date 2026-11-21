@@ -1,0 +1,6 @@
+test_edit_reuses_create_task_and_preserves_feature_identity (TestComponentPlanes.TestComponentPlanes.test_edit_reuses_create_task_and_preserves_feature_identity) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.541s
+
+OK

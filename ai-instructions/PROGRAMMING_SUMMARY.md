@@ -2,6 +2,11 @@
 
 ## Current baseline
 
+Owner rule: every feature/operation must reuse its creation task for editing, with
+saved inputs prefilled, identity-preserving acceptance and unchanged Cancel. Plane
+editing has been verified through both existing entry routes; follow the
+[shared task contract](ui-ux-specs/TASK_PANEL.md#shared-task-patterns) for all further work.
+
 November 21 approved New Plane workflow is installed: the existing command opens
 the right-hand task panel for Plus components, with associative geometry references,
 point-only origin, X/Y direction assignment and Flip normal. Planes belong directly

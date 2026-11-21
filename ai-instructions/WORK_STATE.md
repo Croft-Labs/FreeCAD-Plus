@@ -1,5 +1,20 @@
 # FreeCAD Plus: Current work state
 
+## Shared creation and editing tasks — November 21, 2026
+
+The owner requires editing every feature/operation to reopen its creation workflow
+in the task panel. The [shared task contract](ui-ux-specs/TASK_PANEL.md#shared-task-patterns)
+and development guidelines now make this a standing implementation and acceptance rule.
+Existing plane routes already share `PlaneTask`; no production/UI patch was needed.
+A focused installed-app regression exercised History Edit and the native-tree
+double-click handler with saved plane references, origin point, Y direction, offset
+and flipped normal. Both restored all settings in the same task class. Cancel
+preserved object inventory and Undo count; acceptance updated the original object
+without changing identity, and Undo/Redo restored/reapplied its offset.
+[Result](evidence/plane-20261121/plane_edit_check.txt).
+The updated test module was copied to the installed payload. Other feature editors
+have not all been individually audited by this check.
+
 ## New Plane implementation — November 21, 2026
 
 The owner approved the simplified combined section and explicitly requested

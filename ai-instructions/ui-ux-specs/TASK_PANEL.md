@@ -84,6 +84,19 @@ distinguishes tested editor families and workflows from arbitrary third-party ed
 
 ### Shared task patterns
 
+**Shared create/edit workflow — owner instruction, November 21, 2026:** editing
+any feature or operation must reopen the same task-panel workflow used to create
+it. Reuse the same form, controls, selection methods, preview and validation;
+populate them from the feature's saved parameters and references. Acceptance
+updates that existing feature in one undoable operation, preserving its identity
+and downstream references. Cancel leaves it unchanged. Numerical fields use the
+same focus-leave recompute rule in both modes. Do not introduce a separate editing
+dialog or a reduced editing form. This applies to all current and future feature/
+operation workflows; each integration must verify both creation and editing.
+Plane creation and editing already share `PlaneTask`, including History Edit and
+native tree double-click. This rule does not claim that all legacy/native feature
+editors have been individually audited or retrofitted.
+
 Use sketches, operations/features and other geometry as the user's modeling vocabulary. Background Body ownership must not require independent Body management. Feature selection lists, collapsible sections, preview choices and their exact defaults are preserved in the DOCX-derived sections below; most earlier authorizing conversations are unavailable. Do not silently remove fields just because a toolbar action is consolidated. [Current owner direction](EVIDENCE_AND_DECISIONS.md#current)
 
 A modeling operation requires an edited component. The pinned file cannot own sketches or modeling geometry; selecting a component once does not enter Edit. Definitions, storage, external edits and the deferred Add Component workflow follow [Component Panel](COMPONENT_PANEL.md). [C09](EVIDENCE_AND_DECISIONS.md#c09)

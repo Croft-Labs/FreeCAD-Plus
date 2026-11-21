@@ -15,6 +15,9 @@ their implementation priorities and proposed feature lists are not an active que
 6. Keep one canonical roadmap and record source/build/runtime/publication separately.
 7. Preserve the clean source checkpoint and use reviewable commits for future changes.
 8. Keep build/validation output outside the checkout using the paths in AGENTS.md.
+9. Every feature/operation must reuse its creation task for editing, prefilled from
+   the existing feature. Verify in-place acceptance and unchanged Cancel alongside
+   creation. Follow the [shared task contract](ui-ux-specs/TASK_PANEL.md#shared-task-patterns).
 
 A clean checkout does not itself establish runtime stability or resolve the jitter
 reported for the archived fork. Those comparisons need separately authorized build

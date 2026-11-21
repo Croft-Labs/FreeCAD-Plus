@@ -122,6 +122,43 @@ class TestComponentPlanes(unittest.TestCase):
         self.assertAlmostEqual(sketch.Placement.Base.z-old,7)
         document.save_document(self.doc,Path(os.environ['PLUS_TEST_DIR'])/'AttachedPlane.cadprt')
 
+    def test_edit_reuses_create_task_and_preserves_feature_identity(self):
+        point = self.feature(Part.Vertex(App.Vector(5,6,0)))
+        edge = self.feature(Part.makeLine(App.Vector(),App.Vector(0,10,0)))
+        plane = planes.save(self.doc,[(self.xy,'')],7,[(point,'Vertex1')],[(edge,'Edge1')],'Y',True)
+        name, identity = plane.Name, plane.ID
+        before = ({obj.Name:obj.ID for obj in self.doc.Objects},self.doc.UndoCount)
+        # History Edit and the native tree double-click share the creation task.
+        for open_editor in (lambda: editing.edit_feature(self.doc,plane),
+                            lambda: plane.ViewObject.Proxy.doubleClicked(plane.ViewObject)):
+            open_editor()
+            task = plane_task._active
+            self.assertIs(type(task),plane_task.PlaneTask)
+            self.assertEqual(task.feature,plane)
+            self.assertEqual(task.refs,[(self.xy,'')])
+            self.assertEqual(task.origin_refs,[(point,'Vertex1')])
+            self.assertEqual(task.axis_refs,[(edge,'Edge1')])
+            self.assertEqual(task.offset.value(),7)
+            self.assertTrue(task.y_choice.isChecked())
+            self.assertTrue(task.flip.isChecked())
+            task.offset.setValue(11);task.numeric_left()
+            self.assertEqual(plane.Offset.Value,7)
+            task.reject()
+            self.assertEqual(({obj.Name:obj.ID for obj in self.doc.Objects},self.doc.UndoCount),before)
+        editing.edit_feature(self.doc,plane)
+        task=plane_task._active
+        task.offset.setValue(13)
+        self.assertTrue(task.accept())
+        self.assertEqual(task.result,plane)
+        self.assertEqual((plane.Name,plane.ID),(name,identity))
+        self.assertEqual({obj.Name:obj.ID for obj in self.doc.Objects},before[0])
+        self.assertEqual(plane.Offset.Value,13)
+        self.assertEqual(self.doc.UndoCount,before[1]+1)
+        self.doc.undo();self.doc.recompute()
+        self.assertEqual(self.doc.getObject(name).Offset.Value,7)
+        self.doc.redo();self.doc.recompute()
+        self.assertEqual(self.doc.getObject(name).Offset.Value,13)
+
     def test_planar_face_line_point_two_lines(self):
         face = self.feature(Part.makePlane(10,10,App.Vector(0,0,4)))
         p = planes.save(self.doc,[(face,'Face1')])
