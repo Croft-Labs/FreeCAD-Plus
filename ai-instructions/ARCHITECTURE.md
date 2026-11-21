@@ -22,6 +22,43 @@ The archived fork is reference material, not a source of implicit requirements.
 
 ## Components and data flow
 
+### Feature-centered modeling foundation — November 21, 2026
+
+The owner names the original method **body-centered modeling** and the Plus
+method **feature-centered modeling**. Bodies remain native implementation objects;
+they are no longer a prerequisite of sketch creation in the new service.
+
+`freecad_plus.modeling` is a backend API, with no command, toolbar, panel or task
+registration. `new_sketch(doc)` resolves the explicitly edited component and creates
+a native Sketcher sketch directly in its definition. `extrude_new_solid(doc, sketch,
+length)` consumes a direct, unconsumed sketch and returns a native PartDesign Pad.
+The positive finite length is in millimeters. This entry point creates one new
+solid; it does not infer Add/Subtract targets from the currently active Body.
+
+The native Pad profile must share its Body scope. Therefore extrusion creates a
+Body, removes the sketch from its direct definition membership, inserts that same
+sketch into the Body, creates the Pad and validates its solid in one defining-file
+transaction. No sketch copy, extra identity or schema property is introduced.
+Failure/Undo removes the generated Body and feature and restores the sketch's
+original membership, placement and visibility; Redo restores the result. Native
+Profile links, constraints, Tip semantics, recompute and serialization remain in use.
+Context/ownership, geometry eligibility and pending-operation checks run before
+mutation. Separate sketches can produce independent Bodies in the same component.
+
+Placed and unused Edit contexts use the existing routing services. An external
+unused definition owns its sketch, feature and Undo in its source file, while the
+assembly view's Edit context is preserved. No automatic conversion of existing
+body-centered chains is performed. Existing `editing.new_sketch`/`editing.pad`
+adapters and native commands retain their compatibility behavior.
+
+Next: integrate feature-centered routing with existing native commands and their
+Apply/Cancel transactions, then extend explicit feature-result targeting for
+additive/subtractive operations. Reusing already consumed sketches, deleting a
+feature while retaining its source sketch, and migration of existing chains remain
+separate work. Any visible workflow changes require a preview and owner approval.
+
+### Native component ownership
+
 | Responsibility | Target ownership / native service |
 | --- | --- |
 | File | One native `App::Document`; one marked file-root container represents its global frame and top-level placements |

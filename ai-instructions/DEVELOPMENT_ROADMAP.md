@@ -1,5 +1,22 @@
 # FreeCAD Plus: Development roadmap
 
+## Feature-centered modeling foundation — November 21, 2026
+
+- [x] Adopt owner terminology: body-centered modeling / feature-centered modeling.
+- [x] Add backend sketch creation without a Body prerequisite.
+- [x] Create the internal Body only with the first solid-producing feature, with
+  atomic rollback/Undo and native parameter/identity preservation.
+- [x] Validate component/source ownership, independent solids, rejection paths,
+  existing body-centered regressions and fresh-process save/reopen/recompute.
+- [ ] Integrate existing native New Sketch/feature commands and Apply/Cancel lifecycle.
+- [ ] Extend explicit feature-result targets for additive/subtractive operations.
+- [ ] Define and implement source-sketch reuse and feature deletion cleanup.
+
+UI changes require preview and owner approval before implementation. This increment
+adds backend services only; the current UI continues its existing command path.
+[WORK_STATE](WORK_STATE.md#feature-centered-modeling-foundation--november-21-2026)
+records delivery and exact validation boundaries.
+
 ## Right-hand Tasks dock — November 21, 2026
 
 - [x] Owner approved the native docked preview directly in chat.

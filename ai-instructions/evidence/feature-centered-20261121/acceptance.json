@@ -1,0 +1,37 @@
+{
+  "reopen": {
+    "ok": true
+  },
+  "hashes": [
+    {
+      "build": "1B283394E8004251673164F92343F2C2F3871FB27313E8ED30CA6BB97AA6DBF9",
+      "source": "1B283394E8004251673164F92343F2C2F3871FB27313E8ED30CA6BB97AA6DBF9",
+      "file": "freecad_plus/modeling.py",
+      "installed": "1B283394E8004251673164F92343F2C2F3871FB27313E8ED30CA6BB97AA6DBF9"
+    },
+    {
+      "build": "4DFE05D46A7E465EF9E9C8A4A4644A40C2FC21D4E9EC4ECD5E18EC47E6B3D646",
+      "source": "4DFE05D46A7E465EF9E9C8A4A4644A40C2FC21D4E9EC4ECD5E18EC47E6B3D646",
+      "file": "TestFeatureCenteredModeling.py",
+      "installed": "4DFE05D46A7E465EF9E9C8A4A4644A40C2FC21D4E9EC4ECD5E18EC47E6B3D646"
+    },
+    {
+      "build": "B9CB20748850D0A021C5E5BFFEE888512A8EAF0299E095326F77E5BFB0049666",
+      "source": "B9CB20748850D0A021C5E5BFFEE888512A8EAF0299E095326F77E5BFB0049666",
+      "file": "Init.py",
+      "installed": "B9CB20748850D0A021C5E5BFFEE888512A8EAF0299E095326F77E5BFB0049666"
+    }
+  ],
+  "expected_native_diagnostic": "Pad: Wire is not closed.",
+  "reopen_stderr_bytes": 0,
+  "native": {
+    "ok": true,
+    "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\modeling.py",
+    "tests": {
+      "run": 8,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    }
+  }
+}

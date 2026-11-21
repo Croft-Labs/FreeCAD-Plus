@@ -1,5 +1,43 @@
 # FreeCAD Plus: Current work state
 
+## Feature-centered modeling foundation — November 21, 2026
+
+**Authority/scope:** the owner named original FreeCAD's method body-centered
+modeling and FreeCAD Plus's method feature-centered modeling, authorized continued
+backend work and required previews before any UI changes. This increment changes
+no UI source or command routing. No UI preview was necessary for the backend API.
+
+**Implementation:** `modeling.new_sketch` creates a standalone component-owned
+Sketcher sketch. `modeling.extrude_new_solid` creates its native Body and Pad in one
+source-owned transaction, moving the original sketch into the native profile scope.
+The result must be one valid solid. Failure and Undo restore the prior sketch and
+remove generated objects; Redo, constraints and native downstream recompute work.
+The [architecture](ARCHITECTURE.md#feature-centered-modeling-foundation--november-21-2026)
+owns the API contract and remaining integration boundaries.
+
+**Native validation:** eight tests passed against the installed app (4.282 seconds,
+zero failures/errors/skips): six new feature-centered cases and two existing
+component History/native Pad-Pocket regressions. Coverage includes body-free
+sketch creation/Undo, atomic extrusion/Undo/Redo, stable sketch identity/placement,
+constraint-driven recompute, independent solids, wrong component/File Edit,
+pending caller transaction preservation, invalid lengths/open-profile rollback,
+and external unused-definition source ownership/Undo. The deliberately open wire
+produced the expected native `Pad: Wire is not closed.` diagnostic; no unexpected
+errors or profile-scope warnings occurred. An independent process reopened sketch-only,
+extruded and external-component files, verified identities/Profile/Tip, and changed
+parameters to validate downstream geometry. It exited 0 with empty stderr.
+Durable results: [acceptance](evidence/feature-centered-20261121/acceptance.json)
+and [native test log](evidence/feature-centered-20261121/tests.txt).
+
+**Build/delivery:** CMake regeneration and FreeCADPlusScripts passed in the retained
+`__Apps/_temp builds/FreeCAD-Plus/build` tree. New backend/test modules and test
+registration are installed in the existing app payload, with matching source/build/app
+hashes recorded in the acceptance artifact. The owner's open session and documents
+were preserved. The ordinary New Sketch/Extrude commands still use the existing
+body-centered path; no end-user workflow switch or completed conversion is claimed.
+Next work is command transaction integration, followed by feature-result targeting
+and deletion/reuse lifecycle. Unrelated `project.previewfirst.json` remains excluded.
+
 ## Right-hand Tasks dock — November 21, 2026
 
 **Implementation:** the approved Tasks dock starts on the right at 320 logical
