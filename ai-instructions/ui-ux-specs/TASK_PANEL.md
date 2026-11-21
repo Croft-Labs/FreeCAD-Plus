@@ -66,6 +66,37 @@ Approval is the owner's chat instruction; no tool approval record was modified.
 See [installed acceptance](../WORK_STATE.md#new-plane-implementation--november-21-2026).
 This direction supersedes conflicting unconfirmed plane-form proposals below.
 
+### New Sketch placement workflow — November 21, 2026
+
+Owner direction: choose a plane or face, designate origin and orientation, then
+create the sketch. Preselected items must appear as the sketch-plane references
+when the task opens. The proposed task reuses New Plane's visual structure:
+**Sketch plane**, **Origin and Orientation**, and **Preview**. It retains XY/XZ/YZ
+shortcuts and point-origin/X-or-Y-direction/Flip normal controls, without coordinate
+readouts, a Select button, a selection-mode dropdown or plane-creation offset fields.
+The sketch lies on the selected support. Proposed OK creates the sketch and proceeds
+to native drawing/constraint editing; Cancel creates nothing. Placement editing must
+reuse this same task with saved inputs under the shared create/edit rule.
+
+The proposal accepts one plane or planar face. Multiple preselected references are
+shown without silently choosing one; the user removes extras to obtain a valid
+support. References retain native mapped identities but display readable face names.
+No new production sketch-creation or placement-editing integration is implemented.
+The native candidate uses existing read-only plane/frame calculation and a transient
+overlay; its OK action is a simulation and does not create a sketch, plane or Body.
+
+Preview approval is pending: session `c01f5acbdf83`, seed
+`f4fe8fd90a4b432e238d95aca4a62b7b11f89f12`, candidate fingerprint
+`c7f7b00ab859769c11e8509138fcd85cd36043eb47591d6624cd269f80e9b50c`.
+Direct renders: [current attachment dialog](evidence/sketch-task-20261121/baseline.png),
+[preselected face](evidence/sketch-task-20261121/preselected-face.png),
+[origin/orientation](evidence/sketch-task-20261121/origin-orientation.png),
+[preselected History plane](evidence/sketch-task-20261121/history-plane.png).
+[Prototype checks](evidence/sketch-task-20261121/prototype.json) verify face/History
+preselection, preservation of multiple selections, invalid empty support and no
+model-object creation. No tool approval state has been modified. This new owner
+direction supersedes conflicting unconfirmed New Sketch proposals below.
+
 ### Numerical field updates
 
 **Numeric recompute rule — owner instruction, November 21, 2026:** all numerical

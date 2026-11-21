@@ -1,5 +1,16 @@
 # FreeCAD Plus: Current work state
 
+## New Sketch placement preview — November 21, 2026
+
+The owner requested plane/face selection, origin/orientation designation, then
+sketch creation, with preselection populated on task entry. An isolated native
+task prototype follows the implemented New Plane layout. Face and History-plane
+preselection checks passed, including readable mapped-face labels; ambiguous or
+empty selections require correction. The preview creates no model objects.
+The [owning task specification](ui-ux-specs/TASK_PANEL.md#new-sketch-placement-workflow--november-21-2026)
+records direct screenshots and the exact candidate. Approval and production
+integration are pending; the installed New Sketch command is unchanged.
+
 ## Shared creation and editing tasks — November 21, 2026
 
 The owner requires editing every feature/operation to reopen its creation workflow

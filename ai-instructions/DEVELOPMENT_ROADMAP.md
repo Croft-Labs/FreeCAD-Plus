@@ -1,5 +1,13 @@
 # FreeCAD Plus: Development roadmap
 
+## New Sketch placement workflow — November 21, 2026
+
+- [x] Render the plane/face → origin/orientation → sketch creation proposal and
+  verify preselection in the isolated native task.
+- [ ] Obtain approval of the [direct preview](ui-ux-specs/TASK_PANEL.md#new-sketch-placement-workflow--november-21-2026).
+- [ ] Integrate creation and placement editing, preserving sketch identity,
+  native drawing/constraints, references, Cancel/Undo and deferred numeric updates.
+
 ## New Plane workflow — November 21, 2026
 
 - [x] Obtain approval for the simplified combined Origin and Orientation UI;
