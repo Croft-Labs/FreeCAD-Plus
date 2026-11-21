@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\1a6b86c4f6b2\\candidate\\ui\\plane_task.py",
+  "sha256": "06ea1acc34343032114f295dd4548fef26b1e76f38335619dc1b4735523db4fe",
+  "next_pick_guidance_and_persistent_highlights": true,
+  "reverse_axis_keeps_origin_and_normal": true,
+  "repeat_pick_toggles_reference": true,
+  "delete_removes_reference": true,
+  "numeric_updates_wait_for_focus_leave": true,
+  "no_model_mutation": true
+}

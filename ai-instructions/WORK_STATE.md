@@ -1,5 +1,17 @@
 # FreeCAD Plus: Current work state
 
+## Archived plane workflow review — November 21, 2026
+
+Reviewed the preserved fork's plane solver, task, reference collector and tests.
+The [findings](ARCHIVE_REFERENCE.md#plane-workflow-review--november-21-2026)
+separate useful interactions from obsolete UI and conflicting origin/offset rules.
+An isolated [native proposal](ui-ux-specs/TASK_PANEL.md#archive-guided-plane-proposal--november-21-2026)
+shows next-pick guidance, numbered persistent references, reference toggling/Delete
+and independent axis reversal. Prototype checks passed, including focus-leave
+numeric updates and unchanged model inventory/Undo count. This is preview-only;
+production implementation and owner approval remain pending. The earlier Extrude
+proposal remains pending too. Detailed archived Sketch/Extrude review is not yet done.
+
 ## Extrude task preview — November 21, 2026
 
 The owner requested a preview of a unified task with New Solid/Add/Subtract and

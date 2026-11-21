@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development roadmap
 
+## Archive-guided plane improvements — November 21, 2026
+
+- [x] Review archived plane source and record compatible improvements and rejected
+  legacy behavior in [ARCHIVE_REFERENCE](ARCHIVE_REFERENCE.md#plane-workflow-review--november-21-2026).
+- [x] Render and check the isolated [interaction proposal](ui-ux-specs/TASK_PANEL.md#archive-guided-plane-proposal--november-21-2026).
+- [ ] Obtain owner approval before implementing the UI changes.
+- [ ] Implement approved behavior in shared creation/editing, persist axis reversal,
+  and verify Cancel, Undo/Redo, save/reopen and transient-highlight cleanup.
+- [ ] Review archived Sketch and Extrude workflows separately.
+
 ## Extrude task workflow — November 21, 2026
 
 - [x] Render the isolated New Solid/Add/Subtract proposal with profile and target

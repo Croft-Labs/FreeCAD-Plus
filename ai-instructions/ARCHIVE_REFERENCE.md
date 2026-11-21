@@ -1,5 +1,54 @@
 # FreeCAD Plus reference archive
 
+## Plane workflow review — November 21, 2026
+
+The owner requested guidance from the abandoned fork, starting with Create Plane.
+Reviewed the local `archive/freecad-plus-2026-10-10` checkpoint
+`29496214b34a53fa1d479f35ab5669b41ed4fb18`, particularly
+`src/Gui/ComponentPlaneTask.py`, `src/Gui/ComponentTaskWidgets.py`,
+`src/Mod/Part/ComponentPlane.py` and `tests/TestComponentPlaneTask.py`.
+The old ZIP path below is historical and unavailable on this machine; the local
+Git archive supplied the source. Archived tests were read, not executed, and the
+old application was not launched. Detailed Sketch/Extrude reviews remain future work.
+
+### Useful behavior to recover
+
+- Distinguish incomplete input from invalid geometry. Two points should request
+  a third noncollinear point; one line should request another suitable reference.
+  Conflicting plane-plus-other selections should explain what to remove.
+- Keep selected references visible with temporary highlights. The old collector
+  supported click-again toggling and Delete, alongside Remove/Clear. The new
+  preview adds readable numbered labels and matching amber point markers.
+- Offer independent axis reversal. This changes the in-plane direction without
+  moving the origin or reversing Z; Flip normal remains a separate operation.
+- Manage temporary visibility as part of the task lifecycle: make origin planes
+  available while picking, restore their prior visibility/scale afterward, and
+  avoid displaying both the saved plane and its edit preview. These lifecycle
+  changes are recommendations, not implemented by this preview.
+
+### Preserve newer decisions
+
+Do not restore the archived selection-mode dropdown, numeric coordinate/vector
+forms or separate sections. Keep the combined Origin and Orientation section,
+point-only origin, universal-origin projection for planes and numeric recompute
+only after leaving the field. The archived timer could update while typing.
+Its normal reversal also reversed the offset direction, moving an offset plane;
+the current rule deliberately preserves plane position when flipping Z.
+Keep the current single component-owned associative plane and shared create/edit
+task; do not restore the old helper-object arrangement or implicitly migrate files.
+
+### Later geometry work
+
+The archive accepted additional planar curved-edge combinations using sampling
+and a native planarity check. That merits separate solver tests before adoption.
+Its curved-edge axis used a midpoint tangent, which needs an explicit direction
+rule. Its largest-projection default-axis heuristic can improve near-perpendicular
+cases but can also switch axes; do not silently replace current defaults.
+
+An isolated native [proposal and checks](ui-ux-specs/TASK_PANEL.md#archive-guided-plane-proposal--november-21-2026)
+demonstrate the first three interaction improvements. Production code and the
+installed payload remain unchanged; approval and implementation are pending.
+
 Owner instruction: October 10, 2026. Preserve the existing fork for later/future
 reference before preparing a clean official FreeCAD baseline. Archiving is not
 approval to carry its implementation choices into that baseline.

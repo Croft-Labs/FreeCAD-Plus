@@ -66,6 +66,45 @@ Approval is the owner's chat instruction; no tool approval record was modified.
 See [installed acceptance](../WORK_STATE.md#new-plane-implementation--november-21-2026).
 This direction supersedes conflicting unconfirmed plane-form proposals below.
 
+### Archive-guided plane proposal — November 21, 2026
+
+**Needs owner confirmation; preview only.** The owner requested a review of the
+abandoned fork, starting with Create Plane. [Source findings](../ARCHIVE_REFERENCE.md#plane-workflow-review--november-21-2026)
+inform a focused refinement of the approved form above:
+
+- Specific next-pick guidance distinguishes incomplete from invalid selections.
+- Readable numbered reference names match persistent amber point markers;
+  straight-line references also receive a temporary highlight.
+- Picking an existing defining reference again toggles it off. Delete removes
+  selected list entries or clears the focused origin/axis reference field.
+- **Reverse axis** sits beside Clear axis, reversing X/Y together while preserving
+  the origin and Z. Flip normal keeps its existing meaning.
+
+Preserve the combined section, universal-origin default, X/Y definition controls,
+purple plane/local frame, XY/XZ/YZ shortcuts and focus-leave numeric recompute.
+No coordinate/vector forms or selection-mode controls return. Creation and editing
+must share the resulting workflow; persistence and editing are not implemented
+by this proposal. Temporary origin-plane visibility and broader curve support
+remain separate recommendations in the archive review.
+
+Direct native screenshots: [current two-point state](evidence/plane-guidance-20261121/before.png),
+[proposed next-pick guidance](evidence/plane-guidance-20261121/proposal.png),
+[defined plane](evidence/plane-guidance-20261121/defined.png), and
+[expanded frame with reversed axis](evidence/plane-guidance-20261121/frame.png).
+The fixture uses an isolated document/profile; the candidate reuses the installed
+read-only plane solver. OK is deliberately simulated and creates nothing.
+[Prototype checks](evidence/plane-guidance-20261121/prototype.json) passed for
+guidance/highlights, reversal preserving origin/normal, repeat-pick toggling,
+Delete, focus-leave numeric updates and unchanged object inventory/Undo count.
+These checks do not establish production acceptance or archived-build behavior.
+
+Companion session `1a6b86c4f6b2`, source seed
+`651cac309f2f62aa21f801f7ff1ecdcc0e86d537`, allowlist `ui/plane_task.py`.
+Candidate fingerprint:
+`4036cbc0e10ddda0f4528687063d79cbb4cd40b0503b73d1b017c9f27d5318c3`.
+Scope inspection passed and capture is current. No approval state was changed;
+the installed application remains unchanged.
+
 ### New Sketch placement workflow — November 21, 2026
 
 Owner direction: choose a plane or face, designate origin and orientation, then
