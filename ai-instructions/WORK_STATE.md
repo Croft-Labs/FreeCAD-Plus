@@ -1,5 +1,23 @@
 # FreeCAD Plus: Current work state
 
+## New Plane design review — November 21, 2026
+
+The owner paused selected-plane New Sketch integration to redesign New Plane first.
+The revised native Tasks prototype removes the mode dropdown/Select button, keeps
+origin-plane shortcuts, and shows a temporary purple plane with origin/X/Y/Z frame
+and collapsible value summaries. Original/installed UI and CAD backend are unchanged;
+general selection solving, real plane creation and save remain pending approval and
+implementation. The [task specification](ui-ux-specs/TASK_PANEL.md#new-plane-workflow-revision--november-21-2026)
+owns the direct screenshots, session and exact scope.
+
+The owner's numerical-field rule is recorded as application-wide intent: no
+recompute while typing; recompute valid committed input on focus leave only when
+automatic updates are enabled. Native Qt prototype checks verified no updates
+while typing, one after focus leave, no automatic recompute with the option off,
+and explicit refresh using the committed value. No document objects were added.
+These checks do not establish global enforcement in existing task forms. Their
+retrofit is still pending. No new UI approval or installation is claimed.
+
 ## Grouped History and left-margin visibility — November 21, 2026
 
 **Authority/implementation:** the owner approved the direct preview and explicitly

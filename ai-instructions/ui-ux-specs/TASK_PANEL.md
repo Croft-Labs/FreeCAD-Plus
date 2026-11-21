@@ -28,6 +28,39 @@ Approval is the owner's chat instruction; no tool approval state was changed.
 Installed-app and persistence evidence is in
 [WORK_STATE](../WORK_STATE.md#right-hand-tasks-dock--november-21-2026).
 
+### New Plane workflow revision — November 21, 2026
+
+Owner direction: New Plane opens in the right-hand Tasks panel. Remove the
+Select geometry/Enter values dropdown and the separate Select button. Geometry
+selection is active immediately; retain the XY/XZ/YZ plane shortcuts. Once the
+selected elements define a plane, show a purple preview with its origin and
+orientation. Origin and Orientation remain expandable for adjustments, with their
+current values readable while collapsed. The preview's coordinate frame is local
+to the proposed plane; existing global coordinate graphics stay unchanged.
+
+This is a design revision, not an installed workflow. The native Qt prototype
+uses a disposable plane-selection example and transient overlay; general
+multi-reference solving, final plane creation and persistence are not implemented.
+Direct screenshot review remains pending. Session `b81d0fbb375d`, fingerprint
+`bad2a03b098dcd1b2eb5de9530d1c2942f506d40582d72d8afa292ce84127084`:
+[defined plane](evidence/plane-task-20261121/proposed.png),
+[expanded sections](evidence/plane-task-20261121/details.png),
+[native prototype checks](evidence/plane-task-20261121/prototype.json).
+This direction supersedes conflicting unconfirmed plane-form proposals below.
+
+### Numerical field updates
+
+**Numeric recompute rule — owner instruction, November 21, 2026:** all numerical
+fields must defer "Recompute on update" until the user leaves the field. Do not
+recompute previews or geometry for intermediate keystrokes, incomplete values or
+while the user is still editing the field. Tab or clicking another control commits
+the field; valid committed values trigger recompute only when that option is on.
+When it is off, keep the prior preview until an explicit refresh or final acceptance.
+Final acceptance validates the latest values before creating/updating geometry.
+This is application-wide intent, including native and Plus task forms. The revised
+New Plane prototype demonstrates it; retrofitting existing forms is still pending
+and must not be reported as implemented from this specification alone.
+
 ### Shared task patterns
 
 Use sketches, operations/features and other geometry as the user's modeling vocabulary. Background Body ownership must not require independent Body management. Feature selection lists, collapsible sections, preview choices and their exact defaults are preserved in the DOCX-derived sections below; most earlier authorizing conversations are unavailable. Do not silently remove fields just because a toolbar action is consolidated. [Current owner direction](EVIDENCE_AND_DECISIONS.md#current)

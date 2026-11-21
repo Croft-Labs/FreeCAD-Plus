@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\b81d0fbb375d\\candidate\\ui\\plane_task.py",
+  "sha256": "6a74512adcd6c5ccadd8aa9b133c1f6c0ac28314467db4e640d3bf81e2d2ed53",
+  "numeric_commit": {
+    "no_updates_while_typing": true,
+    "one_update_after_focus_leaves": true,
+    "automatic_off_keeps_last_preview": true,
+    "explicit_refresh_uses_committed_value": true
+  },
+  "no_model_objects_added": true
+}
