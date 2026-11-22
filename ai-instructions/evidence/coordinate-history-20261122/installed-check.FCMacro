@@ -1,0 +1,46 @@
+import json, os, traceback
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets, QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False,'installed_native':True}
+    try:
+        from freecad_plus import document,panel
+        import TestComponentPanel
+        TestComponentPanel.verify_history_fresh_process(out)
+        persisted=document.open_document(out/'test_defaults_creation_only_and_reopen_preserves_hidden_groups/Visibility.cadprt')
+        hidden=[d for d in document.validate(persisted).Definitions if all(not f.Visibility for f in d.Origin.OriginFeatures if f.TypeId in ('App::Line','App::Plane'))]
+        assert len(hidden)==1
+        assert next(f for f in hidden[0].Origin.OriginFeatures if f.TypeId=='App::Point').Visibility
+        App.closeDocument(persisted.Name)
+        result['fresh_process_visibility']=True
+        window=Gui.getMainWindow();window.resize(1300,900);window.show();window.raise_();window.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('Coordinate System');definition=document.validate(doc).Definitions[0]
+        definition.Label='New Component'
+        assert definition.Origin.Visibility and all(f.Visibility for f in definition.Origin.OriginFeatures)
+        dock=panel.show_panel();dock.refresh();dock.tabs.setCurrentIndex(2)
+        tree=dock.trees[2];tree.expandAll()
+        view=Gui.activeDocument().activeView();view.viewAxonometric();view.setCameraType('Orthographic');view.fitAll()
+        def capture(label):
+            QtTest.QTest.qWait(500)
+            assert window.screen().grabWindow(int(window.winId())).save(str(out/('installed-'+label+'.png')))
+            assert dock.widget().grab(QtCore.QRect(0,0,dock.widget().width(),390)).save(str(out/('installed-'+label+'-panel.png')))
+        def click(label):
+            item=next(i for i in dock._maps[2].values() if i.text(0)==label)
+            point=tree.visualItemRect(item).center();point.setX(tree.columnViewportPosition(1)+tree.columnWidth(1)//2)
+            QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,point)
+            QtTest.QTest.qWait(100)
+        capture('shown')
+        click('Planes');assert all(not f.Visibility for f in definition.Origin.OriginFeatures if f.TypeId=='App::Plane')
+        capture('planes-hidden')
+        click('XY Plane');assert sum(f.Visibility for f in definition.Origin.OriginFeatures if f.TypeId=='App::Plane')==1
+        capture('one-plane')
+        click('Coordinate System');assert all(f.Visibility for f in definition.Origin.OriginFeatures)
+        result.update(ok=True,defaults_visible=True,real_group_and_individual_clicks=True,panel_module=panel.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'coordinate_history_installed.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

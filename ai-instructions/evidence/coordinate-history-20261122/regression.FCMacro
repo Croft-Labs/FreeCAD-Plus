@@ -1,0 +1,54 @@
+import json, os, sys, traceback, unittest
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets
+
+out = Path(os.environ['PLUS_TEST_DIR'])
+
+class LiveResult(unittest.TextTestResult):
+    def startTest(self, test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test)
+    def addError(self, test, err):
+        super().addError(test, err)
+        self.stream.write(self._exc_info_to_string(err, test)); self.stream.flush()
+    def addFailure(self, test, err):
+        super().addFailure(test, err)
+        self.stream.write(self._exc_info_to_string(err, test)); self.stream.flush()
+
+def unexpected_modal():
+    modal = QtWidgets.QApplication.activeModalWidget()
+    if modal:
+        with (out/'unexpected-modal.txt').open('a') as f:
+            f.write(modal.metaObject().className() + ': ' + modal.windowTitle() + '\n')
+            f.write('\n'.join(w.text() for w in modal.findChildren(QtWidgets.QLabel))+'\n')
+        modal.reject()
+
+watch = QtCore.QTimer()
+watch.timeout.connect(unexpected_modal)
+# Tests own expected modals. Keep the test main window active after native view creation.
+focus = QtCore.QTimer()
+focus.timeout.connect(lambda: QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow()) if Gui.Control.activeDialog() and not QtWidgets.QApplication.activeModalWidget() and not Gui.getMainWindow().isActiveWindow() else None)
+focus.start(30)
+# The process runner supplies the hard timeout.
+
+def run():
+    result = {'ok':False}
+    try:
+        Gui.getMainWindow().resize(1300,900); Gui.getMainWindow().show(); Gui.getMainWindow().raise_(); Gui.getMainWindow().activateWindow()
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        Gui.activateWorkbench('PartDesignWorkbench')
+        import TestComponentPanel, TestDesignInteractions, TestSketchPlacement, TestComponentHierarchy, TestComponentPilot
+        modules=(TestComponentPanel, TestDesignInteractions, TestSketchPlacement, TestComponentHierarchy, TestComponentPilot)
+        suite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromModule(m) for m in modules)
+        with (out/'coordinate_history_regression.txt').open('w') as stream:
+            report = unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        result.update(ok=report.wasSuccessful(), tests=report.testsRun,
+                      failures=len(report.failures),errors=len(report.errors))
+    except BaseException:
+        result['error'] = traceback.format_exc()
+    (out/'coordinate_history_regression.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+
+QtCore.QTimer.singleShot(2200,run)

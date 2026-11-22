@@ -112,6 +112,19 @@ A direct Reference child displays its full geometry while its parent is edited, 
 
 ### History and legacy files
 
+November 22, 2026 approved replacement: part History starts with **Coordinate
+System**, containing **Origin** (the native point at component-local 0,0,0), an
+**Axes** subgroup (X Axis, Y Axis, Z Axis), and a **Planes** subgroup (XY Plane,
+XZ Plane, YZ Plane). Every group and individual item keeps a visibility eye fixed
+at the far-left margin. A group eye hides all its members when all are visible;
+otherwise it shows all. Mixed groups use an open eye with a horizontal pupil.
+Individual toggles remain independent. New components start with the origin,
+three axes and three planes visible; existing saved visibility is preserved.
+This supersedes the older Origin hierarchy/defaults below. Approval was given
+in chat for companion session `a738581b957c`, fingerprint
+`c682681f99f6fe438156e200e5b7435db452b8554db97c9249f041c18443b832`.
+See [implementation evidence](../WORK_STATE.md#coordinate-system-history--november-22-2026).
+
 November 21, 2026 owner-approved History update: activating a part with double-click
 or Edit in Models or Part Tree opens its History in the current file tab. History
 starts with an expandable Origin containing X Axis, Y Axis, Z Axis, XY Plane,

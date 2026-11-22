@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Definitions and occurrences; placement remains native App::Link data."""
 import FreeCAD as App
-from .document import transaction, validate
+from .document import transaction, validate, show_new_component_frame
 
 
 def _root(doc):
@@ -26,6 +26,7 @@ def create_definition(doc, label):
         raise ValueError("Choose a nonempty component name unique within this file")
     with transaction(doc, "Create domestic component"):
         definition = doc.addObject("App::Part", "Component")
+        show_new_component_frame(definition)
         definition.Label = label
         root.Definitions = [*root.Definitions, definition]
         if App.GuiUp:
@@ -49,6 +50,7 @@ def new_part():
         with transaction(doc, 'Create domestic component'):
             root = document.create_file_root(doc)
             definition = doc.addObject('App::Part', 'Part001')
+            show_new_component_frame(definition)
             root.Definitions = [definition]
             definition.Visibility = False
         editing.edit_file(doc)

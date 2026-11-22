@@ -310,7 +310,10 @@ class TestSketchPlacement(unittest.TestCase):
         task = sketch_task.show(sketch); QtTest.QTest.qWait(80)
         self.assertFalse(task.offset.isHidden())
         self.assertEqual(task.offset.value(),2)
-        task.offset.setFocus();task.offset.selectAll();revision=task.revisions
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        task.offset.setFocus(); QtTest.QTest.qWait(60)
+        self.assertTrue(task.offset.hasFocus())
+        task.offset.selectAll();revision=task.revisions
         QtTest.QTest.keyClicks(task.offset,'5');QtTest.QTest.qWait(60)
         self.assertEqual(task.revisions,revision)
         task.references.setFocus();QtTest.QTest.qWait(60)

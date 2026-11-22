@@ -154,6 +154,14 @@ def create_file_root(doc):
     return root
 
 
+def show_new_component_frame(definition):
+    """Creation-only default; opening/importing/copying never resets saved visibility."""
+    if App.GuiUp:
+        definition.Origin.Visibility = True
+        for feature in definition.Origin.OriginFeatures:
+            feature.Visibility = True
+
+
 def new_document(name="Unnamed"):
     """Create once; opening an existing document never calls this initializer."""
     doc = App.newDocument(name)
@@ -162,6 +170,7 @@ def new_document(name="Unnamed"):
         with transaction(doc, "New component document"):
             root = create_file_root(doc)
             definition = doc.addObject("App::Part", "Part001")
+            show_new_component_frame(definition)
             root.Definitions = [definition]
             instance = doc.addObject("App::Link", "Part001Instance")
             instance.setLink(definition)

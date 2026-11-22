@@ -1,5 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest History update — November 22, 2026
+
+Approved Coordinate System hierarchy is implemented and installed: native Origin
+point, Axes and Planes subgroups, group and individual left-margin visibility eyes.
+New components show their origin/axes/planes; existing saved visibility is retained.
+63 native checks and installed fresh-process verification passed. See
+[acceptance](WORK_STATE.md#coordinate-system-history--november-22-2026).
+
 ## Current baseline
 
 November 22 approved toolbar layout is installed across all nine Design tabs:

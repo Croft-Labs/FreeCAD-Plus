@@ -80,8 +80,8 @@ class TestComponentPanel(unittest.TestCase):
         self.assertFalse(self.widget.trees[1].topLevelItem(0).icon(0).isNull())
         self.assertEqual(len([r for _, r in self.rows(0) if r.kind == 'model']), 3)
         self.assertEqual(len([r for _, r in self.rows(1) if r.kind == 'occurrence']), 4)
-        history = [panel.lookup(r.ref) for _, r in self.rows(2)]
-        self.assertEqual(history, [self.child.Origin, *[o for o in self.child.Origin.OriginFeatures
+        history = [panel.lookup(r.ref) for _, r in self.rows(2) if r.kind == 'history']
+        self.assertEqual(history, [next(o for o in self.child.Origin.OriginFeatures if o.TypeId == 'App::Point'), *[o for o in self.child.Origin.OriginFeatures
                                                      if o.TypeId in ('App::Line', 'App::Plane')],
                                    self.sketch, self.pad])
         self.assertNotIn('PartDesign::Body', [o.TypeId for o in history])
@@ -182,8 +182,8 @@ class TestComponentPanel(unittest.TestCase):
         sketch = editing.new_sketch(self.doc); settle()
         self.assertEqual(sketch.Document, source)
         definition = source_root.Definitions[0]
-        self.assertEqual([panel.lookup(r.ref) for _, r in self.rows(2)],
-                         [definition.Origin, *[o for o in definition.Origin.OriginFeatures
+        self.assertEqual([panel.lookup(r.ref) for _, r in self.rows(2) if r.kind == 'history'],
+                         [next(o for o in definition.Origin.OriginFeatures if o.TypeId == 'App::Point'), *[o for o in definition.Origin.OriginFeatures
                                               if o.TypeId in ('App::Line', 'App::Plane')], sketch])
 
     def test_file_origin_visibility_persistence_and_no_display_model_mutation(self):
@@ -219,12 +219,15 @@ class TestComponentPanel(unittest.TestCase):
         QtTest.QTest.qWait(350)
         self.assertEqual(self.widget.refresh_count, before)
         callbacks = len(editing._context_observers)
-        self.widget.close(); settle()
+        managed = getattr(self.widget, '_ui_mode_managed', False)
+        # Managed docks hide on close; actual destruction must release observers.
+        self.widget.dispose(); self.widget.close(); settle()
         self.assertEqual(len(editing._context_observers), callbacks - 1)
         before = self.widget.refresh_count
         self.child.Label = 'After close'; self.doc.recompute(); settle()
         self.assertEqual(self.widget.refresh_count, before)
         self.widget = panel.show_panel(); settle()
+        self.widget._ui_mode_managed = managed
         self.assertEqual(len(editing._context_observers), callbacks)
 
 
@@ -255,9 +258,14 @@ class TestHistoryVisibility(unittest.TestCase):
         self.assertEqual(self.widget.tabs.currentIndex(), 2)
         self.assertEqual(tree.topLevelItemCount(), 1)
         origin = tree.topLevelItem(0)
-        self.assertEqual(origin.text(0), 'Origin')
+        self.assertEqual(origin.text(0), 'Coordinate System')
         self.assertEqual([origin.child(i).text(0) for i in range(origin.childCount())],
-                         ['X Axis', 'Y Axis', 'Z Axis', 'XY Plane', 'XZ Plane', 'YZ Plane'])
+                         ['Origin', 'Axes', 'Planes'])
+        self.assertEqual([origin.child(1).child(i).text(0) for i in range(3)], ['X Axis', 'Y Axis', 'Z Axis'])
+        self.assertEqual([origin.child(2).child(i).text(0) for i in range(3)], ['XY Plane', 'XZ Plane', 'YZ Plane'])
+        point = panel.lookup(origin.child(0).data(0, panel._ROLE).ref)
+        self.assertEqual(point.TypeId, 'App::Point')
+        self.assertEqual(point.Placement.Base, App.Vector())
         for width in (240, 450):
             self.widget.resize(width, 650); settle()
             self.assertEqual(tree.columnViewportPosition(1), 0)
@@ -267,7 +275,89 @@ class TestHistoryVisibility(unittest.TestCase):
         origin.setExpanded(False); settle()
         self.assertEqual(tree.columnViewportPosition(1), 0)
         origin.setExpanded(True); settle()
-        self.assertEqual(origin.childCount(), 6)
+        self.assertEqual(origin.childCount(), 3)
+
+    def group_eye(self, label):
+        self.widget.tabs.setCurrentIndex(2)
+        tree = self.widget.trees[2]
+        item = next(i for i, r in self.rows(2) if r.kind == 'history_group' and r.label == label)
+        tree.scrollToItem(item); settle()
+        point = tree.visualItemRect(item).center()
+        point.setX(tree.columnViewportPosition(1) + tree.columnWidth(1) // 2)
+        QtTest.QTest.mouseClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, point)
+        settle()
+
+    def test_group_and_individual_eyes_atomic_undo_and_mixed_state(self):
+        origin = self.child.Origin
+        planes = [o for o in origin.OriginFeatures if o.TypeId == 'App::Plane']
+        others = [o for o in origin.OriginFeatures if o not in planes]
+        ids = {o.Name:o.ID for o in self.doc.Objects}
+        Gui.Selection.clearSelection(); Gui.Selection.addSelection(self.pad); settle()
+        selected = Gui.Selection.getSelection()
+        undo = self.doc.UndoCount
+        self.group_eye('Planes')
+        self.assertEqual(self.doc.UndoCount, undo + 1)
+        self.assertTrue(all(not o.Visibility for o in planes))
+        self.assertTrue(all(panel.history_visible(self.child, o) for o in others))
+        self.assertEqual(Gui.Selection.getSelection(), selected)
+        self.doc.undo(); settle(); self.assertTrue(all(o.Visibility for o in planes))
+        self.doc.redo(); settle(); self.assertTrue(all(not o.Visibility for o in planes))
+        self.eye(planes[0])
+        self.assertTrue(planes[0].Visibility)
+        self.assertTrue(all(not o.Visibility for o in planes[1:]))
+        group = next(r for _, r in self.rows(2) if r.kind == 'history_group' and r.label == 'Planes')
+        self.assertEqual(group.visible, 'mixed')
+        self.group_eye('Planes'); self.assertTrue(all(o.Visibility for o in planes))
+        self.group_eye('Axes'); self.assertTrue(all(not o.Visibility for o in others if o.TypeId == 'App::Line'))
+        point = next(o for o in others if o.TypeId == 'App::Point')
+        self.eye(point); self.assertFalse(point.Visibility)
+        self.group_eye('Coordinate System')
+        self.assertTrue(origin.Visibility and all(o.Visibility for o in origin.OriginFeatures))
+        self.group_eye('Coordinate System')
+        self.assertFalse(origin.Visibility)
+        self.assertTrue(all(not o.Visibility for o in origin.OriginFeatures))
+        self.eye(planes[0])
+        self.assertTrue(panel.history_visible(self.child, planes[0]))
+        self.assertTrue(all(not o.Visibility for o in origin.OriginFeatures if o != planes[0]))
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects}, ids)
+
+    def test_defaults_creation_only_and_reopen_preserves_hidden_groups(self):
+        for owner in (self.parent, self.child, self.unused):
+            self.assertTrue(owner.Origin.Visibility)
+            self.assertTrue(all(o.Visibility for o in owner.Origin.OriginFeatures))
+        self.group_eye('Planes'); self.group_eye('Axes')
+        saved = {o.Name:bool(o.Visibility) for o in self.child.Origin.OriginFeatures}
+        child_name = self.child.Name
+        path = document.save_document(self.doc, self.output / 'Visibility.cadprt')
+        self.widget.close(); App.closeDocument(self.doc.Name)
+        self.doc = document.open_document(path)
+        owner = self.doc.getObject(child_name)
+        self.assertEqual({o.Name:bool(o.Visibility) for o in owner.Origin.OriginFeatures}, saved)
+        self.widget = panel.show_panel()
+        created = hierarchy.create_definition(self.doc, 'Visible new frame')
+        self.assertTrue(created.Origin.Visibility and all(o.Visibility for o in created.Origin.OriginFeatures))
+        self.assertEqual({o.Name:bool(o.Visibility) for o in owner.Origin.OriginFeatures}, saved)
+        empty = App.newDocument('EmptyCoordinateDocument')
+        fresh = hierarchy.new_part()
+        self.assertTrue(fresh.Origin.Visibility and all(o.Visibility for o in fresh.Origin.OriginFeatures))
+
+    def test_group_eyes_during_sketch_placement_and_native_drawing(self):
+        from freecad_plus import sketch_task
+        task = sketch_task.show()
+        try:
+            self.group_eye('Planes')
+            self.assertTrue(all(not o.Visibility for o in self.child.Origin.OriginFeatures if o.TypeId == 'App::Plane'))
+            self.assertTrue(all(o.Visibility for o in self.child.Origin.OriginFeatures if o.TypeId != 'App::Plane'))
+        finally:
+            task.reject()
+        self.assertTrue(all(not o.Visibility for o in self.child.Origin.OriginFeatures if o.TypeId == 'App::Plane'))
+        Gui.activeDocument().setEdit(self.sketch.Name); settle()
+        try:
+            self.group_eye('Planes')
+            self.assertTrue(all(o.Visibility for o in self.child.Origin.OriginFeatures if o.TypeId == 'App::Plane'))
+            self.assertIsNotNone(Gui.activeDocument().getInEdit())
+        finally:
+            Gui.activeDocument().resetEdit(); settle()
 
     def test_eye_and_keyboard_preserve_selection_geometry_and_undo(self):
         body = self.pad.getParentGeoFeatureGroup()
@@ -359,6 +449,14 @@ class TestHistoryVisibility(unittest.TestCase):
         self.assertEqual({obj.Name: obj.Visibility for obj in self.doc.Objects}, assembly_visibility)
         source.undo(); settle(); self.assertFalse(origin.Visibility)
         source.redo(); settle(); self.assertTrue(panel.history_visible(definition, axis))
+        planes = [o for o in origin.OriginFeatures if o.TypeId == 'App::Plane']
+        before = source.UndoCount
+        self.group_eye('Planes')
+        self.assertEqual(source.UndoCount, before + 1)
+        self.assertTrue(all(not o.Visibility for o in planes))
+        source.undo(); settle(); self.assertTrue(all(o.Visibility for o in planes))
+        source.redo(); settle(); self.assertTrue(all(not o.Visibility for o in planes))
+        self.assertEqual({obj.Name: obj.Visibility for obj in self.doc.Objects}, assembly_visibility)
         document.save_document(source); document.save_document(self.doc)
         (self.output / 'expected.json').write_text(json.dumps({
             'source_ids': {obj.Name: obj.ID for obj in source.Objects},
@@ -375,10 +473,11 @@ def verify_history_fresh_process(output):
     definition = source.getObject(expected['definition'])
     axis = source.getObject(expected['axis'])
     assert panel.history_visible(definition, axis)
+    assert all(not o.Visibility for o in definition.Origin.OriginFeatures if o.TypeId == 'App::Plane')
     App.setActiveDocument(doc.Name); editing.edit_unused(doc, definition)
     widget = panel.show_panel(); settle()
     origin = widget.trees[2].topLevelItem(0)
-    assert origin.text(0) == 'Origin' and origin.childCount() == 6
+    assert origin.text(0) == 'Coordinate System' and origin.childCount() == 3
     item = next(item for item in widget._maps[2].values() if item.data(0, panel._ROLE).ref == panel.identity(axis))
     assert item.toolTip(1) == 'Hide Z Axis'
     App.closeDocument(doc.Name); App.closeDocument(source.Name)

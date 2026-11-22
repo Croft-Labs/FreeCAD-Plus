@@ -48,15 +48,19 @@ class Planes:
                 pass  # The document may already be deleting its origin children.
 
     def toggle(self, route, shown):
+        self.toggle_many((route,), shown, route[-1].Label)
+
+    def toggle_many(self, routes, shown, label):
         # Transactions record the persistent state, never the automatic reveal.
         self.restore()
         try:
-            changed = route if shown else route[-1:]
+            changed = tuple(dict.fromkeys(obj for route in routes
+                                          for obj in (route if shown else route[-1:])))
             # Hiding a temporarily revealed plane may already match its saved
             # state. Do not leave an empty native transaction active in that case.
             if any(bool(obj.Visibility) != shown for obj in changed):
-                with document.transaction(route[-1].Document,
-                                          ('Show ' if shown else 'Hide ') + route[-1].Label):
+                with document.transaction(changed[-1].Document,
+                                          ('Show ' if shown else 'Hide ') + label):
                     for obj in changed:
                         obj.Visibility = shown
             for obj in changed:

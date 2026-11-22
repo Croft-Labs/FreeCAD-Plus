@@ -8,6 +8,20 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Coordinate System History — November 22, 2026
+
+History projects the existing App::Origin's seven native OriginFeatures. Its
+App::Point is Origin; Axes and Planes are virtual UI groups, not document objects.
+Group targets are revalidated against the current owning definition and occurrence.
+Group eye state aggregates effective child visibility; each click changes native
+Visibility properties in one defining-document transaction. Revealing a child
+reveals required native containers without showing catalog definitions or siblings.
+Native Sketcher joins its existing transaction. Sketch placement batches a group
+through Planes.toggle_many so temporary reveal does not become saved visibility;
+explicit overrides survive cancellation. Creation alone calls
+show_new_component_frame; open/import/copy/conversion do not reset saved states.
+No schema, geometry, ownership or reference identity changes are introduced.
+
 ## Design toolbar layout — November 22, 2026
 
 The Plus ribbon retains shared native QActions/QMenus and native widget factories.

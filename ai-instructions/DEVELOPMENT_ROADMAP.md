@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Coordinate System History — November 22, 2026
+
+- [x] Obtain approval for the direct native hierarchy/eye preview.
+- [x] Project native Origin point and grouped Axes/Planes with individual eyes.
+- [x] Add aggregate group visibility, source-owned Undo/Redo and sketch-task support.
+- [x] Enable coordinate objects only when creating new components.
+- [x] Pass 63 native cases; install and verify saved visibility in a fresh process.
+  See [acceptance](WORK_STATE.md#coordinate-system-history--november-22-2026).
+
 ## Design toolbar layout — November 22, 2026
 
 - [x] Render all nine Design tabs in Light/Dark and obtain direct chat approval.

@@ -1,0 +1,32 @@
+[
+  {
+    "file": "freecad_plus/document.py",
+    "source_build_app_sha256": "502e90ef88303d56988a7620be57f1535a4193352a564adcef257a18d0508f3e",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\coordinate-history-20261122\\install-backup\\freecad_plus\\document.py"
+  },
+  {
+    "file": "freecad_plus/hierarchy.py",
+    "source_build_app_sha256": "60eaac1367ffe8c8e873a2cbb9e4d589a01cf5a4547d8621175bfbf3c899f479",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\coordinate-history-20261122\\install-backup\\freecad_plus\\hierarchy.py"
+  },
+  {
+    "file": "freecad_plus/panel.py",
+    "source_build_app_sha256": "2ac9f5869e33a5920c25d840bd51b0bc836717ef869a10c25ce20e362775ee7c",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\coordinate-history-20261122\\install-backup\\freecad_plus\\panel.py"
+  },
+  {
+    "file": "freecad_plus/sketch_visibility.py",
+    "source_build_app_sha256": "115b2d09c009715aa8b6a4031535dde1974991f270ed2432c2f4a722371fc80e",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\coordinate-history-20261122\\install-backup\\freecad_plus\\sketch_visibility.py"
+  },
+  {
+    "file": "TestComponentPanel.py",
+    "source_build_app_sha256": "5d0a267e46f1ba232ed17296b4bfc30ad0d8ad309cb423bf64e688a1321b8c78",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\coordinate-history-20261122\\install-backup\\TestComponentPanel.py"
+  },
+  {
+    "file": "TestSketchPlacement.py",
+    "source_build_app_sha256": "f3a357ff62591f617773960a7c0c00b97f59b8194578177759498b1e09328f0e",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\coordinate-history-20261122\\install-backup\\TestSketchPlacement.py"
+  }
+]

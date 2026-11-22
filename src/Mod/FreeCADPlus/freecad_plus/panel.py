@@ -4,7 +4,7 @@
 Placed and unused definitions share Edit and History. Temporary isolation is view-only;
 component tabs reuse native views; other confirmed actions remain separate increments.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import FreeCAD as App
@@ -100,8 +100,14 @@ def projection(doc, active=None, active_path=()):
     if active is not None:
         features = {obj.Role: obj for obj in active.Origin.OriginFeatures}
         roles = ('X_Axis', 'Y_Axis', 'Z_Axis', 'XY_Plane', 'XZ_Plane', 'YZ_Plane')
-        children = tuple(history_row(features[role], role.replace('_', ' ')) for role in roles)
-        history.insert(0, history_row(active.Origin, 'Origin', children))
+        def group(label, children):
+            row = history_row(active.Origin, label, children)
+            return replace(row, key=('history-group', identity(active.Origin), label),
+                           kind='history_group', visible=aggregate_visibility(c.visible for c in children))
+        point = next(obj for obj in features.values() if obj.TypeId == 'App::Point')
+        axes = group('Axes', tuple(history_row(features[role], role.replace('_', ' ')) for role in roles[:3]))
+        planes = group('Planes', tuple(history_row(features[role], role.replace('_', ' ')) for role in roles[3:]))
+        history.insert(0, group('Coordinate System', (history_row(point, 'Origin'), axes, planes)))
     return (tuple(models(external.catalog(doc))), (file_row,), tuple(history))
 
 
@@ -109,6 +115,40 @@ def history_visible(definition, obj):
     """Visibility within the component, independent of catalog/occurrence hiding."""
     route = document.owned_path(definition, obj)
     return route is not None and all(member.Visibility for member in route)
+
+
+def aggregate_visibility(states):
+    states = tuple(states)
+    return True if all(s is True for s in states) else False if all(s is False for s in states) else 'mixed'
+
+
+def history_targets(definition, row):
+    obj = lookup(row.ref)
+    if row.kind == 'history':
+        return (obj,)
+    if (row.kind != 'history_group' or obj != definition.Origin
+            or row.key != ('history-group', identity(obj), row.label)):
+        raise ValueError('Choose an item in the edited component History')
+    if row.label == 'Coordinate System':
+        return (obj, *obj.OriginFeatures)
+    types = {'Axes': 'App::Line', 'Planes': 'App::Plane'}
+    if row.label not in types:
+        raise ValueError('Unknown coordinate system group')
+    return tuple(feature for feature in obj.OriginFeatures if feature.TypeId == types[row.label])
+
+
+def history_row_visible(definition, row):
+    targets = history_targets(definition, row)
+    if row.kind == 'history_group' and row.label == 'Coordinate System':
+        targets = targets[1:]
+    return aggregate_visibility(history_visible(definition, obj) for obj in targets)
+
+
+def history_eye_action(row, shown):
+    if row.kind == 'history_group':
+        return (('Hide all ' if shown is True else 'Show all ') + row.label
+                + (' (partially visible)' if shown == 'mixed' else ''))
+    return ('Hide ' if shown else 'Show ') + row.label
 
 
 def _eye_icon(shown, color):
@@ -126,7 +166,10 @@ def _eye_icon(shown, color):
     path.cubicTo(17, 19, 7, 19, 3, 12)
     painter.drawPath(path)
     painter.setBrush(color)
-    painter.drawEllipse(QtCore.QPointF(12, 12), 2.5, 2.5)
+    if shown == 'mixed':
+        painter.drawLine(9, 12, 15, 12)
+    else:
+        painter.drawEllipse(QtCore.QPointF(12, 12), 2.5, 2.5)
     if not shown:
         painter.setCompositionMode(QtGui.QPainter.CompositionMode_Clear)
         painter.setPen(QtGui.QPen(QtCore.Qt.transparent, 4))
@@ -236,29 +279,33 @@ class ComponentPanel(QtWidgets.QDockWidget):
             if Gui.Control.activeDialog():
                 raise ValueError('Finish the current task first')
         route = document.owned_path(definition, obj)
-        if row.kind != 'history' or not route:
+        if row.kind not in ('history', 'history_group') or not route:
             raise ValueError('Choose an item in the edited component History')
         sub = hierarchy.subname(path) + ''.join(member.Name + '.' for member in route)
         expected = ((doc.Name, document.validate(doc).Name, sub) if path
                     else (definition.Document.Name, definition.Name, sub))
         if row.selection != expected:
             raise ValueError('The edited component changed; select the item again')
-        shown = not history_visible(definition, obj)
+        targets = history_targets(definition, row)
+        routes = tuple(document.owned_path(definition, target) for target in targets)
+        if any(not target_route for target_route in routes):
+            raise ValueError('The edited component changed; select the item again')
+        shown = history_row_visible(definition, row) is not True
         def change():
-            if shown:
-                # Native Origin/Body containers must be visible for their child
-                # to draw. Never reveal the catalog definition or another occurrence.
-                for member in route[:-1]:
-                    member.Visibility = True
-            obj.Visibility = shown
+            for target_route in routes:
+                if shown:
+                    # Reveal native containers, never the definition/catalog or another occurrence.
+                    for member in target_route[:-1]:
+                        member.Visibility = True
+                target_route[-1].Visibility = shown
         if placement is not None:
-            placement.origin_visibility.toggle(route, shown)
+            placement.origin_visibility.toggle_many(routes, shown, row.label)
         elif drawing:
             # Join native Sketcher's current transaction. Never commit or replace
             # the operation merely to toggle a view property.
             change()
         else:
-            with document.transaction(obj.Document, ('Show ' if shown else 'Hide ') + obj.Label):
+            with document.transaction(obj.Document, ('Show ' if shown else 'Hide ') + row.label):
                 change()
         self._refresh_history_eyes(definition)
         self.refresh()
@@ -270,11 +317,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
         for item in self._maps[2].values():
             row = item.data(0, _ROLE)
             try:
-                shown = history_visible(definition, lookup(row.ref))
+                shown = history_row_visible(definition, row)
             except (ValueError, RuntimeError, ReferenceError):
                 continue
             item.setIcon(1, _eye_icon(shown, self.trees[2].palette().text().color()))
-            action = ('Hide ' if shown else 'Show ') + row.label
+            action = history_eye_action(row, shown)
             item.setToolTip(1, action)
             item.setData(1, QtCore.Qt.AccessibleTextRole, action)
 
@@ -556,11 +603,15 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 item.setText(0, row.label)
                 obj = lookup(row.ref)
                 item.setIcon(0, QtGui.QIcon(':/icons/freecad.svg') if row.kind in ('file', 'import') else obj.ViewObject.Icon)
+                if row.kind == 'history_group' and row.label != 'Coordinate System':
+                    item.setIcon(0, self.style().standardIcon(QtWidgets.QStyle.SP_DirIcon))
+                if index == 2 and obj.TypeId == 'App::Point':
+                    item.setToolTip(0, 'Point (0, 0, 0) in component coordinates')
                 flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
                 if index == 2 and self._history_eyes:
                     shown = row.visible
                     item.setIcon(1, _eye_icon(shown, tree.palette().text().color()))
-                    action = ('Hide ' if shown else 'Show ') + row.label
+                    action = history_eye_action(row, shown)
                     item.setToolTip(1, action)
                     item.setData(1, QtCore.Qt.AccessibleTextRole, action)
                     item.setData(0, QtCore.Qt.CheckStateRole, None)
@@ -864,6 +915,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
             selections = []
             for item in tree.selectedItems():
                 row = item.data(0, _ROLE)
+                if row.kind == 'history_group':
+                    continue
                 _, obj = self._checked(row)
                 selections.append(row.selection or (obj.Document.Name, obj.Name, ''))
             Gui.Selection.clearSelection()
@@ -886,7 +939,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             for item in items.values():
                 row = item.data(0, _ROLE)
                 selection = row.selection or (row.ref[0], row.ref[2], '')
-                item.setSelected(selection in selected)
+                item.setSelected(row.kind != 'history_group' and selection in selected)
             del blocker
 
     def _visibility_changed(self, item, column):

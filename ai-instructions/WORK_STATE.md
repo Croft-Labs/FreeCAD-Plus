@@ -1,5 +1,41 @@
 # FreeCAD Plus: Current work state
 
+## Coordinate System History — November 22, 2026
+
+The owner approved the [direct native preview](evidence/coordinate-history-20261122/approved.png)
+and requested implementation in [chat](evidence/coordinate-history-20261122/approval.json).
+History now contains Coordinate System → Origin, Axes → X/Y/Z Axis, and Planes →
+XY/XZ/YZ Plane. All rows keep far-left eyes, including each individual datum.
+Group eyes hide all visible members or show all hidden/mixed members, using a
+mixed-state eye. Origin is the existing native App::Point at local (0,0,0).
+New-component creation enables all seven native frame objects. Existing saved
+visibility, native identities, geometry and file-level History remain intact.
+
+The native build passed. Six changed Python modules/tests were installed into the
+existing development payload with rollback backups and matching source/build/app
+hashes: [manifest](evidence/coordinate-history-20261122/install-manifest.json).
+Validation uses disposable profiles, never the owner profile. The existing desktop
+shortcut still targets the development launcher and working directory.
+
+The final native suite passed **63 tests**, covering History projection, real group
+and individual clicks, mixed states, one-step Undo/Redo, external source ownership,
+creation defaults, saved visibility, sketch placement/cancellation/drawing,
+component hierarchy, native creation and existing feature workflows.
+See [report](evidence/coordinate-history-20261122/coordinate_history_regression.txt).
+Initial broader-suite failures exposed test assumptions: managed docks hide rather
+than dispose on close, replacement fixtures must retain managed status, numeric
+focus must settle before typing, and conversion fixtures require fresh destinations.
+Those test setup issues were corrected without changing product behavior.
+
+A separate installed process checked saved hidden groups, external source visibility,
+and real group/individual clicks, and captured the shipped UI without code injection:
+[checks](evidence/coordinate-history-20261122/coordinate_history_installed.json),
+[shown](evidence/coordinate-history-20261122/installed-shown.png),
+[planes hidden](evidence/coordinate-history-20261122/installed-planes-hidden.png),
+[individual plane](evidence/coordinate-history-20261122/installed-one-plane.png).
+Task-generated disposable files are removed after preserving evidence; installation
+rollback copies remain in validation/coordinate-history-20261122/install-backup.
+
 ## Design toolbar layout — November 22, 2026
 
 The owner approved the nine native Design-tab previews and explicitly requested
