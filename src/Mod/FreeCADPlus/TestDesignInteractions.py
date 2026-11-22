@@ -272,6 +272,129 @@ class TestDesignInteractions(unittest.TestCase):
         self.assertEqual(self.render_visibility([body,pad]),before)
 
 
+class TestSketchCoordinateVisibility(unittest.TestCase):
+    setUp = TestDesignInteractions.setUp
+    dialog = TestDesignInteractions.dialog
+    circle = TestDesignInteractions.circle
+    eye = TestDesignInteractions.eye
+
+    def tearDown(self):
+        if Gui.activeDocument() and Gui.activeDocument().getInEdit():
+            Gui.activeDocument().resetEdit();settle()
+        TestDesignInteractions.tearDown(self)
+
+    def frame(self, owner=None):
+        origin=(owner or self.owner).Origin
+        return [origin,*origin.OriginFeatures]
+
+    def switches(self, objects):
+        return {o.Name:o.ViewObject.SwitchNode.whichChild.getValue() for o in objects}
+
+    def assert_hidden(self, objects):
+        self.assertTrue(all(value==-1 for value in self.switches(objects).values()),self.switches(objects))
+        for obj in self.frame():self.assertFalse(panel.history_visible(self.owner,obj))
+
+    def leave(self):
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+
+    def test_existing_default_mixed_and_hidden_restore_without_property_edits(self):
+        sketch=self.circle()
+        for mode in ('default','mixed','hidden'):
+            with self.subTest(mode=mode):
+                for index,obj in enumerate(self.frame()):obj.Visibility=mode=='default' or (mode=='mixed' and index%2==0)
+                flags={o.Name:bool(o.Visibility) for o in self.frame()};before=self.switches(self.frame())
+                undo=self.doc.UndoCount
+                Gui.activeDocument().setEdit(sketch.Name);settle()
+                self.assert_hidden(self.frame())
+                self.assertEqual({o.Name:bool(o.Visibility) for o in self.frame()},flags)
+                self.doc.recompute();self.panel.refresh();settle();self.assert_hidden(self.frame())
+                self.leave();self.assertEqual(self.switches(self.frame()),before)
+                self.assertEqual(self.doc.UndoCount,undo)
+
+    def test_mask_does_not_dirty_document_or_join_native_transaction(self):
+        from freecad_plus.sketch_visibility import Drawing
+        sketch=self.circle();editing.edit_feature(self.doc,sketch);settle()
+        self.panel._restore_sketch_coordinates()
+        before=self.switches(self.frame());undo=self.doc.UndoCount
+        pending=self.doc.HasPendingTransaction;transaction=App.getActiveTransaction()
+        Gui.activeDocument().Modified=False
+        drawing=Drawing(self.owner,sketch,self.panel._current())
+        self.assertTrue(all(value==-1 for value in self.switches(self.frame()).values()))
+        drawing.apply();drawing.restore()
+        self.assertEqual(self.switches(self.frame()),before)
+        self.assertFalse(Gui.activeDocument().Modified)
+        self.assertEqual(self.doc.UndoCount,undo);self.assertEqual(self.doc.HasPendingTransaction,pending)
+        self.assertEqual(App.getActiveTransaction(),transaction)
+        self.leave()
+
+    def test_new_sketch_plane_selection_then_drawing_and_undo(self):
+        before=self.switches(self.frame());flags={o.Name:o.Visibility for o in self.frame()}
+        self.panel.tabs.setCurrentIndex(1)
+        task=sketch_task.show();settle()
+        self.assertTrue(all(o.ViewObject.isVisible() for o in self.frame() if o.TypeId=='App::Plane'))
+        task.choose('XY Plane');self.dialog(QtWidgets.QDialogButtonBox.Ok)
+        self.assert_hidden(self.frame());self.assertEqual(self.panel.tabs.currentIndex(),2)
+        self.leave();self.assertEqual(self.switches(self.frame()),before)
+        self.assertEqual(self.panel.tabs.currentIndex(),1)
+        name=task.result.Name;self.doc.undo();settle();self.assertIsNone(self.doc.getObject(name))
+        self.assertEqual({o.Name:o.Visibility for o in self.frame()},flags)
+        self.doc.redo();settle();self.assertIsNotNone(self.doc.getObject(name))
+        self.assertEqual(self.switches(self.frame()),before)
+
+    def test_individual_eye_accept_abort_and_undo_redo(self):
+        sketch=self.circle();axis=next(o for o in self.frame() if getattr(o,'Role','')=='X_Axis')
+        editing.edit_feature(self.doc,sketch);settle();self.assert_hidden(self.frame())
+        self.eye(axis);self.assertTrue(axis.ViewObject.isVisible())
+        self.assertTrue(panel.history_visible(self.owner,axis))
+        self.assertTrue(all(not o.ViewObject.isVisible() for o in self.frame()[1:] if o!=axis))
+        self.eye(axis);self.assertFalse(axis.Visibility)
+        self.leave();self.assertFalse(axis.Visibility)
+        self.doc.undo();settle();self.assertTrue(axis.Visibility);self.assertTrue(axis.ViewObject.isVisible())
+        self.doc.redo();settle();self.assertFalse(axis.Visibility)
+        editing.edit_feature(self.doc,sketch);settle();self.eye(axis);self.assertTrue(axis.Visibility)
+        App.closeActiveTransaction(True);settle()
+        self.assertFalse(axis.Visibility)
+        self.leave();self.assertFalse(axis.Visibility)
+
+    def test_save_during_edit_reopens_persistent_visibility(self):
+        sketch=self.circle();self.frame()[2].Visibility=False
+        flags={o.Name:bool(o.Visibility) for o in self.frame()}
+        filename=Path(os.environ['PLUS_TEST_DIR'])/'Coordinates.cadprt'
+        document.save_document(self.doc,filename)
+        editing.edit_feature(self.doc,sketch);settle();self.assert_hidden(self.frame())
+        # Plus Save guards unfinished operations; the native save API must also
+        # serialize persistent flags if invoked during native sketch editing.
+        self.doc.save();settle();self.assert_hidden(self.frame())
+        self.leave();App.closeDocument(self.doc.Name);settle()
+        self.doc=App.openDocument(str(filename));self.owner=document.validate(self.doc).Definitions[0];settle()
+        self.assertEqual({o.Name:bool(o.Visibility) for o in self.frame()},flags)
+        for obj in self.frame():self.assertEqual(obj.ViewObject.isVisible(),flags[obj.Name])
+
+    def test_body_owned_sketch_and_dispose_restore(self):
+        body=self.owner.newObject('PartDesign::Body','Body');sketch=body.newObject('Sketcher::SketchObject','Sketch')
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),3),False);self.doc.recompute()
+        objects=self.frame()+self.frame(body);before=self.switches(objects)
+        editing.edit_feature(self.doc,sketch);settle();self.assert_hidden(objects)
+        self.panel.dispose();self.assertEqual(self.switches(objects),before)
+        self.leave();self.panel=panel.show_panel();settle()
+
+    def test_external_source_frame_and_host_context_cleanup(self):
+        folder=Path(os.environ['PLUS_TEST_DIR'])/'coordinate-external';folder.mkdir(exist_ok=True)
+        document.save_document(self.doc,folder/'Host.cadprt');host=self.owner
+        source=document.new_document('CoordinateSource');owner=document.validate(source).Definitions[0]
+        document.save_document(source,folder/'Source.cadprt');external.import_file(self.doc,source)
+        App.setActiveDocument(self.doc.Name);editing.edit_unused(self.doc,owner);self.owner=owner
+        sketch=self.circle();source.recompute();objects=self.frame();before=self.switches(objects)
+        host_before=self.switches(self.frame(host))
+        editing.edit_feature(self.doc,sketch);settle();self.assert_hidden(objects)
+        self.assertEqual(self.switches(self.frame(host)),host_before)
+        self.leave();self.assertEqual(self.switches(objects),before)
+        editing.edit_feature(self.doc,sketch);settle();self.assert_hidden(objects)
+        App.closeDocument(self.doc.Name);settle()
+        self.assertIsNone(self.panel._sketch_drawing)
+        self.assertEqual(self.switches(objects),before)
+
+
 class TestSketchCreationAndTaskTabs(unittest.TestCase):
     setUp = TestDesignInteractions.setUp
     tearDown = TestDesignInteractions.tearDown

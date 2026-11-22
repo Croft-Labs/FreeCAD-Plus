@@ -6,6 +6,13 @@ Implementation planning and acceptance are owned by the [Group 1 roadmap](../DEV
 
 ## Scope boundary: panel behavior and launched operations
 
+Owner-approved November 22, 2026: entering native sketch drawing/editing hides
+the component Coordinate System temporarily. History eyes reflect this display
+and remain usable. Exit restores saved visibility except for explicit eye choices,
+which retain native task transactions. Plane-selection visibility and Sketcher's
+own drawing axes remain available. See
+[sketch coordinate visibility](TASK_PANEL.md#sketch-coordinate-system-visibility--november-22-2026).
+
 Owner-approved November 22, 2026: entering part-feature creation/edit temporarily
 selects History. Finishing or cancelling restores the tab selected before the task,
 including Models, Part Tree or History. New Sketch placement-to-drawing is one

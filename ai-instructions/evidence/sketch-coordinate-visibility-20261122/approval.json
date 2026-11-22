@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-22",
+  "request": "opening a sketch should hide the coordinate system",
+  "approval": "approved",
+  "authority": "User approval in the active chat after the direct native staged preview",
+  "preview_session": "02b185311425",
+  "preview_fingerprint": "e54250d2d7228dd8a68fe50a9b1847f88083ceff4d537568da2fbbdca1a2ae20",
+  "baseline": "baseline-8b71ea9c.png",
+  "candidate": "candidate-ffd07fd0.png",
+  "tool_approval_state_modified": false,
+  "scope": "Hide the native component coordinate system during sketch drawing/editing; preserve plane selection, Sketcher axes, other geometry, saved visibility and native eye transactions."
+}

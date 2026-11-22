@@ -1,5 +1,40 @@
 # FreeCAD Plus: Current work state
 
+## Sketch coordinate-system visibility — November 22, 2026
+
+The owner [approved the native preview](evidence/sketch-coordinate-visibility-20261122/approval.json)
+for hiding the Coordinate System when opening a sketch. New sketch drawing and
+existing sketch editing now hide the component Origin, axes and planes temporarily.
+New Sketch plane selection still shows planes; Sketcher's red/green drawing axes
+remain visible. Exit restores prior display. History eyes remain usable, and explicit
+eye choices retain native accept/abort/Undo semantics. Other geometry stays unchanged.
+
+The implementation masks native render switches rather than Visibility properties,
+keeping automatic hiding outside document transactions and saved files. It covers
+body-owned sketches, external source components, panel disposal and context/document
+closure. No C++ build, schema change or preference override was required.
+
+Three Python files were built and installed with matching source/build/app hashes
+and retained rollback copies: [manifest](evidence/sketch-coordinate-visibility-20261122/install-manifest.json).
+All **162 development-build tests** passed: [report](evidence/sketch-coordinate-visibility-20261122/build-regression.txt).
+The final installed suite also passed **162 tests**, with no failures/errors:
+[report](evidence/sketch-coordinate-visibility-20261122/regression.txt).
+
+Separate installed processes passed real rectangle drawing, saved geometry and
+constraint identity, coordinate hiding/restoration, History tab restoration, and
+reopening an existing sketch: [GUI check](evidence/sketch-coordinate-visibility-20261122/visual.json),
+[reopen check](evidence/sketch-coordinate-visibility-20261122/reopen.json).
+Reviewed native screenshots: [plane selection](evidence/sketch-coordinate-visibility-20261122/installed-placement.png),
+[drawing](evidence/sketch-coordinate-visibility-20261122/installed-drawing.png),
+[after exit](evidence/sketch-coordinate-visibility-20261122/installed-after.png).
+
+The existing desktop shortcut was restarted and verified against the installed
+payload with isolated user/system/data settings, without using the owner profile:
+[launch check](evidence/sketch-coordinate-visibility-20261122/shortcut.json).
+The restarted app remains open. Rollback copies and its isolated profile are retained
+under runtime validation/sketch-coordinate-visibility-20261122; disposable test
+fixtures and inactive validation profiles were removed after acceptance.
+
 ## Sketch dimensions and feature-task History — November 22, 2026
 
 The owner [approved both changes](evidence/sketch-task-behavior-20261122/approval.json)

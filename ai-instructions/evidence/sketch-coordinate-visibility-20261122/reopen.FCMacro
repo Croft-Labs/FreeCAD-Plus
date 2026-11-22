@@ -1,0 +1,30 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtTest
+from freecad_plus import document,panel,editing
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        expected=json.loads((out/'expected.json').read_text())
+        doc=document.open_document(out/'Rectangle.cadprt');sketch=doc.getObject(expected['sketch'])
+        assert sketch.ID==expected['identity'] and sketch.GeometryCount==4
+        assert [c.Type for c in sketch.Constraints]==expected['types']
+        owner=document.validate(doc).Definitions[0];frame=[owner.Origin,*owner.Origin.OriginFeatures]
+        assert {o.Name:bool(o.Visibility) for o in frame}==expected['coordinates']
+        editing.edit((document.validate(doc).Group[0],));dock=panel.show_panel();dock.tabs.setCurrentIndex(0)
+        editing.edit_feature(doc,sketch);QtTest.QTest.qWait(200);assert dock.tabs.currentIndex()==2
+        assert all(o.ViewObject.SwitchNode.whichChild.getValue()==-1 for o in frame)
+        Gui.runCommand('Sketcher_LeaveSketch');App.closeActiveTransaction();QtTest.QTest.qWait(200)
+        assert dock.tabs.currentIndex()==0 and [c.Type for c in sketch.Constraints]==expected['types']
+        assert {o.Name:bool(o.Visibility) for o in frame}==expected['coordinates']
+        assert {o.Name:o.ViewObject.SwitchNode.whichChild.getValue() for o in frame}==expected['switches']
+        result.update(ok=True,saved_geometry_and_constraints=True,existing_edit_tab_restored=True,
+                      saved_coordinate_visibility=True,existing_sketch_hides_and_restores_coordinates=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'reopen.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

@@ -8,6 +8,25 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Coordinate display during sketch drawing — November 22, 2026
+
+ComponentPanel creates a sketch_visibility.Drawing scope on native sketch entry
+for the resolved Plus component, including sketches inside native Bodies or an
+external source. Placement selection retains its separate Planes scope. Drawing
+masks the component origin and its children (and enclosing Body origins) through
+their native Coin SwitchNode, without changing Visibility properties. This keeps
+the automatic mask outside file serialization and Sketcher's open transactions;
+NoModify alone would still record property changes in an already open transaction.
+
+History computes effective eye state through that mask. An explicit eye restores
+render switches, changes native Visibility through the existing shared transaction
+helper, and removes the affected routes from the mask. Accept, abort and Undo/Redo
+therefore retain native property semantics. Refresh reapplies the remaining mask
+after native display updates. Sketch exit, component/view changes, document closure
+and panel disposal restore the remaining render nodes. Saved hidden flags are never
+revealed on exit. Other geometry and Sketcher's drawing axes are unaffected. Classic
+documents retain their native behavior. No schema, preference or C++ change is needed.
+
 ## Sketch input and feature-task tabs — November 22, 2026
 
 QuantitySpinBox drains pending programmatic notifications while signals are blocked,

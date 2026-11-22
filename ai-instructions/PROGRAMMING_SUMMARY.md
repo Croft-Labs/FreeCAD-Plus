@@ -1,5 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest sketch coordinate visibility — November 22, 2026
+
+The approved change is installed: entering new or existing sketch drawing hides
+the component Coordinate System temporarily. Plane selection still shows planes;
+Sketcher's axes and other geometry remain visible as before. History eyes remain
+usable, and exit restores prior display with native semantics for explicit choices.
+Automatic hiding changes no saved visibility or transaction data. All 162 tests
+passed in both build and installed payloads; separate drawing/save-reopen checks
+and the existing shortcut restart passed with isolated settings. See
+[acceptance](WORK_STATE.md#sketch-coordinate-system-visibility--november-22-2026).
+
 ## Latest sketch/task update — November 22, 2026
 
 Approved changes are installed: mouse-only sketch creation adds no unsolicited

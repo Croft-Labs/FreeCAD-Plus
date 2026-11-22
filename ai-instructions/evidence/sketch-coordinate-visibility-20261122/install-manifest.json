@@ -1,0 +1,26 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestDesignInteractions.py",
+    "source_sha256": "22bd89819309a2e7cdfbef5a1481dac5de1cbb6675210fd0a8ede9337c0d0848",
+    "built_sha256": "22bd89819309a2e7cdfbef5a1481dac5de1cbb6675210fd0a8ede9337c0d0848",
+    "installed_sha256": "22bd89819309a2e7cdfbef5a1481dac5de1cbb6675210fd0a8ede9337c0d0848",
+    "previous_sha256": "d986d1410b310b19ead6d5ed51633ea45a696f2c8e6c28f0210090233c552a8d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-coordinate-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\TestDesignInteractions.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source_sha256": "d2299821e815d98f17ce9450342c06a14b54ec0187202d037a46506c80247820",
+    "built_sha256": "d2299821e815d98f17ce9450342c06a14b54ec0187202d037a46506c80247820",
+    "installed_sha256": "d2299821e815d98f17ce9450342c06a14b54ec0187202d037a46506c80247820",
+    "previous_sha256": "0377669f9eb5354fb393e2e3fc5926655b92586fbdcf7f9b783b9ebc84bef186",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-coordinate-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_visibility.py",
+    "source_sha256": "da9c575e5445340d7ac1d7db5cd0c6f4b53933da536e2b0c4c17bfca66f1c8d4",
+    "built_sha256": "da9c575e5445340d7ac1d7db5cd0c6f4b53933da536e2b0c4c17bfca66f1c8d4",
+    "installed_sha256": "da9c575e5445340d7ac1d7db5cd0c6f4b53933da536e2b0c4c17bfca66f1c8d4",
+    "previous_sha256": "35deca28484e030005a602e07e834fc1808c116e957ae91081e43a58db0f1eaf",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-coordinate-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_visibility.py"
+  }
+]

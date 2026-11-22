@@ -1,0 +1,63 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtGui,QtTest
+from freecad_plus import document,panel,sketch_task
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.resize(1300,900);win.show();win.raise_();win.activateWindow()
+        QtWidgets.QApplication.setActiveWindow(win);Gui.activateWorkbench('SketcherWorkbench')
+        doc=document.new_document('Rectangle');owner=document.validate(doc).Definitions[0];owner.Label='Example component'
+        dock=panel.show_panel();dock.refresh();dock.tabs.setCurrentIndex(1)
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewTop()
+        view.getCameraNode().height.setValue(65)
+        frame=[owner.Origin,*owner.Origin.OriginFeatures]
+        saved={o.Name:bool(o.Visibility) for o in frame}
+        switches={o.Name:o.ViewObject.SwitchNode.whichChild.getValue() for o in frame}
+        def capture(name):
+            dock.refresh();QtTest.QTest.qWait(250)
+            assert win.screen().grabWindow(int(win.winId())).save(str(out/('installed-'+name+'.png')))
+        capture('before')
+        task=sketch_task.show();task.choose('XY Plane');QtTest.QTest.qWait(150)
+        assert dock.tabs.currentIndex()==2
+        capture('placement')
+        assert all(o.ViewObject.isVisible() for o in frame if o.TypeId=='App::Plane')
+        assert task.accept(),task.status.text();QtTest.QTest.qWait(400)
+        sketch=task.result;assert dock.tabs.currentIndex()==2
+        view=Gui.activeDocument().activeView();view.viewTop();view.getCameraNode().height.setValue(65)
+        widget=view.graphicsView().viewport()
+        Gui.runCommand('Sketcher_CreateRectangle');QtTest.QTest.qWait(150)
+        for x,y in [(-16,-9),(14,11)]:
+            ratio=widget.devicePixelRatioF();p=view.getPointOnScreen(App.Vector(x,y,0))
+            pos=QtCore.QPoint(round(p[0]/ratio),widget.height()-1-round(p[1]/ratio))
+            event=QtGui.QMouseEvent(QtCore.QEvent.MouseMove,QtCore.QPointF(pos),QtCore.QPointF(widget.mapToGlobal(pos)),QtCore.Qt.NoButton,QtCore.Qt.NoButton,QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(widget,event);QtTest.QTest.qWait(150)
+            QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pos);QtTest.QTest.qWait(150)
+        QtTest.QTest.keyClick(widget,QtCore.Qt.Key_Escape);QtTest.QTest.qWait(200)
+        types=[c.Type for c in sketch.Constraints]
+        assert sketch.GeometryCount==4 and sorted(types)==sorted(['Coincident']*4+['Horizontal']*2+['Vertical']*2),types
+        assert dock.tabs.currentIndex()==2
+        assert all(o.ViewObject.SwitchNode.whichChild.getValue()==-1 for o in frame)
+        assert all(not panel.history_visible(owner,o) for o in frame)
+        assert {o.Name:bool(o.Visibility) for o in frame}==saved
+        capture('drawing')
+        Gui.runCommand('Sketcher_LeaveSketch');App.closeActiveTransaction();doc.recompute();QtTest.QTest.qWait(200)
+        assert dock.tabs.currentIndex()==1;assert sketch.GeometryCount==4
+        assert {o.Name:o.ViewObject.SwitchNode.whichChild.getValue() for o in frame}==switches
+        capture('after')
+        document.save_document(doc,out/'Rectangle.cadprt')
+        expected=dict(sketch=sketch.Name,identity=sketch.ID,types=types,coordinates=saved,switches=switches)
+        (out/'expected.json').write_text(json.dumps(expected))
+        result.update(ok=True,real_rectangle_clicks=True,no_automatic_dimensions=True,geometric_constraints=types,
+            history_in_placement_and_drawing=True,previous_tab_restored=True,module=panel.__file__,
+            coordinates_hidden_while_drawing=True,coordinate_properties_preserved=True,coordinates_restored=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    if Gui.activeDocument() and Gui.activeDocument().getInEdit():Gui.activeDocument().resetEdit()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

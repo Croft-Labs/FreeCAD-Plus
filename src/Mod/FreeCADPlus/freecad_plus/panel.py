@@ -114,7 +114,9 @@ def projection(doc, active=None, active_path=()):
 def history_visible(definition, obj):
     """Visibility within the component, independent of catalog/occurrence hiding."""
     route = document.owned_path(definition, obj)
-    return route is not None and all(member.Visibility for member in route)
+    drawing = _panel._sketch_drawing if _panel is not None else None
+    return route is not None and all(member.Visibility and not (
+        drawing is not None and drawing.definition == definition and drawing.hides(member)) for member in route)
 
 
 def aggregate_visibility(states):
@@ -212,6 +214,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._clipboard = ()
         self._history_eyes = False
         self._feature_scope = None
+        self._sketch_drawing = None
         self.refresh_count = 0
         self.tabs = QtWidgets.QTabWidget()
         self.trees = []
@@ -313,6 +316,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         elif extrude is not None:
             extrude.presentation.toggle_many(routes, shown, row.label)
             extrude.refresh_visibility()
+        elif self._sketch_drawing is not None:
+            self._sketch_drawing.toggle_many(routes, shown, row.label)
         else:
             with document.visibility_transaction(obj.Document, ('Show ' if shown else 'Hide ') + row.label):
                 change()
@@ -440,15 +445,44 @@ class ComponentPanel(QtWidgets.QDockWidget):
             self.tabs.setCurrentIndex(previous)
 
     def _sync_feature_scope(self, current):
+        if self._sketch_drawing is not None:
+            drawing = self._sketch_drawing
+            try:
+                matches = (current == drawing.binding and
+                           self._context(*current)[0] == drawing.definition)
+            except (ValueError, RuntimeError, ReferenceError):
+                matches = False
+            if not matches:
+                self._restore_sketch_coordinates()
+            else:
+                drawing.apply()
         if self._feature_scope is not None and self._feature_scope[0] != current:
             self._restore_feature_tab()
+
+    def _restore_sketch_coordinates(self):
+        drawing = self._sketch_drawing
+        self._sketch_drawing = None
+        if drawing is not None:
+            drawing.restore()
 
     def slotInEdit(self, view):
         if view.Object.isDerivedFrom('Part::Feature'):
             self.begin_feature_task(view.Object)
+        current = self._current()
+        if current is not None and view.Object.isDerivedFrom('Sketcher::SketchObject'):
+            try:
+                definition, _ = self._context(*current)
+                if definition is not None and document.owned_path(definition, view.Object) is not None:
+                    from .sketch_visibility import Drawing
+                    self._restore_sketch_coordinates()
+                    self._sketch_drawing = Drawing(definition, view.Object, current)
+            except (ValueError, RuntimeError, ReferenceError):
+                self._restore_sketch_coordinates()
         self.schedule()
 
     def slotResetEdit(self, view):
+        if self._sketch_drawing is not None and self._sketch_drawing.sketch == view.Object:
+            self._restore_sketch_coordinates()
         self.end_feature_task(view.Object)
         self.schedule()
 
@@ -471,6 +505,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def slotDeletedDocument(self, doc):
         owner = getattr(doc, 'Document', doc)
+        if self._sketch_drawing is not None and owner in (
+                self._sketch_drawing.binding[0], self._sketch_drawing.definition.Document):
+            self._restore_sketch_coordinates()
         if self._feature_scope is not None and self._feature_scope[0][0] == owner:
             self._restore_feature_tab()
         self._states = [(bound, state) for bound, state in self._states if bound[0] != owner]
@@ -1036,6 +1073,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def dispose(self):
         if self._closed:
             return
+        self._restore_sketch_coordinates()
         self._restore_feature_tab()
         from . import movement
         if movement._active is not None and movement._active.panel is self:

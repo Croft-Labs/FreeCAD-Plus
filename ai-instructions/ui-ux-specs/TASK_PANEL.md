@@ -4,6 +4,18 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Sketch coordinate-system visibility — November 22, 2026
+
+The owner requested "opening a sketch should hide the coordinate system" and
+approved the direct native preview. Entering new sketch drawing or editing an
+existing sketch temporarily hides the component Coordinate System: Origin point,
+X/Y/Z axes and XY/XZ/YZ planes. New Sketch plane selection still shows its planes.
+Sketcher's own red/green drawing axes remain visible. Leaving restores prior
+coordinate visibility, while explicit History eye choices retain native task and
+Undo semantics. Other geometry visibility is preserved. Automatic hiding must
+not change saved visibility, add document edits or persist through save/reopen.
+History eyes remain usable and reflect the current viewport display.
+
 ### Sketch dimensions and feature-task History — November 22, 2026
 
 Owner approval: "Approved, implement both changes: no automatic dimensions and

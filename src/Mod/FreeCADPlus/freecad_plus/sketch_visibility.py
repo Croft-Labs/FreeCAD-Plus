@@ -1,6 +1,63 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
-"""Scoped native origin visibility for sketch support selection."""
+"""Scoped native origin visibility for sketch support selection and drawing."""
 from . import document
+
+
+class Drawing:
+    """Mask coordinate render nodes without editing document properties.
+
+    Sketcher commits transactions while drawing. Keeping the mask in Coin,
+    outside those transactions and file serialization, preserves native Undo
+    and save behavior. Explicit History eyes still edit native Visibility.
+    """
+    def __init__(self, definition, sketch, binding):
+        self.definition = definition
+        self.sketch = sketch
+        self.binding = binding
+        origins = [definition.Origin]
+        for parent in document.owned_path(definition, sketch) or ():
+            if parent.TypeId == 'PartDesign::Body':
+                origins.append(parent.Origin)
+        objects = dict.fromkeys(obj for origin in origins for obj in [origin, *origin.OriginFeatures])
+        self.masked = {obj: (obj.ViewObject.SwitchNode,
+                            obj.ViewObject.SwitchNode.whichChild.getValue()) for obj in objects}
+        self.apply()
+
+    def hides(self, obj):
+        return obj in self.masked
+
+    def apply(self):
+        for obj, (node, saved) in tuple(self.masked.items()):
+            try:
+                current = node.whichChild.getValue()
+                # A native recompute/display refresh may rebuild its switch.
+                if current != -1:
+                    self.masked[obj] = (node, current)
+                node.whichChild = -1
+            except (ReferenceError, RuntimeError):
+                self.masked.pop(obj, None)
+
+    def restore(self):
+        for obj, (node, saved) in self.masked.items():
+            try:
+                node.whichChild = saved if obj.Visibility else -1
+            except (ReferenceError, RuntimeError, NameError):
+                pass  # Native document deletion can precede observer cleanup.
+
+    def toggle_many(self, routes, shown, label):
+        self.restore()
+        changed = tuple(dict.fromkeys(obj for route in routes
+                                     for obj in (route if shown else route[-1:])))
+        try:
+            if any(bool(obj.Visibility) != shown for obj in changed):
+                with document.visibility_transaction(changed[-1].Document,
+                                          ('Show ' if shown else 'Hide ') + label):
+                    for obj in changed:
+                        obj.Visibility = shown
+            for obj in changed:
+                self.masked.pop(obj, None)
+        finally:
+            self.apply()
 
 
 def temporary_visibility(obj, shown):
