@@ -4,6 +4,37 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Sketch offset and local axes proposal — November 21, 2026
+
+**Preview pending approval.** The owner noted that Create Sketch lacks Offset and
+asked how local X/Y/Z could stand out from coincident fundamental axes, suggesting
+orange and bold. The isolated native proposal adds **Offset** and **Reverse offset**
+under sketch support selection. Zero remains on the support; signed distance follows
+its unflipped normal. Flip normal changes orientation without moving the offset
+sketch plane. Numeric updates wait for focus leave, and automatic-off keeps the last
+preview. Creation and placement editing must eventually share the saved control.
+
+The proposed shared Plane/Sketch local indicator uses orange, thicker lines and
+larger bold X/Y/Z labels. Its arms are 1.4 times the previous length, separating
+local labels from fundamental labels when origins coincide. The preview draws the
+local indicator visibly over geometry; fundamental/global axes remain unchanged.
+This is a visual distinction, not a change to coordinate frames or geometry.
+
+Direct screenshots: [current Sketch](evidence/sketch-offset-20261121/before.png),
+[5 mm offset and orange axes](evidence/sketch-offset-20261121/proposal.png),
+[coincident-origin axes](evidence/sketch-offset-20261121/axes.png) and
+[reversed offset](evidence/sketch-offset-20261121/reverse.png).
+[Prototype checks](evidence/sketch-offset-20261121/prototype.json) passed for deferred
+updates, reverse offset, position-preserving normal flip, automatic-off, inherited
+plane frame and unchanged object inventory/Undo. OK is disabled in the candidate;
+production code, persistence and installed payload are unchanged.
+
+Session `3a22e0142561` supersedes unrendered `daeaead683ed` after the axes request.
+Seed `b423e491db3a5fac2d5f9d571c5f615f61f98bb6`; allowlist `ui/sketch_task.py`.
+Final inspected fingerprint:
+`cd97d1eb5894ba755d80faa829ef7cbb4827e5d2d4807ccf3c00e5d4b6098e4f`.
+Scope/capture checks passed; no tool approval state was changed.
+
 ### Idle task panel
 
 Before a document exists, show **New File** and **Open**. Dock Tasks at the right initially and preserve the user's later customized location. The DOCX's proposed actions after New File are retained below for confirmation. Do not derive additional idle actions from whichever commands the current build happens to display. [C06](EVIDENCE_AND_DECISIONS.md#c06)

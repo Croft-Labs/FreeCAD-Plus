@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\3a22e0142561\\candidate\\ui\\sketch_task.py",
+  "sha256": "66673c376c5f6f63922abb972508835c6b5f0f9d4000371e9bf833cf57dd178b",
+  "offset_commits_only_on_focus_leave": true,
+  "flip_normal_preserves_offset_position": true,
+  "reverse_offset_changes_side": true,
+  "automatic_off_keeps_last_preview": true,
+  "three_orange_local_axes_at_fundamental_origin": true,
+  "plane_frame_preserved_with_offset": true,
+  "no_model_or_undo_mutation": true
+}

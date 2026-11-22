@@ -1,5 +1,14 @@
 # FreeCAD Plus: Current work state
 
+## Sketch offset and orange axes preview — November 21, 2026
+
+The owner reported missing Sketch offset and overlapping local/fundamental axes.
+An isolated [native proposal](ui-ux-specs/TASK_PANEL.md#sketch-offset-and-local-axes-proposal--november-21-2026)
+adds Offset/Reverse offset and a thicker orange local indicator with larger bold
+labels and slightly longer arms. Numeric updates remain focus-leave; Flip normal
+does not move the offset plane. Prototype checks passed without model/Undo changes.
+Approval and production implementation are pending; installed workflows are unchanged.
+
 ## Plane guidance implementation — November 21, 2026
 
 Owner approval: “implement the concepts, do not copy over the code.” The current
