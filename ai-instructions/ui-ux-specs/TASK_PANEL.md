@@ -4,6 +4,36 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Sketch planes and History visibility proposal — November 22, 2026
+
+**Requested outcome; direct preview awaiting approval.** Owner: “automatically show
+the fundamental planes when creating a new sketch. also make it possible to hide
+and show objects in the history tab while doing so”.
+
+Proposed sequence: New Sketch shows the edited component's XY, XZ and YZ planes
+while choosing support. The existing fixed-left History eyes can hide/show model
+objects and individual planes without closing the task or changing support picks.
+Axes retain their existing visibility, and the task layout, native plane appearance,
+Origin grouping, preselection and numerical focus-leave behavior are preserved.
+Automatic plane visibility is temporary and restores when placement ends; explicit
+eye choices should retain normal user visibility semantics. Implementation must
+handle History visibility safely during native sketch drawing too, without breaking
+the sketch transaction or Cancel. This last phase is not validated by the prototype.
+
+Direct native simulation screenshots: [before](evidence/sketch-visibility-20261122/before.png),
+[planes shown](evidence/sketch-visibility-20261122/proposed.png),
+[solid and YZ plane hidden through History](evidence/sketch-visibility-20261122/hidden.png).
+No new controls are proposed. The isolated handler changes only disposable fixture
+visibility and restores it afterward; it is not production persistence integration.
+
+Companion session `e312b15f0ebe`, seed `13628139222557fb2255a66696293e00e8372623`,
+allowlist `ui/visibility_preview.py`, fingerprint
+`02b290a86faa425eba51f54ce8c8a489b1350bb3e6ba4c3e483e7d85d99d47fe`.
+Both sides use the installed native app corresponding to `74537162bf` and equivalent
+disposable fixtures. [Prototype checks](evidence/sketch-visibility-20261122/prototype-check.json)
+exercise actual eye clicks, hide/show, preserved task/support, restored visibility
+and unchanged object inventory/Undo. Production source and installed app are unchanged.
+
 ### Sketch offset and local axes proposal — November 21, 2026
 
 **Approved in chat and implemented.** The owner noted that Create Sketch lacks Offset and

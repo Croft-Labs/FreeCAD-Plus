@@ -1,5 +1,20 @@
 # FreeCAD Plus: Current work state
 
+## Sketch visibility preview — November 22, 2026
+
+The owner requested automatically visible fundamental planes during New Sketch and
+usable History visibility eyes while creating the sketch. Current History explicitly
+blocks eye actions whenever a task is open. An isolated native
+[proposal](ui-ux-specs/TASK_PANEL.md#sketch-planes-and-history-visibility-proposal--november-22-2026)
+shows XY/XZ/YZ on entry and demonstrates hiding/showing a solid and a plane through
+the existing left-margin eyes without closing placement or changing its support.
+Native fixture checks passed, restoring visibility and preserving object inventory
+and Undo. Direct screenshots await approval under the owner's preview-first rule.
+No application source or installed payload was changed. Production transaction,
+native drawing-phase visibility, external-source and lifecycle handling remain
+implementation work after approval. The unrelated `project.previewfirst.json`
+remains untracked and untouched.
+
 ## Extrude implementation — November 22, 2026
 
 Owner authorization: “make the operation a radio button option stacked vertically,
