@@ -687,10 +687,10 @@ void QuantitySpinBox::handlePendingEmit(bool updateUnit /* = true */)
     updateFromCache(true, updateUnit);
 }
 
-void QuantitySpinBox::updateFromCache(bool notify, bool updateUnit /* = true */)
+void QuantitySpinBox::updateFromCache(bool notify, bool updateUnit /* = true */, bool stepped /* = false */)
 {
     Q_D(QuantitySpinBox);
-    notify = notify && !hasFocus();
+    notify = notify && (!hasFocus() || stepped);
     if (d->pendingEmit) {
         double factor;
         const Base::Quantity& res = d->cached;
@@ -893,7 +893,8 @@ void QuantitySpinBox::stepBy(int steps)
 
     Quantity quant(val, d->unitStr.toStdString());
     updateText(quant);
-    updateFromCache(true);
+    // Spin buttons (including autorepeat) are explicit commits, unlike typing.
+    updateFromCache(true, true, true);
     update();
     selectNumber();
 }

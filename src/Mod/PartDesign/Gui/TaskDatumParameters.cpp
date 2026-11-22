@@ -30,6 +30,9 @@
 #include <App/Origin.h>
 #include <App/Part.h>
 #include <Gui/MainWindow.h>
+#include <Gui/Application.h>
+#include <Gui/Document.h>
+#include <Gui/ComponentModeling.h>
 #include <Gui/ViewProvider.h>
 #include <Gui/Selection/Selection.h>
 #include <Mod/Part/App/DatumFeature.h>
@@ -87,7 +90,15 @@ TaskDlgDatumParameters::~TaskDlgDatumParameters() = default;
 bool TaskDlgDatumParameters::reject()
 {
 
-    return PartGui::TaskDlgAttacher::reject();
+    // Component datums may be edited through an occurrence in another document.
+    // The attachment task owns rollback; close that exact native edit afterwards.
+    auto editDoc = Gui::isComponentModelingDocument(ViewProvider->getObject()->getDocument())
+        ? Gui::Application::Instance->editDocument() : nullptr;
+    bool rejected = PartGui::TaskDlgAttacher::reject();
+    if (rejected && editDoc) {
+        editDoc->resetEdit();
+    }
+    return rejected;
 }
 
 
@@ -186,6 +197,11 @@ bool TaskDlgDatumParameters::accept()
         }
     }
 
+    if (Gui::isComponentModelingDocument(pcDatum->getDocument())) {
+        if (auto editDoc = Gui::Application::Instance->editDocument()) {
+            editDoc->resetEdit();
+        }
+    }
     return true;
 }
 

@@ -8,6 +8,40 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Sketch visibility, Design actions and numeric commits — November 22, 2026
+
+`sketch_visibility.Planes` snapshots the edited definition's Origin/children,
+reveals XY/XZ/YZ and preserves effective axis visibility. Temporary view changes
+use the existing NoModify flag and occur outside the feature transaction. Restore
+runs before creating/editing the sketch and on Cancel, context change or deletion.
+An explicit eye change first restores saved values, makes a source-owned visibility
+transaction only if persistent values change, then reapplies remaining automatic
+visibility. This avoids empty active transactions and prevents temporary reveal
+from entering Undo history. Explicit choices update the saved baseline.
+
+History validates exact component/occurrence identity during placement. During
+native Sketcher editing it changes native visibility inside Sketcher's current
+transaction; it never commits or replaces that transaction. Projection remains
+available during drawing but does not override Sketcher's display state. Eye
+refresh blocks tree signals; the legacy file-origin checkbox handler ignores the
+eye column and component History. Other operation/context guards remain enforced.
+
+The native Design empty-selection watcher delegates component eligibility to
+`idle_tasks.py`: Plus task presentation, active editable component and no task or
+pending transaction. It offers the existing Sketch/Plane commands and registered
+Line/Point commands. These create native PartDesign datum features directly in the
+source definition, use `_enter_editor` for occurrence context and reuse native
+attachment tasks on edit. TaskDatumParameters resets the native editing document
+after accept/reject for component files, including external-source edit contexts.
+Ordinary documents retain their original lifecycle and idle watcher.
+
+Shared ordinary spin boxes use Qt keyboard tracking off, which defers typing but
+emits explicit steps. `DeferredNumber.stepBy` emits its commit signal on a changed
+value. Extrude consumes that sender while focused, without consuming another
+focused edit buffer. Native QuantitySpinBox's step path explicitly permits cached
+notification while focused; typed/expression parsing remains deferred. Manual
+preview flags and native validation/units/limits are preserved. No schema changes.
+
 ## Associative native sketch placement — November 21, 2026
 
 The approved offset extension adds hidden `App::PropertyDistance`
@@ -18,7 +52,7 @@ The solver applies signed offset along the support's unflipped normal after orig
 projection, before sketch normal reversal. Plane-frame inheritance and projected
 part-origin/X defaults remain associative, including after internal Body transfer.
 Nonfinite offsets are rejected before mutation. Task acceptance reads the current
-numeric buffer even with automatic preview off; preview updates still wait for blur.
+numeric buffer even with automatic preview off; typed preview updates still wait for blur; arrow steps update immediately.
 
 The shared Plane/Sketch local preview frame uses orange 5-pixel strokes, 20-point
 bold labels, 12.6-unit arms and labels at 14 units from the unchanged origin. Local
@@ -106,8 +140,8 @@ native datum command. UI layout follows the approved candidate; it is not a clai
 that the separate selected-History-plane New Sketch entry has been integrated.
 
 `numeric_fields.py` defers ordinary Qt integer/decimal editor value notifications
-until focus leave and treats Enter as leaving the field. Native QuantitySpinBox
-caches values without notifying focused consumers, including step changes.
+until focus leave and treats Enter as leaving the field; explicit spin steps notify
+immediately. Native QuantitySpinBox defers focused typed values but emits steps.
 Native InputField parses locally while focused, defers value notifications and
 bound-expression writes, and commits on focus leave. Move/Rotate no longer rebuild
 previews from textChanged or focused parse errors. New Plane retains a committed
@@ -147,8 +181,9 @@ are one transaction in the defining document. FreeCAD retains its normal Undo
 forwarding entry in an active assembly when the source is external.
 
 Eye and Space actions validate the exact current component/occurrence route and
-reject stale rows, active tasks/editors and pending operations before mutation.
-They preserve selection and do not open editors. The approved appearance/workflow
+reject stale rows and unrelated active tasks/editors or pending operations before
+mutation. The November 22 sketch placement/drawing exceptions and their transaction
+rules are specified above. They preserve selection and do not open editors. The approved appearance/workflow
 is owned by [the component specification](ui-ux-specs/COMPONENT_PANEL.md#history-and-legacy-files).
 
 ### Feature-centered Add/Subtract targets — November 21, 2026

@@ -220,11 +220,21 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.refresh()
 
     def toggle_history_visibility(self, row):
-        self._clipboard_guard()
-        if Gui.Control.activeDialog():
-            raise ValueError('Finish the current task first')
         doc, obj = self._checked(row)
-        definition, path = editing.context_path(doc)
+        definition, path = self._context(doc, self._binding[1])
+        from . import sketch_task
+        placement = sketch_task._active
+        if placement is not None:
+            placement.check()
+            if placement.doc != doc or placement.definition != definition:
+                raise ValueError('Use History for the component being edited')
+        native = Gui.getDocument(doc.Name).getInEdit()
+        drawing = (native is not None and native.Object.isDerivedFrom('Sketcher::SketchObject')
+                   and document.owned_path(definition, native.Object) is not None)
+        if placement is None and not drawing:
+            self._clipboard_guard()
+            if Gui.Control.activeDialog():
+                raise ValueError('Finish the current task first')
         route = document.owned_path(definition, obj)
         if row.kind != 'history' or not route:
             raise ValueError('Choose an item in the edited component History')
@@ -234,14 +244,39 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if row.selection != expected:
             raise ValueError('The edited component changed; select the item again')
         shown = not history_visible(definition, obj)
-        with document.transaction(obj.Document, ('Show ' if shown else 'Hide ') + obj.Label):
+        def change():
             if shown:
                 # Native Origin/Body containers must be visible for their child
                 # to draw. Never reveal the catalog definition or another occurrence.
                 for member in route[:-1]:
                     member.Visibility = True
             obj.Visibility = shown
+        if placement is not None:
+            placement.origin_visibility.toggle(route, shown)
+        elif drawing:
+            # Join native Sketcher's current transaction. Never commit or replace
+            # the operation merely to toggle a view property.
+            change()
+        else:
+            with document.transaction(obj.Document, ('Show ' if shown else 'Hide ') + obj.Label):
+                change()
+        self._refresh_history_eyes(definition)
         self.refresh()
+
+    def _refresh_history_eyes(self, definition):
+        # Native drawing keeps a transaction open: update only existing eye
+        # decorations, not the ownership tree while its graph is being edited.
+        blocker = QtCore.QSignalBlocker(self.trees[2])
+        for item in self._maps[2].values():
+            row = item.data(0, _ROLE)
+            try:
+                shown = history_visible(definition, lookup(row.ref))
+            except (ValueError, RuntimeError, ReferenceError):
+                continue
+            item.setIcon(1, _eye_icon(shown, self.trees[2].palette().text().color()))
+            action = ('Hide ' if shown else 'Show ') + row.label
+            item.setToolTip(1, action)
+            item.setData(1, QtCore.Qt.AccessibleTextRole, action)
 
     def _toggle_history_eye(self, item):
         try:
@@ -256,7 +291,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 tree = self.trees[2]
                 item = tree.itemAt(event.pos())
                 if item and tree.columnAt(event.pos().x()) == 1:
-                    if event.type() == QtCore.QEvent.MouseButtonPress and event.button() == QtCore.Qt.LeftButton:
+                    if event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonDblClick) and event.button() == QtCore.Qt.LeftButton:
                         self._toggle_history_eye(item)
                     return True
         if self._history_eyes and watched == self.trees[2] and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
@@ -399,8 +434,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if self._closed:
             return
         current = self._current()
+        drawing = None
+        if current:
+            drawing = Gui.getDocument(current[0].Name).getInEdit()
+            drawing = drawing is not None and drawing.Object.isDerivedFrom('Sketcher::SketchObject')
         if current and any(d.HasPendingTransaction for d in App.listDocuments().values()):
-            return  # Commit/abort observer will schedule once the graph is complete.
+            if not drawing:
+                return  # Other native operations may have an incomplete ownership graph.
         self._binding = current
         try:
             if current is None:
@@ -455,7 +495,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                                         + '\nVisibility: ' + ('Shown' if shown else 'Hidden')
                                         + ('\nExcluded cannot be shown or used as geometry.' if effective == 'Excluded' else '')
                                         + ('\nAdd Reference Feature before using this geometry.' if part_type == 'Reference' else ''))
-            self._update_display_views()
+            if not drawing:
+                self._update_display_views()  # Sketcher owns its editing view overrides.
             self.refresh_count += 1
         except (ValueError, RuntimeError, ReferenceError) as error:
             self._message(str(error))
@@ -849,7 +890,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             del blocker
 
     def _visibility_changed(self, item, column):
-        if self._updating or self._closed:
+        if self._updating or self._closed or self._history_eyes or column != 0:
             return
         row = item.data(0, _ROLE)
         if row.visible is None:

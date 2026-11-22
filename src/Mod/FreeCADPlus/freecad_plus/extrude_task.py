@@ -282,7 +282,8 @@ class ExtrudeTask(QtCore.QObject):
     def commit_numbers(self):
         changed=False
         for field in self.numbers:
-            if field.hasFocus():continue
+            # A spin step commits its sender while focus remains in that field.
+            if field.hasFocus() and field is not self.sender():continue
             value=field.value()
             if self.values[field]!=value:self.values[field]=value;changed=True
         if changed:self.changed()

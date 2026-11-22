@@ -178,7 +178,7 @@ private:
     void validateInput() override;
     void updateText(const Base::Quantity&);
     void updateEdit(const QString& text);
-    void updateFromCache(bool notify, bool updateUnit = true);
+    void updateFromCache(bool notify, bool updateUnit = true, bool stepped = false);
     QString getUserString(const Base::Quantity& val, double& factor, QString& unitString) const;
     QString getUserString(const Base::Quantity& val) const;
     QSize sizeHintCalculator(int height) const;

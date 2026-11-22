@@ -2,17 +2,25 @@
 
 ## Current baseline
 
+November 22 approved Design interactions are installed: New Sketch automatically
+shows fundamental planes; History eyes remain usable during placement and native
+drawing; idle Design offers New Sketch, Datum Plane, Datum Line and Datum Point.
+Typed numeric values wait for field leave; arrow steps update immediately with
+focus retained, including native quantity editors. Line/Point reuse native tasks
+with component ownership. All 103 affected native checks and independent reopen/UI
+verification passed; see [acceptance](WORK_STATE.md#design-interaction-implementation--november-22-2026).
+
 November 22 approved Extrude is implemented and installed, including vertically
 stacked New Solid/Add/Subtract radio buttons. The shared creation/edit task uses
 explicit targets, sketch/curve/region picks, start/end references, independent
 sides, direction/taper and transient tool/result previews. Numerical recompute
-waits for field leave. Managed operations retain native feature identity and use
+waits for field leave for typed values; explicit arrow steps update immediately. Managed operations retain native feature identity and use
 internal Bodies. The native build, 90 installed checks, fresh-process persistence
 and actual GUI acceptance passed; see [acceptance and boundaries](WORK_STATE.md#extrude-implementation--november-22-2026).
 
 November 21 approved Sketch Offset/Reverse offset and orange local Plane/Sketch
 axes are implemented. Offset persists in the shared creation/editing task, follows
-the support normal and is unaffected by sketch normal reversal. Numeric previews
+the support normal and is unaffected by sketch normal reversal. Typed numeric previews
 still wait for field leave; older managed sketches default to zero. See
 [acceptance](WORK_STATE.md#sketch-offset-and-orange-axes-implementation--november-21-2026).
 

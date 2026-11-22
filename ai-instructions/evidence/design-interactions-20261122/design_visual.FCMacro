@@ -1,0 +1,74 @@
+import json,os,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,panel,sketch_task,extrusion,extrude_task,editing
+from TestDesignInteractions import arrow
+out=Path(os.environ['PLUS_TEST_DIR'])
+result={'ok':False,'installed_functionality':True}
+
+def wait():QtTest.QTest.qWait(250)
+def capture(name):
+    wait();window=Gui.getMainWindow()
+    assert window.screen().grabWindow(int(window.winId())).save(str(out/(name+'.png')))
+def eye(components,obj):
+    components.refresh();tree=components.trees[2];tree.expandAll();wait()
+    item=next(i for i in components._maps[2].values() if panel.lookup(i.data(0,panel._ROLE).ref)==obj)
+    tree.scrollToItem(item);wait()
+    pos=QtCore.QPoint(tree.columnViewportPosition(1)+tree.columnWidth(1)//2,tree.visualItemRect(item).center().y())
+    QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pos);wait()
+def action_boxes():
+    return [(w,[a.text().replace('&','') for a in w.actions()]) for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+            if w.isVisible() and 'TaskBox' in w.metaObject().className() and w.actions()]
+
+def run():
+    try:
+        window=Gui.getMainWindow();window.resize(1300,900);window.show();window.raise_();window.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('DesignInteractions');owner=document.validate(doc).Definitions[0];owner.Label='Mounting Plate'
+        components=panel.show_panel();components.tabs.setCurrentIndex(2);components.refresh();components.trees[2].expandAll()
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric()
+        Gui.Selection.clearSelection();wait();capture('installed-design-idle')
+        result['idle_actions']=[actions for _,actions in action_boxes()]
+        assert ['New Sketch','Datum Plane','Datum Line','Datum Point'] in result['idle_actions'],result['idle_actions']
+        assert not any('New Body' in actions for actions in result['idle_actions'])
+        Gui.Selection.addSelection(owner.Origin.OriginFeatures[0]);wait()
+        assert ['New Sketch','Datum Plane','Datum Line','Datum Point'] not in [actions for _,actions in action_boxes()]
+        Gui.Selection.clearSelection()
+        sketch=modeling.new_sketch(doc);points=[(-20,-12),(20,-12),(20,12),(-20,12)]
+        for i in range(4):
+            a,b=points[i],points[(i+1)%4];sketch.addGeometry(Part.LineSegment(App.Vector(*a,0),App.Vector(*b,0)),False)
+        doc.recompute();pad=modeling.extrude_new_solid(doc,sketch,6);pad.Label='Base pad'
+        for obj in owner.Origin.OriginFeatures:obj.Visibility=False
+        owner.Origin.Visibility=False
+        view.fitAll();view.getCameraNode().height.setValue(90)
+        Gui.runCommand('PartDesign_NewSketch');wait();task=sketch_task._active
+        assert task and all(panel.history_visible(owner,o) for o in owner.Origin.OriginFeatures if o.Role.endswith('_Plane'))
+        components.refresh();capture('installed-sketch-planes')
+        refs=list(task.refs);eye(components,pad)
+        yz=next(o for o in owner.Origin.OriginFeatures if o.Role=='YZ_Plane');eye(components,yz)
+        assert not pad.Visibility and not yz.Visibility and not task.closed and task.refs==refs
+        capture('installed-sketch-history-hidden')
+        eye(components,pad);eye(components,yz);task.reject()
+        profile=modeling.new_sketch(doc);profile.Label='Extrusion sketch';profile.Placement.Base.z=6
+        profile.addGeometry(Part.Circle(App.Vector(0,0,0),App.Vector(0,0,1),5),False);doc.recompute()
+        for obj in owner.Origin.OriginFeatures:obj.Visibility=False
+        owner.Origin.Visibility=False
+        feature=extrusion.save(doc,[(profile,'')],{},dict(extrusion.DEFAULTS))
+        task=editing.edit_feature(doc,feature);wait();QtWidgets.QApplication.setActiveWindow(window)
+        field=task.end1['length'];field.setFocus();field.selectAll();revision=task.revisions
+        QtTest.QTest.keyClicks(field,'12');wait()
+        assert field.hasFocus() and task.revisions==revision and task.values[field]==8
+        capture('installed-numeric-typing')
+        arrow(field,True);assert field.hasFocus() and task.values[field]==13 and abs(task.tool_shape.BoundBox.ZLength-13)<1e-7
+        capture('installed-numeric-arrow')
+        task.reject()
+        result.update(ok=True,selection_hides_idle=True,automatic_planes=True,history_hide_show=True,typing_deferred=True,arrow_immediate=True)
+    except BaseException:result['error']=traceback.format_exc()
+    finally:
+        for module in (sketch_task,extrude_task):
+            if module._active:module._active.reject()
+        (out/'design_visual.json').write_text(json.dumps(result,indent=2))
+        for name in list(App.listDocuments()):App.closeDocument(name)
+        QtCore.QTimer.singleShot(100,window.close)
+QtCore.QTimer.singleShot(2200,run)

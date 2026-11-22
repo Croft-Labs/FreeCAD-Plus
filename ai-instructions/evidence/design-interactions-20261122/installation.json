@@ -1,0 +1,57 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\InitGui.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\InitGui.py",
+    "sha256": "12ab2d94d030b6eaad0bd71dcaa9309a68719e0a9f0c2514624fe9b78fec8311"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestDesignInteractions.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestDesignInteractions.py",
+    "sha256": "922b002a7c6694e5a7b4f1da38149df0771a11cb2f849e57d772bef02d931b90"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\numeric_fields.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\numeric_fields.py",
+    "sha256": "945c8bf3fa3520604e0987662d6c67cd55e01ba83da6aa4ab0439d1761acfeec"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "sha256": "34f27dac895e1ab81e0b92e2a16f070b4529e9b26b226ba2e4d907a7be7636db"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "sha256": "5ac5a347f9855d3842a79e4ab62c33a96be0d98db3422f42927e5be1aafc6c33"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_task.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_task.py",
+    "sha256": "94c0c3fbbdc4fdcf4b57af328992f7810491b3420fbe7f5d04502d7db1ad99ed"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "sha256": "7ac2b2872d7758fe66606d6ed0f76fe83c42e569bdec14140bf34bdb8b51bafb"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\idle_tasks.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\idle_tasks.py",
+    "sha256": "e210eb628ce2b9be51a216b4d3164480639082b8a85c47a7eb093435f655b443"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_visibility.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_visibility.py",
+    "sha256": "94f1f873c5586a6f80a1e8023bf95ee707995f5fc78d52d5bc6d28e4782acebd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADGui.dll",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\bin\\FreeCADGui.dll",
+    "sha256": "0f0b9fec686017aeece1a147db2a8baa439488c7e75ff1664d0a6aee11bc16a0"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\PartDesign\\PartDesignGui.pyd",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\PartDesignGui.pyd",
+    "sha256": "bc31517f0c6ed06d81b6f3d4be4cd22afe67f9712a3f2be735846fb15b31ea08"
+  }
+]

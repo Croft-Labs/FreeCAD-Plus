@@ -6,7 +6,7 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ### Typed values versus arrow steps — November 22, 2026
 
-**Requested refinement; native interaction preview awaiting approval.** Owner:
+**Approved in chat November 22; implementation acceptance is recorded in WORK_STATE.** Owner:
 “while editing an extrude and any other feature, keep it such that editing the
 number value doesnt change the preview until the field is left. however, clicking
 the up and down arrows to adjust the length should update the preview immediately”.
@@ -25,21 +25,21 @@ and the [current delayed-arrow baseline](evidence/numeric-step-20261122/numeric-
 [Checks](evidence/numeric-step-20261122/prototype-check.json) exercise actual Qt
 up/down clicks, retained focus, deferred typing, no duplicate blur update, manual
 mode, and unchanged saved geometry/Undo. The temporary prototype step handler is
-not the shared implementation; native QuantitySpinBox and other feature editors
-still need implementation and verification after approval.
+not the shared implementation; production implementation and native editor verification are recorded in
+[acceptance](../WORK_STATE.md#design-interaction-implementation--november-22-2026).
 
 Companion session `bd29cb90beec`, seed `0bbb563eaa428cad592b86ea209bea6eb0793d12`,
 allowlist `ui/step_preview.py`, fingerprint
 `cedbece46e79b70c1f021f61cf36368073b38dfa7b14c45a5ce5d13fbc1763db`.
-No production source or installed payload changed. This joins the pending Design
-idle actions and sketch visibility previews below.
+The isolated prototype remains historical evidence; the owner subsequently approved
+production implementation together with the Design idle and sketch visibility changes.
 
 ### Design idle actions proposal — November 22, 2026
 
-**Requested outcome; direct preview awaiting approval.** Owner: “while in design
+**Approved in chat November 22; implementation acceptance is recorded in WORK_STATE.** Owner: “while in design
 mode and nothing is selected, the options in the task panel should be new sketch,
-Datum Plane, Datum Line, and Datum Point”. This extends the pending sketch visibility
-proposal below; it does not approve its implementation yet.
+Datum Plane, Datum Line, and Datum Point”. This is approved together with the sketch visibility
+proposal below and the numeric arrow-step refinement above.
 
 With an active editable component, no selection and no active operation, the Design
 task panel offers exactly **New Sketch**, **Datum Plane**, **Datum Line**, and
@@ -52,22 +52,23 @@ layouts are preserved. Datum Line/Point creation tasks are not redesigned here.
 Direct screenshots: [current idle panel](evidence/design-empty-20261122/before.png),
 [proposed four actions](evidence/design-empty-20261122/proposed.png).
 Native TaskWatcher prototype commands only record activation; actual creation,
-component ownership and transitions remain production work after approval.
+component ownership and transitions were subsequently implemented and verified;
+see [acceptance](../WORK_STATE.md#design-interaction-implementation--november-22-2026).
 [Fixture checks](evidence/design-empty-20261122/prototype-check.json) verified order,
 stub activation, selection/active-task guards and unchanged objects/Undo.
 
 Companion session `197361ac1c38`, seed `83398ae6271b74ccaecd0338a1c74cca0cba4a42`,
 allowlist `ui/empty_preview.py`, fingerprint
 `309d1ca9e3c8eb504bb6a4160de44cd23e96d9662dc6244343cb071d06b85a69`.
-Installed app and production application source remain unchanged.
+The isolated prototype remains historical evidence; production acceptance is separate.
 
 ### Sketch planes and History visibility proposal — November 22, 2026
 
-**Requested outcome; direct preview awaiting approval.** Owner: “automatically show
+**Approved in chat November 22; implementation acceptance is recorded in WORK_STATE.** Owner: “automatically show
 the fundamental planes when creating a new sketch. also make it possible to hide
 and show objects in the history tab while doing so”.
 
-Proposed sequence: New Sketch shows the edited component's XY, XZ and YZ planes
+Approved sequence: New Sketch shows the edited component's XY, XZ and YZ planes
 while choosing support. The existing fixed-left History eyes can hide/show model
 objects and individual planes without closing the task or changing support picks.
 Axes retain their existing visibility, and the task layout, native plane appearance,
@@ -89,7 +90,7 @@ allowlist `ui/visibility_preview.py`, fingerprint
 Both sides use the installed native app corresponding to `74537162bf` and equivalent
 disposable fixtures. [Prototype checks](evidence/sketch-visibility-20261122/prototype-check.json)
 exercise actual eye clicks, hide/show, preserved task/support, restored visibility
-and unchanged object inventory/Undo. Production source and installed app are unchanged.
+and unchanged object inventory/Undo. Production acceptance is recorded separately.
 
 ### Sketch offset and local axes proposal — November 21, 2026
 
@@ -787,7 +788,7 @@ The following source candidates are not instructions to implement. Exact values,
 
 ### Idle actions after New File
 
-**D2799 — Needs owner confirmation:** The Tasks pane offers New Sketch, Coordinate System, Datum Plane and Add Component.
+**D2799 — Superseded November 22, 2026:** The approved Design idle actions above are New Sketch, Datum Plane, Datum Line and Datum Point.
 
 ### Pipe
 

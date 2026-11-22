@@ -22,6 +22,7 @@
 
 
 #include <App/Document.h>
+#include <Base/Interpreter.h>
 #include <Gui/Application.h>
 #include <Gui/Command.h>
 #include <Gui/Control.h>
@@ -138,6 +139,34 @@ void Workbench::setupContextMenu(const char* recipient, Gui::MenuItem* item) con
         *item << "Separator";
     }
     Gui::StdWorkbench::setupContextMenu(recipient, item);
+}
+
+namespace {
+class ComponentStartWatcher : public Gui::TaskView::TaskWatcherCommandsEmptySelection
+{
+public:
+    ComponentStartWatcher(const char* commands[], const char* title, const char* icon, bool plus)
+        : TaskWatcherCommandsEmptySelection(commands, title, icon), plus(plus) {}
+
+    bool shouldShow() override
+    {
+        if (!TaskWatcherCommandsEmptySelection::shouldShow()) {
+            return false;
+        }
+        bool component = false;
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module module(PyImport_ImportModule("freecad_plus.idle_tasks"), true);
+            component = module.callMemberFunction("eligible", Py::Tuple()).isTrue();
+        }
+        catch (Py::Exception&) {
+            PyErr_Clear(); // An upstream-only installation retains its original watcher.
+        }
+        return plus == component;
+    }
+private:
+    bool plus;
+};
 }
 
 void Workbench::activated()
@@ -349,8 +378,13 @@ void Workbench::activated()
 
     const char* NoSel[] = {"PartDesign_Body", nullptr};
     Watcher.push_back(
-        new Gui::TaskView::TaskWatcherCommandsEmptySelection(NoSel, "Start Part", "Part_Box_Parametric")
+        new ComponentStartWatcher(NoSel, "Start Part", "Part_Box_Parametric", false)
     );
+
+    const char* componentStart[] = {"PartDesign_NewSketch", "PartDesign_Plane",
+                                    "FreeCADPlus_DatumLine", "FreeCADPlus_DatumPoint", nullptr};
+    Watcher.push_back(new ComponentStartWatcher(
+        componentStart, "Create Geometry", "Sketcher_NewSketch", true));
 
     const char* Faces[] = {
         "PartDesign_Fillet",

@@ -56,6 +56,12 @@ def buttons(layout, entries):
 class DeferredNumber(QtWidgets.QDoubleSpinBox):
     committed = QtCore.Signal()
 
+    def stepBy(self, steps):
+        before = self.value()
+        super().stepBy(steps)
+        if self.value() != before:
+            self.committed.emit()
+
     def focusOutEvent(self, event):
         super().focusOutEvent(event)
         self.committed.emit()

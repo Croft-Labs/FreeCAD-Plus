@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "installed_functionality": true,
+  "idle_actions": [
+    [
+      "New Sketch",
+      "Datum Plane",
+      "Datum Line",
+      "Datum Point"
+    ]
+  ],
+  "selection_hides_idle": true,
+  "automatic_planes": true,
+  "history_hide_show": true,
+  "typing_deferred": true,
+  "arrow_immediate": true
+}

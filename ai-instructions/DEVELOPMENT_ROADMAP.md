@@ -1,5 +1,18 @@
 # FreeCAD Plus: Development roadmap
 
+## Design interaction refinements — November 22, 2026
+
+- [x] Obtain approval of all three native previews in chat.
+- [x] Reveal fundamental sketch planes temporarily and allow History eyes during
+  placement/drawing, retaining explicit visibility choices and source ownership.
+- [x] Offer four idle actions and connect component-owned native Datum Line/Point
+  creation/editing without requiring a Body.
+- [x] Defer typed values while publishing numeric arrow steps immediately across
+  shared and native editors; preserve manual preview.
+- [x] Build, install, verify 103 affected native checks, fresh-process persistence,
+  actual UI screenshots and the desktop shortcut. See
+  [acceptance](WORK_STATE.md#design-interaction-implementation--november-22-2026).
+
 ## Sketch offset and local axes — November 21, 2026
 
 - [x] Render the isolated [Offset/orange-axis proposal](ui-ux-specs/TASK_PANEL.md#sketch-offset-and-local-axes-proposal--november-21-2026).

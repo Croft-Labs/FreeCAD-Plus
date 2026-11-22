@@ -127,6 +127,12 @@ Origin/Body parent semantics and defining-file Undo/Redo/save. File-level Histor
 retains its existing controls; coordinate graphics and initial visibility defaults
 are unchanged.
 
+November 22 refinement, approved in chat: History eyes remain usable during New
+Sketch placement and native sketch drawing. They preserve the selected support and
+active editor. Automatic fundamental-plane reveal is temporary; explicit visibility
+choices retain native persistence/Undo semantics. See the
+[Sketch visibility contract](TASK_PANEL.md#sketch-planes-and-history-visibility-proposal--november-22-2026).
+
 Approval: the owner said "approved. implement the history changes with the grouped
 origin, axes and planes, and the visibility eyes fixed to the left margin." in this
 chat on November 21. This approves the direct

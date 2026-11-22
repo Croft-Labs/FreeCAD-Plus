@@ -1,6 +1,60 @@
 # FreeCAD Plus: Current work state
 
+## Design interaction implementation — November 22, 2026
+
+The owner approved all three direct previews together: automatic sketch planes
+and History visibility, four Design task actions, and immediate numeric arrow
+updates. These changes are implemented in the installed development app.
+
+New Sketch temporarily reveals the edited component's XY/XZ/YZ planes. Automatic
+changes restore on completion, Cancel, context change and document close without
+creating objects, Undo records or a dirty document. Explicit History choices persist
+and remain undoable. History eyes work during placement and native sketch drawing;
+drawing changes join the existing sketch transaction without ending the editor.
+Source-owned visibility and the original occurrence context are preserved.
+
+With an editable component and no selection/operation, Design offers New Sketch,
+Datum Plane, Datum Line and Datum Point. Line/Point use their native attachment
+creation/editing tasks and belong directly to the component; no Body is introduced.
+Their native editors now close cleanly after acceptance or cancellation in component
+documents. Classic/native document watchers retain their existing behavior.
+
+Typing numeric values still waits for field leave. Ordinary Qt spin editors,
+shared Plane/Sketch/Extrude numeric controls and native QuantitySpinBox publish
+explicit arrow steps immediately while focused. A later blur does not repeat the
+same update. Automatic preview off remains manual; InputField expression handling
+is unchanged.
+
+The native rebuild succeeded. All **103 installed regression checks passed**:
+[report](evidence/design-interactions-20261122/design_regression.txt),
+[result](evidence/design-interactions-20261122/design_regression.json).
+Coverage includes geometry/targets, sketch preselection/placement, native drawing,
+local/external source ownership, datum create/edit/Cancel, visibility Undo/Redo,
+document cleanup, typed-versus-stepped values and manual preview.
+The [fresh-process check](evidence/design-interactions-20261122/design_reopen.json)
+passed for extrusion identity/dependents, external geometry, saved History visibility
+and component datum reopen/edit/Cancel.
+
+The [installed UI exercise](evidence/design-interactions-20261122/design_visual.json)
+verified the exact four idle links and selection guard, command-opened sketch planes,
+real History clicks and focused numeric steps. Inspected screenshots show
+[Design idle](evidence/design-interactions-20261122/installed-design-idle.png),
+[automatic planes](evidence/design-interactions-20261122/installed-sketch-planes.png),
+[History hiding](evidence/design-interactions-20261122/installed-sketch-history-hidden.png),
+[typed value](evidence/design-interactions-20261122/installed-numeric-typing.png), and
+[arrow-up preview](evidence/design-interactions-20261122/installed-numeric-arrow.png).
+These are working installed functionality, separate from the approved simulations.
+
+Eleven payload files were backed up, installed and hash-verified:
+[manifest](evidence/design-interactions-20261122/installation.json).
+The unchanged [desktop shortcut](evidence/design-interactions-20261122/shortcut.json)
+points to this payload. The user's owner profile and documents were not used by the
+isolated tests. Restart FreeCAD Plus to load the updated native libraries.
+The unrelated untracked `project.previewfirst.json` is preserved and excluded.
+
 ## Numeric arrow-step preview — November 22, 2026
+
+Historical preview record; subsequently approved and implemented above.
 
 The owner refined numerical preview timing across Extrude and other features:
 typing remains deferred until field leave, while spin-button Up/Down updates
@@ -18,6 +72,8 @@ not yet been received for the combined change.
 
 ## Design idle actions preview — November 22, 2026
 
+Historical preview record; subsequently approved and implemented above.
+
 The owner extended the pending sketch visibility work with four Design idle actions:
 New Sketch, Datum Plane, Datum Line, Datum Point. The native
 [proposal](ui-ux-specs/TASK_PANEL.md#design-idle-actions-proposal--november-22-2026)
@@ -28,6 +84,8 @@ preview and the previous sketch visibility preview await direct chat approval;
 production source, installed payload and unrelated work remain unchanged.
 
 ## Sketch visibility preview — November 22, 2026
+
+Historical preview record; subsequently approved and implemented above.
 
 The owner requested automatically visible fundamental planes during New Sketch and
 usable History visibility eyes while creating the sketch. Current History explicitly

@@ -2,5 +2,7 @@
 """Connect the three presentation choices to the normal application startup."""
 from freecad_plus import ui_modes
 from freecad_plus import numeric_fields
+from freecad_plus import idle_tasks
 numeric_fields.install()
+idle_tasks.install()
 ui_modes.install()

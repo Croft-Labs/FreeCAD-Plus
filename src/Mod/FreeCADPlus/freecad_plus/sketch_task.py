@@ -4,7 +4,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 import Part
 from PySide6 import QtCore, QtWidgets
-from . import plane_task, planes, sketch_placement, modeling
+from . import plane_task, planes, sketch_placement, modeling, sketch_visibility
 
 _active = None
 
@@ -14,6 +14,7 @@ class SketchPlacementTask(plane_task.PlaneTask):
     reference_guidance = False
 
     def __init__(self, feature=None):
+        self.origin_visibility = None
         super().__init__(feature)
         self.form.setWindowTitle('New Sketch')
         self.form.setWindowIcon(Gui.getIcon('Sketcher_NewSketch'))
@@ -21,6 +22,7 @@ class SketchPlacementTask(plane_task.PlaneTask):
         for widget in self.plane.findChildren(QtWidgets.QLabel):
             if widget.text() == 'Select defining geometry in the model or History.':
                 widget.setText('Choose a plane or planar face in the model or History.')
+        self.origin_visibility = sketch_visibility.Planes(self.definition)
 
     def title(self, ref):
         obj, sub = ref
@@ -73,6 +75,8 @@ class SketchPlacementTask(plane_task.PlaneTask):
             self.offset.interpretText()
             self.committed_offset = self.offset.value()
             self.placement()
+            # Automatic visibility must not enter the sketch's native transaction.
+            self.origin_visibility.restore()
             args = (self.refs, self.origin_refs, self.axis_refs,
                     'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked())
             if self.feature is not None:
@@ -94,6 +98,8 @@ class SketchPlacementTask(plane_task.PlaneTask):
         except Exception as exc:
             if transaction_id is not None:
                 App.closeActiveTransaction(True, transaction_id)
+            if not self.closed:
+                self.origin_visibility.apply()
             self.status.setText(str(exc))
             return False
 
@@ -106,6 +112,8 @@ class SketchPlacementTask(plane_task.PlaneTask):
 
     def reject(self):
         global _active
+        if self.origin_visibility is not None:
+            self.origin_visibility.restore()
         result = super().reject()
         if _active is self:
             _active = None
