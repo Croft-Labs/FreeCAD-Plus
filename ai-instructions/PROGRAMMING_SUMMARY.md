@@ -2,6 +2,13 @@
 
 ## Current baseline
 
+November 22 approved corrections are installed: rectangular Extrude previews no
+longer show diagonal rear-face shading, and new/existing component sketch editing
+preserves shown/hidden geometry, including native rendered LinkVisibility. The
+previous checks covered saved flags but missed this rendering distinction. All 107
+expanded native checks and independent GUI/save-reopen checks passed; see
+[acceptance](WORK_STATE.md#extrude-rendering-and-sketch-visibility-correction--november-22-2026).
+
 November 22 approved Design interactions are installed: New Sketch automatically
 shows fundamental planes; History eyes remain usable during placement and native
 drawing; idle Design offers New Sketch, Datum Plane, Datum Line and Datum Point.

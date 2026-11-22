@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "installed_functionality": true,
+  "placement_visibility": {
+    "Rectangle sketch": true,
+    "Rectangle extrude": true,
+    "Hidden reference sketch": false
+  },
+  "drawing_visibility": {
+    "Rectangle sketch": true,
+    "Rectangle extrude": true,
+    "Hidden reference sketch": false
+  },
+  "in_native_sketch_editor": true,
+  "drawing_link_visibility": {
+    "Rectangle part": true,
+    "Rectangle sketch": true,
+    "Rectangle extrude": true,
+    "Hidden reference sketch": true
+  },
+  "after_editor_visibility": {
+    "Rectangle sketch": true,
+    "Rectangle extrude": true,
+    "Hidden reference sketch": false
+  },
+  "proposed": true,
+  "rectangle_volume": 7680,
+  "preview_geometry_and_undo_unchanged": true
+}

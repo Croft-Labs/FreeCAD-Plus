@@ -1,5 +1,50 @@
 # FreeCAD Plus: Current work state
 
+## Extrude rendering and sketch visibility correction — November 22, 2026
+
+The owner reported triangular side shading in a rectangle extrusion preview and
+existing geometry disappearing on entering a subsequent sketch. Both reproduced
+in an isolated native fixture. After reviewing the two direct screenshots, the
+owner explicitly replied "Approve both corrections"; see
+[approval](evidence/render-visibility-fix-20261122/approval.json) and the
+[UI contract](ui-ux-specs/TASK_PANEL.md#extrude-rendering-and-sketch-visibility-correction--november-22-2026).
+
+Extrude now declares solid face winding/culling and uses sorted-triangle transparency
+for its preview. The diagonal rear-face artifacts are removed while geometry,
+controls, colors, material opacity and tool-overlay behavior remain unchanged.
+
+Native component sketch entry no longer automatically hides dependents or reveals
+supports/external geometry. The failure was in the definition's rendered
+LinkVisibility, despite unchanged feature Visibility flags and open History eyes.
+Both new and existing component sketches now preserve those states. No saved
+visibility-automation properties or preferences are rewritten. Ordinary documents
+retain native automation; native camera/editor behavior and History eye changes
+remain functional.
+
+The [native build](evidence/render-visibility-fix-20261122/native-build.log) and
+[final incremental build](evidence/render-visibility-fix-20261122/final-build.log)
+succeeded. The focused 12 cases passed, followed by all **107 installed regression
+checks**, zero failures/errors:
+[report](evidence/render-visibility-fix-20261122/render_fix_regression.txt).
+New coverage compares both saved and rendered visibility on features/containers,
+new/existing sketches, hidden support/external geometry, external source/host
+contexts, History changes, Undo and unchanged ordinary-document automation.
+
+The [installed GUI check](evidence/render-visibility-fix-20261122/render_fix_visual.json)
+verified the rectangle's unchanged volume/preview Undo and the prior visible sketch,
+visible solid and hidden reference through native drawing. Inspected captures:
+[corrected Extrude](evidence/render-visibility-fix-20261122/installed-extrude.png),
+[preserved sketch visibility](evidence/render-visibility-fix-20261122/installed-sketch.png).
+The [fresh-process check](evidence/render-visibility-fix-20261122/render_fix_reopen.json)
+passed for re-entered sketch visibility, persisted IDs, local/external extrusion
+geometry and dependents, History visibility and datum editing.
+
+Three payload files were backed up and installed with verified hashes:
+[manifest](evidence/render-visibility-fix-20261122/installation.json).
+The existing desktop shortcut still targets this app; owner profile/documents and
+the unrelated untracked `project.previewfirst.json` remain untouched. Restart the
+app to load the updated native Sketcher library.
+
 ## Design interaction implementation — November 22, 2026
 
 The owner approved all three direct previews together: automatic sketch planes

@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Extrude shading and sketch visibility correction — November 22, 2026
+
+- [x] Reproduce rectangular preview artifacts and hidden component rendering in
+  native sketch edit; deliver direct screenshots and obtain explicit approval.
+- [x] Correct solid preview winding/transparency without changing BRep geometry.
+- [x] Preserve existing geometry visibility in new/existing component sketches,
+  retaining hidden supports, explicit History changes and native document behavior.
+- [x] Build/install; verify 107 native cases, rendered and persisted visibility,
+  actual screenshots and independent reopen. See
+  [acceptance](WORK_STATE.md#extrude-rendering-and-sketch-visibility-correction--november-22-2026).
+
 ## Design interaction refinements — November 22, 2026
 
 - [x] Obtain approval of all three native previews in chat.

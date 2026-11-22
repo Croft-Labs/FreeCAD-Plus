@@ -1,0 +1,72 @@
+import hashlib,json,os,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,panel,sketch_task,extrusion,extrude_task
+output=Path(os.environ['PLUS_TEST_DIR'])/'installed-extrude-preview.png'
+result={'ok':False,'installed_functionality':True}
+restore=lambda:None
+
+def wait():QtTest.QTest.qWait(250)
+def capture(path):
+    wait();window=Gui.getMainWindow()
+    assert window.screen().grabWindow(int(window.winId())).save(str(path))
+def button(which):
+    wait();item=next(box.button(which) for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox) if box.isVisible() and box.button(which))
+    item.click();wait()
+def run():
+    global restore
+    try:
+        window=Gui.getMainWindow();window.resize(1300,900);window.show();window.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('RectanglePreview');owner=document.validate(doc).Definitions[0];owner.Label='Rectangle part'
+        sketch=modeling.new_sketch(doc);sketch.Label='Rectangle sketch'
+        points=[(-20,-12),(20,-12),(20,12),(-20,12)]
+        for i in range(4):
+            a,b=points[i],points[(i+1)%4];sketch.addGeometry(Part.LineSegment(App.Vector(*a,0),App.Vector(*b,0)),False)
+        doc.recompute();components=panel.show_panel();components.tabs.setCurrentIndex(2);components.refresh();components.trees[2].expandAll()
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll();view.getCameraNode().height.setValue(80)
+        ns={'PROPOSED':True}
+        Gui.Selection.addSelection(sketch);Gui.runCommand('PartDesign_Pad');wait();task=extrude_task._active
+        assert task and task.valid
+        ids={o.Name:o.ID for o in doc.Objects};undo=doc.UndoCount
+        capture(output)
+        assert task.tool_shape.isValid() and abs(task.tool_shape.Volume-40*24*8)<1e-6
+        task.reject();assert {o.Name:o.ID for o in doc.Objects}==ids and doc.UndoCount==undo
+        feature=extrusion.save(doc,[(sketch,'')],{},dict(extrusion.DEFAULTS));feature.Label='Rectangle extrude'
+        sketch.Visibility=True;feature.Visibility=True
+        # An unrelated hidden sketch must stay hidden alongside visible prior geometry.
+        hidden=modeling.new_sketch(doc);hidden.Label='Hidden reference sketch'
+        hidden.addGeometry(Part.Circle(App.Vector(35,0,0),App.Vector(0,0,1),3),False);hidden.Visibility=False
+        doc.recompute();Gui.Selection.clearSelection()
+        task=sketch_task.show();task.choose('XY Plane')
+        task.offset.setValue(8);task.numeric_left();wait()
+        result['placement_visibility']={o.Label:bool(o.Visibility) for o in (sketch,feature,hidden)}
+        button(QtWidgets.QDialogButtonBox.Ok)
+        result['drawing_visibility']={o.Label:bool(o.Visibility) for o in (sketch,feature,hidden)}
+        result['in_native_sketch_editor']=bool(Gui.activeDocument().getInEdit())
+        result['drawing_link_visibility']={o.Label:bool(o.ViewObject.LinkVisibility) for o in (owner,sketch,feature,hidden)}
+        if ns['PROPOSED']:
+            assert all(o.ViewObject.LinkVisibility for o in (sketch,feature))
+        view.viewAxonometric();view.getCameraNode().height.setValue(80);components.refresh();capture(str(output)+'.sketch.png')
+        if ns['PROPOSED']:
+            assert sketch.Visibility and feature.Visibility and not hidden.Visibility,result
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();wait()
+        result['after_editor_visibility']={o.Label:bool(o.Visibility) for o in (sketch,feature,hidden)}
+        target=task.result
+        document.save_document(doc,Path(os.environ['PLUS_TEST_DIR'])/'Visibility.cadprt')
+        (Path(os.environ['PLUS_TEST_DIR'])/'visibility_expected.json').write_text(json.dumps({
+            'definition':owner.Name,'target':target.Name,'ids':{o.Name:o.ID for o in doc.Objects},
+            'states':{o.Name:[bool(o.Visibility),bool(o.ViewObject.LinkVisibility)] for o in doc.Objects if o!=target}}))
+
+        result.update(ok=True,proposed=ns['PROPOSED'],rectangle_volume=40*24*8,preview_geometry_and_undo_unchanged=True)
+    except BaseException:result['error']=traceback.format_exc()
+    finally:
+        for module in (sketch_task,extrude_task):
+            if module._active:module._active.reject()
+        if Gui.activeDocument() and Gui.activeDocument().getInEdit():Gui.activeDocument().resetEdit()
+        if App.getActiveTransaction():App.closeActiveTransaction(True)
+        restore();(Path(os.environ['PLUS_TEST_DIR'])/'render_fix_visual.json').write_text(json.dumps(result,indent=2))
+        for name in list(App.listDocuments()):App.closeDocument(name)
+        QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

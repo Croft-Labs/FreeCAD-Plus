@@ -1,0 +1,17 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "sha256": "ec30ffbce8c66f579b92a94ceff62c24ea211501b1611e24ba68376e1d2aa36c"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestDesignInteractions.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestDesignInteractions.py",
+    "sha256": "b0cfc5ba3a1d4afd3eac785e3377ee01388ffb990e2f67eacb3a47f3a27f8a0c"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\SketcherGui.pyd",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\SketcherGui.pyd",
+    "sha256": "5f00dbb96b977ef946ecee8f5c7a720dd8500aba4219d6fb4fc0566abcf6e60d"
+  }
+]

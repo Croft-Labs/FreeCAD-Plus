@@ -52,6 +52,7 @@
 #include <Gui/BitmapFactory.h>
 #include <Gui/CommandT.h>
 #include <Gui/Control.h>
+#include <Gui/ComponentModeling.h>
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
 #include <Gui/MenuManager.h>
@@ -3538,11 +3539,11 @@ bool ViewProviderSketch::setEdit(int ModNum)
                     "ActiveSketch.ViewObject.TempoVis = tv\n"
                     "if ActiveSketch.ViewObject.EditingWorkbench:\n"
                     "  tv.activateWorkbench(ActiveSketch.ViewObject.EditingWorkbench)\n"
-                    "if ActiveSketch.ViewObject.HideDependent:\n"
+                    "if %5 and ActiveSketch.ViewObject.HideDependent:\n"
                     "  tv.hide(tv.get_all_dependent(%3, '%4'))\n"
-                    "if ActiveSketch.ViewObject.ShowSupport:\n"
+                    "if %5 and ActiveSketch.ViewObject.ShowSupport:\n"
                     "  tv.show([ref[0] for ref in ActiveSketch.AttachmentSupport if not (ref[0].isDerivedFrom(\"App::Plane\") or ref[0].isDerivedFrom(\"App::LocalCoordinateSystem\"))])\n"
-                    "if ActiveSketch.ViewObject.ShowLinks:\n"
+                    "if %5 and ActiveSketch.ViewObject.ShowLinks:\n"
                     "  tv.show([ref[0] for ref in ActiveSketch.ExternalGeometry])\n"
                     "tv.sketchClipPlane(ActiveSketch, ActiveSketch.ViewObject.SectionView)\n"
                     "tv.hide(ActiveSketch)\n"
@@ -3551,7 +3552,12 @@ bool ViewProviderSketch::setEdit(int ModNum)
                     .arg(QString::fromLatin1(getDocument()->getDocument()->getName()),
                          QString::fromLatin1(getSketchObject()->getNameInDocument()),
                          QString::fromLatin1(Gui::Command::getObjectCmd(editObj).c_str()),
-                         QString::fromLatin1(editSubName.c_str()));
+                         QString::fromLatin1(editSubName.c_str()),
+                         // Component History owns visibility. Keep native camera,
+                         // workbench and edited-sketch overlays, but do not hide
+                         // the component's links or reveal hidden supports.
+                         Gui::isComponentModelingDocument(getSketchObject()->getDocument())
+                             ? QStringLiteral("False") : QStringLiteral("True"));
             QByteArray cmdstr_bytearray = cmdstr.toLatin1();
             Gui::Command::runCommand(Gui::Command::Gui, cmdstr_bytearray);
         }

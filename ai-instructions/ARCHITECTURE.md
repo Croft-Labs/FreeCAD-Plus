@@ -8,6 +8,30 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Extrude rendering and native sketch visibility correction — November 22, 2026
+
+Extrude's transient indexed mesh declares counterclockwise winding and SOLID only
+for solid shapes, enabling back-face culling. A branch-local sorted-triangle blend
+policy prevents transparent rear triangles from contaminating front-face shading.
+Open reference faces remain two-sided. The through-model tool overlay, colors,
+opacity, profile highlight, unpickability and all BRep operations are unchanged.
+
+Native Sketcher previously called TempoVis to hide dependents and show support/
+external geometry. In a component occurrence this could disable the definition's
+`LinkVisibility` while every feature's saved `Visibility` and History eye remained
+shown. Tests of object visibility alone did not detect the missing viewport geometry.
+`ViewProviderSketch::setEdit` now skips those three automatic actions in component
+modeling documents. It does not change saved HideDependent/ShowSupport/ShowLinks
+properties or preferences. Camera, workbench, section-view choice and the native
+edited-sketch overlay remain under TempoVis. Ordinary documents keep their existing
+native automation. Both new-sketch and existing History/native entry paths share
+this native hook, including source definitions edited from another document.
+
+Acceptance compares persisted Visibility and rendered LinkVisibility on containers
+and features, plus actual native screenshots. Explicit History eye changes join the
+sketch transaction and remain after normal editor completion; Undo retains native
+transaction behavior. No schema or geometry changes are introduced.
+
 ## Sketch visibility, Design actions and numeric commits — November 22, 2026
 
 `sketch_visibility.Planes` snapshots the edited definition's Origin/children,

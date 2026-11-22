@@ -1,0 +1,39 @@
+import json,os,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,editing,idle_tasks
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench')
+        import TestExtrudeWorkflow,TestComponentPanel
+        TestExtrudeWorkflow.verify_fresh_process(out)
+        TestComponentPanel.verify_history_fresh_process(out)
+        doc=document.open_document(out/'design-external/Source.cadprt')
+        owner=document.validate(doc).Definitions[0]
+        datum=next(o for o in owner.Group if o.TypeId=='PartDesign::Line')
+        assert datum.getParentGeoFeatureGroup()==owner
+        assert not any(o.TypeId=='PartDesign::Body' for o in doc.Objects)
+        editing.edit((document.validate(doc).Group[0],))
+        editing.edit_feature(doc,datum);QtTest.QTest.qWait(200)
+        assert Gui.Control.activeDialog() and Gui.activeDocument().getInEdit().Object==datum
+        button=next(box.button(QtWidgets.QDialogButtonBox.Cancel) for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox) if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Cancel))
+        button.click();QtTest.QTest.qWait(100)
+        assert not Gui.activeDocument().getInEdit() and not App.getActiveTransaction()
+        App.closeDocument(doc.Name)
+        expected=json.loads((out/'visibility_expected.json').read_text())
+        doc=document.open_document(out/'Visibility.cadprt')
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        editing.edit((document.validate(doc).Group[0],))
+        target=doc.getObject(expected['target']);editing.edit_feature(doc,target);QtTest.QTest.qWait(200)
+        assert {o.Name:[bool(o.Visibility),bool(o.ViewObject.LinkVisibility)] for o in doc.Objects if o!=target}==expected['states']
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();QtTest.QTest.qWait(100)
+        assert {o.Name:[bool(o.Visibility),bool(o.ViewObject.LinkVisibility)] for o in doc.Objects if o!=target}==expected['states']
+        result.update(ok=True,extrude_identity_geometry_and_dependents=True,external_extrude_reopen=True,history_visibility_persistence=True,component_datum_reopen_edit_cancel=True,sketch_render_visibility_reopen=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'render_fix_reopen.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

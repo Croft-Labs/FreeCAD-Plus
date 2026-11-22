@@ -204,3 +204,69 @@ class TestDesignInteractions(unittest.TestCase):
                     if native:QtCore.QObject.disconnect(field,QtCore.SIGNAL('valueChanged(double)'),callback)
                     else:field.valueChanged.disconnect(callback)
         finally:form.close()
+    def render_visibility(self, objects):
+        # LinkVisibility controls the rendered occurrences independently of the
+        # persisted Visibility flags displayed by History.
+        return {obj.Name:(bool(obj.Visibility),bool(obj.ViewObject.LinkVisibility)) for obj in objects}
+
+    def test_new_sketch_preserves_existing_render_visibility(self):
+        profile=self.circle();solid=extrusion.save(self.doc,[(profile,'')],{},dict(extrusion.DEFAULTS))
+        profile.Visibility=True;solid.Visibility=True
+        hidden=self.circle();hidden.Visibility=False
+        old=list(self.doc.Objects);before=self.render_visibility(old)
+        task=sketch_task.show();task.choose('XY Plane');self.dialog(QtWidgets.QDialogButtonBox.Ok)
+        self.assertEqual(self.render_visibility(old),before)
+        self.assertTrue(Gui.activeDocument().getInEdit().Object==task.result)
+        self.assertTrue(task.result.ViewObject.HideDependent)  # No preference/property rewriting.
+        self.eye(solid);self.assertFalse(solid.Visibility)
+        self.assertTrue(self.owner.ViewObject.LinkVisibility)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+        expected=dict(before);expected[solid.Name]=(False,before[solid.Name][1])
+        self.assertEqual(self.render_visibility(old),expected)
+        self.doc.undo();settle();self.assertEqual(self.render_visibility(old),before)
+
+    def test_existing_sketch_preserves_hidden_support_links_and_visible_dependents(self):
+        support=self.owner.newObject('Part::Feature','HiddenSupport');support.Shape=Part.makeBox(12,12,2)
+        linked=self.owner.newObject('Part::Feature','HiddenReference');linked.Shape=Part.makeBox(2,2,2,App.Vector(20,0,0))
+        profile=self.circle();profile.AttachmentSupport=(support,['Face6']);profile.MapMode='FlatFace'
+        profile.addExternal(linked.Name,'Edge1');self.doc.recompute()
+        solid=extrusion.save(self.doc,[(profile,'')],{},dict(extrusion.DEFAULTS))
+        support.Visibility=False;linked.Visibility=False;solid.Visibility=True
+        old=[o for o in self.doc.Objects if o!=profile];before=self.render_visibility(old)
+        editing.edit_feature(self.doc,profile);settle()
+        self.assertEqual(self.render_visibility(old),before)
+        self.assertTrue(profile.ViewObject.ShowSupport);self.assertTrue(profile.ViewObject.ShowLinks)
+        self.eye(solid);self.assertFalse(solid.Visibility)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+        expected=dict(before);expected[solid.Name]=(False,before[solid.Name][1])
+        self.assertEqual(self.render_visibility(old),expected)
+
+    def test_external_sketch_preserves_source_and_host_render_visibility(self):
+        folder=Path(os.environ['PLUS_TEST_DIR'])/'sketch-visibility-external';folder.mkdir(exist_ok=True)
+        document.save_document(self.doc,folder/'Assembly.cadprt')
+        source=document.new_document('SketchVisibilitySource');owner=document.validate(source).Definitions[0]
+        document.save_document(source,folder/'Source.cadprt');external.import_file(self.doc,source)
+        App.setActiveDocument(self.doc.Name);editing.edit_unused(self.doc,owner);self.owner=owner
+        profile=self.circle();solid=extrusion.save(self.doc,[(profile,'')],{},dict(extrusion.DEFAULTS))
+        profile.Visibility=False;solid.Visibility=True
+        old=list(source.Objects);before=self.render_visibility(old);host_before=self.render_visibility(self.doc.Objects)
+        task=sketch_task.show();task.choose('XY Plane');self.dialog(QtWidgets.QDialogButtonBox.Ok)
+        self.assertEqual(self.render_visibility(old),before)
+        self.assertEqual(self.render_visibility(self.doc.Objects),host_before)
+        self.eye(solid);self.assertFalse(solid.Visibility);self.eye(solid);self.assertTrue(solid.Visibility)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+        self.assertEqual(self.render_visibility(old),before)
+        self.assertEqual(self.render_visibility(self.doc.Objects),host_before)
+
+    def test_classic_sketch_keeps_native_visibility_automation(self):
+        classic=App.newDocument('ClassicVisibility');body=classic.addObject('PartDesign::Body','Body')
+        sketch=body.newObject('Sketcher::SketchObject','Sketch')
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),3),False)
+        pad=body.newObject('PartDesign::Pad','Pad');pad.Profile=sketch;pad.Length=5;classic.recompute()
+        sketch.Visibility=False;pad.Visibility=True;settle()
+        before=self.render_visibility([body,pad])
+        Gui.activeDocument().setEdit(sketch.Name);settle()
+        self.assertTrue(sketch.ViewObject.HideDependent)
+        self.assertFalse(pad.Visibility)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+        self.assertEqual(self.render_visibility([body,pad]),before)

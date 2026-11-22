@@ -4,6 +4,29 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Extrude rendering and sketch visibility correction — November 22, 2026
+
+The owner reported diagonal artifacts in a rectangular Extrude preview and existing
+geometry disappearing when entering the next sketch. Owner direction: visible
+items must stay visible, and hidden items must stay hidden during sketch editing.
+Both corrections were previewed in native disposable fixtures and explicitly
+approved in chat: "Approve both corrections".
+
+Extrude keeps its existing colors, transparency, controls and operation behavior;
+its solid preview must shade faces consistently without diagonal triangle artifacts.
+Entering a component sketch editor preserves other geometry's visibility, including
+prior sketches, solids, supports and external geometry. Native editing graphics and
+camera behavior remain; History eyes continue to allow explicit changes. Temporary
+fundamental planes during placement retain the previously approved lifecycle.
+
+Direct native proposal: [clean extrusion](../evidence/render-visibility-fix-20261122/proposed-extrude.png),
+[preserved sketch visibility](../evidence/render-visibility-fix-20261122/proposed-sketch.png).
+Session `6701f7246f6c`, seed `988a72b88d2d9ac7a06c23b7ec83f508bcbc9e4d`,
+allowlist `ui/fixes.py`, fingerprint
+`3716426d3f9acdcae424a11acfdf14f7bc8e11418a1c7c276f3511096c95b927`.
+The proposal changed only a disposable native fixture; production acceptance is
+recorded in [WORK_STATE](../WORK_STATE.md#extrude-rendering-and-sketch-visibility-correction--november-22-2026).
+
 ### Typed values versus arrow steps — November 22, 2026
 
 **Approved in chat November 22; implementation acceptance is recorded in WORK_STATE.** Owner:

@@ -351,6 +351,14 @@ class ExtrudeTask(QtCore.QObject):
         branch=coin.SoSeparator()
         if top:
             depth=coin.SoDepthBuffer();depth.test=False;depth.write=False;branch.addChild(depth)
+        # Declare solid winding so rear triangles cannot bleed through front faces.
+        # Sort transparent triangles consistently, including the through-model tool overlay.
+        hints=coin.SoShapeHints();hints.vertexOrdering=coin.SoShapeHints.COUNTERCLOCKWISE
+        hints.shapeType=coin.SoShapeHints.SOLID if shape.Solids else coin.SoShapeHints.UNKNOWN_SHAPE_TYPE
+        branch.addChild(hints)
+        sorting=coin.SoTransparencyType()
+        sorting.value=coin.SoTransparencyType.SORTED_OBJECT_SORTED_TRIANGLE_BLEND
+        branch.addChild(sorting)
         material=coin.SoMaterial();material.diffuseColor=color;material.transparency=transparency;branch.addChild(material)
         vertices,faces=shape.tessellate(.2)
         coords=coin.SoCoordinate3();coords.point.setValues(0,len(vertices),[tuple(p) for p in vertices]);branch.addChild(coords)

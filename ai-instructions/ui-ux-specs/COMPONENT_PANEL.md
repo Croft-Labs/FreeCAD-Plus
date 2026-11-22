@@ -127,6 +127,12 @@ Origin/Body parent semantics and defining-file Undo/Redo/save. File-level Histor
 retains its existing controls; coordinate graphics and initial visibility defaults
 are unchanged.
 
+November 22 correction, explicitly approved after native previews: entering sketch
+editing must preserve the current shown/hidden state of other geometry, including
+linked component rendering. Native support/dependent visibility automation must
+not override History choices. See the
+[correction contract](TASK_PANEL.md#extrude-rendering-and-sketch-visibility-correction--november-22-2026).
+
 November 22 refinement, approved in chat: History eyes remain usable during New
 Sketch placement and native sketch drawing. They preserve the selected support and
 active editor. Automatic fundamental-plane reveal is temporary; explicit visibility
