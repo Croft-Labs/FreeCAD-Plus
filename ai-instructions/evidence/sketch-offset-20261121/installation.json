@@ -1,0 +1,22 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestSketchPlacement.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestSketchPlacement.py",
+    "sha256": "49c3d028c578d451e4d30218c300cc5a5b00adecb0a600f22ef12ad581bbfa32"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_placement.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_placement.py",
+    "sha256": "b2199c16a817b529cdff797e29228602f5a7c45bf7eb83763f0817c5536fdfb6"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "sha256": "13e4d47620398ae65b11a3e088c9750d9a72e105bc7be8a7202b0dd589f20ddb"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_task.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_task.py",
+    "sha256": "13f712d5c1958746129aa00fae020af53a6c0b9c5718b19b8832b411edcca365"
+  }
+]

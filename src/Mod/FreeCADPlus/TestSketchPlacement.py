@@ -114,6 +114,8 @@ class TestSketchPlacement(unittest.TestCase):
         self.assertEqual((len(self.doc.Objects), self.doc.UndoCount), (count, undo))
         task = sketch_task.show(); task.choose('XY Plane')
         QtTest.QTest.qWait(80)
+        task.automatic.setChecked(False)
+        task.offset.setFocus(); task.offset.selectAll(); QtTest.QTest.keyClicks(task.offset,'4')
         button = next(box.button(QtWidgets.QDialogButtonBox.Ok)
                       for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox)
                       if box.button(QtWidgets.QDialogButtonBox.Ok) and box.isVisible())
@@ -121,6 +123,8 @@ class TestSketchPlacement(unittest.TestCase):
         QtTest.QTest.qWait(150)
         self.assertTrue(task.closed)
         sketch = task.result
+        self.assertEqual(sketch.SketchPlaneOffset.Value,4)
+        self.assertAlmostEqual(sketch.Placement.Base.z,4)
         self.assertEqual(Gui.activeDocument().getInEdit().Object, sketch)
         sketch.addGeometry(Part.Circle(App.Vector(), App.Vector(0, 0, 1), 2), False)
         Gui.activeDocument().resetEdit(); App.closeActiveTransaction()
@@ -129,6 +133,7 @@ class TestSketchPlacement(unittest.TestCase):
         name = sketch.Name
         self.doc.undo(); self.assertIsNone(self.doc.getObject(name))
         self.doc.redo(); self.assertTrue(placement.is_managed(self.doc.getObject(name)))
+        self.assertEqual(self.doc.getObject(name).SketchPlaneOffset.Value,4)
 
     def test_attachment_editor_and_partdesign_entry_share_task(self):
         Gui.Selection.clearSelection()
@@ -209,10 +214,14 @@ class TestSketchPlacement(unittest.TestCase):
         sketch = placement.save(self.doc, [(support, '')])
         self.assertEqual(sketch.Document, source)
         task = sketch_task.show(sketch); task.flip.setChecked(True)
+        task.offset.setValue(3)
         self.assertTrue(task.accept())
         self.assertTrue(sketch.FlipNormal)
+        self.assertAlmostEqual(sketch.Placement.Base.z,10)
         source.undo(); source.recompute(); self.assertFalse(sketch.FlipNormal)
+        self.assertEqual(sketch.SketchPlaneOffset.Value,0)
         source.redo(); source.recompute(); self.assertTrue(sketch.FlipNormal)
+        self.assertEqual(sketch.SketchPlaneOffset.Value,3)
         self.assertEqual({o.Name: o.ID for o in self.doc.Objects}, assembly_ids)
         document.save_document(source); document.save_document(self.doc)
 
@@ -225,7 +234,7 @@ class TestSketchPlacement(unittest.TestCase):
         body.Placement = App.Placement(App.Vector(2, 0, 0), App.Rotation(App.Vector(0, 0, 1), 20))
         self.doc.recompute()
         support = planes.save(self.doc, [(self.xy, '')], 5)
-        sketch = placement.save(self.doc, [(support, '')])
+        sketch = placement.save(self.doc, [(support, '')], offset=-2)
         sketch.addGeometry(Part.Circle(App.Vector(2, 0, 0), App.Vector(0, 0, 1), 2), False)
         self.doc.recompute()
         expected = sketch.getGlobalPlacement()
@@ -236,13 +245,13 @@ class TestSketchPlacement(unittest.TestCase):
 
     def test_downstream_extrude_recompute_and_cycle_rejection(self):
         support = planes.save(self.doc, [(self.xy, '')], 5)
-        sketch = self.sketch([(support, '')])
+        sketch = placement.save(self.doc, [(support, '')], offset=2)
         sketch.addGeometry(Part.Circle(App.Vector(), App.Vector(0, 0, 1), 2), False)
         self.doc.recompute()
         pad = modeling.extrude_new_solid(self.doc, sketch, 10)
-        self.assertAlmostEqual(pad.Shape.BoundBox.ZMin, 5)
+        self.assertAlmostEqual(pad.Shape.BoundBox.ZMin, 7)
         support.Offset = 12; self.doc.recompute()
-        self.assertAlmostEqual(pad.Shape.BoundBox.ZMin, 12)
+        self.assertAlmostEqual(pad.Shape.BoundBox.ZMin, 14)
         with self.assertRaisesRegex(ValueError, 'downstream'):
             placement.save(self.doc, [(pad, 'Face1')], feature=sketch)
         task = sketch_task.show(sketch)
@@ -263,3 +272,75 @@ class TestSketchPlacement(unittest.TestCase):
         App.setActiveDocument(self.doc.Name)
         with self.assertRaises(ValueError):
             placement.save(self.doc, [(foreign, '')], feature=sketch)
+
+    def test_signed_offset_face_point_override_and_flip(self):
+        face = self.shape(Part.makePlane(20,30,App.Vector(8,9,6)))
+        point = self.shape(Part.Vertex(App.Vector(4,5,20)))
+        for offset in (0,5,-3):
+            for flipped in (False,True):
+                with self.subTest(offset=offset,flipped=flipped):
+                    result = placement.solve(self.owner,[(face,'Face1')],[(point,'Vertex1')],
+                                             flipped=flipped,offset=offset)
+                    self.assertTrue(result.Base.isEqual(App.Vector(4,5,6+offset),1e-7))
+                    self.assertAlmostEqual(result.Rotation.multVec(App.Vector(0,0,1)).z,-1 if flipped else 1)
+        before = (len(self.doc.Objects),self.doc.UndoCount)
+        for offset in (float('nan'),float('inf'),float('-inf')):
+            with self.assertRaisesRegex(ValueError,'finite'):
+                placement.save(self.doc,[(face,'Face1')],offset=offset)
+        self.assertEqual((len(self.doc.Objects),self.doc.UndoCount),before)
+
+    def test_offset_follows_rotated_plane_and_component(self):
+        support = self.owner.newObject('PartDesign::Plane','Support')
+        support.Placement = App.Placement(App.Vector(3,7,12),App.Rotation(App.Vector(1,2,3),43))
+        self.doc.recompute()
+        sketch = placement.save(self.doc,[(support,'')],offset=5)
+        for angle in (20,70):
+            self.owner.Placement = App.Placement(App.Vector(12,8,6),App.Rotation(App.Vector(1,2,1),angle))
+            support.Placement = App.Placement(App.Vector(2,9,11),App.Rotation(App.Vector(2,1,3),angle))
+            self.doc.recompute()
+            expected = support.getGlobalPlacement()
+            expected.Base += expected.Rotation.multVec(App.Vector(0,0,5))
+            self.assertTrue(sketch.getGlobalPlacement().isSame(expected,1e-7))
+
+    def test_offset_task_defers_typing_and_edits_same_sketch(self):
+        sketch = placement.save(self.doc,[(self.xy,'')],offset=2)
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),2),False)
+        self.doc.recompute()
+        identity, undo = sketch.ID,self.doc.UndoCount
+        task = sketch_task.show(sketch); QtTest.QTest.qWait(80)
+        self.assertFalse(task.offset.isHidden())
+        self.assertEqual(task.offset.value(),2)
+        task.offset.setFocus();task.offset.selectAll();revision=task.revisions
+        QtTest.QTest.keyClicks(task.offset,'5');QtTest.QTest.qWait(60)
+        self.assertEqual(task.revisions,revision)
+        task.references.setFocus();QtTest.QTest.qWait(60)
+        self.assertEqual(task.revisions,revision+1)
+        self.assertEqual(task.preview_offset,5)
+        task.reverse_offset();self.assertEqual(task.preview_offset,-5)
+        task.flip.click();self.assertAlmostEqual(task.placement().Base.z,-5)
+        task.reject()
+        self.assertEqual(sketch.SketchPlaneOffset.Value,2)
+        self.assertEqual(self.doc.UndoCount,undo)
+        task = sketch_task.show(sketch)
+        task.automatic.setChecked(False)
+        task.offset.setValue(-5);task.numeric_left()
+        self.assertEqual(task.preview_offset,2)
+        self.assertTrue(task.accept())
+        self.assertEqual((sketch.ID,sketch.GeometryCount),(identity,1))
+        self.assertEqual(sketch.SketchPlaneOffset.Value,-5)
+        self.doc.undo();self.doc.recompute();self.assertEqual(sketch.SketchPlaneOffset.Value,2)
+        self.doc.redo();self.doc.recompute();self.assertEqual(sketch.SketchPlaneOffset.Value,-5)
+        task=sketch_task.show(sketch);self.assertEqual(task.offset.value(),-5);task.reject()
+
+    def test_old_managed_sketch_defaults_without_migration_on_cancel(self):
+        sketch = self.sketch()
+        sketch.removeProperty('SketchPlaneOffset');sketch.touch();self.doc.recompute()
+        before = (tuple(sketch.PropertiesList),self.doc.UndoCount)
+        self.assertEqual(placement.saved_offset(sketch),0)
+        task=sketch_task.show(sketch);self.assertEqual(task.offset.value(),0)
+        task.offset.setValue(5);task.reject()
+        self.assertEqual((tuple(sketch.PropertiesList),self.doc.UndoCount),before)
+        task=sketch_task.show(sketch);task.offset.setValue(5);self.assertTrue(task.accept())
+        self.assertEqual(sketch.SketchPlaneOffset.Value,5)
+        self.doc.undo();self.doc.recompute();self.assertNotIn('SketchPlaneOffset',sketch.PropertiesList)
+        self.doc.redo();self.doc.recompute();self.assertEqual(sketch.SketchPlaneOffset.Value,5)

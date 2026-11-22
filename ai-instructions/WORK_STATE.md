@@ -1,5 +1,40 @@
 # FreeCAD Plus: Current work state
 
+## Sketch offset and orange axes implementation — November 21, 2026
+
+The owner approved the [direct preview](ui-ux-specs/TASK_PANEL.md#sketch-offset-and-local-axes-proposal--november-21-2026).
+New Sketch and placement editing now share saved Offset/Reverse offset controls.
+Signed offset follows the support's unflipped normal; Flip normal preserves position.
+Native drawing handoff remains intact. Older managed sketches use zero offset
+without property migration on open/Cancel. The shared Plane/Sketch preview uses
+the approved orange, thicker, longer local axes and larger bold labels, leaving
+fundamental/global axes unchanged. Numeric preview still commits only on focus leave.
+
+All 61 affected plane/numeric, feature-centered modeling and Sketch-placement
+checks passed in both the [development build](evidence/sketch-offset-20261121/build-check.txt)
+and [installed app](evidence/sketch-offset-20261121/sketch_offset_check.txt).
+This Python-only change required no C++ rebuild. Tests cover signed offsets,
+point-origin overrides, normal flips, rotated support/component transforms,
+internal Body transfer, native OK/drawing, shared editing, old-property compatibility,
+Cancel, Undo/Redo and nonfinite-input rejection before mutation.
+
+[Fresh-process reopen checks](evidence/sketch-offset-20261121/sketch_offset_reopen.json)
+verified saved offsets, downstream extrusion updates and identity, and populated
+edit tasks in local and external source files. The [installed GUI exercise](evidence/sketch-offset-20261121/sketch_offset_visual.json)
+verified deferred updates, automatic-off, Reverse offset, real creation/drawing,
+shared editing/Undo, and the common local-axis style in both tasks. Inspected
+[Sketch](evidence/sketch-offset-20261121/installed-sketch.png),
+[editing](evidence/sketch-offset-20261121/installed-sketch.png.edit.png) and
+[Plane](evidence/sketch-offset-20261121/installed-sketch.png.plane.png) captures match
+the approved appearance; [coincident axes](evidence/sketch-offset-20261121/installed-sketch.png.axes.png)
+were also captured.
+
+Four payload files were backed up and installed with verified source hashes:
+[manifest](evidence/sketch-offset-20261121/installation.json). The existing
+[desktop shortcut](evidence/sketch-offset-20261121/shortcut.json) still targets the
+development payload with its original working directory. Owner documents/profile
+were untouched; checks used isolated profiles and disposable documents.
+
 ## Sketch offset and orange axes preview — November 21, 2026
 
 The owner reported missing Sketch offset and overlapping local/fundamental axes.
@@ -7,7 +42,8 @@ An isolated [native proposal](ui-ux-specs/TASK_PANEL.md#sketch-offset-and-local-
 adds Offset/Reverse offset and a thicker orange local indicator with larger bold
 labels and slightly longer arms. Numeric updates remain focus-leave; Flip normal
 does not move the offset plane. Prototype checks passed without model/Undo changes.
-Approval and production implementation are pending; installed workflows are unchanged.
+The owner subsequently approved this proposal; implementation and installed
+acceptance are recorded above. The isolated candidate remains historical preview evidence.
 
 ## Plane guidance implementation — November 21, 2026
 

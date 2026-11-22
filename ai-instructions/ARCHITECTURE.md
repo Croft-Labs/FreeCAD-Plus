@@ -10,6 +10,23 @@ owns implementation order and acceptance status.
 
 ## Associative native sketch placement — November 21, 2026
 
+The approved offset extension adds hidden `App::PropertyDistance`
+`SketchPlaneOffset` to the existing version-1 sketch placement inputs. Missing
+properties evaluate as zero; opening/recomputing/Cancel does not add them. Creation
+or accepted placement editing adds the property in the existing native transaction.
+The solver applies signed offset along the support's unflipped normal after origin
+projection, before sketch normal reversal. Plane-frame inheritance and projected
+part-origin/X defaults remain associative, including after internal Body transfer.
+Nonfinite offsets are rejected before mutation. Task acceptance reads the current
+numeric buffer even with automatic preview off; preview updates still wait for blur.
+
+The shared Plane/Sketch local preview frame uses orange 5-pixel strokes, 20-point
+bold labels, 12.6-unit arms and labels at 14 units from the unchanged origin. Local
+frame branches bypass depth testing so they remain visible over coincident geometry.
+Only the transient unpickable Coin overlay changes; document/fundamental/global
+axis properties and placements are untouched. Scope and appearance follow the
+[approved proposal](ui-ux-specs/TASK_PANEL.md#sketch-offset-and-local-axes-proposal--november-21-2026).
+
 `sketch_placement.py` stores version-1 placement inputs on the original native
 `Sketcher::SketchObject`: `PlusSketchPlacementVersion`, `PlaneReferences`,
 `OriginPoint`, `AxisReferences`, `DefinedAxis` and `FlipNormal`. Reference properties

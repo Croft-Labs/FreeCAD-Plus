@@ -2,6 +2,12 @@
 
 ## Current baseline
 
+November 21 approved Sketch Offset/Reverse offset and orange local Plane/Sketch
+axes are implemented. Offset persists in the shared creation/editing task, follows
+the support normal and is unaffected by sketch normal reversal. Numeric previews
+still wait for field leave; older managed sketches default to zero. See
+[acceptance](WORK_STATE.md#sketch-offset-and-orange-axes-implementation--november-21-2026).
+
 November 21 archive-guided plane improvements implement the approved concepts
 afresh in current modules: next-pick guidance, numbered reference highlights,
 repeat-pick/Delete removal and saved independent axis reversal. Creation/editing

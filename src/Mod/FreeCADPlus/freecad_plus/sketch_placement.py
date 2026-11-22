@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Associative placement on native sketches; no auxiliary feature or Body."""
+import math
 import FreeCAD as App
 from . import document, planes
 
@@ -15,7 +16,15 @@ def plane_object(refs):
     return obj if planes.is_plane(obj) or obj.TypeId in ('App::Plane', 'PartDesign::Plane') else None
 
 
-def solve(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False):
+def saved_offset(feature):
+    """Version-1 sketches written before offset support remain on their support."""
+    return feature.SketchPlaneOffset.Value if 'SketchPlaneOffset' in feature.PropertiesList else 0.0
+
+
+def solve(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, offset=0):
+    offset = float(offset)
+    if not math.isfinite(offset):
+        raise ValueError('Offset must be finite')
     if len(refs) != 1 or planes.describe(definition, refs[0])[0] != 'plane':
         raise ValueError('Select one plane or planar face for the sketch.')
     support = plane_object(refs)
@@ -35,6 +44,10 @@ def solve(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=Fals
         if item[0] != 'point':
             raise ValueError('Origin accepts a point only')
         origin = item[1] - normal * (item[1] - origin).dot(normal)
+    # Displace along the support normal before optional sketch-normal reversal.
+    # Projecting an override onto the support and translating is equivalent to
+    # projecting it directly onto the parallel offset sketch plane.
+    origin = origin + normal * offset
     if axis not in ('X', 'Y'):
         raise ValueError('Choose X or Y')
     if axis_refs:
@@ -57,18 +70,21 @@ def solve(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=Fals
     return App.Placement(origin, App.Rotation(x, y, normal, 'ZXY'))
 
 
-def validate(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None):
+def validate(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None, offset=0):
     refs, origin_refs, axis_refs = [planes.canonical(definition, r) for r in (refs, origin_refs, axis_refs)]
     if feature is not None:
         if not feature.isDerivedFrom('Sketcher::SketchObject') or document.owned_path(definition, feature) is None:
             raise ValueError('Edit a sketch owned by this component')
         if any(obj == feature or obj in feature.InListRecursive for obj, _ in refs + origin_refs + axis_refs):
             raise ValueError('A sketch cannot depend on itself or a downstream feature')
-    solve(definition, refs, origin_refs, axis_refs, axis, flipped)
+    solve(definition, refs, origin_refs, axis_refs, axis, flipped, offset)
     return refs, origin_refs, axis_refs
 
 
-def configure(feature, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False):
+def configure(feature, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, offset=0):
+    offset = float(offset)
+    if not math.isfinite(offset):
+        raise ValueError('Offset must be finite')
     if not is_managed(feature):
         feature.addProperty('App::PropertyInteger', 'PlusSketchPlacementVersion', 'Sketch placement')
         for name in ('PlaneReferences', 'OriginPoint', 'AxisReferences'):
@@ -79,6 +95,10 @@ def configure(feature, refs, origin_refs=(), axis_refs=(), axis='X', flipped=Fal
                      'DefinedAxis', 'FlipNormal'):
             feature.setEditorMode(name, 2)
         feature.PlusSketchPlacementVersion = 1
+    if 'SketchPlaneOffset' not in feature.PropertiesList:
+        feature.addProperty('App::PropertyDistance', 'SketchPlaneOffset', 'Sketch placement')
+        feature.setEditorMode('SketchPlaneOffset', 2)
+    feature.SketchPlaneOffset = offset
     feature.MapMode = 'Deactivated'
     feature.AttachmentSupport = None
     feature.PlaneReferences = planes.links(refs)
@@ -101,7 +121,7 @@ def recompute(feature):
         raise ValueError('The sketch no longer belongs to a component')
     placement = solve(definition, planes.flatten(feature.PlaneReferences),
                       planes.flatten(feature.OriginPoint), planes.flatten(feature.AxisReferences),
-                      feature.DefinedAxis, feature.FlipNormal)
+                      feature.DefinedAxis, feature.FlipNormal, saved_offset(feature))
     # After Extrude, the native sketch belongs to its result Body. Store in that
     # frame while evaluating all defaults and references in component coordinates.
     placement = owner.getGlobalPlacement().inverse().multiply(definition.getGlobalPlacement()).multiply(placement)
@@ -109,14 +129,14 @@ def recompute(feature):
         feature.Placement = placement
 
 
-def save(doc, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None):
+def save(doc, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None, offset=0):
     from . import modeling
     definition, _ = modeling._context(doc)
-    refs, origin_refs, axis_refs = validate(definition, refs, origin_refs, axis_refs, axis, flipped, feature)
+    refs, origin_refs, axis_refs = validate(definition, refs, origin_refs, axis_refs, axis, flipped, feature, offset)
     with document.transaction(definition.Document, 'Edit sketch placement' if feature else 'Create sketch'):
         if feature is None:
             feature = definition.newObject('Sketcher::SketchObject', 'Sketch')
-        configure(feature, refs, origin_refs, axis_refs, axis, flipped)
+        configure(feature, refs, origin_refs, axis_refs, axis, flipped, offset)
         definition.Document.recompute()
         if 'Invalid' in feature.State:
             raise ValueError('The sketch could not be recomputed')

@@ -21,10 +21,6 @@ class SketchPlacementTask(plane_task.PlaneTask):
         for widget in self.plane.findChildren(QtWidgets.QLabel):
             if widget.text() == 'Select defining geometry in the model or History.':
                 widget.setText('Choose a plane or planar face in the model or History.')
-            if widget.text() == 'Offset': widget.hide()
-        self.offset.hide()
-        for button in self.plane.findChildren(QtWidgets.QPushButton):
-            if button.text() == 'Reverse offset': button.hide()
 
     def title(self, ref):
         obj, sub = ref
@@ -35,6 +31,8 @@ class SketchPlacementTask(plane_task.PlaneTask):
         self.refs = planes.flatten(feature.PlaneReferences)
         self.origin_refs = planes.flatten(feature.OriginPoint)
         self.axis_refs = planes.flatten(feature.AxisReferences)
+        self.committed_offset = sketch_placement.saved_offset(feature)
+        self.offset.setValue(self.committed_offset)
         self.y_choice.setChecked(feature.DefinedAxis == 'Y')
         self.flip.setChecked(feature.FlipNormal)
 
@@ -45,9 +43,9 @@ class SketchPlacementTask(plane_task.PlaneTask):
         self.check()
         axis = 'X' if self.x_choice.isChecked() else 'Y'
         sketch_placement.validate(self.definition, self.refs, self.origin_refs, self.axis_refs,
-                                  axis, self.flip.isChecked(), self.feature)
+                                  axis, self.flip.isChecked(), self.feature, self.committed_offset)
         return sketch_placement.solve(self.definition, self.refs, self.origin_refs, self.axis_refs,
-                                      axis, self.flip.isChecked())
+                                      axis, self.flip.isChecked(), self.committed_offset)
 
     def update(self, *args):
         super().update(*args)
@@ -59,6 +57,9 @@ class SketchPlacementTask(plane_task.PlaneTask):
                 self.origin_ref.setText(name+' origin' if support else 'Projected part origin')
                 self.origin_hint.setText("Using the selected plane's origin." if support else
                                          'Part origin projected onto the selected face.')
+                if self.committed_offset:
+                    self.origin_hint.setText('Using the selected plane frame with offset.' if support else
+                                             'Part origin projected onto the offset sketch plane.')
             if not self.axis_refs:
                 self.axis_ref.setText(name+' '+axis+' axis' if support else
                                       ('Projected part X' if axis=='X' else 'Y derived from projected part X'))
@@ -69,17 +70,19 @@ class SketchPlacementTask(plane_task.PlaneTask):
     def accept(self):
         transaction_id = None
         try:
+            self.offset.interpretText()
+            self.committed_offset = self.offset.value()
             self.placement()
             args = (self.refs, self.origin_refs, self.axis_refs,
                     'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked())
             if self.feature is not None:
-                self.result = sketch_placement.save(self.doc, *args, feature=self.feature)
+                self.result = sketch_placement.save(self.doc, *args, feature=self.feature, offset=self.committed_offset)
                 self.reject()
             else:
                 # Native drawing owns completion of the new-sketch transaction.
                 transaction_id = App.setActiveTransaction('Create a new sketch')
                 self.result = self.definition.newObject('Sketcher::SketchObject', 'Sketch')
-                sketch_placement.configure(self.result, *args)
+                sketch_placement.configure(self.result, *args, offset=self.committed_offset)
                 self.source_doc.recompute()
                 if 'Invalid' in self.result.State:
                     raise ValueError('The sketch could not be recomputed')

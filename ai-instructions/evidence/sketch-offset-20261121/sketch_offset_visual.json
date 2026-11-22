@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_task.py",
+  "sha256": "13f712d5c1958746129aa00fae020af53a6c0b9c5718b19b8832b411edcca365",
+  "offset_commits_only_on_focus_leave": true,
+  "flip_normal_preserves_offset_position": true,
+  "reverse_offset_changes_side": true,
+  "automatic_off_keeps_last_preview": true,
+  "three_orange_local_axes_at_fundamental_origin": true,
+  "plane_frame_preserved_with_offset": true,
+  "preview_no_model_or_undo_mutation": true,
+  "native_drawing_shared_edit_and_undo": true,
+  "plane_task_uses_same_local_axis_style": true
+}

@@ -3,8 +3,8 @@
 ## Sketch offset and local axes — November 21, 2026
 
 - [x] Render the isolated [Offset/orange-axis proposal](ui-ux-specs/TASK_PANEL.md#sketch-offset-and-local-axes-proposal--november-21-2026).
-- [ ] Obtain owner approval before changing the installed workflow.
-- [ ] Implement shared create/edit offset persistence and the approved local-axis
+- [x] Obtain owner approval before changing the installed workflow.
+- [x] Implement shared create/edit offset persistence and the approved local-axis
   style; verify support updates, transformed components, Cancel, Undo and reopen.
 
 ## Archive-guided plane improvements — November 21, 2026

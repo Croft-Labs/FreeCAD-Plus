@@ -6,13 +6,13 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ### Sketch offset and local axes proposal — November 21, 2026
 
-**Preview pending approval.** The owner noted that Create Sketch lacks Offset and
+**Approved in chat and implemented.** The owner noted that Create Sketch lacks Offset and
 asked how local X/Y/Z could stand out from coincident fundamental axes, suggesting
 orange and bold. The isolated native proposal adds **Offset** and **Reverse offset**
 under sketch support selection. Zero remains on the support; signed distance follows
 its unflipped normal. Flip normal changes orientation without moving the offset
 sketch plane. Numeric updates wait for focus leave, and automatic-off keeps the last
-preview. Creation and placement editing must eventually share the saved control.
+preview. Creation and placement editing share the saved control.
 
 The proposed shared Plane/Sketch local indicator uses orange, thicker lines and
 larger bold X/Y/Z labels. Its arms are 1.4 times the previous length, separating
@@ -26,8 +26,10 @@ Direct screenshots: [current Sketch](evidence/sketch-offset-20261121/before.png)
 [reversed offset](evidence/sketch-offset-20261121/reverse.png).
 [Prototype checks](evidence/sketch-offset-20261121/prototype.json) passed for deferred
 updates, reverse offset, position-preserving normal flip, automatic-off, inherited
-plane frame and unchanged object inventory/Undo. OK is disabled in the candidate;
-production code, persistence and installed payload are unchanged.
+plane frame and unchanged object inventory/Undo. OK was disabled in that isolated
+candidate. Production creation/editing now saves the offset and enters native sketch
+drawing normally; older managed sketches default to zero without migration on open
+or Cancel. See [installed acceptance](../WORK_STATE.md#sketch-offset-and-orange-axes-implementation--november-21-2026).
 
 Session `3a22e0142561` supersedes unrendered `daeaead683ed` after the axes request.
 Seed `b423e491db3a5fac2d5f9d571c5f615f61f98bb6`; allowlist `ui/sketch_task.py`.
@@ -145,8 +147,9 @@ create the sketch. Preselected items must appear as the sketch-plane references
 when the task opens. The approved task reuses New Plane's visual structure:
 **Sketch plane**, **Origin and Orientation**, and **Preview**. It retains XY/XZ/YZ
 shortcuts and point-origin/X-or-Y-direction/Flip normal controls, without coordinate
-readouts, a Select button, a selection-mode dropdown or plane-creation offset fields.
-The sketch lies on the selected support. OK creates the sketch and proceeds
+readouts, a Select button or a selection-mode dropdown. The later approved Offset
+controls above extend the initial support-only proposal. At zero offset the sketch
+lies on the selected support. OK creates the sketch and proceeds
 to native drawing/constraint editing; Cancel creates nothing. Placement editing must
 reuse this same task with saved inputs under the shared create/edit rule.
 
