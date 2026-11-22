@@ -194,7 +194,8 @@ direction supersedes conflicting unconfirmed New Sketch proposals below.
 
 This initial length-only proposal is superseded for review by the
 [archive-guided proposal](#archive-guided-extrude-proposal--november-21-2026) below.
-Neither proposal is approved for production implementation yet.
+The archive-guided proposal was approved with the November 22 radio-button
+amendment recorded below.
 
 Owner request: preview a similar Extrude task with **New Solid**, **Add** and
 **Subtract**, including target selection, before implementation. The isolated
@@ -232,7 +233,7 @@ conflicting historical/unconfirmed Extrude items below.
 
 ### Archive-guided Extrude proposal — November 21, 2026
 
-**Preview pending owner approval.** The owner requested a fresh workflow informed
+**Approved November 22, 2026, with the radio-button amendment below.** The owner requested a fresh workflow informed
 by archived concepts, with no old implementation copied. The
 [archive review](../ARCHIVE_REFERENCE.md#extrude-workflow-review--november-21-2026)
 explains what to recover and what to leave behind. The new native Qt proposal uses
@@ -287,6 +288,46 @@ Session `c706bf161145`, clean isolated seed
 Final inspected fingerprint:
 `1284f27b1decce0620010a1e4fe709bc6a105cdb57a2505272f0a51841e06439`.
 Scope/capture checks passed. No tool approval state was modified.
+
+### Extrude implementation — November 22, 2026
+
+Owner instruction: **"make the operation a radio button option stacked vertically,
+new solid, add, subtract. then implement"**. This approves the preceding direct
+native preview and explicitly authorizes that amendment and implementation.
+Operation now uses an exclusive vertical **New Solid / Add / Subtract** radio
+group; other approved sections, controls, colors and terminology are retained.
+
+The amendment was rendered in isolated session `c706bf161145`, fingerprint
+`551bd082d03c3d3e78b1c70bbff4de8f930d718086556f408faf88fba69e74dc`.
+[Direct amended native preview](evidence/extrude-20261122/radio-preview.png).
+Chat authorization governs this limited amendment; companion approval state was
+not modified. No archived implementation was copied.
+
+Plus Extrude opens the task directly, including with no profile selected.
+Preselected sketch/curves and eligible targets populate their fields. After
+selecting a sketch, clicking inside a closed region selects its boundary curves
+and immediate holes; Whole sketch restores the complete profile. Fields route
+native picks to target/start/limit/direction references. Remove, Clear and Delete
+edit the profile/reference lists. The amber profile outline remains while an
+end or target is incomplete. Numbers commit on field leave; automatic-off keeps
+the old preview until Update preview. OK validates the latest field values.
+
+OK creates one associative Extrude, supplying its internal native Body. History
+Edit/double-click reopens the same prefilled task and preserves feature identity.
+Cancel and previews do not change model objects, persistent visibility or Undo.
+Result preview hiding is local to the active view and composes with component
+display rules. Existing native body-centered features retain their editors.
+
+Geometry boundaries: closed planar profiles must produce one valid solid;
+targets are current component-owned native Body results. Start references must
+be parallel to the profile. Taper uses Length ends; native until-face coverage
+restrictions apply to face/shape limits. Whole solid limits resolve the first
+forward boundary intersected by the profile. Moving an operation to another
+internal Body after it has downstream features is rejected. Imported-Part
+targets and legacy migration remain separate. These are explicit validation
+errors, not disabled mockup controls.
+
+See [implementation and installed acceptance](../WORK_STATE.md#extrude-implementation--november-22-2026).
 
 ### Numerical field updates
 

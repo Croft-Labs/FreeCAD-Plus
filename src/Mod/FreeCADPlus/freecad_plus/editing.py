@@ -170,6 +170,10 @@ def edit_feature(doc, feature):
     if planes.is_plane(feature):
         from . import plane_task
         return plane_task.show(feature)
+    from . import extrusion
+    if extrusion.is_extrusion(feature):
+        from . import extrude_task
+        return extrude_task.show(feature)
     from .document import owned_path
     subname = "".join(obj.Name + "." for obj in owned_path(definition, feature))
     parent = validate(doc) if path else definition

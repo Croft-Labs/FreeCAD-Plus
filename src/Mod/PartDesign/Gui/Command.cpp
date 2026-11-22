@@ -1227,6 +1227,10 @@ void prepareProfileBased(Gui::Command* cmd, const std::string& which, double len
     if (Gui::isComponentModelingDocument(cmd->getDocument())) {
         Base::PyGILStateLocker lock;
         try {
+            Py::Module tasks(PyImport_ImportModule("freecad_plus.extrude_task"), true);
+            if (tasks.callMemberFunction("dispatch", Py::TupleN(Py::String(which))).isTrue()) {
+                return;
+            }
             Py::Module module(PyImport_ImportModule("freecad_plus.modeling"), true);
             Py::Object request = module.callMemberFunction("extrusion_request", Py::TupleN(Py::String(which)));
             if (!request.isNone()) {

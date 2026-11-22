@@ -1,5 +1,60 @@
 # FreeCAD Plus: Current work state
 
+## Extrude implementation — November 22, 2026
+
+Owner authorization: “make the operation a radio button option stacked vertically,
+new solid, add, subtract. then implement.” The approved archive-guided workflow
+is implemented with that amendment. The archive supplied concepts only; no old
+implementation was copied. See the [approved task contract](ui-ux-specs/TASK_PANEL.md#extrude-implementation--november-22-2026).
+
+Plus Extrude now has one creation/edit task with preselection, sketch/curve/region
+picking, explicit Add/Subtract targets, start offsets/references, length and
+reference-based ends, one/symmetric/independent sides, direction, taper and
+tool/result preview. Numerical fields recompute after focus leaves. Preview and
+Cancel preserve model inventory, saved visibility and Undo. Accepted operations
+retain native identity across edits, with native linked references and internal
+Bodies supplied by feature operations. Classic and legacy native editors remain.
+
+The [native rebuild](evidence/extrude-20261122/final-build.log) succeeded. All 90
+installed Extrude, Plane/numeric, feature-centered modeling and Sketch-placement
+checks [passed](evidence/extrude-20261122/extrude_check.txt). These include geometry,
+holes, explicit targets, operation changes, rotated Body coordinates, native
+pattern polarity, invalid-input atomicity, deferred/manual updates and document
+cleanup. The earlier development run also [passed](evidence/extrude-20261122/build-check.txt).
+Installed validation corrected a payload path (native modules belong in app/lib),
+an exact-BRep snapshot cast, and test-window activation. The final harness keeps
+docked tasks active without stealing focus from standalone numeric test windows;
+no Plane/Sketch production changes were needed.
+
+[Fresh-process checks](evidence/extrude-20261122/extrude_reopen.json) verified local
+and external-source persistence, shared task prefill, stable feature IDs,
+downstream native features and a plane attached to an Extrude face after dimensional
+editing. Temporary evaluation IDs are excluded from published tool element names.
+This verifies the covered edits, not universal topology migration.
+
+The [installed GUI exercise](evidence/extrude-20261122/extrude_visual.json) verified
+real viewport region clicks, target/face picks, read-only preview, native command
+dispatch, creation, shared editing and identity through Undo/Redo. Inspected
+captures: [New Solid](evidence/extrude-20261122/installed-new-solid.png),
+[Add to face](evidence/extrude-20261122/installed-add-face.png),
+[Subtract tool](evidence/extrude-20261122/installed-subtract-tool.png),
+[Subtract result](evidence/extrude-20261122/installed-subtract-result.png), and
+[editing](evidence/extrude-20261122/installed-edit.png).
+
+Eight payload files were backed up and installed with matching hashes:
+[manifest](evidence/extrude-20261122/installation.json). The unchanged
+[desktop shortcut](evidence/extrude-20261122/shortcut.json) launches this payload.
+The final rebuild refreshed Python files and rebuilt the unchanged native semantics
+after restoring source line endings; its native payload was checked again by the
+fresh-process and GUI exercises. Tests used disposable documents/profiles, leaving
+owner documents and settings untouched.
+
+Scope remains closed planar profiles producing one valid solid, and native current
+Body results as targets. Start references must parallel the profile; taper needs
+Length; whole-shape limits resolve the first intersected forward boundary subject
+to native face coverage. Cross-body rerouting after downstream operations is
+rejected. Arbitrary imported targets and legacy operation migration remain separate.
+
 ## Archive-guided Extrude review and preview — November 21, 2026
 
 Reviewed the archived Extrude task, extent/profile collectors, solver adapter and
@@ -9,9 +64,9 @@ extends the earlier length-only proposal with start/end conditions, independent
 sides, conditional reference picking, advanced direction/taper and tool/result
 preview modes. Archived code was not ported or executed. Representative fixture
 checks passed with unchanged object inventory/Undo and restored visibility.
-General geometry, region picking, persistence and shared operation editing are
-not implemented by this prototype. Approval and production work remain pending;
-the installed Extrude workflow is unchanged.
+General geometry, region picking, persistence and shared operation editing were
+not implemented by this prototype. The owner subsequently approved implementation
+with vertically stacked operation radios; see the November 22 implementation above.
 
 ## Sketch offset and orange axes implementation — November 21, 2026
 

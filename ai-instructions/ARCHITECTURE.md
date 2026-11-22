@@ -1899,3 +1899,39 @@ signals. Without this guard, deleting a selected row emits itemSelectionChanged
 and clears the whole viewport selection before the command can prune its deleted
 constraints. The guard ends immediately after row removal; ordinary list clicks,
 Classic mode and active interactive handlers retain their native synchronization.
+
+## Feature-centered Extrude — November 22, 2026
+
+`freecad_plus/extrusion.py` and `extrude_task.py` implement the approved shared
+creation/edit task. The Pad/Pocket command bridge dispatches Plus component tasks
+before native compatibility routing. History Edit and the Python view provider
+open the same task for managed results.
+
+An accepted operation is `PartDesign::FeatureAddSubPython`, marked by
+`PlusExtrudeVersion=1`, inside an automatically supplied native Body. Its sketch
+stays component-owned. ProfileReferences, Target, StartReference, EndReference,
+SecondEndReference and DirectionReference are native global link/subelement lists;
+`Extrude_*` properties save settings. These task-owned properties are hidden.
+Existing native Pad/Pocket chains are not migrated. Creation, rerouting and edits
+use a defining-document transaction and native linked Undo, with existing
+occurrence-aware eligibility. Native pattern consumers use the saved operation
+polarity through `FeatureAddSub::getAddSubType`.
+
+Preview and execute share a native evaluator in a hidden temporary document with
+Undo disabled. Native Pad supplies length, directional, tapered and until-face
+tool geometry; the Boolean target is explicit. Scratch snapshots shed source
+name tables. Published tool names exclude temporary IDs and include profile
+selection and topology layout; native Boolean history propagates these and the
+target names. Incompatible profile/topology layouts invalidate affected references.
+This is not a universal topology-migration guarantee. Rigid coordinate conversion
+uses exact copied OCC transforms; AddSubShape is feature-local for native patterns.
+
+The task stages inputs, uses Coin overlays and registers transient hiding with
+`display.task_hidden`. Isolation/display refreshes compose those paths; Result
+preview writes no saved Visibility or materials. New Add/Subtract results inherit
+target appearance. Selection, scene callbacks and overrides are released on task
+or document exit. Region picking intersects a viewport ray with the selected
+sketch and stores native boundary-edge links, retaining immediate nested holes.
+
+See the [approved UI and geometry boundaries](ui-ux-specs/TASK_PANEL.md#extrude-implementation--november-22-2026)
+and [acceptance record](WORK_STATE.md#extrude-implementation--november-22-2026).

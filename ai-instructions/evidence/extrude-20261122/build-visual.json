@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "viewport_region_pick": true,
+  "radio_buttons": true,
+  "command": true,
+  "target_and_face_picking": true,
+  "preview_read_only": true,
+  "creation_and_shared_edit": true,
+  "identity_undo_redo": true,
+  "feature": "Extrude",
+  "id": 3861
+}

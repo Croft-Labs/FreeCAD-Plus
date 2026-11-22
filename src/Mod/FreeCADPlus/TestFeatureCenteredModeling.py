@@ -209,6 +209,9 @@ class TestFeatureCenteredCommands(unittest.TestCase):
         Gui.Selection.clearSelection()
         QtTest.QTest.qWait(350)  # Drain delayed native tree selection before new fixtures.
         TestFeatureCenteredModeling.setUp(self)
+        self.task_prefs = App.ParamGet('User parameter:BaseApp/Preferences/General')
+        self.previous_task_mode = self.task_prefs.GetInt('TaskPanelUIMode', 0)
+        self.task_prefs.SetInt('TaskPanelUIMode', 1)  # Explicit native compatibility coverage.
         Gui.activateWorkbench('PartDesignWorkbench')
 
     def tearDown(self):
@@ -216,6 +219,7 @@ class TestFeatureCenteredCommands(unittest.TestCase):
             self.task_button(QtWidgets.QDialogButtonBox.Cancel)
         if App.getActiveTransaction():
             App.closeActiveTransaction(True)
+        self.task_prefs.SetInt('TaskPanelUIMode', self.previous_task_mode)
         TestFeatureCenteredModeling.tearDown(self)
 
     def task_button(self, role):

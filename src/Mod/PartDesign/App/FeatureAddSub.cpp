@@ -55,6 +55,14 @@ void FeatureAddSub::onChanged(const App::Property* property)
 
 FeatureAddSub::Type FeatureAddSub::getAddSubType()
 {
+    // A managed Extrude keeps its native feature identity when its operation
+    // changes. Patterns and other native consumers must see its saved polarity.
+    if (getPropertyByName("PlusExtrudeVersion")) {
+        auto operation = dynamic_cast<App::PropertyString*>(getPropertyByName("Extrude_operation"));
+        if (operation) {
+            return std::string(operation->getValue()) == "Subtract" ? Subtractive : Additive;
+        }
+    }
     return addSubType;
 }
 
@@ -68,10 +76,10 @@ short FeatureAddSub::mustExecute() const
 
 void FeatureAddSub::getAddSubShape(Part::TopoShape& addShape, Part::TopoShape& subShape)
 {
-    if (addSubType == Additive) {
+    if (getAddSubType() == Additive) {
         addShape = AddSubShape.getShape();
     }
-    else if (addSubType == Subtractive) {
+    else if (getAddSubType() == Subtractive) {
         subShape = AddSubShape.getShape();
     }
 }
@@ -86,7 +94,7 @@ void FeatureAddSub::updatePreviewShape()
     };
 
     // for subtractive shapes we want to also showcase removed volume, not only the tool
-    if (addSubType == Subtractive) {
+    if (getAddSubType() == Subtractive) {
         TopoShape base = getBaseTopoShape(true).moved(getLocation().Inverted());
 
         if (const TopoShape& addSubShape = AddSubShape.getShape(); !addSubShape.isEmpty()) {

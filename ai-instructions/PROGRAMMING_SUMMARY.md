@@ -2,6 +2,14 @@
 
 ## Current baseline
 
+November 22 approved Extrude is implemented and installed, including vertically
+stacked New Solid/Add/Subtract radio buttons. The shared creation/edit task uses
+explicit targets, sketch/curve/region picks, start/end references, independent
+sides, direction/taper and transient tool/result previews. Numerical recompute
+waits for field leave. Managed operations retain native feature identity and use
+internal Bodies. The native build, 90 installed checks, fresh-process persistence
+and actual GUI acceptance passed; see [acceptance and boundaries](WORK_STATE.md#extrude-implementation--november-22-2026).
+
 November 21 approved Sketch Offset/Reverse offset and orange local Plane/Sketch
 axes are implemented. Offset persists in the shared creation/editing task, follows
 the support normal and is unaffected by sketch normal reversal. Numeric previews
@@ -44,12 +52,11 @@ November 21 owner terminology: original FreeCAD uses **body-centered modeling**;
 FreeCAD Plus uses **feature-centered modeling**. The new backend module
 `freecad_plus/modeling.py` creates sketches without Bodies and atomically supplies
 a native Body when extruding a new solid. The existing ribbon New Sketch and
-Extrude new-solid commands route to these services. The newer approved sketch
-placement task above replaces the initial native placement dialog; drawing stays
-native. Pad/Pocket also route standalone sketches to current owned
-results for Add/Subtract, independently of the active Body. Sketch-only Pad stays
-New Solid; Pocket can infer the sole eligible result. Existing Body-owned chains
-retain native compatibility.
+Extrude commands initially routed to these services. The approved sketch placement
+task replaces the initial native placement dialog; drawing stays native. The
+November 22 Plus Extrude task now owns creation/editing of managed operations and
+explicit Add/Subtract targets. Classic commands and existing Body-owned chains
+retain native compatibility through the original routing adapters.
 See [architecture](ARCHITECTURE.md#feature-centered-modeling-foundation--november-21-2026)
 for API scope and [WORK_STATE](WORK_STATE.md#feature-centered-modeling-foundation--november-21-2026)
 for initial native acceptance and the newer

@@ -159,6 +159,16 @@ def _construction_paths(owner, prefix):
     return result
 
 
+_task_hidden = []
+
+
+def task_hidden(view, root=None, paths=(), *, preview=False):
+    """Register transient operation hiding alongside the normal display policy."""
+    _task_hidden[:] = [entry for entry in _task_hidden if entry[0] != view]
+    if root is not None and paths:
+        _task_hidden.append((view, root, tuple(paths), preview))
+
+
 def apply_hidden(view, root, paths, *, preview=False):
     """Apply view-local paths, synchronizing queued native link snapshots once.
 
@@ -167,6 +177,11 @@ def apply_hidden(view, root, paths, *, preview=False):
     draining it once; invalid paths and persistent failures still propagate.
     There is no polling, event-loop wait or recurring retry.
     """
+    paths = tuple(paths)
+    for task_view, task_root, extra, task_preview in _task_hidden:
+        if task_view == view and task_root == root and task_preview == preview:
+            paths += extra
+    paths = tuple(dict.fromkeys(paths))
     method = view.setComponentPreviewHiddenPaths if preview else view.setComponentHiddenPaths
     try:
         method(root, paths)

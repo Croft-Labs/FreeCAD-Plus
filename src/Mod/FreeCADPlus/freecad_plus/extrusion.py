@@ -1,0 +1,439 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Associative, feature-centered Extrude, using the native extrusion kernel.
+
+The evaluator owns a hidden, temporary document, never a transaction or an object
+in the user's document. Preview and execution use exactly the same evaluator.
+Saved references are native links; the result retains its identity across edits.
+"""
+import math
+from contextlib import contextmanager
+
+import FreeCAD as App
+import Part
+
+from . import document, editing, modeling, planes
+
+MODES = ('New Solid', 'Add', 'Subtract')
+ENDS = ('Length', 'Up to face', 'Up to shape', 'To first', 'To last', 'Through all')
+LINKS = {'target': 'Target', 'start': 'StartReference', 'limit': 'EndReference',
+         'secondlimit': 'SecondEndReference', 'direction': 'DirectionReference'}
+DEFAULTS = dict(operation='New Solid', start='Profile plane', start_offset=0.,
+                sides='One side', end='Length', length=8., offset=0.,
+                end2='Length', length2=3., offset2=0., reverse=False,
+                direction='Profile normal', measure='Along direction',
+                taper=0., taper2=0., refine=True)
+
+
+def is_extrusion(obj):
+    return getattr(obj, 'PlusExtrudeVersion', 0) == 1
+
+
+def settings(feature):
+    return {key: getattr(feature, 'Extrude_' + key) for key in DEFAULTS}
+
+
+def references(feature):
+    return {key: planes.flatten(getattr(feature, prop))[0]
+            for key, prop in LINKS.items() if getattr(feature, prop)}
+
+
+def owner(feature):
+    body = feature.getParentGeoFeatureGroup()
+    return body.getParentGeoFeatureGroup()
+
+
+def validate(definition, refs, links, values, feature=None):
+    values = dict(DEFAULTS, **values)
+    for key in ('start_offset', 'length', 'length2', 'offset', 'offset2', 'taper', 'taper2'):
+        values[key] = float(values[key])
+        if not math.isfinite(values[key]):
+            raise ValueError('Extrude values must be finite')
+    for key, choices in (('operation', MODES), ('start', ('Profile plane', 'Offset', 'Reference')),
+                         ('sides', ('One side', 'Symmetric', 'Two sides')), ('end', ENDS), ('end2', ENDS),
+                         ('direction', ('Profile normal', 'Selected axis / line')),
+                         ('measure', ('Along direction', 'Along profile normal'))):
+        if values[key] not in choices:
+            raise ValueError('Unknown Extrude setting: ' + key)
+    if not refs:
+        raise ValueError('Select a sketch or a closed region to extrude.')
+    refs = planes.canonical(definition, refs)
+    if any(obj != refs[0][0] or not obj.isDerivedFrom('Sketcher::SketchObject') for obj, sub in refs):
+        raise ValueError('Select a whole sketch or closed curves from one sketch.')
+    links = {key: planes.canonical(definition, [ref])[0] for key, ref in links.items()}
+    if feature is not None:
+        if not is_extrusion(feature) or owner(feature) != definition:
+            raise ValueError('Edit an Extrude owned by this component.')
+        if any(obj == feature or obj in feature.InListRecursive for obj, sub in refs + list(links.values())):
+            raise ValueError('Extrude cannot depend on itself or a downstream feature.')
+    if values['operation'] != 'New Solid':
+        if 'target' not in links:
+            raise ValueError('Select the target solid to modify.')
+        target = links['target'][0]
+        if feature is not None and target == references(feature).get('target', (None, ''))[0]:
+            # The saved predecessor is intentionally no longer the Body Tip.
+            if target.Shape.isNull() or not target.Shape.isValid() or len(target.Shape.Solids) != 1:
+                raise ValueError('The saved target is no longer one valid solid.')
+        else:
+            modeling._target_body(definition, target)
+        links['target'] = (target, '')
+    else:
+        links.pop('target', None)
+    if values['start'] != 'Reference':
+        links.pop('start', None)
+    elif 'start' not in links:
+        raise ValueError('Pick a start face or plane.')
+    if values['direction'] == 'Profile normal':
+        links.pop('direction', None)
+    elif 'direction' not in links:
+        raise ValueError('Pick a straight edge or axis for the direction.')
+    for suffix, key in (('', 'limit'), ('2', 'secondlimit')):
+        if suffix and values['sides'] != 'Two sides':
+            links.pop(key, None)
+            continue
+        kind = values['end' + suffix]
+        if kind == 'Length' and values['length' + suffix] <= 0:
+            raise ValueError('Length must be greater than zero.')
+        if abs(values['taper' + suffix]) >= 90:
+            raise ValueError('Taper must be between -90 and 90 degrees.')
+        if kind in ('Up to face', 'Up to shape'):
+            if key not in links:
+                raise ValueError('Pick a limiting face, plane or shape.')
+        else:
+            links.pop(key, None)
+        if kind in ('To first', 'To last', 'Through all') and 'target' not in links:
+            raise ValueError('This end condition needs an explicit target solid.')
+        if kind != 'Length' and values['taper' + suffix]:
+            raise ValueError('Taper requires a Length end condition.')
+    return refs, links, values
+
+
+def profile_shape(definition, refs):
+    sketch = refs[0][0]
+    placement = definition.getGlobalPlacement().inverse().multiply(sketch.getGlobalPlacement())
+    if any(not sub for _, sub in refs):
+        edges = planes.shape(definition, (sketch, '')).Edges
+    else:
+        edges = []
+        for ref in refs:
+            for edge in planes.shape(definition, ref).Edges:
+                if not any(edge.isSame(existing) for existing in edges):
+                    edges.append(edge)
+    if not edges:
+        raise ValueError('The profile contains no curves.')
+    wires = [Part.Wire(group) for group in Part.sortEdges(edges)]
+    if any(not wire.isClosed() for wire in wires):
+        raise ValueError('The selected curves are open; complete a closed region.')
+    face = Part.makeFace(wires, 'Part::FaceMakerBullseye')
+    if face.isNull() or not face.isValid() or not face.Faces:
+        raise ValueError('The profile must enclose valid planar regions without self-intersections.')
+    normal = placement.Rotation.multVec(App.Vector(0, 0, 1))
+    if any(abs(abs(f.normalAt(0, 0).dot(normal)) - 1) > 1e-7 for f in face.Faces):
+        raise ValueError('The selected curves must lie on the sketch plane.')
+    return face, placement, edges
+
+
+def region_references(definition, sketch, point):
+    """Return native edge links for the bounded sketch region under a point.
+
+    Nested loops partition the sketch into a ring and its inner region. Store
+    the actual boundary references, not a transient face index or a mouse point.
+    Open curves are ignored here and remain selectable through the curve picker.
+    """
+    planes.canonical(definition, [(sketch, '')])
+    shape = planes.shape(definition, (sketch, ''))
+    wires = [Part.Wire(group) for group in Part.sortEdges(shape.Edges)]
+    loops = [(wire, Part.Face(wire)) for wire in wires if wire.isClosed()]
+    containers = [(wire, face) for wire, face in loops if face.isInside(point, 1e-7, True)]
+    if not containers:
+        raise ValueError('Click inside a closed sketch region.')
+    outer, face = min(containers, key=lambda item: item[1].Area)
+    inner = [(wire, candidate) for wire, candidate in loops if candidate.Area < face.Area
+             and face.common(candidate).Area >= candidate.Area - 1e-7]
+    holes = [wire for wire, candidate in inner if not any(
+        other.Area > candidate.Area and other.common(candidate).Area >= candidate.Area - 1e-7
+        for _, other in inner)]
+    boundary = [edge for wire in [outer, *holes] for edge in wire.Edges]
+    return [(sketch, 'Edge' + str(index + 1)) for index, edge in enumerate(shape.Edges)
+            if any(edge.isSame(bound) for bound in boundary)]
+
+
+@contextmanager
+def kernel_document():
+    active = App.ActiveDocument
+    scratch = App.newDocument('ExtrudeEvaluation', hidden=True, temp=True)
+    scratch.UndoMode = 0
+    try:
+        yield scratch
+    finally:
+        App.closeDocument(scratch.Name)
+        if active is not None and active.Name in App.listDocuments() and App.ActiveDocument != active:
+            App.setActiveDocument(active.Name)
+
+
+def shape_limit_face(profile, limit, direction):
+    """Find the first boundary cut by the footprint, ignoring side walls.
+
+Passing an entire closed solid to native UpToShape can leave a closed shell
+which OCC cannot extend to. Resolve its forward boundary geometrically, then
+let the native until-face solver construct and validate the cap.
+    """
+    span = max((limit.BoundBox.getPoint(i) - profile.CenterOfMass).dot(direction) for i in range(8))
+    if span <= 1e-7:
+        raise ValueError('The limiting shape is behind the profile; reverse direction.')
+    probe = profile.extrude(direction * (span + max(1., limit.BoundBox.DiagonalLength * .01)))
+    candidates = []
+    for face in limit.Faces:
+        contact = face.common(probe)
+        if contact.Area > 1e-7:
+            distance = (contact.CenterOfMass - profile.CenterOfMass).dot(direction)
+            if distance > 1e-7:
+                candidates.append((distance, face))
+    if not candidates:
+        raise ValueError('The profile does not reach the limiting shape.')
+    return min(candidates, key=lambda item: item[0])[1]
+
+
+def kernel_snapshot(shape):
+    # Scratch inputs are geometry snapshots, not cross-document named links.
+    # Do not mix the owning document's element-name table with scratch IDs.
+    # A plain copy retains cached child maps even after clearing the root map.
+    # The native BRep round trip retains exact geometry and placements while
+    # dropping all temporary naming metadata, including cached child maps.
+    result = Part.Shape()
+    result.importBrepFromString(shape.exportBrepToString())
+    return Part.cast_to_shape(result)
+
+
+def name_tool(tool, refs, feature, target=None):
+    """Publish names independent of temporary document/object IDs.
+
+    Native Boolean history then propagates these tool names and the target's
+    existing names. Include the profile selection and topology layout so an
+    incompatible profile/topology change invalidates references instead of
+    reusing names from a different layout. Dimensional changes keep the names.
+    """
+    sketch = refs[0][0]
+    tool = kernel_snapshot(tool)
+    tool.Hasher = target.Hasher if target is not None and target.Hasher is not None else sketch.Shape.Hasher
+    tool.Tag = feature.ID if feature else sketch.ID
+    selection = '_'.join(Part.splitSubname(sub)[2] or 'Whole' for _, sub in refs)
+    layout = '_'.join(type(face.Surface).__name__ + str(len(face.Edges)) + 'w' + str(len(face.Wires))
+                      for face in tool.Faces)
+    prefix = 'PlusExtrude1_%s_%s_%s_%s_' % (sketch.ID, selection, len(tool.Vertexes), layout)
+    tool.ElementMap = {prefix + kind + str(i + 1): kind + str(i + 1)
+                       for kind, elements in (('Face', tool.Faces), ('Edge', tool.Edges), ('Vertex', tool.Vertexes))
+                       for i in range(len(elements))}
+    return tool
+
+
+def evaluate(definition, refs, links, values, feature=None):
+    refs, links, v = validate(definition, refs, links, values, feature)
+    face, placement, edges = profile_shape(definition, refs)
+    normal = placement.Rotation.multVec(App.Vector(0, 0, 1))
+    direction = normal
+    if 'direction' in links:
+        line = planes.describe(definition, links['direction'])
+        if line[0] != 'line':
+            raise ValueError('Direction requires a straight edge or axis.')
+        direction = line[2]
+    if v['reverse']:
+        direction = -direction
+    factor = abs(normal.dot(direction))
+    if factor < 1e-7:
+        raise ValueError('The direction must leave the profile plane.')
+    shift = 0.
+    if v['start'] == 'Reference':
+        start = planes.describe(definition, links['start'])
+        if start[0] != 'plane' or abs(abs(start[2].dot(normal)) - 1) > 1e-7:
+            raise ValueError('Choose a start face or plane parallel to the profile.')
+        shift = (start[1] - placement.Base).dot(start[2]) / direction.dot(start[2])
+    if v['start'] != 'Profile plane':
+        shift += v['start_offset']
+    face.translate(direction * shift)
+    target = planes.shape(definition, links['target']) if 'target' in links else None
+    with kernel_document() as scratch:
+        body = scratch.addObject('PartDesign::Body', 'EvaluationBody')
+        body.AllowCompound = True
+        base = None
+        if target is not None:
+            base = body.newObject('PartDesign::Feature', 'TargetSnapshot')
+            base.Shape = kernel_snapshot(target)
+        profile = body.newObject('PartDesign::Feature', 'ProfileSnapshot')
+        profile.BaseFeature = None
+        profile.Shape = kernel_snapshot(face)
+        # Native Pad accepts a planar face profile and computes its normal.
+        pad = body.newObject('PartDesign::Pad', 'Evaluation')
+        pad.BaseFeature = base
+        pad.Profile = (profile, [])
+        pad.UseCustomVector = True
+        pad.Direction = direction
+        pad.AlongSketchNormal = v['measure'] == 'Along profile normal'
+        pad.SideType = v['sides']
+        pad.Refine = v['refine']
+        for suffix, key in (('', 'limit'), ('2', 'secondlimit')):
+            if suffix and v['sides'] != 'Two sides':
+                continue
+            kind = v['end' + suffix]
+            length = v['length' + suffix]
+            if kind == 'Through all':
+                # Native Pad lacks Pocket's ThroughAll enum. Bound the prism
+                # with the target's corners in the actual chosen direction.
+                axis = -direction if suffix else direction
+                distances = [(target.BoundBox.getPoint(i) - face.CenterOfMass).dot(axis) for i in range(8)]
+                length = max(distances) + max(1., target.BoundBox.DiagonalLength * .01)
+                if v['sides'] == 'Symmetric':
+                    length = 2 * (max(abs(distance) for distance in distances)
+                                  + max(1., target.BoundBox.DiagonalLength * .01))
+                if length <= 0:
+                    raise ValueError('The target is behind the extrusion; reverse direction.')
+                if v['measure'] == 'Along profile normal':
+                    length *= factor
+                kind = 'Length'
+            setattr(pad, 'Type' + suffix, {'Up to face': 'UpToFace', 'Up to shape': 'UpToShape',
+                                          'To first': 'UpToFirst', 'To last': 'UpToLast'}.get(kind, kind))
+            setattr(pad, 'Length' + suffix, length)
+            setattr(pad, 'Offset' + suffix, v['offset' + suffix])
+            setattr(pad, 'TaperAngle' + suffix, v['taper' + suffix])
+            if key in links:
+                limit = body.newObject('PartDesign::Feature', 'LimitSnapshot')
+                limit.BaseFeature = None
+                limit.Shape = kernel_snapshot(planes.shape(definition, links[key]))
+                if kind == 'Up to shape' and limit.Shape.Solids:
+                    limit.Shape = shape_limit_face(kernel_snapshot(face), limit.Shape, -direction if suffix else direction)
+                    kind = 'Up to face'
+                    setattr(pad, 'Type' + suffix, 'UpToFace')
+                if kind == 'Up to face':
+                    if len(limit.Shape.Faces) != 1:
+                        raise ValueError('Select one limiting face or plane.')
+                    setattr(pad, 'UpToFace' + suffix, (limit, ['Face1']))
+                else:
+                    setattr(pad, 'UpToShape' + suffix, [(limit, [''])])
+        body.Tip = pad
+        scratch.recompute()
+        # Native Pad writes its tool before fusion. We evaluate the selected
+        # Boolean ourselves, so a failed additive fuse is irrelevant to a cut.
+        tool = pad.AddSubShape.copy()
+        tool.Placement = pad.Placement.multiply(tool.Placement)
+        if tool.isNull() or not tool.isValid() or not tool.Solids:
+            raise ValueError('The extrusion cannot reach its end. Check profile, direction, limit and taper.')
+        tool = name_tool(tool, refs, feature, target)
+    result = tool if target is None else (target.fuse(tool) if v['operation'] == 'Add' else target.cut(tool))
+    if v['refine']:
+        result = result.removeSplitter()
+    if result.isNull() or not result.isValid() or len(result.Solids) != 1:
+        raise ValueError('The operation must produce one solid; check profile and target contact.')
+    if target is not None and abs(result.Volume - target.Volume) < max(1e-7, target.Volume * 1e-10):
+        raise ValueError('No material is ' + ('added.' if v['operation'] == 'Add' else 'removed.'))
+    return result, tool, edges
+
+
+class Extrude:
+    def __init__(self, obj):
+        obj.addProperty('App::PropertyInteger', 'PlusExtrudeVersion', 'Extrude').PlusExtrudeVersion = 1
+        obj.addProperty('App::PropertyLinkSubListGlobal', 'ProfileReferences', 'Extrude')
+        for name in LINKS.values():
+            obj.addProperty('App::PropertyLinkSubListGlobal', name, 'Extrude')
+        for key, default in DEFAULTS.items():
+            kind = 'Bool' if isinstance(default, bool) else 'String' if isinstance(default, str) else 'Float'
+            obj.addProperty('App::Property' + kind, 'Extrude_' + key, 'Extrude')
+            setattr(obj, 'Extrude_' + key, default)
+        obj.addProperty('App::PropertyString', 'ExtrudeError', 'Extrude')
+        for prop in ['PlusExtrudeVersion', 'ProfileReferences', *LINKS.values(),
+                     *['Extrude_' + key for key in DEFAULTS]]:
+            obj.setEditorMode(prop, 2)
+        obj.setEditorMode('ExtrudeError', 1)
+        obj.Proxy = self
+
+    def execute(self, obj):
+        try:
+            definition = owner(obj)
+            result, tool, _ = evaluate(definition, planes.flatten(obj.ProfileReferences),
+                                       references(obj), settings(obj), obj)
+            body = obj.getParentGeoFeatureGroup()
+            transform = body.getGlobalPlacement().inverse().multiply(definition.getGlobalPlacement())
+            # PartDesign synchronizes Placement with BaseFeature after execute.
+            # Bake the coordinate conversion into geometry so that synchronization
+            # cannot discard the Body transform. AddSubShape is feature-local.
+            placement = obj.BaseFeature.Placement if obj.BaseFeature else App.Placement()
+            local = placement.inverse().multiply(transform).toMatrix()
+            result.transformShape(local, True)
+            result.Placement = placement
+            obj.Shape = result
+            tool.transformShape(local, True)
+            obj.AddSubShape = tool
+            obj.ExtrudeError = ''
+        except Exception as exc:
+            obj.Shape = Part.Shape()
+            obj.AddSubShape = Part.Shape()
+            obj.ExtrudeError = str(exc)
+            raise
+
+    def dumps(self):
+        return None
+
+    def loads(self, state):
+        pass
+
+
+class ViewExtrude:
+    def __init__(self, view):
+        view.Proxy = self
+
+    def getIcon(self):
+        return ':/icons/PartDesign_Pad.svg'
+
+    def doubleClicked(self, view):
+        from . import extrude_task
+        extrude_task.show(view.Object)
+        return True
+
+    def dumps(self):
+        return None
+
+    def loads(self, state):
+        pass
+
+
+def save(doc, refs, links, values, feature=None):
+    definition, path = modeling._context(doc)
+    refs, links, values = validate(definition, refs, links, values, feature)
+    evaluate(definition, refs, links, values, feature)
+    target = links.get('target', (None, ''))[0]
+    old_body = feature.getParentGeoFeatureGroup() if feature else None
+    body = target.getParentGeoFeatureGroup() if target else None
+    if feature and target is None and not references(feature).get('target'):
+        body = old_body
+    if feature and body != old_body and old_body.Tip != feature:
+        raise ValueError('Change the target before adding downstream features; this edit would move a feature chain.')
+    with document.transaction(definition.Document, 'Edit Extrude' if feature else 'Extrude'):
+        if body is None:
+            body = definition.newObject('PartDesign::Body', 'Body')
+            body.AllowCompound = False
+        if feature is None:
+            feature = body.newObject('PartDesign::FeatureAddSubPython', 'Extrude')
+            Extrude(feature)
+            ViewExtrude(feature.ViewObject)
+            if target:
+                for prop in ('ShapeAppearance', 'LineColor', 'PointColor', 'Transparency', 'DisplayMode'):
+                    setattr(feature.ViewObject, prop, getattr(target.ViewObject, prop))
+        elif body != old_body:
+            predecessor = references(feature).get('target', (None, ''))[0]
+            old_body.removeObject(feature)
+            old_body.Tip = predecessor
+            if predecessor:
+                predecessor.Visibility = True
+            body.addObject(feature)
+        feature.ProfileReferences = planes.links(refs)
+        for key, prop in LINKS.items():
+            setattr(feature, prop, planes.links([links[key]]) if key in links else [])
+        for key, value in values.items():
+            setattr(feature, 'Extrude_' + key, value)
+        definition.Document.recompute()
+        if feature.ExtrudeError or feature.Shape.isNull() or 'Invalid' in feature.State:
+            raise ValueError(feature.ExtrudeError or 'Extrude failed to recompute.')
+        refs[0][0].Visibility = False
+        if target:
+            target.Visibility = False
+        feature.Visibility = body.Tip == feature
+    editing._restore(doc, definition, path)
+    return feature

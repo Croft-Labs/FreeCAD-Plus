@@ -1,0 +1,42 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestExtrudeWorkflow.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestExtrudeWorkflow.py",
+    "sha256": "0e781de780dc940a0dd1d5453264744b893a0117bc66253a4e72cd2897495fa6"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestFeatureCenteredModeling.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestFeatureCenteredModeling.py",
+    "sha256": "1d871b773f53d18c8d44ee4a9d03fa949be3b35119e9b36d5435f5d30b6c28b5"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py",
+    "sha256": "70b4cf153b877dc55f0a8c853a1eec4751af093617ac8ef4f9b1844f8d791cb9"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "sha256": "1d8913189548d575bdd188fffd1f79990b1da1a371ebe66520e4a733067d48d6"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+    "sha256": "29f28a20d801215e470c45f1e07e38f5bfb8d7c0b57b06fb9f292cd48318bb47"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\display.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\display.py",
+    "sha256": "b0e7035c9de2162998aa77ebfbdd95f3265c807b79d96a8cfee2bf68d419341a"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\PartDesign\\_PartDesign.pyd",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\_PartDesign.pyd",
+    "sha256": "ac95efeba898e945912676460735269d54de9bafecf86c82be4270f7b57d5db6"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\PartDesign\\PartDesignGui.pyd",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\PartDesignGui.pyd",
+    "sha256": "1df2f4e8353b55730b7c871fd9623c707d597d4fa2dfb3b3c56c4cf0a09d8304"
+  }
+]

@@ -1,0 +1,89 @@
+import json, os, traceback
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part
+from PySide6 import QtCore, QtWidgets, QtTest
+from freecad_plus import document, modeling, panel, editing, extrude_task, extrusion, display
+out=Path(os.environ['PLUS_TEST_DIR'])
+result={'ok':False};task=None
+
+def capture(name):
+    QtTest.QTest.qWait(250)
+    window=Gui.getMainWindow()
+    assert window.screen().grabWindow(int(window.winId())).save(str(out/name))
+
+def run():
+    global task
+    try:
+        window=Gui.getMainWindow();window.resize(1300,900);window.show();window.activateWindow()
+        QtWidgets.QApplication.setActiveWindow(window)
+        Gui.activateWorkbench('PartDesignWorkbench')
+        App.ParamGet('User parameter:BaseApp/Preferences/General').SetInt('TaskPanelUIMode',0)
+        doc=document.new_document('ExtrudeWorkflow')
+        owner=document.validate(doc).Definitions[0];owner.Label='Mounting Plate'
+        base=modeling.new_sketch(doc)
+        points=[(0,0),(40,0),(40,25),(0,25)]
+        for i in range(4):
+            a,b=points[i],points[(i+1)%4]
+            base.addGeometry(Part.LineSegment(App.Vector(*a,0),App.Vector(*b,0)),False)
+        doc.recompute();pad=modeling.extrude_new_solid(doc,base,6);pad.Label='Base pad'
+        profile=modeling.new_sketch(doc);profile.Label='Extrusion sketch';profile.Placement.Base.z=6
+        profile.addGeometry(Part.Circle(App.Vector(15,12,0),App.Vector(0,0,1),5),False)
+        limit=owner.newObject('Part::Feature','TopLimit');limit.Label='Top limit'
+        limit.Shape=Part.makePlane(40,25,App.Vector(0,0,18));limit.Visibility=False;doc.recompute()
+        panel.show_panel().tabs.setCurrentIndex(2)
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric()
+        QtTest.QTest.qWait(350);view.fitAll();QtTest.QTest.qWait(250)
+        camera=view.getCameraNode();camera.height.setValue(camera.height.getValue()*1.75)
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(profile)
+        before=({o.Name:o.ID for o in doc.Objects},doc.UndoCount,{o.Name:o.Visibility for o in doc.Objects if hasattr(o,'Visibility')})
+        Gui.runCommand('PartDesign_Pad');QtTest.QTest.qWait(150);task=extrude_task._active
+        assert task.valid,task.status.text()
+        assert all(isinstance(task.modes[n],QtWidgets.QRadioButton) for n in extrusion.MODES)
+        assert task.modes['New Solid'].y()<task.modes['Add'].y()<task.modes['Subtract'].y()
+        capture('installed-new-solid.png')
+        task.profiles.setFocus();QtTest.QTest.qWait(50)
+        widget=view.graphicsView().viewport();ratio=widget.devicePixelRatioF()
+        screen=view.getPointOnScreen(App.Vector(15,12,6))
+        pos=QtCore.QPoint(round(screen[0]/ratio),widget.height()-1-round(screen[1]/ratio))
+        QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pos)
+        QtTest.QTest.qWait(100)
+        assert task.refs==[(profile,'Edge1')],repr(task.refs)
+        task.whole_profile()
+        result['viewport_region_pick']=True
+        task.modes['Add'].click();assert not task.valid
+        task.fields['target'].setFocus();QtTest.QTest.qWait(30);Gui.Selection.addSelection(pad)
+        assert task.valid,task.status.text()
+        task.end1['kind'].setCurrentText('Up to face');assert not task.valid
+        task.fields['limit'].setFocus();QtTest.QTest.qWait(30);Gui.Selection.addSelection(limit,'Face1')
+        assert task.valid,task.status.text()
+        assert abs(task.tool_shape.BoundBox.ZMax-18)<1e-6
+        task.profile.header.setChecked(False);capture('installed-add-face.png')
+        task.modes['Subtract'].click();task.reverse.setChecked(True);task.end1['kind'].setCurrentText('Through all')
+        assert task.valid,task.status.text()
+        capture('installed-subtract-tool.png')
+        task.display.setCurrentText('Result');capture('installed-subtract-result.png')
+        assert task.valid,task.status.text()
+        assert task.result_shape.Volume<pad.Shape.Volume
+        after=({o.Name:o.ID for o in doc.Objects},doc.UndoCount,{o.Name:o.Visibility for o in doc.Objects if hasattr(o,'Visibility')})
+        assert after==before,'Preview changed the document'
+        assert task.accept();feature=task.result;identity=feature.ID
+        QtTest.QTest.qWait(100)
+        assert not display._task_hidden
+        assert abs(feature.Shape.Volume-(6000-150*3.141592653589793))<1e-5
+        task=editing.edit_feature(doc,feature)
+        assert task.mode()=='Subtract' and task.reverse.isChecked() and task.end1['kind'].currentText()=='Through all'
+        task.profile.header.setChecked(False);task.display.setCurrentText('Result');capture('installed-edit.png')
+        task.end1['kind'].setCurrentText('Length');task.end1['length'].setValue(3)
+        assert task.accept();assert feature.ID==identity
+        assert abs(feature.Shape.Volume-(6000-75*3.141592653589793))<1e-5
+        doc.undo();doc.recompute();assert feature.Extrude_end=='Through all'
+        doc.redo();doc.recompute();assert feature.Extrude_end=='Length' and feature.ID==identity
+        document.save_document(doc,out/'VisualExtrude.cadprt')
+        result.update(ok=True,radio_buttons=True,command=True,target_and_face_picking=True,preview_read_only=True,
+                      creation_and_shared_edit=True,identity_undo_redo=True,feature=feature.Name,id=identity)
+    except BaseException:result['error']=traceback.format_exc()
+    if extrude_task._active:extrude_task._active.reject()
+    (out/'extrude_visual.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

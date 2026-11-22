@@ -16,7 +16,7 @@
   concepts without copying archived code.
 - [x] Implement approved behavior in shared creation/editing, persist axis reversal,
   and verify Cancel, Undo/Redo, save/reopen and transient-highlight cleanup.
-- [ ] Review archived Sketch and Extrude workflows separately.
+- [ ] Review the archived Sketch workflow separately. Extrude review is complete below.
 
 ## Extrude task workflow — November 21, 2026
 
@@ -24,9 +24,11 @@
   selection, length controls and deferred preview updates.
 - [x] Review archived Extrude concepts and render a fresh proposal with start/end
   conditions, profile selection, advanced controls and tool/result preview modes.
-- [ ] Obtain approval of the revised [direct preview](ui-ux-specs/TASK_PANEL.md#archive-guided-extrude-proposal--november-21-2026).
-- [ ] Implement the approved task and shared operation editing; verify geometry,
+- [x] Obtain approval of the revised [direct preview](ui-ux-specs/TASK_PANEL.md#archive-guided-extrude-proposal--november-21-2026),
+  including the November 22 vertical New Solid/Add/Subtract radio-button amendment.
+- [x] Implement the approved task and shared operation editing; verify geometry,
   targets, identity, Cancel, Undo/Redo and save/reopen separately from the mockup.
+  See [installed acceptance](WORK_STATE.md#extrude-implementation--november-22-2026).
 
 ## New Sketch placement workflow — November 21, 2026
 
