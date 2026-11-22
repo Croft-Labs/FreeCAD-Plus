@@ -4,6 +4,36 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Typed values versus arrow steps — November 22, 2026
+
+**Requested refinement; native interaction preview awaiting approval.** Owner:
+“while editing an extrude and any other feature, keep it such that editing the
+number value doesnt change the preview until the field is left. however, clicking
+the up and down arrows to adjust the length should update the preview immediately”.
+This refines the earlier blanket focus-leave rule: typed input is deferred, while
+an explicit up/down spin-button step commits immediately with focus retained.
+The step uses the current valid entry. Later focus leave must not duplicate that
+update unless more text was entered. Recompute on update off retains manual preview.
+Keep existing controls, units, precision, limits, expression handling and validation.
+Apply consistently to shared feature inputs and native numeric editors; do not
+special-case only the Extrude Length control in production.
+
+The isolated native Extrude editing prototype demonstrates:
+[typed 12, preview still 8](evidence/numeric-step-20261122/numeric-typing-proposed.png),
+[Up to 13, preview immediately 13](evidence/numeric-step-20261122/numeric-arrow-proposed.png),
+and the [current delayed-arrow baseline](evidence/numeric-step-20261122/numeric-arrow-before.png).
+[Checks](evidence/numeric-step-20261122/prototype-check.json) exercise actual Qt
+up/down clicks, retained focus, deferred typing, no duplicate blur update, manual
+mode, and unchanged saved geometry/Undo. The temporary prototype step handler is
+not the shared implementation; native QuantitySpinBox and other feature editors
+still need implementation and verification after approval.
+
+Companion session `bd29cb90beec`, seed `0bbb563eaa428cad592b86ea209bea6eb0793d12`,
+allowlist `ui/step_preview.py`, fingerprint
+`cedbece46e79b70c1f021f61cf36368073b38dfa7b14c45a5ce5d13fbc1763db`.
+No production source or installed payload changed. This joins the pending Design
+idle actions and sketch visibility previews below.
+
 ### Design idle actions proposal — November 22, 2026
 
 **Requested outcome; direct preview awaiting approval.** Owner: “while in design

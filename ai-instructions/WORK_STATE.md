@@ -1,5 +1,21 @@
 # FreeCAD Plus: Current work state
 
+## Numeric arrow-step preview — November 22, 2026
+
+The owner refined numerical preview timing across Extrude and other features:
+typing remains deferred until field leave, while spin-button Up/Down updates
+immediately. The [native proposal](ui-ux-specs/TASK_PANEL.md#typed-values-versus-arrow-steps--november-22-2026)
+demonstrates actual arrow clicks while editing Extrude. Prototype checks passed
+for typed-versus-stepped values, focus retention, no duplicate blur, manual mode,
+unchanged saved feature geometry and Undo. No production/payload changes.
+
+Implementation after approval must address the shared Qt numeric filter,
+DeferredNumber step notification, Extrude's focused-field exclusion, and native
+QuantitySpinBox emission policy. InputField must preserve deferred typed values
+and expression semantics. Verify other feature/task consumers and automatic-off
+behavior. This refinement joins the two pending proposals below; approval has
+not yet been received for the combined change.
+
 ## Design idle actions preview — November 22, 2026
 
 The owner extended the pending sketch visibility work with four Design idle actions:
