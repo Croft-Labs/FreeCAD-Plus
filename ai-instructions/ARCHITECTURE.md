@@ -8,6 +8,19 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Sketch exit camera fit — November 22, 2026
+
+ComponentPanel queues one native activeView.fitAll after slotResetEdit restores
+the sketch coordinate mask and ends the feature-task scope. Deferring until native
+resetEdit returns lets Sketcher restore its camera, close the task, and finish its
+transaction first. The queued token carries the original document/view, resolved
+component context and identity-checked sketch reference. A new feature task,
+document deletion, view teardown or panel disposal invalidates pending work; the
+callback also checks active view/context, absence of another task/editor, ownership,
+nonempty geometry and a non-null shape. Native fitting preserves orientation and
+selection and edits no document property. It also includes other visible model
+geometry. Classic document editing retains its native behavior.
+
 ## Coordinate display during sketch drawing — November 22, 2026
 
 ComponentPanel creates a sketch_visibility.Drawing scope on native sketch entry

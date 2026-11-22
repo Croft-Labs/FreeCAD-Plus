@@ -215,6 +215,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._history_eyes = False
         self._feature_scope = None
         self._sketch_drawing = None
+        self._sketch_exit_fit = None
         self.refresh_count = 0
         self.tabs = QtWidgets.QTabWidget()
         self.trees = []
@@ -420,6 +421,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
     slotChangedDocument = schedule
 
     def begin_feature_task(self, token):
+        self._sketch_exit_fit = None
         # Overlapping placement/native stages share one saved tab. Refreshes
         # never force it again, so users can browse other tabs during a task.
         current = self._current()
@@ -481,10 +483,42 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.schedule()
 
     def slotResetEdit(self, view):
+        drawing = self._sketch_drawing
         if self._sketch_drawing is not None and self._sketch_drawing.sketch == view.Object:
             self._restore_sketch_coordinates()
+        else:
+            drawing = None
         self.end_feature_task(view.Object)
         self.schedule()
+        if drawing is not None:
+            try:
+                context = self._context(*drawing.binding)
+                if context[0] != drawing.definition:
+                    return
+                token = (drawing.binding, context, identity(drawing.sketch))
+                self._sketch_exit_fit = token
+                # Native resetEdit still owns its viewer and transaction here.
+                # Fit after camera restoration, coordinate restoration and layout.
+                QtCore.QTimer.singleShot(0, lambda: self._fit_exited_sketch(token))
+            except (ValueError, RuntimeError, ReferenceError):
+                pass
+
+    def _fit_exited_sketch(self, token):
+        if self._closed or self._sketch_exit_fit is not token:
+            return
+        self._sketch_exit_fit = None
+        binding, context, ref = token
+        try:
+            if (self._current() != binding or self._context(*binding) != context
+                    or Gui.getDocument(binding[0].Name).getInEdit() is not None
+                    or Gui.Control.activeDialog()):
+                return
+            sketch = lookup(ref)
+            if (document.owned_path(context[0], sketch) is not None
+                    and sketch.GeometryCount and not sketch.Shape.isNull()):
+                binding[1].fitAll()
+        except (ValueError, RuntimeError, ReferenceError):
+            pass  # The sketch or its view may have closed before the queued fit.
 
     def _part_dialog_updated(self):
         # Control updates its active-dialog pointer after TaskView emits this
@@ -505,6 +539,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def slotDeletedDocument(self, doc):
         owner = getattr(doc, 'Document', doc)
+        if self._sketch_exit_fit is not None:
+            binding, _, ref = self._sketch_exit_fit
+            if owner == binding[0] or owner.Name == ref[0]:
+                self._sketch_exit_fit = None
         if self._sketch_drawing is not None and owner in (
                 self._sketch_drawing.binding[0], self._sketch_drawing.definition.Document):
             self._restore_sketch_coordinates()
@@ -530,6 +568,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         return doc, Gui.getDocument(doc.Name).activeView()
 
     def _forget_view(self, binding):
+        if self._sketch_exit_fit is not None and self._sketch_exit_fit[0] == binding:
+            self._sketch_exit_fit = None
         self._states = [(bound, state) for bound, state in self._states if bound != binding]
         if self._binding == binding:
             self._binding = None
@@ -1073,6 +1113,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def dispose(self):
         if self._closed:
             return
+        self._sketch_exit_fit = None
         self._restore_sketch_coordinates()
         self._restore_feature_tab()
         from . import movement

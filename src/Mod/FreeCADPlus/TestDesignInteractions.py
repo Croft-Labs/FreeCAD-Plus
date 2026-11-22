@@ -395,6 +395,119 @@ class TestSketchCoordinateVisibility(unittest.TestCase):
         self.assertEqual(self.switches(objects),before)
 
 
+class TestSketchExitFit(unittest.TestCase):
+    setUp = TestDesignInteractions.setUp
+    tearDown = TestSketchCoordinateVisibility.tearDown
+    dialog = TestDesignInteractions.dialog
+    circle = TestDesignInteractions.circle
+
+    def rectangle(self, sketch):
+        points=[(-65,-35),(75,-35),(75,45),(-65,45)]
+        for index,p in enumerate(points):
+            q=points[(index+1)%4]
+            sketch.addGeometry(Part.LineSegment(App.Vector(*p,0),App.Vector(*q,0)),False)
+        sketch.Document.recompute()
+        return [App.Vector(*p,0) for p in points]
+
+    def camera(self):
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewTop()
+        view.getCameraNode().height.setValue(40)
+        return view
+
+    def assert_framed(self, view, points):
+        widget=view.graphicsView().viewport();ratio=widget.devicePixelRatioF()
+        for point in points:
+            screen=view.getPointOnScreen(point)
+            self.assertTrue(0<=screen[0]<widget.width()*ratio and 0<=screen[1]<widget.height()*ratio,
+                            (point,screen,widget.size()))
+
+    def test_existing_native_exit_routes_preserve_orientation_visibility_and_selection(self):
+        sketch=modeling.new_sketch(self.doc);points=self.rectangle(sketch)
+        solid=self.owner.newObject('Part::Feature','VisibleSolid');solid.Shape=Part.makeBox(10,10,10,App.Vector(120,0,0))
+        self.doc.recompute();view=self.camera()
+        for exit_kind in ('command','close','reset'):
+            with self.subTest(exit=exit_kind):
+                view.getCameraNode().height.setValue(40)
+                if exit_kind=='close':view.viewAxonometric()
+                rotation=view.getCameraOrientation()
+                flags={o.Name:o.Visibility for o in [solid,self.owner.Origin,*self.owner.Origin.OriginFeatures]}
+                self.panel.tabs.setCurrentIndex(1);editing.edit_feature(self.doc,sketch);settle()
+                view.getCameraNode().height.setValue(150)
+                if exit_kind=='command':Gui.runCommand('Sketcher_LeaveSketch')
+                elif exit_kind=='close':
+                    button=next(box.button(QtWidgets.QDialogButtonBox.Close) for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox)
+                                if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Close))
+                    button.click()
+                else:Gui.activeDocument().resetEdit()
+                App.closeActiveTransaction()
+                undo=self.doc.UndoCount;modified=Gui.activeDocument().Modified
+                selection=Gui.Selection.getSelection()
+                settle();self.assert_framed(view,points+[App.Vector(130,10,10)])
+                self.assertTrue(view.getCameraOrientation().isSame(rotation,1e-7))
+                self.assertEqual({o.Name:self.doc.getObject(o.Name).Visibility for o in [solid,self.owner.Origin,*self.owner.Origin.OriginFeatures]},flags)
+                self.assertEqual(self.panel.tabs.currentIndex(),1)
+                self.assertEqual(self.doc.UndoCount,undo);self.assertEqual(Gui.activeDocument().Modified,modified)
+                self.assertEqual(Gui.Selection.getSelection(),selection)
+
+    def test_new_sketch_exit_fits_and_creation_still_undoes(self):
+        view=self.camera();task=sketch_task.show();task.choose('XY Plane')
+        self.dialog(QtWidgets.QDialogButtonBox.Ok);points=self.rectangle(task.result)
+        view.getCameraNode().height.setValue(150)
+        Gui.runCommand('Sketcher_LeaveSketch');App.closeActiveTransaction();settle()
+        self.assert_framed(view,points)
+        name=task.result.Name;self.doc.undo();settle();self.assertIsNone(self.doc.getObject(name))
+        self.doc.redo();settle();self.assertIsNotNone(self.doc.getObject(name))
+
+    def test_empty_sketch_and_cancelled_placement_do_not_fit(self):
+        view=self.camera();before=view.getCameraNode().position.getValue().getValue()
+        task=sketch_task.show();task.reject();settle()
+        self.assertAlmostEqual(view.getCameraNode().height.getValue(),40)
+        self.assertEqual(view.getCameraNode().position.getValue().getValue(),before)
+        sketch=modeling.new_sketch(self.doc);editing.edit_feature(self.doc,sketch);settle()
+        view.getCameraNode().height.setValue(150)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+        self.assertAlmostEqual(view.getCameraNode().height.getValue(),40)
+
+    def test_new_editor_cancels_queued_exit_fit(self):
+        sketch=modeling.new_sketch(self.doc);self.rectangle(sketch);other=self.circle();view=self.camera()
+        editing.edit_feature(self.doc,sketch);settle()
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction()
+        editing.edit_feature(self.doc,other)
+        view.getCameraNode().height.setValue(73);settle()
+        self.assertEqual(Gui.activeDocument().getInEdit().Object,other)
+        self.assertAlmostEqual(view.getCameraNode().height.getValue(),73)
+
+    def test_deleted_sketch_and_closed_document_skip_queued_fit(self):
+        sketch=modeling.new_sketch(self.doc);self.rectangle(sketch);view=self.camera()
+        editing.edit_feature(self.doc,sketch);settle()
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction()
+        self.doc.removeObject(sketch.Name);self.doc.recompute();self.doc.commitTransaction()
+        view.getCameraNode().height.setValue(63);settle()
+        self.assertAlmostEqual(view.getCameraNode().height.getValue(),63)
+        sketch=self.circle();editing.edit_feature(self.doc,sketch);settle()
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();App.closeDocument(self.doc.Name)
+        other=document.new_document('OtherView');other_view=Gui.activeDocument().activeView()
+        other_view.getCameraNode().height.setValue(81);settle()
+        self.assertAlmostEqual(other_view.getCameraNode().height.getValue(),81)
+
+    def test_body_owned_sketch_fits(self):
+        body=self.owner.newObject('PartDesign::Body','Body');sketch=body.newObject('Sketcher::SketchObject','Sketch')
+        points=self.rectangle(sketch);view=self.camera()
+        editing.edit_feature(self.doc,sketch);settle()
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle();self.assert_framed(view,points)
+
+    def test_external_source_fits_host_view(self):
+        folder=Path(os.environ['PLUS_TEST_DIR'])/'fit-external';folder.mkdir(exist_ok=True)
+        document.save_document(self.doc,folder/'Host.cadprt')
+        source=document.new_document('FitSource');owner=document.validate(source).Definitions[0]
+        document.save_document(source,folder/'Source.cadprt');external.import_file(self.doc,source)
+        App.setActiveDocument(self.doc.Name);editing.edit_unused(self.doc,owner);self.owner=owner
+        sketch=modeling.new_sketch(self.doc);points=self.rectangle(sketch);view=self.camera()
+        editing.edit_feature(self.doc,sketch);settle()
+        Gui.getDocument(self.doc.Name).resetEdit();App.closeActiveTransaction();settle()
+        self.assert_framed(view,points);self.assertEqual(sketch.Document,source)
+
+
 class TestSketchCreationAndTaskTabs(unittest.TestCase):
     setUp = TestDesignInteractions.setUp
     tearDown = TestDesignInteractions.tearDown

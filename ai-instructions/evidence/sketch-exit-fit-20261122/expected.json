@@ -1,0 +1,42 @@
+{
+  "sketch": "Sketch",
+  "identity": 4968,
+  "points": [
+    [
+      -65,
+      -35
+    ],
+    [
+      75,
+      -35
+    ],
+    [
+      75,
+      45
+    ],
+    [
+      -65,
+      45
+    ]
+  ],
+  "types": [
+    "Coincident",
+    "Horizontal",
+    "Coincident",
+    "Vertical",
+    "Coincident",
+    "Horizontal",
+    "Coincident",
+    "Vertical"
+  ],
+  "coordinates": {
+    "Origin002": true,
+    "X_Axis001": true,
+    "Y_Axis001": true,
+    "Z_Axis001": true,
+    "XY_Plane001": true,
+    "XZ_Plane001": true,
+    "YZ_Plane001": true,
+    "Origin003": true
+  }
+}

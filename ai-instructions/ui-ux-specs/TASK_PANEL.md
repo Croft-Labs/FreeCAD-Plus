@@ -4,6 +4,17 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### View fitting after sketch exit — November 22, 2026
+
+The owner requested "exiting a sketch should resize the view to include the sketch"
+and approved the direct native preview. Leaving new or existing nonempty sketch
+drawing fits the visible model so the full sketch is included. Retain the normal
+post-exit camera orientation and existing object visibility; fit after native camera,
+coordinate-system and task-layout restoration. Drawing zoom remains under user
+control while editing. Empty/deleted sketches, cancelled placement and closed or
+replaced views must not trigger a stale camera adjustment. Preserve History tab
+restoration, selection, constraints, geometry and native Undo/Redo.
+
 ### Sketch coordinate-system visibility — November 22, 2026
 
 The owner requested "opening a sketch should hide the coordinate system" and

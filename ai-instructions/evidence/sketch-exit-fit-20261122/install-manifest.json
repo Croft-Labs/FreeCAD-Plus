@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestDesignInteractions.py",
+    "source_sha256": "5ff4d8f637d9e559976eb636371c9fdf5cc7a4b8790df25e349310f21cbfa3de",
+    "built_sha256": "5ff4d8f637d9e559976eb636371c9fdf5cc7a4b8790df25e349310f21cbfa3de",
+    "installed_sha256": "5ff4d8f637d9e559976eb636371c9fdf5cc7a4b8790df25e349310f21cbfa3de",
+    "previous_sha256": "22bd89819309a2e7cdfbef5a1481dac5de1cbb6675210fd0a8ede9337c0d0848",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-exit-fit-20261122\\install-backup\\Mod\\FreeCADPlus\\TestDesignInteractions.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source_sha256": "fb69856b95bbf866b5ff17418d9d517e3a700215ffe491d4b4d9070f9d4c0b92",
+    "built_sha256": "fb69856b95bbf866b5ff17418d9d517e3a700215ffe491d4b4d9070f9d4c0b92",
+    "installed_sha256": "fb69856b95bbf866b5ff17418d9d517e3a700215ffe491d4b4d9070f9d4c0b92",
+    "previous_sha256": "d2299821e815d98f17ce9450342c06a14b54ec0187202d037a46506c80247820",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-exit-fit-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  }
+]

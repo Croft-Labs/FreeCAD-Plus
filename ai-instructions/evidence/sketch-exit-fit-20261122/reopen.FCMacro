@@ -1,0 +1,35 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtTest
+from freecad_plus import document,panel,editing
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        expected=json.loads((out/'expected.json').read_text())
+        doc=document.open_document(out/'FramedSketch.cadprt');sketch=doc.getObject(expected['sketch'])
+        assert sketch.ID==expected['identity'] and sketch.GeometryCount==4
+        assert [c.Type for c in sketch.Constraints]==expected['types']
+        editing.edit((document.validate(doc).Group[0],));dock=panel.show_panel();dock.tabs.setCurrentIndex(0)
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric()
+        view.getCameraNode().height.setValue(40);rotation=view.getCameraOrientation()
+        editing.edit_feature(doc,sketch);QtTest.QTest.qWait(200)
+        Gui.runCommand('Sketcher_LeaveSketch');App.closeActiveTransaction();QtTest.QTest.qWait(300)
+        viewport=view.graphicsView().viewport();ratio=viewport.devicePixelRatioF()
+        screen=[view.getPointOnScreen(App.Vector(*p,0)) for p in expected['points']]
+        assert all(0<=p[0]<viewport.width()*ratio and 0<=p[1]<viewport.height()*ratio for p in screen)
+        assert view.getCameraOrientation().isSame(rotation,1e-7)
+        assert dock.tabs.currentIndex()==0
+        owner=document.validate(doc).Definitions[0];frame=[owner.Origin,*owner.Origin.OriginFeatures]
+        assert {o.Name:o.Visibility for o in frame}==expected['coordinates']
+        assert [c.Type for c in sketch.Constraints]==expected['types']
+        result.update(ok=True,saved_identity_and_constraints=True,existing_sketch_fitted=True,
+                      axonometric_orientation_preserved=True,coordinate_visibility_preserved=True,previous_tab_restored=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'reopen.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

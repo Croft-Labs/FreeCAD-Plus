@@ -1,5 +1,35 @@
 # FreeCAD Plus: Current work state
 
+## View fitting after sketch exit — November 22, 2026
+
+The owner [approved the direct native preview](evidence/sketch-exit-fit-20261122/approval.json).
+Leaving a new or existing nonempty sketch now fits the visible model to include the
+whole sketch, retaining the normal post-exit camera orientation. Fitting follows
+native camera, coordinate visibility and task cleanup. It preserves object visibility,
+selection, History restoration, geometry, constraints and native transactions.
+Empty/deleted sketches, cancelled placement, replacement editors and closed views
+or documents do not cause a stale camera adjustment.
+
+The panel and regression module were built and installed with source/build/app
+hash verification and retained rollback copies:
+[manifest](evidence/sketch-exit-fit-20261122/install-manifest.json).
+Seven focused native build cases passed:
+[report](evidence/sketch-exit-fit-20261122/build-regression.txt).
+All **169 installed native tests** passed with no failures/errors:
+[report](evidence/sketch-exit-fit-20261122/regression.txt).
+Separate installed processes passed the actual Close-button/large-sketch visual
+check and saved-sketch reopening with axonometric orientation retained:
+[visual result](evidence/sketch-exit-fit-20261122/visual.json),
+[reopen result](evidence/sketch-exit-fit-20261122/reopen.json).
+The reviewed [installed exit screenshot](evidence/sketch-exit-fit-20261122/installed-exited.png)
+shows the complete rectangle after fitting, matching the approved native preview.
+
+The existing desktop shortcut was restarted and verified with isolated user/system/
+data paths: [launch check](evidence/sketch-exit-fit-20261122/shortcut.json).
+The app remains open. Rollback copies and the active isolated profile remain under
+runtime validation/sketch-exit-fit-20261122. Disposable test fixtures and inactive
+profiles were removed after acceptance; the owner profile was never used.
+
 ## Sketch coordinate-system visibility — November 22, 2026
 
 The owner [approved the native preview](evidence/sketch-coordinate-visibility-20261122/approval.json)

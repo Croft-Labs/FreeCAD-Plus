@@ -1,0 +1,12 @@
+test_body_owned_sketch_fits (TestDesignInteractions.TestSketchExitFit.test_body_owned_sketch_fits) ... ok
+test_deleted_sketch_and_closed_document_skip_queued_fit (TestDesignInteractions.TestSketchExitFit.test_deleted_sketch_and_closed_document_skip_queued_fit) ... ok
+test_empty_sketch_and_cancelled_placement_do_not_fit (TestDesignInteractions.TestSketchExitFit.test_empty_sketch_and_cancelled_placement_do_not_fit) ... ok
+test_existing_native_exit_routes_preserve_orientation_visibility_and_selection (TestDesignInteractions.TestSketchExitFit.test_existing_native_exit_routes_preserve_orientation_visibility_and_selection) ... ok
+test_external_source_fits_host_view (TestDesignInteractions.TestSketchExitFit.test_external_source_fits_host_view) ... ok
+test_new_editor_cancels_queued_exit_fit (TestDesignInteractions.TestSketchExitFit.test_new_editor_cancels_queued_exit_fit) ... ok
+test_new_sketch_exit_fits_and_creation_still_undoes (TestDesignInteractions.TestSketchExitFit.test_new_sketch_exit_fits_and_creation_still_undoes) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 17.111s
+
+OK

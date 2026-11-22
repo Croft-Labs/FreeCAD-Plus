@@ -1,0 +1,54 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part,Sketcher
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,panel,sketch_task
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.resize(1300,900);win.show();win.raise_();win.activateWindow()
+        QtWidgets.QApplication.setActiveWindow(win);Gui.activateWorkbench('SketcherWorkbench')
+        doc=document.new_document('Sketch exit framing');owner=document.validate(doc).Definitions[0]
+        owner.Label='Example component';dock=panel.show_panel();dock.tabs.setCurrentIndex(1)
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewTop()
+        view.getCameraNode().height.setValue(40);rotation=view.getCameraOrientation()
+        task=sketch_task.show();task.choose('XY Plane');assert task.accept();QtTest.QTest.qWait(300)
+        sketch=task.result;sketch.Label='Rectangle sketch'
+        points=[(-65,-35),(75,-35),(75,45),(-65,45)]
+        for index,p in enumerate(points):
+            q=points[(index+1)%4];sketch.addGeometry(Part.LineSegment(App.Vector(*p,0),App.Vector(*q,0)),False)
+        for index in range(4):
+            sketch.addConstraint(Sketcher.Constraint('Coincident',index,2,(index+1)%4,1))
+            sketch.addConstraint(Sketcher.Constraint('Horizontal' if index%2==0 else 'Vertical',index))
+        doc.recompute();frame=[owner.Origin,*owner.Origin.OriginFeatures]
+        flags={o.Name:o.Visibility for o in frame};view.getCameraNode().height.setValue(150)
+        def capture(name):
+            dock.refresh();QtTest.QTest.qWait(250)
+            assert win.screen().grabWindow(int(win.winId())).save(str(out/('installed-'+name+'.png')))
+        assert all(o.ViewObject.SwitchNode.whichChild.getValue()==-1 for o in frame)
+        capture('editing')
+        button=next(box.button(QtWidgets.QDialogButtonBox.Close) for box in win.findChildren(QtWidgets.QDialogButtonBox)
+                    if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Close))
+        QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton);App.closeActiveTransaction();QtTest.QTest.qWait(300)
+        capture('exited');assert dock.tabs.currentIndex()==1
+        assert view.getCameraOrientation().isSame(rotation,1e-7)
+        assert flags=={o.Name:o.Visibility for o in frame}
+        viewport=view.graphicsView().viewport();ratio=viewport.devicePixelRatioF()
+        screen=[view.getPointOnScreen(App.Vector(*p,0)) for p in points]
+        assert all(0<=p[0]<viewport.width()*ratio and 0<=p[1]<viewport.height()*ratio for p in screen)
+        assert view.getCameraNode().height.getValue()>40
+        document.save_document(doc,out/'FramedSketch.cadprt')
+        expected=dict(sketch=sketch.Name,identity=sketch.ID,points=points,types=[c.Type for c in sketch.Constraints],coordinates=flags)
+        (out/'expected.json').write_text(json.dumps(expected,indent=2))
+        result.update(ok=True,height_before_edit=40,height_after_exit=view.getCameraNode().height.getValue(),
+            full_sketch_in_view=True,orientation_preserved=True,visibility_preserved=True,
+            previous_tab_restored=True,native_close_button=True,module=panel.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    if Gui.activeDocument() and Gui.activeDocument().getInEdit():Gui.activeDocument().resetEdit()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

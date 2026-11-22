@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest sketch exit framing — November 22, 2026
+
+The approved change is installed: leaving a new or existing nonempty sketch fits
+the visible model to include the full sketch while retaining exit orientation.
+It runs after native cleanup and skips empty/deleted sketches, cancelled placement
+and stale views/editors. Visibility, selection, History restoration and Undo remain
+intact. Seven focused build tests, all 169 installed tests, and separate native
+Close-button/save-reopen checks passed. See
+[acceptance](WORK_STATE.md#view-fitting-after-sketch-exit--november-22-2026).
+
 ## Latest sketch coordinate visibility — November 22, 2026
 
 The approved change is installed: entering new or existing sketch drawing hides

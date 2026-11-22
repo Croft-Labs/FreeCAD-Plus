@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-22",
+  "request": "exiting a sketch should resize the view to include the sketch",
+  "approval": "approved",
+  "authority": "User approval of the direct native screenshots in the active chat",
+  "preview_session": "9834b51ad4a1",
+  "preview_fingerprint": "ba987491999adab7b0e3dd2a932d34fa4aabbb962e33750651db5d3580cd3985",
+  "baseline": "baseline-55c3f00b.png",
+  "candidate": "candidate-3bd06e3e.png",
+  "tool_approval_state_modified": false,
+  "scope": "Fit the visible model after nonempty sketch exit to include the complete sketch, retaining orientation, visibility, selection, History restoration and native document semantics."
+}
