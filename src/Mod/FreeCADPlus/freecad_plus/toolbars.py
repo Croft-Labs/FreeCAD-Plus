@@ -65,6 +65,24 @@ class ModeSelector(QtWidgets.QComboBox):
         super().showPopup()
 
 
+def style_feature_split(button):
+    """Reserve a separate themed arrow segment without replacing native actions."""
+    if button.menu() is None:
+        return
+    button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+    button.setStyleSheet("""
+        QToolButton { padding-right: 20px; }
+        QToolButton::menu-button {
+            subcontrol-origin: padding;
+            subcontrol-position: top right;
+            width: 18px;
+            border-left: 1px solid rgba(128, 128, 128, 140);
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+    """)
+
+
 class SplitButton(QtWidgets.QToolButton):
     """Keep available choices reachable without enabling the remembered action."""
     def sync_enabled(self):
@@ -99,6 +117,19 @@ class Ribbon(QtCore.QObject):
         self.bar.setFloatable(False)
         self.bar.toggleViewAction().setVisible(False)
         self.host = QtWidgets.QWidget()
+        self.host.setStyleSheet("""
+            QToolButton {
+                border: 1px solid rgba(128, 128, 128, 160);
+                border-radius: 3px;
+                padding: 3px;
+            }
+            QToolButton:hover { border-color: palette(highlight); }
+            QToolButton:pressed, QToolButton:checked {
+                background-color: palette(midlight);
+                border-color: palette(highlight);
+            }
+            QToolButton:disabled { border-color: rgba(128, 128, 128, 75); }
+        """)
         self.host.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         root = QtWidgets.QVBoxLayout(self.host)
         root.setContentsMargins(4, 2, 4, 2)
@@ -328,6 +359,8 @@ class Ribbon(QtCore.QObject):
         if not control.actions():
             control.deleteLater()
             return None
+        for button in control.findChildren(QtWidgets.QToolButton):
+            style_feature_split(button)
         return control
 
     def _spreadsheet_color(self, original, parent):
@@ -370,6 +403,7 @@ class Ribbon(QtCore.QObject):
         elif action.menu() is not None:
             button.setMenu(action.menu())
             button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+        style_feature_split(button)
         return button
 
     def _split(self, commands, caption, parent):
@@ -414,6 +448,7 @@ class Ribbon(QtCore.QObject):
                 preferences().SetString(key, command)
                 button.setDefaultAction(action)
         menu.triggered.connect(remember)
+        style_feature_split(button)
         return button
 
     def _build_common(self, items):
@@ -463,24 +498,53 @@ class Ribbon(QtCore.QObject):
         return label
 
     def _group(self, row, title, entries):
+        if row.count():
+            divider = QtWidgets.QFrame()
+            divider.setObjectName('PlusSectionDivider')
+            divider.setFixedWidth(1)
+            divider.setStyleSheet('background-color: rgba(128, 128, 128, 140); margin-top: 3px; margin-bottom: 3px;')
+            row.addWidget(divider)
         group = QtWidgets.QWidget()
         group.setObjectName('PlusGroup_' + title)
         box = QtWidgets.QVBoxLayout(group)
-        box.setContentsMargins(5, 0, 5, 0)
+        box.setContentsMargins(8, 0, 8, 0)
         box.setSpacing(1)
         grid = QtWidgets.QGridLayout()
         grid.setSpacing(2)
-        column, slot = 0, 0
+        grid.setHorizontalSpacing(5)
+        grid.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        # Preserve native logical subgroups; keep split and ordinary controls
+        # in separate columns within each subgroup.
+        prepared, subgroup = [], []
+        constraint_commands = {'Sketcher_CompDimensionTools', 'Sketcher_CompHorVer',
+                               'Sketcher_CompToggleConstraints'}
+        combined_constraints = constraint_commands.issubset(
+            {command for _, _, commands in entries for command in commands})
+        def flush_subgroup():
+            prepared.extend(sorted(subgroup, key=lambda item: item[4]))
+            subgroup.clear()
         for caption, size, commands in entries:
+            if size == 'separator':
+                if combined_constraints:
+                    continue
+                flush_subgroup()
+                prepared.append((caption, size, commands, None, None))
+                continue
+            control = self._split(commands, caption, group) if commands else None
+            split = isinstance(control, QtWidgets.QToolButton) and control.menu() is not None
+            subgroup.append((caption, size, commands, control, split))
+        flush_subgroup()
+        column, slot, previous_split = 0, 0, None
+        for caption, size, commands, button, split in prepared:
             if size == 'separator':
                 column += 1
                 slot = 0
                 separator = QtWidgets.QFrame()
                 separator.setFrameShape(QtWidgets.QFrame.VLine)
+                separator.setFixedWidth(1)
                 grid.addWidget(separator, 0, column, 6, 1)
                 column += 1
                 continue
-            button = self._split(commands, caption, group) if commands else None
             if button is None:
                 button = QtWidgets.QToolButton(group)
                 button.setEnabled(False)
@@ -489,6 +553,10 @@ class Ribbon(QtCore.QObject):
                 button.setIcon(Gui.getIcon('forbidden'))
                 button.setToolTip(caption + ' is not available in this build.')
                 button.setAccessibleName(caption)
+            if slot and split != previous_split:
+                column += 1
+                slot = 0
+            previous_split = split
             span = {'large': 6, 'medium': 3, 'small': 2}[size]
             if slot + span > 6:
                 column += 1
@@ -501,9 +569,8 @@ class Ribbon(QtCore.QObject):
                 button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
                 button.setIconSize(QtCore.QSize(32, 32))
                 button.setMinimumHeight(55)
-                cell_box.addWidget(button)
+                cell_box.addWidget(button, 0, QtCore.Qt.AlignHCenter)
                 label = self._caption(caption, 82)
-                label.setMinimumWidth(82)
                 cell_box.addWidget(label)
                 grid.addWidget(cell, slot, column, span, 1)
             else:
@@ -511,13 +578,15 @@ class Ribbon(QtCore.QObject):
                 pixels = 28 if size == 'medium' else 20
                 button.setIconSize(QtCore.QSize(pixels, pixels))
                 grid.addWidget(button, slot, column, span, 1)
+            if isinstance(button, QtWidgets.QToolButton):
+                # Keep the reserved icon/arrow space when a narrow page scrolls.
+                button.setFixedWidth(button.sizeHint().width())
             slot += span
         box.addLayout(grid)
         box.addStretch()
         label = self._caption(title, grid.minimumSize().width())
         box.addWidget(label)
         row.addWidget(group)
-        self._divider(row)
 
     def _build_page(self, items):
         page = QtWidgets.QWidget()

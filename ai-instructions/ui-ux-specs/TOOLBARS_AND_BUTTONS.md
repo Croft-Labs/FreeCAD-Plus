@@ -4,6 +4,33 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Section 1 — FC Plus modes, tabs, groups and buttons
 
+### Bordered controls and separate dropdown columns — November 22, 2026
+
+The owner approved the nine Design-tab native previews in chat and instructed:
+"implement the toolbar changes across all design tabs with the bounding boxes,
+separate dropdown columns, logical grouping, and section dividers." The owner also
+requested removing unnecessary right-hand spacing in the proposed renders before
+implementation, clarifying that this was a preview issue, not a current-app defect.
+
+- Every icon has a visible bounding box. A split button's outer box encloses both
+  the icon and its distinct right-hand arrow segment.
+- Icon clicks invoke the current feature; arrow clicks show the complete menu.
+  Choosing an option updates the main icon/action using native command semantics.
+- Preserve logical sections and subgroups, placing ordinary and dropdown controls
+  in separate columns within them. Stack the three standard Constraints dropdowns
+  together. Do not mix types merely to fill unused vertical slots.
+- Use vertical dividers between sections, without a trailing divider. Keep compact
+  natural-width columns and enough room for complete captions and arrow targets;
+  avoid surplus column stretching and fixed large-caption width.
+- Preserve native icons, command inventory, selection controls, enabled/checked
+  states, theme backgrounds and Classic ownership. Narrow windows may scroll.
+
+The original approved preview fingerprint was
+`447e3e05ab0cf491e380e53dae58c551c37d199d219fc9869d4ddb4e478549cb` in
+Companion session `c6dd2e892424`. Direct chat approval and the explicitly requested
+spacing correction govern implementation; no tool approval state was set.
+See [acceptance](../WORK_STATE.md#design-toolbar-layout--november-22-2026).
+
 ### Ribbon theme background — November 21, 2026
 
 The Plus ribbon content background follows the selected application theme,

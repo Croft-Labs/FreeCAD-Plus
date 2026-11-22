@@ -1,0 +1,245 @@
+{
+  "ok": true,
+  "source_sha256": "5fe643a0fb93f75ac1087499f44a0ea69ca121eedee3d75cbcf50b553b55c886",
+  "preview_only": false,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\toolbars.py",
+  "menu_options": [
+    "Circle From Center",
+    "Circle From 3 Points",
+    "Ellipse From Center",
+    "Ellipse From 3 Points"
+  ],
+  "arrow_opens_menu_only": true,
+  "choice_updates_icon": true,
+  "main_invokes_last_choice": true,
+  "themes": [
+    {
+      "theme": "FreeCAD Light",
+      "button_width": 47,
+      "icon_width": 20,
+      "groups": 7,
+      "dividers": 6
+    },
+    {
+      "theme": "FreeCAD Dark",
+      "button_width": 47,
+      "icon_width": 20,
+      "groups": 7,
+      "dividers": 6
+    }
+  ],
+  "tabs": [
+    {
+      "tab": "Home",
+      "workbench": "PartDesignWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 7,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 7,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    },
+    {
+      "tab": "Modeling",
+      "workbench": "PartDesignWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 6,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 6,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    },
+    {
+      "tab": "Sketch",
+      "workbench": "SketcherWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 7,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": [
+            {
+              "command": "Plus_Sketcher_CompDimensionTools",
+              "column": 3,
+              "row": 0
+            },
+            {
+              "command": "Plus_Sketcher_CompHorVer",
+              "column": 3,
+              "row": 2
+            },
+            {
+              "command": "Plus_Sketcher_CompToggleConstraints",
+              "column": 3,
+              "row": 4
+            }
+          ]
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 7,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": [
+            {
+              "command": "Plus_Sketcher_CompDimensionTools",
+              "column": 3,
+              "row": 0
+            },
+            {
+              "command": "Plus_Sketcher_CompHorVer",
+              "column": 3,
+              "row": 2
+            },
+            {
+              "command": "Plus_Sketcher_CompToggleConstraints",
+              "column": 3,
+              "row": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tab": "Surface",
+      "workbench": "SurfaceWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 1,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 1,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    },
+    {
+      "tab": "Assembly",
+      "workbench": "AssemblyWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 2,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 2,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    },
+    {
+      "tab": "Mesh",
+      "workbench": "MeshWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 6,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 6,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    },
+    {
+      "tab": "View",
+      "workbench": "PartDesignWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 2,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 2,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    },
+    {
+      "tab": "Part",
+      "workbench": "PartWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 3,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 3,
+          "overflow": false,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    },
+    {
+      "tab": "All Tools",
+      "workbench": "PartDesignWorkbench",
+      "themes": [
+        {
+          "theme": "FreeCAD Light",
+          "groups": 13,
+          "overflow": true,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        },
+        {
+          "theme": "FreeCAD Dark",
+          "groups": 13,
+          "overflow": true,
+          "mixed_columns": [],
+          "constraint_dropdowns": []
+        }
+      ]
+    }
+  ]
+}

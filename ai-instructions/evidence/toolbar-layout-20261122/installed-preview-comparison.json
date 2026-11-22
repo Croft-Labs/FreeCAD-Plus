@@ -1,0 +1,38 @@
+[
+  {
+    "tab": "home",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "modeling",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "sketch",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "surface",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "assembly",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "mesh",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "view",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "part",
+    "matches_final_preview": true
+  },
+  {
+    "tab": "all-tools",
+    "matches_final_preview": true
+  }
+]

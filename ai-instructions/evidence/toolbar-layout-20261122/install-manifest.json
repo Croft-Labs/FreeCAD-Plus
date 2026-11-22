@@ -1,0 +1,16 @@
+[
+  {
+    "file": "freecad_plus\\toolbars.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\toolbars.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\toolbars.py",
+    "sha256": "5FE643A0FB93F75AC1087499F44A0EA69CA121EEDEE3D75CBCF50B553B55C886",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\toolbar-layout-20261122\\install-backup\\freecad_plus\\toolbars.py"
+  },
+  {
+    "file": "TestPlusToolbars.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPlusToolbars.py",
+    "installed": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestPlusToolbars.py",
+    "sha256": "639FFD2C32449A93654CBED622C7C926270B5B66A329CFB6FCB4BF7A03528EF8",
+    "backup": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\toolbar-layout-20261122\\install-backup\\TestPlusToolbars.py"
+  }
+]

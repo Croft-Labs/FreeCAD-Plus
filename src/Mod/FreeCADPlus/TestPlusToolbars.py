@@ -2201,6 +2201,84 @@ class TestPlusToolbars(unittest.TestCase):
         ui_modes.apply_modes()
         self.assertTrue(has_edge(self.drag_box(view, (2, 3), (-12, -3))))
 
+    def test_design_columns_and_split_hit_areas(self):
+        """Realized layout stays compact, preserves groups and separates click targets."""
+        window = Gui.getMainWindow()
+        theme_prefs = App.ParamGet('User parameter:BaseApp/Preferences/MainWindow')
+        saved_theme = theme_prefs.GetString('Theme')
+        try:
+            window.showNormal()
+            for width, theme in ((1300, 'FreeCAD Light'), (1000, 'FreeCAD Dark')):
+                window.resize(width, 900)
+                theme_prefs.SetString('Theme', theme)
+                for title, owner in toolbars.layout.DESIGN_TABS:
+                    with self.subTest(tab=title, width=width, theme=theme):
+                        if title in ('View', 'All Tools'):
+                            Gui.activateWorkbench('PartDesignWorkbench')
+                            self.ribbon.refresh()
+                        self.tab(title)
+                        page = self.ribbon.scroll.widget()
+                        groups = [w for w in page.findChildren(QtWidgets.QWidget)
+                                  if w.objectName().startswith('PlusGroup_')]
+                        dividers = page.findChildren(QtWidgets.QFrame, 'PlusSectionDivider')
+                        self.assertEqual(len(dividers), max(0, len(groups) - 1))
+                        for divider in dividers:
+                            self.assertEqual(divider.width(), 1)
+                        constraint_columns = []
+                        for group in groups:
+                            grid = group.layout().itemAt(0).layout()
+                            columns = {}
+                            for i in range(grid.count()):
+                                widget = grid.itemAt(i).widget()
+                                if widget is None:
+                                    continue
+                                row, col, _, _ = grid.getItemPosition(i)
+                                buttons = ([widget] if isinstance(widget, QtWidgets.QToolButton)
+                                           else widget.findChildren(QtWidgets.QToolButton))
+                                for button in buttons:
+                                    if not button.objectName().startswith('Plus_'):
+                                        continue
+                                    split = button.menu() is not None
+                                    columns.setdefault(col, set()).add(split)
+                                    # A small icon's cell must not consume surplus section width.
+                                    if button is widget:
+                                        self.assertLessEqual(grid.cellRect(row, col).width(),
+                                                             button.width() + 1)
+                                    self.assertLessEqual(button.width(), button.iconSize().width() +
+                                                         (32 if split else 14))
+                                    if split:
+                                        option = QtWidgets.QStyleOptionToolButton()
+                                        button.initStyleOption(option)
+                                        style = button.style()
+                                        arrow = style.subControlRect(QtWidgets.QStyle.CC_ToolButton,
+                                            option, QtWidgets.QStyle.SC_ToolButtonMenu, button)
+                                        self.assertGreaterEqual(arrow.left(), button.iconSize().width() + 4)
+                                        self.assertGreaterEqual(arrow.width(), 16)
+                                        self.assertTrue(button.rect().contains(arrow))
+                                        # QToolButton uses this menu rectangle internally;
+                                        # generic style hit testing does not resolve split clicks.
+                                        # Real mouse dispatch is covered by the native arc and
+                                        # disabled-main/enabled-alternative tests below.
+                                        self.assertEqual(button.popupMode(),
+                                                         QtWidgets.QToolButton.MenuButtonPopup)
+                                    if button.objectName() in (
+                                            'Plus_Sketcher_CompDimensionTools',
+                                            'Plus_Sketcher_CompHorVer',
+                                            'Plus_Sketcher_CompToggleConstraints'):
+                                        constraint_columns.append(col)
+                            self.assertTrue(all(len(kinds) == 1 for kinds in columns.values()),
+                                            group.objectName())
+                        if title == 'Sketch':
+                            self.assertEqual(len(constraint_columns), 3)
+                            self.assertEqual(len(set(constraint_columns)), 1)
+                        for label in page.findChildren(QtWidgets.QLabel, 'PlusCaption'):
+                            metrics = label.fontMetrics()
+                            self.assertGreaterEqual(label.contentsRect().width(),
+                                max(metrics.horizontalAdvance(line) for line in label.text().split('\n')))
+        finally:
+            theme_prefs.SetString('Theme', saved_theme)
+            window.showMaximized()
+
     def test_native_arc_split_and_last_used(self):
         r = self.ribbon
         self.tab('Sketch')

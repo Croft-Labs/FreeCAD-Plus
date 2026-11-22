@@ -1,0 +1,19 @@
+test_design_columns_and_split_hit_areas (TestPlusToolbars.TestPlusToolbars.test_design_columns_and_split_hit_areas)
+Realized layout stays compact, preserves groups and separates click targets. ... ok
+test_native_arc_split_and_last_used (TestPlusToolbars.TestPlusToolbars.test_native_arc_split_and_last_used) ... ok
+test_plus_split_available_alternative (TestPlusToolbars.TestPlusToolbars.test_plus_split_available_alternative) ... ok
+test_plus_group_last_choice_and_native_state (TestPlusToolbars.TestPlusToolbars.test_plus_group_last_choice_and_native_state) ... ok
+test_native_widget_factory_and_all_tools (TestPlusToolbars.TestPlusToolbars.test_native_widget_factory_and_all_tools) ... ok
+test_added_workbench_expanded_group_and_custom_toolbar (TestPlusToolbars.TestPlusToolbars.test_added_workbench_expanded_group_and_custom_toolbar) ... ok
+test_live_customization_refresh (TestPlusToolbars.TestPlusToolbars.test_live_customization_refresh) ... ok
+test_classic_restore_and_independent_preferences (TestPlusToolbars.TestPlusToolbars.test_classic_restore_and_independent_preferences) ... ok
+test_ribbon_background_follows_theme (TestPlusToolbars.TestPlusToolbars.test_ribbon_background_follows_theme) ... ok
+test_captions_and_icon_only_controls_on_narrow_window (TestPlusToolbars.TestPlusToolbars.test_captions_and_icon_only_controls_on_narrow_window) ... ok
+test_tabs_modes_and_idle (TestPlusToolbars.TestPlusToolbars.test_tabs_modes_and_idle) ... ok
+test_spreadsheet_native_color_widgets (TestPlusToolbars.TestPlusToolbars.test_spreadsheet_native_color_widgets) ... ok
+test_bim_status_controls_keep_native_ownership (TestPlusToolbars.TestPlusToolbars.test_bim_status_controls_keep_native_ownership) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 123.277s
+
+OK

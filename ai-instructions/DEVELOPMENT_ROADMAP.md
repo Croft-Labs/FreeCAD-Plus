@@ -1,5 +1,18 @@
 # FreeCAD Plus: Development roadmap
 
+## Design toolbar layout — November 22, 2026
+
+- [x] Render all nine Design tabs in Light/Dark and obtain direct chat approval.
+- [x] Add icon borders enclosing split arrows, logical separate dropdown columns,
+  a single three-menu Constraints column, and dividers between sections.
+- [x] Remove surplus preview column/caption spacing before installation; preserve
+  natural button widths and horizontal scrolling in narrow windows.
+- [x] Build/install and pass 13 native regression cases, including layout, actual
+  menu/icon clicks, remembered choices, theme changes and native widget ownership.
+- [x] Verify saved choices in a fresh process and exact installed/preview image
+  matches for all nine tabs, including both themes and All Tools scrolling.
+  See [acceptance](WORK_STATE.md#design-toolbar-layout--november-22-2026).
+
 ## Extrude shading and sketch visibility correction — November 22, 2026
 
 - [x] Reproduce rectangular preview artifacts and hidden component rendering in

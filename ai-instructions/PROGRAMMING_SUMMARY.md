@@ -2,6 +2,14 @@
 
 ## Current baseline
 
+November 22 approved toolbar layout is installed across all nine Design tabs:
+bordered icons, separate icon/arrow segments, logical groups with separate dropdown
+columns, and vertical section dividers. The three Constraints menus share a column.
+Surplus spacing in the proposed renders was removed before installation; compact
+natural-width buttons retain their arrow area on narrow scrolling pages. Thirteen
+installed native regression cases passed. See
+[acceptance](WORK_STATE.md#design-toolbar-layout--november-22-2026).
+
 November 22 approved corrections are installed: rectangular Extrude previews no
 longer show diagonal rear-face shading, and new/existing component sketch editing
 preserves shown/hidden geometry, including native rendered LinkVisibility. The

@@ -8,6 +8,26 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Design toolbar layout — November 22, 2026
+
+The Plus ribbon retains shared native QActions/QMenus and native widget factories.
+`style_feature_split` reserves a separate arrow segment on feature buttons; it does
+not replace native action-group bookkeeping. Explicit Plus groups retain their
+stable-command preference and disabled-main/enabled-alternative behavior.
+The ribbon host supplies borders and palette-based interaction states. Classic
+widgets and special selection-menu semantics remain owned by their original code.
+
+`Ribbon._group` partitions controls stably within native logical subgroups and
+starts a new column when button type changes. The standard three Sketcher
+Constraints menus are intentionally collected together across their native
+separators. Section dividers are inserted only between groups. Natural-width
+grids, one-pixel internal separators and content-sized large captions prevent
+surplus horizontal spacing; complete labels still determine minimum section width.
+Large icons are centered over their captions. Realized buttons keep their natural
+width on narrow pages, preserving arrow space while the ribbon scrolls.
+This is presentation-only: command
+identity, geometry, document ownership and operation tasks are unchanged.
+
 ## Extrude rendering and native sketch visibility correction — November 22, 2026
 
 Extrude's transient indexed mesh declares counterclockwise winding and SOLID only

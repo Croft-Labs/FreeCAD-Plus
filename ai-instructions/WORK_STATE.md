@@ -1,5 +1,69 @@
 # FreeCAD Plus: Current work state
 
+## Design toolbar layout — November 22, 2026
+
+The owner approved the nine native Design-tab previews and explicitly requested
+removing unnecessary right-hand space in those renders before implementation.
+This was a preview correction, not a reported spacing defect in the installed app.
+See [chat approval](evidence/toolbar-layout-20261122/approval.json) and the
+[UI contract](ui-ux-specs/TOOLBARS_AND_BUTTONS.md#bordered-controls-and-separate-dropdown-columns--november-22-2026).
+The finalized isolated candidate was captured again in both themes before delivery;
+no Companion approval state was written on the owner's behalf.
+
+`toolbars.py` now draws an outer icon border, reserves a distinct right arrow area,
+and partitions buttons stably within existing logical subgroups. Standard Constraints
+dropdowns occupy one column. One-pixel section dividers appear between groups.
+The spacing correction removes forced 82-pixel large-caption widths, stops grid
+columns stretching into spare label space, centers large icons over captions and
+keeps internal separators narrow. Natural button widths are retained when the page
+scrolls, preventing icon/arrow compression. Native actions, menus, Classic widgets,
+selection semantics and feature tasks remain in their existing owners.
+
+The [native build](evidence/toolbar-layout-20261122/native-build.log) passed; a final
+FreeCADPlusScripts build copied the two Python files. Source/build/payload hashes
+match in the [install manifest](evidence/toolbar-layout-20261122/install-manifest.json).
+Only `toolbars.py` and `TestPlusToolbars.py` were installed into the current owner
+payload. Rollback copies remain under its validation/toolbar-layout-20261122/
+install-backup directory. The existing
+[desktop shortcut](evidence/toolbar-layout-20261122/shortcut.json) still targets the
+same development launcher and working directory; the owner profile was not used.
+
+All **13 installed native regression cases passed** with zero failures/errors:
+[report](evidence/toolbar-layout-20261122/toolbar_layout_regression.txt),
+[result](evidence/toolbar-layout-20261122/toolbar_layout_regression.json).
+Coverage includes all nine tabs in Light/Dark at 1300/1000 logical pixels, arrow
+space, compact columns, Constraints grouping, complete captions at increased font
+size, real mouse menu/main clicks, last choice across rebuild, disabled-main/enabled-
+alternative behavior, theme backgrounds, dynamic/custom toolbars, Classic restore,
+Spreadsheet widgets and BIM status ownership. Initial new assertions incorrectly
+treated generic Qt style subcontrol/hit-test results as QToolButton's click routing;
+the final check uses its reserved menu rectangle, with real clicks verified by the
+existing interaction cases. The narrow-page check also caught actual split-button
+compression, corrected by retaining natural button widths before installation.
+
+The [final preview checks](evidence/toolbar-layout-20261122/spacing-preview-checks.json)
+record all 18 tab/theme captures and zero mixed button-type columns. Geometry,
+document behavior and unrelated feature workflows were not changed by this task.
+
+Independent installed-app [restart verification](evidence/toolbar-layout-20261122/toolbar_persist_verify.json)
+passed after a separate process saved the isolated profile. Saved Plus choices,
+selection preferences and Classic visibility survived. A further fresh installed
+process, without candidate-code injection, passed actual Circle/Ellipse menu and
+main-icon clicks and captured all nine tabs in both themes:
+[checks](evidence/toolbar-layout-20261122/installed.png.json).
+All nine installed screenshot sheets are byte-identical to the final candidate
+[comparison](evidence/toolbar-layout-20261122/installed-preview-comparison.json).
+Direct installed captures:
+[Home](evidence/toolbar-layout-20261122/installed-home.png),
+[Modeling](evidence/toolbar-layout-20261122/installed-modeling.png),
+[Sketch](evidence/toolbar-layout-20261122/installed-sketch.png),
+[Surface](evidence/toolbar-layout-20261122/installed-surface.png),
+[Assembly](evidence/toolbar-layout-20261122/installed-assembly.png),
+[Mesh](evidence/toolbar-layout-20261122/installed-mesh.png),
+[View](evidence/toolbar-layout-20261122/installed-view.png),
+[Part](evidence/toolbar-layout-20261122/installed-part.png),
+[All Tools](evidence/toolbar-layout-20261122/installed-all-tools.png).
+
 ## Extrude rendering and sketch visibility correction — November 22, 2026
 
 The owner reported triangular side shading in a rectangle extrusion preview and

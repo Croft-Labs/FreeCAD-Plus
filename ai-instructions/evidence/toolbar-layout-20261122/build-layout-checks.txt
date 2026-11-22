@@ -1,0 +1,7 @@
+test_design_columns_and_split_hit_areas (TestPlusToolbars.TestPlusToolbars.test_design_columns_and_split_hit_areas)
+Realized layout stays compact, preserves groups and separates click targets. ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 22.693s
+
+OK
