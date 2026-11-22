@@ -1,5 +1,16 @@
 # FreeCAD Plus: Current work state
 
+## Design idle actions preview — November 22, 2026
+
+The owner extended the pending sketch visibility work with four Design idle actions:
+New Sketch, Datum Plane, Datum Line, Datum Point. The native
+[proposal](ui-ux-specs/TASK_PANEL.md#design-idle-actions-proposal--november-22-2026)
+replaces Start Part/New Body with those four links under Create Geometry while no
+selection or operation is active. Stub activation, exact order, selection/task
+guards and unchanged model/Undo passed in a disposable native fixture. Both this
+preview and the previous sketch visibility preview await direct chat approval;
+production source, installed payload and unrelated work remain unchanged.
+
 ## Sketch visibility preview — November 22, 2026
 
 The owner requested automatically visible fundamental planes during New Sketch and

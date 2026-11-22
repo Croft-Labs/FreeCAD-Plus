@@ -4,6 +4,33 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Design idle actions proposal — November 22, 2026
+
+**Requested outcome; direct preview awaiting approval.** Owner: “while in design
+mode and nothing is selected, the options in the task panel should be new sketch,
+Datum Plane, Datum Line, and Datum Point”. This extends the pending sketch visibility
+proposal below; it does not approve its implementation yet.
+
+With an active editable component, no selection and no active operation, the Design
+task panel offers exactly **New Sketch**, **Datum Plane**, **Datum Line**, and
+**Datum Point**, vertically in that order. The proposal uses native task command
+icons/links under **Create Geometry**, replacing the idle **Start Part / New Body**
+prompt. Selection returns to contextual options; an ongoing operation retains its
+task even if selection is empty. Toolbar, History, Origin visibility and operation
+layouts are preserved. Datum Line/Point creation tasks are not redesigned here.
+
+Direct screenshots: [current idle panel](evidence/design-empty-20261122/before.png),
+[proposed four actions](evidence/design-empty-20261122/proposed.png).
+Native TaskWatcher prototype commands only record activation; actual creation,
+component ownership and transitions remain production work after approval.
+[Fixture checks](evidence/design-empty-20261122/prototype-check.json) verified order,
+stub activation, selection/active-task guards and unchanged objects/Undo.
+
+Companion session `197361ac1c38`, seed `83398ae6271b74ccaecd0338a1c74cca0cba4a42`,
+allowlist `ui/empty_preview.py`, fingerprint
+`309d1ca9e3c8eb504bb6a4160de44cd23e96d9662dc6244343cb071d06b85a69`.
+Installed app and production application source remain unchanged.
+
 ### Sketch planes and History visibility proposal — November 22, 2026
 
 **Requested outcome; direct preview awaiting approval.** Owner: “automatically show

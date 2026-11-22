@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\197361ac1c38\\candidate\\ui\\empty_preview.py",
+  "sha256": "2aef28c29146f59dd1c6cfd2485a8672ec4a09cbb395511021fa600463951597",
+  "four_ordered_actions": true,
+  "stub_activation": true,
+  "selection_and_active_task_guards": true,
+  "preview_only": true,
+  "model_and_undo_unchanged": true
+}
