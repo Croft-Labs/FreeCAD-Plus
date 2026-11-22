@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\c706bf161145\\candidate\\ui\\extrude_task.py",
+  "sha256": "075d79bed5c850030dd2f7d052459135539d5d6e655afff655bf59cbe631dea1",
+  "preselected_profile_and_new_solid": true,
+  "target_and_limit_picks_populate_and_validate": true,
+  "tool_and_evaluated_result_views": true,
+  "numeric_blur_and_explicit_update": true,
+  "start_offset_two_sides_and_symmetric_labels": true,
+  "no_feature_or_undo_changes_and_visibility_restored": true
+}

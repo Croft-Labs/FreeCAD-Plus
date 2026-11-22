@@ -22,7 +22,9 @@
 
 - [x] Render the isolated New Solid/Add/Subtract proposal with profile and target
   selection, length controls and deferred preview updates.
-- [ ] Obtain approval of the [direct preview](ui-ux-specs/TASK_PANEL.md#extrude-task-proposal--november-21-2026).
+- [x] Review archived Extrude concepts and render a fresh proposal with start/end
+  conditions, profile selection, advanced controls and tool/result preview modes.
+- [ ] Obtain approval of the revised [direct preview](ui-ux-specs/TASK_PANEL.md#archive-guided-extrude-proposal--november-21-2026).
 - [ ] Implement the approved task and shared operation editing; verify geometry,
   targets, identity, Cancel, Undo/Redo and save/reopen separately from the mockup.
 

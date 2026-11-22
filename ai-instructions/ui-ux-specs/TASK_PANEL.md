@@ -192,6 +192,10 @@ direction supersedes conflicting unconfirmed New Sketch proposals below.
 
 ### Extrude task proposal — November 21, 2026
 
+This initial length-only proposal is superseded for review by the
+[archive-guided proposal](#archive-guided-extrude-proposal--november-21-2026) below.
+Neither proposal is approved for production implementation yet.
+
 Owner request: preview a similar Extrude task with **New Solid**, **Add** and
 **Subtract**, including target selection, before implementation. The isolated
 native proposal reuses the New Plane/New Sketch section style: **Operation**,
@@ -225,6 +229,64 @@ fixture through transient Coin geometry; OK is simulated. No production command,
 extrusion/Boolean backend, persistence or installed payload has been changed.
 No companion approval state was modified. This proposal does not approve the
 conflicting historical/unconfirmed Extrude items below.
+
+### Archive-guided Extrude proposal — November 21, 2026
+
+**Preview pending owner approval.** The owner requested a fresh workflow informed
+by archived concepts, with no old implementation copied. The
+[archive review](../ARCHIVE_REFERENCE.md#extrude-workflow-review--november-21-2026)
+explains what to recover and what to leave behind. The new native Qt proposal uses
+the current light theme and right Tasks dock:
+
+- **Operation:** New Solid/Add/Subtract; Add/Subtract require an explicitly picked
+  current target solid. Mode changes retain the selected target for reuse.
+- **Profile:** preselected sketch/curves, Remove/Clear/Whole sketch, persistent
+  amber outline and planned closed-region picking. One connected closed region
+  with optional holes is the intended initial solid-profile contract.
+- **Start:** Profile plane, Offset or Reference; reveal a signed start offset and
+  picked start reference only when relevant. This offsets the extrusion start,
+  independently of the saved sketch placement offset.
+- **Extent:** One side/Symmetric/Two sides; label a symmetric dimension Total length.
+  Independent side end controls expose Length, Up to face, Up to shape, To first,
+  To last and Through all. Reference and end-offset rows appear only when relevant.
+  Target-dependent ends require a target; missing references receive direct guidance.
+- **Direction and taper:** collapsed by default; profile normal or a picked straight
+  axis/edge, length measurement convention, per-side taper and Refine result.
+  No numeric XYZ direction-vector form is restored.
+- **Preview:** Tool volume (blue/green/red) or Result, Show preview, Recompute on
+  update and explicit Update preview. Numeric changes commit only on focus leave;
+  automatic-off retains the previous overlay until refreshed. Future creation and
+  editing must share all controls and saved inputs.
+
+Direct screenshots: [New Solid](evidence/extrude-guidance-20261121/new-solid.png),
+[Add to a picked face limit](evidence/extrude-guidance-20261121/add-limit.png),
+[Subtract tool volume](evidence/extrude-guidance-20261121/subtract-tool.png),
+[Subtract result](evidence/extrude-guidance-20261121/subtract-result.png),
+[two sides](evidence/extrude-guidance-20261121/two-sides.png),
+[start/direction/taper controls](evidence/extrude-guidance-20261121/advanced.png),
+[missing target](evidence/extrude-guidance-20261121/missing-target.png), and
+[installed native baseline](evidence/extrude-guidance-20261121/before.png).
+
+**Prototype limits:** OK creates nothing. This fresh candidate simulates a known
+circular profile and plate; transient Part shapes demonstrate actual fixture
+Boolean results without adding document features. Region hit-testing, optional-hole
+profiles, general first/last/whole-shape limits, nonplanar references, custom direction,
+independent taper/measurement semantics, persistence and operation editing still
+require production design/integration and tests. Showing controls does not establish
+backend support. Temporary target visibility is restored on mode change/Cancel;
+the owner documents/profile and installed payload were untouched.
+
+[Prototype checks](evidence/extrude-guidance-20261121/prototype.json) passed for
+preselection, required target/limit, real selection field routing, the shown
+up-to-face and through-plate fixtures, tool/result switching, numerical focus-leave,
+manual refresh, symmetric/two-side controls, unchanged object inventory/Undo and
+restored target visibility. The archived tests were not run.
+
+Session `c706bf161145`, clean isolated seed
+`29009520f1f7d7a60e2e4be1c1713f600c477794`, allowlist `ui/extrude_task.py`.
+Final inspected fingerprint:
+`1284f27b1decce0620010a1e4fe709bc6a105cdb57a2505272f0a51841e06439`.
+Scope/capture checks passed. No tool approval state was modified.
 
 ### Numerical field updates
 

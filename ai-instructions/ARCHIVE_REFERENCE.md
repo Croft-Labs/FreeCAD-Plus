@@ -1,5 +1,41 @@
 # FreeCAD Plus reference archive
 
+## Extrude workflow review — November 21, 2026
+
+The owner requested concepts from the abandoned Extrude workflow, a preview before
+implementation, and no copying of the old code. Reviewed checkpoint
+`29496214b34a53fa1d479f35ab5669b41ed4fb18` (`archive/freecad-plus-2026-10-10`):
+`src/Gui/ComponentExtrudeTask.py`, `src/Gui/ComponentTaskWidgets.py`,
+`src/Mod/Part/ComponentExtrude.py`, `src/Mod/Part/ComponentExtent.py` and
+`tests/TestComponentCurveProfile.py`. These were read as historical source, not
+executed. Archived tests are evidence of intended coverage, not current acceptance.
+
+Useful concepts: select an entire sketch or a connected closed region/curve set
+with optional holes; retain visible collected-profile emphasis and easy removal;
+require explicit current results for Add/Subtract; separate start position from
+end condition; provide independent two-side limits and explicit symmetric total
+length; offer taper/custom direction without crowding ordinary extrusion; distinguish
+colored tool-volume overlays from evaluated final-result previews; restore temporary
+preview appearance; and share creation/editing with saved associative references.
+The archive covered Length, Up to face/shape, To first/last and Through all, plus
+start offsets/references and offsets from limits. Its validation required explicit
+targets for target-dependent extents, rejected open/disconnected/intersecting
+profiles, and reported no-material Subtract results.
+
+Adaptations for the current design: retain New Solid terminology and current
+feature-centered backend ownership; use direct picked-reference fields rather
+than typed object identifiers; put advanced controls behind collapsible sections;
+replace archived timer/valueChanged recompute with focus-leave commits and an
+explicit Update preview button. Do not restore old metadata/result-wrapper objects,
+operation-replacement migrations or user-managed Bodies. Production work must
+preserve current feature identity, downstream references, external source ownership,
+native Undo/Redo and the shared editing contract.
+
+The [new isolated proposal](ui-ux-specs/TASK_PANEL.md#archive-guided-extrude-proposal--november-21-2026)
+was written independently in a candidate worktree. No archived implementation was
+ported into it or the current application. It supersedes the earlier length-only
+proposal for review; approval and production implementation remain pending.
+
 ## Plane workflow review — November 21, 2026
 
 The owner requested guidance from the abandoned fork, starting with Create Plane.

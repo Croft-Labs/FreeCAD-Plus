@@ -1,5 +1,18 @@
 # FreeCAD Plus: Current work state
 
+## Archive-guided Extrude review and preview — November 21, 2026
+
+Reviewed the archived Extrude task, extent/profile collectors, solver adapter and
+tests; [findings](ARCHIVE_REFERENCE.md#extrude-workflow-review--november-21-2026).
+A fresh [native prototype](ui-ux-specs/TASK_PANEL.md#archive-guided-extrude-proposal--november-21-2026)
+extends the earlier length-only proposal with start/end conditions, independent
+sides, conditional reference picking, advanced direction/taper and tool/result
+preview modes. Archived code was not ported or executed. Representative fixture
+checks passed with unchanged object inventory/Undo and restored visibility.
+General geometry, region picking, persistence and shared operation editing are
+not implemented by this prototype. Approval and production work remain pending;
+the installed Extrude workflow is unchanged.
+
 ## Sketch offset and orange axes implementation — November 21, 2026
 
 The owner approved the [direct preview](ui-ux-specs/TASK_PANEL.md#sketch-offset-and-local-axes-proposal--november-21-2026).
