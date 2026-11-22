@@ -197,6 +197,17 @@ class TestComponentPlanes(unittest.TestCase):
         self.assertEqual(p.Document,source)
         self.assertEqual(len(self.doc.Objects),before)
         self.assertAlmostEqual(p.Placement.Base.z,8)
+        # Preserve occurrence paths while consuming preselection and subsequent picks.
+        Gui.Selection.clearSelection(); Gui.Selection.addSelection(root,route)
+        task = plane_task.show()
+        self.assertEqual(task.refs,[(xy,'')])
+        self.assertFalse(Gui.Selection.getSelection())
+        Gui.Selection.addSelection(root,route)
+        self.assertEqual(task.refs,[])
+        task.reject()
+        task = plane_task.show(p); task.reverse_axis.click()
+        self.assertTrue(task.accept())
+        self.assertTrue(p.ReverseAxis)
         document.save_document(source,folder/'PlaneSource.cadprt')
         document.save_document(self.doc,folder/'PlaneAssembly.cadprt')
         # A raw foreign definition is not an admitted modeling reference.
@@ -233,7 +244,154 @@ class TestComponentPlanes(unittest.TestCase):
         App.closeDocument(self.doc.Name)
         self.assertTrue(task.closed)
         self.assertIsNone(task.overlay)
+        self.assertIsNone(task.highlights)
         self.assertIsNone(plane_task._active)
+
+    def test_partial_input_and_invalid_geometry_have_actionable_guidance(self):
+        a = self.feature(Part.Vertex(App.Vector()))
+        b = self.feature(Part.Vertex(App.Vector(10,0,0)))
+        c = self.feature(Part.Vertex(App.Vector(20,0,0)))
+        line = self.feature(Part.makeLine(App.Vector(), App.Vector(10,0,0)))
+        cases = [([], 'Choose a plane'), ([(a,'Vertex1')], 'two more points'),
+                 ([(a,'Vertex1'),(b,'Vertex1')], 'third point'),
+                 ([(line,'Edge1')], 'off-line point')]
+        for refs, message in cases:
+            with self.subTest(refs=refs), self.assertRaisesRegex(planes.IncompletePlane, message):
+                planes.solve(self.owner, refs)
+        for refs, message in [([(a,'Vertex1'),(b,'Vertex1'),(c,'Vertex1')], 'collinear'),
+                              ([(line,'Edge1'),(a,'Vertex1')], 'lies on'),
+                              ([(self.xy,''),(a,'Vertex1')], 'by itself')]:
+            with self.subTest(refs=refs), self.assertRaisesRegex(ValueError, message) as caught:
+                planes.solve(self.owner, refs)
+            self.assertNotIsInstance(caught.exception, planes.IncompletePlane)
+
+    def test_preselection_toggle_delete_and_highlight_cleanup(self):
+        points = [self.feature(Part.Vertex(App.Vector(*v))) for v in [(0,0,3),(10,0,3),(0,10,3)]]
+        for obj in points[:2]: Gui.Selection.addSelection(obj,'Vertex1')
+        before = ({o.Name:o.ID for o in self.doc.Objects}, self.doc.UndoCount)
+        scene = Gui.activeDocument().activeView().getSceneGraph()
+        children = scene.getNumChildren()
+        task = plane_task.show()
+        self.assertFalse(task.valid)
+        self.assertIn('third point',task.status.text())
+        self.assertIsNotNone(task.highlights)
+        self.assertEqual(task.references.item(0).text(),'1. '+points[0].Label+'.Vertex1')
+        self.assertFalse(Gui.Selection.getSelection())
+        Gui.Selection.addSelection(points[1],'Vertex1')
+        self.assertEqual(len(task.refs),1)
+        Gui.Selection.addSelection(points[1],'Vertex1')
+        Gui.Selection.addSelection(points[2],'Vertex1')
+        self.assertTrue(task.valid, task.status.text())
+        task.references.setCurrentRow(1); task.references.setFocus()
+        QtTest.QTest.keyClick(task.references,QtCore.Qt.Key_Delete)
+        self.assertEqual(len(task.refs),2)
+        self.assertIn('third point',task.status.text())
+        self.assertIsNotNone(self.doc.getObject(points[1].Name))
+        task.visible.setChecked(False)
+        self.assertIsNone(task.highlights)
+        task.visible.setChecked(True)
+        task.reject()
+        self.assertIsNone(task.highlights)
+        self.assertEqual(scene.getNumChildren(),children)
+        self.assertEqual(({o.Name:o.ID for o in self.doc.Objects},self.doc.UndoCount),before)
+
+    def test_origin_axis_toggle_and_delete_restore_defaults(self):
+        a = self.feature(Part.Vertex(App.Vector(4,5,0)))
+        b = self.feature(Part.Vertex(App.Vector(4,15,0)))
+        task = plane_task.show(); task.choose('XY Plane')
+        task.frame.header.setChecked(True)
+        task.origin_ref.setFocus(); QtTest.QTest.qWait(30)
+        for expected in ([ (a,'Vertex1') ], []):
+            Gui.Selection.addSelection(a,'Vertex1')
+            self.assertEqual(task.origin_refs,expected)
+        Gui.Selection.addSelection(a,'Vertex1')
+        QtTest.QTest.keyClick(task.origin_ref,QtCore.Qt.Key_Delete)
+        self.assertEqual(task.origin_refs,[])
+        self.assertTrue(task.placement().Base.isEqual(App.Vector(),1e-7))
+        task.axis_ref.setFocus(); QtTest.QTest.qWait(30)
+        Gui.Selection.addSelection(a,'Vertex1')
+        self.assertFalse(task.valid)
+        self.assertIn('second distinct point',task.status.text())
+        Gui.Selection.addSelection(b,'Vertex1')
+        self.assertTrue(task.valid)
+        Gui.Selection.addSelection(b,'Vertex1')
+        self.assertFalse(task.valid)
+        QtTest.QTest.keyClick(task.axis_ref,QtCore.Qt.Key_Delete)
+        self.assertEqual(task.axis_refs,[])
+        self.assertTrue(task.valid)
+
+    def test_reverse_axis_persists_edits_undo_and_preserves_plane_footprint(self):
+        plane = planes.save(self.doc,[(self.xy,'')],7)
+        identity, original = plane.ID, App.Placement(plane.Placement)
+        corners = [v.Point for v in plane.Shape.Vertexes]
+        task = plane_task.show(plane)
+        task.reverse_axis.setChecked(True)
+        self.assertFalse(plane.ReverseAxis)
+        self.assertTrue(task.accept())
+        self.assertEqual(plane.ID,identity)
+        self.assertTrue(plane.ReverseAxis)
+        self.assertTrue(plane.Placement.Base.isEqual(original.Base,1e-7))
+        for basis, sign in [(App.Vector(1,0,0),-1),(App.Vector(0,1,0),-1),(App.Vector(0,0,1),1)]:
+            self.assertTrue(plane.Placement.Rotation.multVec(basis).isEqual(
+                original.Rotation.multVec(basis)*sign,1e-7))
+        self.assertTrue(all(any(p.isEqual(v.Point,1e-7) for v in plane.Shape.Vertexes) for p in corners))
+        task = plane_task.show(plane)
+        self.assertTrue(task.reverse_axis.isChecked())
+        task.reverse_axis.click(); task.reject()
+        self.assertTrue(plane.ReverseAxis)
+        self.doc.undo(); self.doc.recompute()
+        self.assertFalse(plane.ReverseAxis)
+        self.doc.redo(); self.doc.recompute()
+        self.assertTrue(plane.ReverseAxis)
+        document.save_document(self.doc,Path(os.environ['PLUS_TEST_DIR'])/'ReversedPlane.cadprt')
+
+    def test_older_plane_defaults_without_mutation_on_open_or_cancel(self):
+        plane = planes.save(self.doc,[(self.xy,'')],5)
+        plane.removeProperty('ReverseAxis'); plane.touch(); self.doc.recompute()
+        self.assertAlmostEqual(plane.Placement.Base.z,5)
+        before = (tuple(plane.PropertiesList),self.doc.UndoCount)
+        task = plane_task.show(plane)
+        self.assertFalse(task.reverse_axis.isChecked())
+        task.reverse_axis.click(); task.reject()
+        self.assertEqual((tuple(plane.PropertiesList),self.doc.UndoCount),before)
+        task = plane_task.show(plane); task.reverse_axis.click()
+        self.assertTrue(task.accept())
+        self.assertTrue(plane.ReverseAxis)
+        self.doc.undo(); self.doc.recompute()
+        self.assertNotIn('ReverseAxis',plane.PropertiesList)
+        self.doc.redo(); self.doc.recompute()
+        self.assertTrue(plane.ReverseAxis)
+
+    def test_reverse_axis_combines_with_flip_and_explicit_y(self):
+        edge = self.feature(Part.makeLine(App.Vector(),App.Vector(10,10,0)))
+        for axis in ('X','Y'):
+            for flip in (False,True):
+                with self.subTest(axis=axis,flip=flip):
+                    before = planes.solve(self.owner,[(self.xy,'')],3,axis_refs=[(edge,'Edge1')],axis=axis,flipped=flip)
+                    after = planes.solve(self.owner,[(self.xy,'')],3,axis_refs=[(edge,'Edge1')],axis=axis,flipped=flip,reversed_axis=True)
+                    self.assertTrue(before.Base.isEqual(after.Base,1e-7))
+                    self.assertTrue(before.Rotation.multVec(App.Vector(0,0,1)).isEqual(
+                        after.Rotation.multVec(App.Vector(0,0,1)),1e-7))
+                    self.assertTrue(before.Rotation.multVec(App.Vector(1,0,0)).isEqual(
+                        -after.Rotation.multVec(App.Vector(1,0,0)),1e-7))
+
+    def test_infinite_datum_lines_have_finite_highlights_and_plane(self):
+        line = self.owner.newObject('PartDesign::Line','SupportLine')
+        line.Placement = App.Placement(App.Vector(2,3,0),App.Rotation(App.Vector(0,0,1),App.Vector(1,0,0)))
+        point = self.feature(Part.Vertex(App.Vector(0,10,0)))
+        task = plane_task.show()
+        Gui.Selection.addSelection(line)
+        self.assertFalse(task.valid)
+        self.assertIsNotNone(task.highlights)
+        branch = task.highlights.getChild(2)
+        coords = branch.getChild(1)
+        for vector in coords.point.getValues():
+            self.assertTrue(all(abs(v)<100 for v in vector))
+        Gui.Selection.addSelection(point,'Vertex1')
+        self.assertTrue(task.valid,task.status.text())
+        self.assertLess(task.placement().Base.Length,1e-7)
+        self.assertTrue(task.accept())
+        self.assertFalse(task.result.Shape.isNull())
 
 
 class TestNumericCommit(unittest.TestCase):

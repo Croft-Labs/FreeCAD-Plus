@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Approved New Plane task; model changes occur only on acceptance."""
+import math
 import FreeCAD as App
 import FreeCADGui as Gui
+import Part
 from PySide6 import QtCore, QtWidgets
 from pivy import coin
 from . import planes, modeling, editing, hierarchy
@@ -71,6 +73,8 @@ def number(layout, title, value=0, suffix=' mm'):
 
 
 class PlaneTask(QtCore.QObject):
+    reference_guidance = True
+
     def __init__(self, feature=None):
         super().__init__()
         self.doc = Gui.activeDocument().Document
@@ -85,6 +89,9 @@ class PlaneTask(QtCore.QObject):
         self.origin_refs = []
         self.axis_refs = []
         self.valid = False
+        self.highlights = None
+        self.internal_selection = False
+        self.released_selections = set()
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle('New Plane')
         self.form.setWindowIcon(Gui.getIcon('PartDesign_Plane'))
@@ -133,7 +140,16 @@ class PlaneTask(QtCore.QObject):
         self.axis_ref.setPlaceholderText('Select a line, edge, or two points')
         self.frame.layout.addWidget(self.axis_ref)
         self.frame.layout.addWidget(label('Two points define the direction from first to second.'))
-        buttons(self.frame.layout, [('Clear axis', self.clear_axis)])
+        axis_actions = QtWidgets.QHBoxLayout()
+        clear_axis = QtWidgets.QPushButton('Clear axis')
+        clear_axis.clicked.connect(self.clear_axis)
+        axis_actions.addWidget(clear_axis)
+        self.reverse_axis = QtWidgets.QPushButton('Reverse axis')
+        self.reverse_axis.setCheckable(True)
+        self.reverse_axis.setToolTip('Reverse the selected X or Y direction without changing the plane normal')
+        self.reverse_axis.setVisible(self.reference_guidance)
+        axis_actions.addWidget(self.reverse_axis)
+        self.frame.layout.addLayout(axis_actions)
         self.flip = QtWidgets.QPushButton('Flip normal'); self.flip.setCheckable(True)
         self.flip.setToolTip('Reverse the preview Z axis without moving the plane')
         self.frame.layout.addWidget(self.flip)
@@ -153,19 +169,28 @@ class PlaneTask(QtCore.QObject):
         self.x_choice.toggled.connect(self.update)
         self.visible.toggled.connect(self.update)
         self.flip.toggled.connect(self.update)
+        self.reverse_axis.toggled.connect(self.update)
         for field in (self.references, self.origin_ref, self.axis_ref):
             field.installEventFilter(self)
+        preselection = []
         if feature is not None:
             self.load_feature(feature)
         else:
             raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0)
                    for sub in entry.SubElementNames or ('',)]
-            try: self.refs = planes.canonical(self.definition, raw)
+            try:
+                self.refs = planes.canonical(self.definition, raw)
+                preselection = raw
             except ValueError: pass
-        Gui.Selection.addObserver(self)
+        # Keep original occurrence paths for admission and selection removal.
+        Gui.Selection.addObserver(self, 0 if self.reference_guidance else 1)
         App.addDocumentObserver(self)
         editing.add_context_observer(self.context_changed)
         self.refresh_fields()
+        if self.reference_guidance:
+            # Consume native preselection so the same reference can be picked again.
+            for obj, sub in preselection:
+                self.release_selection(obj, sub)
 
     def load_feature(self, feature):
         self.refs = planes.flatten(feature.PlaneReferences)
@@ -175,6 +200,7 @@ class PlaneTask(QtCore.QObject):
         self.committed_offset = feature.Offset.Value
         self.y_choice.setChecked(feature.DefinedAxis == 'Y')
         self.flip.setChecked(feature.FlipNormal)
+        self.reverse_axis.setChecked(getattr(feature, 'ReverseAxis', False))
 
     def check(self):
         if self.closed or Gui.activeDocument() is None or Gui.activeDocument().activeView() != self.view:
@@ -184,6 +210,14 @@ class PlaneTask(QtCore.QObject):
             raise ValueError('The edited component changed; start New Plane again')
 
     def eventFilter(self, obj, event):
+        if self.reference_guidance and event.type() in (QtCore.QEvent.ShortcutOverride, QtCore.QEvent.KeyPress):
+            if event.key() == QtCore.Qt.Key_Delete:
+                event.accept()
+                if event.type() == QtCore.QEvent.KeyPress:
+                    if obj is self.references: self.remove_reference()
+                    elif obj is self.origin_ref: self.clear_origin()
+                    elif obj is self.axis_ref: self.clear_axis()
+                return True
         if event.type() in (QtCore.QEvent.FocusIn, QtCore.QEvent.MouseButtonPress):
             self.pick_target = 'origin' if obj is self.origin_ref else ('axis' if obj is self.axis_ref else 'plane')
         return False
@@ -198,10 +232,13 @@ class PlaneTask(QtCore.QObject):
 
     def title(self, ref):
         obj, sub = ref
-        return obj.Label + ('.' + sub if sub else '')
+        element = Part.splitSubname(sub)[2]
+        return obj.Label + ('.' + element if element else '')
 
     def refresh_fields(self):
-        self.references.clear(); self.references.addItems([self.title(ref) for ref in self.refs])
+        self.references.clear()
+        self.references.addItems([(str(i) + '. ' if self.reference_guidance else '') + self.title(ref)
+                                  for i, ref in enumerate(self.refs, 1)])
         self.origin_ref.setText(', '.join(self.title(ref) for ref in self.origin_refs))
         self.axis_ref.setText(' → '.join(self.title(ref) for ref in self.axis_refs))
         self.origin_hint.setText('Selected point projected onto the plane.' if self.origin_refs else
@@ -223,6 +260,7 @@ class PlaneTask(QtCore.QObject):
         if self.automatic.isChecked(): self.update()
 
     def addSelection(self, doc_name, obj_name, sub, *args):
+        if self.internal_selection or self.closed: return
         try:
             self.check()
             obj = App.getDocument(doc_name).getObject(obj_name)
@@ -230,23 +268,43 @@ class PlaneTask(QtCore.QObject):
             kind = planes.describe(self.definition, ref)[0]
             if self.pick_target == 'origin':
                 if kind != 'point': raise ValueError('Origin accepts a point only')
-                self.origin_refs = [ref]
+                self.origin_refs = [] if self.reference_guidance and ref in self.origin_refs else [ref]
             elif self.pick_target == 'axis':
                 if kind not in ('line','point'): raise ValueError('Select a line, edge or two points')
-                if kind == 'line': self.axis_refs = [ref]
+                if self.reference_guidance and ref in self.axis_refs: self.axis_refs.remove(ref)
+                elif kind == 'line': self.axis_refs = [ref]
                 elif ref not in self.axis_refs:
                     if len(self.axis_refs) >= 2 or (self.axis_refs and planes.describe(self.definition,self.axis_refs[0])[0] != 'point'):
                         self.axis_refs = []
                     self.axis_refs.append(ref)
+            elif self.reference_guidance and ref in self.refs:
+                self.refs.remove(ref)
             elif ref not in self.refs:
                 self.refs.append(ref)
             self.refresh_fields(); self.update()
+            if self.reference_guidance: self.release_selection(obj, sub)
         except Exception as exc: self.status.setText(str(exc))
 
+    def release_selection(self, obj, sub):
+        if not Gui.Selection.isSelected(obj, sub, 0): return
+        # Native selection queues removal notifications made inside addSelection.
+        # Keep their identities until delivered, rather than relying on stack scope.
+        key = (obj.Document.Name, obj.Name, sub)
+        self.released_selections.add(key)
+        self.internal_selection = True
+        try:
+            Gui.Selection.removeSelection(obj, sub)
+        finally:
+            self.internal_selection = False
+
     def removeSelection(self, doc_name, obj_name, sub, *args):
+        key = (doc_name, obj_name, sub)
+        if key in self.released_selections:
+            self.released_selections.remove(key)
+            return
         # Stored defining references persist until Remove/Clear. An origin point
         # explicitly deselected while picking origins restores the default.
-        if self.pick_target != 'origin': return
+        if self.internal_selection or self.closed or self.pick_target != 'origin': return
         try:
             obj = App.getDocument(doc_name).getObject(obj_name)
             ref = planes.canonical(self.definition, [(obj, sub)])[0]
@@ -254,7 +312,7 @@ class PlaneTask(QtCore.QObject):
         except Exception: pass
 
     def clearSelection(self, *args):
-        if self.pick_target == 'origin': self.clear_origin()
+        if not self.internal_selection and not self.closed and self.pick_target == 'origin': self.clear_origin()
 
     def choose(self, name):
         self.pick_target = 'plane'
@@ -277,7 +335,55 @@ class PlaneTask(QtCore.QObject):
                                            for obj,sub in self.refs+self.origin_refs+self.axis_refs):
             raise ValueError('A plane cannot depend on itself or a downstream feature')
         return planes.solve(self.definition, self.refs, self.committed_offset, self.origin_refs,
-                            self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked())
+                            self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked(),
+                            self.reverse_axis.isChecked())
+
+    def remove_highlights(self):
+        if self.highlights is not None:
+            try: self.scene.removeChild(self.highlights)
+            except RuntimeError: pass
+            self.highlights = None
+
+    def highlight_references(self):
+        """View-local markers, never document geometry or selectable objects."""
+        self.remove_highlights()
+        if not self.reference_guidance or not self.visible.isChecked(): return
+        world = hierarchy.world_placement(self.doc, self.path) if self.path else App.Placement()
+        overlay = coin.SoSeparator()
+        pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE
+        overlay.addChild(pick)
+        ink = coin.SoMaterial(); ink.diffuseColor = (1.0, 0.60, 0.08)
+        overlay.addChild(ink)
+        for index, ref in enumerate(self.refs, 1):
+            try:
+                kind, *values = planes.describe(self.definition, ref)
+                if kind not in ('point', 'line'): continue
+                branch = coin.SoSeparator()
+                point = world.multVec(values[0])
+                if kind == 'line':
+                    edge = planes.shape(self.definition, ref)
+                    limits = (edge.FirstParameter, edge.LastParameter)
+                    if any(not math.isfinite(t) or abs(t) > 1e50 for t in limits):
+                        limits = (-30, 30)
+                    ends = [world.multVec(edge.valueAt(t)) for t in limits]
+                    style = coin.SoDrawStyle(); style.lineWidth = 4; branch.addChild(style)
+                    coords = coin.SoCoordinate3(); coords.point.setValues(0, 2, [tuple(p) for p in ends])
+                    branch.addChild(coords)
+                    line = coin.SoLineSet(); line.numVertices.setValue(2); branch.addChild(line)
+                    point = (ends[0] + ends[1]) * 0.5
+                shift = coin.SoTranslation(); shift.translation = tuple(point); branch.addChild(shift)
+                if kind == 'point':
+                    sphere = coin.SoSphere(); sphere.radius = 0.65; branch.addChild(sphere)
+                label_shift = coin.SoTranslation(); label_shift.translation = (0, 0, 1.5)
+                branch.addChild(label_shift)
+                font = coin.SoFont(); font.size = 16; branch.addChild(font)
+                caption = coin.SoText2(); caption.string = str(index); branch.addChild(caption)
+                overlay.addChild(branch)
+            except (ValueError, RuntimeError):
+                # The solver reports missing/invalid references; render the others.
+                continue
+        self.highlights = overlay
+        self.scene.addChild(overlay)
 
     def remove_overlay(self):
         if self.overlay is not None:
@@ -288,12 +394,22 @@ class PlaneTask(QtCore.QObject):
     def update(self, *args):
         if self.closed: return
         self.remove_overlay()
+        self.remove_highlights()
         try:
             placement = self.placement()
             self.valid = True
-            self.status.setText('Defined — plane position and normal are valid.')
-        except Exception as exc:
+            self.status.setText('Defined by three points.' if self.reference_guidance and len(self.refs) == 3
+                                else 'Defined — plane position and normal are valid.')
+        except planes.IncompletePlane as exc:
             self.valid = False; self.status.setText(str(exc))
+        except Exception as exc:
+            self.valid = False
+            self.status.setText(('Invalid — ' if self.reference_guidance else '') + str(exc))
+        if self.reference_guidance:
+            try:
+                self.check()
+                self.highlight_references()
+            except (ValueError, RuntimeError): pass
         for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox):
             button = box.button(QtWidgets.QDialogButtonBox.Ok)
             if button and button.isVisible(): button.setEnabled(self.valid)
@@ -310,7 +426,8 @@ class PlaneTask(QtCore.QObject):
         self.overlay.addChild(material)
         pick = coin.SoPickStyle(); pick.style = coin.SoPickStyle.UNPICKABLE; self.overlay.addChild(pick)
         coordinates = coin.SoCoordinate3()
-        left, bottom = planes.bounds('X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked())
+        left, bottom = planes.bounds('X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked(),
+                                     self.reverse_axis.isChecked())
         coordinates.point.setValues(0,4,[tuple(origin + x_axis*u + y_axis*v) for u,v in
                                          [(left,bottom),(left+60,bottom),(left+60,bottom+45),(left,bottom+45)]])
         self.overlay.addChild(coordinates)
@@ -343,7 +460,8 @@ class PlaneTask(QtCore.QObject):
             self.placement()
             self.result = planes.save(self.doc, self.refs, self.committed_offset, self.origin_refs,
                                      self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y',
-                                     self.flip.isChecked(), self.feature)
+                                     self.flip.isChecked(), self.feature,
+                                     reversed_axis=self.reverse_axis.isChecked())
             self.reject()
             return True
         except Exception as exc:
@@ -357,6 +475,7 @@ class PlaneTask(QtCore.QObject):
         App.removeDocumentObserver(self)
         editing.remove_context_observer(self.context_changed)
         self.remove_overlay()
+        self.remove_highlights()
         Gui.Control.closeDialog()
         _active = None
         return True

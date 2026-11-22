@@ -68,8 +68,9 @@ This direction supersedes conflicting unconfirmed plane-form proposals below.
 
 ### Archive-guided plane proposal — November 21, 2026
 
-**Needs owner confirmation; preview only.** The owner requested a review of the
-abandoned fork, starting with Create Plane. [Source findings](../ARCHIVE_REFERENCE.md#plane-workflow-review--november-21-2026)
+**Approved in chat:** “implement the concepts, do not copy over the code.”
+The owner requested a review of the abandoned fork, starting with Create Plane.
+[Source findings](../ARCHIVE_REFERENCE.md#plane-workflow-review--november-21-2026)
 inform a focused refinement of the approved form above:
 
 - Specific next-pick guidance distinguishes incomplete from invalid selections.
@@ -83,8 +84,8 @@ inform a focused refinement of the approved form above:
 Preserve the combined section, universal-origin default, X/Y definition controls,
 purple plane/local frame, XY/XZ/YZ shortcuts and focus-leave numeric recompute.
 No coordinate/vector forms or selection-mode controls return. Creation and editing
-must share the resulting workflow; persistence and editing are not implemented
-by this proposal. Temporary origin-plane visibility and broader curve support
+share the resulting workflow; axis reversal is now saved on the plane, while older
+planes default to unreversed without mutation on opening/Cancel. Temporary origin-plane visibility and broader curve support
 remain separate recommendations in the archive review.
 
 Direct native screenshots: [current two-point state](evidence/plane-guidance-20261121/before.png),
@@ -102,8 +103,9 @@ Companion session `1a6b86c4f6b2`, source seed
 `651cac309f2f62aa21f801f7ff1ecdcc0e86d537`, allowlist `ui/plane_task.py`.
 Candidate fingerprint:
 `4036cbc0e10ddda0f4528687063d79cbb4cd40b0503b73d1b017c9f27d5318c3`.
-Scope inspection passed and capture is current. No approval state was changed;
-the installed application remains unchanged.
+Scope inspection passed and capture was current at approval. No tool approval state
+was changed. The concepts were implemented afresh in the current plane task/solver;
+archived source was not copied. See [implementation acceptance](../WORK_STATE.md#plane-guidance-implementation--november-21-2026).
 
 ### New Sketch placement workflow — November 21, 2026
 

@@ -1,5 +1,47 @@
 # FreeCAD Plus: Current work state
 
+## Plane guidance implementation — November 21, 2026
+
+Owner approval: “implement the concepts, do not copy over the code.” The current
+plane task/solver now implement next-pick guidance, readable numbered references,
+persistent amber point/line highlights, repeat-pick toggling, Delete removal and
+independent Reverse axis. This is fresh implementation in current modules, not
+copied archived code. Creation and editing use the same task. Axis reversal is
+saved, preserves origin/normal/offset/display footprint, and follows native
+Undo/Redo. Older planes default to false and are not modified on open or Cancel.
+The approved layout and numeric focus-leave rule remain; Sketch UI opts out of
+the plane-specific controls. See [UI approval](ui-ux-specs/TASK_PANEL.md#archive-guided-plane-proposal--november-21-2026)
+and [architecture](ARCHITECTURE.md#component-construction-planes-and-numeric-commits--november-21-2026).
+
+All 57 plane/numeric, feature-centered modeling and Sketch-placement checks passed
+in both the [development build](evidence/plane-guidance-20261121/build-check.txt)
+and [installed app](evidence/plane-guidance-20261121/plane_guidance_check.txt).
+The source change is Python-only; no C++ rebuild was required. Checks cover
+partial/invalid geometry, preselection and original occurrence paths, repeated
+picks/Delete, origin defaults, bounded highlights for infinite datum lines,
+cleanup, shared editing, old-plane compatibility, Cancel and Undo/Redo.
+The validation harness initially raced a test's expected error-dialog handler;
+removing its redundant modal watchdog resolved that harness failure. Final full
+runs passed without it; the runner retained its finite process timeout.
+
+A [fresh installed process](evidence/plane-guidance-20261121/plane_guidance_reopen.json)
+reopened saved reversal, verified shared edit prefill, changed reversal and checked
+downstream managed sketches, and recomputed external source-owned planes.
+The [installed GUI exercise](evidence/plane-guidance-20261121/plane_guidance_visual.json)
+checked staging without model changes, real creation/edit acceptance and identity
+through Undo/Redo. Inspected captures match the approved layout:
+[next-pick guidance](evidence/plane-guidance-20261121/installed-plane.png),
+[reversed frame](evidence/plane-guidance-20261121/installed-plane.png.frame.png) and
+[editing](evidence/plane-guidance-20261121/installed-plane.png.edit.png).
+
+Four payload files were backed up and installed with matching source hashes;
+[installation manifest](evidence/plane-guidance-20261121/installation.json).
+The existing [desktop shortcut](evidence/plane-guidance-20261121/shortcut.json)
+still launches this payload with its original working directory. Owner documents
+and profile were untouched; validation used disposable documents and profiles.
+Temporary origin-plane visibility and broader planar-curve support remain separate
+recommendations; the earlier Extrude preview remains pending approval.
+
 ## Archived plane workflow review — November 21, 2026
 
 Reviewed the preserved fork's plane solver, task, reference collector and tests.
@@ -8,8 +50,8 @@ separate useful interactions from obsolete UI and conflicting origin/offset rule
 An isolated [native proposal](ui-ux-specs/TASK_PANEL.md#archive-guided-plane-proposal--november-21-2026)
 shows next-pick guidance, numbered persistent references, reference toggling/Delete
 and independent axis reversal. Prototype checks passed, including focus-leave
-numeric updates and unchanged model inventory/Undo count. This is preview-only;
-production implementation and owner approval remain pending. The earlier Extrude
+numeric updates and unchanged model inventory/Undo count. The owner subsequently
+approved fresh implementation, recorded above. The earlier Extrude
 proposal remains pending too. Detailed archived Sketch/Extrude review is not yet done.
 
 ## Extrude task preview — November 21, 2026

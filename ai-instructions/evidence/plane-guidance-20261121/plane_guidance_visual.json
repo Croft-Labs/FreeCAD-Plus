@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+  "sha256": "32bc38ed8f6643a9aad4323d9873f86e330ffcbf85e2a23b67038920b78b07ab",
+  "next_pick_guidance_and_persistent_highlights": true,
+  "reverse_axis_keeps_origin_and_normal": true,
+  "repeat_pick_toggles_reference": true,
+  "delete_removes_reference": true,
+  "numeric_updates_wait_for_focus_leave": true,
+  "preview_no_model_mutation": true,
+  "create_edit_and_undo_identity": true
+}

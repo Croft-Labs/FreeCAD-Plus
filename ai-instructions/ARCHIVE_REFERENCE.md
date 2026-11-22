@@ -46,8 +46,9 @@ rule. Its largest-projection default-axis heuristic can improve near-perpendicul
 cases but can also switch axes; do not silently replace current defaults.
 
 An isolated native [proposal and checks](ui-ux-specs/TASK_PANEL.md#archive-guided-plane-proposal--november-21-2026)
-demonstrate the first three interaction improvements. Production code and the
-installed payload remain unchanged; approval and implementation are pending.
+demonstrate the first three interaction improvements. The owner subsequently
+approved implementing these concepts without copying archived code. The current
+task/solver received a fresh implementation; see [acceptance](WORK_STATE.md#plane-guidance-implementation--november-21-2026).
 
 Owner instruction: October 10, 2026. Preserve the existing fork for later/future
 reference before preparing a clean official FreeCAD baseline. Archiving is not

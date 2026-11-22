@@ -2,6 +2,12 @@
 
 ## Current baseline
 
+November 21 archive-guided plane improvements implement the approved concepts
+afresh in current modules: next-pick guidance, numbered reference highlights,
+repeat-pick/Delete removal and saved independent axis reversal. Creation/editing
+share the task; older planes remain unchanged until acceptance. See
+[acceptance](WORK_STATE.md#plane-guidance-implementation--november-21-2026).
+
 November 21 approved New Sketch placement is installed: plane/face preselection,
 automatic plane-frame inheritance or part-origin/X projection, editable references,
 and the shared placement-edit task. Sketches retain native identity and drawing;

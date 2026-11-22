@@ -10,6 +10,9 @@ _active = None
 
 
 class SketchPlacementTask(plane_task.PlaneTask):
+    # Plane refinements are approved independently of the Sketch placement UI.
+    reference_guidance = False
+
     def __init__(self, feature=None):
         super().__init__(feature)
         self.form.setWindowTitle('New Sketch')

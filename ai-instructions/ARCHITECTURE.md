@@ -42,6 +42,25 @@ installed/native evidence lives in [WORK_STATE](WORK_STATE.md#new-sketch-placeme
 
 ## Component construction planes and numeric commits — November 21, 2026
 
+The approved archive-guided refinement is implemented in the current modules,
+without copying archived code. `IncompletePlane` distinguishes partial references
+from invalid geometry. Straight-line support evaluates parameter zero to avoid
+infinite datum endpoints; its preview highlight uses a finite segment when the
+underlying edge is unbounded. Numbered amber point/line markers are unpickable,
+view-local Coin nodes removed on hide, Cancel, acceptance and document close.
+Plane picking observes original occurrence paths, validates ownership before
+canonicalization, and consumes native selection for repeat-pick toggling. Removal
+notifications generated during selection callbacks are queued by FreeCAD; their
+identities are tracked so they cannot accidentally clear a newly selected origin.
+
+`ReverseAxis` is an additive Boolean on version-1 planes. Missing properties read
+as false during recompute and task loading; opening/Cancel does not migrate them.
+Acceptance adds it within the same source-owned transaction. It reverses both
+in-plane axes, preserving origin, normal, offset and finite displayed footprint.
+Native properties provide Undo/Redo and save/reopen persistence. The Sketch task
+opts out of these independently approved plane controls/collector changes; sketches
+supported by a plane still inherit its changed frame associatively.
+
 `planes.py` creates a component-owned `Part::FeaturePython` with a versioned,
 stateless Python proxy and native `PropertyLinkSubListGlobal` references. Global
 link scope permits references into the component's internal Bodies; intake still
