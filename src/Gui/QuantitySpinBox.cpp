@@ -681,7 +681,9 @@ void QuantitySpinBox::handlePendingEmit(bool updateUnit /* = true */)
 {
     // Numerical edits commit when focus leaves, including fields whose task
     // explicitly enabled keyboard tracking. Intermediate input is only cached.
-    if (hasFocus()) {
+    // Drain signal-blocked programmatic updates before their blocker expires.
+    // Otherwise focus loss can turn cursor-driven sketch labels into dimensions.
+    if (hasFocus() && !signalsBlocked()) {
         return;
     }
     updateFromCache(true, updateUnit);
@@ -690,7 +692,7 @@ void QuantitySpinBox::handlePendingEmit(bool updateUnit /* = true */)
 void QuantitySpinBox::updateFromCache(bool notify, bool updateUnit /* = true */, bool stepped /* = false */)
 {
     Q_D(QuantitySpinBox);
-    notify = notify && (!hasFocus() || stepped);
+    notify = notify && (!hasFocus() || stepped || signalsBlocked());
     if (d->pendingEmit) {
         double factor;
         const Base::Quantity& res = d->cached;

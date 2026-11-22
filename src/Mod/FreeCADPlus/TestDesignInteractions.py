@@ -6,7 +6,7 @@ from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
-from PySide6 import QtCore, QtWidgets, QtTest
+from PySide6 import QtCore, QtWidgets, QtTest, QtGui
 from freecad_plus import document, editing, modeling, panel, sketch_task, plane_task, idle_tasks, extrusion, extrude_task, external, hierarchy
 
 
@@ -270,3 +270,153 @@ class TestDesignInteractions(unittest.TestCase):
         self.assertFalse(pad.Visibility)
         Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
         self.assertEqual(self.render_visibility([body,pad]),before)
+
+
+class TestSketchCreationAndTaskTabs(unittest.TestCase):
+    setUp = TestDesignInteractions.setUp
+    tearDown = TestDesignInteractions.tearDown
+    dialog = TestDesignInteractions.dialog
+    circle = TestDesignInteractions.circle
+
+    def draw(self, command, points, first_value=None):
+        view=Gui.activeDocument().activeView();widget=view.graphicsView().viewport()
+        Gui.runCommand(command);settle()
+        for index,(x,y) in enumerate(points):
+            p=view.getPointOnScreen(App.Vector(x,y,0));ratio=widget.devicePixelRatioF()
+            pos=QtCore.QPoint(round(p[0]/ratio),widget.height()-1-round(p[1]/ratio))
+            event=QtGui.QMouseEvent(QtCore.QEvent.MouseMove,QtCore.QPointF(pos),
+                QtCore.QPointF(widget.mapToGlobal(pos)),QtCore.Qt.NoButton,QtCore.Qt.NoButton,QtCore.Qt.NoModifier)
+            QtWidgets.QApplication.sendEvent(widget,event);settle()
+            QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pos);settle()
+            if index==0 and first_value is not None:
+                field=QtWidgets.QApplication.focusWidget()
+                self.assertTrue(field.inherits('Gui::QuantitySpinBox'),field.metaObject().className())
+                field.selectAll();QtTest.QTest.keyClicks(field,str(first_value))
+                QtTest.QTest.keyClick(field,QtCore.Qt.Key_Tab);settle()
+        QtTest.QTest.keyClick(widget,QtCore.Qt.Key_Escape);settle()
+
+    def test_mouse_only_tools_do_not_dimension(self):
+        sketch=modeling.new_sketch(self.doc);self.doc.recompute()
+        modeling._enter_editor(self.doc,self.owner,(document.validate(self.doc).Group[0],),sketch);settle()
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewTop()
+        view.getCameraNode().height.setValue(100);settle()
+        cases=[('Sketcher_CreateRectangle',[(-18,-10),(14,11)],4),
+               ('Sketcher_CreateCircle',[(26,22),(31,22)],1),
+               ('Sketcher_CreateLine',[(-30,23),(-15,23)],1),
+               ('Sketcher_CreateArc',[(25,-20),(32,-20),(25,-13)],1)]
+        dimensional={'Distance','DistanceX','DistanceY','Radius','Diameter','Angle','AngleViaPoint'}
+        for command,points,count in cases:
+            with self.subTest(tool=command):
+                before=sketch.GeometryCount;self.draw(command,points)
+                self.assertEqual(sketch.GeometryCount,before+count)
+                self.assertFalse([c.Type for c in sketch.Constraints if c.Type in dimensional])
+        self.assertGreaterEqual(sum(c.Type=='Coincident' for c in sketch.Constraints),4)
+        self.assertGreaterEqual(sum(c.Type=='Horizontal' for c in sketch.Constraints),3)
+        # Explicit dimensions remain valid and undoable, and survive edit entry.
+        import Sketcher
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();self.doc.recompute()
+        with document.transaction(self.doc,'Explicit width'):
+            sketch.addConstraint(Sketcher.Constraint('Distance',0,30.))
+        self.doc.undo();self.assertFalse([c.Type for c in sketch.Constraints if c.Type in dimensional])
+        self.doc.redo()
+        expected=list(sketch.Constraints);editing.edit_feature(self.doc,sketch);settle()
+        self.assertEqual([c.Type for c in sketch.Constraints],[c.Type for c in expected])
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction()
+
+    def test_signal_blocked_values_do_not_escape_on_focus_leave(self):
+        form=QtWidgets.QWidget();layout=QtWidgets.QVBoxLayout(form)
+        field=Gui.UiLoader().createWidget('Gui::QuantitySpinBox');other=QtWidgets.QLineEdit()
+        field.setProperty('unit','mm');layout.addWidget(field);layout.addWidget(other)
+        values=[];callback=lambda value:values.append(value)
+        QtCore.QObject.connect(field,QtCore.SIGNAL('valueChanged(double)'),callback)
+        form.show();form.activateWindow();QtWidgets.QApplication.setActiveWindow(form);settle()
+        try:
+            field.setFocus();settle()
+            for value in (12.1234,18.6543,22.5555):
+                with QtCore.QSignalBlocker(field):field.setProperty('rawValue',value)
+            other.setFocus();settle();self.assertEqual(values,[])
+            field.setFocus();field.selectAll();QtTest.QTest.keyClicks(field,'37');settle()
+            self.assertEqual(values,[]);other.setFocus();settle();self.assertEqual(values,[37.])
+        finally:
+            QtCore.QObject.disconnect(field,QtCore.SIGNAL('valueChanged(double)'),callback);form.close()
+
+    def test_deliberate_onview_entry_still_adds_dimension(self):
+        sketch=modeling.new_sketch(self.doc);self.doc.recompute()
+        modeling._enter_editor(self.doc,self.owner,(document.validate(self.doc).Group[0],),sketch);settle()
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewTop()
+        view.getCameraNode().height.setValue(80);settle()
+        self.draw('Sketcher_CreateRectangle',[(-18,-10),(14,11)],first_value=25)
+        dimensions=[c for c in sketch.Constraints if c.Type in ('Distance','DistanceX','DistanceY')]
+        self.assertEqual(len(dimensions),1);self.assertAlmostEqual(dimensions[0].Value,25.)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+
+    def test_custom_tasks_restore_each_previous_tab_and_allow_browsing(self):
+        profile=self.circle()
+        for previous in range(3):
+            for show in (sketch_task.show,plane_task.show,extrude_task.show):
+                with self.subTest(tab=previous,task=show.__module__):
+                    Gui.Selection.clearSelection();Gui.Selection.addSelection(profile)
+                    self.panel.tabs.setCurrentIndex(previous);task=show();settle()
+                    self.assertEqual(self.panel.tabs.currentIndex(),2)
+                    self.panel.tabs.setCurrentIndex(0);self.panel.refresh();settle()
+                    self.assertEqual(self.panel.tabs.currentIndex(),0)
+                    task.reject();settle();self.assertEqual(self.panel.tabs.currentIndex(),previous)
+
+    def test_sketch_handoff_and_existing_native_edit_restore_original_tab(self):
+        self.panel.tabs.setCurrentIndex(1);task=sketch_task.show();task.choose('XY Plane')
+        self.assertEqual(self.panel.tabs.currentIndex(),2)
+        self.dialog(QtWidgets.QDialogButtonBox.Ok)
+        sketch=task.result;self.assertEqual(Gui.activeDocument().getInEdit().Object,sketch)
+        self.assertEqual(self.panel.tabs.currentIndex(),2)
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),3),False)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();self.doc.recompute();settle()
+        self.assertEqual(self.panel.tabs.currentIndex(),1)
+        self.panel.tabs.setCurrentIndex(0);editing.edit_feature(self.doc,sketch);settle()
+        self.assertEqual(self.panel.tabs.currentIndex(),2)
+        Gui.activeDocument().resetEdit();App.closeActiveTransaction();settle()
+        self.assertEqual(self.panel.tabs.currentIndex(),0)
+
+    def test_extrude_accept_edit_and_native_datums(self):
+        profile=self.circle();Gui.Selection.clearSelection();Gui.Selection.addSelection(profile)
+        self.panel.tabs.setCurrentIndex(1);task=extrude_task.show();settle()
+        self.assertEqual(self.panel.tabs.currentIndex(),2);self.assertTrue(task.accept())
+        self.assertEqual(self.panel.tabs.currentIndex(),1)
+        task=editing.edit_feature(self.doc,task.result);settle();self.assertEqual(self.panel.tabs.currentIndex(),2)
+        task.reject();self.assertEqual(self.panel.tabs.currentIndex(),1)
+        for kind in ('Line','Point'):
+            idle_tasks.create_datum(kind);settle();self.assertEqual(self.panel.tabs.currentIndex(),2)
+            self.dialog(QtWidgets.QDialogButtonBox.Cancel);self.assertEqual(self.panel.tabs.currentIndex(),1)
+
+    def test_context_close_and_failed_sketch_handoff_restore(self):
+        self.panel.tabs.setCurrentIndex(0);task=plane_task.show();editing.edit_file(self.doc);settle()
+        self.assertTrue(task.closed);self.assertEqual(self.panel.tabs.currentIndex(),0)
+        editing.edit((document.validate(self.doc).Group[0],));self.panel.tabs.setCurrentIndex(1)
+        task=sketch_task.show();task.choose('XY Plane')
+        original=modeling._enter_editor
+        def fail(*args):raise ValueError('Expected test entry failure')
+        modeling._enter_editor=fail
+        try:self.assertTrue(task.accept());settle();self.assertEqual(self.panel.tabs.currentIndex(),1)
+        finally:modeling._enter_editor=original
+        task=plane_task.show();App.closeDocument(self.doc.Name);settle()
+        self.assertTrue(task.closed);self.assertEqual(self.panel.tabs.currentIndex(),1)
+
+    def test_external_native_task_restores_host_tab(self):
+        folder=Path(os.environ['PLUS_TEST_DIR'])/'tabs-external';folder.mkdir(exist_ok=True)
+        document.save_document(self.doc,folder/'Host.cadprt')
+        source=document.new_document('TabSource');owner=document.validate(source).Definitions[0]
+        document.save_document(source,folder/'Source.cadprt');external.import_file(self.doc,source)
+        App.setActiveDocument(self.doc.Name);editing.edit_unused(self.doc,owner)
+        sketch=self.circle();source.recompute();self.panel.tabs.setCurrentIndex(1)
+        editing.edit_feature(self.doc,sketch);settle();self.assertEqual(self.panel.tabs.currentIndex(),2)
+        Gui.getDocument(self.doc.Name).resetEdit();App.closeActiveTransaction();settle()
+        self.assertEqual(self.panel.tabs.currentIndex(),1)
+
+    def test_part_creation_dialog_without_native_editor(self):
+        Gui.activateWorkbench('PartWorkbench');self.panel.tabs.setCurrentIndex(1)
+        Gui.runCommand('Part_Primitives');settle()
+        self.assertTrue(Gui.Control.activeDialog());self.assertIsNone(Gui.activeDocument().getInEdit())
+        self.assertEqual(self.panel.tabs.currentIndex(),2)
+        self.panel.tabs.setCurrentIndex(0);self.panel.refresh();settle()
+        self.assertEqual(self.panel.tabs.currentIndex(),0)
+        self.dialog(QtWidgets.QDialogButtonBox.Close);settle()
+        self.assertEqual(self.panel.tabs.currentIndex(),1)

@@ -211,6 +211,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._press = None
         self._clipboard = ()
         self._history_eyes = False
+        self._feature_scope = None
         self.refresh_count = 0
         self.tabs = QtWidgets.QTabWidget()
         self.trees = []
@@ -260,6 +261,12 @@ class ComponentPanel(QtWidgets.QDockWidget):
         Gui.addDocumentObserver(self)
         Gui.Selection.addObserver(self)
         editing.add_context_observer(self.schedule)
+        # Some Part creation dialogs have no native getInEdit object. Listen to
+        # the existing task-view signal as well, without polling every GUI tick.
+        self._task_views = [widget for widget in parent.findChildren(QtWidgets.QWidget)
+                            if widget.inherits('Gui::TaskView::TaskView')]
+        for widget in self._task_views:
+            QtCore.QObject.connect(widget, QtCore.SIGNAL('taskUpdate()'), self._part_dialog_updated)
         self.refresh()
 
     def toggle_history_visibility(self, row):
@@ -406,11 +413,66 @@ class ComponentPanel(QtWidgets.QDockWidget):
     slotActivateDocument = schedule
     slotRelabelDocument = schedule
     slotChangedDocument = schedule
-    slotResetEdit = schedule
-    slotInEdit = schedule
+
+    def begin_feature_task(self, token):
+        # Overlapping placement/native stages share one saved tab. Refreshes
+        # never force it again, so users can browse other tabs during a task.
+        current = self._current()
+        if current is None or self._closed:
+            return
+        self._sync_feature_scope(current)
+        if self._feature_scope is None:
+            self._feature_scope = (current, self.tabs.currentIndex(), set())
+            self.tabs.setCurrentIndex(2)
+        self._feature_scope[2].add(token)
+
+    def end_feature_task(self, token):
+        if self._feature_scope is None or token not in self._feature_scope[2]:
+            return
+        self._feature_scope[2].discard(token)
+        if not self._feature_scope[2]:
+            self._restore_feature_tab()
+
+    def _restore_feature_tab(self):
+        if self._feature_scope is not None:
+            previous = self._feature_scope[1]
+            self._feature_scope = None
+            self.tabs.setCurrentIndex(previous)
+
+    def _sync_feature_scope(self, current):
+        if self._feature_scope is not None and self._feature_scope[0] != current:
+            self._restore_feature_tab()
+
+    def slotInEdit(self, view):
+        if view.Object.isDerivedFrom('Part::Feature'):
+            self.begin_feature_task(view.Object)
+        self.schedule()
+
+    def slotResetEdit(self, view):
+        self.end_feature_task(view.Object)
+        self.schedule()
+
+    def _part_dialog_updated(self):
+        # Control updates its active-dialog pointer after TaskView emits this
+        # signal. Inspect only after that native show/remove call has unwound.
+        QtCore.QTimer.singleShot(0, self._sync_part_dialog)
+
+    def _sync_part_dialog(self):
+        if self._closed:
+            return
+        dialog = Gui.Control.activeTaskDialog()
+        widgets = dialog.getDialogContent() if dialog is not None else ()
+        feature = any(child.metaObject().className().startswith(('PartGui::', 'PartDesignGui::'))
+                      for widget in widgets for child in [widget, *widget.findChildren(QtWidgets.QWidget)])
+        if feature:
+            self.begin_feature_task('native-part-dialog')
+        else:
+            self.end_feature_task('native-part-dialog')
 
     def slotDeletedDocument(self, doc):
         owner = getattr(doc, 'Document', doc)
+        if self._feature_scope is not None and self._feature_scope[0][0] == owner:
+            self._restore_feature_tab()
         self._states = [(bound, state) for bound, state in self._states if bound[0] != owner]
         if self._binding and self._binding[0] == owner:
             self._binding = None
@@ -483,6 +545,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         if self._closed:
             return
         current = self._current()
+        self._sync_feature_scope(current)
         drawing = None
         if current:
             drawing = Gui.getDocument(current[0].Name).getInEdit()
@@ -973,6 +1036,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def dispose(self):
         if self._closed:
             return
+        self._restore_feature_tab()
         from . import movement
         if movement._active is not None and movement._active.panel is self:
             movement._active.finish()
@@ -983,6 +1047,12 @@ class ComponentPanel(QtWidgets.QDockWidget):
         Gui.removeDocumentObserver(self)
         Gui.Selection.removeObserver(self)
         editing.remove_context_observer(self.schedule)
+        for widget in self._task_views:
+            try:
+                QtCore.QObject.disconnect(widget, QtCore.SIGNAL('taskUpdate()'), self._part_dialog_updated)
+            except RuntimeError:
+                pass
+        self._task_views.clear()
         if self._mdi:
             self._mdi.subWindowActivated.disconnect(self.schedule)
         for (doc, view), state in self._states:
@@ -998,6 +1068,19 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._states.clear()
         self._clipboard = ()
         self._binding = None
+
+
+def begin_feature_task(task):
+    if _panel is not None and not _panel._closed:
+        task._history_panel = _panel
+        _panel.begin_feature_task(task)
+
+
+def end_feature_task(task):
+    owner = getattr(task, '_history_panel', None)
+    if owner is not None:
+        owner.end_feature_task(task)
+        task._history_panel = None
 
 
 def show_panel():

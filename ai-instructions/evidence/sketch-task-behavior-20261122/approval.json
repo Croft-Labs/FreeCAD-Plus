@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-22",
+  "owner_instruction": "Approved, implement both changes: no automatic dimensions and switch to History during feature tasks, then restore the previous tab when leaving.",
+  "baseline": "14a30b1fe470e7c79cedb23392dbdaf456236584",
+  "preview_session": "e0de9754456f",
+  "preview_fingerprint": "dfb87a647aa15fb11f18653583a0304bade1ed8da1f7d398209fcc7e5cecb737",
+  "preview_kind": "Native staged storyboard; direct chat approval",
+  "companion_approval_state_modified_by_agent": false
+}

@@ -6,6 +6,14 @@ Implementation planning and acceptance are owned by the [Group 1 roadmap](../DEV
 
 ## Scope boundary: panel behavior and launched operations
 
+Owner-approved November 22, 2026: entering part-feature creation/edit temporarily
+selects History. Finishing or cancelling restores the tab selected before the task,
+including Models, Part Tree or History. New Sketch placement-to-drawing is one
+continuous task. Users may browse tabs during it; refreshes must not force History
+again. Scope restoration to the originating panel/view and clean up abandoned or
+closed tasks. This temporary behavior does not replace component Edit navigation.
+See [feature-task interaction requirements](TASK_PANEL.md#sketch-dimensions-and-feature-task-history--november-22-2026).
+
 The owner clarified that an operation is not Component Panel implementation merely
 because it is conveniently offered by right-click. This panel owns its tabs, tree
 and History presentation, component/document structure, selection/Edit context,

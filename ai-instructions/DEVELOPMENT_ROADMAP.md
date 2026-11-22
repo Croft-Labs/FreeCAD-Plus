@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Sketch dimensions and feature-task History — November 22, 2026
+
+- [x] Obtain approval for the combined direct native storyboard.
+- [x] Prevent cursor-updated numeric fields from creating automatic sketch dimensions.
+- [x] Preserve applicable geometric constraints, deliberate entry and numeric commit timing.
+- [x] Temporarily select History for custom/native feature tasks and restore the prior tab.
+- [x] Cover sketch handoff, standalone Part dialogs, external sources and teardown.
+- [x] Pass 155 installed tests plus separate native GUI/save-reopen checks.
+- [x] Retain rollback installation and verify restart through the existing shortcut.
+  See [acceptance](WORK_STATE.md#sketch-dimensions-and-feature-task-history--november-22-2026).
+
 ## Extrude visibility and shared tree controls — November 22, 2026
 
 - [x] Obtain direct approval for native visibility/target-color previews.

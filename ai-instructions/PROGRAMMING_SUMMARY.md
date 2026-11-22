@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest sketch/task update — November 22, 2026
+
+Approved changes are installed: mouse-only sketch creation adds no unsolicited
+dimensions while geometric constraints and deliberate dimensions remain available.
+Feature creation/edit temporarily selects History and restores the prior tab on
+exit, including sketch placement-to-drawing and standalone native Part dialogs.
+All 155 installed tests and separate GUI/save-reopen checks passed. The app was
+restarted through the existing shortcut with isolated settings. See
+[acceptance](WORK_STATE.md#sketch-dimensions-and-feature-task-history--november-22-2026).
+
 ## Latest Extrude update — November 22, 2026
 
 Approved Extrude visibility behavior and shared task tree controls are installed.

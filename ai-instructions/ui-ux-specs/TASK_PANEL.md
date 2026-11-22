@@ -4,6 +4,24 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Sketch dimensions and feature-task History — November 22, 2026
+
+Owner approval: "Approved, implement both changes: no automatic dimensions and
+switch to History during feature tasks, then restore the previous tab when leaving."
+Mouse-only sketch drawing must not create unsolicited width, height, length,
+radius, diameter or angle dimensions. Clearly applicable geometric constraints,
+including coincidence and horizontal/vertical, remain enabled. Deliberate numeric
+entry and explicit dimension commands remain available; existing dimensions stay
+intact. Cursor-driven numeric labels must not be mistaken for user-entered values.
+Typed fields still commit on focus leave; spin steps still commit immediately.
+
+Part-feature creation/edit selects Components History on entry and restores the
+prior Models/Part Tree/History tab when finishing, cancelling or abandoning the
+task. New Sketch placement and native drawing form one task for this purpose.
+Manual browsing remains possible during editing; refreshes do not force History
+again. Scope tab restoration to the task's panel/view and clean it up on view or
+document closure. See the component-panel specification for tab ownership.
+
 ### Extrude visibility and shared tree controls — November 22, 2026
 
 The owner approved the direct native storyboard and instructed: **"Approved,

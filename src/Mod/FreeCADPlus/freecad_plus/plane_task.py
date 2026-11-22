@@ -488,6 +488,9 @@ class PlaneTask(QtCore.QObject):
         self.remove_overlay()
         self.remove_highlights()
         Gui.Control.closeDialog()
+        if not getattr(self, '_continue_history', False):
+            from . import panel
+            panel.end_feature_task(self)
         _active = None
         return True
 
@@ -499,4 +502,6 @@ def show(feature=None):
     _active = PlaneTask(feature)
     Gui.Control.showDialog(_active)
     _active.update()
+    from . import panel
+    panel.begin_feature_task(_active)
     return _active

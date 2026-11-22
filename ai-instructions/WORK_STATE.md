@@ -1,5 +1,44 @@
 # FreeCAD Plus: Current work state
 
+## Sketch dimensions and feature-task History — November 22, 2026
+
+The owner [approved both changes](evidence/sketch-task-behavior-20261122/approval.json)
+after the direct native storyboard. Mouse-only sketch creation no longer adds
+unsolicited dimensions. Applicable geometric constraints remain; deliberate typed
+sizes and explicit dimension commands still work, and existing dimensions survive
+edit entry. The fix drains programmatic QuantitySpinBox notifications while their
+signal blocker is active; it does not delete constraints or disable auto-constraints.
+
+Entering feature creation/edit selects Components History and leaving restores the
+previous Models/Part Tree/History tab. Sketch placement-to-drawing keeps one saved
+tab. Manual browsing during a task remains possible. Custom Sketch/Plane/Extrude,
+native feature/datum editors, and standalone Part creation dialogs share the scope.
+External-source tasks, context/document teardown and failed native entry clean it up.
+
+The native build passed. Five changed Python modules/tests and FreeCADGui.dll were
+installed with source/build/app hash checks and retained rollback copies:
+[manifest](evidence/sketch-task-behavior-20261122/install-manifest.json).
+Nine focused build cases passed. The final installed suite passed **155 tests** with
+no failures/errors: [report](evidence/sketch-task-behavior-20261122/regression.txt).
+Coverage includes actual mouse-only Rectangle/Circle/Line/Arc, deliberately typed
+on-view dimensions, existing dimensions/Undo/Redo, all prior tabs, manual browsing,
+sketch handoff, native Part dialogs, external sources, and existing Extrude, Sketch,
+Plane, visibility, numeric commit, Move and Rotate workflows.
+
+Separate installed processes passed real rectangle creation, History transitions,
+save/reopen and existing-sketch edit restoration without injected product code:
+[GUI check](evidence/sketch-task-behavior-20261122/visual.json),
+[reopen check](evidence/sketch-task-behavior-20261122/reopen.json).
+Reviewed native captures: [placement](evidence/sketch-task-behavior-20261122/installed-placement.png),
+[drawing](evidence/sketch-task-behavior-20261122/installed-drawing.png),
+[previous tab restored](evidence/sketch-task-behavior-20261122/installed-after.png).
+
+The existing desktop shortcut was restarted and verified against the installed
+payload using explicit isolated user/system/data paths; no owner profile was used:
+[shortcut check](evidence/sketch-task-behavior-20261122/shortcut.json).
+The restarted app remains open. Rollback backups and its isolated profile remain
+under the development runtime's validation/sketch-task-behavior-20261122 directory.
+
 ## Extrude visibility and shared tree controls — November 22, 2026
 
 The owner [approved the direct native storyboard](evidence/extrude-visibility-20261122/approval.json)

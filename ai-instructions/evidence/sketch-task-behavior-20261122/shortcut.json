@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "config": {
+    "ExeName": "FreeCAD",
+    "AppHomePath": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\",
+    "UserParameter": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\profile-shortcut\\user.cfg",
+    "SystemParameter": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\profile-shortcut\\system.cfg",
+    "UserAppData": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\profile-shortcut\\data\\"
+  },
+  "user_data": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\profile-shortcut\\data\\",
+  "task_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+  "panel_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+}

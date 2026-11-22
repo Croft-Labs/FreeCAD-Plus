@@ -1,0 +1,50 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestDesignInteractions.py",
+    "source_sha256": "d986d1410b310b19ead6d5ed51633ea45a696f2c8e6c28f0210090233c552a8d",
+    "built_sha256": "d986d1410b310b19ead6d5ed51633ea45a696f2c8e6c28f0210090233c552a8d",
+    "installed_sha256": "d986d1410b310b19ead6d5ed51633ea45a696f2c8e6c28f0210090233c552a8d",
+    "previous_sha256": "54864f53e8e0afa7acd1e3d9765528f1e689bfdfab85f995b5985fd8c1e00a5c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\install-backup\\Mod\\FreeCADPlus\\TestDesignInteractions.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "d177e01762db6d840dc7344e59f5523f9fbe3715ed8b3c733093002f2373fa6f",
+    "built_sha256": "d177e01762db6d840dc7344e59f5523f9fbe3715ed8b3c733093002f2373fa6f",
+    "installed_sha256": "d177e01762db6d840dc7344e59f5523f9fbe3715ed8b3c733093002f2373fa6f",
+    "previous_sha256": "d177e01762db6d840dc7344e59f5523f9fbe3715ed8b3c733093002f2373fa6f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source_sha256": "0377669f9eb5354fb393e2e3fc5926655b92586fbdcf7f9b783b9ebc84bef186",
+    "built_sha256": "0377669f9eb5354fb393e2e3fc5926655b92586fbdcf7f9b783b9ebc84bef186",
+    "installed_sha256": "0377669f9eb5354fb393e2e3fc5926655b92586fbdcf7f9b783b9ebc84bef186",
+    "previous_sha256": "340afe7492c112457e2e5552f0db1e9d2165af5864398a7a8652d845578d1dea",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/plane_task.py",
+    "source_sha256": "33b31c3218cd87776b295fa59c35daa48f5f397bd82458eb27f69696273fb859",
+    "built_sha256": "33b31c3218cd87776b295fa59c35daa48f5f397bd82458eb27f69696273fb859",
+    "installed_sha256": "33b31c3218cd87776b295fa59c35daa48f5f397bd82458eb27f69696273fb859",
+    "previous_sha256": "33b31c3218cd87776b295fa59c35daa48f5f397bd82458eb27f69696273fb859",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_task.py",
+    "source_sha256": "d4f753e24c444c5cdc70697f1e39bdb258cc9f2c3d1a240597777c939df3ddfb",
+    "built_sha256": "d4f753e24c444c5cdc70697f1e39bdb258cc9f2c3d1a240597777c939df3ddfb",
+    "installed_sha256": "d4f753e24c444c5cdc70697f1e39bdb258cc9f2c3d1a240597777c939df3ddfb",
+    "previous_sha256": "d4f753e24c444c5cdc70697f1e39bdb258cc9f2c3d1a240597777c939df3ddfb",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_task.py"
+  },
+  {
+    "path": "bin/FreeCADGui.dll",
+    "source_sha256": null,
+    "built_sha256": "052a7539bb568e725fb495bc5aba3a53f6f1f869c59f4a9af6b8e9f0ef8ba8e1",
+    "installed_sha256": "052a7539bb568e725fb495bc5aba3a53f6f1f869c59f4a9af6b8e9f0ef8ba8e1",
+    "previous_sha256": "052a7539bb568e725fb495bc5aba3a53f6f1f869c59f4a9af6b8e9f0ef8ba8e1",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-task-behavior-20261122\\install-backup\\bin\\FreeCADGui.dll"
+  }
+]

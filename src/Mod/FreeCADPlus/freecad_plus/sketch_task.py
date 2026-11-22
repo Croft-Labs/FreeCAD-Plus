@@ -90,6 +90,7 @@ class SketchPlacementTask(plane_task.PlaneTask):
                 self.source_doc.recompute()
                 if 'Invalid' in self.result.State:
                     raise ValueError('The sketch could not be recomputed')
+                self._continue_history = True
                 self.reject()
                 # The native task OK callback must unwind before another task
                 # can be opened. Otherwise Sketcher sees the retiring dialog.
@@ -109,6 +110,10 @@ class SketchPlacementTask(plane_task.PlaneTask):
         except Exception as exc:
             App.closeActiveTransaction(True, transaction_id)
             App.Console.PrintError(str(exc) + '\n')
+        finally:
+            from . import panel
+            self._continue_history = False
+            panel.end_feature_task(self)
 
     def reject(self):
         global _active
@@ -129,4 +134,6 @@ def show(feature=None):
     _active = SketchPlacementTask(feature)
     Gui.Control.showDialog(_active)
     _active.update()
+    from . import panel
+    panel.begin_feature_task(_active)
     return _active

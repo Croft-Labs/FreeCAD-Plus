@@ -508,6 +508,8 @@ class ExtrudeTask(QtCore.QObject):
                 try:self.view.removeEventCallbackPivy(coin.SoMouseButtonEvent.getClassTypeId(),self.mouse_callback)
                 except (RuntimeError,ReferenceError):pass
             Gui.Control.closeDialog()
+            from . import panel
+            panel.end_feature_task(self)
         return True
 
 
@@ -519,6 +521,8 @@ def show(feature=None, which='Pad'):
         raise ValueError('This feature uses the native editor.')
     _active=ExtrudeTask(feature,which)
     Gui.Control.showDialog(_active);_active.changed()
+    from . import panel
+    panel.begin_feature_task(_active)
     return _active
 
 

@@ -8,6 +8,29 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Sketch input and feature-task tabs — November 22, 2026
+
+QuantitySpinBox drains pending programmatic notifications while signals are blocked,
+even when focused. Previously its deferred-focus policy kept a notification from
+EditableDatumLabel's cursor-driven setValue alive beyond the QSignalBlocker. On
+focus loss it marked the label user-set and created an unsolicited dimension.
+Normal typed values still defer; explicit steps publish immediately. No constraint
+deletion, solver changes or persistent preference overrides implement this fix.
+
+ComponentPanel owns a temporary (document/view, previous tab, active tokens) scope.
+Custom Plane/Sketch/Extrude tasks register their instance; native feature editors
+register through Gui slotInEdit/slotResetEdit. Only first entry selects History;
+standalone Part/PartDesign dialogs also use TaskView's native taskUpdate signal
+and their typed content widgets, inspected after Control updates its dialog pointer.
+This includes Part primitive creation without an in-edit feature object, without
+polling or treating unrelated preference/movement dialogs as feature editors.
+Refreshes preserve manual browsing. Sketch placement retains its token until the
+deferred native drawing entry succeeds or fails, preserving the original tab across
+both stages. Last exit restores it. Context/view/document teardown and panel disposal
+clear the scope, so late callbacks cannot overwrite another task's tab. Scope changes
+do not edit document properties or transactions. Part Type/selection ownership rules
+and existing component Edit navigation remain unchanged.
+
 ## Extrude task visibility and face references — November 22, 2026
 
 `task_visibility.ExtrudeDisplay` separates the saved source visibility/materials

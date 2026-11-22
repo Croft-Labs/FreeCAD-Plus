@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "real_rectangle_clicks": true,
+  "no_automatic_dimensions": true,
+  "geometric_constraints": [
+    "Coincident",
+    "Coincident",
+    "Coincident",
+    "Coincident",
+    "Horizontal",
+    "Horizontal",
+    "Vertical",
+    "Vertical"
+  ],
+  "history_in_placement_and_drawing": true,
+  "previous_tab_restored": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+}
