@@ -57,8 +57,8 @@ def validate(definition, refs, links, values, feature=None):
     if not refs:
         raise ValueError('Select a sketch or a closed region to extrude.')
     refs = planes.canonical(definition, refs)
-    if any(obj != refs[0][0] or not obj.isDerivedFrom('Sketcher::SketchObject') for obj, sub in refs):
-        raise ValueError('Select a whole sketch or closed curves from one sketch.')
+    refs = [profile_reference(ref) for ref in refs]
+    validate_profiles(definition, refs)
     links = {key: planes.canonical(definition, [ref])[0] for key, ref in links.items()}
     if feature is not None:
         if not is_extrusion(feature) or owner(feature) != definition:
@@ -107,8 +107,48 @@ def validate(definition, refs, links, values, feature=None):
     return refs, links, values
 
 
+def profile_reference(ref):
+    obj, sub = ref
+    if obj.TypeId == 'PartDesign::Body' and Part.splitSubname(sub)[2].startswith('Face'):
+        if obj.Tip is None:
+            raise ValueError('The selected body has no result face.')
+        # The Body adds its own topology-name prefix. Resolve that mapped pick
+        # on the Body first, then store the corresponding Tip face reference.
+        # Keeping the Body prefix on the Tip produces a missing subelement.
+        shape = obj.Shape
+        picked = shape.getElement(sub)
+        index = next((i for i, face in enumerate(shape.Faces) if face.isSame(picked)), None)
+        if index is None:
+            raise ValueError('The selected result face is no longer available.')
+        return (obj.Tip, 'Face' + str(index + 1))
+    return ref
+
+
+def validate_profiles(definition, refs):
+    """Sketch curves or one real face; datum faces are reference geometry only."""
+    if not refs:
+        raise ValueError('Select a sketch, closed sketch region, or face.')
+    obj, sub = refs[0]
+    if obj.isDerivedFrom('Sketcher::SketchObject'):
+        if any(other != obj or (element and not Part.splitSubname(element)[2].startswith('Edge'))
+               for other, element in refs):
+            raise ValueError('Select a whole sketch or closed curves from one sketch.')
+    elif (len(refs) != 1 or not obj.isDerivedFrom('Part::Feature')
+          or obj.isDerivedFrom('PartDesign::Plane')
+          or not Part.splitSubname(sub)[2].startswith('Face')
+          or planes.shape(definition, refs[0]).ShapeType != 'Face'):
+        raise ValueError('Select a sketch or a face of a solid or sheet.')
+
+
 def profile_shape(definition, refs):
     sketch = refs[0][0]
+    if not sketch.isDerivedFrom('Sketcher::SketchObject'):
+        face = planes.shape(definition, refs[0])
+        if not isinstance(face.Surface, Part.Plane):
+            raise ValueError('Extrude requires a planar profile face.')
+        normal = face.normalAt(0, 0)
+        placement = App.Placement(face.CenterOfMass, App.Rotation(App.Vector(0, 0, 1), normal))
+        return face, placement, face.Edges
     placement = definition.getGlobalPlacement().inverse().multiply(sketch.getGlobalPlacement())
     if any(not sub for _, sub in refs):
         edges = planes.shape(definition, (sketch, '')).Edges
@@ -431,7 +471,9 @@ def save(doc, refs, links, values, feature=None):
         definition.Document.recompute()
         if feature.ExtrudeError or feature.Shape.isNull() or 'Invalid' in feature.State:
             raise ValueError(feature.ExtrudeError or 'Extrude failed to recompute.')
-        refs[0][0].Visibility = False
+        # Consuming a face must not hide its entire donor solid/sheet.
+        if refs[0][0].isDerivedFrom('Sketcher::SketchObject'):
+            refs[0][0].Visibility = False
         if target:
             target.Visibility = False
         feature.Visibility = body.Tip == feature

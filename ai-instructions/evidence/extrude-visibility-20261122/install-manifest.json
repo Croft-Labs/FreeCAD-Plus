@@ -1,0 +1,122 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestComponentMove.py",
+    "source_sha256": "02d62e3c370db9271b60f7e2991c1564a9bbbfb4807fa0ceaaba9b874cace96d",
+    "built_sha256": "02d62e3c370db9271b60f7e2991c1564a9bbbfb4807fa0ceaaba9b874cace96d",
+    "installed_sha256": "02d62e3c370db9271b60f7e2991c1564a9bbbfb4807fa0ceaaba9b874cace96d",
+    "previous_sha256": "25dd7dfe53c2233a92d84259dbc666b00049338c64166e4fb4130e1c516dfc96",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentMove.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestComponentPanel.py",
+    "source_sha256": "e20e10514db98e4a649533121772742319677a3d5540be6b087ac512f2f1cb12",
+    "built_sha256": "e20e10514db98e4a649533121772742319677a3d5540be6b087ac512f2f1cb12",
+    "installed_sha256": "e20e10514db98e4a649533121772742319677a3d5540be6b087ac512f2f1cb12",
+    "previous_sha256": "5d0a267e46f1ba232ed17296b4bfc30ad0d8ad309cb423bf64e688a1321b8c78",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentPanel.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestComponentPlanes.py",
+    "source_sha256": "9f940ccdeae4f25060798e03d2d92e53dcc70c545a793a24d45029569f533fb9",
+    "built_sha256": "9f940ccdeae4f25060798e03d2d92e53dcc70c545a793a24d45029569f533fb9",
+    "installed_sha256": "9f940ccdeae4f25060798e03d2d92e53dcc70c545a793a24d45029569f533fb9",
+    "previous_sha256": "8d8e6c26969d0f3d70bd29d5122975c6b04de79cff92ca7683932b28845454d8",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentPlanes.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestComponentRotate.py",
+    "source_sha256": "4088229ac05bd14ed5089c4609900a3a73c06e0d46de23079f16a14616a6144f",
+    "built_sha256": "4088229ac05bd14ed5089c4609900a3a73c06e0d46de23079f16a14616a6144f",
+    "installed_sha256": "4088229ac05bd14ed5089c4609900a3a73c06e0d46de23079f16a14616a6144f",
+    "previous_sha256": "96525bc962221fd9e19267bfa3cc46df3108be94f6f54d5ed96e4cecc65b9119",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentRotate.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestComponentVisibility.py",
+    "source_sha256": "f605f736056feaa7e0f65f8ebf643bb06fbe43474dc7f085ffaea94dd88880e8",
+    "built_sha256": "f605f736056feaa7e0f65f8ebf643bb06fbe43474dc7f085ffaea94dd88880e8",
+    "installed_sha256": "f605f736056feaa7e0f65f8ebf643bb06fbe43474dc7f085ffaea94dd88880e8",
+    "previous_sha256": "cc9638ac915cef00b2659051d96cc88b7af8bfb6873ccd35bda88c6940ef16d1",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentVisibility.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestExtrudeVisibility.py",
+    "source_sha256": "f13346635fd078f25901f9cdac95f5512ee68d00db1e46eabe2057ab6cb53786",
+    "built_sha256": "f13346635fd078f25901f9cdac95f5512ee68d00db1e46eabe2057ab6cb53786",
+    "installed_sha256": "f13346635fd078f25901f9cdac95f5512ee68d00db1e46eabe2057ab6cb53786",
+    "previous_sha256": null,
+    "rollback": null
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestExtrudeWorkflow.py",
+    "source_sha256": "fd4c1d04b0fb04de17c23f7f5a856bb8100229613e5de675559f03f978544e14",
+    "built_sha256": "fd4c1d04b0fb04de17c23f7f5a856bb8100229613e5de675559f03f978544e14",
+    "installed_sha256": "fd4c1d04b0fb04de17c23f7f5a856bb8100229613e5de675559f03f978544e14",
+    "previous_sha256": "0e781de780dc940a0dd1d5453264744b893a0117bc66253a4e72cd2897495fa6",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\TestExtrudeWorkflow.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/display.py",
+    "source_sha256": "95074cc4635af039df97091031fa346829e612179c4e5a8604fd0f45398baecb",
+    "built_sha256": "95074cc4635af039df97091031fa346829e612179c4e5a8604fd0f45398baecb",
+    "installed_sha256": "95074cc4635af039df97091031fa346829e612179c4e5a8604fd0f45398baecb",
+    "previous_sha256": "b0e7035c9de2162998aa77ebfbdd95f3265c807b79d96a8cfee2bf68d419341a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\display.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source_sha256": "886440fabd14cd31634b09452a0042192d3e0b439448da1d83e9480d79a38bb2",
+    "built_sha256": "886440fabd14cd31634b09452a0042192d3e0b439448da1d83e9480d79a38bb2",
+    "installed_sha256": "886440fabd14cd31634b09452a0042192d3e0b439448da1d83e9480d79a38bb2",
+    "previous_sha256": "502e90ef88303d56988a7620be57f1535a4193352a564adcef257a18d0508f3e",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\document.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "086ee4d4eea09cbd18611a00f6d30b4cf5b7d9145886435bdc4d337eb833c5b2",
+    "built_sha256": "086ee4d4eea09cbd18611a00f6d30b4cf5b7d9145886435bdc4d337eb833c5b2",
+    "installed_sha256": "086ee4d4eea09cbd18611a00f6d30b4cf5b7d9145886435bdc4d337eb833c5b2",
+    "previous_sha256": "ec30ffbce8c66f579b92a94ceff62c24ea211501b1611e24ba68376e1d2aa36c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrusion.py",
+    "source_sha256": "46d829f031a6b81816f30dc3160a9378c1fe8aa72ba392ceb356bc1c5202ef4b",
+    "built_sha256": "46d829f031a6b81816f30dc3160a9378c1fe8aa72ba392ceb356bc1c5202ef4b",
+    "installed_sha256": "46d829f031a6b81816f30dc3160a9378c1fe8aa72ba392ceb356bc1c5202ef4b",
+    "previous_sha256": "70b4cf153b877dc55f0a8c853a1eec4751af093617ac8ef4f9b1844f8d791cb9",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source_sha256": "927a9cbc917f1fb2ddd775417b54e8ce5bf68b153cd4e1a0a50564f11420dcd0",
+    "built_sha256": "927a9cbc917f1fb2ddd775417b54e8ce5bf68b153cd4e1a0a50564f11420dcd0",
+    "installed_sha256": "927a9cbc917f1fb2ddd775417b54e8ce5bf68b153cd4e1a0a50564f11420dcd0",
+    "previous_sha256": "2ac9f5869e33a5920c25d840bd51b0bc836717ef869a10c25ce20e362775ee7c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_visibility.py",
+    "source_sha256": "35deca28484e030005a602e07e834fc1808c116e957ae91081e43a58db0f1eaf",
+    "built_sha256": "35deca28484e030005a602e07e834fc1808c116e957ae91081e43a58db0f1eaf",
+    "installed_sha256": "35deca28484e030005a602e07e834fc1808c116e957ae91081e43a58db0f1eaf",
+    "previous_sha256": "115b2d09c009715aa8b6a4031535dde1974991f270ed2432c2f4a722371fc80e",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_visibility.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/task_visibility.py",
+    "source_sha256": "c243e1ef3ad0d8b7e8eecef30da3d6520512f2b900d1b0b837d0010043584cd0",
+    "built_sha256": "c243e1ef3ad0d8b7e8eecef30da3d6520512f2b900d1b0b837d0010043584cd0",
+    "installed_sha256": "c243e1ef3ad0d8b7e8eecef30da3d6520512f2b900d1b0b837d0010043584cd0",
+    "previous_sha256": null,
+    "rollback": null
+  },
+  {
+    "path": "bin/FreeCADGui.dll",
+    "source_sha256": null,
+    "built_sha256": "7c5f69db474f25e9da221e1307703fc86b0351b6600a6111b3b8e7f6147cd469",
+    "installed_sha256": "7c5f69db474f25e9da221e1307703fc86b0351b6600a6111b3b8e7f6147cd469",
+    "previous_sha256": "0f0b9fec686017aeece1a147db2a8baa439488c7e75ff1664d0a6aee11bc16a0",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\extrude-visibility-20261122\\install-backup\\bin\\FreeCADGui.dll"
+  }
+]

@@ -1,0 +1,85 @@
+import json, os, sys, traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,panel,extrude_task,extrusion,editing
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    task=None;result={'ok':False,'installed_native':True}
+    try:
+        window=Gui.getMainWindow();window.resize(1300,900);window.show();window.raise_();window.activateWindow()
+        QtWidgets.QApplication.setActiveWindow(window);Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('Extrude visibility');owner=document.validate(doc).Definitions[0];owner.Label='Mounting plate'
+        base=modeling.new_sketch(doc);base.Label='Base sketch';points=[(0,0),(40,0),(40,25),(0,25)]
+        for i in range(4):
+            a,b=points[i],points[(i+1)%4];base.addGeometry(Part.LineSegment(App.Vector(*a,0),App.Vector(*b,0)),False)
+        doc.recompute();target=modeling.extrude_new_solid(doc,base,6);target.Label='Base solid'
+        def sketch(name,x,y,z,r):
+            obj=modeling.new_sketch(doc);obj.Label=name;obj.Placement.Base.z=z
+            obj.addGeometry(Part.Circle(App.Vector(x,y,0),App.Vector(0,0,1),r),False);return obj
+        other_profile=sketch('Other solid sketch',51,13,0,7);doc.recompute()
+        other=modeling.extrude_new_solid(doc,other_profile,12);other.Label='Other solid'
+        profile=sketch('Extrude profile',15,12,6,5);hidden=sketch('Hidden usable sketch',30,12,6,3);hidden.Visibility=False
+        sheet=owner.newObject('Part::Feature','Sheet');sheet.Label='Usable sheet';sheet.Shape=Part.makePlane(16,12,App.Vector(-23,5,0))
+        sheet.ViewObject.ShapeColor=(.75,.78,.82)
+        wire=owner.newObject('Part::Feature','LooseLine');wire.Label='Unusable loose line';wire.Shape=Part.makeLine(App.Vector(-16,-12,0),App.Vector(38,-12,0))
+        doc.recompute();dock=panel.show_panel();dock.tabs.setCurrentIndex(2);dock.refresh()
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.setCameraType('Orthographic')
+        QtTest.QTest.qWait(300);view.fitAll();QtTest.QTest.qWait(200)
+        camera=view.getCameraNode();camera.height.setValue(camera.height.getValue()*1.25)
+        def capture(name):
+            dock.refresh();dock.tabs.setCurrentIndex(2);dock.trees[2].expandAll()
+            for item in dock._maps[2].values():
+                if item.text(0)=='Coordinate System':item.setExpanded(False)
+            QtTest.QTest.qWait(400)
+            assert window.screen().grabWindow(int(window.winId())).save(str(out/('installed-'+name+'.png')))
+        def eye(obj):
+            dock.refresh();tree=dock.trees[2]
+            item=next(i for i in dock._maps[2].values() if panel.lookup(i.data(0,panel._ROLE).ref)==obj)
+            tree.scrollToItem(item);QtTest.QTest.qWait(60)
+            point=tree.visualItemRect(item).center();point.setX(tree.columnViewportPosition(1)+tree.columnWidth(1)//2)
+            QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,point);QtTest.QTest.qWait(100)
+        saved={o.Name:o.Visibility for o in doc.Objects};appearance=(tuple(target.ViewObject.ShapeColor),target.ViewObject.Transparency)
+        Gui.activeDocument().Modified=False
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(profile);Gui.runCommand('PartDesign_Pad')
+        task=extrude_task._active;assert task.valid,task.status.text()
+        assert not wire.Visibility and not hidden.Visibility and sheet.Visibility and target.ViewObject.Transparency==65
+        assert all(not o.Visibility for o in owner.Origin.OriginFeatures)
+        assert not Gui.activeDocument().Modified
+        capture('new')
+        task.modes['Add'].click();task.fields['target'].setFocus();QtTest.QTest.qWait(100)
+        assert target.ViewObject.Transparency==0 and other.ViewObject.Transparency==0
+        # Real viewport click through native picking/occurrence canonicalization.
+        widget=view.graphicsView().viewport();ratio=widget.devicePixelRatioF();screen=view.getPointOnScreen(App.Vector(32,17,6))
+        point=QtCore.QPoint(round(screen[0]/ratio),widget.height()-1-round(screen[1]/ratio))
+        QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,point);QtTest.QTest.qWait(100)
+        assert task.links.get('target',(None,))[0]==target,repr(task.links)
+        chosen=tuple(target.ViewObject.ShapeColor);assert chosen!=appearance[0]
+        capture('target')
+        task.end1['length'].setFocus();QtTest.QTest.qWait(100)
+        assert target.ViewObject.Transparency==65 and tuple(target.ViewObject.ShapeColor)==chosen
+        capture('leave-target')
+        eye(other);assert not other.Visibility and not task.closed;capture('tree-eye')
+        assert task.accept();feature=task.result;task=None
+        assert (tuple(target.ViewObject.ShapeColor),target.ViewObject.Transparency)==appearance
+        assert not other.Visibility
+        before={o.Name:o.Visibility for o in doc.Objects};undo=doc.UndoCount
+        task=editing.edit_feature(doc,feature);QtTest.QTest.qWait(100)
+        assert profile.Visibility and target.Visibility and not sheet.Visibility and not other.Visibility
+        assert not feature.Visibility and not hidden.Visibility and not wire.Visibility
+        capture('edit');task.reject();task=None
+        assert {o.Name:o.Visibility for o in doc.Objects}==before and doc.UndoCount==undo
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(sheet,'Face1');Gui.runCommand('PartDesign_Pad')
+        task=extrude_task._active;assert task.valid,task.status.text();capture('sheet-face')
+        assert abs(task.tool_shape.Volume-16*12*8)<1e-6;task.reject();task=None
+        result.update(ok=True,command_entry=True,native_viewport_target_pick=True,real_tree_eye=True,
+            new_filter=True,no_dirty_preview=True,target_color_restored=True,edit_visibility_restored=True,
+            face_profile_preview=True,task_module=extrude_task.__file__,panel_module=panel.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

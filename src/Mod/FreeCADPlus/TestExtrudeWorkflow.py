@@ -141,7 +141,8 @@ class TestExtrudeWorkflow(TestFeatureCenteredModeling):
         sketch=self.circle();Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
         before=self.snapshot();Gui.runCommand('PartDesign_Pad');QtTest.QTest.qWait(100)
         task=extrude_task._active;self.assertIsNotNone(task)
-        self.assertEqual(task.refs,[(sketch,'')]);self.assertEqual(self.snapshot(),before)
+        self.assertEqual(task.refs,[(sketch,'')]);self.assertEqual(self.snapshot()[:2],before[:2])
+        self.assertEqual(self.doc.UndoCount,before[-1])
         task.automatic.setChecked(False)
         task.end1['length'].setValue(9)
         self.assertTrue(task.accept())
@@ -165,7 +166,7 @@ class TestExtrudeWorkflow(TestFeatureCenteredModeling):
         task.display.setCurrentText('Result');QtTest.QTest.qWait(100)
         self.assertTrue(task.valid,task.status.text()+' scene='+repr([str(task.scene.getChild(i).getName()) for i in range(task.scene.getNumChildren())]))
         self.assertLess(task.result_shape.Volume,target.Shape.Volume)
-        self.assertEqual(self.snapshot(),before)
+        self.assertEqual(self.snapshot()[:2],before[:2]);self.assertEqual(self.doc.UndoCount,before[-1])
         task.reject();self.assertEqual(self.snapshot(),before)
 
     def test_task_cleanup_on_document_close(self):

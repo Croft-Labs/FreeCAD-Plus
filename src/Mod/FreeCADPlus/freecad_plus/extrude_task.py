@@ -5,7 +5,7 @@ import FreeCADGui as Gui
 import Part
 from PySide6 import QtCore, QtWidgets
 from pivy import coin
-from freecad_plus import modeling, planes, extrusion, document, editing, hierarchy, isolation, display
+from freecad_plus import modeling, planes, extrusion, document, editing, hierarchy, isolation, display, task_visibility
 from freecad_plus.plane_task import Section, label, number, buttons
 
 
@@ -34,6 +34,9 @@ class ExtrudeTask(QtCore.QObject):
         self.numbers = []
         self.values = {}
         self.hidden = False
+        self.presentation = None
+        self.profile_highlight = None
+        self.hidden_objects = []
         self.form = QtWidgets.QWidget()
         self.form.setWindowTitle('Extrude')
         self.form.setWindowIcon(Gui.getIcon('PartDesign_Pad'))
@@ -52,7 +55,7 @@ class ExtrudeTask(QtCore.QObject):
         self.operation.layout.addLayout(row)
         self.target_row = self.reference(self.operation.layout,'Target solid','target','Pick the current solid to modify')
         self.profile = self.section(layout, 'Profile')
-        self.profile.layout.addWidget(label('Select a sketch, curves, or a closed region.'))
+        self.profile.layout.addWidget(label('Select a sketch, closed sketch region, or face.'))
         self.profiles = QtWidgets.QListWidget(); self.profiles.setFixedHeight(36)
         self.profiles.installEventFilter(self); self.profile.layout.addWidget(self.profiles)
         buttons(self.profile.layout,[('Remove',self.remove_profile),('Clear',self.clear_profile),('Whole sketch',self.whole_profile)])
@@ -93,7 +96,9 @@ class ExtrudeTask(QtCore.QObject):
         else:
             raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0) for sub in entry.SubElementNames or ('',)]
             for obj,sub in planes.canonical(self.owner,raw):
-                if obj.isDerivedFrom('Sketcher::SketchObject'):
+                obj,sub = extrusion.profile_reference((obj,sub))
+                if obj.isDerivedFrom('Sketcher::SketchObject') or Part.splitSubname(sub)[2].startswith('Face'):
+                    extrusion.validate_profiles(self.owner, [(obj, sub)])
                     self.refs.append((obj,sub))
                 elif obj.TypeId == 'PartDesign::Body' or obj.isDerivedFrom('PartDesign::Feature'):
                     target = obj.Tip if obj.TypeId == 'PartDesign::Body' else obj
@@ -107,6 +112,8 @@ class ExtrudeTask(QtCore.QObject):
         App.addDocumentObserver(self)
         editing.add_context_observer(self.context_changed)
         self.mouse_callback = self.view.addEventCallbackPivy(coin.SoMouseButtonEvent.getClassTypeId(), self.pick_region)
+        self.presentation = task_visibility.ExtrudeDisplay(self)
+        QtWidgets.QApplication.instance().focusChanged.connect(self.focus_changed)
         self.ready = True
         self.refresh_fields()
 
@@ -125,6 +132,14 @@ class ExtrudeTask(QtCore.QObject):
     def slotDeletedDocument(self,doc):
         if doc in (self.doc,self.source_doc):self.reject(document_closing=True)
 
+    def slotStartSaveDocument(self,doc,*args):
+        if doc==self.source_doc and not self.closed:
+            self.presentation.restore()
+
+    def slotFinishSaveDocument(self,doc,*args):
+        if doc==self.source_doc and not self.closed:
+            self.presentation.apply()
+
     def slotDeletedObject(self,obj):
         if obj==self.feature or any(obj==ref[0] for ref in self.refs+list(self.links.values())):
             # Document deletion tears down native views before all object
@@ -142,6 +157,7 @@ class ExtrudeTask(QtCore.QObject):
             hit=self.view.getObjectInfo((x,y))
             if hit and str(hit.get('Component','')).startswith(('Edge','Vertex')):return
             sketch=self.refs[0][0]
+            if not sketch.isDerivedFrom('Sketcher::SketchObject'):return
             frame=self.owner.getGlobalPlacement().inverse().multiply(sketch.getGlobalPlacement())
             world=hierarchy.world_placement(self.doc,self.path) if self.path else App.Placement()
             frame=world.multiply(frame)
@@ -223,6 +239,7 @@ class ExtrudeTask(QtCore.QObject):
     def eventFilter(self, obj, event):
         if event.type() in (QtCore.QEvent.FocusIn,QtCore.QEvent.MouseButtonPress):
             self.pick = next((key for key,field in self.fields.items() if obj is field),'profile')
+            if self.presentation:self.presentation.update_style()
         if event.type() in (QtCore.QEvent.ShortcutOverride,QtCore.QEvent.KeyPress) and event.key()==QtCore.Qt.Key_Delete:
             event.accept()
             if event.type()==QtCore.QEvent.KeyPress:
@@ -230,6 +247,14 @@ class ExtrudeTask(QtCore.QObject):
                 else:self.clear_reference(self.pick)
             return True
         return False
+
+    def focus_changed(self, old, current):
+        if self.closed or current is None or not self.form.isAncestorOf(current):return
+        # Clicking the viewport/tree continues the active picker. Moving to any
+        # other task control ends target picking, including the Length editor.
+        self.pick = next((key for key,field in self.fields.items()
+                          if current is field or field.isAncestorOf(current)), 'profile')
+        self.presentation.update_style()
 
     def refresh_fields(self):
         self.profiles.clear()
@@ -252,7 +277,8 @@ class ExtrudeTask(QtCore.QObject):
         self.refresh_fields();self.changed()
 
     def whole_profile(self):
-        if self.refs:self.refs=[(self.refs[0][0],'')]
+        if self.refs and self.refs[0][0].isDerivedFrom('Sketcher::SketchObject'):
+            self.refs=[(self.refs[0][0],'')]
         self.refresh_fields();self.changed()
 
     def addSelection(self,doc,name,sub,*args):
@@ -262,9 +288,11 @@ class ExtrudeTask(QtCore.QObject):
             obj=App.getDocument(doc).getObject(name)
             ref=planes.canonical(self.owner,[(obj,sub)])[0]
             if self.pick=='profile':
-                if not ref[0].isDerivedFrom('Sketcher::SketchObject'):raise ValueError('Select a sketch or its closed curves.')
+                ref=extrusion.profile_reference(ref)
+                extrusion.validate_profiles(self.owner,[ref])
                 if ref in self.refs:self.refs.remove(ref)
-                elif self.refs and ref[0]!=self.refs[0][0]:raise ValueError('Use curves from one sketch.')
+                elif self.refs and (ref[0]!=self.refs[0][0] or not ref[0].isDerivedFrom('Sketcher::SketchObject')):
+                    raise ValueError('Use one sketch or one face; clear the current profile first.')
                 else:
                     self.refs = [old for old in self.refs if old[1] and ref[1]]
                     self.refs.append(ref)
@@ -291,6 +319,8 @@ class ExtrudeTask(QtCore.QObject):
     def changed(self,*args):
         if not self.ready or self.closed:return
         self.target_row.setVisible(self.mode()!='New Solid')
+        if self.mode()=='New Solid' and self.pick=='target':self.pick='profile'
+        self.presentation.update_style()
         two=self.sides.currentText()=='Two sides'
         self.second.setVisible(two);self.taper2_row.setVisible(two)
         self.start_row.setVisible(self.start_type.currentText()=='Reference')
@@ -314,6 +344,8 @@ class ExtrudeTask(QtCore.QObject):
             self.set_ok(True)
 
     def clear_overlay(self):
+        self.profile_highlight = None
+        self.hidden_objects = []
         if self.overlay is not None:
             if self.scene.findChild(self.overlay)>=0:self.scene.removeChild(self.overlay)
             self.overlay=None
@@ -328,6 +360,7 @@ class ExtrudeTask(QtCore.QObject):
                 if not self.closed:raise
 
     def hide_results(self,objects):
+        self.hidden_objects = list(objects)
         paths=[]
         session=isolation.current(self.view)
         if session:
@@ -337,6 +370,8 @@ class ExtrudeTask(QtCore.QObject):
             prefix=hierarchy.subname(self.path) if self.path else ''
             if root!=self.owner and not prefix:return
         for obj in objects:
+            if (obj in self.presentation.manual and self.presentation.desired.get(obj)):
+                continue
             if obj is not None and obj.Visibility:
                 route=document.owned_path(self.owner,obj)
                 paths.append(prefix+''.join(child.Name+'.' for child in route))
@@ -345,7 +380,7 @@ class ExtrudeTask(QtCore.QObject):
         if session:session._apply_display(self.owner)
         else:display.apply_hidden(self.view,root,display.hidden_paths(self.doc,self.owner,self.path))
 
-    def add_shape(self,shape,color,transparency=0,top=False):
+    def add_shape(self,shape,color,transparency=0,top=False,parent=None):
         shape=shape.copy()
         shape.Placement=self.world.multiply(shape.Placement)
         branch=coin.SoSeparator()
@@ -364,7 +399,7 @@ class ExtrudeTask(QtCore.QObject):
         coords=coin.SoCoordinate3();coords.point.setValues(0,len(vertices),[tuple(p) for p in vertices]);branch.addChild(coords)
         mesh=coin.SoIndexedFaceSet();indices=[i for face in faces for i in (*face,-1)]
         mesh.coordIndex.setValues(0,len(indices),indices);branch.addChild(mesh)
-        self.overlay.addChild(branch)
+        (self.overlay if parent is None else parent).addChild(branch)
 
     def set_ok(self, enabled):
         for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox):
@@ -372,12 +407,23 @@ class ExtrudeTask(QtCore.QObject):
             if button and button.isVisible():button.setEnabled(enabled)
 
     def highlight_profile(self):
+        if self.profile_highlight is not None and self.overlay is not None:
+            if self.overlay.findChild(self.profile_highlight)>=0:self.overlay.removeChild(self.profile_highlight)
+            self.profile_highlight=None
         if not self.refs or self.overlay is None:return
         highlight=coin.SoSeparator()
+        if self.feature:
+            for ref in self.refs:
+                if (not ref[0].isDerivedFrom('Sketcher::SketchObject')
+                        and not (ref[0] in self.presentation.manual and not self.presentation.desired.get(ref[0]))):
+                    self.add_shape(planes.shape(self.owner,ref),(.65,.68,.70),parent=highlight)
         depth=coin.SoDepthBuffer();depth.test=False;depth.write=False;highlight.addChild(depth)
         ink=coin.SoMaterial();ink.diffuseColor=(1,.6,.08);highlight.addChild(ink)
         style=coin.SoDrawStyle();style.lineWidth=3;highlight.addChild(style)
         for ref in self.refs:
+            if ref[0] in self.presentation.manual and not self.presentation.desired.get(ref[0]):continue
+            if not self.feature and not all(member.Visibility for member in document.owned_path(self.owner,ref[0])):
+                continue
             for edge in planes.shape(self.owner,ref).Edges:
                 points=edge.discretize(60)
                 coords=coin.SoCoordinate3()
@@ -385,6 +431,13 @@ class ExtrudeTask(QtCore.QObject):
                 highlight.addChild(coords)
                 line=coin.SoLineSet();line.numVertices.setValue(len(points));highlight.addChild(line)
         self.overlay.addChild(highlight)
+        self.profile_highlight=highlight
+
+    def refresh_visibility(self):
+        # Eye clicks update display only, including when automatic recompute is
+        # off. They must not evaluate uncommitted/changed operation parameters.
+        if self.hidden:self.hide_results(self.hidden_objects)
+        self.highlight_profile()
 
     def render(self,*args):
         if self.closed:return
@@ -392,10 +445,9 @@ class ExtrudeTask(QtCore.QObject):
         try:
             self.check()
             self.world=hierarchy.world_placement(self.doc,self.path) if self.path else App.Placement()
-            if self.visible.isChecked():
-                self.overlay=coin.SoSeparator()
-                pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;self.overlay.addChild(pick)
-                self.highlight_profile()
+            self.overlay=coin.SoSeparator()
+            pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;self.overlay.addChild(pick)
+            self.highlight_profile()
             result,tool,_=extrusion.evaluate(self.owner,self.refs,self.links,self.settings(),self.feature)
             self.result_shape=result;self.tool_shape=tool
             self.valid=True;self.revisions+=1
@@ -403,7 +455,7 @@ class ExtrudeTask(QtCore.QObject):
             self.status.setText('Result preview · one solid.' if self.display.currentText()=='Result' else
                                 'Tool volume · '+('creates a separate solid.' if target is None else
                                 ('adds to ' if self.mode()=='Add' else 'removes from ')+target.Label+'.'))
-            if self.overlay is not None:
+            if self.visible.isChecked():
                 hidden=[self.feature] if self.feature else []
                 if self.display.currentText()=='Result':
                     hidden.append(target)
@@ -428,10 +480,13 @@ class ExtrudeTask(QtCore.QObject):
             for field in self.numbers:
                 field.interpretText();self.values[field]=field.value()
             self.clear_overlay()
+            self.presentation.restore()
             self.result=extrusion.save(self.doc,self.refs,self.links,self.settings(),self.feature)
             self.reject()
             return True
         except Exception as exc:
+            self.presentation.apply()
+            self.render()
             self.status.setText(str(exc));return False
 
     def reject(self,document_closing=False):
@@ -442,6 +497,8 @@ class ExtrudeTask(QtCore.QObject):
             Gui.Selection.removeObserver(self)
             App.removeDocumentObserver(self)
             editing.remove_context_observer(self.context_changed)
+            QtWidgets.QApplication.instance().focusChanged.disconnect(self.focus_changed)
+            self.presentation.restore()
             if document_closing:
                 display.task_hidden(self.view)
                 self.hidden=False

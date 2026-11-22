@@ -4,6 +4,44 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Extrude visibility and shared tree controls — November 22, 2026
+
+The owner approved the direct native storyboard and instructed: **"Approved,
+implement these changes for Extrude and enable the tree visibility controls in
+all similar workflows."** The [approval and preview record](../evidence/extrude-visibility-20261122/approval.json)
+identifies the exact candidate; no Companion approval state was written for the owner.
+
+History eyes and Part Tree visibility remain usable during feature tasks. Preserve
+the edited component/occurrence checks. A visibility action joins an existing native
+editor transaction without accepting, cancelling or replacing it; idle eye actions
+remain independently undoable. Unrelated pending operations still guard idle changes.
+This covers shared Sketch, Plane, Extrude and Move workflows and native feature/datum
+tasks through their common panel controls; it does not change their geometry or forms.
+
+New Extrude initially hides construction planes, axes, points and other unusable
+geometry. Currently shown sketches and solids/sheets with faces remain visible;
+previously hidden eligible geometry is not revealed. Explicit eye choices can show
+or hide geometry throughout the task, including optional direction/start/end references.
+Editing an existing Extrude initially reveals only its profile geometry and target
+solid if applicable, alongside the operation preview. For a face profile, display
+the referenced face, not the whole donor object unless that object is also the target.
+
+Visible model solids are temporarily 65% transparent. Entering Target solid makes
+them opaque for picking. The chosen target uses the SelectionColor preference;
+moving to another task control restores translucency while retaining that color.
+Viewport/tree picking continues the active reference field. Hidden objects stay
+hidden through focus changes. Temporary colors/transparency and automatic visibility
+restore on completion, cancellation, context change and document close; explicit
+Extrude eye choices remain source-owned and undoable. Accept does not copy temporary
+target materials into the new feature. Eye clicks do not recompute a manually held preview.
+
+Extrude profiles accept whole sketches, closed sketch regions and individual planar
+faces of solids or sheets. Native face links stay associative, including picks through
+Body/occurrence paths. Bare solid edges, axes, points and datum planes are not profiles;
+nonplanar faces report the native planar-profile limitation. Existing sketch profiles,
+optional references, New Solid/Add/Subtract, numeric commit timing and panel layout
+remain intact. A face profile does not consume/hide its entire donor solid or sheet.
+
 ### Extrude rendering and sketch visibility correction — November 22, 2026
 
 The owner reported diagonal artifacts in a rectangular Extrude preview and existing

@@ -1,5 +1,49 @@
 # FreeCAD Plus: Current work state
 
+## Extrude visibility and shared tree controls — November 22, 2026
+
+The owner [approved the direct native storyboard](evidence/extrude-visibility-20261122/approval.json)
+and requested implementation. History eyes and Part Tree visibility remain usable
+through shared feature workflows, including native editors, without accepting or
+replacing their active transactions. Extrude entry hides unusable geometry without
+revealing hidden eligible inputs. Edit entry shows only profile and target geometry.
+Visible solids become translucent, opaque while choosing a target, and use the
+configured selection color for the target. Leaving the target field restores its
+translucency while keeping that color. Automatic display/material changes restore
+on exit/save; explicit eye choices remain undoable. Planar solid/sheet face profiles
+are associative; nonplanar faces report the native planar-profile limitation.
+
+The native build passed and 14 changed modules/tests plus the Gui library (15 files
+total) were installed with verified hashes and retained rollback copies:
+[manifest](evidence/extrude-visibility-20261122/install-manifest.json).
+Temporary appearance changes honor NoModify in the native geometry provider;
+transient visibility also guards group/link notification properties. No false dirty
+flag or temporary material survives opening/cancelling the task or saving during it.
+
+The focused build suite passed 25 cases. The final installed suite passed **134 tests**
+with no failures/errors, covering Extrude, Sketch, Plane/datum tasks, shared tree
+visibility, external sources, component visibility, Move and Rotate:
+[report](evidence/extrude-visibility-20261122/regression.txt).
+Fixture corrections account for managed-dock disposal, visible origin defaults and
+native focus settling; these do not change those workflows' product behavior.
+
+Separate installed processes passed actual viewport target picking and History eye
+clicks, display/material restoration, planar face previews, and saved face/downstream/
+external-source reopening and recompute:
+[GUI results](evidence/extrude-visibility-20261122/visual.json),
+[reopen results](evidence/extrude-visibility-20261122/reopen.json).
+Reviewed native captures: [new](evidence/extrude-visibility-20261122/installed-new.png),
+[target](evidence/extrude-visibility-20261122/installed-target.png),
+[leaving target](evidence/extrude-visibility-20261122/installed-leave-target.png),
+[edit](evidence/extrude-visibility-20261122/installed-edit.png).
+
+All checks use isolated settings. The app was restarted through the existing
+`freecad plus 0.1.0.lnk`, verifying its launcher, working directory, installed modules
+and explicit isolated config/data paths; the restarted app remains open:
+[shortcut check](evidence/extrude-visibility-20261122/shortcut.json).
+Rollback backups and the active isolated shortcut profile remain in the development
+runtime's validation/extrude-visibility-20261122 directory.
+
 ## Coordinate System History — November 22, 2026
 
 The owner approved the [direct native preview](evidence/coordinate-history-20261122/approved.png)

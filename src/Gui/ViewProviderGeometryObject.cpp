@@ -142,7 +142,11 @@ void ViewProviderGeometryObject::onChanged(const App::Property* prop)
         pcShapeMaterial->transparency = trans;
     }
     else if (prop == &ShapeAppearance) {
-        if (getObject() && getObject()->testStatus(App::ObjectStatus::TouchOnColorChange)) {
+        // Task-local appearance changes explicitly opt out of document edits.
+        // Touching here would still dirty linked source documents despite the
+        // property's NoModify status, and schedule an unrelated recompute.
+        if (getObject() && getObject()->testStatus(App::ObjectStatus::TouchOnColorChange)
+            && !prop->testStatus(App::Property::NoModify)) {
             getObject()->touch(true);
         }
         long value = Base::toPercent(ShapeAppearance.getTransparency());

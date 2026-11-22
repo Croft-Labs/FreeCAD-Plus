@@ -8,6 +8,41 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Extrude task visibility and face references — November 22, 2026
+
+`task_visibility.ExtrudeDisplay` separates the saved source visibility/materials
+from initial task display and explicit History eye choices. Create entry filters
+unusable leaves without revealing hidden inputs. Edit entry reveals saved sketch
+profiles and the target, while the task overlays only a referenced face for face
+profiles. Body containers are included in the reveal route. Temporary Visibility
+writes mark both App and Gui properties NoModify, including the dependent groups'
+and links' internal touch notifications for the duration of the setter. Their
+original property statuses are restored immediately. Temporary ShapeAppearance and
+Transparency writes likewise opt out of modification; the native geometry view
+provider honors NoModify before its TouchOnColorChange notification, preventing
+linked display changes from falsely dirtying source documents.
+
+History eye actions restore persistent values before recording changes, then apply
+the remaining task display. Target-field focus changes temporary materials only;
+native picks remain routed to that field while interacting with the viewport/tree.
+Eye refresh updates highlight/hide overlays without evaluating a manually held
+preview. Accept restores materials before native feature creation can inherit them.
+Save callbacks serialize persistent display and reapply task display afterward.
+Cancel, document close and context loss restore automatic changes.
+
+`document.visibility_transaction` joins an existing native operation for narrow
+display-only changes. Other modeling transactions retain the original refusal to
+consume a caller's transaction. Panel guards still validate row identity, edited
+component and source ownership; Part Type changes remain blocked during tasks.
+
+Extrude profile links additionally admit one planar face on a real solid or sheet.
+Body picks resolve their mapped face on the Body before linking the corresponding
+Tip face, avoiding incompatible topology prefixes and Body dependency cycles. Native
+global subelement links persist the association. Face normals/placement are computed
+in component coordinates and reuse the existing native Pad evaluator. Face donors
+remain intact when creating a separate result. Nonplanar profiles and standalone
+non-sketch edges/datums remain explicit validation errors.
+
 ## Coordinate System History — November 22, 2026
 
 History projects the existing App::Origin's seven native OriginFeatures. Its

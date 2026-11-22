@@ -15,6 +15,16 @@ SUPPORTED_SCHEMAS = (1, 2, 3, 4, 5)
 
 
 @contextmanager
+def visibility_transaction(doc, label):
+    """An eye click joins a live editor without committing its transaction."""
+    if doc.HasPendingTransaction or App.getActiveTransaction():
+        yield
+    else:
+        with transaction(doc, label):
+            yield
+
+
+@contextmanager
 def transaction(doc, label):
     """Do not consume or commit a caller's pending transaction."""
     if doc.HasPendingTransaction:

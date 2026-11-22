@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest Extrude update — November 22, 2026
+
+Approved Extrude visibility behavior and shared task tree controls are installed.
+New tasks filter unusable geometry; edits isolate profile/target; solids become
+translucent with target-field selection coloring. Planar solid/sheet faces are
+associative profiles. Temporary display restores cleanly; explicit eye choices
+remain undoable. All 134 installed native tests plus separate GUI/reopen checks
+passed, and the existing shortcut was restarted with isolated settings. See
+[acceptance](WORK_STATE.md#extrude-visibility-and-shared-tree-controls--november-22-2026).
+
 ## Latest History update — November 22, 2026
 
 Approved Coordinate System hierarchy is implemented and installed: native Origin

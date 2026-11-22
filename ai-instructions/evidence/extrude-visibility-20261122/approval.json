@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-22",
+  "owner_instruction": "Approved, implement these changes for Extrude and enable the tree visibility controls in all similar workflows.",
+  "preview_session": "7dc766aebded",
+  "preview_fingerprint": "07fa280aac49138cba53421b71495ce4c900ca1820c1418b8ded2fbd1340bf57",
+  "production_baseline": "d42c49bd477822941d9ba231194a4227ca1bc682",
+  "evidence_kind": "Native staged screenshots, approved directly in chat",
+  "companion_approval_state_modified_by_agent": false,
+  "preview_sources": "C:/Users/dgium/Documents/__Apps/FreeCAD/extrude-visibility-preview/REVIEW.md"
+}

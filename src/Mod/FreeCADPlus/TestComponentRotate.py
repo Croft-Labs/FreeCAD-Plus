@@ -136,7 +136,7 @@ class TestComponentRotate(unittest.TestCase):
         self.assertEqual(mutated,[True]);self.near(self.second.LinkPlacement.Base,(25,0,0))
         self.assertEqual(self.doc.UndoCount,undo)
         self.rotate(task,3,360);task.apply();self.assertEqual(self.doc.UndoCount,undo)
-        self.widget.close();settle();self.assertTrue(task.closed);self.assertIsNone(task.overlay)
+        self.widget.dispose();self.widget.close();settle();self.assertTrue(task.closed);self.assertIsNone(task.overlay)
 
     def test_external_source_rotation_persistence(self):
         document.save_document(self.doc,self.output/'Assembly.cadprt')

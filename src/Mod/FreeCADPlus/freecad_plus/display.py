@@ -77,7 +77,10 @@ def set_state(owner, child=None, *, part_type=None, shown=None):
         if any(prop == name for prop, expression in obj.ExpressionEngine):
             raise ValueError('This component display setting is expression-driven')
     if value == (old_type, old_shown): return False
-    with document.transaction(owner.Document, 'Change component display setting'):
+    # Visibility is usable inside native tasks; changing Part Type still requires
+    # the normal, independent modeling transaction.
+    transaction = document.visibility_transaction if part_type is None else document.transaction
+    with transaction(owner.Document, 'Change component display setting'):
         enable(root); write_state(obj, value)
     return True
 

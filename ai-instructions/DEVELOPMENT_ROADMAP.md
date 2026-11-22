@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Extrude visibility and shared tree controls — November 22, 2026
+
+- [x] Obtain direct approval for native visibility/target-color previews.
+- [x] Enable shared tree visibility during feature tasks while preserving transactions.
+- [x] Filter new Extrude geometry and isolate profile/target when editing.
+- [x] Add temporary translucency and preference-based target coloring with full restoration.
+- [x] Support associative planar solid/sheet face profiles through native Extrude evaluation.
+- [x] Pass 134 installed native tests and separate viewport/eye/save-reopen checks.
+- [x] Verify rollback installation and restart through the existing desktop shortcut.
+  See [acceptance](WORK_STATE.md#extrude-visibility-and-shared-tree-controls--november-22-2026).
+
 ## Coordinate System History — November 22, 2026
 
 - [x] Obtain approval for the direct native hierarchy/eye preview.

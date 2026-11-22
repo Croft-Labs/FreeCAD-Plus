@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "installed_native": true,
+  "command_entry": true,
+  "native_viewport_target_pick": true,
+  "real_tree_eye": true,
+  "new_filter": true,
+  "no_dirty_preview": true,
+  "target_color_restored": true,
+  "edit_visibility_restored": true,
+  "face_profile_preview": true,
+  "task_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+  "panel_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+}

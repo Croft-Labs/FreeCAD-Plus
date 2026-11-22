@@ -12,7 +12,13 @@ from TestUnusedModels import visibility
 settle=fixtures.settle
 
 class TestComponentVisibility(unittest.TestCase):
-    setUp=fixtures.TestComponentPanel.setUp
+    def setUp(self):
+        fixtures.TestComponentPanel.setUp(self)
+        # These ray checks measure component solids, not the newly visible native
+        # construction planes crossing the same rays.
+        for definition in self.root.Definitions:
+            definition.Origin.Visibility=False
+        settle()
     tearDown=fixtures.TestComponentPanel.tearDown
     rows=fixtures.TestComponentPanel.rows
     occurrence=fixtures.TestComponentPanel.occurrence
@@ -33,7 +39,7 @@ class TestComponentVisibility(unittest.TestCase):
         self.assertIsNotNone(self.hit(other,25));self.assertIsNotNone(self.hit(view,25))
         self.assertEqual(visibility(self.doc),vis);self.assertEqual({o.Name:o.ID for o in self.doc.Objects},ids)
         self.assertEqual(self.doc.UndoCount,undo+1)
-        self.widget.close();settle()
+        self.widget.dispose();self.widget.close();settle()
         self.assertIsNotNone(self.hit(view,0));self.assertIsNotNone(self.hit(other,0))
         for current in (view,other):
             names=[str(current.getSceneGraph().getChild(i).getName()) for i in range(current.getSceneGraph().getNumChildren())]
@@ -50,7 +56,7 @@ class TestComponentVisibility(unittest.TestCase):
         self.assertEqual(len(self.widget._states),1)
         self.assertIsNotNone(self.hit(other,0));self.assertIsNotNone(self.hit(other,25))
         # A fresh unfiltered native view must not inherit a destroyed view's key.
-        self.widget.close();settle();Gui.activeDocument().createView('Gui::View3DInventor');settle()
+        self.widget.dispose();self.widget.close();settle();Gui.activeDocument().createView('Gui::View3DInventor');settle()
         fresh=self.view();self.assertIsNotNone(self.hit(fresh,0));self.assertIsNotNone(self.hit(fresh,25))
 
     def test_hidden_excluded_reference_context_and_undo(self):

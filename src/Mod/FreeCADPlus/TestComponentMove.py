@@ -182,7 +182,7 @@ class TestComponentMove(unittest.TestCase):
         self.assertEqual(self.doc.UndoCount,undo)
         self.assertEqual(failed_after_mutation,[True])
         task.update_preview();self.assertIsNotNone(task.overlay)
-        self.widget.close();settle();self.assertTrue(task.closed);self.assertIsNone(task.overlay)
+        self.widget.dispose();self.widget.close();settle();self.assertTrue(task.closed);self.assertIsNone(task.overlay)
         self.widget=panel.show_panel();settle()
         task=self.task((self.first,));self.inputs(task)
         other=document.new_document('OtherMoveFile');settle()

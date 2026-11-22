@@ -79,7 +79,7 @@ class TestComponentPlanes(unittest.TestCase):
         before = (len(self.doc.Objects),self.doc.UndoCount)
         task = plane_task.show(); task.choose('XY Plane')
         QtTest.QTest.qWait(100)
-        task.offset.setFocus(); task.offset.selectAll()
+        task.offset.setFocus(); QtTest.QTest.qWait(100); task.offset.selectAll()
         revision = task.revisions
         QtTest.QTest.keyClicks(task.offset,'12.5'); QtTest.QTest.qWait(80)
         self.assertEqual(task.revisions,revision)

@@ -420,7 +420,12 @@ class TestHistoryVisibility(unittest.TestCase):
         finally: self.doc.abortTransaction()
         editing.edit_feature(self.doc, self.pad); settle()
         try:
-            with self.assertRaises(ValueError): self.widget.toggle_history_visibility(current)
+            transaction = App.getActiveTransaction()
+            shown = self.pad.Visibility
+            self.widget.toggle_history_visibility(current)
+            self.assertNotEqual(self.pad.Visibility, shown)
+            self.assertEqual(App.getActiveTransaction(), transaction)
+            self.assertTrue(Gui.Control.activeDialog())
         finally:
             from TestFeatureCenteredModeling import TestFeatureCenteredCommands
             TestFeatureCenteredCommands.task_button(self, QtWidgets.QDialogButtonBox.Cancel)

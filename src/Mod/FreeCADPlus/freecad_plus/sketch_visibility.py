@@ -7,14 +7,27 @@ def temporary_visibility(obj, shown):
     view = obj.ViewObject
     if view.Visibility == shown:
         return
-    no_modify = 'NoModify' in view.getPropertyStatus('Visibility')
-    if not no_modify:
-        view.setPropertyStatus('Visibility', 'NoModify')
+    # Native view providers synchronize their App-side Visibility property.
+    # Protect both halves so temporary solid/feature hiding cannot dirty a file.
+    properties = [(obj, 'Visibility'), (view, 'Visibility')]
+    # Native groups and linked instances relay child visibility through touch
+    # properties. Keep those notifications, but inherit the transient edit's
+    # NoModify status so they cannot mark the containing/source document dirty.
+    properties += [(parent, name) for parent in obj.InListRecursive
+                   for name in ('_GroupTouched', '_LinkTouched')
+                   if name in parent.PropertiesList]
+    # Part providers may lazily refresh these display properties while changing
+    # Visibility, even though their values have not been edited.
+    properties += [(view, name) for name in ('ShowPlacement', 'ShapeAppearance', 'Transparency')
+                   if name in view.PropertiesList]
+    changed = [(owner, name) for owner, name in properties if 'NoModify' not in owner.getPropertyStatus(name)]
+    for owner, name in changed:
+        owner.setPropertyStatus(name, 'NoModify')
     try:
         view.Visibility = shown
     finally:
-        if not no_modify:
-            view.setPropertyStatus('Visibility', '-NoModify')
+        for owner, name in changed:
+            owner.setPropertyStatus(name, '-NoModify')
 
 
 class Planes:
@@ -59,7 +72,7 @@ class Planes:
             # Hiding a temporarily revealed plane may already match its saved
             # state. Do not leave an empty native transaction active in that case.
             if any(bool(obj.Visibility) != shown for obj in changed):
-                with document.transaction(changed[-1].Document,
+                with document.visibility_transaction(changed[-1].Document,
                                           ('Show ' if shown else 'Hide ') + label):
                     for obj in changed:
                         obj.Visibility = shown

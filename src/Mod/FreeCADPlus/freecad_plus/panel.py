@@ -265,19 +265,22 @@ class ComponentPanel(QtWidgets.QDockWidget):
     def toggle_history_visibility(self, row):
         doc, obj = self._checked(row)
         definition, path = self._context(doc, self._binding[1])
-        from . import sketch_task
+        from . import sketch_task, extrude_task
         placement = sketch_task._active
+        extrude = extrude_task._active
         if placement is not None:
             placement.check()
             if placement.doc != doc or placement.definition != definition:
                 raise ValueError('Use History for the component being edited')
+        if extrude is not None:
+            extrude.check()
+            if extrude.doc != doc or extrude.owner != definition:
+                raise ValueError('Use History for the component being edited')
         native = Gui.getDocument(doc.Name).getInEdit()
-        drawing = (native is not None and native.Object.isDerivedFrom('Sketcher::SketchObject')
-                   and document.owned_path(definition, native.Object) is not None)
-        if placement is None and not drawing:
+        if native is not None and document.owned_path(definition, native.Object) is None:
+            raise ValueError('Use History for the component being edited')
+        if placement is None and extrude is None and native is None and not Gui.Control.activeDialog():
             self._clipboard_guard()
-            if Gui.Control.activeDialog():
-                raise ValueError('Finish the current task first')
         route = document.owned_path(definition, obj)
         if row.kind not in ('history', 'history_group') or not route:
             raise ValueError('Choose an item in the edited component History')
@@ -300,12 +303,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 target_route[-1].Visibility = shown
         if placement is not None:
             placement.origin_visibility.toggle_many(routes, shown, row.label)
-        elif drawing:
-            # Join native Sketcher's current transaction. Never commit or replace
-            # the operation merely to toggle a view property.
-            change()
+        elif extrude is not None:
+            extrude.presentation.toggle_many(routes, shown, row.label)
+            extrude.refresh_visibility()
         else:
-            with document.transaction(obj.Document, ('Show ' if shown else 'Hide ') + row.label):
+            with document.visibility_transaction(obj.Document, ('Show ' if shown else 'Hide ') + row.label):
                 change()
         self._refresh_history_eyes(definition)
         self.refresh()
@@ -808,8 +810,9 @@ class ComponentPanel(QtWidgets.QDockWidget):
         raise ValueError('Edit the component or its immediate parent to change this setting')
 
     def set_display(self, row, *, part_type=None, shown=None, expected=None):
-        self._clipboard_guard()
-        if Gui.Control.activeDialog(): raise ValueError('Finish the current task first')
+        if part_type is not None:
+            self._clipboard_guard()
+            if Gui.Control.activeDialog(): raise ValueError('Finish the current task first')
         owner, child = self._display_target(row)
         current = (identity(owner), identity(child) if child is not None else None)
         if expected is not None and current != expected:
@@ -950,9 +953,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             return
         try:
             doc, obj = self._checked(row)
-            if Gui.getDocument(doc.Name).getInEdit():
-                raise ValueError('Finish the native feature editor first')
-            with document.transaction(doc, 'Change origin visibility'):
+            with document.visibility_transaction(doc, 'Change origin visibility'):
                 obj.Visibility = item.checkState(0) == QtCore.Qt.Checked
                 root = document.validate(doc)
                 if obj.Visibility and obj != root.Origin:
