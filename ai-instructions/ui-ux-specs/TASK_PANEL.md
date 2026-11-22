@@ -4,6 +4,26 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Extrude selected targets and validity colors — November 22, 2026
+
+The owner approved displaying a selected Add/Subtract target even when its History
+eye is off. Show it in the configured selection color, opaque while the Target
+field is active and translucent after leaving it. This is temporary task display;
+do not turn on or save its History visibility. Keep this selected-target display
+when Show preview is off or automatic recomputation is disabled. A target already
+visible remains natively pickable for face/edge references.
+
+Add tool volumes are green when valid and yellow when invalid. Subtract tool volumes
+are red when valid and pink when invalid, including no intersection/no material
+removed. Retain a constructible tool after result validation fails, with the real
+error and disabled OK. Do not reuse stale geometry or invent a tool when construction
+fails. New Solid remains blue. Valid Result view keeps its normal result; invalid
+Result view falls back to the invalid colored tool. Changing inputs with automatic
+recompute off clears the displayed old volume until Update preview; target display
+and eyes still work without recomputing. Keep native geometry/validity rules, numeric
+commit timing, source ownership, selection settings, saved visibility/materials,
+Undo and task cleanup. Tool colors must remain distinct through translucent solids.
+
 ### View fitting after sketch exit — November 22, 2026
 
 The owner requested "exiting a sketch should resize the view to include the sketch"

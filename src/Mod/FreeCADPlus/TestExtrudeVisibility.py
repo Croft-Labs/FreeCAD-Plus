@@ -1,12 +1,171 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Native regression for approved task visibility and face profiles."""
 import json
+import os
+import unittest
+from pathlib import Path
 import FreeCAD as App
 import FreeCADGui as Gui
 import Part
-from PySide6 import QtWidgets, QtTest
+from PySide6 import QtCore, QtWidgets, QtTest
+from pivy import coin
 from freecad_plus import document, modeling, extrusion, extrude_task, plane_task, idle_tasks, panel, editing
 from TestDesignInteractions import TestDesignInteractions, settle
+
+
+class TestExtrudeValidityDisplay(unittest.TestCase):
+    setUp = TestDesignInteractions.setUp
+    tearDown = TestDesignInteractions.tearDown
+    circle = TestDesignInteractions.circle
+    dialog = TestDesignInteractions.dialog
+    eye = TestDesignInteractions.eye
+
+    def fixture(self):
+        base=self.circle();base.delGeometry(0)
+        base.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),6),False);self.doc.recompute()
+        target=modeling.extrude_new_solid(self.doc,base,5)
+        profile=self.circle();profile.Placement.Base.z=5;self.doc.recompute()
+        target.Visibility=False
+        return target,profile
+
+    def task(self, target, profile, mode='Add'):
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(profile)
+        task=extrude_task.show();task.modes[mode].click()
+        task.reverse.setChecked(mode=='Subtract')
+        task.fields['target'].setFocus();settle();Gui.Selection.addSelection(target);settle()
+        self.assertEqual(task.links['target'][0],target)
+        return task
+
+    def material(self, node):
+        self.assertIsNotNone(node)
+        search=coin.SoSearchAction();search.setType(coin.SoMaterial.getClassTypeId());search.apply(node)
+        self.assertIsNotNone(search.getPath())
+        return search.getPath().getTail()
+
+    def assert_color(self, node, expected):
+        for actual,want in zip(self.material(node).diffuseColor[0].getValue(),expected):
+            self.assertAlmostEqual(actual,want,places=5)
+
+    def test_hidden_history_target_container_focus_and_eye_overrides(self):
+        target,profile=self.fixture();body=target.getParentGeoFeatureGroup();body.Visibility=False
+        flags={o.Name:o.Visibility for o in (target,body)}
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(profile);task=extrude_task.show()
+        task.modes['Add'].click();task.fields['target'].setFocus();settle()
+        self.panel.refresh();tree=self.panel.trees[2];tree.expandAll()
+        item=next(i for i in self.panel._maps[2].values() if panel.lookup(i.data(0,panel._ROLE).ref)==target)
+        tree.scrollToItem(item);settle()
+        point=QtCore.QPoint(tree.columnViewportPosition(0)+100,tree.visualItemRect(item).center().y())
+        QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,point);settle()
+        self.assertEqual(task.links['target'][0],target)
+        self.assertFalse(panel.history_visible(self.owner,target));self.assertIsNotNone(task.target_overlay)
+        packed=App.ParamGet('User parameter:BaseApp/Preferences/View').GetUnsigned('SelectionColor',0x1CAD1CFF)
+        self.assert_color(task.target_overlay,tuple(((packed>>s)&255)/255. for s in (24,16,8)))
+        self.assertAlmostEqual(self.material(task.target_overlay).transparency[0],0)
+        task.end1['length'].setFocus();settle()
+        self.assertAlmostEqual(self.material(task.target_overlay).transparency[0],.65,places=5)
+        self.assertEqual({o.Name:o.Visibility for o in (target,body)},flags)
+        self.eye(target);self.assertTrue(target.Visibility);self.assertIsNone(task.target_overlay)
+        self.eye(target);self.assertFalse(target.Visibility);self.assertIsNotNone(task.target_overlay)
+        scene=task.scene;node=task.target_overlay;task.reject()
+        self.assertEqual(scene.findChild(node),-1);self.assertFalse(target.Visibility)
+        self.doc.undo();settle();self.assertTrue(target.Visibility)
+
+    def test_four_colors_and_invalid_acceptance_remains_atomic(self):
+        target,profile=self.fixture()
+        for mode,valid,color in [('Add',True,(.15,.75,.3)),('Add',False,(1,.82,.08)),
+                                 ('Subtract',True,(.95,.22,.22)),('Subtract',False,(1,.4,.7))]:
+            with self.subTest(mode=mode,valid=valid):
+                profile.Placement.Base=App.Vector(10 if mode=='Subtract' and not valid else 0,0,
+                                                   10 if mode=='Add' and not valid else 5)
+                self.doc.recompute();task=self.task(target,profile,mode)
+                self.assertEqual(task.valid,valid,task.status.text())
+                self.assert_color(task.tool_preview,color);self.assertTrue(task.tool_shape.isValid())
+                self.assertIsNotNone(task.target_overlay);self.assertFalse(target.Visibility)
+                if not valid:
+                    self.assertIsNone(task.result_shape)
+                    before=({o.Name:o.ID for o in self.doc.Objects},self.doc.UndoCount)
+                    self.assertFalse(task.accept())
+                    self.assertEqual(({o.Name:o.ID for o in self.doc.Objects},self.doc.UndoCount),before)
+                    self.assert_color(task.tool_preview,color)
+                task.reject()
+
+    def test_visible_selected_target_remains_pickable_for_face_reference(self):
+        target,profile=self.fixture();target.Visibility=True
+        task=self.task(target,profile);self.assertIsNone(task.target_overlay)
+        task.end1['kind'].setCurrentText('Up to face');task.fields['limit'].setFocus();settle()
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll();settle()
+        widget=view.graphicsView().viewport();ratio=widget.devicePixelRatioF()
+        point=view.getPointOnScreen(App.Vector(5,0,5))
+        pos=QtCore.QPoint(round(point[0]/ratio),widget.height()-1-round(point[1]/ratio))
+        QtTest.QTest.mouseClick(widget,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pos);settle()
+        self.assertIn('limit',task.links)
+        self.assertEqual(task.links['limit'][0],target)
+        self.assertIn('Face',task.links['limit'][1]);task.reject()
+
+    def test_invalid_result_fallback_and_unconstructible_input_clears_tool(self):
+        target,profile=self.fixture();profile.Placement.Base.x=10;self.doc.recompute()
+        task=self.task(target,profile,'Subtract');task.display.setCurrentText('Result');settle()
+        self.assertFalse(task.valid);self.assert_color(task.tool_preview,(1,.4,.7))
+        self.assertIn('No material',task.status.text())
+        profile.Placement.Base.x=0;self.doc.recompute();task.render()
+        self.assertTrue(task.valid);self.assertTrue(task.showing_result)
+        self.assertIsNone(task.tool_preview);self.assertIsNone(task.target_overlay)
+        task.clear_profile();self.assertFalse(task.valid)
+        self.assertIsNone(task.tool_shape);self.assertIsNone(task.result_shape);self.assertIsNone(task.tool_preview)
+        self.assertIsNotNone(task.target_overlay)
+        task.reject()
+
+    def test_target_remains_with_preview_off_manual_update_and_new_solid_switch(self):
+        target,profile=self.fixture();other=modeling.extrude_new_solid(self.doc,self.circle(),4);other.Visibility=False
+        task=self.task(target,profile);task.visible.setChecked(False);settle()
+        self.assertIsNone(task.tool_preview);self.assertIsNotNone(task.target_overlay)
+        task.automatic.setChecked(False);revision=task.revisions
+        task.fields['target'].setFocus();settle();Gui.Selection.addSelection(other);settle()
+        self.assertEqual(task.links['target'][0],other);self.assertIsNotNone(task.target_overlay)
+        self.assertEqual(task.revisions,revision);self.assertFalse(target.Visibility or other.Visibility)
+        task.modes['New Solid'].click();self.assertIsNone(task.target_overlay)
+        task.visible.setChecked(True);task.render()
+        self.assert_color(task.tool_preview,(.2,.45,.95))
+        task.modes['Add'].click();self.assertIsNotNone(task.target_overlay)
+        task.clear_reference('target');self.assertIsNone(task.target_overlay);task.reject()
+
+    def test_save_cancel_and_reopen_preserve_hidden_target_and_material(self):
+        target,profile=self.fixture();target.ViewObject.ShapeColor=(.8,.2,.4)
+        original=tuple(target.ViewObject.ShapeColor);self.doc.recompute();settle()
+        undo=self.doc.UndoCount;Gui.activeDocument().Modified=False
+        task=self.task(target,profile);self.assertFalse(Gui.activeDocument().Modified)
+        path=Path(os.environ['PLUS_TEST_DIR'])/'SelectedHiddenTarget.cadprt'
+        document.save_document(self.doc,path);self.assertIsNotNone(task.target_overlay)
+        name=target.Name;task.reject();self.assertFalse(target.Visibility)
+        self.assertEqual(tuple(target.ViewObject.ShapeColor),original);self.assertEqual(self.doc.UndoCount,undo)
+        App.closeDocument(self.doc.Name);self.doc=document.open_document(path);settle()
+        target=self.doc.getObject(name);self.assertFalse(target.Visibility)
+        self.assertEqual(tuple(target.ViewObject.ShapeColor),original)
+
+    def test_existing_feature_edit_and_external_source_cleanup(self):
+        target,profile=self.fixture()
+        feature=extrusion.save(self.doc,[(profile,'')],{'target':(target,'')},dict(extrusion.DEFAULTS,operation='Add'))
+        task=extrude_task.show(feature);self.eye(target);self.assertFalse(target.Visibility)
+        self.assertIsNotNone(task.target_overlay);task.reject()
+        from freecad_plus import external
+        folder=Path(os.environ['PLUS_TEST_DIR'])/'validity-external';folder.mkdir(exist_ok=True)
+        document.save_document(self.doc,folder/'Host.cadprt')
+        source=document.new_document('ValiditySource');owner=document.validate(source).Definitions[0]
+        document.save_document(source,folder/'Source.cadprt');external.import_file(self.doc,source)
+        App.setActiveDocument(self.doc.Name);editing.edit_unused(self.doc,owner);self.owner=owner
+        target,profile=self.fixture();task=self.task(target,profile)
+        self.assertEqual(target.Document,source);self.assertIsNotNone(task.target_overlay)
+        task.reject();self.assertFalse(target.Visibility)
+
+    def test_native_tool_carried_only_after_boolean_validation(self):
+        target,profile=self.fixture();profile.Placement.Base.x=10;self.doc.recompute()
+        values=dict(extrusion.DEFAULTS,operation='Subtract',reverse=True)
+        with self.assertRaises(extrusion.InvalidResult) as caught:
+            extrusion.evaluate(self.owner,[(profile,'')],{'target':(target,'')},values)
+        self.assertTrue(caught.exception.tool.isValid());self.assertGreater(caught.exception.tool.Volume,0)
+        with self.assertRaises(ValueError) as malformed:
+            extrusion.evaluate(self.owner,[],{'target':(target,'')},values)
+        self.assertNotIsInstance(malformed.exception,extrusion.InvalidResult)
 
 
 class TestExtrudeVisibility(TestDesignInteractions):

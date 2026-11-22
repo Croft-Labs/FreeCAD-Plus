@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-22",
+  "approval": "approved",
+  "authority": "User approval of the four direct native color screenshots in the active chat",
+  "request": "Display selected hidden Extrude targets regardless of History visibility; Add green/yellow for valid/invalid, Subtract red/pink for valid/invalid including no intersection.",
+  "preview_session": "6dc04c7609ec",
+  "preview_fingerprint": "1e19c0a59b8aba1bc05a03ab8a7d09fc5944485dcdfd2dca842ca21efc4e810f",
+  "baseline": "baseline-9cdab728.png",
+  "candidate": "candidate-0905898f.png",
+  "tool_approval_state_modified": false
+}

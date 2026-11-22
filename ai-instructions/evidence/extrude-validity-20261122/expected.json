@@ -1,0 +1,50 @@
+[
+  {
+    "file": "add-valid.cadprt",
+    "feature": "Extrude",
+    "identity": 2006,
+    "volume": 6628.318530717959,
+    "target": "Pad",
+    "color": [
+      0.6784313917160034,
+      0.7098039388656616,
+      0.7411764860153198,
+      1.0
+    ]
+  },
+  {
+    "file": "add-invalid.cadprt",
+    "feature": null,
+    "target": "Pad",
+    "color": [
+      0.6784313917160034,
+      0.7098039388656616,
+      0.7411764860153198,
+      1.0
+    ]
+  },
+  {
+    "file": "subtract-valid.cadprt",
+    "feature": "Extrude",
+    "identity": 4061,
+    "volume": 5528.761101961531,
+    "target": "Pad",
+    "color": [
+      0.6784313917160034,
+      0.7098039388656616,
+      0.7411764860153198,
+      1.0
+    ]
+  },
+  {
+    "file": "subtract-invalid.cadprt",
+    "feature": null,
+    "target": "Pad",
+    "color": [
+      0.6784313917160034,
+      0.7098039388656616,
+      0.7411764860153198,
+      1.0
+    ]
+  }
+]

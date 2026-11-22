@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "installed_native": true,
+  "cases": [
+    {
+      "mode": "Add",
+      "valid": true,
+      "status": "Tool volume \u00b7 adds to Base solid (hidden).",
+      "target_selected_from_history": true,
+      "target_history_hidden": true,
+      "tool_volume": 628.3185307179592
+    },
+    {
+      "mode": "Add",
+      "valid": false,
+      "status": "The operation must produce one solid; check profile and target contact.",
+      "target_selected_from_history": true,
+      "target_history_hidden": true,
+      "tool_volume": 628.3185307179592
+    },
+    {
+      "mode": "Subtract",
+      "valid": true,
+      "status": "Tool volume \u00b7 removes from Base solid (hidden).",
+      "target_selected_from_history": true,
+      "target_history_hidden": true,
+      "tool_volume": 628.3185307179591
+    },
+    {
+      "mode": "Subtract",
+      "valid": false,
+      "status": "No material is removed.",
+      "target_selected_from_history": true,
+      "target_history_hidden": true,
+      "tool_volume": 628.3185307179592
+    }
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+}

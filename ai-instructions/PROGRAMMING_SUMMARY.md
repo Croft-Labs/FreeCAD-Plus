@@ -1,5 +1,17 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest Extrude target and preview colors — November 22, 2026
+
+The approved change is installed: hidden targets selected in History display in the
+configured selection color while their eyes remain unchanged. Visible targets retain
+native reference picking. Add tools are green/yellow for valid/invalid results;
+Subtract tools are red/pink. Invalid native operations retain the actual tool for
+preview but remain impossible to accept. Source visibility/materials and transactions
+are preserved. Eight focused build tests, all 177 installed native tests, four native
+visual cases and fresh save/reopen checks passed. The existing shortcut was restarted
+with isolated settings. See
+[acceptance](WORK_STATE.md#extrude-selected-targets-and-validity-colors--november-22-2026).
+
 ## Latest sketch exit framing — November 22, 2026
 
 The approved change is installed: leaving a new or existing nonempty sketch fits

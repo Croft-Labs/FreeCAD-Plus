@@ -1,0 +1,91 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,panel,extrude_task,extrusion
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    task=None;result={'ok':False,'installed_native':True,'cases':[]};saved=[]
+    try:
+        win=Gui.getMainWindow();win.resize(1300,900);win.show();win.raise_();win.activateWindow()
+        QtWidgets.QApplication.setActiveWindow(win);Gui.activateWorkbench('PartDesignWorkbench')
+        App.ParamGet('User parameter:BaseApp/Preferences/General').SetInt('TaskPanelUIMode',0)
+        for mode,valid_expected in [('Add',True),('Add',False),('Subtract',True),('Subtract',False)]:
+            tag=mode.lower()+('-valid' if valid_expected else '-invalid')
+            doc=document.new_document('Extrude '+tag);owner=document.validate(doc).Definitions[0]
+            owner.Label='Mounting plate';base=modeling.new_sketch(doc);base.Label='Base sketch'
+            points=[(0,0),(40,0),(40,25),(0,25)]
+            for i,p in enumerate(points):
+                q=points[(i+1)%4];base.addGeometry(Part.LineSegment(App.Vector(*p,0),App.Vector(*q,0)),False)
+            doc.recompute();target=modeling.extrude_new_solid(doc,base,6);target.Label='Base solid (hidden)'
+            profile=modeling.new_sketch(doc);profile.Label='Extrude profile'
+            profile.Placement.Base.z=12 if mode=='Add' and not valid_expected else 6
+            x=52 if mode=='Subtract' and not valid_expected else 20
+            profile.addGeometry(Part.Circle(App.Vector(x,12,0),App.Vector(0,0,1),5),False)
+            doc.recompute();target.Visibility=False
+            original_color=tuple(target.ViewObject.ShapeColor)
+            dock=panel.show_panel();dock.tabs.setCurrentIndex(2);dock.refresh()
+            view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric()
+            view.setCameraType('Orthographic');camera=view.getCameraNode();camera.height.setValue(85)
+            camera.position=tuple(App.Vector(25,12,6)+view.getCameraOrientation().multVec(App.Vector(0,0,100)))
+            camera.focalDistance=100
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(profile);task=extrude_task.show()
+            task.modes[mode].click()
+            task.reverse.setChecked(mode=='Subtract')
+            task.fields['target'].setFocus();QtTest.QTest.qWait(100)
+            dock.refresh();tree=dock.trees[2];tree.expandAll()
+            for item in dock._maps[2].values():
+                if item.text(0)=='Coordinate System':item.setExpanded(False)
+            item=next(i for i in dock._maps[2].values() if panel.lookup(i.data(0,panel._ROLE).ref)==target)
+            tree.scrollToItem(item);QtTest.QTest.qWait(100)
+            rect=tree.visualItemRect(item);point=QtCore.QPoint(tree.columnViewportPosition(0)+100,rect.center().y())
+            QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,point)
+            QtTest.QTest.qWait(150)
+            assert task.links.get('target',(None,))[0]==target,repr(task.links)
+            assert task.valid==valid_expected,(tag,task.status.text())
+            tool=task.tool_shape
+            assert tool is not None and tool.isValid()
+            assert task.target_overlay is not None
+            def capture(name):
+                dock.refresh();tree.expandAll()
+                for item in dock._maps[2].values():
+                    if item.text(0)=='Coordinate System':item.setExpanded(False)
+                QtTest.QTest.qWait(300)
+                assert win.screen().grabWindow(int(win.winId())).save(str(out/('installed-'+name+'.png')))
+            if tag=='add-valid':
+                capture('target-selected')
+            task.end1['length'].setFocus();QtTest.QTest.qWait(100)
+            capture(tag)
+            assert not target.Visibility and not panel.history_visible(owner,target)
+            result['cases'].append(dict(mode=mode,valid=task.valid,status=task.status.text(),
+                target_selected_from_history=True,target_history_hidden=True,tool_volume=tool.Volume))
+            if valid_expected:
+                volume=task.result_shape.Volume
+                assert task.accept();feature=task.result;task=None
+                assert abs(feature.Shape.Volume-volume)<1e-6
+                assert tuple(feature.ViewObject.ShapeColor)==original_color
+                filename=tag+'.cadprt';document.save_document(doc,out/filename)
+                saved.append(dict(file=filename,feature=feature.Name,identity=feature.ID,volume=volume,target=target.Name,
+                                  color=original_color))
+            else:
+                button=next(box.button(QtWidgets.QDialogButtonBox.Ok) for box in win.findChildren(QtWidgets.QDialogButtonBox)
+                            if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Ok))
+                assert not button.isEnabled()
+                before=({o.Name:o.ID for o in doc.Objects},doc.UndoCount)
+                assert not task.accept()
+                assert ({o.Name:o.ID for o in doc.Objects},doc.UndoCount)==before
+                document.save_document(doc,out/(tag+'.cadprt'))
+                saved.append(dict(file=tag+'.cadprt',feature=None,target=target.Name,color=original_color))
+                task.reject();task=None
+            assert not target.Visibility
+            App.closeDocument(doc.Name);QtTest.QTest.qWait(100)
+        result.update(ok=True,module=extrude_task.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    (out/'expected.json').write_text(json.dumps(saved,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

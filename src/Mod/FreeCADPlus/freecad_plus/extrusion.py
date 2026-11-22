@@ -266,6 +266,13 @@ def name_tool(tool, refs, feature, target=None):
     return tool
 
 
+class InvalidResult(ValueError):
+    """A constructible native tool whose final operation is invalid."""
+    def __init__(self, message, tool):
+        super().__init__(message)
+        self.tool = tool
+
+
 def evaluate(definition, refs, links, values, feature=None):
     refs, links, v = validate(definition, refs, links, values, feature)
     face, placement, edges = profile_shape(definition, refs)
@@ -357,13 +364,18 @@ def evaluate(definition, refs, links, values, feature=None):
         if tool.isNull() or not tool.isValid() or not tool.Solids:
             raise ValueError('The extrusion cannot reach its end. Check profile, direction, limit and taper.')
         tool = name_tool(tool, refs, feature, target)
-    result = tool if target is None else (target.fuse(tool) if v['operation'] == 'Add' else target.cut(tool))
-    if v['refine']:
-        result = result.removeSplitter()
-    if result.isNull() or not result.isValid() or len(result.Solids) != 1:
-        raise ValueError('The operation must produce one solid; check profile and target contact.')
-    if target is not None and abs(result.Volume - target.Volume) < max(1e-7, target.Volume * 1e-10):
-        raise ValueError('No material is ' + ('added.' if v['operation'] == 'Add' else 'removed.'))
+    try:
+        result = tool if target is None else (target.fuse(tool) if v['operation'] == 'Add' else target.cut(tool))
+        if v['refine']:
+            result = result.removeSplitter()
+        if result.isNull() or not result.isValid() or len(result.Solids) != 1:
+            raise ValueError('The operation must produce one solid; check profile and target contact.')
+        if target is not None and abs(result.Volume - target.Volume) < max(1e-7, target.Volume * 1e-10):
+            raise ValueError('No material is ' + ('added.' if v['operation'] == 'Add' else 'removed.'))
+    except Exception as exc:
+        # Preserve this evaluation's tool for display, never a successful result
+        # or a second evaluation with different operation/limit inputs.
+        raise InvalidResult(str(exc), tool) from exc
     return result, tool, edges
 
 

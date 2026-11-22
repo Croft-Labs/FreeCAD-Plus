@@ -23,6 +23,11 @@ class ExtrudeTask(QtCore.QObject):
         self.view = Gui.activeDocument().activeView()
         self.scene = self.view.getSceneGraph()
         self.overlay = None
+        self.target_overlay = None
+        self.tool_preview = None
+        self.showing_result = False
+        self.result_shape = None
+        self.tool_shape = None
         self.closed = False
         self.ready = False
         self.revisions = 0
@@ -338,12 +343,17 @@ class ExtrudeTask(QtCore.QObject):
         self.start.header.setText('Start · '+self.start_type.currentText())
         if self.automatic.isChecked():self.render()
         else:
-            if not self.visible.isChecked():self.clear_overlay()
+            # Retain the last evaluated shapes for callers, but do not display
+            # a stale green/red volume for inputs waiting on Update preview.
+            self.clear_overlay()
             self.status.setText('Preview needs update.')
             # OK revalidates current inputs even when automatic preview is off.
             self.set_ok(True)
+        self.refresh_target()
 
     def clear_overlay(self):
+        self.tool_preview = None
+        self.showing_result = False
         self.profile_highlight = None
         self.hidden_objects = []
         if self.overlay is not None:
@@ -379,6 +389,49 @@ class ExtrudeTask(QtCore.QObject):
         display.task_hidden(self.view,root,paths,preview=bool(session))
         if session:session._apply_display(self.owner)
         else:display.apply_hidden(self.view,root,display.hidden_paths(self.doc,self.owner,self.path))
+
+    def clear_target(self):
+        if self.target_overlay is not None:
+            if self.scene.findChild(self.target_overlay)>=0:self.scene.removeChild(self.target_overlay)
+            self.target_overlay=None
+
+    def refresh_target(self):
+        # Selection presentation is independent of History Visibility and of
+        # tool recomputation/Show preview. No source property is revealed.
+        if not self.ready or self.closed:return
+        self.clear_target()
+        try:
+            self.check()
+            self.hide_results(self.hidden_objects)
+            target=self.links.get('target') if self.mode()!='New Solid' else None
+            if target is None or self.showing_result:
+                return
+            route=document.owned_path(self.owner,target[0])
+            if route is None:return
+            # A visible target already has the selected material and remains
+            # natively pickable for face/edge references. Supplement only hidden
+            # routes instead of replacing their selectable representation.
+            if all(member.Visibility for member in route):return
+            shape=planes.shape(self.owner,target)
+            if shape.isNull() or not shape.Solids:return
+            self.world=hierarchy.world_placement(self.doc,self.path) if self.path else App.Placement()
+            node=coin.SoSeparator();pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;node.addChild(pick)
+            packed=App.ParamGet('User parameter:BaseApp/Preferences/View').GetUnsigned('SelectionColor',0x1CAD1CFF)
+            color=tuple(((packed>>shift)&255)/255. for shift in (24,16,8))
+            self.add_shape(shape,color,0 if self.pick=='target' else .65,parent=node)
+            self.scene.addChild(node);self.target_overlay=node
+        except (ValueError,RuntimeError,ReferenceError):
+            pass  # Context/deletion cleanup owns closing the task.
+
+    def show_tool(self, tool, valid):
+        colors={'New Solid':(.2,.45,.95),
+                'Add':(.15,.75,.3) if valid else (1.,.82,.08),
+                'Subtract':(.95,.22,.22) if valid else (1.,.4,.7)}
+        # Draw after transparent scene geometry so the selected target cannot
+        # tint a red cut volume purple. Keep the native shaded volume.
+        self.tool_preview=coin.SoAnnotation();self.overlay.addChild(self.tool_preview)
+        self.add_shape(tool,colors[self.mode()],.4 if self.mode()=='New Solid' else .15,
+                       True,parent=self.tool_preview)
 
     def add_shape(self,shape,color,transparency=0,top=False,parent=None):
         shape=shape.copy()
@@ -438,10 +491,12 @@ class ExtrudeTask(QtCore.QObject):
         # off. They must not evaluate uncommitted/changed operation parameters.
         if self.hidden:self.hide_results(self.hidden_objects)
         self.highlight_profile()
+        self.refresh_target()
 
     def render(self,*args):
         if self.closed:return
         self.clear_overlay();self.valid=False
+        self.result_shape=None;self.tool_shape=None
         try:
             self.check()
             self.world=hierarchy.world_placement(self.doc,self.path) if self.path else App.Placement()
@@ -460,18 +515,26 @@ class ExtrudeTask(QtCore.QObject):
                 if self.display.currentText()=='Result':
                     hidden.append(target)
                     self.add_shape(result,(.65,.68,.70))
+                    self.showing_result=True
                 else:
-                    self.add_shape(tool,{'New Solid':(.2,.45,.95),'Add':(.15,.75,.3),'Subtract':(.95,.22,.22)}[self.mode()],.4,True)
+                    self.show_tool(tool,True)
                 for end in (self.end1,self.end2) if self.sides.currentText()=='Two sides' else (self.end1,):
                     if end['kind'].currentText() in ('Up to face','Up to shape') and end['key'] in self.links:
                         limit=planes.shape(self.owner,self.links[end['key']])
                         if limit.BoundBox.DiagonalLength<1e6:
                             self.add_shape(limit,(.65,.4,.85),.8)
                 self.hide_results(hidden)
+        except extrusion.InvalidResult as exc:
+            self.tool_shape=exc.tool
+            self.status.setText(str(exc))
+            if self.visible.isChecked():
+                self.show_tool(exc.tool,False)
+                self.hide_results([self.feature] if self.feature else [])
         except Exception as exc:
             self.valid=False;self.status.setText(str(exc))
         if self.overlay is not None:self.scene.addChild(self.overlay)
         self.set_ok(self.valid)
+        self.refresh_target()
 
     def getStandardButtons(self):return QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Cancel
     def accept(self):
@@ -480,6 +543,7 @@ class ExtrudeTask(QtCore.QObject):
             for field in self.numbers:
                 field.interpretText();self.values[field]=field.value()
             self.clear_overlay()
+            self.clear_target()
             self.presentation.restore()
             self.result=extrusion.save(self.doc,self.refs,self.links,self.settings(),self.feature)
             self.reject()
@@ -502,7 +566,9 @@ class ExtrudeTask(QtCore.QObject):
             if document_closing:
                 display.task_hidden(self.view)
                 self.hidden=False
-            try:self.clear_overlay()
+            try:
+                self.clear_overlay()
+                self.clear_target()
             except (RuntimeError,ReferenceError,ValueError):pass
             if not document_closing:
                 try:self.view.removeEventCallbackPivy(coin.SoMouseButtonEvent.getClassTypeId(),self.mouse_callback)

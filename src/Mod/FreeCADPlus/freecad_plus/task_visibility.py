@@ -94,6 +94,7 @@ class ExtrudeDisplay:
                     for material in colored:
                         material.DiffuseColor = color
                     view.ShapeAppearance = colored
+        task.refresh_target()
 
     def restore(self):
         if self.closed:

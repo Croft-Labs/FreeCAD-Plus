@@ -1,0 +1,31 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtTest
+from freecad_plus import document,editing,extrude_task
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False,'files':[]};task=None
+    try:
+        for expected in json.loads((out/'expected.json').read_text()):
+            doc=document.open_document(out/expected['file']);target=doc.getObject(expected['target'])
+            assert not target.Visibility
+            for actual,want in zip(target.ViewObject.ShapeColor,expected['color']):assert abs(actual-want)<1/255+1e-6
+            if expected['feature']:
+                feature=doc.getObject(expected['feature']);assert feature.ID==expected['identity']
+                doc.recompute();assert feature.Shape.isValid() and abs(feature.Shape.Volume-expected['volume'])<1e-6
+                editing.edit((document.validate(doc).Group[0],))
+                task=extrude_task.show(feature);QtTest.QTest.qWait(150)
+                assert task.valid and target.Visibility
+                task.reject();task=None
+                assert not target.Visibility
+            result['files'].append(expected['file']);App.closeDocument(doc.Name)
+        result.update(ok=True,saved_visibility_and_materials=True,valid_geometry_recomputed=True,existing_edit_target_display=True)
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'reopen.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

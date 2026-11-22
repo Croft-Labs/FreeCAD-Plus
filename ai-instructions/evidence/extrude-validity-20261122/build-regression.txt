@@ -1,0 +1,13 @@
+test_existing_feature_edit_and_external_source_cleanup (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_existing_feature_edit_and_external_source_cleanup) ... ok
+test_four_colors_and_invalid_acceptance_remains_atomic (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_four_colors_and_invalid_acceptance_remains_atomic) ... ok
+test_hidden_history_target_container_focus_and_eye_overrides (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_hidden_history_target_container_focus_and_eye_overrides) ... ok
+test_invalid_result_fallback_and_unconstructible_input_clears_tool (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_invalid_result_fallback_and_unconstructible_input_clears_tool) ... ok
+test_native_tool_carried_only_after_boolean_validation (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_native_tool_carried_only_after_boolean_validation) ... ok
+test_save_cancel_and_reopen_preserve_hidden_target_and_material (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_save_cancel_and_reopen_preserve_hidden_target_and_material) ... ok
+test_target_remains_with_preview_off_manual_update_and_new_solid_switch (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_target_remains_with_preview_off_manual_update_and_new_solid_switch) ... ok
+test_visible_selected_target_remains_pickable_for_face_reference (TestExtrudeVisibility.TestExtrudeValidityDisplay.test_visible_selected_target_remains_pickable_for_face_reference) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 12.865s
+
+OK

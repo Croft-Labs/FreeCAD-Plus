@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "files": [
+    "add-valid.cadprt",
+    "add-invalid.cadprt",
+    "subtract-valid.cadprt",
+    "subtract-invalid.cadprt"
+  ],
+  "saved_visibility_and_materials": true,
+  "valid_geometry_recomputed": true,
+  "existing_edit_target_display": true
+}

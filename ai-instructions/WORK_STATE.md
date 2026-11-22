@@ -1,5 +1,41 @@
 # FreeCAD Plus: Current work state
 
+## Extrude selected targets and validity colors — November 22, 2026
+
+The owner [approved the native screenshot preview](evidence/extrude-validity-20261122/approval.json).
+Selecting a hidden Add/Subtract target in History now displays it in the configured
+selection color without changing its History eye. It is opaque while picking the
+target and translucent after leaving that field. Already-visible targets keep native
+face/edge picking. The target display remains available with Show preview or automatic
+preview updates off, and clears when the target or operation no longer needs it.
+
+Add tools are green when valid and yellow when invalid; Subtract tools are red when
+valid and pink when invalid. Invalid final operations retain their actual native tool
+for display, report the error and cannot be accepted. Invalid Result display falls
+back to that colored tool. Malformed inputs clear stale tool geometry. Saved source
+visibility, materials and native transaction behavior remain intact.
+
+Four Python files were built and installed with matching source/build/app hashes
+and retained rollback copies: [manifest](evidence/extrude-validity-20261122/install-manifest.json).
+All **8 focused build tests** and **177 installed native tests** passed with no
+failures/errors: [focused report](evidence/extrude-validity-20261122/build-regression.txt),
+[installed report](evidence/extrude-validity-20261122/regression.txt).
+Separate installed processes passed actual History-click selection, all four colors,
+valid acceptance, invalid atomic rejection and fresh saved-file reopening:
+[visual results](evidence/extrude-validity-20261122/visual.json),
+[reopen results](evidence/extrude-validity-20261122/reopen.json).
+Reviewed installed screenshots: [selected target](evidence/extrude-validity-20261122/installed-target-selected.png),
+[valid Add](evidence/extrude-validity-20261122/installed-add-valid.png),
+[invalid Add](evidence/extrude-validity-20261122/installed-add-invalid.png),
+[valid Subtract](evidence/extrude-validity-20261122/installed-subtract-valid.png),
+[invalid Subtract](evidence/extrude-validity-20261122/installed-subtract-invalid.png).
+
+The existing desktop shortcut was restarted and verified against the installed app
+with isolated user/system/data paths: [launch check](evidence/extrude-validity-20261122/shortcut.json).
+The app remains open. Disposable fixtures and inactive profiles were removed; rollback
+copies and the active isolated profile remain under runtime validation/extrude-validity-20261122.
+The owner profile was never used.
+
 ## View fitting after sketch exit — November 22, 2026
 
 The owner [approved the direct native preview](evidence/sketch-exit-fit-20261122/approval.json).

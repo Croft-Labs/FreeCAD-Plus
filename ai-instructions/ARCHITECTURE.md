@@ -8,6 +8,35 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Extrude selected-target display and invalid tools — November 22, 2026
+
+ExtrudeTask supplements a selected target whose native ownership route is hidden
+with a separate unpickable Coin representation. It uses planes.shape in the owner
+frame and the existing occurrence world transform. History Visibility is untouched.
+Already-visible targets retain their native representation and face/edge picking,
+with the existing temporary selected material. Target refresh is independent of
+tool evaluation/Show preview and follows focus, target replacement/removal, mode and
+eye changes. Native Result display still shows the valid result rather than covering
+its removed material with the original target. Clear/cancel/accept/context teardown
+remove the target node; existing presentation restore owns persistent materials.
+
+The shared native evaluator raises InvalidResult (a ValueError) carrying its already
+constructed tool when Boolean/refine/final-result validation fails. It still raises
+for one-solid/no-change failures, and save/execute never treat that tool as a valid
+result. Earlier input/tool-construction failures carry no tool. Render clears stale
+result/tool state first, then displays this exact failed operation's tool in yellow
+for Add or pink for Subtract. Valid Add/Subtract use green/red. Their shaded tool
+nodes use SoAnnotation and 15% transparency, keeping target transparency from tinting
+the validity color. New Solid keeps blue and its prior tool transparency. Invalid
+Result display falls back to the tool; missing/unconstructible geometry shows no
+volume. OK and the error message still follow native validation. With automatic
+recompute off, old evaluated shapes remain cached but the stale displayed volume is
+removed; Update preview and acceptance retain native evaluation semantics.
+
+No schema, saved identity, geometry kernel rule, preference override or C++ change
+implements this behavior. Source-owned eye transactions and save-time appearance
+restoration remain in the existing shared presentation service.
+
 ## Sketch exit camera fit — November 22, 2026
 
 ComponentPanel queues one native activeView.fitAll after slotResetEdit restores

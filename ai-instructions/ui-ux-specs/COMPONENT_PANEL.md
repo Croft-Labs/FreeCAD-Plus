@@ -6,6 +6,11 @@ Implementation planning and acceptance are owned by the [Group 1 roadmap](../DEV
 
 ## Scope boundary: panel behavior and launched operations
 
+Owner-approved November 22, 2026: an Extrude target chosen from History remains
+displayed as a selected solid even while its eye is off. The temporary task display
+does not change the eye's persistent visibility intent. Eyes remain usable and
+source-owned. See [Extrude target display and colors](TASK_PANEL.md#extrude-selected-targets-and-validity-colors--november-22-2026).
+
 Owner-approved November 22, 2026: entering native sketch drawing/editing hides
 the component Coordinate System temporarily. History eyes reflect this display
 and remain usable. Exit restores saved visibility except for explicit eye choices,

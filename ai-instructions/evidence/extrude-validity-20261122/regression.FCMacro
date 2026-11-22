@@ -1,0 +1,53 @@
+import json, os, sys, traceback, unittest
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+# Tests are source-owned; runtime product modules come from the selected payload.
+sys.path.insert(0,'C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow());super().startTest(test);self.stream.flush()
+    def addError(self,test,err):
+        super().addError(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+    def addFailure(self,test,err):
+        super().addFailure(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+focus=QtCore.QTimer()
+focus.timeout.connect(lambda:QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+    if Gui.Control.activeDialog() and not QtWidgets.QApplication.activeModalWidget() and not Gui.getMainWindow().isActiveWindow() else None)
+focus.start(30)
+def run():
+    result={'ok':False}
+    try:
+        window=Gui.getMainWindow();window.resize(1300,900);window.show();window.raise_();window.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        if os.environ['PLUS_SOURCE_CHECK']=='1':
+            import freecad_plus,importlib
+            from freecad_plus import panel
+            if panel._panel:
+                panel._panel.dispose();window.removeDockWidget(panel._panel);panel._panel.deleteLater()
+            freecad_plus.__path__.insert(0,'C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus')
+            for name in ('document','display','sketch_visibility','extrusion','extrude_task','panel'):
+                importlib.reload(importlib.import_module('freecad_plus.'+name))
+        import TestDesignInteractions,TestExtrudeVisibility
+        suite=unittest.TestSuite()
+        if os.environ['PLUS_TEST_SCOPE']=='broad':
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestDesignInteractions.TestSketchExitFit))
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestDesignInteractions.TestSketchCoordinateVisibility))
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestDesignInteractions.TestSketchCreationAndTaskTabs))
+            import TestExtrudeVisibility,TestExtrudeWorkflow,TestComponentPanel,TestSketchPlacement,TestComponentPlanes,TestComponentVisibility,TestComponentMove,TestComponentRotate
+            for module in (TestExtrudeVisibility,TestExtrudeWorkflow,TestComponentPanel,TestSketchPlacement,TestComponentPlanes,TestComponentVisibility,TestComponentMove,TestComponentRotate):
+                suite.addTests(unittest.defaultTestLoader.loadTestsFromModule(module))
+        else:
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestExtrudeVisibility.TestExtrudeValidityDisplay))
+        with (out/'regression.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        from freecad_plus import extrude_task,panel
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors),
+                      task_module=extrude_task.__file__,panel_module=panel.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'regression.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)
