@@ -27,6 +27,7 @@ set(FreeCADPlus_SRCS
     TestExtrudeWorkflow.py
     TestTargetCoordinateWorkflow.py
     TestPlaneHistoryWorkflow.py
+    TestTaskStatus.py
     TestExtrudeVisibility.py
     TestDesignInteractions.py
     TestComponentReferences.py
@@ -70,6 +71,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/sketch_task.py
     freecad_plus/sketch_visibility.py
     freecad_plus/task_visibility.py
+    freecad_plus/task_status.py
     freecad_plus/sketch_placement.py
     freecad_plus/idle_tasks.py
     freecad_plus/numeric_fields.py
@@ -79,7 +81,7 @@ add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
 fc_copy_sources(FreeCADPlusScripts "${CMAKE_BINARY_DIR}/Mod/FreeCADPlus" ${FreeCADPlus_SRCS})
 install(FILES Init.py InitGui.py TestPlusToolbars.py TestComponentPilot.py TestLegacyConversion.py TestLegacyBooleanConversion.py TestComponentHierarchy.py TestExternalDefinitions.py TestComponentPanel.py TestComponentRename.py TestComponentImport.py TestUnusedModels.py TestComponentWindows.py TestComponentClipboard.py TestComponentMove.py TestComponentRotate.py TestComponentDisplay.py TestComponentVisibility.py TestComponentBodiesOnly.py TestComponentEligibility.py TestComponentExport.py TestComponentExternalExport.py TestComponentModeling.py TestComponentReferences.py TestComponentInputEditors.py TestComponentSweepInputs.py TestComponentDressUpInputs.py TestComponentCommandInputs.py TestComponentBooleanOwnership.py TestComponentBooleanInputs.py TestPartBooleanInputs.py TestComponentFading.py DESTINATION Mod/FreeCADPlus)
 install(FILES
-    TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py TestRevolveWorkflow.py TestExtrudeWorkflow.py TestTargetCoordinateWorkflow.py TestPlaneHistoryWorkflow.py TestExtrudeVisibility.py TestDesignInteractions.py DESTINATION Mod/FreeCADPlus)
+    TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py TestRevolveWorkflow.py TestExtrudeWorkflow.py TestTargetCoordinateWorkflow.py TestPlaneHistoryWorkflow.py TestTaskStatus.py TestExtrudeVisibility.py TestDesignInteractions.py DESTINATION Mod/FreeCADPlus)
 install(FILES
     freecad_plus/__init__.py
     freecad_plus/ui_modes.py
@@ -110,6 +112,7 @@ install(FILES
     freecad_plus/sketch_task.py
     freecad_plus/sketch_visibility.py
     freecad_plus/task_visibility.py
+    freecad_plus/task_status.py
     freecad_plus/sketch_placement.py
     freecad_plus/idle_tasks.py
     freecad_plus/numeric_fields.py

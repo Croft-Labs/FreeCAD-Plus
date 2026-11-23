@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "tests": 3,
+  "failures": 0,
+  "errors": 0,
+  "modules": {
+    "status": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\FreeCADPlus\\freecad_plus\\task_status.py",
+    "plane": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "extrude": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  }
+}

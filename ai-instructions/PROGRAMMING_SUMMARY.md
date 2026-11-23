@@ -1,11 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
-## Pending prominent task-error styling — November 23, 2026
+## Installed prominent task-error styling — November 23, 2026
 
-The owner requests shared amber error emphasis matching the Extrude target field,
-including future implemented errors. A native preview covers Plane, Sketch, Extrude
-and Revolve, full-message visibility and valid recovery. Production/installation
-are unchanged pending screenshot approval. See [preview status](WORK_STATE.md#prominent-task-error-preview-pending--november-23-2026).
+The owner approved shared amber error emphasis matching the Extrude target field.
+`task_status.TaskStatus` is installed in Plane, Sketch, Extrude and Revolve, with
+bounded reveal, focus preservation and valid-state recovery. Future inline task errors
+reuse it. All 122 installed regression checks, five fresh startup checks and four
+installed visual cases passed. See [acceptance](WORK_STATE.md#prominent-task-errors-installed--november-23-2026).
 
 ## Attach Sketch sequential-order repair — November 23, 2026
 

@@ -7,6 +7,7 @@ from PySide6 import QtCore, QtWidgets
 from pivy import coin
 from freecad_plus import modeling, planes, extrusion, document, editing, hierarchy, isolation, display, task_visibility
 from freecad_plus.plane_task import Section, label, number, buttons
+from .task_status import TaskStatus
 from freecad_plus.selection_list import SelectionList
 
 
@@ -103,7 +104,7 @@ class ExtrudeTask(QtCore.QObject):
         self.refresh_button.clicked.connect(self.render)
         self.visible.toggled.connect(self.changed)
         self.automatic.toggled.connect(self.changed)
-        self.status = label('Select a profile.'); layout.addWidget(self.status); layout.addStretch()
+        self.status = TaskStatus('Select a profile.'); layout.addWidget(self.status); layout.addStretch()
         self.configure_form()
         if feature is not None:
             self.load_feature(feature)
@@ -388,7 +389,7 @@ class ExtrudeTask(QtCore.QObject):
                 self.links[self.pick]=ref
             self.refresh_fields();self.changed()
             Gui.Selection.removeSelection(obj,sub)
-        except Exception as exc:self.status.setText(str(exc))
+        except Exception as exc:self.status.setError(str(exc))
 
     def commit_numbers(self):
         changed=False
@@ -604,12 +605,12 @@ class ExtrudeTask(QtCore.QObject):
                 self.hide_results(hidden)
         except self.engine.InvalidResult as exc:
             self.tool_shape=exc.tool
-            self.status.setText(str(exc))
+            self.status.setError(str(exc))
             if self.visible.isChecked():
                 self.show_tool(exc.tool,False)
                 self.hide_results([self.feature] if self.feature else [])
         except Exception as exc:
-            self.valid=False;self.status.setText(str(exc))
+            self.valid=False;self.status.setError(str(exc))
         if self.overlay is not None:self.scene.addChild(self.overlay)
         self.set_ok(self.valid)
         self.refresh_target()
@@ -630,7 +631,7 @@ class ExtrudeTask(QtCore.QObject):
         except Exception as exc:
             self.presentation.apply()
             self.render()
-            self.status.setText(str(exc));return False
+            self.status.setError(str(exc));return False
 
     def reject(self,document_closing=False):
         global _active

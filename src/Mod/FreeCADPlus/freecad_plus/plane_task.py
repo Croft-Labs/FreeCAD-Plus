@@ -6,6 +6,7 @@ import FreeCADGui as Gui
 import Part
 from PySide6 import QtCore, QtWidgets
 from pivy import coin
+from .task_status import TaskStatus
 from . import document, planes, modeling, editing, hierarchy
 
 _active = None
@@ -121,7 +122,7 @@ class PlaneTask(QtCore.QObject):
             quick.addWidget(button)
         refs.addLayout(quick)
         self.plane.layout.addWidget(self.reference_ui)
-        self.status = label('Under-defined — select geometry to define a plane.')
+        self.status = TaskStatus('Under-defined — select geometry to define a plane.')
         self.plane.layout.addWidget(self.status)
         self.offset = number(self.plane.layout, 'Offset')
         reverse = QtWidgets.QPushButton('Reverse offset')
@@ -293,7 +294,7 @@ class PlaneTask(QtCore.QObject):
                 self.normal_to_line = True
             self.refresh_fields(); self.update()
             self.release_selection(obj, sub)
-        except Exception as exc: self.status.setText(str(exc))
+        except Exception as exc: self.status.setError(str(exc))
 
     def release_selection(self, obj, sub):
         if not Gui.Selection.isSelected(obj, sub, 0): return
@@ -423,7 +424,7 @@ class PlaneTask(QtCore.QObject):
             self.valid = False; self.status.setText(str(exc))
         except Exception as exc:
             self.valid = False
-            self.status.setText(('Invalid — ' if self.reference_guidance else '') + str(exc))
+            self.status.setError(('Invalid — ' if self.reference_guidance else '') + str(exc))
         if self.reference_guidance:
             try:
                 self.check()
@@ -489,7 +490,7 @@ class PlaneTask(QtCore.QObject):
             self.reject()
             return True
         except Exception as exc:
-            self.status.setText(str(exc)); return False
+            self.status.setError(str(exc)); return False
 
     def reject(self):
         global _active

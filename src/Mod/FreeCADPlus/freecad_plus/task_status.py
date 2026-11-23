@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Shared prominent inline errors, with bounded reveal and ordinary status recovery."""
+from PySide6 import QtCore, QtWidgets
+
+class TaskStatus(QtWidgets.QLabel):
+    def __init__(self, text=''):
+        super().__init__(text)
+        self.setWordWrap(True)
+        self.setTextFormat(QtCore.Qt.PlainText)
+        self.error=False
+
+    def setText(self, text):
+        self.error=False
+        self.setStyleSheet('')
+        super().setText(text)
+
+    def setError(self, text):
+        reveal=not self.error or self.text()!=text
+        self.error=True
+        self.setStyleSheet('QLabel { border: 2px solid #bd780b; border-radius: 3px; '
+                          'background: #fff3d6; color: #875300; padding: 8px; font-weight: 600; }')
+        super().setText(text)
+        if reveal:QtCore.QTimer.singleShot(50,self.revealError)
+
+    def revealError(self, settle=True):
+        try:
+            if not self.error:return
+            parent=self.parentWidget()
+            while parent is not None:
+                if isinstance(parent,QtWidgets.QScrollArea):
+                    viewport=parent.viewport()
+                    top=self.mapTo(viewport,QtCore.QPoint()).y()
+                    bottom=top+self.height()
+                    # For an unusually long message, reveal its beginning so
+                    # the user can read downward through the remaining text.
+                    if self.height()>viewport.height()-24:
+                        delta=top-12
+                    else:
+                        delta=bottom+12-viewport.height() if bottom+12>viewport.height() else min(0,top-12)
+                    bar=parent.verticalScrollBar()
+                    bar.setValue(bar.value()+delta)
+                    # Native task groups can resize once more after scrolling.
+                    if settle:QtCore.QTimer.singleShot(50,lambda:self.revealError(False))
+                    return
+                parent=parent.parentWidget()
+        except RuntimeError:
+            pass  # Task was closed before the queued UI update.

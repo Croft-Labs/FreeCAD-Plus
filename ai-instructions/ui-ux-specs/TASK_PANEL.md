@@ -12,12 +12,14 @@ error messages. Inline errors must stand out from ordinary task guidance and rem
 readable. Use the target field's amber/pale-amber/dark-text palette consistently.
 Keep the reason and recovery action in the text; do not rely only on color.
 
-The [native proposal](../evidence/task-error-preview-20261123/README.md) shows a
+The owner approved the [native proposal](../evidence/task-error-preview-20261123/README.md).
+It defines a
 shared wrapped amber error box in Plane, Sketch, Extrude and Revolve. Newly raised
 offscreen errors are brought fully into view without changing focus; repeats do not
 keep scrolling. Valid recovery clears the highlight, while incomplete/idle/success
-guidance remains normal. This exact presentation and scroll behavior await direct
-screenshot approval. Production and installed code remain unchanged.
+guidance remains normal. Use the shared treatment for future implemented inline
+errors; existing native modal errors retain their native presentation. See
+[implementation evidence](../evidence/task-errors-20261123/README.md).
 
 ### Reject later sketch supports before attachment — November 23, 2026
 

@@ -1,0 +1,23 @@
+{
+  "root": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\task-errors-20261123",
+  "removed": [
+    "fresh-ktoatg9c",
+    "fresh-stgni5n9",
+    "fresh-vzn4rns6",
+    "profile-build",
+    "profile-installed",
+    "extrude-detail.png",
+    "extrude-error.png",
+    "plane-detail.png",
+    "plane-error.png",
+    "revolve-detail.png",
+    "revolve-error.png",
+    "sketch-detail.png",
+    "sketch-error.png",
+    "viewport.png"
+  ],
+  "retained": [
+    "install-backup",
+    "profile-shortcut"
+  ]
+}

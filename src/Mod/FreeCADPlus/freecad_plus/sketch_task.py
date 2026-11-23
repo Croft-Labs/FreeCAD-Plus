@@ -100,7 +100,7 @@ class SketchPlacementTask(plane_task.PlaneTask):
                 App.closeActiveTransaction(True, transaction_id)
             if not self.closed:
                 self.origin_visibility.apply()
-            self.status.setText(str(exc))
+            self.status.setError(str(exc))
             return False
 
     def enter_drawing(self, transaction_id):

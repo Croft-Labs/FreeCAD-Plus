@@ -1,5 +1,26 @@
 # FreeCAD Plus: Current work state
 
+## Prominent task errors installed — November 23, 2026
+
+The owner approved the native amber-error preview. The shared `TaskStatus` widget is
+implemented and installed for Plane/Sketch placement and Extrude/Revolve selection,
+validation, preview/result and acceptance errors. It uses the approved target-field
+colors, padding, semibold plain text and wrapping. Newly raised errors scroll into
+view without changing focus; one bounded follow-up handles native task-group resizing.
+Repeating the same error does not keep scrolling. Valid recovery restores ordinary
+styling; long messages reveal their beginning. No geometry, reference, History,
+visibility, document schema or task acceptance semantics changed.
+
+All three focused native widget checks passed, followed by **122 installed regression
+checks**, five separate fresh startup checks and four installed visual/recovery cases.
+The tests cover focus, repeated scrolling, wrapping/literal labels, valid recovery,
+queued close cleanup and the affected modeling workflows. Source/build/install hashes
+match for all five Python files; original rollback files are retained. Only the
+FreeCADPlusScripts target was needed. The existing shortcut launches the update with
+isolated settings. Open owner sessions remain untouched and need a restart to load
+their cached Python modules. The shared style is now required for future inline task
+errors in DEVELOPMENT_GUIDELINES. See [implementation evidence](evidence/task-errors-20261123/README.md).
+
 ## Prominent task-error preview pending — November 23, 2026
 
 Owner requests amber highlighting for the insufficiently prominent attachment error
@@ -10,7 +31,7 @@ scroll into view with a bounded native-layout follow-up; successful validation c
 the highlight. All four candidate scenarios pass visibility/recovery checks and
 preserve references, IDs and saved visibility. No feature task is accepted.
 
-**Awaiting direct screenshot approval; production and installation are unchanged.**
+**Historical preview, subsequently approved and implemented above.**
 Session `16176df60dd2`, fingerprint
 `4f5aa46a46bf63433fa196c22609ad24163c52d38805f2ac1a0544c6c4581511`.
 See [screenshots, candidate sources and implementation scope](evidence/task-error-preview-20261123/README.md).

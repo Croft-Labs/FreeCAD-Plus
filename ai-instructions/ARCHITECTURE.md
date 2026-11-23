@@ -8,6 +8,23 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Shared task error feedback — November 23, 2026
+
+`freecad_plus.task_status.TaskStatus` owns the approved inline-error presentation.
+Plane/Sketch placement and Extrude/Revolve call `setError` on selection, validation,
+preview/result and acceptance failures. Ordinary status messages use `setText`,
+which clears the error treatment. The widget uses the existing target-field amber
+palette, padding, semibold plain text and wrapping; object labels never become HTML.
+
+A newly raised/changed error schedules a focus-preserving scroll into view. One
+bounded follow-up accounts for the native task group's second layout pass. The same
+error text does not continually scroll after the user moves the viewport. Successful
+recovery or widget destruction cancels pending work safely. If the message exceeds
+the viewport height, reveal its beginning for downward reading. This is transient
+widget state and never changes geometry, references, History, visibility, stored
+document properties or Undo. New inline task errors reuse this widget; modal native
+errors keep their existing presentation. See [implementation evidence](evidence/task-errors-20261123/README.md).
+
 ## Target guidance and protected native frames — November 23, 2026
 
 ExtrudeTask owns target candidate enumeration, saved-target validation, operation-entry

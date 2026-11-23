@@ -1,0 +1,8 @@
+test_error_reveal_preserves_focus_and_repeat_does_not_scroll (TestTaskStatus.TestTaskStatus.test_error_reveal_preserves_focus_and_repeat_does_not_scroll) ... ok
+test_long_wrapped_error_reveals_beginning_and_renders_literal_labels (TestTaskStatus.TestTaskStatus.test_long_wrapped_error_reveals_beginning_and_renders_literal_labels) ... ok
+test_recovery_and_destruction_cancel_pending_reveal (TestTaskStatus.TestTaskStatus.test_recovery_and_destruction_cancel_pending_reveal) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.946s
+
+OK

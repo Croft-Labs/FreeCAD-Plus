@@ -24,7 +24,8 @@ their implementation priorities and proposed feature lists are not an active que
     additive/subtractive previews in their applicable acceptance checks.
 11. New feature-task errors must follow the owner's
     [prominent error feedback requirement](ui-ux-specs/TASK_PANEL.md#prominent-error-feedback--november-23-2026),
-    using the shared highlighted convention once its current native preview is approved.
+    using the approved shared `task_status.TaskStatus` widget (`setError` for errors,
+    `setText` for normal guidance and successful recovery).
     Preserve actionable text, wrapping, focus and valid-state recovery; ordinary
     incomplete/idle guidance is distinct from an error.
 

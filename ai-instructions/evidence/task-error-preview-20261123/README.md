@@ -1,7 +1,7 @@
 # Prominent inline task errors — November 23, 2026
 
-Status: native UI preview awaiting direct screenshot approval. Production and
-installed task code are unchanged.
+Status: historical native UI preview, subsequently approved by the owner with
+"approved" and [implemented/installed](../task-errors-20261123/README.md).
 
 Owner request: the sketch attachment error is insufficiently prominent; highlight
 it like the Extrude target field, and use that treatment for future implemented errors.
