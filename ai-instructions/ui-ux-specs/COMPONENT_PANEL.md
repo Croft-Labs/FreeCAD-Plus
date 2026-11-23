@@ -37,6 +37,16 @@ implementing every workflow in that task. Operation completion is not a Group 1 
 
 ## Confirmed requirements
 
+### History coordinate icons and initial expansion — November 22, 2026
+
+Owner request: Axes and Planes groups use the same native icons as their respective
+children, replacing folder icons. Coordinate System and its descendants start collapsed.
+Apply the collapse default when creating their History rows; ordinary refreshes retain
+the user's later expand/collapse choices. Preserve visibility eyes, geometry visibility,
+labels, source ownership and the other tabs. The direct native
+[preview](../evidence/history-icons-preview-20261122/README.md) is ready; visual approval
+and production implementation remain pending.
+
 ### Component, definition and instance
 
 A component serves as both a part and an assembly: it can contain its own sketches, operations/features and other geometry, and linked instances of child components. Models holds definitions; Part Tree holds placed instances. Repeated instances share their definition. Core Bodies are background implementation objects, not objects the user must create, activate or manage independently. The user works with sketches, operations/features and geometry. [Current owner direction](EVIDENCE_AND_DECISIONS.md#current)

@@ -1,5 +1,18 @@
 # FreeCAD Plus: Current work state
 
+## History coordinate icons/collapse preview — November 22, 2026
+
+The owner requested child-matching icons on Axes/Planes and Coordinate System plus
+descendants collapsed by default. Direct native screenshots are ready:
+[default](evidence/history-icons-preview-20261122/default.png),
+[root opened](evidence/history-icons-preview-20261122/groups.png),
+[child icon comparison](evidence/history-icons-preview-20261122/children.png).
+The candidate uses native child icons and changes only fresh-row expansion. Native
+checks confirm all three groups initially collapsed, both group/child icon images
+identical, manual expansion retained after refresh and unchanged object visibility.
+**Awaiting chat approval; production source and installed files are unchanged.**
+See [preview provenance](evidence/history-icons-preview-20261122/README.md).
+
 ## Unified Revolve implementation — November 22, 2026
 
 The owner approved: **"implement the expanded selection list and revolves"**.
