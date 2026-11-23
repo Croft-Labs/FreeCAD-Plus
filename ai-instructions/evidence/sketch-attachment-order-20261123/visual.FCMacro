@@ -1,0 +1,34 @@
+"""Capture the actual installed Attach Sketch rejection during the regression case."""
+import json,os,sys,traceback,unittest
+from pathlib import Path
+sys.dont_write_bytecode=True
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR']);result={'ok':False};timer=QtCore.QTimer()
+def capture():
+    modal=QtWidgets.QApplication.activeModalWidget()
+    if isinstance(modal,QtWidgets.QMessageBox) and 'Reorder History' in modal.text():
+        result['warning']=modal.text()
+        result['captured']=modal.grab().save(str(out/'attach-sketch-rejected.png'))
+        timer.stop()
+timer.timeout.connect(capture)
+def run():
+    try:
+        import SketcherGui,PartGui
+        from freecad_plus import document,geometry
+        assert '/app/' in document.__file__.replace('\\','/')
+        assert '/app/' in SketcherGui.__file__.replace('\\','/')
+        Gui.getMainWindow().show();Gui.activateWorkbench('PartDesignWorkbench')
+        timer.start(5)
+        suite=unittest.defaultTestLoader.loadTestsFromName(
+            'TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_attach_sketch_command_rejects_later_plane_then_reorder_retry')
+        with (out/'visual.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+        result.update(ok=report.wasSuccessful() and result.get('captured',False),tests=report.testsRun,
+                      sketcher_module=SketcherGui.__file__,part_module=PartGui.__file__,
+                      document_module=document.__file__,geometry_module=geometry.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    timer.stop();(out/'visual.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

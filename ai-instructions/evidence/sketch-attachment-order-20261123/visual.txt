@@ -1,0 +1,6 @@
+test_attach_sketch_command_rejects_later_plane_then_reorder_retry (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_attach_sketch_command_rejects_later_plane_then_reorder_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.066s
+
+OK

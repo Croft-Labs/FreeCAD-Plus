@@ -7,6 +7,7 @@ import FreeCAD as App,FreeCADGui as Gui,Part
 from PySide6 import QtCore,QtGui,QtWidgets,QtTest
 from freecad_plus import document,planes,plane_task,sketch_task,sketch_placement,extrusion,panel,editing,external,hierarchy
 from TestComponentPlanes import TestComponentPlanes
+from TestComponentModeling import messages
 
 
 class TestPlaneHistoryWorkflow(unittest.TestCase):
@@ -23,6 +24,85 @@ class TestPlaneHistoryWorkflow(unittest.TestCase):
         line=self.feature(Part.makeLine(App.Vector(),App.Vector(0,0,20)))
         point=self.feature(Part.Vertex(App.Vector(4,5,7)))
         return (line,'Edge1'),(point,'Vertex1')
+
+    def native_attach(self, sketch, plane):
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(plane,'Face1')
+        dialogs=[];timer=QtCore.QTimer()
+        def answer():
+            dialog=QtWidgets.QApplication.activeModalWidget()
+            if not isinstance(dialog,QtWidgets.QInputDialog):return
+            dialogs.append(dialog.windowTitle())
+            combo=dialog.findChild(QtWidgets.QComboBox)
+            if dialog.windowTitle()=='Select Sketch':
+                combo.setCurrentText(sketch.Label)
+            else:
+                index=next((i for i in range(combo.count()) if '(suggested)' in combo.itemText(i)), -1)
+                if index<0:dialog.reject();return
+                combo.setCurrentIndex(index)
+            dialog.accept()
+        timer.timeout.connect(answer);timer.start(25)
+        try:
+            with messages() as errors:Gui.runCommand('Sketcher_MapSketch');QtTest.QTest.qWait(100)
+        finally:timer.stop()
+        return errors,dialogs
+
+    def test_attach_sketch_command_rejects_later_plane_then_reorder_retry(self):
+        with document.transaction(self.doc,'Native sketch fixture'):
+            sketch=self.owner.newObject('Sketcher::SketchObject','NativeSketch')
+            sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),3),False)
+        plane=planes.save(self.doc,[(self.xy,'')],7)
+        before=(sketch.Placement,sketch.MapMode,list(sketch.AttachmentSupport),self.doc.UndoCount)
+        errors,dialogs=self.native_attach(sketch,plane)
+        self.assertTrue(any('Reorder History' in error and 'try again' in error for error in errors),errors)
+        self.assertNotIn('Sketch Attachment',dialogs)
+        self.assertEqual(document.history(self.doc,self.owner),[sketch,plane])
+        self.assertTrue(sketch.Placement.isSame(before[0],1e-7))
+        self.assertEqual((sketch.MapMode,list(sketch.AttachmentSupport),self.doc.UndoCount),before[1:])
+        document.reorder_history(self.doc,self.owner,plane,0)
+        errors,dialogs=self.native_attach(sketch,plane)
+        self.assertFalse(errors,errors);self.assertIn('Sketch Attachment',dialogs)
+        self.assertEqual(sketch.AttachmentSupport[0][0],plane)
+        self.assertAlmostEqual(sketch.Placement.Base.z,7)
+        self.doc.undo();self.doc.recompute();self.assertFalse(sketch.AttachmentSupport)
+        self.doc.redo();self.doc.recompute();self.assertEqual(sketch.AttachmentSupport[0][0],plane)
+
+    def test_managed_attach_sketch_command_rejects_later_pick(self):
+        sketch=sketch_placement.save(self.doc,[(self.xy,'')])
+        plane=planes.save(self.doc,[(self.xy,'')],7)
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+        Gui.runCommand('Sketcher_MapSketch');QtTest.QTest.qWait(80)
+        task=sketch_task._active;self.assertIsNotNone(task)
+        before=list(task.refs);self.pick(task,(plane,''))
+        self.assertEqual(task.refs,before)
+        self.assertIn('Reorder History',task.status.text());self.assertIn('try again',task.status.text())
+        task.reject()
+
+    def test_native_attach_sketch_legacy_document_remains_supported(self):
+        legacy=App.newDocument('LegacyAttachOrder')
+        sketch=legacy.addObject('Sketcher::SketchObject','LegacySketch')
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),3),False)
+        plane=legacy.addObject('Part::Plane','LaterPlane');plane.Placement.Base.z=7;legacy.recompute()
+        errors,dialogs=self.native_attach(sketch,plane)
+        self.assertFalse(errors,errors);self.assertIn('Sketch Attachment',dialogs)
+        self.assertEqual(sketch.AttachmentSupport[0][0],plane)
+
+    def test_sketch_support_property_rejects_later_reference(self):
+        from TestPartBooleanInputs import TestPartBooleanInputs
+        with document.transaction(self.doc,'Native sketch fixture'):
+            sketch=self.owner.newObject('Sketcher::SketchObject','NativeSketch')
+        plane=planes.save(self.doc,[(self.xy,'')],7)
+        def select(obj):
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(obj)
+        self.select=select
+        dialog=TestPartBooleanInputs.open_compound_links(self,sketch,'Attachment Support')
+        TestPartBooleanInputs.choose_compound_links(self,dialog,[plane])
+        before=self.doc.UndoCount
+        with messages() as errors:dialog.accept();QtTest.QTest.qWait(100)
+        self.assertTrue(any('Reorder History' in error for error in errors),errors)
+        self.assertTrue(dialog.isVisible());self.assertFalse(sketch.AttachmentSupport)
+        self.assertEqual(self.doc.UndoCount,before)
+        self.assertEqual(document.history(self.doc,self.owner),[sketch,plane])
+        dialog.reject()
 
     def pick(self,task,ref):
         task.pick_target='plane';Gui.Selection.clearSelection();Gui.Selection.addSelection(*ref)

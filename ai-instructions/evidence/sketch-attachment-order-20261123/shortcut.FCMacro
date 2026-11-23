@@ -1,0 +1,29 @@
+"""Verify the existing desktop launcher with explicit isolated settings."""
+import json, os, sys, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore
+
+out = Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result = {'ok': False}
+    try:
+        from freecad_plus import document, panel, geometry
+        assert hasattr(geometry, 'is_component_input_property')
+        config = {key: App.ConfigGet(key) for key in ('ExeName', 'AppHomePath', 'UserParameter', 'SystemParameter', 'UserAppData')}
+        assert 'profile-shortcut' in config['UserParameter'], config
+        assert 'profile-shortcut' in config['SystemParameter'], config
+        assert 'profile-shortcut' in App.getUserAppDataDir(), App.getUserAppDataDir()
+        assert '/app/' in panel.__file__.replace('\\', '/'), panel.__file__
+        assert '/app/' in document.__file__.replace('\\', '/'), document.__file__
+        Gui.activateWorkbench('PartDesignWorkbench')
+        window = Gui.getMainWindow(); window.show(); window.raise_(); window.activateWindow()
+        result.update(ok=True, config=config, user_data=App.getUserAppDataDir(),
+                      panel_module=panel.__file__,document_module=document.__file__)
+    except BaseException:
+        result['error'] = traceback.format_exc()
+    (out / 'shortcut.json').write_text(json.dumps(result, indent=2))
+
+QtCore.QTimer.singleShot(2200, run)

@@ -1,0 +1,103 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/102] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestPlaneHistoryWorkflow.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestPlaneHistoryWorkflow.py
+[2/102] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/geometry.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/geometry.py
+[3/102] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/document.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/document.py
+[4/102] Automatic MOC and UIC for target FreeCADBase
+[5/101] Generating qrc_Base_translation.cpp
+[6/101] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[7/101] Building CXX object src\Base\CMakeFiles\FreeCADBase.dir\qrc_Base_translation.cpp.obj
+[8/101] Linking CXX shared library bin\FreeCADBase.dll
+[9/101] Automatic MOC and UIC for target FreeCADApp
+[10/100] Generating qrc_App_translation.cpp
+[11/100] Building CXX object src\App\CMakeFiles\FreeCADApp.dir\qrc_App_translation.cpp.obj
+[12/100] Building CXX object src\App\CMakeFiles\FreeCADApp.dir\Application.cpp.obj
+[13/100] Building CXX object src\App\CMakeFiles\FreeCADApp.dir\Document.cpp.obj
+[14/100] Linking CXX shared library bin\FreeCADApp.dll
+[15/100] Linking CXX shared library Mod\Material\Materials.pyd
+[16/100] Linking CXX shared library Mod\Part\Part.pyd
+[17/100] Automatic MOC and UIC for target FreeCADGui
+[18/99] Linking CXX shared library Mod\Sketcher\Sketcher.pyd
+[19/99] Generating qrc_FreeCAD_translation.cpp
+[20/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\qrc_FreeCAD_translation.cpp.obj
+[21/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Clipping.cpp.obj
+[22/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TaskDlgRelocation.cpp.obj
+[23/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DemoMode.cpp.obj
+[24/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Dialogs\DlgPropertyLink.cpp.obj
+[25/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\InputVector.cpp.obj
+[26/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DownloadManager.cpp.obj
+[27/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\SceneInspector.cpp.obj
+[28/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TextureMapping.cpp.obj
+[29/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Placement.cpp.obj
+[30/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Transform.cpp.obj
+[31/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DownloadItem.cpp.obj
+[32/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\VectorListEditor.cpp.obj
+[33/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\NetworkRetriever.cpp.obj
+[34/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DocumentRecovery.cpp.obj
+[35/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TaskElementColors.cpp.obj
+[36/99] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Widgets.cpp.obj
+[37/99] Linking CXX shared library bin\FreeCADGui.dll
+[38/99] Automatic MOC and UIC for target MatGui
+[39/98] Generating qrc_Material_translation.cpp
+[40/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\qrc_Material_translation.cpp.obj
+[41/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\Array3D.cpp.obj
+[42/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\Array2D.cpp.obj
+[43/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgInspectAppearance.cpp.obj
+[44/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgInspectMaterial.cpp.obj
+[45/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgSettingsMaterial.cpp.obj
+[46/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgMaterialImp.cpp.obj
+[47/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgDisplayPropertiesImp.cpp.obj
+[48/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgSettingsDefaultMaterial.cpp.obj
+[49/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\ImageEdit.cpp.obj
+[50/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\ListEdit.cpp.obj
+[51/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\TextEdit.cpp.obj
+[52/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\MaterialSave.cpp.obj
+[53/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\MaterialsEditor.cpp.obj
+[54/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\MaterialTreeWidget.cpp.obj
+[55/98] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\ModelSelect.cpp.obj
+[56/98] Linking CXX shared library Mod\Material\MatGui.pyd
+[57/98] Automatic MOC and UIC for target PartGui
+[58/97] Generating qrc_Part_translation.cpp
+[59/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\qrc_Part_translation.cpp.obj
+[60/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgExportStep.cpp.obj
+[61/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\Mirroring.cpp.obj
+[62/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgBooleanOperation.cpp.obj
+[63/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgImportStep.cpp.obj
+[64/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\CrossSections.cpp.obj
+[65/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgExtrusion.cpp.obj
+[66/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgScale.cpp.obj
+[67/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartImportIgesImp.cpp.obj
+[68/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartImportStepImp.cpp.obj
+[69/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartBoxImp.cpp.obj
+[70/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgFilletEdges.cpp.obj
+[71/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartCylinderImp.cpp.obj
+[72/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgSettingsGeneral.cpp.obj
+[73/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgSettingsObjectColor.cpp.obj
+[74/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgSettings3DViewPartImp.cpp.obj
+[75/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\PatternParametersWidget.cpp.obj
+[76/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgRevolution.cpp.obj
+[77/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgProjectionOnSurface.cpp.obj
+[78/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskFaceAppearances.cpp.obj
+[79/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskShapeBuilder.cpp.obj
+[80/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPrimitives.cpp.obj
+[81/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskLoft.cpp.obj
+[82/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\SectionCutting.cpp.obj
+[83/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskOffset.cpp.obj
+[84/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskSweep.cpp.obj
+[85/97] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskThickness.cpp.obj
+[86/97] Linking CXX shared library Mod\Part\PartGui.pyd
+[87/97] Automatic MOC and UIC for target SketcherGui
+[88/96] Generating qrc_Sketcher_translation.cpp
+[89/96] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\qrc_Sketcher_translation.cpp.obj
+[90/96] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherSolverAdvanced.cpp.obj
+[91/96] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherValidation.cpp.obj
+[92/96] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\Command.cpp.obj
+[93/96] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherElements.cpp.obj
+[94/96] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherConstraints.cpp.obj
+[95/96] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\SketcherToolDefaultWidget.cpp.obj
+[96/96] Linking CXX shared library Mod\Sketcher\SketcherGui.pyd

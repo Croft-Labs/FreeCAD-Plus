@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+## Attach Sketch sequential-order repair — November 23, 2026
+
+The owner-reported `Sketcher_MapSketch` bypass is repaired: validate support against
+History before native attachment mutates dependencies, with reorder-and-retry guidance.
+Sketch support-property picks share the boundary. See [repair status and acceptance](WORK_STATE.md#attach-sketch-sequential-order-repair--november-23-2026).
+
 ## Latest Plane/Sketch placement and History reordering — November 23, 2026
 
 Both approved workflows are installed: shared compatible/conflicting reference

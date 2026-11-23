@@ -1,0 +1,122 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source_sha256": "e192fe91419c3051da02f0ccca6a9a25134e5c34d5b69fa9cb4e0ef294bdea44",
+    "built_sha256": "e192fe91419c3051da02f0ccca6a9a25134e5c34d5b69fa9cb4e0ef294bdea44",
+    "installed_sha256": "e192fe91419c3051da02f0ccca6a9a25134e5c34d5b69fa9cb4e0ef294bdea44",
+    "previous_sha256": "e12a78c2e19fdd034c8944323d755c8a21a8b498396d5a0f773d030307f16123",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "rollback_sha256": "e12a78c2e19fdd034c8944323d755c8a21a8b498396d5a0f773d030307f16123"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\geometry.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/geometry.py",
+    "source_sha256": "545b6bf1f6f5dac87b3643df76bf28275119b756af736f0d619addb0da101004",
+    "built_sha256": "545b6bf1f6f5dac87b3643df76bf28275119b756af736f0d619addb0da101004",
+    "installed_sha256": "545b6bf1f6f5dac87b3643df76bf28275119b756af736f0d619addb0da101004",
+    "previous_sha256": "353e7baaff0a4147b3749afb63276c5f7ff38c3162898286c170c41551bc8f84",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\geometry.py",
+    "rollback_sha256": "353e7baaff0a4147b3749afb63276c5f7ff38c3162898286c170c41551bc8f84"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestPlaneHistoryWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestPlaneHistoryWorkflow.py",
+    "source_sha256": "da5109025a4983c5985b8f1b829dca6538e8e626bce5931b9e7477193cee9f68",
+    "built_sha256": "da5109025a4983c5985b8f1b829dca6538e8e626bce5931b9e7477193cee9f68",
+    "installed_sha256": "da5109025a4983c5985b8f1b829dca6538e8e626bce5931b9e7477193cee9f68",
+    "previous_sha256": "a59e0a7cf34aa55ce73764d3ba014707688a814486ca14e764d14c07b4df8a6a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\Mod\\FreeCADPlus\\TestPlaneHistoryWorkflow.py",
+    "rollback_sha256": "a59e0a7cf34aa55ce73764d3ba014707688a814486ca14e764d14c07b4df8a6a"
+  },
+  {
+    "path": "bin\\FreeCADBase.dll",
+    "build_path": "bin/FreeCADBase.dll",
+    "source_sha256": null,
+    "built_sha256": "8d9dc9adb6d27984c3c92242a55e445d771c5c9f78050de1780a5934e0e20f05",
+    "installed_sha256": "8d9dc9adb6d27984c3c92242a55e445d771c5c9f78050de1780a5934e0e20f05",
+    "previous_sha256": "eb87a2eafdedcb03a5e2979f598697cdbf686eaeb1d6a1c79e8d846d28c67760",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\bin\\FreeCADBase.dll",
+    "rollback_sha256": "eb87a2eafdedcb03a5e2979f598697cdbf686eaeb1d6a1c79e8d846d28c67760"
+  },
+  {
+    "path": "bin\\FreeCADApp.dll",
+    "build_path": "bin/FreeCADApp.dll",
+    "source_sha256": null,
+    "built_sha256": "d38d5da57d08fdb84c3894476adb12e15f4637de3d2ed236cede490f70b2075f",
+    "installed_sha256": "d38d5da57d08fdb84c3894476adb12e15f4637de3d2ed236cede490f70b2075f",
+    "previous_sha256": "1bcb0b70bb92574b83aaa2641a0ec443a5370c66b9cfc99965c51b50e23185e6",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\bin\\FreeCADApp.dll",
+    "rollback_sha256": "1bcb0b70bb92574b83aaa2641a0ec443a5370c66b9cfc99965c51b50e23185e6"
+  },
+  {
+    "path": "bin\\FreeCADGui.dll",
+    "build_path": "bin/FreeCADGui.dll",
+    "source_sha256": null,
+    "built_sha256": "18b85cb0d0dc5c05fbc66a772e08378dbc0de8dae8b459e532c578b53423b45b",
+    "installed_sha256": "18b85cb0d0dc5c05fbc66a772e08378dbc0de8dae8b459e532c578b53423b45b",
+    "previous_sha256": "052a7539bb568e725fb495bc5aba3a53f6f1f869c59f4a9af6b8e9f0ef8ba8e1",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\bin\\FreeCADGui.dll",
+    "rollback_sha256": "052a7539bb568e725fb495bc5aba3a53f6f1f869c59f4a9af6b8e9f0ef8ba8e1"
+  },
+  {
+    "path": "lib\\Materials.pyd",
+    "build_path": "Mod/Material/Materials.pyd",
+    "source_sha256": null,
+    "built_sha256": "ac9e1753925bce614445aeb2a6c8bde864a48f3b6d5c0edb23c0915a07593ca2",
+    "installed_sha256": "ac9e1753925bce614445aeb2a6c8bde864a48f3b6d5c0edb23c0915a07593ca2",
+    "previous_sha256": "a01fe4688ed94b52596b935ea669cc5e2502b21c3ec0c6589472b6e042c1d07a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\lib\\Materials.pyd",
+    "rollback_sha256": "a01fe4688ed94b52596b935ea669cc5e2502b21c3ec0c6589472b6e042c1d07a"
+  },
+  {
+    "path": "lib\\MatGui.pyd",
+    "build_path": "Mod/Material/MatGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "98324efee975f503d0196938f585ce8ef172fc84edc3733b5a636b05b0120a7f",
+    "installed_sha256": "98324efee975f503d0196938f585ce8ef172fc84edc3733b5a636b05b0120a7f",
+    "previous_sha256": "ae123aaa1d605c9e5006ed663fe4b2d961f2148ca0ef1a1916ec9c34278c139b",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\lib\\MatGui.pyd",
+    "rollback_sha256": "ae123aaa1d605c9e5006ed663fe4b2d961f2148ca0ef1a1916ec9c34278c139b"
+  },
+  {
+    "path": "lib\\Part.pyd",
+    "build_path": "Mod/Part/Part.pyd",
+    "source_sha256": null,
+    "built_sha256": "13fa7489dc00d9e5e797c78f2266b63fee50069a3c2eb41e5055ec7e516e9ea4",
+    "installed_sha256": "13fa7489dc00d9e5e797c78f2266b63fee50069a3c2eb41e5055ec7e516e9ea4",
+    "previous_sha256": "2ca640fd28b6d10e0b66437d70867b49cf9b3439839a71ff39adeb7842265840",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\lib\\Part.pyd",
+    "rollback_sha256": "2ca640fd28b6d10e0b66437d70867b49cf9b3439839a71ff39adeb7842265840"
+  },
+  {
+    "path": "lib\\PartGui.pyd",
+    "build_path": "Mod/Part/PartGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "c9386830c90bb36906284c298b91ac4e73db6a79babded43eccd5b621617fb43",
+    "installed_sha256": "c9386830c90bb36906284c298b91ac4e73db6a79babded43eccd5b621617fb43",
+    "previous_sha256": "48d048b88ddda89784df5cf95ec84dff3e6d7d42209c199cf6af0c01c137c8c2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\lib\\PartGui.pyd",
+    "rollback_sha256": "48d048b88ddda89784df5cf95ec84dff3e6d7d42209c199cf6af0c01c137c8c2"
+  },
+  {
+    "path": "lib\\Sketcher.pyd",
+    "build_path": "Mod/Sketcher/Sketcher.pyd",
+    "source_sha256": null,
+    "built_sha256": "319acc556dad75f2ce64f153cbb8b0ff91cd1e7a98bb151c7133d8333b81462a",
+    "installed_sha256": "319acc556dad75f2ce64f153cbb8b0ff91cd1e7a98bb151c7133d8333b81462a",
+    "previous_sha256": "dff6209e79c99c891f05082f4cc299b688cd765a7326dd86631998bc62b942de",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\lib\\Sketcher.pyd",
+    "rollback_sha256": "dff6209e79c99c891f05082f4cc299b688cd765a7326dd86631998bc62b942de"
+  },
+  {
+    "path": "lib\\SketcherGui.pyd",
+    "build_path": "Mod/Sketcher/SketcherGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "a726604907fb0afc4e00154a0d9a227588180d9c26196e73712b21adeb0d563d",
+    "installed_sha256": "a726604907fb0afc4e00154a0d9a227588180d9c26196e73712b21adeb0d563d",
+    "previous_sha256": "5f00dbb96b977ef946ecee8f5c7a720dd8500aba4219d6fb4fc0566abcf6e60d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sketch-attachment-order-20261123\\install-backup\\lib\\SketcherGui.pyd",
+    "rollback_sha256": "5f00dbb96b977ef946ecee8f5c7a720dd8500aba4219d6fb4fc0566abcf6e60d"
+  }
+]

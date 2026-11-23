@@ -1,5 +1,31 @@
 # FreeCAD Plus: Current work state
 
+## Attach Sketch sequential-order repair — November 23, 2026
+
+Owner clarified the failing route is the Attach Sketch button (`Sketcher_MapSketch`).
+The native command checked cycles but not History position before support assignment;
+the resulting dependency sort could then silently move the sketch after a later plane.
+The command now checks the chosen existing sketch against the original selection
+before attachment modes and again before changing support. Sketch support-property
+picks share the guard. Rejection preserves support, map mode, placement, order and
+Undo count and says to reorder History, then try again. Explicitly moving the plane
+before the sketch permits retry. Classic documents retain their native behavior.
+
+Native FreeCADGui/SketcherGui and dependencies were rebuilt and installed with
+source/build/install hashes and retained original/loaded-image backups. All 67 focused
+build checks and 217 installed regressions passed, including the actual native command,
+reorder/retry, Undo/Redo, managed sketch task, support-property rejection and classic
+document compatibility. Five separate startup checks also passed. The installed
+fresh-process warning was captured and inspected.
+See [repair evidence](evidence/sketch-attachment-order-20261123/README.md).
+
+The owner's regular-profile process (PID 21716 during installation) was preserved;
+its loaded libraries remain backed up. **Save and restart that session to load the
+native fix.** Validation and the separate shortcut launch use isolated profiles.
+Unrelated `project.previewfirst.json` remains untouched. Installation briefly created
+one module at the build-style location; it was hash-verified and moved into backup,
+then all twelve final installed outputs were verified at their actual runtime paths.
+
 ## Plane/Sketch placement and History reordering installed — November 23, 2026
 
 Owner approved both previews: "implement the plane and sketch placement as well as

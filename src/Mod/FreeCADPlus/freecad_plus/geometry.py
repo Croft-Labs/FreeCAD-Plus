@@ -183,6 +183,13 @@ def is_part_input_property(consumer, name):
     return name in part_input_properties(consumer)
 
 
+def is_component_input_property(consumer, name):
+    """Reference properties with a native picker admission boundary."""
+    if consumer.isDerivedFrom('Sketcher::SketchObject'):
+        return name in ('AttachmentSupport', 'Support', 'PlaneReferences', 'OriginPoint', 'AxisReferences')
+    return is_part_input_property(consumer, name)
+
+
 def require_modeling_inputs(consumer, inputs=None):
     """Check native modeling intake without replacing its own geometry rules.
 

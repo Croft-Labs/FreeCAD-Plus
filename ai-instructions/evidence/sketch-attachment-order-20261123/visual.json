@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "warning": "\"Plane\" must precede \"NativeSketch\" in History; Reorder History to put the input before this feature, then try again.",
+  "captured": true,
+  "tests": 1,
+  "sketcher_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\SketcherGui.pyd",
+  "part_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\PartGui.pyd",
+  "document_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+  "geometry_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\geometry.py"
+}

@@ -598,7 +598,14 @@ does not mutate ownership, identities, visibility, native links or saved schema.
 `document.require_predecessors` checks an existing consumer's current corrected
 position before input mutation. Later/self inputs are refused. It is shared by native
 geometry admission, Extrude/Revolve validation and picking, sketch placement, and
-plane save/preview. Command-start admission passing a component/Body is creation,
+plane save/preview. The Attach Sketch command (`Sketcher_MapSketch`) checks the chosen
+existing sketch against the unresolved support selection before offering attachment
+modes, and again before mutation. Otherwise native support assignment would change
+the dependency graph before History could reject the forward input. Sketch support
+properties also participate in `DlgPropertyLink`'s pre-commit guard through
+`geometry.is_component_input_property`; this is separate from Part-only ownership
+restrictions. Rejections instruct the user to reorder History and retry. Classic
+FreeCAD documents retain native behavior. Command-start admission passing a component/Body is creation,
 not an edit to a container, and permits inputs for the appended feature. Native
 recompute and arbitrary Python assignments are not global admission hooks; existing
 legacy dependencies are displayed in valid topological order. Temporary suppression

@@ -1,0 +1,18 @@
+test_attach_sketch_command_rejects_later_plane_then_reorder_retry (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_attach_sketch_command_rejects_later_plane_then_reorder_retry) ... FAIL
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestPlaneHistoryWorkflow.py", line 56, in test_attach_sketch_command_rejects_later_plane_then_reorder_retry
+    self.assertTrue(any('Reorder History' in error and 'try again' in error for error in errors),errors)
+AssertionError: False is not true : []
+
+======================================================================
+FAIL: test_attach_sketch_command_rejects_later_plane_then_reorder_retry (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_attach_sketch_command_rejects_later_plane_then_reorder_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus\TestPlaneHistoryWorkflow.py", line 56, in test_attach_sketch_command_rejects_later_plane_then_reorder_retry
+    self.assertTrue(any('Reorder History' in error and 'try again' in error for error in errors),errors)
+AssertionError: False is not true : []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.715s
+
+FAILED (failures=1)

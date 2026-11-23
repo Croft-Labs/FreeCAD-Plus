@@ -38,6 +38,7 @@
 #include <Gui/Application.h>
 #include <Gui/BitmapFactory.h>
 #include <Gui/CommandT.h>
+#include <Gui/ComponentGeometry.h>
 #include <Gui/ComponentModeling.h>
 #include <Gui/Control.h>
 #include <Gui/Document.h>
@@ -683,6 +684,15 @@ void CmdSketcherMapSketch::activated(int iMsg)
             return;
         int index = items.indexOf(text);
         Part2DObject* sketch = static_cast<Part2DObject*>(sketches[index]);
+        // Admission must use the existing History order, before setting support
+        // can make the dependency-sorted view silently move this sketch later.
+        const auto inputError = Gui::componentGeometryError(sketch);
+        if (!inputError.empty()) {
+            QMessageBox::warning(Gui::getMainWindow(),
+                                 qApp->translate("Sketcher_MapSketch", "Attach Sketch"),
+                                 QString::fromUtf8(inputError.c_str()));
+            return;
+        }
         if (sketch->getPropertyByName("PlusSketchPlacementVersion")) {
             doCommand(Gui, "from freecad_plus import sketch_task\nsketch_task.show(%s)",
                       getObjectCmd(sketch).c_str());
@@ -787,6 +797,13 @@ void CmdSketcherMapSketch::activated(int iMsg)
 
         // * action
         if (bAttach) {
+            const auto error = Gui::componentGeometryError(sketch);
+            if (!error.empty()) {
+                QMessageBox::warning(Gui::getMainWindow(),
+                                     qApp->translate("Sketcher_MapSketch", "Attach Sketch"),
+                                     QString::fromUtf8(error.c_str()));
+                return;
+            }
             App::PropertyLinkSubList support;
             Gui::Selection().getAsPropertyLinkSubList(support);
             std::string supportString = support.getPyReprString();

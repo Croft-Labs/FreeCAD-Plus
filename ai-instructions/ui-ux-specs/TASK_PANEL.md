@@ -4,6 +4,19 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Reject later sketch supports before attachment — November 23, 2026
+
+Owner bug report identifies the Attach Sketch button (`Sketcher_MapSketch`): creating
+a sketch, then a plane, must not allow attaching that sketch to the later plane.
+Validate the pre-attachment History order before writing any support or map mode.
+Reject the selection, preserve the previous support/placement/order, and tell the
+user to reorder History so the input precedes the sketch, then try again. Do not
+silently reorder History as a side effect of accepting the new dependency. After
+the user explicitly reorders the independent plane before the sketch, attachment
+may proceed. Apply the same guard to sketch support-property picks. This repairs
+the already-approved sequential-input contract; it adds no new task layout.
+See [repair evidence](../evidence/sketch-attachment-order-20261123/README.md).
+
 ### Compatible plane picks and interchangeable references — November 23, 2026
 
 Owner request applies to both creating a datum plane and choosing a sketch plane.

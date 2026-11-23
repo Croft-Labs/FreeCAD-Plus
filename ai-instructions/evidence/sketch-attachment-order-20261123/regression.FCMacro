@@ -1,0 +1,84 @@
+import json, os, sys, traceback, unittest, importlib
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets
+out = Path(os.environ['PLUS_TEST_DIR'])
+if os.environ.get('PLUS_SOURCE_CHECK')=='1':
+    sys.path.insert(0,'C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')
+
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test); self.stream.flush()
+    def addError(self,test,err):
+        super().addError(test,err); self.stream.write(self._exc_info_to_string(err,test)); self.stream.flush()
+    def addFailure(self,test,err):
+        super().addFailure(test,err); self.stream.write(self._exc_info_to_string(err,test)); self.stream.flush()
+
+focus = QtCore.QTimer()
+focus.timeout.connect(lambda: QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+    if Gui.Control.activeDialog() and not QtWidgets.QApplication.activeModalWidget()
+    and not Gui.getMainWindow().isActiveWindow() else None)
+focus.start(30)
+
+def run():
+    result = {'ok': False}
+    try:
+        window=Gui.getMainWindow(); window.resize(1300,900); window.show(); window.raise_(); window.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        import TestFeatureCenteredModeling, TestTargetCoordinateWorkflow, TestPlaneHistoryWorkflow
+        import tempfile
+        os.environ['PLUS_TEST_DIR']=tempfile.mkdtemp(prefix='fresh-',dir=out)
+        suite=unittest.TestSuite()
+        if os.environ['PLUS_TEST_SCOPE']!='ui':
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow))
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow))
+        if os.environ['PLUS_TEST_SCOPE']=='legacy':
+            import tempfile
+            os.environ['PLUS_TEST_DIR']=tempfile.mkdtemp(prefix='legacy-fresh-',dir=out)
+            for name in ('TestLegacyConversion','TestLegacyBooleanConversion'):
+                module=importlib.import_module(name)
+                cls=getattr(module,name)
+                suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(cls))
+        elif os.environ['PLUS_TEST_SCOPE']=='ui':
+            import TestComponentPanel
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestComponentPanel.TestUIModes))
+        else:
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(TestFeatureCenteredModeling.TestSequentialHistory))
+        if os.environ['PLUS_TEST_SCOPE']=='focused':
+            for name in ('TestComponentPlanes','TestSketchPlacement'):
+                suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(getattr(importlib.import_module(name),name)))
+        if os.environ['PLUS_TEST_SCOPE']=='repair':
+            for name,cls in (('TestComponentInputEditors','TestComponentInputEditors'),
+                             ('TestComponentModeling','TestComponentModeling'),
+                             ('TestRevolveWorkflow','TestRevolveWorkflow')):
+                suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(getattr(importlib.import_module(name),cls)))
+            import TestPartBooleanInputs
+            suite.addTest(TestPartBooleanInputs.TestPartBooleanInputs('test_split_property_all_inputs_reject_then_accept_undo_save'))
+        if os.environ['PLUS_TEST_SCOPE']=='broad':
+            for name in ('TestExtrudeWorkflow','TestExtrudeVisibility','TestRevolveWorkflow','TestSketchPlacement','TestComponentPlanes',
+                         'TestComponentPanel','TestComponentModeling','TestComponentInputEditors','TestComponentSweepInputs',
+                         'TestComponentDressUpInputs','TestComponentCommandInputs','TestPartBooleanInputs',
+                         'TestLegacyConversion','TestLegacyBooleanConversion'):
+                module=importlib.import_module(name)
+                # Imported fixture classes are not additional suites for this module.
+                for _,value in sorted(vars(module).items()):
+                    if isinstance(value,type) and issubclass(value,unittest.TestCase) and value.__module__==name:
+                        # Startup visibility tests need a fresh process, not a dock
+                        # deliberately closed by earlier interaction fixtures.
+                        if value.__name__!='TestUIModes':
+                            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(value))
+        if os.environ['PLUS_TEST_SCOPE']=='repair':
+            suite=unittest.defaultTestLoader.loadTestsFromName('TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_attach_sketch_command_rejects_later_plane_then_reorder_retry')
+        with (out/'regression.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        from freecad_plus import document, geometry
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors),
+                      document_module=document.__file__,geometry_module=geometry.__file__)
+    except BaseException: result['error']=traceback.format_exc()
+    (out/'regression.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+
+QtCore.QTimer.singleShot(2200,run)

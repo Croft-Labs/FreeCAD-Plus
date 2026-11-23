@@ -776,7 +776,8 @@ std::string DlgPropertyLink::componentLinkError(
     App::DocumentObjectT target(prop);
     auto obj = target.getObject();
     if (!obj || (!obj->isDerivedFrom(Base::Type::fromName("Part::Compound"))
-                 && !obj->isDerivedFrom(Base::Type::fromName("Part::FeaturePython")))) {
+                 && !obj->isDerivedFrom(Base::Type::fromName("Part::FeaturePython"))
+                 && !obj->isDerivedFrom(Base::Type::fromName("Sketcher::SketchObject")))) {
         return {};
     }
     const auto objects = obj->getDocument()->getObjects();
@@ -789,7 +790,7 @@ std::string DlgPropertyLink::componentLinkError(
     try {
         Py::Module module(PyImport_ImportModule("freecad_plus.geometry"), true);
         Py::Boolean guarded(module.callMemberFunction(
-            "is_part_input_property",
+            "is_component_input_property",
             Py::TupleN(Py::Object(obj->getPyObject(), true), Py::String(target.getPropertyName()))));
         if (!guarded) {
             return {};

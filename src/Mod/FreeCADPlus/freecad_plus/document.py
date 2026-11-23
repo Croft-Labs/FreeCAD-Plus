@@ -342,7 +342,7 @@ def require_predecessors(definition, consumer, inputs):
     for source in _history_inputs(definition, ordered, objects):
         if position[source] >= position[consumer]:
             raise ValueError(f'"{source.Label}" must precede "{consumer.Label}" in History; '
-                             'choose an earlier input.')
+                             'Reorder History to put the input before this feature, then try again.')
 
 
 def inspect_archive(filename):
