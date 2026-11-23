@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Installed Revolve Solid/Sheet — November 23, 2026
+
+Revolve now shares Extrude's approved Solid/Sheet controls. Sheet forces New and
+rotates curves into uncapped sheets; Solid remains default and preserves legacy
+features. Axis and angular workflows, edit identity and task visibility remain.
+All 96 build and 96 installed checks pass, plus native task interaction, separate
+process persistence/recompute and shortcut verification. See
+[acceptance](evidence/revolve-sheet-20261123/README.md).
+
 ## Installed Extrude Solid/Sheet — November 23, 2026
 
 Approved output choices now create native uncapped sheets from open/closed curves.

@@ -65,13 +65,13 @@ class ExtrudeTask(QtCore.QObject):
             button.clicked.connect(self.changed)
         self.modes['New Solid'].setChecked(True)
         self.outputs = {}
-        if self.engine is extrusion:
+        if 'output' in self.engine.DEFAULTS:
             self.modes['New Solid'].setText('New')
             columns = QtWidgets.QHBoxLayout(); output_row = QtWidgets.QVBoxLayout()
             self.output_group = QtWidgets.QButtonGroup(self)
             for name in ('Solid', 'Sheet'):
                 button = QtWidgets.QRadioButton(name)
-                button.setObjectName('ExtrudeOutput' + name)
+                button.setObjectName(self.title + 'Output' + name)
                 self.output_group.addButton(button); self.outputs[name] = button
                 output_row.addWidget(button); button.clicked.connect(self.changed)
             self.outputs['Solid'].setChecked(True); output_row.addStretch()
@@ -128,9 +128,9 @@ class ExtrudeTask(QtCore.QObject):
             for obj,sub in planes.canonical(self.owner,raw):
                 obj,sub = self.engine.profile_reference((obj,sub))
                 if (obj.isDerivedFrom('Sketcher::SketchObject') or Part.splitSubname(sub)[2].startswith('Face')
-                        or (self.engine is extrusion and (Part.splitSubname(sub)[2].startswith('Edge')
+                        or (self.outputs and (Part.splitSubname(sub)[2].startswith('Edge')
                             or (obj.isDerivedFrom('Part::Feature') and obj.Shape.Edges and not obj.Shape.Faces)))):
-                    if self.engine is extrusion and not obj.isDerivedFrom('Sketcher::SketchObject') and not Part.splitSubname(sub)[2].startswith('Face'):
+                    if self.outputs and not obj.isDerivedFrom('Sketcher::SketchObject') and not Part.splitSubname(sub)[2].startswith('Face'):
                         self.engine.validate_profiles(self.owner, [(obj, sub)], 'Sheet')
                     else:
                         self.engine.validate_profiles(self.owner, [(obj, sub)])
@@ -292,8 +292,8 @@ class ExtrudeTask(QtCore.QObject):
         self.profile_hint.setText('Select sketch curves or edges. Open curves create sheets.' if sheet else
                                   'Select a sketch, closed sketch region, or face.')
         with QtCore.QSignalBlocker(self.display):
-            self.display.setItemText(0, 'Extrusion preview' if sheet else 'Tool volume')
-        for end in (self.end1, self.end2):
+            self.display.setItemText(0, ('Extrusion preview' if self.engine is extrusion else 'Revolution preview') if sheet else 'Tool volume')
+        for end in (self.end1, self.end2) if self.engine is extrusion else ():
             if sheet and end['kind'].currentIndex() >= 3:
                 with QtCore.QSignalBlocker(end['kind']):end['kind'].setCurrentIndex(0)
             for index in (3, 4, 5):
@@ -418,7 +418,7 @@ class ExtrudeTask(QtCore.QObject):
             document.require_predecessors(self.owner,self.feature,[ref])
             if self.pick=='profile':
                 ref=self.engine.profile_reference(ref)
-                if self.engine is extrusion:self.engine.validate_profiles(self.owner,[ref],self.output())
+                if self.outputs:self.engine.validate_profiles(self.owner,[ref],self.output())
                 else:self.engine.validate_profiles(self.owner,[ref])
                 if ref in self.refs:self.refs.remove(ref)
                 elif self.refs and (ref[0]!=self.refs[0][0] or (not ref[0].isDerivedFrom('Sketcher::SketchObject')

@@ -9,8 +9,11 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 Owner requests the same Solid/Sheet options as Extrude. Solid is selected by
 default; Sheet automatically selects and locks New. Use the same left/right
 operation layout and preserve the rotation axis and angular controls.
-The [native preview](../evidence/revolve-sheet-preview-20261123/README.md)
-awaits approval; this records intent, not completed implementation.
+The owner approved the [native preview](../evidence/revolve-sheet-preview-20261123/README.md)
+and requested implementation. Sheet clears any target; returning to Solid leaves
+New selected and re-enables all operations. Open curves generate uncapped sheets;
+existing saved Revolves default to Solid. See
+[implementation evidence](../evidence/revolve-sheet-20261123/README.md).
 
 ### Extrude Solid/Sheet output — November 23, 2026
 

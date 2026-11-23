@@ -629,9 +629,9 @@ def save_feature(doc, refs, links, values, feature, engine):
             if predecessor:
                 predecessor.Visibility = True
             body.addObject(feature)
-        if engine is sys.modules[__name__] and 'Extrude_output' not in feature.PropertiesList:
-            feature.addProperty('App::PropertyString', 'Extrude_output', 'Extrude')
-            feature.setEditorMode('Extrude_output', 2)
+        if 'output' in engine.DEFAULTS and engine.PREFIX + 'output' not in feature.PropertiesList:
+            feature.addProperty('App::PropertyString', engine.PREFIX + 'output', engine.NAME)
+            feature.setEditorMode(engine.PREFIX + 'output', 2)
         feature.ProfileReferences = planes.links(refs)
         for key, prop in engine.LINKS.items():
             setattr(feature, prop, planes.links([links[key]]) if key in links else [])

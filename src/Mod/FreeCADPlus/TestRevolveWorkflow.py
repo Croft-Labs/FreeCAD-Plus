@@ -10,6 +10,133 @@ from freecad_plus import document, modeling, revolution, revolve_task, extrude_t
 from TestFeatureCenteredModeling import TestFeatureCenteredModeling
 
 
+class TestSheetRevolve(unittest.TestCase):
+    setUp = TestFeatureCenteredModeling.setUp
+    snapshot = TestFeatureCenteredModeling.snapshot
+
+    def tearDown(self):
+        if extrude_task._active:extrude_task._active.reject()
+        TestFeatureCenteredModeling.tearDown(self)
+
+    def line(self, radius=2):
+        sketch=modeling.new_sketch(self.doc)
+        sketch.Placement.Rotation=App.Rotation(App.Vector(1,0,0),90)
+        sketch.addGeometry(Part.LineSegment(App.Vector(radius,0,0),App.Vector(radius,4,0)),False)
+        self.doc.recompute();return sketch
+
+    def values(self, **kwargs):return dict(revolution.DEFAULTS,output='Sheet',axis='Component Z axis',**kwargs)
+
+    def evaluate(self, sketch, links=None, **kwargs):
+        return revolution.evaluate(self.owner,[(sketch,'')],links or {},self.values(**kwargs))[0]
+
+    def save(self, sketch, feature=None, **kwargs):
+        return revolution.save(self.doc,[(sketch,'')],{},self.values(**kwargs),feature)
+
+    def test_open_line_angles_sides_and_preview_is_read_only(self):
+        sketch=self.line();before=self.snapshot();docs=set(App.listDocuments())
+        for values in (dict(angle=90),dict(angle=90,reverse=True),dict(angle=90,sides='Symmetric'),
+                       dict(angle=30,angle2=60,sides='Two sides'),dict(angle=90,start='Offset',start_offset=25)):
+            shape=self.evaluate(sketch,**values)
+            self.assertTrue(shape.isValid());self.assertFalse(shape.Solids);self.assertEqual(len(shape.Faces),1)
+            self.assertAlmostEqual(shape.Area,4*math.pi)
+        self.assertAlmostEqual(self.evaluate(sketch,end='Through all').Area,16*math.pi)
+        self.assertGreater(self.evaluate(sketch,angle=90).Faces[0].CenterOfMass.y,0)
+        self.assertLess(self.evaluate(sketch,angle=90,reverse=True).Faces[0].CenterOfMass.y,0)
+        self.assertAlmostEqual(self.evaluate(sketch,angle=90,sides='Symmetric').Faces[0].CenterOfMass.y,0,places=6)
+        self.assertEqual(before,self.snapshot());self.assertEqual(docs,set(App.listDocuments()))
+
+    def test_save_edit_identity_undo_reopen_and_associativity(self):
+        sketch=self.line();feature=self.save(sketch,angle=90);identity=feature.ID;name=feature.Name
+        self.save(sketch,feature,angle=180);self.assertEqual(feature.ID,identity)
+        self.assertAlmostEqual(feature.Shape.Area,8*math.pi)
+        self.doc.undo();self.doc.recompute();self.assertAlmostEqual(feature.Shape.Area,4*math.pi)
+        self.doc.redo();self.doc.recompute();self.assertAlmostEqual(feature.Shape.Area,8*math.pi)
+        sketch.Placement.Base.z=3;self.doc.recompute();self.assertAlmostEqual(feature.Shape.BoundBox.ZMin,3)
+        order=document.history(self.doc,self.owner);self.assertLess(order.index(sketch),order.index(feature))
+        path=self.output/'SheetRevolve.cadprt';document.save_document(self.doc,path)
+        App.closeDocument(self.doc.Name);self.doc=document.open_document(path)
+        feature=self.doc.getObject(name);self.assertEqual(feature.ID,identity)
+        self.assertEqual(revolution.settings(feature)['output'],'Sheet');self.assertFalse(feature.Shape.Solids)
+
+    def test_closed_profile_switches_and_legacy_default(self):
+        sketch=TestRevolveWorkflow.profile(self);feature=self.save(sketch,angle=90);identity=feature.ID
+        self.assertFalse(feature.Shape.Solids);self.assertGreater(len(feature.Shape.Faces),1)
+        revolution.save(self.doc,[(sketch,'')],{},dict(revolution.DEFAULTS,axis='Component Z axis',angle=90),feature)
+        self.assertEqual(len(feature.Shape.Solids),1);self.assertEqual(feature.ID,identity)
+        feature.removeProperty('Revolve_output');self.doc.recompute()
+        self.assertEqual(revolution.settings(feature)['output'],'Solid');self.assertEqual(len(feature.Shape.Solids),1)
+        self.save(sketch,feature,angle=90);self.assertEqual(feature.ID,identity)
+        self.assertEqual(feature.Revolve_output,'Sheet');self.assertFalse(feature.Shape.Solids)
+
+    def test_reference_start_limit_and_selected_axis(self):
+        sketch=self.line()
+        limit=self.owner.newObject('Part::Feature','Limit')
+        limit.Shape=Part.makePlane(20,20,App.Vector(0,-10,-5),App.Vector(1,0,0))
+        axis=self.owner.newObject('Part::Feature','Axis');axis.Shape=Part.makeLine(App.Vector(),App.Vector(0,0,10))
+        self.doc.recompute()
+        shape=self.evaluate(sketch,{'limit':(limit,'Face1')},end='Up to face',offset=10)
+        self.assertAlmostEqual(shape.Area,16*math.pi*100/360,places=6)
+        shape=self.evaluate(sketch,{'start':(limit,'Face1')},start='Reference',start_offset=10,angle=90)
+        self.assertAlmostEqual(shape.Area,4*math.pi)
+        shape,_,_=revolution.evaluate(self.owner,[(sketch,'')],{'axis':(axis,'Edge1')},dict(self.values(angle=90),axis='Selected axis / line'))
+        self.assertAlmostEqual(shape.Area,4*math.pi)
+
+    def test_edges_faces_and_multiple_curves(self):
+        sketch=self.line();sketch.addGeometry(Part.LineSegment(App.Vector(3,0,0),App.Vector(3,4,0)),False);self.doc.recompute()
+        self.assertAlmostEqual(self.evaluate(sketch,angle=90).Area,10*math.pi)
+        shape,_,_=revolution.evaluate(self.owner,[(sketch,'Edge2')],{},self.values(angle=90))
+        self.assertAlmostEqual(shape.Area,6*math.pi)
+        curve=self.owner.newObject('Part::Feature','Curve');curve.Shape=Part.makeLine(App.Vector(2,0,0),App.Vector(2,0,4))
+        self.doc.recompute();self.assertAlmostEqual(self.evaluate(curve,angle=90).Area,4*math.pi)
+        face=self.owner.newObject('Part::Feature','Face')
+        face.Shape=Part.Face(Part.makePolygon([App.Vector(2,0,0),App.Vector(3,0,0),App.Vector(3,0,4),App.Vector(2,0,4),App.Vector(2,0,0)]))
+        self.doc.recompute()
+        shape,_,_=revolution.evaluate(self.owner,[(face,'Face1')],{},self.values(angle=90))
+        self.assertFalse(shape.Solids);self.assertTrue(shape.isValid())
+
+    def test_rejections_and_new_only_evaluator(self):
+        sketch=self.line()
+        _,links,values=revolution.validate(self.owner,[(sketch,'')],{'target':(None,'')},self.values(operation='Subtract'))
+        self.assertEqual(values['operation'],'New Solid');self.assertNotIn('target',links)
+        for values in (dict(angle=0),dict(angle=300,angle2=100,sides='Two sides')):
+            with self.assertRaises(ValueError):self.evaluate(sketch,**values)
+        with self.assertRaises(Exception):self.evaluate(self.line(0))
+        feature=self.save(sketch,angle=90)
+        later=self.line()
+        with self.assertRaises(ValueError):self.save(later,feature,angle=90)
+        self.assertTrue(feature.Shape.isValid())
+
+    def test_native_task_switch_accept_and_edit(self):
+        Gui.activateWorkbench('PartDesignWorkbench');sketch=self.line();before=self.snapshot()
+        Gui.Selection.addSelection(sketch);Gui.runCommand('PartDesign_Revolution')
+        task=extrude_task._active;self.assertEqual(task.output(),'Solid')
+        QtTest.QTest.mouseClick(task.outputs['Sheet'],QtCore.Qt.LeftButton)
+        self.assertTrue(task.valid,task.status.text());self.assertEqual(task.mode(),'New Solid')
+        self.assertTrue(all(not b.isEnabled() for b in task.modes.values()))
+        self.assertEqual(task.display.itemText(0),'Revolution preview')
+        task.outputs['Solid'].click();self.assertTrue(all(b.isEnabled() for b in task.modes.values()))
+        task.reject();self.assertEqual(before,self.snapshot())
+        Gui.Selection.addSelection(sketch);task=revolve_task.show();task.outputs['Sheet'].click()
+        self.assertTrue(task.accept());feature=task.result
+        task=revolve_task.show(feature);self.assertTrue(task.valid,task.status.text());self.assertEqual(task.output(),'Sheet')
+        self.assertTrue(all(not b.isEnabled() for b in task.modes.values()));task.reject()
+
+    def test_sheet_clears_target_and_preserves_hidden_curve_visibility(self):
+        Gui.activateWorkbench('PartDesignWorkbench')
+        circle=TestFeatureCenteredModeling.circle(self,5)
+        target=modeling.extrude_new_solid(self.doc,circle,2);target.Visibility=False
+        curve=self.owner.newObject('Part::Feature','Curve');curve.Shape=Part.makeLine(App.Vector(2,0,0),App.Vector(2,0,4))
+        hidden=self.owner.newObject('Part::Feature','Hidden');hidden.Shape=curve.Shape;hidden.Visibility=False
+        sketch=self.line();self.doc.recompute();before=self.snapshot()
+        Gui.Selection.addSelection(sketch);task=revolve_task.show();task.modes['Add'].click()
+        self.assertEqual(task.links['target'][0],target)
+        task.outputs['Sheet'].click();self.assertNotIn('target',task.links)
+        self.assertEqual(task.fields['target'].text(),'');self.assertIsNone(task.target_overlay)
+        self.assertTrue(curve.Visibility);self.assertFalse(hidden.Visibility)
+        task.outputs['Solid'].click();self.assertFalse(curve.Visibility)
+        self.assertEqual(task.mode(),'New Solid');task.reject();self.assertEqual(before,self.snapshot())
+
+
 class TestRevolveWorkflow(unittest.TestCase):
     circle = TestFeatureCenteredModeling.circle
     snapshot = TestFeatureCenteredModeling.snapshot

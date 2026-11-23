@@ -162,8 +162,8 @@ class TestSheetExtrude(unittest.TestCase):
         task.outputs['Sheet'].click();self.assertTrue(curve.Visibility);self.assertFalse(hidden.Visibility)
         task.outputs['Solid'].click();self.assertFalse(curve.Visibility)
         task.reject();self.assertTrue(curve.Visibility);self.assertFalse(hidden.Visibility)
-        task=revolve_task.show();self.assertEqual(task.outputs,{})
-        self.assertEqual(task.modes['New Solid'].text(),'New Solid');task.reject()
+        task=revolve_task.show();self.assertEqual(task.output(),'Solid')
+        self.assertEqual(task.modes['New Solid'].text(),'New');task.reject()
 
 
 class TestExtrudeWorkflow(TestFeatureCenteredModeling):

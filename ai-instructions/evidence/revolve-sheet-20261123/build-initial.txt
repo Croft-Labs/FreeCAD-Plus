@@ -1,0 +1,26 @@
+test_closed_profile_switches_and_legacy_default (TestRevolveWorkflow.TestSheetRevolve.test_closed_profile_switches_and_legacy_default) ... ok
+test_edges_faces_and_multiple_curves (TestRevolveWorkflow.TestSheetRevolve.test_edges_faces_and_multiple_curves) ... ok
+test_native_task_switch_accept_and_edit (TestRevolveWorkflow.TestSheetRevolve.test_native_task_switch_accept_and_edit) ... ok
+test_open_line_angles_sides_and_preview_is_read_only (TestRevolveWorkflow.TestSheetRevolve.test_open_line_angles_sides_and_preview_is_read_only) ... ERROR
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestRevolveWorkflow.py", line 43, in test_open_line_angles_sides_and_preview_is_read_only
+    self.assertGreater(self.evaluate(sketch,angle=90).CenterOfMass.y,0)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Part.Compound' object has no attribute 'CenterOfMass'
+test_reference_start_limit_and_selected_axis (TestRevolveWorkflow.TestSheetRevolve.test_reference_start_limit_and_selected_axis) ... ok
+test_rejections_and_new_only_evaluator (TestRevolveWorkflow.TestSheetRevolve.test_rejections_and_new_only_evaluator) ... ok
+test_save_edit_identity_undo_reopen_and_associativity (TestRevolveWorkflow.TestSheetRevolve.test_save_edit_identity_undo_reopen_and_associativity) ... ok
+
+======================================================================
+ERROR: test_open_line_angles_sides_and_preview_is_read_only (TestRevolveWorkflow.TestSheetRevolve.test_open_line_angles_sides_and_preview_is_read_only)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\build\Mod\FreeCADPlus\TestRevolveWorkflow.py", line 43, in test_open_line_angles_sides_and_preview_is_read_only
+    self.assertGreater(self.evaluate(sketch,angle=90).CenterOfMass.y,0)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Part.Compound' object has no attribute 'CenterOfMass'
+
+----------------------------------------------------------------------
+Ran 7 tests in 3.102s
+
+FAILED (errors=1)

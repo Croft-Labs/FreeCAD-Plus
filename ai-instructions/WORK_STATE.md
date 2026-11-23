@@ -1,12 +1,19 @@
 # FreeCAD Plus: Current work state
 
-## Revolve Solid/Sheet preview — November 23, 2026
+## Revolve Solid/Sheet installed — November 23, 2026
 
-Owner requested the same output choices as Extrude. The native proposal defaults
-to Solid; Sheet selects and locks New, and Solid re-enables New/Add/Subtract.
-Axis and angular controls remain. UI assertions and a native one-line/270-degree
-sheet fixture passed. Production implementation/install await preview approval.
-See [direct screenshots and scope](evidence/revolve-sheet-preview-20261123/README.md).
+Owner approved implementation. Revolve now shares Extrude's Solid/Sheet choices:
+Solid defaults on; Sheet selects and locks New and clears the target. Returning
+to Solid re-enables New/Add/Subtract. Native curve rotation produces uncapped
+sheets; axis, angular offset, angle, reverse, symmetric/two-side and reference
+controls remain. Existing saved Revolves default to Solid.
+
+All 96 build and 96 installed regression checks passed, including eight new Sheet
+Revolve tests and existing Extrude, Solid Revolve, visibility and history checks.
+Native command/mouse/accept/edit, fresh-process reopen/recompute and existing
+shortcut verification also passed. Six scripts installed with rollback copies.
+Owner sessions/settings were preserved; existing processes need restart to load
+the changes. See [evidence and installed images](evidence/revolve-sheet-20261123/README.md).
 
 ## Extrude Solid/Sheet installed — November 23, 2026
 

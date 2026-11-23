@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "tests": 96,
+  "failures": 0,
+  "errors": 0,
+  "modules": [
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  ]
+}

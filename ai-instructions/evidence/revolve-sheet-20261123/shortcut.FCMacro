@@ -1,0 +1,25 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import document,modeling,revolution,revolve_task
+        assert 'profile-shortcut' in App.ConfigGet('UserParameter')
+        assert 'profile-shortcut' in App.ConfigGet('SystemParameter')
+        assert 'profile-shortcut' in App.getUserAppDataDir()
+        assert '/app/' in revolution.__file__.replace('\\','/')
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        doc=document.new_document('Sheet check');sketch=modeling.new_sketch(doc)
+        sketch.addGeometry(Part.LineSegment(App.Vector(10,0,0),App.Vector(10,15,0)),False);doc.recompute()
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+        task=revolve_task.show();assert task.output()=='Solid';task.outputs['Sheet'].click()
+        assert task.valid and task.mode()=='New Solid' and all(not b.isEnabled() for b in task.modes.values())
+        task.reject();App.closeDocument(doc.Name)
+        result.update(ok=True,module=revolution.__file__,profile=App.ConfigGet('UserParameter'))
+    except BaseException:result['error']=traceback.format_exc()
+    (Path(os.environ['PLUS_TEST_DIR'])/'shortcut.json').write_text(json.dumps(result,indent=2))
+QtCore.QTimer.singleShot(2200,run)

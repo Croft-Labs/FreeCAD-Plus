@@ -16,7 +16,7 @@ AXES = ('Sketch vertical axis', 'Sketch horizontal axis', 'Component X axis',
 ENDS = ('Angle', 'Up to face', 'Through all')
 LINKS = {'target': 'Target', 'start': 'StartReference', 'limit': 'EndReference',
          'secondlimit': 'SecondEndReference', 'axis': 'AxisReference'}
-DEFAULTS = dict(operation='New Solid', start='Profile plane', start_offset=0.,
+DEFAULTS = dict(output='Solid', operation='New Solid', start='Profile plane', start_offset=0.,
                 sides='One side', end='Angle', angle=360., offset=0.,
                 end2='Angle', angle2=45., offset2=0., reverse=False,
                 axis='Sketch vertical axis', refine=True)
@@ -32,7 +32,7 @@ def is_revolution(obj):
 
 
 def settings(feature):
-    return {key: getattr(feature, PREFIX + key) for key in DEFAULTS}
+    return {key: getattr(feature, PREFIX + key, default) for key, default in DEFAULTS.items()}
 
 
 def references(feature):
@@ -46,13 +46,16 @@ def validate(definition, refs, links, values, feature=None):
         v[key] = float(v[key])
         if not math.isfinite(v[key]) or abs(v[key]) > 360:
             raise ValueError('Angles must be finite and within 360 degrees.')
-    for key, choices in (('operation', MODES), ('start', ('Profile plane', 'Offset', 'Reference')),
+    for key, choices in (('output', ('Solid', 'Sheet')), ('operation', MODES), ('start', ('Profile plane', 'Offset', 'Reference')),
                          ('sides', ('One side', 'Symmetric', 'Two sides')), ('end', ENDS),
                          ('end2', ENDS), ('axis', AXES)):
         if v[key] not in choices:
             raise ValueError('Unsupported Revolve setting: ' + key)
     refs = [profile_reference(ref) for ref in planes.canonical(definition, refs)]
-    validate_profiles(definition, refs)
+    validate_profiles(definition, refs, v['output'])
+    if v['output'] == 'Sheet':
+        v['operation'] = 'New Solid'
+        links = {key: ref for key, ref in links.items() if key != 'target'}
     links = {key: planes.canonical(definition, [ref])[0] for key, ref in links.items() if key in LINKS}
     if feature is not None:
         if not is_revolution(feature) or owner(feature) != definition:
@@ -119,6 +122,8 @@ def rotation_axis(definition, refs, links, v):
 
 def evaluate(definition, refs, links, values, feature=None):
     refs, links, v = validate(definition, refs, links, values, feature)
+    if v['output'] == 'Sheet':
+        return evaluate_sheet(definition, refs, links, v, feature)
     face, frame, edges = extrusion.profile_shape(definition, refs)
     base, direction = rotation_axis(definition, refs, links, v)
     normal = frame.Rotation.multVec(App.Vector(0, 0, 1))
@@ -181,6 +186,77 @@ def evaluate(definition, refs, links, values, feature=None):
     except Exception as exc:
         raise InvalidResult(str(exc), tool) from exc
     return result, tool, edges
+
+
+def evaluate_sheet(definition, refs, links, v, feature):
+    """Revolve native wires without filling the profile or capping the result."""
+    obj = refs[0][0]
+    selected = [planes.shape(definition, ref) for ref in refs]
+    if obj.isDerivedFrom('Sketcher::SketchObject') and any(not sub for _, sub in refs):
+        selected = [planes.shape(definition, (obj, ''))]
+    edges = []
+    for shape in selected:
+        for edge in shape.Edges:
+            if not any(edge.isSame(old) for old in edges):edges.append(edge)
+    if not edges:raise ValueError('The profile contains no curves.')
+    profile = Part.makeCompound([Part.Wire(group) for group in Part.sortEdges(edges)])
+    base, axis = rotation_axis(definition, refs, links, v)
+    if obj.isDerivedFrom('Sketcher::SketchObject'):
+        frame = definition.getGlobalPlacement().inverse().multiply(obj.getGlobalPlacement())
+        origin, normal = frame.Base, frame.Rotation.multVec(App.Vector(0, 0, 1))
+    else:
+        plane = profile.findPlane()
+        if plane is not None:
+            origin, normal = plane.Position, plane.Axis
+        else:
+            origin = profile.Vertexes[0].Point
+            normal = (origin - base).cross(axis)
+            if normal.Length < 1e-7:
+                normal = next(((vertex.Point - base).cross(axis) for vertex in profile.Vertexes
+                               if (vertex.Point - base).cross(axis).Length > 1e-7), App.Vector())
+            if normal.Length < 1e-7:raise ValueError('The curves lie on the rotation axis and cannot create a sheet.')
+            normal.normalize()
+            projected = profile.copy()
+            projected.Placement = App.Placement(App.Vector(), App.Rotation(normal, App.Vector(0, 0, 1))).multiply(projected.Placement)
+            if projected.BoundBox.ZLength > 1e-6:
+                raise ValueError('The curves and rotation axis must share one plane.')
+    if abs(axis.dot(normal)) > 1e-7 or abs((base - origin).dot(normal)) > 1e-6:
+        raise ValueError('The rotation axis must lie in the profile plane.')
+    start = 0.
+    if v['start'] == 'Reference':
+        reference = planes.describe(definition, links['start'])
+        if (reference[0] != 'plane' or abs(reference[2].dot(axis)) > 1e-7
+                or abs((base - reference[1]).dot(reference[2])) > 1e-6):
+            raise ValueError('The start plane must contain the rotation axis.')
+        start = math.degrees(math.atan2(axis.dot(normal.cross(reference[2])), normal.dot(reference[2])))
+    if v['start'] != 'Profile plane':start += v['start_offset']
+    profile.rotate(base, axis, start)
+    normal = App.Rotation(axis, start).multVec(normal)
+    sweep = -axis if v['reverse'] and v['sides'] != 'Symmetric' else axis
+    def angle_for(suffix, key, direction):
+        kind = v['end' + suffix]
+        if kind == 'Through all':return 360.
+        if kind == 'Angle':return v['angle' + suffix]
+        limit = planes.describe(definition, links[key])
+        if (limit[0] != 'plane' or abs(limit[2].dot(direction)) > 1e-7
+                or abs((base - limit[1]).dot(limit[2])) > 1e-6):
+            raise ValueError('The angular limit must be a plane containing the rotation axis.')
+        angle = math.degrees(math.atan2(direction.dot(normal.cross(limit[2])), normal.dot(limit[2]))) % 180.
+        if angle < 1e-7:raise ValueError('The start and limit planes coincide; specify a rotation angle.')
+        angle += v['offset' + suffix]
+        if not 1e-7 < angle <= 360:raise ValueError('The limit and offset must produce an angle between 0 and 360 degrees.')
+        return angle
+    first = angle_for('', 'limit', sweep)
+    second = angle_for('2', 'secondlimit', -sweep) if v['sides'] == 'Two sides' else 0.
+    if first + second > 360 + 1e-7:raise ValueError('The two rotation angles must total at most 360 degrees.')
+    if v['sides'] == 'Symmetric':profile.rotate(base, sweep, -first / 2)
+    elif second:profile.rotate(base, sweep, -second)
+    result = extrusion.kernel_snapshot(profile).revolve(base, sweep, first + second)
+    if v['refine']:result = result.removeSplitter()
+    if result.isNull() or not result.isValid() or not result.Faces or result.Solids or result.Area < 1e-9:
+        raise ValueError('The sheet revolution is degenerate; check the curves and rotation axis.')
+    result = extrusion.name_tool(result, refs, feature, namespace='PlusRevolveSheet1')
+    return result, result.copy(), edges
 
 
 class Revolve(extrusion.Extrude):

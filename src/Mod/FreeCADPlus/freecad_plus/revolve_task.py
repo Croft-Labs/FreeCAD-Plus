@@ -46,7 +46,7 @@ class RevolveTask(extrude_task.ExtrudeTask):
         self.axis_guide = None
 
     def settings(self):
-        return dict(operation=self.mode(), start=self.start_type.currentText(), start_offset=self.values[self.start_offset],
+        return dict(output=self.output(), operation=self.mode(), start=self.start_type.currentText(), start_offset=self.values[self.start_offset],
                     sides=self.sides.currentText(), end=self.end1['kind'].currentText(), end2=self.end2['kind'].currentText(),
                     angle=self.values[self.end1['length']], angle2=self.values[self.end2['length']],
                     offset=self.values[self.end1['offset']], offset2=self.values[self.end2['offset']],
@@ -55,6 +55,7 @@ class RevolveTask(extrude_task.ExtrudeTask):
     def load_feature(self, feature):
         self.refs = planes.flatten(feature.ProfileReferences);self.links = revolution.references(feature)
         v = revolution.settings(feature);self.modes[v['operation']].setChecked(True)
+        self.outputs[v['output']].setChecked(True)
         for widget, key in ((self.start_type, 'start'), (self.sides, 'sides'), (self.axis, 'axis'),
                             (self.end1['kind'], 'end'), (self.end2['kind'], 'end2')):
             widget.setCurrentText(v[key])
@@ -65,6 +66,8 @@ class RevolveTask(extrude_task.ExtrudeTask):
 
     def changed(self, *args):
         if not self.ready or self.closed:return
+        self.update_output()
+        self.presentation.update_usable()
         self.update_target()
         self.presentation.update_style()
         self.second.setVisible(self.sides.currentText() == 'Two sides')
@@ -96,7 +99,7 @@ class RevolveTask(extrude_task.ExtrudeTask):
         try:
             base, axis = revolution.rotation_axis(self.owner, self.refs, self.links, self.settings())
             shape = planes.shape(self.owner, self.refs[0]);span = max(10., shape.BoundBox.DiagonalLength)
-            projected = (shape.CenterOfMass - base).dot(axis);center = base + axis * projected
+            projected = (shape.BoundBox.Center - base).dot(axis);center = base + axis * projected
             points = [self.world.multVec(center - axis * span), self.world.multVec(center + axis * span)]
             node = coin.SoAnnotation();ink = coin.SoBaseColor();ink.rgb = (.6, .25, .85);node.addChild(ink)
             style = coin.SoDrawStyle();style.lineWidth = 2;style.linePattern = 0xF0F0;node.addChild(style)

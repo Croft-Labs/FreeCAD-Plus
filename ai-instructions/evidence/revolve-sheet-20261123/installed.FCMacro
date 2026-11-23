@@ -1,0 +1,66 @@
+"""Real installed command, task, saved result and direct native images."""
+import os,sys,json,traceback,math
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import document,modeling,extrude_task,revolution
+        assert '/app/' in revolution.__file__.replace('\\','/')
+        win=Gui.getMainWindow();win.showNormal();win.resize(1200,1000);win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('Sheet Revolve')
+        owner=document.validate(doc).Definitions[0]
+        sketch=modeling.new_sketch(doc);sketch.Label='Line profile'
+        sketch.addGeometry(Part.LineSegment(App.Vector(10,0,0),App.Vector(10,15,0)),False)
+        doc.recompute();Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+        Gui.runCommand('PartDesign_Revolution');QtTest.QTest.qWait(150)
+        task=extrude_task._active;assert task is not None and task.output()=='Solid'
+        task.values[task.end1['length']]=270;task.end1['length'].setValue(270);task.render()
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks');tasks.setMinimumWidth(370)
+        def capture(name):
+            QtTest.QTest.qWait(300)
+            if win.focusWidget():win.focusWidget().clearFocus()
+            for scroll in tasks.findChildren(QtWidgets.QAbstractScrollArea):scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(150)
+            pix=win.grab();scale=pix.devicePixelRatioF();pos=task.operation.mapTo(win,QtCore.QPoint())
+            rect=QtCore.QRect(round(pos.x()*scale),round(pos.y()*scale),round(task.operation.width()*scale),round(task.operation.height()*scale))
+            assert pix.copy(rect).save(str(out/(name+'-operation.png')))
+            assert tasks.grab().save(str(out/(name+'-task.png')))
+        capture('installed-solid')
+        QtTest.QTest.mouseClick(task.outputs['Sheet'],QtCore.Qt.LeftButton);QtTest.QTest.qWait(150)
+        assert task.valid,task.status.text()
+        assert task.mode()=='New Solid' and all(not b.isEnabled() for b in task.modes.values())
+        capture('installed-sheet')
+        assert task.accept();feature=task.result
+        assert feature.Shape.isValid() and len(feature.Shape.Faces)==1 and not feature.Shape.Solids
+        assert abs(feature.Shape.Area-225*math.pi)<1e-7
+        path=out/'InstalledSheetRevolve.cadprt';document.save_document(doc,path)
+        (out/'fixture.json').write_text(json.dumps(dict(feature=feature.Name,sketch=sketch.Name,identity=feature.ID)))
+        Gui.Selection.clearSelection()
+        for obj in doc.Objects:
+            if obj.TypeId in ('App::Origin','App::Plane','App::Line','PartDesign::Plane'):obj.Visibility=False
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric()
+        camera=view.getCameraNode();camera.height=45
+        center=feature.Shape.BoundBox.Center
+        position=center+view.getCameraOrientation().multVec(App.Vector(0,0,100))
+        camera.position.setValue(position.x,position.y,position.z)
+        QtTest.QTest.qWait(200);view.saveImage(str(out/'installed-sheet-result.png'),800,650,'Current')
+        feature.ViewObject.Proxy.doubleClicked(feature.ViewObject);QtTest.QTest.qWait(100)
+        task=extrude_task._active;assert task.feature==feature and task.output()=='Sheet' and task.valid
+        task.values[task.end1['length']]=180;task.end1['length'].setValue(180)
+        assert task.accept();assert feature.ID==json.loads((out/'fixture.json').read_text())['identity']
+        assert abs(feature.Shape.Area-150*math.pi)<1e-7
+        document.save_document(doc,path)
+        result.update(ok=True,source=revolution.__file__,faces=len(feature.Shape.Faces),solids=len(feature.Shape.Solids),area=feature.Shape.Area,
+                      native_command=True,mouse_selected_sheet=True,double_click_edit=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'installed.json').write_text(json.dumps(result,indent=2))
+    from freecad_plus import extrude_task
+    if extrude_task._active:extrude_task._active.reject()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

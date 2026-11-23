@@ -13,7 +13,8 @@ Native Qt assertions verify the default, Add-to-Sheet switch, locked New and ret
 to Solid. The native geometry fixture revolves a 15 mm line at radius 10 mm through
 270 degrees, yielding one valid face, zero solids and 706.858347 mm² area. This is
 illustrative fixture geometry, not production Sheet Revolve; OK is disabled in the
-prototype. Implementation and installation await approval of this preview.
+prototype. The owner approved this preview and requested implementation. See
+[production acceptance](../revolve-sheet-20261123/README.md) separately.
 
 Implementation should share the Extrude output controls without changing its
 behavior, persist Revolve output, default legacy Revolves to Solid and use native

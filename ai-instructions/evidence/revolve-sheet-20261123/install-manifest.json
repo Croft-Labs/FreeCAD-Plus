@@ -1,0 +1,56 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\extrusion.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/extrusion.py",
+    "source_sha256": "13284a3e344132eef1cfd4d593b39ef0a7e36530135d500cc3df0e86cd1d2fcf",
+    "built_sha256": "13284a3e344132eef1cfd4d593b39ef0a7e36530135d500cc3df0e86cd1d2fcf",
+    "installed_sha256": "13284a3e344132eef1cfd4d593b39ef0a7e36530135d500cc3df0e86cd1d2fcf",
+    "previous_sha256": "53a8ff17e86c14575b2a6962d80331a8d42e37bf9e83438ab8957968850971a3",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-sheet-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "298058de83b3835f2c1f702caa98bd19863c8984f06f2855df4d03255d6025db",
+    "built_sha256": "298058de83b3835f2c1f702caa98bd19863c8984f06f2855df4d03255d6025db",
+    "installed_sha256": "298058de83b3835f2c1f702caa98bd19863c8984f06f2855df4d03255d6025db",
+    "previous_sha256": "75543998d9e2dc02c37b380faffb72991c54f58a05771f99d0c2fdb1a6917bb2",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-sheet-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\revolution.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/revolution.py",
+    "source_sha256": "b0393ee98b46df00492b2e4ba4bb9ddfa540ce3e7a09f272f5d8aeadfeb4b827",
+    "built_sha256": "b0393ee98b46df00492b2e4ba4bb9ddfa540ce3e7a09f272f5d8aeadfeb4b827",
+    "installed_sha256": "b0393ee98b46df00492b2e4ba4bb9ddfa540ce3e7a09f272f5d8aeadfeb4b827",
+    "previous_sha256": "b038dd9b447a962d72e87274d5384fda2a3a4bdfbb4f6c419451d177167758ba",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-sheet-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolution.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/revolve_task.py",
+    "source_sha256": "3d32288bbb1a9469b666869c1267c2e059674f3f4eff8c503a178da90a86b486",
+    "built_sha256": "3d32288bbb1a9469b666869c1267c2e059674f3f4eff8c503a178da90a86b486",
+    "installed_sha256": "3d32288bbb1a9469b666869c1267c2e059674f3f4eff8c503a178da90a86b486",
+    "previous_sha256": "f0214e9bfb24ee783c4efefa68bd3600e4d465ec09eafaeab5d02d28bf4f2b2e",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-sheet-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestExtrudeWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestExtrudeWorkflow.py",
+    "source_sha256": "ffff0d986140846d369069e6b7e4ac7a05035d4ced52e38c3c156b9be4a3f0fe",
+    "built_sha256": "ffff0d986140846d369069e6b7e4ac7a05035d4ced52e38c3c156b9be4a3f0fe",
+    "installed_sha256": "ffff0d986140846d369069e6b7e4ac7a05035d4ced52e38c3c156b9be4a3f0fe",
+    "previous_sha256": "f68aed6ac76aeb8839b88f18aed8d0e5caad2595276bc6a2053831f30ed2e21f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-sheet-20261123\\install-backup\\Mod\\FreeCADPlus\\TestExtrudeWorkflow.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestRevolveWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestRevolveWorkflow.py",
+    "source_sha256": "0ab113f1c3b0fed82f41b242763a0d51ca2c06a3935a38fa72555f96c13472a0",
+    "built_sha256": "0ab113f1c3b0fed82f41b242763a0d51ca2c06a3935a38fa72555f96c13472a0",
+    "installed_sha256": "0ab113f1c3b0fed82f41b242763a0d51ca2c06a3935a38fa72555f96c13472a0",
+    "previous_sha256": "c4e0fafc0be7ca6c346517d74802b78cf0893f16dba83e208846fb69af54455f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-sheet-20261123\\install-backup\\Mod\\FreeCADPlus\\TestRevolveWorkflow.py"
+  }
+]
