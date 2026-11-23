@@ -11,11 +11,14 @@ Thicken feature that turns sheets into solids with designated thickness. Thicken
 must offer New/Add/Subtract, matching Extrude/Revolve. Invalid geometry must not
 leave a feature operation stuck. Existing prominent-error, target-selection,
 preview-color, History and tree-visibility conventions apply. The
-[native proposal](../evidence/shell-thicken-preview-20261123/README.md) awaits
-approval; it illustrates total thickness, direction and invalid-selection feedback.
+[native proposal](../evidence/shell-thicken-preview-20261123/README.md) illustrates total thickness, direction and invalid-selection feedback.
 Owner later placed Thicken in Modeling's new Surface section, alongside the six
 existing Surface tools, and removed the standalone Plus Surface tab. See the
 [updated combined preview](../evidence/surface-modeling-preview-20261123/README.md).
+Owner approved the combined scope in chat: "approved, implement". Session
+`5e9afa49ce33`, fingerprint `54411b35662f1b635829af79c86f77f4f28f2201cd715b2343c81026f8634db4`
+was re-inspected as fresh and within scope before implementation; tool approval
+state was left untouched.
 
 ### Revolve Solid/Sheet output — November 23, 2026
 

@@ -1,0 +1,86 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import document,extrude_task,thicken,thicken_task,toolbars,ui_modes
+        assert '/app/' in thicken.__file__.replace('\\','/')
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1050);win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        ribbon=toolbars._controller;ribbon.tab='Modeling';ribbon.refresh()
+        doc=document.new_document('Thicken acceptance');owner=document.validate(doc).Definitions[0]
+        sheet=owner.newObject('Part::Feature','Sheet');sheet.Label='Revolved sheet'
+        sheet.Shape=Part.makeLine(App.Vector(10,0,0),App.Vector(10,15,0)).revolve(App.Vector(),App.Vector(0,1,0),270)
+        doc.recompute();Gui.Selection.clearSelection();Gui.Selection.addSelection(sheet)
+        QtTest.QTest.qWait(200)
+        pix=win.grab();scale=pix.devicePixelRatioF();pos=ribbon.host.mapTo(win,QtCore.QPoint())
+        pix.copy(QtCore.QRect(round(pos.x()*scale),round(pos.y()*scale),round(ribbon.host.width()*scale),round(ribbon.host.height()*scale))).save(str(out/'modeling-ribbon.png'))
+        Gui.runCommand('Plus_Thicken');QtTest.QTest.qWait(250)
+        task=extrude_task._active;assert task and task.valid,task.status.text() if task else 'No task'
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks');tasks.setMinimumWidth(380)
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric()
+        camera=view.getCameraNode();camera.height=45
+        center=sheet.Shape.BoundBox.Center;position=center+view.getCameraOrientation().multVec(App.Vector(0,0,100))
+        camera.position.setValue(position.x,position.y,position.z)
+        def capture(name):
+            QtTest.QTest.qWait(250)
+            if win.focusWidget():win.focusWidget().clearFocus()
+            for scroll in tasks.findChildren(QtWidgets.QAbstractScrollArea):scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(150)
+            assert tasks.grab().save(str(out/(name+'-task.png')))
+            assert win.screen().grabWindow(win.winId()).save(str(out/(name+'-window.png')))
+        capture('thicken-new')
+        task.normal.setCurrentText('Symmetric');assert task.valid;capture('thicken-symmetric')
+        task.normal.setCurrentText('Along normal');assert task.accept();feature=task.result
+        assert abs(feature.Shape.Volume-742.20126444)<1e-5
+        identity=feature.ID;feature.ViewObject.Proxy.doubleClicked(feature.ViewObject);task=extrude_task._active
+        task.amount.setValue(2);task.commit_numbers();assert task.accept();assert feature.ID==identity
+        path=out/'InstalledThicken.cadprt';document.save_document(doc,path)
+        (out/'fixture.json').write_text(json.dumps(dict(feature=feature.Name,sheet=sheet.Name,identity=identity,volume=feature.Shape.Volume)))
+        sheet2=owner.newObject('Part::Feature','PlaneSheet');sheet2.Shape=Part.makePlane(10,8)
+        body=owner.newObject('PartDesign::Body','TargetBody');target=body.newObject('PartDesign::Feature','Target')
+        target.Shape=Part.makeBox(10,8,3,App.Vector(0,0,-2));body.Tip=target;target.Visibility=False
+        doc.recompute();Gui.Selection.clearSelection();Gui.Selection.addSelection(sheet2)
+        Gui.runCommand('Plus_Thicken');task=extrude_task._active
+        task.modes['Add'].click();task.pick='target';task.addSelection(doc.Name,target.Name,'')
+        task.amount.setValue(2);task.commit_numbers();task.pick='profile';task.presentation.update_style();task.render()
+        camera.height=24;center=App.Vector(5,4,0);position=center+view.getCameraOrientation().multVec(App.Vector(0,0,100));camera.position.setValue(position.x,position.y,position.z)
+        assert task.valid and task.target_overlay is not None;capture('thicken-add-valid')
+        task.modes['Subtract'].click();assert task.valid;capture('thicken-subtract-valid')
+        sheet2.Placement.Base.x=15;doc.recompute()
+        camera.height=38;center=App.Vector(12,4,0);position=center+view.getCameraOrientation().multVec(App.Vector(0,0,100));camera.position.setValue(position.x,position.y,position.z)
+        for mode in ('Add','Subtract'):
+            task.modes[mode].click();task.render();assert not task.valid and task.tool_shape is not None
+            capture('thicken-'+mode.lower()+'-invalid')
+        task.reject();Gui.Selection.clearSelection()
+        # Capture the actual prominent rejection dialog; dismiss using its Close button.
+        def close_error():
+            modal=QtWidgets.QApplication.activeModalWidget()
+            if modal:
+                modal.grab().save(str(out/'shell-invalid.png'));modal.reject()
+        Gui.Selection.addSelection(feature,'Face1')
+        # A separate Body sheet supplies the previously broken native entry.
+        sb=owner.newObject('PartDesign::Body','SheetBody');sf=sb.newObject('PartDesign::Feature','SheetResult')
+        sf.Shape=sheet.Shape;sb.Tip=sf;doc.recompute();Gui.Selection.clearSelection();Gui.Selection.addSelection(sf,'Face1')
+        Gui.activeDocument().activeView().setActiveObject('pdbody',sb)
+        QtCore.QTimer.singleShot(250,close_error);Gui.runCommand('PartDesign_Thickness')
+        assert not doc.HasPendingTransaction and not Gui.Control.activeDialog()
+        Gui.Selection.clearSelection();Gui.activeDocument().activeView().setActiveObject('pdbody',body)
+        Gui.Selection.addSelection(target,'Face6');Gui.runCommand('PartDesign_Thickness')
+        QtTest.QTest.qWait(250);assert Gui.Control.activeDialog()
+        tasks.grab().save(str(out/'shell-task.png'))
+        Gui.activeDocument().resetEdit();doc.abortTransaction()
+        result.update(ok=True,source=thicken.__file__,native_command=True,double_click_edit=True,hidden_target=True,validity_colors=True,
+                      persisted=str(path),volume=feature.Shape.Volume)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'installed.json').write_text(json.dumps(result,indent=2))
+    from freecad_plus import extrude_task
+    if extrude_task._active:extrude_task._active.reject()
+    if Gui.activeDocument() and Gui.activeDocument().getInEdit():Gui.activeDocument().resetEdit()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

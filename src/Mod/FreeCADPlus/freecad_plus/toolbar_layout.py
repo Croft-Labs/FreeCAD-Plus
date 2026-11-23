@@ -5,7 +5,6 @@ DESIGN_TABS = (
     ('Home', 'PartDesignWorkbench'),
     ('Modeling', 'PartDesignWorkbench'),
     ('Sketch', 'SketcherWorkbench'),
-    ('Surface', 'SurfaceWorkbench'),
     ('Assembly', 'AssemblyWorkbench'),
     ('Mesh', 'MeshWorkbench'),
     ('View', None),
@@ -40,7 +39,16 @@ MODELING = (
     ('Dress-Up', (
         ('Fillet and Chamfer', 'large', ('PartDesign_Fillet', 'PartDesign_Chamfer')),
         ('Draft', 'medium', ('PartDesign_Draft',)),
-        ('Shell / Thickness', 'medium', ('PartDesign_Thickness',)),
+        ('Shell', 'medium', ('PartDesign_Thickness',)),
+    )),
+    ('Surface', (
+        ('Thicken', 'large', ('Plus_Thicken',)),
+        ('Filling', 'small', ('Surface_Filling',)),
+        ('Fill Boundary Curves', 'small', ('Surface_GeomFillSurface',)),
+        ('Sections', 'small', ('Surface_Sections',)),
+        ('Extend Face', 'small', ('Surface_ExtendFace',)),
+        ('Curve on Mesh', 'small', ('Surface_CurveOnMesh',)),
+        ('Blend Curve', 'small', ('Surface_BlendCurve',)),
     )),
     ('Transformation', (
         ('Mirror Feature', 'medium', ('PartDesign_Mirrored',)),

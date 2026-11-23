@@ -545,12 +545,16 @@ class Extrude:
         obj.setEditorMode(engine.ERROR, 1)
         obj.Proxy = self
 
+    def evaluated(self, obj, definition):
+        engine = self.engine()
+        return engine.evaluate(definition, planes.flatten(obj.ProfileReferences),
+                               engine.references(obj), engine.settings(obj), obj)
+
     def execute(self, obj):
         engine = self.engine()
         try:
             definition = owner(obj)
-            result, tool, _ = engine.evaluate(definition, planes.flatten(obj.ProfileReferences),
-                                       engine.references(obj), engine.settings(obj), obj)
+            result, tool, _ = self.evaluated(obj, definition)
             body = obj.getParentGeoFeatureGroup()
             transform = body.getGlobalPlacement().inverse().multiply(definition.getGlobalPlacement())
             # PartDesign synchronizes Placement with BaseFeature after execute.

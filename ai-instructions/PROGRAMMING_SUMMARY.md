@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Installed Shell, Thicken and Surface layout — November 23, 2026
+
+Modeling now contains the six native Surface actions plus Thicken, replacing the
+Plus Surface tab. PartDesign Thickness is presented as Shell, with invalid-input
+preflight and failed-entry cleanup. Thicken shares the feature task/persistence
+services for New/Add/Subtract sheet offsets and associative editing. Native build,
+107 distinct installed regression cases, direct UI, fresh-process recompute and
+shortcut checks passed. See [acceptance](evidence/thicken-20261123/README.md).
+
+
 ## Installed Revolve Solid/Sheet — November 23, 2026
 
 Revolve now shares Extrude's approved Solid/Sheet controls. Sheet forces New and

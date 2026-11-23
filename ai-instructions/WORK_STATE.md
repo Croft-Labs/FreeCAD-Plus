@@ -1,17 +1,26 @@
 # FreeCAD Plus: Current work state
 
-## Shell rename, Thicken and invalid-entry repair preview — November 23, 2026
+## Shell, Thicken and Modeling Surface section installed — November 23, 2026
 
-Owner requested Shell naming, separate sheet-to-solid Thicken, and a fix for invalid
-geometry leaving the operation stuck; clarified Thicken has New/Add/Subtract.
-Native UI previews cover renamed Shell, Thicken total thickness/direction/target,
-and prominent invalid-input feedback. A native filled offset creates the example
-solid, but Thicken persistence/operations and Shell preflight/rollback are not yet
-implemented. Preview approval is pending. Owner subsequently moved Thicken into a
-new Surface section on Modeling with all six current Surface tools, removing the
-Plus Surface tab. The revised native preview verifies all seven controls and
-retained Modeling context. See [current combined preview](evidence/surface-modeling-preview-20261123/README.md)
-and [reproduced defect and feature scope](evidence/shell-thicken-preview-20261123/README.md).
+Owner approved the combined preview and requested implementation. Surface's six
+native tools and the new Thicken now share a Surface section in Modeling; the Plus
+Surface tab is removed. Native Surface/Classic access remains. Thickness is named
+Shell in the native command/task; existing identities/properties/labels remain.
+Invalid sheets are rejected before Shell creates a feature, and declined/failed
+initial task entry rolls back its transaction.
+
+Thicken provides associative New/Add/Subtract from one sheet or connected faces,
+total thickness, Along/Opposite normal/Symmetric, and Sharp/Rounded joins. It reuses
+target visibility/colors, scrolling selections, History/eyes, deferred typing,
+creation/editing and atomic persistence. Saved recompute is independent of active
+editing context; interactive input keeps ownership and strict-order admission.
+
+Eleven focused build and eleven final installed checks pass, in addition to the
+106-case installed broad regression run (107 distinct cases overall). Installed
+native UI capture, separate-process reopen/recompute and the existing shortcut
+check passed. Eleven payload files have retained rollback copies. Owner sessions
+and settings were preserved; existing processes need restart to load new modules.
+See [implementation and direct screenshots](evidence/thicken-20261123/README.md).
 
 ## Revolve Solid/Sheet installed — November 23, 2026
 

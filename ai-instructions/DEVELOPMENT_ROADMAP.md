@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Shell, Thicken and Surface section — November 23, 2026
+
+- [x] Preview combined Shell/Thicken scope and Modeling Surface placement; obtain chat approval.
+- [x] Implement native Shell naming/preflight/entry rollback and associative Thicken New/Add/Subtract.
+- [x] Move six native Surface actions with Thicken into Modeling, retaining Classic/native access.
+- [x] Validate build, installed regressions, direct UI, fresh-process persistence and existing shortcut.
+- [x] Install with rollback copies and record [acceptance](evidence/thicken-20261123/README.md).
+
+
 ## Shared feature workflow migration contract — November 23, 2026
 
 Owner instruction: combining feature workflows also combines their Plus task-panel

@@ -1,0 +1,25 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import document,thicken,extrude_task,toolbar_layout
+        assert 'profile-shortcut' in App.ConfigGet('UserParameter')
+        assert 'profile-shortcut' in App.ConfigGet('SystemParameter')
+        assert 'profile-shortcut' in App.getUserAppDataDir()
+        assert '/app/' in thicken.__file__.replace('\\','/')
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        doc=document.new_document('Thicken check');owner=document.validate(doc).Definitions[0]
+        sheet=owner.newObject('Part::Feature','Sheet');sheet.Shape=Part.makePlane(10,8);doc.recompute()
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(sheet);Gui.runCommand('Plus_Thicken')
+        task=extrude_task._active;assert task and task.valid;task.reject();App.closeDocument(doc.Name)
+        assert 'Surface' not in [name for name,_ in toolbar_layout.DESIGN_TABS]
+        result.update(ok=True,module=thicken.__file__,profile=App.ConfigGet('UserParameter'))
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'shortcut.json').write_text(json.dumps(result,indent=2))
+QtCore.QTimer.singleShot(2200,run)

@@ -170,7 +170,10 @@ def edit_feature(doc, feature):
     if planes.is_plane(feature):
         from . import plane_task
         return plane_task.show(feature)
-    from . import extrusion, revolution
+    from . import extrusion, revolution, thicken
+    if thicken.is_thicken(feature):
+        from . import thicken_task
+        return thicken_task.show(feature)
     if revolution.is_revolution(feature):
         from . import revolve_task
         return revolve_task.show(feature)

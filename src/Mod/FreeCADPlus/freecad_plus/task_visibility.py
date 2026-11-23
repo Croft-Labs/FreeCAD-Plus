@@ -46,7 +46,7 @@ class ExtrudeDisplay:
         self.desired = dict(self.saved)
         if task.feature is None:
             for obj in self.saved:
-                if not document.owned_children(obj) and not usable(obj, self.sheet):
+                if not document.owned_children(obj) and not task.usable_geometry(obj, self.sheet):
                     self.desired[obj] = False
                 elif obj.TypeId == 'App::Link':
                     self.desired[obj] = False
@@ -75,7 +75,7 @@ class ExtrudeDisplay:
         self.sheet = sheet
         if self.task.feature is None:
             for obj in self.saved:
-                if obj not in self.manual and usable(obj, True) and not usable(obj):
+                if obj not in self.manual and self.task.usable_geometry(obj, True) and not self.task.usable_geometry(obj):
                     self.desired[obj] = self.saved[obj] if sheet else False
             self.apply()
 

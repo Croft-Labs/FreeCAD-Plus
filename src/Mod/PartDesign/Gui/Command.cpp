@@ -619,7 +619,7 @@ bool CmdPartDesignNewSketch::isActive()
 // Common utility functions for all features creating solids
 //===========================================================================
 
-static void finishFeature(
+static bool finishFeature(
     const Gui::Command* cmd,
     App::DocumentObject* feature,
     App::DocumentObject* prevSolidFeature = nullptr,
@@ -663,8 +663,9 @@ static void finishFeature(
         cmd->copyVisual(feature, "DisplayMode", obj);
     }
 
-    PartDesignGui::setEdit(feature, activeBody);
+    const bool entered = PartDesignGui::setEdit(feature, activeBody);
     cmd->doCommand(cmd->Gui, "Gui.Selection.clearSelection()");
+    return entered;
 }
 
 //===========================================================================
@@ -2076,7 +2077,27 @@ void finishDressupFeature(
         FCMD_OBJ_CMD(Feat, "UseAllEdges = True");
     }
     cmd->doCommand(cmd->Gui, "Gui.Selection.clearSelection()");
-    finishFeature(cmd, Feat, base);
+    try {
+        if (which == "Thickness") {
+            FCMD_OBJ_CMD(Feat, "Label = 'Shell'");
+        }
+        const bool entered = finishFeature(cmd, Feat, base);
+        const auto editDocument = Gui::Application::Instance->editDocument();
+        if (which == "Thickness"
+            && (!entered || !editDocument
+                || editDocument->getInEdit() != Gui::Application::Instance->getViewProvider(Feat))) {
+            cmd->abortCommand();
+            return;
+        }
+    }
+    catch (...) {
+        // A failed initial Shell task must not leave an invisible feature and
+        // pending transaction. Errors inside an opened task remain recoverable.
+        if (which == "Thickness") {
+            cmd->abortCommand();
+        }
+        throw;
+    }
 
     App::DocumentObject* baseFeature = static_cast<PartDesign::DressUp*>(Feat)->Base.getValue();
     if (baseFeature) {
@@ -2252,8 +2273,8 @@ CmdPartDesignThickness::CmdPartDesignThickness()
 {
     sAppModule = "PartDesign";
     sGroup = QT_TR_NOOP("PartDesign");
-    sMenuText = QT_TR_NOOP("Thickness");
-    sToolTipText = QT_TR_NOOP("Applies thickness and removes the selected faces");
+    sMenuText = QT_TR_NOOP("Shell");
+    sToolTipText = QT_TR_NOOP("Hollows a solid by removing selected faces and setting wall thickness");
     sWhatsThis = "PartDesign_Thickness";
     sStatusTip = sToolTipText;
     sPixmap = "PartDesign_Thickness";
@@ -2262,6 +2283,11 @@ CmdPartDesignThickness::CmdPartDesignThickness()
 void CmdPartDesignThickness::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+    if (App::GetApplication().getActiveTransaction()) {
+        doCommand(Gui, "from freecad_plus.thicken_task import show_error; "
+                  "show_error('Shell', 'Finish the current operation first.')");
+        return;
+    }
     Gui::SelectionObject selected;
     bool useAllEdges = false;
     bool noSelection = false;
@@ -2292,6 +2318,13 @@ void CmdPartDesignThickness::activated(int iMsg)
         }
     }
 
+    if (!base || base->Shape.getShape().isNull()
+        || base->Shape.getShape().countSubShapes(TopAbs_SOLID) != 1) {
+        doCommand(Gui, "from freecad_plus.thicken_task import show_error; "
+                  "show_error('Shell — incompatible selection', "
+                  "'Shell requires one solid. Use Thicken to give a sheet thickness.')");
+        return;
+    }
     finishDressupFeature(this, "Thickness", base, SubNames, useAllEdges);
 }
 

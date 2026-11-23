@@ -18,6 +18,7 @@ class ExtrudeTask(QtCore.QObject):
     engine = extrusion
     title = "Extrude"
     icon = "PartDesign_Pad"
+    selection_noun = "curves"
     def __init__(self, feature=None, which='Pad'):
         super().__init__()
         self.doc = Gui.activeDocument().Document
@@ -124,24 +125,7 @@ class ExtrudeTask(QtCore.QObject):
         if feature is not None:
             self.load_feature(feature)
         else:
-            raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0) for sub in entry.SubElementNames or ('',)]
-            for obj,sub in planes.canonical(self.owner,raw):
-                obj,sub = self.engine.profile_reference((obj,sub))
-                if (obj.isDerivedFrom('Sketcher::SketchObject') or Part.splitSubname(sub)[2].startswith('Face')
-                        or (self.outputs and (Part.splitSubname(sub)[2].startswith('Edge')
-                            or (obj.isDerivedFrom('Part::Feature') and obj.Shape.Edges and not obj.Shape.Faces)))):
-                    if self.outputs and not obj.isDerivedFrom('Sketcher::SketchObject') and not Part.splitSubname(sub)[2].startswith('Face'):
-                        self.engine.validate_profiles(self.owner, [(obj, sub)], 'Sheet')
-                    else:
-                        self.engine.validate_profiles(self.owner, [(obj, sub)])
-                    self.refs.append((obj,sub))
-                elif obj.TypeId == 'PartDesign::Body' or obj.isDerivedFrom('PartDesign::Feature'):
-                    target = obj.Tip if obj.TypeId == 'PartDesign::Body' else obj
-                    modeling._target_body(self.owner,target)
-                    if 'target' in self.links and self.links['target'][0] != target:
-                        raise ValueError('Select one target solid.')
-                    self.links['target'] = (target,'')
-            self.modes['Subtract' if which in ('Pocket','Groove') else 'Add' if 'target' in self.links else 'New Solid'].setChecked(True)
+            self.initial_selection(which)
         Gui.Selection.clearSelection()
         Gui.Selection.addObserver(self,0)
         App.addDocumentObserver(self)
@@ -152,8 +136,31 @@ class ExtrudeTask(QtCore.QObject):
         self.ready = True
         self.refresh_fields()
 
+    def initial_selection(self, which):
+        raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0) for sub in entry.SubElementNames or ('',)]
+        for obj,sub in planes.canonical(self.owner,raw):
+            obj,sub = self.engine.profile_reference((obj,sub))
+            if (obj.isDerivedFrom('Sketcher::SketchObject') or Part.splitSubname(sub)[2].startswith('Face')
+                    or (self.outputs and (Part.splitSubname(sub)[2].startswith('Edge')
+                        or (obj.isDerivedFrom('Part::Feature') and obj.Shape.Edges and not obj.Shape.Faces)))):
+                if self.outputs and not obj.isDerivedFrom('Sketcher::SketchObject') and not Part.splitSubname(sub)[2].startswith('Face'):
+                    self.engine.validate_profiles(self.owner, [(obj, sub)], 'Sheet')
+                else:
+                    self.engine.validate_profiles(self.owner, [(obj, sub)])
+                self.refs.append((obj,sub))
+            elif obj.TypeId == 'PartDesign::Body' or obj.isDerivedFrom('PartDesign::Feature'):
+                target = obj.Tip if obj.TypeId == 'PartDesign::Body' else obj
+                modeling._target_body(self.owner,target)
+                if 'target' in self.links and self.links['target'][0] != target:
+                    raise ValueError('Select one target solid.')
+                self.links['target'] = (target,'')
+        self.modes['Subtract' if which in ('Pocket','Groove') else 'Add' if 'target' in self.links else 'New Solid'].setChecked(True)
+
     def configure_form(self):
         pass
+
+    def usable_geometry(self, obj, sheet=False):
+        return task_visibility.usable(obj, sheet)
 
     def check(self):
         if self.closed or Gui.activeDocument() is None or Gui.activeDocument().activeView() != self.view:
@@ -387,7 +394,7 @@ class ExtrudeTask(QtCore.QObject):
         missing=target is None
         self.fields['target'].setStyleSheet(
             'QLineEdit { border: 2px solid #bd780b; border-radius: 3px; background: #fff3d6; }' if missing else '')
-        self.target_hint.setText(('Choose a target solid before selecting curves.' if candidates else
+        self.target_hint.setText(('Choose a target solid before selecting ' + self.selection_noun + '.' if candidates else
                                  'No solid is available to modify. Create a new solid first.') if missing else
                                 'Only solid selected automatically.' if target==self.automatic_target else '')
         self.target_hint.setStyleSheet('color: #875300;' if missing else 'color: #4d5965;')

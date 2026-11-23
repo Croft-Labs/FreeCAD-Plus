@@ -6,3 +6,6 @@ from freecad_plus import idle_tasks
 numeric_fields.install()
 idle_tasks.install()
 ui_modes.install()
+
+from freecad_plus import thicken_task
+thicken_task.install()

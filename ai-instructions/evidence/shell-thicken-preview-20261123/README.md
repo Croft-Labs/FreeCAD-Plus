@@ -1,5 +1,7 @@
 # Shell and Thicken preview — November 23, 2026
 
+Subsequently approved in chat and implemented. See [installed acceptance](../thicken-20261123/README.md).
+
 Owner requested renaming Thickness to Shell, a separate Thicken feature for sheets
 and a fix for invalid input leaving an operation stuck. Owner clarified Thicken
 must have New/Add/Subtract, like Extrude and Revolve. This is a native UI proposal;

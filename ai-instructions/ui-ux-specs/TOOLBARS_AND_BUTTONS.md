@@ -12,7 +12,8 @@ feature in that section. Shell remains in Dress-Up. Keep Filling, Fill Boundary
 Curves, Sections, Extend Face, Curve on Mesh and Blend Curve individually available
 with native icons/commands. Native Surface workbench and Classic access remain.
 The [combined native preview](../evidence/surface-modeling-preview-20261123/README.md)
-awaits approval; implementation is pending.
+was explicitly approved in chat with "approved, implement". See the
+[shared approval record](TASK_PANEL.md#shell-and-thicken--november-23-2026).
 
 ### Bordered controls and separate dropdown columns — November 22, 2026
 
@@ -129,7 +130,7 @@ Groups run left to right in this order. Ordered clusters follow the owner's outl
 | --- | --- | --- |
 | Sketch | New Sketch; cluster of Edit Sketch, Attach Sketch, Coordinate System | New Sketch size unstated in the final prompt (DOCX says large); remaining cluster small. Coordinate System dropdown: Coordinate System (default), Plane, Axis, Point. |
 | Modeling | Extrude; Revolve; Loft, Helix | Extrude/Revolve large; Loft/Helix medium cluster. |
-| Dress-Up | Fillet and Chamfer; Draft, Shell/Thickness | Combined Fillet and Chamfer large; Draft/Shell medium cluster. Use the remembered split-button behavior above; Fillet is the initial choice. |
+| Dress-Up | Fillet and Chamfer; Draft, Shell | Combined Fillet and Chamfer large; Draft/Shell medium cluster. Use the remembered split-button behavior above; Fillet is the initial choice. |
 | Transformation | Mirror Feature, Linear Pattern, Circular Pattern, Multi Transform | Medium cluster. |
 | Primitives | Box, Cylinder, Sphere, Cone, Ellipsoid, Torus, Prism, Wedge, Tab | Large dropdown; Box default. The owner included Tab; its absence from the implementation is not approval to remove it. |
 | Other | Delete Face/Defeaturing, Add Reference Object | Medium cluster. |
@@ -893,7 +894,7 @@ Original source registration, not availability in this fork's build, determines 
 | Fillet | [`PartDesign_Fillet`](#button-partdesign_fillet) | Design > Modeling > Dress-Up > Fillet and Chamfer (large) |
 | Chamfer | [`PartDesign_Chamfer`](#button-partdesign_chamfer) | Design > Modeling > Dress-Up > Fillet and Chamfer (large) |
 | Draft | [`PartDesign_Draft`](#button-partdesign_draft) | Design > Modeling > Dress-Up > Draft (medium) |
-| Thickness | [`PartDesign_Thickness`](#button-partdesign_thickness) | Design > Modeling > Dress-Up > Shell/Thickness (medium) |
+| Thickness | [`PartDesign_Thickness`](#button-partdesign_thickness) | Design > Modeling > Dress-Up > Shell (medium) |
 | Defeaturing | [`PartDesign_Defeaturing`](#button-partdesign_defeaturing) | Design > Modeling > Other > Delete Face/Defeaturing (medium) |
 
 #### Part Design Transformation Features
@@ -2799,7 +2800,7 @@ Each row gives a short original command description and its intended FC Plus pla
 | <a id="button-partdesign_subtractivehelix"></a><img src="toolbar-icons/PartDesign_SubtractiveHelix.png" width="16" height="16" alt=""> Subtractive Helix — [`PartDesign_SubtractiveHelix`](https://github.com/FreeCAD/FreeCAD/blob/b9609745048b/src/Mod/PartDesign/Gui/Command.cpp) | Sweeps the selected sketch or profile along a helix and removes it from the body | Design > Modeling > Modeling > Helix (medium; alias mapping needs confirmation) |
 | <a id="button-partdesign_subtractiveloft"></a><img src="toolbar-icons/PartDesign_SubtractiveLoft.png" width="16" height="16" alt=""> Subtractive Loft — [`PartDesign_SubtractiveLoft`](https://github.com/FreeCAD/FreeCAD/blob/b9609745048b/src/Mod/PartDesign/Gui/Command.cpp) | Lofts the selected sketch or profile through one or more sections and removes it from the body | Design > Modeling > Modeling > Loft (medium; alias mapping needs confirmation) |
 | <a id="button-partdesign_subtractivepipe"></a><img src="toolbar-icons/PartDesign_SubtractivePipe.png" width="16" height="16" alt=""> Subtractive Pipe — [`PartDesign_SubtractivePipe`](https://github.com/FreeCAD/FreeCAD/blob/b9609745048b/src/Mod/PartDesign/Gui/Command.cpp) | Sweeps the selected sketch or profile along a path and removes it from the body | Unspecified; retain original access |
-| <a id="button-partdesign_thickness"></a><img src="toolbar-icons/PartDesign_Thickness.png" width="16" height="16" alt=""> Thickness — [`PartDesign_Thickness`](https://github.com/FreeCAD/FreeCAD/blob/b9609745048b/src/Mod/PartDesign/Gui/Command.cpp) | Applies thickness and removes the selected faces | Design > Modeling > Dress-Up > Shell/Thickness (medium) |
+| <a id="button-partdesign_thickness"></a><img src="toolbar-icons/PartDesign_Thickness.png" width="16" height="16" alt=""> Thickness — [`PartDesign_Thickness`](https://github.com/FreeCAD/FreeCAD/blob/b9609745048b/src/Mod/PartDesign/Gui/Command.cpp) | Applies thickness and removes the selected faces | Design > Modeling > Dress-Up > Shell (medium) |
 | <a id="button-partdesign_wizardshaft"></a>PartDesign_WizardShaft — [`PartDesign_WizardShaft`](https://github.com/FreeCAD/FreeCAD/blob/b9609745048b/src/Mod/PartDesign/WizardShaft/WizardShaft.py) | Native PartDesign_WizardShaft action; detailed behavior follows the original workbench help. | Unspecified; retain original access |
 | <a id="button-partdesign_wizardshaftcallback"></a>PartDesign_WizardShaftCallBack — [`PartDesign_WizardShaftCallBack`](https://github.com/FreeCAD/FreeCAD/blob/b9609745048b/src/Mod/PartDesign/WizardShaft/WizardShaft.py) | Native PartDesign_WizardShaftCallBack action; detailed behavior follows the original workbench help. | Unspecified; retain original access |
 ### Points

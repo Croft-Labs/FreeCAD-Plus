@@ -1,5 +1,7 @@
 # Surface tools inside Modeling — November 23, 2026
 
+Subsequently approved in chat and implemented. See [installed acceptance](../thicken-20261123/README.md).
+
 Owner revised the pending Shell/Thicken proposal: move the Surface tab's tools
 into a Surface section on Modeling, remove that tab, and place Thicken in the new
 section. Shell stays in Dress-Up. This supersedes the earlier proposed Thicken

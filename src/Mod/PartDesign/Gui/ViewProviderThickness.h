@@ -40,7 +40,7 @@ public:
     ViewProviderThickness()
     {
         sPixmap = "PartDesign_Thickness.svg";
-        menuName = tr("Thickness Parameters");
+        menuName = tr("Shell Parameters");
     }
 
     /// return "Thickness"

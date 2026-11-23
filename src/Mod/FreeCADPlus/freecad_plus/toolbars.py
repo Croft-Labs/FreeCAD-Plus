@@ -259,7 +259,7 @@ class Ribbon(QtCore.QObject):
 
     def _modes(self, available):
         modes = [('Design', 'PartDesignWorkbench')] + list(layout.MODE_WORKBENCHES)
-        mapped = {wb for _, wb in modes} | {wb for _, wb in layout.DESIGN_TABS}
+        mapped = {wb for _, wb in modes} | {wb for _, wb in layout.DESIGN_TABS} | {'SurfaceWorkbench'}
         for name, wb in available.items():
             if name not in mapped:
                 modes.append((str(wb.MenuText).replace('&', ''), name))
@@ -286,7 +286,8 @@ class Ribbon(QtCore.QObject):
             name = wb.name()
             available = Gui.listWorkbenches()
             if name != self.workbench:
-                design = next((tab for tab, owner in layout.DESIGN_TABS if owner == name), None)
+                design = ('Modeling' if name == 'SurfaceWorkbench' else
+                          next((tab for tab, owner in layout.DESIGN_TABS if owner == name), None))
                 self.mode_workbench = 'PartDesignWorkbench' if design else name
                 if design:
                     # PartDesign defaults to the specified Modeling tab.
@@ -328,6 +329,9 @@ class Ribbon(QtCore.QObject):
                 bar.toggleViewAction().setVisible(False)
                 bar.hide()
             self._build_common(items)
+            if self.mode_workbench == 'PartDesignWorkbench' and self.tab in ('Modeling', 'Surface'):
+                self.tab = 'Modeling'
+                import SurfaceGui  # Register native actions without changing the active tab.
             self._build_page(items)
             self.bar.show()
             self.bar.toggleViewAction().setVisible(False)

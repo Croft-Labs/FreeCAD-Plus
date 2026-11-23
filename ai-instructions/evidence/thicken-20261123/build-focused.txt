@@ -1,0 +1,16 @@
+test_add_subtract_and_invalid_tool (TestThickenWorkflow.TestThickenWorkflow.test_add_subtract_and_invalid_tool) ... ok
+test_boolean_save_edit_keeps_predecessor (TestThickenWorkflow.TestThickenWorkflow.test_boolean_save_edit_keeps_predecessor) ... ok
+test_curved_sheet_and_connected_faces (TestThickenWorkflow.TestThickenWorkflow.test_curved_sheet_and_connected_faces) ... ok
+test_invalid_inputs_and_sequential_edit_are_atomic (TestThickenWorkflow.TestThickenWorkflow.test_invalid_inputs_and_sequential_edit_are_atomic) ... ok
+test_modeling_surface_layout_and_classic_native_access (TestThickenWorkflow.TestThickenWorkflow.test_modeling_surface_layout_and_classic_native_access) ... ok
+test_planar_directions_and_read_only_preview (TestThickenWorkflow.TestThickenWorkflow.test_planar_directions_and_read_only_preview) ... ok
+test_save_edit_undo_associativity_and_reopen (TestThickenWorkflow.TestThickenWorkflow.test_save_edit_undo_associativity_and_reopen) ... ok
+test_sheet_face_collector_and_error_recovery (TestThickenWorkflow.TestThickenWorkflow.test_sheet_face_collector_and_error_recovery) ... ok
+test_shell_declined_editor_rolls_back_its_transaction (TestThickenWorkflow.TestThickenWorkflow.test_shell_declined_editor_rolls_back_its_transaction) ... ok
+test_shell_invalid_entry_and_valid_native_task (TestThickenWorkflow.TestThickenWorkflow.test_shell_invalid_entry_and_valid_native_task) ... ok
+test_task_create_edit_cancel_numeric_and_hidden_target (TestThickenWorkflow.TestThickenWorkflow.test_task_create_edit_cancel_numeric_and_hidden_target) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 5.736s
+
+OK

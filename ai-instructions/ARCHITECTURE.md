@@ -8,6 +8,22 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Thicken and Shell integration — November 23, 2026
+
+`freecad_plus.thicken` evaluates native filled offsets and shares `extrusion.save_feature`
+and the `Extrude` proxy's Body-local output conversion. `PlusThickenVersion=1`,
+`ProfileReferences`, `Target` and hidden `Thicken_*` settings preserve native links and
+identity. `Thicken.evaluated` checks recorded owned inputs independently of active
+view; interactive `validate` retains canonical occurrence admission and strict History.
+`thicken_task.ThickenTask` specializes the common collector/task lifecycle and keeps
+its geometry-specific controls separate. `Plus_Thicken` registers at GUI startup.
+
+The native Shell command keeps `PartDesign_Thickness` and `PartDesign::Thickness`.
+It rejects non-solids before opening a transaction, and checks actual edit-provider
+entry before retaining a newly created feature. Initial entry exceptions/declines
+abort only its own operation; existing pending operations are rejected. Native task
+semantics and existing feature labels/properties remain. See [acceptance](evidence/thicken-20261123/README.md).
+
 ## Shared task error feedback — November 23, 2026
 
 `freecad_plus.task_status.TaskStatus` owns the approved inline-error presentation.
