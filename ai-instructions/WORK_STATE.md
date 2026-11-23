@@ -1,13 +1,18 @@
 # FreeCAD Plus: Current work state
 
-## Extrude Solid/Sheet preview — November 23, 2026
+## Extrude Solid/Sheet installed — November 23, 2026
 
-Owner requests sheet extrusion for open curves and clarified Solid/Sheet on the
-left (Solid default), New/Add/Subtract on the right. Sheet selects and locks New
-and disables all three operation buttons; Solid re-enables them. Native UI
-prototype checks and a one-line/one-face sheet illustration passed. Production
-evaluator, persistence and installation remain unchanged pending preview approval.
-See [direct screenshots and implementation scope](evidence/extrude-sheet-preview-20261123/README.md).
+Owner approved implementation. Extrude now has Solid/Sheet on the left (Solid
+default), New/Add/Subtract on the right. Sheet selects and locks New, removes any
+target and produces uncapped native sheets from open or closed curves. Solid
+re-enables the operations. Existing Extrudes default to Solid; Revolve is unchanged.
+
+Ten focused build checks and all 88 installed regressions pass. Installed command,
+mouse selection, double-click edit, separate-process save/reopen/recompute and
+existing-shortcut checks passed. Four scripts installed with retained rollback
+copies; owner sessions/settings preserved. Existing sessions need restart to load
+the changes. Sheet limits currently require forward planar faces; taper requires
+closed profiles and Length. See [evidence and installed screenshots](evidence/extrude-sheet-20261123/README.md).
 
 ## Selection button appearance/click repair — November 23, 2026
 

@@ -1,0 +1,15 @@
+test_closed_curves_are_uncapped_and_mode_edits_keep_identity (TestExtrudeWorkflow.TestSheetExtrude.test_closed_curves_are_uncapped_and_mode_edits_keep_identity) ... ok
+test_curve_visibility_and_revolve_scope (TestExtrudeWorkflow.TestSheetExtrude.test_curve_visibility_and_revolve_scope) ... ok
+test_edge_and_face_inputs_and_new_only_boundary (TestExtrudeWorkflow.TestSheetExtrude.test_edge_and_face_inputs_and_new_only_boundary) ... ok
+test_existing_features_without_output_remain_solid (TestExtrudeWorkflow.TestSheetExtrude.test_existing_features_without_output_remain_solid) ... ok
+test_limits_taper_and_degenerate_profile (TestExtrudeWorkflow.TestSheetExtrude.test_limits_taper_and_degenerate_profile) ... ok
+test_line_sheet_preview_save_edit_undo_and_associativity (TestExtrudeWorkflow.TestSheetExtrude.test_line_sheet_preview_save_edit_undo_and_associativity) ... ok
+test_multiple_curves_and_open_taper (TestExtrudeWorkflow.TestSheetExtrude.test_multiple_curves_and_open_taper) ... ok
+test_offsets_reverse_symmetric_two_sides_and_direction (TestExtrudeWorkflow.TestSheetExtrude.test_offsets_reverse_symmetric_two_sides_and_direction) ... ok
+test_task_switching_cancel_accept_and_edit (TestExtrudeWorkflow.TestSheetExtrude.test_task_switching_cancel_accept_and_edit) ... ok
+test_tilted_limit_start_reference_and_rotated_sketch (TestExtrudeWorkflow.TestSheetExtrude.test_tilted_limit_start_reference_and_rotated_sketch) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 4.229s
+
+OK

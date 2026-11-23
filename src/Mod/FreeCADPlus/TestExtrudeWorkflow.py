@@ -13,6 +13,159 @@ from freecad_plus import document, editing, extrusion, extrude_task, external, h
 from TestFeatureCenteredModeling import TestFeatureCenteredModeling
 
 
+class TestSheetExtrude(unittest.TestCase):
+    setUp = TestFeatureCenteredModeling.setUp
+    circle = TestFeatureCenteredModeling.circle
+    snapshot = TestFeatureCenteredModeling.snapshot
+
+    def tearDown(self):
+        if extrude_task._active:extrude_task._active.reject()
+        TestFeatureCenteredModeling.tearDown(self)
+
+    def line(self):
+        sketch = modeling.new_sketch(self.doc)
+        sketch.addGeometry(Part.LineSegment(App.Vector(0,0,0), App.Vector(10,0,0)), False)
+        self.doc.recompute()
+        return sketch
+
+    def evaluate(self, obj, links=None, **settings):
+        return extrusion.evaluate(self.owner, [(obj,'')], links or {}, dict(extrusion.DEFAULTS, output='Sheet', **settings))[0]
+
+    def save(self, obj, feature=None, **settings):
+        return extrusion.save(self.doc, [(obj,'')], {}, dict(extrusion.DEFAULTS, output='Sheet', **settings), feature)
+
+    def test_line_sheet_preview_save_edit_undo_and_associativity(self):
+        sketch=self.line(); before=self.snapshot();docs=set(App.listDocuments())
+        shape=self.evaluate(sketch,length=8)
+        self.assertEqual(len(shape.Faces),1);self.assertFalse(shape.Solids);self.assertAlmostEqual(shape.Area,80)
+        self.assertEqual(self.snapshot(),before);self.assertEqual(set(App.listDocuments()),docs)
+        feature=self.save(sketch,length=8);identity=feature.ID;name=feature.Name
+        self.assertFalse(feature.Shape.Solids);self.assertEqual(feature.getParentGeoFeatureGroup().Tip,feature)
+        self.assertNotIn('Invalid',feature.State)
+        history=document.history(self.doc,self.owner);self.assertLess(history.index(sketch),history.index(feature))
+        self.save(sketch,feature,length=12);self.assertEqual(feature.ID,identity);self.assertAlmostEqual(feature.Shape.Area,120)
+        self.doc.undo();self.doc.recompute();self.assertAlmostEqual(feature.Shape.Area,80)
+        self.doc.redo();self.doc.recompute();self.assertEqual(feature.ID,identity)
+        sketch.Placement.Base.z=4;self.doc.recompute();self.assertAlmostEqual(feature.Shape.BoundBox.ZMin,4)
+        path=self.output/'Sheet.cadprt';document.save_document(self.doc,path)
+        App.closeDocument(self.doc.Name);self.doc=App.openDocument(str(path));self.owner=document.validate(self.doc).Definitions[0]
+        feature=self.doc.getObject(name);self.doc.recompute()
+        self.assertEqual(extrusion.settings(feature)['output'],'Sheet');self.assertFalse(feature.Shape.Solids)
+        self.assertEqual(feature.ID,identity);self.assertAlmostEqual(feature.Shape.Area,120)
+
+    def test_closed_curves_are_uncapped_and_mode_edits_keep_identity(self):
+        sketch=self.circle(2);sheet=self.save(sketch,length=5);identity=sheet.ID
+        self.assertFalse(sheet.Shape.Solids);self.assertAlmostEqual(sheet.Shape.Area,20*math.pi)
+        extrusion.save(self.doc,[(sketch,'')],{},dict(extrusion.DEFAULTS,length=5),sheet)
+        self.assertEqual(sheet.ID,identity);self.assertEqual(len(sheet.Shape.Solids),1)
+        self.save(sketch,sheet,length=5);self.assertEqual(sheet.ID,identity);self.assertFalse(sheet.Shape.Solids)
+
+    def test_offsets_reverse_symmetric_two_sides_and_direction(self):
+        sketch=self.line()
+        cases=[(dict(start='Offset',start_offset=2,length=8),(2,10)),
+               (dict(length=8,reverse=True),(-8,0)),
+               (dict(length=8,sides='Symmetric'),(-4,4)),
+               (dict(length=8,length2=3,sides='Two sides'),(-3,8))]
+        for values,span in cases:
+            shape=self.evaluate(sketch,**values)
+            self.assertAlmostEqual(shape.BoundBox.ZMin,span[0]);self.assertAlmostEqual(shape.BoundBox.ZMax,span[1])
+            self.assertFalse(shape.Solids)
+        axis=self.owner.newObject('Part::Feature','Direction');axis.Shape=Part.makeLine(App.Vector(),App.Vector(0,1,1));self.doc.recompute()
+        shape=self.evaluate(sketch,{'direction':(axis,'Edge1')},direction='Selected axis / line',measure='Along profile normal',length=8)
+        self.assertAlmostEqual(shape.BoundBox.ZMax,8)
+
+    def test_limits_taper_and_degenerate_profile(self):
+        sketch=self.line()
+        limit=self.owner.newObject('Part::Feature','Limit');limit.Shape=Part.makePlane(30,30,App.Vector(-10,-10,6));self.doc.recompute()
+        shape=self.evaluate(sketch,{'limit':(limit,'Face1')},end='Up to face',offset=1)
+        self.assertAlmostEqual(shape.BoundBox.ZMax,7);self.assertAlmostEqual(shape.Area,70)
+        target=self.owner.newObject('Part::Feature','LimitSolid');target.Shape=Part.makeBox(30,30,4,App.Vector(-10,-10,6));self.doc.recompute()
+        shape=self.evaluate(sketch,{'limit':(target,'')},end='Up to shape')
+        self.assertAlmostEqual(shape.BoundBox.ZMax,6)
+        shape=self.evaluate(self.circle(3),length=5,taper=5);self.assertFalse(shape.Solids);self.assertTrue(shape.isValid())
+        axis=self.owner.newObject('Part::Feature','Parallel');axis.Shape=Part.makeLine(App.Vector(),App.Vector(10,0,0));self.doc.recompute()
+        with self.assertRaises(ValueError):self.evaluate(sketch,{'direction':(axis,'Edge1')},direction='Selected axis / line')
+
+    def test_edge_and_face_inputs_and_new_only_boundary(self):
+        solid=modeling.extrude_new_solid(self.doc,self.circle(3),5)
+        edge_index=next(i for i,e in enumerate(solid.Shape.Edges,1) if isinstance(e.Curve,Part.Circle))
+        face_index=next(i for i,f in enumerate(solid.Shape.Faces,1) if isinstance(f.Surface,Part.Plane))
+        for obj,sub in ((solid.getParentGeoFeatureGroup(),'Edge'+str(edge_index)),(solid,'Face'+str(face_index))):
+            shape,_,_=extrusion.evaluate(self.owner,[(obj,sub)],{},dict(extrusion.DEFAULTS,output='Sheet',length=2))
+            self.assertFalse(shape.Solids);self.assertAlmostEqual(shape.Area,12*math.pi)
+        line=self.owner.newObject('Part::Feature','Standalone');line.Shape=Part.makeLine(App.Vector(),App.Vector(10,0,0))
+        axis=self.owner.newObject('Part::Feature','Axis');axis.Shape=Part.makeLine(App.Vector(),App.Vector(0,0,10));self.doc.recompute()
+        shape=self.evaluate(line,{'direction':(axis,'Edge1')},direction='Selected axis / line')
+        self.assertFalse(shape.Solids);self.assertAlmostEqual(shape.Area,80)
+        refs,links,values=extrusion.validate(self.owner,[(self.line(),'')],{'target':(solid,'')},dict(extrusion.DEFAULTS,output='Sheet',operation='Subtract'))
+        self.assertEqual(values['operation'],'New Solid');self.assertNotIn('target',links)
+        face=self.owner.newObject('Part::Feature','Face');face.Shape=Part.makePlane(10,4);self.doc.recompute()
+        shape,_,_=extrusion.evaluate(self.owner,[(face,'Face1')],{},dict(extrusion.DEFAULTS,output='Sheet',length=2))
+        self.assertFalse(shape.Solids);self.assertAlmostEqual(shape.Area,56)
+
+    def test_multiple_curves_and_open_taper(self):
+        sketch=self.line()
+        sketch.addGeometry(Part.LineSegment(App.Vector(10,0,0),App.Vector(10,5,0)),False)
+        sketch.addGeometry(Part.LineSegment(App.Vector(20,0,0),App.Vector(30,0,0)),False)
+        self.doc.recompute()
+        for refs,area in (([(sketch,'Edge1'),(sketch,'Edge2')],120), ([(sketch,'')],200)):
+            shape,_,_=extrusion.evaluate(self.owner,refs,{},dict(extrusion.DEFAULTS,output='Sheet'))
+            self.assertAlmostEqual(shape.Area,area);self.assertFalse(shape.Solids)
+        with self.assertRaisesRegex(ValueError,'zero taper'):
+            self.evaluate(self.line(),length=5,taper=5)
+
+    def test_tilted_limit_start_reference_and_rotated_sketch(self):
+        sketch=self.line()
+        limit=self.owner.newObject('Part::Feature','TiltedLimit')
+        limit.Shape=Part.makePlane(60,60,App.Vector(-20,-20,15))
+        limit.Placement.Rotation=App.Rotation(App.Vector(0,1,0),15)
+        self.doc.recompute()
+        shape=self.evaluate(sketch,{'limit':(limit,'Face1')},end='Up to face')
+        self.assertTrue(shape.isValid());self.assertFalse(shape.Solids)
+        self.assertGreater(shape.BoundBox.ZMax,shape.BoundBox.ZMin)
+        start=self.owner.newObject('Part::Feature','StartPlane');start.Shape=Part.makePlane(40,40,App.Vector(-10,-10,3))
+        self.doc.recompute()
+        shape=self.evaluate(sketch,{'start':(start,'Face1')},start='Reference',start_offset=2,length=4)
+        self.assertAlmostEqual(shape.BoundBox.ZMin,5);self.assertAlmostEqual(shape.BoundBox.ZMax,9)
+        sketch.Placement.Rotation=App.Rotation(App.Vector(1,0,0),90);self.doc.recompute()
+        shape=self.evaluate(sketch,length=4)
+        self.assertAlmostEqual(shape.Area,40);self.assertAlmostEqual(shape.BoundBox.YLength,4)
+
+    def test_existing_features_without_output_remain_solid(self):
+        sketch=self.circle();feature=extrusion.save(self.doc,[(sketch,'')],{},extrusion.DEFAULTS)
+        feature.removeProperty('Extrude_output');self.doc.recompute()
+        self.assertEqual(extrusion.settings(feature)['output'],'Solid');self.assertEqual(len(feature.Shape.Solids),1)
+        identity=feature.ID;extrusion.save(self.doc,[(sketch,'')],{},dict(extrusion.DEFAULTS,length=6),feature)
+        self.assertEqual(feature.ID,identity);self.assertEqual(feature.Extrude_output,'Solid')
+
+    def test_task_switching_cancel_accept_and_edit(self):
+        Gui.activateWorkbench('PartDesignWorkbench')
+        sketch=self.line();before=self.snapshot();Gui.Selection.addSelection(sketch)
+        task=extrude_task.show();QtTest.QTest.qWait(100)
+        self.assertEqual(task.output(),'Solid');self.assertFalse(task.valid)
+        task.outputs['Sheet'].click();QtTest.QTest.qWait(100)
+        self.assertTrue(task.valid,task.status.text());self.assertEqual(task.mode(),'New Solid')
+        self.assertTrue(all(not b.isEnabled() for b in task.modes.values()))
+        task.outputs['Solid'].click();self.assertTrue(all(b.isEnabled() for b in task.modes.values()))
+        task.outputs['Sheet'].click();task.reject();self.assertEqual(self.snapshot(),before)
+        Gui.Selection.addSelection(sketch);task=extrude_task.show();task.outputs['Sheet'].click()
+        self.assertTrue(task.accept());feature=task.result
+        task=extrude_task.show(feature);self.assertEqual(task.output(),'Sheet');self.assertTrue(task.valid,task.status.text())
+        task.reject()
+
+    def test_curve_visibility_and_revolve_scope(self):
+        from freecad_plus import revolve_task
+        Gui.activateWorkbench('PartDesignWorkbench')
+        curve=self.owner.newObject('Part::Feature','Curve');curve.Shape=Part.makeLine(App.Vector(),App.Vector(10,0,0))
+        hidden=self.owner.newObject('Part::Feature','Hidden');hidden.Shape=curve.Shape;hidden.Visibility=False;self.doc.recompute()
+        task=extrude_task.show();self.assertFalse(curve.Visibility)
+        task.outputs['Sheet'].click();self.assertTrue(curve.Visibility);self.assertFalse(hidden.Visibility)
+        task.outputs['Solid'].click();self.assertFalse(curve.Visibility)
+        task.reject();self.assertTrue(curve.Visibility);self.assertFalse(hidden.Visibility)
+        task=revolve_task.show();self.assertEqual(task.outputs,{})
+        self.assertEqual(task.modes['New Solid'].text(),'New Solid');task.reject()
+
+
 class TestExtrudeWorkflow(TestFeatureCenteredModeling):
     def setUp(self):
         super().setUp()

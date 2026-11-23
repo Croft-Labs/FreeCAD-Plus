@@ -1,0 +1,31 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import extrusion,extrude_task,document,editing,isolation
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.open_document(out/'InstalledSheet.cadprt');names=json.loads((out/'fixture.json').read_text())
+        feature=doc.getObject(names['feature']);sketch=doc.getObject(names['sketch'])
+        assert feature.ID==names['identity'] and extrusion.settings(feature)['output']=='Sheet'
+        assert not feature.Shape.Solids and abs(feature.Shape.Area-360)<1e-7
+        definition=extrusion.owner(feature);occurrences=isolation.occurrences(doc,definition)
+        if occurrences:editing.edit(occurrences[0])
+        else:editing.edit_unused(doc,definition)
+        sketch.Placement.Base.z=5;doc.recompute()
+        assert feature.Shape.isValid() and not feature.ExtrudeError and not feature.Shape.Solids
+        assert abs(feature.Shape.BoundBox.ZMin-5)<1e-7 and abs(feature.Shape.BoundBox.ZMax-17)<1e-7
+        task=extrude_task.show(feature);assert task.valid and task.output()=='Sheet'
+        assert all(not b.isEnabled() for b in task.modes.values());task.reject()
+        result.update(ok=True,fresh_process_recompute=True,identity=feature.ID,area=feature.Shape.Area,profile=App.ConfigGet('UserParameter'))
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'reopen.json').write_text(json.dumps(result,indent=2))
+    from freecad_plus import extrude_task
+    if extrude_task._active:extrude_task._active.reject()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

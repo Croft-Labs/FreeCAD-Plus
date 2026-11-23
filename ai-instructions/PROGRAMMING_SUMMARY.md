@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Installed Extrude Solid/Sheet — November 23, 2026
+
+Approved output choices now create native uncapped sheets from open/closed curves.
+Sheet forces and locks New; Solid remains default and keeps New/Add/Subtract.
+Persisted output defaults older features to Solid. Shared edit, identity, history,
+visibility and Revolve behavior are preserved. Ten focused build and 88 installed
+checks pass, plus native command/edit, fresh-process recompute and shortcut checks.
+See [acceptance and supported extents](evidence/extrude-sheet-20261123/README.md).
+
 ## Installed selection-button correction — November 23, 2026
 
 The curve-intent setting is a full-button dropdown with a normal theme background;

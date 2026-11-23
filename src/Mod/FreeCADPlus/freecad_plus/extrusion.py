@@ -23,7 +23,7 @@ MODES = ('New Solid', 'Add', 'Subtract')
 ENDS = ('Length', 'Up to face', 'Up to shape', 'To first', 'To last', 'Through all')
 LINKS = {'target': 'Target', 'start': 'StartReference', 'limit': 'EndReference',
          'secondlimit': 'SecondEndReference', 'direction': 'DirectionReference'}
-DEFAULTS = dict(operation='New Solid', start='Profile plane', start_offset=0.,
+DEFAULTS = dict(output='Solid', operation='New Solid', start='Profile plane', start_offset=0.,
                 sides='One side', end='Length', length=8., offset=0.,
                 end2='Length', length2=3., offset2=0., reverse=False,
                 direction='Profile normal', measure='Along direction',
@@ -35,7 +35,7 @@ def is_extrusion(obj):
 
 
 def settings(feature):
-    return {key: getattr(feature, 'Extrude_' + key) for key in DEFAULTS}
+    return {key: getattr(feature, 'Extrude_' + key, default) for key, default in DEFAULTS.items()}
 
 
 def references(feature):
@@ -54,7 +54,7 @@ def validate(definition, refs, links, values, feature=None):
         values[key] = float(values[key])
         if not math.isfinite(values[key]):
             raise ValueError('Extrude values must be finite')
-    for key, choices in (('operation', MODES), ('start', ('Profile plane', 'Offset', 'Reference')),
+    for key, choices in (('output', ('Solid', 'Sheet')), ('operation', MODES), ('start', ('Profile plane', 'Offset', 'Reference')),
                          ('sides', ('One side', 'Symmetric', 'Two sides')), ('end', ENDS), ('end2', ENDS),
                          ('direction', ('Profile normal', 'Selected axis / line')),
                          ('measure', ('Along direction', 'Along profile normal'))):
@@ -64,7 +64,10 @@ def validate(definition, refs, links, values, feature=None):
         raise ValueError('Select a sketch or a closed region to extrude.')
     refs = planes.canonical(definition, refs)
     refs = [profile_reference(ref) for ref in refs]
-    validate_profiles(definition, refs)
+    validate_profiles(definition, refs, values['output'])
+    if values['output'] == 'Sheet':
+        values['operation'] = 'New Solid'  # Keep the saved operation identifier compatible.
+        links = {key: ref for key, ref in links.items() if key != 'target'}
     links = {key: planes.canonical(definition, [ref])[0] for key, ref in links.items()}
     if feature is not None:
         if not is_extrusion(feature) or owner(feature) != definition:
@@ -116,7 +119,7 @@ def validate(definition, refs, links, values, feature=None):
 
 def profile_reference(ref):
     obj, sub = ref
-    if obj.TypeId == 'PartDesign::Body' and Part.splitSubname(sub)[2].startswith('Face'):
+    if obj.TypeId == 'PartDesign::Body' and Part.splitSubname(sub)[2].startswith(('Face', 'Edge')):
         if obj.Tip is None:
             raise ValueError('The selected body has no result face.')
         # The Body adds its own topology-name prefix. Resolve that mapped pick
@@ -124,14 +127,16 @@ def profile_reference(ref):
         # Keeping the Body prefix on the Tip produces a missing subelement.
         shape = obj.Shape
         picked = shape.getElement(sub)
-        index = next((i for i, face in enumerate(shape.Faces) if face.isSame(picked)), None)
+        kind = picked.ShapeType
+        elements = shape.Faces if kind == 'Face' else shape.Edges
+        index = next((i for i, element in enumerate(elements) if element.isSame(picked)), None)
         if index is None:
             raise ValueError('The selected result face is no longer available.')
-        return (obj.Tip, 'Face' + str(index + 1))
+        return (obj.Tip, kind + str(index + 1))
     return ref
 
 
-def validate_profiles(definition, refs):
+def validate_profiles(definition, refs, output='Solid'):
     """Sketch curves or one real face; datum faces are reference geometry only."""
     if not refs:
         raise ValueError('Select a sketch, closed sketch region, or face.')
@@ -140,6 +145,16 @@ def validate_profiles(definition, refs):
         if any(other != obj or (element and not Part.splitSubname(element)[2].startswith('Edge'))
                for other, element in refs):
             raise ValueError('Select a whole sketch or closed curves from one sketch.')
+    elif output == 'Sheet':
+        if (not obj.isDerivedFrom('Part::Feature') or obj.TypeId in (
+                'PartDesign::Plane', 'PartDesign::Line', 'PartDesign::Point',
+                'Part::DatumPlane', 'Part::DatumLine', 'Part::DatumPoint')
+                or any(other != obj for other, _ in refs)):
+            raise ValueError('Select sketch curves, edges or a face from one object for Sheet.')
+        for ref in refs:
+            shape = planes.shape(definition, ref)
+            if not shape.Edges or (shape.Faces and (len(refs) != 1 or shape.ShapeType != 'Face')):
+                raise ValueError('Select curves or a face boundary, not an entire solid or sheet.')
     elif (len(refs) != 1 or not obj.isDerivedFrom('Part::Feature')
           or obj.isDerivedFrom('PartDesign::Plane')
           or not Part.splitSubname(sub)[2].startswith('Face')
@@ -169,7 +184,7 @@ def profile_shape(definition, refs):
         raise ValueError('The profile contains no curves.')
     wires = [Part.Wire(group) for group in Part.sortEdges(edges)]
     if any(not wire.isClosed() for wire in wires):
-        raise ValueError('The selected curves are open; complete a closed region.')
+        raise ValueError('The selected curves are open; choose Sheet or complete a closed region.')
     face = Part.makeFace(wires, 'Part::FaceMakerBullseye')
     if face.isNull() or not face.isValid() or not face.Faces:
         raise ValueError('The profile must enclose valid planar regions without self-intersections.')
@@ -282,6 +297,8 @@ class InvalidResult(ValueError):
 
 def evaluate(definition, refs, links, values, feature=None):
     refs, links, v = validate(definition, refs, links, values, feature)
+    if v['output'] == 'Sheet':
+        return evaluate_sheet(definition, refs, links, v, feature)
     face, placement, edges = profile_shape(definition, refs)
     normal = placement.Rotation.multVec(App.Vector(0, 0, 1))
     direction = normal
@@ -384,6 +401,125 @@ def evaluate(definition, refs, links, values, feature=None):
         # or a second evaluation with different operation/limit inputs.
         raise InvalidResult(str(exc), tool) from exc
     return result, tool, edges
+
+
+def evaluate_sheet(definition, refs, links, v, feature):
+    """Extrude uncapped wires with the native Part kernel, never a thin solid."""
+    obj = refs[0][0]
+    selected = [planes.shape(definition, ref) for ref in refs]
+    if obj.isDerivedFrom('Sketcher::SketchObject') and any(not sub for _, sub in refs):
+        selected = [planes.shape(definition, (obj, ''))]
+    edges = []
+    for shape in selected:
+        for edge in shape.Edges:
+            if not any(edge.isSame(old) for old in edges):
+                edges.append(edge)
+    if not edges:
+        raise ValueError('The profile contains no curves.')
+    wires = [Part.Wire(group) for group in Part.sortEdges(edges)]
+    if (v['taper'] or (v['sides'] == 'Two sides' and v['taper2'])) and any(not wire.isClosed() for wire in wires):
+        raise ValueError('Sheet taper requires closed profile curves; use zero taper for open curves.')
+    profile = Part.makeCompound(wires)
+    normal = None
+    if obj.isDerivedFrom('Sketcher::SketchObject'):
+        placement = definition.getGlobalPlacement().inverse().multiply(obj.getGlobalPlacement())
+        normal = placement.Rotation.multVec(App.Vector(0, 0, 1))
+        origin = placement.Base
+    else:
+        plane = profile.findPlane()
+        if plane is not None:
+            normal = plane.Axis
+        origin = profile.BoundBox.Center
+    direction = normal
+    if 'direction' in links:
+        line = planes.describe(definition, links['direction'])
+        if line[0] != 'line':
+            raise ValueError('Direction requires a straight edge or axis.')
+        direction = line[2]
+    if direction is None:
+        raise ValueError('Choose a selected axis / line direction for this standalone curve.')
+    direction = App.Vector(direction); direction.normalize()
+    if v['reverse']:
+        direction = -direction
+    factor = abs(normal.dot(direction)) if normal is not None else 1.
+    if normal is not None and factor < 1e-7:
+        raise ValueError('The direction must leave the profile plane.')
+    if normal is None and (v['measure'] == 'Along profile normal' or v['start'] == 'Reference'):
+        raise ValueError('This profile has no unique plane; use Along direction and a start offset.')
+    shift = 0.
+    if v['start'] == 'Reference':
+        start = planes.describe(definition, links['start'])
+        if start[0] != 'plane' or abs(abs(start[2].dot(normal)) - 1) > 1e-7:
+            raise ValueError('Choose a start face or plane parallel to the profile.')
+        shift = (start[1] - origin).dot(start[2]) / direction.dot(start[2])
+    if v['start'] != 'Profile plane':
+        shift += v['start_offset']
+    profile.translate(direction * shift)
+    pieces = []
+    with kernel_document() as scratch:
+        source = scratch.addObject('Part::Feature', 'SheetProfile')
+        source.Shape = kernel_snapshot(profile)
+        for suffix in ('', '2') if v['sides'] == 'Two sides' else ('',):
+            axis = -direction if suffix else direction
+            kind = v['end' + suffix]
+            extrusion = scratch.addObject('Part::Extrusion', 'SheetEvaluation')
+            extrusion.Base = source; extrusion.DirMode = 'Custom'; extrusion.Dir = axis
+            extrusion.Solid = False
+            if kind == 'Length':
+                length = v['length' + suffix] / factor if v['measure'] == 'Along profile normal' else v['length' + suffix]
+                extrusion.LengthFwd = length
+                extrusion.Symmetric = v['sides'] == 'Symmetric'
+                extrusion.TaperAngle = v['taper' + suffix]
+                if extrusion.Symmetric:
+                    extrusion.TaperAngleRev = v['taper' + suffix]
+                scratch.recompute()
+                piece = extrusion.Shape.copy()
+            else:
+                if v['sides'] == 'Symmetric':
+                    raise ValueError('Use One side or Two sides for a Sheet with a limiting face.')
+                limit = planes.shape(definition, links['secondlimit' if suffix else 'limit'])
+                candidates = []
+                for face in limit.Faces:
+                    if not isinstance(face.Surface, Part.Plane):
+                        continue
+                    n = face.normalAt(0, 0); denominator = axis.dot(n)
+                    if abs(denominator) < 1e-7:
+                        continue
+                    projected = profile.copy()
+                    projected.Placement = App.Placement(App.Vector(), App.Rotation(n, App.Vector(0, 0, 1))).multiply(projected.Placement)
+                    distances = [(face.CenterOfMass.dot(n) - height) / denominator
+                                 for height in (projected.BoundBox.ZMin, projected.BoundBox.ZMax)]
+                    if min(distances) + v['offset' + suffix] <= 1e-7:
+                        continue
+                    cap = face.copy(); cap.translate(axis * v['offset' + suffix])
+                    extrusion.LengthFwd = max(distances) + abs(v['offset' + suffix]) + max(1., profile.BoundBox.DiagonalLength)
+                    scratch.recompute()
+                    probe = extrusion.Shape.copy()
+                    if probe.isNull():
+                        continue
+                    piece = probe.common(cap.makeHalfSpace(profile.Vertexes[0].Point))
+                    # A finite face must span the whole end boundary, not just
+                    # cross part of the profile. Infinite datum planes remain usable.
+                    end = probe.section(cap)
+                    if end.isNull() or not end.Edges:
+                        continue
+                    full_end = probe.section(cap.Surface.toShape())
+                    if full_end.Length - end.Length > max(1e-7, full_end.Length * 1e-7):
+                        continue
+                    candidates.append((min(distances), piece))
+                if not candidates:
+                    raise ValueError('Sheet end requires a forward planar limiting face reached by the curves.')
+                piece = min(candidates, key=lambda item: item[0])[1]
+            if piece.isNull() or not piece.isValid() or not piece.Faces or piece.Solids or piece.Area < 1e-9:
+                raise ValueError('The sheet extrusion is degenerate; check the curves, direction and taper.')
+            pieces.append(piece)
+    result = pieces[0] if len(pieces) == 1 else pieces[0].fuse(pieces[1])
+    if v['refine']:
+        result = result.removeSplitter()
+    if result.isNull() or not result.isValid() or not result.Faces or result.Solids:
+        raise ValueError('The extrusion must produce valid uncapped sheets.')
+    result = name_tool(result, refs, feature, namespace='PlusExtrudeSheet1')
+    return result, result.copy(), edges
 
 
 class Extrude:
@@ -493,6 +629,9 @@ def save_feature(doc, refs, links, values, feature, engine):
             if predecessor:
                 predecessor.Visibility = True
             body.addObject(feature)
+        if engine is sys.modules[__name__] and 'Extrude_output' not in feature.PropertiesList:
+            feature.addProperty('App::PropertyString', 'Extrude_output', 'Extrude')
+            feature.setEditorMode('Extrude_output', 2)
         feature.ProfileReferences = planes.links(refs)
         for key, prop in engine.LINKS.items():
             setattr(feature, prop, planes.links([links[key]]) if key in links else [])

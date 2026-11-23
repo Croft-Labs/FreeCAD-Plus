@@ -10,9 +10,11 @@ Owner requests Solid/Sheet radio buttons on the left of Operation, with
 New/Add/Subtract on the right. Solid is the default. Sheet automatically selects
 New and grays out/locks the entire operation group. Solid re-enables those choices.
 Extruding an open line as Sheet creates a sheet with no solid thickness. Preserve
-the shared creation/edit workflow. The
-[native proposal](../evidence/extrude-sheet-preview-20261123/README.md) awaits
-preview approval; this requirement does not claim production implementation.
+the shared creation/edit workflow. The owner approved the
+[native proposal](../evidence/extrude-sheet-preview-20261123/README.md) and explicitly
+requested implementation. Returning to Solid leaves New selected. Closed profiles
+in Sheet produce uncapped sheets as well; existing saved Extrudes default to Solid.
+See [implementation evidence](../evidence/extrude-sheet-20261123/README.md).
 
 ### Sketch Exit and action Cancel — November 23, 2026
 

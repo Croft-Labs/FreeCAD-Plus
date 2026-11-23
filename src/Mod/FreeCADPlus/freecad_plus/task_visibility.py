@@ -19,12 +19,13 @@ def appearance_edit(view):
             view.setPropertyStatus(name, '-NoModify')
 
 
-def usable(obj):
+def usable(obj, sheet=False):
     if obj.isDerivedFrom('Sketcher::SketchObject'):
         return True
-    if obj.isDerivedFrom('PartDesign::Plane'):
+    if obj.TypeId in ('PartDesign::Plane', 'PartDesign::Line', 'PartDesign::Point',
+                      'Part::DatumPlane', 'Part::DatumLine', 'Part::DatumPoint'):
         return False
-    return obj.isDerivedFrom('Part::Feature') and bool(obj.Shape.Faces)
+    return obj.isDerivedFrom('Part::Feature') and bool(obj.Shape.Faces or (sheet and obj.Shape.Edges))
 
 
 class ExtrudeDisplay:
@@ -36,6 +37,7 @@ class ExtrudeDisplay:
         self.manual = set()
         self.closed = False
         self.style = None
+        self.sheet = task.output() == 'Sheet'
         def visit(obj):
             for child in document.owned_children(obj):
                 self.saved[child] = bool(child.Visibility)
@@ -44,14 +46,15 @@ class ExtrudeDisplay:
         self.desired = dict(self.saved)
         if task.feature is None:
             for obj in self.saved:
-                if not document.owned_children(obj) and not usable(obj):
+                if not document.owned_children(obj) and not usable(obj, self.sheet):
                     self.desired[obj] = False
                 elif obj.TypeId == 'App::Link':
                     self.desired[obj] = False
         else:
             self.desired = {obj: False for obj in self.saved}
             # Face donors stay hidden: the task draws just the referenced face.
-            reveal = [obj for obj, _ in task.refs if obj.isDerivedFrom('Sketcher::SketchObject')]
+            reveal = [obj for obj, _ in task.refs if obj.isDerivedFrom('Sketcher::SketchObject')
+                      or (self.sheet and hasattr(obj, 'Shape') and not obj.Shape.Faces)]
             if task.mode() != 'New Solid' and 'target' in task.links:
                 reveal.append(task.links['target'][0])
             for obj in reveal:
@@ -65,6 +68,16 @@ class ExtrudeDisplay:
                     and 'ShapeAppearance' in obj.ViewObject.PropertiesList):
                 self.materials[obj] = (obj.ViewObject.ShapeAppearance, obj.ViewObject.Transparency)
         self.apply()
+
+    def update_usable(self):
+        sheet = self.task.output() == 'Sheet'
+        if sheet == self.sheet:return
+        self.sheet = sheet
+        if self.task.feature is None:
+            for obj in self.saved:
+                if obj not in self.manual and usable(obj, True) and not usable(obj):
+                    self.desired[obj] = self.saved[obj] if sheet else False
+            self.apply()
 
     def apply(self):
         self.closed = False

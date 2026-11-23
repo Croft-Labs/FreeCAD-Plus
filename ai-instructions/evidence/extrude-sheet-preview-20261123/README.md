@@ -1,7 +1,9 @@
 # Extrude Solid/Sheet preview — November 23, 2026
 
-Status: native UI proposal awaiting approval; production source and installation
-are unchanged. Owner requested sheet extrusion so that an open line can produce
+Status: owner approved this native UI proposal and requested implementation.
+This directory retains the pre-implementation prototype; production acceptance
+is recorded [separately](../extrude-sheet-20261123/README.md).
+Owner requested sheet extrusion so that an open line can produce
 a single sheet, then clarified the exact layout and operation restriction:
 
 - Solid and Sheet on the left; Solid selected by default.

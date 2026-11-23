@@ -64,12 +64,27 @@ class ExtrudeTask(QtCore.QObject):
             self.group.addButton(button); self.modes[name] = button; row.addWidget(button)
             button.clicked.connect(self.changed)
         self.modes['New Solid'].setChecked(True)
-        self.operation.layout.addLayout(row)
+        self.outputs = {}
+        if self.engine is extrusion:
+            self.modes['New Solid'].setText('New')
+            columns = QtWidgets.QHBoxLayout(); output_row = QtWidgets.QVBoxLayout()
+            self.output_group = QtWidgets.QButtonGroup(self)
+            for name in ('Solid', 'Sheet'):
+                button = QtWidgets.QRadioButton(name)
+                button.setObjectName('ExtrudeOutput' + name)
+                self.output_group.addButton(button); self.outputs[name] = button
+                output_row.addWidget(button); button.clicked.connect(self.changed)
+            self.outputs['Solid'].setChecked(True); output_row.addStretch()
+            columns.addLayout(output_row, 1); columns.addLayout(row, 1)
+            self.operation.layout.addLayout(columns)
+        else:
+            self.operation.layout.addLayout(row)
         self.target_row = self.reference(self.operation.layout,'Target solid','target','Pick the current solid to modify')
         self.target_hint = label('')
         self.target_row.layout().addWidget(self.target_hint)
         self.profile = self.section(layout, 'Profile')
-        self.profile.layout.addWidget(label('Select a sketch, closed sketch region, or face.'))
+        self.profile_hint = label('Select a sketch, closed sketch region, or face.')
+        self.profile.layout.addWidget(self.profile_hint)
         self.profiles = SelectionList()
         self.profiles.installEventFilter(self); self.profile.layout.addWidget(self.profiles)
         buttons(self.profile.layout,[('Remove',self.remove_profile),('Clear',self.clear_profile),('Whole sketch',self.whole_profile)])
@@ -112,8 +127,13 @@ class ExtrudeTask(QtCore.QObject):
             raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0) for sub in entry.SubElementNames or ('',)]
             for obj,sub in planes.canonical(self.owner,raw):
                 obj,sub = self.engine.profile_reference((obj,sub))
-                if obj.isDerivedFrom('Sketcher::SketchObject') or Part.splitSubname(sub)[2].startswith('Face'):
-                    self.engine.validate_profiles(self.owner, [(obj, sub)])
+                if (obj.isDerivedFrom('Sketcher::SketchObject') or Part.splitSubname(sub)[2].startswith('Face')
+                        or (self.engine is extrusion and (Part.splitSubname(sub)[2].startswith('Edge')
+                            or (obj.isDerivedFrom('Part::Feature') and obj.Shape.Edges and not obj.Shape.Faces)))):
+                    if self.engine is extrusion and not obj.isDerivedFrom('Sketcher::SketchObject') and not Part.splitSubname(sub)[2].startswith('Face'):
+                        self.engine.validate_profiles(self.owner, [(obj, sub)], 'Sheet')
+                    else:
+                        self.engine.validate_profiles(self.owner, [(obj, sub)])
                     self.refs.append((obj,sub))
                 elif obj.TypeId == 'PartDesign::Body' or obj.isDerivedFrom('PartDesign::Feature'):
                     target = obj.Tip if obj.TypeId == 'PartDesign::Body' else obj
@@ -197,6 +217,7 @@ class ExtrudeTask(QtCore.QObject):
         self.refs = planes.flatten(feature.ProfileReferences)
         self.links = self.engine.references(feature)
         v = self.engine.settings(feature)
+        if self.outputs:self.outputs[v.get('output', 'Solid')].setChecked(True)
         self.modes[v['operation']].setChecked(True)
         for widget,key in ((self.start_type,'start'),(self.sides,'sides'),(self.direction,'direction'),(self.measure,'measure'),
                            (self.end1['kind'],'end'),(self.end2['kind'],'end2')):
@@ -207,7 +228,7 @@ class ExtrudeTask(QtCore.QObject):
         self.reverse.setChecked(v['reverse']);self.refine.setChecked(v['refine'])
 
     def settings(self):
-        return dict(operation=self.mode(),start=self.start_type.currentText(),start_offset=self.values[self.start_offset],
+        return dict(output=self.output(),operation=self.mode(),start=self.start_type.currentText(),start_offset=self.values[self.start_offset],
                     sides=self.sides.currentText(),end=self.end1['kind'].currentText(),end2=self.end2['kind'].currentText(),
                     length=self.values[self.end1['length']],length2=self.values[self.end2['length']],
                     offset=self.values[self.end1['offset']],offset2=self.values[self.end2['offset']],
@@ -255,6 +276,30 @@ class ExtrudeTask(QtCore.QObject):
     def mode(self):
         return next(name for name,button in self.modes.items() if button.isChecked())
 
+    def output(self):
+        return 'Sheet' if self.outputs and self.outputs['Sheet'].isChecked() else 'Solid'
+
+    def update_output(self):
+        if not self.outputs:return
+        sheet = self.output() == 'Sheet'
+        switching = getattr(self, 'output_mode', None) != sheet
+        self.output_mode = sheet
+        if sheet:
+            self.modes['New Solid'].setChecked(True)
+            self.links.pop('target', None); self.automatic_target = None
+            if self.pick == 'target':self.pick = 'profile'
+        for button in self.modes.values():button.setEnabled(not sheet)
+        self.profile_hint.setText('Select sketch curves or edges. Open curves create sheets.' if sheet else
+                                  'Select a sketch, closed sketch region, or face.')
+        with QtCore.QSignalBlocker(self.display):
+            self.display.setItemText(0, 'Extrusion preview' if sheet else 'Tool volume')
+        for end in (self.end1, self.end2):
+            if sheet and end['kind'].currentIndex() >= 3:
+                with QtCore.QSignalBlocker(end['kind']):end['kind'].setCurrentIndex(0)
+            for index in (3, 4, 5):
+                end['kind'].model().item(index).setEnabled(not sheet)
+        if switching:self.refresh_fields()
+
     def eventFilter(self, obj, event):
         if event.type() in (QtCore.QEvent.FocusIn,QtCore.QEvent.MouseButtonPress):
             self.pick = next((key for key,field in self.fields.items() if obj is field),'profile')
@@ -279,7 +324,7 @@ class ExtrudeTask(QtCore.QObject):
         self.profiles.clear()
         for obj,sub in self.refs:
             element = Part.splitSubname(sub)[2]
-            self.profiles.addItem(obj.Label + (' · '+element if element else ' · Whole sketch'))
+            self.profiles.addItem(obj.Label + ' · ' + (element or ('Whole sketch' if obj.isDerivedFrom('Sketcher::SketchObject') else 'All curves')))
         for key,field in self.fields.items():
             ref = self.links.get(key)
             field.setText(ref[0].Label+('.'+Part.splitSubname(ref[1])[2] if Part.splitSubname(ref[1])[2] else '') if ref else '')
@@ -373,10 +418,14 @@ class ExtrudeTask(QtCore.QObject):
             document.require_predecessors(self.owner,self.feature,[ref])
             if self.pick=='profile':
                 ref=self.engine.profile_reference(ref)
-                self.engine.validate_profiles(self.owner,[ref])
+                if self.engine is extrusion:self.engine.validate_profiles(self.owner,[ref],self.output())
+                else:self.engine.validate_profiles(self.owner,[ref])
                 if ref in self.refs:self.refs.remove(ref)
-                elif self.refs and (ref[0]!=self.refs[0][0] or not ref[0].isDerivedFrom('Sketcher::SketchObject')):
-                    raise ValueError('Use one sketch or one face; clear the current profile first.')
+                elif self.refs and (ref[0]!=self.refs[0][0] or (not ref[0].isDerivedFrom('Sketcher::SketchObject')
+                                      and not (self.output()=='Sheet' and Part.splitSubname(ref[1])[2].startswith('Edge')
+                                               and all(Part.splitSubname(old[1])[2].startswith('Edge') for old in self.refs)))):
+                    raise ValueError('Use curves from one object or one face; clear the current profile first.' if self.output()=='Sheet' else
+                                     'Use one sketch or one face; clear the current profile first.')
                 else:
                     self.refs = [old for old in self.refs if old[1] and ref[1]]
                     self.refs.append(ref)
@@ -402,6 +451,8 @@ class ExtrudeTask(QtCore.QObject):
 
     def changed(self,*args):
         if not self.ready or self.closed:return
+        self.update_output()
+        self.presentation.update_usable()
         self.update_target()
         self.presentation.update_style()
         two=self.sides.currentText()=='Two sides'
@@ -573,6 +624,7 @@ class ExtrudeTask(QtCore.QObject):
 
     def render(self,*args):
         if self.closed:return
+        self.update_output()
         self.update_target()
         self.clear_overlay();self.valid=False
         self.result_shape=None;self.tool_shape=None
@@ -586,7 +638,8 @@ class ExtrudeTask(QtCore.QObject):
             self.result_shape=result;self.tool_shape=tool
             self.valid=True;self.revisions+=1
             target=self.links.get('target',(None,''))[0] if self.mode()!='New Solid' else None
-            self.status.setText('Result preview · one solid.' if self.display.currentText()=='Result' else
+            self.status.setText(('Sheet preview · %d face%s, no thickness.' % (len(result.Faces), '' if len(result.Faces)==1 else 's'))
+                                if self.output()=='Sheet' else 'Result preview · one solid.' if self.display.currentText()=='Result' else
                                 'Tool volume · '+('creates a separate solid.' if target is None else
                                 ('adds to ' if self.mode()=='Add' else 'removes from ')+target.Label+'.'))
             if self.visible.isChecked():
@@ -619,6 +672,7 @@ class ExtrudeTask(QtCore.QObject):
     def accept(self):
         try:
             self.check()
+            self.update_output()
             if not self.require_target():return False
             for field in self.numbers:
                 field.interpretText();self.values[field]=field.value()
