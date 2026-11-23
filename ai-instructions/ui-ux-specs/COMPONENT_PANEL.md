@@ -37,6 +37,22 @@ implementing every workflow in that task. Operation completion is not a Group 1 
 
 ## Confirmed requirements
 
+### Strict sequential feature History — November 22, 2026
+
+Owner decision: sketches remain predecessors of the Extrude/Revolve or other feature
+that uses them, and must never be reorderable after a consuming feature. Modeling is
+strictly sequential. History must express feature/input sequence across backend Body
+containers; flattening each Body ahead of later component sketches is incorrect.
+Apply the same predecessor rule to other feature inputs. New features follow their
+inputs; editing must not introduce forward or cyclic dependencies. Any eventual
+reordering must preserve direct and transitive predecessor/dependent order.
+
+This confirms the dependency restriction, not every interaction in the historical
+D2864 reordering proposal. The current panel has no History drag-reorder action.
+The [native ordering preview](../evidence/sequential-history-preview-20261122/README.md)
+reproduces the defect and illustrates the intended sequence. Visual approval and
+production implementation remain pending; source/build/install status lives in WORK_STATE.
+
 ### History coordinate icons and initial expansion — November 22, 2026
 
 Owner request: Axes and Planes groups use the same native icons as their respective

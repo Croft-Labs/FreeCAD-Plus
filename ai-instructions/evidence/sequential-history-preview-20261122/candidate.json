@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "native_preview": true,
+  "backend_ordering_implemented": false,
+  "display_order": [
+    "Coordinate System",
+    "Sketch - Base",
+    "Extrude",
+    "Sketch - Revolve profile",
+    "Revolve (Add)",
+    "Sketch - Extrude profile",
+    "Extrude (Add)"
+  ],
+  "expected_order": [
+    "Coordinate System",
+    "Sketch - Base",
+    "Extrude",
+    "Sketch - Revolve profile",
+    "Revolve (Add)",
+    "Sketch - Extrude profile",
+    "Extrude (Add)"
+  ],
+  "matches_sequential_example": true,
+  "native_ownership_order": [
+    "Sketch - Base",
+    "Extrude",
+    "Revolve (Add)",
+    "Extrude (Add)",
+    "Sketch - Revolve profile",
+    "Sketch - Extrude profile"
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\f56b79f8df59\\candidate\\panel.py",
+  "geometry_and_visibility_unchanged": true
+}

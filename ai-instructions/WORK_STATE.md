@@ -1,5 +1,22 @@
 # FreeCAD Plus: Current work state
 
+## Sequential History preview — November 22, 2026
+
+The owner requires strictly sequential modeling: a sketch must remain before any
+feature that uses it, with dependency-invalid reordering forbidden. Root cause:
+document.history traverses definition.Group and flattens each backend Body in place,
+so operations appended to an older Body precede newer component-owned profile sketches.
+The current History panel has no drag-reorder action.
+
+A real native Extrude/Revolve/Extrude Add fixture reproduces both misplaced profiles.
+The isolated candidate displays the intended sequence with unchanged native geometry,
+visibility, identities, eyes and coordinate layout. Its creation-ID display sort is a
+visual stand-in only, not a production dependency-order implementation.
+Direct [current](evidence/sequential-history-preview-20261122/baseline.png) and
+[proposed](evidence/sequential-history-preview-20261122/candidate.png) screenshots are ready.
+**Awaiting preview approval; production source and installed payload are unchanged.**
+See [scope, provenance and next work](evidence/sequential-history-preview-20261122/README.md).
+
 ## History coordinate icons and collapsed defaults — November 22, 2026
 
 The owner approved the direct native preview with **"implement"**. Axes/Planes now
