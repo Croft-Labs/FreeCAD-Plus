@@ -4,6 +4,30 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Compatible plane picks and interchangeable references — November 23, 2026
+
+Owner request applies to both creating a datum plane and choosing a sketch plane.
+Each pick updates the preview. Keep compatible defining references together; when
+the newly picked reference conflicts with the existing defining set, replace the
+whole set with that new reference alone. In particular, XY then XZ leaves only XZ
+and previews that plane. Two distinct coplanar lines remain together and define a
+plane; compatible incomplete sets stay available for the next pick.
+
+A line and point define a plane through the point, normal to the line, in either
+selection order. Planes and planar faces are interchangeable; so are lines and
+straight edges, and points and vertices. These rules belong to the defining-geometry
+collector. Keep the separate origin and axis override controls and their meanings.
+Unusable/foreign/later geometry must not discard valid prior selections; distinguish
+geometric conflicts from admission failures or invalid offset/axis settings.
+
+The existing saved line-plus-point construction defines a containing plane. Preserve
+those saved results and reference identities when adding the new normal-through-point
+construction. No implicit geometry migration on open, recompute or Cancel.
+
+The isolated [native UI proposal](../evidence/plane-selection-preview-20261123/README.md)
+uses specimen selection/placement callbacks. Production solver, persistence and task
+changes await approval of its direct screenshots.
+
 ### Target guidance and sole-solid selection — November 23, 2026
 
 Owner revision supersedes the unapproved November 22 popup: highlight the target field

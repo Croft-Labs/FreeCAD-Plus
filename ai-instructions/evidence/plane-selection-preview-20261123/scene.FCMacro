@@ -1,0 +1,106 @@
+"""Fixture-driven UI proposal; never accept a task or modify installed modules."""
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part
+from PySide6 import QtCore,QtWidgets,QtTest,QtGui
+import freecad_plus
+from freecad_plus import document,planes
+from TestComponentFading import capture
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'fixture_driven_native_ui':True,'backend_implemented':False,'cases':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        freecad_plus.__path__.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+        from freecad_plus import plane_task,sketch_task
+        importlib.reload(plane_task);importlib.reload(sketch_task)
+        proposed=hasattr(plane_task.PlaneTask,'placement') and '_preview_collect' in Path(plane_task.__file__).read_text()
+        result['proposed']=proposed;result['module']=plane_task.__file__
+        doc=document.new_document('Plane selection preview');owner=document.validate(doc).Definitions[0]
+        frame=owner.Origin;frame.Visibility=False
+        xy=next(o for o in frame.OriginFeatures if getattr(o,'Role','')=='XY_Plane')
+        xz=next(o for o in frame.OriginFeatures if getattr(o,'Role','')=='XZ_Plane')
+        def feature(name,shape):
+            obj=owner.newObject('Part::Feature',name);obj.Label=name;obj.Shape=shape
+            obj.ViewObject.LineWidth=3.;obj.ViewObject.PointSize=8.;return obj
+        flat=feature('Flat face',Part.makePlane(40,30,App.Vector(-10,-10,8)))
+        edge=feature('Straight edge',Part.makeLine(App.Vector(0,-8,0),App.Vector(0,26,0)))
+        normal_edge=feature('Normal edge',Part.makeLine(App.Vector(8,0,-5),App.Vector(8,0,30)))
+        vertex=feature('Vertex',Part.Vertex(App.Vector(8,0,12)))
+        line=owner.newObject('PartDesign::Line','Line');line.Placement=App.Placement(App.Vector(),App.Rotation(App.Vector(0,0,1),App.Vector(1,0,0)))
+        normal_line=owner.newObject('PartDesign::Line','NormalLine');normal_line.Label='Normal line'
+        point=owner.newObject('PartDesign::Point','Point');point.Placement.Base=App.Vector(0,0,18)
+        skew=feature('Skew edge',Part.makeLine(App.Vector(0,-8,10),App.Vector(0,25,10)))
+        point2=feature('Second vertex',Part.Vertex(App.Vector(18,0,18)))
+        point3=feature('Third vertex',Part.Vertex(App.Vector(0,18,18)))
+        doc.recompute()
+        fixtures=[flat,edge,normal_edge,vertex,line,normal_line,point,skew,point2,point3]
+        # The UI-only candidate receives explicit specimen states, not a general solver.
+        def key(refs):return frozenset((o.Name,s) for o,s in refs)
+        pairs={key([(line,''),(edge,'Edge1')]):(App.Vector(),App.Vector(0,0,1),'Defined by two coplanar lines / edges.'),
+               key([(normal_line,''),(point,'')]):(App.Vector(0,0,18),App.Vector(0,0,1),'Through the point; normal to the line.'),
+               key([(normal_edge,'Edge1'),(vertex,'Vertex1')]):(App.Vector(8,0,12),App.Vector(0,0,1),'Through the vertex; normal to the edge.'),
+               key([(point,''),(point2,'Vertex1'),(point3,'Vertex1')]):(App.Vector(0,0,18),App.Vector(0,0,1),'Defined by three noncollinear points / vertices.')}
+        partial=key([(point,''),(point2,'Vertex1')])
+        def collect(refs,ref):
+            combined=refs+[ref]
+            return combined if key(combined) in pairs or key(combined)==partial else [ref]
+        def placement(refs):
+            if key(refs) in pairs:
+                anchor,normal,_=pairs[key(refs)]
+                return App.Placement(anchor,App.Rotation(App.Vector(0,0,1),normal))
+            if len(refs)==1:
+                kind=planes.describe(owner,refs[0])[0]
+                if kind=='line':raise planes.IncompletePlane('1 line / edge selected — choose a point / vertex or coplanar line / edge.')
+                if kind=='point':raise planes.IncompletePlane('1 point / vertex selected — choose a line / edge or two more points.')
+                return planes.solve(owner,refs)
+            if key(refs)==partial:raise planes.IncompletePlane('2 points / vertices selected — choose a third point off their line.')
+            raise planes.IncompletePlane('Choose defining geometry in the model or History.')
+        def description(refs):
+            return pairs[key(refs)][2] if key(refs) in pairs else 'Defined by the selected plane / planar face.'
+        scenarios=[('xy-to-xz',[(xy,''),(xz,'')]),('plane-to-face',[(xy,''),(flat,'Face1')]),
+                   ('coplanar-lines',[(line,''),(edge,'Edge1')]),('normal-line-point',[(normal_line,''),(point,'')]),
+                   ('normal-edge-vertex',[(normal_edge,'Edge1'),(vertex,'Vertex1')]),
+                   ('point-then-line',[(point,''),(normal_line,'')]),('skew-replacement',[(line,''),(skew,'Edge1')]),
+                   ('three-points',[(point,''),(point2,'Vertex1'),(point3,'Vertex1')])]
+        for name,factory in (('plane',plane_task.show),('sketch',sketch_task.show)):
+            for slug,picks in scenarios:
+                for obj in fixtures:obj.Visibility=any(obj==p[0] for p in picks)
+                before={o.Name:(o.ID,o.Visibility) for o in doc.Objects}
+                Gui.Selection.clearSelection();task=factory()
+                if proposed:
+                    task._preview_collect=collect;task._preview_placement=placement;task._preview_description=description
+                steps=[]
+                for obj,sub in picks:
+                    task.pick_target='plane';Gui.Selection.clearSelection();Gui.Selection.addSelection(obj,sub)
+                    QtTest.QTest.qWait(90)
+                    steps.append(dict(selected=[task.title(r) for r in task.refs],valid=task.valid,status=task.status.text()))
+                view=Gui.activeDocument().activeView();view.viewAxonometric();view.fitAll();QtTest.QTest.qWait(120)
+                shot=out/(name+'-'+slug+'.png')
+                screen=win.grab()
+                framebuffer,ratio=capture(view,out/'viewport.png',prepare=False)
+                framebuffer.setDevicePixelRatio(ratio)
+                painter=QtGui.QPainter(screen)
+                painter.drawImage(view.graphicsView().viewport().mapTo(win,QtCore.QPoint()),framebuffer)
+                painter.end();assert screen.save(str(shot))
+                if name=='sketch' and slug=='xy-to-xz':assert screen.save(os.environ['PLUS_PREVIEW_IMAGE'])
+                if proposed:
+                    expected=collect(picks[:-1],picks[-1])
+                    assert task.refs==expected,(slug,task.refs,expected)
+                    assert task.valid==(slug!='skew-replacement'),(slug,task.status.text())
+                    if task.valid and 'normal-' in slug:
+                        actual=task.placement();anchor,normal,_=pairs[key(task.refs)]
+                        assert (actual.Base-anchor).Length<1e-7
+                        assert actual.Rotation.multVec(App.Vector(0,0,1)).isEqual(normal,1e-7)
+                result['cases'].append(dict(task=name,scenario=slug,steps=steps,screenshot=str(shot)))
+                task.reject();QtTest.QTest.qWait(50)
+                assert {o.Name:(o.ID,o.Visibility) for o in doc.Objects}==before
+        result.update(ok=True,ids_and_visibility_preserved=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

@@ -1,5 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
+## Pending plane-selection proposal — November 23, 2026
+
+The owner requests shared compatible/conflicting selection behavior for Plane and
+Sketch placement, line+point normal-through-point construction, and equivalent
+plane/face, line/straight-edge and point/vertex inputs. All 16 native UI specimen
+cases pass. Screenshot approval is pending; production and installation are unchanged.
+See [current preview and next scope](WORK_STATE.md#plane-selection-preview--november-23-2026).
+
 ## Latest target selection and coordinate-system protection — November 23, 2026
 
 Approved changes are installed: Extrude/Revolve Add/Subtract automatically select the

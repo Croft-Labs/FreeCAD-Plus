@@ -1,5 +1,24 @@
 # FreeCAD Plus: Current work state
 
+## Plane selection preview — November 23, 2026
+
+The owner requests matching reference collection for datum planes and sketch planes:
+compatible picks accumulate; a conflicting pick replaces the prior defining set.
+XY→XZ should leave only XZ. Line+point defines a plane through the point normal to
+the line. Planes/planar faces, lines/straight edges and points/vertices are equivalent.
+The [native UI proposal](evidence/plane-selection-preview-20261123/README.md) passes
+all 16 specimen UI-state checks across both tasks, with unchanged IDs/visibility
+after Cancel. Screenshots: [replacement](evidence/plane-selection-preview-20261123/replace-plane.png),
+[coplanar lines](evidence/plane-selection-preview-20261123/coplanar-lines.png),
+[normal through point](evidence/plane-selection-preview-20261123/normal-through-point.png),
+[flat face](evidence/plane-selection-preview-20261123/planar-face.png).
+
+**Awaiting screenshot approval. No production/backend/installed changes.** Session
+`cc6496002256`, fingerprint `3dd056488e4bcc7aa4487ac6d0a28129621057edb87b8311af39e40803862ea5`.
+The two UI candidate files use fixture collection/placement callbacks. Production
+work must preserve old saved line-plus-point containing-plane geometry when adding
+the new normal-through-point semantics. See the evidence's implementation scope.
+
 ## Target selection and coordinate-system persistence — November 23, 2026
 
 The owner approved and both changes are implemented and installed. Extrude/Revolve

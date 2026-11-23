@@ -1,0 +1,374 @@
+{
+  "ok": true,
+  "fixture_driven_native_ui": true,
+  "backend_implemented": false,
+  "cases": [
+    {
+      "task": "plane",
+      "scenario": "xy-to-xz",
+      "steps": [
+        {
+          "selected": [
+            "XY-plane001"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        },
+        {
+          "selected": [
+            "XZ-plane001"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-xy-to-xz.png"
+    },
+    {
+      "task": "plane",
+      "scenario": "plane-to-face",
+      "steps": [
+        {
+          "selected": [
+            "XY-plane001"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        },
+        {
+          "selected": [
+            "Flat face.Face1"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-plane-to-face.png"
+    },
+    {
+      "task": "plane",
+      "scenario": "coplanar-lines",
+      "steps": [
+        {
+          "selected": [
+            "Line"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Line",
+            "Straight edge.Edge1"
+          ],
+          "valid": true,
+          "status": "Defined by two coplanar lines / edges."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-coplanar-lines.png"
+    },
+    {
+      "task": "plane",
+      "scenario": "normal-line-point",
+      "steps": [
+        {
+          "selected": [
+            "Normal line"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Normal line",
+            "Point"
+          ],
+          "valid": true,
+          "status": "Through the point; normal to the line."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-normal-line-point.png"
+    },
+    {
+      "task": "plane",
+      "scenario": "normal-edge-vertex",
+      "steps": [
+        {
+          "selected": [
+            "Normal edge.Edge1"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Normal edge.Edge1",
+            "Vertex.Vertex1"
+          ],
+          "valid": true,
+          "status": "Through the vertex; normal to the edge."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-normal-edge-vertex.png"
+    },
+    {
+      "task": "plane",
+      "scenario": "point-then-line",
+      "steps": [
+        {
+          "selected": [
+            "Point"
+          ],
+          "valid": false,
+          "status": "1 point / vertex selected \u2014 choose a line / edge or two more points."
+        },
+        {
+          "selected": [
+            "Point",
+            "Normal line"
+          ],
+          "valid": true,
+          "status": "Through the point; normal to the line."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-point-then-line.png"
+    },
+    {
+      "task": "plane",
+      "scenario": "skew-replacement",
+      "steps": [
+        {
+          "selected": [
+            "Line"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Skew edge.Edge1"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-skew-replacement.png"
+    },
+    {
+      "task": "plane",
+      "scenario": "three-points",
+      "steps": [
+        {
+          "selected": [
+            "Point"
+          ],
+          "valid": false,
+          "status": "1 point / vertex selected \u2014 choose a line / edge or two more points."
+        },
+        {
+          "selected": [
+            "Point",
+            "Second vertex.Vertex1"
+          ],
+          "valid": false,
+          "status": "2 points / vertices selected \u2014 choose a third point off their line."
+        },
+        {
+          "selected": [
+            "Point",
+            "Second vertex.Vertex1",
+            "Third vertex.Vertex1"
+          ],
+          "valid": true,
+          "status": "Defined by three noncollinear points / vertices."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\plane-three-points.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "xy-to-xz",
+      "steps": [
+        {
+          "selected": [
+            "XY-plane001"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        },
+        {
+          "selected": [
+            "XZ-plane001"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-xy-to-xz.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "plane-to-face",
+      "steps": [
+        {
+          "selected": [
+            "XY-plane001"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        },
+        {
+          "selected": [
+            "Flat face.Face1"
+          ],
+          "valid": true,
+          "status": "Defined by the selected plane / planar face."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-plane-to-face.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "coplanar-lines",
+      "steps": [
+        {
+          "selected": [
+            "Line"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Line",
+            "Straight edge.Edge1"
+          ],
+          "valid": true,
+          "status": "Defined by two coplanar lines / edges."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-coplanar-lines.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "normal-line-point",
+      "steps": [
+        {
+          "selected": [
+            "Normal line"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Normal line",
+            "Point"
+          ],
+          "valid": true,
+          "status": "Through the point; normal to the line."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-normal-line-point.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "normal-edge-vertex",
+      "steps": [
+        {
+          "selected": [
+            "Normal edge.Edge1"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Normal edge.Edge1",
+            "Vertex.Vertex1"
+          ],
+          "valid": true,
+          "status": "Through the vertex; normal to the edge."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-normal-edge-vertex.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "point-then-line",
+      "steps": [
+        {
+          "selected": [
+            "Point"
+          ],
+          "valid": false,
+          "status": "1 point / vertex selected \u2014 choose a line / edge or two more points."
+        },
+        {
+          "selected": [
+            "Point",
+            "Normal line"
+          ],
+          "valid": true,
+          "status": "Through the point; normal to the line."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-point-then-line.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "skew-replacement",
+      "steps": [
+        {
+          "selected": [
+            "Line"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        },
+        {
+          "selected": [
+            "Skew edge.Edge1"
+          ],
+          "valid": false,
+          "status": "1 line / edge selected \u2014 choose a point / vertex or coplanar line / edge."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-skew-replacement.png"
+    },
+    {
+      "task": "sketch",
+      "scenario": "three-points",
+      "steps": [
+        {
+          "selected": [
+            "Point"
+          ],
+          "valid": false,
+          "status": "1 point / vertex selected \u2014 choose a line / edge or two more points."
+        },
+        {
+          "selected": [
+            "Point",
+            "Second vertex.Vertex1"
+          ],
+          "valid": false,
+          "status": "2 points / vertices selected \u2014 choose a third point off their line."
+        },
+        {
+          "selected": [
+            "Point",
+            "Second vertex.Vertex1",
+            "Third vertex.Vertex1"
+          ],
+          "valid": true,
+          "status": "Defined by three noncollinear points / vertices."
+        }
+      ],
+      "screenshot": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-selection-preview-20261123\\candidate\\sketch-three-points.png"
+    }
+  ],
+  "proposed": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\cc6496002256\\candidate\\plane_task.py",
+  "ids_and_visibility_preserved": true
+}
