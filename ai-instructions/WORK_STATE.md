@@ -1,5 +1,15 @@
 # FreeCAD Plus: Current work state
 
+## Shell rename, Thicken and invalid-entry repair preview — November 23, 2026
+
+Owner requested Shell naming, separate sheet-to-solid Thicken, and a fix for invalid
+geometry leaving the operation stuck; clarified Thicken has New/Add/Subtract.
+Native UI previews cover renamed Shell, Thicken total thickness/direction/target,
+and prominent invalid-input feedback. A native filled offset creates the example
+solid, but Thicken persistence/operations and Shell preflight/rollback are not yet
+implemented. Preview approval is pending. See
+[direct screenshots, reproduced defect and implementation scope](evidence/shell-thicken-preview-20261123/README.md).
+
 ## Revolve Solid/Sheet installed — November 23, 2026
 
 Owner approved implementation. Revolve now shares Extrude's Solid/Sheet choices:

@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "proposed": true,
+  "renamed_shell_headers": [
+    "Thickness Parameters"
+  ],
+  "default_new": true,
+  "target_cue": true,
+  "symmetric_total": true,
+  "cancel_clean": true,
+  "fixture_solids": 1,
+  "fixture_volume": 742.2012644406705
+}

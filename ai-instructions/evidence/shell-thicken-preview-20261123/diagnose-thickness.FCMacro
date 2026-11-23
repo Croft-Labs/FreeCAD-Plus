@@ -1,0 +1,49 @@
+import json,os,sys,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,extrusion,revolution
+out=Path(os.environ['PLUS_TEST_DIR']);rows=[];messages=[]
+def dismiss():
+    for w in QtWidgets.QApplication.topLevelWidgets():
+        if isinstance(w,QtWidgets.QMessageBox) and w.isVisible():messages.append(w.text());w.reject()
+timer=QtCore.QTimer();timer.timeout.connect(dismiss);timer.start(100)
+def run():
+    result={'ok':False}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench');win=Gui.getMainWindow();win.show();win.activateWindow()
+        for kind in ('extrude_face','revolve_face','sheet_whole','solid_face'):
+            doc=document.new_document('ThicknessProbe');sketch=modeling.new_sketch(doc)
+            if kind=='solid_face':
+                sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),10),False)
+            else:sketch.addGeometry(Part.LineSegment(App.Vector(10,0,0),App.Vector(10,15,0)),False)
+            doc.recompute()
+            if kind=='revolve_face':feature=revolution.save(doc,[(sketch,'')],{},dict(revolution.DEFAULTS,output='Sheet',angle=270))
+            else:feature=extrusion.save(doc,[(sketch,'')],{},dict(extrusion.DEFAULTS,output='Solid' if kind=='solid_face' else 'Sheet'))
+            Gui.Selection.clearSelection()
+            sub='' if kind=='sheet_whole' else 'Face1'
+            if kind=='solid_face':sub=next('Face'+str(i+1) for i,f in enumerate(feature.Shape.Faces) if isinstance(f.Surface,Part.Plane))
+            Gui.Selection.addSelection(feature,sub)
+            Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(300)
+            edit=Gui.activeDocument().getInEdit();task=win.findChild(QtWidgets.QDockWidget,'Tasks')
+            created=[o for o in doc.Objects if o.TypeId=='PartDesign::Thickness']
+            rows.append(dict(case=kind,active_dialog=bool(Gui.Control.activeDialog()),in_edit=edit.Object.Name if edit else None,
+                pending_transaction=doc.HasPendingTransaction,messages=list(messages),tasks_visible=task.isVisible(),
+                widgets=[w.metaObject().className() for w in task.findChildren(QtWidgets.QWidget) if 'Thickness' in w.metaObject().className()],
+                features=[dict(name=o.Name,state=list(o.State),status=o.getStatusString(),null=o.Shape.isNull()) for o in created]))
+            if kind!='solid_face':
+                Gui.runCommand('Std_Undo');QtTest.QTest.qWait(100)
+                rows[-1]['undo_recovery']=dict(pending=doc.HasPendingTransaction,thickness_exists=doc.getObject('Thickness') is not None,
+                                               source_exists=doc.getObject(feature.Name) is not None,source_visible=feature.Visibility)
+            Gui.activeDocument().resetEdit();Gui.Control.closeDialog()
+            if doc.HasPendingTransaction:doc.abortTransaction()
+            rows[-1]['recovered']=not Gui.Control.activeDialog() and not Gui.activeDocument().getInEdit() and not doc.HasPendingTransaction
+            App.closeDocument(doc.Name);messages.clear()
+        result.update(ok=True,cases=rows)
+    except BaseException:result.update(error=traceback.format_exc(),cases=rows)
+    (out/'check.json').write_text(json.dumps(result,indent=2))
+    timer.stop()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

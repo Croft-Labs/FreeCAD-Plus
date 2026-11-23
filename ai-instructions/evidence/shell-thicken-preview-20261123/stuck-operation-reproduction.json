@@ -1,0 +1,108 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "extrude_face",
+      "active_dialog": false,
+      "in_edit": null,
+      "pending_transaction": true,
+      "messages": [],
+      "tasks_visible": true,
+      "widgets": [],
+      "features": [
+        {
+          "name": "Thickness",
+          "state": [
+            "Touched",
+            "Invalid"
+          ],
+          "status": "Base feature's shape is not a solid",
+          "null": true
+        }
+      ],
+      "undo_recovery": {
+        "pending": false,
+        "thickness_exists": false,
+        "source_exists": true,
+        "source_visible": true
+      },
+      "recovered": true
+    },
+    {
+      "case": "revolve_face",
+      "active_dialog": false,
+      "in_edit": null,
+      "pending_transaction": true,
+      "messages": [],
+      "tasks_visible": true,
+      "widgets": [],
+      "features": [
+        {
+          "name": "Thickness",
+          "state": [
+            "Touched",
+            "Invalid"
+          ],
+          "status": "Base feature's shape is not a solid",
+          "null": true
+        }
+      ],
+      "undo_recovery": {
+        "pending": false,
+        "thickness_exists": false,
+        "source_exists": true,
+        "source_visible": true
+      },
+      "recovered": true
+    },
+    {
+      "case": "sheet_whole",
+      "active_dialog": false,
+      "in_edit": null,
+      "pending_transaction": true,
+      "messages": [],
+      "tasks_visible": true,
+      "widgets": [],
+      "features": [
+        {
+          "name": "Thickness",
+          "state": [
+            "Touched",
+            "Invalid"
+          ],
+          "status": "Base feature's shape is not a solid",
+          "null": true
+        }
+      ],
+      "undo_recovery": {
+        "pending": false,
+        "thickness_exists": false,
+        "source_exists": true,
+        "source_visible": true
+      },
+      "recovered": true
+    },
+    {
+      "case": "solid_face",
+      "active_dialog": true,
+      "in_edit": "Thickness",
+      "pending_transaction": true,
+      "messages": [],
+      "tasks_visible": true,
+      "widgets": [
+        "PartDesignGui::TaskThicknessParameters"
+      ],
+      "features": [
+        {
+          "name": "Thickness",
+          "state": [
+            "Up-to-date"
+          ],
+          "status": "Valid",
+          "null": false
+        }
+      ],
+      "recovered": true
+    }
+  ]
+}

@@ -4,6 +4,16 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Shell and Thicken — November 23, 2026
+
+Owner requests renaming Thickness to Shell for solid hollowing and a separate
+Thicken feature that turns sheets into solids with designated thickness. Thicken
+must offer New/Add/Subtract, matching Extrude/Revolve. Invalid geometry must not
+leave a feature operation stuck. Existing prominent-error, target-selection,
+preview-color, History and tree-visibility conventions apply. The
+[native proposal](../evidence/shell-thicken-preview-20261123/README.md) awaits
+approval; it illustrates total thickness, direction and invalid-selection feedback.
+
 ### Revolve Solid/Sheet output — November 23, 2026
 
 Owner requests the same Solid/Sheet options as Extrude. Solid is selected by
