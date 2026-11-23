@@ -3,8 +3,9 @@
 ## Unified Loft preview pending approval — November 23, 2026
 
 Requested unified Loft/New/Add/Subtract and merged Plus task entries are previewed
-with native shared widgets. [Direct screenshots, source and checks](evidence/loft-workflow-preview-20261123/README.md).
-Session f28df6cc461b is fresh/in-scope; approval state untouched. Production remains
+with native shared widgets, now including the owner's added Solid/Sheet option.
+Sheet forces/locks New as in Extrude/Revolve. [Direct screenshots, source and checks](evidence/loft-workflow-preview-20261123/README.md).
+Session 64ec80523dda supersedes f28df6cc461b and is fresh/in-scope; approval state untouched. Production remains
 7479a0ff04, installed and pushed. Await concrete UI approval before implementation;
 follow [proposed scope](ui-ux-specs/TASK_PANEL.md#unified-loft--november-23-2026).
 

@@ -45,6 +45,18 @@ def run():
             task.modes['Subtract'].click();shot('loft-subtract-target')
             task.target.setText('Solid001');task.changed();shot('loft-subtract-selected')
             task.status.setError('The loft volume does not intersect the target solid. Change the sections or select another target.');shot('loft-invalid')
+            assert task.outputs['Solid'].isChecked()
+            task.outputs['Sheet'].click()
+            assert task.modes['New'].isChecked() and all(not b.isEnabled() for b in task.modes.values())
+            assert not task.target_row.isVisible() and not task.target.text()
+            assert task.sections.count()==3 and task.display.itemText(0)=='Loft preview'
+            shot('loft-sheet')
+            task.outputs['Solid'].click()
+            assert task.modes['New'].isChecked() and all(b.isEnabled() for b in task.modes.values())
+            assert not task.target.text() and task.sections.count()==3
+            task.modes['Add'].click();assert task.target_row.isVisible()
+            result.update(solid_default=True,sheet_locks_new=True,sheet_clears_target=True,
+                          solid_restores_choices=True,sections_preserved=True)
             task.reject();task=None
             assert not doc.HasPendingTransaction and not Gui.Control.activeDialog()
             result.update(default_new=True,ordered_collector=True,target_cues=True,cancel_clean=True)

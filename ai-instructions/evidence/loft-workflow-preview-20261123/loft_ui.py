@@ -20,23 +20,31 @@ class LoftTask:
         layout=QtWidgets.QVBoxLayout(self.form);layout.setContentsMargins(6,4,6,4);layout.setSpacing(2)
         layout.addWidget(label('Component: Part001'))
         operation=Section('Operation');layout.addWidget(operation)
+        columns=QtWidgets.QHBoxLayout();outputs=QtWidgets.QVBoxLayout();modes=QtWidgets.QVBoxLayout()
+        self.outputs={};self.output_group=QtWidgets.QButtonGroup(self.form)
+        for name in ('Solid','Sheet'):
+            button=QtWidgets.QRadioButton(name);self.output_group.addButton(button);self.outputs[name]=button
+            outputs.addWidget(button);button.clicked.connect(self.changed)
+        self.outputs['Solid'].setChecked(True);outputs.addStretch()
+        columns.addLayout(outputs,1);columns.addLayout(modes,1);operation.layout.addLayout(columns)
         self.modes={};self.group=QtWidgets.QButtonGroup(self.form)
         for name in ('New','Add','Subtract'):
             button=QtWidgets.QRadioButton(name);self.group.addButton(button);self.modes[name]=button
-            operation.layout.addWidget(button);button.clicked.connect(self.changed)
+            modes.addWidget(button);button.clicked.connect(self.changed)
         self.modes['New'].setChecked(True)
         self.target_row=QtWidgets.QWidget();row=QtWidgets.QVBoxLayout(self.target_row);row.setContentsMargins(0,0,0,0)
         row.addWidget(label('Target solid'));self.target=QtWidgets.QLineEdit();self.target.setReadOnly(True)
         self.target.setPlaceholderText('Select the solid to modify');row.addWidget(self.target)
         self.target_hint=TaskStatus();row.addWidget(self.target_hint);operation.layout.addWidget(self.target_row)
         section=Section('Sections');layout.addWidget(section)
-        section.layout.addWidget(label('Select profiles in loft order. Drag rows or use Up / Down to reorder.'))
+        self.section_hint=label('');section.layout.addWidget(self.section_hint)
         self.sections=SelectionList();self.sections.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.sections.addItems(['Sketch · Base profile','Sketch001 · Middle profile','Sketch002 · End profile'])
         section.layout.addWidget(self.sections)
         buttons(section.layout,[('Up',lambda:self.move(-1)),('Down',lambda:self.move(1)),('Remove',self.remove),('Clear',self.sections.clear)])
         self.options=Section('Loft options');layout.addWidget(self.options)
         self.ruled=QtWidgets.QCheckBox('Ruled surface');self.closed=QtWidgets.QCheckBox('Closed')
+        self.closed.setToolTip('Connect the last section back to the first. This does not cap a sheet.')
         self.refine=QtWidgets.QCheckBox('Refine result');self.refine.setChecked(True)
         for control in (self.ruled,self.closed,self.refine):self.options.layout.addWidget(control)
         preview=Section('Preview');layout.addWidget(preview)
@@ -53,12 +61,19 @@ class LoftTask:
             item=self.sections.takeItem(i);self.sections.insertItem(j,item);self.sections.setCurrentRow(j)
     def remove(self):self.sections.takeItem(self.sections.currentRow())
     def changed(self,*args):
+        sheet=self.outputs['Sheet'].isChecked()
+        if sheet:
+            self.modes['New'].setChecked(True);self.target.clear()
+        for button in self.modes.values():button.setEnabled(not sheet)
+        self.section_hint.setText(('Select open or closed section curves in loft order.' if sheet else
+                                  'Select closed section profiles in loft order.')+' Drag rows or use Up / Down to reorder.')
+        self.display.setItemText(0,'Loft preview' if sheet else 'Tool volume')
         mode=next(name for name,button in self.modes.items() if button.isChecked())
         self.target_row.setVisible(mode!='New')
         missing=mode!='New' and not self.target.text()
         self.target.setStyleSheet('QLineEdit {border: 2px solid #bd780b; background: #fff3d6; color: #875300;}' if missing else '')
         self.target_hint.setText('Select the target solid before selecting sections.' if missing else '')
-        self.status.setText('Tool volume · creates a new solid.' if mode=='New' else 'Select a target solid to preview '+mode.lower()+'.' if missing else 'Tool volume · '+mode.lower()+'.')
+        self.status.setText('Sheet preview · uncapped, no thickness.' if sheet else 'Tool volume · creates a new solid.' if mode=='New' else 'Select a target solid to preview '+mode.lower()+'.' if missing else 'Tool volume · '+mode.lower()+'.')
     def getStandardButtons(self):return int(QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Cancel)
     def accept(self):return False
     def reject(self):Gui.Control.closeDialog();return True

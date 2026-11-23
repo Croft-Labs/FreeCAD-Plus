@@ -11,6 +11,17 @@ matching Extrude/Revolve, and merging their Plus task entries. The
 [native UI proposal](../evidence/loft-workflow-preview-20261123/README.md) is awaiting
 explicit approval; the following layout/implementation details are proposed.
 
+Owner additionally requested Solid/Sheet output. The revised proposal uses the
+same two-column arrangement as Extrude/Revolve: Solid/Sheet left, New/Add/Subtract
+right. Solid defaults on. Sheet selects and locks New, disables all operation
+buttons, clears/hides the target and accepts compatible open or closed section
+curves/edges/wires to create an uncapped sheet without thickness. Returning to
+Solid keeps New, re-enables operation choices and preserves section selections.
+Solid requires closed section profiles with supported native vertex endpoints.
+Closed connects the final section back to the first; it does not cap a sheet.
+Store output in saved features and restore it on editing; existing supported
+Lofts default Solid. Sheet uses Loft preview in place of Tool volume.
+
 New defaults to a new solid. Add/Subtract require an explicit current target or
 the approved sole-eligible-target shortcut, independent of Classic active Body.
 Choose target before collecting additional sections. Collect section profiles in
@@ -33,7 +44,7 @@ in Plus documents. Plus Loft entry defaults New. Preserve native legacy document
 workflows, existing identities/settings and unrelated ribbon/tab/coordinate visuals.
 Implementation scope: shared Loft engine/task, creation/edit dispatch, native Loft
 command bridges, Plus task watchers/entry command and relevant registration/tests.
-No Pipe/Helix migration or new sheet-output option is included in this proposal.
+No Pipe/Helix migration is included in this proposal.
 Saved native features must retain unsupported settings/native editing where needed.
 
 ### Component-owned operation routing — November 23, 2026

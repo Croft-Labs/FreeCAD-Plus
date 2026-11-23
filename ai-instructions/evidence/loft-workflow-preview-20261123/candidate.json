@@ -11,6 +11,11 @@
     "",
     ""
   ],
+  "solid_default": true,
+  "sheet_locks_new": true,
+  "sheet_clears_target": true,
+  "solid_restores_choices": true,
+  "sections_preserved": true,
   "default_new": true,
   "ordered_collector": true,
   "target_cues": true,
