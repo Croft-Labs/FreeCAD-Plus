@@ -143,6 +143,15 @@ Show the Selection toolbar above the ribbon alongside Save/Edit, in Design mode.
 
 Enabled categories intersect with the current command's selection rules. Viewport click, box-selection and persistence behaviors are defined in [Model View Window](MODEL_VIEW_WINDOW.md#selection-behavior).
 
+Owner request November 23, 2026 (preview pending): show the curve-intent icon and
+current name, and give the category filter a summary such as All, Curves omitted,
+2 omitted or Curves only. Add Select all/reset and Select 1. The owner clarified
+that Select 1 followed by a category enables only that category. Abandoning it
+must retain the previous filter; manually clearing the final enabled category
+must be prevented. The filter can never be empty. See the
+[native UI preview](../evidence/selection-controls-preview-20261123/README.md);
+this records requested behavior, not implementation or preview approval.
+
 ### Layers toolbar
 
 Show Layers beside the other top toolbars in Design mode. Include **Layers**, **Move to Layer**, and **Change Active Layer**. The latter two are compact fixed-label buttons opening a full-button dropdown, not wide boxes displaying a current value or split default-action buttons. Move to Layer operates on eligible preselected objects and is disabled without them. Change Active Layer shows a check beside the active layer. The [Layers task](TASK_PANEL.md#layers) owns assignment rules. [R03](EVIDENCE_AND_DECISIONS.md#r03)

@@ -1,0 +1,129 @@
+"""Isolated native Qt selection-control prototype; no model selection gate."""
+import os, sys, json, traceback, types
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets, QtTest
+sys.dont_write_bytecode = True
+out = Path(os.environ['PLUS_PREVIEW_OUT'])
+
+class MemoryPreferences:
+    def __init__(self): self.values = {}
+    def GetBool(self, key, default): return self.values.get(key, default)
+    def SetBool(self, key, value): self.values[key] = value
+    def GetString(self, key, default): return self.values.get(key, default)
+    def SetString(self, key, value): self.values[key] = value
+    def GetGroup(self, key): return self
+
+def run():
+    global dialog
+    result = {'ok': False, 'ui_simulation': True, 'native_Qt_widgets': True, 'cases': []}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench')
+        sys.path.insert(0, os.environ['PLUS_PREVIEW_WORKTREE'])
+        from selection_preview import selection_toolbar as toolbar, category_selection as categories
+        toolbar.preferences = lambda: memory
+        toolbar.apply = lambda active: None
+        categories._controller = types.SimpleNamespace(configure=lambda active: None)
+        memory = MemoryPreferences()
+        dialog = QtWidgets.QDialog(Gui.getMainWindow())
+        dialog.setWindowTitle('Selection controls — interactive UI prototype')
+        dialog.resize(920, 560)
+        layout = QtWidgets.QVBoxLayout(dialog)
+        title = QtWidgets.QLabel('Selection toolbar preview')
+        title.setStyleSheet('font-size: 20px; font-weight: bold;')
+        layout.addWidget(title)
+        layout.addWidget(QtWidgets.QLabel('UI simulation • Try the dropdowns below. Model picking and saved settings are disconnected.'))
+        frame = QtWidgets.QFrame()
+        frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        row = QtWidgets.QHBoxLayout(frame)
+        toolbar.append_controls(row, True)
+        row.addStretch()
+        layout.addWidget(frame)
+        layout.addStretch()
+        outside = QtWidgets.QLabel('Click this area to dismiss a dropdown.\nThe current filter stays active until you choose a replacement category.')
+        layout.addWidget(outside)
+        dialog.show(); dialog.raise_(); dialog.activateWindow()
+        QtTest.QTest.qWait(350)
+        if os.environ.get('PLUS_PREVIEW_INTERACTIVE') == '1':
+            result.update(ok=True, interactive_dialog_visible=dialog.isVisible())
+            (out/'result.json').write_text(json.dumps(result, indent=2))
+            dialog.finished.connect(Gui.getMainWindow().close)
+            return
+        button = dialog.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+        chain = dialog.findChild(QtWidgets.QToolButton, 'PlusCurveIntent')
+        menu = button.menu()
+        proposed = button.toolButtonStyle() == QtCore.Qt.ToolButtonTextBesideIcon
+        result['proposed'] = proposed
+
+        def shot(name):
+            QtTest.QTest.qWait(120)
+            # Capture the actual native dialog and popup at their screen position.
+            pos = dialog.mapToGlobal(QtCore.QPoint())
+            pix = dialog.screen().grabWindow(0, pos.x(), pos.y(), dialog.width(), dialog.height())
+            assert pix.save(str(out/(name+'.png')))
+            return pix
+
+        def popup():
+            menu.popup(button.mapToGlobal(QtCore.QPoint(0, button.height())))
+            QtTest.QTest.qWait(120)
+
+        def click(name):
+            widget = menu.findChild(QtWidgets.QWidget, name)
+            assert widget is not None
+            pos = QtCore.QPoint(10, widget.height() // 2) if isinstance(widget, QtWidgets.QCheckBox) else widget.rect().center()
+            QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, pos=pos)
+            QtTest.QTest.qWait(50)
+
+        shot('toolbar')
+        popup()
+        assert shot('menu').save(os.environ['PLUS_PREVIEW_IMAGE'])
+        if proposed:
+            assert button.text() == 'All'
+            click('CategoryCurves'); assert button.text() == 'Curves omitted'
+            shot('curves-omitted')
+            click('CategoryFaces'); assert button.text() == '2 omitted'
+            shot('two-omitted')
+            click('SelectOneCategory'); assert button.text() == '2 omitted'
+            shot('select-one')
+            # An actual outside click dismisses the popup without changing the filter.
+            outside_point = menu.mapFromGlobal(outside.mapToGlobal(outside.rect().center()))
+            QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, pos=outside_point)
+            QtTest.QTest.qWait(120)
+            assert not menu.isVisible()
+            assert button.text() == '2 omitted'
+            assert not menu.findChild(QtWidgets.QPushButton, 'SelectOneCategory').isChecked()
+            result['cases'].append('Abandoned Select 1 retains 2 omitted')
+            popup(); click('SelectOneCategory')
+            QtTest.QTest.keyClick(menu, QtCore.Qt.Key_Escape)
+            assert not menu.isVisible() and button.text() == '2 omitted'
+            result['cases'].append('Escape abandons Select 1')
+            popup(); click('SelectOneCategory'); click('CategoryCurves')
+            assert not menu.isVisible() and button.text() == 'Curves only'
+            popup()
+            curve = menu.findChild(QtWidgets.QCheckBox, 'CategoryCurves')
+            assert curve.isChecked() and not curve.isEnabled()
+            click('CategoryCurves'); assert button.text() == 'Curves only'
+            shot('curves-only')
+            result['cases'].append('Select 1 Curves and final-category guard')
+            click('CategoryEdges'); assert button.text() == '6 omitted'
+            assert curve.isEnabled()
+            click('SelectAllReset'); assert button.text() == 'All'
+            result['cases'].append('Multiple categories and reset')
+            menu.close()
+            for action in chain.menu().actions():
+                action.trigger()
+                assert chain.text() == action.text() and not chain.icon().isNull()
+                shot(action.text().lower().replace(' ', '-'))
+            result['cases'].append('All three intent labels and native icons')
+        else: menu.close()
+        result['ok'] = True
+    except BaseException:
+        result['error'] = traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result, indent=2))
+    if os.environ.get('PLUS_PREVIEW_INTERACTIVE') == '1' and result['ok']:
+        dialog.finished.connect(Gui.getMainWindow().close)
+        return
+    if 'dialog' in globals(): dialog.close()
+    QtCore.QTimer.singleShot(100, Gui.getMainWindow().close)
+
+QtCore.QTimer.singleShot(2200, run)

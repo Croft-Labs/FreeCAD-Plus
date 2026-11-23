@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "ui_simulation": true,
+  "native_Qt_widgets": true,
+  "cases": [
+    "Abandoned Select 1 retains 2 omitted",
+    "Escape abandons Select 1",
+    "Select 1 Curves and final-category guard",
+    "Multiple categories and reset",
+    "All three intent labels and native icons"
+  ],
+  "proposed": true
+}

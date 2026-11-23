@@ -1,5 +1,15 @@
 # FreeCAD Plus: Current work state
 
+## Selection toolbar preview — November 23, 2026
+
+Owner requests named curve-intent controls, category summaries, Select all/reset,
+Select 1 category replacement, and a nonempty-filter safeguard. Owner clarified
+Select 1 chooses one category. Native Qt UI prototype checks passed for labels,
+summaries, singleton replacement, outside/Escape cancellation, reset and final-
+category protection. Geometry admission and saved preferences are disconnected.
+Awaiting preview approval; production/install unchanged. Sketch Exit/Cancel is
+still separately pending. See [direct screenshots and scope](evidence/selection-controls-preview-20261123/README.md).
+
 ## Sketch Exit/Cancel control preview — November 23, 2026
 
 Owner requests Exit Sketch instead of Close and an adjacent Cancel while a sketch
