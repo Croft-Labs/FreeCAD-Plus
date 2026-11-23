@@ -1,5 +1,17 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest unified Revolve and selection lists — November 22, 2026
+
+Approved changes are installed. Extrude and Revolve share an at-least-five-row
+scrollable profile collector. Revolution/Groove commands now share New Solid/Add/
+Subtract creation and editing for component profiles, with axis references/guide,
+degree-based offsets and angles, symmetric/two-sided rotation, selected-target display
+and validity colors. Native saved links, identity, source ownership and Undo remain
+intact. All 11 focused build checks and 188 installed tests passed, plus separate
+native visual and saved-file reopen checks. Native To first/To last remain disabled;
+angular references require planes through the axis. See
+[acceptance](WORK_STATE.md#unified-revolve-implementation--november-22-2026).
+
 ## Latest Extrude target and preview colors — November 22, 2026
 
 The approved change is installed: hidden targets selected in History display in the

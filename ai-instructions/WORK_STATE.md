@@ -1,5 +1,37 @@
 # FreeCAD Plus: Current work state
 
+## Unified Revolve implementation — November 22, 2026
+
+The owner approved: **"implement the expanded selection list and revolves"**.
+The shared Extrude/Revolve profile list now reserves at least five complete native
+rows and scrolls through every selection, including long labels and larger fonts.
+Revolution and Groove commands share the feature-centered Revolve task with New Solid,
+Add and Subtract, axis selection/guide, degree-based start/end offsets and rotation
+angles, symmetric/two-sided sweeps, shared target visibility/colors and History scope.
+History editing uses the same populated task and retains feature identity.
+
+Source, native build and installation are complete, with rollback retained:
+[manifest](evidence/revolve-implementation-20261122/install-manifest.json).
+All **11 focused development-build checks** and **188 installed native tests** passed:
+[focused](evidence/revolve-implementation-20261122/build-regression.txt),
+[installed](evidence/revolve-implementation-20261122/regression.txt).
+Separate installed processes passed five native operation/validity visual cases,
+actual History target clicks, both expanded lists, atomic invalid rejection and
+fresh saved-file reopening with identities and prefilled angular parameters intact:
+[visual](evidence/revolve-implementation-20261122/visual.json),
+[reopen](evidence/revolve-implementation-20261122/reopen.json).
+Reviewed live screenshots: [Revolve list/axis](evidence/revolve-implementation-20261122/overview.png),
+[angular controls](evidence/revolve-implementation-20261122/add-valid.png),
+[Extrude list](evidence/revolve-implementation-20261122/extrude-selections.png).
+See [evidence](evidence/revolve-implementation-20261122/README.md).
+The existing desktop shortcut was restarted and verified with isolated user/system/
+data paths: [launch](evidence/revolve-implementation-20261122/shortcut.json). The app
+remains open. Disposable test files and inactive profiles were removed after acceptance;
+rollback copies and the active shortcut profile are retained. The owner profile was
+never used, and unrelated project.previewfirst.json remains untouched.
+The native limitation is explicit: To first/To last remain disabled; angular reference
+starts/limits require a plane through the axis. Legacy native editors are preserved.
+
 ## Unified Revolve preview — November 22, 2026
 
 The owner requested Extrude's workflow for New Solid/new body, Add and Subtract
@@ -13,8 +45,8 @@ All five native BRep fixture cases (New Solid, Add valid/invalid, Subtract valid
 passed the preview's geometry/visibility assertions; invalid cases disable OK.
 These are native staged screenshots, not an implemented Revolve task or regression
 coverage for persistence/selection/editing. The baseline is installed Extrude as the
-shared-layout reference. **Awaiting direct chat approval before implementation.**
-Production source and installed files remain unchanged. See the
+shared-layout reference. **Subsequently approved; see implementation status above.**
+At preview capture, production source and installed files were unchanged. See the
 [preview record](evidence/revolve-workflow-preview-20261122/README.md) for provenance,
 limitations and the subsequent implementation/validation scope.
 
@@ -33,8 +65,8 @@ or expansion. A native staged Extrude list preview is ready for chat approval:
 It shows six complete rows at the current native font, satisfying the five-row
 minimum, and scrolls through all eight selected edges. The real Extrude remains valid.
 The [preview record](evidence/extrude-selection-preview-20261122/README.md) identifies
-the isolated candidate and exact fingerprint. **List implementation is pending approval;
-production source and the installed application are unchanged.**
+the isolated candidate and exact fingerprint. **Subsequently approved with Revolve;
+see implementation status above.**
 
 ## Extrude selected targets and validity colors — November 22, 2026
 

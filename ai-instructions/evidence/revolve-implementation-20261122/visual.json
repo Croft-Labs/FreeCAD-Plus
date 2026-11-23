@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "installed_native": true,
+  "cases": [
+    {
+      "mode": "New Solid",
+      "valid": true,
+      "tool_volume": 4021.2385965949334,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Add",
+      "valid": true,
+      "tool_volume": 4021.2385965949334,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Add",
+      "valid": false,
+      "tool_volume": 4021.2385965949325,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Subtract",
+      "valid": true,
+      "tool_volume": 4021.2385965949334,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Subtract",
+      "valid": false,
+      "tool_volume": 8042.477193189869,
+      "target_history_hidden": true
+    }
+  ],
+  "extrude_expanded_list": true
+}

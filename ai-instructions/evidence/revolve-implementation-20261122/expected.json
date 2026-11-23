@@ -1,0 +1,33 @@
+[
+  {
+    "file": "new-solid-valid.cadprt",
+    "feature": "Revolve",
+    "identity": 2593,
+    "volume": 4021.2385965949334,
+    "target": "Pad"
+  },
+  {
+    "file": "add-valid.cadprt",
+    "feature": "Revolve",
+    "identity": 897,
+    "volume": 15180.175702145876,
+    "target": "Pad"
+  },
+  {
+    "file": "add-invalid.cadprt",
+    "feature": null,
+    "target": "Pad"
+  },
+  {
+    "file": "subtract-valid.cadprt",
+    "feature": "Revolve",
+    "identity": 4432,
+    "volume": 11158.937105550944,
+    "target": "Pad"
+  },
+  {
+    "file": "subtract-invalid.cadprt",
+    "feature": null,
+    "target": "Pad"
+  }
+]

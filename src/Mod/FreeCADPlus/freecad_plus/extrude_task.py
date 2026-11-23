@@ -7,12 +7,16 @@ from PySide6 import QtCore, QtWidgets
 from pivy import coin
 from freecad_plus import modeling, planes, extrusion, document, editing, hierarchy, isolation, display, task_visibility
 from freecad_plus.plane_task import Section, label, number, buttons
+from freecad_plus.selection_list import SelectionList
 
 
 _active = None
 
 
 class ExtrudeTask(QtCore.QObject):
+    engine = extrusion
+    title = "Extrude"
+    icon = "PartDesign_Pad"
     def __init__(self, feature=None, which='Pad'):
         super().__init__()
         self.doc = Gui.activeDocument().Document
@@ -43,8 +47,8 @@ class ExtrudeTask(QtCore.QObject):
         self.profile_highlight = None
         self.hidden_objects = []
         self.form = QtWidgets.QWidget()
-        self.form.setWindowTitle('Extrude')
-        self.form.setWindowIcon(Gui.getIcon('PartDesign_Pad'))
+        self.form.setWindowTitle(self.title)
+        self.form.setWindowIcon(Gui.getIcon(self.icon))
         layout = QtWidgets.QVBoxLayout(self.form)
         layout.setContentsMargins(6,4,6,4); layout.setSpacing(2)
         layout.addWidget(label('Component: ' + self.owner.Label))
@@ -61,7 +65,7 @@ class ExtrudeTask(QtCore.QObject):
         self.target_row = self.reference(self.operation.layout,'Target solid','target','Pick the current solid to modify')
         self.profile = self.section(layout, 'Profile')
         self.profile.layout.addWidget(label('Select a sketch, closed sketch region, or face.'))
-        self.profiles = QtWidgets.QListWidget(); self.profiles.setFixedHeight(36)
+        self.profiles = SelectionList()
         self.profiles.installEventFilter(self); self.profile.layout.addWidget(self.profiles)
         buttons(self.profile.layout,[('Remove',self.remove_profile),('Clear',self.clear_profile),('Whole sketch',self.whole_profile)])
         self.start = self.section(layout, 'Start', False)
@@ -96,14 +100,15 @@ class ExtrudeTask(QtCore.QObject):
         self.visible.toggled.connect(self.changed)
         self.automatic.toggled.connect(self.changed)
         self.status = label('Select a profile.'); layout.addWidget(self.status); layout.addStretch()
+        self.configure_form()
         if feature is not None:
             self.load_feature(feature)
         else:
             raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0) for sub in entry.SubElementNames or ('',)]
             for obj,sub in planes.canonical(self.owner,raw):
-                obj,sub = extrusion.profile_reference((obj,sub))
+                obj,sub = self.engine.profile_reference((obj,sub))
                 if obj.isDerivedFrom('Sketcher::SketchObject') or Part.splitSubname(sub)[2].startswith('Face'):
-                    extrusion.validate_profiles(self.owner, [(obj, sub)])
+                    self.engine.validate_profiles(self.owner, [(obj, sub)])
                     self.refs.append((obj,sub))
                 elif obj.TypeId == 'PartDesign::Body' or obj.isDerivedFrom('PartDesign::Feature'):
                     target = obj.Tip if obj.TypeId == 'PartDesign::Body' else obj
@@ -111,7 +116,7 @@ class ExtrudeTask(QtCore.QObject):
                     if 'target' in self.links and self.links['target'][0] != target:
                         raise ValueError('Select one target solid.')
                     self.links['target'] = (target,'')
-            self.modes['Subtract' if which == 'Pocket' else 'Add' if 'target' in self.links else 'New Solid'].setChecked(True)
+            self.modes['Subtract' if which in ('Pocket','Groove') else 'Add' if 'target' in self.links else 'New Solid'].setChecked(True)
         Gui.Selection.clearSelection()
         Gui.Selection.addObserver(self,0)
         App.addDocumentObserver(self)
@@ -122,12 +127,15 @@ class ExtrudeTask(QtCore.QObject):
         self.ready = True
         self.refresh_fields()
 
+    def configure_form(self):
+        pass
+
     def check(self):
         if self.closed or Gui.activeDocument() is None or Gui.activeDocument().activeView() != self.view:
-            raise ValueError('Return to the view where Extrude was opened.')
+            raise ValueError('Return to the view where '+self.title+' was opened.')
         definition,path = modeling._context(self.doc)
         if modeling._routing_context(self.doc,definition,path) != self.context:
-            raise ValueError('The edited component changed; start Extrude again.')
+            raise ValueError('The edited component changed; start '+self.title+' again.')
 
     def context_changed(self):
         if self.closed:return
@@ -174,15 +182,15 @@ class ExtrudeTask(QtCore.QObject):
             normal=frame.Rotation.multVec(App.Vector(0,0,1));denominator=normal.dot(direction)
             if abs(denominator)<1e-9:return
             point += direction*((frame.Base-point).dot(normal)/denominator)
-            refs=extrusion.region_references(self.owner,sketch,world.inverse().multVec(point))
+            refs=self.engine.region_references(self.owner,sketch,world.inverse().multVec(point))
             if refs:
                 self.refs=refs;self.refresh_fields();self.changed();callback.setHandled()
         except (ValueError,RuntimeError):pass
 
     def load_feature(self,feature):
         self.refs = planes.flatten(feature.ProfileReferences)
-        self.links = extrusion.references(feature)
-        v = extrusion.settings(feature)
+        self.links = self.engine.references(feature)
+        v = self.engine.settings(feature)
         self.modes[v['operation']].setChecked(True)
         for widget,key in ((self.start_type,'start'),(self.sides,'sides'),(self.direction,'direction'),(self.measure,'measure'),
                            (self.end1['kind'],'end'),(self.end2['kind'],'end2')):
@@ -293,8 +301,8 @@ class ExtrudeTask(QtCore.QObject):
             obj=App.getDocument(doc).getObject(name)
             ref=planes.canonical(self.owner,[(obj,sub)])[0]
             if self.pick=='profile':
-                ref=extrusion.profile_reference(ref)
-                extrusion.validate_profiles(self.owner,[ref])
+                ref=self.engine.profile_reference(ref)
+                self.engine.validate_profiles(self.owner,[ref])
                 if ref in self.refs:self.refs.remove(ref)
                 elif self.refs and (ref[0]!=self.refs[0][0] or not ref[0].isDerivedFrom('Sketcher::SketchObject')):
                     raise ValueError('Use one sketch or one face; clear the current profile first.')
@@ -304,7 +312,7 @@ class ExtrudeTask(QtCore.QObject):
             else:
                 if self.pick=='target':
                     target=ref[0].Tip if ref[0].TypeId=='PartDesign::Body' else ref[0]
-                    saved=extrusion.references(self.feature).get('target',(None,''))[0] if self.feature else None
+                    saved=self.engine.references(self.feature).get('target',(None,''))[0] if self.feature else None
                     if target!=saved:modeling._target_body(self.owner,target)
                     ref=(target,'')
                 self.links[self.pick]=ref
@@ -503,7 +511,7 @@ class ExtrudeTask(QtCore.QObject):
             self.overlay=coin.SoSeparator()
             pick=coin.SoPickStyle();pick.style=coin.SoPickStyle.UNPICKABLE;self.overlay.addChild(pick)
             self.highlight_profile()
-            result,tool,_=extrusion.evaluate(self.owner,self.refs,self.links,self.settings(),self.feature)
+            result,tool,_=self.engine.evaluate(self.owner,self.refs,self.links,self.settings(),self.feature)
             self.result_shape=result;self.tool_shape=tool
             self.valid=True;self.revisions+=1
             target=self.links.get('target',(None,''))[0] if self.mode()!='New Solid' else None
@@ -524,7 +532,7 @@ class ExtrudeTask(QtCore.QObject):
                         if limit.BoundBox.DiagonalLength<1e6:
                             self.add_shape(limit,(.65,.4,.85),.8)
                 self.hide_results(hidden)
-        except extrusion.InvalidResult as exc:
+        except self.engine.InvalidResult as exc:
             self.tool_shape=exc.tool
             self.status.setText(str(exc))
             if self.visible.isChecked():
@@ -545,7 +553,7 @@ class ExtrudeTask(QtCore.QObject):
             self.clear_overlay()
             self.clear_target()
             self.presentation.restore()
-            self.result=extrusion.save(self.doc,self.refs,self.links,self.settings(),self.feature)
+            self.result=self.engine.save(self.doc,self.refs,self.links,self.settings(),self.feature)
             self.reject()
             return True
         except Exception as exc:

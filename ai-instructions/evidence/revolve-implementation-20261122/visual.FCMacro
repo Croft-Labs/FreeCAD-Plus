@@ -1,0 +1,103 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,panel,extrude_task,revolve_task,revolution
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    task=None;result={'ok':False,'installed_native':True,'cases':[]};saved=[]
+    try:
+        win=Gui.getMainWindow();win.resize(1300,1000);win.show();win.raise_();win.activateWindow()
+        QtWidgets.QApplication.setActiveWindow(win);Gui.activateWorkbench('PartDesignWorkbench')
+        App.ParamGet('User parameter:BaseApp/Preferences/General').SetInt('TaskPanelUIMode',0)
+        for mode,wanted in [('New Solid',True),('Add',True),('Add',False),('Subtract',True),('Subtract',False)]:
+            tag=mode.lower().replace(' ','-')+('-valid' if wanted else '-invalid')
+            doc=document.new_document('Revolve proposal');owner=document.validate(doc).Definitions[0];owner.Label='Rotary housing'
+            base=modeling.new_sketch(doc);base.Label='Base circle'
+            base.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),22),False);doc.recompute()
+            target=modeling.extrude_new_solid(doc,base,8);target.Label='Base solid (hidden)';target.Visibility=False
+            profile=modeling.new_sketch(doc);profile.Label='Radial profile'
+            x=28 if mode=='Subtract' and not wanted else 12
+            z=12 if mode=='Add' and not wanted else 6
+            profile.Placement=App.Placement(App.Vector(),App.Rotation(App.Vector(1,0,0),90))
+            coords=[(x,z),(x+4,z),(x+8,z),(x+8,z+4),(x+8,z+8),(x+4,z+8),(x,z+8),(x,z+4)]
+            for i,p in enumerate(coords):
+                q=coords[(i+1)%8];profile.addGeometry(Part.LineSegment(App.Vector(*p,0),App.Vector(*q,0)),False)
+            doc.recompute();face=Part.Face(Part.Wire(profile.Shape.Edges));face.rotate(App.Vector(),App.Vector(0,0,1),15)
+            tool=face.revolve(App.Vector(),App.Vector(0,0,1),225)
+            actual=tool if mode=='New Solid' else target.Shape.fuse(tool) if mode=='Add' else target.Shape.cut(tool)
+            valid=actual.isValid() and len(actual.Solids)==1 and (mode=='New Solid' or abs(actual.Volume-target.Shape.Volume)>1e-6)
+            assert valid==wanted,(tag,actual.Volume)
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(profile)
+            Gui.runCommand('PartDesign_Groove' if mode=='Subtract' else 'PartDesign_Revolution')
+            task=extrude_task._active;assert isinstance(task,revolve_task.RevolveTask)
+            task.refs=[(profile,'Edge'+str(i)) for i in range(1,9)];task.refresh_fields()
+            task.axis.setCurrentText('Component Z axis');task.modes[mode].click()
+            task.start_type.setCurrentText('Offset');task.start_offset.setValue(15);task.end1['length'].setValue(225)
+            task.commit_numbers()
+            dock=panel.show_panel();dock.tabs.setCurrentIndex(2);dock.refresh()
+            for item in dock._maps[2].values():
+                if item.text(0)=='Coordinate System':item.setExpanded(False)
+            if mode!='New Solid':
+                task.fields['target'].setFocus();QtTest.QTest.qWait(80)
+                tree=dock.trees[2];tree.expandAll()
+                item=next(i for i in dock._maps[2].values() if panel.lookup(i.data(0,panel._ROLE).ref)==target)
+                tree.scrollToItem(item);QtTest.QTest.qWait(80)
+                point=QtCore.QPoint(tree.columnViewportPosition(0)+100,tree.visualItemRect(item).center().y())
+                QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,point)
+                QtTest.QTest.qWait(80);assert task.links['target'][0]==target
+            task.end1['length'].setFocus();QtTest.QTest.qWait(100)
+            assert task.valid==wanted,task.status.text()
+            assert abs(task.tool_shape.Volume-tool.Volume)<1e-5
+            button=next(box.button(QtWidgets.QDialogButtonBox.Ok) for box in win.findChildren(QtWidgets.QDialogButtonBox)
+                        if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Ok))
+            assert button.isEnabled()==valid
+            view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll()
+            def capture(name):
+                QtTest.QTest.qWait(300)
+                assert win.screen().grabWindow(int(win.winId())).save(str(out/(name+'.png')))
+            if mode=='New Solid':
+                capture('overview')
+                task.profiles.scrollToBottom();capture('selections-scrolled')
+                task.profile.header.setChecked(False)
+                task.start.header.setChecked(True)
+            else:
+                task.profile.header.setChecked(False);task.start.header.setChecked(True)
+            capture(tag)
+            result['cases'].append(dict(mode=mode,valid=valid,tool_volume=task.tool_shape.Volume,target_history_hidden=not target.Visibility))
+            assert not target.Visibility
+            filename=tag+'.cadprt'
+            if valid:
+                volume=task.result_shape.Volume;assert task.accept();feature=task.result;task=None
+                saved.append(dict(file=filename,feature=feature.Name,identity=feature.ID,volume=volume,target=target.Name))
+            else:
+                before=({o.Name:o.ID for o in doc.Objects},doc.UndoCount)
+                assert not task.accept();assert ({o.Name:o.ID for o in doc.Objects},doc.UndoCount)==before
+                saved.append(dict(file=filename,feature=None,target=target.Name))
+            document.save_document(doc,out/filename)
+            if task:task.reject();task=None
+            assert not target.Visibility
+            App.closeDocument(doc.Name);QtTest.QTest.qWait(100)
+        doc=document.new_document('Extrude selections');sketch=modeling.new_sketch(doc)
+        points=[(0,0),(10,0),(20,0),(20,10),(20,20),(10,20),(0,20),(0,10)]
+        for i,p in enumerate(points):
+            q=points[(i+1)%8];sketch.addGeometry(Part.LineSegment(App.Vector(*p,0),App.Vector(*q,0)),False)
+        doc.recompute();Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+        Gui.runCommand('PartDesign_Pad');task=extrude_task._active
+        task.refs=[(sketch,'Edge'+str(i)) for i in range(1,9)];task.refresh_fields();task.changed()
+        assert task.valid,task.status.text()
+        view=Gui.activeDocument().activeView();view.viewAxonometric();view.fitAll();capture('extrude-selections')
+        rows=task.profiles
+        assert sum(0<=rows.visualItemRect(rows.item(i)).top() and rows.visualItemRect(rows.item(i)).bottom()<rows.viewport().height() for i in range(8))>=5
+        rows.scrollToBottom();capture('extrude-selections-scrolled');task.reject();task=None
+        App.closeDocument(doc.Name)
+        result.update(ok=True,extrude_expanded_list=True)
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    (out/'expected.json').write_text(json.dumps(saved,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

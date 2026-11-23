@@ -8,6 +8,32 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Unified Revolve and shared selection lists — November 22, 2026
+
+ExtrudeTask now has an engine/title/icon contract and a form-configuration hook.
+RevolveTask reuses its collection, selection, preview, visibility, acceptance and
+cleanup methods, supplying axis/angular controls and settings. Both use SelectionList,
+whose height reserves five font-dependent rows plus any horizontal scrollbar. The
+shared active-task slot keeps panel eyes and tab scopes on the existing lifecycle.
+
+Revolution/Groove command dispatch enters the shared task for Plus component profiles;
+body-owned native sketches and Classic mode retain native routing. History editing and
+ViewRevolve open the same populated task. The feature remains one FeatureAddSubPython
+with PlusRevolveVersion=1, native global profile/axis/target/start/end references and
+Revolve_* parameters. Extrude's schema and class identities remain unchanged.
+Shared save_feature and the inherited execute path preserve native transactions,
+Body routing, source ownership, placement conversion and feature identity.
+
+The Revolve evaluator uses a hidden scratch document and native PartDesign::Revolution
+to construct the exact independent tool. It resolves sketch/component/picked axes in
+the component frame, then signed start rotation and angular plane limits. Native
+Angle/TwoAngles/Midplane construct the sweep; Through all resolves to 360°. Native
+To first/To last are incomplete upstream and are disabled. Reference starts and limits
+must be planes through the axis; other surfaces are rejected explicitly. The final
+Boolean, single-solid/no-change validation and InvalidResult tool retention follow
+Extrude. Tool element names have the PlusRevolve1 namespace; existing Extrude names
+are unchanged. No archived Plus code is imported or copied.
+
 ## Extrude selected-target display and invalid tools — November 22, 2026
 
 ExtrudeTask supplements a selected target whose native ownership route is hidden

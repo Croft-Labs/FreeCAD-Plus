@@ -1,0 +1,127 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+"""Revolve creation/editing using the shared profile and visibility task."""
+import FreeCAD as App
+import FreeCADGui as Gui
+from PySide6 import QtWidgets
+from pivy import coin
+from . import extrude_task, revolution, planes, modeling, ui_modes
+from .plane_task import label
+
+
+class RevolveTask(extrude_task.ExtrudeTask):
+    engine = revolution
+    title = 'Revolve'
+    icon = 'PartDesign_Revolution'
+
+    def end_controls(self, layout, key):
+        end = self.combo(layout, 'End', ['Angle', 'Up to face', 'Through all', 'To first', 'To last'])
+        for index in (3, 4):
+            item = end.model().item(index);item.setEnabled(False)
+            item.setToolTip('This angular end condition is not implemented by the native kernel.')
+        row, amount = self.numeric(layout, 'Rotation angle', 45 if key else 360, ' °')
+        amount.setRange(.01, 360)
+        limit = self.reference(layout, 'Limit', key + 'limit', 'Pick a plane through the rotation axis')
+        offset_row, offset = self.numeric(layout, 'End offset', 0, ' °');offset.setRange(-360, 360)
+        return dict(kind=end, length=amount, length_row=row, limit_row=limit,
+                    offset_row=offset_row, offset=offset, key=key + 'limit')
+
+    def configure_form(self):
+        self.start_offset.setSuffix(' °');self.start_offset.setRange(-360, 360)
+        self.fields['start'].setPlaceholderText('Pick a plane through the rotation axis')
+        self.direction_label.setText('Direction: around selected axis')
+        self.direction_label.setWordWrap(True)
+        self.advanced.header.setText('Advanced')
+        def hide(layout):
+            for i in range(layout.count()):
+                item = layout.itemAt(i)
+                if item.widget():item.widget().hide()
+                elif item.layout():hide(item.layout())
+        hide(self.advanced.layout);self.refine.show()
+        layout = self.form.layout()
+        self.axis_section = self.section(layout, 'Axis of rotation')
+        layout.removeWidget(self.axis_section);layout.insertWidget(layout.indexOf(self.start), self.axis_section)
+        self.axis = self.combo(self.axis_section.layout, 'Axis', revolution.AXES)
+        self.axis_row = self.reference(self.axis_section.layout, 'Axis / line', 'axis', 'Pick a straight edge or datum axis')
+        self.axis_summary = label('');self.axis_section.layout.addWidget(self.axis_summary)
+        self.axis_guide = None
+
+    def settings(self):
+        return dict(operation=self.mode(), start=self.start_type.currentText(), start_offset=self.values[self.start_offset],
+                    sides=self.sides.currentText(), end=self.end1['kind'].currentText(), end2=self.end2['kind'].currentText(),
+                    angle=self.values[self.end1['length']], angle2=self.values[self.end2['length']],
+                    offset=self.values[self.end1['offset']], offset2=self.values[self.end2['offset']],
+                    axis=self.axis.currentText(), reverse=self.reverse.isChecked(), refine=self.refine.isChecked())
+
+    def load_feature(self, feature):
+        self.refs = planes.flatten(feature.ProfileReferences);self.links = revolution.references(feature)
+        v = revolution.settings(feature);self.modes[v['operation']].setChecked(True)
+        for widget, key in ((self.start_type, 'start'), (self.sides, 'sides'), (self.axis, 'axis'),
+                            (self.end1['kind'], 'end'), (self.end2['kind'], 'end2')):
+            widget.setCurrentText(v[key])
+        for widget, key in ((self.start_offset, 'start_offset'), (self.end1['length'], 'angle'),
+                            (self.end2['length'], 'angle2'), (self.end1['offset'], 'offset'), (self.end2['offset'], 'offset2')):
+            widget.setValue(v[key]);self.values[widget] = v[key]
+        self.reverse.setChecked(v['reverse']);self.refine.setChecked(v['refine'])
+
+    def changed(self, *args):
+        if not self.ready or self.closed:return
+        self.target_row.setVisible(self.mode() != 'New Solid')
+        if self.mode() == 'New Solid' and self.pick == 'target':self.pick = 'profile'
+        self.presentation.update_style()
+        self.second.setVisible(self.sides.currentText() == 'Two sides')
+        self.start_row.setVisible(self.start_type.currentText() == 'Reference')
+        self.start_offset_row.setVisible(self.start_type.currentText() != 'Profile plane')
+        self.reverse.setEnabled(self.sides.currentText() != 'Symmetric')
+        self.axis_row.setVisible(self.axis.currentText() == 'Selected axis / line')
+        self.axis_summary.setText(self.axis.currentText() if self.axis.currentText() != 'Selected axis / line'
+                                  else self.fields['axis'].text() or 'Select a rotation axis.')
+        for end in (self.end1, self.end2):
+            end['length_row'].setVisible(end['kind'].currentText() == 'Angle')
+            end['limit_row'].setVisible(end['kind'].currentText() == 'Up to face')
+            end['offset_row'].setVisible(end['kind'].currentText() == 'Up to face')
+        self.end1['length_row'].findChild(QtWidgets.QLabel).setText(
+            'Total rotation angle' if self.sides.currentText() == 'Symmetric' else 'Rotation angle')
+        self.start.header.setText('Start · ' + self.start_type.currentText())
+        if self.automatic.isChecked():self.render()
+        else:
+            self.clear_overlay();self.status.setText('Preview needs update.');self.set_ok(True)
+        self.refresh_target()
+
+    def highlight_profile(self):
+        super().highlight_profile()
+        if self.overlay is None:return
+        if self.axis_guide is not None and self.overlay.findChild(self.axis_guide) >= 0:
+            self.overlay.removeChild(self.axis_guide)
+        self.axis_guide = None
+        if not self.refs:return
+        try:
+            base, axis = revolution.rotation_axis(self.owner, self.refs, self.links, self.settings())
+            shape = planes.shape(self.owner, self.refs[0]);span = max(10., shape.BoundBox.DiagonalLength)
+            projected = (shape.CenterOfMass - base).dot(axis);center = base + axis * projected
+            points = [self.world.multVec(center - axis * span), self.world.multVec(center + axis * span)]
+            node = coin.SoAnnotation();ink = coin.SoBaseColor();ink.rgb = (.6, .25, .85);node.addChild(ink)
+            style = coin.SoDrawStyle();style.lineWidth = 2;style.linePattern = 0xF0F0;node.addChild(style)
+            coords = coin.SoCoordinate3();coords.point.setValues(0, 2, [tuple(p) for p in points]);node.addChild(coords)
+            line = coin.SoLineSet();line.numVertices = 2;node.addChild(line)
+            self.overlay.addChild(node);self.axis_guide = node
+        except (ValueError, KeyError, RuntimeError):pass
+
+
+def show(feature=None, which='Revolution'):
+    if Gui.Control.activeDialog():raise ValueError('Finish the current task first.')
+    if feature is not None and not revolution.is_revolution(feature):
+        raise ValueError('This feature uses the native editor.')
+    task = RevolveTask(feature, which);extrude_task._active = task
+    Gui.Control.showDialog(task);task.changed()
+    from . import panel
+    panel.begin_feature_task(task)
+    return task
+
+
+def dispatch(which):
+    if ui_modes.modes()[2] != 'Plus':return False
+    definition, _ = modeling._context(Gui.activeDocument().Document)
+    if any(obj.isDerivedFrom('Sketcher::SketchObject') and obj.getParentGeoFeatureGroup() != definition
+           for obj in Gui.Selection.getSelection('*')):return False
+    show(which=which)
+    return True

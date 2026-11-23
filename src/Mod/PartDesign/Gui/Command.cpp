@@ -1458,6 +1458,22 @@ void CmdPartDesignRevolution::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
 
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module tasks(PyImport_ImportModule("freecad_plus.revolve_task"), true);
+            if (tasks.callMemberFunction("dispatch", Py::TupleN(Py::String("Revolution"))).isTrue()) {
+                return;
+            }
+        }
+        catch (Py::Exception&) {
+            Base::PyException error;
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QString::fromUtf8(error.what()));
+            return;
+        }
+    }
+
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
@@ -1519,6 +1535,22 @@ CmdPartDesignGroove::CmdPartDesignGroove()
 void CmdPartDesignGroove::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module tasks(PyImport_ImportModule("freecad_plus.revolve_task"), true);
+            if (tasks.callMemberFunction("dispatch", Py::TupleN(Py::String("Groove"))).isTrue()) {
+                return;
+            }
+        }
+        catch (Py::Exception&) {
+            Base::PyException error;
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QString::fromUtf8(error.what()));
+            return;
+        }
+    }
 
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 

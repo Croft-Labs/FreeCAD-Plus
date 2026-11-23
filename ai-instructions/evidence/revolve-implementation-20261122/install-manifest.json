@@ -1,0 +1,66 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestRevolveWorkflow.py",
+    "source_sha256": "dee54020cc3dae0b53d16c1870c044a5b8f7a1434ca5b0701cf8235939dd2ace",
+    "built_sha256": "dee54020cc3dae0b53d16c1870c044a5b8f7a1434ca5b0701cf8235939dd2ace",
+    "installed_sha256": "dee54020cc3dae0b53d16c1870c044a5b8f7a1434ca5b0701cf8235939dd2ace",
+    "previous_sha256": "dee54020cc3dae0b53d16c1870c044a5b8f7a1434ca5b0701cf8235939dd2ace",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\Mod\\FreeCADPlus\\TestRevolveWorkflow.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/editing.py",
+    "source_sha256": "bcd4477cc2b46d504b5a37a5aa18f8f8f6bfea0d8defdbc6ab9e99daf34c6eaf",
+    "built_sha256": "bcd4477cc2b46d504b5a37a5aa18f8f8f6bfea0d8defdbc6ab9e99daf34c6eaf",
+    "installed_sha256": "bcd4477cc2b46d504b5a37a5aa18f8f8f6bfea0d8defdbc6ab9e99daf34c6eaf",
+    "previous_sha256": "bcd4477cc2b46d504b5a37a5aa18f8f8f6bfea0d8defdbc6ab9e99daf34c6eaf",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\editing.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "3f5e1d91255590f06b7caa2cb96b96f9b29eef2d5b6b7830d10924d9e64ac14a",
+    "built_sha256": "3f5e1d91255590f06b7caa2cb96b96f9b29eef2d5b6b7830d10924d9e64ac14a",
+    "installed_sha256": "3f5e1d91255590f06b7caa2cb96b96f9b29eef2d5b6b7830d10924d9e64ac14a",
+    "previous_sha256": "3f5e1d91255590f06b7caa2cb96b96f9b29eef2d5b6b7830d10924d9e64ac14a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrusion.py",
+    "source_sha256": "3be9b758534f7e1ebcd7de5901cb7ad467168d8ff11e8d1dd5a88bfaffc27761",
+    "built_sha256": "3be9b758534f7e1ebcd7de5901cb7ad467168d8ff11e8d1dd5a88bfaffc27761",
+    "installed_sha256": "3be9b758534f7e1ebcd7de5901cb7ad467168d8ff11e8d1dd5a88bfaffc27761",
+    "previous_sha256": "850ecf9aea526418c623333194f0dad815b3d943393d2e748afc5f2f4b2c82c0",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/revolution.py",
+    "source_sha256": "8288f6d0502a02940d17420873278957c210faa4e0fbf70302350b7da08ce1fd",
+    "built_sha256": "8288f6d0502a02940d17420873278957c210faa4e0fbf70302350b7da08ce1fd",
+    "installed_sha256": "8288f6d0502a02940d17420873278957c210faa4e0fbf70302350b7da08ce1fd",
+    "previous_sha256": "8288f6d0502a02940d17420873278957c210faa4e0fbf70302350b7da08ce1fd",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolution.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/revolve_task.py",
+    "source_sha256": "7e42c6ff6ceff7b5931b14cf03b326ec94753a88e39f0cac67d158ca09315f42",
+    "built_sha256": "7e42c6ff6ceff7b5931b14cf03b326ec94753a88e39f0cac67d158ca09315f42",
+    "installed_sha256": "7e42c6ff6ceff7b5931b14cf03b326ec94753a88e39f0cac67d158ca09315f42",
+    "previous_sha256": "7e57eaa4e1227b37433a83f7f57655ffaf6c8776ba8c7237e8d4045c30188b4f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/selection_list.py",
+    "source_sha256": "5b004062eeed78467143a00478533386cc600c871cf0d9bf072cb7d2de685eec",
+    "built_sha256": "5b004062eeed78467143a00478533386cc600c871cf0d9bf072cb7d2de685eec",
+    "installed_sha256": "5b004062eeed78467143a00478533386cc600c871cf0d9bf072cb7d2de685eec",
+    "previous_sha256": "5b004062eeed78467143a00478533386cc600c871cf0d9bf072cb7d2de685eec",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\selection_list.py"
+  },
+  {
+    "path": "lib/PartDesignGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "e2a61c27d3c4c5e3722ee5bc8bed0f3a9c5ec3f9d1d2e9968af42a5f5e4a66ab",
+    "installed_sha256": "e2a61c27d3c4c5e3722ee5bc8bed0f3a9c5ec3f9d1d2e9968af42a5f5e4a66ab",
+    "previous_sha256": "bc31517f0c6ed06d81b6f3d4be4cd22afe67f9712a3f2be735846fb15b31ea08",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\revolve-implementation-20261122\\install-backup\\lib\\PartDesignGui.pyd"
+  }
+]

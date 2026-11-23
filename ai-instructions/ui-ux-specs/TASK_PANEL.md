@@ -15,12 +15,28 @@ at-least-five-row scrollable list, selected-target visibility/color, Add green/y
 and Subtract red/pink validity colors, numeric commit timing, History task scope,
 source ownership, visibility restoration and native validation/Undo behavior.
 
-The native staged [layout proposal](../evidence/revolve-workflow-preview-20261122/README.md)
-adds Axis of rotation, angular Start offset and Rotation angle controls to the shared
-sections. The requested behavior is confirmed; **visual approval and implementation
-remain pending**. This instruction supersedes D2763–D2765's old confirmation gate
+The owner approved implementation: **"implement the expanded selection list and revolves"**.
+The [layout proposal](../evidence/revolve-workflow-preview-20261122/README.md) adds
+Axis of rotation, angular Start offset and Rotation angle controls to the shared
+sections. This instruction supersedes D2763–D2765's old confirmation gate
 for combining the workflows and angular fields. Other archived details below remain
 unconfirmed unless explicitly covered by this request or existing shared-task rules.
+
+The implementation uses native angular construction for Angle, symmetric/two-sided
+rotation and Through all (360°). Angular start/end references are planes containing
+the selected axis; end offsets are also degrees. Unsupported native To first/To last
+entries remain disabled with an explanation. Invalid axes, intersecting profiles,
+overlapping sweeps beyond 360°, unreachable/unsupported limits and invalid Boolean
+results cannot be accepted. Native/body-owned legacy Revolution and Groove editors
+remain available outside the shared component workflow; no legacy conversion is implied.
+
+### Expanded selected-curves lists — November 22, 2026
+
+Approved with the combined Revolve implementation: Extrude and Revolve profile lists
+must show at least five complete rows and scroll to every selection. Size from native
+font/row metrics and allow for a horizontal scrollbar so long names do not consume
+the five-row minimum. Full labels remain available in tooltips. Keep native selection,
+Remove/Clear/Whole sketch actions and task-panel scrolling in creation and editing.
 
 ### Shared selected-target and validity display — November 22, 2026
 

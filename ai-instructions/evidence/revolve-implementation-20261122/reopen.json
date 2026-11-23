@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "files": [
+    "new-solid-valid.cadprt",
+    "add-valid.cadprt",
+    "add-invalid.cadprt",
+    "subtract-valid.cadprt",
+    "subtract-invalid.cadprt"
+  ],
+  "saved_visibility": true,
+  "geometry_recomputed": true,
+  "identity_and_editor_parameters": true
+}

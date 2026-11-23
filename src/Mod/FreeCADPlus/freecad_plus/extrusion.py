@@ -6,12 +6,18 @@ in the user's document. Preview and execution use exactly the same evaluator.
 Saved references are native links; the result retains its identity across edits.
 """
 import math
+import sys
 from contextlib import contextmanager
 
 import FreeCAD as App
 import Part
 
 from . import document, editing, modeling, planes
+
+NAME = 'Extrude'
+VERSION = 'PlusExtrudeVersion'
+PREFIX = 'Extrude_'
+ERROR = 'ExtrudeError'
 
 MODES = ('New Solid', 'Add', 'Subtract')
 ENDS = ('Length', 'Up to face', 'Up to shape', 'To first', 'To last', 'Through all')
@@ -145,7 +151,7 @@ def profile_shape(definition, refs):
     if not sketch.isDerivedFrom('Sketcher::SketchObject'):
         face = planes.shape(definition, refs[0])
         if not isinstance(face.Surface, Part.Plane):
-            raise ValueError('Extrude requires a planar profile face.')
+            raise ValueError('Select a planar profile face.')
         normal = face.normalAt(0, 0)
         placement = App.Placement(face.CenterOfMass, App.Rotation(App.Vector(0, 0, 1), normal))
         return face, placement, face.Edges
@@ -244,7 +250,7 @@ def kernel_snapshot(shape):
     return Part.cast_to_shape(result)
 
 
-def name_tool(tool, refs, feature, target=None):
+def name_tool(tool, refs, feature, target=None, namespace='PlusExtrude1'):
     """Publish names independent of temporary document/object IDs.
 
     Native Boolean history then propagates these tool names and the target's
@@ -259,7 +265,7 @@ def name_tool(tool, refs, feature, target=None):
     selection = '_'.join(Part.splitSubname(sub)[2] or 'Whole' for _, sub in refs)
     layout = '_'.join(type(face.Surface).__name__ + str(len(face.Edges)) + 'w' + str(len(face.Wires))
                       for face in tool.Faces)
-    prefix = 'PlusExtrude1_%s_%s_%s_%s_' % (sketch.ID, selection, len(tool.Vertexes), layout)
+    prefix = '%s_%s_%s_%s_%s_' % (namespace, sketch.ID, selection, len(tool.Vertexes), layout)
     tool.ElementMap = {prefix + kind + str(i + 1): kind + str(i + 1)
                        for kind, elements in (('Face', tool.Faces), ('Edge', tool.Edges), ('Vertex', tool.Vertexes))
                        for i in range(len(elements))}
@@ -380,27 +386,34 @@ def evaluate(definition, refs, links, values, feature=None):
 
 
 class Extrude:
+    @staticmethod
+    def engine():
+        return sys.modules[__name__]
+
     def __init__(self, obj):
-        obj.addProperty('App::PropertyInteger', 'PlusExtrudeVersion', 'Extrude').PlusExtrudeVersion = 1
-        obj.addProperty('App::PropertyLinkSubListGlobal', 'ProfileReferences', 'Extrude')
-        for name in LINKS.values():
-            obj.addProperty('App::PropertyLinkSubListGlobal', name, 'Extrude')
-        for key, default in DEFAULTS.items():
+        engine = self.engine()
+        obj.addProperty('App::PropertyInteger', engine.VERSION, engine.NAME)
+        setattr(obj, engine.VERSION, 1)
+        obj.addProperty('App::PropertyLinkSubListGlobal', 'ProfileReferences', engine.NAME)
+        for name in engine.LINKS.values():
+            obj.addProperty('App::PropertyLinkSubListGlobal', name, engine.NAME)
+        for key, default in engine.DEFAULTS.items():
             kind = 'Bool' if isinstance(default, bool) else 'String' if isinstance(default, str) else 'Float'
-            obj.addProperty('App::Property' + kind, 'Extrude_' + key, 'Extrude')
-            setattr(obj, 'Extrude_' + key, default)
-        obj.addProperty('App::PropertyString', 'ExtrudeError', 'Extrude')
-        for prop in ['PlusExtrudeVersion', 'ProfileReferences', *LINKS.values(),
-                     *['Extrude_' + key for key in DEFAULTS]]:
+            obj.addProperty('App::Property' + kind, engine.PREFIX + key, engine.NAME)
+            setattr(obj, engine.PREFIX + key, default)
+        obj.addProperty('App::PropertyString', engine.ERROR, engine.NAME)
+        for prop in [engine.VERSION, 'ProfileReferences', *engine.LINKS.values(),
+                     *[engine.PREFIX + key for key in engine.DEFAULTS]]:
             obj.setEditorMode(prop, 2)
-        obj.setEditorMode('ExtrudeError', 1)
+        obj.setEditorMode(engine.ERROR, 1)
         obj.Proxy = self
 
     def execute(self, obj):
+        engine = self.engine()
         try:
             definition = owner(obj)
-            result, tool, _ = evaluate(definition, planes.flatten(obj.ProfileReferences),
-                                       references(obj), settings(obj), obj)
+            result, tool, _ = engine.evaluate(definition, planes.flatten(obj.ProfileReferences),
+                                       engine.references(obj), engine.settings(obj), obj)
             body = obj.getParentGeoFeatureGroup()
             transform = body.getGlobalPlacement().inverse().multiply(definition.getGlobalPlacement())
             # PartDesign synchronizes Placement with BaseFeature after execute.
@@ -413,11 +426,11 @@ class Extrude:
             obj.Shape = result
             tool.transformShape(local, True)
             obj.AddSubShape = tool
-            obj.ExtrudeError = ''
+            setattr(obj, engine.ERROR, '')
         except Exception as exc:
             obj.Shape = Part.Shape()
             obj.AddSubShape = Part.Shape()
-            obj.ExtrudeError = str(exc)
+            setattr(obj, engine.ERROR, str(exc))
             raise
 
     def dumps(self):
@@ -447,42 +460,46 @@ class ViewExtrude:
 
 
 def save(doc, refs, links, values, feature=None):
+    return save_feature(doc, refs, links, values, feature, sys.modules[__name__])
+
+
+def save_feature(doc, refs, links, values, feature, engine):
     definition, path = modeling._context(doc)
-    refs, links, values = validate(definition, refs, links, values, feature)
-    evaluate(definition, refs, links, values, feature)
+    refs, links, values = engine.validate(definition, refs, links, values, feature)
+    engine.evaluate(definition, refs, links, values, feature)
     target = links.get('target', (None, ''))[0]
     old_body = feature.getParentGeoFeatureGroup() if feature else None
     body = target.getParentGeoFeatureGroup() if target else None
-    if feature and target is None and not references(feature).get('target'):
+    if feature and target is None and not engine.references(feature).get('target'):
         body = old_body
     if feature and body != old_body and old_body.Tip != feature:
         raise ValueError('Change the target before adding downstream features; this edit would move a feature chain.')
-    with document.transaction(definition.Document, 'Edit Extrude' if feature else 'Extrude'):
+    with document.transaction(definition.Document, 'Edit '+engine.NAME if feature else engine.NAME):
         if body is None:
             body = definition.newObject('PartDesign::Body', 'Body')
             body.AllowCompound = False
         if feature is None:
-            feature = body.newObject('PartDesign::FeatureAddSubPython', 'Extrude')
-            Extrude(feature)
-            ViewExtrude(feature.ViewObject)
+            feature = body.newObject('PartDesign::FeatureAddSubPython', engine.NAME)
+            engine.Feature(feature)
+            engine.ViewFeature(feature.ViewObject)
             if target:
                 for prop in ('ShapeAppearance', 'LineColor', 'PointColor', 'Transparency', 'DisplayMode'):
                     setattr(feature.ViewObject, prop, getattr(target.ViewObject, prop))
         elif body != old_body:
-            predecessor = references(feature).get('target', (None, ''))[0]
+            predecessor = engine.references(feature).get('target', (None, ''))[0]
             old_body.removeObject(feature)
             old_body.Tip = predecessor
             if predecessor:
                 predecessor.Visibility = True
             body.addObject(feature)
         feature.ProfileReferences = planes.links(refs)
-        for key, prop in LINKS.items():
+        for key, prop in engine.LINKS.items():
             setattr(feature, prop, planes.links([links[key]]) if key in links else [])
         for key, value in values.items():
-            setattr(feature, 'Extrude_' + key, value)
+            setattr(feature, engine.PREFIX + key, value)
         definition.Document.recompute()
-        if feature.ExtrudeError or feature.Shape.isNull() or 'Invalid' in feature.State:
-            raise ValueError(feature.ExtrudeError or 'Extrude failed to recompute.')
+        if getattr(feature, engine.ERROR) or feature.Shape.isNull() or 'Invalid' in feature.State:
+            raise ValueError(getattr(feature, engine.ERROR) or engine.NAME+' failed to recompute.')
         # Consuming a face must not hide its entire donor solid/sheet.
         if refs[0][0].isDerivedFrom('Sketcher::SketchObject'):
             refs[0][0].Visibility = False
@@ -491,3 +508,7 @@ def save(doc, refs, links, values, feature=None):
         feature.Visibility = body.Tip == feature
     editing._restore(doc, definition, path)
     return feature
+
+
+Feature = Extrude
+ViewFeature = ViewExtrude

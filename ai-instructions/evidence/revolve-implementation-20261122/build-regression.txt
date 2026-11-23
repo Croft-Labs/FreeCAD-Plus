@@ -1,0 +1,16 @@
+test_add_subtract_and_invalid_tools (TestRevolveWorkflow.TestRevolveWorkflow.test_add_subtract_and_invalid_tools) ... ok
+test_angles_offset_reverse_symmetric_and_two_sides (TestRevolveWorkflow.TestRevolveWorkflow.test_angles_offset_reverse_symmetric_and_two_sides) ... ok
+test_axis_references_and_transformed_sketch (TestRevolveWorkflow.TestRevolveWorkflow.test_axis_references_and_transformed_sketch) ... ok
+test_cycles_rerouting_and_downstream_references (TestRevolveWorkflow.TestRevolveWorkflow.test_cycles_rerouting_and_downstream_references) ... ok
+test_external_source_ownership_and_recompute (TestRevolveWorkflow.TestRevolveWorkflow.test_external_source_ownership_and_recompute) ... ok
+test_face_profile_and_invalid_axis (TestRevolveWorkflow.TestRevolveWorkflow.test_face_profile_and_invalid_axis) ... ok
+test_real_commands_shared_edit_history_and_cancel (TestRevolveWorkflow.TestRevolveWorkflow.test_real_commands_shared_edit_history_and_cancel) ... ok
+test_reference_start_and_face_limit (TestRevolveWorkflow.TestRevolveWorkflow.test_reference_start_and_face_limit) ... ok
+test_save_edit_identity_undo_and_reopen (TestRevolveWorkflow.TestRevolveWorkflow.test_save_edit_identity_undo_and_reopen) ... ok
+test_selection_list_five_rows_long_names_font_and_scrolling (TestRevolveWorkflow.TestRevolveWorkflow.test_selection_list_five_rows_long_names_font_and_scrolling) ... ok
+test_task_target_colors_invalid_accept_and_numeric_commit (TestRevolveWorkflow.TestRevolveWorkflow.test_task_target_colors_invalid_accept_and_numeric_commit) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 8.190s
+
+OK
