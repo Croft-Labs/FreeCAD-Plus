@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "cases": [
+    {
+      "task": "sketch",
+      "error": "\"Later Plane\" must precede \"Sketch\" in History; Reorder History to put the input before this feature, then try again.",
+      "highlighted": true,
+      "recovery": "Using the selected plane\u2019s origin and orientation.",
+      "cleared": true
+    },
+    {
+      "task": "plane",
+      "error": "\"Later Plane\" must precede \"Datum Plane\" in History; Reorder History to put the input before this feature, then try again.",
+      "highlighted": true,
+      "recovery": "Defined \u2014 plane position and normal are valid.",
+      "cleared": true
+    },
+    {
+      "task": "extrude",
+      "error": "\"Later Plane\" must precede \"Extrude\" in History; Reorder History to put the input before this feature, then try again.",
+      "highlighted": true,
+      "recovery": "Tool volume \u00b7 creates a separate solid.",
+      "cleared": true
+    },
+    {
+      "task": "revolve",
+      "error": "\"Later Plane\" must precede \"Revolve\" in History; Reorder History to put the input before this feature, then try again.",
+      "highlighted": true,
+      "recovery": "Tool volume \u00b7 creates a separate solid.",
+      "cleared": true
+    }
+  ],
+  "proposed": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\16176df60dd2\\candidate\\plane_task.py",
+  "ids_visibility_links_preserved": true
+}

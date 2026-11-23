@@ -1,0 +1,86 @@
+"""Native UI-only error presentation comparison; never accept a feature task."""
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest,QtGui
+import freecad_plus
+from freecad_plus import document,planes,sketch_placement,extrusion,revolution
+from TestComponentFading import capture
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'ui_only':True,'cases':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        App.ParamGet('User parameter:BaseApp/Preferences/General').SetInt('TaskPanelUIMode',0)
+        Gui.activateWorkbench('PartDesignWorkbench')
+        freecad_plus.__path__.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+        from freecad_plus import plane_task,sketch_task,extrude_task,revolve_task
+        for module in (plane_task,sketch_task,extrude_task,revolve_task):importlib.reload(module)
+        proposed=(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'task_status.py').exists()
+        result.update(proposed=proposed,module=plane_task.__file__)
+        for name,module in (('sketch',sketch_task),('plane',plane_task),('extrude',extrude_task),('revolve',revolve_task)):
+            doc=document.new_document('Error highlight preview');owner=document.validate(doc).Definitions[0]
+            owner.Label='Component';owner.Origin.Visibility=False
+            xy=next(o for o in owner.Origin.OriginFeatures if o.Role=='XY_Plane')
+            if name=='plane':
+                feature=planes.save(doc,[(xy,'')]);feature.Label='Datum Plane'
+            else:
+                sketch=sketch_placement.save(doc,[(xy,'')]);sketch.Label='Sketch'
+                if name=='revolve':
+                    # Native profile in the XZ plane, offset from its rotation axis.
+                    sketch.Placement=App.Placement(App.Vector(),App.Rotation(App.Vector(1,0,0),90))
+                    # Keep this fixture's manually oriented native sketch independent.
+                    for prop in ('PlusSketchPlacementVersion','PlaneReferences','OriginPoint','AxisReferences'):
+                        sketch.removeProperty(prop)
+                    vertices=[(2,1),(4,1),(4,3),(2,3)]
+                    for i,(x,y) in enumerate(vertices):
+                        xx,yy=vertices[(i+1)%4]
+                        sketch.addGeometry(Part.LineSegment(App.Vector(x,y,0),App.Vector(xx,yy,0)),False)
+                else:sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),8),False)
+                doc.recompute()
+                if name=='sketch':feature=sketch
+                elif name=='extrude':feature=extrusion.save(doc,[(sketch,'')],{},dict(extrusion.DEFAULTS,length=10))
+                else:feature=revolution.save(doc,[(sketch,'')],{},dict(revolution.DEFAULTS,axis='Component Z axis',angle=180))
+            later=planes.save(doc,[(xy,'')],7);later.Label='Later Plane'
+            before={o.Name:(o.ID,o.Visibility,tuple(x.Name for x in o.OutList)) for o in doc.Objects}
+            Gui.Selection.clearSelection();task=module.show(feature)
+            QtTest.QTest.qWait(300)  # Let the native task finish opening before the next pick.
+            if name in ('plane','sketch'):task.pick_target='plane'
+            else:task.pick='profile'
+            original_refs=list(task.refs)
+            view=Gui.activeDocument().activeView();view.viewAxonometric();view.fitAll()
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(later,'Face1');QtTest.QTest.qWait(200)
+            assert task.refs==original_refs
+            assert 'Reorder History' in task.status.text(),(name,task.status.text())
+            assert bool(task.status.styleSheet())==proposed
+            screen=win.grab()
+            framebuffer,ratio=capture(view,out/'viewport.png',prepare=False)
+            framebuffer.setDevicePixelRatio(ratio)
+            painter=QtGui.QPainter(screen);painter.drawImage(view.graphicsView().viewport().mapTo(win,QtCore.QPoint()),framebuffer);painter.end()
+            assert screen.save(str(out/(name+'-error.png')))
+            if name=='sketch':assert screen.save(os.environ['PLUS_PREVIEW_IMAGE'])
+            # Crop the actual visible task scroll area, without offscreen content/status bar.
+            scroll=task.form.parentWidget()
+            while scroll is not None and not isinstance(scroll,QtWidgets.QScrollArea):scroll=scroll.parentWidget()
+            viewport=scroll.viewport();pos=viewport.mapTo(win,QtCore.QPoint());ratio=screen.devicePixelRatio()
+            status_rect=QtCore.QRect(task.status.mapTo(viewport,QtCore.QPoint()),task.status.size())
+            if proposed:assert viewport.rect().contains(status_rect),(name,'Error is offscreen',status_rect,viewport.rect(),scroll.verticalScrollBar().value(),scroll.verticalScrollBar().maximum(),getattr(task.status,'revealDebug',None))
+            rect=QtCore.QRect(round(pos.x()*ratio),round(pos.y()*ratio),round(viewport.width()*ratio),round(viewport.height()*ratio))
+            assert screen.copy(rect).save(str(out/(name+'-detail.png')))
+            error=task.status.text()
+            if name in ('plane','sketch'):task.update()
+            else:task.render()
+            assert not task.status.styleSheet(),(name,'Error highlight did not clear')
+            assert task.valid,(name,task.status.text())
+            result['cases'].append(dict(task=name,error=error,highlighted=proposed,recovery=task.status.text(),cleared=True))
+            task.reject();QtTest.QTest.qWait(60)
+            assert {o.Name:(o.ID,o.Visibility,tuple(x.Name for x in o.OutList)) for o in doc.Objects}==before
+            App.closeDocument(doc.Name)
+        result.update(ok=True,ids_visibility_links_preserved=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

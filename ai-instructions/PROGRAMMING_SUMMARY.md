@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Pending prominent task-error styling — November 23, 2026
+
+The owner requests shared amber error emphasis matching the Extrude target field,
+including future implemented errors. A native preview covers Plane, Sketch, Extrude
+and Revolve, full-message visibility and valid recovery. Production/installation
+are unchanged pending screenshot approval. See [preview status](WORK_STATE.md#prominent-task-error-preview-pending--november-23-2026).
+
 ## Attach Sketch sequential-order repair — November 23, 2026
 
 The owner-reported `Sketcher_MapSketch` bypass is repaired: validate support against

@@ -4,6 +4,21 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Prominent error feedback — November 23, 2026
+
+Owner instruction: highlight the task-panel attachment/order error like the existing
+Extrude target field; apply the same prominent treatment to all future implemented
+error messages. Inline errors must stand out from ordinary task guidance and remain
+readable. Use the target field's amber/pale-amber/dark-text palette consistently.
+Keep the reason and recovery action in the text; do not rely only on color.
+
+The [native proposal](../evidence/task-error-preview-20261123/README.md) shows a
+shared wrapped amber error box in Plane, Sketch, Extrude and Revolve. Newly raised
+offscreen errors are brought fully into view without changing focus; repeats do not
+keep scrolling. Valid recovery clears the highlight, while incomplete/idle/success
+guidance remains normal. This exact presentation and scroll behavior await direct
+screenshot approval. Production and installed code remain unchanged.
+
 ### Reject later sketch supports before attachment — November 23, 2026
 
 Owner bug report identifies the Attach Sketch button (`Sketcher_MapSketch`): creating

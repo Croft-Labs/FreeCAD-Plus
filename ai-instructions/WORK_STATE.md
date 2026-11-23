@@ -1,5 +1,21 @@
 # FreeCAD Plus: Current work state
 
+## Prominent task-error preview pending — November 23, 2026
+
+Owner requests amber highlighting for the insufficiently prominent attachment error
+and the same treatment for future implemented errors. The native UI candidate uses
+the existing Extrude target palette, padding, wrapped semibold text and shared error
+classification across Plane/Sketch and Extrude/Revolve. Newly raised offscreen errors
+scroll into view with a bounded native-layout follow-up; successful validation clears
+the highlight. All four candidate scenarios pass visibility/recovery checks and
+preserve references, IDs and saved visibility. No feature task is accepted.
+
+**Awaiting direct screenshot approval; production and installation are unchanged.**
+Session `16176df60dd2`, fingerprint
+`4f5aa46a46bf63433fa196c22609ad24163c52d38805f2ac1a0544c6c4581511`.
+See [screenshots, candidate sources and implementation scope](evidence/task-error-preview-20261123/README.md).
+The preview preserves owner sessions and untracked `project.previewfirst.json`.
+
 ## Attach Sketch sequential-order repair — November 23, 2026
 
 Owner clarified the failing route is the Attach Sketch button (`Sketcher_MapSketch`).
