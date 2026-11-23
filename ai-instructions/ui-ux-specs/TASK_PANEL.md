@@ -11,8 +11,12 @@ adjacent **Cancel** while geometry creation, constraint application or another s
 action is active. Cancel follows native Escape semantics for that action and keeps
 the sketch open. Completed geometry/constraints are retained. Hide Cancel when no
 action is active; Exit Sketch keeps native sketch-closing behavior. The
-[native-widget proposal](../evidence/sketch-exit-preview-20261123/README.md) awaits
-direct preview approval before implementation.
+[native-widget proposal](../evidence/sketch-exit-preview-20261123/README.md) was
+approved for implementation together with the selection toolbar changes. Cancel
+is an action button rather than a dialog rejection: one Escape may reset an
+unfinished drawing step while leaving its tool active, in which case Cancel
+remains visible. This applies in both task UI modes and preserves the existing
+LeaveSketchWithEscape preference.
 
 ### Sketch-selected modeling workflows — November 23, 2026
 

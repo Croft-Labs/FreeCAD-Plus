@@ -1,0 +1,38 @@
+"""Verify the existing desktop launcher using explicit isolated settings."""
+import json, os, sys, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets, QtTest
+out = Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result = {'ok': False}
+    try:
+        from freecad_plus import document, modeling, editing, category_selection, toolbars
+        config = {key: App.ConfigGet(key) for key in ('ExeName','AppHomePath','UserParameter','SystemParameter','UserAppData')}
+        assert 'profile-shortcut' in config['UserParameter'], config
+        assert 'profile-shortcut' in config['SystemParameter'], config
+        assert 'profile-shortcut' in App.getUserAppDataDir()
+        assert '/app/' in category_selection.__file__.replace('\\','/')
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        doc=document.new_document('Installed selection and sketch controls')
+        category_selection.set_categories({'Curves'})
+        button=toolbars._controller.common.findChild(QtWidgets.QToolButton,'PlusSelectionCategories')
+        assert button.text()=='Curves only'
+        category_selection.set_categories(category_selection.CATEGORIES)
+        sketch=modeling.new_sketch(doc);editing.edit_feature(doc,sketch);QtTest.QTest.qWait(200)
+        box=next(b for b in win.findChildren(QtWidgets.QDialogButtonBox) if b.isVisible() and b.button(QtWidgets.QDialogButtonBox.Close))
+        cancel=box.findChild(QtWidgets.QPushButton,'SketchCancelAction')
+        assert box.button(QtWidgets.QDialogButtonBox.Close).text()=='Exit Sketch'
+        assert not cancel.isVisible()
+        Gui.runCommand('Sketcher_CreateRectangle');QtTest.QTest.qWait(150)
+        assert cancel.isVisible()
+        cancel.click();QtTest.QTest.qWait(150)
+        assert not cancel.isVisible() and Gui.activeDocument().getInEdit() is not None
+        box.button(QtWidgets.QDialogButtonBox.Close).click()
+        assert Gui.activeDocument().getInEdit() is None
+        result.update(ok=True,config=config,user_data=App.getUserAppDataDir(),module=category_selection.__file__)
+    except BaseException: result['error']=traceback.format_exc()
+    (out/'shortcut.json').write_text(json.dumps(result,indent=2))
+QtCore.QTimer.singleShot(2200,run)

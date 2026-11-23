@@ -22,6 +22,12 @@
 
 
 #include <Gui/Command.h>
+#include <Gui/Application.h>
+#include <Gui/Document.h>
+#include <Gui/MDIView.h>
+#include <QPushButton>
+#include <QTimer>
+#include <Inventor/events/SoKeyboardEvent.h>
 
 #include "TaskDlgEditSketch.h"
 #include "ViewProviderSketch.h"
@@ -106,6 +112,47 @@ void TaskDlgEditSketch::slotToolChanged(const std::string& toolname)
     }
 
     ToolSettings->setHidden(!widgetvisible);
+    // Deactivation notifies before clearing the handler. DSH_None can also be
+    // an active constraint tool without a settings widget, so inspect the mode
+    // after the transition, with this dialog guarding the queued callback.
+    QTimer::singleShot(0, this, &TaskDlgEditSketch::updateCancelButton);
+}
+
+void TaskDlgEditSketch::modifyStandardButtons(QDialogButtonBox* box)
+{
+    if (auto* close = box->button(QDialogButtonBox::Close)) {
+        close->setText(tr("Exit Sketch"));
+    }
+    cancelButton = box->addButton(tr("Cancel"), QDialogButtonBox::ActionRole);
+    cancelButton->setObjectName(QStringLiteral("SketchCancelAction"));
+    cancelButton->setToolTip(tr("Cancel the current sketch action (Escape)"));
+    connect(cancelButton, &QPushButton::clicked, this, &TaskDlgEditSketch::cancelCurrentAction);
+    updateCancelButton();
+}
+
+void TaskDlgEditSketch::updateCancelButton()
+{
+    if (cancelButton) {
+        cancelButton->setVisible(
+            sketchView && sketchView->getSketchMode() == ViewProviderSketch::STATUS_SKETCH_UseHandler
+        );
+    }
+}
+
+void TaskDlgEditSketch::cancelCurrentAction()
+{
+    if (sketchView && sketchView->getSketchMode() == ViewProviderSketch::STATUS_SKETCH_UseHandler) {
+        if (auto* document = Gui::Application::Instance->activeDocument()) {
+            if (auto* view = document->getActiveView()) {
+                view->setFocus();
+            }
+        }
+        // Delegate one Escape pair to the native handler. Some drawing tools
+        // reset an unfinished step and remain active; do not purge them here.
+        sketchView->keyPressed(true, SoKeyboardEvent::ESCAPE);
+        sketchView->keyPressed(false, SoKeyboardEvent::ESCAPE);
+    }
+    updateCancelButton();
 }
 
 //==== calls from the TaskView ===============================================================

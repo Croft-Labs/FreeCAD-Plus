@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Installed selection toolbar and sketch task controls — November 23, 2026
+
+Named chain settings, readable category summaries, Select all/reset and safe
+Select 1 category replacement are installed. Empty filters are prevented/repaired.
+Sketch tasks show Exit Sketch and action-only Cancel with native Escape semantics
+in both modes. All 16 build and 39 installed checks, visual cases, fresh-process
+settings and existing-shortcut checks passed. See
+[acceptance](WORK_STATE.md#selection-toolbar-and-sketch-buttons-installed--november-23-2026).
+
 ## Installed creation selection repair — November 23, 2026
 
 New-component navigation now clears selection after opening History while retaining

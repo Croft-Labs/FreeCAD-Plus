@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "tests": 39,
+  "failures": 0,
+  "errors": 0,
+  "modules": [
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\category_selection.py",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\selection_toolbar.py",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\TestDesignInteractions.py"
+  ]
+}

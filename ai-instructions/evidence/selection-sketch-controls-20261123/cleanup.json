@@ -1,0 +1,35 @@
+{
+  "retained": [
+    "install-backup",
+    "profile-shortcut"
+  ],
+  "removed": [
+    "coordinate-external",
+    "fit-external",
+    "profile-build",
+    "profile-installed",
+    "tabs-external",
+    "box-crossing.png",
+    "box-enclosure.png",
+    "category-menu.png",
+    "category-sketch-box.png",
+    "Coordinates.20261123-131001.FCBak",
+    "Coordinates.cadprt",
+    "curve-intent-split.png",
+    "curves-only-menu.png",
+    "curves-only-toolbar.png",
+    "installed-window.png",
+    "ribbon-categories.png",
+    "ribbon-curve-intent.png",
+    "select-one-menu.png",
+    "selection-toolbar.png",
+    "sketch-constraint-buttons.png",
+    "sketch-constraint-tasks.png",
+    "sketch-crossing.png",
+    "sketch-drawing-buttons.png",
+    "sketch-drawing-tasks.png",
+    "sketch-enclosure.png",
+    "sketch-idle-buttons.png"
+  ],
+  "root": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-sketch-controls-20261123"
+}

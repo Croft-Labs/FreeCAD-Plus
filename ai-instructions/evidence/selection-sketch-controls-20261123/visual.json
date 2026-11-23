@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "installed": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\category_selection.py",
+  "cases": [
+    "named toolbar",
+    "summaries",
+    "select-one",
+    "last category guard",
+    "idle sketch",
+    "drawing Cancel",
+    "constraint Cancel",
+    "Exit Sketch"
+  ]
+}

@@ -143,14 +143,18 @@ Show the Selection toolbar above the ribbon alongside Save/Edit, in Design mode.
 
 Enabled categories intersect with the current command's selection rules. Viewport click, box-selection and persistence behaviors are defined in [Model View Window](MODEL_VIEW_WINDOW.md#selection-behavior).
 
-Owner request November 23, 2026 (preview pending): show the curve-intent icon and
+Owner-approved change November 23, 2026: show the curve-intent icon and
 current name, and give the category filter a summary such as All, Curves omitted,
 2 omitted or Curves only. Add Select all/reset and Select 1. The owner clarified
 that Select 1 followed by a category enables only that category. Abandoning it
 must retain the previous filter; manually clearing the final enabled category
 must be prevented. The filter can never be empty. See the
-[native UI preview](../evidence/selection-controls-preview-20261123/README.md);
-this records requested behavior, not implementation or preview approval.
+[native UI preview](../evidence/selection-controls-preview-20261123/README.md).
+Select 1 leaves the current filter effective until a category is chosen. Closing
+the popup or pressing Escape abandons that pending choice. The final enabled
+checkbox stays checked and disabled until another category is enabled or Select 1
+is armed. Older empty saved filters recover to All. Remember committed choices
+across toolbar rebuilds and restarts; Classic mode keeps native selection behavior.
 
 ### Layers toolbar
 

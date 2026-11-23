@@ -1,5 +1,20 @@
 # FreeCAD Plus: Current work state
 
+## Selection toolbar and sketch buttons installed — November 23, 2026
+
+Owner approved both previews. Chain control now shows its current icon/name;
+category filter summarizes All/omitted/only, with Select all/reset and transactional
+Select 1 category replacement. Outside/Escape dismissal keeps the prior filter;
+the last checkbox cannot be cleared, and older empty saved filters recover to All.
+Sketch tasks now show Exit Sketch and an adjacent Cancel while an action is active.
+Cancel follows one native Escape pair, including partial-step reset, in both modes.
+
+SketcherGui and scripts built successfully. All 16 build and 39 installed regression
+checks passed, along with eight installed visual cases, fresh-process persistence
+and existing-shortcut verification. Five installed files have retained rollback
+copies. Owner sessions/settings were preserved; existing sessions need restart to
+load cached code. See [implementation and screenshots](evidence/selection-sketch-controls-20261123/README.md).
+
 ## Selection toolbar preview — November 23, 2026
 
 Owner requests named curve-intent controls, category summaries, Select all/reset,
@@ -7,8 +22,8 @@ Select 1 category replacement, and a nonempty-filter safeguard. Owner clarified
 Select 1 chooses one category. Native Qt UI prototype checks passed for labels,
 summaries, singleton replacement, outside/Escape cancellation, reset and final-
 category protection. Geometry admission and saved preferences are disconnected.
-Awaiting preview approval; production/install unchanged. Sketch Exit/Cancel is
-still separately pending. See [direct screenshots and scope](evidence/selection-controls-preview-20261123/README.md).
+Subsequently approved and implemented in the increment above. See
+[original screenshots and scope](evidence/selection-controls-preview-20261123/README.md).
 
 ## Sketch Exit/Cancel control preview — November 23, 2026
 
@@ -16,7 +31,8 @@ Owner requests Exit Sketch instead of Close and an adjacent Cancel while a sketc
 action is active, behaving like Escape without leaving sketch edit. Native-widget
 prototype covers idle, rectangle and constraint states; Cancel preserves the open
 sketch/completed geometry and Exit Sketch closes it. Automatic active-tool detection
-is still fixture-driven. Awaiting preview approval; production/install unchanged.
+was fixture-driven in this prototype. Subsequently approved and implemented above
+with native active-handler detection.
 See [preview and native implementation scope](evidence/sketch-exit-preview-20261123/README.md).
 
 ## Creation selection repair installed — November 23, 2026

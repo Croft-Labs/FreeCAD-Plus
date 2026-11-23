@@ -1,0 +1,22 @@
+import json, os, sys, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets
+def run():
+    result={'ok':False}
+    try:
+        import TestPlusToolbars
+        from freecad_plus import category_selection, toolbars, ui_modes
+        TestPlusToolbars.verify_fresh_process()
+        assert category_selection.enabled_categories()=={'Curves'}
+        App.ParamGet('User parameter:BaseApp/Preferences/General').SetInt('ToolbarUIMode',0)
+        ui_modes.apply_modes()
+        button=toolbars._controller.common.findChild(QtWidgets.QToolButton,'PlusSelectionCategories')
+        assert button.text()=='Curves only'
+        assert not button.boxes['Curves'].isEnabled()
+        result.update(ok=True,filter=button.text(),checks='saved intent, singleton, toggles, Classic restore')
+    except BaseException: result['error']=traceback.format_exc()
+    (Path(os.environ['PLUS_TEST_DIR'])/'reopen.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

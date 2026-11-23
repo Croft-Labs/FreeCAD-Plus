@@ -1,0 +1,40 @@
+import json, os, sys, traceback, unittest
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets
+out = Path(os.environ['PLUS_TEST_DIR'])
+class LiveResult(unittest.TextTestResult):
+    def startTest(self, test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test); self.stream.flush()
+    def addError(self, test, err):
+        super().addError(test, err); self.stream.write(self._exc_info_to_string(err, test)); self.stream.flush()
+    def addFailure(self, test, err):
+        super().addFailure(test, err); self.stream.write(self._exc_info_to_string(err, test)); self.stream.flush()
+
+def run():
+    result = {'ok': False}
+    try:
+        win = Gui.getMainWindow(); win.show(); win.raise_(); win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        import TestPlusToolbars as toolbar, TestDesignInteractions as design
+        suite = unittest.TestSuite()
+        prefixes = ('test_category_', 'test_curve_intent_', 'test_directional_', 'test_persistent_control_scope')
+        for name in unittest.defaultTestLoader.getTestCaseNames(toolbar.TestPlusToolbars):
+            if name.startswith(prefixes): suite.addTest(toolbar.TestPlusToolbars(name))
+        suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(design.TestSketchTaskButtons))
+        if os.environ['PLUS_TEST_SCOPE'] == 'broad':
+            for cls in (design.TestSketchCoordinateVisibility, design.TestSketchExitFit, design.TestSketchCreationAndTaskTabs):
+                suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(cls))
+        with (out/'regression.txt').open('w') as stream:
+            report = unittest.TextTestRunner(stream=stream, verbosity=2, resultclass=LiveResult).run(suite)
+        from freecad_plus import category_selection, selection_toolbar
+        result.update(ok=report.wasSuccessful(), tests=report.testsRun, failures=len(report.failures), errors=len(report.errors),
+                      modules=[category_selection.__file__, selection_toolbar.__file__, design.__file__])
+    except BaseException: result['error'] = traceback.format_exc()
+    (out/'regression.json').write_text(json.dumps(result, indent=2))
+    if Gui.activeDocument() and Gui.activeDocument().getInEdit(): Gui.activeDocument().resetEdit()
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100, Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200, run)

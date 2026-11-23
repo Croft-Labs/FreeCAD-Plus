@@ -80,9 +80,8 @@ class CurveIntentButton(QtWidgets.QToolButton):
         self.initStyleOption(option)
         arrow = self.style().subControlRect(QtWidgets.QStyle.CC_ToolButton, option,
                                             QtWidgets.QStyle.SC_ToolButtonMenu, self)
-        # Some native styles omit the menu width from an icon-only size hint.
-        # Keep a full icon-sized button area beside their native arrow area.
-        size.setWidth(max(size.width(), size.height() + arrow.width()))
+        # Reserve room for the split-menu arrow beside the current setting text.
+        size.setWidth(size.width() + arrow.width())
         return size
 
 
@@ -91,7 +90,7 @@ def append_curve_intent(row):
     button.setObjectName('PlusCurveIntent')
     button.setAccessibleName('Curve intent')
     button.setAutoRaise(True)
-    button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+    button.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
     button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
     menu = QtWidgets.QMenu(button)
     group = QtGui.QActionGroup(button)

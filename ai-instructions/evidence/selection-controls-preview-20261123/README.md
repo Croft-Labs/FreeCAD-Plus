@@ -1,9 +1,10 @@
 # Selection toolbar preview — November 23, 2026
 
-Status: native Qt UI simulation prepared for owner review. Not implemented in the
-production checkout or installed application. Sketch Exit/Cancel preview remains
-separately pending. Owner clarified Select 1 means choosing one filter category,
-not selecting one geometry object.
+Status: owner approved implementation on November 23, 2026, then also approved
+the sketch Exit/Cancel buttons. This directory retains the original UI simulation;
+see [implementation and installed checks](../selection-sketch-controls-20261123/README.md).
+Owner clarified Select 1 means choosing one filter category, not selecting one
+geometry object.
 
 ## Proposed behavior
 

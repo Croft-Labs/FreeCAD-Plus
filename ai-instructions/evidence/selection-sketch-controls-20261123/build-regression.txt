@@ -1,0 +1,21 @@
+test_category_empty_preferences_recovery_and_rebuild (TestPlusToolbars.TestPlusToolbars.test_category_empty_preferences_recovery_and_rebuild) ... ok
+test_category_geometry_and_batch_admission (TestPlusToolbars.TestPlusToolbars.test_category_geometry_and_batch_admission) ... ok
+test_category_menu_scope_and_gate_ownership (TestPlusToolbars.TestPlusToolbars.test_category_menu_scope_and_gate_ownership) ... ok
+test_category_native_model_boxes (TestPlusToolbars.TestPlusToolbars.test_category_native_model_boxes) ... ok
+test_category_native_sketch_click_and_box (TestPlusToolbars.TestPlusToolbars.test_category_native_sketch_click_and_box) ... ok
+test_category_single_choice_dismissal_and_nonempty_guard (TestPlusToolbars.TestPlusToolbars.test_category_single_choice_dismissal_and_nonempty_guard) ... ok
+test_curve_intent_control_and_scope (TestPlusToolbars.TestPlusToolbars.test_curve_intent_control_and_scope) ... ok
+test_curve_intent_native_topology (TestPlusToolbars.TestPlusToolbars.test_curve_intent_native_topology) ... ok
+test_curve_intent_native_viewport_and_filters (TestPlusToolbars.TestPlusToolbars.test_curve_intent_native_viewport_and_filters) ... ok
+test_directional_control_scope_and_saved_choice (TestPlusToolbars.TestPlusToolbars.test_directional_control_scope_and_saved_choice) ... ok
+test_directional_native_object_and_element_boxes (TestPlusToolbars.TestPlusToolbars.test_directional_native_object_and_element_boxes) ... ok
+test_directional_native_sketch_boxes (TestPlusToolbars.TestPlusToolbars.test_directional_native_sketch_boxes) ... ok
+test_persistent_control_scope_and_saved_choice (TestPlusToolbars.TestPlusToolbars.test_persistent_control_scope_and_saved_choice) ... ok
+test_cancel_partial_rectangle_matches_one_escape (TestDesignInteractions.TestSketchTaskButtons.test_cancel_partial_rectangle_matches_one_escape) ... ok
+test_escape_preference_and_rapid_tool_exit (TestDesignInteractions.TestSketchTaskButtons.test_escape_preference_and_rapid_tool_exit) ... ok
+test_exit_and_cancel_geometry_and_constraint_in_both_modes (TestDesignInteractions.TestSketchTaskButtons.test_exit_and_cancel_geometry_and_constraint_in_both_modes) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 103.152s
+
+OK

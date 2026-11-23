@@ -1,0 +1,5 @@
+{
+  "ok": true,
+  "filter": "Curves only",
+  "checks": "saved intent, singleton, toggles, Classic restore"
+}

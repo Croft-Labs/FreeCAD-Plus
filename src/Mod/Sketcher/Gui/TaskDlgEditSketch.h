@@ -70,6 +70,7 @@ public:
     void autoClosedOnClosedView() override;
 
     QDialogButtonBox::StandardButtons getStandardButtons() const override;
+    void modifyStandardButtons(QDialogButtonBox* box) override;
 
     /** @brief Function used to register a slot to be triggered when the tool widget is changed. */
     template<typename F>
@@ -84,6 +85,8 @@ protected:
 
 private:
     void slotToolChanged(const std::string& toolname);
+    void updateCancelButton();
+    void cancelCurrentAction();
 
 protected:
     ViewProviderSketch* sketchView;
@@ -95,6 +98,7 @@ protected:
 
 private:
     Connection connectionToolSettings;
+    QPointer<QPushButton> cancelButton;
 };
 
 

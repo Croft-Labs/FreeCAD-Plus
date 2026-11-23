@@ -1,0 +1,17 @@
+import json, os, sys, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore
+def run():
+    result={'ok':False}
+    try:
+        import TestPlusToolbars
+        from freecad_plus import category_selection
+        TestPlusToolbars.prepare_fresh_process()
+        category_selection.set_categories({'Curves'})
+        App.saveParameter(); result['ok']=True
+    except BaseException: result['error']=traceback.format_exc()
+    (Path(os.environ['PLUS_TEST_DIR'])/'persist.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

@@ -1,6 +1,8 @@
 # Sketch Exit and Cancel controls preview — November 23, 2026
 
-Status: awaiting direct preview approval. Production and installation unchanged.
+Status: owner approved implementation on November 23, 2026. This directory retains
+the original prototype evidence; see the subsequent
+[implementation and installed checks](../selection-sketch-controls-20261123/README.md).
 
 Owner requests that sketch editing rename Close to **Exit Sketch** and add a
 **Cancel** button beside it while a geometry, constraint or similar action is active.

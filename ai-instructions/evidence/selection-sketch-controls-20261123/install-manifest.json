@@ -1,0 +1,47 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\selection_toolbar.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/selection_toolbar.py",
+    "source_sha256": "ce086fb382bd518cad60c307ec2770833314fd4f4888ec1b5a44354e390da09f",
+    "built_sha256": "ce086fb382bd518cad60c307ec2770833314fd4f4888ec1b5a44354e390da09f",
+    "installed_sha256": "ce086fb382bd518cad60c307ec2770833314fd4f4888ec1b5a44354e390da09f",
+    "previous_sha256": "01ee4e7061d6b1f16117f386e9980ede7a833c01667669b509f846ce38ad9f83",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-sketch-controls-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\selection_toolbar.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\category_selection.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/category_selection.py",
+    "source_sha256": "5d9760365948cc736b6a423a34c77e54dc920683db14ba375f415086dbe89a9e",
+    "built_sha256": "5d9760365948cc736b6a423a34c77e54dc920683db14ba375f415086dbe89a9e",
+    "installed_sha256": "5d9760365948cc736b6a423a34c77e54dc920683db14ba375f415086dbe89a9e",
+    "previous_sha256": "ed6720548afd3161230ca76ae98f55338191086411d879b9d63430cb5646fcbb",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-sketch-controls-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\category_selection.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestPlusToolbars.py",
+    "build_path": "Mod/FreeCADPlus/TestPlusToolbars.py",
+    "source_sha256": "22e43feaed331466e42ad05f10be2f1713e24dbaa239ae699613cce888f79a18",
+    "built_sha256": "22e43feaed331466e42ad05f10be2f1713e24dbaa239ae699613cce888f79a18",
+    "installed_sha256": "22e43feaed331466e42ad05f10be2f1713e24dbaa239ae699613cce888f79a18",
+    "previous_sha256": "639ffd2c32449a93654cbed622c7c926270b5b66a329cfb6fcb4bf7a03528ef8",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-sketch-controls-20261123\\install-backup\\Mod\\FreeCADPlus\\TestPlusToolbars.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestDesignInteractions.py",
+    "build_path": "Mod/FreeCADPlus/TestDesignInteractions.py",
+    "source_sha256": "27b15beafd849ef9e60752373034cf017d0603d81ec57eafe3b2f34131a5befd",
+    "built_sha256": "27b15beafd849ef9e60752373034cf017d0603d81ec57eafe3b2f34131a5befd",
+    "installed_sha256": "27b15beafd849ef9e60752373034cf017d0603d81ec57eafe3b2f34131a5befd",
+    "previous_sha256": "5ff4d8f637d9e559976eb636371c9fdf5cc7a4b8790df25e349310f21cbfa3de",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-sketch-controls-20261123\\install-backup\\Mod\\FreeCADPlus\\TestDesignInteractions.py"
+  },
+  {
+    "path": "lib\\SketcherGui.pyd",
+    "build_path": "Mod/Sketcher/SketcherGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "8e14e15ba622f20fa7824d93edfaeaef7aa0fa6824e7a4af8b56ca5fc0561e06",
+    "installed_sha256": "8e14e15ba622f20fa7824d93edfaeaef7aa0fa6824e7a4af8b56ca5fc0561e06",
+    "previous_sha256": "65eb0ae4ea4acc67eb37ac8c8b0a0dc5d9b6c5c8481b2690abac3321ec51a5e1",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-sketch-controls-20261123\\install-backup\\lib\\SketcherGui.pyd"
+  }
+]

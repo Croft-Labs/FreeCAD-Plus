@@ -1,0 +1,68 @@
+import json, os, sys, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part
+from PySide6 import QtCore, QtWidgets, QtTest
+from freecad_plus import document, modeling, editing, toolbars, category_selection
+out = Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result = {'ok': False, 'installed': True}
+    try:
+        win = Gui.getMainWindow(); win.showMaximized(); win.raise_(); win.activateWindow()
+        def capture(widget, filename):
+            # Child controls are transparent; include their actual parent backdrop.
+            image = win.grab()
+            scale = image.devicePixelRatioF()
+            pos = widget.mapTo(win, QtCore.QPoint())
+            rect = QtCore.QRect(round(pos.x()*scale), round(pos.y()*scale),
+                                round(widget.width()*scale), round(widget.height()*scale))
+            assert image.copy(rect).save(str(out/filename))
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc = document.new_document('Selection and sketch controls')
+        sketch = modeling.new_sketch(doc)
+        sketch.addGeometry(Part.Circle(App.Vector(), App.Vector(0,0,1), 8), False); doc.recompute()
+        QtTest.QTest.qWait(350)
+        ribbon = toolbars._controller
+        button = ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+        chain = ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent')
+        chain.menu().actions()[1].trigger()
+        category_selection.set_categories(set(category_selection.CATEGORIES)-{'Faces', 'Curves'})
+        QtTest.QTest.qWait(150)
+        assert button.text() == '2 omitted'
+        capture(ribbon.top, 'selection-toolbar.png')
+        assert win.grab().save(str(out/'installed-window.png'))
+        menu = button.menu(); menu.popup(button.mapToGlobal(QtCore.QPoint(0, button.height())))
+        QtTest.QTest.qWait(100)
+        button.select_one.click(); QtTest.QTest.qWait(100)
+        assert menu.grab().save(str(out/'select-one-menu.png'))
+        button.boxes['Curves'].click(); QtTest.QTest.qWait(100)
+        assert button.text() == 'Curves only'
+        capture(ribbon.top, 'curves-only-toolbar.png')
+        menu.popup(button.mapToGlobal(QtCore.QPoint(0, button.height()))); QtTest.QTest.qWait(100)
+        assert menu.grab().save(str(out/'curves-only-menu.png')); menu.close()
+        category_selection.set_categories(category_selection.CATEGORIES)
+        editing.edit_feature(doc, sketch); QtTest.QTest.qWait(250)
+        box = next(box for box in win.findChildren(QtWidgets.QDialogButtonBox)
+                   if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Close))
+        cancel = box.findChild(QtWidgets.QPushButton, 'SketchCancelAction')
+        close = box.button(QtWidgets.QDialogButtonBox.Close)
+        tasks = win.findChild(QtWidgets.QDockWidget, 'Tasks')
+        assert close.text() == 'Exit Sketch' and not cancel.isVisible()
+        capture(box, 'sketch-idle-buttons.png')
+        for state, command in (('drawing', 'Sketcher_CreateRectangle'), ('constraint', 'Sketcher_ConstrainHorizontal')):
+            Gui.Selection.clearSelection(); Gui.runCommand(command); QtTest.QTest.qWait(200)
+            assert cancel.isVisible()
+            capture(box, 'sketch-'+state+'-buttons.png')
+            capture(tasks, 'sketch-'+state+'-tasks.png')
+            cancel.click(); QtTest.QTest.qWait(150)
+            assert Gui.activeDocument().getInEdit() is not None and not cancel.isVisible()
+        close.click(); QtTest.QTest.qWait(100)
+        assert Gui.activeDocument().getInEdit() is None
+        result.update(ok=True, module=category_selection.__file__, cases=['named toolbar', 'summaries', 'select-one', 'last category guard', 'idle sketch', 'drawing Cancel', 'constraint Cancel', 'Exit Sketch'])
+    except BaseException: result['error'] = traceback.format_exc()
+    (out/'visual.json').write_text(json.dumps(result, indent=2))
+    if Gui.activeDocument() and Gui.activeDocument().getInEdit(): Gui.activeDocument().resetEdit()
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100, Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200, run)

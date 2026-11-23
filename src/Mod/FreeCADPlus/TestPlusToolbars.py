@@ -353,11 +353,12 @@ class TestPlusToolbars(unittest.TestCase):
     def category_toggle(self, name, enabled):
         button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
         menu = button.menu()
-        action = next(a for a in menu.actions() if a.text() == name)
+        action = menu.findChild(QtWidgets.QCheckBox, 'Category' + name)
         if action.isChecked() != enabled:
             def choose():
-                QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
-                                       menu.actionGeometry(action).center())
+                QtTest.QTest.mouseClick(action, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
+                                       QtCore.QPoint(10, action.height() // 2))
+                menu.close()
             QtCore.QTimer.singleShot(100, choose)
             QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
             settle()
@@ -367,8 +368,11 @@ class TestPlusToolbars(unittest.TestCase):
     def test_category_menu_scope_and_gate_ownership(self):
         import Part
         button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
-        self.assertEqual([a.text() for a in button.menu().actions()],list(category_selection.CATEGORIES))
-        self.assertTrue(all(a.isChecked() for a in button.menu().actions()))
+        boxes = button.menu().findChildren(QtWidgets.QCheckBox)
+        self.assertEqual([a.text() for a in boxes],list(category_selection.CATEGORIES))
+        self.assertTrue(all(a.isChecked() for a in boxes))
+        self.assertEqual(button.text(), 'All')
+        self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonTextBesideIcon)
         self.assertFalse(button.icon().isNull())
         doc=App.newDocument('CategoryScope');obj=doc.addObject('Part::Feature','Box')
         obj.Shape=Part.makeBox(10,10,10);doc.recompute()
@@ -379,7 +383,7 @@ class TestPlusToolbars(unittest.TestCase):
             self.category_toggle('Faces',False)
             self.tab('Home')
             button=self.ribbon.common.findChild(QtWidgets.QToolButton,'PlusSelectionCategories')
-            self.assertFalse(next(a for a in button.menu().actions() if a.text()=='Faces').isChecked())
+            self.assertFalse(button.menu().findChild(QtWidgets.QCheckBox, 'CategoryFaces').isChecked())
             for mode in (1,0):
                 self.prefs.SetInt('ToolbarUIMode',mode);ui_modes.apply_modes()
                 Gui.Selection.addSelection(obj,'Face1')
@@ -446,6 +450,67 @@ class TestPlusToolbars(unittest.TestCase):
             button.menu().close()
         QtCore.QTimer.singleShot(100, capture_menu)
         QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton)
+
+    def test_category_single_choice_dismissal_and_nonempty_guard(self):
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+        menu = button.menu()
+        def popup():
+            menu.popup(button.mapToGlobal(QtCore.QPoint(0, button.height())))
+            settle()
+        def click(name):
+            widget = menu.findChild(QtWidgets.QWidget, name)
+            QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, pos=QtCore.QPoint(10, widget.height()//2))
+            settle()
+        self.category_toggle('Curves', False)
+        self.assertEqual(button.text(), 'Curves omitted')
+        self.category_toggle('Faces', False)
+        self.assertEqual(button.text(), '2 omitted')
+        before = category_selection.enabled_categories()
+        popup(); click('SelectOneCategory')
+        self.assertEqual(category_selection.enabled_categories(), before)
+        self.assertEqual({n for n,v in category_selection._controller.enabled.items() if v}, before)
+        QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, pos=QtCore.QPoint(-20, -20))
+        settle()
+        self.assertFalse(menu.isVisible())
+        self.assertFalse(button.armed)
+        self.assertEqual(category_selection.enabled_categories(), before)
+        popup(); click('SelectOneCategory')
+        QtTest.QTest.keyClick(menu, QtCore.Qt.Key_Escape)
+        self.assertFalse(button.armed)
+        self.assertEqual(category_selection.enabled_categories(), before)
+        popup(); click('SelectOneCategory'); click('CategoryCurves')
+        self.assertFalse(menu.isVisible())
+        self.assertEqual(button.text(), 'Curves only')
+        self.assertEqual(category_selection.enabled_categories(), {'Curves'})
+        self.assertEqual({n for n,v in category_selection._controller.enabled.items() if v}, {'Curves'})
+        popup()
+        self.assertFalse(button.boxes['Curves'].isEnabled())
+        click('CategoryCurves')
+        self.assertEqual(category_selection.enabled_categories(), {'Curves'})
+        click('CategoryEdges')
+        self.assertTrue(button.boxes['Curves'].isEnabled())
+        click('CategoryCurves')
+        self.assertEqual(button.text(), 'Edges only')
+        click('SelectAllReset')
+        self.assertEqual(button.text(), 'All')
+        self.assertEqual(category_selection.enabled_categories(), set(category_selection.CATEGORIES))
+        menu.close()
+
+    def test_category_empty_preferences_recovery_and_rebuild(self):
+        for name in category_selection.CATEGORIES:
+            category_selection.preferences().SetBool(name, False)
+        category_selection.apply(True)
+        self.assertTrue(all(category_selection._controller.enabled.values()))
+        self.assertEqual(category_selection.enabled_categories(), set(category_selection.CATEGORIES))
+        with self.assertRaises(ValueError):
+            category_selection.set_categories([])
+        category_selection.set_categories({'Curves'})
+        self.ribbon.refresh(); settle()
+        button = self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
+        self.assertEqual(button.text(), 'Curves only')
+        self.assertIn('Allowed: Curves', button.toolTip())
+        category_selection.set_categories({'Edges'})
+        self.assertEqual(button.text(), 'Edges only')
 
     def test_category_native_model_boxes(self):
         import Part
@@ -1982,6 +2047,7 @@ class TestPlusToolbars(unittest.TestCase):
         self.ribbon.refresh()
         self.assertEqual(curve_selection.intent(), 'Single Curve')
         button = self.curve_intent(2)
+        self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonTextBesideIcon)
         option = QtWidgets.QStyleOptionToolButton()
         button.initStyleOption(option)
         arrow = button.style().subControlRect(QtWidgets.QStyle.CC_ToolButton, option,
@@ -2677,7 +2743,7 @@ def verify_fresh_process():
     assert curve_selection.intent() == 'Tangent Curves'
     categories = r.common.findChild(QtWidgets.QToolButton, 'PlusSelectionCategories')
     assert categories is not None
-    assert not next(a for a in categories.menu().actions() if a.text() == 'Faces').isChecked()
+    assert not categories.menu().findChild(QtWidgets.QCheckBox, 'CategoryFaces').isChecked()
     assert category_selection._controller.active
     directional = r.common.findChild(QtWidgets.QToolButton, 'PlusDirectionalSelection')
     assert directional is not None and not directional.isChecked()

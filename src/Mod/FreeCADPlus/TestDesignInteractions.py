@@ -508,6 +508,108 @@ class TestSketchExitFit(unittest.TestCase):
         self.assert_framed(view,points);self.assertEqual(sketch.Document,source)
 
 
+class TestSketchTaskButtons(unittest.TestCase):
+    setUp = TestDesignInteractions.setUp
+    circle = TestDesignInteractions.circle
+
+    def tearDown(self):
+        if Gui.activeDocument() and Gui.activeDocument().getInEdit():
+            Gui.activeDocument().resetEdit()
+        TestDesignInteractions.tearDown(self)
+
+    def buttons(self):
+        box = next(box for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox)
+                   if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Close))
+        return box.button(QtWidgets.QDialogButtonBox.Close), box.findChild(QtWidgets.QPushButton, 'SketchCancelAction')
+
+    def test_exit_and_cancel_geometry_and_constraint_in_both_modes(self):
+        from freecad_plus import ui_modes
+        toolbar_mode = self.prefs.GetInt('ToolbarUIMode', 0)
+        try:
+            for mode in (0, 1):
+                self.prefs.SetInt('TaskPanelUIMode', mode)
+                self.prefs.SetInt('ToolbarUIMode', mode); ui_modes.apply_modes()
+                sketch = self.circle()
+                self.panel.tabs.setCurrentIndex(1)
+                visibility = {o.Name: o.Visibility for o in [self.owner.Origin, *self.owner.Origin.OriginFeatures]}
+                editing.edit_feature(self.doc, sketch); settle()
+                close, cancel = self.buttons()
+                self.assertEqual(close.text(), 'Exit Sketch')
+                self.assertFalse(cancel.isVisible())
+                self.assertEqual(self.panel.tabs.currentIndex(), 2)
+                before = (sketch.GeometryCount, sketch.ConstraintCount)
+                for command in ('Sketcher_CreateRectangle', 'Sketcher_ConstrainHorizontal'):
+                    Gui.Selection.clearSelection(); Gui.runCommand(command); settle()
+                    self.assertTrue(cancel.isVisible(), command)
+                    QtTest.QTest.mouseClick(cancel, QtCore.Qt.LeftButton); settle()
+                    self.assertEqual(Gui.activeDocument().getInEdit().Object, sketch)
+                    self.assertFalse(cancel.isVisible(), command)
+                    self.assertEqual((sketch.GeometryCount, sketch.ConstraintCount), before)
+                # Exit also works while a tool is active and retains finished geometry.
+                Gui.runCommand('Sketcher_CreateCircle'); settle()
+                self.assertTrue(cancel.isVisible())
+                QtTest.QTest.mouseClick(close, QtCore.Qt.LeftButton); settle()
+                self.assertIsNone(Gui.activeDocument().getInEdit())
+                self.assertEqual((sketch.GeometryCount, sketch.ConstraintCount), before)
+                self.assertEqual(self.panel.tabs.currentIndex(), 1)
+                self.assertEqual({n: self.doc.getObject(n).Visibility for n in visibility}, visibility)
+                App.closeActiveTransaction()
+        finally:
+            self.prefs.SetInt('ToolbarUIMode', toolbar_mode); ui_modes.apply_modes()
+
+    def test_cancel_partial_rectangle_matches_one_escape(self):
+        sketch = self.circle(); editing.edit_feature(self.doc, sketch); settle()
+        view = Gui.activeDocument().activeView(); view.setAnimationEnabled(False); view.viewTop()
+        view.getCameraNode().height.setValue(80); settle()
+        widget = view.graphicsView().viewport()
+        close, cancel = self.buttons()
+        before = (sketch.GeometryCount, sketch.ConstraintCount)
+        results = []
+        for use_button in (False, True):
+            Gui.Selection.clearSelection(); Gui.runCommand('Sketcher_CreateRectangle'); settle()
+            point = view.getPointOnScreen(App.Vector(-15, -10, 0))
+            ratio = widget.devicePixelRatioF()
+            position = QtCore.QPoint(round(point[0]/ratio), widget.height()-1-round(point[1]/ratio))
+            QtTest.QTest.mouseMove(widget, position); QtTest.QTest.mouseClick(widget, QtCore.Qt.LeftButton, pos=position)
+            settle()
+            if use_button:
+                QtTest.QTest.mouseClick(cancel, QtCore.Qt.LeftButton)
+            else:
+                widget.setFocus(); QtTest.QTest.keyClick(widget, QtCore.Qt.Key_Escape)
+            settle()
+            results.append((cancel.isVisible(), sketch.GeometryCount, sketch.ConstraintCount))
+            self.assertEqual(Gui.activeDocument().getInEdit().Object, sketch)
+            self.assertEqual((sketch.GeometryCount, sketch.ConstraintCount), before)
+            widget.setFocus(); QtTest.QTest.keyClick(widget, QtCore.Qt.Key_Escape); settle()
+            self.assertFalse(cancel.isVisible())
+        self.assertEqual(results[0], results[1])
+        self.assertTrue(results[0][0], 'First Escape resets the partial rectangle and retains its tool')
+
+    def test_escape_preference_and_rapid_tool_exit(self):
+        prefs = App.ParamGet('User parameter:BaseApp/Preferences/Mod/Sketcher')
+        saved = prefs.GetBool('LeaveSketchWithEscape', True)
+        try:
+            for leave in (False, True):
+                prefs.SetBool('LeaveSketchWithEscape', leave)
+                sketch = self.circle(); editing.edit_feature(self.doc, sketch); settle()
+                close, cancel = self.buttons()
+                Gui.runCommand('Sketcher_CreateCircle'); settle()
+                QtTest.QTest.mouseClick(cancel, QtCore.Qt.LeftButton); settle()
+                self.assertIsNotNone(Gui.activeDocument().getInEdit())
+                self.assertFalse(cancel.isVisible())
+                Gui.Selection.clearSelection()
+                viewport = Gui.activeDocument().activeView().graphicsView().viewport()
+                viewport.setFocus(); QtTest.QTest.keyClick(viewport, QtCore.Qt.Key_Escape); settle()
+                self.assertEqual(Gui.activeDocument().getInEdit() is None, leave)
+                if not leave:
+                    # Close before the queued active-tool visibility callback runs.
+                    Gui.runCommand('Sketcher_CreateCircle'); close.click(); settle()
+                    self.assertIsNone(Gui.activeDocument().getInEdit())
+                App.closeActiveTransaction()
+        finally:
+            prefs.SetBool('LeaveSketchWithEscape', saved)
+
+
 class TestSketchCreationAndTaskTabs(unittest.TestCase):
     setUp = TestDesignInteractions.setUp
     tearDown = TestDesignInteractions.tearDown
