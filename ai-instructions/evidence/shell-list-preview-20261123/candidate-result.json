@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "proposed": true,
+  "empty_task": true,
+  "no_target_field": true,
+  "no_selection_toggle": true,
+  "list_click_activates": true,
+  "delete_removes_rows": true,
+  "remove_and_clear": true,
+  "parameter_edit_retains_faces": true,
+  "mixed_solid_preserves_faces": true,
+  "scrolling_list": true,
+  "cancel_clean": true
+}

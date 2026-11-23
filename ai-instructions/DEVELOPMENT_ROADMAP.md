@@ -11,9 +11,10 @@ See [implementation and acceptance](evidence/fillet-20261123/README.md).
 ## Shell entry — November 23, 2026
 
 - [x] Prepare native UI prototype for empty/invalid preselection and selection after opening.
+- [x] Amend to a face list without target field or Select/Confirm toggle; record shared collector migration.
 - [ ] Obtain preview approval, then implement and validate shared Shell creation/editing.
 
-See [preview and scope](evidence/shell-entry-preview-20261123/README.md).
+See [amended preview and scope](evidence/shell-list-preview-20261123/README.md).
 
 ## Unified Loft — November 23, 2026
 

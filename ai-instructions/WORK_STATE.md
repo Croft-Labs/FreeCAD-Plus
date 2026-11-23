@@ -13,13 +13,15 @@ and the existing desktop shortcut passed. Four payload files have rollback copie
 owner sessions/settings remain untouched. Restart older processes to load the fix.
 See [repair and direct captures](evidence/fillet-20261123/README.md).
 
-## Shell entry preview awaiting approval — November 23, 2026
+## Revised Shell face-list preview awaiting approval — November 23, 2026
 
 Owner requests opening Shell without preselected faces and keeping the task open
-with incompatible selections such as curves. A native QWidget prototype now shows
-empty entry, explicit target selection, direct face picking and highlighted inline
-errors that preserve valid inputs. No production changes or installation yet.
-See [direct screenshots and prototype checks](evidence/shell-entry-preview-20261123/README.md).
+with incompatible selections such as curves. The amended native QWidget prototype
+removes the target field and Select/Confirm toggle. Clicking the face list activates
+picking; Delete/Remove remove rows and Clear faces empties it. Parameter editing
+retains selections. Shared migration guidance covers Fillet/Radius and similar
+collectors. UI-only checks pass; no production changes or installation yet.
+See [direct screenshots and prototype checks](evidence/shell-list-preview-20261123/README.md).
 
 ## Unified Loft installed — November 23, 2026
 

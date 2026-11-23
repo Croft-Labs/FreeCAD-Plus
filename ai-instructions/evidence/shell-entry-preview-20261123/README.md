@@ -1,5 +1,8 @@
 # Shell selection after opening: proposed UI
 
+Superseded by the owner's [face-list amendment](../shell-list-preview-20261123/README.md):
+no target field or selection toggle. This older prototype was not implemented.
+
 November 23, 2026. UI prototype only; awaiting owner approval. Installed baseline
 is 068fc7d5819f7219ddb627efa0ae3f5ad687e777. No production code or install changed.
 

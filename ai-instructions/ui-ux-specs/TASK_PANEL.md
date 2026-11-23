@@ -23,11 +23,25 @@ Owner requests opening Shell without choosing faces beforehand. Empty selection
 or an incompatible curve must not prevent entry; users select faces in the open
 task. This supersedes launch-blocking geometry guidance in the earlier routing repair.
 
-The [UI-only proposal](../evidence/shell-entry-preview-20261123/README.md) awaits
-approval: explicit Target solid, direct face picks establishing the target, five-row
-scrolling face list and recoverable highlighted messages. Keep native Shell options
-and saved feature identities. Target changes clear old faces; rejected picks preserve
-valid inputs. No active Body dependency. Production implementation remains pending.
+Owner amended the proposal: **no target body/solid field**, and no Select faces or
+Confirm Selection toggle. The selected faces implicitly identify their owning solid.
+Clicking/focusing the face list activates viewport picking; clicking new faces adds
+them. Delete removes highlighted list rows, as does Remove; Clear faces empties the
+list. These actions remove references, never the source geometry. Keep at least five
+visible rows with scrolling. Editing a parameter retains the list; click the list to
+resume picking, without a confirmation step. Compatible preselection still populates
+the list; empty or incompatible preselection still opens the task.
+
+The owner requests this same list-driven selection pattern for Fillet/Radius and
+comparable feature workflows, replacing their Select/Confirm Selection toggles as
+they are updated. Preserve the installed selection-loop safeguards and native gates.
+
+The [amended UI-only proposal](../evidence/shell-list-preview-20261123/README.md)
+supersedes the earlier target-field prototype and awaits approval. It derives one
+solid from the faces, preserves valid inputs on incompatible picks and allows a
+different solid after clearing the list. Keep native Shell options and saved feature
+identities, prominent recoverable errors and component access/history rules. No
+active Body dependency. Production implementation remains pending.
 
 ### Unified Loft — November 23, 2026
 

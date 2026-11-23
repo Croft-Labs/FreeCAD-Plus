@@ -37,6 +37,13 @@ their implementation priorities and proposed feature lists are not an active que
 
 ## Component routing without an active Body — November 23, 2026
 
+For Shell, Fillet/Radius and comparable feature collectors, use the owner's
+[list-driven selection pattern](ui-ux-specs/TASK_PANEL.md#shell-selection-after-opening--november-23-2026)
+when updating the workflow: activate picking by selecting its list, remove rows
+with Delete/Remove, and clear references with Clear. Replace Select/Confirm
+Selection toggles. Shell has no separate target field; its faces identify the solid.
+This migration requirement is recorded; the revised Shell prototype awaits approval.
+
 Owner clarification: FreeCAD Plus has an active Component, **no active Body**.
 Every feature workflow we implement or modify must resolve its inputs and result
 ownership from that Component, explicit geometry/target selections, or saved feature
