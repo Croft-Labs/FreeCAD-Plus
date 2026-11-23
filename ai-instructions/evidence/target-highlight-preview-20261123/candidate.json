@@ -1,0 +1,134 @@
+{
+  "ok": true,
+  "native_ui_preview": true,
+  "fixture_driven_target_candidates": true,
+  "production_eligibility_implemented": false,
+  "cases": [
+    {
+      "feature": "extrude",
+      "operation": "Add",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "Choose a target solid before selecting curves."
+    },
+    {
+      "feature": "extrude",
+      "operation": "Subtract",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "Choose a target solid before selecting curves."
+    },
+    {
+      "feature": "revolve",
+      "operation": "Add",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "Choose a target solid before selecting curves."
+    },
+    {
+      "feature": "revolve",
+      "operation": "Subtract",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "Choose a target solid before selecting curves."
+    },
+    {
+      "feature": "extrude",
+      "operation": "Add",
+      "available_solids": 1,
+      "chosen": "Extrude",
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": "Only solid selected automatically.",
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "extrude",
+      "operation": "Subtract",
+      "available_solids": 1,
+      "chosen": "Extrude",
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": "Only solid selected automatically.",
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "revolve",
+      "operation": "Add",
+      "available_solids": 1,
+      "chosen": "Extrude",
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": "Only solid selected automatically.",
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "revolve",
+      "operation": "Subtract",
+      "available_solids": 1,
+      "chosen": "Extrude",
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": "Only solid selected automatically.",
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "extrude",
+      "operation": "Add",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "No solid is available to modify. Create a new solid first."
+    },
+    {
+      "feature": "extrude",
+      "operation": "Subtract",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "No solid is available to modify. Create a new solid first."
+    },
+    {
+      "feature": "revolve",
+      "operation": "Add",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "No solid is available to modify. Create a new solid first."
+    },
+    {
+      "feature": "revolve",
+      "operation": "Subtract",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": true,
+      "amber_highlight": true,
+      "popup_visible": false,
+      "hint": "No solid is available to modify. Create a new solid first."
+    }
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\ac148f57d8fe\\candidate\\extrude_task.py",
+  "identities_and_visibility_restored": true
+}

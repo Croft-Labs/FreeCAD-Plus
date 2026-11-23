@@ -1,0 +1,134 @@
+{
+  "ok": true,
+  "native_ui_preview": true,
+  "fixture_driven_target_candidates": true,
+  "production_eligibility_implemented": false,
+  "cases": [
+    {
+      "feature": "extrude",
+      "operation": "Add",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    },
+    {
+      "feature": "extrude",
+      "operation": "Subtract",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    },
+    {
+      "feature": "revolve",
+      "operation": "Add",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    },
+    {
+      "feature": "revolve",
+      "operation": "Subtract",
+      "available_solids": 2,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    },
+    {
+      "feature": "extrude",
+      "operation": "Add",
+      "available_solids": 1,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null,
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "extrude",
+      "operation": "Subtract",
+      "available_solids": 1,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null,
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "revolve",
+      "operation": "Add",
+      "available_solids": 1,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null,
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "revolve",
+      "operation": "Subtract",
+      "available_solids": 1,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null,
+      "hidden_target_eye_unchanged": true
+    },
+    {
+      "feature": "extrude",
+      "operation": "Add",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    },
+    {
+      "feature": "extrude",
+      "operation": "Subtract",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    },
+    {
+      "feature": "revolve",
+      "operation": "Add",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    },
+    {
+      "feature": "revolve",
+      "operation": "Subtract",
+      "available_solids": 0,
+      "chosen": null,
+      "target_focused": false,
+      "amber_highlight": false,
+      "popup_visible": false,
+      "hint": null
+    }
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\ac148f57d8fe\\baseline\\extrude_task.py",
+  "identities_and_visibility_restored": true
+}

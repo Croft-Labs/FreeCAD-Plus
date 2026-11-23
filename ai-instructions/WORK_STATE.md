@@ -1,5 +1,21 @@
 # FreeCAD Plus: Current work state
 
+## Target highlighting and sole-solid preview — November 23, 2026
+
+The owner revised the unapproved popup to field highlighting and automatic choice
+of the sole body. The native Extrude/Revolve candidate selects one available solid;
+multiple candidates get a focused amber Target solid field with inline guidance;
+zero candidates get an inline explanation. No modal dialog appears.
+All 12 fixture UI cases (zero/one/two candidates, both features and Add/Subtract)
+rendered as intended, including unchanged hidden-target eyes and restoration of
+native IDs/visibility after Cancel. The renderer supplies candidate lists; actual
+eligibility enumeration and full intake/lifecycle guards are pending implementation.
+Direct [multiple solids](evidence/target-highlight-preview-20261123/multiple-solids.png),
+[sole solid](evidence/target-highlight-preview-20261123/sole-solid.png),
+[no solid](evidence/target-highlight-preview-20261123/no-solid.png).
+**Awaiting approval of this revised preview; production and installation are unchanged.**
+See [scope/provenance](evidence/target-highlight-preview-20261123/README.md).
+
 ## Target-first Add/Subtract prompt preview — November 22, 2026
 
 The owner requests a missing-target error before selecting profile curves in Add/
@@ -9,7 +25,7 @@ preview updates and modes with an existing target do not repeat it. Document IDs
 remain unchanged. Direct [Add popup](evidence/target-first-preview-20261122/add-popup.png),
 [Subtract popup](evidence/target-first-preview-20261122/subtract-popup.png), and
 [target focus](evidence/target-first-preview-20261122/target-focus.png).
-**Awaiting preview approval. Production and installed source are unchanged.**
+**Superseded by the November 23 field-highlight/sole-solid proposal above. Do not implement the popup.**
 The candidate is a UI demonstration; direct command startup, intake guards,
 cleared/invalid target handling and complete dialog lifecycle are implementation work.
 See [preview provenance and scope](evidence/target-first-preview-20261122/README.md).

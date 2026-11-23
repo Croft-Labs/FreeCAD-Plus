@@ -1,4 +1,9 @@
-# Target-first Add/Subtract popup — awaiting approval
+# Target-first Add/Subtract popup — superseded
+
+Owner revision, November 23: use field highlighting and automatic sole-body selection.
+This popup was never approved or installed. Use the
+[revised preview](../target-highlight-preview-20261123/README.md); the text below is
+historical preview evidence, not a pending implementation instruction.
 
 Owner request: missing-target errors must appear before choosing profile curves for
 Add/Subtract. The native candidate shared by Extrude and Revolve shows a warning on

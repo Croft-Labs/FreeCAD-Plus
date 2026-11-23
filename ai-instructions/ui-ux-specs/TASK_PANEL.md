@@ -4,21 +4,27 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
-### Target-first Add/Subtract prompt — November 22, 2026
+### Target guidance and sole-solid selection — November 23, 2026
 
-Owner request: show the missing-target error before the user starts choosing curves
-for Add/Subtract. The proposed shared Extrude/Revolve flow warns immediately on
-entering Add or Subtract without a target: "Choose a target solid before selecting
-profile curves." OK focuses the existing Target solid field. A selected target
-suppresses the warning, and preview/numeric updates must not repeatedly open it.
-Retain already-selected profile curves; require a valid target before further
-profile picking. New Solid does not require a target. The complete implementation
-must also handle direct Subtract command startup, clearing/invalidating a target,
-viewport region picks, and task/dialog cleanup without changing visibility intent.
+Owner revision supersedes the unapproved November 22 popup: highlight the target field
+instead, and automatically choose the sole body when Add/Subtract is selected.
+The proposed shared Extrude/Revolve behavior selects the current result when exactly
+one eligible solid exists in the edited component. Preserve an existing valid target.
+With multiple candidates, focus/highlight Target solid in amber and say "Choose a
+target solid before selecting curves." With none, explain that a solid is needed.
+Use inline guidance, not a modal popup.
 
-The [direct native popup preview](../evidence/target-first-preview-20261122/README.md)
-is ready for approval. The candidate demonstrates mode-entry prompts and focus only;
-full input guarding and installed changes remain pending.
+Count eligible current Body results, not every History feature. Respect source
+ownership, validity and predecessor rules for edited features; never select the
+edited feature or a later result. A hidden sole target uses the existing temporary
+selected-solid display without changing its History eye. Retain profile selections.
+New Solid needs no target. Handle direct startup, target removal/invalidity, region
+picking and Cancel. Deliberate Clear must not trigger automatic reselection on every
+preview/numeric update. Continue the shared behavior for similar future workflows.
+
+The [revised native UI preview](../evidence/target-highlight-preview-20261123/README.md)
+uses explicit fixture candidate lists to demonstrate all three cases. Production
+eligibility/intake guarding and installed changes await visual approval.
 
 ### Unified Revolve workflow request — November 22, 2026
 
