@@ -1,0 +1,74 @@
+"""Native Shell entry prototype and installed preselection baseline; isolated fixtures only."""
+import os,sys,json,traceback,shutil
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document
+sys.dont_write_bytecode=True
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+repo=Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus')
+def run():
+    result={'ok':False,'ui_prototype':True};task=None
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1100)
+        Gui.activateWorkbench('PartDesignWorkbench');doc=document.new_document('Shell entry preview')
+        owner=document.validate(doc).Definitions[0];body=owner.newObject('PartDesign::Body','Body')
+        solid=body.newObject('PartDesign::Feature','Solid');solid.Shape=Part.makeBox(15,12,10);body.Tip=solid
+        curve=owner.newObject('Part::Feature','Curve');curve.Shape=Part.makeLine(App.Vector(20,0,0),App.Vector(20,12,0))
+        doc.recompute();view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll()
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks');tasks.setMinimumWidth(420)
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);import shell_ui
+        proposed=shell_ui.proposed();result['proposed']=proposed
+        def shot(name):
+            QtTest.QTest.qWait(180)
+            if win.focusWidget():win.focusWidget().clearFocus()
+            for scroll in tasks.findChildren(QtWidgets.QScrollArea):scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(100);assert tasks.grab().save(str(out/(name+'.png')))
+        if proposed:
+            task=shell_ui.ShellTask(str(repo/'src/Mod/PartDesign/Gui/TaskThicknessParameters.ui'))
+            Gui.Selection.clearSelection();Gui.Control.showDialog(task);QtTest.QTest.qWait(200)
+            for box in tasks.findChildren(QtWidgets.QDialogButtonBox):
+                button=box.button(QtWidgets.QDialogButtonBox.Ok)
+                if button:button.setEnabled(False)
+            assert not task.target.text() and task.faces.count()==0;shot('shell-empty')
+            task.ignored_curve();shot('shell-curve-ignored');assert Gui.Control.activeDialog()
+            task.choose_solid('Solid');shot('shell-solid-selected')
+            task.reset();task.choose_face('Solid','Face6');assert task.target.text()=='Solid' and task.faces.count()==1
+            shot('shell-face-selected')
+            task.ignored_curve();assert task.faces.count()==1 and task.target.text()=='Solid';shot('shell-invalid-pick-keeps-faces')
+            task.choose_face('Solid001','Face1');assert task.faces.count()==1 and task.target.text()=='Solid'
+            shot('shell-other-solid')
+            task.choose_solid('Solid001');assert task.faces.count()==0;task.choose_face('Solid001','Face2')
+            task.ignored_sheet();shot('shell-sheet-guidance')
+            task.reject();task=None
+            assert not doc.HasPendingTransaction and not Gui.Control.activeDialog()
+            result.update(empty_task=True,curve_keeps_task=True,face_establishes_target=True,
+                          rejected_pick_preserves_faces=True,target_change_clears_faces=True,cancel_clean=True)
+            shutil.copyfile(out/'shell-empty.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        else:
+            captured=[]
+            def capture_modal():
+                dialog=QtWidgets.QApplication.activeModalWidget()
+                if dialog:
+                    dialog.grab().save(str(out/('baseline-'+case[0]+'.png')))
+                    captured.append(dict(case=case[0],title=dialog.windowTitle(),text=[w.text() for w in dialog.findChildren(QtWidgets.QLabel)]))
+                    dialog.reject()
+            timer=QtCore.QTimer(win);timer.setInterval(50);timer.timeout.connect(capture_modal)
+            for name,obj in [('empty',None),('curve',curve)]:
+                case=[name];Gui.Selection.clearSelection()
+                if obj:Gui.Selection.addSelection(obj)
+                timer.start();Gui.runCommand('PartDesign_Thickness');timer.stop()
+                assert not Gui.Control.activeDialog() and not doc.HasPendingTransaction
+            result['baseline_messages']=captured
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(solid,'Face6');Gui.runCommand('PartDesign_Thickness')
+            assert Gui.Control.activeDialog();shot('baseline-shell-task')
+            Gui.activeDocument().resetEdit();Gui.Control.closeDialog()
+            if doc.HasPendingTransaction:doc.abortTransaction()
+            shutil.copyfile(out/'baseline-shell-task.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

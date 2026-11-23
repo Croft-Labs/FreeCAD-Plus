@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "proposed": true,
+  "empty_task": true,
+  "curve_keeps_task": true,
+  "face_establishes_target": true,
+  "rejected_pick_preserves_faces": true,
+  "target_change_clears_faces": true,
+  "cancel_clean": true
+}

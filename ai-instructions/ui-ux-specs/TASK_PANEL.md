@@ -4,6 +4,18 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Shell selection after opening — November 23, 2026
+
+Owner requests opening Shell without choosing faces beforehand. Empty selection
+or an incompatible curve must not prevent entry; users select faces in the open
+task. This supersedes launch-blocking geometry guidance in the earlier routing repair.
+
+The [UI-only proposal](../evidence/shell-entry-preview-20261123/README.md) awaits
+approval: explicit Target solid, direct face picks establishing the target, five-row
+scrolling face list and recoverable highlighted messages. Keep native Shell options
+and saved feature identities. Target changes clear old faces; rejected picks preserve
+valid inputs. No active Body dependency. Production implementation remains pending.
+
 ### Unified Loft — November 23, 2026
 
 Owner requests combining Additive/Subtractive Loft into one Loft with New/Add/Subtract,

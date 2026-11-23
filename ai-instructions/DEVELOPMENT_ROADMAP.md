@@ -1,5 +1,12 @@
 # FreeCAD Plus: Development roadmap
 
+## Shell entry — November 23, 2026
+
+- [x] Prepare native UI prototype for empty/invalid preselection and selection after opening.
+- [ ] Obtain preview approval, then implement and validate shared Shell creation/editing.
+
+See [preview and scope](evidence/shell-entry-preview-20261123/README.md).
+
 ## Unified Loft — November 23, 2026
 
 - [ X ] Prepare [direct native UI proposal](evidence/loft-workflow-preview-20261123/README.md), including Solid/Sheet amendment.

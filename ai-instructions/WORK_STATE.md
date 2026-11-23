@@ -1,5 +1,13 @@
 # FreeCAD Plus: Current work state
 
+## Shell entry preview awaiting approval — November 23, 2026
+
+Owner requests opening Shell without preselected faces and keeping the task open
+with incompatible selections such as curves. A native QWidget prototype now shows
+empty entry, explicit target selection, direct face picking and highlighted inline
+errors that preserve valid inputs. No production changes or installation yet.
+See [direct screenshots and prototype checks](evidence/shell-entry-preview-20261123/README.md).
+
 ## Unified Loft installed — November 23, 2026
 
 Owner approved the amended Solid/Sheet proposal. Shared Loft creation/editing now

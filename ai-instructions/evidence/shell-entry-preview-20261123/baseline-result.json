@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "proposed": false,
+  "baseline_messages": [
+    {
+      "case": "empty",
+      "title": "Shell",
+      "text": [
+        "Select one solid or its faces before starting Shell."
+      ]
+    },
+    {
+      "case": "curve",
+      "title": "Feature is not in a body",
+      "text": [
+        "",
+        "In order to use this feature it needs to belong to a body object in the document."
+      ]
+    }
+  ]
+}
