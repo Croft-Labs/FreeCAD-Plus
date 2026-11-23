@@ -1,5 +1,12 @@
 # FreeCAD Plus: Current work state
 
+## New component navigation preview — November 23, 2026
+
+Owner requests newly created components become active with Components > History
+selected. Native UI-only cases for existing and empty files pass activation/tab/
+ID/link checks. Awaiting screenshot approval; production and installation unchanged.
+See [preview and next implementation scope](evidence/new-component-preview-20261123/README.md).
+
 ## Prominent task errors installed — November 23, 2026
 
 The owner approved the native amber-error preview. The shared `TaskStatus` widget is
