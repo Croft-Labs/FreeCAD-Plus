@@ -159,8 +159,9 @@ class TestRevolveWorkflow(unittest.TestCase):
             self.assertEqual(rows.item(7).toolTip(),rows.item(7).text());task.reject()
 
     def test_cycles_rerouting_and_downstream_references(self):
-        sketch=self.profile();feature=self.save(sketch,angle=90);identity=feature.ID
-        target=self.target();self.save(sketch,{'target':(target,'')},feature,operation='Add',angle=90)
+        # Strict sequential modeling requires a target to exist before its consumer.
+        target=self.target();sketch=self.profile();feature=self.save(sketch,angle=90);identity=feature.ID
+        self.save(sketch,{'target':(target,'')},feature,operation='Add',angle=90)
         self.assertEqual(feature.ID,identity);self.assertEqual(feature.getParentGeoFeatureGroup(),target.getParentGeoFeatureGroup())
         with self.assertRaises(ValueError):self.save(sketch,{'target':(feature,'')},feature,operation='Add',angle=90)
         downstream=extrusion.save(self.doc,[(self.circle(1),'')],{'target':(feature,'')},dict(extrusion.DEFAULTS,operation='Add',length=3))

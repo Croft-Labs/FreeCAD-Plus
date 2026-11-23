@@ -555,7 +555,24 @@ content to the edited component. New combined operation workflows are separate w
 
 History presents the active component's sketches, producing operations and other
 geometry in dependency-compatible sequence. Body containers remain backend items.
-This does not authorize History reordering or temporary suppression workflows.
+Owner-approved November 22, 2026: this is strictly sequential across Body boundaries.
+`document.history` orders the visible ownership projection by native `OutList`
+dependencies, including expressions and indirect native inputs; a referenced Body
+resolves to its Tip. Creation IDs break ties between independent objects. Coordinate
+frames are implicit predecessors and component occurrences retain separate histories.
+Cycles are reported rather than presented in a misleading order. The projection
+does not mutate ownership, identities, visibility, native links or saved schema.
+
+`document.require_predecessors` checks an existing consumer's current corrected
+position before input mutation. Later/self inputs are refused. It is shared by native
+geometry admission, Extrude/Revolve validation and picking, sketch placement, and
+plane save/preview. Command-start admission passing a component/Body is creation,
+not an edit to a container, and permits inputs for the appended feature. Native
+recompute and arbitrary Python assignments are not global admission hooks; existing
+legacy dependencies are displayed in valid topological order. This does not add
+History drag reordering or temporary suppression workflows. Any future reorder
+command must preserve direct/transitive predecessor constraints. Acceptance lives in
+[sequential History evidence](evidence/sequential-history-20261122/README.md).
 Temporary unused-model occurrences and contextual fading are view state; saving
 must not turn them into permanent placements or authored visibility changes.
 

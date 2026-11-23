@@ -1,5 +1,10 @@
 # Strict sequential History — native presentation preview
 
+Subsequent owner approval: **"approved, implement strict sequential history and prevent
+sketches or other inputs from being ordered after the features that use them"**.
+See [implementation evidence](../sequential-history-20261122/README.md). The remainder
+records the preview stage, before production implementation.
+
 Owner request: the sketch used by Extrude or Revolve stays before that feature;
 reordering it after a consumer is forbidden. Modeling is strictly sequential.
 

@@ -1,0 +1,137 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestComponentInputEditors.py",
+    "source_sha256": "e6702f4342869322514364fcb7d58d334d3d7f348c65eb8da9432a8e85486e0a",
+    "built_sha256": "e6702f4342869322514364fcb7d58d334d3d7f348c65eb8da9432a8e85486e0a",
+    "installed_sha256": "e6702f4342869322514364fcb7d58d334d3d7f348c65eb8da9432a8e85486e0a",
+    "previous_sha256": "e6702f4342869322514364fcb7d58d334d3d7f348c65eb8da9432a8e85486e0a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentInputEditors.py",
+    "rollback_sha256": "99a4ac15ad199afb58a5764747369a774c5c1c9cd81f05c4f91c9b2adbcfe5f3"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestComponentModeling.py",
+    "source_sha256": "9a3c8db9316ac4ee379e5235a349f7d4a4133c94a34864b9354132fc933b187b",
+    "built_sha256": "9a3c8db9316ac4ee379e5235a349f7d4a4133c94a34864b9354132fc933b187b",
+    "installed_sha256": "9a3c8db9316ac4ee379e5235a349f7d4a4133c94a34864b9354132fc933b187b",
+    "previous_sha256": "9a3c8db9316ac4ee379e5235a349f7d4a4133c94a34864b9354132fc933b187b",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentModeling.py",
+    "rollback_sha256": "6e809a45fb93c7f314c5d5eeca63eff7b978faedf8ba60afe3ec1cc1c4375e89"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestComponentPanel.py",
+    "source_sha256": "88c7879afae84f413940b1626652b07332b96049b8b4ce0f46740a8772fe74ba",
+    "built_sha256": "88c7879afae84f413940b1626652b07332b96049b8b4ce0f46740a8772fe74ba",
+    "installed_sha256": "88c7879afae84f413940b1626652b07332b96049b8b4ce0f46740a8772fe74ba",
+    "previous_sha256": "e20e10514db98e4a649533121772742319677a3d5540be6b087ac512f2f1cb12",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\TestComponentPanel.py",
+    "rollback_sha256": "e20e10514db98e4a649533121772742319677a3d5540be6b087ac512f2f1cb12"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestFeatureCenteredModeling.py",
+    "source_sha256": "9f7d347153d7085a446485a3e702e92a0604ed726a5c9b8f1dc19a11ac63b388",
+    "built_sha256": "9f7d347153d7085a446485a3e702e92a0604ed726a5c9b8f1dc19a11ac63b388",
+    "installed_sha256": "9f7d347153d7085a446485a3e702e92a0604ed726a5c9b8f1dc19a11ac63b388",
+    "previous_sha256": "9f7d347153d7085a446485a3e702e92a0604ed726a5c9b8f1dc19a11ac63b388",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\TestFeatureCenteredModeling.py",
+    "rollback_sha256": "1d871b773f53d18c8d44ee4a9d03fa949be3b35119e9b36d5435f5d30b6c28b5"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestLegacyBooleanConversion.py",
+    "source_sha256": "5d32491dadbc87bd739eaf560fd18e66c22efcfc08822bf38bb360774595c8d5",
+    "built_sha256": "5d32491dadbc87bd739eaf560fd18e66c22efcfc08822bf38bb360774595c8d5",
+    "installed_sha256": "5d32491dadbc87bd739eaf560fd18e66c22efcfc08822bf38bb360774595c8d5",
+    "previous_sha256": "5d32491dadbc87bd739eaf560fd18e66c22efcfc08822bf38bb360774595c8d5",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\TestLegacyBooleanConversion.py",
+    "rollback_sha256": "18644990b9f0976a87c335fa40386752357993fa1f04e4be4052106579ad8930"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestPartBooleanInputs.py",
+    "source_sha256": "9ab55330228982250956e80f6651d6d7d0c93ee9663d2102b9027c0e80f7b689",
+    "built_sha256": "9ab55330228982250956e80f6651d6d7d0c93ee9663d2102b9027c0e80f7b689",
+    "installed_sha256": "9ab55330228982250956e80f6651d6d7d0c93ee9663d2102b9027c0e80f7b689",
+    "previous_sha256": "9ab55330228982250956e80f6651d6d7d0c93ee9663d2102b9027c0e80f7b689",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\TestPartBooleanInputs.py",
+    "rollback_sha256": "f6bef124f544e4198aa24d03f56c71ac915ac24d4a37992fd674acdf02a0b98b"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestRevolveWorkflow.py",
+    "source_sha256": "c4e0fafc0be7ca6c346517d74802b78cf0893f16dba83e208846fb69af54455f",
+    "built_sha256": "c4e0fafc0be7ca6c346517d74802b78cf0893f16dba83e208846fb69af54455f",
+    "installed_sha256": "c4e0fafc0be7ca6c346517d74802b78cf0893f16dba83e208846fb69af54455f",
+    "previous_sha256": "c4e0fafc0be7ca6c346517d74802b78cf0893f16dba83e208846fb69af54455f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\TestRevolveWorkflow.py",
+    "rollback_sha256": "dee54020cc3dae0b53d16c1870c044a5b8f7a1434ca5b0701cf8235939dd2ace"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/document.py",
+    "source_sha256": "f2bc4aef8d21eb2f8cd4b775add82c0875d3a5db7507412347919e4be1f18723",
+    "built_sha256": "f2bc4aef8d21eb2f8cd4b775add82c0875d3a5db7507412347919e4be1f18723",
+    "installed_sha256": "f2bc4aef8d21eb2f8cd4b775add82c0875d3a5db7507412347919e4be1f18723",
+    "previous_sha256": "f2bc4aef8d21eb2f8cd4b775add82c0875d3a5db7507412347919e4be1f18723",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "rollback_sha256": "886440fabd14cd31634b09452a0042192d3e0b439448da1d83e9480d79a38bb2"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "3a80a9f1e4ddeffa4201cff39c6e43b35cb5fd509af2b33aad734a0b3ce5ff33",
+    "built_sha256": "3a80a9f1e4ddeffa4201cff39c6e43b35cb5fd509af2b33aad734a0b3ce5ff33",
+    "installed_sha256": "3a80a9f1e4ddeffa4201cff39c6e43b35cb5fd509af2b33aad734a0b3ce5ff33",
+    "previous_sha256": "3a80a9f1e4ddeffa4201cff39c6e43b35cb5fd509af2b33aad734a0b3ce5ff33",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "rollback_sha256": "3f5e1d91255590f06b7caa2cb96b96f9b29eef2d5b6b7830d10924d9e64ac14a"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrusion.py",
+    "source_sha256": "98816aba1285931b3570127ef0d99660525af3f044043e1239a289a5241e852d",
+    "built_sha256": "98816aba1285931b3570127ef0d99660525af3f044043e1239a289a5241e852d",
+    "installed_sha256": "98816aba1285931b3570127ef0d99660525af3f044043e1239a289a5241e852d",
+    "previous_sha256": "98816aba1285931b3570127ef0d99660525af3f044043e1239a289a5241e852d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py",
+    "rollback_sha256": "3be9b758534f7e1ebcd7de5901cb7ad467168d8ff11e8d1dd5a88bfaffc27761"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/geometry.py",
+    "source_sha256": "353e7baaff0a4147b3749afb63276c5f7ff38c3162898286c170c41551bc8f84",
+    "built_sha256": "353e7baaff0a4147b3749afb63276c5f7ff38c3162898286c170c41551bc8f84",
+    "installed_sha256": "353e7baaff0a4147b3749afb63276c5f7ff38c3162898286c170c41551bc8f84",
+    "previous_sha256": "353e7baaff0a4147b3749afb63276c5f7ff38c3162898286c170c41551bc8f84",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\geometry.py",
+    "rollback_sha256": "ff15176efba0d13241603c1e42a37c1f3fa876988ad3db4cfba8d9f20f407ff6"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/plane_task.py",
+    "source_sha256": "2801ef209677eb7c287de0f5c86119cf47ccb8b360783833043ed743d360af40",
+    "built_sha256": "2801ef209677eb7c287de0f5c86119cf47ccb8b360783833043ed743d360af40",
+    "installed_sha256": "2801ef209677eb7c287de0f5c86119cf47ccb8b360783833043ed743d360af40",
+    "previous_sha256": "2801ef209677eb7c287de0f5c86119cf47ccb8b360783833043ed743d360af40",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "rollback_sha256": "33b31c3218cd87776b295fa59c35daa48f5f397bd82458eb27f69696273fb859"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/planes.py",
+    "source_sha256": "59ba8f2961e669fcd28074e059eddf49e3b552b5041ad2d49aed64c5b8023127",
+    "built_sha256": "59ba8f2961e669fcd28074e059eddf49e3b552b5041ad2d49aed64c5b8023127",
+    "installed_sha256": "59ba8f2961e669fcd28074e059eddf49e3b552b5041ad2d49aed64c5b8023127",
+    "previous_sha256": "59ba8f2961e669fcd28074e059eddf49e3b552b5041ad2d49aed64c5b8023127",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\planes.py",
+    "rollback_sha256": "d02d0c0aad8c60b17669d1ad4d5f236acd1401cfab391837d4984fa254bb1bd3"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/revolution.py",
+    "source_sha256": "b038dd9b447a962d72e87274d5384fda2a3a4bdfbb4f6c419451d177167758ba",
+    "built_sha256": "b038dd9b447a962d72e87274d5384fda2a3a4bdfbb4f6c419451d177167758ba",
+    "installed_sha256": "b038dd9b447a962d72e87274d5384fda2a3a4bdfbb4f6c419451d177167758ba",
+    "previous_sha256": "b038dd9b447a962d72e87274d5384fda2a3a4bdfbb4f6c419451d177167758ba",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolution.py",
+    "rollback_sha256": "8288f6d0502a02940d17420873278957c210faa4e0fbf70302350b7da08ce1fd"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_placement.py",
+    "source_sha256": "c0384ec282aa2d9dbaaaa87a1f2f2afcc95274ac87170b1f23b77318ca44fe36",
+    "built_sha256": "c0384ec282aa2d9dbaaaa87a1f2f2afcc95274ac87170b1f23b77318ca44fe36",
+    "installed_sha256": "c0384ec282aa2d9dbaaaa87a1f2f2afcc95274ac87170b1f23b77318ca44fe36",
+    "previous_sha256": "c0384ec282aa2d9dbaaaa87a1f2f2afcc95274ac87170b1f23b77318ca44fe36",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_placement.py",
+    "rollback_sha256": "b2199c16a817b529cdff797e29228602f5a7c45bf7eb83763f0817c5536fdfb6"
+  }
+]

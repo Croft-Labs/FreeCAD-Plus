@@ -77,6 +77,7 @@ def validate(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=F
             raise ValueError('Edit a sketch owned by this component')
         if any(obj == feature or obj in feature.InListRecursive for obj, _ in refs + origin_refs + axis_refs):
             raise ValueError('A sketch cannot depend on itself or a downstream feature')
+    document.require_predecessors(definition, feature, refs + origin_refs + axis_refs)
     solve(definition, refs, origin_refs, axis_refs, axis, flipped, offset)
     return refs, origin_refs, axis_refs
 

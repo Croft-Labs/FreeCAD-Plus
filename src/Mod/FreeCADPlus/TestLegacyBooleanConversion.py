@@ -75,7 +75,8 @@ class TestLegacyBooleanConversion(unittest.TestCase):
         self.assertEqual(list(converted.ToolBox.getGlobalPlacement().toMatrix().A), frame)
         self.assertNotIn(converted.ToolBody, definition.Group)
         history = document.history(converted, definition)
-        self.assertEqual(history, [converted.BaseBox, converted.ToolBox, converted.Fusion])
+        self.assertEqual(history, [*sorted((converted.BaseBox, converted.ToolBox),key=lambda o:o.ID),
+                                   converted.Fusion])
         if hierarchy:
             self.assertEqual(definition, converted.LegacyPart)
             self.assertEqual(converted.SharedPart.LinkedObject, definition)

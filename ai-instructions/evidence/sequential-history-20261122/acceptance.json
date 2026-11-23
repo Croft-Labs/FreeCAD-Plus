@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "unique_installed_tests": 165,
+  "runs": {
+    "installed-regression": 160,
+    "legacy-regression": 9,
+    "ui-regression": 5
+  },
+  "unresolved": {},
+  "note": "Six initial conversion errors were existing-destination fixture collisions; all conversion tests were rerun in a fresh directory. Startup UI tests ran separately.",
+  "actual_history_click": true,
+  "fresh_reopen": true,
+  "isolated_shortcut": true
+}

@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "display_order": [
+    "Coordinate System",
+    "Sketch - Base",
+    "Extrude",
+    "Sketch - Revolve profile",
+    "Revolve (Add)",
+    "Sketch - Extrude profile",
+    "Extrude (Add)"
+  ],
+  "later_profile_history_click_rejected": true,
+  "error_message": "\"Sketch - Extrude profile\" must precede \"Extrude\" in History; choose an earlier input.",
+  "original_profile_preserved": true,
+  "saved": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\sequential-history-20261122\\Sequential.cadprt",
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py"
+}

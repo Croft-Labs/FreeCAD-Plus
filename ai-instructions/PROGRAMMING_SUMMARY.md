@@ -1,5 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest strict sequential History — November 22, 2026
+
+The approved change is installed: component History follows native dependencies
+across Body boundaries, keeping sketches and other inputs before their consumers.
+Shared editors reject later/self inputs before mutation. Existing graphs retain
+geometry, identity, ownership and saved schema. All 28 targeted development and
+165 unique installed checks passed, plus actual History-click and fresh-reopen checks.
+A separate updated app was launched through the existing shortcut with isolated settings.
+The owner's unsaved Unnamed window was preserved and needs a restart after saving.
+See [acceptance](WORK_STATE.md#strict-sequential-history--november-22-2026).
+
 ## Latest History coordinate presentation — November 22, 2026
 
 The approved change is installed: Axes/Planes use their children's native icons;

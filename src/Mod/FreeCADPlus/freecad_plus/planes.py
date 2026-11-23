@@ -241,6 +241,7 @@ def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=Fa
             raise ValueError('Edit a plane owned by this component')
         if any(obj == feature or obj in feature.InListRecursive for obj, _ in refs+origin_refs+axis_refs):
             raise ValueError('A plane cannot depend on itself or a downstream feature')
+    document.require_predecessors(definition, feature, refs + origin_refs + axis_refs)
     solve(definition, refs, offset, origin_refs, axis_refs, axis, flipped, reversed_axis)
     with document.transaction(definition.Document, 'Edit plane' if feature else 'Create plane'):
         if feature is None:

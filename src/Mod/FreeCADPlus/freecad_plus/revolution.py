@@ -4,7 +4,7 @@ import math
 import sys
 import FreeCAD as App
 import Part
-from . import extrusion, modeling, planes
+from . import document, extrusion, modeling, planes
 
 NAME = 'Revolve'
 VERSION = 'PlusRevolveVersion'
@@ -93,6 +93,7 @@ def validate(definition, refs, links, values, feature=None):
         raise ValueError('Through all is a single full revolution.')
     if v['sides'] == 'Two sides' and v['end'] == v['end2'] == 'Angle' and v['angle'] + v['angle2'] > 360:
         raise ValueError('The two rotation angles must total at most 360 degrees.')
+    document.require_predecessors(definition, feature, refs + list(links.values()))
     return refs, links, v
 
 

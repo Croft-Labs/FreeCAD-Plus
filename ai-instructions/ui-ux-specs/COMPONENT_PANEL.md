@@ -49,9 +49,10 @@ reordering must preserve direct and transitive predecessor/dependent order.
 
 This confirms the dependency restriction, not every interaction in the historical
 D2864 reordering proposal. The current panel has no History drag-reorder action.
-The [native ordering preview](../evidence/sequential-history-preview-20261122/README.md)
-reproduces the defect and illustrates the intended sequence. Visual approval and
-production implementation remain pending; source/build/install status lives in WORK_STATE.
+The owner approved the [native ordering preview](../evidence/sequential-history-preview-20261122/README.md)
+and implementation with "approved, implement strict sequential history and prevent
+sketches or other inputs from being ordered after the features that use them".
+Source/build/install acceptance lives in WORK_STATE.
 
 ### History coordinate icons and initial expansion — November 22, 2026
 

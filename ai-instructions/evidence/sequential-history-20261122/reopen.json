@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "order": [
+    "Sketch",
+    "Extrude",
+    "Sketch001",
+    "Revolve",
+    "Sketch002",
+    "Extrude001"
+  ],
+  "identities_preserved": true,
+  "volumes_preserved": true
+}

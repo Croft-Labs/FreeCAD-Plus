@@ -199,7 +199,7 @@ def new_document(name="Unnamed"):
 
 
 def history(doc, definition=None):
-    """Projection only: file frame or native sketch/feature sequence, no Body rows."""
+    """Read-only dependency sequence across Bodies, with creation-order tie breaks."""
     root = validate(doc)
     if definition is None:
         return [root.Origin] + [o for o in root.Origin.OriginFeatures if o.TypeId == "App::Plane"]
@@ -217,7 +217,78 @@ def history(doc, definition=None):
                 for tool in owned_children(obj):
                     yield from features(tool)
             yield obj
-    return [feature for obj in definition.Group for feature in features(obj)]
+    nodes = list(dict.fromkeys(feature for obj in definition.Group for feature in features(obj)))
+    dependencies = _history_dependencies(definition, nodes)
+    # Body membership is ownership, not chronology. Native object IDs survive
+    # save/restore and Undo; no parallel persisted order or ownership rewrite is needed.
+    import heapq
+    ready = [(obj.ID, obj.Name, obj) for obj in nodes if not dependencies[obj]]
+    heapq.heapify(ready)
+    followers = {obj: [] for obj in nodes}
+    for obj, inputs in dependencies.items():
+        for source in inputs:
+            followers[source].append(obj)
+    ordered = []
+    while ready:
+        _, _, obj = heapq.heappop(ready)
+        ordered.append(obj)
+        for follower in followers[obj]:
+            dependencies[follower].remove(obj)
+            if not dependencies[follower]:
+                heapq.heappush(ready, (follower.ID, follower.Name, follower))
+    if len(ordered) != len(nodes):
+        raise ValueError('Circular feature dependencies prevent sequential History')
+    return ordered
+
+
+def _history_inputs(definition, nodes, objects):
+    """Resolve hidden native inputs to visible producers without crossing components.
+
+    OutList includes native geometry links and expression dependencies. A Body used
+    as a result reference means its Tip, not its ownership Group. Coordinate frames
+    are implicit predecessors and child component occurrences have their own History.
+    """
+    visible, found, visited = set(nodes), set(), set()
+    pending = list(objects)
+    while pending:
+        obj = pending.pop()
+        if obj is None or obj in visited:
+            continue
+        visited.add(obj)
+        if obj in visible:
+            found.add(obj)
+        elif obj.TypeId == 'PartDesign::Body' and owned_path(definition, obj) is not None:
+            pending.append(obj.Tip)
+        elif (obj.TypeId not in ('App::Part', 'App::Link', 'App::Origin')
+              and owned_path(definition, obj) is not None):
+            pending.extend(obj.OutList)
+    return found
+
+
+def _history_dependencies(definition, nodes):
+    return {obj: _history_inputs(definition, nodes, obj.OutList) for obj in nodes}
+
+
+def require_predecessors(definition, consumer, inputs):
+    """Reject a new forward reference before an editor mutates native links.
+
+    A new operation validates with its component as consumer and is appended after
+    its inputs. Existing operations use their current dependency-correct History
+    position, including repaired legacy order, rather than changing that position
+    to accommodate a newly selected later input.
+    """
+    # Native command-start admission passes the Body before a feature exists.
+    if consumer is None or consumer == definition or consumer.TypeId == 'PartDesign::Body':
+        return
+    ordered = history(definition.Document, definition)
+    if consumer not in ordered:
+        raise ValueError('The edited feature is no longer in component History')
+    position = {obj: index for index, obj in enumerate(ordered)}
+    objects = [obj.getSubObject(sub, 1) if sub else obj for obj, sub in inputs]
+    for source in _history_inputs(definition, ordered, objects):
+        if position[source] >= position[consumer]:
+            raise ValueError(f'"{source.Label}" must precede "{consumer.Label}" in History; '
+                             'choose an earlier input.')
 
 
 def inspect_archive(filename):

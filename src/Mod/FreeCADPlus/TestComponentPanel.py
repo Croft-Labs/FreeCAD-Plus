@@ -624,7 +624,10 @@ class TestUIModes(unittest.TestCase):
         Gui.activateWorkbench('PartDesignWorkbench');settle()
         def toolbar_actions():
             return {bar.objectName():tuple(a.objectName() for a in bar.actions())
-                    for bar in self.window.findChildren(QtWidgets.QToolBar)}
+                    for bar in self.window.findChildren(QtWidgets.QToolBar)
+                    # Plus split-button controls are presentation-specific and
+                    # intentionally disappear in Classic mode. Native actions persist.
+                    if not bar.objectName().startswith('PlusControl_')}
         actions=toolbar_actions()
         for values in itertools.product((0,1),repeat=3):
             self.choose_modes(values);self.check_model(values[0]==0)

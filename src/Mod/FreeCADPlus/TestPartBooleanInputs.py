@@ -560,6 +560,11 @@ class TestPartBooleanInputs(unittest.TestCase):
         owner=owner or self.child
         a,b=self.boxes(owner);c,_=self.boxes(owner)
         create=owner.addObject if hasattr(owner,'Objects') else owner.newObject
+        # Both the original and replacement inputs precede the edited filter.
+        if kind=='_CompoundFilter':
+            compound=create('Part::Compound','FilterSource');compound.Links=[a,b]
+            if prop=='Base':
+                replacement=create('Part::Compound','FilterReplacement');replacement.Links=[c,b];c=replacement
         result=create('Part::FeaturePython','EditableSplitJoin')
         module=CompoundFilter if kind=='_CompoundFilter' else (
             SplitFeatures if hasattr(SplitFeatures,kind) else JoinFeatures)
@@ -569,10 +574,7 @@ class TestPartBooleanInputs(unittest.TestCase):
         if prop in ('Tool','Tools','Objects'):c.Placement=b.Placement
         if hasattr(result,'Objects'):result.Objects=[a,b]
         elif kind=='_CompoundFilter':
-            compound=create('Part::Compound','FilterSource');compound.Links=[a,b]
             result.Base=compound;result.Stencil=a;result.FilterType='collision-pass'
-            if prop=='Base':
-                replacement=create('Part::Compound','FilterReplacement');replacement.Links=[c,b];c=replacement
         else:
             result.Base=a
             if hasattr(result,'Tools'):result.Tools=[b];result.Mode='Split'

@@ -48,6 +48,16 @@ class TestComponentInputEditors(unittest.TestCase):
     def limit_path(self,first,box,face=''):
         return hierarchy.subname((first,self.nested))+box.Name+'.'+face
 
+    def pad_after_limits(self):
+        # These picker checks edit an existing native Pad. Its limit geometry
+        # must precede it under the component's strict sequential modeling rule.
+        body=self.pad.getParentGeoFeatureGroup()
+        with document.transaction(self.doc,'Prepare sequential native Pad fixture'):
+            self.doc.removeObject(self.pad.Name)
+            self.pad=body.newObject('PartDesign::Pad','Pad')
+            self.pad.Profile=(self.sketch,[]);self.pad.Length=5
+        settle()
+
     def pick_button(self,name):
         button=self.control(QtWidgets.QToolButton,name)
         if not button.isChecked():button.setChecked(True)
@@ -104,6 +114,7 @@ class TestComponentInputEditors(unittest.TestCase):
 
     def test_extrude_face_picked_typed_and_reopen(self):
         Gui.activateWorkbench('PartDesignWorkbench');box=self.limit();foreign=self.limit(self.unused,'Foreign')
+        self.pad_after_limits()
         self.forbidden();editing.edit_feature(self.doc,self.pad);settle()
         self.control(QtWidgets.QComboBox,'changeMode').setCurrentIndex(3);settle()
         self.pick_button('buttonFace');before=self.pad.UpToFace;undo=self.doc.UndoCount
@@ -126,6 +137,7 @@ class TestComponentInputEditors(unittest.TestCase):
 
     def test_extrude_shape_and_face_lists_both_sides_cancel(self):
         Gui.activateWorkbench('PartDesignWorkbench');box=self.limit();self.forbidden()
+        self.pad_after_limits()
         editing.edit_feature(self.doc,self.pad);settle()
         self.control(QtWidgets.QComboBox,'sidesMode').setCurrentIndex(1);settle()
         for suffix in ('','2'):

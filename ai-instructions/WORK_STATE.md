@@ -1,21 +1,35 @@
 # FreeCAD Plus: Current work state
 
-## Sequential History preview — November 22, 2026
+## Strict sequential History — November 22, 2026
 
-The owner requires strictly sequential modeling: a sketch must remain before any
-feature that uses it, with dependency-invalid reordering forbidden. Root cause:
-document.history traverses definition.Group and flattens each backend Body in place,
-so operations appended to an older Body precede newer component-owned profile sketches.
-The current History panel has no drag-reorder action.
+The owner approved strict sequential History and preventing sketches or other inputs
+from appearing after their consumers. The production projection now orders native
+dependencies across Body boundaries, including expression links and Body result
+references, with creation IDs breaking independent ties. Profiles stay before their
+Extrude/Revolve operations. Existing saved graphs display in dependency order without
+rewriting their geometry, ownership, visibility, identity or schema.
 
-A real native Extrude/Revolve/Extrude Add fixture reproduces both misplaced profiles.
-The isolated candidate displays the intended sequence with unchanged native geometry,
-visibility, identities, eyes and coordinate layout. Its creation-ID display sort is a
-visual stand-in only, not a production dependency-order implementation.
-Direct [current](evidence/sequential-history-preview-20261122/baseline.png) and
-[proposed](evidence/sequential-history-preview-20261122/candidate.png) screenshots are ready.
-**Awaiting preview approval; production source and installed payload are unchanged.**
-See [scope, provenance and next work](evidence/sequential-history-preview-20261122/README.md).
+Shared input admission rejects later/self inputs before supported editor mutations.
+It covers Extrude/Revolve, sketch placement, planes and the native modeling input
+paths. Coordinate layout/eyes and other tabs are retained. No drag-reorder action
+was introduced; future ordering actions must obey predecessor constraints.
+See [technical contract](ARCHITECTURE.md#creation-editing-and-history) and
+[implementation evidence](evidence/sequential-history-20261122/README.md).
+
+All **28 targeted development checks** and **165 unique installed native checks**
+passed. Six conversion checks initially encountered existing test destinations;
+all nine conversion checks passed in a fresh directory. Five startup/UI-mode checks
+ran in a separate fresh process. [Aggregate acceptance](evidence/sequential-history-20261122/acceptance.json)
+retains the original run and verifies every failed case has a passing retry.
+Separate installed processes confirmed [actual History order and input clicks](evidence/sequential-history-20261122/visual.json)
+and [fresh reopen](evidence/sequential-history-20261122/reopen.json), preserving IDs and volumes.
+Reviewed [installed screenshot](evidence/sequential-history-20261122/history.png).
+The Python payload is installed with rollback copies and matching source/build/app hashes.
+The existing shortcut launched and verified a separate isolated updated instance;
+disposable fixtures were removed, retaining rollback and the active profile.
+The owner's already-open window still contains an unsaved Unnamed document and was
+left untouched; that older process needs a restart after the owner saves it.
+Unrelated project.previewfirst.json remains untouched.
 
 ## History coordinate icons and collapsed defaults — November 22, 2026
 

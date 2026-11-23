@@ -223,6 +223,7 @@ def require_modeling_inputs(consumer, inputs=None):
             target = obj.getSubObject(sub, 1) if sub else obj
             if _owned_path(active, target) is None or target == active:
                 raise ValueError('These Part inputs must be owned by the edited component')
+    document.require_predecessors(active, consumer, inputs)
 
 
 def require_part_boolean_inputs(doc, inputs=None):

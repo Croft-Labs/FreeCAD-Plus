@@ -110,6 +110,7 @@ def validate(definition, refs, links, values, feature=None):
             raise ValueError('This end condition needs an explicit target solid.')
         if kind != 'Length' and values['taper' + suffix]:
             raise ValueError('Taper requires a Length end condition.')
+    document.require_predecessors(definition, feature, refs + list(links.values()))
     return refs, links, values
 
 

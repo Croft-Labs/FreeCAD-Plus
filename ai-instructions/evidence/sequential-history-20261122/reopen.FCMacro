@@ -1,0 +1,25 @@
+import os, sys, json, traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore
+from freecad_plus import document, extrusion, revolution
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        expected=json.loads((out/'expected.json').read_text())
+        doc=document.open_document(out/'Sequential.cadprt');owner=doc.getObject(expected['owner'])
+        doc.recompute()
+        assert [o.Name for o in document.history(doc,owner)]==expected['order']
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        for name,volume in expected['volumes'].items():
+            obj=doc.getObject(name)
+            assert obj.Shape.isValid() and abs(obj.Shape.Volume-volume)<1e-7
+        result.update(ok=True,order=expected['order'],identities_preserved=True,volumes_preserved=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'reopen.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

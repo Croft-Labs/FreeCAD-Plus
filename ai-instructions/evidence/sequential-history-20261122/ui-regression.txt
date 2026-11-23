@@ -1,0 +1,10 @@
+test_01_default_startup_and_preferences_cancel (TestComponentPanel.TestUIModes.test_01_default_startup_and_preferences_cancel) ... ok
+test_02_mixed_modes_preserve_backend_and_menu (TestComponentPanel.TestUIModes.test_02_mixed_modes_preserve_backend_and_menu) ... ok
+test_03_native_pad_pocket_survive_presentation_changes (TestComponentPanel.TestUIModes.test_03_native_pad_pocket_survive_presentation_changes) ... ok
+test_04_preferences_apply_and_persist (TestComponentPanel.TestUIModes.test_04_preferences_apply_and_persist) ... ok
+test_05_independent_native_tree_layout (TestComponentPanel.TestUIModes.test_05_independent_native_tree_layout) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 11.728s
+
+OK

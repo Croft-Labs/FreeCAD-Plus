@@ -300,6 +300,7 @@ class ExtrudeTask(QtCore.QObject):
             self.check()
             obj=App.getDocument(doc).getObject(name)
             ref=planes.canonical(self.owner,[(obj,sub)])[0]
+            document.require_predecessors(self.owner,self.feature,[ref])
             if self.pick=='profile':
                 ref=self.engine.profile_reference(ref)
                 self.engine.validate_profiles(self.owner,[ref])

@@ -123,6 +123,11 @@ class TestComponentModeling(unittest.TestCase):
         def observe(consumer,inputs=None):calls.append(inputs);return original(consumer,inputs)
         with patch.object(geometry,'require_modeling_inputs',side_effect=observe),messages() as errors:
             Gui.runCommand('PartDesign_Pad');settle()
+            # The shared Extrude task starts empty and waits for an explicit profile.
+            from freecad_plus import extrude_task
+            if extrude_task._active:
+                self.assertFalse(extrude_task._active.refs)
+                self.select(self.root,self.sub(self.second,sketch));settle()
         self.assertFalse(errors,errors);self.assertTrue(any(refs for refs in calls),calls)
         accept_task()
         legacy=App.newDocument('LegacyProfile');body=legacy.addObject('PartDesign::Body','Body')
@@ -137,7 +142,9 @@ class TestComponentModeling(unittest.TestCase):
     def test_external_unused_context_and_wrong_consumer(self):
         source,definition=self.external_fixture();editing.edit_unused(self.doc,definition)
         sketch=editing.new_sketch(self.doc);settle()
-        geometry.require_modeling_inputs(sketch,[(sketch,'')])
+        geometry.require_modeling_inputs(definition,[(sketch,'')])
+        with self.assertRaisesRegex(ValueError,'must precede'):
+            geometry.require_modeling_inputs(sketch,[(sketch,'')])
         with self.assertRaisesRegex(ValueError,'edited component'):
             geometry.require_modeling_inputs(self.pad,[(sketch,'')])
         editing.edit_file(self.doc)

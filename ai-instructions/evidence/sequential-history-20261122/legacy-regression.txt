@@ -1,0 +1,14 @@
+test_fallback_is_explicit_and_persistently_reported (TestLegacyConversion.TestLegacyConversion.test_fallback_is_explicit_and_persistently_reported) ... ok
+test_native_body_preserves_editability_and_live_source (TestLegacyConversion.TestLegacyConversion.test_native_body_preserves_editability_and_live_source) ... ok
+test_native_primitive_static_curve_and_empty (TestLegacyConversion.TestLegacyConversion.test_native_primitive_static_curve_and_empty) ... ok
+test_rejection_save_failure_and_exclusive_destination (TestLegacyConversion.TestLegacyConversion.test_rejection_save_failure_and_exclusive_destination) ... ok
+test_schema_one_remains_readable_without_implicit_upgrade (TestLegacyConversion.TestLegacyConversion.test_schema_one_remains_readable_without_implicit_upgrade) ... ok
+test_nested_scripted_tool_is_refused_without_output (TestLegacyBooleanConversion.TestLegacyBooleanConversion.test_nested_scripted_tool_is_refused_without_output) ... ok
+test_part_shared_link_preserves_boolean_graph (TestLegacyBooleanConversion.TestLegacyBooleanConversion.test_part_shared_link_preserves_boolean_graph) ... ok
+test_standalone_boolean_preserves_editable_graph (TestLegacyBooleanConversion.TestLegacyBooleanConversion.test_standalone_boolean_preserves_editable_graph) ... ok
+test_unowned_dependency_and_independent_body_are_refused (TestLegacyBooleanConversion.TestLegacyBooleanConversion.test_unowned_dependency_and_independent_body_are_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 3.722s
+
+OK

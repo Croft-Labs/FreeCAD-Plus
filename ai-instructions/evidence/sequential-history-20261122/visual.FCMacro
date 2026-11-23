@@ -1,0 +1,49 @@
+"""Installed sequence, actual History clicks, and durable fresh-process fixture."""
+import os, sys, json, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtTest
+from freecad_plus import document, panel, extrude_task
+sys.path.insert(0,'C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus')
+from TestFeatureCenteredModeling import TestSequentialHistory
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        assert '/app/' in document.__file__.replace('\\','/'),document.__file__
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        fixture=TestSequentialHistory('test_interleaved_bodies_undo_and_saved_order');fixture.setUp()
+        chain=fixture.chain();doc=fixture.doc
+        labels=['Sketch - Base','Extrude','Sketch - Revolve profile','Revolve (Add)',
+                'Sketch - Extrude profile','Extrude (Add)']
+        for obj,label in zip(chain,labels):obj.Label=label
+        dock=panel.show_panel();dock.tabs.setCurrentIndex(2);dock.refresh();QtTest.QTest.qWait(250)
+        tree=dock.trees[2]
+        shown=[tree.topLevelItem(i).text(0) for i in range(tree.topLevelItemCount())]
+        assert shown==['Coordinate System',*labels],shown
+        assert dock.grab().save(str(out/'history.png'))
+        # Open the earlier Extrude and click a later sketch through real History.
+        task=extrude_task.show(chain[1]);task.clear_profile();task.pick='profile'
+        QtTest.QTest.qWait(100)
+        item=next(i for i in dock._maps[2].values() if i.data(0,panel._ROLE).ref==panel.identity(chain[4]))
+        tree.scrollToItem(item);QtTest.QTest.qWait(100)
+        QtTest.QTest.mouseClick(tree.viewport(),QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,
+                               tree.visualItemRect(item).center())
+        QtTest.QTest.qWait(150)
+        assert not task.refs and 'must precede' in task.status.text(),task.status.text()
+        message=task.status.text();task.reject()
+        assert chain[1].ProfileReferences[0][0]==chain[0]
+        path=document.save_document(doc,out/'Sequential.cadprt')
+        expected=dict(owner=fixture.owner.Name,order=[o.Name for o in chain],
+                      ids={o.Name:o.ID for o in doc.Objects},volumes={o.Name:o.Shape.Volume for o in chain[1::2]})
+        (out/'expected.json').write_text(json.dumps(expected,indent=2))
+        result.update(ok=True,display_order=shown,later_profile_history_click_rejected=True,
+                      error_message=message,original_profile_preserved=True,saved=str(path),module=document.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

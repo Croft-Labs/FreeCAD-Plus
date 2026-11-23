@@ -6,7 +6,7 @@ import FreeCADGui as Gui
 import Part
 from PySide6 import QtCore, QtWidgets
 from pivy import coin
-from . import planes, modeling, editing, hierarchy
+from . import document, planes, modeling, editing, hierarchy
 
 _active = None
 
@@ -340,6 +340,7 @@ class PlaneTask(QtCore.QObject):
         if self.feature is not None and any(obj == self.feature or obj in self.feature.InListRecursive
                                            for obj,sub in self.refs+self.origin_refs+self.axis_refs):
             raise ValueError('A plane cannot depend on itself or a downstream feature')
+        document.require_predecessors(self.definition, self.feature, self.refs+self.origin_refs+self.axis_refs)
         return planes.solve(self.definition, self.refs, self.committed_offset, self.origin_refs,
                             self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked(),
                             self.reverse_axis.isChecked())

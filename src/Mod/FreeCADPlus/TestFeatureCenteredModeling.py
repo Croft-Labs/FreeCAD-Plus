@@ -715,3 +715,158 @@ def verify_targets_fresh_process(output):
     assert cut.Shape.isValid() and abs(cut.Shape.Volume - 86 * math.pi) < 1e-7
     document.validate(doc)
     App.closeDocument(doc.Name); App.closeDocument(source.Name)
+
+
+class TestSequentialHistory(unittest.TestCase):
+    """Component-wide order and pre-mutation native input admission."""
+    setUp = TestFeatureCenteredModeling.setUp
+    tearDown = TestFeatureCenteredModeling.tearDown
+    circle = TestFeatureCenteredModeling.circle
+    snapshot = TestFeatureCenteredModeling.snapshot
+
+    def chain(self):
+        from freecad_plus import extrusion, revolution
+        base = self.circle(4)
+        first = extrusion.save(self.doc, [(base, '')], {}, dict(extrusion.DEFAULTS, length=6))
+        profile = modeling.new_sketch(self.doc)
+        profile.Placement = App.Placement(App.Vector(), App.Rotation(App.Vector(1,0,0),90))
+        points = [(2,1),(5,1),(5,3),(2,3)]
+        for i, p in enumerate(points):
+            q = points[(i+1)%4]
+            profile.addGeometry(Part.LineSegment(App.Vector(*p,0),App.Vector(*q,0)),False)
+        self.doc.recompute()
+        second = revolution.save(self.doc, [(profile,'')], {'target':(first,'')},
+            dict(revolution.DEFAULTS, operation='Add', axis='Component Z axis', angle=90))
+        last_profile = self.circle(2); last_profile.Placement.Base.z = 5; self.doc.recompute()
+        third = extrusion.save(self.doc, [(last_profile,'')], {'target':(second,'')},
+            dict(extrusion.DEFAULTS, operation='Add', length=5))
+        return [base, first, profile, second, last_profile, third]
+
+    def test_interleaved_bodies_undo_and_saved_order(self):
+        from freecad_plus import extrusion
+        chain = self.chain()
+        names = [o.Name for o in chain]
+        self.assertEqual(document.history(self.doc,self.owner),chain)
+        before = self.snapshot(); volumes = [o.Shape.Volume for o in chain[1::2]]
+        self.owner.Group = list(reversed(self.owner.Group))
+        self.assertEqual(document.history(self.doc,self.owner),chain)
+        self.assertEqual([o.Shape.Volume for o in chain[1::2]],volumes)
+        self.assertEqual(self.snapshot()[0],before[0])
+        extrusion.save(self.doc,[(chain[4],'')],{'target':(chain[3],'')},
+            dict(extrusion.DEFAULTS,operation='Add',length=7),chain[5])
+        self.assertEqual(document.history(self.doc,self.owner),chain)
+        self.doc.undo(); self.doc.recompute()
+        self.assertEqual([o.Name for o in document.history(self.doc,self.owner)],names)
+        self.doc.redo(); self.doc.recompute()
+        expected = {o.Name:o.ID for o in self.doc.Objects}
+        owner_name = self.owner.Name
+        path = document.save_document(self.doc,self.output/'Sequential.cadprt')
+        App.closeDocument(self.doc.Name); self.doc = document.open_document(path)
+        self.owner = self.doc.getObject(owner_name)
+        self.assertEqual([o.Name for o in document.history(self.doc,self.owner)],names)
+        self.assertEqual({o.Name:o.ID for o in self.doc.Objects},expected)
+        (self.output/'expected.json').write_text(json.dumps(dict(owner=owner_name,order=names,ids=expected)))
+
+    def test_forward_profile_target_axis_and_limit_are_atomic(self):
+        from freecad_plus import extrusion, revolution, planes
+        chain = self.chain(); old = chain[1]; revolve = chain[3]
+        later = self.circle(1)
+        xy = next(o for o in self.owner.Origin.OriginFeatures if o.Role=='XY_Plane')
+        late_plane = planes.save(self.doc,[(xy,'')],10)
+        late_axis = self.owner.newObject('PartDesign::Line','LaterAxis')
+        late_target = extrusion.save(self.doc,[(later,'')],{},dict(extrusion.DEFAULTS,length=3))
+        before = self.snapshot()
+        cases = [
+            lambda: extrusion.save(self.doc,[(later,'')],{},extrusion.settings(old),old),
+            lambda: extrusion.save(self.doc,[(chain[0],'')],{'target':(late_target,'')},
+                dict(extrusion.settings(old),operation='Add'),old),
+            lambda: extrusion.save(self.doc,[(chain[0],'')],{'limit':(late_plane,'')},
+                dict(extrusion.settings(old),end='Up to face'),old),
+            lambda: revolution.save(self.doc,[(chain[2],'')],
+                {'target':(old,''),'axis':(late_axis,'')},
+                dict(revolution.settings(revolve),axis='Selected axis / line'),revolve)]
+        for attempt in cases:
+            with self.assertRaisesRegex(ValueError,'must precede'): attempt()
+            self.assertEqual(self.snapshot(),before)
+        self.assertEqual(old.ProfileReferences[0][0],chain[0])
+        self.assertFalse(revolve.AxisReference)
+
+    def test_sketch_plane_and_native_input_guards(self):
+        from freecad_plus import planes, sketch_placement, geometry
+        xy = next(o for o in self.owner.Origin.OriginFeatures if o.Role=='XY_Plane')
+        early_plane = planes.save(self.doc,[(xy,'')],1)
+        sketch = sketch_placement.save(self.doc,[(early_plane,'')])
+        late_plane = planes.save(self.doc,[(xy,'')],2)
+        before = self.snapshot()
+        for attempt in (
+            lambda: sketch_placement.save(self.doc,[(late_plane,'')],feature=sketch),
+            lambda: planes.save(self.doc,[(late_plane,'')],feature=early_plane),
+            lambda: geometry.require_modeling_inputs(sketch,[(late_plane,'')])):
+            with self.assertRaisesRegex(ValueError,'must precede'): attempt()
+            self.assertEqual(self.snapshot(),before)
+        geometry.require_modeling_inputs(sketch,[(early_plane,'')])
+        geometry.require_modeling_inputs(sketch,[(xy,'')])
+
+    def test_native_expression_and_body_result_dependencies(self):
+        from freecad_plus import geometry
+        early = self.owner.newObject('Part::Feature','Early')
+        early.addProperty('App::PropertyLength','Value')
+        source = self.owner.newObject('Part::Feature','Source')
+        source.addProperty('App::PropertyLength','Value'); source.Value=4
+        # A pre-existing legacy forward link is repaired in the projection, without
+        # rewriting IDs/links or ownership. Expressions are native OutList edges.
+        early.setExpression('Value','Source.Value * 2')
+        before = self.snapshot()
+        self.assertEqual(document.history(self.doc,self.owner),[source,early])
+        self.assertEqual(self.snapshot(),before)
+        geometry.require_modeling_inputs(early,[(source,'')])
+        with self.assertRaisesRegex(ValueError,'must precede'):
+            geometry.require_modeling_inputs(source,[(early,'')])
+        sketch = self.circle()
+        pad = modeling.extrude_new_solid(self.doc,sketch,4)
+        result = self.owner.newObject('Part::Feature','Result')
+        result.addProperty('App::PropertyLink','Input'); result.Input=pad.getParentGeoFeatureGroup()
+        order = document.history(self.doc,self.owner)
+        self.assertLess(order.index(sketch),order.index(pad))
+        self.assertLess(order.index(pad),order.index(result))
+        geometry.require_modeling_inputs(pad.getParentGeoFeatureGroup(),[(sketch,'')])
+
+    def test_cycles_are_not_silently_ordered(self):
+        a = self.owner.newObject('Part::Feature','A'); b = self.owner.newObject('Part::Feature','B')
+        a.addProperty('App::PropertyLink','Input'); b.addProperty('App::PropertyLink','Input')
+        a.Input=b; b.Input=a
+        try:
+            with self.assertRaisesRegex(ValueError,'Circular feature'):
+                document.history(self.doc,self.owner)
+        finally: b.Input=None
+        self.assertEqual(document.history(self.doc,self.owner),[b,a])
+
+    def test_native_compound_drop_rejects_future_input(self):
+        first=self.owner.newObject('Part::Box','First')
+        result=self.owner.newObject('Part::Compound','Compound');result.Links=[first]
+        later=self.owner.newObject('Part::Box','Later');self.doc.recompute()
+        before=self.snapshot()
+        self.assertFalse(result.ViewObject.canDropObject(later))
+        with self.assertRaisesRegex(Exception,'must precede'):
+            result.ViewObject.dropObject(later)
+        self.assertEqual(result.Links,[first]);self.assertEqual(self.snapshot(),before)
+
+    def test_history_picker_rejects_later_profile(self):
+        from freecad_plus import extrusion, extrude_task, panel
+        chain = self.chain(); later = self.circle()
+        task = extrude_task.show(chain[1])
+        try:
+            task.clear_profile(); task.pick='profile'
+            Gui.Selection.clearSelection(); Gui.Selection.addSelection(later)
+            QtTest.QTest.qWait(100)
+            self.assertFalse(task.refs)
+            self.assertIn('must precede',task.status.text())
+            self.assertEqual(chain[1].ProfileReferences[0][0],chain[0])
+        finally: task.reject()
+        widget=panel.show_panel(); widget.tabs.setCurrentIndex(2); widget.refresh()
+        rows=[widget.trees[2].topLevelItem(i).data(0,panel._ROLE).ref[2]
+              for i in range(1,widget.trees[2].topLevelItemCount())]
+        self.assertEqual(rows,[o.Name for o in document.history(self.doc,self.owner)])
+        self.assertEqual(widget.trees[2].dragDropMode(),QtWidgets.QAbstractItemView.NoDragDrop)
+        self.assertTrue(all(not item.flags() & QtCore.Qt.ItemIsDragEnabled
+                            for item in widget._maps[2].values()))
