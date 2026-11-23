@@ -1,5 +1,23 @@
 # FreeCAD Plus: Current work state
 
+## Shared display rule and selected-curves preview — November 22, 2026
+
+The owner's instruction to carry selected-target visibility and additive/subtractive
+validity colors into future similar feature workflows is now recorded in
+[Task panel](ui-ux-specs/TASK_PANEL.md#shared-selected-target-and-validity-display--november-22-2026)
+and the development guidelines. This documents future acceptance requirements; it
+does not retrofit unrelated workflows.
+
+The owner also requested at least five visible selected-curve rows with scrolling
+or expansion. A native staged Extrude list preview is ready for chat approval:
+[top](evidence/extrude-selection-preview-20261122/proposed-top.png),
+[scrolled to the final selection](evidence/extrude-selection-preview-20261122/proposed-scrolled.png).
+It shows six complete rows at the current native font, satisfying the five-row
+minimum, and scrolls through all eight selected edges. The real Extrude remains valid.
+The [preview record](evidence/extrude-selection-preview-20261122/README.md) identifies
+the isolated candidate and exact fingerprint. **List implementation is pending approval;
+production source and the installed application are unchanged.**
+
 ## Extrude selected targets and validity colors — November 22, 2026
 
 The owner [approved the native screenshot preview](evidence/extrude-validity-20261122/approval.json).

@@ -18,6 +18,10 @@ their implementation priorities and proposed feature lists are not an active que
 9. Every feature/operation must reuse its creation task for editing, prefilled from
    the existing feature. Verify in-place acceptance and unchanged Cancel alongside
    creation. Follow the [shared task contract](ui-ux-specs/TASK_PANEL.md#shared-task-patterns).
+10. As similar feature workflows are implemented, apply the confirmed
+    [selected-target visibility and validity colors](ui-ux-specs/TASK_PANEL.md#shared-selected-target-and-validity-display--november-22-2026).
+    Include hidden-target selection, temporary display restoration and valid/invalid
+    additive/subtractive previews in their applicable acceptance checks.
 
 A clean checkout does not itself establish runtime stability or resolve the jitter
 reported for the archived fork. Those comparisons need separately authorized build

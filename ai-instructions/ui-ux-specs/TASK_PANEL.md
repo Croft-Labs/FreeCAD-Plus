@@ -4,6 +4,18 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Shared selected-target and validity display — November 22, 2026
+
+Owner instruction: apply Extrude's selected-target visibility and valid/invalid
+preview colors to all similar feature workflows as they are implemented. A selected
+target must remain visible in the configured selection color even with its History
+eye off, without changing saved visibility; use the same target-field opacity and
+temporary-display cleanup. Additive volumes use green when valid and yellow when
+invalid; subtractive volumes use red when valid and pink when invalid. Preserve real
+validation and prevent invalid acceptance. Apply these operation meanings where
+applicable; do not invent color meanings for unrelated operations. This is a standing
+requirement for future workflow work, not a claim that those workflows exist today.
+
 ### Extrude selected targets and validity colors — November 22, 2026
 
 The owner approved displaying a selected Add/Subtract target even when its History
