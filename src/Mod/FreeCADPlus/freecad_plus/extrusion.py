@@ -645,8 +645,9 @@ def save_feature(doc, refs, links, values, feature, engine):
         if getattr(feature, engine.ERROR) or feature.Shape.isNull() or 'Invalid' in feature.State:
             raise ValueError(getattr(feature, engine.ERROR) or engine.NAME+' failed to recompute.')
         # Consuming a face must not hide its entire donor solid/sheet.
-        if refs[0][0].isDerivedFrom('Sketcher::SketchObject'):
-            refs[0][0].Visibility = False
+        for source, _ in refs:
+            if source.isDerivedFrom('Sketcher::SketchObject'):
+                source.Visibility = False
         if target:
             target.Visibility = False
         feature.Visibility = body.Tip == feature

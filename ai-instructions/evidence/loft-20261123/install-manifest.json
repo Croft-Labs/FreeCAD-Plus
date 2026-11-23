@@ -1,0 +1,92 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\InitGui.py",
+    "build_path": "Mod/FreeCADPlus/InitGui.py",
+    "source_sha256": "f30ed12b98903ad248fbf8ba1e0ea01b23f42d17318517165c68a20ecfe98c81",
+    "built_sha256": "f30ed12b98903ad248fbf8ba1e0ea01b23f42d17318517165c68a20ecfe98c81",
+    "installed_sha256": "f30ed12b98903ad248fbf8ba1e0ea01b23f42d17318517165c68a20ecfe98c81",
+    "previous_sha256": "76a4778d7431f4be3592a1ce9050043b7b187a3e897b6d1de72a6c5d1ce779ed",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\InitGui.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\loft.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/loft.py",
+    "source_sha256": "79a0cc430e8a524b40222b181db898079374afc1c421be95ff282a79693430a2",
+    "built_sha256": "79a0cc430e8a524b40222b181db898079374afc1c421be95ff282a79693430a2",
+    "installed_sha256": "79a0cc430e8a524b40222b181db898079374afc1c421be95ff282a79693430a2",
+    "previous_sha256": null,
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\loft.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\loft_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/loft_task.py",
+    "source_sha256": "084801a6bd0a83c7cd8abe135b4b3993ab39e925363a4bbcc80500a42970952c",
+    "built_sha256": "084801a6bd0a83c7cd8abe135b4b3993ab39e925363a4bbcc80500a42970952c",
+    "installed_sha256": "084801a6bd0a83c7cd8abe135b4b3993ab39e925363a4bbcc80500a42970952c",
+    "previous_sha256": null,
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\loft_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\extrusion.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/extrusion.py",
+    "source_sha256": "a9fa3e715b63ec4a9bed0cc59720dc1dcf155e6b8631b0cf944766df83204d41",
+    "built_sha256": "a9fa3e715b63ec4a9bed0cc59720dc1dcf155e6b8631b0cf944766df83204d41",
+    "installed_sha256": "a9fa3e715b63ec4a9bed0cc59720dc1dcf155e6b8631b0cf944766df83204d41",
+    "previous_sha256": "2a78c96ba542a137f2f1ff96b48bcc494128da6f00b807bbc79cbc56bddd0856",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/editing.py",
+    "source_sha256": "f88fb6411e6423fdc154fa16bda7f013202175adc9597f7844dde1982dc5e896",
+    "built_sha256": "f88fb6411e6423fdc154fa16bda7f013202175adc9597f7844dde1982dc5e896",
+    "installed_sha256": "f88fb6411e6423fdc154fa16bda7f013202175adc9597f7844dde1982dc5e896",
+    "previous_sha256": "3c6ad900b5b831565787ac41cf1b47862f191ba6e902e4eb4c2ba7ff823a6885",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\editing.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\selection_list.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/selection_list.py",
+    "source_sha256": "54c62751f11b9010e50a04e4b4b3db1a3840b0c397cf3c67d96065bd7bddb5f2",
+    "built_sha256": "54c62751f11b9010e50a04e4b4b3db1a3840b0c397cf3c67d96065bd7bddb5f2",
+    "installed_sha256": "54c62751f11b9010e50a04e4b4b3db1a3840b0c397cf3c67d96065bd7bddb5f2",
+    "previous_sha256": "5b004062eeed78467143a00478533386cc600c871cf0d9bf072cb7d2de685eec",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\selection_list.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\toolbar_layout.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/toolbar_layout.py",
+    "source_sha256": "91ac3c0c55ada6541c65d25f8c2d9aa4d37accdf67e5c5b13c434c085c09106e",
+    "built_sha256": "91ac3c0c55ada6541c65d25f8c2d9aa4d37accdf67e5c5b13c434c085c09106e",
+    "installed_sha256": "91ac3c0c55ada6541c65d25f8c2d9aa4d37accdf67e5c5b13c434c085c09106e",
+    "previous_sha256": "a1a8736855962e75211acf4dfe5c5a714c4a74c21a3176e3698d4e8b36996ebc",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\toolbar_layout.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestLoftWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestLoftWorkflow.py",
+    "source_sha256": "f807b103fc41f53977737bedbd67ed1aa0c6adb69819ee80cf0bb3b834f8aa08",
+    "built_sha256": "f807b103fc41f53977737bedbd67ed1aa0c6adb69819ee80cf0bb3b834f8aa08",
+    "installed_sha256": "f807b103fc41f53977737bedbd67ed1aa0c6adb69819ee80cf0bb3b834f8aa08",
+    "previous_sha256": null,
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\TestLoftWorkflow.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestTaskEntryWorkflows.py",
+    "build_path": "Mod/FreeCADPlus/TestTaskEntryWorkflows.py",
+    "source_sha256": "985425b7e130654fb6e357e5ce802a97447135404fd2ff822971a6c0f5b16164",
+    "built_sha256": "985425b7e130654fb6e357e5ce802a97447135404fd2ff822971a6c0f5b16164",
+    "installed_sha256": "985425b7e130654fb6e357e5ce802a97447135404fd2ff822971a6c0f5b16164",
+    "previous_sha256": "172a5dc398619fa4df11bfca2401f88d87e6837ac294481722dca27f658689d8",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\Mod\\FreeCADPlus\\TestTaskEntryWorkflows.py"
+  },
+  {
+    "path": "lib\\PartDesignGui.pyd",
+    "build_path": "Mod/PartDesign/PartDesignGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "8b7e6f50410452d17543a2c5803821ddaeb9f638d00898065cf8e70671818f87",
+    "installed_sha256": "8b7e6f50410452d17543a2c5803821ddaeb9f638d00898065cf8e70671818f87",
+    "previous_sha256": "b5e67951183841ccb93a1396d492e4a0c98a45b33d7b00d7fabb2dfa481d1eee",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\loft-20261123\\install-backup\\lib\\PartDesignGui.pyd"
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "ok": true,
+  "entries": {
+    "ShapeBinder0": [
+      "Pad",
+      "Pocket",
+      "Revolve",
+      "Groove",
+      "Loft",
+      "Additive Pipe",
+      "Subtractive Pipe"
+    ],
+    "ShapeBinder1": [
+      "Pad",
+      "Pocket",
+      "Revolve",
+      "Groove",
+      "Additive Loft",
+      "Subtractive Loft",
+      "Additive Pipe",
+      "Subtractive Pipe"
+    ],
+    "SubShapeBinder0": [
+      "Pad",
+      "Pocket",
+      "Revolve",
+      "Groove",
+      "Loft",
+      "Additive Pipe",
+      "Subtractive Pipe"
+    ],
+    "SubShapeBinder1": [
+      "Pad",
+      "Pocket",
+      "Revolve",
+      "Groove",
+      "Additive Loft",
+      "Subtractive Loft",
+      "Additive Pipe",
+      "Subtractive Pipe"
+    ]
+  }
+}

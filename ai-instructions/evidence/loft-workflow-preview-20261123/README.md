@@ -1,5 +1,9 @@
 # Unified Loft proposal — November 23, 2026
 
+Subsequently approved in chat: "Approved. Implement". See
+[implementation/acceptance](../loft-20261123/README.md). The following describes
+the UI-only preview and its original evidence boundary.
+
 Owner requests one Loft workflow with New/Add/Subtract and combined Plus task
 entries, subsequently adding Solid/Sheet output. Concrete UI approval is pending; production code and installed payload
 remain unchanged at 7479a0ff04278b9b15903e1fc6c8a00092b83d1a.

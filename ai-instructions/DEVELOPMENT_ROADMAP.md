@@ -3,11 +3,12 @@
 ## Unified Loft — November 23, 2026
 
 - [ X ] Prepare [direct native UI proposal](evidence/loft-workflow-preview-20261123/README.md), including Solid/Sheet amendment.
-- [   ] Obtain approval of the concrete workflow/layout.
-- [   ] Implement Solid/Sheet and shared New/Add/Subtract creation/editing, plus combined Plus task entries.
-- [   ] Verify geometry, routing with absent/different native Body, targets/colors,
+- [ X ] Obtain approval of the concrete workflow/layout: "Approved. Implement".
+- [ X ] Implement Solid/Sheet and shared New/Add/Subtract creation/editing, plus combined Plus task entries.
+- [ X ] Verify geometry, routing with absent/different native Body, targets/colors,
   history/access, edit identity, Cancel/Undo/reopen and Classic/legacy compatibility;
   install with rollback and verify the existing shortcut.
+  See [installed acceptance](evidence/loft-20261123/README.md).
 
 ## Shell, Thicken and Surface section — November 23, 2026
 

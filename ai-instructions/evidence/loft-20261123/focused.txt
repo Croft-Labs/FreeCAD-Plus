@@ -1,0 +1,22 @@
+test_add_subtract_invalid_contact_and_active_body_independence (TestLoftWorkflow.TestLoftWorkflow.test_add_subtract_invalid_contact_and_active_body_independence) ... ok
+test_boolean_edit_preserves_target_identity_and_other_solid (TestLoftWorkflow.TestLoftWorkflow.test_boolean_edit_preserves_target_identity_and_other_solid) ... ok
+test_classic_and_plus_task_entries_for_multiple_sections (TestLoftWorkflow.TestLoftWorkflow.test_classic_and_plus_task_entries_for_multiple_sections) ... ok
+test_closed_sheet_sequence (TestLoftWorkflow.TestLoftWorkflow.test_closed_sheet_sequence) ... ok
+test_external_component_recompute_outside_edit_context (TestLoftWorkflow.TestLoftWorkflow.test_external_component_recompute_outside_edit_context) ... ok
+test_hidden_target_valid_invalid_colors_and_cancel (TestLoftWorkflow.TestLoftWorkflow.test_hidden_target_valid_invalid_colors_and_cancel) ... ok
+test_invalid_input_and_later_reference_are_atomic (TestLoftWorkflow.TestLoftWorkflow.test_invalid_input_and_later_reference_are_atomic) ... ok
+test_native_and_plus_command_dispatch_no_active_body (TestLoftWorkflow.TestLoftWorkflow.test_native_and_plus_command_dispatch_no_active_body) ... ok
+test_open_and_closed_sheet_profiles (TestLoftWorkflow.TestLoftWorkflow.test_open_and_closed_sheet_profiles) ... ok
+test_other_component_sources_and_targets_rejected (TestLoftWorkflow.TestLoftWorkflow.test_other_component_sources_and_targets_rejected) ... ok
+test_planar_face_sections_and_vertex_endpoint (TestLoftWorkflow.TestLoftWorkflow.test_planar_face_sections_and_vertex_endpoint) ... ok
+test_profile_reference_retains_section_order_same_object (TestLoftWorkflow.TestLoftWorkflow.test_profile_reference_retains_section_order_same_object) ... ok
+test_save_edit_undo_recompute_and_reopen (TestLoftWorkflow.TestLoftWorkflow.test_save_edit_undo_recompute_and_reopen) ... ok
+test_section_picking_error_recovery_and_sole_target (TestLoftWorkflow.TestLoftWorkflow.test_section_picking_error_recovery_and_sole_target) ... ok
+test_solid_ruled_holes_and_read_only_preview (TestLoftWorkflow.TestLoftWorkflow.test_solid_ruled_holes_and_read_only_preview) ... ok
+test_task_output_order_edit_cancel_and_manual_preview (TestLoftWorkflow.TestLoftWorkflow.test_task_output_order_edit_cancel_and_manual_preview) ... ok
+test_transformed_target_and_downstream_face_reference (TestLoftWorkflow.TestLoftWorkflow.test_transformed_target_and_downstream_face_reference) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 15.446s
+
+OK

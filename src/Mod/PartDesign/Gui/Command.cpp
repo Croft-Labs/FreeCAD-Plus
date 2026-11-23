@@ -1723,6 +1723,20 @@ void CmdPartDesignAdditiveLoft::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
 
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module tasks(PyImport_ImportModule("freecad_plus.loft_task"), true);
+            tasks.callMemberFunction("dispatch", Py::TupleN(Py::String("AdditiveLoft")));
+        }
+        catch (Py::Exception&) {
+            Base::PyException error;
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QString::fromUtf8(error.what()));
+        }
+        return;
+    }
+
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
@@ -1772,6 +1786,20 @@ CmdPartDesignSubtractiveLoft::CmdPartDesignSubtractiveLoft()
 void CmdPartDesignSubtractiveLoft::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
+
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module tasks(PyImport_ImportModule("freecad_plus.loft_task"), true);
+            tasks.callMemberFunction("dispatch", Py::TupleN(Py::String("SubtractiveLoft")));
+        }
+        catch (Py::Exception&) {
+            Base::PyException error;
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QString::fromUtf8(error.what()));
+        }
+        return;
+    }
 
     PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
 

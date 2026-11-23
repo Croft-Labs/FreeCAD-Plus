@@ -9,3 +9,5 @@ ui_modes.install()
 
 from freecad_plus import thicken_task
 thicken_task.install()
+from freecad_plus import loft_task
+loft_task.install()

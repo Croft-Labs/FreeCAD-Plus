@@ -1,5 +1,15 @@
 # FreeCAD Plus: Programming Summary
 
+## Unified Loft installed — November 23, 2026
+
+Loft combines Solid/Sheet and New/Add/Subtract in one creation/edit task with
+ordered sections. Plus task entries are combined; Classic aliases use shared
+component routing without active-Body dependence. Native saved features retain
+their native editors. Installed broad suite 120 checks and final Loft suite 17
+passed, with native UI/colors, binder-entry, fresh-reopen and shortcut verification.
+See [acceptance and screenshots](evidence/loft-20261123/README.md) and
+[architecture](ARCHITECTURE.md#unified-loft--november-23-2026).
+
 ## Component-only routing repair installed — November 23, 2026
 
 Shell now resolves the selected solid's Body regardless of Classic active-Body state;

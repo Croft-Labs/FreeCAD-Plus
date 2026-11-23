@@ -171,8 +171,9 @@ private:
 class ModelingTaskWatcher : public Gui::TaskView::TaskWatcherCommands
 {
 public:
-    ModelingTaskWatcher(const char* commands[], bool plus)
-        : TaskWatcherCommands("SELECT Sketcher::SketchObject COUNT 1", commands,
+    ModelingTaskWatcher(const char* commands[], bool plus,
+                        const char* filter = "SELECT Sketcher::SketchObject COUNT 1")
+        : TaskWatcherCommands(filter, commands,
                               "Modeling Tools", "PartDesign_Body"), plus(plus) {}
 
     bool shouldShow() override
@@ -441,7 +442,7 @@ void Workbench::activated()
 
     const char* componentSketch[] = {
         "PartDesign_NewSketch", "FreeCADPlus_Extrude", "PartDesign_Hole", "FreeCADPlus_Revolve",
-        "PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft",
+        "FreeCADPlus_Loft",
         "PartDesign_AdditivePipe", "PartDesign_SubtractivePipe",
         "PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix", nullptr
     };
@@ -454,12 +455,11 @@ void Workbench::activated()
         "PartDesign_SubtractivePipe",
         nullptr
     };
-    Watcher.push_back(new Gui::TaskView::TaskWatcherCommands(
-        "SELECT Sketcher::SketchObject COUNT 2..",
-        Sketches,
-        "Modeling tools",
-        "PartDesign_Body"
-    ));
+    Watcher.push_back(new ModelingTaskWatcher(Sketches, false, "SELECT Sketcher::SketchObject COUNT 2.."));
+    const char* componentSketches[] = {
+        "FreeCADPlus_Loft", "PartDesign_AdditivePipe", "PartDesign_SubtractivePipe", nullptr
+    };
+    Watcher.push_back(new ModelingTaskWatcher(componentSketches, true, "SELECT Sketcher::SketchObject COUNT 2.."));
 
     const char* ShapeBinder[] = {
         "PartDesign_Pad",
@@ -472,12 +472,12 @@ void Workbench::activated()
         "PartDesign_SubtractivePipe",
         nullptr
     };
-    Watcher.push_back(new Gui::TaskView::TaskWatcherCommands(
-        "SELECT PartDesign::ShapeBinder COUNT 1",
-        ShapeBinder,
-        "Modeling tools",
-        "PartDesign_Body"
-    ));
+    Watcher.push_back(new ModelingTaskWatcher(ShapeBinder, false, "SELECT PartDesign::ShapeBinder COUNT 1"));
+    const char* componentShapeBinder[] = {
+        "PartDesign_Pad", "PartDesign_Pocket", "PartDesign_Revolution", "PartDesign_Groove",
+        "FreeCADPlus_Loft", "PartDesign_AdditivePipe", "PartDesign_SubtractivePipe", nullptr
+    };
+    Watcher.push_back(new ModelingTaskWatcher(componentShapeBinder, true, "SELECT PartDesign::ShapeBinder COUNT 1"));
 
     const char* SubShapeBinder[] = {
         "PartDesign_Pad",
@@ -490,12 +490,12 @@ void Workbench::activated()
         "PartDesign_SubtractivePipe",
         nullptr
     };
-    Watcher.push_back(new Gui::TaskView::TaskWatcherCommands(
-        "SELECT PartDesign::SubShapeBinder COUNT 1",
-        SubShapeBinder,
-        "Modeling tools",
-        "PartDesign_Body"
-    ));
+    Watcher.push_back(new ModelingTaskWatcher(SubShapeBinder, false, "SELECT PartDesign::SubShapeBinder COUNT 1"));
+    const char* componentSubShapeBinder[] = {
+        "PartDesign_Pad", "PartDesign_Pocket", "PartDesign_Revolution", "PartDesign_Groove",
+        "FreeCADPlus_Loft", "PartDesign_AdditivePipe", "PartDesign_SubtractivePipe", nullptr
+    };
+    Watcher.push_back(new ModelingTaskWatcher(componentSubShapeBinder, true, "SELECT PartDesign::SubShapeBinder COUNT 1"));
 
     const char* Transformed[] = {
         "PartDesign_Mirrored",

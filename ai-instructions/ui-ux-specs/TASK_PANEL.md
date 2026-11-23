@@ -8,10 +8,13 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 Owner requests combining Additive/Subtractive Loft into one Loft with New/Add/Subtract,
 matching Extrude/Revolve, and merging their Plus task entries. The
-[native UI proposal](../evidence/loft-workflow-preview-20261123/README.md) is awaiting
-explicit approval; the following layout/implementation details are proposed.
+[native UI proposal](../evidence/loft-workflow-preview-20261123/README.md), including
+the Solid/Sheet amendment, was explicitly approved in chat: "Approved. Implement".
+Session `64ec80523dda`, fingerprint
+`7f0837fb50c2141b8aa3107c2211c811187ef2617d025e89b32be62a6ace28ba`, was re-inspected
+as fresh and within scope before implementation; tool approval state was untouched.
 
-Owner additionally requested Solid/Sheet output. The revised proposal uses the
+Owner additionally requested Solid/Sheet output. The approved workflow uses the
 same two-column arrangement as Extrude/Revolve: Solid/Sheet left, New/Add/Subtract
 right. Solid defaults on. Sheet selects and locks New, disables all operation
 buttons, clears/hides the target and accepts compatible open or closed section
@@ -44,8 +47,9 @@ in Plus documents. Plus Loft entry defaults New. Preserve native legacy document
 workflows, existing identities/settings and unrelated ribbon/tab/coordinate visuals.
 Implementation scope: shared Loft engine/task, creation/edit dispatch, native Loft
 command bridges, Plus task watchers/entry command and relevant registration/tests.
-No Pipe/Helix migration is included in this proposal.
-Saved native features must retain unsupported settings/native editing where needed.
+No Pipe/Helix migration is included. Saved native Loft features retain their native
+editor and properties; newly created Plus Lofts use the shared creation/edit task.
+See [implementation and native acceptance](../evidence/loft-20261123/README.md).
 
 ### Component-owned operation routing — November 23, 2026
 

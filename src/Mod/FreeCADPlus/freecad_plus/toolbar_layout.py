@@ -33,7 +33,7 @@ MODELING = (
     ('Modeling', (
         ('Extrude', 'large', ('PartDesign_Pad', 'PartDesign_Pocket')),
         ('Revolve', 'large', ('PartDesign_Revolution', 'PartDesign_Groove')),
-        ('Loft', 'medium', ('PartDesign_AdditiveLoft', 'PartDesign_SubtractiveLoft')),
+        ('Loft', 'medium', ('FreeCADPlus_Loft', 'PartDesign_AdditiveLoft', 'PartDesign_SubtractiveLoft')),
         ('Helix', 'medium', ('PartDesign_AdditiveHelix', 'PartDesign_SubtractiveHelix')),
     )),
     ('Dress-Up', (

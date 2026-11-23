@@ -8,6 +8,33 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Unified Loft — November 23, 2026
+
+`freecad_plus.loft` evaluates ordered section snapshots with native PartDesign Loft
+for solids and native Part Loft for uncapped sheets. Profiles may have corresponding
+multiple wires, including solid holes; vertex endpoints retain native geometry rules.
+Preview uses temporary documents/shapes and never writes feature objects. Booleans
+consume the explicit current target; non-intersection/no material change retains the
+tool for invalid-color display. No Classic active Body is consulted.
+
+New saved `PartDesign::FeatureAddSubPython` objects carry `PlusLoftVersion=1`, ordered
+`ProfileReferences`, `Target`, hidden `Loft_*` settings and `LoftError`. Shared
+`extrusion.save_feature` preserves identity, transactions and Body-local transforms;
+all consumed sketches are hidden without moving their ownership/history position.
+Recompute validates saved ownership independently of the currently edited view.
+Topology names include all ordered source IDs. Existing native Lofts retain native
+identities, properties and editors; no automatic conversion occurs.
+
+`loft_task.LoftTask` reuses target presentation, admission, History/eye controls,
+preview and creation/edit lifecycle from `ExtrudeTask`, adding an ordered collector
+and Loft options. Native Additive/Subtractive Loft commands dispatch to Add/Subtract
+for component documents. `FreeCADPlus_Loft` starts New and serves the combined Plus
+task entry/ribbon action. Native legacy documents bypass the new dispatch. Single,
+multiple-sketch and binder task watchers retain Classic entries and choose combined
+Loft labels in Plus mode. The selection-list font/style resize callback is now
+bound to its Qt owner so closing a task cancels pending resize work.
+See [native acceptance](evidence/loft-20261123/README.md).
+
 ## Component routing authority — November 23, 2026
 
 The edited Component and explicit inputs/targets define Plus operation ownership.

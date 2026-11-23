@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "native_commands": true,
+  "drag_model_order": true,
+  "sheet_lock": true,
+  "hidden_target": true,
+  "valid_invalid": true,
+  "edit_identity": true,
+  "other_solid_unchanged": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\loft.py"
+}

@@ -24,4 +24,4 @@ class SelectionList(QtWidgets.QListWidget):
     def changeEvent(self, event):
         super().changeEvent(event)
         if event.type() in (QtCore.QEvent.FontChange, QtCore.QEvent.StyleChange):
-            QtCore.QTimer.singleShot(0, self.resize_rows)
+            QtCore.QTimer.singleShot(0, self, self.resize_rows)

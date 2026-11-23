@@ -1,0 +1,44 @@
+import json,os,sys,traceback,unittest,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+run_name=os.environ['PLUS_TEST_RUN']
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test);self.stream.flush()
+    def addError(self,test,err):
+        super().addError(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+    def addFailure(self,test,err):
+        super().addFailure(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        if os.environ.get('PLUS_SOURCE_CHECK')=='1':
+            source='C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus'
+            sys.path.insert(0,source)
+            import freecad_plus
+            freecad_plus.__path__.insert(0,source+'/freecad_plus')
+            from freecad_plus import extrusion,editing
+            importlib.reload(extrusion);importlib.reload(editing)
+        import TestLoftWorkflow
+        suite=unittest.defaultTestLoader.loadTestsFromTestCase(TestLoftWorkflow.TestLoftWorkflow)
+        if os.environ.get('PLUS_SOURCE_CHECK')=='1':
+            suite=unittest.TestSuite(test for test in suite if 'command_dispatch' not in test.id())
+        for name in (() if os.environ.get('PLUS_TEST_SCOPE') != 'broad' else ('TestExtrudeWorkflow','TestRevolveWorkflow','TestThickenWorkflow','TestTaskEntryWorkflows','TestComponentCommandInputs','TestComponentDressUpInputs','TestComponentSweepInputs','TestExtrudeVisibility','TestTargetCoordinateWorkflow')):
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromTestCase(getattr(importlib.import_module(name),name)))
+        with (out/(run_name+'.txt')).open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        from freecad_plus import extrusion,extrude_task
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors),modules=[extrusion.__file__,extrude_task.__file__])
+    except BaseException:result['error']=traceback.format_exc()
+    (out/(run_name+'.json')).write_text(json.dumps(result,indent=2))
+    from freecad_plus import extrude_task
+    if extrude_task._active:extrude_task._active.reject()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

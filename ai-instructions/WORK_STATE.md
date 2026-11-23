@@ -1,13 +1,19 @@
 # FreeCAD Plus: Current work state
 
-## Unified Loft preview pending approval — November 23, 2026
+## Unified Loft installed — November 23, 2026
 
-Requested unified Loft/New/Add/Subtract and merged Plus task entries are previewed
-with native shared widgets, now including the owner's added Solid/Sheet option.
-Sheet forces/locks New as in Extrude/Revolve. [Direct screenshots, source and checks](evidence/loft-workflow-preview-20261123/README.md).
-Session 64ec80523dda supersedes f28df6cc461b and is fresh/in-scope; approval state untouched. Production remains
-7479a0ff04, installed and pushed. Await concrete UI approval before implementation;
-follow [proposed scope](ui-ux-specs/TASK_PANEL.md#unified-loft--november-23-2026).
+Owner approved the amended Solid/Sheet proposal. Shared Loft creation/editing now
+offers New/Add/Subtract, ordered sections and native Loft options. Sheet forces
+and locks New. Plus task entries are combined; Classic aliases dispatch to shared
+Add/Subtract in component documents, independent of ambient native Body state.
+Saved native Lofts retain native editing/identities. All shared target, History,
+visibility, validity-color and transaction conventions apply.
+
+Broad build suite 118 checks, expanded build Loft suite 17, installed broad suite
+120 and final installed Loft suite 17 passed. Installed UI/color/drag-model audit,
+binder entries, fresh-process recompute and existing shortcut verified. Ten payload
+files installed with rollback/hash checks; owner sessions/settings and unrelated
+project.previewfirst.json preserved. [Acceptance and direct screenshots](evidence/loft-20261123/README.md).
 
 ## Component-only routing repair installed — November 23, 2026
 

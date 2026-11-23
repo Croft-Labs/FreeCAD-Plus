@@ -84,8 +84,9 @@ class TestTaskEntryWorkflows(unittest.TestCase):
                 self.assertNotIn('Pocket', labels);self.assertNotIn('Groove', labels)
             else:
                 self.assertEqual(labels[:6], ['New Sketch', 'Pad', 'Pocket', 'Hole', 'Revolve', 'Groove'])
-            self.assertEqual(labels[-6:], ['Additive Loft', 'Subtractive Loft', 'Additive Pipe',
-                                         'Subtractive Pipe', 'Additive Helix', 'Subtractive Helix'])
+            self.assertEqual(labels[4:] if task_mode == 0 else labels[6:],
+                             (['Loft'] if task_mode == 0 else ['Additive Loft', 'Subtractive Loft']) +
+                             ['Additive Pipe', 'Subtractive Pipe', 'Additive Helix', 'Subtractive Helix'])
             self.select()
             self.assertFalse(any('Hole' in labels for _, labels in action_boxes()))
 
@@ -93,9 +94,10 @@ class TestTaskEntryWorkflows(unittest.TestCase):
         original = self.state()
         for mode in (0, 1):
             self.prefs.SetInt('TaskPanelUIMode', mode)
-            entries = [('Extrude', 'Extrude', 'New Solid'), ('Revolve', 'Revolve', 'New Solid')] if mode == 0 else [
+            entries = [('Extrude', 'Extrude', 'New Solid'), ('Revolve', 'Revolve', 'New Solid'), ('Loft', 'Loft', 'New Solid')] if mode == 0 else [
                 ('Pad', 'Extrude', 'New Solid'), ('Pocket', 'Extrude', 'Subtract'),
-                ('Revolve', 'Revolve', 'New Solid'), ('Groove', 'Revolve', 'Subtract')]
+                ('Revolve', 'Revolve', 'New Solid'), ('Groove', 'Revolve', 'Subtract'),
+                ('Additive Loft', 'Loft', 'Add'), ('Subtractive Loft', 'Loft', 'Subtract')]
             for label, title, operation in entries:
                 self.widget.tabs.setCurrentIndex(0);self.select(self.profile)
                 box = next(w for w, labels in action_boxes() if label in labels)

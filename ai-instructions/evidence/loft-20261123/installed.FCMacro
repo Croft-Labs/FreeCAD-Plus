@@ -1,0 +1,84 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from pivy import coin
+from freecad_plus import document,modeling,editing,loft,loft_task,extrude_task,panel
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1100);win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench');doc=document.new_document('Unified Loft')
+        owner=document.validate(doc).Definitions[0];solids=[]
+        for x in (0,50):
+            body=owner.newObject('PartDesign::Body','Body');solid=body.newObject('PartDesign::Feature','Solid')
+            solid.Shape=Part.makeBox(20,20,10,App.Vector(x-10,-10,-5));body.Tip=solid;solids.append(solid)
+        refs=[]
+        for z,r in ((0,4),(10,6),(20,3)):
+            sketch=modeling.new_sketch(doc);sketch.Placement.Base.z=z
+            sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),r),False);refs.append((sketch,''))
+        doc.recompute();view=Gui.activeDocument().activeView();view.setAnimationEnabled(False)
+        view.viewAxonometric();camera=view.getCameraNode();camera.height=60
+        center=App.Vector(0,0,8);position=center+view.getCameraOrientation().multVec(App.Vector(0,0,100))
+        camera.position.setValue(position.x,position.y,position.z)
+        view.setActiveObject('pdbody',solids[1].getParentGeoFeatureGroup())
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks');tasks.setMinimumWidth(420)
+        def shot(name):
+            QtTest.QTest.qWait(180)
+            for scroll in tasks.findChildren(QtWidgets.QScrollArea):scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(100);assert tasks.grab().save(str(out/(name+'.png')))
+            if name.startswith('loft-'):view.saveImage(str(out/(name+'-geometry.png')),800,650,'Current')
+        def color(task,expected):
+            search=coin.SoSearchAction();search.setType(coin.SoMaterial.getClassTypeId());search.apply(task.tool_preview)
+            actual=tuple(search.getPath().getTail().diffuseColor[0].getValue())
+            assert all(abs(a-b)<1e-6 for a,b in zip(actual,expected)),actual
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(refs[0][0]);shot('modeling-single')
+        for obj,_ in refs[1:]:Gui.Selection.addSelection(obj)
+        shot('modeling-multiple');Gui.runCommand('FreeCADPlus_Loft');task=extrude_task._active
+        assert isinstance(task,loft_task.LoftTask) and task.valid
+        shot('loft-solid-task')
+        # Exercise the internal-move model path used by native drag/drop.
+        assert task.profiles.model().moveRows(QtCore.QModelIndex(),1,1,QtCore.QModelIndex(),0)
+        assert task.refs[0]==refs[1]
+        assert task.profiles.model().moveRows(QtCore.QModelIndex(),0,1,QtCore.QModelIndex(),2)
+        assert task.refs==refs and task.valid
+        task.outputs['Sheet'].click();assert task.valid and not task.result_shape.Solids
+        assert all(not button.isEnabled() for button in task.modes.values());shot('loft-sheet-task')
+        task.outputs['Solid'].click();assert task.accept();feature=task.result;identity=feature.ID
+        assert all(not obj.Visibility for obj,_ in refs)
+        task=editing.edit_feature(doc,feature);assert task.refs==refs and task.valid;task.reject()
+        assert solids[1].getParentGeoFeatureGroup().Tip==solids[1] and abs(solids[1].Shape.Volume-4000)<1e-6
+        # Force hidden target display, valid and invalid boolean overlays.
+        solids[0].Visibility=False
+        Gui.Selection.clearSelection()
+        for obj,_ in refs:Gui.Selection.addSelection(obj)
+        Gui.runCommand('PartDesign_AdditiveLoft');task=extrude_task._active
+        assert task.mode()=='Add' and 'target' not in task.links;shot('loft-add-target')
+        task.pick='target';task.addSelection(doc.Name,solids[0].Name,'');task.pick='profile';task.presentation.update_style()
+        assert task.valid and task.target_overlay is not None and not solids[0].Visibility
+        color(task,(.15,.75,.3))
+        shot('loft-add-valid')
+        task.pick='target';task.addSelection(doc.Name,solids[1].Name,'');assert not task.valid and task.tool_preview is not None
+        color(task,(1.,.82,.08))
+        shot('loft-add-invalid')
+        task.modes['Subtract'].click();assert not task.valid;color(task,(1.,.4,.7));shot('loft-subtract-invalid')
+        task.pick='target';task.addSelection(doc.Name,solids[0].Name,'');assert task.valid;color(task,(.95,.22,.22));shot('loft-subtract-valid')
+        assert task.accept();cut=task.result
+        assert cut.getParentGeoFeatureGroup()==solids[0].getParentGeoFeatureGroup()
+        assert solids[1].getParentGeoFeatureGroup().Tip==solids[1]
+        # Leave a visible solid and a separate sheet in the saved acceptance file.
+        task=editing.edit_feature(doc,feature);task.outputs['Sheet'].click();assert task.accept() and feature.ID==identity
+        names=dict(feature=feature.Name,identity=identity,area=feature.Shape.Area,cut=cut.Name,
+                   cut_volume=cut.Shape.Volume,other=solids[1].Name,other_volume=solids[1].Shape.Volume)
+        document.save_document(doc,out/'Loft.cadprt');(out/'fixture.json').write_text(json.dumps(names,indent=2))
+        result.update(ok=True,native_commands=True,drag_model_order=True,sheet_lock=True,
+                      hidden_target=True,valid_invalid=True,edit_identity=True,other_solid_unchanged=True,
+                      module=loft.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    if extrude_task._active:extrude_task._active.reject()
+    (out/'installed.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

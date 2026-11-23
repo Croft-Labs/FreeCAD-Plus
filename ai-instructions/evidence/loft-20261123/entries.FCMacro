@@ -1,0 +1,30 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore
+from freecad_plus import document,modeling
+from TestTaskEntryWorkflows import action_boxes,settle
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench');doc=document.new_document('Loft binder entries')
+        owner=document.validate(doc).Definitions[0];sketch=modeling.new_sketch(doc)
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),4),False);doc.recompute()
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/General');result['entries']={}
+        for kind in ('ShapeBinder','SubShapeBinder'):
+            binder=owner.newObject('PartDesign::'+kind,kind);binder.Support=[(sketch,[''])];doc.recompute()
+            for mode in (0,1):
+                prefs.SetInt('TaskPanelUIMode',mode);Gui.Selection.clearSelection();Gui.Selection.addSelection(binder);settle()
+                labels=[label for _,items in action_boxes() for label in items]
+                if mode==0:
+                    assert labels.count('Loft')==1 and 'Additive Loft' not in labels and 'Subtractive Loft' not in labels,labels
+                else:assert 'Additive Loft' in labels and 'Subtractive Loft' in labels and 'Loft' not in labels,labels
+                assert 'Pad' in labels and 'Pocket' in labels and 'Revolve' in labels and 'Groove' in labels,labels
+                result['entries'][kind+str(mode)]=labels
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'entries.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)
