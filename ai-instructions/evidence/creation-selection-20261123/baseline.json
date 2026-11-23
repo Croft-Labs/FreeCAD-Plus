@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "new-file",
+      "active": "Part001",
+      "selection": [
+        "Part001Instance"
+      ],
+      "actions": []
+    },
+    {
+      "case": "new-component",
+      "active": "Part002",
+      "selection": [
+        "Component"
+      ],
+      "actions": []
+    },
+    {
+      "case": "empty-file",
+      "active": "Part001",
+      "selection": [
+        "Part001"
+      ],
+      "actions": []
+    }
+  ],
+  "proposed": false
+}

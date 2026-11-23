@@ -1,0 +1,47 @@
+"""Installed creation leaves no selection and restores the approved idle task card."""
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,hierarchy,editing,panel,ui_modes
+from TestTaskEntryWorkflows import action_boxes
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False,'cases':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/General')
+        for key in ui_modes.KEYS:prefs.SetInt(key,0)
+        for case in ('new-file','new-component','empty-file'):
+            if case=='empty-file':
+                doc=App.newDocument('Empty');doc.UndoMode=1
+                Gui.runCommand('Std_Part')
+            else:
+                Gui.runCommand('Std_New');doc=App.ActiveDocument
+                if case=='new-component':Gui.runCommand('Std_Part')
+            QtTest.QTest.qWait(450)
+            created=document.validate(doc).Definitions[-1];widget=panel._panel
+            assert editing.context(doc)[0]==created and widget.tabs.currentIndex()==2
+            assert not Gui.Selection.getSelection('*')
+            assert all(not tree.selectedItems() for tree in widget.trees)
+            boxes=action_boxes();expected=['New Sketch','Datum Plane','Datum Line','Datum Point']
+            assert expected in [labels for _,labels in boxes]
+            if case=='new-component':
+                assert widget.grab().save(str(out/'history.png'))
+                box=next(w for w,labels in boxes if labels==expected)
+                assert box.grab().save(str(out/'idle-tasks.png'))
+            Gui.Selection.addSelection(created.Origin);QtTest.QTest.qWait(350)
+            assert created.Origin in Gui.Selection.getSelection('*')
+            result['cases'].append(dict(case=case,active=created.Label,empty_selection=True,
+                                        history=True,idle_actions=expected,next_selection_preserved=True))
+            App.closeDocument(doc.Name)
+        assert '/app/' in panel.__file__.replace('\\','/'),panel.__file__
+        result.update(ok=True,module=panel.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

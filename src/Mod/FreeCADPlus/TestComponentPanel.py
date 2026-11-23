@@ -835,6 +835,7 @@ class TestNativeComponentCreation(unittest.TestCase):
             self.assertEqual(root.Group[0].LinkedObject, root.Definitions[0])
             self.assertEqual(editing.context(doc)[0], root.Definitions[0])
             self.assertEqual(panel._panel.tabs.currentIndex(), 2)
+            self.assertFalse(Gui.Selection.getSelection('*'))
             existing = {o.Name: o.ID for o in doc.Objects}
             placed = tuple(o.Name for o in root.Group)
             undo = doc.UndoCount
@@ -850,6 +851,7 @@ class TestNativeComponentCreation(unittest.TestCase):
                                  for item in panel._panel._maps[1].values()))
             self.assertEqual(editing.context(doc)[0], created)
             self.assertEqual(panel._panel.tabs.currentIndex(), 2)
+            self.assertFalse(Gui.Selection.getSelection('*'))
             self.assertEqual({n: doc.getObject(n).ID for n in existing}, existing)
             self.assertEqual(doc.UndoCount, undo + 1)
             doc.undo(); settle()
@@ -888,6 +890,7 @@ class TestNativeComponentCreation(unittest.TestCase):
         self.assertEqual(tuple(o.Name for o in source_root.Group), links)
         self.assertEqual(editing.context(doc)[0], created)
         self.assertEqual(panel._panel.tabs.currentIndex(), 2)
+        self.assertFalse(Gui.Selection.getSelection('*'))
         source.undo(); settle()
         self.assertEqual(len(source_root.Definitions), 1)
         document.validate(doc)
@@ -901,6 +904,7 @@ class TestNativeComponentCreation(unittest.TestCase):
         self.assertEqual(len(self.model_names()), 1)
         self.assertEqual(editing.context(doc)[0], root.Definitions[0])
         self.assertEqual(panel._panel.tabs.currentIndex(), 2)
+        self.assertFalse(Gui.Selection.getSelection('*'))
         self.assertEqual(list(root.Group), [])
         doc.undo(); settle(); self.assertEqual(list(doc.Objects), [])
         doc.redo(); settle(); self.assertEqual(len(document.validate(doc).Definitions), 1)

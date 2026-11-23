@@ -110,6 +110,10 @@ class TestTaskEntryWorkflows(unittest.TestCase):
                 self.assertEqual(self.state(), original)
 
     def test_creation_navigation_factories_and_task_restoration(self):
+        self.assertFalse(Gui.Selection.getSelection('*'))
+        self.assertFalse(any(tree.selectedItems() for tree in self.widget.trees))
+        self.assertIn(['New Sketch', 'Datum Plane', 'Datum Line', 'Datum Point'],
+                      [labels for _, labels in action_boxes()])
         self.widget.tabs.setCurrentIndex(1)
         original = editing.context(self.doc)[0]
         hierarchy.create_definition(self.doc, 'Catalog only');settle()
@@ -118,6 +122,13 @@ class TestTaskEntryWorkflows(unittest.TestCase):
         created = hierarchy.new_part();settle()
         self.assertEqual(editing.context(self.doc)[0], created)
         self.assertEqual(self.widget.tabs.currentIndex(), 2)
+        self.assertFalse(Gui.Selection.getSelection('*'))
+        self.assertFalse(any(tree.selectedItems() for tree in self.widget.trees))
+        self.assertIn(['New Sketch', 'Datum Plane', 'Datum Line', 'Datum Point'],
+                      [labels for _, labels in action_boxes()])
+        Gui.Selection.addSelection(created.Origin);settle()
+        self.assertIn(created.Origin, Gui.Selection.getSelection('*'))
+        Gui.Selection.clearSelection()
         links = tuple(document.validate(self.doc).Group)
         task = sketch_task.show();settle()
         with self.assertRaises(ValueError):hierarchy.new_part()

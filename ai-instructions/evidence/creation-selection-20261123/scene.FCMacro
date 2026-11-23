@@ -1,0 +1,57 @@
+"""Native creation selection correction; reuse approved History/Create Geometry UI."""
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest,QtGui
+import freecad_plus
+from freecad_plus import document,hierarchy,editing
+from TestTaskEntryWorkflows import action_boxes
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'cases':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        from freecad_plus import panel
+        if panel._panel is not None:panel._panel.close()
+        freecad_plus.__path__.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);importlib.reload(panel)
+        source=Path(panel.__file__).read_text();proposed='widget.tabs.setCurrentIndex(2)\n        Gui.Selection.clearSelection()' in source
+        result['proposed']=proposed
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/General')
+        for key in ('ModelPanelUIMode','TaskPanelUIMode','ToolbarUIMode'):prefs.SetInt(key,0)
+        for case in ('new-file','new-component','empty-file'):
+            if case=='empty-file':
+                doc=App.newDocument('Empty');doc.UndoMode=1;created=hierarchy.new_part()
+            else:
+                doc=document.new_document('Creation selection')
+                created=document.validate(doc).Definitions[0] if case=='new-file' else hierarchy.new_part()
+            QtTest.QTest.qWait(450)
+            widget=panel._panel;active=editing.context(doc)[0]
+            assert active==created and widget.tabs.currentIndex()==2
+            selection=Gui.Selection.getSelection('*')
+            labels=[labels for _,labels in action_boxes()]
+            assert bool(selection)==(not proposed),(case,selection)
+            if proposed:
+                assert all(not tree.selectedItems() for tree in widget.trees)
+                assert ['New Sketch','Datum Plane','Datum Line','Datum Point'] in labels,labels
+            if case=='new-component':
+                tasks=win.findChild(QtWidgets.QDockWidget,'Tasks')
+                left=widget.grab();right=tasks.grab()
+                # Place two literal dock captures side by side, preserving their pixels.
+                image=QtGui.QPixmap(left.width()+right.width()+12,max(left.height(),right.height()))
+                image.fill(QtGui.QColor('white'));paint=QtGui.QPainter(image)
+                paint.drawPixmap(0,0,left);paint.drawPixmap(left.width()+12,0,right);paint.end()
+                assert image.save(os.environ['PLUS_PREVIEW_IMAGE'])
+            result['cases'].append(dict(case=case,active=created.Label,selection=[o.Name for o in selection],actions=labels))
+            # No queued clear may erase the user's next choice.
+            Gui.Selection.addSelection(created.Origin);QtTest.QTest.qWait(350)
+            assert created.Origin in Gui.Selection.getSelection('*')
+            App.closeDocument(doc.Name)
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

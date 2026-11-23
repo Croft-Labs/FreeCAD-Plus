@@ -1,5 +1,16 @@
 # FreeCAD Plus: Current work state
 
+## Creation selection repair installed — November 23, 2026
+
+Owner reported that new-component navigation left selection active and hid idle
+tasks. The creation helper now clears all selection after opening History and
+synchronizes tree highlights. The new component remains active; Plus Create Geometry
+shows New Sketch and datum actions. No delayed clearing affects subsequent picks.
+Eight focused build checks, eight installed regressions and all three installed
+creation-path visual checks passed. Python-only installation retains rollback files;
+the existing shortcut was verified with isolated settings. Existing owner processes
+were preserved and need restart to load cached modules. See [evidence](evidence/creation-selection-20261123/README.md).
+
 ## Component creation and modeling task updates installed — November 23, 2026
 
 Owner approved all three pending previews. New File/New Component activate the new

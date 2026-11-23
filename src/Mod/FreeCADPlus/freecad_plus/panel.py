@@ -1247,6 +1247,8 @@ def show_created_component(doc, definition, path=()):
         widget.refresh()
         widget._select_context(doc)
         widget.tabs.setCurrentIndex(2)
+        Gui.Selection.clearSelection()
+        widget._sync_selection()
         if ui_modes.modes()[0] == 'Plus':
             widget.show()
             widget.raise_()

@@ -1,0 +1,17 @@
+{
+  "removed": [
+    "baseline",
+    "candidate",
+    "fresh-katxfj_t",
+    "fresh-muvokstu",
+    "profile-build",
+    "profile-installed",
+    "history.png",
+    "idle-tasks.png"
+  ],
+  "retained": [
+    "install-backup",
+    "profile-shortcut"
+  ],
+  "root": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\creation-selection-20261123"
+}

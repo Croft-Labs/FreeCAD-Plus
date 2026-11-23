@@ -1832,6 +1832,11 @@ native-document case initializes only the file frame and one unused definition i
 one transaction, then activates the new component. Existing nonempty legacy documents retain
 the native Part path; this command does not silently convert loaded legacy content.
 
+After creation navigation, `show_created_component` clears native selection and
+synchronizes the panel trees. Component activation is separate from selection:
+the new component stays editable, History has no selected row, and native empty-
+selection watchers can display Create Geometry. There is no queued selection clear.
+
 The native command is shared across Classic/Plus presentations; the full storage
 chooser and separate instance-placement workflow remain deferred. Acceptance is
 owned by TestNativeComponentCreation and WORK_STATE.

@@ -1,0 +1,45 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "new-file",
+      "active": "Part001",
+      "selection": [],
+      "actions": [
+        [
+          "New Sketch",
+          "Datum Plane",
+          "Datum Line",
+          "Datum Point"
+        ]
+      ]
+    },
+    {
+      "case": "new-component",
+      "active": "Part002",
+      "selection": [],
+      "actions": [
+        [
+          "New Sketch",
+          "Datum Plane",
+          "Datum Line",
+          "Datum Point"
+        ]
+      ]
+    },
+    {
+      "case": "empty-file",
+      "active": "Part001",
+      "selection": [],
+      "actions": [
+        [
+          "New Sketch",
+          "Datum Plane",
+          "Datum Line",
+          "Datum Point"
+        ]
+      ]
+    }
+  ],
+  "proposed": true
+}

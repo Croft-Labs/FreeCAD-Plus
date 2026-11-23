@@ -1,0 +1,45 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "new-file",
+      "active": "Part001",
+      "empty_selection": true,
+      "history": true,
+      "idle_actions": [
+        "New Sketch",
+        "Datum Plane",
+        "Datum Line",
+        "Datum Point"
+      ],
+      "next_selection_preserved": true
+    },
+    {
+      "case": "new-component",
+      "active": "Part002",
+      "empty_selection": true,
+      "history": true,
+      "idle_actions": [
+        "New Sketch",
+        "Datum Plane",
+        "Datum Line",
+        "Datum Point"
+      ],
+      "next_selection_preserved": true
+    },
+    {
+      "case": "empty-file",
+      "active": "Part001",
+      "empty_selection": true,
+      "history": true,
+      "idle_actions": [
+        "New Sketch",
+        "Datum Plane",
+        "Datum Line",
+        "Datum Point"
+      ],
+      "next_selection_preserved": true
+    }
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+}

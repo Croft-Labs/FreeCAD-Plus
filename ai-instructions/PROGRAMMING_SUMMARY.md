@@ -1,5 +1,11 @@
 # FreeCAD Plus: Programming Summary
 
+## Installed creation selection repair — November 23, 2026
+
+New-component navigation now clears selection after opening History while retaining
+the active component, restoring the approved idle geometry tasks. Eight installed
+checks and three native creation-path checks pass. See [acceptance](WORK_STATE.md#creation-selection-repair-installed--november-23-2026).
+
 ## Installed component/task workflow updates — November 23, 2026
 
 New components activate with History selected. New Body starting task cards are

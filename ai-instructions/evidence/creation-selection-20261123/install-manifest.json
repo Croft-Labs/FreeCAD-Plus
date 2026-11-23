@@ -1,0 +1,29 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source_sha256": "2706e6e9011335cd330e15af82adea34bd7078b117d9c118ac54dc602626a3e3",
+    "built_sha256": "2706e6e9011335cd330e15af82adea34bd7078b117d9c118ac54dc602626a3e3",
+    "installed_sha256": "2706e6e9011335cd330e15af82adea34bd7078b117d9c118ac54dc602626a3e3",
+    "previous_sha256": "4cca874525468477b407791024eea45466803f4da7ba93d879eb8df21528fb5b",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\creation-selection-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestComponentPanel.py",
+    "build_path": "Mod/FreeCADPlus/TestComponentPanel.py",
+    "source_sha256": "f8c08e721a73b7f970c6048576b46bcc5b402b1fe040ca76d7e5c2fc23e86363",
+    "built_sha256": "f8c08e721a73b7f970c6048576b46bcc5b402b1fe040ca76d7e5c2fc23e86363",
+    "installed_sha256": "f8c08e721a73b7f970c6048576b46bcc5b402b1fe040ca76d7e5c2fc23e86363",
+    "previous_sha256": "7487668436e9facb3339f2af91e41f34f3c7233abbc49b5fdf1efcc67f9d7572",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\creation-selection-20261123\\install-backup\\Mod\\FreeCADPlus\\TestComponentPanel.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestTaskEntryWorkflows.py",
+    "build_path": "Mod/FreeCADPlus/TestTaskEntryWorkflows.py",
+    "source_sha256": "172a5dc398619fa4df11bfca2401f88d87e6837ac294481722dca27f658689d8",
+    "built_sha256": "172a5dc398619fa4df11bfca2401f88d87e6837ac294481722dca27f658689d8",
+    "installed_sha256": "172a5dc398619fa4df11bfca2401f88d87e6837ac294481722dca27f658689d8",
+    "previous_sha256": "e08ba345191c5fb51f01775b2df1856d2a663ef552eab19d0556cb57273ea1d3",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\creation-selection-20261123\\install-backup\\Mod\\FreeCADPlus\\TestTaskEntryWorkflows.py"
+  }
+]
