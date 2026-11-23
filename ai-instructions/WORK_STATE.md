@@ -1,5 +1,12 @@
 # FreeCAD Plus: Current work state
 
+## Feature selection gestures preview awaiting approval - November 23, 2026
+
+Owner requests plain click to add and Shift-click to remove feature inputs.
+Native-list prototype demonstrates repeated click retaining rows and Shift-click
+removing them. Production selection handlers are unchanged. Scope and direct
+captures: [feature picker preview](evidence/feature-pick-preview-20261123/README.md).
+
 ## Sketch dimension single Enter installed - November 23, 2026
 
 Approved: one main/keypad Enter applies a valid sketch dimension and closes the

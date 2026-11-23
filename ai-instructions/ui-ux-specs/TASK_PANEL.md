@@ -1342,3 +1342,12 @@ Native units/expressions, validation, Cancel/Escape, name/reference controls and
 other task-panel numeric behavior are preserved. Invalid or incomplete text
 stays focused with the dialog open. See the [approved preview](../evidence/dimension-enter-preview-20261123/README.md)
 and [native implementation checks](../evidence/dimension-enter-20261123/README.md).
+
+### Feature input click and Shift-click - November 23, 2026
+
+Owner requests click to add/select and Shift-click to remove/deselect in feature
+collectors. Proposed: repeated plain clicks retain existing entries, Shift-click
+on an absent entry does nothing, and curve-chain selection carries the gesture
+through expansion. Apply across profile/edge/face/section/reference collectors;
+preserve validation, History ordering, single-input replacement and existing list
+controls. Implementation awaits approval of the [native-list preview](../evidence/feature-pick-preview-20261123/README.md).

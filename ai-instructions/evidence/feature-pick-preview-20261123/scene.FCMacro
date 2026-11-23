@@ -1,0 +1,48 @@
+import os,sys,json,traceback
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+sys.dont_write_bytecode=True
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+def run():
+    result={'ok':False,'ui_only':True};task=None;frame=None
+    try:
+        from freecad_plus import document,extrude_task
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('Selection preview')
+        owner=document.validate(doc).Definitions[0]
+        sketch=owner.newObject('Sketcher::SketchObject','Sketch')
+        sketch.addGeometry(Part.LineSegment(App.Vector(0,0,0),App.Vector(20,0,0)),False)
+        sketch.addGeometry(Part.LineSegment(App.Vector(20,0,0),App.Vector(20,15,0)),False)
+        doc.recompute()
+        task=extrude_task.show();task.outputs['Sheet'].setChecked(True);task.changed()
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);import selection_ui
+        frame=QtWidgets.QWidget();frame.setStyleSheet('background:#f5f5f5;color:#202020;font-size:14px;')
+        frame.resize(330,360);layout=QtWidgets.QVBoxLayout(frame)
+        layout.addWidget(QtWidgets.QLabel('Extrude - selected curves'))
+        layout.addWidget(task.profiles)
+        hint=QtWidgets.QLabel('');hint.setWordWrap(True);layout.addWidget(hint)
+        footer=QtWidgets.QLabel('Native list widget; simulated picking.\nNo production behavior is changed.');footer.setWordWrap(True);layout.addWidget(footer)
+        frame.show();QtTest.QTest.qWait(150)
+        images=[];counts=[]
+        actions=[('1. Click Edge1, then Edge2',[(1,False),(2,False)]),('2. Click Edge1 again',[(1,False)]),('3. Shift-click Edge2',[(2,True)])]
+        for title,picks in actions:
+            for edge,shift in picks:selection_ui.pick(task,(sketch,'Edge'+str(edge)),shift)
+            counts.append(task.profiles.count())
+            hint.setText(('Click adds. Shift-click removes.\n' if selection_ui.proposed() else 'Current repeated-click toggle.\n')+str(task.profiles.count())+' selected')
+            task.profiles.clearSelection();QtTest.QTest.qWait(80)
+            img=frame.grab().toImage();img.setDevicePixelRatio(1);images.append((title,img))
+        w=images[0][1].width();h=images[0][1].height()
+        canvas=QtGui.QImage(w*3+40,h+55,QtGui.QImage.Format_RGB32);canvas.fill(QtGui.QColor('white'))
+        p=QtGui.QPainter(canvas);p.setPen(QtGui.QColor('#222222'))
+        for i,(title,img) in enumerate(images):p.drawText(i*(w+20)+10,30,title);p.drawImage(i*(w+20),55,img)
+        p.end();canvas.save(os.environ['PLUS_PREVIEW_IMAGE'])
+        assert counts==([2,2,1] if selection_ui.proposed() else [2,1,0]),counts
+        result.update(ok=True,counts=counts,proposed=selection_ui.proposed())
+    except BaseException:result['error']=traceback.format_exc()
+    if frame:frame.close()
+    if task:task.reject()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)
