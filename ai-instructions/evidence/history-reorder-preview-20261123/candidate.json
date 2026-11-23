@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "native_ui_preview": true,
+  "specimen_drop_outcomes": true,
+  "persistent_reordering_implemented": false,
+  "initial_order": [
+    "Coordinate System",
+    "Datum Plane - Support",
+    "Sketch - Profile",
+    "Extrude",
+    "Datum Plane - Independent"
+  ],
+  "steps": [
+    {
+      "moved": "Datum Plane - Independent",
+      "requested_index": 2,
+      "order": [
+        "Coordinate System",
+        "Datum Plane - Support",
+        "Datum Plane - Independent",
+        "Sketch - Profile",
+        "Extrude"
+      ],
+      "message": null
+    },
+    {
+      "moved": "Datum Plane - Support",
+      "requested_index": 5,
+      "order": [
+        "Coordinate System",
+        "Datum Plane - Independent",
+        "Datum Plane - Support",
+        "Sketch - Profile",
+        "Extrude"
+      ],
+      "message": "\"Datum Plane - Support\" cannot be moved after \"Sketch - Profile\" because that feature depends on it.\n\nIt has been placed immediately before \"Sketch - Profile\"."
+    },
+    {
+      "moved": "Extrude",
+      "requested_index": 2,
+      "order": [
+        "Coordinate System",
+        "Datum Plane - Independent",
+        "Datum Plane - Support",
+        "Sketch - Profile",
+        "Extrude"
+      ],
+      "message": "\"Extrude\" cannot be moved before \"Sketch - Profile\" because it depends on that feature.\n\nIt has been placed immediately after \"Sketch - Profile\"."
+    }
+  ],
+  "proposed": true,
+  "coordinate_subtree_locked": true,
+  "native_order_geometry_references_unchanged": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\661e846aab01\\candidate\\panel.py"
+}

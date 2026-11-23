@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Pending History drag ordering — November 23, 2026
+
+The owner requests manual feature order constrained by dependencies, a fixed first
+Coordinate System, and correction before the earliest dependent plus a popup for
+invalid downward moves. The native UI demonstration passes its three specimen drop
+cases and coordinate-subtree lock. Screenshot approval is pending; no backend or
+installation changes. The Plane/Sketch selection proposal remains separately pending.
+See [current preview and scope](WORK_STATE.md#history-drag-reorder-preview--november-23-2026).
+
 ## Pending plane-selection proposal — November 23, 2026
 
 The owner requests shared compatible/conflicting selection behavior for Plane and

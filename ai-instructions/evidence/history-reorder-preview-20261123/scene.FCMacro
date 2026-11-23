@@ -1,0 +1,105 @@
+"""Native History drop events with explicit specimen outcomes, no saved ordering."""
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+import freecad_plus
+from freecad_plus import document,panel,planes,sketch_placement,extrusion
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'native_ui_preview':True,'specimen_drop_outcomes':True,'persistent_reordering_implemented':False}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        if panel._panel:
+            panel._panel.dispose();win.removeDockWidget(panel._panel);panel._panel.deleteLater()
+        freecad_plus.__path__.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);importlib.reload(panel)
+        doc=document.new_document('History order proposal');owner=document.validate(doc).Definitions[0]
+        xy=next(o for o in owner.Origin.OriginFeatures if getattr(o,'Role','')=='XY_Plane')
+        support=planes.save(doc,[(xy,'')],offset=4);support.Label='Datum Plane - Support'
+        sketch=sketch_placement.save(doc,[(support,'')]);sketch.Label='Sketch - Profile'
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),4),False);doc.recompute()
+        solid=extrusion.save(doc,[(sketch,'')],{},dict(extrusion.DEFAULTS,length=6));solid.Label='Extrude'
+        independent=planes.save(doc,[(xy,'')],offset=-5);independent.Label='Datum Plane - Independent'
+        doc.recompute()
+        before={o.Name:(o.ID,o.Visibility,tuple(x.Name for x in o.OutList)) for o in doc.Objects}
+        dock=panel.show_panel();dock.tabs.setCurrentIndex(2);dock.refresh();QtTest.QTest.qWait(200)
+        # Keep the drag indicator and complete feature names visible.
+        win.resizeDocks([dock],[365],QtCore.Qt.Horizontal)
+        tree=dock.trees[2]
+        def labels():return [tree.topLevelItem(i).text(0) for i in range(tree.topLevelItemCount())]
+        def item(obj):return next(i for i in dock._maps[2].values() if i.data(0,panel._ROLE).ref==panel.identity(obj))
+        original=labels();assert original==['Coordinate System',support.Label,sketch.Label,solid.Label,independent.Label],original
+        result['initial_order']=original;result['steps']=[]
+        proposed=hasattr(panel,'_HistoryReorderPreview');result['proposed']=proposed
+        assert dock.grab().save(str(out/'initial.png'))
+        if proposed:
+            # Explicit response tables exercise the proposed UI without changing
+            # native dependencies, order properties, group membership or documents.
+            def arrange(objects):
+                blocker=QtCore.QSignalBlocker(tree)
+                ordered=[tree.topLevelItem(0),*[item(o) for o in objects]]
+                for row in ordered:tree.takeTopLevelItem(tree.indexOfTopLevelItem(row))
+                tree.addTopLevelItems(ordered)
+                del blocker
+            popups=[]
+            def dropped(row,index):
+                chosen=panel.lookup(row.data(0,panel._ROLE).ref);message=None
+                if chosen==independent:
+                    arrange([support,independent,sketch,solid])
+                elif chosen==support:
+                    arrange([independent,support,sketch,solid])
+                    message=(f'"{support.Label}" cannot be moved after "{sketch.Label}" because that feature depends on it.\n\n'
+                             f'It has been placed immediately before "{sketch.Label}".')
+                elif chosen==solid:
+                    arrange([independent,support,sketch,solid])
+                    message=(f'"{solid.Label}" cannot be moved before "{sketch.Label}" because it depends on that feature.\n\n'
+                             f'It has been placed immediately after "{sketch.Label}".')
+                tree.setCurrentItem(row)
+                result['steps'].append(dict(moved=chosen.Label,requested_index=index,order=labels(),message=message))
+                if message:
+                    box=QtWidgets.QMessageBox(QtWidgets.QMessageBox.Information,'History order',message,QtWidgets.QMessageBox.Ok,win)
+                    box.setWindowModality(QtCore.Qt.ApplicationModal);box.open();popups.append(box)
+            tree._preview_drop=dropped
+            def drop(obj,position):
+                row=item(obj);tree.setCurrentItem(row);row.setSelected(True)
+                mime=tree.mimeData([row]);view=tree.viewport()
+                enter=QtGui.QDragEnterEvent(position,QtCore.Qt.MoveAction,mime,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier)
+                QtWidgets.QApplication.sendEvent(view,enter)
+                event=QtGui.QDropEvent(QtCore.QPointF(position),QtCore.Qt.MoveAction,mime,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier)
+                QtWidgets.QApplication.sendEvent(view,event);QtTest.QTest.qWait(100)
+            # A legitimate independent feature moves into the chain without a popup.
+            drop(independent,tree.visualItemRect(item(sketch)).topLeft()+QtCore.QPoint(90,2))
+            assert len(result['steps'])==1 and not popups
+            assert labels()==['Coordinate System',support.Label,independent.Label,sketch.Label,solid.Label]
+            assert dock.grab().save(str(out/'valid-move.png'))
+            # Dropping the plane beyond its sketch and extrusion stops at the first dependent.
+            drop(support,tree.visualItemRect(item(solid)).bottomLeft()+QtCore.QPoint(90,-1))
+            assert len(result['steps'])==2 and popups
+            assert labels()==['Coordinate System',independent.Label,support.Label,sketch.Label,solid.Label]
+            assert dock.grab().save(str(out/'corrected-order.png'))
+            assert popups[-1].grab().save(str(out/'cannot-move-after.png'))
+            popups[-1].accept();QtTest.QTest.qWait(70)
+            # Complementary rule: a result cannot precede its inputs.
+            drop(solid,tree.visualItemRect(item(support)).topLeft()+QtCore.QPoint(90,2))
+            assert len(result['steps'])==3
+            assert popups[-1].grab().save(str(out/'cannot-move-before.png'))
+            popups[-1].accept();QtTest.QTest.qWait(70)
+            frame=tree.topLevelItem(0)
+            def locked(row):
+                return not bool(row.flags()&QtCore.Qt.ItemIsDragEnabled) and all(locked(row.child(i)) for i in range(row.childCount()))
+            assert locked(frame);result['coordinate_subtree_locked']=True
+            assert dock.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+        else:
+            result['drag_enabled']=tree.dragEnabled()
+            assert dock.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+        assert {o.Name:(o.ID,o.Visibility,tuple(x.Name for x in o.OutList)) for o in doc.Objects}==before
+        assert document.history(doc,owner)==[support,sketch,solid,independent]
+        result.update(ok=True,native_order_geometry_references_unchanged=True,module=panel.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

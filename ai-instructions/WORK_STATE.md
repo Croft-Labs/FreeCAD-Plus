@@ -1,5 +1,24 @@
 # FreeCAD Plus: Current work state
 
+## History drag-reorder preview — November 23, 2026
+
+The owner requests a fixed first Coordinate System, all defining inputs before their
+consumers, and manual drag ordering within those constraints. Dropping an input after
+a dependent must put it immediately before its first dependent and show a naming/
+explanation popup. The [native UI proposal](evidence/history-reorder-preview-20261123/README.md)
+demonstrates a valid independent move, a support plane moved back before its sketch,
+and an extrusion kept after its input sketch. Three Qt drop-event cases pass; the
+coordinate subtree is non-draggable. Native IDs, visibility, references and model order
+remain unchanged. Direct [corrected History](evidence/history-reorder-preview-20261123/corrected-order.png)
+and [popup](evidence/history-reorder-preview-20261123/cannot-move-after.png).
+
+**Awaiting screenshot approval; no production or installation change.** Session
+`661e846aab01`, fingerprint `ae4db163f725c584d967a4f790112838a342f4fe6d8c363df4a8a47528357acf`.
+The candidate uses explicit specimen order outcomes. Persistent preferred ordering,
+dependency clamps, transaction handling and complete native drag validation remain
+implementation work. The Plane/Sketch selection proposal below is still separately
+pending; this request does not cancel or approve it.
+
 ## Plane selection preview — November 23, 2026
 
 The owner requests matching reference collection for datum planes and sketch planes:

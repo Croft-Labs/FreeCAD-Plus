@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "native_ui_preview": true,
+  "specimen_drop_outcomes": true,
+  "persistent_reordering_implemented": false,
+  "initial_order": [
+    "Coordinate System",
+    "Datum Plane - Support",
+    "Sketch - Profile",
+    "Extrude",
+    "Datum Plane - Independent"
+  ],
+  "steps": [],
+  "proposed": false,
+  "drag_enabled": false,
+  "native_order_geometry_references_unchanged": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\661e846aab01\\baseline\\panel.py"
+}

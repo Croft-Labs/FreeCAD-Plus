@@ -37,6 +37,28 @@ implementing every workflow in that task. Operation completion is not a Group 1 
 
 ## Confirmed requirements
 
+### History drag ordering and corrected invalid moves — November 23, 2026
+
+The fundamental Coordinate System must always be first; its native subtree is fixed.
+All defining inputs precede their consumers, directly and transitively. For example,
+a custom datum plane precedes the sketch placed on it, and that sketch precedes its
+Extrude/Revolve. Allow feature rows to be clicked and dragged into valid order.
+
+If an input is dropped after a dependent, move it immediately before its first
+dependent in History, then display a popup stating that it cannot be moved after
+that dependent. Name the moved feature and blocking dependent, and explain the
+corrected position. Conversely, a dependent cannot move before its required inputs;
+place it after the latest required predecessor and explain the correction. A valid
+independent move needs no popup. Preserve unaffected row order, visibility controls,
+selection/edit behavior and native geometry/reference identity.
+
+This owner request extends the earlier dependency restriction to manual drag ordering;
+it does not approve every archived drag/reorder behavior. The isolated
+[native preview](../evidence/history-reorder-preview-20261123/README.md) demonstrates
+the valid move, corrected position and popup. Production reordering/persistence await
+approval of those direct screenshots. The preceding Plane/Sketch selection proposal
+remains separately pending.
+
 ### Strict sequential feature History — November 22, 2026
 
 Owner decision: sketches remain predecessors of the Extrude/Revolve or other feature
