@@ -1,5 +1,14 @@
 # FreeCAD Plus: Current work state
 
+## Sketch Modeling Tools preview — November 23, 2026
+
+Plus task mode should consolidate Pad/Pocket to Extrude and Revolve/Groove to
+Revolve; Classic keeps its buttons but opens the shared workflows in component
+documents. Both native prototype lists and six command-entry routes pass, with
+selected-profile prefill and Cancel preservation. Awaiting approval; production
+and installation unchanged. The two earlier previews below also remain pending.
+See [scope, screenshots and routing evidence](evidence/sketch-tools-preview-20261123/README.md).
+
 ## Remove New Body task prompts preview — November 23, 2026
 
 Owner requests removal of all New Body Tasks starting prompts. The single Start Part

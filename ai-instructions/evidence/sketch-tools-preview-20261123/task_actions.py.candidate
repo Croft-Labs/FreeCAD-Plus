@@ -1,0 +1,11 @@
+"""UI preview manifest matching the current native single-sketch task watcher."""
+CLASSIC = ['PartDesign_NewSketch', 'PartDesign_Pad', 'PartDesign_Pocket',
+           'PartDesign_Hole', 'PartDesign_Revolution', 'PartDesign_Groove',
+           'PartDesign_AdditiveLoft', 'PartDesign_SubtractiveLoft',
+           'PartDesign_AdditivePipe', 'PartDesign_SubtractivePipe',
+           'PartDesign_AdditiveHelix', 'PartDesign_SubtractiveHelix']
+
+def commands(mode):
+    if mode == 'Plus':
+        return ['PartDesign_NewSketch', 'Preview_Extrude', 'PartDesign_Hole', 'Preview_Revolve'] + CLASSIC[6:]
+    return CLASSIC

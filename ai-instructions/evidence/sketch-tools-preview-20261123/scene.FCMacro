@@ -1,0 +1,75 @@
+"""Native task-list prototype and shared-panel opening; no feature acceptance."""
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+import freecad_plus
+from freecad_plus import document,modeling,panel
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+class Alias:
+    def __init__(self,label,command):self.label=label;self.command=command
+    def GetResources(self):return {'MenuText':self.label,'Pixmap':self.command,'ToolTip':self.label}
+    def IsActive(self):return True
+    def Activated(self):Gui.runCommand(self.command)
+
+class Watcher:
+    title='Modeling Tools'
+    icon='PartDesign_Body'
+    def __init__(self,commands):self.commands=commands
+    def shouldShow(self):return True
+
+def run():
+    result={'ok':False,'native_task_list_prototype':True,'cases':[],'routes':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,900);win.show()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        source=os.environ['PLUS_PREVIEW_WORKTREE'];sys.path.insert(0,source);freecad_plus.__path__.insert(0,source)
+        import task_actions
+        from freecad_plus import extrude_task,revolve_task
+        importlib.reload(extrude_task);importlib.reload(revolve_task)
+        proposed='Preview_Extrude' in task_actions.commands('Plus');result['proposed']=proposed
+        Gui.addCommand('Preview_Extrude',Alias('Extrude','PartDesign_Pad'))
+        Gui.addCommand('Preview_Revolve',Alias('Revolve','PartDesign_Revolution'))
+        doc=document.new_document('Sketch task preview');owner=document.validate(doc).Definitions[0]
+        sketch=modeling.new_sketch(doc)
+        sketch.addGeometry(Part.Circle(App.Vector(5,0,0),App.Vector(0,0,1),2),False);doc.recompute()
+        p=panel.show_panel();p.tabs.setCurrentIndex(2);p.refresh()
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/General')
+        original={o.Name:(o.ID,tuple(x.Name for x in o.OutList),o.Visibility) for o in doc.Objects}
+        for name,value in (('Plus',0),('Classic',1)):
+            prefs.SetInt('TaskPanelUIMode',value)
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+            Gui.Control.addTaskWatcher([Watcher(task_actions.commands(name))]);QtTest.QTest.qWait(250)
+            boxes=[w for w in win.findChildren(QtWidgets.QWidget) if w.isVisible() and 'TaskBox' in w.metaObject().className() and w.actions()]
+            assert len(boxes)==1
+            labels=[a.text().replace('&','') for a in boxes[0].actions()]
+            dock=win.findChild(QtWidgets.QDockWidget,'Tasks');assert dock and dock.isVisible()
+            assert boxes[0].grab().save(str(out/(name.lower()+'.png')))
+            if name=='Plus':assert boxes[0].grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+            result['cases'].append(dict(mode=name,actions=labels))
+            if proposed:
+                if name=='Plus':assert 'Extrude' in labels and 'Pad' not in labels and 'Pocket' not in labels and 'Groove' not in labels
+                commands=(('Preview_Extrude','Extrude','New Solid'),('Preview_Revolve','Revolve','New Solid')) if name=='Plus' else (
+                    ('PartDesign_Pad','Extrude','New Solid'),('PartDesign_Pocket','Extrude','Subtract'),
+                    ('PartDesign_Revolution','Revolve','New Solid'),('PartDesign_Groove','Revolve','Subtract'))
+                for command,title,operation in commands:
+                    Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+                    Gui.runCommand(command);QtTest.QTest.qWait(160)
+                    task=extrude_task._active
+                    assert task and task.title==title,(command,task)
+                    assert task.mode()==operation,(command,task.mode())
+                    assert task.refs and task.refs[0][0]==sketch,(command,task.refs)
+                    result['routes'].append(dict(mode=name,command=command,title=task.title,operation=task.mode(),profile=sketch.Name))
+                    task.reject();QtTest.QTest.qWait(100)
+                    assert {o.Name:(o.ID,tuple(x.Name for x in o.OutList),o.Visibility) for o in doc.Objects}==original
+        result.update(ok=True,document_preserved=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    try:
+        if extrude_task._active:extrude_task._active.reject()
+    except Exception:pass
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

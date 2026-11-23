@@ -1,0 +1,43 @@
+{
+  "ok": true,
+  "native_task_list_prototype": true,
+  "cases": [
+    {
+      "mode": "Plus",
+      "actions": [
+        "New Sketch",
+        "Pad",
+        "Pocket",
+        "Hole",
+        "Revolve",
+        "Groove",
+        "Additive Loft",
+        "Subtractive Loft",
+        "Additive Pipe",
+        "Subtractive Pipe",
+        "Additive Helix",
+        "Subtractive Helix"
+      ]
+    },
+    {
+      "mode": "Classic",
+      "actions": [
+        "New Sketch",
+        "Pad",
+        "Pocket",
+        "Hole",
+        "Revolve",
+        "Groove",
+        "Additive Loft",
+        "Subtractive Loft",
+        "Additive Pipe",
+        "Subtractive Pipe",
+        "Additive Helix",
+        "Subtractive Helix"
+      ]
+    }
+  ],
+  "routes": [],
+  "proposed": false,
+  "document_preserved": true
+}

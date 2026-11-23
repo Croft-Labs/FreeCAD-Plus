@@ -1,0 +1,84 @@
+{
+  "ok": true,
+  "native_task_list_prototype": true,
+  "cases": [
+    {
+      "mode": "Plus",
+      "actions": [
+        "New Sketch",
+        "Extrude",
+        "Hole",
+        "Revolve",
+        "Additive Loft",
+        "Subtractive Loft",
+        "Additive Pipe",
+        "Subtractive Pipe",
+        "Additive Helix",
+        "Subtractive Helix"
+      ]
+    },
+    {
+      "mode": "Classic",
+      "actions": [
+        "New Sketch",
+        "Pad",
+        "Pocket",
+        "Hole",
+        "Revolve",
+        "Groove",
+        "Additive Loft",
+        "Subtractive Loft",
+        "Additive Pipe",
+        "Subtractive Pipe",
+        "Additive Helix",
+        "Subtractive Helix"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "mode": "Plus",
+      "command": "Preview_Extrude",
+      "title": "Extrude",
+      "operation": "New Solid",
+      "profile": "Sketch"
+    },
+    {
+      "mode": "Plus",
+      "command": "Preview_Revolve",
+      "title": "Revolve",
+      "operation": "New Solid",
+      "profile": "Sketch"
+    },
+    {
+      "mode": "Classic",
+      "command": "PartDesign_Pad",
+      "title": "Extrude",
+      "operation": "New Solid",
+      "profile": "Sketch"
+    },
+    {
+      "mode": "Classic",
+      "command": "PartDesign_Pocket",
+      "title": "Extrude",
+      "operation": "Subtract",
+      "profile": "Sketch"
+    },
+    {
+      "mode": "Classic",
+      "command": "PartDesign_Revolution",
+      "title": "Revolve",
+      "operation": "New Solid",
+      "profile": "Sketch"
+    },
+    {
+      "mode": "Classic",
+      "command": "PartDesign_Groove",
+      "title": "Revolve",
+      "operation": "Subtract",
+      "profile": "Sketch"
+    }
+  ],
+  "proposed": true,
+  "document_preserved": true
+}

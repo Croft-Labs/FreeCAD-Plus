@@ -4,6 +4,16 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Sketch-selected modeling workflows — November 23, 2026
+
+Owner requests Plus-mode Modeling Tools use current shared workflows, with Extrude
+instead of separate Pad/Pocket entries. Classic retains its native buttons but
+redirects to the shared workflow. The [proposal](../evidence/sketch-tools-preview-20261123/README.md)
+also consolidates implemented Revolve/Groove in Plus and routes both Classic buttons
+to shared Revolve; subtractive entries preselect Subtract. Other modeling tools keep
+their current entries until corresponding workflows are implemented. Preview awaits
+approval; production is unchanged.
+
 ### Remove New Body starting prompts — November 23, 2026
 
 Owner instruction: remove all Tasks-panel entries offering New Body as the starting
