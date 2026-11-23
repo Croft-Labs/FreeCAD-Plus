@@ -834,7 +834,7 @@ class TestNativeComponentCreation(unittest.TestCase):
             self.assertEqual(len(root.Group), 1)
             self.assertEqual(root.Group[0].LinkedObject, root.Definitions[0])
             self.assertEqual(editing.context(doc)[0], root.Definitions[0])
-            context = Gui.activeDocument().activeView().getActiveObject('PlusEdit', False)
+            self.assertEqual(panel._panel.tabs.currentIndex(), 2)
             existing = {o.Name: o.ID for o in doc.Objects}
             placed = tuple(o.Name for o in root.Group)
             undo = doc.UndoCount
@@ -846,9 +846,10 @@ class TestNativeComponentCreation(unittest.TestCase):
             self.assertIn(panel.identity(created), self.model_names())
             self.assertEqual(tuple(o.Name for o in root.Group), placed)
             self.assertEqual(sum(o.TypeId == 'App::Link' for o in doc.Objects), 1)
-            self.assertFalse(any(item.data(0, panel._ROLE).kind == 'unused'
+            self.assertTrue(any(item.data(0, panel._ROLE).kind == 'unused'
                                  for item in panel._panel._maps[1].values()))
-            self.assertEqual(Gui.activeDocument().activeView().getActiveObject('PlusEdit', False), context)
+            self.assertEqual(editing.context(doc)[0], created)
+            self.assertEqual(panel._panel.tabs.currentIndex(), 2)
             self.assertEqual({n: doc.getObject(n).ID for n in existing}, existing)
             self.assertEqual(doc.UndoCount, undo + 1)
             doc.undo(); settle()
@@ -885,7 +886,8 @@ class TestNativeComponentCreation(unittest.TestCase):
         created = source_root.Definitions[-1]
         self.assertIn(panel.identity(created), self.model_names())
         self.assertEqual(tuple(o.Name for o in source_root.Group), links)
-        self.assertEqual(editing.context(doc)[0], imported)
+        self.assertEqual(editing.context(doc)[0], created)
+        self.assertEqual(panel._panel.tabs.currentIndex(), 2)
         source.undo(); settle()
         self.assertEqual(len(source_root.Definitions), 1)
         document.validate(doc)
@@ -897,7 +899,9 @@ class TestNativeComponentCreation(unittest.TestCase):
         self.assertEqual([d.Label for d in root.Definitions], ['Part001'])
         self.assertEqual(list(root.Group), [])
         self.assertEqual(len(self.model_names()), 1)
-        self.assertEqual(panel._panel.trees[1].topLevelItem(0).childCount(), 0)
+        self.assertEqual(editing.context(doc)[0], root.Definitions[0])
+        self.assertEqual(panel._panel.tabs.currentIndex(), 2)
+        self.assertEqual(list(root.Group), [])
         doc.undo(); settle(); self.assertEqual(list(doc.Objects), [])
         doc.redo(); settle(); self.assertEqual(len(document.validate(doc).Definitions), 1)
         legacy = App.newDocument('ExistingLegacy')

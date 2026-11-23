@@ -1234,6 +1234,24 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self._binding = None
 
 
+def show_created_component(doc, definition, path=()):
+    """Creation-only navigation; factories/imports do not change the active part."""
+    if path:
+        editing.edit(path)
+    else:
+        editing.edit_unused(doc, definition)
+    from . import ui_modes
+    ui_modes.apply_modes()
+    widget = _panel
+    if widget is not None and not widget._closed:
+        widget.refresh()
+        widget._select_context(doc)
+        widget.tabs.setCurrentIndex(2)
+        if ui_modes.modes()[0] == 'Plus':
+            widget.show()
+            widget.raise_()
+
+
 def begin_feature_task(task):
     if _panel is not None and not _panel._closed:
         task._history_panel = _panel

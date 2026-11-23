@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "native_installed": true,
+  "active": "Part002",
+  "history": true,
+  "lists": {
+    "plus": [
+      "New Sketch",
+      "Extrude",
+      "Hole",
+      "Revolve",
+      "Additive Loft",
+      "Subtractive Loft",
+      "Additive Pipe",
+      "Subtractive Pipe",
+      "Additive Helix",
+      "Subtractive Helix"
+    ],
+    "classic": [
+      "New Sketch",
+      "Pad",
+      "Pocket",
+      "Hole",
+      "Revolve",
+      "Groove",
+      "Additive Loft",
+      "Subtractive Loft",
+      "Additive Pipe",
+      "Subtractive Pipe",
+      "Additive Helix",
+      "Subtractive Helix"
+    ]
+  },
+  "new_body_absent": true,
+  "modules": {
+    "document": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py",
+    "panel": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "PartDesignGui": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\lib\\PartDesignGui.pyd"
+  }
+}

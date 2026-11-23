@@ -1,0 +1,13 @@
+test_empty_document_and_existing_legacy (TestComponentPanel.TestNativeComponentCreation.test_empty_document_and_existing_legacy) ... ok
+test_external_definition_owns_new_part (TestComponentPanel.TestNativeComponentCreation.test_external_definition_owns_new_part) ... ok
+test_new_file_and_part_both_presentations (TestComponentPanel.TestNativeComponentCreation.test_new_file_and_part_both_presentations) ... ok
+test_start_card_creates_shared_component (TestComponentPanel.TestNativeComponentCreation.test_start_card_creates_shared_component) ... ok
+test_actual_task_actions_share_panels_and_cancel_preserves_document (TestTaskEntryWorkflows.TestTaskEntryWorkflows.test_actual_task_actions_share_panels_and_cancel_preserves_document) ... ok
+test_creation_navigation_factories_and_task_restoration (TestTaskEntryWorkflows.TestTaskEntryWorkflows.test_creation_navigation_factories_and_task_restoration) ... ok
+test_idle_never_offers_new_body_in_either_mode_or_context (TestTaskEntryWorkflows.TestTaskEntryWorkflows.test_idle_never_offers_new_body_in_either_mode_or_context) ... ok
+test_sketch_watchers_switch_without_workbench_reactivation (TestTaskEntryWorkflows.TestTaskEntryWorkflows.test_sketch_watchers_switch_without_workbench_reactivation) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 21.001s
+
+OK

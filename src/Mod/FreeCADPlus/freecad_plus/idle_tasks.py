@@ -5,9 +5,13 @@ import FreeCADGui as Gui
 from . import modeling
 
 
-def eligible():
+def plus_tasks():
     from . import ui_modes
-    if ui_modes.modes()[2] != 'Plus' or Gui.activeDocument() is None or Gui.Control.activeDialog():
+    return ui_modes.modes()[2] == 'Plus'
+
+
+def eligible():
+    if not plus_tasks() or Gui.activeDocument() is None or Gui.Control.activeDialog():
         return False
     try:
         modeling._context(Gui.activeDocument().Document)
@@ -52,6 +56,25 @@ class DatumCommand:
             App.Console.PrintError(str(error) + '\n')
 
 
+class ModelingCommand:
+    """Plus task label over the native command and its shared component dispatch."""
+    def __init__(self, title, command):
+        self.title, self.command = title, command
+
+    def GetResources(self):
+        return {'MenuText': self.title, 'ToolTip': self.title,
+                'Pixmap': self.command}
+
+    def IsActive(self):
+        native = Gui.Command.get(self.command)
+        return bool(native and native.isActive())
+
+    def Activated(self):
+        Gui.runCommand(self.command)
+
+
 def install():
     for kind in ('Line', 'Point'):
         Gui.addCommand('FreeCADPlus_Datum' + kind, DatumCommand(kind))
+    for title, command in (('Extrude', 'PartDesign_Pad'), ('Revolve', 'PartDesign_Revolution')):
+        Gui.addCommand('FreeCADPlus_' + title, ModelingCommand(title, command))

@@ -1,0 +1,48 @@
+"""Installed native command/watcher screenshots; no prototype watcher substitution."""
+import os,json,sys,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part,PartDesignGui
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,editing,modeling,panel,ui_modes
+from TestTaskEntryWorkflows import action_boxes
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False,'native_installed':True}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,900);win.show()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/General')
+        for key in ui_modes.KEYS:prefs.SetInt(key,0)
+        Gui.runCommand('Std_New');QtTest.QTest.qWait(180)
+        doc=App.ActiveDocument;root=document.validate(doc)
+        panel._panel.tabs.setCurrentIndex(0)
+        Gui.runCommand('Std_Part');QtTest.QTest.qWait(180)
+        owner=root.Definitions[-1]
+        assert editing.context(doc)[0]==owner and panel._panel.tabs.currentIndex()==2
+        assert len(root.Group)==1
+        assert panel._panel.grab().save(str(out/'new-component.png'))
+        profile=modeling.new_sketch(doc)
+        profile.addGeometry(Part.Circle(App.Vector(5,0,0),App.Vector(0,0,1),2),False);doc.recompute()
+        lists={}
+        for name,mode in (('plus',0),('classic',1)):
+            prefs.SetInt('TaskPanelUIMode',mode);ui_modes.apply_modes()
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(profile);QtTest.QTest.qWait(200)
+            boxes=action_boxes();assert len(boxes)==1,boxes
+            box,labels=boxes[0];lists[name]=labels
+            assert ('Extrude' in labels)==(mode==0)
+            assert ('Pocket' in labels)==(mode==1)
+            assert box.grab().save(str(out/(name+'-tools.png')))
+            Gui.Selection.clearSelection();QtTest.QTest.qWait(180)
+            assert not any('New Body' in labels for _,labels in action_boxes())
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks')
+        assert tasks.grab().save(str(out/'no-new-body.png'))
+        modules={'document':document.__file__,'panel':panel.__file__,'PartDesignGui':PartDesignGui.__file__}
+        assert all('/app/' in path.replace('\\','/') for path in modules.values()),modules
+        result.update(ok=True,active=owner.Label,history=True,lists=lists,new_body_absent=True,modules=modules)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

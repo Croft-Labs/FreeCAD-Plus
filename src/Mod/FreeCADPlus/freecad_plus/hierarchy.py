@@ -35,14 +35,14 @@ def create_definition(doc, label):
 
 
 def new_part():
-    """Native New Part adapter: create a definition only, preserving Edit/selection.
+    """Native New Part adapter: create and activate a definition, showing History.
 
     The current defining file owns it, including when editing an imported model.
     Empty native documents can be initialized; existing legacy content is never
     migrated implicitly. New File has its own Part001 + instance contract.
     """
     import FreeCADGui as Gui
-    from . import document, editing
+    from . import document, editing, panel
     doc = App.ActiveDocument
     if doc is None or Gui.Control.activeDialog() or Gui.activeDocument().getInEdit():
         raise ValueError('Finish the current task before creating a component')
@@ -53,8 +53,9 @@ def new_part():
             show_new_component_frame(definition)
             root.Definitions = [definition]
             definition.Visibility = False
-        editing.edit_file(doc)
+        panel.show_created_component(doc, definition)
         return definition
+    host = doc
     root = _root(doc)
     view = Gui.activeDocument().activeView()
     active = view.getActiveObject('PlusEdit')
@@ -66,7 +67,9 @@ def new_part():
     index = 1
     while f'Part{index:03d}' in names:
         index += 1
-    return create_definition(doc, f'Part{index:03d}')
+    definition = create_definition(doc, f'Part{index:03d}')
+    panel.show_created_component(host, definition)
+    return definition
 
 
 def rename_definition(definition, label):

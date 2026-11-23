@@ -1,27 +1,44 @@
 # FreeCAD Plus: Current work state
 
+## Component creation and modeling task updates installed — November 23, 2026
+
+Owner approved all three pending previews. New File/New Component activate the new
+component and select History, including empty files and externally owned definitions;
+generic factories/import/copy preserve their existing navigation. No extra instance
+is placed. The Start Part/New Body task card is removed across modes. Plus single-
+sketch Modeling Tools shows Extrude and Revolve; Classic retains Pad/Pocket and
+Revolve/Groove, opening shared component tasks with the matching operation. Other
+tools and native legacy compatibility remain intact. Future additive/subtractive
+workflow migrations must consolidate Plus task entries too (e.g. Loft), as recorded
+in the roadmap and development guidelines.
+
+Eight focused build checks, **113 installed regressions**, five separate startup
+checks and installed native visual checks passed. PartDesignGui and dependencies
+were built/installed with original and loaded-image rollback backups. Owner sessions
+were preserved; existing processes need restart to load updated modules. See
+[implementation and delivery evidence](evidence/component-task-updates-20261123/README.md).
+
 ## Sketch Modeling Tools preview — November 23, 2026
 
 Plus task mode should consolidate Pad/Pocket to Extrude and Revolve/Groove to
 Revolve; Classic keeps its buttons but opens the shared workflows in component
 documents. Both native prototype lists and six command-entry routes pass, with
-selected-profile prefill and Cancel preservation. Awaiting approval; production
-and installation unchanged. The two earlier previews below also remain pending.
+selected-profile prefill and Cancel preservation. Historical preview, subsequently
+approved and implemented above.
 See [scope, screenshots and routing evidence](evidence/sketch-tools-preview-20261123/README.md).
 
 ## Remove New Body task prompts preview — November 23, 2026
 
 Owner requests removal of all New Body Tasks starting prompts. The single Start Part
 watcher registration is isolated for removal across panel modes. Native-widget
-simulation checks three contexts and preserves Create Geometry. Awaiting preview
-approval; C++ has not been rebuilt or installed. The new-component navigation
-preview below remains pending. See [scope and evidence](evidence/no-body-task-preview-20261123/README.md).
+simulation checks three contexts and preserves Create Geometry. Historical preview,
+subsequently approved and implemented above. See [scope and evidence](evidence/no-body-task-preview-20261123/README.md).
 
 ## New component navigation preview — November 23, 2026
 
 Owner requests newly created components become active with Components > History
 selected. Native UI-only cases for existing and empty files pass activation/tab/
-ID/link checks. Awaiting screenshot approval; production and installation unchanged.
+ID/link checks. Historical preview, subsequently approved and implemented above.
 See [preview and next implementation scope](evidence/new-component-preview-20261123/README.md).
 
 ## Prominent task errors installed — November 23, 2026

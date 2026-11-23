@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "config": {
+    "ExeName": "FreeCAD",
+    "AppHomePath": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\",
+    "UserParameter": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\component-task-updates-20261123\\profile-shortcut\\user.cfg",
+    "SystemParameter": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\component-task-updates-20261123\\profile-shortcut\\system.cfg",
+    "UserAppData": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\component-task-updates-20261123\\profile-shortcut\\data\\"
+  },
+  "user_data": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\component-task-updates-20261123\\profile-shortcut\\data\\",
+  "panel_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+  "document_module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\document.py"
+}

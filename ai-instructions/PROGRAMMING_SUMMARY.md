@@ -1,5 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
+## Installed component/task workflow updates — November 23, 2026
+
+New components activate with History selected. New Body starting task cards are
+removed. Plus sketch tasks use Extrude/Revolve; Classic buttons open the same shared
+component workflows. Future additive/subtractive migrations must combine Plus task
+entries too. Eight focused checks, 113 installed regressions, five startup checks
+and native visual checks passed. See [acceptance](WORK_STATE.md#component-creation-and-modeling-task-updates-installed--november-23-2026).
+
 ## Installed prominent task-error styling — November 23, 2026
 
 The owner approved shared amber error emphasis matching the Extrude target field.

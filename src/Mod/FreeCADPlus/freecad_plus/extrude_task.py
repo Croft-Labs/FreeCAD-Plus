@@ -673,10 +673,8 @@ def show(feature=None, which='Pad'):
 
 
 def dispatch(which):
-    # Only Plus tasks in component documents enter this workflow. Native
+    # Component workflows are shared by both task presentations. Native
     # body-owned sketches retain their existing command compatibility.
-    from . import ui_modes
-    if ui_modes.modes()[2]!='Plus':return False
     definition,_=modeling._context(Gui.activeDocument().Document)
     selected=Gui.Selection.getSelection('*')
     if any(obj.isDerivedFrom('Sketcher::SketchObject') and obj.getParentGeoFeatureGroup()!=definition

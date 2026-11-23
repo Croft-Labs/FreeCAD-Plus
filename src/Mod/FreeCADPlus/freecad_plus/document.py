@@ -190,8 +190,8 @@ def new_document(name="Unnamed"):
                 definition.Visibility = False
                 instance.Visibility = True
         if App.GuiUp:
-            from . import editing
-            editing.edit(instance)
+            from . import panel
+            panel.show_created_component(doc, definition, (instance,))
         return doc
     except Exception:
         App.closeDocument(doc.Name)

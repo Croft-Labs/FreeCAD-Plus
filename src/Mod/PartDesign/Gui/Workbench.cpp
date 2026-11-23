@@ -167,6 +167,33 @@ public:
 private:
     bool plus;
 };
+
+class ModelingTaskWatcher : public Gui::TaskView::TaskWatcherCommands
+{
+public:
+    ModelingTaskWatcher(const char* commands[], bool plus)
+        : TaskWatcherCommands("SELECT Sketcher::SketchObject COUNT 1", commands,
+                              "Modeling Tools", "PartDesign_Body"), plus(plus) {}
+
+    bool shouldShow() override
+    {
+        if (!TaskWatcherCommands::shouldShow()) {
+            return false;
+        }
+        bool plusMode = false;
+        Base::PyGILStateLocker lock;
+        try {
+            Py::Module module(PyImport_ImportModule("freecad_plus.idle_tasks"), true);
+            plusMode = module.callMemberFunction("plus_tasks", Py::Tuple()).isTrue();
+        }
+        catch (Py::Exception&) {
+            PyErr_Clear(); // Upstream-only installations retain native command labels.
+        }
+        return plus == plusMode;
+    }
+private:
+    bool plus;
+};
 }
 
 void Workbench::activated()
@@ -376,11 +403,6 @@ void Workbench::activated()
         "PartDesign_CoordinateSystem"
     ));
 
-    const char* NoSel[] = {"PartDesign_Body", nullptr};
-    Watcher.push_back(
-        new ComponentStartWatcher(NoSel, "Start Part", "Part_Box_Parametric", false)
-    );
-
     const char* componentStart[] = {"PartDesign_NewSketch", "PartDesign_Plane",
                                     "FreeCADPlus_DatumLine", "FreeCADPlus_DatumPoint", nullptr};
     Watcher.push_back(new ComponentStartWatcher(
@@ -415,12 +437,15 @@ void Workbench::activated()
         "PartDesign_SubtractiveHelix",
         nullptr
     };
-    Watcher.push_back(new Gui::TaskView::TaskWatcherCommands(
-        "SELECT Sketcher::SketchObject COUNT 1",
-        Sketch,
-        "Modeling Tools",
-        "PartDesign_Body"
-    ));
+    Watcher.push_back(new ModelingTaskWatcher(Sketch, false));
+
+    const char* componentSketch[] = {
+        "PartDesign_NewSketch", "FreeCADPlus_Extrude", "PartDesign_Hole", "FreeCADPlus_Revolve",
+        "PartDesign_AdditiveLoft", "PartDesign_SubtractiveLoft",
+        "PartDesign_AdditivePipe", "PartDesign_SubtractivePipe",
+        "PartDesign_AdditiveHelix", "PartDesign_SubtractiveHelix", nullptr
+    };
+    Watcher.push_back(new ModelingTaskWatcher(componentSketch, true));
 
     const char* Sketches[] = {
         "PartDesign_AdditiveLoft",

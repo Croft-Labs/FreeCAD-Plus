@@ -2,9 +2,8 @@
 
 ## New component navigation — November 23, 2026
 
-Owner requests that creating a component activates the new part and selects
-Components > History. The native presentation proposal is awaiting screenshot
-approval; see [preview and implementation scope](../evidence/new-component-preview-20261123/README.md).
+Owner approved that creating a component activates the new part and selects
+Components > History. See [approved preview and implementation scope](../evidence/new-component-preview-20261123/README.md).
 Creation ownership and instance counts retain their existing contracts.
 
 Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirmed requirements are authoritative.** Material headed **Needs owner confirmation** is preserved for review and must not be treated as an approved change. The current application, agent-written specifications and implementation reports do not establish owner approval. Newer explicit owner decisions supersede older decisions on the same subject. See [evidence and unresolved decisions](EVIDENCE_AND_DECISIONS.md).
@@ -130,10 +129,10 @@ The menu placement and label are implementation choices for C09's confirmed
 import behavior, not a recovered exact owner layout. The chooser states the target
 file. See the [import contract](../ARCHITECTURE.md#models-file-import-g16c6).
 
-**New Part creates a definition in Models only.** It does not place an instance
-in Part Tree or enter unused-model Edit automatically. Placement in Part Tree is
-a separate action. This October 11 owner clarification confirms the creation/
-placement distinction without defining the deferred placement task.
+**New Part creates a definition without placing an instance.** Placement in Part
+Tree remains a separate action. The November 23 owner update now activates the new
+definition for editing and selects History automatically, superseding the former
+requirement to preserve the previous editing context after creation.
 
 New Component allows storage in the current defining file, a new external file, or an existing external file such as Hardware. Use **domestic** and **external** terminology. Names must be unique within a file; equal names in different files remain distinct definitions. Show a domestic name without a qualifier, and an external name as **M3 screw (Hardware)**. Do not silently substitute a domestic definition for an external one with the same name. [C09](EVIDENCE_AND_DECISIONS.md#c09)
 

@@ -1,8 +1,8 @@
 # Sketch Modeling Tools preview — November 23, 2026
 
-Status: native task-list prototype awaiting approval. Production and installation
-are unchanged. Earlier component-navigation and New Body card-removal previews
-remain pending; this additional request does not approve those proposals.
+Status: historical native task-list prototype, subsequently approved with the
+component-navigation and New Body card-removal previews on November 23.
+See [implementation evidence](../component-task-updates-20261123/README.md).
 
 Owner requests current modeling workflows in the sketch-selection task card:
 Plus shows one Extrude entry instead of Pad/Pocket. Apply the same convention to

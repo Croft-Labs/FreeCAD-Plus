@@ -11,8 +11,14 @@ instead of separate Pad/Pocket entries. Classic retains its native buttons but
 redirects to the shared workflow. The [proposal](../evidence/sketch-tools-preview-20261123/README.md)
 also consolidates implemented Revolve/Groove in Plus and routes both Classic buttons
 to shared Revolve; subtractive entries preselect Subtract. Other modeling tools keep
-their current entries until corresponding workflows are implemented. Preview awaits
-approval; production is unchanged.
+their current entries until corresponding workflows are implemented. The owner
+approved the preview and implementation.
+
+Owner subsequently approved implementation of all three pending previews. For
+future migrations, combining additive/subtractive workflows (such as Loft) must
+also combine their Plus task entries. Classic buttons remain and route to the
+shared workflow with the matching operation. See the
+[feature migration contract](../DEVELOPMENT_ROADMAP.md#shared-feature-workflow-migration-contract--november-23-2026).
 
 ### Remove New Body starting prompts — November 23, 2026
 
@@ -20,7 +26,7 @@ Owner instruction: remove all Tasks-panel entries offering New Body as the start
 point for a part. Component feature workflows create Bodies internally as results.
 The proposal removes the Start Part watcher card across task-panel modes, preserving
 Create Geometry and other task actions. [UI preview](../evidence/no-body-task-preview-20261123/README.md)
-awaits approval; production is unchanged.
+was approved for implementation with the other two pending previews.
 
 ### Prominent error feedback — November 23, 2026
 

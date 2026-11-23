@@ -1,7 +1,8 @@
 # New component navigation preview — November 23, 2026
 
-Native UI proposal awaiting screenshot approval. Production and installation are
-unchanged. Creating a component should activate it in the current view and show
+Historical native UI proposal, subsequently approved with the other two pending
+changes on November 23. See [implementation evidence](../component-task-updates-20261123/README.md).
+Creating a component should activate it in the current view and show
 Components > History. Definition-only creation adds no extra placed instance.
 New File retains its initial definition + instance contract and should land on
 History too. Generic definition factories/import/copy must not navigate.

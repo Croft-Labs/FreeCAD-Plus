@@ -1819,21 +1819,34 @@ WORK_STATE owns results and delivery evidence.
 
 Std_New calls document.new_document in both UI presentations: it creates the file
 root, ordinary Part001 definition and its initial linked occurrence, then enters
-Edit on Part001 as specified. Low-level App.newDocument remains unchanged for
+Edit on Part001 and selects Components > History. Low-level App.newDocument remains unchanged for
 upstream callers, macros and legacy fixtures.
 
 Std_Part calls hierarchy.new_part for component documents or genuinely empty
 native documents. It adds one unique PartNNN definition to the current defining
-file's catalog, without creating links, moving selected objects, or activating the
-new definition. Editing an external model targets that model's defining file and
-Undo stack. Existing component Edit and selection context stay intact. The empty
+file's catalog, without creating links or moving selected objects. Creation activates
+the new definition and selects History through `panel.show_created_component`.
+Editing an external model targets that model's defining file and Undo stack while
+navigation remains in the initiating view. The empty
 native-document case initializes only the file frame and one unused definition in
-one transaction, then edits the file. Existing nonempty legacy documents retain
+one transaction, then activates the new component. Existing nonempty legacy documents retain
 the native Part path; this command does not silently convert loaded legacy content.
 
 The native command is shared across Classic/Plus presentations; the full storage
 chooser and separate instance-placement workflow remain deferred. Acceptance is
 owned by TestNativeComponentCreation and WORK_STATE.
+
+Generic definition factories, import and copy do not invoke creation navigation.
+Classic model-panel presentation remains hidden while its shared component context
+and stored History tab follow creation. Subsequent feature tasks restore History
+when it was the tab selected before entry.
+
+The native PartDesign single-sketch task watcher has separate Plus and Classic
+command lists, selected dynamically by TaskPanelUIMode. Plus aliases in `idle_tasks`
+reuse native command activation/enabled state; Classic retains native labels/icons.
+Component Extrude/Revolve dispatch is independent of task presentation mode.
+The Start Part/New Body watcher is removed in both modes. Other contextual actions,
+native legacy documents and backend result Bodies retain their existing behavior.
 
 ## Independent Plus toolbar presentation (TB.1 / TB.2a / TB.2a1 / TB.2b)
 
@@ -2221,7 +2234,7 @@ Classic mode and active interactive handlers retain their native synchronization
 ## Feature-centered Extrude — November 22, 2026
 
 `freecad_plus/extrusion.py` and `extrude_task.py` implement the approved shared
-creation/edit task. The Pad/Pocket command bridge dispatches Plus component tasks
+creation/edit task. The Pad/Pocket command bridge dispatches component tasks in both presentation modes
 before native compatibility routing. History Edit and the Python view provider
 open the same task for managed results.
 

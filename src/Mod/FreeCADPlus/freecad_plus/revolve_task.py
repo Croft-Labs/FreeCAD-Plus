@@ -4,7 +4,7 @@ import FreeCAD as App
 import FreeCADGui as Gui
 from PySide6 import QtWidgets
 from pivy import coin
-from . import extrude_task, revolution, planes, modeling, ui_modes
+from . import extrude_task, revolution, planes, modeling
 from .plane_task import label
 
 
@@ -118,7 +118,7 @@ def show(feature=None, which='Revolution'):
 
 
 def dispatch(which):
-    if ui_modes.modes()[2] != 'Plus':return False
+    # Presentation mode does not select a different component modeling workflow.
     definition, _ = modeling._context(Gui.activeDocument().Document)
     if any(obj.isDerivedFrom('Sketcher::SketchObject') and obj.getParentGeoFeatureGroup() != definition
            for obj in Gui.Selection.getSelection('*')):return False

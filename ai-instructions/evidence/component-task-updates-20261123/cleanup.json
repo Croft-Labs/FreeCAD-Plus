@@ -1,0 +1,19 @@
+{
+  "retained": [
+    "install-backup",
+    "profile-shortcut"
+  ],
+  "root": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\component-task-updates-20261123",
+  "removed": [
+    "fresh-myafruic",
+    "fresh-qj9keqre",
+    "fresh-r9jl__un",
+    "fresh-yk100ocq",
+    "profile-build",
+    "profile-installed",
+    "classic-tools.png",
+    "new-component.png",
+    "no-new-body.png",
+    "plus-tools.png"
+  ]
+}

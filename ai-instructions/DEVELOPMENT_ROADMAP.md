@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development roadmap
 
+## Shared feature workflow migration contract — November 23, 2026
+
+Owner instruction: combining feature workflows also combines their Plus task-panel
+entries. For example, when Additive/Subtractive Loft becomes one Loft workflow,
+show one Loft task entry. Classic retains its original buttons and opens the same
+workflow with the corresponding operation selected. Apply this to future Pipe,
+Helix and similar migrations as they are implemented. Include task entry labels,
+mode switching and command routing in each migration's acceptance checks.
+See [task-panel requirements](ui-ux-specs/TASK_PANEL.md#sketch-selected-modeling-workflows--november-23-2026).
+
 ## Unified Revolve and selected-curves list — November 22, 2026
 
 - [x] Record the owner's shared workflow, axis and angular-field requirements.

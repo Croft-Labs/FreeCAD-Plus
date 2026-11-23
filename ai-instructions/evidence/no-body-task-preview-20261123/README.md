@@ -1,7 +1,7 @@
 # Remove New Body task prompts — November 23, 2026
 
-Status: UI preview awaiting approval. Production source/build/installation unchanged.
-The earlier new-component activation/History preview also remains pending separately.
+Status: historical UI preview, subsequently approved with the other two pending
+changes on November 23. See [implementation evidence](../component-task-updates-20261123/README.md).
 
 Owner requests removal of every Tasks-panel New Body starting prompt: components
 are the starting point, and Bodies are backend feature results. Inspection found

@@ -28,6 +28,11 @@ their implementation priorities and proposed feature lists are not an active que
     `setText` for normal guidance and successful recovery).
     Preserve actionable text, wrapping, focus and valid-state recovery; ordinary
     incomplete/idle guidance is distinct from an error.
+12. When migrating additive/subtractive features to one shared workflow (for
+    example Loft), combine their Plus task-panel entries in the same change.
+    Keep the Classic buttons, routed to the shared workflow with the matching
+    operation selected. Apply the same rule to future Pipe/Helix migrations;
+    do not merge their task entries before their shared workflows exist.
 
 A clean checkout does not itself establish runtime stability or resolve the jitter
 reported for the archived fork. Those comparisons need separately authorized build
