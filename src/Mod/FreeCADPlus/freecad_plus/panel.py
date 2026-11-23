@@ -729,7 +729,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
 
     def _reconcile(self, index, rows):
         tree, previous, current = self.trees[index], self._maps[index], {}
-        def sync(parent, entries):
+        def sync(parent, entries, coordinate_branch=False):
             for position, row in enumerate(entries):
                 item = previous.get(row.key)
                 fresh = item is None
@@ -745,8 +745,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 item.setText(0, row.label)
                 obj = lookup(row.ref)
                 item.setIcon(0, QtGui.QIcon(':/icons/freecad.svg') if row.kind in ('file', 'import') else obj.ViewObject.Icon)
-                if row.kind == 'history_group' and row.label != 'Coordinate System':
-                    item.setIcon(0, self.style().standardIcon(QtWidgets.QStyle.SP_DirIcon))
+                if row.kind == 'history_group' and row.label in ('Axes', 'Planes') and row.children:
+                    item.setIcon(0, lookup(row.children[0].ref).ViewObject.Icon)
                 if index == 2 and obj.TypeId == 'App::Point':
                     item.setToolTip(0, 'Point (0, 0, 0) in component coordinates')
                 flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
@@ -763,9 +763,11 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     item.setCheckState(0, QtCore.Qt.Checked if row.visible else QtCore.Qt.Unchecked)
                 item.setFlags(flags)
                 current[row.key] = item
-                sync(item, row.children)
+                coordinate_row = coordinate_branch or (index == 2 and row.kind == 'history_group'
+                                                        and row.label == 'Coordinate System')
+                sync(item, row.children, coordinate_row)
                 if fresh:
-                    item.setExpanded(True)
+                    item.setExpanded(not coordinate_row)
         blocker = QtCore.QSignalBlocker(tree)
         sync(tree.invisibleRootItem(), rows)
         for key, item in previous.items():

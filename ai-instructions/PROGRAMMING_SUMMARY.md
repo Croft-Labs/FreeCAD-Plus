@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest History coordinate presentation — November 22, 2026
+
+The approved change is installed: Axes/Planes use their children's native icons;
+Coordinate System and descendants start collapsed. Refresh preserves manual expansion
+choices and geometry visibility. All 14 existing native panel/History checks and a
+separate installed visual check passed. The existing shortcut was restarted with
+isolated settings. See
+[acceptance](WORK_STATE.md#history-coordinate-icons-and-collapsed-defaults--november-22-2026).
+
 ## Latest unified Revolve and selection lists — November 22, 2026
 
 Approved changes are installed. Extrude and Revolve share an at-least-five-row

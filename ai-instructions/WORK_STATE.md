@@ -1,17 +1,23 @@
 # FreeCAD Plus: Current work state
 
-## History coordinate icons/collapse preview — November 22, 2026
+## History coordinate icons and collapsed defaults — November 22, 2026
 
-The owner requested child-matching icons on Axes/Planes and Coordinate System plus
-descendants collapsed by default. Direct native screenshots are ready:
-[default](evidence/history-icons-preview-20261122/default.png),
-[root opened](evidence/history-icons-preview-20261122/groups.png),
-[child icon comparison](evidence/history-icons-preview-20261122/children.png).
-The candidate uses native child icons and changes only fresh-row expansion. Native
-checks confirm all three groups initially collapsed, both group/child icon images
-identical, manual expansion retained after refresh and unchanged object visibility.
-**Awaiting chat approval; production source and installed files are unchanged.**
-See [preview provenance](evidence/history-icons-preview-20261122/README.md).
+The owner approved the direct native preview with **"implement"**. Axes/Planes now
+use their children's native icons. Coordinate System and descendants start collapsed;
+ordinary refreshes preserve manual expansion choices. Source and installed payload
+match the approved candidate. All **14 existing native panel/History checks passed**,
+including eyes, task-time clicks, selection, Undo, source ownership and saved visibility.
+A separate installed process confirmed defaults, identical icon images, preserved
+manual expansion and unchanged geometry visibility. Reviewed installed screenshots:
+[default](evidence/history-icons-20261122/default.png),
+[root opened](evidence/history-icons-20261122/groups.png),
+[child icon comparison](evidence/history-icons-20261122/children.png).
+See [implementation evidence](evidence/history-icons-20261122/README.md) and
+[preview provenance](evidence/history-icons-preview-20261122/README.md).
+The Python payload was refreshed and installed with rollback retained. The existing
+desktop shortcut was restarted and verified with isolated user/system/data paths;
+the app remains open. Disposable validation fixtures and inactive profiles were removed.
+The owner profile and unrelated project.previewfirst.json were untouched.
 
 ## Unified Revolve implementation — November 22, 2026
 

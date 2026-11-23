@@ -1,0 +1,10 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/panel.py",
+    "source_sha256": "9c8e3db03574c0cb085650b220f1ccbc528193ca8370d77bfca12fae6330fc83",
+    "built_sha256": "9c8e3db03574c0cb085650b220f1ccbc528193ca8370d77bfca12fae6330fc83",
+    "installed_sha256": "9c8e3db03574c0cb085650b220f1ccbc528193ca8370d77bfca12fae6330fc83",
+    "previous_sha256": "fb69856b95bbf866b5ff17418d9d517e3a700215ffe491d4b4d9070f9d4c0b92",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\history-icons-20261122\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+  }
+]

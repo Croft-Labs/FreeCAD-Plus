@@ -1,0 +1,50 @@
+"""Capture and verify the approved History display in the installed runtime."""
+import os, sys, json, traceback
+sys.dont_write_bytecode = True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtTest
+from freecad_plus import document, panel
+out = Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result = {'ok': False, 'native_installed': True}
+    try:
+        assert '/app/' in panel.__file__.replace('\\', '/'), panel.__file__
+        win = Gui.getMainWindow(); win.resize(1100, 800)
+        win.show(); win.raise_(); win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc = document.new_document('History coordinate display')
+        owner = document.validate(doc).Definitions[0]
+        flags = {o.Name: o.Visibility for o in owner.Origin.OriginFeatures}
+        dock = panel.show_panel(); dock.tabs.setCurrentIndex(2); dock.refresh()
+        QtTest.QTest.qWait(200)
+        groups = {item.text(0): item for item in dock._maps[2].values()
+                  if item.data(0, panel._ROLE).kind == 'history_group'}
+        result['default_expanded'] = {name: item.isExpanded() for name, item in groups.items()}
+        assert not any(result['default_expanded'].values()), result
+        def capture(name):
+            QtTest.QTest.qWait(200)
+            assert dock.grab().save(str(out / (name + '.png')))
+        capture('default')
+        groups['Coordinate System'].setExpanded(True); capture('groups')
+        for item in groups.values(): item.setExpanded(True)
+        capture('children')
+        result['group_icons_match_children'] = {
+            name: groups[name].icon(0).pixmap(24, 24).toImage() ==
+                  groups[name].child(0).icon(0).pixmap(24, 24).toImage()
+            for name in ('Axes', 'Planes')}
+        assert all(result['group_icons_match_children'].values()), result
+        groups['Axes'].setExpanded(False); dock.refresh()
+        assert groups['Coordinate System'].isExpanded()
+        assert not groups['Axes'].isExpanded() and groups['Planes'].isExpanded()
+        assert {o.Name: o.Visibility for o in owner.Origin.OriginFeatures} == flags
+        result.update(ok=True, manual_expansion_preserved=True,
+                      geometry_visibility_unchanged=True, module=panel.__file__)
+    except BaseException:
+        result['error'] = traceback.format_exc()
+    (out / 'visual.json').write_text(json.dumps(result, indent=2))
+    for name in list(App.listDocuments()): App.closeDocument(name)
+    QtCore.QTimer.singleShot(100, Gui.getMainWindow().close)
+
+QtCore.QTimer.singleShot(2200, run)

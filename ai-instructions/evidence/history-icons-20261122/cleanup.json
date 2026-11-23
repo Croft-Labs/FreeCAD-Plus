@@ -1,0 +1,24 @@
+{
+  "root": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\history-icons-20261122",
+  "removed": [
+    "profile-installed",
+    "test_defaults_creation_only_and_reopen_preserves_hidden_groups",
+    "test_event_coalescing_idle_and_observer_cleanup",
+    "test_external_visibility_is_source_owned_and_persists",
+    "test_eye_and_keyboard_preserve_selection_geometry_and_undo",
+    "test_file_origin_visibility_persistence_and_no_display_model_mutation",
+    "test_group_and_individual_eyes_atomic_undo_and_mixed_state",
+    "test_group_eyes_during_sketch_placement_and_native_drawing",
+    "test_hidden_origin_and_body_reveal_in_single_transaction",
+    "test_mouse_selection_double_click_edit_and_model_occurrence_memory",
+    "test_nested_import_labels_and_external_edit_remain_in_assembly",
+    "test_origin_group_and_left_margin_survive_resize_and_collapse",
+    "test_projection_ownership_and_history_without_body_rows",
+    "test_stale_context_pending_transaction_and_task_guards",
+    "test_tab_guard_stale_rows_and_per_view_context"
+  ],
+  "retained": [
+    "install-backup",
+    "profile-shortcut"
+  ]
+}

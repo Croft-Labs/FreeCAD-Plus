@@ -43,9 +43,10 @@ Owner request: Axes and Planes groups use the same native icons as their respect
 children, replacing folder icons. Coordinate System and its descendants start collapsed.
 Apply the collapse default when creating their History rows; ordinary refreshes retain
 the user's later expand/collapse choices. Preserve visibility eyes, geometry visibility,
-labels, source ownership and the other tabs. The direct native
-[preview](../evidence/history-icons-preview-20261122/README.md) is ready; visual approval
-and production implementation remain pending.
+labels, source ownership and the other tabs. The owner approved the direct native
+[preview](../evidence/history-icons-preview-20261122/README.md) with "implement".
+Installed acceptance is recorded in
+[WORK_STATE](../WORK_STATE.md#history-coordinate-icons-and-collapsed-defaults--november-22-2026).
 
 ### Component, definition and instance
 

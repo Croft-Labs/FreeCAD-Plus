@@ -1,4 +1,8 @@
-# Native History coordinate icons/default collapse — awaiting approval
+# Native History coordinate icons/default collapse — approved
+
+The owner subsequently approved this direct preview with **"implement"**.
+[Installed implementation and checks](../history-icons-20261122/README.md) are complete.
+The remaining text records the original preview stage.
 
 The owner's requested presentation is implemented only in an isolated candidate
 panel.py. Axes and Planes copy the native icon of their first child. Fresh Coordinate

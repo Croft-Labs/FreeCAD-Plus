@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "native_installed": true,
+  "default_expanded": {
+    "Coordinate System": false,
+    "Axes": false,
+    "Planes": false
+  },
+  "group_icons_match_children": {
+    "Axes": true,
+    "Planes": true
+  },
+  "manual_expansion_preserved": true,
+  "geometry_visibility_unchanged": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+}
