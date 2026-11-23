@@ -4,6 +4,14 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Revolve Solid/Sheet output — November 23, 2026
+
+Owner requests the same Solid/Sheet options as Extrude. Solid is selected by
+default; Sheet automatically selects and locks New. Use the same left/right
+operation layout and preserve the rotation axis and angular controls.
+The [native preview](../evidence/revolve-sheet-preview-20261123/README.md)
+awaits approval; this records intent, not completed implementation.
+
 ### Extrude Solid/Sheet output — November 23, 2026
 
 Owner requests Solid/Sheet radio buttons on the left of Operation, with

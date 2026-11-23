@@ -1,0 +1,64 @@
+"""Isolated native UI prototype; sheet shape is illustrative fixture geometry."""
+import os,sys,json,traceback,math
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from pivy import coin
+from freecad_plus import document,modeling,revolve_task
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+def run():
+    result={'ok':False,'ui_prototype':True,'sheet_geometry_is_fixture':True};task=None
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1200,1000);win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('Revolve sheet preview');sketch=modeling.new_sketch(doc);sketch.Label='Line profile'
+        sketch.addGeometry(Part.LineSegment(App.Vector(10,0,0),App.Vector(10,15,0)),False);doc.recompute()
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+        task=revolve_task.show();QtTest.QTest.qWait(150);task.ready=False
+        task.end1['length'].setValue(270);task.values[task.end1['length']]=270
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+        from revolve_output import configure
+        controls=configure(task);result['proposed']=controls is not None
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks');tasks.setMinimumWidth(370)
+        def shot(name):
+            QtTest.QTest.qWait(300)
+            if win.focusWidget():win.focusWidget().clearFocus()
+            for scroll in tasks.findChildren(QtWidgets.QAbstractScrollArea):scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(150);pix=win.grab();scale=pix.devicePixelRatioF();pos=task.operation.mapTo(win,QtCore.QPoint())
+            rect=QtCore.QRect(round(pos.x()*scale),round(pos.y()*scale),round(task.operation.width()*scale),round(task.operation.height()*scale))
+            assert pix.copy(rect).save(str(out/(name+'-operation.png')))
+            assert tasks.grab().save(str(out/(name+'-task.png')))
+        shot('solid')
+        if controls:
+            assert controls.buttons['Solid'].isChecked()
+            task.modes['Add'].setChecked(True);controls.buttons['Sheet'].click()
+            assert task.mode()=='New Solid' and all(not b.isEnabled() for b in task.modes.values())
+            sheet=sketch.Shape.Edges[0].revolve(App.Vector(),App.Vector(0,1,0),270)
+            assert sheet.isValid() and len(sheet.Faces)==1 and not sheet.Solids
+            assert abs(sheet.Area-225*math.pi)<1e-6
+            task.clear_overlay();task.overlay=coin.SoSeparator();task.scene.addChild(task.overlay)
+            task.world=App.Placement();task.show_tool(sheet,True);task.highlight_profile()
+            task.display.setItemText(0,'Revolution preview');task.profile_hint.setText('Select sketch curves or edges. Open curves create sheets.')
+            task.status.setText('Sheet preview · one face, no thickness.');task.set_ok(False)
+            shot('sheet')
+            from shutil import copyfile
+            copyfile(out/'sheet-operation.png',os.environ['PLUS_PREVIEW_IMAGE'])
+            specimen=App.newDocument('SheetIllustration');obj=specimen.addObject('Part::Feature','Sheet')
+            obj.Shape=sheet;obj.ViewObject.ShapeColor=(.2,.45,.95);specimen.recompute()
+            view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll()
+            QtTest.QTest.qWait(200);view.saveImage(str(out/'sheet-viewport.png'),800,650,'Current')
+            App.setActiveDocument(doc.Name);controls.buttons['Solid'].click()
+            assert all(b.isEnabled() for b in task.modes.values()) and task.mode()=='New Solid'
+            task.modes['Subtract'].click();assert task.mode()=='Subtract'
+            result.update(default_solid=True,sheet_locks_new=True,solid_unlocks=True,faces=len(sheet.Faces),solids=len(sheet.Solids),area=sheet.Area)
+        else:
+            from shutil import copyfile
+            copyfile(out/'solid-operation.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)
