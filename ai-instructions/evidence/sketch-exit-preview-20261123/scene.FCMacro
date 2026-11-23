@@ -1,0 +1,57 @@
+"""Native sketch-task widgets with fixture-driven preview button state."""
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,editing
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'native_widget_prototype':True,'active_state_driven_by_fixture':True,'cases':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);from sketch_buttons import Controls
+        doc=document.new_document('Sketch exit preview');owner=document.validate(doc).Definitions[0]
+        sketch=modeling.new_sketch(doc)
+        sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),8),False);doc.recompute()
+        editing.edit_feature(doc,sketch);QtTest.QTest.qWait(350)
+        view=Gui.activeDocument().activeView();view.viewTop();view.fitAll()
+        viewport=view.graphicsView().viewport()
+        box=next(w for w in win.findChildren(QtWidgets.QDialogButtonBox)
+                 if w.isVisible() and w.button(QtWidgets.QDialogButtonBox.Close))
+        before=(sketch.GeometryCount,sketch.ConstraintCount)
+        def cancel():
+            viewport.setFocus();QtTest.QTest.keyClick(viewport,QtCore.Qt.Key_Escape)
+            controls.set_active(False)
+        controls=Controls(box,cancel);proposed=hasattr(controls,'cancel');result['proposed']=proposed
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks')
+        for name,command in (('idle',None),('drawing','Sketcher_CreateRectangle'),('constraint','Sketcher_ConstrainHorizontal')):
+            if command:
+                Gui.Selection.clearSelection();Gui.runCommand(command);QtTest.QTest.qWait(200)
+            controls.set_active(command is not None);QtTest.QTest.qWait(160)
+            labels=[b.text().replace('&','') for b in box.buttons() if b.isVisible()]
+            assert ('Exit Sketch' in labels)==proposed
+            assert ('Cancel' in labels)==(proposed and command is not None)
+            assert tasks.grab().save(str(out/(name+'.png')))
+            assert box.grab().save(str(out/(name+'-buttons.png')))
+            if name=='drawing':assert tasks.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+            if command:
+                if proposed:QtTest.QTest.mouseClick(controls.cancel,QtCore.Qt.LeftButton)
+                else:cancel()
+                QtTest.QTest.qWait(250)
+                assert Gui.activeDocument().getInEdit() is not None
+                assert (sketch.GeometryCount,sketch.ConstraintCount)==before
+                if proposed:assert not controls.cancel.isVisible()
+            result['cases'].append(dict(state=name,buttons=labels,sketch_remains_open=True,completed_geometry_preserved=True))
+        close=box.button(QtWidgets.QDialogButtonBox.Close);QtTest.QTest.mouseClick(close,QtCore.Qt.LeftButton)
+        QtTest.QTest.qWait(250);assert Gui.activeDocument().getInEdit() is None
+        assert (sketch.GeometryCount,sketch.ConstraintCount)==before
+        result.update(ok=True,exit_closes_sketch=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if Gui.activeDocument() and Gui.activeDocument().getInEdit():Gui.activeDocument().resetEdit()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

@@ -1,0 +1,16 @@
+"""Native widget prototype; the fixture supplies active-tool state."""
+from PySide6 import QtWidgets
+
+class Controls:
+    def __init__(self, box, cancel_action):
+        self.box = box
+        self.exit = box.button(QtWidgets.QDialogButtonBox.Close)
+        self.exit.setText('Exit Sketch')
+        self.cancel = box.addButton('Cancel', QtWidgets.QDialogButtonBox.ActionRole)
+        self.cancel.setToolTip('Cancel the current sketch action (Esc)')
+        self.cancel.setAutoDefault(False)
+        self.cancel.clicked.connect(cancel_action)
+        self.set_active(False)
+
+    def set_active(self, active):
+        self.cancel.setVisible(active)

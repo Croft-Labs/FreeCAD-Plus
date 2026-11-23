@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "native_widget_prototype": true,
+  "active_state_driven_by_fixture": true,
+  "cases": [
+    {
+      "state": "idle",
+      "buttons": [
+        "Close"
+      ],
+      "sketch_remains_open": true,
+      "completed_geometry_preserved": true
+    },
+    {
+      "state": "drawing",
+      "buttons": [
+        "Close"
+      ],
+      "sketch_remains_open": true,
+      "completed_geometry_preserved": true
+    },
+    {
+      "state": "constraint",
+      "buttons": [
+        "Close"
+      ],
+      "sketch_remains_open": true,
+      "completed_geometry_preserved": true
+    }
+  ],
+  "proposed": false,
+  "exit_closes_sketch": true
+}

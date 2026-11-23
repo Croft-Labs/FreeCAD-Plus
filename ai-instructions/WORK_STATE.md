@@ -1,5 +1,14 @@
 # FreeCAD Plus: Current work state
 
+## Sketch Exit/Cancel control preview — November 23, 2026
+
+Owner requests Exit Sketch instead of Close and an adjacent Cancel while a sketch
+action is active, behaving like Escape without leaving sketch edit. Native-widget
+prototype covers idle, rectangle and constraint states; Cancel preserves the open
+sketch/completed geometry and Exit Sketch closes it. Automatic active-tool detection
+is still fixture-driven. Awaiting preview approval; production/install unchanged.
+See [preview and native implementation scope](evidence/sketch-exit-preview-20261123/README.md).
+
 ## Creation selection repair installed — November 23, 2026
 
 Owner reported that new-component navigation left selection active and hid idle

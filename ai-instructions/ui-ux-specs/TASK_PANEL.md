@@ -4,6 +4,16 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Sketch Exit and action Cancel — November 23, 2026
+
+Owner requests **Exit Sketch** replacing the sketch editor's Close button, plus an
+adjacent **Cancel** while geometry creation, constraint application or another sketch
+action is active. Cancel follows native Escape semantics for that action and keeps
+the sketch open. Completed geometry/constraints are retained. Hide Cancel when no
+action is active; Exit Sketch keeps native sketch-closing behavior. The
+[native-widget proposal](../evidence/sketch-exit-preview-20261123/README.md) awaits
+direct preview approval before implementation.
+
 ### Sketch-selected modeling workflows — November 23, 2026
 
 Owner requests Plus-mode Modeling Tools use current shared workflows, with Extrude
