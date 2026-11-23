@@ -1,5 +1,13 @@
 # FreeCAD Plus: Programming Summary
 
+## Fillet selection repair installed — November 23, 2026
+
+Deferred guarded curve-chain delivery prevents the native consuming-picker loop;
+canonical seed names prevent double toggles. Plus Fillet opens whole-solid inputs
+with an empty edge list and routes by selected/sole component result, not ambient
+Body. Eight build and 90 installed checks, viewport picking, reopen/edit and shortcut
+checks passed. See [repair evidence](evidence/fillet-20261123/README.md).
+
 ## Unified Loft installed — November 23, 2026
 
 Loft combines Solid/Sheet and New/Add/Subtract in one creation/edit task with

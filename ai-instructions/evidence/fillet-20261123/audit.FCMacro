@@ -1,0 +1,30 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False};case=None
+    try:
+        from TestFilletWorkflow import TestFilletWorkflow
+        from TestComponentModeling import accept_task
+        from freecad_plus import document
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1000)
+        case=TestFilletWorkflow('test_clear_and_connected_pick_drains_native_notifications_once');case.setUp()
+        feature=case.enter(case.solid)
+        assert not feature.Base[1] and not feature.UseAllEdges
+        win.findChild(QtWidgets.QDockWidget,'Tasks').grab().save(str(out/'fillet-empty.png'))
+        case.pick('Edge1','Connected Curves');assert len(feature.Base[1])==12
+        case.clear();case.pick('Edge1');assert feature.Base[1]==['Edge1']
+        assert feature.Shape.isValid()
+        win.findChild(QtWidgets.QDockWidget,'Tasks').grab().save(str(out/'fillet-single-after-clear.png'))
+        identity=feature.ID;volume=feature.Shape.Volume
+        accept_task();assert not Gui.Control.activeDialog()
+        document.save_document(case.doc,case.output/'Fillet.cadprt')
+        result.update(ok=True,empty_entry=True,connected_edges=12,after_clear=feature.Base[1],identity=identity,volume=volume,accepted=True)
+    except BaseException:result['error']=traceback.format_exc()
+    finally:
+        if case:case.tearDown()
+    (out/'audit.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000,run)

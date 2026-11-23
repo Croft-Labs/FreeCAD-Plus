@@ -4,6 +4,19 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Fillet edge selection repair — November 23, 2026
+
+Owner reported a freeze after opening Fillet on an Extrude, clearing the automatically
+selected edges, then picking an edge. Fillet must not automatically select every edge
+on entry. In Plus component documents, whole-solid selection opens an empty collector;
+explicit edge/face picks are retained. Keep the native explicit Use all edges option.
+With no selection, a sole component result supplies the target; multiple results
+require explicit selection, independent of Classic active Body. Connected/Tangent
+curve selection must deliver each edge once and remain responsive when the task
+consumes and clears picks. Preserve the native Fillet editor, geometry and identities.
+This is a correction of the existing workflow, not a new task layout. See
+[repair evidence](../evidence/fillet-20261123/README.md).
+
 ### Shell selection after opening — November 23, 2026
 
 Owner requests opening Shell without choosing faces beforehand. Empty selection

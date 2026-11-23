@@ -1,0 +1,13 @@
+test_clear_and_connected_pick_drains_native_notifications_once (TestFilletWorkflow.TestFilletWorkflow.test_clear_and_connected_pick_drains_native_notifications_once) ... ok
+test_legacy_whole_solid_still_offers_native_all_edges (TestFilletWorkflow.TestFilletWorkflow.test_legacy_whole_solid_still_offers_native_all_edges) ... ok
+test_queued_chain_cannot_select_after_task_cancel (TestFilletWorkflow.TestFilletWorkflow.test_queued_chain_cannot_select_after_task_cancel) ... ok
+test_real_viewport_pick_after_clearing_edges (TestFilletWorkflow.TestFilletWorkflow.test_real_viewport_pick_after_clearing_edges) ... ok
+test_selected_solid_ignores_other_active_body (TestFilletWorkflow.TestFilletWorkflow.test_selected_solid_ignores_other_active_body) ... ok
+test_tangent_pick_and_shared_chamfer_collector (TestFilletWorkflow.TestFilletWorkflow.test_tangent_pick_and_shared_chamfer_collector) ... ok
+test_whole_solid_and_empty_entry_require_explicit_edges (TestFilletWorkflow.TestFilletWorkflow.test_whole_solid_and_empty_entry_require_explicit_edges) ... ok
+test_empty_selection_context_and_cancel (TestComponentCommandInputs.TestComponentCommandInputs.test_empty_selection_context_and_cancel) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 10.474s
+
+OK

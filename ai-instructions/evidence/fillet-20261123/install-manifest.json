@@ -1,0 +1,38 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\curve_selection.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/curve_selection.py",
+    "source_sha256": "9c65523f957bcbf0fecbf1e2dbad76e06ddb5f0237237ba96bf656445b6c63e6",
+    "built_sha256": "9c65523f957bcbf0fecbf1e2dbad76e06ddb5f0237237ba96bf656445b6c63e6",
+    "installed_sha256": "9c65523f957bcbf0fecbf1e2dbad76e06ddb5f0237237ba96bf656445b6c63e6",
+    "previous_sha256": "23b5b03508c66c6ec3d1dcdcffa06846ccb59cc291d8d470c4611e261718bdd6",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\fillet-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\curve_selection.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestFilletWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestFilletWorkflow.py",
+    "source_sha256": "31d343353f5eeb58886454a1eec21e51337c97c200d36d14bf8a2522383da6bc",
+    "built_sha256": "31d343353f5eeb58886454a1eec21e51337c97c200d36d14bf8a2522383da6bc",
+    "installed_sha256": "31d343353f5eeb58886454a1eec21e51337c97c200d36d14bf8a2522383da6bc",
+    "previous_sha256": null,
+    "rollback": null
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestComponentCommandInputs.py",
+    "build_path": "Mod/FreeCADPlus/TestComponentCommandInputs.py",
+    "source_sha256": "9ec036f7cddd9e21b0a800b0850df998a9f68cc5f4427823879d33290ad8edf8",
+    "built_sha256": "9ec036f7cddd9e21b0a800b0850df998a9f68cc5f4427823879d33290ad8edf8",
+    "installed_sha256": "9ec036f7cddd9e21b0a800b0850df998a9f68cc5f4427823879d33290ad8edf8",
+    "previous_sha256": "7a84895647fe2e5f9c443615a1e7117962bea27034443a75a58cef86fc490ef0",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\fillet-20261123\\install-backup\\Mod\\FreeCADPlus\\TestComponentCommandInputs.py"
+  },
+  {
+    "path": "lib\\PartDesignGui.pyd",
+    "build_path": "Mod/PartDesign/PartDesignGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "1e48e7498a326836a921b25958f8269866ce35ef110b4598d3a4b00ee8072e60",
+    "installed_sha256": "1e48e7498a326836a921b25958f8269866ce35ef110b4598d3a4b00ee8072e60",
+    "previous_sha256": "8b7e6f50410452d17543a2c5803821ddaeb9f638d00898065cf8e70671818f87",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\fillet-20261123\\install-backup\\lib\\PartDesignGui.pyd"
+  }
+]

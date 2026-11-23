@@ -2026,6 +2026,15 @@ default is Single Curve. Rebuilding the ribbon retains this choice. Classic and
 other modes disable the observer's expansion; programmatic command/collector and
 tree selections are not expanded. The adapter never replaces native selection gates.
 
+The November 23 Fillet repair defers expansion until the seed's native notification
+queue drains. Each additional pick then runs synchronously under the controller's
+guard; consuming tasks can clear selection without recursively expanding queued
+picks forever. Pending canonical edge keys deduplicate overlapping picks, including
+mapped names of the seed. Deferred work checks the document/editor/task context and
+is discarded after task exit. Fillet in Plus documents resolves an explicit or sole
+component target and opens whole-solid inputs with an empty edge list; native legacy
+document behavior and the explicit Use all edges checkbox remain unchanged.
+
 Native `resolveSubElement` and `Part.splitSubname` resolve mapped geometry names and
 preserve the original occurrence prefix. Traversal uses only the selected owner's
 geometry, never spatial proximity to other document objects or occurrences. During

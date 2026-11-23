@@ -1,5 +1,13 @@
 # FreeCAD Plus: Development roadmap
 
+## Fillet selection repair — November 23, 2026
+
+- [x] Reproduce and repair the consuming-picker notification loop and mapped seed toggle.
+- [x] Remove implicit all-edge selection in Plus Fillet; retain explicit and legacy options.
+- [x] Validate component target routing, native picking, persistence and installed shortcut.
+
+See [implementation and acceptance](evidence/fillet-20261123/README.md).
+
 ## Shell entry — November 23, 2026
 
 - [x] Prepare native UI prototype for empty/invalid preselection and selection after opening.

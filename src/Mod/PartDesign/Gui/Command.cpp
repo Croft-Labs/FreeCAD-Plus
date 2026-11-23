@@ -25,6 +25,8 @@
 #include <BRepAdaptor_Surface.hxx>
 #include <GeomLib_IsPlanarSurface.hxx>
 #include <QMessageBox>
+#include <App/GeoFeatureGroupExtension.h>
+#include <Gui/MDIView.h>
 #include <TopExp_Explorer.hxx>
 #include <TopLoc_Location.hxx>
 #include <TopoDS.hxx>
@@ -1995,11 +1997,53 @@ bool dressupGetSelected(
 )
 {
     std::vector<Gui::SelectionObject> selection = cmd->getSelection().getSelectionEx();
-    // Shell consumes the selected solid, independently of the last active Body.
+    const bool componentFillet = which == "Fillet"
+        && Gui::isComponentModelingDocument(cmd->getDocument());
+    if (componentFillet && selection.empty()) {
+        // An empty edge list still needs an unambiguous component solid. Do not
+        // take the target from Classic's ambient active Body.
+        auto* view = Gui::Application::Instance->activeView();
+        auto* owner = view ? view->getActiveObject<App::DocumentObject*>("PlusEdit") : nullptr;
+        if (!owner) {
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Ineligible geometry"),
+                                 QObject::tr("Edit a component before using modeling geometry"));
+            return false;
+        }
+        std::vector<PartDesign::Body*> bodies;
+        for (auto* body : cmd->getDocument()->getObjectsOfType<PartDesign::Body>()) {
+            if (body->Tip.getValue() && App::GeoFeatureGroupExtension::getGroupOfObject(body) == owner) {
+                bodies.push_back(body);
+            }
+        }
+        if (bodies.size() == 1) {
+            selection.emplace_back(bodies.front()->Tip.getValue());
+        }
+        else {
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Fillet"),
+                                 QObject::tr("Select the solid or its edges to fillet."));
+            return false;
+        }
+    }
+    // Modified component dress-ups consume the selected solid, independently of
+    // the last active Body.
     // Keep the original unresolved selection for component/occurrence admission.
-    PartDesign::Body* pcActiveBody = which == "Thickness" && selection.size() == 1
-        ? PartDesignGui::getBodyFor(selection[0].getObject(), true)
-        : PartDesignGui::getBody(true);
+    PartDesign::Body* pcActiveBody = nullptr;
+    if (componentFillet) {
+        if (selection.size() != 1) {
+            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Fillet"),
+                                 QObject::tr("Select edges or faces from a single solid."));
+            return false;
+        }
+        pcActiveBody = selection[0].getObject<PartDesign::Body>();
+        if (!pcActiveBody) {
+            pcActiveBody = PartDesign::Body::findBodyOf(selection[0].getObject());
+        }
+    }
+    else {
+        pcActiveBody = which == "Thickness" && selection.size() == 1
+            ? PartDesignGui::getBodyFor(selection[0].getObject(), true)
+            : PartDesignGui::getBody(true);
+    }
 
     if (!pcActiveBody) {
         return false;
@@ -2021,7 +2065,8 @@ bool dressupGetSelected(
         );
         return false;
     }
-    else if (pcActiveBody != PartDesignGui::getBodyFor(selection[0].getObject(), false)) {
+    else if (!componentFillet
+             && pcActiveBody != PartDesignGui::getBodyFor(selection[0].getObject(), false)) {
         QMessageBox::warning(
             Gui::getMainWindow(),
             QObject::tr("Selection is not in the active body"),
@@ -2059,7 +2104,7 @@ bool dressupGetSelected(
 
     // if 1 Part::Feature object selected, but no subobjects, select all edges for the user
     // but only for fillet and chamfer (not for draft or thickness)
-    if (selection[0].getSubNames().empty()
+    if (!componentFillet && selection[0].getSubNames().empty()
         && (which.compare("Fillet") == 0 || which.compare("Chamfer") == 0)) {
         useAllEdges = true;
         std::string edgeTypeName = Part::TopoShape::shapeName(TopAbs_EDGE);  //"Edge"
@@ -2160,6 +2205,14 @@ bool makeChamferOrFillet(Gui::Command* cmd, const std::string& which)
     else {
         base = static_cast<Part::Feature*>(selected.getObject());
         SubNames = std::vector<std::string>(selected.getSubNames());
+        if (which == "Fillet" && Gui::isComponentModelingDocument(cmd->getDocument())) {
+            if (auto* body = dynamic_cast<PartDesign::Body*>(base)) {
+                base = dynamic_cast<Part::Feature*>(body->Tip.getValue());
+                if (!base) {
+                    return false;
+                }
+            }
+        }
     }
 
     finishDressupFeature(cmd, which, base, SubNames, useAllEdges);

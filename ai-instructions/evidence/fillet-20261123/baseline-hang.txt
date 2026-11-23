@@ -1,0 +1,10 @@
+extrude
+extruded 2399.9999999999995
+selection [('Extrude', ())]
+command
+returned 0.125
+settled
+initial ['Edge1', 'Edge2', 'Edge3', 'Edge4', 'Edge5', 'Edge6', 'Edge7', 'Edge8', 'Edge9', 'Edge10', 'Edge11', 'Edge12'] all True enabled False
+delete all
+deleted []
+pick after clear

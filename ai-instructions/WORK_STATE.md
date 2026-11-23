@@ -1,5 +1,18 @@
 # FreeCAD Plus: Current work state
 
+## Fillet selection freeze repaired and installed — November 23, 2026
+
+Fixed a reproducible selection-notification loop when clearing Fillet edges and
+picking again with curve-chain selection. Mapped seed edges are no longer toggled
+twice. Plus Fillet opens whole-solid inputs with no automatic all-edge selection
+and uses explicit/sole component targets independently of Classic active Body.
+
+Eight focused build checks and all 90 installed checks passed, including actual
+viewport picking, Cancel and Undo/Redo. Installed audit, fresh-process reopen/edit
+and the existing desktop shortcut passed. Four payload files have rollback copies;
+owner sessions/settings remain untouched. Restart older processes to load the fix.
+See [repair and direct captures](evidence/fillet-20261123/README.md).
+
 ## Shell entry preview awaiting approval — November 23, 2026
 
 Owner requests opening Shell without preselected faces and keeping the task open

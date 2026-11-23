@@ -1,0 +1,9 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/13] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestComponentCommandInputs.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestComponentCommandInputs.py
+[2/13] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written

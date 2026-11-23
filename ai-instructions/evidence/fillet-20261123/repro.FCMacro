@@ -1,0 +1,57 @@
+import os,json,traceback,time
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def log(s):
+    with (out/'progress.txt').open('a') as f:f.write(s+'\n')
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import document,modeling,extrusion
+        Gui.activateWorkbench('PartDesignWorkbench');Gui.getMainWindow().show()
+        doc=document.new_document('Fillet rectangle');owner=document.validate(doc).Definitions[0]
+        sketch=modeling.new_sketch(doc)
+        points=[App.Vector(0,0,0),App.Vector(20,0,0),App.Vector(20,12,0),App.Vector(0,12,0)]
+        for i in range(4):sketch.addGeometry(Part.LineSegment(points[i],points[(i+1)%4]),False)
+        doc.recompute();log('extrude')
+        feature=extrusion.save(doc,[(sketch,'')],{},dict(extrusion.DEFAULTS,length=10))
+        log('extruded '+str(feature.Shape.Volume));Gui.activeDocument().activeView().viewAxonometric();Gui.activeDocument().activeView().fitAll()
+        case=os.environ.get('FILLET_CASE','Edge1');editing_case=case=='Edit';clear_case=case.startswith('Clear');chain_case=case=='ClearChain';case='' if clear_case else 'Edge1' if editing_case else case;obj=feature
+        if os.environ.get('FILLET_BODY')=='1':obj=feature.getParentGeoFeatureGroup()
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(obj,case)
+        log('selection '+repr([(s.ObjectName,s.SubElementNames) for s in Gui.Selection.getSelectionEx()]))
+        def modal():
+            w=QtWidgets.QApplication.activeModalWidget()
+            if w:
+                log('MODAL '+w.windowTitle()+' '+str([l.text() for l in w.findChildren(QtWidgets.QLabel)]));w.reject()
+        timer=QtCore.QTimer();timer.timeout.connect(modal);timer.start(200)
+        log('command');start=time.monotonic();Gui.runCommand('PartDesign_Fillet');log('returned '+str(time.monotonic()-start))
+        QtTest.QTest.qWait(250);log('settled');timer.stop()
+        edited=Gui.activeDocument().getInEdit();result.update(ok=True,edit=edited.Object.Name if edited else None)
+        if edited:
+            if clear_case:
+                win=Gui.getMainWindow();button=win.findChild(QtWidgets.QToolButton,'buttonRefSel');items=win.findChild(QtWidgets.QListWidget,'listWidgetReferences')
+                log('initial '+repr(edited.Object.Base[1])+' all '+str(edited.Object.UseAllEdges)+' enabled '+str(items.isEnabled()))
+                win.findChild(QtWidgets.QCheckBox,'checkBoxUseAllEdges').setChecked(False)
+                items.selectAll();log('delete all');next(a for a in items.actions() if a.text()=='Remove').trigger();log('deleted '+repr(edited.Object.Base[1]))
+                if chain_case:
+                    from freecad_plus import curve_selection,selection_toolbar
+                    selection_toolbar.preferences().SetString('CurveIntent','Connected Curves');curve_selection._controller.picking=True
+                button.setChecked(True);log('pick after clear');Gui.Selection.addSelection(feature.getParentGeoFeatureGroup(),'Edge1');QtTest.QTest.qWait(100);log('picked '+repr(edited.Object.Base[1]))
+            if editing_case:
+                win=Gui.getMainWindow();button=win.findChild(QtWidgets.QToolButton,'buttonRefSel');items=win.findChild(QtWidgets.QListWidget,'listWidgetReferences')
+                for repeat in range(3):
+                    for idx in list(range(1,13))+list(range(12,0,-1)):
+                        if not button.isChecked():button.setChecked(True)
+                        log('pick '+str(repeat)+' Edge'+str(idx));Gui.Selection.addSelection(feature,'Edge'+str(idx));QtTest.QTest.qWait(20)
+                        log('refs '+repr(edited.Object.Base[1]))
+                        if items.count():items.setCurrentRow(items.count()-1)
+                        log('row set');QtTest.QTest.qWait(20)
+            result['valid']=edited.Object.Shape.isValid();result['volume']=edited.Object.Shape.Volume
+            Gui.getMainWindow().grab().save(str(out/'task.png'))
+            Gui.activeDocument().resetEdit();doc.abortTransaction()
+        App.closeDocument(doc.Name)
+    except BaseException:result['error']=traceback.format_exc();log(result['error'])
+    (out/'result.json').write_text(json.dumps(result,indent=2));QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1800,run)

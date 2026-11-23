@@ -127,6 +127,7 @@ class Controller(QtCore.QObject):
         self.picking = False
         self.busy = False
         self.cache = {}
+        self.pending = set()
         QtWidgets.QApplication.instance().installEventFilter(self)
         Gui.Selection.addObserver(self, 0)  # Keep the original occurrence path.
 
@@ -154,16 +155,46 @@ class Controller(QtCore.QObject):
         root = document.getObject(name) if document else None
         if root is None:
             return
+        try:
+            import Part
+            prefix, _, _ = Part.splitSubname(sub)
+            _, _, element = Part.splitSubname(root.resolveSubElement(sub)[2])
+            seed = prefix + element
+            key = (doc, name, seed)
+            if key in self.pending:
+                return
+            chain = candidates(root, sub, mode, self.cache)
+            keys = {(doc, name, candidate) for candidate in chain} | {key}
+            extra = [candidate for candidate in chain
+                     if candidate != seed and (doc, name, candidate) not in self.pending]
+            if not extra:
+                return
+            self.pending.update(keys)
+            gui = Gui.activeDocument()
+            editor = gui.getInEdit() if gui else None
+            task = Gui.Control.activeDialog()
+            # SelectionSingleton queues notifications made inside an observer.
+            # A consuming task (Fillet, for example) clears each pick. Expanding
+            # its queued picks again can therefore refill that queue forever.
+            # Start after the seed notification drains, then deliver each extra
+            # pick synchronously under the guard, retaining the native gate.
+            QtCore.QTimer.singleShot(0, self, lambda: self.expand(root, extra, keys, gui, editor, task))
+        except (RuntimeError, ValueError, AttributeError) as exc:
+            App.Console.PrintWarning('Plus curve selection: %s\n' % exc)
+
+    def expand(self, root, extra, keys, gui, editor, task):
         self.busy = True
         try:
-            for candidate in candidates(root, sub, mode, self.cache):
-                if candidate != sub:
-                    # Never replace a command's gate or bypass native admission.
-                    Gui.Selection.addSelection(doc, name, candidate)
-        except (RuntimeError, ValueError, AttributeError) as exc:
+            if (not self.active or Gui.activeDocument() != gui
+                    or (gui and gui.getInEdit() != editor) or Gui.Control.activeDialog() != task):
+                return
+            for candidate in extra:
+                Gui.Selection.addSelection(root.Document.Name, root.Name, candidate)
+        except (RuntimeError, ValueError, AttributeError, ReferenceError) as exc:
             App.Console.PrintWarning('Plus curve selection: %s\n' % exc)
         finally:
             self.busy = False
+            self.pending.difference_update(keys)
 
 
 def apply(active):

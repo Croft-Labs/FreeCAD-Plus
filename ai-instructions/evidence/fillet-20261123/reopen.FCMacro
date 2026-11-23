@@ -1,0 +1,29 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import document,editing
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.open_document(out/'test_clear_and_connected_pick_drains_native_notifications_once/Fillet.cadprt')
+        feature=next(obj for obj in doc.Objects if obj.TypeId=='PartDesign::Fillet')
+        identity=feature.ID;volume=feature.Shape.Volume
+        doc.recompute();assert feature.Shape.isValid() and feature.Base[1]==['Edge1']
+        assert not feature.UseAllEdges
+        assert abs(volume-2397.8539816339744)<1e-7
+        root=document.validate(doc)
+        editing.edit(next(obj for obj in root.Group if obj.TypeId=='App::Link'))
+        editing.edit_feature(doc,feature);QtTest.QTest.qWait(100)
+        assert Gui.activeDocument().getInEdit().Object==feature
+        button=next(box.button(QtWidgets.QDialogButtonBox.Cancel) for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox) if box.isVisible() and box.button(QtWidgets.QDialogButtonBox.Cancel))
+        QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton);QtTest.QTest.qWait(100)
+        assert feature.ID==identity and abs(feature.Shape.Volume-volume)<1e-7
+        result.update(ok=True,identity=identity,volume=volume,refs=feature.Base[1],edit_cancel=True)
+        App.closeDocument(doc.Name)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'reopen.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000,run)

@@ -71,8 +71,13 @@ class TestComponentCommandInputs(unittest.TestCase):
         for name in ('Fillet', 'LinearPattern'):
             self.denied('PartDesign_' + name, body, 'Edit a component')
         view.setActiveObject('PlusEdit', parent, sub)
+        # This component has both the fixture Pad and CommandBox. Fillet must
+        # not choose between them from Classic's ambient active Body.
+        self.denied('PartDesign_Fillet', body, 'Select the solid')
         for name in ('Fillet', 'LinearPattern'):
             Gui.Selection.clearSelection(); before = self.state(body)[:4]
+            if name == 'Fillet':
+                self.select(self.base)
             with messages() as errors: Gui.runCommand('PartDesign_' + name); settle()
             self.assertFalse(errors, errors)
             self.assertIsNotNone(Gui.activeDocument().getInEdit())
