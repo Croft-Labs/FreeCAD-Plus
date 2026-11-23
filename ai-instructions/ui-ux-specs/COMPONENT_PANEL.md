@@ -54,6 +54,18 @@ and implementation with "approved, implement strict sequential history and preve
 sketches or other inputs from being ordered after the features that use them".
 Source/build/install acceptance lives in WORK_STATE.
 
+### Persistent base coordinate system — November 23, 2026
+
+The owner approved protecting the base coordinate system created with every part.
+Its Coordinate System, native Origin point, axes and planes cannot be deleted
+individually, including through History. Visibility controls remain usable. Keep
+the existing native objects and identities; do not replace them after deletion.
+Normal deletion of the owning component, Undo/Redo and cancellation still work.
+User-created datum geometry remains deletable. Existing saved component files
+receive the same protection without migration.
+
+See [implementation evidence](../evidence/target-coordinate-20261123/README.md).
+
 ### History coordinate icons and initial expansion — November 22, 2026
 
 Owner request: Axes and Planes groups use the same native icons as their respective

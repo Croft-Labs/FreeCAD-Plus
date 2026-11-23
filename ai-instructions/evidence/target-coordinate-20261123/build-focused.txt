@@ -1,0 +1,21 @@
+test_clear_does_not_reselect_until_operation_entry (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_clear_does_not_reselect_until_operation_entry) ... ok
+test_direct_subtractive_launch_and_existing_selection (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_direct_subtractive_launch_and_existing_selection) ... ok
+test_edit_keeps_saved_predecessor_and_excludes_self_and_later (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_edit_keeps_saved_predecessor_and_excludes_self_and_later) ... ok
+test_hidden_sole_target_both_tools_both_operations_and_cancel (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_hidden_sole_target_both_tools_both_operations_and_cancel) ... ok
+test_history_delete_preserves_native_frame_and_visibility_controls (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_history_delete_preserves_native_frame_and_visibility_controls) ... ok
+test_invalid_target_clears_and_deleted_target_closes_safely (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_invalid_target_clears_and_deleted_target_closes_safely) ... ok
+test_native_frame_deletion_is_atomic_and_reopen_keeps_ids (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_native_frame_deletion_is_atomic_and_reopen_keeps_ids) ... ok
+test_owner_cascade_undo_redo_abort_and_custom_datums (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_owner_cascade_undo_redo_abort_and_custom_datums) ... ok
+test_zero_and_multiple_targets_highlight_without_popup (TestTargetCoordinateWorkflow.TestTargetCoordinateWorkflow.test_zero_and_multiple_targets_highlight_without_popup) ... ok
+test_cycles_are_not_silently_ordered (TestFeatureCenteredModeling.TestSequentialHistory.test_cycles_are_not_silently_ordered) ... ok
+test_forward_profile_target_axis_and_limit_are_atomic (TestFeatureCenteredModeling.TestSequentialHistory.test_forward_profile_target_axis_and_limit_are_atomic) ... ok
+test_history_picker_rejects_later_profile (TestFeatureCenteredModeling.TestSequentialHistory.test_history_picker_rejects_later_profile) ... ok
+test_interleaved_bodies_undo_and_saved_order (TestFeatureCenteredModeling.TestSequentialHistory.test_interleaved_bodies_undo_and_saved_order) ... ok
+test_native_compound_drop_rejects_future_input (TestFeatureCenteredModeling.TestSequentialHistory.test_native_compound_drop_rejects_future_input) ... ok
+test_native_expression_and_body_result_dependencies (TestFeatureCenteredModeling.TestSequentialHistory.test_native_expression_and_body_result_dependencies) ... ok
+test_sketch_plane_and_native_input_guards (TestFeatureCenteredModeling.TestSequentialHistory.test_sketch_plane_and_native_input_guards) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 14.238s
+
+OK

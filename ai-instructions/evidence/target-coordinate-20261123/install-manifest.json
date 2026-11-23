@@ -1,0 +1,47 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/TestTargetCoordinateWorkflow.py",
+    "source_sha256": "827ba252fade32924eaa9842d417f0ae8cbb7dc8ec0c6ac31d37ab4fcd6c0e9d",
+    "built_sha256": "827ba252fade32924eaa9842d417f0ae8cbb7dc8ec0c6ac31d37ab4fcd6c0e9d",
+    "installed_sha256": "827ba252fade32924eaa9842d417f0ae8cbb7dc8ec0c6ac31d37ab4fcd6c0e9d",
+    "previous_sha256": null,
+    "rollback": null,
+    "rollback_sha256": null
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "01634d78e5cb9ed768c7d3abf0c9cc308b67db362f02a5e3d45a4cade5087a4e",
+    "built_sha256": "01634d78e5cb9ed768c7d3abf0c9cc308b67db362f02a5e3d45a4cade5087a4e",
+    "installed_sha256": "01634d78e5cb9ed768c7d3abf0c9cc308b67db362f02a5e3d45a4cade5087a4e",
+    "previous_sha256": "3a80a9f1e4ddeffa4201cff39c6e43b35cb5fd509af2b33aad734a0b3ce5ff33",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\target-coordinate-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "rollback_sha256": "3a80a9f1e4ddeffa4201cff39c6e43b35cb5fd509af2b33aad734a0b3ce5ff33"
+  },
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/revolve_task.py",
+    "source_sha256": "a6662ae58d40959121a0fb89b10f2defec36d5a9030709d2975598290d3dc2d5",
+    "built_sha256": "a6662ae58d40959121a0fb89b10f2defec36d5a9030709d2975598290d3dc2d5",
+    "installed_sha256": "a6662ae58d40959121a0fb89b10f2defec36d5a9030709d2975598290d3dc2d5",
+    "previous_sha256": "7e42c6ff6ceff7b5931b14cf03b326ec94753a88e39f0cac67d158ca09315f42",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\target-coordinate-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py",
+    "rollback_sha256": "7e42c6ff6ceff7b5931b14cf03b326ec94753a88e39f0cac67d158ca09315f42"
+  },
+  {
+    "path": "bin/FreeCADApp.dll",
+    "source_sha256": null,
+    "built_sha256": "1bcb0b70bb92574b83aaa2641a0ec443a5370c66b9cfc99965c51b50e23185e6",
+    "installed_sha256": "1bcb0b70bb92574b83aaa2641a0ec443a5370c66b9cfc99965c51b50e23185e6",
+    "previous_sha256": "72cc66ee2bbb237a88f5016b5a85574f3e0e6fe5b6c1eb47700635881daf5011",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\target-coordinate-20261123\\install-backup\\bin\\FreeCADApp.dll",
+    "rollback_sha256": "72cc66ee2bbb237a88f5016b5a85574f3e0e6fe5b6c1eb47700635881daf5011"
+  },
+  {
+    "path": "bin/FreeCADBase.dll",
+    "source_sha256": null,
+    "built_sha256": "eb87a2eafdedcb03a5e2979f598697cdbf686eaeb1d6a1c79e8d846d28c67760",
+    "installed_sha256": "eb87a2eafdedcb03a5e2979f598697cdbf686eaeb1d6a1c79e8d846d28c67760",
+    "previous_sha256": "dee3f751617785ceffe8eb97295a661c3183a93bad673020085f153eb099efa4",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\target-coordinate-20261123\\install-backup\\bin\\FreeCADBase.dll",
+    "rollback_sha256": "dee3f751617785ceffe8eb97295a661c3183a93bad673020085f153eb099efa4"
+  }
+]

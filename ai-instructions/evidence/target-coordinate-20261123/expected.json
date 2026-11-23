@@ -1,0 +1,122 @@
+{
+  "File": [
+    1610,
+    true
+  ],
+  "Origin": [
+    1611,
+    false
+  ],
+  "X_Axis": [
+    1612,
+    true
+  ],
+  "Y_Axis": [
+    1613,
+    true
+  ],
+  "Z_Axis": [
+    1614,
+    true
+  ],
+  "XY_Plane": [
+    1615,
+    true
+  ],
+  "XZ_Plane": [
+    1616,
+    true
+  ],
+  "YZ_Plane": [
+    1617,
+    true
+  ],
+  "Origin001": [
+    1618,
+    true
+  ],
+  "Part001": [
+    1619,
+    false
+  ],
+  "Origin002": [
+    1620,
+    true
+  ],
+  "X_Axis001": [
+    1621,
+    true
+  ],
+  "Y_Axis001": [
+    1622,
+    true
+  ],
+  "Z_Axis001": [
+    1623,
+    true
+  ],
+  "XY_Plane001": [
+    1624,
+    true
+  ],
+  "XZ_Plane001": [
+    1625,
+    true
+  ],
+  "YZ_Plane001": [
+    1626,
+    true
+  ],
+  "Origin003": [
+    1627,
+    true
+  ],
+  "Part001Instance": [
+    1628,
+    true
+  ],
+  "Sketch": [
+    1629,
+    false
+  ],
+  "Body": [
+    1630,
+    true
+  ],
+  "Origin004": [
+    1631,
+    false
+  ],
+  "X_Axis002": [
+    1632,
+    true
+  ],
+  "Y_Axis002": [
+    1633,
+    true
+  ],
+  "Z_Axis002": [
+    1634,
+    true
+  ],
+  "XY_Plane002": [
+    1635,
+    true
+  ],
+  "XZ_Plane002": [
+    1636,
+    true
+  ],
+  "YZ_Plane002": [
+    1637,
+    true
+  ],
+  "Origin005": [
+    1638,
+    true
+  ],
+  "Extrude": [
+    1639,
+    false
+  ]
+}

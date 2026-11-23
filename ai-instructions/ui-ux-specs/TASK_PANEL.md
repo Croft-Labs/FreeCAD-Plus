@@ -8,7 +8,7 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 Owner revision supersedes the unapproved November 22 popup: highlight the target field
 instead, and automatically choose the sole body when Add/Subtract is selected.
-The proposed shared Extrude/Revolve behavior selects the current result when exactly
+The approved shared Extrude/Revolve behavior selects the current result when exactly
 one eligible solid exists in the edited component. Preserve an existing valid target.
 With multiple candidates, focus/highlight Target solid in amber and say "Choose a
 target solid before selecting curves." With none, explain that a solid is needed.
@@ -22,9 +22,10 @@ New Solid needs no target. Handle direct startup, target removal/invalidity, reg
 picking and Cancel. Deliberate Clear must not trigger automatic reselection on every
 preview/numeric update. Continue the shared behavior for similar future workflows.
 
+The owner approved implementation together with coordinate-system persistence:
+"then implement both the target selection and the coordinate system persistence".
 The [revised native UI preview](../evidence/target-highlight-preview-20261123/README.md)
-uses explicit fixture candidate lists to demonstrate all three cases. Production
-eligibility/intake guarding and installed changes await visual approval.
+defines the appearance. See [implementation evidence](../evidence/target-coordinate-20261123/README.md).
 
 ### Unified Revolve workflow request — November 22, 2026
 

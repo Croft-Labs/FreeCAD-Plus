@@ -39,6 +39,8 @@ class ExtrudeTask(QtCore.QObject):
         self.pick = 'profile'
         self.refs = []
         self.links = {}
+        self.target_mode = None
+        self.automatic_target = None
         self.fields = {}
         self.numbers = []
         self.values = {}
@@ -63,6 +65,8 @@ class ExtrudeTask(QtCore.QObject):
         self.modes['New Solid'].setChecked(True)
         self.operation.layout.addLayout(row)
         self.target_row = self.reference(self.operation.layout,'Target solid','target','Pick the current solid to modify')
+        self.target_hint = label('')
+        self.target_row.layout().addWidget(self.target_hint)
         self.profile = self.section(layout, 'Profile')
         self.profile.layout.addWidget(label('Select a sketch, closed sketch region, or face.'))
         self.profiles = SelectionList()
@@ -166,6 +170,7 @@ class ExtrudeTask(QtCore.QObject):
                 or event.wasCtrlDown() or event.wasShiftDown()):return
         try:
             self.check()
+            if not self.require_target():return
             position=event.getPosition();x,y=int(position[0]),int(position[1])
             hit=self.view.getObjectInfo((x,y))
             if hit and str(hit.get('Component','')).startswith(('Edge','Vertex')):return
@@ -279,7 +284,68 @@ class ExtrudeTask(QtCore.QObject):
             field.setText(ref[0].Label+('.'+Part.splitSubname(ref[1])[2] if Part.splitSubname(ref[1])[2] else '') if ref else '')
 
     def clear_reference(self,key):
-        self.links.pop(key,None);self.refresh_fields();self.changed()
+        self.links.pop(key,None)
+        if key=='target':self.automatic_target=None
+        self.refresh_fields();self.changed()
+        if key=='target' and self.mode()!='New Solid':self.focus_target()
+
+    def valid_target(self, target):
+        """An edited feature may retain its saved predecessor inside its Body."""
+        if target is None:return False
+        try:
+            document.require_predecessors(self.owner,self.feature,[(target,'')])
+            saved=self.engine.references(self.feature).get('target',(None,''))[0] if self.feature else None
+            if target==saved and target is not None:
+                return (document.owned_path(self.owner,target) is not None
+                        and not target.Shape.isNull() and target.Shape.isValid()
+                        and len(target.Shape.Solids)==1 and 'Invalid' not in target.State)
+            modeling._target_body(self.owner,target)
+            return True
+        except (ValueError,RuntimeError,ReferenceError,AttributeError):return False
+
+    def target_candidates(self):
+        # One result per Body; never count hidden historical stages as solids.
+        return [body.Tip for body in self.owner.Group if body.TypeId=='PartDesign::Body'
+                and body.Tip is not None and self.valid_target(body.Tip)]
+
+    def focus_target(self):
+        if self.closed or self.mode()=='New Solid':return
+        self.fields['target'].setFocus()
+        self.pick='target'
+        self.presentation.update_style();self.refresh_target()
+
+    def target_ready(self):
+        return self.mode()=='New Solid' or self.valid_target(self.links.get('target',(None,''))[0])
+
+    def require_target(self):
+        if self.target_ready():return True
+        self.update_target();self.focus_target();self.set_ok(False)
+        return False
+
+    def update_target(self):
+        mode=self.mode();entering=mode!=self.target_mode;self.target_mode=mode
+        self.target_row.setVisible(mode!='New Solid')
+        if mode=='New Solid':
+            if self.pick=='target':self.pick='profile'
+            return
+        target=self.links.get('target',(None,''))[0]
+        if target is not None and not self.valid_target(target):
+            self.links.pop('target',None);self.automatic_target=None;target=None
+            self.refresh_fields()
+        candidates=self.target_candidates() if target is None else []
+        # Only operation entry selects automatically. Clear remains a deliberate
+        # empty selection through numeric changes and preview refreshes.
+        if entering and target is None and len(candidates)==1:
+            target=candidates[0];self.links['target']=(target,'');self.automatic_target=target
+            self.refresh_fields();self.profiles.setFocus();self.pick='profile'
+        missing=target is None
+        self.fields['target'].setStyleSheet(
+            'QLineEdit { border: 2px solid #bd780b; border-radius: 3px; background: #fff3d6; }' if missing else '')
+        self.target_hint.setText(('Choose a target solid before selecting curves.' if candidates else
+                                 'No solid is available to modify. Create a new solid first.') if missing else
+                                'Only solid selected automatically.' if target==self.automatic_target else '')
+        self.target_hint.setStyleSheet('color: #875300;' if missing else 'color: #4d5965;')
+        if entering and missing:QtCore.QTimer.singleShot(0,self.focus_target)
 
     def clear_profile(self):
         self.refs=[];self.refresh_fields();self.changed()
@@ -298,6 +364,9 @@ class ExtrudeTask(QtCore.QObject):
         if self.closed:return
         try:
             self.check()
+            if self.pick=='profile' and not self.require_target():
+                Gui.Selection.removeSelection(doc,name,sub)
+                return
             obj=App.getDocument(doc).getObject(name)
             ref=planes.canonical(self.owner,[(obj,sub)])[0]
             document.require_predecessors(self.owner,self.feature,[ref])
@@ -313,8 +382,8 @@ class ExtrudeTask(QtCore.QObject):
             else:
                 if self.pick=='target':
                     target=ref[0].Tip if ref[0].TypeId=='PartDesign::Body' else ref[0]
-                    saved=self.engine.references(self.feature).get('target',(None,''))[0] if self.feature else None
-                    if target!=saved:modeling._target_body(self.owner,target)
+                    if not self.valid_target(target):raise ValueError('Choose an eligible predecessor solid.')
+                    self.automatic_target=None
                     ref=(target,'')
                 self.links[self.pick]=ref
             self.refresh_fields();self.changed()
@@ -332,8 +401,7 @@ class ExtrudeTask(QtCore.QObject):
 
     def changed(self,*args):
         if not self.ready or self.closed:return
-        self.target_row.setVisible(self.mode()!='New Solid')
-        if self.mode()=='New Solid' and self.pick=='target':self.pick='profile'
+        self.update_target()
         self.presentation.update_style()
         two=self.sides.currentText()=='Two sides'
         self.second.setVisible(two);self.taper2_row.setVisible(two)
@@ -357,7 +425,7 @@ class ExtrudeTask(QtCore.QObject):
             self.clear_overlay()
             self.status.setText('Preview needs update.')
             # OK revalidates current inputs even when automatic preview is off.
-            self.set_ok(True)
+            self.set_ok(self.target_ready())
         self.refresh_target()
 
     def clear_overlay(self):
@@ -504,6 +572,7 @@ class ExtrudeTask(QtCore.QObject):
 
     def render(self,*args):
         if self.closed:return
+        self.update_target()
         self.clear_overlay();self.valid=False
         self.result_shape=None;self.tool_shape=None
         try:
@@ -549,6 +618,7 @@ class ExtrudeTask(QtCore.QObject):
     def accept(self):
         try:
             self.check()
+            if not self.require_target():return False
             for field in self.numbers:
                 field.interpretText();self.values[field]=field.value()
             self.clear_overlay()

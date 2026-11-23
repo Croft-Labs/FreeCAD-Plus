@@ -68,11 +68,13 @@
 #include "Application.h"
 #include "AutoTransaction.h"
 #include "BackupPolicy.h"
+#include "Datums.h"
 #include "ExpressionParser.h"
 #include "GeoFeature.h"
 #include "License.h"
 #include "Link.h"
 #include "MergeDocuments.h"
+#include "Origin.h"
 #include "StringHasher.h"
 #include "Transactions.h"
 
@@ -3269,6 +3271,37 @@ void Document::_removeObject(DocumentObject* pcObject, RemoveObjectOptions optio
     if (!options.testFlag(RemoveObjectOption::MayRemoveWhileRecomputing) && testStatus(Document::Recomputing)) {
         FC_ERR("Cannot delete " << pcObject->getFullName() << " while recomputing");
         return;
+    }
+
+    // Plus component frames are structural objects, not editable features.
+    // Enforce this before opening a transaction or breaking any references;
+    // the GUI's onDelete veto alone does not cover document API callers.
+    // Undo/rollback and deletion of the owning Part/Body must still remove the
+    // complete frame normally, without recreating objects or changing IDs.
+    if (!d->undoing && !d->rollback) {
+        auto* origin = dynamic_cast<App::Origin*>(pcObject);
+        if (auto* datum = dynamic_cast<App::DatumElement*>(pcObject)) {
+            origin = dynamic_cast<App::Origin*>(datum->getLCS());
+        }
+        if (origin && !origin->isRemoving()) {
+            bool ownedFrame = false;
+            for (auto* owner : origin->getInList()) {
+                auto* link = dynamic_cast<App::PropertyLink*>(owner->getPropertyByName("Origin"));
+                if (link && link->getValue() == origin && !owner->isRemoving()) {
+                    ownedFrame = true;
+                    break;
+                }
+            }
+            if (ownedFrame) {
+                for (const auto& entry : d->objectMap) {
+                    auto* format = dynamic_cast<App::PropertyString*>(
+                        entry.second->getPropertyByName("PlusFormat"));
+                    if (format && std::string(format->getValue()) == "FreeCADPlus.ComponentDocument") {
+                        throw Base::RuntimeError("The component's base coordinate system cannot be deleted.");
+                    }
+                }
+            }
+        }
     }
 
     TransactionLocker tlock;

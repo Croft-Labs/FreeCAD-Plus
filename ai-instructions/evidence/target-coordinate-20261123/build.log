@@ -1,0 +1,12 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/7] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/extrude_task.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/extrude_task.py
+[2/7] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[3/6] Automatic MOC and UIC for target FreeCADApp
+[4/5] Building CXX object src\App\CMakeFiles\FreeCADApp.dir\Document.cpp.obj
+[5/5] Linking CXX shared library bin\FreeCADApp.dll

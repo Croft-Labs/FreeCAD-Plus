@@ -1,5 +1,19 @@
 # FreeCAD Plus: Programming Summary
 
+## Latest target selection and coordinate-system protection — November 23, 2026
+
+Approved changes are installed: Extrude/Revolve Add/Subtract automatically select the
+sole eligible solid; otherwise they highlight Target solid with inline guidance before
+curve selection. Existing valid targets and hidden-target display are preserved. The
+native base coordinate frame and its point/axes/planes cannot be deleted individually
+in Plus documents, including through the document API. Whole-owner deletion, Undo/Redo,
+custom datums and legacy documents remain supported.
+
+All 16 focused build checks and 207 installed regression/startup tests passed, plus
+12 installed UI cases and fresh-process save/reopen protection checks. The existing
+shortcut launched the updated application with isolated settings; rollback files remain.
+See [acceptance](WORK_STATE.md#target-selection-and-coordinate-system-persistence--november-23-2026).
+
 ## Latest strict sequential History — November 22, 2026
 
 The approved change is installed: component History follows native dependencies

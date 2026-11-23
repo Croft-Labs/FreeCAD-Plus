@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "protected_objects": [
+    "Origin",
+    "X_Axis",
+    "Y_Axis",
+    "Z_Axis",
+    "XY_Plane",
+    "XZ_Plane",
+    "YZ_Plane",
+    "Origin001",
+    "Origin002",
+    "X_Axis001",
+    "Y_Axis001",
+    "Z_Axis001",
+    "XY_Plane001",
+    "XZ_Plane001",
+    "YZ_Plane001",
+    "Origin003",
+    "Origin004",
+    "X_Axis002",
+    "Y_Axis002",
+    "Z_Axis002",
+    "XY_Plane002",
+    "XZ_Plane002",
+    "YZ_Plane002",
+    "Origin005"
+  ],
+  "identities_and_visibility_preserved": true
+}

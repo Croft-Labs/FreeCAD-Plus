@@ -8,6 +8,27 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Target guidance and protected native frames — November 23, 2026
+
+ExtrudeTask owns target candidate enumeration, saved-target validation, operation-entry
+autoselection and inline guidance; RevolveTask uses the same methods. Candidates are
+eligible current Tips of Bodies directly owned by the edited component, subject to
+source eligibility, solid validity and strict predecessor checks. Editing retains its
+valid saved target even when that result is no longer the Body Tip. Only operation
+entry autoselects; numeric/preview updates cannot undo a deliberate Clear. Profile and
+region intake require a target for Add/Subtract; New Solid does not. Existing target
+presentation supplies hidden-target selection display without changing native eyes.
+Deleting an active input closes the task through the existing deferred cleanup path.
+
+App::Document::_removeObject rejects independent removal of an owned App::Origin or
+its DatumElement children in a Plus component document before opening a transaction
+or breaking references. The existing native ViewProvider deletion veto remains the
+GUI entry-point protection. The document guard also covers Python/API removal and
+existing saved files. It exempts Undo/rollback and native owner-removal cascades;
+custom datum geometry, orphan frames and ordinary legacy documents keep their native
+behavior. No new schema, protection property, recreated frame or altered identity is
+introduced. The file frame and internal Body frames share the protection.
+
 ## Unified Revolve and shared selection lists — November 22, 2026
 
 ExtrudeTask now has an engine/title/icon contract and a form-configuration hook.

@@ -1,0 +1,60 @@
+import os, sys, json, traceback, importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part
+from PySide6 import QtCore, QtTest, QtWidgets
+import freecad_plus
+from freecad_plus import document, modeling, extrusion, extrude_task, revolve_task
+out=Path(os.environ['PLUS_TEST_DIR'])
+
+def run():
+    result={'ok':False,'installed_functionality':True,'fixture_driven_target_candidates':False,
+            'production_eligibility_implemented':True,'cases':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        assert '/app/' in extrude_task.__file__.replace(chr(92),'/'),extrude_task.__file__
+        pass
+        for count in (2,1,0):
+            doc=document.new_document('Target guidance '+str(count));targets=[]
+            for index in range(count):
+                base=modeling.new_sketch(doc)
+                base.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),4),False)
+                base.Placement.Base.x=index*12;doc.recompute()
+                targets.append(extrusion.save(doc,[(base,'')],{},dict(extrusion.DEFAULTS,length=6)))
+            if count==1:targets[0].Visibility=False
+            before={o.Name:(o.ID,o.Visibility) for o in doc.Objects}
+            for name,factory in (('extrude',extrude_task.show),('revolve',revolve_task.show)):
+                for mode in ('Add','Subtract'):
+                    Gui.Selection.clearSelection();task=factory()
+                    QtTest.QTest.qWait(100);task.modes[mode].click();QtTest.QTest.qWait(150)
+                    slug=name+'-'+mode.lower()+'-'+str(count)
+                    dock=win.findChild(QtWidgets.QDockWidget,'Tasks')
+                    assert dock.grab().save(str(out/(slug+'-full.png')))
+                    crop=dock.grab(QtCore.QRect(0,0,dock.width(),min(450,dock.height())))
+                    assert crop.save(str(out/(slug+'.png')))
+                    if slug=='extrude-add-2':assert crop.save(str(out/'multiple-solids.png'))
+                    chosen=task.links.get('target',(None,''))[0]
+                    case=dict(feature=name,operation=mode,available_solids=count,
+                              chosen=chosen.Name if chosen else None,
+                              target_focused=task.fields['target'].hasFocus() and task.pick=='target',
+                              amber_highlight='#bd780b' in task.fields['target'].styleSheet(),
+                              popup_visible=any(w.isVisible() for w in win.findChildren(QtWidgets.QMessageBox)))
+                    case['hint']=task.target_hint.text() if hasattr(task,'target_hint') else None
+                    if count==1:case['hidden_target_eye_unchanged']=not targets[0].Visibility
+                    assert chosen==(targets[0] if count==1 else None),case
+                    assert case['amber_highlight']==(count!=1),case
+                    assert not case['popup_visible'],case
+                    result['cases'].append(case);task.reject();QtTest.QTest.qWait(70)
+                    assert {o.Name:(o.ID,o.Visibility) for o in doc.Objects}==before
+            if count==1:
+                document.save_document(doc,out/'Protected.cadprt')
+                (out/'expected.json').write_text(json.dumps({o.Name:(o.ID,o.Visibility) for o in doc.Objects},indent=2))
+            App.closeDocument(doc.Name)
+        result.update(ok=True,module=extrude_task.__file__,identities_and_visibility_restored=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'visual.json').write_text(json.dumps(result,indent=2))
+    if extrude_task._active:extrude_task._active.reject()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

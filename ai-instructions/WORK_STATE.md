@@ -1,5 +1,33 @@
 # FreeCAD Plus: Current work state
 
+## Target selection and coordinate-system persistence — November 23, 2026
+
+The owner approved and both changes are implemented and installed. Extrude/Revolve
+Add/Subtract select the sole eligible current solid automatically, preserving a valid
+existing target. Otherwise Target solid receives the approved amber highlight and
+inline guidance, without a popup. Profile/region picking and acceptance require a
+target. Deliberate Clear persists through numeric/preview updates. Hidden targets
+use the existing selected-solid display while History eyes remain unchanged.
+
+The base native Coordinate System, Origin point, axes and planes now have document-level
+deletion protection in Plus files, in addition to their native GUI veto. Existing files
+gain protection without migration or replacement objects. Visibility, native identities,
+whole-owner deletion, Undo/Redo and cancellation remain intact; custom datums and legacy
+documents retain their existing behavior. File and backend Body frames are protected too.
+
+Validation: all 16 focused build checks, 202 installed regression tests and 5 separate
+fresh-startup tests passed. Twelve installed UI cases cover zero/one/two targets across
+both tools and Add/Subtract. A fresh process reopened the saved file and rejected all
+24 frame-object deletion attempts without changing IDs or visibility. The app was
+restarted through the existing desktop shortcut using explicitly isolated settings;
+rollback copies are retained. No owner-profile process was running during installation.
+
+Direct installed screenshots: [multiple solids](evidence/target-coordinate-20261123/multiple-solids.png),
+[sole solid](evidence/target-coordinate-20261123/sole-solid.png),
+[no solid](evidence/target-coordinate-20261123/no-solid.png),
+[Revolve](evidence/target-coordinate-20261123/revolve-target.png).
+See [implementation/build/installed evidence](evidence/target-coordinate-20261123/README.md).
+
 ## Target highlighting and sole-solid preview — November 23, 2026
 
 The owner revised the unapproved popup to field highlighting and automatic choice
@@ -13,7 +41,7 @@ eligibility enumeration and full intake/lifecycle guards are pending implementat
 Direct [multiple solids](evidence/target-highlight-preview-20261123/multiple-solids.png),
 [sole solid](evidence/target-highlight-preview-20261123/sole-solid.png),
 [no solid](evidence/target-highlight-preview-20261123/no-solid.png).
-**Awaiting approval of this revised preview; production and installation are unchanged.**
+**Subsequently approved and implemented with coordinate-system persistence above.**
 See [scope/provenance](evidence/target-highlight-preview-20261123/README.md).
 
 ## Target-first Add/Subtract prompt preview — November 22, 2026

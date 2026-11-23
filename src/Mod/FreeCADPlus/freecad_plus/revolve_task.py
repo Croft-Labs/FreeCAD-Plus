@@ -65,8 +65,7 @@ class RevolveTask(extrude_task.ExtrudeTask):
 
     def changed(self, *args):
         if not self.ready or self.closed:return
-        self.target_row.setVisible(self.mode() != 'New Solid')
-        if self.mode() == 'New Solid' and self.pick == 'target':self.pick = 'profile'
+        self.update_target()
         self.presentation.update_style()
         self.second.setVisible(self.sides.currentText() == 'Two sides')
         self.start_row.setVisible(self.start_type.currentText() == 'Reference')
@@ -84,7 +83,7 @@ class RevolveTask(extrude_task.ExtrudeTask):
         self.start.header.setText('Start · ' + self.start_type.currentText())
         if self.automatic.isChecked():self.render()
         else:
-            self.clear_overlay();self.status.setText('Preview needs update.');self.set_ok(True)
+            self.clear_overlay();self.status.setText('Preview needs update.');self.set_ok(self.target_ready())
         self.refresh_target()
 
     def highlight_profile(self):
