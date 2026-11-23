@@ -1,0 +1,12 @@
+test_dimension_one_enter_lengths_units_arithmetic_and_angle (TestPlusToolbars.TestPlusToolbars.test_dimension_one_enter_lengths_units_arithmetic_and_angle) ... ok
+test_dimension_one_enter_radius_and_diameter (TestPlusToolbars.TestPlusToolbars.test_dimension_one_enter_radius_and_diameter) ... ok
+test_dimension_one_enter_invalid_recovery_edit_and_cancel (TestPlusToolbars.TestPlusToolbars.test_dimension_one_enter_invalid_recovery_edit_and_cancel) ... ok
+test_dimension_retention_cancel (TestPlusToolbars.TestPlusToolbars.test_dimension_retention_cancel) ... ok
+test_dimension_retention_reference_and_no_dialog (TestPlusToolbars.TestPlusToolbars.test_dimension_retention_reference_and_no_dialog) ... ok
+test_extrude_and_plane_arrows_commit_while_typing_waits (TestDesignInteractions.TestDesignInteractions.test_extrude_and_plane_arrows_commit_while_typing_waits) ... ok
+test_ordinary_and_native_numeric_arrows (TestDesignInteractions.TestDesignInteractions.test_ordinary_and_native_numeric_arrows) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 97.792s
+
+OK

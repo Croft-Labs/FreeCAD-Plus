@@ -1,0 +1,6 @@
+test_dimension_one_enter_invalid_recovery_edit_and_cancel (TestPlusToolbars.TestPlusToolbars.test_dimension_one_enter_invalid_recovery_edit_and_cancel) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 6.509s
+
+OK

@@ -1,12 +1,17 @@
 # FreeCAD Plus: Current work state
 
-## Sketch dimension Enter preview awaiting approval - November 23, 2026
+## Sketch dimension single Enter installed - November 23, 2026
 
-Owner requests one Enter to apply a typed sketch dimension and close its dialog.
-Native-widget reproduction identifies the shared numeric focus-traversal filter.
-The isolated candidate demonstrates one-press completion with unchanged controls;
-constraint geometry/persistence is mocked. No production changes or installation.
-See [direct preview and exact scope](evidence/dimension-enter-preview-20261123/README.md).
+Approved: one main/keypad Enter applies a valid sketch dimension and closes the
+native dialog, including edits, units and arithmetic. Invalid text stays focused
+and open. Native validation, Cancel and reference controls are retained.
+
+All seven focused installed regression checks passed, covering dimension types,
+Plus/Classic, selection persistence, Undo/Redo, invalid recovery and unrelated
+numeric fields. A fresh process through the existing desktop shortcut also passed.
+Two Python payloads were installed with hash checks and retained rollback copies;
+validation used isolated profiles. No owner settings or unrelated files changed.
+See [implementation and native acceptance](evidence/dimension-enter-20261123/README.md).
 
 ## Shell and shared list controls installed - November 23, 2026
 

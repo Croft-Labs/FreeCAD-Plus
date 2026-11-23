@@ -1336,8 +1336,9 @@ See [the October 11 owner decision](EVIDENCE_AND_DECISIONS.md#independent-classi
 
 ### Sketch dimensional constraint Enter - November 23, 2026
 
-Proposed: after a valid numerical dimension, main or keypad Enter commits once and
-closes the dimension dialog. Apply to creating and editing dimensions. Preserve
-native units/expressions, invalid-input handling, Cancel/Escape, name/reference
-controls and other task-panel numeric behavior. Production implementation awaits
-approval of the [isolated native-widget preview](../evidence/dimension-enter-preview-20261123/README.md).
+Approved and installed: after a valid numerical dimension, main or keypad Enter
+commits once and closes the native dimension dialog, for creating and editing.
+Native units/expressions, validation, Cancel/Escape, name/reference controls and
+other task-panel numeric behavior are preserved. Invalid or incomplete text
+stays focused with the dialog open. See the [approved preview](../evidence/dimension-enter-preview-20261123/README.md)
+and [native implementation checks](../evidence/dimension-enter-20261123/README.md).

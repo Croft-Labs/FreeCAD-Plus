@@ -10,7 +10,7 @@ creation/editing and length/radius/diameter/angle. Retain native units, expressi
 invalid-input validation, Cancel/Escape, name/reference controls and layout. Other
 numeric task fields retain their blur/arrow behavior. Intended implementation scope
 is numeric_fields.py and, only if needed, Sketcher EditDatumDialog.cpp, with focused
-native regression tests. No production code or installed payload changed yet.
+native regression tests. At preview time, no production code or installed payload had changed.
 
 [Current behavior after one Enter](baseline.png) and
 [proposed one-press completion](proposed.png) are UI-only simulations using the
@@ -21,6 +21,8 @@ Companion session: e494680daf44. Adapter baseline:
 a5f23b50a3db8c50312a8726646a287b52f69763. Fingerprint:
 9bb46843f4a61f0648d7d6c78affaa18ede84fba99b56fc518f15d14bf8bfac1.
 Allowed candidate file: dimension_ui.py. Capture is valid, violations empty;
-explicit owner preview approval is pending. Approval state has not been modified.
+Owner approved with "approved. implement". Tool approval state was not modified.
+The [completed implementation and native checks](../dimension-enter-20261123/README.md)
+are recorded separately.
 The earlier ad69ed082ec7 session was abandoned after embedded Python generated
 bytecode in its baseline; the fresh renderer disables bytecode before importing.

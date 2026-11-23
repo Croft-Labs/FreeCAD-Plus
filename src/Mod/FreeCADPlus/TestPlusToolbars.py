@@ -1476,6 +1476,91 @@ class TestPlusToolbars(unittest.TestCase):
                         prefs.GetBool('ShowDialogOnDistanceConstraint', True))
         prefs.SetBool('ShowDialogOnDistanceConstraint', show)
 
+    def dimension_enter_action(self, invoke, text, key=QtCore.Qt.Key_Return,
+                               invalid=(), cancel=False, capture=False):
+        seen, errors = [], []
+        timer = QtCore.QTimer()
+        def respond():
+            dialog = QtWidgets.QApplication.activeModalWidget()
+            if not dialog or dialog.objectName() != 'SketcherGui__InsertDatum':return
+            timer.stop(); seen.append(dialog.windowTitle())
+            try:
+                field = dialog.findChild(QtWidgets.QWidget, 'labelEdit')
+                editor = field.findChild(QtWidgets.QLineEdit)
+                def type_value(value):
+                    editor.setFocus();editor.selectAll();QtTest.QTest.keyClicks(editor, value)
+                for value in invalid:
+                    type_value(value)
+                    self.assertFalse(field.property('acceptableInput'), (value, editor.text()))
+                    QtTest.QTest.keyClick(editor, key)
+                    self.assertTrue(dialog.isVisible());self.assertTrue(editor.hasFocus())
+                    self.assertEqual(editor.text(), value)
+                type_value(text)
+                self.assertTrue(field.property('acceptableInput'))
+                if capture:
+                    dialog.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'dimension-before-enter.png'))
+                QtTest.QTest.keyClick(editor, QtCore.Qt.Key_Escape if cancel else key)
+                self.assertFalse(dialog.isVisible(), 'One keypress must close the dimension dialog')
+            except BaseException as error:
+                errors.append(repr(error));dialog.reject()
+        timer.timeout.connect(respond);timer.start(25)
+        watchdog = QtCore.QTimer();watchdog.setSingleShot(True)
+        def timeout():
+            errors.append('Dimension dialog did not appear within five seconds')
+            modal=QtWidgets.QApplication.activeModalWidget()
+            if modal:modal.reject()
+        watchdog.timeout.connect(timeout);watchdog.start(5000)
+        try:invoke()
+        finally:timer.stop();watchdog.stop()
+        self.assertEqual(errors, []);self.assertEqual(len(seen), 1);settle()
+
+    def test_dimension_one_enter_lengths_units_arithmetic_and_angle(self):
+        import math
+        self.dimension_preferences()
+        sketch, view = self.sketch_click_fixture(lines=[((-10,4),(8,6)),((-8,-6),(10,-4))])
+        for suffix, text, expected, key in (
+                ('DistanceX','25',25,QtCore.Qt.Key_Return),
+                ('DistanceY','1 in',25.4,QtCore.Qt.Key_Enter),
+                ('Distance','12+8',20,QtCore.Qt.Key_Return),
+                ('Angle','30 deg',math.pi/6,QtCore.Qt.Key_Enter)):
+            def dispatch(command, classic):
+                self.dimension_enter_action(lambda: Gui.runCommand(command) if classic else self.sketch_command(command), text, key,
+                                            capture=suffix=='DistanceX')
+                self.assertAlmostEqual(sketch.Constraints[0].Value, expected, places=5)
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain'+suffix, ('Edge1',), suffix, dispatch)
+
+    def test_dimension_one_enter_radius_and_diameter(self):
+        self.dimension_preferences();sketch, view = self.dimension_circles()
+        for suffix, text, expected, key in (('Radius','5 mm',5,QtCore.Qt.Key_Return),
+                                            ('Diameter','10',10,QtCore.Qt.Key_Enter)):
+            def dispatch(command, classic):
+                self.dimension_enter_action(lambda: Gui.runCommand(command) if classic else self.sketch_command(command), text, key)
+                self.assertAlmostEqual(sketch.Constraints[0].Value, expected)
+            self.check_constraint_retention(sketch, 'Sketcher_Constrain'+suffix, ('Edge1',), suffix, dispatch)
+
+    def test_dimension_one_enter_invalid_recovery_edit_and_cancel(self):
+        self.dimension_preferences();sketch, view = self.sketch_click_fixture()
+        self.constraint_inputs(sketch, ('Edge1',))
+        self.dimension_enter_action(lambda:self.sketch_command('Sketcher_ConstrainDistance'), '25',
+                                    invalid=('nonsense','12+'))
+        self.assertAlmostEqual(sketch.Constraints[0].Value,25)
+        self.assertEqual(sketch.ConstraintCount,1)
+        constraints=Gui.getMainWindow().findChild(QtWidgets.QListWidget,'listWidgetConstraints')
+        self.assertIsNotNone(constraints)
+        def edit():constraints.itemActivated.emit(constraints.item(0))
+        self.dimension_enter_action(edit,'35',QtCore.Qt.Key_Enter)
+        self.assertEqual(sketch.ConstraintCount,1);self.assertAlmostEqual(sketch.Constraints[0].Value,35)
+        self.dimension_enter_action(edit,'45',cancel=True)
+        self.assertAlmostEqual(sketch.Constraints[0].Value,35)
+        self.assertEqual(sketch.solve(),0)
+        self.assertIsNotNone(Gui.activeDocument().getInEdit())
+        output = Path(os.environ['PLUS_TEST_DIR'])/'dimension-after-enter.png'
+        if os.name == 'nt':
+            from TestComponentFading import capture
+            capture(view, output, prepare=False)
+        else:
+            view.graphicsView().viewport().grabFramebuffer().save(str(output))
+
     def dimension_circles(self):
         import Part
         sketch, view = self.sketch_click_fixture()

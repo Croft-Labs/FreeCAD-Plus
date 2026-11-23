@@ -17,6 +17,20 @@ class NumericCommitFilter(QtCore.QObject):
         if not numeric:
             return False
         if event.type() == QtCore.QEvent.KeyPress and event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+            dialog = widget.window()
+            if (isinstance(dialog, QtWidgets.QDialog)
+                    and dialog.objectName() in ('SketcherGui__InsertDatum', 'SketcherGui::InsertDatum')
+                    and widget.objectName() == 'labelEdit'):
+                # Validate before blur: native focus-out restores the last valid
+                # value for invalid text, which must not silently accept it.
+                if event.isAutoRepeat() or not widget.property('acceptableInput'):
+                    return True
+                box = dialog.findChild(QtWidgets.QDialogButtonBox, 'buttonBox')
+                button = box.button(QtWidgets.QDialogButtonBox.Ok) if box else None
+                if button and button.isVisible() and button.isEnabled():
+                    widget.focusNextChild()  # Publish the native pending quantity first.
+                    button.click()          # Retain native validation and transaction handling.
+                return True
             widget.focusNextChild()
             return True
         if not ordinary:

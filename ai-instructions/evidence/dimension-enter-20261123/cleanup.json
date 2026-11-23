@@ -1,0 +1,23 @@
+{
+  "removed": [
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\profile-build",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\profile-installed",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\dimension-after-enter.png",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\dimension-before-enter.png",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\regression-stderr.txt",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\regression-stdout.txt",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\regression.json",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\regression.txt",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\repair-stderr.txt",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\repair-stdout.txt",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\repair.json",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\repair.txt",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\shortcut-target.json",
+    "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dimension-enter-20261123\\shortcut.json"
+  ],
+  "retained": [
+    "install-backup",
+    "install-manifest.json",
+    "profile-shortcut"
+  ]
+}

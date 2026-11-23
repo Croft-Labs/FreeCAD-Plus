@@ -1,0 +1,2 @@
+C:/Users/dgium/Documents/__Apps/FreeCAD/dimension-enter-validation/repair.FCMacro:9: DeprecationWarning: Function: 'QApplication.setActiveWindow(QWidget *act)' is marked as deprecated, please check the documentation for more information.
+  QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())

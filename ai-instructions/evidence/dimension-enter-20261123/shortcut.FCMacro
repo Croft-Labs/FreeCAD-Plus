@@ -1,0 +1,23 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    case=None
+    try:
+        import TestPlusToolbars
+        assert 'profile-shortcut' in App.ConfigGet('UserParameter')
+        assert 'profile-shortcut' in App.ConfigGet('SystemParameter')
+        assert 'profile-shortcut' in App.getUserAppDataDir()
+        assert '/app/' in TestPlusToolbars.__file__.replace('\\','/')
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        case=TestPlusToolbars.TestPlusToolbars('test_dimension_one_enter_invalid_recovery_edit_and_cancel')
+        case.setUp();case.test_dimension_one_enter_invalid_recovery_edit_and_cancel()
+        result.update(ok=True,module=TestPlusToolbars.__file__,profile=App.ConfigGet('UserParameter'),dimension_enter_edit_cancel=True)
+    except BaseException:result['error']=traceback.format_exc()
+    finally:
+        if case:case.tearDown()
+    (out/'shortcut.json').write_text(json.dumps(result,indent=2))
+QtCore.QTimer.singleShot(2200,run)

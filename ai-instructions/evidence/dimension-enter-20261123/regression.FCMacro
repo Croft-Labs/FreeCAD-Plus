@@ -1,0 +1,38 @@
+import json,os,sys,traceback,unittest,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test);self.stream.flush()
+    def addError(self,test,err):
+        super().addError(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+    def addFailure(self,test,err):
+        super().addFailure(test,err);self.stream.write(self._exc_info_to_string(err,test));self.stream.flush()
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        suite=unittest.TestSuite()
+        for name in ('test_dimension_one_enter_lengths_units_arithmetic_and_angle',
+                     'test_dimension_one_enter_radius_and_diameter',
+                     'test_dimension_one_enter_invalid_recovery_edit_and_cancel',
+                     'test_dimension_retention_cancel','test_dimension_retention_reference_and_no_dialog'):
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromName('TestPlusToolbars.TestPlusToolbars.'+name))
+        for name in ('test_extrude_and_plane_arrows_commit_while_typing_waits','test_ordinary_and_native_numeric_arrows'):
+            suite.addTests(unittest.defaultTestLoader.loadTestsFromName('TestDesignInteractions.TestDesignInteractions.'+name))
+        with (out/'regression.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        from freecad_plus import extrusion,extrude_task
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors),modules=[extrusion.__file__,extrude_task.__file__])
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'regression.json').write_text(json.dumps(result,indent=2))
+    from freecad_plus import extrude_task
+    if extrude_task._active:extrude_task._active.reject()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)
