@@ -734,11 +734,8 @@ def show(feature=None, which='Pad'):
 
 
 def dispatch(which):
-    # Component workflows are shared by both task presentations. Native
-    # body-owned sketches retain their existing command compatibility.
-    definition,_=modeling._context(Gui.activeDocument().Document)
-    selected=Gui.Selection.getSelection('*')
-    if any(obj.isDerivedFrom('Sketcher::SketchObject') and obj.getParentGeoFeatureGroup()!=definition
-           for obj in selected):return False
+    # Component documents always use explicit feature/profile/target routing,
+    # including older Body-owned sketches. Legacy documents bypass this bridge.
+    modeling._context(Gui.activeDocument().Document)
     show(which=which)
     return True

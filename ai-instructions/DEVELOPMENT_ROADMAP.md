@@ -9,6 +9,13 @@
 - [x] Install with rollback copies and record [acceptance](evidence/thicken-20261123/README.md).
 
 
+## Component routing without an active Body — November 23, 2026
+
+All implemented/modified Plus operations must follow the owner's
+[Component-only routing rule](DEVELOPMENT_GUIDELINES.md#component-routing-without-an-active-body--november-23-2026).
+Include divergent/absent native active-Body cases in every feature migration.
+See [Shell and profile-dispatch repair](evidence/shell-routing-20261123/README.md).
+
 ## Shared feature workflow migration contract — November 23, 2026
 
 Owner instruction: combining feature workflows also combines their Plus task-panel

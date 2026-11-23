@@ -4,6 +4,7 @@ These guidelines apply to the clean FreeCAD 1.1.4 baseline selected October 10, 
 The earlier adopted guidelines are preserved in [the historical archive](archive/pre-restart-docs/DEVELOPMENT_GUIDELINES.md);
 their implementation priorities and proposed feature lists are not an active queue.
 
+
 1. Follow AGENTS.md, central workspace rules and the confirmed UI specifications.
 2. Keep upstream source unchanged until a specific implementation task is authorized.
 3. Reuse native geometry, links, solvers and services; decide ownership, identity,
@@ -33,6 +34,24 @@ their implementation priorities and proposed feature lists are not an active que
     Keep the Classic buttons, routed to the shared workflow with the matching
     operation selected. Apply the same rule to future Pipe/Helix migrations;
     do not merge their task entries before their shared workflows exist.
+
+## Component routing without an active Body — November 23, 2026
+
+Owner clarification: FreeCAD Plus has an active Component, **no active Body**.
+Every feature workflow we implement or modify must resolve its inputs and result
+ownership from that Component, explicit geometry/target selections, or saved feature
+references. Never require, infer a target from, or silently fall back to Classic's
+`pdbody` state. Bodies are backend result containers. A native adapter may derive a
+Body from an already resolved feature; its ambient active-Body state is not authority.
+
+Use the approved sole-eligible-target rule where applicable; ambiguity requires
+explicit selection. Retain component/occurrence access and strict History checks.
+Acceptance must include multiple solids with a different or absent native active
+Body, correct result ownership, Cancel/Undo and preservation of the other solid.
+This rule applies to future feature migrations as well as corrections to existing
+ones. Ordinary legacy FreeCAD documents retain their native workflows; changing
+presentation to Classic within a Plus document does not change Plus routing.
+
 
 A clean checkout does not itself establish runtime stability or resolve the jitter
 reported for the archived fork. Those comparisons need separately authorized build

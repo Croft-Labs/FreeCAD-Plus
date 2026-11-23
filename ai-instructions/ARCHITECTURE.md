@@ -8,6 +8,19 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Component routing authority — November 23, 2026
+
+The edited Component and explicit inputs/targets define Plus operation ownership.
+Native `pdbody` is never a user prerequisite or implicit target for migrated commands.
+Shell resolves its Body from the selected feature before the shared admission check,
+and leaves native active-Body state unchanged. Empty selection in Plus receives
+explicit selection guidance. Extrude/Revolve dispatch always opens the shared task
+in Plus documents, including older Body-owned sketches; legacy documents bypass that
+bridge. New Sketch, Plane, datum Line/Point and Thicken already resolve the component
+through their shared services. Native editor adapters may derive a Body from an
+explicitly resolved feature, but must not use ambient Body state as routing authority.
+See [repair acceptance](evidence/shell-routing-20261123/README.md).
+
 ## Thicken and Shell integration — November 23, 2026
 
 `freecad_plus.thicken` evaluates native filled offsets and shares `extrusion.save_feature`

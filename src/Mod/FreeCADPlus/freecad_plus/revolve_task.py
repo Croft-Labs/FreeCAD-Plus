@@ -122,8 +122,6 @@ def show(feature=None, which='Revolution'):
 
 def dispatch(which):
     # Presentation mode does not select a different component modeling workflow.
-    definition, _ = modeling._context(Gui.activeDocument().Document)
-    if any(obj.isDerivedFrom('Sketcher::SketchObject') and obj.getParentGeoFeatureGroup() != definition
-           for obj in Gui.Selection.getSelection('*')):return False
+    modeling._context(Gui.activeDocument().Document)
     show(which=which)
     return True

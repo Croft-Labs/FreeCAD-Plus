@@ -1,0 +1,38 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "source_sha256": "f3b094d8a9a2868211409b155a8645f36165ddb1e9cf26094810e556208b53ec",
+    "built_sha256": "f3b094d8a9a2868211409b155a8645f36165ddb1e9cf26094810e556208b53ec",
+    "installed_sha256": "f3b094d8a9a2868211409b155a8645f36165ddb1e9cf26094810e556208b53ec",
+    "previous_sha256": "d11f299ec57b101761ba111d67ddd45f3cd1858d836035c3e2071aa2a05a7cc5",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\shell-routing-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/revolve_task.py",
+    "source_sha256": "fb51d1f731ea9fc06a38e1577b5a854fa2f50df741b7fd893bb56415e1a56406",
+    "built_sha256": "fb51d1f731ea9fc06a38e1577b5a854fa2f50df741b7fd893bb56415e1a56406",
+    "installed_sha256": "fb51d1f731ea9fc06a38e1577b5a854fa2f50df741b7fd893bb56415e1a56406",
+    "previous_sha256": "3d32288bbb1a9469b666869c1267c2e059674f3f4eff8c503a178da90a86b486",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\shell-routing-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestThickenWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestThickenWorkflow.py",
+    "source_sha256": "1a50af73692c305868fa84d4e8d5fa6353c968c367838e0b2bfb9a1bd7470e56",
+    "built_sha256": "1a50af73692c305868fa84d4e8d5fa6353c968c367838e0b2bfb9a1bd7470e56",
+    "installed_sha256": "1a50af73692c305868fa84d4e8d5fa6353c968c367838e0b2bfb9a1bd7470e56",
+    "previous_sha256": "6c95991f21d205359d2410e23c2618141d797e6aea5253054f71f77afec28914",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\shell-routing-20261123\\install-backup\\Mod\\FreeCADPlus\\TestThickenWorkflow.py"
+  },
+  {
+    "path": "lib\\PartDesignGui.pyd",
+    "build_path": "Mod/PartDesign/PartDesignGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "b5e67951183841ccb93a1396d492e4a0c98a45b33d7b00d7fabb2dfa481d1eee",
+    "installed_sha256": "b5e67951183841ccb93a1396d492e4a0c98a45b33d7b00d7fabb2dfa481d1eee",
+    "previous_sha256": "eece4f21166a7ad6ef8902ebf4aa975dba9f67ab419f927be9438c2f9dba5476",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\shell-routing-20261123\\install-backup\\lib\\PartDesignGui.pyd"
+  }
+]

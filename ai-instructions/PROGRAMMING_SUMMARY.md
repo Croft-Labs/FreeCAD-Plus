@@ -1,5 +1,18 @@
 # FreeCAD Plus: Programming Summary
 
+## Component-only routing repair installed — November 23, 2026
+
+Shell now resolves the selected solid's Body regardless of Classic active-Body state;
+empty Plus selection asks for a solid instead of silently using that state. Older
+Body-owned sketches stay in shared Extrude/Revolve tasks. The owner's rule that
+Plus has an active Component and no active Body is recorded for every modified
+workflow and future feature migration.
+
+All 31 build and 31 installed checks pass, plus the native multi-solid/migrated-
+creation audit, fresh-process reopen and existing shortcut check. Four payload
+files have rollback copies; owner sessions/settings were preserved. See
+[repair, audit and screenshots](evidence/shell-routing-20261123/README.md).
+
 ## Installed Shell, Thicken and Surface layout — November 23, 2026
 
 Modeling now contains the six native Surface actions plus Thicken, replacing the

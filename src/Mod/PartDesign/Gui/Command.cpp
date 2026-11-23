@@ -1966,7 +1966,12 @@ bool dressupGetSelected(
     bool& noSelection
 )
 {
-    PartDesign::Body* pcActiveBody = PartDesignGui::getBody(true);
+    std::vector<Gui::SelectionObject> selection = cmd->getSelection().getSelectionEx();
+    // Shell consumes the selected solid, independently of the last active Body.
+    // Keep the original unresolved selection for component/occurrence admission.
+    PartDesign::Body* pcActiveBody = which == "Thickness" && selection.size() == 1
+        ? PartDesignGui::getBodyFor(selection[0].getObject(), true)
+        : PartDesignGui::getBody(true);
 
     if (!pcActiveBody) {
         return false;
@@ -1975,8 +1980,6 @@ bool dressupGetSelected(
     if (!componentInputsAllowed(pcActiveBody)) {
         return false;
     }
-
-    std::vector<Gui::SelectionObject> selection = cmd->getSelection().getSelectionEx();
 
     if (selection.empty()) {
         noSelection = true;
@@ -2286,6 +2289,12 @@ void CmdPartDesignThickness::activated(int iMsg)
     if (App::GetApplication().getActiveTransaction()) {
         doCommand(Gui, "from freecad_plus.thicken_task import show_error; "
                   "show_error('Shell', 'Finish the current operation first.')");
+        return;
+    }
+    if (Gui::isComponentModelingDocument(getDocument())
+        && getSelection().getSelectionEx().size() != 1) {
+        doCommand(Gui, "from freecad_plus.thicken_task import show_error; "
+                  "show_error('Shell', 'Select one solid or its faces before starting Shell.')");
         return;
     }
     Gui::SelectionObject selected;

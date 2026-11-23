@@ -193,3 +193,68 @@ class TestThickenWorkflow(unittest.TestCase):
         finally:Gui.getDocument=original
         self.assertFalse(Gui.Control.activeDialog());self.assertFalse(self.doc.HasPendingTransaction)
         self.assertFalse(Gui.activeDocument().getInEdit());self.assertEqual(before,self.snapshot())
+
+    def test_shell_selected_first_body_accept_and_undo(self):
+        from TestComponentModeling import messages, accept_task
+        Gui.activateWorkbench('PartDesignWorkbench')
+        first=self.solid();second=self.solid();second.Placement.Base.x=20;self.doc.recompute()
+        first_body=first.getParentGeoFeatureGroup();second_body=second.getParentGeoFeatureGroup()
+        view=Gui.activeDocument().activeView();view.setActiveObject('pdbody',second_body)
+        second_shape=second.Shape.copy();second_group=list(second_body.Group)
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(first,'Face6')
+        with messages() as errors:Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(100)
+        self.assertFalse(errors,errors);self.assertTrue(Gui.Control.activeDialog())
+        feature=Gui.activeDocument().getInEdit().Object;name=feature.Name
+        self.assertEqual(feature.getParentGeoFeatureGroup(),first_body)
+        self.assertEqual(feature.Base[0],first)
+        self.assertEqual(view.getActiveObject('pdbody'),second_body)
+        accept_task();self.assertFalse(Gui.Control.activeDialog());self.assertFalse(self.doc.HasPendingTransaction)
+        self.assertTrue(feature.Shape.isValid());self.assertLess(feature.Shape.Volume,first.Shape.Volume)
+        self.assertEqual(second_body.Tip,second);self.assertEqual(second_body.Group,second_group)
+        self.assertAlmostEqual(second.Shape.Volume,second_shape.Volume)
+        self.doc.undo();self.doc.recompute();self.assertIsNone(self.doc.getObject(name));self.assertEqual(first_body.Tip,first)
+        self.doc.redo();self.doc.recompute();self.assertEqual(first_body.Tip.Name,name)
+        document.save_document(self.doc,self.output/'TwoBodyShell.cadprt')
+
+    def test_shell_selected_first_body_cancel_without_active_body(self):
+        from TestComponentModeling import messages
+        Gui.activateWorkbench('PartDesignWorkbench');first=self.solid();self.solid()
+        view=Gui.activeDocument().activeView();view.setActiveObject('pdbody',None)
+        before=self.snapshot();Gui.Selection.clearSelection();Gui.Selection.addSelection(first,'Face6')
+        with messages() as errors:Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(100)
+        self.assertFalse(errors,errors);self.assertTrue(Gui.Control.activeDialog())
+        buttons=[box.button(QtWidgets.QDialogButtonBox.Cancel) for box in Gui.getMainWindow().findChildren(QtWidgets.QDialogButtonBox)]
+        button=next(b for b in buttons if b and b.isVisible());QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton)
+        QtTest.QTest.qWait(100);self.assertEqual(before,self.snapshot())
+        self.assertFalse(self.doc.HasPendingTransaction);self.assertIsNone(view.getActiveObject('pdbody'))
+
+    def test_shell_empty_selection_never_uses_active_body(self):
+        Gui.activateWorkbench('PartDesignWorkbench');first=self.solid();self.solid()
+        Gui.activeDocument().activeView().setActiveObject('pdbody',first.getParentGeoFeatureGroup())
+        Gui.Selection.clearSelection();before=self.snapshot();seen=[];original=thicken_task.show_error
+        thicken_task.show_error=lambda title,message:seen.append(message)
+        try:Gui.runCommand('PartDesign_Thickness')
+        finally:thicken_task.show_error=original
+        self.assertTrue(seen);self.assertIn('Select one solid',seen[0]);self.assertEqual(before,self.snapshot())
+        self.assertFalse(self.doc.HasPendingTransaction);self.assertFalse(Gui.Control.activeDialog())
+
+    def test_migrated_profile_commands_ignore_active_body_for_owned_sketches(self):
+        from TestComponentModeling import messages
+        Gui.activateWorkbench('PartDesignWorkbench');first=self.solid();second=self.solid()
+        body=first.getParentGeoFeatureGroup();other=second.getParentGeoFeatureGroup()
+        sketch=body.newObject('Sketcher::SketchObject','OlderSketch')
+        sketch.addGeometry(Part.Circle(App.Vector(5,0,0),App.Vector(0,0,1),1),False)
+        body.Tip=first;self.doc.recompute()
+        view=Gui.activeDocument().activeView()
+        for active in (other,None):
+            view.setActiveObject('pdbody',active)
+            for command,title in [('PartDesign_Pad','Extrude'),('PartDesign_Pocket','Extrude'),
+                                  ('PartDesign_Revolution','Revolve'),('PartDesign_Groove','Revolve')]:
+                before=self.snapshot();Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+                with messages() as errors:Gui.runCommand(command);QtTest.QTest.qWait(50)
+                self.assertFalse(errors,errors);task=extrude_task._active
+                self.assertIsNotNone(task);self.assertEqual(task.title,title);self.assertEqual(task.refs,[(sketch,'')])
+                task.modes['Add'].click();self.assertNotIn('target',task.links)
+                task.pick='target';task.addSelection(self.doc.Name,first.Name,'')
+                self.assertEqual(task.links['target'][0],first)
+                task.reject();self.assertEqual(before,self.snapshot());self.assertEqual(view.getActiveObject('pdbody'),active)

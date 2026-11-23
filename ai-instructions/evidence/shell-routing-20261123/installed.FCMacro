@@ -1,0 +1,71 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import document,extrude_task
+        from TestComponentModeling import messages,accept_task
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1000);win.raise_();win.activateWindow()
+        doc=document.new_document('Selected solid Shell');owner=document.validate(doc).Definitions[0]
+        bodies=[];solids=[]
+        for i in range(2):
+            body=owner.newObject('PartDesign::Body','Body');solid=body.newObject('PartDesign::Feature','Solid')
+            solid.Shape=Part.makeBox(10,8,6,App.Vector(i*18,0,0));body.Tip=solid
+            bodies.append(body);solids.append(solid)
+        doc.recompute();view=Gui.activeDocument().activeView();view.setActiveObject('pdbody',bodies[1])
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(solids[0],'Face6')
+        with messages() as errors:Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(150)
+        assert not errors,errors
+        feature=Gui.activeDocument().getInEdit().Object
+        assert feature.getParentGeoFeatureGroup()==bodies[0] and feature.Base[0]==solids[0]
+        assert view.getActiveObject('pdbody')==bodies[1]
+        win.findChild(QtWidgets.QDockWidget,'Tasks').grab().save(str(out/'selected-first-shell-task.png'))
+        accept_task();assert feature.Shape.isValid() and feature.Shape.Volume<solids[0].Shape.Volume
+        assert bodies[1].Tip==solids[1] and abs(solids[1].Shape.Volume-480)<1e-7
+        for obj in doc.Objects:
+            if obj.TypeId in ('App::Origin','App::Plane','App::Line'):obj.Visibility=False
+        view.viewAxonometric();view.setAnimationEnabled(False)
+        camera=view.getCameraNode();camera.height=36
+        center=App.Vector(14,4,3);position=center+view.getCameraOrientation().multVec(App.Vector(0,0,100))
+        camera.position.setValue(position.x,position.y,position.z);QtTest.QTest.qWait(200)
+        win.screen().grabWindow(win.winId()).save(str(out/'selected-first-shell-result.png'))
+        path=out/'TwoBodyShell.cadprt';document.save_document(doc,path)
+        names=dict(feature=feature.Name,first=bodies[0].Name,second=bodies[1].Name,second_solid=solids[1].Name,volume=feature.Shape.Volume,identity=feature.ID)
+        (out/'fixture.json').write_text(json.dumps(names))
+        # Older Body-owned sketches must create explicit independent results.
+        sketch=bodies[0].newObject('Sketcher::SketchObject','OlderSketch')
+        sketch.addGeometry(Part.Circle(App.Vector(5,0,0),App.Vector(0,0,1),1),False)
+        bodies[0].Tip=feature;doc.recompute()
+        for command in ('PartDesign_Pad','PartDesign_Revolution'):
+            view.setActiveObject('pdbody',bodies[1]);Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+            with messages() as errors:Gui.runCommand(command);QtTest.QTest.qWait(100)
+            assert not errors,errors
+            task=extrude_task._active;assert task and task.valid,task.status.text() if task else 'No shared task'
+            assert task.mode()=='New Solid' and task.accept()
+            assert task.result.getParentGeoFeatureGroup() not in bodies
+            assert sketch.getParentGeoFeatureGroup()==bodies[0] and bodies[0].Tip==feature
+        from freecad_plus import plane_task,sketch_task,idle_tasks
+        for native_active in (bodies[1],None):
+            view.setActiveObject('pdbody',native_active);Gui.Selection.clearSelection()
+            Gui.runCommand('PartDesign_Plane');assert plane_task._active.definition==owner;plane_task._active.reject()
+            Gui.runCommand('Sketcher_NewSketch');assert sketch_task._active.definition==owner;sketch_task._active.reject()
+            for kind in ('Line','Point'):
+                with messages() as errors:datum=idle_tasks.create_datum(kind);QtTest.QTest.qWait(100)
+                assert not errors,errors
+                assert datum.getParentGeoFeatureGroup()==owner
+                Gui.activeDocument().resetEdit();doc.abortTransaction()
+        result['migrated_creation_audit']=True
+        result.update(ok=True,selected_first=True,active_second_unchanged=True,second_volume=solids[1].Shape.Volume,shell_volume=feature.Shape.Volume)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'installed.json').write_text(json.dumps(result,indent=2))
+    from freecad_plus import extrude_task,plane_task,sketch_task
+    for module in (extrude_task,plane_task,sketch_task):
+        if module._active:module._active.reject()
+    if Gui.activeDocument() and Gui.activeDocument().getInEdit():Gui.activeDocument().resetEdit()
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

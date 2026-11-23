@@ -4,6 +4,18 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Component-owned operation routing — November 23, 2026
+
+Owner explicitly clarified that FreeCAD Plus has no active Body. Every modified
+operation uses the active Component plus selected inputs/targets or saved feature
+references. Selecting a solid for Shell must operate on that solid even when the
+Classic native active Body is different or absent. Shell with no explicit solid
+selection gives prominent selection guidance instead of consuming a stale Body.
+Extrude/Revolve use their shared Plus tasks for older Body-owned sketches too.
+The rule and migration acceptance live in
+[development guidelines](../DEVELOPMENT_GUIDELINES.md#component-routing-without-an-active-body--november-23-2026).
+This repairs the approved workflow; no new layout was proposed.
+
 ### Shell and Thicken — November 23, 2026
 
 Owner requests renaming Thickness to Shell for solid hollowing and a separate
