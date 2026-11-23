@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "cases": [
+    {
+      "case": "existing",
+      "created": "Part002",
+      "active": "Part002",
+      "tab": "History",
+      "links_preserved": true,
+      "ids_preserved": true
+    },
+    {
+      "case": "empty",
+      "created": "Part001",
+      "active": "Part001",
+      "tab": "History",
+      "links_preserved": true,
+      "ids_preserved": true
+    }
+  ],
+  "proposed": true,
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\96e077810961\\candidate\\panel.py"
+}

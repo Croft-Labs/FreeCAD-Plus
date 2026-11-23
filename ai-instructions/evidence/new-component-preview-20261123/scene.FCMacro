@@ -1,0 +1,50 @@
+"""Native UI-only post-creation navigation proposal; no command wiring."""
+import os,sys,json,traceback,importlib
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+import freecad_plus
+from freecad_plus import document,hierarchy,editing
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'ui_only':True,'cases':[]}
+    try:
+        win=Gui.getMainWindow();win.resize(1100,800);win.show()
+        App.ParamGet('User parameter:BaseApp/Preferences/General').SetInt('TaskPanelUIMode',0)
+        Gui.activateWorkbench('PartDesignWorkbench')
+        from freecad_plus import panel
+        if panel._panel is not None:panel._panel.close()
+        freecad_plus.__path__.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+        importlib.reload(panel)
+        proposed=hasattr(panel,'preview_created_component')
+        result.update(proposed=proposed,module=panel.__file__)
+        for case in ('existing','empty'):
+            doc=document.new_document('Component navigation') if case=='existing' else App.newDocument('Empty file')
+            doc.UndoMode=1
+            widget=panel.show_panel();widget.refresh();widget.tabs.setCurrentIndex(0)
+            QtTest.QTest.qWait(150)
+            created=hierarchy.new_part()
+            root=document.validate(doc)
+            before={o.Name:(o.ID,tuple(x.Name for x in o.OutList)) for o in doc.Objects}
+            links=tuple(o.Name for o in root.Group)
+            if proposed:panel.preview_created_component(created)
+            widget.refresh();QtTest.QTest.qWait(350)
+            active=widget._context(doc,Gui.activeDocument().activeView())[0]
+            assert (active==created)==proposed
+            assert widget.tabs.currentIndex()==(2 if proposed else 0)
+            assert {o.Name:(o.ID,tuple(x.Name for x in o.OutList)) for o in doc.Objects}==before
+            assert tuple(o.Name for o in root.Group)==links
+            win.resizeDocks([widget],[390],QtCore.Qt.Horizontal)
+            QtTest.QTest.qWait(120)
+            assert widget.grab().save(str(out/(case+'.png')))
+            if case=='existing':assert widget.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+            result['cases'].append(dict(case=case,created=created.Label,active=active.Label if active else None,tab=widget.tabs.tabText(widget.tabs.currentIndex()),links_preserved=True,ids_preserved=True))
+            App.closeDocument(doc.Name)
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)
