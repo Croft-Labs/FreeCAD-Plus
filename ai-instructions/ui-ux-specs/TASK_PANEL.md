@@ -13,6 +13,9 @@ leave a feature operation stuck. Existing prominent-error, target-selection,
 preview-color, History and tree-visibility conventions apply. The
 [native proposal](../evidence/shell-thicken-preview-20261123/README.md) awaits
 approval; it illustrates total thickness, direction and invalid-selection feedback.
+Owner later placed Thicken in Modeling's new Surface section, alongside the six
+existing Surface tools, and removed the standalone Plus Surface tab. See the
+[updated combined preview](../evidence/surface-modeling-preview-20261123/README.md).
 
 ### Revolve Solid/Sheet output — November 23, 2026
 

@@ -4,6 +4,9 @@ Owner requested renaming Thickness to Shell, a separate Thicken feature for shee
 and a fix for invalid input leaving an operation stuck. Owner clarified Thicken
 must have New/Add/Subtract, like Extrude and Revolve. This is a native UI proposal;
 production implementation/install await approval. No approval state was changed.
+The later [combined Surface-in-Modeling preview](../surface-modeling-preview-20261123/README.md)
+supersedes this placement: Thicken belongs in Modeling's new Surface section,
+the six existing Surface tools move there, and the Surface tab is removed.
 
 Direct screenshots:
 - [Shell task rename](shell-task.png), retaining native hollow-solid parameters.
@@ -18,8 +21,9 @@ Direct screenshots:
 Shell replaces the visible command/task name Thickness; the wall-thickness field
 remains Thickness. Keep native solid hollowing and saved PartDesign::Thickness
 identities/parameters. New feature labels use Shell; do not rewrite owner labels
-of existing saved objects. Add Thicken beside Shell in Modeling's Dress-Up group,
-using the existing native Offset icon.
+of existing saved objects. Thicken uses the existing native Offset icon. Its
+original Dress-Up placement is superseded by the owner's later direction to
+place it in Modeling's new Surface section; Shell stays in Dress-Up.
 
 Thicken selects one owned sheet or connected faces from one sheet, with a scrolling
 five-row collector, Remove/Clear, positive Total thickness (initially 1 mm), and

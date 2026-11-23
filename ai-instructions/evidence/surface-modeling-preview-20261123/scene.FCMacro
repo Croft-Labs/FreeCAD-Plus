@@ -1,0 +1,93 @@
+"""Native UI-only preview; model specimen uses native filled offset, not a saved Plus feature."""
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling,toolbars
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+def run():
+    result={'ok':False,'ui_prototype':True};task=None
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1050);win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench');doc=document.new_document('Shell and Thicken preview')
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);import shell_thicken_ui as candidate
+        proposed=candidate.configure();result['proposed']=proposed
+        QtTest.QTest.qWait(300)
+        group=win.findChild(QtWidgets.QWidget,'PlusGroup_Dress-Up')
+        def crop(widget,path):
+            QtTest.QTest.qWait(150);pix=win.grab();scale=pix.devicePixelRatioF();pos=widget.mapTo(win,QtCore.QPoint())
+            rect=QtCore.QRect(round(pos.x()*scale),round(pos.y()*scale),round(widget.width()*scale),round(widget.height()*scale))
+            assert pix.copy(rect).save(str(path))
+        crop(group,out/'ribbon.png')
+        crop(toolbars._controller.host,out/'modeling-ribbon.png')
+        if proposed:
+            surface=win.findChild(QtWidgets.QWidget,'PlusGroup_Surface');assert surface is not None
+            crop(surface,out/'surface-section.png')
+            names=('Surface_Filling','Surface_GeomFillSurface','Surface_Sections','Surface_ExtendFace','Surface_CurveOnMesh','Surface_BlendCurve','Plus_ThickenPreview')
+            found=[surface.findChild(QtWidgets.QToolButton,'Plus_'+name) or surface.findChild(QtWidgets.QToolBar,'PlusControl_'+name) for name in names]
+            assert all(found)
+            assert all(not button.property('PlusUnavailable') for button in found)
+            assert all(toolbars._controller.tabbar.tabText(i)!='Surface' for i in range(toolbars._controller.tabbar.count()))
+            assert Gui.activeWorkbench().name()=='PartDesignWorkbench'
+            result.update(surface_commands=list(names),surface_tab_removed=True,modeling_stays_active=True)
+            # Check tooltips/accessibility retain all native command names.
+            result['surface_labels']=[Gui.Command.get(name).getAction()[0].text() for name in names]
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks');tasks.setMinimumWidth(380)
+        if proposed:
+            task=candidate.ThickenTask();Gui.Control.showDialog(task);QtTest.QTest.qWait(300)
+            for box in tasks.findChildren(QtWidgets.QDialogButtonBox):
+                button=box.button(QtWidgets.QDialogButtonBox.Ok)
+                if button:button.setEnabled(False)
+            def shot(name):
+                QtTest.QTest.qWait(250)
+                if win.focusWidget():win.focusWidget().clearFocus()
+                for scroll in tasks.findChildren(QtWidgets.QAbstractScrollArea):scroll.verticalScrollBar().setValue(0)
+                QtTest.QTest.qWait(100);assert tasks.grab().save(str(out/(name+'.png')))
+            shot('thicken-new');task.direction.setCurrentText('Symmetric');shot('thicken-symmetric')
+            assert 'Half' in task.direction_hint.text()
+            task.modes['Add'].click();assert task.target_row.isVisible() and '#bd780b' in task.target.styleSheet();shot('thicken-add-target')
+            task.modes['Subtract'].click();assert task.target_row.isVisible()
+            task.status.setError('Thicken requires sheets or faces from a sheet. The selected object is a solid; use Shell to hollow it.')
+            task.modes['New'].setChecked(True);task.target_row.hide();shot('thicken-invalid')
+            task.reject();task=None
+            assert not doc.HasPendingTransaction and not Gui.Control.activeDialog()
+            sketch=modeling.new_sketch(doc);sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),10),False);doc.recompute()
+            base=modeling.extrude_new_solid(doc,sketch,8)
+            face=next('Face'+str(i+1) for i,f in enumerate(base.Shape.Faces) if isinstance(f.Surface,Part.Plane))
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(base,face);Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(250)
+            renamed=candidate.rename_shell_task(tasks);assert renamed
+            QtTest.QTest.qWait(100);assert tasks.grab().save(str(out/'shell-task.png'))
+            Gui.activeDocument().resetEdit();Gui.Control.closeDialog()
+            if doc.HasPendingTransaction:doc.abortTransaction()
+            result['renamed_shell_headers']=renamed
+            error=candidate.invalid_shell(win);error.show();QtTest.QTest.qWait(150)
+            assert error.grab().save(str(out/'shell-invalid.png'));error.reject()
+            # Geometry illustration only, independent of the prototype task.
+            specimen=App.newDocument('ThickenIllustration')
+            sheet=Part.makeLine(App.Vector(10,0,0),App.Vector(10,15,0)).revolve(App.Vector(),App.Vector(0,1,0),270)
+            solid=sheet.makeOffsetShape(1,1e-7,False,False,0,2,True)
+            assert solid.isValid() and len(solid.Solids)==1 and solid.Volume>0
+            obj=specimen.addObject('Part::Feature','ThickenedSheet');obj.Shape=solid;obj.ViewObject.ShapeColor=(.2,.45,.95)
+            specimen.recompute();view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll()
+            QtTest.QTest.qWait(200);view.saveImage(str(out/'thicken-illustration.png'),800,650,'Current')
+            result.update(default_new=True,target_cue=True,symmetric_total=True,cancel_clean=True,fixture_solids=len(solid.Solids),fixture_volume=solid.Volume)
+            from shutil import copyfile
+            copyfile(out/'modeling-ribbon.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        else:
+            sketch=modeling.new_sketch(doc);sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),10),False);doc.recompute()
+            solid=modeling.extrude_new_solid(doc,sketch,8)
+            face=next('Face'+str(i+1) for i,f in enumerate(solid.Shape.Faces) if isinstance(f.Surface,Part.Plane))
+            Gui.Selection.clearSelection();Gui.Selection.addSelection(solid,face);Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(250)
+            assert tasks.grab().save(str(out/'native-thickness.png'))
+            from shutil import copyfile
+            copyfile(out/'modeling-ribbon.png',os.environ['PLUS_PREVIEW_IMAGE'])
+            Gui.activeDocument().resetEdit();Gui.Control.closeDialog()
+            if doc.HasPendingTransaction:doc.abortTransaction()
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

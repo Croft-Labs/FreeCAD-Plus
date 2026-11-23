@@ -4,6 +4,16 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Section 1 — FC Plus modes, tabs, groups and buttons
 
+### Surface tools inside Modeling — November 23, 2026
+
+Owner requests moving the six existing Surface tools into a Surface section on
+Modeling, removing the standalone Plus Surface tab, and placing the new Thicken
+feature in that section. Shell remains in Dress-Up. Keep Filling, Fill Boundary
+Curves, Sections, Extend Face, Curve on Mesh and Blend Curve individually available
+with native icons/commands. Native Surface workbench and Classic access remain.
+The [combined native preview](../evidence/surface-modeling-preview-20261123/README.md)
+awaits approval; implementation is pending.
+
 ### Bordered controls and separate dropdown columns — November 22, 2026
 
 The owner approved the nine Design-tab native previews in chat and instructed:

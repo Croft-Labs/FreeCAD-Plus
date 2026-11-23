@@ -1,0 +1,108 @@
+from PySide6 import QtCore, QtGui, QtWidgets
+import FreeCADGui as Gui
+from freecad_plus.plane_task import Section, label, number, buttons
+from freecad_plus.selection_list import SelectionList
+from freecad_plus.task_status import TaskStatus
+
+class PreviewCommand:
+    def GetResources(self):
+        return dict(Pixmap='Part_Offset',MenuText='Thicken',ToolTip='Give a sheet thickness to create a solid')
+    def Activated(self):pass
+    def IsActive(self):return True
+
+def configure():
+    from freecad_plus import toolbar_layout,toolbars
+    import SurfaceGui
+    original_modes=toolbars._controller._modes
+    toolbars._controller._modes=lambda available: [(label,owner) for label,owner in original_modes(available) if owner!='SurfaceWorkbench']
+    toolbar_layout.DESIGN_TABS=tuple(item for item in toolbar_layout.DESIGN_TABS if item[0]!='Surface')
+    Gui.addCommand('Plus_ThickenPreview',PreviewCommand())
+    for action in Gui.Command.get('PartDesign_Thickness').getAction():
+        action.setText('Shell');action.setToolTip('Hollow a solid by removing selected faces and setting wall thickness')
+    groups=[]
+    for title,entries in toolbar_layout.MODELING:
+        result=[]
+        for caption,size,commands in entries:
+            if 'PartDesign_Thickness' in commands:
+                result.append(('Shell',size,commands))
+            else:result.append((caption,size,commands))
+        groups.append((title,tuple(result)))
+        if title=='Dress-Up':
+            groups.append(('Surface',(
+                ('Thicken','large',('Plus_ThickenPreview',)),
+                ('Filling','small',('Surface_Filling',)),
+                ('Fill Boundary Curves','small',('Surface_GeomFillSurface',)),
+                ('Sections','small',('Surface_Sections',)),
+                ('Extend Face','small',('Surface_ExtendFace',)),
+                ('Curve on Mesh','small',('Surface_CurveOnMesh',)),
+                ('Blend Curve','small',('Surface_BlendCurve',)),
+            )))
+    toolbar_layout.MODELING=tuple(groups);toolbars._controller.refresh()
+    return True
+
+class ThickenTask:
+    def __init__(self):
+        self.form=QtWidgets.QWidget();self.form.setWindowTitle('Thicken');self.form.setWindowIcon(Gui.getIcon('Part_Offset'))
+        layout=QtWidgets.QVBoxLayout(self.form);layout.setContentsMargins(6,4,6,4);layout.setSpacing(2)
+        layout.addWidget(label('Component: Part001'))
+        self.operation=Section('Operation');layout.addWidget(self.operation)
+        self.modes={};self.group=QtWidgets.QButtonGroup(self.form)
+        for name in ('New','Add','Subtract'):
+            button=QtWidgets.QRadioButton(name);self.group.addButton(button);self.modes[name]=button
+            self.operation.layout.addWidget(button);button.clicked.connect(self.changed)
+        self.modes['New'].setChecked(True)
+        self.target_row=QtWidgets.QWidget();row=QtWidgets.QVBoxLayout(self.target_row);row.setContentsMargins(0,0,0,0)
+        row.addWidget(label('Target solid'))
+        self.target=QtWidgets.QLineEdit();self.target.setReadOnly(True);self.target.setPlaceholderText('Select the solid to modify')
+        row.addWidget(self.target);self.target_hint=TaskStatus();row.addWidget(self.target_hint)
+        self.operation.layout.addWidget(self.target_row)
+        profile=Section('Sheets / faces');layout.addWidget(profile)
+        profile.layout.addWidget(label('Select a sheet or connected faces from one sheet.'))
+        self.sources=SelectionList();self.sources.addItem('Revolved sheet · Face1');profile.layout.addWidget(self.sources)
+        buttons(profile.layout,[('Remove',self.remove),('Clear',self.sources.clear)])
+        thickness=Section('Thickness');layout.addWidget(thickness)
+        self.amount=number(thickness.layout,'Total thickness',1);self.amount.setRange(.01,100000)
+        row=QtWidgets.QHBoxLayout();row.addWidget(label('Direction'));self.direction=QtWidgets.QComboBox()
+        self.direction.addItems(['Along normal','Opposite normal','Symmetric']);row.addWidget(self.direction,1);thickness.layout.addLayout(row)
+        self.direction_hint=label('');thickness.layout.addWidget(self.direction_hint);self.direction.currentTextChanged.connect(self.changed)
+        advanced=Section('Advanced',False);layout.addWidget(advanced)
+        row=QtWidgets.QHBoxLayout();row.addWidget(label('Corner join'));self.join=QtWidgets.QComboBox()
+        self.join.addItems(['Sharp','Rounded']);row.addWidget(self.join,1);advanced.layout.addLayout(row)
+        preview=Section('Preview');layout.addWidget(preview)
+        row=QtWidgets.QHBoxLayout();row.addWidget(label('Show'));self.display=QtWidgets.QComboBox();self.display.addItems(['Tool volume','Result'])
+        row.addWidget(self.display,1);preview.layout.addLayout(row)
+        row=QtWidgets.QHBoxLayout()
+        for name in ('Show preview','Recompute on update'):
+            item=QtWidgets.QCheckBox(name);item.setChecked(True);row.addWidget(item)
+        preview.layout.addLayout(row);preview.layout.addWidget(QtWidgets.QPushButton('Update preview'))
+        self.status=TaskStatus();layout.addWidget(self.status);layout.addStretch()
+        self.changed()
+    def remove(self):
+        self.sources.takeItem(self.sources.currentRow())
+    def changed(self,*args):
+        mode=next(name for name,button in self.modes.items() if button.isChecked())
+        self.target_row.setVisible(mode!='New')
+        self.target.setStyleSheet('QLineEdit {border: 2px solid #bd780b; background: #fff3d6; color: #875300;}' if mode!='New' and not self.target.text() else '')
+        self.target_hint.setText('Select the target solid before selecting sheets.' if mode!='New' and not self.target.text() else '')
+        self.direction_hint.setText('Half of the total thickness on each side of the sheet.' if self.direction.currentText()=='Symmetric' else 'Thickness follows the sheet surface normals.')
+        self.status.setText('Tool volume · creates a new solid.' if mode=='New' else 'Select a target solid to preview '+mode.lower()+'.')
+    def getStandardButtons(self):return int(QtWidgets.QDialogButtonBox.Ok|QtWidgets.QDialogButtonBox.Cancel)
+    def accept(self):return False
+    def reject(self):Gui.Control.closeDialog();return True
+    def isAllowedAlterSelection(self):return True
+
+def invalid_shell(parent):
+    dialog=QtWidgets.QDialog(parent);dialog.setWindowTitle('Shell — incompatible selection')
+    layout=QtWidgets.QVBoxLayout(dialog);status=TaskStatus()
+    status.setError('Shell requires a solid. The selected object is a sheet. Use Thicken to give the sheet a thickness.')
+    layout.addWidget(status);buttons=QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Close)
+    buttons.rejected.connect(dialog.reject);layout.addWidget(buttons);dialog.resize(440,155)
+    return dialog
+
+def rename_shell_task(tasks):
+    renamed=[]
+    for widget in tasks.findChildren(QtWidgets.QWidget):
+        title=widget.property('headerText')
+        if isinstance(title,str) and 'Thickness' in title:
+            widget.setProperty('headerText',title.replace('Thickness','Shell'));renamed.append(title)
+    return renamed

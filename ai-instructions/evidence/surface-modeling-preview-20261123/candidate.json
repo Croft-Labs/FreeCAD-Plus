@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "proposed": true,
+  "surface_commands": [
+    "Surface_Filling",
+    "Surface_GeomFillSurface",
+    "Surface_Sections",
+    "Surface_ExtendFace",
+    "Surface_CurveOnMesh",
+    "Surface_BlendCurve",
+    "Plus_ThickenPreview"
+  ],
+  "surface_tab_removed": true,
+  "modeling_stays_active": true,
+  "surface_labels": [
+    "Filling",
+    "Fill Boundary Curves",
+    "Sections",
+    "Extend Face",
+    "Curve on Mesh",
+    "Blend Curve",
+    "Thicken"
+  ],
+  "renamed_shell_headers": [
+    "Thickness Parameters"
+  ],
+  "default_new": true,
+  "target_cue": true,
+  "symmetric_total": true,
+  "cancel_clean": true,
+  "fixture_solids": 1,
+  "fixture_volume": 742.2012644406705
+}
