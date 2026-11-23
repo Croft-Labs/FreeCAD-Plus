@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "proposed": false,
+  "visible_task_labels": [
+    "Modeling tools",
+    "Additive Loft",
+    "Subtractive Loft",
+    "Additive Pipe",
+    "Subtractive Pipe",
+    "",
+    "",
+    ""
+  ]
+}

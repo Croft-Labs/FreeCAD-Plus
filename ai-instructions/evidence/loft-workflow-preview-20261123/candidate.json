@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "proposed": true,
+  "visible_task_labels": [
+    "Modeling tools",
+    "Loft",
+    "Additive Pipe",
+    "Subtractive Pipe",
+    "",
+    "",
+    ""
+  ],
+  "default_new": true,
+  "ordered_collector": true,
+  "target_cues": true,
+  "cancel_clean": true
+}

@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Unified Loft — November 23, 2026
+
+- [ X ] Prepare [direct native UI proposal](evidence/loft-workflow-preview-20261123/README.md).
+- [   ] Obtain approval of the concrete workflow/layout.
+- [   ] Implement shared New/Add/Subtract creation/editing and combined Plus task entries.
+- [   ] Verify geometry, routing with absent/different native Body, targets/colors,
+  history/access, edit identity, Cancel/Undo/reopen and Classic/legacy compatibility;
+  install with rollback and verify the existing shortcut.
+
 ## Shell, Thicken and Surface section — November 23, 2026
 
 - [x] Preview combined Shell/Thicken scope and Modeling Surface placement; obtain chat approval.

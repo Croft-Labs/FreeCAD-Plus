@@ -1,0 +1,71 @@
+"""Native widget proposal only; no production Loft feature implementation."""
+import os,sys,json,traceback,shutil
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,modeling
+sys.dont_write_bytecode=True
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def run():
+    result={'ok':False,'ui_prototype':True};task=None
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1100)
+        Gui.activateWorkbench('PartDesignWorkbench');doc=document.new_document('Loft preview')
+        sketches=[]
+        for i,(z,r) in enumerate(((0,10),(15,7),(30,11))):
+            sketch=modeling.new_sketch(doc);sketch.Placement.Base=App.Vector(0,0,z)
+            sketch.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),r),False);sketches.append(sketch)
+        doc.recompute();view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewAxonometric();view.fitAll()
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks');tasks.setMinimumWidth(420)
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(sketches[0]);QtTest.QTest.qWait(400)
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);import loft_ui as candidate
+        proposed=candidate.configure(tasks);result['proposed']=proposed
+        def shot(name):
+            QtTest.QTest.qWait(200)
+            if win.focusWidget():win.focusWidget().clearFocus()
+            for scroll in tasks.findChildren(QtWidgets.QAbstractScrollArea):scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(100);assert tasks.grab().save(str(out/(name+'.png')))
+        shot('modeling-tools-single')
+        for sketch in sketches[1:]:Gui.Selection.addSelection(sketch)
+        QtTest.QTest.qWait(300);candidate.configure(tasks);shot('modeling-tools-multiple')
+        result['visible_task_labels']=[w.text() for w in tasks.findChildren(QtWidgets.QToolButton) if w.isVisible()]
+        if proposed:
+            assert 'Loft' in result['visible_task_labels']
+            assert not any('Additive Loft' in t or 'Subtractive Loft' in t for t in result['visible_task_labels'])
+            Gui.Selection.clearSelection();task=candidate.LoftTask();Gui.Control.showDialog(task);QtTest.QTest.qWait(200)
+            for box in tasks.findChildren(QtWidgets.QDialogButtonBox):
+                button=box.button(QtWidgets.QDialogButtonBox.Ok)
+                if button:button.setEnabled(False)
+            shot('loft-new')
+            original=[task.sections.item(i).text() for i in range(task.sections.count())]
+            task.sections.setCurrentRow(1);task.move(-1);assert task.sections.item(0).text()==original[1]
+            task.move(1);assert [task.sections.item(i).text() for i in range(3)]==original
+            task.modes['Add'].click();assert task.target_row.isVisible();shot('loft-add-target')
+            task.modes['Subtract'].click();shot('loft-subtract-target')
+            task.target.setText('Solid001');task.changed();shot('loft-subtract-selected')
+            task.status.setError('The loft volume does not intersect the target solid. Change the sections or select another target.');shot('loft-invalid')
+            task.reject();task=None
+            assert not doc.HasPendingTransaction and not Gui.Control.activeDialog()
+            result.update(default_new=True,ordered_collector=True,target_cues=True,cancel_clean=True)
+            shutil.copyfile(out/'loft-new.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        else:
+            Gui.Selection.clearSelection()
+            # Existing native dialog in an isolated synthetic legacy fixture.
+            native=App.newDocument('NativeLoftBaseline');body=native.addObject('PartDesign::Body','Body')
+            profiles=[]
+            for z,r in ((0,10),(15,7),(30,11)):
+                sk=body.newObject('Sketcher::SketchObject','Sketch');sk.Placement.Base=App.Vector(0,0,z)
+                sk.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),r),False);profiles.append(sk)
+            loft=body.newObject('PartDesign::AdditiveLoft','AdditiveLoft');loft.Profile=(profiles[0],['']);loft.Sections=[(s,['']) for s in profiles[1:]]
+            native.recompute();assert loft.Shape.isValid();Gui.activeDocument().activeView().setAnimationEnabled(False)
+            Gui.activeDocument().setEdit(loft.Name);QtTest.QTest.qWait(200);shot('native-loft')
+            shutil.copyfile(out/'native-loft.png',os.environ['PLUS_PREVIEW_IMAGE'])
+            Gui.activeDocument().resetEdit();Gui.Control.closeDialog()
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

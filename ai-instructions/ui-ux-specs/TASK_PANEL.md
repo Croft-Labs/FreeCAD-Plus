@@ -4,6 +4,38 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Unified Loft — November 23, 2026
+
+Owner requests combining Additive/Subtractive Loft into one Loft with New/Add/Subtract,
+matching Extrude/Revolve, and merging their Plus task entries. The
+[native UI proposal](../evidence/loft-workflow-preview-20261123/README.md) is awaiting
+explicit approval; the following layout/implementation details are proposed.
+
+New defaults to a new solid. Add/Subtract require an explicit current target or
+the approved sole-eligible-target shortcut, independent of Classic active Body.
+Choose target before collecting additional sections. Collect section profiles in
+order in a five-row scrolling list, with drag reorder and Up/Down/Remove/Clear.
+Use sketch profiles and planar faces, retaining supported native vertex end
+sections. Require at least two compatible sections; preserve native validation
+and expose Ruled surface, Closed and Refine result. Reordering sections changes
+loft traversal, never the required predecessor order in History.
+
+Reuse shared target highlighting/temporary visibility, Add green/yellow and
+Subtract red/pink validity colors, Tool volume/Result, Show preview, Recompute on
+update, Update preview and prominent recoverable errors. Same creation/edit task,
+identity-preserving acceptance, clean Cancel, Undo/Redo and save/reopen; History
+navigation/restoration, tree eyes and dependency/access rules remain applicable.
+All sources/target belong to the explicit Component context; no ambient Body fallback.
+
+Plus single/multiple-sketch and applicable binder task cards show one Loft entry.
+Classic retains Additive/Subtractive Loft labels and routes to shared Add/Subtract
+in Plus documents. Plus Loft entry defaults New. Preserve native legacy document
+workflows, existing identities/settings and unrelated ribbon/tab/coordinate visuals.
+Implementation scope: shared Loft engine/task, creation/edit dispatch, native Loft
+command bridges, Plus task watchers/entry command and relevant registration/tests.
+No Pipe/Helix migration or new sheet-output option is included in this proposal.
+Saved native features must retain unsupported settings/native editing where needed.
+
 ### Component-owned operation routing — November 23, 2026
 
 Owner explicitly clarified that FreeCAD Plus has no active Body. Every modified

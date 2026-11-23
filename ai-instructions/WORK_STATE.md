@@ -1,5 +1,13 @@
 # FreeCAD Plus: Current work state
 
+## Unified Loft preview pending approval — November 23, 2026
+
+Requested unified Loft/New/Add/Subtract and merged Plus task entries are previewed
+with native shared widgets. [Direct screenshots, source and checks](evidence/loft-workflow-preview-20261123/README.md).
+Session f28df6cc461b is fresh/in-scope; approval state untouched. Production remains
+7479a0ff04, installed and pushed. Await concrete UI approval before implementation;
+follow [proposed scope](ui-ux-specs/TASK_PANEL.md#unified-loft--november-23-2026).
+
 ## Component-only routing repair installed — November 23, 2026
 
 Shell now resolves the selected solid's Body regardless of Classic active-Body state;
