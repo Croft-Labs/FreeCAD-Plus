@@ -1,0 +1,34 @@
+from PySide6 import QtCore, QtWidgets
+
+class OutputControls(QtCore.QObject):
+    def __init__(self, task):
+        super().__init__(task)
+        self.task = task
+        self.group = QtWidgets.QButtonGroup(self)
+        self.buttons = {}
+        row = task.operation.layout.takeAt(0).layout()
+        task.modes['New Solid'].setText('New')
+        columns = QtWidgets.QHBoxLayout()
+        output = QtWidgets.QVBoxLayout()
+        for name in ('Solid', 'Sheet'):
+            button = QtWidgets.QRadioButton(name)
+            button.setObjectName('ExtrudeOutput' + name)
+            self.group.addButton(button); self.buttons[name] = button
+            output.addWidget(button)
+            button.clicked.connect(self.changed)
+        output.addStretch()
+        columns.addLayout(output, 1)
+        columns.addLayout(row, 1)
+        task.operation.layout.insertLayout(0, columns)
+        self.buttons['Solid'].setChecked(True)
+
+    def changed(self):
+        sheet = self.buttons['Sheet'].isChecked()
+        if sheet:
+            self.task.modes['New Solid'].setChecked(True)
+        for button in self.task.modes.values():
+            button.setEnabled(not sheet)
+        self.task.target_row.setVisible(not sheet and self.task.mode() != 'New Solid')
+
+def configure(task):
+    return OutputControls(task)

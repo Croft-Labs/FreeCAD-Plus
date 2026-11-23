@@ -1,0 +1,82 @@
+"""Native task UI proposal and fixture-only geometric sheet illustration."""
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+from pivy import coin
+from freecad_plus import document,modeling,extrude_task
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+def run():
+    result={'ok':False,'ui_prototype':True,'sheet_geometry_is_fixture':True}
+    task=None
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1200,900);win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('Extrude sheet preview')
+        sketch=modeling.new_sketch(doc)
+        sketch.Label='Line profile'
+        sketch.addGeometry(Part.LineSegment(App.Vector(-15,0,0),App.Vector(15,0,0)),False)
+        doc.recompute();view=Gui.activeDocument().activeView();view.setAnimationEnabled(False)
+        view.viewAxonometric();view.fitAll();view.getCameraNode().height=45
+        Gui.Selection.clearSelection();Gui.Selection.addSelection(sketch)
+        task=extrude_task.show();QtTest.QTest.qWait(180)
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+        from extrude_output import configure
+        controls=configure(task);proposed=controls is not None;result['proposed']=proposed
+        tasks=win.findChild(QtWidgets.QDockWidget,'Tasks')
+        tasks.setMinimumWidth(370);QtTest.QTest.qWait(150)
+        def shot(name):
+            for scroll in tasks.findChildren(QtWidgets.QAbstractScrollArea):
+                scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(100)
+            # Capture parent backdrop; the operation section itself is transparent.
+            pix=win.grab();scale=pix.devicePixelRatioF()
+            pos=task.operation.mapTo(win,QtCore.QPoint())
+            rect=QtCore.QRect(round(pos.x()*scale),round(pos.y()*scale),round(task.operation.width()*scale),round(task.operation.height()*scale))
+            assert pix.copy(rect).save(str(out/(name+'-operation.png')))
+            assert tasks.grab().save(str(out/(name+'-task.png')))
+        shot('solid')
+        if proposed:
+            assert controls.buttons['Solid'].isChecked()
+            # Freeze real evaluator during UI-only Sheet preview. No model operation is accepted.
+            task.ready=False
+            task.modes['Add'].setChecked(True)
+            controls.buttons['Sheet'].click()
+            assert task.mode()=='New Solid' and all(not b.isEnabled() for b in task.modes.values())
+            # Real native edge extrusion illustrates the requested line -> sheet result.
+            sheet=sketch.Shape.Edges[0].extrude(App.Vector(0,0,8))
+            assert sheet.isValid() and len(sheet.Faces)==1 and not sheet.Solids
+            task.clear_overlay();task.overlay=coin.SoSeparator();task.scene.addChild(task.overlay)
+            task.world=App.Placement();task.show_tool(sheet,True);task.highlight_profile()
+            task.display.setItemText(0,'Extrusion preview')
+            instruction=task.profile.layout.itemAt(0).widget()
+            instruction.setText('Select sketch curves or edges. Open curves create sheets.')
+            task.status.setText('Sheet preview · one face, no thickness.')
+            task.set_ok(False)
+            shot('sheet')
+            from shutil import copyfile
+            copyfile(out/'sheet-operation.png',os.environ['PLUS_PREVIEW_IMAGE'])
+            # Separate native specimen for an offscreen render; overlays are not
+            # included by every FreeCAD offscreen renderer.
+            specimen=App.newDocument('SheetIllustration')
+            obj=specimen.addObject('Part::Feature','Sheet')
+            obj.Shape=sheet;obj.ViewObject.ShapeColor=(.2,.45,.95);obj.ViewObject.LineColor=(.05,.1,.25)
+            specimen.recompute();QtTest.QTest.qWait(200)
+            illustration=Gui.activeDocument().activeView();illustration.viewAxonometric();illustration.fitAll()
+            QtTest.QTest.qWait(200);illustration.saveImage(str(out/'sheet-viewport.png'),800,650,'Current')
+            App.setActiveDocument(doc.Name)
+            controls.buttons['Solid'].click()
+            assert all(b.isEnabled() for b in task.modes.values()) and task.mode()=='New Solid'
+            task.modes['Subtract'].click();assert task.mode()=='Subtract'
+            result.update(default_solid=True,sheet_locks_new=True,solid_unlocks_operations=True,
+                          sheet_faces=len(sheet.Faces),sheet_solids=len(sheet.Solids),sheet_area=sheet.Area)
+        else:
+            assert task.operation.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    if task:task.reject()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

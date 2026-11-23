@@ -4,6 +4,16 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Extrude Solid/Sheet output — November 23, 2026
+
+Owner requests Solid/Sheet radio buttons on the left of Operation, with
+New/Add/Subtract on the right. Solid is the default. Sheet automatically selects
+New and grays out/locks the entire operation group. Solid re-enables those choices.
+Extruding an open line as Sheet creates a sheet with no solid thickness. Preserve
+the shared creation/edit workflow. The
+[native proposal](../evidence/extrude-sheet-preview-20261123/README.md) awaits
+preview approval; this requirement does not claim production implementation.
+
 ### Sketch Exit and action Cancel — November 23, 2026
 
 Owner requests **Exit Sketch** replacing the sketch editor's Close button, plus an

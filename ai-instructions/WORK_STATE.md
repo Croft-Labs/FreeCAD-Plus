@@ -1,5 +1,14 @@
 # FreeCAD Plus: Current work state
 
+## Extrude Solid/Sheet preview — November 23, 2026
+
+Owner requests sheet extrusion for open curves and clarified Solid/Sheet on the
+left (Solid default), New/Add/Subtract on the right. Sheet selects and locks New
+and disables all three operation buttons; Solid re-enables them. Native UI
+prototype checks and a one-line/one-face sheet illustration passed. Production
+evaluator, persistence and installation remain unchanged pending preview approval.
+See [direct screenshots and implementation scope](evidence/extrude-sheet-preview-20261123/README.md).
+
 ## Selection button appearance/click repair — November 23, 2026
 
 Owner reported the curve-intent control was dark in Light and opened only through
