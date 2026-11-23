@@ -1,5 +1,13 @@
 # FreeCAD Plus: Current work state
 
+## Sketch dimension Enter preview awaiting approval - November 23, 2026
+
+Owner requests one Enter to apply a typed sketch dimension and close its dialog.
+Native-widget reproduction identifies the shared numeric focus-traversal filter.
+The isolated candidate demonstrates one-press completion with unchanged controls;
+constraint geometry/persistence is mocked. No production changes or installation.
+See [direct preview and exact scope](evidence/dimension-enter-preview-20261123/README.md).
+
 ## Shell and shared list controls installed - November 23, 2026
 
 Approved Shell opens empty or with invalid preselection and collects faces without

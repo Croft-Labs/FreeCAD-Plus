@@ -1,0 +1,52 @@
+import os,sys,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+sys.dont_write_bytecode=True
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+repo=Path('C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus')
+def run():
+    result={'ok':False,'ui_only':True};frame=None;filter=None
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench')
+        from freecad_plus import numeric_fields
+        numeric_fields.install()
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);import dimension_ui
+        proposed=dimension_ui.proposed()
+        frame=QtWidgets.QWidget();frame.setWindowTitle('Sketch dimension - isolated interaction preview')
+        frame.setObjectName('previewFrame');frame.setStyleSheet('QWidget#previewFrame { background: #f3f3f3; } QLabel { color: #222222; }')
+        frame.resize(440,420);layout=QtWidgets.QVBoxLayout(frame)
+        title=QtWidgets.QLabel('Type a dimension, then press Enter once');layout.addWidget(title)
+        context=QtWidgets.QLabel('Sketch width: 20 mm');context.setStyleSheet('font-size:18px; padding:12px;')
+        layout.addWidget(context)
+        dialog=Gui.PySideUic.loadUi(str(repo/'src/Mod/Sketcher/Gui/InsertDatum.ui'))
+        dialog.setParent(frame,QtCore.Qt.Widget);layout.addWidget(dialog)
+        dialog.findChild(QtWidgets.QLabel,'label').setText('Length:')
+        field=dialog.findChild(QtWidgets.QWidget,'labelEdit')
+        field.setProperty('unit','mm');field.setProperty('rawValue',20.)
+        footer=QtWidgets.QLabel('UI simulation using the native dimension widgets.\nNo sketch geometry or saved document is changed.')
+        footer.setWordWrap(True);layout.addWidget(footer)
+        def accepted():
+            context.setText('Sketch width: 25 mm')
+            dialog.hide();title.setText('Dimension applied; continue sketching')
+        dialog.accepted.connect(accepted)
+        if hasattr(dimension_ui,'install'):filter=dimension_ui.install(field,dialog,frame)
+        frame.show();frame.raise_();frame.activateWindow();QtTest.QTest.qWait(100)
+        edit=field.findChild(QtWidgets.QLineEdit);edit.setFocus();edit.selectAll();QtTest.QTest.keyClicks(edit,'25')
+        QtTest.QTest.qWait(50);before=frame.grab().toImage();before.setDevicePixelRatio(1)
+        QtTest.QTest.keyClick(edit,QtCore.Qt.Key_Return);QtTest.QTest.qWait(100)
+        closed=not dialog.isVisible()
+        assert closed==proposed,(closed,proposed)
+        after=frame.grab().toImage();after.setDevicePixelRatio(1)
+        result.update(proposed=proposed,closed_after_one_enter=closed,displayed_value=context.text())
+        canvas=QtGui.QImage(before.width()*2+24,before.height()+44,QtGui.QImage.Format_RGB32);canvas.fill(QtGui.QColor('white'))
+        painter=QtGui.QPainter(canvas);painter.setPen(QtGui.QColor('#222222'))
+        painter.drawText(12,25,'Before Enter');painter.drawText(before.width()+24,25,'After one Enter')
+        painter.drawImage(0,44,before);painter.drawImage(before.width()+24,44,after);painter.end()
+        canvas.save(os.environ['PLUS_PREVIEW_IMAGE']);result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    if filter:QtWidgets.QApplication.instance().removeEventFilter(filter)
+    if frame:frame.close()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000,run)
