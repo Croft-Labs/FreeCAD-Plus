@@ -1,0 +1,58 @@
+"""Source-driven native-widget simulation of one task watcher registration removal.
+
+C++ is not rebuilt for this UI preview. The candidate omits the native TaskBox
+corresponding to the removed registration; all other native cards are preserved.
+"""
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+from freecad_plus import document,editing,panel
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+def boxes():
+    return [w for w in Gui.getMainWindow().findChildren(QtWidgets.QWidget)
+            if w.isVisible() and 'TaskBox' in w.metaObject().className() and w.actions()]
+
+def actions(box):return [a.text().replace('&','') for a in box.actions()]
+
+def run():
+    result={'ok':False,'native_widget_simulation':True,'compiled_candidate':False,'cases':[]}
+    try:
+        source=(Path(os.environ['PLUS_PREVIEW_WORKTREE'])/'Workbench.cpp').read_text()
+        proposed='const char* NoSel[] = {"PartDesign_Body", nullptr};' not in source
+        result['proposed']=proposed
+        win=Gui.getMainWindow();win.resize(1100,800);win.show()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('Task prompt preview');owner=document.validate(doc).Definitions[0]
+        p=panel.show_panel();p.tabs.setCurrentIndex(2);p.refresh()
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/General')
+        for name,mode,active in (('classic-component',1,True),('plus-file',0,False),('plus-component',0,True)):
+            prefs.SetInt('TaskPanelUIMode',mode)
+            if active:editing.edit(document.validate(doc).Group[0])
+            else:editing.edit_file(doc)
+            Gui.Selection.clearSelection();Gui.activateWorkbench('PartWorkbench');Gui.activateWorkbench('PartDesignWorkbench')
+            QtTest.QTest.qWait(350)
+            before=[actions(w) for w in boxes()]
+            has_body=any('New Body' in a for a in before)
+            assert has_body==(name!='plus-component'),(name,before)
+            ids={o.Name:o.ID for o in doc.Objects}
+            if proposed:
+                for w in boxes():
+                    if 'New Body' in actions(w):w.hide()
+            after=[actions(w) for w in boxes()]
+            expected=[a for a in before if 'New Body' not in a] if proposed else before
+            assert after==expected,(name,before,after)
+            assert {o.Name:o.ID for o in doc.Objects}==ids
+            dock=win.findChild(QtWidgets.QDockWidget,'Tasks')
+            assert dock and dock.isVisible()
+            assert dock.grab().save(str(out/(name+'.png')))
+            if name=='classic-component':assert dock.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+            result['cases'].append(dict(case=name,before=before,after=after,ids_preserved=True))
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

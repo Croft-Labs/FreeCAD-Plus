@@ -1,5 +1,13 @@
 # FreeCAD Plus: Current work state
 
+## Remove New Body task prompts preview — November 23, 2026
+
+Owner requests removal of all New Body Tasks starting prompts. The single Start Part
+watcher registration is isolated for removal across panel modes. Native-widget
+simulation checks three contexts and preserves Create Geometry. Awaiting preview
+approval; C++ has not been rebuilt or installed. The new-component navigation
+preview below remains pending. See [scope and evidence](evidence/no-body-task-preview-20261123/README.md).
+
 ## New component navigation preview — November 23, 2026
 
 Owner requests newly created components become active with Components > History

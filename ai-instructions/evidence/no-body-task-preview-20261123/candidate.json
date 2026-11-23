@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "native_widget_simulation": true,
+  "compiled_candidate": false,
+  "cases": [
+    {
+      "case": "classic-component",
+      "before": [
+        [
+          "New Body"
+        ]
+      ],
+      "after": [],
+      "ids_preserved": true
+    },
+    {
+      "case": "plus-file",
+      "before": [
+        [
+          "New Body"
+        ]
+      ],
+      "after": [],
+      "ids_preserved": true
+    },
+    {
+      "case": "plus-component",
+      "before": [
+        [
+          "New Sketch",
+          "Datum Plane",
+          "Datum Line",
+          "Datum Point"
+        ]
+      ],
+      "after": [
+        [
+          "New Sketch",
+          "Datum Plane",
+          "Datum Line",
+          "Datum Point"
+        ]
+      ],
+      "ids_preserved": true
+    }
+  ],
+  "proposed": true
+}

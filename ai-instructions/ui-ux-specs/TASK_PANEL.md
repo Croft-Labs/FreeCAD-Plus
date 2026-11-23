@@ -4,6 +4,14 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Remove New Body starting prompts — November 23, 2026
+
+Owner instruction: remove all Tasks-panel entries offering New Body as the starting
+point for a part. Component feature workflows create Bodies internally as results.
+The proposal removes the Start Part watcher card across task-panel modes, preserving
+Create Geometry and other task actions. [UI preview](../evidence/no-body-task-preview-20261123/README.md)
+awaits approval; production is unchanged.
+
 ### Prominent error feedback — November 23, 2026
 
 Owner instruction: highlight the task-panel attachment/order error like the existing
