@@ -4,6 +4,22 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Target-first Add/Subtract prompt — November 22, 2026
+
+Owner request: show the missing-target error before the user starts choosing curves
+for Add/Subtract. The proposed shared Extrude/Revolve flow warns immediately on
+entering Add or Subtract without a target: "Choose a target solid before selecting
+profile curves." OK focuses the existing Target solid field. A selected target
+suppresses the warning, and preview/numeric updates must not repeatedly open it.
+Retain already-selected profile curves; require a valid target before further
+profile picking. New Solid does not require a target. The complete implementation
+must also handle direct Subtract command startup, clearing/invalidating a target,
+viewport region picks, and task/dialog cleanup without changing visibility intent.
+
+The [direct native popup preview](../evidence/target-first-preview-20261122/README.md)
+is ready for approval. The candidate demonstrates mode-entry prompts and focus only;
+full input guarding and installed changes remain pending.
+
 ### Unified Revolve workflow request — November 22, 2026
 
 Owner instruction: apply the same workflow to Revolve New Body, Add and Subtract,

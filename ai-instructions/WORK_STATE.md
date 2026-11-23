@@ -1,5 +1,19 @@
 # FreeCAD Plus: Current work state
 
+## Target-first Add/Subtract prompt preview — November 22, 2026
+
+The owner requests a missing-target error before selecting profile curves in Add/
+Subtract. A native candidate shared by Extrude/Revolve shows the immediate popup
+and focuses Target solid after OK. All four mode/feature combinations show it;
+preview updates and modes with an existing target do not repeat it. Document IDs
+remain unchanged. Direct [Add popup](evidence/target-first-preview-20261122/add-popup.png),
+[Subtract popup](evidence/target-first-preview-20261122/subtract-popup.png), and
+[target focus](evidence/target-first-preview-20261122/target-focus.png).
+**Awaiting preview approval. Production and installed source are unchanged.**
+The candidate is a UI demonstration; direct command startup, intake guards,
+cleared/invalid target handling and complete dialog lifecycle are implementation work.
+See [preview provenance and scope](evidence/target-first-preview-20261122/README.md).
+
 ## Strict sequential History — November 22, 2026
 
 The owner approved strict sequential History and preventing sketches or other inputs

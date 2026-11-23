@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "native_preview": true,
+  "complete_intake_guard_implemented": false,
+  "cases": [
+    {
+      "feature": "extrude",
+      "operation": "Add",
+      "popup_shown": false,
+      "target_focused_after_dismissal": false,
+      "no_popup_on_preview_update": true,
+      "no_popup_with_target": true
+    },
+    {
+      "feature": "extrude",
+      "operation": "Subtract",
+      "popup_shown": false,
+      "target_focused_after_dismissal": false,
+      "no_popup_on_preview_update": true,
+      "no_popup_with_target": true
+    },
+    {
+      "feature": "revolve",
+      "operation": "Add",
+      "popup_shown": false,
+      "target_focused_after_dismissal": false,
+      "no_popup_on_preview_update": true,
+      "no_popup_with_target": true
+    },
+    {
+      "feature": "revolve",
+      "operation": "Subtract",
+      "popup_shown": false,
+      "target_focused_after_dismissal": false,
+      "no_popup_on_preview_update": true,
+      "no_popup_with_target": true
+    }
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\22942ee0d6a0\\baseline\\extrude_task.py",
+  "document_identities_preserved": true
+}
