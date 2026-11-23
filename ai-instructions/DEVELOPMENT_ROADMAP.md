@@ -1,5 +1,17 @@
 # FreeCAD Plus: Development roadmap
 
+## Unified Revolve and selected-curves list — November 22, 2026
+
+- [x] Record the owner's shared workflow, axis and angular-field requirements.
+- [x] Prepare direct native staged screenshots for New Solid, Add/Subtract and
+  valid/invalid colors, with the larger scrollable profile list.
+- [ ] Obtain chat approval of the [proposal](evidence/revolve-workflow-preview-20261122/README.md).
+- [ ] Implement shared creation/editing, native axis/angular geometry and persistent
+  references; carry over selected targets, preview validity and task visibility.
+- [ ] Apply the approved larger selection list to Extrude and Revolve.
+- [ ] Validate native geometry, identity, editing, Undo, save/reopen and installed UI;
+  install with rollback, restart the existing shortcut, commit/push and remote-verify.
+
 ## Sketch dimensions and feature-task History — November 22, 2026
 
 - [x] Obtain approval for the combined direct native storyboard.

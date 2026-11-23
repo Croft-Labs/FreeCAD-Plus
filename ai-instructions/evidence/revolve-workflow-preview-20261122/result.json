@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "native_staged_proposal": true,
+  "cases": [
+    {
+      "mode": "New Solid",
+      "valid": true,
+      "tool_volume": 4021.238596594939,
+      "staged": true,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Add",
+      "valid": true,
+      "tool_volume": 4021.238596594939,
+      "staged": true,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Add",
+      "valid": false,
+      "tool_volume": 4021.238596594936,
+      "staged": true,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Subtract",
+      "valid": true,
+      "tool_volume": 4021.238596594939,
+      "staged": true,
+      "target_history_hidden": true
+    },
+    {
+      "mode": "Subtract",
+      "valid": false,
+      "tool_volume": 8042.4771931898795,
+      "staged": true,
+      "target_history_hidden": true
+    }
+  ]
+}

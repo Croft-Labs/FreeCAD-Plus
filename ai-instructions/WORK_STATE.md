@@ -1,5 +1,23 @@
 # FreeCAD Plus: Current work state
 
+## Unified Revolve preview — November 22, 2026
+
+The owner requested Extrude's workflow for New Solid/new body, Add and Subtract
+Revolve, combining Revolution/Groove and replacing linear offset/distance with
+angular offset/rotation about an identified axis. The native staged proposal is
+ready: [profile list and axis](evidence/revolve-workflow-preview-20261122/overview.png),
+[angular controls and Add](evidence/revolve-workflow-preview-20261122/add-valid.png),
+[Subtract](evidence/revolve-workflow-preview-20261122/subtract-valid.png).
+It includes the still-pending larger selection list from the preceding request.
+All five native BRep fixture cases (New Solid, Add valid/invalid, Subtract valid/invalid)
+passed the preview's geometry/visibility assertions; invalid cases disable OK.
+These are native staged screenshots, not an implemented Revolve task or regression
+coverage for persistence/selection/editing. The baseline is installed Extrude as the
+shared-layout reference. **Awaiting direct chat approval before implementation.**
+Production source and installed files remain unchanged. See the
+[preview record](evidence/revolve-workflow-preview-20261122/README.md) for provenance,
+limitations and the subsequent implementation/validation scope.
+
 ## Shared display rule and selected-curves preview — November 22, 2026
 
 The owner's instruction to carry selected-target visibility and additive/subtractive

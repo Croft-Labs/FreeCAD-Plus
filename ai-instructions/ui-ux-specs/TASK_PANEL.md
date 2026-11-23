@@ -4,6 +4,24 @@ Status: owner-intent specification, reconstructed 2026-10-10. **Only the confirm
 
 ## Confirmed requirements
 
+### Unified Revolve workflow request — November 22, 2026
+
+Owner instruction: apply the same workflow to Revolve New Body, Add and Subtract,
+combining the former Revolution and Groove workflows, with an identified rotation
+axis, offset measured in degrees and distance replaced by degrees of rotation.
+Use the existing feature-centered New Solid wording for the new-body result, matching
+Extrude. Creation and editing use one task. Carry over profile collection, the requested
+at-least-five-row scrollable list, selected-target visibility/color, Add green/yellow
+and Subtract red/pink validity colors, numeric commit timing, History task scope,
+source ownership, visibility restoration and native validation/Undo behavior.
+
+The native staged [layout proposal](../evidence/revolve-workflow-preview-20261122/README.md)
+adds Axis of rotation, angular Start offset and Rotation angle controls to the shared
+sections. The requested behavior is confirmed; **visual approval and implementation
+remain pending**. This instruction supersedes D2763–D2765's old confirmation gate
+for combining the workflows and angular fields. Other archived details below remain
+unconfirmed unless explicitly covered by this request or existing shared-task rules.
+
 ### Shared selected-target and validity display — November 22, 2026
 
 Owner instruction: apply Extrude's selected-target visibility and valid/invalid
