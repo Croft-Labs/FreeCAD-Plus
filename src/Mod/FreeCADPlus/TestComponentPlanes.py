@@ -254,16 +254,19 @@ class TestComponentPlanes(unittest.TestCase):
         line = self.feature(Part.makeLine(App.Vector(), App.Vector(10,0,0)))
         cases = [([], 'Choose a plane'), ([(a,'Vertex1')], 'two more points'),
                  ([(a,'Vertex1'),(b,'Vertex1')], 'third point'),
-                 ([(line,'Edge1')], 'off-line point')]
+                 ([(line,'Edge1')], 'point / vertex')]
         for refs, message in cases:
             with self.subTest(refs=refs), self.assertRaisesRegex(planes.IncompletePlane, message):
                 planes.solve(self.owner, refs)
         for refs, message in [([(a,'Vertex1'),(b,'Vertex1'),(c,'Vertex1')], 'collinear'),
-                              ([(line,'Edge1'),(a,'Vertex1')], 'lies on'),
                               ([(self.xy,''),(a,'Vertex1')], 'by itself')]:
             with self.subTest(refs=refs), self.assertRaisesRegex(ValueError, message) as caught:
                 planes.solve(self.owner, refs)
             self.assertNotIsInstance(caught.exception, planes.IncompletePlane)
+        normal = planes.solve(self.owner, [(line,'Edge1'),(a,'Vertex1')])
+        self.assertTrue(normal.Rotation.multVec(App.Vector(0,0,1)).isEqual(App.Vector(1,0,0),1e-7))
+        with self.assertRaisesRegex(ValueError,'lies on'):
+            planes.solve(self.owner,[(line,'Edge1'),(a,'Vertex1')],normal_to_line=False)
 
     def test_preselection_toggle_delete_and_highlight_cleanup(self):
         points = [self.feature(Part.Vertex(App.Vector(*v))) for v in [(0,0,3),(10,0,3),(0,10,3)]]
@@ -389,7 +392,7 @@ class TestComponentPlanes(unittest.TestCase):
             self.assertTrue(all(abs(v)<100 for v in vector))
         Gui.Selection.addSelection(point,'Vertex1')
         self.assertTrue(task.valid,task.status.text())
-        self.assertLess(task.placement().Base.Length,1e-7)
+        self.assertTrue(task.placement().Base.isEqual(App.Vector(0,10,0),1e-7))
         self.assertTrue(task.accept())
         self.assertFalse(task.result.Shape.isNull())
 

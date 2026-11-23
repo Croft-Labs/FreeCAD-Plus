@@ -1,0 +1,25 @@
+{
+  "root": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\plane-history-20261123",
+  "removed": [
+    "fresh-_0nlg6tw",
+    "fresh-00ynqam8",
+    "fresh-16ubybs8",
+    "fresh-ka2did00",
+    "fresh-lmvyn_vh",
+    "fresh-o_4t9htk",
+    "fresh-pb_h6xxl",
+    "fresh-qlcfd11h",
+    "profile-build",
+    "profile-installed",
+    "profile-live",
+    "installed-history.png",
+    "installed-plane-selection.png",
+    "installed-popup.png",
+    "installed-sketch-selection.png",
+    "PlaneHistory.cadprt"
+  ],
+  "retained": [
+    "install-backup",
+    "profile-shortcut"
+  ]
+}

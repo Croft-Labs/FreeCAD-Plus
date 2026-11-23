@@ -1,0 +1,115 @@
+"""Installed Qt drop-path and saved-model fixture (not an OS mouse test)."""
+import json,os,sys,time,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+from freecad_plus import document,planes,sketch_placement,extrusion,panel,plane_task,sketch_task
+out=Path(os.environ['PLUS_TEST_DIR']);state={'ok':False,'ready':False,'orders':[]}
+deadline=time.monotonic()+600
+timer=QtCore.QTimer()
+
+def setup():
+    global doc,owner,p,s,f,i,widget,native_snapshot,initial_volume
+    try:
+        assert '/app/' in panel.__file__.replace(chr(92),'/')
+        win=Gui.getMainWindow();win.resize(1100,800);win.show();win.raise_();win.activateWindow()
+        Gui.activateWorkbench('PartDesignWorkbench')
+        doc=document.new_document('History drag validation');owner=document.validate(doc).Definitions[0]
+        xy=next(o for o in owner.Origin.OriginFeatures if o.Role=='XY_Plane')
+        p=planes.save(doc,[(xy,'')],4);p.Label='Datum Plane - Support'
+        s=sketch_placement.save(doc,[(p,'')]);s.Label='Sketch - Profile'
+        s.addGeometry(Part.Circle(App.Vector(),App.Vector(0,0,1),3),False);doc.recompute()
+        f=extrusion.save(doc,[(s,'')],{},dict(extrusion.DEFAULTS,length=5));f.Label='Extrude'
+        i=planes.save(doc,[(xy,'')],-2);i.Label='Datum Plane - Independent'
+        native_snapshot={o.Name:(o.ID,o.Visibility,tuple(x.Name for x in o.OutList)) for o in doc.Objects}
+        initial_volume=f.Shape.Volume
+        widget=panel.show_panel();widget.tabs.setCurrentIndex(2);widget.refresh()
+        win.resizeDocks([widget],[365],QtCore.Qt.Horizontal)
+        Gui.activeDocument().activeView().viewAxonometric();Gui.activeDocument().activeView().fitAll()
+        state.update(ready=True,modules={name:module.__file__ for name,module in [('panel',panel),('planes',planes),('sketch',sketch_placement)]})
+        (out/'live.json').write_text(json.dumps(state,indent=2));timer.start(250)
+        QtCore.QTimer.singleShot(700,move_independent)
+    except BaseException:
+        state['error']=traceback.format_exc();finish(False)
+
+def finish(success):
+    timer.stop()
+    try:
+        if success:
+            assert document.history(doc,owner)==[i,p,s,f]
+            assert {o.Name:(o.ID,o.Visibility,tuple(x.Name for x in o.OutList)) for o in doc.Objects}==native_snapshot
+            assert abs(f.Shape.Volume-initial_volume)<1e-7
+            assert len(state['orders'])>=3
+            assert widget.grab().save(str(out/'installed-history.png'))
+            # A persisted normal construction plus an old absent-property plane
+            # travel together to a fresh native process.
+            edge=owner.newObject('Part::Feature','NormalEdge');edge.Shape=Part.makeLine(App.Vector(),App.Vector(20,0,0))
+            vertex=owner.newObject('Part::Feature','PlanePoint');vertex.Shape=Part.Vertex(App.Vector(3,5,7));doc.recompute()
+            refs=[(edge,'Edge1'),(vertex,'Vertex1')]
+            edge.Label='Direction line';vertex.Label='Plane point'
+            for module,label in ((plane_task,'plane'),(sketch_task,'sketch')):
+                task=module.show()
+                for ref in refs:
+                    task.pick_target='plane';Gui.Selection.clearSelection();Gui.Selection.addSelection(*ref)
+                    QtTest.QTest.qWait(80)
+                assert task.valid and task.refs==refs
+                assert task.placement().Base.isEqual(App.Vector(3,5,7),1e-7)
+                assert task.form.grab().save(str(out/('installed-'+label+'-selection.png')))
+                task.reject()
+            normal=planes.save(doc,refs);normal.Label='Normal plane'
+            sketch=sketch_placement.save(doc,refs);sketch.Label='Normal sketch'
+            legacy=planes.save(doc,refs,normal_to_line=False);legacy.Label='Legacy containing plane'
+            legacy.removeProperty('NormalToLine');doc.recompute()
+            expected=dict(owner=owner.Name,order=[o.Name for o in document.history(doc,owner)],
+                ids={o.Name:o.ID for o in doc.Objects},frames={o.Name:[tuple(o.Placement.Base),tuple(o.Placement.Rotation.Q)] for o in (normal,sketch,legacy)},
+                normals=[normal.Name,sketch.Name],legacy=legacy.Name,volume=initial_volume,solid=f.Name)
+            document.save_document(doc,out/'PlaneHistory.cadprt')
+            (out/'expected.json').write_text(json.dumps(expected,indent=2));state['ok']=True
+    except BaseException:state['error']=traceback.format_exc()
+    (out/'live.json').write_text(json.dumps(state,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+
+ticks=0
+def drop(obj,target,below):
+    tree=widget.trees[2]
+    row=lambda o:widget._maps[2][('history',panel.identity(o))]
+    tree.payload=widget.prepare_history_move(row(obj).data(0,panel._ROLE))
+    mime=QtCore.QMimeData();mime.setData(tree.mime_type,b'feature')
+    rect=tree.visualItemRect(row(target))
+    point=QtCore.QPoint(100,rect.bottom()-1 if below else rect.top()+1)
+    class Drop(QtGui.QDropEvent):
+        def source(self):return tree
+    event=Drop(QtCore.QPointF(point),QtCore.Qt.MoveAction,mime,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier)
+    tree.dropEvent(event);tree.payload=None
+    assert event.isAccepted()
+def move_independent():
+    try:
+        drop(i,s,False)
+        QtCore.QTimer.singleShot(700,move_support)
+    except BaseException:state['error']=traceback.format_exc();finish(False)
+def move_support():
+    try:drop(p,f,True)
+    except BaseException:state['error']=traceback.format_exc();finish(False)
+
+def observe():
+    global ticks
+    ticks+=1
+    try:
+        order=[o.Label for o in document.history(doc,owner)]
+        if not state['orders'] or order!=state['orders'][-1]:
+            state['orders'].append(order);(out/'live.json').write_text(json.dumps(state,indent=2))
+        for box in Gui.getMainWindow().findChildren(QtWidgets.QMessageBox):
+            if box.isVisible() and 'cannot be moved' in box.text():
+                state['popup']=box.text();box.grab().save(str(out/'installed-popup.png'))
+                (out/'live.json').write_text(json.dumps(state,indent=2))
+                box.accept();QtCore.QTimer.singleShot(500,lambda:finish(True))
+        if ticks%20==0:
+            with (out/'live.txt').open('a') as stream:stream.write('Waiting for native drag check\n')
+        if (out/'finish-live.txt').exists():finish(True)
+        elif time.monotonic()>deadline:
+            state['error']='Native mouse verification exceeded ten minutes';finish(False)
+    except BaseException:state['error']=traceback.format_exc();finish(False)
+timer.timeout.connect(observe)
+QtCore.QTimer.singleShot(2200,setup)

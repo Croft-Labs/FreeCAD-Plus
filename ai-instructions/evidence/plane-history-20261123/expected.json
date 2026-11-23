@@ -1,0 +1,101 @@
+{
+  "owner": "Part001",
+  "order": [
+    "Plane001",
+    "Plane",
+    "Sketch",
+    "Extrude",
+    "NormalEdge",
+    "PlanePoint",
+    "Plane002",
+    "Sketch001",
+    "Plane003"
+  ],
+  "ids": {
+    "File": 4877,
+    "Origin": 4878,
+    "X_Axis": 4879,
+    "Y_Axis": 4880,
+    "Z_Axis": 4881,
+    "XY_Plane": 4882,
+    "XZ_Plane": 4883,
+    "YZ_Plane": 4884,
+    "Origin001": 4885,
+    "Part001": 4886,
+    "Origin002": 4887,
+    "X_Axis001": 4888,
+    "Y_Axis001": 4889,
+    "Z_Axis001": 4890,
+    "XY_Plane001": 4891,
+    "XZ_Plane001": 4892,
+    "YZ_Plane001": 4893,
+    "Origin003": 4894,
+    "Part001Instance": 4895,
+    "Plane": 4896,
+    "Sketch": 4897,
+    "Body": 4898,
+    "Origin004": 4899,
+    "X_Axis002": 4900,
+    "Y_Axis002": 4901,
+    "Z_Axis002": 4902,
+    "XY_Plane002": 4903,
+    "XZ_Plane002": 4904,
+    "YZ_Plane002": 4905,
+    "Origin005": 4906,
+    "Extrude": 4907,
+    "Plane001": 4908,
+    "NormalEdge": 4909,
+    "PlanePoint": 4910,
+    "Plane002": 4911,
+    "Sketch001": 4912,
+    "Plane003": 4913
+  },
+  "frames": {
+    "Plane002": [
+      [
+        3.0,
+        5.0,
+        7.0
+      ],
+      [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ]
+    ],
+    "Sketch001": [
+      [
+        3.0,
+        5.0,
+        7.0
+      ],
+      [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ]
+    ],
+    "Plane003": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.4575815808579403,
+        0.0,
+        0.0,
+        0.8891676427196101
+      ]
+    ]
+  },
+  "normals": [
+    "Plane002",
+    "Sketch001"
+  ],
+  "legacy": "Plane003",
+  "volume": 141.37166941154078,
+  "solid": "Extrude"
+}

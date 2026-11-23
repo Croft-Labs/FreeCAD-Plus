@@ -1,0 +1,6 @@
+test_external_history_order_is_source_owned (TestPlaneHistoryWorkflow.TestPlaneHistoryWorkflow.test_external_history_order_is_source_owned) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.526s
+
+OK

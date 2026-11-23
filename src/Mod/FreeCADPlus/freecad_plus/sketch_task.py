@@ -19,9 +19,6 @@ class SketchPlacementTask(plane_task.PlaneTask):
         self.form.setWindowTitle('New Sketch')
         self.form.setWindowIcon(Gui.getIcon('Sketcher_NewSketch'))
         self.plane.header.setText('Sketch plane')
-        for widget in self.plane.findChildren(QtWidgets.QLabel):
-            if widget.text() == 'Select defining geometry in the model or History.':
-                widget.setText('Choose a plane or planar face in the model or History.')
         self.origin_visibility = sketch_visibility.Planes(self.definition)
 
     def title(self, ref):
@@ -45,9 +42,9 @@ class SketchPlacementTask(plane_task.PlaneTask):
         self.check()
         axis = 'X' if self.x_choice.isChecked() else 'Y'
         sketch_placement.validate(self.definition, self.refs, self.origin_refs, self.axis_refs,
-                                  axis, self.flip.isChecked(), self.feature, self.committed_offset)
+                                  axis, self.flip.isChecked(), self.feature, self.committed_offset, self.normal_to_line)
         return sketch_placement.solve(self.definition, self.refs, self.origin_refs, self.axis_refs,
-                                      axis, self.flip.isChecked(), self.committed_offset)
+                                      axis, self.flip.isChecked(), self.committed_offset, self.normal_to_line)
 
     def update(self, *args):
         super().update(*args)
@@ -65,7 +62,7 @@ class SketchPlacementTask(plane_task.PlaneTask):
             if not self.axis_refs:
                 self.axis_ref.setText(name+' '+axis+' axis' if support else
                                       ('Projected part X' if axis=='X' else 'Y derived from projected part X'))
-        if self.valid:
+        if self.valid and len(self.refs)==1:
             self.status.setText('Using the selected plane’s origin and orientation.' if support else
                                 'Using the projected part origin and X axis.')
 
@@ -80,13 +77,15 @@ class SketchPlacementTask(plane_task.PlaneTask):
             args = (self.refs, self.origin_refs, self.axis_refs,
                     'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked())
             if self.feature is not None:
-                self.result = sketch_placement.save(self.doc, *args, feature=self.feature, offset=self.committed_offset)
+                self.result = sketch_placement.save(self.doc, *args, feature=self.feature, offset=self.committed_offset,
+                                                   normal_to_line=self.normal_to_line)
                 self.reject()
             else:
                 # Native drawing owns completion of the new-sketch transaction.
                 transaction_id = App.setActiveTransaction('Create a new sketch')
                 self.result = self.definition.newObject('Sketcher::SketchObject', 'Sketch')
-                sketch_placement.configure(self.result, *args, offset=self.committed_offset)
+                sketch_placement.configure(self.result, *args, offset=self.committed_offset,
+                                           normal_to_line=self.normal_to_line)
                 self.source_doc.recompute()
                 if 'Invalid' in self.result.State:
                     raise ValueError('The sketch could not be recomputed')

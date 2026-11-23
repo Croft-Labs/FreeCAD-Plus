@@ -347,7 +347,18 @@ No document schema or existing feature identity is changed.
 The solver uses native Part shapes and FreeCAD vectors/placements. It supports
 planar faces/planes, three noncollinear points, line-plus-point and two coplanar
 lines. It projects the source file's universal origin (expressed in the definition
-frame), or a selected point, onto the offset plane. An explicit X/Y direction is
+frame), or a selected point, onto the offset plane. Approved November 23: new line
+plus point inputs instead place the origin at that point (plus offset along the
+line) and the plane normal along the line. Hidden `NormalToLine` records this
+construction on both datum planes and Plus sketches. Absence/false preserves the
+historical containing-plane construction; ordinary open/recompute/cancel never
+migrates saved geometry. Unchanged legacy edits preserve that choice; changing the
+defining references opts into the new construction. Shared `planes.collect` keeps
+supported complete/incomplete combinations, replacing a geometric conflict with
+the newest reference only. Both tasks admit the reference and check predecessors
+before collecting it, so unsupported/foreign/later picks preserve the old set.
+Planes/flat faces, lines/straight edges and points/vertices use one classifier.
+An explicit X/Y direction is
 projected in-plane; the other direction is derived as a right-handed frame. Flip
 normal preserves the selected direction, geometric plane and displayed rectangle.
 Infinite fundamental faces are sampled at finite UV coordinates for stability.
@@ -579,7 +590,7 @@ geometry in dependency-compatible sequence. Body containers remain backend items
 Owner-approved November 22, 2026: this is strictly sequential across Body boundaries.
 `document.history` orders the visible ownership projection by native `OutList`
 dependencies, including expressions and indirect native inputs; a referenced Body
-resolves to its Tip. Creation IDs break ties between independent objects. Coordinate
+resolves to its Tip. Saved preferred ranks, then creation IDs, break ties between independent objects. Coordinate
 frames are implicit predecessors and component occurrences retain separate histories.
 Cycles are reported rather than presented in a misleading order. The projection
 does not mutate ownership, identities, visibility, native links or saved schema.
@@ -590,10 +601,17 @@ geometry admission, Extrude/Revolve validation and picking, sketch placement, an
 plane save/preview. Command-start admission passing a component/Body is creation,
 not an edit to a container, and permits inputs for the appended feature. Native
 recompute and arbitrary Python assignments are not global admission hooks; existing
-legacy dependencies are displayed in valid topological order. This does not add
-History drag reordering or temporary suppression workflows. Any future reorder
-command must preserve direct/transitive predecessor constraints. Acceptance lives in
-[sequential History evidence](evidence/sequential-history-20261122/README.md).
+legacy dependencies are displayed in valid topological order. Temporary suppression
+workflows remain separate. The November 23 approved `reorder_history` command clamps
+each move between all transitive predecessors and consumers. Hidden component
+`PlusHistoryOrder` string identities (`Name:ID`) rank independent features without
+adding native dependency links; new or reused identities append. No property is added
+until an actual order change. A source-document transaction provides Undo/Redo;
+native FreeCAD also creates a coordinated Undo marker in an active external host,
+without changing host properties. The panel validates component/view/path and the
+original identity sequence again at drop time, disallows active tasks/transactions,
+keeps Coordinate System fixed first, and posts correction popups after refreshing.
+See [implementation evidence](evidence/plane-history-20261123/README.md).
 Temporary unused-model occurrences and contextual fading are view state; saving
 must not turn them into permanent placements or authored visibility changes.
 

@@ -1,0 +1,29 @@
+import json,os,sys,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore
+from freecad_plus import document,editing
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        expected=json.loads((out/'expected.json').read_text())
+        doc=document.open_document(out/'PlaneHistory.cadprt');owner=doc.getObject(expected['owner'])
+        assert {o.Name:o.ID for o in doc.Objects}==expected['ids']
+        assert [o.Name for o in document.history(doc,owner)]==expected['order']
+        for name,(base,rotation) in expected['frames'].items():
+            feature=doc.getObject(name);frame=App.Placement(App.Vector(*base),App.Rotation(*rotation))
+            assert feature.Placement.isSame(frame,1e-7),name
+        for name in expected['normals']:
+            feature=doc.getObject(name);assert feature.NormalToLine
+            assert feature.Placement.Base.isEqual(App.Vector(3,5,7),1e-7)
+            assert feature.Placement.Rotation.multVec(App.Vector(0,0,1)).isEqual(App.Vector(1,0,0),1e-7)
+        assert 'NormalToLine' not in doc.getObject(expected['legacy']).PropertiesList
+        assert abs(doc.getObject(expected['solid']).Shape.Volume-expected['volume'])<1e-7
+        result.update(ok=True,manual_order_restored=True,normal_plane_and_sketch_restored=True,legacy_geometry_preserved=True,identities_preserved=True)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'reopen.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

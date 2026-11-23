@@ -199,7 +199,7 @@ def new_document(name="Unnamed"):
 
 
 def history(doc, definition=None):
-    """Read-only dependency sequence across Bodies, with creation-order tie breaks."""
+    """Dependency sequence across Bodies, respecting saved preferred order."""
     root = validate(doc)
     if definition is None:
         return [root.Origin] + [o for o in root.Origin.OriginFeatures if o.TypeId == "App::Plane"]
@@ -219,10 +219,12 @@ def history(doc, definition=None):
             yield obj
     nodes = list(dict.fromkeys(feature for obj in definition.Group for feature in features(obj)))
     dependencies = _history_dependencies(definition, nodes)
-    # Body membership is ownership, not chronology. Native object IDs survive
-    # save/restore and Undo; no parallel persisted order or ownership rewrite is needed.
+    # String identities do not add native dependency links. Deleted/reused names
+    # cannot acquire a previous object's rank; unmatched new objects append.
+    ranks = {key:i for i,key in enumerate(getattr(definition, 'PlusHistoryOrder', []))}
+    def priority(obj):return (ranks.get(_history_key(obj),len(ranks)),obj.ID,obj.Name,obj)
     import heapq
-    ready = [(obj.ID, obj.Name, obj) for obj in nodes if not dependencies[obj]]
+    ready = [priority(obj) for obj in nodes if not dependencies[obj]]
     heapq.heapify(ready)
     followers = {obj: [] for obj in nodes}
     for obj, inputs in dependencies.items():
@@ -230,15 +232,67 @@ def history(doc, definition=None):
             followers[source].append(obj)
     ordered = []
     while ready:
-        _, _, obj = heapq.heappop(ready)
+        _, _, _, obj = heapq.heappop(ready)
         ordered.append(obj)
         for follower in followers[obj]:
             dependencies[follower].remove(obj)
             if not dependencies[follower]:
-                heapq.heappush(ready, (follower.ID, follower.Name, follower))
+                heapq.heappush(ready, priority(follower))
     if len(ordered) != len(nodes):
         raise ValueError('Circular feature dependencies prevent sequential History')
     return ordered
+
+
+def _history_key(obj):
+    return f'{obj.Name}:{obj.ID}'
+
+
+def reorder_history(doc, definition, feature, position):
+    """Move one visible feature, clamped between all inputs and consumers.
+
+    Position is an insertion slot in the original feature-only sequence. The
+    coordinate frame is structural and never participates in this sequence.
+    """
+    from . import modeling
+    active, _ = modeling._context(doc)
+    if active != definition:raise ValueError('The edited component changed; drag the feature again.')
+    if definition.Document.HasPendingTransaction or App.getActiveTransaction():
+        raise ValueError('Finish the current operation before reordering History.')
+    ordered = history(doc, definition)
+    if feature not in ordered:raise ValueError('Only modeling features can be reordered.')
+    if not isinstance(position,int) or not 0 <= position <= len(ordered):
+        raise ValueError('Invalid History insertion position.')
+    dependencies = _history_dependencies(definition, ordered)
+    def ancestors(obj):
+        found=set();pending=list(dependencies[obj])
+        while pending:
+            source=pending.pop()
+            if source not in found:
+                found.add(source);pending.extend(dependencies[source])
+        return found
+    inputs=ancestors(feature)
+    consumers={obj for obj in ordered if feature in ancestors(obj)}
+    old=ordered.index(feature);remaining=[obj for obj in ordered if obj != feature]
+    requested=position-(position>old)
+    lower=max((i+1 for i,obj in enumerate(remaining) if obj in inputs),default=0)
+    upper=min((i for i,obj in enumerate(remaining) if obj in consumers),default=len(remaining))
+    actual=max(lower,min(requested,upper));message=''
+    if requested>upper:
+        blocker=remaining[upper]
+        message=(f'"{feature.Label}" cannot be moved after "{blocker.Label}" because that feature depends on it.\n\n'
+                 f'It has been placed immediately before "{blocker.Label}".')
+    elif requested<lower:
+        blocker=remaining[lower-1]
+        message=(f'"{feature.Label}" cannot be moved before "{blocker.Label}" because it depends on that feature.\n\n'
+                 f'It has been placed immediately after "{blocker.Label}".')
+    result=remaining[:actual]+[feature]+remaining[actual:]
+    if result != ordered:
+        with transaction(definition.Document,'Reorder feature History'):
+            if 'PlusHistoryOrder' not in definition.PropertiesList:
+                definition.addProperty('App::PropertyStringList','PlusHistoryOrder','History')
+                definition.setEditorMode('PlusHistoryOrder',2)
+            definition.PlusHistoryOrder=[_history_key(obj) for obj in result]
+    return message
 
 
 def _history_inputs(definition, nodes, objects):

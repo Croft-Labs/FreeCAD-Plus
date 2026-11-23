@@ -1,5 +1,34 @@
 # FreeCAD Plus: Current work state
 
+## Plane/Sketch placement and History reordering installed — November 23, 2026
+
+Owner approved both previews: "implement the plane and sketch placement as well as
+the reordering of the history tab". Both are implemented and installed. Compatible
+plane picks accumulate; conflicts replace the defining set. Plane/face,
+line/straight-edge and point/vertex inputs are interchangeable. New line+point
+construction is through the point, normal to the line. Older saved containing-plane
+geometry is preserved by an additive construction flag, including on Cancel/open.
+
+History keeps Coordinate System first and fixed. One-feature drags persist a preferred
+order while retaining all transitive dependencies. Invalid moves are corrected before
+the first consumer (or after the last input), with a popup naming the blocker.
+Source-owned transactions support Undo/Redo; native links, ownership and geometry
+remain unchanged. Active tasks/transactions and stale drag contexts are refused.
+
+Validation: 62 focused build tests passed. The installed broad suite passed 212 of
+213; its remaining external-source fixture was corrected and passed separately,
+giving 213/213 covered checks. Five separate fresh startup checks also passed, and
+the final installed focused rerun passed 63/63 after a helper-text correction.
+Installed Qt drop/popup and native selection fixtures passed, plus fresh-process
+save/reopen of order, identities, new construction and legacy geometry. OS-level
+mouse drag could not be checked: both computer-control tools failed to attach to
+the isolated FreeCAD window with the same window-owner mismatch. This is a tooling
+limitation, not a claimed mouse-test pass. See [full evidence](evidence/plane-history-20261123/README.md).
+
+Scripts were installed with source/build/app hash matching and retained rollback
+backups. The existing desktop shortcut launched the update with isolated settings.
+Unrelated `project.previewfirst.json` remains untouched. No native rebuild was needed.
+
 ## History drag-reorder preview — November 23, 2026
 
 The owner requests a fixed first Coordinate System, all defining inputs before their
@@ -12,12 +41,11 @@ coordinate subtree is non-draggable. Native IDs, visibility, references and mode
 remain unchanged. Direct [corrected History](evidence/history-reorder-preview-20261123/corrected-order.png)
 and [popup](evidence/history-reorder-preview-20261123/cannot-move-after.png).
 
-**Awaiting screenshot approval; no production or installation change.** Session
+**Historical preview, subsequently approved and implemented above.** Session
 `661e846aab01`, fingerprint `ae4db163f725c584d967a4f790112838a342f4fe6d8c363df4a8a47528357acf`.
 The candidate uses explicit specimen order outcomes. Persistent preferred ordering,
 dependency clamps, transaction handling and complete native drag validation remain
-implementation work. The Plane/Sketch selection proposal below is still separately
-pending; this request does not cancel or approve it.
+implementation work at that preview stage. The owner subsequently approved both.
 
 ## Plane selection preview — November 23, 2026
 
@@ -32,7 +60,7 @@ after Cancel. Screenshots: [replacement](evidence/plane-selection-preview-202611
 [normal through point](evidence/plane-selection-preview-20261123/normal-through-point.png),
 [flat face](evidence/plane-selection-preview-20261123/planar-face.png).
 
-**Awaiting screenshot approval. No production/backend/installed changes.** Session
+**Historical preview, subsequently approved and implemented above.** Session
 `cc6496002256`, fingerprint `3dd056488e4bcc7aa4487ac6d0a28129621057edb87b8311af39e40803862ea5`.
 The two UI candidate files use fixture collection/placement callbacks. Production
 work must preserve old saved line-plus-point containing-plane geometry when adding

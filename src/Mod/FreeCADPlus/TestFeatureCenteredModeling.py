@@ -867,6 +867,7 @@ class TestSequentialHistory(unittest.TestCase):
         rows=[widget.trees[2].topLevelItem(i).data(0,panel._ROLE).ref[2]
               for i in range(1,widget.trees[2].topLevelItemCount())]
         self.assertEqual(rows,[o.Name for o in document.history(self.doc,self.owner)])
-        self.assertEqual(widget.trees[2].dragDropMode(),QtWidgets.QAbstractItemView.NoDragDrop)
-        self.assertTrue(all(not item.flags() & QtCore.Qt.ItemIsDragEnabled
-                            for item in widget._maps[2].values()))
+        self.assertEqual(widget.trees[2].dragDropMode(),QtWidgets.QAbstractItemView.InternalMove)
+        self.assertFalse(widget.trees[2].topLevelItem(0).flags() & QtCore.Qt.ItemIsDragEnabled)
+        self.assertTrue(all(widget.trees[2].topLevelItem(i).flags() & QtCore.Qt.ItemIsDragEnabled
+                            for i in range(1,widget.trees[2].topLevelItemCount())))

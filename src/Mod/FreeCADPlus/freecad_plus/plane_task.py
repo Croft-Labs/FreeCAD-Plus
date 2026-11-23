@@ -89,6 +89,7 @@ class PlaneTask(QtCore.QObject):
         self.context = modeling._routing_context(self.doc, self.definition, self.path)
         self.view = Gui.activeDocument().activeView()
         self.feature = feature
+        self.normal_to_line = planes.saved_normal_to_line(feature)
         self.closed = False
         self.pick_target = 'plane'
         self.refs = []
@@ -106,7 +107,7 @@ class PlaneTask(QtCore.QObject):
         layout.addWidget(label('Component: ' + self.definition.Label))
         self.plane = Section('Plane orientation and location')
         layout.addWidget(self.plane)
-        self.plane.layout.addWidget(label('Select defining geometry in the model or History.'))
+        self.plane.layout.addWidget(label('Select planes / planar faces, lines / straight edges, or points / vertices.'))
         self.reference_ui = QtWidgets.QWidget()
         refs = QtWidgets.QVBoxLayout(self.reference_ui); refs.setContentsMargins(0,0,0,0)
         self.references = QtWidgets.QListWidget(); self.references.setFixedHeight(60)
@@ -185,18 +186,18 @@ class PlaneTask(QtCore.QObject):
             raw = [(entry.Object, sub) for entry in Gui.Selection.getSelectionEx('*',0)
                    for sub in entry.SubElementNames or ('',)]
             try:
-                self.refs = planes.canonical(self.definition, raw)
+                for ref in planes.canonical(self.definition, raw):
+                    self.refs = planes.collect(self.definition, self.refs, ref)
                 preselection = raw
             except ValueError: pass
         # Keep original occurrence paths for admission and selection removal.
-        Gui.Selection.addObserver(self, 0 if self.reference_guidance else 1)
+        Gui.Selection.addObserver(self, 0)
         App.addDocumentObserver(self)
         editing.add_context_observer(self.context_changed)
         self.refresh_fields()
-        if self.reference_guidance:
-            # Consume native preselection so the same reference can be picked again.
-            for obj, sub in preselection:
-                self.release_selection(obj, sub)
+        # Consume native preselection so the same reference can be picked again.
+        for obj, sub in preselection:
+            self.release_selection(obj, sub)
 
     def load_feature(self, feature):
         self.refs = planes.flatten(feature.PlaneReferences)
@@ -272,6 +273,7 @@ class PlaneTask(QtCore.QObject):
             obj = App.getDocument(doc_name).getObject(obj_name)
             ref = planes.canonical(self.definition, [(obj, sub)])[0]
             kind = planes.describe(self.definition, ref)[0]
+            document.require_predecessors(self.definition, self.feature, [ref])
             if self.pick_target == 'origin':
                 if kind != 'point': raise ValueError('Origin accepts a point only')
                 self.origin_refs = [] if self.reference_guidance and ref in self.origin_refs else [ref]
@@ -285,10 +287,12 @@ class PlaneTask(QtCore.QObject):
                     self.axis_refs.append(ref)
             elif self.reference_guidance and ref in self.refs:
                 self.refs.remove(ref)
+                self.normal_to_line = True
             elif ref not in self.refs:
-                self.refs.append(ref)
+                self.refs = planes.collect(self.definition, self.refs, ref)
+                self.normal_to_line = True
             self.refresh_fields(); self.update()
-            if self.reference_guidance: self.release_selection(obj, sub)
+            self.release_selection(obj, sub)
         except Exception as exc: self.status.setText(str(exc))
 
     def release_selection(self, obj, sub):
@@ -322,17 +326,19 @@ class PlaneTask(QtCore.QObject):
 
     def choose(self, name):
         self.pick_target = 'plane'
+        self.normal_to_line = True
         role = name.replace(' ', '_')
         self.refs = [(next(obj for obj in self.definition.Origin.OriginFeatures if obj.Role == role), '')]
         self.refresh_fields(); self.update()
 
     def remove_reference(self):
         row = self.references.currentRow()
-        if row >= 0: self.refs.pop(row)
+        if row >= 0:
+            self.refs.pop(row);self.normal_to_line = True
         self.refresh_fields(); self.update()
 
     def clear(self):
-        self.refs = []; self.refresh_fields(); self.update()
+        self.refs = [];self.normal_to_line = True;self.refresh_fields();self.update()
 
     def placement(self):
         self.check()
@@ -343,7 +349,7 @@ class PlaneTask(QtCore.QObject):
         document.require_predecessors(self.definition, self.feature, self.refs+self.origin_refs+self.axis_refs)
         return planes.solve(self.definition, self.refs, self.committed_offset, self.origin_refs,
                             self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y', self.flip.isChecked(),
-                            self.reverse_axis.isChecked())
+                            self.reverse_axis.isChecked(), self.normal_to_line)
 
     def remove_highlights(self):
         if self.highlights is not None:
@@ -407,6 +413,12 @@ class PlaneTask(QtCore.QObject):
             self.valid = True
             self.status.setText('Defined by three points.' if self.reference_guidance and len(self.refs) == 3
                                 else 'Defined — plane position and normal are valid.')
+            if self.normal_to_line and sorted(planes.describe(self.definition,r)[0] for r in self.refs)==['line','point']:
+                self.status.setText('Through the point / vertex; normal to the line / edge.')
+                if not self.origin_refs:
+                    point = next(ref for ref in self.refs if planes.describe(self.definition, ref)[0] == 'point')
+                    self.origin_ref.setText(self.title(point))
+                    self.origin_hint.setText('Using the defining point, with the plane offset applied.')
         except planes.IncompletePlane as exc:
             self.valid = False; self.status.setText(str(exc))
         except Exception as exc:
@@ -473,7 +485,7 @@ class PlaneTask(QtCore.QObject):
             self.result = planes.save(self.doc, self.refs, self.committed_offset, self.origin_refs,
                                      self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y',
                                      self.flip.isChecked(), self.feature,
-                                     reversed_axis=self.reverse_axis.isChecked())
+                                     reversed_axis=self.reverse_axis.isChecked(), normal_to_line=self.normal_to_line)
             self.reject()
             return True
         except Exception as exc:

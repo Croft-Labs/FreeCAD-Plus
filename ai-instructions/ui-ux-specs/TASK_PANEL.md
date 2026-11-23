@@ -24,9 +24,12 @@ The existing saved line-plus-point construction defines a containing plane. Pres
 those saved results and reference identities when adding the new normal-through-point
 construction. No implicit geometry migration on open, recompute or Cancel.
 
-The isolated [native UI proposal](../evidence/plane-selection-preview-20261123/README.md)
-uses specimen selection/placement callbacks. Production solver, persistence and task
-changes await approval of its direct screenshots.
+Owner approved implementation together with History ordering: "implement the plane
+and sketch placement as well as the reordering of the history tab". Both shared
+tasks and the production solver are installed. A hidden `NormalToLine` construction
+flag preserves older containing-plane results when absent/false; new selections use
+the normal-through-point construction. Opening or cancelling does not migrate it.
+See [implementation evidence](../evidence/plane-history-20261123/README.md).
 
 ### Target guidance and sole-solid selection — November 23, 2026
 

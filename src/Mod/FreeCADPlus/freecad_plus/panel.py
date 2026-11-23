@@ -200,6 +200,63 @@ class _Delegate(QtWidgets.QStyledItemDelegate):
             painter.restore()
 
 
+class HistoryTree(QtWidgets.QTreeWidget):
+    """Same-tree, single-feature insertion; native ownership is never dragged."""
+    mime_type = 'application/x-freecad-plus-history'
+
+    def __init__(self, panel):
+        super().__init__()
+        self.panel=panel;self.payload=None
+        self.setDragEnabled(True);self.setAcceptDrops(True);self.setDropIndicatorShown(True)
+        self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+        self.setDefaultDropAction(QtCore.Qt.MoveAction)
+
+    def mimeTypes(self):return [self.mime_type]
+
+    def startDrag(self, actions):
+        items=self.selectedItems()
+        if len(items)!=1:return
+        item=items[0]
+        if item.parent() is not None or not item.flags() & QtCore.Qt.ItemIsDragEnabled:return
+        try:
+            self.payload=self.panel.prepare_history_move(item.data(0,_ROLE))
+            mime=QtCore.QMimeData();mime.setData(self.mime_type,b'feature')
+            drag=QtGui.QDrag(self);drag.setMimeData(mime)
+            drag.setPixmap(self.viewport().grab(self.visualItemRect(item)))
+            drag.exec_(QtCore.Qt.MoveAction)
+        except (ValueError,RuntimeError,ReferenceError) as error:self.panel._message(str(error))
+        finally:self.payload=None
+
+    def accepts_move(self,event):
+        return event.source() is self and self.payload is not None and event.mimeData().hasFormat(self.mime_type)
+
+    def dragEnterEvent(self,event):
+        if self.accepts_move(event):super().dragEnterEvent(event)
+        else:event.ignore()
+
+    def dragMoveEvent(self,event):
+        if self.accepts_move(event):super().dragMoveEvent(event)
+        else:event.ignore()
+
+    def dropEvent(self,event):
+        if not self.accepts_move(event):event.ignore();return
+        target=self.itemAt(event.position().toPoint())
+        while target is not None and target.parent() is not None:target=target.parent()
+        index=self.indexOfTopLevelItem(target) if target is not None else self.topLevelItemCount()
+        if target is not None and event.position().y()>self.visualItemRect(target).center().y():index+=1
+        try:
+            # The structural coordinate row occupies index zero, outside History's feature list.
+            message=self.panel.move_history(self.payload,max(0,index-1))
+            event.acceptProposedAction()
+            if message:
+                QtCore.QTimer.singleShot(0,lambda: QtWidgets.QMessageBox.information(self.panel,'History order',message)
+                                         if not self.panel._closed else None)
+        except (ValueError,RuntimeError,ReferenceError) as error:
+            event.ignore();self.panel._message(str(error))
+        finally:
+            self.setState(QtWidgets.QAbstractItemView.NoState);self.viewport().update()
+
+
 class ComponentPanel(QtWidgets.QDockWidget):
     def __init__(self, parent):
         super().__init__('Components', parent)
@@ -220,7 +277,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
         self.tabs = QtWidgets.QTabWidget()
         self.trees = []
         for label in ('Models', 'Part Tree', 'History'):
-            tree = QtWidgets.QTreeWidget()
+            tree = HistoryTree(self) if label == 'History' else QtWidgets.QTreeWidget()
             tree.setObjectName('Plus' + label.replace(' ', ''))
             tree.setHeaderHidden(True)
             if label == 'History':
@@ -761,6 +818,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
                     item.setIcon(1, QtGui.QIcon())
                     flags |= QtCore.Qt.ItemIsUserCheckable
                     item.setCheckState(0, QtCore.Qt.Checked if row.visible else QtCore.Qt.Unchecked)
+                if index == 2 and self._history_eyes and not coordinate_branch and row.kind == 'history':
+                    flags |= QtCore.Qt.ItemIsDragEnabled
                 item.setFlags(flags)
                 current[row.key] = item
                 coordinate_row = coordinate_branch or (index == 2 and row.kind == 'history_group'
@@ -776,6 +835,30 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 parent.takeChild(parent.indexOfChild(item))
         self._maps[index] = current
         del blocker
+
+    def prepare_history_move(self, row):
+        current=self._current()
+        if current is None or current!=self._binding:raise ValueError('The view changed; drag the feature again.')
+        if Gui.Control.activeDialog():raise ValueError('Finish the current feature task before reordering History.')
+        doc,view=current;owner,path=self._context(doc,view)
+        if owner is None:raise ValueError('Edit a component before reordering History.')
+        ordered=document.history(doc,owner)
+        if row.kind!='history' or lookup(row.ref) not in ordered:
+            raise ValueError('The fundamental coordinate system cannot be reordered.')
+        return (current,identity(owner),tuple(identity(o) for o in path),row.ref,tuple(identity(o) for o in ordered))
+
+    def move_history(self,payload,position):
+        binding,owner_ref,path_refs,feature_ref,expected=payload
+        feature=lookup(feature_ref)
+        row=Row(('history',feature_ref),'history',feature.Label,feature_ref)
+        if self.prepare_history_move(row)!=payload:
+            raise ValueError('History changed during the drag; try again.')
+        message=document.reorder_history(binding[0],lookup(owner_ref),feature,position)
+        self.refresh()
+        tree=self.trees[2];item=self._maps[2].get(row.key)
+        if item is not None:
+            tree.setCurrentItem(item);tree.scrollToItem(item)
+        return message
 
     def _message(self, text):
         self.message.setText(text)

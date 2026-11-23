@@ -52,12 +52,14 @@ place it after the latest required predecessor and explain the correction. A val
 independent move needs no popup. Preserve unaffected row order, visibility controls,
 selection/edit behavior and native geometry/reference identity.
 
-This owner request extends the earlier dependency restriction to manual drag ordering;
-it does not approve every archived drag/reorder behavior. The isolated
-[native preview](../evidence/history-reorder-preview-20261123/README.md) demonstrates
-the valid move, corrected position and popup. Production reordering/persistence await
-approval of those direct screenshots. The preceding Plane/Sketch selection proposal
-remains separately pending.
+Owner approved implementation together with Plane/Sketch placement. Installed History
+supports one feature per drag, dependency-safe correction and the naming popup.
+The preferred order persists with the source component and supports Undo/Redo and
+save/reopen; it does not rewrite native feature links or ownership. Reordering requires
+finishing any active feature task/transaction. Stale or cross-context drags are rejected.
+This does not approve every archived drag/reorder behavior. See
+[implementation evidence](../evidence/plane-history-20261123/README.md), including the
+documented limitation of OS mouse verification in this session.
 
 ### Strict sequential feature History — November 22, 2026
 
@@ -70,7 +72,8 @@ inputs; editing must not introduce forward or cyclic dependencies. Any eventual
 reordering must preserve direct and transitive predecessor/dependent order.
 
 This confirms the dependency restriction, not every interaction in the historical
-D2864 reordering proposal. The current panel has no History drag-reorder action.
+D2864 reordering proposal. The November 23 decision above now authorizes and
+implements single-feature History drag reordering within these constraints.
 The owner approved the [native ordering preview](../evidence/sequential-history-preview-20261122/README.md)
 and implementation with "approved, implement strict sequential history and prevent
 sketches or other inputs from being ordered after the features that use them".

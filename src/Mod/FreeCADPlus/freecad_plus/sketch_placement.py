@@ -21,12 +21,14 @@ def saved_offset(feature):
     return feature.SketchPlaneOffset.Value if 'SketchPlaneOffset' in feature.PropertiesList else 0.0
 
 
-def solve(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, offset=0):
+def solve(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, offset=0,
+          normal_to_line=True):
     offset = float(offset)
     if not math.isfinite(offset):
         raise ValueError('Offset must be finite')
     if len(refs) != 1 or planes.describe(definition, refs[0])[0] != 'plane':
-        raise ValueError('Select one plane or planar face for the sketch.')
+        return planes.solve(definition, refs, offset, origin_refs, axis_refs, axis, flipped,
+                            normal_to_line=normal_to_line)
     support = plane_object(refs)
     if support is not None:
         frame = definition.getGlobalPlacement().inverse().multiply(support.getGlobalPlacement())
@@ -70,7 +72,8 @@ def solve(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=Fals
     return App.Placement(origin, App.Rotation(x, y, normal, 'ZXY'))
 
 
-def validate(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None, offset=0):
+def validate(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None, offset=0,
+             normal_to_line=True):
     refs, origin_refs, axis_refs = [planes.canonical(definition, r) for r in (refs, origin_refs, axis_refs)]
     if feature is not None:
         if not feature.isDerivedFrom('Sketcher::SketchObject') or document.owned_path(definition, feature) is None:
@@ -78,11 +81,14 @@ def validate(definition, refs, origin_refs=(), axis_refs=(), axis='X', flipped=F
         if any(obj == feature or obj in feature.InListRecursive for obj, _ in refs + origin_refs + axis_refs):
             raise ValueError('A sketch cannot depend on itself or a downstream feature')
     document.require_predecessors(definition, feature, refs + origin_refs + axis_refs)
-    solve(definition, refs, origin_refs, axis_refs, axis, flipped, offset)
+    solve(definition, refs, origin_refs, axis_refs, axis, flipped, offset, normal_to_line)
     return refs, origin_refs, axis_refs
 
 
-def configure(feature, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, offset=0):
+def configure(feature, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, offset=0,
+              normal_to_line=None):
+    if normal_to_line is None:
+        normal_to_line = planes.saved_normal_to_line(feature) if is_managed(feature) else True
     offset = float(offset)
     if not math.isfinite(offset):
         raise ValueError('Offset must be finite')
@@ -107,6 +113,10 @@ def configure(feature, refs, origin_refs=(), axis_refs=(), axis='X', flipped=Fal
     feature.AxisReferences = planes.links(axis_refs)
     feature.DefinedAxis = axis
     feature.FlipNormal = flipped
+    if 'NormalToLine' not in feature.PropertiesList:
+        feature.addProperty('App::PropertyBool', 'NormalToLine', 'Sketch placement')
+        feature.setEditorMode('NormalToLine', 2)
+    feature.NormalToLine = normal_to_line
     recompute(feature)
 
 
@@ -122,7 +132,8 @@ def recompute(feature):
         raise ValueError('The sketch no longer belongs to a component')
     placement = solve(definition, planes.flatten(feature.PlaneReferences),
                       planes.flatten(feature.OriginPoint), planes.flatten(feature.AxisReferences),
-                      feature.DefinedAxis, feature.FlipNormal, saved_offset(feature))
+                      feature.DefinedAxis, feature.FlipNormal, saved_offset(feature),
+                      planes.saved_normal_to_line(feature))
     # After Extrude, the native sketch belongs to its result Body. Store in that
     # frame while evaluating all defaults and references in component coordinates.
     placement = owner.getGlobalPlacement().inverse().multiply(definition.getGlobalPlacement()).multiply(placement)
@@ -130,14 +141,16 @@ def recompute(feature):
         feature.Placement = placement
 
 
-def save(doc, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None, offset=0):
+def save(doc, refs, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None, offset=0,
+         normal_to_line=None):
     from . import modeling
     definition, _ = modeling._context(doc)
-    refs, origin_refs, axis_refs = validate(definition, refs, origin_refs, axis_refs, axis, flipped, feature, offset)
+    if normal_to_line is None:normal_to_line = planes.saved_normal_to_line(feature)
+    refs, origin_refs, axis_refs = validate(definition, refs, origin_refs, axis_refs, axis, flipped, feature, offset, normal_to_line)
     with document.transaction(definition.Document, 'Edit sketch placement' if feature else 'Create sketch'):
         if feature is None:
             feature = definition.newObject('Sketcher::SketchObject', 'Sketch')
-        configure(feature, refs, origin_refs, axis_refs, axis, flipped, offset)
+        configure(feature, refs, origin_refs, axis_refs, axis, flipped, offset, normal_to_line)
         definition.Document.recompute()
         if 'Invalid' in feature.State:
             raise ValueError('The sketch could not be recomputed')

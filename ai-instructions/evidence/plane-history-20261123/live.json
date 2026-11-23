@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "ready": true,
+  "orders": [
+    [
+      "Datum Plane - Support",
+      "Sketch - Profile",
+      "Extrude",
+      "Datum Plane - Independent"
+    ],
+    [
+      "Datum Plane - Support",
+      "Datum Plane - Independent",
+      "Sketch - Profile",
+      "Extrude"
+    ],
+    [
+      "Datum Plane - Independent",
+      "Datum Plane - Support",
+      "Sketch - Profile",
+      "Extrude"
+    ]
+  ],
+  "modules": {
+    "panel": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py",
+    "planes": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\planes.py",
+    "sketch": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_placement.py"
+  },
+  "popup": "\"Datum Plane - Support\" cannot be moved after \"Sketch - Profile\" because that feature depends on it.\n\nIt has been placed immediately before \"Sketch - Profile\"."
+}

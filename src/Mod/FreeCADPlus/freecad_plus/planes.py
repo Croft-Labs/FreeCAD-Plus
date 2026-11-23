@@ -76,7 +76,7 @@ def describe(definition, ref):
     raise ValueError('Select a planar face, plane, straight edge, line or point')
 
 
-def base_plane(definition, refs):
+def base_plane(definition, refs, normal_to_line=True):
     items = [describe(definition, ref) for ref in refs]
     kinds = [item[0] for item in items]
     if kinds == ['plane']:
@@ -86,13 +86,13 @@ def base_plane(definition, refs):
     if not kinds:
         raise IncompletePlane('Choose a plane or planar face, or start with points or straight lines.')
     if kinds == ['point']:
-        raise IncompletePlane('1 point selected — pick two more points or an off-point line.')
+        raise IncompletePlane('1 point selected — pick two more points or a line / straight edge.')
     if kinds == ['point', 'point']:
         if (items[1][1] - items[0][1]).Length < EPS:
             raise ValueError('The points coincide; choose distinct points.')
         raise IncompletePlane('2 points selected — pick a third point off their line.')
     if kinds == ['line']:
-        raise IncompletePlane('1 line selected — pick an off-line point or another coplanar line.')
+        raise IncompletePlane('1 line selected — pick a point / vertex or another coplanar line.')
     if kinds == ['point', 'point', 'point']:
         a, b, c = [item[1] for item in items]
         if (b-a).cross(c-a).Length < EPS:
@@ -101,6 +101,8 @@ def base_plane(definition, refs):
     if sorted(kinds) == ['line', 'point']:
         line = next(item for item in items if item[0] == 'line')
         point = next(item[1] for item in items if item[0] == 'point')
+        if normal_to_line:
+            return point, line[2]
         if line[2].cross(point-line[1]).Length < EPS:
             raise ValueError('The point lies on the line; choose an off-line point.')
         return line[1], unit(line[2].cross(point-line[1]))
@@ -118,16 +120,40 @@ def base_plane(definition, refs):
     raise ValueError('Select one plane/planar face, three points, a line and point, or two coplanar lines')
 
 
+def collect(definition, refs, ref):
+    """Keep supported partial/complete combinations; replace geometric conflicts.
+
+    Callers admit the new reference before collecting it. Offset/frame errors
+    are deliberately excluded from this decision.
+    """
+    describe(definition, ref)
+    combined = list(refs) + [ref]
+    try:
+        base_plane(definition, combined)
+    except IncompletePlane:
+        pass
+    except ValueError:
+        return [ref]
+    return combined
+
+
+def saved_normal_to_line(feature):
+    # Absence identifies the historical line-containing-plane construction.
+    return getattr(feature, 'NormalToLine', False) if feature is not None else True
+
+
 def solve(definition, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=False,
-          reversed_axis=False):
+          reversed_axis=False, normal_to_line=True):
     offset = float(offset)
     if not math.isfinite(offset):
         raise ValueError('Offset must be finite')
-    anchor, base_normal = base_plane(definition, refs)
+    anchor, base_normal = base_plane(definition, refs, normal_to_line)
     anchor = anchor + base_normal * offset
     normal = -base_normal if flipped else base_normal
     # Universal origin expressed in the stored component coordinate frame.
     point = definition.getGlobalPlacement().inverse().multVec(App.Vector())
+    if normal_to_line and sorted(describe(definition, r)[0] for r in refs) == ['line', 'point']:
+        point = anchor
     if origin_refs:
         if len(origin_refs) != 1:
             raise ValueError('Select one origin point')
@@ -194,7 +220,8 @@ class Plane:
         try:
             placement = solve(owner, flatten(obj.PlaneReferences), obj.Offset.Value,
                               flatten(obj.OriginPoint), flatten(obj.AxisReferences),
-                              obj.DefinedAxis, obj.FlipNormal, getattr(obj, 'ReverseAxis', False))
+                              obj.DefinedAxis, obj.FlipNormal, getattr(obj, 'ReverseAxis', False),
+                              saved_normal_to_line(obj))
             u, v = bounds(obj.DefinedAxis, obj.FlipNormal, getattr(obj, 'ReverseAxis', False))
             obj.Shape = Part.makePlane(60, 45, App.Vector(u,v,0))
             obj.Placement = placement
@@ -233,7 +260,8 @@ class ViewPlane:
 
 
 def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None,
-         reversed_axis=False):
+         reversed_axis=False, normal_to_line=None):
+    if normal_to_line is None:normal_to_line = saved_normal_to_line(feature)
     definition, path = modeling._context(doc)
     refs, origin_refs, axis_refs = [canonical(definition, values) for values in (refs, origin_refs, axis_refs)]
     if feature is not None:
@@ -242,7 +270,7 @@ def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=Fa
         if any(obj == feature or obj in feature.InListRecursive for obj, _ in refs+origin_refs+axis_refs):
             raise ValueError('A plane cannot depend on itself or a downstream feature')
     document.require_predecessors(definition, feature, refs + origin_refs + axis_refs)
-    solve(definition, refs, offset, origin_refs, axis_refs, axis, flipped, reversed_axis)
+    solve(definition, refs, offset, origin_refs, axis_refs, axis, flipped, reversed_axis, normal_to_line)
     with document.transaction(definition.Document, 'Edit plane' if feature else 'Create plane'):
         if feature is None:
             feature = definition.newObject('Part::FeaturePython', 'Plane')
@@ -258,6 +286,10 @@ def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=Fa
         if 'ReverseAxis' not in feature.PropertiesList:
             feature.addProperty('App::PropertyBool', 'ReverseAxis', 'Plane')
         feature.ReverseAxis = reversed_axis
+        if 'NormalToLine' not in feature.PropertiesList:
+            feature.addProperty('App::PropertyBool', 'NormalToLine', 'Plane')
+            feature.setEditorMode('NormalToLine', 2)
+        feature.NormalToLine = normal_to_line
         definition.Document.recompute()
         if feature.PlaneError or feature.Shape.isNull():
             raise ValueError(feature.PlaneError or 'Plane creation failed')

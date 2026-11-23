@@ -1,20 +1,33 @@
 # FreeCAD Plus: Programming Summary
 
-## Pending History drag ordering — November 23, 2026
+## Latest Plane/Sketch placement and History reordering — November 23, 2026
+
+Both approved workflows are installed: shared compatible/conflicting reference
+collection and normal-through-point placement, plus persistent dependency-safe
+History dragging with corrected-position popups and a fixed first Coordinate System.
+Older saved plane construction, native identities/references and source ownership
+are preserved. Undo/Redo and fresh-process save/reopen passed.
+
+Validation covers 213 installed regression checks (212 broad plus the repaired
+external-source fixture), five startup checks, 62 build checks and installed Qt
+drop/selection cases. Actual OS mouse dragging remains unverified because both
+computer tools failed window attachment. See [current acceptance](WORK_STATE.md#planesketch-placement-and-history-reordering-installed--november-23-2026).
+
+## Historical History drag preview — November 23, 2026
 
 The owner requests manual feature order constrained by dependencies, a fixed first
 Coordinate System, and correction before the earliest dependent plus a popup for
 invalid downward moves. The native UI demonstration passes its three specimen drop
-cases and coordinate-subtree lock. Screenshot approval is pending; no backend or
-installation changes. The Plane/Sketch selection proposal remains separately pending.
+cases and coordinate-subtree lock. Both proposals were later approved and implemented
+in the increment above.
 See [current preview and scope](WORK_STATE.md#history-drag-reorder-preview--november-23-2026).
 
-## Pending plane-selection proposal — November 23, 2026
+## Historical plane-selection preview — November 23, 2026
 
 The owner requests shared compatible/conflicting selection behavior for Plane and
 Sketch placement, line+point normal-through-point construction, and equivalent
 plane/face, line/straight-edge and point/vertex inputs. All 16 native UI specimen
-cases pass. Screenshot approval is pending; production and installation are unchanged.
+cases pass. The owner later approved implementation together with History ordering.
 See [current preview and next scope](WORK_STATE.md#plane-selection-preview--november-23-2026).
 
 ## Latest target selection and coordinate-system protection — November 23, 2026
