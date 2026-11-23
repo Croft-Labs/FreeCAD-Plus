@@ -2035,7 +2035,8 @@ class TestPlusToolbars(unittest.TestCase):
                                QtCore.QPoint(button.width()-4, button.height()//2))
         settle()
         self.assertEqual(observed, [True])
-        self.assertEqual(button.defaultAction(), action)
+        self.assertEqual(button.text(), action.text())
+        self.assertEqual(button.icon().cacheKey(), action.icon().cacheKey())
         self.assertEqual(curve_selection.intent(), curve_selection.INTENTS[index])
         self.assertFalse(button.icon().isNull())
         self.assertEqual(len(menu.actions()), 3)
@@ -2048,17 +2049,21 @@ class TestPlusToolbars(unittest.TestCase):
         self.assertEqual(curve_selection.intent(), 'Single Curve')
         button = self.curve_intent(2)
         self.assertEqual(button.toolButtonStyle(), QtCore.Qt.ToolButtonTextBesideIcon)
-        option = QtWidgets.QStyleOptionToolButton()
-        button.initStyleOption(option)
-        arrow = button.style().subControlRect(QtWidgets.QStyle.CC_ToolButton, option,
-                                               QtWidgets.QStyle.SC_ToolButtonMenu, button)
-        self.assertGreaterEqual(arrow.left(), button.iconSize().width())
-        spy = QtTest.QSignalSpy(button.defaultAction().triggered)
-        QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, QtCore.Qt.NoModifier,
-                               QtCore.QPoint(arrow.left()//2, button.height()//2))
-        self.assertEqual(spy.count(), 1)
-        self.assertFalse(button.menu().isVisible())
-        button.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'curve-intent-split.png'))
+        self.assertEqual(button.popupMode(), QtWidgets.QToolButton.InstantPopup)
+        self.assertFalse(button.isCheckable())
+        self.assertFalse(button.isChecked())
+        self.assertIsNone(button.defaultAction())
+        for x in (10, button.width()//2, button.width()-4):
+            observed = []
+            def dismiss():
+                observed.append(button.menu().isVisible())
+                button.menu().close()
+            QtCore.QTimer.singleShot(100, dismiss)
+            QtTest.QTest.mouseClick(button, QtCore.Qt.LeftButton, pos=QtCore.QPoint(x, button.height()//2))
+            settle()
+            self.assertEqual(observed, [True])
+            self.assertEqual(curve_selection.intent(), 'Tangent Curves')
+        button.grab().save(str(Path(os.environ['PLUS_TEST_DIR'])/'curve-intent-dropdown.png'))
         self.tab('Home')
         self.assertEqual(self.ribbon.common.findChild(QtWidgets.QToolButton, 'PlusCurveIntent').text(),
                          'Tangent Curves')

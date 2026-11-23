@@ -1,0 +1,26 @@
+import os,sys,json,traceback
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+def run():
+    result={'ok':False}
+    try:
+        from freecad_plus import toolbars,selection_toolbar
+        assert 'profile-shortcut' in App.ConfigGet('UserParameter')
+        assert 'profile-shortcut' in App.ConfigGet('SystemParameter')
+        assert 'profile-shortcut' in App.getUserAppDataDir()
+        assert '/app/' in selection_toolbar.__file__.replace('\\','/')
+        Gui.activateWorkbench('PartDesignWorkbench')
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        button=toolbars._controller.common.findChild(QtWidgets.QToolButton,'PlusCurveIntent')
+        assert not button.isCheckable() and button.popupMode()==QtWidgets.QToolButton.InstantPopup
+        opened=[]
+        def dismiss():opened.append(button.menu().isVisible());button.menu().close()
+        QtCore.QTimer.singleShot(100,dismiss)
+        QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton,pos=button.rect().center())
+        assert opened==[True]
+        result.update(ok=True,module=selection_toolbar.__file__,profile=App.ConfigGet('UserParameter'))
+    except BaseException:result['error']=traceback.format_exc()
+    (Path(os.environ['PLUS_TEST_DIR'])/'shortcut.json').write_text(json.dumps(result,indent=2))
+QtCore.QTimer.singleShot(2200,run)

@@ -156,6 +156,11 @@ checkbox stays checked and disabled until another category is enabled or Select 
 is armed. Older empty saved filters recover to All. Remember committed choices
 across toolbar rebuilds and restarts; Classic mode keeps native selection behavior.
 
+Owner correction November 23: the curve-intent control is a full-button dropdown;
+clicking its icon, text or arrow opens the same menu. Keep the selected-setting
+checkmark in the menu, without making the toolbar button a checked/dark toggle.
+Its resting appearance follows the current light or dark theme.
+
 ### Layers toolbar
 
 Show Layers beside the other top toolbars in Design mode. Include **Layers**, **Move to Layer**, and **Change Active Layer**. The latter two are compact fixed-label buttons opening a full-button dropdown, not wide boxes displaying a current value or split default-action buttons. Move to Layer operates on eligible preselected objects and is disabled without them. Change Active Layer shows a check beside the active layer. The [Layers task](TASK_PANEL.md#layers) owns assignment rules. [R03](EVIDENCE_AND_DECISIONS.md#r03)

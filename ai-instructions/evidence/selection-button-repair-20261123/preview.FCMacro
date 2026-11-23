@@ -1,0 +1,51 @@
+import os, sys, json, traceback
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore, QtWidgets, QtTest
+sys.dont_write_bytecode=True
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+def run():
+    result={'ok':False,'ui_prototype':True,'cases':[]}
+    try:
+        Gui.activateWorkbench('PartDesignWorkbench')
+        from freecad_plus import toolbars
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+        from selection_preview import selection_toolbar as toolbar
+        dialog=QtWidgets.QDialog(Gui.getMainWindow());dialog.resize(850,200)
+        dialog.setWindowTitle('Selection button repair — native UI prototype')
+        layout=QtWidgets.QVBoxLayout(dialog)
+        layout.addWidget(QtWidgets.QLabel('Selection button repair • native ribbon styling'))
+        frame=QtWidgets.QWidget();frame.setStyleSheet(toolbars._controller.host.styleSheet())
+        row=QtWidgets.QHBoxLayout(frame);row.addWidget(QtWidgets.QLabel('Selection'))
+        toolbar.append_curve_intent(row);row.addStretch();layout.addWidget(frame)
+        layout.addWidget(QtWidgets.QLabel('Current setting stays checked in the menu. Click icon, label or arrow to open it.'))
+        dialog.show();dialog.raise_();dialog.activateWindow();QtTest.QTest.qWait(150)
+        button=frame.findChild(QtWidgets.QToolButton,'PlusCurveIntent');menu=button.menu()
+        proposed=button.popupMode()==QtWidgets.QToolButton.InstantPopup
+        result['proposed']=proposed
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/MainWindow')
+        for theme in ('FreeCAD Light','FreeCAD Dark'):
+            prefs.SetString('StyleSheet','FreeCAD.qss');prefs.SetString('Theme',theme)
+            QtTest.QTest.qWait(700)
+            for action in menu.actions():
+                action.trigger();QtTest.QTest.qWait(60)
+                assert button.text()==action.text()
+                if proposed:assert not button.isCheckable() and not button.isChecked()
+            opened=[]
+            for x in (10,button.width()//2,button.width()-4):
+                observed=[]
+                def inspect():
+                    observed.append(menu.isVisible());menu.close()
+                QtCore.QTimer.singleShot(100,inspect)
+                QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton,pos=QtCore.QPoint(x,button.height()//2))
+                QtTest.QTest.qWait(140);opened.append(observed==[True])
+            assert opened==([True,True,True] if proposed else [False,False,True]),opened
+            result['cases'].append({'theme':theme,'icon_label_arrow_open':opened,'checked':button.isChecked()})
+            filename='light.png' if theme.endswith('Light') else 'dark.png'
+            assert dialog.grab().save(str(out/filename))
+            if theme.endswith('Light'):assert dialog.grab().save(os.environ['PLUS_PREVIEW_IMAGE'])
+        result['ok']=True;dialog.close()
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

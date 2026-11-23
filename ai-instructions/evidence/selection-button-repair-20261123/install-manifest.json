@@ -1,0 +1,20 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\selection_toolbar.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/selection_toolbar.py",
+    "source_sha256": "461b2f09d577dd33954bb42ba3650fbae91b3e83df55cacc9b909fc4d9eff6ec",
+    "built_sha256": "461b2f09d577dd33954bb42ba3650fbae91b3e83df55cacc9b909fc4d9eff6ec",
+    "installed_sha256": "461b2f09d577dd33954bb42ba3650fbae91b3e83df55cacc9b909fc4d9eff6ec",
+    "previous_sha256": "ce086fb382bd518cad60c307ec2770833314fd4f4888ec1b5a44354e390da09f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-button-repair-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\selection_toolbar.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestPlusToolbars.py",
+    "build_path": "Mod/FreeCADPlus/TestPlusToolbars.py",
+    "source_sha256": "bd6f46113d256f362c2dfa7d62928d9930ae165bc9e1b5df9c2518071209932f",
+    "built_sha256": "bd6f46113d256f362c2dfa7d62928d9930ae165bc9e1b5df9c2518071209932f",
+    "installed_sha256": "bd6f46113d256f362c2dfa7d62928d9930ae165bc9e1b5df9c2518071209932f",
+    "previous_sha256": "22e43feaed331466e42ad05f10be2f1713e24dbaa239ae699613cce888f79a18",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-button-repair-20261123\\install-backup\\Mod\\FreeCADPlus\\TestPlusToolbars.py"
+  }
+]

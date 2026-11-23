@@ -73,25 +73,13 @@ def append_controls(row, active):
     row.addWidget(persistent)
 
 
-class CurveIntentButton(QtWidgets.QToolButton):
-    def sizeHint(self):
-        size = super().sizeHint()
-        option = QtWidgets.QStyleOptionToolButton()
-        self.initStyleOption(option)
-        arrow = self.style().subControlRect(QtWidgets.QStyle.CC_ToolButton, option,
-                                            QtWidgets.QStyle.SC_ToolButtonMenu, self)
-        # Reserve room for the split-menu arrow beside the current setting text.
-        size.setWidth(size.width() + arrow.width())
-        return size
-
-
 def append_curve_intent(row):
-    button = CurveIntentButton()
+    button = QtWidgets.QToolButton()
     button.setObjectName('PlusCurveIntent')
     button.setAccessibleName('Curve intent')
     button.setAutoRaise(True)
     button.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
-    button.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+    button.setPopupMode(QtWidgets.QToolButton.InstantPopup)
     menu = QtWidgets.QMenu(button)
     group = QtGui.QActionGroup(button)
     group.setExclusive(True)
@@ -105,10 +93,14 @@ def append_curve_intent(row):
         def choose(checked=False, action=action, label=label):
             preferences().SetString('CurveIntent', label)
             action.setChecked(True)
-            button.setDefaultAction(action)
+            button.setText(label)
+            button.setIcon(action.icon())
+            button.setToolTip(label)
         action.triggered.connect(choose)
         if label == curve_selection.intent():
             action.setChecked(True)
-            button.setDefaultAction(action)
+            button.setText(label)
+            button.setIcon(action.icon())
+            button.setToolTip(label)
     button.setMenu(menu)
     row.addWidget(button)

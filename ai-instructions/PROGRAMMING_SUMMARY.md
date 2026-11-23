@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Installed selection-button correction — November 23, 2026
+
+The curve-intent setting is a full-button dropdown with a normal theme background;
+the selected checkmark remains in its menu. Five build and five installed checks
+pass, including both themes and native picking. See
+[repair evidence](evidence/selection-button-repair-20261123/README.md).
+
 ## Installed selection toolbar and sketch task controls — November 23, 2026
 
 Named chain settings, readable category summaries, Select all/reset and safe

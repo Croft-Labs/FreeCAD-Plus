@@ -1,5 +1,15 @@
 # FreeCAD Plus: Current work state
 
+## Selection button appearance/click repair — November 23, 2026
+
+Owner reported the curve-intent control was dark in Light and opened only through
+its arrow. It now copies the selected menu item's label/icon without inheriting
+its checked state, and uses a full-button popup. Menu checkmarks and saved intent
+are retained. Native Light/Dark previews preceded the repair; five build and five
+installed checks passed, including icon/label/arrow clicks and native curve picking.
+Two scripts installed with rollback copies. See
+[evidence and installed images](evidence/selection-button-repair-20261123/README.md).
+
 ## Selection toolbar and sketch buttons installed — November 23, 2026
 
 Owner approved both previews. Chain control now shows its current icon/name;

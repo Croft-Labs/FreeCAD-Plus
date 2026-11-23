@@ -1,0 +1,10 @@
+test_curve_intent_control_and_scope (TestPlusToolbars.TestPlusToolbars.test_curve_intent_control_and_scope) ... ok
+test_curve_intent_native_topology (TestPlusToolbars.TestPlusToolbars.test_curve_intent_native_topology) ... ok
+test_curve_intent_native_viewport_and_filters (TestPlusToolbars.TestPlusToolbars.test_curve_intent_native_viewport_and_filters) ... ok
+test_ribbon_background_follows_theme (TestPlusToolbars.TestPlusToolbars.test_ribbon_background_follows_theme) ... ok
+test_category_menu_scope_and_gate_ownership (TestPlusToolbars.TestPlusToolbars.test_category_menu_scope_and_gate_ownership) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 32.767s
+
+OK

@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "tests": 5,
+  "failures": 0,
+  "errors": 0,
+  "themes": [
+    "FreeCAD Light",
+    "FreeCAD Dark"
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\FreeCADPlus\\freecad_plus\\selection_toolbar.py"
+}

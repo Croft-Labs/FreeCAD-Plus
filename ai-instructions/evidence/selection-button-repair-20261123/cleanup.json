@@ -1,0 +1,19 @@
+{
+  "removed": [
+    "baseline",
+    "candidate",
+    "profile-build",
+    "profile-installed",
+    "curve-intent-dropdown.png",
+    "dark.png",
+    "FreeCAD-Dark-ribbon.png",
+    "FreeCAD-Light-ribbon.png",
+    "light.png",
+    "ribbon-curve-intent.png"
+  ],
+  "retained": [
+    "install-backup",
+    "profile-shortcut"
+  ],
+  "root": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\selection-button-repair-20261123"
+}

@@ -1,0 +1,50 @@
+import os,sys,json,traceback,unittest
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtWidgets,QtTest
+out=Path(os.environ['PLUS_TEST_DIR'])
+class LiveResult(unittest.TextTestResult):
+    def startTest(self,test):
+        QtWidgets.QApplication.setActiveWindow(Gui.getMainWindow())
+        super().startTest(test);self.stream.flush()
+def run():
+    result={'ok':False}
+    try:
+        win=Gui.getMainWindow();win.showMaximized();win.raise_();win.activateWindow()
+        import TestPlusToolbars
+        names=('test_curve_intent_control_and_scope','test_curve_intent_native_topology',
+               'test_curve_intent_native_viewport_and_filters','test_ribbon_background_follows_theme',
+               'test_category_menu_scope_and_gate_ownership')
+        suite=unittest.TestSuite(TestPlusToolbars.TestPlusToolbars(n) for n in names)
+        with (out/'regression.txt').open('w') as stream:
+            report=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=LiveResult).run(suite)
+        from freecad_plus import toolbars,ui_modes,selection_toolbar
+        App.ParamGet('User parameter:BaseApp/Preferences/General').SetInt('ToolbarUIMode',0)
+        Gui.activateWorkbench('PartDesignWorkbench');ui_modes.apply_modes()
+        prefs=App.ParamGet('User parameter:BaseApp/Preferences/MainWindow')
+        states=[]
+        for theme in ('FreeCAD Light','FreeCAD Dark'):
+            prefs.SetString('StyleSheet','FreeCAD.qss');prefs.SetString('Theme',theme);QtTest.QTest.qWait(700)
+            button=toolbars._controller.common.findChild(QtWidgets.QToolButton,'PlusCurveIntent')
+            for action in button.menu().actions():
+                action.trigger();QtTest.QTest.qWait(60)
+                assert button.text()==action.text() and not button.isChecked() and not button.isCheckable()
+            for x in (10,button.width()//2,button.width()-4):
+                opened=[]
+                def dismiss():opened.append(button.menu().isVisible());button.menu().close()
+                QtCore.QTimer.singleShot(100,dismiss)
+                QtTest.QTest.mouseClick(button,QtCore.Qt.LeftButton,pos=QtCore.QPoint(x,button.height()//2))
+                QtTest.QTest.qWait(120);assert opened==[True]
+            image=win.grab();scale=image.devicePixelRatioF();pos=button.mapTo(win,QtCore.QPoint())
+            rect=QtCore.QRect(round((pos.x()-4)*scale),round((pos.y()-4)*scale),round((button.width()+8)*scale),round((button.height()+8)*scale))
+            image.copy(rect).save(str(out/('light.png' if theme.endswith('Light') else 'dark.png')))
+            states.append(theme)
+        prefs.SetString('Theme','FreeCAD Light')
+        result.update(ok=report.wasSuccessful(),tests=report.testsRun,failures=len(report.failures),errors=len(report.errors),
+                      themes=states,module=selection_toolbar.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'regression.json').write_text(json.dumps(result,indent=2))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "ui_prototype": true,
+  "cases": [
+    {
+      "theme": "FreeCAD Light",
+      "icon_label_arrow_open": [
+        true,
+        true,
+        true
+      ],
+      "checked": false
+    },
+    {
+      "theme": "FreeCAD Dark",
+      "icon_label_arrow_open": [
+        true,
+        true,
+        true
+      ],
+      "checked": false
+    }
+  ],
+  "proposed": true
+}
