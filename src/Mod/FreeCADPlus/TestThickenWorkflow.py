@@ -136,37 +136,14 @@ class TestThickenWorkflow(unittest.TestCase):
 
     def test_shell_invalid_entry_and_valid_native_task(self):
         Gui.activateWorkbench('PartDesignWorkbench')
-        # Sheet in the same native Body form as Extrude/Revolve Sheet outputs.
-        body=self.owner.newObject('PartDesign::Body','Body')
-        sheet=body.newObject('PartDesign::Feature','Sheet');sheet.Shape=Part.makePlane(10,8)
-        body.Tip=sheet;self.doc.recompute();before=self.snapshot()
-        Gui.activeDocument().activeView().setActiveObject('pdbody',body)
-        unexpected=[]
-        def dismiss_prompt():
-            modal=QtWidgets.QApplication.activeModalWidget()
-            if modal:
-                unexpected.append(modal.windowTitle()+': '+ ' '.join(w.text() for w in modal.findChildren(QtWidgets.QLabel)))
-                modal.reject()
-        messages=[];original=thicken_task.show_error
-        thicken_task.show_error=lambda title,message:messages.append((title,message))
-        try:
-            Gui.Selection.addSelection(sheet,'Face1')
-            QtCore.QTimer.singleShot(200,dismiss_prompt);Gui.runCommand('PartDesign_Thickness')
-        finally:thicken_task.show_error=original
-        self.assertFalse(unexpected,unexpected)
-        self.assertTrue(messages);self.assertIn('Thicken',messages[0][1])
-        self.assertFalse(self.doc.HasPendingTransaction);self.assertFalse(Gui.Control.activeDialog())
+        sheet=self.sheet();target=self.solid();before=self.snapshot()
+        Gui.Selection.addSelection(sheet,'Face1');Gui.runCommand('PartDesign_Thickness')
+        task=extrude_task._active
+        self.assertTrue(Gui.Control.activeDialog());self.assertIn('Thicken',task.status.text())
+        self.assertFalse(task.refs);self.assertFalse(self.doc.HasPendingTransaction)
+        task.addSelection(self.doc.Name,target.Name,'Face6')
+        self.assertTrue(task.valid,task.status.text());task.reject()
         self.assertEqual(before,self.snapshot())
-        Gui.Selection.clearSelection();target=self.solid()
-        Gui.activeDocument().activeView().setActiveObject('pdbody',target.getParentGeoFeatureGroup())
-        Gui.Selection.addSelection(target,'Face6')
-        QtCore.QTimer.singleShot(200,dismiss_prompt)
-        Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(250)
-        self.assertFalse(unexpected,unexpected)
-        self.assertTrue(Gui.Control.activeDialog());self.assertTrue(Gui.activeDocument().getInEdit())
-        feature=target.getParentGeoFeatureGroup().Tip
-        self.assertEqual(feature.TypeId,'PartDesign::Thickness');self.assertEqual(feature.Label,'Shell')
-        Gui.activeDocument().resetEdit();self.doc.abortTransaction()
 
     def test_modeling_surface_layout_and_classic_native_access(self):
         from freecad_plus import ui_modes
@@ -179,20 +156,12 @@ class TestThickenWorkflow(unittest.TestCase):
         Gui.activateWorkbench('SurfaceWorkbench');ribbon.refresh()
         self.assertEqual(ribbon.tab,'Modeling');self.assertEqual(ribbon.mode_workbench,'PartDesignWorkbench')
 
-    def test_shell_declined_editor_rolls_back_its_transaction(self):
-        Gui.activateWorkbench('PartDesignWorkbench');target=self.solid()
-        Gui.activeDocument().activeView().setActiveObject('pdbody',target.getParentGeoFeatureGroup())
-        before=self.snapshot();original=Gui.getDocument
-        class DeclinedEditor:
-            def __init__(self,wrapped):self.wrapped=wrapped
-            def __getattr__(self,name):return getattr(self.wrapped,name)
-            def setEdit(self,*args):return False
-        Gui.getDocument=lambda name:DeclinedEditor(original(name))
-        try:
-            Gui.Selection.addSelection(target,'Face6');Gui.runCommand('PartDesign_Thickness')
-        finally:Gui.getDocument=original
-        self.assertFalse(Gui.Control.activeDialog());self.assertFalse(self.doc.HasPendingTransaction)
-        self.assertFalse(Gui.activeDocument().getInEdit());self.assertEqual(before,self.snapshot())
+    def test_shell_rejected_empty_task_has_no_transaction(self):
+        Gui.activateWorkbench('PartDesignWorkbench');self.solid()
+        before=self.snapshot();Gui.Selection.clearSelection();Gui.runCommand('PartDesign_Thickness')
+        task=extrude_task._active
+        self.assertFalse(task.accept());self.assertFalse(self.doc.HasPendingTransaction)
+        task.reject();self.assertEqual(before,self.snapshot())
 
     def test_shell_selected_first_body_accept_and_undo(self):
         from TestComponentModeling import messages, accept_task
@@ -204,11 +173,12 @@ class TestThickenWorkflow(unittest.TestCase):
         Gui.Selection.clearSelection();Gui.Selection.addSelection(first,'Face6')
         with messages() as errors:Gui.runCommand('PartDesign_Thickness');QtTest.QTest.qWait(100)
         self.assertFalse(errors,errors);self.assertTrue(Gui.Control.activeDialog())
-        feature=Gui.activeDocument().getInEdit().Object;name=feature.Name
-        self.assertEqual(feature.getParentGeoFeatureGroup(),first_body)
-        self.assertEqual(feature.Base[0],first)
+        task=extrude_task._active
+        self.assertEqual(task.refs,[(first,'Face6')])
         self.assertEqual(view.getActiveObject('pdbody'),second_body)
         accept_task();self.assertFalse(Gui.Control.activeDialog());self.assertFalse(self.doc.HasPendingTransaction)
+        feature=task.result;name=feature.Name
+        self.assertEqual(feature.getParentGeoFeatureGroup(),first_body)
         self.assertTrue(feature.Shape.isValid());self.assertLess(feature.Shape.Volume,first.Shape.Volume)
         self.assertEqual(second_body.Tip,second);self.assertEqual(second_body.Group,second_group)
         self.assertAlmostEqual(second.Shape.Volume,second_shape.Volume)
@@ -231,12 +201,11 @@ class TestThickenWorkflow(unittest.TestCase):
     def test_shell_empty_selection_never_uses_active_body(self):
         Gui.activateWorkbench('PartDesignWorkbench');first=self.solid();self.solid()
         Gui.activeDocument().activeView().setActiveObject('pdbody',first.getParentGeoFeatureGroup())
-        Gui.Selection.clearSelection();before=self.snapshot();seen=[];original=thicken_task.show_error
-        thicken_task.show_error=lambda title,message:seen.append(message)
-        try:Gui.runCommand('PartDesign_Thickness')
-        finally:thicken_task.show_error=original
-        self.assertTrue(seen);self.assertIn('Select one solid',seen[0]);self.assertEqual(before,self.snapshot())
-        self.assertFalse(self.doc.HasPendingTransaction);self.assertFalse(Gui.Control.activeDialog())
+        Gui.Selection.clearSelection();before=self.snapshot();Gui.runCommand('PartDesign_Thickness')
+        task=extrude_task._active
+        self.assertFalse(task.refs);self.assertFalse(task.links)
+        self.assertFalse(self.doc.HasPendingTransaction)
+        task.reject();self.assertEqual(before,self.snapshot())
 
     def test_migrated_profile_commands_ignore_active_body_for_owned_sketches(self):
         from TestComponentModeling import messages

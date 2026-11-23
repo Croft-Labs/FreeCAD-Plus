@@ -23,6 +23,8 @@
 
 #include "TaskThicknessParameters.h"
 #include "ViewProviderThickness.h"
+#include <Gui/Command.h>
+#include <Gui/ComponentModeling.h>
 
 using namespace PartDesignGui;
 
@@ -44,4 +46,15 @@ void ViewProviderThickness::setupContextMenu(QMenu* menu, QObject* receiver, con
 TaskDlgFeatureParameters* ViewProviderThickness::getEditDialog()
 {
     return new TaskDlgThicknessParameters(this);
+}
+
+bool ViewProviderThickness::doubleClicked()
+{
+    if (Gui::isComponentModelingDocument(getObject()->getDocument())) {
+        Gui::Command::doCommand(Gui::Command::Gui,
+            "from freecad_plus import editing; editing.edit_feature(Gui.activeDocument().Document, %s)",
+            Gui::Command::getObjectCmd(getObject()).c_str());
+        return true;
+    }
+    return ViewProviderDressUp::doubleClicked();
 }

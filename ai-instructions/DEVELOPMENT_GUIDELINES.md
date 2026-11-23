@@ -42,7 +42,9 @@ For Shell, Fillet/Radius and comparable feature collectors, use the owner's
 when updating the workflow: activate picking by selecting its list, remove rows
 with Delete/Remove, and clear references with Clear. Replace Select/Confirm
 Selection toggles. Shell has no separate target field; its faces identify the solid.
-This migration requirement is recorded; the revised Shell prototype awaits approval.
+Owner approved the revised Shell prototype and shared collectors. Shell, Fillet/Radius,
+Chamfer and Draft now implement this interaction; apply it to comparable workflows
+as they are migrated.
 
 Owner clarification: FreeCAD Plus has an active Component, **no active Body**.
 Every feature workflow we implement or modify must resolve its inputs and result

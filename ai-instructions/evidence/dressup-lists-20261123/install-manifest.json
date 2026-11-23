@@ -1,0 +1,74 @@
+[
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\shell.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/shell.py",
+    "source_sha256": "fd791a4d130309e85284a060944843c8385dd09db93b20d795b3516ea3aeb3b2",
+    "built_sha256": "fd791a4d130309e85284a060944843c8385dd09db93b20d795b3516ea3aeb3b2",
+    "installed_sha256": "fd791a4d130309e85284a060944843c8385dd09db93b20d795b3516ea3aeb3b2",
+    "previous_sha256": null,
+    "rollback": null
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\shell_task.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/shell_task.py",
+    "source_sha256": "c3d0cd940e206eabba7a8c971f216097755675b15409eddd23cf399e5a96faf7",
+    "built_sha256": "c3d0cd940e206eabba7a8c971f216097755675b15409eddd23cf399e5a96faf7",
+    "installed_sha256": "c3d0cd940e206eabba7a8c971f216097755675b15409eddd23cf399e5a96faf7",
+    "previous_sha256": null,
+    "rollback": null
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\freecad_plus\\editing.py",
+    "build_path": "Mod/FreeCADPlus/freecad_plus/editing.py",
+    "source_sha256": "0c172814d868ea75af028cecbf47f2bb7f69425352b958c8f7a3aa35c92a1472",
+    "built_sha256": "0c172814d868ea75af028cecbf47f2bb7f69425352b958c8f7a3aa35c92a1472",
+    "installed_sha256": "0c172814d868ea75af028cecbf47f2bb7f69425352b958c8f7a3aa35c92a1472",
+    "previous_sha256": "f88fb6411e6423fdc154fa16bda7f013202175adc9597f7844dde1982dc5e896",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dressup-20261123\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\editing.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestShellWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestShellWorkflow.py",
+    "source_sha256": "f800f2faceee21c57b91550bedcebb73bcd755075ff94297b22cf797fd4a6443",
+    "built_sha256": "f800f2faceee21c57b91550bedcebb73bcd755075ff94297b22cf797fd4a6443",
+    "installed_sha256": "f800f2faceee21c57b91550bedcebb73bcd755075ff94297b22cf797fd4a6443",
+    "previous_sha256": null,
+    "rollback": null
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestComponentCommandInputs.py",
+    "build_path": "Mod/FreeCADPlus/TestComponentCommandInputs.py",
+    "source_sha256": "2c514adae36ba6fefc23c4fb6ac2a2cc41d21b555fa5b1835f4d118d0731a6d9",
+    "built_sha256": "2c514adae36ba6fefc23c4fb6ac2a2cc41d21b555fa5b1835f4d118d0731a6d9",
+    "installed_sha256": "2c514adae36ba6fefc23c4fb6ac2a2cc41d21b555fa5b1835f4d118d0731a6d9",
+    "previous_sha256": "9ec036f7cddd9e21b0a800b0850df998a9f68cc5f4427823879d33290ad8edf8",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dressup-20261123\\install-backup\\Mod\\FreeCADPlus\\TestComponentCommandInputs.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestComponentDressUpInputs.py",
+    "build_path": "Mod/FreeCADPlus/TestComponentDressUpInputs.py",
+    "source_sha256": "61612b8141f42376c7ed396146ea86c2c3fbdb9cabd9e1d086621764b1917508",
+    "built_sha256": "61612b8141f42376c7ed396146ea86c2c3fbdb9cabd9e1d086621764b1917508",
+    "installed_sha256": "61612b8141f42376c7ed396146ea86c2c3fbdb9cabd9e1d086621764b1917508",
+    "previous_sha256": "4d25949c3b9992199c2074fba4e77b67c9ad7e5cdc7378d9e05dd47f7c81c337",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dressup-20261123\\install-backup\\Mod\\FreeCADPlus\\TestComponentDressUpInputs.py"
+  },
+  {
+    "path": "Mod\\FreeCADPlus\\TestThickenWorkflow.py",
+    "build_path": "Mod/FreeCADPlus/TestThickenWorkflow.py",
+    "source_sha256": "852d5366342a827aabc1557c60c481ea19663f2d449a39ee2b0271e32c13d447",
+    "built_sha256": "852d5366342a827aabc1557c60c481ea19663f2d449a39ee2b0271e32c13d447",
+    "installed_sha256": "852d5366342a827aabc1557c60c481ea19663f2d449a39ee2b0271e32c13d447",
+    "previous_sha256": "1a50af73692c305868fa84d4e8d5fa6353c968c367838e0b2bfb9a1bd7470e56",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dressup-20261123\\install-backup\\Mod\\FreeCADPlus\\TestThickenWorkflow.py"
+  },
+  {
+    "path": "lib\\PartDesignGui.pyd",
+    "build_path": "Mod/PartDesign/PartDesignGui.pyd",
+    "source_sha256": null,
+    "built_sha256": "c2209ece3df86cc4137f1a3923fb18e890f86ea8a1df8791c1f454c6ee1a03bb",
+    "installed_sha256": "c2209ece3df86cc4137f1a3923fb18e890f86ea8a1df8791c1f454c6ee1a03bb",
+    "previous_sha256": "1e48e7498a326836a921b25958f8269866ce35ef110b4598d3a4b00ee8072e60",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\dressup-20261123\\install-backup\\lib\\PartDesignGui.pyd"
+  }
+]

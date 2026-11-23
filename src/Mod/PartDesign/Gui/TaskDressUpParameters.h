@@ -35,6 +35,8 @@
 class QAction;
 class QListWidget;
 class QListWidgetItem;
+class QLabel;
+class QPushButton;
 
 namespace Part
 {
@@ -68,6 +70,7 @@ public:
     }
 
     bool event(QEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
 protected Q_SLOTS:
     void onButtonRefSel(const bool checked);
@@ -122,6 +125,10 @@ private:
     Gui::WeakPtrT<ViewProviderDressUp> DressUpView;
 
     Gui::ViewProvider* previouslyShownViewProvider {nullptr};
+    QListWidget* referenceList {nullptr};
+    QLabel* referenceHint {nullptr};
+    QPushButton* removeReferences {nullptr};
+    QPushButton* clearReferences {nullptr};
 };
 
 /// simulation dialog for the TaskView

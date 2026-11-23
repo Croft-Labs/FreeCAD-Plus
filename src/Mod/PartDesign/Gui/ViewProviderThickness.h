@@ -46,6 +46,7 @@ public:
     /// return "Thickness"
     const std::string& featureName() const override;
     void setupContextMenu(QMenu*, QObject*, const char*) override;
+    bool doubleClicked() override;
 
 protected:
     /// Returns a newly create dialog for the part to be placed in the task view

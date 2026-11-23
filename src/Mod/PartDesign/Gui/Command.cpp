@@ -1997,9 +1997,9 @@ bool dressupGetSelected(
 )
 {
     std::vector<Gui::SelectionObject> selection = cmd->getSelection().getSelectionEx();
-    const bool componentFillet = which == "Fillet"
+    const bool componentDressUp = (which == "Fillet" || which == "Chamfer" || which == "Draft")
         && Gui::isComponentModelingDocument(cmd->getDocument());
-    if (componentFillet && selection.empty()) {
+    if (componentDressUp && selection.empty()) {
         // An empty edge list still needs an unambiguous component solid. Do not
         // take the target from Classic's ambient active Body.
         auto* view = Gui::Application::Instance->activeView();
@@ -2019,8 +2019,8 @@ bool dressupGetSelected(
             selection.emplace_back(bodies.front()->Tip.getValue());
         }
         else {
-            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Fillet"),
-                                 QObject::tr("Select the solid or its edges to fillet."));
+            QMessageBox::warning(Gui::getMainWindow(), QString::fromStdString(which),
+                                 QObject::tr("Select the solid or its edges or faces."));
             return false;
         }
     }
@@ -2028,9 +2028,9 @@ bool dressupGetSelected(
     // the last active Body.
     // Keep the original unresolved selection for component/occurrence admission.
     PartDesign::Body* pcActiveBody = nullptr;
-    if (componentFillet) {
+    if (componentDressUp) {
         if (selection.size() != 1) {
-            QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Fillet"),
+            QMessageBox::warning(Gui::getMainWindow(), QString::fromStdString(which),
                                  QObject::tr("Select edges or faces from a single solid."));
             return false;
         }
@@ -2065,7 +2065,7 @@ bool dressupGetSelected(
         );
         return false;
     }
-    else if (!componentFillet
+    else if (!componentDressUp
              && pcActiveBody != PartDesignGui::getBodyFor(selection[0].getObject(), false)) {
         QMessageBox::warning(
             Gui::getMainWindow(),
@@ -2104,7 +2104,7 @@ bool dressupGetSelected(
 
     // if 1 Part::Feature object selected, but no subobjects, select all edges for the user
     // but only for fillet and chamfer (not for draft or thickness)
-    if (!componentFillet && selection[0].getSubNames().empty()
+    if (!componentDressUp && selection[0].getSubNames().empty()
         && (which.compare("Fillet") == 0 || which.compare("Chamfer") == 0)) {
         useAllEdges = true;
         std::string edgeTypeName = Part::TopoShape::shapeName(TopAbs_EDGE);  //"Edge"
@@ -2205,7 +2205,7 @@ bool makeChamferOrFillet(Gui::Command* cmd, const std::string& which)
     else {
         base = static_cast<Part::Feature*>(selected.getObject());
         SubNames = std::vector<std::string>(selected.getSubNames());
-        if (which == "Fillet" && Gui::isComponentModelingDocument(cmd->getDocument())) {
+        if (Gui::isComponentModelingDocument(cmd->getDocument())) {
             if (auto* body = dynamic_cast<PartDesign::Body*>(base)) {
                 base = dynamic_cast<Part::Feature*>(body->Tip.getValue());
                 if (!base) {
@@ -2313,6 +2313,15 @@ void CmdPartDesignDraft::activated(int iMsg)
         base = static_cast<Part::Feature*>(selected.getObject());
         SubNames = std::vector<std::string>(selected.getSubNames());
 
+        if (Gui::isComponentModelingDocument(getDocument())) {
+            if (auto* body = dynamic_cast<PartDesign::Body*>(base)) {
+                base = dynamic_cast<Part::Feature*>(body->Tip.getValue());
+                if (!base) {
+                    return;
+                }
+            }
+        }
+
         const Part::TopoShape& TopShape = base->Shape.getShape();
 
         // filter out the edges
@@ -2372,10 +2381,8 @@ void CmdPartDesignThickness::activated(int iMsg)
                   "show_error('Shell', 'Finish the current operation first.')");
         return;
     }
-    if (Gui::isComponentModelingDocument(getDocument())
-        && getSelection().getSelectionEx().size() != 1) {
-        doCommand(Gui, "from freecad_plus.thicken_task import show_error; "
-                  "show_error('Shell', 'Select one solid or its faces before starting Shell.')");
+    if (Gui::isComponentModelingDocument(getDocument())) {
+        doCommand(Gui, "from freecad_plus import shell_task; shell_task.show()");
         return;
     }
     Gui::SelectionObject selected;

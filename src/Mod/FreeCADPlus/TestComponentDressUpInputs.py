@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtTest, QtWidgets
 from freecad_plus import document, display, editing, geometry
 from TestComponentPanel import TestComponentPanel, settle
 from TestComponentModeling import TestComponentModeling, accept_task, messages
@@ -57,8 +57,12 @@ class TestComponentDressUpInputs(unittest.TestCase):
         return doc
 
     def pick(self, button, obj, element='', forbidden=False, legacy=False):
-        widget = self.control(QtWidgets.QAbstractButton, button)
-        if not widget.isChecked(): widget.setChecked(True)
+        if button == 'buttonRefSel' and not legacy:
+            refs = self.control(QtWidgets.QListWidget, 'listWidgetReferences')
+            QtTest.QTest.mouseClick(refs.viewport(), QtCore.Qt.LeftButton)
+        else:
+            widget = self.control(QtWidgets.QAbstractButton, button)
+            if not widget.isChecked(): widget.setChecked(True)
         settle()
         if legacy: self.select(obj, element)
         else: self.select(self.root, self.sub(self.first if forbidden else self.second, obj, element))
@@ -96,7 +100,9 @@ class TestComponentDressUpInputs(unittest.TestCase):
         self.denied_pick('buttonRefSel', self.base, 'Edge2')
         self.pick('buttonRefSel', self.base, 'Edge2')
         self.assertEqual(set(self.target.Base[1]), {'Edge1', 'Edge2'})
-        self.pick('buttonRefSel', self.base, 'Edge2', forbidden=True)
+        refs = self.control(QtWidgets.QListWidget, 'listWidgetReferences')
+        refs.setCurrentRow(1)
+        next(a for a in refs.actions() if a.text() == 'Remove').trigger()
         self.assertEqual(list(self.target.Base[1]), ['Edge1'])
         self.pick('buttonRefSel', self.base, 'Edge2')
         accept_task()
@@ -112,7 +118,6 @@ class TestComponentDressUpInputs(unittest.TestCase):
             refs = self.control(QtWidgets.QListWidget, 'listWidgetReferences')
             add_all = next(a for a in refs.actions() if a.text() == 'Add All Edges')
             checkbox = self.control(QtWidgets.QCheckBox, 'checkBoxUseAllEdges')
-            picker = self.control(QtWidgets.QToolButton, 'buttonRefSel')
             view = Gui.activeDocument().activeView()
             resolved, parent, sub = view.getActiveObject('PlusEdit', False)
             view.setActiveObject('PlusEdit', None)
@@ -122,7 +127,7 @@ class TestComponentDressUpInputs(unittest.TestCase):
                 checkbox.setChecked(True); settle()
             self.assertTrue(all('Edit a component' in error for error in errors), errors)
             self.assertEqual(self.snapshot(), before)
-            self.assertFalse(checkbox.isChecked()); self.assertTrue(refs.isEnabled()); self.assertTrue(picker.isEnabled())
+            self.assertFalse(checkbox.isChecked()); self.assertTrue(refs.isEnabled())
             view.setActiveObject('PlusEdit', parent, sub)
             add_all.trigger(); self.doc.recompute(); settle()
             self.assertEqual(len(self.target.Base[1]), 12)

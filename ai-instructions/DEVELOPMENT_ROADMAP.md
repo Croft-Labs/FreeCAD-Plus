@@ -12,9 +12,11 @@ See [implementation and acceptance](evidence/fillet-20261123/README.md).
 
 - [x] Prepare native UI prototype for empty/invalid preselection and selection after opening.
 - [x] Amend to a face list without target field or Select/Confirm toggle; record shared collector migration.
-- [ ] Obtain preview approval, then implement and validate shared Shell creation/editing.
+- [x] Obtain amended face-list preview approval for Shell and shared dress-up collectors.
+- [x] Validate and install Shell creation/editing and Fillet/Chamfer/Draft list controls (20 focused + 99 installed tests, reopen and shortcut).
 
-See [amended preview and scope](evidence/shell-list-preview-20261123/README.md).
+See [amended preview](evidence/shell-list-preview-20261123/README.md) and
+[implementation and acceptance](evidence/dressup-lists-20261123/README.md).
 
 ## Unified Loft — November 23, 2026
 

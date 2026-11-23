@@ -1,6 +1,8 @@
 # Shell face-list amendment — November 23, 2026
 
-Native UI prototype only; awaiting approval. Supersedes session a5461c3ce973's
+Native UI prototype, subsequently approved in chat: "implement all previewed changes,
+the shell, radius, etc". Production implementation and acceptance are recorded in
+[the implementation evidence](../dressup-lists-20261123/README.md). Supersedes session a5461c3ce973's
 target-field proposal. Installed baseline is d9304d889b. No production UI, picking,
 geometry engine or installation changed in this amendment.
 

@@ -1,0 +1,41 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore,QtGui,QtTest,QtWidgets
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False};case=None
+    try:
+        from TestShellWorkflow import TestShellWorkflow
+        from freecad_plus import extrude_task,shell_task
+        win=Gui.getMainWindow();win.show();win.raise_();win.activateWindow()
+        case=TestShellWorkflow('test_actual_viewport_face_pick_after_clear');case.setUp()
+        solid=case.solid();task=case.open(solid,'Edge1')
+        assert task.status.error and not task.refs
+        dock=win.findChild(QtWidgets.QDockWidget,'Tasks')
+        dock.grab().save(str(out/'shell-invalid-curve.png'))
+        case.pick(task,solid,'Face6');assert task.valid
+        task.final.setChecked(True);task.thickness.setFocus();QtTest.QTest.qWait(30)
+        assert task.pick is None and task.showing_result
+        QtTest.QTest.mouseClick(task.faces.viewport(),QtCore.Qt.LeftButton)
+        assert task.pick=='profile'
+        view=Gui.activeDocument().activeView();view.setCameraType('Orthographic')
+        view.setAnimationEnabled(False);view.viewTop();view.fitAll();view.getCameraNode().height=30
+        QtTest.QTest.qWait(100)
+        viewport=view.graphicsView().viewport();ratio=viewport.devicePixelRatioF()
+        screen=view.getPointOnScreen(App.Vector(10,6,10))
+        pos=QtCore.QPoint(round(screen[0]/ratio),viewport.height()-1-round(screen[1]/ratio))
+        event=QtGui.QMouseEvent(QtCore.QEvent.MouseMove,QtCore.QPointF(pos),QtCore.QPointF(viewport.mapToGlobal(pos)),QtCore.Qt.NoButton,QtCore.Qt.NoButton,QtCore.Qt.NoModifier)
+        QtWidgets.QApplication.sendEvent(viewport,event)
+        QtTest.QTest.mouseClick(viewport,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier,pos)
+        QtTest.QTest.qWait(100)
+        assert task.refs==[(solid,'Face6')] and task.valid
+        task.final.setChecked(False);dock.grab().save(str(out/'shell-installed.png'))
+        assert '/app/' in shell_task.__file__.replace('\\','/')
+        result.update(ok=True,final_preview_list_pick=True,no_duplicate=True,module=shell_task.__file__)
+    except BaseException:result['error']=traceback.format_exc()
+    finally:
+        if case:case.tearDown()
+    (out/'audit.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

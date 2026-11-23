@@ -53,7 +53,7 @@ class TestComponentCommandInputs(unittest.TestCase):
         doc, body = self.fixture()
         for kind in ('Reference', 'Excluded'):
             display.set_state(self.root, self.first, part_type=kind); settle()
-            for name in ('Fillet', 'Chamfer', 'Draft', 'Thickness', 'Mirrored',
+            for name in ('Fillet', 'Chamfer', 'Draft', 'Mirrored',
                          'LinearPattern', 'PolarPattern', 'MultiTransform'):
                 self.select(self.root, self.sub(self.first, self.base, 'Edge1'))
                 self.denied('PartDesign_' + name, body, 'Excluded' if kind == 'Excluded' else 'Reference')

@@ -166,6 +166,9 @@ def edit_feature(doc, feature):
     definition, path = context_path(doc)
     if feature not in history(doc, definition):
         raise ValueError("The feature must belong to the edited component")
+    if feature.TypeId == 'PartDesign::Thickness':
+        from . import shell_task
+        return shell_task.show(feature)
     from . import planes
     if planes.is_plane(feature):
         from . import plane_task

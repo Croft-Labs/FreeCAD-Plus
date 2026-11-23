@@ -1,0 +1,25 @@
+test_actual_viewport_face_pick_after_clear (TestShellWorkflow.TestShellWorkflow.test_actual_viewport_face_pick_after_clear) ... ok
+test_empty_curve_and_sheet_entry_are_recoverable (TestShellWorkflow.TestShellWorkflow.test_empty_curve_and_sheet_entry_are_recoverable) ... ok
+test_history_restore_eyes_and_scrollable_list (TestShellWorkflow.TestShellWorkflow.test_history_restore_eyes_and_scrollable_list) ... ok
+test_implicit_owner_rejects_mixed_solids_until_cleared (TestShellWorkflow.TestShellWorkflow.test_implicit_owner_rejects_mixed_solids_until_cleared) ... ok
+test_later_input_rejected_when_editing (TestShellWorkflow.TestShellWorkflow.test_later_input_rejected_when_editing) ... ok
+test_list_delete_remove_clear_and_parameter_focus (TestShellWorkflow.TestShellWorkflow.test_list_delete_remove_clear_and_parameter_focus) ... ok
+test_native_accept_edit_cancel_undo_and_save (TestShellWorkflow.TestShellWorkflow.test_native_accept_edit_cancel_undo_and_save) ... ok
+test_native_dressup_list_focus_and_duplicate_add (TestShellWorkflow.TestShellWorkflow.test_native_dressup_list_focus_and_duplicate_add) ... ok
+test_preview_controls_and_blur_commit (TestShellWorkflow.TestShellWorkflow.test_preview_controls_and_blur_commit) ... ok
+test_clear_and_connected_pick_drains_native_notifications_once (TestFilletWorkflow.TestFilletWorkflow.test_clear_and_connected_pick_drains_native_notifications_once) ... ok
+test_legacy_whole_solid_still_offers_native_all_edges (TestFilletWorkflow.TestFilletWorkflow.test_legacy_whole_solid_still_offers_native_all_edges) ... ok
+test_queued_chain_cannot_select_after_task_cancel (TestFilletWorkflow.TestFilletWorkflow.test_queued_chain_cannot_select_after_task_cancel) ... ok
+test_real_viewport_pick_after_clearing_edges (TestFilletWorkflow.TestFilletWorkflow.test_real_viewport_pick_after_clearing_edges) ... ok
+test_selected_solid_ignores_other_active_body (TestFilletWorkflow.TestFilletWorkflow.test_selected_solid_ignores_other_active_body) ... ok
+test_tangent_pick_and_shared_chamfer_collector (TestFilletWorkflow.TestFilletWorkflow.test_tangent_pick_and_shared_chamfer_collector) ... ok
+test_whole_solid_and_empty_entry_require_explicit_edges (TestFilletWorkflow.TestFilletWorkflow.test_whole_solid_and_empty_entry_require_explicit_edges) ... ok
+test_dressup_pick_cleanup_undo_and_reopen (TestComponentDressUpInputs.TestComponentDressUpInputs.test_dressup_pick_cleanup_undo_and_reopen) ... ok
+test_legacy_dressup_and_transformed_bypass (TestComponentDressUpInputs.TestComponentDressUpInputs.test_legacy_dressup_and_transformed_bypass) ... ok
+test_transformed_originals_cleanup_undo_and_reopen (TestComponentDressUpInputs.TestComponentDressUpInputs.test_transformed_originals_cleanup_undo_and_reopen) ... ok
+test_whole_edge_routes_context_loss_and_cancel (TestComponentDressUpInputs.TestComponentDressUpInputs.test_whole_edge_routes_context_loss_and_cancel) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 24.525s
+
+OK

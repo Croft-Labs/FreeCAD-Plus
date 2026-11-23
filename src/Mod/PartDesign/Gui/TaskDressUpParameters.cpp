@@ -27,6 +27,11 @@
 #include <QKeyEvent>
 #include <QListWidgetItem>
 #include <QTimer>
+#include <QLabel>
+#include <QPushButton>
+#include <QToolButton>
+#include <QVBoxLayout>
+#include <QCheckBox>
 
 
 #include <App/Application.h>
@@ -35,6 +40,7 @@
 #include <Gui/BitmapFactory.h>
 #include <Gui/Command.h>
 #include <Gui/ComponentGeometry.h>
+#include <Gui/ComponentModeling.h>
 #include <Gui/Notifications.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Tools.h>
@@ -140,6 +146,9 @@ void TaskDressUpParameters::referenceSelected(const Gui::SelectionChanges& msg, 
     std::vector<std::string> refs = pcDressUp->Base.getSubValues();
 
     if (const auto f = std::ranges::find(refs, subName); f != refs.end()) {
+        if (referenceList) {
+            return; // List collectors add; explicit Remove/Delete owns removal.
+        }
         refs.erase(f);  // it's in the list. Remove it
         removeItemFromListWidget(widget, msg.pSubName);
     }
@@ -243,6 +252,10 @@ void TaskDressUpParameters::onButtonRefSel(bool checked)
 
 void TaskDressUpParameters::doubleClicked(QListWidgetItem* item)
 {
+    if (referenceList) {
+        setSelectionMode(refSel);
+        return;
+    }
     // executed when the user double-clicks on any item in the list
     // shows the fillets as they are -> useful to switch out of selection mode
 
@@ -262,6 +275,12 @@ void TaskDressUpParameters::doubleClicked(QListWidgetItem* item)
 
 void TaskDressUpParameters::setSelection(QListWidgetItem* current)
 {
+    if (referenceList) {
+        if (referenceList->hasFocus()) {
+            setSelectionMode(refSel);
+        }
+        return;
+    }
     // executed when the user selected an item in the list (but double-clicked it)
     // highlights the currently selected item
 
@@ -362,13 +381,83 @@ void TaskDressUpParameters::createDeleteAction(QListWidget* parentList)
     deleteAction->setShortcutVisibleInContextMenu(true);
     parentList->addAction(deleteAction);
     parentList->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+    if (!Gui::isComponentModelingDocument(getObject()->getDocument())) {
+        return;
+    }
+    referenceList = parentList;
+    if (auto* toggle = proxy->findChild<QToolButton*>(QStringLiteral("buttonRefSel"))) {
+        toggle->hide();
+    }
+    auto* layout = qobject_cast<QVBoxLayout*>(proxy->layout());
+    referenceHint = new QLabel(tr("Click the list to add references from the view."), proxy);
+    referenceHint->setWordWrap(true);
+    layout->insertWidget(layout->indexOf(parentList), referenceHint);
+    auto* actions = new QWidget(proxy);
+    auto* row = new QHBoxLayout(actions);
+    row->setContentsMargins(0, 0, 0, 0);
+    removeReferences = new QPushButton(tr("Remove"), actions);
+    clearReferences = new QPushButton(allowEdges ? tr("Clear references") : tr("Clear faces"), actions);
+    removeReferences->setObjectName(QStringLiteral("removeReferences"));
+    clearReferences->setObjectName(QStringLiteral("clearReferences"));
+    row->addWidget(removeReferences);
+    row->addWidget(clearReferences);
+    layout->insertWidget(layout->indexOf(parentList) + 1, actions);
+    parentList->setMinimumHeight(5 * (parentList->fontMetrics().height() + 6)
+                                 + 2 * parentList->frameWidth());
+    parentList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    parentList->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
+    parentList->setToolTip(tr("Click this list to add references in the view. Delete removes highlighted rows."));
+    deleteAction->setShortcutContext(Qt::WidgetShortcut);
+    parentList->installEventFilter(this);
+    parentList->viewport()->installEventFilter(this);
+    connect(removeReferences, &QPushButton::clicked, this, [this] { onRefDeleted(); });
+    connect(clearReferences, &QPushButton::clicked, this, [this] {
+        if (auto* all = proxy->findChild<QCheckBox*>(QStringLiteral("checkBoxUseAllEdges"))) {
+            all->setChecked(false);
+        }
+        referenceList->selectAll();
+        onRefDeleted();
+        setSelectionMode(refSel);
+    });
+    connect(qApp, &QApplication::focusChanged, this, [this](QWidget*, QWidget* now) {
+        if (now && proxy->isAncestorOf(now) && now != referenceList
+            && !referenceList->isAncestorOf(now)
+            && now != removeReferences && now != clearReferences) {
+            setSelectionMode(none);
+        }
+    });
+    QTimer::singleShot(0, this, [this] {
+        if (referenceList->isEnabled()) {
+            referenceList->setFocus();
+            setSelectionMode(refSel);
+        }
+    });
+}
+
+bool TaskDressUpParameters::eventFilter(QObject* watched, QEvent* event)
+{
+    if (referenceList && (watched == referenceList || watched == referenceList->viewport())) {
+        if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::FocusIn) {
+            setSelectionMode(refSel);
+        }
+        if (event->type() == QEvent::KeyPress) {
+            auto* key = static_cast<QKeyEvent*>(event);
+            if (Gui::QtTools::matches(key, deleteAction->shortcut())) {
+                onRefDeleted();
+                return true;
+            }
+        }
+    }
+    return TaskBox::eventFilter(watched, event);
 }
 
 bool TaskDressUpParameters::event(QEvent* event)
 {
     if (event->type() == QEvent::ShortcutOverride) {
         QKeyEvent* kevent = static_cast<QKeyEvent*>(event);  // NOLINT
-        if (deleteAction && Gui::QtTools::matches(kevent, deleteAction->shortcut())) {
+        if (deleteAction && (!referenceList || referenceList->hasFocus())
+            && Gui::QtTools::matches(kevent, deleteAction->shortcut())) {
             kevent->accept();
             return true;
         }
@@ -383,7 +472,7 @@ bool TaskDressUpParameters::event(QEvent* event)
 
 void TaskDressUpParameters::keyPressEvent(QKeyEvent* ke)
 {
-    if (deleteAction && deleteAction->isEnabled()
+    if (deleteAction && deleteAction->isEnabled() && (!referenceList || referenceList->hasFocus())
         && Gui::QtTools::matches(ke, deleteAction->shortcut())) {
         deleteAction->trigger();
         return;
@@ -447,8 +536,17 @@ void TaskDressUpParameters::setSelectionMode(selectionModes mode)
         return;
     }
 
+    if (selectionMode == mode) {
+        return;
+    }
     selectionMode = mode;
     setButtons(mode);
+    if (referenceList) {
+        referenceList->setStyleSheet(mode == refSel
+            ? QStringLiteral("QListWidget { border: 2px solid #347bb7; }") : QString());
+        referenceHint->setText(mode == refSel ? tr("Click references in the view to add them.")
+                                              : tr("Click the list to add more references."));
+    }
 
     if (mode == none) {
         Gui::Selection().rmvSelectionGate();

@@ -41,7 +41,9 @@ supersedes the earlier target-field prototype and awaits approval. It derives on
 solid from the faces, preserves valid inputs on incompatible picks and allows a
 different solid after clearing the list. Keep native Shell options and saved feature
 identities, prominent recoverable errors and component access/history rules. No
-active Body dependency. Production implementation remains pending.
+active Body dependency. Owner approved Shell and shared Fillet/Radius, Chamfer and Draft list controls.
+Implemented and installed; 20 focused and 99 installed native checks passed.
+See [implementation acceptance](../evidence/dressup-lists-20261123/README.md).
 
 ### Unified Loft — November 23, 2026
 
@@ -95,8 +97,8 @@ See [implementation and native acceptance](../evidence/loft-20261123/README.md).
 Owner explicitly clarified that FreeCAD Plus has no active Body. Every modified
 operation uses the active Component plus selected inputs/targets or saved feature
 references. Selecting a solid for Shell must operate on that solid even when the
-Classic native active Body is different or absent. Shell with no explicit solid
-selection gives prominent selection guidance instead of consuming a stale Body.
+Classic native active Body is different or absent. Shell opens with an empty face
+list when no faces are preselected; the first valid face determines the solid.
 Extrude/Revolve use their shared Plus tasks for older Body-owned sketches too.
 The rule and migration acceptance live in
 [development guidelines](../DEVELOPMENT_GUIDELINES.md#component-routing-without-an-active-body--november-23-2026).
