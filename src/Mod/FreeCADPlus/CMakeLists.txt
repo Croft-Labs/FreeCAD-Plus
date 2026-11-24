@@ -11,6 +11,7 @@ set(FreeCADPlus_SRCS
     TestPatternCorrections.py
     TestPatternBatching.py
     TestPatternGroups.py
+    TestPatternEditing.py
     TestShellWorkflow.py
     TestComponentPilot.py
     TestLegacyConversion.py
@@ -89,6 +90,8 @@ set(FreeCADPlus_SRCS
     freecad_plus/sketch_task.py
     freecad_plus/sketch_pattern.py
     freecad_plus/sketch_pattern_task.py
+    freecad_plus/sketch_pattern_edit.py
+    freecad_plus/sketch_pattern_legacy.py
     freecad_plus/sketch_visibility.py
     freecad_plus/task_visibility.py
     freecad_plus/task_status.py
@@ -110,6 +113,7 @@ install(FILES
     TestPatternCorrections.py
     TestPatternBatching.py
     TestPatternGroups.py
+    TestPatternEditing.py
     TestShellWorkflow.py
     TestLoftWorkflow.py
     TestThickenWorkflow.py TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py TestRevolveWorkflow.py TestExtrudeWorkflow.py TestTargetCoordinateWorkflow.py TestPlaneHistoryWorkflow.py TestTaskStatus.py TestTaskEntryWorkflows.py TestExtrudeVisibility.py TestDesignInteractions.py DESTINATION Mod/FreeCADPlus)
@@ -149,6 +153,8 @@ install(FILES
     freecad_plus/sketch_task.py
     freecad_plus/sketch_pattern.py
     freecad_plus/sketch_pattern_task.py
+    freecad_plus/sketch_pattern_edit.py
+    freecad_plus/sketch_pattern_legacy.py
     freecad_plus/sketch_visibility.py
     freecad_plus/task_visibility.py
     freecad_plus/task_status.py

@@ -1,0 +1,321 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[0/1] Re-running CMake...
+-- Compiler: MSVC, version: 19.44.35229.0
+-- prefix: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/app
+-- bindir: bin
+-- datadir: data
+-- docdir: doc
+-- includedir: include
+-- libdir: lib
+-- cmake: 3.31.6
+-- LibPack: read version file and got 3.1.1.3
+-- Using Qt6 directory from LibPack in C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/lib/cmake/Qt6
+-- Compiling with Qt 6
+Found LibPack 3.1.1.3
+-- Found Python3: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/python.exe (found version "3.12.10") found components: Interpreter Development Development.Module Development.Embed
+-- Found LibPack 3 Qt 6.8.3
+-- Found pybind11: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include (found version "2.13.6")
+-- Found LibPack 3 pybind11 2.13.6
+-- Found LibPack 3 XercesC 3.2.5
+-- Found LibPack 3 e57format
+-- Found LibPack 3 yaml-cpp 0.8.0
+-- Found LibPack 3 Coin 4.0.3
+-- Found LibPack 3 Freetype 2.13.3 library from
+-- PyCXX found:
+--   Headers:  C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/3rdParty/PyCXX
+--   Sources:  C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/3rdParty/PyCXX/CXX
+--   Version:  7.1.11
+-- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE)
+=====================================================
+Doxygen not found, will not build documentation.
+=====================================================
+
+-- find_package() was used to locate fmt version 11.0.2
+-- PyCXX found:
+--   Headers:  C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/3rdParty/PyCXX
+--   Sources:  C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/3rdParty/PyCXX/CXX
+--   Version:  7.1.11
+-- Found OpenCASCADE version: 7.8.1
+--   OpenCASCADE include directory: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/inc
+--   OpenCASCADE shared libraries directory: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/lib
+-- VTK components: CommonCore;CommonDataModel;FiltersVerdict;IOXML;FiltersCore;FiltersGeneral;IOLegacy;FiltersExtraction;FiltersSources;FiltersGeometry;WrappingPythonCore;hdf5;RenderingCore;InteractionStyle;RenderingFreeType;RenderingOpenGL2
+-- Found Python3: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/python.exe (found suitable version "3.12.10", minimum required is "3.12") found components: Interpreter Development.Module Development.Embed
+-- VTK python wrapper: available
+-- Check for medfile (libmed and libmedc) ...
+-- Found Netgen: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/cmake
+-- Found NETGEN version 6.2, calculated: 396132
+-- checking SWIG/Pivy runtime compatibility...
+-- Looking for: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/swig_runtime_check.h
+-- File exists: YES
+-- SWIG_RUNTIME_VERSION_LINE: #define SWIG_RUNTIME_VERSION "4"
+-- Extracted SWIG_RUNTIME_VERSION: 4
+-- SWIG/Pivy runtime compatibility: PASSED
+-- swig runtime API version: 4
+-- pivy runtime API version: 4
+-- swig binary version building freecad: 4.4.0
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR)
+-- Set up to compile with Qt 6.8.3
+-- Checking Pivy version by importing it in a Python program...
+-- Found Pivy 0.6.9
+-- Checking Pivy Coin3D version by importing it in a Python program...
+-- Found Pivy Coin3D SIM Coin 4.0.3
+-- Found pip-installed Shiboken6 in C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/shiboken6
+-- Found pip-installed shiboken6_generator in C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/shiboken6_generator
+--   --> with includes in C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/shiboken6_generator/include
+-- Found pip-installed PySide6 in C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/PySide6
+--   --> with includes in C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/PySide6/include
+-- Found PYSIDE6 tools: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/uic.exe, C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/rcc.exe
+-- PySide 6.8.3 Python module found at C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\dependencies\LibPack-1.1.0-v3.1.1.3-Release\bin\Lib\site-packages\PySide6.
+
+-- Found Matplotlib: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/matplotlib (found version "3.9.2")
+-- Platform is 64-bit, set -D_OCC64
+-- [OndselSolver] Building static library
+-- Could NOT find OpenMP_C: Found unsuitable version "2.0", but required is at least "4.0" (found -openmp)
+-- Could NOT find OpenMP_CXX: Found unsuitable version "2.0", but required is at least "4.0" (found -openmp)
+-- Could NOT find OpenMP (missing: OpenMP_C_FOUND OpenMP_CXX_FOUND) (Required is at least version "4.0")
+-- area module (for Path Workbench) will be installed to: lib
+-- Performing Test _flag_found
+-- Performing Test _flag_found - Failed
+-- Performing Test _flag_found
+-- Performing Test _flag_found - Failed
+-- Copying libpack dependency directories to build directory...
+-- ... end copying.
+=======================================
+
+-- =======================================
+-- Created install commands for INSTALL target.
+
+-- Found Python3: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/python.exe (found version "3.12.10") found components: Interpreter
+
+   ==============
+     System
+   ==============
+
+-- bindir:                      bin
+-- BLAS:                        -undefined-
+-- ccache:                      not enabled
+-- CMAKE_VERSION:               3.31.6
+-- Compiler:                    C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe (19.44.35229.0)
+-- datadir:                     data
+-- docdir:                      doc
+-- includedir:                  include
+-- libdir:                      lib
+-- prefix:                      C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/app
+-- Python:                      3.12.10 [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/python.exe] Suffix: []
+
+   ==============
+     Config
+   ==============
+
+-- BUILD_ADDONMGR:              ON
+-- BUILD_ASSEMBLY:              ON
+-- BUILD_BIM:                   ON
+-- BUILD_CAM:                   ON
+-- BUILD_CLOUD:                 OFF
+-- BUILD_DRAFT:                 ON
+-- BUILD_DRAWING:               OFF
+-- BUILD_FEM:                   ON
+-- BUILD_GUI:                   ON
+-- BUILD_HELP:                  ON
+-- BUILD_IDF:                   ON
+-- BUILD_IMPORT:                ON
+-- BUILD_INSPECTION:            ON
+-- BUILD_JTREADER:              OFF
+-- BUILD_MATERIAL:              ON
+-- BUILD_MATERIAL_EXTERNAL:     OFF
+-- BUILD_MEASURE:               ON
+-- BUILD_MESH:                  ON
+-- BUILD_MESH_PART:             ON
+-- BUILD_OPENSCAD:              ON
+-- BUILD_PART:                  ON
+-- BUILD_PART_DESIGN:           ON
+-- BUILD_PLOT:                  ON
+-- BUILD_POINTS:                ON
+-- BUILD_REVERSEENGINEERING:    ON
+-- BUILD_ROBOT:                 ON
+-- BUILD_SANDBOX:               OFF
+-- BUILD_SHOW:                  ON
+-- BUILD_SKETCHER:              ON
+-- BUILD_SMESH:                 ON
+-- BUILD_SPREADSHEET:           ON
+-- BUILD_START:                 ON
+-- BUILD_SURFACE:               ON
+-- BUILD_TECHDRAW:              ON
+-- BUILD_TEST:                  ON
+-- BUILD_TUX:                   ON
+-- BUILD_VR:                    OFF
+-- BUILD_WEB:                   ON
+-- CMAKE_BUILD_TYPE:            Release
+-- CMAKE_CXX_FLAGS:             /DWIN32 /D_WINDOWS  /MP
+-- CMAKE_CXX_STANDARD:          20
+-- CMAKE_INSTALL_PREFIX:        C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/app
+-- CMAKE_PREFIX_PATH:           C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release
+-- ENABLE_DEVELOPER_TESTS:      ON
+-- FREECAD_CREATE_MAC_APP:      -undefined-
+-- FREECAD_LIBPACK_USE:         ON
+-- FREECAD_QT_VERSION:          6
+-- FREECAD_USE_EXTERNAL_KDL:    OFF
+-- FREECAD_USE_EXTERNAL_SMESH:  OFF
+-- FREECAD_USE_FREETYPE:        ON
+-- FREECAD_USE_PYSIDE:          ON
+-- FREECAD_USE_SHIBOKEN:        ON
+-- Python3_EXECUTABLE:          C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/python.exe
+-- PYTHON_LIBRARY:              -undefined-
+-- USE_CUDA:                    -undefined-
+-- USE_OPENCV:                  -undefined-
+
+   ==============
+     Libraries
+   ==============
+
+-- 3Dconnexion:                 Building with 3Dconnexion NavLib support
+-- Boost:                       1.87.0
+-- Coin3D:                      4.0.3 [optimized;Coin4;debug;Coin4d] [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include]
+-- Coin3D_DOC:                  not found
+-- DesignerPlugin:              not built (BUILD_DESIGNER_PLUGIN is OFF)
+-- Doxygen:                     not found
+-- Eigen3:                      3.4.0
+-- fmt:                         11.0.2
+-- Freetype:                    2.13.3
+-- HDF5:                        1.12.3
+-- ICU:                         74.2
+-- Matplotlib:                  3.9.2 PathDirs: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/matplotlib
+-- MEDFile:                     5.0.0 [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/lib/medC.lib;C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/lib/med.lib] [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include]
+-- NETGEN:                      6.2.2404 (6.2.2404) [-DNO_PARALLEL_THREADS;-DOCCGEOMETRY;-DNETGEN_VERSION=396132] [] [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include/include;C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include] [nglib] [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include/include;C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include]
+-- OCC:                         7.8.1 [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/lib] [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/inc]
+-- OCC_Libs:                    [TKFillet;TKMesh;TKernel;TKG2d;TKG3d;TKMath;TKShHealing;TKXSBase;TKBool;TKBO;TKBRep;TKTopAlgo;TKGeomAlgo;TKGeomBase;TKOffset;TKPrim;TKHLR;TKFeat;TKDESTEP;TKDEIGES;TKDEGLTF;TKDESTL]
+-- OpenGL_Lib:                  [opengl32]
+-- OpenGLU_Incl:                []
+-- OpenGLU_Lib:                 [glu32]
+-- pivy:                        0.6.9
+-- pybind11:                    2.13.6
+-- PYCXX:                       7.1.11 Incl: C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/3rdParty/PyCXX Src:C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/3rdParty/PyCXX/CXX
+-- PySide:                      6.8.3 [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/PySide6/include]
+-- PySideTools:                 v: 6  uic: [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/uic.exe]  rcc: [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/rcc.exe]
+-- QtConcurrent:                6.8.3
+-- QtCore:                      6.8.3
+-- QtNetwork:                   6.8.3
+-- QtOpenGL:                    6.8.3
+-- QtOpenGLWidgets:             6.8.3
+-- QtPrintSupport:              6.8.3
+-- QtSvg:                       6.8.3
+-- QtTest:                      6.8.3
+-- QtUiTools:                   6.8.3
+-- QtWidgets:                   6.8.3
+-- QtXml:                       6.8.3
+-- Rift:                        not enabled (BUILD_VR)
+-- Shiboken:                    6.8.3 [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/bin/Lib/site-packages/shiboken6_generator/include]
+-- SMESH:                       7.7.1.0 build internal
+-- SWIG:                        4.4.0
+-- Vtk:                         9.4.2
+-- XercesC:                     3.2.5 [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/lib/xerces-c_3.lib] [C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/dependencies/LibPack-1.1.0-v3.1.1.3-Release/include]
+-- yaml-cpp:                    0.8.0
+-- ZLIB:                        1.3.1
+
+=================================================
+Now run 'cmake --build C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build' to build FreeCAD
+=================================================
+
+-- Configuring done (5.8s)
+-- Generating done (5.5s)
+-- Build files have been written to: C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build
+[1/105] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestPatternGroups.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestPatternGroups.py
+[2/105] Automatic MOC and UIC for target FreeCADBase
+[3/104] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestPatternEditing.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestPatternEditing.py
+[4/104] Generating qrc_Base_translation.cpp
+[5/104] Building CXX object src\Base\CMakeFiles\FreeCADBase.dir\qrc_Base_translation.cpp.obj
+[6/104] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py
+[7/104] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/sketch_pattern_edit.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/sketch_pattern_edit.py
+[8/104] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/sketch_pattern_legacy.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/sketch_pattern_legacy.py
+[9/104] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[10/103] Linking CXX shared library bin\FreeCADBase.dll
+[11/103] Automatic MOC and UIC for target FreeCADApp
+[12/102] Generating qrc_App_translation.cpp
+[13/102] Building CXX object src\App\CMakeFiles\FreeCADApp.dir\qrc_App_translation.cpp.obj
+[14/102] Linking CXX shared library bin\FreeCADApp.dll
+[15/98] Automatic MOC and UIC for target FreeCADGui
+[16/97] Generating qrc_FreeCAD_translation.cpp
+[17/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\qrc_FreeCAD_translation.cpp.obj
+[18/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Clipping.cpp.obj
+[19/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DemoMode.cpp.obj
+[20/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TaskDlgRelocation.cpp.obj
+[21/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\InputVector.cpp.obj
+[22/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\SceneInspector.cpp.obj
+[23/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Placement.cpp.obj
+[24/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TextureMapping.cpp.obj
+[25/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DownloadItem.cpp.obj
+[26/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DownloadManager.cpp.obj
+[27/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Transform.cpp.obj
+[28/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\VectorListEditor.cpp.obj
+[29/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\DocumentRecovery.cpp.obj
+[30/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\TaskElementColors.cpp.obj
+[31/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\NetworkRetriever.cpp.obj
+[32/97] Building CXX object src\Gui\CMakeFiles\FreeCADGui.dir\Widgets.cpp.obj
+[33/97] Linking CXX shared library bin\FreeCADGui.dll
+[34/97] Automatic MOC and UIC for target MatGui
+[35/96] Generating qrc_Material_translation.cpp
+[36/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\qrc_Material_translation.cpp.obj
+[37/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\Array3D.cpp.obj
+[38/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\Array2D.cpp.obj
+[39/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgDisplayPropertiesImp.cpp.obj
+[40/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgInspectAppearance.cpp.obj
+[41/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgInspectMaterial.cpp.obj
+[42/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgSettingsDefaultMaterial.cpp.obj
+[43/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgSettingsMaterial.cpp.obj
+[44/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\DlgMaterialImp.cpp.obj
+[45/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\ImageEdit.cpp.obj
+[46/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\ListEdit.cpp.obj
+[47/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\MaterialSave.cpp.obj
+[48/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\MaterialsEditor.cpp.obj
+[49/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\MaterialTreeWidget.cpp.obj
+[50/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\ModelSelect.cpp.obj
+[51/96] Building CXX object src\Mod\Material\Gui\CMakeFiles\MatGui.dir\TextEdit.cpp.obj
+[52/96] Linking CXX shared library Mod\Material\MatGui.pyd
+[53/96] Automatic MOC and UIC for target PartGui
+[54/95] Generating qrc_Part_translation.cpp
+[55/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\qrc_Part_translation.cpp.obj
+[56/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\Mirroring.cpp.obj
+[57/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgBooleanOperation.cpp.obj
+[58/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgExportStep.cpp.obj
+[59/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\CrossSections.cpp.obj
+[60/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgExtrusion.cpp.obj
+[61/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgScale.cpp.obj
+[62/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgImportStep.cpp.obj
+[63/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgFilletEdges.cpp.obj
+[64/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartImportIgesImp.cpp.obj
+[65/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartImportStepImp.cpp.obj
+[66/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartBoxImp.cpp.obj
+[67/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPartCylinderImp.cpp.obj
+[68/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgSettings3DViewPartImp.cpp.obj
+[69/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgSettingsGeneral.cpp.obj
+[70/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgRevolution.cpp.obj
+[71/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgSettingsObjectColor.cpp.obj
+[72/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgPrimitives.cpp.obj
+[73/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\PatternParametersWidget.cpp.obj
+[74/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\DlgProjectionOnSurface.cpp.obj
+[75/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskShapeBuilder.cpp.obj
+[76/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskFaceAppearances.cpp.obj
+[77/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\SectionCutting.cpp.obj
+[78/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskLoft.cpp.obj
+[79/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskOffset.cpp.obj
+[80/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskSweep.cpp.obj
+[81/95] Building CXX object src\Mod\Part\Gui\CMakeFiles\PartGui.dir\TaskThickness.cpp.obj
+[82/95] Linking CXX shared library Mod\Part\PartGui.pyd
+[83/95] Automatic MOC and UIC for target SketcherGui
+[84/94] Generating qrc_Sketcher_translation.cpp
+[85/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\qrc_Sketcher_translation.cpp.obj
+[86/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherElements.cpp.obj
+[87/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherConstraints.cpp.obj
+[88/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherTools.cpp.obj
+[89/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\SketcherToolDefaultWidget.cpp.obj
+[90/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherSolverAdvanced.cpp.obj
+[91/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherValidation.cpp.obj
+[92/94] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\ViewProviderSketch.cpp.obj
+[93/94] Linking CXX shared library Mod\Sketcher\SketcherGui.pyd

@@ -1353,6 +1353,24 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
+### Approved existing Sketch Pattern editor — November 24, 2026
+
+Owner requested double-clicking either the Pattern icon in the sketch or its
+constraint-list entry to reopen the populated Sketch Pattern task, then approved
+the concrete workflow with “Approve and implement”. This replaces the pitch-only
+popup described below. The dedicated panel restores original geometry, counts,
+spacing modes/values, direction references, reverse and one/two/symmetric extents,
+linear/circular and angular/radial modes, explicit units and spacing-chain choices.
+The current pattern previews its replacement while pending edits leave the saved
+model unchanged. Done on the left updates and closes; Apply on the right updates
+and clears for another pattern; Cancel/Escape discards the pending edits.
+Preserve the single nonexpandable group entry/icon, native constraints, surviving
+geometry identities, Undo/Redo and save/reopen. Dependency conflicts retain the
+inputs and explain what prevents the edit. Older grouped patterns may recover an
+equivalent current layout where the spacing topology is unambiguous; unavailable
+historical authoring choices must not be invented.
+See [approval, native captures and implementation](../evidence/pattern-edit-20261124/README.md).
+
 ### Approved Pattern constraint presentation — November 24, 2026
 
 Owner approved the concrete single-icon/list presentation in chat: “Approve this
@@ -1360,8 +1378,8 @@ presentation”. Each newly created sketch pattern represents all its generated
 constraints with one Pattern icon in the viewer and one Pattern row in the constraint
 list. There are no expandable children. Source constraints remain separate. The group
 is selectable; deleting it removes its relationships while retaining geometry, and
-Undo restores them. Double-click provides the independent pitches through the native
-dimension editor, including explicit-unit persistence. Hide spacing chain hides the
+Undo restores them. The later approved existing-pattern editor above supersedes the
+initial pitch-only double-click popup and retains explicit units. Hide spacing chain hides the
 helper geometry and every associated constraint graphic, including the Pattern icon;
 the list entry remains available. Showing it restores one icon. Existing legacy
 patterns retain their independent constraints rather than guessing membership.

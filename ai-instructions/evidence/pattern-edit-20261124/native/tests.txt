@@ -1,0 +1,194 @@
+Running main() from C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\tests\lib\googletest\src\gtest_main.cc
+[==========] Running 88 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 18 tests from ConstraintPointsAccess
+[ RUN      ] ConstraintPointsAccess.testDefaultGeoElementIdsAreSane
+[       OK ] ConstraintPointsAccess.testDefaultGeoElementIdsAreSane (0 ms)
+[ RUN      ] ConstraintPointsAccess.testOldWriteIsReadByNew
+[       OK ] ConstraintPointsAccess.testOldWriteIsReadByNew (0 ms)
+[ RUN      ] ConstraintPointsAccess.testNewWriteIsReadByOld
+[       OK ] ConstraintPointsAccess.testNewWriteIsReadByOld (0 ms)
+[ RUN      ] ConstraintPointsAccess.testThreeElementsByDefault
+[       OK ] ConstraintPointsAccess.testThreeElementsByDefault (0 ms)
+[ RUN      ] ConstraintPointsAccess.testFourElementsWhenAddingOne
+[       OK ] ConstraintPointsAccess.testFourElementsWhenAddingOne (0 ms)
+[ RUN      ] ConstraintPointsAccess.testElementSerializationWhenAccessingOldWay
+[       OK ] ConstraintPointsAccess.testElementSerializationWhenAccessingOldWay (0 ms)
+[ RUN      ] ConstraintPointsAccess.testElementSerializationWhenAccessingNewWay
+[       OK ] ConstraintPointsAccess.testElementSerializationWhenAccessingNewWay (0 ms)
+[ RUN      ] ConstraintPointsAccess.testElementSerializationWhenMixingOldAndNew
+[       OK ] ConstraintPointsAccess.testElementSerializationWhenMixingOldAndNew (0 ms)
+[ RUN      ] ConstraintPointsAccess.testElementsRestoredFromSerialization
+[       OK ] ConstraintPointsAccess.testElementsRestoredFromSerialization (1 ms)
+[ RUN      ] ConstraintPointsAccess.testElementsRestoredFromSerializationWithoutNewElementStorage
+[       OK ] ConstraintPointsAccess.testElementsRestoredFromSerializationWithoutNewElementStorage (1 ms)
+[ RUN      ] ConstraintPointsAccess.testLegacyIsPreferedDuringSerializationWithoutLegacyElementStorage
+[       OK ] ConstraintPointsAccess.testLegacyIsPreferedDuringSerializationWithoutLegacyElementStorage (1 ms)
+[ RUN      ] ConstraintPointsAccess.testLegacyIsPreferedDuringSerializationIfContradicting
+[       OK ] ConstraintPointsAccess.testLegacyIsPreferedDuringSerializationIfContradicting (1 ms)
+[ RUN      ] ConstraintPointsAccess.testSubstituteIndex
+[       OK ] ConstraintPointsAccess.testSubstituteIndex (0 ms)
+[ RUN      ] ConstraintPointsAccess.testSubstituteIndexAndPos
+[       OK ] ConstraintPointsAccess.testSubstituteIndexAndPos (0 ms)
+[ RUN      ] ConstraintPointsAccess.testInvolvesGeoId
+[       OK ] ConstraintPointsAccess.testInvolvesGeoId (0 ms)
+[ RUN      ] ConstraintPointsAccess.testInvolvesGeoIdAndPosId
+[       OK ] ConstraintPointsAccess.testInvolvesGeoIdAndPosId (0 ms)
+[ RUN      ] ConstraintPointsAccess.testLegacyWriteReflectedInInvolvesAndSubstitute
+[       OK ] ConstraintPointsAccess.testLegacyWriteReflectedInInvolvesAndSubstitute (0 ms)
+[ RUN      ] ConstraintPointsAccess.testSubstituteUpdatesLegacyFieldsToo
+[       OK ] ConstraintPointsAccess.testSubstituteUpdatesLegacyFieldsToo (0 ms)
+[----------] 18 tests from ConstraintPointsAccess (5 ms total)
+
+[----------] 68 tests from SketchObjectTest
+[ RUN      ] SketchObjectTest.createSketchObject
+[       OK ] SketchObjectTest.createSketchObject (186 ms)
+[ RUN      ] SketchObjectTest.testGeoIdFromShapeTypeEdge
+[       OK ] SketchObjectTest.testGeoIdFromShapeTypeEdge (1 ms)
+[ RUN      ] SketchObjectTest.testGeoIdFromShapeTypeVertex
+[       OK ] SketchObjectTest.testGeoIdFromShapeTypeVertex (1 ms)
+[ RUN      ] SketchObjectTest.testGeoIdFromShapeTypeExternalEdge
+[       OK ] SketchObjectTest.testGeoIdFromShapeTypeExternalEdge (1 ms)
+[ RUN      ] SketchObjectTest.testGeoIdFromShapeTypeHAxis
+[       OK ] SketchObjectTest.testGeoIdFromShapeTypeHAxis (1 ms)
+[ RUN      ] SketchObjectTest.testGeoIdFromShapeTypeVAxis
+[       OK ] SketchObjectTest.testGeoIdFromShapeTypeVAxis (1 ms)
+[ RUN      ] SketchObjectTest.testGeoIdFromShapeTypeRootPoint
+[       OK ] SketchObjectTest.testGeoIdFromShapeTypeRootPoint (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomPoint
+[       OK ] SketchObjectTest.testGetPointFromGeomPoint (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomLineSegment
+[       OK ] SketchObjectTest.testGetPointFromGeomLineSegment (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomCircle
+[       OK ] SketchObjectTest.testGetPointFromGeomCircle (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomEllipse
+[       OK ] SketchObjectTest.testGetPointFromGeomEllipse (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomArcOfCircle
+[       OK ] SketchObjectTest.testGetPointFromGeomArcOfCircle (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomArcOfEllipse
+[       OK ] SketchObjectTest.testGetPointFromGeomArcOfEllipse (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomArcOfHyperbola
+[       OK ] SketchObjectTest.testGetPointFromGeomArcOfHyperbola (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomArcOfParabola
+[       OK ] SketchObjectTest.testGetPointFromGeomArcOfParabola (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomBSplineCurveNonPeriodic
+[       OK ] SketchObjectTest.testGetPointFromGeomBSplineCurveNonPeriodic (1 ms)
+[ RUN      ] SketchObjectTest.testGetPointFromGeomBSplineCurvePeriodic
+[       OK ] SketchObjectTest.testGetPointFromGeomBSplineCurvePeriodic (1 ms)
+[ RUN      ] SketchObjectTest.testConstraintAfterDeletingGeo
+[       OK ] SketchObjectTest.testConstraintAfterDeletingGeo (1 ms)
+[ RUN      ] SketchObjectTest.testDeleteExposeInternalGeometryOfEllipse
+[       OK ] SketchObjectTest.testDeleteExposeInternalGeometryOfEllipse (1 ms)
+[ RUN      ] SketchObjectTest.testDeleteExposeInternalGeometryOfHyperbola
+[       OK ] SketchObjectTest.testDeleteExposeInternalGeometryOfHyperbola (1 ms)
+[ RUN      ] SketchObjectTest.testDeleteExposeInternalGeometryOfParabola
+[       OK ] SketchObjectTest.testDeleteExposeInternalGeometryOfParabola (1 ms)
+[ RUN      ] SketchObjectTest.testDeleteExposeInternalGeometryOfBSpline
+[       OK ] SketchObjectTest.testDeleteExposeInternalGeometryOfBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testDeleteOnlyUnusedInternalGeometryOfBSpline
+[       OK ] SketchObjectTest.testDeleteOnlyUnusedInternalGeometryOfBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionNoUnits1
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionNoUnits1 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionNoUnits2
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionNoUnits2 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits1
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits1 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits2
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits2 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits3
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits3 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits4
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionWithUnits4 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionApplyAndReverse1
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionApplyAndReverse1 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionApplyAndReverse2
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionApplyAndReverse2 (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionSimple
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionSimple (1 ms)
+[ RUN      ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionApplyAndReverse
+[       OK ] SketchObjectTest.testReverseAngleConstraintToSupplementaryExpressionApplyAndReverse (1 ms)
+[ RUN      ] SketchObjectTest.testGetElementName
+[       OK ] SketchObjectTest.testGetElementName (2 ms)
+[ RUN      ] SketchObjectTest.testSplitLineSegment
+[       OK ] SketchObjectTest.testSplitLineSegment (2 ms)
+[ RUN      ] SketchObjectTest.testSplitCircle
+[       OK ] SketchObjectTest.testSplitCircle (1 ms)
+[ RUN      ] SketchObjectTest.testSplitEllipse
+[       OK ] SketchObjectTest.testSplitEllipse (1 ms)
+[ RUN      ] SketchObjectTest.testSplitArcOfCircle
+[       OK ] SketchObjectTest.testSplitArcOfCircle (1 ms)
+[ RUN      ] SketchObjectTest.testSplitArcOfConic
+[       OK ] SketchObjectTest.testSplitArcOfConic (1 ms)
+[ RUN      ] SketchObjectTest.testSplitNonPeriodicBSpline
+[       OK ] SketchObjectTest.testSplitNonPeriodicBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testSplitPeriodicBSpline
+[       OK ] SketchObjectTest.testSplitPeriodicBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testTrimWithoutIntersection
+[       OK ] SketchObjectTest.testTrimWithoutIntersection (1 ms)
+[ RUN      ] SketchObjectTest.testTrimLineSegmentEnd
+[       OK ] SketchObjectTest.testTrimLineSegmentEnd (1 ms)
+[ RUN      ] SketchObjectTest.testTrimLineSegmentMid
+[       OK ] SketchObjectTest.testTrimLineSegmentMid (1 ms)
+[ RUN      ] SketchObjectTest.testTrimCircleEnd
+[       OK ] SketchObjectTest.testTrimCircleEnd (1 ms)
+[ RUN      ] SketchObjectTest.testTrimCircleMid
+[       OK ] SketchObjectTest.testTrimCircleMid (1 ms)
+[ RUN      ] SketchObjectTest.testTrimArcOfCircleEnd
+[       OK ] SketchObjectTest.testTrimArcOfCircleEnd (1 ms)
+[ RUN      ] SketchObjectTest.testTrimArcOfCircleMid
+[       OK ] SketchObjectTest.testTrimArcOfCircleMid (1 ms)
+[ RUN      ] SketchObjectTest.testTrimEllipseEnd
+[       OK ] SketchObjectTest.testTrimEllipseEnd (1 ms)
+[ RUN      ] SketchObjectTest.testTrimEllipseMid
+[       OK ] SketchObjectTest.testTrimEllipseMid (2 ms)
+[ RUN      ] SketchObjectTest.testTrimPeriodicBSplineEnd
+[       OK ] SketchObjectTest.testTrimPeriodicBSplineEnd (1 ms)
+[ RUN      ] SketchObjectTest.testTrimPeriodicBSplineMid
+[       OK ] SketchObjectTest.testTrimPeriodicBSplineMid (1 ms)
+[ RUN      ] SketchObjectTest.testTrimNonPeriodicBSplineEnd
+[       OK ] SketchObjectTest.testTrimNonPeriodicBSplineEnd (1 ms)
+[ RUN      ] SketchObjectTest.testTrimNonPeriodicBSplineMid
+[       OK ] SketchObjectTest.testTrimNonPeriodicBSplineMid (1 ms)
+[ RUN      ] SketchObjectTest.testTrimEffectOnConstruction
+[       OK ] SketchObjectTest.testTrimEffectOnConstruction (1 ms)
+[ RUN      ] SketchObjectTest.testTrimEndEffectOnFullLengthConstraints
+[       OK ] SketchObjectTest.testTrimEndEffectOnFullLengthConstraints (1 ms)
+[ RUN      ] SketchObjectTest.testTrimEndEffectOnSymmetricConstraints
+[       OK ] SketchObjectTest.testTrimEndEffectOnSymmetricConstraints (1 ms)
+[ RUN      ] SketchObjectTest.testTrimEndEffectOnUnrelatedTangent
+[       OK ] SketchObjectTest.testTrimEndEffectOnUnrelatedTangent (1 ms)
+[ RUN      ] SketchObjectTest.testModifyKnotMultInNonPeriodicBSplineToZero
+[       OK ] SketchObjectTest.testModifyKnotMultInNonPeriodicBSplineToZero (1 ms)
+[ RUN      ] SketchObjectTest.testModifyKnotMultInNonPeriodicBSplineToDisallowed
+[       OK ] SketchObjectTest.testModifyKnotMultInNonPeriodicBSplineToDisallowed (1 ms)
+[ RUN      ] SketchObjectTest.testModifyKnotMultInNonPeriodicBSpline
+[       OK ] SketchObjectTest.testModifyKnotMultInNonPeriodicBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testModifyKnotMultInPeriodicBSplineToZero
+[       OK ] SketchObjectTest.testModifyKnotMultInPeriodicBSplineToZero (1 ms)
+[ RUN      ] SketchObjectTest.testModifyKnotMultInPeriodicBSplineToDisallowed
+[       OK ] SketchObjectTest.testModifyKnotMultInPeriodicBSplineToDisallowed (1 ms)
+[ RUN      ] SketchObjectTest.testModifyKnotMultInPeriodicBSpline
+[       OK ] SketchObjectTest.testModifyKnotMultInPeriodicBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testInsertKnotInNonPeriodicBSpline
+[       OK ] SketchObjectTest.testInsertKnotInNonPeriodicBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testInsertKnotInPeriodicBSpline
+[       OK ] SketchObjectTest.testInsertKnotInPeriodicBSpline (1 ms)
+[ RUN      ] SketchObjectTest.testJoinCurves
+[       OK ] SketchObjectTest.testJoinCurves (1 ms)
+[ RUN      ] SketchObjectTest.testJoinCurvesWhenTangent
+[       OK ] SketchObjectTest.testJoinCurvesWhenTangent (2 ms)
+[----------] 68 tests from SketchObjectTest (301 ms total)
+
+[----------] 1 test from GCSTest
+[ RUN      ] GCSTest.clearConstraints
+[       OK ] GCSTest.clearConstraints (0 ms)
+[----------] 1 test from GCSTest (0 ms total)
+
+[----------] 1 test from ConstraintsTest
+[ RUN      ] ConstraintsTest.tangentBSplineAndArc
+[       OK ] ConstraintsTest.tangentBSplineAndArc (0 ms)
+[----------] 1 test from ConstraintsTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 88 tests from 4 test suites ran. (378 ms total)
+[  PASSED  ] 88 tests.

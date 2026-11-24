@@ -195,38 +195,17 @@ class TestPatternGroupView(unittest.TestCase):
         self.assertEqual(sum(bool(v) for v in self.nodes().enable.getValues()),2)
 
     def test_group_pitch_editor_preserves_units(self):
-        from PySide6 import QtCore,QtTest,QtWidgets
+        from PySide6 import QtTest,QtWidgets
         self.s.addConstraint(Sketcher.Constraint('Distance',0,4.))
         pattern.apply(self.s,[0],fixtures.linear(),True)
         widget,rows=self.rows();row=next(r for r in rows if r.text().startswith('Pattern'))
-        errors=[];seen=[]
-        def interact():
-            try:
-                menu=QtWidgets.QApplication.activePopupWidget()
-                if isinstance(menu,QtWidgets.QMenu):
-                    action=menu.actions()[0];seen.append(action.text())
-                    menu.setActiveAction(action);QtTest.QTest.keyClick(menu,QtCore.Qt.Key_Return)
-                    return
-                dialog=QtWidgets.QApplication.activeModalWidget()
-                if dialog:
-                    timer.stop()
-                    field=dialog.findChild(QtWidgets.QWidget,'labelEdit').findChild(QtWidgets.QLineEdit)
-                    field.setFocus();field.selectAll();QtTest.QTest.keyClicks(field,'0.123456 in')
-                    buttons=dialog.findChild(QtWidgets.QDialogButtonBox,'buttonBox')
-                    buttons.button(QtWidgets.QDialogButtonBox.Ok).setFocus()
-                    buttons.button(QtWidgets.QDialogButtonBox.Ok).click()
-            except BaseException as error:
-                errors.append(str(error));timer.stop()
-                dialog=QtWidgets.QApplication.activeModalWidget()
-                if dialog:dialog.reject()
-        timer=QtCore.QTimer();timer.timeout.connect(interact);timer.start(30)
-        watchdog=QtCore.QTimer();watchdog.setSingleShot(True)
-        def abort():
-            for w in (QtWidgets.QApplication.activeModalWidget(),QtWidgets.QApplication.activePopupWidget()):
-                if w:w.close()
-        watchdog.timeout.connect(abort);watchdog.start(5000)
-        widget.itemActivated.emit(row);timer.stop();watchdog.stop()
-        self.assertFalse(errors,errors);self.assertEqual(seen,['Direction 1 pitch'])
+        widget.itemActivated.emit(row);QtTest.QTest.qWait(200)
+        panel=self.win.findChild(QtWidgets.QWidget,'SketchPatternPanel')
+        self.assertIsNotNone(panel)
+        self.assertTrue(panel.edit_group)
+        field=panel.d1.value.lineEdit();field.setFocus();field.selectAll()
+        QtTest.QTest.keyClicks(field,'0.123456 in');panel.items.setFocus();QtTest.QTest.qWait(50)
+        panel.done.click();QtTest.QTest.qWait(100)
         c=next(c for c in self.s.Constraints if c.PatternDriver)
         self.assertEqual(c.PresentationUnit,'in');self.assertAlmostEqual(c.Value,.123456*25.4,places=10)
         self.assertEqual(self.s.solve(),0)

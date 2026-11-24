@@ -1,5 +1,22 @@
 # FreeCAD Plus: Current work state
 
+## Existing Sketch Pattern editing — installed
+
+November 24, 2026. Owner approved the populated editor and Apply/Done/Cancel
+workflow. Double-click either the single Pattern icon or constraint-list entry to
+edit original geometry, counts, spacing and directions, including angular/radial
+patterns and explicit units. Preview replaces the old instances without changing
+the document. Done updates/closes; Apply updates/clears; Cancel discards pending
+edits. Persistent native geometry IDs preserve definitions across save/reopen;
+surviving copy identities and native spacing/Equal relationships are retained.
+Recoverable older grouped patterns open with an equivalent layout; ambiguous or
+dependent cases explain the blocker rather than discarding geometry.
+All 93 installed application checks and 88 native tests pass, plus four
+fresh-process saved-file edits and three existing-shortcut checks. A fixed-length
+12-by-12 grid applies in 4.04 seconds and edits in 3.80 seconds locally.
+Restart FreeCAD Plus to load the update. See
+[implementation, native captures and delivery](evidence/pattern-edit-20261124/README.md).
+
 ## Pattern groups and fixed-length grid speed — installed
 
 November 24, 2026. The owner approved one Pattern entry/icon without expandable

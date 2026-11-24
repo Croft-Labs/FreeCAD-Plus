@@ -175,7 +175,7 @@ class PatternControls(QtWidgets.QWidget):
 
 class PatternTask(PatternControls):
     """Controls owned by the native sketch tool; picks arrive through that tool."""
-    def __init__(self, host, sketch, ids):
+    def __init__(self, host, sketch, ids, group=''):
         self.host = host
         self.sketch = sketch
         self.closed = False
@@ -186,6 +186,10 @@ class PatternTask(PatternControls):
         self._helper_root=None
         self._helper_node=None
         self.ready = False
+        self.edit_group=group
+        self.edit_record=None
+        self.edit_error=''
+        self.updating=False
         super().__init__(host)
         self.setObjectName('SketchPatternPanel')
         host.setProperty('patternGeometryPicking', True)
@@ -212,7 +216,53 @@ class PatternTask(PatternControls):
         for spin in self.findChildren(QtWidgets.QAbstractSpinBox):
             spin.lineEdit().textEdited.connect(self.sync)
         self.activate_pick(self.items)
+        if group:
+            try:
+                from . import sketch_pattern_edit as editing
+                self.edit_record,ids,options=editing.load(sketch,group)
+                self.load_inputs(ids,options,self.edit_record['dimensions'])
+            except (ValueError,RuntimeError) as error:self.edit_error=str(error)
         self.sync()
+
+    def load_inputs(self,ids,options,dimensions):
+        self.ready=False
+        self.items.clear()
+        for i in ids:self.items.addItem('Edge'+str(i+1))
+        self.mode.setCurrentText(options.get('pattern','Linear'))
+        self.layout_mode.setCurrentText(options.get('directions','One direction'))
+        def set_reference(field,value):
+            self.references[field]=value
+            if value is None:field.clear();return
+            geo,pos=value
+            text=('Origin' if pos else 'X axis') if geo==-1 else 'Y axis' if geo==-2 else 'External '+str(-geo-2) if geo<0 else 'Edge'+str(geo+1)
+            if geo>=0 and pos:text+=' · '+('center' if pos==3 else 'point '+str(pos))
+            field.setText(text)
+        set_reference(self.center,options.get('center'))
+        for name in ('d1','d2','angular','radial'):
+            e=getattr(self,name);values=options.get(name,{})
+            if not values:continue
+            e.extent.setCurrentText(values.get('mode','One dimension'))
+            e.reverse.setChecked(values.get('reverse',False))
+            for suffix in ('','2'):
+                getattr(e,'spacing'+suffix).setCurrentText(values.get('spacing'+suffix,'Angular pitch' if name=='angular' else 'Pitch'))
+                getattr(e,'count'+suffix).setValue(values.get('count'+suffix,3))
+                value=getattr(e,'value'+suffix);value.setSuffix(values.get('unit'+suffix,'deg' if name=='angular' else 'mm'))
+                value.setValue(values.get('value'+suffix,10))
+            if e.kind=='linear':
+                e.method.setCurrentText(values.get('method','Axis or line'))
+                e.x.setValue(values.get('x',1));e.y.setValue(values.get('y',0))
+                for key in ('reference','start','end'):set_reference(getattr(e,key),values.get(key))
+            elif e.kind=='radial':set_reference(e.reference,values.get('reference'))
+        self.lock.setChecked(dimensions);self.hide_spacing.setChecked(options.get('hide_spacing',False))
+        self.ready=True
+
+    def get_hidden_geometry(self):
+        if not self.edit_record or self.updating:return []
+        from .sketch_pattern_edit import owned
+        hidden=owned(self.edit_record)
+        return [i for i,f in enumerate(self.sketch.GeometryFacadeList) if str(f.Id) in hidden]
+
+    def get_edit_group(self):return self.edit_group if not self.updating and not self.edit_error else ''
 
     def notify(self, action):
         if self.closed: return
@@ -222,7 +272,7 @@ class PatternTask(PatternControls):
     def toggle_spacing(self, hidden):
         # Pending controls affect only the preview. With no pending geometry the
         # checkbox can still show/hide existing saved chains.
-        if not self.items.count() and getattr(self.sketch, 'PatternSpacingTags', []):
+        if not self.edit_group and not self.items.count() and getattr(self.sketch, 'PatternSpacingTags', []):
             self.sketch.Document.openTransaction('Hide pattern spacing chain' if hidden else 'Show pattern spacing chain')
             try:
                 pattern.set_chain_hidden(self.sketch, hidden)
@@ -332,6 +382,8 @@ class PatternTask(PatternControls):
 
     def sync(self, *args):
         if not self.ready or self.closed: return
+        if self.edit_error:
+            self.apply.setEnabled(False);self.status.setError(self.edit_error);self.status.show();return
         for field in self.references:
             if not field.text(): self.references[field] = None
         super().sync()
@@ -353,6 +405,9 @@ class PatternTask(PatternControls):
                 self.apply.setEnabled(False)
                 self.status.setError(str(error)); self.status.show()
         self.update_helpers()
+        if self.edit_group and self.apply.isEnabled():
+            self.status.setText('Editing existing pattern. Changes replace its generated instances.')
+            self.status.show()
         self.notify('preview')
 
     def get_preview(self): return self._preview
@@ -389,12 +444,17 @@ class PatternTask(PatternControls):
     def apply_pattern(self):
         if not self.apply.isEnabled() or self.closed: return False
         try:
-            pattern.apply(self.sketch, self.geometry_ids(), self.options(), self.lock.isChecked())
+            if self.edit_group:
+                from . import sketch_pattern_edit as editing
+                self.updating=True;self.notify('preview')
+                editing.update(self.sketch,self.edit_group,self.geometry_ids(),self.options(),self.lock.isChecked())
+            else:pattern.apply(self.sketch, self.geometry_ids(), self.options(), self.lock.isChecked())
             import FreeCADGui as Gui
             Gui.Selection.clearSelection()
             self.reset_inputs()
             return True
         except Exception as error:
+            self.updating=False;self.notify('preview')
             self.status.setError(str(error)); self.status.show()
             return False
 
@@ -410,6 +470,7 @@ class PatternTask(PatternControls):
     def reset_inputs(self):
         if self.closed: return
         self.ready=False
+        self.edit_group='';self.edit_record=None;self.edit_error='';self.updating=False
         self.items.clear()
         for field in self.references:
             self.references[field] = None; field.clear()
@@ -424,9 +485,9 @@ class PatternTask(PatternControls):
         self._helper_preview=[]
 
 
-def create(host, sketch, ids):
+def create(host, sketch, ids, group=''):
     layout = QtWidgets.QVBoxLayout(host)
     layout.setContentsMargins(0, 0, 0, 0)
-    panel = PatternTask(host, sketch, ids)
+    panel = PatternTask(host, sketch, ids, group)
     layout.addWidget(panel)
     return panel

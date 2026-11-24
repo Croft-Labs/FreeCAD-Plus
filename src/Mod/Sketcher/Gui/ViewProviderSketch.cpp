@@ -71,6 +71,7 @@
 #include <Mod/Sketcher/App/SolverGeometryExtension.h>
 
 #include "DrawSketchHandler.h"
+#include "DrawSketchHandlerPattern.h"
 #include "EditDatumDialog.h"
 #include "EditModeCoinManager.h"
 #include "SnapManager.h"
@@ -1402,17 +1403,7 @@ void ViewProviderSketch::editDoubleClicked()
             Constraint* Constr = constrlist[id];
 
             if (!Constr->PatternGroup.empty()) {
-                QMenu menu;
-                for (int member : getSketchObject()->expandPatternConstraints({id})) {
-                    const auto* c = constrlist[member];
-                    if (c->PatternDriver.empty()) continue;
-                    auto* action = menu.addAction(QString::fromStdString(c->PatternDriver));
-                    action->setData(member);
-                }
-                if (auto* action = menu.exec(QCursor::pos())) {
-                    EditDatumDialog dialog(this, action->data().toInt());
-                    dialog.exec(false);
-                }
+                editPattern(Constr->PatternGroup);
                 return;
             }
 
@@ -4416,6 +4407,32 @@ const std::vector<Sketcher::Constraint*> ViewProviderSketch::getConstraints() co
     return getSketchObject()->Constraints.getValues();
 }
 
+void ViewProviderSketch::editPattern(const std::string& group)
+{
+    const std::string docName = getObject()->getDocument()->getName();
+    const std::string objName = getObject()->getNameInDocument();
+    // Activation replaces task widgets. Defer until the list/viewport event unwinds.
+    QTimer::singleShot(0, qApp, [docName, objName, group] {
+        auto* doc = App::GetApplication().getDocument(docName.c_str());
+        if (!doc) return;
+        auto* obj = doc->getObject(objName.c_str());
+        auto* vp = obj ? dynamic_cast<ViewProviderSketch*>(Gui::Application::Instance->getViewProvider(obj)) : nullptr;
+        if (vp && vp->isInEditMode())
+            ActivateHandler(vp->getDocument(), std::make_unique<DrawSketchHandlerPattern>(std::vector<int>{}, group));
+    });
+}
+
+void ViewProviderSketch::setPatternPreviewHidden(std::set<int> ids, std::string group)
+{
+    if (ids == patternPreviewHidden && group == patternPreviewGroup) return;
+    patternPreviewHidden = std::move(ids);
+    patternPreviewGroup = std::move(group);
+    patternDisplaySources.clear();
+    patternDisplayConstraints.clear();
+    patternDisplayCopies.clear();
+    if (isInEditMode()) draw(false, true);
+}
+
 const std::vector<Sketcher::Constraint*> ViewProviderSketch::getDisplayConstraints() const
 {
     const auto& values = getSketchObject()->Constraints.getValues();
@@ -4435,11 +4452,20 @@ const std::vector<Sketcher::Constraint*> ViewProviderSketch::getDisplayConstrain
     }
     std::set<std::string> seen;
     for (const auto* c : values) {
-        if (c->PatternGroup.empty()) {
+        const bool hidden = (!patternPreviewGroup.empty() && c->PatternGroup == patternPreviewGroup)
+            || patternPreviewHidden.contains(c->First) || patternPreviewHidden.contains(c->Second)
+            || patternPreviewHidden.contains(c->Third);
+        if (c->PatternGroup.empty() && !hidden) {
             patternDisplayConstraints.push_back(const_cast<Sketcher::Constraint*>(c));
             continue;
         }
         auto display = std::unique_ptr<Sketcher::Constraint>(c->clone());
+        if (c->PatternGroup.empty()) {
+            display->isVisible = false;
+            patternDisplayConstraints.push_back(display.get());
+            patternDisplayCopies.push_back(std::move(display));
+            continue;
+        }
         const bool first = seen.insert(c->PatternGroup).second;
         // Display-only Block layout supplies a single pickable icon. The real
         // solver constraint type and its persisted equations are untouched.
@@ -4449,7 +4475,7 @@ const std::vector<Sketcher::Constraint*> ViewProviderSketch::getDisplayConstrain
         display->Second = display->Third = Sketcher::GeoEnum::GeoUndef;
         display->SecondPos = display->ThirdPos = Sketcher::PointPos::none;
         display->Name.clear();
-        display->isVisible = first && c->isVisible;
+        display->isVisible = first && c->isVisible && !hidden;
         patternDisplayConstraints.push_back(display.get());
         patternDisplayCopies.push_back(std::move(display));
     }

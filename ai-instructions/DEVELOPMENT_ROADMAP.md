@@ -1,5 +1,16 @@
 # FreeCAD Plus: Development roadmap
 
+## Existing Sketch Pattern editing — November 24, 2026
+
+- [x] Obtain explicit approval of the populated editor and Done/Apply/Cancel workflow.
+- [x] Route both the native Pattern icon and constraint-list double-click to the dedicated task.
+- [x] Persist full definitions using native geometry IDs; retain surviving copies and group identity.
+- [x] Preview replacements without saved mutations; rebuild constraints/chains atomically with Undo.
+- [x] Recover unambiguous older groups and explain unsupported/dependent edits.
+- [x] Install and pass 93 application checks, 88 native tests, four fresh-process file
+  edits and three checks through the existing desktop shortcut. Local 12-by-12 line
+  editing: 3.80 seconds. See [evidence](evidence/pattern-edit-20261124/README.md).
+
 ## Pattern groups and fixed-length grid speed — November 24, 2026
 
 - [x] Obtain approval of the single entry/icon and complete hidden-chain presentation.

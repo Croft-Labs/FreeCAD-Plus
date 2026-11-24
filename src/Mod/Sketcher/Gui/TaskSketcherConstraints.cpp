@@ -1187,18 +1187,7 @@ void TaskSketcherConstraints::onListWidgetConstraintsItemActivated(QListWidgetIt
     const auto* sketch = sketchView->getSketchObject();
     const auto& group = sketch->Constraints[it->ConstraintNbr]->PatternGroup;
     if (!group.empty()) {
-        QMenu menu;
-        for (int id : sketch->expandPatternConstraints({it->ConstraintNbr})) {
-            const auto* c = sketch->Constraints[id];
-            if (c->PatternDriver.empty()) continue;
-            auto* action = menu.addAction(QString::fromStdString(c->PatternDriver));
-            action->setData(id);
-        }
-        if (menu.isEmpty()) return;
-        if (auto* action = menu.exec(QCursor::pos())) {
-            EditDatumDialog dialog(sketchView, action->data().toInt());
-            dialog.exec(false);
-        }
+        sketchView->editPattern(group);
         return;
     }
 

@@ -668,7 +668,7 @@ def _spacing_chains(sketch, ids, instances, options, chain=None):
     return chain
 
 
-def _group_pattern_constraints(sketch, first, options, chain):
+def _group_pattern_constraints(sketch, first, options, chain, identity=None, previous_label=''):
     constraints = sketch.Constraints
     if first == len(constraints): return
     if not hasattr(constraints[first], 'PatternGroup'):
@@ -686,7 +686,9 @@ def _group_pattern_constraints(sketch, first, options, chain):
         counts = [len(extent_values(options['d1']))]
         if options.get('directions') == 'Two directions': counts.append(len(extent_values(options['d2'])))
     label = 'Pattern %d — ' % number + ' × '.join(map(str,counts))
-    identity = uuid.uuid4().hex
+    identity = identity or uuid.uuid4().hex
+    if previous_label:
+        label = previous_label.split(' — ')[0] + ' — ' + ' × '.join(map(str,counts))
     for c in constraints[first:]:
         c.PatternGroup = identity
         c.PatternLabel = label
@@ -704,16 +706,17 @@ def _group_pattern_constraints(sketch, first, options, chain):
                         break
     sketch.Constraints = constraints
     sketch.setVisibility(list(range(first,len(constraints))),not options.get('hide_spacing',False))
+    return identity
 
 
-def apply(sketch, ids, options, dimensions=False):
+def apply(sketch, ids, options, dimensions=False, *, _reuse=None, _identity=None, _label='', _transaction=True):
     """Apply atomically, preserving source freedom and grouping new constraints."""
     ids = operation_geometry(sketch, ids)
     placements = transforms(sketch, options)
     preview(sketch, ids, options) # Validate bounds and geometry before opening a transaction.
     if sketch.solve() != 0: raise ValueError('Resolve the existing sketch constraints before applying a pattern.')
     doc = sketch.Document
-    doc.openTransaction('Sketch Pattern')
+    if _transaction: doc.openTransaction('Sketch Pattern')
     try:
         if dimensions:
             for i in list(ids):
@@ -726,28 +729,34 @@ def apply(sketch, ids, options, dimensions=False):
         line_only = options.get('pattern','Linear') != 'Circular' or options.get('directions') == 'Radial'
         rigid_lines = _fixed_length_lines(sketch, ids) if dimensions and line_only else set()
         originals = [(i, geometry(sketch, i), sketch.getConstruction(i)) for i in ids]
-        generated = [(transformed(g, transform), construction)
-                     for transform in placements for _, g, construction in originals]
+        generated = [(n,i,transformed(g, transform),construction)
+                     for n,transform in enumerate(placements) for i,g,construction in originals
+                     if i not in (_reuse or {}).get(n,{})]
         first = sketch.GeometryCount
         # Keep original ordering, including mixtures of construction/normal curves.
-        for construction, group in groupby(generated, key=lambda item: item[1]):
-            sketch.addGeometry([g for g, _ in group], construction)
+        for construction, group in groupby(generated, key=lambda item: item[3]):
+            sketch.addGeometry([g for _,_,g,_ in group], construction)
+        added={(n,i):first+k for k,(n,i,_,_) in enumerate(generated)}
         result = []
         instances = []
         batch = _ConstraintBatch(sketch)
         for n, transform in enumerate(placements):
-            mapping = dict(zip(ids, range(first+n*len(ids), first+(n+1)*len(ids))))
+            mapping={i:(_reuse or {}).get(n,{}).get(i,added.get((n,i))) for i in ids}
             _copy_constraints(sketch, source, mapping, transform, dimensions, batch, rigid_lines)
             instances.append(mapping)
             result.extend(mapping.values())
         batch.flush()
         chain = _spacing_chains(sketch, ids, instances, options) if dimensions else None
-        _group_pattern_constraints(sketch, len(source), options, chain)
+        identity=_group_pattern_constraints(sketch, len(source), options, chain, _identity, _label)
+        if identity:
+            from .sketch_pattern_edit import save_definition
+            save_definition(sketch,identity,ids,options,dimensions,instances,chain.helpers if chain else [])
         if sketch.solve() != 0: raise ValueError('The generated pattern could not be solved.')
         doc.recompute()
-        doc.commitTransaction()
+        if _transaction: doc.commitTransaction()
         return result
     except Exception:
-        doc.abortTransaction()
-        sketch.solve()
+        if _transaction:
+            doc.abortTransaction()
+            sketch.solve()
         raise

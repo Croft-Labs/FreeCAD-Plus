@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "files": [
+    {
+      "file": "edited-pattern.FCStd",
+      "recovered": false,
+      "count": 6
+    },
+    {
+      "file": "external-pattern.FCStd",
+      "recovered": false,
+      "count": 5
+    },
+    {
+      "file": "fixed-line-grid12.FCStd",
+      "recovered": true,
+      "count": 13
+    },
+    {
+      "file": "grid12.FCStd",
+      "recovered": true,
+      "count": 13
+    }
+  ]
+}

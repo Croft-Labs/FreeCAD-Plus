@@ -544,6 +544,9 @@ public:
     void activateHandler(std::unique_ptr<DrawSketchHandler> newHandler);
     /// removes the active handler
     void purgeHandler(bool clearSelection = true);
+    void editPattern(const std::string& group);
+    void setPatternPreviewHidden(std::set<int> ids, std::string group);
+    bool isPatternPreviewHidden(int id) const { return patternPreviewHidden.contains(id); }
     //@}
 
 
@@ -1012,6 +1015,8 @@ private:
 
     bool blockContextMenu;
     mutable std::vector<Sketcher::Constraint*> patternDisplaySources;
+    std::set<int> patternPreviewHidden;
+    std::string patternPreviewGroup;
     mutable std::vector<std::unique_ptr<Sketcher::Constraint>> patternDisplayCopies;
     mutable std::vector<Sketcher::Constraint*> patternDisplayConstraints;
 };

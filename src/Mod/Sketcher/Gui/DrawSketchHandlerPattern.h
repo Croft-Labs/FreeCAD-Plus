@@ -40,11 +40,13 @@ class DrawSketchHandlerPattern: public DrawSketchHandler
 {
     Q_DECLARE_TR_FUNCTIONS(SketcherGui::DrawSketchHandlerPattern)
 public:
-    explicit DrawSketchHandlerPattern(std::vector<int> ids): initialIds(std::move(ids)) {}
+    explicit DrawSketchHandlerPattern(std::vector<int> ids, std::string group = {})
+        : initialIds(std::move(ids)), editGroup(std::move(group)) {}
     ~DrawSketchHandlerPattern() override
     {
         if (widget) widget->action = {};
         call("detach");
+        if (sketchgui) sketchgui->setPatternPreviewHidden({}, {});
         Base::PyGILStateLocker lock;
         panel = Py::None();
     }
@@ -134,12 +136,13 @@ protected:
             wrapper.loadGuiModule();
             wrapper.loadWidgetsModule();
             Py::Module module(PyImport_ImportModule("freecad_plus.sketch_pattern_task"), true);
-            Py::Tuple args(3);
+            Py::Tuple args(4);
             args[0] = wrapper.fromQWidget(widget);
             args[1] = Py::Object(getSketchObject()->getPyObject(), true);
             Py::List ids;
             for (int id : initialIds) ids.append(Py::Long(id));
             args[2] = ids;
+            args[3] = Py::String(editGroup);
             panel = Py::Callable(module.getAttr("create")).apply(args);
             widget->action = [this](const QString& action) {
                 if (action == QStringLiteral("finish")) {
@@ -187,6 +190,11 @@ private:
         Base::PyGILStateLocker lock;
         if (panel.isNone()) return;
         try {
+            Py::List hidden(Py::Callable(panel.getAttr("get_hidden_geometry")).apply(Py::Tuple()));
+            std::set<int> ids;
+            for (const Py::Object& id : hidden) ids.insert(int(Py::Long(id)));
+            Py::String group(Py::Callable(panel.getAttr("get_edit_group")).apply(Py::Tuple()));
+            sketchgui->setPatternPreviewHidden(std::move(ids), group.as_std_string());
             Py::List geometries(Py::Callable(panel.getAttr("get_preview")).apply(Py::Tuple()));
             std::vector<Part::Geometry*> preview;
             for (Py::Object geometry : geometries) {
@@ -199,6 +207,7 @@ private:
         catch (Py::Exception&) { Base::PyException().reportException(); }
     }
     std::vector<int> initialIds;
+    std::string editGroup;
     QPointer<PatternHostWidget> widget;
     Py::Object panel;
     bool syncing = false;
