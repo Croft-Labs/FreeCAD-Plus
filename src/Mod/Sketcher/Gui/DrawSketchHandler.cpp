@@ -1083,6 +1083,11 @@ void DrawSketchHandler::setAxisPickStyle(bool on)
     ViewProviderSketchDrawSketchHandlerAttorney::setAxisPickStyle(*sketchgui, on);
 }
 
+void DrawSketchHandler::setConstraintPickStyle(bool on)
+{
+    ViewProviderSketchDrawSketchHandlerAttorney::setConstraintSelectability(*sketchgui, on);
+}
+
 void DrawSketchHandler::moveCursorToSketchPoint(Base::Vector2d point)
 {
     ViewProviderSketchDrawSketchHandlerAttorney::moveCursorToSketchPoint(*sketchgui, point);

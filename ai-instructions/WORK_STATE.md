@@ -1,6 +1,6 @@
 # FreeCAD Plus: Current work state
 
-## Sketch Pattern preview awaiting approval - November 24, 2026
+## Sketch Pattern installed - November 24, 2026
 
 Owner requests a dedicated Mirror-style task replacing Move / Array Transform.
 Clarified counts include the original; circular spacing supports angular pitch or
@@ -8,11 +8,18 @@ total angle. Linear has one/two directions; each direction independently offers
 One dimension, Two dimensions (separate forward/backward values), or Symmetric.
 Circular has the same extent modes and Angular, Radial, or Angular + radial.
 
-Native Qt UI simulations and lifecycle checks pass. Direct screenshots, proposed
-count semantics, isolated candidate and implementation boundaries are recorded in
-[the pending review](evidence/sketch-pattern-preview-20261124/README.md).
-No production pattern implementation, app build or installation occurred. Continue
-after explicit screenshot/workflow approval; preserve unrelated project.previewfirst.json.
+Owner approved the [screenshots and workflow](evidence/sketch-pattern-preview-20261124/README.md)
+in chat: "approved. implement". The native tool bridge, Python task/geometry services,
+reference selection, live preview, optional relative dimensions and native transactions
+are implemented. Counts include the original; symmetric counts are odd, and full-circle
+totals do not duplicate the endpoint. Ordinary sketch panels restore on leaving the tool.
+
+Existing native build succeeded; 23 pattern cases and all 53 installed acceptance/
+regression cases passed. The unchanged desktop shortcut passed Apply/Undo/Done;
+a fresh process reopened the dimensioned native sketch with 4 source degrees of
+freedom. Installed files have verified hashes and native rollback copies. See
+[acceptance, limitations and screenshots](evidence/sketch-pattern-20261124/README.md).
+No release or EAS/Expo build occurred. Unrelated project.previewfirst.json remains untouched.
 
 ## Compatible symmetry redundancy installed - November 24, 2026
 

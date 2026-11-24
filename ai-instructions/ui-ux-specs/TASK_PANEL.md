@@ -1353,7 +1353,7 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
-### Sketch Pattern task proposal - November 24, 2026
+### Sketch Pattern task - approved November 24, 2026
 
 Owner requests a dedicated geometry-first task replacing Move / Array Transform,
 following Mirror's Apply/Done and task-section isolation. Linear supports one/two
@@ -1363,8 +1363,20 @@ Angular, Radial, or Angular + radial directions. Counts include the original;
 angular extents offer angular pitch or total angle. A compact click-add/Shift-remove
 collector, reference pickers, reverse and optional dimensions are required.
 
-The [concrete workflow, remaining proposed semantics and screenshots](../evidence/sketch-pattern-preview-20261124/README.md)
-await explicit approval. No production implementation is authorized by this record.
+The owner approved the [concrete workflow and screenshots](../evidence/sketch-pattern-preview-20261124/README.md)
+in chat: "approved. implement". Each side of Two dimensions counts the original,
+so its total is forward + backward - 1. Symmetric uses an odd total count around
+the original; total distance/angle spans both sides. Full-circle total angle uses
+360 / instances without duplicating the endpoint. Other overlapping angular
+extents are invalid. Combined direction totals multiply.
+
+Apply alone creates native geometry and optional relative dimensions, clears the
+geometry list and retains parameters/references. Done, Cancel and Escape discard
+pending input and restore the prior sketch sections, keeping earlier applies.
+Undo/Redo clears pending input and references. Rotation centers accept points,
+circle/arc centers and their radius/diameter dimensions. Radial reference defines
+outward, with translation without scaling; reject inward extents reaching center.
+Normal sketch axes, coordinate graphics and the separate move-only command remain.
 
 ### Compatible symmetry constraints - November 24, 2026
 

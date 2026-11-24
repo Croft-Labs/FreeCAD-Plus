@@ -55,6 +55,7 @@ SET(SketcherGui_SRCS
     DrawSketchHandlerPoint.h
     DrawSketchHandlerFillet.h
     DrawSketchHandlerTranslate.h
+    DrawSketchHandlerPattern.h
     DrawSketchHandlerTrimming.h
     DrawSketchHandlerExtend.h
     DrawSketchHandlerSplitting.h

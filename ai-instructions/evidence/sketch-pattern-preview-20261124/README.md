@@ -1,7 +1,7 @@
 # Sketch Pattern proposal - November 24, 2026
 
-Status: rendered UI proposal, awaiting explicit owner approval. No production
-source, installed application, native build, geometry or saved document changed.
+Status: owner approved these screenshots and workflow in chat: **"approved. implement"**.
+The captures below remain UI proposal evidence; implementation acceptance is recorded separately.
 
 ## Requested workflow and scope
 
@@ -43,8 +43,8 @@ independent positive and negative spacing/counts, not a second direction.
   is Nforward + Nbackward - 1. Each side has its own pitch/total choice and value.
 - Symmetric: a shared pitch/count or total span distributes equally around the
   original; this proposal requires an odd count. Reverse is disabled as it has no
-  effect. Total span covers both sides. This count interpretation is a proposal
-  for approval, not a separately confirmed owner decision.
+  effect. Total span covers both sides. This interpretation was included in the
+  screenshots/workflow subsequently approved by the owner.
 - Full-circle total angle is a closed distribution: 360/N spacing, with no duplicate
   at 360 degrees. Implementation must prevent duplicate transforms where angular
   extents meet, and reject degenerate references/inward placement through the
@@ -104,8 +104,8 @@ Only the UI candidate is changed; no commit is made in either companion worktree
 The superseded first session was invalidated by generated Python bytecode;
 the final macro explicitly disables bytecode and its baseline remains clean.
 
-Obtain approval of these screenshots and semantics before functional work, under
-the preview-first skill and shared APP_DEVELOPMENT_POLICY. Chat approval is
-authoritative; do not change companion approval state on the owner's behalf.
+The owner's subsequent chat approval authorizes functional work under the
+preview-first skill and shared APP_DEVELOPMENT_POLICY. Chat approval is
+authoritative; companion approval state has not been changed on the owner's behalf.
 The new EAS/Expo build policy was read; this preview uses the existing native
 FreeCAD executable and creates no app build or test-app clone.

@@ -103,14 +103,15 @@ TaskDlgEditSketch::~TaskDlgEditSketch()
 
 void TaskDlgEditSketch::slotToolChanged(const std::string& toolname)
 {
-    if (toolname == "DSH_Symmetry" && symmetryPanelVisibility.empty()) {
+    const bool isolatedTool = toolname == "DSH_Symmetry" || toolname == "DSH_Pattern";
+    if (isolatedTool && symmetryPanelVisibility.empty()) {
         for (QWidget* panel : {static_cast<QWidget*>(Messages), static_cast<QWidget*>(Constraints),
                                static_cast<QWidget*>(Elements), static_cast<QWidget*>(SolverAdvanced)}) {
             symmetryPanelVisibility.emplace_back(panel, !panel->isHidden());
             panel->hide();
         }
     }
-    else if (toolname != "DSH_Symmetry" && !symmetryPanelVisibility.empty()) {
+    else if (!isolatedTool && !symmetryPanelVisibility.empty()) {
         for (const auto& [panel, visible] : symmetryPanelVisibility) {
             panel->setVisible(visible);
         }

@@ -6,6 +6,7 @@ set(FreeCADPlus_SRCS
     TestFilletWorkflow.py
     TestSketchSymmetry.py
     TestSketchConstraintSymmetry.py
+    TestSketchPattern.py
     TestShellWorkflow.py
     TestComponentPilot.py
     TestLegacyConversion.py
@@ -82,6 +83,8 @@ set(FreeCADPlus_SRCS
     freecad_plus/planes.py
     freecad_plus/plane_task.py
     freecad_plus/sketch_task.py
+    freecad_plus/sketch_pattern.py
+    freecad_plus/sketch_pattern_task.py
     freecad_plus/sketch_visibility.py
     freecad_plus/task_visibility.py
     freecad_plus/task_status.py
@@ -97,6 +100,7 @@ install(FILES
     TestFilletWorkflow.py
     TestSketchSymmetry.py
     TestSketchConstraintSymmetry.py
+    TestSketchPattern.py
     TestShellWorkflow.py
     TestLoftWorkflow.py
     TestThickenWorkflow.py TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py TestRevolveWorkflow.py TestExtrudeWorkflow.py TestTargetCoordinateWorkflow.py TestPlaneHistoryWorkflow.py TestTaskStatus.py TestTaskEntryWorkflows.py TestExtrudeVisibility.py TestDesignInteractions.py DESTINATION Mod/FreeCADPlus)
@@ -134,6 +138,8 @@ install(FILES
     freecad_plus/planes.py
     freecad_plus/plane_task.py
     freecad_plus/sketch_task.py
+    freecad_plus/sketch_pattern.py
+    freecad_plus/sketch_pattern_task.py
     freecad_plus/sketch_visibility.py
     freecad_plus/task_visibility.py
     freecad_plus/task_status.py

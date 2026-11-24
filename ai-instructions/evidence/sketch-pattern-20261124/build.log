@@ -1,0 +1,26 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/29] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestSketchPattern.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestSketchPattern.py
+[2/29] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[3/20] Automatic MOC and UIC for target SketcherGui
+[4/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandConstraints.cpp.obj
+[5/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\Utils.cpp.obj
+[6/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandCreateGeo.cpp.obj
+[7/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherBSpline.cpp.obj
+[8/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherOverlay.cpp.obj
+[9/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherTools.cpp.obj
+[10/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherVirtualSpace.cpp.obj
+[11/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherConstraints.cpp.obj
+[12/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherElements.cpp.obj
+[13/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherValidation.cpp.obj
+[14/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\SketcherToolDefaultWidget.cpp.obj
+[15/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherSolverAdvanced.cpp.obj
+[16/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskDlgEditSketch.cpp.obj
+[17/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\DrawSketchHandler.cpp.obj
+[18/19] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\ViewProviderSketch.cpp.obj
+[19/19] Linking CXX shared library Mod\Sketcher\SketcherGui.pyd

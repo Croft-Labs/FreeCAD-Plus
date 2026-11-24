@@ -62,6 +62,7 @@
 
 
 #include "DrawSketchHandlerTranslate.h"
+#include "DrawSketchHandlerPattern.h"
 #include "DrawSketchHandlerOffset.h"
 #include "DrawSketchHandlerRotate.h"
 #include "DrawSketchHandlerScale.h"
@@ -2517,8 +2518,8 @@ CmdSketcherTranslate::CmdSketcherTranslate()
 {
     sAppModule = "Sketcher";
     sGroup = "Sketcher";
-    sMenuText = QT_TR_NOOP("Move / Array Transform");
-    sToolTipText = QT_TR_NOOP("Translates the selected geometries and enables the creation of 'i' * 'j' copies");
+    sMenuText = QT_TR_NOOP("Sketch Pattern");
+    sToolTipText = QT_TR_NOOP("Patterns sketch geometry in linear, angular and radial directions");
     sWhatsThis = "Sketcher_Translate";
     sStatusTip = sToolTipText;
     sPixmap = "Sketcher_Translate";
@@ -2529,17 +2530,30 @@ CmdSketcherTranslate::CmdSketcherTranslate()
 void CmdSketcherTranslate::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
-    std::vector<int> listOfGeoIds = getListOfSelectedGeoIds(true);
-
-    if (!listOfGeoIds.empty()) {
-        ActivateHandler(getActiveGuiDocument(), std::make_unique<DrawSketchHandlerTranslate>(listOfGeoIds));
+    std::vector<int> listOfGeoIds;
+    const auto* view = dynamic_cast<SketcherGui::ViewProviderSketch*>(getActiveGuiDocument()->getInEdit());
+    if (!view) return;
+    auto* sketch = view->getSketchObject();
+    for (const auto& selection : getSelection().getSelectionEx()) {
+        if (selection.getObject() != sketch) continue;
+        for (const auto& name : selection.getSubNames()) {
+            int geo = Sketcher::GeoEnum::GeoUndef;
+            Sketcher::PointPos pos = Sketcher::PointPos::none;
+            getIdsFromName(name.c_str(), sketch, geo, pos);
+            if (geo >= 0 && geo < sketch->Geometry.getSize()
+                && std::ranges::find(listOfGeoIds, geo) == listOfGeoIds.end()) {
+                listOfGeoIds.push_back(geo);
+            }
+        }
     }
+
+    ActivateHandler(getActiveGuiDocument(), std::make_unique<DrawSketchHandlerPattern>(listOfGeoIds));
     getSelection().clearSelection();
 }
 
 bool CmdSketcherTranslate::isActive()
 {
-    return isCommandNeedingGeometryActive(getActiveGuiDocument());
+    return isCommandActive(getActiveGuiDocument());
 }
 
 void CreateSketcherCommandsConstraintAccel()

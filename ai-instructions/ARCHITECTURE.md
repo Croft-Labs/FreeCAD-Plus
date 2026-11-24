@@ -8,6 +8,28 @@ DOCX candidates or restore archived Plus code. The [component specification](ui-
 owns UI requirements; [the roadmap](DEVELOPMENT_ROADMAP.md#group-1--component-panel-and-document-structure)
 owns implementation order and acceptance status.
 
+## Sketch Pattern — November 24, 2026
+
+The existing `Sketcher_Translate` command opens `DrawSketchHandlerPattern`, which
+owns the native tool lifecycle, selection callbacks, temporary geometry drawing
+and document undo/redo connections. A widget-owned action bridge hosts
+`freecad_plus.sketch_pattern_task`; there is no global pattern observer or polling
+timer. Queued Done callbacks are guarded by the widget and cleared on tool teardown.
+The ordinary sketch panels share Mirror's exact visibility save/restore path.
+
+`freecad_plus.sketch_pattern` evaluates independent extents and arbitrary local
+directions, composes rigid rotations/translations, and writes native geometry and
+transferable constraints inside a document transaction. Optional relative
+dimensions use native point offsets, construction radii, equality and angular
+constraints, retaining source degrees of freedom. Internal aligned geometry supplies
+ellipse/spline anchors. Redundant newly derived equations may be omitted; source
+constraints are never removed. The earlier compatible-symmetry solver correction
+continues to handle genuine symmetry redundancy and preserve real conflict errors.
+
+There is no custom persistent pattern object or new file schema. Input references
+are evaluated at Apply; native sketch output, construction helpers and dimensions
+remain editable with existing Sketcher tools. See [acceptance and delivery](evidence/sketch-pattern-20261124/README.md).
+
 ## Unified Loft — November 23, 2026
 
 `freecad_plus.loft` evaluates ordered section snapshots with native PartDesign Loft
