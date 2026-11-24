@@ -119,6 +119,8 @@ public:
     PyObject* getPyObject() override;
 
     Base::Quantity getPresentationValue() const;
+    // Optional presentation only; absent in legacy files. Copied with constraints.
+    std::string PresentationUnit;
     inline void setValue(double newValue)
     {
         Value = newValue;

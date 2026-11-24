@@ -139,6 +139,7 @@ DlgSettingsGeneral::DlgSettingsGeneral(QWidget* parent)
     ui->spinBoxDecimals->setMaximum(std::numeric_limits<double>::digits10 + 1);
 
     auto addItem = [&, index {0}](const std::string& item) mutable {
+        ui->SecondaryUnits->addItem(QString::fromStdString(item), index);
         ui->comboBox_UnitSystem->addItem(QString::fromStdString(item), index++);
     };
     auto descriptions = UnitsApi::getDescriptions();
@@ -204,6 +205,8 @@ void DlgSettingsGeneral::saveUnitSystemSettings()
     );
     hGrpu->SetInt("UserSchema", ui->comboBox_UnitSystem->currentIndex());
     hGrpu->SetInt("Decimals", ui->spinBoxDecimals->value());
+    hGrpu->SetInt("SecondarySchema", ui->SecondaryUnits->currentIndex());
+    hGrpu->SetInt("SecondaryDecimals", ui->SecondaryDecimals->value());
     hGrpu->SetBool("IgnoreProjectSchema", ui->checkBox_projectUnitSystemIgnore->isChecked());
 
     // Set actual value
@@ -294,6 +297,8 @@ void DlgSettingsGeneral::loadSettings()
     );
     ui->comboBox_UnitSystem->setCurrentIndex(hGrpu->GetInt("UserSchema", 0));
     ui->spinBoxDecimals->setValue(hGrpu->GetInt("Decimals", UnitsApi::getDecimals()));
+    ui->SecondaryUnits->setCurrentIndex(hGrpu->GetInt("SecondarySchema", 3));
+    ui->SecondaryDecimals->setValue(hGrpu->GetInt("SecondaryDecimals", 3));
     ui->checkBox_projectUnitSystemIgnore->setChecked(hGrpu->GetBool("IgnoreProjectSchema", false));
 
     // Get the current user setting for the minimum fractional inch
@@ -376,6 +381,8 @@ void DlgSettingsGeneral::resetSettingsToDefaults()
     hGrp->RemoveInt("UserSchema");
     // reset "Decimals" parameter
     hGrp->RemoveInt("Decimals");
+    hGrp->RemoveInt("SecondarySchema");
+    hGrp->RemoveInt("SecondaryDecimals");
     // reset "IgnoreProjectSchema" parameter
     hGrp->RemoveBool("IgnoreProjectSchema");
     // reset "FracInch" parameter
@@ -545,6 +552,7 @@ void DlgSettingsGeneral::translateIconSizes()
 void DlgSettingsGeneral::retranslateUnits()
 {
     auto setItem = [&, index {0}](const std::string& item) mutable {
+        ui->SecondaryUnits->setItemText(index, QString::fromStdString(item));
         ui->comboBox_UnitSystem->setItemText(index++, QString::fromStdString(item));
     };
     const auto descriptions = UnitsApi::getDescriptions();

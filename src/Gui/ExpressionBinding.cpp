@@ -200,7 +200,7 @@ bool ExpressionBinding::assignToProperty(const std::string& propName, double val
         }
     }
 
-    Gui::Command::doCommand(Gui::Command::Doc, "%s = %f", propName.c_str(), value);
+    Gui::Command::doCommand(Gui::Command::Doc, "%s = %.17g", propName.c_str(), value);
     return true;
 }
 

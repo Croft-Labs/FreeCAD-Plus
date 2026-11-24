@@ -52,6 +52,11 @@ class RevolveTask(extrude_task.ExtrudeTask):
                     offset=self.values[self.end1['offset']], offset2=self.values[self.end2['offset']],
                     axis=self.axis.currentText(), reverse=self.reverse.isChecked(), refine=self.refine.isChecked())
 
+    def quantity_fields(self):
+        return {self.engine.PREFIX+key:field for key,field in (
+            ('start_offset',self.start_offset), ('angle',self.end1['length']),
+            ('angle2',self.end2['length']), ('offset',self.end1['offset']), ('offset2',self.end2['offset']))}
+
     def load_feature(self, feature):
         self.refs = planes.flatten(feature.ProfileReferences);self.links = revolution.references(feature)
         v = revolution.settings(feature);self.modes[v['operation']].setChecked(True)
@@ -62,6 +67,8 @@ class RevolveTask(extrude_task.ExtrudeTask):
         for widget, key in ((self.start_offset, 'start_offset'), (self.end1['length'], 'angle'),
                             (self.end2['length'], 'angle2'), (self.end1['offset'], 'offset'), (self.end2['offset'], 'offset2')):
             widget.setValue(v[key]);self.values[widget] = v[key]
+        from .quantity_fields import restore
+        restore(feature, self.quantity_fields())
         self.reverse.setChecked(v['reverse']);self.refine.setChecked(v['refine'])
 
     def changed(self, *args):

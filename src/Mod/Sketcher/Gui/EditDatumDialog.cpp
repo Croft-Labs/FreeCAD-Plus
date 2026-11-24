@@ -33,6 +33,7 @@
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
 #include <Gui/Notifications.h>
+#include <Gui/QuantityPresentation.h>
 #include <Gui/View3DInventor.h>
 #include <Gui/View3DInventorViewer.h>
 #include <Gui/Document.h>
@@ -172,6 +173,7 @@ int EditDatumDialog::exec(bool atCursor)
 
         init_val.setValue(datum);
 
+        ui_ins_datum->labelEdit->setProperty("presentationUnit", QString::fromStdString(Constr->PresentationUnit));
         ui_ins_datum->labelEdit->setValue(init_val);
         ui_ins_datum->labelEdit->pushToHistory();
         ui_ins_datum->labelEdit->selectNumber();
@@ -245,7 +247,7 @@ void EditDatumDialog::accepted()
 
                     Gui::cmdAppObjectArgs(
                         sketch,
-                        "setDatum(%i,App.Units.Quantity('%.8g %s'))",
+                        "setDatum(%i,App.Units.Quantity('%.17g %s'))",
                         ConstrNbr,
                         newDatum,
                         unitString
@@ -253,6 +255,9 @@ void EditDatumDialog::accepted()
                 }
             }
 
+            auto updated = std::unique_ptr<Sketcher::Constraint>(sketch->Constraints[ConstrNbr]->clone());
+            updated->PresentationUnit = ui_ins_datum->labelEdit->property("presentationUnit").toString().toStdString();
+            sketch->Constraints.set1Value(ConstrNbr, updated.get());
             std::string constraintName = ui_ins_datum->name->text().trimmed().toStdString();
             std::string currConstraintName = sketch->Constraints[ConstrNbr]->Name;
 

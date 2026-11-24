@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include <FCConfig.h>
+#include <Gui/QuantityPresentation.h>
 
 #include <QPainter>
 #include <QRegularExpression>
@@ -2126,10 +2127,12 @@ QString EditModeConstraintCoinManager::getPresentationString(
     // Get the current value string including units
     double factor {};
     std::string unitStr;  // the actual unit string
-    const auto constrPresValue {constraint->getPresentationValue().getUserString(factor, unitStr)};
-    auto valueStr = QString::fromStdString(constrPresValue);
+    QString presentationUnit;
+    auto valueStr = Gui::QuantityPresentation::format(constraint->getPresentationValue(),
+        QString::fromStdString(constraint->PresentationUnit), false, factor, presentationUnit);
+    unitStr = presentationUnit.toStdString();
 
-    auto fixedValueStr = fixValueStr(valueStr, unitStr).value_or(valueStr);
+    auto fixedValueStr = constraint->PresentationUnit.empty() ? fixValueStr(valueStr, unitStr).value_or(valueStr) : valueStr;
     if (!prefix.empty()) {
         fixedValueStr.prepend(QString::fromStdString(prefix));
     }

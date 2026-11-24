@@ -8,6 +8,7 @@ import Part
 from PySide6 import QtCore, QtWidgets
 from pivy import coin
 from .task_status import TaskStatus
+from .quantity_fields import QuantityNumber
 from . import document, planes, modeling, editing, hierarchy
 
 _active = None
@@ -55,18 +56,8 @@ def buttons(layout, entries):
     layout.addLayout(row)
 
 
-class DeferredNumber(QtWidgets.QDoubleSpinBox):
-    committed = QtCore.Signal()
-
-    def stepBy(self, steps):
-        before = self.value()
-        super().stepBy(steps)
-        if self.value() != before:
-            self.committed.emit()
-
-    def focusOutEvent(self, event):
-        super().focusOutEvent(event)
-        self.committed.emit()
+class DeferredNumber(QuantityNumber):
+    """Compatibility name for tasks using the shared deferred quantity control."""
 
 
 def number(layout, title, value=0, suffix=' mm'):
@@ -74,8 +65,8 @@ def number(layout, title, value=0, suffix=' mm'):
     row.addWidget(QtWidgets.QLabel(title))
     field = DeferredNumber()
     field.setKeyboardTracking(False)
-    field.setRange(-100000, 100000); field.setDecimals(2)
-    field.setValue(value); field.setSuffix(suffix)
+    field.setRange(-100000, 100000); field.setDecimals(6)
+    field.setSuffix(suffix); field.setValue(value)
     row.addWidget(field, 1); layout.addLayout(row)
     return field
 
@@ -206,6 +197,8 @@ class PlaneTask(QtCore.QObject):
         self.origin_refs = planes.flatten(feature.OriginPoint)
         self.axis_refs = planes.flatten(feature.AxisReferences)
         self.offset.setValue(feature.Offset.Value)
+        from .quantity_fields import restore
+        restore(feature, {'Offset':self.offset})
         self.committed_offset = feature.Offset.Value
         self.y_choice.setChecked(feature.DefinedAxis == 'Y')
         self.flip.setChecked(feature.FlipNormal)
@@ -488,7 +481,8 @@ class PlaneTask(QtCore.QObject):
             self.result = planes.save(self.doc, self.refs, self.committed_offset, self.origin_refs,
                                      self.axis_refs, 'X' if self.x_choice.isChecked() else 'Y',
                                      self.flip.isChecked(), self.feature,
-                                     reversed_axis=self.reverse_axis.isChecked(), normal_to_line=self.normal_to_line)
+                                     reversed_axis=self.reverse_axis.isChecked(), normal_to_line=self.normal_to_line,
+                                     quantity_units={'Offset':self.offset._unit})
             self.reject()
             return True
         except Exception as exc:

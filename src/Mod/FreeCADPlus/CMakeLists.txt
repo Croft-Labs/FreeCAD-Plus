@@ -7,6 +7,7 @@ set(FreeCADPlus_SRCS
     TestSketchSymmetry.py
     TestSketchConstraintSymmetry.py
     TestSketchPattern.py
+    TestSpacingUnits.py
     TestShellWorkflow.py
     TestComponentPilot.py
     TestLegacyConversion.py
@@ -91,6 +92,7 @@ set(FreeCADPlus_SRCS
     freecad_plus/sketch_placement.py
     freecad_plus/idle_tasks.py
     freecad_plus/numeric_fields.py
+    freecad_plus/quantity_fields.py
     freecad_plus/document_import.py
 )
 add_custom_target(FreeCADPlusScripts ALL SOURCES ${FreeCADPlus_SRCS})
@@ -101,6 +103,7 @@ install(FILES
     TestSketchSymmetry.py
     TestSketchConstraintSymmetry.py
     TestSketchPattern.py
+    TestSpacingUnits.py
     TestShellWorkflow.py
     TestLoftWorkflow.py
     TestThickenWorkflow.py TestFeatureCenteredModeling.py TestComponentPlanes.py TestSketchPlacement.py TestRevolveWorkflow.py TestExtrudeWorkflow.py TestTargetCoordinateWorkflow.py TestPlaneHistoryWorkflow.py TestTaskStatus.py TestTaskEntryWorkflows.py TestExtrudeVisibility.py TestDesignInteractions.py DESTINATION Mod/FreeCADPlus)
@@ -146,6 +149,7 @@ install(FILES
     freecad_plus/sketch_placement.py
     freecad_plus/idle_tasks.py
     freecad_plus/numeric_fields.py
+    freecad_plus/quantity_fields.py
     freecad_plus/document_import.py
     DESTINATION Mod/FreeCADPlus/freecad_plus
 )

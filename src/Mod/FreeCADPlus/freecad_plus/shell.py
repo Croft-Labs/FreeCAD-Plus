@@ -43,6 +43,8 @@ def evaluate(owner, refs, values, feature=None):
 
 
 def save(doc, refs, values, feature=None):
+    unit_values = values.get('_units', {})
+    values = {k:v for k,v in values.items() if k != '_units'}
     owner, path = modeling._context(doc)
     refs = validate(owner, refs, feature)
     evaluate(owner, refs, values, feature)
@@ -64,6 +66,8 @@ def save(doc, refs, values, feature=None):
         feature.Base = (base, [sub for _, sub in refs])
         for key, value in values.items():
             setattr(feature, key, value)
+        from .quantity_fields import save as save_units
+        save_units(feature, unit_values)
         owner.Document.recompute()
         if feature.Shape.isNull() or not feature.Shape.isValid() or 'Invalid' in feature.State:
             raise ValueError('Shell failed to recompute. Adjust the faces or thickness.')

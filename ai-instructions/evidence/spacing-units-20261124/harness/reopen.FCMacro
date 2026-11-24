@@ -1,0 +1,37 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False,'files':[]}
+    try:
+        from freecad_plus import sketch_pattern,extrusion
+        Gui.activateWorkbench('SketcherWorkbench')
+        source=out.parent/'installed'
+        for filename in ('native-units.FCStd','spacing-hidden.FCStd','circular-hidden.FCStd','feature-units.FCStd'):
+            doc=App.openDocument(str(source/filename))
+            doc.recompute()
+            if filename=='native-units.FCStd':
+                assert doc.Sketch.Constraints[0].PresentationUnit=='in'
+                assert abs(doc.Sketch.Constraints[0].Value-2.54)<1e-12
+            elif filename=='feature-units.FCStd':
+                feature=next(o for o in doc.Objects if 'QuantityPresentationUnits' in o.PropertiesList)
+                assert feature.QuantityPresentationUnits[extrusion.PREFIX+'length']=='in'
+                assert abs(feature.Shape.BoundBox.ZLength-2.54)<1e-10
+            else:
+                sketch=doc.Sketch
+                assert sketch.solve()==0 and sketch.Shape.isValid()
+                assert sketch_pattern.chain_is_hidden(sketch)
+                tags=set(sketch.PatternSpacingTags)
+                assert tags and all(sketch_pattern.visual_layer(f)==2 for f in sketch.GeometryFacadeList if sketch_pattern.spacing_tag(f) in tags)
+                sketch_pattern.set_chain_hidden(sketch,False)
+                assert not sketch_pattern.chain_is_hidden(sketch) and sketch.solve()==0
+            result['files'].append(filename);App.closeDocument(doc.Name)
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    (out/'tests.txt').write_text('Fresh process native file checks: '+str(result['ok']))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2000,run)

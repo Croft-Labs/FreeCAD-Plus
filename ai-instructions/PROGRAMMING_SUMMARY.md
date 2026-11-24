@@ -1,12 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
-## Spacing chains and units review pending — November 24, 2026
+## Spacing chains and quantities — installed
 
-Owner requests equal connected spacing lines, angular arc chains, a hide-chain
-checkbox, six-decimal task input and retained explicit units with secondary unit/
-display precision preferences. One driver per pitch is confirmed. The new UI is
-[previewed for approval](evidence/spacing-units-preview-20261124/README.md);
-production code and installed app remain at the verified pattern implementation.
+November 24, 2026. Owner-approved line/arc spacing chains, persistent hide control, shared six-decimal
+entry, explicit units and secondary display preferences are installed. Native build,
+88 C++ solver tests, 144 installed application checks, four fresh-process saved-file
+checks and two existing-shortcut checks pass. Restart FreeCAD Plus to load the native
+update; see [implementation and evidence](evidence/spacing-units-20261124/README.md).
 
 ## Sketch Pattern installed - November 24, 2026
 

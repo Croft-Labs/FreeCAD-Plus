@@ -16,6 +16,9 @@ class NumericCommitFilter(QtCore.QObject):
                                (widget.inherits('Gui::QuantitySpinBox') or widget.inherits('Gui::InputField')))
         if not numeric:
             return False
+        if isinstance(widget, QtWidgets.QDoubleSpinBox) and event.type() in (QtCore.QEvent.Polish, QtCore.QEvent.FocusIn):
+            if widget.decimals() < 6:
+                widget.setDecimals(6)
         if event.type() == QtCore.QEvent.KeyPress and event.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
             dialog = widget.window()
             if (isinstance(dialog, QtWidgets.QDialog)

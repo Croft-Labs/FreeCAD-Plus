@@ -199,8 +199,10 @@ def _independent(sketch, c):
     if status == -2 or sketch.PartiallyRedundantConstraints:
         sketch.delConstraint(index)
         if sketch.solve() != 0: raise ValueError('The pattern constraints could not be solved.')
+        return None
     elif status != 0:
         raise ValueError('The pattern dimensions conflict with the sketch.')
+    return index
 
 
 def _offset_point(sketch, source, target, delta):
@@ -262,6 +264,210 @@ def _dimension_copy(sketch, mapping, transform):
         if isinstance(g, Part.Circle): _independent(sketch, Sketcher.Constraint('Equal', source, target))
 
 
+def _positions(g):
+    if isinstance(g, Part.LineSegment): return (1, 2)
+    if isinstance(g, Part.Point): return (1,)
+    if isinstance(g, (Part.Circle, Part.Ellipse)): return (3,)
+    if isinstance(g, (Part.ArcOfCircle, Part.ArcOfEllipse)): return (3, 1, 2)
+    if isinstance(g, Part.BSplineCurve): return ()
+    raise ValueError('Spacing constraints are not supported for this geometry type.')
+
+
+def visual_layer(facade):
+    try:
+        return facade.getExtensionOfType('SketcherGui::ViewProviderSketchGeometryExtension').VisualLayerId
+    except (ValueError, RuntimeError):
+        return 0
+
+
+def spacing_tag(facade):
+    # Part's runtime geometry Tag is remapped across processes. Persist our own
+    # identity on the geometry so deletion/reordering and file reopening are safe.
+    try:
+        return facade.getExtensionOfName('FreeCADPlusPatternSpacing').Value
+    except (ValueError, RuntimeError):
+        return facade.Tag
+
+
+def chain_is_hidden(sketch):
+    tags = set(getattr(sketch, 'PatternSpacingTags', []))
+    return any(visual_layer(f) == 2 for f in sketch.GeometryFacadeList if spacing_tag(f) in tags)
+
+
+def set_chain_hidden(sketch, hidden):
+    """Use stable native geometry tags, not indices that change after deletion."""
+    tags = set(getattr(sketch, 'PatternSpacingTags', []))
+    facades = sketch.GeometryFacadeList
+    helpers = set()
+    for i, facade in enumerate(facades):
+        if spacing_tag(facade) in tags:
+            if App.GuiUp:
+                import SketcherGui
+                try:
+                    extension = facade.getExtensionOfType('SketcherGui::ViewProviderSketchGeometryExtension')
+                except (ValueError, RuntimeError):
+                    extension = SketcherGui.ViewProviderSketchGeometryExtension(0)
+                extension.VisualLayerId = 2 if hidden else 0
+                facade.setExtension(extension)
+            helpers.add(i)
+    if helpers:
+        sketch.GeometryFacadeList = facades
+        sketch.solve()
+        for i, c in enumerate(sketch.Constraints):
+            if c.Type not in ('Distance', 'Angle', 'Radius', 'Diameter', 'DistanceX', 'DistanceY'):
+                if any(g in helpers for g in (c.First, c.Second, c.Third)):
+                    sketch.setVisibility(i, not hidden)
+
+
+class SpacingChains:
+    """Connected helper geometry with one editable master per independent pitch."""
+    def __init__(self, sketch):
+        self.sketch = sketch
+        self.masters = {}
+        self.helpers = []
+        self.units = {}
+
+    def add(self, geometry):
+        index = self.sketch.addGeometry(geometry, True)
+        self.helpers.append(index)
+        return index
+
+    def constrain(self, kind, *args):
+        return _independent(self.sketch, Sketcher.Constraint(kind, *args))
+
+    def connect(self, source, target):
+        self.constrain('Coincident', *source, *target)
+
+    def line(self, source, target, key, vector, reference=None):
+        s = self.sketch
+        a, b = s.getPoint(*source), s.getPoint(*target)
+        line = self.add(Part.LineSegment(a, b))
+        self.connect(source, (line, 1)); self.connect(target, (line, 2))
+        if key in self.masters:
+            self.constrain('Equal', self.masters[key], line)
+            self.constrain('Parallel', self.masters[key], line)
+        else:
+            self.masters[key] = line
+            c = Sketcher.Constraint('Distance', line, (b-a).Length)
+            if hasattr(c, 'PresentationUnit'): c.PresentationUnit = self.units.get(key, '')
+            _independent(s, c)
+            if reference is not None:
+                self.constrain('Parallel', reference, line)
+            elif abs(vector.y) < EPS: self.constrain('Horizontal', line)
+            elif abs(vector.x) < EPS: self.constrain('Vertical', line)
+            else: self.constrain('Angle', line, math.atan2(vector.y, vector.x))
+
+    def arc(self, source, target, center, angle, key):
+        s = self.sketch
+        a, b, c = s.getPoint(*source), s.getPoint(*target), s.getPoint(*center)
+        if (a-c).Length < EPS:
+            # A zero-radius arc is singular. Retain the established nonsingular
+            # relative-rotation construction for this exceptional anchor.
+            rotation = App.Rotation(App.Vector(0, 0, 1), angle)
+            first = s.GeometryCount
+            _transform_point(s, source, target, (angle, c-rotation.multVec(c), center, App.Vector()))
+            self.helpers.extend(range(first, s.GeometryCount))
+            return
+        start = math.atan2((a-c).y, (a-c).x)
+        if angle < 0:
+            start += math.radians(angle)
+            source, target = target, source
+        arc = self.add(Part.ArcOfCircle(Part.Circle(c, App.Vector(0, 0, 1), (a-c).Length),
+                                      start, start + math.radians(abs(angle))))
+        self.connect(center, (arc, 3))
+        self.connect(source, (arc, 1)); self.connect(target, (arc, 2))
+        c = Sketcher.Constraint('Angle', arc, math.radians(abs(angle)))
+        if hasattr(c, 'PresentationUnit'): c.PresentationUnit = self.units.get(key, '')
+        datum = _independent(s, c)
+        if datum is not None:
+            if key in self.masters:
+                # Equal arc radii do not imply equal angular spans. A native
+                # expression shares the one angular driver across all radii.
+                s.setExpression('Constraints[%d]' % datum, 'Constraints[%d]' % self.masters[key])
+                s.setVisibility(datum, False)
+            else: self.masters[key] = datum
+
+    def finish(self, hidden):
+        s = self.sketch
+        if 'PatternSpacingTags' not in s.PropertiesList:
+            s.addProperty('App::PropertyStringList', 'PatternSpacingTags', 'Pattern',
+                          'Stable identities of pattern construction helpers')
+            s.setEditorMode('PatternSpacingTags', 2)
+        facades = s.GeometryFacadeList
+        for i in self.helpers:
+            facades[i].setExtension(Part.GeometryStringExtension(facades[i].Tag, 'FreeCADPlusPatternSpacing'))
+        s.PatternSpacingTags = list(s.PatternSpacingTags) + [facades[i].Tag for i in self.helpers]
+        s.GeometryFacadeList = facades
+        set_chain_hidden(s, hidden)
+
+
+def _spacing_chains(sketch, ids, instances, options):
+    chain = SpacingChains(sketch)
+    circular = options.get('pattern') == 'Circular'
+    if circular:
+        layout = options.get('directions', 'Angular')
+        xs = extent_values(options['angular'], True) if layout != 'Radial' else [0.0]
+        ys = extent_values(options['radial']) if layout != 'Angular' else [0.0]
+        center, center_ref = point_reference(sketch, options.get('center'))
+        radial = direction(sketch, {'method':'Two points', 'start':center_ref,
+                                   'end':options['radial']['reference']}) if len(ys)>1 else App.Vector()
+        extents = (options.get('angular', {}), options.get('radial', {}))
+        vectors = (None, radial)
+    else:
+        xs = extent_values(options['d1'])
+        ys = extent_values(options['d2']) if options.get('directions') == 'Two directions' else [0.0]
+        extents = (options['d1'], options.get('d2', {}))
+        vectors = (direction(sketch, options['d1']), direction(sketch, options['d2']) if len(ys)>1 else App.Vector())
+    # Match the generation order, preserving original at (0,0).
+    nodes = {(0.0, 0.0): {i:i for i in ids}}
+    generated = iter(instances)
+    for x in xs:
+        for y in ys:
+            if abs(x)<EPS and abs(y)<EPS: continue
+            nodes[(x,y)] = next(generated)
+    for axis, values in enumerate((xs, ys)):
+        if len(values) == 1: continue
+        extent = extents[axis]
+        reference = None
+        if circular and axis == 1:
+            first = sketch.GeometryCount
+            reference = _ray(sketch, center_ref, point_reference(sketch, extent['reference'])[1])
+            chain.helpers.extend(range(first, sketch.GeometryCount))
+        elif not circular:
+            if extent.get('method') == 'Two points':
+                first = sketch.GeometryCount
+                reference = _ray(sketch, point_reference(sketch, extent['start'])[1], point_reference(sketch, extent['end'])[1])
+                chain.helpers.extend(range(first, sketch.GeometryCount))
+            elif extent.get('method', 'Axis or line') == 'Axis or line':
+                reference = extent['reference'][0]
+        for sign in (1, -1):
+            side = sorted((v for v in values if v*sign>EPS), key=abs)
+            previous = 0.0
+            for value in side:
+                # Spanning tree: radial/grid second direction only at x=0;
+                # first direction at every y. Avoid redundant grid loops.
+                cross_values = ys if axis == 0 else [0.0]
+                for cross in cross_values:
+                    p = (previous,cross) if axis == 0 else (cross,previous)
+                    q = (value,cross) if axis == 0 else (cross,value)
+                    key = (axis, sign if extent.get('mode') == 'Two dimensions' else 0)
+                    forward = sign == (-1 if extent.get('reverse') else 1)
+                    chain.units[key] = extent.get('unit' if forward or extent.get('mode') != 'Two dimensions' else 'unit2', '')
+                    for source in ids:
+                        for pos in _positions(geometry(sketch, source)):
+                            a, b = (nodes[p][source],pos), (nodes[q][source],pos)
+                            if circular and axis == 0:
+                                chain.arc(a,b,center_ref,value-previous,key)
+                            else:
+                                chain.line(a,b,key,vectors[axis]*sign,reference)
+                previous = value
+    for mapping in instances:
+        for source, target in mapping.items():
+            if isinstance(geometry(sketch, source), Part.Circle):
+                chain.constrain('Equal', source, target)
+    chain.finish(options.get('hide_spacing', False))
+
+
 def apply(sketch, ids, options, dimensions=False):
     """Apply atomically; no new feature/property schema, source deletion or fixed source."""
     ids = operation_geometry(sketch, ids)
@@ -280,14 +486,16 @@ def apply(sketch, ids, options, dimensions=False):
                 raise ValueError('Including internal geometry, the pattern exceeds 10,000 generated elements.')
         source = [c.dumpContent() for c in sketch.Constraints]
         result = []
+        instances = []
         for transform in placements:
             mapping = {}
             for i in ids:
                 mapping[i] = sketch.addGeometry(transformed(geometry(sketch, i), transform), sketch.getConstruction(i))
             _copy_constraints(sketch, source, mapping, transform)
             if sketch.solve() != 0: raise ValueError('The copied constraints could not be solved.')
-            if dimensions: _dimension_copy(sketch, mapping, transform)
+            instances.append(mapping)
             result.extend(mapping.values())
+        if dimensions: _spacing_chains(sketch, ids, instances, options)
         if sketch.solve() != 0: raise ValueError('The generated pattern could not be solved.')
         doc.recompute()
         doc.commitTransaction()

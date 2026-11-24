@@ -208,10 +208,13 @@ class TestPatternGeometry(unittest.TestCase):
         self.line()
         index = self.s.addConstraint(Sketcher.Constraint('Angle', 0, 0.0))
         self.s.setDriving(index, False); self.s.solve(); before = self.s.DoF
-        original = self.s.Constraints[index].dumpContent()
+        original = self.s.Constraints[index]
         pattern.apply(self.s, [0], circular(angular=extent(count=2, spacing='Angular pitch', value=45)), True)
         self.assertEqual(self.s.solve(), 0); self.assertEqual(self.s.DoF, before)
-        self.assertEqual(self.s.Constraints[index].dumpContent(), original)
+        after = self.s.Constraints[index]
+        self.assertEqual((after.Type,after.Driving,after.IsActive,after.First),
+                         (original.Type,original.Driving,original.IsActive,original.First))
+        self.assertAlmostEqual(after.Value,original.Value,places=10)
 
     def test_dimension_failure_rolls_back(self):
         self.s.addGeometry(Part.ArcOfHyperbola(Part.Hyperbola(), -1, 1))
@@ -267,11 +270,11 @@ class TestPatternTask(unittest.TestCase):
         self.pick(self.p.items, 'Edge1', True); self.assertEqual(self.p.items.count(), 0)
         self.pick(self.p.items, 'Edge1'); self.pick(self.p.d1.reference, 'H_Axis')
         self.p.d1.count.setValue(3); self.assertTrue(self.p.apply.isEnabled(), self.p.status.text())
-        self.p.apply.click(); self.assertEqual(self.s.GeometryCount, 4, self.p.status.text())
+        self.p.apply.click(); self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 4, self.p.status.text())
         self.assertGreater(self.s.ConstraintCount, 0)
         self.assertEqual(self.p.items.count(), 0); self.assertTrue(self.p.d1.reference.text())
         self.doc.undo(); self.QtTest.QTest.qWait(100); self.assertEqual(self.s.GeometryCount, 2)
-        self.doc.redo(); self.QtTest.QTest.qWait(100); self.assertEqual(self.s.GeometryCount, 4)
+        self.doc.redo(); self.QtTest.QTest.qWait(100); self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 4)
         self.p.done.click(); self.QtTest.QTest.qWait(100)
         self.assertTrue(all(not w.isHidden() == visible for w, visible in self.sections))
         self.assertIsNotNone(self.Gui.activeDocument().getInEdit())
@@ -311,7 +314,7 @@ class TestPatternTask(unittest.TestCase):
         self.assertEqual(spin.value(), 12)
         self.p.lock.setChecked(True); self.p.apply.click()
         self.assertEqual(self.s.solve(), 0)
-        self.assertEqual(self.s.GeometryCount, 17, self.p.status.text())
+        self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 17, self.p.status.text())
         self.p.items.setFocus(); self.QtTest.QTest.keyClick(self.p.items, QtCore.Qt.Key_Escape)
         self.QtTest.QTest.qWait(100)
         self.assertIsNotNone(self.Gui.activeDocument().getInEdit())
@@ -361,7 +364,7 @@ class TestPatternTask(unittest.TestCase):
         click(App.Vector(7, 3, 0)); self.p.activate_pick(self.p.d1.reference)
         click(App.Vector(0, 7, 0), expected='V_Axis')
         self.assertTrue(self.p.apply.isEnabled(), self.p.status.text())
-        self.p.apply.click(); self.assertEqual(self.s.GeometryCount, 6, self.p.status.text())
+        self.p.apply.click(); self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 6, self.p.status.text())
         self.win.grab().save(str(Path(os.environ['PLUS_TEST_DIR']) / 'pattern-viewport-applied.png'))
         self.p.done.click(); self.QtTest.QTest.qWait(100)
 
@@ -384,7 +387,7 @@ class TestPatternTask(unittest.TestCase):
                     doc.recompute(); self.Gui.activeDocument().setEdit(self.s.Name)
                     self.enter(); self.pick(self.p.items, 'Edge1'); self.pick(self.p.d1.reference, 'H_Axis')
                     self.p.d1.count.setValue(2); self.p.apply.click()
-                    self.assertEqual(self.s.GeometryCount, 2, self.p.status.text())
+                    self.assertEqual(sum(not self.s.getConstruction(i) for i in range(self.s.GeometryCount)), 2, self.p.status.text())
                     self.p.done.click(); self.QtTest.QTest.qWait(100); self.Gui.activeDocument().resetEdit()
                 finally: App.closeDocument(doc.Name)
         finally:

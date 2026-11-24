@@ -540,14 +540,16 @@ void IntSpinBox::paintEvent(QPaintEvent*)
 DoubleSpinBox::DoubleSpinBox(QWidget* parent)
     : QDoubleSpinBox(parent)
     , ExpressionSpinBox(this)
-{}
+{
+    setDecimals(6);
+}
 
 DoubleSpinBox::~DoubleSpinBox() = default;
 
 bool DoubleSpinBox::apply(const std::string& propName)
 {
     if (!ExpressionBinding::apply(propName)) {
-        Gui::Command::doCommand(Gui::Command::Doc, "%s = %f", propName.c_str(), value());
+        Gui::Command::doCommand(Gui::Command::Doc, "%s = %.17g", propName.c_str(), value());
         return true;
     }
 

@@ -243,7 +243,15 @@ class ExtrudeTask(QtCore.QObject):
         for widget,key in ((self.start_offset,'start_offset'),(self.end1['length'],'length'),(self.end2['length'],'length2'),
                            (self.end1['offset'],'offset'),(self.end2['offset'],'offset2'),(self.taper,'taper'),(self.taper2,'taper2')):
             widget.setValue(v[key]);self.values[widget] = v[key]
+        from .quantity_fields import restore
+        restore(feature, self.quantity_fields())
         self.reverse.setChecked(v['reverse']);self.refine.setChecked(v['refine'])
+
+    def quantity_fields(self):
+        return {self.engine.PREFIX+key:field for key,field in (
+            ('start_offset',self.start_offset), ('length',self.end1['length']),
+            ('length2',self.end2['length']), ('offset',self.end1['offset']),
+            ('offset2',self.end2['offset']), ('taper',self.taper), ('taper2',self.taper2))}
 
     def settings(self):
         return dict(output=self.output(),operation=self.mode(),start=self.start_type.currentText(),start_offset=self.values[self.start_offset],
@@ -716,7 +724,9 @@ class ExtrudeTask(QtCore.QObject):
             self.clear_overlay()
             self.clear_target()
             self.presentation.restore()
-            self.result=self.engine.save(self.doc,self.refs,self.links,self.settings(),self.feature)
+            from .quantity_fields import units
+            values = self.settings(); values['_units'] = units(self.quantity_fields())
+            self.result=self.engine.save(self.doc,self.refs,self.links,values,self.feature)
             self.reject()
             return True
         except Exception as exc:

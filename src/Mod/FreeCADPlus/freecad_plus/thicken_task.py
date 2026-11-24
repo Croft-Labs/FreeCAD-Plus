@@ -56,12 +56,17 @@ class ThickenTask(extrude_task.ExtrudeTask):
         return dict(operation=self.mode(), thickness=self.values[self.amount],
                     direction=self.normal.currentText(), join=self.join.currentText())
 
+    def quantity_fields(self):
+        return {self.engine.PREFIX+'thickness':self.amount}
+
     def load_feature(self, feature):
         self.refs = planes.flatten(feature.ProfileReferences)
         self.links = thicken.references(feature)
         values = thicken.settings(feature)
         self.modes[values['operation']].setChecked(True)
         self.amount.setValue(values['thickness']);self.values[self.amount] = values['thickness']
+        from .quantity_fields import restore
+        restore(feature, self.quantity_fields())
         self.normal.setCurrentText(values['direction']);self.join.setCurrentText(values['join'])
 
     def refresh_fields(self):

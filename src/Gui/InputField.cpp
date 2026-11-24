@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include <limits>
+#include "QuantityPresentation.h"
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QPixmapCache>
@@ -103,6 +104,7 @@ InputField::InputField(QWidget* parent)
     this->setContextMenuPolicy(Qt::DefaultContextMenu);
 
     connect(this, &QLineEdit::textChanged, this, &InputField::newInput);
+    connect(this, &QLineEdit::textEdited, this, [this] { setProperty("presentationEdited", true); });
 }
 
 int InputField::getMargin()
@@ -119,11 +121,12 @@ InputField::~InputField() = default;
 void InputField::bind(const App::ObjectIdentifier& _path)
 {
     ExpressionBinding::bind(_path);
+    QuantityPresentation::restore(this, _path);
 
     auto* prop = freecad_cast<PropertyQuantity*>(getPath().getProperty());
 
     if (prop) {
-        actQuantity = Base::Quantity(prop->getValue());
+        actQuantity = prop->getQuantityValue();
     }
 
     DocumentObject* docObj = getPath().getDocumentObject();
@@ -143,7 +146,7 @@ void InputField::bind(const App::ObjectIdentifier& _path)
 bool InputField::apply(const std::string& propName)
 {
     if (!ExpressionBinding::apply(propName)) {
-        Gui::Command::doCommand(Gui::Command::Doc, "%s = %f", propName.c_str(), getQuantity().getValue());
+        Gui::Command::doCommand(Gui::Command::Doc, "%s = %.17g", propName.c_str(), getQuantity().getValue());
         return true;
     }
     else {
@@ -186,10 +189,11 @@ void InputField::updateText(const Base::Quantity& quant)
     }
 
     double dFactor;
-    std::string unitStr;
-    std::string txt = quant.getUserString(dFactor, unitStr);
+    QString unitStr;
+    QString txt = QuantityPresentation::format(quant, property("presentationUnit").toString(), true, dFactor, unitStr);
     actUnitValue = quant.getValue() / dFactor;
-    setText(QString::fromStdString(txt));
+    QSignalBlocker blocker(this);
+    setText(txt);
 }
 
 void InputField::resizeEvent(QResizeEvent* /*event*/)
@@ -310,6 +314,8 @@ void InputField::newInput(const QString& text)
         iconLabel->setVisible(false);
     }
     validInput = true;
+    const auto explicitUnit = QuantityPresentation::explicitUnit(text, res.getUnit());
+    if (!explicitUnit.isEmpty()) setProperty("presentationUnit", explicitUnit);
 
     if (res.getValue() > Maximum) {
         res.setValue(Maximum);
@@ -329,6 +335,7 @@ void InputField::newInput(const QString& text)
     // Keep parsing/validation responsive, but do not recompute consumers while
     // the user is still editing this numerical field.
     if (!hasFocus()) {
+        if (isBound()) QuantityPresentation::remember(this, getPath());
         Q_EMIT valueChanged(res);
         Q_EMIT valueChanged(res.getValue());
     }
@@ -503,7 +510,9 @@ const Base::Unit& InputField::getUnit() const
 /// get stored, valid quantity as a string
 QString InputField::getQuantityString() const
 {
-    return QString::fromStdString(actQuantity.getUserString());
+    double factor;
+    QString unit;
+    return QuantityPresentation::format(actQuantity, property("presentationUnit").toString(), true, factor, unit);
 }
 
 /// set, validate and display quantity from a string. Must match existing units.
@@ -518,18 +527,22 @@ void InputField::setQuantityString(const QString& text)
 QString InputField::rawText() const
 {
     double factor;
-    std::string unit;
+    QString unit;
     double value = actQuantity.getValue();
-    actQuantity.getUserString(factor, unit);
-    return QStringLiteral("%1 %2").arg(value / factor).arg(QString::fromStdString(unit));
+    QuantityPresentation::format(actQuantity, property("presentationUnit").toString(), true, factor, unit);
+    return QStringLiteral("%1 %2").arg(value / factor, 0, 'g', 17).arg(unit);
 }
 
 /// expects the string in C locale and internally converts it into the OS-specific locale
 void InputField::setRawText(const QString& text)
 {
     Base::Quantity quant = Base::Quantity::parse(text.toStdString());
+    const auto unit = QuantityPresentation::explicitUnit(text, quant.getUnit());
+    if (!unit.isEmpty()) setProperty("presentationUnit", unit);
     // Input and then format the quantity
-    newInput(QString::fromStdString(quant.getUserString()));
+    double factor;
+    QString actualUnit;
+    newInput(QuantityPresentation::format(quant, property("presentationUnit").toString(), true, factor, actualUnit));
     updateText(actQuantity);
 }
 
@@ -687,7 +700,8 @@ void InputField::focusOutEvent(QFocusEvent* event)
             // the multiplication factor induced by user unit system
             double factor;
             std::string unitStr;
-            actQuantity.getUserString(factor, unitStr);
+            QString actualUnit;
+            QuantityPresentation::format(actQuantity, property("presentationUnit").toString(), true, factor, actualUnit);
             actQuantity = actQuantity * factor;
         }
     }
@@ -698,7 +712,9 @@ void InputField::focusOutEvent(QFocusEvent* event)
     // once, including when the formatted text is identical to the typed text.
     {
         QSignalBlocker blocker(this);
-        this->setText(QString::fromStdString(actQuantity.getUserString()));
+        double factor;
+        QString unit;
+        this->setText(QuantityPresentation::format(actQuantity, property("presentationUnit").toString(), true, factor, unit));
     }
     newInput(isBound() ? committedInput : this->text());
     QLineEdit::focusOutEvent(event);

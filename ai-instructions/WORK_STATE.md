@@ -1,13 +1,12 @@
 # FreeCAD Plus: Current work state
 
-## Spacing chains and quantity presentation — preview prepared
+## Spacing chains and quantities — installed
 
-November 24 owner follow-up requests connected equal spacing chains, one driving
-length per pitch (confirmed), hide-chain checkbox, angular arcs/radial lines,
-six-decimal task values and persistent explicit units. General adds secondary unit
-system and display precision. [Preview, examples, source investigation and acceptance scope](evidence/spacing-units-preview-20261124/README.md)
-await the new UI approval. No production/persistence/backend changes implemented yet;
-prior Sketch Pattern/default-dimensions installation remains intact.
+November 24, 2026. Owner-approved implementation is installed. All 88 native tests,
+144 installed application tests, four fresh-process file checks and two shortcut
+checks pass. Saved helper identities survive process changes; hidden chains retain
+their driving equations. Restart FreeCAD Plus to load the native update. See
+[implementation, metadata contracts and acceptance](evidence/spacing-units-20261124/README.md).
 
 ## Sketch Pattern installed - November 24, 2026
 

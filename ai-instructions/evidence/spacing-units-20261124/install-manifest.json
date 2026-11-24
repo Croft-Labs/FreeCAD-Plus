@@ -1,0 +1,128 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\bin\\FreeCADGui.dll",
+    "path": "bin/FreeCADGui.dll",
+    "previous_sha256": "481c794ee8178e12f16dd42aae3b01a1c6a7af5911965f994895abf42cf1f3ba",
+    "sha256": "6bc07e2574b15eb8315f8a5a298e3b0030925283abcffd53adfccb01f69dcb9a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\bin\\FreeCADGui.dll"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\Sketcher.pyd",
+    "path": "lib/Sketcher.pyd",
+    "previous_sha256": "bdd73023e293de6380c9d9f12c767685a6546471374b84ffb2bf21844bd136fe",
+    "sha256": "da7ef98f8bec360c0594a92347e4fd0b0788376cb8a4001df2d3d637a998f0c9",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\lib\\Sketcher.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\SketcherGui.pyd",
+    "path": "lib/SketcherGui.pyd",
+    "previous_sha256": "d97df5a957f573fd0b64fea808994698dd603ea0a71dbac3d83698cb3afeb0db",
+    "sha256": "d97905c23f1d21d2f9a1662d09e992339d6a32961d168fde5fc0d84d93fe18a7",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\lib\\SketcherGui.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\PartDesign\\PartDesignGui.pyd",
+    "path": "lib/PartDesignGui.pyd",
+    "previous_sha256": "6075184ce0263b91338cdb5646bf32a9b37ab7831ce831819009f505b0ef23bb",
+    "sha256": "f09ecd429fbbc5e1216204a145d553b6ca1aa94ac2d36d5260ed656a85acce1a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\lib\\PartDesignGui.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestSketchPattern.py",
+    "path": "Mod/FreeCADPlus/TestSketchPattern.py",
+    "previous_sha256": "87ac16876ebc7ebc0063d7fca9cb8d666c6f1f279b6767f3eb96a0565d4c3ce7",
+    "sha256": "9595d32718884d77956126ce4fb1f0f61edc14e0b807a0eceb6035d79513b8d7",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\TestSketchPattern.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestSpacingUnits.py",
+    "path": "Mod/FreeCADPlus/TestSpacingUnits.py",
+    "previous_sha256": null,
+    "sha256": "15fd589376405c3bc2d646f879b2fe754cd5c5cbbbe845a00214f9da62fb8a46",
+    "rollback": null
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/extrude_task.py",
+    "previous_sha256": "4ec380aa9394f6833803037ae99e68721dc96d9c21e8652ba08f7b50c2e9ef0a",
+    "sha256": "22b45badfe21c3b26540b5453d03ecd15de9872512ea786091272d2d42ae02be",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrude_task.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/extrusion.py",
+    "previous_sha256": "a9fa3e715b63ec4a9bed0cc59720dc1dcf155e6b8631b0cf944766df83204d41",
+    "sha256": "60b0a09235bef39b35cc5c071d520c3aafc1cae16af33cc7c0715e7af3fb433f",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\extrusion.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\numeric_fields.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/numeric_fields.py",
+    "previous_sha256": "89985cb468ac480d658e56f7eafcbcadd02a54083b853454b3607a4117692024",
+    "sha256": "795ee20933153d767c52d13af440798fe829dfcb1cfaafebd48a550adef0fc33",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\numeric_fields.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/plane_task.py",
+    "previous_sha256": "9407f72a09bcf4508ae67e05d6f0281a2ff0d4b40c0eeaa7e03f9cd565b596d1",
+    "sha256": "f100addecce5ada9c1b43f4e8e436fefb098c0b1d7859a276b954fa694ac36a4",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\plane_task.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\planes.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/planes.py",
+    "previous_sha256": "b2e086082f5731834622f6215ba37bbb24874a71017596e3413dbd4d36f21aba",
+    "sha256": "7a808bcec2e446b74d6ba3b69e300fcd7b28cd0bd04db87da09be1cb0bb45b68",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\planes.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\quantity_fields.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/quantity_fields.py",
+    "previous_sha256": null,
+    "sha256": "e62ffc75d7d6f557078f15a5ef6dcf9670f4c8dfb41ba56880bb9a43ef419f20",
+    "rollback": null
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/revolve_task.py",
+    "previous_sha256": "fb51d1f731ea9fc06a38e1577b5a854fa2f50df741b7fd893bb56415e1a56406",
+    "sha256": "228b32f9667c95c20aa2d5f3a5698aee4f76a1cbf16326b6ad18f02fab753a84",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\revolve_task.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\shell.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/shell.py",
+    "previous_sha256": "fd791a4d130309e85284a060944843c8385dd09db93b20d795b3516ea3aeb3b2",
+    "sha256": "2ec8428744fb899a1f75469e22ecf31b60672d3e1122af100f8cb262db44e2c8",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\shell.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\shell_task.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/shell_task.py",
+    "previous_sha256": "85cc30c71329c043788a5fb7542de74089dde212356099c5648ce3dd322cbf64",
+    "sha256": "459c962237ca937b100440ace53b7b489443c978512acb5aa1433f1a9f0f488c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\shell_task.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern.py",
+    "previous_sha256": "6b093104bcf8cfc76b249668c1c1ff5d58f5f1f136c03e181ca94305d0854ec1",
+    "sha256": "fa1031b7f0f76c36ae94660efcce6d3ec3e315a246e07f3ad6154d2ff0180308",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern_task.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py",
+    "previous_sha256": "b9577897a25c8fd0be29961041d81ac3758420259f697ff36f48f1fb0ffdc67b",
+    "sha256": "4a32838d4bafecdf222a3282fec1cb5a882d93cc25c3409a9141d4f5fd4e06dc",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern_task.py"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\thicken_task.py",
+    "path": "Mod/FreeCADPlus/freecad_plus/thicken_task.py",
+    "previous_sha256": "aa98ef709804aa671f8b4d6c7e052d50d3856d2f4168cf8c45b4c86a768b6aa2",
+    "sha256": "a9288e98be50d7129f60115e73e7d35bfbe924759f74e1a298cc7884478fb7fe",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\spacing-units-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\thicken_task.py"
+  }
+]

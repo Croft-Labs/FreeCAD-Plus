@@ -54,7 +54,10 @@ class ShellTask(extrude_task.ExtrudeTask):
         self.thickness = number(layout, 'Thickness', feature.Value.Value if feature else 1)
         self.thickness.setObjectName('Value')
         self.thickness.setDecimals(6)
-        if feature:self.thickness.setValue(feature.Value.Value)
+        if feature:
+            self.thickness.setValue(feature.Value.Value)
+            from .quantity_fields import restore
+            restore(feature, {'Value':self.thickness})
         self.thickness.setMinimum(.001)
         self.value = self.thickness.value()
         self.mode_box = QtWidgets.QComboBox(); self.mode_box.addItems(['Skin', 'Pipe', 'Recto verso'])
@@ -204,7 +207,8 @@ class ShellTask(extrude_task.ExtrudeTask):
             self.check(); self.thickness.interpretText(); self.value = self.thickness.value()
             shell.evaluate(self.owner, self.refs, self.settings(), self.feature)
             self.clear_overlay(); self.clear_target(); self.presentation.restore()
-            self.result = shell.save(self.doc, self.refs, self.settings(), self.feature)
+            values = self.settings(); values['_units'] = {'Value':self.thickness._unit}
+            self.result = shell.save(self.doc, self.refs, values, self.feature)
             self.reject(); return True
         except Exception as exc:
             self.presentation.apply(); self.render(); self.status.setError(str(exc)); return False

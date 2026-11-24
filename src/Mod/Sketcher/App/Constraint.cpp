@@ -76,6 +76,7 @@ Constraint* Constraint::copy() const
 {
     Constraint* temp = new Constraint();
     temp->Value = this->Value;
+    temp->PresentationUnit = this->PresentationUnit;
     temp->Type = this->Type;
     temp->AlignmentType = this->AlignmentType;
     temp->Name = this->Name;
@@ -155,6 +156,7 @@ void Constraint::Save(Writer& writer) const
                         << "InternalAlignmentIndex=\"" << InternalAlignmentIndex << "\" ";
     }
     writer.Stream() << "Value=\"" << Value << "\" "
+                    << "PresentationUnit=\"" << encodeAttribute(PresentationUnit) << "\" "
                     << "LabelDistance=\"" << LabelDistance << "\" "
                     << "LabelPosition=\"" << LabelPosition << "\" "
                     << "IsDriving=\"" << (int)isDriving << "\" "
@@ -195,6 +197,7 @@ void Constraint::Restore(XMLReader& reader)
     Name = reader.getAttribute<const char*>("Name");
     Type = reader.getAttribute<ConstraintType>("Type");
     Value = reader.getAttribute<double>("Value");
+    PresentationUnit = reader.hasAttribute("PresentationUnit") ? reader.getAttribute<const char*>("PresentationUnit") : "";
 
     if (this->Type == InternalAlignment) {
         AlignmentType = reader.getAttribute<InternalAlignmentType>("InternalAlignmentType");

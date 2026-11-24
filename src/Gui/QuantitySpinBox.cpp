@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include <limits>
+#include "QuantityPresentation.h"
 #include <QApplication>
 #include <QDebug>
 #include <QFocusEvent>
@@ -329,6 +330,7 @@ QuantitySpinBox::QuantitySpinBox(QWidget* parent)
     d_ptr->locale = locale();
     this->setContextMenuPolicy(Qt::DefaultContextMenu);
     connect(lineEdit(), &QLineEdit::textChanged, this, &QuantitySpinBox::userInput);
+    connect(lineEdit(), &QLineEdit::textEdited, this, [this] { setProperty("presentationEdited", true); });
     connect(this, &QuantitySpinBox::editingFinished, this, [&] { this->handlePendingEmit(true); });
 }
 
@@ -337,6 +339,8 @@ QuantitySpinBox::~QuantitySpinBox() = default;
 void QuantitySpinBox::bind(const App::ObjectIdentifier& _path)
 {
     ExpressionSpinBox::bind(_path);
+    QuantityPresentation::restore(this, _path);
+    if (!hasExpression()) updateText(value());
 }
 
 void QuantitySpinBox::showIcon()
@@ -618,6 +622,8 @@ void QuantitySpinBox::userInput(const QString& text)
     Base::Quantity res;
     const App::ObjectIdentifier& path = getPath();
     if (d->validate(tmp, res, path)) {
+        const auto explicitUnit = QuantityPresentation::explicitUnit(text, res.getUnit());
+        if (!explicitUnit.isEmpty()) setProperty("presentationUnit", explicitUnit);
         d->validStr = tmp;
         d->validInput = true;
     }
@@ -704,6 +710,7 @@ void QuantitySpinBox::updateFromCache(bool notify, bool updateUnit /* = true */,
         // signaling
         if (notify) {
             d->pendingEmit = false;
+            if (isBound()) QuantityPresentation::remember(this, getPath());
             Q_EMIT valueChanged(res);
             Q_EMIT valueChanged(res.getValue());
             Q_EMIT textChanged(text);
@@ -833,26 +840,15 @@ void QuantitySpinBox::clearSchema()
 QString QuantitySpinBox::getUserString(const Base::Quantity& val, double& factor, QString& unitString) const
 {
     Q_D(const QuantitySpinBox);
-    std::string unitStr;
-    const std::string str = d->scheme ? val.getUserString(d->scheme.get(), factor, unitStr)
-                                      : val.getUserString(factor, unitStr);
-    unitString = QString::fromStdString(unitStr);
-    return QString::fromStdString(str);
+    return QuantityPresentation::format(val, property("presentationUnit").toString(), true,
+                                        factor, unitString, d->scheme.get());
 }
 
 QString QuantitySpinBox::getUserString(const Base::Quantity& val) const
 {
-    Q_D(const QuantitySpinBox);
-    std::string str;
-    if (d->scheme) {
-        double factor;
-        std::string unitString;
-        str = val.getUserString(d->scheme.get(), factor, unitString);
-    }
-    else {
-        str = val.getUserString();
-    }
-    return QString::fromStdString(str);
+    double factor;
+    QString unit;
+    return getUserString(val, factor, unit);
 }
 
 void QuantitySpinBox::setExpression(std::shared_ptr<Expression> expr)

@@ -260,7 +260,7 @@ class ViewPlane:
 
 
 def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=False, feature=None,
-         reversed_axis=False, normal_to_line=None):
+         reversed_axis=False, normal_to_line=None, quantity_units=None):
     if normal_to_line is None:normal_to_line = saved_normal_to_line(feature)
     definition, path = modeling._context(doc)
     refs, origin_refs, axis_refs = [canonical(definition, values) for values in (refs, origin_refs, axis_refs)]
@@ -280,6 +280,8 @@ def save(doc, refs, offset=0, origin_refs=(), axis_refs=(), axis='X', flipped=Fa
         feature.OriginPoint = links(origin_refs)
         feature.AxisReferences = links(axis_refs)
         feature.Offset = offset
+        from .quantity_fields import save as save_units
+        save_units(feature, quantity_units)
         feature.DefinedAxis = axis
         feature.FlipNormal = flipped
         # Older version-1 planes acquire the additive property only on acceptance.

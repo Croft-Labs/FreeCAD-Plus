@@ -4,11 +4,11 @@
 
 - [x] Confirm one driving length per independent pitch.
 - [x] Prepare General preferences, precision/unit and line/arc-chain previews.
-- [ ] Obtain approval of [the new screenshots and contract](evidence/spacing-units-preview-20261124/README.md).
-- [ ] Implement native spacing chains and reversible persistent helper visibility.
-- [ ] Implement shared six-decimal task entry, explicit-unit persistence/editing/labels,
+- [x] Obtain approval of [the new screenshots and contract](evidence/spacing-units-preview-20261124/README.md).
+- [x] Implement native spacing chains and reversible persistent helper visibility.
+- [x] Implement shared six-decimal task entry, explicit-unit persistence/editing/labels,
   and secondary unit-system/display-precision preferences.
-- [ ] Validate solver freedoms, edited pitch propagation, task coverage, expressions,
+- [x] Validate solver freedoms, edited pitch propagation, task coverage, expressions,
   visibility, legacy files, Undo/Redo, fresh reopen and existing shortcut delivery.
 
 ## Sketch Pattern task - November 24, 2026

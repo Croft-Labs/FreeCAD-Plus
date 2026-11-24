@@ -1102,12 +1102,32 @@ Py::Boolean ConstraintPy::getIsActive() const
     return Py::Boolean(this->getConstraintPtr()->isActive);
 }
 
-PyObject* ConstraintPy::getCustomAttributes(const char* /*attr*/) const
+PyObject* ConstraintPy::getCustomAttributes(const char* attr) const
 {
+    if (std::string(attr) == "PresentationUnit")
+        return PyUnicode_FromString(getConstraintPtr()->PresentationUnit.c_str());
     return nullptr;
 }
 
-int ConstraintPy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+int ConstraintPy::setCustomAttributes(const char* attr, PyObject* obj)
 {
+    if (std::string(attr) == "PresentationUnit") {
+        if (!PyUnicode_Check(obj)) {
+            PyErr_SetString(PyExc_TypeError, "PresentationUnit must be a string");
+            return -1;
+        }
+        std::string unit = PyUnicode_AsUTF8(obj);
+        try {
+            if (!unit.empty() && Base::Quantity::parse("1 " + unit).getUnit() != getConstraintPtr()->getPresentationValue().getUnit()) {
+                PyErr_SetString(PyExc_ValueError, "Incompatible presentation unit");
+                return -1;
+            }
+            getConstraintPtr()->PresentationUnit = unit;
+            return 1;
+        } catch (const Base::Exception& e) {
+            PyErr_SetString(PyExc_ValueError, e.what());
+            return -1;
+        }
+    }
     return 0;
 }

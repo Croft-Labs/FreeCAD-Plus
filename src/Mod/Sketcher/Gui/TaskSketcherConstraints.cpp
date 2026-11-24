@@ -44,6 +44,7 @@
 #include <Gui/Document.h>
 #include <Gui/MainWindow.h>
 #include <Gui/Notifications.h>
+#include <Gui/QuantityPresentation.h>
 #include <Gui/Selection/PlusSelection.h>
 #include <Gui/Selection/Selection.h>
 #include <Gui/Selection/SelectionObject.h>
@@ -161,7 +162,7 @@ public:
                 case Sketcher::Angle:
                     name = QStringLiteral("%1 (%2)").arg(
                         name,
-                        QString::fromStdString(constraint->getPresentationValue().getUserString()));
+                        Gui::QuantityPresentation::display(constraint->getPresentationValue(), constraint->PresentationUnit));
                     break;
                 case Sketcher::SnellsLaw: {
                     double v = constraint->getPresentationValue().getValue();

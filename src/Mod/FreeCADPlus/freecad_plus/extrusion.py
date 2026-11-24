@@ -605,6 +605,8 @@ def save(doc, refs, links, values, feature=None):
 
 
 def save_feature(doc, refs, links, values, feature, engine):
+    unit_values = values.get('_units', {})
+    values = {k:v for k,v in values.items() if k != '_units'}
     definition, path = modeling._context(doc)
     refs, links, values = engine.validate(definition, refs, links, values, feature)
     engine.evaluate(definition, refs, links, values, feature)
@@ -641,6 +643,8 @@ def save_feature(doc, refs, links, values, feature, engine):
             setattr(feature, prop, planes.links([links[key]]) if key in links else [])
         for key, value in values.items():
             setattr(feature, engine.PREFIX + key, value)
+        from .quantity_fields import save as save_units
+        save_units(feature, unit_values)
         definition.Document.recompute()
         if getattr(feature, engine.ERROR) or feature.Shape.isNull() or 'Invalid' in feature.State:
             raise ValueError(getattr(feature, engine.ERROR) or engine.NAME+' failed to recompute.')

@@ -1353,7 +1353,7 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
-### Requested spacing chains and quantity units — November 24, 2026
+### Approved spacing chains and quantity units — November 24, 2026
 
 Owner follow-up replaces repeated pattern coordinate dimensions with connected,
 equal spacing lines and confirms one driving length per independent pitch. Angular
@@ -1369,7 +1369,8 @@ a millimeter document. General preferences need secondary units and their displa
 decimal count. Counts remain integers; preserve expressions and physical values.
 
 [The new preference/field/chain previews and detailed contract](../evidence/spacing-units-preview-20261124/README.md)
-await UI approval. They are simulations, not implemented backend behavior.
+were approved with “Approved. Implement”. The implemented persistence and native
+acceptance are recorded in [spacing and units evidence](../evidence/spacing-units-20261124/README.md).
 
 ### Sketch Pattern task - approved November 24, 2026
 

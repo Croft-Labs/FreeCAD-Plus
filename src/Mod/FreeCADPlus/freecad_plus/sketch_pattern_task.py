@@ -2,6 +2,7 @@
 from PySide6 import QtCore, QtWidgets
 from . import sketch_pattern as pattern
 from freecad_plus.task_status import TaskStatus
+from .quantity_fields import QuantityNumber
 
 
 def combo(items):
@@ -9,8 +10,8 @@ def combo(items):
 def count(value):
     w=QtWidgets.QSpinBox(); w.setRange(2,999); w.setValue(value); return w
 def amount(value, angular=False):
-    w=QtWidgets.QDoubleSpinBox(); w.setDecimals(2); w.setRange(.01,360 if angular else 100000)
-    w.setValue(value); w.setSuffix('°' if angular else ' mm'); return w
+    w=QuantityNumber(); w.setRange(.000001,360 if angular else 100000)
+    w.setSuffix('deg' if angular else 'mm'); w.setValue(value); return w
 def reference(text):
     w=QtWidgets.QLineEdit(); w.setReadOnly(True); w.setPlaceholderText(text); w.setClearButtonEnabled(True); return w
 
@@ -30,6 +31,7 @@ class Extent(QtWidgets.QGroupBox):
             vector=QtWidgets.QWidget(); vec=QtWidgets.QHBoxLayout(vector); vec.setContentsMargins(0,0,0,0)
             self.x=QtWidgets.QDoubleSpinBox(); self.y=QtWidgets.QDoubleSpinBox()
             for label,spin in [('X',self.x),('Y',self.y)]:
+                spin.setDecimals(6)
                 spin.setRange(-10000,10000); vec.addWidget(QtWidgets.QLabel(label)); vec.addWidget(spin); spin.valueChanged.connect(owner.sync)
             self.x.setValue(1); self.picks.addWidget(vector); layout.addLayout(row)
             self.method.currentIndexChanged.connect(self.change_method); self.change_method(0)
@@ -104,9 +106,11 @@ class PatternControls(QtWidgets.QWidget):
         self.d1=Extent('Direction 1',self); self.d2=Extent('Direction 2',self)
         self.angular=Extent('Angular direction',self,'angular'); self.radial=Extent('Radial direction',self,'radial')
         for w in (self.d1,self.d2,self.angular,self.radial): layout.addWidget(w)
-        self.lock=QtWidgets.QCheckBox('Create dimensions'); layout.addWidget(self.lock)
+        self.lock=QtWidgets.QCheckBox('Create spacing constraints'); layout.addWidget(self.lock)
         self.lock.setChecked(True)
         self.lock.setToolTip('Constrain the pattern spacing and placement relative to the original geometry.')
+        self.hide_spacing=QtWidgets.QCheckBox('Hide spacing chain'); layout.addWidget(self.hide_spacing)
+        self.lock.toggled.connect(self.hide_spacing.setEnabled)
         self.summary=QtWidgets.QLabel(); self.summary.setWordWrap(True); layout.addWidget(self.summary)
         self.status=TaskStatus(); layout.addWidget(self.status)
         row=QtWidgets.QHBoxLayout(); self.apply=QtWidgets.QPushButton('Apply'); self.done=QtWidgets.QPushButton('Done')
@@ -190,6 +194,8 @@ class PatternTask(PatternControls):
             if 0 <= index < sketch.GeometryCount:
                 self.add_geometry('Edge' + str(index + 1))
         self.ready = True
+        self.hide_spacing.setChecked(pattern.chain_is_hidden(sketch))
+        self.hide_spacing.toggled.connect(self.toggle_spacing)
         self.activate_pick(self.items)
         self.sync()
 
@@ -197,6 +203,16 @@ class PatternTask(PatternControls):
         if self.closed: return
         self.host.setProperty('patternAction', action)
         self.host.setProperty('patternSerial', int(self.host.property('patternSerial') or 0) + 1)
+
+    def toggle_spacing(self, hidden):
+        if getattr(self.sketch, 'PatternSpacingTags', []):
+            self.sketch.Document.openTransaction('Hide pattern spacing chain' if hidden else 'Show pattern spacing chain')
+            try:
+                pattern.set_chain_hidden(self.sketch, hidden)
+                self.sketch.Document.commitTransaction()
+            except Exception:
+                self.sketch.Document.abortTransaction()
+                raise
 
     def activate_pick(self, field):
         if self.active_pick is not None:
@@ -264,6 +280,7 @@ class PatternTask(PatternControls):
         values = dict(mode=extent.extent.currentText(), reverse=extent.reverse.isChecked(),
                       spacing=extent.spacing.currentText(), value=extent.value.value(), count=extent.count.value(),
                       spacing2=extent.spacing2.currentText(), value2=extent.value2.value(), count2=extent.count2.value())
+        values.update(unit=extent.value._unit, unit2=extent.value2._unit)
         if extent.kind == 'linear':
             values.update(method=extent.method.currentText(), x=extent.x.value(), y=extent.y.value(),
                           reference=self.references.get(extent.reference),
@@ -272,7 +289,7 @@ class PatternTask(PatternControls):
         return values
 
     def options(self):
-        return dict(pattern=self.mode.currentText(), directions=self.layout_mode.currentText(),
+        return dict(pattern=self.mode.currentText(), directions=self.layout_mode.currentText(), hide_spacing=self.hide_spacing.isChecked(),
                     center=self.references.get(self.center), d1=self.extent_options(self.d1),
                     d2=self.extent_options(self.d2), angular=self.extent_options(self.angular),
                     radial=self.extent_options(self.radial))
