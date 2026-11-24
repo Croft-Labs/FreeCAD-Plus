@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch
 import FreeCAD as App
 import FreeCADGui as Gui
-from PySide6 import QtCore, QtTest, QtWidgets
+from PySide6 import QtCore, QtGui, QtTest, QtWidgets
 from freecad_plus import document, editing, external, hierarchy, panel
 from TestComponentPanel import TestComponentPanel, settle
 from TestUnusedModels import TestUnusedModels
@@ -21,7 +21,7 @@ class TestComponentRename(unittest.TestCase):
     occurrence = TestComponentPanel.occurrence
     external_fixture = TestUnusedModels.external_fixture
 
-    def rename(self, index, item, label, *, cancel=False, before_accept=None):
+    def rename(self, index, item, label, *, cancel=False, before_accept=None, context_x=None):
         self.widget.tabs.setCurrentIndex(index)
         tree = self.widget.trees[index]; tree.scrollToItem(item); settle()
         observed = []; deadline = time.monotonic() + 8
@@ -48,7 +48,15 @@ class TestComponentRename(unittest.TestCase):
                 if cancel: modal.reject()
                 else: modal.accept()
         timer.timeout.connect(drive); timer.start(25)
-        try: self.widget._menu(tree, tree.visualItemRect(item).center())
+        try:
+            point = tree.visualItemRect(item).center()
+            if context_x is None:
+                self.widget._menu(tree, point)
+            else:
+                point.setX(context_x)
+                event = QtGui.QContextMenuEvent(QtGui.QContextMenuEvent.Mouse, point,
+                                                tree.viewport().mapToGlobal(point))
+                QtWidgets.QApplication.sendEvent(tree.viewport(), event)
         finally: timer.stop(); timer.deleteLater()
         settle()
         self.assertEqual(observed, ['menu', 'dialog'])
@@ -126,6 +134,80 @@ class TestComponentRename(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Finish'):
                 self.widget.rename_row(row)
         finally: Gui.getDocument(self.doc.Name).resetEdit(); settle()
+
+    def test_history_heading_context_menu_rename_undo_and_save(self):
+        tree = self.widget.trees[2]; self.widget.tabs.setCurrentIndex(2); settle()
+        heading = tree.topLevelItem(0)
+        self.assertEqual(heading.text(0), self.child.Label)
+        self.assertEqual(heading.data(0, panel._ROLE).kind, 'history_component')
+        self.assertTrue(heading.font(0).bold()); self.assertTrue(heading.icon(1).isNull())
+        self.assertFalse(heading.flags() & QtCore.Qt.ItemIsDragEnabled)
+        before = {o.Name:(o.ID, o.Visibility) for o in self.doc.Objects}
+        context = editing.context_path(self.doc); original = self.child.Label; undo = self.doc.UndoCount
+        self.widget.grab().save(str(self.output/'history-before.png'))
+        def dialog_capture():
+            QtWidgets.QApplication.activeModalWidget().grab().save(str(self.output/'rename-dialog.png'))
+        # Dispatch native context events on the far-left icon and on its name.
+        self.rename(2, heading, 'Mounting plate', context_x=8, before_accept=dialog_capture)
+        self.assertEqual(self.child.Label, 'Mounting plate')
+        self.assertIs(tree.topLevelItem(0), heading)
+        self.assertEqual(heading.text(0), 'Mounting plate')
+        self.assertEqual(self.doc.UndoCount, undo+1)
+        self.assertEqual(editing.context_path(self.doc), context)
+        for _, row in self.rows(0)+self.rows(1)+self.rows(2):
+            if row.ref == panel.identity(self.child): self.assertEqual(row.label, 'Mounting plate')
+        self.widget.grab().save(str(self.output/'history-renamed.png'))
+        self.doc.undo(); settle(); self.assertEqual(heading.text(0), original)
+        self.doc.redo(); settle(); self.assertEqual(heading.text(0), 'Mounting plate')
+        self.rename(2, heading, 'Cancelled name', cancel=True, context_x=60)
+        self.assertEqual(heading.text(0), 'Mounting plate')
+        self.assertEqual({o.Name:(o.ID, o.Visibility) for o in self.doc.Objects}, before)
+        document.save_document(self.doc, self.output/'HistoryRename.cadprt')
+        (self.output/'expected.json').write_text(json.dumps({'definition':self.child.Name,
+            'label':self.child.Label, 'ids':{o.Name:o.ID for o in self.doc.Objects},
+            'pad':self.pad.Name, 'volume':self.pad.Shape.Volume}))
+
+    def test_history_heading_has_no_visibility_or_feature_selection(self):
+        tree = self.widget.trees[2]; self.widget.tabs.setCurrentIndex(2); settle()
+        heading = tree.topLevelItem(0); before = {o.Name:o.Visibility for o in self.doc.Objects}
+        undo = self.doc.UndoCount
+        point = QtCore.QPoint(8, tree.visualItemRect(heading).center().y())
+        QtTest.QTest.mouseClick(tree.viewport(), QtCore.Qt.LeftButton, QtCore.Qt.NoModifier, point)
+        tree.setCurrentItem(heading); QtTest.QTest.keyClick(tree, QtCore.Qt.Key_Space); settle()
+        self.widget._refresh_history_eyes(self.child)
+        self.assertTrue(heading.icon(1).isNull())
+        self.assertFalse(Gui.Selection.getSelection())
+        self.assertEqual({o.Name:o.Visibility for o in self.doc.Objects}, before)
+        self.assertEqual(self.doc.UndoCount, undo)
+        self.assertFalse(self.widget.message.text())
+
+    def test_history_rename_validation_and_stale_context(self):
+        heading = self.widget.trees[2].topLevelItem(0)
+        name = self.child.Label; undo = self.doc.UndoCount
+        for label in (' ', self.parent.Label):
+            self.rename(2, heading, label, context_x=8)
+            self.assertEqual(self.child.Label, name); self.assertEqual(self.doc.UndoCount, undo)
+            self.assertIn('unique within this file', self.widget.message.text())
+        with patch.object(self.widget, '_message', wraps=self.widget._message) as feedback:
+            self.rename(2, heading, 'Stale', before_accept=lambda:editing.edit((self.first,)))
+        self.assertEqual(self.child.Label, name)
+        self.assertTrue(any('active component changed' in call.args[0] for call in feedback.call_args_list))
+        self.widget.refresh()
+        self.assertEqual(self.widget.trees[2].topLevelItem(0).text(0), self.parent.Label)
+        editing.edit_file(self.doc); settle()
+        self.assertFalse(any(row.kind == 'history_component' for _, row in self.rows(2)))
+
+    def test_history_unused_and_external_definition_rename(self):
+        editing.edit_unused(self.doc, self.unused); settle()
+        self.rename(2, self.widget.trees[2].topLevelItem(0), 'Spare plate', context_x=8)
+        self.assertEqual(self.unused.Label, 'Spare plate')
+        source, definition = self.external_fixture()
+        App.setActiveDocument(self.doc.Name); editing.edit_unused(self.doc, definition); settle()
+        original = definition.Label
+        self.rename(2, self.widget.trees[2].topLevelItem(0), 'External plate', context_x=60)
+        self.assertEqual(definition.Label, 'External plate')
+        self.assertIn('External plate', self.widget.trees[2].topLevelItem(0).text(0))
+        source.undo(); settle(); self.assertEqual(definition.Label, original)
 
 
 def verify_fresh_process(output):

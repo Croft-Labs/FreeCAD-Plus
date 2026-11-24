@@ -273,6 +273,7 @@ class TestPlaneHistoryWorkflow(unittest.TestCase):
         def row(obj):return widget._maps[2][('history',panel.identity(obj))]
         def locked(item):return not bool(item.flags()&QtCore.Qt.ItemIsDragEnabled) and all(locked(item.child(j)) for j in range(item.childCount()))
         self.assertTrue(locked(tree.topLevelItem(0)))
+        self.assertTrue(locked(tree.topLevelItem(1)))
         payload=widget.prepare_history_move(row(i).data(0,panel._ROLE))
         document.reorder_history(self.doc,self.owner,i,1)
         with self.assertRaisesRegex(ValueError,'changed'):widget.move_history(payload,0)
@@ -291,4 +292,13 @@ class TestPlaneHistoryWorkflow(unittest.TestCase):
         try:tree.dropEvent(event);QtTest.QTest.qWait(140)
         finally:timer.stop();tree.payload=None
         self.assertTrue(event.isAccepted());self.assertTrue(messages);self.assertIn(s.Label,messages[0])
-        self.assertEqual(tree.topLevelItem(0).text(0),'Coordinate System')
+        self.assertEqual(tree.topLevelItem(0).text(0),self.owner.Label)
+        self.assertEqual(tree.topLevelItem(1).text(0),'Coordinate System')
+        # Dropping onto the component heading means the first feature position.
+        tree.payload=widget.prepare_history_move(row(i).data(0,panel._ROLE))
+        event=Drop(QtCore.QPointF(8,tree.visualItemRect(tree.topLevelItem(0)).center().y()),
+                   QtCore.Qt.MoveAction,mime,QtCore.Qt.LeftButton,QtCore.Qt.NoModifier)
+        try:tree.dropEvent(event)
+        finally:tree.payload=None
+        self.assertTrue(event.isAccepted())
+        self.assertEqual(document.history(self.doc,self.owner),[i,p,s,f])

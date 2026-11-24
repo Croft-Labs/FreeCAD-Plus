@@ -1,5 +1,22 @@
 # Component panel
 
+## Active component in History — November 24, 2026
+
+Owner-approved: show the active component as History's first row, above Coordinate
+System. In this tab only, its native icon and name start at the far left, above the
+history items' visibility eyes. Use the existing active bold/highlight treatment.
+The component row has no visibility eye and cannot be hidden or reordered here.
+Right-click anywhere on that row, including its far-left icon, to Rename using
+the existing shared-definition dialog. Renaming updates all instances, supports
+Undo/Redo and save/reopen, and retains the current component/occurrence context.
+Cancel and invalid names retain the previous name. File-only History has no
+component heading. Models, Part Tree, feature eyes/editing and coordinate graphics
+retain their existing behavior.
+
+Approved in chat: "Approved implement and also make sure that the user is able to
+right click the part row and rename it" following the requested left alignment.
+[Preview identity, direct screenshots and implementation evidence](../evidence/history-component-20261124/README.md).
+
 ## New component navigation — November 23, 2026
 
 Owner approved that creating a component activates the new part and selects

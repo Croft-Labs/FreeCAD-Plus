@@ -1,0 +1,10 @@
+test_history_heading_context_menu_rename_undo_and_save (TestComponentRename.TestComponentRename.test_history_heading_context_menu_rename_undo_and_save) ... ok
+test_empty_document_and_existing_legacy (TestComponentPanel.TestNativeComponentCreation.test_empty_document_and_existing_legacy) ... ok
+test_external_definition_owns_new_part (TestComponentPanel.TestNativeComponentCreation.test_external_definition_owns_new_part) ... ok
+test_new_file_and_part_both_presentations (TestComponentPanel.TestNativeComponentCreation.test_new_file_and_part_both_presentations) ... ok
+test_start_card_creates_shared_component (TestComponentPanel.TestNativeComponentCreation.test_start_card_creates_shared_component) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 6.686s
+
+OK

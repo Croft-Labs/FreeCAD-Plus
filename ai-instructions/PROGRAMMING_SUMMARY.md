@@ -1,5 +1,14 @@
 # FreeCAD Plus: Programming Summary
 
+## Active component and Rename in History — installed
+
+History now starts with the active component's icon/name aligned at the far left,
+above the visibility eyes. The heading has no eye and offers right-click Rename.
+Existing naming validation, shared labels, Undo/Redo, geometry and History ordering
+are preserved. All 44 source and installed checks, fresh-process reopening and
+five existing-shortcut checks passed. Restart the app. See
+[approval, implementation and screenshots](evidence/history-component-20261124/README.md).
+
 ## Single Pattern item in Elements — installed
 
 Native Elements groups saved pattern membership into one row, preserving originals

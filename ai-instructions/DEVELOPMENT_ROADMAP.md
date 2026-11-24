@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Active component in History — November 24, 2026
+
+- [x] Owner approves revised far-left identity row and right-click Rename.
+- [x] Integrate existing shared-definition naming with active-context guards.
+- [x] Preserve feature eyes, geometry selection, coordinate rows and drag ordering.
+- [x] Pass 44 source and installed checks, fresh-process reopening and five
+  existing-shortcut checks; install Python update with rollback copies.
+  See [approval and evidence](evidence/history-component-20261124/README.md).
+
 ## Single Pattern item in Elements — November 24, 2026
 
 - [x] Owner directs completion of the existing single-row preview; verify freshness.

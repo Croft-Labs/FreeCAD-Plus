@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "checks": [
+    "shared definition rename reopen",
+    "external definition rename reopen",
+    "History rename identity and volume",
+    "History heading after reopen"
+  ],
+  "module": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\panel.py"
+}

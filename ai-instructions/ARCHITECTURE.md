@@ -1654,13 +1654,20 @@ unchanged names and preflight refusal do not add an Undo entry. Read-only Label
 properties are refused; if the native assignment alters the requested name, the
 transaction rolls back rather than silently substituting another name.
 
-The Component Panel offers Rename for Models, placed occurrences and the temporary
-unused row. Renaming an occurrence renames its shared definition and all displayed
-uses; it is not a per-instance alias. The prompt makes that scope explicit. Menu
+The Component Panel offers Rename for Models, placed occurrences, the temporary
+unused row and the active component heading in History. Renaming an occurrence
+renames its shared definition and all displayed uses; it is not a per-instance
+alias. The prompt makes that scope explicit. Menu
 placement is a routine implementation choice for the owner's C09 rename permission,
 not a recovered exact menu layout. File rows and History features are outside this
-action. The dialog rechecks tab, identity, catalog membership, current name and
-native task/transaction state before committing. Native observers update labels and
+action. History's heading is a presentation-only row with the active definition
+and exact occurrence path; it spans the eye/name columns at the far left, has no
+eye or drag action and is excluded from geometry selection. History feature drop
+positions count only feature rows, excluding both heading and coordinate rows.
+Its Rename menu uses the same service and additionally rechecks active component
+and occurrence context before accepting. The dialog rechecks tab, identity, catalog
+membership, current name and native task/transaction state before committing.
+Native observers update labels and
 component window titles without polling or replacing stable rows. External names
 remain qualified by defining file, and saving uses that source's existing service.
 

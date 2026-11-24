@@ -1,5 +1,12 @@
 # FreeCAD Plus: Current work state
 
+## History component heading — installed
+
+November 24: approved far-left active component row and right-click Rename are
+installed. Source/installed 44-case suites, fresh-process save/reopen checks and
+five existing-shortcut checks pass. Restart running sessions. See
+[evidence and screenshots](evidence/history-component-20261124/README.md).
+
 ## Single Pattern item in Elements — installed
 
 November 24, 2026. Owner directed completion of the existing preview. Native

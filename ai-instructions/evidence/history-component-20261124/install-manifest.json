@@ -1,0 +1,27 @@
+[
+  {
+    "file": "freecad_plus/panel.py",
+    "sha256": "da2d684c26dc4c56455afaedc9aa76c511a5561ea7db4350dfd5eeeb87596394",
+    "backup_sha256": "0a8cff0f04cf75c51a3653176f8310c316a1215335c956012979f96d93617bb8"
+  },
+  {
+    "file": "TestComponentRename.py",
+    "sha256": "aca34c2e603ce551728514e754b395d11c97292b512afc46eb7d438f938c67c9",
+    "backup_sha256": "026c60be38953f9d67e60797aab7406acd56228fd6769012e230606acada1631"
+  },
+  {
+    "file": "TestComponentPanel.py",
+    "sha256": "09ae83628279b12d88e23e69412924ddb439a19f643c28105c4b767c9f2e1908",
+    "backup_sha256": "f8c08e721a73b7f970c6048576b46bcc5b402b1fe040ca76d7e5c2fc23e86363"
+  },
+  {
+    "file": "TestPlaneHistoryWorkflow.py",
+    "sha256": "4b4b56c56d3cbc20ff879091bebd61b530c102af627f7f36f3b2a73d048c75de",
+    "backup_sha256": "da5109025a4983c5985b8f1b829dca6538e8e626bce5931b9e7477193cee9f68"
+  },
+  {
+    "file": "TestFeatureCenteredModeling.py",
+    "sha256": "836623a6b9501aec6de78671cd8f5406cfc69727096f6a7693e03c3055548f27",
+    "backup_sha256": "c153b8b73fa62a5f16ab69db3dcb5d3f45f5930414bf26fdbc95ead9455368e2"
+  }
+]

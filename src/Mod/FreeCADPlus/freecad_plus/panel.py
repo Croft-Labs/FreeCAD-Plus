@@ -108,6 +108,9 @@ def projection(doc, active=None, active_path=()):
         axes = group('Axes', tuple(history_row(features[role], role.replace('_', ' ')) for role in roles[:3]))
         planes = group('Planes', tuple(history_row(features[role], role.replace('_', ' ')) for role in roles[3:]))
         history.insert(0, group('Coordinate System', (history_row(point, 'Origin'), axes, planes)))
+        history.insert(0, Row(('history-component', identity(active)), 'history_component',
+                              external.qualified_label(active, doc), identity(active),
+                              tuple(identity(item) for item in active_path)))
     return (tuple(models(external.catalog(doc))), (file_row,), tuple(history))
 
 
@@ -211,6 +214,17 @@ class HistoryTree(QtWidgets.QTreeWidget):
         self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.setDefaultDropAction(QtCore.Qt.MoveAction)
 
+    def drawRow(self, painter, option, index):
+        row = index.siblingAtColumn(0).data(_ROLE)
+        if row is not None and row.kind == 'history_component':
+            # Only the component identity spans the eye and name columns.
+            option = QtWidgets.QStyleOptionViewItem(option)
+            option.rect.setLeft(0)
+            option.rect.setRight(self.viewport().width() - 1)
+            self.itemDelegate().paint(painter, option, index.siblingAtColumn(0))
+            return
+        super().drawRow(painter, option, index)
+
     def mimeTypes(self):return [self.mime_type]
 
     def startDrag(self, actions):
@@ -245,8 +259,9 @@ class HistoryTree(QtWidgets.QTreeWidget):
         index=self.indexOfTopLevelItem(target) if target is not None else self.topLevelItemCount()
         if target is not None and event.position().y()>self.visualItemRect(target).center().y():index+=1
         try:
-            # The structural coordinate row occupies index zero, outside History's feature list.
-            message=self.panel.move_history(self.payload,max(0,index-1))
+            # Component identity and coordinate rows are outside the feature list.
+            position=sum(self.topLevelItem(i).data(0,_ROLE).kind == 'history' for i in range(index))
+            message=self.panel.move_history(self.payload,position)
             event.acceptProposedAction()
             if message:
                 QtCore.QTimer.singleShot(0,lambda: QtWidgets.QMessageBox.information(self.panel,'History order',message)
@@ -388,6 +403,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
         blocker = QtCore.QSignalBlocker(self.trees[2])
         for item in self._maps[2].values():
             row = item.data(0, _ROLE)
+            if row.kind == 'history_component':
+                continue
             try:
                 shown = history_row_visible(definition, row)
             except (ValueError, RuntimeError, ReferenceError):
@@ -398,6 +415,8 @@ class ComponentPanel(QtWidgets.QDockWidget):
             item.setData(1, QtCore.Qt.AccessibleTextRole, action)
 
     def _toggle_history_eye(self, item):
+        if item.data(0, _ROLE).kind == 'history_component':
+            return
         try:
             self.toggle_history_visibility(item.data(0, _ROLE))
         except (ValueError, RuntimeError, ReferenceError) as error:
@@ -409,11 +428,12 @@ class ComponentPanel(QtWidgets.QDockWidget):
                                 QtCore.QEvent.MouseButtonDblClick):
                 tree = self.trees[2]
                 item = tree.itemAt(event.pos())
-                if item and tree.columnAt(event.pos().x()) == 1:
+                component_row = item is not None and item.data(0, _ROLE).kind == 'history_component'
+                if item and not component_row and tree.columnAt(event.pos().x()) == 1:
                     if event.type() in (QtCore.QEvent.MouseButtonPress, QtCore.QEvent.MouseButtonDblClick) and event.button() == QtCore.Qt.LeftButton:
                         self._toggle_history_eye(item)
                     return True
-                if (item and event.button() == QtCore.Qt.LeftButton
+                if (item and not component_row and event.button() == QtCore.Qt.LeftButton
                         and tree.columnAt(event.pos().x()) == 0
                         and event.pos().x() >= tree.visualItemRect(item).left()):
                     from .selection_list import feature_picker_active, pick_intent
@@ -738,7 +758,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 self._reconcile(index, entries)
                 for item in self._maps[index].values():
                     row = item.data(0, _ROLE)
-                    is_active = bool(active and row.ref == identity(active) and row.kind in ('model', 'occurrence', 'unused'))
+                    is_active = bool(active and row.ref == identity(active) and row.kind in ('model', 'occurrence', 'unused', 'history_component'))
                     is_file = current and not active and row.kind == 'file'
                     font = item.font(0); font.setBold(bool(is_active or is_file)); item.setFont(0, font)
                     item.setData(0, _ACTIVE, bool(is_active or is_file))
@@ -823,7 +843,10 @@ class ComponentPanel(QtWidgets.QDockWidget):
                 if index == 2 and obj.TypeId == 'App::Point':
                     item.setToolTip(0, 'Point (0, 0, 0) in component coordinates')
                 flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
-                if index == 2 and self._history_eyes:
+                if index == 2 and row.kind == 'history_component':
+                    item.setIcon(1, QtGui.QIcon())
+                    item.setToolTip(0, 'Active component - right-click to rename')
+                elif index == 2 and self._history_eyes:
                     shown = row.visible
                     item.setIcon(1, _eye_icon(shown, tree.palette().text().color()))
                     action = history_eye_action(row, shown)
@@ -956,9 +979,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
             raise ValueError('Finish the current task first')
         def target():
             doc, obj = self._checked(row)
-            if (row.kind not in ('model', 'occurrence', 'unused') or
+            if (row.kind not in ('model', 'occurrence', 'unused', 'history_component') or
                     obj not in external.available_definitions(document.validate(doc))):
                 raise ValueError('Choose an available component to rename')
+            if row.kind == 'history_component':
+                active, path = self._context(doc, self._binding[1])
+                if active != obj or tuple(identity(item) for item in path) != row.path:
+                    raise ValueError('The active component changed; reopen Rename')
             return obj
         definition = target()
         binding, previous = self._binding, definition.Label
@@ -1091,10 +1118,13 @@ class ComponentPanel(QtWidgets.QDockWidget):
         item = tree.itemAt(point)
         row = item.data(0, _ROLE) if item else None
         component_row = row is not None and row.kind in ('file', 'model', 'occurrence', 'unused')
-        if not component_row and tree != self.trees[0]:
+        history_component = row is not None and row.kind == 'history_component'
+        if not component_row and not history_component and tree != self.trees[0]:
             return
         menu = QtWidgets.QMenu(self)
         actions = {}
+        if history_component:
+            actions[menu.addAction('Rename')] = self.rename_row
         if tree == self.trees[0]:
             actions[menu.addAction('Import Models from File')] = self.import_models
         if component_row:
@@ -1159,7 +1189,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             selections = []
             for item in tree.selectedItems():
                 row = item.data(0, _ROLE)
-                if row.kind == 'history_group':
+                if row.kind in ('history_group', 'history_component'):
                     continue
                 _, obj = self._checked(row)
                 selections.append(row.selection or (obj.Document.Name, obj.Name, ''))
@@ -1183,7 +1213,7 @@ class ComponentPanel(QtWidgets.QDockWidget):
             for item in items.values():
                 row = item.data(0, _ROLE)
                 selection = row.selection or (row.ref[0], row.ref[2], '')
-                item.setSelected(row.kind != 'history_group' and selection in selected)
+                item.setSelected(row.kind not in ('history_group', 'history_component') and selection in selected)
             del blocker
 
     def _visibility_changed(self, item, column):

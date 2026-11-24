@@ -256,8 +256,9 @@ class TestHistoryVisibility(unittest.TestCase):
         self.click(0, self.model(self.unused), double=True)
         tree = self.widget.trees[2]
         self.assertEqual(self.widget.tabs.currentIndex(), 2)
-        self.assertEqual(tree.topLevelItemCount(), 1)
-        origin = tree.topLevelItem(0)
+        self.assertEqual(tree.topLevelItemCount(), 2)
+        self.assertEqual(tree.topLevelItem(0).text(0), self.unused.Label)
+        origin = tree.topLevelItem(1)
         self.assertEqual(origin.text(0), 'Coordinate System')
         self.assertEqual([origin.child(i).text(0) for i in range(origin.childCount())],
                          ['Origin', 'Axes', 'Planes'])
@@ -271,7 +272,7 @@ class TestHistoryVisibility(unittest.TestCase):
             self.assertEqual(tree.columnViewportPosition(1), 0)
             self.assertEqual(tree.header().visualIndex(1), 0)
             for item, row in self.rows(2):
-                self.assertFalse(item.icon(1).isNull())
+                self.assertEqual(item.icon(1).isNull(), row.kind == 'history_component')
         origin.setExpanded(False); settle()
         self.assertEqual(tree.columnViewportPosition(1), 0)
         origin.setExpanded(True); settle()
@@ -481,7 +482,7 @@ def verify_history_fresh_process(output):
     assert all(not o.Visibility for o in definition.Origin.OriginFeatures if o.TypeId == 'App::Plane')
     App.setActiveDocument(doc.Name); editing.edit_unused(doc, definition)
     widget = panel.show_panel(); settle()
-    origin = widget.trees[2].topLevelItem(0)
+    origin = widget.trees[2].topLevelItem(1)
     assert origin.text(0) == 'Coordinate System' and origin.childCount() == 3
     item = next(item for item in widget._maps[2].values() if item.data(0, panel._ROLE).ref == panel.identity(axis))
     assert item.toolTip(1) == 'Hide Z Axis'
