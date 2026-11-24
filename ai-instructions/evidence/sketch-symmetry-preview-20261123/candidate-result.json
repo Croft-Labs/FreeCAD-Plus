@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "initial_disabled": true,
+  "duplicate_add_noop": true,
+  "shift_removes": true,
+  "ready_enabled": true,
+  "invalid_axis_disabled": true,
+  "apply_ui_reset": true,
+  "geometry_unchanged": true,
+  "proposed": true
+}

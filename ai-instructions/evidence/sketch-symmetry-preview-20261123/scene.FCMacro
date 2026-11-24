@@ -1,0 +1,51 @@
+import os,sys,json,traceback,shutil
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtWidgets,QtTest
+sys.dont_write_bytecode=True
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+def run():
+    result={'ok':False,'ui_only':True};panel=None
+    try:
+        win=Gui.getMainWindow();win.showNormal();win.resize(1400,1100)
+        Gui.activateWorkbench('SketcherWorkbench')
+        doc=App.newDocument('SymmetryPreview');sketch=doc.addObject('Sketcher::SketchObject','Sketch')
+        for a,b in (((5,3),(15,3)),((15,3),(15,11)),((15,11),(5,11))):
+            sketch.addGeometry(Part.LineSegment(App.Vector(*a,0),App.Vector(*b,0)),False)
+        doc.recompute();Gui.activeDocument().setEdit(sketch.Name);QtTest.QTest.qWait(150)
+        view=Gui.activeDocument().activeView();view.setAnimationEnabled(False);view.viewTop();view.fitAll()
+        for i in range(1,4):Gui.Selection.addSelection(sketch,'Edge'+str(i))
+        Gui.runCommand('Sketcher_Symmetry');QtTest.QTest.qWait(200)
+        dock=win.findChild(QtWidgets.QDockWidget,'Tasks');dock.setMinimumWidth(460)
+        sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);import symmetry_ui
+        panel=symmetry_ui.install(dock);QtTest.QTest.qWait(120)
+        def shot(name):
+            for scroll in dock.findChildren(QtWidgets.QScrollArea):scroll.verticalScrollBar().setValue(0)
+            QtTest.QTest.qWait(100);dock.grab().save(str(out/(name+'.png')))
+        before=sketch.GeometryCount
+        if symmetry_ui.proposed():
+            assert not panel.apply.isEnabled()
+            shot('empty')
+            panel.add_geometry('Edge1');panel.add_geometry('Edge2');panel.add_geometry('Edge3')
+            panel.add_geometry('Edge1');assert panel.items.count()==3
+            panel.add_geometry('Edge2',True);assert panel.items.count()==2
+            panel.add_geometry('Edge2');assert panel.items.count()==3
+            panel.choose_axis('Vertical sketch axis');assert panel.apply.isEnabled()
+            shot('ready');shutil.copyfile(out/'ready.png',os.environ['PLUS_PREVIEW_IMAGE'])
+            panel.invalid_axis();assert not panel.apply.isEnabled();shot('invalid-axis')
+            panel.choose_axis('Vertical sketch axis');panel.apply.click()
+            assert panel.items.count()==0 and panel.axis.text()=='Vertical sketch axis' and not panel.apply.isEnabled()
+            shot('after-apply')
+            result.update(initial_disabled=True,duplicate_add_noop=True,shift_removes=True,
+                          ready_enabled=True,invalid_axis_disabled=True,apply_ui_reset=True)
+        else:
+            shot('baseline');shutil.copyfile(out/'baseline.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        assert sketch.GeometryCount==before
+        result.update(ok=True,geometry_unchanged=True,proposed=symmetry_ui.proposed())
+        button=win.findChild(QtWidgets.QPushButton,'SketchCancelAction')
+        if button:button.click()
+        Gui.activeDocument().resetEdit();App.closeDocument(doc.Name)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

@@ -1352,3 +1352,13 @@ through expansion. Apply across profile/edge/face/section/reference collectors;
 preserve validation, History ordering, single-input replacement and existing list
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
+
+### Sketcher symmetric geometry task - November 23, 2026
+
+Owner requests a Geometry list, single-line Axis of symmetry selection field and
+Apply for creating mirrored sketch geometry. Proposed: open without preselection,
+click/Shift collection, native axis/line/point support, highlighted invalid-input
+feedback, native existing symmetry options and Apply-only creation. Proposed Apply
+stays open, clearing geometry while retaining the axis; owner preference is pending.
+Cancel/Exit Sketch retain their existing roles. Implementation awaits approval of
+the [native-widget preview](../evidence/sketch-symmetry-preview-20261123/README.md).
