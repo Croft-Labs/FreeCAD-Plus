@@ -1,0 +1,44 @@
+{
+  "id": "6469d946a798",
+  "base": "3dcd93c84e370bc05f40ab42b0e11e51b1f9cde3",
+  "allowed": [
+    "pattern_ui.py"
+  ],
+  "profile": {
+    "kind": "command-image",
+    "command": [
+      "C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/app/bin/python.exe",
+      "C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-corrections-preview/render.py",
+      "{worktree}",
+      "{output}"
+    ],
+    "width": 1100,
+    "height": 1100,
+    "waitMs": 500,
+    "route": "/"
+  },
+  "preview": {
+    "fingerprint": "58881413c8dfd6a1c69168e6b5600a55c05fc3aee39426bd08e036977a417966",
+    "captured": 1795537826.0314233,
+    "baseline": {
+      "file": "baseline-98f7c42e.png",
+      "sha256": "7b71010be6930252026961ff83652252722bce0a49a8b526014957977a5f8cc7",
+      "renderer": "command-image",
+      "side": "baseline",
+      "worktree": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\6469d946a798\\baseline",
+      "note": "Custom runtime adapter. Operator is responsible for source provenance and faithful rendering."
+    },
+    "candidate": {
+      "file": "candidate-04d32bda.png",
+      "sha256": "7d5c9a036c8b239b945dcb4d15253e9b05f125e28f3359184dd57e26211909ac",
+      "renderer": "command-image",
+      "side": "candidate",
+      "worktree": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\app-render-companion\\sessions\\6469d946a798\\candidate",
+      "note": "Custom runtime adapter. Operator is responsible for source provenance and faithful rendering."
+    }
+  },
+  "fingerprint": "58881413c8dfd6a1c69168e6b5600a55c05fc3aee39426bd08e036977a417966",
+  "previewValid": true,
+  "violations": [],
+  "approved": false
+}

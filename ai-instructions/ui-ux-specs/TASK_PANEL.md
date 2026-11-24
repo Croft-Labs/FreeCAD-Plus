@@ -1353,6 +1353,18 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
+### Requested pattern/task corrections — November 24, 2026
+
+Owner requests fields that fit narrow docks, previews for each ready direction
+before all selected directions are complete, and visible preview spacing lines/arcs
+unless Hide spacing chain is checked. Copied geometric sizes use Equal relationships
+to the original instead of individual driving measurements. Keep source size drivers
+and independent spacing drivers. For task completion Done/Apply pairs: Done is left
+and applies then closes; Apply is right and applies then clears selections/references
+for another operation, retaining settings. Cancel/Escape does not apply pending input.
+See [the concrete workflow, simulations and implementation scope](../evidence/pattern-corrections-preview-20261124/README.md).
+Native Qt UI simulation is ready; direct approval and functional implementation remain pending.
+
 ### Approved spacing chains and quantity units — November 24, 2026
 
 Owner follow-up replaces repeated pattern coordinate dimensions with connected,

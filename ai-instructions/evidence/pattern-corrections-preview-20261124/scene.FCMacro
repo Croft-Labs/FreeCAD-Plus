@@ -1,0 +1,135 @@
+import os,sys,json,traceback,math,shutil
+sys.dont_write_bytecode=True
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part
+from PySide6 import QtCore,QtGui,QtWidgets,QtTest
+sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE'])
+import pattern_ui
+out=Path(os.environ['PLUS_PREVIEW_OUT'])
+
+class Diagram(QtWidgets.QWidget):
+    def __init__(self,panel):
+        super().__init__();self.panel=panel;self.setMinimumSize(440,500)
+    def paintEvent(self,event):
+        p=QtGui.QPainter(self);p.setRenderHint(QtGui.QPainter.Antialiasing)
+        p.fillRect(self.rect(),QtGui.QColor('#fafafa'))
+        c=self.panel;active=c.active_extents();valid=[e for e in active if e.valid()]
+        ready=bool(c.items.count()) and (not c.mode.currentIndex() or bool(c.center.text()))
+        if not pattern_ui.proposed() and len(valid)!=len(active):valid=[]
+        if not ready:valid=[]
+        p.setPen(QtGui.QColor('#333333'));p.drawText(22,30,'Preview simulation — no document changes')
+        shown=' + '.join(e.title() for e in valid) or 'No complete direction'
+        p.drawText(QtCore.QRect(22,45,self.width()-44,70),QtCore.Qt.TextWordWrap,shown)
+        helpers=pattern_ui.proposed() and c.lock.isChecked() and not c.hide_spacing.isChecked()
+        points=[];chains=[]
+        if not c.mode.currentIndex():
+            nx=c.d1.count.value() if c.d1 in valid else 1
+            ny=c.d2.count.value() if c.d2 in valid else 1
+            for j in range(ny):
+                for i in range(nx):points.append(QtCore.QPointF(65+i*72,170+j*75))
+                chains.append([QtCore.QPointF(65+i*72,170+j*75) for i in range(nx)])
+            chains.append([QtCore.QPointF(65,170+j*75) for j in range(ny)])
+        else:
+            na=c.angular.count.value() if c.angular in valid else 1
+            nr=c.radial.count.value() if c.radial in valid else 1
+            center=QtCore.QPointF(80,390)
+            for j in range(nr):
+                ring=[];radius=120+j*55
+                for i in range(na):
+                    angle=math.radians(i*30);q=center+QtCore.QPointF(radius*math.cos(angle),-radius*math.sin(angle))
+                    points.append(q);ring.append(q)
+                if helpers:
+                    p.setPen(QtGui.QPen(QtGui.QColor('#3489bd'),1.5,QtCore.Qt.DashLine))
+                    p.drawArc(QtCore.QRectF(center.x()-radius,center.y()-radius,2*radius,2*radius),0,(na-1)*30*16)
+            chains.append([center+QtCore.QPointF(120+j*55,0) for j in range(nr)])
+        if helpers:
+            p.setPen(QtGui.QPen(QtGui.QColor('#3489bd'),1.5,QtCore.Qt.DashLine))
+            for line in chains:
+                for a,b in zip(line,line[1:]):p.drawLine(a,b)
+            p.drawText(22,455,'Blue: connected spacing lines / angular arcs')
+            p.drawText(22,480,'One driving value per independent pitch')
+        p.setPen(QtGui.QPen(QtGui.QColor('#444444'),2))
+        for i,q in enumerate(points):
+            p.drawEllipse(q,13,13)
+            p.drawText(q+QtCore.QPointF(-15,-19),'Ø10' if i==0 else '=')
+        p.setPen(QtGui.QColor('#333333'))
+        p.drawText(QtCore.QRect(22,520,self.width()-44,90),QtCore.Qt.TextWordWrap,'Original diameter drives the size. Copies use Equal constraints; no repeated diameter dimensions.')
+
+def run():
+    result={'ok':False,'ui_only':True,'proposed':pattern_ui.proposed()}
+    window=None;doc=None
+    try:
+        window=QtWidgets.QWidget();window.setWindowTitle('Sketch Pattern — UI proposal')
+        window.setAutoFillBackground(True)
+        palette=window.palette();palette.setColor(QtGui.QPalette.Window,QtGui.QColor('#f0f0f0'));palette.setColor(QtGui.QPalette.WindowText,QtGui.QColor('#202020'));window.setPalette(palette)
+        layout=QtWidgets.QHBoxLayout(window)
+        panel=pattern_ui.PatternControls(None)
+        scroll=QtWidgets.QScrollArea();scroll.setWidgetResizable(True);scroll.setFixedWidth(362);scroll.setWidget(panel)
+        panel.setAutoFillBackground(True);panel.setPalette(palette)
+        diagram=Diagram(panel);layout.addWidget(diagram,1);layout.addWidget(scroll)
+        window.resize(950,1080);window.show()
+        def shot(name):
+            panel.setFixedHeight(panel.sizeHint().height())
+            window.resize(950,max(660,min(1080,panel.height()+24)))
+            diagram.update();QtTest.QTest.qWait(100);scroll.verticalScrollBar().setValue(0)
+            window.grab().save(str(out/(name+'.png')))
+            # Every visible editor must fit the panel at the narrow review width.
+            if pattern_ui.proposed():
+                for w in panel.findChildren(QtWidgets.QWidget):
+                    if w.isVisible() and isinstance(w,(QtWidgets.QComboBox,QtWidgets.QAbstractSpinBox,QtWidgets.QLineEdit,QtWidgets.QPushButton)):
+                        x=w.mapTo(panel,QtCore.QPoint()).x()
+                        assert x>=0 and x+w.width()<=panel.width(),(name,type(w).__name__,x,w.width(),panel.width())
+        panel.add_geometry('Edge1');panel.d1.reference.setText('X axis')
+        panel.d1.value.setValue(1.29999);panel.layout_mode.setCurrentIndex(1);panel.d2.count.setValue(3)
+        panel.sync();shot('linear-first-direction')
+        panel.d2.reference.setText('Y axis');panel.sync();shot('linear-grid')
+        panel.d1.extent.setCurrentIndex(1);panel.d1.value2.setSuffix('in');panel.d1.value2.setValue(0.123456*25.4)
+        panel.sync();shot('independent-extents')
+        panel.d1.extent.setCurrentIndex(0)
+        panel.mode.setCurrentIndex(1);panel.center.setText('Origin');panel.angular.count.setValue(4);panel.angular.value.setValue(30)
+        panel.layout_mode.setCurrentIndex(2);panel.radial.count.setValue(3)
+        panel.sync();shot('angular-first-direction')
+        panel.radial.reference.setText('Edge1 · center');panel.sync();shot('circular-complete')
+        panel.hide_spacing.setChecked(True);shot('circular-hidden')
+        # Completion behavior is deliberately stubbed: no model or solver writes.
+        pending=panel.items.count();commits=[]
+        def apply_stub():
+            if panel.apply.isEnabled():
+                commits.append(panel.items.count());panel.clear_geometry()
+                for e in (panel.d1,panel.d2,panel.radial):
+                    if e.reference:e.reference.clear()
+                panel.center.clear();panel.sync()
+        panel.apply.clicked.connect(apply_stub)
+        panel.apply.click();assert commits==[pending] and panel.items.count()==0
+        shot('after-apply')
+        panel.add_geometry('Edge1');panel.mode.setCurrentIndex(0);panel.d1.reference.setText('X axis');panel.sync()
+        def done_stub():
+            if panel.apply.isEnabled():apply_stub();window.hide()
+            elif not panel.items.count():window.hide()
+        panel.done.clicked.connect(done_stub);panel.done.click()
+        assert not window.isVisible() and len(commits)==2
+        result.update(narrow_editors_fit=True,simulated_apply_clears=True,simulated_done_applies_closes=True)
+        # Capture the existing native Mirror widget, adjusting only the candidate button order.
+        Gui.activateWorkbench('SketcherWorkbench');doc=App.newDocument('MirrorPreview')
+        s=doc.addObject('Sketcher::SketchObject','Sketch');s.addGeometry(Part.Circle(App.Vector(10,5,0),App.Vector(0,0,1),3))
+        doc.recompute();Gui.activeDocument().setEdit(s.Name);Gui.runCommand('Sketcher_Symmetry');QtTest.QTest.qWait(100)
+        mirror=Gui.getMainWindow().findChild(QtWidgets.QWidget,'SketchSymmetryTask')
+        assert mirror is not None
+        pattern_ui.configure_mirror(mirror);mirror.setAutoFillBackground(True);mirror.setPalette(palette)
+        mirror.setStyleSheet('QWidget#SketchSymmetryTask {background:#f0f0f0;color:#202020;}')
+        QtTest.QTest.qWait(100)
+        if pattern_ui.proposed():
+            assert mirror.findChild(QtWidgets.QPushButton,'SymmetryDone').x()<mirror.findChild(QtWidgets.QPushButton,'SymmetryApply').x()
+        mirror.grab().save(str(out/'mirror-buttons.png'))
+        assert s.GeometryCount==1
+        Gui.activeDocument().resetEdit();App.closeDocument(doc.Name);doc=None
+        shutil.copyfile(out/'linear-first-direction.png',os.environ['PLUS_PREVIEW_IMAGE'])
+        result['ok']=True
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    if window:window.close()
+    if doc:
+        try:Gui.activeDocument().resetEdit();App.closeDocument(doc.Name)
+        except Exception:pass
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1800,run)

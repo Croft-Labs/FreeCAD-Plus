@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Pattern/task corrections — preview awaiting approval
+
+November 24, 2026. Owner requests narrow fields, partial-direction previews including
+spacing helpers, Equal sizes instead of repeated copy dimensions, and Done-left/apply-close
+versus Apply-right/apply-reset. [Native Qt simulations and scope](evidence/pattern-corrections-preview-20261124/README.md)
+are ready for direct chat approval. Production and installation remain at `9a17cbdd93`.
+
 ## Spacing chains and quantities — installed
 
 November 24, 2026. Owner-approved line/arc spacing chains, persistent hide control, shared six-decimal

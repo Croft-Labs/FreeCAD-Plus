@@ -1,5 +1,12 @@
 # FreeCAD Plus: Current work state
 
+## Pattern/task corrections — UI review
+
+November 24, 2026. Prepared narrow-width native Qt simulations for the owner's new
+pattern/spacing preview, equal-size and Done/Apply correction requests. See
+[workflow, screenshots, exact scope and remaining acceptance](evidence/pattern-corrections-preview-20261124/README.md).
+Await direct approval before production implementation. Existing installed code is unchanged.
+
 ## Spacing chains and quantities — installed
 
 November 24, 2026. Owner-approved implementation is installed. All 88 native tests,

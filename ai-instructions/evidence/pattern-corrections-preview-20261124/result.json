@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "ui_only": true,
+  "proposed": true,
+  "narrow_editors_fit": true,
+  "simulated_apply_clears": true,
+  "simulated_done_applies_closes": true
+}

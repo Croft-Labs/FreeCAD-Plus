@@ -1,5 +1,13 @@
 # FreeCAD Plus: Development roadmap
 
+## Pattern/task corrections — November 24, 2026
+
+- [x] Audit clipping, preview gating, copied dimensions and completion pairs.
+- [x] Prepare [narrow native Qt simulations and workflow](evidence/pattern-corrections-preview-20261124/README.md).
+- [ ] Obtain direct screenshot approval, then implement the scoped corrections.
+- [ ] Verify native layout, partial/helper previews, size propagation, completion/reset,
+  Undo/reopen and existing-shortcut delivery.
+
 ## Spacing chains and persistent quantity units — November 24, 2026
 
 - [x] Confirm one driving length per independent pitch.
