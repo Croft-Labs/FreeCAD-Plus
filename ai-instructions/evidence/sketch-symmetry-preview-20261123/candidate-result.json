@@ -1,6 +1,8 @@
 {
   "ok": true,
   "ui_only": true,
+  "done_returns_to_sketch": true,
+  "done_does_not_commit": true,
   "initial_disabled": true,
   "duplicate_add_noop": true,
   "shift_removes": true,

@@ -4,8 +4,9 @@
 
 Owner requests Geometry list, single-line symmetry-axis selection and Apply within
 sketch editing. Isolated native-widget prototype retains native symmetry options
-and Cancel/Exit Sketch. Proposed Apply stays open, clears geometry and keeps the
-axis; owner preference question is pending. No production or installed change.
+and Cancel/Exit Sketch. Owner clarified: Apply stays open, clears geometry and keeps
+the axis; Done closes symmetry without applying pending inputs. Revised preview
+awaits approval. No production or installed change.
 See [direct preview and scope](evidence/sketch-symmetry-preview-20261123/README.md).
 
 ## Feature click/Shift-click selection installed - November 23, 2026

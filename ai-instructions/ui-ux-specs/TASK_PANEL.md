@@ -1358,7 +1358,8 @@ and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 Owner requests a Geometry list, single-line Axis of symmetry selection field and
 Apply for creating mirrored sketch geometry. Proposed: open without preselection,
 click/Shift collection, native axis/line/point support, highlighted invalid-input
-feedback, native existing symmetry options and Apply-only creation. Proposed Apply
-stays open, clearing geometry while retaining the axis; owner preference is pending.
+feedback, native existing symmetry options and Apply-only creation. Owner clarified:
+Apply stays open, clearing geometry while retaining the axis; adjacent Done closes
+symmetry without applying pending inputs and preserves previously applied sets.
 Cancel/Exit Sketch retain their existing roles. Implementation awaits approval of
 the [native-widget preview](../evidence/sketch-symmetry-preview-20261123/README.md).

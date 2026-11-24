@@ -19,6 +19,8 @@ def run():
         dock=win.findChild(QtWidgets.QDockWidget,'Tasks');dock.setMinimumWidth(460)
         sys.path.insert(0,os.environ['PLUS_PREVIEW_WORKTREE']);import symmetry_ui
         panel=symmetry_ui.install(dock);QtTest.QTest.qWait(120)
+        if panel is not None:
+            panel.done.clicked.connect(lambda:win.findChild(QtWidgets.QPushButton,'SketchCancelAction').click())
         def shot(name):
             for scroll in dock.findChildren(QtWidgets.QScrollArea):scroll.verticalScrollBar().setValue(0)
             QtTest.QTest.qWait(100);dock.grab().save(str(out/(name+'.png')))
@@ -36,7 +38,11 @@ def run():
             panel.choose_axis('Vertical sketch axis');panel.apply.click()
             assert panel.items.count()==0 and panel.axis.text()=='Vertical sketch axis' and not panel.apply.isEnabled()
             shot('after-apply')
-            result.update(initial_disabled=True,duplicate_add_noop=True,shift_removes=True,
+            panel.add_geometry('Edge1');panel.done.click();QtTest.QTest.qWait(100)
+            assert Gui.activeDocument().getInEdit() is not None
+            assert not win.findChild(QtWidgets.QPushButton,'SketchCancelAction').isVisible()
+            shot('after-done')
+            result.update(done_returns_to_sketch=True,done_does_not_commit=True,initial_disabled=True,duplicate_add_noop=True,shift_removes=True,
                           ready_enabled=True,invalid_axis_disabled=True,apply_ui_reset=True)
         else:
             shot('baseline');shutil.copyfile(out/'baseline.png',os.environ['PLUS_PREVIEW_IMAGE'])

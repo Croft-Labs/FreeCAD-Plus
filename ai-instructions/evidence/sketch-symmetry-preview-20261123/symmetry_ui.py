@@ -24,7 +24,9 @@ class SymmetryPanel(QtWidgets.QWidget):
         self.delete.toggled.connect(lambda on:self.constraints.setChecked(False) if on else None)
         self.constraints.toggled.connect(lambda on:self.delete.setChecked(False) if on else None)
         self.status=TaskStatus('Select geometry, then choose the axis.');layout.addWidget(self.status)
-        self.apply=QtWidgets.QPushButton('Apply');self.apply.clicked.connect(self.apply_preview);layout.addWidget(self.apply)
+        self.apply=QtWidgets.QPushButton('Apply');self.apply.clicked.connect(self.apply_preview)
+        self.done=QtWidgets.QPushButton('Done')
+        row=QtWidgets.QHBoxLayout();row.addWidget(self.apply);row.addWidget(self.done);layout.addLayout(row)
         footer=QtWidgets.QLabel('UI preview: selection and Apply are simulated.');footer.setWordWrap(True);layout.addWidget(footer)
         self.sync()
 
