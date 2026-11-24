@@ -1,0 +1,53 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/54] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestPatternEditing.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestPatternEditing.py
+[2/54] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/sketch_pattern_task.py
+[3/54] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/sketch_pattern_edit.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/sketch_pattern_edit.py
+[4/54] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/freecad_plus/sketch_pattern_legacy.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/freecad_plus/sketch_pattern_legacy.py
+[5/54] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[6/54] Building CXX object src\App\CMakeFiles\FreeCADApp.dir\Application.cpp.obj
+[7/54] Linking CXX shared library bin\FreeCADApp.dll
+[8/49] Automatic MOC and UIC for target Sketcher
+[9/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\SketchAnalysis.cpp.obj
+[10/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\PythonConverter.cpp.obj
+[11/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\SketchObject.cpp.obj
+[12/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\AppSketcher.cpp.obj
+[13/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\SketchPyImp.cpp.obj
+[14/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\SketchObjectPyImp.cpp.obj
+[15/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\planegcs\GCS.cpp.obj
+[16/48] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\Sketch.cpp.obj
+[17/48] Linking CXX shared library Mod\Sketcher\Sketcher.pyd
+[18/48] Automatic MOC and UIC for target Sketcher_tests_run
+[19/47] Automatic MOC and UIC for target SketcherGui
+[20/46] Building CXX object tests\src\Mod\Sketcher\App\CMakeFiles\Sketcher_tests_run.dir\SketcherTestHelpers.cpp.obj
+[21/46] Building CXX object tests\src\Mod\Sketcher\App\CMakeFiles\Sketcher_tests_run.dir\SketchObject.cpp.obj
+[22/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\Command.cpp.obj
+[23/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\Utils.cpp.obj
+[24/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandCreateGeo.cpp.obj
+[25/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandConstraints.cpp.obj
+[26/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherBSpline.cpp.obj
+[27/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherTools.cpp.obj
+[28/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherOverlay.cpp.obj
+[29/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandSketcherVirtualSpace.cpp.obj
+[30/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\CommandAlterGeometry.cpp.obj
+[31/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherConstraints.cpp.obj
+[32/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherElements.cpp.obj
+[33/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\SketcherToolDefaultWidget.cpp.obj
+[34/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherMessages.cpp.obj
+[35/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherSolverAdvanced.cpp.obj
+[36/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\TaskSketcherValidation.cpp.obj
+[37/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\SketcherTransformationExpressionHelper.cpp.obj
+[38/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\DrawSketchHandler.cpp.obj
+[39/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\ViewProviderSketch.cpp.obj
+[40/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\EditDatumDialog.cpp.obj
+[41/46] Building CXX object tests\src\Mod\Sketcher\App\CMakeFiles\Sketcher_tests_run.dir\planegcs\GCS.cpp.obj
+[42/46] Building CXX object src\Mod\Sketcher\Gui\CMakeFiles\SketcherGui.dir\SnapManager.cpp.obj
+[43/46] Linking CXX shared library Mod\Sketcher\SketcherGui.pyd
+[44/46] Building CXX object tests\src\Mod\Sketcher\App\CMakeFiles\Sketcher_tests_run.dir\planegcs\Constraints.cpp.obj
+[45/46] Building CXX object tests\src\Mod\Sketcher\App\CMakeFiles\Sketcher_tests_run.dir\SketchObjectChanges.cpp.obj
+[46/46] Linking CXX executable bin\Sketcher_tests_run.exe

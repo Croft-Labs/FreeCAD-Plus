@@ -1,0 +1,57 @@
+import os,time,json,traceback,ctypes
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui,Part,Sketcher
+from PySide6 import QtCore,QtWidgets,QtTest,QtOpenGLWidgets
+from freecad_plus import sketch_pattern as p
+import TestSketchPattern as f
+out=Path(os.environ['PLUS_TEST_DIR']);started=time.perf_counter()
+def log(phase,**values):
+    with (out/'phases.jsonl').open('a') as stream:stream.write(json.dumps(dict(wall_seconds=time.perf_counter()-started,phase=phase,**values))+'\n')
+def wrap(owner,name):
+    original=getattr(owner,name)
+    def call(*args,**kw):
+        log(name+' begin');t=time.perf_counter()
+        try:return original(*args,**kw)
+        finally:log(name+' end',elapsed=time.perf_counter()-t)
+    setattr(owner,name,call)
+for owner,name in [(p._ConstraintBatch,'flush'),(p._ConstraintBatch,'_add_optional'),(p,'_spacing_chains'),(p,'_group_pattern_constraints')]:wrap(owner,name)
+def run():
+    result=dict(ok=False)
+    try:
+        doc=App.newDocument('MemoryProbe');doc.UndoMode=1;s=doc.addObject('Sketcher::SketchObject','Sketch')
+        kind=os.environ.get('PLUS_GEOMETRY','line');n=int(os.environ.get('PLUS_COUNT','20'))
+        if kind.startswith('circle'):
+            s.addGeometry(Part.Circle(App.Vector(5,3,0),App.Vector(0,0,1),2));ids=[0]
+            if 'free' not in kind:s.addConstraint(Sketcher.Constraint('Diameter',0,4.))
+        elif kind=='line':
+            s.addGeometry(Part.LineSegment(App.Vector(5,3,0),App.Vector(9,3,0)));s.addConstraint(Sketcher.Constraint('Distance',0,4.));ids=[0]
+        else:
+            points=[App.Vector(x,y,0) for x,y in ((5,3),(9,3),(9,7),(5,7))]
+            for i in range(4):s.addGeometry(Part.LineSegment(points[i],points[(i+1)%4]))
+            for i in range(4):
+                s.addConstraint(Sketcher.Constraint('Coincident',i,2,(i+1)%4,1))
+                s.addConstraint(Sketcher.Constraint('Horizontal' if i%2==0 else 'Vertical',i))
+            s.addConstraint(Sketcher.Constraint('Distance',0,4.));s.addConstraint(Sketcher.Constraint('Distance',1,4.));ids=list(range(4))
+        log('seed',geometry=kind,count=n,geometries=s.GeometryCount,constraints=s.ConstraintCount)
+        options=f.linear(directions='Two directions',d1=f.extent(count=n),d2=f.extent(count=n,reference=(-2,0)))
+        t=time.perf_counter()
+        if kind.endswith('gui'):
+            Gui.activateWorkbench('SketcherWorkbench');Gui.activeDocument().setEdit(s.Name)
+            Gui.runCommand('Sketcher_Translate');QtTest.QTest.qWait(150)
+            panel=Gui.getMainWindow().findChild(QtWidgets.QWidget,'SketchPatternPanel')
+            panel.add_geometry('Edge1');panel.layout_mode.setCurrentText('Two directions')
+            for field,name in ((panel.d1.reference,'H_Axis'),(panel.d2.reference,'V_Axis')):
+                panel.activate_pick(field);Gui.Selection.clearSelection();Gui.Selection.addSelection(s,name)
+            panel.d1.count.setValue(n);panel.d2.count.setValue(n);QtTest.QTest.qWait(100)
+            log('preview ready',copies=len(panel.get_preview()),helpers=len(panel._helper_preview))
+            assert panel.apply.isEnabled(),panel.status.text()
+            t=time.perf_counter();panel.apply.click()
+            assert not panel.items.count(),panel.status.text()
+            panel.done.click();QtTest.QTest.qWait(100);Gui.activeDocument().resetEdit()
+        else:p.apply(s,ids,options,True)
+        result.update(ok=True,seconds=time.perf_counter()-t,geometries=s.GeometryCount,constraints=s.ConstraintCount,dof=s.DoF)
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2));log('finished',**result)
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1500,run)

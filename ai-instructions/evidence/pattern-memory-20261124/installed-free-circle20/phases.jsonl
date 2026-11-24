@@ -1,0 +1,27 @@
+{"wall_seconds": 1.7270516999997199, "phase": "seed", "geometry": "circle-free-gui", "count": 20, "geometries": 1, "constraints": 0}
+{"wall_seconds": 2.5948780000326224, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.595345899986569, "phase": "_spacing_chains end", "elapsed": 0.00016110000433400273}
+{"wall_seconds": 2.5969970000442117, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.597302899986971, "phase": "_spacing_chains end", "elapsed": 9.889999637380242e-05}
+{"wall_seconds": 2.6013397999922745, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.60216400003992, "phase": "_spacing_chains end", "elapsed": 0.0003934999695047736}
+{"wall_seconds": 2.6050691000418738, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6056212999974377, "phase": "_spacing_chains end", "elapsed": 0.00032300001475960016}
+{"wall_seconds": 2.6088527000392787, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6102199000306427, "phase": "_spacing_chains end", "elapsed": 0.0011240000021643937}
+{"wall_seconds": 2.6183024999918416, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.6232548000407405, "phase": "_spacing_chains end", "elapsed": 0.0047005999949760735}
+{"wall_seconds": 2.7381359999999404, "phase": "preview ready", "copies": 399, "helpers": 399}
+{"wall_seconds": 2.8227094000321813, "phase": "flush begin"}
+{"wall_seconds": 2.822972399997525, "phase": "_add_optional begin"}
+{"wall_seconds": 2.8772938000038266, "phase": "_add_optional end", "elapsed": 0.05396500002825633}
+{"wall_seconds": 2.87764280004194, "phase": "flush end", "elapsed": 0.054667600023094565}
+{"wall_seconds": 2.8778366000042297, "phase": "_spacing_chains begin"}
+{"wall_seconds": 2.969304300029762, "phase": "flush begin"}
+{"wall_seconds": 2.9696942000300623, "phase": "_add_optional begin"}
+{"wall_seconds": 5.116624200018123, "phase": "_add_optional end", "elapsed": 2.1465076000313275}
+{"wall_seconds": 5.117166000010911, "phase": "flush end", "elapsed": 2.147559500008356}
+{"wall_seconds": 11.422837999998592, "phase": "_spacing_chains end", "elapsed": 8.544623200024944}
+{"wall_seconds": 11.423171500035096, "phase": "_group_pattern_constraints begin"}
+{"wall_seconds": 13.491983600019012, "phase": "_group_pattern_constraints end", "elapsed": 2.068446599994786}
+{"wall_seconds": 20.097070700023323, "phase": "finished", "ok": true, "seconds": 17.358005699992646, "geometries": 799, "constraints": 1995, "dof": 3}

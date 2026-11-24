@@ -19,6 +19,42 @@ class TestPatternBatching(unittest.TestCase):
     setUp = fixtures.TestPatternGeometry.setUp
     tearDown = fixtures.TestPatternGeometry.tearDown
 
+    def test_grid20_circle_spacing_size_edits_and_undo(self):
+        s=self.s
+        s.addGeometry(Part.Circle(App.Vector(5,3,0),App.Vector(0,0,1),2))
+        s.addConstraint(Sketcher.Constraint('Diameter',0,4.))
+        before=s.DoF
+        options=fixtures.linear(directions='Two directions',d1=fixtures.extent(count=20),
+                                d2=fixtures.extent(count=20,reference=(-2,0)))
+        started=time.perf_counter();copies=pattern.apply(s,[0],options,True);elapsed=time.perf_counter()-started
+        self.assertLess(elapsed,20.,'20 by 20 circle grid regressed')
+        self.assertEqual((s.GeometryCount,s.ConstraintCount),(799,1996))
+        self.assertEqual(len(copies),399);self.assertEqual(len(s.PatternSpacingTags),399)
+        cs=s.Constraints;helpers={i for i in range(s.GeometryCount) if s.getConstruction(i)}
+        self.assertEqual(sum(c.Type=='Equal' and c.First==0 for c in cs),399)
+        self.assertEqual(sum(c.Type=='Equal' and c.First in helpers for c in cs),397)
+        self.assertEqual(sum(c.Type=='Parallel' and c.Second in helpers for c in cs),399)
+        drivers=[i for i,c in enumerate(cs) if c.PatternDriver]
+        self.assertEqual(len(drivers),2)
+        s.setDatum(0,App.Units.Quantity('6 mm'))
+        for i,value in zip(drivers,('11 mm','13 mm')):s.setDatum(i,App.Units.Quantity(value))
+        self.doc.recompute();self.assertEqual(s.solve(),0);self.assertEqual(s.DoF,before)
+        origin=s.Geometry[0].Center
+        for n,i in enumerate([0]+copies):
+            self.assertAlmostEqual(s.Geometry[i].Radius,3.,places=6)
+            self.assertLess((s.Geometry[i].Center-origin-App.Vector(n//20*11,n%20*13,0)).Length,1e-5)
+        for c in s.Constraints:
+            if c.Type=='Coincident':
+                self.assertLess((s.getPoint(c.First,c.FirstPos)-s.getPoint(c.Second,c.SecondPos)).Length,1e-5)
+        for hidden in (True,False):
+            pattern.set_chain_hidden(s,hidden);self.assertEqual(pattern.chain_is_hidden(s),hidden)
+            self.assertEqual(s.solve(),0);self.assertEqual(s.DoF,before)
+        if os.environ.get('PLUS_TEST_DIR'):
+            out=Path(os.environ['PLUS_TEST_DIR']);self.doc.saveAs(str(out/'grid20.FCStd'))
+            (out/'grid20-timing.json').write_text(json.dumps(dict(seconds=elapsed,instances=400,helpers=399,equal_sizes=399)))
+        self.doc.undo();self.assertEqual((s.GeometryCount,s.ConstraintCount),(1,1))
+        self.doc.redo();self.assertEqual(s.GeometryCount,799);self.assertEqual(s.solve(),0)
+
     def test_grid12_spacing_equal_edits_undo_and_save(self):
         s = self.s
         s.addGeometry(Part.Circle(App.Vector(5, 3, 0), App.Vector(0, 0, 1), 2))

@@ -1,0 +1,8 @@
+test_list_reopens_populated_cancel_done_apply_and_undo (TestPatternEditing.TestPatternEditingTask.test_list_reopens_populated_cancel_done_apply_and_undo) ... ok
+test_viewport_icon_double_click (TestPatternEditing.TestPatternEditingTask.test_viewport_icon_double_click) ... ok
+test_group_pitch_editor_preserves_units (TestPatternGroups.TestPatternGroupView.test_group_pitch_editor_preserves_units) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 7.798s
+
+OK

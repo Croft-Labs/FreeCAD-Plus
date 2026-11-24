@@ -1,0 +1,11 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/14] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[2/7] Automatic MOC and UIC for target Sketcher
+[3/6] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\planegcs\GCS.cpp.obj
+[4/6] Linking CXX shared library Mod\Sketcher\Sketcher.pyd

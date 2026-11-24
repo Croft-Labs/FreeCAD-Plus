@@ -1,0 +1,32 @@
+import os,json,traceback
+from pathlib import Path
+import FreeCAD as App,FreeCADGui as Gui
+from PySide6 import QtCore
+from freecad_plus import sketch_pattern as pattern,sketch_pattern_edit as editing
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    result={'ok':False}
+    try:
+        doc=App.openDocument(str(out.parent/'installed/grid20.FCStd'));s=doc.Sketch
+        assert s.solve()==0 and s.GeometryCount==799
+        group=next(c.PatternGroup for c in s.Constraints if c.PatternGroup)
+        record,ids,options=editing.load(s,group)
+        assert options['d1']['count']==20 and options['d2']['count']==20
+        assert len(s.PatternSpacingTags)==399
+        assert sum(c.Type=='Equal' and c.First==0 for c in s.Constraints)==399
+        options['d1']['count']=21
+        copies=editing.update(s,group,ids,options,True)
+        assert len(copies)==419 and s.solve()==0
+        for i in copies:assert abs(s.Geometry[i].Radius-3)<1e-5
+        pattern.set_chain_hidden(s,True);assert pattern.chain_is_hidden(s)
+        path=out/'edited-grid20.FCStd';doc.saveAs(str(path));App.closeDocument(doc.Name)
+        doc=App.openDocument(str(path));s=doc.Sketch
+        assert s.solve()==0 and pattern.chain_is_hidden(s)
+        assert editing.load(s,group)[2]['d1']['count']==21
+        result.update(ok=True,instances=420,helpers=len(s.PatternSpacingTags))
+    except BaseException:result['error']=traceback.format_exc()
+    (out/'result.json').write_text(json.dumps(result,indent=2))
+    (out/'tests.txt').write_text('Fresh-process 400-circle grid, edit to 420, saved hidden chains and Equal sizes: '+str(result['ok']))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1500,run)

@@ -1,0 +1,13 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/17] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestPatternBatching.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestPatternBatching.py
+[2/17] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[3/10] Automatic MOC and UIC for target Sketcher
+[4/9] Building CXX object src\Mod\Sketcher\App\CMakeFiles\Sketcher.dir\planegcs\GCS.cpp.obj
+[5/9] Linking CXX shared library Mod\Sketcher\Sketcher.pyd
+[6/8] Automatic MOC and UIC for target Sketcher_tests_run

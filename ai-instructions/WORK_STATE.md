@@ -1,5 +1,20 @@
 # FreeCAD Plus: Current work state
 
+## Large circle-pattern memory — installed
+
+November 24, 2026. Owner reported an allocation error after applying a 20-by-20
+circle grid. Sparse solver diagnosis now avoids dense Jacobian/factor copies and
+reduces only needed dependency columns; factorization memory is reused sequentially.
+The installed task completes in 17.43 seconds versus 32.78,
+with peak private memory reduced from 1.54 GB to 1.21 GB.
+All spacing/Equal relationships, conflict checks, pitch edits, hiding and Undo remain.
+The exact original allocation error did not reproduce in the isolated fixture;
+these are verified reductions in memory pressure, not a universal OOM guarantee.
+91 native tests and 94 build-runtime application checks pass; 75 installed
+cases have no failures/errors and one upstream skip. Saved-grid reopening and the
+existing shortcut pass too. Restart the app.
+See [measurements, implementation and limits](evidence/pattern-memory-20261124/README.md).
+
 ## Existing Sketch Pattern editing — installed
 
 November 24, 2026. Owner approved the populated editor and Apply/Done/Cancel

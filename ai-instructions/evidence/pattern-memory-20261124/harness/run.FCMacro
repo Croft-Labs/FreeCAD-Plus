@@ -1,0 +1,24 @@
+import os, sys, unittest, json, traceback
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui
+from PySide6 import QtCore
+out=Path(os.environ['PLUS_TEST_DIR'])
+def run():
+    try:
+        if os.environ.get('PLUS_TEST_SOURCE'):
+            sys.path.insert(0,os.environ['PLUS_TEST_SOURCE'])
+            import freecad_plus
+            freecad_plus.__path__.insert(0,os.path.join(os.environ['PLUS_TEST_SOURCE'],'freecad_plus'))
+        suite=unittest.defaultTestLoader.loadTestsFromNames(os.environ.get('PLUS_TEST_NAMES','TestSketchSymmetry').split(','))
+        with (out/'tests.txt').open('w') as stream:
+            result=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)
+        (out/'result.json').write_text(json.dumps(dict(ok=result.wasSuccessful(),tests=result.testsRun,
+            failures=len(result.failures),errors=len(result.errors)),indent=2))
+    except BaseException:
+        (out/'result.json').write_text(json.dumps(dict(ok=False,error=traceback.format_exc()),indent=2))
+    from PySide6 import QtWidgets
+    (out/'report.txt').write_text('\n'.join(w.toPlainText() for w in Gui.getMainWindow().findChildren(QtWidgets.QTextEdit)),encoding='utf-8')
+    for name in list(App.listDocuments()):
+        App.closeDocument(name)
+    QtCore.QTimer.singleShot(150,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(2200,run)

@@ -4743,6 +4743,48 @@ void System::makeReducedJacobian(
     }
 }
 
+#ifdef EIGEN_SPARSEQR_COMPATIBLE
+void System::makeReducedJacobian(
+    Eigen::SparseMatrix<double>& J,
+    std::map<int, int>& jacobianconstraintmap,
+    GCS::VEC_pD& pdiagnoselist,
+    std::map<int, int>& tagmultiplicity
+)
+{
+    const std::set<double*> driven(pdrivenlist.begin(), pdrivenlist.end());
+    std::map<double*, int> columns;
+    for (auto* parameter : plist) {
+        if (!driven.contains(parameter)) {
+            columns.emplace(parameter, static_cast<int>(pdiagnoselist.size()));
+            pdiagnoselist.push_back(parameter);
+        }
+    }
+    std::vector<Eigen::Triplet<double>> entries;
+    int row = 0;
+    for (size_t index = 0; index < clist.size(); ++index) {
+        auto* constraint = clist[index];
+        constraint->revertParams();
+        if (constraint->getTag() < 0 || !constraint->isDriving()) continue;
+        // Gradients are zero outside params(). Deduplicate shared parameters:
+        // grad() already includes all occurrences of a parameter in a constraint.
+        const auto parameters = constraint->params();
+        const std::set<double*> unique(parameters.begin(), parameters.end());
+        for (auto* parameter : unique) {
+            auto found = columns.find(parameter);
+            if (found == columns.end()) continue;
+            const double value = constraint->grad(parameter);
+            if (value != 0.) entries.emplace_back(row, found->second, value);
+        }
+        auto [tag, inserted] = tagmultiplicity.emplace(constraint->getTag(), 0);
+        if (!inserted) ++tag->second;
+        jacobianconstraintmap[row++] = static_cast<int>(index);
+    }
+    J.resize(row, pdiagnoselist.size());
+    J.setFromTriplets(entries.begin(), entries.end());
+    J.makeCompressed();
+}
+#endif
+
 int System::diagnose(Algorithm alg)
 {
     // Analyses the constrainess grad of the system and provides feedback
@@ -4786,13 +4828,15 @@ int System::diagnose(Algorithm alg)
     conflictingTags.clear();
     redundantTags.clear();
     partiallyRedundantTags.clear();
+    pDependentParameters.clear();
+    pDependentParametersGroups.clear();
 
     // This QR diagnosis uses a reduced Jacobian matrix to calculate the rank of the system
     // and identify conflicting and redundant constraints.
     //
     // reduced Jacobian matrix
     // The Jacobian has been reduced to:
-    // 1. only contain driving constraints, but keep a full size (zero padded).
+    // 1. only contain driving constraints (the dense path keeps zero padding).
     // 2. remove the parameters of the values of driven constraints.
     Eigen::MatrixXd J;
 
@@ -4809,12 +4853,8 @@ int System::diagnose(Algorithm alg)
     // like 0 and -1.
     std::map<int, int> tagmultiplicity;
 
-    makeReducedJacobian(J, jacobianconstraintmap, pdiagnoselist, tagmultiplicity);
-
-    // this function will exit with a diagnosis and, unless overridden by functions below, with full
-    // DoFs
-    hasDiagnosis = true;
-    dofs = pdiagnoselist.size();
+    // Select the storage before allocating the Jacobian.
+    dofs = plist.size() - pdrivenlist.size();
 
     // Use DenseQR for small to medium systems to avoid SparseQR rank issues.
     // SparseQR is known to fail rank detection on specific geometric structures (e.g. aligned slots).
@@ -4881,7 +4921,18 @@ int System::diagnose(Algorithm alg)
     }
 #endif
 
-    if (J.rows() == 0) {
+#ifdef EIGEN_SPARSEQR_COMPATIBLE
+    Eigen::SparseMatrix<double> sparseJ;
+    if (qrAlgorithm == EigenSparseQR)
+        makeReducedJacobian(sparseJ, jacobianconstraintmap, pdiagnoselist, tagmultiplicity);
+    else
+#endif
+        makeReducedJacobian(J, jacobianconstraintmap, pdiagnoselist, tagmultiplicity);
+    dofs = pdiagnoselist.size();
+    hasDiagnosis = true;
+
+    if (jacobianconstraintmap.empty()) {
+        emptyDiagnoseMatrix = true;
         return dofs;
     }
 
@@ -4911,9 +4962,9 @@ int System::diagnose(Algorithm alg)
         auto fut = std::async(
             &System::identifyDependentParametersDenseQR,
             this,
-            J,
-            jacobianconstraintmap,
-            pdiagnoselist,
+            std::cref(J),
+            std::cref(jacobianconstraintmap),
+            std::cref(pdiagnoselist),
             true
         );
 
@@ -4928,7 +4979,7 @@ int System::diagnose(Algorithm alg)
         // identifyDependentGeometryParametersInTransposedJacobianDenseQRDecomposition( qrJT,
         // pdiagnoselist, paramsNum, rank);
 
-        fut.wait();  // wait for the execution of identifyDependentParametersSparseQR to finish
+        fut.get();  // Join before parameters change; propagate allocation failures.
 
         dofs = paramsNum - rank;  // unless overconstraint, which will be overridden below
 
@@ -4969,37 +5020,21 @@ int System::diagnose(Algorithm alg)
         int rank = 0;
         Eigen::MatrixXd R;
         Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> SqrJT;
-        // Here we give the system the possibility to run the two QR decompositions in parallel,
-        // depending on the load of the system so we are using the default std::launch::async |
-        // std::launch::deferred policy, as nobody better than the system nows if it can run the
-        // task in parallel or is oversubscribed and should deferred it. Care to wait() for the
-        // future before any prospective detection of conflicting/redundant, because the
-        // redundant solve modifies pdiagnoselist and it would NOT be thread-safe. Care to call
-        // the thread with silent=true, unless the present thread does not use Base::Console, or
-        // the launch policy is set to std::launch::deferred policy, as it is not thread-safe to
-        // use them in both at the same time.
-        //
-        // identifyDependentParametersSparseQR(J, jacobianconstraintmap, pdiagnoselist, true)
-        //
-        // Debug:
-        // auto fut =
-        // std::async(std::launch::deferred,&System::identifyDependentParametersSparseQR, this,
-        // J, jacobianconstraintmap, pdiagnoselist, false);
-        auto fut = std::async(
-            &System::identifyDependentParametersSparseQR,
-            this,
-            J,
+        // Sparse factorizations can still have substantial fill-in on large
+        // grids. Release the parameter factor before allocating the constraint
+        // factor, instead of retaining both concurrently in an async task.
+        identifyDependentParametersSparseQR(
+            sparseJ,
             jacobianconstraintmap,
             pdiagnoselist,
             /*silent=*/true
         );
 
         makeSparseQRDecomposition(
-            J,
+            sparseJ,
             jacobianconstraintmap,
             SqrJT,
             rank,
-            R,
             /*transposed=*/true,
             /*silent=*/false
         );
@@ -5007,12 +5042,12 @@ int System::diagnose(Algorithm alg)
         int paramsNum = SqrJT.rows();
         int constrNum = SqrJT.cols();
 
-        fut.wait();  // wait for the execution of identifyDependentParametersSparseQR to finish
-
         dofs = paramsNum - rank;  // unless overconstraint, which will be overridden below
 
         // Detecting conflicting or redundant constraints
         if (constrNum > rank) {
+            // The normal independent case needs only the rank, not a dense R.
+            R = SqrJT.matrixR().topRows(std::min(paramsNum, constrNum));
             int nonredundantconstrNum;
 
             identifyConflictingRedundantConstraints(
@@ -5128,27 +5163,20 @@ void System::makeDenseQRDecomposition(
 
 #ifdef EIGEN_SPARSEQR_COMPATIBLE
 void System::makeSparseQRDecomposition(
-    const Eigen::MatrixXd& J,
+    const Eigen::SparseMatrix<double>& J,
     const std::map<int, int>& jacobianconstraintmap,
     Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>>& SqrJT,
     int& rank,
-    Eigen::MatrixXd& R,
     bool transposeJ,
     bool silent
 )
 {
 
-    Eigen::SparseMatrix<double> SJ;
-
-    // this creation is not optimized (done using triplets)
-    // however the time this takes is negligible compared to the
-    // time the QR decomposition itself takes
-    SJ = J.sparseView();
-    SJ.makeCompressed();
+    const auto& SJ = J;
 
 # ifdef _GCS_DEBUG
     if (!silent) {
-        SolverReportingManager::Manager().LogMatrix("J", J);
+        SolverReportingManager::Manager().LogMatrix("J", Eigen::MatrixXd(J));
     }
 # endif
 
@@ -5187,12 +5215,7 @@ void System::makeSparseQRDecomposition(
             SqrJT.setPivotThreshold(qrpivotThreshold);
             rank = SqrJT.rank();
 
-            if (colsNum >= rowsNum) {
-                R = SqrJT.matrixR().triangularView<Eigen::Upper>();
-            }
-            else {
-                R = SqrJT.matrixR().topRows(colsNum).triangularView<Eigen::Upper>();
-            }
+            // Keep the factor sparse. Only the conflict path materializes R.
 
 # ifdef _GCS_DEBUG_SOLVER_JACOBIAN_QR_DECOMPOSITION_TRIANGULAR_MATRIX
             R2 = SqrJT.matrixR();
@@ -5211,7 +5234,7 @@ void System::makeSparseQRDecomposition(
 # ifdef _GCS_DEBUG_SOLVER_JACOBIAN_QR_DECOMPOSITION_TRIANGULAR_MATRIX
     if (J.rows() > 0 && !silent) {
 
-        SolverReportingManager::Manager().LogMatrix("R", R);
+        SolverReportingManager::Manager().LogMatrix("R", Eigen::MatrixXd(SqrJT.matrixR()));
 
         SolverReportingManager::Manager().LogMatrix("R2", R2);
 
@@ -5242,15 +5265,13 @@ void System::identifyDependentParametersDenseQR(
 
 #ifdef EIGEN_SPARSEQR_COMPATIBLE
 void System::identifyDependentParametersSparseQR(
-    const Eigen::MatrixXd& J,
+    const Eigen::SparseMatrix<double>& J,
     const std::map<int, int>& jacobianconstraintmap,
     const GCS::VEC_pD& pdiagnoselist,
     bool silent
 )
 {
     Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> SqrJ;
-    Eigen::MatrixXd Rparams;
-
     int nontransprank;
 
     makeSparseQRDecomposition(
@@ -5258,12 +5279,41 @@ void System::identifyDependentParametersSparseQR(
         jacobianconstraintmap,
         SqrJ,
         nontransprank,
-        Rparams,
         false,
         true
     );  // do not transpose allow one to diagnose parameters
 
-    identifyDependentParameters(SqrJ, Rparams, nontransprank, pdiagnoselist, silent);
+    (void)silent;
+    // Only the columns after the rank describe free-parameter dependencies.
+    // Solving one sparse triangular system per column avoids constructing and
+    // reducing an entire dense square R matrix for large, nearly fixed sketches.
+    const auto& factor = SqrJ.matrixR();
+    // SparseQR's R entries are unsorted. Round-trip through row-major storage
+    // before random diagonal access (Eigen's documented sorting procedure).
+    const Eigen::SparseMatrix<double, Eigen::RowMajor> sortedUpper =
+        factor.topLeftCorner(nontransprank, nontransprank);
+    const Eigen::SparseMatrix<double> upper = sortedUpper;
+    pDependentParametersGroups.resize(SqrJ.cols() - nontransprank);
+    Eigen::VectorXd dependence(nontransprank);
+    for (int column = nontransprank; column < SqrJ.cols(); ++column) {
+        dependence.setZero();
+        for (Eigen::SparseMatrix<double>::InnerIterator entry(factor, column); entry; ++entry) {
+            if (entry.row() < nontransprank) dependence[entry.row()] = entry.value();
+        }
+        if (nontransprank) upper.triangularView<Eigen::Upper>().solveInPlace(dependence);
+        auto& group = pDependentParametersGroups[column - nontransprank];
+        for (int row = 0; row < nontransprank; ++row) {
+            // Match the original (unnormalized) elimination threshold.
+            if (std::abs(dependence[row] * upper.coeff(row, row)) > 1e-10) {
+                auto* parameter = pdiagnoselist[SqrJ.colsPermutation().indices()[row]];
+                group.push_back(parameter);
+                pDependentParameters.push_back(parameter);
+            }
+        }
+        auto* parameter = pdiagnoselist[SqrJ.colsPermutation().indices()[column]];
+        group.push_back(parameter);
+        pDependentParameters.push_back(parameter);
+    }
 }
 #endif
 

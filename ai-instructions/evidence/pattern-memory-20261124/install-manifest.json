@@ -1,0 +1,23 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\SketcherGui.pyd",
+    "path": "lib/SketcherGui.pyd",
+    "previous_sha256": "71cdca302afdbdc4bf23cee1288b38fb8664e83304916c225e269403da1cf0ad",
+    "sha256": "e7af5dcbe3643eed2198134fe659e83bf8f2115dbb726d421b7dc01e59b16b4c",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-memory-20261124\\install-backup\\lib\\SketcherGui.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\Sketcher.pyd",
+    "path": "lib/Sketcher.pyd",
+    "previous_sha256": "ffe9567a360a6f76f01c7fa615f7a9f62de966936bd597698a14dd399ef74e6f",
+    "sha256": "59ed88414d7b579afa7ae2215bc384e1886a35bea760883242e32bfcad075f8a",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-memory-20261124\\install-backup\\lib\\Sketcher.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPatternBatching.py",
+    "path": "Mod/FreeCADPlus/TestPatternBatching.py",
+    "previous_sha256": "888d32667a6209040b827b3f210fdb4e746e39817512fe3d9b46d0e01326f2dd",
+    "sha256": "bcbdc64031cac1409ba9e01393291ee124bb9bc8e96911d354367dc4b86ef47d",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-memory-20261124\\install-backup\\Mod\\FreeCADPlus\\TestPatternBatching.py"
+  }
+]

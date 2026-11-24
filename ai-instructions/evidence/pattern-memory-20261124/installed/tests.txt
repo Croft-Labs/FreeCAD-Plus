@@ -1,0 +1,86 @@
+test_CarbonCopyReverseMapping (SketcherTests.TestSketchCarbonCopyReverseMapping.TestSketchCarbonCopyReverseMapping.test_CarbonCopyReverseMapping) ... ok
+testConstraintWithExpression (SketcherTests.TestSketchExpression.TestSketchExpression.testConstraintWithExpression) ... ok
+testBasicFillet (SketcherTests.TestSketchFillet.TestSketchFillet.testBasicFillet) ... ok
+testCoincident (SketcherTests.TestSketchFillet.TestSketchFillet.testCoincident) ... ok
+testCurve (SketcherTests.TestSketchFillet.TestSketchFillet.testCurve) ... ok
+testDistance (SketcherTests.TestSketchFillet.TestSketchFillet.testDistance) ... ok
+testHorizontalVertical (SketcherTests.TestSketchFillet.TestSketchFillet.testHorizontalVertical) ... ok
+testOriginalCorner (SketcherTests.TestSketchFillet.TestSketchFillet.testOriginalCorner) ... ok
+testPointOnObject (SketcherTests.TestSketchFillet.TestSketchFillet.testPointOnObject) ... ok
+testSymmetric (SketcherTests.TestSketchFillet.TestSketchFillet.testSymmetric) ... ok
+testTangent (SketcherTests.TestSketchFillet.TestSketchFillet.testTangent) ... ok
+testUnconnected (SketcherTests.TestSketchFillet.TestSketchFillet.testUnconnected) ... ok
+testUnconnectedCurve (SketcherTests.TestSketchFillet.TestSketchFillet.testUnconnectedCurve) ... ok
+test_attachment_offset_updates_in_edit_mode (SketcherTests.TestPlacementUpdate.TestSketchPlacementUpdate.test_attachment_offset_updates_in_edit_mode)
+test that changing AttachmentOffset while editing updates the transform. ... ok
+test_multiple_attachment_offset_updates (SketcherTests.TestPlacementUpdate.TestSketchPlacementUpdate.test_multiple_attachment_offset_updates)
+test that multiple AttachmentOffset changes in edit mode all update correctly. ... ok
+test_no_update_when_not_editing (SketcherTests.TestPlacementUpdate.TestSketchPlacementUpdate.test_no_update_when_not_editing)
+verify that attachment offset changes don't cause issues when sketch is not in edit mode. ... ok
+test_unattached_sketch_placement_updates (SketcherTests.TestPlacementUpdate.TestSketchPlacementUpdate.test_unattached_sketch_placement_updates)
+test that unattached sketches also work correctly. ... ok
+testDegenratedGeometryCase (SketcherTests.TestSketchValidateCoincidents.TestSketchValidateCoincidents.testDegenratedGeometryCase) ... ok
+testDeleteConstraintsToExternalCase (SketcherTests.TestSketchValidateCoincidents.TestSketchValidateCoincidents.testDeleteConstraintsToExternalCase) ... ok
+testExternalGeoDeletion (SketcherTests.TestSketchValidateCoincidents.TestSketchValidateCoincidents.testExternalGeoDeletion)
+Make sure that we don't remove External Geometry references to deleted geometry. ... ok
+testSingleMissingCoincidentCase (SketcherTests.TestSketchValidateCoincidents.TestSketchValidateCoincidents.testSingleMissingCoincidentCase) ... ok
+testValidateConstraintsCase (SketcherTests.TestSketchValidateCoincidents.TestSketchValidateCoincidents.testValidateConstraintsCase) ... ok
+testBlockConstraintEllipse (SketcherTests.TestSketcherSolver.TestSketcherSolver.testBlockConstraintEllipse) ... ok
+testBoxCase (SketcherTests.TestSketcherSolver.TestSketcherSolver.testBoxCase) ... ok
+testCircleToLineDistance_Driving_Passant (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Driving_Passant) ... ok
+testCircleToLineDistance_Driving_Secant (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Driving_Secant) ... skipped 'Support for secants still under discussion, see comments in PR 9044'
+testCircleToLineDistance_Legacy_Negative (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Legacy_Negative) ... ok
+testCircleToLineDistance_Reference_Secant (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Reference_Secant) ... ok
+testConstructionToggleTNP (SketcherTests.TestSketcherSolver.TestSketcherSolver.testConstructionToggleTNP)
+Bug 15484 ... ok
+testIssue3245 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testIssue3245) ... ok
+testIssue3245_2 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testIssue3245_2) ... ok
+testRemovedExternalGeometryReference (SketcherTests.TestSketcherSolver.TestSketcherSolver.testRemovedExternalGeometryReference) ... ok
+testSaveLoadWithExternalGeometryReference (SketcherTests.TestSketcherSolver.TestSketcherSolver.testSaveLoadWithExternalGeometryReference) ... ok
+testSlotCase (SketcherTests.TestSketcherSolver.TestSketcherSolver.testSlotCase) ... ok
+testTNPExternalGeometryStored (SketcherTests.TestSketcherSolver.TestSketcherSolver.testTNPExternalGeometryStored) ... ok
+testThreeLinesWithCoincidences_1 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testThreeLinesWithCoincidences_1) ... ok
+testThreeLinesWithCoincidences_2 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testThreeLinesWithCoincidences_2) ... ok
+test_grid12_spacing_equal_edits_undo_and_save (TestPatternBatching.TestPatternBatching.test_grid12_spacing_equal_edits_undo_and_save) ... ok
+test_grid20_circle_spacing_size_edits_and_undo (TestPatternBatching.TestPatternBatching.test_grid20_circle_spacing_size_edits_and_undo) ... ok
+test_radial_and_two_point_direction_with_mixed_construction (TestPatternBatching.TestPatternBatching.test_radial_and_two_point_direction_with_mixed_construction) ... ok
+test_redundancy_fallback_preserves_source_and_rejects_conflict (TestPatternBatching.TestPatternBatching.test_redundancy_fallback_preserves_source_and_rejects_conflict) ... ok
+test_grid12_apply_in_sketch_edit (TestPatternBatching.TestPatternBatchingTask.test_grid12_apply_in_sketch_edit) ... ok
+test_angular_radial_edit_and_mode_change (TestPatternEditing.TestPatternEditing.test_angular_radial_edit_and_mode_change) ... ok
+test_external_direction_recipe_roundtrip (TestPatternEditing.TestPatternEditing.test_external_direction_recipe_roundtrip) ... ok
+test_grid12_edit_timing (TestPatternEditing.TestPatternEditing.test_grid12_edit_timing) ... ok
+test_grid_counts_directions_identity_undo_and_save (TestPatternEditing.TestPatternEditing.test_grid_counts_directions_identity_undo_and_save) ... ok
+test_legacy_reversed_grid_and_expression_guard (TestPatternEditing.TestPatternEditing.test_legacy_reversed_grid_and_expression_guard) ... ok
+test_rebuild_failure_restores_existing_pattern (TestPatternEditing.TestPatternEditing.test_rebuild_failure_restores_existing_pattern) ... ok
+test_recover_older_grouped_linear_and_circular (TestPatternEditing.TestPatternEditing.test_recover_older_grouped_linear_and_circular) ... ok
+test_reference_and_other_pattern_survive_geometry_renumbering (TestPatternEditing.TestPatternEditing.test_reference_and_other_pattern_survive_geometry_renumbering) ... ok
+test_save_close_reopen_definition_and_visibility (TestPatternEditing.TestPatternEditing.test_save_close_reopen_definition_and_visibility) ... ok
+test_total_units_refresh_and_symmetric_negative_extents (TestPatternEditing.TestPatternEditing.test_total_units_refresh_and_symmetric_negative_extents) ... ok
+test_unrelated_geometry_and_constraint_dependency_rollback (TestPatternEditing.TestPatternEditing.test_unrelated_geometry_and_constraint_dependency_rollback) ... ok
+test_whole_sketch_extrusion_survives_count_edit (TestPatternEditing.TestPatternEditing.test_whole_sketch_extrusion_survives_count_edit) ... ok
+test_list_reopens_populated_cancel_done_apply_and_undo (TestPatternEditing.TestPatternEditingTask.test_list_reopens_populated_cancel_done_apply_and_undo) ... ok
+test_viewport_icon_double_click (TestPatternEditing.TestPatternEditingTask.test_viewport_icon_double_click) ... ok
+test_group_pitch_editor_preserves_units (TestPatternGroups.TestPatternGroupView.test_group_pitch_editor_preserves_units) ... ok
+test_single_icon_list_hide_selection_delete_undo (TestPatternGroups.TestPatternGroupView.test_single_icon_list_hide_selection_delete_undo) ... ok
+test_angular_radial_drivers (TestPatternGroups.TestPatternGroups.test_angular_radial_drivers) ... ok
+test_fixed_length_grid12_no_fallback_and_edit (TestPatternGroups.TestPatternGroups.test_fixed_length_grid12_no_fallback_and_edit) ... ok
+test_hide_group_visibility_and_renumber_save (TestPatternGroups.TestPatternGroups.test_hide_group_visibility_and_renumber_save) ... ok
+test_projected_length_requires_direction_and_radial_fixed_line (TestPatternGroups.TestPatternGroups.test_projected_length_requires_direction_and_radial_fixed_line) ... ok
+test_second_pattern_separate_and_undo (TestPatternGroups.TestPatternGroups.test_second_pattern_separate_and_undo) ... ok
+test_constrained_construction_line_reference (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_constrained_construction_line_reference) ... ok
+test_dimension_edit_delete_symmetry_and_undo_redo (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_dimension_edit_delete_symmetry_and_undo_redo) ... ok
+test_fully_constrained_compatible_and_conflicting_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_fully_constrained_compatible_and_conflicting_symmetry) ... ok
+test_horizontal_rectangle_vertical_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_horizontal_rectangle_vertical_axis) ... ok
+test_native_symmetry_command (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_native_symmetry_command) ... ok
+test_oblique_axis_preserves_both_symmetry_equations (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_oblique_axis_preserves_both_symmetry_equations) ... ok
+test_point_symmetry_duplicate (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_point_symmetry_duplicate) ... ok
+test_save_reopen_and_downstream_extrusion (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_save_reopen_and_downstream_extrusion) ... ok
+test_symmetry_before_horizontal_and_duplicate_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_symmetry_before_horizontal_and_duplicate_symmetry) ... ok
+test_two_sides_and_two_axes (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_two_sides_and_two_axes) ... ok
+test_unrelated_redundancy_remains_an_error (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_unrelated_redundancy_remains_an_error) ... ok
+test_vertical_rectangle_horizontal_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_vertical_rectangle_horizontal_axis) ... ok
+
+----------------------------------------------------------------------
+Ran 75 tests in 123.872s
+
+OK (skipped=1)

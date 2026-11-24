@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Large circle-pattern memory — November 24, 2026
+
+- [x] Measure the reported 20-by-20 circle Apply path in an isolated task.
+- [x] Avoid unnecessary dense allocations and overlapping sparse factorizations.
+- [x] Preserve dependency, redundancy/conflict diagnosis and native constraints.
+- [x] Add 400-circle chain/size/edit/Undo regression and native solver comparisons.
+- [x] Build, install, verify memory/timing, saved-grid reopening and the existing shortcut.
+  The exact reported OOM did not reproduce; see [measured reductions and limits](evidence/pattern-memory-20261124/README.md).
+
 ## Existing Sketch Pattern editing — November 24, 2026
 
 - [x] Obtain explicit approval of the populated editor and Done/Apply/Cancel workflow.

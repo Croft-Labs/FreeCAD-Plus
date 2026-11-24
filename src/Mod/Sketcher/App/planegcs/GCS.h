@@ -167,12 +167,17 @@ private:
     );
 
 #ifdef EIGEN_SPARSEQR_COMPATIBLE
+    void makeReducedJacobian(
+        Eigen::SparseMatrix<double>& J,
+        std::map<int, int>& jacobianconstraintmap,
+        GCS::VEC_pD& pdiagnoselist,
+        std::map<int, int>& tagmultiplicity
+    );
     void makeSparseQRDecomposition(
-        const Eigen::MatrixXd& J,
+        const Eigen::SparseMatrix<double>& J,
         const std::map<int, int>& jacobianconstraintmap,
         Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>>& SqrJT,
         int& rank,
-        Eigen::MatrixXd& R,
         bool transposeJ = true,
         bool silent = false
     );
@@ -204,7 +209,7 @@ private:
 
 #ifdef EIGEN_SPARSEQR_COMPATIBLE
     void identifyDependentParametersSparseQR(
-        const Eigen::MatrixXd& J,
+        const Eigen::SparseMatrix<double>& J,
         const std::map<int, int>& jacobianconstraintmap,
         const GCS::VEC_pD& pdiagnoselist,
         bool silent = true
