@@ -27,6 +27,10 @@ def run():
         before=sketch.GeometryCount
         if symmetry_ui.proposed():
             assert not panel.apply.isEnabled()
+            if hasattr(panel,'hidden_sections'):
+                assert len(panel.hidden_sections)>=3
+                assert all(w.isHidden() for w,visible in panel.hidden_sections)
+                result['normal_sections_hidden']=True
             shot('empty')
             panel.add_geometry('Edge1');panel.add_geometry('Edge2');panel.add_geometry('Edge3')
             panel.add_geometry('Edge1');assert panel.items.count()==3
@@ -41,6 +45,9 @@ def run():
             panel.add_geometry('Edge1');panel.done.click();QtTest.QTest.qWait(100)
             assert Gui.activeDocument().getInEdit() is not None
             assert not win.findChild(QtWidgets.QPushButton,'SketchCancelAction').isVisible()
+            if hasattr(panel,'hidden_sections'):
+                assert all(w.isHidden()!=visible for w,visible in panel.hidden_sections)
+                result['normal_sections_restored']=True
             shot('after-done')
             result.update(done_returns_to_sketch=True,done_does_not_commit=True,initial_disabled=True,duplicate_add_noop=True,shift_removes=True,
                           ready_enabled=True,invalid_axis_disabled=True,apply_ui_reset=True)

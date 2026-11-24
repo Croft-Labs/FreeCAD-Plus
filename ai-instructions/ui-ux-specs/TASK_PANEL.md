@@ -1361,5 +1361,8 @@ click/Shift collection, native axis/line/point support, highlighted invalid-inpu
 feedback, native existing symmetry options and Apply-only creation. Owner clarified:
 Apply stays open, clearing geometry while retaining the axis; adjacent Done closes
 symmetry without applying pending inputs and preserves previously applied sets.
+Owner further requests a dedicated symmetry task: hide ordinary Sketch Edit,
+Constraints, Elements/lines and advanced solver panels while active; restore their
+prior visibility on leaving symmetry. Keep viewport geometry selectable.
 Cancel/Exit Sketch retain their existing roles. Implementation awaits approval of
 the [native-widget preview](../evidence/sketch-symmetry-preview-20261123/README.md).

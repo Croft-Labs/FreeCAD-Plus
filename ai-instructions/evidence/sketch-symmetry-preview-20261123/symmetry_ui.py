@@ -73,4 +73,27 @@ def install(dock):
     native=next(w for w in dock.findChildren(QtWidgets.QWidget) if w.metaObject().className().endswith('SketcherToolDefaultWidget'))
     parent=native.parentWidget();layout=parent.layout();native.hide()
     panel=SymmetryPanel(parent);layout.addWidget(panel);panel.show()
+
+    task_names = ('TaskSketcherMessages', 'TaskSketcherConstraints',
+                  'TaskSketcherElements', 'TaskSketcherSolverAdvanced')
+    panel.hidden_sections = [(w, not w.isHidden()) for w in dock.findChildren(QtWidgets.QWidget)
+                             if any(w.metaObject().className().endswith(n) for n in task_names)]
+    for widget, was_visible in panel.hidden_sections:
+        widget.hide()
+    panel.restored = False
+    def restore():
+        if panel.restored:
+            return
+        panel.restored = True
+        for widget, was_visible in panel.hidden_sections:
+            widget.setVisible(was_visible)
+        timer.stop()
+    timer = QtCore.QTimer(dock)
+    timer.setInterval(50)
+    timer.timeout.connect(lambda: restore() if not panel.isVisible() else None)
+    panel.done.clicked.connect(restore)
+    cancel = dock.findChild(QtWidgets.QPushButton, 'SketchCancelAction')
+    if cancel:
+        cancel.clicked.connect(restore)
+    timer.start()
     return panel

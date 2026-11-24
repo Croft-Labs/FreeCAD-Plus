@@ -1,6 +1,8 @@
 {
   "ok": true,
   "ui_only": true,
+  "normal_sections_hidden": true,
+  "normal_sections_restored": true,
   "done_returns_to_sketch": true,
   "done_does_not_commit": true,
   "initial_disabled": true,

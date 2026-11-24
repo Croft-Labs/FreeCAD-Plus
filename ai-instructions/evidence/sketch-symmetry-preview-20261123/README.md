@@ -7,6 +7,9 @@ Current native Sketcher_Symmetry (Mirror) requires geometry preselection and use
 the viewport axis/point pick to commit. Its tool panel exposes Delete original
 geometries and Create symmetry constraints. Proposed workflow:
 
+- Show a dedicated symmetry task: temporarily hide Sketch Edit, Constraints,
+  Elements/lines and advanced solver sections. Restore prior section visibility
+  when leaving symmetry. Keep viewport geometry visible for selection.
 - Open with no preselection or prefill eligible selected internal sketch geometry.
 - Five-row scrollable Geometry list; activate it to collect, click adds once,
   Shift-click removes; retain Delete/Remove/Clear, without Select/Confirm toggles.
@@ -36,14 +39,14 @@ The prototype replaces the symmetry tool widget in an isolated actual FreeCAD
 sketch editor. Its list/axis and Apply interactions are simulated; no mirrored
 geometry is committed. Native fixture geometry count stays unchanged in baseline
 and candidate. Checks confirm empty/invalid disabling, duplicate-add suppression,
-Shift removal, recovery, post-Apply reset and Done returning to sketch editing without a commit. These are UI checks,
+Shift removal, recovery, post-Apply reset and Done returning to sketch editing without a commit. Normal sections are verified hidden during symmetry and restored after Done. These are UI checks,
 not proof of working command integration, picking, geometry, Undo or persistence.
 No production source or installed payload changed. The simulation footer is preview
 annotation, not a proposed product control.
 
-Companion session c5ec4798c9a1 supersedes f6f16a2395cf with Apply/Done clarification; adapter baseline
+Companion session aef4e2a28b5b supersedes c5ec4798c9a1 with the dedicated task layout; adapter baseline
 be7bf70c1f925f182d1eb8fc6c90b3109d049cb4; fingerprint
-17b71b7da4abd8b94bce4c168104489ddc0274c7a33987948ef7f8810aba37fd.
+8cbe727921cf6509587d4c22e9fdc7286e6f428349daf9cc5d13b53068f9fd96.
 Only symmetry_ui.py changed in candidate. Preview valid, scope violations empty.
 Owner preview approval is pending; tool approval state was not modified.
 
