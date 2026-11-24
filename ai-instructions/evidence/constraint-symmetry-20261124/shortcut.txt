@@ -1,0 +1,6 @@
+test_native_symmetry_command (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_native_symmetry_command) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.953s
+
+OK

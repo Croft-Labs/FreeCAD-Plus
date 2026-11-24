@@ -1,5 +1,14 @@
 # FreeCAD Plus: Development roadmap
 
+## Compatible symmetry redundancy - November 24, 2026
+
+- [x] Reproduce the rectangle constraint failure and correct solver diagnosis.
+- [x] Preserve real conflicts, unrelated diagnostics and saved constraints.
+- [x] Validate native commands, edits, Undo/Redo, persistence and downstream use.
+- [x] Rebuild dependent modules, install with rollback, and verify the existing shortcut.
+
+See [acceptance and test evidence](evidence/constraint-symmetry-20261124/README.md).
+
 ## Fillet selection repair — November 23, 2026
 
 - [x] Reproduce and repair the consuming-picker notification loop and mapped seed toggle.

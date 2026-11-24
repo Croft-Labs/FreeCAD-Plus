@@ -1,0 +1,30 @@
+[
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\Sketcher.pyd",
+    "path": "lib/Sketcher.pyd",
+    "previous_sha256": "319acc556dad75f2ce64f153cbb8b0ff91cd1e7a98bb151c7133d8333b81462a",
+    "sha256": "bdd73023e293de6380c9d9f12c767685a6546471374b84ffb2bf21844bd136fe",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\constraint-symmetry-20261124\\install-backup\\lib\\Sketcher.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\Sketcher\\SketcherGui.pyd",
+    "path": "lib/SketcherGui.pyd",
+    "previous_sha256": "f61bdbc13044ab853b8ee38a50e633bd7a3ac5e55ba2276be340403bcb0a065c",
+    "sha256": "d8a03664654b1eec56a1f0d611f227e94144a95ad9c9d348dfca3a78fdc0bdaf",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\constraint-symmetry-20261124\\install-backup\\lib\\SketcherGui.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\build\\Mod\\PartDesign\\PartDesignGui.pyd",
+    "path": "lib/PartDesignGui.pyd",
+    "previous_sha256": "936baec90133c1a64a97ad1940a68eeb10eb364e65e4e696478f83acc5acf5ba",
+    "sha256": "6075184ce0263b91338cdb5646bf32a9b37ab7831ce831819009f505b0ef23bb",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\constraint-symmetry-20261124\\install-backup\\lib\\PartDesignGui.pyd"
+  },
+  {
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestSketchConstraintSymmetry.py",
+    "path": "Mod/FreeCADPlus/TestSketchConstraintSymmetry.py",
+    "previous_sha256": null,
+    "sha256": "74deb55ea6d5e3cc2863caa69957241f0ffd0c4d1d43cace8bbf4100ee400962",
+    "rollback": null
+  }
+]

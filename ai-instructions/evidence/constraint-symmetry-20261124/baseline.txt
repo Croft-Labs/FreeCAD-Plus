@@ -1,0 +1,93 @@
+test_constrained_construction_line_reference (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_constrained_construction_line_reference) ... FAIL
+test_dimension_edit_delete_symmetry_and_undo_redo (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_dimension_edit_delete_symmetry_and_undo_redo) ... FAIL
+test_fully_constrained_compatible_and_conflicting_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_fully_constrained_compatible_and_conflicting_symmetry) ... FAIL
+test_horizontal_rectangle_vertical_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_horizontal_rectangle_vertical_axis) ... FAIL
+test_save_reopen_and_downstream_extrusion (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_save_reopen_and_downstream_extrusion) ... FAIL
+test_symmetry_before_horizontal_and_duplicate_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_symmetry_before_horizontal_and_duplicate_symmetry) ... FAIL
+test_unrelated_redundancy_remains_an_error (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_unrelated_redundancy_remains_an_error) ... FAIL
+test_vertical_rectangle_horizontal_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_vertical_rectangle_horizontal_axis) ... FAIL
+
+======================================================================
+FAIL: test_constrained_construction_line_reference (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_constrained_construction_line_reference)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 64, in test_constrained_construction_line_reference
+    self.assertSymmetric()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -3 != 0
+
+======================================================================
+FAIL: test_dimension_edit_delete_symmetry_and_undo_redo (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_dimension_edit_delete_symmetry_and_undo_redo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 105, in test_dimension_edit_delete_symmetry_and_undo_redo
+    self.assertSymmetric()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -2 != 0
+
+======================================================================
+FAIL: test_fully_constrained_compatible_and_conflicting_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_fully_constrained_compatible_and_conflicting_symmetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 88, in test_fully_constrained_compatible_and_conflicting_symmetry
+    self.assertSymmetric()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -2 != 0
+
+======================================================================
+FAIL: test_horizontal_rectangle_vertical_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_horizontal_rectangle_vertical_axis)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 50, in test_horizontal_rectangle_vertical_axis
+    self.assertSymmetric()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -2 != 0
+
+======================================================================
+FAIL: test_save_reopen_and_downstream_extrusion (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_save_reopen_and_downstream_extrusion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 125, in test_save_reopen_and_downstream_extrusion
+    self.assertSymmetric()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -2 != 0
+
+======================================================================
+FAIL: test_symmetry_before_horizontal_and_duplicate_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_symmetry_before_horizontal_and_duplicate_symmetry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 76, in test_symmetry_before_horizontal_and_duplicate_symmetry
+    self.assertSymmetric()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -2 != 0
+
+======================================================================
+FAIL: test_unrelated_redundancy_remains_an_error (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_unrelated_redundancy_remains_an_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 96, in test_unrelated_redundancy_remains_an_error
+    self.assertSymmetric()
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -2 != 0
+
+======================================================================
+FAIL: test_vertical_rectangle_horizontal_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_vertical_rectangle_horizontal_axis)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 56, in test_vertical_rectangle_horizontal_axis
+    self.assertSymmetric(vertical=True)
+  File "C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\TestSketchConstraintSymmetry.py", line 38, in assertSymmetric
+    self.assertEqual(self.sketch.solve(), 0)
+AssertionError: -2 != 0
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.138s
+
+FAILED (failures=8)

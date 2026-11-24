@@ -135,6 +135,8 @@ private:
 
     int dofs;
     std::set<Constraint*> redundant;
+    // Symmetry equations may be redundant, but must still pass the residual check.
+    std::set<Constraint*> symmetryConstraints;
     VEC_I conflictingTags, redundantTags, partiallyRedundantTags;
 
     bool hasUnknowns;   // if plist is filled with the unknown parameters

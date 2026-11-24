@@ -1,0 +1,40 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.14.42
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[1/44] Copying C:/Users/dgium/Documents/__Apps/FreeCAD/FreeCAD-Plus/src/Mod/FreeCADPlus/TestSketchConstraintSymmetry.py to C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/Mod/FreeCADPlus/TestSketchConstraintSymmetry.py
+[2/44] Generating version_file
+git
+C:/Users/dgium/Documents/__Apps/_temp builds/FreeCAD-Plus/build/src/Build/Version.h.out written
+[3/34] Automatic MOC and UIC for target PartDesignGui
+[4/33] Generating qrc_PartDesign_translation.cpp
+[5/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\qrc_PartDesign_translation.cpp.obj
+[6/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\Utils.cpp.obj
+[7/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\CommandBody.cpp.obj
+[8/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\Command.cpp.obj
+[9/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskSketchBasedParameters.cpp.obj
+[10/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskFeaturePick.cpp.obj
+[11/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskExtrudeParameters.cpp.obj
+[12/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskPadParameters.cpp.obj
+[13/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskPocketParameters.cpp.obj
+[14/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskChamferParameters.cpp.obj
+[15/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskFilletParameters.cpp.obj
+[16/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskDraftParameters.cpp.obj
+[17/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskThicknessParameters.cpp.obj
+[18/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskTransformedMessages.cpp.obj
+[19/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskRevolutionParameters.cpp.obj
+[20/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskMirroredParameters.cpp.obj
+[21/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskPatternParameters.cpp.obj
+[22/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskScaledParameters.cpp.obj
+[23/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskMultiTransformParameters.cpp.obj
+[24/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskShapeBinder.cpp.obj
+[25/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskHoleParameters.cpp.obj
+[26/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskBooleanParameters.cpp.obj
+[27/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskPipeParameters.cpp.obj
+[28/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskLoftParameters.cpp.obj
+[29/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\TaskHelixParameters.cpp.obj
+[30/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\ViewProviderSketchBased.cpp.obj
+[31/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\ViewProviderHole.cpp.obj
+[32/33] Building CXX object src\Mod\PartDesign\Gui\CMakeFiles\PartDesignGui.dir\ViewProviderHelix.cpp.obj
+[33/33] Linking CXX shared library Mod\PartDesign\PartDesignGui.pyd

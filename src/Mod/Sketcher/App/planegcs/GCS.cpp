@@ -527,6 +527,7 @@ void System::clear()
     emptyDiagnoseMatrix = true;
 
     redundant.clear();
+    symmetryConstraints.clear();
     conflictingTags.clear();
     redundantTags.clear();
     partiallyRedundantTags.clear();
@@ -584,6 +585,7 @@ void System::removeConstraint(Constraint* constr)
     }
 
     clist.erase(it);
+    symmetryConstraints.erase(constr);
     if (constr->getTag() >= 0) {
         hasDiagnosis = false;
     }
@@ -1230,13 +1232,19 @@ int System::addConstraintEqualRadius(Arc& a1, Arc& a2, int tagId, bool driving)
 int System::addConstraintP2PSymmetric(Point& p1, Point& p2, Line& l, int tagId, bool driving)
 {
     addConstraintPerpendicular(p1, p2, l.p1, l.p2, tagId, driving);
-    return addConstraintMidpointOnLine(p1, p2, l.p1, l.p2, tagId, driving);
+    symmetryConstraints.insert(clist.back());
+    int result = addConstraintMidpointOnLine(p1, p2, l.p1, l.p2, tagId, driving);
+    symmetryConstraints.insert(clist.back());
+    return result;
 }
 
 int System::addConstraintP2PSymmetric(Point& p1, Point& p2, Point& p, int tagId, bool driving)
 {
     addConstraintPointOnPerpBisector(p, p1, p2, tagId, driving);
-    return addConstraintPointOnLine(p, p1, p2, tagId, driving);
+    symmetryConstraints.insert(clist.back());
+    int result = addConstraintPointOnLine(p, p1, p2, tagId, driving);
+    symmetryConstraints.insert(clist.back());
+    return result;
 }
 
 int System::addConstraintSnellsLaw(
@@ -5509,7 +5517,15 @@ void System::identifyConflictingRedundantConstraints(
         auto iterMostPopular = std::max_element(
             conflictingMap.begin(),
             conflictingMap.end(),
-            [&tagmultiplicity](const auto& pair1, const auto& pair2) {
+            [this, &tagmultiplicity](const auto& pair1, const auto& pair2) {
+                // Keep the user's other constraints and test the dependent symmetry
+                // equation instead. Only equations satisfied by the reduced solution
+                // become redundant below; incompatible symmetry remains a conflict.
+                bool symmetry1 = symmetryConstraints.count(pair1.first) != 0;
+                bool symmetry2 = symmetryConstraints.count(pair2.first) != 0;
+                if (symmetry1 != symmetry2) {
+                    return symmetry2;
+                }
                 size_t sizeOfSet1 = pair1.second.size();
                 size_t sizeOfSet2 = pair2.second.size();
                 auto tag1 = pair1.first->getTag();
@@ -5646,6 +5662,9 @@ void System::identifyConflictingRedundantConstraints(
     // output of redundant tags
     SET_I redundantTagsSet, partiallyRedundantTagsSet;
     for (const auto& constr : redundant) {
+        if (symmetryConstraints.count(constr) != 0) {
+            continue;
+        }
         redundantTagsSet.insert(constr->getTag());
         partiallyRedundantTagsSet.insert(constr->getTag());
     }

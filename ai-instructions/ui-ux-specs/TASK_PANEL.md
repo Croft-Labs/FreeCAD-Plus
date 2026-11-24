@@ -1353,6 +1353,15 @@ preserve validation, History ordering, single-input replacement and existing lis
 controls. See the [approved native-list preview](../evidence/feature-pick-preview-20261123/README.md)
 and [implementation acceptance](../evidence/feature-pick-20261123/README.md).
 
+### Compatible symmetry constraints - November 24, 2026
+
+Owner correction: adding symmetry to an already horizontal/vertical rectangle must
+not report an error merely because some symmetry equations are redundant. Retain
+the rectangle's existing constraints and the symmetry constraint, including fully
+constrained compatible cases. Actual contradictions must still fail validation.
+Constraint creation, selection, appearance, editing and native Undo remain unchanged;
+this is a solver correction within the existing workflow, with no new interface.
+
 ### Sketcher symmetric geometry task - November 23, 2026
 
 Approved, including the owner's larger-list revision: Mirror opens its own symmetry

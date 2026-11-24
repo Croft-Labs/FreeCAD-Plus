@@ -1,5 +1,17 @@
 # FreeCAD Plus: Current work state
 
+## Compatible symmetry redundancy installed - November 24, 2026
+
+The solver accepts compatible full/partial symmetry redundancy without removing
+saved constraints. Actual conflicts and unrelated redundancy still report errors.
+The existing command, appearance and selection workflow are unchanged.
+
+Native Sketcher and dependent PartDesign builds passed, with 88 C++ tests and
+39 installed checks passing (one existing upstream skip). The desktop shortcut's
+fresh-process native constraint check passed. Three native modules and the new
+test script are installed with hash verification and retained rollback copies.
+Restart existing processes. See [implementation and evidence](evidence/constraint-symmetry-20261124/README.md).
+
 ## Sketcher symmetry workflow installed - November 23, 2026
 
 Approved dedicated task with an enlarged scrollable Geometry list, single-line

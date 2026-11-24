@@ -1,5 +1,12 @@
 # FreeCAD Plus: Programming Summary
 
+## Compatible symmetry redundancy installed - November 24, 2026
+
+Rectangle symmetry now accepts verified redundant equations while retaining all
+constraints and actual conflict detection. Native build, 88 C++ tests, 39 installed
+checks (one upstream skip), and the existing shortcut passed. See
+[solver correction and acceptance](evidence/constraint-symmetry-20261124/README.md).
+
 ## Sketcher symmetry task installed - November 23, 2026
 
 Approved dedicated symmetry task with enlarged Geometry list, reference field and

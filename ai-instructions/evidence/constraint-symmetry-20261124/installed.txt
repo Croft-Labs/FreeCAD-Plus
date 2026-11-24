@@ -1,0 +1,46 @@
+test_constrained_construction_line_reference (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_constrained_construction_line_reference) ... ok
+test_dimension_edit_delete_symmetry_and_undo_redo (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_dimension_edit_delete_symmetry_and_undo_redo) ... ok
+test_fully_constrained_compatible_and_conflicting_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_fully_constrained_compatible_and_conflicting_symmetry) ... ok
+test_horizontal_rectangle_vertical_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_horizontal_rectangle_vertical_axis) ... ok
+test_native_symmetry_command (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_native_symmetry_command) ... ok
+test_oblique_axis_preserves_both_symmetry_equations (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_oblique_axis_preserves_both_symmetry_equations) ... ok
+test_point_symmetry_duplicate (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_point_symmetry_duplicate) ... ok
+test_save_reopen_and_downstream_extrusion (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_save_reopen_and_downstream_extrusion) ... ok
+test_symmetry_before_horizontal_and_duplicate_symmetry (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_symmetry_before_horizontal_and_duplicate_symmetry) ... ok
+test_two_sides_and_two_axes (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_two_sides_and_two_axes) ... ok
+test_unrelated_redundancy_remains_an_error (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_unrelated_redundancy_remains_an_error) ... ok
+test_vertical_rectangle_horizontal_axis (TestSketchConstraintSymmetry.TestSketchConstraintSymmetry.test_vertical_rectangle_horizontal_axis) ... ok
+testBlockConstraintEllipse (SketcherTests.TestSketcherSolver.TestSketcherSolver.testBlockConstraintEllipse) ... ok
+testBoxCase (SketcherTests.TestSketcherSolver.TestSketcherSolver.testBoxCase) ... ok
+testCircleToLineDistance_Driving_Passant (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Driving_Passant) ... ok
+testCircleToLineDistance_Driving_Secant (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Driving_Secant) ... skipped 'Support for secants still under discussion, see comments in PR 9044'
+testCircleToLineDistance_Legacy_Negative (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Legacy_Negative) ... ok
+testCircleToLineDistance_Reference_Secant (SketcherTests.TestSketcherSolver.TestSketcherSolver.testCircleToLineDistance_Reference_Secant) ... ok
+testConstructionToggleTNP (SketcherTests.TestSketcherSolver.TestSketcherSolver.testConstructionToggleTNP)
+Bug 15484 ... ok
+testIssue3245 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testIssue3245) ... ok
+testIssue3245_2 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testIssue3245_2) ... ok
+testRemovedExternalGeometryReference (SketcherTests.TestSketcherSolver.TestSketcherSolver.testRemovedExternalGeometryReference) ... ok
+testSaveLoadWithExternalGeometryReference (SketcherTests.TestSketcherSolver.TestSketcherSolver.testSaveLoadWithExternalGeometryReference) ... ok
+testSlotCase (SketcherTests.TestSketcherSolver.TestSketcherSolver.testSlotCase) ... ok
+testTNPExternalGeometryStored (SketcherTests.TestSketcherSolver.TestSketcherSolver.testTNPExternalGeometryStored) ... ok
+testThreeLinesWithCoincidences_1 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testThreeLinesWithCoincidences_1) ... ok
+testThreeLinesWithCoincidences_2 (SketcherTests.TestSketcherSolver.TestSketcherSolver.testThreeLinesWithCoincidences_2) ... ok
+test_apply_repeated_and_undo_redo (TestSketchSymmetry.TestSketchSymmetry.test_apply_repeated_and_undo_redo) ... ok
+test_component_sketch_both_presentations (TestSketchSymmetry.TestSketchSymmetry.test_component_sketch_both_presentations) ... ok
+test_constraints_cancel_escape_and_other_tool (TestSketchSymmetry.TestSketchSymmetry.test_constraints_cancel_escape_and_other_tool) ... ok
+test_delete_original_and_axis_remapping (TestSketchSymmetry.TestSketchSymmetry.test_delete_original_and_axis_remapping) ... ok
+test_empty_entry_large_list_and_done_restore (TestSketchSymmetry.TestSketchSymmetry.test_empty_entry_large_list_and_done_restore) ... ok
+test_empty_sketch_can_open_and_cancel (TestSketchSymmetry.TestSketchSymmetry.test_empty_sketch_can_open_and_cancel) ... ok
+test_external_line_reference_and_scrollable_many_inputs (TestSketchSymmetry.TestSketchSymmetry.test_external_line_reference_and_scrollable_many_inputs) ... ok
+test_native_options_construction_and_point_center (TestSketchSymmetry.TestSketchSymmetry.test_native_options_construction_and_point_center) ... ok
+test_real_viewport_click_and_shift (TestSketchSymmetry.TestSketchSymmetry.test_real_viewport_click_and_shift) ... ok
+test_save_reopen (TestSketchSymmetry.TestSketchSymmetry.test_save_reopen) ... ok
+test_shift_delete_clear_and_invalid_axis_recovery (TestSketchSymmetry.TestSketchSymmetry.test_shift_delete_clear_and_invalid_axis_recovery) ... ok
+test_standalone_point_selected_after_open (TestSketchSymmetry.TestSketchSymmetry.test_standalone_point_selected_after_open) ... ok
+test_constraint_retention_points_and_symmetry (TestPlusToolbars.TestPlusToolbars.test_constraint_retention_points_and_symmetry) ... ok
+
+----------------------------------------------------------------------
+Ran 40 tests in 85.026s
+
+OK (skipped=1)
