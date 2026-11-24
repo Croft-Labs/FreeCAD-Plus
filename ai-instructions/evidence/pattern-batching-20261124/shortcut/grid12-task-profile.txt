@@ -1,0 +1,36 @@
+         19546 function calls in 1.539 seconds
+
+   Ordered by: internal time
+   List reduced from 149 to 30 due to restriction <30>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    0.571    0.114    0.572    0.114 {method 'solve' of 'Sketcher.SketchObject' objects}
+        1    0.333    0.333    0.333    0.333 {method 'recompute' of 'App.Document' objects}
+        1    0.282    0.282    0.511    0.511 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:377(set_chain_hidden)
+        1    0.275    0.275    0.786    0.786 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:482(finish)
+        1    0.036    0.036    0.036    0.036 {method 'setVisibility' of 'Sketcher.SketchObject' objects}
+      431    0.021    0.000    0.021    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:54(geometry)
+        2    0.003    0.001    0.003    0.001 {method 'addGeometry' of 'Sketcher.SketchObject' objects}
+       22    0.002    0.000    0.002    0.000 {method 'setVisible' of 'PySide6.QtWidgets.QWidget' objects}
+      570    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:418(constrain)
+        3    0.001    0.000    0.002    0.001 {method 'setStyleSheet' of 'PySide6.QtWidgets.QWidget' objects}
+      286    0.001    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:151(transformed)
+      143    0.001    0.000    0.004    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:433(line)
+      154    0.001    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\curve_selection.py:136(eventFilter)
+      288    0.001    0.000    0.001    0.000 {method 'getExtensionOfName' of 'Sketcher.GeometryFacade' objects}
+      143    0.001    0.000    0.001    0.000 {method 'getExtensionOfType' of 'Sketcher.GeometryFacade' objects}
+        1    0.000    0.000    0.983    0.983 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:570(_spacing_chains)
+      143    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:514(addGeometry)
+        1    0.000    0.000    1.534    1.534 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:632(apply)
+      286    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:507(getPoint)
+        1    0.000    0.000    0.000    0.000 {built-in method Selection.clearSelection}
+        2    0.000    0.000    0.000    0.000 {method 'addConstraint' of 'Sketcher.SketchObject' objects}
+      154    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\category_selection.py:99(eventFilter)
+        2    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:100(transforms)
+       74    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern_task.py:241(eventFilter)
+      286    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:227(<genexpr>)
+        2    0.000    0.000    0.205    0.102 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:251(_add_optional)
+      530    0.000    0.000    0.001    0.000 {method 'type' of 'PySide6.QtCore.QEvent' objects}
+     2000    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+       39    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\panel.py:477(schedule)
+      286    0.000    0.000    0.000    0.000 {method 'copy' of 'Part.Geometry' objects}

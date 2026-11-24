@@ -1,5 +1,20 @@
 # FreeCAD Plus: Current work state
 
+## Pattern batching — installed
+
+November 24, 2026. Owner approved batching and asked to repeat the 12-by-12 test.
+The Python service batches copied geometry/constraints and linear/radial-only chain
+additions, protects source/accepted Equal constraints during redundancy fallback,
+and sends one native visibility update instead of redrawing per helper constraint.
+The installed circle grid applies in 1.409 seconds through the service and 1.568
+seconds through the task button (1.539 via the existing shortcut). All 72 installed
+checks pass, plus fresh-process saved-grid diameter/pitch edits and shortcut acceptance.
+Both installed file hashes match the manifest; the previous service is backed up.
+Restart FreeCAD Plus to load it. Fixed-length line grids still have expensive native
+redundancy checks: the additional 12-by-12 line benchmark took 57.28 seconds. No
+claim of universal 1.5-second performance or changed native solver is made. See
+[evidence and remaining performance limit](evidence/pattern-batching-20261124/README.md).
+
 ## Pattern/task corrections — installed
 
 November 24, 2026. The owner approved the concrete Qt proposal with “Approved. Implement”.

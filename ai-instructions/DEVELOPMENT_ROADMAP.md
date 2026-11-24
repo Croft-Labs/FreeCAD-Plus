@@ -1,5 +1,15 @@
 # FreeCAD Plus: Development roadmap
 
+## Pattern batching — November 24, 2026
+
+- [x] Profile the 12-by-12 grid and identify repeated solves and visibility redraws.
+- [x] Implement approved batching with protected source/Equal constraints and conflict rollback.
+- [x] Verify size/pitch edits, connected chains, source freedom, hide/show, Undo/Redo and persistence.
+- [x] Install and verify 72 application checks, a fresh-process saved grid and the existing shortcut.
+  Actual circle-grid task Apply is 1.54–1.57 seconds. Fixed-length grids remain slower
+  (57.28 seconds for the additional 12-by-12 line benchmark); further native redundancy
+  optimization is not implemented. See [results](evidence/pattern-batching-20261124/README.md).
+
 ## Pattern/task corrections — November 24, 2026
 
 - [x] Audit clipping, preview gating, copied dimensions and completion pairs.

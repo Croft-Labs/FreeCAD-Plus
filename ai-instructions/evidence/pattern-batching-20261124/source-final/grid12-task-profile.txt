@@ -1,0 +1,36 @@
+         31857 function calls in 1.560 seconds
+
+   Ordered by: internal time
+   List reduced from 169 to 30 due to restriction <30>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    0.555    0.111    0.556    0.111 {method 'solve' of 'Sketcher.SketchObject' objects}
+        1    0.366    0.366    0.373    0.373 {method 'recompute' of 'App.Document' objects}
+        1    0.281    0.281    0.766    0.766 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:482(finish)
+        1    0.275    0.275    0.485    0.485 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:377(set_chain_hidden)
+        1    0.034    0.034    0.034    0.034 {method 'setVisibility' of 'Sketcher.SketchObject' objects}
+      431    0.020    0.000    0.020    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:54(geometry)
+      656    0.003    0.000    0.006    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\curve_selection.py:136(eventFilter)
+        2    0.003    0.001    0.003    0.001 {method 'addGeometry' of 'Sketcher.SketchObject' objects}
+       23    0.002    0.000    0.004    0.000 {method 'setVisible' of 'PySide6.QtWidgets.QWidget' objects}
+      656    0.002    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\category_selection.py:99(eventFilter)
+      570    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:418(constrain)
+        3    0.001    0.000    0.002    0.001 {method 'setStyleSheet' of 'PySide6.QtWidgets.QWidget' objects}
+      286    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:151(transformed)
+     1777    0.001    0.000    0.002    0.000 {method 'type' of 'PySide6.QtCore.QEvent' objects}
+      656    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\numeric_fields.py:13(eventFilter)
+      143    0.001    0.000    0.004    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:433(line)
+     1890    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
+      288    0.001    0.000    0.001    0.000 {method 'getExtensionOfName' of 'Sketcher.GeometryFacade' objects}
+      801    0.001    0.000    0.001    0.000 shibokensupport/feature.py:88(feature_import)
+      143    0.001    0.000    0.001    0.000 {method 'getExtensionOfType' of 'Sketcher.GeometryFacade' objects}
+     1777    0.001    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\bin\Lib\enum.py:720(__call__)
+      143    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:514(addGeometry)
+      286    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:507(getPoint)
+      135    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern_task.py:241(eventFilter)
+        1    0.000    0.000    0.964    0.964 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:570(_spacing_chains)
+        1    0.000    0.000    1.553    1.553 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:632(apply)
+     1222    0.000    0.000    0.000    0.000 {method 'inherits' of 'PySide6.QtCore.QObject' objects}
+     1777    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\bin\Lib\enum.py:1128(__new__)
+        1    0.000    0.000    0.000    0.000 {built-in method Selection.clearSelection}
+      801    0.000    0.000    0.001    0.000 shibokensupport/signature/loader.py:59(feature_import)

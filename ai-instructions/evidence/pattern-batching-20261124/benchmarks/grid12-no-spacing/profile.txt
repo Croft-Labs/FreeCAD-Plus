@@ -1,0 +1,31 @@
+         12592 function calls in 1.533 seconds
+
+   Ordered by: internal time
+   List reduced from 93 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      288    0.948    0.003    0.950    0.003 {method 'solve' of 'Sketcher.SketchObject' objects}
+      143    0.478    0.003    0.479    0.003 {method 'addConstraint' of 'Sketcher.SketchObject' objects}
+        1    0.045    0.045    0.048    0.048 {method 'recompute' of 'App.Document' objects}
+      143    0.015    0.000    0.015    0.000 {method 'restoreContent' of 'Base.Persistence' objects}
+      429    0.014    0.000    0.014    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:53(geometry)
+      143    0.013    0.000    0.014    0.000 {method 'addGeometry' of 'Sketcher.SketchObject' objects}
+      143    0.003    0.000    0.976    0.007 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:171(_copy_constraints)
+     1737    0.003    0.000    0.003    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\panel.py:477(schedule)
+      286    0.002    0.000    0.003    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:150(transformed)
+        5    0.002    0.000    0.002    0.000 {built-in method _io.open}
+      143    0.002    0.000    0.947    0.007 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:225(_independent)
+        1    0.001    0.001    1.533    1.533 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:545(apply)
+     1737    0.001    0.000    0.001    0.000 {method 'isActive' of 'PySide6.QtCore.QTimer' objects}
+        5    0.001    0.000    0.001    0.000 {method '__exit__' of '_io._IOBase' objects}
+      174    0.001    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\curve_selection.py:136(eventFilter)
+      286    0.000    0.000    0.000    0.000 {method 'transform' of 'Part.Geometry' objects}
+      143    0.000    0.000    0.951    0.007 C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-corrections-validation/performance.FCMacro:11(independent)
+      174    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\category_selection.py:99(eventFilter)
+      286    0.000    0.000    0.000    0.000 {method 'copy' of 'Part.Geometry' objects}
+        2    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:99(transforms)
+      143    0.000    0.000    0.000    0.000 {built-in method builtins.sorted}
+      145    0.000    0.000    0.000    0.000 {built-in method builtins.any}
+      543    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+      148    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+      174    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\numeric_fields.py:13(eventFilter)

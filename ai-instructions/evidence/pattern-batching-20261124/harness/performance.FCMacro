@@ -1,0 +1,64 @@
+import os, sys, time, json, traceback, cProfile, pstats
+from pathlib import Path
+import FreeCAD as App, FreeCADGui as Gui, Part, Sketcher
+from PySide6 import QtCore
+if os.environ.get('PLUS_TEST_SOURCE'):
+    sys.path.insert(0,os.environ['PLUS_TEST_SOURCE'])
+    import freecad_plus
+    freecad_plus.__path__.insert(0,os.path.join(os.environ['PLUS_TEST_SOURCE'],'freecad_plus'))
+from freecad_plus import sketch_pattern as pattern
+from TestSketchPattern import extent, linear
+out=Path(os.environ['PLUS_PERF_DIR'])
+original=pattern._independent
+started=0
+calls=0
+def independent(*args):
+    global calls
+    result=original(*args)
+    calls+=1
+    if calls%25==0:
+        (out/'progress.json').write_text(json.dumps(dict(seconds=time.perf_counter()-started,constraints_checked=calls)))
+    return result
+pattern._independent=independent
+class DiagnosticSketch:
+    def __init__(self,target):object.__setattr__(self,'target',target)
+    def __getattr__(self,name):return getattr(self.target,name)
+    def __setattr__(self,name,value):setattr(self.target,name,value)
+    def solve(self):
+        start=time.perf_counter();status=self.target.solve()
+        with (out/'solves.jsonl').open('a') as stream:
+            stream.write(json.dumps(dict(seconds=time.perf_counter()-start,status=status,
+                constraints=self.target.ConstraintCount,redundant=self.target.RedundantConstraints,
+                partial=self.target.PartiallyRedundantConstraints,conflicts=self.target.ConflictingConstraints))+'\n')
+        return status
+if os.environ.get('PLUS_PERF_KIND')=='line' and hasattr(pattern,'_ConstraintBatch'):
+    initialize=pattern._ConstraintBatch.__init__
+    def traced_initialize(self,sketch):
+        initialize(self,sketch);self.sketch=DiagnosticSketch(sketch)
+    pattern._ConstraintBatch.__init__=traced_initialize
+def run():
+    global started,calls
+    try:
+        doc=App.newDocument('IsolatedPatternPerformance')
+        s=doc.addObject('Sketcher::SketchObject','Sketch')
+        if os.environ.get('PLUS_PERF_KIND')=='line':
+            s.addGeometry(Part.LineSegment(App.Vector(5,3,0),App.Vector(9,3,0)))
+            s.addConstraint(Sketcher.Constraint('Distance',0,4.))
+        else:
+            s.addGeometry(Part.Circle(App.Vector(5,3,0),App.Vector(0,0,1),2))
+            s.addConstraint(Sketcher.Constraint('Diameter',0,4.))
+        n=int(os.environ['PLUS_PERF_N']); spacing=os.environ['PLUS_PERF_SPACING']=='1'
+        options=linear(directions='Two directions',d1=extent(count=n),d2=extent(count=n,reference=(-2,0)))
+        profiler=cProfile.Profile();calls=0;started=time.perf_counter()
+        profiler.enable()
+        pattern.apply(s,[0],options,spacing)
+        profiler.disable()
+        elapsed=time.perf_counter()-started
+        result=dict(ok=True,side=n,spacing=spacing,seconds=elapsed,geometry=s.GeometryCount,constraints=s.ConstraintCount,independent_calls=calls)
+        with (out/'profile.txt').open('w') as f:pstats.Stats(profiler,stream=f).sort_stats('tottime').print_stats(25)
+        (out/'result.json').write_text(json.dumps(result,indent=2))
+    except BaseException:
+        (out/'result.json').write_text(json.dumps(dict(ok=False,error=traceback.format_exc())))
+    for name in list(App.listDocuments()):App.closeDocument(name)
+    QtCore.QTimer.singleShot(100,Gui.getMainWindow().close)
+QtCore.QTimer.singleShot(1800,run)

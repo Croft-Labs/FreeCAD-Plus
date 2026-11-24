@@ -1,0 +1,36 @@
+         166003 function calls in 20.945 seconds
+
+   Ordered by: internal time
+   List reduced from 169 to 30 due to restriction <30>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      570   19.273    0.034   19.378    0.034 {method 'setVisibility' of 'Sketcher.SketchObject' objects}
+        5    0.551    0.110    0.552    0.110 {method 'solve' of 'Sketcher.SketchObject' objects}
+        1    0.383    0.383    0.392    0.392 {method 'recompute' of 'App.Document' objects}
+        1    0.302    0.302   19.861   19.861 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:369(set_chain_hidden)
+        1    0.277    0.277   20.139   20.139 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:471(finish)
+     6415    0.034    0.000    0.064    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\curve_selection.py:136(eventFilter)
+      431    0.021    0.000    0.021    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:54(geometry)
+     6415    0.016    0.000    0.027    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\category_selection.py:99(eventFilter)
+    13463    0.008    0.000    0.018    0.000 {method 'type' of 'PySide6.QtCore.QEvent' objects}
+     6415    0.008    0.000    0.018    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\numeric_fields.py:13(eventFilter)
+     6560    0.006    0.000    0.010    0.000 shibokensupport/feature.py:88(feature_import)
+    13408    0.006    0.000    0.006    0.000 {built-in method builtins.isinstance}
+    13463    0.005    0.000    0.009    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\bin\Lib\enum.py:720(__call__)
+      608    0.005    0.000    0.007    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\panel.py:477(schedule)
+    12734    0.005    0.000    0.005    0.000 {method 'inherits' of 'PySide6.QtCore.QObject' objects}
+     6560    0.005    0.000    0.015    0.000 shibokensupport/signature/loader.py:59(feature_import)
+    13463    0.004    0.000    0.004    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\bin\Lib\enum.py:1128(__new__)
+        2    0.003    0.001    0.003    0.001 {method 'addGeometry' of 'Sketcher.SketchObject' objects}
+     6415    0.002    0.000    0.004    0.000 <frozen importlib._bootstrap>:645(parent)
+    13619    0.002    0.000    0.002    0.000 {method 'get' of 'dict' objects}
+     6560    0.002    0.000    0.005    0.000 shibokensupport/signature/loader.py:67(feature_imported)
+       23    0.002    0.000    0.004    0.000 {method 'setVisible' of 'PySide6.QtWidgets.QWidget' objects}
+     2000    0.002    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:390(<genexpr>)
+     6560    0.002    0.000    0.003    0.000 shibokensupport/feature.py:134(feature_imported)
+     6415    0.002    0.000    0.002    0.000 {method 'rpartition' of 'str' objects}
+      570    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\FreeCAD\FreeCAD-Plus\src\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:407(constrain)
+     6560    0.001    0.000    0.001    0.000 {built-in method sys._getframe}
+      608    0.001    0.000    0.001    0.000 {method 'isActive' of 'PySide6.QtCore.QTimer' objects}
+      720    0.001    0.000    0.002    0.000 {built-in method builtins.any}
+        3    0.001    0.000    0.002    0.001 {method 'setStyleSheet' of 'PySide6.QtWidgets.QWidget' objects}

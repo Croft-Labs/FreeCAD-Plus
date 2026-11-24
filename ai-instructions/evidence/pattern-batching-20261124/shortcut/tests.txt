@@ -1,0 +1,6 @@
+test_grid12_apply_in_sketch_edit (TestPatternBatching.TestPatternBatchingTask.test_grid12_apply_in_sketch_edit) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.555s
+
+OK

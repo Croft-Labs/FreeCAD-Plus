@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 """Sketch pattern geometry and constraints. All persisted output is native Sketcher data."""
 import math
+from itertools import groupby
 import FreeCAD as App
 import Part
 import Sketcher
@@ -168,7 +169,7 @@ def preview(sketch, ids, options, spacing=False, helpers=None):
     return copies
 
 
-def _copy_constraints(sketch, source, mapping, transform, dimensions=False):
+def _copy_constraints(sketch, source, mapping, transform, dimensions=False, batch=None):
     angle = transform[0]
     copied = []
     equal=set()
@@ -218,13 +219,18 @@ def _copy_constraints(sketch, source, mapping, transform, dimensions=False):
         if c.Third in mapping: c.Third = mapping[c.Third]
         c.Name = ''
         copied.append(c)
-    if copied: sketch.addConstraint(copied)
-    for i in sorted(equal): _independent(sketch,Sketcher.Constraint('Equal',i,mapping[i]))
+    if batch is None:
+        if copied: sketch.addConstraint(copied)
+        for i in sorted(equal): _independent(sketch,Sketcher.Constraint('Equal',i,mapping[i]))
+    else:
+        batch.required.extend(copied)
+        batch.optional.extend(Sketcher.Constraint('Equal',i,mapping[i]) for i in sorted(equal))
 
 
 def _independent(sketch, c):
     """Only remove our just-added equation if existing equations already imply it."""
-    index = sketch.addConstraint(c)
+    # The scalar API already solves. The list API lets us solve exactly once.
+    index = sketch.addConstraint([c])[0]
     status = sketch.solve()
     if status == -2 or sketch.PartiallyRedundantConstraints:
         sketch.delConstraint(index)
@@ -233,6 +239,50 @@ def _independent(sketch, c):
     elif status != 0:
         raise ValueError('The pattern dimensions conflict with the sketch.')
     return index
+
+
+class _ConstraintBatch:
+    """Validate groups, isolating only redundant new equations when necessary."""
+    def __init__(self, sketch):
+        self.sketch = sketch
+        self.required = []
+        self.optional = []
+
+    def _add_optional(self, constraints):
+        if not constraints: return
+        s = self.sketch
+        geometry_before = s.Geometry
+        indices = s.addConstraint(constraints)
+        status = s.solve()
+        partial = bool(s.PartiallyRedundantConstraints)
+        if status == 0 and not partial: return
+        # Native redundancy diagnostics are one-based. Discard only the newly
+        # added members of its fully redundant set, never source/accepted
+        # equations or partial relationships. Revalidate the remaining group.
+        redundant = {i-1 for i in s.RedundantConstraints}.intersection(indices)
+        removable = status == -2 and not partial and redundant
+        # Roll back only this attempted group, never existing/source constraints.
+        # Partial redundancy can return success and move geometry, so restore it.
+        s.delConstraints(list(indices), False, True)
+        if status == 0: s.Geometry = geometry_before
+        if removable:
+            self._add_optional([c for i,c in zip(indices,constraints) if i not in redundant])
+            return
+        if len(constraints) == 1:
+            if status == -2 or (status == 0 and partial): return
+            raise ValueError('The pattern dimensions conflict with the sketch.')
+        middle = len(constraints) // 2
+        self._add_optional(constraints[:middle])
+        self._add_optional(constraints[middle:])
+
+    def flush(self):
+        if self.required:
+            self.sketch.addConstraint(self.required)
+            if self.sketch.solve() != 0:
+                raise ValueError('The copied constraints could not be solved.')
+        self._add_optional(self.optional)
+        self.required.clear()
+        self.optional.clear()
 
 
 def _offset_point(sketch, source, target, delta):
@@ -343,10 +393,13 @@ def set_chain_hidden(sketch, hidden):
     if helpers:
         sketch.GeometryFacadeList = facades
         sketch.solve()
+        visibility = []
         for i, c in enumerate(sketch.Constraints):
             if c.Type not in ('Distance', 'Angle', 'Radius', 'Diameter', 'DistanceX', 'DistanceY'):
                 if any(g in helpers for g in (c.First, c.Second, c.Third)):
-                    sketch.setVisibility(i, not hidden)
+                    visibility.append(i)
+        # Each call redraws the complete sketch while editing. Update once.
+        if visibility: sketch.setVisibility(visibility, not hidden)
 
 
 class SpacingChains:
@@ -363,7 +416,10 @@ class SpacingChains:
         return index
 
     def constrain(self, kind, *args):
-        return _independent(self.sketch, Sketcher.Constraint(kind, *args))
+        return self.constraint(Sketcher.Constraint(kind, *args))
+
+    def constraint(self, constraint):
+        return _independent(self.sketch, constraint)
 
     def connect(self, source, target):
         self.constrain('Coincident', *source, *target)
@@ -386,7 +442,7 @@ class SpacingChains:
             self.masters[key] = line
             c = Sketcher.Constraint('Distance', line, (b-a).Length)
             if hasattr(c, 'PresentationUnit'): c.PresentationUnit = self.units.get(key, '')
-            _independent(s, c)
+            self.constraint(c)
             if reference is not None:
                 self.constrain('Parallel', reference, line)
             elif abs(vector.y) < EPS: self.constrain('Horizontal', line)
@@ -483,9 +539,40 @@ class _PreviewChains(SpacingChains):
         self.add(Part.ArcOfCircle(Part.Circle(c,App.Vector(0,0,1),(a-c).Length),start,start+math.radians(abs(angle))))
 
 
+class _BatchedLineChains(SpacingChains):
+    """Stage linear/radial helpers and equations without intermediate solves."""
+    def __init__(self, sketch):
+        super().__init__(_PreviewGeometry(sketch, []))
+        self.target = sketch
+        self.batch = _ConstraintBatch(sketch)
+
+    def constraint(self, constraint):
+        self.batch.optional.append(constraint)
+
+    def ray(self, source, target):
+        a, b = self.sketch.getPoint(*source), self.sketch.getPoint(*target)
+        if (b-a).Length <= EPS:
+            raise ValueError('Dimensioned rotation requires a point away from its center.')
+        line = self.add(Part.LineSegment(a, b))
+        for point, position in ((source, 1), (target, 2)):
+            self.constrain('Vertical', *point, line, position)
+            self.constrain('Horizontal', *point, line, position)
+        return line
+
+    def finish(self, hidden):
+        if self.sketch.helpers:
+            self.target.addGeometry(self.sketch.helpers, True)
+        self.batch.flush()
+        self.sketch = self.target
+        super().finish(hidden)
+
+
 def _spacing_chains(sketch, ids, instances, options, chain=None):
-    if chain is None: chain = SpacingChains(sketch)
     circular = options.get('pattern') == 'Circular'
+    if chain is None:
+        # Angular chains retain their ordered expression/constraint indices.
+        line_only = not circular or options.get('directions') == 'Radial'
+        chain = _BatchedLineChains(sketch) if line_only else SpacingChains(sketch)
     if circular:
         layout = options.get('directions', 'Angular')
         xs = extent_values(options['angular'], True) if layout != 'Radial' else [0.0]
@@ -559,16 +646,22 @@ def apply(sketch, ids, options, dimensions=False):
             if len(ids) * len(placements) > 10000:
                 raise ValueError('Including internal geometry, the pattern exceeds 10,000 generated elements.')
         source = [c.dumpContent() for c in sketch.Constraints]
+        originals = [(i, geometry(sketch, i), sketch.getConstruction(i)) for i in ids]
+        generated = [(transformed(g, transform), construction)
+                     for transform in placements for _, g, construction in originals]
+        first = sketch.GeometryCount
+        # Keep original ordering, including mixtures of construction/normal curves.
+        for construction, group in groupby(generated, key=lambda item: item[1]):
+            sketch.addGeometry([g for g, _ in group], construction)
         result = []
         instances = []
-        for transform in placements:
-            mapping = {}
-            for i in ids:
-                mapping[i] = sketch.addGeometry(transformed(geometry(sketch, i), transform), sketch.getConstruction(i))
-            _copy_constraints(sketch, source, mapping, transform, dimensions)
-            if sketch.solve() != 0: raise ValueError('The copied constraints could not be solved.')
+        batch = _ConstraintBatch(sketch)
+        for n, transform in enumerate(placements):
+            mapping = dict(zip(ids, range(first+n*len(ids), first+(n+1)*len(ids))))
+            _copy_constraints(sketch, source, mapping, transform, dimensions, batch)
             instances.append(mapping)
             result.extend(mapping.values())
+        batch.flush()
         if dimensions: _spacing_chains(sketch, ids, instances, options)
         if sketch.solve() != 0: raise ValueError('The generated pattern could not be solved.')
         doc.recompute()

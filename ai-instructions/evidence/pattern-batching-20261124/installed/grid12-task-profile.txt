@@ -1,0 +1,36 @@
+         30271 function calls in 1.568 seconds
+
+   Ordered by: internal time
+   List reduced from 169 to 30 due to restriction <30>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        5    0.551    0.110    0.552    0.110 {method 'solve' of 'Sketcher.SketchObject' objects}
+        1    0.369    0.369    0.376    0.376 {method 'recompute' of 'App.Document' objects}
+        1    0.283    0.283    0.494    0.494 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:377(set_chain_hidden)
+        1    0.282    0.282    0.776    0.776 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:482(finish)
+        1    0.034    0.034    0.034    0.034 {method 'setVisibility' of 'Sketcher.SketchObject' objects}
+      431    0.022    0.000    0.022    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:54(geometry)
+      610    0.003    0.000    0.005    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\curve_selection.py:136(eventFilter)
+        2    0.003    0.001    0.003    0.001 {method 'addGeometry' of 'Sketcher.SketchObject' objects}
+       23    0.002    0.000    0.002    0.000 {method 'setVisible' of 'PySide6.QtWidgets.QWidget' objects}
+      570    0.002    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:418(constrain)
+      610    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\category_selection.py:99(eventFilter)
+        3    0.001    0.000    0.002    0.001 {method 'setStyleSheet' of 'PySide6.QtWidgets.QWidget' objects}
+      286    0.001    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:151(transformed)
+      610    0.001    0.000    0.002    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\numeric_fields.py:13(eventFilter)
+      143    0.001    0.000    0.004    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:433(line)
+     1513    0.001    0.000    0.002    0.000 {method 'type' of 'PySide6.QtCore.QEvent' objects}
+      288    0.001    0.000    0.001    0.000 {method 'getExtensionOfName' of 'Sketcher.GeometryFacade' objects}
+     1798    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
+      143    0.001    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:514(addGeometry)
+      755    0.001    0.000    0.001    0.000 shibokensupport/feature.py:88(feature_import)
+      143    0.001    0.000    0.001    0.000 {method 'getExtensionOfType' of 'Sketcher.GeometryFacade' objects}
+      286    0.001    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:507(getPoint)
+        1    0.000    0.000    0.000    0.000 {built-in method Selection.clearSelection}
+     1513    0.000    0.000    0.001    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\bin\Lib\enum.py:720(__call__)
+        1    0.000    0.000    0.970    0.970 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:570(_spacing_chains)
+        1    0.000    0.000    1.562    1.562 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\Mod\FreeCADPlus\freecad_plus\sketch_pattern.py:632(apply)
+      755    0.000    0.000    0.001    0.000 shibokensupport/signature/loader.py:59(feature_import)
+     1162    0.000    0.000    0.000    0.000 {method 'inherits' of 'PySide6.QtCore.QObject' objects}
+     1513    0.000    0.000    0.000    0.000 C:\Users\dgium\Documents\__Apps\_temp builds\FreeCAD-Plus\app\bin\Lib\enum.py:1128(__new__)
+     2009    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}

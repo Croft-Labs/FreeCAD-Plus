@@ -1,0 +1,16 @@
+[
+  {
+    "path": "Mod/FreeCADPlus/freecad_plus/sketch_pattern.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py",
+    "previous_sha256": "cceec4151d7d7641907cc7157277f38845babfe5f0b744cea1ed474c1e41158b",
+    "rollback": "C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\validation\\pattern-batching-20261124\\install-backup\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py",
+    "sha256": "038a1c6e9e1369ace3ac5a9183c1e5a138f0cad43b0c567ee47e87fbaf82bec7"
+  },
+  {
+    "path": "Mod/FreeCADPlus/TestPatternBatching.py",
+    "source": "C:\\Users\\dgium\\Documents\\__Apps\\FreeCAD\\FreeCAD-Plus\\src\\Mod\\FreeCADPlus\\TestPatternBatching.py",
+    "previous_sha256": null,
+    "rollback": null,
+    "sha256": "888d32667a6209040b827b3f210fdb4e746e39817512fe3d9b46d0e01326f2dd"
+  }
+]

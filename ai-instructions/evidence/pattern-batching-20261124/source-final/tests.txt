@@ -1,0 +1,32 @@
+test_grid12_spacing_equal_edits_undo_and_save (TestPatternBatching.TestPatternBatching.test_grid12_spacing_equal_edits_undo_and_save) ... ok
+test_radial_and_two_point_direction_with_mixed_construction (TestPatternBatching.TestPatternBatching.test_radial_and_two_point_direction_with_mixed_construction) ... ok
+test_redundancy_fallback_preserves_source_and_rejects_conflict (TestPatternBatching.TestPatternBatching.test_redundancy_fallback_preserves_source_and_rejects_conflict) ... ok
+test_grid12_apply_in_sketch_edit (TestPatternBatching.TestPatternBatchingTask.test_grid12_apply_in_sketch_edit) ... ok
+test_equal_circle_line_arc_sizes_and_source_edits (TestPatternCorrections.TestPatternSizes.test_equal_circle_line_arc_sizes_and_source_edits) ... ok
+test_preview_helpers_match_committed_chains_without_mutations (TestPatternCorrections.TestPatternSizes.test_preview_helpers_match_committed_chains_without_mutations) ... ok
+test_projected_length_preserves_free_orientation (TestPatternCorrections.TestPatternSizes.test_projected_length_preserves_free_orientation) ... ok
+test_arbitrary_vector_and_two_points (TestSketchPattern.TestPatternGeometry.test_arbitrary_vector_and_two_points) ... ok
+test_arc_and_spline_dimensions (TestSketchPattern.TestPatternGeometry.test_arc_and_spline_dimensions) ... ok
+test_center_circle_and_invalid_inward_atomic (TestSketchPattern.TestPatternGeometry.test_center_circle_and_invalid_inward_atomic) ... ok
+test_circular_full_turn_and_angular_pitch (TestSketchPattern.TestPatternGeometry.test_circular_full_turn_and_angular_pitch) ... ok
+test_circular_radial_grid_and_size (TestSketchPattern.TestPatternGeometry.test_circular_radial_grid_and_size) ... ok
+test_closed_patterns_support_downstream_extrusion (TestSketchPattern.TestPatternGeometry.test_closed_patterns_support_downstream_extrusion) ... ok
+test_constraints_original_construction_and_undo (TestSketchPattern.TestPatternGeometry.test_constraints_original_construction_and_undo) ... ok
+test_dimension_failure_rolls_back (TestSketchPattern.TestPatternGeometry.test_dimension_failure_rolls_back) ... ok
+test_dimensioned_angular_radial_and_save_reopen (TestSketchPattern.TestPatternGeometry.test_dimensioned_angular_radial_and_save_reopen) ... ok
+test_dimensioned_clockwise_half_turn_and_origin_endpoint (TestSketchPattern.TestPatternGeometry.test_dimensioned_clockwise_half_turn_and_origin_endpoint) ... ok
+test_dimensioned_rectangle_and_fixed_source (TestSketchPattern.TestPatternGeometry.test_dimensioned_rectangle_and_fixed_source) ... ok
+test_dimensioned_rotation_tracks_source_and_radius (TestSketchPattern.TestPatternGeometry.test_dimensioned_rotation_tracks_source_and_radius) ... ok
+test_dimensioned_translation_tracks_source_without_fixing (TestSketchPattern.TestPatternGeometry.test_dimensioned_translation_tracks_source_without_fixing) ... ok
+test_extent_counts_pitch_total_reverse_symmetric (TestSketchPattern.TestPatternGeometry.test_extent_counts_pitch_total_reverse_symmetric) ... ok
+test_external_line_and_circle_references (TestSketchPattern.TestPatternGeometry.test_external_line_and_circle_references) ... ok
+test_four_independent_linear_extents (TestSketchPattern.TestPatternGeometry.test_four_independent_linear_extents) ... ok
+test_reference_angle_preserves_source_freedom (TestSketchPattern.TestPatternGeometry.test_reference_angle_preserves_source_freedom) ... ok
+test_angular_arcs_radial_lines_and_pitch_edit (TestSpacingUnits.TestSpacingChains.test_angular_arcs_radial_lines_and_pitch_edit) ... ok
+test_four_pitch_masters_and_hidden_reopen (TestSpacingUnits.TestSpacingChains.test_four_pitch_masters_and_hidden_reopen) ... ok
+test_one_length_driver_and_equal_connected_lines (TestSpacingUnits.TestSpacingChains.test_one_length_driver_and_equal_connected_lines) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 10.641s
+
+OK

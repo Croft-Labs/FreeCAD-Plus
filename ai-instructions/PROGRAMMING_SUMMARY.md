@@ -1,5 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
+## Pattern batching — installed
+
+November 24, 2026. Owner-approved batching groups geometry, constraints and spacing
+visibility updates. The installed 12-by-12 circle grid applies in 1.54–1.57 seconds
+through the task panel; the prior benchmark did not finish within its 100-second
+deadline. Spacing chains, Equal size relationships, pitch/diameter edits and Undo
+remain intact. All 72 installed application checks, fresh-process saved-grid editing
+and existing-shortcut acceptance pass. Fixed-length line grids remain slower because
+of redundancy checks (12-by-12 measured 57.28 seconds). See
+[implementation, measurements and limits](evidence/pattern-batching-20261124/README.md).
+
 ## Pattern/task corrections — installed
 
 November 24, 2026. Owner-approved narrow fields, partial-direction previews including
