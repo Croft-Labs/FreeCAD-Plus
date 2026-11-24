@@ -1,0 +1,69 @@
+{"wall_seconds": 1.7583501999615692, "phase": "saved sketch", "properties": {}, "geometry": ["Circle (Radius : 0.325, Position : (1.27, 1.27, 0), Direction : (0, 0, 1))", "<Line segment (1.27,1.27,0) (1.27,0,0) >", "<Line segment (1.27,1.27,0) (0,1.27,0) >"], "constraints": [{"type": "Coincident", "first": 1, "firstpos": 1, "second": 0, "secondpos": 3, "third": -2000, "value": 0.0, "driving": true}, {"type": "PointOnObject", "first": 1, "firstpos": 2, "second": -1, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Vertical", "first": 1, "firstpos": 0, "second": -2000, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Coincident", "first": 2, "firstpos": 1, "second": 0, "secondpos": 3, "third": -2000, "value": 0.0, "driving": true}, {"type": "PointOnObject", "first": 2, "firstpos": 2, "second": -2, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Horizontal", "first": 2, "firstpos": 0, "second": -2000, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Equal", "first": 1, "firstpos": 0, "second": 2, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "DistanceY", "first": 1, "firstpos": 2, "second": 1, "secondpos": 1, "third": -2000, "value": 1.27, "driving": true}, {"type": "Diameter", "first": 0, "firstpos": 0, "second": -2000, "secondpos": 0, "third": -2000, "value": 0.65, "driving": true}]}
+{"wall_seconds": 1.758771099965088, "phase": "seed", "geometry": "saved-visible-wide100-gui", "count": 20, "geometries": 3, "constraints": 9}
+{"wall_seconds": 3.7267740999814123, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7272617999697104, "phase": "_spacing_chains end", "elapsed": 0.00015709997387602925}
+{"wall_seconds": 3.729026499961037, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.729372499976307, "phase": "_spacing_chains end", "elapsed": 0.00012320000678300858}
+{"wall_seconds": 3.7330737999873236, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7337916999822482, "phase": "_spacing_chains end", "elapsed": 0.0003942999755963683}
+{"wall_seconds": 3.7363074999884702, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7368897999986075, "phase": "_spacing_chains end", "elapsed": 0.0003369000041857362}
+{"wall_seconds": 3.7402785000158474, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7416747999959625, "phase": "_spacing_chains end", "elapsed": 0.0011628999491222203}
+{"wall_seconds": 3.7503829000052065, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.755478299979586, "phase": "_spacing_chains end", "elapsed": 0.004808300000149757}
+{"wall_seconds": 3.7732753999880515, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.773869799973909, "phase": "_spacing_chains end", "elapsed": 0.0003095999709330499}
+{"wall_seconds": 3.7768720000167377, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.777369199960958, "phase": "_spacing_chains end", "elapsed": 0.000256099971011281}
+{"wall_seconds": 3.7843897999846376, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7891769999987446, "phase": "_spacing_chains end", "elapsed": 0.004340799991041422}
+{"wall_seconds": 3.8093854999751784, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8140313999610953, "phase": "_spacing_chains end", "elapsed": 0.004358100006356835}
+{"wall_seconds": 3.833725599979516, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8384391000145115, "phase": "_spacing_chains end", "elapsed": 0.004381600010674447}
+{"wall_seconds": 3.8579729999764822, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8624532999820076, "phase": "_spacing_chains end", "elapsed": 0.004169699968770146}
+{"wall_seconds": 3.8793451999663375, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8798599999863654, "phase": "_spacing_chains end", "elapsed": 0.00027059996500611305}
+{"wall_seconds": 3.886824599991087, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8915021999855526, "phase": "_spacing_chains end", "elapsed": 0.004357900004833937}
+{"wall_seconds": 3.911867299990263, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.916573899972718, "phase": "_spacing_chains end", "elapsed": 0.0044018999906256795}
+{"wall_seconds": 3.9891197999822907, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.9896948999958113, "phase": "_spacing_chains end", "elapsed": 0.00028550002025440335}
+{"wall_seconds": 3.9926805999712087, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.9931690999655984, "phase": "_spacing_chains end", "elapsed": 0.00026030000299215317}
+{"wall_seconds": 4.00046279997332, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.041451099968981, "phase": "_spacing_chains end", "elapsed": 0.04057680000551045}
+{"wall_seconds": 4.0613705000141636, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.066584200016223, "phase": "_spacing_chains end", "elapsed": 0.004832699953112751}
+{"wall_seconds": 4.0862026999820955, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.090962899965234, "phase": "_spacing_chains end", "elapsed": 0.004443700017873198}
+{"wall_seconds": 4.110995900002308, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.1155481999740005, "phase": "_spacing_chains end", "elapsed": 0.004251599952112883}
+{"wall_seconds": 4.132528399990406, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.1332721000071615, "phase": "_spacing_chains end", "elapsed": 0.00029420002829283476}
+{"wall_seconds": 4.1406164999934845, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.145175999961793, "phase": "_spacing_chains end", "elapsed": 0.004283600021153688}
+{"wall_seconds": 4.164895299996715, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.170069399988279, "phase": "_spacing_chains end", "elapsed": 0.004750400024931878}
+{"wall_seconds": 4.367162599985022, "phase": "preview ready", "copies": 399, "helpers": 0}
+{"wall_seconds": 4.370868099969812, "phase": "view", "camera": "#Inventor V2.1 ascii\n\n\nOrthographicCamera {\n  viewportMapping ADJUST_CAMERA\n  position 25 25 87\n  orientation 0 0 1  0\n  nearDistance 76.379616\n  farDistance 87.401123\n  aspectRatio 1\n  focalDistance 87\n  height 100\n\n}\n", "options": {"pattern": "Linear", "directions": "Two directions", "hide_spacing": true, "center": null, "d1": {"mode": "One dimension", "reverse": false, "spacing": "Pitch", "value": 2.54, "count": 20, "spacing2": "Pitch", "value2": 10.0, "count2": 3, "unit": "in", "unit2": "mm", "method": "Axis or line", "x": 1.0, "y": 0.0, "reference": [-1, 0], "start": null, "end": null}, "d2": {"mode": "One dimension", "reverse": false, "spacing": "Pitch", "value": 2.54, "count": 20, "spacing2": "Pitch", "value2": 10.0, "count2": 3, "unit": "in", "unit2": "mm", "method": "Axis or line", "x": 1.0, "y": 0.0, "reference": [-2, 0], "start": null, "end": null}, "angular": {"mode": "One dimension", "reverse": false, "spacing": "Angular pitch", "value": 45.0, "count": 5, "spacing2": "Angular pitch", "value2": 30.0, "count2": 3, "unit": "deg", "unit2": "deg"}, "radial": {"mode": "One dimension", "reverse": false, "spacing": "Pitch", "value": 20.0, "count": 5, "spacing2": "Pitch", "value2": 10.0, "count2": 3, "unit": "mm", "unit2": "mm", "reference": null}}}
+{"wall_seconds": 4.373043100000359, "phase": "apply begin"}
+{"wall_seconds": 4.690145100001246, "phase": "flush begin"}
+{"wall_seconds": 4.690420700004324, "phase": "_add_optional begin"}
+{"wall_seconds": 4.723524599976372, "phase": "_add_optional end", "elapsed": 0.03274090000195429}
+{"wall_seconds": 4.723953199980315, "phase": "flush end", "elapsed": 0.033515999966766685}
+{"wall_seconds": 4.724196999974083, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.819297700014431, "phase": "flush begin"}
+{"wall_seconds": 4.819668899988756, "phase": "_add_optional begin"}
+{"wall_seconds": 6.878410100005567, "phase": "_add_optional end", "elapsed": 2.0583657000097446}
+{"wall_seconds": 6.8791188999894075, "phase": "flush end", "elapsed": 2.059475200017914}
+{"wall_seconds": 6.886462999973446, "phase": "set_chain_hidden begin"}
+{"wall_seconds": 13.000469899969175, "phase": "set_chain_hidden end", "elapsed": 6.113609499996528}
+{"wall_seconds": 13.001176899997517, "phase": "_spacing_chains end", "elapsed": 8.27670930000022}
+{"wall_seconds": 13.001486299966928, "phase": "_group_pattern_constraints begin"}
+{"wall_seconds": 15.037080099980813, "phase": "_group_pattern_constraints end", "elapsed": 2.035127100010868}
+{"wall_seconds": 21.22369199997047, "phase": "apply end", "elapsed": 16.849981100007426}
+{"wall_seconds": 21.608938799996395, "phase": "finished", "ok": true, "seconds": 17.23647460003849, "geometries": 801, "constraints": 2004, "dof": 0}

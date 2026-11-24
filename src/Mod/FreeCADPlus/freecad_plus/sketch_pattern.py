@@ -261,8 +261,11 @@ def _copy_constraints(sketch, source, mapping, transform, dimensions=False, batc
 
 def _independent(sketch, c):
     """Only remove our just-added equation if existing equations already imply it."""
+    # Pattern membership is assigned after solving. Do not render thousands
+    # of temporary labels before the final single Pattern icon is available.
     # The scalar API already solves. The list API lets us solve exactly once.
     index = sketch.addConstraint([c])[0]
+    sketch.setVisibility([index], False)
     status = sketch.solve()
     if status == -2 or sketch.PartiallyRedundantConstraints:
         sketch.delConstraint(index)
@@ -285,6 +288,7 @@ class _ConstraintBatch:
         s = self.sketch
         geometry_before = s.Geometry
         indices = s.addConstraint(constraints)
+        s.setVisibility(indices, False)
         status = s.solve()
         partial = bool(s.PartiallyRedundantConstraints)
         if status == 0 and not partial: return
@@ -309,7 +313,8 @@ class _ConstraintBatch:
 
     def flush(self):
         if self.required:
-            self.sketch.addConstraint(self.required)
+            indices = self.sketch.addConstraint(self.required)
+            self.sketch.setVisibility(indices, False)
             if self.sketch.solve() != 0:
                 raise ValueError('The copied constraints could not be solved.')
         self._add_optional(self.optional)

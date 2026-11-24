@@ -1,11 +1,16 @@
 # FreeCAD Plus: Programming Summary
 
-## Persistent memory error — unresolved
+## Persistent memory error — corrected and installed
 
-The owner reports recurrence after restart. Screenshot-based reproductions pass,
-but the exact sketch is not available. Full traceback logging is installed in
-sketch_pattern_task.py; allocation rollback/retry and existing task checks pass.
-See [current investigation and evidence](evidence/pattern-memory-repro-20261124/README.md).
+The saved owner sketch reproduces the failure at verified 0.100 in pitches.
+Suppressing temporary generated constraint labels before solve prevents oversized
+intermediate image allocation; final Pattern grouping restores intended visibility.
+The exact installed 20-by-20 Apply succeeds in 16.86 seconds. All 96 application
+tests, fresh-process save/reopen/edit to 420 instances and the existing shortcut
+pass. Chains, Equal sizes, pitch drivers, units and Undo/Redo remain verified.
+Earlier GUI probes retained 20 mm pitches; corrected tests assert committed values.
+No native rebuild was needed. See
+[implementation and evidence](evidence/pattern-label-allocation-20261124/README.md).
 
 ## Large circle-pattern memory — installed
 

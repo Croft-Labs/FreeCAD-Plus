@@ -1,0 +1,69 @@
+{"wall_seconds": 1.7486071000457741, "phase": "saved sketch", "properties": {}, "geometry": ["Circle (Radius : 0.325, Position : (1.27, 1.27, 0), Direction : (0, 0, 1))", "<Line segment (1.27,1.27,0) (1.27,0,0) >", "<Line segment (1.27,1.27,0) (0,1.27,0) >"], "constraints": [{"type": "Coincident", "first": 1, "firstpos": 1, "second": 0, "secondpos": 3, "third": -2000, "value": 0.0, "driving": true}, {"type": "PointOnObject", "first": 1, "firstpos": 2, "second": -1, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Vertical", "first": 1, "firstpos": 0, "second": -2000, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Coincident", "first": 2, "firstpos": 1, "second": 0, "secondpos": 3, "third": -2000, "value": 0.0, "driving": true}, {"type": "PointOnObject", "first": 2, "firstpos": 2, "second": -2, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Horizontal", "first": 2, "firstpos": 0, "second": -2000, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "Equal", "first": 1, "firstpos": 0, "second": 2, "secondpos": 0, "third": -2000, "value": 0.0, "driving": true}, {"type": "DistanceY", "first": 1, "firstpos": 2, "second": 1, "secondpos": 1, "third": -2000, "value": 1.27, "driving": true}, {"type": "Diameter", "first": 0, "firstpos": 0, "second": -2000, "secondpos": 0, "third": -2000, "value": 0.65, "driving": true}]}
+{"wall_seconds": 1.7489631000207737, "phase": "seed", "geometry": "saved-visible-wide100-gui", "count": 20, "geometries": 3, "constraints": 9}
+{"wall_seconds": 3.6930086000356823, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.6934934000018984, "phase": "_spacing_chains end", "elapsed": 0.0001818999880924821}
+{"wall_seconds": 3.695482600014657, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.695989300031215, "phase": "_spacing_chains end", "elapsed": 0.0001870999694801867}
+{"wall_seconds": 3.7000564000336453, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7007918000454083, "phase": "_spacing_chains end", "elapsed": 0.0004220000118948519}
+{"wall_seconds": 3.7034888000343926, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7041566999978386, "phase": "_spacing_chains end", "elapsed": 0.0003364000003784895}
+{"wall_seconds": 3.7076348999980837, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7089829000178725, "phase": "_spacing_chains end", "elapsed": 0.001118500018492341}
+{"wall_seconds": 3.718028100032825, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.723269500012975, "phase": "_spacing_chains end", "elapsed": 0.004895799967925996}
+{"wall_seconds": 3.7419305000221357, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7425415000179783, "phase": "_spacing_chains end", "elapsed": 0.00032730004750192165}
+{"wall_seconds": 3.7456982000148855, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.74647549999645, "phase": "_spacing_chains end", "elapsed": 0.000285100017208606}
+{"wall_seconds": 3.753344400029164, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.7579125000047497, "phase": "_spacing_chains end", "elapsed": 0.004291700024623424}
+{"wall_seconds": 3.777280700043775, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.782095600035973, "phase": "_spacing_chains end", "elapsed": 0.004508699988946319}
+{"wall_seconds": 3.802484700048808, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8076197000336833, "phase": "_spacing_chains end", "elapsed": 0.00449520000256598}
+{"wall_seconds": 3.827671500039287, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8330393000505865, "phase": "_spacing_chains end", "elapsed": 0.004946700006257743}
+{"wall_seconds": 3.8498428000020795, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.8503858000040054, "phase": "_spacing_chains end", "elapsed": 0.0002932000206783414}
+{"wall_seconds": 3.8572715000482276, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.862808900012169, "phase": "_spacing_chains end", "elapsed": 0.005154400016181171}
+{"wall_seconds": 3.883628800045699, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.888275400036946, "phase": "_spacing_chains end", "elapsed": 0.004341199994087219}
+{"wall_seconds": 3.9599813999957405, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.960587300010957, "phase": "_spacing_chains end", "elapsed": 0.0003043999895453453}
+{"wall_seconds": 3.964353600051254, "phase": "_spacing_chains begin"}
+{"wall_seconds": 3.9649066000129096, "phase": "_spacing_chains end", "elapsed": 0.0002893999917432666}
+{"wall_seconds": 3.972550800011959, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.011678000038955, "phase": "_spacing_chains end", "elapsed": 0.03872449998743832}
+{"wall_seconds": 4.032455200038385, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.037402700050734, "phase": "_spacing_chains end", "elapsed": 0.004589900025166571}
+{"wall_seconds": 4.056371800019406, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.0613144999952056, "phase": "_spacing_chains end", "elapsed": 0.004554299986921251}
+{"wall_seconds": 4.081440300040413, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.086361600027885, "phase": "_spacing_chains end", "elapsed": 0.004630699986591935}
+{"wall_seconds": 4.103312799998093, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.103861100040376, "phase": "_spacing_chains end", "elapsed": 0.00028390000807121396}
+{"wall_seconds": 4.110992900037672, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.115618200041354, "phase": "_spacing_chains end", "elapsed": 0.004338799975812435}
+{"wall_seconds": 4.136209400021471, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.1411197000416, "phase": "_spacing_chains end", "elapsed": 0.004577799991238862}
+{"wall_seconds": 4.330966100038495, "phase": "preview ready", "copies": 399, "helpers": 0}
+{"wall_seconds": 4.333913200011011, "phase": "view", "camera": "#Inventor V2.1 ascii\n\n\nOrthographicCamera {\n  viewportMapping ADJUST_CAMERA\n  position 25 25 87\n  orientation 0 0 1  0\n  nearDistance 76.379616\n  farDistance 87.401123\n  aspectRatio 1\n  focalDistance 87\n  height 100\n\n}\n", "options": {"pattern": "Linear", "directions": "Two directions", "hide_spacing": true, "center": null, "d1": {"mode": "One dimension", "reverse": false, "spacing": "Pitch", "value": 2.54, "count": 20, "spacing2": "Pitch", "value2": 10.0, "count2": 3, "unit": "in", "unit2": "mm", "method": "Axis or line", "x": 1.0, "y": 0.0, "reference": [-1, 0], "start": null, "end": null}, "d2": {"mode": "One dimension", "reverse": false, "spacing": "Pitch", "value": 2.54, "count": 20, "spacing2": "Pitch", "value2": 10.0, "count2": 3, "unit": "in", "unit2": "mm", "method": "Axis or line", "x": 1.0, "y": 0.0, "reference": [-2, 0], "start": null, "end": null}, "angular": {"mode": "One dimension", "reverse": false, "spacing": "Angular pitch", "value": 45.0, "count": 5, "spacing2": "Angular pitch", "value2": 30.0, "count2": 3, "unit": "deg", "unit2": "deg"}, "radial": {"mode": "One dimension", "reverse": false, "spacing": "Pitch", "value": 20.0, "count": 5, "spacing2": "Pitch", "value2": 10.0, "count2": 3, "unit": "mm", "unit2": "mm", "reference": null}}}
+{"wall_seconds": 4.335359900025651, "phase": "apply begin"}
+{"wall_seconds": 4.656998000049498, "phase": "flush begin"}
+{"wall_seconds": 4.6572678000084125, "phase": "_add_optional begin"}
+{"wall_seconds": 4.738473700010218, "phase": "_add_optional end", "elapsed": 0.08085349999601021}
+{"wall_seconds": 4.738829200039618, "phase": "flush end", "elapsed": 0.08155109995277599}
+{"wall_seconds": 4.739026400027797, "phase": "_spacing_chains begin"}
+{"wall_seconds": 4.83196229999885, "phase": "flush begin"}
+{"wall_seconds": 4.832241900032386, "phase": "_add_optional begin"}
+{"wall_seconds": 6.96328419999918, "phase": "_add_optional exception", "traceback": "Traceback (most recent call last):\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 288, in _add_optional\n    status = s.solve()\n             ^^^^^^^^^\nMemoryError: Not enough memory available\n"}
+{"wall_seconds": 6.963579000032041, "phase": "_add_optional end", "elapsed": 2.131124200008344}
+{"wall_seconds": 6.964054700045381, "phase": "flush exception", "traceback": "Traceback (most recent call last):\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 315, in flush\n    self._add_optional(self.optional)\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 288, in _add_optional\n    status = s.solve()\n             ^^^^^^^^^\nMemoryError: Not enough memory available\n"}
+{"wall_seconds": 6.964301800006069, "phase": "flush end", "elapsed": 2.1320603000349365}
+{"wall_seconds": 6.964871200034395, "phase": "_spacing_chains exception", "traceback": "Traceback (most recent call last):\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 667, in _spacing_chains\n    chain.finish(options.get('hide_spacing', False))\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 602, in finish\n    self.batch.flush()\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 315, in flush\n    self._add_optional(self.optional)\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 288, in _add_optional\n    status = s.solve()\n             ^^^^^^^^^\nMemoryError: Not enough memory available\n"}
+{"wall_seconds": 6.965063100040425, "phase": "_spacing_chains end", "elapsed": 2.225866599997971}
+{"wall_seconds": 6.977194000035524, "phase": "apply exception", "traceback": "Traceback (most recent call last):\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 749, in apply\n    chain = _spacing_chains(sketch, ids, instances, options) if dimensions else None\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 667, in _spacing_chains\n    chain.finish(options.get('hide_spacing', False))\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 602, in finish\n    self.batch.flush()\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 315, in flush\n    self._add_optional(self.optional)\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 15, in call\n    answer=original(*args,**kw)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\dgium\\Documents\\__Apps\\_temp builds\\FreeCAD-Plus\\app\\Mod\\FreeCADPlus\\freecad_plus\\sketch_pattern.py\", line 288, in _add_optional\n    status = s.solve()\n             ^^^^^^^^^\nMemoryError: Not enough memory available\n"}
+{"wall_seconds": 6.977491500030737, "phase": "apply end", "elapsed": 2.641913800034672}
+{"wall_seconds": 6.985400400008075, "phase": "finished", "ok": false, "error": "Traceback (most recent call last):\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 94, in run\n    assert not panel.items.count(),panel.status.text()\n           ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Not enough memory available\n"}

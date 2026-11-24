@@ -1,5 +1,12 @@
 # Persistent pattern allocation failure — November 24, 2026
 
+**Superseded by the [saved-file reproduction and correction](../pattern-label-allocation-20261124/README.md).**
+The owner subsequently supplied the source sketch. The GUI probes below had a
+harness input bug: they set text but did not commit the quantity field, leaving
+20 mm pitches in place. They do not verify 0.100-inch spacing. The corrected test
+asserts both physical values and unit strings and reproduces the original error.
+Retain the original results as historical evidence with this limitation.
+
 **Unresolved.** The owner confirmed the error persists after restarting the
 updated app. Their sketch was unsaved. They were asked to save the source sketch
 before applying the pattern and provide its local path. No path has arrived yet.

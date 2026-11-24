@@ -2,13 +2,16 @@
 
 ## Persistent pattern allocation failure — November 24, 2026
 
-- [x] Reconstruct pictured inch-spaced circle and source construction lines;
-  test clean/copied owner profiles and saved/unsaved Plus Component documents.
+- [x] Correct the earlier GUI harness: commit and assert 0.100 in values;
+  earlier screenshot probes accidentally retained 20 mm pitches.
 - [x] Install full failure traceback logging; verify rollback, retained inputs,
   retry, seven installed task checks and the existing shortcut.
-- [ ] Obtain exact source sketch or recurrence trace and reproduce the failure.
-- [ ] Implement and verify the targeted correction. **Not resolved by the passing
-  reconstruction.** See [evidence and limits](evidence/pattern-memory-repro-20261124/README.md).
+- [x] Obtain exact source sketch and reproduce the failure at its dense camera scale.
+- [x] Hide generated labels before solving, then restore final Pattern visibility.
+- [x] Install and verify exact-file Apply (16.86 seconds), 96 regression tests,
+  fresh-process editing/reopening at 420 instances and the existing shortcut.
+  Preserve the original file, chains, Equal sizes, units and Undo/Redo. See
+  [correction and evidence](evidence/pattern-label-allocation-20261124/README.md).
 - [ ] Obtain approval for the separate Elements-list single Pattern-row preview.
 
 ## Large circle-pattern memory — November 24, 2026

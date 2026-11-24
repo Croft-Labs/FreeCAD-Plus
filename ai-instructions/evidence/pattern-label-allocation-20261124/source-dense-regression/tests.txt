@@ -1,0 +1,6 @@
+test_dense_inch_grid_defers_labels_and_preserves_chains (TestPatternGroups.TestPatternGroupView.test_dense_inch_grid_defers_labels_and_preserves_chains) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 59.495s
+
+OK

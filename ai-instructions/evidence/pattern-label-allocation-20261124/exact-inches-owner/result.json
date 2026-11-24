@@ -1,0 +1,4 @@
+{
+  "ok": false,
+  "error": "Traceback (most recent call last):\n  File \"C:/Users/dgium/Documents/__Apps/FreeCAD/pattern-memory-repro/probe.FCMacro\", line 94, in run\n    assert not panel.items.count(),panel.status.text()\n           ^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Not enough memory available\n"
+}

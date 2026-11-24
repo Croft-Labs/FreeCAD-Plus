@@ -133,6 +133,67 @@ class TestPatternGroupView(unittest.TestCase):
     enter = fixtures.TestPatternTask.enter
     pick = fixtures.TestPatternTask.pick
 
+    def test_dense_inch_grid_defers_labels_and_preserves_chains(self):
+        from PySide6 import QtTest
+        s=self.s
+        s.delGeometry(1);s.delGeometry(0)
+        s.addGeometry(Part.Circle(App.Vector(1.27,1.27,0),App.Vector(0,0,1),.325))
+        s.addGeometry([Part.LineSegment(App.Vector(1.27,1.27,0),App.Vector(1.27,0,0)),
+                       Part.LineSegment(App.Vector(1.27,1.27,0),App.Vector(0,1.27,0))],True)
+        s.addConstraint([Sketcher.Constraint('Coincident',1,1,0,3),
+                         Sketcher.Constraint('PointOnObject',1,2,-1),Sketcher.Constraint('Vertical',1),
+                         Sketcher.Constraint('Coincident',2,1,0,3),
+                         Sketcher.Constraint('PointOnObject',2,2,-2),Sketcher.Constraint('Horizontal',2),
+                         Sketcher.Constraint('Equal',1,2),Sketcher.Constraint('DistanceY',1,2,1,1,1.27),
+                         Sketcher.Constraint('Diameter',0,.65)])
+        self.assertEqual(s.solve(),0);self.assertEqual(s.DoF,0)
+        # Zoomed out enough to merge ungrouped constraint labels. These
+        # intermediate labels formerly overflowed Coin's signed-short image width.
+        view=self.Gui.activeDocument().activeView()
+        view.setCamera('#Inventor V2.1 ascii\nOrthographicCamera { position 25 25 87 orientation 0 0 1 0 nearDistance 1 farDistance 200 focalDistance 87 height 100 }')
+        self.enter();self.pick(self.p.items,'Edge1')
+        self.p.layout_mode.setCurrentText('Two directions')
+        self.pick(self.p.d1.reference,'H_Axis');self.pick(self.p.d2.reference,'V_Axis')
+        for direction in (self.p.d1,self.p.d2):
+            direction.count.setValue(20)
+            field=direction.value.lineEdit();field.setFocus();field.selectAll()
+            QtTest.QTest.keyClicks(field,'0.100 in');self.p.items.setFocus()
+            direction.value.interpretText();direction.value.committed.emit()
+        for axis in ('d1','d2'):
+            self.assertAlmostEqual(self.p.options()[axis]['value'],2.54,places=10)
+            self.assertEqual(self.p.options()[axis]['unit'],'in')
+        self.p.hide_spacing.setChecked(True)
+        self.p.apply.click();self.assertEqual(self.p.items.count(),0,self.p.status.text())
+        self.p.done.click();QtTest.QTest.qWait(100)
+        self.assertEqual((s.GeometryCount,s.ConstraintCount,s.DoF),(801,2004,0))
+        self.assertEqual(len(s.PatternSpacingTags),399)
+        self.assertEqual(sum(c.Type=='Equal' and c.First==0 for c in s.Constraints),399)
+        self.assertTrue(all(not visible(c) for c in s.Constraints if c.PatternGroup))
+        self.assertEqual(sum(r.text().startswith('Pattern') for r in self.rows()[1]),1)
+        circles=[i for i,g in enumerate(s.Geometry) if isinstance(g,Part.Circle)]
+        drivers=[i for i,c in enumerate(s.Constraints) if c.PatternDriver]
+        self.assertEqual(len(drivers),2)
+        s.setDatum(8,App.Units.Quantity('.8 mm'))
+        for i in drivers:
+            self.assertEqual(s.Constraints[i].PresentationUnit,'in')
+            s.setDatum(i,App.Units.Quantity('.12 in'))
+        self.doc.recompute();self.assertEqual(s.solve(),0);self.assertEqual(s.DoF,0)
+        for n,i in enumerate(circles):
+            self.assertAlmostEqual(s.Geometry[i].Radius,.4,places=8)
+            self.assertLess((s.Geometry[i].Center-App.Vector(1.27+n//20*3.048,1.27+n%20*3.048,0)).Length,1e-6)
+        for c in s.Constraints:
+            if c.Type=='Coincident':
+                self.assertLess((s.getPoint(c.First,c.FirstPos)-s.getPoint(c.Second,c.SecondPos)).Length,1e-6)
+        for hidden in (False,True):
+            pattern.set_chain_hidden(s,hidden)
+            self.assertEqual(pattern.chain_is_hidden(s),hidden)
+            self.assertTrue(all(visible(c)!=hidden for c in s.Constraints if c.PatternGroup))
+        if os.environ.get('PLUS_TEST_DIR'):
+            self.doc.saveAs(str(Path(os.environ['PLUS_TEST_DIR'])/'dense-grid20.FCStd'))
+        self.doc.undo();self.assertEqual((s.GeometryCount,s.ConstraintCount),(3,9))
+        self.doc.redo();self.assertEqual((s.GeometryCount,s.ConstraintCount),(801,2004))
+        self.assertEqual(s.solve(),0)
+
     def nodes(self):
         from pivy import coin
         search=coin.SoSearchAction();search.setName('ConstraintGroup')

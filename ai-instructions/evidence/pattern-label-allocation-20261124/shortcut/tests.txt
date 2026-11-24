@@ -1,0 +1,6 @@
+test_group_pitch_editor_preserves_units (TestPatternGroups.TestPatternGroupView.test_group_pitch_editor_preserves_units) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.015s
+
+OK

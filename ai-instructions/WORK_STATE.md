@@ -1,16 +1,18 @@
 # FreeCAD Plus: Current work state
 
-## Persistent pattern memory error — awaiting exact source sketch
+## Persistent pattern memory error — reproduced, corrected and installed
 
-November 24, 2026. Owner confirms failure persists after restart; sketch was
-unsaved. Screenshot reconstruction with 20-by-20 circles, 0.100 in pitch, hidden
-chains and source construction lines succeeds in clean/copied owner profiles,
-including an unsaved Plus Component. The actual failure is still unresolved.
-Full traceback logging is installed and rollback/retry is verified. Seven
-installed task tests and the existing-shortcut failure/retry check pass.
-Asked owner to save the source sketch before Apply and provide its local path;
-await that file or a recurrence trace before claiming a fix. See
-[reproduction limits and diagnostic delivery](evidence/pattern-memory-repro-20261124/README.md).
+November 24, 2026. The owner's saved sketch reproduces the allocation error at
+20 by 20 with verified 0.100 in pitches. Generated constraint labels were rendered
+before Pattern grouping, creating oversized intermediate images. Newly inserted
+constraints now remain hidden until final grouping sets their intended visibility.
+The installed exact-file Apply passes in 16.86 seconds, retaining spacing chains,
+Equal relationships, source constraints and units. All 96 installed regression
+tests pass, plus fresh-process editing/reopening at 420 instances and the existing
+desktop shortcut check. The original desktop file is unchanged. Restart the app.
+Earlier GUI reproduction probes accidentally retained 20 mm pitches; the harness
+now commits and asserts actual inch values. See
+[correction and validation](evidence/pattern-label-allocation-20261124/README.md).
 The Elements-list Pattern row proposal remains pending approval, with no production
 changes; handoff is ../pattern-elements-preview/README.md from the repository root.
 
